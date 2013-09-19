@@ -292,7 +292,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cCodPgo",  "C",  2, 0, {|| "@!" }, "Código de forma de pago"                 )
    ::AddField( "cCodRut",  "C", 12, 0, {|| "@!" }, "Código de la ruta"                       )
    ::AddField( "cCodAge",  "C", 12, 0, {|| "@!" }, "Código del agente"                       )
-   ::AddField( "cCodUsr",  "C",  3, 0, {|| "@!" }, "Código usuario que realiza el cambio"    )
+   ::AddField( "cCodUsr",  "C",  3, 0, {|| "@!" }, "Código usuario"                          )
 
    ::AddField( "cTipDoc",  "C", 30, 0, {|| "" },   "Tipo de documento"                       )
 

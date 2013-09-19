@@ -1233,7 +1233,7 @@ METHOD InitDialog() CLASS TFastReportInfGen
 
       ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "Folder_out_32",        "Exportar",          1, {|| ::DlgExportDocument() }, , , .f., .f., .f. )
       ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Folder_into_32",       "Importar",          2, {|| ::DlgImportDocument() }, , , .f., .f., .f. )
-      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "Folder_into_32",       "Ver",               3, {|| ::XmlDocument() }, , , .f., .f., .f. )
+      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "Folder_document_32",   "Ver",               3, {|| ::XmlDocument() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
 

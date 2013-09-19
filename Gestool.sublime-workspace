@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"A",
+				"A"
+			],
+			[
+				"nLinea",
+				"nLinea"
+			],
+			[
 				"bac",
 				"background-color"
 			],
@@ -506,64 +514,90 @@
 			[
 				"Co",
 				"Codigo"
-			],
-			[
-				"ctext",
-				"cTextoWait"
-			],
-			[
-				"cText",
-				"cTextoWait"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "prg/Tvisor.prg",
-			"settings":
-			{
-				"buffer_size": 8021,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "bin/Trace.Log",
-			"settings":
-			{
-				"buffer_size": 324,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Confvisor.prg",
-			"settings":
-			{
-				"buffer_size": 26563,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Timptik.prg",
-			"settings":
-			{
-				"buffer_size": 13014,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Confimptiket.prg",
-			"settings":
-			{
-				"buffer_size": 38437,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 670228,
+				"buffer_size": 670252,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpvtactil.prg",
+			"settings":
+			{
+				"buffer_size": 298412,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "bin/script/003.prg",
+			"settings":
+			{
+				"buffer_size": 4898,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/buildinternet-supersized/slideshow/demo.html",
+			"settings":
+			{
+				"buffer_size": 5570,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/header.tpl",
+			"settings":
+			{
+				"buffer_size": 5869,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/zoomslider.tpl",
+			"settings":
+			{
+				"buffer_size": 646,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/index.html",
+			"settings":
+			{
+				"buffer_size": 106,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "prg/Client.prg",
+			"settings":
+			{
+				"buffer_size": 462510,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 1335 files for \"on aItmContacto\"\n\nC:\\fw195\\Gestool\\prg\\Contactos.prg:\n  205  //--------------------------------------------------------------------------//\n  206  \n  207: FUNCTION aItmContacto()\n  208  \n  209     local aItmCon  := {}\n\n1 match in 1 file\n\n\nSearching 1335 files for \"step\"\n\nC:\\fw195\\Gestool\\prg\\Bitmap.prg:\n   38     DATA   lScroll, lStretch\n   39     DATA   aHotAreas\n   40:    DATA   nVStep, nHStep\n   41     DATA   nZoom\n   42     DATA   lTransparent AS LOGICAL INIT .f.\n   ..\n  205     ::lScroll   = lScroll\n  206     ::aHotAreas = {}\n  207:    ::nVStep    = 1\n  208:    ::nHStep    = 1\n  209     ::lUpdate   = lUpdate\n  210     ::bWhen     = bWhen\n  ...\n  322           next\n  323        else\n  324:          for n = Len( ::aControls ) to 1 step -1\n  325               oCtl = ::aControls[ n ]\n  326               ::aControls[ n ]:Move( oCtl:nTop + ( ::nX - ::nOldX ), oCtl:nLeft )\n  ...\n  487     ::oCursor   = oCursor\n  488     ::oWnd      = oWnd\n  489:    ::nVStep    = 1\n  490:    ::nHStep    = 1\n  491     ::lUpdate   = lUpdate\n  492     ::bWhen     = bWhen\n  ...\n  588     endif\n  589     ::Refresh( .f. )\n  590:    ::oVScroll:SetPos( Int( -::nX / ::nVStep ) )\n  591  \n  592     ::AdjControls()\n  ...\n  603     ::nX -= Min( nVisible, ::nHeight() + ::nX - nVisible )\n  604     ::Refresh( .f. )\n  605:    ::oVScroll:SetPos( Int( -::nX / ::nVStep ) )\n  606  \n  607     ::AdjControls()\n  ...\n  622     endif\n  623     ::Refresh( .f. )\n  624:    ::oHScroll:SetPos( Int( -::nY / ::nHStep ) )\n  625  \n  626     ::AdjControls()\n  ...\n  637     ::nY -= Min( nVisible, ::nWidth() + ::nY - nVisible )\n  638     ::Refresh( .f. )\n  639:    ::oHScroll:SetPos( Int( -::nY / ::nHStep ) )\n  640  \n  641     ::AdjControls()\n  ...\n  780  \n  781     local nVisible := Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 )\n  782:    local nStep\n  783  \n  784     ::nOldX = ::nX\n  785     ::oVScroll:GoDown()\n  786  \n  787:    nStep := ( ::nHeight() + ::nX ) - nVisible\n  788  \n  789     if ::nHeight() > nVisible\n  790        if ::nX > -::nXExtra() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 )\n  791:          ::nX -= Min( nStep, ::nVStep )\n  792           ::Refresh( .f. )\n  793        endif\n  ...\n  805  \n  806     ::oVScroll:GoUp()\n  807:    ::nX := Min( ::nX + ::nVStep, 0 )\n  808     ::Refresh( .f. )\n  809  \n  ...\n  817  \n  818     local nVisible := Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1\n  819:    local nStep, n\n  820  \n  821:    nStep := ( ::nWidth() + ::nY ) - nVisible\n  822  \n  823     ::oHScroll:GoDown()\n  824     if ::nWidth() > nVisible\n  825        if ::nY > -::nYExtra() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 )\n  826:          ::nY -= Min( nStep, ::nHStep )\n  827           ::Refresh( .f. )\n  828        endif\n  ...\n  830  \n  831     if ! Empty( ::aControls )\n  832:       for n = Len( ::aControls ) to 1 step -1\n  833            ::aControls[ n ]:Move( ::aControls[ n ]:nTop,;\n  834                                   ::aControls[ n ]:nLeft - 10 )\n  ...\n  848     ::oHScroll:GoUp()\n  849     if ::nWidth() > nVisible\n  850:       ::nY := Min( ::nY + ::nHStep, 0 )\n  851        ::Refresh( .f. )\n  852     endif\n  853  \n  854     if ! Empty( ::aControls )\n  855:       for n = Len( ::aControls ) to 1 step -1\n  856            ::aControls[ n ]:Move( ::aControls[ n ]:nTop,;\n  857                                   ::aControls[ n ]:nLeft + 10 )\n  ...\n  980        if lVer .and. ::oVScroll != nil\n  981           ::oVScroll:SetRange( 0, ( ( ::nXExtra() + ;\n  982:                               If( lHor, GetSysMetrics( 3 ), 0 ) ) / ::nVStep ) )\n  983           if ::nX == 0\n  984              ::oVScroll:SetPos( 0 )\n  ...\n  987        if lHor .and. ::oHScroll != nil\n  988           ::oHScroll:SetRange( 0, Int( ( ::nYExtra() + ;\n  989:                               If( lVer, GetSysMetrics( 2 ), 0 ) ) / ::nHStep ) )\n  990           if ::nY == 0\n  991              ::oHScroll:SetPos( 0 )\n\nC:\\fw195\\Gestool\\prg\\Cccheck.prg:\n   58  º     entry of credit card numbers so you can verify the users key errors.  º\n   59  º     DO NOT ASSUME THE CREDIT CARD IS VALID BY THIS ROUTINE!  This is just º\n   60: º     one step to validating a credit card number.  Enjoy.                  º\n   61  º                                                                           º\n   62  º     I can determine 7 types of credit cards.  If this routine does not    º\n\nC:\\fw195\\Gestool\\prg\\Dotnetba.prg:\n  896        // no caben todos\n  897        // voy quitando de atras hacia alante hasta que quepan\n  898:       for n := nLen to 1 step -1\n  899  \n  900            if len(oCarpeta:aGrupos[n]:aItems) != 1\n\nC:\\fw195\\Gestool\\prg\\Expconsumo.prg:\n  832  \n  833     							// On Windows98, ExtCreateRegion() may fail if the number of rectangles is too\n  834:    							// large (ie: > 4000). Therefore, we have to create the region by multiple steps.\n  835     							if (pData->rdh.nCount == 2000)\n  836     							{\n\nC:\\fw195\\Gestool\\prg\\Folder.prg:\n  476        TabDelAllItems( ::hWnd )\n  477  \n  478:       for n = Len( ::aPrompts ) to 1 step -1\n  479           TabCtrlAdd( ::hWnd, ::aPrompts[ n ], ::aEnable[ n ] )\n  480        next\n\nC:\\fw195\\Gestool\\prg\\Htmrep.prg:\n  862           ENDDO\n  863  \n  864:          FOR nFor1 := nGroups TO 1 STEP -1\n  865              IF ::aGroups[nFor1]:Check()\n  866                 ::EndGroup(nFor1)\n  ...\n  878  \n  879     IF ::lGroup\n  880:       FOR nFor1 := nGroups TO 1 STEP -1\n  881           IF !Empty(::aGroups[nFor1]:nCounter)\n  882              ::EndGroup(nFor1)\n\nC:\\fw195\\Gestool\\prg\\Impfactu.prg:\n 1063              ::oDbfArtGst:Codigo     := ::oDbfArtFac:cRef\n 1064              ::oDbfArtGst:Nombre     := ::oDbfArtFac:cDetalle\n 1065:             ::oDbfArtGst:pCosto     := ::oDbfArtFac:nCosteProm\n 1066              ::oDbfArtGst:Benef1     := ::oDbfArtFac:nBenefPvp\n 1067              ::oDbfArtGst:Benef2     := ::oDbfArtFac:nBenefMay\n\nC:\\fw195\\Gestool\\prg\\Mdiclien.prg:\n  133  \n  134     if lVScroll\n  135:       DEFINE SCROLLBAR ::oVScroll VERTICAL RANGE 1, 10 PAGESTEP 1 OF Self\n  136     endif\n  137  \n  138     if lHScroll\n  139:       DEFINE SCROLLBAR ::oHScroll HORIZONTAL RANGE 1, 10 PAGESTEP 1 OF Self\n  140     endif\n  141  \n\nC:\\fw195\\Gestool\\prg\\Mdiclienc3.prg:\n  131  \n  132     if lVScroll\n  133:       DEFINE SCROLLBAR ::oVScroll VERTICAL RANGE 1, 10 PAGESTEP 1 OF Self\n  134     endif\n  135  \n  136     if lHScroll\n  137:       DEFINE SCROLLBAR ::oHScroll HORIZONTAL RANGE 1, 10 PAGESTEP 1 OF Self\n  138     endif\n  139  \n\nC:\\fw195\\Gestool\\prg\\Mget.prg:\n  884  \n  885     local oPrn, oFont\n  886:    local nRowStep\n  887     local nRow := 0, nCol := 0, n, n1 := 0\n  888     local nLines := ::GetLineCount()\n  ...\n  899        DEFINE FONT oFont NAME GetSysFont() SIZE 0, -11 OF oPrn\n  900  \n  901:       nRowStep = oPrn:nVertRes() / 60   // We want 60 rows\n  902  \n  903        PAGE\n  904           for n = 1 to nLines  // rows\n  905               oPrn:Say( nRow, nCol, ::GetLine( n ), oFont )\n  906:              nRow += nRowStep\n  907               n1 ++\n  908               IF n1 == 60\n\nC:\\fw195\\Gestool\\prg\\Outlook.prg:\n    5  //--------------------------------------------------------------------------//\n    6  \n    7: #define STEP_CTL    2\n    8: #define STEP_BMP    5\n    9  #define SAY_HEIGHT  18\n   10  #define LSPIN       14\n   ..\n  237           MoveTo( ::hDC, nOffLeft, nRow + 1 )\n  238           LineTo( ::hDC, o:nWidth, nRow + 1 )\n  239:          nRow  += STEP_CTL\n  240  \n  241        next\n\nC:\\fw195\\Gestool\\prg\\Outold.prg:\n    5  //--------------------------------------------------------------------------//\n    6  #define BTN_HEIGHT    22\n    7: #define STEP_BMP       5\n    8  #define SAY_HEIGHT    18\n    9  #define LSPIN         14\n   ..\n  411  \n  412      // caben todos los iconos en la barra ??\n  413:     nSpace := Int( ( nEnd - nOffset + STEP_BMP ) / ( STEP_BMP + 32 + SAY_HEIGHT ) )\n  414      for n := 1 to ::nDesp\n  415        ::aGroup[ ::nActual, 4, n ]:Hide()\n  ...\n  420            Min( Len( ::aGroup[ ::nActual, 4 ] ) - ::nDesp, nSpace ) + 1\n  421        if n <= Len( ::aGroup[ ::nActual, 4 ] )\n  422:         ::aGroup[ ::nActual, 4, n]:Move( nOffset + ( STEP_BMP + 32 + SAY_HEIGHT ) * ( n - 1 - ::nDesp ), ;\n  423              nOffLeft, 32, 32, .t. )\n  424          ::aGroup[ ::nActual, 4, n ]:Show()\n  425  \n  426          ::aGroup[ ::nActual, 5, n ]:Move( nOffset + ;\n  427:             ( STEP_BMP + 32 + SAY_HEIGHT ) * ( n - 1 - ::nDesp ) + 32, 0, ;\n  428              nWidth, SAY_HEIGHT, .t. )\n  429          ::aGroup[ ::nActual, 5, n ]:Show()\n  ...\n  436      next\n  437  \n  438:     if nSpace < ( STEP_BMP + 32 + SAY_HEIGHT )\n  439        if ::nDesp > 0\n  440          ::oBtnTop:Move( ( ::nActual ) * BTN_HEIGHT + 6, 6, LSPIN, LSPIN, .t.  )\n\nC:\\fw195\\Gestool\\prg\\Pdawbrowse.prg:\n 1397           otherwise\n 1398                ::GetDC()\n 1399:               for n = nLines to 1 step -1\n 1400                    ::DrawLine( n )\n 1401                    ::Skip( -1 )\n\nC:\\fw195\\Gestool\\prg\\Report.prg:\n  976           ENDDO\n  977  \n  978:          FOR nFor1 := nGroups TO 1 STEP -1\n  979              IF ::aGroups[nFor1]:Check()\n  980                 ::EndGroup(nFor1)\n  ...\n  992  \n  993     IF ::lGroup\n  994:       FOR nFor1 := nGroups TO 1 STEP -1\n  995           IF !Empty(::aGroups[nFor1]:nCounter)\n  996              ::EndGroup(nFor1)\n\nC:\\fw195\\Gestool\\prg\\Reportc3.prg:\n 1038           ENDDO\n 1039  \n 1040:          FOR nFor1 := nGroups TO 1 STEP -1\n 1041              IF ::aGroups[nFor1]:Check()\n 1042                 ::EndGroup(nFor1)\n ....\n 1054  \n 1055     IF ::lGroup\n 1056:       FOR nFor1 := nGroups TO 1 STEP -1\n 1057           IF !Empty(::aGroups[nFor1]:nCounter)\n 1058              ::EndGroup(nFor1)\n\nC:\\fw195\\Gestool\\prg\\Rpreview.prg:\n  657  //----------------------------------------------------------------------------//\n  658  \n  659: STATIC FUNCTION VScroll(nType,lPage, nSteps)\n  660  \n  661:      LOCAL nYfactor, nYorig, nStep\n  662  \n  663       DEFAULT lPage := .F.\n  ...\n  665       nYfactor := Int(DEVICE:nVertRes()/oWnd:oVScroll:nMax)\n  666  \n  667:      IF nSteps != NIL\n  668:           nStep := nSteps\n  669       ELSEIF lPage\n  670:           nStep := oWnd:oVScroll:nMax/10\n  671       ELSE\n  672:           nStep := 1\n  673       ENDIF\n  674  \n  675       IF nType == GO_UP\n  676:           nStep := -(nStep)\n  677       ELSEIF nType == GO_POS\n  678:           oWnd:oVscroll:SetPos(nSteps)\n  679:           nStep := 0\n  680       ENDIF\n  681  \n  682:      nYorig := nYfactor * (oWnd:oVScroll:GetPos() + nStep - 1)\n  683  \n  684       IF nYorig > DEVICE:nVertRes()\n  ...\n  698  //----------------------------------------------------------------------------//\n  699  \n  700: STATIC FUNCTION HScroll(nType,lPage, nSteps)\n  701  \n  702:      LOCAL nXfactor, nXorig, nStep\n  703  \n  704       DEFAULT lPage := .F.\n  ...\n  706       nXfactor := Int(DEVICE:nHorzRes()/oWnd:oHScroll:nMax)\n  707  \n  708:      IF nSteps != NIL\n  709:           nStep := nSteps\n  710       ELSEIF lPage\n  711:           nStep := oWnd:oHScroll:nMax/10\n  712       ELSE\n  713:           nStep := 1\n  714       ENDIF\n  715  \n  716       IF nType == GO_LEFT\n  717:           nStep := -(nStep)\n  718       ELSEIF nType == GO_POS\n  719:           oWnd:oHscroll:SetPos(nSteps)\n  720:           nStep := 0\n  721       ENDIF\n  722  \n  723:      nXorig := nXfactor * (oWnd:oHScroll:GetPos() + nStep - 1)\n  724  \n  725       IF nXorig > DEVICE:nHorzRes()\n  ...\n  742  \n  743       LOCAL oCoors\n  744:      LOCAL nXStep, nYStep, nXFactor, nYFactor,;\n  745             nWidth, nHeight, nXOrg\n  746  \n  ...\n  753       nWidth   := oCoors:nRight - oCoors:nLeft + 1\n  754       nHeight  := oCoors:nBottom - oCoors:nTop + 1\n  755:      nXStep   := Max(Int(nX/nWidth*HSCROLL_RANGE) - 9, 0)\n  756:      nYStep   := Max(Int(nY/nHeight*VSCROLL_RANGE) - 9, 0)\n  757       nXFactor := Int(DEVICE:nHorzRes()/HSCROLL_RANGE)\n  758       nYFactor := Int(DEVICE:nVertRes()/VSCROLL_RANGE)\n  ...\n  760       Zoom(.T.)\n  761  \n  762:      IF !empty(nXStep)\n  763:           HScroll(2,,nxStep)\n  764:           oWnd:oHScroll:SetPos(nxStep)\n  765       ENDIF\n  766  \n  767:      IF !empty(nYStep)\n  768:           VScroll(2,,nyStep)\n  769:           oWnd:oVScroll:SetPos(nyStep)\n  770       ENDIF\n  771  \n  ...\n  778       LOCAL oCoors\n  779       LOCAL aFiles\n  780:      LOCAL nXStep, nYStep, nXFactor, nYFactor,;\n  781             nWidth, nHeight, nXOrg\n  782  \n  ...\n  793       nWidth   := oCoors:nRight - oCoors:nLeft + 1\n  794       nHeight  := oCoors:nBottom - oCoors:nTop + 1\n  795:      nXStep   := Max(Int(nX/nWidth*HSCROLL_RANGE) - 9, 0)\n  796:      nYStep   := Max(Int(nY/nHeight*VSCROLL_RANGE) - 9, 0)\n  797       nXFactor := Int(DEVICE:nHorzRes()/HSCROLL_RANGE)\n  798       nYFactor := Int(DEVICE:nVertRes()/VSCROLL_RANGE)\n  ...\n  812       Zoom(.T.)\n  813  \n  814:      IF !empty(nXStep)\n  815:           HScroll(2,,nxStep)\n  816:           oWnd:oHScroll:SetPos(nxStep)\n  817       ENDIF\n  818  \n  819:      IF !empty(nYStep)\n  820:           VScroll(2,,nyStep)\n  821:           oWnd:oVScroll:SetPos(nyStep)\n  822       ENDIF\n  823  \n\nC:\\fw195\\Gestool\\prg\\Rpreviewc3.prg:\n  669  //----------------------------------------------------------------------------//\n  670  \n  671: static function VScroll(nType,lPage, nSteps)\n  672  \n  673:      local nYfactor, nYorig, nStep\n  674  \n  675       DEFAULT lPage := .F.\n  ...\n  687       nYfactor := Int(DEVICE:nVertRes()/oWnd:oVScroll:nMax)\n  688  \n  689:      if nSteps != nil\n  690:           nStep := nSteps\n  691       elseif lPage\n  692:           nStep := oWnd:oVScroll:nMax/10\n  693       else\n  694:           nStep := 1\n  695       endif\n  696  \n  697       if nType == GO_UP\n  698:           nStep := -(nStep)\n  699       elseif nType == GO_POS\n  700:           oWnd:oVscroll:SetPos(nSteps)\n  701:           nStep := 0\n  702       endif\n  703  \n  704:      nYorig := nYfactor * (oWnd:oVScroll:GetPos() + nStep - 1)\n  705  \n  706       if nYorig > DEVICE:nVertRes()\n  ...\n  724  //----------------------------------------------------------------------------//\n  725  \n  726: static function HScroll(nType,lPage, nSteps)\n  727  \n  728:      local nXfactor, nXorig, nStep\n  729  \n  730       DEFAULT lPage := .F.\n  ...\n  742       nXfactor := Int(DEVICE:nHorzRes()/oWnd:oHScroll:nMax)\n  743  \n  744:      if nSteps != nil\n  745:           nStep := nSteps\n  746       elseif lPage\n  747:           nStep := oWnd:oHScroll:nMax/10\n  748       else\n  749:           nStep := 1\n  750       endif\n  751  \n  752       if nType == GO_LEFT\n  753:           nStep := -(nStep)\n  754       elseif nType == GO_POS\n  755:           oWnd:oHscroll:SetPos(nSteps)\n  756:           nStep := 0\n  757       endif\n  758  \n  759:      nXorig := nXfactor * (oWnd:oHScroll:GetPos() + nStep - 1)\n  760  \n  761       if nXorig > DEVICE:nHorzRes()\n  ...\n  782  \n  783       local oCoors\n  784:      local nXStep, nYStep, nXFactor, nYFactor,;\n  785             nWidth, nHeight\n  786  \n  ...\n  794       nHeight  := oCoors:nBottom - oCoors:nTop + 1\n  795       if .f.\n  796:         nXStep   := Max(Int(nX/nWidth*HSCROLL_RANGE) - 9, 0)\n  797          nXFactor := Int(DEVICE:nHorzRes()/HSCROLL_RANGE)\n  798       endif\n  799       if .f.\n  800:         nYStep   := Max(Int(nY/nHeight*VSCROLL_RANGE) - 9, 0)\n  801          nYFactor := Int(DEVICE:nVertRes()/VSCROLL_RANGE)\n  802       endif\n  ...\n  804       Zoom(.T.)\n  805  \n  806:      if !empty(nXStep)\n  807:           HScroll(2,,nxStep)\n  808:           oWnd:oHScroll:SetPos(nxStep)\n  809       endif\n  810  \n  811:      if !empty(nYStep)\n  812:           VScroll(2,,nyStep)\n  813:           oWnd:oVScroll:SetPos(nyStep)\n  814       endif\n  815  \n  ...\n  822       local oCoors\n  823       local aFiles\n  824:      local nXStep, nYStep, nXFactor, nYFactor,;\n  825             nWidth, nHeight\n  826  \n  ...\n  838       nHeight  := oCoors:nBottom - oCoors:nTop + 1\n  839       if .f.\n  840:         nXStep   := Max(Int(nX/nWidth*HSCROLL_RANGE) - 9, 0)\n  841          nXFactor := Int(DEVICE:nHorzRes()/HSCROLL_RANGE)\n  842       endif\n  843       if .f.\n  844:         nYStep   := Max(Int(nY/nHeight*VSCROLL_RANGE) - 9, 0)\n  845          nYFactor := Int(DEVICE:nVertRes()/VSCROLL_RANGE)\n  846       endif\n  ...\n  860       Zoom(.T.)\n  861  \n  862:      if !empty(nXStep)\n  863:           HScroll(2,,nxStep)\n  864:           oWnd:oHScroll:SetPos(nxStep)\n  865       endif\n  866  \n  867:      if !empty(nYStep)\n  868:           VScroll(2,,nyStep)\n  869:           oWnd:oVScroll:SetPos(nyStep)\n  870       endif\n  871  \n\nC:\\fw195\\Gestool\\prg\\Rxml.prg:\n 1774      nStart := 3\n 1775    END\n 1776:   FOR nChar := nStart TO nLen STEP 2\n 1777      nCode := ASCPOS(cInStr, nChar + 1) * 0x0100 + ASCPOS(cInStr, nChar)\n 1778      IF nCode >= 0xD800 .AND. nCode <= 0xDBFF\n ....\n 1800      nStart := 3\n 1801    END\n 1802:   FOR nChar := nStart TO nLen STEP 2\n 1803      nCode := ASCPOS(cInStr, nChar) * 0x0100 + ASCPOS(cInStr, nChar + 1)\n 1804      IF nCode >= 0xD800 .AND. nCode <= 0xDBFF\n ....\n 2136  LOCAL nLen    := LEN(cInStr)\n 2137  \n 2138: FOR nChar := 1 TO nLen STEP 2\n 2139    cOutStr += SUBSTR(cInStr, nChar + 1, 1) + SUBSTR(cInStr, nChar, 1)\n 2140  NEXT\n\nC:\\fw195\\Gestool\\prg\\Scrllbar.prg:\n   18  CLASS TScrollBar FROM TControl\n   19  \n   20:    DATA   lVertical, lReDraw, lIsChild, nMin, nMax, nPgStep\n   21     DATA   bGoUp, bGoDown, bGoTop, bGoBottom, bPageUp, bPageDown, bPos\n   22     DATA   bTrack\n   23  \n   24     CLASSDATA aProperties INIT { \"cVarName\", \"nMin\", \"nMax\",;\n   25:                                 \"nPgStep\", \"nTop\", \"nLeft\", \"Cargo\" }\n   26  \n   27:    METHOD New( nRow, nCol, nMin, nMax, nPgStep, lVertical, oWnd, nWidth,;\n   28                 nHeight, bUpAction, bDownAction, bPgUp, bPgDown,;\n   29                 bPos, lPixel, nClrText, nClrBack, cMsg, lUpdate,;\n   30                 bWhen, bValid, lDesign ) CONSTRUCTOR\n   31  \n   32:    METHOD WinNew( nMin, nMax, nPgStep, lVertical, oWnd, bUpAction,;\n   33                    bDownAction, bPgUp, bPgDown, bPos, nClrText, nClrBack,;\n   34                    lUpdate, bWhen, bValid ) CONSTRUCTOR\n   35  \n   36:    METHOD ReDefine( nID, nMin, nMax, nPgStep, oWnd, bUpAction, bDownAction, ;\n   37                      bPgUp, bPgDown, bPos, nClrText, nClrBack, cMsg,;\n   38                      lUpdate, bWhen, bValid ) CONSTRUCTOR\n   ..\n   72  \n   73     METHOD PageUp() INLINE  If( ::bPageUp != nil, Eval( ::bPageUp ),),;\n   74:                            ::SetPos( ::GetPos() - ::nPgStep )\n   75  \n   76     METHOD PageDown() INLINE  If( ::bPageDown != nil, Eval( ::bPageDown ),),;\n   77:                                  ::SetPos( ::GetPos() + ::nPgStep )\n   78  \n   79     METHOD SetPage( nSize )\n   ..\n  100  //----------------------------------------------------------------------------//\n  101  \n  102: METHOD New( nRow, nCol, nMin, nMax, nPgStep, lVertical, oWnd, nWidth, nHeight,;\n  103              bUpAct, bDownAct, bPgUp, bPgDown, bPos, lPixel, nClrText,;\n  104              nClrBack, cMsg, lUpdate, bWhen, bValid, lDesign ) CLASS TScrollBar\n  ...\n  109  \n  110     DEFAULT nRow := 0, nCol := 0,;\n  111:            nMin := 0, nMax := 0, nPgStep := 1,;\n  112             oWnd := GetWndDefault(),;\n  113             lVertical := .t., nWidth := If( lVertical, 16, 100 ),;\n  ...\n  125     ::nMin       = nMin\n  126     ::nMax       = nMax\n  127:    ::nPgStep    = nPgStep\n  128     ::lVertical  = lVertical\n  129     ::lReDraw    = .t.\n  ...\n  151        ::SetRange( ::nMin, ::nMax )\n  152        ::SetPos( ::nMin )\n  153:       ::SetPage( ::nPgStep )\n  154        oWnd:AddControl( Self )\n  155     else\n  ...\n  169  // They are NOT controls but we consider them as real Objects!\n  170  \n  171: METHOD WinNew( nMin, nMax, nPgStep, lVertical, oWnd, bUpAction,;\n  172                 bDownAction, bPgUp, bPgDown, bPos, nClrText, nClrBack,;\n  173                 lUpdate, bWhen, bValid ) CLASS TScrollBar\n  174  \n  175:    DEFAULT nMin := 1, nMax := 2, nPgStep := 1, lVertical := .t.,;\n  176             nClrText  := GetSysColor( COLOR_WINDOW ),;\n  177             nClrBack  := GetSysColor( COLOR_SCROLLBAR ),;\n  ...\n  184     ::nMin      = nMin\n  185     ::nMax      = nMax\n  186:    ::nPgStep   = nPgStep\n  187     ::bGoUp     = bUpAction\n  188     ::bGoDown   = bDownAction\n  ...\n  197     ::SetColor( nClrText, nClrBack )\n  198     ::SetRange( nMin, nMax )\n  199:    ::SetPage( nPgStep )\n  200     ::SetPos( nMin )\n  201  \n  ...\n  204  //----------------------------------------------------------------------------//\n  205  \n  206: METHOD Redefine( nID, nMin, nMax, nPgStep, oWnd, bUpAction, bDownAction, ;\n  207                   bPgUp, bPgDown, bPos, nClrText, nClrBack, cMsg,;\n  208                   lUpdate, bWhen, bValid ) CLASS TScrollbar\n  209  \n  210:    DEFAULT nMin := 0, nMax := 0, nPgStep := 1,;\n  211             nClrText  := GetSysColor( COLOR_WINDOW ),;\n  212             nClrBack  := GetSysColor( COLOR_SCROLLBAR ),;\n  ...\n  216     ::nMin       = nMin\n  217     ::nMax       = nMax\n  218:    ::nPgStep    = nPgStep\n  219     ::lVertical  = .f.\n  220     ::lReDraw    = .t.\n\nC:\\fw195\\Gestool\\prg\\Selector.prg:\n   85     METHOD KeyDown( nKey, nFlags )\n   86  \n   87:    METHOD PlaceMark( nPos, nStep )\n   88  \n   89     METHOD Position( nPos, nInit, nDeviation )\n   ..\n  235     nLap := ::nArc / ( nMarks / 2 - 1 )\n  236  \n  237:    for n := 1 to nMarks step 2\n  238         ::aMarks[ n ]     := ::nRow - Cos( nMark ) * ( ::nRadius + 2 )\n  239         ::aMarks[ n + 1 ] := ::nCol + Sin( nMark ) * ( ::nRadius + 2 )\n  ...\n  456  //----------------------------------------------------------------------------//\n  457  \n  458: METHOD PlaceMark( nPos, nStep ) CLASS TSelector\n  459  \n  460     local nMark\n  ...\n  465  \n  466     nPos := AdjPos( ::nOrigin + ;\n  467:                  ( Max( 1, Min( nMark + nStep, ::nMarks ) ) - 1 ) * nLap )\n  468  \n  469     ::SetPosition( nPos )\n\nC:\\fw195\\Gestool\\prg\\Tdbf.prg:\n  158      METHOD IdxFCheck()\n  159      METHOD IdxCreate( oIdx )    INLINE ( ::nArea )->( oIdx:Create() )\n  160:     METHOD ReIndexAll( bOption, nStep )\n  161  \n  162      METHOD IdxActivate()\n  ...\n 1182  // A¤ade un array de definicion de orden a ::aTIndex\n 1183  //\n 1184: METHOD AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp ) CLASS TDbf\n 1185  \n 1186      local oIdx\n ....\n 1189          oIdx := cName\n 1190      else\n 1191:         oIdx := TIndex():New( Self, cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp )\n 1192      endif\n 1193  \n ....\n 1201  //\n 1202  \n 1203: METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lFocus ) CLASS TDbf\n 1204  \n 1205      local nRec\n ....\n 1219  \n 1220          nRec            := ::RecNo()\n 1221:         oIdx            := ::AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, .t. )\n 1222  \n 1223          oIdx:IdxExt()\n ....\n 1404  //  Regenera todos los indice activos de la DBF\n 1405  //\n 1406: METHOD ReIndexAll( bOption, nStep ) CLASS TDbf\n 1407  \n 1408:     ( ::nArea )->( OrdCondSet(,,,, bOption, nStep ) )\n 1409      ( ::nArea )->( OrdListRebuild() )\n 1410  \n\nC:\\fw195\\Gestool\\prg\\Tdbsys.prg:\n   37  #define IIDS_UNIQUE       6\n   38  #define IIDS_DES          7\n   39: #define IIDS_STEP         8\n   40  #define IIDS_COMMENT      9\n   41  \n   ..\n  135          ::oIDS:AddField( \"LUNIQUE\",  \"L\", 01 )\n  136          ::oIDS:AddField( \"LDES\",     \"L\", 01 )\n  137:         ::oIDS:AddField( \"NSTEP\",    \"N\", 10 )\n  138          ::oIDS:AddField( \"CCOMMENT\", \"C\", 64 )\n  139  \n  ...\n  244                                 aIdx[ i, IIDS_KEY ],      aIdx[ i, IIDS_FOR ],, ;\n  245                                 aIdx[ i, IIDS_UNIQUE ],   aIdx[ i, IIDS_DES ], ;\n  246:                                aIdx[ i, IIDS_COMMENT ],, aIdx[ i, IIDS_STEP ] )\n  247              NEXT\n  248          endif\n\nC:\\fw195\\Gestool\\prg\\Tdprnc3.old.prg:\n  962  \n  963  if ( nPosBit>=1 ) .and. ( nPosBit<=len( aBits ) )\n  964:   for nBit:=len( aBits ) to 1 step -1\n  965      iif( nValor>=aBits[ nBit ],;\n  966           nValor:=nValor-aBits[ nBit ],;\n\nC:\\fw195\\Gestool\\prg\\Texcelsxh.prg:\n 1082  \n 1083    IF nPos > 0\n 1084:     FOR nDec := nLen TO nPos STEP -1\n 1085        IF SubStr( cNum, nDec, 1 ) == \"0\"\n 1086          cNum := SubStr( cNum, 1, Len(cNum) - 1 )\n\nC:\\fw195\\Gestool\\prg\\Tgraph.prg:\n  953        IF nX1 == nX2\n  954           IF nY1 <= nY2\n  955:             FOR nI = nY1 TO nY2 STEP 3\n  956                 MoveTo( ::hDC, nX1, nI )\n  957                 LineTo( ::hDC, nX2, MIN(nI+2,nY2) )\n  958              NEXT nI\n  959           ELSE\n  960:             FOR nI = nY1 TO nY2 STEP -3\n  961                 MoveTo( ::hDC, nX1, nI )\n  962                 LineTo( ::hDC, nX2, MAX(nI-2,nY2) )\n  ...\n  966           nPend := (nY2-nY1)/(nX2-nX1)\n  967           nInter := nY1-nPend * nX1\n  968:          FOR nI = nX1 TO nX2 STEP 3\n  969              MoveTo( ::hDC, nI, nInter+nPend*nI )\n  970              LineTo( ::hDC, MIN(nI+2,nX2), nInter+nPend*(Min(nI+2,nX2)) )\n\nC:\\fw195\\Gestool\\prg\\Tidxutil.prg:\n   78      oIdxNone:lUniq    := .t.\n   79      oIdxNone:lDes     := .f.\n   80:     oIdxNone:nStep    := 0\n   81      oIdxNone:uTop     := NIL\n   82      oIdxNone:uBottom  := NIL\n\nC:\\fw195\\Gestool\\prg\\Timptik.prg:\n   49     DATA  nRow\n   50     DATA  nCol\n   51:    DATA  nRowStep\n   52  \n   53     DATA  nWidth\n   ..\n   86     Method Corte()                INLINE   ::Write( RetChr( ::cCorte ) )\n   87  \n   88:    METHOD NeedNewPage()          INLINE   ( ::nRow + ::nRowStep >= ::nHeight )\n   89  \n   90  END CLASS\n   ..\n  284           ::oFont           := TFont():New( \"Courier New\", 0, -12, , .t., , , , , , , , , , , ::oPrn )\n  285           ::nRow            := 0\n  286:          ::nRowStep        := ::oPrn:GetTextHeight( CHAR_PATTERN, ::oFont )\n  287  \n  288           ::nWidth          := ::oPrn:nHorzRes()\n  ...\n  360           ::oPrn:Say( ::nRow, nStartCol, cTexto, ::oFont )\n  361  \n  362:          ::nRow            += ::nRowStep\n  363  \n  364           if ::NeedNewPage()\n\nC:\\fw195\\Gestool\\prg\\Tindex.prg:\n   25      DATA Cargo, uTop, uBottom\n   26      DATA bFor, bKey                         AS BLOCK\n   27:     DATA nStep                              AS NUMERIC\n   28      DATA oDbf\n   29  \n   ..\n   31  \n   32      METHOD New( oDbf, cName, cFile, cKey, cFor, bWhile, lUniq, ;\n   33:                 lDes, cComment, bOption, nStep, lNoDel, lTmp ) CONSTRUCTOR\n   34      METHOD SetScope( uTop, uBottom )\n   35      METHOD ClearScope()\n   ..\n   50  \n   51  METHOD New( oDbf, cName, cFile, cKey, cFor, bWhile, ;\n   52:             lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp ) CLASS TIndex\n   53  \n   54      BYNAME oDbf\n   ..\n   87      ::lScope   := .f.\n   88  \n   89:     if ValType( nStep ) != \"N\"\n   90:          nStep := if( ValType( bOption ) != \"B\", 100000000, 0 )\n   91      endif\n   92  \n   93:     BYNAME nStep\n   94  \n   95  return( Self )\n   ..\n   99  METHOD SetCond() CLASS TIndex\n  100  \n  101: return( ( ::oDbf:nArea )->( OrdCondSet( ::cFor, ::bFor,, ::bWhile, ::bOption, ::nStep, RecNo(), .f., , , ::lDes ) ) )\n  102  \n  103  //----------------------------------------------------------------------------//\n\nC:\\fw195\\Gestool\\prg\\Tinfgen.prg:\n  334     METHOD AddField( cNomCol, cTypCol, nSizCol, nDecCol, cPicCol, cHeaCol )\n  335  \n  336:    METHOD AddTmpIndex( cName, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lFocus )\n  337  \n  338     METHOD AddGroup( bGroup , bHeader, bFooter, bFont, lEject )\n\nC:\\fw195\\Gestool\\prg\\Tprogres.prg:\n   14  #define PBM_SETPOS        1026\n   15  #define PBM_DELTAPOS      1027\n   16: #define PBM_SETSTEP       1028\n   17: #define PBM_STEPIT        1029\n   18  \n   19  #ifdef __XPP__\n   ..\n   25  CLASS TProgress FROM TControl\n   26  \n   27:    DATA   nMin, nMax, nPos, nStep  AS NUMERIC\n   28  \n   29     METHOD New( nTop, nLeft, oWnd, nPos, nClrFore,;\n   ..\n   47     #endif\n   48  \n   49:    METHOD SetStep( nStepInc ) INLINE ;\n   50:           SendMessage( ::hWnd, PBM_SETSTEP, ::nStep := nStepInc )\n   51  \n   52:    METHOD Deltapos(1) INLINE SendMessage( ::hWnd, PBM_STEPIT )\n   53  \n   54  ENDCLASS\n\nC:\\fw195\\Gestool\\prg\\Tsalon.prg:\n 2522  \n 2523     							// On Windows98, ExtCreateRegion() may fail if the number of rectangles is too\n 2524:    							// large (ie: > 4000). Therefore, we have to create the region by multiple steps.\n 2525     							if (pData->rdh.nCount == 2000)\n 2526     							{\n\nC:\\fw195\\Gestool\\prg\\Twebmenu.prg:\n   10  #define COLOR_INACTIVEBORDER      14   //HIGHLIGHTTEXT\n   11  \n   12: #define STEP_CTL        2\n   13: #define STEP_BMP        5\n   14  \n   15  #define TRANSPARENT     1\n   ..\n  286        for n := 1 to Len( ::aControls )\n  287           nHeight  += ::aControls[n]:nHeight\n  288:          nHeight  += STEP_CTL\n  289        next\n  290  \n  ...\n  367           end if\n  368  \n  369:          nRow  += STEP_CTL\n  370  \n  371        next\n\nC:\\fw195\\Gestool\\prg\\Wbrowse.prg:\n 2115           otherwise\n 2116                ::GetDC()\n 2117:               for n = nLines to 1 step -1\n 2118                    ::DrawLine( n )\n 2119                    ::Skip( -1 )\n\nC:\\fw195\\Gestool\\prg\\Webbar.prg:\n    6  //--------------------------------------------------------------------------//\n    7  \n    8: #define STEP_CTL        2\n    9: #define STEP_BMP        5\n   10  \n   11  #define COLOR_BTNFACE   15\n\nC:\\fw195\\Gestool\\prg\\Webbtn.prg:\n   46     DATA   nClrBBotOver\n   47     DATA   nPad\n   48:    DATA   nStepBmp         AS NUMERIC  INIT  16\n   49     DATA   bMenu\n   50     DATA   lMenu            AS LOGIC    INIT  .f.\n   ..\n  532           ReleaseCapture()\n  533           if lClick\n  534:             ::Click( nCol > ::nRight - ::nStepBmp )\n  535           endif\n  536        endif\n\nC:\\fw195\\Gestool\\prg\\Xbrowse.102.prg:\n 5329                    else\n 5330                       if nI > 0\n 5331:                         for n := ::aDisplay[ ::nColSel ] - 1 to nI step -1\n 5332                             ::GoLeft()\n 5333                          next n\n ....\n 5347                                ::DrawLine( .t. )\n 5348                             else\n 5349:                               for n := ::aDisplay[ ::nColSel ] - 1 to nI step -1\n 5350                                   ::GoLeft()\n 5351                                next n\n ....\n 5817     local uBookMark, nRow\n 5818     local nDataRows\n 5819:    local oClip, cText, nPasteRow, nStep, cFormat\n 5820     local aTotals  := {}, lAnyTotals := .f.\n 5821     local aWidths  := {}\n ....\n 5939  \n 5940           nRow      := 2\n 5941:          nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )\n 5942  \n 5943           if ::lExcelCellWise\n ....\n 5954                 lContinue := ( ::Skip( 1 ) == 1 )\n 5955                 nRow ++\n 5956:                If ( nRow - 2 ) % nStep == 0\n 5957                    if Eval( bProgress, nRow - 2, nDataRows ) == .f.\n 5958                       Exit\n ....\n 5990                    endif\n 5991  \n 5992:                   If ( nRow - 2 ) % nStep == 0\n 5993                       if Eval( bProgress, nRow - 2, nDataRows ) == .f.\n 5994                          Exit\n ....\n 6107     local uBookMark, nRow\n 6108     local nDataRows\n 6109:    local oClip, cText, nPasteRow, nStep, cFormat,cFileName,cURL,i\n 6110     local aTotals  := {}, lAnyTotals := .f. , aProp:={} , aOOFilters:={} , nPos, oCharLocale\n 6111     local lContinue := .t.\n ....\n 6259        nRow      := 2\n 6260        nPasteRow := 2\n 6261:       nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )\n 6262        cText     := \"\"\n 6263        oClip := TClipBoard():New()\n ....\n 6287              endif\n 6288  \n 6289:             If ( nRow - 2 ) % nStep == 0\n 6290                 if Eval( bProgress, nRow - 2, nDataRows ) == .f.\n 6291                    Exit\n ....\n 9948  \n 9949     nKount   := 0\n 9950:    for nAt := nLen to 1 step -1\n 9951        ::aMerge[ nAt ][ 2 ] := nKount\n 9952        nKount++\n ....\n 10830     nLuma    := 0\n 10831     k        := 0\n 10832:    for n    := Int( nCol ) + 10 to nCol + nWidth step 10\n 10833        nClr  := GetPixel( hDC, n, nRow )\n 10834        nLuma += ( 0.299 * nRGBRed( nClr ) + 0.587 * nRGBGreen( nClr ) + 0.114 * nRGBBlue( nClr ) )\n\nC:\\fw195\\Gestool\\prg\\Xbrowse.prg:\n 2070              oCol        := ::aCols[ ::aDisplay[ nLen ] ]\n 2071           case ::nStretchCol == STRETCHCOL_WIDEST\n 2072:             for n := nLen to 1 step -1\n 2073                 o        := ::aCols[ ::aDisplay[ n ] ]\n 2074                 if o:cDataType != nil .and. o:cDataType $ 'FMP'\n ....\n 5268     if ValType( aCols ) == 'C'\n 5269        cGroup      := Upper( aCols )\n 5270:       for n := Len( ::aCols ) to 1 step -1\n 5271           if ! Empty( ::aCols[ n ]:cGrpHdr ) .and. Upper( ::aCols[ n ]:cGrpHdr ) == cGroup\n 5272              nLastCol := n\n ....\n 6256                    else\n 6257                       if nI > 0\n 6258:                         for n := ::aDisplay[ ::nColSel ] - 1 to nI step -1\n 6259                             ::GoLeft()\n 6260                          next n\n ....\n 6274                                ::DrawLine( .t. )\n 6275                             else\n 6276:                               for n := ::aDisplay[ ::nColSel ] - 1 to nI step -1\n 6277                                   ::GoLeft()\n 6278                                next n\n ....\n 6791     local uBookMark, nRow\n 6792     local nDataRows\n 6793:    local oClip, cText, nPasteRow, nStep, cFormat\n 6794     local aTotals  := {}, lAnyTotals := .f.\n 6795     local aWidths  := {}\n ....\n 6922  \n 6923           nRow      := 2\n 6924:          nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )\n 6925  \n 6926           if ::lExcelCellWise\n ....\n 6936                 lContinue := ( ::Skip( 1 ) == 1 )\n 6937                 nRow ++\n 6938:                If ( nRow - 2 ) % nStep == 0\n 6939                    if Eval( bProgress, nRow - 2, nDataRows ) == .f.\n 6940                       Exit\n ....\n 6971                    endif\n 6972  \n 6973:                   If ( nRow - 2 ) % nStep == 0\n 6974                       if Eval( bProgress, nRow - 2, nDataRows ) == .f.\n 6975                          Exit\n ....\n 7096     local uBookMark, nRow\n 7097     local nDataRows\n 7098:    local oClip, cText, nPasteRow, nStep, cFormat,cFileName,cURL,i\n 7099     local aTotals  := {}, lAnyTotals := .f. , aProp:={} , aOOFilters:={} , nPos, oCharLocale\n 7100     local lContinue := .t.\n ....\n 7249        nRow      := 2\n 7250        nPasteRow := 2\n 7251:       nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )\n 7252        cText     := \"\"\n 7253        oClip := TClipBoard():New( 1, ::oWnd )\n ....\n 7277              endif\n 7278  \n 7279:             If ( nRow - 2 ) % nStep == 0\n 7280                 if Eval( bProgress, nRow - 2, nDataRows ) == .f.\n 7281                    Exit\n ....\n 11652  \n 11653     nKount   := 0\n 11654:    for nAt := nLen to 1 step -1\n 11655        ::aMerge[ nAt ][ 2 ] := nKount\n 11656        nKount++\n .....\n 12508     nLuma    := 0\n 12509     k        := 0\n 12510:    for n    := Int( nCol ) + 10 to nCol + nWidth step 10\n 12511        nClr  := GetPixel( hDC, n, nRow )\n 12512        nLuma += ( 0.299 * nRGBRed( nClr ) + 0.587 * nRGBGreen( nClr ) + 0.114 * nRGBBlue( nClr ) )\n .....\n 12749        elseif nLen > 1\n 12750           nLen--\n 12751:          for n := 1 to nLen step 2\n 12752              if ValType( xVal ) == ValType( aSearch[ n ] ) .and. ;\n 12753                    aSearch[ n ] == xVal\n\n241 matches across 37 files\n",
+			"settings":
+			{
+				"buffer_size": 35731,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "prg/Contactos.prg",
+			"settings":
+			{
+				"buffer_size": 11062,
 				"line_ending": "Windows"
 			}
 		}
@@ -600,11 +634,23 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/buildinternet-supersized/slideshow/demo.html",
+		"/C/fw195/Gestool/bin/script/001.prg",
+		"/C/fw195/Gestool/bin/script/002.prg",
+		"/C/Users/Villa/Desktop/Importacion clientes Spain Aqua.prg",
+		"/C/Users/Villa/Google Drive/GestoolUtiles/Scripts/Importacion clientes Spain Aqua.prg",
+		"/C/fw195/Gestool/prg/Tactil.prg",
+		"/C/fw195/Gestool/prg/Valtostr.prg",
+		"/C/fw195/Gestool/prg/Tvisor.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Timptik.prg",
+		"/C/fw195/Gestool/prg/Confimptiket.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/Confvisor.prg",
+		"/C/fw195/Gestool/prg/Arqueo.prg",
 		"/C/fw195/Gestool/bin/Trace.Log",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tprntik.prg",
-		"/C/fw195/Gestool/prg/Confimptiket.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Tcajon.prg",
 		"/C/Users/Villa/Desktop/zoomslider.tpl",
 		"/C/Users/Villa/Desktop/zoomslider.php",
@@ -694,7 +740,6 @@
 		"/C/fw195/Gestool/prg/pro",
 		"/C/fw195/Gestool/prg/albcli",
 		"/C/fw195/Gestool/prg/Internet.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/HPPC.mak",
@@ -716,18 +761,7 @@
 		"/C/fw195/camero/HT.Bat",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
-		"/C/fw195/Gestool/prg/Tfastventasproveedores.prg",
-		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
-		"/C/fw195/Gestool/prg/Turno.prg",
-		"/C/fw195/Gestool/prg/Ttotturno.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
-		"/C/fw195/Gestool/Lx.mak",
-		"/C/fw195/Gestool/prg/Ordencomanda.prg",
-		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/authentication.css",
-		"/C/AppServ/www/zemtrum/tienda/controllers/front/AuthController.php",
-		"/C/AppServ/www/zemtrum/tienda/classes/controller/AdminController.php",
-		"/C/AppServ/www/zemtrum/tienda/controllers/front/MyAccountController.php",
-		"/C/AppServ/www/zemtrum/tienda/authentication.php"
+		"/C/fw195/Gestool/prg/Tfastventasproveedores.prg"
 	],
 	"find":
 	{
@@ -735,7 +769,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -775,6 +809,52 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"step",
+			"on aitm",
+			"aDirectorio",
+			"#",
+			"on aItmContacto",
+			"aItmContacto",
+			"on aitm",
+			"on openfiles",
+			"SetBufferLine",
+			"ultimocambio",
+			"SetBufferLine",
+			"EscribeVisor",
+			"ultimocambio",
+			"SetBufferLine",
+			"ultimocambio",
+			"SetBufferLine",
+			"UltimoCambio",
+			"obrwlineas",
+			"obrwlin",
+			"cPictureTotal",
+			"cpictureimporte",
+			"cpicture",
+			"nDecimalesImporte",
+			"TotalTemporal",
+			"nPvpTil",
+			"ovisor",
+			"AgregarLineas",
+			"ovisor",
+			"AgregarLineas",
+			"carga",
+			"closefile",
+			"closefiles",
+			"openfiles",
+			"cVisor",
+			"ovisor",
+			"cambio",
+			"cambio.",
+			"cambio",
+			"SetBufferLine",
+			"on IsVisor",
+			"is",
+			":cReset",
+			"reset",
+			"on retChr(",
+			"Chr(",
+			"chr",
 			"cReset",
 			"nPosInit",
 			"nInact",
@@ -856,53 +936,7 @@
 			"ccodpr",
 			"ccodpr1",
 			"LoaArt",
-			"ccodpr1",
-			"on aitm",
-			"ccodpr",
-			"on aitm",
-			"on loaart",
-			"ON EdtRec",
-			"\"ccODPR1",
-			"\"CODPR1",
-			"ccodpr1",
-			"on acol",
-			"_CCODPR1",
-			"space",
-			"aItmTmpBrw",
-			"cvalpr1",
-			"cvalpr2",
-			"aItmTmpBrw",
-			"brwPrpAct",
-			"CVALPR1",
-			"on acol",
-			"on c",
-			"on aitm",
-			"codprp1",
-			"on aitm",
-			"bOnPostSave",
-			"Save(",
-			"Save",
-			"newtik",
-			"endtrans",
-			"on rx",
-			"on endtrans",
-			"ActualizaStockWeb",
-			"footer",
-			"first",
-			"cDImagen",
-			"SetCurrentDirectory",
-			"cNoPath",
-			"cFirstPath",
-			"on cNoPath",
-			"TSndRecInf",
-			"ctext",
-			"on edtrec",
-			"while",
-			"openfiles",
-			"on oretfld",
-			"on rx",
-			"oret",
-			"oretç"
+			"ccodpr1"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -934,18 +968,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tvisor.prg",
+					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 8021,
+						"buffer_size": 670252,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6579,
-								6579
+								147514,
+								147861
 							]
 						],
 						"settings":
@@ -955,113 +989,141 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3633.0,
+						"translation.y": 82481.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "bin/Trace.Log",
+					"file": "prg/Tpvtactil.prg",
 					"settings":
 					{
-						"buffer_size": 324,
+						"buffer_size": 298412,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								26252,
+								26252
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 19224.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "prg/Confvisor.prg",
+					"file": "bin/script/003.prg",
 					"settings":
 					{
-						"buffer_size": 26563,
+						"buffer_size": 4898,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								2531,
+								2531
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 4,
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1836.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "prg/Timptik.prg",
+					"file": "/C/Users/Villa/Desktop/buildinternet-supersized/slideshow/demo.html",
 					"settings":
 					{
-						"buffer_size": 13014,
+						"buffer_size": 5570,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3369,
-								3369
+								2317,
+								2317
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 175.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "prg/Confimptiket.prg",
+					"file": "/C/Users/Villa/Desktop/header.tpl",
 					"settings":
 					{
-						"buffer_size": 38437,
+						"buffer_size": 5869,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								5486,
+								5486
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2052.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/Users/Villa/Desktop/zoomslider.tpl",
+					"settings":
+					{
+						"buffer_size": 646,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								613,
+								613
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -1071,19 +1133,47 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "prg/Tpv.prg",
+					"buffer": 6,
+					"file": "/C/Users/Villa/Desktop/index.html",
 					"settings":
 					{
-						"buffer_size": 670228,
+						"buffer_size": 106,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								253403,
-								253403
+								84,
+								84
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "prg/Client.prg",
+					"settings":
+					{
+						"buffer_size": 462510,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								378849,
+								378849
 							]
 						],
 						"settings":
@@ -1093,7 +1183,1042 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 147551.0,
+						"translation.y": 209854.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"settings":
+					{
+						"buffer_size": 35731,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										187,
+										202
+									],
+									[
+										412,
+										416
+									],
+									[
+										420,
+										424
+									],
+									[
+										577,
+										581
+									],
+									[
+										603,
+										607
+									],
+									[
+										770,
+										774
+									],
+									[
+										991,
+										995
+									],
+									[
+										1017,
+										1021
+									],
+									[
+										1186,
+										1190
+									],
+									[
+										1373,
+										1377
+									],
+									[
+										1511,
+										1515
+									],
+									[
+										1697,
+										1701
+									],
+									[
+										1867,
+										1871
+									],
+									[
+										1954,
+										1958
+									],
+									[
+										2158,
+										2162
+									],
+									[
+										2168,
+										2172
+									],
+									[
+										2303,
+										2307
+									],
+									[
+										2478,
+										2482
+									],
+									[
+										2505,
+										2509
+									],
+									[
+										2737,
+										2741
+									],
+									[
+										2747,
+										2751
+									],
+									[
+										2901,
+										2905
+									],
+									[
+										3149,
+										3153
+									],
+									[
+										3294,
+										3298
+									],
+									[
+										3626,
+										3630
+									],
+									[
+										3899,
+										3903
+									],
+									[
+										4201,
+										4205
+									],
+									[
+										4606,
+										4610
+									],
+									[
+										4913,
+										4917
+									],
+									[
+										5111,
+										5115
+									],
+									[
+										5313,
+										5317
+									],
+									[
+										5483,
+										5487
+									],
+									[
+										5811,
+										5815
+									],
+									[
+										6089,
+										6093
+									],
+									[
+										6218,
+										6222
+									],
+									[
+										6391,
+										6395
+									],
+									[
+										6520,
+										6524
+									],
+									[
+										6647,
+										6651
+									],
+									[
+										6844,
+										6848
+									],
+									[
+										7062,
+										7066
+									],
+									[
+										7269,
+										7273
+									],
+									[
+										7298,
+										7302
+									],
+									[
+										7507,
+										7511
+									],
+									[
+										7709,
+										7713
+									],
+									[
+										7901,
+										7905
+									],
+									[
+										7916,
+										7920
+									],
+									[
+										8225,
+										8229
+									],
+									[
+										8462,
+										8466
+									],
+									[
+										8674,
+										8678
+									],
+									[
+										8954,
+										8958
+									],
+									[
+										9147,
+										9151
+									],
+									[
+										9317,
+										9321
+									],
+									[
+										9523,
+										9527
+									],
+									[
+										9693,
+										9697
+									],
+									[
+										9968,
+										9972
+									],
+									[
+										10020,
+										10024
+									],
+									[
+										10162,
+										10166
+									],
+									[
+										10193,
+										10197
+									],
+									[
+										10202,
+										10206
+									],
+									[
+										10251,
+										10255
+									],
+									[
+										10316,
+										10320
+									],
+									[
+										10400,
+										10404
+									],
+									[
+										10411,
+										10415
+									],
+									[
+										10491,
+										10495
+									],
+									[
+										10516,
+										10520
+									],
+									[
+										10612,
+										10616
+									],
+									[
+										10819,
+										10823
+									],
+									[
+										10871,
+										10875
+									],
+									[
+										11013,
+										11017
+									],
+									[
+										11044,
+										11048
+									],
+									[
+										11053,
+										11057
+									],
+									[
+										11102,
+										11106
+									],
+									[
+										11167,
+										11171
+									],
+									[
+										11253,
+										11257
+									],
+									[
+										11264,
+										11268
+									],
+									[
+										11344,
+										11348
+									],
+									[
+										11369,
+										11373
+									],
+									[
+										11465,
+										11469
+									],
+									[
+										11584,
+										11588
+									],
+									[
+										11592,
+										11596
+									],
+									[
+										11802,
+										11806
+									],
+									[
+										11867,
+										11871
+									],
+									[
+										12101,
+										12105
+									],
+									[
+										12137,
+										12141
+									],
+									[
+										12183,
+										12187
+									],
+									[
+										12239,
+										12243
+									],
+									[
+										12275,
+										12279
+									],
+									[
+										12321,
+										12325
+									],
+									[
+										12429,
+										12433
+									],
+									[
+										12437,
+										12441
+									],
+									[
+										12647,
+										12651
+									],
+									[
+										12712,
+										12716
+									],
+									[
+										12946,
+										12950
+									],
+									[
+										12982,
+										12986
+									],
+									[
+										13028,
+										13032
+									],
+									[
+										13084,
+										13088
+									],
+									[
+										13120,
+										13124
+									],
+									[
+										13166,
+										13170
+									],
+									[
+										13377,
+										13381
+									],
+									[
+										13429,
+										13433
+									],
+									[
+										13571,
+										13575
+									],
+									[
+										13602,
+										13606
+									],
+									[
+										13611,
+										13615
+									],
+									[
+										13660,
+										13664
+									],
+									[
+										13725,
+										13729
+									],
+									[
+										13809,
+										13813
+									],
+									[
+										13820,
+										13824
+									],
+									[
+										13900,
+										13904
+									],
+									[
+										13925,
+										13929
+									],
+									[
+										14021,
+										14025
+									],
+									[
+										14228,
+										14232
+									],
+									[
+										14280,
+										14284
+									],
+									[
+										14422,
+										14426
+									],
+									[
+										14453,
+										14457
+									],
+									[
+										14462,
+										14466
+									],
+									[
+										14511,
+										14515
+									],
+									[
+										14576,
+										14580
+									],
+									[
+										14662,
+										14666
+									],
+									[
+										14673,
+										14677
+									],
+									[
+										14753,
+										14757
+									],
+									[
+										14778,
+										14782
+									],
+									[
+										14874,
+										14878
+									],
+									[
+										14993,
+										14997
+									],
+									[
+										15001,
+										15005
+									],
+									[
+										15169,
+										15173
+									],
+									[
+										15338,
+										15342
+									],
+									[
+										15532,
+										15536
+									],
+									[
+										15568,
+										15572
+									],
+									[
+										15614,
+										15618
+									],
+									[
+										15670,
+										15674
+									],
+									[
+										15706,
+										15710
+									],
+									[
+										15752,
+										15756
+									],
+									[
+										15860,
+										15864
+									],
+									[
+										15868,
+										15872
+									],
+									[
+										16036,
+										16040
+									],
+									[
+										16205,
+										16209
+									],
+									[
+										16399,
+										16403
+									],
+									[
+										16435,
+										16439
+									],
+									[
+										16481,
+										16485
+									],
+									[
+										16537,
+										16541
+									],
+									[
+										16573,
+										16577
+									],
+									[
+										16619,
+										16623
+									],
+									[
+										16756,
+										16760
+									],
+									[
+										16973,
+										16977
+									],
+									[
+										17191,
+										17195
+									],
+									[
+										17430,
+										17434
+									],
+									[
+										17655,
+										17659
+									],
+									[
+										17746,
+										17750
+									],
+									[
+										18029,
+										18033
+									],
+									[
+										18262,
+										18266
+									],
+									[
+										18594,
+										18598
+									],
+									[
+										18761,
+										18765
+									],
+									[
+										18958,
+										18962
+									],
+									[
+										19261,
+										19265
+									],
+									[
+										19471,
+										19475
+									],
+									[
+										19484,
+										19488
+									],
+									[
+										19662,
+										19666
+									],
+									[
+										19842,
+										19846
+									],
+									[
+										20070,
+										20074
+									],
+									[
+										20304,
+										20308
+									],
+									[
+										20316,
+										20320
+									],
+									[
+										20499,
+										20503
+									],
+									[
+										20687,
+										20691
+									],
+									[
+										20915,
+										20919
+									],
+									[
+										21133,
+										21137
+									],
+									[
+										21146,
+										21150
+									],
+									[
+										21329,
+										21333
+									],
+									[
+										21488,
+										21492
+									],
+									[
+										21783,
+										21787
+									],
+									[
+										21938,
+										21942
+									],
+									[
+										22191,
+										22195
+									],
+									[
+										22405,
+										22409
+									],
+									[
+										22628,
+										22632
+									],
+									[
+										22792,
+										22796
+									],
+									[
+										23027,
+										23031
+									],
+									[
+										23191,
+										23195
+									],
+									[
+										23269,
+										23273
+									],
+									[
+										23455,
+										23459
+									],
+									[
+										23661,
+										23665
+									],
+									[
+										24002,
+										24006
+									],
+									[
+										24197,
+										24201
+									],
+									[
+										24394,
+										24398
+									],
+									[
+										24635,
+										24639
+									],
+									[
+										24834,
+										24838
+									],
+									[
+										25076,
+										25080
+									],
+									[
+										25348,
+										25352
+									],
+									[
+										25530,
+										25534
+									],
+									[
+										25725,
+										25729
+									],
+									[
+										25946,
+										25950
+									],
+									[
+										26192,
+										26196
+									],
+									[
+										26388,
+										26392
+									],
+									[
+										26597,
+										26601
+									],
+									[
+										26832,
+										26836
+									],
+									[
+										26964,
+										26968
+									],
+									[
+										26995,
+										26999
+									],
+									[
+										27093,
+										27097
+									],
+									[
+										27267,
+										27271
+									],
+									[
+										27615,
+										27619
+									],
+									[
+										27850,
+										27854
+									],
+									[
+										27885,
+										27889
+									],
+									[
+										28021,
+										28025
+									],
+									[
+										28155,
+										28159
+									],
+									[
+										28162,
+										28166
+									],
+									[
+										28226,
+										28230
+									],
+									[
+										28235,
+										28239
+									],
+									[
+										28244,
+										28248
+									],
+									[
+										28323,
+										28327
+									],
+									[
+										28586,
+										28590
+									],
+									[
+										28781,
+										28785
+									],
+									[
+										28814,
+										28818
+									],
+									[
+										29004,
+										29008
+									],
+									[
+										29101,
+										29105
+									],
+									[
+										29269,
+										29273
+									],
+									[
+										29499,
+										29503
+									],
+									[
+										29532,
+										29536
+									],
+									[
+										29696,
+										29700
+									],
+									[
+										29926,
+										29930
+									],
+									[
+										30158,
+										30162
+									],
+									[
+										30429,
+										30433
+									],
+									[
+										30638,
+										30642
+									],
+									[
+										30795,
+										30799
+									],
+									[
+										31029,
+										31033
+									],
+									[
+										31235,
+										31239
+									],
+									[
+										31464,
+										31468
+									],
+									[
+										31703,
+										31707
+									],
+									[
+										31907,
+										31911
+									],
+									[
+										32087,
+										32091
+									],
+									[
+										32274,
+										32278
+									],
+									[
+										32629,
+										32633
+									],
+									[
+										32896,
+										32900
+									],
+									[
+										33182,
+										33186
+									],
+									[
+										33453,
+										33457
+									],
+									[
+										33662,
+										33666
+									],
+									[
+										33819,
+										33823
+									],
+									[
+										34053,
+										34057
+									],
+									[
+										34259,
+										34263
+									],
+									[
+										34488,
+										34492
+									],
+									[
+										34727,
+										34731
+									],
+									[
+										34942,
+										34946
+									],
+									[
+										35125,
+										35129
+									],
+									[
+										35315,
+										35319
+									],
+									[
+										35574,
+										35578
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								4678,
+								4678
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2034.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "prg/Contactos.prg",
+					"settings":
+					{
+						"buffer_size": 11062,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6207,
+								6214
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3273.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
