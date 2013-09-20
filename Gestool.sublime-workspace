@@ -526,6 +526,14 @@
 				"buffer_size": 192990,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "prg/Tgenmail.prg",
+			"settings":
+			{
+				"buffer_size": 41781,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
@@ -560,6 +568,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/TGenMailing",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
@@ -686,8 +695,7 @@
 		"/C/fw195/Gestool/Hr.bat",
 		"/C/fw195/Gestool/resource/Gstpda.rc",
 		"/C/fw195/Gestool/resource/Gstdialog.rc",
-		"/C/fw195/Gestool/Ax.bat",
-		"/C/fw195/camero/HV.Bat"
+		"/C/fw195/Gestool/Ax.bat"
 	],
 	"find":
 	{
@@ -695,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -735,6 +743,15 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lCreateMail",
+			"lExternalSendMail",
+			"ss TGenMailing",
+			"TGenMailing",
+			"mail",
+			"?",
+			"lCheckSaasMode",
+			"lControlAcceso",
+			"lCheckSaasMode",
 			"on msgwait",
 			"step",
 			"on aitm",
@@ -853,16 +870,7 @@
 			"od resource",
 			"bOnPostSave",
 			"cserdoc ",
-			"cserdoc",
-			"tmasdet",
-			"#",
-			"bOnPostSaveDetail\nbOnPostSaveDetail",
-			"bOnPostSaveDetail",
-			"on rx",
-			"ccodpr2",
-			"ccodpr",
-			"ccodpr1",
-			"LoaArt"
+			"cserdoc"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -889,7 +897,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -904,8 +912,8 @@
 						"selection":
 						[
 							[
-								180757,
-								180757
+								16992,
+								17003
 							]
 						],
 						"settings":
@@ -915,7 +923,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 102395.0,
+						"translation.y": 12335.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Tgenmail.prg",
+					"settings":
+					{
+						"buffer_size": 41781,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								24758,
+								24758
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 17339.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
