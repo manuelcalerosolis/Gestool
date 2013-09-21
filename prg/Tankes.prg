@@ -142,30 +142,29 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
    local oBlock
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   /*
-   Definicion del master-------------------------------------------------------
-   */
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
-
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
       lOpen             := .f.
+      
+      ::CloseService()
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de tanques de combustible" )
 

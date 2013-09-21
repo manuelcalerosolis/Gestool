@@ -11,26 +11,28 @@ static bEdit      := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aT
 static bEdtDet    := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
 //----------------------------------------------------------------------------//
+// Abre las bases de datos necesarias
 
 STATIC FUNCTION OpenFiles()
-//Abre las bases de datos necesarias
 
    local lOpen    := .t.
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 
-   USE ( cPatAlm() + "UBICAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAT", @dbfUbicaT ) )
-   SET ADSINDEX TO ( cPatAlm() + "UBICAT.CDX" ) ADDITIVE
+      USE ( cPatAlm() + "UBICAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAT", @dbfUbicaT ) )
+      SET ADSINDEX TO ( cPatAlm() + "UBICAT.CDX" ) ADDITIVE
 
-   USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
-   SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
+      USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
+      SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
-      CloseFiles()
       lOpen          := .f.
+
+      CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -518,18 +520,20 @@ FUNCTION mkUbi( cPath, lAppend, cPathOld, oMeter )
    DEFAULT cPath     := cPatAlm()
 	DEFAULT lAppend	:= .F.
 
-   if !lExistTable( cPath + "Ubicat.Dbf" )
-      dbCreate( cPath + "Ubicat.Dbf", aSqlStruct( aItmUbi() ), cDriver() )
+   if !lExistTable( cPath + "UbiCat.Dbf" )
+      dbCreate( cPath + "UbiCat.Dbf", aSqlStruct( aItmUbi() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "Ubical.Dbf" )
-      dbCreate( cPath + "Ubical.Dbf", aSqlStruct( aItmUbiLin() ), cDriver() )
+   if !lExistTable( cPath + "UbiCal.Dbf" )
+      dbCreate( cPath + "UbiCal.Dbf", aSqlStruct( aItmUbiLin() ), cDriver() )
    end if
 
    if lAppend .and. lIsDir( cPathOld )
-      appDbf( cPathOld, cPath, "Ubicat" )
-      appDbf( cPathOld, cPath, "Ubical" )
+      appDbf( cPathOld, cPath, "UbiCat" )
+      appDbf( cPathOld, cPath, "UbiCal" )
    end if
+
+   rxUbi( cPath, oMeter )
 
 RETURN NIL
 
@@ -538,7 +542,6 @@ RETURN NIL
 FUNCTION rxUbi( cPath, oMeter )
 
    local dbfUbi
-   local dbfUbiLin
 
    DEFAULT cPath := cPatAlm()
 
@@ -550,6 +553,7 @@ FUNCTION rxUbi( cPath, oMeter )
    fEraseIndex( cPath + "UBICAL.CDX" )
 
    if lExistTable( cPath + "UBICAT.DBF" )
+      
       dbUseArea( .t., cDriver(), cPath + "UBICAT.DBF", cCheckArea( "UBICAT", @dbfUbi ), .f. )
 
       if !( dbfUbi )->( neterr() )
@@ -562,24 +566,27 @@ FUNCTION rxUbi( cPath, oMeter )
       else
          msgStop( "Imposible abrir en modo exclusivo las cabeceras de ubicaiones" )
       end if
+
    end if
 
    if lExistTable( cPath + "UBICAL.DBF" )
-      dbUseArea( .t., cDriver(), cPath + "UBICAL.DBF", cCheckArea( "UBICAL", @dbfUbiLin ), .f. )
+      
+      dbUseArea( .t., cDriver(), cPath + "UBICAL.DBF", cCheckArea( "UBICAL", @dbfUbi ), .f. )
 
-      if !( dbfUbiLin )->( neterr() )
-         ( dbfUbiLin )->( __dbPack() )
+      if !( dbfUbi )->( neterr() )
+         ( dbfUbi )->( __dbPack() )
 
-         ( dbfUbiLin )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-         ( dbfUbiLin )->( ordCreate( cPath + "UBICAL.CDX", "CUBILIN", "Field->cCodUbi + Field->cUbiLin", {|| Field->cCodUbi + Field->cUbiLin } ) )
+         ( dbfUbi )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfUbi )->( ordCreate( cPath + "UBICAL.CDX", "CUBILIN", "Field->cCodUbi + Field->cUbiLin", {|| Field->cCodUbi + Field->cUbiLin } ) )
 
-         ( dbfUbiLin )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-         ( dbfUbiLin )->( ordCreate( cPath + "UBICAL.CDX", "CCODUBI", "Field->cCodUbi", {|| Field->cCodUbi } ) )
+         ( dbfUbi )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfUbi )->( ordCreate( cPath + "UBICAL.CDX", "CCODUBI", "Field->cCodUbi", {|| Field->cCodUbi } ) )
 
-         ( dbfUbiLin )->( dbCloseArea() )
+         ( dbfUbi )->( dbCloseArea() )
       else
          msgStop( "Imposible abrir en modo exclusivo las líneas de ubicaciones." )
       end if
+
    end if
 
 RETURN NIL

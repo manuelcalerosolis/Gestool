@@ -94,27 +94,31 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TGrpFam
+METHOD OpenFiles( lExclusive, cPath ) CLASS TGrpFam
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos de grupos de famílias" )
-      ::CloseFiles()
       lOpen             := .f.
+      
+      msgStop( "Imposible abrir las bases de datos de grupos de famílias" )
+      
+      ::CloseFiles()
 
    END SEQUENCE
 

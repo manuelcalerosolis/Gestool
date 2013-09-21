@@ -66,12 +66,15 @@ Function mkCategoria( cPath, lAppend, cPathOld )
 
    dbCreate( cPath + "Categorias.Dbf", aSqlStruct( aItmCategoria() ), cDriver() )
 
-   if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "Categorias.Dbf" )
+
       dbUseArea( .t., cDriver(), cPath + "Categorias.Dbf", cCheckArea( "Categorias", @dbfCategoria ), .f. )
+   
       if !( dbfCategoria )->( neterr() )
          ( dbfCategoria )->( __dbApp( cPathOld + "Categorias.Dbf" ) )
          ( dbfCategoria )->( dbCloseArea() )
       end if
+   
    end if
 
    rxCategoria( cPath )

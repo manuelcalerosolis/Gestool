@@ -13,7 +13,6 @@ CLASS TDetComentarios FROM TDet
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD CloseFiles()
 
@@ -62,29 +61,31 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
+   DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DEFAULT  lExclusive  := .f.
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
 
-   if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
-   end if
-
-   ::oDbf:Activate( .f., !lExclusive )
+      ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de lineas de comentarios" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen          := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de lineas de comentarios" )
 
    END SEQUENCE
 

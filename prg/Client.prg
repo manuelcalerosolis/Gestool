@@ -11238,6 +11238,7 @@ Crea las BD clientes
 
 FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
 
+   DEFAULT cPath        := cPatCli()
    DEFAULT lAppend      := .f.
 
    IF oMeter != NIL
@@ -11245,7 +11246,34 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       sysRefresh()
 	END IF
 
-   CreateFiles( cPath )
+   IF !lExistTable( cPath + "CLIENT.DBF" )
+      dbCreate( cPath + "CLIENT.DBF", aSqlStruct( aItmCli() ), cDriver() )
+   END IF
+
+   IF !lExistTable( cPath + "CLIATP.DBF" )
+      dbCreate( cPath + "CLIATP.DBF", aSqlStruct( aItmAtp() ), cDriver() )
+   END IF
+
+   IF !lExistTable( cPath + "OBRAST.DBF" )
+      dbCreate( cPath + "OBRAST.DBF", aSqlStruct( aItmObr() ), cDriver() )
+   END IF
+
+   IF !lExistTable( cPath + "CLIENTD.DBF" )
+      dbCreate( cPath + "CLIENTD.DBF", aSqlStruct( aCliDoc() ), cDriver() )
+   END IF
+
+   IF !lExistTable( cPath + "CLIBNC.DBF" )
+      dbCreate( cPath + "CLIBNC.DBF", aSqlStruct( aCliBnc() ), cDriver() )
+   END IF
+
+   if !lExistTable( cPath + "CLIINC.DBF" )
+      dbCreate( cPath + "CLIINC.DBF", aSqlStruct( aCliInc() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "CLICONTACTOS.Dbf" )
+      dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
+   end if
+
    rxClient( cPath, oMeter )
 
    if lAppend .and. lIsDir( cPathOld )
@@ -11255,6 +11283,7 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       AppDbf( cPathOld, cPath, "CliBnc"         )
       AppDbf( cPathOld, cPath, "CliInc"         )
       AppDbf( cPathOld, cPath, "CliContactos"   )
+      AppDbf( cPathOld, cPath, "ClientD"        )
    end if
 
 RETURN NIL
@@ -11266,18 +11295,6 @@ FUNCTION rxClient( cPath, oMeter )
    local dbfClient
 
    DEFAULT cPath  := cPatCli()
-
-   if !lExistTable( cPath + "Client.Dbf"  )     .or.;
-      !lExistTable( cPath + "CliAtp.Dbf"  )     .or.;
-      !lExistTable( cPath + "ObrasT.Dbf"  )     .or.;
-      !lExistTable( cPath + "CliBnc.Dbf"  )     .or.;
-      !lExistTable( cPath + "CliInc.Dbf"  )     .or.;
-      !lExistTable( cPath + "ClientD.Dbf" )     .or.;
-      !lExistTable( cPath + "CliContactos.Dbf" )
-
-      CreateFiles( cPath )
-
-   end if
 
    fEraseIndex( cPath + "CLIENT.CDX" )
 

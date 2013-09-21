@@ -1177,18 +1177,19 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
    local oBlock
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::DefineFiles()
+      ::DefineFiles( cPath )
 
       ::oDbf:Activate(        .f., !( lExclusive ) )
       ::oDbfCaj:Activate(     .f., !( lExclusive ) )
@@ -1196,11 +1197,11 @@ METHOD OpenService( lExclusive )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos de turnos" + CRLF + CRLF + ErrorMessage( oError ) )
+      lOpen             := .f.
 
       ::CloseService()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir todas las bases de datos de turnos." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -1212,7 +1213,9 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath )
 
-   DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT  "Sesiones"
+   DEFAULT cPath        := ::cPath
+
+   DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Sesiones"
 
       FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
@@ -1240,7 +1243,7 @@ METHOD DefineFiles( cPath )
 
    END DATABASE ::oDbf
 
-   DEFINE DATABASE ::oDbfCaj FILE "TURNOC.DBF" CLASS "TurnoC" ALIAS "TurnoC" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT "Cajas por sesiones"
+   DEFINE DATABASE ::oDbfCaj FILE "TURNOC.DBF" CLASS "TurnoC" ALIAS "TurnoC" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Cajas por sesiones"
 
       FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT ""                                                  OF ::oDbfCaj
       FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT ""                                                  OF ::oDbfCaj
@@ -1276,7 +1279,7 @@ METHOD DefineFiles( cPath )
    Chequa la concordancia entre estructuras
    */
 
-   DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT  "Lineas de contadores en turnos de venta"
+   DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Lineas de contadores en turnos de venta"
 
       FIELD NAME "cNumTur" TYPE "C" LEN  6   DEC 0 COMMENT "Número"                          PICTURE "######"  OF ::oDbfDet
       FIELD NAME "cSufTur" TYPE "C" LEN  2   DEC 0 COMMENT "Sufijo"                                            OF ::oDbfDet

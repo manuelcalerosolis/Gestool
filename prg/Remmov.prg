@@ -901,7 +901,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -909,11 +909,12 @@ METHOD OpenService( lExclusive )
 
    DEFAULT lExclusive   := .f.
 
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -922,11 +923,11 @@ METHOD OpenService( lExclusive )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de movimientos" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de movimientos" )
 
    END SEQUENCE
 
@@ -3520,7 +3521,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetMovimientos
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
 
    local lOpen             := .t.
    local oBlock
@@ -3531,7 +3532,7 @@ METHOD OpenFiles( lExclusive ) CLASS TDetMovimientos
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )

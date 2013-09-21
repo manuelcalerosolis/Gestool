@@ -1953,7 +1953,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
                   /*
-                  AÃ±adimos un nuevo registro
+                  Añadimos un nuevo registro-----------------------------------
                   */
 
                   if ::lValidRegister()
@@ -1971,7 +1971,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
 
                   ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-                  ::oDbf:cNomCli    := ::oTikCliT:cNomCli
+                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
                   ::oDbf:cPobCli    := ::oTikCliT:cPobCli
                   ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oTikCliT:cPosCli
@@ -1983,7 +1983,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oTikCliT:cCodPago
+                  ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
                   ::oDbf:cCodRut    := ::oTikCliT:cCodRut
                   ::oDbf:cCodAge    := ::oTikCliT:cCodAge
                   ::oDbf:cCodTrn    := ""
@@ -1998,7 +1998,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
 
                   ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
-                  ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
+                  ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
                   ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
                   ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
                   ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
@@ -2028,7 +2028,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
                   /*
-                  AÃ±adimos un nuevo registro
+                  Añadimos un nuevo registro-----------------------------------
                   */
 
                   if ::lValidRegister()

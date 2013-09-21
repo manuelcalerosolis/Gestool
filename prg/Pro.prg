@@ -1893,9 +1893,11 @@ Function mkPro( cPath, lAppend, cPathOld, oMeter )
    DEFAULT cPath     := cPatArt()
 	DEFAULT lAppend	:= .F.
 
-   dbCreate( cPath + "Pro.Dbf", aSqlStruct( aPro() ), cDriver() )
+   if !lExistTable( cPath + "Pro.Dbf" )
+      dbCreate( cPath + "Pro.Dbf", aSqlStruct( aPro() ), cDriver() )
+   end if 
 
-   if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "Pro.Dbf" )
 
       dbUseArea( .t., cDriver(), cPath + "Pro.Dbf", cCheckArea( "Pro", @cDbf ), .f. )
 
@@ -1906,9 +1908,11 @@ Function mkPro( cPath, lAppend, cPathOld, oMeter )
 
    end if
 
-   dbCreate( cPath + "TblPro.Dbf", aSqlStruct( aItmPro() ), cDriver() )
+   if !lExistTable( cPath + "TblPro.Dbf" )
+      dbCreate( cPath + "TblPro.Dbf", aSqlStruct( aItmPro() ), cDriver() )
+   end if 
 
-   if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "TblPro.Dbf" )
 
       dbUseArea( .t., cDriver(), cPath + "TblPro.Dbf", cCheckArea( "Pro", @cDbf ), .f. )
 
@@ -1931,7 +1935,7 @@ Function rxPro( cPath, oMeter )
 
    DEFAULT cPath  := cPatArt()
 
-   if !lExistTable( cPath + "PRO.DBF" )
+   if !lExistTable( cPath + "PRO.DBF" ) .or. !lExistTable( cPath + "TblPro.Dbf" )
       mkPro( cPath )
    end if
 

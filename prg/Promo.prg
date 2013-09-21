@@ -709,12 +709,6 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-   IF !lExistTable( cPatArt() + "PROMOT.DBF" )  .or.;
-      !lExistTable( cPatArt() + "PROMOL.DBF" )  .or.;
-      !lExistTable( cPatArt() + "PROMOC.DBF" )
-		CreateFiles()
-	END IF
-
    USE ( cPatArt() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOT", @dbfPromoT ) )
    SET ADSINDEX TO ( cPatArt() + "PROMOT.CDX" ) ADDITIVE
 
@@ -800,11 +794,21 @@ FUNCTION mkPromo( cPath, lAppend, cPathOld, oMeter )
    DEFAULT lAppend   := .f.
    DEFAULT cPath     := cPatArt()
 
-   CreateFiles( cPath, oMeter )
+   if !lExistTable( cPath + "PROMOT.DBF" )
+      dbCreate( cPath + "PROMOT.DBF", aSqlStruct( aItmPrm() ), cDriver() )
+   end if 
 
-   IF lAppend .and. lIsDir( cPathOld )
+   if !lExistTable( cPath + "PROMOL.DBF" )
+      dbCreate( cPath + "PROMOL.DBF", aSqlStruct( aColPrm() ), cDriver() )
+   end if 
+   
+   if !lExistTable( cPath + "PROMOC.DBF" )
+      dbCreate( cPath + "PROMOC.DBF", aSqlStruct( aCliPrm() ), cDriver() )
+   end if 
 
-      // Cabeceras
+   RxPromo( cPath, oMeter )
+
+   if lAppend .and. lIsDir( cPathOld )
 
       dbUseArea( .t., cDriver(), cPath + "PROMOT.DBF", cCheckArea( "PROMOT", @dbfPrm ), .f. )
       ordListAdd( cPath + "PROMOT.CDX"  )
@@ -858,21 +862,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION CreateFiles( cPath, oMeter )
-
-   DEFAULT cPath := cPatArt()
-
-   dbCreate( cPath + "PROMOT.DBF", aSqlStruct( aItmPrm() ), cDriver() )
-   dbCreate( cPath + "PROMOL.DBF", aSqlStruct( aColPrm() ), cDriver() )
-   dbCreate( cPath + "PROMOC.DBF", aSqlStruct( aCliPrm() ), cDriver() )
-
-   RxPromo( cPath, oMeter )
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-FUNCTION RxPromo( cPath, oMeter )
+FUNCTION rxPromo( cPath, oMeter )
 
    DEFAULT cPath := cPatArt()
 

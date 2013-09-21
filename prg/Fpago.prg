@@ -1299,9 +1299,9 @@ FUNCTION mkFPago( cPath, lAppend, cPathOld )
    DEFAULT cPath     := cPatGrp()
    DEFAULT lAppend   := .f.
 
-   dbCreate( cPath + "FPAGO.DBF", aSqlStruct( aItmFPago() ), cDriver() )
+   dbCreate( cPath + "Fpago.Dbf", aSqlStruct( aItmFPago() ), cDriver() )
 
-   if lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "Fpago.Dbf" )
       dbUseArea( .t., cDriver(), cPath + "Fpago.Dbf", cCheckArea( "Fpago", @dbfFormasPago ), .f. )
       ( dbfFormasPago )->( __dbApp( cPathOld + "Fpago.Dbf" ) )
       ( dbfFormasPago )->( dbCloseArea() )

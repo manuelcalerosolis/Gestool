@@ -58,7 +58,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TNewImp
+METHOD OpenFiles( lExclusive, cPath ) CLASS TNewImp
 
    local lOpen          := .t.
    local oBlock
@@ -70,7 +70,7 @@ METHOD OpenFiles( lExclusive ) CLASS TNewImp
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -79,15 +79,13 @@ METHOD OpenFiles( lExclusive ) CLASS TNewImp
 
       lOpen             := .f.
 
+      ::CloseFiles()
+
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de impuestos especiales" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 

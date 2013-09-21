@@ -78,20 +78,19 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
+   DEFAULT cPath        := ::cPath
    DEFAULT lExclusive   := .f.
 
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-
-         ::DefineFiles()
-
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
