@@ -7561,7 +7561,7 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
+FUNCTION mkPreCli(cPath, lAppend, cPathOld, oMeter, bFor )
 
 	local dbfPreCliT
    local dbfPreCliL
@@ -7577,9 +7577,11 @@ FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
 		sysrefresh()
    end if
 
-   DEFAULT bFor   := {|| .t. }
+   DEFAULT lAppend   := .f. 
+   DEFAULT bFor      := {|| .t. }
 
    CreateFiles( cPath )
+   
    rxPreCli( cPath, oMeter )
 
    If lAppend .and. lIsDir( cPathOld )

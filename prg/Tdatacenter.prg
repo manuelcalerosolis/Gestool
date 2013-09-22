@@ -2562,6 +2562,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliT.Cdx"
    oDataTable:cDescription := "S.A.T. de clientes"
+   oDataTable:bCreateFile  := {| cPath | mkSatCli( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxSatCli( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2606,6 +2608,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliT.Cdx"
    oDataTable:cDescription := "Presupuestos de clientes"
+   oDataTable:bCreateFile  := {| cPath | mkPreCli( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxPreCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynPreCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
