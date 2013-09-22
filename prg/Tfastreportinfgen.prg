@@ -155,6 +155,11 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD OpenData( cPath, lExclusive )
    METHOD CloseData()
 
+   METHOD OpenService( lExclusive, cPath )
+   METHOD CloseService()
+
+   Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
+
    METHOD lGenerate()
 
    METHOD GenReport( nOption )
@@ -1827,6 +1832,64 @@ METHOD CloseData() CLASS TFastReportInfGen
    if ::oDbfDiv != nil .and. ::oDbfDiv:Used()
       ::oDbfDiv:end()
    end if
+
+   if ::oDbfInf != nil .and. ::oDbfInf:Used()
+      ::oDbfInf:end()
+   end if
+
+   if ::oDbfPersonalizado != nil .and. ::oDbfPersonalizado:Used()
+      ::oDbfPersonalizado:end()
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath ) CLASS TFastReportInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock
+
+   DEFAULT cPath        := cPatEmp()
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      /*
+      Definicion y apertura de los fiche de configuración----------------------
+      */
+
+      if Empty( ::oDbfInf )
+         ::oDbfInf               := ::DefineReport( cPath )
+      end if
+
+      ::oDbfInf:Activate( .f., !( lExclusive ) )
+
+      if Empty( ::oDbfPersonalizado )
+         ::oDbfPersonalizado     := ::DefinePersonalizado( cPath )
+      end if
+
+      ::oDbfPersonalizado:Activate( .f., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen             := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseService() CLASS TFastReportInfGen
 
    if ::oDbfInf != nil .and. ::oDbfInf:Used()
       ::oDbfInf:end()

@@ -6295,10 +6295,6 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 
    local oBlock
    local oError
-   local dbfAlbPrvT
-   local dbfAlbPrvL
-   local dbfAlbPrvI
-   local dbfAlbPrvD
    local oldAlbPrvT
    local oldAlbPrvL
    local oldAlbPrvI
@@ -6313,6 +6309,7 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 	END IF
 
    CreateFiles( cPath )
+
    rxAlbPrv( cPath, oMeter )
 
    IF lAppend .and. lIsDir( cPathOld )

@@ -2763,7 +2763,6 @@ Method CreateData()
    */
 
    mkProvee( cPatSnd() )
-   rxProvee( cPatSnd() )
 
    dbUseArea( .t., cDriver(), cPatSnd() + "Provee.Dbf", cCheckArea( "Provee", @tmpPrv ), .f. )
    if !( tmpPrv )->( neterr() )
@@ -4634,7 +4633,17 @@ FUNCTION mkProvee( cPath, lAppend, cPathOld, oMeter )
 		sysrefresh()
 	END IF
 
-   CreateFiles( cPath )
+   IF !lExistTable( cPath + "PROVEE.DBF" )
+      dbCreate( cPath + "PROVEE.DBF", aSqlStruct( aItmPrv() ), cDriver() )
+   END IF
+
+   IF !lExistTable( cPath + "PROVEED.DBF" )
+      dbCreate( cPath + "PROVEED.DBF", aSqlStruct( aPrvDoc() ), cDriver() )
+   END IF
+
+   IF !lExistTable( cPath + "PRVBNC.DBF" )
+      dbCreate( cPath + "PRVBNC.DBF", aSqlStruct( aPrvBnc() ), cDriver() )
+   END IF
 
    rxProvee( cPath, oMeter )
 
@@ -4705,12 +4714,6 @@ FUNCTION rxProvee( cPath, oMeter )
    local dbfPrvBnc
 
    DEFAULT cPath  := cPatPrv()
-
-   if !lExistTable( cPath + "PROVEE.DBF" ) .OR.;
-      !lExistTable( cPath + "PRVBNC.DBF" ) .OR.;
-      !lExistTable( cPath + "PROVEED.DBF" )
-		CreateFiles( cPath )
-   end if
 
    fEraseIndex( cPath + "PROVEE.Cdx" )
 
@@ -4852,26 +4855,6 @@ Function cSeekProveedor( cCodArt, dbfArtPrv )
    ( dbfArtPrv )->( OrdSetFocus( nOrdenAnterior ) )
 
 return cCodArt
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION CreateFiles( cPath, oMeter )
-
-   DEFAULT cPath  := cPatPrv()
-
-   IF !lExistTable( cPath + "PROVEE.DBF" )
-      dbCreate( cPath + "PROVEE.DBF", aSqlStruct( aItmPrv() ), cDriver() )
-   END IF
-
-   IF !lExistTable( cPath + "PROVEED.DBF" )
-      dbCreate( cPath + "PROVEED.DBF", aSqlStruct( aPrvDoc() ), cDriver() )
-   END IF
-
-   IF !lExistTable( cPath + "PRVBNC.DBF" )
-      dbCreate( cPath + "PRVBNC.DBF", aSqlStruct( aPrvBnc() ), cDriver() )
-   END IF
-
-RETURN NIL
 
 //---------------------------------------------------------------------------//
 

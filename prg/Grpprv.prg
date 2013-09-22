@@ -20,8 +20,6 @@ CLASS TGrpPrv FROM TMant
 
    METHOD OpenFiles( lExclusive )
    
-   MESSAGE OpenService( lExclusive )            METHOD OpenFiles( lExclusive )
-
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
@@ -65,7 +63,6 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
-   //::lAutoButtons       := .t.
    ::lCreateShell       := .f.
    ::cHtmlHelp          := "Grupos de proveedores"
 
@@ -84,7 +81,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -96,7 +93,7 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -104,14 +101,13 @@ METHOD OpenFiles( lExclusive )
    RECOVER USING oError
 
       lOpen             := .f.
+      
+      ::CloseFiles()
+      
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de proveedores" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 

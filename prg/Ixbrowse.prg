@@ -68,7 +68,7 @@ Method CreateData( cPath )
       dbCreate( cPath + "CfgUse.Dbf", aSqlStruct( aItmHea() ), cDriver() )
    end if
 
-   Return ( Self )
+Return ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -99,7 +99,7 @@ Method ReindexData( cPath )
 
    end if
 
-   Return ( self )
+Return ( self )
 
 //------------------------------------------------------------------------//
 
