@@ -12832,8 +12832,8 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
    local oldAlbCliT
    local oldAlbCliL
 
-   DEFAULT lAppend   := .f.
    DEFAULT cPath     := cPatEmp()
+   DEFAULT lAppend   := .f.
    DEFAULT bFor      := {|| .t. }
 
 	IF oMeter != NIL
@@ -12842,6 +12842,7 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
 	END IF
 
    CreateFiles( cPath )
+
    rxPedCli( cPath, oMeter )
 
    IF lAppend .and. lIsDir( cPathOld )
