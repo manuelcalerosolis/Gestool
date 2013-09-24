@@ -520,19 +520,27 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Factu.prg",
+			"file": "/C/AppServ/www/zemtrum/tienda/modules/nivoslider/nivoslider.tpl",
 			"settings":
 			{
-				"buffer_size": 192990,
+				"buffer_size": 2922,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tgenmail.prg",
+			"file": "/C/Users/Villa/Desktop/copia zoomslider/zoomslider.php",
 			"settings":
 			{
-				"buffer_size": 41781,
+				"buffer_size": 8889,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/zoomslider - copia/demo.html",
+			"settings":
+			{
+				"buffer_size": 5570,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -568,18 +576,23 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/TGenMailing",
+		"/C/Users/Villa/Desktop/zoomslider - copia/zoomslider.tpl",
+		"/C/Users/Villa/Desktop/zoomslider - copia/demo.html",
+		"/C/Users/Villa/Desktop/zoomslider - copia/css/supersized.css",
+		"/C/Users/Villa/Desktop/buildinternet-supersized/slideshow/demo.html",
+		"/C/Users/Villa/Desktop/zoomslider/zoomslider.tpl",
+		"/C/Users/Villa/Desktop/settings.inc.php",
 		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Tgenmail.prg",
+		"/C/fw195/Gestool/prg/TGenMailing",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/bin/script/003.prg",
-		"/C/Users/Villa/Desktop/buildinternet-supersized/slideshow/demo.html",
 		"/C/Users/Villa/Desktop/header.tpl",
 		"/C/Users/Villa/Desktop/zoomslider.tpl",
 		"/C/Users/Villa/Desktop/index.html",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Contactos.prg",
-		"/C/Users/Villa/Desktop/settings.inc.php",
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"/C/fw195/Gestool/bin/script/002.prg",
 		"/C/Users/Villa/Desktop/Importacion clientes Spain Aqua.prg",
@@ -690,12 +703,7 @@
 		"/C/fw195/Gestool/Hx.bat",
 		"/C/fw195/Gestool/HP.Bat",
 		"/C/fw195/Gestool/prg/Tdetcaptura.prg",
-		"/C/fw195/Gestool/prg/Tcaptura.prg",
-		"/C/Users/Villa/Desktop/FACTU.PRG",
-		"/C/fw195/Gestool/Hr.bat",
-		"/C/fw195/Gestool/resource/Gstpda.rc",
-		"/C/fw195/Gestool/resource/Gstdialog.rc",
-		"/C/fw195/Gestool/Ax.bat"
+		"/C/fw195/Gestool/prg/Tcaptura.prg"
 	],
 	"find":
 	{
@@ -897,61 +905,85 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Factu.prg",
+					"file": "/C/AppServ/www/zemtrum/tienda/modules/nivoslider/nivoslider.tpl",
 					"settings":
 					{
-						"buffer_size": 192990,
+						"buffer_size": 2922,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								16992,
-								17003
+								1655,
+								1655
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/HTML/HTML.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 12335.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tgenmail.prg",
+					"file": "/C/Users/Villa/Desktop/copia zoomslider/zoomslider.php",
 					"settings":
 					{
-						"buffer_size": 41781,
+						"buffer_size": 8889,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								24758,
-								24758
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 17339.0,
+						"translation.y": 1998.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/Users/Villa/Desktop/zoomslider - copia/demo.html",
+					"settings":
+					{
+						"buffer_size": 5570,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4988,
+								4988
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1633.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
