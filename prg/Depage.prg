@@ -1371,13 +1371,21 @@ RETURN NIL
 
 FUNCTION mkDepAge( cPath, lAppend, cPathOld, oMeter )
 
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT lAppend   := .f.
 
 	IF oMeter != NIL
 		oMeter:cText	:= "Generando Bases"
 		sysrefresh()
 	END IF
 
-	CreateFiles( cPath )
+   if !lExistTable( cPath + "DepAgeT.Dbf" )
+      dbCreate( cPath + "DEPAGET.DBF", aSqlStruct( aItmDepAge() ), cDriver() )
+   end if 
+
+   if !lExistTable( cPath + "DepAgeL.Dbf" )
+      dbCreate( cPath + "DEPAGEL.DBF", aSqlStruct( aColDepAge() ), cDriver() )
+   end if
 
    rxDepAge( cPath, oMeter )
 
@@ -1395,11 +1403,6 @@ FUNCTION rxDepAge( cPath, oMeter )
 	local dbfDepAgeT
 
    DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "DEPAGET.DBF" ) .or.;
-      !lExistTable( cPath + "DEPAGEL.DBF" )
-		CreateFiles( cPath )
-   end if
 
    fEraseIndex( cPath + "DEPAGET.CDX" )
    fEraseIndex( cPath + "DEPAGEL.CDX" )
@@ -1615,15 +1618,6 @@ STATIC FUNCTION KillTrans()
 RETURN NIL
 
 //------------------------------------------------------------------------//
-
-STATIC FUNCTION CreateFiles( cPath )
-
-   dbCreate( cPath + "DEPAGET.DBF", aSqlStruct( aItmDepAge() ), cDriver() )
-   dbCreate( cPath + "DEPAGEL.DBF", aSqlStruct( aColDepAge() ), cDriver() )
-
-RETURN NIL
-
-//--------------------------------------------------------------------//
 
 /*
 Devuelve en numero de articulos en una linea de detalle

@@ -7696,7 +7696,6 @@ FUNCTION rxFacPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de facturas de proveedores" )
    end if
 
-
 RETURN NIL
 
 //--------------------------------------------------------------------------//

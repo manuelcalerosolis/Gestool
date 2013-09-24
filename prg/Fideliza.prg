@@ -175,28 +175,30 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos de programas de fidelizaciones" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir todas las bases de datos de programas de fidelizaciones" )
 
    END SEQUENCE
 

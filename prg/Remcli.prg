@@ -454,18 +454,19 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )

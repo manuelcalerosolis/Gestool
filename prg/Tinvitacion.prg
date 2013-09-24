@@ -95,19 +95,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
    local oBlock
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -115,14 +116,13 @@ METHOD OpenFiles( lExclusive )
    RECOVER USING oError
 
       lOpen             := .f.
+
+      ::CloseFiles()
+
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de invitaciones" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 

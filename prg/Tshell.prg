@@ -2211,6 +2211,8 @@ Method CreateData( cPath )
       dbCreate( cPath + "CfgCol.Dbf", aSqlStruct( aItmCol() ), cDriver() )
    end if
 
+   ::ReindexData( cPath )
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//

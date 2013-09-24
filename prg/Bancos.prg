@@ -17,9 +17,6 @@ CLASS TBancos FROM TMant
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()
 
-   METHOD OpenService( lExclusive )
-   METHOD CloseService()
-
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
@@ -65,29 +62,31 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TBancos
+METHOD OpenFiles( lExclusive, cPath ) CLASS TBancos
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := cPatGrp()
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de bancos" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de bancos" )
 
    END SEQUENCE
 
@@ -106,48 +105,6 @@ METHOD CloseFiles() CLASS TBancos
    ::oDbf               := nil
 
 RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive ) CLASS TBancos
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lExclusive   := .f.
-
-   BEGIN SEQUENCE
-
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
-
-   ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de bancos" )
-
-      ::CloseService()
-
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD CloseService() CLASS TBancos
-
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
-      ::oDbf:End()
-   end if
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -456,14 +413,15 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive ) CLASS TCuentasBancarias
+METHOD OpenService( lExclusive, cPath ) CLASS TCuentasBancarias
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
@@ -474,11 +432,11 @@ METHOD OpenService( lExclusive ) CLASS TCuentasBancarias
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de bancos" )
+      lOpen             := .f.
 
       ::CloseService()
 
-      lOpen             := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de bancos" )
 
    END SEQUENCE
 

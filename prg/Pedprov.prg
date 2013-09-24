@@ -5202,8 +5202,6 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
 
-   local dbfPedPrvT
-   local dbfPedPrvL
    local oldPedPrvT
    local oldPedPrvL
    local oldPedPrvI
@@ -5218,6 +5216,7 @@ FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
    end if
 
    CreateFiles( cPath )
+
    rxPedPrv( cPath, oMeter )
 
    IF lAppend .and. lIsDir( cPathOld )
@@ -5232,6 +5231,16 @@ FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
             ordListAdd( cPath + "PedPROVL.CDX"  )
       end if
 
+      dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPrvI", @dbfPedPrvI ), .f. )
+      if !( dbfPedPrvI )->( neterr() )
+            ( dbfPedPrvI )->( ordListAdd( cPath + "PedPrvI.Cdx" ) )
+      end if
+
+      dbUseArea( .t., cDriver(), cPath + "PedPrvD.Dbf", cCheckArea( "PedPrvD", @dbfPedPrvD ), .f. )
+      if !( dbfPedPrvD)->( neterr() )
+            ( dbfPedPrvD )->( ordListAdd( cPath + "PedPrvD.Cdx" ) )
+      end if
+
       dbUseArea( .t., cDriver(), cPathOld + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @oldPedPrvT ), .f. )
       if !( oldPedPrvT )->( neterr() )
             ordListAdd( cPathOld + "PEDPROVT.CDX"  )
@@ -5242,19 +5251,9 @@ FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
             ordListAdd( cPathOld + "PEDPROVL.CDX"  )
       end if
 
-      dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPrvI", @dbfPedPrvI ), .f. )
-      if !( oldPedPrvL )->( neterr() )
-            ( dbfPedPrvI )->( ordListAdd( cPath + "PedPrvI.Cdx" ) )
-      end if
-
       dbUseArea( .t., cDriver(), cPathOld + "PEDPRVI.DBF", cCheckArea( "PEDPRVI", @oldPedPrvI ), .f. )
       if !( oldPedPrvI )->( neterr() )
             ( oldPedPrvI )->( ordListAdd( cPathOld + "PEDPRVI.CDX" ) )
-      end if
-
-      dbUseArea( .t., cDriver(), cPath + "PedPrvD.Dbf", cCheckArea( "PedPrvD", @dbfPedPrvD ), .f. )
-      if !( dbfPedPrvD)->( neterr() )
-            ( dbfPedPrvD )->( ordListAdd( cPath + "PedPrvD.Cdx" ) )
       end if
 
       dbUseArea( .t., cDriver(), cPathOld + "PEDPRVD.DBF", cCheckArea( "PEDPRVD", @oldPedPrvD ), .f. )
@@ -7103,6 +7102,7 @@ Method CreateData()
    */
 
    CreateFiles( cPatSnd() )
+
    rxPedPrv( cPatSnd() )
 
    USE ( cPatSnd() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @tmpPedPrvT ) )

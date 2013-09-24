@@ -184,7 +184,7 @@ RETURN ( lOpen )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -195,18 +195,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER USING oError
+      
+      lOpen             := .f.
 
       msgStop( "Imposible abrir lineas de facturas automáticas" + CRLF + ErrorMessage( oError ) )
 
       ::CloseService()
-
-      lOpen             := .f.
 
    END SEQUENCE
 

@@ -738,10 +738,6 @@ Function IsRuta()
       mkRuta( cPatCli() )
    end if
 
-   if !lExistIndex( cPatCli() + "Ruta.Cdx" )
-      rxRuta( cPatCli() )
-   end if
-
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 

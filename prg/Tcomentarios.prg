@@ -15,10 +15,12 @@ CLASS TComentarios FROM TMasDet
    DATA  Codigo
 
    METHOD OpenFiles( lExclusive )
-
    METHOD CloseFiles()
 
    METHOD DefineFiles()
+
+   METHOD OpenService( lExclusive )
+   METHOD CloseService()
 
    METHOD Resource( nMode )
 
@@ -32,37 +34,38 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
    local oBlock
 
+   DEFAULT cPath        := ::cPath
    DEFAULT lExclusive   := .f.
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !lExclusive )
+      ::oDbf:Activate( .f., !lExclusive )
 
-   ::oDetComentarios    := TDetComentarios():New( ::cPath, Self )
-   ::AddDetail( ::oDetComentarios )
+      ::oDetComentarios := TDetComentarios():New( ::cPath, Self )
+      ::AddDetail( ::oDetComentarios )
 
-   ::OpenDetails()
+      ::OpenDetails()
 
-   ::bFirstKey          := {|| ::oDbf:cCodigo }
+      ::bFirstKey       := {|| ::oDbf:cCodigo }
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de comentarios" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de comentarios" )
 
    END SEQUENCE
 
@@ -75,6 +78,52 @@ RETURN ( lOpen )
 METHOD CloseFiles()
 
    ::CloseDetails()
+
+   if !Empty( ::oDbf )
+      ::oDbf:end()
+   end if
+
+   ::oDbf         := nil
+
+RETURN .t.
+
+//----------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oError
+   local oBlock
+
+   DEFAULT cPath        := ::cPath
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !lExclusive )
+
+   RECOVER USING oError
+
+      lOpen             := .f.
+
+      ::CloseFiles()
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de comentarios" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//----------------------------------------------------------------------------//
+
+METHOD CloseService()
 
    if !Empty( ::oDbf )
       ::oDbf:end()

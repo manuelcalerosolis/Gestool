@@ -12414,6 +12414,7 @@ FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
    local oldAlbCliD
    local oldAlbCliP
 
+   DEFAULT lAppend   := .f.
    DEFAULT bFor      := {|| .t. }
 
    if oMeter != nil

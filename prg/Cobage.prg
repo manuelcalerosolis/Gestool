@@ -93,6 +93,10 @@ CLASS TCobAge FROM TMasDet
 
    METHOD OpenFiles()
    METHOD CloseFiles()
+
+   METHOD OpenService( lExclusive, cPath )
+   METHOD CloseService()
+
    METHOD Resource( nMode )
    METHOD Activate()
 
@@ -390,6 +394,50 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCobAge
 RETURN ( ::oDbf )
 
 //----------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oBlock
+
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER
+
+      lOpen             := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos de remesas." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseService()
+
+   if !Empt( ::oDbf )
+      ::oDbf:End()
+   endif
+
+   ::oDbf   := nil
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 
 METHOD OpenFiles( cPath ) CLASS TCobAge
 

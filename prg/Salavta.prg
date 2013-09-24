@@ -89,8 +89,11 @@ CLASS TSalaVenta FROM TMasDet
    Method End()
 
    Method OpenFiles( lExclusive )
-   Message OpenService( lExclusive )   Method OpenFiles( lExclusive )
+   Method OpenService( lExclusive )
+     
    Method CloseFiles()
+   Method CloseService()
+   
    Method DefineFiles()
 
    Method Resource( nMode )
@@ -1348,7 +1351,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1358,7 +1361,7 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -1367,9 +1370,11 @@ METHOD OpenFiles( lExclusive )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos de las salas de ventas." )
-      ::CloseFiles()
       lOpen             := .f.
+
+      ::CloseFiles()
+      
+      msgStop( "Imposible abrir todas las bases de datos de las salas de ventas." )
 
    END SEQUENCE
 
@@ -1396,6 +1401,50 @@ METHOD CloseFiles()
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lExclusive   := .f.
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER
+
+      lOpen             := .f.
+
+      ::CloseFiles()
+      
+      msgStop( "Imposible abrir todas las bases de datos de las salas de ventas." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//----------------------------------------------------------------------------//
+
+METHOD CloseService()
+
+   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   ::oDbf               := nil 
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD DefineFiles( cPath, cDriver )
 
@@ -1506,11 +1555,13 @@ METHOD Create( cPath ) CLASS TDetSalaVta
 
    ::cPath              := cPath
 
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetSalaVta
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetSalaVta
 
    local lOpen          := .t.
    local oBlock
@@ -1521,12 +1572,10 @@ METHOD OpenFiles( lExclusive ) CLASS TDetSalaVta
    BEGIN SEQUENCE
 
    if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
+      ::oDbf            := ::DefineFiles( cPath )
    end if
 
    ::oDbf:Activate( .f., !lExclusive )
-
-   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
 
    RECOVER
 

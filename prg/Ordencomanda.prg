@@ -138,29 +138,30 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos ordenes de comanda" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir las bases de datos ordenes de comanda" )
 
    END SEQUENCE
 

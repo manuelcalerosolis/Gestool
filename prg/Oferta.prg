@@ -130,10 +130,6 @@ STATIC FUNCTION OpenFiles()
       Return ( .f. )
    end if
 
-   IF !lExistTable( cPatArt() + "OFERTA.DBF" )
-      CreateFiles()
-   END IF
-
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -2549,30 +2545,26 @@ RETURN sPrecio
 FUNCTION mkOferta( cPath, lAppend, cPathOld, oMeter )
 
    local dbfOfe
-   local oldOfe
 
    DEFAULT lAppend   := .f.
    DEFAULT cPath     := cPatArt()
 
-   CreateFiles( cPath, oMeter )
+   if !lExistTable( cPath + "Oferta.Dbf" )
+      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver() )
+   end if 
 
-   if lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "Categorias.Dbf" )
 
-      dbUseArea( .t., cDriver(), cPath + "OFERTA.DBF", cCheckArea( "OFERTA", @dbfOfe ), .f. )
-      ordListAdd( cPath + "OFERTA.CDX"  )
-
-      dbUseArea( .t., cDriver(), cPathOld + "OFERTA.DBF", cCheckArea( "OFERTA", @oldOfe ), .f. )
-       ordListAdd( cPathOld + "OFERTA.CDX"  )
-
-      while !( oldOfe )->( Eof() )
-         dbCopy( oldOfe, dbfOfe, .t. )
-         ( oldOfe )->( dbSkip() )
-      end while
-
-      ( dbfOfe )->( dbCloseArea() )
-      ( oldOfe )->( dbCloseArea() )
-
+      dbUseArea( .t., cDriver(), cPath + "Oferta.Dbf", cCheckArea( "Categorias", @dbfOfe ), .f. )
+   
+      if !( dbfCategoria )->( neterr() )
+         ( dbfCategoria )->( __dbApp( cPathOld + "Oferta.Dbf" ) )
+         ( dbfCategoria )->( dbCloseArea() )
+      end if
+   
    end if
+
+   rxOferta( cPath )
 
 RETURN NIL
 
@@ -2584,9 +2576,9 @@ FUNCTION rxOferta( cPath, oMeter )
 
    DEFAULT cPath := cPatArt()
 
-   IF !lExistTable( cPath + "OFERTA.DBF" )
-      dbCreate( cPath + "OFERTA.DBF", aSqlStruct( aItmOfe() ), cDriver() )
-   END IF
+   if !lExistTable( cPath + "Oferta.Dbf" )
+      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver() )
+   end if 
 
    fEraseIndex( cPath + "OFERTA.CDX" )
 
@@ -2632,12 +2624,12 @@ Function aItmOfe()
    aAdd( aBase, { "NPREOFE4",  "N",   16,    6, "Precio oferta 4" }                                      )
    aAdd( aBase, { "NPREOFE5",  "N",   16,    6, "Precio oferta 5" }                                      )
    aAdd( aBase, { "NPREOFE6",  "N",   16,    6, "Precio oferta 6" }                                      )
-   aAdd( aBase, { "NPREIVA1",  "N",   16,    6, "Precio oferta con " + cImp() + " 1" }                              )
-   aAdd( aBase, { "NPREIVA2",  "N",   16,    6, "Precio oferta con " + cImp() + " 2" }                              )
-   aAdd( aBase, { "NPREIVA3",  "N",   16,    6, "Precio oferta con " + cImp() + " 3" }                              )
-   aAdd( aBase, { "NPREIVA4",  "N",   16,    6, "Precio oferta con " + cImp() + " 4" }                              )
-   aAdd( aBase, { "NPREIVA5",  "N",   16,    6, "Precio oferta con " + cImp() + " 5" }                              )
-   aAdd( aBase, { "NPREIVA6",  "N",   16,    6, "Precio oferta con " + cImp() + " 6" }                              )
+   aAdd( aBase, { "NPREIVA1",  "N",   16,    6, "Precio oferta con " + cImp() + " 1" }                   )
+   aAdd( aBase, { "NPREIVA2",  "N",   16,    6, "Precio oferta con " + cImp() + " 2" }                   )
+   aAdd( aBase, { "NPREIVA3",  "N",   16,    6, "Precio oferta con " + cImp() + " 3" }                   )
+   aAdd( aBase, { "NPREIVA4",  "N",   16,    6, "Precio oferta con " + cImp() + " 4" }                   )
+   aAdd( aBase, { "NPREIVA5",  "N",   16,    6, "Precio oferta con " + cImp() + " 5" }                   )
+   aAdd( aBase, { "NPREIVA6",  "N",   16,    6, "Precio oferta con " + cImp() + " 6" }                   )
    aAdd( aBase, { "NUNVOFE",   "N",    3,    0, "Unidades a vender en la oferta" }                       )
    aAdd( aBase, { "NUNCOFE",   "N",    3,    0, "Unidades a cobrar en la oferta" }                       )
    aAdd( aBase, { "DFECCHG",   "D",    8,    0, "Fecha de cambio" }                                      )
@@ -2653,7 +2645,7 @@ Function aItmOfe()
    aAdd( aBase, { "CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" }                           )
    aAdd( aBase, { "LLABEL",    "L",    1,    0, "Lógico de selección de etiqueta"  }                     )
    aAdd( aBase, { "NLABEL",    "N",    5,    0, "Número de etiquetas a imprimir"   }                     )
-   aAdd( aBase, { "LIVAINC",   "L",    1,    0, "Lógico " + cImp() + " incluido"   }                             )
+   aAdd( aBase, { "LIVAINC",   "L",    1,    0, "Lógico " + cImp() + " incluido"   }                     )
    aAdd( aBase, { "NUNDMIN",   "N",   16,    6, "Unidades mínimas para aplicar la oferta"   }            )
    aAdd( aBase, { "NTBLOFE",   "N",    1,    0, "Tabla a la que aplicamos la oferta"   }                 )
    aAdd( aBase, { "NCAJMIN",   "N",   16,    6, "Cajas mínimas para aplicar la oferta" }                 )

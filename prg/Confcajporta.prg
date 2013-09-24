@@ -27,9 +27,11 @@ STATIC FUNCTION OpenFiles()
 
    RECOVER
 
-      msgStop( "Imposible Abrir todas las bases de datos" )
-      CloseFiles ()
       lOpen       := .f.
+
+      CloseFiles()
+
+      msgStop( "Imposible Abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -787,10 +789,10 @@ FUNCTION mkLogPorta( cPath )
    END DATABASE oLogPorta
 
    oLogPorta:Activate( .f., .f. )
-
    oLogPorta:End()
 
  RETURN .t.
+ 
  //----------------------------------------------------------------------------//
 
  /*Funcion que crea los índices de las bases de datos*/

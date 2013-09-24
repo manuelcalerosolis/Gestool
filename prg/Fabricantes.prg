@@ -131,27 +131,30 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos fabricantes" )
-      ::CloseFiles()
       lOpen             := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir las bases de datos fabricantes" )
 
    END SEQUENCE
 

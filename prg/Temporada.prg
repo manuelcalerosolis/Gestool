@@ -46,12 +46,15 @@ Function mkTemporada( cPath, lAppend, cPathOld )
 
    dbCreate( cPath + "Temporadas.Dbf", aSqlStruct( aItmTemporada() ), cDriver() )
 
-   if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "Temporadas.dbf" )
+      
       dbUseArea( .t., cDriver(), cPath + "Temporadas.Dbf", cCheckArea( "Temporada", @dbfTemporada ), .f. )
+      
       if !( dbfTemporada )->( neterr() )
          ( dbfTemporada )->( __dbApp( cPathOld + "Temporadas.Dbf" ) )
          ( dbfTemporada )->( dbCloseArea() )
       end if
+      
    end if
 
    rxTemporada( cPath )

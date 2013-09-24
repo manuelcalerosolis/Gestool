@@ -75,7 +75,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock
@@ -86,18 +86,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos de cuentas de remesas." )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir todas las bases de datos de cuentas de remesas." )
 
    END SEQUENCE
 

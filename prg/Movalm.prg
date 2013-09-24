@@ -1810,7 +1810,7 @@ FUNCTION mkHisMov( cPath, lAppend, cPathOld, oMeter )
       dbCreate( cPath + "HISMOV.DBF", aSqlStruct( aItmMov() ), cDriver() )
    end if
 
-   if lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "HISMOV.DBF" )
       dbUseArea( .t., cDriver(), cPath + "HISMOV.DBF", cCheckArea( "HISMOV", @dbfHisMov ), .f. )
       if !( dbfHisMov )->( neterr() )
          ( dbfHisMov )->( __dbApp( cPathOld + "HISMOV.DBF" ) )

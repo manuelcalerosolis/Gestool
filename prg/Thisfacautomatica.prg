@@ -82,7 +82,7 @@ RETURN ( lOpen )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -93,16 +93,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      ::CloseService()
       lOpen             := .f.
+
+      ::CloseService()
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 

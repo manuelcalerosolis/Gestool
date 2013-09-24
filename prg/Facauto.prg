@@ -388,7 +388,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive ) CLASS TFacAutomatica
+METHOD OpenService( lExclusive, cPath ) CLASS TFacAutomatica
 
    local lOpen          := .t.
    local oError
@@ -399,18 +399,18 @@ METHOD OpenService( lExclusive ) CLASS TFacAutomatica
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::OpenDetails()
-
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      ::CloseService()
       lOpen             := .f.
+
+      ::CloseService()
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -427,8 +427,6 @@ METHOD CloseService() CLASS TFacAutomatica
    end if
 
    ::oDbf   := nil
-
-   ::CloseDetails()
 
 RETURN ( .t. )
 

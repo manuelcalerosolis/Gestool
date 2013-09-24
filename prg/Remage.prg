@@ -380,27 +380,44 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oBlock
 
    DEFAULT lExclusive   := .f.
 
-   /*
-   Definicion del master-------------------------------------------------------
-   */
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
-RETURN ( Self )
+   RECOVER
+
+      lOpen             := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos de remesas." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
 METHOD CloseService()
 
-   ::oDbf:End()
+   if !Empt( ::oDbf )
+      ::oDbf:End()
+   endif
+
    ::oDbf   := nil
 
 RETURN ( .t. )

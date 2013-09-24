@@ -10,9 +10,6 @@ CLASS TDetFideliza FROM TDet
    DATA  cBitmap  INIT Rgb( 197, 227, 9 )
 
    METHOD OpenFiles( lExclusive )
-
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
-
    METHOD CloseFiles()
 
    METHOD DefineFiles()
@@ -21,28 +18,26 @@ CLASS TDetFideliza FROM TDet
 
    Method lPreSave( oGet, nMode )
 
-   Method SaveDetails()                INLINE ( ::oDbfVir:cCodigo := ::oParent:oDbf:cCodigo )
-
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen             := .t.
-   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock            
 
    DEFAULT lExclusive      := .f.
+   DEFAULT cPath           := ::cPath
 
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
-
-      ::bOnPreSaveDetail   := {|| ::SaveDetails() }
 
    RECOVER
 
@@ -174,6 +169,8 @@ METHOD lPreSave( nMode )
       MsgStop( "Unidades de la oferta no puede ser menor que cero." )
       return .f.
    end if
+
+   ::oDbfVir:cCodigo := ::oParent:oDbf:cCodigo
 
 Return .t.
 

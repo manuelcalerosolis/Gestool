@@ -7343,10 +7343,6 @@ RETURN ( nCalculo )
 
 FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
-   local dbfSatCliT
-   local dbfSatCliL
-   local dbfSatCliI
-   local dbfSatCliD
    local oldSatCliT
    local oldSatCliL
    local oldSatCliI
@@ -7357,12 +7353,14 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
       sysrefresh()
    end if
 
-   DEFAULT bFor   := {|| .t. }
+   DEFAULT lAppend   := .f.
+   DEFAULT bFor      := {|| .t. }
 
    CreateFiles( cPath )
+
    rxSatCli( cPath, oMeter )
 
-   If lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lIsDir( cPathOld )
 
       dbUseArea( .t., cDriver(), cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @dbfSatCliT ), .f. )
       if !( dbfSatCliT )->( neterr() )
@@ -7455,7 +7453,7 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
       ( oldSatCliI )->( dbCloseArea() )
       ( oldSatCliD )->( dbCloseArea() )
 
-   End If
+   end if
 
 Return Nil
 

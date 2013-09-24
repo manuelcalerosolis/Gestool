@@ -574,6 +574,7 @@ METHOD lResource() CLASS TpvCobros
    ::oOfficeBar            := nil
    ::oBtnCalculadora       := nil
    ::oBrwPago              := nil
+   
    ::aButtonsMoney         := Array( 16 )
 
 Return ( ::oDlg:nResult == IDOK )

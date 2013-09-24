@@ -933,9 +933,9 @@ FUNCTION rxEntSal( cPath, oMeter )
 
    DEFAULT cPath  := cPatEmp()
 
-   IF !lExistTable( cPath + "ENTSAL.DBF" )
+   if !lExistTable( cPath + "ENTSAL.DBF" )
       dbCreate( cPath + "ENTSAL.DBF", aSqlStruct( aItmEntSal() ), cDriver() )
-	END IF
+	end if
 
    fEraseIndex( cPath + "ENTSAL.CDX" )
 

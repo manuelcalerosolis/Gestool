@@ -1,15 +1,8 @@
-#ifndef __PDA__
    #include "FiveWin.Ch"
    #include "Font.ch"
    #include "Report.ch"
    #include "Factu.ch"
    #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
-#ifndef __PDA__
 
 static oWndBrw
 static cNewFile
@@ -34,42 +27,6 @@ static bEdit      := {  |aTmp, aGet, dbfTarPreT, oBrw, bWhen, bValid, nMode |   
 static bEdit2     := {  |aTmp, aGet, dbfTarPreL, oBrw, bWhen, bValid, nMode, cCodTar | EdtDet(     aTmp, aGet, dbfTarPreL, oBrw, bWhen, bValid, nMode, cCodTar ) }
 static bEdit3     := {  |aTmp, aGet, dbfTarPreS, oBrw, bWhen, bValid, nMode, cCodArt | EdtExtDet(  aTmp, aGet, dbfTarPreS, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
-static aDetalle   := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" },;
-                        {"NTIPTAR",   "N",    1,    0, "Tipo de tarifa" },;
-                        {"CCODART",   "C",   18,    0, "Código del artículo" },;
-                        {"CNOMART",   "C",   50,    0, "Nombre del artículo" },;
-                        {"CCODFAM",   "C",   16,    0, "Código de la família" },;
-                        {"CNOMFAM",   "C",   50,    0, "Nombre de la família" },;
-                        {"NPRCTAR1",  "N",   16,    6, "Precio del artículo 1" },;
-                        {"NPRCTAR2",  "N",   16,    6, "Precio del artículo 2" },;
-                        {"NPRCTAR3",  "N",   16,    6, "Precio del artículo 3" },;
-                        {"NPRCTAR4",  "N",   16,    6, "Precio del artículo 4" },;
-                        {"NPRCTAR5",  "N",   16,    6, "Precio del artículo 5" },;
-                        {"NPRCTAR6",  "N",   16,    6, "Precio del artículo 6" },;
-                        {"NDTOART",   "N",    6,    2, "Descuento fijo del artículo" },;
-                        {"CDIVART",   "C",    3,    0, "Código de la divisa" },;
-                        {"NDTODIV",   "N",   16,    6, "Descuento lineal del artículo" },;
-                        {"DINIPRM",   "D",    8,    0, "Fecha inicio de promoción" },;
-                        {"DFINPRM",   "D",    8,    0, "Fecha final de promoción" },;
-                        {"NDTOPRM",   "N",    6,    2, "Descuento promoción" },;
-                        {"CCODPR1",   "C",   20,    0, "Código de primera propiedad" },;
-                        {"CCODPR2",   "C",   20,    0, "Código de segunda propiedad" },;
-                        {"CVALPR1",   "C",   20,    0, "Valor de primera propiedad" },;
-                        {"CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" } }
-
-static aDeta2     := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" },;
-                        {"CCODART",   "C",   18,    0, "Código del artículo" },;
-                        {"CCODFAM",   "C",   16,    0, "Código de la família" },;
-                        {"CCODPR1",   "C",   20,    0, "Código de primera propiedad" },;
-                        {"CCODPR2",   "C",   20,    0, "Código de segunda propiedad" },;
-                        {"CVALPR1",   "C",   20,    0, "Valor de primera propiedad" },;
-                        {"CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" },;
-                        {"CCODAGE",   "C",    3,    0, "Código del agentes" },;
-                        {"NCOMAGE",   "N",    6,    2, "Porcentaje de comisión del agente" },;
-                        {"NCOMPRM",   "N",    6,    2, "Porcentaje de comisión en promoción" } }
-
-#endif
-
 #ifndef __PDA__
 
 //----------------------------------------------------------------------------//
@@ -78,12 +35,62 @@ static aDeta2     := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" },;
 
 function aItmTar()
 
-   local aItmTar :=  {}
+   local aItmTar  :=  {}
 
    aAdd( aItmTar, { "CCODTAR",   "C",  5,  0, "Código de la tarifa" ,  "",  "", "( cDbf )" } )
    aAdd( aItmTar, { "CNOMTAR",   "C", 30,  0, "Nombre de la tarifa" ,  "",  "", "( cDbf )" } )
 
 return ( aItmTar )
+
+//----------------------------------------------------------------------------//
+
+function aItmTarifaLineas()
+
+   local aItmTar  := {}
+
+   aAdd( aItmTar, { "CCODTAR",   "C",    5,    0, "Código de la tarifa" }            )                 
+   aAdd( aItmTar, { "NTIPTAR",   "N",    1,    0, "Tipo de tarifa" }                 )
+   aAdd( aItmTar, { "CCODART",   "C",   18,    0, "Código del artículo" }            )      
+   aAdd( aItmTar, { "CNOMART",   "C",   50,    0, "Nombre del artículo" }            )      
+   aAdd( aItmTar, { "CCODFAM",   "C",   16,    0, "Código de la família" }           )      
+   aAdd( aItmTar, { "CNOMFAM",   "C",   50,    0, "Nombre de la família" }           )      
+   aAdd( aItmTar, { "NPRCTAR1",  "N",   16,    6, "Precio del artículo 1" }          )      
+   aAdd( aItmTar, { "NPRCTAR2",  "N",   16,    6, "Precio del artículo 2" }          )      
+   aAdd( aItmTar, { "NPRCTAR3",  "N",   16,    6, "Precio del artículo 3" }          )      
+   aAdd( aItmTar, { "NPRCTAR4",  "N",   16,    6, "Precio del artículo 4" }          )      
+   aAdd( aItmTar, { "NPRCTAR5",  "N",   16,    6, "Precio del artículo 5" }          )      
+   aAdd( aItmTar, { "NPRCTAR6",  "N",   16,    6, "Precio del artículo 6" }          )      
+   aAdd( aItmTar, { "NDTOART",   "N",    6,    2, "Descuento fijo del artículo" }    )
+   aAdd( aItmTar, { "CDIVART",   "C",    3,    0, "Código de la divisa" }            )
+   aAdd( aItmTar, { "NDTODIV",   "N",   16,    6, "Descuento lineal del artículo" }  )
+   aAdd( aItmTar, { "DINIPRM",   "D",    8,    0, "Fecha inicio de promoción" }      )
+   aAdd( aItmTar, { "DFINPRM",   "D",    8,    0, "Fecha final de promoción" }       )
+   aAdd( aItmTar, { "NDTOPRM",   "N",    6,    2, "Descuento promoción" }            )
+   aAdd( aItmTar, { "CCODPR1",   "C",   20,    0, "Código de primera propiedad" }    )
+   aAdd( aItmTar, { "CCODPR2",   "C",   20,    0, "Código de segunda propiedad" }    )
+   aAdd( aItmTar, { "CVALPR1",   "C",   20,    0, "Valor de primera propiedad" }     )
+   aAdd( aItmTar, { "CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" }     )
+
+Return ( aItmTar )      
+
+//----------------------------------------------------------------------------//
+
+function aItmTarifaAgentes()
+
+   local aItmTar  := {}
+
+   aAdd( aItmTar, { "CCODTAR",   "C",    5,    0, "Código de la tarifa" }                 )
+   aAdd( aItmTar, { "CCODART",   "C",   18,    0, "Código del artículo" }                 )   
+   aAdd( aItmTar, { "CCODFAM",   "C",   16,    0, "Código de la família" }                )
+   aAdd( aItmTar, { "CCODPR1",   "C",   20,    0, "Código de primera propiedad" }         )
+   aAdd( aItmTar, { "CCODPR2",   "C",   20,    0, "Código de segunda propiedad" }         )
+   aAdd( aItmTar, { "CVALPR1",   "C",   20,    0, "Valor de primera propiedad" }          )
+   aAdd( aItmTar, { "CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" }          )
+   aAdd( aItmTar, { "CCODAGE",   "C",    3,    0, "Código del agentes" }                  )
+   aAdd( aItmTar, { "NCOMAGE",   "N",    6,    2, "Porcentaje de comisión del agente" }   )
+   aAdd( aItmTar, { "NCOMPRM",   "N",    6,    2, "Porcentaje de comisión en promoción" } )
+
+Return ( aItmTar )
 
 //----------------------------------------------------------------------------//
 
@@ -515,7 +522,7 @@ STATIC FUNCTION BeginTrans( aTmp )
 	Primero Crear la base de datos local
 	*/
 
-   dbCreate( cNewFile, aSqlStruct( aDetalle ), cLocalDriver() )
+   dbCreate( cNewFile, aSqlStruct( aItmTarifaLineas() ), cLocalDriver() )
 
    dbUseArea( .t., cLocalDriver(), cNewFile, cCheckArea( cDbf, @dbfTmpArticulo ), .f. )
    if !( dbfTmpArticulo )->( neterr() )
@@ -670,12 +677,6 @@ STATIC FUNCTION OpenFiles()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      IF !lExistTable( cPatArt() + "TARPRET.DBF" ) .OR.;
-         !lExistTable( cPatArt() + "TARPREL.DBF" ) .OR.;
-         !lExistTable( cPatArt() + "TARPRES.DBF" )
-         CreateFiles()
-      END IF
-
       USE ( cPatArt() + "TARPRET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRET", @dbfTarPreT ) )
       SET ADSINDEX TO ( cPatArt() + "TARPRET.CDX" ) ADDITIVE
 
@@ -756,10 +757,22 @@ Return ( .t. )
 
 FUNCTION mkTarifa( cPath, oMeter, lAppend, cPathOld )
 
-   DEFAULT cPath := cPatArt()
+   DEFAULT lAppend   := .f.
+   DEFAULT cPath     := cPatArt()
 
-   CreateFiles( oMeter, cPath, lAppend, cPathOld )
-   Reindex( oMeter, cPath )
+   if !lExistTable( cPath + "TARPRET.DBF" )
+      dbCreate( cPath + "TARPRET.DBF", aSqlStruct( aItmTar() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "TARPREL.DBF" )
+      dbCreate( cPath + "TARPREL.DBF", aSqlStruct( aItmTarifaLineas() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "TARPRES.DBF" )
+      dbCreate( cPath + "TARPRES.DBF", aSqlStruct( aItmTarifaAgentes() ), cDriver() )
+   end if
+
+   rxTarifa( cPath, oMeter )
 
    if lAppend .and. lIsDir( cPathOld )
       AppDbf( cPathOld, cPath, "TARPRET" )
@@ -771,49 +784,28 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION CreateFiles( oMeter, cPath )
+Function rxTarifa( cPath, oMeter)
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath := cPatArt()
 
    if !lExistTable( cPath + "TARPRET.DBF" )
       dbCreate( cPath + "TARPRET.DBF", aSqlStruct( aItmTar() ), cDriver() )
    end if
 
    if !lExistTable( cPath + "TARPREL.DBF" )
-      dbCreate( cPath + "TARPREL.DBF", aSqlStruct( aDetalle ), cDriver() )
+      dbCreate( cPath + "TARPREL.DBF", aSqlStruct( aItmTarifaLineas() ), cDriver() )
    end if
 
    if !lExistTable( cPath + "TARPRES.DBF" )
-      dbCreate( cPath + "TARPRES.DBF", aSqlStruct( aDeta2 ), cDriver() )
+      dbCreate( cPath + "TARPRES.DBF", aSqlStruct( aItmTarifaAgentes() ), cDriver() )
    end if
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-FUNCTION rxTarifa( cPath, oMeter )
-
-RETURN Reindex( oMeter, cPath )
-
-//----------------------------------------------------------------------------//
-
-STATIC FUNCTION Reindex( oMeter, cPath )
-
-   DEFAULT cPath := cPatArt()
-
-   IF !lExistTable( cPath + "TARPRET.DBF" ) .OR. ;
-      !lExistTable( cPath + "TARPREL.DBF" ) .OR. ;
-      !lExistTable( cPath + "TARPRES.DBF" )
-
-		CreateFiles()
-
-	END IF
 
    fEraseIndex( cPath + "TARPRET.CDX" )
    fEraseIndex( cPath + "TARPREL.CDX" )
    fEraseIndex( cPath + "TARPRES.CDX" )
 
    USE ( cPath + "TARPRET.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TARPRET", @dbfTarPreT ) ) EXCLUSIVE
+   
    if !( dbfTarPreT )->( neterr() )
       ( dbfTarPreT )->( __dbPack() )
 
@@ -830,7 +822,8 @@ STATIC FUNCTION Reindex( oMeter, cPath )
    end if
 
    USE ( cPath + "TARPREL.DBF" ) NEW VIA ( cDriver() )ALIAS ( cCheckArea( "TARPREL", @dbfTarPreL ) ) EXCLUSIVE
-    if !( dbfTarPreL )->( neterr() )
+   
+   if !( dbfTarPreL )->( neterr() )
       ( dbfTarPreL )->( __dbPack() )
 
       ( dbfTarPreL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
@@ -855,6 +848,7 @@ STATIC FUNCTION Reindex( oMeter, cPath )
    end if
 
    USE ( cPath + "TARPRES.DBF" ) NEW VIA ( cDriver() )ALIAS ( cCheckArea( "TARPRES", @dbfTarPreS ) ) EXCLUSIVE
+   
    if !( dbfTarPreS )->( neterr() )
       ( dbfTarPreS )->( __dbPack() )
 
@@ -1955,7 +1949,7 @@ STATIC FUNCTION BeginTr2( aTmp )
    Primero Crear la base de datos local----------------------------------------
 	*/
 
-   dbCreate( cNewFil2, aSqlStruct( aDeta2 ), cLocalDriver() )
+   dbCreate( cNewFil2, aSqlStruct( aItmTarifaAgentes() ), cLocalDriver() )
 
    dbUseArea( .t., cLocalDriver(), cNewFil2, cCheckArea( cDbf, @dbfTmpAgente ), .f. )
    if !( dbfTmpAgente )->( neterr() )
