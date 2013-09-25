@@ -2408,6 +2408,14 @@ Function TComercio()
 
 Return nil
 
+Function TAcceso()
+
+Return nil
+
+Function TDetSalaVenta()
+
+Return nil
+
 /*Function TOrdenComanda()
 
 Return nil*/

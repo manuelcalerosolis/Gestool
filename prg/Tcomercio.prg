@@ -1164,10 +1164,10 @@ METHOD InsertIvaPrestashop() CLASS TComercio
    local nCodigoWeb        := 0
    local nCodigoGrupoWeb   := 0
 
-   cCommand := "INSERT INTO " + ::cPreFixtable( "tax") + "( " +;
-                  "rate, " + ;
-                  "active )" + ;
-               " VALUES " + ;
+   cCommand := "INSERT INTO " + ::cPreFixtable( "tax") + ;
+                  "( rate, " + ;
+                  "active ) " + ;
+               "VALUES " + ;
                   "('" + AllTrim( Str( ::oIva:TpIva ) ) + "', " + ;  // rate
                   "'1' )"                                            // active
 
@@ -1194,7 +1194,7 @@ METHOD InsertIvaPrestashop() CLASS TComercio
                " VALUES " + ;
                   "('" + Str( nCodigoWeb ) + "', " + ;         // id_tax
                   "'" + Str( ::nLanguage ) + "', " + ;         // id_lang
-                  "'" + AllTrim( ::oIva:DescIva ) + "' )"      // name
+                  "'" + ::oCon:EscapeStr( ::oIva:DescIva ) + "' )"      // name
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -1214,7 +1214,7 @@ METHOD InsertIvaPrestashop() CLASS TComercio
                   "name, " + ;
                   "active )" + ;
                " VALUES " + ;
-                  "('" + AllTrim( ::oIva:DescIva ) + "', " + ; // name
+                  "('" + ::oCon:EscapeStr( ::oIva:DescIva ) + "', " + ; // name
                   "'1' )"                                      // active
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -1395,7 +1395,7 @@ Method InsertFabricantesPrestashop() CLASS TComercio
                   "date_upd, " + ;
                   "active )" + ;
                " VALUES " + ;
-                  "('" + AllTrim( ::oFab:cNomFab ) + "', " + ;       //name
+                  "('" + ::oCon:EscapeStr( ::oFab:cNomFab ) + "', " + ;       //name
                   "'" + dtos( GetSysDate() ) + "', " + ;             //date_add
                   "'" + dtos( GetSysDate() ) + "', " + ;             //date_upd
                   "'1' )"                                            //active
@@ -1896,8 +1896,8 @@ Method InsertCategoriesPrestashop() CLASS TComercio
                   " ) VALUES ( '" + ;
                   Str( nCodigoWeb ) + "', '" +;
                   Str( ::nLanguage ) + "', '" + ;
-                  AllTrim( ::oFam:cNomFam ) + "', '" + ;
-                  AllTrim( ::oFam:cNomFam ) + "', '" + ;
+                  ::oCon:EscapeStr( ::oFam:cNomFam ) + "', '" + ;
+                  ::oCon:EscapeStr( ::oFam:cNomFam ) + "', '" + ;
                   cLinkRewrite( ::oFam:cNomFam ) + "', " + ;
                   "'', " + ;
                   "'', " + ;
@@ -2238,8 +2238,8 @@ Method InsertGrupoCategoriesPrestashop() CLASS TComercio
                "VALUES ( " + ; 
                   "'" + Str( nCodigoWeb ) + "'," + ;
                   "'" + Str( ::nLanguage ) + "', " + ;
-                  "'" + AllTrim( ::oGrpFam:cNomGrp ) + "', " + ;
-                  "'" + AllTrim( ::oGrpFam:cNomGrp ) + "', " + ;
+                  "'" + ::oCon:EscapeStr( ::oGrpFam:cNomGrp ) + "', " + ;
+                  "'" + ::oCon:EscapeStr( ::oGrpFam:cNomGrp ) + "', " + ;
                   "'" + cLinkRewrite( ::oGrpFam:cNomGrp ) + "', "+ ;
                   "'', " + ;
                   "'', " + ;
@@ -2811,8 +2811,8 @@ Method InsertPropiedadesPrestashop() CLASS TComercio
                               " VALUES " + ;
                                   "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;    //id_attribute_group
                                   "'" + Str( ::nLanguage ) + "', " + ;                 //id_lang
-                                  "'" + AllTrim( ::oPro:cDesPro ) + "', " + ;          //name
-                                  "'" + AllTrim( ::oPro:cDesPro ) + "' )"              //public_name
+                                  "'" + ::oCon:EscapeStr( ::oPro:cDesPro ) + "', " + ;          //name
+                                  "'" + ::oCon:EscapeStr( ::oPro:cDesPro ) + "' )"              //public_name
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -3029,7 +3029,7 @@ METHOD InsertLineasPropiedadesPrestashop( cCodPro, nCodigoGrupo ) CLASS TComerci
                            "VALUES " + ;
                               "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
                               "'" + Str( ::nLanguage ) + "', " + ;                    //id_lang
-                              "'" + AllTrim( ::oTblPro:cDesTbl ) + "' )"              //name
+                              "'" + ::oCon:EscapeStr( ::oTblPro:cDesTbl ) + "' )"              //name
 
          if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -4756,7 +4756,7 @@ METHOD InsertImageProductsPrestashop() CLASS TComercio
                      " VALUES " + ;
                         "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
                         "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;
-                        "'" + AllTrim( ::oArtImg:cNbrArt ) + "' )"
+                        "'" + ::oCon:EscapeStr( ::oArtImg:cNbrArt ) + "' )"
 
          if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
             ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
@@ -4765,13 +4765,13 @@ METHOD InsertImageProductsPrestashop() CLASS TComercio
          end if
 
          cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
-                        "(  id_image, " + ;
-                        "id_shop, " + ;
-                        "cover )" + ;
-                     " VALUES " + ;
+                        "( id_image, " + ;
+                           "id_shop, " + ;
+                           "cover ) "  + ;
+                     "VALUES " + ;
                         "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
-                        "'1', " + ;
-                        "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
+                           "'1', " + ;
+                           "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
 
          if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
             ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
@@ -5623,7 +5623,11 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent )
 
       else
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_parent, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '" + Str( IdParent ) + "', '2', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) " )
+         if TMSCommand():New( ::oCon ):ExecDirect( ;
+            "INSERT INTO " + ::cPrefixTable( "category" ) + ;
+               " ( id_parent, level_depth, nleft, nright, active, date_add, date_upd, position ) " + ;
+            "VALUES " + ;
+               " ( '" + Str( IdParent ) + "', '2', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) " )
 
             nCodigoWeb           := ::oCon:GetInsertId()
 
@@ -5652,13 +5656,18 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent )
             ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '" + Str( nCodigoWeb ) + "', '" + Str( ::nLanguage ) + "', '" + AllTrim( ::oTipArt:cNomTip ) + "', '" + AllTrim( ::oTipArt:cNomTip ) + "', '" + cLinkRewrite( ::oTipArt:cNomTip ) + "', '', '', '' )" )
+         if TMSCommand():New( ::oCon ):ExecDirect( ;
+            "INSERT INTO " + ::cPrefixTable( "category_lang" ) +;
+               " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) " + ;
+            "VALUES"+ ;
+               " ( '" + Str( nCodigoWeb ) + "', '" + Str( ::nLanguage ) + "', '" + ::oCon:EscapeStr( ::oTipArt:cNomTip ) + "', '" + ::oCon:EscapeStr( ::oTipArt:cNomTip ) + "', '" + cLinkRewrite( ::oTipArt:cNomTip ) + "', '', '', '' )" )
+
             ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_lang", 3 )
          else
             ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_lang", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTavle( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '" + Str( nCodigoWeb ) + "', '1', '0' )" )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '" + Str( nCodigoWeb ) + "', '1', '0' )" )
             ::SetText( "He insertado correctamente en la tabla category_group la categoría raiz", 3 )
          else
             ::SetText( "Error al insertar la categoría inicio en category_group", 3 )
@@ -5667,7 +5676,7 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent )
          if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '1' )" )
             ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::SetText( "Error al insertar v " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
+            ::SetText( "Error al insertar " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
          if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '2' )" )
@@ -5750,19 +5759,19 @@ METHOD AppendClientesToPrestashop()
                                                                                     "date_add, " + ;
                                                                                     "date_upd )" + ;
                                                                            " VALUES " + ;
-                                                                                    "('9', " + ;                                                       //id_gender, " - Genero desconocido
-                                                                                    "'1', " + ;                                                        //"id_default_group, " + ;
-                                                                                    "'" + ( cFirstName ) + "', " + ;                            //"firstname, " + ;
-                                                                                    "'" + ( cLastName ) + "', " + ;                             //"lastname, " + ;
-                                                                                    "'" + AllTrim( ::oCli:cMeiInt ) + "', " + ;                        //"email, " + ;
+                                                                                    "('9', " + ;                                                         //id_gender, " - Genero desconocido
+                                                                                    "'1', " + ;                                                          //"id_default_group, " + ;
+                                                                                    "'" + ( cFirstName ) + "', " + ;                                     //"firstname, " + ;
+                                                                                    "'" + ( cLastName ) + "', " + ;                                      //"lastname, " + ;
+                                                                                    "'" + ::oCon:EscapeStr( ::oCli:cMeiInt ) + "', " + ;                 //"email, " + ;
                                                                                     "'" + hb_md5( AllTrim( ::Cookiekey ) + AllTrim( ::oCli:cClave ) ) + "', " + ;   //"passwd, " + ;
-                                                                                    "'1', " + ;                                                        //"newletter, " + ;
-                                                                                    "'" + hb_md5( AllTrim( ::oCli:Cod ) ) + "', " + ;                  //"secure_key, " + ;
-                                                                                    "'1', " + ;                                                        //"active, " + ;
-                                                                                    "'0', " + ;                                                        //"is_guest, " + ;
-                                                                                    "'0', " + ;                                                        //"deleted, " + ;
-                                                                                    "'" + dtos( GetSysDate() ) + "', " + ;                             //"date_add )" + ;
-                                                                                    "'" + dtos( GetSysDate() ) + "' )" )                               //"date_upd )" + ;
+                                                                                    "'1', " + ;                                                          //"newletter, " + ;
+                                                                                    "'" + hb_md5( AllTrim( ::oCli:Cod ) ) + "', " + ;                    //"secure_key, " + ;
+                                                                                    "'1', " + ;                                                          //"active, " + ;
+                                                                                    "'0', " + ;                                                          //"is_guest, " + ;
+                                                                                    "'0', " + ;                                                          //"deleted, " + ;
+                                                                                    "'" + dtos( GetSysDate() ) + "', " + ;                               //"date_add )" + ;
+                                                                                    "'" + dtos( GetSysDate() ) + "' )" )                                 //"date_upd )" + ;
 
                   nCodigoWeb           := ::oCon:GetInsertId()
 
