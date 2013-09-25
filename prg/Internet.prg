@@ -92,6 +92,8 @@ CLASS TSndRecInf
    Method OpenFiles()
    Method CloseFiles()
 
+   Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenFiles( lExclusive, cPath ), ::CloseFiles() )
+
    Method BotonSiguiente()
    Method BotonAnterior()
 
@@ -344,17 +346,23 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method OpenFiles( lExclusive )
+Method OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      if Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
+         ::DefineFiles()
+      end if
+
       ::oDbfSenderReciver:Activate( .f., !( lExclusive ) )
+
       ::oDbfFilesReciver:Activate(  .f., !( lExclusive ) )
 
    RECOVER USING oError
@@ -378,13 +386,19 @@ Method CloseFiles()
 
    BEGIN SEQUENCE
 
-      ::oDbfSenderReciver:End()
-      ::oDbfFilesReciver:End()
+      if !Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
+         ::oDbfSenderReciver:End()
+      end if
+
+      if !Empty( ::oDbfFilesReciver )
+         ::oDbfFilesReciver:End()
+      end if
 
    RECOVER
 
-      msgStop( "Imposible cerrar todas las bases de datos.", "Atención" )
       lOpen       := .f.
+
+      msgStop( "Imposible cerrar todas las bases de datos.", "Atención" )
 
    END SEQUENCE
 

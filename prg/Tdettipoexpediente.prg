@@ -11,7 +11,6 @@ CLASS TDetTipoExpediente FROM TDet
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD Resource( nMode, lLiteral )
 
@@ -73,11 +72,11 @@ METHOD OpenFiles( lExclusive )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+      lOpen                := .f.
 
       ::CloseFiles()
-
-      lOpen                := .f.
+      
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 

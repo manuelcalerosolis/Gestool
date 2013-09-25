@@ -1753,19 +1753,19 @@ FUNCTION rxHisMov( cPath, oMeter )
       ( dbfHisMov )->( __dbPack() )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "NNUMREM", "Str( nNumRem ) + cSufRem", {|| Str( Field->nNumRem ) + Field->cSufRem }, ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "nNumRem", "Str( nNumRem ) + cSufRem", {|| Str( Field->nNumRem ) + Field->cSufRem }, ) )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "DFECMOV", "Dtos( dFecMov ) + cTimMov", {|| Dtos( Field->dFecMov ) + Field->cTimMov } ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "dFecMov", "Dtos( dFecMov ) + cTimMov", {|| Dtos( Field->dFecMov ) + Field->cTimMov } ) )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "CREFMOV", "CREFMOV + CVALPR1 + CVALPR2 + CLOTE", {|| Field->CREFMOV + Field->CVALPR1 + Field->CVALPR2 + Field->cLote } ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cRefMov", "CREFMOV + CVALPR1 + CVALPR2 + CLOTE", {|| Field->CREFMOV + Field->CVALPR1 + Field->CVALPR2 + Field->cLote } ) )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "CALOMOV", "CALOMOV", {|| Field->CALOMOV } ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cAloMov", "CALOMOV", {|| Field->CALOMOV } ) )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "CALIMOV", "CALIMOV", {|| Field->CALIMOV } ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cAliMov", "CALIMOV", {|| Field->CALIMOV } ) )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cRefAlm", "cRefMov + cValPr1 + cValPr2 + cAliMov + cLote", {|| Field->cRefMov + Field->cValPr1 + Field->cValPr2 + Field->cAliMov + Field->cLote } ) )
@@ -1781,6 +1781,9 @@ FUNCTION rxHisMov( cPath, oMeter )
 
       ( dbfHisMov )->( ordCondSet("!Deleted() .and. nTipMov == 4", {|| !Deleted() .and. Field->nTipMov == 4 }, , , , , , , , , .t. ) )
       ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "nTipMov", "cRefMov + Dtos( dFecMov )", {|| Field->cRefMov + Dtos( Field->dFecMov ) } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted() .and. nTipMov == 4", {|| !Deleted() .and. Field->nTipMov == 4 }, , , , , , , , , .t. ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cStock", "cRefMov + cAliMov + cCodPr1 + cValPr1 + cCodPr2 + cValPr2 + cLote", {|| Field->cRefMov + Field->cAliMov + Field->cCodPr1 + Field->cValPr1 + Field->cCodPr2 + Field->cValPr2 + Field->cLote } ) )
 
       ( dbfHisMov )->( dbCloseArea() )
 

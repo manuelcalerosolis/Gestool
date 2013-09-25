@@ -58,6 +58,8 @@ static function ErrorDialog( e ) // -> logical or quits App.
       return 0
    end
 
+   msgStop( e:procLine, "procLine" )
+
    // for network open error, set NETERR() and subsystem default
    if ( e:genCode == EG_OPEN .and. ;
       ( e:osCode == 32 .or. e:osCode == 5 ) .and. ;
@@ -128,13 +130,7 @@ static function ErrorDialog( e ) // -> logical or quits App.
 
    cErrorLog += CRLF + "System" + CRLF
    cErrorLog += "======" + CRLF
-
-   #ifdef __CLIPPER__
-      cErrorLog += "   CPU type: " + GetCPU() + CRLF
-   #else
-      cErrorLog += "   CPU type: " + GetCPU() + " " + ;
-                   AllTrim( Str( GetCPUSpeed() ) ) + " Mhz" + CRLF
-   #endif
+   cErrorLog += "   CPU type: " + GetCPU() + " " + AllTrim( Str( GetCPUSpeed() ) ) + " Mhz" + CRLF
 
    cErrorLog += "   Hardware memory: " + ;
                 cValToChar( Int( nExtMem() / ( 1024 * 1024 ) ) + 1 ) + ;
@@ -142,19 +138,11 @@ static function ErrorDialog( e ) // -> logical or quits App.
 
    cErrorLog += "   Compiler version: " + Version() + CRLF
 
-   #ifdef __CLIPPER__
-      cErrorLog += "   Windows and MsDos versions: " + ;
-                   AllTrim( Str( aVersions[ 1 ] ) ) + "." + ;
-                   AllTrim( Str( aVersions[ 2 ] ) ) + ", " + ;
-                   AllTrim( Str( aVersions[ 3 ] ) ) + "." + ;
-                   AllTrim( Str( aVersions[ 4 ] ) ) + CRLF + CRLF
-   #else
-      cErrorLog += "   Windows version: " + ;
+   cErrorLog += "   Windows version: " + ;
                    AllTrim( Str( aVersions[ 1 ] ) ) + "." + ;
                    AllTrim( Str( aVersions[ 2 ] ) ) + ", Build " + ;
                    AllTrim( Str( aVersions[ 3 ] ) ) + ;
                    " " + aVersions[ 5 ] + CRLF + CRLF
-   #endif
 
    aTasks = GetTasks()
    cErrorLog += "   Windows total applications running: " + ;

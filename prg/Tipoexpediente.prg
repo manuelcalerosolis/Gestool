@@ -31,8 +31,6 @@ CLASS TTipoExpediente FROM TMasDet
    METHOD Create( cPath )
 
    METHOD OpenFiles( lExclusive )
-   METHOD OpenService( lExclusive )
-
    METHOD CloseFiles()
 
    METHOD DefineFiles()
@@ -137,37 +135,6 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
-
-   local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lExclusive   := .f.
-
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::DefineFiles()
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER
-
-      msgStop( "Imposible abrir todas las bases de datos" )
-
-      ::CloseFiles()
-
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
 METHOD CloseFiles()
 
    if ::oDbf != nil .and. ::oDbf:Used()
@@ -182,21 +149,23 @@ RETURN .t.
 //---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cDriver )
+   
+   local oDbf
 
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "TipExpT.Dbf" CLASS "TipExpT" ALIAS "TipExpT" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de expedientes"
+   DEFINE TABLE oDbf FILE "TipExpT.Dbf" CLASS "TipExpT" ALIAS "TipExpT" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de expedientes"
 
-      FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100    OF ::oDbf
-      FIELD NAME "cNomTip"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400    OF ::oDbf
+      FIELD NAME "cCodTip"   TYPE "C" LEN  3  DEC 0 COMMENT "Código" COLSIZE 100                OF oDbf
+      FIELD NAME "cNomTip"   TYPE "C" LEN 35  DEC 0 COMMENT "Nombre" COLSIZE 400                OF oDbf
 
-      INDEX TO "TipExpT.Cdx" TAG "cCodTip" ON "cCodTip"           COMMENT "Código"   NODELETED      OF ::oDbf
-      INDEX TO "TipExpT.Cdx" TAG "cNomTip" ON "Upper( cNomTip )"  COMMENT "Nombre"   NODELETED      OF ::oDbf
+      INDEX TO "TipExpT.Cdx" TAG "cCodTip" ON "cCodTip"           COMMENT "Código"   NODELETED  OF oDbf
+      INDEX TO "TipExpT.Cdx" TAG "cNomTip" ON "Upper( cNomTip )"  COMMENT "Nombre"   NODELETED  OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //---------------------------------------------------------------------------//
 

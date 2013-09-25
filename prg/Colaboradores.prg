@@ -31,17 +31,19 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
-      ::CloseFiles()
+      
       lOpen          := .f.
+
+      ::CloseFiles()
+      
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
 
@@ -53,20 +55,22 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "Colaboradores.Dbf" CLASS "Colaboraores" ALIAS "Colabora" PATH ( cPath ) VIA ( cDriver ) COMMENT "Colaboradores"
+   DEFINE TABLE oDbf FILE "Colaboradores.Dbf" CLASS "Colaboraores" ALIAS "Colabora" PATH ( cPath ) VIA ( cDriver ) COMMENT "Colaboradores"
 
-      FIELD NAME "cCodCol"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF ::oDbf
-      FIELD NAME "cDesCol"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF ::oDbf
+      FIELD NAME "cCodCol"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100    OF oDbf
+      FIELD NAME "cDesCol"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400    OF oDbf
 
-      INDEX TO "Colaboradores.Cdx" TAG "cCodCol" ON "cCodCol" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "Colaboradores.Cdx" TAG "cDesCol" ON "cDesCol" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "Colaboradores.Cdx" TAG "cCodCol" ON "cCodCol" COMMENT "Código" NODELETED  OF oDbf
+      INDEX TO "Colaboradores.Cdx" TAG "cDesCol" ON "cDesCol" COMMENT "Nombre" NODELETED  OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

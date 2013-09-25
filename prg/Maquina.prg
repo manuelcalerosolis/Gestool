@@ -138,7 +138,7 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -167,7 +167,7 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -178,18 +178,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -225,27 +225,29 @@ RETURN .t.
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "MaqCosT.Dbf" CLASS "MaqCosT" ALIAS "MaqCosT" PATH ( cPath ) VIA ( cDriver )COMMENT "Maquinaria"
+   DEFINE TABLE oDbf FILE "MaqCosT.Dbf" CLASS "MaqCosT" ALIAS "MaqCosT" PATH ( cPath ) VIA ( cDriver ) COMMENT "Maquinaria"
 
-      FIELD NAME "cCodMaq"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100    OF ::oDbf
-      FIELD NAME "cDesMaq"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400    OF ::oDbf
-      FIELD NAME "cCodSec"    TYPE "C" LEN 03  DEC 0 COMMENT "Sección"     COLSIZE 100    OF ::oDbf
-      FIELD NAME "cCodDiv"    TYPE "C" LEN 03  DEC 0 COMMENT "Divisa"      HIDE           OF ::oDbf
-      FIELD NAME "nVdvDiv"    TYPE "N" LEN 16  DEC 6 COMMENT "Valor divisa"HIDE           OF ::oDbf
-      FIELD NAME "nHorDia"    TYPE "N" LEN 16  DEC 6 COMMENT "Horas dia"   HIDE           OF ::oDbf
-      FIELD CALCULATE NAME "nTotCos"   LEN 16  DEC 6 COMMENT "Coste dia"   COLSIZE 100    VAL ::cTotalCosteDia()  ALIGN RIGHT OF ::oDbf
-      FIELD CALCULATE NAME "nHorCos"   LEN 16  DEC 6 COMMENT "Coste hora"  COLSIZE 100    VAL ::cTotalCosteHora() ALIGN RIGHT OF ::oDbf
+      FIELD NAME "cCodMaq"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100    OF oDbf
+      FIELD NAME "cDesMaq"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400    OF oDbf
+      FIELD NAME "cCodSec"    TYPE "C" LEN 03  DEC 0 COMMENT "Sección"     COLSIZE 100    OF oDbf
+      FIELD NAME "cCodDiv"    TYPE "C" LEN 03  DEC 0 COMMENT "Divisa"      HIDE           OF oDbf
+      FIELD NAME "nVdvDiv"    TYPE "N" LEN 16  DEC 6 COMMENT "Valor divisa"HIDE           OF oDbf
+      FIELD NAME "nHorDia"    TYPE "N" LEN 16  DEC 6 COMMENT "Horas dia"   HIDE           OF oDbf
+      FIELD CALCULATE NAME "nTotCos"   LEN 16  DEC 6 COMMENT "Coste dia"   COLSIZE 100    VAL ::cTotalCosteDia()  ALIGN RIGHT OF oDbf
+      FIELD CALCULATE NAME "nHorCos"   LEN 16  DEC 6 COMMENT "Coste hora"  COLSIZE 100    VAL ::cTotalCosteHora() ALIGN RIGHT OF oDbf
 
-      INDEX TO "MaqCosT.Cdx" TAG "cCodMaq" ON "cCodMaq" COMMENT "Código"   NODELETED    OF ::oDbf
-      INDEX TO "MaqCosT.Cdx" TAG "cDesMaq" ON "cDesMaq" COMMENT "Nombre"   NODELETED    OF ::oDbf
-      INDEX TO "MaqCosT.Cdx" TAG "cCodSec" ON "cCodSec" COMMENT "Sección"  NODELETED    OF ::oDbf
+      INDEX TO "MaqCosT.Cdx" TAG "cCodMaq" ON "cCodMaq" COMMENT "Código"   NODELETED      OF oDbf
+      INDEX TO "MaqCosT.Cdx" TAG "cDesMaq" ON "cDesMaq" COMMENT "Nombre"   NODELETED      OF oDbf
+      INDEX TO "MaqCosT.Cdx" TAG "cCodSec" ON "cCodSec" COMMENT "Sección"  NODELETED      OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

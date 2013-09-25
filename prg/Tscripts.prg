@@ -45,7 +45,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TScripts
+METHOD OpenFiles( lExclusive, cPath ) CLASS TScripts
 
    local lOpen          := .t.
    local oError
@@ -57,18 +57,18 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
 
@@ -79,22 +79,24 @@ RETURN ( lOpen )
 //----------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
+   
+   local oDbf
 
    DEFAULT cPath        := ::cPath
 
-   DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scripts" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
+   DEFINE TABLE oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scripts" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
 
-      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"        COLSIZE 100          OF ::oDbf
-      FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf
-      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"             HIDE           OF ::oDbf
-      FIELD NAME "cCodUsr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código de usuario"   HIDE           OF ::oDbf
+      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"              COLSIZE 100    OF oDbf
+      FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"              COLSIZE 400    OF oDbf
+      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"             HIDE           OF oDbf
+      FIELD NAME "cCodUsr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código de usuario"   HIDE           OF oDbf
 
-      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "Código" NODELETED                 OF oDbf
+      INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED                 OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //---------------------------------------------------------------------------//
 

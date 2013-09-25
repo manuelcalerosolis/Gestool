@@ -50,7 +50,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen             := .t.
    local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -60,23 +60,22 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
       lOpen                := .f.
+      
+      ::CloseFiles()
+      
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 
@@ -93,7 +92,7 @@ METHOD OpenService( lExclusive, cPath )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles( cPath )
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )

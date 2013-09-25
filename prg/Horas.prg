@@ -10,7 +10,6 @@ CLASS THoras FROM TMANT
    DATA  cBitmap  INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD CloseFiles()
 
@@ -24,7 +23,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -35,18 +34,18 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen          := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -70,20 +69,22 @@ RETURN .t.
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "Horas.Dbf" CLASS "Horas" ALIAS "Horas" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de horas"
+   DEFINE TABLE oDbf FILE "Horas.Dbf" CLASS "Horas" ALIAS "Horas" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de horas"
 
-      FIELD NAME "cCodHra"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"            COLSIZE 100                                  OF ::oDbf
-      FIELD NAME "cDesHra"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"            COLSIZE 400                                  OF ::oDbf
+      FIELD NAME "cCodHra"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"   COLSIZE 100 OF oDbf
+      FIELD NAME "cDesHra"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"   COLSIZE 400 OF oDbf
 
-      INDEX TO "Horas.Cdx" TAG "cCodHra" ON "cCodHra" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "Horas.Cdx" TAG "cDesHra" ON "cDesHra" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "Horas.Cdx" TAG "cCodHra" ON "cCodHra" COMMENT "Código"  NODELETED   OF oDbf
+      INDEX TO "Horas.Cdx" TAG "cDesHra" ON "cDesHra" COMMENT "Nombre"  NODELETED   OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

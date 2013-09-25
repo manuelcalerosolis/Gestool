@@ -53,19 +53,21 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
 
-   DEFINE TABLE ::oDbf FILE "Actuaciones.Dbf" CLASS "Actuaciones" ALIAS "Actuac" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Actuaciones"
+   DEFINE TABLE oDbf FILE "Actuaciones.Dbf" CLASS "Actuaciones" ALIAS "Actuac" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Actuaciones"
 
-      FIELD NAME "cCodAct"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF ::oDbf
-      FIELD NAME "cDesAct"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF ::oDbf
+      FIELD NAME "cCodAct"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100 OF oDbf
+      FIELD NAME "cDesAct"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400 OF oDbf
 
-      INDEX TO "Actuaciones.Cdx" TAG "cCodAct" ON "cCodAct" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "Actuaciones.Cdx" TAG "cDesAct" ON "cDesAct" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "Actuaciones.Cdx" TAG "cCodAct" ON "cCodAct" COMMENT "Código" NODELETED OF oDbf
+      INDEX TO "Actuaciones.Cdx" TAG "cDesAct" ON "cDesAct" COMMENT "Nombre" NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

@@ -31,17 +31,19 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
-      ::CloseFiles()
       lOpen          := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
 
@@ -53,20 +55,22 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "Entidades.Dbf" CLASS "Entidades" ALIAS "Entidades" PATH ( cPath ) VIA ( cDriver ) COMMENT "Entidades"
+   DEFINE TABLE oDbf FILE "Entidades.Dbf" CLASS "Entidades" ALIAS "Entidades" PATH ( cPath ) VIA ( cDriver ) COMMENT "Entidades"
 
-      FIELD NAME "cCodEnt"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF ::oDbf
-      FIELD NAME "cDesEnt"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF ::oDbf
+      FIELD NAME "cCodEnt"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF oDbf
+      FIELD NAME "cDesEnt"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF oDbf
 
-      INDEX TO "Entidades.Cdx" TAG "cCodEnt" ON "cCodEnt" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "Entidades.Cdx" TAG "cDesEnt" ON "cDesEnt" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "Entidades.Cdx" TAG "cCodEnt" ON "cCodEnt" COMMENT "Código" NODELETED OF oDbf
+      INDEX TO "Entidades.Cdx" TAG "cDesEnt" ON "cDesEnt" COMMENT "Nombre" NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

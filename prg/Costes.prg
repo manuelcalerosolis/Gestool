@@ -10,7 +10,6 @@ CLASS TCosMaq FROM TMANT
    DATA  cBitmap  INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD CloseFiles()
 
@@ -24,7 +23,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -35,18 +34,18 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen          := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -70,21 +69,23 @@ RETURN .t.
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "Costes.Dbf" CLASS "Costes" ALIAS "Costes" PATH ( cPath ) VIA ( cDriver )COMMENT "Costes de maquinaria"
+   DEFINE TABLE oDbf FILE "Costes.Dbf" CLASS "Costes" ALIAS "Costes" PATH ( cPath ) VIA ( cDriver ) COMMENT "Costes de maquinaria"
 
-      FIELD NAME "cCodCos"    TYPE "C" LEN 12  DEC 0 COMMENT "Código"   COLSIZE 100   OF ::oDbf
-      FIELD NAME "cDesCos"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"   COLSIZE 400   OF ::oDbf
-      FIELD NAME "nImpCos"    TYPE "N" LEN 16  DEC 6 COMMENT "Importe"  COLSIZE 100   PICTURE cPouDiv() ALIGN RIGHT   OF ::oDbf
+      FIELD NAME "cCodCos"    TYPE "C" LEN 12  DEC 0 COMMENT "Código"   COLSIZE 100   OF oDbf
+      FIELD NAME "cDesCos"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"   COLSIZE 400   OF oDbf
+      FIELD NAME "nImpCos"    TYPE "N" LEN 16  DEC 6 COMMENT "Importe"  COLSIZE 100   PICTURE cPouDiv() ALIGN RIGHT   OF oDbf
 
-      INDEX TO "Costes.Cdx" TAG "cCodCos" ON "cCodCos" COMMENT "Código" NODELETED     OF ::oDbf
-      INDEX TO "Costes.Cdx" TAG "cDesCos" ON "cDesCos" COMMENT "Nombre" NODELETED     OF ::oDbf
+      INDEX TO "Costes.Cdx" TAG "cCodCos" ON "cCodCos" COMMENT "Código" NODELETED     OF oDbf
+      INDEX TO "Costes.Cdx" TAG "cDesCos" ON "cDesCos" COMMENT "Nombre" NODELETED     OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

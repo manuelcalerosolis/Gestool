@@ -11,8 +11,6 @@ CLASS TTipOpera FROM TMant
 
    METHOD OpenFiles( lExclusive )
 
-   METHOD OpenService( lExclusive )
-
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
@@ -23,7 +21,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -33,16 +31,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
+      lOpen             := .f.
+      
       msgStop( "Imposible abrir todas las bases de datos" )
+      
       ::CloseFiles()
-      lOpen          := .f.
 
    END SEQUENCE
 
@@ -52,52 +52,24 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT  lExclusive  := .f.
-
-   BEGIN SEQUENCE
-
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
-
-   ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
-      ::CloseFiles()
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//----------------------------------------------------------------------------//
-
 METHOD DefineFiles( cPath, cDriver )
+
+   local oDbf
 
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "TipOpera.Dbf" CLASS "TipOpera" ALIAS "TipOpera" PATH ( cPath ) VIA ( cDriver )COMMENT "Tipos de operaciones"
+   DEFINE TABLE oDbf FILE "TipOpera.Dbf" CLASS "TipOpera" ALIAS "TipOpera" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de operaciones"
 
-      FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF ::oDbf
-      FIELD NAME "cDesTip"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF ::oDbf
+      FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF oDbf
+      FIELD NAME "cDesTip"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF oDbf
 
-      INDEX TO "TipOpera.Cdx" TAG "cCodTip" ON "cCodTip" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "TipOpera.Cdx" TAG "cDesTip" ON "cDesTip" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "TipOpera.Cdx" TAG "cCodTip" ON "cCodTip" COMMENT "Código" NODELETED OF oDbf
+      INDEX TO "TipOpera.Cdx" TAG "cDesTip" ON "cDesTip" COMMENT "Nombre" NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 
@@ -142,7 +114,7 @@ METHOD Resource( nMode )
       oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode ), oDlg:end( IDOK ), ) } )
    end if
 
-   oDlg:bStart := { || oGet:SetFocus() }
+   oDlg:bStart    := { || oGet:SetFocus() }
 
 	ACTIVATE DIALOG oDlg	CENTER
 
@@ -152,13 +124,9 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( nMode )
 
-   if nMode == APPD_MODE .or. nMode == DUPL_MODE
-
-      if ::oDbf:SeekInOrd( ::oDbf:cCodTip, "CCODTIP" )
-         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodTip ) )
-         return .f.
-      end if
-
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. ::oDbf:SeekInOrd( ::oDbf:cCodTip, "cCodTip" )
+      MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodTip ) )
+      Return .f.
    end if
 
    if Empty( ::oDbf:cDesTip )
