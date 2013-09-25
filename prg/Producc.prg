@@ -1598,7 +1598,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg ) )
+         ACTION   ( ::lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -1640,28 +1640,32 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-METHOD lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg )
+METHOD lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld )
 
    if Empty( ::oDbf:cAlmOrd )
       MsgStop( "Tiene que seleccionar un almacén." )
+      oFld:SetOption( 1 )
       oGetAlm:SetFocus()
       Return nil
    end if
 
    if Empty( ::oDbf:cCodSec )
       MsgStop( "Tiene que seleccionar una sección." )
+      oFld:SetOption( 1 )
       oGetSec:SetFocus()
       Return nil
    end if
 
    if Empty( ::oDbf:cCodOpe )
       MsgStop( "Tiene que seleccionar una operación." )
+      oFld:SetOption( 1 )
       oGetOpe:SetFocus()
       Return nil
    end if
 
    if ::oDbf:dFecFin < ::oDbf:dFecOrd
       MsgStop( "La fecha de fin no puede ser menor que la fecha de inicio." )
+      oFld:SetOption( 1 )
       oHorFin:SetFocus()
       Return nil
    end if
