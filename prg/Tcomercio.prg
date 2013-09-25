@@ -4101,11 +4101,11 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                   " VALUES " + ;
                      "('" + Str( nCodigoWeb ) + "', " + ;                  // id_product
                      "'" + Str( ::nLanguage ) + "', " + ;                  // id_lang
-                     "'" + if( !Empty( ::oArt:mDesTec ), AllTrim( ::oArt:mDesTec ), AllTrim( ::oArt:Nombre ) ) + "', " + ;        // description
+                     "'" + if( !Empty( ::oArt:mDesTec ), ::oCon:EscapeStr( ::oArt:mDesTec ), ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;        // description
                      "'" + "Ref:" + AllTrim( ::oArt:Codigo ) + "', " + ;   // description_short
-                     "'" + cLinkRewrite( ::oArt:Nombre ) + "', " + ;       // link_rewrite
-                     "'" + AllTrim( ::oArt:Nombre ) + "', " + ;            // name
-                     "'En stock', " + ;                                    // avatible_now
+                     "'" + cLinkRewrite( ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;       // link_rewrite
+                     "'" + ::oCon:EscapeStr( ::oArt:Nombre ) + "', " + ;      // name
+                     "'En stock', " + ;                                       // avatible_now
                      "'' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -4967,6 +4967,8 @@ Method AppendImagesPrestashop() CLASS TComercio
 
       if !Empty( ::cHostFtp )
 
+         ?"Ftp"
+
          ::oInt         := TInternet():New()
          ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
@@ -4985,7 +4987,9 @@ Method AppendImagesPrestashop() CLASS TComercio
             ::nTotMeter                := len( ::aImagesArticulos )
             nCount                     := 1
 
-               if !Empty( ::cDImagen )
+            ?::cDImagen
+
+            if !Empty( ::cDImagen )
                ::oFtp:CreateDirectory( ::cDImagen + "/p" )
                ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
             end if
@@ -5028,7 +5032,9 @@ Method AppendImagesPrestashop() CLASS TComercio
             ::oFtp:end()
          end if
 
-      else   
+      else  
+
+         ?"Directorio" 
 
          if isDirectory( ::cDImagen )
             
@@ -5746,8 +5752,8 @@ METHOD AppendClientesToPrestashop()
                                                                            " VALUES " + ;
                                                                                     "('9', " + ;                                                       //id_gender, " - Genero desconocido
                                                                                     "'1', " + ;                                                        //"id_default_group, " + ;
-                                                                                    "'" + AllTrim( cFirstName ) + "', " + ;                            //"firstname, " + ;
-                                                                                    "'" + AllTrim( cLastName ) + "', " + ;                             //"lastname, " + ;
+                                                                                    "'" + ( cFirstName ) + "', " + ;                            //"firstname, " + ;
+                                                                                    "'" + ( cLastName ) + "', " + ;                             //"lastname, " + ;
                                                                                     "'" + AllTrim( ::oCli:cMeiInt ) + "', " + ;                        //"email, " + ;
                                                                                     "'" + hb_md5( AllTrim( ::Cookiekey ) + AllTrim( ::oCli:cClave ) ) + "', " + ;   //"passwd, " + ;
                                                                                     "'1', " + ;                                                        //"newletter, " + ;
@@ -5807,15 +5813,15 @@ METHOD AppendClientesToPrestashop()
                                                                          " VALUES " + ;
                                                                                   "('6', " + ;                                                   //id_country
                                                                                   "'" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;                 //id_customer
-                                                                                  "'" + AllTrim( cFirstName ) + AllTrim( cLastName ) + "', " + ; //alias
+                                                                                  "'" + cFirstName + cLastName  + "', " + ; //alias
                                                                                   "'" + AllTrim( cLastName ) + "', " + ;                         //lastname
                                                                                   "'" + AllTrim( cFirstName ) + "', " + ;                        //firstname
-                                                                                  "'" + AllTrim( ::oCli:Domicilio ) + "', " + ;                  //address1
-                                                                                  "'" + AllTrim( ::oCli:CodPostal ) + "', " + ;                  //postcode
-                                                                                  "'" + AllTrim( ::oCli:Poblacion ) + "', " + ;                  //city
-                                                                                  "'" + AllTrim( ::oCli:Telefono ) + "', " + ;                   //phone
-                                                                                  "'" + AllTrim( ::oCli:Movil ) + "', " + ;                      //phone_mobile
-                                                                                  "'" + AllTrim( ::oCli:Nif ) + "', " + ;                        //dni
+                                                                                  "'" + ::oCon:EscapeStr( ::oCli:Domicilio ) + "', " + ;                  //address1
+                                                                                  "'" + ::oCon:EscapeStr( ::oCli:CodPostal ) + "', " + ;                  //postcode
+                                                                                  "'" + ::oCon:EscapeStr( ::oCli:Poblacion ) + "', " + ;                  //city
+                                                                                  "'" + ::oCon:EscapeStr( ::oCli:Telefono ) + "', " + ;                   //phone
+                                                                                  "'" + ::oCon:EscapeStr( ::oCli:Movil ) + "', " + ;                      //phone_mobile
+                                                                                  "'" + ::oCon:EscapeStr( ::oCli:Nif ) + "', " + ;                        //dni
                                                                                   "'" + dtos( GetSysDate() ) + "', " + ;                         //date_add
                                                                                   "'" + dtos( GetSysDate() ) + "', " + ;                         //date_upd
                                                                                   "'1', " + ;                                                    //active
@@ -5857,15 +5863,15 @@ METHOD AppendClientesToPrestashop()
                   Actualizamos la tabla de direcciones-------------------------
                   */
 
-                  if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "address" ) + " SET alias='" + AllTrim( cFirstName ) + AllTrim( cLastName ) + ;
-                                                                                "', firstname='" + AllTrim( cFirstName ) + ;
-                                                                                "', lastname='" + AllTrim( cLastName ) + ;
-                                                                                "', address1='" + AllTrim( ::oCli:Domicilio ) + ;
-                                                                                "', postcode='" + AllTrim( ::oCli:CodPostal ) + ;
-                                                                                "', city='" + AllTrim( ::oCli:Poblacion ) + ;
-                                                                                "', phone='" + AllTrim( ::oCli:Telefono ) + ;
-                                                                                "', phone_mobile='" + AllTrim( ::oCli:Movil ) + ;
-                                                                                "', dni='" + AllTrim( ::oCli:Nif ) + ;
+                  if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "address" ) + " SET alias='" + ( cFirstName ) + ( cLastName ) + ;
+                                                                                "', firstname='" + ( cFirstName ) + ;
+                                                                                "', lastname='" + ( cLastName ) + ;
+                                                                                "', address1='" + ::oCon:EscapeStr( ::oCli:Domicilio ) + ;
+                                                                                "', postcode='" + ::oCon:EscapeStr( ::oCli:CodPostal ) + ;
+                                                                                "', city='" + ::oCon:EscapeStr( ::oCli:Poblacion ) + ;
+                                                                                "', phone='" + ::oCon:EscapeStr( ::oCli:Telefono ) + ;
+                                                                                "', phone_mobile='" + ::oCon:EscapeStr( ::oCli:Movil ) + ;
+                                                                                "', dni='" + ::oCon:EscapeStr( ::oCli:Nif ) + ;
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + AllTrim( Str( ::oCli:cCodWeb ) ) )
 
