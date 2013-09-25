@@ -230,7 +230,7 @@ return( E1GetInsertId( ::hConnect ) )
 // Filtra las secuencias de escape y las cadenas especiales
 
 METHOD EscapeStr( cStr ) CLASS TMSVConnect
-return( E1RealEscapeStr( ::hConnect, cStr ) )
+return( Alltrim( E1RealEscapeStr( ::hConnect, cStr ) ) )
 
 //---------------------------------------------------------------------------//
 // Seleccionar juego de caracteres
