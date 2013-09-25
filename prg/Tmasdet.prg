@@ -135,6 +135,9 @@ CLASS TMasDet FROM TMant
 
    METHOD GetFirstKey()       INLINE ( if( ::bFirstKey != nil, ::cFirstKey := Eval( ::bFirstKey, Self ), ) )
 
+   METHOD OpenService( lExclusive, cPath )
+   METHOD CloseService()
+
    METHOD CloseFiles()
 
    METHOD AddDetail( oDetail )
@@ -144,7 +147,6 @@ CLASS TMasDet FROM TMant
    METHOD oDefDiv( nId, nIdBmp, nIdChg, oDlg, nMode )
 
    METHOD OpenDetails()       INLINE ( aSend( ::oDbfDet, "OpenFiles()" ) )
-
    METHOD CloseDetails()      INLINE ( aSend( ::oDbfDet, "CloseFiles()" ) )
 
    METHOD nRegisterToProcess()
@@ -441,6 +443,50 @@ METHOD CancelDetails() CLASS TMasDet
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath ) CLASS TMasDet
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lExclusive   := .f.
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      lOpen             := .f.
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      ::CloseService()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseService() CLASS TMasDet
+
+   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   ::oDbf            := nil
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
 
 METHOD ReportDetails() CLASS TMasDet
 

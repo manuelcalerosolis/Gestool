@@ -506,7 +506,7 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cProducP )
       SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "HisMov.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cHisMovT)
+      USE ( cPatEmp() + "HisMov.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cHisMovT )
       SET ADSINDEX TO ( cPatEmp() + "HisMov.Cdx" ) ADDITIVE
 
       USE ( cPatEmp() + "MovSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cHisMovS )
@@ -4868,12 +4868,14 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
+   // Control de errores-------------------------------------------------------
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Calculo de stock" )
 
    END SEQUENCE
-
+   
    ErrorBlock( oBlock )
 
 return ( ::aStocks )
@@ -5987,7 +5989,7 @@ Return ( nRiesgo )
 
 METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   local nRec           := ( ::cHisMovT)->( Recno() )
+   local nRec           := ( ::cHisMovT )->( Recno() )
 
    DEFAULT cCodAlm      := Space( 3 )  
    DEFAULT cCodPrp1     := Space( 20 )
@@ -5998,22 +6000,18 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    ::dConsolidacion     := nil
 
-   if dbSeekInOrd( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote, "cStock", ::cHisMovT)
+   if dbSeekInOrd( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote, "cStock", ::cHisMovT )
 
       while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( ::cHisMovT)->nTipMov == 4
+         if Empty( ::dConsolidacion )
 
-            if Empty( ::dConsolidacion )
+            ::dConsolidacion     := ( ::cHisMovT)->dFecMov
 
-               ::dConsolidacion     := ( ::cHisMovT)->dFecMov
+         else
 
-            else
-
-               if ( ::cHisMovT)->dFecMov > ::dConsolidacion
-                  ::dConsolidacion  := ( ::cHisMovT)->dFecMov
-               end if
-
+            if ( ::cHisMovT)->dFecMov > ::dConsolidacion
+               ::dConsolidacion  := ( ::cHisMovT)->dFecMov
             end if
 
          end if

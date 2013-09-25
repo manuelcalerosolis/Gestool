@@ -38,10 +38,11 @@ CLASS TDetMaterial FROM TDet
    DATA  oGetTotVol
    DATA  nGetTotVol           INIT  0
 
+   METHOD New( cPath, oParent )
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD Resource( nMode, lLiteral )
    METHOD SetDialogMode( nMode )
@@ -76,6 +77,20 @@ CLASS TDetMaterial FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) 
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+   ::bOnPreDelete       := {|| ::DeleteDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
@@ -127,7 +142,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen             := .t.
    local oError
@@ -139,21 +154,18 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::bOnPreSaveDetail   := {|| ::SaveDetails() }
-      ::bOnPreDelete       := {|| ::DeleteDetails() }
+   RECOVER USING oError
 
-   RECOVER
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      lOpen                := .f.
 
       ::CloseFiles()
 
-      lOpen                := .f.
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -826,6 +838,8 @@ RETURN ( nTotUnd )
 
 CLASS TDetSeriesMaterial FROM TDet
 
+   METHOD New( cPath, oParent )
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -840,6 +854,19 @@ CLASS TDetSeriesMaterial FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) CLASS TDetSeriesMaterial
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetSeriesMaterial
 
@@ -877,7 +904,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetSeriesMaterial
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetSeriesMaterial
 
    local lOpen             := .t.
    local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -887,25 +914,22 @@ METHOD OpenFiles( lExclusive ) CLASS TDetSeriesMaterial
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::bOnPreSaveDetail   := {|| ::SaveDetails() }
-
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
       lOpen                := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 

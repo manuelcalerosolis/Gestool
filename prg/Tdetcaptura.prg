@@ -67,6 +67,7 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetCaptura
    ::CheckDefault( DEFAULT_CODE, .f. )
 
    ::bOnPreSaveDetail   := {|| ::SaveLines() }
+   ::bOnPreSaveDetail   := {|| ::SaveLines() }
 
 RETURN ( Self )
 

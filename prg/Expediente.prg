@@ -561,8 +561,9 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
+      
       ::oDbf:Activate( .f., !lExclusive )
 
       ::OpenDetails()
@@ -620,7 +621,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -631,16 +632,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      ::CloseService()
       lOpen             := .f.
+      
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      
+      ::CloseService()
 
    END SEQUENCE
 
@@ -657,8 +660,6 @@ METHOD CloseService()
    end if
 
    ::oDbf   := nil
-
-   ::CloseDetails()
 
 RETURN ( .t. )
 
@@ -734,42 +735,44 @@ RETURN ( .t. )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "ExpCab.Dbf" CLASS "ExpCab" ALIAS "ExpCab" PATH ( cPath ) VIA ( cDriver ) COMMENT "Expediente de producción"
+   DEFINE DATABASE oDbf FILE "ExpCab.Dbf" CLASS "ExpCab" ALIAS "ExpCab" PATH ( cPath ) VIA ( cDriver ) COMMENT "Expediente de producción"
 
-      FIELD NAME "cSerExp" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                                                                       OF ::oDbf
-      FIELD NAME "nNumExp" TYPE "N" LEN 09  DEC 0 COMMENT "Número"                                                                      OF ::oDbf
-      FIELD NAME "cSufExp" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                                                                      OF ::oDbf
-      FIELD NAME "lExpEnd" TYPE "L" LEN 01  DEC 0 COMMENT "Expediente finalizado"   HIDE                                                OF ::oDbf
-      FIELD NAME "dFecOrd" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                                                                OF ::oDbf
-      FIELD NAME "cHorOrd" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de inicio"          PICTURE "@R 99:99"                                  OF ::oDbf
-      FIELD NAME "dFecVto" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha vencimiento"                                                           OF ::oDbf
-      FIELD NAME "cHorVto" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de vencimiento"     PICTURE "@R 99:99"                                  OF ::oDbf
-      FIELD NAME "cCodCli" TYPE "C" LEN 12  DEC 0 COMMENT "Cliente"                                                                     OF ::oDbf
-      FIELD NAME "cNomCli" TYPE "C" LEN 80  DEC 0 COMMENT "Nombre cliente"                                                              OF ::oDbf
-      FIELD NAME "cCodTip" TYPE "C" LEN 03  DEC 0 COMMENT "Código tipo expediente"                                                      OF ::oDbf
-      FIELD NAME "cCodSub" TYPE "C" LEN 03  DEC 0 COMMENT "Código subtipo expediente"                                                   OF ::oDbf
-      FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                                                                     OF ::oDbf
-      FIELD NAME "cCodCol" TYPE "C" LEN 03  DEC 0 COMMENT "Colaborador"                                                                 OF ::oDbf
-      FIELD NAME "cCodTra" TYPE "C" LEN 05  DEC 0 COMMENT "Operario"                                                                    OF ::oDbf
-      FIELD NAME "cCodEnt" TYPE "C" LEN 03  DEC 0 COMMENT "Entidad"                                                                     OF ::oDbf
-      FIELD NAME "dFecAsg" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha de asignación"                                                         OF ::oDbf
+      FIELD NAME "cSerExp" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                                                                       OF oDbf
+      FIELD NAME "nNumExp" TYPE "N" LEN 09  DEC 0 COMMENT "Número"                                                                      OF oDbf
+      FIELD NAME "cSufExp" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                                                                      OF oDbf
+      FIELD NAME "lExpEnd" TYPE "L" LEN 01  DEC 0 COMMENT "Expediente finalizado"   HIDE                                                OF oDbf
+      FIELD NAME "dFecOrd" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                                                                OF oDbf
+      FIELD NAME "cHorOrd" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de inicio"          PICTURE "@R 99:99"                                  OF oDbf
+      FIELD NAME "dFecVto" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha vencimiento"                                                           OF oDbf
+      FIELD NAME "cHorVto" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de vencimiento"     PICTURE "@R 99:99"                                  OF oDbf
+      FIELD NAME "cCodCli" TYPE "C" LEN 12  DEC 0 COMMENT "Cliente"                                                                     OF oDbf
+      FIELD NAME "cNomCli" TYPE "C" LEN 80  DEC 0 COMMENT "Nombre cliente"                                                              OF oDbf
+      FIELD NAME "cCodTip" TYPE "C" LEN 03  DEC 0 COMMENT "Código tipo expediente"                                                      OF oDbf
+      FIELD NAME "cCodSub" TYPE "C" LEN 03  DEC 0 COMMENT "Código subtipo expediente"                                                   OF oDbf
+      FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                                                                     OF oDbf
+      FIELD NAME "cCodCol" TYPE "C" LEN 03  DEC 0 COMMENT "Colaborador"                                                                 OF oDbf
+      FIELD NAME "cCodTra" TYPE "C" LEN 05  DEC 0 COMMENT "Operario"                                                                    OF oDbf
+      FIELD NAME "cCodEnt" TYPE "C" LEN 03  DEC 0 COMMENT "Entidad"                                                                     OF oDbf
+      FIELD NAME "dFecAsg" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha de asignación"                                                         OF oDbf
 
-      INDEX TO "ExpCab.Cdx" TAG "cNumExp" ON "cSerExp + Str( nNumExp, 9 ) + cSufExp"   COMMENT "Número"           NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "dFecOrd" ON "dFecOrd"                                 COMMENT "Fecha inicio"     NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cCodCli" ON "cCodCli"                                 COMMENT "Cliente"          NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cNomCli" ON "cNomCli"                                 COMMENT "Nombre cliente"   NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cCodTip" ON "cCodTip"                                 COMMENT "Tipo"             NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cCodSub" ON "cCodSub"                                 COMMENT "Subtipo"          NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cCodTra" ON "cCodTra"                                 COMMENT "Operario"         NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cCodEnt" ON "cCodEnt"                                 COMMENT "Entidad"          NODELETED             OF ::oDbf
-      INDEX TO "ExpCab.Cdx" TAG "cCodCol" ON "cCodCol"                                 COMMENT "Colaborador"      NODELETED             OF ::oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cNumExp" ON "cSerExp + Str( nNumExp, 9 ) + cSufExp"   COMMENT "Número"           NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "dFecOrd" ON "dFecOrd"                                 COMMENT "Fecha inicio"     NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cCodCli" ON "cCodCli"                                 COMMENT "Cliente"          NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cNomCli" ON "cNomCli"                                 COMMENT "Nombre cliente"   NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cCodTip" ON "cCodTip"                                 COMMENT "Tipo"             NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cCodSub" ON "cCodSub"                                 COMMENT "Subtipo"          NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cCodTra" ON "cCodTra"                                 COMMENT "Operario"         NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cCodEnt" ON "cCodEnt"                                 COMMENT "Entidad"          NODELETED             OF oDbf
+      INDEX TO "ExpCab.Cdx" TAG "cCodCol" ON "cCodCol"                                 COMMENT "Colaborador"      NODELETED             OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //---------------------------------------------------------------------------//
 

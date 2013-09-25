@@ -16,10 +16,10 @@ CLASS TOperarios FROM TMasDet
    DATA  lUltDef     INIT .f.
 
    METHOD OpenFiles( lExclusive )
-
-   // MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
-
    METHOD CloseFiles()
+
+   METHOD OpenService( lExclusive, cPath )
+   METHOD CloseService()
 
    METHOD DefineFiles()
 
@@ -48,7 +48,7 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
@@ -68,9 +68,11 @@ METHOD OpenFiles( lExclusive )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
-      ::CloseFiles()
       lOpen          := .f.
+      
+      ::CloseFiles()
+      
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -104,36 +106,83 @@ RETURN .t.
 
 //----------------------------------------------------------------------------//
 
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER
+
+      lOpen             := .f.
+
+      ::CloseService()
+
+      msgStop( "Imposible abrir todas las bases de datos de detalle de operarios" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseService()
+
+   if ::oDbf != nil .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   ::oDbf               := nil
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
 METHOD DefineFiles( cPath, cDriver )
+
+   local oDbf
 
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "OpeT.Dbf" CLASS "Operario" ALIAS "Operario" PATH ( cPath ) VIA ( cDriver ) COMMENT "Operarios"
+   DEFINE TABLE oDbf FILE "OpeT.Dbf" CLASS "Operario" ALIAS "Operario" PATH ( cPath ) VIA ( cDriver ) COMMENT "Operarios"
 
-      FIELD NAME "cCodTra"    TYPE "C" LEN  5  DEC 0 COMMENT "Código"                  COLSIZE 60   OF ::oDbf
-      FIELD NAME "cNomTra"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"                  COLSIZE 300  OF ::oDbf
-      FIELD NAME "cCodSec"    TYPE "C" LEN  3  DEC 0 COMMENT "Sección"                 COLSIZE 60   OF ::oDbf
-      FIELD NAME "cDivTra"    TYPE "C" LEN  3  DEC 0 COMMENT "Divisa"                  HIDE         OF ::oDbf
-      FIELD NAME "cDirTra"    TYPE "C" LEN 50  DEC 0 COMMENT "Domicilio"               HIDE         OF ::oDbf
-      FIELD NAME "cCdpTra"    TYPE "C" LEN  7  DEC 0 COMMENT "Código postal"           HIDE         OF ::oDbf
-      FIELD NAME "cPobTra"    TYPE "C" LEN 25  DEC 0 COMMENT "Población"               HIDE         OF ::oDbf
-      FIELD NAME "cPrvTra"    TYPE "C" LEN 20  DEC 0 COMMENT "Provincia"               HIDE         OF ::oDbf
-      FIELD NAME "cTlfTra"    TYPE "C" LEN 12  DEC 0 COMMENT "Teléfono"                HIDE         OF ::oDbf
-      FIELD NAME "cMovTra"    TYPE "C" LEN 12  DEC 0 COMMENT "Móvil"                   HIDE         OF ::oDbf
-      FIELD NAME "nCosNom"    TYPE "N" LEN 16  DEC 6 COMMENT "Nómina Mes"              HIDE         OF ::oDbf
-      FIELD NAME "nCosSSSS"   TYPE "N" LEN 16  DEC 6 COMMENT "Seg. Social Mes"         HIDE         OF ::oDbf
-      FIELD NAME "nPagas"     TYPE "N" LEN  3  DEC 0 COMMENT "Pagas Año"               HIDE         OF ::oDbf
-      FIELD NAME "nDiaPro"    TYPE "N" LEN  5  DEC 0 COMMENT "Dias producctivos"       HIDE         OF ::oDbf
-      FIELD NAME "nHorDia"    TYPE "N" LEN 16  DEC 6 COMMENT "Horas por día"           HIDE         OF ::oDbf
+      FIELD NAME "cCodTra"    TYPE "C" LEN  5  DEC 0 COMMENT "Código"                  COLSIZE 60   OF oDbf
+      FIELD NAME "cNomTra"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"                  COLSIZE 300  OF oDbf
+      FIELD NAME "cCodSec"    TYPE "C" LEN  3  DEC 0 COMMENT "Sección"                 COLSIZE 60   OF oDbf
+      FIELD NAME "cDivTra"    TYPE "C" LEN  3  DEC 0 COMMENT "Divisa"                  HIDE         OF oDbf
+      FIELD NAME "cDirTra"    TYPE "C" LEN 50  DEC 0 COMMENT "Domicilio"               HIDE         OF oDbf
+      FIELD NAME "cCdpTra"    TYPE "C" LEN  7  DEC 0 COMMENT "Código postal"           HIDE         OF oDbf
+      FIELD NAME "cPobTra"    TYPE "C" LEN 25  DEC 0 COMMENT "Población"               HIDE         OF oDbf
+      FIELD NAME "cPrvTra"    TYPE "C" LEN 20  DEC 0 COMMENT "Provincia"               HIDE         OF oDbf
+      FIELD NAME "cTlfTra"    TYPE "C" LEN 12  DEC 0 COMMENT "Teléfono"                HIDE         OF oDbf
+      FIELD NAME "cMovTra"    TYPE "C" LEN 12  DEC 0 COMMENT "Móvil"                   HIDE         OF oDbf
+      FIELD NAME "nCosNom"    TYPE "N" LEN 16  DEC 6 COMMENT "Nómina Mes"              HIDE         OF oDbf
+      FIELD NAME "nCosSSSS"   TYPE "N" LEN 16  DEC 6 COMMENT "Seg. Social Mes"         HIDE         OF oDbf
+      FIELD NAME "nPagas"     TYPE "N" LEN  3  DEC 0 COMMENT "Pagas Año"               HIDE         OF oDbf
+      FIELD NAME "nDiaPro"    TYPE "N" LEN  5  DEC 0 COMMENT "Dias producctivos"       HIDE         OF oDbf
+      FIELD NAME "nHorDia"    TYPE "N" LEN 16  DEC 6 COMMENT "Horas por día"           HIDE         OF oDbf
 
-      INDEX TO "OpeT.Cdx" TAG "cCodTra" ON "cCodTra" COMMENT "Código"   NODELETED OF ::oDbf
-      INDEX TO "OpeT.Cdx" TAG "cNomTra" ON "cNomTra" COMMENT "Nombre"   NODELETED OF ::oDbf
-      INDEX TO "OpeT.Cdx" TAG "cCodSec" ON "cCodSec" COMMENT "Sección"  NODELETED OF ::oDbf
+      INDEX TO "OpeT.Cdx" TAG "cCodTra" ON "cCodTra" COMMENT "Código"   NODELETED OF oDbf
+      INDEX TO "OpeT.Cdx" TAG "cNomTra" ON "cNomTra" COMMENT "Nombre"   NODELETED OF oDbf
+      INDEX TO "OpeT.Cdx" TAG "cCodSec" ON "cCodSec" COMMENT "Sección"  NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

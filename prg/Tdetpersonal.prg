@@ -17,11 +17,11 @@ CLASS TDetPersonal FROM TDet
 
    DATA  lAppendTrabajador             INIT  .f.
 
+   METHOD New( cPath, oParent )  
+   
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
-
    METHOD CloseFiles()
 
    METHOD Resource( nMode, lLiteral )
@@ -45,6 +45,20 @@ CLASS TDetPersonal FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) 
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+   ::bOnPreDelete       := {|| ::DeleteDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
@@ -83,7 +97,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetPersonal
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetPersonal
 
    local lOpen          := .t.
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -92,20 +106,19 @@ METHOD OpenFiles( lExclusive ) CLASS TDetPersonal
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !lExclusive )
-
-   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
-   ::bOnPreDelete       := {|| ::DeleteDetails() }
+      ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
+
       ::CloseFiles()
-      lOpen          := .f.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 

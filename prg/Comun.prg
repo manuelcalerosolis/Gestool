@@ -930,6 +930,7 @@ Function mkReport( cPath, lAppend, cPathOld, oMeter )
 	END IF
 
    CreateDbfReport( cPath )
+   
    rxReport( cPath, oMeter )
 
    if lAppend .and. lIsDir( cPathOld )

@@ -10,7 +10,6 @@ CLASS TSeccion FROM TMant
    DATA  cBitmap  INIT clrTopProduccion
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD DefineFiles()
 
@@ -22,7 +21,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -32,16 +31,18 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
+      
       ::CloseFiles()
-      lOpen          := .f.
+      
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -53,20 +54,22 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "Seccion.Dbf" CLASS "Seccion" ALIAS "Seccion" PATH ( cPath ) VIA ( cDriver )COMMENT "Secciones"
+   DEFINE TABLE oDbf FILE "Seccion.Dbf" CLASS "Seccion" ALIAS "Seccion" PATH ( cPath ) VIA ( cDriver ) COMMENT "Secciones"
 
-      FIELD NAME "cCodSec"    TYPE "C" LEN  3  DEC 0 COMMENT "Código" COLSIZE 100   OF ::oDbf
-      FIELD NAME "cDesSec"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre" COLSIZE 400   OF ::oDbf
+      FIELD NAME "cCodSec"    TYPE "C" LEN  3  DEC 0 COMMENT "Código" COLSIZE 100   OF oDbf
+      FIELD NAME "cDesSec"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre" COLSIZE 400   OF oDbf
 
-      INDEX TO "Seccion.Cdx" TAG "cCodSec" ON "cCodSec" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "Seccion.Cdx" TAG "cDesSec" ON "cDesSec" COMMENT "Nombre" NODELETED OF ::oDbf
+      INDEX TO "Seccion.Cdx" TAG "cCodSec" ON "cCodSec" COMMENT "Código" NODELETED  OF oDbf
+      INDEX TO "Seccion.Cdx" TAG "cDesSec" ON "cDesSec" COMMENT "Nombre" NODELETED  OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

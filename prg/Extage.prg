@@ -1794,6 +1794,8 @@ FUNCTION mkExtAge( cPath, lAppend, cPathOld, oMeter )
 
    local dbfExtAgeT
 
+   DEFAULT lAppend   := .f.
+
 	IF oMeter != NIL
 		oMeter:cText	:= "Generando Bases"
 		sysrefresh()
@@ -1804,11 +1806,13 @@ FUNCTION mkExtAge( cPath, lAppend, cPathOld, oMeter )
    if lAppend .and. lIsDir( cPathOld )
 
       dbUseArea( .t., cDriver(), cPath + "ExtAgeT.DBF", cCheckArea( "ExtAgeT", @dbfExtAgeT ), .f. )
-      if !( dbfExtAget )->( neterr() )
+      if !( dbfExtAgeT )->( neterr() )
          ( dbfExtAgeT )->( __dbApp( cPathOld + "ExtAgeT.DBF" ) )
          ( dbfExtAgeT )->( dbCloseArea() )
+      end if
 
-         dbUseArea( .t., cDriver(), cPath + "ExtAgeL.DBF", cCheckArea( "ExtAgeL", @dbfExtAgeT ), .f. )
+      dbUseArea( .t., cDriver(), cPath + "ExtAgeL.DBF", cCheckArea( "ExtAgeL", @dbfExtAgeT ), .f. )
+      if !( dbfExtAgeT )->( neterr() )
          ( dbfExtAgeT )->( __dbApp( cPathOld + "ExtAgeL.DBF" ) )
          ( dbfExtAgeT )->( dbCloseArea() )
       end if
@@ -2004,8 +2008,13 @@ RETURN NIL
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   dbCreate( cPath + "EXTAGET.DBF", aSqlStruct( aItmExtAge() ), cDriver() )
-   dbCreate( cPath + "EXTAGEL.DBF", aSqlStruct( aColExtAge() ), cDriver() )
+   if !lExistTable( cPath + "EXTAGET.DBF" )
+      dbCreate( cPath + "EXTAGET.DBF", aSqlStruct( aItmExtAge() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "EXTAGEL.DBF" )
+      dbCreate( cPath + "EXTAGEL.DBF", aSqlStruct( aColExtAge() ), cDriver() )
+   end if
 
 RETURN NIL
 

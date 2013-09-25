@@ -39,12 +39,12 @@ CLASS TDetProduccion FROM TDet
 
    DATA  oDbfSeries
 
+   METHOD New( cPath, oParent )
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()
-
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD Resource( nMode, lLiteral )
    METHOD SetDialogMode()
@@ -80,6 +80,20 @@ CLASS TDetProduccion FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) CLASS TDetProduccion
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+   ::bOnPreDelete       := {|| ::DeleteDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
 
@@ -129,7 +143,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetProduccion
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetProduccion
 
    local lOpen             := .t.
    local oBlock
@@ -140,26 +154,22 @@ METHOD OpenFiles( lExclusive ) CLASS TDetProduccion
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::bOnPreSaveDetail   := {|| ::SaveDetails() }
-      ::bOnPreDelete       := {|| ::DeleteDetails() }
-
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
       lOpen                := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 
@@ -169,8 +179,9 @@ METHOD CloseFiles() CLASS TDetProduccion
 
    if ::oDbf != nil .and. ::oDbf:Used()
       ::oDbf:End()
-      ::oDbf               := nil
    end if
+
+   ::oDbf                  := nil
 
 RETURN .t.
 
@@ -967,6 +978,8 @@ RETURN ( nTotUnd )
 
 CLASS TDetSeriesProduccion FROM TDet
 
+   METHOD New( cPath, oParent )
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -981,6 +994,19 @@ CLASS TDetSeriesProduccion FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) CLASS TDetSeriesProduccion
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetSeriesProduccion
 
@@ -1018,7 +1044,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetSeriesProduccion
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetSeriesProduccion
 
    local lOpen             := .t.
    local oBlock
@@ -1029,25 +1055,22 @@ METHOD OpenFiles( lExclusive ) CLASS TDetSeriesProduccion
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::bOnPreSaveDetail   := {|| ::SaveDetails() }
-
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
       lOpen                := .f.
+
+      ::CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 
@@ -1057,8 +1080,9 @@ METHOD CloseFiles() CLASS TDetSeriesProduccion
 
    if ::oDbf != nil .and. ::oDbf:Used()
       ::oDbf:End()
-      ::oDbf         := nil
    end if
+
+   ::oDbf                  := nil
 
 RETURN .t.
 
@@ -1074,7 +1098,6 @@ METHOD SaveDetails() CLASS TDetSeriesProduccion
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
-
 
 METHOD Resource( nMode ) CLASS TDetSeriesProduccion
 

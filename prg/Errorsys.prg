@@ -57,7 +57,7 @@ Function DefError( oError )
       cMessage += " (DOS Error " + LTrim( Str( oError:OsCode ) ) + ") "
    EndIf
 
-   i := 2
+   i := 1
 
    Do While !Empty( ProcName( i ) )
 
@@ -146,7 +146,11 @@ Function ErrorMessage( oError )
    ElseIf !Empty( oError:Operation )
       cMessage    += ": " + oError:Operation
    EndIf
-
+/*
+   If ValType( oError:ProcLine ) == "N"
+      cMessage    += "  " + LTrim( Str( oError:ProcLine ) )
+   EndIf
+*/
    Do While !Empty( ProcName( i ) )
       cMessage    += Chr( 13 ) + Chr( 10 ) + "Llamado desde " + Trim( ProcName( i ) ) + "(" + LTrim( Str( ProcLine( i ) ) ) + ")"
       i++

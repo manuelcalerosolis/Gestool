@@ -1,12 +1,6 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "TDbfVirt.ch"
-   #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
+#include "TDbfVirt.ch"
+#include "Xbrowse.ch"
 #include "Factu.ch"
 #include "MesDbf.ch"
 
@@ -77,28 +71,17 @@ CLASS TOrdCarga FROM TMasDet
    METHOD DefineFiles()
 
    METHOD OpenFiles()
-
    METHOD CloseFiles()
-
-   METHOD OpenService( lExclusive )
 
    METHOD Resource( nMode )
 
    METHOD Activate()
-
-#ifndef __PDA__
 
    METHOD Report()         INLINE   TInfOrdCar():New( "Ordenes de carga", , , , , , { ::oDbf, ::oDetOrdCar:oDbf } ):Play()
 
    METHOD EdtRotor( oDlg )
 
    METHOD ImpAlbCli()
-
-#else
-
-   METHOD PdaActivate()
-
-#endif
 
    METHOD OpenError()      INLINE   ( MsgStop( "Proceso en uso por otro usuario", "Abrir fichero" ), .f. )
 
@@ -133,11 +116,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
 
-#ifndef __PDA__
    ::oTrans                := TTrans():New( cPath )
-#else
-   ::oTrans                := TTrans():New( cPatCli() )
-#endif
 
    ::oBmp                  := LoadBitmap( 0, 32760 )
    ::dFecIni               := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
@@ -150,15 +129,9 @@ METHOD New( cPath, oMenuItem, oWndParent )
 
    ::bOnPreDelete          := {|| ::RollBackAlbCli()  }
 
-#ifndef __PDA__
    ::bOnPostAppendDetail   := {|| ::oBrwDet:Refresh(), ::nPesOrdVir() }
    ::bOnPostEditDetail     := {|| ::oBrwDet:Refresh(), ::nPesOrdVir() }
    ::bOnPostDeleteDetail   := {|| ::oBrwDet:Refresh(), ::nPesOrdVir() }
-#else
-   ::bOnPostAppendDetail   := {|| ::oBrwDet:Refresh() }
-   ::bOnPostEditDetail     := {|| ::oBrwDet:Refresh() }
-   ::bOnPostDeleteDetail   := {|| ::oBrwDet:Refresh() }
-#endif
 
    ::oDetOrdCar            := TDetOrdCar():New( cPath, Self )
 
@@ -211,205 +184,39 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-#ifdef __PDA__
-
-METHOD PdaActivate()
-
-   local oBrw
-   local oDlg
-   local oFont
-   local oBtn
-   local oSayTit
-   local uGet1
-   local cGet1       := ""
-   local nOrdAnt     := GetBrwOpt( "BrwOrdCar" )
-   local oCbxOrd
-   local aCbxOrd     := { "Número", "Fecha", "Transportista" }
-   local cCbxOrd     := "Número"
-   local oThis       := Self
-
-   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrdAnt ]
-
-   if nAnd( ::nLevel, 1 ) == 0
-
-      if !::OpenFiles()
-         return nil
-      end if
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar clientes"
-
-         REDEFINE SAY oSayTit ;
-            VAR      "Órdenes de carga" ;
-            ID       110 ;
-            COLOR    "N/W*" ;
-            FONT     oFont ;
-            OF       oDlg
-
-         REDEFINE BTNBMP oBtn ;
-            ID       100 ;
-            OF       oDlg ;
-            FILE     ( cPatBmp() + "truck_blue_16.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( nil )
-
-         oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE GET uGet1 VAR cGet1;
-            ID       104 ;
-            BITMAP   "FIND" ;
-            OF       oDlg
-
-            uGet1:bChange   := {|nKey, nFlags| AutoSeek( nKey, nFlags, uGet1, oBrw, ::oDbf:cAlias, .t. ) }
-            uGet1:bValid    := {|| OrdClearScope( oBrw, ::oDbf:cAlias ), oBrw:Refresh(), .t. }
-
-         REDEFINE COMBOBOX oCbxOrd ;
-            VAR      cCbxOrd ;
-            ID       102 ;
-            ITEMS    aCbxOrd ;
-            OF       oDlg
-
-            oCbxOrd:bChange := {|| ::oDbf:OrdSetFocus( oCbxOrd:nAt ), ::oDbf:GoTop(), oBrw:refresh(), uGet1:SetFocus(), oCbxOrd:refresh() }
-
-         REDEFINE IBROWSE oBrw ;
-            FIELDS   AllTrim( Str( ::oDbf:nNumOrd ) ) + "/" + ::oDbf:cSufOrd + CRLF + Dtoc( ::oDbf:dFecOrd ),;
-                     ::oDbf:cCodTrn + CRLF + ::oTrans:cNombre( ::oDbf:cCodTrn ) ,;
-                     ::oDbf:cCodAge + CRLF + AllTrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, "cNbrAge" ) ) + Space(1) + AllTrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, "cApeAge" ) ) ;
-            HEAD     "Número" + CRLF + "Fecha",;
-                     "Transportista",;
-                     "Agente" ;
-            FIELDSIZES ;
-                     100,;
-                     200,;
-                     200 ;
-            JUSTIFY  .f.,;
-                     .f.,;
-                     .f. ;
-            ALIAS    ( ::oDbf:cAlias ) ;
-            ID       105 ;
-            OF       oDlg
-
-      ACTIVATE DIALOG oDlg ;
-         ON INIT ( oDlg:SetMenu( PdaBuildMenu( oDlg, oThis, oBrw ) ) )
-
-      /*
-      Guardo los campos del browse
-      */
-
-      oBrw:CloseData()
-      ::CloseFiles()
-
-      //Restauramos la ventana---------------------------------------------------
-
-      oWnd():Show()
-
-   else
-
-      msgStop( "Acceso no permitido." )
-
-   end if
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-static function PdaBuildMenu( oDlg, oThis, oBrw )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 500 ;
-      BITMAPS  60 ; // bitmaps resoruces ID
-      IMAGES   6    // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 510 OF oMenu ACTION ( oThis:Append( oBrw ) )
-
-      REDEFINE MENUITEM ID 520 OF oMenu ACTION ( oThis:Edit( oBrw ) )
-
-      REDEFINE MENUITEM ID 530 OF oMenu ACTION ( oThis:Del( oBrw ) )
-
-      REDEFINE MENUITEM ID 540 OF oMenu ACTION ( oThis:Zoom( oBrw ) )
-
-      REDEFINE MENUITEM ID 550 OF oMenu ACTION ( msginfo( "Imprimir" ), oBrw:Refresh() )
-
-      REDEFINE MENUITEM ID 560 OF oMenu ACTION ( oDlg:End() )
-
-RETURN oMenu
-
-#endif
-
-//----------------------------------------------------------------------------//
-
-#ifndef __PDA__
-
 METHOD DefineFiles( cPath, cDriver )
+
+   local oDbf
 
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "ORDCARP.DBF" CLASS "ORDCARP" ALIAS "ORDCARP" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Ordenes de carga"
+   DEFINE DATABASE oDbf FILE "ORDCARP.DBF" CLASS "ORDCARP" ALIAS "ORDCARP" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Ordenes de carga"
 
-   FIELD CALCULATE NAME "bSndInt"   LEN  14 DEC  0                      COMMENT { "Enviar", "Lbl16" , 3 }        VAL {|| ::oDbf:lSndInt } BITMAPS "Sel16", "Nil16"          COLSIZE 20       OF ::oDbf
-   FIELD NAME "nNumOrd"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT ""                                                                                     HIDE OF ::oDbf
-   FIELD NAME "cSufOrd"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT ""                                                                                     HIDE OF ::oDbf
-   FIELD CALCULATE NAME "cNumOrd"   LEN  12 DEC  0                      COMMENT "Número"        VAL ( Str( ::oDbf:nNumOrd ) + "/" + ::oDbf:cSufOrd )       COLSIZE  80      OF ::oDbf
-   FIELD NAME "dFecOrd"    TYPE "D" LEN   8 DEC  0                      COMMENT "Fecha"                                                                    COLSIZE  80      OF ::oDbf
-   FIELD NAME "cCodTrn"    TYPE "C" LEN   9 DEC  0 PICTURE "@!"         COMMENT "Código"                                                                   COLSIZE  60      OF ::oDbf
-   FIELD CALCULATE NAME "cNomTrn"   LEN  50 DEC  0                      COMMENT "Transportista" VAL ( if( !Empty( ::oTrans ), ::oTrans:cNombre( ::oDbf:cCodTrn ), "" ) ) COLSIZE 200 OF ::oDbf
-   FIELD NAME "nKgsTrn"    TYPE "N" LEN  16 DEC  6 PICTURE MasUnd()     COMMENT "TARA"          ALIGN RIGHT                                                COLSIZE  80      OF ::oDbf
-   FIELD NAME "cRetPor"    TYPE "C" LEN 100 DEC  0                      COMMENT "Retirado por"                                                             COLSIZE 120      OF ::oDbf
-   FIELD NAME "cRetMat"    TYPE "C" LEN  20 DEC  0 PICTURE "@!"         COMMENT "Matrícula"                                                                COLSIZE 100      OF ::oDbf
-   FIELD NAME "nBultos"    TYPE "N" LEN   3 DEC  0 PICTURE "999"        COMMENT "Bultos"        ALIGN RIGHT                                                COLSIZE  50      OF ::oDbf
-   FIELD NAME "cCodAge"    TYPE "C" LEN   3 DEC  0 PICTURE "@!"         COMMENT "Cod. agente"                                                              COLSIZE  50 HIDE OF ::oDbf
-   FIELD NAME "lSndInt"    TYPE "L" LEN   1 DEC  0                      COMMENT ""                                                                                     HIDE OF ::oDbf
-   FIELD NAME "lRegula"    TYPE "L" LEN   1 DEC  0                      COMMENT ""                                                                                     HIDE OF ::oDbf
+   FIELD CALCULATE NAME "bSndInt"   LEN  14 DEC  0                      COMMENT { "Enviar", "Lbl16" , 3 }        VAL {|| oDbf:lSndInt } BITMAPS "Sel16", "Nil16"          COLSIZE 20       OF oDbf
+   FIELD NAME "nNumOrd"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT ""                                                                                     HIDE OF oDbf
+   FIELD NAME "cSufOrd"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT ""                                                                                     HIDE OF oDbf
+   FIELD CALCULATE NAME "cNumOrd"   LEN  12 DEC  0                      COMMENT "Número"        VAL ( Str( oDbf:nNumOrd ) + "/" + oDbf:cSufOrd )           COLSIZE  80      OF oDbf
+   FIELD NAME "dFecOrd"    TYPE "D" LEN   8 DEC  0                      COMMENT "Fecha"                                                                    COLSIZE  80      OF oDbf
+   FIELD NAME "cCodTrn"    TYPE "C" LEN   9 DEC  0 PICTURE "@!"         COMMENT "Código"                                                                   COLSIZE  60      OF oDbf
+   FIELD CALCULATE NAME "cNomTrn"   LEN  50 DEC  0                      COMMENT "Transportista" VAL ( if( !Empty( ::oTrans ), ::oTrans:cNombre( oDbf:cCodTrn ), "" ) ) COLSIZE 200 OF oDbf
+   FIELD NAME "nKgsTrn"    TYPE "N" LEN  16 DEC  6 PICTURE MasUnd()     COMMENT "TARA"          ALIGN RIGHT                                                COLSIZE  80      OF oDbf
+   FIELD NAME "cRetPor"    TYPE "C" LEN 100 DEC  0                      COMMENT "Retirado por"                                                             COLSIZE 120      OF oDbf
+   FIELD NAME "cRetMat"    TYPE "C" LEN  20 DEC  0 PICTURE "@!"         COMMENT "Matrícula"                                                                COLSIZE 100      OF oDbf
+   FIELD NAME "nBultos"    TYPE "N" LEN   3 DEC  0 PICTURE "999"        COMMENT "Bultos"        ALIGN RIGHT                                                COLSIZE  50      OF oDbf
+   FIELD NAME "cCodAge"    TYPE "C" LEN   3 DEC  0 PICTURE "@!"         COMMENT "Cod. agente"                                                              COLSIZE  50 HIDE OF oDbf
+   FIELD NAME "lSndInt"    TYPE "L" LEN   1 DEC  0                      COMMENT ""                                                                                     HIDE OF oDbf
+   FIELD NAME "lRegula"    TYPE "L" LEN   1 DEC  0                      COMMENT ""                                                                                     HIDE OF oDbf
 
-   INDEX TO "OrdCarP.Cdx" TAG "nNumOrd"  ON "Str( nNumOrd ) + cSufOrd"  COMMENT "Número"        NODELETED OF ::oDbf
-   INDEX TO "OrdCarP.Cdx" TAG "dFecOrd"  ON "dFecOrd"                   COMMENT "Fecha"         NODELETED OF ::oDbf
-   INDEX TO "OrdCarP.Cdx" TAG "cCodTrn"  ON "cCodTrn"                   COMMENT "Transportista" NODELETED OF ::oDbf
+   INDEX TO "OrdCarP.Cdx" TAG "nNumOrd"  ON "Str( nNumOrd ) + cSufOrd"  COMMENT "Número"        NODELETED OF oDbf
+   INDEX TO "OrdCarP.Cdx" TAG "dFecOrd"  ON "dFecOrd"                   COMMENT "Fecha"         NODELETED OF oDbf
+   INDEX TO "OrdCarP.Cdx" TAG "cCodTrn"  ON "cCodTrn"                   COMMENT "Transportista" NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-   ::oDbf:bOpenError := { || ::OpenError() }
+   oDbf:bOpenError := { || ::OpenError() }
 
-RETURN ( ::oDbf )
-
-#else
-
-//---------------------------------------------------------------------------//
-
-METHOD DefineFiles( cPath, cDriver )
-
-   DEFAULT cPath        := ::cPath
-
-   DEFINE DATABASE ::oDbf FILE "ORDCARP.DBF" CLASS "ORDCARP" ALIAS "ORDCARP" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Ordenes de carga"
-
-   FIELD NAME "nNumOrd"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT ""                                                                                     HIDE OF ::oDbf
-   FIELD NAME "cSufOrd"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT ""                                                                                     HIDE OF ::oDbf
-   FIELD NAME "dFecOrd"    TYPE "D" LEN   8 DEC  0                      COMMENT "Fecha"                                                                    COLSIZE  80      OF ::oDbf
-   FIELD NAME "cCodTrn"    TYPE "C" LEN   9 DEC  0 PICTURE "@!"         COMMENT "Código"                                                                   COLSIZE  60      OF ::oDbf
-   FIELD NAME "nKgsTrn"    TYPE "N" LEN  16 DEC  6 PICTURE MasUnd()     COMMENT "TARA"          ALIGN RIGHT                                                COLSIZE  80      OF ::oDbf
-   FIELD NAME "cRetPor"    TYPE "C" LEN 100 DEC  0                      COMMENT "Retirado por"                                                             COLSIZE 120      OF ::oDbf
-   FIELD NAME "cRetMat"    TYPE "C" LEN  20 DEC  0 PICTURE "@!"         COMMENT "Matrícula"                                                                COLSIZE 100      OF ::oDbf
-   FIELD NAME "nBultos"    TYPE "N" LEN   3 DEC  0 PICTURE "999"        COMMENT "Bultos"        ALIGN RIGHT                                                COLSIZE  50      OF ::oDbf
-   FIELD NAME "cCodAge"    TYPE "C" LEN   3 DEC  0 PICTURE "@!"         COMMENT "Cod. agente"                                                              COLSIZE  50 HIDE OF ::oDbf
-   FIELD NAME "lSndInt"    TYPE "L" LEN   1 DEC  0                      COMMENT ""                                                                                     HIDE OF ::oDbf
-   FIELD NAME "lRegula"    TYPE "L" LEN   1 DEC  0                      COMMENT ""                                                                                     HIDE OF ::oDbf
-
-   INDEX TO "OrdCarP.Cdx" TAG "nNumOrd"  ON "Str( nNumOrd ) + cSufOrd"  COMMENT "Número"        NODELETED OF ::oDbf
-   INDEX TO "OrdCarP.Cdx" TAG "dFecOrd"  ON "dFecOrd"                   COMMENT "Fecha"         NODELETED OF ::oDbf
-   INDEX TO "OrdCarP.Cdx" TAG "cCodTrn"  ON "cCodTrn"                   COMMENT "Transportista" NODELETED OF ::oDbf
-
-   END DATABASE ::oDbf
-
-   ::oDbf:bOpenError := { || ::OpenError() }
-
-RETURN ( ::oDbf )
-
-
-#endif
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 
@@ -551,42 +358,6 @@ METHOD CloseFiles()
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive )
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lExclusive   := .f.
-
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::DefineFiles()
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseService()
-   end if
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 METHOD Resource( nMode )
 
@@ -846,174 +617,7 @@ METHOD Resource( nMode )
 
 RETURN ( oDlg:nResult == IDOK )
 
-#else
-
 //---------------------------------------------------------------------------//
-
-METHOD Resource( nMode )
-
-   local oDlg
-   local oFld
-   local oThis          := Self
-   local oGetAge
-   local oGetTrn
-   local oSayAge
-   local oSatTrn
-   local cSayAge
-   local cSayTrn
-   local aBtn           := array(4)
-
-   if nMode == APPD_MODE
-      ::oDbf:dFecOrd    := Date()
-      ::oDbf:cSufOrd    := cSufPda()
-      ::oDbf:nBultos    := 0
-      ::oDbf:cCodAge    := Padr( cCodAge(), 3, Space( 1 ) )
-      ::oDbf:cCodTrn    := Padr( cCodTra(), 9, Space( 1 ) )
-      ::oDbf:lRegula    := .t.
-   end if
-
-   cSayAge              := cNbrAgent( ::oDbf:cCodAge, ::oDbfAge:cAlias )
-   cSayTrn              := ::oTrans:cNombre( ::oDbf:cCodTrn )
-
-   DEFINE DIALOG oDlg RESOURCE "ORDCAR_PDA"
-
-   REDEFINE FOLDER oFld ;
-      ID          100 ;
-      OF          oDlg ;
-      PROMPT      "Orden",           "Líneas" ;
-      DIALOGS     "ORDCAR_PDA1",     "ORDCAR_PDA2"
-
-      REDEFINE GET ::oDbf:nNumOrd ;
-         ID       110 ;
-         WHEN     ( .f. ) ;
-         PICTURE  "999999999" ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET ::oDbf:cSufOrd ;
-         ID       111 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET ::oDbf:dFecOrd ;
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGetAge VAR ::oDbf:cCodAge ;
-         ID       130 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oSayAge VAR cSayAge ;
-         ID       131 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGetTrn VAR ::oDbf:cCodTrn ;
-         ID       140 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oSayTrn VAR cSayTrn ;
-         ID       141 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET ::oDbf:nBultos ;
-         ID       150 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "999.99" ;
-         OF       oFld:aDialogs[1]
-
-      /*
-      Detalle------------------------------------------------------------------
-      */
-
-      REDEFINE BTNBMP aBtn[1];
-         ID       100 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "New16" ;
-         NOBORDER
-
-         aBtn[1]:SetColor( 0, nRGB( 255, 255, 255 )  )
-         aBtn[1]:bAction   := {|| ::oDetOrdCar:Append( oBrw ) }
-
-      REDEFINE BTNBMP aBtn[2];
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "Edit16" ;
-         NOBORDER
-
-         aBtn[2]:SetColor( 0, nRGB( 255, 255, 255 )  )
-         aBtn[2]:bAction   := {|| ::oDetOrdCar:Edit( oBrw ) }
-
-      REDEFINE BTNBMP aBtn[3];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "Del16" ;
-         NOBORDER
-
-         aBtn[3]:SetColor( 0, nRGB( 255, 255, 255 )  )
-         aBtn[3]:bAction   := {|| ::oDetOrdCar:Del( oBrw ) }
-
-      REDEFINE BTNBMP aBtn[4];
-         ID       130 ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "Zoom16" ;
-         NOBORDER
-
-         aBtn[4]:SetColor( 0, nRGB( 255, 255, 255 )  )
-         aBtn[4]:bAction   := {|| ::oDetOrdCar:Zoom( oBrw ) }
-
-      REDEFINE IBROWSE oBrw ;
-         FIELDS   AllTrim( ::oDetOrdCar:oDbfVir:cRef ) + CRLF + Alltrim( ::oDetOrdCar:oDbfVir:cDetalle ),;
-                  Trans( ::oDetOrdCar:oDbfVir:nUniOrd, MasUnd() );
-         HEAD     "Artículo",;
-                  "Und.";
-         FIELDSIZES ;
-                  170,;
-                  30 ;
-         JUSTIFY  .f.,;
-                  .t. ;
-         ALIAS    ( ::oDetOrdCar:oDbfVir:cAlias ) ;
-         ID       200 ;
-         OF       oFld:aDialogs[ 2 ]
-
-   ACTIVATE DIALOG oDlg ON INIT( oDlg:SetMenu( pdaMenuLinea( oDlg ) ) )
-
-   // Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuLinea( oDlg, oThis )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-   oDlg:SetMenu( oMenu )
-
-Return oMenu
-
-#endif
-
-//---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 METHOD EdtRotor( oDlg )
 
@@ -1040,8 +644,6 @@ METHOD EdtRotor( oDlg )
    oDlg:SetMenu( ::oMenu )
 
 RETURN ( ::oMenu )
-
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -1201,8 +803,6 @@ RETURN ( if( lPic, Trans( nPeso, MasUnd() ), nPeso ) )
 
 //----------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 METHOD ImpAlbCli()
 
 	local oDlg
@@ -1304,8 +904,6 @@ METHOD ImpAlbCli()
    ::nPesOrdVir()
 
 RETURN ( .t. )
-
-#endif
 
 //--------------------------------------------------------------------------//
 
@@ -1592,106 +1190,6 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-#ifdef __PDA__
-
-CLASS pdaOrdCarSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus ) CLASS pdaOrdCarSenderReciver
-
-   local pdaOrdCarT
-   local pdaOrdCarL
-   local pcOrdCarT
-   local pcOrdCarL
-   local lExist      := .f.
-   local cFileName
-
-   USE ( cPatEmp() + "OrdCarP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OrdCarP", @pdaOrdCarT ) )
-   SET ADSINDEX TO ( cPatEmp() + "OrdCarP.Cdx" ) ADDITIVE
-
-   USE ( cPatEmp() + "OrdCarL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OrdCarL", @pdaOrdCarL ) )
-   SET ADSINDEX TO ( cPatEmp() + "OrdCarL.Cdx" ) ADDITIVE
-
-   dbUseArea( .t., cDriver(), cPatPc() + "OrdCarP.Dbf", cCheckArea( "OrdCarP", @pcOrdCarT ), .t. )
-   ( pcOrdCarT )->( ordListAdd( cPatPc() + "OrdCarP.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatPc() + "OrdCarL.Dbf", cCheckArea( "OrdCarL", @pcOrdCarL ), .t. )
-   ( pcOrdCarL )->( ordListAdd( cPatPc() + "OrdCarL.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( pcOrdCarT )->( OrdKeyCount() ) )
-   end if
-
-   ( pcOrdCarT )->( dbGoTop() )
-
-   while !( pcOrdCarT )->( eof() )
-
-      if( pcOrdCarT )->lSndInt
-
-         if dbLock( pcOrdCarT )
-            ( pcOrdCarT )->lSndInt := .f.
-            ( pcOrdCarT )->( dbUnLock() )
-         end if
-
-         if ( pdaOrdCarT )->( dbSeek( Str( ( pcOrdCarT )->nNumOrd ) + ( pcOrdCarT )->cSufOrd ) )
-            dbPass( pcOrdCarT, pdaOrdCarT, .f. )
-         else
-            dbPass( pcOrdCarT, pdaOrdCarT, .t. )
-         end if
-
-         while ( pdaOrdCarL )->( dbSeek( Str( ( pcOrdCarT )->nNumOrd ) + ( pcOrdCarT )->cSufOrd ) )
-            if dbLock( pdaOrdCarL )
-               ( pdaOrdCarL )->( dbDelete() )
-               ( pdaOrdCarL )->( dbUnLock() )
-            endif
-         end while
-
-         if ( pcOrdCarL )->( dbSeek( Str( ( pcOrdCarT )->nNumOrd ) + ( pcOrdCarT )->cSufOrd ) )
-
-            while Str( ( pcOrdCarT )->nNumOrd ) + ( pcOrdCarT )->cSufOrd == Str( ( pcOrdCarL )->nNumOrd ) + ( pcOrdCarL )->cSufOrd .and. !( pcOrdCarL )->( eof() )
-
-               dbPass( pcOrdCarL, pdaOrdCarL, .t. )
-
-               ( pcOrdCarL )->( dbSkip() )
-
-            end while
-
-         end if
-
-      end if
-
-      ( pcOrdCarT )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando cabecera de órdenes de carga " + Alltrim( Str( ( pcOrdCarT )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pcOrdCarT )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( pcOrdCarT )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( pdaOrdCarT )
-   CLOSE ( pdaOrdCarL )
-   CLOSE ( pcOrdCarT  )
-   CLOSE ( pcOrdCarL  )
-
-Return ( Self )
-
-#endif
-
-//---------------------------------------------------------------------------//
-
 METHOD Enviar() CLASS TOrdCarga
 
    local nOrdCar
@@ -1709,514 +1207,6 @@ METHOD Enviar() CLASS TOrdCarga
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-#ifdef __PDA__
-
-static function pdaOpenFiles()
-
-   local lOpen       := .t.
-   local oError
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   BEGIN SEQUENCE
-
-   /*
-   Bases de datos necesarias para imprimir liquidaciones-----------------------
-   */
-
-      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-         lOpen       := .f.
-      else 
-         ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )      
-      end if
-
-      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
-      ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
-
-      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-         lOpen       := .f.
-      else 
-         ( dbfFacCliT )->( OrdSetFocus( "nNumFac" ) )
-      end if
-
-      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-      ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
-
-      USE ( cPatGrp() + "TRANSPOR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Transpor", @dbfTransport ) )
-      SET ADSINDEX TO ( cPatGrp() + "TRANSPOR.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Articulo", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      pdaCloseFiles()
-
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-static function pdaCloseFiles()
-
-   CLOSE( dbfAlbCliT   )
-   CLOSE( dbfAlbCliL   )
-   CLOSE( dbfFacCliT   )
-   CLOSE( dbfFacCliL   )
-   CLOSE( dbfTransport )
-   CLOSE( dbfArticulo  )
-   CLOSE( dbfHisMov    )
-
-   dbfAlbCliT     := nil
-   dbfAlbCliL     := nil
-   dbfFacCliT     := nil
-   dbfFacCliL     := nil
-   dbfTransport   := nil
-   dbfArticulo    := nil
-   dbfHisMov      := nil
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-function pdaEstado()
-
-   local oDlg
-   local oSayTit
-   local oBtn
-   local oFont
-
-   /*
-   Abrimos las tablas necesarias-----------------------------------------------
-   */
-
-   if !pdaOpenFiles()
-      Return ( .f. )
-   end if
-
-   /*
-   Comprobamos que el transportista no esté vacío------------------------------
-   */
-
-   if Empty( cCodTra() )
-      MsgStop( 'Transportista en cofiguración no puede estar vacío' )
-      Return ( .f. )
-   end if
-
-   /*
-   Creamos una tabla temporal--------------------------------------------------
-   */
-
-   if CreaTemporal()
-      Return( .f. )
-   end if
-
-   /*
-   Distintas cajas de dialogo--------------------------------------------------
-   */
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "ESTADO_PDA"
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "preferences_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Estado del camión" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE SAY oSayProgress ;
-         VAR      cSayProgress ;
-         ID       120 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      oPgrEstado   := TProgress():Redefine( 130, oDlg )
-      oPgrEstado:SetPos( 0 )
-      oPgrEstado:SetRange( 0, 3 )
-
-      REDEFINE IBROWSE oBrwEstado;
-         FIELDS   AllTrim( ( dbfTmpEstado )->cCodArt ) + CRLF + AllTrim( ( dbfTmpEstado )->cNomArt ),;
-                  Trans( ( dbfTmpEstado )->nStkArt, MasUnd() ),;
-                  "";
-         HEAD     "Artículo",;
-                  "Und.",;
-                  "";
-         FIELDSIZES ;
-                  187,;
-                  30,;
-                  0;
-         JUSTIFY  .f.,;
-                  .t.,;
-                  .f. ;
-         ALIAS    ( dbfTmpEstado ) ;
-         ID       140 ;
-         OF       oDlg
-
-   oDlg:bStart                := {|| CalculoEstado() }
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaEstadoMenu( oDlg, oBrwEstado ) ) )
-
-   /*
-   Cerramos las tablas y temporales--------------------------------------------
-   */
-
-   KillTemporal()
-
-   pdaCloseFiles()
-
-   //Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static function pdaEstadoMenu( oDlg, oBrw )
-
-  local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 190 ;
-      BITMAPS  70 ; // bitmaps resoruces ID
-      IMAGES   2     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 191 OF oMenu ACTION ( ImprimirEstado(), oBrw:Refresh() )
-
-      REDEFINE MENUITEM ID 192 OF oMenu ACTION ( oDlg:End() )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-static function CreaTemporal()
-
-   local oError
-   local oBlock
-   local lErrors  := .f.
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   cTmpEstado  := cGetNewFileName( cPatTmp() + "TmpEst" )
-
-   dbCreate( cTmpEstado, aSqlStruct( aItmTmpEst() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpEstado, cCheckArea( "TmpEst", @dbfTmpEstado ), .f. )
-
-   ( dbfTmpEstado )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
-   ( dbfTmpEstado )->( OrdCreate( cTmpEstado, "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible crear tablas temporales." )
-
-      KillTemporal()
-
-      lErrors     := .t.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( lErrors )
-
-//---------------------------------------------------------------------------//
-
-static function aItmTmpEst()
-
-   local aItmTmpEst  := {}
-
-   aAdd( aItmTmpEst, {"cCodArt"     ,"C",  18,  0, "Código del procucto" } )
-   aAdd( aItmTmpEst, {"cNomArt"     ,"C", 100 , 0, "Nombre del producto" } )
-   aAdd( aItmTmpEst, {"nStkArt"     ,"N",  16 , 6, "Stock del producto" } )
-
-return ( aItmTmpEst )
-
-//---------------------------------------------------------------------------//
-
-static function KillTemporal()
-
-   if !Empty( dbfTmpEstado ) .and. ( dbfTmpEstado )->( Used() )
-      ( dbfTmpEstado )->( dbCloseArea() )
-   end if
-
-   dbfTmpEstado   := nil
-
-   dbfErase( cTmpEstado )
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static function CalculoEstado()
-
-   local cAlmacen    := cDefAlm()
-
-   oSayProgress:SetText( "Procesando ordenes de carga" )
-   oPgrEstado:SetPos( 0 )
-   oPgrEstado:SetRange( 0, ( dbfHisMov )->( LastRec() ) )
-
-   /*
-   Movimientos de almacen------------------------------------------------------
-   */
-
-   while !( dbfHisMov )->( eof() )
-
-      if !Empty( ( dbfHisMov )->cAliMov ) .and. ( dbfHisMov )->cAliMov == cAlmacen
-
-         if !( dbfTmpEstado )->( dbSeek( ( dbfHisMov )->cRefMov ) )
-
-            ( dbfTmpEstado )->( dbAppend() )
-
-            ( dbfTmpEstado )->cCodArt     := ( dbfHisMov )->cRefMov
-            ( dbfTmpEstado )->cNomArt     := RetFld( ( dbfHisMov )->cRefMov, dbfArticulo, "Nombre" )
-            ( dbfTmpEstado )->nStkArt     := nTotNMovAlm( dbfHisMov )
-
-            ( dbfTmpEstado )->( dbUnLock() )
-
-         else
-
-            if dbLock( dbfTmpEstado )
-               ( dbfTmpEstado )->nStkArt  += nTotNMovAlm( dbfHisMov )
-               ( dbfTmpEstado )->( dbUnLock() )
-            end if
-
-         end if
-
-      end if
-
-      if !Empty( ( dbfHisMov )->cAloMov ) .and. ( dbfHisMov )->cAloMov == cAlmacen
-
-         if !( dbfTmpEstado )->( dbSeek( ( dbfHisMov )->cRefMov ) )
-
-            ( dbfTmpEstado )->( dbAppend() )
-
-            ( dbfTmpEstado )->cCodArt     := ( dbfHisMov )->cRefMov
-            ( dbfTmpEstado )->cNomArt     := RetFld( ( dbfHisMov )->cRefMov, dbfArticulo, "Nombre" )
-            ( dbfTmpEstado )->nStkArt     := -( nTotNMovAlm( dbfHisMov ) )
-
-            ( dbfTmpEstado )->( dbUnLock() )
-
-         else
-
-            if dbLock( dbfTmpEstado )
-               ( dbfTmpEstado )->nStkArt  -= nTotNMovAlm( dbfHisMov )
-               ( dbfTmpEstado )->( dbUnLock() )
-            end if
-
-         end if
-
-      end if
-
-      oPgrEstado:SetPos( ( dbfHisMov )->( Recno() ) )
-
-      ( dbfHisMov )->( dbSkip() )
-
-   end while
-
-   /*
-   ALBARANES-------------------------------------------------------------------
-   */
-
-   oSayProgress:SetText( "Procesando albaranes" )
-   oPgrEstado:SetPos( 0 )
-   oPgrEstado:SetRange( 0, ( dbfAlbCliT )->( LastRec() ) )
-
-   while !( dbfAlbCliT )->( eof() )
-
-      if !( dbfAlbCliT )->lFacturado                                 .and.;
-         ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) )
-
-         while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb .and. !( dbfAlbCliL )->( eof() )
-
-            if ( dbfAlbCliL )->cAlmLin == cAlmacen
-
-               if !( dbfTmpEstado )->( dbSeek( ( dbfAlbCliL )->cRef ) )
-
-                  ( dbfTmpEstado )->( dbAppend() )
-
-                  ( dbfTmpEstado )->cCodArt     := ( dbfAlbCliL )->cRef
-                  ( dbfTmpEstado )->cNomArt     := ( dbfAlbCliL )->cDetalle
-                  ( dbfTmpEstado )->nStkArt     := -( nTotNAlbCli( dbfAlbCliL ) )
-
-                  ( dbfTmpEstado )->( dbUnLock() )
-
-               else
-
-                  if dbLock( dbfTmpEstado )
-                     ( dbfTmpEstado )->nStkArt  -= nTotNAlbCli( dbfAlbCliL )
-                     ( dbfTmpEstado )->( dbUnLock() )
-                  end if
-
-               end if
-
-            end if
-
-            ( dbfAlbCliL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      oPgrEstado:SetPos( ( dbfAlbCliT )->( Recno() ) )
-
-      ( dbfAlbCliT )->( dbSkip() )
-
-   end while
-
-   /*
-   FACTURAS--------------------------------------------------------------------
-   */
-
-   oSayProgress:SetText( "Procesando facturas" )
-   oPgrEstado:SetPos( 0 )
-   oPgrEstado:SetRange( 0, ( dbfFacCliT )->( LastRec() ) )
-
-   while !( dbfFacCliT )->( eof() )
-
-      if ( dbfFacCliL )->( dbSeek( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac ) )
-
-         while ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac == ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac .and. !( dbfFacCliL )->( eof() )
-
-            if ( dbfFacCliL )->cAlmLin == cAlmacen
-
-               if !( dbfTmpEstado )->( dbSeek( ( dbfFacCliL )->cRef ) )
-
-                  ( dbfTmpEstado )->( dbAppend() )
-
-                  ( dbfTmpEstado )->cCodArt     := ( dbfFacCliL )->cRef
-                  ( dbfTmpEstado )->cNomArt     := ( dbfFacCliL )->cDetalle
-                  ( dbfTmpEstado )->nStkArt     := -( nTotNFacCli( dbfFacCliL ) )
-
-                  ( dbfTmpEstado )->( dbUnLock() )
-
-               else
-
-                  if dbLock( dbfTmpEstado )
-                     ( dbfTmpEstado )->nStkArt  -= nTotNFacCli( dbfFacCliL )
-                     ( dbfTmpEstado )->( dbUnLock() )
-                  end if
-
-               end if
-
-            end if
-
-            ( dbfFacCliL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      oPgrEstado:SetPos( ( dbfFacCliT )->( Recno() ) )
-
-      ( dbfFacCliT )->( dbSkip() )
-
-   end while
-
-   ( dbfTmpEstado )->( dbGoTop() )
-
-   oPgrEstado:SetPos( ( dbfFacCliT )->( LastRec() ) )
-   oSayProgress:SetText( "Proceso finalizado" )
-
-   if !Empty( oBrwEstado )
-      oBrwEstado:Refresh()
-   end if
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static function ImprimirEstado()
-
-   local oError
-   local oBlock
-   local nRec           := ( dbfTmpEstado )->( Recno() )
-   local cTextToPrint   := ""
-   local nTotalPeso     := 0
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   /*
-   Cabecera de la impresión----------------------------------------------------
-   */
-
-   cTextToPrint         += CRLF + CRLF + REPLICATE( "-", 60 ) + CRLF
-   cTextToPrint         += "               INFORME DEL ESTADO DEL CAMION                " + CRLF
-   cTextToPrint         += "Transportista: " + PadR( RetFld( cCodTra(), dbfTransport, "cNomTrn" ), 45, Space( 1 ) ) + CRLF
-   cTextToPrint         += REPLICATE( "-", 60 ) + CRLF
-   cTextToPrint         += "Codigo    Nombre                                    Unidades" + CRLF
-
-   cTextToPrint         += "--------- --------------------------------------- ----------" + CRLF
-
-   /*
-   Lineas de la impresión------------------------------------------------------
-   */
-
-   ( dbfTmpEstado )->( dbGoTop() )
-
-   while !( dbfTmpEstado )->( Eof() )
-
-      cTextToPrint      += PadR( ( dbfTmpEstado )->cCodArt, 9, Space( 1 ) ) + Space( 1 )
-      cTextToPrint      += PadR( ( dbfTmpEstado )->cNomArt, 39, Space( 1 ) ) + Space( 1 )
-      cTextToPrint      += PadL( Trans( ( dbfTmpEstado )->nStkArt, "@E 9999999.99" ), 10, Space( 1 ) ) + CRLF
-
-      if ( dbfTmpEstado )->nStkArt > 0
-         nTotalPeso     += ( ( dbfTmpEstado )->nStkArt * RetFld( ( dbfTmpEstado )->cCodArt, dbfArticulo, "NPESOKG" ) )
-      end if
-
-      ( dbfTmpEstado )->( dbSkip() )
-
-   end while
-
-   /*
-   Fin de la impresión----------------------------------------------------
-   */
-
-   cTextToPrint   += REPLICATE( "-", 60 ) + CRLF
-
-   msginfo( "Compruebe si la impresora está en línea y si tiene papel suficiente", "¡Atención!" )
-
-   SendText( cTextToPrint )
-
-   ( dbfTmpEstado )->( dbGoTo( nRec ) )
-
-   RECOVER
-
-      msgStop( "Ocurrió un error a la hora de imprimir el estado" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return .t.
-
-//---------------------------------------------------------------------------//
-#endif
 
 
 

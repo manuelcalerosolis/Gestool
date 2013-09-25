@@ -13,10 +13,11 @@ CLASS TDetCostes FROM TDet
 
    DATA  oCostesMaquina
 
+   METHOD New( cPath, oParent ) 
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD Resource( nMode, lLiteral )
 
@@ -33,6 +34,19 @@ CLASS TDetCostes FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) 
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveLines() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
@@ -61,7 +75,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen             := .t.
    local oError
@@ -72,20 +86,19 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles()
+         ::oDbf            := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::bOnPreSaveDetail   := {|| ::SaveLines() }
 
    RECOVER USING oError
 
+      lOpen                := .f.
+      
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
       ::CloseFiles()
-
-      lOpen                := .f.
 
    END SEQUENCE
 

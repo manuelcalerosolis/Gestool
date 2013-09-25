@@ -729,7 +729,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -741,20 +741,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      // ::OpenDetails()
-
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
 
       ::CloseService()
 
-      lOpen             := .f.
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -979,19 +977,19 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "ProCab.Dbf" CLASS "ProCab" ALIAS "ProCab" PATH ( cPath ) VIA ( cDriver ) COMMENT "Partes de producción"
 
-      FIELD NAME "cSerOrd" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"             OF ::oDbf
-      FIELD NAME "nNumOrd" TYPE "N" LEN 09  DEC 0 COMMENT "Número"            OF ::oDbf
-      FIELD NAME "cSufOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"            OF ::oDbf
-      FIELD NAME "dFecOrd" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"      OF ::oDbf
-      FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"         OF ::oDbf
-      FIELD NAME "cCodDiv" TYPE "C" LEN 03  DEC 0 COMMENT "Divisa"            OF ::oDbf
-      FIELD NAME "nVdvDiv" TYPE "N" LEN 16  DEC 6 COMMENT "Valor divisa"      OF ::oDbf
-      FIELD NAME "cAlmOrd" TYPE "C" LEN 03  DEC 0 COMMENT "Almacén destino"   OF ::oDbf
-      FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"           OF ::oDbf
+      FIELD NAME "cSerOrd" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                               OF ::oDbf
+      FIELD NAME "nNumOrd" TYPE "N" LEN 09  DEC 0 COMMENT "Número"                              OF ::oDbf
+      FIELD NAME "cSufOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                              OF ::oDbf
+      FIELD NAME "dFecOrd" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                        OF ::oDbf
+      FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"                           OF ::oDbf
+      FIELD NAME "cCodDiv" TYPE "C" LEN 03  DEC 0 COMMENT "Divisa"                              OF ::oDbf
+      FIELD NAME "nVdvDiv" TYPE "N" LEN 16  DEC 6 COMMENT "Valor divisa"                        OF ::oDbf
+      FIELD NAME "cAlmOrd" TYPE "C" LEN 03  DEC 0 COMMENT "Almacén destino"                     OF ::oDbf
+      FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                             OF ::oDbf
       FIELD NAME "cHorIni" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"   OF ::oDbf
       FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"   OF ::oDbf
-      FIELD NAME "cCodOpe" TYPE "C" LEN 03  DEC 0 COMMENT "Operación"         OF ::oDbf
-      FIELD NAME "cAlmOrg" TYPE "C" LEN 03  DEC 0 COMMENT "Almacen Origen"    OF ::oDbf
+      FIELD NAME "cCodOpe" TYPE "C" LEN 03  DEC 0 COMMENT "Operación"                           OF ::oDbf
+      FIELD NAME "cAlmOrg" TYPE "C" LEN 03  DEC 0 COMMENT "Almacen Origen"                      OF ::oDbf
 
       INDEX TO "ProCab.Cdx" TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT "Número"        NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "dFecOrd" ON "dFecOrd"                                 COMMENT "Fecha inicio"  NODELETED OF ::oDbf

@@ -8,12 +8,13 @@
 
 CLASS TDetHoras FROM TDet
 
+   METHOD New( cPath, oParent )
+
    METHOD Create( cPath )
 
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
    METHOD Resource( nMode, lLiteral )
 
@@ -26,6 +27,19 @@ CLASS TDetHoras FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) 
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
@@ -67,28 +81,29 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DEFAULT  lExclusive  := .f.
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
 
-   if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
-   end if
-
-   ::oDbf:Activate( .f., !lExclusive )
-
-   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+      ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
+
       ::CloseFiles()
-      lOpen          := .f.
+      
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -198,7 +213,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD SaveDetails()
 
-   ::oDbfVir:cCodTra  := ::oParent:oDbf:cCodTra
+   ::oDbfVir:cCodTra    := ::oParent:oDbf:cCodTra
 
 RETURN ( Self )
 
@@ -220,17 +235,17 @@ METHOD lPreSave( oGetCod, nMode )
 
    if nMode == APPD_MODE
 
-         if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodHra, "cCodHra" )
-            msgStop( "Código existente" )
-            oGetCod:SetFocus()
-            Return ( .f. )
-         end if
+      if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodHra, "cCodHra" )
+         msgStop( "Código existente" )
+         oGetCod:SetFocus()
+         Return ( .f. )
+      end if
 
-         if Empty( ::oDbfVir:cCodHra )
-            msgStop( "Código de hora vacío" )
-            oGetCod:SetFocus()
-            Return ( .f. )
-         end if
+      if Empty( ::oDbfVir:cCodHra )
+         msgStop( "Código de hora vacío" )
+         oGetCod:SetFocus()
+         Return ( .f. )
+      end if
 
    end if
 

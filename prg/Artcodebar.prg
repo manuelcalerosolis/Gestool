@@ -411,21 +411,18 @@ Static Function BeginTrans( aTmp, nMode )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   dbCreate( filTmpCodebar, aItmBar(), cDriver() )
+   dbCreate( filTmpCodebar, aItmBar(), cLocalDriver() )
 
-   dbUseArea( .t., cDriver(), filTmpCodebar, cCheckArea( "CodBar", @dbfTmpCodebar ), .f. )
+   dbUseArea( .t., cLocalDriver(), filTmpCodebar, cCheckArea( "CodBar", @dbfTmpCodebar ), .f. )
 
-   ( dbfTmpCodebar )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+   ( dbfTmpCodebar )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
    ( dbfTmpCodebar )->( OrdCreate( filTmpCodebar, "cCodBar", "cCodBar", {|| Field->cCodBar } ) )
 
    if ( dbfCodebar )->( dbSeek( cCodArt ) )
 
       while ( dbfCodebar )->cCodArt == cCodArt .and. !( dbfCodebar )->( eof() )
-
          dbPass( dbfCodebar, dbfTmpCodebar, .t. )
-
          ( dbfCodebar )->( dbSkip() )
-
       end while
 
       ( dbfTmpCodebar )->( dbGoTop() )

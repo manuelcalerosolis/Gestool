@@ -450,7 +450,8 @@ static oFraPub
 static oTipArt
 static oUndMedicion
 static oTipPed
-static Cod
+
+static oBtnKit
 
 static oDlgPedidosWeb
 static oBrwPedidosWeb
@@ -1731,7 +1732,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
    local cGetMasDiv     := ""
    local oBmpEmp
    local oBmpDiv
-   local oBtnKit
    local cEstPed        := ""
    local oRieCli
    local nRieCli        := 0
@@ -2684,7 +2684,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfPedCliT, dbfTmpLin, oBrwLin ) )
+         ACTION   ( lEscandalloEdtRec( .t., oBrwLin ) )
 
       REDEFINE GET aGet[_CSERPED] VAR aTmp[_CSERPED] ;
          ID       90 ;
@@ -2749,7 +2749,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
          ID       118 ;
          OF       oFld:aDialogs[1]
 
-      //codigo del usuario
+      // Codigo del usuario----------------------------------------------------
 
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       115 ;
@@ -3284,24 +3284,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 
    oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Pedido" ) } )
 
-   do case
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:End() ) }
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oDlg:End() ) }
-      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
-      otherwise
-         oDlg:bStart := {|| ShowKit( dbfPedCliT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
-   end case
+   oDlg:bStart 		:= {|| StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin ) }
 
 	ACTIVATE DIALOG oDlg;
-      ON INIT  (  EdtRecMenu( aTmp, oDlg ),;
-                  SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ),;
-                  oBrwLin:Load() ,;
-                  oBrwInc:Load() ,;
-                  oBrwPgo:Load() ,;
-                  if( !Empty( cCodPre ), aGet[ _CNUMPRE ]:lValid(), ) );
+      ON INIT  (  InitEdtRec( aTmp, aGet, oDlg, oBrwLin, oBrwInc, oBrwPgo ), SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) );
       ON PAINT (  RecalculaTotal( aTmp ) );
       CENTER
 
@@ -3356,6 +3342,55 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
    KillTrans()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin )
+
+	lEscandalloEdtRec( .f., oBrwLin )
+
+	if nMode == APPD_MODE
+
+		do case      
+      	case lRecogerUsuario() .and. Empty( cCodArt )
+
+         	if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+         		oDlg:End()
+         	end if
+
+      	case lRecogerUsuario() .and. !Empty( cCodArt )
+      		
+      		if lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+      			AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt )
+      		else
+      			oDlg:End()
+      		end if 
+      
+      	case !lRecogerUsuario() .and. !Empty( cCodArt )
+         	
+         	AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) 
+
+      end case 
+
+	   if !Empty( cCodPre )
+   		aGet[ _CNUMPRE ]:lValid()
+   	end if 
+
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function InitEdtRec( aTmp, aGet, oDlg, oBrwLin, oBrwInc, oBrwPgo )
+
+   EdtRecMenu( aTmp, oDlg )
+   
+   oBrwLin:Load()
+   oBrwInc:Load()
+   oBrwPgo:Load()
+
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -18773,3 +18808,36 @@ Function sTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
 Return ( sTotal )
 
 //--------------------------------------------------------------------------//
+
+Static Function lEscandalloEdtRec( lSet, oBrwLin )
+
+   local lShwKit     := lShwKit()
+
+   if lSet
+      lShwKit        := !lShwKit
+   end if
+
+   if lShwKit
+      SetWindowText( oBtnKit:hWnd, "Ocultar Esc&ll." )
+      if ( dbfTmpLin )->( Used() )
+         ( dbfTmpLin )->( dbClearFilter() )
+      end if
+   else
+      SetWindowText( oBtnKit:hWnd, "Mostrar Esc&ll." )
+      if ( dbfTmpLin )->( Used() )
+         ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, "!lKitChl" ) )
+      end if
+   end if
+
+   if lSet
+      lShwKit( lShwKit )
+   end if
+
+   if !Empty( oBrwLin )
+      oBrwLin:Refresh()
+   end if   
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+

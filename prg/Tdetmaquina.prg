@@ -12,6 +12,8 @@ CLASS TDetMaquina FROM TDet
    DATA  oTotHoras
    DATA  nTotHoras      INIT 0
 
+   METHOD New( cPath, oParent ) 
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -36,6 +38,19 @@ CLASS TDetMaquina FROM TDet
 END CLASS
 
 //--------------------------------------------------------------------------//
+
+METHOD New( cPath, oParent ) 
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
@@ -74,28 +89,29 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
-   DEFAULT  lExclusive  := .f.
+   DEFAULT lExclusive   := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !lExclusive )
-
-   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+      ::oDbf:Activate( .f., !lExclusive )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      lOpen             := .f.
+      
       ::CloseFiles()
-      lOpen          := .f.
+      
+      msgStop( "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
 
@@ -109,8 +125,9 @@ METHOD CloseFiles()
 
    if ::oDbf != nil .and. ::oDbf:Used()
       ::oDbf:End()
-      ::oDbf      := nil
    end if
+
+   ::oDbf               := nil
 
 RETURN .t.
 
