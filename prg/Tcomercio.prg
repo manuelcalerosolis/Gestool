@@ -4041,7 +4041,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    Insertamos un artículo nuevo en la tabla category_product----------------
     */
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ; 
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
                      " ( id_category, " + ;
                      "id_product )" + ;
                   " VALUES " + ;
@@ -4967,8 +4967,6 @@ Method AppendImagesPrestashop() CLASS TComercio
 
       if !Empty( ::cHostFtp )
 
-         ?"Ftp"
-
          ::oInt         := TInternet():New()
          ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
@@ -4986,8 +4984,6 @@ Method AppendImagesPrestashop() CLASS TComercio
 
             ::nTotMeter                := len( ::aImagesArticulos )
             nCount                     := 1
-
-            ?::cDImagen
 
             if !Empty( ::cDImagen )
                ::oFtp:CreateDirectory( ::cDImagen + "/p" )
@@ -5033,8 +5029,6 @@ Method AppendImagesPrestashop() CLASS TComercio
          end if
 
       else  
-
-         ?"Directorio" 
 
          if isDirectory( ::cDImagen )
             
