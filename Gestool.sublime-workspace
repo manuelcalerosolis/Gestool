@@ -523,7 +523,7 @@
 			"file": "/C/Users/Villa/Desktop/blocktopmenu.tpl",
 			"settings":
 			{
-				"buffer_size": 13022,
+				"buffer_size": 13034,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,42 +531,32 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 232187,
+				"buffer_size": 232119,
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "Searching 1335 files for \"EscapeStr\"\n\nC:\\fw195\\Gestool\\prg\\Msdatabase.prg:\n  469                  cString += oTb:ColRead( i ) + \", \"\n  470              else\n  471:                 cString += \"'\" + oTb:EscapeStr( i ) + \"', \"\n  472              endif\n  473          next\n\nC:\\fw195\\Gestool\\prg\\Msdataset.prg:\n   27      METHOD Execute( cStmt )\n   28  \n   29:     METHOD EscapeStr( nCol )\n   30  \n   31      METHOD SetTinyAsLogical( lLogical )\n   ..\n   77  // Filtra las secuencias de escape y las cadenas especiales\n   78  \n   79: METHOD EscapeStr( nCol ) CLASS TMSDataSet\n   80: return( E1RealEscapeStr( ::oConnect:hConnect, ::ColRead( nCol ) ) )\n   81  \n   82  //---------------------------------------------------------------------------//\n\nC:\\fw195\\Gestool\\prg\\Msvconnect.prg:\n   45      METHOD GetInsertId()\n   46  \n   47:     METHOD EscapeStr( cStr )\n   48  /*\n   49      METHOD SetCharacterSet( cCharSet )\n   ..\n  230  // Filtra las secuencias de escape y las cadenas especiales\n  231  \n  232: METHOD EscapeStr( cStr ) CLASS TMSVConnect\n  233: return( E1RealEscapeStr( ::hConnect, cStr ) )\n  234  \n  235  //---------------------------------------------------------------------------//\n\nC:\\fw195\\Gestool\\prg\\Tcomercio.prg:\n 5734  \n 5735                 nSpace               := At( \" \", ::oCli:Titulo )\n 5736:                cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )\n 5737:                cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )\n 5738  \n 5739                 if TMSCommand():New( ::oCon ):ExecDirect( \"INSERT INTO \" + ::cPrefixTable( \"customer\" ) + \" ( id_gender, \" + ;\n ....\n 5838  \n 5839                 nSpace               := At( \" \", ::oCli:Titulo )\n 5840:                cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )\n 5841:                cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )\n 5842  \n 5843                 if !::oCli:lWeb\n\nC:\\fw195\\Gestool\\prg\\TcomercioOSCOMMERCE.prg:\n 1966        oTablaPropiedades:FieldPut( 1, nCodigoWeb  )\n 1967        oTablaPropiedades:FieldPut( 2, ::nLanguage )\n 1968:       oTablaPropiedades:FieldPut( 3, ::oCon:EscapeStr( ::GetPropArt() ) )\n 1969  \n 1970        if oTablaPropiedades:Insert()\n ....\n 1992  \n 1993           oTablaPropiedades:FieldPut( 2, ::nLanguage )\n 1994:          oTablaPropiedades:FieldPut( 3, ::oCon:EscapeStr( ::GetPropArt() ) )\n 1995  \n 1996           if oTablaPropiedades:update()\n ....\n 2027  \n 2028        oTablaPropiedades_Lineas:FieldPut( 2, ::nLanguage )\n 2029:       oTablaPropiedades_Lineas:FieldPut( 3, ::oCon:EscapeStr( ::oTblPro:cDesTbl ) )\n 2030  \n 2031        if oTablaPropiedades_Lineas:Update()\n ....\n 2042        oTablaPropiedades_Lineas:FieldPut( 1, nCodigoWeb )\n 2043        oTablaPropiedades_Lineas:FieldPut( 2, ::nLanguage )\n 2044:       oTablaPropiedades_Lineas:FieldPut( 3, ::oCon:EscapeStr( ::oTblPro:cDesTbl ) )\n 2045  \n 2046        if oTablaPropiedades_Lineas:Insert()\n ....\n 2893        oTablaDescripciones:FieldPut( 3, ::SeleccionFamilia() )\n 2894  \n 2895:       oTablaDescripciones:FieldPut( 4, ::oCon:EscapeStr( ::oArt:mDesTec ) )\n 2896  \n 2897        if !oTablaDescripciones:Insert()\n ....\n 2998  \n 2999           oTablaDescripciones:FieldPut( 2, ::nLanguage )\n 3000:          //oTablaDescripciones:FieldPut( 3, ::oCon:EscapeStr( ::oArt:Nombre ) )\n 3001           oTablaDescripciones:FieldPut( 3, ::SeleccionFamilia() )\n 3002:          oTablaDescripciones:FieldPut( 4, ::oCon:EscapeStr( ::oArt:mDesTec ) )\n 3003  \n 3004           if !oTablaDescripciones:update()\n ....\n 3837           oTablaFamiliasDesc:FieldPut( 1, nCodigoWeb )\n 3838           oTablaFamiliasDesc:FieldPut( 2, ::nLanguage )\n 3839:          oTablaFamiliasDesc:FieldPut( 3, ::oCon:EscapeStr( ::oFam:cNomFam ) )\n 3840  \n 3841           if !oTablaFamiliasDesc:Insert()\n ....\n 3885  \n 3886           oTablaFamiliasDesc:FieldPut( 2, ::nLanguage )\n 3887:          oTablaFamiliasDesc:FieldPut( 3, ::oCon:EscapeStr( ::oFam:cNomFam ) )\n 3888  \n 3889           if !oTablaFamiliasDesc:update()\n ....\n 3934        oTablaFamiliasDesc:FieldPut( 1, nCodigoWeb )\n 3935        oTablaFamiliasDesc:FieldPut( 2, ::nLanguage )\n 3936:       oTablaFamiliasDesc:FieldPut( 3, ::oCon:EscapeStr( ::oGrpFam:cNomGrp ) )\n 3937  \n 3938        if !oTablaFamiliasDesc:Insert()\n ....\n 3971  \n 3972           oTablaFamiliasDesc:FieldPut( 2, ::nLanguage )\n 3973:          oTablaFamiliasDesc:FieldPut( 3, ::oCon:EscapeStr( ::oGrpFam:cNomGrp ) )\n 3974  \n 3975           if !oTablaFamiliasDesc:update()\n ....\n 4316                    oTablaFamiliasDesc:FieldPut( 1, idCategories )\n 4317                    oTablaFamiliasDesc:FieldPut( 2, ::nLanguage )\n 4318:                   oTablaFamiliasDesc:FieldPut( 3, ::oCon:EscapeStr( ::GetTipArt() ) )\n 4319  \n 4320                    if oTablaFamiliasDesc:Insert()\n ....\n 4355     end if\n 4356  \n 4357:    oQuery            := TMSQuery():New( ::oCon, 'SELECT * FROM ' + oTablaFamiliasDesc:cName + ' WHERE categories_name = \"' + ::oCon:EscapeStr( Rtrim( ::GetTipArt() ) ) + '\"' )\n 4358  \n 4359     if oQuery:Open()\n ....\n 4490  \n 4491           nSpace               := At( \" \", ::oCli:Titulo )\n 4492:          cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )\n 4493:          cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )\n 4494  \n 4495           oTablaClientes:Blank()\n ....\n 4521           oTablaClientesDirec:FieldPut( 5,  cFirstName )\n 4522           oTablaClientesDirec:FieldPut( 6,  cLastName )\n 4523:          oTablaClientesDirec:FieldPut( 7,  ::oCon:EscapeStr( ::oCli:Domicilio ) )\n 4524:          oTablaClientesDirec:FieldPut( 9,  ::oCon:EscapeStr( ::oCli:CodPostal ) )\n 4525:          oTablaClientesDirec:FieldPut( 10, ::oCon:EscapeStr( ::oCli:Poblacion ) )\n 4526:          oTablaClientesDirec:FieldPut( 11, ::oCon:EscapeStr( ::oCli:Provincia ) )\n 4527           oTablaClientesDirec:FieldPut( 12, id_pais )\n 4528           oTablaClientesDirec:FieldPut( 13, id_zona )\n ....\n 4556  \n 4557           nSpace               := At( \" \", ::oCli:Titulo )\n 4558:          cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )\n 4559:          cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )\n 4560  \n 4561           if oTablaClientes:RecCount() > 0 .and. oTablaClientes:Find( 1, ::oCli:cCodWeb, .t. )\n ....\n 4584              oTablaClientesDirec:FieldPut( 5, cFirstName  )\n 4585              oTablaClientesDirec:FieldPut( 6, cLastName )\n 4586:             oTablaClientesDirec:FieldPut( 7, ::oCon:EscapeStr( ::oCli:Domicilio ) )\n 4587:             oTablaClientesDirec:FieldPut( 9, ::oCon:EscapeStr( ::oCli:CodPostal ) )\n 4588:             oTablaClientesDirec:FieldPut( 10, ::oCon:EscapeStr( ::oCli:Poblacion ) )\n 4589:             oTablaClientesDirec:FieldPut( 11, ::oCon:EscapeStr( ::oCli:Provincia ) )\n 4590              oTablaClientesDirec:FieldPut( 12, id_pais )\n 4591              oTablaClientesDirec:FieldPut( 13, id_zona )\n ....\n 5534  \n 5535        oTablaFabricantes:Blank()\n 5536:       oTablaFabricantes:FieldPut( 2, ::oCon:EscapeStr( ::oFab:cNomFab ) )\n 5537        oTablaFabricantes:FieldPut( 3, cNoPathInt( ::cdImagen ) + \"/\" + cNoPath( ::oFab:cImgLogo))\n 5538        oTablaFabricantes:FieldPut( 4, GetSysDate() )\n ....\n 5577  \n 5578              oTablaFabricantes:Load()\n 5579:             oTablaFabricantes:FieldPut( 2, ::oCon:EscapeStr( ::oFab:cNomFab ) )\n 5580              oTablaFabricantes:FieldPut( 3, cNoPathInt( ::cdImagen ) + \"/\" + cNoPath( ::oFab:cImgLogo))\n 5581              oTablaFabricantes:FieldPut( 4, GetSysDate() )\n ....\n 5639  \n 5640        oTablaIva:Blank()\n 5641:       oTablaIva:FieldPut( 2, ::oCon:EscapeStr( ::oIva:DescIva ) )\n 5642        oTablaIva:FieldPut( 3, ::oIva:TPIva )\n 5643        oTablaIva:FieldPut( 4, GetSysDate() )\n ....\n 5667        oTablaIva_rates:FieldPut( 4, 1 )\n 5668        oTablaIva_rates:FieldPut( 5, ::oIva:TpIva )\n 5669:       oTablaIva_rates:FieldPut( 6, ::oCon:EscapeStr( ::oIva:DescIva ) )\n 5670        oTablaIva_rates:FieldPut( 7, GetSysDate() )\n 5671        oTablaIva_rates:FieldPut( 8, GetSysDate() )\n ....\n 5684  \n 5685           oTablaIva:Load()\n 5686:          oTablaIva:FieldPut( 2, ::oCon:EscapeStr( ::oIva:DescIva ) )\n 5687           oTablaIva:FieldPut( 3, ::oIva:TPIva )\n 5688           oTablaIva:FieldPut( 4, GetSysDate() )\n ....\n 5707           oTablaIva_rates:FieldPut( 4, 1 )\n 5708           oTablaIva_rates:FieldPut( 5, ::oIva:TpIva )\n 5709:          oTablaIva_rates:FieldPut( 6, ::oCon:EscapeStr( ::oIva:DescIva ) )\n 5710           oTablaIva_rates:FieldPut( 7, GetSysDate() )\n 5711           oTablaIva_rates:FieldPut( 8, GetSysDate() )\n ....\n 5803  \n 5804         oTablaZone:Blank()\n 5805:        oTablaZone:FieldPut( 2, ::oCon:EscapeStr( cNombre ) )\n 5806         oTablaZone:FieldPut( 3, \"Peninsula\" )\n 5807         oTablaZone:FieldPut( 4, getsysdate() )\n ....\n 10469  \n 10470                 nSpace               := At( \" \", ::oCli:Titulo )\n 10471:                cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )\n 10472:                cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )\n 10473  \n 10474                 if TMSCommand():New( ::oCon ):ExecDirect( \"INSERT INTO \" + ::cPrefixTable( \"customer\" ) + \" ( id_gender, \" + ;\n .....\n 10573  \n 10574                 nSpace               := At( \" \", ::oCli:Titulo )\n 10575:                cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )\n 10576:                cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )\n 10577  \n 10578                 if !::oCli:lWeb\n\n47 matches across 5 files\n",
-			"settings":
-			{
-				"buffer_size": 9766,
-				"line_ending": "Windows",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "prg/Msvconnect.prg",
-			"settings":
-			{
-				"buffer_size": 18380,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/Villa/Desktop/blocktopmenu.php",
-			"settings":
-			{
-				"buffer_size": 32357,
-				"line_ending": "Unix"
 			}
 		},
 		{
 			"file": "/C/Users/Villa/Desktop/superfish-modified.css",
 			"settings":
 			{
-				"buffer_size": 11901,
+				"buffer_size": 16301,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/footer.tpl",
+			"settings":
+			{
+				"buffer_size": 1540,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/global.css",
+			"settings":
+			{
+				"buffer_size": 61165,
+				"line_ending": "Windows"
 			}
 		},
 		{
@@ -610,6 +600,9 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/blocktopmenu.php",
+		"/C/fw195/Gestool/prg/Msvconnect.prg",
+		"/C/fw195/Gestool/prg/Impfaccom.prg",
 		"/C/Users/Villa/Desktop/settings.inc.php",
 		"/C/Users/Villa/Desktop/superfish-modified.css",
 		"/C/AppServ/www/zemtrum/tienda/modules/nivoslider/nivoslider.tpl",
@@ -657,7 +650,6 @@
 		"/C/Users/Villa/Desktop/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Infprv.prg",
 		"/C/fw195/Gestool/prg/Tinfprv.prg",
-		"/C/Users/Villa/Desktop/blocktopmenu.php",
 		"/C/Users/Villa/Desktop/blockuserinfo.php",
 		"/C/Users/Villa/Desktop/menutoplinks.class.php",
 		"/C/Users/Villa/Desktop/shopping-cart.tpl",
@@ -735,9 +727,7 @@
 		"/C/fw195/Gestool/Hx.mak",
 		"/C/fw195/Gestool/Build.bat",
 		"/C/fw195/Gestool/prg/Brwvta.prg",
-		"/C/fw195/Gestool/prg/Trazalote.prg",
-		"/C/fw195/Gestool/Hx.bat",
-		"/C/fw195/Gestool/HP.Bat"
+		"/C/fw195/Gestool/prg/Trazalote.prg"
 	],
 	"find":
 	{
@@ -785,6 +775,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"header_ima",
+			"footer",
+			"oDbfFacTFac",
+			"product_lang",
+			"?",
 			"insertpro",
 			"EscapeStr",
 			"INSERT",
@@ -907,12 +902,7 @@
 			"lGrupoSerie",
 			"cNumRef",
 			"on rx",
-			"datarepor",
-			"loaart",
-			"::oValPr1",
-			"cvalpr1",
-			"od Append",
-			"Append"
+			"datarepor"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -939,7 +929,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -947,15 +937,15 @@
 					"file": "/C/Users/Villa/Desktop/blocktopmenu.tpl",
 					"settings":
 					{
-						"buffer_size": 13022,
+						"buffer_size": 13034,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1697,
-								1614
+								3395,
+								3395
 							]
 						],
 						"settings":
@@ -964,7 +954,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 990.0,
+						"translation.y": 1080.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -974,15 +964,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 232187,
+						"buffer_size": 232119,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								135750,
-								135750
+								134864,
+								134864
 							]
 						],
 						"settings":
@@ -992,307 +982,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 72905.0,
+						"translation.y": 72509.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"settings":
-					{
-						"buffer_size": 9766,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										201,
-										210
-									],
-									[
-										367,
-										376
-									],
-									[
-										535,
-										544
-									],
-									[
-										591,
-										600
-									],
-									[
-										836,
-										845
-									],
-									[
-										1005,
-										1014
-									],
-									[
-										1062,
-										1071
-									],
-									[
-										1358,
-										1367
-									],
-									[
-										1459,
-										1468
-									],
-									[
-										1787,
-										1796
-									],
-									[
-										1888,
-										1897
-									],
-									[
-										2197,
-										2206
-									],
-									[
-										2407,
-										2416
-									],
-									[
-										2628,
-										2637
-									],
-									[
-										2912,
-										2921
-									],
-									[
-										3139,
-										3148
-									],
-									[
-										3358,
-										3367
-									],
-									[
-										3515,
-										3524
-									],
-									[
-										3786,
-										3795
-									],
-									[
-										4003,
-										4012
-									],
-									[
-										4264,
-										4273
-									],
-									[
-										4481,
-										4490
-									],
-									[
-										4783,
-										4792
-									],
-									[
-										5046,
-										5055
-									],
-									[
-										5251,
-										5260
-									],
-									[
-										5346,
-										5355
-									],
-									[
-										5630,
-										5639
-									],
-									[
-										5719,
-										5728
-									],
-									[
-										5808,
-										5817
-									],
-									[
-										5897,
-										5906
-									],
-									[
-										6175,
-										6184
-									],
-									[
-										6270,
-										6279
-									],
-									[
-										6623,
-										6632
-									],
-									[
-										6714,
-										6723
-									],
-									[
-										6806,
-										6815
-									],
-									[
-										6898,
-										6907
-									],
-									[
-										7160,
-										7169
-									],
-									[
-										7468,
-										7477
-									],
-									[
-										7761,
-										7770
-									],
-									[
-										8051,
-										8060
-									],
-									[
-										8288,
-										8297
-									],
-									[
-										8593,
-										8602
-									],
-									[
-										8835,
-										8844
-									],
-									[
-										9104,
-										9113
-									],
-									[
-										9206,
-										9215
-									],
-									[
-										9540,
-										9549
-									],
-									[
-										9642,
-										9651
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								843,
-								843
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Msvconnect.prg",
-					"settings":
-					{
-						"buffer_size": 18380,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6767,
-								6767
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3741.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/C/Users/Villa/Desktop/blocktopmenu.php",
-					"settings":
-					{
-						"buffer_size": 32357,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1077,
-								1083
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
 					"file": "/C/Users/Villa/Desktop/superfish-modified.css",
 					"settings":
 					{
-						"buffer_size": 11901,
+						"buffer_size": 16301,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4815,
-								4815
+								4923,
+								4923
 							]
 						],
 						"settings":
@@ -1301,13 +1009,67 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3342.0,
+						"translation.y": 3417.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 3,
+					"file": "/C/Users/Villa/Desktop/footer.tpl",
+					"settings":
+					{
+						"buffer_size": 1540,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1540,
+								1540
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 216.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/Users/Villa/Desktop/global.css",
+					"settings":
+					{
+						"buffer_size": 61165,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2024,
+								2024
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 743.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "/C/Users/Villa/Desktop/header.tpl",
 					"settings":
 					{
@@ -1328,7 +1090,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1758.0,
+						"translation.y": 1038.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
