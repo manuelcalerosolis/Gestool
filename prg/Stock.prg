@@ -1780,9 +1780,9 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
 
    while !( dbf )->( eof() )
 
-      cCodAnt  := (dbf)->CSERFAC + Str( (dbf)->NNUMFAC ) + (dbf)->CSUFFAC
+      cCodAnt  := ( dbf )->cSerFac + Str( (dbf)->NNUMFAC ) + (dbf)->CSUFFAC
       ( dbf )->( dbSkip() )
-      if cCodAnt  == (dbf)->CSERFAC + Str( (dbf)->NNUMFAC ) + (dbf)->CSUFFAC .and. !(dbf)->(eof())
+      if cCodAnt  == ( dbf )->cSerFac + Str( (dbf)->NNUMFAC ) + (dbf)->CSUFFAC .and. !(dbf)->(eof())
          aAdd( aMsg, { .t., "Factura de proveedor duplicado : " + cCodAnt } )
          lDup  := .t.
       end if
@@ -4759,7 +4759,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    Pasamos por el temporal para albaranes--------------------------------------
    */
 
-   if !Empty( ::tmpAlbCliL )
+   if IsChar( ::tmpAlbCliL )
 
       nRec                          := ( ::tmpAlbCliL )->( Recno() )
 
@@ -4772,7 +4772,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
                :cTipoDocumento      := ALB_CLI
                :cCodigo             := ( ::tmpAlbCliL )->cRef
-               :cNumeroDocumento    := ( ::tmpAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::tmpAlbCiL )->nNumAlb ) )
+               :cNumeroDocumento    := ( ::tmpAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::tmpAlbCliL )->nNumAlb ) )
                :cDelegacion         := ( ::tmpAlbCliL )->cSufAlb
                :dFechaDocumento     := ( ::tmpAlbCliL )->dFecAlb
                :cCodigoAlmacen      := ( ::tmpAlbCliL )->cAlmLin
@@ -4781,6 +4781,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad1    := ( ::tmpAlbCliL )->cValPr1
                :cValorPropiedad2    := ( ::tmpAlbCliL )->cValPr2
                :cLote               := ( ::tmpAlbCliL )->cLote
+
                :nUnidades           := - nTotNAlbCli( ::tmpAlbCliL )
                
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
@@ -4801,8 +4802,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    Pasamos por el temporal para Facturas-------------------------------------
    */
 
-   if !Empty( ::tmpFacCliL )
-
+   if IsChar( ::tmpFacCliL )
       nRec                          := ( ::tmpFacCliL )->( Recno() )
 
       ( ::tmpFacCliL )->( dbGoTop() )
@@ -4814,7 +4814,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
                :cTipoDocumento      := FAC_CLI
                :cCodigo             := ( ::tmpFacCliL )->cRef
-               :cNumeroDocumento    := ( ::tmpFacCliL )->cSerFac + "/" + Alltrim( Str( ( ::tmpFacCiL )->nNumFac ) )
+               :cNumeroDocumento    := ( ::tmpFacCliL )->cSerie + "/" + Alltrim( Str( ( ::tmpFacCliL )->nNumFac ) )
                :cDelegacion         := ( ::tmpFacCliL )->cSufFac
                :dFechaDocumento     := ( ::tmpFacCliL )->dFecFac
                :cCodigoAlmacen      := ( ::tmpFacCliL )->cAlmLin
@@ -4823,6 +4823,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad1    := ( ::tmpFacCliL )->cValPr1
                :cValorPropiedad2    := ( ::tmpFacCliL )->cValPr2
                :cLote               := ( ::tmpFacCliL )->cLote
+
                :nUnidades           := - nTotNFacCli( ::tmpFacCliL )
 
                ::Integra( hb_QWith(), lLote, lNumeroSerie )

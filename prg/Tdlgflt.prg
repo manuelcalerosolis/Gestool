@@ -250,14 +250,18 @@ Method Default()
                               "Mes igual",;
                               "Año igual" }
 
-   ::aTField            := aSort( ::aTField, , , { |x, y| x[ 5 ] < y[ 5 ] } )
+   if !Empty( ::aTField )                              
+      
+      // msgStop( cValToChar( ::aTField ) )
 
-   for each oFld in ::aTField
+      // ::aTField         := aSort( ::aTField, , , { |x, y| msgStop( x[ 5 ] ), msgStop( y[ 5 ] ), x[ 5 ] < y[ 5 ] } )
 
-      do case
+      for each oFld in ::aTField
+
+         do case
          case IsObject( oFld )
 
-            if !Empty( oFld:cComment ) .and. !oFld:lCalculate
+            if !Empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
                aAdd( ::aTblField,      oFld:cName )
                aAdd( ::aTblType,       oFld:cType )
                aAdd( ::aTblLen,        oFld:nLen )
@@ -277,7 +281,9 @@ Method Default()
 
          end case
 
-   next
+      next
+
+   end if
 
    for each oFld in ::aFldFilter
       if Empty( oFld )

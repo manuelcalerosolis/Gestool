@@ -2408,6 +2408,14 @@ Function TComercio()
 
 Return nil
 
+Function TAcceso()
+
+Return nil
+
+Function TDetSalaVenta()
+
+Return nil
+
 /*Function TOrdenComanda()
 
 Return nil*/
@@ -2422,8 +2430,8 @@ LOCAL   c
    DEFAULT lExact := .t.
 
    if ( C := valtype( uFirst ) ) == valtype( uSecond )
-      if c == 'C'
-         if lExact
+      if c == 'C
+'         if lExact
             if Upper( AllTrim( uFirst ) ) == Upper( AllTrim( uSecond ) )
                return .t.
             endif
