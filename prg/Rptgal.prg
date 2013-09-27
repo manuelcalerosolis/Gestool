@@ -2430,8 +2430,8 @@ LOCAL   c
    DEFAULT lExact := .t.
 
    if ( C := valtype( uFirst ) ) == valtype( uSecond )
-      if c == 'C'
-         if lExact
+      if c == 'C
+'         if lExact
             if Upper( AllTrim( uFirst ) ) == Upper( AllTrim( uSecond ) )
                return .t.
             endif

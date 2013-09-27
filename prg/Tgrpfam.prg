@@ -135,18 +135,18 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TGrpFam
 
    DEFINE DATABASE ::oDbf FILE "GRPFAM.DBF" CLASS "GRPFAM" ALIAS "GRPFAM" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de familias"
 
-      FIELD CALCULATE NAME "bSndDoc"      LEN 14  DEC 0  COMMENT { "Enviar", "Lbl16" , 3 } VAL {|| ::oDbf:lSndDoc} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
-      FIELD CALCULATE NAME "bPubInt"      LEN 14  DEC 0  COMMENT { "Publi car", "SNDINT16" , 3 } VAL {|| ::oDbf:lPubInt} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
+      FIELD CALCULATE NAME "bSndDoc"      LEN 14  DEC 0  COMMENT { "Enviar", "Lbl16" , 3 }      VAL {|| ::oDbf:lSndDoc} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
+      FIELD CALCULATE NAME "bPubInt"      LEN 14  DEC 0  COMMENT { "Publicar", "SndInt16" , 3 } VAL {|| ::oDbf:lPubInt} BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
       FIELD NAME "cCodGrp"       TYPE "C" LEN  3  DEC 0  COMMENT "Código"                             COLSIZE 80  OF ::oDbf
-      FIELD NAME "cNomGrp"       TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"                PICTURE "@!" COLSIZE 200 OF ::oDbf
+      FIELD NAME "cNomGrp"       TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"                             COLSIZE 200 OF ::oDbf
       FIELD NAME "lPubInt"       TYPE "L" LEN  1  DEC 0  HIDE                                                     OF ::oDbf
       FIELD NAME "cCodWeb"       TYPE "N" LEN 11  DEC 0  HIDE                                                     OF ::oDbf
       FIELD NAME "lSndDoc"       TYPE "L" LEN  1  DEC 0  HIDE                                                     OF ::oDbf
       FIELD NAME "CIMGGRP"       TYPE "C" LEN 250 DEC 0  HIDE                                                     OF ::oDbf
 
-      INDEX TO "GRPFAM.CDX" TAG "CCODGRP" ON "CCODGRP"            COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "GRPFAM.CDX" TAG "CNOMGRP" ON "UPPER( CNOMGRP )"   COMMENT "Nombre" NODELETED OF ::oDbf
-      INDEX TO "GRPFAM.CDX" TAG "cCodWeb" ON "Str( cCodWeb, 11 )" COMMENT "CódigoWeb" NODELETED OF ::oDbf
+      INDEX TO "GRPFAM.CDX" TAG "CCODGRP" ON "CCODGRP"            COMMENT "Código"     NODELETED OF ::oDbf
+      INDEX TO "GRPFAM.CDX" TAG "CNOMGRP" ON "UPPER( CNOMGRP )"   COMMENT "Nombre"     NODELETED OF ::oDbf
+      INDEX TO "GRPFAM.CDX" TAG "cCodWeb" ON "Str( cCodWeb, 11 )" COMMENT "CódigoWeb"  NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -246,6 +246,7 @@ RETURN ( oDlg:nResult == IDOK )
 METHOD lPreSave( oGet, oGet2, oDlg, nMode )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
+      
       if Empty( ::oDbf:cCodGrp )
          MsgStop( "Código de grupo de família no puede estar vacío." )
          oGet:SetFocus()

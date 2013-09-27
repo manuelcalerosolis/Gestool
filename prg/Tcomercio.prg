@@ -106,7 +106,7 @@ CLASS TComercio
    DATA  oArt
    DATA  oPro
    DATA  oTblPro
-   DATA  oFPAgo
+   DATA  oFPago
 
    DATA  oArtDiv
    DATA  oTipArt
