@@ -65,6 +65,7 @@
 #define _NPOSINT                 36      //   N       3    0
 #define _LFAMINT                 37      //   L       1    0
 #define _CCOMFAM                 38      //   C       3    0
+#define _CDESWEB                 39      //   C       3    0
 
 #ifndef __PDA__
 
@@ -920,6 +921,12 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             MAX      ( 99 ) ;
             OF       oFld:aDialogs[1]
 
+         REDEFINE GET aGet[ _CDESWEB ] VAR aTmp[ _CDESWEB ] ;
+            ID       340 ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            PICTURE  "@!" ;
+            OF       oFld:aDialogs[1]
+
          REDEFINE GET aGet[ _CCODIMP ] VAR aTmp[ _CCODIMP ] ;
             ID       420 ;
             VALID    ( oSayTComandas:cText( RetFld( aTmp[ _CCODIMP ], oTComandas:GetAlias() ) ), .t. );
@@ -1363,7 +1370,7 @@ Function EdtFamilia( cCodFam, lOpenBrowse )
 
          if OpenFiles( .t. )
             if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
-               lEdit       := WinEdtRec( oWndBrw, bEdit, dbfFamilia )
+               lEdit    := WinEdtRec( oWndBrw, bEdit, dbfFamilia )
             else
                MsgStop( "No se encuentra familia" )
             end if
@@ -2816,7 +2823,8 @@ Function aItmFam()
                      {"cNomImp",    "C",    50,    0, "Nombre del orden de impresion comanda" },;
                      {"nPosInt",    "N",     3,    0, "Pocisión para mostrar en internet" },;
                      {"LFAMINT",    "L",     1,    0, "Añade la familia junto con la descripción en internet" },;
-                     {"CCOMFAM",    "C",     3,    0, "Comentario por defecto para la familia" } }
+                     {"CCOMFAM",    "C",     3,    0, "Comentario por defecto para la familia" },;
+                     {"cDesWeb",    "C",   250,    0, "Descripción para la web" } }
 
 return ( aBase )
 

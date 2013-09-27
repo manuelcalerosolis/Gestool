@@ -1775,7 +1775,7 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
-FAMILIA_01 DIALOG DISCARDABLE 98, -11, 346, 302
+FAMILIA_01 DIALOG DISCARDABLE 98, -11, 346, 317
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -1801,33 +1801,35 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 431, "Edit", WS_BORDER, 114, 208, 161, 11
   CONTROL "Artículos no acumulables", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 185, 95, 10
   CONTROL "Mostrar ventana comentarios", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 196, 108, 10
-  CONTROL "Publicar en internet", 115, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 238, 74, 10
-  CONTROL "Añadir familia a la descripción", 116, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 250, 108, 10
-  CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 235, 248, 40, 11
-  CONTROL "Permitir precios sin valoración", 315, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 273, 108, 10
-  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 56, 284, 54, 11
-  CONTROL "", 310, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 284, 54, 11
+  CONTROL "Publicar en internet", 115, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 236, 74, 10
+  CONTROL "Añadir familia a la descripción", 116, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 248, 108, 10
+  CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 235, 246, 40, 11
+  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 58, 260, 217, 11
+  CONTROL "Permitir precios sin valoración", 315, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 288, 108, 10
+  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 58, 299, 54, 11
+  CONTROL "", 310, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 299, 54, 11
   CONTROL "", 600, "TBitmap", 0x00800000, 283, 5, 60, 62
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 27, 30, 8
   CONTROL "Propiedad 1", -1, "Static", WS_GROUP, 8, 63, 43, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 15, 27, 8
   CONTROL "Propiedad 2", -1, "Static", WS_GROUP, 8, 75, 43, 8
-  CONTROL "Rapels %", -1, "Static", WS_GROUP, 172, 287, 35, 8
+  CONTROL "Rapels %", -1, "Static", WS_GROUP, 172, 302, 35, 8
   CONTROL "Grupo familias", -1, "Static", WS_GROUP, 8, 51, 49, 8
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 1, 1, 279, 37
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 1, 40, 279, 72
   CONTROL "Color botón", -1, "Static", WS_GROUP, 8, 138, 41, 8
   CONTROL "Imagen", -1, "Static", WS_GROUP, 8, 150, 29, 8
   CONTROL "Frase pub.", -1, "Static", WS_GROUP, 8, 87, 39, 8
-  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 0, 264, 279, 34
-  CONTROL "Descuento %", -1, "Static", WS_GROUP, 8, 288, 47, 8
-  CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 1, 114, 279, 110
+  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 1, 277, 279, 36
+  CONTROL "Descuento %", -1, "Static", WS_GROUP, 8, 303, 47, 8
+  CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 1, 114, 279, 109
   CONTROL "Familia comb.", -1, "Static", WS_GROUP, 8, 173, 48, 8
   CONTROL "Posición", -1, "Static", WS_GROUP, 8, 162, 32, 8
   CONTROL "Orden", -1, "Static", WS_GROUP, 8, 100, 45, 8
-  CONTROL "Orden Internet", -1, "Static", WS_GROUP, 172, 251, 47, 8
-  CONTROL "Internet", -1, "Button", BS_GROUPBOX, 0, 226, 279, 37
+  CONTROL "Orden Internet", -1, "Static", WS_GROUP, 172, 249, 47, 8
+  CONTROL "Prestashop", -1, "Button", BS_GROUPBOX, 1, 224, 279, 51
   CONTROL "Comentario", -1, "Static", WS_GROUP, 8, 210, 48, 8
+  CONTROL "Descripción", -1, "Static", WS_GROUP, 8, 263, 43, 8
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
@@ -10570,14 +10572,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "Informes", -1, "Button", BS_GROUPBOX, 1, 3, 339, 26
 }
 
-FAMILIA DIALOG DISCARDABLE 98, -11, 355, 340
+FAMILIA DIALOG DISCARDABLE 98, -11, 355, 360
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Familias de artículos"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 246, 322, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 301, 322, 50, 14
-  CONTROL "", 100, "SysTabControl32", WS_TABSTOP, 3, 2, 349, 316
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 246, 341, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 301, 341, 50, 14
+  CONTROL "", 100, "SysTabControl32", WS_TABSTOP, 3, 2, 349, 334
 }
 
 PRECOMPNT DIALOG DISCARDABLE 140, 65, 283, 122
