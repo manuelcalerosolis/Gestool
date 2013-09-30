@@ -1897,7 +1897,7 @@ Method InsertCategoriesPrestashop() CLASS TComercio
                   Str( nCodigoWeb ) + "', '" +;
                   Str( ::nLanguage ) + "', '" + ;
                   ::oCon:EscapeStr( ::oFam:cNomFam ) + "', '" + ;
-                  ::oCon:EscapeStr( ::oFam:cNomFam ) + "', '" + ;
+                  ::oCon:EscapeStr( ::oFam:cDesWeb ) + "', '" + ;
                   cLinkRewrite( ::oFam:cNomFam ) + "', " + ;
                   "'', " + ;
                   "'', " + ;
