@@ -287,6 +287,11 @@ CLASS TComercio
 
    METHOD GetParentCategories()
 
+   METHOD cValidDirectoryFtp( cDirectory )
+
+   METHOD CreateDirectoryImages( cCarpeta )
+   METHOD ReturnDirectoryImages( cCarpeta )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -326,7 +331,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::cPasswd               := uFieldEmpresa( "cPswSql" )
    ::cDbName               := uFieldEmpresa( "cDtbSql" )
    ::nPort                 := uFieldEmpresa( "nPrtSql", 3306 )
-   ::cDImagen              := uFieldEmpresa( "cdImagen" )
+   ::cDImagen              := ::cValidDirectoryFtp( uFieldEmpresa( "cdImagen" ) )
    ::cSeriePed             := uFieldEmpresa( "cSeriePed" )
    ::nSecondTimer          := uFieldEmpresa( "nTiempoPed", 0 ) * 60000
    ::cUserFtp              := uFieldEmpresa( "cUsrFtpImg" )
@@ -951,9 +956,7 @@ Method ExportarPrestashop() Class TComercio
             ::MeterGlobalText( "Subiendo imagenes" )
 
             if ::lImagenes .or. ::lSincAll
-               if ApoloMsgNoYes( "¿Subir imagenes?", "Confirme" )
-                  ::AppendImagesPrestashop()
-               end if   
+               ::AppendImagesPrestashop()
             end if
 
          end if
@@ -1139,10 +1142,6 @@ METHOD AppendIvaPrestashop() Class TComercio
       if ::oIva:lPubInt
 
          ::MeterParticularText( "Actualizando tipos de " + cImp() )
-
-         /*
-         Metemos las familias como categorías----------------------------------
-         */
 
          ::InsertIvaPrestashop()
 
@@ -4877,6 +4876,8 @@ Method AppendImagesPrestashop() CLASS TComercio
 
    ::aTipoImagenPrestashop()
 
+   ::SetText( "Creando y redimensionando imágenes", 2 )
+
    /*
    Cargamos creamos las imagenes a subir---------------------------------------
    */
@@ -4891,7 +4892,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
          case oImage:nTipoImagen == tipoProducto
 
-            cNewImg           := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
+            cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
 
             SaveImage( oImage:cNombreImagen, cNewImg )
 
@@ -4902,9 +4903,11 @@ Method AppendImagesPrestashop() CLASS TComercio
 
             ::AddImagesArticulos( oImagenFinal )
 
+            ::SetText( "Elaborando " + cNoPath( oImage:cNombreImagen ), 3 )
+
          case oImage:nTipoImagen == tipoCategoria
 
-            cNewImg           := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
+            cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + ".jpg"
 
             SaveImage( oImage:cNombreImagen, cNewImg )
 
@@ -4913,6 +4916,8 @@ Method AppendImagesPrestashop() CLASS TComercio
             oImagenFinal:nTipoImagen      := oImage:nTipoImagen
 
             ::AddImagesCategories( oImagenFinal )
+
+            ::SetText( "Elaborando " + cNoPath( oImage:cNombreImagen ), 3 )
 
       end case
 
@@ -4926,7 +4931,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
             case oImage:nTipoImagen == tipoProducto .and. oTipoImage:lProducts
 
-               cNewImg           := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
+               cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
                SaveImage( oImage:cNombreImagen, cNewImg, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
 
@@ -4937,9 +4942,11 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::AddImagesArticulos( oImagenFinal )
 
+               ::SetText( "Elaborando " + cNoPath( oImagenFinal:cNombreImagen ), 3 )
+
             case oImage:nTipoImagen == tipoCategoria .and. oTipoImage:lCategories
 
-               cNewImg           := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
+               cNewImg                       := cPatTmp() + oImage:cPrefijoNombre + "-" + oTipoImage:cNombreTipo + ".jpg"
 
                SaveImage( oImage:cNombreImagen, cNewImg, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
 
@@ -4949,6 +4956,8 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::AddImagesCategories( oImagenFinal )
 
+               ::SetText( "Elaborando " + cNoPath( oImagenFinal:cNombreImagen ), 3 )
+
          end case
 
          SysRefresh()
@@ -4957,11 +4966,11 @@ Method AppendImagesPrestashop() CLASS TComercio
 
    next
 
-   if Len( ::aImagesArticulos ) > 0
+   /*
+   Conectamos al FTP y Subimos las imágenes de artículos-----------------------
+   */
 
-      /*
-      Conectamos al FTP y Subimos las imágenes de artículos-----------------------
-      */
+   if Len( ::aImagesArticulos ) > 0
 
       ::nTotMeter    := 0
 
@@ -4996,23 +5005,37 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-               ::oFtp:CreateDirectory( oImage:cCarpeta )
-               ::oFtp:SetCurrentDirectory( oImage:cCarpeta )
+               /*
+               Posicionamos en el directorio-----------------------------------
+               */
 
+               ::CreateDirectoryImages( oImage:cCarpeta )
+
+               /*
+               Sube el fichero ------------------------------------------------
+               */
+             
                oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
                if !oFile:PutFile( ::oMeterL )
                   ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
                end if
-
-               ::oFtp:SetCurrentDirectory( ".." )
-
-               nCount                  += 1
-
                oFile:End()
 
                /*
-               Me Paso Al Anterior---------------------------------------------------
+               Volvemos al directorio raiz-------------------------------------
                */
+
+               ::ReturnDirectoryImages( oImage:cCarpeta )
+
+               /*
+               if !Empty( ::cDImagen )
+                  ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+               end if
+
+               Siguiente-------------------------------------------------------
+               */
+
+               nCount++
 
                SysRefresh()
 
@@ -5033,7 +5056,7 @@ Method AppendImagesPrestashop() CLASS TComercio
          if isDirectory( ::cDImagen )
             
             if !isDirectory( ::cDImagen + "/p" )
-               
+              
                Makedir( ::cDImagen + "/p" )
 
             end if
@@ -6591,6 +6614,64 @@ METHOD nIdProductAttribute( cCodWebArt, cCodWebValPr1, cCodWebValPr2 ) CLASS TCo
 
 Return nIdProductAttribute
 
+//---------------------------------------------------------------------------//
+
+METHOD cValidDirectoryFtp( cDirectory )
+
+   local cResult
+
+   /*
+   Cambiamos todas las contrabarras por barras normales------------------------
+   */
+
+   cResult     := StrTran( AllTrim( cDirectory ), "\", "/" )
+
+   /*
+   Si empieza por barra la quitamos--------------------------------------------
+   */
+
+   if Left( cResult, 1 ) == "/"
+      cResult  := SubStr( cResult, 2 )
+   end if
+
+   /*
+   Si termina por barra la quitamos--------------------------------------------
+   */
+
+   if Right( cResult, 1 ) == "/"
+      cResult  := SubStr( cResult, 1, Len( cResult ) - 1 )
+   end if
+
+Return ( cResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreateDirectoryImages( cCarpeta )
+
+   local n
+
+   for n := 1 to Len( cCarpeta )
+      ::oFtp:CreateDirectory( SubStr( cCarpeta, n, 1 ) )
+      ::oFtp:SetCurrentDirectory( SubStr( cCarpeta, n, 1 ) )
+   next   
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD ReturnDirectoryImages( cCarpeta )
+
+   local n
+
+   for n := 1 to Len( cCarpeta )
+      ::oFtp:SetCurrentDirectory( ".." )
+   next   
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

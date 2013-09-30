@@ -30,7 +30,7 @@ CLASS TFTP
    METHOD DeleteFile( cFileName )    // deletes a remote FTP file
 
    METHOD Directory( cMask )         // as Clipper Directory() but on a FTP site!
-
+ 
    METHOD DeleteMask( cMask )        // as Clipper Directory() but on a FTP site!
 
    METHOD GetCurrentDirectory()              INLINE ( FtpGetCurrentDirectory( ::hFTP ) )
