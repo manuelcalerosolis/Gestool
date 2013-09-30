@@ -1834,3 +1834,78 @@ Static Function CloseFiles()
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
+
+Function lGetAgente( oGetAgente, dbfAgente )
+
+   local oDlg
+   local oCodigoAgente
+   local cCodigoAgente := Space( 3 )
+   local oNombreAgente
+   local cNombreAgente := ""
+
+   DEFINE DIALOG oDlg RESOURCE "GetUsuario"
+
+      REDEFINE GET oCodigoAgente ;
+         VAR      cCodigoAgente ;
+         ID       100 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAgentes( oCodigoAgente ) ) ;
+         VALID    ( SetAgentes( oCodigoAgente, oNombreAgente, oDlg, dbfAgente ) ) ;
+         OF       oDlg
+
+      REDEFINE GET oNombreAgente ;
+         VAR      cNombreAgente ;
+         ID       110 ;
+         WHEN     ( .f. ) ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( if( oCodigoAgente:lValid(), oDlg:end( IDOK ), ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      oDlg:bStart       := { || oCodigoAgente:SetFocus(), oCodigoAgente:SelectAll() }
+      oDlg:bKeyDown     := { | nKey | if( nKey == 65 .and. GetKeyState( VK_CONTROL ), CreateInfoArticulo(), 0 ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+      oCodigoAgente:cText( cCodigoAgente )
+      oCodigoAgente:lValid()
+
+      if !Empty( oGetAgente )
+         oGetAgente:cText( cCodigoAgente )
+         oGetAgente:lValid()
+      end if
+
+   end if
+
+Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Function SetAgentes( oCodigoAgente, oSay, oDlg, dbfAgente )
+
+   local lSetAgente  := .t.
+   local cCodAgente  := oCodigoAgente:VarGet()
+
+   if ( dbfAgente )->( dbSeek( cCodAgente ) )
+      oSay:cText( Rtrim( cNombreAgente( dbfAgente ) ) )
+      if !Empty( oDlg )
+         oDlg:End( IDOK )
+      end if
+   else
+      oCodigoAgente:cText( Space( 3 ) )
+      lSetAgente     := .f.
+   end if
+
+Return ( lSetAgente )
+
+//---------------------------------------------------------------------------//

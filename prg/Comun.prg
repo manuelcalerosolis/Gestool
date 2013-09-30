@@ -2388,45 +2388,70 @@ FUNCTION nAjuste( nNumber, cAdjust )
 
    local n
    local cNumber
+   local nResult
    local cResult
+   local aAdjust
+   local aNumber        := {}
+
+   if Empty( nNumber )
+      Return ( 0 )
+   end if 
 
    /*
-   Posible ajuste doble
+   Posible ajuste doble--------------------------------------------------------
    */
 
+   nResult              := 0
+   aAdjust              := hb_aTokens( cAdjust, "|" )
 
-   cResult           := ""
-   cNumber           := Trans( nNumber, cPorDiv() )
+   for each cAdjust in aAdjust
 
-   if IsNum( cAdjust )
-      cAdjust        := Trans( cAdjust, cPorDiv() )
-   else
-      cAdjust        := Alltrim( cAdjust )
-   end if
-
-   cAdjust           := Padl( cAdjust, len( cNumber ), "#" )
-
-   n                 := At( "[",  cAdjust) != 0
-
-   for n := 1 to len( cNumber )
-      if ( cAdjust[ n ] == "#" )
-         cResult     += cNumber[ n ]
+      cResult           := ""
+      cNumber           := Trans( nNumber, cPorDiv() )
+   
+      if IsNum( cAdjust )
+         cAdjust        := Trans( cAdjust, cPorDiv() )
       else
-         cResult     += cAdjust[ n ]
+         cAdjust        := Alltrim( cAdjust )
       end if
+   
+      cAdjust           := Padl( cAdjust, len( cNumber ), "#" )
+   
+      // msgStop( cAdjust, "cAdjust" )
+
+      for n := 1 to len( cNumber )
+         if ( cAdjust[ n ] == "#" )
+            cResult     += cNumber[ n ]
+         else
+            cResult     += cAdjust[ n ]
+         end if
+      next
+   
+      aAdd( aNumber, Val( StrTran( cResult, ",", "." ) ) )
+
+   next 
+
+   for each n in aNumber
+      nResult           := n
+
+      // ? ( n - nNumber )
+
+      if ( ( n - nNumber ) > 0 )
+         exit
+      end if 
    next
 
-   nNumber           := Val( StrTran( cResult, ",", "." ) ) 
-
-RETURN ( nNumber )
+RETURN ( nResult )
 
 //---------------------------------------------------------------------------//
 
-/*Function cPatIn( lShort )
+/*
+Function cPatIn( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "In\" )*/
+Return ( if( !lShort, FullCurDir(), "" ) + "In\" )
+*/
 
 //----------------------------------------------------------------------------//
 

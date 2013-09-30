@@ -1334,13 +1334,9 @@ Return ( fRename( cTableOld, cTableNew ) )
 
 Function dbSafeUnlock( cAlias )
 
-   CursorWait()
-
-   if Select( cAlias ) != 0
+   // if Select( cAlias ) != 0
       ( cAlias )->( dbUnLock() )
-   end if
-
-   CursorWE()
+   // end if
 
 Return nil
 

@@ -287,10 +287,6 @@ CLASS TComercio
 
    METHOD GetParentCategories()
 
-   METHOD cValidDirectoryFtp( cDirectory )
-
-   METHOD CreateDirectoryImages( cCarpeta )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -330,7 +326,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::cPasswd               := uFieldEmpresa( "cPswSql" )
    ::cDbName               := uFieldEmpresa( "cDtbSql" )
    ::nPort                 := uFieldEmpresa( "nPrtSql", 3306 )
-   ::cDImagen              := ::cValidDirectoryFtp( uFieldEmpresa( "cdImagen" ) )
+   ::cDImagen              := uFieldEmpresa( "cdImagen" )
    ::cSeriePed             := uFieldEmpresa( "cSeriePed" )
    ::nSecondTimer          := uFieldEmpresa( "nTiempoPed", 0 ) * 60000
    ::cUserFtp              := uFieldEmpresa( "cUsrFtpImg" )
@@ -4881,8 +4877,6 @@ Method AppendImagesPrestashop() CLASS TComercio
 
    ::aTipoImagenPrestashop()
 
-   ::SetText( "Creando y redimensionando imágenes", 2 )
-
    /*
    Cargamos creamos las imagenes a subir---------------------------------------
    */
@@ -4992,11 +4986,8 @@ Method AppendImagesPrestashop() CLASS TComercio
             nCount                     := 1
 
             if !Empty( ::cDImagen )
-
                ::oFtp:CreateDirectory( ::cDImagen + "/p" )
-
                ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
-
             end if
 
             for each oImage in ::aImagesArticulos
@@ -5005,21 +4996,8 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-               
-
-
-               ::CreateDirectoryImages( oImage:cCarpeta )
-
-               
-
-
-               /*
-               ----------------------------------------------------------------
-               Método antiguo para subir imágenes------------------------------
-               ----------------------------------------------------------------
                ::oFtp:CreateDirectory( oImage:cCarpeta )
                ::oFtp:SetCurrentDirectory( oImage:cCarpeta )
-               */
 
                oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
                if !oFile:PutFile( ::oMeterL )
@@ -6613,54 +6591,6 @@ METHOD nIdProductAttribute( cCodWebArt, cCodWebValPr1, cCodWebValPr2 ) CLASS TCo
 
 Return nIdProductAttribute
 
-//---------------------------------------------------------------------------//
-
-METHOD cValidDirectoryFtp( cDirectory )
-
-   local cResult
-
-   /*
-   Cambiamos todas las contrabarras por barras normales------------------------
-   */
-
-   cResult     := StrTran( AllTrim( cDirectory ), "\", "/" )
-
-   /*
-   Si empieza por barra la quitamos--------------------------------------------
-   */
-
-   if Left( cResult, 1 ) == "/"
-      cResult  := SubStr( cResult, 2 )
-   end if
-
-   /*
-   Si termina por barra la quitamos--------------------------------------------
-   */
-
-   if Right( cResult, 1 ) == "/"
-      cResult  := SubStr( cResult, 1, Len( cResult ) - 1 )
-   end if
-
-Return ( cResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD CreateDirectoryImages( cCarpeta )
-
-   local n
-
-   for n := 1 to Len( cCarpeta )
-
-      ::oFtp:CreateDirectory( SubStr( cCarpeta, n, 1 ) )
-      ::oFtp:SetCurrentDirectory( SubStr( cCarpeta, n, 1 ) )
-
-   next   
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

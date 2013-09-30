@@ -2290,7 +2290,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-      VALID    ( cAgentes( aGet[ _CCODAGE ], dbfAgent, oGetTxt[ 6 ], aGet[ _NCOMAGE ], dbfAgeCom ) );
+         VALID    ( cAgentes( aGet[ _CCODAGE ], dbfAgent, oGetTxt[ 6 ], aGet[ _NCOMAGE ], dbfAgeCom ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAgentes( aGet[ _CCODAGE ], oGetTxt[ 6 ] ) );
          OF       oDlgTpv
@@ -2810,15 +2810,13 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
    nTotRnt                    := 0
    nTotPctRnt                 := 0
 
-   lRecTotal( aTmp, .f. )
-
    /*
    Comportamiento inicial------------------------------------------------------
    */
 
    if !Empty( oDlgTpv )
 
-      aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Disable() } )
+      // aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Disable() } )
 
       if IsTrue( lMaximized )
          oDlgTpv:Maximize()
@@ -2826,120 +2824,28 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
 
    end if
 
-   do case
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
+   if nMode == APPD_MODE
 
-         if lGetUsuario( aGet[ _CCCJTIK ], dbfUsr )
+      aGet[ _CCLITIK ]:lValid()
 
-            cUsrTik( aGet[ _CCCJTIK ]:VarGet() )
+      if !lGetUsuario( aGet[ _CCCJTIK ], dbfUsr )      
+         oDlgTpv:End()
+         Return ( nil )         
+      end if
 
-            aGet[ _CCLITIK ]:lValid()
+      if !lGetAgente( aGet[ _CCODAGE ], dbfAgent )      
+         oDlgTpv:End()
+         Return ( nil )         
+      end if
 
-            if !Empty( oDlgTpv )
-               aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-            end if
-
-            AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
-
-            aGet[ _CCLITIK ]:SetFocus()
-
-         else
-
-            if !Empty( oDlgTpv )
-               aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-            end if
-
-            oDlgTpv:End()
-
-         end if
-
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. lEntCon()
-
-         if lGetUsuario( aGet[ _CCCJTIK ], dbfUsr )
-
-            cUsrTik( aGet[ _CCCJTIK ]:VarGet() )
-
-            aGet[ _CCLITIK ]:lValid()
-
-            if !Empty( oDlgTpv )
-               aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-            end if
-
-            AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
-
-            aGet[ _CCLITIK ]:SetFocus()
-
-         else
-
-            if !Empty( oDlgTpv )
-               aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-            end if
-
-            oDlgTpv:End()
-
-         end if
-
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !lEntCon()
-
-         if lGetUsuario( aGet[ _CCCJTIK ], dbfUsr )
-
-            cUsrTik( aGet[ _CCCJTIK ]:VarGet() )
-
-            aGet[ _CCLITIK ]:lValid()
-
-            if !Empty( oDlgTpv )
-               aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-            end if
-
-            aGet[ _CCLITIK ]:SetFocus()
-
-         else
-
-            if !Empty( oDlgTpv )
-               aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-            end if
-
-            oDlgTpv:End()
-
-         end if
-
-      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. lEntCon()
-
-         aGet[ _CCLITIK ]:lValid()
-
-         if !Empty( oDlgTpv )
-            aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-         end if
-
+      if !Empty( cCodArt ) .or. lEntCon()
          AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
+      end if 
 
-         aGet[ _CCLITIK ]:SetFocus()
+   end if 
 
-      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
+   lRecTotal( aTmp, .f. )
 
-         aGet[ _CCLITIK ]:lValid()
-
-         if !Empty( oDlgTpv )
-            aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-         end if
-
-         AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
-
-         aGet[ _CCLITIK ]:SetFocus()
-
-      otherwise
-
-         aGet[ _CCLITIK ]:lValid()
-
-         if !Empty( oDlgTpv )
-            aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
-         end if
-
-         lRecTotal( aTmp )
-
-         oBrwDet:SetFocus()
-
-   end case
 
 Return ( nil )
 

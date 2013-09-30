@@ -520,11 +520,51 @@
 	"buffers":
 	[
 		{
+			"file": "/C/Users/Villa/Desktop/blocktopmenu.tpl",
+			"settings":
+			{
+				"buffer_size": 13034,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 234206,
+				"buffer_size": 232119,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/superfish-modified.css",
+			"settings":
+			{
+				"buffer_size": 16301,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/footer.tpl",
+			"settings":
+			{
+				"buffer_size": 1540,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/global.css",
+			"settings":
+			{
+				"buffer_size": 61165,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/header.tpl",
+			"settings":
+			{
+				"buffer_size": 5876,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -560,23 +600,11 @@
 	},
 	"file_history":
 	[
-		"/C/Users/Villa/Desktop/footer.tpl",
-		"/C/Users/Villa/Desktop/blocktopmenu.tpl",
-		"/C/Users/Villa/Desktop/global.css",
-		"/C/Users/Villa/Desktop/blocksocial.tpl",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Tftp.prg",
-		"/C/fw195/Gestool/prg/Tftpc3.prg",
-		"/C/Users/Villa/Desktop/zoomslider - copia/blocksocial.tpl",
-		"/C/Users/Villa/Desktop/es.php",
-		"/C/fw195/Gestool/prg/Tgrpfam.prg",
-		"/C/fw195/Gestool/prg/Tmant.prg",
-		"/C/Users/Villa/Desktop/header.tpl",
-		"/C/Users/Villa/Desktop/superfish-modified.css",
 		"/C/Users/Villa/Desktop/blocktopmenu.php",
 		"/C/fw195/Gestool/prg/Msvconnect.prg",
 		"/C/fw195/Gestool/prg/Impfaccom.prg",
 		"/C/Users/Villa/Desktop/settings.inc.php",
+		"/C/Users/Villa/Desktop/superfish-modified.css",
 		"/C/AppServ/www/zemtrum/tienda/modules/nivoslider/nivoslider.tpl",
 		"/C/Users/Villa/Desktop/copia zoomslider/zoomslider.php",
 		"/C/Users/Villa/Desktop/zoomslider - copia/demo.html",
@@ -591,6 +619,7 @@
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/bin/script/003.prg",
+		"/C/Users/Villa/Desktop/header.tpl",
 		"/C/Users/Villa/Desktop/zoomslider.tpl",
 		"/C/Users/Villa/Desktop/index.html",
 		"/C/fw195/Gestool/prg/Client.prg",
@@ -613,8 +642,11 @@
 		"/C/Users/Villa/Desktop/zoomslider.php",
 		"/C/Users/Villa/Desktop/flexslider.css",
 		"/C/Users/Villa/Desktop/homeslider/bx_styles.css",
+		"/C/Users/Villa/Desktop/global.css",
+		"/C/Users/Villa/Desktop/footer.tpl",
 		"/C/Users/Villa/Desktop/homeslider/homeslider.tpl",
 		"/C/Users/Villa/Desktop/grid_prestashop.css",
+		"/C/Users/Villa/Desktop/blocktopmenu.tpl",
 		"/C/Users/Villa/Desktop/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Infprv.prg",
 		"/C/fw195/Gestool/prg/Tinfprv.prg",
@@ -648,6 +680,7 @@
 		"/C/Users/Villa/Desktop/payment_return.tpl",
 		"/C/Users/Villa/Desktop/payment.tpl",
 		"/C/Users/Villa/Desktop/phonepayment.html",
+		"/C/Users/Villa/Desktop/es.php",
 		"/C/Users/Villa/Desktop/identity.tpl",
 		"/C/Users/Villa/Desktop/breadcrumb.tpl",
 		"/C/Users/Villa/Desktop/authentication.tpl",
@@ -655,6 +688,7 @@
 		"/C/Users/Villa/Desktop/my-account.tpl",
 		"/C/Users/Villa/Desktop/blockmyaccount.tpl",
 		"/C/Users/Villa/Desktop/blockcontact.tpl",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/resource/Gstimage12.rc",
@@ -670,6 +704,7 @@
 		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/Tdetproduccion.prg",
+		"/C/fw195/Gestool/prg/Tmant.prg",
 		"/C/fw195/Gestool/prg/Tmasdet.prg",
 		"/C/AppServ/www/webtactil/dbuser.php",
 		"/C/AppServ/www/webtactil/db.php",
@@ -687,7 +722,12 @@
 		"/C/fw195/Gestool/prg/albcli",
 		"/C/fw195/Gestool/prg/Internet.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
-		"/C/fw195/Gestool/prg/Tutil.prg"
+		"/C/fw195/Gestool/prg/Tutil.prg",
+		"/C/fw195/Gestool/HPPC.mak",
+		"/C/fw195/Gestool/Hx.mak",
+		"/C/fw195/Gestool/Build.bat",
+		"/C/fw195/Gestool/prg/Brwvta.prg",
+		"/C/fw195/Gestool/prg/Trazalote.prg"
 	],
 	"find":
 	{
@@ -695,7 +735,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -735,21 +775,6 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"CreateDirectoryImages",
-			"for n",
-			"for",
-			"Directory",
-			"AppendImagesPrestashop",
-			"images",
-			"insert",
-			"AppendImagesPrestashop",
-			"::cDImagen",
-			"cValidDirectoryFtp",
-			"cvalid",
-			"cDImagen",
-			"AppendImagesPrestashop",
-			"footer",
-			"Report",
 			"header_ima",
 			"footer",
 			"oDbfFacTFac",
@@ -862,7 +887,22 @@
 			"delegacion",
 			"menu",
 			"displayTop",
-			"HOOK_TOP"
+			"HOOK_TOP",
+			"$HOOK_TOP",
+			"header_user",
+			"48",
+			"lGrupoNumero",
+			"::oGrupoNumero",
+			"oGrupoSerie",
+			"ogrupose",
+			"ogruposerie",
+			"cserdoc",
+			"cnumdoc",
+			"cserdoc",
+			"lGrupoSerie",
+			"cNumRef",
+			"on rx",
+			"datarepor"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -889,23 +929,50 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tcomercio.prg",
+					"file": "/C/Users/Villa/Desktop/blocktopmenu.tpl",
 					"settings":
 					{
-						"buffer_size": 234206,
+						"buffer_size": 13034,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								231324,
-								231324
+								3395,
+								3395
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1080.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Tcomercio.prg",
+					"settings":
+					{
+						"buffer_size": 232119,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								134864,
+								134864
 							]
 						],
 						"settings":
@@ -915,7 +982,115 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 119170.0,
+						"translation.y": 72509.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/Users/Villa/Desktop/superfish-modified.css",
+					"settings":
+					{
+						"buffer_size": 16301,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4923,
+								4923
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3417.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/Users/Villa/Desktop/footer.tpl",
+					"settings":
+					{
+						"buffer_size": 1540,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1540,
+								1540
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 216.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/Users/Villa/Desktop/global.css",
+					"settings":
+					{
+						"buffer_size": 61165,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2024,
+								2024
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 743.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/Users/Villa/Desktop/header.tpl",
+					"settings":
+					{
+						"buffer_size": 5876,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5375,
+								5417
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1038.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

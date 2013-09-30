@@ -3196,7 +3196,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArt, nMode )
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oSayLote, oBeneficioSobre, oTotal, nMode ) );
-         COLOR    CLR_GET ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwArticulo( aGet[_CREF], aGet[_CDETALLE] ) ) ;
          OF       oFld:aDialogs[1]

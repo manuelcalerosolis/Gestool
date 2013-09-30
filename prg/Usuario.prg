@@ -2999,3 +2999,99 @@ static function lValPss( oAntClave, oClave, cClave, cRepClave, cAntClave, lOldPa
 return .t.
 
 //---------------------------------------------------------------------------//
+
+Function lGetUsuario( oGetUsuario, dbfUsr )
+
+   local oDlg
+   local oSayUsuario
+   local oBmpGeneral
+   local oCodigoUsuario
+   local cCodigoUsuario := Space( 3 )
+   local oNombreUsuario
+   local cNombreUsuario := ""
+
+   if !lRecogerUsuario()
+      Return .t.
+   end if
+
+   DEFINE DIALOG oDlg RESOURCE "GetUsuario"
+
+      REDEFINE BITMAP oBmpGeneral ;
+        ID        500 ;
+        RESOURCE  "Users_48_alpha" ;
+        TRANSPARENT ;
+        OF        oDlg
+
+      REDEFINE SAY oSayUsuario ;
+         VAR      "Usuario" ;
+         ID       510 ;
+         OF       oDlg
+
+      REDEFINE GET oCodigoUsuario ;
+         VAR      cCodigoUsuario ;
+         ID       100 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwUser( oCodigoUsuario, dbfUsr ) ) ;
+         VALID    ( SetUsuario( oCodigoUsuario, oNombreUsuario, oDlg, dbfUsr ) ) ;
+         OF       oDlg
+
+      REDEFINE GET oNombreUsuario ;
+         VAR      cNombreUsuario ;
+         ID       110 ;
+         WHEN     ( .f. ) ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( if( oCodigoUsuario:lValid(), oDlg:end( IDOK ), ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      oDlg:bStart       := { || oCodigoUsuario:SetFocus(), oCodigoUsuario:SelectAll() }
+      oDlg:bKeyDown     := { | nKey | if( nKey == 65 .and. GetKeyState( VK_CONTROL ), CreateInfoArticulo(), 0 ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   oBmpGeneral:End()
+
+   if oDlg:nResult == IDOK
+
+      oCodigoUsuario:cText( cCodigoUsuario )
+      oCodigoUsuario:lValid()
+
+      if !Empty( oGetUsuario )
+         oGetUsuario:cText( cCodigoUsuario )
+         oGetUsuario:lValid()
+      end if
+
+      cUsrTik( cCodigoUsuario )
+
+   end if
+
+Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Function SetUsuario( oCodUsr, oSay, oDlg, dbfUsr )
+
+   local lSetUsr  := .t.
+   local cCodUsr  := oCodUsr:VarGet()
+
+   if ( dbfUsr )->( dbSeek( cCodUsr ) )
+      oSay:cText( Rtrim( ( dbfUsr )->cNbrUse ) )
+      if !Empty( oDlg )
+         oDlg:End( IDOK )
+      end if
+   else
+      oCodUsr:cText( Space( 3 ) )
+      lSetUsr     := .f.
+   end if
+
+Return ( lSetUsr )
+
+//---------------------------------------------------------------------------//

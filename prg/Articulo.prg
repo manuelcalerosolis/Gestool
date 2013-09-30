@@ -2940,12 +2940,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo)->( FieldPos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ] );
          ID       480 ;
          ITEMS    {  "#,#0",;
-                     "#,#5",;
+                     "#,#5|#,#9",;
                      "#,10",;
                      "#,20",;
                      "#,50",;
+                     "#,50|#,90",;
                      "#,90",;
                      "#,95",;
+                     "#,99",;
+                     "#,95|#,99",;
                      "#,99",;
                      "#,00",;
                      "1,00",;
@@ -2979,7 +2982,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       fldDescripciones
 
-      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "mComent" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "mComent" ) ) ];
+      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "mComent" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "mComent" ) ) ];
          ID       370 ;
 			MEMO ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -15297,10 +15301,10 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CFAMCOD", "FAMILIA + CODIGO", {|| Field->FAMILIA + Field->CODIGO }, ) )
 
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CPRVHAB", "CPRVHAB", {|| Field->CPRVHAB }, ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "cPrvHab", "cPrvHab", {|| Field->cPrvHab }, ) )
 
       ( dbfArticulo )->( ordCondSet("!Deleted() .and. !lObs", {|| !Deleted() .and. !Field->lObs }  ) )
-      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CODOBS", "CODIGO", {|| Field->CODIGO } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CodObs", "Codigo", {|| Field->Codigo } ) )
 
       ( dbfArticulo )->( ordCondSet("!Deleted() .and. !lObs", {|| !Deleted() .and. !Field->lObs }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "NOMOBS", "UPPER( NOMBRE )", {|| UPPER( Field->NOMBRE ) } ) )
@@ -16349,7 +16353,7 @@ return ( nAnd( nLevelUsr( "01014" ), 1 ) == 0 )
 Function BrwArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, oBtn, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad )
 
    if !IsPda() .and. !IsReport()
-      if ValType( oUser() ) == "O" .and. oUser():lSelectorFamilia()
+      if IsObject( oUser() ) .and. oUser():lSelectorFamilia()
          Return ( BrwFamiliaArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend ) )
       end if
    end if
@@ -16369,9 +16373,9 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    local nOrd           := GetBrwOpt( "BrwArticulo" )
    local nLevel         := nLevelUsr( "01014" )
    local oCbxOrd
-   local aCbxOrd        := { "Código", "Nombre" }
+   local aCbxOrd        := { "Código", "Nombre", "Proveedor" }
    local cCbxOrd
-   local Ordenes        := { "CodObs", "NomObs" }
+   local Ordenes        := { "CodObs", "NomObs", "cPrvHab" }
    local oSayText
    local cSayText       := "Listado de artículos"
    local oBmpImage
@@ -16491,9 +16495,11 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Proveedor"
-         :bStrData         := {|| if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ) }
+         :bEditValue       := {|| if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ) }
          :nWidth           := 220
          :lHide            := .t.
+         :cSortOrder       := "cPrvHab"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
