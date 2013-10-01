@@ -2320,67 +2320,67 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 402, 2, 59, 48
 }
 
-EMPRESA_2 DIALOG DISCARDABLE 31, 12, 432, 353
+EMPRESA_2 DIALOG DISCARDABLE 31, 12, 629, 313
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "Permitir solo artículos codificados", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 39, 118, 10
   CONTROL "Entradas de lineas continuas", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 49, 104, 10
   CONTROL "Modificar descripciones", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 59, 87, 10
-  CONTROL "Activar búsqueda circular", 206, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 70, 93, 10
-  CONTROL "Modificar tipo de impuesto", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 81, 95, 10
-  CONTROL "Recoger usuarios", 187, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 39, 69, 10
-  CONTROL "Recoger el número de lote", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 49, 97, 10
-  CONTROL "Utilizar rejillas de entrada de propiedades", 138, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 59, 143, 10
-  CONTROL "Cambiar precios costo automáticamente", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 70, 139, 10
-  CONTROL "", 139, "Edit", WS_BORDER|WS_TABSTOP, 273, 80, 67, 11
-  CONTROL "Recoger direcciones", 181, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 106, 79, 10
-  CONTROL "Recoger agentes", 182, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 117, 68, 10
-  CONTROL "Habilitar punto verde", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 128, 79, 10
-  CONTROL "Habilitar portes", 189, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 139, 60, 10
-  CONTROL "Habilitar descuento lineal", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 150, 92, 10
-  CONTROL "Seleccionar tarifas en línea", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 161, 99, 10
-  CONTROL "Agrupar entregas a cuenta en recibos", 204, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 132, 10
-  CONTROL "Buscar precios en tarifas inferiores", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 183, 121, 10
-  CONTROL "Multiples tipos de movimientos ", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 106, 110, 10
-  CONTROL "Avisar en ventas sin valorar", 184, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 117, 100, 10
-  CONTROL "Avisar saldo pendiente", 192, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 128, 85, 10
-  CONTROL "Habilitar impuestos especiales", 183, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 139, 107, 10
-  CONTROL "Modificar impuestos especiales", 188, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 210, 150, 111, 10
-  CONTROL "Costo actual en documentos", 761, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 172, 103, 10
-  CONTROL "No mostrar precios de costo en ventas", 205, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 183, 135, 10
-  CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 210, 161, 125, 10
-  CONTROL "No usar movimientos para el costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 210, 142, 10
-  CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 210, 137, 10
-  CONTROL "Importes exactos en tickets", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 235, 99, 10
-  CONTROL "Recoger ubicaciones en sala", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 245, 105, 10
-  CONTROL "Mostrar la sala antes de iniciar la venta", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 255, 135, 10
-  CONTROL "Ordenar artículos por nombre", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 265, 105, 10
-  CONTROL "Asistente para devoluciones y vales", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 275, 126, 10
-  CONTROL "Habilitar programa de fideliazación", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 235, 121, 10
-  CONTROL "Usar colores en los artículos del táctil", 990, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 245, 131, 10
-  CONTROL "Crear tickets para recoger desde táctil", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 255, 133, 10
-  CONTROL "Crear tickets para llevar desde táctil", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 265, 125, 10
-  CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 275, 134, 10
-  CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 346, 235, 53, 10
-  CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 346, 245, 73, 10
-  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 346, 255, 73, 10
-  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 302, 39, 10
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 105, 301, 320, 11
-  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 314, 51, 10
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 105, 313, 320, 11
-  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 326, 54, 10
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 105, 325, 320, 11
-  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 338, 47, 10
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 105, 337, 320, 11
-  CONTROL "Generales", -1, "Button", BS_GROUPBOX, 44, 29, 384, 65
-  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 290, 384, 61
+  CONTROL "Activar búsqueda circular", 206, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 39, 93, 10
+  CONTROL "Modificar tipo de impuesto", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 50, 95, 10
+  CONTROL "Recoger usuarios", 187, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 331, 39, 69, 10
+  CONTROL "Recoger el número de lote", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 331, 49, 97, 10
+  CONTROL "Utilizar rejillas de entrada de propiedades", 138, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 471, 38, 143, 10
+  CONTROL "Cambiar precios costo automáticamente", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 471, 48, 139, 10
+  CONTROL "", 139, "Edit", WS_BORDER|WS_TABSTOP, 546, 58, 67, 11
+  CONTROL "Recoger direcciones", 181, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 85, 79, 10
+  CONTROL "Recoger agentes", 182, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 96, 68, 10
+  CONTROL "Habilitar punto verde", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 107, 79, 10
+  CONTROL "Habilitar portes", 189, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 118, 60, 10
+  CONTROL "Habilitar descuento lineal", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 129, 92, 10
+  CONTROL "Seleccionar tarifas en línea", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 140, 99, 10
+  CONTROL "Agrupar entregas a cuenta en recibos", 204, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 85, 132, 10
+  CONTROL "Buscar precios en tarifas inferiores", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 95, 121, 10
+  CONTROL "Multiples tipos de movimientos ", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 107, 110, 10
+  CONTROL "Avisar en ventas sin valorar", 184, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 118, 100, 10
+  CONTROL "Avisar saldo pendiente", 192, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 190, 129, 85, 10
+  CONTROL "Habilitar impuestos especiales", 183, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 330, 85, 107, 10
+  CONTROL "Modificar impuestos especiales", 188, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 343, 97, 111, 10
+  CONTROL "Costo actual en documentos", 761, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 330, 119, 103, 10
+  CONTROL "No mostrar precios de costo en ventas", 205, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 470, 85, 135, 10
+  CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 343, 108, 125, 10
+  CONTROL "No usar movimientos para el costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 167, 142, 10
+  CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 167, 137, 10
+  CONTROL "Importes exactos en tickets", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 192, 99, 10
+  CONTROL "Recoger ubicaciones en sala", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 202, 105, 10
+  CONTROL "Mostrar la sala antes de iniciar la venta", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 212, 135, 10
+  CONTROL "Ordenar artículos por nombre", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 222, 105, 10
+  CONTROL "Asistente para devoluciones y vales", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 232, 126, 10
+  CONTROL "Habilitar programa de fideliazación", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 192, 121, 10
+  CONTROL "Usar colores en los artículos del táctil", 990, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 202, 131, 10
+  CONTROL "Crear tickets para recoger desde táctil", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 212, 133, 10
+  CONTROL "Crear tickets para llevar desde táctil", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 222, 125, 10
+  CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 198, 232, 134, 10
+  CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 346, 192, 53, 10
+  CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 346, 202, 73, 10
+  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 346, 212, 73, 10
+  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 259, 39, 10
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 105, 258, 320, 11
+  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 271, 51, 10
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 105, 270, 320, 11
+  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 283, 54, 10
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 105, 282, 320, 11
+  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 295, 47, 10
+  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 105, 294, 320, 11
+  CONTROL "Generales", -1, "Button", BS_GROUPBOX, 44, 29, 577, 43
+  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 248, 578, 61
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones generales del programa", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
-  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 95, 384, 101
-  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 198, 384, 25
-  CONTROL "Terminal punto de venta", -1, "Button", BS_GROUPBOX, 44, 226, 384, 63
-  CONTROL "Nombre del impuesto", -1, "Static", WS_GROUP, 198, 83, 70, 8
+  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 74, 578, 80
+  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 155, 578, 25
+  CONTROL "Terminal punto de venta", -1, "Button", BS_GROUPBOX, 44, 183, 578, 63
+  CONTROL "Nombre del impuesto", -1, "Static", WS_GROUP, 471, 61, 70, 8
 }
 
 CONSERFAC DIALOG DISCARDABLE 111, 68, 313, 288
@@ -16463,15 +16463,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "Gastos suplidos", 460, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 227, 98, 63, 10
 }
 
-EMPRESACFG DIALOG DISCARDABLE 137, 27, 630, 377
+EMPRESACFG DIALOG DISCARDABLE 137, 27, 627, 429
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU
 CAPTION "Empresa"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 521, 360, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 576, 360, 50, 14
-  CONTROL "", 400, "TPages", WS_TABSTOP, 194, 3, 432, 353
-  CONTROL "", 100, "TXBrowse", 0x00000000, 2, 3, 189, 353
+  CONTROL "", 400, "TPages", WS_TABSTOP, 2, 101, 624, 327
 }
 
 DELETERECNO DIALOG DISCARDABLE 113, 81, 287, 82

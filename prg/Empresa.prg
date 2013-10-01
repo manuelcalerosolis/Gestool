@@ -16,6 +16,7 @@ static dbfCount
 static dbfUser
 static dbfTVta
 static oBandera
+
 static cNewDlg
 static cNewBnc
 static lActEmp       := .t.
@@ -23,6 +24,8 @@ static nIvaReq       := 1
 static cOldSerie
 static cOldNomSer
 static cNewEmpresa   := ""
+
+static oOfficeBar
 
 static oBanco
 static oPais
@@ -147,32 +150,32 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Entrega a cuenta pedido",;
                         "Entrega a cuenta albarán" }
 
-      aImagenes   := {   "Clipboard_empty_businessman_16",;
-                         "Document_plain_businessman_16",;
-                         "Document_businessman_16",;
-                         "Document_businessman_16",;
-                         "Power-drill_user1_16",;
-                         "Notebook_user1_16",;
-                         "Clipboard_empty_user1_16",;
-                         "Document_plain_user1_16",;
-                         "Document_user1_16",;
-                         "Document_money2_16",;
-                         "Document_delete_16",;
-                         "Package_add_16",;
-                         "Package_ok_16",;
-                         "Cashier_user1_16",;
-                         "Worker2_Form_Red_16",;
-                         "Folder_document_16",;
-                         "Pencil_Package_16",;
-                         "Stopwatch_16",;
-                         "Briefcase_document_16",;
-                         "Truck_blue_document_16",;
-                         "User1_16",;
-                         "Money2_businessman_16",;
-                         "Briefcase_user1_16",;
-                         "Briefcase_security_agent_16",;
-                         "Clipboard_Empty_Moneybag_16",;
-                         "Document_Plain_Moneybag_16" }
+      aImagenes   := {  "Clipboard_empty_businessman_16",;
+                        "Document_plain_businessman_16",;
+                        "Document_businessman_16",;
+                        "Document_businessman_16",;
+                        "Power-drill_user1_16",;
+                        "Notebook_user1_16",;
+                        "Clipboard_empty_user1_16",;
+                        "Document_plain_user1_16",;
+                        "Document_user1_16",;
+                        "Document_money2_16",;
+                        "Document_delete_16",;
+                        "Package_add_16",;
+                        "Package_ok_16",;
+                        "Cashier_user1_16",;
+                        "Worker2_Form_Red_16",;
+                        "Folder_document_16",;
+                        "Pencil_Package_16",;
+                        "Stopwatch_16",;
+                        "Briefcase_document_16",;
+                        "Truck_blue_document_16",;
+                        "User1_16",;
+                        "Money2_businessman_16",;
+                        "Briefcase_user1_16",;
+                        "Briefcase_security_agent_16",;
+                        "Clipboard_Empty_Moneybag_16",;
+                        "Document_Plain_Moneybag_16" }
 
    RECOVER USING oError
 
@@ -1119,7 +1122,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    local oBrwEmp
    local oBrwCon
-   local oBrwCfg
 
    local oBmpComportamiento
    local oBmpDefecto
@@ -1137,13 +1139,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oGroupNFC
    local oSerie
    local cSerie                  := "A"
-   local aItems                  := {  {  "Wrench_48_alpha",            "General"               },;
-                                       {  "Preferences_Edit_48_alpha",  "Valores por defecto"   },;
-                                       {  "Cube_Yellow_Alpha_48",       "Artículos"             },;
-                                       {  "Document_Edit_48_alpha",     "Contadores y docs."    },;
-                                       {  "Folder2_red_Alpha_48",       "Contabilidad"          },;
-                                       {  "Satellite_dish_48_alpha",    "Envios"                },;
-                                       {  "Earth2_Alpha_48",            "Comunicaciones"        } }
+
    /*
    Obtenemos el nivel de acceso------------------------------------------------
    */
@@ -1250,45 +1246,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       TITLE       "Configuración de empresa : " + aTmp[ _CODEMP ] + "-" + aTmp[ _CNOMBRE ] ;
       OF          oWnd()
 
-      oBrwCfg                        := TXBrowse():New( oDlg )
-
-      oBrwCfg:nMarqueeStyle          := 5
-      oBrwCfg:lRecordSelector        := .f.
-      oBrwCfg:lHScroll               := .f.
-      oBrwCfg:lVScroll               := .f.
-      oBrwCfg:lHeader                := .f.
-      oBrwCfg:nDataLines             := 1
-      oBrwCfg:oFont                  := oFnt
-      oBrwCfg:nRowHeight             := 60
-
-      oBrwCfg:nMarqueeStyle          := MARQSTYLE_HIGHLROWMS
-
-      oBrwCfg:bClrSel                := {|| { CLR_WHITE, RGB( 251, 140,  60 ) } }
-      oBrwCfg:bClrSelFocus           := {|| { CLR_WHITE, RGB( 251, 140,  60 ) } }
-
-      oBrwCfg:bChange                := {|| ChangeTreeCfg( oBrwCfg, oFld ) }
-
-      oBrwCfg:CreateFromResource( 100 )
-
-      oBrwCfg:SetArray( aItems, , , .f. )
-
-      with object ( oBrwCfg:AddCol() )
-         :nEditType       := TYPE_IMAGE
-         :lBmpStretch     := .f.
-         :lBmpTransparent := .t.
-         :nDataBmpAlign   := AL_LEFT
-         :nWidth          := 60
-         :bAlphaLevel     := {|| 255 }
-         :bStrData        := {|| aItems[ oBrwCfg:nArrayAt, 2 ] }
-         :bStrImage       := {|| aItems[ oBrwCfg:nArrayAt, 1 ] }
-      end with
-
-      with object ( oBrwCfg:AddCol() )
-         :bStrData        := {|| aItems[ oBrwCfg:nArrayAt, 2 ] }
-         :nWidth          := 190
-      end with
-
-   REDEFINE PAGES oFld ;
+      REDEFINE PAGES oFld ;
          ID       400;
          OF       oDlg ;
          DIALOGS  "EMPRESA_2", "EMPRESA_3", "EMPRESA_8", "EMPRESA_10", "EMPRESA_5", "EMPRESA_6", "EMPRESA_0"
@@ -2405,23 +2363,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       Botones --------------------------------------------------------------------
       */
 
-      REDEFINE BUTTON;
-            ID       IDOK ;
-            OF       oDlg ;
-            ACTION   ( SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) )
-
-      REDEFINE BUTTON ;
-            ID       IDCANCEL ;
-            OF       oDlg ;
-            CANCEL ;
-            ACTION   ( oDlg:end() )
-
       oFld:aDialogs[ 4 ]:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
       oFld:aDialogs[ 5 ]:AddFastKey( VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
 
       oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) } )
 
-      oDlg:bStart    := {|| aEvalValid( oFld:aDialogs[ 2 ] ), aEvalValid( oFld:aDialogs[ 5 ] ), CmbDocumentosChanged( .f. ) }
+      oDlg:bStart    := {|| StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT        ( InitEdtCnf( oFld, nSelFolder ) ) ;
@@ -2492,6 +2439,44 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
+Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
+
+   local oBoton
+   local oGrupo
+   local oCarpeta
+
+   oOfficeBar              := TDotNetBar():New( 0, 0, 2020, 148, oDlg, 1 )
+   oOfficeBar:lPaintAll    := .f.
+   oOfficeBar:lDisenio     := .f.
+   oOfficeBar:SetStyle( 1 )
+
+   oDlg:oTop         := oOfficeBar
+
+   oCarpeta          := TCarpeta():New( oOfficeBar, "Configurar empresa." )
+
+   oGrupo            := TDotNetGroup():New( oCarpeta, 707, "Opciones", .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Wrench_48_alpha",            "Configuración general",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Preferences_Edit_48_alpha",  "Valores por defecto",             2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Cube_Yellow_Alpha_48",       "Parametrización de artículos",    3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Document_Edit_48_alpha",     "Contadores y documentos",         4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Folder2_red_Alpha_48",       "Contabilidad",                    5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Satellite_dish_48_alpha",    "Envios y recepciones",            6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Earth2_Alpha_48",            "Comunicaciones",                  7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+
+   oGrupo            := TDotNetGroup():New( oCarpeta, 202, "Guardar", .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Floppy_disk_blue_alpha_48",  "Guardar",                         1, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 100, oGrupo, "Door2_open_alpha_48",        "Salida",                          2, {|| oDlg:End() }, , , .f., .f., .f. )
+
+   aEvalValid( oFld:aDialogs[ 2 ] )
+
+   aEvalValid( oFld:aDialogs[ 5 ] )
+
+   CmbDocumentosChanged( .f. ) 
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 Static Function KillTrans()
 
 	/*
@@ -2523,16 +2508,6 @@ Static Function InitEdtCnf( oFld, nSelFolder )
 Return ( nil )
 
 //--------------------------------------------------------------------------//
-
-Static Function ChangeTreeCfg( oBrwCfg, oFld )
-
-   oFld:SetOption( oBrwCfg:nArrayAt )
-   
-   oBrwCfg:Refresh()
-
-Return nil
-
-//---------------------------------------------------------------------------//
 
 Static Function CmbDocumentosChanged( lCmbSerieSaved )
 
@@ -5958,7 +5933,6 @@ Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
    WinGather( aTmp, , dbfEmp, oBrw, nMode )
 
    oDlg:Enable()
-   
    oDlg:End( IDOK )
 
    CursorWE()

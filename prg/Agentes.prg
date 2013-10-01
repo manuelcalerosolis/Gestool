@@ -1838,12 +1838,29 @@ Return ( .t. )
 Function lGetAgente( oGetAgente, dbfAgente )
 
    local oDlg
+   local oBmpUsuario
+   local oSayUsuario
    local oCodigoAgente
    local cCodigoAgente := Space( 3 )
    local oNombreAgente
    local cNombreAgente := ""
 
-   DEFINE DIALOG oDlg RESOURCE "GetUsuario"
+   if !lRecogerAgentes()
+      Return .t.
+   end if
+
+   DEFINE DIALOG oDlg RESOURCE "GetUsuario" TITLE "Introduzca agente"
+
+      REDEFINE BITMAP oBmpUsuario ;
+         ID       500 ;
+         RESOURCE "Security_Agent_48_Alpha" ;
+         TRANSPARENT ;
+         OF       oDlg
+
+      REDEFINE SAY oSayUsuario ;
+         VAR      "Agentes" ;
+         ID       510 ;
+         OF       oDlg
 
       REDEFINE GET oCodigoAgente ;
          VAR      cCodigoAgente ;
@@ -1875,6 +1892,8 @@ Function lGetAgente( oGetAgente, dbfAgente )
 
    ACTIVATE DIALOG oDlg CENTER
 
+   oBmpUsuario:End()
+
    if oDlg:nResult == IDOK
 
       oCodigoAgente:cText( cCodigoAgente )
@@ -1896,7 +1915,7 @@ Function SetAgentes( oCodigoAgente, oSay, oDlg, dbfAgente )
    local lSetAgente  := .t.
    local cCodAgente  := oCodigoAgente:VarGet()
 
-   if ( dbfAgente )->( dbSeek( cCodAgente ) )
+   if dbSeekInOrd( cCodAgente, "cCodAge", dbfAgente )
       oSay:cText( Rtrim( cNombreAgente( dbfAgente ) ) )
       if !Empty( oDlg )
          oDlg:End( IDOK )
