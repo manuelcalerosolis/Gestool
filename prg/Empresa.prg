@@ -4,7 +4,15 @@
 #include "Image.ch"
 #include "Xbrowse.ch"
 
-#define _MENUITEM_   "01003" 
+#define _MENUITEM_            "01003" 
+
+#define fldGeneral            oFld:aDialogs[ 1 ]
+#define fldValores            oFld:aDialogs[ 2 ]
+#define fldArticulos          oFld:aDialogs[ 3 ]
+#define fldContadores         oFld:aDialogs[ 4 ]
+#define fldContabilidad       oFld:aDialogs[ 5 ]
+#define fldEnvios             oFld:aDialogs[ 6 ]
+#define fldComunicaciones     oFld:aDialogs[ 7 ]
 
 static oWndBrw
 static dbfEmp
@@ -522,14 +530,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          ID       500 ;
          RESOURCE "Factory_48_Alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
    REDEFINE GET   aGet[ _CODEMP ] VAR aTmp[ _CODEMP ];
 			ID 		100 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          VALID    ( NotValid( aGet[ _CODEMP ], dbfEmp, .t., "0" ) .and. !Empty( aTmp[ _CODEMP ] ) ) ;
          PICTURE  "@!" ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
    REDEFINE GET aTmp[ _CNOMBRE ];
 			ID 		110 ;
@@ -694,7 +702,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          ID       500 ;
          RESOURCE "Office_Building_48_Alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE GET oCodEmp VAR cCodEmp ;
          ID       100 ;
@@ -856,7 +864,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       Browse delegaciones --------------------------------------------------------
       */
 
-      oBrwDet                 := IXBrowse():New( if( nMode == APPD_MODE, oFld:aDialogs[ 3 ], oFld:aDialogs[ 2 ] ) )
+      oBrwDet                 := IXBrowse():New( if( nMode == APPD_MODE, fldArticulos, fldValores ) )
 
       oBrwDet:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDet:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1237,8 +1245,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    cTiempoPed              := cTiempoToCadena( aTmp[ _NTIEMPOPED ] )
 
-   DEFINE FONT oFnt NAME "Segoe UI Light" SIZE 0, -20
-
    LoaItmEmp( aTmp )
 
    DEFINE DIALOG  oDlg ;
@@ -1259,208 +1265,208 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       500 ;
          RESOURCE "wrench_48_alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LCODART ] VAR aTmp[ _LCODART ] ;
          ID       140 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LENTCON ] VAR aTmp[ _LENTCON ] ;
          ID       150 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LMODDES ] VAR aTmp[ _LMODDES ] ;
          ID       160 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LMODIVA ] VAR aTmp[ _LMODIVA ] ;
          ID       170 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LBUSCIR ] ;
          VAR      aTmp[ _LBUSCIR ] ;
          ID       206 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LGETUSR ] VAR aTmp[ _LGETUSR ] ;
          ID       187 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LGETLOT ] VAR aTmp[ _LGETLOT ] ;
          ID       185 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aTmp[ _LUSETBL ] ;
          ID       138;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aGet[ _CNOMIMP ] VAR aTmp[ _CNOMIMP ] ;
          ID       139 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LACTCOS ] VAR aTmp[ _LACTCOS ] ;
          ID       190 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LGETCOB ] VAR aTmp[ _LGETCOB ] ;
          ID       181 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LGETAGE ] VAR aTmp[ _LGETAGE ] ;
          ID       182 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LUSEPNT ] VAR aTmp[ _LUSEPNT ] ;
          ID       191 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LUSEPOR ] VAR aTmp[ _LUSEPOR ] ;
          ID       189 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LDTOLIN ] VAR aTmp[ _LDTOLIN ] ;
          ID       300 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LPRELIN ] VAR aTmp[ _LPRELIN ] ;
          ID       110 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LGRPENT ] VAR aTmp[ _LGRPENT ] ;
          ID       204 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LBUSIMP ] VAR aTmp[ _LBUSIMP ] ;
          ID       195 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LTIPMOV ] VAR aTmp[ _LTIPMOV ] ;
          ID       180 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LPASNIL ] VAR aTmp[ _LPASNIL ] ;
          ID       184 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LSALPDT ] VAR aTmp[ _LSALPDT ] ;
          ID       192 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LUSEIMP ] VAR aTmp[ _LUSEIMP ] ;
          ID       183 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LMODIMP ] VAR aTmp[ _LMODIMP ] ;
          ID       188 ;
          WHEN     aTmp[ _LUSEIMP ] ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LIVAIMPESP ] VAR aTmp[ _LIVAIMPESP ] ;
          ID       153 ;
          WHEN     aTmp[ _LUSEIMP ] ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LSHWCOS ] VAR aTmp[ _LSHWCOS ] ;
          ID       205 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LMOVCOS ] VAR aTmp[ _LMOVCOS ] ;
          ID       203 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LCOSACT ] VAR aTmp[ _LCOSACT ] ;
          ID       761 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LCOSPRV ] VAR aTmp[ _LCOSPRV ] ;
          ID       198 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LIMPEXA ] VAR aTmp[ _LIMPEXA ] ;
          ID       186 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LGETUBI ] VAR aTmp[ _LGETUBI ] ;
          ID       196 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LSHOWSALA ] ;
          VAR      aTmp[ _LSHOWSALA ] ;
          ID       158 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LORDNOMTPV ] ;
          VAR      aTmp[ _LORDNOMTPV ] ;
          ID       159 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LNUMTIK ] VAR aTmp[ _LNUMTIK ] ;
          ID       197 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LFIDELITY ] VAR aTmp[ _LFIDELITY ] ;
          ID       193 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LLLEVAR ] VAR aTmp[ _LLLEVAR ] ;
          ID       126 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LRECOGER ] VAR aTmp[ _LRECOGER ] ;
          ID       125 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LENCARGO ] VAR aTmp[ _LENCARGO ] ;
          ID       127 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LADDCUT ] VAR aTmp[ _LADDCUT ] ;
          ID       128 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LALBTCT ] VAR aTmp[ _LALBTCT ] ;
          ID       129 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LFACTCT ] VAR aTmp[ _LFACTCT ] ;
          ID       130 ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
          ID       990 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LNUMPED ] VAR aTmp[ _LNUMPED ] ;
          ID       260 ;   
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
          ID       270 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LNUMOBR ] VAR aTmp[ _LNUMOBR ] ;
          ID       200 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aGet[ _CNUMOBR ] VAR aTmp[ _CNUMOBR ] ;
          ID       210 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LNUMALB ] VAR aTmp[ _LNUMALB ] ;
          ID       220 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aGet[ _CNUMALB ] VAR aTmp[ _CNUMALB ] ;
          ID       230 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE CHECKBOX aGet[ _LSUALB ] VAR aTmp[ _LSUALB ] ;
          ID       240 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       REDEFINE GET aGet[ _CSUALB ] VAR aTmp[ _CSUALB ] ;
          ID       250 ;
-         OF       oFld:aDialogs[1]
+         OF       fldGeneral
 
       /*
       Page 2 Defecto-----------------------------------------------------------
@@ -1470,31 +1476,31 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       500 ;
          RESOURCE "Preferences_edit_48_alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CSUFDOC ] VAR aTmp[ _CSUFDOC ];
          ID       105 ;
          VALID    ( cDelegacion( aGet[ _CSUFDOC ], dbfDlg, oSay[47], aTmp[ _CODEMP ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwDelegacion( aGet[ _CSUFDOC ], dbfDlg, oSay[47], aTmp[ _CODEMP ] ) ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[47] VAR cSay[47] ;
          ID       106;
          WHEN     .f. ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFCLI ] VAR aTmp[ _CDEFCLI ] ;
          ID       100;
          VALID    ( cClient( aGet[ _CDEFCLI ], , oSay[32] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwClient( aGet[ _CDEFCLI ], oSay[32] ) ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[32] VAR cSay[32] ;
          ID       101;
          WHEN     .f. ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFSER ] VAR aTmp[ _CDEFSER ];
          ID       110;
@@ -1504,7 +1510,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ON UP    ( UpSerie( aGet[ _CDEFSER ] ) );
          ON DOWN  ( DwSerie( aGet[ _CDEFSER ] ) );
          VALID    ( aTmp[ _CDEFSER ] == Space( 1 ) .or. ( aTmp[ _CDEFSER ] >= "A" .and. aTmp[ _CDEFSER ] <= "Z" ) );
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFCAJ ] VAR aTmp[ _CDEFCAJ ] ;
          ID       140;
@@ -1512,16 +1518,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( cCajas( aGet[ _CDEFCAJ ], , oSay[33] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwCajas( aGet[ _CDEFCAJ ], oSay[33] ) ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[ 33 ] VAR cSay[ 33 ] ;
          WHEN     .f. ;
          ID       141 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE CHECKBOX aGet[ _LSELCAJ ] VAR aTmp[ _LSELCAJ ] ;
          ID       142 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFALM ] VAR aTmp[ _CDEFALM ] ;
          ID       120;
@@ -1529,16 +1535,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( cAlmacen( aGet[ _CDEFALM ], , oSay[1] ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CDEFALM ], oSay[1] ) );
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[1] VAR cSay[1] ;
          WHEN     .F. ;
          ID       121 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE CHECKBOX aGet[ _LSELALM ] VAR aTmp[ _LSELALM ] ;
          ID       122 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFFPG ] VAR aTmp[ _CDEFFPG ] ;
          ID       130;
@@ -1546,12 +1552,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( cFPago( aGet[ _CDEFFPG ], , oSay[2] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwFPago( aGet[ _CDEFFPG ], oSay[2] ) );
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[2] VAR cSay[2] ;
          WHEN     .F. ;
          ID       131 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFIVA ] VAR aTmp[ _CDEFIVA ] ;
          ID       135;
@@ -1559,16 +1565,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( cTiva( aGet[ _CDEFIVA ], , oSay[35] ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIva( aGet[ _CDEFIVA ], , oSay[35] ) ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[35] VAR cSay[35] ;
          WHEN     .F. ;
          ID       136 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
          ID       137 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFCJR ] VAR aTmp[ _CDEFCJR ] ;
          ID       150;
@@ -1576,12 +1582,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( cUser( aGet[ _CDEFCJR ], , oSay[34] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwUser( aGet[ _CDEFCJR ], , oSay[34] ) ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[34] VAR cSay[34] ;
          WHEN     .f. ;
          ID       151 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFVTA ] VAR aTmp[ _CDEFVTA ] ;
          ID       400;
@@ -1589,12 +1595,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( cTVta( aGet[ _CDEFVTA ], dbfTVta, oSay[43] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwTVta( aGet[ _CDEFVTA ], dbfTVta, oSay[43] ) ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oSay[43] VAR cSay[43] ;
          WHEN     .f. ;
          ID       401 ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDEFTEM ] VAR aTmp[ _CDEFTEM ] ;
          ID       200;
@@ -1602,19 +1608,19 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@!" ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwTemporada( aGet[ _CDEFTEM ], oSay[ 46 ] ) ) ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE GET oSay[ 46 ] VAR cSay[ 46 ] ;
          ID       201;
          WHEN     .f. ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CDIRIMG ] VAR aTmp[ _CDIRIMG ] ;
          ID       155;
          PICTURE  "@!" ;
          BITMAP   "FOLDER" ;
          ON HELP  ( aGet[ _CDIRIMG ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CDIRIMG ] ), .t. ), 100 ) ) );
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET aGet[ _CINIJORNADA ] VAR aTmp[ _CINIJORNADA ] ;
          PICTURE  "@R 99:99" ;
@@ -1623,7 +1629,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ON DOWN  ( DwTime( aGet[ _CINIJORNADA ] ) );
          VALID    ( ValidTime( aGet[ _CINIJORNADA ], .t. ) );
          ID       280 ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE GET oSerie VAR cSerie ;
          ID       290 ;
@@ -1632,40 +1638,40 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ON UP    ( ChangeSerie( aGet, aTmp, oSerie, cSerie, .f. ) );
          ON DOWN  ( ChangeSerie( aGet, aTmp, oSerie, cSerie, .t. ) );
          VALID    ( cSerie >= "A" .AND. cSerie <= "Z" ) ;
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE GET oNombreSerie VAR cNombreSerie ;
          ID       291;
          VALID    ( GuardaNombreSerie( aTmp, cSerie ) );
-         OF       oFld:aDialogs[2]
+         OF       fldValores
 
       REDEFINE CHECKBOX aGet[ _LRECNUMFAC ] VAR aTmp[ _LRECNUMFAC ] ; 
          ID       300 ;
-         OF       oFld:aDialogs[2]   
+         OF       fldValores   
 
       REDEFINE GET aGet[ _NAUTSER ] VAR aTmp[ _NAUTSER ] ;
          PICTURE  "999999999" ;
          SPINNER ;
          VALID    ( aTmp[ _NAUTSER ] > 0 );
          ID       295 ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE GET aGet[ _NDIAVAL ] VAR aTmp[ _NDIAVAL ];
          ID       156;
          PICTURE  "999" ;
          SPINNER ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE GET aGet[ _NDIAVALE ] VAR aTmp[ _NDIAVALE ];
          ID       220;
          PICTURE  "999" ;
          SPINNER ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       REDEFINE COMBOBOX oSay[ 42 ] VAR cSay[ 42 ] ;
          ITEMS    aCifRut ;
          ID       160;
-         OF       oFld:aDialogs[ 2 ]
+         OF       fldValores
 
       /*
       Page 3 Articulos---------------------------------------------------------
@@ -1675,143 +1681,143 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       500 ;
          RESOURCE "Cube_Yellow_Alpha_48" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR1 ] VAR aTmp[ _LSHWTAR1 ] ;
          ID       100 ;
          WHEN     .f. ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR1 ] VAR aTmp[ _CTXTTAR1 ] ;
          ID       110;
          SPINNER ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NDEFBNF1 ] VAR aTmp[ _NDEFBNF1 ] ;
          ID       120;
          SPINNER ;
          PICTURE  "@E 999.99" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE COMBOBOX oSay[ 36 ] VAR cSay[ 36 ] ;
          ITEMS    aBnfSobre ;
          ID       130;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR2 ] VAR aTmp[ _LSHWTAR2 ] ;
          ID       200 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR2 ] VAR aTmp[ _CTXTTAR2 ] ;
          ID       210;
          WHEN     ( aTmp[ _LSHWTAR2 ] ) ;
          SPINNER ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NDEFBNF2 ] VAR aTmp[ _NDEFBNF2 ] ;
          ID       220;
          WHEN     ( aTmp[ _LSHWTAR2 ] ) ;
          SPINNER ;
          PICTURE  "@E 999.99" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE COMBOBOX oSay[ 37 ] VAR cSay[ 37 ] ;
          ITEMS    aBnfSobre ;
          WHEN     ( aTmp[ _LSHWTAR2 ] ) ;
          ID       230;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR3 ] VAR aTmp[ _LSHWTAR3 ] ;
          ID       300 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR3 ] VAR aTmp[ _CTXTTAR3 ] ;
          ID       310;
          WHEN     ( aTmp[ _LSHWTAR3 ] ) ;
          SPINNER ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NDEFBNF3 ] VAR aTmp[ _NDEFBNF3 ] ;
          ID       320;
          WHEN     ( aTmp[ _LSHWTAR3 ] ) ;
          SPINNER ;
          PICTURE  "@E 999.99" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE COMBOBOX oSay[ 38 ] VAR cSay[ 38 ] ;
          ITEMS    aBnfSobre ;
          WHEN     ( aTmp[ _LSHWTAR3 ] ) ;
          ID       330;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR4 ] VAR aTmp[ _LSHWTAR4 ] ;
          ID       400 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR4 ] VAR aTmp[ _CTXTTAR4 ] ;
          ID       410;
          WHEN     ( aTmp[ _LSHWTAR4 ] ) ;
          SPINNER ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NDEFBNF4 ] VAR aTmp[ _NDEFBNF4 ] ;
          ID       420;
          WHEN     ( aTmp[ _LSHWTAR4 ] ) ;
          SPINNER ;
          PICTURE  "@E 999.99" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE COMBOBOX oSay[ 39 ] VAR cSay[ 39 ] ;
          ITEMS    aBnfSobre ;
          WHEN     ( aTmp[ _LSHWTAR4 ] ) ;
          ID       430;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR5 ] VAR aTmp[ _LSHWTAR5 ] ;
          ID       501 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR5 ] VAR aTmp[ _CTXTTAR5 ] ;
          ID       510;
          WHEN     ( aTmp[ _LSHWTAR5 ] ) ;
          SPINNER ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NDEFBNF5 ] VAR aTmp[ _NDEFBNF5 ] ;
          ID       520;
          WHEN     ( aTmp[ _LSHWTAR5 ] ) ;
          SPINNER ;
          PICTURE  "@E 999.99" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE COMBOBOX oSay[ 40 ] VAR cSay[ 40 ] ;
          ITEMS    aBnfSobre ;
          WHEN     ( aTmp[ _LSHWTAR5 ] ) ;
          ID       530;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR6 ] VAR aTmp[ _LSHWTAR6 ] ;
          ID       600 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR6 ] VAR aTmp[ _CTXTTAR6 ] ;
          ID       610;
          WHEN     ( aTmp[ _LSHWTAR6 ] ) ;
          SPINNER ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NDEFBNF6 ] VAR aTmp[ _NDEFBNF6 ] ;
          ID       620;
          WHEN     ( aTmp[ _LSHWTAR6 ] ) ;
          SPINNER ;
          PICTURE  "@E 999.99" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE COMBOBOX oSay[ 41 ] VAR cSay[ 41 ] ;
          ITEMS    aBnfSobre ;
          WHEN     ( aTmp[ _LSHWTAR6 ] ) ;
          ID       630;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NPREVTA ] VAR aTmp[ _NPREVTA ] ;
          ID       800 ;
@@ -1819,7 +1825,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NPREWEBVTA ] VAR aTmp[ _NPREWEBVTA ] ;
          ID       810 ;
@@ -1827,7 +1833,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NPRETPRO ] VAR aTmp[ _NPRETPRO ] ;
          ID       740 ;
@@ -1835,7 +1841,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _NPRETCMB ] VAR aTmp[ _NPRETCMB ] ;
          ID       750 ;
@@ -1843,83 +1849,83 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LUSECAJ ] VAR aTmp[ _LUSECAJ ] ;
          ID       250 ;
          ON CHANGE ( lChgCajCaj( aGet, aTmp ) );
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LCALCAJ ] VAR aTmp[ _LCALCAJ ] ;
          ID       260 ;
          WHEN     aTmp[ _LUSECAJ ] ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CNBRCAJ ] VAR aTmp[ _CNBRCAJ ] ;
          ID       270 ;
          WHEN     aTmp[ _LUSECAJ ] ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CNBRUND ] VAR aTmp[ _CNBRUND ] ;
          ID       280 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWPOP ] VAR aTmp[ _LSHWPOP ] ;
          ID       770 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSTKCERO ] VAR aTmp[ _LSTKCERO ] ;
          ID       193 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSERNOCOM ] VAR aTmp[ _LSERNOCOM ] ;
          ID       196 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LNSTKACT ] ;
          VAR      aTmp[ _LNSTKACT ] ;
          ID       194 ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LCALLOT ] VAR aTmp[ _LCALLOT ] ;
          ID       197 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LCALSER ] VAR aTmp[ _LCALSER ] ;
          ID       198 ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aTmp[ _NDGTUND ] ;
          ID       700 ;
          PICTURE  "99" ;
          SPINNER  MIN 8 MAX 12 ;
          VALID    ( aTmp[ _NDGTUND ] >= 8 .AND. aTmp[ _NDGTUND ] <= 12 ) ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aTmp[ _NDECUND ] ;
          ID       710;
          PICTURE  "99" ;
          SPINNER  MIN 0 MAX 6 ;
          VALID    ( aTmp[ _NDECUND ] >= 0 .AND. aTmp[ _NDECUND ]  <= 6 ) ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aTmp[ _NDGTESC ] ;
          ID       720 ;
          PICTURE  "99" ;
          SPINNER  MIN 8 MAX 12 ;
          VALID    ( aTmp[ _NDGTESC ] >= 8 .AND. aTmp[ _NDGTESC ] <= 12 ) ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE GET aTmp[ _NDECESC ] ;
          ID       730;
          PICTURE  "99" ;
          SPINNER  MIN 0 MAX 6 ;
          VALID    ( aTmp[ _NDECESC ] >= 0 .AND. aTmp[ _NDECESC ]  <= 6 ) ;
-         OF       oFld:aDialogs[3]
+         OF       fldArticulos
 
       REDEFINE RADIO aTmp[ _NCOPSEA ] ; 
          ID       760, 761, 762 ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       fldArticulos
 
       /*
       Page 4 Contadores--------------------------------------------------------
@@ -1929,11 +1935,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       500 ;
             RESOURCE "document_edit_48_alpha" ;
             TRANSPARENT ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       REDEFINE COMBOBOX oCmbDocumentos VAR cCmbDocumentos ;
             ID       100;
-            OF       oFld:aDialogs[ 4 ] ;
+            OF       fldContadores  ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             ITEMS    aDocumentos ;
             BITMAPS  aImagenes
@@ -1948,12 +1954,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ON UP    ( UpSerie( oGetSerie ) );
             ON DOWN  ( DwSerie( oGetSerie ) );
             VALID    ( Empty( cGetSerie ) .or. ( cGetSerie >= "A" .and. cGetSerie <= "Z" ) ) ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
             ITEMS    { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" } ;
             ID       110 ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       oCmbSerie:bChange       := {|| CmbSerieChanged() }
 
@@ -1963,7 +1969,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             SPINNER ;
             PICTURE  "999999999" ;
             VALID    ( nGetContador > 0 ) ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       REDEFINE GET oGetFormato VAR cGetFormato ;
             ID       130 ;
@@ -1972,7 +1978,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             BITMAP   "LUPA" ;
             VALID    ( cDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
             ON HELP  ( brwDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       REDEFINE GET oGetCopias VAR nGetCopias ;
             ID       140 ;
@@ -1982,24 +1988,24 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             SPINNER ;
             MIN      0 ;
             MAX      9 ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       REDEFINE GET oGetNFCPrefijo VAR cGetNFCPrefijo ;
             ID       160 ;
             IDSAY    161 ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       REDEFINE GET oGetNFCContador VAR cGetNFCContador ;
             ID       170 ;
             IDSAY    171 ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
 
       REDEFINE GET oGetPlantillaDefecto VAR cGetPlantillaDefecto ;
             ID       190 ;
             BITMAP   "Folder" ;
             ON HELP  ( oGetPlantillaDefecto:cText( cGetFile( 'Html ( *.Html ) | *.Html', 'Seleccione el nombre del fichero' ) ) ) ;
-            OF       oFld:aDialogs[ 4 ]
+            OF       fldContadores 
 
       /*
       Page 4 Contabilidad------------------------------------------------------
@@ -2009,24 +2015,24 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       500 ;
          RESOURCE "Folder2_red_Alpha_48" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CRUTCNT ] VAR aTmp[ _CRUTCNT ] ;
          ID       100;
          PICTURE  "@!" ;
          BITMAP   "FOLDER" ;
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       aGet[ _CRUTCNT ]:bHelp        := {|| aGet[ _CRUTCNT ]:cText( Padr( cGetDir32( "Seleccione directorio de Contaplus", Rtrim( aTmp[ _CRUTCNT ] ), .t. ), 100 ) ) }
       aGet[ _CRUTCNT ]:bValid       := {|| ChkRuta( aTmp[ _CRUTCNT ], .t. ), .t. }
 
       REDEFINE BUTTON;
          ID       130 ;
-         OF       oFld:aDialogs[5] ;
+         OF       fldContabilidad ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) );
          ACTION   ( EditConta( oBrwEmp:nArrayAt, aTmp ), oBrwEmp:Refresh() )
 
-      oBrwEmp                       := TXBrowse():New( oFld:aDialogs[ 5 ] )
+      oBrwEmp                       := TXBrowse():New( fldContabilidad )
 
       oBrwEmp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwEmp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -2075,7 +2081,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          VALID    ( ChkCta( aTmp[ _CCTACLI ], aGet[ _CCTACLI ]:oSay, .f., AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          ON HELP  ( BrwChkCta( aGet[ _CCTACLI ], aGet[ _CCTACLI ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTAPRV ] VAR aTmp[ _CCTAPRV ] ;
          ID       380;
@@ -2085,7 +2091,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          VALID    ( ChkCta( aTmp[ _CCTAPRV ], aGet[ _CCTAPRV ]:oSay, .f., AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          ON HELP  ( BrwChkCta( aGet[ _CCTAPRV ], aGet[ _CCTAPRV ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTAVTA ] VAR aTmp[ _CCTAVTA ] ;
          ID       390;
@@ -2095,7 +2101,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          VALID    ( ChkCta( aTmp[ _CCTAVTA ], aGet[ _CCTAVTA ]:oSay, .f., AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          ON HELP  ( BrwChkCta( aGet[ _CCTAVTA ], aGet[ _CCTAVTA ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTACOB ] VAR aTmp[ _CCTACOB ] ;
          ID       400 ;
@@ -2105,7 +2111,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubCta( aGet[ _CCTACOB ], aGet[ _CCTACOB ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          VALID    ( MkSubCta( aGet[ _CCTACOB ], nil, aGet[ _CCTACOB ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTASIN ] VAR aTmp[ _CCTASIN ] ;
          ID       410 ;
@@ -2115,7 +2121,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubCta( aGet[ _CCTASIN ], aGet[ _CCTASIN ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          VALID    ( MkSubCta( aGet[ _CCTASIN ], nil, aGet[ _CCTASIN ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
-         OF       oFld:aDialogs[5]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTAANT ] VAR aTmp[ _CCTAANT ] ;
          ID       430 ;
@@ -2125,7 +2131,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubCta( aGet[ _CCTAANT ], aGet[ _CCTAANT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          VALID    ( MkSubCta( aGet[ _CCTAANT ], nil, aGet[ _CCTAANT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTARET ] VAR aTmp[ _CCTARET ] ;
          ID       440 ;
@@ -2135,7 +2141,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubCta( aGet[ _CCTARET ], aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          VALID    ( MkSubCta( aGet[ _CCTARET ], nil, aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTACEESPT ] VAR aTmp[ _CCTACEESPT ] ;
          ID       450 ;
@@ -2145,7 +2151,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubCta( aGet[ _CCTACEESPT ], aGet[ _CCTACEESPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          VALID    ( MkSubCta( aGet[ _CCTACEESPT ], nil, aGet[ _CCTACEESPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTACEERPT ] VAR aTmp[ _CCTACEERPT ] ;
          ID       460 ;
@@ -2155,24 +2161,24 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkSubCta( aGet[ _CCTACEERPT ], aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
          VALID    ( MkSubCta( aGet[ _CCTACEERPT ], nil, aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE RADIO nIvaReq ;
          ID       420, 421 ;
          WHEN     ChkRuta( aTmp[ _CRUTCNT ], .f. ) ;
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE CHECKBOX aGet[ _LCONIVA ] VAR aTmp[ _LCONIVA ] ;
          ID       470 ;
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE CHECKBOX aGet[ _LREQDEC ] VAR aTmp[ _LREQDEC ] ;
          ID       480 ;
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       REDEFINE CHECKBOX aGet[ _LAPTNEG ] VAR aTmp[ _LAPTNEG ] ;
          ID       490 ;
-         OF       oFld:aDialogs[ 5 ]
+         OF       fldContabilidad
 
       /*
       Page 6 Envios------------------------------------------------------------
@@ -2182,56 +2188,56 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID          500 ;
          RESOURCE    "Satellite_dish_48_alpha" ;
          TRANSPARENT ;
-         OF          oFld:aDialogs[6]
+         OF          fldEnvios
 
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
             ITEMS    { "Cliente", "Servidor" } ;
             ID       100 ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE RADIO aTmp[ _NTIPCON ] ;
             ID       110, 111 ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE GET aGet[ _CRUTCON ] VAR aTmp[ _CRUTCON ] ;
             ID       120;
             PICTURE  "@!" ;
             BITMAP   "FOLDER" ;
             ON HELP  ( aGet[ _CRUTCON ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CRUTCON ] ), .t. ), 100 ) ) );
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE GET aTmp[ _CSITFTP ] ;
             ID       160;
             WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE GET aTmp[_CUSRFTP] ;
             ID       170 ;
             WHEN     ( aTmp[_NTIPCON] == 2 ) ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE GET aTmp[ _CPSWFTP ] ;
             ID       180;
             WHEN     ( aTmp[_NTIPCON] == 2 ) ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LPASENVIO ] VAR aTmp[ _LPASENVIO ] ;
             ID       200 ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LENVENT ] VAR aTmp[ _LENVENT ] ;
             ID       190 ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE CHECKBOX aTmp[ _LMAILTURNO ] ;
             ID       300;
             WHEN     ( lUsrMaster() ) ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       REDEFINE GET aTmp[ _CMAILTURNO ] ;
             ID       310 ;
             WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTURNO ] ) ;
-            OF       oFld:aDialogs[6]
+            OF       fldEnvios
 
       /*
       Page 7 comunicacion------------------------------------------------------
@@ -2241,62 +2247,62 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       500 ;
             RESOURCE "Earth2_Alpha_48" ;
             TRANSPARENT ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CSRVMAI ] ;
             ID       160;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _NPRTMAI ] ;
             ID       165;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CCTAMAI ] ;
             ID       170;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CPSSMAI ] ;
             ID       176;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE CHECKBOX aTmp[ _LAUTMAI ] ;
             ID       175;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CCCPMAI ] ;
             ID       180;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CSITSQL ] ;
             ID       100;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _NPRTSQL ] ;
             ID       110;
             SPINNER ;
             MIN      1;
             MAX      65535;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CUSRSQL ] ;
             ID       120;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CPSWSQL ] ;
             ID       130;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CDTBSQL ] ;
             ID       140 ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CCOOKEY ] ;
             ID       141 ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CPREFIXTBL ] ;
             ID       142 ;
-            OF       oFld:aDialogs[7]      
+            OF       fldComunicaciones      
 
       REDEFINE GET aGet[ _CSERIEPED ] VAR aTmp[ _CSERIEPED ] ;
             SPINNER ;
@@ -2305,11 +2311,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             PICTURE  "@!" ;
             VALID    ( aTmp[ _CSERIEPED ] >= "A" .AND. aTmp[ _CSERIEPED ] <= "Z"  );
             ID       210 ;
-            OF       oFld:aDialogs[ 7 ]
+            OF       fldComunicaciones
 
       REDEFINE BTNBMP ;
             ID       150 ;
-            OF       oFld:aDialogs[7] ;
+            OF       fldComunicaciones ;
             RESOURCE "Data_Connection_16" ;
             NOBORDER ;
             TOOLTIP  "Porbar conexión" ;
@@ -2318,53 +2324,53 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE COMBOBOX cTiempoPed ;
             ITEMS    aTiempo ;
             ID       220 ;
-            OF       oFld:aDialogs[ 7 ]
+            OF       fldComunicaciones
 
       REDEFINE CHECKBOX aGet[ _LREALWEB ] VAR aTmp[ _LREALWEB ] ;
             ID       400 ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CHOSTFTPIMG ] ;
             ID       250;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _NPRTFTP ] ;
             ID       260;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CUSRFTPIMG ] ;
             ID       230;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE CHECKBOX aGet[ _LPASFTP ] VAR aTmp[ _LPASFTP ] ;
             ID       270 ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CPSWFTPIMG ] ;
             ID       240;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CDIMAGEN ] ;
             ID       200 ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aGet[ _CRUTEDI ] VAR aTmp[ _CRUTEDI ] ;
             ID       300 ;
             PICTURE  "@!" ;
             BITMAP   "FOLDER" ;
             ON HELP  ( aGet[ _CRUTEDI ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CRUTEDI ] ), .t. ), 100 ) ) );
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CCODEDI ] ;
             ID       310 ;
-            OF       oFld:aDialogs[7]
+            OF       fldComunicaciones
 
       /*
       Botones --------------------------------------------------------------------
       */
 
-      oFld:aDialogs[ 4 ]:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
-      oFld:aDialogs[ 5 ]:AddFastKey( VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
+      fldContadores:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
+      fldContabilidad:AddFastKey( VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
 
       oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) } )
 
@@ -2445,7 +2451,7 @@ Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
    local oGrupo
    local oCarpeta
 
-   oOfficeBar              := TDotNetBar():New( 0, 0, 2020, 148, oDlg, 1 )
+   oOfficeBar              := TDotNetBar():New( 0, 0, 2020, 128, oDlg, 1 )
    oOfficeBar:lPaintAll    := .f.
    oOfficeBar:lDisenio     := .f.
    oOfficeBar:SetStyle( 1 )
@@ -2454,22 +2460,22 @@ Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
 
    oCarpeta          := TCarpeta():New( oOfficeBar, "Configurar empresa." )
 
-   oGrupo            := TDotNetGroup():New( oCarpeta, 707, "Opciones", .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Wrench_48_alpha",            "Configuración general",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Preferences_Edit_48_alpha",  "Valores por defecto",             2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Cube_Yellow_Alpha_48",       "Parametrización de artículos",    3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Document_Edit_48_alpha",     "Contadores y documentos",         4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Folder2_red_Alpha_48",       "Contabilidad",                    5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Satellite_dish_48_alpha",    "Envios y recepciones",            6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Earth2_Alpha_48",            "Comunicaciones",                  7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+   oGrupo            := TDotNetGroup():New( oCarpeta, 427, "Opciones", .f. ) 
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Wrench_32_alpha",            "General",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Preferences_Edit_32_alpha",  "Valores",           2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32_alpha",       "Artículos",         3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Document_Edit_32_alpha",     "Contadores",        4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Folder2_red_32_alpha",       "Contabilidad",      5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Satellite_dish_32_alpha",    "Envios",            6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Earth2_32_alpha",            "Comunicaciones",    7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
 
-   oGrupo            := TDotNetGroup():New( oCarpeta, 202, "Guardar", .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Floppy_disk_blue_alpha_48",  "Guardar",                         1, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 100, oGrupo, "Door2_open_alpha_48",        "Salida",                          2, {|| oDlg:End() }, , , .f., .f., .f. )
+   oGrupo            := TDotNetGroup():New( oCarpeta, 122, "Guardar", .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Floppy_disk_blue_32_alpha",  "Guardar",           1, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Door2_open_32_alpha",        "Salida",            2, {|| oDlg:End() }, , , .f., .f., .f. )
 
-   aEvalValid( oFld:aDialogs[ 2 ] )
+   aEvalValid( fldValores )
 
-   aEvalValid( oFld:aDialogs[ 5 ] )
+   aEvalValid( fldContabilidad )
 
    CmbDocumentosChanged( .f. ) 
 

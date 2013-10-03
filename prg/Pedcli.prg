@@ -18067,7 +18067,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
       /*
-      Primero Crear la base de datos local
+      Primero Crear la base de datos local-------------------------------------
       */
 
       cTmpLin        := cGetNewFileName( cPatTmp() + "cPedLin" )
