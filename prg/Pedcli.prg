@@ -2310,8 +2310,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := cNombreCajas()
+         :bEditValue          := {|| NotCaja( ( dbfTmpLin )->nCanPed ) }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with     
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := cNombreUnidades()
-         :bEditValue          := {|| nTotNPedCli( dbfTmpLin ) }
+         :bEditValue          := {|| nTotNPedCli( dbfTmpLin ) } 
          :cEditPicture        := cPicUnd
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -2321,7 +2331,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Unidad de medición"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
-         :nWidth              := 94
+         :nWidth              := 24
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3858,90 +3868,94 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local bmpImage
    local oTotUni
    local oTotPdt
-   local nTotPdt        := 0
+   local nTotPdt        	:= 0
    local oTotEnt
    local oSayGrp
-   local cSayGrp        := ""
+   local cSayGrp        	:= ""
    local oSayFam
-   local cSayFam        := ""
-   local cNumedPrv      := ""
+   local cSayFam        	:= ""
+   local cNumedPrv      	:= ""
    local oRentLin
    local cRentLin
-   local cCodDiv        := aTmpPed[ _CDIVPED ]
+   local cCodDiv        	:= aTmpPed[ _CDIVPED ]
    local oSayDias
    local oGetCaducidad
    local dGetCaducidad
    local nOrdFacCliL
    local oBtnSer
    local oEstadoProduccion
-   local cEstadoProduccion := aEstadoProduccion[ Min( Max( aTmp[ _NPRODUC ] + 1, 1 ), len( aEstadoProduccion ) ) ]
+   local cEstadoProduccion 
+
 
    do case
    case nMode == APPD_MODE
 
-      aTmp[_NNUMPED ]   := aTmpPed[ _NNUMPED ]
-      aTmp[_NUNICAJA]   := 1
-      aTmp[_DFECHA  ]   := Ctod( "" )
-      aTmp[_CTIPMOV ]   := cDefVta()
-      aTmp[_LTOTLIN ]   := lTotLin
-      aTmp[_NCANPED ]   := 1
-      aTmp[_CALMLIN ]   := aTmpPed[ _CCODALM ]
-      aTmp[_LIVALIN ]   := aTmpPed[ _LIVAINC ]
-      aTmp[_NTARLIN ]   := aTmpPed[ _NTARIFA ]
-      aTmp[_LIMPFRA ]   := .t.
+      aTmp[ _NNUMPED ]   	:= aTmpPed[ _NNUMPED ]
+      aTmp[ _NUNICAJA]   	:= 1
+      aTmp[ _DFECHA  ]   	:= Ctod( "" )
+      aTmp[ _CTIPMOV ]   	:= cDefVta()
+      aTmp[ _LTOTLIN ]   	:= lTotLin
+      aTmp[ _NCANPED ]   	:= 1
+      aTmp[ _CALMLIN ]   	:= aTmpPed[ _CCODALM ]
+      aTmp[ _LIVALIN ]   	:= aTmpPed[ _LIVAINC ]
+      aTmp[ _NTARLIN ]   	:= aTmpPed[ _NTARIFA ]
+      aTmp[ _LIMPFRA ]   	:= .t.
 
       if aTmpPed[ _NREGIVA ] <= 1
-         aTmp[ _NIVA ]  := nIva( dbfIva, cDefIva() )
+         aTmp[ _NIVA ]  	:= nIva( dbfIva, cDefIva() )
       end if
 
       if !Empty( cCodArtEnt )
-         cCodArt        := Padr( cCodArtEnt, 32 )
+         cCodArt        	:= Padr( cCodArtEnt, 32 )
       end if
 
-      aTmp[ __DFECSAL ] := aTmpPed[ _DFECSAL ]
-      aTmp[ __DFECENT ] := aTmpPed[ _DFECENTR]
+		aTmp[ _NPRODUC ]		:= 0
 
-      aTmp[ __LALQUILER]:= !Empty( oTipPed ) .and. ( oTipPed:nAt == 2 )
+      aTmp[ __DFECSAL ] 	:= aTmpPed[ _DFECSAL ]
+      aTmp[ __DFECENT ] 	:= aTmpPed[ _DFECENTR]
+      aTmp[ __LALQUILER ]	:= !Empty( oTipPed ) .and. ( oTipPed:nAt == 2 )
 
    case nMode == EDIT_MODE
 
-      lTotLin           := aTmp[ _LTOTLIN ]
+      lTotLin           	:= aTmp[ _LTOTLIN ]
 
    end case
 
-   nOrdPedPrv           := ( dbfPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
+   nOrdPedPrv           	:= ( dbfPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
-   dFecRes              := dTmpPdtRec( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes )
-   nTotRes              := nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbCliL )
-   nTotRes              += nUnidadesRecibidasFacCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfFacCliL )
+   dFecRes              	:= dTmpPdtRec( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes )
+   nTotRes              	:= nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbCliL )
+   nTotRes              	+= nUnidadesRecibidasFacCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfFacCliL )
 
    if nTotRes > nTotNPedCli( aTmp )
-      nTotRes           := nTotNPedCli( aTmp )
+      nTotRes           	:= nTotNPedCli( aTmp )
    end if
 
-   nTotEnt              := nUnidadesRecibidasPedCli( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbPrvL )
-   nTotPdt              := nTotNPedCli( aTmp ) - nTotEnt
+   nTotEnt              	:= nUnidadesRecibidasPedCli( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbPrvL )
+   nTotPdt              	:= nTotNPedCli( aTmp ) - nTotEnt
+
+   cEstadoProduccion 		:= aEstadoProduccion[ Min( Max( aTmp[ _NPRODUC ] + 1, 1 ), len( aEstadoProduccion ) ) ]
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
-   cOldCodArt           := aTmp[ _CREF ]
-   cOldPrpArt           := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
-   cOldUndMed           := aTmp[ _CUNIDAD ]
+   cOldCodArt           	:= aTmp[ _CREF ]
+   cOldPrpArt           	:= aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
+   cOldUndMed           	:= aTmp[ _CUNIDAD ]
 
    /*
    Etiquetas de familias y grupos de familias----------------------------------
    */
 
-   cSayGrp              := RetFld( aTmp[ _CGRPFAM ], oGrpFam:GetAlias() )
-   cSayFam              := RetFld( aTmp[ _CCODFAM ], dbfFamilia )
+   cSayGrp              	:= RetFld( aTmp[ _CGRPFAM ], oGrpFam:GetAlias() )
+   cSayFam              	:= RetFld( aTmp[ _CCODFAM ], dbfFamilia )
 
    /*
    Filtros---------------------------------------------------------------------
    */
 
-   nOrdAnt              := ( dbfAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
+   nOrdAnt              	:= ( dbfAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
    ( dbfAlbCliL )->( OrdScope( 0, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] ) )
    ( dbfAlbCliL )->( OrdScope( 1, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] ) )
@@ -3951,13 +3965,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
    Hacemos un Scope para saber qué facturas están vinculadas con este pedido---
    */
 
-   nOrdFacCliL          := ( dbfFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
+   nOrdFacCliL          	:= ( dbfFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
    ( dbfFacCliL )->( OrdScope( 0, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] ) )
    ( dbfFacCliL )->( OrdScope( 1, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] ) )
    ( dbfFacCliL )->( dbGoTop() )
 
-   nOrdAlbPrv           := ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
+   nOrdAlbPrv           	:= ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
    ( dbfAlbPrvL )->( OrdScope( 0, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] ) )
    ( dbfAlbPrvL )->( OrdScope( 1, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] ) )
@@ -16349,15 +16363,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    local aXbyStr
    local aClo     := aClone( aTmp )
 
-#ifndef __PDA__
-
    oBtn:SetFocus()
 
    if !aGet[ _CREF ]:lValid()
       return nil
    end if
-
-#endif
 
    if !lMoreIva( aTmp[ _NIVA ] )
       msgStop( "Demasiados tipos de " + cImp() + " en un mismo documento.", "Atención" )
@@ -16626,11 +16636,12 @@ Static Function AppendKit( uTmpLin, aTmpPed )
    local nDtoDiv
    local nNumLin
    local nTarLin
-   local nRecAct                       := ( dbfKit )->( Recno() )
    local nUnidades                     := 0
    local nStkActual                    := 0
+   local nRecAct                       := ( dbfKit 	)->( Recno() )
+   local nRecLin 								:= ( dbfTmpLin )->( Recno() )
 
-   if ValType( uTmpLin ) == "A"
+   if IsArray( uTmpLin )
       cCodArt                          := uTmpLin[ _CREF    ]
       cSerPed                          := uTmpLin[ _CSERPED ]
       nNumPed                          := uTmpLin[ _NNUMPED ]
@@ -16705,6 +16716,18 @@ Static Function AppendKit( uTmpLin, aTmpPed )
             if ( dbfArticulo )->lFacCnv
                ( dbfTmpLin )->nFacCnv  := ( dbfArticulo )->nFacCnv
             end if
+
+            /*
+            Valores q arrastramos----------------------------------------------
+				*/           
+
+            ( dbfTmpLin )->cCodFam 		:= ( dbfArticulo )->Familia
+            ( dbfTmpLin )->cGrpFam 		:= cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
+            ( dbfTmpLin )->cCodFra 		:= cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
+
+            /*
+            Datos de la cabecera-----------------------------------------------
+            */
 
             ( dbfTmpLin )->cSerPed     := cSerPed
             ( dbfTmpLin )->nNumPed     := nNumPed
@@ -16797,7 +16820,8 @@ Static Function AppendKit( uTmpLin, aTmpPed )
 
    end if
 
-   ( dbfKit )->( dbGoTo( nRecAct ) )
+   ( dbfKit 	)->( dbGoTo( nRecAct ) )
+   ( dbfTmpLin )->( dbGoTo( nRecLin ) )
 
 Return ( nil )
 
@@ -16951,8 +16975,13 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
    local cProveedor
    local nTarOld     := aTmp[ _NTARLIN ]
    local nNumDto     := 0
+   local dFecPed 		:= aTmpPed[ _DFECPED ]
 
    DEFAULT lFocused  := .t.
+
+   if !Empty( aTmpPed[ _DFECENT ] )
+   	dFecPed 			:= aTmpPed[ _DFECENT ]
+   end if 
 
    if Empty( cCodArt )
 
@@ -17088,7 +17117,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                   aTmp[ _CLOTE ]    := ( dbfArticulo )->cLote
                end if
 
-               aTmp[ _LLOTE ]          := ( dbfArticulo )->lLote
+               aTmp[ _LLOTE ]       := ( dbfArticulo )->lLote
 
             else
 
@@ -17146,14 +17175,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             Coger el tipo de venta------------------------------------------------
             */
 
-            aTmp[ _LMSGVTA ]         := ( dbfArticulo )->lMsgVta
-            aTmp[ _LNOTVTA ]         := ( dbfArticulo )->lNotVta
+            aTmp[ _LMSGVTA ]        := ( dbfArticulo )->lMsgVta
+            aTmp[ _LNOTVTA ]        := ( dbfArticulo )->lNotVta
 
             /*
             Cogemos las familias y los grupos de familias
             */
 
-            cCodFam                 := ( dbfArticulo )->Familia
+            cCodFam               	:= ( dbfArticulo )->Familia
             if !Empty( cCodFam )
 
                if !Empty( aGet[ _CCODFAM ] )
@@ -17223,8 +17252,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             -------------------------------------------------------------------
             */
 
-#ifndef __PDA__
-
             if !Empty( aGet[ _NPESOKG ] )
                aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
             else
@@ -17255,8 +17282,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             else
                 aTmp[ _CVOLUMEN ]:= ( dbfArticulo )->cVolumen
             end if
-
-#endif
 
             /*
             Tipo de articulo---------------------------------------------------
@@ -17447,25 +17472,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             if nMode == APPD_MODE
                cCodFam        := RetFamArt( cCodArt, dbfArticulo )
             else
-               cCodFam        := aTmp[_CCODFAM]
+               cCodFam        := aTmp[ _CCODFAM ]
             end if
 
             /*
-            Cargamos los valores de los puntos para muebles
+            Cargamos el precio-------------------------------------------------
             */
-
-#ifndef __PDA__
-
-         if IsMuebles()
-            aTmp[ _NPUNTOS ]  := ( dbfArticulo )->pCosto
-            aTmp[ _NVALPNT ]  := ( dbfArticulo )->nPuntos
-            aTmp[ _NDTOPNT ]  := ( dbfArticulo )->nDtoPnt
-            aTmp[ _NINCPNT ]  := 0
-         end if
-
-#endif
-
-            //--Precio de venta recomendado, punto verde y costo de producto--//
 
             aTmp[ _NPVPREC ] := (dbfArticulo)->PvpRec
 
@@ -17632,14 +17644,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
                //--Descuento de promoci¢n--//
 
-               nImpOfe  := RetDtoPrm( cCodArt, cCodFam, aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPed[_DFECPED], dbfTarPreL )
+               nImpOfe  := RetDtoPrm( cCodArt, cCodFam, aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dFecPed, dbfTarPreL )
                if nImpOfe  != 0
                   aGet[_NDTOPRM]:cText( nImpOfe )
                end if
 
                //--Descuento de promocion para el agente--//
 
-               nDtoAge  := RetDtoAge( cCodArt, cCodFam, aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPed[_DFECPED], aTmpPed[_CCODAGE], dbfTarPreL, dbfTarPreS )
+               nDtoAge  := RetDtoAge( cCodArt, cCodFam, aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dFecPed, aTmpPed[_CCODAGE], dbfTarPreL, dbfTarPreS )
                if nDtoAge  != 0
                   aGet[ _NCOMAGE ]:cText( nDtoAge )
                end if
@@ -17649,7 +17661,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             //--Atipicas de clientes por artículos--//
 
             do case
-            case  lSeekAtpArt( aTmpPed[ _CCODCLI ] + cCodArt, aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], aTmpPed[ _DFECPED ], dbfCliAtp ) .AND. ;
+            case  lSeekAtpArt( aTmpPed[ _CCODCLI ] + cCodArt, aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], dFecPed, dbfCliAtp ) .AND. ;
                   ( dbfCliAtp )->lAplPed
 
                nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
@@ -17689,7 +17701,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             //--Atipicas de clientes por familias--//
 
-            case  lSeekAtpFam( aTmpPed[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpPed[ _DFECPED ], dbfCliAtp ) .and. ;
+            case  lSeekAtpFam( aTmpPed[ _CCODCLI ] + aTmp[ _CCODFAM ], dFecPed, dbfCliAtp ) .and. ;
                   ( dbfCliAtp )->lAplPed
 
                /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/
@@ -17717,21 +17729,21 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             //--Buscamos si existen ofertas para este articulo y le cambiamos el precio--//
 
-            nImpOfe     := nImpOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[ _CCODPR1 ], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+            nImpOfe     := nImpOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], , aTmp[ _CCODPR1 ], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
             if nImpOfe  != 0
                aGet[ _NPREDIV ]:cText( nImpOfe )
             end if
 
             //--Buscamos si existen descuentos en las ofertas--//
 
-            nImpOfe     := nDtoOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+            nImpOfe     := nDtoOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
             if nImpOfe  != 0
                aGet[ _NDTO ]:cText( nImpOfe )
             end if
 
             //--Buscamos si existen descuentos lineales en las ofertas--//
 
-            nImpOfe     := nDtoLineal( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+            nImpOfe     := nDtoLineal( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
             if nImpOfe  != 0
                if !Empty( aGet[ _NDTODIV ] )
                   aGet[ _NDTODIV ]:cText( nImpOfe )
@@ -17842,24 +17854,38 @@ Return ( nEstado )
 
 Static Function nEstadoProduccion( cNumPed )
 
-   local nEstado        := 1
+   local nEstado        		:= 1
 
    if ( dbfPedCliL )->( dbSeek( cNumPed ) )
 
       while ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cNumPed .and. !( dbfPedCliL )->( Eof() )
 
-         do case
-            case ( dbfPedCliL )->nProduc == 1
+      	/*
+      	Las lineas hijas no pintan nada---------------------------------------
+      	*/
 
-               nEstado  := 2
+   		if !( dbfPedCliL )->lKitChl
 
-               exit
+	         do case
+   	         case ( dbfPedCliL )->nProduc == 0 	// No se ha producido nada
 
-            case ( dbfPedCliL )->nProduc == 2
+   	         	if nEstado == 3
+    	         		nEstado  := 2
+    	         		exit 
+    	         	end if 
 
-               nEstado  := 3
+   	         case ( dbfPedCliL )->nProduc == 1 	// Producido parcialmente
 
-         end case
+    	         	nEstado  	:= 2
+    	         	exit 
+
+	            case ( dbfPedCliL )->nProduc == 2 	// Linea producida
+
+   	            nEstado  	:= 3
+
+      	   end case
+
+         end if 
 
          ( dbfPedCliL )->( dbSkip() )
 
@@ -17995,8 +18021,8 @@ Return nil
 
 Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
 
-   	local oError
-   	local oBlock
+   local oError
+   local oBlock
 	local oCbxOrd
 	local cNumPed
 
@@ -18650,7 +18676,11 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
    local sOfeArt
    local nTotalLinea    := 0
+   local dFecPed 			:= aTmpPed[ _DFECPED ]
 
+   if !Empty( aTmpPed[ _DFECENT ] )
+   	dFecPed 				:= aTmpPed[ _DFECENT ]
+   end if
 
    if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
 
@@ -18660,7 +18690,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
       nTotalLinea := RecalculaLinea( aTmp, aTmpPed, nDouDiv, , , , aTmpPed[ _CDIVPED ], .t. )
 
-      sOfeArt     := sOfertaArticulo( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPED ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANPED ], nTotalLinea )
+      sOfeArt     := sOfertaArticulo( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPED ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANPED ], nTotalLinea )
 
       if !Empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )
@@ -18681,7 +18711,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
          Buscamos si existen ofertas por familia----------------------------
          */
 
-         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
+         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -18701,7 +18731,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
+         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -18721,7 +18751,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
+         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -18741,7 +18771,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
          Buscamos si existen ofertas por temporadas----------------------
          */
 
-         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
+         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -18761,7 +18791,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
          Buscamos si existen ofertas por fabricantes---------------------------
          */
 
-         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
+         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )

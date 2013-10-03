@@ -1604,7 +1604,7 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
 
                ( ::cKit )->( dbSkip() )
 
-            end do
+            end while
 
          end if
 
@@ -1617,6 +1617,8 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
    end if
 
    RECOVER USING oError
+
+      msgStop( "Error en calculo de stock." + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
 
@@ -4656,7 +4658,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       /*
       Pendientes de entregar---------------------------------------------------
-      */
 
       SysRefresh()
 
@@ -4727,6 +4728,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          end while
 
       end if
+      */
 
    end if
 

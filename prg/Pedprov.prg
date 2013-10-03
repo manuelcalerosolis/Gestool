@@ -1,4 +1,4 @@
-#include "FiveWin.Ch" 
+#include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Factu.ch"
 #include "Report.ch"
@@ -9,7 +9,7 @@
 
 /*
 Definici¢n de la base de datos de pedidos a proveedores
-*/  
+*/
 
 #define _CSERPED                   1      //   C      1     0
 #define _NNUMPED                   2      //   C      9     0
@@ -419,7 +419,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if !TDataCenter():OpenPedCliT( @dbfPedCliT )
          lOpenFiles     := .f.
-      end if 
+      end if
 
       // Unidades de medicion
 
@@ -699,7 +699,7 @@ STATIC FUNCTION CloseFiles()
    dbfProMat   := nil
    dbfHisMov   := nil
    dbfSitua    := nil
-   dbfClient   := nil 
+   dbfClient   := nil
 
    lOpenFiles  := .f.
 
@@ -773,9 +773,9 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       LEVEL    nLevel ;
       OF       oWnd
 
-	  oWndBrw:lFechado     := .t.
+	oWndBrw:lFechado     := .t.
       oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfPedPrvT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfPedPrvT, .f. ) ) }
-	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
+	oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión cerrada"
@@ -893,7 +893,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :cHeader          := "Situación"
          :cSortOrder       := "cSituac"
          :bEditValue       := {|| ( dbfPedPrvT )->cSituac }
-         :nWidth           := 80
+         :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -909,7 +909,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :cHeader          := "Nombre proveedor"
          :cSortOrder       := "cNomPrv"
          :bEditValue       := {|| ( dbfPedPrvT )->cNomPrv }
-         :nWidth           := 180
+         :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -1193,8 +1193,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
    local oBrwLin
    local oBrwInc
    local oBrwDoc
-   local oSay        := Array( 5 )
-   local cSay        := Array( 5 )
+   local oSay                 := Array( 5 )
+   local cSay                 := Array( 5 )
    local oSayLabels           := Array( 7 )
    local oBmpDiv
    local oBmpEmp
@@ -1246,11 +1246,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          Return .f.
       end if
 
-      aTmp[ _CTURPED ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
-      aTmp[ _LSNDDOC ]  := .t.
-      aTmp[ _LCLOPED ]  := .f.
-      aTmp[ _NESTADO ]  := 1
+      aTmp[ _CTURPED ]        := cCurSesion()
+      aTmp[ _CCODCAJ ]        := oUser():cCaja()
+      aTmp[ _LSNDDOC ]        := .t.
+      aTmp[ _LCLOPED ]        := .f.
+      aTmp[ _NESTADO ]        := 1
 
    case nMode == EDIT_MODE
 
@@ -1291,7 +1291,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
       aTmp[ _CDTOESP ]  := Padr( "General", 50 )
    end if
 
-   if Empty( aTmp[ _CDPP ] )
+   if Empty( aTmp[ _CDPP ] ) 
       aTmp[ _CDPP ]     := Padr( "Pronto pago", 50 )
    end if
 
@@ -3302,34 +3302,6 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
       aGet[ _CDETALLE ]:Show()
       aGet[ _MLNGDES  ]:Hide()
 
-/*
-      if !( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
-
-         // Busqueda por codigo de proveedor-----------------------------------------
-
-         nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
-
-         if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
-            cCodArt              := ( dbfArtPrv )->cCodArt
-         end if
-
-         ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
-
-         // Primero buscamos por codigos de barra------------------------------------
-
-         cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
-
-         // Ahora buscamos por el codigo interno-------------------------------------
-
-         lSeek                   := ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
-
-      else
-
-         lSeek                   := .t.
-
-      end if
-*/
-
       if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
 
          if ( lChgCodArt )
@@ -3588,6 +3560,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
       else
 
          msgStop( "Artículo no encontrado" )
+
          Return .f.
 
       end if
@@ -4702,7 +4675,7 @@ FUNCTION BrwPedPrv( oGetNum, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, dbfFPago )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Número"
+         :cHeader          := "Número" 
          :cSortOrder       := "nNumPed"
          :bEditValue       := {|| ( dbfPedPrvT )->cSerPed + "/" + Str( ( dbfPedPrvT )->nNumPed ) + "/" + ( dbfPedPrvT )->cSufPed }
          :nWidth           := 60
@@ -6641,7 +6614,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "NCTLSTK", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "CALMLIN" ,"C",  3,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "LLOTE",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NLOTE",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NLOTE",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
    aAdd( aColPedPrv,  { "CLOTE",   "C", 12,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "NNUMLIN", "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "NUNDKIT", "N", 16,   6, "Unidades del producto kit",        "MasUnd()",          "", "(cDbfCol)" } )

@@ -5209,6 +5209,18 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
                ( dbfTmpLin )->nFacCnv  := ( dbfArticulo )->nFacCnv
             end if
 
+            /*
+            Valores q arrastramos----------------------------------------------
+            */           
+
+            ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
+            ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
+            ( dbfTmpLin )->cCodFra     := cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
+
+            /*
+            Datos de la cabecera-----------------------------------------------
+            */           
+
             ( dbfTmpLin )->cSerie      := aClo[ _CSERIE  ]
             ( dbfTmpLin )->nNumFac     := aClo[ _NNUMFAC ]
             ( dbfTmpLin )->cSufFac     := aClo[ _CSUFFAC ]

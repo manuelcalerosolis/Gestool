@@ -2131,7 +2131,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Static Function cTextoMovimiento( dbfHisMov )
+Function cTextoMovimiento( dbfHisMov )
 
 Return ( { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( dbfHisMov )->nTipMov, 1 ), 4 ) ] )
 

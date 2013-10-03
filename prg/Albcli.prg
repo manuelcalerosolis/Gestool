@@ -16332,6 +16332,18 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                ( dbfTmpLin )->nFacCnv  := ( dbfArticulo )->nFacCnv
             end if
 
+            /*
+            Valores q arrastramos----------------------------------------------
+            */           
+
+            ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
+            ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
+            ( dbfTmpLin )->cCodFra     := cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
+
+            /*
+            Datos de la cabecera-----------------------------------------------
+            */           
+
             ( dbfTmpLin )->cSerAlb     := cSerAlb
             ( dbfTmpLin )->nNumAlb     := nNumAlb
             ( dbfTmpLin )->cSufAlb     := cSufAlb
