@@ -56,3 +56,18 @@ businessman_chart_16 BITMAP "..\\bmp\\businessman_chart_16.bmp"
 cube_yellow_chart_16 BITMAP "..\\bmp\\cube_yellow_chart_16.bmp"
 text_normal_16 BITMAP "..\\bmp\\text_normal_16.bmp"
 branch_16 BITMAP "..\\bmp\\branch_16.bmp"
+door2_open_alpha_48 BITMAP "..\\bmp\\door2_open_alpha_48.bmp"
+floppy_disk_blue_alpha_48 BITMAP "..\\bmp\\floppy_disk_blue_alpha_48.bmp"
+wrench_32_alpha BITMAP "..\\bmp\wrench_32_alpha.bmp"
+preferences_edit_32_alpha BITMAP "..\\bmp\\preferences_edit_32_alpha.bmp"
+cube_yellow_32_alpha BITMAP "..\\bmp\\cube_yellow_32_alpha.bmp"
+document_edit_32_alpha BITMAP "..\\bmp\\document_edit_32_alpha.bmp"
+folder2_red_32_alpha BITMAP "..\\bmp\\folder2_red_32_alpha.bmp"
+satellite_dish_32_alpha BITMAP "..\\bmp\\satellite_dish_32_alpha.bmp"
+Earth2_32_alpha BITMAP "..\\bmp\\Earth2_32_alpha.bmp"
+Floppy_disk_blue_32_alpha BITMAP "..\\bmp\\Floppy_disk_blue_32_alpha.bmp"
+Door2_open_32_alpha BITMAP "..\\bmp\\Door2_open_32_alpha.bmp"
+cashier_32_alpha BITMAP "..\\bmp\\cashier_32_alpha.bmp"
+
+
+

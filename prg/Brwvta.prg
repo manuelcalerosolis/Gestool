@@ -2661,7 +2661,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
                oDbfTmp:cEstDoc   := "Movimiento"
                oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
-               oDbfTmp:cNomDoc   := if( ( dbfMovAlm )->nTipMov == 1, "Entre almacenes", "Regularización" )
+               oDbfTmp:cNomDoc   := cTextoMovimiento( dbfMovAlm )
                oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
                oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
                oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2
@@ -2681,7 +2681,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
                oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
                oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
-               oDbfTmp:cNomDoc   := if( ( dbfMovAlm )->nTipMov == 1, "Entre almacenes", "Regularización" )
+               oDbfTmp:cNomDoc   := cTextoMovimiento( dbfMovAlm )
                oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
                oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
                oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2

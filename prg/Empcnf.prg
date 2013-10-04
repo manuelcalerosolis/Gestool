@@ -394,6 +394,10 @@ FUNCTION lRecogerUsuario() ; RETURN ( uFieldEmpresa( "lGetUsr" ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION lRecogerAgentes() ; RETURN ( uFieldEmpresa( "lGetAge" ) )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION lRecogerUbicacion() ; RETURN ( uFieldEmpresa( "lGetUbi" ) )
 
 //---------------------------------------------------------------------------//
@@ -847,10 +851,6 @@ FUNCTION cDefFpg() ;
    end if
 
 RETURN ( cDefFpg )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION lRecogerAgentes() ; RETURN ( aEmp()[ _LGETAGE ] )
 
 //---------------------------------------------------------------------------//
 
@@ -1370,8 +1370,7 @@ FUNCTION lRetCodArt()
 return ( lRetCodArt )
 
 //--------------------------------------------------------------------------//
-
-//Devuelve si en la ficha de artículos hay que usar uno o varios códigos de barras
+// Devuelve si en la ficha de artículos hay que usar uno o varios códigos de barras
 
 FUNCTION lMultipleCodeBar()
 

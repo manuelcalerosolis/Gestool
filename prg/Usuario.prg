@@ -566,7 +566,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "user_48_alpha" ;
+         RESOURCE "User_48_alpha" ;
          TRANSPARENT ;
          OF       oDlg
 
@@ -736,30 +736,13 @@ Static Function SaveUser( aTmp, aGet, dbfUser, oTree, oBrw, oDlg, nMode, oGet )
       Return .f.
    end if
 
+   /*
+   Empezamos a grabar--------------------------------------------------------
+   */
+
    if !Empty( aGet[ _NGRPUSE ] )
       aTmp[ _NGRPUSE ]  := aGet[ _NGRPUSE ]:nAt
    end if
-
-   /*
-   Seleccionamos un único usuario para que realize documentos automáticos------
-
-   if aTmp[ _LDOCAUT ]
-
-      ( dbfUser )->( dbGoTop() )
-
-      while !( dbfUser )->( Eof() )
-
-         if dbLock( dbfUser )
-            ( dbfUser )->lDocAut       := .f.
-            ( dbfUser )->( dbUnLock() )
-         end if
-
-         ( dbfUser )->( dbSkip() )
-
-      end while
-
-   end if
-   */
 
    ( dbfUser )->( dbGoTo( nRec ) )
 
@@ -3004,7 +2987,7 @@ Function lGetUsuario( oGetUsuario, dbfUsr )
 
    local oDlg
    local oSayUsuario
-   local oBmpGeneral
+   local oBmpUsuario
    local oCodigoUsuario
    local cCodigoUsuario := Space( 3 )
    local oNombreUsuario
@@ -3016,11 +2999,11 @@ Function lGetUsuario( oGetUsuario, dbfUsr )
 
    DEFINE DIALOG oDlg RESOURCE "GetUsuario"
 
-      REDEFINE BITMAP oBmpGeneral ;
-        ID        500 ;
-        RESOURCE  "Users_48_alpha" ;
-        TRANSPARENT ;
-        OF        oDlg
+      REDEFINE BITMAP oBmpUsuario ;
+         ID       500 ;
+         RESOURCE "User_48_alpha" ;
+         TRANSPARENT ;
+         OF       oDlg
 
       REDEFINE SAY oSayUsuario ;
          VAR      "Usuario" ;
@@ -3057,7 +3040,7 @@ Function lGetUsuario( oGetUsuario, dbfUsr )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   oBmpGeneral:End()
+   oBmpUsuario:End()
 
    if oDlg:nResult == IDOK
 

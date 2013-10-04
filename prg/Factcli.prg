@@ -18989,15 +18989,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    local nRec     := ( dbfTmpLin )->( RecNo() )
    local aClo     := aClone( aTmp )
 
-#ifndef __PDA__
-
    oBtn:SetFocus()
 
    if !aGet[ _CREF ]:lValid()
       return nil
    end if
-
-#endif
 
    /*
    Fin de modo de edición multiple
@@ -19054,8 +19050,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
    end if
 
-#ifndef __PDA__
-
    if !Empty( aTmp[ _CREF ] ) .and. ( aTmp[ _LNOTVTA ] .or. aTmp[ _LMSGVTA ] )
 
       nTotUnd     := nTotNFacCli( aTmp )
@@ -19095,8 +19089,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
-
-#endif
 
    if nMode == APPD_MODE
 
@@ -19419,6 +19411,18 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
             ( dbfTmpLin )->nCosDiv     := nCosto( nil, dbfArticulo, dbfKit )
             ( dbfTmpLin )->nValImp     := oNewImp:nValImp( ( dbfArticulo )->cCodImp )
+
+            /*
+            Valores q arrastramos----------------------------------------------
+				*/           
+
+            ( dbfTmpLin )->cCodFam 		:= ( dbfArticulo )->Familia
+            ( dbfTmpLin )->cGrpFam 		:= cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
+            ( dbfTmpLin )->cCodFra 		:= cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
+
+            /*
+            Datos de la cabecera-----------------------------------------------
+           	*/
 
             ( dbfTmpLin )->cSerie      := aClo[ _CSERIE  ]
             ( dbfTmpLin )->nNumFac     := aClo[ _NNUMFAC ]

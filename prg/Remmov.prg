@@ -2394,6 +2394,7 @@ METHOD loadAlmacen( nMode )
 
    local nPreMed
    local cCodFam
+   local cCodAlm
    local cCodTip
    local sStkAlm
    local aStkAlm
@@ -2402,77 +2403,97 @@ METHOD loadAlmacen( nMode )
 
    ::oDlgImport:Disable()
 
+   cCodAlm              := ::oDbf:cAlmDes
+
    if ( nMode == APPD_MODE ) .and. ( ::oDbf:nTipMov >= 2 )
 
       ::oMtrStock:cText    := "Importando artículos "
-      ::oMtrStock:nTotal   := ( ::oStock:cArticulo )->( LastRec() )
+      ::oMtrStock:nTotal   := ::oArt:OrdKeyCount() 
+      
       ::oMtrStock:Refresh()
 
-      aStkAlm              := ::oStock:aStockAlmacen( Self )
+      ::oArt:GoTop()
+      while !::oArt:eof()
 
-      for each sStkAlm in aStkAlm
+      if ( ::lFamilia      .or. ( ::oArt:Familia >= ::cFamiliaInicio        .and. ::oArt:Familia <= ::cFamiliaFin ) )      .and.;
+         ( ::lTipoArticulo .or. ( ::oArt:cCodTip >= ::cTipoArticuloInicio   .and. ::oArt:cCodTip <= ::cTipoArticuloFin ) ) .and.;
+         ( ::lArticulo     .or. ( ::oArt:Codigo >= ::cArticuloInicio        .and. ::oArt:Codigo <= ::cArticuloFin ) )
 
-         if ::oDetMovimientos:oDbfVir:Append()
+         aStkAlm           := ::oStock:aStockArticulo( ::oArt:Codigo, cCodAlm )
 
-            ::oDetMovimientos:oDbfVir:Blank()
+         for each sStkAlm in aStkAlm
 
-            ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
+            if sStkAlm:nUnidades != 0
 
-            ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
-
-            ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
-            ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad1
-            ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
-            ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad1
-            ::oDetMovimientos:oDbfVir:cLote     := sStkAlm:cLote
-
-            ::oDetMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
-            ::oDetMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
-
-            ::oDetMovimientos:oDbfVir:nNumLin   := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
-
-            ::oDetMovimientos:oDbfVir:dFecMov   := ::oDbf:dFecRem
-            ::oDetMovimientos:oDbfVir:cTimMov   := ::oDbf:cTimRem
-
-            ::oDetMovimientos:oDbfVir:nTipMov   := ::oDbf:nTipMov
-            ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
-            ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
-            ::oDetMovimientos:oDbfVir:cAloMov   := Space( 3 )
-
-            ::oDetMovimientos:oDbfVir:nUndMov   := 0
-            ::oDetMovimientos:oDbfVir:nUndAnt   := ::oStock:nStockAlmacen( sStkAlm:cCodigo, ::oDbf:cAlmDes, ::oDetMovimientos:oDbfVir:cValPr1, ::oDetMovimientos:oDbfVir:cValPr2, ::oDetMovimientos:oDbfVir:cLote )
-
-            if !uFieldEmpresa( "lCosAct" )
-
-               nPreMed                          := ::oStock:nPrecioMedioCompra( sStkAlm:cCodigo, ::oDbf:cAlmDes, nil, GetSysDate() )
-
-               if nPreMed == 0
-                  nPreMed                       := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
+               if  ::oDetMovimientos:oDbfVir:Append()
+   
+                  ::oDetMovimientos:oDbfVir:Blank()
+      
+                  ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
+      
+                  ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
+      
+                  ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
+                  ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad1
+                  ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
+                  ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad1
+                  ::oDetMovimientos:oDbfVir:cLote     := sStkAlm:cLote
+                  ::oDetMovimientos:oDbfVir:nUndAnt   := sStkAlm:nUnidades
+      
+                  ::oDetMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
+                  ::oDetMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
+      
+                  ::oDetMovimientos:oDbfVir:nNumLin   := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+      
+                  ::oDetMovimientos:oDbfVir:dFecMov   := ::oDbf:dFecRem
+                  ::oDetMovimientos:oDbfVir:cTimMov   := ::oDbf:cTimRem
+   
+                  ::oDetMovimientos:oDbfVir:nTipMov   := ::oDbf:nTipMov
+                  ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
+                  ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
+                  ::oDetMovimientos:oDbfVir:cAloMov   := Space( 3 )
+      
+                  ::oDetMovimientos:oDbfVir:nUndMov   := 0
+      
+                  if !uFieldEmpresa( "lCosAct" )
+      
+                     nPreMed                          := ::oStock:nPrecioMedioCompra( sStkAlm:cCodigo, cCodAlm, nil, GetSysDate() )
+      
+                     if nPreMed == 0
+                        nPreMed                       := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
+                     end if
+      
+                  else
+      
+                     nPreMed                          := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
+   
+                  end if
+      
+                  ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
+      
+                  ::oDetMovimientos:oDbfVir:Save()
+      
                end if
-
-            else
-
-               nPreMed                          := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
-
+            
             end if
 
-            ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
-
-            ::oDetMovimientos:oDbfVir:Save()
-
-         end if
-
-      next
-
-      ::oDetMovimientos:oDbfVir:GoTop()
-
-      ::oBrwDet:Refresh()
-
-      ::oMtrStock:Set( ( ::oStock:cArticulo )->( LastRec() ) )
+         next
+      
+      end if
+   
+      ::oArt:Skip()
+   
+      ::oMtrStock:Set( ::oArt:OrdKeyNo() ) 
+   
+      end while
 
    end if
 
-   ::oMtrStock:Set( 0 )
+   ::oDetMovimientos:oDbfVir:GoTop()
+   
+   ::oBrwDet:Refresh()
+   
+   ::oMtrStock:Set( ::oArt:OrdKeyCount() )
 
    ::oDlgImport:Enable()
    ::oDlgImport:End()
