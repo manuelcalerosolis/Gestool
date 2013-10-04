@@ -9,10 +9,11 @@
 #define fldGeneral            oFld:aDialogs[ 1 ]
 #define fldValores            oFld:aDialogs[ 2 ]
 #define fldArticulos          oFld:aDialogs[ 3 ]
-#define fldContadores         oFld:aDialogs[ 4 ]
-#define fldContabilidad       oFld:aDialogs[ 5 ]
-#define fldEnvios             oFld:aDialogs[ 6 ]
-#define fldComunicaciones     oFld:aDialogs[ 7 ]
+#define fldTPV                oFld:aDialogs[ 4 ]
+#define fldContadores         oFld:aDialogs[ 5 ]
+#define fldContabilidad       oFld:aDialogs[ 6 ]
+#define fldEnvios             oFld:aDialogs[ 7 ]
+#define fldComunicaciones     oFld:aDialogs[ 8 ]
 
 static oWndBrw
 static dbfEmp
@@ -1138,6 +1139,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oBmpContabilidad
    local oBmpEnvios
    local oBmpComunicacion
+   local oBmpTPV
 
    local aBnfSobre               := { "Costo", "Venta" }
    local aCifRut                 := { "Cálculo de C.I.F.", "Cálculo de R.U.T." }
@@ -1186,10 +1188,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    /*
    Control de errores----------------------------------------------------------
-   */
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+   */
 
    if Empty( aTmp[ _CDEFSER ] )
       aTmp[ _CDEFSER ]     := Space( 1 )
@@ -1248,14 +1250,21 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    LoaItmEmp( aTmp )
 
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "EMPRESACFG" ;
+      RESOURCE    "EmpresaCfg" ;
       TITLE       "Configuración de empresa : " + aTmp[ _CODEMP ] + "-" + aTmp[ _CNOMBRE ] ;
       OF          oWnd()
 
       REDEFINE PAGES oFld ;
          ID       400;
          OF       oDlg ;
-         DIALOGS  "EMPRESA_2", "EMPRESA_3", "EMPRESA_8", "EMPRESA_10", "EMPRESA_5", "EMPRESA_6", "EMPRESA_0"
+         DIALOGS  "EMPRESA_2",;
+                  "EMPRESA_3",;
+                  "EMPRESA_8",;
+                  "EMPRESA_12",;
+                  "EMPRESA_10",;
+                  "EMPRESA_5",;
+                  "EMPRESA_6",;
+                  "EMPRESA_0"
 
       /*
       Page 1 Comportamientos---------------------------------------------------
@@ -1382,60 +1391,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       198 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LIMPEXA ] VAR aTmp[ _LIMPEXA ] ;
-         ID       186 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LGETUBI ] VAR aTmp[ _LGETUBI ] ;
-         ID       196 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LSHOWSALA ] ;
-         VAR      aTmp[ _LSHOWSALA ] ;
-         ID       158 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LORDNOMTPV ] ;
-         VAR      aTmp[ _LORDNOMTPV ] ;
-         ID       159 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LNUMTIK ] VAR aTmp[ _LNUMTIK ] ;
-         ID       197 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LFIDELITY ] VAR aTmp[ _LFIDELITY ] ;
-         ID       193 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LLLEVAR ] VAR aTmp[ _LLLEVAR ] ;
-         ID       126 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LRECOGER ] VAR aTmp[ _LRECOGER ] ;
-         ID       125 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LENCARGO ] VAR aTmp[ _LENCARGO ] ;
-         ID       127 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LADDCUT ] VAR aTmp[ _LADDCUT ] ;
-         ID       128 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LALBTCT ] VAR aTmp[ _LALBTCT ] ;
-         ID       129 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LFACTCT ] VAR aTmp[ _LFACTCT ] ;
-         ID       130 ;
-         OF       fldGeneral
-
-      REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
-         ID       990 ;
-         OF       fldGeneral
-
       REDEFINE CHECKBOX aGet[ _LNUMPED ] VAR aTmp[ _LNUMPED ] ;
          ID       260 ;   
          OF       fldGeneral
@@ -1467,6 +1422,70 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE GET aGet[ _CSUALB ] VAR aTmp[ _CSUALB ] ;
          ID       250 ;
          OF       fldGeneral
+
+      /*
+      Controles de TPV---------------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpTPV ;
+         ID       500 ;
+         RESOURCE "Cashier_48_alpha" ;
+         TRANSPARENT ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LIMPEXA ] VAR aTmp[ _LIMPEXA ] ;
+         ID       186 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LGETUBI ] VAR aTmp[ _LGETUBI ] ;
+         ID       196 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LSHOWSALA ] ;
+         VAR      aTmp[ _LSHOWSALA ] ;
+         ID       158 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LORDNOMTPV ] ;
+         VAR      aTmp[ _LORDNOMTPV ] ;
+         ID       159 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LNUMTIK ] VAR aTmp[ _LNUMTIK ] ;
+         ID       197 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LFIDELITY ] VAR aTmp[ _LFIDELITY ] ;
+         ID       193 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LLLEVAR ] VAR aTmp[ _LLLEVAR ] ;
+         ID       126 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LRECOGER ] VAR aTmp[ _LRECOGER ] ;
+         ID       125 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LENCARGO ] VAR aTmp[ _LENCARGO ] ;
+         ID       127 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LADDCUT ] VAR aTmp[ _LADDCUT ] ;
+         ID       128 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LALBTCT ] VAR aTmp[ _LALBTCT ] ;
+         ID       129 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LFACTCT ] VAR aTmp[ _LFACTCT ] ;
+         ID       130 ;
+         OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
+         ID       990 ;
+         OF       fldTPV
 
       /*
       Page 2 Defecto-----------------------------------------------------------
@@ -2369,8 +2388,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       Botones --------------------------------------------------------------------
       */
 
-      fldContadores:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
-      fldContabilidad:AddFastKey( VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
+      fldContadores:AddFastKey(     VK_F3, {|| EdtCon( oBrwCon ) } )
+      fldContabilidad:AddFastKey(   VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
 
       oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) } )
 
@@ -2382,7 +2401,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    /*
    Fin del control de errores--------------------------------------------------
-   */
 
    RECOVER USING oError
 
@@ -2390,6 +2408,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    END SEQUENCE
    ErrorBlock( oBlock )
+   */
 
    /*
    Matamos los objetos con las imágenes----------------------------------------
@@ -2437,6 +2456,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       oBmpComunicacion:End()
    end if
 
+   if !Empty( oBmpTPV )
+      oBmpTPV:End()
+   end if 
+
    if !Empty( oFnt )
       oFnt:End()
    end if
@@ -2460,14 +2483,15 @@ Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
 
    oCarpeta          := TCarpeta():New( oOfficeBar, "Configurar empresa." )
 
-   oGrupo            := TDotNetGroup():New( oCarpeta, 427, "Opciones", .f. ) 
+   oGrupo            := TDotNetGroup():New( oCarpeta, 488, "Opciones", .f. ) 
       oBoton         := TDotNetButton():New( 60, oGrupo, "Wrench_32_alpha",            "General",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Preferences_Edit_32_alpha",  "Valores",           2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32_alpha",       "Artículos",         3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Document_Edit_32_alpha",     "Contadores",        4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Folder2_red_32_alpha",       "Contabilidad",      5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Satellite_dish_32_alpha",    "Envios",            6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Earth2_32_alpha",            "Comunicaciones",    7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Cashier_32_alpha",           "T.P.V.",            4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Document_Edit_32_alpha",     "Contadores",        5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Folder2_red_32_alpha",       "Contabilidad",      6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Satellite_dish_32_alpha",    "Envios",            7, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Earth2_32_alpha",            "Comunicaciones",    8, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
 
    oGrupo            := TDotNetGroup():New( oCarpeta, 122, "Guardar", .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Floppy_disk_blue_32_alpha",  "Guardar",           1, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) }, , , .f., .f., .f. )
@@ -2475,7 +2499,7 @@ Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
 
    aEvalValid( fldValores )
 
-   aEvalValid( fldContabilidad )
+   aEvalValid( fldContabilidad ) 
 
    CmbDocumentosChanged( .f. ) 
 

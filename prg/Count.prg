@@ -79,11 +79,12 @@ Function SynNewCount( cPath )
    Deben de existir todos los tipos de documentos------------------------------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "NCOUNT", @dbf ), .t. )
+   dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "nCount", @dbf ), .t. )
 
    if !( dbf )->( neterr() )
 
       ( dbf )->( ordListAdd( cPath + "nCount.Cdx" ) )
+      ( dbf )->( ordSetFocus( "Doc" )
 
       for n := 1 to len( aDoc )
 

@@ -2423,64 +2423,68 @@ METHOD loadAlmacen( nMode )
 
          for each sStkAlm in aStkAlm
 
-            if ::oDetMovimientos:oDbfVir:Append()
+            if sStkAlm:nUnidades != 0
 
-               ::oDetMovimientos:oDbfVir:Blank()
+               if  ::oDetMovimientos:oDbfVir:Append()
    
-               ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
+                  ::oDetMovimientos:oDbfVir:Blank()
+      
+                  ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
+      
+                  ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
+      
+                  ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
+                  ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad1
+                  ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
+                  ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad1
+                  ::oDetMovimientos:oDbfVir:cLote     := sStkAlm:cLote
+                  ::oDetMovimientos:oDbfVir:nUndAnt   := sStkAlm:nUnidades
+      
+                  ::oDetMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
+                  ::oDetMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
+      
+                  ::oDetMovimientos:oDbfVir:nNumLin   := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+      
+                  ::oDetMovimientos:oDbfVir:dFecMov   := ::oDbf:dFecRem
+                  ::oDetMovimientos:oDbfVir:cTimMov   := ::oDbf:cTimRem
    
-               ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
+                  ::oDetMovimientos:oDbfVir:nTipMov   := ::oDbf:nTipMov
+                  ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
+                  ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
+                  ::oDetMovimientos:oDbfVir:cAloMov   := Space( 3 )
+      
+                  ::oDetMovimientos:oDbfVir:nUndMov   := 0
+      
+                  if !uFieldEmpresa( "lCosAct" )
+      
+                     nPreMed                          := ::oStock:nPrecioMedioCompra( sStkAlm:cCodigo, cCodAlm, nil, GetSysDate() )
+      
+                     if nPreMed == 0
+                        nPreMed                       := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
+                     end if
+      
+                  else
+      
+                     nPreMed                          := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
    
-               ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
-               ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad1
-               ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
-               ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad1
-               ::oDetMovimientos:oDbfVir:cLote     := sStkAlm:cLote
-   
-               ::oDetMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
-               ::oDetMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
-   
-               ::oDetMovimientos:oDbfVir:nNumLin   := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
-   
-               ::oDetMovimientos:oDbfVir:dFecMov   := ::oDbf:dFecRem
-               ::oDetMovimientos:oDbfVir:cTimMov   := ::oDbf:cTimRem
-
-               ::oDetMovimientos:oDbfVir:nTipMov   := ::oDbf:nTipMov
-               ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
-               ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
-               ::oDetMovimientos:oDbfVir:cAloMov   := Space( 3 )
-   
-               ::oDetMovimientos:oDbfVir:nUndMov   := 0
-               ::oDetMovimientos:oDbfVir:nUndAnt   := ::oStock:nStockAlmacen( sStkAlm:cCodigo, ::oDbf:cAlmDes, ::oDetMovimientos:oDbfVir:cValPr1, ::oDetMovimientos:oDbfVir:cValPr2, ::oDetMovimientos:oDbfVir:cLote )
-   
-               if !uFieldEmpresa( "lCosAct" )
-   
-                  nPreMed                          := ::oStock:nPrecioMedioCompra( sStkAlm:cCodigo, ::oDbf:cAlmDes, nil, GetSysDate() )
-   
-                  if nPreMed == 0
-                     nPreMed                       := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
                   end if
-   
-               else
-   
-                  nPreMed                          := nCosto( sStkAlm:cCodigo, ::oArt:cAlias, ::oArtKit:cAlias )
-
+      
+                  ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
+      
+                  ::oDetMovimientos:oDbfVir:Save()
+      
                end if
-   
-               ::oDetMovimientos:oDbfVir:nPreDiv    := nPreMed
-   
-               ::oDetMovimientos:oDbfVir:Save()
-   
+            
             end if
-   
+
          next
-   
+      
       end if
-
+   
       ::oArt:Skip()
-
+   
       ::oMtrStock:Set( ::oArt:OrdKeyNo() ) 
-
+   
       end while
 
    end if
