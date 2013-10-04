@@ -68,7 +68,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-Function SynNewCount( cPath )
+Function synCount( cPath )
 
    local n
    local dbf
@@ -84,7 +84,7 @@ Function SynNewCount( cPath )
    if !( dbf )->( neterr() )
 
       ( dbf )->( ordListAdd( cPath + "nCount.Cdx" ) )
-      ( dbf )->( ordSetFocus( "Doc" )
+      ( dbf )->( ordSetFocus( "Doc" ) )
 
       for n := 1 to len( aDoc )
 

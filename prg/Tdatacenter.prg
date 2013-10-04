@@ -1657,6 +1657,7 @@ METHOD BuildEmpresa()
    oDataTable:aStruct      := aItmCount()
    oDataTable:bCreateFile  := {| cPath | mkCount( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxCount( cPath ) }
+   oDataTable:bSyncFile    := {| cPath | synCount( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

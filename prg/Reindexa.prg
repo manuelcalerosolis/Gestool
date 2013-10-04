@@ -143,7 +143,7 @@ METHOD GenIndices( oMsg )
 
    if ::lNotGrupo
       rxCount( ::cPathEmp )
-      synNewCount( ::cPathEmp )
+      synCount( ::cPathEmp )
    end if
 
    /*
