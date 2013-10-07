@@ -2893,14 +2893,14 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutT.Cdx"
    oDataTable:cDescription := "Plantillas automáticas de clientes"
-
+   oDataTable:bCreateFile  := {| cPath | msgAlert( "plantillas" ), TFacAutomatica():BuildFiles( .t., cPath ), msgAlert("en tmp") }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "FacAutL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutL.Cdx"
-   oDataTable:cDescription := "Plantillas automáticas de clientes"
+   oDataTable:cDescription := "Plantillas automáticas de clientes lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bCreateFile  := {| cPath | TDetFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
@@ -2909,7 +2909,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacAutI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutI.Cdx"
-   oDataTable:cDescription := "Plantillas automáticas de clientes"
+   oDataTable:cDescription := "Plantillas automáticas de clientes historico"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bCreateFile  := {| cPath | THisFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )

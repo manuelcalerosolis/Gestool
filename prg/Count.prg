@@ -85,8 +85,6 @@ Function synCount( cPath, nSemilla )
       Deben de existir todos los tipos de documentos------------------------------
       */
 
-      ? ( cPatEmp() + "NCOUNT.DBF" )
-
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbf ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
@@ -161,19 +159,13 @@ Return nil
 
 Function IsCount()
 
-   ? 1
-
    if !lExistTable( cPatEmp() + "nCount.Dbf" )
       mkCount( cPatEmp() )
    end if
 
-   ? 2
-
    if !lExistIndex( cPatEmp() + "nCount.Cdx" )
       rxCount( cPatEmp() )
    end if
-
-   ? 3
 
    synCount( cPatEmp() )
 

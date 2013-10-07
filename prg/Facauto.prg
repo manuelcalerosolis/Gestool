@@ -529,7 +529,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
    local oBmpGeneral
    local oBmpFolder
 
-   ::aGet               := Array( 23 )
+   ::aGet               := Array( ::oDbf:FieldCount )
 
    if nMode == APPD_MODE
       ::oDbf:cDtoEsp    := "General"
@@ -637,8 +637,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          OF       oFld:aDialogs[ 1 ]
 
          ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:bValid   := {|| ::oGrpFacturasAutomaticas:Existe( ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ], ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:oHelpText, "cNomGrp", .t., .t., "0" ) }
-         ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:bHelp    := {|| ::oGrpFacturasAutomaticas:Buscar( ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ], ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:oHelpText ) }
-
+         ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:bHelp    := {|| ::oGrpFacturasAutomaticas:Buscar( ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ] ) }
 
       REDEFINE GET ::aGet[ _CCODPAGO ] VAR ::oDbf:cCodPago ;
          ID       450 ;
@@ -1256,6 +1255,7 @@ METHOD lPostLoad() CLASS TFacAutomatica
    ::ShowKit( .f. )
 
    ::aGet[ ::oDbf:FieldPos( "cCodPago" ) ]:lValid()
+   ::aGet[ ::oDbf:FieldPos( "cCodGrp") ]:lValid()
 
 RETURN ( Self )
 
