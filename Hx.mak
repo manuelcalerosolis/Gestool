@@ -156,6 +156,7 @@ Tftpfile.prg            \
 Meter.prg               \
 Tankes.prg              \
 Grpcli.prg              \
+Grpfacauto.prg 			\
 Recprv.prg              \
 Tinfgen.prg             \
 TNewInfGen.prg          \
@@ -545,6 +546,7 @@ Printer.obj             \
 Meter.obj               \
 Tankes.obj              \
 Grpcli.obj              \
+Grpfacauto.obj 			\
 Recprv.obj              \
 Tinfgen.obj             \
 TNewInfGen.obj          \
@@ -953,6 +955,7 @@ $(OBJ)\Webmap.obj               +
 $(OBJ)\Meter.obj                +
 $(OBJ)\Tankes.obj               +
 $(OBJ)\Grpcli.obj               +
+$(OBJ)\Grpfacauto.obj           +
 $(OBJ)\Recprv.obj               +
 $(OBJ)\TInfAlm.obj              +
 $(OBJ)\TInfGrp.obj              +
