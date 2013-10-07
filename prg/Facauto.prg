@@ -66,6 +66,8 @@ CLASS TFacAutomatica FROM TMasDet
    DATA  oDbfFPago
    DATA  oDbfAge
 
+   DATA  oGrpFacturasAutomaticas
+
    DATA  aTotIva
 
    DATA  oGetBrt
@@ -130,13 +132,13 @@ ENDCLASS
 
 METHOD New( cPath, oWndParent, oMenuItem ) CLASS TFacAutomatica
 
-   DEFAULT cPath           := cPatEmp()
-   DEFAULT oWndParent      := GetWndFrame()
+   DEFAULT cPath              := cPatEmp()
+   DEFAULT oWndParent         := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel             := nLevelUsr( oMenuItem )
+      ::nLevel                := nLevelUsr( oMenuItem )
    else
-      ::nLevel             := 0
+      ::nLevel                := 0
    end if
 
    if nAnd( ::nLevel, 1 ) != 0
@@ -144,23 +146,25 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TFacAutomatica
       return nil
    end if
 
-   ::cPath                 := cPath
-   ::oWndParent            := oWndParent
+   ::cPath                    := cPath
+   ::oWndParent               := oWndParent
 
-   ::bFirstKey             := {|| ::oDbf:cCodFac }
+   ::bFirstKey                := {|| ::oDbf:cCodFac }
 
-   ::oDetFacAutomatica     := TDetFacAutomatica():New( cPath, Self )
+   ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():New( )
+
+   ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, Self )
    ::AddDetail( ::oDetFacAutomatica )
 
-   ::oHisFacAutomatica     := THisFacAutomatica():New( cPath, Self )
+   ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, Self )
    ::AddDetail( ::oHisFacAutomatica )
 
-   ::aTotIva               := { { 0,0,nil,0 }, { 0,0,nil,0 }, { 0,0,nil,0 } }
+   ::aTotIva                  := { { 0,0,nil,0 }, { 0,0,nil,0 }, { 0,0,nil,0 } }
 
-   ::nTotBrt               := 0
-   ::nTotNet               := 0
-   ::nTotIva               := 0
-   ::nTotFac               := 0
+   ::nTotBrt                  := 0
+   ::nTotNet                  := 0
+   ::nTotIva                  := 0
+   ::nTotFac                  := 0
 
 RETURN ( Self )
 
@@ -366,13 +370,16 @@ METHOD OpenFiles( lExclusive ) CLASS TFacAutomatica
 
       ::oDbf:Activate( .f., !lExclusive )
 
+      ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
+      ::oGrpFacturasAutomaticas:OpenFiles()
+
       ::OpenDetails()
 
-      ::oFont              := TFont():New( "Arial", 8, 26, .F., .T. )
+      ::oFont                    := TFont():New( "Arial", 8, 26, .F., .T. )
 
    RECOVER USING oError
 
-      lOpen             := .f.
+      lOpen                      := .f.
 
       msgStop( "Imposible abrir las bases de datos de facturas automáticas." + CRLF + ErrorMessage( oError ) )
 
@@ -450,16 +457,23 @@ METHOD CloseFiles() CLASS TFacAutomatica
       ::oDbfAge:End()
    end if
 
+   if ::oGrpFacturasAutomaticas != nil
+      ::oGrpFacturasAutomaticas:End()
+   end if
+
    if ::oFont != nil
       ::oFont:End()
    end if
 
    ::CloseDetails()
 
-   ::oDbf      := nil
-   ::oDbfIva   := nil
-   ::oFont     := nil
-   ::oDbfFPago := nil
+   ::oDbf                     := nil
+   ::oDbfIva                  := nil
+   ::oDbfFPago                := nil
+
+   ::oGrpFacturasAutomaticas  := nil
+
+   ::oFont                    := nil
 
 RETURN ( .t. )
 
@@ -495,9 +509,11 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TFacAutomatica
       FIELD NAME "nTipDoc"   TYPE "N" LEN  01 DEC 0 COMMENT "Tipo de documento"                                      HIDE              OF ::oDbf
       FIELD NAME "cSerFact"  TYPE "C" LEN  01 DEC 0 COMMENT "Serie de facturación"                                   HIDE              OF ::oDbf
       FIELD NAME "cCodPago"  TYPE "C" LEN  02 DEC 0 COMMENT "Foma de pago"                                           HIDE              OF ::oDbf
+      FIELD NAME "cCodGrp"   TYPE "C" LEN  04 DEC 0 COMMENT "Código de grupo"                                        HIDE              OF ::oDbf
 
       INDEX TO "FacAutT.Cdx" TAG "cCodFac" ON "Field->cCodFac" COMMENT "Código"  NODELETED   OF ::oDbf
       INDEX TO "FacAutT.Cdx" TAG "cNomFac" ON "Field->cNomFac" COMMENT "Nombre"  NODELETED   OF ::oDbf
+      INDEX TO "FacAutT.Cdx" TAG "cCodGrp" ON "Field->cCodGrp" COMMENT "Grupo"   NODELETED   OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -612,6 +628,17 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          WHEN     ( nMode != ZOOM_MODE );
          VALID    ( Empty( ::oDbf:cSerFact ) .or. ( ::oDbf:cSerFact >= "A" .and. ::oDbf:cSerFact <= "Z" ) );
          OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE GET ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ] VAR ::oDbf:cCodGrp ;
+         ID       150 ;
+         IDTEXT   151 ;
+         BITMAP   "LUPA" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 1 ]
+
+         ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:bValid   := {|| ::oGrpFacturasAutomaticas:Existe( ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ], ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:oHelpText, "cNomGrp", .t., .t., "0" ) }
+         ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:bHelp    := {|| ::oGrpFacturasAutomaticas:Buscar( ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ], ::aGet[ ::oDbf:FieldPos( "cCodGrp" ) ]:oHelpText ) }
+
 
       REDEFINE GET ::aGet[ _CCODPAGO ] VAR ::oDbf:cCodPago ;
          ID       450 ;

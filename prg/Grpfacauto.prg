@@ -6,7 +6,7 @@
 
 CLASS TGrpFacturasAutomaticas FROM TMant
 
-   DATA  cMru           INIT "Users2_16"
+   DATA  cMru           INIT "Folder_gear_16"
 
    DATA  cParentSelect  INIT Space( 4 )
 
@@ -46,7 +46,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatCli()
    DEFAULT oWndParent   := GetWndFrame()
-   DEFAULT oMenuItem    := "01030"
+   DEFAULT oMenuItem    := "04018"
 
    if Empty( ::nLevel )
       ::nLevel          := nLevelUsr( oMenuItem )
@@ -66,7 +66,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    //::lAutoButtons       := .t.
    ::lCreateShell       := .f.
-   ::cHtmlHelp          := "Grupos de facturas automáticas"
+   ::cHtmlHelp          := "Grupos de plantillas automáticas"
 
 RETURN ( Self )
 
@@ -103,7 +103,7 @@ METHOD OpenFiles( lExclusive, cPath )
    RECOVER USING oError
 
       lOpen             := .f.
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de facturas automáticas" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de plantillas automáticas" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
@@ -121,15 +121,15 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "GrpFac.Dbf" CLASS "GrpFac" ALIAS "GrpFac" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de facturas automáticas"
+   DEFINE DATABASE ::oDbf FILE "GrpFac.Dbf" CLASS "GrpFac" ALIAS "GrpFac" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de plantillas automáticas"
 
-      FIELD NAME "CCODGRP"    TYPE "C" LEN  4  DEC 0  COMMENT "Código"              COLSIZE 80  OF ::oDbf
-      FIELD NAME "CNOMGRP"    TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"              COLSIZE 200 OF ::oDbf
-      FIELD NAME "CCODPDR"    TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"         COLSIZE 80  OF ::oDbf
+      FIELD NAME "cCodGrp"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"       COLSIZE 80        OF ::oDbf
+      FIELD NAME "cNomGrp"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"       COLSIZE 200       OF ::oDbf
+      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"  COLSIZE 80        OF ::oDbf
 
-      INDEX TO "GRPCLI.CDX" TAG "CCODGRP" ON "CCODGRP"   COMMENT "Código"           NODELETED   OF ::oDbf
-      INDEX TO "GRPCLI.CDX" TAG "CNOMGRP" ON "CNOMGRP"   COMMENT "Nombre"           NODELETED   OF ::oDbf
-      INDEX TO "GRPCLI.CDX" TAG "CCODPDR" ON "CCODPDR"   COMMENT "Grupo padre"      NODELETED   OF ::oDbf
+      INDEX TO "GrpFac.Cdx" TAG "cCodGrp" ON "cCodGrp"   COMMENT "Código"        NODELETED   OF ::oDbf
+      INDEX TO "GrpFac.Cdx" TAG "cNomGrp" ON "cNomGrp"   COMMENT "Nombre"        NODELETED   OF ::oDbf
+      INDEX TO "GrpFac.Cdx" TAG "cCodPdr" ON "cCodPdr"   COMMENT "Grupo padre"   NODELETED   OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -141,7 +141,7 @@ METHOD Resource( nMode )
 
 	local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de facturas automáticas"
+   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de plantillas automáticas"
 
       REDEFINE GET ::oGetCodigo ;
          VAR      ::oDbf:cCodGrp ;
