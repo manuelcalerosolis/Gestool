@@ -259,10 +259,12 @@ CLASS TStock
          :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
          :cLote               := ( ::cAlbPrvL )->cLote
          :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
-         :nUnidades           := nTotNAlbPrv( ::cAlbPrvL ) 
 
          if IsTrue( lNumeroSerie )
+            :nUnidades        := 1 
             :cNumeroSerie     := ( ::cAlbPrvS )->cNumSer
+         else
+            :nUnidades        := nTotNAlbPrv( ::cAlbPrvL ) 
          end if
          
          ::Integra( hb_QWith() )
@@ -292,10 +294,12 @@ CLASS TStock
          :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
          :cLote               := ( ::cFacPrvL )->cLote
          :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
-         :nUnidades           := nTotNFacPrv( ::cFacPrvL ) 
 
          if IsTrue( lNumeroSerie )
+            :nUnidades           := 1
             :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
+         else
+            :nUnidades           := nTotNFacPrv( ::cFacPrvL )
          end if
          
          ::Integra( hb_QWith() )

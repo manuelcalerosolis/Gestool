@@ -3749,6 +3749,16 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
+         oMsg:SetText( "Creando grupos de facturas automáticas" )
+      end if
+
+      if cPathOld != nil .and. aImportacion:lClientes
+         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathGrp + "GrpFac.Dbf" )   ; SysRefresh()
+      else
+         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles()                            ; SysRefresh()
+      end if
+
+      if oMsg != nil
          oMsg:SetText( "Creando transportistas" )
       end if
 
@@ -4307,15 +4317,6 @@ FUNCTION mkPathGrp( cCodGrpNew, cNomGrpNew, cCodGrpOld, aImportacion, lDialog, l
          TTipArt():Create( cPath ):CheckFiles( cPathOld + "TipArt.Dbf" )   ; SysRefresh()
       else
          TTipArt():Create( cPath ):CheckFiles()                            ; SysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando grupos de clientes" )
-      end if
-      if cPathOld != nil .and. aImportacion:lClientes
-         TGrpCli():Create( cPath ):CheckFiles( cPathOld + "GrpCli.Dbf" )   ; SysRefresh()
-      else
-         TGrpCli():Create( cPath ):CheckFiles()                            ; SysRefresh()
       end if
 
       if oMsg != nil

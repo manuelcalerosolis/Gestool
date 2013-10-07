@@ -2147,6 +2147,15 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "GrpFac"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "GrpFac.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "GrpFac.Cdx"
+   oDataTable:cDescription := "Grupos de facturas automáticas"
+   oDataTable:bCreateFile  := {| cPath | TGrpFacturasAutomaticas():BuildFiles( .t., cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "Agentes"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Agentes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Agentes.Cdx"
