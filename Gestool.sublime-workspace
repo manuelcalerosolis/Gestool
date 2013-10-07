@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"ba",
+				"background-color"
+			],
+			[
 				"pa",
 				"padding-top"
 			],
@@ -22,10 +26,6 @@
 			[
 				"aLL",
 				"Alltrim"
-			],
-			[
-				"ba",
-				"background"
 			],
 			[
 				"A",
@@ -519,6 +519,30 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "/C/Users/Villa/Desktop/productorg.tpl",
+			"settings":
+			{
+				"buffer_size": 35041,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/product.tpl",
+			"settings":
+			{
+				"buffer_size": 28202,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "bin/script/003.prg",
+			"settings":
+			{
+				"buffer_size": 4898,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -552,18 +576,23 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/bin/script/003.prg",
+		"/C/Users/Villa/Desktop/global.css",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/Users/Villa/Desktop/homeslider.tpl",
+		"/C/Users/Villa/Desktop/bx_styles.css",
+		"/C/Users/Villa/Desktop/header.tpl",
+		"/C/Users/Villa/Desktop/grid_prestashop.css",
+		"/C/Users/Villa/Desktop/footer.tpl",
+		"/C/Users/Villa/Desktop/blocktopmenu.tpl",
+		"/C/Users/Villa/Desktop/superfish-modified.css",
 		"/C/Users/Villa/Desktop/product.tpl",
 		"/C/Users/Villa/Desktop/product.css",
-		"/C/Users/Villa/Desktop/grid_prestashop.css",
 		"/C/Users/Villa/Desktop/category.tpl",
 		"/C/Users/Villa/Desktop/product_list.css",
 		"/C/Users/Villa/Desktop/product-list.tpl",
-		"/C/Users/Villa/Desktop/global.css",
-		"/C/Users/Villa/Desktop/superfish-modified.css",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/Users/Villa/Desktop/category-tree-branch.tpl",
-		"/C/Users/Villa/Desktop/footer.tpl",
-		"/C/Users/Villa/Desktop/blocktopmenu.tpl",
 		"/C/Users/Villa/Desktop/blocksocial.tpl",
 		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/fw195/Gestool/prg/Tftpc3.prg",
@@ -571,7 +600,6 @@
 		"/C/Users/Villa/Desktop/es.php",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tmant.prg",
-		"/C/Users/Villa/Desktop/header.tpl",
 		"/C/Users/Villa/Desktop/blocktopmenu.php",
 		"/C/fw195/Gestool/prg/Msvconnect.prg",
 		"/C/fw195/Gestool/prg/Impfaccom.prg",
@@ -589,7 +617,6 @@
 		"/C/fw195/Gestool/prg/TGenMailing",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
-		"/C/fw195/Gestool/bin/script/003.prg",
 		"/C/Users/Villa/Desktop/zoomslider.tpl",
 		"/C/Users/Villa/Desktop/index.html",
 		"/C/fw195/Gestool/prg/Client.prg",
@@ -676,10 +703,7 @@
 		"/C/fw195/Gestool/prg/producc",
 		"/C/fw195/Gestool/prg/Pro.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
-		"/C/fw195/Gestool/prg/Factprv.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg"
+		"/C/fw195/Gestool/prg/Factprv.prg"
 	],
 	"find":
 	{
@@ -727,6 +751,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"#",
+			"priceDisplay",
+			"on aitm",
+			"InsertProductsPrestashop",
+			"oBmpWeb",
+			"on edtrec",
+			"sf-with-ul",
 			"long_description",
 			"our_price_display",
 			"prices",
@@ -847,14 +878,7 @@
 			"heig",
 			"hei",
 			"active",
-			"columns",
-			"flexslider sixteen columns",
-			"sixteen",
-			"viewport",
-			"tinfprv",
-			"sf-contener",
-			"clearfix",
-			"jquery.reveal.js"
+			"columns"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -881,8 +905,91 @@
 	"groups":
 	[
 		{
+			"selected": 2,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "/C/Users/Villa/Desktop/productorg.tpl",
+					"settings":
+					{
+						"buffer_size": 35041,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								22133,
+								21204
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 7449.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/Villa/Desktop/product.tpl",
+					"settings":
+					{
+						"buffer_size": 28202,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								18122,
+								18122
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6225.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "bin/script/003.prg",
+					"settings":
+					{
+						"buffer_size": 4898,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								493,
+								4898
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2946.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

@@ -711,10 +711,10 @@ METHOD Activate( oWnd ) CLASS TComercio
          OF       ::oDlg;
          ACTION   ( ::ExportarPrestashop() );
 
-      REDEFINE BUTTONBMP ::oBtnImportar ;
+      /*REDEFINE BUTTONBMP ::oBtnImportar ;
          ID       520 ;
          OF       ::oDlg;
-         ACTION   ( ::ImportarPrestashop() );
+         ACTION   ( ::ImportarPrestashop() );*/
 
       /*
       Tree---------------------------------------------------------------------
@@ -857,7 +857,7 @@ Method ExportarPrestashop() Class TComercio
    ::aCategorias     := {}
 
    ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
+   //::oBtnImportar:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -993,7 +993,7 @@ Method ExportarPrestashop() Class TComercio
    ::Closefiles()
 
    ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
+   //::oBtnImportar:Hide()
 
    ::oBtnCancel:Enable()
 
@@ -1008,7 +1008,7 @@ Method ImportarPrestashop()
    local oError
 
    ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
+   //::oBtnImportar:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -1087,7 +1087,7 @@ Method ImportarPrestashop()
    ::Closefiles()
 
    ::oBtnExportar:Hide()
-   ::oBtnImportar:Hide()
+   //::oBtnImportar:Hide()
 
    ::oBtnCancel:Enable()
 
@@ -4052,6 +4052,27 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    else
       ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "category_product" ), 3 )
    end if
+
+   /*
+   Insertamos un artículo como producto destacado------------------------------
+   */
+
+   if ::oArt:lPubPor
+
+      cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
+                        " ( id_category, " + ;
+                        "id_product )" + ;
+                     " VALUES " + ;
+                        "('" + AllTrim( Str( Max( nParent, 1 ) ) ) + "', " + ;
+                        "'2' )"
+   
+      if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " como producto destacado", 3 )
+      else
+         ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " como producto destacado", 3 )
+      end if
+
+   end if   
 
    /*
    Insertamos un artículo nuevo en la tabla category_shop-------------------
