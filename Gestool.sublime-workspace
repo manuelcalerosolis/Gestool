@@ -4,12 +4,24 @@
 		"selected_items":
 		[
 			[
-				"aLL",
-				"Alltrim"
+				"pa",
+				"padding-top"
 			],
 			[
-				"pa",
-				"padding-right"
+				"pad",
+				"padding-bottom"
+			],
+			[
+				"padi",
+				"padding-left"
+			],
+			[
+				"fon",
+				"font-weight"
+			],
+			[
+				"aLL",
+				"Alltrim"
 			],
 			[
 				"ba",
@@ -36,16 +48,8 @@
 				"div	Tag"
 			],
 			[
-				"fon",
-				"font-size"
-			],
-			[
 				"pado",
 				"padding-bottom"
-			],
-			[
-				"padi",
-				"padding-top"
 			],
 			[
 				"font",
@@ -190,10 +194,6 @@
 			[
 				"stock",
 				"stock_available"
-			],
-			[
-				"pad",
-				"padding-left"
 			],
 			[
 				"list",
@@ -519,14 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "prg/Tcomercio.prg",
-			"settings":
-			{
-				"buffer_size": 234206,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -560,11 +552,19 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/product.tpl",
+		"/C/Users/Villa/Desktop/product.css",
+		"/C/Users/Villa/Desktop/grid_prestashop.css",
+		"/C/Users/Villa/Desktop/category.tpl",
+		"/C/Users/Villa/Desktop/product_list.css",
+		"/C/Users/Villa/Desktop/product-list.tpl",
+		"/C/Users/Villa/Desktop/global.css",
+		"/C/Users/Villa/Desktop/superfish-modified.css",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/Users/Villa/Desktop/category-tree-branch.tpl",
 		"/C/Users/Villa/Desktop/footer.tpl",
 		"/C/Users/Villa/Desktop/blocktopmenu.tpl",
-		"/C/Users/Villa/Desktop/global.css",
 		"/C/Users/Villa/Desktop/blocksocial.tpl",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/fw195/Gestool/prg/Tftpc3.prg",
 		"/C/Users/Villa/Desktop/zoomslider - copia/blocksocial.tpl",
@@ -572,7 +572,6 @@
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tmant.prg",
 		"/C/Users/Villa/Desktop/header.tpl",
-		"/C/Users/Villa/Desktop/superfish-modified.css",
 		"/C/Users/Villa/Desktop/blocktopmenu.php",
 		"/C/fw195/Gestool/prg/Msvconnect.prg",
 		"/C/fw195/Gestool/prg/Impfaccom.prg",
@@ -614,7 +613,6 @@
 		"/C/Users/Villa/Desktop/flexslider.css",
 		"/C/Users/Villa/Desktop/homeslider/bx_styles.css",
 		"/C/Users/Villa/Desktop/homeslider/homeslider.tpl",
-		"/C/Users/Villa/Desktop/grid_prestashop.css",
 		"/C/Users/Villa/Desktop/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Infprv.prg",
 		"/C/fw195/Gestool/prg/Tinfprv.prg",
@@ -681,13 +679,7 @@
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/fw195/Gestool/prg/pro",
-		"/C/fw195/Gestool/prg/albcli",
-		"/C/fw195/Gestool/prg/Internet.prg",
-		"/C/fw195/Gestool/prg/Stock.prg",
-		"/C/fw195/Gestool/prg/Tutil.prg"
+		"/C/fw195/Gestool/prg/Albcli.prg"
 	],
 	"find":
 	{
@@ -695,7 +687,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -735,6 +727,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"long_description",
+			"our_price_display",
+			"prices",
+			"price",
+			"pb-lef",
+			"price",
+			"attribute",
+			"clear",
+			"product_desc",
+			"ul#product_list li span.availability",
+			"center_block",
+			"center",
+			"grid",
+			"container",
 			"CreateDirectoryImages",
 			"for n",
 			"for",
@@ -848,21 +854,7 @@
 			"tinfprv",
 			"sf-contener",
 			"clearfix",
-			"jquery.reveal.js",
-			"js",
-			"css",
-			"cart_navigation_extra",
-			"cDelegacion",
-			"cDelegacion.",
-			"cDelegacion",
-			"on cDlgUsr",
-			":cDelegacion(",
-			"cDelegacion",
-			"CSUFDOC",
-			"delegacion",
-			"menu",
-			"displayTop",
-			"HOOK_TOP"
+			"jquery.reveal.js"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -889,37 +881,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "prg/Tcomercio.prg",
-					"settings":
-					{
-						"buffer_size": 234206,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								231324,
-								231324
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 119170.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
