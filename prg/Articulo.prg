@@ -228,8 +228,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
    lExternal      := lExt
 
-   /*oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       oMsgText( 'Abriendo ficheros artículos' )
 
@@ -462,7 +462,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       oMsgText( 'Ficheros de artículos abiertos' )
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       lOpenFiles           := .f.
 
@@ -470,7 +470,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
@@ -1749,7 +1749,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "ART_15",;
                   "ART_4",;
                   "ART_6",;
-                  "ART_13"
+                  "ART_WEB"
 
 	/*
 	Primera Caja de Dialog del Folder
@@ -4388,6 +4388,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
          WHEN     ( .F. );
+         OF       fldWeb
+
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lPubPor" ) ) ] ;
+         ID       230 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
 
    /*
@@ -15685,7 +15690,7 @@ function aItmArt()
    aAdd( aBase, { "LLOTE",     "L",  1, 0, "Lote (S/N)",                              "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LPUBINT",   "L",  1, 0, "Lógico para publicar en internet (S/N)",  "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LPUBOFE",   "L",  1, 0, "Lógico para publicar como oferta (S/N)",  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "Lógico para publicar como oferta de portada(S/N)",  "",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "Lógico para publicar como artículo destacado (S/N)",  "",       "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NDTOINT1",  "N",  6, 2, "Descuento de oferta para tienda web 1",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT1",  "N", 15, 6, "Precio del producto en oferta 1",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA1",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 1", "",        "", "( cDbfArt )", nil } )

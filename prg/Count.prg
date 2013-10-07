@@ -68,12 +68,13 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-Function synCount( cPath )
+Function synCount( cPath, nSemilla )
 
    local n
    local dbf
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT nSemilla  := 1 
 
    /*
    Deben de existir todos los tipos de documentos------------------------------
@@ -97,30 +98,30 @@ Function synCount( cPath )
                ( dbf )->lDoc  := aDoc[ n, 4 ]
                ( dbf )->lCon  := aDoc[ n, 5 ]
                ( dbf )->lNFC  := aDoc[ n, 6 ]
-               ( dbf )->A     := 1
-               ( dbf )->B     := 1
-               ( dbf )->C     := 1
-               ( dbf )->D     := 1
-               ( dbf )->E     := 1
-               ( dbf )->H     := 1
-               ( dbf )->I     := 1
-               ( dbf )->J     := 1
-               ( dbf )->K     := 1
-               ( dbf )->L     := 1
-               ( dbf )->M     := 1
-               ( dbf )->N     := 1
-               ( dbf )->O     := 1
-               ( dbf )->P     := 1
-               ( dbf )->Q     := 1
-               ( dbf )->R     := 1
-               ( dbf )->S     := 1
-               ( dbf )->T     := 1
-               ( dbf )->U     := 1
-               ( dbf )->V     := 1
-               ( dbf )->W     := 1
-               ( dbf )->X     := 1
-               ( dbf )->Y     := 1
-               ( dbf )->Z     := 1
+               ( dbf )->A     := nSemilla
+               ( dbf )->B     := nSemilla
+               ( dbf )->C     := nSemilla
+               ( dbf )->D     := nSemilla
+               ( dbf )->E     := nSemilla
+               ( dbf )->H     := nSemilla
+               ( dbf )->I     := nSemilla
+               ( dbf )->J     := nSemilla
+               ( dbf )->K     := nSemilla
+               ( dbf )->L     := nSemilla
+               ( dbf )->M     := nSemilla
+               ( dbf )->N     := nSemilla
+               ( dbf )->O     := nSemilla
+               ( dbf )->P     := nSemilla
+               ( dbf )->Q     := nSemilla
+               ( dbf )->R     := nSemilla
+               ( dbf )->S     := nSemilla
+               ( dbf )->T     := nSemilla
+               ( dbf )->U     := nSemilla
+               ( dbf )->V     := nSemilla
+               ( dbf )->W     := nSemilla
+               ( dbf )->X     := nSemilla
+               ( dbf )->Y     := nSemilla
+               ( dbf )->Z     := nSemilla
                ( dbf )->( dbUnLock() )
             end if
 
@@ -156,10 +157,6 @@ Return nil
 
 Function IsCount()
 
-   local oError
-   local oBlock
-   local dbf
-
    if !lExistTable( cPatEmp() + "nCount.Dbf" )
       mkCount( cPatEmp() )
    end if
@@ -168,21 +165,7 @@ Function IsCount()
       rxCount( cPatEmp() )
    end if
 
-   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      USE ( cPatEmp() + "nCount.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NPEDPRV", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "nCount.Cdx" ) ADDITIVE
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbf )
+   synCount( cPatEmp() )
 
 Return ( .t. )
 
@@ -274,92 +257,15 @@ Return ( nil )
 
 Static Function CreateFiles( cPath, oMeter, nSemilla, cPathOld )
 
-   local m
-   local dbfNew
-   local dbfOld
-   local lOld              := .f.
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT nSemilla        := 1
 
    if !lExistTable( cPath + "nCount.Dbf" )
-
       dbCreate( cPath + "nCount.Dbf", aSqlStruct( aItmCount() ), cDriver() )
-
-      dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "NCOUNT", @dbfNew ), .f. )
-
-      if !Empty( cPathOld ) .and. lExistTable( cPathOld + "nCount.Dbf" ) .and. lExistIndex( cPathOld + "nCount.Cdx" )
-
-         dbUseArea( .t., cDriver(), cPathOld + "nCount.Dbf", cCheckArea( "NCOUNT", @dbfOld ), .t. )
-         ( dbfOld )->( ordListAdd( cPathOld + "nCount.Cdx" ) )
-
-         lOld              := .t.
-
-      end if
-
-      if oMeter != nil
-         oMeter:cText      := "Contadores"
-      end if
-
-      for m := 1 to len( aDoc )
-
-         ( dbfNew )->( dbAppend() )
-
-         ( dbfNew )->Doc   := aDoc[ m, 1 ]
-         ( dbfNew )->Des   := aDoc[ m, 2 ]
-         ( dbfNew )->lSerie:= aDoc[ m, 3 ]
-         ( dbfNew )->lDoc  := aDoc[ m, 4 ]
-         ( dbfNew )->lCon  := aDoc[ m, 5 ]
-         ( dbfNew )->lNFC  := aDoc[ m, 6 ]
-
-         if Upper( Rtrim( aDoc[ m, 1 ] ) ) == "NSESION"
-            ( dbfNew )->A  := 1
-         else
-            ( dbfNew )->A  := nSemilla
-            ( dbfNew )->B  := nSemilla
-            ( dbfNew )->C  := nSemilla
-            ( dbfNew )->D  := nSemilla
-            ( dbfNew )->E  := nSemilla
-            ( dbfNew )->F  := nSemilla
-            ( dbfNew )->G  := nSemilla
-            ( dbfNew )->H  := nSemilla
-            ( dbfNew )->I  := nSemilla
-            ( dbfNew )->J  := nSemilla
-            ( dbfNew )->K  := nSemilla
-            ( dbfNew )->L  := nSemilla
-            ( dbfNew )->M  := nSemilla
-            ( dbfNew )->N  := nSemilla
-            ( dbfNew )->O  := nSemilla
-            ( dbfNew )->P  := nSemilla
-            ( dbfNew )->Q  := nSemilla
-            ( dbfNew )->R  := nSemilla
-            ( dbfNew )->S  := nSemilla
-            ( dbfNew )->T  := nSemilla
-            ( dbfNew )->U  := nSemilla
-            ( dbfNew )->V  := nSemilla
-            ( dbfNew )->W  := nSemilla
-            ( dbfNew )->X  := nSemilla
-            ( dbfNew )->Y  := nSemilla
-            ( dbfNew )->Z  := nSemilla
-         end if
-
-         if lOld
-         ( dbfNew )->cSerie:= RetFld( aDoc[ m, 1 ], dbfOld, "cSerie" )
-         end if
-
-         ( dbfNew )->( dbUnLock() )
-
-         SysRefresh()
-
-      next
-
-      ( dbfNew )->( dbCloseArea() )
-
-      if lOld
-         ( dbfOld )->( dbCloseArea() )
-      end if
-
    end if
+
+   rxCount( cPath )
 
 Return nil
 

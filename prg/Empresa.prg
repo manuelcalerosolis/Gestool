@@ -3217,7 +3217,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    Chequeo de existencia de tablas---------------------------------------------
    */
 
-   if !lSoft .and. !lAis()
+   if !lSoft // .and. !lAis()
 
       oMsgText( 'Comprobando existencia de tablas' )
       IsEntSal()
@@ -3269,6 +3269,9 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
       oMsgText( 'Comprobando bancos' )
       IsBancos()
+
+      oMsgText( 'Comprobando contadores' )
+      IsCount()
 
    end if
 
@@ -3614,7 +3617,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando contadores" )
       end if
-      mkCount( cPath, nil, nGetSemilla )                             ; sysrefresh()
+      mkCount( cPath ); synCount( cPath, nGetSemilla)                   ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando tarifas" )

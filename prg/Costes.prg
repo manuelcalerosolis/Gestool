@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TCosMaq FROM TMANT
+CLASS TCosMaq FROM TMant
 
    DATA  cMru     INIT "Robot_Money2_16"
    DATA  cBitmap  INIT clrTopProduccion
@@ -32,6 +32,8 @@ METHOD OpenFiles( lExclusive, cPath )
    DEFAULT lExclusive   := .f.
 
    BEGIN SEQUENCE
+
+
 
       if Empty( ::oDbf )
          ::oDbf         := ::DefineFiles( cPath )

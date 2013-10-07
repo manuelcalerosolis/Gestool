@@ -190,13 +190,6 @@ METHOD Load( lAppend ) CLASS TMasDet
 
             ::oDbfVir:AppendFromObject( ::oDbf )
 
-            /*
-            if ::oDbfVir:Append()
-               aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbf:FieldGet( n ) ) } )
-               ::oDbfVir:Save()
-            end if
-            */
-
             if ::bOnPostLoad != nil
                Eval( ::bOnPostLoad, Self )
             end if

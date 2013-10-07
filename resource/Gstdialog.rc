@@ -459,8 +459,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Número actual", -1, "Static", WS_GROUP, 54, 239, 51, 8
   CONTROL "Tanque", -1, "Static", WS_GROUP, 172, 239, 28, 8
   CONTROL "Stock maximo", -1, "Static", WS_GROUP, 54, 211, 50, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 42, 221, 445, 1
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 42, 263, 445, 1
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 221, 446, 1
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 263, 446, 1
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones de stock del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
@@ -2832,7 +2832,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 127, 26, 8
 }
 
-ART_13 DIALOG DISCARDABLE 36, 16, 496, 286
+ART_WEB DIALOG DISCARDABLE 36, 16, 496, 286
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -2849,11 +2849,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "Entrega en ", 182, "Button", BS_AUTORADIOBUTTON, 49, 120, 72, 10
   CONTROL "", 183, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 141, 119, 30, 11
   CONTROL "", 184, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 179, 119, 30, 11
-  CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 345, 93, 30, 11
+  CONTROL "Producto destacado", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 262, 96, 77, 10
+  CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 345, 119, 30, 11
   CONTROL "", 220, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 147, 440, 133
   CONTROL "dias", -1, "Static", WS_GROUP, 213, 121, 16, 9
   CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 136, 448, 147
-  CONTROL "Meses de garantía", -1, "Static", WS_GROUP, 262, 96, 72, 8
+  CONTROL "Meses de garantía", -1, "Static", WS_GROUP, 262, 122, 72, 8
   CONTROL "-", -1, "Static", WS_GROUP, 173, 122, 5, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 255, 85, 237, 48
   CONTROL "Entregas", -1, "Button", BS_GROUPBOX, 44, 85, 207, 48

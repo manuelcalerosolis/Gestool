@@ -48,11 +48,12 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
+METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName )
 
    local oDbf
 
    DEFAULT cPath        := ::cPath
+   DEFAULT cDriver      := cDriver()
    DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "MaqCosL"
 
@@ -60,7 +61,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cDriver() ) COMMENT "Lineas de coste de maquinaria"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cDriver ) COMMENT "Lineas de coste de maquinaria"
 
       FIELD NAME "cCodMaq" TYPE "C" LEN  3  DEC 0 COMMENT "Máquina"     OF oDbf
       FIELD NAME "cCodCos" TYPE "C" LEN 12  DEC 0 COMMENT "Cód. cos."   OF oDbf
