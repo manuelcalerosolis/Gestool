@@ -151,13 +151,13 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TFacAutomatica
 
    ::bFirstKey                := {|| ::oDbf:cCodFac }
 
-   ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():New( )
-
    ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, Self )
    ::AddDetail( ::oDetFacAutomatica )
 
    ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, Self )
    ::AddDetail( ::oHisFacAutomatica )
+
+   ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
 
    ::aTotIva                  := { { 0,0,nil,0 }, { 0,0,nil,0 }, { 0,0,nil,0 } }
 
@@ -172,26 +172,28 @@ RETURN ( Self )
 
 METHOD Create( cPath, oWndParent ) CLASS TFacAutomatica
 
-   DEFAULT cPath        := cPatEmp()
-   DEFAULT oWndParent   := GetWndFrame()
+   DEFAULT cPath              := cPatEmp()
+   DEFAULT oWndParent         := GetWndFrame()
 
-   ::cPath              := cPath
-   ::oWndParent         := oWndParent
+   ::cPath                    := cPath
+   ::oWndParent               := oWndParent
 
-   ::oDetFacAutomatica  := TDetFacAutomatica():New( cPath, Self )
+   ::oDetFacAutomatica        := TDetFacAutomatica():New( cPath, Self )
    ::AddDetail( ::oDetFacAutomatica )
 
-   ::oHisFacAutomatica  := THisFacAutomatica():New( cPath, Self )
+   ::oHisFacAutomatica        := THisFacAutomatica():New( cPath, Self )
    ::AddDetail( ::oHisFacAutomatica )
 
-   ::bFirstKey          := {|| ::oDbf:cCodFac }
+   ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
 
-   ::aTotIva            := { { 0,0,nil,0 }, { 0,0,nil,0 }, { 0,0,nil,0 } }
+   ::bFirstKey                := {|| ::oDbf:cCodFac }
 
-   ::nTotBrt            := 0
-   ::nTotNet            := 0
-   ::nTotIva            := 0
-   ::nTotFac            := 0
+   ::aTotIva                  := { { 0,0,nil,0 }, { 0,0,nil,0 }, { 0,0,nil,0 } }
+
+   ::nTotBrt                  := 0
+   ::nTotNet                  := 0
+   ::nTotIva                  := 0
+   ::nTotFac                  := 0
 
 RETURN ( Self )
 
@@ -370,8 +372,9 @@ METHOD OpenFiles( lExclusive ) CLASS TFacAutomatica
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
-      ::oGrpFacturasAutomaticas:OpenFiles()
+      if !Empty( ::oGrpFacturasAutomaticas )
+         ::oGrpFacturasAutomaticas:OpenFiles()
+      end if 
 
       ::OpenDetails()
 
@@ -510,6 +513,9 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TFacAutomatica
       FIELD NAME "cSerFact"  TYPE "C" LEN  01 DEC 0 COMMENT "Serie de facturación"                                   HIDE              OF ::oDbf
       FIELD NAME "cCodPago"  TYPE "C" LEN  02 DEC 0 COMMENT "Foma de pago"                                           HIDE              OF ::oDbf
       FIELD NAME "cCodGrp"   TYPE "C" LEN  04 DEC 0 COMMENT "Código de grupo"                                        HIDE              OF ::oDbf
+      FIELD NAME "nPerSel"   TYPE "N" LEN   3 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
+      FIELD NAME "cPerSel"   TYPE "C" LEN  20 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
+      FIELD NAME "dNexFac"   TYPE "D" LEN  08 DEC 0 COMMENT "Fecha de próxima factura"                               HIDE              OF ::oDbf
 
       INDEX TO "FacAutT.Cdx" TAG "cCodFac" ON "Field->cCodFac" COMMENT "Código"  NODELETED   OF ::oDbf
       INDEX TO "FacAutT.Cdx" TAG "cNomFac" ON "Field->cNomFac" COMMENT "Nombre"  NODELETED   OF ::oDbf
@@ -545,6 +551,8 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
       ::oDbf:cManObr    := "Gastos"
       ::oDbf:nDiaFact   := 1
       ::oDbf:nTipDoc    := 2
+      ::oDbf:dFecIni    := GetSysDate()
+      ::oDbf:dNexFac    := GetSysDate()
    end if
 
    if Empty( ::oDbf:cMesSel )
@@ -605,10 +613,24 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1] ;
 
+      REDEFINE GET ::aGet[ ::oDbf:FieldPos( "nPerSel" ) ] VAR ::oDbf:nPerSel ;
+         ID       160 ;
+         PICTURE  "999" ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1] ;
+
+      REDEFINE COMBOBOX ::aGet[ ::oDbf:FieldPos( "cPerSel") ] VAR ::oDbf:cPerSel ;
+         ID       161 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ITEMS    ( { "Día", "Semana", "Mes", "Año" } ) ;
+         OF       oFld:aDialogs[1]
+
       ::oTreeSemana                       := TTreeView():Redefine( 500, oFld:aDialogs[1] )
 
       ::oTreeMes                          := TTreeView():Redefine( 600, oFld:aDialogs[1] )
 
+      /*
       REDEFINE GET ::aGet[ _NDIAFACT ] VAR ::oDbf:nDiaFact ;
          ID       410 ;
          PICTURE  "99" ;
@@ -618,6 +640,13 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( ::oDbf:nDiaFact >= 1 .and. ::oDbf:nDiaFact <= 31 ) ;
          OF       oFld:aDialogs[1]
+      */
+
+      REDEFINE GET ::aGet[ ::oDbf:FieldPos( "dNexFac" ) ] VAR ::oDbf:dNexFac ;
+         ID       410 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1] ;
 
       REDEFINE GET ::aGet[ _CSERFACT ] VAR ::oDbf:cSerFact ;
          ID       440 ;
@@ -1280,7 +1309,7 @@ METHOD lPreSave( nMode ) CLASS TFacAutomatica
       return .f.
    end if
 
-   if ::oDbf:dFecFin < ::oDbf:dFecIni
+   if !Empty( ::oDbf:dFecFin ) .and. ( ::oDbf:dFecFin < ::oDbf:dFecIni )
       msgStop( "La fecha de fin no puede ser menor que la fecha de inicio." )
       ::aGet[ _DFECINI ]:SetFocus()
       return .f.
@@ -1588,6 +1617,8 @@ CLASS TCreaFacAutomaticas
    DATA oFacAutL
    DATA oFacAutI
 
+   DATA oGrpFacturasAutomaticas
+
    DATA oTree
    DATA oBrwPlantilla
    DATA oMetMsg
@@ -1615,6 +1646,10 @@ CLASS TCreaFacAutomaticas
    DATA oTreeSemana
    DATA oTreeMes
 
+   DATA oGetCodigoGrupo 
+   DATA cGetCodigoGrupo             INIT Space( 4 )
+   DATA cOldCodigoGrupo
+
    METHOD Create()
 
    METHOD OpenFiles()
@@ -1641,9 +1676,11 @@ CLASS TCreaFacAutomaticas
 
    METHOD lSeekClient( cCodFac )
 
-   METHOD OnClickRefreshAsistente()    INLINE   ( ::lLanzaAsistente(), ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. ) ) 
+   METHOD OnClickRefreshAsistente()    INLINE   ( ::lLanzaAsistente() ) 
 
    METHOD OnClickIgnoraProcesado()     INLINE   ( ::oBtnIgnoraProcesado:Toggle() )
+
+   METHOD SetNextFechaFactura()
 
 ENDCLASS
 
@@ -1665,6 +1702,7 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
 
    ::dFecDocumento      := GetSysDate()
    ::lAsistente         := lAsistente
+   ::cOldCodigoGrupo    := ::cGetCodigoGrupo
 
    /*
    Comprobamos si tenemos que lanzar el asistente------------------------------
@@ -1693,7 +1731,17 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
          SPINNER ;
          OF       oFld:aDialogs[ 1 ]
 
-      TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plnatillas" )
+      REDEFINE GET ::oGetCodigoGrupo VAR ::cGetCodigoGrupo ;
+         ID       140 ;
+         IDTEXT   141 ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[ 1 ]
+
+         ::oGetCodigoGrupo:bValid      := {|| ::oGrpFacturasAutomaticas:Existe( ::oGetCodigoGrupo, ::oGetCodigoGrupo:oHelpText, "cNomGrp", .t., .t., "0" ) }
+         ::oGetCodigoGrupo:bHelp       := {|| ::oGrpFacturasAutomaticas:Buscar( ::oGetCodigoGrupo ) }
+         ::oGetCodigoGrupo:bLostFocus  := {|| if( ::cOldCodigoGrupo != ::cGetCodigoGrupo, ::OnClickRefreshAsistente(), ), ::cOldCodigoGrupo := ::cGetCodigoGrupo }
+
+      TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plantillas" )
 
       REDEFINE CHECKBOX ::oChkIgnoraProcesado ;
          VAR      ::lChkIgnoraProcesado ;
@@ -1718,7 +1766,7 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
       ::oBrwPlantilla:bLDblClick       := {|| ::aPlantilla[ ::oBrwPlantilla:nArrayAt, 1 ] := !::aPlantilla[ ::oBrwPlantilla:nArrayAt, 1 ], ::oBrwPlantilla:Refresh() }
 
       with object ( ::oBrwPlantilla:AddCol() )
-         :cHeader          := "Sel"
+         :cHeader          := "Seleccionada"
          :nHeadBmpNo       := 1
          :bStrData         := {|| "" }
          :bEditValue       := {|| ::aPlantilla[ ::oBrwPlantilla:nArrayAt, 1 ] }
@@ -1899,7 +1947,10 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-   DATABASE NEW ::oDbfCliAtp  PATH ( cPatCli() )   FILE "CLIATP.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+   DATABASE NEW ::oDbfCliAtp  PATH ( cPatCli() )   FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+
+   ::oGrpFacturasAutomaticas  := TGrpFacturasAutomaticas():Create( cPatEmp() )
+   ::oGrpFacturasAutomaticas:OpenService( .f. )
 
    ::oFacAutT           := TFacAutomatica():Create( cPatEmp() )
    ::oFacAutT:Openfiles( .f. )
@@ -2003,6 +2054,10 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
    if ::oDbfCliAtp != nil .and. ::oDbfCliAtp:Used()
       ::oDbfCliAtp:End()
    end if
+
+   if ::oGrpFacturasAutomaticas != nil
+      ::oGrpFacturasAutomaticas:End()
+   end if 
 
    if ::oFacAutT != nil
       ::oFacAutT:End()
@@ -2165,7 +2220,7 @@ METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
                if (  ( Empty( ::oFacAutT:oDbf:dFecIni ) .or. ::oFacAutT:oDbf:dFecIni <= GetSysDate() )   .and.;
                      ( Empty( ::oFacAutT:oDbf:dFecFin ) .or. ::oFacAutT:oDbf:dFecFin >= GetSysDate() ) )
 
-                  if ::lMesSeleccionado() .and. ::lDiaSeleccionado()
+                  if ( Empty( ::cGetCodigoGrupo ) .or. ( ::oFacAutT:oDbf:cCodGrp == ::cGetCodigoGrupo ) ) // .or. ( ::lMesSeleccionado() .and. ::lDiaSeleccionado() )
 
                      if ::lCompruebaFecha()
 
@@ -2216,6 +2271,10 @@ METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
       end if
 
       aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
+
+      if !Empty( ::oBrwPlantilla )
+         ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. )
+      end if
 
    RECOVER USING oError
 
@@ -2377,11 +2436,15 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
       ::oAlbCliT:cCodAlm   := cDefAlm()
    end if
 
-   if ( ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) )
-      ::oAlbCliT:cCodPago  := ::oDbfCli:CodPago
-   else
-      ::oAlbCliT:cCodPago  := cDefFpg()
-   end if
+   if !Empty( ::oFacAutT:oDbf:cCodPago )
+      ::oAlbCliT:cCodPago     := ::oFacAutT:oDbf:cCodPago 
+   else 
+      if ( ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) )
+         ::oAlbCliT:cCodPago  := ::oDbfCli:CodPago
+      else
+         ::oAlbCliT:cCodPago  := cDefFpg()
+      end if
+   end if 
 
    ::oAlbCliT:cTurAlb      := cCurSesion()
    ::oAlbCliT:dFecAlb      := ::dFecDocumento
@@ -2593,6 +2656,12 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
    ::oTree:Select( oNode )
 
+   /*
+   Preparamos la proxima factura-----------------------------------------------
+   */
+
+   ::SetNextFechaFactura()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2620,11 +2689,15 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
       ::oFacCliT:cCodAlm   := cDefAlm()
    end if
 
-   if ( ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) )
-      ::oFacCliT:cCodPago  := ::oDbfCli:CodPago
-   else
-      ::oFacCliT:cCodPago  := cDefFpg()
-   end if
+   if !Empty( ::oFacAutT:oDbf:cCodPago )
+      ::oFacCliT:cCodPago     := ::oFacAutT:oDbf:cCodPago 
+   else 
+      if ( ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) )
+         ::oFacCliT:cCodPago  := ::oDbfCli:CodPago
+      else
+         ::oFacCliT:cCodPago  := cDefFpg()
+      end if
+   end if 
 
    ::oFacCliT:cTurFac      := cCurSesion()
    ::oFacCliT:dFecFac      := ::dFecDocumento
@@ -2648,8 +2721,8 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:cCodDlg      := oUser():cDelegacion()
    ::oFacCliT:cDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoEsp, ::oFacAutT:oDbf:cDtoEsp )
    ::oFacCliT:nDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDtoEsp, ::oFacAutT:oDbf:nDtoEsp )
-   ::oFacCliT:cDpp         := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDpp, ::oFacAutT:oDbf:cDpp )
-   ::oFacCliT:nDpp         := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDpp, ::oFacAutT:oDbf:nDpp )
+   ::oFacCliT:cDpp         := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDpp,    ::oFacAutT:oDbf:cDpp )
+   ::oFacCliT:nDpp         := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDpp,    ::oFacAutT:oDbf:nDpp )
    ::oFacCliT:cDtoUno      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoUno, ::oFacAutT:oDbf:cDtoUno )
    ::oFacCliT:nDtoUno      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDtoCnt, ::oFacAutT:oDbf:nDtoUno )
    ::oFacCliT:cDtoDos      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoDos, ::oFacAutT:oDbf:cDtoDos )
@@ -2851,12 +2924,18 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    GenPgoFacCli( cSerFac + Str( nNumFac ) + cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, ::oDbfCli:cAlias, ::oDbfFPago:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias )
 
    /*
-   Estado de la factura
+   Estado de la factura--------------------------------------------------------
    */
 
    if ::oFacCliT:SeekInOrd( cSerFac + Str( nNumFac ) + cSufFac, "nNumFac" )
       ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
    end if
+
+   /*
+   Preparamos la proxima factura-----------------------------------------------
+   */
+
+   ::SetNextFechaFactura()
 
 RETURN ( Self )
 
@@ -2864,20 +2943,23 @@ RETURN ( Self )
 
 METHOD lCompruebaFecha() CLASS TCreaFacAutomaticas
 
-   local lReturn        := .t.
+   local lReturn        := .f.
 
    if ::lChkIgnoraProcesado
       RETURN .t.
    end if
 
+   if ::oFacAutT:oDbf:dNexFac <= GetSysDate()
+      Return .t.
+   end if 
+
+   /*
    ::oFacAutI:oDbf:OrdScope( ::oFacAutT:oDbf:cCodFac )
    ::oFacAutI:oDbf:GoBottom()
 
    if !Empty( ::oFacAutI:oDbf:dFecha )
 
-      /*
-      Facturacion automatica dia de la semana----------------------------------
-      */
+      // Facturacion automatica dia de la semana----------------------------------
 
       if ::oFacAutT:oDbf:lDiaSel
 
@@ -2917,6 +2999,7 @@ METHOD lCompruebaFecha() CLASS TCreaFacAutomaticas
 
    ::oFacAutI:oDbf:ClearScope()
    ::oFacAutI:oDbf:GoTop()
+   */
 
 RETURN ( lReturn )
 
@@ -2928,6 +3011,31 @@ METHOD ActionTree() CLASS TCreaFacAutomaticas
 
    if !Empty( oTreeInforme ) .and. !Empty( oTreeInforme:bAction )
       Eval( oTreeInforme:bAction )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetNextFechaFactura()
+
+   if ( ::oFacAutT:oDbf:nPerSel > 0 ) .and. !Empty( ::oFacAutT:oDbf:cPerSel )
+
+      do case
+         case Alltrim( ::oFacAutT:oDbf:cPerSel ) == "Día"
+            ::oFacAutT:oDbf:FieldPutByName( "dNexFac", ( GetSysDate() + ::oFacAutT:oDbf:nPerSel ) )
+
+         case Alltrim( ::oFacAutT:oDbf:cPerSel ) == "Semana"
+            ::oFacAutT:oDbf:FieldPutByName( "dNexFac", ( GetSysDate() + ( ::oFacAutT:oDbf:nPerSel * 7 ) ) )
+
+         case Alltrim( ::oFacAutT:oDbf:cPerSel ) == "Mes"
+            ::oFacAutT:oDbf:FieldPutByName( "dNexFac", ( AddMonth( GetSysDate(), ::oFacAutT:oDbf:nPerSel ) ) )
+
+         case Alltrim( ::oFacAutT:oDbf:cPerSel ) == "Año"
+            ::oFacAutT:oDbf:FieldPutByName( "dNexFac", ( AddMonth( GetSysDate(), ( ::oFacAutT:oDbf:nPerSel * 12 ) ) ) )
+
+      end case
+
    end if
 
 RETURN ( Self )

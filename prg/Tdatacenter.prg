@@ -2893,7 +2893,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutT.Cdx"
    oDataTable:cDescription := "Plantillas automáticas de clientes"
-   oDataTable:bCreateFile  := {| cPath | msgAlert( "plantillas" ), TFacAutomatica():BuildFiles( .t., cPath ), msgAlert("en tmp") }
+   oDataTable:bCreateFile  := {| cPath | TFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
