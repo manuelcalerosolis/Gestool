@@ -4072,7 +4072,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
          ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " como producto destacado", 3 )
       end if
 
-   end if   
+   end if
 
    /*
    Insertamos un artículo nuevo en la tabla category_shop-------------------

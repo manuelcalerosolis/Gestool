@@ -12156,13 +12156,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 170, "Static", WS_BORDER|WS_GROUP, 234, 74, 230, 10
   CONTROL "", 180, "Static", WS_BORDER|WS_GROUP, 234, 86, 230, 10
   CONTROL "", 190, "Static", WS_BORDER|WS_GROUP, 234, 98, 230, 10
-  CONTROL "Exportar datos", 510, "Button", WS_TABSTOP, 44, 117, 59, 14
-  CONTROL "Importar pedidos", 520, "Button", WS_TABSTOP, 404, 117, 60, 14
-  CONTROL "", 200, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 54, 144, 410, 172
+  CONTROL "", 200, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 54, 127, 410, 189
+  CONTROL "Exportar datos", 510, "Button", WS_TABSTOP, 342, 354, 59, 14
+  CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 403, 354, 61, 14
   CONTROL "Procesando...", 210, "Static", WS_GROUP, 54, 318, 342, 8
   CONTROL "", 220, "msctls_progress32", 0x00000000, 54, 330, 410, 4
   CONTROL "", 230, "msctls_progress32", 0x00000000, 54, 338, 410, 4
-  CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 403, 354, 61, 14
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comercio electrónico. Este asistente le guiará para enviar y recibir información de su web.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 425, 8
   CONTROL "Opciones exportación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 28, 97, 86
@@ -12173,7 +12172,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Base de datos:", -1, "Static", WS_GROUP, 154, 76, 80, 8
   CONTROL "Usuario FTP ", -1, "Static", WS_GROUP, 154, 88, 80, 8
   CONTROL "Direcctorio imágenes", -1, "Static", WS_GROUP, 154, 100, 80, 8
-  CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 132, 426, 218
+  CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 116, 426, 234
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
