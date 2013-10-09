@@ -16,8 +16,13 @@ TEACHER_32 BITMAP "..\\bmp\\Teacher_32.bmp"
 TEACHER_16 BITMAP "..\\bmp\\Teacher_16.bmp"
 SCHOOL_32 BITMAP "..\\bmp\\School_32.bmp"
 SCHOOL_16 BITMAP "..\\bmp\\School_16.bmp"
+
 FOLDER_DOCUMENT_32 BITMAP "..\\bmp\\Folder_Document_32.bmp"
 FOLDER_DOCUMENT_16 BITMAP "..\\bmp\\Folder_Document_16.bmp"
+
+FOLDER_GEAR_32 BITMAP "..\\bmp\\Folder_Gear_32.bmp"
+FOLDER_GEAR_16 BITMAP "..\\bmp\\Folder_Gear_16.bmp"
+
 DOCUMENT_ATTACHMENT_32 BITMAP "..\\bmp\\Document_Attachment_32.bmp"
 DOCUMENT_ATTACHMENT_16 BITMAP "..\\bmp\\Document_Attachment_16.bmp"
 WINDOW_DELETE_16 BITMAP "..\\bmp\\Window_Delete_16.bmp"

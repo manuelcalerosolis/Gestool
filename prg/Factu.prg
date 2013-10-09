@@ -2440,7 +2440,7 @@ Function CreateAcceso( oWnd )
    // Clientes----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := If( IsProfesional(), 6, 4 )
+   oGrupo:nBigItems     := If( IsProfesional(), 7, 4 )
    oGrupo:cPrompt       := 'Clientes'
    oGrupo:cLittleBitmap := "User1_16"
    oGrupo:cBigBitmap    := "User1_32"
@@ -2499,12 +2499,22 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Grupo de plantillas'
+   oItem:cMessage       := 'Acceso a grupos de plantillas automáticas'
+   oItem:bAction        := {|| TGrpFacturasAutomaticas():New( cPatCli(), oWnd, "04018" ):Activate() }
+   oItem:cId            := "04018"
+   oItem:cBmp           := "folder_gear_16"
+   oItem:cBmpBig        := "folder_gear_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Plantillas automáticas'
    oItem:cMessage       := 'Acceso a plantillas de ventas automáticas'
    oItem:bAction        := {|| StartTFacAutomatica() }
-   oItem:cId            := "04015"
+   oItem:cId            := "04017"
    oItem:cBmp           := "document_gear_16"
-   oItem:cBmpBig        := "document_gear_32"
+   oItem:cBmpBig        := "document_gear_32" 
    oItem:lShow          := .f.
 
    end if

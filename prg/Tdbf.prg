@@ -225,7 +225,6 @@ CLASS TDbf
     METHOD  aMsg( nMsg )      INLINE GetMsg( ::nLang )[ nMsg ]
     METHOD  DbError( Error )  INLINE MsgInfo( if( ValType( Error ) != "N", Error, ::aMsg( Error ) ) )
 
-
     //Nuevos por manuel calero
 
     METHOD lSetMarkRec( cMark, nRec )

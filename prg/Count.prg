@@ -72,20 +72,21 @@ Function synCount( cPath, nSemilla )
 
    local n
    local dbf
+   local oError
+   local oBlock
 
    DEFAULT cPath     := cPatEmp()
    DEFAULT nSemilla  := 1 
 
-   /*
-   Deben de existir todos los tipos de documentos------------------------------
-   */
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "nCount", @dbf ), .t. )
+      /*
+      Deben de existir todos los tipos de documentos------------------------------
+      */
 
-   if !( dbf )->( neterr() )
-
-      ( dbf )->( ordListAdd( cPath + "nCount.Cdx" ) )
-      ( dbf )->( ordSetFocus( "Doc" ) )
+      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
       for n := 1 to len( aDoc )
 
@@ -139,13 +140,14 @@ Function synCount( cPath, nSemilla )
 
       next
 
-      ( dbf )->( dbCloseArea() )
+   RECOVER USING oError
 
-   else
+      msgStop( ErrorMessage( oError ), "Imposible abrir la tabla de contadores" )
 
-      msgStop( "Imposible abrir en modo exclusivo la tabla de contadores", "Sincronizando contadores" )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
-   end if
+   CLOSE ( dbf )
 
 Return nil
 
@@ -256,7 +258,6 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 Static Function CreateFiles( cPath, oMeter, nSemilla, cPathOld )
-
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT nSemilla        := 1

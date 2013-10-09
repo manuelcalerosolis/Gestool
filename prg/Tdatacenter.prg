@@ -1363,11 +1363,11 @@ METHOD AddTable( oTable )
       else
 
          if !file( oTable:cDataFile )
-            msgWait( "No existe " + ( oTable:cDataFile ), "Atención", 1 )
+            msgAlert( "No existe " + ( oTable:cDataFile ), "Atención", 1 )
          end if
 
          if !file( oTable:cIndexFile )
-            msgWait( "No existe " + ( oTable:cIndexFile ), "Atención", 1 )
+            msgAlert( "No existe " + ( oTable:cIndexFile ), "Atención", 1 )
          end if
 
       end if
@@ -2893,14 +2893,14 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutT.Cdx"
    oDataTable:cDescription := "Plantillas automáticas de clientes"
-
+   oDataTable:bCreateFile  := {| cPath | TFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "FacAutL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutL.Cdx"
-   oDataTable:cDescription := "Plantillas automáticas de clientes"
+   oDataTable:cDescription := "Plantillas automáticas de clientes lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bCreateFile  := {| cPath | TDetFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
@@ -2909,7 +2909,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacAutI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutI.Cdx"
-   oDataTable:cDescription := "Plantillas automáticas de clientes"
+   oDataTable:cDescription := "Plantillas automáticas de clientes historico"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bCreateFile  := {| cPath | THisFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
@@ -4184,54 +4184,59 @@ METHOD ActualizaTable( oTable, cPath )
    local nField      
    local aField
    
+   lCopy             := .t.
    cOld              := oTable:cName 
    cTmp              := cEmpTmp() + cNoPath( oTable:cName )
-   
-   if !lExistTable( cOld + ".Dbf" )
-      return .f.
-   end if
-   
+     
    if !lExistTable( cTmp + ".Dbf" )
       return .f.
    end if
    
-   USE ( cOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
-   if NetErr()
-      msgStop(  cOld + ".Dbf", "Error de apertura" )
-      return .f.
-   end if
-   
-   USE ( cTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
-   if NetErr()
-      msgStop(  cTmp + ".Dbf", "Error de apertura" )
-      return .f.
-   end if
+   /*
+   Si tenemos tabla antigua pasamos los campos---------------------------------
+   */
 
-   // Preparamos los campos ---------------------------------------------------
-   
-   nField            := ( dbfTmp )->( fCount() )
-   aField            := Array( nField )
+   if lExistTable( cOld + ".Dbf" )
 
-   for i := 1 to nField
-      aField[ i ]    := ( dbfTmp )->( FieldPos( ( dbfOld )->( FieldName( i ) ) ) )
-   next
+      USE ( cOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
+      if NetErr()
+         msgStop(  cOld + ".Dbf", "Error de apertura" )
+         return .f.
+      end if
+      
+      USE ( cTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
+      if NetErr()
+         msgStop(  cTmp + ".Dbf", "Error de apertura" )
+         return .f.
+      end if
+   
+      // Preparamos los campos ---------------------------------------------------
+      
+      nField            := ( dbfTmp )->( fCount() )
+      aField            := Array( nField )
 
-   while !( dbfOld )->( eof() )
+      for i := 1 to nField
+         aField[ i ]    := ( dbfTmp )->( FieldPos( ( dbfOld )->( FieldName( i ) ) ) )
+      next
+   
+      while !( dbfOld )->( eof() )
+   
+         ( dbfTmp )->( dbAppend() )
+      
+         aEval( aField, {| nFld, i | if( nFld != 0, ( dbfTmp )->( FieldPut( nFld, ( dbfOld )->( FieldGet( i ) ) ) ), ) } )
+      
+         ( dbfOld )->( dbSkip() )
+      
+         SysRefresh()
+      
+      end while
+      
+      lCopy             := ( dbfOld )->( eof() )
+   
+      CLOSE ( dbfOld )
+      CLOSE ( dbfTmp )
 
-      ( dbfTmp )->( dbAppend() )
-   
-      aEval( aField, {| nFld, i | if( nFld != 0, ( dbfTmp )->( FieldPut( nFld, ( dbfOld )->( FieldGet( i ) ) ) ), ) } )
-   
-      ( dbfOld )->( dbSkip() )
-   
-      SysRefresh()
-   
-   end while
-   
-   lCopy             := ( dbfOld )->( eof() )
-   
-   CLOSE ( dbfOld )
-   CLOSE ( dbfTmp )
+   end if 
    
    // Si hay copia satisfactoria cambiamos los ficheros------------------------
    
