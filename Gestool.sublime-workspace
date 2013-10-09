@@ -531,15 +531,15 @@
 			"file": "/C/Users/Villa/Desktop/product.tpl",
 			"settings":
 			{
-				"buffer_size": 28202,
+				"buffer_size": 30472,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "bin/script/003.prg",
+			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 4898,
+				"buffer_size": 235458,
 				"line_ending": "Windows"
 			}
 		}
@@ -576,9 +576,10 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/settings.inc.php",
+		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/bin/script/003.prg",
 		"/C/Users/Villa/Desktop/global.css",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/Users/Villa/Desktop/homeslider.tpl",
 		"/C/Users/Villa/Desktop/bx_styles.css",
@@ -603,7 +604,6 @@
 		"/C/Users/Villa/Desktop/blocktopmenu.php",
 		"/C/fw195/Gestool/prg/Msvconnect.prg",
 		"/C/fw195/Gestool/prg/Impfaccom.prg",
-		"/C/Users/Villa/Desktop/settings.inc.php",
 		"/C/AppServ/www/zemtrum/tienda/modules/nivoslider/nivoslider.tpl",
 		"/C/Users/Villa/Desktop/copia zoomslider/zoomslider.php",
 		"/C/Users/Villa/Desktop/zoomslider - copia/demo.html",
@@ -751,6 +751,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"insertprod",
+			"insertpro",
+			"on aitm",
+			"fldWeb",
+			"on aitm",
+			"oBtnImportar",
+			"oBtnImportar.",
+			"oBtnImportar",
 			"#",
 			"priceDisplay",
 			"on aitm",
@@ -870,15 +878,7 @@
 			"TCommPort",
 			"TestBalanza",
 			"ConfImpTiket",
-			"TPort",
-			"write",
-			"TestVisor",
-			"image",
-			"zooms",
-			"heig",
-			"hei",
-			"active",
-			"columns"
+			"TPort"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -920,8 +920,8 @@
 						"selection":
 						[
 							[
-								22133,
-								21204
+								14837,
+								17601
 							]
 						],
 						"settings":
@@ -930,7 +930,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7449.0,
+						"translation.y": 5269.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -940,15 +940,15 @@
 					"file": "/C/Users/Villa/Desktop/product.tpl",
 					"settings":
 					{
-						"buffer_size": 28202,
+						"buffer_size": 30472,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								18122,
-								18122
+								20559,
+								20559
 							]
 						],
 						"settings":
@@ -957,35 +957,35 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 6225.0,
+						"translation.y": 6169.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "bin/script/003.prg",
+					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 4898,
+						"buffer_size": 235458,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								493,
-								4898
+								135488,
+								135488
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 2,
+							"tab_size": 3,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2946.0,
+						"translation.y": 72779.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
