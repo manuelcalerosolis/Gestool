@@ -2416,6 +2416,10 @@ Function TDetSalaVenta()
 
 Return nil
 
+Function TGrpFacturasAutomaticas()
+
+Return nil 
+
 /*Function TOrdenComanda()
 
 Return nil*/

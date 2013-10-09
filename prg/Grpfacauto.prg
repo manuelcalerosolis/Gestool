@@ -18,6 +18,8 @@ CLASS TGrpFacturasAutomaticas FROM TMant
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
 
+   METHOD Activate()
+
    METHOD OpenFiles( lExclusive )
    MESSAGE OpenService( lExclusive )            METHOD OpenFiles( lExclusive )
 
@@ -37,6 +39,26 @@ CLASS TGrpFacturasAutomaticas FROM TMant
    METHOD ChangeTreeState( oTree, aItems )
    METHOD GetTreeState( oTree, aItems )
    METHOD SetTreeState( oTree, aItems )
+
+   //-------------------------------------------------------------------------//
+
+   INLINE METHOD RunPlantillaAutomatica( cCodigoGrupo )
+
+      with object ( TCreaFacAutomaticas():New() )
+         :cCodigoGrupo     := cCodigoGrupo
+         if :OpenFiles()
+            if :lSelectCodigoPlantilla()
+               :Run()
+            end if
+            :CloseFiles()
+         end if 
+      end with
+
+      Return ( Self )
+
+   ENDMETHOD
+
+   //-------------------------------------------------------------------------//
 
 END CLASS
 
@@ -82,6 +104,68 @@ METHOD Create( cPath )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD Activate()
+
+   local oGen
+
+   if nAnd( ::nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end if
+
+   /*
+   Cerramos todas las ventanas-------------------------------------------------
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if Empty( ::oDbf ) .or. !::oDbf:Used()
+      ::lOpenFiles      := ::OpenFiles()
+   end if
+
+   /*
+   Creamos el Shell------------------------------------------------------------
+   */
+
+   if ::lOpenFiles
+
+      if !::lCreateShell
+         ::CreateShell( ::nLevel )
+      end if
+
+      ::oWndBrw:GralButtons( Self )
+
+      if lUsrMaster() .or. oUser():lDocAuto()
+
+         DEFINE BTNSHELL oGen RESOURCE "Flash_" OF ::oWndBrw ;
+            NOBORDER ;
+            ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodGrp ) ) ;
+            TOOLTIP  "(G)enerar ahora";
+            HOTKEY   "G"
+   
+            DEFINE BTNSHELL RESOURCE "Flash_" OF ::oWndBrw ;
+               ACTION   ( ::RunPlantillaAutomatica() );
+               TOOLTIP  "Generar todas ahora" ;
+               FROM     oGen
+   
+      end if
+
+      ::oWndBrw:EndButtons( Self )
+
+      if ::cHtmlHelp != nil
+         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+      end if
+
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+
+   end if
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
 
 METHOD OpenFiles( lExclusive, cPath )
 

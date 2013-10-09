@@ -4007,7 +4007,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local cSayGrp        := ""
    local oSayFam
    local cSayFam        := ""
-   local cCodArt        := Padr( aTmp[ _CREF ], 32 )
+   local cCodArt        := Padr( aTmp[ _CREF ], 200 )
    local oRentLin
    local cRentLin       := ""
    local cCodDiv        := aTmpAlb[ _CDIVALB ]
@@ -15111,6 +15111,7 @@ RETURN ( lFacAlb )
 
 STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, lFocused )
 
+   local hHas128
    local nDtoAge
    local cCodFam
    local cPrpArt
@@ -15141,8 +15142,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
           aGet[ _CDETALLE ]:cText( Space( 50 ) )
       end if
 
-      aGet[_CDETALLE]:bWhen      := {|| .t. }
-      aGet[_CDETALLE]:Hide()
+      aGet[ _CDETALLE ]:bWhen      := {|| .t. }
+      aGet[ _CDETALLE ]:Hide()
 
       if !Empty( aGet[ _MLNGDES ] )
           aGet[ _MLNGDES ]:Show()
@@ -15164,16 +15165,24 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
       Primero buscamos por codigos de barra y por referencia de proveedor
       */
 
-      if "," $ cCodArt
-         nPosComa                := At( ",", cCodArt )
-         cProveedor              := RJust( Left( cCodArt, nPosComa - 1 ), "0", RetNumCodPrvEmp() )
-         cCodArt                 := cSeekProveedor( cCodArt, dbfArtPrv )
-      else
-         cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
-      end if
+      do case
+         case ( "," $ cCodArt )
+            nPosComa             := At( ",", cCodArt )
+            cProveedor           := RJust( Left( cCodArt, nPosComa - 1 ), "0", RetNumCodPrvEmp() )
+            cCodArt              := cSeekProveedor( cCodArt, dbfArtPrv )
+         
+         case len( cCodArt ) > 30
+            hHas128              := ReadCodeGS128( cCode )
+            cCodArt              := uGetCodigo( hHas128, "01" )
+            ? cCodArt
+
+         otherwise
+            cCodArt              := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
+
+      end case
 
       /*
-      Ahora buscamos por el codigo interno
+      Ahora buscamos por el codigo interno-------------------------------------
       */
 
       if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )

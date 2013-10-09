@@ -1474,3 +1474,935 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
    end if
 
 Return ( "" )
+
+//---------------------------------------------------------------------------//
+
+Function ReadCodeGS128( cCode )
+
+  local cLote       := ""
+  local hCodeGS128  := {=>}
+
+  DEFAULT cCode     := "0118411859552753103439L3 15140600"
+
+    if Substr( cCode, 1, 2 ) == "00"
+
+      hSet( hCodeGS128, "00", { "Codigo" => Substr( cCode, 3, 18 ),;
+                                "Descripcion" => "Serial Shipping Container",;
+                                "Tipo" => "C",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 21 )
+
+    end if 
+
+    if Substr( cCode, 1, 2 ) == "01"
+
+      hSet( hCodeGS128, "01", { "Codigo" => Substr( cCode, 3, 14 ),;
+                                "Descripcion" => "Shipping Container Code",;
+                                "Tipo" => "C",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 17 )
+
+    end if 
+
+    if Substr( cCode, 1, 2 ) == "02"
+
+      hSet( hCodeGS128, "02", { "Codigo" => Substr( cCode, 3, 14 ),;
+                                "Descripcion" => "Number of containers",;
+                                "Tipo" => "N",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 17 )
+
+    end if 
+
+    if Substr( cCode, 1, 2 ) == "10"
+
+      cCode   := Substr( cCode, 3 )
+      while Substr( cCode, 1, 1 ) != Space(1)
+        cLote += Substr( cCode, 1, 1 )
+        cCode := Substr( cCode, 2 )
+      end while
+      cCode   := Substr( cCode, 2 )
+
+      hSet( hCodeGS128, "10", { "Codigo" => cLote,;
+                                "Descripcion" => "Batch Number",;
+                                "Tipo" => "C",;
+                                "Decimales" => 0 } )
+
+    end if 
+
+    if Substr( cCode, 1, 2 ) == "11"
+
+      hSet( hCodeGS128, "11", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion" => "Production Date",;
+                                "Tipo" => "D",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 9 )
+
+    end if 
+    
+    if Substr( cCode, 1, 2 ) == "13"
+
+      aadd( aCodeGS128, "13", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion" => "Packaging Date",;
+                                "Tipo" => "D",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 9 )
+
+    end if 
+    
+    if Substr( cCode, 1, 2 ) == "15"
+
+      hSet( hCodeGS128, "15", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion" => "Sell by Date",;
+                                "Tipo" => "D",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 9 )
+
+    end if
+
+    if Substr( cCode, 1, 2 ) == "17"
+
+      hSet( hCodeGS128, "17", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion" => "Expiration Date",;
+                                "Tipo" => "D",;
+                                "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 9 )
+
+    end if
+
+Return ( aCodeGS128 )
+
+Function uGetCodigo( hHash, cAI )
+
+  local uGetCodigo
+  local hCodeGS128
+
+  hCodeGS128    := hGet( hHash, cAI )
+  if !Empty( hCodeGS128 )
+    uGetCodigo  := hGet( hCodeGS128, "Codigo" )
+  end if
+
+Return ( uGetCodigo )
+
+Static Function DateGS128( cDate )
+
+Return ( Stod( "20" + Substr( cDate, 1, 4 ) + if( Substr( cDate, 5, 2 ) == "00", "01", Substr( cDate, 5, 2 ) ) ) )
+
+Function PrintGS128()
+
+  local h
+
+  for each h in ReadCodeGS128()
+    hEval( h, {|k,v| msgInfo( v, k ) } )
+  next 
+
+Return nil
+
+/*
+  if Copy(Codigo,1,2) = '20' then
+    with Result do
+    begin
+      AI:= '20';
+      Valor:= Copy(Codigo,3,2);
+      Tipo:= rtNumero;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Product Variant';
+      Delete(Codigo,1,4);
+    end else
+  if Copy(Codigo,1,2) = '21' then
+    with Result do
+    begin
+      AI:= '21';
+      Tipo:= rtTexto;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Serial Number';
+      Delete(Codigo,1,2);
+      Valor:= EmptyStr;
+      while Length(Codigo) > 0 do
+      begin
+        C:= Codigo[1];
+        Delete(Codigo,1,1);
+        if C = #$1D then
+          break
+        else
+          Valor:= Valor + C;
+      end;
+    end else
+  if Copy(Codigo,1,3) = '310' then
+    with Result do
+    begin
+      AI:= '310';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruKg;
+      Descripcion:= 'Product Net Weight';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '311' then
+    with Result do
+    begin
+      AI:= '311';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros;
+      Descripcion:= 'Product Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '312' then
+    with Result do
+    begin
+      AI:= '312';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros;
+      Descripcion:= 'Product Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '313' then
+    with Result do
+    begin
+      AI:= '313';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros;
+      Descripcion:= 'Product Depth/Thickness/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '314' then
+    with Result do
+    begin
+      AI:= '314';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros2;
+      Descripcion:= 'Product Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '315' then
+    with Result do
+    begin
+      AI:= '315';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruLitros;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '316' then
+    with Result do
+    begin
+      AI:= '316';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros3;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '320' then
+    with Result do
+    begin
+      AI:= '320';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruLibras;
+      Descripcion:= 'Product Net Weight';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '321' then
+    with Result do
+    begin
+      AI:= '321';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas;
+      Descripcion:= 'Product Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '322' then
+    with Result do
+    begin
+      AI:= '322';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies;
+      Descripcion:= 'Product Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '323' then
+    with Result do
+    begin
+      AI:= '323';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Product Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '324' then
+    with Result do
+    begin
+      AI:= '324';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas;
+      Descripcion:= 'Product Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '325' then
+    with Result do
+    begin
+      AI:= '325';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies;
+      Descripcion:= 'Product Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '326' then
+    with Result do
+    begin
+      AI:= '326';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Product Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '327' then
+    with Result do
+    begin
+      AI:= '327';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas;
+      Descripcion:= 'Product Depth/Thickness/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '328' then
+    with Result do
+    begin
+      AI:= '328';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies;
+      Descripcion:= 'Product Depth/Thickness/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '329' then
+    with Result do
+    begin
+      AI:= '329';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Product Depth/Thickness/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '330' then
+    with Result do
+    begin
+      AI:= '330';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruKg;
+      Descripcion:= 'Container Gross Weight';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '331' then
+    with Result do
+    begin
+      AI:= '331';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros;
+      Descripcion:= 'Container Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '332' then
+    with Result do
+    begin
+      AI:= '332';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros;
+      Descripcion:= 'Container Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '333' then
+    with Result do
+    begin
+      AI:= '333';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros;
+      Descripcion:= 'Container Depth/Thickness/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '334' then
+    with Result do
+    begin
+      AI:= '334';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros2;
+      Descripcion:= 'Container Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '335' then
+    with Result do
+    begin
+      AI:= '335';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruLitros;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '336' then
+    with Result do
+    begin
+      AI:= '336';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruMetros3;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '340' then
+    with Result do
+    begin
+      AI:= '340';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruLibras;
+      Descripcion:= 'Container Gross Weight';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '341' then
+    with Result do
+    begin
+      AI:= '341';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas;
+      Descripcion:= 'Container Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '342' then
+    with Result do
+    begin
+      AI:= '342';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies;
+      Descripcion:= 'Container Length/1st Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '343' then
+    with Result do
+    begin
+      AI:= '343';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Container Length/1st Dimension in';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '343' then
+    with Result do
+    begin
+      AI:= '343';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Container Length/1st Dimension in';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '344' then
+    with Result do
+    begin
+      AI:= '344';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas;
+      Descripcion:= 'Container Width/Diamater/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '345' then
+    with Result do
+    begin
+      AI:= '345';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies;
+      Descripcion:= 'Container Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '346' then
+    with Result do
+    begin
+      AI:= '346';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Container Width/Diameter/2nd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '347' then
+    with Result do
+    begin
+      AI:= '347';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas;
+      Descripcion:= 'Container Depth/Thickness/Height/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '348' then
+    with Result do
+    begin
+      AI:= '348';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies;
+      Descripcion:= 'Container Depth/Thickness/Height/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '349' then
+    with Result do
+    begin
+      AI:= '349';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas;
+      Descripcion:= 'Container Depth/Thickness/Height/3rd Dimension';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '350' then
+    with Result do
+    begin
+      AI:= '350';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas2;
+      Descripcion:= 'Product Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '351' then
+    with Result do
+    begin
+      AI:= '351';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies2;
+      Descripcion:= 'Product Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '352' then
+    with Result do
+    begin
+      AI:= '352';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas2;
+      Descripcion:= 'Product Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '353' then
+    with Result do
+    begin
+      AI:= '353';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas2;
+      Descripcion:= 'Container Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '354' then
+    with Result do
+    begin
+      AI:= '354';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies2;
+      Descripcion:= 'Container Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '355' then
+    with Result do
+    begin
+      AI:= '355';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas2;
+      Descripcion:= 'Container Area';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '356' then
+    with Result do
+    begin
+      AI:= '356';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruOnzas;
+      Descripcion:= 'Net Weight';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '360' then
+    with Result do
+    begin
+      AI:= '360';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruQuarts;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '361' then
+    with Result do
+    begin
+      AI:= '361';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruGalones;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '362' then
+    with Result do
+    begin
+      AI:= '362';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruQuarts;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '363' then
+    with Result do
+    begin
+      AI:= '363';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruGalones;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '364' then
+    with Result do
+    begin
+      AI:= '364';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas3;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '365' then
+    with Result do
+    begin
+      AI:= '365';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies3;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '366' then
+    with Result do
+    begin
+      AI:= '366';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas3;
+      Descripcion:= 'Product Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '367' then
+    with Result do
+    begin
+      AI:= '364';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPulgadas3;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '368' then
+    with Result do
+    begin
+      AI:= '365';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruPies3;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,3) = '369' then
+    with Result do
+    begin
+      AI:= '366';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= StrToInt(Copy(Codigo,4,1));
+      Unidades:= ruYardas3;
+      Descripcion:= 'Container Gross Volume';
+      Delete(Codigo,1,10);
+    end else
+  if Copy(Codigo,1,2) = '37' then
+    with Result do
+    begin
+      AI:= '37';
+      Tipo:= rtNumero;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Number of Units Contained';
+      Delete(Codigo,1,2);
+      Valor:= EmptyStr;
+      while Length(Codigo) > 0 do
+      begin
+        C:= Codigo[1];
+        Delete(Codigo,1,1);
+        if C = #$1D then
+          break
+        else
+          Valor:= Valor + C;
+      end;
+    end else
+  if Copy(Codigo,1,2) = '400' then
+    with Result do
+    begin
+      AI:= '400';
+      Tipo:= rtTexto;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Customer Purchase Order Number';
+      Delete(Codigo,1,3);
+      Valor:= EmptyStr;
+      while Length(Codigo) > 0 do
+      begin
+        C:= Codigo[1];
+        Delete(Codigo,1,1);
+        if C = #$1D then
+          break
+        else
+          Valor:= Valor + C;
+      end;
+    end else
+  if Copy(Codigo,1,2) = '410' then
+    with Result do
+    begin
+      AI:= '410';
+      Valor:= Copy(Codigo,4,13);
+      Tipo:= rtEAN13;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Ship To/Deliver To Location Code';
+      Delete(Codigo,1,16);
+    end else
+  if Copy(Codigo,1,2) = '411' then
+    with Result do
+    begin
+      AI:= '411';
+      Valor:= Copy(Codigo,4,13);
+      Tipo:= rtEAN13;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Bill To/Invoice Location Code';
+      Delete(Codigo,1,16);
+    end else
+  if Copy(Codigo,1,2) = '412' then
+    with Result do
+    begin
+      AI:= '412';
+      Valor:= Copy(Codigo,4,13);
+      Tipo:= rtEAN13;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Purchase From Location Code';
+      Delete(Codigo,1,16);
+    end else
+  if Copy(Codigo,1,2) = '8001' then
+    with Result do
+    begin
+      AI:= '8001';
+      Valor:= Copy(Codigo,5,14);
+      Tipo:= rtNumero;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Roll Products - Width/Length/Core Diameter';
+      Delete(Codigo,1,18);
+    end else
+  if Copy(Codigo,1,2) = '8004' then
+    with Result do
+    begin
+      AI:= '8004';
+      Tipo:= rtTexto;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'UPC/EAN Serial Identification';
+      Delete(Codigo,1,4);
+      Valor:= EmptyStr;
+      while Length(Codigo) > 0 do
+      begin
+        C:= Codigo[1];
+        Delete(Codigo,1,1);
+        if C = #$1D then
+          break
+        else
+          Valor:= Valor + C;
+      end;
+    end else
+  if Copy(Codigo,1,2) = '8005' then
+    with Result do
+    begin
+      AI:= '8005';
+      Valor:= Copy(Codigo,5,6);
+      Tipo:= rtNumero;
+      Decimales:= 0;
+      Unidades:= ruNinguna;
+      Descripcion:= 'Price per Unit of Measure';
+      Delete(Codigo,1,10);
+    end else
+      raise Exception.Create('AI desconocido');
+end;
+ 
+function UnidToStr(Unidad: TRegUnidades): String;
+begin
+  case Unidad of
+    ruNinguna: Result:= EmptyStr;
+    ruKg: Result:= 'Kilogramos';
+    ruMetros: Result:= 'Metros';
+    ruMetros2: Result:= 'Metros cuadrados';
+    ruMetros3: Result:= 'Metros cubicos';
+    ruLitros: Result:= 'Litros';
+    ruLibras: Result:= 'Libras';
+    ruPulgadas: Result:= 'Pulgadas';
+    ruPulgadas2: Result:= 'Pulgadas cuadradas';
+    ruPulgadas3: Result:= 'Pulgadas cubicas';
+    ruPies: Result:= 'Pies';
+    ruPies2: Result:= 'Pies cuadrados';
+    ruPies3: Result:= 'Pies cubicos';
+    ruYardas: Result:= 'Yardas';
+    ruYardas2: Result:= 'Yardas cuadradas';
+    ruYardas3: Result:= 'Yardas cubicas';
+    ruOnzas: Result:= 'Onzas';
+    ruQuarts: Result:= 'Quarts';
+    ruGalones: Result:= 'Galones';
+  end;
+end;
+ 
+ 
+var
+  Str: String;
+  i: Integer;
+  d: Double;
+  Registro: TRegistro;
+begin
+  while TRUE do
+  try
+    Readln(Str);
+    while Str <> EmptyStr do
+    begin
+      Writeln;
+      Registro:= LeerRegistro(Str);
+      Writeln('AI: ' + Registro.AI);
+      Writeln('Descr: ' + Registro.Descripcion);
+      Writeln('Valor: ' + Registro.Valor);
+      case Registro.Tipo of
+        rtTexto:  Writeln('Tipo: Texto');
+        rtNumero:
+          begin
+            Writeln('Tipo: Numero');
+            Writeln('Decimales: ' + IntToStr(Registro.Decimales));
+            Writeln('Unidades: ' + UnidToStr(Registro.Unidades));
+            d:= StrToFloat(Registro.Valor);
+            i:= Registro.Decimales;
+            while i>0 do
+            begin
+              d:= d / 10;
+              dec(i);
+            end;
+            Writeln('Valor: ' + FloatToStr(d));
+          end;
+        rtFecha:
+          begin
+            Writeln('Tipo: Fecha');
+            with Registro do
+              Writeln('Fecha: ' + Copy(Valor,5,2) + '/' + Copy(Valor,3,2)
+                + '/' + Copy(Valor,1,2));
+          end;
+        rtEAN13:  Writeln('Tipo: EAN13');
+      end;
+    end;
+    Writeln;
+  except
+    On E: Exception do
+    begin
+      Writeln;
+      Writeln('Error al leer codigo');
+      Writeln;
+    end;
+  end;
+end.
+*/

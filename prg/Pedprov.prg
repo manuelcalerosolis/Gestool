@@ -2643,7 +2643,7 @@ Edita las lineas de Detalle
 
 STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedPrvL, oBrw, aTmpPed, cCodArt, nMode )
 
-	local oDlg
+   local oDlg
    local oFld
    local oBmp
    local oBtn
@@ -2708,17 +2708,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedPrvL, oBrw, aTmpPed, cCodArt, nMode )
       RESOURCE    "LPEDPRV" ;
       TITLE       LblTitle( nMode ) + "líneas a pedidos de proveedores"
 
-		REDEFINE FOLDER oFld ID 400 OF oDlg ;
+	REDEFINE FOLDER oFld ID 400 OF oDlg ;
          PROMPT   "&General"  , "Da&tos",    "&Anular",     "&Observaciones" ;
          DIALOGS  "LFACPRV_1" , "LPEDPRV_2", "LFACPRV_4",   "LFACPRV_6"
 
       REDEFINE GET aGet[ _CREF ] VAR aTmp[ _CREF ];
-			ID 		110 ;
+	   ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oGetIra, oDlg, oBmp, oGetStk ) );
          ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
          BITMAP   "LUPA" ;
-			OF 		oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]
 
       /*
       Lotes
@@ -2727,12 +2727,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedPrvL, oBrw, aTmpPed, cCodArt, nMode )
 
       REDEFINE SAY oSayLote;
          ID       111 ;
-			OF 		oFld:aDialogs[1]
+	   OF 	oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CLOTE] VAR aTmp[_CLOTE];
+      REDEFINE GET aGet[ _CLOTE ] VAR aTmp[ _CLOTE ];
          ID       112 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oFld:aDialogs[1]
+	   OF 	oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
 	     ID 		120 ;
@@ -2761,7 +2761,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedPrvL, oBrw, aTmpPed, cCodArt, nMode )
                         LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oGetIra, oDlg, oBmp, oGetStk ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[_CCODPR1 ] ) ) ;
-			OF 		oFld:aDialogs[1]
+	   OF 		oFld:aDialogs[1]
 
          aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
 
