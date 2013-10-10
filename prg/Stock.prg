@@ -6296,6 +6296,7 @@ Return ( nRiesgo )
 METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
    local nRec           := ( ::cHisMovT )->( Recno() )
+   local nOrd           := ( ::cHisMovT )->( OrdSetFocus( "cStock" ) )
 
    DEFAULT cCodAlm      := Space( 3 )  
    DEFAULT cCodPrp1     := Space( 20 )
@@ -6306,7 +6307,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    ::dConsolidacion     := nil
 
-   if dbSeekInOrd( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote, "cStock", ::cHisMovT )
+   if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
 
       while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
@@ -6328,6 +6329,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    end if
 
+   ( ::cHisMovT )->( ordSetFocus( nOrd ) )
    ( ::cHisMovT )->( dbGoTo( nRec ) )
 
 Return ( ::dConsolidacion )
