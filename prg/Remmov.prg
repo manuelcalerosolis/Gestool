@@ -2434,9 +2434,9 @@ METHOD loadAlmacen( nMode )
                   ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
       
                   ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
-                  ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad1
+                  ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad2
                   ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
-                  ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad1
+                  ::oDetMovimientos:oDbfVir:cValPr2   := sStkAlm:cValorPropiedad2
                   ::oDetMovimientos:oDbfVir:cLote     := sStkAlm:cLote
                   ::oDetMovimientos:oDbfVir:nUndAnt   := sStkAlm:nUnidades
       
