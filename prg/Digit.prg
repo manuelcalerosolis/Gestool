@@ -1546,7 +1546,7 @@ Function ReadCodeGS128( cCode )
     
     if Substr( cCode, 1, 2 ) == "13"
 
-      aadd( aCodeGS128, "13", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
+      hSet( hCodeGS128, "13", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
                                 "Descripcion" => "Packaging Date",;
                                 "Tipo" => "D",;
                                 "Decimales" => 0 } )
@@ -1577,7 +1577,7 @@ Function ReadCodeGS128( cCode )
 
     end if
 
-Return ( aCodeGS128 )
+Return ( hCodeGS128 )
 
 Function uGetCodigo( hHash, cAI )
 
