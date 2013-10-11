@@ -3841,30 +3841,30 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local cGet2
    local oGet3
    local cGet3
-   local oTot           := Array( 6 )
+   local oTot           	:= Array( 6 )
    local oTotal
 	local nTotal
    local oSayPr1
    local oSayPr2
-   local cSayPr1        := ""
-   local cSayPr2        := ""
+   local cSayPr1        	:= ""
+   local cSayPr2        	:= ""
    local oSayVp1
    local oSayVp2
-   local cSayVp1        := ""
-   local cSayVp2        := ""
+   local cSayVp1        	:= ""
+   local cSayVp2        	:= ""
    local oSayAlm
-   local cSayAlm        := ""
+   local cSayAlm        	:= ""
    local nOrdAnt
    local nOrdPedPrv
    local nOrdAlbPrv
-   local nTotRes        := 0
-   local cNumPed        := aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
+   local nTotRes        	:= 0
+   local cNumPed        	:= aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
    local oSayLote
    local oStkAct
-   local nStkAct        := 0
+   local nStkAct        	:= 0
    local nTotEnt
    local dFecRes
-   local cCodArt        := Padr( aTmp[ _CREF ], 32 )
+   local cCodArt        	:= Padr( aTmp[ _CREF ], 200 )
    local bmpImage
    local oTotUni
    local oTotPdt

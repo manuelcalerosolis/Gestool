@@ -1,25 +1,18 @@
-
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Folder.ch"
-   #include "Report.ch"
-   #include "Menu.ch"
-   #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
+#include "Folder.ch"
+#include "Report.ch"
+#include "Menu.ch"
+#include "Xbrowse.ch"
 #include "Factu.ch"
 
 #define CLR_BAR                   14197607
 #define _MENUITEM_                "01057"
 
-#define impuestos_DESG                  1
-#define impuestos_INCL                  2
+#define impuestos_DESG            1
+#define impuestos_INCL            2
 
 /*
-Definición de la base de datos de albaranes a CLIENTES
+Definición de la base de datos de albaranes a CLIENTES-------------------------
 */
 
 #define _CSERALB                  1
@@ -3988,64 +3981,65 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local oGet3
    local cGet3
    local oTotal
-   local nTotal        := 0
+   local nTotal               := 0
    local oSayPr1
    local oSayPr2
-   local cSayPr1       := ""
-   local cSayPr2       := ""
+   local cSayPr1              := ""
+   local cSayPr2              := ""
    local oSayVp1
    local oSayVp2
-   local cSayVp1       := ""
-   local cSayVp2       := ""
+   local cSayVp1              := ""
+   local cSayVp2              := ""
    local bmpImage
    local oSayAlm
    local cSayAlm
    local oStkAct
-   local nStkAct        := 0
+   local nStkAct              := 0
    local oBtnSer
    local oSayGrp
-   local cSayGrp        := ""
+   local cSayGrp              := ""
    local oSayFam
-   local cSayFam        := ""
-   local cCodArt        := Padr( aTmp[ _CREF ], 200 )
+   local cSayFam              := ""
+   local cCodArt              := Padr( aTmp[ _CREF ], 200 )
    local oRentLin
-   local cRentLin       := ""
-   local cCodDiv        := aTmpAlb[ _CDIVALB ]
+   local cRentLin             := ""
+   local cCodDiv              := aTmpAlb[ _CDIVALB ]
    local oSayDias
 
    do case
    case nMode == APPD_MODE
 
-      aTmp[_dCSERALB]   := aTmpAlb[_CSERALB]
-      aTmp[_dNNUMALB]   := aTmpAlb[_NNUMALB]
-      aTmp[_NCANENT ]   := 1
-      aTmp[_NUNICAJA]   := 1
-      aTmp[_DFECHA  ]   := GetSysDate()
-      aTmp[_CTIPMOV ]   := cDefVta()
-      aTmp[_LTOTLIN ]   := lTotLin
-      aTmp[_LNEWLIN ]   := .t.
-      aTmp[_CALMLIN ]   := aTmpAlb[ _CCODALM ]
-      aTmp[_LIVALIN ]   := aTmpAlb[ _LIVAINC ]
-      aTmp[_dCNUMPED]   := aTmpAlb[ _CNUMPED ]
-      aTmp[_NTARLIN ]   := aTmpAlb[ _NTARIFA ]
-      aTmp[_LIMPFRA ]   := .t.
+      aTmp[ _dCSERALB]        := aTmpAlb[_CSERALB]
+      aTmp[ _dNNUMALB]        := aTmpAlb[_NNUMALB]
+      aTmp[ _NCANENT ]        := 1
+      aTmp[ _NUNICAJA]        := 1
+      aTmp[ _DFECHA  ]        := GetSysDate()
+      aTmp[ _CTIPMOV ]        := cDefVta()
+      aTmp[ _LTOTLIN ]        := lTotLin
+      aTmp[ _LNEWLIN ]        := .t.
+      aTmp[ _CALMLIN ]        := aTmpAlb[ _CCODALM ]
+      aTmp[ _LIVALIN ]        := aTmpAlb[ _LIVAINC ]
+      aTmp[ _dCNUMPED]        := aTmpAlb[ _CNUMPED ]
+      aTmp[ _NTARLIN ]        := aTmpAlb[ _NTARIFA ]
+      aTmp[ _LIMPFRA ]        := .t.
+      aTmp[ _DFECCAD ]        := Ctod( "" )
 
       if !Empty( cCodArtEnt )
-         cCodArt           := cCodArtEnt
+         cCodArt              := cCodArtEnt
       end if
 
-      aTmp[ __DFECSAL ]    := aTmpAlb[ _DFECSAL ]
-      aTmp[ __DFECENT ]    := aTmpAlb[ _DFECENTR ]
+      aTmp[ __DFECSAL ]       := aTmpAlb[ _DFECSAL ]
+      aTmp[ __DFECENT ]       := aTmpAlb[ _DFECENTR ]
 
       if !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
-         aTmp[ __LALQUILER ] := .t.
+         aTmp[ __LALQUILER ]  := .t.
       else
-         aTmp[ __LALQUILER ]:= .f.
+         aTmp[ __LALQUILER ]  := .f.
       end if
 
    case nMode == EDIT_MODE
 
-      lTotLin           := aTmp[ _LTOTLIN ]
+      lTotLin                 := aTmp[ _LTOTLIN ]
 
    end case
 
@@ -15118,16 +15112,16 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    local cCodFam
    local cPrpArt
    local nCosPro
-   local nPrePro     := 0
-   local nImpAtp     := 0
-   local nImpOfe     := 0
-   local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local nPrePro                 := 0
+   local nImpAtp                 := 0
+   local nImpOfe                 := 0
+   local lChgCodArt              := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
    local nPosComa
    local cProveedor
-   local nTarOld     := aTmp[ _NTARLIN ]
-   local nNumDto     := 0
+   local nTarOld                 := aTmp[ _NTARLIN ]
+   local nNumDto                 := 0
 
-   DEFAULT lFocused  := .t.
+   DEFAULT lFocused              := .t.
 
    if Empty( cCodArt )
 
@@ -15137,14 +15131,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
       end if
 
       if Empty( aTmp[ _NIVA ] )
-         aGet[ _NIVA ]:bWhen      := {|| .t. }
+         aGet[ _NIVA ]:bWhen     := {|| .t. }
       end if
 
       if !Empty( aGet[ _CDETALLE ] )
           aGet[ _CDETALLE ]:cText( Space( 50 ) )
       end if
 
-      aGet[ _CDETALLE ]:bWhen      := {|| .t. }
+      aGet[ _CDETALLE ]:bWhen    := {|| .t. }
       aGet[ _CDETALLE ]:Hide()
 
       if !Empty( aGet[ _MLNGDES ] )
@@ -15158,23 +15152,17 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    else
 
       if lModIva()
-         aGet[ _NIVA ]:bWhen      := {|| .t. }
+         aGet[ _NIVA ]:bWhen     := {|| .t. }
       else
-         aGet[ _NIVA ]:bWhen      := {|| .f. }
+         aGet[ _NIVA ]:bWhen     := {|| .f. }
       end if
 
       /*
-      Primero buscamos por codigos de barra y por referencia de proveedor
+      Buscamos codificacion GS1-128--------------------------------------------
       */
 
       do case
-         case ( "," $ cCodArt )
-
-            nPosComa             := At( ",", cCodArt )
-            cProveedor           := RJust( Left( cCodArt, nPosComa - 1 ), "0", RetNumCodPrvEmp() )
-            cCodArt              := cSeekProveedor( cCodArt, dbfArtPrv )
-         
-         case len( cCodArt ) > 30
+         case Len( Alltrim( cCodArt ) ) > 18
 
             hHas128              := ReadCodeGS128()
             if !Empty( hHas128 )
@@ -15232,13 +15220,13 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             if aGet[ _MLNGDES ] != nil
                aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
             else
-               aTmp[ _MLNGDES ] := ( dbfArticulo )->Descrip
+               aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
             end if
 
             if !Empty( aGet[ _DESCRIP ] )
                aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
             else
-               aTmp[ _DESCRIP ]     := ( dbfArticulo )->Descrip
+               aTmp[ _DESCRIP ]  := ( dbfArticulo )->Descrip
             end if
 
             /*

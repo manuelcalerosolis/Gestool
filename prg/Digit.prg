@@ -1520,7 +1520,7 @@ Function ReadCodeGS128( cCode )
     if Substr( cCode, 1, 2 ) == "10"
 
       cCode   := Substr( cCode, 3 )
-      while Substr( cCode, 1, 1 ) != Space(1)
+      while Substr( cCode, 1, 1 ) != Space( 1 )
         cLote += Substr( cCode, 1, 1 )
         cCode := Substr( cCode, 2 )
       end while
@@ -1579,6 +1579,8 @@ Function ReadCodeGS128( cCode )
 
 Return ( hCodeGS128 )
 
+//---------------------------------------------------------------------------//
+
 Function uGetCodigo( hHash, cAI )
 
   local uGetCodigo
@@ -1591,9 +1593,13 @@ Function uGetCodigo( hHash, cAI )
 
 Return ( uGetCodigo )
 
+//---------------------------------------------------------------------------//
+
 Static Function DateGS128( cDate )
 
 Return ( Stod( "20" + Substr( cDate, 1, 4 ) + if( Substr( cDate, 5, 2 ) == "00", "01", Substr( cDate, 5, 2 ) ) ) )
+
+//---------------------------------------------------------------------------//
 
 Function PrintGS128()
 

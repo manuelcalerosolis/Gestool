@@ -16823,7 +16823,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       end if
 
       if !Empty( oGetCodigo )
-         oGetCodigo:cText( cReturn )
+         oGetCodigo:cText( Padr( cReturn, 200 ) )
       end if
 
       if !Empty( oGetNombre )
@@ -16868,7 +16868,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    DestroyFastFilter( dbfArticulo )
 
-   SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CODOBS", 1, 2 ) )
+   SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CodObs", 1, 2 ) )
 
    if !Empty( oBrw )
       oBrw:CloseData()
