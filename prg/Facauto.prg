@@ -126,6 +126,24 @@ CLASS TFacAutomatica FROM TMasDet
 
    METHOD ExternalEdit( cCodFac )
 
+   //-------------------------------------------------------------------------//
+
+   INLINE METHOD RunPlantillaAutomatica( cCodigoPlantilla )
+
+      with object ( TCreaFacAutomaticas():New() )
+         :cCodigoPlantilla    := cCodigoPlantilla
+         if :OpenFiles()
+            if :lSelectCodigoPlantilla()
+               :Run()
+            end if
+            :CloseFiles()
+         end if 
+      end with
+
+      Return ( Self )
+
+   ENDMETHOD
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -215,7 +233,8 @@ METHOD Activate() CLASS TFacAutomatica
       XBROWSE ;
       TITLE    "Plantillas de ventas automáticas" ;
       PROMPT   "Código",;
-               "Nombre";
+               "Nombre",;
+               "Grupo";
       MRU      "Document_gear_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( ::oDbf ) ;
@@ -244,9 +263,11 @@ METHOD Activate() CLASS TFacAutomatica
       end with
 
       with object ( ::oWndBrw:AddXCol() )
-         :cHeader          := "Tipo"
-         :bEditValue       := {|| if( ::oDbf:FieldGetByName( "lDiaSel" ), "Diario", "Mensual" ) }
+         :cHeader          := "Grupo"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodGrp" ) }
          :nWidth           := 80
+         :cSortOrder       := "cCodGrp"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( ::oWndBrw:AddXCol() )
@@ -320,13 +341,13 @@ if lUsrMaster() .or. oUser():lDocAuto()
 
    DEFINE BTNSHELL oGen RESOURCE "Flash_" OF ::oWndBrw ;
       NOBORDER ;
-      ACTION   ( TCreaFacAutomaticas():Create( .t., ::oDbf:cCodFac, .t. ) );
-      TOOLTIP  "(G)enerar";
+      ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodFac ) ) ;
+      TOOLTIP  "(G)enerar ahora";
       HOTKEY   "G"
 
       DEFINE BTNSHELL RESOURCE "Flash_" OF ::oWndBrw ;
-         ACTION   ( TCreaFacAutomaticas():Create( .t., nil, .t. ) );
-         TOOLTIP  "Generar todas" ;
+         ACTION   ( ::RunPlantillaAutomatica() );
+         TOOLTIP  "Generar todas ahora" ;
          FROM     oGen
 
 end if
@@ -1284,7 +1305,7 @@ METHOD lPostLoad() CLASS TFacAutomatica
    ::ShowKit( .f. )
 
    ::aGet[ ::oDbf:FieldPos( "cCodPago" ) ]:lValid()
-   ::aGet[ ::oDbf:FieldPos( "cCodGrp") ]:lValid()
+   ::aGet[ ::oDbf:FieldPos( "cCodGrp" )  ]:lValid()
 
 RETURN ( Self )
 
@@ -1590,6 +1611,25 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+Function lFacturasAutomaticas()
+
+   if !( oUser():lDocAuto() .or. lUsrMaster() )
+      Return .f.
+   end if
+
+   with object ( TCreaFacAutomaticas():New() )
+      if :OpenFiles()
+         if :lLanzaAsistente()
+            :Run()
+         end if
+         :CloseFiles()
+      end if 
+   end with
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 CLASS TCreaFacAutomaticas
 
    DATA oDbfArt
@@ -1640,17 +1680,22 @@ CLASS TCreaFacAutomaticas
 
    DATA cErrorMessage
 
-   DATA lAsistente      
+   DATA lAsistente   
+   DATA lMensaje   
 
    DATA oTreeSelector
    DATA oTreeSemana
    DATA oTreeMes
 
-   DATA oGetCodigoGrupo 
-   DATA cGetCodigoGrupo             INIT Space( 4 )
-   DATA cOldCodigoGrupo
+   DATA oCodigoGrupo 
+   DATA cCodigoGrupo             INIT Space( 4 )
 
-   METHOD Create()
+   DATA oCodigoPlantilla
+   DATA cCodigoPlantilla         INIT Space( 3 )
+
+   Method New()
+
+   METHOD Run()
 
    METHOD OpenFiles()
 
@@ -1682,41 +1727,54 @@ CLASS TCreaFacAutomaticas
 
    METHOD SetNextFechaFactura()
 
+   METHOD lSelectCodigoPlantilla( cCodigoPlantilla ) 
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
+METHOD New() CLASS TCreaFacAutomaticas
+
+   ::lMensaje           := .f.
+   ::lAsistente         := .t.
+   ::dFecDocumento      := GetSysDate()
+   ::cCodigoPlantilla   := Space( 3 )
+   ::cCodigoGrupo       := Space( 4 )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Run() CLASS TCreaFacAutomaticas
 
    local oDlg 
    local oFld
    local oBmp
    local nMetMsg
+   local cCodigoGrupo
+   local cCodigoPlantilla
 
-   DEFAULT lMensaje     := .f.
-   DEFAULT lAsistente   := .f.
+   cCodigoGrupo      := ::cCodigoGrupo
+   cCodigoPlantilla  := ::cCodigoPlantilla
 
+   /*
    if !::OpenFiles()
       Return .f.
    end if
-
-   ::dFecDocumento      := GetSysDate()
-   ::lAsistente         := lAsistente
-   ::cOldCodigoGrupo    := ::cGetCodigoGrupo
-
+   */
    /*
    Comprobamos si tenemos que lanzar el asistente------------------------------
    */
 
-   if ::lLanzaAsistente( cCodigoFactura )
+   // if ::lLanzaAsistente()
 
       DEFINE DIALOG oDlg RESOURCE "AssDocAuto"
 
       REDEFINE BITMAP oBmp ;
-        ID       900 ;
-        RESOURCE "Plantillas_automaticas_48_alpha" ;
+        ID        900 ;
+        RESOURCE  "Plantillas_automaticas_48_alpha" ;
         TRANSPARENT ;
-        OF       oDlg
+        OF        oDlg
 
       REDEFINE FOLDER oFld ;
          ID       400 ;
@@ -1731,22 +1789,32 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
          SPINNER ;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET ::oGetCodigoGrupo VAR ::cGetCodigoGrupo ;
-         ID       140 ;
-         IDTEXT   141 ;
+      REDEFINE GET ::oCodigoGrupo VAR ::cCodigoGrupo ;
+         ID       120 ;
+         IDTEXT   121 ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[ 1 ]
 
-         ::oGetCodigoGrupo:bValid      := {|| ::oGrpFacturasAutomaticas:Existe( ::oGetCodigoGrupo, ::oGetCodigoGrupo:oHelpText, "cNomGrp", .t., .t., "0" ) }
-         ::oGetCodigoGrupo:bHelp       := {|| ::oGrpFacturasAutomaticas:Buscar( ::oGetCodigoGrupo ) }
-         ::oGetCodigoGrupo:bLostFocus  := {|| if( ::cOldCodigoGrupo != ::cGetCodigoGrupo, ::OnClickRefreshAsistente(), ), ::cOldCodigoGrupo := ::cGetCodigoGrupo }
+         ::oCodigoGrupo:bValid      := {|| if( ::oGrpFacturasAutomaticas:Existe( ::oCodigoGrupo, ::oCodigoGrupo:oHelpText, "cNomGrp", .t., .t., "0" ), ( if( cCodigoGrupo != ::cCodigoGrupo, ::lSelectCodigoPlantilla(), ), cCodigoGrupo := ::cCodigoGrupo, .t. ), .f. ) }
+         ::oCodigoGrupo:bHelp       := {|| ::oGrpFacturasAutomaticas:Buscar( ::oCodigoGrupo ) }
 
+      REDEFINE GET ::oCodigoPlantilla VAR ::cCodigoPlantilla ;
+         ID       130 ;
+         IDTEXT   131 ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[ 1 ]
+
+         ::oCodigoPlantilla:bValid  := {|| if( ::oFacAutT:Existe( ::oCodigoPlantilla, ::oCodigoPlantilla:oHelpText, "cNomFac", .t., .t., "0" ), ( if( cCodigoPlantilla != ::cCodigoPlantilla, ::lSelectCodigoPlantilla(), ), cCodigoPlantilla := ::cCodigoPlantilla, .t. ), .f. ) }
+         ::oCodigoPlantilla:bHelp   := {|| ::oFacAutT:Buscar( ::oCodigoPlantilla ) }
+
+      /*
       TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plantillas" )
 
       REDEFINE CHECKBOX ::oChkIgnoraProcesado ;
          VAR      ::lChkIgnoraProcesado ;
          ID       130 ;
          OF       oFld:aDialogs[ 1 ]
+      */
 
       /*
       Plantillas para el proceso-----------------------------------------------
@@ -1794,7 +1862,9 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
 
       ::oBrwPlantilla:CreateFromResource( 100 )
 
+      /*
       ::oTreeSelector      := TTreeView():Redefine( 500, oFld:aDialogs[1] )
+      */
 
       /*
       Arbol de resultados------------------------------------------------------
@@ -1830,19 +1900,17 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
 
       ACTIVATE DIALOG oDlg CENTER
 
-   else
+   // else
 
-      if lMensaje
-         MsgInfo( ::cErrorMessage, "Plantillas de facturas automáticas." )
-      end if
+      // MsgInfo( ::cErrorMessage, "Plantillas de facturas automáticas." )
 
-   end if
+   // end if
 
    /*
    Anoto la fecha en el usuario------------------------------------------------
    */
 
-   ::CloseFiles()
+   // ::CloseFiles()
 
    if !Empty( oBmp )
       oBmp:End()
@@ -1859,6 +1927,7 @@ METHOD StartAsistente()
    
    ::oBtnInforme:Disable()  
 
+   /*
    ::oTreeSemana     := ::oTreeSelector:Add( "Semana" ) 
  
    ::oTreeSemana:Add( "Lunes"      ) 
@@ -1899,6 +1968,10 @@ METHOD StartAsistente()
    tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
 
    sysrefresh()
+   */
+
+   ::oCodigoGrupo:lValid()
+   ::oCodigoPlantilla:lValid()
 
 RETURN ( Self )
 
@@ -2102,6 +2175,62 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
+
+   local oError
+   local oBlock
+   local lSelect
+
+   lSelect                                := .f.
+
+   ::aPlantilla                           := {}
+
+   oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      CursorWait()
+
+      if oUser():lDocAuto() .or. lUsrMaster()
+
+         ::oFacAutT:oDbf:GoTop()
+
+         while !::oFacAutT:oDbf:Eof()
+
+            if ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) ) .and.;
+               ( Empty( ::cCodigoGrupo ) .or. ( ::oFacAutT:oDbf:cCodGrp == ::cCodigoGrupo ) )
+
+               aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
+
+               lSelect                    := .t.
+
+            end if 
+
+            ::oFacAutT:oDbf:Skip()
+
+         end while
+
+      end if
+
+      aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
+
+      if !Empty( ::oBrwPlantilla )
+         ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. )
+      end if
+
+      CursorWE()
+
+   RECOVER USING oError
+
+      msgStop( "Imposible seleccionar plantillas de facturas automáticas." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lSelect )
+
+//---------------------------------------------------------------------------//
+
 METHOD lMesSeleccionado() CLASS TCreaFacAutomaticas
 
    local nMes
@@ -2193,20 +2322,20 @@ RETURN ( .f. )
 // Comprobamos que si tenemos que lanzar el asistente--------------------------
 //---------------------------------------------------------------------------//
 
-METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
+METHOD lLanzaAsistente() CLASS TCreaFacAutomaticas
 
    local lLanza
    local oError
    local oBlock
 
-   lLanza                                 := ::lAsistente
+   lLanza                           := .f.
 
-   ::aPlantilla                           := {}
-   ::cErrorMessage                        := ""
+   ::aPlantilla                     := {}
+   ::cErrorMessage                  := ""
 
    CursorWait()
 
-   oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if oUser():lDocAuto() .or. lUsrMaster()
@@ -2215,52 +2344,38 @@ METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
 
          while !::oFacAutT:oDbf:Eof()
 
-            if Empty( cCodFac ) .or. ( ::oFacAutT:oDbf:cCodFac == cCodFac )
+            if (  ( Empty( ::oFacAutT:oDbf:dFecIni ) .or. ::oFacAutT:oDbf:dFecIni <= GetSysDate() )   .and.;
+                  ( Empty( ::oFacAutT:oDbf:dFecFin ) .or. ::oFacAutT:oDbf:dFecFin >= GetSysDate() ) )
 
-               if (  ( Empty( ::oFacAutT:oDbf:dFecIni ) .or. ::oFacAutT:oDbf:dFecIni <= GetSysDate() )   .and.;
-                     ( Empty( ::oFacAutT:oDbf:dFecFin ) .or. ::oFacAutT:oDbf:dFecFin >= GetSysDate() ) )
+               if ::lCompruebaFecha()
 
-                  if ( Empty( ::cGetCodigoGrupo ) .or. ( ::oFacAutT:oDbf:cCodGrp == ::cGetCodigoGrupo ) ) // .or. ( ::lMesSeleccionado() .and. ::lDiaSeleccionado() )
+                  if ::lSeekClient( ::oFacAutT:oDbf:cCodFac )
 
-                     if ::lCompruebaFecha()
+                     aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 
-                        if ::lSeekClient( ::oFacAutT:oDbf:cCodFac )
-
-                           aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
-
-                           lLanza         := .t.
-
-                        else
-
-                           aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "No está asignada a ningún cliente." } )
-
-                           ::cErrorMessage+= "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " no está asignada a ningún cliente." + CRLF
-
-                        end if
-
-                     else
-
-                        aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Ya ha generado sus documentos." } )
-
-                        ::cErrorMessage   += "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " ya ha generado sus documentos." + CRLF
-
-                     end if
+                     lLanza         := .t.
 
                   else
 
-                     aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "No tiene selección para éste mes o dia." } )
-
-                     ::cErrorMessage      += "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " no tiene selección para éste mes." + CRLF
+                     aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "No está asignada a ningún cliente." } )
+                     
+                     ::cErrorMessage+= "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " no está asignada a ningún cliente." + CRLF
 
                   end if
 
                else
 
-                  aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "No esta en el periodo de fechas." } )
+                  aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Ya ha generado sus documentos." } )
 
-                  ::cErrorMessage         += "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " no esta en el periodo de fechas." + CRLF
+                  ::cErrorMessage   += "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " ya ha generado sus documentos." + CRLF
 
                end if
+
+            else
+
+               aAdd( ::aPlantilla, { .f., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "No esta en el periodo de fechas." } )
+
+               ::cErrorMessage      += "La plantilla " + Rtrim( ::oFacAutT:oDbf:cNomFac ) + " no esta en el periodo de fechas." + CRLF
 
             end if
 
@@ -2423,6 +2538,9 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    local aTotAlb
    local nImpAtp
    local nDtoArt
+   local cCodPgo
+
+   BeginTransaction()
 
    /*
    Cabecera del albarán--------------------------------------------------------
@@ -2436,15 +2554,42 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
       ::oAlbCliT:cCodAlm   := cDefAlm()
    end if
 
+   /*
+   Forma de pago del albarán---------------------------------------------------
+   */
+
    if !Empty( ::oFacAutT:oDbf:cCodPago )
-      ::oAlbCliT:cCodPago     := ::oFacAutT:oDbf:cCodPago 
-   else 
-      if ( ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) )
-         ::oAlbCliT:cCodPago  := ::oDbfCli:CodPago
-      else
-         ::oAlbCliT:cCodPago  := cDefFpg()
-      end if
+      cCodPgo              := ::oFacAutT:oDbf:cCodPago 
    end if 
+
+   if Empty( cCodPgo ) .and. ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) 
+      cCodPgo              := ::oDbfCli:CodPago
+   end if 
+
+   if Empty( cCodPgo )
+      cCodPgo              := cDefFpg()
+   end if 
+
+   /*
+   Serie, numero y sufijo------------------------------------------------------
+   */
+
+   ::oAlbCliT:cCodPago     := cCodPgo 
+
+   if !Empty( ::oFacAutT:oDbf:cSerFact )
+      cSerAlb              := ::oFacAutT:oDbf:cSerFact
+   end if
+
+   if Empty( cSerAlb ) .and. ::oFacAutT:oDbf:lUseCli
+      cSerAlb              := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "Serie" )
+   end if
+
+   if Empty( cSerAlb )
+      cSerAlb              := cNewSer( "nAlbCli", ::oDbfCount:cAlias )
+   end if
+
+   nNumAlb                 := nNewDoc( cSerAlb, ::oAlbCliT:cAlias, "nAlbCli", , ::oDbfCount:cAlias )
+   cSufAlb                 := RetSufEmp()
 
    ::oAlbCliT:cTurAlb      := cCurSesion()
    ::oAlbCliT:dFecAlb      := ::dFecDocumento
@@ -2485,21 +2630,6 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:nManObr      := ::oFacAutT:oDbf:nManObr
    ::oAlbCliT:cManObr      := ::oFacAutT:oDbf:cManObr
    ::oAlbCliT:lRecargo     := ::oDbfCli:lReq
-
-   if !Empty( ::oFacAutT:oDbf:cSerFact )
-      cSerAlb              := ::oFacAutT:oDbf:cSerFact
-   end if
-
-   if Empty( cSerAlb ) .and. ::oFacAutT:oDbf:lUseCli
-      cSerAlb              := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "Serie" )
-   end if
-
-   if Empty( cSerAlb )
-      cSerAlb              := cNewSer( "nAlbCli", ::oDbfCount:cAlias )
-   end if
-
-   nNumAlb                 := nNewDoc( cSerAlb, ::oAlbCliT:cAlias, "nAlbCli", , ::oDbfCount:cAlias )
-   cSufAlb                 := RetSufEmp()
 
    nDtoArt                 := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "nDtoArt" )
 
@@ -2576,8 +2706,9 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
          if ::oFacAutL:oDbf:lPrcAtp
 
-            //--Chequeamos situaciones especiales--//
-            //--Atipicas de clientes por artículos--//
+            /*
+            Chequeamos situaciones especiales----------------------------------
+            */
 
             if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
                ::oDbfCliAtp:lAplFac
@@ -2594,13 +2725,13 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
             else
 
-               ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
+               ::oAlbCliL:nPreUnit     := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
 
             end if
 
          else
 
-            ::oAlbCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
+            ::oAlbCliL:nPreUnit     := ::oFacAutL:oDbf:nPreUnit
 
          end if
 
@@ -2662,6 +2793,14 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
    ::SetNextFechaFactura()
 
+   /*
+   Escribe los datos pendientes------------------------------------------------
+   */
+
+   dbCommitAll()
+
+   CommitTransaction()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2676,6 +2815,9 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    local aTotFac
    local nImpAtp
    local nDtoArt
+   local cCodPgo
+
+   BeginTransaction()
 
    /*
    Cabecera del facturas-------------------------------------------------------
@@ -2689,15 +2831,42 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
       ::oFacCliT:cCodAlm   := cDefAlm()
    end if
 
+   /*
+   Forma de pago del albarán---------------------------------------------------
+   */
+
    if !Empty( ::oFacAutT:oDbf:cCodPago )
-      ::oFacCliT:cCodPago     := ::oFacAutT:oDbf:cCodPago 
-   else 
-      if ( ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) )
-         ::oFacCliT:cCodPago  := ::oDbfCli:CodPago
-      else
-         ::oFacCliT:cCodPago  := cDefFpg()
-      end if
+      cCodPgo              := ::oFacAutT:oDbf:cCodPago 
    end if 
+
+   if Empty( cCodPgo ) .and. ::oFacAutT:oDbf:lUseCli .and. !Empty( ::oDbfCli:CodPago ) 
+      cCodPgo              := ::oDbfCli:CodPago
+   end if 
+
+   if Empty( cCodPgo )
+      cCodPgo              := cDefFpg()
+   end if 
+
+   ::oFacCliT:cCodPago     := cCodPgo
+
+   /*
+   Serie, numero y sufijo------------------------------------------------------
+   */
+
+   if !Empty( ::oFacAutT:oDbf:cSerFact )
+      cSerFac              := ::oFacAutT:oDbf:cSerFact
+   end if
+
+   if ::oFacAutT:oDbf:lUseCli
+      cSerFac              := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "Serie" )
+   end if
+
+   if Empty( cSerFac )
+      cSerFac              := cNewSer( "nFacCli", ::oDbfCount:cAlias )
+   end if
+
+   nNumFac                 := nNewDoc( cSerFac, ::oFacCliT:cAlias, "nFacCli", , ::oDbfCount:cAlias )
+   cSufFac                 := RetSufEmp()
 
    ::oFacCliT:cTurFac      := cCurSesion()
    ::oFacCliT:dFecFac      := ::dFecDocumento
@@ -2743,21 +2912,6 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:cManObr      := ::oFacAutT:oDbf:cManObr
    ::oFacCliT:nIvaMan      := ::oFacAutT:oDbf:nIvaMan
    ::oFacCliT:nManObr      := ::oFacAutT:oDbf:nManObr
-
-   if !Empty( ::oFacAutT:oDbf:cSerFact )
-      cSerFac              := ::oFacAutT:oDbf:cSerFact
-   end if
-
-   if ::oFacAutT:oDbf:lUseCli
-      cSerFac              := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "Serie" )
-   end if
-
-   if Empty( cSerFac )
-      cSerFac              := cNewSer( "nFacCli", ::oDbfCount:cAlias )
-   end if
-
-   nNumFac                 := nNewDoc( cSerFac, ::oFacCliT:cAlias, "nFacCli", , ::oDbfCount:cAlias )
-   cSufFac                 := RetSufEmp()
 
    nDtoArt                 := oRetFld( ::oDbfCli:Cod, ::oDbfCli, "nDtoArt" )
 
@@ -2835,8 +2989,9 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
 
          if ::oFacAutL:oDbf:lPrcAtp
 
-            //--Chequeamos situaciones especiales--//
-            //--Atipicas de clientes por artículos--//
+            /*
+            Chequeamos situaciones especiales----------------------------------
+            */
 
             if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
                ::oDbfCliAtp:lAplFac
@@ -2937,6 +3092,14 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
 
    ::SetNextFechaFactura()
 
+   /*
+   Escribe los datos pendientes------------------------------------------------
+   */
+
+   dbCommitAll()
+
+   CommitTransaction()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2949,7 +3112,7 @@ METHOD lCompruebaFecha() CLASS TCreaFacAutomaticas
       RETURN .t.
    end if
 
-   if ::oFacAutT:oDbf:dNexFac <= GetSysDate()
+   if !Empty( ::oFacAutT:oDbf:dNexFac ) .and. ( ::oFacAutT:oDbf:dNexFac <= GetSysDate() )
       Return .t.
    end if 
 

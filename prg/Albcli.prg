@@ -4007,7 +4007,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local cSayGrp        := ""
    local oSayFam
    local cSayFam        := ""
-   local cCodArt        := Padr( aTmp[ _CREF ], 32 )
+   local cCodArt        := Padr( aTmp[ _CREF ], 200 )
    local oRentLin
    local cRentLin       := ""
    local cCodDiv        := aTmpAlb[ _CDIVALB ]
@@ -15111,6 +15111,9 @@ RETURN ( lFacAlb )
 
 STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, lFocused )
 
+   local hHas128
+   local cLote
+   local dFechaCaducidad
    local nDtoAge
    local cCodFam
    local cPrpArt
@@ -15141,8 +15144,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
           aGet[ _CDETALLE ]:cText( Space( 50 ) )
       end if
 
-      aGet[_CDETALLE]:bWhen      := {|| .t. }
-      aGet[_CDETALLE]:Hide()
+      aGet[ _CDETALLE ]:bWhen      := {|| .t. }
+      aGet[ _CDETALLE ]:Hide()
 
       if !Empty( aGet[ _MLNGDES ] )
           aGet[ _MLNGDES ]:Show()
@@ -15164,16 +15167,30 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
       Primero buscamos por codigos de barra y por referencia de proveedor
       */
 
-      if "," $ cCodArt
-         nPosComa                := At( ",", cCodArt )
-         cProveedor              := RJust( Left( cCodArt, nPosComa - 1 ), "0", RetNumCodPrvEmp() )
-         cCodArt                 := cSeekProveedor( cCodArt, dbfArtPrv )
-      else
-         cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
-      end if
+      do case
+         case ( "," $ cCodArt )
+
+            nPosComa             := At( ",", cCodArt )
+            cProveedor           := RJust( Left( cCodArt, nPosComa - 1 ), "0", RetNumCodPrvEmp() )
+            cCodArt              := cSeekProveedor( cCodArt, dbfArtPrv )
+         
+         case len( cCodArt ) > 30
+
+            hHas128              := ReadCodeGS128()
+            if !Empty( hHas128 )
+               cCodArt           := uGetCodigo( hHas128, "01" )
+               cLote             := uGetCodigo( hHas128, "10" )
+               dFechaCaducidad   := uGetCodigo( hHas128, "15" )
+            end if 
+
+         otherwise
+
+            cCodArt              := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
+
+      end case
 
       /*
-      Ahora buscamos por el codigo interno
+      Ahora buscamos por el codigo interno-------------------------------------
       */
 
       if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
@@ -15203,10 +15220,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
             end if
 
-            aGet[_CDETALLE ]:show()
-            aGet[_MLNGDES  ]:hide()
+            aGet[ _CDETALLE ]:show()
+            aGet[ _MLNGDES  ]:hide()
 
-            aGet[_CDETALLE ]:cText( ( dbfArticulo )->Nombre )
+            aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
 
             /*
             Descripciones largas--------------------------------------------------
@@ -15261,37 +15278,54 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Lotes
-            -------------------------------------------------------------------
+            Lotes--------------------------------------------------------------
             */
 
             if ( dbfArticulo )->lLote
+
+               aTmp[ _LLOTE ]       := ( dbfArticulo )->lLote
+
+               if Empty( cLote )
+                  cLote             := ( dbfArticulo )->cLote
+               end if 
 
                if !Empty( aGet[ _CLOTE ] )
 
                   aGet[ _CLOTE ]:Show()
 
                   if Empty( aGet[ _CLOTE ]:VarGet() )
-                     aGet[ _CLOTE ]:cText( ( dbfArticulo )->cLote )
+                     aGet[ _CLOTE ]:cText( cLote )
                      aGet[ _CLOTE ]:lValid()
                   end if
 
                else
 
                   if Empty( aTmp[ _CLOTE ] )
-                     aTmp[ _CLOTE ] := ( dbfArticulo )->cLote
+                     aTmp[ _CLOTE ] := cLote 
                   end if
 
                end if
 
-               aTmp[ _LLOTE ] := ( dbfArticulo )->lLote
+               /*
+               Fecha de caducidad----------------------------------------------
+               */
+
+               if Empty( dFechaCaducidad )
+                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+               end if 
 
                if !Empty( aGet[ _DFECCAD ] )
 
                   aGet[ _DFECCAD ]:Show()
 
                   if Empty( aGet[ _DFECCAD ]:VarGet() )
-                     aGet[ _DFECCAD ]:cText( dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL ) )
+                     aGet[ _DFECCAD ]:cText( dFechaCaducidad )
+                  end if
+
+               else 
+
+                  if Empty( aTmp[ _DFECCAD ] )
+                     aTmp[ _DFECCAD ]  := dFechaCaducidad
                   end if
 
                end if

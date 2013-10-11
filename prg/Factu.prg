@@ -1045,7 +1045,7 @@ Function lStartCheck()
 
    oMsgText( 'Facturas automáticas' )
 
-   TCreaFacAutomaticas():Create()
+   lFacturasAutomaticas()
 
    // Aviso de pedidos pendientes de procesar----------------------------------
 
