@@ -3532,9 +3532,9 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       INDEX TO ( cFileName ) TAG "cRefAlm" ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cLote"   ON "cLote"                                  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "nNumLin" ON "Str( nNumLin )"                         NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "lSndDoc" ON "lSndDoc"                                NODELETED FOR "lSndDoc"       OF oDbf
-      INDEX TO ( cFileName ) TAG "nTipMov" ON "cRefMov + Dtos( dFecMov )"              NODELETED FOR "nTipMov == 4"  OF oDbf
-      INDEX TO ( cFileName ) TAG "cStock"  ON "cRefMov + cAliMov + cCodPr1 + cValPr1 + cCodPr2 + cValPr2 + cLote" NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "lSndDoc" ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"        OF oDbf
+      INDEX TO ( cFileName ) TAG "nTipMov" ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"   OF oDbf
+      INDEX TO ( cFileName ) TAG "cStock"  ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"   OF oDbf
 
    END DATABASE oDbf
 
@@ -5049,10 +5049,10 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetSeriesMovimi
       FIELD NAME "lUndNeg"    TYPE "L" LEN 01  DEC 0 COMMENT "Lógico de unidades en negativo"   HIDE        OF oDbf
       FIELD NAME "cNumSer"    TYPE "C" LEN 30  DEC 0 COMMENT "Número de serie"                  HIDE        OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cNumOrd" ON "Str( nNumRem,9 ) + cSufRem"                      NODELETED   OF oDbf
+      INDEX TO ( cFileName ) TAG "cNumOrd" ON "Str( nNumRem ) + cSufRem + Str( nNumLin )"       NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCodArt" ON "cCodArt + cAlmOrd + cNumSer"                     NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cNumSer" ON "cNumSer"                                         NODELETED   OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumLin" ON "Str( nNumLin, 4 ) + cCodArt"                     NODELETED   OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumLin" ON "Str( nNumLin ) + cCodArt"                        NODELETED   OF oDbf
 
    END DATABASE oDbf
 
