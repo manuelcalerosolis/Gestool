@@ -14728,7 +14728,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
 
       end if
 
-      if !Empty( aTmp[_CREF] )
+      if !Empty( cCodArt )
          aGet[ _CDETALLE ]:show()
          aGet[ _MLNGDES  ]:hide()
       else
@@ -14738,7 +14738,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
 
    if !Empty( oStock )
 
-      oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
+      oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
 
       if uFieldEmpresa( "lNStkAct" )
          oStkAct:Hide()
@@ -15122,14 +15122,13 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    local cCodFam
    local cPrpArt
    local nCosPro
+   local cProveedor
    local nPrePro                 := 0
    local nImpAtp                 := 0
    local nImpOfe                 := 0
-   local lChgCodArt              := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local nPosComa
-   local cProveedor
-   local nTarOld                 := aTmp[ _NTARLIN ]
    local nNumDto                 := 0
+   local nTarOld                 := aTmp[ _NTARLIN ]
+   local lChgCodArt              := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
 
    DEFAULT lFocused              := .t.
 
