@@ -18,7 +18,7 @@ Static oMsgAlarm
 CLASS TComercio
 
    CLASSDATA oInstance
-
+   
    DATA  hRas
    DATA  lRasValido
    DATA  lFtpValido
@@ -741,10 +741,10 @@ METHOD Activate( oWnd ) CLASS TComercio
          OF       ::oDlg;
          ACTION   ( ::ExportarPrestashop() );
 
-      /*REDEFINE BUTTONBMP ::oBtnImportar ;
+      REDEFINE BUTTONBMP ::oBtnImportar ;
          ID       520 ;
          OF       ::oDlg;
-         ACTION   ( ::ImportarPrestashop() );*/
+         ACTION   ( ::ImportarPrestashop() );
 
       /*
       Tree---------------------------------------------------------------------
@@ -885,7 +885,7 @@ Method ExportarPrestashop() Class TComercio
    ::aCategorias     := {}
 
    ::oBtnExportar:Hide()
-   //::oBtnImportar:Hide()
+   ::oBtnImportar:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -1027,7 +1027,7 @@ Method ExportarPrestashop() Class TComercio
    ::Closefiles()
 
    ::oBtnExportar:Hide()
-   //::oBtnImportar:Hide()
+   ::oBtnImportar:Hide()
 
    ::oBtnCancel:Enable()
 
@@ -1042,7 +1042,7 @@ Method ImportarPrestashop()
    local oError
 
    ::oBtnExportar:Hide()
-   //::oBtnImportar:Hide()
+   ::oBtnImportar:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -1121,7 +1121,7 @@ Method ImportarPrestashop()
    ::Closefiles()
 
    ::oBtnExportar:Hide()
-   //::oBtnImportar:Hide()
+   ::oBtnImportar:Hide()
 
    ::oBtnCancel:Enable()
 
