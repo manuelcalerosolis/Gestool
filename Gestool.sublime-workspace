@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"broo",
+				"brooklyn"
+			],
+			[
+				"tex",
+				"text-transform"
+			],
+			[
+				"padi",
+				"padding-bottom"
+			],
+			[
+				"pa",
+				"padding-top"
+			],
+			[
+				"mar",
+				"margin-bottom"
+			],
+			[
 				"text",
 				"text-align"
 			],
@@ -44,24 +64,12 @@
 				"products_block"
 			],
 			[
-				"tex",
-				"text-align"
-			],
-			[
 				"ba",
 				"background-color"
 			],
 			[
-				"pa",
-				"padding-top"
-			],
-			[
 				"pad",
 				"padding-bottom"
-			],
-			[
-				"padi",
-				"padding-left"
 			],
 			[
 				"aLL",
@@ -90,10 +98,6 @@
 			[
 				"pado",
 				"padding-bottom"
-			],
-			[
-				"mar",
-				"margin-bottom"
 			],
 			[
 				"he",
@@ -510,44 +514,24 @@
 			[
 				"case",
 				"case"
-			],
-			[
-				"lSel",
-				"lSelPr2"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "/C/Users/Villa/Desktop/footer.tpl",
+			"file": "/C/Users/Villa/Desktop/index.html",
 			"settings":
 			{
-				"buffer_size": 13126,
+				"buffer_size": 4422,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/Villa/Desktop/jquery.reveal.js",
+			"file": "/C/Users/Villa/Desktop/brooklyn.html",
 			"settings":
 			{
-				"buffer_size": 7253,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/Villa/Desktop/blocktopmenu.tpl",
-			"settings":
-			{
-				"buffer_size": 12895,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/Villa/Desktop/global.css",
-			"settings":
-			{
-				"buffer_size": 61269,
+				"buffer_size": 8642,
 				"line_ending": "Windows"
 			}
 		}
@@ -585,32 +569,42 @@
 	"file_history":
 	[
 		"/C/Users/Villa/Desktop/index.html",
-		"/C/Users/Villa/Desktop/blocktopmenu.php",
-		"/C/Users/Villa/Desktop/jquery.reveal.js",
-		"/C/Users/Villa/Desktop/superfish-modified.css",
+		"/C/Users/Villa/Desktop/homeslider.tpl",
+		"/C/Users/Villa/Desktop/homeslider.php",
+		"/C/Users/Villa/Desktop/homeslider.js",
+		"/C/Users/Villa/Desktop/brooklyn.html",
+		"/C/Users/Villa/Desktop/index2.html",
+		"/C/Users/Villa/Desktop/index.php",
 		"/C/Users/Villa/Desktop/blocktopmenu.tpl",
-		"/C/Users/Villa/Desktop/blockuserinfo.tpl",
 		"/C/Users/Villa/Desktop/header.tpl",
+		"/C/Users/Villa/Desktop/footer.tpl",
+		"/C/Users/Villa/Desktop/brooklyn/index.html",
+		"/C/Users/Villa/Desktop/product.tpl",
+		"/C/Users/Villa/Desktop/global.css",
+		"/C/Users/Villa/Desktop/category.tpl",
+		"/C/Users/Villa/Desktop/breadcrumb.tpl",
+		"/C/Users/Villa/Desktop/product old/product.tpl",
+		"/C/Users/Villa/Desktop/category.css",
+		"/C/Users/Villa/Desktop/categoryORG.tpl",
+		"/C/Users/Villa/Desktop/jquery.reveal.js",
+		"/C/Users/Villa/Desktop/product.css",
+		"/C/Users/Villa/Desktop/product_list.css",
+		"/C/Users/Villa/Desktop/product-list.tpl",
+		"/C/Users/Villa/Desktop/blocktopmenu.php",
+		"/C/Users/Villa/Desktop/superfish-modified.css",
+		"/C/Users/Villa/Desktop/blockuserinfo.tpl",
 		"/C/Users/Villa/Desktop/homefeatured.css",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
-		"/C/Users/Villa/Desktop/global.css",
 		"/C/Users/Villa/Desktop/homefeatured.tpl",
 		"/C/Users/Villa/Desktop/homefeatured.php",
 		"/C/Users/Villa/Desktop/config.xml",
-		"/C/Users/Villa/Desktop/homeslider.tpl",
 		"/C/Users/Villa/Desktop/grid_prestashop.css",
-		"/C/Users/Villa/Desktop/product.tpl",
 		"/C/Users/Villa/Desktop/productorg.tpl",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/Users/Villa/Desktop/settings.inc.php",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/bin/script/003.prg",
 		"/C/Users/Villa/Desktop/bx_styles.css",
-		"/C/Users/Villa/Desktop/footer.tpl",
-		"/C/Users/Villa/Desktop/product.css",
-		"/C/Users/Villa/Desktop/category.tpl",
-		"/C/Users/Villa/Desktop/product_list.css",
-		"/C/Users/Villa/Desktop/product-list.tpl",
 		"/C/Users/Villa/Desktop/category-tree-branch.tpl",
 		"/C/Users/Villa/Desktop/blocksocial.tpl",
 		"/C/fw195/Gestool/prg/Tftp.prg",
@@ -688,7 +682,6 @@
 		"/C/Users/Villa/Desktop/payment.tpl",
 		"/C/Users/Villa/Desktop/phonepayment.html",
 		"/C/Users/Villa/Desktop/identity.tpl",
-		"/C/Users/Villa/Desktop/breadcrumb.tpl",
 		"/C/Users/Villa/Desktop/authentication.tpl",
 		"/C/Users/Villa/Desktop/CmsController.php",
 		"/C/Users/Villa/Desktop/my-account.tpl",
@@ -702,16 +695,7 @@
 		"/C/fw195/Gestool/prg/Tnewinfgen.prg",
 		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/AppServ/www/webtactil/inicio/index.html",
-		"/C/AppServ/www/webtactil/inicio/usuario.php",
-		"/C/AppServ/www/webtactil/inicio/css/estilos.css",
-		"/C/AppServ/www/webtactil/inicio/js/funciones.js",
-		"/C/fw195/Gestool/prg/Producc.prg",
-		"/C/fw195/Gestool/prg/Remmov.prg",
-		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
-		"/C/fw195/Gestool/prg/Tdetproduccion.prg",
-		"/C/fw195/Gestool/prg/Tmasdet.prg",
-		"/C/AppServ/www/webtactil/dbuser.php",
-		"/C/AppServ/www/webtactil/db.php"
+		"/C/AppServ/www/webtactil/inicio/usuario.php"
 	],
 	"find":
 	{
@@ -759,6 +743,18 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"<",
+			"auto",
+			"bxSlider",
+			"hover",
+			"buttons_bottom_block",
+			"bottom",
+			"fieldset",
+			"fiel",
+			"more",
+			"center_column",
+			"center",
+			"{\n",
 			"center",
 			"clearBoth",
 			"color",
@@ -874,19 +870,7 @@
 			"cambio.",
 			"cambio",
 			"SetBufferLine",
-			"on IsVisor",
-			"is",
-			":cReset",
-			"reset",
-			"on retChr(",
-			"Chr(",
-			"chr",
-			"cReset",
-			"nPosInit",
-			"nInact",
-			"timer",
-			"Say",
-			"nPosInit"
+			"on IsVisor"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -894,6 +878,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"html",
 			"cPatEmp",
 			"cTextoWait",
 			"ctextowait",
@@ -913,23 +898,23 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/Users/Villa/Desktop/footer.tpl",
+					"file": "/C/Users/Villa/Desktop/index.html",
 					"settings":
 					{
-						"buffer_size": 13126,
+						"buffer_size": 4422,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2433,
-								2433
+								2792,
+								4404
 							]
 						],
 						"settings":
@@ -938,51 +923,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 666.0,
+						"translation.y": 1488.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "/C/Users/Villa/Desktop/jquery.reveal.js",
+					"file": "/C/Users/Villa/Desktop/brooklyn.html",
 					"settings":
 					{
-						"buffer_size": 7253,
+						"buffer_size": 8642,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1116,
-								1116
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 324.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Users/Villa/Desktop/blocktopmenu.tpl",
-					"settings":
-					{
-						"buffer_size": 12895,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2762,
-								2762
+								4870,
+								4870
 							]
 						],
 						"settings":
@@ -991,34 +950,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1242.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/C/Users/Villa/Desktop/global.css",
-					"settings":
-					{
-						"buffer_size": 61269,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3146,
-								3146
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 8813.0,
+						"translation.y": 2247.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
