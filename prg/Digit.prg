@@ -1482,7 +1482,7 @@ Function ReadCodeGS128( cCode )
   local cLote       := ""
   local hCodeGS128  := {=>}
 
-  DEFAULT cCode     := "0118411859552753103439L3 15140600"
+  DEFAULT cCode     := "0118411859552753103439L315140600"
 
     if Substr( cCode, 1, 2 ) == "00"
 
@@ -1519,17 +1519,23 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "10"
 
+      /*
       cCode   := Substr( cCode, 3 )
-      while Substr( cCode, 1, 1 ) != Space(1)
+      while Substr( cCode, 1, 1 ) != Space( 1 )
         cLote += Substr( cCode, 1, 1 )
         cCode := Substr( cCode, 2 )
       end while
       cCode   := Substr( cCode, 2 )
+      */
+
+      cLote   := Substr( cCode, 3, 6 )
 
       hSet( hCodeGS128, "10", { "Codigo" => cLote,;
                                 "Descripcion" => "Batch Number",;
                                 "Tipo" => "C",;
                                 "Decimales" => 0 } )
+
+      cCode   := Substr( cCode, 9 )
 
     end if 
 
@@ -1577,23 +1583,42 @@ Function ReadCodeGS128( cCode )
 
     end if
 
+    if Substr( cCode, 1, 2 ) == "20"
+      
+      hSet( hCodeGS128, "20", { "Codigo" => Val( Substr( cCode, 3, 2 ) ),;
+                                "Descripcion" => "Product Variant",;
+                                "Tipo" => "N",;
+                                "Decimales" => 0 } )
+
+        cCode   := Substr( cCode, 5 )
+
+    end if 
+
 Return ( hCodeGS128 )
+
+//---------------------------------------------------------------------------//
 
 Function uGetCodigo( hHash, cAI )
 
   local uGetCodigo
   local hCodeGS128
 
-  hCodeGS128    := hGet( hHash, cAI )
-  if !Empty( hCodeGS128 )
-    uGetCodigo  := hGet( hCodeGS128, "Codigo" )
+  if hHasKey( hHash, cAI )
+    hCodeGS128    := hGet( hHash, cAI )
+    if !Empty( hCodeGS128 )
+      uGetCodigo  := hGet( hCodeGS128, "Codigo" )
+    end if
   end if
 
 Return ( uGetCodigo )
 
+//---------------------------------------------------------------------------//
+
 Static Function DateGS128( cDate )
 
 Return ( Stod( "20" + Substr( cDate, 1, 4 ) + if( Substr( cDate, 5, 2 ) == "00", "01", Substr( cDate, 5, 2 ) ) ) )
+
+//---------------------------------------------------------------------------//
 
 Function PrintGS128()
 

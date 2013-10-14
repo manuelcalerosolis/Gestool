@@ -89,19 +89,22 @@ CLASS TComercio
 
    DATA  cPath
 
-   DATA  lSincAll
+   DATA  oIniEmpresa
+
+   DATA  lSincAll             INIT .f.
+   DATA  lArticulos           INIT .f.
+   DATA  lFamilias            INIT .f.
+   DATA  lPedidos             INIT .f.
+   DATA  lFabricantes         INIT .f.
+   DATA  lIva                 INIT .f.
+   DATA  lImagenes            INIT .f.
+   DATA  lClientes            INIT .f.
+
    DATA  oArticulos
-   DATA  lArticulos
-   DATA  lFamilias
    DATA  oPedidos
-   DATA  lPedidos
-   DATA  lFabricantes
    DATA  oTipIva
-   DATA  lIva
    DATA  oCliente
-   DATA  lCliente
    DATA  oImagenes
-   DATA  lImagenes
 
    DATA  oArt
    DATA  oPro
@@ -292,6 +295,38 @@ CLASS TComercio
    METHOD CreateDirectoryImages( cCarpeta )
    METHOD ReturnDirectoryImages( cCarpeta )
 
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD LoadIniValues
+
+      ::lArticulos            := ::oIniEmpresa:Get( "Prestashop", "Articulos",   .t., ::lArticulos   )
+      ::lFamilias             := ::oIniEmpresa:Get( "Prestashop", "Familias",    .t., ::lFamilias    )
+      ::lPedidos              := ::oIniEmpresa:Get( "Prestashop", "Pedidos",     .t., ::lPedidos     )
+      ::lFabricantes          := ::oIniEmpresa:Get( "Prestashop", "Fabricantes", .t., ::lFabricantes )
+      ::lIva                  := ::oIniEmpresa:Get( "Prestashop", "Iva",         .t., ::lIva         )
+      ::lClientes             := ::oIniEmpresa:Get( "Prestashop", "Clientes",    .t., ::lClientes    )
+      ::lImagenes             := ::oIniEmpresa:Get( "Prestashop", "Imagenes",    .t., ::lImagenes    )
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD SaveIniValues
+
+      ::oIniEmpresa:Set( "Prestashop", "Articulos",   ::lArticulos   )
+      ::oIniEmpresa:Set( "Prestashop", "Familias",    ::lFamilias    )
+      ::oIniEmpresa:Set( "Prestashop", "Pedidos",     ::lPedidos     )
+      ::oIniEmpresa:Set( "Prestashop", "Fabricantes", ::lFabricantes )
+      ::oIniEmpresa:Set( "Prestashop", "Iva",         ::lIva         )
+      ::oIniEmpresa:Set( "Prestashop", "Clientes",    ::lClientes    )
+      ::oIniEmpresa:Set( "Prestashop", "Imagenes",    ::lImagenes    )
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -312,14 +347,9 @@ METHOD New( oMenuItem ) CLASS TComercio
 
    ::nLevel                := nLevelUsr( oMenuItem )
 
+   ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
+
    ::lSincAll              := .f.
-   ::lArticulos            := .t.
-   ::lFamilias             := .t.
-   ::lPedidos              := .t.
-   ::lFabricantes          := .t.
-   ::lIva                  := .t.
-   ::lCliente              := .t.
-   ::lImagenes             := .t.
    ::aImages               := {}
    ::aImagesArticulos      := {}
    ::aImagesCategories     := {}
@@ -625,11 +655,11 @@ METHOD Activate( oWnd ) CLASS TComercio
       return ( Self )
    end if
 
-   CursorWait()
-
    if oWnd != nil
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
+
+   ::LoadIniValues()
 
    /*
    Apertura del fichero de texto---------------------------------------------//
@@ -660,7 +690,7 @@ METHOD Activate( oWnd ) CLASS TComercio
          WHEN     ( !::lSincAll );
          OF       ::oDlg
 
-      REDEFINE CHECKBOX ::oCliente VAR ::lCliente ;
+      REDEFINE CHECKBOX ::oCliente VAR ::lClientes ;
          ID       130 ;
          WHEN     ( !::lSincAll );
          OF       ::oDlg 
@@ -736,8 +766,6 @@ METHOD Activate( oWnd ) CLASS TComercio
          ID       IDCANCEL ;
          OF       ::oDlg ;
          ACTION   ( ::oDlg:end() )
-
-      ::oDlg:bStart  := {|| CursorWe() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -940,7 +968,7 @@ Method ExportarPrestashop() Class TComercio
             Pasamos los clientes desde el programa a prestashop-------------
                
 
-            if ::lCliente .or. ::lSincAll
+            if ::lClientes .or. ::lSincAll
 
                ::MeterGlobalText( "Actualizando estado de los pedidos" )
                ::AppendClientesToPrestashop()
@@ -967,7 +995,11 @@ Method ExportarPrestashop() Class TComercio
 
       ::SetText( 'Base de datos desconectada.', 1 )
 
-      ::MeterGlobalText( "Proceso finalizado" )
+      /*
+      Guardamos la configuración en el INI-------------------------------------
+      */
+
+      ::SaveIniValues()
 
       /*
       Para que al final del proceso quede totalmente llena la barra del meter--
@@ -975,6 +1007,8 @@ Method ExportarPrestashop() Class TComercio
 
       ::oMeter:Set( 100 )
       ::oMeterL:Set( 100 )
+
+      ::MeterGlobalText( "Proceso finalizado" )
 
    else
 
