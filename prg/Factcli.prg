@@ -5321,8 +5321,7 @@ end if
    end if
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
-                           if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           lCalcDeta( aTmp, aTmpFac ) }
+                           if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -18222,9 +18221,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    /*
    Buscamos codificacion GS1-128--------------------------------------------
    */
+   
    if Len( Alltrim( cCodArt ) ) > 18
 
-      hHas128              := ReadCodeGS128()
+      hHas128              := ReadCodeGS128( cCodArt )
 
       if !Empty( hHas128 )
          cCodArt           := uGetCodigo( hHas128, "01" )
@@ -19328,24 +19328,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
       end if
 
    else
-
-      /*
-      No podemos mover las lineas tipo kit
-
-      ( dbfTmpLin )->( dbGoTop() )
-      while !( dbfTmpLin )->( Eof() )
-         if ( dbfTmpLin )->nNumLin == nNumLin .and. ( dbfTmpLin )->lKit
-            if ( dbfTmpLin )->( dbRLock() )
-               ( dbfTmpLin )->nCanEnt  := aTmp[ _NCANENT ]
-               ( dbfTmpLin )->nUniCaja := aTmp[ _NUNICAJA]
-               ( dbfTmpLin )->( dbUnLock() )
-            end if
-         end if
-         ( dbfTmpLin )->( dbSkip() )
-      end while
-
-      ( dbfTmpLin )->( dbGoTo( nRec ) )
-      */
 
       /*
       Guardamos el registro de manera normal

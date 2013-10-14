@@ -4024,17 +4024,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _LIMPFRA ]        := .t.
       aTmp[ _DFECCAD ]        := Ctod( "" )
 
-      if !Empty( cCodArtEnt )
-         cCodArt              := cCodArtEnt
-      end if
-
       aTmp[ __DFECSAL ]       := aTmpAlb[ _DFECSAL ]
       aTmp[ __DFECENT ]       := aTmpAlb[ _DFECENTR ]
+      aTmp[ __LALQUILER ]     := !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
 
-      if !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
-         aTmp[ __LALQUILER ]  := .t.
-      else
-         aTmp[ __LALQUILER ]  := .f.
+      if !Empty( cCodArtEnt )
+         cCodArt              := cCodArtEnt
       end if
 
    case nMode == EDIT_MODE
@@ -4730,7 +4725,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid(),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
    ACTIVATE DIALOG oDlg ;
@@ -15172,7 +15166,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
       if Len( Alltrim( cCodArt ) ) > 18
 
-         hHas128              := ReadCodeGS128()
+         hHas128              := ReadCodeGS128( cCodArt )
          if !Empty( hHas128 )
             cCodArt           := uGetCodigo( hHas128, "01" )
             cLote             := uGetCodigo( hHas128, "10" )
