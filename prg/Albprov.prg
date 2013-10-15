@@ -3954,7 +3954,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    oBtn:SetFocus()
 
    if !aGet[ _CREF ]:lValid()
-      return nil
+      Return nil
    end if
 
    if !lMoreIva( aTmp[ _NIVA ] )
@@ -5136,6 +5136,8 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             ---------------------------------------------------------------------
             */
 
+            aTmp[ _LLOTE ]       := ( dbfArticulo )->lLote
+
             if ( dbfArticulo )->lLote
 
                if Empty( cLote )
@@ -5146,8 +5148,6 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                aGet[ _CLOTE   ]:Show()
                aGet[ _CLOTE   ]:cText( cLote )
  
-               aTmp[ _LLOTE ]    := .t.
-
                /*
                Fecha de caducidad----------------------------------------------
                */

@@ -1085,6 +1085,12 @@ METHOD Importar()
             ::oDbfArtGst:cImagen    := ::oDbfArtFac:cImagen
             ::oDbfArtGst:lKitArt    := ::oDbfArtFac:lKit
             ::oDbfArtGst:cPrvHab    := ::oDbfArtFac:cCodPro
+            ::oDbfArtGst:nDtoArt1   := ::oDbfArtFac:nDto1
+            ::oDbfArtGst:nDtoArt2   := ::oDbfArtFac:nDto2
+            ::oDbfArtGst:nDtoArt3   := ::oDbfArtFac:nDto3
+            ::oDbfArtGst:nDtoArt4   := ::oDbfArtFac:nDto4
+            ::oDbfArtGst:nDtoArt5   := ::oDbfArtFac:nDto5
+            ::oDbfArtGst:nDtoArt6   := ::oDbfArtFac:nDto6
 
             /*
             ----------------------------------------------------------------------
@@ -1269,28 +1275,28 @@ METHOD Importar()
 
             ::oDbfCliGst:Append()
 
-            cControl               := cDgtControl( ::oDbfCliFac:cEntidad, ::oDbfCliFac:cAgencia, Space( 2 ), ::oDbfCliFac:cCuenta )
+            cControl                := cDgtControl( ::oDbfCliFac:cEntidad, ::oDbfCliFac:cAgencia, Space( 2 ), ::oDbfCliFac:cCuenta )
 
-            ::oDbfCliGst:Cod       := cCodCli
-            ::oDbfCliGst:Titulo    := ::oDbfCliFac:cNomCli
-            ::oDbfCliGst:Nif       := ::oDbfCliFac:cDniCif
-            ::oDbfCliGst:Domicilio := ::oDbfCliFac:cDirCli
-            ::oDbfCliGst:Poblacion := ::oDbfCliFac:cPobCli
-            if ::oDbfProvFac:Seek( ::oDbfCliFac:cCodProv )
-               ::oDbfCliGst:Provincia := ::oDbfProvFac:cNomProv
+            ::oDbfCliGst:Cod        := cCodCli
+            ::oDbfCliGst:Titulo     := ::oDbfCliFac:cNomCli
+            ::oDbfCliGst:Nif        := ::oDbfCliFac:cDniCif
+            ::oDbfCliGst:Domicilio  := ::oDbfCliFac:cDirCli
+            ::oDbfCliGst:Poblacion  := ::oDbfCliFac:cPobCli
+            if ::oDbfProvFac:Seek(  ::oDbfCliFac:cCodProv )
+               ::oDbfCliGst:Provincia  := ::oDbfProvFac:cNomProv
             end if
-            ::oDbfCliGst:CodPostal := ::oDbfCliFac:cPtlCli
-            ::oDbfCliGst:Telefono  := ::oDbfCliFac:cTfO1Cli
-            ::oDbfCliGst:Fax       := ::oDbfCliFac:cFaxCli
-            ::oDbfCliGst:NbrEst    := ::oDbfCliFac:cNomCom
-            ::oDbfCliGst:DiaPago   := ::oDbfCliFac:nDia1Pago
-            ::oDbfCliGst:DiaPago2  := ::oDbfCliFac:nDia2Pago
-            ::oDbfCliGst:Banco     := ::oDbfCliFac:cNbrBco
-            ::oDbfCliGst:DirBanco  := ::oDbfCliFac:cDirBco
-            ::oDbfCliGst:PobBanco  := ::oDbfCliFac:cPobBco
-            ::oDbfCliGst:cProBanco := ::oDbfCliFac:cProvBco
-            ::oDbfCliGst:Cuenta    := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
-            ::oDbfCliGst:CodPago   := ::oDbfCliFac:cCodPAgo
+            ::oDbfCliGst:CodPostal  := ::oDbfCliFac:cPtlCli
+            ::oDbfCliGst:Telefono   := ::oDbfCliFac:cTfO1Cli
+            ::oDbfCliGst:Fax        := ::oDbfCliFac:cFaxCli
+            ::oDbfCliGst:NbrEst     := ::oDbfCliFac:cNomCom
+            ::oDbfCliGst:DiaPago    := ::oDbfCliFac:nDia1Pago
+            ::oDbfCliGst:DiaPago2   := ::oDbfCliFac:nDia2Pago
+            ::oDbfCliGst:Banco      := ::oDbfCliFac:cNbrBco
+            ::oDbfCliGst:DirBanco   := ::oDbfCliFac:cDirBco
+            ::oDbfCliGst:PobBanco   := ::oDbfCliFac:cPobBco
+            ::oDbfCliGst:cProBanco  := ::oDbfCliFac:cProvBco
+            ::oDbfCliGst:Cuenta     := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
+            ::oDbfCliGst:CodPago    := ::oDbfCliFac:cCodPAgo
             ::oDbfCliGst:nDpp       := ::oDbfCliFac:nDpp
             ::oDbfCliGst:Riesgo     := ::oDbfCliFac:nRiesgo
             ::oDbfCliGst:CopiasF    := ::oDbfCliFac:nCopFac
@@ -1301,6 +1307,7 @@ METHOD Importar()
             ::oDbfCliGst:CtaVenta   := ::oDbfCliFac:cCtaVtas
             ::oDbfCliGst:cAgente    := ::oDbfCliFac:cCodAge
             ::oDbfCliGst:lBlqCli    := .f.
+            ::oDbfCliGst:nDtoArt    := ::oDbfCliFac:nDto
 
             if Val( ::oDbfCliFac:cCodCli ) >= 10000 .and. Val( ::oDbfCliFac:cCodCli ) <= 99999
                ::oDbfCliGst:lChgPre := .f.
@@ -3394,7 +3401,6 @@ RETURN ( Self )
 Static Function SpecialPadr( cCadena, cChar, nLen )
 
 Return( if( !Empty( cCadena ), Padr( RJust( cCadena, cChar, nLen ), 12, ' ' ), Space( 12 ) ) )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
