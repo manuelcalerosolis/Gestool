@@ -1897,7 +1897,7 @@ Function mkPro( cPath, lAppend, cPathOld, oMeter )
       dbCreate( cPath + "Pro.Dbf", aSqlStruct( aPro() ), cDriver() )
    end if 
 
-   if lAppend .and. lExistTable( cPathOld + "Pro.Dbf" )
+   if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "Pro.Dbf" )
 
       dbUseArea( .t., cDriver(), cPath + "Pro.Dbf", cCheckArea( "Pro", @cDbf ), .f. )
 
@@ -1912,7 +1912,7 @@ Function mkPro( cPath, lAppend, cPathOld, oMeter )
       dbCreate( cPath + "TblPro.Dbf", aSqlStruct( aItmPro() ), cDriver() )
    end if 
 
-   if lAppend .and. lExistTable( cPathOld + "TblPro.Dbf" )
+   if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "TblPro.Dbf" )
 
       dbUseArea( .t., cDriver(), cPath + "TblPro.Dbf", cCheckArea( "Pro", @cDbf ), .f. )
 

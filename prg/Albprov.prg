@@ -2992,12 +2992,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbPrvL, oBrw, aTmpAlb, cCodArtEnt, nMode
    case nMode == EDIT_MODE
 
       if !Empty( aTmp[ _CREF ] )
-         ( dbfArticulo )->( dbSeek( aTmp[ _CREF ] ) )
+         ( dbfArticulo )->( dbSeek( Alltrim( aTmp[ _CREF ] ) ) )
       end if
 
    end case
 
-   cOldCodArt              := aTmp[ _CREF ]
+   cOldCodArt              := aTmp[ _CREF    ]
    cOldPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    cOldUndMed              := aTmp[ _CUNIDAD ]
 

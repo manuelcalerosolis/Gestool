@@ -14163,7 +14163,7 @@ Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
    local nIvaPct  := nIva( dbfIva, cTipIva )
 
    /*
-   Despues si tiene impuesto especial qitarlo
+   Despues si tiene impuesto especial qitarlo----------------------------------
    */
 
    if !Empty( cCodImp ) .and. !Empty( oNewImp )
@@ -14171,7 +14171,7 @@ Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
    end if
 
 	/*
-   Calculo del impuestos
+   Calculo del impuestos-------------------------------------------------------
 	*/
 
    nPrecio        += ( nPrecio * nIvaPct / 100 )

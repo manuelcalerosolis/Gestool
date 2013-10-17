@@ -117,45 +117,7 @@ function Main( cParams )
 
    // Motor de bases de datos--------------------------------------------------
 
-   do case
-   case ( "ADSLOCAL" $ cAdsType )
-
-      lAds( .t. )
-      cIp( cAdsIp )
-      cData( cAdsData )
-
-      RddRegister(   'ADS', 1 )
-      RddSetDefault( 'ADSCDX' )
-
-      AdsSetServerType( 1 )   // ADS_LOCAL_SERVER
-      AdsSetFileType( 2 )     // ADS_CDX
-
-      AdsRightsCheck( .f. )
-
-   case ( "ADSREMOTE" $ cAdsType )
-
-      lAds( .t. )
-      cIp( cAdsIp )
-      cData( cAdsData )
-
-      RddRegister(   'ADS', 1 )
-      RddSetDefault( 'ADSCDX' )
-
-      AdsSetServerType( 7 )   // ADS_LOCAL_SERVER
-      AdsSetFileType( 2 )     // ADS_CDX
-
-      AdsRightsCheck( .f. )
-
-      AdsCacheOpenTables( 250 )
-
-      nError      := AdsIsServerLoaded( cAdsIp )
-      if nError == 0
-         adsGetLastError( @cError )
-         msgStop( cError, "Salida de la aplicación" )
-         Return .f.
-      end if
-
-   case ( "ADSINTERNET" $ cAdsType )
+   if ( "ADSINTERNET" $ cAdsType )
 
       lAIS( .t. )
       cIp( cAdsIp )
@@ -198,7 +160,7 @@ function Main( cParams )
 
       end with
 
-   otherwise
+   else 
 
       lCdx( .t. )
 
@@ -350,7 +312,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( DToC( GetSysDate() ) ) + 12,,,, .t., { || SelSysDate() } )
    oWnd:oMsgBar:oDate:lTimer  := .t.
-   oWnd:oMsgBar:oDate:bMsg    := { || GetSysDate() }
+   oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
    oWnd:oMsgBar:CheckTimer()
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : "      + Rtrim( oUser():cNombre() ), 200,,,, .t. )
@@ -1007,9 +969,9 @@ Function lStartCheck()
 
    CursorWait()
 
-   oMsgText( 'Chequeando versión de empresa' )
-
    // Chequeamos los cambios de versiones--------------------------------------
+
+   oMsgText( 'Chequeando versión de empresa' )
 
    ChkAllEmp()
 

@@ -446,7 +446,7 @@ FUNCTION mkCajPorta( cPath, lAppend, cPathOld, oMeter )
 
    oCajPorta:Activate( .f., .t. )
 
-   if lAppend .and. lExistTable( cPathOld + "CajPorta.Dbf" )
+   if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "CajPorta.Dbf" )
       oCajPorta:AppendFrom( cPathOld + "CajPorta.Dbf" )
    end if
 

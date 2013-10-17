@@ -1301,7 +1301,7 @@ FUNCTION mkFPago( cPath, lAppend, cPathOld )
 
    dbCreate( cPath + "Fpago.Dbf", aSqlStruct( aItmFPago() ), cDriver() )
 
-   if lAppend .and. lExistTable( cPathOld + "Fpago.Dbf" )
+   if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "Fpago.Dbf" )
       dbUseArea( .t., cDriver(), cPath + "Fpago.Dbf", cCheckArea( "Fpago", @dbfFormasPago ), .f. )
       ( dbfFormasPago )->( __dbApp( cPathOld + "Fpago.Dbf" ) )
       ( dbfFormasPago )->( dbCloseArea() )

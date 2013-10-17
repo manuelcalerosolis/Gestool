@@ -6179,6 +6179,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lLote      := (dbfAlbCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfAlbCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfAlbCliL)->cLote
+               (dbfTmpLin)->dFecCad    := (dbfAlbCliL)->dFecCad
                (dbfTmpLin)->lControl   := (dbfAlbCliL)->lControl
                (dbfTmpLin)->lMsgVta    := (dbfAlbCliL)->lMsgVta
                (dbfTmpLin)->lNotVta    := (dbfAlbCliL)->lNotVta
@@ -6205,7 +6206,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->nIncPnt    := (dbfAlbCliL)->nIncPnt
                (dbfTmpLin)->nFacCnv    := (dbfAlbCliL)->nFacCnv
                (dbfTmpLin)->lLinOfe    := (dbfAlbCliL)->lLinOfe
-               (dbfTmpLin)->dFecCad    := (dbfAlbCliL)->dFecCad
                (dbfTmpLin)->cNumSat 	:= (dbfAlbCliL)->cNumSat
                (dbfTmpLin)->cSuPed     := cSuPed
 
@@ -6459,42 +6459,43 @@ STATIC FUNCTION cFacPrv( cFacPrv, aGet, aTmp, oBrw, nMode )
             if !( dbfFacPrvL )->lControl
 
                ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin    := ( dbfFacPrvL )->nNumLin
-               ( dbfTmpLin )->cRef       := ( dbfFacPrvL )->cRef
-               ( dbfTmpLin )->cRefPrv    := ( dbfFacPrvL )->cRefPrv
-               ( dbfTmpLin )->cDetalle   := ( dbfFacPrvL )->cDetalle
-               ( dbfTmpLin )->mLngDes    := ( dbfFacPrvL )->mLngDes
-               ( dbfTmpLin )->mNumSer    := ( dbfFacPrvL )->mNumSer
-               ( dbfTmpLin )->nCanEnt    := ( dbfFacPrvL )->nCanEnt
-               ( dbfTmpLin )->cUnidad    := ( dbfFacPrvL )->cUnidad
-               ( dbfTmpLin )->nUniCaja   := ( dbfFacPrvL )->nUniCaja
-               ( dbfTmpLin )->nIva       := ( dbfFacPrvL )->nIva
-               ( dbfTmpLin )->nReq       := ( dbfFacPrvL )->nReq
-               ( dbfTmpLin )->dFecha     := ( dbfFacPrvT )->dFecFac
-               ( dbfTmpLin )->nCtlStk    := ( dbfFacPrvL )->nCtlStk
-               ( dbfTmpLin )->cAlmLin    := ( dbfFacPrvL )->cAlmLin
-               ( dbfTmpLin )->lIvaLin    := ( dbfFacPrvL )->lIvaLin
-               ( dbfTmpLin )->cCodPr1    := ( dbfFacPrvL )->cCodPr1
-               ( dbfTmpLin )->cCodPr2    := ( dbfFacPrvL )->cCodPr2
-               ( dbfTmpLin )->cValPr1    := ( dbfFacPrvL )->cValPr1
-               ( dbfTmpLin )->cValPr2    := ( dbfFacPrvL )->cValPr2
-               ( dbfTmpLin )->nCosDiv    := ( dbfFacPrvL )->nPreUnit
-               ( dbfTmpLin )->lKitArt    := ( dbfFacPrvL )->lKitArt
-               ( dbfTmpLin )->lKitChl    := ( dbfFacPrvL )->lKitChl
-               ( dbfTmpLin )->lKitPrc    := ( dbfFacPrvL )->lKitPrc
-               ( dbfTmpLin )->lLote      := ( dbfFacPrvL )->lLote
-               ( dbfTmpLin )->nLote      := ( dbfFacPrvL )->nLote
-               ( dbfTmpLin )->cLote      := ( dbfFacPrvL )->cLote
-               ( dbfTmpLin )->cCodFam    := ( dbfFacPrvL )->cCodFam
-               ( dbfTmpLin )->cGrpFam    := ( dbfFacPrvL )->cGrpFam
-               ( dbfTmpLin )->cCodPrv    := ( dbfFacPrvT )->cCodPrv
-               ( dbfTmpLin )->cNomPrv    := ( dbfFacPrvT )->cNomPrv
-               ( dbfTmpLin )->nNumMed    := ( dbfFacPrvL )->nNumMed
-               ( dbfTmpLin )->nMedUno    := ( dbfFacPrvL )->nMedUno
-               ( dbfTmpLin )->nMedDos    := ( dbfFacPrvL )->nMedDos
-               ( dbfTmpLin )->nMedTre    := ( dbfFacPrvL )->nMedTre
-               ( dbfTmpLin )->nFacCnv    := ( dbfFacPrvL )->nFacCnv
-               ( dbfTmpLin )->mObsLin    := ( dbfFacPrvL )->mObsLin
+               ( dbfTmpLin )->nNumLin    	:= ( dbfFacPrvL )->nNumLin
+               ( dbfTmpLin )->cRef       	:= ( dbfFacPrvL )->cRef
+               ( dbfTmpLin )->cRefPrv    	:= ( dbfFacPrvL )->cRefPrv
+               ( dbfTmpLin )->cDetalle   	:= ( dbfFacPrvL )->cDetalle
+               ( dbfTmpLin )->mLngDes    	:= ( dbfFacPrvL )->mLngDes
+               ( dbfTmpLin )->mNumSer    	:= ( dbfFacPrvL )->mNumSer
+               ( dbfTmpLin )->nCanEnt    	:= ( dbfFacPrvL )->nCanEnt
+               ( dbfTmpLin )->cUnidad    	:= ( dbfFacPrvL )->cUnidad
+               ( dbfTmpLin )->nUniCaja   	:= ( dbfFacPrvL )->nUniCaja
+               ( dbfTmpLin )->nIva       	:= ( dbfFacPrvL )->nIva
+               ( dbfTmpLin )->nReq       	:= ( dbfFacPrvL )->nReq
+               ( dbfTmpLin )->dFecha     	:= ( dbfFacPrvT )->dFecFac
+               ( dbfTmpLin )->nCtlStk    	:= ( dbfFacPrvL )->nCtlStk
+               ( dbfTmpLin )->cAlmLin    	:= ( dbfFacPrvL )->cAlmLin
+               ( dbfTmpLin )->lIvaLin    	:= ( dbfFacPrvL )->lIvaLin
+               ( dbfTmpLin )->cCodPr1    	:= ( dbfFacPrvL )->cCodPr1
+               ( dbfTmpLin )->cCodPr2    	:= ( dbfFacPrvL )->cCodPr2
+               ( dbfTmpLin )->cValPr1    	:= ( dbfFacPrvL )->cValPr1
+               ( dbfTmpLin )->cValPr2    	:= ( dbfFacPrvL )->cValPr2
+               ( dbfTmpLin )->nCosDiv    	:= ( dbfFacPrvL )->nPreUnit
+               ( dbfTmpLin )->lKitArt    	:= ( dbfFacPrvL )->lKitArt
+               ( dbfTmpLin )->lKitChl    	:= ( dbfFacPrvL )->lKitChl
+               ( dbfTmpLin )->lKitPrc    	:= ( dbfFacPrvL )->lKitPrc
+               ( dbfTmpLin )->lLote      	:= ( dbfFacPrvL )->lLote
+               ( dbfTmpLin )->nLote      	:= ( dbfFacPrvL )->nLote
+               ( dbfTmpLin )->cLote      	:= ( dbfFacPrvL )->cLote
+               ( dbfTmpLin )->dFecCad   	:= ( dbfFacPrvL )->dFecCad
+               ( dbfTmpLin )->cCodFam    	:= ( dbfFacPrvL )->cCodFam
+               ( dbfTmpLin )->cGrpFam    	:= ( dbfFacPrvL )->cGrpFam
+               ( dbfTmpLin )->cCodPrv    	:= ( dbfFacPrvT )->cCodPrv
+               ( dbfTmpLin )->cNomPrv    	:= ( dbfFacPrvT )->cNomPrv
+               ( dbfTmpLin )->nNumMed    	:= ( dbfFacPrvL )->nNumMed
+               ( dbfTmpLin )->nMedUno    	:= ( dbfFacPrvL )->nMedUno
+               ( dbfTmpLin )->nMedDos    	:= ( dbfFacPrvL )->nMedDos
+               ( dbfTmpLin )->nMedTre    	:= ( dbfFacPrvL )->nMedTre
+               ( dbfTmpLin )->nFacCnv    	:= ( dbfFacPrvL )->nFacCnv
+               ( dbfTmpLin )->mObsLin    	:= ( dbfFacPrvL )->mObsLin
 
             end if
 
@@ -9766,6 +9767,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->lLote    := ( dbfAlbCliL )->lLote
                ( dbfTmpLin )->nLote    := ( dbfAlbCliL )->nLote
                ( dbfTmpLin )->cLote    := ( dbfAlbCliL )->cLote
+               ( dbfTmpLin )->dFecCad  := ( dbfAlbCliL )->dFecCad
                ( dbfTmpLin )->lControl := ( dbfAlbCliL )->lControl
                ( dbfTmpLin )->lNotVta  := ( dbfAlbCliL )->lNotVta
                ( dbfTmpLin )->lImpLin  := ( dbfAlbCliL )->lImpLin
@@ -9792,7 +9794,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->nIncPnt  := ( dbfAlbCliL )->nIncPnt
                ( dbfTmpLin )->nFacCnv  := ( dbfAlbCliL )->nFacCnv
                ( dbfTmpLin )->lLinOfe  := ( dbfAlbCliL )->lLinOfe
-               ( dbfTmpLin )->dFecCad  := ( dbfAlbCliL )->dFecCad
                ( dbfTmpLin )->cNumSat  := ( dbfAlbCliL )->cNumSat
                ( dbfTmpLin )->cSuPed   := cSuPed
 

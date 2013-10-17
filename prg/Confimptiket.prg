@@ -459,7 +459,7 @@ FUNCTION mkImpTik( cPath, lAppend, cPathOld, oMeter )
 
    oImpTik:Activate( .f., .f. )
 
-   if lAppend .and. lExistTable( cPathOld + "IMPTIK.DBF" )
+   if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "IMPTIK.DBF" )
       oImpTik:AppendFrom( cPathOld + "IMPTIK.DBF" )
    end if
 

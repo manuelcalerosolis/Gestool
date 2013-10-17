@@ -1334,7 +1334,7 @@ Return ( fRename( cTableOld, cTableNew ) )
 
 Function dbSafeUnlock( cAlias )
 
-   // if Select( cAlias ) != 0
+   // if ( cAlias )->( Used() )
       ( cAlias )->( dbUnLock() )
    // end if
 
@@ -1486,18 +1486,12 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
-   /*
-   if lAdsRDD()
-      ( cAlias )->( dbClearFilter() )
-   end if
-   */
-   
    aTmp           := dbBlankRec( cAlias )
 
    aGet           := Array( ( cAlias )->( fCount() ) )
 
 	/*
-	Bloqueamos el registro durante la edici¢n
+	Bloqueamos el registro durante la edición-----------------------------------
 	*/
 
    lReturn        := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, APPD_MODE, xOthers )
@@ -1747,9 +1741,9 @@ Return .f.
 
 //--------------------------------------------------------------------------//
 /*
-Devuelve un array con un registro en blanco, del alias pasado como
-argumento
+Devuelve un array con un registro en blanco, del alias pasado como argumento
 */
+
 Function dbBlankRec( cAlias )
 
    local i

@@ -3141,7 +3141,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArtEnt, nMode
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
-   cOldCodArt              := aTmp[ _CREF ]
+   cOldCodArt              := aTmp[ _CREF    ]
    cOldPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    cOldUndMed              := aTmp[ _CUNIDAD ]
 
@@ -3161,7 +3161,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArtEnt, nMode
    case nMode == EDIT_MODE
 
       if !Empty( aTmp[ _CREF ] )
-         ( dbfArticulo )->( dbSeek( aTmp[ _CREF ] ) )
+         ( dbfArticulo )->( dbSeek( Alltrim( aTmp[ _CREF ] ) ) )
       end if
 
    end case
@@ -3198,7 +3198,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oSayLote, oBeneficioSobre, oTotal, nMode ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[_CREF], aGet[_CDETALLE] ) ) ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -3846,8 +3846,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArtEnt, nMode
    oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
    oDlg:bStart    := {|| SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oTotal, oBrwPrp, oGetIra ),;
-                         if( !Empty( cCodArt ), aGet[ _CREF ]:lValid(), ),;
-                         aGet[ _CUNIDAD ]:lValid() }
+                         if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -5774,7 +5773,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
       if Len( Alltrim( cCodArt ) ) > 18
 
-         hHas128              := ReadCodeGS128(  )
+         hHas128              := ReadCodeGS128( cCodArt )
          if !Empty( hHas128 )
             cCodArt           := uGetCodigo( hHas128, "01" )
             cLote             := uGetCodigo( hHas128, "10" )

@@ -349,7 +349,7 @@ FUNCTION mkSitua( cPath, lAppend, cPathOld )
       fErase( cPath + "Situa.Cdx" )
    end if
 
-   if lAppend .and. lExistTable( cPathOld + "Situa.Dbf" )
+   if lAppend .and. lIsDir( cPathOld ) .and. lExistTable( cPathOld + "Situa.Dbf" )
 
       dbUseArea( .t., cDriver(), "Situa.Dbf", cCheckArea( "Situa", @dbfSitua ), .f. )
       ( dbfSitua )->( __dbApp( cPathOld + "Situa.Dbf" ) )
