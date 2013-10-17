@@ -53,6 +53,7 @@ CLASS TReindex
    DATA  lEmpresa          INIT .t.
    DATA  lSincroniza       INIT .t.
    DATA  lMessageEnd       INIT .t.
+   DATA  lCloseAll         INIT .t.
 
    METHOD New( oWnd )      CONSTRUCTOR
 
@@ -124,7 +125,9 @@ METHOD GenIndices( oMsg )
 
    StopServices()
 
-   dbCloseAll()
+   if ::lCloseAll
+      dbCloseAll()
+   end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -535,7 +538,9 @@ METHOD GenIndices( oMsg )
          ::oDlg:End()
       end if
 
-      dbCloseAll()
+      if ::lCloseAll
+         dbCloseAll()
+      end if
 
    END SEQUENCE
 
@@ -667,7 +672,9 @@ METHOD Resource( lAutoInit )
 
    // Cerramos posibles tablas-------------------------------------------------
 
-   dbCloseAll()
+   if ::lCloseAll
+      dbCloseAll()
+   end if 
 
    // Iniciamos los servicios--------------------------------------------------
 

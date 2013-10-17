@@ -3308,7 +3308,7 @@ Return ( oDlg:nResult == IDOK )
 Edita las lineas de Detalle
 */
 
-STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArt, nMode )
+STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArtEnt, nMode )
 
 	local oDlg
 	local oFld
@@ -3332,12 +3332,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArt, nMode )
    local nStkAct           := 0
    local oStkAct
    local oBtnSer
+   local cCodArt           := Padr( aTmp[ _CREF ], 200 )
+
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
-   cOldCodArt              := aTmp[ _CREF ]
+   cOldCodArt              := aTmp[ _CREF    ]
    cOldPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    cOldUndMed              := aTmp[ _CUNIDAD ]
 
@@ -3349,14 +3351,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArt, nMode )
       aTmp[ _NNUMLIN  ]    := nLastNum( dbfTmp )
       aTmp[ _DFECCAD  ]    := Ctod( "" )
 
-      if !Empty( cCodArt )
-         aTmp[ _CREF ]     := cCodArt
+      if !Empty( cCodArtEnt )
+         cCodArt           := cCodArtEnt
       end if
 
    case nMode == EDIT_MODE
 
       if !Empty( aTmp[ _CREF ] )
-         ( dbfArticulo )->( dbSeek( aTmp[ _CREF ] ) )
+         ( dbfArticulo )->( dbSeek( Alltrim( aTmp[ _CREF ] ) ) )
       end if
 
    end case
@@ -3377,13 +3379,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArt, nMode )
                   "LALBPRV_3",;
                   "LFACPRV_5"
 
-      REDEFINE GET aGet[ _CREF ] VAR aTmp[ _CREF ];
+      REDEFINE GET aGet[ _CREF ] VAR cCodArt ;
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal ) );
-			COLOR 	CLR_GET ;
+         VALID    ( LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[_CREF], aGet[_CDETALLE] ) ) ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
       /*
@@ -3442,7 +3443,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArt, nMode )
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[_CCODPR1 ], dbfTblPro ),;
-                        LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal ),;
+                        LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -3465,7 +3466,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfRctPrvL, oBrw, aTmpFac, cCodArt, nMode )
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
-                        LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal ),;
+                        LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -3802,7 +3803,7 @@ return .t.
 
 STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, oBrwPrp, oGetIra )
 
-   local cCodArt  := aGet[ _CREF ]:VarGet()
+   local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
    if !lUseCaj()
       aGet[ _NCANENT ]:Hide()
@@ -3831,31 +3832,34 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    do case
    case nMode == APPD_MODE
 
-      aGet[_CREF    ]:show()
-      aGet[_CDETALLE]:show()
-      aGet[_MLNGDES ]:hide()
-      aGet[_CLOTE   ]:hide()
-      aGet[_DFECCAD ]:hide()
-      aGet[_NCANENT ]:cText( 1 )
-      aGet[_NUNICAJA]:cText( 1 )
-      aGet[_CALMLIN ]:cText( aTmpFac[ _CCODALM ] )
-      aGet[_NIVA    ]:cText( nIva( dbfIva, cDefIva() ) )
+      aGet[ _CREF    ]:Show()
+      aGet[ _CREF    ]:cText( Space( 200 ) )
+
+      aGet[ _CDETALLE]:show()
+
+      aGet[ _MLNGDES ]:hide()
+      aGet[ _CLOTE   ]:hide()
+      aGet[ _DFECCAD ]:hide()
+      aGet[ _NCANENT ]:cText( 1 )
+      aGet[ _NUNICAJA]:cText( 1 )
+      aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ] )
+      aGet[ _NIVA    ]:cText( nIva( dbfIva, cDefIva() ) )
 
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
-      aGet[_CREF    ]:hide()
-		aGet[_CDETALLE]:hide()
-		aGet[_MLNGDES ]:show()
-      aGet[_CLOTE   ]:hide()
-      aGet[_DFECCAD ]:hide()
+      aGet[ _CREF    ]:hide()
+		aGet[ _CDETALLE]:hide()
+		aGet[ _MLNGDES ]:show()
+      aGet[ _CLOTE   ]:hide()
+      aGet[ _DFECCAD ]:hide()
 
    case nMode != APPD_MODE .AND. !empty( cCodArt )
 
-      aGet[_CREF    ]:show()
-		aGet[_CDETALLE]:show()
-		aGet[_MLNGDES ]:hide()
+      aGet[ _CREF    ]:show()
+		aGet[ _CDETALLE]:show()
+		aGet[ _MLNGDES ]:hide()
 
-      if aTmp[ _LLOTE ]
+      if aTmp[ _LLOTE   ]
          aGet[ _CLOTE   ]:Show()
          aGet[ _DFECFAC ]:Show()
       else
@@ -3891,13 +3895,15 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       oSayVp2:hide()
    end if
 
-   //Ocultamos las tres unidades de medicion
+   /*
+   Ocultamos las tres unidades de medicion-------------------------------------
+   */
 
    aGet[ ( dbfRctPrvL )->( fieldpos( "nMedUno" ) ) ]:Hide()
    aGet[ ( dbfRctPrvL )->( fieldpos( "nMedDos" ) ) ]:Hide()
    aGet[ ( dbfRctPrvL )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
-   if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
+   if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
       if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
          aGet[ ( dbfRctPrvL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
@@ -3917,6 +3923,8 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    end if
 
    aGet[ _CALMLIN ]:lValid()
+   aGet[ _CUNIDAD ]:lValid()
+
    aGet[ _CREF    ]:SetFocus()
 
 Return Nil
@@ -5524,8 +5532,11 @@ RETURN lValid
 Carga los articulos
 */
 
-STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal )
+STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oTotal )
 
+   local hHas128
+   local cLote
+   local dFechaCaducidad
    local nIva
    local nOrdAnt
    local nPreUnt
@@ -5533,13 +5544,11 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
    local cCodFam
    local cPrpArt
    local cCodPrv
-   local cCodArt
    local lChgCodArt
    local lSeek       := .f.
 
    nIva              := 0
    cCodPrv           := aTmpFac[ _CCODPRV ]
-   cCodArt           := aGet[ _CREF    ]:VarGet()
    cPrpArt           := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    lChgCodArt        := ( Rtrim( cOldCodArt ) != Rtrim( cCodArt ) .or. Rtrim( cOldPrpArt ) != Rtrim( cPrpArt ) )
 
@@ -5550,12 +5559,12 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
          return .f.
       end if
 
-		aGet[_NIVA    ]:bWhen	:= {|| .t. }
+		aGet[ _NIVA    ]:bWhen	:= {|| .t. }
 
-      aGet[_CDETALLE]:Hide()
+      aGet[ _CDETALLE]:Hide()
 
-      aGet[_MLNGDES ]:Show()
-      aGet[_MLNGDES ]:SetFocus()
+      aGet[ _MLNGDES ]:Show()
+      aGet[ _MLNGDES ]:SetFocus()
 
       if !Empty( oBrwPrp )
          oBrwPrp:Hide()
@@ -5564,40 +5573,33 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
    else
 
       if lModIva()
-			aGet[_NIVA ]:bWhen	:= {|| .t. }
+			aGet[ _NIVA ]:bWhen	:= {|| .t. }
       else
-			aGet[_NIVA ]:bWhen	:= {|| .f. }
+			aGet[ _NIVA ]:bWhen	:= {|| .f. }
       end if
 
-		aGet[_CREF    ]:show()
-		aGet[_CDETALLE]:show()
-		aGet[_MLNGDES ]:hide()
+		aGet[ _CREF    ]:show()
+		aGet[ _CDETALLE]:show()
+		aGet[ _MLNGDES ]:hide()
 
-/*
-      if !( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
+      /*
+      Buscamos codificacion GS1-128--------------------------------------------
+      */
 
-         // Busqueda por codigo de proveedor-----------------------------------------
+      if Len( Alltrim( cCodArt ) ) > 18
 
-         nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
-
-         if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
-            cCodArt              := ( dbfArtPrv )->cCodArt
-         end if
-
-         ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
-
-         // Primero buscamos por codigos de barra------------------------------------
-
-         cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
-
-         lSeek                   := ( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
-
-      else
-
-         lSeek                   := .t.
+         hHas128              := ReadCodeGS128( cCodArt )
+         if !Empty( hHas128 )
+            cCodArt           := uGetCodigo( hHas128, "01" )
+            cLote             := uGetCodigo( hHas128, "10" )
+            dFechaCaducidad   := uGetCodigo( hHas128, "15" )
+         end if 
 
       end if
-*/
+
+      /*
+      Ahora buscamos por el codigo interno-------------------------------------
+      */
 
       if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
 
@@ -5608,25 +5610,43 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
                return .f.
             end if
 
-            /*
-            Lotes
-            ---------------------------------------------------------------------
-            */
+            cCodArt              := ( dbfArticulo )->Codigo
 
-            aTmp[ _LLOTE  ]         := ( dbfArticulo )->lLote
+            aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
+            aTmp[ _CREF ]        := cCodArt
 
             if ( dbfArticulo )->lLote
-               aGet[ _CLOTE   ]:show()
-               aGet[ _CLOTE   ]:cText( ( dbfArticulo )->cLote )
-               aGet[ _DFECCAD ]:show()
-               aGet[ _DFECCAD ]:cText( dFechaCaducidad( aTmpFac[ _DFECFAC ], ( dbfArticulo )->nDuracion, ( dbfArticulo )->nTipDur ) )
+
+               if Empty( cLote )
+                  cLote          := ( dbfArticulo )->cLote
+               end if 
+
+               aGet[ _CLOTE   ]:Show()
+               aGet[ _CLOTE   ]:cText( cLote )
+
+               /*
+               Fecha de caducidad----------------------------------------------
+               */
+
+               if Empty( dFechaCaducidad )
+                  dFechaCaducidad   := dFechaCaducidadLote( cCodArt, aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+               end if 
+
+               aGet[ _DFECCAD ]:Show()
+
+               if Empty( aTmp[ _DFECCAD ] )
+                  aGet[ _DFECCAD ]:cText( dFechaCaducidad )
+               end if
+
             else
-               aGet[ _CLOTE   ]:hide()
-               aGet[ _DFECCAD ]:hide()
+
+               aGet[ _CLOTE   ]:Hide()
+               aGet[ _DFECCAD ]:Hide()
+
             end if
 
             /*
-            Cogemos las familias y grupos de familias
+            Cogemos las familias y grupos de familias-----------------------------
             */
 
             cCodFam              := ( dbfArticulo )->Familia
@@ -5674,8 +5694,8 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
             oFld:aEnable := { .t., .t., .t. }
             oFld:refresh()
 
-            aGet[_CREF    ]:cText( ( dbfArticulo )->Codigo )
-            aGet[_CDETALLE]:cText( ( dbfArticulo )->Nombre )
+            aGet[ _CREF     ]:cText( ( dbfArticulo )->Codigo )
+            aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
 
             if ( dbfArticulo )->lMosCom .and. !Empty( ( dbfArticulo )->mComent )
                MsgStop( Trim( ( dbfArticulo )->mComent ) )

@@ -196,16 +196,16 @@ METHOD OpenFiles()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
    else
-      DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() ) CLASS "CLIGST"  SHARED INDEX "CLIENT.CDX"
-      DATABASE NEW ::oDbfObrGst PATH ( cPatCli() )  FILE "OBRAST.DBF"   VIA ( cDriver() ) CLASS "OBRGST"  SHARED INDEX "OBRAST.CDX"
-      DATABASE NEW ::oDbfAtpGst PATH ( cPatCli() )  FILE "CLIATP.DBF"   VIA ( cDriver() ) CLASS "ATPGST"  SHARED INDEX "CLIATP.CDX"
-      DATABASE NEW ::oDbfBncGst PATH ( cPatCli() )  FILE "CliBnc.DBF"   VIA ( cDriver() ) CLASS "CliBnc"  SHARED INDEX "CliBnc.CDX"
-      DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTES.DBF" VIA ( cLocalDriver() ) CLASS "CLIFAC"
-      DATABASE NEW ::oDbfObrFac PATH ( ::cPathFac ) FILE "DIRCLI.DBF"   VIA ( cLocalDriver() ) CLASS "OBRFAC"
-      DATABASE NEW ::oDbfBncFac PATH ( ::cPathFac ) FILE "BancosCL.DBF" VIA ( cLocalDriver() ) CLASS "BancosCL"
-      DATABASE NEW ::oDbfAtpFac PATH ( ::cPathFac ) FILE "ATIPICAS.DBF" VIA ( cLocalDriver() ) CLASS "ATPFAC"
-      DATABASE NEW ::oDbfProvFac PATH ( ::cPathFac ) FILE "PROVINC.DBF" VIA ( cLocalDriver() ) CLASS "PROVFAC" SHARED INDEX "PROVINC.CDX"
-      DATABASE NEW ::oDbfCliCom PATH ( ::cPathFac ) FILE "ClienteC.Dbf" VIA ( cLocalDriver() ) CLASS "ClienteC" SHARED INDEX "ClienteC.Cdx"
+      DATABASE NEW ::oDbfCliGst  PATH ( cPatCli() )  FILE "CLIENT.DBF"     VIA ( cDriver() )       CLASS "Cligst"  SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfObrGst  PATH ( cPatCli() )  FILE "OBRAST.DBF"     VIA ( cDriver() )       CLASS "Obrgst"  SHARED INDEX "OBRAST.CDX"
+      DATABASE NEW ::oDbfAtpGst  PATH ( cPatCli() )  FILE "CLIATP.DBF"     VIA ( cDriver() )       CLASS "Atpgst"  SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oDbfBncGst  PATH ( cPatCli() )  FILE "CliBnc.DBF"     VIA ( cDriver() )       CLASS "Clibnc"  SHARED INDEX "CliBnc.CDX"
+      DATABASE NEW ::oDbfCliFac  PATH ( ::cPathFac ) FILE "CLIENTES.DBF"   VIA ( cLocalDriver() )  CLASS "Clifac"
+      DATABASE NEW ::oDbfObrFac  PATH ( ::cPathFac ) FILE "DIRCLI.DBF"     VIA ( cLocalDriver() )  CLASS "Obrfac"
+      DATABASE NEW ::oDbfBncFac  PATH ( ::cPathFac ) FILE "BancosCL.DBF"   VIA ( cLocalDriver() )  CLASS "Bancoscl"
+      DATABASE NEW ::oDbfAtpFac  PATH ( ::cPathFac ) FILE "ATIPICAS.DBF"   VIA ( cLocalDriver() )  CLASS "Atpfac"
+      DATABASE NEW ::oDbfProvFac PATH ( ::cPathFac ) FILE "PROVINC.DBF"    VIA ( cLocalDriver() )  CLASS "Provfac"   SHARED INDEX "PROVINC.CDX"
+      DATABASE NEW ::oDbfCliCom  PATH ( ::cPathFac ) FILE "ClienteC.Dbf"   VIA ( cLocalDriver() )  CLASS "Clientec"  SHARED INDEX "ClienteC.Cdx"
    end if
 
    if !File( ::cPathFac + "FPAGO.DBF" )
@@ -1067,10 +1067,8 @@ METHOD Importar()
             ::oDbfArtGst:Benef2     := ::oDbfArtFac:nBenefMay
             ::oDbfArtGst:pVenta1    := ::oDbfArtFac:nPvp
             ::oDbfArtGst:pVtaIva1   := ::oDbfArtFac:nPConIva
-            ::oDbfArtGst:pVenta3    := ::oDbfArtFac:nPvp - ( ::oDbfArtFac:nPvp * ::oDbfArtFac:nDto1 / 100 )
-            ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:nPConIva - ( ::oDbfArtFac:nPConIva * ::oDbfArtFac:nDto1 / 100 )
-            ::oDbfArtGst:pVenta5    := ::oDbfArtFac:nPreMayor
-            ::oDbfArtGst:pVtaIva5   := ::oDbfArtFac:nPMConIva
+            ::oDbfArtGst:pVenta2    := ::oDbfArtFac:nPreMayor
+            ::oDbfArtGst:pVtaIva2   := ::oDbfArtFac:nPMConIva
             ::oDbfArtGst:nMinimo    := ::oDbfArtFac:nStockMin
             ::oDbfArtGst:TipoIva    := ::oDbfArtFac:cTipoIva
             ::oDbfArtGst:Familia    := ::oDbfArtFac:cCodFAm
@@ -1085,6 +1083,12 @@ METHOD Importar()
             ::oDbfArtGst:cImagen    := ::oDbfArtFac:cImagen
             ::oDbfArtGst:lKitArt    := ::oDbfArtFac:lKit
             ::oDbfArtGst:cPrvHab    := ::oDbfArtFac:cCodPro
+            ::oDbfArtGst:nDtoArt1   := ::oDbfArtFac:nDto1
+            ::oDbfArtGst:nDtoArt2   := ::oDbfArtFac:nDto2
+            ::oDbfArtGst:nDtoArt3   := ::oDbfArtFac:nDto3
+            ::oDbfArtGst:nDtoArt4   := ::oDbfArtFac:nDto4
+            ::oDbfArtGst:nDtoArt5   := ::oDbfArtFac:nDto5
+            ::oDbfArtGst:nDtoArt6   := ::oDbfArtFac:nDto6
 
             /*
             ----------------------------------------------------------------------
@@ -1269,28 +1273,28 @@ METHOD Importar()
 
             ::oDbfCliGst:Append()
 
-            cControl               := cDgtControl( ::oDbfCliFac:cEntidad, ::oDbfCliFac:cAgencia, Space( 2 ), ::oDbfCliFac:cCuenta )
+            cControl                := cDgtControl( ::oDbfCliFac:cEntidad, ::oDbfCliFac:cAgencia, Space( 2 ), ::oDbfCliFac:cCuenta )
 
-            ::oDbfCliGst:Cod       := cCodCli
-            ::oDbfCliGst:Titulo    := ::oDbfCliFac:cNomCli
-            ::oDbfCliGst:Nif       := ::oDbfCliFac:cDniCif
-            ::oDbfCliGst:Domicilio := ::oDbfCliFac:cDirCli
-            ::oDbfCliGst:Poblacion := ::oDbfCliFac:cPobCli
-            if ::oDbfProvFac:Seek( ::oDbfCliFac:cCodProv )
-               ::oDbfCliGst:Provincia := ::oDbfProvFac:cNomProv
+            ::oDbfCliGst:Cod        := cCodCli
+            ::oDbfCliGst:Titulo     := ::oDbfCliFac:cNomCli
+            ::oDbfCliGst:Nif        := ::oDbfCliFac:cDniCif
+            ::oDbfCliGst:Domicilio  := ::oDbfCliFac:cDirCli
+            ::oDbfCliGst:Poblacion  := ::oDbfCliFac:cPobCli
+            if ::oDbfProvFac:Seek(  ::oDbfCliFac:cCodProv )
+               ::oDbfCliGst:Provincia  := ::oDbfProvFac:cNomProv
             end if
-            ::oDbfCliGst:CodPostal := ::oDbfCliFac:cPtlCli
-            ::oDbfCliGst:Telefono  := ::oDbfCliFac:cTfO1Cli
-            ::oDbfCliGst:Fax       := ::oDbfCliFac:cFaxCli
-            ::oDbfCliGst:NbrEst    := ::oDbfCliFac:cNomCom
-            ::oDbfCliGst:DiaPago   := ::oDbfCliFac:nDia1Pago
-            ::oDbfCliGst:DiaPago2  := ::oDbfCliFac:nDia2Pago
-            ::oDbfCliGst:Banco     := ::oDbfCliFac:cNbrBco
-            ::oDbfCliGst:DirBanco  := ::oDbfCliFac:cDirBco
-            ::oDbfCliGst:PobBanco  := ::oDbfCliFac:cPobBco
-            ::oDbfCliGst:cProBanco := ::oDbfCliFac:cProvBco
-            ::oDbfCliGst:Cuenta    := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
-            ::oDbfCliGst:CodPago   := ::oDbfCliFac:cCodPAgo
+            ::oDbfCliGst:CodPostal  := ::oDbfCliFac:cPtlCli
+            ::oDbfCliGst:Telefono   := ::oDbfCliFac:cTfO1Cli
+            ::oDbfCliGst:Fax        := ::oDbfCliFac:cFaxCli
+            ::oDbfCliGst:NbrEst     := ::oDbfCliFac:cNomCom
+            ::oDbfCliGst:DiaPago    := ::oDbfCliFac:nDia1Pago
+            ::oDbfCliGst:DiaPago2   := ::oDbfCliFac:nDia2Pago
+            ::oDbfCliGst:Banco      := ::oDbfCliFac:cNbrBco
+            ::oDbfCliGst:DirBanco   := ::oDbfCliFac:cDirBco
+            ::oDbfCliGst:PobBanco   := ::oDbfCliFac:cPobBco
+            ::oDbfCliGst:cProBanco  := ::oDbfCliFac:cProvBco
+            ::oDbfCliGst:Cuenta     := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
+            ::oDbfCliGst:CodPago    := ::oDbfCliFac:cCodPAgo
             ::oDbfCliGst:nDpp       := ::oDbfCliFac:nDpp
             ::oDbfCliGst:Riesgo     := ::oDbfCliFac:nRiesgo
             ::oDbfCliGst:CopiasF    := ::oDbfCliFac:nCopFac
@@ -1301,6 +1305,7 @@ METHOD Importar()
             ::oDbfCliGst:CtaVenta   := ::oDbfCliFac:cCtaVtas
             ::oDbfCliGst:cAgente    := ::oDbfCliFac:cCodAge
             ::oDbfCliGst:lBlqCli    := .f.
+            ::oDbfCliGst:nDtoArt    := ::oDbfCliFac:nDto
 
             if Val( ::oDbfCliFac:cCodCli ) >= 10000 .and. Val( ::oDbfCliFac:cCodCli ) <= 99999
                ::oDbfCliGst:lChgPre := .f.
@@ -1314,14 +1319,11 @@ METHOD Importar()
                end if
             end if
 
-            do case
-               case ::oDbfCliFac:nDto == 6 .and. ::oDbfCliFac:lMayorista
-                  ::oDbfCliGst:nTarifa    := 5
-               case ::oDbfCliFac:nDto == 6 .and. !::oDbfCliFac:lMayorista
-                  ::oDbfCliGst:nTarifa    := 1
-               otherwise
-                  ::oDbfCliGst:nTarifa    := 3
-            end case
+            if ::oDbfCliFac:lMayorista
+               ::oDbfCliGst:nTarifa := 2
+            else             
+               ::oDbfCliGst:nTarifa := 1
+            end if
 
             ::oDbfCliGst:nLabel     := ::oDbfCliFac:nEtiquetas
             ::oDbfCliGst:mComent    := ::oDbfCliFac:cObser2Bco  // -1para Arguelles
@@ -3394,7 +3396,6 @@ RETURN ( Self )
 Static Function SpecialPadr( cCadena, cChar, nLen )
 
 Return( if( !Empty( cCadena ), Padr( RJust( cCadena, cChar, nLen ), 12, ' ' ), Space( 12 ) ) )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

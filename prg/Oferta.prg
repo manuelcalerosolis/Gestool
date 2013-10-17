@@ -2553,13 +2553,13 @@ FUNCTION mkOferta( cPath, lAppend, cPathOld, oMeter )
       dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver() )
    end if 
 
-   if lAppend .and. lExistTable( cPathOld + "Categorias.Dbf" )
+   if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "Oferta.Dbf" )
 
-      dbUseArea( .t., cDriver(), cPath + "Oferta.Dbf", cCheckArea( "Categorias", @dbfOfe ), .f. )
+      dbUseArea( .t., cDriver(), cPath + "Oferta.Dbf", cCheckArea( "Oferta", @dbfOfe ), .f. )
    
-      if !( dbfCategoria )->( neterr() )
-         ( dbfCategoria )->( __dbApp( cPathOld + "Oferta.Dbf" ) )
-         ( dbfCategoria )->( dbCloseArea() )
+      if !( dbfOfe )->( neterr() )
+         ( dbfOfe )->( __dbApp( cPathOld + "Oferta.Dbf" ) )
+         ( dbfOfe )->( dbCloseArea() )
       end if
    
    end if

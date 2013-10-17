@@ -4970,7 +4970,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   if !lNotPendiente
+   if !lNotPendiente .and. ( ::cAlbPrvL )->( Used() ) .and. ( ::cPedPrvL )->( Used() )
 
       /*
       Pendientes de recibir----------------------------------------------------
@@ -5112,19 +5112,19 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    Comprobamos la marca de la empresa para no mostrar los valores cero --------
    */
 
-   ( ::cPedPrvL )->( OrdSetFocus( nOrdPedPrvL ) )
-   ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
-   ( ::cAlbPrvS )->( OrdSetFocus( nOrdAlbPrvS ) )
-   ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
-   ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cPedCliL )->( OrdSetFocus( nOrdPedCliL ) )
-   ( ::cAlbCliL )->( OrdSetFocus( nOrdAlbCliL ) )
-   ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) )
-   ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) )
-   ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) )
-   ( ::cProducL )->( OrdSetFocus( nOrdProducL ) )
-   ( ::cProducM )->( OrdSetFocus( nOrdProducM ) )
-   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) )
+   if( ( ::cPedPrvL )->( Used() ), ( ::cPedPrvL )->( OrdSetFocus( nOrdPedPrvL ) ), )
+   if( ( ::cAlbPrvL )->( Used() ), ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) ), )
+   if( ( ::cAlbPrvS )->( Used() ), ( ::cAlbPrvS )->( OrdSetFocus( nOrdAlbPrvS ) ), )
+   if( ( ::cFacPrvL )->( Used() ), ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) ), )
+   if( ( ::cRctPrvL )->( Used() ), ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) ), )
+   if( ( ::cPedCliL )->( Used() ), ( ::cPedCliL )->( OrdSetFocus( nOrdPedCliL ) ), )
+   if( ( ::cAlbCliL )->( Used() ), ( ::cAlbCliL )->( OrdSetFocus( nOrdAlbCliL ) ), )
+   if( ( ::cFacCliL )->( Used() ), ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) ), )
+   if( ( ::cFacRecL )->( Used() ), ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) ), )
+   if( ( ::cTikL    )->( Used() ), ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) ), )
+   if( ( ::cProducL )->( Used() ), ( ::cProducL )->( OrdSetFocus( nOrdProducL ) ), )
+   if( ( ::cProducM )->( Used() ), ( ::cProducM )->( OrdSetFocus( nOrdProducM ) ), )
+   if( ( ::cHisMovT )->( Used() ), ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) ), )
 
    /*
    Repasamos el valor de lo obtenido-------------------------------------------

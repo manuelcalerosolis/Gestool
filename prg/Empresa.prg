@@ -28,11 +28,19 @@ static oBandera
 
 static cNewDlg
 static cNewBnc
-static lActEmp       := .t.
-static nIvaReq       := 1
+static lActEmp                := .t.
+static nIvaReq                := 1
+
+static cOldCodigoEmpresa    
+
+static nSemillaContadores     := 1
+
+static aImportacion         
+
 static cOldSerie
 static cOldNomSer
-static cNewEmpresa   := ""
+
+static cNewEmpresa            := ""
 
 static oOfficeBar
 
@@ -42,14 +50,14 @@ static oPais
 static cTmpCon
 static tmpDlgCon
 
-static bEdiT         := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
-static bEdtGrp       := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtGrp( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
-static bEdtC         := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtCnf( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
-static bEdtDlg       := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod | EdtDet( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod ) }
+static bEdit                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
+static bEdtGrp                := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtGrp( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
+static bEdtC                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtCnf( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
+static bEdtDlg                := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod | EdtDet( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod ) }
 
-static aItmEmp       := {}
-static aTiempo       := { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
-static aTiempoImp    := { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
+static aItmEmp                := {}
+static aTiempo                := { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
+static aTiempoImp             := { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
 static cTiempoPed
 
@@ -88,6 +96,7 @@ static cGrupoNFC
 
 static oGetPlantillaDefecto
 static cGetPlantillaDefecto
+
 
 //----------------------------------------------------------------------------//
 
@@ -296,10 +305,9 @@ FUNCTION Empresa( oMenuItem, oWnd )
 						"Nombre";
          MRU      "Office_Building_16";
          BITMAP   clrTopArchivos ;
-         APPEND   ( if( oUser():lCambiarEmpresa, WinAppRec( nil, bEdit, dbfEmp ), ) );
-         EDIT     ( if( oUser():lCambiarEmpresa, WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) ) ;
-         DELETE   ( if( oUser():lCambiarEmpresa, WinDelEmp( oWndBrw:oBrw, dbfEmp ), ) ) ;
-         DUPLICAT ( if( oUser():lCambiarEmpresa, WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) );
+         APPEND   ( if( oUser():lCambiarEmpresa, WinAppEmp(), ) );
+         EDIT     ( if( oUser():lCambiarEmpresa, WinEdtEmp(), ) ) ;
+         DELETE   ( if( oUser():lCambiarEmpresa, WinDelEmp(), ) ) ;
          LEVEL    nLevel ;
          XBROWSE ;
          OF       oWnd
@@ -364,7 +372,6 @@ if oUser():lCambiarEmpresa
       DEFINE BTNSHELL RESOURCE "NEW" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
-         ON DROP  ( oWndBrw:RecDup() );
          TOOLTIP  "(A)ñadir";
          HOTKEY   "A" ;
          BEGIN GROUP ;
@@ -431,6 +438,124 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
+Static Function WinAppEmp()
+
+   local cCodigoEmpresa
+   local cNombreEmpresa
+
+   if WinAppRec( oWndBrw, bEdit, dbfEmp )
+
+      cCodigoEmpresa := ( dbfEmp )->CodEmp
+      cNombreEmpresa := ( dbfEmp )->cNombre
+
+      /*
+      Cerramos la ventana------------------------------------------------------
+      */
+   
+      oWndBrw:QuitOnProcess()
+      oWndBrw:End()
+
+      /*
+      Cerramos todas los servicios---------------------------------------------
+      */
+
+      StopServices()
+
+      /*
+      Creamos empresa----------------------------------------------------------
+      */
+
+      dbCloseAll()
+
+      mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
+
+      /*
+      Establecemos la empresa como la seleccionada-----------------------------
+      */
+
+      SetEmpresa( cCodigoEmpresa, , , , , oWnd() )
+
+      /*
+      Iniciamos todas los servicios---------------------------------------------
+      */
+
+      InitServices()
+
+   end if
+
+RETURN ( nil )
+       
+//----------------------------------------------------------------------------//
+
+Static Function WinEdtEmp()
+
+   if WinEdtRec( oWndBrw, bEdit, dbfEmp )
+
+      /*
+      Establecemos la empresa como la seleccionada-----------------------------
+      */
+
+      SetEmpresa( ( dbfEmp )->CodEmp, , , , , oWnd() )
+
+   end if
+
+RETURN ( nil )
+       
+//----------------------------------------------------------------------------//
+/*
+Devuelve el Nombre de la Empresa Activa
+*/
+
+STATIC FUNCTION WinDelEmp()
+
+   local lRet     := .f.
+   local cPath    := FullCurDir() + "Emp" + ( dbfEmp )->CodEmp + "\"
+
+   if nUsrInUse() > 1
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      return ( lRet )
+   end if
+
+   if ( dbfEmp )->CodEmp == cCodigoEmpresaEnUso()
+
+      msgStop( "Imposible borrar empresa activa" )
+
+   else
+
+      if ApoloMsgNoYes( "Confirme eliminación de empresa", "Supresión de empresa" )
+
+         if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de empresa" )
+
+            CursorWait()
+
+            if IsDirectory( cPath )
+               EraseFilesInDirectory(cPath )
+            end if
+
+            while ( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
+               if dbLock( dbfDlg )
+                  ( dbfDlg )->( dbDelete() )
+                  ( dbfDlg )->( dbUnLock() )
+               end if
+            end while
+
+
+            DelRecno( dbfEmp, oWndBrw )
+
+            lRet  := .t.
+
+            CursorWE()
+
+         end if
+
+      end if
+
+   end if
+
+RETURN lRet
+
+//----------------------------------------------------------------------------//
+
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
@@ -440,17 +565,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 	local oNomEmp
 	local cNomEmp
 	local oCodEmp
-   local aImportacion   := aImportacion()
-   local cCodEmp        := Space( 4 )
 	local bmpEmp
+
    local oBmpEmp
+   local oBmpChg
+
    local oBrwDet
    local oBrwBnc
-   local oBmpChg
-   local oGetSemilla
-   local nGetSemilla    := 1
+   
+   local oSemilla
+   
    local oSayGrp
    local cSayGrp
+
+   local oGetSemilla
+   
    local oBmpGeneral
    local oBmpImportacion
    local oBmpDelegaciones
@@ -460,6 +589,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return .f.
    end if
+
+   cOldCodigoEmpresa    := Space( 4 )
+   nSemillaContadores   := 1
+   aImportacion         := aImportacion()
 
    // Para los servicios ------------------------------------------------------
 
@@ -705,11 +838,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldValores
 
-      REDEFINE GET oCodEmp VAR cCodEmp ;
+      REDEFINE GET oCodEmp VAR cOldCodigoEmpresa ;
          ID       100 ;
          PICTURE  "@!" ;
 			WHEN  	( nMode == APPD_MODE ) ;
-         VALID    ( if( cEmpresa( oCodEmp, dbfEmp, oNomEmp ), AppFromEmpresa( cCodEmp, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg ), .f. ) ) ;
+         VALID    ( if( cEmpresa( oCodEmp, dbfEmp, oNomEmp ), AppFromEmpresa( cOldCodigoEmpresa, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg ), .f. ) ) ;
          BITMAP   "LUPA";
          ON HELP  ( BrwEmpresa( oCodEmp, dbfEmp, oNomEmp ) ) ;
          OF       oFld:aDialogs[2]
@@ -721,112 +854,112 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
       REDEFINE CHECKBOX aImportacion:lArticulos ;
          ID       230 ;
-         WHEN     ( !Empty( cCodEmp ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE RADIO aImportacion:nCosto ;
          ID       231, 232 ;
-         WHEN     ( ( !Empty( cCodEmp ) .AND. nMode == APPD_MODE ) .and. aImportacion:lArticulos ) ;
+         WHEN     ( ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) .and. aImportacion:lArticulos ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lClientes ;
          ID       240 ;
-         WHEN     ( !Empty( cCodEmp ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lProveedor ;
          ID       250 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lOferta ;
          ID       251 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPromocion ;
          ID       252 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlmacen ;
          ID       260 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAgente ;
          ID       270 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lRuta ;
          ID       280 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lDocument ;
          ID       285 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lStockIni ;
          ID       290 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lFPago ;
          ID       300 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPedPrv ;
          ID       310 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlbPrv ;
          ID       320 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPreCli ;
          ID       330 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPedCli ;
          ID       340 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlbCli ;
          ID       350 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lVale ;
          ID       360 ;
-         WHEN     ( !Empty(cCodEmp) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAnticipo ;
          ID       370 ;
-         WHEN     ( !Empty( cCodEmp ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lProduccion ;
          ID       380 ;
-         WHEN     ( !Empty( cCodEmp ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lBancos ;
          ID       390 ;
-         WHEN     ( !Empty( cCodEmp ) .AND. nMode == APPD_MODE ) ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET oGetSemilla VAR nGetSemilla ;
+      REDEFINE GET oGetSemilla VAR nSemillaContadores ;
          ID       130 ;
-         VALID    ( nGetSemilla > 0 ) ;
+         VALID    ( nSemillaContadores > 0 ) ;
          PICTURE  "999999999" ;
 			WHEN  	( nMode == APPD_MODE ) ;
          OF       oFld:aDialogs[2]
@@ -910,7 +1043,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, aImportacion, nGetSemilla, cCodEmp, oBrwDet, dbfEmp, nMode ) )
+         ACTION   ( EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp, nMode ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -930,10 +1063,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    ACTIVATE DIALOG oDlg ;
          ON INIT     ( if( nMode != APPD_MODE, oBtnPrv:Hide(), SetWindowText( oBtnOk:hWnd, "&Siguiente >" ) ) ) ;
          CENTER
-
-   if oDlg:nResult == IDOK
-      SetEmpresa( cNewEmpresa, , , , , oWnd() )
-   end if
 
    oBmpChg:End()
    oBmpEmp:End()
@@ -960,9 +1089,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    // Para los servicios ------------------------------------------------------
 
-   InitServices()
+   // InitServices()
 
-RETURN ( .t. )
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -3328,59 +3457,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-/*
-Devuelve el Nombre de la Empresa Activa
-*/
-
-STATIC FUNCTION WinDelEmp( oBrw, dbfEmp )
-
-   local lRet     := .f.
-   local cPath    := FullCurDir() + "Emp" + ( dbfEmp )->CodEmp + "\"
-
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return ( lRet )
-   end if
-
-   if ( dbfEmp )->CodEmp == cCodigoEmpresaEnUso()
-
-      msgStop( "Imposible borrar empresa activa" )
-
-   else
-
-      if ApoloMsgNoYes( "Conforme eliminación de empresa", "Supresión de empresa" )
-
-         if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de empresa" )
-
-            CursorWait()
-
-            if IsDirectory( cPath )
-
-               EraseFilesInDirectory(cPath )
-
-            end if
-
-            while ( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
-               if dbLock( dbfDlg )
-                  ( dbfDlg )->( dbDelete() )
-                  ( dbfDlg )->( dbUnLock() )
-               end if
-            end while
-
-            DelRecno( dbfEmp, oBrw )
-
-            lRet  := .t.
-
-            CursorWE()
-
-         end if
-
-      end if
-
-   end if
-
-RETURN lRet
-
 //---------------------------------------------------------------------------//
 
 /*Funcion que borra el grupo de empresas y el directorio*/
@@ -3495,10 +3571,10 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cCodGrp        := Space( 4 )
    local cPathGrp       := ""
    local lAIS           := lAIS()
-
+/*
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if lAIS
       lAIS( .f. ) 
       lCdx( .t. )
@@ -3668,7 +3744,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando ubicaciones" )
       end if
-      mkUbi(  cPath, aImportacion:lAlmacen, cPathGrp, nil )         ; sysrefresh()
+      mkUbi(  cPath, aImportacion:lAlmacen, cPathGrp, nil )             ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando ofertas" )
@@ -4060,6 +4136,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
       if lNewEmp
 
+      ? "hay nieva empresa"
+      ? cPath
+
          with object ( TReindex():New( nil, nil, cPath ) )
             :lEmpresa      := .f.
             :lMessageEnd   := .f.
@@ -4099,7 +4178,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       MsgStop( "Imposible crear el directorio " + cPath )
 
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
@@ -4107,7 +4186,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -5441,7 +5520,7 @@ return ( lCopy )
 
 //-----------------------------------------------------------------------//
 
-STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, aImportacion, nGetSemilla, cCodEmpOld, oBrwDet, dbfEmp, nMode )
+STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp, nMode )
 
    local cCodEmp  := aTmp[ _CODEMP ]
 
@@ -5461,9 +5540,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, aImportacion, nG
 
       end if
 
-      if !Empty( cCodEmpOld ) .and. !dbSeekInOrd( cCodEmpOld, "CodEmp", dbfEmp )
+      if !Empty( cOldCodigoEmpresa ) .and. !dbSeekInOrd( cOldCodigoEmpresa, "CodEmp", dbfEmp )
 
-         msgStop( "Empresa " + cCodEmpOld + " no encontrada." )
+         msgStop( "Empresa " + cOldCodigoEmpresa + " no encontrada." )
 
          Return nil
 
@@ -5521,12 +5600,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, aImportacion, nG
          aTmp[ _CDIRIMG ]  := ".\Imagen"
       end if
 
-      aTmp[ _NNUMREM ]     := nGetSemilla
-      aTmp[ _NNUMLIQ ]     := nGetSemilla
-      aTmp[ _NNUMCAR ]     := nGetSemilla
-      aTmp[ _NNUMMOV ]     := nGetSemilla
-      aTmp[ _NNUMCOB ]     := nGetSemilla
-      aTmp[ _NNUMPGO ]     := nGetSemilla
+      aTmp[ _NNUMREM ]     := nSemillaContadores
+      aTmp[ _NNUMLIQ ]     := nSemillaContadores
+      aTmp[ _NNUMCAR ]     := nSemillaContadores
+      aTmp[ _NNUMMOV ]     := nSemillaContadores
+      aTmp[ _NNUMCOB ]     := nSemillaContadores
+      aTmp[ _NNUMPGO ]     := nSemillaContadores
 
    end if
 
@@ -5549,27 +5628,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, aImportacion, nG
    oDlg:Enable()
    oDlg:End( IDOK )
 
-   if nMode == APPD_MODE .and. !Empty( aTmp[ _CODEMP ] )
-
-      if oWndBrw != nil
-         oWndBrw:QuitOnProcess()
-         oWndBrw:End()
-      end if
-
-      /*
-      Cerramos todas los servicios---------------------------------------------
-      */
-
-      StopServices()
-
-      /*
-      Creamos empresa----------------------------------------------------------
-      */
-
-      mkPathEmp( aTmp[ _CODEMP ], aTmp[ _CNOMBRE ], cCodEmpOld, aImportacion, .t., .t., nGetSemilla )
-
-   end if
-
 Return .t.
 
 //---------------------------------------------------------------------------//
@@ -5578,13 +5636,12 @@ FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
 
    local nLevel         := 0
 
-
    DEFAULT  oWnd        := oWnd()
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  nSelFolder  := 1
 
    /*
-   Obtenemos el nivel de acceso
+   Obtenemos el nivel de acceso------------------------------------------------
    */
 
    nLevel               := nLevelUsr( oMenuItem )
@@ -5595,7 +5652,7 @@ FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
    end if
 
    /*
-   Cerramos todas las ventanas
+   Cerramos todas las ventanas-------------------------------------------------
    */
 
    if oWnd != nil
@@ -6677,6 +6734,8 @@ FUNCTION TstEmpresa( cPatDat )
    local lChangeCode
    local lChangeStruct  
 
+   return .f.
+
    if lAIS()
       Return .f.
    end if 
@@ -6756,7 +6815,7 @@ FUNCTION TstEmpresa( cPatDat )
       return .f.
    end if 
 
-   if( !lAIS(), ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ), ordSetFocus( 1 ) )
+   if( !lAIS(), ( dbfEmp )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ), ordSetFocus( 1 ) )
       
    dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
             
@@ -6765,7 +6824,7 @@ FUNCTION TstEmpresa( cPatDat )
       return .f.
    end if    
          
-   if( !lAIS(), ordListAdd( ( cPatDat() + "Delega.Cdx" ) ), ordSetFocus( 1 ) )
+   if( !lAIS(), ( dbfDlg )->( ordListAdd( ( cPatDat() + "Delega.Cdx" ) ) ), ordSetFocus( 1 ) )
 
    /*
    Comprobamos la longitud del codigo------------------------------------
