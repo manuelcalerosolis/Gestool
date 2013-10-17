@@ -3016,10 +3016,19 @@ Function lChangeStruct( cAlias, aStruct )
 
    for i := 1 to ( cAlias )->( fCount() )
 
-      if aAliasStruct[ i, DBS_NAME ] != aStruct[ i, DBS_NAME ] .or. ;
+      if Upper( aAliasStruct[ i, DBS_NAME ] ) != Upper( aStruct[ i, DBS_NAME ] ) .or. ;
          aAliasStruct[ i, DBS_TYPE ] != aStruct[ i, DBS_TYPE ] .or. ;
          aAliasStruct[ i, DBS_LEN  ] != aStruct[ i, DBS_LEN  ] .or. ;
          aAliasStruct[ i, DBS_DEC  ] != aStruct[ i, DBS_DEC  ]
+
+         msgAlert( aAliasStruct[ i, DBS_NAME ], str( i ) )
+         msgAlert( aStruct[      i, DBS_NAME ], str( i ) )
+         msgAlert( aAliasStruct[ i, DBS_TYPE ], str( i ) )
+         msgAlert( aStruct[      i, DBS_TYPE ], str( i ) )
+         msgAlert( aAliasStruct[ i, DBS_LEN ], str( i ) )
+         msgAlert( aStruct[      i, DBS_LEN ], str( i ) )
+         msgAlert( aAliasStruct[ i, DBS_DEC ], str( i ) )
+         msgAlert( aStruct[      i, DBS_DEC ], str( i ) )
 
          Return .t.
 
@@ -3027,7 +3036,7 @@ Function lChangeStruct( cAlias, aStruct )
 
    next
 
-RETURN .f.
+Return .f.
 
 //----------------------------------------------------------------------------//
 

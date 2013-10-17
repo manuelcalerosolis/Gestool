@@ -532,8 +532,8 @@ Method InitClientResource() CLASS TGenMailing
    ::oActiveX:ShowFormToolbar                   := .t.
    */
 
-   if !Empty( uFieldEmpresa( "cHostFtpImg" ) )
-      ::oActiveX:FTPHost                        := uFieldEmpresa( "cHostFtpImg" )
+   if !Empty( uFieldEmpresa( "cHstFtpImg" ) )
+      ::oActiveX:FTPHost                        := uFieldEmpresa( "cHstFtpImg" )
       ::oActiveX:FTPPassive                     := uFieldEmpresa( "lPasFtp" )
       ::oActiveX:FTPUser                        := uFieldEmpresa( "cUsrFtpImg" )
       ::oActiveX:FTPPassword                    := uFieldEmpresa( "cPswFtpImg" )

@@ -180,7 +180,7 @@
 #define _CTXTTAR4              180
 #define _CTXTTAR5              181
 #define _CTXTTAR6              182
-#define _CINIJORNADA           183
+#define _CINIJOR           	 183
 #define _CSRVMAI               184
 #define _CCTAMAI               185
 #define _CPSSMAI               186
@@ -214,7 +214,7 @@
 #define _CCODEDI               214
 #define _CUSRFTPIMG            215
 #define _CPSWFTPIMG            216
-#define _CHOSTFTPIMG           217
+#define _CHSTFTPIMG            217
 #define _NPRTFTP               218
 #define _CNUMREGMER            219
 #define _NTIEMPOIMP            220
@@ -283,5 +283,5 @@
 #define _LALBTCT			   	283
 #define _LFACTCT			   	284
 #define _CPREFIXTBL 		   	285
-#define _LMAILTURNO				286
-#define _CMAILTURNO				287
+#define _LMAILTRNO				286
+#define _CMAILTRNO				287

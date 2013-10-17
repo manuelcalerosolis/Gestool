@@ -366,7 +366,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::nSecondTimer          := uFieldEmpresa( "nTiempoPed", 0 ) * 60000
    ::cUserFtp              := uFieldEmpresa( "cUsrFtpImg" )
    ::cPasswdFtp            := uFieldEmpresa( "cPswFtpImg" )
-   ::cHostFtp              := uFieldEmpresa( "cHostFtpImg" )
+   ::cHostFtp              := uFieldEmpresa( "cHstFtpImg" )
    ::nPortFtp              := uFieldEmpresa( "nPrtFtp", 21 )
    ::lPassiveFtp           := uFieldEmpresa( "lPasFtp" )
    ::Cookiekey             := uFieldEmpresa( "cCooKey" )

@@ -1342,8 +1342,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       aTmp[ _CNBRUND ]     := Padr( "Unidades", 100 )
    end if
 
-   if Empty( aTmp[ _CINIJORNADA ] )
-      aTmp[ _CINIJORNADA ] := "0800"
+   if Empty( aTmp[ _CINIJOR ] )
+      aTmp[ _CINIJOR ]     := "0800"
    end if
 
    if Empty( aTmp[ _CNOMIMP ] )
@@ -1770,12 +1770,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ON HELP  ( aGet[ _CDIRIMG ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CDIRIMG ] ), .t. ), 100 ) ) );
          OF       fldValores
 
-      REDEFINE GET aGet[ _CINIJORNADA ] VAR aTmp[ _CINIJORNADA ] ;
+      REDEFINE GET aGet[ _CINIJOR ] VAR aTmp[ _CINIJOR ] ;
          PICTURE  "@R 99:99" ;
          SPINNER ;
-         ON UP    ( UpTime( aGet[ _CINIJORNADA ] ) );
-         ON DOWN  ( DwTime( aGet[ _CINIJORNADA ] ) );
-         VALID    ( ValidTime( aGet[ _CINIJORNADA ], .t. ) );
+         ON UP    ( UpTime( aGet[ _CINIJOR ] ) );
+         ON DOWN  ( DwTime( aGet[ _CINIJOR ] ) );
+         VALID    ( ValidTime( aGet[ _CINIJOR ], .t. ) );
          ID       280 ;
          OF       fldValores
 
@@ -2377,14 +2377,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       190 ;
             OF       fldEnvios
 
-      REDEFINE CHECKBOX aTmp[ _LMAILTURNO ] ;
+      REDEFINE CHECKBOX aTmp[ _LMAILTRNO ] ;
             ID       300;
             WHEN     ( lUsrMaster() ) ;
             OF       fldEnvios
 
-      REDEFINE GET aTmp[ _CMAILTURNO ] ;
+      REDEFINE GET aTmp[ _CMAILTRNO ] ;
             ID       310 ;
-            WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTURNO ] ) ;
+            WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTRNO ] ) ;
             OF       fldEnvios
 
       /*
@@ -2478,7 +2478,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       400 ;
             OF       fldComunicaciones
 
-      REDEFINE GET aTmp[ _CHOSTFTPIMG ] ;
+      REDEFINE GET aTmp[ _CHSTFTPIMG ] ;
             ID       250;
             OF       fldComunicaciones
 
@@ -3571,10 +3571,10 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cCodGrp        := Space( 4 )
    local cPathGrp       := ""
    local lAIS           := lAIS()
-/*
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if lAIS
       lAIS( .f. ) 
       lCdx( .t. )
@@ -4136,9 +4136,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
       if lNewEmp
 
-      ? "hay nieva empresa"
-      ? cPath
-
          with object ( TReindex():New( nil, nil, cPath ) )
             :lEmpresa      := .f.
             :lMessageEnd   := .f.
@@ -4178,7 +4175,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       MsgStop( "Imposible crear el directorio " + cPath )
 
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
@@ -4186,7 +4183,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -6734,11 +6731,13 @@ FUNCTION TstEmpresa( cPatDat )
    local lChangeCode
    local lChangeStruct  
 
-   return .f.
+   // return .f.
 
    if lAIS()
       Return .f.
    end if 
+
+   CursorWait()
 
    if !lExistTable( cPatDat() + "EMPRESA.DBF" )
       dbCreate( cPatDat() + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
@@ -6756,53 +6755,48 @@ FUNCTION TstEmpresa( cPatDat )
    Empresa------------------------------------------------------------------
    */
 
-   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
+   dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
 
-   if !( dbfEmp )->( netErr() )
+   dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
 
-      lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
+   if !( dbfEmp )->( netErr() ) .and. !( dbfDlg )->( netErr() )
+
+      lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() ) .or. lChangeStruct( dbfDlg, aItmDlg() )
 
       ( dbfEmp )->( dbCloseArea() )
-
-      if lChangeStruct
-
-         dbCreate( cPatEmpTmp() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cLocalDriver() )
-         appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
-
-         fEraseTable( cPatDat() + "Empresa.Dbf" )
-         fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
-
-      end if
-
-   end if
-
-   /*
-   Delgaciones--------------------------------------------------------------
-   */
-
-   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-
-   if !( dbfDlg )->( netErr() )
-
-      lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
-
       ( dbfDlg )->( dbCloseArea() )
 
       if lChangeStruct
 
-         dbCreate( cPatEmpTmp() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cLocalDriver() )
+         ? "cambio de estructura"
+
+         mkEmpresa( cPatEmpTmp(), cLocalDriver() )
+
+         /*
+         Trasbase a delegaciones-----------------------------------------------
+         */
+
          appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
 
          fEraseTable( cPatDat() + "Delega.Dbf" )
+
          fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
+         fRenameTable( cPatEmpTmp() + "Delega.Cdx", cPatDat() + "Delega.Cdx" )
+
+         /*
+         Trasbase a empresas---------------------------------------------------
+         */
+
+         appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
+
+         fEraseTable( cPatDat() + "Empresa.Dbf" )
+
+         fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
+         fRenameTable( cPatEmpTmp() + "Empresa.Cdx", cPatDat() + "Empresa.Cdx" )
 
       end if
 
    end if
-
-   if lChangeStruct
-      rxEmpresa( cPatDat() )
-   end if 
 
    /*
    Situacion especial para cambio de codigo---------------------------------
@@ -6813,18 +6807,18 @@ FUNCTION TstEmpresa( cPatDat )
    if ( dbfEmp )->( netErr() )
       if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
       return .f.
+   else 
+      if( !lAIS(), ( dbfEmp )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ), ordSetFocus( 1 ) )
    end if 
-
-   if( !lAIS(), ( dbfEmp )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ), ordSetFocus( 1 ) )
       
    dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
             
    if ( dbfDlg )->( netErr() )
       if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
       return .f.
+   else 
+      if( !lAIS(), ( dbfDlg )->( ordListAdd( ( cPatDat() + "Delega.Cdx" ) ) ), ordSetFocus( 1 ) )
    end if    
-         
-   if( !lAIS(), ( dbfDlg )->( ordListAdd( ( cPatDat() + "Delega.Cdx" ) ) ), ordSetFocus( 1 ) )
 
    /*
    Comprobamos la longitud del codigo------------------------------------
@@ -6835,8 +6829,10 @@ FUNCTION TstEmpresa( cPatDat )
       
       cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
       
-      if len( cCodEmp ) == 2
+      if len( cCodEmp ) < 4
       
+         ? "renombramos la empresa"
+
          if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
             if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
                msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
@@ -6844,7 +6840,7 @@ FUNCTION TstEmpresa( cPatDat )
          end if 
       
          if ( dbfEmp )->( dbRLock() )
-            ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
+            ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp, "0", 4 )
             ( dbfEmp )->( dbUnlock() )
          end if
       
@@ -6878,17 +6874,27 @@ FUNCTION TstEmpresa( cPatDat )
    ( dbfDlg )->( dbGoTop() )
    while !( dbfDlg )->( Eof() )
 
-      if ( dbfDlg )->( dbRLock() )
-         ( dbfDlg )->cCodEmp   := RJust( ( dbfDlg )->cCodEmp )
-         ( dbfDlg )->( dbUnlock() )
-      end if
+      if len( AllTrim( ( dbfDlg )->cCodEmp ) ) < 4
+
+         if ( dbfDlg )->( dbRLock() )
+            ( dbfDlg )->cCodEmp  := RJust( ( dbfDlg )->cCodEmp, "0", 4 )
+            ( dbfDlg )->( dbUnlock() )
+         end if
+      
+      end if 
 
       ( dbfDlg )->( dbSkip() )
                   
    end while
+
+   /*
+   Cerramos las bases de datos-------------------------------------------------
+   */
              
    ( dbfDlg )->( dbCloseArea() )
    ( dbfEmp )->( dbCloseArea() )
+
+   CursorWE()
 
 RETURN ( .t. )
 
@@ -7012,7 +7018,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"CCTASIN",    "C", 12, 0, "Subcuenta de clientes sin codificar",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"LGETCOB",    "L",  1, 0, "Recoger obras",                                         "", "", "aEmp()", nil } )
    aAdd( aDbf, {"DFECVER",    "D",  8, 0, "Fecha de la versión",                                   "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"LSELFAM",    "L",  8, 0, "Selector por família",                                  "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"LSELFAM",    "L",  1, 0, "Selector por família",                                  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"LUSEIMP",    "L",  1, 0, "Habilitar impuestos especiales",                        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"LMODIMP",    "L",  1, 0, "Modificar impuestos especiales",                        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"NNUMLIQ",    "N",  9, 0, "Número de la liquidación",                              "", "", "aEmp()", nil } )
@@ -7080,7 +7086,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cTxtTar4",   "C", 50, 0, "Nombre para la cuarta tarifa",                          "", "", "aEmp()", "Precio 4"} )
    aAdd( aDbf, {"cTxtTar5",   "C", 50, 0, "Nombre para la quinta tarifa",                          "", "", "aEmp()", "Precio 5"} )
    aAdd( aDbf, {"cTxtTar6",   "C", 50, 0, "Nombre para la sexta tarifa",                           "", "", "aEmp()", "Precio 6"} )
-   aAdd( aDbf, {"cIniJornada","C",  5, 0, "Hora de inicio de la jornada laboral",                  "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cIniJor",    "C",  5, 0, "Hora de inicio de la jornada laboral",                  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cSrvMai",    "C",250, 0, "Servidor de correo",                                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaMai",    "C",250, 0, "Cuenta de correo",                                      "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cPssMai",    "C",250, 0, "Clave de cuenta de correo",                             "", "", "aEmp()", "" } )
@@ -7114,7 +7120,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCodEdi",    "C", 17, 0, "Código EDI [EAN] de nuestras empresa",                  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cUsrFtpImg", "C", 50, 0, "Nombre de usuario para ftp de imagenes",                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cPswFtpImg", "C", 50, 0, "Contraseña de usuario para ftp de imagenes",            "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cHostFtpImg","C", 50, 0, "Host para ftp de imagenes",                             "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cHstFtpImg", "C", 50, 0, "Host para ftp de imagenes",                             "", "", "aEmp()", nil } )
    aAdd( aDbf, {"nPrtFtp",    "N",  5, 0, "Puerto del servidor ftp para imagenes",                 "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNumRegMer", "C",250, 0, "Número del registro mercantil",                         "", "", "aEmp()", Space( 250 ) } )
    aAdd( aDbf, {"nTiempoImp", "N",  3, 0, "Tiempo de recarga de impresión pda",                    "", "", "aEmp()", 0 } )
@@ -7183,8 +7189,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "Lógico para realizar albaranes desde táctil",           "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lFacTct",    "L",  1, 0, "Lógico para realizar facturas desde táctil",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cPrefixTbl", "C", 10, 0, "Prefijo para tablas de prestashop",                     "", "", "aEmp()", "ps_" } )
-   aAdd( aDbf, {"lMailTurno", "L",  1, 0, "Lógico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"cMailTurno", "C",200, 0, "Dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
+   aAdd( aDbf, {"lMailTrno",  "L",  1, 0, "Lógico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cMailTrno",  "C",200, 0, "Dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
 
 Return ( aDbf  )
 
@@ -7202,34 +7208,36 @@ return ( aItmDlg )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION mkEmpresa( cPath )
+FUNCTION mkEmpresa( cPath, cDriver )
 
-   DEFAULT cPath  := cPatDat()
+   DEFAULT cPath     := cPatDat()
+   DEFAULT cDriver   := cDriver()
 
    if !lExistTable( cPath + "EMPRESA.DBF" )
-      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver )
    end if
 
    if !lExistTable( cPath + "DELEGA.DBF" )
-      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver )
    end if
 
    if !lExistIndex( cPath + "EMPRESA.CDX" ) .or. !lExistIndex( cPath + "DELEGA.CDX" )
-      rxEmpresa( cPath )
+      rxEmpresa( cPath, cDriver )
    end if
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxEmpresa( cPath, oMeter )
+FUNCTION rxEmpresa( cPath, cDriver )
 
    local dbfEmp
 
-   DEFAULT cPath  := cPatDat()
+   DEFAULT cPath     := cPatDat()
+   DEFAULT cDriver   := cDriver()
 
    if !lExistTable( cPath + "EMPRESA.DBF" )
-      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver )
    end if
 
    dbUseArea( .t., cDriver(), cPath + "Empresa.Dbf", cCheckArea( "EMPRESA", @dbfEmp ), .f. )
@@ -7251,7 +7259,7 @@ FUNCTION rxEmpresa( cPath, oMeter )
    end if
 
    if !lExistTable( cPath + "DELEGA.DBF" )
-      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver )
    end if
 
    dbUseArea( .t., cDriver(), cPath + "DELEGA.DBF", cCheckArea( "DELEGA", @dbfDlg ), .f. )

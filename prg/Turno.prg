@@ -3304,8 +3304,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    ::lImprimirEnvio     := ::oIniArqueo:Get( "Arqueo", "ImprimirEnvio",    .t.,           ::lImprimirEnvio )
 
-   ::lEnviarMail        := uFieldEmpresa( "lMailTurno" )
-   ::cEnviarMail        := uFieldEmpresa( "cMailTurno" )
+   ::lEnviarMail        := uFieldEmpresa( "lMailTrno" )
+   ::cEnviarMail        := uFieldEmpresa( "cMailTrno" )
    ::cEnviarMail        := Padr( ::cEnviarMail, 200 )
 
    ::oMoneyEfectivo     := TVirtualMoney():New()
