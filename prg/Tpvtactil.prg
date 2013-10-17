@@ -8669,8 +8669,12 @@ METHOD OnclickDividirMesa() Class TpvTactil
 
    ::oBrwOriginal                        := IXBrowse():New( oDlg )
 
-   ::oBrwOriginal:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwOriginal:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrwOriginal:bClrStd                := {|| if( ::oTemporalDivisionOriginal:lDelTil, { CLR_BLACK, Rgb( 255, 0, 0 ) }, { CLR_BLACK, Rgb( 255, 255, 255 ) } ) }
+   ::oBrwOriginal:bClrSel                := {|| if( ::oTemporalDivisionOriginal:lDelTil, { CLR_BLACK, Rgb( 255, 0, 0 ) }, { CLR_BLACK, Rgb( 229, 229, 229 ) } ) }
+   ::oBrwOriginal:bClrSelFocus           := {|| if( ::oTemporalDivisionOriginal:lDelTil, { CLR_BLACK, Rgb( 255, 128, 128 ) }, { CLR_BLACK, Rgb( 167, 205, 240 ) } ) }
+
+   //::oBrwOriginal:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   //::oBrwOriginal:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
    ::oBrwOriginal:lRecordSelector        := .f.
    ::oBrwOriginal:lHScroll               := .f. 
@@ -9042,6 +9046,11 @@ METHOD AddLineOrgToNew() Class TpvTactil
    local cCodArt
    local nUnidades
 
+   if ::oTemporalDivisionOriginal:lDelTil
+      msgStop( "No se pueden pasar lineas eliminadas de una mesa a otra" )
+      return ( Self )
+   end if   
+   
    nLinea      := ::oTemporalDivisionOriginal:nNumLin
    cCodArt     := ::oTemporalDivisionOriginal:cCbaTil
    nUnidades   := ::oTemporalDivisionOriginal:nUntTil
