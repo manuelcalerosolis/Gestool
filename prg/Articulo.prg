@@ -2940,7 +2940,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo)->( FieldPos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ] );
          ID       480 ;
          ITEMS    {  "#,#0",;
+                     "#,#5",;
+                     "#,#9",;
                      "#,#5|#,#9",;
+                     "#,#5|#,#0",;
                      "#,10",;
                      "#,20",;
                      "#,50",;

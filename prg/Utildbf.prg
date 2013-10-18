@@ -3021,15 +3021,6 @@ Function lChangeStruct( cAlias, aStruct )
          aAliasStruct[ i, DBS_LEN  ] != aStruct[ i, DBS_LEN  ] .or. ;
          aAliasStruct[ i, DBS_DEC  ] != aStruct[ i, DBS_DEC  ]
 
-         msgAlert( aAliasStruct[ i, DBS_NAME ], str( i ) )
-         msgAlert( aStruct[      i, DBS_NAME ], str( i ) )
-         msgAlert( aAliasStruct[ i, DBS_TYPE ], str( i ) )
-         msgAlert( aStruct[      i, DBS_TYPE ], str( i ) )
-         msgAlert( aAliasStruct[ i, DBS_LEN ], str( i ) )
-         msgAlert( aStruct[      i, DBS_LEN ], str( i ) )
-         msgAlert( aAliasStruct[ i, DBS_DEC ], str( i ) )
-         msgAlert( aStruct[      i, DBS_DEC ], str( i ) )
-
          Return .t.
 
       end if
