@@ -1550,11 +1550,11 @@ RETURN ( cCtaCom )
 
 FUNCTION RetCtaTrn( cCodArt, dbfArticulo )
 
-   local cCtaVta  := cCtaVta()
+   local cCtaVta  := uFieldEmpresa( "cCtaPor" )
 
-   IF ( dbfArticulo )->( dbSeek( cCodArt ) )
+   if ( dbfArticulo )->( dbSeek( cCodArt ) )
       cCtaVta     := Rtrim( ( dbfArticulo )->cCtaTrn )
-   END IF
+   end if
 
 RETURN ( cCtaVta )
 

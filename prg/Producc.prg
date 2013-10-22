@@ -1054,7 +1054,7 @@ METHOD Resource( nMode, aDatosAnterior )
       else
          ::oDbf:dFecOrd    := GetSysDate()
          ::oDbf:dFecFin    := GetSysDate()
-         ::oDbf:cHorIni    := uFieldEmpresa( "cIniJornada" )
+         ::oDbf:cHorIni    := uFieldEmpresa( "cIniJor" )
          ::oDbf:cHorFin    := SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
       end if
 

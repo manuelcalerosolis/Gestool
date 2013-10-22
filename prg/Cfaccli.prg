@@ -286,6 +286,23 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    /*
+   Gastos se lo sumamos a la base----------------------------------------------
+   */
+
+   if ( dbfFacCliT )->nManObr != 0
+
+      cSubCtaTrn     := uFieldEmpresa( "cCtaGas")
+
+      nPos           := aScan( aVentas, {|x| x[ 1 ] == cSubCtaTrn .and. x[ 2 ] == ( dbfFacCliT )->nIvaMan } )
+      if nPos == 0
+         aAdd( aVentas, { cSubCtaTrn, ( dbfFacCliT )->nIvaMan, ( dbfFacCliT )->nManObr, 0, 0, 0 } )
+      else
+         aVentas[ nPos, 3 ]   += ( dbfFacCliT )->nManObr
+      end if
+
+   end if 
+
+   /*
    Despues de aplicar los descuentos le sumamos el punto verde-----------------
    */
 
@@ -321,6 +338,25 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       end if
 
    next
+
+   /*
+   Estudio Gasto despues de los descuentos-------------------------------------
+   */
+
+   if ( dbfFacCliT )->nManObr != 0
+
+      nIva        := ( dbfFacCliT )->nIvaMan
+      cSubCtaIva  := cSubCuentaIva( nIva, ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+      cSubCtaReq  := cSubCuentaRecargo( nIva, ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+
+      nPos        := aScan( aIva, {|x| x[ 1 ] == nIva } )
+      if nPos  == 0
+         aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, ( dbfFacCliT )->nManObr, 0, 0, 0 } )
+      else
+         aIva[ nPos, 4 ] += ( dbfFacCliT )->nManObr
+      end if
+
+   end if
 
    /*
    Despues de aplicar los descuentos le sumamos el punto verde-----------------
@@ -489,7 +525,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    */
 
    nTotDebe          += Round( ptaDebe, nRouDiv )
-
 
    for n := 1 to len( aVentas )
 

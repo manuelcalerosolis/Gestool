@@ -102,6 +102,9 @@ CLASS TStock
    DATA lLote              AS LOGIC INIT .f.
    DATA lNumeroSerie       AS LOGIC INIT .f.
 
+   DATA oDbfStock
+   DATA cDbfStock
+
    METHOD New( cPath, lExclusive )
 
    METHOD Create( cPath, lExclusive )
@@ -109,15 +112,12 @@ CLASS TStock
    METHOD End()            INLINE ( if( !Empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
    METHOD lOpenFiles( lExclusive )
-
    METHOD CloseFiles()
 
-   METHOD CreateFiles( cPath )
+   METHOD CreateTemporalFiles( cPath )
+   METHOD DeleteTemporalFiles( cPath )
 
-   METHOD DeleteFiles( cPath )
    METHOD Zap()
-
-   METHOD ReindexFiles( cPath )
 
    METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento )
 
@@ -654,6 +654,24 @@ CLASS TStock
    
    //---------------------------------------------------------------------------//
 
+   METHOD Select()                        INLINE ( if( ::oDbfStock:Used(), ::oDbfStock:nArea, 0 ) )
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD SaveStockArticulo( cCodArt )
+
+      local aStock
+
+      for each aStock in ::aStockArticulo( cCodArt ) 
+         aStock:Save( ::oDbfStock )
+      next 
+
+      RETURN ( Self )
+
+   ENDMETHOD      
+
+   //---------------------------------------------------------------------------//
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -688,67 +706,54 @@ Return Self
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateFiles( cPath ) CLASS TStock
+METHOD CreateTemporalFiles( cPath ) CLASS TStock
 
-   DEFAULT cPath        := ::cPath
+   local aStock
 
-   aAdd( ::aMovAlm, { "cCodArt", "C", 18, 0, ""                                           } )
-   aAdd( ::aMovAlm, { "cCodAlm", "C",  3, 0, ""                                           } )
-   aAdd( ::aMovAlm, { "cCodPr1", "C", 20, 0, ""                                           } )
-   aAdd( ::aMovAlm, { "cCodPr2", "C", 20, 0, ""                                           } )
-   aAdd( ::aMovAlm, { "cValPr1", "C", 20, 0, ""                                           } )
-   aAdd( ::aMovAlm, { "cValPr2", "C", 20, 0, ""                                           } )
-   aAdd( ::aMovAlm, { "nStkAct", "N", 19, 6, "Stock actual"                               } )
-   aAdd( ::aMovAlm, { "nStkIn",  "N", 19, 6, "Stock entrada"                              } )
-   aAdd( ::aMovAlm, { "nStkPdr", "N", 19, 6, "Stock pendiente de recibir"                 } )
-   aAdd( ::aMovAlm, { "nStkPde", "N", 19, 6, "Stock pendiente de entregar"                } )
-   aAdd( ::aMovAlm, { "nStkPdc", "N", 19, 6, "Stock pendiente de entregar comprometido"   } )
-   aAdd( ::aMovAlm, { "nStkEnt", "N", 19, 6, "Total de stock comprado"                    } )
-   aAdd( ::aMovAlm, { "nStkSal", "N", 19, 6, "Total de stock vendido"                     } )
-   aAdd( ::aMovAlm, { "nImpStk", "N", 19, 6, "Importe de stock"                           } )
-   aAdd( ::aMovAlm, { "nLote"  , "N",  9, 0, "N煤mero de lote"                             } )
-   aAdd( ::aMovAlm, { "cLote"  , "C", 12, 0, "N煤mero de lote"                             } )
+   DEFAULT cPath        := cPatTmp()
 
-   if !lExistTable( cPath + "MovAlm.Dbf" )
-      dbCreate( cPath + "MovAlm.Dbf", aSqlStruct( ::aMovAlm ), cDriver() )
-   end if
+   ::cDbfStock          := "Stock" + cCurUsr() + ".Dbf"
 
-   ::ReindexFiles( cPath )
+   ::DeleteTemporalFiles( cPath )
 
-RETURN ( Self )
+   DEFINE DATABASE ::oDbfStock FILE ( ::cDbfStock ) CLASS "StockDbf" ALIAS "StockDbf" PATH ( cPath ) VIA ( cLocalDriver() ) 
 
-//---------------------------------------------------------------------------//
+   FIELD NAME "cCodigo"    TYPE "C" LEN 18 DEC 0 COMMENT "C骴igo de art韈ulo"                    OF ::oDbfStock
+   FIELD NAME "cDelega"    TYPE "C" LEN  3 DEC 0 COMMENT "Delegaci髇"                            OF ::oDbfStock
+   FIELD NAME "dFecDoc"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"                   OF ::oDbfStock
+   FIELD NAME "cAlmacen"   TYPE "C" LEN  3 DEC 0 COMMENT "C骴igo del almacen"                    OF ::oDbfStock
+   FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "C骴igo de la primera propiedad"        OF ::oDbfStock
+   FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "C骴igo de la segunda propiedad"        OF ::oDbfStock
+   FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
+   FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
+   FIELD NAME "cLote"      TYPE "C" LEN 12 DEC 0 COMMENT "N鷐ero de lote"                        OF ::oDbfStock
+   FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "N鷐ero de serie"                       OF ::oDbfStock
+   FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Feha de caducidad"                     OF ::oDbfStock
+   FIELD NAME "nUnd"       TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades"                        OF ::oDbfStock
+   FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
+   FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
+   FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "N鷐ero del documento lote"             OF ::oDbfStock
+   FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 
-METHOD DeleteFiles( cPath ) CLASS TStock
+   INDEX TO "Stock.Cdx" TAG "cCodArt" ON "cCodigo + cValPrp1 + cValPrp2 + cAlmacen + cLote" COMMENT "C骴igo" FOR "!Deleted()" OF ::oDbfStock
 
-   DEFAULT cPath        := ::cPath
+   END DATABASE ::oDbfStock
 
-   dbfErase( cPath + "MovAlm" )
+   ::oDbfStock:Activate( .f., .t. )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ReindexFiles( cPath, oMeter ) CLASS TStock
+METHOD DeleteTemporalFiles( cPath ) CLASS TStock
 
-   local dbfMovAlm
+   DEFAULT cPath        := cPatTmp()
 
-   DEFAULT cPath        := ::cPath
+   if !Empty( ::oDbfStock ) .and. ::oDbfStock:Used()
+      ::oDbfStock:Close()
+   end if      
 
-   if !lExistTable( cPath + "MovAlm.Dbf" )
-      ::CreateFiles( cPath )
-   end if
-
-   fEraseIndex( cPath + "MovAlm.Cdx" )
-
-   dbUseArea( .t., cDriver(), cPath + "MovAlm.Dbf", cCheckArea( "MovAlm", @dbfMovAlm ), .f. )
-   if !( dbfMovAlm )->( netErr() )
-      ( dbfMovAlm )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfMovAlm )->( ordCreate( cPath + "MovAlm.Cdx", "Codigo", "cCodArt + cValPr1 + cValPr2 + cCodAlm + cLote", {|| Field->cCodArt + Field->cValPr1 + Field->cValPr2 + Field->cCodAlm + Field->cLote } ) )
-
-      ( dbfMovAlm )->( dbCloseArea() )
-   end if
-
+   dbfErase( ::cDbfStock )
 
 RETURN ( Self )
 
@@ -1013,7 +1018,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 //
-// Este metodo a帽ade y elimina stock pendiente de recibir por los pedidos a proveedores
+// Este metodo a馻de y elimina stock pendiente de recibir por los pedidos a proveedores
 //
 
 METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
@@ -1029,7 +1034,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cPedPrvL == nil .or. cNumPed == nil
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1043,7 +1048,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNPedPrv( ::cPedPrvL ) - ( ::cPedPrvL )->nUniEnt
 
             /*
-            mult. las unidades por su factor de conversi贸n
+            mult. las unidades por su factor de conversi髇
             */
 
             if ( ::cPedPrvL )->nFacCnv != 0
@@ -1156,7 +1161,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cFacPrvL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1170,7 +1175,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNFacPrv( ::cFacPrvL )
 
             /*
-            mult. las unidades por su factor de conversi贸n
+            mult. las unidades por su factor de conversi髇
             */
 
             if ( ::cFacPrvL )->nFacCnv != 0
@@ -1224,7 +1229,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cRctPrvL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1238,7 +1243,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNRctPrv( ::cRctPrvL )
 
             /*
-            mult. las unidades por su factor de conversi贸n
+            mult. las unidades por su factor de conversi髇
             */
 
             if ( ::cRctPrvL )->nFacCnv != 0
@@ -1293,7 +1298,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbCliT ) .or. Empty( ::cAlbCliL ) .or. Empty( ::cAlbPrvL )
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1524,7 +1529,7 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cPedPrvL )
-      msgStop( "Imposible actualizar el estado del pedido.", "Atenci贸n" )
+      msgStop( "Imposible actualizar el estado del pedido.", "Atenci髇" )
       return self
    end if
 
@@ -1668,7 +1673,7 @@ METHOD AlbCli( cNumAlb, cCodAlm, lDelete, lIncremento, lIgnEstado, lChequea, lAc
    DEFAULT lActPendientes  := .t.
 
    if ::cAlbCliT == nil .or. ::cAlbCliL == nil .or. cNumAlb == nil
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1763,7 +1768,7 @@ METHOD FacCli( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    DEFAULT lActPendientes  := .f.
 
    if ::cFacCliL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1836,7 +1841,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    */
 
    if ::cFacRecL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
+      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
       return self
    end if
 
@@ -1850,7 +1855,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
             nUnits      := nTotNFacRec( ::cFacRecL )
 
             /*
-            mult. las unidades por su factor de conversi贸n
+            mult. las unidades por su factor de conversi髇
             */
 
             if ( ::cFacRecL )->nFacCnv != 0
@@ -1928,7 +1933,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
             nUnits      := ( ::cTikL )->nUntTil
 
             /*
-            mult. las unidades por su Tiktor de conversi贸n
+            mult. las unidades por su Tiktor de conversi髇
             */
 
             if ( ::cTikL )->nFacCnv != 0
@@ -2105,7 +2110,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
 
    if oMeter != NIL
       oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Art铆culos"
+      oMeter:cText  := "Art韈ulos"
    end if
 
    while !( dbf )->( eof() )
@@ -2113,7 +2118,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
       cCodAnt  := ( dbf )->Codigo
       ( dbf )->( dbSkip() )
       if cCodAnt == ( dbf )->Codigo .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Art铆culo duplicado : " + cCodAnt } )
+         aAdd( aMsg, { .t., "Art韈ulo duplicado : " + cCodAnt } )
          lDup  := .t.
       end if
 
@@ -3756,7 +3761,7 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
       oMtr:AutoInc()
    end if
 
-   //Recorremos movimientos de almac茅n-----------------------------------------
+   //Recorremos movimientos de almac閚-----------------------------------------
 
    if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
@@ -3830,13 +3835,13 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
 
    /*
-   Obtengo la fecha de consolidaci贸n-------------------------------------------
+   Obtengo la fecha de consolidaci髇-------------------------------------------
    */
 
    //::lCheckConsolidacion( cCodArt )
 
    /*
-   Recorremos movimientos de almac茅n-------------------------------------------
+   Recorremos movimientos de almac閚-------------------------------------------
    */
 
    if ( ::cHisMovT)->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
@@ -4040,7 +4045,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       CursorWait()
 
-      // Movimientos de almac茅n------------------------------------------------------
+      // Movimientos de almac閚------------------------------------------------------
 
       SysRefresh()
 
@@ -4454,7 +4459,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    end if
 
    /*
-   Movimientos de almac茅n------------------------------------------------------
+   Movimientos de almac閚------------------------------------------------------
    */
 
    SysRefresh()
@@ -5258,7 +5263,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    
    ErrorBlock( oBlock )
 
-return ( ::aStocks )
+Return ( ::aStocks )
 
 //---------------------------------------------------------------------------//
 
@@ -5312,7 +5317,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
       ::lCheckConsolidacion( cCodArt )
 
       /*
-      Movimientos de almac茅n------------------------------------------------------
+      Movimientos de almac閚------------------------------------------------------
       */
 
       if ( ::cHisMovS )->( dbSeek( cCodArt + cCodAlm + cNumeroSerie ) )
@@ -5947,7 +5952,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
          end if
 
          /*
-         Movimientos de almac茅n------------------------------------------------------
+         Movimientos de almac閚------------------------------------------------------
          */
 
          SysRefresh()
@@ -6114,7 +6119,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
 
    ::aSeries               := aNumSer
 
-   DEFINE DIALOG oDlg RESOURCE "BrowseNumeroSerie"  TITLE "Seleccionar n煤mero de serie"
+   DEFINE DIALOG oDlg RESOURCE "BrowseNumeroSerie"  TITLE "Seleccionar n鷐ero de serie"
 
       REDEFINE GET         oGet ;
          VAR               cGet ;
@@ -6137,7 +6142,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "N煤mero de serie"
+         :cHeader          := "N鷐ero de serie"
          :bStrData         := {|| if( !Empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cNumeroSerie, "" ) }
          :nWidth           := 200
       end with
@@ -6350,7 +6355,7 @@ Method SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente, lAviso )
 
          if lAviso
             msgStop( "El riesgo alacanzado es de " + Alltrim( Trans( nRiesgo, cPorDiv() ) ) + "; sobre el establecido en su ficha " + Alltrim( Trans( nRiesgoCliente, cPorDiv() ) ) + ".",;
-                     "El riesgo del cliente supera el l铆mite establecido" )
+                     "El riesgo del cliente supera el l韒ite establecido" )
 
          end if
 
@@ -6533,6 +6538,8 @@ CLASS SStock
    DATA cNumeroDocumento      INIT ""
    DATA cTipoDocumento        INIT ""
 
+   //------------------------------------------------------------------------//
+   
    INLINE METHOD New()
 
       ::cCodigo               := ""
@@ -6556,7 +6563,11 @@ CLASS SStock
 
    ENDMETHOD
 
+   //------------------------------------------------------------------------//
+
    METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) )
+
+   //------------------------------------------------------------------------//
 
    INLINE METHOD Say()
 
@@ -6577,6 +6588,35 @@ CLASS SStock
                "PendientesEntregar != 0"  + cValToChar( ::nPendientesEntregar != 0 ) )
 
    ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD Save( oDbfStock )
+
+      oDbfStock:Append()
+
+      oDbfStock:cCodigo    := ::cCodigo               
+      oDbfStock:cDelega    := ::cDelegacion           
+      oDbfStock:dFecDoc    := ::dFechaDocumento       
+      oDbfStock:cAlmacen   := ::cCodigoAlmacen        
+      oDbfStock:cCodPrp1   := ::cCodigoPropiedad1     
+      oDbfStock:cCodPrp2   := ::cCodigoPropiedad2     
+      oDbfStock:cValPrp1   := ::cValorPropiedad1      
+      oDbfStock:cValPrp2   := ::cValorPropiedad2      
+      oDbfStock:cLote      := ::cLote                 
+      oDbfStock:cNumSer    := ::cNumeroSerie          
+      oDbfStock:dFecCad    := ::dFechaCaducidad       
+      oDbfStock:nUnd       := ::nUnidades             
+      oDbfStock:nPdtRec    := ::nPendientesRecibir    
+      oDbfStock:nPdtEnt    := ::nPendientesEntregar   
+      oDbfStock:cNumDoc    := ::cNumeroDocumento      
+      oDbfStock:cTipDoc    := ::cTipoDocumento        
+
+      oDbfStock:Save()
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
 
 END CLASS
 

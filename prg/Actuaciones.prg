@@ -31,11 +31,11 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 

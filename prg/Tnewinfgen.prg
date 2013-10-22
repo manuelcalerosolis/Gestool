@@ -3747,7 +3747,7 @@ METHOD oDefHoraInicio( nId, oDlg ) CLASS TNewInfGen
    DEFAULT oDlg      := ::oFld:aDialogs[1]
 
    if Empty( ::cHoraInicio )
-      ::cHoraInicio  := uFieldEmpresa( "cIniJornada" )
+      ::cHoraInicio  := uFieldEmpresa( "cIniJor" )
    end if
 
    REDEFINE GET      ::oHoraInicio ;
