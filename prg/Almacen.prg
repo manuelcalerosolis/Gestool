@@ -41,26 +41,6 @@ static dbfUbicaL
 static dbfTmp
 static cNewFile
 
-static aBase := { { "CCODALM",  "C",      3,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" },;
-                  { "CNOMALM",  "C",     20,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" },;
-                  { "CDIRALM",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" },;
-                  { "CPOSALM",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" },;
-                  { "CPOBALM",  "C",     30,     0, "Población de almacen"           ,  "",   "", "( cDbfAlm )" },;
-                  { "CPROALM",  "C",     20,     0, "Provincia de almacen"           ,  "",   "", "( cDbfAlm )" },;
-                  { "CTFNALM",  "C",     12,     0, "Teléfono de almacen"            ,  "",   "", "( cDbfAlm )" },;
-                  { "CFAXALM",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" },;
-                  { "CPERALM",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" },;
-                  { "CCODCLI",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" },;
-                  { "CUBICA1",  "C",      5,     0, "Ubicación 1"                    ,  "",   "", "( cDbfAlm )" },;
-                  { "CUBICA2",  "C",      5,     0, "Ubicación 2"                    ,  "",   "", "( cDbfAlm )" },;
-                  { "CUBICA3",  "C",      5,     0, "Ubicación 3"                    ,  "",   "", "( cDbfAlm )" },;
-                  { "CNOMUBI1", "C",     30,     0, "Nombre ubicación 1"             ,  "",   "", "( cDbfAlm )" },;
-                  { "CNOMUBI2", "C",     30,     0, "Nombre ubicación 2"             ,  "",   "", "( cDbfAlm )" },;
-                  { "CNOMUBI3", "C",     30,     0, "Nombre ubicación 3"             ,  "",   "", "( cDbfAlm )" } }
-
-static aBase2:= { { "CCODALM",  "C",      3,     0, "" },;
-						{ "CCODAGE",  "C",      3,     0, "" } }
-
 //----------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -494,7 +474,7 @@ STATIC FUNCTION BeginTrans( aTemp )
 	Primero Crear la base de datos local
 	*/
 
-   dbCreate( cNewFile, aSqlStruct( aBase2 ), cLocalDriver() )
+   dbCreate( cNewFile, aSqlStruct( aItmAlmAgente() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cNewFile, cCheckArea( cDbf, @dbfTmp ), .f. )
 
    if !( dbfTmp )->( neterr() )
@@ -839,10 +819,39 @@ RETURN cAlmacen
 
 //--------------------------------------------------------------------------//
 
-
 FUNCTION aItmAlm()
 
-RETURN ( aBase )
+   local aItmAlm  := {}
+
+   aAdd( aItmAlm, { "CCODALM",  "C",      3,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CNOMALM",  "C",     20,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CDIRALM",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CPOSALM",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CPOBALM",  "C",     30,     0, "Población de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CPROALM",  "C",     20,     0, "Provincia de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CTFNALM",  "C",     12,     0, "Teléfono de almacen"            ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CFAXALM",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CPERALM",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CCODCLI",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CUBICA1",  "C",      5,     0, "Ubicación 1"                    ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CUBICA2",  "C",      5,     0, "Ubicación 2"                    ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CUBICA3",  "C",      5,     0, "Ubicación 3"                    ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CNOMUBI1", "C",     30,     0, "Nombre ubicación 1"             ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CNOMUBI2", "C",     30,     0, "Nombre ubicación 2"             ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "CNOMUBI3", "C",     30,     0, "Nombre ubicación 3"             ,  "",   "", "( cDbfAlm )" } )
+
+RETURN ( aItmAlm )
+
+//---------------------------------------------------------------------------//
+
+Function aItmAlmAgente()
+
+   local aItmAlmAgente  := {}
+
+   aAdd( aItmAlmAgente, { "CCODALM",  "C",      3,     0, "" } )
+   aAdd( aItmAlmAgente, { "CCODAGE",  "C",      3,     0, "" } )
+
+Return aItmAlmAgente
 
 //---------------------------------------------------------------------------//
 //Funcion que devuelve el nombre de la ubicación, diciendole
@@ -1114,11 +1123,11 @@ FUNCTION mkAlmacen( cPath, lAppend, cPathOld, oMeter )
 	END IF
 
    IF !lExistTable( cPath + "ALMACEN.DBF" )
-      dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aBase ), cDriver() )
+      dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aItmAlm() ), cDriver() )
 	END IF
 
    IF !lExistTable( cPath + "ALMACENL.DBF" )
-      dbCreate( cPath + "ALMACENL.DBF", aSqlStruct( aBase2 ), cDriver() )
+      dbCreate( cPath + "ALMACENL.DBF", aSqlStruct( aItmAlmAgente() ), cDriver() )
 	END IF
 
 	rxAlmacen( cPath, oMeter )
@@ -1143,7 +1152,7 @@ FUNCTION rxAlmacen( cPath, oMeter )
    DEFAULT cPath  := cPatAlm()
 
    IF !lExistTable( cPath + "ALMACEN.DBF" )
-      dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aBase ), cDriver() )
+      dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aItmAlm() ), cDriver() )
 	END IF
 
    fEraseIndex( cPath + "ALMACEN.CDX" )
@@ -1165,7 +1174,7 @@ FUNCTION rxAlmacen( cPath, oMeter )
    end if
 
    IF !lExistTable( cPath + "ALMACENL.DBF" )
-      dbCreate( cPath + "ALMACENL.DBF", aSqlStruct( aBase2 ), cDriver() )
+      dbCreate( cPath + "ALMACENL.DBF", aSqlStruct( aItmAlmAgente() ), cDriver() )
 	END IF
 
    fErase( cPath + "ALMACENL.CDX" )

@@ -49,25 +49,141 @@ static cUsrTik
 
 static oFastReport
 
-static hMapaAjuste   := {  "#,#0"   => { "Round" => 1,  "Incrementa" => 0.10,    "Ceros" => .t. } ,;
-                           "#,#5"   => { "Round" => 1,  "Incrementa" => 0.05,    "Ceros" => .f. } ,;
-                           "#,#9"   => { "Round" => 1,  "Incrementa" => 0.09,    "Ceros" => .f. } ,;
-                           "#,10"   => { "Round" => 0,  "Incrementa" => 0.10,    "Ceros" => .f. } ,;
-                           "#,20"   => { "Round" => 0,  "Incrementa" => 0.20,    "Ceros" => .f. } ,;
-                           "#,50"   => { "Round" => 0,  "Incrementa" => 0.50,    "Ceros" => .f. } ,;
-                           "#,90"   => { "Round" => 0,  "Incrementa" => 0.90,    "Ceros" => .f. } ,;
-                           "#,95"   => { "Round" => 0,  "Incrementa" => 0.95,    "Ceros" => .f. } ,;
-                           "#,99"   => { "Round" => 0,  "Incrementa" => 0.99,    "Ceros" => .f. } ,;
-                           "#,00"   => { "Round" => 0,  "Incrementa" => 1.00,    "Ceros" => .t. } ,;
-                           "1,00"   => { "Round" => -1, "Incrementa" => 11.00,   "Ceros" => .f. } ,;
-                           "5,00"   => { "Round" => -1, "Incrementa" => 15.00,   "Ceros" => .f. } ,;
-                           "9,00"   => { "Round" => -1, "Incrementa" => 19.00,   "Ceros" => .f. } ,;
-                           "10,00"  => { "Round" => -2, "Incrementa" => 110.00,  "Ceros" => .f. } ,;
-                           "20,00"  => { "Round" => -2, "Incrementa" => 120.00,  "Ceros" => .f. } ,;
-                           "50,00"  => { "Round" => -2, "Incrementa" => 150.00,  "Ceros" => .f. } ,;
-                           "100,00" => { "Round" => -3, "Incrementa" => 200.00,  "Ceros" => .f. } }
+static hMapaAjuste   := {  "#,#0"   => { "Round" => 1,  "Incrementa" => 0.00,    "Decrementa" => 0.00,  "Ceros" => .t. } ,;
+                           "#,#5"   => { "Round" => 1,  "Incrementa" => 0.05,    "Decrementa" => -0.05,  "Ceros" => .f. } ,;
+                           "#,#9"   => { "Round" => 1,  "Incrementa" => 0.09,    "Decrementa" => -0.01,  "Ceros" => .f. } ,;
+                           "#,10"   => { "Round" => 0,  "Incrementa" => 0.10,    "Decrementa" => -0.90,  "Ceros" => .f. } ,;
+                           "#,20"   => { "Round" => 0,  "Incrementa" => 0.20,    "Decrementa" => -0.80,  "Ceros" => .f. } ,;
+                           "#,50"   => { "Round" => 0,  "Incrementa" => 0.50,    "Decrementa" => -0.50,  "Ceros" => .f. } ,;
+                           "#,90"   => { "Round" => 0,  "Incrementa" => 0.90,    "Decrementa" => -0.10,  "Ceros" => .f. } ,;
+                           "#,95"   => { "Round" => 0,  "Incrementa" => 0.95,    "Decrementa" => -0.05,  "Ceros" => .f. } ,;
+                           "#,99"   => { "Round" => 0,  "Incrementa" => 0.99,    "Decrementa" => -0.01,  "Ceros" => .f. } ,;
+                           "#,00"   => { "Round" => 0,  "Incrementa" => 1.00,    "Decrementa" => -9.00,  "Ceros" => .t. } ,;
+                           "1,00"   => { "Round" => -1, "Incrementa" => 11.00,   "Decrementa" => -19.00, "Ceros" => .f. } ,;
+                           "5,00"   => { "Round" => -1, "Incrementa" => 15.00,   "Decrementa" => -15.00, "Ceros" => .f. } ,;
+                           "9,00"   => { "Round" => -1, "Incrementa" => 19.00,   "Decrementa" => -19.00, "Ceros" => .f. } ,;
+                           "10,00"  => { "Round" => -2, "Incrementa" => 110.00,  "Decrementa" => 110.00,"Ceros" => .f. } ,;
+                           "20,00"  => { "Round" => -2, "Incrementa" => 120.00,  "Decrementa" => 120.00,"Ceros" => .f. } ,;
+                           "50,00"  => { "Round" => -2, "Incrementa" => 150.00,  "Decrementa" => 150.00,"Ceros" => .f. } ,;
+                           "100,00" => { "Round" => -3, "Incrementa" => 200.00,  "Decrementa" => 200.00,"Ceros" => .f. } }
 
 //----------------------------------------------------------------------------//
+
+FUNCTION nAjuste( nNumber, cAdjust )
+
+   local n
+   local nAjusteDecimales
+   local nAjusteIncrementa
+   local nAjusteDecrementa
+   local cNumber
+   local nResult
+   local cResult
+   local aAdjust
+   local aNumber        := {}
+
+   if Empty( nNumber )
+      Return ( 0 )
+   end if 
+
+   /*
+   Posible ajuste doble--------------------------------------------------------
+   */
+
+   nResult              := 0
+   aAdjust              := hb_aTokens( cAdjust, "|" )
+
+   for each cAdjust in aAdjust
+
+      nAjusteDecimales  := nAjusteDecimales( cAdjust )
+      nAjusteIncrementa := nAjusteIncrementa( cAdjust )
+      nAjusteDecrementa := nAjusteDecrementa( cAdjust )
+
+      nResult           := Round( nNumber, nAjusteDecimales )
+
+      if nResult - nNumber > 0
+         nResult        += nAjusteDecrementa
+      else 
+         nResult        += nAjusteIncrementa 
+      end if 
+
+      aAdd( aNumber, nResult )
+
+   next 
+
+   for each n in aNumber
+      if ( ( n - nNumber ) >= -0.000001 )
+         nResult        := n
+         exit 
+      end if 
+   next
+
+RETURN ( nResult )
+
+//---------------------------------------------------------------------------//
+
+Static Function nAjusteDecimales( cAjuste )
+
+  local hAjuste
+  local nAjusteDecimales
+
+  if hHasKey( hMapaAjuste, cAjuste )
+    hAjuste             := hGet( hMapaAjuste, cAjuste )
+    if !Empty( hAjuste )
+      nAjusteDecimales  := hGet( hAjuste, "Round" )
+    end if
+  end if
+
+Return ( nAjusteDecimales )
+
+//---------------------------------------------------------------------------//
+
+Static Function nAjusteIncrementa( cAjuste )
+
+  local hAjuste
+  local nAjusteIncrementa
+
+  if hHasKey( hMapaAjuste, cAjuste )
+    hAjuste             := hGet( hMapaAjuste, cAjuste )
+    if !Empty( hAjuste )
+      nAjusteIncrementa := hGet( hAjuste, "Incrementa" )
+    end if
+  end if
+
+Return ( nAjusteIncrementa )
+
+//---------------------------------------------------------------------------//
+
+Static Function nAjusteDecrementa( cAjuste )
+
+  local hAjuste
+  local nAjusteDecrementa
+
+  if hHasKey( hMapaAjuste, cAjuste )
+    hAjuste             := hGet( hMapaAjuste, cAjuste )
+    if !Empty( hAjuste )
+      nAjusteDecrementa := hGet( hAjuste, "Decrementa" )
+    end if
+  end if
+
+Return ( nAjusteDecrementa )
+
+//---------------------------------------------------------------------------//
+
+Static Function nAjusteCeros( cAjuste )
+
+  local hAjuste
+  local nAjusteCeros
+
+  if hHasKey( hMapaAjuste, cAjuste )
+    hAjuste             := hGet( hMapaAjuste, cAjuste )
+    if !Empty( hAjuste )
+      nAjusteCeros      := hGet( hAjuste, "Ceros" )
+    end if
+  end if
+
+Return ( nAjusteCeros )
+
+//---------------------------------------------------------------------------//
 
 Function lAds( lSetAds )
 
@@ -1667,12 +1783,7 @@ FUNCTION cPatStk( cPath, lPath, lShort, lGrp )
       Return ( cAdsUNC() + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
    end if
 
-
-   #ifdef __SQLLIB__
-Return ( if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
-   #else
 Return ( if( !lShort, FullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
-   #endif
 
 //---------------------------------------------------------------------------//
 /*
@@ -2398,101 +2509,6 @@ FUNCTION cDelUsrTik( cCodUsr )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
-FUNCTION nAjuste( nNumber, cAdjust )
-
-   local n
-   local nAjusteDecimales
-   local nAjusteIncrementa
-   local lAjusteCeros
-   local cNumber
-   local nResult
-   local cResult
-   local aAdjust
-   local aNumber        := {}
-
-   if Empty( nNumber )
-      Return ( 0 )
-   end if 
-
-   /*
-   Posible ajuste doble--------------------------------------------------------
-   */
-
-   nResult              := 0
-   aAdjust              := hb_aTokens( cAdjust, "|" )
-
-   for each cAdjust in aAdjust
-
-      nAjusteDecimales  := nAjusteDecimales( cAdjust )
-      nAjusteIncrementa := nAjusteIncrementa( cAdjust )
-      lAjusteCeros      := nAjusteCeros( cAdjust )
-
-      nResult           := Round( nNumber, nAjusteDecimales )
-
-      
-
-      if !( nResult == nNumber .and. lAjusteCeros )
-         nResult        += nAjusteIncrementa
-      end if 
-
-      aAdd( aNumber, nResult )
-
-   next 
-
-   for each n in aNumber
-      msgAlert( n, "salida" )
-   next
-
-RETURN ( nResult )
-
-//---------------------------------------------------------------------------//
-
-Static Function nAjusteDecimales( cAjuste )
-
-  local hAjuste
-  local nAjusteDecimales
-
-  if hHasKey( hMapaAjuste, cAjuste )
-    hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
-      nAjusteDecimales  := hGet( hAjuste, "Round" )
-    end if
-  end if
-
-Return ( nAjusteDecimales )
-
-//---------------------------------------------------------------------------//
-
-Static Function nAjusteIncrementa( cAjuste )
-
-  local hAjuste
-  local nAjusteIncrementa
-
-  if hHasKey( hMapaAjuste, cAjuste )
-    hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
-      nAjusteIncrementa := hGet( hAjuste, "Incrementa" )
-    end if
-  end if
-
-Return ( nAjusteIncrementa )
-
-//---------------------------------------------------------------------------//
-
-Static Function nAjusteCeros( cAjuste )
-
-  local hAjuste
-  local nAjusteCeros
-
-  if hHasKey( hMapaAjuste, cAjuste )
-    hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
-      nAjusteCeros      := hGet( hAjuste, "Ceros" )
-    end if
-  end if
-
-Return ( nAjusteCeros )
 
 
 /*

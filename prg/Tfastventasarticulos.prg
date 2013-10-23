@@ -50,10 +50,11 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
 
-   METHOD cIdeDocumento()   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+   METHOD cIdeDocumento()     INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
 
+   METHOD StockArticulo()     INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
 
-   METHOD StockArticulo()   INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote   ) )
+   METHOD aStockArticulo()    INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
 END CLASS
 
@@ -227,7 +228,13 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       ::oStock                := TStock():Create( cPatGrp() )
       if !::oStock:lOpenFiles()
+         
          lOpen                := .f.
+
+      else 
+
+         ::oStock:CreateTemporalFiles()
+
       end if
 
    RECOVER USING oError
@@ -366,6 +373,7 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
       end if
 
       if !Empty( ::oStock )
+         ::oStock:DeleteTemporalFiles()
          ::oStock:End()
       end if
 
@@ -662,6 +670,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Escandallos",                ::oArtKit:nArea )
    ::oFastReport:SetFieldAliases(   "Escandallos",                cItemsToReport( aItmKit() ) )
 
+   ::oFastReport:SetWorkArea(       "Stock",                      ::oStock:Select() )
+   ::oFastReport:SetFieldAliases(   "Stock",                      cObjectsToReport( ::oStock:oDbfStock ) )
+
    ::oFastReport:SetWorkArea(       "Artículos.Escandallos",      ::oDbfArt:nArea )
    ::oFastReport:SetFieldAliases(   "Artículos.Escandallos",      cItemsToReport( aItmArt() ) )
 
@@ -689,10 +700,11 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Proveedores",                ::oDbfPrv:nArea )
    ::oFastReport:SetFieldAliases(   "Proveedores",                cItemsToReport( aItmPrv() ) )
 
+   ::oFastReport:SetWorkArea(       "Almacenes",                  ::oDbfAlm:nArea )
+   ::oFastReport:SetFieldAliases(   "Almacenes",                  cItemsToReport( aItmAlm() ) )
+
    ::oFastReport:SetWorkArea(       "Usuarios",                   ::oDbfUsr:nArea ) 
    ::oFastReport:SetFieldAliases(   "Usuarios",                   cItemsToReport( aItmUsuario() ) )
-
-
 
    /*
    Relaciones entre tablas-----------------------------------------------------
@@ -702,6 +714,11 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Stock",                             {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Stock", "Almacén",                             {|| ::oStock:oDbfStock:cCodAlm } )
+
+   ? ::oStock:oDbfStock:cFile
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
@@ -731,7 +748,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
-   ::oFastReport:SetresyncPair(     "Informe", "Códigos de barras" )
+   ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
+   ::oFastReport:SetResyncPair(     "Informe", "Stock" )
 
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
 
@@ -923,8 +941,6 @@ METHOD AddVariable() CLASS TFastVentasArticulos
          ::AddVariableLineasRectificativaProveedor()
 
    end case
-
-   ::oFastReport:AddVariable(    "Articulos",    "Stock actual",   "CallHbFunc( 'oTinfGen', ['StockArticulo'])" )
 
 Return ( Super:AddVariable() )
 
@@ -2099,14 +2115,13 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       ::oDbf:cCodTrn  := ""
       ::oDbf:cCodUsr  := ""
 
-      
-
       /*
       AÃ±adimos un nuevo registro
       */
 
       if ::lValidRegister()
          ::oDbf:Insert()
+         ::oStock:SaveStockArticulo( ::oDbf:cCodArt )
       else
          ::oDbf:Cancel()
       end if

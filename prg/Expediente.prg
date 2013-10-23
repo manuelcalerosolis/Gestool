@@ -50,8 +50,8 @@ Return nil
 
 CLASS TExpediente FROM TMasDet
 
-   DATA  cMru     INIT "Folder_document_16"
-   DATA  cBitmap  INIT clrTopExpedientes
+   DATA  cMru                 INIT "Folder_document_16"
+   DATA  cBitmap              INIT clrTopExpedientes
 
    DATA  oArt
    DATA  oCli
@@ -817,7 +817,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       ::oDbf:cCodTra       := oUser():cOperario()
       ::oDbf:dFecOrd       := GetSysDate()
-      ::oDbf:cHorOrd       := uFieldEmpresa( "cIniJornada" )
+      ::oDbf:cHorOrd       := uFieldEmpresa( "cIniJor" )
       ::oDbf:dFecVto       := Ctod( "" )
       ::oDbf:dFecAsg       := GetSysDate()
 

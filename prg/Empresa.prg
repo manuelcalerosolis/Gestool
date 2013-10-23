@@ -1391,7 +1391,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
                   "EMPRESA_8",;
                   "EMPRESA_12",;
                   "EMPRESA_10",;
-                  "EMPRESA_5",;
+                  "EMPRESA_CONTABILIDAD",;
                   "EMPRESA_6",;
                   "EMPRESA_0"
 
@@ -2291,6 +2291,26 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( MkSubCta( aGet[ _CCTARET ], nil, aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
+      REDEFINE GET aGet[ _CCTAPOR ] VAR aTmp[ _CCTAPOR ] ;
+         ID       445 ;
+         IDSAY    446 ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubCta( aGet[ _CCTAPOR ], aGet[ _CCTAPOR ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubCta( aGet[ _CCTAPOR ], nil, aGet[ _CCTAPOR ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         OF       fldContabilidad
+
+      REDEFINE GET aGet[ _CCTAGAS ] VAR aTmp[ _CCTAGAS ] ;
+         ID       510 ;
+         IDSAY    511 ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubCta( aGet[ _CCTAGAS ], aGet[ _CCTAGAS ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubCta( aGet[ _CCTAGAS ], nil, aGet[ _CCTAGAS ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         OF       fldContabilidad
+
       REDEFINE GET aGet[ _CCTACEESPT ] VAR aTmp[ _CCTACEESPT ] ;
          ID       450 ;
          IDSAY    451 ;
@@ -2359,14 +2379,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
             OF       fldEnvios
 
-      REDEFINE GET aTmp[_CUSRFTP] ;
+      REDEFINE GET aTmp[ _CUSRFTP ] ;
             ID       170 ;
             WHEN     ( aTmp[_NTIPCON] == 2 ) ;
             OF       fldEnvios
 
       REDEFINE GET aTmp[ _CPSWFTP ] ;
             ID       180;
-            WHEN     ( aTmp[_NTIPCON] == 2 ) ;
+            WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
             OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LPASENVIO ] VAR aTmp[ _LPASENVIO ] ;
@@ -6768,8 +6788,6 @@ FUNCTION TstEmpresa( cPatDat )
 
       if lChangeStruct
 
-         ? "cambio de estructura"
-
          mkEmpresa( cPatEmpTmp(), cLocalDriver() )
 
          /*
@@ -6821,7 +6839,7 @@ FUNCTION TstEmpresa( cPatDat )
    end if    
 
    /*
-   Comprobamos la longitud del codigo------------------------------------
+   Comprobamos la longitud del codigo------------------------------------------
    */
 
    ( dbfEmp )->( dbGoTop() )
@@ -6831,8 +6849,6 @@ FUNCTION TstEmpresa( cPatDat )
       
       if len( cCodEmp ) < 4
       
-         ? "renombramos la empresa"
-
          if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
             if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
                msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
@@ -6847,7 +6863,7 @@ FUNCTION TstEmpresa( cPatDat )
       end if 
               
       /*
-      Comprobamos q el codigo de la delegacion no este vacio----------------------
+      Comprobamos q el codigo de la delegacion no este vacio-------------------
       */
 
       if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
@@ -6860,7 +6876,7 @@ FUNCTION TstEmpresa( cPatDat )
       end if
 
       /*
-      Sigiente empresa------------------------------------------------
+      Sigiente empresa---------------------------------------------------------
       */
                 
       ( dbfEmp )->( dbSkip() )
@@ -7191,6 +7207,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cPrefixTbl", "C", 10, 0, "Prefijo para tablas de prestashop",                     "", "", "aEmp()", "ps_" } )
    aAdd( aDbf, {"lMailTrno",  "L",  1, 0, "Lógico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cMailTrno",  "C",200, 0, "Dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
+   aAdd( aDbf, {"cCtaPor",    "C", 12, 0, "Subcuenta de portes",                                   "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCtaGas",    "C", 12, 0, "Subcuenta de gastos",                                   "", "", "aEmp()", nil } )
 
 Return ( aDbf  )
 

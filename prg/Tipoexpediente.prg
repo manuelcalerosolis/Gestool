@@ -112,7 +112,7 @@ METHOD OpenFiles( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )

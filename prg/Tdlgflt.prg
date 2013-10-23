@@ -4,6 +4,7 @@
 #include "Report.ch"
 #include "MesDbf.ch"
 #include "DbInfo.ch"
+#include "Xbrowse.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -26,6 +27,11 @@ CLASS TDlgFlt
    DATA oValFilter
    DATA oNexFilter
 
+   DATA aTblConditionNumerico 
+   DATA aTblConditionCaracter 
+   DATA aTblConditionFecha
+   DATA aTblConditionLogico
+
    DATA cTipFilter
    DATA cTexFilter            INIT ""
    DATA cDbfFilter
@@ -33,7 +39,6 @@ CLASS TDlgFlt
    DATA oWndBrw
 
    DATA aFilter               INIT {}
-
 
    DATA lDefaultFilter        INIT .f.
    DATA cDefaultFilter
@@ -69,6 +74,13 @@ CLASS TDlgFlt
 
    DATA lAppendFilter         INIT .f.
 
+   DATA oDlg
+   DATA cResource             INIT "FastFiltros"
+   DATA oBrwFilter
+
+   DATA oColCondicion
+   DATA oColValor
+
    CLASSDATA cOrdAnterior
    CLASSDATA nRecAnterior
    CLASSDATA cBagAnterior
@@ -97,6 +109,9 @@ CLASS TDlgFlt
    METHOD Resource()
    Method StarResource( oBtnSave, oBtnDelete, oDlg )
 
+   Method Dialog()
+   Method StartDialog()
+
    METHOD Load()
    METHOD LoadFilter()
 
@@ -113,6 +128,25 @@ CLASS TDlgFlt
    METHOD lGetFilterName()
 
    METHOD lValidFilterName( oDlg )
+
+   METHOD NexoOnPostEdit( o, x, n ) 
+
+   METHOD CampoOnPostEdit( o, x, n )
+
+   METHOD AppendLine()        INLINE ( aAdd( ::aFilter, { ::aTblMask[ 1 ], ::aTblCondition[ 1 ], Space( 200 ), ::aTblNexo[ 1 ] } ) )
+   
+   INLINE METHOD DeleteLine()
+
+      local nLineasFilter  := len( ::aFilter )
+
+      if ( nLineasFilter > 1 ) .and. ( ::oBrwFilter:nArrayAt <= nLineasFilter )
+         aDel( ::aFilter, ::oBrwFilter:nArrayAt, .t. ) 
+         ::oBrwFilter:Refresh()
+      end if 
+
+      RETURN ( Self )
+
+   ENDMETHOD
 
 END CLASS
 
@@ -250,6 +284,31 @@ Method Default()
                               "Mes igual",;
                               "Año igual" }
 
+   ::aTblConditionNumerico := {  "Igual",;
+                                 "Distinto",;
+                                 "Mayor",;
+                                 "Menor",;
+                                 "Mayor igual",;
+                                 "Menor igual" }
+
+   ::aTblConditionCaracter := {  "Igual",;
+                                 "Distinto",;
+                                 "Contenga" }
+
+   ::aTblConditionFecha    := {  "Igual",;
+                                 "Distinto",;
+                                 "Mayor",;
+                                 "Menor",;
+                                 "Mayor igual",;
+                                 "Menor igual",;
+                                 "Dia semana igual",;
+                                 "Mes igual",;
+                                 "Año igual" }
+
+   ::aTblConditionLogico   := {  "Igual",;
+                                 "Distinto" }
+
+
    if !Empty( ::aTField )                              
       
       // msgStop( cValToChar( ::aTField ) )
@@ -290,6 +349,10 @@ Method Default()
          oFld           := ::aTblMask[ 1 ]
       end if
    next
+
+   ::aFilter            := {}
+
+   ::AppendLine()
 
 Return ( Self )
 
@@ -523,6 +586,317 @@ Method StarResource( oBtnSave, oBtnDelete, oDlg )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+Method Dialog()
+
+   local oDlg
+
+   /*
+   Aplicamos los valores segun se han archivado--------------------------------
+   */
+
+   ::Default()
+
+   /*
+   Caja de dialogo-------------------------------------------------------------
+   */
+
+   DEFINE DIALOG oDlg RESOURCE ::cResource 
+
+   /*
+   Browse de los rangos----------------------------------------------------------
+   */
+
+   ::oBrwFilter                  := TXBrowse():New( oDlg )
+
+   ::oBrwFilter:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwFilter:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrwFilter:SetArray( ::aFilter, , , .f. )
+
+   ::oBrwFilter:lHScroll         := .f.
+   ::oBrwFilter:lVScroll         := .f.
+   ::oBrwFilter:lRecordSelector  := .t.
+   ::oBrwFilter:lFastEdit        := .t.
+
+   ::oBrwFilter:nFreeze          := 1
+   ::oBrwFilter:nMarqueeStyle    := 3
+
+   ::oBrwFilter:nColSel          := 2
+
+   ::oBrwFilter:bChange          := {|| ::CampoOnPostEdit() }
+
+   ::oBrwFilter:CreateFromResource( 310 )
+
+   with object ( ::oBrwFilter:AddCol() )
+      :cHeader          := "Campo"
+      :bEditValue       := {|| ::aFilter[ ::oBrwFilter:nArrayAt, 1 ] }
+      :nEditType        := EDIT_LISTBOX
+      :aEditListTxt     := ::aTblMask
+      :nWidth           := 240
+      :bOnPostEdit      := {|o,x,n| ::CampoOnPostEdit( o, x, n ) } 
+   end with
+
+   with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
+      :cHeader          := "Condicion"
+      :bEditValue       := {|| ::aFilter[ ::oBrwFilter:nArrayAt, 2 ] }
+      :nEditType        := EDIT_LISTBOX
+      :aEditListTxt     := ::aTblCondition
+      :nWidth           := 100
+      :bOnPostEdit      := {|o,x,n| If( n != VK_ESCAPE, ::aFilter[ ::oBrwFilter:nArrayAt, 2 ] := x, ) } 
+   end with
+
+   with object ( ::oColValor := ::oBrwFilter:AddCol() )
+      :cHeader          := "Valor"
+      :bEditValue       := {|| ::aFilter[ ::oBrwFilter:nArrayAt, 3 ] }
+      :nEditType        := EDIT_GET
+      :nWidth           := 200
+      :bOnPostEdit      := {|o,x,n| If( n != VK_ESCAPE, ::aFilter[ ::oBrwFilter:nArrayAt, 3 ] := x, ) } 
+   end with
+
+   with object ( ::oBrwFilter:AddCol() )
+      :cHeader          := "Nexo"
+      :bEditValue       := {|| ::aFilter[ ::oBrwFilter:nArrayAt, 4 ] }
+      :nEditType        := EDIT_LISTBOX
+      :aEditListTxt     := ::aTblNexo
+      :nWidth           := 60
+      :bOnPostEdit      := {|o,x,n| ::NexoOnPostEdit( o, x, n ) } 
+   end with
+
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+   oDlg:Activate( , , , .t., , , {|| ::StartDialog( oDlg ) } )
+
+   if oDlg:nResult != IDOK
+      ::cExpFilter      := ""
+      ::bExpFilter      := nil
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog( oDlg )
+
+   local oGrupo
+   local oCarpeta
+   local oOfficeBar
+
+   oOfficeBar              := TDotNetBar():New( 0, 0, 1020, 115, oDlg, 1 )
+   oOfficeBar:lPaintAll    := .f.
+   oOfficeBar:lDisenio     := .f.
+
+   oOfficeBar:SetStyle( 1 )
+
+      oCarpeta             := TCarpeta():New( oOfficeBar, "Filtros" )
+
+      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Salida", .f. )
+      TDotNetButton():New( 120, oGrupo, "Up16",    "Subir línea",    1, {|| ::oBrwFilter:GoUp() }, , , .f., .f., .f. )
+      TDotNetButton():New( 120, oGrupo, "Down16",  "Bajar línea",    1, {|| ::oBrwFilter:GoDown() }, , , .f., .f., .f. )
+      TDotNetButton():New( 120, oGrupo, "Del16",   "Eliminar línea", 1, {|| ::DeleteLine() }, , , .f., .f., .f. )
+
+      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Salida", .f. )
+         
+      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Aplicar",  1, {|| ::SaveToDatabase() }, , , .f., .f., .f. )
+      TDotNetButton():New( 60, oGrupo, "End32",          "Salir",    2, {|| oDlg:End() }, , , .f., .f., .f. )
+
+   oDlg:oTop               := oOfficeBar
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD NexoOnPostEdit( o, x, n ) 
+
+   local nAt               := ::oBrwFilter:nArrayAt
+
+   if IsNum( n ) .and. ( n != VK_ESCAPE )
+
+      if !Empty( x )
+      
+         ::aFilter[ nAt, 4 ]  := x
+
+         if ( nAt ) == len( ::aFilter ) 
+            ::AppendLine()
+         end if 
+
+         ::oBrwFilter:Refresh()
+
+      end if 
+
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CampoOnPostEdit( o, x, n )
+
+   local nPos
+   local lCambio                          := .f.
+   local nAt                              := ::oBrwFilter:nArrayAt
+
+   if IsNum( n ) .and. ( n != VK_ESCAPE )
+
+      if !IsNil( x )
+         if ::aFilter[ nAt, 1 ] != x
+            ::aFilter[ nAt, 1 ]           := x
+            lCambio                       := .t.
+         end if 
+      end if
+
+      nPos                                := aScan( ::aTblMask, ::aFilter[ nAt, 1 ] )
+      if nPos != 0
+
+         do case
+            case ::aTblType[ nPos ] == "C"
+
+               ::oColCondicion:aEditListTxt   := ::aTblConditionCaracter
+
+               ::oColValor:nEditType            := EDIT_GET              
+
+               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+                  ::aFilter[ nAt, 3 ]           := Space( 200 )
+               end if 
+
+            case ::aTblType[ nPos ] == "N"
+
+               ::oColCondicion:aEditListTxt   := ::aTblConditionNumerico
+
+               ::oColValor:nEditType            := EDIT_GET              
+
+               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+                  ::aFilter[ nAt, 3 ]           := 0
+               end if 
+
+            case ::aTblType[ nPos ] == "D"
+               
+               ::oColCondicion:aEditListTxt   := ::aTblConditionFecha
+
+               ::oColValor:nEditType            := EDIT_DATE       
+               
+               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+                  ::aFilter[ nAt, 3 ]           := Date()
+               end if 
+               
+            case ::aTblType[ nPos ] == "L"
+
+               ::oColCondicion:aEditListTxt   := ::aTblConditionLogico
+
+               ::oColValor:aEditListTxt         := { "Si", "No" }
+
+               ::oColValor:nEditType            := EDIT_GET_LISTBOX
+
+               if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
+                  ::aFilter[ nAt, 3 ]           := "Si"
+               end if 
+
+            otherwise
+
+               ::oColCondicion:aEditListTxt     := ::aTblCondition
+
+         end case 
+
+         ::oBrwFilter:Refresh()
+
+      end if
+
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+/*
+METHOD ExpresionBuilder()
+
+   local oBlock
+   local n           := 1
+   local lExpMaker   := .f.
+   local aNex        := { " .AND. ", " .OR. " }
+   local aExpCon     := { " == ", " != ", " > ", " < ", " >= ", " <= ", " $ ", "Dow()", "Month()", "Year()" }
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ::lAllRecno
+
+      ::cExpFilter   := ""
+      ::bExpFilter   := {|| .t. }
+      ::cTxtFilter   := ""
+      lExpMaker      := .t.
+
+   else
+
+      ::cExpFilter   := ""
+      ::bExpFilter   := nil
+      ::cTxtFilter   := ""
+
+      for each cFilter
+
+      while n <= len( ::aValFilter )
+
+         do case
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == " $ "
+               ::cExpFilter   += cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] )
+
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Dow()"
+               ::cExpFilter   += "Dow( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
+
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Month()"
+               ::cExpFilter   += "Month( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
+
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Year()"
+               ::cExpFilter   += "Year( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
+
+            otherwise
+               ::cExpFilter   += cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ] )
+
+         end case
+
+         ::cTxtFilter      += ::aTblMask[ ::oFldFilter[n]:nAt ] + Space( 1 ) + lower( ::aTblCondition[ ::oConFilter[n]:nAt ] ) + Space( 1 ) + cGetVal( ::aValFilter[n], ::aTblType[ ::oFldFilter[n]:nAt ] )
+
+         if ::oNexFilter[ n ]:nAt != 1
+            ::cExpFilter   += aNex[ ::oNexFilter[n]:nAt - 1 ]
+            ::cTxtFilter   += Space( 1 ) + lower( ::aTblNexo[ ::oNexFilter[n]:nAt ] ) + Space( 1 )
+         else
+            exit
+         end if
+
+         n++
+
+      end do
+
+      do case
+         case IsObject( ::oDbf )
+            ::oDbf:SetFocus()
+         case IsChar( ::oDbf )
+            Select( ::oDbf )
+      end case
+
+      if Empty( ::cExpFilter ) .or. At( Type( ::cExpFilter ), "UEUI" ) != 0
+         msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+         ::cExpFilter   := ""
+         ::bExpFilter   := nil
+         ::cTxtFilter   := ""
+      else
+         ::bExpFilter   := Compile( ::cExpFilter )
+         lExpMaker      := .t.
+      end if
+
+   end if
+
+   RECOVER
+
+      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lExpMaker )
+*/
+//--------------------------------------------------------------------------//
+
 
 Method CreateFilter( oDlg )
 
