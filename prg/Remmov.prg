@@ -912,9 +912,9 @@ METHOD OpenService( lExclusive, cPath )
    DEFAULT lExclusive   := .f.
    DEFAULT cPath        := ::cPath
 
-/*
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   BEGIN SEQUENCE
 
       if Empty( ::oDbf )
          ::oDbf         := ::DefineFiles( cPath )
@@ -923,7 +923,7 @@ METHOD OpenService( lExclusive, cPath )
       ::oDbf:Activate( .f., !( lExclusive ) )
 
       ::OpenDetails()
-/*
+
    RECOVER USING oError
 
       lOpen             := .f.
@@ -934,7 +934,7 @@ METHOD OpenService( lExclusive, cPath )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( lOpen )
 
@@ -1879,8 +1879,8 @@ Method Process()
 
    for m := 1 to len( aFiles )
 
-      /*oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE*/
+      oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
 
       /*
       descomprimimos el fichero
@@ -2050,14 +2050,14 @@ Method Process()
 
       end if
 
-/*      RECOVER USING oError
+       RECOVER USING oError
 
          ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
          ::oSender:SetText( ErrorMessage( oError ) )
 
       END SEQUENCE
 
-      ErrorBlock( oBlock )*/
+      ErrorBlock( oBlock )
 
    next
 
