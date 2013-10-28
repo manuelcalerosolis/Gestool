@@ -186,8 +186,6 @@ CLASS TDlgFlt
 
       next 
 
-      ObjInspect( ::aFilter )
-
       RETURN ( Self )
 
    ENDMETHOD
@@ -200,6 +198,8 @@ CLASS TDlgFlt
          case IsChar(  uDbfFilter )
             ::cDbfFilter   := uDbfFilter
       end case
+
+      Select( ::cDbfFilter )
 
       RETURN ( Self )
 
@@ -935,37 +935,41 @@ METHOD ExpresionBuilder()
 
       for each aFilter in ::aFilter
 
-         do case
-            case aFilter[ 2 ] == "Igual"
-               ::cExpFilter   += ::cField( aFilter ) + " == " + ::cValue( aFilter )
+         if len( aFilter ) > 0
 
-            case aFilter[ 2 ] == "Distinto"
-               ::cExpFilter   += ::cField( aFilter ) + " != " + ::cValue( aFilter )
+            do case
+               case aFilter[ 2 ] == "Igual"
+                  ::cExpFilter   += ::cField( aFilter ) + " == " + ::cValue( aFilter )
+   
+               case aFilter[ 2 ] == "Distinto"
+                  ::cExpFilter   += ::cField( aFilter ) + " != " + ::cValue( aFilter )
+   
+               case aFilter[ 2 ] == "Mayor"
+                  ::cExpFilter   += ::cField( aFilter ) + " > " + ::cValue( aFilter )
+   
+               case aFilter[ 2 ] == "Menor"
+                  ::cExpFilter   += ::cField( aFilter ) + " < " + ::cValue( aFilter )
+   
+               case aFilter[ 2 ] == "Mayor igual"
+                  ::cExpFilter   += ::cField( aFilter ) + " >= " + ::cValue( aFilter )
+   
+               case aFilter[ 2 ] == "Menor igual"
+                  ::cExpFilter   += ::cField( aFilter ) + " <= " + ::cValue( aFilter )
+   
+               case aFilter[ 2 ] == "Contenga"
+                  ::cExpFilter   += ::cValue( aFilter ) + " $ " + ::cField( aFilter )
+   
+               case aFilter[ 2 ] == "Dia semana igual"
+   
+               case aFilter[ 2 ] == "Mes igual"
+   
+               case aFilter[ 2 ] == "Año igual"
+               
+            end case
+   
+            ::cExpFilter         += ::cNexo( aFilter )
 
-            case aFilter[ 2 ] == "Mayor"
-               ::cExpFilter   += ::cField( aFilter ) + " > " + ::cValue( aFilter )
-
-            case aFilter[ 2 ] == "Menor"
-               ::cExpFilter   += ::cField( aFilter ) + " < " + ::cValue( aFilter )
-
-            case aFilter[ 2 ] == "Mayor igual"
-               ::cExpFilter   += ::cField( aFilter ) + " >= " + ::cValue( aFilter )
-
-            case aFilter[ 2 ] == "Menor igual"
-               ::cExpFilter   += ::cField( aFilter ) + " <= " + ::cValue( aFilter )
-
-            case aFilter[ 2 ] == "Contenga"
-               ::cExpFilter   += ::cValue( aFilter ) + " $ " + ::cField( aFilter )
-
-            case aFilter[ 2 ] == "Dia semana igual"
-
-            case aFilter[ 2 ] == "Mes igual"
-
-            case aFilter[ 2 ] == "Año igual"
-            
-         end case
-
-         ::cExpFilter         += ::cNexo( aFilter )
+         end if 
 
       next
 
@@ -973,12 +977,7 @@ METHOD ExpresionBuilder()
       Seleccionamos la tabbla--------------------------------------------------
       */
 
-      do case
-         case IsObject( ::oDbf )
-            ::oDbf:SetFocus()
-         case IsChar( ::oDbf )
-            Select( ::oDbf )
-      end case
+      ::SetFilterDatabase( ::oDbf )
 
       /*
       Construimos el filtro----------------------------------------------------

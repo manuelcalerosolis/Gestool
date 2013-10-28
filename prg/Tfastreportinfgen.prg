@@ -995,10 +995,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
             if !Empty( ::oFilter:bExpFilter )
                ::oBtnFiltrar:cCaption( "Filtro activo" )
-               ? ( "Filtro activo" )
             else 
                ::oBtnFiltrar:cCaption( "Filtrar" )
-               ? ( "Filtrar" )
             end if
 
          end if 
