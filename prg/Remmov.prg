@@ -316,7 +316,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nTipMov"             TYPE "N" LEN  1  DEC 0                                                                                COMMENT "Tipo del movimiento"             HIDE  OF ::oDbf
       FIELD CALCULATE NAME "cTipMov"            LEN 12  DEC 0                             VAL ( ::cTextoMovimiento() )                       COMMENT "Tipo"             COLSIZE 90           OF ::oDbf
       FIELD NAME "cCodUsr"             TYPE "C" LEN  3  DEC 0                             DEFAULT  cCurUsr()                                 COMMENT "Código usuario"                  HIDE  OF ::oDbf
-      FIELD NAME "cCodDlg"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Delegación"       COLSIZE 20           OF ::oDbf
+      FIELD NAME "cCodDlg"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT ""                                HIDE  OF ::oDbf
       FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                COMMENT "Código agente"                   HIDE  OF ::oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE  OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
@@ -910,10 +910,11 @@ METHOD OpenService( lExclusive, cPath )
    local oBlock
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
-
+/*
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE*/
 
       if Empty( ::oDbf )
          ::oDbf         := ::DefineFiles( cPath )
@@ -922,7 +923,7 @@ METHOD OpenService( lExclusive, cPath )
       ::oDbf:Activate( .f., !( lExclusive ) )
 
       ::OpenDetails()
-
+/*
    RECOVER USING oError
 
       lOpen             := .f.
@@ -933,7 +934,7 @@ METHOD OpenService( lExclusive, cPath )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( lOpen )
 
@@ -1878,8 +1879,8 @@ Method Process()
 
    for m := 1 to len( aFiles )
 
-      oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+      /*oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE*/
 
       /*
       descomprimimos el fichero
@@ -1896,7 +1897,7 @@ Method Process()
          if file( cPatSnd() + "RemMovT.Dbf" )
 
             oRemMovTmp        := TRemMovAlm():New( cPatSnd() )
-            oRemMovTmp:OpenService( .f., .t. )
+            oRemMovTmp:OpenService( .f. )
 
             oRemMovTmp:oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
@@ -1907,6 +1908,32 @@ Method Process()
 
             dbfRemMovTmp      := oRemMovTmp:oDbf:cAlias
             dbfRemMovFix      := oRemMov:oDbf:cAlias
+
+            /*
+            Ponemos los valores de las delegaciones----------------------------
+            */
+
+            oRemMovTmp:oDbf:GoTop()
+            while !oRemMovTmp:oDbf:Eof()
+
+               if Empty( oRemMovTmp:oDbf:cSufRem )
+                  oRemMovTmp:oDbf:FieldPutByName( "cSufRem", "00" )
+               end if 
+
+               oRemMovTmp:oDbf:Skip()
+
+            end while 
+
+            oRemMovTmp:oDetMovimientos:oDbf:GoTop()
+            while !oRemMovTmp:oDetMovimientos:oDbf:Eof()
+
+               if Empty( oRemMovTmp:oDetMovimientos:oDbf:cSufRem )
+                  oRemMovTmp:oDetMovimientos:oDbf:FieldPutByName( "cSufRem", "00" )
+               end if 
+
+               oRemMovTmp:oDetMovimientos:oDbf:Skip()
+
+            end while 
 
             /*
             Trasbase de turnos-------------------------------------------------------
@@ -2023,14 +2050,14 @@ Method Process()
 
       end if
 
-      RECOVER USING oError
+/*      RECOVER USING oError
 
          ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
          ::oSender:SetText( ErrorMessage( oError ) )
 
       END SEQUENCE
 
-      ErrorBlock( oBlock )
+      ErrorBlock( oBlock )*/
 
    next
 
@@ -5245,7 +5272,7 @@ METHOD cMostrarSerie() CLASS TRemMovAlm
 
    if ::oDetSeriesMovimientos:oDbfVir:Seek( str(::oDetMovimientos:oDbfVir:nNumRem) + ::oDetMovimientos:oDbfVir:cSufRem + str( ::oDetMovimientos:oDbfVir:nNumLin ) )
 
-      while str(::oDetSeriesMovimientos:oDbfVir:nNumRem) + ::oDetSeriesMovimientos:oDbfVir:cSufRem + str( ::oDetSeriesMovimientos:oDbfVir:nNumLin ) == str( ::oDetMovimientos:oDbfVir:nNumRem ) + ::oDetMovimientos:oDbfVir:cSufRem + str (::oDetMovimientos:oDbfVir:nNumLin ) .and. !::oDetSeriesMovimientos:oDbfVir:Eof() .and. i <= 1
+      while (str(::oDetSeriesMovimientos:oDbfVir:nNumRem) + ::oDetSeriesMovimientos:oDbfVir:cSufRem + str( ::oDetSeriesMovimientos:oDbfVir:nNumLin ) ) == (str( ::oDetMovimientos:oDbfVir:nNumRem ) + ::oDetMovimientos:oDbfVir:cSufRem + str (::oDetMovimientos:oDbfVir:nNumLin ) ) .and. !::oDetSeriesMovimientos:oDbfVir:Eof() .and. i <= 1
 
          if i == 0
             cResultado  = "[" + AllTrim( ::oDetSeriesMovimientos:oDbfVir:cNumSer ) + "] "

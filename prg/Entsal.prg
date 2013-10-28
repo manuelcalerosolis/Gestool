@@ -158,6 +158,15 @@ FUNCTION EntSal( oMenuItem, oWnd )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfEntT )->cSufEnt }
+         :nWidth           := 40
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
          :bEditValue       := {|| ( dbfEntT )->cCodCaj }
          :nWidth           := 80
