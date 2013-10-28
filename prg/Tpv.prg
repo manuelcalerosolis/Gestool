@@ -1784,11 +1784,15 @@ Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
 
       case ( dbfTikT )->cTipTik == SAVFAC
 
+         ?"imprimo como factura"
+
          if lImpFacturasEnImpresora( ( dbfTikT )->cNcjTik, dbfCajT )
 
             if lPrev
+               ?"Visualizo"
                VisFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             else
+               ?"Imprimo"
                PrnFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             end if
 
