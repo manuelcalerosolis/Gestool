@@ -10955,7 +10955,7 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
 
    IF ::oBrw:oWnd:IsKindOf( "TDIALOG" )
       ::oEditLbx:nDlgCode = DLGC_WANTALLKEYS
-      ::oEditLbx:bKeyDown   := {|k| ::oEditLbx:nLastKey := k, nil }
+      ::oEditLbx:bKeyDown   := {|k| if( !Empty( ::oEditLbx), ::oEditLbx:nLastKey := k, ), nil }
 
    ELSE
       ::oEditLbx:bKeyDown   := {|k| ::oEditLbx:nLastKey := k, ;

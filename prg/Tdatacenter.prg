@@ -531,6 +531,18 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oCnfFlt()
+
+      local oCnfFlt
+
+      DATABASE NEW oCnfFlt PATH ( cPatDat() ) FILE "CnfFlt.Dbf" VIA ( cDriver() ) SHARED INDEX "CnfFlt.Cdx"
+
+      Return ( oCnfFlt )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
 END CLASS
 
 //---------------------------------------------------------------------------//

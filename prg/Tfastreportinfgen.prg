@@ -115,8 +115,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoFacturasRectificativasProveedores INIT 0
    DATA  nTotalFacturasRectificativasProveedores   INIT 0
 
-
-
    //------------------------------------------------------------------------//
 
    METHOD Create()
@@ -982,6 +980,32 @@ CLASS TFastReportInfGen FROM TNewInfGen
          Return ( Self )
 
       end if
+
+   ENDMETHOD
+
+//----------------------------------------------------------------------------//
+
+   INLINE METHOD DlgFilter()
+
+      if !Empty( ::oFilter )
+
+         ::oFilter:Dialog()
+
+         if !Empty( ::oBtnFiltrar )
+
+            if !Empty( ::oFilter:bExpFilter )
+               ::oBtnFiltrar:cCaption( "Filtro activo" )
+               ? ( "Filtro activo" )
+            else 
+               ::oBtnFiltrar:cCaption( "Filtrar" )
+               ? ( "Filtrar" )
+            end if
+
+         end if 
+
+      end if
+
+      Return ( Self )
 
    ENDMETHOD
 

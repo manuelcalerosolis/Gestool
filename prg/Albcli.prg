@@ -1526,7 +1526,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       oWndBrw:lFechado     := .t.
 
-	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
+	   oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión cerrada"

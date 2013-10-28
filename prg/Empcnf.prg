@@ -225,7 +225,7 @@ RETURN ( aEmp()[ _CDEFALM ] )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDefAlm() ; RETURN ( aEmp()[ _CDEFALM ] )
+FUNCTION cDefAlm() ; RETURN ( uFieldEmpresa( "CDEFALM" ) )
 
 //---------------------------------------------------------------------------//
 

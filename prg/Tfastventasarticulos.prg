@@ -151,7 +151,11 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
-   ::CreateFilter( , ::oDbf )
+   ::oFilter      := TDlgFlt():Create( ::oDbf )
+   if !Empty( ::oFilter )
+      ::oFilter:SetFilterDatabase( ::oCnfFlt )
+      ::oFilter:SetFilterType( FST_ART )
+   end if 
 
 RETURN .t.
 
@@ -208,7 +212,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) CLASS "AlbPrvL"     FILE "AlbProvL.Dbf"  VIA ( cDriver() ) SHARED INDEX "AlbProvL.Cdx"
 
-      DATABASE NEW ::oFacPrvT PATH ( cPatEmp() ) CLASS "FacPrvT"     FILE "FacPrvT.Dbf"   VIA ( cDriver() ) SHARED INDEX "FacPrvT.Cdx"
+      DATABASE NEW ::oFacPrvT PATH ( CPATEMP() ) CLASS "FacPrvT"     FILE "FacPrvT.Dbf"   VIA ( cDriver() ) SHARED INDEX "FacPrvT.Cdx"
 
       DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) CLASS "FacPrvL"     FILE "FacPrvL.Dbf"   VIA ( cDriver() ) SHARED INDEX "FacPrvL.Cdx"
 
@@ -221,6 +225,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oProMat  PATH ( cPatEmp() ) CLASS "ProMat"      FILE "ProMat.Dbf"    VIA ( cDriver() ) SHARED INDEX "ProMat.Cdx"
 
       DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) CLASS "HisMov"      FILE "HisMov.Dbf"    VIA ( cDriver() ) SHARED INDEX "HisMov.Cdx"
+
+      ::oCnfFlt   := TDataCenter():oCnfFlt()
 
       /*
       Stocks de articulos------------------------------------------------------
@@ -370,6 +376,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !Empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
          ::oHisMov:end()
+      end if
+
+      if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
+         ::oCnfFlt:end()
       end if
 
       if !Empty( ::oStock )
@@ -589,7 +599,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:Desde .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:Hasta ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:Desde       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )
 
-      return .t.
+      Return .t.
 
    end if
 
@@ -717,8 +727,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetMasterDetail(   "Informe", "Stock",                             {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Stock", "Almacén",                             {|| ::oStock:oDbfStock:cCodAlm } )
-
-   ? ::oStock:oDbfStock:cFile
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )

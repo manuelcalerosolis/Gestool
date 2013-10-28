@@ -212,6 +212,9 @@ Defines para ficheros INI
 #define PAR_PRO                 '30'
 #define COB_TIK                 '31'
 #define SAT_CLI                 '32'
+#define FST_ART                 '33'
+#define FST_CLI                 '34'
+#define FST_PRV                 '35'
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir

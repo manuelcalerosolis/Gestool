@@ -207,6 +207,7 @@ CLASS TInfGen
    DATA oRctPrvT
    DATA oRctPrvL
    DATA oRemAgeT
+   DATA oCnfFlt
 
    DATA aFields
    DATA aIniCli
@@ -497,7 +498,7 @@ CLASS TInfGen
 
    METHOD CreateFilter( aTField, oDbf )
 
-   METHOD DlgFilter()            INLINE ( if( ::oFilter != nil, ::oFilter:Dialog(), ) ) //INLINE ( if( ::oFilter != nil, ::oFilter:Resource(), ) )
+   METHOD DlgFilter()            INLINE ( if( !Empty( ::oFilter ), ::oFilter:Dialog(), ) )
 
    METHOD EvalFilter( oDbf )
 
