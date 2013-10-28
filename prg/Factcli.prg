@@ -611,9 +611,7 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    */
 
    if lVisualDocumento( cCodDoc, dbfDoc )
-
       PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
-
    else
 
       /*
@@ -13047,7 +13045,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
       /*
       Zona de variables--------------------------------------------------------
       */
-
+      
       VariableReport( oFr )
 
       /*

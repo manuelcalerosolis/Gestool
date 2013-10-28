@@ -1094,11 +1094,6 @@ STATIC FUNCTION CloseFiles()
    dbfComentariosT   := nil
    dbfComentariosL   := nil
 
-   if !Empty( oFr )
-      oFr:DestroyFr()
-      oFr            := nil 
-   end if
-
    lOpenFiles        := .f.
 
    EnableAcceso()
@@ -1149,22 +1144,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    end if
 
    DisableAcceso()
-
-   /*
-   Creacion del objeto report--------------------------------------------------
-   */
-
-   oFr                  := frReportManager():New()
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos---------------------------------------------------------------
-   */
-
-   DataReport( oFr )
-
+   
    /*
    Compruebo si hay turnos abiertos--------------------------------------------
    */
@@ -1784,15 +1764,11 @@ Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
 
       case ( dbfTikT )->cTipTik == SAVFAC
 
-         ?"imprimo como factura"
-
          if lImpFacturasEnImpresora( ( dbfTikT )->cNcjTik, dbfCajT )
 
             if lPrev
-               ?"Visualizo"
                VisFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             else
-               ?"Imprimo"
                PrnFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             end if
 
@@ -14540,6 +14516,21 @@ Function PrintReportTikCli( nDevice, nCopies, cPrinter )
    SysRefresh()
 
    /*
+   Creacion del objeto report--------------------------------------------------
+   */
+
+   oFr                  := frReportManager():New()
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos---------------------------------------------------------------
+   */
+
+   DataReport( oFr )
+
+   /*
    Creamos las relaciones------------------------------------------------------
    */
 
@@ -14597,6 +14588,14 @@ Function PrintReportTikCli( nDevice, nCopies, cPrinter )
    */
 
    ClearRelationReport( oFr )
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   oFr := nil
 
 Return .t.
 
