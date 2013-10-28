@@ -18340,7 +18340,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
             nTotDtoEsp        += nDescuentoEsp
             nTotDpp           += nDescuentoPp
 
-            nTotCos           += ( cTikL )->nCosDiv
+            nTotCos           += nCosLTpv( cTikL,  nDouDiv, nDorDiv ) // ( cTikL )->nCosDiv
 
             if ( cTikL )->lInPromo
                nTotPrm        += nTotLin - nDescuentoEsp - nDescuentoPp

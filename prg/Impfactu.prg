@@ -1784,9 +1784,9 @@ METHOD Importar()
          ::oDbfPreLFac:GoTop()
          while !( ::oDbfPreLFac:eof() )
 
-            n                          := aScan( aTemporalLineas, {|o| o:nNumPre == ::oDbfPreLFac:nNumPre .and. o:nNumLin == ::oDbfPreLFac:nServicio } )
+            //n                          := aScan( aTemporalLineas, {|o| o:nNumPre == ::oDbfPreLFac:nNumPre .and. o:nNumLin == ::oDbfPreLFac:nServicio .and. !Empty(o:cRef) } )
 
-            if n == 0
+            //if n == 0
 
                oTemporal               := SLineasPresupuestos()
                oTemporal:cSerPre       := "A"  
@@ -1808,7 +1808,7 @@ METHOD Importar()
 
                aAdd( aTemporalLineas, oTemporal )   
 
-            else
+            /*else
             
                if Empty( aTemporalLineas[n]:mLngDes )
                   aTemporalLineas[n]:mLngDes := ::oDbfPreLFac:cDetalle   
@@ -1832,7 +1832,7 @@ METHOD Importar()
                   aTemporalLineas[n]:nIva := ::oDbfPreLFac:nIva
                end if
 
-            end if   
+            end if */  
 
             ::aMtrIndices[ 20 ]:Set( ::oDbfPreLFac:Recno() )
 

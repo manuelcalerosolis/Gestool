@@ -46,6 +46,7 @@ REQUEST DBFCDX
 #define _CSUCBNC                   34      //
 #define _CDIGBNC                   35      //
 #define _CCTABNC                   36      //
+#define _CCODWEB                   37  
 
 static oWndBrw
 static aBigResource
@@ -534,6 +535,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          MIN      ( 1 ) ;
          MAX      ( 99 ) ;
          OF       oDlg
+
+      REDEFINE GET aGet[ _CCODWEB ] ;
+         VAR      aTmp[ _CCODWEB ] ;
+         ID       430 ;
+         WHEN     ( nMode != ZOOM_MODE ); 
+         OF       oDlg   
 
       // Código de facturae ---------------------------------------------------
 
@@ -1353,6 +1360,7 @@ function aItmFPago()
    aAdd( aBase, { "cSucBnc",  "C",    4,   0, "Sucursal de la cuenta"                                  ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cDigBnc",  "C",    2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCtaBnc",  "C",   10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cCodWeb",  "C",  100,   0, "Código web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
 
 return ( aBase )
 

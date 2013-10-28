@@ -236,6 +236,8 @@ CLASS TRemMovAlm FROM TMasDet
    Method ReciveData()
    Method Process()
 
+   Method cMostrarSerie() 
+
    Method Report()            INLINE   TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
 
    Method ActualizaStockWeb( cNumDoc )
@@ -1227,6 +1229,13 @@ METHOD Resource( nMode )
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Lote"
          :bStrData      := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "cLote" ) }
+         :nWidth        := 80
+         :lHide         := .t.
+      end with
+
+      with object ( ::oBrwDet:addCol() )
+         :cHeader       := "Serie"
+         :bStrData      := {|| ::cMostrarSerie() }
          :nWidth        := 80
          :lHide         := .t.
       end with
@@ -2398,6 +2407,7 @@ METHOD loadAlmacen( nMode )
    local cCodTip
    local sStkAlm
    local aStkAlm
+   local nNumLin
 
    CursorWait()
 
@@ -2442,8 +2452,9 @@ METHOD loadAlmacen( nMode )
       
                   ::oDetMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
                   ::oDetMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
-      
-                  ::oDetMovimientos:oDbfVir:nNumLin   := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+                  
+                  nNumLin                             := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+                  ::oDetMovimientos:oDbfVir:nNumLin   := nNumLin
       
                   ::oDetMovimientos:oDbfVir:dFecMov   := ::oDbf:dFecRem
                   ::oDetMovimientos:oDbfVir:cTimMov   := ::oDbf:cTimRem
@@ -2452,7 +2463,25 @@ METHOD loadAlmacen( nMode )
                   ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
                   ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
                   ::oDetMovimientos:oDbfVir:cAloMov   := Space( 3 )
-      
+
+                  if !Empty( sStkAlm:cNumeroSerie )
+
+                     ::oDetSeriesMovimientos:oDbfVir:Append()
+
+                     ::oDetSeriesMovimientos:oDbfVir:Blank()
+
+                     ::oDetSeriesMovimientos:oDbfVir:nNumRem   := ::oDbf:nNumRem
+                     ::oDetSeriesMovimientos:oDbfVir:cSufRem   := ::oDbf:cSufRem
+                     ::oDetSeriesMovimientos:oDbfVir:dFecRem   := ::oDbf:dFecRem
+                     ::oDetSeriesMovimientos:oDbfVir:nNumLin   := nNumLin
+                     ::oDetSeriesMovimientos:oDbfVir:cCodArt   := sStkAlm:cCodigo
+                     ::oDetSeriesMovimientos:oDbfVir:cAlmOrd   := ::oDbf:cAlmDes
+                     ::oDetSeriesMovimientos:oDbfVir:cNumSer   := sStkAlm:cNumeroSerie
+
+                     ::oDetSeriesMovimientos:oDbfVir:Save()
+
+                  end if
+
                   ::oDetMovimientos:oDbfVir:nUndMov   := 0
       
                   if !uFieldEmpresa( "lCosAct" )
@@ -5205,7 +5234,40 @@ METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
 
 RETURN ( Self )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD cMostrarSerie() CLASS TRemMovAlm
+
+   local nNumRec     := ::oDetSeriesMovimientos:oDbfVir:Recno()
+   local nOrdAnt     := ::oDetSeriesMovimientos:oDbfVir:OrdSetFocus( "cNumOrd" )
+   local cResultado  := ""
+   local i           := 0
+
+   if ::oDetSeriesMovimientos:oDbfVir:Seek( str(::oDetMovimientos:oDbfVir:nNumRem) + ::oDetMovimientos:oDbfVir:cSufRem + str( ::oDetMovimientos:oDbfVir:nNumLin ) )
+
+      while str(::oDetSeriesMovimientos:oDbfVir:nNumRem) + ::oDetSeriesMovimientos:oDbfVir:cSufRem + str( ::oDetSeriesMovimientos:oDbfVir:nNumLin ) == str( ::oDetMovimientos:oDbfVir:nNumRem ) + ::oDetMovimientos:oDbfVir:cSufRem + str (::oDetMovimientos:oDbfVir:nNumLin ) .and. !::oDetSeriesMovimientos:oDbfVir:Eof() .and. i <= 1
+
+         if i == 0
+            cResultado  = "[" + AllTrim( ::oDetSeriesMovimientos:oDbfVir:cNumSer ) + "] "
+         else
+            cResultado  = "[...]"
+
+         end if
+
+         i  += 1
+
+         ::oDetSeriesMovimientos:oDbfVir:Skip()
+
+      end while
+
+   end if
+
+   ::oDetSeriesMovimientos:oDbfVir:OrdSetFocus( nOrdAnt )
+   ::oDetSeriesMovimientos:oDbfVir:Goto( nNumRec )
+
+RETURN ( cResultado )
+
+//---------------------------------------------------------------------------//
 
 Function AppMovimientosAlmacen()
 
