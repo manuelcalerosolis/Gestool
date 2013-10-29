@@ -145,9 +145,11 @@ CLASS TDlgFlt
 
    METHOD cField( aField )             INLINE ( ::aTblField[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblField ) ) ] )
 
+   METHOD cFieldType( aField )         INLINE ( ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] )
+
    METHOD cCondition( aField )         INLINE ( ::aTblSimbolos[ Min( Max( aScan( ::aTblCondition, aField[ 2 ] ), 0 ), len( ::aTblSimbolos ) ) ] )
 
-   METHOD cValue( aField )             INLINE ( cGetValue( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
+   METHOD cValue( aField )             INLINE ( cCharToVal( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
 
    METHOD cNexo( aField )              INLINE ( ::aTblExpresion[ Min( Max( aScan( ::aTblNexo, Alltrim( aField[ 4 ] ) ), 0 ), len( ::aTblExpresion ) ) ] )
 
@@ -1490,45 +1492,6 @@ RETURN cRet
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION cGetValue( xVal, cType )
-
-   local cTemp    := ""
-
-   DEFAULT cType  := ValType( xVal )
-
-   do case
-      case cType == "C" .or. cType == "M"
-
-         if !Empty( xVal )
-            xVal  := Rtrim( xVal )
-         end if
-         
-         if ( '"' $ xVal ) .or. ( "'" $ xVal )
-            cTemp := Rtrim( cValToChar( xVal ) )
-         else
-            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
-         end if
-
-      case cType == "N"
-         cTemp    := cValToChar( xVal )
-
-      case cType == "D"
-
-         cTemp    := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
-
-      case cType == "L"
-         if "S" $ Rtrim( Upper( xVal ) )
-            cTemp := ".t."
-         else
-            cTemp := ".f."
-         end if
-
-   end case
-
-RETURN ( Rtrim( cTemp ) )
-
-//---------------------------------------------------------------------------//
-
 STATIC FUNCTION cGetVal( xVal, cType, cNexo )
 
    local cTemp    := ""
@@ -2042,6 +2005,8 @@ Method LoadFilter( cTipFilter, cTxtFilter )
       ::cDeSerializeFilter( ( ::cDbfFilter )->cFldFlt )
    
    end if
+
+   aEval( ::aFilter, {| a | if( len( a ) > 0, a[ 3 ] := ::cValue( a ), ) } )
 
    if !Empty( ::oBrwFilter )
       ::oBrwFilter:SetArray( ::aFilter )

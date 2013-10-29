@@ -472,10 +472,10 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
    local oBlock
 
    DEFAULT lCenter   := ( ::nTop == 0 .and. ::nLeft == 0 )
-/*
+
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    CursorWait()
 
    if Empty( bValid )
@@ -549,7 +549,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    CursorWE()
 
-/*   RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Error al iniciar al abrir las bases de datos" + CRLF + ErrorMessage( oError ) )
 
@@ -558,7 +558,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    ::BarEnable()
 
 RETURN NIL

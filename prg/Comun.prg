@@ -2320,7 +2320,46 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-function cValToText( uVal, lBarraFecha )
+FUNCTION cCharToVal( xVal, cType )
+
+   local cTemp    := ""
+
+   DEFAULT cType  := ValType( xVal )
+
+   do case
+      case cType == "C" .or. cType == "M"
+
+         if !Empty( xVal )
+            xVal  := Rtrim( xVal )
+         end if
+         
+         if ( '"' $ xVal ) .or. ( "'" $ xVal )
+            cTemp := Rtrim( cValToChar( xVal ) )
+         else
+            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
+         end if
+
+      case cType == "N"
+         cTemp    := cValToChar( xVal )
+
+      case cType == "D"
+
+         cTemp    := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
+
+      case cType == "L"
+         if "S" $ Rtrim( Upper( xVal ) )
+            cTemp := ".t."
+         else
+            cTemp := ".f."
+         end if
+
+   end case
+
+RETURN ( Rtrim( cTemp ) )
+
+//---------------------------------------------------------------------------//
+
+Function cValToText( uVal, lBarraFecha )
 
    local cType             := ValType( uVal )
 
