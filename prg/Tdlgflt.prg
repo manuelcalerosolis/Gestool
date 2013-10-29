@@ -38,8 +38,6 @@ CLASS TDlgFlt
 
    DATA oWndBrw
 
-   DATA aFilter               INIT {}
-
    DATA lDefaultFilter        INIT .f.
    DATA cDefaultFilter
 
@@ -85,6 +83,8 @@ CLASS TDlgFlt
 
    DATA oColCondicion
    DATA oColValor
+
+   CLASSDATA aFilter          INIT {}
 
    CLASSDATA cOrdAnterior
    CLASSDATA nRecAnterior
@@ -274,11 +274,12 @@ METHOD Create( oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
 
    DEFAULT lAplyFilter  := .t.
 
-   ::aTField            := aClone( oDbf:aTField )
    ::oDbf               := oDbf
    ::oWebBtn            := oWebBtn
    ::lAplyFilter        := lAplyFilter
    ::oWndBrw            := oWndBrw
+
+   ::aTField            := aClone( oDbf:aTField )
 
    ::lAllRecno          := .f.
 
@@ -292,7 +293,11 @@ METHOD Create( oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
       return ( Self )
    end if
 
+   ::aFilter            := {}
+
    ::Default()
+
+   ::AppendLine()
 
 RETURN Self
 
@@ -412,10 +417,6 @@ Method Default()
          oFld           := ::aTblMask[ 1 ]
       end if
    next
-
-   ::aFilter            := {}
-
-   ::AppendLine()
 
 Return ( Self )
 
