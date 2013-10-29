@@ -1722,12 +1722,6 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde ) + '" ) .and. nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
    cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
 
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
-
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando facturas rectificativas"
@@ -1874,12 +1868,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    cExpHead       += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
    cExpHead       += ' .and. cNumTik >= "' + Rtrim( ::oGrupoNumero:Cargo:Desde )   + '" .and. cNumTik <= "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '"'
    cExpHead       += ' .and. cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 4
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 4 ]
-   end if
-   */
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2091,7 +2079,13 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
    ::oMtrInf:cText         := "Procesando artículos"
 
    /*
-   Recorremos artículos
+   Vaciamos los stocks anteriores----------------------------------------------
+   */
+
+   ::oStock:ZapStockArticulo()   
+
+   /*
+   Recorremos artículos--------------------------------------------------------
    */
 
    ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
@@ -2159,12 +2153,6 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
    cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
    cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufPed <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-    */
 
    ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2309,12 +2297,6 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
    cExpHead             += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
    cExpHead             += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufAlb <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
 
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-    */
-
    ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando albaranes a proveedor"
@@ -2454,12 +2436,6 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )        + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
    cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumFac <= Val( "'   + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
    cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufFac <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-    */
 
    ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 

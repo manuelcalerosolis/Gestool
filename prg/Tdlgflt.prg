@@ -139,6 +139,8 @@ CLASS TDlgFlt
 
    METHOD CampoOnPostEdit( o, x, n )
   
+   METHOD ReturnFilter()               INLINE ( if( ::ExpresionBuilder(), ::oDlg:End( IDOK ), ) )
+
    METHOD ExpresionBuilder( oDlg )   
 
    METHOD cField( aField )             INLINE ( ::aTblField[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblField ) ) ] )
@@ -148,8 +150,6 @@ CLASS TDlgFlt
    METHOD cValue( aField )             INLINE ( cGetValue( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
 
    METHOD cNexo( aField )              INLINE ( ::aTblExpresion[ Min( Max( aScan( ::aTblNexo, Alltrim( aField[ 4 ] ) ), 0 ), len( ::aTblExpresion ) ) ] )
-
-   METHOD SetTipoFilter( cTipo )       INLINE ( ::cTipFilter := cTipo )
 
    METHOD SetFilterType( cTipFilter )  INLINE ( ::cTipFilter := cTipFilter )
 
@@ -199,7 +199,18 @@ CLASS TDlgFlt
             ::cDbfFilter   := uDbfFilter
       end case
 
-      Select( ::cDbfFilter )
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   INLINE METHOD SelectTable()
+
+      do case
+         case IsObject( ::oDbf )
+            ::oDbf:SetFocus()
+         case IsChar( ::oDbf )
+            Select( ::oDbf )
+      end case 
 
       RETURN ( Self )
 
@@ -737,7 +748,7 @@ Method Dialog()
       :nWidth           := 600
    end with
 
-   ::oDlg:AddFastKey( VK_F5, {|| ::oDlg:end( IDOK ) } )
+   ::oDlg:AddFastKey( VK_F5, {|| ::ReturnFilter() } )
 
    ::oDlg:Activate( , , , .t., , , {|| ::InitDialog() } )
 
@@ -775,7 +786,7 @@ METHOD InitDialog()
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Salida", .f. )
          
-      TDotNetButton():New( 60, oGrupo, "Funnel_32", "Aplicar filtro",   1, {|| ::ExpresionBuilder() }, , , .f., .f., .f. )
+      TDotNetButton():New( 60, oGrupo, "Funnel_32", "Aplicar filtro",   1, {|| ::ReturnFilter() }, , , .f., .f., .f. )
       TDotNetButton():New( 60, oGrupo, "End32",     "Salir",            2, {|| ::oDlg:End() }, , , .f., .f., .f. )
 
       if !Empty( ::cTipFilter )
@@ -974,10 +985,10 @@ METHOD ExpresionBuilder()
       next
 
       /*
-      Seleccionamos la tabbla--------------------------------------------------
+      Seleccionamos la tabla--------------------------------------------------
       */
 
-      ::SetFilterDatabase( ::oDbf )
+      ::SelectTable( ::oDbf )
 
       /*
       Construimos el filtro----------------------------------------------------
@@ -1863,11 +1874,13 @@ METHOD SaveFilter()
       Return ( .f. )
    end if
 
-
+   // Tomamos un nombre para el filtro-----------------------------------------
 
    if ::lGetFilterName()
 
-      ::oDlg:Disable()
+      if !Empty( ::oDlg )
+         ::oDlg:Disable()
+      end if 
 
       // Si el nuevo es un filtro por defecto quitamos todos-------------------
 
@@ -1882,7 +1895,7 @@ METHOD SaveFilter()
                   ( ::cDbfFilter )->( dbUnLock() )
                end if
 
-               ( ::cDbfFilter)->( dbSkip() )
+               ( ::cDbfFilter )->( dbSkip() )
 
             end while
 
@@ -1914,7 +1927,9 @@ METHOD SaveFilter()
          ::oWndBrw:SetComboFilter( ::cTexFilter )
       end if
 
-      ::oDlg:Enable()
+      if !Empty( ::oDlg )
+         ::oDlg:Enable()
+      end if 
 
    end if
 
@@ -2049,16 +2064,22 @@ Method lBuildFilter()
       Return ( lBuild )
    end if
 
-   ::SetFilterDatabase( ::oDbf )
+   ::SelectTable( ::oDbf )
 
    if At( Type( ::cExpFilter ), "UEUI" ) != 0
+
       msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+
       ::cExpFilter   := ""
       ::bExpFilter   := nil
       ::cTxtFilter   := ""
+   
    else
+   
       ::bExpFilter   := Compile( ::cExpFilter )
+   
       lBuild         := .t.
+   
    end if
 
 Return ( lBuild )

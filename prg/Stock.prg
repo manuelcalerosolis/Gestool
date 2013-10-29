@@ -658,6 +658,16 @@ CLASS TStock
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD ZapStockArticulo( cCodArt )
+
+      ::oDbfStock:Zap()
+
+      RETURN ( Self )
+
+   ENDMETHOD      
+
+   //---------------------------------------------------------------------------//
+
    INLINE METHOD SaveStockArticulo( cCodArt )
 
       local aStock
