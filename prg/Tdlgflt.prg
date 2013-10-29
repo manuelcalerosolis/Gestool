@@ -308,6 +308,8 @@ METHOD Init( oWndBrw ) CLASS TDlgFlt
    ::oWndBrw            := oWndBrw
    ::oDbf               := oWndBrw:xAlias
 
+   ::aFilter            := {}
+
    ::lAplyFilter        := .t.
 
 RETURN Self
