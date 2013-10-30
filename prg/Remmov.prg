@@ -1756,7 +1756,7 @@ Method CreateData()
       ::oSender:SetText( "Comprimiendo movimientos de almacén" )
 
       if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
+         ::oSender:SetText( "Ficheros comprimidos en " + Rtrim( cFileName ) )
       else
          ::oSender:SetText( "ERROR al crear fichero comprimido" )
       end if
