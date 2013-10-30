@@ -200,7 +200,7 @@ CLASS TDlgFlt
    METHOD ValidDialog()
 
    METHOD LoadFilter()
-   METHOD LoadDefaultFilter()          VIRTUAL
+   METHOD LoadDefaultFilter()          VIRTUAL 
 
    METHOD ChgFields()
 
