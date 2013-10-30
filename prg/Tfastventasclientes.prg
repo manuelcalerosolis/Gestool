@@ -101,7 +101,11 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
       return .t.
    end if
 
-   ::CreateFilter( , ::oDbf )
+   ::oFilter      := TDlgFlt():Create( ::oDbf )
+   if !Empty( ::oFilter )
+      ::oFilter:SetFilterDatabase( ::oCnfFlt )
+      ::oFilter:SetFilterType( FST_CLI )
+   end if 
 
 RETURN .t.
 
@@ -163,7 +167,9 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
 
-       /*
+      ::oCnfFlt   := TDataCenter():oCnfFlt()
+
+      /*
       Stocks de articulos------------------------------------------------------
       */
 
@@ -273,6 +279,10 @@ METHOD CloseFiles() CLASS TFastVentasClientes
    if !Empty( ::oCliInc ) .and. ( ::oCliInc:Used() )
       ::oCliInc:End()
    end if 
+
+   if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
+      ::oCnfFlt:end()
+   end if
 
    if !Empty( ::oStock )
       ::oStock:End()
@@ -603,8 +613,6 @@ METHOD AddVariable() CLASS TFastVentasClientes
    ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
    ::oFastReport:AddVariable(    "Clientes",    "Total facturado",    "CallHbFunc( 'oTinfGen', ['TotalFacturado'])" )
 
-
-
 Return ( Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
@@ -671,6 +679,12 @@ METHOD lGenerate() CLASS TFastVentasClientes
          ::AddClientes()
 
    end case
+
+   if !Empty( ::oFilter:cExpFilter )
+      ::oDbf:SetFilter( ::oFilter:cExpFilter )
+   else
+      ::oDbf:KillFilter()
+   end if
 
    ::oDbf:GoTop()
 

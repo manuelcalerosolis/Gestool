@@ -1507,9 +1507,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          ALLOW    EXIT ;
          HOTKEY   "S"
 
-      oWndBrw:oActiveFilter:aTField       := aItmArt()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
-      oWndBrw:oActiveFilter:cTipFilter    := ART_TBL
+      oWndBrw:oActiveFilter:SetFields( aItmArt() )
+      oWndBrw:oActiveFilter:SetFilterType( ART_TBL )
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
 
       ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
 

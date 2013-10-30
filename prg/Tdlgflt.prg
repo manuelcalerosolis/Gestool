@@ -50,10 +50,45 @@ CLASS TDlgFlt
    DATA aTblType
    DATA aTblLen
    DATA aTblDecimals
-   DATA aTblNexo
-   DATA aTblCondition
-   DATA aTblExpresion
-   DATA aTblSimbolos
+
+   DATA aTblNexo              INIT { "", "Y", "O" }
+   DATA aTblExpresion         INIT {  "", " .and. ", " .or. " }
+   DATA aTblSimbolos          INIT {  " == ", " != ", " > ", " < ", " >= ", " <= ", " $ " }
+
+   DATA aTblCondition         INIT {   "Igual",;
+                                       "Distinto",;
+                                       "Mayor",;
+                                       "Menor",;
+                                       "Mayor igual",;
+                                       "Menor igual",;
+                                       "Contenga",;
+                                       "Dia semana igual",;
+                                       "Mes igual",;
+                                       "Año igual" }
+
+   DATA aTblConditionNumerico INIT {   "Igual",;
+                                       "Distinto",;
+                                       "Mayor",;
+                                       "Menor",;
+                                       "Mayor igual",;
+                                       "Menor igual" }
+      
+   DATA aTblConditionCaracter INIT  {  "Igual",;
+                                       "Distinto",;
+                                       "Contenga" }
+
+   DATA aTblConditionFecha    INIT  {  "Igual",;
+                                       "Distinto",;
+                                       "Mayor",;
+                                       "Menor",;
+                                       "Mayor igual",;
+                                       "Menor igual",;
+                                       "Dia semana igual",;
+                                       "Mes igual",;
+                                       "Año igual" }
+
+   DATA aTblConditionLogico   INIT  {  "Igual",;
+                                       "Distinto" }
 
    DATA oReplace
    DATA cReplace
@@ -91,26 +126,72 @@ CLASS TDlgFlt
    CLASSDATA cBagAnterior
    CLASSDATA cNamAnterior
 
+   // Contructores-------------------------------------------------------------
+
    METHOD New( aTField, oDbf )
    METHOD Init( oDbf, oWndBrw )
    METHOD Create( aTField, oDbf )
+   METHOD Default()
+
+   // Operaciones con los filtros----------------------------------------------
 
    METHOD CreateFilter( oDlg )
    METHOD SaveFilter()
    METHOD DeleteFilter()
-
    METHOD KillFilter( oDlg )
+   METHOD CleanFilter()                INLINE ( ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
+
+   INLINE METHOD SetFields( aTField )
+
+      local oFld
+
+      ::aTField      := aTField
+
+      if !Empty( ::aTField )                              
+      
+         for each oFld in ::aTField
+
+            do case
+            case IsObject( oFld )
+   
+               if !Empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
+                  aAdd( ::aTblField,      oFld:cName )
+                  aAdd( ::aTblType,       oFld:cType )
+                  aAdd( ::aTblLen,        oFld:nLen )
+                  aAdd( ::aTblDecimals,   oFld:nDec )
+                  aAdd( ::aTblMask,       oFld:cComment )
+               end if
+   
+            case IsArray( oFld )
+   
+               if !Empty( oFld[ 5 ] )
+                  aAdd( ::aTblField,      oFld[ 1 ] )
+                  aAdd( ::aTblType,       oFld[ 2 ] )
+                  aAdd( ::aTblLen,        oFld[ 3 ] )
+                  aAdd( ::aTblDecimals,   oFld[ 4 ] )
+                  aAdd( ::aTblMask,       oFld[ 5 ] )
+               end if
+   
+            end case
+   
+         next
+
+      end if
+
+      RETURN ( Self )
+
+   ENDMETHOD
 
    METHOD SetFilter( cText )
+   METHOD SetFilterType( cTipFilter )  INLINE ( ::cTipFilter   := cTipFilter )
 
    METHOD lBuildFilter()
    METHOD AplyFilter()
-   METHOD lBuildAplyFilter()  INLINE ( if( ::lBuildFilter(), ::AplyFilter(), ) )
+   METHOD lBuildAplyFilter()           INLINE ( if( ::lBuildFilter(), ::AplyFilter(), ) )
 
-   METHOD Default()
+   METHOD AddFilter()                  INLINE ( ::lAppendFilter := .t., ::Dialog() )
+   METHOD EditFilter()                 INLINE ( ::lAppendFilter := .f., ::Dialog() )
 
-   METHOD AddFilter()         INLINE ( ::lAppendFilter := .t., ::Resource() )
-   METHOD EditFilter()        INLINE ( ::lAppendFilter := .f., ::Resource() )
    METHOD Resource()
    METHOD StarResource( oBtnSave, oBtnDelete, oDlg )
 
@@ -118,7 +199,7 @@ CLASS TDlgFlt
    METHOD InitDialog()
    METHOD ValidDialog()
 
-   METHOD Load()              VIRTUAL
+   METHOD Load()                       VIRTUAL
    METHOD LoadFilter()
 
    METHOD ChgFields()
@@ -149,11 +230,12 @@ CLASS TDlgFlt
 
    METHOD cCondition( aField )         INLINE ( ::aTblSimbolos[ Min( Max( aScan( ::aTblCondition, aField[ 2 ] ), 0 ), len( ::aTblSimbolos ) ) ] )
 
-   METHOD cValue( aField )             INLINE ( cCharToVal( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
+   METHOD uValue( aField )             INLINE ( cCharToVal( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
+
+   METHOD cValue( aField )             INLINE ( cGetValue( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
 
    METHOD cNexo( aField )              INLINE ( ::aTblExpresion[ Min( Max( aScan( ::aTblNexo, Alltrim( aField[ 4 ] ) ), 0 ), len( ::aTblExpresion ) ) ] )
 
-   METHOD SetFilterType( cTipFilter )  INLINE ( ::cTipFilter := cTipFilter )
 
    INLINE METHOD cSerializeFilter()
 
@@ -312,6 +394,8 @@ METHOD Init( oWndBrw ) CLASS TDlgFlt
 
    ::aFilter            := {}
 
+   ::Default()
+
    ::lAplyFilter        := .t.
 
 RETURN Self
@@ -344,83 +428,15 @@ Method Default()
 
    ::cExpReplace           := Space( 100 )
 
-   ::aTblNexo              := {  " ", "Y", "O" }
-   ::aTblExpresion         := {  "", " .and. ", " .or. " }
+   ::SetFields( ::aTField )                              
 
-   ::aTblCondition         := {  "Igual",;
-                                 "Distinto",;
-                                 "Mayor",;
-                                 "Menor",;
-                                 "Mayor igual",;
-                                 "Menor igual",;
-                                 "Contenga",;
-                                 "Dia semana igual",;
-                                 "Mes igual",;
-                                 "Año igual" }
-
-   ::aTblSimbolos          := {  " == ", " != ", " > ", " < ", " >= ", " <= ", " $ " }
-
-   ::aTblConditionNumerico := {  "Igual",;
-                                 "Distinto",;
-                                 "Mayor",;
-                                 "Menor",;
-                                 "Mayor igual",;
-                                 "Menor igual" }
-
-   ::aTblConditionCaracter := {  "Igual",;
-                                 "Distinto",;
-                                 "Contenga" }
-
-   ::aTblConditionFecha    := {  "Igual",;
-                                 "Distinto",;
-                                 "Mayor",;
-                                 "Menor",;
-                                 "Mayor igual",;
-                                 "Menor igual",;
-                                 "Dia semana igual",;
-                                 "Mes igual",;
-                                 "Año igual" }
-
-   ::aTblConditionLogico   := {  "Igual",;
-                                 "Distinto" }
-
-
-   if !Empty( ::aTField )                              
-      
-      for each oFld in ::aTField
-
-         do case
-         case IsObject( oFld )
-
-            if !Empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
-               aAdd( ::aTblField,      oFld:cName )
-               aAdd( ::aTblType,       oFld:cType )
-               aAdd( ::aTblLen,        oFld:nLen )
-               aAdd( ::aTblDecimals,   oFld:nDec )
-               aAdd( ::aTblMask,       oFld:cComment )
-            end if
-
-         case IsArray( oFld )
-
-            if !Empty( oFld[ 5 ] )
-               aAdd( ::aTblField,      oFld[ 1 ] )
-               aAdd( ::aTblType,       oFld[ 2 ] )
-               aAdd( ::aTblLen,        oFld[ 3 ] )
-               aAdd( ::aTblDecimals,   oFld[ 4 ] )
-               aAdd( ::aTblMask,       oFld[ 5 ] )
-            end if
-
-         end case
-
-      next
-
-   end if
-
+/*      
    for each oFld in ::aFldFilter
       if Empty( oFld )
          oFld           := ::aTblMask[ 1 ]
       end if
    next
+*/
 
 Return ( Self )
 
@@ -658,6 +674,8 @@ Method Dialog()
 
    ::Default()
 
+   ::AppendLine()
+
    /*
    Caja de dialogo-------------------------------------------------------------
    */
@@ -745,6 +763,8 @@ Method Dialog()
 
    ::oBrwAlmacenados:cAlias            := ::cDbfFilter
 
+   ::oBrwAlmacenados:bLDblClick        := {|| ::LoadFilter() }
+
    ::oBrwAlmacenados:CreateFromResource( 310 )
 
    with object ( ::oBrwAlmacenados:AddCol() )
@@ -779,9 +799,10 @@ METHOD InitDialog()
 
       oCarpeta             := TCarpeta():New( oOfficeBar, "Filtros" )
 
-      oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f. )
+      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Filtros", .f. )
          
-      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Guardar filtro",  1, {|| ::SaveFilter() }, , , .f., .f., .f. )
+      TDotNetButton():New( 60, oGrupo, "Del32",          "Limpiar filtro",  1, {|| ::CleanFilter() }, , , .f., .f., .f. )
+      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Guardar filtro",  2, {|| ::SaveFilter() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
       
@@ -1993,32 +2014,29 @@ Method LoadFilter( cTipFilter, cTxtFilter )
          
          ::cDeSerializeFilter( ( ::cDbfFilter )->cFldFlt )
 
+         aEval( ::aFilter, {| a | if( len( a ) > 0, a[ 3 ] := ::uValue( a ), ) } )
+
+         if !Empty( ::oBrwFilter )
+            ::oBrwFilter:SetArray( ::aFilter )
+         end if 
+
+         if !Empty( ::oDlg ) .and. !Empty( ::oDlg:oTop )
+            ::oDlg:oTop:SetOption( 1 )
+         end if
+
+         if !Empty( ::oFld )
+            ::oFld:SetOption( 1 )
+         end if 
+
       else
          
          MsgStop( "Código de filtro " + cTipFilter + " - " + Rtrim( Upper( cTxtFilter ) ) + " no encontrado" )
+         
          Return .f.
 
       end if 
-   
-   else 
-      
-      ::cDeSerializeFilter( ( ::cDbfFilter )->cFldFlt )
-   
+  
    end if
-
-   aEval( ::aFilter, {| a | if( len( a ) > 0, a[ 3 ] := ::cValue( a ), ) } )
-
-   if !Empty( ::oBrwFilter )
-      ::oBrwFilter:SetArray( ::aFilter )
-   end if 
-
-   if !Empty( ::oDlg ) .and. !Empty( ::oDlg:oTop )
-      ::oDlg:oTop:SetOption( 1 )
-   end if
-
-   if !Empty( ::oFld )
-      ::oFld:SetOption( 1 )
-   end if 
 
 Return ( .t. )
 
@@ -2181,4 +2199,41 @@ FUNCTION aItmFilter()
 RETURN ( aBase )
 
 //----------------------------------------------------------------------------//
+
+STATIC FUNCTION cGetValue( xVal, cType )
+
+   local cTemp    := ""
+
+   DEFAULT cType  := ValType( xVal )
+
+   do case
+      case cType == "C" .or. cType == "M"
+
+         if !Empty( xVal )
+            xVal  := Rtrim( xVal )
+         end if
+         
+         if ( '"' $ xVal ) .or. ( "'" $ xVal )
+            cTemp := Rtrim( cValToChar( xVal ) )
+         else
+            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
+         end if
+
+      case cType == "N"
+         cTemp    := cValToChar( xVal )
+
+      case cType == "D"
+
+         cTemp    := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
+
+      case cType == "L"
+         if "S" $ Rtrim( Upper( xVal ) )
+            cTemp := ".t."
+         else
+            cTemp := ".f."
+         end if
+
+   end case
+
+RETURN ( Rtrim( cTemp ) )
 

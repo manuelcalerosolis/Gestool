@@ -302,7 +302,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
 			HOTKEY 	"S"
 
       oWndBrw:oActiveFilter:aTField       := aItmEntSal()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := ENT_SAL
 
 		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

@@ -1343,7 +1343,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmRctPrv()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := FAC_PRV
    end if
 

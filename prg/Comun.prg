@@ -2340,22 +2340,22 @@ FUNCTION cCharToVal( xVal, cType )
          end if
 
       case cType == "N"
-         cTemp    := cValToChar( xVal )
+         cTemp    := Val( cValToChar( xVal ) )
 
       case cType == "D"
 
-         cTemp    := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
+         cTemp    := Ctod( Rtrim( cValToChar( xVal ) ) )
 
       case cType == "L"
          if "S" $ Rtrim( Upper( xVal ) )
-            cTemp := ".t."
+            cTemp := .t.
          else
-            cTemp := ".f."
+            cTemp := .f.
          end if
 
    end case
 
-RETURN ( Rtrim( cTemp ) )
+RETURN ( cTemp )
 
 //---------------------------------------------------------------------------//
 

@@ -1358,7 +1358,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmAlbPrv()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := ALB_PRV
    end if
 

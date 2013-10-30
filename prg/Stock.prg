@@ -366,6 +366,7 @@ CLASS TStock
       RETURN nil
 
    ENDMETHOD
+   
    //---------------------------------------------------------------------------//
 
    INLINE METHOD InsertStockRectificativaProveedores( lNumeroSerie )

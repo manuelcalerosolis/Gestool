@@ -2072,7 +2072,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmAlbCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := ALB_CLI
    end if
 

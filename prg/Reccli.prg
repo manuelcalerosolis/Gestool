@@ -768,7 +768,7 @@ end if
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmrecCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := REC_CLI
    end if
 

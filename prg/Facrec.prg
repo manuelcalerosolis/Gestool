@@ -1989,7 +1989,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmFacRec()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := FAC_REC
    end if
 

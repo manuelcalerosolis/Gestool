@@ -1107,7 +1107,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmAntCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := ANT_CLI
    end if
 

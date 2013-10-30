@@ -176,17 +176,17 @@ CLASS TShell FROM TMdiChild
 
    METHOD FastSeek( oGet, cText )
 
-   METHOD lCloseArea INLINE ( .t. ) // ::oBrw:lCloseArea() )
+   METHOD lCloseArea    INLINE ( .t. ) // ::oBrw:lCloseArea() )
 
-   METHOD Refresh()  INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ), if( !Empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), Super:Refresh() )
-   METHOD UpStable() INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
-   METHOD GoUp()     INLINE ( ::oBrw:GoUp() )
-   METHOD GoDown()   INLINE ( ::oBrw:GoDown() )
+   METHOD Refresh()     INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ), if( !Empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), Super:Refresh() )
+   METHOD UpStable()    INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
+   METHOD GoUp()        INLINE ( ::oBrw:GoUp() )
+   METHOD GoDown()      INLINE ( ::oBrw:GoDown() )
 
    METHOD Select()      INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
    METHOD SelectOne()   INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
 
-   METHOD SetFocus() INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ), ( ::oBrw:SetFocus(), ::oBrw:Select( 0 ), ::oBrw:Select( 1 ) ), ) )
+   METHOD SetFocus()    INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ), ( ::oBrw:SetFocus(), ::oBrw:Select( 0 ), ::oBrw:Select( 1 ) ), ) )
 
    METHOD SetIndex( nIndex )
 
@@ -521,7 +521,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    // Filtro por defecto----------------------------------------------------
 
-   ::oActiveFilter:Load()
+   ::oActiveFilter:LoadFilter()
 
    // Preparamos la ventana principal---------------------------------------
 

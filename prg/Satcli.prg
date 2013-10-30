@@ -1611,7 +1611,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmSatCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := SAT_CLI
    end if
 

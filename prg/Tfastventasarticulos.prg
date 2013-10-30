@@ -573,6 +573,8 @@ METHOD lGenerate() CLASS TFastVentasArticulos
 
    if !Empty( ::oFilter:cExpFilter )
       ::oDbf:SetFilter( ::oFilter:cExpFilter )
+   else
+      ::oDbf:KillFilter()
    end if
 
    ::oDbf:GoTop()
@@ -726,7 +728,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Stock",                             {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cCodAlm } )
+   ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )

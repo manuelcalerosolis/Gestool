@@ -632,7 +632,7 @@ FUNCTION Provee( oMenuItem, oWnd )
       */
 
       oWndBrw:oActiveFilter:aTField       := aItmPrv()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := PRV_TBL
 
 		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )

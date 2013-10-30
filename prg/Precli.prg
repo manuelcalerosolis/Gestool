@@ -1767,7 +1767,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmPreCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := PRE_CLI
    end if
 

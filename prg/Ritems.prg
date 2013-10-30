@@ -4112,7 +4112,7 @@ Static Function VisualEdtDocs( dbfDoc )
    local cTipo          
 
    if !lUsrMaster()
-      msgInfo( "Solo pueden modificar los formatos el ususario Administrador" )
+      msgInfo( "Solo pueden modificar los formatos el usuario Administrador" )
       Return .f.
    end if
 

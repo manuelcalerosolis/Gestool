@@ -68,7 +68,11 @@ METHOD lResource( cFld ) CLASS TFastVentasProveedores
       return .t.
    end if
 
-   ::CreateFilter( aItmPrv(), ::oDbfPrv )
+   ::oFilter      := TDlgFlt():Create( ::oDbf )
+   if !Empty( ::oFilter )
+      ::oFilter:SetFilterDatabase( ::oCnfFlt )
+      ::oFilter:SetFilterType( FST_PRV )
+   end if 
 
 RETURN .t.
 
@@ -78,6 +82,7 @@ METHOD OpenFiles() CLASS TFastVentasProveedores
 
    local lOpen    := .t.
    local oBlock
+   local oError
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -100,9 +105,11 @@ METHOD OpenFiles() CLASS TFastVentasProveedores
 
       DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) CLASS "FacRecL"  FILE "RctPrvL.DBF" VIA ( cDriver() ) SHARED INDEX "RctPrvL.CDX"
 
-   RECOVER
+      ::oCnfFlt   := TDataCenter():oCnfFlt()
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de artículos" )
 
       ::CloseFiles()
 
@@ -152,6 +159,10 @@ METHOD CloseFiles() CLASS TFastVentasProveedores
 
    if !Empty( ::oRctPrvT ) .and. ( ::oRctPrvT:Used() )
       ::oRctPrvT:end()
+   end if
+
+   if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
+      ::oCnfFlt:end()
    end if
 
 RETURN .t.
@@ -746,6 +757,12 @@ METHOD lGenerate() CLASS TFastVentasProveedores
          ::AddProveedor( .t. )
 
    end case
+
+   if !Empty( ::oFilter:cExpFilter )
+      ::oDbf:SetFilter( ::oFilter:cExpFilter )
+   else
+      ::oDbf:KillFilter()
+   end if
 
    ::oDbf:GoTop()
 

@@ -2402,7 +2402,7 @@ end if
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmFacCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := FAC_CLI
    end if
 

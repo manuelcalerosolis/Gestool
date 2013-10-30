@@ -617,7 +617,7 @@ FUNCTION HisMovAlm( oMenuItem, oWnd )
 			HOTKEY 	"S"
 
       oWndBrw:oActiveFilter:aTField       := aItmMov()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := MOV_ALM
 
 		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

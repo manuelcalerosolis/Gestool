@@ -1163,7 +1163,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmPedPrv()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := PED_PRV
    end if
 

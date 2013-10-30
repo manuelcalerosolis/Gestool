@@ -802,9 +802,9 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       Datos para el filtro-----------------------------------------------------
       */
 
-      oWndBrw:oActiveFilter:aTField       := aItmCli()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
-      oWndBrw:oActiveFilter:cTipFilter    := CLI_TBL
+      oWndBrw:oActiveFilter:SetFields( aItmCli() )
+      oWndBrw:oActiveFilter:SetFilterType( CLI_TBL )
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
 
       /*
       Abrimos la ventana-------------------------------------------------------

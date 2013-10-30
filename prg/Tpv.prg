@@ -1623,7 +1623,7 @@ end if
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:aTField       := aItmTik()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
       oWndBrw:oActiveFilter:cTipFilter    := TIK_CLI
    end if
 
