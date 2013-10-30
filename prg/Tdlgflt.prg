@@ -45,11 +45,11 @@ CLASS TDlgFlt
 
    DATA lMultyExpresion       INIT .f.
 
-   DATA aTblMask
-   DATA aTblField
-   DATA aTblType
-   DATA aTblLen
-   DATA aTblDecimals
+   DATA aTblMask              INIT {}
+   DATA aTblField             INIT {}
+   DATA aTblType              INIT {}
+   DATA aTblLen               INIT {}
+   DATA aTblDecimals          INIT {}
 
    DATA aTblNexo              INIT { "", "Y", "O" }
    DATA aTblExpresion         INIT {  "", " .and. ", " .or. " }
@@ -139,7 +139,7 @@ CLASS TDlgFlt
    METHOD SaveFilter()
    METHOD DeleteFilter()
    METHOD KillFilter( oDlg )
-   METHOD CleanFilter()                INLINE ( ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
+   METHOD CleanFilter()                INLINE ( msgalert( "clean" ), ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
 
    INLINE METHOD SetFields( aTField )
 
@@ -199,8 +199,8 @@ CLASS TDlgFlt
    METHOD InitDialog()
    METHOD ValidDialog()
 
-   METHOD Load()                       VIRTUAL
    METHOD LoadFilter()
+   METHOD LoadDefaultFilter()          VIRTUAL
 
    METHOD ChgFields()
 
@@ -300,7 +300,7 @@ CLASS TDlgFlt
 
    ENDMETHOD
 
-   METHOD AppendLine()                 INLINE ( aAdd( ::aFilter, { ::aTblMask[ 1 ], ::aTblCondition[ 1 ], Space( 200 ), ::aTblNexo[ 1 ] } ) )
+   METHOD AppendLine()                 INLINE ( aAdd( ::aFilter, { ::aTblMask[ 1 ], ::aTblCondition[ 1 ], Space( 100 ), ::aTblNexo[ 1 ] } ) )
 
    INLINE METHOD DeleteLine()
 
@@ -326,7 +326,6 @@ METHOD New( aTField, oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
    DEFAULT aTField      := dbStruct()
    DEFAULT lAplyFilter  := .t.
 
-   ::aTField            := aTField
    ::oDbf               := oDbf
    ::oWebBtn            := oWebBtn
    ::lAplyFilter        := lAplyFilter
@@ -340,6 +339,8 @@ METHOD New( aTField, oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
    ::cExpFilter         := nil
    ::bExpFilter         := nil
    ::aExpFilter         := nil
+
+   ::SetFields( aTField )
 
    if Empty( ::aTField )
       MsgStop( "No hay tabla definida." )
@@ -363,8 +364,6 @@ METHOD Create( oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
    ::lAplyFilter        := lAplyFilter
    ::oWndBrw            := oWndBrw
 
-   ::aTField            := aClone( oDbf:aTField )
-
    ::lAllRecno          := .f.
 
    ::cTxtFilter         := nil
@@ -372,16 +371,14 @@ METHOD Create( oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
    ::bExpFilter         := nil
    ::aExpFilter         := nil
 
+   ::SetFields( aClone( oDbf:aTField ) )
+
    if Empty( ::aTField )
       MsgStop( "No hay tabla definida." )
       return ( Self )
    end if
 
    ::aFilter            := {}
-
-   ::Default()
-
-   ::AppendLine()
 
 RETURN Self
 
@@ -393,8 +390,6 @@ METHOD Init( oWndBrw ) CLASS TDlgFlt
    ::oDbf               := oWndBrw:xAlias
 
    ::aFilter            := {}
-
-   ::Default()
 
    ::lAplyFilter        := .t.
 
@@ -418,17 +413,15 @@ Method Default()
 
    ::lAllRecno             := .f.
 
-   ::aTblMask              := {}          // Muestra las mascaras
-   ::aTblField             := {}          // Muestra las campos
-   ::aTblType              := {}          // Tipos de campo
-   ::aTblLen               := {}          // Len del campo
-   ::aTblDecimals          := {}          // Decimales del campo
-
    ::nMtrReplace           := 0
 
    ::cExpReplace           := Space( 100 )
 
    ::SetFields( ::aTField )                              
+
+   if Empty( ::aFilter )
+      ::AppendLine()
+   end if 
 
 /*      
    for each oFld in ::aFldFilter
@@ -658,8 +651,6 @@ Method StarResource( oBtnSave, oBtnDelete, oDlg )
 
    if ::lAppendFilter
       oBtnDelete:Hide()
-   else
-      ::LoadFilter( oDlg )
    end if
 
 RETURN ( Self )
@@ -673,8 +664,6 @@ Method Dialog()
    */
 
    ::Default()
-
-   ::AppendLine()
 
    /*
    Caja de dialogo-------------------------------------------------------------
@@ -763,7 +752,7 @@ Method Dialog()
 
    ::oBrwAlmacenados:cAlias            := ::cDbfFilter
 
-   ::oBrwAlmacenados:bLDblClick        := {|| ::LoadFilter() }
+   ::oBrwAlmacenados:bLDblClick        := {|| ::LoadFilter( ( ::cDbfFilter )->cTexFlt ) }
 
    ::oBrwAlmacenados:CreateFromResource( 310 )
 
@@ -821,7 +810,7 @@ METHOD InitDialog()
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
          
-      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Cargar filtro",     1, {|| ::LoadFilter() }, , , .f., .f., .f. )
+      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Cargar filtro",     1, {|| ::LoadFilter( ( ::cDbfFilter )->cTexFlt ) }, , , .f., .f., .f. )
       TDotNetButton():New( 60, oGrupo, "Del32",          "Eliminar filtro",   2, {|| ::DeleteFilter() }, , , .f., .f., .f. )
 
       oOfficeBar:bChange   := {|| ::oFld:SetOption( oOfficeBar:nOption ) }
@@ -905,7 +894,7 @@ METHOD CampoOnPostEdit( o, x, n )
                ::oColValor:nEditType            := EDIT_GET              
 
                if Empty( ::aFilter[ nAt, 3 ] ) .or. lCambio
-                  ::aFilter[ nAt, 3 ]           := Space( 200 )
+                  ::aFilter[ nAt, 3 ]           := Space( 100 )
                end if 
 
             case ::aTblType[ nPos ] == "N"
@@ -2006,37 +1995,52 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method LoadFilter( cTipFilter, cTxtFilter )
+Method LoadFilter( cTxtFilter )
 
-   if !Empty( cTipFilter ) .and. !Empty( cTxtFilter )
-
-      if ( ::cDbfFilter )->( dbSeek( cTipFilter + Rtrim( Upper( cTxtFilter ) ) ) )
-         
-         ::cDeSerializeFilter( ( ::cDbfFilter )->cFldFlt )
-
-         aEval( ::aFilter, {| a | if( len( a ) > 0, a[ 3 ] := ::uValue( a ), ) } )
-
-         if !Empty( ::oBrwFilter )
-            ::oBrwFilter:SetArray( ::aFilter )
-         end if 
-
-         if !Empty( ::oDlg ) .and. !Empty( ::oDlg:oTop )
-            ::oDlg:oTop:SetOption( 1 )
-         end if
-
-         if !Empty( ::oFld )
-            ::oFld:SetOption( 1 )
-         end if 
-
-      else
-         
-         MsgStop( "Código de filtro " + cTipFilter + " - " + Rtrim( Upper( cTxtFilter ) ) + " no encontrado" )
-         
-         Return .f.
-
-      end if 
-  
+   if Empty( ::cTipFilter )
+      msgStop( "El tipo del filtro esta vacio")
+      Return .f.
    end if
+
+   if Empty( cTxtFilter )
+      msgStop( "El texto del filtro esta vacio")
+      Return .f.
+   end if
+
+   if ( ::cDbfFilter )->( dbSeek( ::cTipFilter + Rtrim( Upper( cTxtFilter ) ) ) )
+
+      CursorWait()
+
+      // Deserializamos el filtro-------------------------------------------
+      
+      ::cDeSerializeFilter( ( ::cDbfFilter )->cFldFlt )
+      
+      // Colocamos los campos segun su tipo---------------------------------
+
+      aEval( ::aFilter, {| a | if( len( a ) > 0, a[ 3 ] := ::uValue( a ), ) } )
+      
+      if !Empty( ::oBrwFilter )
+         ::oBrwFilter:SetArray( ::aFilter )
+      end if 
+      
+      if !Empty( ::oDlg ) .and. !Empty( ::oDlg:oTop )
+         ::oDlg:oTop:SetOption( 1 )
+         ::oDlg:oTop:Refresh()
+      end if
+      
+      if !Empty( ::oFld )
+         ::oFld:SetOption( 1 )
+      end if 
+
+      CursorWE()
+
+   else
+      
+      MsgStop( "Código de filtro " + ::cTipFilter + " - " + Rtrim( Upper( cTxtFilter ) ) + " no encontrado" )
+      
+      Return .f.
+
+   end if 
 
 Return ( .t. )
 

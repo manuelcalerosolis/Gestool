@@ -521,7 +521,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    // Filtro por defecto----------------------------------------------------
 
-   ::oActiveFilter:LoadFilter()
+   ::oActiveFilter:LoadDefaultFilter()
 
    // Preparamos la ventana principal---------------------------------------
 

@@ -2322,22 +2322,24 @@ return nil
 
 FUNCTION cCharToVal( xVal, cType )
 
-   local cTemp    := ""
+   local cTemp      := ""
 
-   DEFAULT cType  := ValType( xVal )
+   DEFAULT cType    := ValType( xVal )
 
    do case
       case cType == "C" .or. cType == "M"
 
          if !Empty( xVal )
-            xVal  := Rtrim( xVal )
+            cTemp   := Padr( Rtrim( xVal ), 100 )
          end if
          
+         /*
          if ( '"' $ xVal ) .or. ( "'" $ xVal )
             cTemp := Rtrim( cValToChar( xVal ) )
          else
             cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
          end if
+        */
 
       case cType == "N"
          cTemp    := Val( cValToChar( xVal ) )
