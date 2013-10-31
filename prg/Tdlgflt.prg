@@ -42,9 +42,15 @@ CLASS TDlgFlt
    DATA aTblField             INIT {}
    DATA aTblType              INIT {}
 
-   DATA aTblNexo              INIT { "", "Y", "O" }
+   DATA aTblNexo              INIT {  "", "Y", "O" }
    DATA aTblExpresion         INIT {  "", " .and. ", " .or. " }
-   DATA aTblSimbolos          INIT {  " == ", " != ", " > ", " < ", " >= ", " <= ", " $ " }
+   DATA aTblSimbolos          INIT {   " == ",;
+                                       " != ",;
+                                       " > ",;
+                                       " < ",;
+                                       " >= ",;
+                                       " <= ",;
+                                       " $ " }
 
    DATA aTblCondition         INIT {   "Igual",;
                                        "Distinto",;
@@ -52,10 +58,7 @@ CLASS TDlgFlt
                                        "Menor",;
                                        "Mayor igual",;
                                        "Menor igual",;
-                                       "Contenga",;
-                                       "Dia semana igual",;
-                                       "Mes igual",;
-                                       "Año igual" }
+                                       "Contenga" }
 
    DATA aTblConditionNumerico INIT {   "Igual",;
                                        "Distinto",;
@@ -73,10 +76,7 @@ CLASS TDlgFlt
                                        "Mayor",;
                                        "Menor",;
                                        "Mayor igual",;
-                                       "Menor igual",;
-                                       "Dia semana igual",;
-                                       "Mes igual",;
-                                       "Año igual" }
+                                       "Menor igual" }
 
    DATA aTblConditionLogico   INIT  {  "Igual",;
                                        "Distinto" }
@@ -166,7 +166,7 @@ CLASS TDlgFlt
 
    METHOD ChgFields()
 
-   METHOD ExeReplace()
+   METHOD ExecuteReplace()
 
    METHOD ChgGet( cType, nLen, nDec )
 
@@ -176,6 +176,21 @@ CLASS TDlgFlt
    METHOD lValidFilterName( oDlg )
 
    METHOD ExpresionBuilder( oDlg )   
+   METHOD AppendExpresion( aFilter )   
+
+   METHOD cField( aField )             INLINE ( ::aTblField[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblField ) ) ] )
+
+   METHOD cFieldType( aField )         INLINE ( ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] )
+
+   METHOD cCondition( aField )         INLINE ( ::aTblSimbolos[ Min( Max( aScan( ::aTblCondition, aField[ 2 ] ), 0 ), len( ::aTblSimbolos ) ) ] )
+
+   METHOD uValue( aField )             INLINE ( cCharToVal( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
+
+   METHOD cValue( aField )             INLINE ( cGetValue( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
+
+   METHOD cNexo( aField )              INLINE ( ::aTblExpresion[ Min( Max( aScan( ::aTblNexo, Alltrim( aField[ 4 ] ) ), 0 ), len( ::aTblExpresion ) ) ] )
+
+   METHOD AppendLine()                 INLINE ( aAdd( ::aFilter, { ::aTblMask[ 1 ], ::aTblCondition[ 1 ], Space( 100 ), ::aTblNexo[ 1 ] } ) )
 
    INLINE METHOD cExpresionField( aField )
 
@@ -189,18 +204,6 @@ CLASS TDlgFlt
       RETURN ( cField )
 
    ENDMETHOD
-
-   METHOD cField( aField )             INLINE ( ::aTblField[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblField ) ) ] )
-
-   METHOD cFieldType( aField )         INLINE ( ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] )
-
-   METHOD cCondition( aField )         INLINE ( ::aTblSimbolos[ Min( Max( aScan( ::aTblCondition, aField[ 2 ] ), 0 ), len( ::aTblSimbolos ) ) ] )
-
-   METHOD uValue( aField )             INLINE ( cCharToVal( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
-
-   METHOD cValue( aField )             INLINE ( cGetValue( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
-
-   METHOD cNexo( aField )              INLINE ( ::aTblExpresion[ Min( Max( aScan( ::aTblNexo, Alltrim( aField[ 4 ] ) ), 0 ), len( ::aTblExpresion ) ) ] )
 
    INLINE METHOD cSerializeFilter()
 
@@ -235,6 +238,8 @@ CLASS TDlgFlt
 
       next 
 
+      aSize( ::aFilter, len( ::aFilter ) - 1 )
+
       RETURN ( Self )
 
    ENDMETHOD
@@ -262,7 +267,6 @@ CLASS TDlgFlt
 
    ENDMETHOD
 
-
    INLINE METHOD SelectTable()
 
       do case
@@ -275,8 +279,6 @@ CLASS TDlgFlt
       RETURN ( Self )
 
    ENDMETHOD
-
-   METHOD AppendLine()                 INLINE ( aAdd( ::aFilter, { ::aTblMask[ 1 ], ::aTblCondition[ 1 ], Space( 100 ), ::aTblNexo[ 1 ] } ) )
 
    INLINE METHOD DeleteLine()
 
@@ -291,6 +293,15 @@ CLASS TDlgFlt
 
    ENDMETHOD
 
+   INLINE METHOD InitExpresion()
+
+      ::cExpFilter   := ""
+      ::cTxtFilter   := ""
+      ::bExpFilter   := nil
+
+      RETURN ( Self )
+
+   ENDMETHOD
 
 END CLASS
 
@@ -495,6 +506,8 @@ RETURN ( Self )
 
 Method Dialog()
 
+   local oBmp
+
    ::Default()
 
    /*
@@ -504,14 +517,20 @@ Method Dialog()
    DEFINE DIALOG ::oDlg RESOURCE "FastFiltros"
 
       REDEFINE FOLDER ::oFld ;
-         ID       300;
+         ID       100 ;
          OF       ::oDlg ;
-         PROMPT   "&Filtros",;
+         PROMPT   "&Generador",;
                   "&Almacenados";
          DIALOGS  "FastFiltros_Definicion",;
                   "FastFiltros_Almacenados"
 
-      ::BrwFilter()
+      REDEFINE BITMAP oBmp ;
+         ID       500 ;
+         RESOURCE "Funnel_48_alpha" ;
+         TRANSPARENT ;
+         OF       ::oDlg
+
+      ::BrwFilter( ::oFld:aDialogs[ 1 ] )
 
       /*
       Browse de los filtros almacenados-------------------------------------------
@@ -568,7 +587,7 @@ Method Dialog()
 
    ::oDlg:Activate( , , , .t., , , {|| ::InitDialog() } )
 
-   ::ValidDialog()
+   ::ValidDialog( oBmp )
 
 RETURN ( Self )
 
@@ -576,28 +595,23 @@ RETURN ( Self )
 
 METHOD InitDialog()
 
-   CursorWait()
-
    if !Empty( ::cTipFilter )
       ::SetScopeFilter( ::cTipFilter )
    end if
-
-   CursorWE()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidDialog()
+METHOD ValidDialog( oBmp )
 
    if ::oDlg:nResult != IDOK
-      ::cExpFilter      := ""
-      ::bExpFilter      := nil
+      ::InitExpresion()
    end if
 
-   ( ::cDbfFilter )->( OrdScope( 0, nil ) )
-   ( ::cDbfFilter )->( OrdScope( 1, nil ) )
-   ( ::cDbfFilter )->( dbGoTop() )
+   ::SetScopeFilter()
+
+   oBmp:End()
 
 RETURN ( Self )
 
@@ -714,43 +728,13 @@ METHOD ExpresionBuilder()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::cExpFilter   := ""
-      ::bExpFilter   := nil
-      ::cTxtFilter   := ""
+      ::InitExpresion()
 
       for each aFilter in ::aFilter
 
          if len( aFilter ) > 0
 
-            do case
-               case aFilter[ 2 ] == "Igual"
-                  ::cExpFilter   += ::cExpresionField( aFilter ) + " == " + ::cValue( aFilter )
-   
-               case aFilter[ 2 ] == "Distinto"
-                  ::cExpFilter   += ::cExpresionField( aFilter ) + " != " + ::cValue( aFilter )
-   
-               case aFilter[ 2 ] == "Mayor"
-                  ::cExpFilter   += ::cExpresionField( aFilter ) + " > " + ::cValue( aFilter )
-   
-               case aFilter[ 2 ] == "Menor"
-                  ::cExpFilter   += ::cExpresionField( aFilter ) + " < " + ::cValue( aFilter )
-   
-               case aFilter[ 2 ] == "Mayor igual"
-                  ::cExpFilter   += ::cExpresionField( aFilter ) + " >= " + ::cValue( aFilter )
-   
-               case aFilter[ 2 ] == "Menor igual"
-                  ::cExpFilter   += ::cExpresionField( aFilter ) + " <= " + ::cValue( aFilter )
-   
-               case aFilter[ 2 ] == "Contenga"
-                  ::cExpFilter   += ::cValue( aFilter ) + " $ " + ::cExpresionField( aFilter )
-   
-               case aFilter[ 2 ] == "Dia semana igual"
-   
-               case aFilter[ 2 ] == "Mes igual"
-   
-               case aFilter[ 2 ] == "Año igual"
-               
-            end case
+            ::AppendExpresion( aFilter )            
    
             ::cExpFilter         += ::cNexo( aFilter )
 
@@ -768,20 +752,10 @@ METHOD ExpresionBuilder()
       Construimos el filtro----------------------------------------------------
       */
 
-      if Empty( ::cExpFilter ) .or. At( Type( ::cExpFilter ), "UEUI" ) != 0
-
-         msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida", "Expresión incorrecta [" + Type( ::cExpFilter ) + "]" )
-      
-         ::cExpFilter   := ""
-         ::bExpFilter   := nil
-         ::cTxtFilter   := ""
-      
-      else
-      
-         ::bExpFilter   := Compile( ::cExpFilter )
-
-         lExpMaker      := .t.
-      
+      ::bExpFilter               := Compile( ::cExpFilter )
+      if Empty( ::bExpFilter )
+         msgStop( "Expresion erronea " + ::cExpFilter, "Error!" )
+         ::InitExpresion()
       end if
 
    RECOVER USING oError
@@ -792,13 +766,26 @@ METHOD ExpresionBuilder()
 
    ErrorBlock( oBlock )
 
-Return ( lExpMaker )
+Return ( !IsNil( ::bExpFilter ) )
+
+//--------------------------------------------------------------------------//
+
+METHOD AppendExpresion( aFilter )
+
+   local cCondition  := ::cCondition( aFilter )
+
+   if cCondition == " $ "
+      ::cExpFilter   += ::cValue( aFilter ) + cCondition + ::cExpresionField( aFilter )  
+   else
+      ::cExpFilter   += ::cExpresionField( aFilter ) + cCondition + ::cValue( aFilter )
+   end if 
+
+Return ( Self )
 
 //--------------------------------------------------------------------------//
 
 METHOD ChgFields()
 
-   local This     := Self
    local oDlg
 
    if Empty( ::aTField )
@@ -806,13 +793,15 @@ METHOD ChgFields()
       return ( Self )
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "CHGFIELDS"
+   DEFINE DIALOG oDlg RESOURCE "ChangeFields"
 
-   REDEFINE COMBOBOX ::oReplace VAR ::cReplace ;
+   REDEFINE COMBOBOX ::oReplace ;
+      VAR      ::cReplace ;
       ITEMS    ::aTblMask ;
-      ON CHANGE( This:cFldReplace := This:aTblField[ This:oReplace:nAt ] ) ;
       ID       80 ;
       OF       oDlg
+
+   ::oReplace:bChange   := {|| ::cFldReplace := ::aTblField[ ::oReplace:nAt ] }
 
    REDEFINE GET ::oExpReplace VAR ::cExpReplace ;
       ID       90 ;
@@ -841,27 +830,26 @@ METHOD ChgFields()
    REDEFINE BUTTON ;
       ID       IDOK ;
       OF       oDlg ;
-      ACTION   ( if( ::ExpresionBuilder(), ( ::ExeReplace(), oDlg:end( IDOK ) ), ) )
+      ACTION   ( if( ::ExpresionBuilder(), ( ::ExecuteReplace(), oDlg:end( IDOK ) ), ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL ;
       OF       oDlg ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| if( ::ExpresionBuilder(), ( ::ExeReplace(), oDlg:end( IDOK ) ), ) } )
+   oDlg:AddFastKey( VK_F5, {|| if( ::ExpresionBuilder(), ( ::ExecuteReplace(), oDlg:end( IDOK ) ), ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult != IDOK
-      ::cExpFilter   := ""
-      ::bExpFilter   := nil
+      ::InitExpresion()
    end if
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExeReplace()
+METHOD ExecuteReplace()
 
    local nRpl     := 0
    local cGetVal
@@ -875,46 +863,38 @@ METHOD ExeReplace()
 
    ::oMtrReplace:SetTotal( ( ::oDbf )->( LastRec() ) )
 
-   do case
-      case Valtype( ::oDbf ) == "O"
+   nDbfRec        := ( ::oDbf )->( Recno() )
+   nOrdAnt        := ( ::oDbf )->( OrdSetFocus( 0 ) )
+   nFldPos        := ( ::oDbf )->( FieldPos( Rtrim( ::cFldReplace ) ) )
 
-         ::oDbf:GetStatus()
+   if nFldPos != 0
 
-         ::oDbf:SetStatus()
+      ( ::oDbf )->( dbGoTop() )
+      while !( ::oDbf )->( eof() )
 
-      case Valtype( ::oDbf ) == "C"
+         cGetVal  := ( ::oDbf )->( Eval( Compile( cGetVal( ::cExpReplace, ValType( ( ::oDbf )->( FieldGet( nFldPos ) ) ) ) ) ) )
 
-         nDbfRec        := ( ::oDbf )->( Recno() )
-         nOrdAnt        := ( ::oDbf )->( OrdSetFocus( 0 ) )
-         nFldPos        := ( ::oDbf )->( FieldPos( Rtrim( ::cFldReplace ) ) )
-
-         if nFldPos != 0
-
-            ( ::oDbf )->( dbGoTop() )
-            while !( ::oDbf )->( eof() )
-
-               cGetVal  := ( ::oDbf )->( Eval( Compile( cGetVal( ::cExpReplace, ValType( ( ::oDbf )->( FieldGet( nFldPos ) ) ) ) ) ) )
-
-               if ::lAllRecno .or. ( ::oDbf )->( Eval( ::bExpFilter ) )
-                  if ( ::oDbf )->( dbRLock() )
-                     ( ::oDbf )->( FieldPut( nFldPos, cGetVal ) )
-                     ( ::oDbf )->( dbUnLock() )
-                  end if
-                  ++nRpl
-               end if
-
-               ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) )
-
-               ( ::oDbf )->( dbSkip() )
-
-            end while
+         if ::lAllRecno .or. ( ::oDbf )->( Eval( ::bExpFilter ) )
+            
+            if ( ::oDbf )->( dbRLock() )
+               ( ::oDbf )->( FieldPut( nFldPos, cGetVal ) )
+               ( ::oDbf )->( dbUnLock() )
+            end if
+            
+            ++nRpl
 
          end if
 
-         ( ::oDbf )->( OrdSetFocus( nOrdAnt ) )
-         ( ::oDbf )->( dbGoTo( nDbfRec ) )
+         ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) )
 
-   end case
+         ( ::oDbf )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::oDbf )->( OrdSetFocus( nOrdAnt ) )
+   ( ::oDbf )->( dbGoTo( nDbfRec ) )
 
    msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
 
@@ -1150,10 +1130,7 @@ METHOD KillFilter( oDlg )
    ::cBagAnterior := nil
    ::cNamAnterior := nil
 
-   ::cTxtFilter   := nil
-   ::cExpFilter   := nil
-   ::bExpFilter   := nil
-   ::aExpFilter   := nil
+   ::InitExpresion()
 
    do case
       case IsObject( ::oDbf )
@@ -1244,13 +1221,6 @@ METHOD SaveFilter()
          ( ::cDbfFilter )->( dbUnLock() )
 
       end if
-
-      /*
-      if !Empty( ::oWndBrw )
-         ::oWndBrw:()
-         ::oWndBrw:SetComboFilter( ::cTexFilter )
-      end if
-      */
 
       if !Empty( ::oDlg )
          ::oDlg:Enable()

@@ -76,7 +76,7 @@ FUNCTION Compile( cExpression )
    if !Empty( cExpression ) .and. At( Type( cExpression ), "UEUI" ) == 0
       bExpression := &( "{|| " + Rtrim( cExpression ) + " } " )
    else
-      bExpression := {|| nil }
+      bExpression := nil 
    end if
 
 RETURN ( bExpression )
