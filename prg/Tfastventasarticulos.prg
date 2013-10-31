@@ -638,6 +638,11 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      { "Title" => "Compras",                      "Image" =>12, "Type" => "Compras",                       "Directory" => "Articulos\Compras",  "File" => "Compras.fr3" },;
                   } ;
                   },; 
+                  {  "Title" => "Compras/Ventas",                 "Image" => 12, "Subnode" =>;
+                  { ;
+                     { "Title" => "Compras y ventas",             "Image" => 2, "Type" => "Compras y ventas",              "Directory" => "Articulos\ComprasVentas",  "File" => "Compras y ventas.fr3" },;
+                  } ;
+                  },; 
                   {  "Title" => "Existencias", "Image" => 16, "Subnode" =>;
                   { ;
                      { "Title" => "Existencias",                  "Image" =>16, "Type" => "Existencias",                    "Directory" => "Articulos\Existencias",        "File" => "Existencias.fr3" },;

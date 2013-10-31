@@ -1353,18 +1353,6 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
-if !oUser():lFiltroVentas()
-
-   DEFINE BTNSHELL oFlt RESOURCE "BFILTER" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( TDlgFlt():New( aItmFacPrv(), dbfFacPrvT, oFlt, .t., oWndBrw ):Resource( FAC_PRV, nil, dbfFlt ) ) ;
-      TOOLTIP  "(F)iltrar" ;
-      HOTKEY   "F";
-
-   lLoadFiltro( FAC_PRV, aItmFacPrv(), oFlt, oWndBrw, dbfFlt, dbfFacPrvT )
-
-end if
-
    if oUser():lAdministrador()
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;

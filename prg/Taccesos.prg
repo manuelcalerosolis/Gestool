@@ -996,7 +996,7 @@ Return ( Self )
 
 Method EnableComboFilter( aItems )
 
-   local aItem
+   local cItem
 
    if !Empty( ::oComboFilter )
 
@@ -1005,11 +1005,14 @@ Method EnableComboFilter( aItems )
 
       // Cargamos los filtros-----------------------------------------------
 
-      for each aItem in aItems
-         aAdd( ::aComboFilter, aItem[ 1 ] )
+      for each cItem in aItems
+         aAdd( ::aComboFilter, cItem )
       next
 
       ::oComboFilter:SetItems( ::aComboFilter )
+      
+      ::oComboFilter:Set( ::cComboFilter )
+
       ::oComboFilter:Show()
       ::oComboFilter:Enable()
 
@@ -1024,21 +1027,7 @@ Method SetDefaultComboFilter( aItems )
    local aItem
 
    if !Empty( ::oComboFilter )
-
       ::oComboFilter:Set( "[Mis filtros]" )
-
-      for each aItem in aItems
-
-         if aItem[ 3 ]
-
-            ::oComboFilter:Set( aItem[ 1 ] )
-
-            Eval( ::oComboFilter:bChange )
-
-         end if
-
-      next
-
    end if
 
 Return ( Self )

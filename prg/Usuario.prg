@@ -323,14 +323,6 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          HOTKEY   "V";
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL oFlt RESOURCE "BFILTER" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmUsuario(), dbfUser, oFlt, .t., oWndBrw ):Resource( USR_TBL, nil, dbfFlt ) ) ;
-         TOOLTIP  "(F)iltrar" ;
-         HOTKEY   "F"
-
-      lLoadFiltro( ANT_CLI, aItmUsuario(), oFlt, oWndBrw, dbfFlt, dbfUser )
-
    if oUser():lAdministrador()
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" GROUP OF oWndBrw ;

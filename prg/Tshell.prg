@@ -296,8 +296,8 @@ CLASS TShell FROM TMdiChild
    METHOD AplyFilter()                       INLINE ( if( !Empty( ::oActiveFilter ), ::oActiveFilter:AplyFilter(), ) )
    METHOD ChangeFilter( cFilter )            INLINE ( msgStop( cFilter ) )
 
-   METHOD EnableComboFilter( aFilter )       INLINE ( ::oWndBar:EnableComboFilter( ::oActiveFilter:aFilter ) )
-   METHOD SetDefaultComboFilter( aFilter )   INLINE ( ::oWndBar:SetDefaultComboFilter( ::oActiveFilter:aFilter ) )
+   METHOD EnableComboFilter( aFilter )       INLINE ( ::oWndBar:EnableComboFilter( aFilter ) )
+   METHOD SetDefaultComboFilter( aFilter )   INLINE ( ::oWndBar:SetDefaultComboFilter( aFilter ) )
    METHOD SetComboFilter( cItem )            INLINE ( ::oWndBar:SetComboFilter( cItem ) )
 
    METHOD ToExcel()
@@ -521,7 +521,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    // Filtro por defecto----------------------------------------------------
 
-   ::oActiveFilter:LoadDefaultFilter() 
+   ::oActiveFilter:LoadTypeFilter() 
 
    // Preparamos la ventana principal---------------------------------------
 
@@ -529,9 +529,9 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
       ::oWndBar:EnableComboBox(  ::aPrompt )
 
-      ::EnableComboFilter(       ::oActiveFilter:aFilter )
+      ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
 
-      ::SetDefaultComboFilter(   ::oActiveFilter:aFilter )
+      ::SetDefaultComboFilter(   ::oActiveFilter:aFiltersName )
 
       ::ShowAddButtonFilter()
 
@@ -2726,7 +2726,9 @@ METHOD ChgFilter() CLASS TShell
    end if
 
    if !Empty( cFilter )
-      ::oActiveFilter:SetFilter( cFilter )
+      if ::oActiveFilter:LoadFilter( cFilter )
+         ::oActiveFilter:lBuildAplyFilter()
+      endif
    end if
 
    ::SetFocus()

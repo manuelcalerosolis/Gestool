@@ -1184,15 +1184,6 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   DEFINE BTNSHELL oFlt RESOURCE "BFILTER" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( TDlgFlt():New( aItmTik(), dbfTikT, oFlt, .t., oWndBrw ):Resource( TIK_CLI, nil, dbfFlt ) );
-      TOOLTIP  "(F)iltrar" ;
-      HOTKEY   "F";
-      LEVEL    ACC_APPD
-
-   lLoadFiltro( TIK_CLI, aItmTik(), oFlt, oWndBrw, dbfFlt, dbfTikT )
-
    if oUser():lAdministrador()
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;

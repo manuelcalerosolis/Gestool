@@ -18,22 +18,15 @@ CLASS TDlgFlt
    DATA bExpFilter
    DATA aExpFilter
    DATA cTxtFilter
-   DATA aFldFilter
-   DATA aConFilter
-   DATA aValFilter
-   DATA aNexFilter
-   DATA oFldFilter
-   DATA oConFilter
-   DATA oValFilter
-   DATA oNexFilter
 
    DATA aTblConditionNumerico 
    DATA aTblConditionCaracter 
    DATA aTblConditionFecha
    DATA aTblConditionLogico
 
-   DATA cTipFilter
+   DATA cTipFilter            INIT ""
    DATA cTexFilter            INIT ""
+
    DATA cDbfFilter
 
    DATA oWndBrw
@@ -48,8 +41,6 @@ CLASS TDlgFlt
    DATA aTblMask              INIT {}
    DATA aTblField             INIT {}
    DATA aTblType              INIT {}
-   DATA aTblLen               INIT {}
-   DATA aTblDecimals          INIT {}
 
    DATA aTblNexo              INIT { "", "Y", "O" }
    DATA aTblExpresion         INIT {  "", " .and. ", " .or. " }
@@ -94,10 +85,11 @@ CLASS TDlgFlt
    DATA cReplace
    DATA cFldReplace
    DATA oExpReplace
-   DATA cExpReplace
+   DATA cExpReplace           INIT Space( 100 )
+
    DATA oMtrReplace
-   DATA nMtrReplace
-   DATA lAllRecno
+   DATA nMtrReplace           INIT 0
+   DATA lAllRecno             INIT .f.
 
    DATA oWebBtn
 
@@ -119,6 +111,8 @@ CLASS TDlgFlt
    DATA oColCondicion
    DATA oColValor
 
+   DATA aFiltersName          INIT {}
+
    CLASSDATA aFilter          INIT {}
 
    CLASSDATA cOrdAnterior
@@ -135,94 +129,66 @@ CLASS TDlgFlt
 
    // Operaciones con los filtros----------------------------------------------
 
-   METHOD CreateFilter( oDlg )
    METHOD SaveFilter()
    METHOD DeleteFilter()
-   METHOD KillFilter( oDlg )
-   METHOD CleanFilter()                INLINE ( msgalert( "clean" ), ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
+   METHOD CleanFilter()                INLINE ( ::aFilter := {}, ::AppendLine(), ::oBrwFilter:SetArray( ::aFilter, , , .f. ) )
 
-   INLINE METHOD SetFields( aTField )
-
-      local oFld
-
-      ::aTField      := aTField
-
-      if !Empty( ::aTField )                              
-      
-         for each oFld in ::aTField
-
-            do case
-            case IsObject( oFld )
-   
-               if !Empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
-                  aAdd( ::aTblField,      oFld:cName )
-                  aAdd( ::aTblType,       oFld:cType )
-                  aAdd( ::aTblLen,        oFld:nLen )
-                  aAdd( ::aTblDecimals,   oFld:nDec )
-                  aAdd( ::aTblMask,       oFld:cComment )
-               end if
-   
-            case IsArray( oFld )
-   
-               if !Empty( oFld[ 5 ] )
-                  aAdd( ::aTblField,      oFld[ 1 ] )
-                  aAdd( ::aTblType,       oFld[ 2 ] )
-                  aAdd( ::aTblLen,        oFld[ 3 ] )
-                  aAdd( ::aTblDecimals,   oFld[ 4 ] )
-                  aAdd( ::aTblMask,       oFld[ 5 ] )
-               end if
-   
-            end case
-   
-         next
-
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD SetFields( aTField )
 
    METHOD SetFilter( cText )
    METHOD SetFilterType( cTipFilter )  INLINE ( ::cTipFilter   := cTipFilter )
 
    METHOD lBuildFilter()
    METHOD AplyFilter()
-   METHOD lBuildAplyFilter()           INLINE ( if( ::lBuildFilter(), ::AplyFilter(), ) )
+   METHOD KillFilter( oDlg )
+
+   METHOD lBuildAplyFilter()           INLINE ( if( ::ExpresionBuilder(), ::AplyFilter(), ) )
 
    METHOD AddFilter()                  INLINE ( ::lAppendFilter := .t., ::Dialog() )
    METHOD EditFilter()                 INLINE ( ::lAppendFilter := .f., ::Dialog() )
 
-   METHOD Resource()
-   METHOD StarResource( oBtnSave, oBtnDelete, oDlg )
+   METHOD BrwFilter( oDlg )
+
+   // Dialogo para montar el filtro--------------------------------------------
 
    METHOD Dialog()
    METHOD InitDialog()
    METHOD ValidDialog()
 
+   METHOD NexoOnPostEdit( o, x, n ) 
+   METHOD CampoOnPostEdit( o, x, n )
+  
+   METHOD ReturnFilter()               INLINE ( if( ::ExpresionBuilder(), ::oDlg:End( IDOK ), ) )
+
    METHOD LoadFilter()
+   METHOD LoadTypeFilter()
    METHOD LoadDefaultFilter()          VIRTUAL 
 
    METHOD ChgFields()
-
-   METHOD ExpMaker()
-
-   METHOD aExpMaker()
 
    METHOD ExeReplace()
 
    METHOD ChgGet( cType, nLen, nDec )
 
-   METHOD lGetFilterName()
+   // Obtener el nombre del filtro---------------------------------------------
 
+   METHOD lGetFilterName()
    METHOD lValidFilterName( oDlg )
 
-   METHOD NexoOnPostEdit( o, x, n ) 
-
-   METHOD CampoOnPostEdit( o, x, n )
-  
-   METHOD ReturnFilter()               INLINE ( if( ::ExpresionBuilder(), ::oDlg:End( IDOK ), ) )
-
    METHOD ExpresionBuilder( oDlg )   
+
+   INLINE METHOD cExpresionField( aField )
+
+      local cField   := ::cField( aField )
+      local cType    := ::cFieldType( aField )
+
+      if cType == "C" .or. cType == "M"
+         cField      := 'Rtrim( ' + Rtrim( cField ) + ' )'
+      end if 
+
+      RETURN ( cField )
+
+   ENDMETHOD
 
    METHOD cField( aField )             INLINE ( ::aTblField[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblField ) ) ] )
 
@@ -235,7 +201,6 @@ CLASS TDlgFlt
    METHOD cValue( aField )             INLINE ( cGetValue( aField[ 3 ], ::aTblType[ Min( Max( aScan( ::aTblMask, Alltrim( aField[ 1 ] ) ), 0 ), len( ::aTblType ) ) ] ) )
 
    METHOD cNexo( aField )              INLINE ( ::aTblExpresion[ Min( Max( aScan( ::aTblNexo, Alltrim( aField[ 4 ] ) ), 0 ), len( ::aTblExpresion ) ) ] )
-
 
    INLINE METHOD cSerializeFilter()
 
@@ -287,6 +252,17 @@ CLASS TDlgFlt
 
    ENDMETHOD
 
+   INLINE METHOD SetScopeFilter( uScope )
+
+      ( ::cDbfFilter )->( OrdScope( 0, uScope ) )
+      ( ::cDbfFilter )->( OrdScope( 1, uScope ) )
+      ( ::cDbfFilter )->( dbGoTop() )
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+
    INLINE METHOD SelectTable()
 
       do case
@@ -315,6 +291,7 @@ CLASS TDlgFlt
 
    ENDMETHOD
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -326,26 +303,17 @@ METHOD New( aTField, oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
    DEFAULT aTField      := dbStruct()
    DEFAULT lAplyFilter  := .t.
 
-   ::oDbf               := oDbf
-   ::oWebBtn            := oWebBtn
-   ::lAplyFilter        := lAplyFilter
-   ::oWndBrw            := oWndBrw
-
-   ::cTipFilter         := ""
-   ::cTexFilter         := ""
-   ::cDbfFilter         := ""
-
-   ::cTxtFilter         := nil
-   ::cExpFilter         := nil
-   ::bExpFilter         := nil
-   ::aExpFilter         := nil
-
    ::SetFields( aTField )
 
    if Empty( ::aTField )
       MsgStop( "No hay tabla definida." )
       return ( Self )
    end if
+
+   ::oDbf               := oDbf
+   ::oWebBtn            := oWebBtn
+   ::lAplyFilter        := lAplyFilter
+   ::oWndBrw            := oWndBrw
 
    ::Default()
 
@@ -363,13 +331,6 @@ METHOD Create( oDbf, oWebBtn, lAplyFilter, oWndBrw ) CLASS TDlgFlt
    ::oWebBtn            := oWebBtn
    ::lAplyFilter        := lAplyFilter
    ::oWndBrw            := oWndBrw
-
-   ::lAllRecno          := .f.
-
-   ::cTxtFilter         := nil
-   ::cExpFilter         := nil
-   ::bExpFilter         := nil
-   ::aExpFilter         := nil
 
    ::SetFields( aClone( oDbf:aTField ) )
 
@@ -401,287 +362,77 @@ Method Default()
 
    local oFld
 
-   ::aFldFilter            := Afill( Array( 5 ), "" )
-   ::aConFilter            := Afill( Array( 5 ), "Contenga" )
-   ::aValFilter            := Afill( Array( 5 ), Space( 100 ) )
-   ::aNexFilter            := Afill( Array( 4 ), "" )
-
-   ::oFldFilter            := Array( 5 )
-   ::oConFilter            := Array( 5 )
-   ::oValFilter            := Array( 5 )
-   ::oNexFilter            := Array( 4 )
-
-   ::lAllRecno             := .f.
-
-   ::nMtrReplace           := 0
-
-   ::cExpReplace           := Space( 100 )
-
    ::SetFields( ::aTField )                              
 
    if Empty( ::aFilter )
       ::AppendLine()
    end if 
 
-/*      
-   for each oFld in ::aFldFilter
-      if Empty( oFld )
-         oFld           := ::aTblMask[ 1 ]
-      end if
-   next
-*/
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-//
-// Caja de dialogo para creal el filtro
-//
 
-METHOD Resource( cTipFilter, cTexFilter, uDbfFilter, lDefFilter ) CLASS TDlgFlt
+METHOD SetFields( aTField )
 
-   local n
-   local oBmp
-   local oDlg
-   local oBtnSave
-   local oBtnDelete
+   local oFld
 
-   // Control antes de comenzar------------------------------------------------
+   ::aTField      := aTField
 
-   if Empty( ::aTField )
-      MsgStop( "No hay tabla definida." )
-      return ( Self )
-   end if
+   if !Empty( ::aTField )                              
+   
+      for each oFld in ::aTField
 
-   // Parametros --------------------------------------------------------------
+         do case
+         case IsObject( oFld )
 
-   if !Empty( cTipFilter )
-      ::cTipFilter      := cTipFilter
-   end if
+            if !Empty( oFld:cComment ) .and. !( oFld:lCalculate ) .and. !( oFld:lHide )
+               aAdd( ::aTblField,      oFld:cName )
+               aAdd( ::aTblType,       oFld:cType )
+               aAdd( ::aTblMask,       oFld:cComment )
+            end if
 
-   if !Empty( cTexFilter )
-      ::cTexFilter      := cTexFilter
-   end if
+         case IsArray( oFld )
 
-   ::SetFilterDatabase( uDbfFilter )
+            if !Empty( oFld[ 5 ] )
+               aAdd( ::aTblField,      oFld[ 1 ] )
+               aAdd( ::aTblType,       oFld[ 2 ] )
+               aAdd( ::aTblMask,       oFld[ 5 ] )
+            end if
 
-   if IsLogic( lDefFilter )
-      ::lDefaultFilter  := lDefFilter
-   end if
+         end case
 
-   // Valores por defecto------------------------------------------------------
-
-   ::Default()
-
-   // Dialog-------------------------------------------------------------------
-
-   DEFINE DIALOG oDlg ;
-      RESOURCE    "Consulta" ;
-      TITLE       if( ::lAppendFilter, "Añadiendo filtro", "Modificando filtro : " + Rtrim( ::cTexFilter ) )
-
-      REDEFINE BITMAP oBmp ;
-         ID       400 ;
-         RESOURCE "Funnel_48_alpha"  ;
-         TRANSPARENT ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oFldFilter[1] VAR ::aFldFilter[1] ;
-         ITEMS    ::aTblMask ;
-         ID       100 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oConFilter[1] VAR ::aConFilter[1] ;
-         ITEMS    ::aTblCondition ;
-         ID       110 ;
-         OF       oDlg
-
-      REDEFINE GET ::oValFilter[1] VAR ::aValFilter[1] ;
-         ID       120 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oNexFilter[1] VAR ::aNexFilter[1] ;
-         ITEMS    ::aTblNexo ;
-         ON CHANGE( oDlg:aEvalWhen() ) ;
-         ID       130 ;
-         OF       oDlg
-
-      /*
-      Segunda linea______________________________________________________________
-      */
-
-      REDEFINE COMBOBOX ::oFldFilter[2] VAR ::aFldFilter[2] ;
-         ITEMS    ::aTblMask ;
-         WHEN     !empty( ::aNexFilter[1] ) ;
-         ID       140 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oConFilter[2] VAR ::aConFilter[2] ;
-         ITEMS    ::aTblCondition ;
-         WHEN     !empty( ::aNexFilter[1] );
-         ID       150 ;
-         OF       oDlg
-
-      REDEFINE GET ::oValFilter[2] VAR ::aValFilter[2] ;
-         WHEN     !empty( ::aNexFilter[1] ) ;
-         ID       160 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oNexFilter[2] VAR ::aNexFilter[2] ;
-         ITEMS    ::aTblNexo ;
-         ON CHANGE( oDlg:aEvalWhen() ) ;
-         WHEN     !empty( ::aNexFilter[1] ) ;
-         ID       170 ;
-         OF       oDlg
-
-      /*
-      Tercera linea______________________________________________________________
-      */
-
-      REDEFINE COMBOBOX ::oFldFilter[3] VAR ::aFldFilter[3] ;
-         ITEMS    ::aTblMask ;
-         WHEN     !empty( ::aNexFilter[2] ) ;
-         ID       180 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oConFilter[3] VAR ::aConFilter[3] ;
-         ITEMS    ::aTblCondition ;
-         WHEN     !empty( ::aNexFilter[2] ) ;
-         ID       190 ;
-         OF       oDlg
-
-      REDEFINE GET ::oValFilter[3] VAR ::aValFilter[3] ;
-         WHEN     !empty( ::aNexFilter[2] ) ;
-         ID       200 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oNexFilter[3] VAR ::aNexFilter[3] ;
-         ITEMS    ::aTblNexo ;
-         ON CHANGE( oDlg:aEvalWhen() ) ;
-         WHEN     !empty( ::aNexFilter[2] ) ;
-         ID       210 ;
-         OF       oDlg
-
-      /*
-      Cuarta linea_______________________________________________________________
-      */
-
-      REDEFINE COMBOBOX ::oFldFilter[4] VAR ::aFldFilter[4] ;
-         ITEMS    ::aTblMask ;
-         WHEN     !empty( ::aNexFilter[3] ) ;
-         ID       220 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oConFilter[4] VAR ::aConFilter[4] ;
-         ITEMS    ::aTblCondition ;
-         WHEN     !empty( ::aNexFilter[3] ) ;
-         ID       230 ;
-         OF       oDlg
-
-      REDEFINE GET ::oValFilter[4] VAR ::aValFilter[4] ;
-         WHEN     !empty( ::aNexFilter[3] ) ;
-         ID       240 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oNexFilter[4] VAR ::aNexFilter[4] ;
-         ITEMS    ::aTblNexo ;
-         ON CHANGE( oDlg:aEvalWhen() ) ;
-         WHEN     !empty( ::aNexFilter[3] ) ;
-         ID       250 ;
-         OF       oDlg
-
-      /*
-      Quinta linea_______________________________________________________________
-      */
-
-      REDEFINE COMBOBOX ::oFldFilter[5] VAR ::aFldFilter[5] ;
-         ITEMS    ::aTblMask ;
-         WHEN     !empty( ::aNexFilter[4] ) ;
-         ID       260 ;
-         OF       oDlg
-
-      REDEFINE COMBOBOX ::oConFilter[5] VAR ::aConFilter[5] ;
-         ITEMS    ::aTblCondition ;
-         WHEN     !empty( ::aNexFilter[4] ) ;
-         ID       270 ;
-         OF       oDlg
-
-      REDEFINE GET ::oValFilter[5] VAR ::aValFilter[5] ;
-         WHEN     !empty( ::aNexFilter[4] ) ;
-         ID       280 ;
-         OF       oDlg
-
-      REDEFINE METER ::oMtrReplace VAR ::nMtrReplace ;
-         PROMPT   "Filtrando" ;
-         ID       290 ;
-         OF       oDlg
-
-      REDEFINE BUTTON oBtnSave ;
-         ID       510 ;
-         OF       oDlg ;
-         ACTION   ( ::SaveFilter( oDlg ) )
-
-      REDEFINE BUTTON oBtnDelete ;
-         ID       500 ;
-         OF       oDlg ;
-         ACTION   ( ::DeleteFilter( oDlg ) )
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( ::CreateFilter( oDlg ) )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-      oDlg:AddFastKey( VK_F5, {|| ::CreateFilter( oDlg ) } )
-
-      oDlg:bStart := {|| ::StarResource( oBtnSave, oBtnDelete, oDlg ) }
-
-   oDlg:Activate( , , , .t. )
-
-   oBmp:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method StarResource( oBtnSave, oBtnDelete, oDlg )
-
-   if ::lAppendFilter
-      oBtnDelete:Hide()
+      next
+   
    end if
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Dialog()
+METHOD BrwFilter( oDlg )
 
-   /*
-   Aplicamos los valores segun se han archivado--------------------------------
-   */
+   DEFAULT oDlg                  := ::oFld:aDialogs[ 1 ]
 
-   ::Default()
+   REDEFINE BUTTON ;
+      ID       100 ;
+      OF       ( oDlg );
+      ACTION   ( ::CleanFilter() )
 
-   /*
-   Caja de dialogo-------------------------------------------------------------
-   */
+   REDEFINE BUTTON ;
+      ID       110 ;
+      OF       ( oDlg );
+      ACTION   ( ::SaveFilter() )
 
-   DEFINE DIALOG ::oDlg RESOURCE "FastFiltros"
-
-      REDEFINE PAGES ::oFld ;
-         ID       300;
-         OF       ::oDlg ;
-         DIALOGS  "FastFiltros_Definicion",;
-                  "FastFiltros_Almacenados"
+   REDEFINE BUTTON ;
+      ID       120 ;
+      OF       ( oDlg );
+      ACTION   ( ::DeleteLine() )
 
    /*
    Browse de los rangos----------------------------------------------------------
    */
 
-   ::oBrwFilter                  := TXBrowse():New( ::oFld:aDialogs[ 1 ] )
+   ::oBrwFilter                  := TXBrowse():New( oDlg )
 
    ::oBrwFilter:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwFilter:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -698,7 +449,7 @@ Method Dialog()
 
    ::oBrwFilter:bChange          := {|| ::CampoOnPostEdit() }
 
-   ::oBrwFilter:CreateFromResource( 310 )
+   ::oBrwFilter:CreateFromResource( 200 )
 
    with object ( ::oBrwFilter:AddCol() )
       :cHeader          := "Campo"
@@ -735,34 +486,85 @@ Method Dialog()
       :bOnPostEdit      := {|o,x,n| ::NexoOnPostEdit( o, x, n ) } 
    end with
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//
+// Caja de dialogo para creal el filtro
+//
+
+Method Dialog()
+
+   ::Default()
+
    /*
-   Browse de los filtros almacenados-------------------------------------------
+   Caja de dialogo-------------------------------------------------------------
    */
 
-   ::oBrwAlmacenados                   := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+   DEFINE DIALOG ::oDlg RESOURCE "FastFiltros"
 
-   ::oBrwAlmacenados:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwAlmacenados:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      REDEFINE FOLDER ::oFld ;
+         ID       300;
+         OF       ::oDlg ;
+         PROMPT   "&Filtros",;
+                  "&Almacenados";
+         DIALOGS  "FastFiltros_Definicion",;
+                  "FastFiltros_Almacenados"
 
-   ::oBrwAlmacenados:nMarqueeStyle     := 5
+      ::BrwFilter()
 
-   ::oBrwAlmacenados:lHScroll          := .f.
-   ::oBrwAlmacenados:lVScroll          := .t.
-   ::oBrwAlmacenados:lRecordSelector   := .t.
+      /*
+      Browse de los filtros almacenados-------------------------------------------
+      */
+      
+      REDEFINE BUTTON ;
+         ID       100 ;
+         OF       ( ::oFld:aDialogs[ 2 ] );
+         ACTION   ( ::LoadFilter( ( ::cDbfFilter )->cTexFlt ) )
 
-   ::oBrwAlmacenados:cAlias            := ::cDbfFilter
+      REDEFINE BUTTON ;
+         ID       110 ;
+         OF       ( ::oFld:aDialogs[ 2 ] );
+         ACTION   ( ::DeleteFilter() )
+   
+      ::oBrwAlmacenados                   := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+   
+      ::oBrwAlmacenados:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwAlmacenados:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   
+      ::oBrwAlmacenados:nMarqueeStyle     := 5
+   
+      ::oBrwAlmacenados:lHScroll          := .f.
+      ::oBrwAlmacenados:lVScroll          := .t.
+      ::oBrwAlmacenados:lRecordSelector   := .t.
+   
+      ::oBrwAlmacenados:cAlias            := ::cDbfFilter
+   
+      ::oBrwAlmacenados:bLDblClick        := {|| ::LoadFilter( ( ::cDbfFilter )->cTexFlt ) }
+   
+      ::oBrwAlmacenados:CreateFromResource( 200 )
+   
+      with object ( ::oBrwAlmacenados:AddCol() )
+         :cHeader          := "Filtro"
+         :bEditValue       := {|| ( ::cDbfFilter )->cTexFlt }
+         :nWidth           := 600
+      end with
 
-   ::oBrwAlmacenados:bLDblClick        := {|| ::LoadFilter( ( ::cDbfFilter )->cTexFlt ) }
+      /*
+      Botones de los filtros almacenados---------------------------------------
+      */
 
-   ::oBrwAlmacenados:CreateFromResource( 310 )
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       ( ::oDlg );
+         ACTION   ( ::ReturnFilter() )
 
-   with object ( ::oBrwAlmacenados:AddCol() )
-      :cHeader          := "Filtro"
-      :bEditValue       := {|| ( ::cDbfFilter )->cTexFlt }
-      :nWidth           := 600
-   end with
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       ( ::oDlg );
+         ACTION   ( ::oDlg:End() )
 
-   ::oDlg:AddFastKey( VK_F5, {|| ::ReturnFilter() } )
+      ::oDlg:AddFastKey( VK_F5, {|| ::ReturnFilter() } )
 
    ::oDlg:Activate( , , , .t., , , {|| ::InitDialog() } )
 
@@ -774,54 +576,11 @@ RETURN ( Self )
 
 METHOD InitDialog()
 
-   local oGrupo
-   local oCarpeta
-   local oOfficeBar
-
    CursorWait()
 
-   oOfficeBar              := TDotNetBar():New( 0, 0, 1020, 115, ::oDlg, 1 )
-   oOfficeBar:lPaintAll    := .f.
-   oOfficeBar:lDisenio     := .f.
-
-   oOfficeBar:SetStyle( 1 )
-
-      oCarpeta             := TCarpeta():New( oOfficeBar, "Filtros" )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Filtros", .f. )
-         
-      TDotNetButton():New( 60, oGrupo, "Del32",          "Limpiar filtro",  1, {|| ::CleanFilter() }, , , .f., .f., .f. )
-      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Guardar filtro",  2, {|| ::SaveFilter() }, , , .f., .f., .f. )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
-      
-      TDotNetButton():New( 120, oGrupo, "Up16",    "Subir línea",    1, {|| ::oBrwFilter:GoUp() }, , , .f., .f., .f. )
-      TDotNetButton():New( 120, oGrupo, "Down16",  "Bajar línea",    1, {|| ::oBrwFilter:GoDown() }, , , .f., .f., .f. )
-      TDotNetButton():New( 120, oGrupo, "Del16",   "Eliminar línea", 1, {|| ::DeleteLine() }, , , .f., .f., .f. )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Salida", .f. )
-         
-      TDotNetButton():New( 60, oGrupo, "Funnel_32", "Aplicar filtro",   1, {|| ::ReturnFilter() }, , , .f., .f., .f. )
-      TDotNetButton():New( 60, oGrupo, "End32",     "Salir",            2, {|| ::oDlg:End() }, , , .f., .f., .f. )
-
-      if !Empty( ::cTipFilter )
-
-      oCarpeta             := TCarpeta():New( oOfficeBar, "Filtros almacenados" )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
-         
-      TDotNetButton():New( 60, oGrupo, "Disk_blue_32",   "Cargar filtro",     1, {|| ::LoadFilter( ( ::cDbfFilter )->cTexFlt ) }, , , .f., .f., .f. )
-      TDotNetButton():New( 60, oGrupo, "Del32",          "Eliminar filtro",   2, {|| ::DeleteFilter() }, , , .f., .f., .f. )
-
-      oOfficeBar:bChange   := {|| ::oFld:SetOption( oOfficeBar:nOption ) }
-
-      ( ::cDbfFilter )->( OrdScope( 0, ::cTipFilter ) )
-      ( ::cDbfFilter )->( OrdScope( 1, ::cTipFilter ) )
-      ( ::cDbfFilter )->( dbGoTop() )
-
-      end if
-
-   ::oDlg:oTop             := oOfficeBar
+   if !Empty( ::cTipFilter )
+      ::SetScopeFilter( ::cTipFilter )
+   end if
 
    CursorWE()
 
@@ -889,7 +648,7 @@ METHOD CampoOnPostEdit( o, x, n )
          do case
             case ::aTblType[ nPos ] == "C"
 
-               ::oColCondicion:aEditListTxt   := ::aTblConditionCaracter
+               ::oColCondicion:aEditListTxt     := ::aTblConditionCaracter
 
                ::oColValor:nEditType            := EDIT_GET              
 
@@ -965,25 +724,25 @@ METHOD ExpresionBuilder()
 
             do case
                case aFilter[ 2 ] == "Igual"
-                  ::cExpFilter   += ::cField( aFilter ) + " == " + ::cValue( aFilter )
+                  ::cExpFilter   += ::cExpresionField( aFilter ) + " == " + ::cValue( aFilter )
    
                case aFilter[ 2 ] == "Distinto"
-                  ::cExpFilter   += ::cField( aFilter ) + " != " + ::cValue( aFilter )
+                  ::cExpFilter   += ::cExpresionField( aFilter ) + " != " + ::cValue( aFilter )
    
                case aFilter[ 2 ] == "Mayor"
-                  ::cExpFilter   += ::cField( aFilter ) + " > " + ::cValue( aFilter )
+                  ::cExpFilter   += ::cExpresionField( aFilter ) + " > " + ::cValue( aFilter )
    
                case aFilter[ 2 ] == "Menor"
-                  ::cExpFilter   += ::cField( aFilter ) + " < " + ::cValue( aFilter )
+                  ::cExpFilter   += ::cExpresionField( aFilter ) + " < " + ::cValue( aFilter )
    
                case aFilter[ 2 ] == "Mayor igual"
-                  ::cExpFilter   += ::cField( aFilter ) + " >= " + ::cValue( aFilter )
+                  ::cExpFilter   += ::cExpresionField( aFilter ) + " >= " + ::cValue( aFilter )
    
                case aFilter[ 2 ] == "Menor igual"
-                  ::cExpFilter   += ::cField( aFilter ) + " <= " + ::cValue( aFilter )
+                  ::cExpFilter   += ::cExpresionField( aFilter ) + " <= " + ::cValue( aFilter )
    
                case aFilter[ 2 ] == "Contenga"
-                  ::cExpFilter   += ::cValue( aFilter ) + " $ " + ::cField( aFilter )
+                  ::cExpFilter   += ::cValue( aFilter ) + " $ " + ::cExpresionField( aFilter )
    
                case aFilter[ 2 ] == "Dia semana igual"
    
@@ -1037,28 +796,6 @@ Return ( lExpMaker )
 
 //--------------------------------------------------------------------------//
 
-Method CreateFilter( oDlg, cTipFilter )
-
-   oDlg:Disable()
-
-   if ::lMultyExpresion
-      if ::aExpMaker()
-         ::AplyFilter()
-      end if
-   else
-      if ::ExpMaker()
-         ::AplyFilter()
-      end if
-   end if
-
-   oDlg:Enable()
-
-   oDlg:End( IDOK )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD ChgFields()
 
    local This     := Self
@@ -1083,137 +820,18 @@ METHOD ChgFields()
 
    REDEFINE CHECKBOX ::lAllRecno ;
       ID       70 ;
-      ON CHANGE( oDlg:aEvalWhen() );
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oFldFilter[1] VAR ::aFldFilter[1] ;
-      ITEMS    ::aTblMask ;
-      WHEN     !::lAllRecno ;
-      ID       100 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oConFilter[1] VAR ::aConFilter[1] ;
-      ITEMS    ::aTblCondition ;
-      WHEN     !::lAllRecno ;
-      ID       110 ;
-      OF       oDlg
-
-   REDEFINE GET ::oValFilter[1] VAR ::aValFilter[1] ;
-      ID       120 ;
-      WHEN     !::lAllRecno ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oNexFilter[1] VAR ::aNexFilter[1] ;
-      ITEMS    ::aTblNexo ;
-      ON CHANGE( oDlg:aEvalWhen() ) ;
-      WHEN     !::lAllRecno ;
-      ID       130 ;
+      ON CHANGE( if( ::lAllRecno, ::oBrwFilter:Hide(), ::oBrwFilter:Show() ) );
       OF       oDlg
 
    /*
-   Segunda linea______________________________________________________________
+   Browse de los rangos--------------------------------------------------------
    */
 
-   REDEFINE COMBOBOX ::oFldFilter[2] VAR ::aFldFilter[2] ;
-      ITEMS    ::aTblMask ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[1] ) );
-      ID       140 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oConFilter[2] VAR ::aConFilter[2] ;
-      ITEMS    ::aTblCondition ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[1] ) );
-      ID       150 ;
-      OF       oDlg
-
-   REDEFINE GET ::oValFilter[2] VAR ::aValFilter[2] ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[1] ) );
-      ID       160 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oNexFilter[2] VAR ::aNexFilter[2] ;
-      ITEMS    ::aTblNexo ;
-      ON CHANGE( oDlg:aEvalWhen() ) ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[1] ) );
-      ID       170 ;
-      OF       oDlg
+   ::BrwFilter( oDlg )
 
    /*
-   Tercera linea______________________________________________________________
+   Botones del dialogo---------------------------------------------------------
    */
-
-   REDEFINE COMBOBOX ::oFldFilter[3] VAR ::aFldFilter[3] ;
-      ITEMS    ::aTblMask ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[2] ) );
-      ID       180 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oConFilter[3] VAR ::aConFilter[3] ;
-      ITEMS    ::aTblCondition ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[2] ) );
-      ID       190 ;
-      OF       oDlg
-
-   REDEFINE GET ::oValFilter[3] VAR ::aValFilter[3] ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[2] ) );
-      ID       200 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oNexFilter[3] VAR ::aNexFilter[3] ;
-      ITEMS    ::aTblNexo ;
-      ON CHANGE( oDlg:aEvalWhen() ) ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[2] ) );
-      ID       210 ;
-      OF       oDlg
-
-   /*
-   Cuarta linea_______________________________________________________________
-   */
-
-   REDEFINE COMBOBOX ::oFldFilter[4] VAR ::aFldFilter[4] ;
-      ITEMS    ::aTblMask ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[3] ) );
-      ID       220 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oConFilter[4] VAR ::aConFilter[4] ;
-      ITEMS    ::aTblCondition ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[3] ) );
-      ID       230 ;
-      OF       oDlg
-
-   REDEFINE GET ::oValFilter[4] VAR ::aValFilter[4] ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[3] ) );
-      ID       240 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oNexFilter[4] VAR ::aNexFilter[4] ;
-      ITEMS    ::aTblNexo ;
-      ON CHANGE( oDlg:aEvalWhen() ) ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[3] ) );
-      ID       250 ;
-      OF       oDlg
-
-   /*
-   Quinta linea_______________________________________________________________
-   */
-
-   REDEFINE COMBOBOX ::oFldFilter[5] VAR ::aFldFilter[5] ;
-      ITEMS    ::aTblMask ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[4] ) );
-      ID       260 ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX ::oConFilter[5] VAR ::aConFilter[5] ;
-      ITEMS    ::aTblCondition ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[4] ) );
-      ID       270 ;
-      OF       oDlg
-
-   REDEFINE GET ::oValFilter[5] VAR ::aValFilter[5] ;
-      WHEN     ( !::lAllRecno .and. !empty( ::aNexFilter[4] ) );
-      ID       280 ;
-      OF       oDlg
 
    REDEFINE METER ::oMtrReplace VAR ::nMtrReplace ;
       PROMPT   "Procesando" ;
@@ -1223,14 +841,14 @@ METHOD ChgFields()
    REDEFINE BUTTON ;
       ID       IDOK ;
       OF       oDlg ;
-      ACTION   ( if( ::ExpMaker(), ( ::ExeReplace(), oDlg:end( IDOK ) ), ) )
+      ACTION   ( if( ::ExpresionBuilder(), ( ::ExeReplace(), oDlg:end( IDOK ) ), ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL ;
       OF       oDlg ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| if( ::ExpMaker(), ( ::ExeReplace(), oDlg:end( IDOK ) ), ) } )
+   oDlg:AddFastKey( VK_F5, {|| if( ::ExpresionBuilder(), ( ::ExeReplace(), oDlg:end( IDOK ) ), ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -1242,170 +860,6 @@ METHOD ChgFields()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD ExpMaker()
-
-   local oBlock
-   local n           := 1
-   local lExpMaker   := .f.
-   local aNex        := { " .AND. ", " .OR. " }
-   local aExpCon     := { " == ", " != ", " > ", " < ", " >= ", " <= ", " $ ", "Dow()", "Month()", "Year()" }
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if ::lAllRecno
-
-      ::cExpFilter   := ""
-      ::bExpFilter   := {|| .t. }
-      ::cTxtFilter   := ""
-      lExpMaker      := .t.
-
-   else
-
-      ::cExpFilter   := ""
-      ::bExpFilter   := nil
-      ::cTxtFilter   := ""
-
-      while n <= len( ::aValFilter )
-
-         do case
-            case aExpCon[ ::oConFilter[ n ]:nAt ] == " $ "
-               ::cExpFilter   += cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] )
-
-            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Dow()"
-               ::cExpFilter   += "Dow( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
-
-            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Month()"
-               ::cExpFilter   += "Month( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
-
-            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Year()"
-               ::cExpFilter   += "Year( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
-
-            otherwise
-               ::cExpFilter   += cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ] )
-
-         end case
-
-         ::cTxtFilter      += ::aTblMask[ ::oFldFilter[n]:nAt ] + Space( 1 ) + lower( ::aTblCondition[ ::oConFilter[n]:nAt ] ) + Space( 1 ) + cGetVal( ::aValFilter[n], ::aTblType[ ::oFldFilter[n]:nAt ] )
-
-         if ::oNexFilter[ n ]:nAt != 1
-            ::cExpFilter   += aNex[ ::oNexFilter[n]:nAt - 1 ]
-            ::cTxtFilter   += Space( 1 ) + lower( ::aTblNexo[ ::oNexFilter[n]:nAt ] ) + Space( 1 )
-         else
-            exit
-         end if
-
-         n++
-
-      end do
-
-      do case
-         case IsObject( ::oDbf )
-            ::oDbf:SetFocus()
-         case IsChar( ::oDbf )
-            Select( ::oDbf )
-      end case
-
-      if Empty( ::cExpFilter ) .or. At( Type( ::cExpFilter ), "UEUI" ) != 0
-         msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
-         ::cExpFilter   := ""
-         ::bExpFilter   := nil
-         ::cTxtFilter   := ""
-      else
-         ::bExpFilter   := Compile( ::cExpFilter )
-         lExpMaker      := .t.
-      end if
-
-   end if
-
-   RECOVER
-
-      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( lExpMaker )
-
-//--------------------------------------------------------------------------//
-
-METHOD aExpMaker()
-
-   local n           := 1
-   local i           := 1
-   local aNex        := {  " .AND. ", " .OR. " }
-   local aExpCon     := {  " == ", " != ", " > ", " < ", " >= ", " <= ", " $ " }
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   BEGIN SEQUENCE
-
-   if ::lAllRecno
-
-      ::aExpFilter   := { {|| .t. } }
-
-   else
-
-      ::aExpFilter            := {}
-
-      for i := 1 to len( ::oDbf )
-
-         ::cExpFilter         := ""
-         ::cTxtFilter         := ""
-
-         n                    := 1
-         while n <= len( ::aValFilter )
-
-            if Empty( ::aTblField[ ::oFldFilter[ n ]:nAt, i ] )
-               ::cExpFilter      += ".t."
-            else
-               if aExpCon[ ::oConFilter[ n ]:nAt ] == " $ "
-                  ::cExpFilter   += cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt, i ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt, i ], ::aTblType[ ::oFldFilter[ n ]:nAt, i ] )
-               else
-                  ::cExpFilter   += cGetField( ::aTblField[ ::oFldFilter[n]:nAt, i ], ::aTblType[ ::oFldFilter[n]:nAt, i ] ) + aExpCon[ ::oConFilter[n]:nAt ] + cGetVal( ::aValFilter[n], ::aTblType[ ::oFldFilter[n]:nAt, i ] )
-               end if
-            end if
-
-            ::cTxtFilter         += ::aTblMask[ ::oFldFilter[ n ]:nAt ] + Space( 1 ) + lower( ::aTblCondition[ ::oConFilter[ n ]:nAt ] ) + Space( 1 ) + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt, i ] )
-
-            if ::oNexFilter[ n ]:nAt != 1
-               ::cExpFilter      += aNex[ ::oNexFilter[ n ]:nAt - 1 ]
-               ::cTxtFilter      += Space( 1 ) + lower( ::aTblNexo[ ::oNexFilter[ n ]:nAt ] ) + Space( 1 )
-            else
-               exit
-            end if
-
-            n++
-
-         end do
-
-         ::oDbf[ i ]:SetFocus()
-
-         if Empty( ::cExpFilter ) .or. At( Type( ::cExpFilter ), "UEUI" ) != 0
-            msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
-            ::cExpFilter         := ""
-            ::cTxtFilter         := ""
-         else
-            aAdd( ::aExpFilter, Rtrim( ::cExpFilter ) )
-         end if
-
-      next
-
-   end if
-
-   RECOVER
-
-      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
-      Return ( .f. )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( .t. )
-
-//--------------------------------------------------------------------------//
 
 METHOD ExeReplace()
 
@@ -1465,111 +919,6 @@ METHOD ExeReplace()
    msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD ChgGet( cType, nLen, nDec, n )
-
-   ::oValFilter[n]:bValid       := {|| .t. }
-   ::oValFilter[n]:oGet:Picture := ""
-
-   if cType == "L"
-      ::oValFilter[n]:bValid := {| oVal | oVal:varGet() $ "SN" }
-   end if
-
-   ::oValFilter[n]:refresh()
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION retGet( cType, nLen, nDec )
-
-   local cRet  := ""
-
-   do case
-      case cType == "L"
-         cRet  := "S"
-      case cType == "C"
-         cRet  := Space( nLen )
-      case cType == "N"
-         cRet  := 0
-      case cType == "D"
-         cRet  := date()
-   end case
-
-RETURN cRet
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION cGetVal( xVal, cType, cNexo )
-
-   local cTemp    := ""
-
-   DEFAULT cType  := ValType( xVal )
-
-   if "$" $ xVal
-      xVal        := Rtrim( StrTran( xVal, "$", "" ) )
-      xVal        := &( xVal )
-   end if
-
-   if SubStr( xVal, 1, 1 ) == "&"
-      Return ( cGetVal( Eval( bChar2Block( SubStr( xVal, 2 ) ) ), cType ) )
-   end if
-
-   do case
-      case cType == "C" .or. cType == "M"
-         if !Empty( xVal )
-            xVal  := Rtrim( xVal )
-         end if
-         if ( '"' $ xVal ) .or. ( "'" $ xVal )
-            cTemp := Rtrim( cValToChar( xVal ) )
-         else
-            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
-         end if
-
-      case cType == "N"
-         cTemp    := cValToChar( xVal )
-
-      case cType == "D"
-
-         do case
-            case cNexo == "Dow()"
-               cTemp := Rtrim( cValToChar( xVal ) )
-            case cNexo == "Month()"
-               cTemp := Rtrim( cValToChar( xVal ) )
-            case cNexo == "Year()"
-               cTemp := Rtrim( cValToChar( xVal ) )
-            otherwise
-               cTemp := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
-         end case
-
-      case cType == "L"
-         if "S" $ Rtrim( Upper( xVal ) )
-            cTemp := ".t."
-         else
-            cTemp := ".f."
-         end if
-
-   end case
-
-RETURN ( Rtrim( cTemp ) )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION cGetField( xField, cType )
-
-   local cTemp    := ""
-
-   DEFAULT cType  := ValType( xField )
-
-   if cType == "C" .or. cType == "M"
-      cTemp       := 'Rtrim( ' + Rtrim( xField ) + ' )'
-   else
-      cTemp       := xField
-   end case
-
-RETURN ( cTemp )
 
 //---------------------------------------------------------------------------//
 
@@ -1896,12 +1245,12 @@ METHOD SaveFilter()
 
       end if
 
-      ::Load()
-
+      /*
       if !Empty( ::oWndBrw )
-         ::oWndBrw:EnableComboFilter( ::aFilter )
+         ::oWndBrw:()
          ::oWndBrw:SetComboFilter( ::cTexFilter )
       end if
+      */
 
       if !Empty( ::oDlg )
          ::oDlg:Enable()
@@ -1915,33 +1264,26 @@ Return ( .t. )
 
 METHOD DeleteFilter( oDlg )
 
-   local cTipFilter  := ( ::cDbfFilter )->cTipDoc
-   local cTxtFilter  := Alltrim( ( ::cDbfFilter)->cTexFlt )
+   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿ Desea eliminar el filtro : " + Alltrim( ( ::cDbfFilter)->cTexFlt ) + " ?", "Confirme supresión" )
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿ Desea eliminar el filtro : " + Rtrim( cTxtFilter ) + " ?", "Confirme supresión" )
-
-      if ( ::cDbfFilter)->( dbSeek( cTipFilter + Upper( cTxtFilter ) ) )
-
-         delRecno( ::cDbfFilter )
-
-         if !Empty( ::oWndBrw )
-            ::oWndBrw:EnableComboFilter( ::aFilter )
-            ::KillFilter()
-         end if
-
-         if !Empty( oDlg )
-            oDlg:End()
-         end if 
-
-         if !Empty( ::oBrwAlmacenados )
-            ::oBrwAlmacenados:Refresh()
-         end if 
-
+      if !Empty( ::oWndBrw )
+         ::oWndBrw:EnableComboFilter( ::aFilter )
+         ::KillFilter()
       end if
+      
+      if !Empty( oDlg )
+         oDlg:End()
+      end if 
+      
+      if !Empty( ::oBrwAlmacenados )
+         ::oBrwAlmacenados:Refresh()
+      end if 
+
+      Return ( .t. )
 
    end if
 
-Return ( .t. )
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -2061,8 +1403,8 @@ Method lBuildFilter()
       msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
 
       ::cExpFilter   := ""
-      ::bExpFilter   := nil
       ::cTxtFilter   := ""
+      ::bExpFilter   := nil
    
    else
    
@@ -2076,30 +1418,31 @@ Return ( lBuild )
 
 //---------------------------------------------------------------------------//
 
-Function lLoadFiltro( cTipoDocumento, aItems, oButton, oWndBrw, dbfFlt, dbf )
+METHOD LoadTypeFilter()
 
-   local cFilter
-   local bFilter
+   if Empty( ::cDbfFilter )
+      Return .f.
+   end if
 
-   if ( dbfFlt )->( dbSeek( cTipoDocumento ) )
+   if Empty( ::cTipFilter )   
+      Return .f.
+   endif
 
-      while ( dbfFlt )->cTipDoc == cTipoDocumento .and. !( dbfFlt )->( eof() )
+   ::aFiltersName    := {}
 
-         bFilter     := bFiltro( aItems, dbfFlt, dbf, oButton, oWndBrw )
+   if ( ::cDbfFilter )->( dbSeek( ::cTipFilter ) )
 
-         oWndBrw:NewAt( "bFilter", , , bFilter, Rtrim( by( ( dbfFlt )->cTexFlt ) ), , , , , oButton )
+      while ( ::cDbfFilter )->cTipDoc == ::cTipFilter .and. !( ::cDbfFilter )->( eof() )
 
-         if Empty( cFilter )
-            cFilter  := Rtrim( by( ( dbfFlt )->cExpFlt ) )
-         end if
+         aAdd( ::aFiltersName, Rtrim( ( ::cDbfFilter )->cTexFlt ) )
 
-         ( dbfFlt )->( dbSkip() )
+         ( ::cDbfFilter )->( dbSkip() )
 
       end do
 
    end if
 
-return nil
+Return .t. 
 
 //---------------------------------------------------------------------------//
 
@@ -2240,4 +1583,112 @@ STATIC FUNCTION cGetValue( xVal, cType )
    end case
 
 RETURN ( Rtrim( cTemp ) )
+
+//--------------------------------------------------------------------------//
+
+METHOD ChgGet( cType, nLen, nDec, n )
+
+   ::oValFilter[n]:bValid       := {|| .t. }
+   ::oValFilter[n]:oGet:Picture := ""
+
+   if cType == "L"
+      ::oValFilter[n]:bValid := {| oVal | oVal:varGet() $ "SN" }
+   end if
+
+   ::oValFilter[n]:refresh()
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION retGet( cType, nLen, nDec )
+
+   local cRet  := ""
+
+   do case
+      case cType == "L"
+         cRet  := "S"
+      case cType == "C"
+         cRet  := Space( nLen )
+      case cType == "N"
+         cRet  := 0
+      case cType == "D"
+         cRet  := date()
+   end case
+
+RETURN cRet
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION cGetVal( xVal, cType, cNexo )
+
+   local cTemp    := ""
+
+   DEFAULT cType  := ValType( xVal )
+
+   if "$" $ xVal
+      xVal        := Rtrim( StrTran( xVal, "$", "" ) )
+      xVal        := &( xVal )
+   end if
+
+   if SubStr( xVal, 1, 1 ) == "&"
+      Return ( cGetVal( Eval( bChar2Block( SubStr( xVal, 2 ) ) ), cType ) )
+   end if
+
+   do case
+      case cType == "C" .or. cType == "M"
+         if !Empty( xVal )
+            xVal  := Rtrim( xVal )
+         end if
+         if ( '"' $ xVal ) .or. ( "'" $ xVal )
+            cTemp := Rtrim( cValToChar( xVal ) )
+         else
+            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
+         end if
+
+      case cType == "N"
+         cTemp    := cValToChar( xVal )
+
+      case cType == "D"
+
+         do case
+            case cNexo == "Dow()"
+               cTemp := Rtrim( cValToChar( xVal ) )
+            case cNexo == "Month()"
+               cTemp := Rtrim( cValToChar( xVal ) )
+            case cNexo == "Year()"
+               cTemp := Rtrim( cValToChar( xVal ) )
+            otherwise
+               cTemp := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
+         end case
+
+      case cType == "L"
+         if "S" $ Rtrim( Upper( xVal ) )
+            cTemp := ".t."
+         else
+            cTemp := ".f."
+         end if
+
+   end case
+
+RETURN ( Rtrim( cTemp ) )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION cGetField( xField, cType )
+
+   local cTemp    := ""
+
+   DEFAULT cType  := ValType( xField )
+
+   if cType == "C" .or. cType == "M"
+      cTemp       := 'Rtrim( ' + Rtrim( xField ) + ' )'
+   else
+      cTemp       := xField
+   end case
+
+RETURN ( cTemp )
+
+//---------------------------------------------------------------------------//
+
 
