@@ -598,12 +598,12 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:Desde    .and. ::oDbf:cCodFab   <= ::oGrupoFabricante:Cargo:Hasta )    .and.;
       ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:Desde       .and. ::oDbf:cCodCli   <= ::oGrupoCliente:Cargo:Hasta )       .and.;
       ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:Desde      .and. ::oDbf:cCodGrp   <= ::oGrupoGCliente:Cargo:Hasta )      .and.;
-      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:Desde       .and. ::oDbf:cCodAlm   <= ::oGrupoAlmacen:Cargo:Hasta )       .and.;
       ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:Desde         .and. ::oDbf:cCodPago  <= ::oGrupoFpago:Cargo:Hasta )         .and.;
       ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:Desde          .and. ::oDbf:cCodRut   <= ::oGrupoRuta:Cargo:Hasta )          .and.;
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:Desde        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:Hasta )        .and.;
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:Desde .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:Hasta ) .and.;
-      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:Desde       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )
+      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:Desde       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )       .and.;
+      ( ::cReportType == "Existencias" .or. ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:Desde .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:Hasta ) )
 
       Return .t.
 
@@ -2134,7 +2134,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
 
       if ::lValidRegister()
          ::oDbf:Insert()
-         ::oStock:SaveStockArticulo( ::oDbf:cCodArt )
+         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta )
       else
          ::oDbf:Cancel()
       end if

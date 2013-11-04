@@ -2303,6 +2303,8 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
 
                   cField      := StrTran( cText, "&#34", "" ) // CutString( '&#34;', '&#34;', cText, .t. )
 
+                  msgAlert( cField, "cField" )
+
                   if !Empty( cField )
 
                      n        := aScan( ::aFields, {|a| a[ 6 ] == cField } )
