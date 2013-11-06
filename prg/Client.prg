@@ -13,7 +13,7 @@
    #include "Factu.ch"
    #include "Ini.ch"
 
-#define _COD                       1      //   C      7     0 
+#define _COD                       1      //   C      7     0
 #define _TITULO                    2      //   C     50     0
 #define _NIF                       3      //   C     15     0
 #define _DOMICILIO                 4      //   C     35     0
@@ -133,6 +133,7 @@
 #define _MFACAUT                 118      //   M     10     0
 #define _DFECNACI                119      //   D      8     0
 #define _NSEXO                   120      //   N      7     0 
+#define _NTARCMB                 121      //   N      1     0
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODART                  2      //   C     14     0
@@ -842,6 +843,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
       aTmp[ _COPIASF ]  := 0
       aTmp[ _NLABEL  ]  := 1
       aTmp[ _NTARIFA ]  := 1
+      aTmp[ _NTARCMB ]  := 1
    end case
 
    if GetSysMetrics( 1 ) == 560
@@ -1058,6 +1060,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          aTmp[ _COPIASF ]  := 0
          aTmp[ _NLABEL  ]  := 1
          aTmp[ _NTARIFA ]  := 1
+         aTmp[ _NTARCMB ]  := 1
 
       case nMode == DUPL_MODE
          aTmp[ _COD ]      := NextKey( aTmp[ _COD ], dbfClient, "0", RetNumCodCliEmp() )
@@ -1270,6 +1273,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          VALID    ( aTmp[ _NTARIFA ] >= 1 .and. aTmp[ _NTARIFA ] <= 6 );
          OF       fldGeneral
+
+      REDEFINE GET aGet[ _NTARCMB ] VAR aTmp[ _NTARCMB ] ;
+         ID       102 ;
+         PICTURE  "9" ;
+         SPINNER ;
+         MIN      1 ;
+         MAX      6 ;
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         VALID    ( aTmp[ _NTARCMB ] >= 1 .and. aTmp[ _NTARCMB ] <= 6 );
+         OF       fldGeneral   
 
       REDEFINE GET aGet[ _NDTOART ] VAR aTmp[ _NDTOART ] ;
          ID       101 ;
@@ -10412,6 +10425,7 @@ static function EdtPda( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
       aTmp[ _COPIASF ]  := 0
       aTmp[ _NLABEL  ]  := 1
       aTmp[ _NTARIFA ]  := 1
+      aTmp[ _NTARCMB ]  := 1
    end if
 
    if Empty( aTmp[ _CDTOESP ] )
@@ -11798,6 +11812,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "mFacAut",   "M", 10, 0, "Plantillas de facturas automáticas",            "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "dFecNaci",  "D",  8, 0, "Fecha de nacimiento",                           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "nSexo",     "N",  1, 0, "Sexo del cliente",                              "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en táctil" ,     "",                   "", "( cDbfCli )" } )
 
 RETURN ( aBase )
 
@@ -12088,7 +12103,7 @@ function nImpAtp( nTarifa, dbfCliAtp, uPreUnt, nIva, oTarifa )
    end if
 
 return ( nPre )
-
+ 
 //---------------------------------------------------------------------------//
 
 function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
@@ -12762,6 +12777,26 @@ static function SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
 
       if !Empty( aGet[ _NTARIFA ] )
          aGet[ _NTARIFA ]:SetFocus()
+      end if
+
+      return nil
+
+   end if
+
+   /*
+   Comprobamos que la tarifa para combinar esté entre 1 y 6---------------------------------
+   */
+
+   if aTmp[ _NTARCMB ] < 1
+      aTmp[ _NTARCMB ]  := 1
+   end if
+
+   if aTmp[ _NTARCMB ] < 1 .or. aTmp[ _NTARCMB ] > 6
+
+      MsgStop( "La tarifa para combinar debe de estar entre 1 y 6" )
+
+      if !Empty( aGet[ _NTARCMB ] )
+         aGet[ _NTARCMB ]:SetFocus()
       end if
 
       return nil
