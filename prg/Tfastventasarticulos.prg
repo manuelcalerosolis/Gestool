@@ -603,7 +603,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:Desde        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:Hasta )        .and.;
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:Desde .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:Hasta ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:Desde       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )       .and.;
-      ( ::cReportType == "Existencias" .or. ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:Desde .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:Hasta ) )
+      ( ::cReportType == "Existencias" .or.( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:Desde .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:Hasta ) )
 
       Return .t.
 

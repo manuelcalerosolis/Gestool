@@ -2303,8 +2303,6 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
 
                   cField      := StrTran( cText, "&#34", "" ) // CutString( '&#34;', '&#34;', cText, .t. )
 
-                  msgAlert( cField, "cField" )
-
                   if !Empty( cField )
 
                      n        := aScan( ::aFields, {|a| a[ 6 ] == cField } )
@@ -2341,9 +2339,6 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
       end if
 
       if !Empty( cIndex )
-
-         msgStop( cIndex, "orden extraido" )
-
          ::oDbf:AddTmpIndex( "Grupos", ( ::cFileIndx ), ( cIndex ), , , , , , , , , .t. )
       end if
 
