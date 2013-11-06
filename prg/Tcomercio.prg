@@ -4094,11 +4094,11 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    if ::oArt:lPubPor
 
       cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
-                        " ( id_category, " + ;
-                        "id_product )" + ;
-                     " VALUES " + ;
-                        "('" + AllTrim( Str( Max( nParent, 1 ) ) ) + "', " + ;
-                        "'2' )"
+                     " ( id_category, " + ;
+                     "id_product )" + ;
+                  " VALUES " + ;
+                     "('2', " + ;
+                     "'" + Str( nCodigoWeb ) + "' )"
    
       if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " como producto destacado", 3 )
