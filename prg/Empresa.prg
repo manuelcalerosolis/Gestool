@@ -2498,6 +2498,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       400 ;
             OF       fldComunicaciones
 
+      REDEFINE CHECKBOX aGet[ _LAPENOMB ] VAR aTmp[ _LAPENOMB ] ;
+            ID       420 ;
+            OF       fldComunicaciones      
+
       REDEFINE GET aTmp[ _CHSTFTPIMG ] ;
             ID       250;
             OF       fldComunicaciones
@@ -7209,6 +7213,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cMailTrno",  "C",200, 0, "Dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
    aAdd( aDbf, {"cCtaPor",    "C", 12, 0, "Subcuenta de portes",                                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaGas",    "C", 12, 0, "Subcuenta de gastos",                                   "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lApeNomb",   "L",  1, 0, "Lógico recibir apellidos, nombre desde la web",         "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )
 

@@ -1290,6 +1290,9 @@ FUNCTION rxFPago( cPath, oMeter )
       ( dbfFormasPago )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFormasPago )->( ordCreate( cPath + "FPAGO.CDX", "CDESPGOBIG", "UPPER( Field->CDESPAGO )", {|| UPPER( Field->CDESPAGO ) } ) )
 
+      ( dbfFormasPago )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFormasPago )->( ordCreate( cPath + "FPAGO.CDX", "cCodWeb", "Field->cCodWeb", {|| Field->cCodWeb }, ) )
+
       ( dbfFormasPago )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de formas de pago", "Reindexando formas de pago" )
@@ -1760,5 +1763,32 @@ Static Function ChangePosition( lInc )
    ( dbfFormasPago )->( OrdSetFocus( nOrd ) )
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+function cFPagoWeb( cCodWeb, cFPago )
+
+   local cCodigoFormaPago  := ""
+   local nRec              := ( cFPago )->( Recno() )
+   local nOrdAnt           := ( cFPago )->( OrdSetFocus( "cCodWeb" ) )
+
+   if !Empty( cCodWeb ) 
+      
+      if ( cFPago )->( dbSeek( cCodWeb ) )
+
+         cCodigoFormaPago     := ( cFPago )->cCodPago
+
+      else
+
+         cCodigoFormaPago     := cDefFpg()
+
+      end if
+
+   end if
+
+   ( cFPago )->( dbGoTo( nRec ) )
+   ( cFPago )->( OrdSetFocus( nOrdAnt ) )
+
+return cCodigoFormaPago
 
 //---------------------------------------------------------------------------//
