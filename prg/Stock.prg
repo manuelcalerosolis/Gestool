@@ -674,8 +674,8 @@ CLASS TStock
       local aStock
 
       for each aStock in ::aStockArticulo( cCodArt ) 
-         if ( !Empty( cAlmcenOrigen )     .and. aStock:cCodigoAlmacen >= cAlmcenOrigen ) .and. ;
-            ( !Empty( cAlmacenDestino )   .and. aStock:cCodigoAlmacen <= cAlmacenDestino)
+         if ( Empty( cAlmcenOrigen )     .or. aStock:cCodigoAlmacen >= cAlmcenOrigen   ) .and. ;
+            ( Empty( cAlmacenDestino )   .or. aStock:cCodigoAlmacen <= cAlmacenDestino )
             aStock:Save( ::oDbfStock )
          end if 
       next 
@@ -5053,6 +5053,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       /*
       Pendientes de entregar---------------------------------------------------
+      
 
       SysRefresh()
 
