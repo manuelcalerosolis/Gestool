@@ -51,14 +51,15 @@ CLASS TSalaVenta FROM TMasDet
                                                    uFieldEmpresa( "cTxtTar3", "Precio 3" ),;
                                                    uFieldEmpresa( "cTxtTar4", "Precio 4" ),;
                                                    uFieldEmpresa( "cTxtTar5", "Precio 5" ),;
-                                                   uFieldEmpresa( "cTxtTar6", "Precio 6" ) }
+                                                   uFieldEmpresa( "cTxtTar6", "Precio 6" ),;
+                                                   "Precio por defecto" }
 
    CLASSDATA oDlgSalaVenta
 
    CLASSDATA aSalas        AS ARRAY    INIT {}
    CLASSDATA aTikets       AS ARRAY    INIT {}
    CLASSDATA oGenerico
-   CLASSDATA oLlevar
+   CLASSDATA oLlevar 
 
    DATA oSalon
 
@@ -66,7 +67,7 @@ CLASS TSalaVenta FROM TMasDet
    DATA lPuntosVenta
    DATA cInitialSala
 
-   DATA oDetSalaVta        AS OBJECT
+   DATA oDetSalaVta        AS OBJECT    
 
    DATA nTarifa            AS NUMERIC  INIT  1
 
@@ -192,7 +193,7 @@ METHOD Resource( nMode )
 			PICTURE 	"@!" ;
 			OF 		oDlg
 
-      REDEFINE GET ::oDbf:cDescrip ;
+      REDEFINE GET ::oDbf:cDescrip ; 
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg

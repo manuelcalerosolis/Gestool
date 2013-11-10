@@ -4094,11 +4094,11 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    if ::oArt:lPubPor
 
       cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ;
-                        " ( id_category, " + ;
-                        "id_product )" + ;
-                     " VALUES " + ;
-                        "('" + AllTrim( Str( Max( nParent, 1 ) ) ) + "', " + ;
-                        "'2' )"
+                     " ( id_category, " + ;
+                     "id_product )" + ;
+                  " VALUES " + ;
+                     "('2', " + ;
+                     "'" + Str( nCodigoWeb ) + "' )"
    
       if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " como producto destacado", 3 )
@@ -5985,6 +5985,8 @@ METHOD AppendClientPrestashop()
    local lFirst                  := .t.
    local oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "customer" ) )
    local cCodCli
+   local oQueryState
+   local cProvincia              := ""
 
    /*
    Recorremos el Query con la consulta-----------------------------------------
@@ -6014,14 +6016,20 @@ METHOD AppendClientPrestashop()
 
             ::MeterParticularText( " Descargando cliente " + AllTrim( Str( ::nActualMeterL ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-            if !::oCli:SeekInOrd( Str( oQuery:FieldGet( 1 ), 11 ), "cCodWeb" ) //id_customer
+            if !::oCli:SeekInOrd( Str( oQuery:FieldGet( 1 ), 11 ), "cCodWeb" )
 
                cCodCli           := NextKey( dbLast(  ::oCli, 1 ), ::oCli:cAlias, "0", RetNumCodCliEmp() )
 
                ::oCli:Append()
                ::oCli:Blank()
                ::oCli:Cod        := cCodCli
-               ::oCli:Titulo     := oQuery:FieldGetbyName( "firstname" ) + Space( 1 ) + oQuery:FieldGetByName( "lastname" ) //firstname - Last Name
+               
+               if uFieldEmpresa( "lApeNomb" )
+                  ::oCli:Titulo  := UPPER( oQuery:FieldGetbyName( "lastname" ) ) + ", " + UPPER( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
+               else   
+                  ::oCli:Titulo  := UPPER( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + UPPER( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
+               end if   
+               
                ::oCli:nTipCli    := 3
                ::oCli:CopiasF    := 1
                ::oCli:Serie      := uFieldEmpresa( "cSeriePed" )
@@ -6052,6 +6060,18 @@ METHOD AppendClientPrestashop()
                      while !oQueryDirecciones:Eof()
 
                         /*
+                        Tomamos el nombre de la provincia----------------------
+                        */                        
+
+                        oQueryState       := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixTable( "state" ) + " WHERE id_state = " + Str( oQueryDirecciones:FieldGetByName( "id_state" ) ) )
+
+                        if oQueryState:Open() .and. oQueryState:RecCount() > 0
+
+                           cProvincia     := oQueryState:FieldGetbyName( "name" )
+
+                        end if   
+
+                        /*
                         El primero lo ponemos en la tabla de clientes----------
                         */
 
@@ -6061,6 +6081,7 @@ METHOD AppendClientPrestashop()
                            ::oCli:Domicilio      := oQueryDirecciones:FieldGetByName( "address1" ) + " " + oQueryDirecciones:FieldGetByName( "address2" ) //"address1" - "address2"
                            ::oCli:Poblacion      := oQueryDirecciones:FieldGetByName( "city" ) //"city"
                            ::oCli:CodPostal      := oQueryDirecciones:FieldGetByName( "postcode" ) //"postcode"
+                           ::oCli:Provincia      := cProvincia
                            ::oCli:Telefono       := oQueryDirecciones:FieldGetByName( "phone" ) //"phone"
                            ::oCli:Movil          := oQueryDirecciones:FieldGetByName( "phone_mobile" ) //"phone_mobile"
 
@@ -6075,10 +6096,17 @@ METHOD AppendClientPrestashop()
 
                         ::oObras:cCodCli         := cCodCli
                         ::oObras:cCodObr         := "@" + AllTrim( Str( oQueryDirecciones:FieldGet( 1 ) ) ) //"id_address"
-                        ::oObras:cNomObr         := oQueryDirecciones:FieldGetByName( "address1" ) + " " + oQueryDirecciones:FieldGetByName( "address2" ) //"address1" - "address2"
+                        
+                        if uFieldEmpresa( "lApeNomb" )
+                           ::oObras:cNomObr      := UPPER( oQuery:FieldGetbyName( "lastname" ) ) + ", " + UPPER( oQuery:FieldGetByName( "firstname" ) ) // Last Name - firstname
+                        else   
+                           ::oObras:cNomObr      := UPPER( oQuery:FieldGetbyName( "firstname" ) ) + Space( 1 ) + UPPER( oQuery:FieldGetByName( "lastname" ) ) //firstname - Last Name
+                        end if
+
                         ::oObras:cDirObr         := oQueryDirecciones:FieldGetByName( "address1" ) + " " + oQueryDirecciones:FieldGetByName( "address2" ) //"address1" - "address2"
                         ::oObras:cPobObr         := oQueryDirecciones:FieldGetByName( "city" ) //"city"
                         ::oObras:cPosObr         := oQueryDirecciones:FieldGetByName( "postcode" ) //"postcode"
+                        ::oObras:cPrvObr         := cProvincia
                         ::oObras:cTelObr         := oQueryDirecciones:FieldGetByName( "phone" ) //"phone"
                         ::oObras:cMovObr         := oQueryDirecciones:FieldGetByName( "phone_mobile" ) //"phone_mobile"
                         ::oObras:lDefObr         := lFirst
@@ -6192,7 +6220,8 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:dFecPed      := dFecha
                ::oPedCliT:cCodAlm      := oUser():cAlmacen()
                ::oPedCliT:cCodCaj      := oUser():cCaja()
-               ::oPedCliT:cCodPgo      := cDefFpg()
+               ::oPedCliT:cCodObr      := "@" + AllTrim( Str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
+               ::oPedCliT:cCodPgo      := cFPagoWeb( AllTrim( oQuery:FieldGetByName( "module" ) ), ::oFPago:cAlias )
                ::oPedCliT:nEstado      := 1
                ::oPedCliT:nTarifa      := 1
                ::oPedCliT:cDivPed      := cDivEmp()

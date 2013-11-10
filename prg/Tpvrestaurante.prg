@@ -144,7 +144,8 @@ CLASS TTpvRestaurante FROM TMasDet
                                                    uFieldEmpresa( "cTxtTar3", "Precio 3" ),;
                                                    uFieldEmpresa( "cTxtTar4", "Precio 4" ),;
                                                    uFieldEmpresa( "cTxtTar5", "Precio 5" ),;
-                                                   uFieldEmpresa( "cTxtTar6", "Precio 6" ) }
+                                                   uFieldEmpresa( "cTxtTar6", "Precio 6" ),;
+                                                   "Precio por defecto" }
 
    CLASSDATA oDlgSalaVenta
 
@@ -154,14 +155,14 @@ CLASS TTpvRestaurante FROM TMasDet
    CLASSDATA oLlevar
 
    DATA oSalon
-
+    
    DATA lMinimize          AS LOGIC    INIT .f.
    DATA lPuntosVenta
    DATA cInitialSala
 
    DATA oDetSalaVta        AS OBJECT
 
-   DATA nTarifa            AS NUMERIC  INIT  1
+   DATA nTarifa            AS NUMERIC  INIT  1  
 
    DATA cSelectedSala
    DATA cSelectedPunto

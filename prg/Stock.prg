@@ -669,12 +669,15 @@ CLASS TStock
 
    //---------------------------------------------------------------------------//
 
-   INLINE METHOD SaveStockArticulo( cCodArt )
+   INLINE METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino )
 
       local aStock
 
       for each aStock in ::aStockArticulo( cCodArt ) 
-         aStock:Save( ::oDbfStock )
+         if ( Empty( cAlmcenOrigen )     .or. aStock:cCodigoAlmacen >= cAlmcenOrigen   ) .and. ;
+            ( Empty( cAlmacenDestino )   .or. aStock:cCodigoAlmacen <= cAlmacenDestino )
+            aStock:Save( ::oDbfStock )
+         end if 
       next 
 
       RETURN ( Self )
@@ -746,7 +749,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
    FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 
-   INDEX TO "Stock.Cdx" TAG "cCodArt" ON "cCodigo + cValPrp1 + cValPrp2 + cAlmacen + cLote" COMMENT "Código" FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO "Stock.Cdx" TAG "cCodArt" ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote" COMMENT "Código" FOR "!Deleted()" OF ::oDbfStock
 
    END DATABASE ::oDbfStock
 
@@ -5050,6 +5053,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       /*
       Pendientes de entregar---------------------------------------------------
+      
 
       SysRefresh()
 

@@ -2339,9 +2339,6 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
       end if
 
       if !Empty( cIndex )
-
-         msgStop( cIndex, "orden extraido" )
-
          ::oDbf:AddTmpIndex( "Grupos", ( ::cFileIndx ), ( cIndex ), , , , , , , , , .t. )
       end if
 
