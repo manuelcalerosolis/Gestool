@@ -61,7 +61,7 @@ static dbfAlmT
 static dbfPro
 static dbfTblPro
 static dbfDoc
-static dbfFlt
+static oFiltrosAlmacenados
 
 static filTmpPrv
 static dbfTmpPrv
@@ -311,8 +311,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
+      oFiltrosAlmacenados  := TDataCenter():oCnfFlt()
 
       USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
@@ -662,8 +661,8 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfDoc )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFlt )
-      ( dbfFlt )->( dbCloseArea() )
+   if !Empty( oFiltrosAlmacenados ) .and. oFiltrosAlmacenados:Used()
+      oFiltrosAlmacenados:end()
    end if
 
    if !Empty( oStock )
@@ -740,7 +739,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    oNewImp        := nil
    oFraPub        := nil
    dbfDoc         := nil
-   dbfFlt         := nil
    dbfCategoria   := nil
    dbfTemporada   := nil
    dbfAlbPrvL     := nil
@@ -1508,8 +1506,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          HOTKEY   "S"
 
       oWndBrw:oActiveFilter:SetFields( aItmArt() )
+      oWndBrw:oActiveFilter:SetFilterDatabase( oFiltrosAlmacenados )
       oWndBrw:oActiveFilter:SetFilterType( ART_TBL )
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
 
       ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
 

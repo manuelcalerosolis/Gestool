@@ -178,6 +178,7 @@ Tinfcols.prg            \
 Tbuscar.prg             \
 Tmant.prg               \
 Tdlgflt.prg             \
+TFiltercreator.prg 		\
 Tarray.prg              \
 Tabs.prg                \
 Webbtn.prg              \
@@ -580,6 +581,7 @@ Tinfcols.obj            \
 Tbuscar.obj             \
 Tmant.obj               \
 Tdlgflt.obj             \
+TFiltercreator.obj 		\
 Tarray.obj              \
 Tabs.obj                \
 Webbtn.obj              \
@@ -985,6 +987,7 @@ $(OBJ)\Tinfcols.obj             +
 $(OBJ)\Tbuscar.obj              +
 $(OBJ)\Tmant.obj                +
 $(OBJ)\Tdlgflt.obj              +
+$(OBJ)\TFiltercreator.obj 		  +
 $(OBJ)\Tarray.obj               +
 $(OBJ)\Tabs.obj                 +
 $(OBJ)\Webbtn.obj               +

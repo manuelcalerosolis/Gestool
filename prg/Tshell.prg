@@ -269,9 +269,9 @@ CLASS TShell FROM TMdiChild
    Method ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
    Method HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
 
-   Method KillFilter()                       INLINE ( if( ::lActiveFilter .and. !Empty( ::oActiveFilter ), ::oActiveFilter:KillFilter(), ) )
    Method AddFilter()                        INLINE ( if( !Empty( ::oActiveFilter ), ::oActiveFilter:AddFilter(), ) )
-   Method EditFilter()                       INLINE ( if( !Empty( ::oActiveFilter ), ::oActiveFilter:EditFilter(), ) )
+   Method EditFilter()                       INLINE ( if( !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ), ::oActiveFilter:EditFilter( ::oWndBar:GetComboFilter() ), ) )
+   Method KillFilter()                       INLINE ( if( !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ), ( ::oActiveFilter:KillFilter(), ::oWndBar:HideButtonFilter(), ::oWndBar:HideEditButtonFilter(), ), ) )
 
    Method CreateData()
    Method OpenData()
@@ -293,7 +293,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD SetAutoFilter()
 
-   METHOD AplyFilter()                       INLINE ( if( !Empty( ::oActiveFilter ), ::oActiveFilter:AplyFilter(), ) )
+   METHOD AplyFilter()                       
    METHOD ChangeFilter( cFilter )            INLINE ( msgStop( cFilter ) )
 
    METHOD EnableComboFilter( aFilter )       INLINE ( ::oWndBar:EnableComboFilter( aFilter ) )
@@ -363,13 +363,18 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    ::aColSelect      := aColSelect
    ::aJustify        := aJustify
    ::lBigStyle       := lBigStyle
-   ::xAlias          := xAlias
-
+   
    ::bAdd            := bAdd
    ::bEdit           := bEdit
    ::bDel            := bDel
    ::bDup            := bDup
    ::bZoo            := bZoo
+
+   if IsObject( xAlias )
+      ::xAlias       := xAlias:nArea
+   else
+      ::xAlias       := xAlias
+   end if
 
    // Fuentes en funcion del estilo
 
@@ -388,7 +393,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    // Objeto de filtrado-------------------------------------------------------
 
-   ::oActiveFilter   := TDlgFlt():Init( Self )
+   ::oActiveFilter   := TFilterCreator():Init( Self )
 
    /*
    Llamada al objeto padre para que se cree
@@ -504,30 +509,19 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    // Seleccion de oden de la columna------------------------------------------
 
-   do case
-      case IsObject( ::xAlias ) .and. ( ::xAlias:Used() )
-
-         if !Empty( ::oBrw )
-            aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ::xAlias:OrdSetFocus(), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
-         end if
-
-      case  IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-
-         if !Empty( ::oBrw )
-            aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( OrdSetFocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
-         end if
-
-   end case
+   if ( ::xAlias )->( Used() ) .and. !Empty( ::oBrw )
+      aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( OrdSetFocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
+   end if
 
    // Filtro por defecto----------------------------------------------------
 
-   ::oActiveFilter:LoadTypeFilter() 
+   ::oActiveFilter:FiltersName() 
 
    // Preparamos la ventana principal---------------------------------------
 
    if !Empty( ::oWndBar )
 
-      ::oWndBar:EnableComboBox(  ::aPrompt )
+      ::oWndBar:EnableComboBox( ::aPrompt )
 
       ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
 
@@ -778,12 +772,9 @@ METHOD End( lForceExit ) CLASS TShell
 
       // Guardamos la pos actual ----------------------------------------------
 
-      do case
-         case IsObject( ::xAlias )
-            ::nRec            := ::xAlias:RecNo()
-         case  IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
-            ::nRec            := ( ::xAlias )->( RecNo() )
-      end case
+      if ( ::xAlias )->( Used() )
+         ::nRec               := ( ::xAlias )->( RecNo() )
+      end if 
 
       if !::lBigStyle .and. !Empty( ::oWndBar )
          ::nTab               := ::oWndBar:GetComboBoxAt( .t. )
@@ -856,20 +847,17 @@ METHOD Search() CLASS TShell
       return nil
    end if
 
-   do case
-   case IsObject( ::xAlias )
-      cIndice     := ::aPrompt[ ::xAlias:OrdNumber() ]
-   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
       cIndice     := ::aPrompt[ ( ::xAlias )->( OrdNumber() ) ]
-   end case
+   end if 
 
    DEFINE DIALOG oDlg RESOURCE "SEARCH"
 
    REDEFINE COMBOBOX ::oTxtSea VAR xCadena;
-      ITEMS    ::aLstSea ;
-      ID       100 ;
-      OF       oDlg ;
-      STYLE    CBS_DROPDOWN
+      ITEMS       ::aLstSea ;
+      ID          100 ;
+      OF          oDlg ;
+      STYLE       CBS_DROPDOWN
 
       ::oTxtSea:bValid        := {|| ::AddSearch() }
       ::oTxtSea:bChange       := {|| ::ChangeSeek( oIndice ) }
@@ -877,20 +865,20 @@ METHOD Search() CLASS TShell
       ::oTxtSea:oGet:bChange  := {| nKey, nFlags | ::FastSeek( nKey, nFlags, ::oTxtSea ) }
 
    REDEFINE COMBOBOX oIndice VAR cIndice ;
-      ID       101 ;
-      ITEMS    ::aPrompt ;
-      OF       oDlg
+      ID          101 ;
+      ITEMS       ::aPrompt ;
+      OF          oDlg
 
       oIndice:bChange         := {|| ::ChgIndex( oIndice ) }
 
    REDEFINE CHECKBOX oAutoSeek VAR ::lAutoSeek ;
-      ID       102 ;
-      OF       oDlg ;
+      ID          102 ;
+      OF          oDlg ;
 
    REDEFINE BUTTON ;
-      ID       510 ;
-      OF       oDlg ;
-      ACTION   ( oDlg:end() )
+      ID          510 ;
+      OF          oDlg ;
+      ACTION      ( oDlg:end() )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( oThis:AddSearch() )
 
@@ -909,16 +897,7 @@ METHOD AddSearch() CLASS TShell
 
    ::oWndBar:CleanGet()
 
-   do case
-   case IsObject( ::xAlias ) .and. ::xAlias:Used()
-
-      nRec  := ::xAlias:Recno()
-
-      ::xAlias:OrdClearScope()
-
-      ::xAlias:GoTo( nRec )
-
-   case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
 
       nRec  := ( ::xAlias )->( Recno() )
 
@@ -927,7 +906,7 @@ METHOD AddSearch() CLASS TShell
 
       ( ::xAlias )->( dbGoTo( nRec ) )
 
-   end case
+   end if 
 
    // ::oBrw:Refresh()
 
@@ -943,12 +922,9 @@ Cambia el indice actual
 
 METHOD ChgIndex( oIndice ) CLASS TShell
 
-   do case
-   case IsObject( ::xAlias )
-      ::xAlias:OrdSetFocus( oIndice:nAt )
-   case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
       ( ::xAlias )->( OrdSetFocus( oIndice:nAt ) )
-   end case
+   end if
 
    if !Empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( oIndice:nAt )
@@ -982,14 +958,10 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
    local oGet     := ::oTxtSea:oGet
    local nOrd     := if( SubStr( oGet:varGet(), 1, 1 ) $ "0123456789", 1, 2 )
 
-   do case
-   case IsObject( ::xAlias )
-      ::xAlias:OrdSetFocus( n )
-      cType       := ValType( ::xAlias:OrdKey() )
-   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
       ( ::xAlias )->( OrdSetFocus( n ) )
       cType       := ValType( ( ::xAlias )->( OrdKey() ) )
-   end case
+   end if
 
    oIndice:Set( nOrd )
 
@@ -1006,10 +978,7 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
       xCadena     := Val( Rtrim( oGet:GetText() ) )
    end case 
 
-   do case
-   case IsObject( ::xAlias )
-      ::xAlias:Seek( xCadena )
-   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
       ( ::xAlias )->( dbSeek( xCadena ) )
    end case
 
@@ -1030,12 +999,7 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
    local lSeek
    local cAlias
 
-   do case
-      case IsObject( ::xAlias )
-         cAlias      := ::xAlias:cAlias
-      case IsChar( ::xAlias )
-         cAlias      := ::xAlias
-   end case
+   cAlias            := ::xAlias
 
    if Empty( cAlias ) .or. !( cAlias )->( Used() )
       Return .f.
@@ -1214,15 +1178,7 @@ return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 METHOD AddMru() CLASS TShell
 
-   local cAlias
-
-   if IsObject( ::xAlias )
-      cAlias   := ::xAlias:nArea
-   else
-      cAlias   := ::xAlias
-   end if
-
-   if Empty( ( cAlias )->( OrdSetFocus() ) )
+   if Empty( ( ::xAlias )->( OrdSetFocus() ) )
       MsgInfo( LoadString( GetResources(), 15 ) )
       Return nil
    end if
@@ -1363,14 +1319,8 @@ static function SeaSeek( nKey, Self )
       */
 
       nOrd     := if( SubStr( ::aLstSea[ nKey ], 1, 1 ) $ "0123456789", 1, 2 )
-
-      if IsObject( ::xAlias )
-         nOrd  := ::xAlias:OrdSetFocus( nOrd )
-         cType := ValType( ::xAlias:OrdKey() )
-      else
-         nOrd  := ( ::xAlias )->( OrdSetFocus( nOrd ) )
-         cType := ValType( ( ::xAlias )->( OrdKey() ) )
-      end if
+      nOrd     := ( ::xAlias )->( OrdSetFocus( nOrd ) )
+      cType    := ValType( ( ::xAlias )->( OrdKey() ) )
 
       ::oBrw:GoTop()
 
@@ -1380,13 +1330,8 @@ static function SeaSeek( nKey, Self )
          xKey  := Val( ::aLstSea[ nKey ] )
       end if
 
-      if IsObject( ::xAlias )
-         ::xAlias:Seek( xKey )
-         ::xAlias:OrdSetFocus( nOrd )
-      else
-         ( ::xAlias )->( dbSeek( ::aLstSea[ nKey ] ) )
-         ( ::xAlias )->( OrdSetFocus( nOrd ) )
-      end if
+      ( ::xAlias )->( dbSeek( ::aLstSea[ nKey ] ) )
+      ( ::xAlias )->( OrdSetFocus( nOrd ) )
 
       ::oBrw:SetFocus()
       ::oBrw:Refresh()
@@ -1418,13 +1363,9 @@ METHOD PutOriginal() CLASS TShell
    Vamos al principio----------------------------------------------------------
    */
 
-   do case
-      case IsObject( ::xAlias )
-         ::xAlias:GoTop()
-
-      case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
-         ( ::xAlias )->( dbGoTop() )
-   end case
+   if ( ::xAlias )->( Used() )
+      ( ::xAlias )->( dbGoTop() )
+   end if 
 
 return nil
 
@@ -2720,20 +2661,43 @@ Return ( Self )
 METHOD ChgFilter() CLASS TShell
 
    local cFilter              := ""
+   local cFilterExpresion     := ""
+
+   CursorWait()
 
    if !Empty( ::oWndBar )
       cFilter                 := ::oWndBar:GetComboFilter()
    end if
 
    if !Empty( cFilter )
-      if ::oActiveFilter:LoadFilter( cFilter )
-         ::oActiveFilter:lBuildAplyFilter()
-      endif
+
+      if cFilter != txtFilters 
+         
+         cFilterExpresion     := ::oActiveFilter:ExpresionFilter( cFilter )
+         if !Empty ( cFilterExpresion )
+            CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
+         endif
+
+         ::ShowButtonFilter()
+         ::ShowEditButtonFilter()
+
+      else 
+
+         DestroyFastFilter( ::xAlias )
+
+         ::HideButtonFilter()
+         ::HideEditButtonFilter()
+
+      end if 
+
    end if
 
-   ::SetFocus()
+   CursorWE()
 
-return ( Self )
+   ::SetFocus()
+   ::Refresh()
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -2748,7 +2712,17 @@ METHOD ToExcel()
 Return ( Self )
 
 //----------------------------------------------------------------------------//
- 
+
+METHOD AplyFilter()
+
+   if !Empty( ::oActiveFilter )
+      ::ChgFilter()
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
 Function aItmHea()
 
    local aBase := {}

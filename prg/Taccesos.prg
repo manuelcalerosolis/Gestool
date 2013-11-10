@@ -33,8 +33,8 @@ CLASS TAcceso
    DATA  aComboBox         INIT  {}
 
    DATA  oComboFilter
-   DATA  cComboFilter      INIT  "[Mis filtros]"
-   DATA  aComboFilter      INIT  {"[Mis filtros]"}
+   DATA  cComboFilter      INIT  txtFilters
+   DATA  aComboFilter      INIT  {txtFilters}
 
    DATA  oYearComboBox
    DATA  cYearComboBox     INIT  "[Todos]"
@@ -1000,8 +1000,8 @@ Method EnableComboFilter( aItems )
 
    if !Empty( ::oComboFilter )
 
-      ::cComboFilter       := "[Mis filtros]"
-      ::aComboFilter       := { "[Mis filtros]" }
+      ::cComboFilter       := txtFilters
+      ::aComboFilter       := { txtFilters }
 
       // Cargamos los filtros-----------------------------------------------
 
@@ -1027,7 +1027,7 @@ Method SetDefaultComboFilter( aItems )
    local aItem
 
    if !Empty( ::oComboFilter )
-      ::oComboFilter:Set( "[Mis filtros]" )
+      ::oComboFilter:Set( txtFilters )
    end if
 
 Return ( Self )

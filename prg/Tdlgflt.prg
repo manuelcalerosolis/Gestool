@@ -530,6 +530,7 @@ Method Dialog()
          TRANSPARENT ;
          OF       ::oDlg
 
+
       ::BrwFilter( ::oFld:aDialogs[ 1 ] )
 
       /*

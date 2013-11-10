@@ -73,10 +73,10 @@ FUNCTION Compile( cExpression )
 
 	local bExpression
 
-   if !Empty( cExpression ) .and. At( Type( cExpression ), "UEUI" ) == 0
-      bExpression := &( "{|| " + Rtrim( cExpression ) + " } " )
+   if !Empty( cExpression ) .and. Type( cExpression ) != "UE" .and. Type( cExpression ) != "UI"
+      bExpression    := &( "{|| " + Rtrim( cExpression ) + " } " )
    else
-      bExpression := nil 
+      bExpression    := nil 
    end if
 
 RETURN ( bExpression )
@@ -368,3 +368,53 @@ FUNCTION RJust( cCadena, cChar, nLen )
 RETURN PadL( AllTrim( cCadena ), nLen, cChar )
 
 //--------------------------------------------------------------------------//
+
+Function GetSubArray( aArray, nPos )
+
+   local a
+   local aKeys    := {}
+
+   for each a in aArray
+      aAdd( aKeys, a[ nPos ] )
+   next 
+
+RETURN ( aKeys )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION cGetValue( xVal, cType )
+
+   local cTemp    := ""
+
+   DEFAULT cType  := ValType( xVal )
+
+   do case
+      case cType == "C" .or. cType == "M"
+
+         if !Empty( xVal )
+            xVal  := Rtrim( xVal )
+         end if
+         
+         if ( '"' $ xVal ) .or. ( "'" $ xVal )
+            cTemp := Rtrim( cValToChar( xVal ) )
+         else
+            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
+         end if
+
+      case cType == "N"
+         cTemp    := cValToChar( xVal )
+
+      case cType == "D"
+
+         cTemp    := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
+
+      case cType == "L"
+         if "S" $ Rtrim( Upper( xVal ) )
+            cTemp := ".t."
+         else
+            cTemp := ".f."
+         end if
+
+   end case
+
+RETURN ( Rtrim( cTemp ) )

@@ -1434,40 +1434,11 @@ return( oOld:cName )
 //
 METHOD _SetScope( uTop, uBottom ) CLASS TDbf
 
-    local cType := ""
+    DEFAULT uBottom := uTop
 
-    if ::oIndex:cName == "_NONE_"
-            ::DbError( dbNOORDER )
-    else
-        ::lScope := .f.
-
-        if uTop == nil .and. uBottom != nil
-            cType := ValType( uBottom )
-            DO CASE
-                CASE cType == "L" ; uTop := .f.
-                CASE cType == "N" ; uTop := 0
-                CASE cType == "C" ; uTop := ""
-                CASE cType == "D" ; uTop := CToD( "" )
-                OTHERWISE         ; uTop := uBottom
-            END CASE
-        else
-            uBottom := if( uBottom == nil, uTop, uBottom )
-        endif
-
-        if uBottom != nil
-            // Control de errores y activacion del SCOPE:
-            if Valtype( uBottom ) != Valtype( uTop )
-                ::DbError( dbSCPTMM )
-            elseif ::lScope := ::oIndex:SetScope( uTop, uBottom )
-                iScpTop( Self )
-                ::lCount := .t.
-            else
-                MsgInfo( "No se pudo establecer el SCOPE" )
-            endif
-        else
-            ::ClearScope()
-        endif
-    endif
+    ( ::nArea )->( OrdScope( 0, uTop ) )
+    ( ::nArea )->( OrdScope( 1, uBottom ) )
+    ( ::nArea )->( DbGoTop() )
 
 return( Self )
 
@@ -1475,9 +1446,9 @@ return( Self )
 
 METHOD ClearScope() CLASS TDbf
 
-    ::lScope := .f.
-    ::lCount := .t.
-    ::oIndex:ClearScope()
+    ( ::nArea )->( OrdScope( 0, nil ) )
+    ( ::nArea )->( OrdScope( 1, nil ) )
+    ( ::nArea )->( DbGoTop() )
 
 return( Self )
 

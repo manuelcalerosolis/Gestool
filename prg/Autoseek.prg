@@ -535,7 +535,6 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
 
    ErrorBlock( oBlock )
 
-
 Return ( bExpFilter != nil )
 
 //---------------------------------------------------------------------------//
