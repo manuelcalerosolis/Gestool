@@ -50,7 +50,7 @@ REQUEST DBFCDX
 static oWndBrw
 
 static dbfEmp
-static dbfFlt
+
 static dbfUser
 static dbfMapa
 static dbfCajT
@@ -98,9 +98,6 @@ Function OpenFiles()
    USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
    SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-   SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
    if !Empty( oOperario )
       oOperario:OpenFiles()
    end if
@@ -141,11 +138,6 @@ Static Function CloseFiles()
       ( dbfDelega )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFlt )
-      ( dbfFlt )->( dbCloseArea() )
-   end if
-
-   dbfFlt         := nil
    dbfUser        := nil
    dbfMapa        := nil
    dbfCajT        := nil

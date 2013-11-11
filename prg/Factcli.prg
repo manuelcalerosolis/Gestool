@@ -434,7 +434,7 @@ static dbfObrasT
 static dbfFamilia
 static dbfKit
 static dbfDoc
-static dbfFlt
+
 static dbfArtDiv
 static dbfCajT
 static dbfUsr
@@ -1005,9 +1005,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
 
@@ -1438,10 +1435,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfDoc     )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFlt )
-      ( dbfFlt     )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfPro )
       ( dbfPro     )->( dbCloseArea() )
    end if
@@ -1657,7 +1650,6 @@ STATIC FUNCTION CloseFiles()
    oBandera    := nil
    dbfObrasT   := nil
    dbfDoc      := nil
-   dbfFlt      := nil
    dbfOferta   := nil
    dbfPro      := nil
    dbfTblPro   := nil
@@ -2401,9 +2393,8 @@ end if
       ALLOW EXIT ;
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmFacCli()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := FAC_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmFacCli() )
+      oWndBrw:oActiveFilter:SetFilterType( FAC_CLI )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

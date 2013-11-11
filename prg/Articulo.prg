@@ -61,7 +61,6 @@ static dbfAlmT
 static dbfPro
 static dbfTblPro
 static dbfDoc
-static oFiltrosAlmacenados
 
 static filTmpPrv
 static dbfTmpPrv
@@ -310,8 +309,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
-
-      oFiltrosAlmacenados  := TDataCenter():oCnfFlt()
 
       USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
@@ -659,10 +656,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    if !Empty( dbfDoc )
       ( dbfDoc )->( dbCloseArea() )
-   end if
-
-   if !Empty( oFiltrosAlmacenados ) .and. oFiltrosAlmacenados:Used()
-      oFiltrosAlmacenados:end()
    end if
 
    if !Empty( oStock )
@@ -1325,13 +1318,13 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
             MENU     This:Toggle() ;
-            ACTION   ( TDlgFlt():New( aItmArt(), dbfArticulo ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfArticulo, aItmArt(), ART_TBL ) ) ;
             TOOLTIP  "Cambiar campos" ;
             LEVEL    ACC_EDIT
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( TDlgFlt():New( aItmKit(), dbfArtKit ):ChgFields(), oWndBrw:Refresh() ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfArtKit, aItmKit(), ART_TBL ) ) ;
                TOOLTIP  "Lineas escandallos" ;
                FROM     oRpl ;
                CLOSED ;
@@ -1339,7 +1332,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( TDlgFlt():New( aItmVta(), dbfArtVta ):ChgFields(), oWndBrw:Refresh() ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfArtVta, aItmVta(), ART_TBL ) ) ;
                TOOLTIP  "Ventas por propiedades" ;
                FROM     oRpl ;
                CLOSED ;
@@ -1506,7 +1499,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          HOTKEY   "S"
 
       oWndBrw:oActiveFilter:SetFields( aItmArt() )
-      oWndBrw:oActiveFilter:SetFilterDatabase( oFiltrosAlmacenados )
       oWndBrw:oActiveFilter:SetFilterType( ART_TBL )
 
       ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )

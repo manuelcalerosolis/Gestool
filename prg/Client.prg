@@ -246,7 +246,7 @@ static dbfTmpCon
 static dbfTmpSubCta
 static dbfArtDiv
 static dbfInci
-static dbfFlt
+
 static dbfOfe
 static oTrans
 static cTmpDoc
@@ -805,7 +805,6 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       oWndBrw:oActiveFilter:SetFields( aItmCli() )
       oWndBrw:oActiveFilter:SetFilterType( CLI_TBL )
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
 
       /*
       Abrimos la ventana-------------------------------------------------------
@@ -8490,9 +8489,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
       SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
@@ -8618,7 +8614,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfDoc       )
    CLOSE ( dbfBanco     )
    CLOSE ( dbfInci      )
-   CLOSE ( dbfFlt       )
    CLOSE ( dbfOfe       )
    CLOSE ( dbfArtDiv    )
    CLOSE ( dbfAntCliT   )
@@ -8648,7 +8643,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfDoc         := nil
    dbfBanco       := nil
    dbfInci        := nil
-   dbfFlt         := nil
    dbfOfe         := nil
    dbfArtDiv      := nil
    dbfAntCliT     := nil
@@ -9608,7 +9602,6 @@ STATIC FUNCTION pdaCloseFiles( lDestroy )
    CLOSE ( dbfProL      )
    CLOSE ( dbfBanco     )
    CLOSE ( dbfInci      )
-   CLOSE ( dbfFlt       )
 
    dbfClientD     := nil
    dbfCliAtp      := nil
@@ -9628,7 +9621,6 @@ STATIC FUNCTION pdaCloseFiles( lDestroy )
    dbfProL        := nil
    dbfBanco       := nil
    dbfInci        := nil
-   dbfFlt         := nil
 
    if oPais != nil
       oPais:end()

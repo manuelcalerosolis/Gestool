@@ -265,7 +265,7 @@ static dbfTarPreS
 static dbfRuta
 static dbfAlm
 static dbfDoc
-static dbfFlt
+
 static dbfCliAtp
 static dbfCajPorta
 static dbfAgeCom
@@ -659,9 +659,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatDat() + "CAJPORTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJPORTA", @dbfCajPorta ) )
       SET ADSINDEX TO ( cPatDat() + "CAJPORTA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
       SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
 
@@ -920,7 +917,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfDoc      )
    CLOSE ( dbfCliAtp   )
    CLOSE ( dbfCajPorta )
-   CLOSE ( dbfFlt      )
    CLOSE ( dbfAgeCom   )
    CLOSE ( dbfEmp      )
    CLOSE ( dbfAlbCliP  )
@@ -1048,7 +1044,6 @@ STATIC FUNCTION CloseFiles()
    dbfArtDiv         := nil
    dbfDoc            := nil
    dbfCliAtp         := nil
-   dbfFlt            := nil
    dbfAgeCom         := nil
    dbfEmp            := nil
    dbfAlbCliP        := nil
@@ -1622,9 +1617,8 @@ else
 end if
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmTik()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := TIK_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmTik() )
+      oWndBrw:oActiveFilter:SetFilterType( TIK_CLI )
    end if
 
    ACTIVATE SHELL oWndBrw VALID ( CloseFiles() )

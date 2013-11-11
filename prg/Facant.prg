@@ -141,7 +141,7 @@ static dbfCajT
 static dbfAlmT
 static dbfDelega
 static dbfAgeCom
-static dbfFlt
+
 static dbfEmp
 static oBandera
 static cTmpInc
@@ -413,9 +413,6 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
    SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-   SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
    USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
    SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
 
@@ -542,10 +539,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfDelega )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFlt )
-      ( dbfFlt )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfAgeCom )
       ( dbfAgeCom )->( dbCloseArea() )
    end if
@@ -595,7 +588,6 @@ STATIC FUNCTION CloseFiles()
    dbfUsr      := nil
    dbfCount    := nil
    dbfDelega   := nil
-   dbfFlt      := nil
    dbfAgeCom   := nil
    dbfEmp      := nil
    dbfCliInc   := nil
@@ -1106,9 +1098,8 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmAntCli()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := ANT_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmAntCli() )
+      oWndBrw:oActiveFilter:SetFilterType( ANT_CLI )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

@@ -78,7 +78,6 @@ static dbfRctPrvT
 static dbfRctPrvL
 static dbfFPago
 static dbfIva
-static dbfFlt
 static dbfProvee
 static dbfCount
 static dbfDoc
@@ -138,9 +137,6 @@ STATIC FUNCTION OpenFiles( cPatEmp )
 
       USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
       SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -220,9 +216,6 @@ STATIC FUNCTION CloseFiles()
    if dbfDoc != nil
       ( dbfDoc )->( dbCloseArea() )
    end if
-   if dbfFlt != nil
-      ( dbfFlt )->( dbCloseArea() )
-   end if
    if dbfEmp != nil
       ( dbfEmp )->( dbCloseArea() )
    end if
@@ -242,7 +235,6 @@ STATIC FUNCTION CloseFiles()
    dbfFPago    := nil
    dbfProvee   := nil
    dbfDoc      := nil
-   dbfFlt      := nil
    oWndBrw     := nil
    dbfEmp      := nil
    dbfCount    := nil
@@ -676,9 +668,8 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmRecPrv()
-      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
-      oWndBrw:oActiveFilter:cTipFilter    := REC_PRV
+      oWndBrw:oActiveFilter:SetFields( aItmRecPrv() )
+      oWndBrw:oActiveFilter:SetFilterType( REC_PRV )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

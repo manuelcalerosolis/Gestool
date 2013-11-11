@@ -99,7 +99,7 @@ memvar cDbfPrv
 static dbfProvee
 static dbfProveeD
 static dbfIva
-static dbfFlt
+
 static dbfPedPrvT
 static dbfPedPrvL
 static dbfAlbPrvT
@@ -219,9 +219,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
 
       USE ( cPatPrv() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBanco ) )
       SET ADSINDEX TO ( cPatPrv() + "PRVBNC.CDX" ) ADDITIVE
@@ -631,9 +628,8 @@ FUNCTION Provee( oMenuItem, oWnd )
       Datos para el filtro-----------------------------------------------------
       */
 
-      oWndBrw:oActiveFilter:aTField       := aItmPrv()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := PRV_TBL
+      oWndBrw:oActiveFilter:SetFields( aItmPrv() )
+      oWndBrw:oActiveFilter:SetFilterType( PRV_TBL )
 
 		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
 
@@ -2241,7 +2237,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfArticulo)
    CLOSE ( dbfDiv     )
    CLOSE ( dbfBanco   )
-   CLOSE ( dbfFlt     )
    CLOSE ( dbfDoc     )
 
    if !Empty( oPais )
@@ -2269,7 +2264,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfIva      := nil
    dbfArticulo := nil
    dbfDiv      := nil
-   dbfFlt      := nil
    oBandera    := nil
    oPais       := nil
    dbfBanco    := nil
@@ -4557,7 +4551,6 @@ STATIC FUNCTION pdaCloseFiles( lDestroy )
    CLOSE ( dbfArticulo)
    CLOSE ( dbfDiv     )
    CLOSE ( dbfBanco   )
-   CLOSE ( dbfFlt     )
 
    if !Empty( oPais )
       oPais:End()
@@ -4579,7 +4572,6 @@ STATIC FUNCTION pdaCloseFiles( lDestroy )
    dbfIva      := nil
    dbfArticulo := nil
    dbfDiv      := nil
-   dbfFlt      := nil
    oBandera    := nil
    oPais       := nil
    dbfBanco    := nil

@@ -27,7 +27,7 @@ static oWndBrw
 static dbfEntT
 static dbfDivisa
 static dbfCajT
-static dbfFlt
+
 static cPorDiv
 static oBandera
 static dbfUser
@@ -301,9 +301,8 @@ FUNCTION EntSal( oMenuItem, oWnd )
 			TOOLTIP "(S)alir" ;
 			HOTKEY 	"S"
 
-      oWndBrw:oActiveFilter:aTField       := aItmEntSal()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := ENT_SAL
+      oWndBrw:oActiveFilter:SetFields(  aItmEntSal() )
+      oWndBrw:oActiveFilter:SetFilterType( ENT_SAL )
 
 		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
@@ -337,9 +336,6 @@ STATIC FUNCTION OpenFiles()
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-   USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-   SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
    USE ( cPatDat() + "USERS.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "USERS", @dbfUser ) )
    SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
@@ -372,14 +368,12 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfEntT   )
    CLOSE ( dbfDivisa )
    CLOSE ( dbfCajT   )
-   CLOSE ( dbfFlt    )
    CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
 
    dbfEntT     := nil
    dbfDivisa   := nil
    dbfCajT     := nil
-   dbfFlt      := nil
    dbfUser     := nil
    dbfCaj      := nil
 

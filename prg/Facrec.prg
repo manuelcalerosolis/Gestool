@@ -356,7 +356,7 @@ static dbfPromoL
 static dbfPromoC
 static dbfAlm
 static dbfPro
-static dbfFlt
+
 static dbfTblPro
 static dbfArticulo
 static dbfCodebar
@@ -853,9 +853,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
       SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
 
@@ -1266,10 +1263,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfAgeCom )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFlt )
-      ( dbfFlt )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfEmp )
       ( dbfEmp )->( dbCloseArea() )
    end if
@@ -1427,7 +1420,6 @@ STATIC FUNCTION CloseFiles()
    dbfInci     := nil
    dbfArtPrv   := nil
    dbfDelega   := nil
-   dbfFlt      := nil
    dbfAgeCom   := nil
    dbfEmp      := nil
    dbfTblCnv   := nil
@@ -1988,9 +1980,8 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       */
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmFacRec()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := FAC_REC
+      oWndBrw:oActiveFilter:SetFields( aItmFacRec() )
+      oWndBrw:oActiveFilter:SetFilterType( FAC_REC )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

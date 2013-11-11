@@ -12,6 +12,9 @@
 
 static cFullCurDir
 
+static oMeter
+static nMeter  := 0
+
 #endif
 
 //--------------------------------------------------------------------------//
@@ -418,3 +421,49 @@ FUNCTION cGetValue( xVal, cType )
    end case
 
 RETURN ( Rtrim( cTemp ) )
+
+//---------------------------------------------------------------------------//
+
+Function ReplaceCreator( oShell, cDbf, aStructure, cType )
+
+   local oReplaceDialog
+
+   oReplaceDialog       := TReplaceCreator():Init( oShell )
+
+   if !Empty( oReplaceDialog )
+      oReplaceDialog:SetFields( aStructure )
+      oReplaceDialog:SetFilterType( cType )
+      oReplaceDialog:SetDatabaseToReplace( cDbf )
+      oReplaceDialog:Dialog()
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function AutoMeterDialog( oDialog )
+
+   oMeter   := TMeter():New( 0, 0, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 100, oDialog, oDialog:nWidth, 4 )
+
+RETURN ( oMeter )
+
+Function SetTotalAutoMeterDialog( nSet )
+
+   oMeter:SetTotal( nSet )
+
+RETURN ( oMeter )
+
+Function SetAutoMeterDialog( nSet )
+
+   oMeter:Set( nSet )
+
+RETURN ( oMeter )
+
+Function EndAutoMeterDialog( nSet )
+
+   oMeter:Hide()
+   oMeter:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

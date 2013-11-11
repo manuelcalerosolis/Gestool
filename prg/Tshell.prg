@@ -523,11 +523,11 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
       ::oWndBar:EnableComboBox( ::aPrompt )
 
-      ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
-
-      ::SetDefaultComboFilter(   ::oActiveFilter:aFiltersName )
-
-      ::ShowAddButtonFilter()
+      if !Empty( ::oActiveFilter:lReady() )
+         ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
+         ::SetDefaultComboFilter(   ::oActiveFilter:aFiltersName )
+         ::ShowAddButtonFilter()
+      end if 
 
       ::oWndBar:EnableGet()
 
@@ -767,6 +767,8 @@ METHOD End( lForceExit ) CLASS TShell
    // Matamos los filtros por si los hubiera-----------------------------------
 
    ::KillFilter()
+
+   ::oActiveFilter:End()
 
    if ::lOpenData
 
@@ -2695,7 +2697,6 @@ METHOD ChgFilter() CLASS TShell
    CursorWE()
 
    ::SetFocus()
-   ::Refresh()
 
 Return ( Self )
 

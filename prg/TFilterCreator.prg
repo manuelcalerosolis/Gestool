@@ -28,18 +28,16 @@ CLASS TFilterCreator
 
    DATA aFilter                              INIT {}
 
+   DATA aDescriptions                        INIT {}
+
    DATA cExpresionFilter
    DATA bExpresionFilter
 
 	DATA cName 									      INIT "Filtro de pruebas"
-	DATA cType 									      INIT FST_ART
+	DATA cType 									      INIT ""
 
-   DATA aStructure                           INIT {   {  "Código",   "Codigo",   "C" },;
-                                                      {  "Nombre",   "Nombre",   "C" },;  
-                                                      {  "Importe",  "Importe",  "N" },;
-                                                      {  "Fecha",    "Fecha",    "D" },;
-                                                      {  "Lógico",   "Logico",   "L" } }
-      
+   DATA aStructure                           INIT {}
+
    DATA hNexo                                INIT  {  ""    => "",;
                                                       "Y"   => " .and. ",;
                                                       "O"   => " .or. " }
@@ -57,6 +55,10 @@ CLASS TFilterCreator
 
    METHOD AddFilter()                        INLINE ( ::oFilterDialog:Dialog() )
    METHOD EditFilter( cFilterName )          INLINE ( ::oFilterDialog:Dialog( cFilterName ) ) 
+
+   METHOD Dialog()                           INLINE ( ::oFilterDialog:Dialog() )
+
+   METHOD lReady()                           INLINE ( !Empty( ::cType ) .and. !Empty( ::oFilterDatabase ) )
 
    METHOD FiltersName()
    METHOD SetFiltersName( aFilter )          INLINE ( ::aFiltersName := aFilter )
@@ -92,12 +94,13 @@ CLASS TFilterCreator
    METHOD GetNexo( cNexo )                   INLINE ( HGet( ::hNexo, cNexo ) )
 
    METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ), ::oFilterDatabase:SetScope( cType ), ) )
- 
    METHOD GetFilterType()                    INLINE ( ::cType )
 
    METHOD SetFilterDatabase( oDbf )          INLINE ( ::oFilterDatabase:SetDbf( oDbf ) )
 
    METHOD KillFilter()                       VIRTUAL
+
+   METHOD End()                              INLINE ( ::oFilterDatabase:CloseFiles() )
 
 END CLASS
 
@@ -125,6 +128,8 @@ METHOD Init( oTShell ) CLASS TFilterCreator
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
 
+   ::oFilterDatabase:OpenFiles()
+
    ::oFilterDialog      := TFilterDialog():New( Self )
 
 RETURN ( Self )
@@ -135,7 +140,7 @@ METHOD SetFields( aFieldStructure ) CLASS TFilterCreator
 
 	local oField
 
-	::aStructure 	:= {}
+	::aStructure        := {}
 
    if !Empty( aFieldStructure )                              
    
@@ -237,6 +242,50 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS TReplaceCreator FROM TFilterCreator
+
+   DATA cDbfReplace
+
+   METHOD New()
+
+   METHOD Init()
+
+   METHOD SetDatabaseToReplace( cDbf )    INLINE ( ::cDbfReplace := cDbf )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New() CLASS TReplaceCreator
+
+   ::oFilterDatabase   := TFilterDatabase():New( Self )
+
+   ::oFilterDatabase:OpenFiles()
+   ::oFilterDatabase:SetScope( ::GetFilterType() )
+
+   ::oFilterDialog     := TReplaceDialog():New( Self )
+   ::oFilterDialog:Dialog()
+
+   ::oFilterDatabase:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Init( oTShell ) CLASS TReplaceCreator
+
+   ::oTShell            := oTShell
+
+   ::oFilterDatabase    := TFilterDatabase():New( Self )
+
+   ::oFilterDialog      := TReplaceDialog():New( Self )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS TFilterDialog
 
 	DATA oDlg 
@@ -245,6 +294,7 @@ CLASS TFilterDialog
 
    DATA cTitle                         INIT "Generador de filtros"
    DATA cResource                      INIT "FastFiltros"
+   DATA cIcon                          INIT "Funnel_48_alpha" // Replace2_48_alpha
 
 	DATA oFilterCreator
    DATA oFilterDatabase
@@ -255,7 +305,8 @@ CLASS TFilterDialog
 	METHOD New( oFilterCreator )
 	
 	METHOD Dialog()
-   METHOD HeadderDialog()
+   METHOD HeaderDialog()
+   METHOD ReplaceDialog()              VIRTUAL
    METHOD FooterDialog()
    METHOD InitDialog( cFilterName )
    METHOD EndDialog()
@@ -286,7 +337,9 @@ RETURN ( Self )
 
 METHOD Dialog( cFilterName ) CLASS TFilterDialog
 
-   ::HeadderDialog()
+   ::HeaderDialog()
+
+   ::ReplaceDialog()
    
    ::FooterDialog( cFilterName )
 
@@ -294,7 +347,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD HeadderDialog() CLASS TFilterDialog
+METHOD HeaderDialog() CLASS TFilterDialog
 
    /*
    Caja de dialogo-------------------------------------------------------------
@@ -314,7 +367,7 @@ METHOD HeadderDialog() CLASS TFilterDialog
 
       REDEFINE BITMAP ::oBmp ;
          ID          500 ;
-         RESOURCE    "Funnel_48_alpha" ;
+         RESOURCE    ( ::cIcon ) ;
          TRANSPARENT ;
          OF          ::oDlg
 
@@ -439,6 +492,140 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
+CLASS TReplaceDialog FROM TFilterDialog
+
+   DATA cTitle                         INIT "Reemplazar campos"
+   DATA cResource                      INIT "FastReplace"
+   DATA cIcon                          INIT "Replace2_48_alpha"
+
+   DATA oReplace
+   DATA cReplace
+
+   DATA oExpReplace
+   DATA cExpReplace                    INIT Space( 100 )
+
+   DATA lAllRecno                      INIT .f.
+
+   METHOD GetField( cDescription )     INLINE ( ::oFilterCreator:GetField( cDescription ) )
+
+   METHOD SetDatabaseToReplace( cDbf ) INLINE ( ::cDbfReplace := cDbf )
+
+   METHOD ReplaceDialog()              
+
+   METHOD ValidDialog()
+   METHOD EndDialog()
+
+   METHOD DbfReplace()                 INLINE ( ::oFilterCreator:cDbfReplace )
+   METHOD ExpresionFilter()            INLINE ( ::oFilterCreator:bExpresionFilter )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD ReplaceDialog() CLASS TReplaceDialog
+
+   REDEFINE COMBOBOX ::oReplace VAR ::cReplace ;
+      ITEMS    ::oFilterCreator:GetDescriptions();
+      ID       80 ;
+      OF       ::oDlg
+
+   REDEFINE GET ::oExpReplace VAR ::cExpReplace ;
+      ID       90 ;
+      OF       ::oDlg
+
+   REDEFINE CHECKBOX ::lAllRecno ;
+      ID       70 ;
+      ON CHANGE( if( ::lAllRecno, ::oFld:Hide(), ::oFld:Show() ) );
+      OF       ::oDlg
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidDialog()
+
+   if Empty( ::cReplace )
+      msgStop( "El campo a reemplazar esta vacio")
+      RETURN ( .f. )
+   end if
+
+   if Empty( ::cExpReplace )
+      msgStop( "La expresión a reemplazar esta vacia")
+      RETURN ( .f. )
+   end if
+
+   if Empty( ::DbfReplace() )
+      msgStop( "No hay bases de datos para reemplazar")
+      RETURN ( .f. )
+   end if          
+
+   if !::oFilterCreator:BuildFilter( ::oBrwFilter:aFilter )
+      RETURN ( .f. )
+   end if          
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD EndDialog() CLASS TReplaceDialog
+
+   local nRpl     := 0
+   local cGetVal
+   local nOrdAnt
+   local nDbfRec
+   local nFldPos
+
+   if !::ValidDialog()
+      RETURN .f.
+   end if
+
+   AutoMeterDialog( ::oDlg )
+   
+   SetTotalAutoMeterDialog( ( ::DbfReplace() )->( LastRec() ) )
+
+   nDbfRec        := ( ::DbfReplace() )->( Recno() )
+   nOrdAnt        := ( ::DbfReplace() )->( OrdSetFocus( 0 ) )
+   nFldPos        := ( ::DbfReplace() )->( FieldPos( ::oFilterCreator:GetField( ::cReplace ) ) )
+
+   if nFldPos != 0
+
+      ( ::DbfReplace() )->( dbGoTop() )
+      while !( ::DbfReplace() )->( eof() )
+
+         cGetVal  := ( ::DbfReplace() )->( Eval( Compile( cGetValue( ::cExpReplace, ValType( ( ::DbfReplace() )->( FieldGet( nFldPos ) ) ) ) ) ) )
+
+         if ::lAllRecno .or. ( ::DbfReplace() )->( Eval( ::ExpresionFilter() ) )
+            
+            if ( ::DbfReplace() )->( dbRLock() )
+               ( ::DbfReplace() )->( FieldPut( nFldPos, cGetVal ) )
+               ( ::DbfReplace() )->( dbUnLock() )
+            end if
+            
+            ++nRpl
+
+         end if
+
+         SetAutoMeterDialog( ( ::DbfReplace() )->( Recno() ) )
+
+         ( ::DbfReplace() )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::DbfReplace() )->( OrdSetFocus( nOrdAnt ) )
+   ( ::DbfReplace() )->( dbGoTo( nDbfRec ) )
+
+   msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
+
+   EndAutoMeterDialog()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS TBrowseFilter
 
    DATA oFilterDialog
@@ -452,7 +639,6 @@ CLASS TBrowseFilter
 
    DATA bExpresionFilter
 
-	DATA aDescriptions 								INIT {}
 	DATA aFields 										INIT {}
 	DATA aTypes 										INIT {}
 
@@ -504,7 +690,7 @@ CLASS TBrowseFilter
 	METHOD GetStructurePos( nPos )						INLINE ( ::GetStructure()[ nPos ] )
 	METHOD GetStructureType( cDescripcion )
 
-	METHOD GetDescriptions() 								INLINE ( if( Empty( ::aDescriptions ), ( ::aDescriptions := GetSubArray( ::aStructure, posDescription ) ), ), ::aDescriptions ) 
+	METHOD GetDescriptions() 								INLINE ( ::oFilterDialog:oFilterCreator:GetDescriptions() ) 
 	METHOD GetDescriptionsPos( nPos ) 					INLINE ( ::GetDescriptions()[ nPos ] )
 
 	METHOD GetFields() 										INLINE ( if( Empty( ::aFields ), ( ::aFields := GetSubArray( ::aStructure, posField ) ), ), ::aFields )
@@ -815,9 +1001,9 @@ CLASS TFilterDatabase FROM TMant
    DATA  cType
    DATA  oFilterCreator  
 
-   DATA  cFilterName          INIT Space( 100 )
-   DATA  lDefault             INIT .f.
-   DATA  lAllUser             INIT .t.
+   DATA  cFilterName                   INIT Space( 100 )
+   DATA  lDefault                      INIT .f.
+   DATA  lAllUser                      INIT .t.
 
    METHOD New() 
    METHOD End()                        INLINE ( ::CloseFiles() )
@@ -834,8 +1020,8 @@ CLASS TFilterDatabase FROM TMant
    METHOD Dialog()
    METHOD lValidDialog() 
 
-   METHOD SeekFullKey( cFilterName )   INLINE ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + cFilterName ) )
-   
+   METHOD SeekFullKey( cFilterName )
+
    METHOD SerializeFilter()
    METHOD UnSerializeFilter()
 
@@ -970,11 +1156,9 @@ METHOD Save() CLASS TFilterDatabase
 
    if ::Dialog()
 
-      if ::SeekFullKey( ::cFilterName )
+      if !Empty( ::cFilterName ) .and. ::SeekFullKey( ::cFilterName )
          ::oDbf:Delete()
       end if 
-
-      ? valtoprg( ::oFilterCreator:aFilter )
 
       ::oDbf:Blank()
       ::oDbf:cTipDoc    := ::oFilterCreator:GetFilterType()
@@ -1087,3 +1271,14 @@ METHOD ArrayFilter( cFilterName ) CLASS TFilterDatabase
 RETURN ( aArrayFilter )
 
 //---------------------------------------------------------------------------//
+
+METHOD SeekFullKey( cFilterName ) CLASS TFilterDatabase
+   
+   if !Empty( cFilterName )
+      RETURN ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + cFilterName ) )
+   end if
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+

@@ -323,7 +323,7 @@ static dbfOferta
 static dbfTVta
 static dbfTblPro
 static dbfPro
-static dbfFlt
+
 static dbfArtDiv
 static dbfDelega
 static dbfAgeCom
@@ -719,9 +719,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatGrp() + "AGECOM.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
       SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
 
@@ -1066,10 +1063,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfAgeCom )->( dbCloseArea() )
    end if
 
-   if dbfFlt != nil
-      ( dbfFlt )->( dbCloseArea() )
-   end if
-
    if dbfCount != nil
       ( dbfCount )->( dbCloseArea() )
    end if
@@ -1218,7 +1211,6 @@ STATIC FUNCTION CloseFiles()
    oTipArt        := nil
    oGrpFam        := nil
    dbfInci        := nil
-   dbfFlt         := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
 
@@ -1766,9 +1758,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmPreCli()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := PRE_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmPreCli() )
+      oWndBrw:oActiveFilter:SetFilterType( PRE_CLI )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

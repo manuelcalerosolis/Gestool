@@ -420,7 +420,6 @@ static dbfDiv
 static oBandera
 static dbfKit
 static dbfDoc
-static dbfFlt
 static dbfTblCnv
 static dbfOferta
 static dbfObrasT
@@ -649,9 +648,6 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
@@ -1013,9 +1009,6 @@ STATIC FUNCTION CloseFiles()
    if !Empty( dbfKit )
       ( dbfKit       )->( dbCloseArea() )
    end if
-   if !Empty( dbfFlt )
-      ( dbfFlt       )->( dbCloseArea() )
-   end if
    if !Empty( dbfAlm )
       ( dbfAlm       )->( dbCloseArea() )
    end if
@@ -1219,7 +1212,6 @@ STATIC FUNCTION CloseFiles()
    dbfOferta      := nil
    dbfObrasT      := nil
    dbfPro         := nil
-   dbfFlt         := nil
    dbfTblPro      := nil
    dbfRuta        := nil
    dbfArtDiv      := nil
@@ -2071,9 +2063,8 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       */
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmAlbCli()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := ALB_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
+      oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
@@ -11411,7 +11402,6 @@ STATIC FUNCTION pdaCloseFiles()
    dbfOferta      := nil
    dbfObrasT      := nil
    dbfPro         := nil
-   dbfFlt         := nil
    dbfTblPro      := nil
    dbfRuta        := nil
    dbfArtDiv      := nil

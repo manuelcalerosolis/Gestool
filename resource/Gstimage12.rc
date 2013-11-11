@@ -68,6 +68,7 @@ Earth2_32_alpha BITMAP "..\\bmp\\Earth2_32_alpha.bmp"
 Floppy_disk_blue_32_alpha BITMAP "..\\bmp\\Floppy_disk_blue_32_alpha.bmp"
 Door2_open_32_alpha BITMAP "..\\bmp\\Door2_open_32_alpha.bmp"
 cashier_32_alpha BITMAP "..\\bmp\\cashier_32_alpha.bmp"
+Replace2_48_alpha BITMAP "..\\bmp\\Replace2_48_alpha.bmp"
 
 
 

@@ -303,7 +303,7 @@ static dbfCajT
 static dbfTblPro
 static dbfDiv
 static dbfUsr
-static dbfFlt
+
 static dbfCount
 static oBandera
 static dbfAlbPrvT
@@ -450,9 +450,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
       SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
@@ -700,10 +697,6 @@ Static Function CloseFiles()
       ( dbfKit )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFlt )
-      ( dbfFlt )->( dbCloseArea() )
-   end if
-
    if dbfFacPrvP != nil
       ( dbfFacPrvP )->( dbCloseArea() )
    end if
@@ -840,7 +833,6 @@ Static Function CloseFiles()
    dbfArticulo := nil
    dbfCodebar  := nil
    dbfKit      := nil
-   dbfFlt      := nil
    dbfFacPrvP  := nil
    dbfArtCom   := nil
    dbfDiv      := nil

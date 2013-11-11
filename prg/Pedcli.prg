@@ -410,7 +410,7 @@ static dbfTmpDoc
 static dbfTmpPgo
 static dbfTVta
 static dbfPro
-static dbfFlt
+
 static dbfTblPro
 static dbfDoc
 static dbfAgeCom
@@ -820,9 +820,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
@@ -1676,9 +1673,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmPedCli()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := PED_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmPedCli() )
+      oWndBrw:oActiveFilter:SetFilterType( PED_CLI )
    end if
 
    if lPedWeb
@@ -12216,7 +12212,6 @@ STATIC FUNCTION pdaCloseFiles()
    if( !Empty( dbfInci    ), ( dbfInci    )->( dbCloseArea() ), )
    if( !Empty( dbfArtPrv  ), ( dbfArtPrv  )->( dbCloseArea() ), )
    if( !Empty( dbfDelega  ), ( dbfDelega  )->( dbCloseArea() ), )
-   if( !Empty( dbfFlt     ), ( dbfFlt     )->( dbCloseArea() ), )
    if( !Empty( dbfCount   ), ( dbfCount   )->( dbCloseArea() ), )
    if( !Empty( dbfAgeCom  ), ( dbfAgeCom  )->( dbCloseArea() ), )
    if( !Empty( dbfEmp     ), ( dbfEmp     )->( dbCloseArea() ), )
@@ -12271,7 +12266,6 @@ STATIC FUNCTION pdaCloseFiles()
    dbfTblCnv      := nil
    dbfCajT        := nil
    dbfUsr         := nil
-   dbfFlt         := nil
    dbfInci        := nil
    dbfCount       := nil
    dbfAgeCom      := nil
@@ -13647,7 +13641,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfInci    ), ( dbfInci    )->( dbCloseArea() ), )
    if( !Empty( dbfArtPrv  ), ( dbfArtPrv  )->( dbCloseArea() ), )
    if( !Empty( dbfDelega  ), ( dbfDelega  )->( dbCloseArea() ), )
-   if( !Empty( dbfFlt     ), ( dbfFlt     )->( dbCloseArea() ), )
    if( !Empty( dbfCount   ), ( dbfCount   )->( dbCloseArea() ), )
    if( !Empty( dbfAgeCom  ), ( dbfAgeCom  )->( dbCloseArea() ), )
    if( !Empty( dbfEmp     ), ( dbfEmp     )->( dbCloseArea() ), )
@@ -13726,7 +13719,6 @@ STATIC FUNCTION CloseFiles()
    dbfTblCnv      := nil
    dbfCajT        := nil
    dbfUsr         := nil
-   dbfFlt         := nil
    dbfInci        := nil
    dbfCount       := nil
    dbfAgeCom      := nil

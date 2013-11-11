@@ -75,7 +75,7 @@ static dbfTmov
 static dbfDiv
 static oStock
 static dbfUsr
-static dbfFlt
+
 static dbfDelega
 static dbfProLin
 static dbfProMat
@@ -203,9 +203,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "PROLIN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROLIN", @dbfProLin ) )
       SET ADSINDEX TO ( cPatEmp() + "PROLIN.CDX" ) ADDITIVE
       SET TAG TO "cCodArt"
@@ -286,7 +283,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE( dbfTikCliT  )
    CLOSE( dbfTikCliL  )
    CLOSE( dbfUsr      )
-   CLOSE( dbfFlt      )
    CLOSE( dbfDelega   )
    CLOSE( dbfProLin   )
    CLOSE( dbfProMat   )
@@ -322,7 +318,6 @@ STATIC FUNCTION CloseFiles()
    dbfTikCliT  := nil
    dbfTikCliL  := nil
    dbfUsr      := nil
-   dbfFlt      := nil
    dbfDelega   := nil
    oStock      := nil
    dbfPedPrvL  := nil
@@ -616,9 +611,8 @@ FUNCTION HisMovAlm( oMenuItem, oWnd )
          TOOLTIP  "(S)alir" ;
 			HOTKEY 	"S"
 
-      oWndBrw:oActiveFilter:aTField       := aItmMov()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := MOV_ALM
+      oWndBrw:oActiveFilter:SetFields( aItmMov() )
+      oWndBrw:oActiveFilter:SetFilterType( MOV_ALM )
 
 		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 

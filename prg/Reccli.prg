@@ -106,7 +106,7 @@ static dbfAntCliT
 static dbfFPago
 static dbfIva
 static dbfDoc
-static dbfFlt
+
 static dbfAgent
 static dbfCajT
 static dbfEmp
@@ -198,9 +198,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
@@ -280,9 +277,6 @@ STATIC FUNCTION CloseFiles()
    if dbfCajT != nil
       ( dbfCajT )->( dbCloseArea() )
    end if
-   if dbfFlt != nil
-      ( dbfFlt )->( dbCloseArea() )
-   end if
    if dbfEmp != nil
       ( dbfEmp )->( dbCloseArea() )
    end if
@@ -318,7 +312,6 @@ STATIC FUNCTION CloseFiles()
    dbfEmp      := nil
    dbfDiv      := nil
    dbfDoc      := nil
-   dbfFlt      := nil
    dbfBncCli   := nil
    dbfBncEmp   := nil
    dbfTurno    := nil
@@ -767,9 +760,8 @@ end if
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmrecCli()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := REC_CLI
+      oWndBrw:oActiveFilter:SetFields( aItmrecCli() )
+      oWndBrw:oActiveFilter:SetFilterType( REC_CLI )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

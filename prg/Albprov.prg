@@ -281,7 +281,7 @@ static dbfPedPrvL
 static dbfPedCliT
 static dbfPedCliL
 static dbfPro
-static dbfFlt
+
 static dbfTblPro
 static dbfDelega
 static dbfAlm
@@ -467,12 +467,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
-      SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
@@ -720,10 +714,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfCount )->( dbCloseArea() )
    end if
 
-   if dbfFlt != nil
-      ( dbfFlt )->( dbCloseArea() )
-   end if
-
    if dbfPedCliT != nil
       ( dbfPedCliT )->( dbCloseArea() )
    end if
@@ -833,7 +823,6 @@ STATIC FUNCTION CloseFiles()
    dbfUsr      := nil
    dbfInci     := nil
    dbfDelega   := nil
-   dbfFlt      := nil
    dbfCount    := nil
    dbfPedCliT  := nil
    dbfPedCliL  := nil
@@ -1357,9 +1346,8 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmAlbPrv()
-      oWndBrw:oActiveFilter:SetFilterDatabase( dbfFlt )
-      oWndBrw:oActiveFilter:cTipFilter    := ALB_PRV
+      oWndBrw:oActiveFilter:SetFields( aItmAlbPrv() )
+      oWndBrw:oActiveFilter:SetFilterType( ALB_PRV )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
