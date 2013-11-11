@@ -58,7 +58,7 @@ CLASS TFilterCreator
 
    METHOD Dialog()                           INLINE ( ::oFilterDialog:Dialog() )
 
-   METHOD lReady()                           INLINE ( !Empty( ::cType ) .and. !Empty( ::oFilterDatabase ) )
+   METHOD Ready()                            INLINE ( !Empty( ::cType ) .and. !Empty( ::oFilterDatabase ) )
 
    METHOD FiltersName()
    METHOD SetFiltersName( aFilter )          INLINE ( ::aFiltersName := aFilter )
@@ -93,7 +93,7 @@ CLASS TFilterCreator
    METHOD GetCondition( cCondition )         INLINE ( HGet( ::hConditions, cCondition ) )
    METHOD GetNexo( cNexo )                   INLINE ( HGet( ::hNexo, cNexo ) )
 
-   METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ), ::oFilterDatabase:SetScope( cType ), ) )
+   METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ) .and. !Empty( cType ), ::oFilterDatabase:SetScope( cType ), ) )
    METHOD GetFilterType()                    INLINE ( ::cType )
 
    METHOD SetFilterDatabase( oDbf )          INLINE ( ::oFilterDatabase:SetDbf( oDbf ) )
@@ -278,6 +278,8 @@ METHOD Init( oTShell ) CLASS TReplaceCreator
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
 
+   ::oFilterDatabase:OpenFiles()
+
    ::oFilterDialog      := TReplaceDialog():New( Self )
 
 RETURN ( Self )
@@ -320,6 +322,8 @@ CLASS TFilterDialog
    METHOD SetFilter( aArrayFilter )    INLINE ( ::oBrwFilter:SetFilter( aArrayFilter ) )
 
    METHOD TitleFilter()                INLINE Rtrim( ::oFilterDatabase:oDbf:cTexFlt )
+
+   METHOD Ready()                      INLINE ( ::oFilterCreator:Ready() )
 
 END CLASS
 
@@ -439,6 +443,12 @@ METHOD InitDialog( cFilterName ) CLASS TFilterDialog
    if !Empty( cFilterName )   
       ::Load( cFilterName )
    end if          
+
+   msgStop( ::Ready() )
+
+   if !::Ready()
+      ::oFld:aEnable := { .t., .f. }
+   end if 
 
 RETURN ( Self )
 

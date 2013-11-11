@@ -1324,7 +1324,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( ReplaceCreator( oWndBrw, dbfArtKit, aItmKit(), ART_TBL ) ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfArtKit, aItmKit() ) ) ;
                TOOLTIP  "Lineas escandallos" ;
                FROM     oRpl ;
                CLOSED ;
@@ -1332,7 +1332,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( ReplaceCreator( oWndBrw, dbfArtVta, aItmVta(), ART_TBL ) ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfArtVta, aItmVta() ) ) ;
                TOOLTIP  "Ventas por propiedades" ;
                FROM     oRpl ;
                CLOSED ;

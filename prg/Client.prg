@@ -731,13 +731,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
             NOBORDER ;
             MENU     This:Toggle() ;
-            ACTION   ( TDlgFlt():New( aItmCli(), dbfClient ):ChgFields() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfClient, aItmCli(), CLI_TBL ) ) ;
             TOOLTIP  "Cambiar campos" ;
             LEVEL    ACC_APPD
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( TDlgFlt():New( aItmAtp(), dbfCliAtp ):ChgFields() ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfCliAtp, aItmAtp() ) ) ;
                TOOLTIP  "Tarifa" ;
                FROM     oRpl ;
                CLOSED ;

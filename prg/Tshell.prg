@@ -523,7 +523,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
       ::oWndBar:EnableComboBox( ::aPrompt )
 
-      if !Empty( ::oActiveFilter:lReady() )
+      if !Empty( ::oActiveFilter:Ready() )
          ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
          ::SetDefaultComboFilter(   ::oActiveFilter:aFiltersName )
          ::ShowAddButtonFilter()

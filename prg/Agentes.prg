@@ -180,7 +180,7 @@ FUNCTION Agentes( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmAge(), dbfAge ):ChgFields() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfAge, aItmAge() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_APPD
 
