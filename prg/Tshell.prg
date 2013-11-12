@@ -1861,8 +1861,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
 
       with object ::oBrw
 
-         do case
-         case IsObject( ::xAlias ) .and. ::xAlias:Used()
+         if ( ::xAlias )->( Used() )
 
             for each oCol in :aCols
 
@@ -1875,20 +1874,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
 
             next
 
-         case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-
-            for each oCol in :aCols
-
-               if Eq( cOrd, oCol:cHeader )
-                  oCol:cOrder       := "A"
-                  oCol:SetOrder()
-               else
-                  oCol:cOrder       := " "
-               end if
-
-            next
-
-         end case
+         end if 
 
       end with
 
@@ -1930,12 +1916,9 @@ RETURN ( Self )
 
 METHOD SetIndex( nOrd ) CLASS TShell
 
-   do case
-   case IsObject( ::xAlias ) .and. ::xAlias:Used()
-      ::xAlias:SetOrder( nOrd )
-   case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
       ( ::xAlias )->( dbSetOrder( nOrd ) )
-   end case
+   end if 
 
    if !Empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( nOrd )
@@ -2691,6 +2674,8 @@ METHOD ChgFilter() CLASS TShell
          ::HideEditButtonFilter()
 
       end if 
+
+      ::Refresh() 
 
    end if
 

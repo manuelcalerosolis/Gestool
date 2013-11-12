@@ -300,24 +300,6 @@ Function CfgTikItems( oMenuItem, oWnd )
          HOTKEY   "E" ;
          LEVEL    ACC_DELE
 
-      if oUser():lAdministrador()
-
-         DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
-            NOBORDER ;
-            MENU     This:Toggle() ;
-            ACTION   ( TDlgFlt():New( aItemsDocument(), dbfDoc ):ChgFields(), oWndBrw:Refresh() ) ;
-            TOOLTIP  "Cambiar campos" ;
-            LEVEL    ACC_EDIT
-
-            DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-               ACTION   ( TDlgFlt():New( aItemsLines(), dbfDet ):ChgFields(), oWndBrw:Refresh() ) ;
-               TOOLTIP  "Líneas" ;
-               FROM     oRpl ;
-               CLOSED ;
-               LEVEL    ACC_EDIT
-
-      end if
-
       DEFINE BTNSHELL RESOURCE "EXPORT" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( ExpDoc( oWndBrw ) );

@@ -13665,9 +13665,8 @@ SELECTLABELS_2 DIALOG DISCARDABLE 113, 78, 390, 254
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 4, 11, 234, 11
-  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 247, 11, 77, 138
-  CONTROL "&Filtrar", 170, "Button", WS_TABSTOP, 334, 11, 50, 14
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 4, 11, 269, 11
+  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 285, 11, 99, 138
   CONTROL "S&eleccionar", 100, "Button", WS_TABSTOP, 4, 33, 50, 14
   CONTROL "&Todos", 110, "Button", WS_TABSTOP, 54, 33, 50, 14
   CONTROL "N&inguno", 120, "Button", WS_TABSTOP, 104, 33, 50, 14
@@ -13679,9 +13678,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Agregar artículos", 180, "TXBrowse", WS_TABSTOP|0x00300000, 4, 49, 380, 194
   CONTROL "TMeter", 190, "TMeter", 0x00800000, 4, 244, 380, 5
   CONTROL "", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 26, 386, 226
-  CONTROL "Ordenado por", -1, "Button", BS_GROUPBOX, 243, 0, 85, 27
-  CONTROL "Buscar por", -1, "Button", BS_GROUPBOX, 1, 0, 240, 27
-  CONTROL "Filtro", -1, "Button", BS_GROUPBOX, 330, 0, 58, 27
+  CONTROL "Ordenado por", -1, "Button", BS_GROUPBOX, 279, 0, 109, 27
+  CONTROL "Buscar por", -1, "Button", BS_GROUPBOX, 1, 0, 277, 27
   CONTROL "Propiedades", 220, "Button", WS_TABSTOP, 154, 33, 50, 14
 }
 

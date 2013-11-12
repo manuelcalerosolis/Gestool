@@ -1051,7 +1051,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmAntCli(), dbfAntCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfAntCli, aItmAntCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 

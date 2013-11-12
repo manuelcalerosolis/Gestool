@@ -101,9 +101,9 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
       return .t.
    end if
 
-   ::oFilter      := TDlgFlt():Create( ::oDbf )
+   ::oFilter      := TFilterCreator():New()
    if !Empty( ::oFilter )
-      ::oFilter:SetFilterDatabase( ::oCnfFlt )
+      ::oFilter:SetDatabase( ::oDbf )
       ::oFilter:SetFilterType( FST_CLI )
    end if 
 
@@ -680,11 +680,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    end case
 
-   if !Empty( ::oFilter:cExpFilter )
-      ::oDbf:SetFilter( ::oFilter:cExpFilter )
-   else
-      ::oDbf:KillFilter()
-   end if
+   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
    ::oDbf:GoTop()
 

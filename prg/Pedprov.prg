@@ -1084,13 +1084,13 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmPedPrv(), dbfPedPrvT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfPedPrvT, aItmPedPrv() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColPedPrv(), dbfPedPrvL ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfPedPrvL, aColPedPrv() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;

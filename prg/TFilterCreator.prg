@@ -77,6 +77,7 @@ CLASS TFilterCreator
    METHOD GetTextExpresion()                 INLINE ( ::cExpresionFilter )
 
 	METHOD SetFields( aFieldStructure ) 
+   METHOD SetDatabase( oDatabase )           
 
 	METHOD GetStructure() 					      INLINE ( ::aStructure )
 
@@ -108,12 +109,12 @@ END CLASS
 
 METHOD New() CLASS TFilterCreator
 
-   ::oFilterDatabase   := TFilterDatabase():New( Self )
+   ::oFilterDatabase    := TFilterDatabase():New( Self )
 
    ::oFilterDatabase:OpenFiles()
    ::oFilterDatabase:SetScope( ::GetFilterType() )
 
-	::oFilterDialog     := TFilterDialog():New( Self )
+   ::oFilterDialog       := TFilterDialog():New( Self )
    ::oFilterDialog:Dialog()
 
    ::oFilterDatabase:End()
@@ -138,36 +139,40 @@ RETURN ( Self )
 
 METHOD SetFields( aFieldStructure ) CLASS TFilterCreator
 
-	local oField
+	local aField
 
 	::aStructure        := {}
 
-   if !Empty( aFieldStructure )                              
+   for each oField in aFieldStructure
+
+        if !Empty( oField[ 5 ] )
+         aAdd( ::aStructure, { oField[ 5 ], oField[ 1 ], oField[ 2 ] } )
+     	end if
+
+   next
    
-      for each oField in aFieldStructure
-
-         do case
-         	case IsObject( oField )
-
-            	if !Empty( oField:cComment ) .and. !( oField:lCalculate ) .and. !( oField:lHide )
-   	            aAdd( ::aStructure, { oField:cComment, oField:cName, oField:cType } )
-      	      end if
-
-         	case IsArray( oField )
-
-            	if !Empty( oField[ 5 ] )
-   	            aAdd( ::aStructure, { oField[ 5 ], oField[ 1 ], oField[ 2 ] } )
-         	   end if
-
-         end case
-
-      next
-   
-   end if
-	
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD SetDatabase( oDatabase ) CLASS TFilterCreator
+
+   local oField
+
+   ::aStructure        := {}
+
+   for each oField in oDatabase:aTField
+
+      if !Empty( oField:cComment ) .and. !( oField:lCalculate ) .and. !( oField:lHide )
+         aAdd( ::aStructure, { oField:cComment, oField:cName, oField:cType } )
+      end if
+
+   next
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD ScanStructure( cDescription, nPos )
 
@@ -444,10 +449,10 @@ METHOD InitDialog( cFilterName ) CLASS TFilterDialog
       ::Load( cFilterName )
    end if          
 
-   msgStop( ::Ready() )
-
    if !::Ready()
       ::oFld:aEnable := { .t., .f. }
+   else 
+      ::oBrwAlmacenados:GoTop()
    end if 
 
 RETURN ( Self )
@@ -855,7 +860,7 @@ METHOD Activate() CLASS TBrowseFilter
 
    with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
       :cHeader                   := "Condicion"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldCondition ] }
+      :bEditValue                := {|| Padr( ::aFilter[ ::oBrwFilter:nArrayAt, fldCondition ], 100 ) }
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := ::GetConditionsCaracter()
       :nWidth                    := 100
@@ -958,6 +963,7 @@ CLASS TBrowseAlmacenado
    METHOD SetDialog( oDlg )                     INLINE ( ::oDlg := oDlg )
    METHOD SetDatabase( oDbf )                   INLINE ( ::oDbf := oDbf )
 
+   METHOD GoTop()                               INLINE ( if( !Empty( ::oBrwAlmacenados ), ( ::oBrwAlmacenados:GoTop() ), ) )
    METHOD Refresh()                             INLINE ( if( !Empty( ::oBrwAlmacenados ), ( ::oBrwAlmacenados:Refresh() ), ) )
 
 END CLASS
@@ -1022,7 +1028,6 @@ CLASS TFilterDatabase FROM TMant
    METHOD OpenFiles( lExclusive )
 
    METHOD SetScope( uScope )
-   METHOD SetDbf( oDbf )               INLINE ( ::oDbf := oDbf )
 
    METHOD Save()
    METHOD Delete()                     INLINE ( ::oDbf:Delete() )
@@ -1194,6 +1199,7 @@ METHOD Dialog() CLASS TFilterDatabase
 
    REDEFINE GET ::cFilterName ;
       ID          100 ;
+      PICTURE     "@!" ;
       OF          oDlg
 
    REDEFINE CHECKBOX ::lDefault ;

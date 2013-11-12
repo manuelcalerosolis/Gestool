@@ -13045,8 +13045,6 @@ CLASS TArticuloLabelGenerator
 
    Method EditLabel()
 
-   Method FilterLabel()
-
    Method ChangeCriterio()
 
    Method lPrintLabels()
@@ -13282,11 +13280,6 @@ Method Create() CLASS TArticuloLabelGenerator
             ID       165 ;
             OF       ::fldPrecios ;
             ACTION   ( WinZooRec( ::oBrwLabel, bEdit, dbfArticulo ) )
-
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::fldPrecios ;
-            ACTION   ( ::FilterLabel() )
 
          ::oBrwLabel                 := TXBrowse():New( ::fldPrecios )
 
@@ -13834,31 +13827,6 @@ Return ( Self )
 Method EditLabel() CLASS TArticuloLabelGenerator
 
    ::oBrwLabel:aCols[ 4 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel()
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():New( aItmArt(), dbfArticulo )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

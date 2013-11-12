@@ -54,7 +54,6 @@ static dbfRctPrvL
 static oDbfTmp
 
 static oBtnFiltro
-static oFilter     
 
 static cPouDiv
 static cPinDiv
@@ -402,10 +401,6 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    nRec                    := ( dbfArticulo )->( Recno() )
    nOrd                    := ( dbfArticulo )->( OrdSetFocus( 1 ) )
 
-   oFilter                 := TDlgFlt():Create( oDbfTmp, , .f. )
-   oFilter:bOnAplyFilter   := {|| oDbfTmp:SetFilter( oFilter:cExpFilter ), oBrwTmp:Refresh() }
-   oFilter:bOnKillFilter   := {|| oDbfTmp:SetFilter(), oBrwTmp:Refresh() }
-
    cPouDiv                 := cPouDiv( cDivEmp(), dbfDiv )
    cPinDiv                 := cPinDiv( cDivEmp(), dbfDiv )
    cPirDiv                 := cPirDiv( cDivEmp(), dbfDiv )
@@ -739,7 +734,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    REDEFINE BUTTON oBtnFiltro ;
       ID       306 ;
       OF       fldDocumentos ;
-      ACTION   ( Filtro(), oBrwTmp:Refresh() )
+      ACTION   ( Filtro( oBrwTmp ) )
 
    REDEFINE BUTTON ;
       ID       307 ;
@@ -3655,19 +3650,22 @@ Return ( nTotImp )
 
 //---------------------------------------------------------------------------//
 
-Static Function Filtro()
+Static Function Filtro( oBrwTmp )
 
-   if oFilter != nil
+   local oFilter  := TFilterCreator():Init() 
+   
+   oFilter:SetDatabase( oDbfTmp )  
+   oFilter:Dialog()
 
-      oFilter:Resource()
+   if !Empty( oFilter:cExpresionFilter )
+      oDbfTmp:SetFilter( oFilter:cExpresionFilter )
+      SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
+   else 
+      oDbfTmp:SetFilter()
+      SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
+   end if 
 
-      if oFilter:cExpFilter != nil
-         SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
-      else
-         SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
-      end if
-
-   end if
+   oBrwTmp:Refresh()
 
 Return( .t. )
 

@@ -1976,12 +1976,12 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmAlbCli(), dbfAlbCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliT, aItmAlbCli(), ALB_CLI ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-            ACTION   ( TDlgFlt():New( aColAlbCli(), dbfAlbCliL ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliL, aColAlbCli() ) ) ;
             TOOLTIP  "Líneas" ;
             FROM     oRpl ;
             CLOSED ;

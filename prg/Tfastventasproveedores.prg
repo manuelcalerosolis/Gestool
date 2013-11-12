@@ -68,9 +68,9 @@ METHOD lResource( cFld ) CLASS TFastVentasProveedores
       return .t.
    end if
 
-   ::oFilter      := TDlgFlt():Create( ::oDbf )
+   ::oFilter      := TFilterCreator():New()
    if !Empty( ::oFilter )
-      ::oFilter:SetFilterDatabase( ::oCnfFlt )
+      ::oFilter:SetDatabase( ::oDbf )
       ::oFilter:SetFilterType( FST_PRV )
    end if 
 
@@ -758,11 +758,7 @@ METHOD lGenerate() CLASS TFastVentasProveedores
 
    end case
 
-   if !Empty( ::oFilter:cExpFilter )
-      ::oDbf:SetFilter( ::oFilter:cExpFilter )
-   else
-      ::oDbf:KillFilter()
-   end if
+   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
    ::oDbf:GoTop()
 

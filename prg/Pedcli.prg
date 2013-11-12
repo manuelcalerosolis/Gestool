@@ -1573,13 +1573,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmPedCli(), dbfPedCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfPedCliT, aItmPedCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColPedCli(), dbfPedCliL ):ChgFields(), oWndBrw:Refresh() ) ;
+         	ACTION   ( ReplaceCreator( oWndBrw, dbfPedCliL, aColPedCli() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;

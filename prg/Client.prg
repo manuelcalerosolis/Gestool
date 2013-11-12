@@ -4090,7 +4090,7 @@ STATIC FUNCTION GenReport( dbfClient, oWndBrw )
 	REDEFINE BUTTON ;
 		ID 		531 ;
 		OF 		oDlg ;
-      ACTION   ( oFlt   := TDlgFlt():New( aItmCli(), dbfClient ):Resource() )
+      ACTION   ( nil )
 
 	REDEFINE BUTTON ;
 		ID 		508;
@@ -7167,13 +7167,10 @@ CLASS TClienteLabelGenerator
    Data oMtrLabel
    Data nMtrLabel
 
-   Data oFilter
-
    Data hBmp
 
    Data oBtnListado
 
-   Data oBtnFilter
    Data oBtnSiguiente
    Data oBtnAnterior
    Data oBtnCancel
@@ -7200,8 +7197,6 @@ CLASS TClienteLabelGenerator
    Method DelLabel()
 
    Method EditLabel()
-
-   Method FilterLabel()
 
    Method ChangeCriterio()
 
@@ -7429,11 +7424,6 @@ Method Create() CLASS TClienteLabelGenerator
             ID       165 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( WinZooRec( ::oBrwLabel, bEdtRec, dbfClient ) )
-
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFld:aDialogs[ 2 ] ;
-            ACTION   ( ::FilterLabel() )
 
          REDEFINE BUTTON oBtnPrp ;
             ID       220 ;
@@ -7789,31 +7779,6 @@ Return ( Self )
 Method EditLabel() CLASS TClienteLabelGenerator
 
    ::oBrwLabel:aCols[ 4 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel()
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():New( aItmCli(), dbfClient )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

@@ -582,7 +582,7 @@ FUNCTION HisMovAlm( oMenuItem, oWnd )
       DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmMov(), dbfHisMov ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfHisMov, aItmMov() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 

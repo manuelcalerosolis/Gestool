@@ -1283,13 +1283,13 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmRctPrv(), dbfRctPrvT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfRctPrvT, aItmRctPrv() ) ) ;      
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColRctPrv(), dbfRctPrvL ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfRctPrvL, aColRctPrv() ) ) ;      
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
@@ -10423,8 +10423,6 @@ CLASS TRectificativaProveedorLabelGenerator
 
    Method EditLabel()
 
-   Method FilterLabel()
-
    Method LoadAuxiliar()
 
    Method lPrintLabels()
@@ -10697,11 +10695,6 @@ Method Create() CLASS TRectificativaProveedorLabelGenerator
             ID       165 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
-
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFld:aDialogs[ 2 ] ;
-            ACTION   ( ::FilterLabel() )
 
          REDEFINE BUTTON oBtnPrp ;
             ID       220 ;
@@ -11168,31 +11161,6 @@ Return ( Self )
 Method EditLabel() CLASS TRectificativaProveedorLabelGenerator
 
    ::oBrwLabel:aCols[ 6 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel()
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():New( aLblRctPrv(), ::cAreaTmpLabel )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

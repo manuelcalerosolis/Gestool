@@ -1541,13 +1541,13 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmSatCli(), dbfSatCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfSatCliT, aItmSatCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColSatCli(), dbfSatCliL ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfSatCliL, aColSatCli() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;

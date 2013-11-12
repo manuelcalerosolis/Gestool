@@ -78,7 +78,6 @@ CLASS TProduccion FROM TMasDet
    DATA  oDbfDoc
    DATA  oDbfCount
    DATA  oDbfEmp
-   DATA  oDbfFilter
 
    DATA  oDetProduccion
    DATA  oDetSeriesProduccion
@@ -159,7 +158,6 @@ CLASS TProduccion FROM TMasDet
    Data lErrorOnCreate
 
    Data oBtnListado
-   Data oBtnFilter
    Data oBtnSiguiente
    Data oBtnAnterior
    Data oBtnCancel
@@ -174,8 +172,6 @@ CLASS TProduccion FROM TMasDet
    Data cAreaTemporalLabel
 
    Data oBrwLabel
-
-   DATA oFilter
 
    METHOD New( cPath, oWndParent, oMenuItem )
    METHOD Create( cPath, oWndParent )
@@ -284,8 +280,6 @@ CLASS TProduccion FROM TMasDet
    METHOD EditLabel()
 
    METHOD SelectColumn( oCombo )
-
-   METHOD FilterLabel()
 
    METHOD DesignLabelProducc()
    
@@ -587,8 +581,6 @@ METHOD Activate()
       HOTKEY   "Q";
       LEVEL    ACC_IMPR   
 
-   ::LoadFilter()
-
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::oWndBrw:end() ) ;
@@ -672,8 +664,6 @@ METHOD OpenFiles( lExclusive )
    DATABASE NEW ::oDbfCount   PATH ( cPatEmp() )   FILE "NCOUNT.DBF"    VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
    DATABASE NEW ::oDbfEmp     PATH ( cPatDat() )   FILE "EMPRESA.DBF"   VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
-
-   DATABASE NEW ::oDbfFilter  PATH ( cPatDat() )   FILE "CnfFlt.Dbf"    VIA ( cDriver() ) SHARED INDEX "CnfFlt.Cdx"
 
    DATABASE NEW ::oHisMov     PATH ( cPatEmp() )   FILE "HISMOV.DBF"    VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
 
@@ -946,11 +936,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfDiv ) .and. ::oDbfDiv:Used()
       ::oDbfDiv:End()
-   end if
-
-   if ::oDbfFilter != nil .and. ::oDbfFilter:Used()
-      ::oDbfFilter:End()
-      ::oDbfFilter   := nil
    end if
 
    ::DestroyTemporal()
@@ -3909,11 +3894,6 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
             OF       ::oFldLbl:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFldLbl:aDialogs[ 2 ] ;
-            ACTION   ( nil ) //::FilterLabel() )
-
          ::oBrwLabel                 := TXBrowse():New( ::oFldLbl:aDialogs[ 2 ] )
 
          ::oBrwLabel:nMarqueeStyle   := 5
@@ -4325,31 +4305,6 @@ Return ( Self )
 METHOD EditLabel() CLASS TProduccion
 
    ::oBrwLabel:aCols[ 6 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel() CLASS TProduccion
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():Create( ::cAreaTmpLabel, nil, .t., ::oBrwLabel )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

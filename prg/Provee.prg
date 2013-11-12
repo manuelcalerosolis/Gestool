@@ -580,7 +580,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aItmPrv(), dbfProvee ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfProvee, aItmPrv() ) ) ;
             TOOLTIP  "Cambiar campos" ;
             LEVEL    ACC_EDIT
 
@@ -3589,8 +3589,6 @@ CLASS TProveedorLabelGenerator
    Data oMtrLabel
    Data nMtrLabel
 
-   Data oFilter
-
    Data oBtnFilter
    Data oBtnSiguiente
    Data oBtnAnterior
@@ -3618,8 +3616,6 @@ CLASS TProveedorLabelGenerator
    Method DelLabel()
 
    Method EditLabel()
-
-   Method FilterLabel()
 
    Method ChangeCriterio()
 
@@ -3847,11 +3843,6 @@ Method Create( ) CLASS TProveedorLabelGenerator
             ID       165 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( WinZooRec( ::oBrwLabel, bEdit, dbfProvee ) )
-
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFld:aDialogs[ 2 ] ;
-            ACTION   ( ::FilterLabel() )
 
          REDEFINE BUTTON oBtnPrp ;
             ID       220 ;
@@ -4159,31 +4150,6 @@ Method EditLabel() CLASS TProveedorLabelGenerator
       end if
 
    end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel()
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():New( aItmPrv(), dbfProvee )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

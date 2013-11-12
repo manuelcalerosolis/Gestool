@@ -2294,13 +2294,13 @@ end if
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmFacCli(), dbfFacCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+       	ACTION   ( ReplaceCreator( oWndBrw, dbfFacCliT, aItmFacCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColFacCli(), dbfFacCliL ):ChgFields(), oWndBrw:Refresh() ) ;
+	       	ACTION   ( ReplaceCreator( oWndBrw, dbfFacCliL, aColFacCli() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
