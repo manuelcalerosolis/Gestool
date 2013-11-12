@@ -143,10 +143,10 @@ METHOD SetFields( aFieldStructure ) CLASS TFilterCreator
 
 	::aStructure        := {}
 
-   for each oField in aFieldStructure
+   for each aField in aFieldStructure
 
-        if !Empty( oField[ 5 ] )
-         aAdd( ::aStructure, { oField[ 5 ], oField[ 1 ], oField[ 2 ] } )
+        if !Empty( aField[ 5 ] )
+         aAdd( ::aStructure, { aField[ 5 ], aField[ 1 ], aField[ 2 ] } )
      	end if
 
    next
