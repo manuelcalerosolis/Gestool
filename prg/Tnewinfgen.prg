@@ -696,7 +696,7 @@ METHOD NewResource( cFldRes ) CLASS TNewInfGen
    REDEFINE BUTTON ::oBtnFilter ;
       ID       510 ;
       OF       ::oDlg ;
-      ACTION   ( ::DlgFilter(), if( !Empty( ::oFilter:bExpFilter ) .or. !Empty( ::oFilter:aExpFilter ), SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" ), SetWindowText( ::oBtnFilter:hWnd, "Filtrar" ) ) )
+      ACTION   ( ::DlgFilter(), if( !Empty( ::oFilter:bExpresionFilter ), SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" ), SetWindowText( ::oBtnFilter:hWnd, "Filtrar" ) ) )
 
    REDEFINE BUTTON ::oBtnAction ;
       ID       560 ;

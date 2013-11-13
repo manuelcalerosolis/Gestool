@@ -101,7 +101,7 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
       return .t.
    end if
 
-   ::oFilter      := TFilterCreator():New()
+   ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
       ::oFilter:SetFilterType( FST_CLI )
@@ -167,7 +167,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
 
-      ::oCnfFlt   := TDataCenter():oCnfFlt()
+      ::oCnfFlt               := TDataCenter():oCnfFlt()
 
       /*
       Stocks de articulos------------------------------------------------------

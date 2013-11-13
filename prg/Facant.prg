@@ -9,13 +9,13 @@
 #endif
    #include "Factu.ch"
 
-#define _MENUITEM_            "01181"
+#define _MENUITEM_           "01181"
 
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define impuestos_DESG             1
-#define impuestos_INCL             2
+#define impuestos_DESG       1
+#define impuestos_INCL       2
 
 #define _CSERANT             1
 #define _NNUMANT             2

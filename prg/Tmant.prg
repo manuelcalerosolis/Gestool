@@ -696,7 +696,7 @@ RETURN ( uVal )
 
 METHOD Filter( cTipoDocumento, oButton, oDbfFilter ) CLASS TMant
 
-   local oFilter     := TFilterCreator():New()
+   local oFilter     := TFilterCreator():Init()
 
    if !Empty( oFilter )
 

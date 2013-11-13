@@ -18417,7 +18417,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Cogemos las familias y los grupos de familias
+         Cogemos las familias y los grupos de familias-------------------------
          */
 
          cCodFam                 := ( dbfArticulo )->Familia

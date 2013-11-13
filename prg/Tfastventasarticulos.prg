@@ -151,7 +151,7 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
-   ::oFilter      := TFilterCreator():New()
+   ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
       ::oFilter:SetFilterType( ART_TBL )

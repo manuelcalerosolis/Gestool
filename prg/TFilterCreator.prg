@@ -168,7 +168,7 @@ METHOD SetDatabase( oDatabase ) CLASS TFilterCreator
       end if
 
    next
-   
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -295,7 +295,8 @@ RETURN ( Self )
 
 CLASS TFilterDialog
 
-	DATA oDlg 
+	CLASSDATA oDlg 
+
 	DATA oFld
    DATA oBmp
 
@@ -314,20 +315,24 @@ CLASS TFilterDialog
 	METHOD Dialog()
    METHOD HeaderDialog()
    METHOD ReplaceDialog()              VIRTUAL
-   METHOD FooterDialog()
+   METHOD FilterDialog()
+   METHOD AlmacenadosDialog()   
+   METHOD ActivateDialog( cFilterName )
+
    METHOD InitDialog( cFilterName )
    METHOD EndDialog()
 
-   METHOD GetFilter()                  INLINE ( ::oBrwFilter:aFilter )
    
    METHOD Save()     
    METHOD Load()          
    METHOD Delete()
 
    METHOD SetFilter( aArrayFilter )    INLINE ( ::oBrwFilter:SetFilter( aArrayFilter ) )
+   METHOD GetFilter()                  INLINE ( ::oBrwFilter:aFilter )
 
    METHOD TitleFilter()                INLINE Rtrim( ::oFilterDatabase:oDbf:cTexFlt )
 
+   METHOD SetExpresion( cExpresion )   INLINE ( ::oFilterCreator:SetExpresion( cExpresion ) )   
    METHOD Ready()                      INLINE ( ::oFilterCreator:Ready() )
 
 END CLASS
@@ -346,11 +351,17 @@ RETURN ( Self )
 
 METHOD Dialog( cFilterName ) CLASS TFilterDialog
 
+   ::SetExpresion()
+
    ::HeaderDialog()
+
+   ::FilterDialog()
 
    ::ReplaceDialog()
    
-   ::FooterDialog( cFilterName )
+   ::AlmacenadosDialog()   
+
+   ::ActivateDialog( cFilterName )
 
 RETURN ( Self )
 
@@ -384,7 +395,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD FooterDialog( cFilterName ) CLASS TFilterDialog
+METHOD FilterDialog() CLASS TFilterDialog
 
       /*
       Clase para editar los filtros--------------------------------------------
@@ -399,6 +410,12 @@ METHOD FooterDialog( cFilterName ) CLASS TFilterDialog
 
       ::oBrwFilter:SetStructure( ::oFilterCreator:GetStructure() )
       ::oBrwFilter:Activate()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AlmacenadosDialog() CLASS TFilterDialog
 
       /*
       Browse de los filtros almacenados-------------------------------------------
@@ -418,6 +435,12 @@ METHOD FooterDialog( cFilterName ) CLASS TFilterDialog
       
       ::oBrwAlmacenados:SetDatabase( ::oFilterDatabase:oDbf )
       ::oBrwAlmacenados:Activate()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActivateDialog( cFilterName ) CLASS TFilterDialog
 
       /*
       Botones de los filtros almacenados---------------------------------------
@@ -643,6 +666,8 @@ RETURN ( nil )
 
 CLASS TBrowseFilter
 
+   CLASSDATA aFilter                         INIT {}
+
    DATA oFilterDialog
 
 	DATA oDlg
@@ -657,7 +682,6 @@ CLASS TBrowseFilter
 	DATA aFields 										INIT {}
 	DATA aTypes 										INIT {}
 
-	DATA aFilter 										INIT {}
 	DATA lSaveFilter 									INIT .t.
 
 	DATA aStructure									INIT { 	{	"Código",	"Codigo", 	"C" },;
