@@ -31,7 +31,6 @@ static dbfClient
 
 static oDbfTmp
 static oBtnFiltro
-static oFilter       := nil
 
 static cPouDiv
 static cPinDiv
@@ -272,10 +271,6 @@ function BrwVtaCli( cCodCli, cNomCli )
       Return nil
    end if
 
-   oFilter                 := TDlgFlt():Create( oDbfTmp, , .f. )
-   oFilter:bOnAplyFilter   := {|| oDbfTmp:SetFilter( oFilter:cExpFilter ), oBrwTmp:Refresh() }
-   oFilter:bOnKillFilter   := {|| oDbfTmp:SetFilter(), oBrwTmp:Refresh() }
-
    CursorWait()
 
    cPicUnd                 := MasUnd()
@@ -457,7 +452,7 @@ end if
    REDEFINE BUTTON oBtnFiltro ;
       ID       306 ;
       OF       oFld:aDialogs[2] ;
-      ACTION   ( Filtro(), oBrwTmp:Refresh() )
+      ACTION   ( Filtro( oBrwTmp ) )
 
    REDEFINE BUTTON ;
       ID       307 ;
@@ -969,89 +964,13 @@ Function aTotVentasCliente( cCodCli, nYear, lUnits )
 
    aEval( aVta, {|a| Afill( a, 0 ) } )
 
-#ifdef __SQLLIB__
+   TotalAlbaranesClientes( cCodCli, dbfAlbCliT, dbfAlbCliL, dbfDiv, dbfIva, nYear, lUnits  )
 
-   if !Empty( cCodCli )
-      ( dbfAlbCliT )->( SR_SetFilter( 'cCodCli = ' + sr_cDbValue( cCodCli ) + ' AND NOT lFacturado' ) )
-      ( dbfFacCliT )->( SR_SetFilter( 'cCodCli = ' + sr_cDbValue( cCodCli ) ) )
-      ( dbfFacRecT )->( SR_SetFilter( 'cCodCli = ' + sr_cDbValue( cCodCli ) ) )
-      ( dbfTikCliT )->( SR_SetFilter( 'cCliTik = ' + sr_cDbValue( cCodCli ) ) )
-   end if
+   TotalFacturasClientes( cCodCli, dbfFacCliT, dbfFacCliL, dbfAntCliT, dbfDiv, dbfIva, nYear, lUnits )
 
-#endif
+   TotalFacturasRectificativas( cCodCli, dbfFacRecT, dbfFacRecL, dbfAntCliT, dbfDiv, dbfIva, nYear, lUnits )
 
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            TotalAlbaranesClientes( cCodCli, dbfAlbCliT, dbfAlbCliL, dbfDiv, dbfIva, nYear, lUnits  )
-
-            TotalFacturasClientes( cCodCli, dbfFacCliT, dbfFacCliL, dbfAntCliT, dbfDiv, dbfIva, nYear, lUnits )
-
-            TotalFacturasRectificativas( cCodCli, dbfFacRecT, dbfFacRecL, dbfAntCliT, dbfDiv, dbfIva, nYear, lUnits )
-
-            TotalTicketsClientes( cCodCli, dbfTikCliT, dbfTikCliL, dbfDiv, nYear, lUnits )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfRecEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfRecEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "AntCliT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
-            SET TAG TO "CCLITIK"
-
-            USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
-            SET TAG TO "CNUMTIL"
-
-            TotalAlbaranesClientes( cCodCli, dbfAlbEmpT, dbfAlbEmpL, dbfDiv, dbfIva, nYear, lUnits  )
-
-            TotalFacturasClientes( cCodCli, dbfFacEmpT, dbfFacEmpL, dbfAntEmpT, dbfDiv, dbfIva, nYear, lUnits )
-
-            TotalFacturasRectificativas( cCodCli, dbfRecEmpT, dbfRecEmpL, dbfAntEmpT, dbfDiv, dbfIva, nYear, lUnits )
-
-            TotalTicketsClientes( cCodCli, dbfTikEmpT, dbfTikEmpL, dbfDiv, nYear, lUnits )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfAntEmpT )
-            CLOSE( dbfRecEmpT )
-            CLOSE( dbfRecEmpL )
-            CLOSE( dbfTikEmpT )
-            CLOSE( dbfTikEmpL )
-
-         end if
-
-      next
-
-   end if*/
+   TotalTicketsClientes( cCodCli, dbfTikCliT, dbfTikCliL, dbfDiv, nYear, lUnits )
 
    if lClo
       CloseFiles()
@@ -1409,7 +1328,7 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "nTypDoc" TYPE "C" LEN  2 DEC 0 COMMENT "Tipo de documento"     OF oDbf
       FIELD NAME "cEstado" TYPE "C" LEN 20 DEC 0 COMMENT "Estado del documento"  OF oDbf
       FIELD NAME "dFecDoc" TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"   OF oDbf
-      FIELD NAME "cNumDoc" TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento"  OF oDbf
+      FIELD NAME "cNumDoc" TYPE "C" LEN 13 DEC 0 COMMENT "Codigo del documento"  OF oDbf
       FIELD NAME "nNumRec" TYPE "N" LEN  2 DEC 0 COMMENT "Número del recibo"     OF oDbf
       FIELD NAME "cCodCli" TYPE "C" LEN 12 DEC 0 COMMENT "Código del cliente"    OF oDbf
       FIELD NAME "cNomCli" TYPE "C" LEN 50 DEC 0 COMMENT "Nombre del cliente"    OF oDbf
@@ -1940,24 +1859,29 @@ return ( cMes )
 
 //---------------------------------------------------------------------------//
 
-Static Function Filtro()
+Static Function Filtro( oBrwTmp )
 
-   if oFilter != nil
+   local oFilter  := TFilterCreator():Init() 
+   
+   oFilter:SetDatabase( oDbfTmp )  
+   oFilter:Dialog()
 
-      oFilter:Resource()
+   if !Empty( oFilter:cExpresionFilter )
+      oDbfTmp:SetFilter( oFilter:cExpresionFilter )
+      SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
+   else 
+      oDbfTmp:SetFilter()
+      SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
+   end if 
 
-      if oFilter:cExpFilter != nil
-         SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
-      else
-         SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
-      end if
-
-   end if
+   oBrwTmp:Refresh()
 
 Return( .t. )
 
 //---------------------------------------------------------------------------//
-/*Esta funcion devuelve el total entregado por un cliente*/
+/*
+Esta funcion devuelve el total entregado por un cliente
+*/
 
 Function nTotEntCli( cCodCli, dbfPedCliT, dbfPedCliP, dbfAlbCliT, dbfAlbCliP, cPorDiv, nYear )
 
@@ -2056,8 +1980,7 @@ Function nTotPedXCli( cCodCli, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, nYear )
 
          if ( dbfPedCliT )->nEstado == 1 .and. ( nYear == nil .or. Year( ( dbfPedCliT )->dFecPed ) == nYear )
 
-            nTotal   += nTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed,;
-                                     dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .f. )
+            nTotal   += nTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .f. )
 
          end if
 
@@ -2262,42 +2185,9 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-static function nCobrosTik( cCodCli, nYear )
+Static Function nCobrosTik( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfTikEmpT
-   local dbfTikEmpP
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  += nCobTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliP, dbfIva, dbfDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
-            SET TAG TO "CCLITIK"
-
-            USE ( cPatStk( cCodEmp ) + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikEmpP ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEP.CDX" ) ADDITIVE
-
-            nTotal  += nCobTik( cCodCli, nil, nil, dbfTikEmpT, dbfTikEmpP, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfTikEmpT )
-            CLOSE( dbfTikEmpP )
-
-         end if
-
-      next
-
-   end if  */
-
-Return nTotal
+Return ( nCobTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliP, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2537,130 +2427,18 @@ Return nTotal
 
 static function nTotalPedido( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfPedEmpT
-   local dbfPedEmpL
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  += nTotPedXCli( cCodCli, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIL.CDX" ) ADDITIVE
-
-            nTotal  += nTotPedXCli( cCodCli, dbfPedEmpT, dbfPedEmpL, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfPedEmpT )
-            CLOSE( dbfPedEmpL )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nTotPedXCli( cCodCli, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
 static function nTotalEntregas( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfPedEmpT
-   local dbfPedEmpP
-   local dbfAlbEmpT
-   local dbfAlbEmpP
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  +=  nTotEntCli( cCodCli, dbfPedCliT, dbfPedCliP, dbfAlbCliT, dbfAlbCliP, cPorDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "PEDCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIP", @dbfPedEmpP ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIP.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbEmpP ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIP.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            nTotal  +=  nTotEntCli( cCodCli, dbfPedEmpT, dbfPedEmpP, dbfAlbEmpT, dbfAlbEmpP, cPorDiv, nYear )
-
-            CLOSE( dbfPedEmpT )
-            CLOSE( dbfPedEmpP )
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpP )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nTotEntCli( cCodCli, dbfPedCliT, dbfPedCliP, dbfAlbCliT, dbfAlbCliP, cPorDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
-static function nTotalAlbaran( cCodCli, nYear )
+Static Function nTotalAlbaran( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfAlbEmpT
-   local dbfAlbEmpL
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  += nVtaAlbCli( cCodCli, nil, nil, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, .t., nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ADDITIVE
-
-            nTotal  += nVtaAlbCli( cCodCli, nil, nil, dbfAlbEmpT, dbfAlbEmpL, dbfIva, dbfDiv, .t., nYear )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nVtaAlbCli( cCodCli, nil, nil, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, .t., nYear ) )
 
 //---------------------------------------------------------------------------//

@@ -1249,7 +1249,7 @@ METHOD StdResource( cFldRes ) CLASS TInfGen
    REDEFINE BUTTON ::oBtnFilter ;
       ID       510 ;
       OF       ::oDlg ;
-      ACTION   ( ::DlgFilter(), if( !Empty( ::oFilter:bExpFilter ) .or. !Empty( ::oFilter:aExpFilter ), SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" ), SetWindowText( ::oBtnFilter:hWnd, "Filtrar" ) ) )
+      ACTION   ( ::DlgFilter(), if( !Empty( ::oFilter:bExpresionFilter ), SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" ), SetWindowText( ::oBtnFilter:hWnd, "Filtrar" ) ) )
 
    /*
    REDEFINE BUTTON ::oBtnData ;
@@ -5186,14 +5186,18 @@ METHOD EvalFilter( oDbf )
 
    local lFilter  := .t.
 
-   if !Empty( ::oFilter ) .and. !Empty( ::oFilter:bExpFilter )
-      if Valtype( ::oFilter:oDbf ) == "O"
+   if !Empty( ::oFilter ) .and. !Empty( ::oFilter:bExpresionFilter )
+
+      if IsObject( ::oFilter:oDbf )
          ::oFilter:oDbf:SetFocus()
       end if
-      if Valtype( ::oFilter:oDbf ) == "C"
+      
+      if IsChar( ::oFilter:oDbf )
          Select( ::oFilter:oDbf )
       end if
-      lFilter     := Eval( ::oFilter:bExpFilter )
+      
+      lFilter     := Eval( ::oFilter:bExpresionFilter )
+
    end if
 
 RETURN ( lFilter )

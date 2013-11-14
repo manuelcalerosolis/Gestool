@@ -70,6 +70,10 @@ CLASS TProduccion FROM TMasDet
 
    DATA  oHisMov
 
+   DATA  oGrupoFamilia
+   DATA  oTipoArticulo
+   DATA  oFabricante
+
    DATA  oStock
    DATA  oPro
    DATA  oTblPro
@@ -78,7 +82,7 @@ CLASS TProduccion FROM TMasDet
    DATA  oDbfDoc
    DATA  oDbfCount
    DATA  oDbfEmp
-   DATA  oDbfFilter
+   DATA  oTemporada 
 
    DATA  oDetProduccion
    DATA  oDetSeriesProduccion
@@ -159,7 +163,6 @@ CLASS TProduccion FROM TMasDet
    Data lErrorOnCreate
 
    Data oBtnListado
-   Data oBtnFilter
    Data oBtnSiguiente
    Data oBtnAnterior
    Data oBtnCancel
@@ -174,8 +177,6 @@ CLASS TProduccion FROM TMasDet
    Data cAreaTemporalLabel
 
    Data oBrwLabel
-
-   DATA oFilter
 
    METHOD New( cPath, oWndParent, oMenuItem )
    METHOD Create( cPath, oWndParent )
@@ -285,8 +286,6 @@ CLASS TProduccion FROM TMasDet
 
    METHOD SelectColumn( oCombo )
 
-   METHOD FilterLabel()
-
    METHOD DesignLabelProducc()
    
    METHOD lPrintLabels()
@@ -360,6 +359,12 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::AddDetail( ::oDetMaquina )
 
    ::oStock                := TStock():Create( cPatGrp() )
+
+   ::oGrupoFamilia         := TGrpFam():Create( cPatArt() )
+
+   ::oTipoArticulo         := TTipArt():Create( cPatArt() )
+
+   ::oFabricante           := TFabricantes():Create( cPatArt() )
 
    ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
    ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
@@ -456,7 +461,7 @@ METHOD Activate()
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "cNumOrd"
-         :bEditValue       := {|| ::oDbf:cSerOrd + "/" + AllTrim( Str( ::oDbf:nNumOrd ) ) + "/" + ::oDbf:cSufOrd }
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cSerOrd" ) + "/" + AllTrim( Str( ::oDbf:FieldGetByName( "nNumOrd" ) ) ) + "/" + ::oDbf:FieldGetByName( "cSufOrd" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -464,21 +469,21 @@ METHOD Activate()
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Fecha inicio"
          :cSortOrder       := "dFecOrd"
-         :bEditValue       := {|| Dtoc( ::oDbf:dFecOrd ) + "-" + Trans( ::oDbf:cHorIni, "@R 99:99" ) }
+         :bEditValue       := {|| Dtoc( ::oDbf:FieldGetByName( "dFecOrd" ) ) + "-" + Trans( ::oDbf:FieldGetByName( "cHorIni" ), "@R 99:99" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Fecha fin"
-         :bEditValue       := {|| Dtoc( ::oDbf:dFecFin ) + "-" + Trans( ::oDbf:cHorFin, "@R 99:99" ) }
+         :bEditValue       := {|| Dtoc( ::oDbf:FieldGetByName( "dFecFin" ) ) + "-" + Trans( ::oDbf:FieldGetByName( "cHorFin" ), "@R 99:99" ) }
          :nWidth           := 100
       end with
 
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Operación"
          :cSortOrder       := "cCodOpe"
-         :bEditValue       := {|| ::oDbf:cCodOpe + " - " + oRetFld( ::oDbf:cCodOpe, ::oOperacion:oDbf ) }
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodOpe" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) }
          :nWidth           := 250
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -486,7 +491,7 @@ METHOD Activate()
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Sección"
          :cSortOrder       := "cCodSec"
-         :bEditValue       := {|| ::oDbf:cCodSec + " - " + oRetFld( ::oDbf:cCodSec, ::oSeccion:oDbf ) }
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodSec" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodSec" ), ::oSeccion:oDbf ) }
          :nWidth           := 250
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -494,7 +499,7 @@ METHOD Activate()
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
          :cSortOrder       := "cAlmOrd"
-         :bEditValue       := {|| ::oDbf:cAlmOrd + " - " + oRetFld( ::oDbf:cAlmOrd, ::oAlm ) }
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cAlmOrd" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cAlmOrd" ), ::oAlm ) }
          :nWidth           := 250
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -516,6 +521,15 @@ METHOD Activate()
       TOOLTIP  "(A)ñadir";
       BEGIN GROUP ;
       HOTKEY   "A" ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecDup() );
+      ON DROP  ( ::oWndBrw:RecDup() );
+      TOOLTIP  "(D)uplicar";
+      BEGIN GROUP ;
+      HOTKEY   "D" ;
       LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
@@ -587,8 +601,6 @@ METHOD Activate()
       HOTKEY   "Q";
       LEVEL    ACC_IMPR   
 
-   ::LoadFilter()
-
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::oWndBrw:end() ) ;
@@ -631,13 +643,17 @@ METHOD OpenFiles( lExclusive )
    DATABASE NEW ::oFam        PATH ( cPatArt() )   FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oAlbPrvT    PATH ( cPatEmp() )   FILE "ALBPROVT.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
+   
    DATABASE NEW ::oAlbPrvL    PATH ( cPatEmp() )   FILE "ALBPROVL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
    ::oAlbPrvL:OrdSetFocus( "cRef" )
+
    DATABASE NEW ::oAlbPrvS    PATH ( cPatEmp() )   FILE "ALBPRVS.DBF"   VIA ( cDriver() ) SHARED INDEX "ALBPRVS.CDX"
 
    DATABASE NEW ::oFacPrvT    PATH ( cPatEmp() )   FILE "FACPRVT.DBF"   VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
+   
    DATABASE NEW ::oFacPrvL    PATH ( cPatEmp() )   FILE "FACPRVL.DBF"   VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
    ::oFacPrvL:OrdSetFocus( "cRef" )
+   
    DATABASE NEW ::oFacPrvS    PATH ( cPatEmp() )   FILE "FacPrvS.DBF"   VIA ( cDriver() ) SHARED INDEX "FacPrvS.CDX"
 
    DATABASE NEW ::oRctPrvL    PATH ( cPatEmp() )   FILE "RctPrvL.DBF"   VIA ( cDriver() ) SHARED INDEX "RctPrvL.CDX"
@@ -673,9 +689,21 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oDbfEmp     PATH ( cPatDat() )   FILE "EMPRESA.DBF"   VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
 
-   DATABASE NEW ::oDbfFilter  PATH ( cPatDat() )   FILE "CnfFlt.Dbf"    VIA ( cDriver() ) SHARED INDEX "CnfFlt.Cdx"
-
    DATABASE NEW ::oHisMov     PATH ( cPatEmp() )   FILE "HISMOV.DBF"    VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
+
+   DATABASE NEW ::oTemporada  PATH ( cPatEmp() )   FILE "Temporadas.Dbf" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
+
+   if !::oGrupoFamilia:OpenFiles()
+      lOpen          := .f.
+   end if
+
+   if !::oTipoArticulo:OpenFiles()
+      lOpen          := .f.
+   end if
+
+   if !::oFabricante:OpenFiles()
+      lOpen          := .f.
+   end if 
 
    if Empty( ::oDbfTemporal )
       ::DefineTemporal()
@@ -904,6 +932,10 @@ METHOD CloseFiles()
       ::oHisMov:End()
    end if
 
+   if ::oTemporada != nil .and. ::oTemporada:Used()
+      ::oTemporada:End()
+   end if
+
    if ::oDetHoras != nil
       ::oDetHoras:End()
       ::oDetHoras    := nil
@@ -939,6 +971,19 @@ METHOD CloseFiles()
       ::oHoras       := nil
    end if
 
+   if !Empty( ::oGrupoFamilia )
+      ::oGrupoFamilia:End()
+   end if
+
+   if !Empty( ::oTipoArticulo )
+      ::oTipoArticulo:End()
+   end if
+
+   if !Empty( ::oFabricante )
+      ::oFabricante:End()
+   end if
+
+
    if !Empty( ::oStock )
       ::oStock:end()
       ::oStock       := nil
@@ -946,11 +991,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfDiv ) .and. ::oDbfDiv:Used()
       ::oDbfDiv:End()
-   end if
-
-   if ::oDbfFilter != nil .and. ::oDbfFilter:Used()
-      ::oDbfFilter:End()
-      ::oDbfFilter   := nil
    end if
 
    ::DestroyTemporal()
@@ -3909,11 +3949,6 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
             OF       ::oFldLbl:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFldLbl:aDialogs[ 2 ] ;
-            ACTION   ( nil ) //::FilterLabel() )
-
          ::oBrwLabel                 := TXBrowse():New( ::oFldLbl:aDialogs[ 2 ] )
 
          ::oBrwLabel:nMarqueeStyle   := 5
@@ -4325,31 +4360,6 @@ Return ( Self )
 METHOD EditLabel() CLASS TProduccion
 
    ::oBrwLabel:aCols[ 6 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel() CLASS TProduccion
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():Create( ::cAreaTmpLabel, nil, .t., ::oBrwLabel )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

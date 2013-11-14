@@ -730,18 +730,6 @@ Return ( cFilterExpresion )
 
 Method AplyFilter()
 
-   local cExpFilter        := ::CreateFilter()
-
-   if Empty( ::oFilter )
-      ::oFilter            := TDlgFlt():Create( ::oDbf, nil, .t., ::oWndBrw )
-   end if
-
-   if !Empty( ::oFilter )
-      ::oFilter:cExpFilter := cExpFilter
-      ::oFilter:bExpFilter := Compile( cExpFilter )
-      ::oFilter:AplyFilter()
-   end if
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//

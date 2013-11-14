@@ -172,7 +172,7 @@ function Main( cParams )
    Opciones especiales de arranque hace la operacion y salir-------------------
    */
 
-   // TFilterCreator():New()
+   // TFilterCreator():Init()
 
    do case
    case ( "ENVIO" $ cParamsMain )

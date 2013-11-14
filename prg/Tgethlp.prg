@@ -64,7 +64,7 @@ CLASS TGetHlp FROM TGet
 
    Method LostFocus( hCtlFocus )
 
-   Method lOldValid()
+   Method lValid()
 
 ENDCLASS
 
@@ -465,7 +465,7 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD lOldValid() CLASS TGetHlp
+METHOD lValid() CLASS TGetHlp
 
    local lRet := .t.
 
@@ -478,7 +478,7 @@ METHOD lOldValid() CLASS TGetHlp
       ::oGet:Assign()
       if ValType( ::bOldValid ) == "B"
          lRet := Eval( ::bOldValid, Self  )
-         if !lRet
+         if IsLogic( lRet ) .and. !lRet
             ::oWnd:nLastKey = 0
          endif
       endif

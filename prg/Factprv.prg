@@ -1350,14 +1350,14 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmFacPrv(), dbfFacPrvT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfFacPrvT, aItmFacPrv() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColFacPrv(), dbfFacPrvL ):ChgFields(), oWndBrw:Refresh() ) ;
-            TOOLTIP  "Lineas" ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfFacPrvL, aColFacPrv() ) ) ;
+            TOOLTIP  "Líneas" ;
             FROM     oRpl ;
             CLOSED ;
             LEVEL    ACC_EDIT
@@ -11175,13 +11175,10 @@ CLASS TFacturaProveedorLabelGenerator
    Data oMtrLabel
    Data nMtrLabel
 
-   Data oFilter
-
    Data lClose
 
    Data lErrorOnCreate
 
-   Data oBtnFilter
    Data oBtnSiguiente
    Data oBtnAnterior
    Data oBtnCancel
@@ -11216,8 +11213,6 @@ CLASS TFacturaProveedorLabelGenerator
    Method DelLabel()
 
    Method EditLabel()
-
-   Method FilterLabel()
 
    Method LoadAuxiliar()
 
@@ -11491,11 +11486,6 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
             ID       165 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
-
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFld:aDialogs[ 2 ] ;
-            ACTION   ( ::FilterLabel() )
 
          REDEFINE BUTTON oBtnPrp ;
             ID       220 ;
@@ -11965,31 +11955,6 @@ Return ( Self )
 Method EditLabel() CLASS TFacturaProveedorLabelGenerator
 
    ::oBrwLabel:aCols[ 6 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel()
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():New( aColFacPrv(), ::cAreaTmpLabel )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

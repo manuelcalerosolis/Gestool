@@ -2767,12 +2767,9 @@ CLASS TOfertaLabelGenerator
    Data oMtrLabel
    Data nMtrLabel
 
-   Data oFilter
-
    Data hBmp
 
    Data oBtnListado
-   Data oBtnFilter
    Data oBtnSiguiente
    Data oBtnAnterior
    Data oBtnCancel
@@ -2808,8 +2805,6 @@ CLASS TOfertaLabelGenerator
    Method DelLabel()
 
    Method EditLabel()
-
-   Method FilterLabel()
 
    Method ChangeCriterio()
 
@@ -3050,11 +3045,6 @@ Method Create() CLASS TOfertaLabelGenerator
             ID       165 ;
             OF       ::oFld:aDialogs[2] ;
             ACTION   ( WinZooRec( ::oBrwLabel, bEdit, dbfOferta, .f., cDefIva() ) )
-
-         REDEFINE BUTTON ::oBtnFilter ;
-            ID       170 ;
-            OF       ::oFld:aDialogs[2] ;
-            ACTION   ( ::FilterLabel() )
 
          ::oBrwLabel                 := TXBrowse():New( ::oFld:aDialogs[2] )
 
@@ -3558,31 +3548,6 @@ Return ( Self )
 Method EditLabel() CLASS TOfertaLabelGenerator
 
    ::oBrwLabel:aCols[ 4 ]:Edit()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method FilterLabel()
-
-   if Empty( ::oFilter )
-      ::oFilter      := TDlgFlt():New( aItmOfe(), dbfOferta )
-   end if
-
-   if !Empty( ::oFilter )
-
-      ::oFilter:Resource()
-
-      if ::oFilter:cExpFilter != nil
-         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
-      else
-         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
-      end if
-
-   end if
-
-   ::oBrwLabel:Refresh()
-   ::oBrwLabel:SetFocus()
 
 Return ( Self )
 

@@ -435,6 +435,7 @@ Function ReplaceCreator( oShell, cDbf, aStructure, cType )
       oReplaceDialog:SetFilterType( cType )
       oReplaceDialog:SetDatabaseToReplace( cDbf )
       oReplaceDialog:Dialog()
+      oReplaceDialog:End()
    end if
 
 RETURN ( nil )

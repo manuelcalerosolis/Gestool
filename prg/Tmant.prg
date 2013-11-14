@@ -696,11 +696,16 @@ RETURN ( uVal )
 
 METHOD Filter( cTipoDocumento, oButton, oDbfFilter ) CLASS TMant
 
-   local oFilter     := TDlgFlt():Create( ::oDbf, oButton, .t., ::oWndBrw )
+   local oFilter     := TFilterCreator():Init()
 
    if !Empty( oFilter )
-      oFilter:Resource( cTipoDocumento, nil, oDbfFilter )
-   end if
+
+      oFilter:SetDatabase( ::oDbf )
+      oFilter:Dialog()
+
+      ::oDbf:SetFilter( oFilter:cExpresionFilter )
+
+   end if 
 
 RETURN NIL
 

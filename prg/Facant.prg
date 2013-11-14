@@ -9,13 +9,13 @@
 #endif
    #include "Factu.ch"
 
-#define _MENUITEM_            "01181"
+#define _MENUITEM_           "01181"
 
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define impuestos_DESG             1
-#define impuestos_INCL             2
+#define impuestos_DESG       1
+#define impuestos_INCL       2
 
 #define _CSERANT             1
 #define _NNUMANT             2
@@ -1051,7 +1051,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmAntCli(), dbfAntCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfAntCliT, aItmAntCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 

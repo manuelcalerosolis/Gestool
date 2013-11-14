@@ -58,7 +58,7 @@ CLASS TFilterCreator
 
    METHOD Dialog()                           INLINE ( ::oFilterDialog:Dialog() )
 
-   METHOD lReady()                           INLINE ( !Empty( ::cType ) .and. !Empty( ::oFilterDatabase ) )
+   METHOD Ready()                            INLINE ( !Empty( ::cType ) .and. !Empty( ::oFilterDatabase ) )
 
    METHOD FiltersName()
    METHOD SetFiltersName( aFilter )          INLINE ( ::aFiltersName := aFilter )
@@ -77,6 +77,7 @@ CLASS TFilterCreator
    METHOD GetTextExpresion()                 INLINE ( ::cExpresionFilter )
 
 	METHOD SetFields( aFieldStructure ) 
+   METHOD SetDatabase( oDatabase )           
 
 	METHOD GetStructure() 					      INLINE ( ::aStructure )
 
@@ -93,7 +94,7 @@ CLASS TFilterCreator
    METHOD GetCondition( cCondition )         INLINE ( HGet( ::hConditions, cCondition ) )
    METHOD GetNexo( cNexo )                   INLINE ( HGet( ::hNexo, cNexo ) )
 
-   METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ), ::oFilterDatabase:SetScope( cType ), ) )
+   METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ) .and. !Empty( cType ), ::oFilterDatabase:SetScope( cType ), ) )
    METHOD GetFilterType()                    INLINE ( ::cType )
 
    METHOD SetFilterDatabase( oDbf )          INLINE ( ::oFilterDatabase:SetDbf( oDbf ) )
@@ -108,12 +109,12 @@ END CLASS
 
 METHOD New() CLASS TFilterCreator
 
-   ::oFilterDatabase   := TFilterDatabase():New( Self )
+   ::oFilterDatabase    := TFilterDatabase():New( Self )
 
    ::oFilterDatabase:OpenFiles()
    ::oFilterDatabase:SetScope( ::GetFilterType() )
 
-	::oFilterDialog     := TFilterDialog():New( Self )
+   ::oFilterDialog       := TFilterDialog():New( Self )
    ::oFilterDialog:Dialog()
 
    ::oFilterDatabase:End()
@@ -138,36 +139,40 @@ RETURN ( Self )
 
 METHOD SetFields( aFieldStructure ) CLASS TFilterCreator
 
-	local oField
+	local aField
 
 	::aStructure        := {}
 
-   if !Empty( aFieldStructure )                              
+   for each aField in aFieldStructure
+
+        if !Empty( aField[ 5 ] )
+         aAdd( ::aStructure, { aField[ 5 ], aField[ 1 ], aField[ 2 ] } )
+     	end if
+
+   next
    
-      for each oField in aFieldStructure
-
-         do case
-         	case IsObject( oField )
-
-            	if !Empty( oField:cComment ) .and. !( oField:lCalculate ) .and. !( oField:lHide )
-   	            aAdd( ::aStructure, { oField:cComment, oField:cName, oField:cType } )
-      	      end if
-
-         	case IsArray( oField )
-
-            	if !Empty( oField[ 5 ] )
-   	            aAdd( ::aStructure, { oField[ 5 ], oField[ 1 ], oField[ 2 ] } )
-         	   end if
-
-         end case
-
-      next
-   
-   end if
-	
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD SetDatabase( oDatabase ) CLASS TFilterCreator
+
+   local oField
+
+   ::aStructure        := {}
+
+   for each oField in oDatabase:aTField
+
+      if !Empty( oField:cComment ) .and. !( oField:lCalculate ) .and. !( oField:lHide )
+         aAdd( ::aStructure, { oField:cComment, oField:cName, oField:cType } )
+      end if
+
+   next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD ScanStructure( cDescription, nPos )
 
@@ -278,6 +283,8 @@ METHOD Init( oTShell ) CLASS TReplaceCreator
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
 
+   ::oFilterDatabase:OpenFiles()
+
    ::oFilterDialog      := TReplaceDialog():New( Self )
 
 RETURN ( Self )
@@ -288,7 +295,8 @@ RETURN ( Self )
 
 CLASS TFilterDialog
 
-	DATA oDlg 
+	CLASSDATA oDlg 
+
 	DATA oFld
    DATA oBmp
 
@@ -307,19 +315,25 @@ CLASS TFilterDialog
 	METHOD Dialog()
    METHOD HeaderDialog()
    METHOD ReplaceDialog()              VIRTUAL
-   METHOD FooterDialog()
+   METHOD FilterDialog()
+   METHOD AlmacenadosDialog()   
+   METHOD ActivateDialog( cFilterName )
+
    METHOD InitDialog( cFilterName )
    METHOD EndDialog()
 
-   METHOD GetFilter()                  INLINE ( ::oBrwFilter:aFilter )
    
    METHOD Save()     
    METHOD Load()          
    METHOD Delete()
 
    METHOD SetFilter( aArrayFilter )    INLINE ( ::oBrwFilter:SetFilter( aArrayFilter ) )
+   METHOD GetFilter()                  INLINE ( ::oBrwFilter:aFilter )
 
    METHOD TitleFilter()                INLINE Rtrim( ::oFilterDatabase:oDbf:cTexFlt )
+
+   METHOD SetExpresion( cExpresion )   INLINE ( ::oFilterCreator:SetExpresion( cExpresion ) )   
+   METHOD Ready()                      INLINE ( ::oFilterCreator:Ready() )
 
 END CLASS
 
@@ -337,11 +351,17 @@ RETURN ( Self )
 
 METHOD Dialog( cFilterName ) CLASS TFilterDialog
 
+   ::SetExpresion()
+
    ::HeaderDialog()
+
+   ::FilterDialog()
 
    ::ReplaceDialog()
    
-   ::FooterDialog( cFilterName )
+   ::AlmacenadosDialog()   
+
+   ::ActivateDialog( cFilterName )
 
 RETURN ( Self )
 
@@ -375,7 +395,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD FooterDialog( cFilterName ) CLASS TFilterDialog
+METHOD FilterDialog() CLASS TFilterDialog
 
       /*
       Clase para editar los filtros--------------------------------------------
@@ -390,6 +410,12 @@ METHOD FooterDialog( cFilterName ) CLASS TFilterDialog
 
       ::oBrwFilter:SetStructure( ::oFilterCreator:GetStructure() )
       ::oBrwFilter:Activate()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AlmacenadosDialog() CLASS TFilterDialog
 
       /*
       Browse de los filtros almacenados-------------------------------------------
@@ -409,6 +435,12 @@ METHOD FooterDialog( cFilterName ) CLASS TFilterDialog
       
       ::oBrwAlmacenados:SetDatabase( ::oFilterDatabase:oDbf )
       ::oBrwAlmacenados:Activate()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActivateDialog( cFilterName ) CLASS TFilterDialog
 
       /*
       Botones de los filtros almacenados---------------------------------------
@@ -439,6 +471,12 @@ METHOD InitDialog( cFilterName ) CLASS TFilterDialog
    if !Empty( cFilterName )   
       ::Load( cFilterName )
    end if          
+
+   if !::Ready()
+      ::oFld:aEnable := { .t., .f. }
+   else 
+      ::oBrwAlmacenados:GoTop()
+   end if 
 
 RETURN ( Self )
 
@@ -628,6 +666,8 @@ RETURN ( nil )
 
 CLASS TBrowseFilter
 
+   CLASSDATA aFilter                         INIT {}
+
    DATA oFilterDialog
 
 	DATA oDlg
@@ -642,7 +682,6 @@ CLASS TBrowseFilter
 	DATA aFields 										INIT {}
 	DATA aTypes 										INIT {}
 
-	DATA aFilter 										INIT {}
 	DATA lSaveFilter 									INIT .t.
 
 	DATA aStructure									INIT { 	{	"Código",	"Codigo", 	"C" },;
@@ -845,7 +884,7 @@ METHOD Activate() CLASS TBrowseFilter
 
    with object ( ::oColCondicion := ::oBrwFilter:AddCol() )
       :cHeader                   := "Condicion"
-      :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldCondition ] }
+      :bEditValue                := {|| Padr( ::aFilter[ ::oBrwFilter:nArrayAt, fldCondition ], 100 ) }
       :nEditType                 := EDIT_LISTBOX
       :aEditListTxt              := ::GetConditionsCaracter()
       :nWidth                    := 100
@@ -948,6 +987,7 @@ CLASS TBrowseAlmacenado
    METHOD SetDialog( oDlg )                     INLINE ( ::oDlg := oDlg )
    METHOD SetDatabase( oDbf )                   INLINE ( ::oDbf := oDbf )
 
+   METHOD GoTop()                               INLINE ( if( !Empty( ::oBrwAlmacenados ), ( ::oBrwAlmacenados:GoTop() ), ) )
    METHOD Refresh()                             INLINE ( if( !Empty( ::oBrwAlmacenados ), ( ::oBrwAlmacenados:Refresh() ), ) )
 
 END CLASS
@@ -1012,7 +1052,6 @@ CLASS TFilterDatabase FROM TMant
    METHOD OpenFiles( lExclusive )
 
    METHOD SetScope( uScope )
-   METHOD SetDbf( oDbf )               INLINE ( ::oDbf := oDbf )
 
    METHOD Save()
    METHOD Delete()                     INLINE ( ::oDbf:Delete() )
@@ -1184,6 +1223,7 @@ METHOD Dialog() CLASS TFilterDatabase
 
    REDEFINE GET ::cFilterName ;
       ID          100 ;
+      PICTURE     "@!" ;
       OF          oDlg
 
    REDEFINE CHECKBOX ::lDefault ;

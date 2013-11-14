@@ -251,8 +251,6 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
    ::aItems          := aItems
    ::dbfAlias        := dbfAlias
 
-   ::oFlt            := TDlgFlt():New( aItems, dbfAlias )
-
    ::aFields         := ::oFlt:aTblMask
 
    cTag              := ( ::dbfAlias )->( OrdSetFocus() )
@@ -340,7 +338,7 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
       REDEFINE BUTTON ::oBtnFilter ;
          ID       120 ;
          OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( if( ::oFlt != nil, SelLabel( ::oFlt, ::oBtnFilter ), ), ::oBrwClient:Refresh() )
+         ACTION   ( ::oBrwClient:Refresh() )
 
       REDEFINE BUTTON ;
          ID       130 ;
@@ -1360,7 +1358,6 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
    end if
 
    if !Empty( aItems ) .and. !Empty( dbfAlias )
-      ::oFlt      := TDlgFlt():New( aItems, dbfAlias )
       ::aFields   := ::oFlt:aTblMask
    end if
 

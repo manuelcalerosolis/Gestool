@@ -371,7 +371,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    ::bZoo            := bZoo
 
    if IsObject( xAlias )
-      ::xAlias       := xAlias:nArea
+      ::xAlias       := xAlias:cAlias
    else
       ::xAlias       := xAlias
    end if
@@ -523,7 +523,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
       ::oWndBar:EnableComboBox( ::aPrompt )
 
-      if !Empty( ::oActiveFilter:lReady() )
+      if !Empty( ::oActiveFilter:Ready() )
          ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
          ::SetDefaultComboFilter(   ::oActiveFilter:aFiltersName )
          ::ShowAddButtonFilter()
@@ -1802,12 +1802,9 @@ METHOD ChgTabs( nTab ) CLASS TShell
 
    DEFAULT nTab   := ::oTabs:nOption
 
-   do case
-      case IsObject( ::xAlias ) .and. ::xAlias:Used()
-         ::xAlias:SetOrder( nTab )
-      case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-         (::xAlias)->( dbSetOrder( nTab ) )
-   end case
+   if ( ::xAlias )->( Used() )
+      (::xAlias)->( dbSetOrder( nTab ) )
+   end if
 
    // Evento de cambio de indices----------------------------------------------
 
@@ -1861,8 +1858,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
 
       with object ::oBrw
 
-         do case
-         case IsObject( ::xAlias ) .and. ::xAlias:Used()
+         if ( ::xAlias )->( Used() )
 
             for each oCol in :aCols
 
@@ -1875,20 +1871,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
 
             next
 
-         case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-
-            for each oCol in :aCols
-
-               if Eq( cOrd, oCol:cHeader )
-                  oCol:cOrder       := "A"
-                  oCol:SetOrder()
-               else
-                  oCol:cOrder       := " "
-               end if
-
-            next
-
-         end case
+         end if 
 
       end with
 
@@ -1930,12 +1913,9 @@ RETURN ( Self )
 
 METHOD SetIndex( nOrd ) CLASS TShell
 
-   do case
-   case IsObject( ::xAlias ) .and. ::xAlias:Used()
-      ::xAlias:SetOrder( nOrd )
-   case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
+   if ( ::xAlias )->( Used() )
       ( ::xAlias )->( dbSetOrder( nOrd ) )
-   end case
+   end if 
 
    if !Empty( ::oWndBar )
       ::oWndBar:SetComboBoxSelect( nOrd )
@@ -2001,16 +1981,9 @@ METHOD lPressCol( nCol ) CLASS TShell
 
          ::oWndBar:SetComboBoxSet( cHeader )
 
-         do case
-            case IsObject( ::xAlias )
-
-               ::xAlias:OrdSetFocus( ::oWndBar:GetComboBoxAt() )
-
-            case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-
-               ( ::xAlias )->( OrdSetFocus( ::oWndBar:GetComboBoxAt() ) )
-
-         end case
+         if ( ::xAlias )->( Used() )
+            ( ::xAlias )->( OrdSetFocus( ::oWndBar:GetComboBoxAt() ) )
+         end if 
 
          ::oBrw:Refresh()
 
@@ -2243,25 +2216,15 @@ Method LoadData()
 
       if ::lAutoPos
 
-         do case
-            case IsObject( ::xAlias ) .and. ( ::xAlias:Used() )
+         if ( ::xAlias )->( Used() )
 
-               ::xAlias:OrdSetFocus( ::nTab )
-               ::xAlias:GoTo( ::nRec )
+            ( ::xAlias )->( dbGoTo( ::nRec ) )
 
-               if ::xAlias:Recno() != ::nRec .or. ::nRec > ::xAlias:Lastrec()
-                  ::xAlias:GoTop()
-               end if
+            if ( ::xAlias )->( Recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
+               ( ::xAlias )->( dbGoTop() )
+            end if
 
-            case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-
-               ( ::xAlias )->( dbGoTo( ::nRec ) )
-
-               if ( ::xAlias )->( Recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
-                  ( ::xAlias )->( dbGoTop() )
-               end if
-
-         end case
+         end if 
 
       end if
 
@@ -2405,27 +2368,17 @@ Method CreateXBrowse() CLASS TShell
 
       ::oBrw:lRecordSelector  := .f.
 
-      // Propiedades del control -------------------------------------------------
+      // Propiedades del control ----------------------------------------------
 
       ::oBrw:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
 
       ::oBrw:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
-
-      // ::oBrw:bLDblClick    := {|| ::RecEdit() }
-
-      ::oBrw:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
-
       ::oBrw:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      // ::oBrw:bSeek            := { |c,u| ::oBrw:RddIncrSeek( c, @u ) }
+      ::oBrw:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      do case
-      case IsObject( ::xAlias )
-
-         ::xAlias:SetBrowse( ::oBrw )
-
-      case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
+      if ( ::xAlias )->( Used() )
 
          ::oBrw:nDataType  := 0 // DATATYPE_RDD
          ::oBrw:cAlias     := ::xAlias
@@ -2450,7 +2403,7 @@ Method CreateXBrowse() CLASS TShell
 
          // ::oBrw:bPastEof   := {|| msgStop( "bPastEof") }
 
-      end case
+      end if 
 
       ::oBrw:bKeyChar      := {|nKey| ::CtrlKey( nKey ) }
 
@@ -2463,7 +2416,7 @@ Method CreateXBrowse() CLASS TShell
          ::oBrw:nRowHeight := 36
       endif
 
-      ::oBrw:nLeft         := dfnTreeViewWidth + dfnSplitterWidth + 0 // 1
+      ::oBrw:nLeft         := dfnTreeViewWidth + dfnSplitterWidth // 1
       ::oBrw:nRight        := ::nRight - ::nLeft
       ::oBrw:nBottom       := ::nBottom - ::nTop
 
@@ -2640,12 +2593,8 @@ METHOD SetAutoFilter( cFilter )
 
    if Empty( ::bFilter ) .and. !Empty( cFilter )
 
-      do case
-         case IsObject( ::xAlias ) .and. ::xAlias:Used()
-            ::xAlias:SetFocus()
-
-         case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
-            Select( ::xAlias )->( Used() )
+      if ( ::xAlias )->( Used() )
+         Select( ::xAlias )->( Used() )
       end case
 
       if Empty( cFilter ) .or. At( Type( cFilter ), "UEUI" ) != 0
@@ -2691,6 +2640,8 @@ METHOD ChgFilter() CLASS TShell
          ::HideEditButtonFilter()
 
       end if 
+
+      ::Refresh() 
 
    end if
 

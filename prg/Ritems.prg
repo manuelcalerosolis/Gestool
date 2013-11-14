@@ -466,19 +466,19 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
             NOBORDER ;
             MENU     This:Toggle() ;
-            ACTION   ( TDlgFlt():New( aItmDoc, dbfDoc ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfDoc, aItmDoc ) ) ;
             TOOLTIP  "Cambiar campos" ;
             LEVEL    ACC_EDIT
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-               ACTION   ( TDlgFlt():New( aItmItm, dbfItm ):ChgFields(), oWndBrw:Refresh() ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfItm, aItmItm ) ) ;
                TOOLTIP  "Campos" ;
                FROM     oRpl ;
                CLOSED ;
                LEVEL    ACC_EDIT
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-               ACTION   ( TDlgFlt():New( aItmCol, dbfCol ):ChgFields(), oWndBrw:Refresh() ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, dbfCol, aItmCol ) ) ;
                TOOLTIP  "Columnas" ;
                FROM     oRpl ;
                CLOSED ;

@@ -151,10 +151,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
-   ::oFilter      := TDlgFlt():Create( ::oDbf )
+   ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
-      ::oFilter:SetFilterDatabase( ::oCnfFlt )
-      ::oFilter:SetFilterType( FST_ART )
+      ::oFilter:SetDatabase( ::oDbf )
+      ::oFilter:SetFilterType( ART_TBL )
    end if 
 
 RETURN .t.
@@ -575,11 +575,9 @@ METHOD lGenerate() CLASS TFastVentasArticulos
 
    ::nRemesaAgentes()
 
-   if !Empty( ::oFilter:cExpFilter )
-      ::oDbf:SetFilter( ::oFilter:cExpFilter )
-   else
-      ::oDbf:KillFilter()
-   end if
+   // Colocamos el filtro -----------------------------------------------------
+
+   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
    ::oDbf:GoTop()
 

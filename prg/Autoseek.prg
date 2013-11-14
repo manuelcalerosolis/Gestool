@@ -511,6 +511,13 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
       Select( cAlias )
 
       bExpFilter           := bCheck2Block( cExpFilter )
+/*
+      msgInfo( !Empty( bExpFilter ), "!Empty( bExpFilter )" )
+      msgInfo( valtoprg( bExpFilter ), "( bExpFilter )" )
+      msgInfo( !Empty( cOldIndexName ), "!Empty( cOldIndexName )" )
+      msgInfo( valtoprg( cOldIndexName ), "( cOldIndexName )" )
+      msgInfo( !Empty( cBagAnterior ), "!Empty( cBagAnterior )" )
+      msgInfo( valtoprg( cBagAnterior ), "( cBagAnterior )" )*/
 
       if !Empty( bExpFilter ) .and. !Empty( cOldIndexName ) .and. !Empty( cBagAnterior )
          ( cAlias )->( OrdCondSet( cExpFilter, bExpFilter ) )

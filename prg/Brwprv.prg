@@ -19,7 +19,6 @@ static dbfFPago
 static oDbfTmp
 
 static oBtnFiltro
-static oFilter    := nil
 
 static oMenu
 static oTreeImageList
@@ -164,10 +163,6 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    if !OpenFiles()
       Return nil
    end if
-
-   oFilter                 := TDlgFlt():Create( oDbfTmp, , .f. )
-   oFilter:bOnAplyFilter   := {|| oDbfTmp:SetFilter( oFilter:cExpFilter ), oBrwTmp:Refresh() }
-   oFilter:bOnKillFilter   := {|| oDbfTmp:SetFilter(), oBrwTmp:Refresh() }
 
    aDbfBmp           := {  LoadBitmap( GetResources(), "bRed"   ),;
                            LoadBitmap( GetResources(), "bYelow" ),;
@@ -332,7 +327,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
   REDEFINE BUTTON oBtnFiltro ;
       ID       306 ;
       OF       oFld:aDialogs[2] ;
-      ACTION   ( Filtro(), oBrwTmp:Refresh() )
+      ACTION   ( Filtro( oBrwTmp ) )
 
    REDEFINE BUTTON ;
       ID       307 ;
@@ -1134,19 +1129,22 @@ Return ( nTotImp )
 
 //---------------------------------------------------------------------------//
 
-Static Function Filtro()
+Static Function Filtro( oBrwTmp )
 
-   if oFilter != nil
+   local oFilter  := TFilterCreator():Init() 
+   
+   oFilter:SetDatabase( oDbfTmp )  
+   oFilter:Dialog()
 
-      oFilter:Resource()
+   if !Empty( oFilter:cExpresionFilter )
+      oDbfTmp:SetFilter( oFilter:cExpresionFilter )
+      SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
+   else 
+      oDbfTmp:SetFilter()
+      SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
+   end if 
 
-      if oFilter:cExpFilter != nil
-         SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
-      else
-         SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
-      end if
-
-   end if
+   oBrwTmp:Refresh()
 
 Return( .t. )
 
