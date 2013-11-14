@@ -355,18 +355,18 @@ METHOD lResource() CLASS TpvCobros
          VAR      ::sTotalesCobros:nTotal ;
          ID       150 ;
          FONT     ::oSender:oFntDlg ;
-         PICTURE  ::oSender:cPictureTotal ;
+         PICTURE  ::oSender:cPictureTotal ; 
          OF       ::oDlg
 
       /*
       Total entregado__________________________________________________________
       */
 
-      REDEFINE SAY ::sTotalesCobros:oEntregado ;
+      REDEFINE SAY ::sTotalesCobros:oEntregado ;     
          VAR      ::sTotalesCobros:nEntregado ;
-         ID       160 ;
-         FONT     ::oSender:oFntDlg ;
-         PICTURE  ::oSender:cPictureTotal ;
+         ID       160 ;  
+         FONT     ::oSender:oFntDlg ;   
+         PICTURE  ::oSender:cPictureTotal ; 
          OF       ::oDlg
 
       /*
@@ -521,14 +521,14 @@ METHOD lResource() CLASS TpvCobros
       with object ( ::oBrwPago:AddCol() )
          :cHeader          := "Pago"
          :bEditValue       := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:cTexto }
-         :nWidth           := 290
+         :nWidth           := 210
       end with
 
       with object ( ::oBrwPago:AddCol() )
          :cHeader          := "Importe"
          :bEditValue       := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:nImporte }
          :cEditPicture     := ::oSender:cPictureTotal
-         :nWidth           := 155
+         :nWidth           := 130
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -537,12 +537,13 @@ METHOD lResource() CLASS TpvCobros
          :cHeader          := "Cambio"
          :bEditValue       := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:nCambio }
          :cEditPicture     := ::oSender:cPictureTotal
-         :nWidth           := 155
+         :nWidth           := 130
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
+         :lHide            := .t.
       end with
 
-      ::oBrwPago:CreateFromResource( 400 )
+      ::oBrwPago:CreateFromResource( 400 ) 
 
       /*
       Botones------------------------------------------------------------------

@@ -464,26 +464,22 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
    if lBigStyle
 
       if GetSysMetrics( 1 ) == 560
+
          DEFINE DIALOG oDlg RESOURCE "HELPENTRYTACTILIMP_1024x576"   TITLE "Seleccionar tipo de impresora"
 
       else
+
          DEFINE DIALOG oDlg RESOURCE cResource TITLE "Seleccionar tipo de impresora"
 
       end if
 
    else
+
       DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar tipo de impresora"
+
    end if
 
-   if lBigStyle
-
-      REDEFINE BUTTONBMP ;
-         ID       100 ;
-         OF       oDlg ;
-         BITMAP   "LUPA_32";
-         ACTION   ( BuscarBrwTactil( dbfTImp, oBrw ) )
-
-   else
+   if !lBigStyle
 
       REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -544,7 +540,19 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
          BITMAP   "DOWN32" ;
          ACTION   ( oBrw:GoDown() )
 
-      end if
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(IDOK) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:End() )
+
+      else
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -556,6 +564,8 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
          OF       oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
+
+      end if   
 
       if !lBigStyle
 

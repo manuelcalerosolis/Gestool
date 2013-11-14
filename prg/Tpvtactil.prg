@@ -69,6 +69,8 @@ CLASS TpvTactil
    DATA nScreenHorzRes
    DATA nScreenVertRes
 
+   DATA nResizeSmall
+
    DATA lOpenfiles
 
    DATA nLevel
@@ -221,6 +223,11 @@ CLASS TpvTactil
    DATA oBtnLineasDelete
    DATA oBtnLineasComentarios
    DATA oBtnLineasEscandallos
+
+   DATA oBtnSCobrar
+   DATA oBtnSSalon
+   DATA oBtnSEntregar
+   DATA oBtnSSalir
 
    DATA oBtnPreviewDocumento
    DATA oBtnPrintDocumento  
@@ -401,6 +408,8 @@ CLASS TpvTactil
    METHOD StartResource()
    METHOD EndResource()
    METHOD PaintResource()
+
+   METHOD l1024()                   INLINE ( ::nScreenHorzRes >= 1024 )
 
    METHOD CargaBrowseFamilias()
 
@@ -1682,6 +1691,38 @@ CLASS TpvTactil
 
 //---------------------------------------------------------------------------//
 
+   INLINE METHOD ResizedCol( nSize )
+
+      local nResize := 24
+
+      if !::l1024 .and. nSize > nResize
+
+         nSize -= nResize
+
+      end if
+
+      Return( nSize )
+
+   ENDMETHOD   
+
+//--------------------------------------------------------------------------//
+
+INLINE METHOD ResizedFont( nSize )
+
+      local nResize := 25 //es un porcentaje
+
+      if !::l1024
+
+         nSize -= ( nSize * nResize ) / 100
+
+      end if
+
+      Return( nSize )
+
+   ENDMETHOD   
+
+//--------------------------------------------------------------------------//
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -1708,15 +1749,18 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
    ::nScreenHorzRes           := GetSysMetrics( 0 )
    ::nScreenVertRes           := GetSysMetrics( 1 )
-   ::nScreenVertRes           := 752
 
    ::lOpenFiles               := .f. 
    ::lKillResource            := .f.
    ::lHideCalculadora         := .t.
 
-   ::cResource                := "TpvTactil"
-
-   ::lImagenArticulos         := !uFieldEmpresa( "lImgArt" ) 
+   if ::l1024()
+      ::cResource             := "TpvTactil"
+      ::lImagenArticulos      := !uFieldEmpresa( "lImgArt" )
+   else 
+      ::cResource             := "TpvTactilSmall"
+      ::lImagenArticulos      := .f.
+   end if   
 
    if ::lImagenArticulos
 
@@ -1734,7 +1778,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
          otherwise
 
             ::nImageViewWItem := 86 + 4
-            ::nImageViewHItem := 97 + 38
+            ::nImageViewHItem := 97 + 38 
 
       end case
 
@@ -1775,12 +1819,12 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
    ::oBtnNum                  := Array( 15 )
 
-   ::oFntNum                  := TFont():New( "Segoe UI",  0, 46, .f., .f. )
-   ::oFntEur                  := TFont():New( "Segoe UI",  0, 30, .f., .f. )
-   ::oFntFld                  := TFont():New( "Segoe UI",  0, 26, .f., .t. )
-   ::oFntBrw                  := TFont():New( "Segoe UI",  0, 20, .f., .t. )
-   ::oFntDlg                  := TFont():New( "Segoe UI", 12, 32, .f., .f. )
-   ::oFntDto                  := TFont():New( "Segoe UI",  0, 40, .f., .f. ) 
+   ::oFntNum                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 46 ), .f., .f. )
+   ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
+   ::oFntFld                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 26 ), .f., .t. )
+   ::oFntBrw                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 20 ), .f., .t. )
+   ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
+   ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
 
    ::cSayZona                 := "Zona"  
    ::cSayInfo                 := ""
@@ -1906,10 +1950,10 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   if !( ::nScreenHorzRes >= 1024 )
+   /*if !( ::nScreenHorzRes >= 1024 )
       MsgStop( __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + "táctil solo permite resoluciones de 1024 o superiores" )
       Return .f.
-   end if
+   end if*/
 
    if !lCurSesion()
       MsgStop( "No hay sesiones activas, imposible añadir documentos." )
@@ -2869,6 +2913,10 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Cocktail_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
 
+   if !::l1024()
+      ::oBtnSSalir               := TButtonBmp():ReDefine( 509, {|| ::oDlg:End },                  ::oDlg, , , .f., , , , .f., "End32" )
+   end if
+
    /*
    Botones para el orden de las comandas---------------------------------------
 
@@ -2975,7 +3023,7 @@ METHOD Resource() CLASS TpvTactil
       :cHeader                := "Nº"
       :bEditValue             := {|| ::oTemporalLinea:nNumLin }
       :lHide                  := ::lEmptyOrdenComanda
-      :nWidth                 := 20
+      :nWidth                 := ::ResizedCol( 20 )
       :nDataStrAlign          := AL_RIGHT
       :nHeadStrAlign          := AL_RIGHT
    end with
@@ -2984,7 +3032,7 @@ METHOD Resource() CLASS TpvTactil
       :cHeader                := "Or. Orden comanda"
       :lHide                  := .t.
       :bEditValue             := {|| ::oOrdenComanda:cAbreviatura( ::oTemporalLinea:cOrdOrd ) } 
-      :nWidth                 := 30
+      :nWidth                 := ::ResizedCol( 30 )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -2992,7 +3040,7 @@ METHOD Resource() CLASS TpvTactil
       :bStrData               := {|| "" }
       :lHide                  := .t.
       :bEditValue             := {|| !Empty( ::oTemporalLinea:cCodInv ) }
-      :nWidth                 := 16
+      :nWidth                 := ::ResizedCol( 16 )
       :SetCheck( { "Sel16", "Nil16" } )
    end with
 
@@ -3001,14 +3049,14 @@ METHOD Resource() CLASS TpvTactil
       :bStrData               := {|| "" }
       :lHide                  := .t.
       :bEditValue             := {|| ::oTemporalLinea:lInPromo }
-      :nWidth                 := 16
+      :nWidth                 := ::ResizedCol( 16 )
       :SetCheck( { "Star_Blue_16", "Nil16" } )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Und"
       :bEditValue             := {|| ::nUnidadesLinea( ::oTemporalLinea, .t. ) }
-      :nWidth                 := 50
+      :nWidth                 := ::ResizedCol( 60 )
       :nDataStrAlign          := AL_RIGHT
       :nHeadStrAlign          := AL_RIGHT
    end with
@@ -3016,7 +3064,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Factor"
       :bEditValue             := {|| Trans( ::oTemporalLinea:nFacCnv, "@EZ 999,999.999999" ) }
-      :nWidth                 := 50
+      :nWidth                 := ::ResizedCol( 50 )
       :nDataStrAlign          := AL_RIGHT
       :nHeadStrAlign          := AL_RIGHT
       :lHide                  := .t.
@@ -3025,22 +3073,22 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Detalle"
       :bEditValue             := {|| ::cTextoLinea() }
-      :nWidth                 := if( ::lEmptyOrdenComanda, 200, 180 )
+      :nWidth                 := if( ::lEmptyOrdenComanda, ::ResizedCol( 130 ), ::ResizedCol( 110 ) )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "%Dto"
       :bEditValue             := {|| Trans( ::oTemporalLinea:nDtoLin, "@EZ 999.99" ) }
       :lHide                  := .t.
-      :nWidth                 := 45
+      :nWidth                 := ::ResizedCol( 45 )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Total"
       :bEditValue             := {|| ::nTotalLinea( ::oTemporalLinea, .t. ) }
-      :nWidth                 := 60
+      :nWidth                 := ::ResizedCol( 70 )
       :nDataStrAlign          := AL_RIGHT
-      :nHeadStrAlign          := AL_RIGHT
+      :nHeadStrAlign          := AL_RIGHT 
    end with
 
    /*
@@ -3181,14 +3229,14 @@ METHOD Resource() CLASS TpvTactil
    /*
    Boton de +_______________________________________________________________
    */
-
+ 
    REDEFINE BUTTON ::oBtnNum[ 13 ] ;
       ID       113 ;
       OF       ::oDlg;
       ACTION   ( ::KeyChar( "=" ) );
       PROMPT   "=" ;
 
-   ::oBtnNum[ 13 ]:SetFont( ::oFntNum )
+   ::oBtnNum[ 13 ]:SetFont( ::oFntNum ) 
 
    /*
    Boton de -_______________________________________________________________
@@ -3213,6 +3261,19 @@ METHOD Resource() CLASS TpvTactil
       PROMPT   "x" ;
 
    ::oBtnNum[ 15 ]:SetFont( ::oFntNum )
+
+   /*
+   Redefinimos botones especiales para las resoluciones pequeñas---------------
+   */
+
+   if !::l1024()
+
+      ::oBtnSSalon               := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
+      ::oBtnSEntregar            := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
+      ::oBtnSCobrar              := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
+      
+
+   end if
 
    /*
    Definimos el meter--------------------------------------------------------
@@ -3254,6 +3315,8 @@ METHOD StartResource() CLASS TpvTactil
 
    CursorWait()
 
+   if ::l1024()
+
    if Empty( ::oOfficeBar )
 
       /*
@@ -3288,8 +3351,8 @@ METHOD StartResource() CLASS TpvTactil
       */
 
       ::oGrpSalones           := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "Cup_32" )
-         ::oBtnSala           := TDotNetButton():New( 60, ::oGrpSalones, "Cup_32",                 "Mesas",        1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
-         ::oBtnGeneral        := TDotNetButton():New( 60, ::oGrpSalones, "Cashier_32",             "General",      2, {|| ::OnClickGeneral() }, , , .f., .f., .f. )
+         ::oBtnSala           := TDotNetButton():New( 60, ::oGrpSalones, "Cup_32",                 "Mesas",             1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
+         ::oBtnGeneral        := TDotNetButton():New( 60, ::oGrpSalones, "Cashier_32",             "General",           2, {|| ::OnClickGeneral() }, , , .f., .f., .f. )
 
          if uFieldEmpresa( "lRecoger" )
             ::oBtnRecoger     := TDotNetButton():New( 60, ::oGrpSalones, "shoppingbasket_full_32", "Para recoger", nPos++, {|| ::OnClickParaRecoger() }, , , .f., .f., .f. )
@@ -3304,34 +3367,34 @@ METHOD StartResource() CLASS TpvTactil
          end if
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "User1_32" )
-         ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-         ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-         ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+         ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+         ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+         ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "Disk_blue_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",   1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",   1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",     1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lAlbTct" )
 
          oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
-            oBoton            := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",         1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
-            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+            oBoton            := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",           1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
+            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
       else
 
          oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
-            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",            1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
       end if         
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",     1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
-
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Comanda", .f., , "Printer_comanda_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",   1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",     1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
@@ -3339,11 +3402,11 @@ METHOD StartResource() CLASS TpvTactil
          oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",           1, {|| ::OnClickLista() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",      1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",    2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",        1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",      2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "Security_Agent_32" )
          ::oBtnUsuario        := TDotNetButton():New( 60, oGrupo, "Security_Agent_32",             Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
@@ -3375,7 +3438,7 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
 
-   end if
+   end if 
 
    /*
    Le damos al acciones al boon derecho de los botones
@@ -3401,18 +3464,20 @@ METHOD StartResource() CLASS TpvTactil
       ::oBtnEncargar:bRAction := {|| ::OnClickSalaVenta( ubiEncargar ) }
    end if
 
+   end if
+
    /*
    Si no tienen orden de comandas no mostramos el botón-----------------------
    */
 
    if ::oOrdenComanda:EmptyOrdenComanda()
       ::oBtnCambiarOrden:Hide()
-   end if 
+   end if  
 
    /*
    Estado del boton de cobro rapido
    */
-
+ 
    if uFieldEmpresa( "lImpExa")
       ::oBtnImportesExactos:Selected()
    end if
@@ -3537,6 +3602,18 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnCambiarOrden:Move( ::oBtnCambiarOrden:nTop + nDialogHeight, ::oBtnCambiarOrden:nLeft + nDialogWidth, , , .f. )
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )
 
+   if !Empty( ::oBtnSCobrar )
+      ::oBtnSCobrar:Move( ::oBtnSCobrar:nTop + nDialogHeight, ::oBtnSCobrar:nLeft + nDialogWidth, , , .f. )
+   end if
+
+   if !Empty( ::oBtnSSalon )
+      ::oBtnSSalon:Move( ::oBtnSSalon:nTop + nDialogHeight, ::oBtnSSalon:nLeft + nDialogWidth, , , .f. )
+   end if
+   
+   if !Empty( ::oBtnSEntregar )
+      ::oBtnSEntregar:Move( ::oBtnSEntregar:nTop + nDialogHeight, ::oBtnSEntregar:nLeft + nDialogWidth, , , .f. )
+   end if
+
    ::oBtnCombinado:Move( ::oBtnCombinado:nTop + nDialogHeight, ::oBtnCombinado:nLeft + nDialogWidth, , , .f. )
    
    // ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f. )
@@ -3560,6 +3637,10 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnPrintDocumento:Move( ::oBtnPrintDocumento:nTop + nDialogHeight, ::oBtnPrintDocumento:nLeft + nDialogWidth, , , .f. )
 
    ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f.)
+   
+   if !Empty( ::oBtnSSalir )
+      ::oBtnSSalir:Move( ::oBtnSSalir:nTop + nDialogHeight, ::oBtnSSalir:nLeft + nDialogWidth, , , .f.)
+   end if   
 
    ::oGetUnidades:Move( ::oGetUnidades:nTop + nDialogHeight, ::oGetUnidades:nLeft + nDialogWidth, , , .f. )
 
@@ -3801,13 +3882,13 @@ METHOD AgregarLibre() CLASS TpvTactil
          ACTION   ( VirtualKey( .f., oDescripcionLibre ) )
 
       REDEFINE GET oIvaLibre ;
-         VAR      ::nIvaLibre ;
+         VAR      ::nIvaLibre ; 
          PICTURE  "@E 999.99" ;
          WHEN     ( .f. );
          ID       200 ;
          OF       oDlg
 
-      REDEFINE BUTTONBMP ;
+      REDEFINE BUTTONBMP ; 
          ID       210 ;
          OF       oDlg ;
          BITMAP   "Lupa_32" ;
@@ -3823,7 +3904,7 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       130 ;
          OF       oDlg ;
          BITMAP   "Calculator_32" ;
-         ACTION   ( Calculadora( 0, oUnidadesLibre ) )
+         ACTION   ( Calculadora( 0, oUnidadesLibre ) ) 
 
       REDEFINE GET oImporteLibre ;
          VAR      ::nImporteLibre ;
@@ -4950,7 +5031,7 @@ METHOD InitComentarios() CLASS TpvTactil
 
    DEFINE DIALOG oDlgComentarios RESOURCE "TPVComentarios"
 
-      REDEFINE GET oGetComentario VAR cGetComentario ;
+      REDEFINE GET oGetComentario VAR cGetComentario;
          ID       150;
          FONT     ::oFntDlg ;
          OF       oDlgComentarios
@@ -4958,17 +5039,17 @@ METHOD InitComentarios() CLASS TpvTactil
       REDEFINE BUTTONBMP ;
          ID       160 ;
          OF       oDlgComentarios ;
-         BITMAP   "Keyboard2_32" ;
-         ACTION   ( VirtualKey( .f., oGetComentario ) )
+         BITMAP   "Keyboard2_32" ; 
+         ACTION   ( VirtualKey( .f., oGetComentario ) ) 
 
       REDEFINE BUTTONBMP ;
          ID       161 ;
          OF       oDlgComentarios ;
          BITMAP   "Garbage_Empty_32" ;
          ACTION   ( oGetComentario:cText( Space( 254 ) ) )
-
+  
       REDEFINE BUTTONBMP ;
-         ID       170 ;
+         ID       170 ; 
          OF       oDlgComentarios ;
          BITMAP   "Navigate_up" ;
          ACTION   ( oBrwComentarios:Select( 0 ), oBrwComentarios:GoUp(), oBrwComentarios:Select( 1 ) )
@@ -5009,7 +5090,7 @@ METHOD InitComentarios() CLASS TpvTactil
       oBrwComentarios:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
       oBrwComentarios:nMarqueeStyle          := MARQSTYLE_HIGHLROW
       oBrwComentarios:cName                  := "Comentarios de artículos"
-      oBrwComentarios:nRowHeight             := 48
+      oBrwComentarios:nRowHeight             := 45
       oBrwComentarios:lHeader                := .f.
       oBrwComentarios:lHScroll               := .f.
 
@@ -5033,7 +5114,7 @@ METHOD InitComentarios() CLASS TpvTactil
       oBrwLineasComentarios:cName            := "Lineas comentarios de artículos"
       oBrwLineasComentarios:lHeader          := .f.
       oBrwLineasComentarios:lHScroll         := .f.
-      oBrwLineasComentarios:nRowHeight       := 48
+      oBrwLineasComentarios:nRowHeight       := 45
       
       oBrwLineasComentarios:SetFont( ::oFntBrw )
 
@@ -7677,6 +7758,10 @@ METHOD SetCalculadora() CLASS TpvTactil
 
       ::oBtnCalculadora:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
 
+      if !Empty( ::oBtnSSalir )
+         ::oBtnSSalir:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
+      end if   
+
    else
 
       aEval( ::oBtnNum, {|o| o:Show() } )
@@ -7689,6 +7774,10 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop - calcDistance, , , , .t. )
 
       ::oBtnCalculadora:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
+
+      if !Empty( ::oBtnSSalir )
+         ::oBtnSSalir:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
+      end if
 
    end if
 
