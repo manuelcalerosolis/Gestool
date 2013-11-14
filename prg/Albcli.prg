@@ -4324,7 +4324,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
             WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
             ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
             VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-            COLOR    CLR_GET ;
             PICTURE  cPouDiv ;
             OF       oFld:aDialogs[1]
 
@@ -4718,6 +4717,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
+
+
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
       CENTER
@@ -4814,6 +4815,8 @@ Static Function EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmp
    end if
 
    ACTIVATE DIALOG oDlg CENTER
+
+
 
 Return ( oDlg:nResult == IDOK )
 
@@ -14643,6 +14646,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
       aGet[ _CREF    ]:cText( Space( 200 ) )
 
       aTmp[ _LIVALIN ]  := aTmpAlb[ _LIVAINC ]
+      aTmp[ _DFECCAD ]  := Ctod( "" )
+
 
       aGet[ _NCANENT ]:cText( 1 )
       aGet[ _NUNICAJA]:cText( 1 )

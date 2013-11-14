@@ -214,6 +214,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    local oGetTip
    local oGetFab
    local oGetTmp
+   local oGetCat
 
    ::cOldCodArt         := ::oDbfVir:cCodArt
 
@@ -494,16 +495,16 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       oGetTip:bHelp  := {|| ::oParent:oTipoArticulo:Buscar( oGetTip ) }
       oGetTip:lValid()
 
-      REDEFINE GET oGetFab VAR ::oDbfVir:cCodFab ;
+      REDEFINE GET oGetCat VAR ::oDbfVir:cCodCat ;
          ID       ( 130 ) ;
          IDTEXT   ( 131 ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[ 2 ]
 
-      oGetFab:bValid := {|| ::oParent:oFabricante:Existe( oGetFab, oGetFab:oHelpText ) }
-      oGetFab:bHelp  := {|| ::oParent:oFabricante:Buscar( oGetFab ) }
-      oGetFab:lValid()
+      oGetCat:bValid := {|| oGetCat:oHelpText:cText( oRetFld( ::oDbfVir:cCodCat, ::oParent:oCategoria ) ) }
+      oGetCat:bHelp  := {|| BrwCategoria( oGetCat, oGetCat:oHelpText ) }
+      oGetCat:lValid()
 
       REDEFINE GET oGetTmp VAR ::oDbfVir:cCodTmp ;
          ID       ( 140 ) ;
@@ -515,6 +516,17 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       oGetTmp:bValid := {|| oGetTmp:oHelpText:cText( oRetFld( ::oDbfVir:cCodTmp, ::oParent:oTemporada ) ) }
       oGetTmp:bHelp  := {|| BrwTemporada( oGetTmp,oGetTmp:oHelpText ) }
       oGetTmp:lValid()
+
+      REDEFINE GET oGetFab VAR ::oDbfVir:cCodFab ;
+         ID       ( 150 ) ;
+         IDTEXT   ( 151 ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[ 2 ]
+
+      oGetFab:bValid := {|| ::oParent:oFabricante:Existe( oGetFab, oGetFab:oHelpText ) }
+      oGetFab:bHelp  := {|| ::oParent:oFabricante:Buscar( oGetFab ) }
+      oGetFab:lValid()
 
       /*
       Botones------------------------------------------------------------------
@@ -648,7 +660,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
 
       if ::oParent:oArt:Seek( cCodArt ) .or. ::oParent:oArt:Seek( Upper( cCodArt ) )
 
-         cCodArt  := ::oParent:oArt:Codigo
+         cCodArt                 := ::oParent:oArt:Codigo
 
          if !uFieldEmpresa( "lNStkAct" )
             ::oStkAct:cText( ::oParent:oStock:nStockActual( cCodArt, ::oDbfVir:cAlmOrd ) )
@@ -680,6 +692,12 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
                ::oLote:Hide()
             end if
 
+            ::oDbfVir:cCodFam    := ::oParent:oArt:Familia
+            ::oDbfVir:cCodTip    := ::oParent:oArt:cCdoTip
+            ::oDbfVir:cCodCat    := ::oParent:oArt:Familia
+            ::oDbfVir:cCodTmp    := ::oParent:oArt:Familia
+            ::oDbfVir:cCodFab    := ::oParent:oArt:Familia
+            
          end if
 
          ::lTotUnidades( ::oDbfVir )
@@ -712,7 +730,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
             ::oSayVp2:Hide()
          end if
 
-         ::cOldCodArt   := cCodArt
+         ::cOldCodArt            := cCodArt
 
          return .t.
 

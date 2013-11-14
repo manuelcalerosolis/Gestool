@@ -467,7 +467,7 @@ return nil
 
 METHOD lValid() CLASS TGetHlp
 
-   local lRet := .t.
+   local lRet   := .t.
 
    if ::oGet:BadDate
       ::oGet:KillFocus()
@@ -476,11 +476,15 @@ METHOD lValid() CLASS TGetHlp
       return .f.
    else
       ::oGet:Assign()
-      if ValType( ::bOldValid ) == "B"
-         lRet := Eval( ::bOldValid, Self  )
-         if IsLogic( lRet ) .and. !lRet
-            ::oWnd:nLastKey = 0
-         endif
+      if ValType( ::bValid ) == "B"
+         lRet   := Eval( ::bValid, Self  )
+         if IsLogic( lRet )
+            if !lRet
+              ::oWnd:nLastKey = 0
+            endif
+         else
+            return .t.
+         end if 
       endif
    endif
 

@@ -2021,6 +2021,10 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
    DEFAULT nKitStk      := 0
    DEFAULT nCtlStk      := 1
 
+   if Empty( cCodArt )
+      RETURN ( nUnits )
+   end if 
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -4443,6 +4447,14 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
    DEFAULT lNotPendiente:= .f.
 
+   lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
+
+   ::aStocks            := {}
+
+   if Empty( cCodArt )
+      Return ( ::aStocks )
+   end if
+
    ::lLote              := lLote
    ::lNumeroSerie       := lNumeroSerie
 
@@ -4462,10 +4474,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    nOrdProducL          := ( ::cProducL )->( OrdSetFocus( "cCodArt"  ) )
    nOrdProducM          := ( ::cProducM )->( OrdSetFocus( "cCodArt"  ) )
    nOrdHisMov           := ( ::cHisMovT )->( OrdSetFocus( "cRefMov"  ) )
-
-   lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
-
-   ::aStocks            := {}
 
    if !Empty( oBrw )
       oBrw:aArrayData   := {}
@@ -6607,6 +6615,8 @@ CLASS SStock
    //------------------------------------------------------------------------//
 
    INLINE METHOD Save( oDbfStock )
+
+      ? "save"
 
       oDbfStock:Append()
 
