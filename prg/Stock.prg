@@ -6616,8 +6616,6 @@ CLASS SStock
 
    INLINE METHOD Save( oDbfStock )
 
-      ? "save"
-
       oDbfStock:Append()
 
       oDbfStock:cCodigo    := ::cCodigo               
