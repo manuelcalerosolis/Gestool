@@ -5539,6 +5539,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
       ::oTiketCabecera:nTarifa      := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
 
       ::nTarifaSolo                 := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
+      ::nTarifaCombinado            := Max( oRetFld( cCliente, ::oCliente, "nTarCmb" ), 1 )
 
       if Empty( oRetFld( cCliente, ::oCliente, "CodPago" ) )
          ::oTiketCabecera:cFpgTik   := cDefFpg()
@@ -7104,8 +7105,17 @@ METHOD CargaValoresDefecto( nUbicacion, lInit ) CLASS TpvTactil
       ::oTiketCabecera:lAbierto  := .t.
       ::oTiketCabecera:lCloTik   := .f.
       ::oTiketCabecera:lSndDoc   := .t.
-      ::nTarifaSolo              := Max( uFieldEmpresa( "nPreVta" ), 1 )
-      ::nTarifaCombinado         := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+      if !Empty( cDefCli() )
+
+         ::nTarifaSolo           := Max( oRetFld( cDefCli(), ::oCliente, "nTarifa" ), 1 )
+         ::nTarifaCombinado      := Max( oRetFld( cDefCli(), ::oCliente, "nTarCmb" ), 1 )
+
+      else
+
+         ::nTarifaSolo           := Max( uFieldEmpresa( "nPreTPro" ), 1 )
+         ::nTarifaCombinado      := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+
+      end if
    end if
 
    if !Empty( ::sTotal )
