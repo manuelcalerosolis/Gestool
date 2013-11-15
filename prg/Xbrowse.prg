@@ -3995,6 +3995,7 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
                END
             next nFor
          else
+            
             for nFor := 1 to Len( aCols )
                WITH OBJECT ::AddCol()
                   :cHeader := aCols[ nFor ]
@@ -4033,6 +4034,8 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
                   oCol:bEditValue   := aCols[ nFor ]
                elseif ValType( aCols[ nFor ] ) == 'C'
                   TRY
+                   ? "oCol:bEditValue"
+
                      (0)->( &( aCols[ nFor ] ) )
                      oCol:bEditValue   := &( "{ ||" + aCols[ nFor ] + "}" )
                   CATCH
@@ -4047,6 +4050,7 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
       endif
       AEval( ::aCols, {| oCol, i | oCol:cHeader := MakeColAlphabet( i ), ;
                               oCol:nHeadStrAlign := AL_CENTER } )
+
       if lAutoOrder
          if Len( ::aCols ) > 1 //ValType( aData[ 1 ] ) == 'A' // Ver 10.8 to avoid runtime error for empty array
 

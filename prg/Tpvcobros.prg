@@ -37,7 +37,7 @@ CLASS TpvCobros
    DATA aFormasdePago  
 
    DATA oBrwPago
-   DATA oBrwFPago
+   DATA oBrwFormasPago
 
    DATA nExit
 
@@ -519,24 +519,29 @@ RETURN ( HGet( ::aFormasdePago[ ::oBrwPago:nAt ], "Codigo" ) )
 
 METHOD RedefineBrowseFormasdePago() CLASS TpvCobros
 
-   ::oBrwFPago                 := TXBrowse():New( ::oDlg )
-   ::oBrwFPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwFPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-   ::oBrwFPago:lVScroll        := .f.
-   ::oBrwFPago:lHScroll        := .f.
-   ::oBrwFPago:nMarqueeStyle   := 5
-   ::oBrwFPago:lHeader         := .f.
-   ::oBrwFPago:lFooter         := .f.
-   ::oBrwfPago:lRecordSelector := .f.
+   ::oBrwFormasPago                 := TXBrowse():New( ::oDlg )
+   ::oBrwFormasPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwFormasPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrwFormasPago:lVScroll        := .f.
+   ::oBrwFormasPago:lHScroll        := .f.
+   ::oBrwFormasPago:nMarqueeStyle   := 5
+   ::oBrwFormasPago:lHeader         := .f.
+   ::oBrwFormasPago:lFooter         := .f.
+   ::oBrwFormasPago:lRecordSelector := .f.
 
-   ::oBrwFPago:SetArray( ::aFormasdePago, , , .f. )
+   ::oBrwFormasPago:SetArray( ::aFormasdePago, , , .f. )
 
-   ::oBrwFPago:CreateFromResource( 140 )
-
-   with object ( ::oBrwFPago:AddCol() )
+   ::oBrwFormasPago:CreateFromResource( 140 )
+   
+   with object ( ::oBrwFormasPago:AddCol() )
       :cHeader          := "Forma"
-      :bEditValue       := {|| ::FormaPagoCodigo( ::oBrwPago:nAt ) }
-      // :bEditValue       := {|| "Codigo" }
+      :bEditValue       := {|| ::oBrwFormasPago:aRow[ "Codigo" ] }
+      :nWidth           := 100
+   end with
+
+   with object ( ::oBrwFormasPago:AddCol() )
+      :cHeader          := "Imagen"
+      :bEditValue       := {|| ::oBrwFormasPago:aRow[ "Imagen" ] }
       :nWidth           := 100
    end with
 
