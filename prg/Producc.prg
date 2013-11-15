@@ -72,7 +72,6 @@ CLASS TProduccion FROM TMasDet
 
    DATA  oGrupoFamilia
    DATA  oTipoArticulo
-   DATA  oFabricante
 
    DATA  oStock
    DATA  oPro
@@ -83,6 +82,8 @@ CLASS TProduccion FROM TMasDet
    DATA  oDbfCount
    DATA  oDbfEmp
    DATA  oTemporada 
+   DATA  oFabricante
+   DATA  oCategoria
 
    DATA  oDetProduccion
    DATA  oDetSeriesProduccion
@@ -693,6 +694,8 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oTemporada  PATH ( cPatEmp() )   FILE "Temporadas.Dbf" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
 
+   DATABASE NEW ::oCategoria  PATH ( cPatEmp() )   FILE "Categorias.Dbf" VIA ( cDriver() ) SHARED INDEX "Categorias.Cdx"
+
    if !::oGrupoFamilia:OpenFiles()
       lOpen          := .f.
    end if
@@ -935,6 +938,10 @@ METHOD CloseFiles()
    if ::oTemporada != nil .and. ::oTemporada:Used()
       ::oTemporada:End()
    end if
+
+   if ::oCategoria != nil .and. ::oCategoria:Used()
+      ::oCategoria:End()
+   end if 
 
    if ::oDetHoras != nil
       ::oDetHoras:End()
