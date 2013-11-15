@@ -218,7 +218,6 @@ Tdeltarifasclientes.prg \
 Tdet.prg                \
 Tdiacli.prg             \
 Tdiprvfa.prg            \
-Tdlgflt.prg             \
 Tdprnc3.prg             \
 Tfamalb.prg             \
 Tfamart.prg             \
@@ -332,7 +331,7 @@ XBrowse.prg             \
 Webbar.prg              \
 Webbtn.prg              \
 TPrnTik.prg             \
-Tdlgflt.prg             \
+TFilterCreator.prg      \
 PInfDiaParte.prg        \
 PAcuDiaParte.prg        \
 PInfDiaOperarios.prg    \
@@ -1001,7 +1000,6 @@ TAcuATVta.prg           \
 XMovGrp.prg             \
 XComGVta.prg            \
 TArtStkMinGrp.prg       \
-Tdlgflt.prg             \
 PInfDiaParte.prg        \
 PAcuDiaParte.prg        \
 TCliObr.prg             \
@@ -1271,7 +1269,7 @@ Tdeltarifasclientes.obj \
 Tdet.obj                \
 Tdiacli.obj             \
 Tdiprvfa.obj            \
-Tdlgflt.obj             \
+TFilterCreator.obj      \
 Tdprnc3.obj             \
 Tfamalb.obj             \
 Tfamart.obj             \
@@ -1389,7 +1387,6 @@ Webbtn.obj              \
 Wininet.obj             \
 Winmapihb.obj           \
 TPrnTik.obj             \
-Tdlgflt.obj             \
 PInfDiaParte.obj        \
 PAcuDiaParte.obj        \
 PInfDiaOperarios.obj    \
@@ -2059,7 +2056,6 @@ TAcuATVta.obj           \
 XMovGrp.obj             \
 XComGVta.obj            \
 TArtStkMinGrp.obj       \
-Tdlgflt.obj             \
 PInfDiaParte.obj        \
 PAcuDiaParte.obj        \
 TCliObr.obj             \
@@ -2330,7 +2326,7 @@ $(OBJ)\Tdeltarifasclientes.obj  +
 $(OBJ)\Tdet.obj                 +
 $(OBJ)\Tdiacli.obj              +
 $(OBJ)\Tdiprvfa.obj             +
-$(OBJ)\Tdlgflt.obj              +
+$(OBJ)\TFilterCreator.obj       +
 $(OBJ)\Tdprnc3.obj              +
 $(OBJ)\Tfamalb.obj              +
 $(OBJ)\Tfamart.obj              +
@@ -2448,7 +2444,6 @@ $(OBJ)\Webbtn.obj               +
 $(OBJ)\Wininet.obj              +
 $(OBJ)\Winmapihb.obj            +
 $(OBJ)\TPrnTik.obj              +
-$(OBJ)\Tdlgflt.obj              +
 $(OBJ)\PInfDiaParte.obj         +
 $(OBJ)\PAcuDiaParte.obj         +
 $(OBJ)\PInfDiaOperarios.obj     +
@@ -3118,7 +3113,6 @@ $(OBJ)\TAcuATVta.obj            +
 $(OBJ)\XMovGrp.obj              +
 $(OBJ)\XComGVta.obj             +
 $(OBJ)\TArtStkMinGrp.obj        +
-$(OBJ)\Tdlgflt.obj              +
 $(OBJ)\PInfDiaParte.obj         +
 $(OBJ)\PAcuDiaParte.obj         +
 $(OBJ)\TCliObr.obj              +

@@ -721,15 +721,8 @@ METHOD LoadFilter() CLASS TMant
    end if
 
 RETURN ( Self )
+
 //---------------------------------------------------------------------------//
-
-Static Function bFiltro( oDbf, oDbfFilter, oButton, oWndBrw )
-
-   local cTip     := by( oDbfFilter:cTipDoc )
-   local cTxt     := by( oDbfFilter:cTexFlt )
-   local bGen     := {|| TDlgFlt():Create( oDbf, oButton, .t., oWndBrw ):Resource( cTip, cTxt, oDbfFilter ) }
-
-Return ( bGen )
 
 #endif
 

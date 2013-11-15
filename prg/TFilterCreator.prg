@@ -107,7 +107,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TFilterCreator
+METHOD New( ) CLASS TFilterCreator
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
 

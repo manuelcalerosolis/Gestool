@@ -5170,13 +5170,14 @@ METHOD CreateFilter( aTField, oDbf, lMultyExpresion )
 
    DEFAULT lMultyExpresion       := .f.
 
-   if !Empty( aTField )
-      ::oFilter                  := TDlgFlt():New( aTField, oDbf, nil, .f. )
-   else
-      ::oFilter                  := TDlgFlt():Create( oDbf, nil, .f. )
-   end if
-
-   ::oFilter:lMultyExpresion     := lMultyExpresion
+   ::oFilter                     := TFilterCreator():New() 
+   
+   do case
+      case !Empty( aTField )
+         ::oFilter:SetFields( aTField )
+      case !Empty( oDbf )
+         ::oFilter:SetDatabase( oDbf )
+   end case 
 
 RETURN ( Self )
 

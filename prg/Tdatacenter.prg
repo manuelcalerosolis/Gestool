@@ -1618,8 +1618,7 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "CnfFlt.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CnfFlt.Cdx"
    oDataTable:cDescription := "Configuración filtros"
-   oDataTable:bCreateFile  := {| cPath | mkFilter( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxFilter( cPath ) }
+   oDataTable:bCreateFile  := {| cPath | TFilterDatabase():BuildFiles( .t., cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 

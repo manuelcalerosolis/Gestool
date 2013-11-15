@@ -604,7 +604,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmRecPrv(), dbfFacPrvP ):ChgFields(), oWndBrw:Refresh() );
+         ACTION   ( ReplaceCreator( oWndBrw, dbfFacPrvP, aItmRecPrv() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -3279,21 +3279,19 @@ Return .t.
 
 Static Function FilterRecibos( lCobrado )
 
-   with object ( TDlgFlt():Init( oWndBrw ) )
+   local cFilterExpresion
 
-      do case
-         case IsTrue( lCobrado )
-            :cExpFilter    := "lCobrado .and. !lDevuelto"
-         case IsFalse( lCobrado )
-            :cExpFilter    := "!lCobrado .and. !lDevuelto"
-         case IsNil( lCobrado )
-            :cExpFilter    := "lDevuelto"
-      end case
+   do case
+      case IsTrue( lCobrado )
+         cFilterExpresion  := "lCobrado .and. !lDevuelto"
+      case IsFalse( lCobrado )
+         cFilterExpresion  := "!lCobrado .and. !lDevuelto"
+      case IsNil( lCobrado )
+         cFilterExpresion  := "lDevuelto"
+   end case
 
-      :AplyFilter()
-
-   end with
+   CreateFastFilter( cFilterExpresion, dbfFacPrvP, .f. )
 
 Return ( nil )
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -319,7 +319,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmUsuario(), dbfUser ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfUser, aItmUsuario() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_APPD
 

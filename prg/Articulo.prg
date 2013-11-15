@@ -16339,9 +16339,9 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    local nOrd           := GetBrwOpt( "BrwArticulo" )
    local nLevel         := nLevelUsr( "01014" )
    local oCbxOrd
-   local aCbxOrd        := { "Código", "Nombre", "Proveedor" }
    local cCbxOrd
-   local Ordenes        := { "CodObs", "NomObs", "cPrvHab" }
+   local aCbxOrd        := { "Código", "Nombre", "Proveedor" }
+   local Ordenes        := { "CODOBS", "NOMOBS", "CPRVHAB" }
    local oSayText
    local cSayText       := "Listado de artículos"
    local oBmpImage
@@ -16353,9 +16353,10 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    local nRecAnt
    local cReturn        := Space( 18 )
    local lPropiedades   := .f.
-   local oBtnAceptarpropiedades
+   local oBtnAceptarPropiedades
 
    nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+
    cCbxOrd              := aCbxOrd[ nOrd ]
 
    DEFAULT lCodeBar     := .f.
@@ -16406,18 +16407,18 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    end if
 
 		REDEFINE GET aGet1 VAR cGet1;
-			ID 		104 ;
-			PICTURE	"@!" ;
-         ON CHANGE( SpecialSeek( nKey, nFlags, aGet1, oBrw, oCbxOrd, dbfArticulo, dbfCodebar ) );
-         VALID    ( OrdClearScope( oBrw, dbfArticulo ) );
-			OF 		oDlg
+			ID 		   104 ;
+			PICTURE	   "@!" ;
+         ON CHANGE   ( SpecialSeek( nKey, nFlags, aGet1, oBrw, oCbxOrd, dbfArticulo, dbfCodebar ) );
+         VALID       ( OrdClearScope( oBrw, dbfArticulo ) );
+			OF 		   oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfArticulo)->( OrdSetFocus( Ordenes[ oCbxOrd:nAt ] ) ), ( dbfArticulo )->( dbGoTop() ), oBrw:refresh(), aGet1:SetFocus(), oCbxOrd:refresh() ) ;
-         OF       oDlg
+			VAR 		   cCbxOrd ;
+			ID 		   102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( dbfArticulo)->( OrdSetFocus( Ordenes[ oCbxOrd:nAt ] ) ), ( dbfArticulo )->( dbGoTop() ), oBrw:refresh(), aGet1:SetFocus(), oCbxOrd:refresh() ) ;
+         OF          oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -16829,7 +16830,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    DestroyFastFilter( dbfArticulo )
 
-   SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CodObs", 1, 2 ) )
+   SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CODOBS", 1, 2 ) )
 
    if !Empty( oBrw )
       oBrw:CloseData()

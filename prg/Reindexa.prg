@@ -201,10 +201,10 @@ METHOD GenIndices( oMsg )
 
          end if
 
-         ::SetText( "Generando índices : Tipo de " + cImp(), ::aProgress[ 1 ] )        ; rxTIva(     ::cPathDat )
+         ::SetText( "Generando índices : Tipo de " + cImp(), ::aProgress[ 1 ] )  ; rxTIva(     ::cPathDat )
          ::SetText( "Generando índices : Movimientos", ::aProgress[ 1 ] )        ; rxTMov(     ::cPathDat )
          ::SetText( "Generando índices : Tablas conversión", ::aProgress[ 1 ] )  ; rxTblCnv(   ::cPathDat )
-         ::SetText( "Generando índices : Filtros", ::aProgress[ 1 ] )            ; rxFilter(   ::cPathDat )
+         ::SetText( "Generando índices : Filtros", ::aProgress[ 1 ] )            ; TFilterDatabase():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Notas", ::aProgress[ 1 ] )              ; TNotas():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Agenda", ::aProgress[ 1 ] )             ; TAgenda():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Tanques", ::aProgress[ 1 ] )            ; TTankes():Create( ::cPathDat ):Reindexa()

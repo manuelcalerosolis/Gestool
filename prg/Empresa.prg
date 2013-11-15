@@ -4662,9 +4662,8 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
             ActDbf( cEmpDat, cEmpTmp, "Tiva", "tipos de impuestos", oMet, oMsg, aMsg )
          end if
 
-         if mkFilter( cEmpTmp )
-            ActDbf( cEmpDat, cEmpTmp, "CnfFlt", "filtros", oMet, oMsg, aMsg )
-         end if
+         oMsg:SetText( "Añadiendo filtros" )
+            TFilterDatabase():Create():SyncAllDbf() 
 
          if mkCajas( cEmpTmp )
             ActDbf( cEmpDat, cEmpTmp, "Cajas", "cajas", oMet, oMsg, aMsg )
