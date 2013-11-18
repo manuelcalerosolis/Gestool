@@ -659,6 +659,7 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oRctPrvL    PATH ( cPatEmp() )   FILE "RctPrvL.DBF"   VIA ( cDriver() ) SHARED INDEX "RctPrvL.CDX"
    ::oRctPrvL:OrdSetFocus( "cRef" )
+
    DATABASE NEW ::oRctPrvS    PATH ( cPatEmp() )   FILE "RctPrvS.DBF"   VIA ( cDriver() ) SHARED INDEX "RctPrvS.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
@@ -4872,3 +4873,138 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
 Return .f.   
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TDetalleArticulos FROM TDet
+
+   DATA  oGetGrupoFamilia
+   DATA  oGetFamilia
+   DATA  oGetTipo
+   DATA  oGetFabricante
+   DATA  oGetTemporada
+   DATA  oGetCatalogo
+
+   METHOD CommunFields( oDbf )
+
+   METHOD LoadPropiedadesArticulos( oDlg )
+
+   METHOD LoadCommunFields()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD CommunFields( oDbf ) CLASS TDetalleArticulos
+
+      FIELD NAME "cGrpFam"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del grupo de familia"   HIDE        OF oDbf       
+      FIELD NAME "cCodFam"    TYPE "C" LEN 16  DEC 0 COMMENT "Código de la familia"          HIDE        OF oDbf       
+      FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del tipo"               HIDE        OF oDbf        
+      FIELD NAME "cCodCat"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de categoría"           HIDE        OF oDbf       
+      FIELD NAME "cCodTmp"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de la temporada"        HIDE        OF oDbf       
+      FIELD NAME "cCodFab"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del fabricante"         HIDE        OF oDbf       
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
+
+      REDEFINE GET ::oGetGrupoFamilia VAR ::oDbfVir:cGrpFam ;
+         ID       ( 100 ) ;
+         IDTEXT   ( 101 ) ;
+         WHEN     ( nMode != ZOOM_MODE );
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetGrupoFamilia:bValid := {|| ::oParent:oGrupoFamilia:Existe( ::oGetGrupoFamilia, ::oGetGrupoFamilia:oHelpText ) }
+      ::oGetGrupoFamilia:bHelp  := {|| ::oParent:oGrupoFamilia:Buscar( ::oGetGrupoFamilia ) }
+      ::oGetGrupoFamilia:lValid()
+
+      REDEFINE GET ::oGetFamilia VAR ::oDbfVir:cCodFam ;
+         ID       ( 110 ) ;
+         IDTEXT   ( 111 ) ;
+         WHEN     ( nMode != ZOOM_MODE );
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetFamilia:bValid := {|| ::oGetFamilia:oHelpText:cText( oRetFld( ::oDbfVir:cCodFam, ::oParent:oFam ) ) }
+      ::oGetFamilia:bHelp  := {|| BrwFamilia( ::oGetFamilia, ::oGetFamilia:oHelpText ) }
+      ::oGetFamilia:lValid()
+
+      REDEFINE GET ::oGetTipo VAR ::oDbfVir:cCodTip ;
+         ID       ( 120 ) ;
+         IDTEXT   ( 121 ) ;
+         WHEN     ( nMode != ZOOM_MODE );
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetTipo:bValid := {|| ::oParent:oTipoArticulo:Existe( ::oGetTipo, ::oGetTipo:oHelpText ) }
+      ::oGetTipo:bHelp  := {|| ::oParent:oTipoArticulo:Buscar( ::oGetTipo ) }
+      ::oGetTipo:lValid()
+
+      REDEFINE GET ::oGetCatalogo VAR ::oDbfVir:cCodCat ;
+         ID       ( 130 ) ;
+         IDTEXT   ( 131 ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetCatalogo:bValid := {|| ::oGetCatalogo:oHelpText:cText( oRetFld( ::oDbfVir:cCodCat, ::oParent:oCategoria ) ) }
+      ::oGetCatalogo:bHelp  := {|| BrwCategoria( ::oGetCatalogo, ::oGetCatalogo:oHelpText ) }
+      ::oGetCatalogo:lValid()
+
+      REDEFINE GET ::oGetTemporada VAR ::oDbfVir:cCodTmp ;
+         ID       ( 140 ) ;
+         IDTEXT   ( 141 ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetTemporada:bValid := {|| ::oGetTemporada:oHelpText:cText( oRetFld( ::oDbfVir:cCodTmp, ::oParent:oTemporada ) ) }
+      ::oGetTemporada:bHelp  := {|| BrwTemporada( ::oGetTemporada, ::oGetTemporada:oHelpText ) }
+      ::oGetTemporada:lValid()
+
+      REDEFINE GET ::oGetFabricante VAR ::oDbfVir:cCodFab ;
+         ID       ( 150 ) ;
+         IDTEXT   ( 151 ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      ::oGetFabricante:bValid := {|| ::oParent:oFabricante:Existe( ::oGetFabricante, ::oGetFabricante:oHelpText ) }
+      ::oGetFabricante:bHelp  := {|| ::oParent:oFabricante:Buscar( ::oGetFabricante ) }
+      ::oGetFabricante:lValid()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD LoadCommunFields() CLASS TDetalleArticulos
+
+      ::oGetGrupoFamilia:cText( cGruFam( ::oParent:oArt:Familia, ::oParent:oFam ) )
+      ::oGetGrupoFamilia:lValid()
+
+      ::oGetFamilia:cText( ::oParent:oArt:Familia )
+      ::oGetFamilia:lValid()
+
+      ::oGetTipo:cText( ::oParent:oArt:cCodTip )
+      ::oGetTipo:lValid()
+
+      ::oGetCatalogo:cText( ::oParent:oArt:cCodCate )
+      ::oGetCatalogo:lValid()
+
+      ::oGetTemporada:cText( ::oParent:oArt:cCodTemp )
+      ::oGetTemporada:lValid()
+
+      ::oGetFabricante:cText( ::oParent:oArt:cCodFab )
+      ::oGetFabricante:lValid()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
+

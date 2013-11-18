@@ -132,7 +132,7 @@ CLASS TGenMailing
 
    Method lEditaCSS()
 
-   Method MailServerSend() Inline ( ::MailServer + if( !Empty( ::MailServerPort ), ":" + Alltrim( Str( ::MailServerPort ) ), "" ) )
+   Method MailServerSend()    INLINE ( ::MailServer + if( !Empty( ::MailServerPort ), ":" + Alltrim( Str( ::MailServerPort ) ), "" ) )
 
    Method SelectColumn( oCombo )
 
@@ -1358,7 +1358,7 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
    end if
 
    if !Empty( aItems ) .and. !Empty( dbfAlias )
-      ::aFields   := ::oFlt:aTblMask
+      ::aFields   := GetSubArray( aItems, 5 ) //aArray, nPos )::oFlt:aTblMask
    end if
 
    DEFINE DIALOG ::oDlg RESOURCE "SendDocumentoMail"

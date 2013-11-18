@@ -543,6 +543,69 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oProCab()
+
+      local cFilter
+      local oProCab
+
+      DATABASE NEW oProCab PATH ( cPatEmp() ) FILE "ProCab.Dbf" VIA ( cDriver() ) SHARED INDEX "ProCab.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufOrd == '" + oUser():cDelegacion() 
+
+            ( oProCab:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oProCab )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD oProLin()
+
+      local cFilter
+      local oProLin
+
+      DATABASE NEW oProLin PATH ( cPatEmp() ) FILE "ProLin.Dbf" VIA ( cDriver() ) SHARED INDEX "ProLin.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufOrd == '" + oUser():cDelegacion() 
+
+            ( oProLin:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oProLin )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD oProCab()
+
+      local cFilter
+      local oProCab
+
+      DATABASE NEW oProCab PATH ( cPatEmp() ) FILE "ProCab.Dbf" VIA ( cDriver() ) SHARED INDEX "ProCab.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufOrd == '" + oUser():cDelegacion() 
+
+            ( oProCab:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oProCab )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
 END CLASS
 
 //---------------------------------------------------------------------------//

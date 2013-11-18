@@ -7,7 +7,7 @@
 
 //--------------------------------------------------------------------------//
 
-CLASS TDetMaterial FROM TDet
+CLASS TDetMaterial FROM TDetalleArticulos
 
    DATA  oGetCaja
    DATA  oGetUnidades
@@ -130,6 +130,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "cCodPro"    TYPE "C" LEN 18  DEC 0 COMMENT "Código del artídulo producido" COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN 08  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
 
+      ::CommunFields( oDbf )
+
       INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"       NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cCodPro" ON "cCodPro"                                     NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt"                                     NODELETED OF oDbf
@@ -178,6 +180,7 @@ RETURN ( lOpen )
 METHOD Resource( nMode )
 
    local oDlg
+   local oFld 
    local oGetArt
    local oGetNom
    local oGetAlm
@@ -214,7 +217,17 @@ METHOD Resource( nMode )
 
    cSayAlm              := RetAlmacen( ::oDbfVir:cAlmOrd, ::oParent:oAlm )
 
-   DEFINE DIALOG oDlg RESOURCE "LMaterial" TITLE LblTitle( nMode ) + "materias primas"
+   DEFINE DIALOG  oDlg ;
+      RESOURCE    "LProducido" ;
+      TITLE       LblTitle( nMode ) + "articulos producidos"
+      
+      REDEFINE FOLDER oFld ;
+         ID       400 ;
+         OF       oDlg ;
+         PROMPT   "&Artículo",;
+                  "Da&tos" ;
+         DIALOGS  "LProducido_1",;
+                  "LProducido_2"
 
       /*
       Codigo de articulo-------------------------------------------------------
@@ -224,7 +237,7 @@ METHOD Resource( nMode )
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE );
          BITMAP   "LUPA" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       oGetArt:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
       oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom ) }
@@ -232,7 +245,7 @@ METHOD Resource( nMode )
       REDEFINE GET oGetNom VAR ::oDbfVir:cNomArt ;
          ID       111 ;
          WHEN     ( lModDes() .and. nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       /*
       Lotes-------------------------------------------------------------------
@@ -242,7 +255,7 @@ METHOD Resource( nMode )
          ID       210 ;
          IDSAY    211 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
        /*
       Propiedades--------------------------------------------------------------
@@ -250,14 +263,14 @@ METHOD Resource( nMode )
 
       REDEFINE SAY ::oSayPr1 VAR cSayPr1;
          ID       221 ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oValPr1 VAR ::oDbfVir:cValPr1;
          ID       220 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
          ::oValPr1:bValid := {|| lPrpAct( ::oDbfVir:cValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) }
          ::oValPr1:bHelp  := {|| brwPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
@@ -266,18 +279,18 @@ METHOD Resource( nMode )
          ID       222 ;
          WHEN     .f. ;
          COLOR    CLR_GET ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE SAY ::oSayPr2 VAR cSayPr2;
          ID       231 ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oValPr2 VAR ::oDbfVir:cValPr2;
          ID       230 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
          ::oValPr2:bValid := {|| lPrpAct( ::oDbfVir:cValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) }
          ::oValPr2:bHelp  := {|| brwPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
@@ -285,8 +298,7 @@ METHOD Resource( nMode )
       REDEFINE GET ::oSayVp2 VAR cSayVp2;
          ID       232 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       /*
       Cajas y unidades---------------------------------------------------------
@@ -297,7 +309,8 @@ METHOD Resource( nMode )
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
+
       ::oGetCaja:bChange   := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
       ::oGetCaja:bValid    := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
 
@@ -306,7 +319,8 @@ METHOD Resource( nMode )
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
+
       ::oGetUnidades:bChange  := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
       ::oGetUnidades:bValid   := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
 
@@ -314,14 +328,15 @@ METHOD Resource( nMode )
          ID       140;
          WHEN     ( .f. ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oGetPrecio VAR ::oDbfVir:nImpOrd ;
          ID       150;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
+
       ::oGetPrecio:bChange := {|| ::lTotPrecio( ::oDbfVir ) }
       ::oGetPrecio:bChange := {|| ::lTotPrecio( ::oDbfVir ) }
 
@@ -329,7 +344,7 @@ METHOD Resource( nMode )
          ID       160;
          WHEN     ( .f. ) ;
          PICTURE  ::oParent:cPorDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       /*
       Pesos--------------------------------------------------------------------
@@ -340,7 +355,7 @@ METHOD Resource( nMode )
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  MasUnd() ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       ::oGetPes:bChange   := {|| ::lTotPeso( ::oDbfVir ) }
       ::oGetPes:bValid    := {|| ::lTotPeso( ::oDbfVir ) }
@@ -348,13 +363,13 @@ METHOD Resource( nMode )
       REDEFINE GET ::oGetUndPes VAR ::oDbfVir:cUndPes ;
          ID       171;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oGetTotPes VAR ::nGetTotPes ;
          ID       172;
          WHEN     ( .f. ) ;
          PICTURE  MasUnd() ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       /*
       Volumen------------------------------------------------------------------
@@ -365,7 +380,7 @@ METHOD Resource( nMode )
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  MasUnd() ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       ::oGetVol:bChange   := {|| ::lTotVolumen( ::oDbfVir ) }
       ::oGetVol:bValid    := {|| ::lTotVolumen( ::oDbfVir ) }
@@ -373,13 +388,13 @@ METHOD Resource( nMode )
       REDEFINE GET ::oGetUndVol VAR ::oDbfVir:cUndVol ;
          ID       181;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oGetTotVol VAR ::nGetTotVol ;
          ID       182;
          WHEN     ( .f. ) ;
          PICTURE  MasUnd() ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       /*
       Código de almacen--------------------------------------------------------
@@ -390,7 +405,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( oGetAlm, oSayAlm ) ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       oGetAlm:bChange   := {|| ::lStkAct() }
       oGetAlm:bValid    := {|| cAlmacen( oGetAlm, ::oParent:oAlm, oSayAlm ), ::lStkAct() }
@@ -398,7 +413,7 @@ METHOD Resource( nMode )
       REDEFINE GET oSayAlm VAR cSayAlm ;
          ID       191 ;
          WHEN     ( .f. ) ;
-			OF 		oDlg
+         OF       oFld:aDialogs[1]
 
       /*
       Stock Actual-------------------------------------------------------------
@@ -408,11 +423,21 @@ METHOD Resource( nMode )
          ID       200 ;
          WHEN     .f. ;
          PICTURE  MasUnd() ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
+
+      /*
+      Pestaña de datos---------------------------------------------------------
+      */
+
+      ::LoadPropiedadesArticulos( oFld:aDialogs[ 2 ], nMode )
+
+      /*
+      Botones globales a toda la caja de dailogo-------------------------------
+      */
 
       REDEFINE BUTTON oBtnSer ;
-         ID       552 ;
-			OF 		oDlg ;
+         ID       3 ;
+         OF       oDlg ;
          ACTION   ( nil )
 
       oBtnSer:bAction   := {|| ::oParent:oDetSeriesMaterial:Resource( nMode ) }
@@ -427,11 +452,6 @@ METHOD Resource( nMode )
          ID       IDCANCEL ;
          OF       oDlg ;
 			ACTION 	( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       9 ;
-			OF 		oDlg ;
-         ACTION   ( MsgInfo( "Ayuda no disponible", "Perdonen las molestias" ) )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F1, {|| MsgInfo( "Ayuda no disponible", "Perdonen las molestias" ) } )
