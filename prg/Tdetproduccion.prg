@@ -7,7 +7,7 @@
 
 //--------------------------------------------------------------------------//
 
-CLASS TDetProduccion FROM TDet
+CLASS TDetProduccion FROM TDetalleArticulos
 
    DATA  oMenu
 
@@ -133,12 +133,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
 
-      FIELD NAME "cGrpFam"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del grupo de familia"   HIDE        OF oDbf       
-      FIELD NAME "cCodFam"    TYPE "C" LEN 16  DEC 0 COMMENT "Código de la familia"          HIDE        OF oDbf       
-      FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del tipo"               HIDE        OF oDbf        
-      FIELD NAME "cCodCat"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de categoría"           HIDE        OF oDbf       
-      FIELD NAME "cCodTmp"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de la temporada"        HIDE        OF oDbf       
-      FIELD NAME "cCodFab"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del fabricante"         HIDE        OF oDbf       
+      ::CommunFields( oDbf )
 
       INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd,9 ) + cSufOrd"        NODELETED   OF oDbf
       INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt"                                     NODELETED   OF oDbf
@@ -209,12 +204,6 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    local cSayPr2
    local cSayVp2
    local oBtnSer
-   local oGrpFam
-   local oGetFam
-   local oGetTip
-   local oGetFab
-   local oGetTmp
-   local oGetCat
 
    ::cOldCodArt         := ::oDbfVir:cCodArt
 
@@ -462,71 +451,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       Pestaña de datos---------------------------------------------------------
       */
 
-      REDEFINE GET oGrpFam VAR ::oDbfVir:cGrpFam ;
-         ID       ( 100 ) ;
-         IDTEXT   ( 101 ) ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-      oGrpFam:bValid := {|| ::oParent:oGrupoFamilia:Existe( oGrpFam, oGrpFam:oHelpText ) }
-      oGrpFam:bHelp  := {|| ::oParent:oGrupoFamilia:Buscar( oGrpFam ) }
-      oGrpFam:lValid()
-
-      REDEFINE GET oGetFam VAR ::oDbfVir:cCodFam ;
-         ID       ( 110 ) ;
-         IDTEXT   ( 111 ) ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-      oGetFam:bValid := {|| oGetFam:oHelpText:cText( oRetFld( ::oDbfVir:cCodFam, ::oParent:oFam ) ) }
-      oGetFam:bHelp  := {|| BrwFamilia( oGetFam, oGetFam:oHelpText ) }
-      oGetFam:lValid()
-
-      REDEFINE GET oGetTip VAR ::oDbfVir:cCodTip ;
-         ID       ( 120 ) ;
-         IDTEXT   ( 121 ) ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-      oGetTip:bValid := {|| ::oParent:oTipoArticulo:Existe( oGetTip, oGetTip:oHelpText ) }
-      oGetTip:bHelp  := {|| ::oParent:oTipoArticulo:Buscar( oGetTip ) }
-      oGetTip:lValid()
-
-      REDEFINE GET oGetCat VAR ::oDbfVir:cCodCat ;
-         ID       ( 130 ) ;
-         IDTEXT   ( 131 ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-      oGetCat:bValid := {|| oGetCat:oHelpText:cText( oRetFld( ::oDbfVir:cCodCat, ::oParent:oCategoria ) ) }
-      oGetCat:bHelp  := {|| BrwCategoria( oGetCat, oGetCat:oHelpText ) }
-      oGetCat:lValid()
-
-      REDEFINE GET oGetTmp VAR ::oDbfVir:cCodTmp ;
-         ID       ( 140 ) ;
-         IDTEXT   ( 141 ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-      oGetTmp:bValid := {|| oGetTmp:oHelpText:cText( oRetFld( ::oDbfVir:cCodTmp, ::oParent:oTemporada ) ) }
-      oGetTmp:bHelp  := {|| BrwTemporada( oGetTmp,oGetTmp:oHelpText ) }
-      oGetTmp:lValid()
-
-      REDEFINE GET oGetFab VAR ::oDbfVir:cCodFab ;
-         ID       ( 150 ) ;
-         IDTEXT   ( 151 ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-      oGetFab:bValid := {|| ::oParent:oFabricante:Existe( oGetFab, oGetFab:oHelpText ) }
-      oGetFab:bHelp  := {|| ::oParent:oFabricante:Buscar( oGetFab ) }
-      oGetFab:lValid()
+      ::LoadPropiedadesArticulos( oFld:aDialogs[ 2 ], nMode )
 
       /*
       Botones------------------------------------------------------------------
@@ -692,12 +617,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
                ::oLote:Hide()
             end if
 
-            ::oDbfVir:cCodFam    := ::oParent:oArt:Familia
-            ::oDbfVir:cCodTip    := ::oParent:oArt:cCdoTip
-            ::oDbfVir:cCodCat    := ::oParent:oArt:Familia
-            ::oDbfVir:cCodTmp    := ::oParent:oArt:Familia
-            ::oDbfVir:cCodFab    := ::oParent:oArt:Familia
-            
+            ::LoadCommunFields()
+         
          end if
 
          ::lTotUnidades( ::oDbfVir )
@@ -705,8 +626,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
          ::lTotPeso( ::oDbfVir )
          ::lTotVolumen( ::oDbfVir )
 
-         ::oDbfVir:cCodPr1 := ::oParent:oArt:cCodPrp1
-         ::oDbfVir:cCodPr2 := ::oParent:oArt:cCodPrp2
+         ::oDbfVir:cCodPr1       := ::oParent:oArt:cCodPrp1
+         ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
 
          if !Empty( ::oDbfVir:cCodPr1 )
             ::oSayPr1:Show()
@@ -1227,3 +1148,4 @@ METHOD Resource( nMode ) CLASS TDetSeriesProduccion
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
+

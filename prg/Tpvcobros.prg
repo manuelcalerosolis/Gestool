@@ -723,7 +723,6 @@ METHOD CargaFormasdePago CLASS TpvCobros
       ::oSender:oFormaPago:OrdSetFocus( "nPosTpv" )
 
       ::oSender:oFormaPago:GoTop()
-
       while !::oSender:oFormaPago:eof()
 
          aAdd( ::aFormasdePago, { "Codigo" => ::oSender:oFormaPago:cCodPago,;

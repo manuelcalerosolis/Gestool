@@ -380,7 +380,7 @@ FUNCTION cGruFam( cCodFam, oDbfFam )
    local cCodGrf  := ""
 
    if oDbfFam:Seek( cCodFam )
-      cCodGrf     := oDbfFam:cCodGrP
+      cCodGrf     := oDbfFam:cCodGrp
    end if
 
 RETURN ( cCodGrf )
