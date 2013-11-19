@@ -3827,9 +3827,9 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
          cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
    
          if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
-            if ( dbfPedCliT )->lEstado .and. dbLock( dbfPedCliT )
+            if ( dbfPedCliT )->nEstado != 3 .and. dbLock( dbfPedCliT )
                ( dbfPedCliT )->cNumAlb    := ""
-               ( dbfPedCliT )->lEstado    := .f.
+               ( dbfPedCliT )->nEstado    := 1
                ( dbfPedCliT )->( dbUnLock() )
             end if
          end if 
