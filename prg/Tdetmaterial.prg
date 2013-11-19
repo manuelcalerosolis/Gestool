@@ -592,6 +592,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
             ::oGetVol:cText( ::oParent:oArt:nVolumen )
             ::oGetUndVol:cText( ::oParent:oArt:cVolumen )
 
+            ::LoadCommunFields()
+
          end if
 
          ::lTotUnidades( ::oDbfVir )

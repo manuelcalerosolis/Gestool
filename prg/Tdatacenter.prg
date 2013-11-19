@@ -116,6 +116,9 @@ CLASS TDataCenter
 
    METHOD CreateTemporalTable( oTable )
 
+   METHOD CreateAllLocksTablesUsers()
+   METHOD GetAllLocksTablesUsers()
+
    METHOD lAdministratorTask()
    METHOD StartAdministratorTask()
 
@@ -203,39 +206,6 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )   
-
-/*      
-      local lOpen
-      local cSqlStatement
-
-      dbf                     := cCheckArea( "FACCLIT" )
-
-      if lAIS() 
-
-         cSqlStatement        := "SELECT * FROM " + ( cPatEmp() + "FacCliT" ) 
-
-         if !oUser():lAdministrador()
-            
-            cSqlStatement     += " WHERE cSufFac = '" + oUser():cDelegacion() + "' AND cCodCaj = '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cSqlStatement  += " AND cCodUsr = '" + oUser():cCodigo() + "'"
-            end if 
-
-         end if 
-
-         lOpen                := ADSRunSQL( @dbf, cSqlStatement )
-
-      else
-
-         USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( @dbf ) 
-         SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
-
-         lOpen                := !neterr()
-
-      end if 
-
-      Return ( lOpen )
-*/
    
    ENDMETHOD
 
@@ -857,6 +827,8 @@ METHOD StartAdministratorTask()
 
       ::CreateColumnLogTable()
 
+      ::CreateAllLocksTablesUsers()
+
       ::oMtrDiccionario:Set( 3 )
 
       /*
@@ -1411,6 +1383,106 @@ METHOD CreateColumnTriggerDelete( oTable, cTrigger )
    ErrorBlock( oBlock )
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreateAllLocksTablesUsers()
+
+   local lSql
+   local cSql  
+   local nError
+   local cErrorAds
+
+   cSql        := "CREATE PROCEDURE mgGetAllLocksAllTablesAllUsers ( "     + CRLF 
+   cSql        += "     TableName CICHAR ( 255 ) OUTPUT, "                 + CRLF 
+   cSql        += "     RecNumber INTEGER OUTPUT, "                        + CRLF
+   cSql        += "     UserName CICHAR ( 50 ) OUTPUT, "                   + CRLF 
+   cSql        += "     IPAddress CICHAR ( 30 ) OUTPUT, "                  + CRLF 
+   cSql        += "     DictionaryUser CICHAR ( 50 ) OUTPUT ) "            + CRLF 
+   cSql        += "     BEGIN "                                            + CRLF
+   cSql        += "       DECLARE cTbls CURSOR AS EXECUTE PROCEDURE sp_mgGetAllTables(); " + CRLF 
+   cSql        += "       DECLARE cLocks CURSOR; "                         + CRLF
+   cSql        += "       DECLARE cUser CURSOR;  "                         + CRLF
+   cSql        += " "                                                      + CRLF 
+   cSql        += "          OPEN cTbls; "                                 + CRLF 
+   cSql        += " "                                                      + CRLF 
+   cSql        += "WHILE FETCH cTbls DO "                                  + CRLF
+   cSql        += "   OPEN cLocks AS EXECUTE PROCEDURE sp_mgGetAllLocks(cTbls.TableName); " + CRLF
+   cSql        += "   WHILE FETCH cLocks DO "                              + CRLF 
+   cSql        += "      OPEN cUser as EXECUTE PROCEDURE sp_mgGetLockOwner(cTbls.TableName, cLocks.LockedRecNo); " + CRLF 
+   cSql        += "      WHILE FETCH cUser DO "                            + CRLF 
+   cSql        += "         INSERT INTO __output VALUES (cTbls.TableName, cLocks.LockedRecNo, cUser.UserName, cUser.Address, cUser.DictionaryUser); " + CRLF
+   cSql        += "      END WHILE; "                                      + CRLF 
+   cSql        += "      CLOSE cUser; "                                    + CRLF 
+   cSql        += "   END WHILE; "                                         + CRLF 
+   cSql        += "   CLOSE cLocks; "                                      + CRLF 
+   cSql        += "END WHILE; "                                            + CRLF 
+   cSql        += "CLOSE cTbls; "                                          + CRLF 
+   cSql        += "END; "                                                  + CRLF
+  
+   if ADSCreateSQLStatement( "Locks", 2 )
+
+      lSql        := ADSExecuteSQLDirect( cSql )
+      if !lSql
+
+         nError   := AdsGetLastError( @cErrorAds )
+         msgStop( cErrorAds + CRLF + cSql, 'ERROR CREATE SQL en ADSExecuteSQLDirect' )
+
+         Return ( Self )
+
+      endif
+
+   else
+
+      nError      := AdsGetLastError( @cErrorAds )
+      msgStop( cErrorAds + CRLF + cSql, 'ERROR CREATE SQL en ADSCreateSQLStatement' )
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetAllLocksTablesUsers()
+
+   local lOk
+   local cStm
+   local nError
+   local cErrorAds
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm           := "EXECUTE PROCEDURE mgGetAllLocksAllTablesAllUsers();"
+
+   /*
+   Creamos la snetencia--------------------------------------------------------
+   */
+
+   if ADSCreateSQLStatement( "AllLocks", 3 )
+
+      lOk         := ADSExecuteSQLDirect( cStm )
+      if !lOk
+         nError   := AdsGetLastError( @cErrorAds )
+         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
+      endif
+
+   else
+
+      nError      := AdsGetLastError( @cErrorAds )
+      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
+
+   end if
+
+   AdsCacheOpenCursors( 0 )
+   AdsClrCallBack()
+
+   if Select( "AllLocks" ) > 0
+      ( "AllLocks" )->( dbCloseArea() )
+   endif
+
+RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
 

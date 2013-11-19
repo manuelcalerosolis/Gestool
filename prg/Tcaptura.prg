@@ -417,7 +417,7 @@ Method CreateColumns( cCodCaptura, oBrw )
                :bEditValue          := NameToField( ::oCapCampos:oDbf:cNombre )
 
                if ( ::oCapCampos:oDbf:lBitmap )
-                  :SetCheck( { "Star_Red_16", "Nil16" } )
+                  :SetCheck( { "Star_Blue_16", "Nil16" } )
                end if
 
                if ::oCapCampos:oDbf:lAlign

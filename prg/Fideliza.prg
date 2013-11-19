@@ -281,8 +281,6 @@ METHOD Resource( nMode )
    local oGetHor
    local oBmpGeneral
 
-   ::LoadFamilia()
-
    DEFINE DIALOG oDlg RESOURCE "Fideliza" TITLE LblTitle( nMode ) + "programa de fidelización"
 
       REDEFINE BITMAP oBmpGeneral ;
@@ -514,6 +512,8 @@ METHOD InitResource()
    ::oImageList:AddMasked( TBitmap():Define( "Sun_and_cloud_16" ), Rgb( 255, 0, 255 ) )
 
    ::oTreeRango:SetImagelist( ::oImageList )
+
+   ::LoadFamilia()
 
    ::ChkChanged()
 

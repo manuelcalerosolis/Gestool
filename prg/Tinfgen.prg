@@ -5170,7 +5170,7 @@ METHOD CreateFilter( aTField, oDbf, lMultyExpresion )
 
    DEFAULT lMultyExpresion       := .f.
 
-   ::oFilter                     := TFilterCreator():New() 
+   ::oFilter                     := TFilterCreator():Init() 
    
    do case
       case !Empty( aTField )

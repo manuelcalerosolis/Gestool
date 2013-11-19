@@ -23,18 +23,17 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD lResource( cFld )
 
    METHOD Create()
-   METHOD lGenerate()
    METHOD lValidRegister()
 
    METHOD OpenFiles()
    METHOD CloseFiles()
 
    METHOD DataReport()
-   METHOD AddVariable()
 
    METHOD StartDialog()
 
    METHOD BuildTree()
+   METHOD BuildReportCorrespondences()
 
    METHOD AddSATClientes()
    METHOD AddPresupuestoClientes()
@@ -53,11 +52,13 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
 
-   METHOD cIdeDocumento()     INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+   METHOD cIdeDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+            
+   METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
 
-   METHOD StockArticulo()     INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
+   METHOD aStockArticulo()                INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
-   METHOD aStockArticulo()    INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
+   METHOD SetUnidadesNegativo( lValue )   INLINE ( ::lUnidadesNegativo := lValue )
 
 END CLASS
 
@@ -482,218 +483,102 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD BuildReportCorrespondences()
    
-   ::hReport   := { "Listado" =>                   { "Generate" => { {|| ::AddArticulo() } } },;
-                  { "SAT de clientes" =>           { "Generate" => { {|| ::AddSATClientes() } } },;
-                  { "Presupuestos de clientes" =>  { "Generate" => { {|| ::AddPresupuestoClientes() }}}
-
-         
-
-      case ::cReportType == "Pedidos de clientes"
-
-         ::AddPedidoClientes()
-
-      case ::cReportType == "Albaranes de clientes"
-
-         ::AddAlbaranCliente()
-
-      case ::cReportType == "Facturas de clientes"
-
-         ::AddFacturaCliente()
-
-         ::AddFacturaRectificativa()
-
-      case ::cReportType == "Rectificativas de clientes" 
-
-         ::AddFacturaRectificativa( .t. )
-
-      case ::cReportType == "Tickets de clientes"
-
-         ::AddTicket( .t. )
-
-      case ::cReportType == "Ventas"
-
-         ::AddAlbaranCliente( .t. )
-
-         ::AddFacturaCliente()
-
-         ::AddFacturaRectificativa()
-
-         ::AddTicket()
-
-      case ::cReportType == "Partes de producción"
-
-         ::AddParteProduccion()
-
-      case ::cReportType == "Pedidos de proveedores"
-
-         ::AddPedidoProveedor()
-
-      case ::cReportType == "Albaranes de proveedores"
-
-         ::AddAlbaranProveedor()
-
-      case ::cReportType == "Facturas de proveedores"
-
-         ::AddFacturaProveedor()
-
-      case ::cReportType == "Rectificativas de proveedores"
-
-         ::AddRectificativaProveedor()
-
-      case ::cReportType == "Compras"
-
-         ::AddAlbaranProveedor( .t. )
-
-         ::AddFacturaProveedor()
-
-         ::AddRectificativaProveedor()
-
-      case ::cReportType == "Compras y ventas"
-
-         ::lUnidadesNegativo           := .t.
-
-         ::AddAlbaranCliente( .t. )
-
-         ::AddFacturaCliente()
-
-         ::AddFacturaRectificativa()
-
-         ::AddTicket()
-
-         ::AddAlbaranProveedor( .t. )
-
-         ::AddFacturaProveedor()
-
-         ::AddRectificativaProveedor()
-
-         ::lUnidadesNegativo           := .f.
-
-      case ::cReportType == "Existencias"
-
-         ::AddArticulo()
-
-   end case
-*/
-
-METHOD lGenerate() CLASS TFastVentasArticulos
-
-   ::oDbf:Zap()
-
-   /*
-   Recorremos artículos--------------------------------------------------------
-   */
-
-   do case
-      case ::cReportType == "Listado"
-
-         ::AddArticulo()
-
-      case ::cReportType == "SAT de clientes"
-
-         ::AddSATClientes()
-
-      case ::cReportType == "Presupuestos de clientes"
-
-         ::AddPresupuestoClientes()
-
-      case ::cReportType == "Pedidos de clientes"
-
-         ::AddPedidoClientes()
-
-      case ::cReportType == "Albaranes de clientes"
-
-         ::AddAlbaranCliente()
-
-      case ::cReportType == "Facturas de clientes"
-
-         ::AddFacturaCliente()
-
-         ::AddFacturaRectificativa()
-
-      case ::cReportType == "Rectificativas de clientes" 
-
-         ::AddFacturaRectificativa( .t. )
-
-      case ::cReportType == "Tickets de clientes"
-
-         ::AddTicket( .t. )
-
-      case ::cReportType == "Ventas"
-
-         ::AddAlbaranCliente( .t. )
-
-         ::AddFacturaCliente()
-
-         ::AddFacturaRectificativa()
-
-         ::AddTicket()
-
-      case ::cReportType == "Partes de producción"
-
-         ::AddParteProduccion()
-
-      case ::cReportType == "Pedidos de proveedores"
-
-         ::AddPedidoProveedor()
-
-      case ::cReportType == "Albaranes de proveedores"
-
-         ::AddAlbaranProveedor()
-
-      case ::cReportType == "Facturas de proveedores"
-
-         ::AddFacturaProveedor()
-
-      case ::cReportType == "Rectificativas de proveedores"
-
-         ::AddRectificativaProveedor()
-
-      case ::cReportType == "Compras"
-
-         ::AddAlbaranProveedor( .t. )
-
-         ::AddFacturaProveedor()
-
-         ::AddRectificativaProveedor()
-
-      case ::cReportType == "Compras y ventas"
-
-         ::lUnidadesNegativo           := .t.
-
-         ::AddAlbaranCliente( .t. )
-
-         ::AddFacturaCliente()
-
-         ::AddFacturaRectificativa()
-
-         ::AddTicket()
-
-         ::AddAlbaranProveedor( .t. )
-
-         ::AddFacturaProveedor()
-
-         ::AddRectificativaProveedor()
-
-         ::lUnidadesNegativo           := .f.
-
-      case ::cReportType == "Existencias"
-
-         ::AddArticulo()
-
-   end case
-
-   ::nRemesaAgentes()
-
-   // Colocamos el filtro -----------------------------------------------------
-
-   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
-
-   ::oDbf:GoTop()
-
-RETURN ( ::oDbf:LastRec() > 0 )
+   ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::AddArticulo() } ,;
+                                                         "Variable" =>  {||   nil },;
+                                                         "Data" =>      {||   nil } },;
+                     "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasSATCliente() },;
+                                                         "Data" =>      {||   ::FastReportSATCliente() } },;
+                     "Presupuestos de clientes" =>    {  "Generate" =>  {||   ::AddPresupuestoClientes() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasPresupuestoCliente() },;
+                                                         "Data" =>      {||   ::FastReportPresupuestoCliente() } },;
+                     "Pedidos de clientes" =>         {  "Generate" =>  {||   ::AddPedidoClientes() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasPedidoCliente() },;
+                                                         "Data" =>      {||   ::FastReportPedidoCliente() } },;
+                     "Albaranes de clientes" =>       {  "Generate" =>  {||   ::AddAlbaranCliente() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasAlbaranCliente() },;
+                                                         "Data" =>      {||   ::FastReportAlbaranCliente() } },;
+                     "Facturas de clientes" =>        {  "Generate" =>  {||   ::AddFacturaCliente(),;
+                                                                              ::AddFacturaRectificativa() },;
+                                                         "Variable" =>  {||   ::AddVariableFacturaCliente() },;
+                                                         "Data" =>      {||   ::FastReportFacturaCliente(),;
+                                                                              ::FastReportFacturaRectificativa() } },;
+                     "Rectificativas de clientes" =>  {  "Generate" =>  {||   ::AddFacturaRectificativa( .t. ) },;
+                                                         "Variable" =>  {||   ::AddVariableLineasRectificativaCliente() },;
+                                                         "Data" =>      {||   ::FastReportFacturaRectificativa() } },;
+                     "Tickets de clientes" =>         {  "Generate" =>  {||   ::AddTicket( .t. ) },;
+                                                         "Variable" =>  {||   ::AddVariableLineasTicketCliente() },;
+                                                         "Data" =>      {||   ::FastReportTicket( .t. ) } },;
+                     "Ventas" =>                      {  "Generate" =>  {||   ::AddAlbaranCliente( .t. ),;
+                                                                              ::AddFacturaCliente(),;
+                                                                              ::AddFacturaRectificativa(),;
+                                                                              ::AddTicket() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
+                                                                              ::AddVariableLineasFacturaCliente(),;
+                                                                              ::AddVariableLineasRectificativaCliente(),;
+                                                                              ::AddVariableLineasTicketCliente() },;
+                                                         "Data" =>      {||   ::FastReportAlbaranCliente(),;
+                                                                              ::FastReportFacturaCliente(),;
+                                                                              ::FastReportFacturaRectificativa(),;
+                                                                              ::FastReportTicket( .t. ) } },;
+                     "Partes de producción" =>        {  "Generate" =>  {||   ::AddParteProduccion() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasParteProduccion() },;
+                                                         "Data" =>      {||   ::FastReportParteProduccion() } },;
+                     "Pedidos de proveedores" =>      {  "Generate" =>  {||   ::AddPedidoProveedor() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasPedidoProveedor() },;
+                                                         "Data" =>      {||   ::FastReportPedidoProveedor() } },;
+                     "Albaranes de proveedores" =>    {  "Generate" =>  {||   ::AddAlbaranProveedor() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasAlbaranProveedor() },;
+                                                         "Data" =>      {||   ::FastReportAlbaranProveedor() } },;
+                     "Facturas de proveedores" =>     {  "Generate" =>  {||   ::AddFacturaProveedor() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasFacturaProveedor(),;
+                                                                              ::AddVariableLineasRectificativaProveedor() },;
+                                                         "Data" =>      {||   ::FastReportFacturaProveedor() } },;
+                     "Rectificativas de proveedores"=>{  "Generate" =>  {||   ::AddRectificativaProveedor() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasRectificativaProveedor() },;
+                                                         "Data" =>      {||   ::FastReportRectificativaProveedor() } },;
+                     "Compras" =>                     {  "Generate" =>  {||   ::AddAlbaranProveedor( .t. ),;
+                                                                              ::AddFacturaProveedor(),;
+                                                                              ::AddRectificativaProveedor() },;
+                                                         "Variable" =>  {||   ::AddVariableLineasAlbaranProveedor(),;
+                                                                              ::AddVariableLineasFacturaProveedor(),;
+                                                                              ::AddVariableLineasRectificativaProveedor() },;
+                                                         "Data" =>      {||   ::FastReportPedidoProveedor(),;
+                                                                              ::FastReportAlbaranProveedor(),;
+                                                                              ::FastReportFacturaProveedor(),;
+                                                                              ::FastReportRectificativaProveedor() } },;
+                     "Compras y ventas" =>            {  "Generate" =>  {||   ::SetUnidadesNegativo( .t. ),;
+                                                                              ::AddAlbaranCliente( .t. ),;
+                                                                              ::AddFacturaCliente(),;
+                                                                              ::AddFacturaRectificativa(),;
+                                                                              ::AddTicket(),;
+                                                                              ::AddAlbaranProveedor( .t. ),;
+                                                                              ::AddFacturaProveedor(),;
+                                                                              ::AddRectificativaProveedor(),;
+                                                                              ::SetUnidadesNegativo( .f. ) },;
+                                                         "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
+                                                                              ::AddVariableFacturaCliente(),;
+                                                                              ::AddVariableLineasRectificativaCliente(),;
+                                                                              ::AddVariableLineasTicketCliente(),;
+                                                                              ::AddVariableLineasAlbaranProveedor(),;
+                                                                              ::AddVariableLineasFacturaProveedor(),;
+                                                                              ::AddVariableLineasRectificativaProveedor() },;
+                                                         "Data" =>      {||   ::FastReportAlbaranCliente(),;
+                                                                              ::FastReportFacturaCliente(),;
+                                                                              ::FastReportFacturaRectificativa(),;
+                                                                              ::FastReportTicket( .t. ),;
+                                                                              ::FastReportPedidoProveedor(),;
+                                                                              ::FastReportAlbaranProveedor(),;
+                                                                              ::FastReportFacturaProveedor(),;
+                                                                              ::FastReportRectificativaProveedor() } },;
+                     "Existencias" =>                 {  "Generate" =>  {||   ::AddArticulo() },;
+                                                         "Variable" =>  {||   nil },;
+                                                         "Data" =>      {||   nil } } }
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -892,199 +777,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
 
-   /*
-   Tablas en funcion del tipo de informe---------------------------------------
-   */
-
-   do case
-      case ::cReportType == "SAT de clientes"
-
-         ::FastReportSATCliente()
-
-      case ::cReportType == "Presupuestos de clientes"
-
-         ::FastReportPresupuestoCliente()
-
-      case ::cReportType == "Pedidos de clientes"
-      
-         ::FastReportPedidoCliente()
-
-      case ::cReportType == "Albaranes de clientes"
-      
-         ::FastReportAlbaranCliente()
-
-      case ::cReportType == "Facturas de clientes"
-      
-         ::FastReportFacturaCliente()
-         
-         ::FastReportFacturaRectificativa()
-
-      case ::cReportType == "Rectificativas de clientes"
-
-         ::FastReportFacturaRectificativa()
-
-      case ::cReportType == "Tickets de clientes"
-
-         ::FastReportTicket( .t. )
-
-      case ::cReportType == "Ventas"
-
-         ::FastReportAlbaranCliente()
-
-         ::FastReportFacturaCliente()
-
-         ::FastReportFacturaRectificativa()
-
-         ::FastReportTicket( .t. )
-
-      case ::cReportType == "Partes de producción"
-         
-         ::FastReportParteProduccion()
-
-      case ::cReportType == "Pedidos de proveedores"
-         
-         ::FastReportPedidoProveedor()
-
-      case ::cReportType == "Albaranes de proveedores"
-
-         ::FastReportAlbaranProveedor()
-
-      case ::cReportType == "Facturas de proveedores"
-
-         ::FastReportFacturaProveedor()
-
-      case ::cReportType == "Rectificativas de proveedores"
-
-         ::FastReportRectificativaProveedor()
-
-      case ::cReportType == "Compras"
-
-         ::FastReportPedidoProveedor()
-
-         ::FastReportAlbaranProveedor()
-
-         ::FastReportFacturaProveedor()
-
-         ::FastReportRectificativaProveedor()
-
-      case ::cReportType == "Compras y ventas"
-
-         ::FastReportAlbaranCliente()
-
-         ::FastReportFacturaCliente()
-
-         ::FastReportFacturaRectificativa()
-
-         ::FastReportTicket( .t. )
-
-         ::FastReportPedidoProveedor()
-
-         ::FastReportAlbaranProveedor()
-
-         ::FastReportFacturaProveedor()
-         
-         ::FastReportRectificativaProveedor()
-
-   end case
+   ::SetDataReport()
 
 Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddVariable() CLASS TFastVentasArticulos
-
-   /*
-   Tablas en funcion del tipo de informe---------------------------------------
-   */
-
-   do case
-      case ::cReportType == "SAT de clientes"
-
-         ::AddVariableLineasSATCliente()         
-
-      case ::cReportType == "Presupuestos de clientes"
-
-         ::AddVariableLineasPresupuestoCliente()         
-
-      case ::cReportType == "Pedidos de clientes"
-      
-         ::AddVariableLineasPedidoCliente()
-
-      case ::cReportType == "Albaranes de clientes"
-      
-         ::AddVariableLineasAlbaranCliente()
-
-      case ::cReportType == "Facturas de clientes"
-      
-         ::AddVariableFacturaCliente()
-
-      case ::cReportType == "Rectificativas de clientes"
-
-         ::AddVariableLineasRectificativaCliente()
-
-      case ::cReportType == "Tickets de clientes"
-
-         ::AddVariableLineasTicketCliente()
-
-      case ::cReportType == "Ventas"
-
-         ::AddVariableLineasAlbaranCliente()
-
-         ::AddVariableLineasFacturaCliente()
-         
-         ::AddVariableLineasRectificativaCliente()
-
-         ::AddVariableLineasTicketCliente()   
-
-      case ::cReportType == "Partes de producción"
-
-         ::AddVariableLineasParteProduccion()
-
-      case ::cReportType == "Pedidos de proveedores"
-
-         ::AddVariableLineasPedidoProveedor()
-
-      case ::cReportType == "Albaranes de proveedores"   
-
-         ::AddVariableLineasAlbaranProveedor()
-
-      case ::cReportType == "Facturas de proveedores"
-
-         ::AddVariableLineasFacturaProveedor()
-
-         ::AddVariableLineasRectificativaProveedor()
-
-      case ::cReportType == "Rectificativas de proveedores"
-
-         ::AddVariableLineasRectificativaProveedor()
-
-      case ::cReportType == "Compras"
-
-         ::AddVariableLineasAlbaranProveedor()
-
-         ::AddVariableLineasFacturaProveedor()
-
-         ::AddVariableLineasRectificativaProveedor()
-
-      case ::cReportType == "Compras y ventas"
-
-         ::AddVariableLineasAlbaranCliente()
-
-         ::AddVariableFacturaCliente()
-
-         ::AddVariableLineasRectificativaCliente()
-
-         ::AddVariableLineasTicketCliente() 
-
-         ::AddVariableLineasAlbaranProveedor()
-
-         ::AddVariableLineasFacturaProveedor()
-
-         ::AddVariableLineasRectificativaProveedor()
-
-   end case
-
-Return ( Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 
@@ -1351,15 +1046,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -1499,15 +1186,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -1656,15 +1335,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -1807,15 +1478,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oFacCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -1955,15 +1618,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -2173,15 +1828,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
             end if
 
@@ -2255,11 +1902,8 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       AÃ±adimos un nuevo registro
       */
 
-      if ::lValidRegister()
-         ::oDbf:Insert()
+      if ::InsertIfValid()
          ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta )
-      else
-         ::oDbf:Cancel()
       end if
 
       ::oDbfArt:Skip()
@@ -2376,15 +2020,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:cHorDoc    := SubStr( ::oPedPrvT:cTimChg, 1, 2 )
                      ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 4, 2 )
 
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -2464,12 +2100,12 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cCodCate   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
                      ::oDbf:cCodTemp   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                      ::oDbf:cCodFab    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                     ::oDbf:cCodGrp    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                      ::oDbf:cCodCli    := ::oPedPrvT:cCodPrv
                      ::oDbf:cNomCli    := ::oPedPrvT:cNomPrv
                      ::oDbf:cPobCli    := ::oPedPrvT:cPobPrv
                      ::oDbf:cPrvCli    := ::oPedPrvT:cProPrv
                      ::oDbf:cPosCli    := ::oPedPrvT:cPosPrv
-                     ::oDbf:cCodGrp    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                      ::oDbf:cCodAlm    := ::oPedPrvL:cAlmLin
                      ::oDbf:cCodPago   := ::oPedPrvT:cCodPgo
                      ::oDbf:cCodRut    := ""
@@ -2512,15 +2148,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cHorDoc    := SubStr( ::oPedPrvT:cTimChg, 1, 2 )
                      ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 4, 2 )
 
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -2659,16 +2287,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oAlbPrvT:cTimChg, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
-
+                  ::InsertIfValid()
+                  
                end if
 
                ::oAlbPrvL:Skip()
@@ -2799,15 +2419,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oFacPrvT:cTimChg, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oFacPrvT:cTimChg, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -2938,15 +2550,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oRctPrvT:cTimChg, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oRctPrvT:cTimChg, 4, 2 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+                  ::InsertIfValid()
 
                end if
 
@@ -2979,7 +2583,9 @@ METHOD StartDialog() CLASS TFastVentasArticulos
 
    ::CreateTreeImageList()
 
-   ::BuildTree( )
+   ::BuildTree()
+
+   ::BuildReportCorrespondences()
 
 RETURN ( Self )
 

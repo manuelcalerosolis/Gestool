@@ -19,6 +19,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  nDias
 
+   DATA  hReport 
+
    DATA  nUnidadesTiempo   INIT 1
    DATA  oUnidadesTiempo
    DATA  cUnidadesTiempo   INIT "Semana(s)"
@@ -159,6 +161,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
 
    METHOD lGenerate()
+   
+   METHOD SetDataReport()
 
    METHOD GenReport( nOption )
 
@@ -887,13 +891,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD AddVariable()
-
-      Super:AddVariable()
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD AddVariable()
 
    //------------------------------------------------------------------------//
 
@@ -1004,6 +1002,22 @@ CLASS TFastReportInfGen FROM TNewInfGen
       end if
 
       Return ( Self )
+
+   ENDMETHOD
+
+//----------------------------------------------------------------------------//
+
+   INLINE METHOD InsertIfValid()
+
+      local lValidRegister := ::lValidRegister()
+
+      if lValidRegister
+         ::oDbf:Insert()
+      else
+         ::oDbf:Cancel()
+      end if
+
+      Return ( lValidRegister )
 
    ENDMETHOD
 
@@ -1657,53 +1671,52 @@ RETURN ( Self )
 
 METHOD lGenerate() CLASS TFastReportInfGen
 
+   local aGenerate
+
    ::oDbf:Zap()
 
-   ::oMtrInf:SetTotal( ::oDbfArt:LastRec() )
+   // Generamos el informe-----------------------------------------------------
 
-   ::oMtrInf:cText      := "Procesando artículos"
+   aGenerate         := hGet( ::hReport, ( ::cReportType ) )
+   if !Empty( aGenerate )
+      Eval( hGet( aGenerate, "Generate" ) )
+   end if 
 
-   /*
-   Calculo del numero de dias--------------------------------------------------
-   */
+   // Colocamos el filtro -----------------------------------------------------
 
-   ::nDias              := 0
+   ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
 
-   do case
-      case ::cUnidadesTiempo == "Dia(s)"
-         ::nDias        := ::nUnidadesTiempo
-      case ::cUnidadesTiempo == "Semana(s)"
-         ::nDias        := ::nUnidadesTiempo * 7
-      case ::cUnidadesTiempo == "Mes(es)"
-         ::nDias        := ::nUnidadesTiempo * 30
-      case ::cUnidadesTiempo == "Año(s)"
-         ::nDias        := ::nUnidadesTiempo * 365
-   end case
-
-   /*
-   Recorremos artículos--------------------------------------------------------
-   */
-
-   ::oDbfArt:GoTop()
-   while !::oDbfArt:Eof() .and. !::lBreak
-
-      if ::lValidRegister()
-
-         ::oDbf:Append()
-         ::oDbf:cCodArt := ::oDbfArt:Codigo
-         ::oDbf:Save()
-
-      end if
-
-      ::oDbfArt:Skip()
-
-      ::oMtrInf:AutoInc()
-
-   end while
-
-   ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
+   ::oDbf:GoTop()
 
 RETURN ( ::oDbf:LastRec() > 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetDataReport() CLASS TFastReportInfGen
+
+   local aData
+
+   aData       := hGet( ::hReport, ( ::cReportType ) )
+   if !Empty( aData )
+      Eval( hGet( aData, "Data" ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariable() CLASS TFastReportInfGen
+
+   local aVariable
+
+   Super:AddVariable()
+
+   aVariable   := hGet( ::hReport, ( ::cReportType ) )
+   if !Empty( aVariable )
+      Eval( hGet( aVariable, "Variable" ) )
+   end if 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2419,7 +2432,6 @@ METHOD LoadPersonalizado() CLASS TFastReportInfGen
 
    local oItem
 
-
    if !Empty( ::oTreePersonalizados )
 
       ::oTreePersonalizados:DeleteAll()
@@ -2431,6 +2443,7 @@ METHOD LoadPersonalizado() CLASS TFastReportInfGen
          while ( Rtrim( ::oDbfPersonalizado:cClsInf ) == ::ClassName() ) .and. !( ::oDbfPersonalizado:Eof() )
 
             oItem    := ::oTreePersonalizados:GetText( Alltrim( ::oDbfPersonalizado:cTypInf ) )
+
             if IsObject( oItem )
                oItem:Add( Alltrim( ::oDbfPersonalizado:cNomInf ), oItem:nImage, Alltrim( ::oDbfPersonalizado:cTypInf ) )
                oItem:Expand()
