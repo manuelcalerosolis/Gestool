@@ -1383,6 +1383,20 @@ return ( aResources )
 
 //---------------------------------------------------------------------------//
 
+function aMiddleResourceFormaPago()
+
+   local aResources := {}
+
+   aAdd( aResources, "Money2_24" )
+   aAdd( aResources, "Creditcards_24" )
+   aAdd( aResources, "MoneyBag_24" )
+   aAdd( aResources, "Percent_24" )
+   aAdd( aResources, "ShoppingBasket_24" )
+
+return ( aResources )
+
+//---------------------------------------------------------------------------//
+
 function aBigResourceFormaPago()
 
    local aResources := {}

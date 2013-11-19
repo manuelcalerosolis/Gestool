@@ -69,6 +69,8 @@ Floppy_disk_blue_32_alpha BITMAP "..\\bmp\\Floppy_disk_blue_32_alpha.bmp"
 Door2_open_32_alpha BITMAP "..\\bmp\\Door2_open_32_alpha.bmp"
 cashier_32_alpha BITMAP "..\\bmp\\cashier_32_alpha.bmp"
 Replace2_48_alpha BITMAP "..\\bmp\\Replace2_48_alpha.bmp"
-
-
-
+Money2_24 BITMAP "..\\bmp\\Money2_24.bmp"
+Creditcards_24 BITMAP "..\\bmp\\Creditcards_24.bmp"
+MoneyBag_24 BITMAP "..\\bmp\\MoneyBag_24.bmp"
+Percent_24 BITMAP "..\\bmp\\Percent_24.bmp"
+ShoppingBasket_24 BITMAP "..\\bmp\\ShoppingBasket_24.bmp"
