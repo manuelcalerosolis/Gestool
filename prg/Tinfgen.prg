@@ -1361,8 +1361,8 @@ METHOD Print( nDevice ) CLASS TInfGen
       aAdd( aFnt, TFont():New( Rtrim( ::acFont[ n ] ), 0, Val( ::acSizes[ n ] ),,( "Negrita" $ ::acEstilo[ n ] ),,,,( "Cursiva" $ ::acEstilo[ n ] ),,,,,,, ) )
    next
 
-   if !Empty( ::oFilter ) .and. !Empty( ::oFilter:cTxtFilter )
-      aAdd( ::aHeader, {|| Padr( "Filtro", 13 ) + ": " + cValToChar( ::oFilter:cTxtFilter ) } )
+   if !Empty( ::oFilter ) .and. !Empty( ::oFilter:cExpresionFilter )
+      aAdd( ::aHeader, {|| Padr( "Filtro", 13 ) + ": " + cValToChar( ::oFilter:cExpresionFilter ) } )
    end if
 
    if !Empty( ::cFooter )

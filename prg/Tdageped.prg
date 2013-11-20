@@ -186,8 +186,8 @@ METHOD lGenerate() CLASS TdAgePed
 
    ::oPedCliT:OrdSetFocus( "dFecPed" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if

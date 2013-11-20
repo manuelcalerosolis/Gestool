@@ -369,8 +369,8 @@ METHOD lGenerate()
          cCondicionCabecera   += '.and. nEstado == 3'
    end case
 
-   if !Empty( ::oFilter:cExpFilter )
-      cCondicionCabecera      += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cCondicionCabecera      += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cCondicionCabecera ), , , , , , , , .t. )

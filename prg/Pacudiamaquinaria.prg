@@ -183,8 +183,8 @@ METHOD lGenerate() CLASS PAcuDiaMaquinaria
       cExpHead    += ' .and. cCodOpe >= "' + Rtrim( ::oGrupoOperacion:Cargo:Desde ) + '" .and. cCodOpe <= "' + Rtrim( ::oGrupoOperacion:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead    += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )

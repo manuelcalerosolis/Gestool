@@ -685,8 +685,8 @@ Method cExpresionFilter() CLASS TFastValoracionAlmacen
       cExpresion       += ' .and. Codigo >= "' + Rtrim( ::oGrupoArticulo:Cargo:Desde ) + '" .and. Codigo <= "' + Rtrim( ::oGrupoArticulo:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpresion       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpresion       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    /*if ( ::oGrupoArticulo:Cargo:Todos .or. ( ::oDbfArt:Codigo >= ::oGrupoArticulo:Cargo:Desde .and. ::oDbfArt:Codigo <= ::oGrupoArticulo:Cargo:Hasta ) )         .and.;

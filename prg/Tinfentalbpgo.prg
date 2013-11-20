@@ -139,8 +139,8 @@ METHOD lGenerate()
       cExpresion     += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpresion     += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpresion     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oAlbCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliP:cFile ), ::oAlbCliP:OrdKey(), ( cExpresion ), , , , , , , , .t. )

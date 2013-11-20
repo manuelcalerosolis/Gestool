@@ -42,6 +42,9 @@ CLASS TpvCobros
    DATA oTextoTotal
    DATA cTextoTotal
 
+   DATA oGetEntregado
+   DATA nGetEntregado      INIT 0
+
    DATA aFormasdePago
 
    DATA oBrwPago
@@ -91,15 +94,19 @@ CLASS TpvCobros
 
       if !::lClickMoneda
          ::sTotalesCobros:nCobrado  := 0
+         ::nGetEntregado            := 0
       end if
 
-      ::sTotalesCobros:nCobrado     += nImporte
+      //::sTotalesCobros:nCobrado     += nImporte
+      ::nGetEntregado               += nImporte
 
-      ::sTotalesCobros:Refresh()
+      ::oGetEntregado:Refresh()
+
+      //::sTotalesCobros:Refresh()
 
       ::lClickMoneda                := .t.
 
-      ::SetTextoTotal()
+      //::SetTextoTotal()
 
       RETURN ( Self )
 
@@ -537,14 +544,14 @@ Return ( AEval( ::aButtonsMoney, {|h| h[ "Object" ] := TButton():ReDefine( h[ "I
 
 METHOD RedefineGetEntrega() CLASS TpvCobros
 
-   REDEFINE GET ::sTotalesCobros:oCobrado ;
-      VAR      ::sTotalesCobros:nCobrado ;
+   REDEFINE GET ::oGetEntregado ;
+      VAR      ::nGetEntregado ;
       ID       150 ;
       PICTURE  ::oSender:cPictureTotal ;
       OF       ::oDlg
 
-   ::sTotalesCobros:oCobrado:bWhen  := {|| .t. }
-   ::sTotalesCobros:oCobrado:bValid := {|| ::ValidTotalesCobro() }
+   //::sTotalesCobros:oCobrado:bWhen  := {|| .t. }
+   //::sTotalesCobros:oCobrado:bValid := {|| ::ValidTotalesCobro() }
 
 Return ( Self )
 
@@ -681,30 +688,33 @@ METHOD SetTextoTotal() CLASS TpvCobros
    msginfo( ::sTotalesCobros:nAnticipo, "nAnticipo" )
    msginfo( ::sTotalesCobros:nCambio, "nCambio" )*/
 
+   ?::sTotalesCobros:nEntregado
+   ?::sTotalesCobros:nTotal
+
    do case
       case ::sTotalesCobros:nCobrado < ::sTotalesCobros:nTotal
 
          if !Empty( ::oTextoTotal )
-            ::oTextoTotal:SetText( "Cobrado: " + Str( ::sTotalesCobros:nCobrado ) )
+            ::oTextoTotal:SetText( "Pendiente: " + Str( ::sTotalesCobros:nCobrado ) )
          end if
 
-         ::cTextoTotal  := "Cobrado: " + Str( ::sTotalesCobros:nCobrado )
+         ::cTextoTotal  := "Pendiente: " + Str( ::sTotalesCobros:nCobrado )
 
       case ::sTotalesCobros:nCobrado == ::sTotalesCobros:nTotal
 
          if !Empty( ::oTextoTotal )
-            ::oTextoTotal:SetText( "Cobrado: " + Str( ::sTotalesCobros:nCobrado ) )
+            ::oTextoTotal:SetText( "Importe exaxto" )
          end if
 
-         ::cTextoTotal  := "Cobrado: " + Str( ::sTotalesCobros:nCobrado )
+         ::cTextoTotal  := "Importe exaxto"
 
       case ::sTotalesCobros:nCobrado > ::sTotalesCobros:nTotal      
 
          if !Empty( ::oTextoTotal )
-            ::oTextoTotal:SetText( "Cobrado: " + Str( ::sTotalesCobros:nCobrado ) )
+            ::oTextoTotal:SetText( "Cambio: " + Str( ::sTotalesCobros:nCobrado ) )
          end if
 
-         ::cTextoTotal  := "Cobrado: " + Str( ::sTotalesCobros:nCobrado )
+         ::cTextoTotal  := "Cambio: " + Str( ::sTotalesCobros:nCobrado )
 
    end case   
 

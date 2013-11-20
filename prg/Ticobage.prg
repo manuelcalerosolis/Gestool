@@ -174,8 +174,8 @@ METHOD lGenerate()
       cExpHead       += '.and. cCodAge >= "' + Rtrim( ::cAgeOrg ) + '" .and. cCodAge <= "' + Rtrim( ::cAgeDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ::oFilter:cExpresionFilter
    end if
 
    ::oCobAgeT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oCobAgeT:cFile ), ::oCobAgeT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

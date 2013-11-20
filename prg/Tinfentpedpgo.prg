@@ -168,8 +168,8 @@ METHOD lGenerate()
       cExpresion     += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpresion     += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpresion     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oPedCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliP:cFile ), ::oPedCliP:OrdKey(), ( cExpresion ), , , , , , , , .t. )

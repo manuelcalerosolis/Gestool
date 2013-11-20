@@ -1218,7 +1218,7 @@ FUNCTION SelLabel( oFlt, oBtnFilter )
 
    oFlt:Resource()
 
-   if oFlt:cExpFilter != nil .and. oBtnFilter != nil
+   if oFlt:cExpresionFilter != nil .and. oBtnFilter != nil
       SetWindowText( oBtnFilter:hWnd, "Filtro activo" )
    else
       SetWindowText( oBtnFilter:hWnd, "Filtrar" )

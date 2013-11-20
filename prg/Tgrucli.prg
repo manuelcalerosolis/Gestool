@@ -124,8 +124,8 @@ METHOD lGenerate()
       cExpCli      := '.t.'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpCli      += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpCli      += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oDbfCli:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfCli:cFile ), ::oDbfCli:OrdKey(), ( cExpCli ), , , , , , , , .t. )

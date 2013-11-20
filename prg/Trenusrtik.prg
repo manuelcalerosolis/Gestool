@@ -157,8 +157,8 @@ METHOD lGenerate() CLASS TRenUsrTik
       cExpHead    += ' .and. cCcjTik >= "' + Rtrim( ::cUsrOrg ) + '" .and. cCcjTik <= "' + Rtrim( ::cUsrDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

@@ -199,8 +199,8 @@ METHOD lGenerate()
       cExpHead    += '.and. cCodCol >= "' + Rtrim( ::oGrupoColaborador:Cargo:Desde ) + '" .and. cCodCol <= "' + Rtrim( ::oGrupoColaborador:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead    += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oExpediente:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oExpediente:oDbf:cFile ), ::oExpediente:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )

@@ -401,13 +401,13 @@ Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function CreateUserFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha )
+Function CreateUserFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha )
 
-RETURN ( CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha, .f., .f. ) )
+RETURN ( CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha, .f., .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha, lNotUser, lNotFecha )
+Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha, lNotUser, lNotFecha )
 
    local nEvery
    local bEvery
@@ -452,22 +452,22 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
       cOrdKey              := ( cAlias )->( OrdKey() )
 
       if lInclude
-         cExpFilter        := "'" + cExpFilter + "' $ " + cOrdKey + " .and. !Deleted()"
+         cExpresionFilter        := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
       end if
 
       if Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
-         cExpFilter        += if( !Empty( cExpFilter ), " .and. ", "" ) + cFiltroUsuario
+         cExpresionFilter        += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
       end if
 
       if Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
-         cExpFilter        += if( !Empty( cExpFilter ), " .and. ", "" ) + cFiltroFecha
+         cExpresionFilter        += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
       end if
 
-      if !Empty( cExpFilter )
+      if !Empty( cExpresionFilter )
 
-         bExpFilter        := bCheck2Block( cExpFilter )
+         bExpFilter        := bCheck2Block( cExpresionFilter )
 
-         ( cAlias )->( dbSetFilter( bExpFilter, cExpFilter ) )
+         ( cAlias )->( dbSetFilter( bExpFilter, cExpresionFilter ) )
          ( cAlias )->( dbGoTop() )
 
       else
@@ -493,28 +493,28 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
       end if
 
       if lInclude
-         cExpFilter        := "'" + cExpFilter + "' $ " + cOrdKey + ".and. " + cCondAnterior
+         cExpresionFilter        := "'" + cExpresionFilter + "' $ " + cOrdKey + ".and. " + cCondAnterior
       end if
 
       if !lNotUser .and. Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
-         if !Empty( cExpFilter )
-            cExpFilter     += " .and. " + cFiltroUsuario
+         if !Empty( cExpresionFilter )
+            cExpresionFilter     += " .and. " + cFiltroUsuario
          else
-            cExpFilter     := cFiltroUsuario
+            cExpresionFilter     := cFiltroUsuario
          end if
       end if
 
       if !lNotFecha .and. Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
-         if !Empty( cExpFilter )
-            cExpFilter     += " .and. " + cFiltroFecha
+         if !Empty( cExpresionFilter )
+            cExpresionFilter     += " .and. " + cFiltroFecha
          else
-            cExpFilter     := cFiltroFecha
+            cExpresionFilter     := cFiltroFecha
          end if
       end if
 
       Select( cAlias )
 
-      bExpFilter           := bCheck2Block( cExpFilter )
+      bExpFilter           := bCheck2Block( cExpresionFilter )
 /*
       msgInfo( !Empty( bExpFilter ), "!Empty( bExpFilter )" )
       msgInfo( valtoprg( bExpFilter ), "( bExpFilter )" )
@@ -524,7 +524,7 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
       msgInfo( valtoprg( cBagAnterior ), "( cBagAnterior )" )*/
 
       if !Empty( bExpFilter ) .and. !Empty( cOldIndexName ) .and. !Empty( cBagAnterior )
-         ( cAlias )->( OrdCondSet( cExpFilter, bExpFilter ) )
+         ( cAlias )->( OrdCondSet( cExpresionFilter, bExpFilter ) )
          ( cAlias )->( OrdCreate( cBagAnterior, cNamAnterior, cOrdKey, bOrdKey ) )
          ( cAlias )->( OrdSetFocus( cNamAnterior, cBagAnterior ) )
          ( cAlias )->( dbGoTop() )

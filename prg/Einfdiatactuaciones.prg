@@ -180,8 +180,8 @@ METHOD lGenerate()
       cExpHead       += ' .and. cCodAct >= "' + Rtrim( ::cTipActOrg ) + '" .and. cCodAct <= "' + Rtrim( ::cTipActDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oActuacion:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oActuacion:cFile ), ::oActuacion:OrdKey(), ( cExpHead ), , , , , , , , .t. )

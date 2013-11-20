@@ -55,11 +55,11 @@ CLASS TNotas FROM TMant
 
    Method ChangeCodigoInteresado()
 
-   Method SetFilter( cExpFilter )
+   Method SetFilter( cExpresionFilter )
 
-   Method SetFilterFecha( cExpFilter )
+   Method SetFilterFecha( cExpresionFilter )
 
-   Method SetFilterEstado( cExpFilter )
+   Method SetFilterEstado( cExpresionFilter )
 
    Method ZoomDocument()
 
