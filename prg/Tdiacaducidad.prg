@@ -231,8 +231,8 @@ METHOD lGenerate() CLASS TDiaCaducidad
       cExpArt     += ' .and. cCodCate >= "' + ::oGrupoCategoria:Cargo:Desde + '" .and. cCodCate <= "' + ::oGrupoCategoria:Cargo:Hasta + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpArt     += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpArt     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .t. )

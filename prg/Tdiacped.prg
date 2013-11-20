@@ -184,8 +184,8 @@ METHOD lGenerate() CLASS TDiaCPed
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    //Creamos el índice

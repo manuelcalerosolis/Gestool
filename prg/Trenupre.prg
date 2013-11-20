@@ -184,8 +184,8 @@ METHOD lGenerate() CLASS TRenUPre
       cExpHead       += ' .and. cCodRut >= "' + Rtrim( ::cRutOrg ) + '" .and. cCodRut <= "' + Rtrim( ::cRutDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

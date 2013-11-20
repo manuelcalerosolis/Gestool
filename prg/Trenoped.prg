@@ -180,8 +180,8 @@ METHOD lGenerate() CLASS TRenOPed
       cExpHead       += ' .and. cCodPgo >= "' + Rtrim( ::cFpgDes ) + '" .and. cCodPgo <= "' + Rtrim( ::cFpgHas ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

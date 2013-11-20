@@ -176,8 +176,8 @@ METHOD lGenerate()
          cExpHead    := '.t.'
    end case
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -241,8 +241,8 @@ METHOD lGenerate()
    ::oFacRecT:OrdSetFocus( "dFecFac" )
    ::oFacRecL:OrdSetFocus( "nNumFac" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if

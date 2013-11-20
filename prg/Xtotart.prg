@@ -351,8 +351,8 @@ METHOD lGenerate()
 
    ::oDbfArt:OrdSetFocus( "Codigo" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpArt        := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpArt        := ::oFilter:cExpresionFilter
    else
       cExpArt        := '.t.'
    end if

@@ -194,8 +194,8 @@ METHOD lGenerate()
       cExpArt     += ' .and. ( pVenta1 != 0 .or. pVenta2 != 0 .or. pVenta3 != 0 .or. pVenta4 != 0 .or. pVenta5 != 0 .or. pVenta6 != 0 )'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpArt     += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpArt     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .t. )

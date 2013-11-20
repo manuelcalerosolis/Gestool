@@ -212,8 +212,8 @@ METHOD lGenerate() CLASS TDiaXAlb
       cExpHead       += ' .and. dFecEnv >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecEnv <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

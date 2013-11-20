@@ -211,8 +211,8 @@ METHOD lGenerate()
       cExpresion     += " .and. cCodCli >= '" + Alltrim( ::cCliOrg ) + "' .and. cCodCli <= '" + Alltrim( ::cCliDes ) + "'"
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpresion     += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpresion     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpresion ), , , , , , , , .t. )

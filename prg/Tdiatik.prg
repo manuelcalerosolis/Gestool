@@ -134,8 +134,8 @@ METHOD lGenerate() CLASS TDiaTik
    cExpHead       := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    cExpHead       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead    += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

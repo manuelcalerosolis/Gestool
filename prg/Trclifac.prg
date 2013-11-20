@@ -228,8 +228,8 @@ METHOD lGenerate() CLASS TResCFac
       cExpHead       += ' .and. cCodObr >= "' + Rtrim( ::cObrOrg ) + '" .and. cCodObr <= "' + Rtrim( ::cObrDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -414,8 +414,8 @@ METHOD lGenerate() CLASS TResCFac
       cExpHead       += ' .and. cCodObr >= "' + Rtrim( ::cObrOrg ) + '" .and. cCodObr <= "' + Rtrim( ::cObrDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

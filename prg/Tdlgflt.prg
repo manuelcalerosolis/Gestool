@@ -14,10 +14,10 @@ CLASS TDlgFlt
 
    DATA aTField
 
-   DATA cExpFilter
+   DATA cExpresionFilter
    DATA bExpFilter
    DATA aExpFilter
-   DATA cTxtFilter
+   DATA cExpresionFilter
 
    DATA aTblConditionNumerico 
    DATA aTblConditionCaracter 
@@ -295,8 +295,8 @@ CLASS TDlgFlt
 
    INLINE METHOD InitExpresion()
 
-      ::cExpFilter   := ""
-      ::cTxtFilter   := ""
+      ::cExpresionFilter   := ""
+      ::cExpresionFilter   := ""
       ::bExpFilter   := nil
 
       RETURN ( Self )
@@ -737,7 +737,7 @@ METHOD ExpresionBuilder()
 
             ::AppendExpresion( aFilter )            
    
-            ::cExpFilter         += ::cNexo( aFilter )
+            ::cExpresionFilter         += ::cNexo( aFilter )
 
          end if 
 
@@ -753,9 +753,9 @@ METHOD ExpresionBuilder()
       Construimos el filtro----------------------------------------------------
       */
 
-      ::bExpFilter               := Compile( ::cExpFilter )
+      ::bExpFilter               := Compile( ::cExpresionFilter )
       if Empty( ::bExpFilter )
-         msgStop( "Expresion erronea " + ::cExpFilter, "Error!" )
+         msgStop( "Expresion erronea " + ::cExpresionFilter, "Error!" )
          ::InitExpresion()
       end if
 
@@ -776,9 +776,9 @@ METHOD AppendExpresion( aFilter )
    local cCondition  := ::cCondition( aFilter )
 
    if cCondition == " $ "
-      ::cExpFilter   += ::cValue( aFilter ) + cCondition + ::cExpresionField( aFilter )  
+      ::cExpresionFilter   += ::cValue( aFilter ) + cCondition + ::cExpresionField( aFilter )  
    else
-      ::cExpFilter   += ::cExpresionField( aFilter ) + cCondition + ::cValue( aFilter )
+      ::cExpresionFilter   += ::cExpresionField( aFilter ) + cCondition + ::cValue( aFilter )
    end if 
 
 Return ( Self )
@@ -922,7 +922,7 @@ METHOD AplyFilter()
       Eval( ::bOnAplyFilter )
    end if
 
-   if ::cExpFilter != nil .and. ::lAplyFilter
+   if ::cExpresionFilter != nil .and. ::lAplyFilter
 
       do case
          case IsObject( ::oDbf )
@@ -933,7 +933,7 @@ METHOD AplyFilter()
 
             if lAdsRdd()
 
-               ( ::oDbf:cAlias )->( dbSetFilter( c2Block( ::cExpFilter + " .and. !Deleted()" ), ::cExpFilter + " .and. !Deleted()" ) )
+               ( ::oDbf:cAlias )->( dbSetFilter( c2Block( ::cExpresionFilter + " .and. !Deleted()" ), ::cExpresionFilter + " .and. !Deleted()" ) )
 
                if !Empty( ::oWndBrw )
                   ::oWndBrw:ShowButtonFilter()
@@ -973,9 +973,9 @@ METHOD AplyFilter()
                   end if
 
                   if !Empty( ::oMtrReplace )
-                     ( ::oDbf:cAlias )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf:cAlias )->( RecNo() ) ), SysRefresh() }, nEvery ) )
+                     ( ::oDbf:cAlias )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf:cAlias )->( RecNo() ) ), SysRefresh() }, nEvery ) )
                   else
-                     ( ::oDbf:cAlias )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
+                     ( ::oDbf:cAlias )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
                   end if
 
                   ( ::oDbf:cAlias )->( OrdCreate( ::cBagAnterior, ::cNamAnterior, cOrdKey, bOrdKey ) )
@@ -1004,7 +1004,7 @@ METHOD AplyFilter()
 
             if lAdsRdd()
 
-               ( ::oDbf )->( dbSetFilter( c2Block( ::cExpFilter + " .and. !Deleted()" ), ::cExpFilter + " .and. !Deleted()" ) )
+               ( ::oDbf )->( dbSetFilter( c2Block( ::cExpresionFilter + " .and. !Deleted()" ), ::cExpresionFilter + " .and. !Deleted()" ) )
 
                if !Empty( ::oWndBrw )
                   ::oWndBrw:ShowButtonFilter()
@@ -1044,9 +1044,9 @@ METHOD AplyFilter()
                   end if
 
                   if !Empty( ::oMtrReplace )
-                     ( ::oDbf )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) ), SysRefresh() }, nEvery ) )
+                     ( ::oDbf )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) ), SysRefresh() }, nEvery ) )
                   else
-                     ( ::oDbf )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
+                     ( ::oDbf )->( OrdCondSet( ::cExpresionFilter + " .and. !Deleted()", c2Block( ::cExpresionFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
                   end if
 
                   ( ::oDbf )->( OrdCreate( ::cBagAnterior, ::cNamAnterior, cOrdKey, bOrdKey ) )
@@ -1215,7 +1215,7 @@ METHOD SaveFilter()
          ( ::cDbfFilter )->cCodUsr     := if( !::lAllUser, cCurUsr(), Space( 3 ) )
          ( ::cDbfFilter )->cTipDoc     := ::cTipFilter
          ( ::cDbfFilter )->cTexFlt     := ::cTexFilter
-         ( ::cDbfFilter )->cExpFlt     := ::cExpFilter
+         ( ::cDbfFilter )->cExpFlt     := ::cExpresionFilter
          ( ::cDbfFilter )->lDefFlt     := ::lDefaultFilter
          ( ::cDbfFilter )->cFldFlt     := ::cSerializeFilter()
 
@@ -1308,19 +1308,19 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method LoadFilter( cTxtFilter )
+Method LoadFilter( cExpresionFilter )
 
    if Empty( ::cTipFilter )
       msgStop( "El tipo del filtro esta vacio")
       Return .f.
    end if
 
-   if Empty( cTxtFilter )
+   if Empty( cExpresionFilter )
       msgStop( "El texto del filtro esta vacio")
       Return .f.
    end if
 
-   if ( ::cDbfFilter )->( dbSeek( ::cTipFilter + Rtrim( Upper( cTxtFilter ) ) ) )
+   if ( ::cDbfFilter )->( dbSeek( ::cTipFilter + Rtrim( Upper( cExpresionFilter ) ) ) )
 
       CursorWait()
 
@@ -1349,7 +1349,7 @@ Method LoadFilter( cTxtFilter )
 
    else
       
-      MsgStop( "Código de filtro " + ::cTipFilter + " - " + Rtrim( Upper( cTxtFilter ) ) + " no encontrado" )
+      MsgStop( "Código de filtro " + ::cTipFilter + " - " + Rtrim( Upper( cExpresionFilter ) ) + " no encontrado" )
       
       Return .f.
 
@@ -1363,23 +1363,23 @@ Method lBuildFilter()
 
    local lBuild      := .f.
 
-   if Empty( ::cExpFilter )
+   if Empty( ::cExpresionFilter )
       Return ( lBuild )
    end if
 
    ::SelectTable( ::oDbf )
 
-   if At( Type( ::cExpFilter ), "UEUI" ) != 0
+   if At( Type( ::cExpresionFilter ), "UEUI" ) != 0
 
-      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+      msgStop( "Expresión " + Rtrim( ::cExpresionFilter ) + " no valida" )
 
-      ::cExpFilter   := ""
-      ::cTxtFilter   := ""
+      ::cExpresionFilter   := ""
+      ::cExpresionFilter   := ""
       ::bExpFilter   := nil
    
    else
    
-      ::bExpFilter   := Compile( ::cExpFilter )
+      ::bExpFilter   := Compile( ::cExpresionFilter )
    
       lBuild         := .t.
    
@@ -1427,7 +1427,7 @@ METHOD SetFilter( cText )
       if nFilter != 0
 
          ::cTexFilter   := ::aFilter[ nFilter, 1 ]
-         ::cExpFilter   := ::aFilter[ nFilter, 2 ]
+         ::cExpresionFilter   := ::aFilter[ nFilter, 2 ]
 
          ::lBuildAplyFilter()
 

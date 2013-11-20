@@ -244,8 +244,8 @@ METHOD lGenerate()
       cExpArt        += ' .and. Familia >= "' + Rtrim( ::cFamOrg ) + '" .and. Familia <= "' + Rtrim( ::cFamDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpArt        += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpArt        += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .t. )

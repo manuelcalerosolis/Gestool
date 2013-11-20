@@ -248,8 +248,8 @@ METHOD lGenerate()
 
    cExpArt           := 'nCtlStock == 1 .and. !lKitArt'
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpArt        += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpArt        += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .t. )

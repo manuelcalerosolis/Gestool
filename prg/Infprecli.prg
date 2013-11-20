@@ -176,8 +176,8 @@ METHOD lGenerate()
       cExpHead    += '.and. cCodPgo >= "' + Rtrim( ::oGrupoFPago:Cargo:Desde ) + '" .and. cCodPgo <= "' + Rtrim( ::oGrupoFPago:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead    += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )

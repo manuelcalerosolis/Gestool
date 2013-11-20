@@ -175,8 +175,8 @@ METHOD lGenerate() CLASS PAcuDiaParte
       cExpHead    += ' .and. cAlmOrd >= "' + Rtrim( ::oGrupoAlmacen:Cargo:Desde ) + '" .and. cAlmOrd <= "' + Rtrim( ::oGrupoAlmacen:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead    += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oMtrInf:SetText( "Creando filtros" )

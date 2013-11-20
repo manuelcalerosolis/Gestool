@@ -118,8 +118,8 @@ METHOD lGenerate()
    end if
 
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpFam      += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpFam      += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oDbfFam:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfFam:cFile ), ::oDbfFam:OrdKey(), ( cExpFam ), , , , , , , , .t. )

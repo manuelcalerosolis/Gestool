@@ -216,8 +216,8 @@ METHOD lGenerate() CLASS TddAgeFac
 
    ::oFacCliT:OrdSetFocus( "dFecFac" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if
@@ -270,8 +270,8 @@ METHOD lGenerate() CLASS TddAgeFac
 
    ::oFacRecT:OrdSetFocus( "dFecFac" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if

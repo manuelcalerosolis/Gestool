@@ -284,8 +284,8 @@ METHOD lGenerate()
       cExpHead       += ' .and. cCodTrn >= "' + Rtrim( ::oGrupoTransportista:Cargo:Desde ) + '" .and. cCodTrn <= "' + Rtrim( ::oGrupoTransportista:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oAlqCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlqCliT:cFile ), ::oAlqCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

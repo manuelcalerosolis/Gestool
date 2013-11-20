@@ -124,8 +124,8 @@ METHOD lGenerate()
 
    ::oDbfKit:OrdSetFocus( "CCODKIT" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if

@@ -191,8 +191,8 @@ METHOD lGenerate() CLASS PAcuDiaMateriales
       cExpHead    += ' .and. cCodSec >= "' + Rtrim( ::oGrupoSeccion:Cargo:Desde ) + '" .and. cCodSec <= "' + Rtrim( ::oGrupoSeccion:Cargo:Hasta ) + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead    += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )

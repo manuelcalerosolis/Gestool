@@ -161,8 +161,8 @@ METHOD lGenerate() CLASS TarArt
       cExpHead       += ' .and. cCodArt >= "' + ::cArtOrg + '" .and. cCodArt <= "' + ::cArtDes + '"'
    end if
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oCliAtp:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oCliAtp:cFile ), ::oCliAtp:OrdKey(), ( cExpHead ), , , , , , , , .t. )

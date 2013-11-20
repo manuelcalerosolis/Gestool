@@ -173,8 +173,8 @@ METHOD lGenerate() CLASS TInfPgoPob
 
    ::oFacCliP:OrdSetFocus( "dPreCob" )
 
-   if !Empty( ::oFilter:cExpFilter )
-      cExpHead       := ::oFilter:cExpFilter
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if
