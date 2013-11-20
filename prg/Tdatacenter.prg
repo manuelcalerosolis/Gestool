@@ -116,8 +116,11 @@ CLASS TDataCenter
 
    METHOD CreateTemporalTable( oTable )
 
+   METHOD CloseArea( cArea )              INLINE ( if( Select( cArea ) > 0, ( ( cArea )->( dbCloseArea() ), dbSelectArea( 0 ) ), ), .t. )
+
    METHOD CreateAllLocksTablesUsers()
    METHOD GetAllLocksTablesUsers()
+   METHOD CloseAllLocksTablesUsers()      INLINE ( ::CloseArea( "AllLocks" ) )
 
    METHOD lAdministratorTask()
    METHOD StartAdministratorTask()
@@ -125,11 +128,11 @@ CLASS TDataCenter
    METHOD Auditor()
    METHOD StartAuditor()                  VIRTUAL
 
-   METHOD lValidOperationLog()
    METHOD lSelectOperationLog()
+   METHOD CloseOperationLog()             INLINE ( ::CloseArea( "SqlOperation" ) )
 
-   METHOD lValidColumnLog()
    METHOD lSelectColumnLog()
+   METHOD CloseColumnLog()                INLINE ( ::CloseArea( "SqlOperation" ) )
 
    METHOD lCreaArrayPeriodos()
    METHOD lRecargaFecha()
@@ -1460,7 +1463,9 @@ METHOD GetAllLocksTablesUsers()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "AllLocks", 3 )
+   lOk            := ADSCreateSQLStatement( "AllLocks", 3 )
+
+   if lOk
 
       lOk         := ADSExecuteSQLDirect( cStm )
       if !lOk
@@ -1475,10 +1480,11 @@ METHOD GetAllLocksTablesUsers()
 
    end if
 
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
+   if lOk 
+      AdsCacheOpenCursors( 0 )
+      AdsClrCallBack()
 
-   if Select( "AllLocks" ) > 0
+      lOk         := Select( "AllLocks" ) > 0
       ( "AllLocks" )->( dbCloseArea() )
    endif
 
@@ -3588,6 +3594,10 @@ METHOD Auditor()
       Return ( Self )
    end if
 
+   if !::GetAllLocksTablesUsers()
+      Return ( Self )
+   end if 
+
    ::lCreaArrayPeriodos()
 
    DEFINE DIALOG ::oDlgAuditor RESOURCE "AdvantageAuditor"
@@ -3764,7 +3774,11 @@ METHOD Auditor()
          OF                ::oDlgAuditor ;
          ACTION            ( ::oDlgAuditor:End() )
 
-   ::oDlgAuditor:Activate( , , , .t., {|| ::lValidOperationLog() } )
+   ::oDlgAuditor:Activate( , , , .t. )
+
+   ::CloseOperationLog()
+   ::CloseColumnLog()
+   ::CloseAllLocksTablesUsers()
 
 RETURN ( Self )
 
@@ -3816,7 +3830,7 @@ METHOD lSelectOperationLog()
    Cerramos las areas----------------------------------------------------------
    */
 
-   ::lValidOperationLog()
+   ::CloseOperationLog()
 
    /*
    Creamos la snetencia--------------------------------------------------------
@@ -3857,16 +3871,6 @@ RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidOperationLog()
-
-   ( "SqlOperation" )->( dbCloseArea() )
-
-   dbSelectArea( 0 )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD lSelectColumnLog( nOperationId )
 
    local lOk
@@ -3890,7 +3894,7 @@ METHOD lSelectColumnLog( nOperationId )
    Cerramos las areas----------------------------------------------------------
    */
 
-   ::lValidColumnLog()
+   ::CloseColumnLog()
 
    /*
    Creamos la snetencia--------------------------------------------------------
@@ -3926,16 +3930,6 @@ METHOD lSelectColumnLog( nOperationId )
    CursorWE()
 
 RETURN ( lOk )
-
-//---------------------------------------------------------------------------//
-
-METHOD lValidColumnLog()
-
-   ( "SqlColumn" )->( dbCloseArea() )
-
-   dbSelectArea( 0 )
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
