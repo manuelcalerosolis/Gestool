@@ -34,15 +34,15 @@
 #define exitAceptarDesglosado       5
 
 #define documentoTicket             1
-#define documentoAlbaran            2
-#define documentoFactura            3
+#define documentoAlbaran            2 
+#define documentoFactura            3 
 
 #define nParcial                    1
 #define nPagado                     2
 
 #define calcDistance                240
 
-static aResources                   := {}  
+static aResources                   := {}   
 
 static oThis
 
@@ -199,7 +199,7 @@ CLASS TpvTactil
 
    DATA oFntNum
    DATA oFntEur
-   DATA oFntFld
+   DATA oFntFld 
    DATA oFntBrw
    DATA oFntDlg
    DATA oFntDto
@@ -1719,7 +1719,9 @@ INLINE METHOD ResizedFont( nSize )
 
       Return( nSize )
 
-   ENDMETHOD   
+   ENDMETHOD
+
+METHOD ActualizaTarifaCliente()      
 
 //--------------------------------------------------------------------------//
 
@@ -5513,6 +5515,13 @@ Return ( nil )
 METHOD SelecionaCliente() CLASS TpvTactil
 
    local cCliente
+   local cTarifaSoloOld
+   local cTarifaCombinadoOld
+
+   cTarifaSoloOld       := ::nTarifaSolo
+   cTarifaCombinadoOld  := ::nTarifaCombinado
+
+
 
    do case
       case ::oTiketCabecera:nUbiTik == ubiLlevar
@@ -5555,9 +5564,68 @@ METHOD SelecionaCliente() CLASS TpvTactil
 
       ::SetSerie()
 
+      /*
+      Comprobamos que han cambiado la tarifa del cliente-----------------------
+      */
+
+      if ::oTemporalLinea:RecCount() != 0
+
+         if cTarifaSoloOld != ::nTarifaSolo
+
+            if ApoloMsgNoYes( "La tarifa del cliente ha cambiado, ¿desea actualizar los precios de todas las líneas?", "Confirmación", .t. )
+
+               ::ActualizaTarifaCliente()
+
+            end if
+
+         end if
+
+      end if   
+
    end if
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD ActualizaTarifaCliente() CLASS TpvTactil
+
+   ::oTemporalLinea:GetStatus()
+
+   ::oTemporalLinea:GoTop()
+
+   while !::oTemporalLinea:Eof()
+
+      if !Empty( ::oTemporalLinea:cComTil )
+
+         ::oTemporalLinea:Load()
+
+         ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oTemporalLinea:cCbaTil, ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+         ::oTemporalLinea:nPcmTil   := cRetPreArt( ::oTemporalLinea:cComTil, ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+
+         ::oTemporalLinea:Save()
+
+      else
+
+         ::oTemporalLinea:Load()
+
+         ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oTemporalLinea:cCbaTil, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+
+         ::oTemporalLinea:Save()
+
+      end if
+
+      ::oTemporalLinea:Skip()
+      
+   end while
+
+   ::oTemporalLinea:SetStatus()
+
+   ::TotalTemporal()
+
+   ::oBrwLineas:Refresh()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

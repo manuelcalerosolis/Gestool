@@ -9277,12 +9277,13 @@ function ShowKit( dbfMaster, dbfTmpLin, oBrw, lSet, dbfTmpInc, cCodCli, dbfClien
    if !Empty( aGet ) .and. !Empty( dbfMaster )
 
       if !Empty( cCodCli )
-         aGet[ ( dbfMaster )->( FieldPos( "cCodCli" ) ) ]:cText( cCodCli )
-         aGet[ ( dbfMaster )->( FieldPos( "cCodCli" ) ) ]:lValid()
+
+        aGet[ ( dbfMaster )->( FieldPos( "cCodCli" ) ) ]:cText( cCodCli )
+        aGet[ ( dbfMaster )->( FieldPos( "cCodCli" ) ) ]:lValid()
+
       end if
 
    end if
-
 
    if oGetRnt != nil .and. oUser():lNotRentabilidad()
       oGetRnt:Hide()

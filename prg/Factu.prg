@@ -5524,7 +5524,7 @@ Function cBmpVersion()
 
    end if
 
-Return ( cBmpVersion )
+Return ( cBmpVersion ) 
 
 //---------------------------------------------------------------------------//
 

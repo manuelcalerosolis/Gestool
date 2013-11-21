@@ -1715,7 +1715,7 @@ Return .t.
 
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, cCodPre )
 
-	local oDlg
+   local oDlg
    local oFld
    local nOrd
    local lWhen
@@ -3292,7 +3292,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 
    oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Pedido" ) } )
 
-   oDlg:bStart 		:= {|| StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin ) }
+   oDlg:bStart 		:= {|| StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin, cCodCli ) }
 
 	ACTIVATE DIALOG oDlg;
       ON INIT  (  InitEdtRec( aTmp, aGet, oDlg, oBrwLin, oBrwInc, oBrwPgo ), SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) );
@@ -3353,11 +3353,16 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin )
+Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin, cCodCli )
 
 	lEscandalloEdtRec( .f., oBrwLin )
 
 	if nMode == APPD_MODE
+
+		if !Empty( aGet ) .and. !Empty( cCodCli )
+      		aGet[ _CCODCLI ]:cText( cCodCli )
+       		aGet[ _CCODCLI ]:lValid()
+   		end if
 
 		do case      
       	case lRecogerUsuario() .and. Empty( cCodArt )
