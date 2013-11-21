@@ -27,16 +27,17 @@
 
 
 #define fldGeneral                  oFld:aDialogs[1]
-#define fldPrecios                  oFld:aDialogs[2]
-#define fldDescripciones            oFld:aDialogs[3]
-#define fldPropiedades              oFld:aDialogs[4]
-#define fldImagenes                 oFld:aDialogs[5]
-#define fldLogistica                oFld:aDialogs[6]
-#define fldStocks                   oFld:aDialogs[7]
-#define fldContabilidad             oFld:aDialogs[8]
-#define fldOfertas                  oFld:aDialogs[9]
-#define fldEscandallos              oFld:aDialogs[10]
-#define fldWeb                      oFld:aDialogs[11]
+#define fldTactil                   oFld:aDialogs[2]
+#define fldPrecios                  oFld:aDialogs[3]
+#define fldDescripciones            oFld:aDialogs[4]
+#define fldPropiedades              oFld:aDialogs[5]
+#define fldImagenes                 oFld:aDialogs[6]
+#define fldLogistica                oFld:aDialogs[7]
+#define fldStocks                   oFld:aDialogs[8]
+#define fldContabilidad             oFld:aDialogs[9]
+#define fldOfertas                  oFld:aDialogs[10]
+#define fldEscandallos              oFld:aDialogs[11]
+#define fldWeb                      oFld:aDialogs[12]
 #define fldUbicaciones              oFld:aDialogs[12]
 
 memvar cDbfArt
@@ -1719,6 +1720,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       300 ;
          OF       oDlg ;
          PROMPT   "&General",;
+                  "&Táctil",;
                   "&Precios",;
                   "&Descripciones",;
                   "P&ropiedades",;
@@ -1730,6 +1732,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "&Escandallos",;
                   "&Web";
          DIALOGS  "ART_1",;
+                  "ART_Tactil",;
                   "ART_5",;
                   "ART_2",;
                   "ART_20",;
@@ -1739,7 +1742,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "ART_15",;
                   "ART_4",;
                   "ART_6",;
-                  "ART_WEB"
+                  "ART_Web"
 
 	/*
 	Primera Caja de Dialog del Folder
@@ -1903,16 +1906,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldGeneral
 
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LINCTCL" ) ) ] ;
-         ID       230 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "CDESTCL" ) ) ] ;
-         ID       260 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
    /*
    Lote------------------------------------------------------------------------
    */
@@ -1927,23 +1920,48 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( dbfArticulo )->( fieldpos( "lLote" ) ) ] );
          OF       fldGeneral
 
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
-         ID       290 ;
-         COLOR    aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ], aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
-         BITMAP   "COLORS_16" ;
-         ON HELP  ( ColorFam( aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ) ) ;
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lTipAcc" ) ) ] ;
+         ID       280 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
-         BITMAP   "Lupa" ;
-         ON HELP  ( GetBmp( aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ], bmpImage ) ) ;
-         ON CHANGE( ChgBmp( cImgArticulo ( aTmp ), bmpImage ) ) ;
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lAutSer" ) ) ];
+         ID       138 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( ChgBmp( cImgArticulo ( aTmp ), bmpImage ) ) ;
-         ID       220 ;
          OF       fldGeneral
+
+   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lObs" ) )] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "lObs" ) )];
+         ID       139 ;
+         OF       fldGeneral
+
+   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lNumSer" ) ) ];
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "lNumSer" ) ) ];
+         ID       136 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldGeneral
+
+   bmpImage             := TImage():ReDefine( 500,, cFileBmpName( cImgArticulo ( aTmp ) ), oDlg,,, .F., .T.,,, .F.,, )
+
+   bmpImage:SetColor( , GetSysColor( 15 ) )
+   bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
+   bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
+
+   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lTerminado" ) ) ];
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "lTerminado" ) ) ];
+         ID       620 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldGeneral
+
+
+   /*
+   Tactil----------------------------------------------------------------------
+   */
+
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LINCTCL" ) ) ] ;
+         ID       230 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldTactil
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nPosTpv" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nPosTpv" ) ) ] ;
@@ -1954,54 +1972,50 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          MIN      ( 0 ) ;
          MAX      ( 99 ) ;
          ID       225 ;
-         OF       fldGeneral
+         OF       fldTactil
+
+   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "CDESTCL" ) ) ] ;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldTactil
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
+         ID       290 ;
+         COLOR    aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ], aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
+         BITMAP   "COLORS_16" ;
+         ON HELP  ( ColorFam( aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ) ) ;
+         OF       fldTactil
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
+         BITMAP   "Lupa" ;
+         ON HELP  ( GetBmp( aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ], bmpImage ) ) ;
+         ON CHANGE( ChgBmp( cImgArticulo ( aTmp ), bmpImage ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( ChgBmp( cImgArticulo ( aTmp ), bmpImage ) ) ;
+         ID       220 ;
+         OF       fldTactil
 
    REDEFINE COMBOBOX oImpComanda1 VAR cImpComanda1 ;
       ITEMS       aImpComanda ;
       ID          450 ;
       WHEN        ( nMode != ZOOM_MODE ) ;
-      OF          fldGeneral
+      OF          fldTactil
 
    REDEFINE COMBOBOX oImpComanda2 VAR cImpComanda2 ;
       ITEMS       aImpComanda ;
       ID          460 ;
       WHEN        ( nMode != ZOOM_MODE ) ;
-      OF          fldGeneral
+      OF          fldTactil
 
    REDEFINE COMBOBOX oNombreOrdenComanda ;
-      VAR            cNombreOrdenComanda ;
-      ITEMS          aNombreOrdenComanda ;
-      ID             470 ;
-      WHEN           ( nMode != ZOOM_MODE ) ;
-      OF             fldGeneral
+      VAR         cNombreOrdenComanda ;
+      ITEMS       aNombreOrdenComanda ;
+      ID          470 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          fldTactil
 
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lTipAcc" ) ) ] ;
-         ID       280 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lAutSer" ) ) ];
-         ID          138 ;
-         WHEN        ( nMode != ZOOM_MODE ) ;
-         OF          fldGeneral
-
-   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lObs" ) )] ;
-         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "lObs" ) )];
-         ID          139 ;
-         OF          fldGeneral
-
-   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lNumSer" ) ) ];
-         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "lNumSer" ) ) ];
-         ID          136 ;
-         WHEN        ( nMode != ZOOM_MODE ) ;
-         OF          fldGeneral
-
-
-   bmpImage             := TImage():ReDefine( 500,, cFileBmpName( cImgArticulo ( aTmp ) ), oDlg,,, .F., .T.,,, .F.,, )
-
-   bmpImage:SetColor( , GetSysColor( 15 ) )
-   bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
-   bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
 
    /*
 	Segunda Caja de Dialogo del Folder
@@ -15712,15 +15726,15 @@ function aItmArt()
    aAdd( aBase, { "cCodFab",   "C",  3, 0, "Código del fabricante",                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpCom1",  "N",  1, 0, "Impresora de comanda 1",                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpCom2",  "N",  1, 0, "Impresora de comanda 2",                   "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LMSGMOV",   "L",  1, 0, "Lógico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lMsgMov",   "L",  1, 0, "Lógico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cImagenWeb","C",250, 0, "Imagen para la web",                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cChgBar",   "D",  8, 0, "Fecha de cambio de código de barras",      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODUBI1",  "C",  5, 0, "Código primera ubicación",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODUBI2",  "C",  5, 0, "Código segunda ubicación",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODUBI3",  "C",  5, 0, "Código tercera ubicación",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVALUBI1",  "C",  5, 0, "Valor primera ubicación",                  "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVALUBI2",  "C",  5, 0, "Valor segunda ubicación",                  "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVALUBI3",  "C",  5, 0, "Valor tercera ubicación",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodUbi1",  "C",  5, 0, "Código primera ubicación",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodUbi2",  "C",  5, 0, "Código segunda ubicación",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodUbi3",  "C",  5, 0, "Código tercera ubicación",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValUbi1",  "C",  5, 0, "Valor primera ubicación",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValUbi2",  "C",  5, 0, "Valor segunda ubicación",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValUbi3",  "C",  5, 0, "Valor tercera ubicación",                  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecVta",   "D",  8, 0, "Fecha de puesta a la venta",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFinVta",   "D",  8, 0, "Fecha de fin de la venta",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lMsgSer",   "L",  1, 0, "Avisar en ventas por series sin stock",    "",                  "", "( cDbfArt )", nil } )
@@ -15749,6 +15763,7 @@ function aItmArt()
    aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cOrdOrd",   "C",  2, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lTerminado","L",  1, 0, "Lógico de producto terminado (producción)" , "",                "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
