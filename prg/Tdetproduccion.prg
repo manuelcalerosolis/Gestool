@@ -40,6 +40,8 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    DATA  oDbfSeries
 
+   DATA  oChkTerminado
+
    METHOD New( cPath, oParent )
 
    METHOD DefineFiles()
@@ -132,6 +134,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
+      FIELD NAME "lTerminado" TYPE "L" LEN  1  DEC 0 COMMENT "Lógico de producto terminado"  COLSIZE  80 OF oDbf
 
       ::CommunFields( oDbf )
 
@@ -447,6 +450,10 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE CHECKBOX ::oChkTerminado VAR ::oDbfVir:lTerminado ;
+         ID       300 ;
+         OF       oFld:aDialogs[1]
+
       /*
       Pestaña de datos---------------------------------------------------------
       */
@@ -616,6 +623,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
             else
                ::oLote:Hide()
             end if
+
+            ::oChkTerminado:Click( ::oParent:oArt:lTerminado )
 
             ::LoadCommunFields()
          

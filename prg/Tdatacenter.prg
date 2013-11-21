@@ -29,8 +29,11 @@ CLASS TDataCenter
    DATA        oBrwEmpresas
 
    DATA        oDlgAuditor
+   DATA        oFldAuditor
+
    DATA        oBrwOperation
    DATA        oBrwColumn
+   DATA        oBrwBlocks
 
    DATA        oMtrActualiza
    DATA        nMtrActualiza              INIT 0
@@ -116,7 +119,7 @@ CLASS TDataCenter
 
    METHOD CreateTemporalTable( oTable )
 
-   METHOD CloseArea( cArea )              INLINE ( if( Select( cArea ) > 0, ( ( cArea )->( dbCloseArea() ), dbSelectArea( 0 ) ), ), .t. )
+   METHOD CloseArea( cArea )              INLINE ( if( Select( cArea ) > 0, ( cArea )->( dbCloseArea() ), ), dbSelectArea( 0 ), .t. )
 
    METHOD CreateAllLocksTablesUsers()
    METHOD GetAllLocksTablesUsers()
@@ -132,7 +135,7 @@ CLASS TDataCenter
    METHOD CloseOperationLog()             INLINE ( ::CloseArea( "SqlOperation" ) )
 
    METHOD lSelectColumnLog()
-   METHOD CloseColumnLog()                INLINE ( ::CloseArea( "SqlOperation" ) )
+   METHOD CloseColumnLog()                INLINE ( ::CloseArea( "SqlColumn" ) )
 
    METHOD lCreaArrayPeriodos()
    METHOD lRecargaFecha()
@@ -144,6 +147,8 @@ CLASS TDataCenter
    METHOD DisableTriggers()
    METHOD EnableTriggers()
    METHOD SetAplicationID( cNombreUsuario )
+
+   METHOD ExecuteSqlStatement( cSql, cSqlStatement )
 
    METHOD Resource( nId )
    METHOD StartResource()
@@ -1112,7 +1117,7 @@ METHOD CreateTriggerUpdate( oTable )
 
    dbSelectArea( 0 )
 
-   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 2 )
+   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 7 )
 
       lTrigger    := ADSExecuteSQLDirect( cTrigger )
       if !lTrigger
@@ -1222,7 +1227,7 @@ METHOD CreateTriggerInsert( oTable, cAction )
 
    dbSelectArea( 0 )
 
-   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 2 )
+   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 7 )
 
       lTrigger    := ADSExecuteSQLDirect( cTrigger )
       if !lTrigger
@@ -1329,7 +1334,7 @@ METHOD CreateTriggerDelete( oTable, cAction )
 
    dbSelectArea( 0 )
 
-   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 2 )
+   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 7 )
 
       lTrigger    := ADSExecuteSQLDirect( cTrigger )
       if !lTrigger
@@ -1423,7 +1428,7 @@ METHOD CreateAllLocksTablesUsers()
    cSql        += "CLOSE cTbls; "                                          + CRLF 
    cSql        += "END; "                                                  + CRLF
   
-   if ADSCreateSQLStatement( "Locks", 2 )
+   if ADSCreateSQLStatement( "Locks", 7 )
 
       lSql        := ADSExecuteSQLDirect( cSql )
       if !lSql
@@ -1438,7 +1443,7 @@ METHOD CreateAllLocksTablesUsers()
    else
 
       nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds + CRLF + cSql, 'ERROR CREATE SQL en ADSCreateSQLStatement' )
+      msgStop( "Error : " + Str( nError ) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
 
    end if
 
@@ -1450,8 +1455,8 @@ METHOD GetAllLocksTablesUsers()
 
    local lOk
    local cStm
-   local nError
-   local cErrorAds
+
+   ::CloseAllLocksTablesUsers()
 
    /*
    Creamos la instruccion------------------------------------------------------
@@ -1463,30 +1468,7 @@ METHOD GetAllLocksTablesUsers()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   lOk            := ADSCreateSQLStatement( "AllLocks", 3 )
-
-   if lOk
-
-      lOk         := ADSExecuteSQLDirect( cStm )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   if lOk 
-      AdsCacheOpenCursors( 0 )
-      AdsClrCallBack()
-
-      lOk         := Select( "AllLocks" ) > 0
-      ( "AllLocks" )->( dbCloseArea() )
-   endif
+   lOk            := ::ExecuteSqlStatement( cStm, "AllLocks" )
 
 RETURN ( lOk )
 
@@ -3508,7 +3490,7 @@ METHOD CreateOperationLogTable()
 
    dbSelectArea( 0 )
 
-   if ADSCreateSQLStatement( "OperationLog", 3 )
+   if ADSCreateSQLStatement( "OperationLog", 7 )
 
       lTrigger    := ADSExecuteSQLDirect( cTable )
       if !lTrigger
@@ -3554,7 +3536,7 @@ METHOD CreateColumnLogTable()
 
    dbSelectArea( 0 )
 
-   if ADSCreateSQLStatement( "ColumnLog", 3 )
+   if ADSCreateSQLStatement( "ColumnLog", 7 )
 
       lTrigger    := ADSExecuteSQLDirect( cTable )
       if !lTrigger
@@ -3586,11 +3568,11 @@ METHOD Auditor()
      
    ::BuildEmpresa()
 
-   if !::lSelectColumnLog()
+   if !::lSelectOperationLog()
       Return ( Self )
    end if
 
-   if !::lSelectOperationLog()
+   if !::lSelectColumnLog()
       Return ( Self )
    end if
 
@@ -3602,11 +3584,19 @@ METHOD Auditor()
 
    DEFINE DIALOG ::oDlgAuditor RESOURCE "AdvantageAuditor"
 
+      REDEFINE FOLDER ::oFldAuditor;
+         ID          100 ;
+         OF          ::oDlgAuditor ;
+         PROMPT      "&Operaciones",;
+                     "&Bloqueos" ;
+         DIALOGS     "AdvantageAuditor_Operaciones",;
+                     "AdvantageAuditor_Bloqueos"
+
       REDEFINE COMBOBOX ::oPeriodo ;
          VAR         ::cPeriodo ;
          ID          100 ;
          ITEMS       ::aPeriodo ;
-         OF          ::oDlgAuditor
+         OF          ::oFldAuditor:aDialogs[1]
 
       ::oPeriodo:bChange                     := {|| ::lRecargaFecha() } 
 
@@ -3614,36 +3604,36 @@ METHOD Auditor()
          VAR         ::dIniInf ;
          SPINNER ;
          ID          120 ;
-         OF          ::oDlgAuditor
+         OF          ::oFldAuditor:aDialogs[1]
 
       REDEFINE GET   ::oFinInf ;
          VAR         ::dFinInf;
          SPINNER ;
          ID          130 ;
-         OF          ::oDlgAuditor
+         OF          ::oFldAuditor:aDialogs[1]
 
       REDEFINE CHECKBOX ::lAppend ;
          ID          140 ;
-         OF          ::oDlgAuditor
+         OF          ::oFldAuditor:aDialogs[1]
 
       REDEFINE CHECKBOX ::lEdit ;
          ID          141 ;
-         OF          ::oDlgAuditor
+         OF          ::oFldAuditor:aDialogs[1]
 
       REDEFINE CHECKBOX ::lDelete ;
          ID          142 ;
-         OF          ::oDlgAuditor
+         OF          ::oFldAuditor:aDialogs[1]
 
       REDEFINE BUTTON ;
          ID          150 ;
-         OF          ::oDlgAuditor ;
+         OF          ::oFldAuditor:aDialogs[1] ;
          ACTION      ( ::lSelectOperationLog() )
 
       /*
       Operaciones -------------------------------------------------------------
       */
 
-      ::oBrwOperation                        := TXBrowse():New( ::oDlgAuditor )
+      ::oBrwOperation                        := TXBrowse():New( ::oFldAuditor:aDialogs[1] )
 
       ::oBrwOperation:lRecordSelector        := .t.
       ::oBrwOperation:lTransparent           := .f.
@@ -3664,7 +3654,7 @@ METHOD Auditor()
       ::oBrwOperation:bKeyCount              := {|| ( "SqlOperation" )->( ADSKeyCount( , , 1 ) ) }
 */
 
-      ::oBrwOperation:bChange                := {|| ::lSelectColumnLog( SqlOperation->Id ) }
+      ::oBrwOperation:bChange                := {|| ::lSelectColumnLog( SqlOperation->Id ), ::oBrwColumn:GoTop(), ::oBrwColumn:Refresh() }
 
       ::oBrwOperation:CreateFromResource( 200 )
 
@@ -3718,7 +3708,7 @@ METHOD Auditor()
       Columnas de cambio-------------------------------------------------------
       */
 
-      ::oBrwColumn                        := TXBrowse():New( ::oDlgAuditor )
+      ::oBrwColumn                        := TXBrowse():New( ::oFldAuditor:aDialogs[1] )
 
       ::oBrwColumn:lRecordSelector        := .t.
       ::oBrwColumn:lTransparent           := .f.
@@ -3763,6 +3753,63 @@ METHOD Auditor()
          :cHeader          := "NEWVALUE"
          :nWidth           := 80
          :bEditValue       := {|| SqlColumn->NEWVALUE } 
+      end with
+
+      /*
+      Columnas bloqueos-------------------------------------------------------
+      */
+
+      REDEFINE BUTTON ;
+         ID          150 ;
+         OF          ::oFldAuditor:aDialogs[2] ;
+         ACTION      ( ::GetAllLocksTablesUsers(), ::oBrwBlocks:Refresh(), ::oBrwBlocks:GoTop() )
+
+      ::oBrwBlocks                        := TXBrowse():New( ::oFldAuditor:aDialogs[2] )
+
+      ::oBrwBlocks:lRecordSelector        := .t.
+      ::oBrwBlocks:lTransparent           := .f.
+      ::oBrwBlocks:nDataLines             := 1
+
+      ::oBrwBlocks:lVScroll               := .t.
+      ::oBrwBlocks:lHScroll               := .f.
+
+      ::oBrwBlocks:nMarqueeStyle          := MARQSTYLE_HIGHLROW
+
+      ::oBrwBlocks:cAlias                 := "AllLocks"
+
+      ::oBrwBlocks:bClrSel                := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
+      ::oBrwBlocks:bClrSelFocus           := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
+
+      ::oBrwBlocks:CreateFromResource( 100 )
+
+      with object ( ::oBrwBlocks:AddCol() )
+         :cHeader          := "Tabla"
+         :nWidth           := 180
+         :bEditValue       := {|| AllLocks->TableName } 
+      end with
+
+      with object ( ::oBrwBlocks:AddCol() )
+         :cHeader          := "Registro Nº"
+         :nWidth           := 80
+         :bEditValue       := {|| Trans( AllLocks->RecNumber, "9999999999" ) } 
+      end with
+
+      with object ( ::oBrwBlocks:AddCol() )
+         :cHeader          := "Usuario"
+         :nWidth           := 80
+         :bEditValue       := {|| AllLocks->UserName } 
+      end with
+
+      with object ( ::oBrwBlocks:AddCol() )
+         :cHeader          := "Direccion IP"
+         :nWidth           := 80
+         :bEditValue       := {|| AllLocks->IPAddress } 
+      end with
+
+      with object ( ::oBrwBlocks:AddCol() )
+         :cHeader          := "Usuario"
+         :nWidth           := 80
+         :bEditValue       := {|| AllLocks->DictionaryUser } 
       end with
 
       /*
@@ -3836,25 +3883,13 @@ METHOD lSelectOperationLog()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "SqlOperation", 3 )
+   lOk            := ::ExecuteSqlStatement( cStm, "SqlOperation" )
 
-      lOk         := ADSExecuteSQLDirect( cStm )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
-      endif
+   /*
+   Dejamos la fechas como estaban----------------------------------------------
+   */
 
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-   Set(_SET_DATEFORMAT, cDateFormat )
+   Set( _SET_DATEFORMAT, cDateFormat )
 
    /*
    Refresh en pantalla --------------------------------------------------------
@@ -3900,32 +3935,7 @@ METHOD lSelectColumnLog( nOperationId )
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "SqlColumn", 3 )
-
-      lOk         := ADSExecuteSQLDirect( cStm )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds, 'ERROR en ADSSqlColumnLog' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-   /*
-   Refresh en pantalla --------------------------------------------------------
-   */
-
-   if !Empty( ::oBrwColumn )
-      ::oBrwColumn:Refresh()
-      ::oBrwColumn:GoTop()
-   end if
+   lOk            := ::ExecuteSqlStatement( cStm, "SqlColumn" )
 
    CursorWE()
 
@@ -4515,7 +4525,7 @@ METHOD DisableTriggers()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "DisableTriggers", 3 )
+   if ADSCreateSQLStatement( "DisableTriggers", 7 )
 
       lOk         := ADSExecuteSQLDirect( cStm )
       if !lOk
@@ -4558,7 +4568,7 @@ METHOD EnableTriggers()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "EnableTriggers", 3 )
+   if ADSCreateSQLStatement( "EnableTriggers", 7 )
 
       lOk         := ADSExecuteSQLDirect( cStm )
       if !lOk
@@ -4603,7 +4613,7 @@ METHOD SetAplicationID( cNombreUsuario )
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "SetAplicationID", 3 )
+   if ADSCreateSQLStatement( "SetAplicationID", 7 )
 
       lOk         := ADSExecuteSQLDirect( cStm )
       if !lOk
@@ -4624,6 +4634,38 @@ METHOD SetAplicationID( cNombreUsuario )
 
    if Select( "SetAplicationID" ) > 0
       ( "SetAplicationID" )->( dbCloseArea() )
+   endif
+
+RETURN ( lOk )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExecuteSqlStatement( cSql, cSqlStatement )
+
+   local lOk
+   local nError
+   local cErrorAds
+
+   lOk            := ADSCreateSQLStatement( cSqlStatement, 7 )
+
+   if lOk
+
+      lOk         := ADSExecuteSQLDirect( cSql )
+      if !lOk
+         nError   := AdsGetLastError( @cErrorAds )
+         msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
+      endif
+
+   else
+
+      nError      := AdsGetLastError( @cErrorAds )
+      msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
+
+   end if
+
+   if lOk 
+      AdsCacheOpenCursors( 0 )
+      AdsClrCallBack()
    endif
 
 RETURN ( lOk )
@@ -4765,7 +4807,7 @@ Function ADSExecuteSQLScript( cScript )
          ( cSqlAlias )->( dbCloseArea() )
       end if 
 
-      if !ADSCreateSQLStatement( cSqlAlias, 3 ) 
+      if !ADSCreateSQLStatement( cSqlAlias, 7 ) 
 
          ( cSqlAlias )->( dbCloseArea() )
 

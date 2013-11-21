@@ -38,6 +38,8 @@ CLASS TDetMaterial FROM TDetalleArticulos
    DATA  oGetTotVol
    DATA  nGetTotVol           INIT  0
 
+   DATA  oChkTerminado
+
    METHOD New( cPath, oParent )
 
    METHOD DefineFiles()
@@ -129,6 +131,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "cCodPro"    TYPE "C" LEN 18  DEC 0 COMMENT "Código del artídulo producido" COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN 08  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
+      FIELD NAME "lTerminado" TYPE "L" LEN  1  DEC 0 COMMENT "Lógico de producto terminado"  COLSIZE  80 OF oDbf
 
       ::CommunFields( oDbf )
 
@@ -425,6 +428,10 @@ METHOD Resource( nMode )
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE CHECKBOX ::oChkTerminado VAR ::oDbfVir:lTerminado ;
+         ID       300 ;
+         OF       oFld:aDialogs[1]
+
       /*
       Pestaña de datos---------------------------------------------------------
       */
@@ -591,6 +598,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
             ::oGetUndPes:cText( ::oParent:oArt:cUndDim )
             ::oGetVol:cText( ::oParent:oArt:nVolumen )
             ::oGetUndVol:cText( ::oParent:oArt:cVolumen )
+
+            ::oChkTerminado:Click( ::oParent:oArt:lTerminado )
 
             ::LoadCommunFields()
 
