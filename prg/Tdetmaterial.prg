@@ -38,8 +38,6 @@ CLASS TDetMaterial FROM TDetalleArticulos
    DATA  oGetTotVol
    DATA  nGetTotVol           INIT  0
 
-   DATA  oChkTerminado
-
    METHOD New( cPath, oParent )
 
    METHOD DefineFiles()
@@ -47,7 +45,8 @@ CLASS TDetMaterial FROM TDetalleArticulos
    METHOD OpenFiles( lExclusive )
 
    METHOD Resource( nMode, lLiteral )
-   METHOD SetDialogMode( nMode )
+   METHOD SetResource( nMode )
+   METHOD SaveResource( oGetArt, oDlg )
 
    METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
@@ -73,8 +72,6 @@ CLASS TDetMaterial FROM TDetalleArticulos
    METHOD lStkAct()
 
    METHOD EdtRotor( oDlg )
-
-   METHOD lPreSave( oGetArt, oDlg )
 
 END CLASS
 
@@ -131,7 +128,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "cCodPro"    TYPE "C" LEN 18  DEC 0 COMMENT "Código del artídulo producido" COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN 08  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
-      FIELD NAME "lTerminado" TYPE "L" LEN  1  DEC 0 COMMENT "Lógico de producto terminado"  COLSIZE  80 OF oDbf
+      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT ""                              HIDE        OF oDbf              
 
       ::CommunFields( oDbf )
 
@@ -194,6 +191,8 @@ METHOD Resource( nMode )
    local cSayVp1
    local cSayVp2
    local oBtnSer
+   local oBtnAdelante
+   local oBtnAtras
 
    ::cOldCodArt         := ::oDbfVir:cCodArt
 
@@ -428,10 +427,6 @@ METHOD Resource( nMode )
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX ::oChkTerminado VAR ::oDbfVir:lTerminado ;
-         ID       300 ;
-         OF       oFld:aDialogs[1]
-
       /*
       Pestaña de datos---------------------------------------------------------
       */
@@ -449,11 +444,21 @@ METHOD Resource( nMode )
 
       oBtnSer:bAction   := {|| ::oParent:oDetSeriesMaterial:Resource( nMode ) }
 
+      REDEFINE BUTTON oBtnAtras ;
+         ID       4 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) )
+
+      REDEFINE BUTTON oBtnAdelante ;
+         ID       5 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
+
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oGetArt, oDlg ) )
+         ACTION   ( ::SaveResource( oGetArt, oDlg ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -461,12 +466,13 @@ METHOD Resource( nMode )
 			ACTION 	( oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F1, {|| MsgInfo( "Ayuda no disponible", "Perdonen las molestias" ) } )
          oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
-         oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGetArt, oDlg ) } )
+         oDlg:AddFastKey( VK_F5, {|| ::SaveResource( oGetArt, oDlg ) } )
+         oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
+         oDlg:AddFastKey( VK_F8, {|| oBtnAdelante:Click() } )
       end if
 
-      oDlg:bStart       := {|| ::EdtRotor( oDlg ), ::SetDialogMode( nMode ) }
+      oDlg:bStart := {|| ::EdtRotor( oDlg ), ::SetResource( nMode ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -476,7 +482,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-METHOD SetDialogMode( nMode )
+METHOD SetResource( nMode )
 
    if !lUseCaj()
       ::oGetCaja:Hide()
@@ -525,6 +531,8 @@ METHOD SetDialogMode( nMode )
       end if
 
    end if
+
+   ::oClasificacionArticulo:SetNumber( ::oDbfVir:nTipArt )
 
 RETURN ( Self )
 
@@ -594,12 +602,10 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                ::oLote:Hide()
             end if
 
-            ::oGetPes:cText( ::oParent:oArt:nPesoKg )
-            ::oGetUndPes:cText( ::oParent:oArt:cUndDim )
-            ::oGetVol:cText( ::oParent:oArt:nVolumen )
-            ::oGetUndVol:cText( ::oParent:oArt:cVolumen )
-
-            ::oChkTerminado:Click( ::oParent:oArt:lTerminado )
+            ::oGetPes:cText(     ::oParent:oArt:nPesoKg )
+            ::oGetUndPes:cText(  ::oParent:oArt:cUndDim )
+            ::oGetVol:cText(     ::oParent:oArt:nVolumen )
+            ::oGetUndVol:cText(  ::oParent:oArt:cVolumen )
 
             ::LoadCommunFields()
 
@@ -825,13 +831,15 @@ RETURN ( ::oMenu )
 
 //---------------------------------------------------------------------------//
 
-METHOD lPreSave( oGetArt, oDlg )
+METHOD SaveResource( oGetArt, oDlg )
 
    if Empty( ::oDbfVir:cCodArt )
       MsgStop( "Tiene que seleccionar un artículo." )
       oGetArt:SetFocus()
       Return .f.
    end if
+
+   ::oDbfVir:nTipArt    := ::oClasificacionArticulo:GetNumber()
 
    ::oParent:oTotProducido:Refresh()
    ::oParent:oTotMaterias:Refresh()
@@ -1074,7 +1082,7 @@ Function Metro()
 
    oBrw:aCols[ 2 ]:bStrData        := {|| oBrw:aRow[ 2 ] }
    oBrw:aCols[ 2 ]:nWidth          := 280
-
+ 
    oBrw:CreateFromCode()
 
    oBrw:aCols[ 1 ]:bPaintText = { | oCol, hDC, cText, aCoors, aColors, lHighlight | DrawRow( oCol, hDC, cText, aCoors, oFont3 )  }

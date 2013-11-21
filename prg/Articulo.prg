@@ -27,8 +27,8 @@
 
 
 #define fldGeneral                  oFld:aDialogs[1]
-#define fldTactil                   oFld:aDialogs[2]
-#define fldPrecios                  oFld:aDialogs[3]
+#define fldPrecios                  oFld:aDialogs[2]
+#define fldTactil                   oFld:aDialogs[3]
 #define fldDescripciones            oFld:aDialogs[4]
 #define fldPropiedades              oFld:aDialogs[5]
 #define fldImagenes                 oFld:aDialogs[6]
@@ -1714,14 +1714,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    Cargamos los precios en sus variables---------------------------------------
 	*/
 
-   DEFINE DIALOG oDlg RESOURCE "ARTICULO" TITLE LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[ ( dbfArticulo )->( fieldpos( "Nombre" ) ) ] )
+   DEFINE DIALOG oDlg RESOURCE "Articulo" TITLE LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[ ( dbfArticulo )->( fieldpos( "Nombre" ) ) ] )
 
       REDEFINE FOLDER oFld;
          ID       300 ;
          OF       oDlg ;
          PROMPT   "&General",;
-                  "&Táctil",;
                   "&Precios",;
+                  "&Táctil",;
                   "&Descripciones",;
                   "P&ropiedades",;
                   "Imagenes",;
@@ -1732,12 +1732,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "&Escandallos",;
                   "&Web";
          DIALOGS  "ART_1",;
-                  "ART_Tactil",;
                   "ART_5",;
+                  "ART_Tactil",;
                   "ART_2",;
                   "ART_20",;
                   "ART_12",;
-                  "ART_14",;
+                  "ART_Logistica",;
                   "ART_3",;
                   "ART_15",;
                   "ART_4",;
@@ -1947,12 +1947,43 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
    bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
 
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lFacCnv" ) ) ] ;
+      ID       200 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      ON CHANGE( ChangeFactorConversion( aTmp, aGet ) ) ;
+      OF       fldGeneral
+
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "nFacCnv" ) ) ] ;
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nFacCnv" ) ) ] ;
+      ID       210 ;
+      WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "lFacCnv" ) ) ] );
+      PICTURE  "@E 999,999.999999" ;
+      OF       fldGeneral
+
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "nDuracion" ) ) ] ;
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nDuracion" ) ) ] ;
+      ID       250 ;
+      SPINNER ;
+      MIN      0 ;
+      MAX      100 ;
+      WHEN     ( nMode != ZOOM_MODE );
+      OF       fldGeneral
+
+   REDEFINE COMBOBOX aGet[ ( dbfArticulo )->( fieldpos( "nTipDur" ) ) ];
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nTipDur" ) ) ];
+      ITEMS    { "Dia (s)", "Mes (es)", "Año (s)" };
+      ID       251 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      OF       fldGeneral
+
+
+   /*
    REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lTerminado" ) ) ];
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "lTerminado" ) ) ];
          ID       620 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
-
+   */
 
    /*
    Tactil----------------------------------------------------------------------
@@ -3258,22 +3289,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ]:bValid   := {|| oSeccion:Existe( aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ]:oHelpText, "cDesSec", .t., .t., "0" ) }
       aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ]:bHelp    := {|| oSeccion:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ] ) }
 
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "NDURACION" ) ) ] ;
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "NDURACION" ) ) ] ;
-      ID       250 ;
-      SPINNER ;
-      MIN      0 ;
-      MAX      100 ;
-      WHEN     ( nMode != ZOOM_MODE );
-      OF       fldLogistica
-
-   REDEFINE COMBOBOX aGet[ ( dbfArticulo )->( fieldpos( "NTIPDUR" ) ) ];
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "NTIPDUR" ) ) ];
-      ITEMS    { "Dia (s)", "Mes (es)", "Año (s)" };
-      ID       251 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldLogistica
-
    REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "NCAJENT" ) ) ] ;
       ID       180 ;
       SPINNER ;
@@ -3435,19 +3450,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "CUNDPLT" ) ) ] ;
       ID       410 ;
       WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldLogistica
-
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lFacCnv" ) ) ] ;
-      ID       200 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      ON CHANGE( ChangeFactorConversion( aTmp, aGet ) ) ;
-      OF       fldLogistica
-
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "nFacCnv" ) ) ] ;
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nFacCnv" ) ) ] ;
-      ID       210 ;
-      WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "lFacCnv" ) ) ] );
-      PICTURE  "@E 999,999.999999" ;
       OF       fldLogistica
 
    /*
@@ -4574,12 +4576,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE BUTTON ;
          ID       3 ;
          OF       oDlg ;
-         ACTION   ( oFld:SetOption( oFld:nOption - 1 )  )
+         ACTION   ( if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) )
 
    REDEFINE BUTTON ;
          ID       4 ;
          OF       oDlg ;
-         ACTION   ( oFld:SetOption( oFld:nOption + 1 ) )
+         ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
 
    REDEFINE BUTTON aBtn[ 1 ] ;
          ID       IDOK ;
@@ -4611,8 +4613,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       fldImagenes:AddFastKey( VK_F3, {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) } )
       fldImagenes:AddFastKey( VK_F4, {|| WinDelRec( oBrwImg, dbfTmpImg ) } )
 
-      oDlg:AddFastKey(  VK_F7, {|| oFld:SetOption( oFld:nOption - 1 ) } )
-      oDlg:AddFastKey(  VK_F8, {|| oFld:SetOption( oFld:nOption + 1 ) } )
+      oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
+      oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
       oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 

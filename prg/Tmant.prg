@@ -13,6 +13,8 @@ CLASS TMant
 
    DATA nLevel
 
+   DATA nMode
+
    DATA cPath
    DATA cMru
 
@@ -949,7 +951,9 @@ METHOD Append( oBrw ) CLASS TMant
       end if
    end if
 
-   lAppend           := ::Resource( 1 )
+   ::nMode           := APPD_MODE
+
+   lAppend           := ::Resource( ::nMode )
 
    if lAppend
 
@@ -975,6 +979,8 @@ METHOD Append( oBrw ) CLASS TMant
 
    end if
 
+   ::nMode           := nil
+
    if ::lMinimize
       if( oBrw != nil, oBrw:Maximize(), )
    end if
@@ -989,6 +995,7 @@ METHOD Append( oBrw ) CLASS TMant
          return .f.
       end if
    end if
+
 
 return ( lAppend )
 
@@ -1013,7 +1020,9 @@ METHOD Dup() CLASS TMant
       end if
    end if
 
-   lDup        := ::Resource( 1 )
+   ::nMode     := APPD_MODE
+
+   lDup        := ::Resource( ::nMode )
 
    if lDup
 
@@ -1042,6 +1051,8 @@ METHOD Dup() CLASS TMant
       ::oDbf:Cancel()
 
    end if
+
+   ::nMode     := nil 
 
    if ::bOnPostAppend != nil
       lTrigger       := Eval( ::bOnPostAppend, Self )
@@ -1080,7 +1091,9 @@ METHOD Edit( oBrw ) CLASS TMant
 
       ::oDbf:Load()
 
-      lEdit          := ::Resource( 2 )
+      ::nMode        := EDIT_MODE
+
+      lEdit          := ::Resource( ::nMode )
 
       if lEdit
 
@@ -1110,6 +1123,8 @@ METHOD Edit( oBrw ) CLASS TMant
 
    end if
 
+   ::nMode     := nil
+
    if ::lMinimize
       if( oBrw != nil, oBrw:Maximize(), )
    end if
@@ -1134,7 +1149,13 @@ METHOD Zoom() CLASS TMant
    end if
 
    ::oDbf:Load()
-   ::Resource( 3 )
+   
+   ::nMode     := ZOOM_MODE
+
+   ::Resource( ::nMode )
+
+   ::nMode     := nil
+
    ::oDbf:Cancel()
 
 RETURN ( .t. )

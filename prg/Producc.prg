@@ -1360,7 +1360,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( oBrwMat:AddCol() )
          :cHeader          := "Número"
-         :bStrData         := {|| Trans( ::oDetProduccion:oDbfVir:nNumLin, "9999" ) }
+         :bStrData         := {|| Trans( ::oDetProduccion:oDbfVir:FieldGetByName( "nNumLin" ), "9999" ) }
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -1368,19 +1368,19 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( oBrwMat:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| ::oDetProduccion:oDbfVir:cCodArt }
+         :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cCodArt" ) }
          :nWidth           := 80
       end with
 
       with object ( oBrwMat:AddCol() )
          :cHeader          := "Nombre"
-         :bStrData         := {|| ::oDetProduccion:oDbfVir:cNomArt }
+         :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cNomArt" ) }
          :nWidth           := 400
       end with
 
       with object ( oBrwMat:AddCol() )
          :cHeader          := "Almacén"
-         :bStrData         := {|| ::oDetProduccion:oDbfVir:cAlmOrd }
+         :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 55
       end with
 
@@ -1394,7 +1394,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( oBrwMat:AddCol() )
          :cHeader          := "Precio"
-         :bStrData         := {|| Trans( ::oDetProduccion:oDbfVir:nImpOrd, ::cPouDiv ) }
+         :bStrData         := {|| Trans( ::oDetProduccion:oDbfVir:FieldGetByName( "nImpOrd" ), ::cPouDiv ) }
          :nWidth           := 85
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -1549,25 +1549,25 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( oBrwPer:AddCol() )
          :cHeader          := "Personal"
-         :bStrData         := {|| Rtrim( ::oDetPersonal:oDbfVir:cCodTra ) + " - " + oRetFld( ::oDetPersonal:oDbfVir:cCodTra, ::oOperario:oDbf ) }
+         :bStrData         := {|| Rtrim( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ) ) + " - " + oRetFld( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oOperario:oDbf ) }
          :nWidth           := 325
       end with
 
       with object ( oBrwPer:AddCol() )
          :cHeader          := "Operación"
-         :bStrData         := {|| ::oDetPersonal:oDbfVir:cCodOpe + " - " + oRetFld( ::oDetPersonal:oDbfVir:cCodOpe, ::oOperacion:oDbf ) }
+         :bStrData         := {|| ::oDetPersonal:oDbfVir:FieldGetByName( "cCodOpe" ) + " - " + oRetFld( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) }
          :nWidth           := 325
       end with
 
       with object ( oBrwPer:AddCol() )
          :cHeader          := "Tiempo empleado"
-         :bStrData         := {|| cTiempo( ::oDetPersonal:oDbfVir:dFecIni, ::oDetPersonal:oDbfVir:dFecFin, ::oDetPersonal:oDbfVir:cHorIni, ::oDetPersonal:oDbfVir:cHorFin ) }
+         :bStrData         := {|| cTiempo( ::oDetPersonal:oDbfVir:FieldGetByName( "dFecIni" ), ::oDetPersonal:oDbfVir:FieldGetByName( "dFecFin" ), ::oDetPersonal:oDbfVir:FieldGetByName( "cHorIni" ), ::oDetPersonal:oDbfVir:FieldGetByName( "cHorFin" ) ) }
          :nWidth           := 110
       end with
 
       with object ( oBrwPer:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| ::oDetPersonal:cTotal( ::oDetPersonal:oDbfVir:cCodTra, ::oDetHorasPersonal:oDbfVir ) }
+         :bStrData         := {|| ::oDetPersonal:cTotal( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
          :nWidth           := 90
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -1615,13 +1615,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( oBrwMaq:AddCol() )
          :cHeader             := "Maquina"
-         :bStrData            := {|| Rtrim( ::oDetMaquina:oDbfVir:cCodMaq ) + " - " + oRetFld( ::oDetMaquina:oDbfVir:cCodMaq, ::oMaquina:oDbf ) }
+         :bStrData            := {|| Rtrim( ::oDetMaquina:oDbfVir:FieldGetByName( "cCodMaq" ) ) + " - " + oRetFld( ::oDetMaquina:oDbfVir:FieldGetByName( "cCodMaq" ), ::oMaquina:oDbf ) }
          :nWidth              := 645
       end with
 
       with object ( oBrwMaq:AddCol() )
          :cHeader             := "Tiempo empleado"
-         :bStrData            := {|| cTiempo( ::oDetMaquina:oDbfVir:dFecIni, ::oDetMaquina:oDbfVir:dFecFin, ::oDetMaquina:oDbfVir:cIniMaq, ::oDetMaquina:oDbfVir:cFinMaq ) }
+         :bStrData            := {|| cTiempo( ::oDetMaquina:oDbfVir:FieldGetByName( "dFecIni" ), ::oDetMaquina:oDbfVir:FieldGetByName( "dFecFin" ), ::oDetMaquina:oDbfVir:FieldGetByName( "cIniMaq" ), ::oDetMaquina:oDbfVir:FieldGetByName( "cFinMaq" ) ) }
          :nWidth              := 120
       end with
 
@@ -4887,6 +4887,8 @@ CLASS TDetalleArticulos FROM TDet
    DATA  oGetTemporada
    DATA  oGetCatalogo
 
+   DATA oClasificacionArticulo
+
    METHOD CommunFields( oDbf )
 
    METHOD LoadPropiedadesArticulos( oDlg )
@@ -4899,12 +4901,12 @@ END CLASS
 
 METHOD CommunFields( oDbf ) CLASS TDetalleArticulos
 
-      FIELD NAME "cGrpFam"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del grupo de familia"   HIDE        OF oDbf       
-      FIELD NAME "cCodFam"    TYPE "C" LEN 16  DEC 0 COMMENT "Código de la familia"          HIDE        OF oDbf       
-      FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del tipo"               HIDE        OF oDbf        
-      FIELD NAME "cCodCat"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de categoría"           HIDE        OF oDbf       
-      FIELD NAME "cCodTmp"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de la temporada"        HIDE        OF oDbf       
-      FIELD NAME "cCodFab"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del fabricante"         HIDE        OF oDbf       
+   FIELD NAME "cGrpFam"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del grupo de familia"   HIDE        OF oDbf       
+   FIELD NAME "cCodFam"    TYPE "C" LEN 16  DEC 0 COMMENT "Código de la familia"          HIDE        OF oDbf       
+   FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del tipo"               HIDE        OF oDbf        
+   FIELD NAME "cCodCat"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de categoría"           HIDE        OF oDbf       
+   FIELD NAME "cCodTmp"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de la temporada"        HIDE        OF oDbf       
+   FIELD NAME "cCodFab"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del fabricante"         HIDE        OF oDbf       
 
 RETURN ( Self )
 
@@ -4978,6 +4980,13 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetFabricante:bHelp  := {|| ::oParent:oFabricante:Buscar( ::oGetFabricante ) }
       ::oGetFabricante:lValid()
 
+      /*
+      Clasificación -----------------------------------------------------------
+      */
+
+      ::oClasificacionArticulo   := ClasificacionTipoArticulo():New( 200, oDlg )
+      ::oClasificacionArticulo:SetMode( nMode )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -5001,6 +5010,10 @@ METHOD LoadCommunFields() CLASS TDetalleArticulos
 
       ::oGetFabricante:cText( ::oParent:oArt:cCodFab )
       ::oGetFabricante:lValid()
+     
+      ? ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip )
+
+      ::oClasificacionArticulo:SetNumber( ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip ) )
 
 RETURN ( Self )
 

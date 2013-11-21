@@ -6,6 +6,8 @@
 
 CLASS TTipArt FROM TMANT
 
+   DATA oClasificacionArticulo
+
    METHOD Create( cPath ) CONSTRUCTOR
 
    METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
@@ -17,20 +19,20 @@ CLASS TTipArt FROM TMANT
 
    METHOD Activate()
 
-   METHOD Resource( nMode )
-
    METHOD lValid( oGet, oSay )
 
    METHOD cNombre( cCodArt )
+   METHOD nTipo( cCodArt )
 
-   METHOD lPreSave( oGet, oGet2, oDlg, nMode )
+   METHOD Resource( nMode )
+   METHOD InitResource()
+   METHOD SaveResource( oGet, oGet2, oDlg )
 
    METHOD PublicarWeb( lLoad )
 
    METHOD Enviar( lLoad )
 
    METHOD lSelect( lSel, oBrw )
-
    METHOD SelectAll( lSel, oBrw )
 
 END CLASS
@@ -111,10 +113,19 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"
 
-      FIELD CALCULATE NAME "bSndDoc"   LEN  14  DEC 0 COMMENT { "Enviar", "Lbl16", 3 }       VAL {|| ::oDbf:FieldGetByName( "lSelect" ) } BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
-      FIELD CALCULATE NAME "bPubInt"   LEN  14  DEC 0 COMMENT { "Publicar", "SndInt16", 3 }  VAL {|| ::oDbf:FieldGetByName( "lPubInt" ) } BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
+      FIELD CALCULATE NAME "bSndDoc"   LEN  14  DEC 0 COMMENT { "Enviar", "Lbl16", 3 }       VAL {|| ::oDbf:FieldGetByName( "lSelect" ) } ;
+            BITMAPS "Sel16", "Nil16" COLSIZE 20                                                             OF ::oDbf
+
+      FIELD CALCULATE NAME "bPubInt"   LEN  14  DEC 0 COMMENT { "Publicar", "SndInt16", 3 }  VAL {|| ::oDbf:FieldGetByName( "lPubInt" ) } ;
+            BITMAPS "Sel16", "Nil16" COLSIZE 20                                                             OF ::oDbf
+
       FIELD NAME "cCodTip" TYPE "C"    LEN   3  DEC 0 COMMENT "Código"         PICTURE "@!"  COLSIZE 60     OF ::oDbf
       FIELD NAME "cNomTip" TYPE "C"    LEN 100  DEC 0 COMMENT "Nombre"                       COLSIZE 200    OF ::oDbf
+
+      FIELD CALCULATE NAME "cTipArt"   LEN 100  DEC 0 COMMENT "Clasificación"                VAL {|| ClasificacionTipoArticulo():GetNombre( ::oDbf:FieldGetByName( "nTipArt" ) ) } ;
+            COLSIZE 120                                                                                     OF ::oDbf
+
+      FIELD NAME "nTipArt" TYPE "N"    LEN   1  DEC 0 COMMENT ""               HIDE          COLSIZE 0      OF ::oDbf              
       FIELD NAME "lSelect" TYPE "L"    LEN   1  DEC 0 COMMENT ""               HIDE          COLSIZE 0      OF ::oDbf
       FIELD NAME "lPubInt" TYPE "L"    LEN   1  DEC 0 COMMENT ""               HIDE          COLSIZE 0      OF ::oDbf
       FIELD NAME "cCodWeb" TYPE "N"    LEN  11  DEC 0 COMMENT "Código Web"     HIDE                         OF ::oDbf
@@ -140,7 +151,7 @@ METHOD Activate()
    end if
 
    /*
-   Cerramos todas las ventanas
+   Cerramos todas las ventanas-------------------------------------------------
    */
 
    if ::oWndParent != nil
@@ -152,7 +163,7 @@ METHOD Activate()
    end if
 
    /*
-   Creamos el Shell
+   Creamos el Shell------------------------------------------------------------
    */
 
    if ::lOpenFiles
@@ -200,8 +211,9 @@ METHOD Resource( nMode )
    local oGetImagen
    local oBmpImagen
 
-   if nMode == APPD_MODE
+   if ( nMode == APPD_MODE )
       ::oDbf:nPosInt := 1
+      ::oDbf:nTipArt := 1
    end if
 
    DEFINE DIALOG oDlg RESOURCE "TipArt" TITLE LblTitle( nMode ) + "tipos de artículos"
@@ -216,6 +228,9 @@ METHOD Resource( nMode )
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
+
+      ::oClasificacionArticulo   := ClasificacionTipoArticulo():New( 200, oDlg )
+      ::oClasificacionArticulo:SetMode( nMode )
 
       REDEFINE GET oGetNombreInt VAR ::oDbf:cNomInt UPDATE;
          ID       150 ;
@@ -263,7 +278,7 @@ METHOD Resource( nMode )
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oGet, oGetNombre, oDlg, nMode ) )
+         ACTION   ( ::SaveResource( oGet, oGetNombre, oDlg, nMode ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -277,22 +292,30 @@ METHOD Resource( nMode )
          ACTION   ( ChmHelp( "Tipos_de_artículos" ) )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGet, oGetNombre, oDlg, nMode ) } )
+      oDlg:AddFastKey( VK_F5, {|| ::SaveResource( oGet, oGetNombre, oDlg ) } )
    end if
 
    oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Tipos_de_artículos" ) } )
 
    oDlg:bStart    := {|| oGet:SetFocus() }
 
-   ACTIVATE DIALOG oDlg CENTER
+   oDlg:Activate( , , , .t., , , {|| ::InitResource() } )
 
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-METHOD lPreSave( oGet, oGetNombre, oDlg, nMode )
+METHOD InitResource()
+   
+   ::oClasificacionArticulo:SetNumber( ::oDbf:nTipArt )
 
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD SaveResource( oGet, oGetNombre, oDlg )
+
+   if ( ::nMode == APPD_MODE .or. ::nMode == DUPL_MODE )
 
       if Empty( ::oDbf:cCodTip )
          MsgStop( "Código de tipo de artículo no puede estar vacío." )
@@ -317,6 +340,7 @@ METHOD lPreSave( oGet, oGetNombre, oDlg, nMode )
 
    ::oDbf:lSelect    := .t.
    ::oDbf:cCodWeb    := 0
+   ::oDbf:nTipArt    := ::oClasificacionArticulo:GetNumber()
 
 RETURN ( oDlg:end( IDOK ) )
 
@@ -324,9 +348,7 @@ RETURN ( oDlg:end( IDOK ) )
 
 Method lSelect( lSel, oBrw )
 
-   ::oDbf:Load()
-   ::oDbf:lSelect    := lSel
-   ::oDbf:Save()
+   ::oDbf:FieldPutByName( "lSelect", lSel )
 
    if oBrw != nil
       oBrw:Refresh()
@@ -382,15 +404,27 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-METHOD cNombre( cCodArt )
+METHOD cNombre( cCodTip )
 
    local cNombre  := ""
 
-   if ::oDbf:Seek( cCodArt )
+   if ::oDbf:Seek( cCodTip )
       cNombre     := ::oDbf:cNomTip
    end if
 
 RETURN ( cNombre )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTipo( cCodTip )
+
+   local nTipo  := 0
+
+   if ::oDbf:Seek( cCodTip )
+      nTipo     := ::oDbf:nTipArt
+   end if
+
+RETURN ( nTipo )
 
 //---------------------------------------------------------------------------//
 
@@ -429,3 +463,51 @@ METHOD Enviar( lLoad )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+CLASS ClasificacionTipoArticulo
+   
+   DATA        oClasificacionArticulo
+   DATA        cClasificacionArticulo
+
+   CLASSDATA   aClasificacionArticulo     INIT { "Terminado", "Semiterminado", "Materia prima", "Desecho", "Otros" }
+   
+   METHOD New( nId, oDialog)
+
+   METHOD Change()                        VIRTUAL
+
+   METHOD GetText()                       INLINE ( ::oClasificacionArticulo:VarGet() )
+   METHOD SetText( cText )                INLINE ( ::oClasificacionArticulo:Set( cText ) )
+
+   METHOD GetNumber()                     INLINE ( ::oClasificacionArticulo:nAt )
+   METHOD SetNumber( nNumber )            INLINE ( ::SetText( nNumber ) )
+
+   METHOD SetMode( nMode )                INLINE ( ::oClasificacionArticulo:bWhen := {| nMode | nMode != APPD_MODE } )
+
+   METHOD GetNombre()
+
+END CLASS
+
+METHOD New( nId, oDialog ) CLASS ClasificacionTipoArticulo
+
+   REDEFINE COMBOBOX ::oClasificacionArticulo ;
+            VAR      ::cClasificacionArticulo ;
+            ID       ( nId ) ;
+            ITEMS    ::aClasificacionArticulo ;
+            OF       oDialog
+
+   ::oClasificacionArticulo:bChange := {|| ::Change( ::oClasificacionArticulo ) }
+   
+RETURN ( Self )
+
+METHOD GetNombre( nTipArt )
+
+   local cNombre     := ""
+
+   if nTipArt > 0
+      cNombre        := ::aClasificacionArticulo[ ( Min( Max( nTipArt, 1 ), len( ::aClasificacionArticulo ) ) ) ] 
+   end if
+
+RETURN ( cNombre )
+
+//---------------------------------------------------------------------------//
+

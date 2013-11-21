@@ -40,8 +40,6 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    DATA  oDbfSeries
 
-   DATA  oChkTerminado
-
    METHOD New( cPath, oParent )
 
    METHOD DefineFiles()
@@ -50,8 +48,8 @@ CLASS TDetProduccion FROM TDetalleArticulos
    METHOD CloseFiles()
 
    METHOD Resource( nMode, lLiteral )
-   METHOD SetDialogMode()
-   METHOD lPreSave( oGetArt, oDlg, nMode )
+   METHOD SetResource()
+   METHOD SaveResource( oGetArt, oDlg, nMode )
 
    METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
@@ -134,7 +132,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
-      FIELD NAME "lTerminado" TYPE "L" LEN  1  DEC 0 COMMENT "Lógico de producto terminado"  COLSIZE  80 OF oDbf
+      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT ""                              HIDE        OF oDbf              
 
       ::CommunFields( oDbf )
 
@@ -207,6 +205,8 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    local cSayPr2
    local cSayVp2
    local oBtnSer
+   local oBtnAdelante
+   local oBtnAtras
 
    ::cOldCodArt         := ::oDbfVir:cCodArt
 
@@ -450,10 +450,6 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX ::oChkTerminado VAR ::oDbfVir:lTerminado ;
-         ID       300 ;
-         OF       oFld:aDialogs[1]
-
       /*
       Pestaña de datos---------------------------------------------------------
       */
@@ -471,11 +467,21 @@ METHOD Resource( nMode ) CLASS TDetProduccion
 
       oBtnSer:bAction   := {|| ::oParent:oDetSeriesProduccion:Resource( nMode ) }
 
+      REDEFINE BUTTON oBtnAtras ;
+         ID       4 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) )
+
+      REDEFINE BUTTON oBtnAdelante ;
+         ID       5 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
+
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oGetArt, oDlg, nMode ) )
+         ACTION   ( ::SaveResource( oGetArt, oDlg, nMode ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -484,10 +490,12 @@ METHOD Resource( nMode ) CLASS TDetProduccion
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() })
-         oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGetArt, oDlg, nMode ) } )
+         oDlg:AddFastKey( VK_F5, {|| ::SaveResource( oGetArt, oDlg, nMode ) } )
+         oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
+         oDlg:AddFastKey( VK_F8, {|| oBtnAdelante:Click() } )
       end if
 
-      oDlg:bStart := {|| ::EdtRotor( oDlg ), ::SetDialogMode( nMode ) }
+      oDlg:bStart := {|| ::EdtRotor( oDlg ), ::SetResource( nMode ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -497,7 +505,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-METHOD SetDialogMode( nMode ) CLASS TDetProduccion
+METHOD SetResource( nMode ) CLASS TDetProduccion
 
    if !lUseCaj()
       ::oGetCaja:Hide()
@@ -546,6 +554,8 @@ METHOD SetDialogMode( nMode ) CLASS TDetProduccion
       end if
 
    end if
+
+   ::oClasificacionArticulo:SetNumber( ::oDbfVir:nTipArt )
 
 RETURN ( Self )
 
@@ -624,8 +634,6 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
                ::oLote:Hide()
             end if
 
-            ::oChkTerminado:Click( ::oParent:oArt:lTerminado )
-
             ::LoadCommunFields()
          
          end if
@@ -682,7 +690,7 @@ METHOD nTotUnidades( oDbf ) CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd, ::oParent:nDouDiv ), ( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd ) ) )
+RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ), ::oParent:nDouDiv ), ( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ) ) ) )
 
 //--------------------------------------------------------------------------//
 
@@ -706,7 +714,7 @@ METHOD nTotPrecio( oDbf ) CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( Round( ::nTotUnidades( oDbf ) * oDbf:nImpOrd, ::oParent:nDorDiv ) )
+RETURN ( Round( ::nTotUnidades( oDbf ) * oDbf:FieldGetByName( "nImpOrd" ), ::oParent:nDorDiv ) )
 
 //--------------------------------------------------------------------------//
 
@@ -735,7 +743,6 @@ METHOD nTotal( oDbf ) CLASS TDetProduccion
    oDbf:GetStatus()
 
    oDbf:GoTop()
-
    while !oDbf:Eof()
       nTotal      += ::nTotPrecio( oDbf )
       oDbf:Skip()
@@ -844,7 +851,7 @@ RETURN ( ::oGetTotVol:cText( ::nTotVolumen( oDbf ) ), .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD lPreSave( oGetArt, oDlg, nMode ) CLASS TDetProduccion
+METHOD SaveResource( oGetArt, oDlg, nMode ) CLASS TDetProduccion
 
    local nOrdAnt
 
@@ -853,6 +860,8 @@ METHOD lPreSave( oGetArt, oDlg, nMode ) CLASS TDetProduccion
       oGetArt:SetFocus()
       Return .f.
    end if
+
+   ::oDbfVir:nTipArt    := ::oClasificacionArticulo:GetNumber()
 
    do case
       case nMode == APPD_MODE
