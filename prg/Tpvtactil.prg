@@ -34,15 +34,15 @@
 #define exitAceptarDesglosado       5
 
 #define documentoTicket             1
-#define documentoAlbaran            2
-#define documentoFactura            3
+#define documentoAlbaran            2 
+#define documentoFactura            3 
 
 #define nParcial                    1
 #define nPagado                     2
 
 #define calcDistance                240
 
-static aResources                   := {}  
+static aResources                   := {}   
 
 static oThis
 
@@ -199,7 +199,7 @@ CLASS TpvTactil
 
    DATA oFntNum
    DATA oFntEur
-   DATA oFntFld
+   DATA oFntFld 
    DATA oFntBrw
    DATA oFntDlg
    DATA oFntDto
