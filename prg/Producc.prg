@@ -5011,8 +5011,6 @@ METHOD LoadCommunFields() CLASS TDetalleArticulos
       ::oGetFabricante:cText( ::oParent:oArt:cCodFab )
       ::oGetFabricante:lValid()
      
-      ? ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip )
-
       ::oClasificacionArticulo:SetNumber( ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip ) )
 
 RETURN ( Self )
