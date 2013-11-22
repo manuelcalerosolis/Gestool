@@ -18712,7 +18712,7 @@ Function nDtoLTpv( uTmpL, nDec, nRouDec, nVdv )
    do case 
    case ValType( uTmpL ) == "C"
 
-      if !( uTmpL )->lFreTil .and. ( uTmpL )->nDtoLin != 0
+      if !( uTmpL )->lFreTil .and. ( uTmpL )->nDtoLin != 0 
 
          nCalculo       := Round( ( uTmpL )->nPvpTil, nDec )    // Precio
 
