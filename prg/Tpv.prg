@@ -18709,8 +18709,8 @@ Function nDtoLTpv( uTmpL, nDec, nRouDec, nVdv )
    Siempre q el ticket no sea gratis
    */
 
-   
-   
+   do case 
+   case ValType( uTmpL ) == "C"
 
       if !( uTmpL )->lFreTil .and. ( uTmpL )->nDtoLin != 0
 
