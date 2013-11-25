@@ -16,7 +16,7 @@
 #define NUM_BTN_FAM               7
 #define NUM_BTN_ART              19
 
-#define FONT_NAME                "Segoe UI" // "Arial" //
+#define FONT_NAME                "Segoe UI" // "Arial" // 
 
 /*
 Ficheros-----------------------------------------------------------------------
