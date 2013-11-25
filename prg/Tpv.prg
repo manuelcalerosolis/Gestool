@@ -404,7 +404,7 @@ static oFabricante
 static lExternal           := .t.
 static nNumBtnFam          := NUM_BTN_FAM
 static nNumBtnArt          := NUM_BTN_ART
-static aTipDoc             := { "Tiket", "AlbarÃ¡n", "Factura", "DevoluciÃ³n", "Apartado", "Vale", "Pda", "Cheque regalo" }
+static aTipDoc             := { "Tiket", "Albarán", "Factura", "Devolución", "Apartado", "Vale", "Pda", "Cheque regalo" }
 static bEditT              := { |aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, aNumDoc    | EdtRec( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, aNumDoc ) }
 static bEditL              := { |aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik | EdtDet( aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik ) }
 static bEditP              := { |aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik | EdtCob( aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik ) }
@@ -1144,7 +1144,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    Compruebo si hay turnos abiertos--------------------------------------------
    */
 
-   cTitle      := "T.P.V. - SesiÃ³n: " + Alltrim( Trans( cCurSesion(), "######" ) ) + " - " + dtoc( date() )
+   cTitle      := "T.P.V. - Sesión: " + Alltrim( Trans( cCurSesion(), "######" ) ) + " - " + dtoc( date() )
 
    /*
    Anotamos el movimiento para el navegador------------------------------------
@@ -1155,13 +1155,13 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    cTitle ;
-      PROMPTS  "NÃºmero",;
+      PROMPTS  "Número",;
 					"Fecha",;
                "Caja",;
                "Cajero",;
-               "CÃ³digo",;
+               "Código",;
                "Nombre",;
-               "SesiÃ³n" ;
+               "Sesión" ;
       MRU      "Cashier_user1_16";
       BITMAP   clrTopTPV ;
       ALIAS    ( dbfTikT );
@@ -1178,7 +1178,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "SesiÃ³n cerrada"
+         :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfTikT )->lCloTik }
@@ -1226,7 +1226,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :cSortOrder       := "cNumTik"
          :bEditValue       := {|| ( dbfTikT )->cSerTik + "/" + lTrim( ( dbfTikT )->cNumTik ) }
          :nWidth           := 80
@@ -1234,13 +1234,13 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "DelegaciÃ³n"
+         :cHeader          := "Delegación"
          :bEditValue       := {|| ( dbfTikT )->cSufTik } // ( dbfTikT )->cCodDlg }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "SesiÃ³n"
+         :cHeader          := "Sesión"
          :cSortOrder       := "cTurTik"
          :bEditValue       := {|| Trans( ( dbfTikT )->cTurTik, "######" ) }
          :nWidth           := 40
@@ -1281,7 +1281,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCliTik"
          :bEditValue       := {|| AllTrim( ( dbfTikT )->cCliTik ) }
          :nWidth           := 70
@@ -1297,7 +1297,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "AlmacÃ©n"
+         :cHeader          := "Almacén"
          :bEditValue       := {|| ( dbfTikT )->cAlmTik }
          :nWidth           := 60
       end with
@@ -1394,7 +1394,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oWndBrw:RecAdd() );
-      TOOLTIP  "(A)Ã±adir";
+      TOOLTIP  "(A)ñadir";
       HOTKEY   "A";
       BEGIN GROUP ;
       LEVEL    ACC_APPD
@@ -1843,7 +1843,7 @@ FUNCTION TpvDelRec()
    CursorWait()
 
    /*
-   Cambiamos el estado del albarÃ¡n del que proviene----------------------------
+   Cambiamos el estado del albarán del que proviene----------------------------
    */
 
    if !Empty( ( dbfTikT )->cAlbTik )
@@ -2055,7 +2055,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
    end if
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. !lCurSesion()
-      MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
+      MsgStop( "No hay sesiones activas, imposible añadir documentos" )
       return .f.
    end if
 
@@ -2459,7 +2459,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
       REDEFINE GET oTotEsp VAR nTotDtoEsp ;
          ID       712 ;
-         PICTURE  "@ER 999.99 â‚¬" ;
+         PICTURE  "@ER 999.99 €" ;
          WHEN     ( .f. ) ;
          OF       oDlgTpv
 
@@ -2478,7 +2478,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
       REDEFINE GET oTotDpp VAR nTotDpp ;
          ID       722 ;
-         PICTURE  "@ER 999.99 â‚¬" ;
+         PICTURE  "@ER 999.99 €" ;
          WHEN     ( .f. ) ;
          OF       oDlgTpv
 
@@ -2647,17 +2647,17 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
       oCarpeta          := TCarpeta():New( oOfficeBar, "T.P.V." )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 186, "Lineas", .f. )
-         oBtnAdd        := TDotNetButton():New( 60, oGrupo, "New32",                    "AÃ±adir [F2]",         1, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
+         oBtnAdd        := TDotNetButton():New( 60, oGrupo, "New32",                    "Añadir [F2]",         1, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
          oBtnEdt        := TDotNetButton():New( 60, oGrupo, "Edit32",                   "Modificar [F3]",      2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
          oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                    "Eliminar [F4]",       3, {|| WinDelRec( oBrwDet, dbfTmpL, nil, nil, .t. ), lRecTotal( aTmp ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 436, "Cobros", .f. )
          oBtnTik        := TDotNetButton():New( 60, oGrupo, "Money2_32",                "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnAlb        := TDotNetButton():New( 60, oGrupo, "Document_plain_user1_32",  "AlbarÃ¡n [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnAlb        := TDotNetButton():New( 60, oGrupo, "Document_plain_user1_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnFac        := TDotNetButton():New( 70, oGrupo, "Document_user1_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnVal        := TDotNetButton():New( 60, oGrupo, "Cashier_Money2_32",        "Cheque regalo",       5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnDev        := TDotNetButton():New( 60, oGrupo, "Cashier_Delete_32",        "DevoluciÃ³n",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
+         oBtnDev        := TDotNetButton():New( 60, oGrupo, "Cashier_Delete_32",        "Devolución",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
          oBtnOld        := TDotNetButton():New( 60, oGrupo, "Cashier_Scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f. )
@@ -2670,11 +2670,11 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
       oCarpeta          := TCarpeta():New( oOfficeBar, "Rotor" )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 306, "Cobros", .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "User1_32",                 "Modificar cliente",   1, {|| if( !Empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "CÃ³digo cliente vacÃ­o" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe cliente",     2, {|| if( !Empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "CÃ³digo cliente vacÃ­o" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "User1_32",                 "Modificar cliente",   1, {|| if( !Empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe cliente",     2, {|| if( !Empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
          oBoton         := TDotNetButton():New( 60, oGrupo, "Worker_32",                "Modificar obras",     3, {|| if( !Empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32",           "Modificar artÃ­culo",  4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe artÃ­culo",    5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32",           "Modificar artículo",  4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe artículo",    5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
 
       SetButtonEdtRec( nMode, aTmp )
 
@@ -3381,7 +3381,7 @@ static function BrwApartados()
    local nOrd                    := GetBrwOpt( "BrwTikCli" )
    local oCbxOrd
    local cCbxOrd
-   local aCbxOrd                 := { "NÃºmero", "Fecha", "CÃ³digo cliente", "Nombre cliente" }
+   local aCbxOrd                 := { "Número", "Fecha", "Código cliente", "Nombre cliente" }
    local nRecAnt                 := ( dbfTikT )->( RecNo() )
    local cApartadoSeleccionado   := ""
 
@@ -3431,7 +3431,7 @@ static function BrwApartados()
          oBrw:nMarqueeStyle      := 5
 
          with object ( oBrw:AddCol() )
-            :cHeader             := "NÃºmero"
+            :cHeader             := "Número"
             :cSortOrder          := "cNumTik"
             :bEditValue          := {|| ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
             :nWidth              := 70
@@ -3453,14 +3453,14 @@ static function BrwApartados()
          end with
 
          with object ( oBrw:AddCol() )
-            :cHeader             := "SesiÃ³n"
+            :cHeader             := "Sesión"
             :bEditValue          := {|| ( dbfTikT )->cTurTik + "/" + ( dbfTikT )->cSufTik }
             :nWidth              := 80
             :lHide               := .t.
          end with
 
          with object ( oBrw:AddCol() )
-            :cHeader             := "CÃ³digo cliente"
+            :cHeader             := "Código cliente"
             :bEditValue          := {|| Rtrim( ( dbfTikT )->cCliTik ) }
             :cSortOrder          := "cCliTik"
             :nWidth              := 100
@@ -3617,7 +3617,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       if Empty( aTmp[ _CALMTIK ] )
          aGet[ _CALMTIK ]:SetFocus()
-         MsgInfo( "AlmacÃ©n no puede estar vacio" )
+         MsgInfo( "Almacén no puede estar vacio" )
          lSaveNewTik       := .f.
          return .f.
       end if
@@ -3710,21 +3710,21 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    case nSave == SAVALB
 
       if Empty( aTmp[ _CCLITIK ] )
-         msgStop( "CÃ³digo de cliente no puede estar vacio." )
+         msgStop( "Código de cliente no puede estar vacio." )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
          return .f.
       end if
 
       if !Empty( aGet[ _CCLITIK ] ) .and. lCliBlq( aTmp[ _CCLITIK ], dbfClient )
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarÃ¡n" )
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarán" )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
          return .f.
       end if
 
       if !Empty( aGet[ _CCLITIK ] ) .and. !lCliChg( aTmp[ _CCLITIK ], dbfClient )
-         msgStop( "Este cliente no tiene autorizaciÃ³n para venta a credito.", "Imposible archivar como albarÃ¡n" )
+         msgStop( "Este cliente no tiene autorización para venta a credito.", "Imposible archivar como albarán" )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
          return .f.
@@ -3733,7 +3733,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       if !lBig
 
          if !Empty( aGet[ _CFPGTIK ] ) .and. Empty( aTmp[ _CFPGTIK ] )
-            MsgStop( "Debe de introducir una forma de pago", "Imposible archivar como albarÃ¡n" )
+            MsgStop( "Debe de introducir una forma de pago", "Imposible archivar como albarán" )
             aGet[ _CFPGTIK ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
@@ -3746,7 +3746,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
          if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
-            MsgStop( "Debe de introducir una obra", "Imposible archivar como albarÃ¡n" )
+            MsgStop( "Debe de introducir una obra", "Imposible archivar como albarán" )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
@@ -3823,13 +3823,13 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    aTmp[ _NCOBTIK ]     := nTotTik
 
    /*
-   Capturanmos el porcentaje de promociÃ³n--------------------------------------
+   Capturanmos el porcentaje de promoción--------------------------------------
    */
 
    aTmp[ _NPCTPRM ]     := oFideliza:nPorcentajePrograma( nTotPrm )
 
    /*
-   Vemos si cumple las condiciones para la promociÃ³n---------------------------
+   Vemos si cumple las condiciones para la promoción---------------------------
    */
 
    lValePromocion       := ( !Retfld( aTmp[ _CCLITIK ], dbfClient, "lExcFid" ) .and. ( aTmp[ _NPCTPRM ] != 0 ) )
@@ -3887,7 +3887,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             */
 
             if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Obtenemos el nuevo nÃºmero'
+               oMetMsg:cText     := 'Obtenemos el nuevo número'
                oMetMsg:Refresh()
             end if
 
@@ -4025,7 +4025,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
                   ( dbfTmpP )->nVdvPgo    := aTmp[ _NVDVTIK ]
                   ( dbfTmpP )->nDevTik    := Max( aTmp[ _NCAMTIK ], 0 )
                else
-                  MsgStop( "No se ha podido aÃ±adir el registro de pago" )
+                  MsgStop( "No se ha podido añadir el registro de pago" )
                end if
 
             end if
@@ -4039,13 +4039,13 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          nCambioTik           := aTmp[ _NCAMTIK ]
 
          /*
-         Antes de guardar, si venimos de un albarÃ¡n, cambiamos el estado al albarÃ¡n
+         Antes de guardar, si venimos de un albarán, cambiamos el estado al albarán
          */
 
          if !Empty( aTmp[ _CALBTIK ] )
 
             if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Estado albarÃ¡n'
+               oMetMsg:cText     := 'Estado albarán'
                oMetMsg:Refresh()
             end if
 
@@ -4266,7 +4266,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Imprimir el registro--------------------------------------------------
          */
 
-         if lCopTik .and. nSave != SAVAPT // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botÃ³n de aceptar e imprimir
+         if lCopTik .and. nSave != SAVAPT // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
             ImpTiket( .f. )
          end if
 
@@ -4328,7 +4328,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
          /*
-         Generamos el vale por promociÃ³n si nos lo piden--------------------
+         Generamos el vale por promoción si nos lo piden--------------------
          */
 
          if ( lValePromocion ) .and. ( nValePromocion > 0 ) .and. ( nMode == APPD_MODE ) .and. ( nSave != SAVVAL )
@@ -4375,7 +4375,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             aTbl[ _CTIPTIK ]     := SAVVAL
             aTbl[ _NUNTTIL ]     := 1
             aTbl[ _NNUMLIN ]     := 1
-            aTbl[ _CNOMTIL ]     := "Vale por promociÃ³n"
+            aTbl[ _CNOMTIL ]     := "Vale por promoción"
 
             if ( nSave == SAVDEV )
                aTbl[ _NPVPTIL ]  := - nValePromocion
@@ -4385,7 +4385,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             dbGather( aTbl, dbfTikL, .t. )
 
-            if lCopTik // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botÃ³n de aceptar e imprimir
+            if lCopTik // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
                ImpTiket( .f. )
             end if
 
@@ -4414,7 +4414,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          RollBackTransaction()
 
-         msgStop( "Error en la grabaciÃ³n del ticket" + CRLF + ErrorMessage( oError ) )
+         msgStop( "Error en la grabación del ticket" + CRLF + ErrorMessage( oError ) )
 
       END SEQUENCE
 
@@ -5061,7 +5061,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       ( dbfTmpP )->( dbGoTop() )
 
       /*
-      AÂ¤adimos desde el fichero de Anticipos-----------------------------------
+      A¤adimos desde el fichero de Anticipos-----------------------------------
       */
 
       nRec  := ( dbfAntCliT )->( Recno() )
@@ -5083,7 +5083,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       aTmp[ _NCOBTIK ]  := nTotTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, nil, nil, .f. )
 
       /*
-      AÂ¤adimos desde el fichero de PAGOS---------------------------------------
+      A¤adimos desde el fichero de PAGOS---------------------------------------
       */
 
       if ( dbfTikP )->( dbSeek( cNumTik ) )
@@ -5096,7 +5096,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
       ( dbfTmpP )->( dbGoTop() )
 
       /*
-      AÃ±adimos desde los vales----------------------------------------------
+      Añadimos desde los vales----------------------------------------------
       */
 
       nRec     := ( dbfTikT )->( Recno() )
@@ -5145,7 +5145,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
                ( dbfTmpP )->nVdvPgo    := aTmp[ _NVDVTIK ]
                ( dbfTmpP )->nDevTik    := Max( aTmp[ _NCAMTIK ], 0 )
             else
-               MsgStop( "No se ha podido aÃ±adir el registro de pago" )
+               MsgStop( "No se ha podido añadir el registro de pago" )
             end if
 
          end if
@@ -5462,7 +5462,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
 
       if Empty( aTmp[ _CALMTIK ] )
          aGet[ _CALMTIK ]:SetFocus()
-         MsgInfo( "AlmacÃ©n no puede estar vacio" )
+         MsgInfo( "Almacén no puede estar vacio" )
          return .f.
       end if
 
@@ -5474,7 +5474,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
    end if
 
    /*
-   Parar timer de impresiÃ³n pda------------------------------------------------
+   Parar timer de impresión pda------------------------------------------------
    */
 
    StopAutoImp()
@@ -5542,7 +5542,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
          */
 
          if !Empty( oMetMsg )
-            oMetMsg:cText           := 'Obtenemos el nuevo nÃºmero'
+            oMetMsg:cText           := 'Obtenemos el nuevo número'
             oMetMsg:Refresh()
          end if
 
@@ -5648,14 +5648,14 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
 
    RECOVER USING oError
 
-      msgStop( "Error en la grabaciÃ³n del ticket" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error en la grabación del ticket" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
    /*
-   Reactivamos de nuevo el timer para las impresiÃ³nes de pda-------------------
+   Reactivamos de nuevo el timer para las impresiónes de pda-------------------
    */
 
    StartAutoImp()
@@ -6420,7 +6420,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    cPicEur              := cPorDiv( cDivChg(),        dbfDiv )       // Picture de la divisa equivalente
 
    /*
-   Variable para saber si han aÃ±adido lineas ----------------------------------
+   Variable para saber si han añadido lineas ----------------------------------
    */
 
    lNowAppendLine       := .f.
@@ -6781,7 +6781,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          LoaAlb2Tik()
 
          /*
-         AÂ¤adimos desde el fichero de entregas a cuenta------------------------
+         A¤adimos desde el fichero de entregas a cuenta------------------------
          */
 
          nRecAnt  := ( dbfAlbCliP )->( Recno() )
@@ -6857,7 +6857,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          end if
 
          /*
-         AÂ¤adimos desde el fichero de Anticipos-----------------------------------
+         A¤adimos desde el fichero de Anticipos-----------------------------------
          */
 
          nRecAnt  := ( dbfAntCliT )->( Recno() )
@@ -6877,7 +6877,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       else
 
          /*
-         AÃ±adimos desde el fichero de lineas-----------------------------------
+         Añadimos desde el fichero de lineas-----------------------------------
          */
 
          if ( dbfTikL )->( dbSeek( cNumTik ) )
@@ -6897,7 +6897,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          ( dbfTmpL )->( dbGoTop() )
 
          /*
-         AÂ¤adimos desde el fichero de PAGOS---------------------------------------
+         A¤adimos desde el fichero de PAGOS---------------------------------------
          */
 
          if ( dbfTikP )->( dbSeek( cNumTik ) )
@@ -6910,7 +6910,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          ( dbfTmpP )->( dbGoTop() )
 
          /*
-         AÃ±adimos desde los vales----------------------------------------------
+         Añadimos desde los vales----------------------------------------------
          */
 
          nRecAnt     := ( dbfTikT )->( Recno() )
@@ -6942,7 +6942,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    end if
 
    /*
-   Cargamos valores en la OfficeBar para el caso del tÃ¡ctil--------------------
+   Cargamos valores en la OfficeBar para el caso del táctil--------------------
    */
 
    cTextoOfficeBar( aTmp )
@@ -7124,7 +7124,7 @@ Static Function BeginTrans( aTmp, aGet, nMode )
    end if
 
    /*
-   AÃ±adimos desde el fichero de lineas-----------------------------------
+   Añadimos desde el fichero de lineas-----------------------------------
    */
 
    if ( dbfTikL )->( dbSeek( cNumTik ) )
@@ -7171,7 +7171,7 @@ Return .T.
 #ifndef __PDA__
 
 /*
-Funcion Auxiliar para AÂ¤adir lineas de detalle
+Funcion Auxiliar para A¤adir lineas de detalle
 */
 
 STATIC FUNCTION AppDetRec( oBrw, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
@@ -7188,7 +7188,7 @@ STATIC FUNCTION AppDetRec( oBrw, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
    end if
 
    /*
-   Variable para saber si han aÃ±adido lineas ----------------------------------
+   Variable para saber si han añadido lineas ----------------------------------
    */
 
    lNowAppendLine       := .t.
@@ -7308,7 +7308,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
          nCaptura    := oCol:Cargo[ 2 ]
 
          do case
-            case cName == "CÃ³digo del artÃ­culo"
+            case cName == "Código del artículo"
 
                @ 0, 0 GET  aGet[ _CCBATIL ] VAR aTmp[ _CCBATIL ] ;
                            NOBORDER ;
@@ -7331,7 +7331,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _CCBATIL ]:lNeedGetFocus   := .t.
                end if
 
-               aGet[ _CCBATIL ]:Cargo              := "CÃ³digo del artÃ­culo"
+               aGet[ _CCBATIL ]:Cargo              := "Código del artículo"
 
             case cName == "Unidades"
 
@@ -7353,7 +7353,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
                aGet[ _NUNTTIL ]:Cargo              := "Unidades"
 
-            case cName == "MediciÃ³n 1"
+            case cName == "Medición 1"
 
                @ 0, 0 GET  aGet[ _NMEDUNO ] VAR aTmp[ _NMEDUNO ] ;
                            NOBORDER ;
@@ -7371,9 +7371,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _NMEDUNO ]:lNeedGetFocus   := .t.
                end if
 
-               aGet[ _NMEDUNO ]:Cargo              := "MediciÃ³n 1"
+               aGet[ _NMEDUNO ]:Cargo              := "Medición 1"
 
-            case cName == "MediciÃ³n 2"
+            case cName == "Medición 2"
 
                @ 0, 0 GET  aGet[ _NMEDDOS ] VAR aTmp[ _NMEDDOS ] ;
                            NOBORDER ;
@@ -7391,9 +7391,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _NMEDDOS ]:lNeedGetFocus   := .t.
                end if
 
-               aGet[ _NMEDDOS ]:Cargo              := "MediciÃ³n 2"
+               aGet[ _NMEDDOS ]:Cargo              := "Medición 2"
 
-            case cName == "MediciÃ³n 3"
+            case cName == "Medición 3"
 
                @ 0, 0 GET  aGet[ _NMEDTRE ] VAR aTmp[ _NMEDTRE ] ;
                            NOBORDER ;
@@ -7411,7 +7411,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _NMEDTRE ]:lNeedGetFocus   := .t.
                end if
 
-               aGet[ _NMEDTRE ]:Cargo              := "MediciÃ³n 3"
+               aGet[ _NMEDTRE ]:Cargo              := "Medición 3"
 
             case cName == "Propiedad 1"
 
@@ -7583,7 +7583,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            RIGHT ;
                            OF       oDlgDet
 
-            case cName == "NÃºmero de serie"
+            case cName == "Número de serie"
 
                @ 0, 0 BUTTON oBtnSer ;
                            PROMPT   ( "&Series" );
@@ -7591,7 +7591,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            ACTION   ( SetLostFocusOff(), EditarNumeroSerie( aTmp, oStock, nMode ),SetLostFocusOn() ) ;
                            OF       oDlgDet
 
-            case cName == "PromociÃ³n"
+            case cName == "Promoción"
 
                @ 0, 0 BITMAP aGet[ _LINPROMO ] ;
                            RESOURCE "Star_Blue_16";
@@ -7611,7 +7611,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
                aGet[ _LLINOFE ]:lTransparent   := .t.
 
-            case cName == "NÃºmero de lÃ­nea"
+            case cName == "Número de línea"
 
                @ 0, 0 GET  aGet[ _NNUMLIN ] VAR aTmp[ _NNUMLIN ];
                            NOBORDER ;
@@ -7621,7 +7621,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            RIGHT ;
                            OF       oDlgDet
 
-            case cName == "CÃ³digo de barras"
+            case cName == "Código de barras"
 
                @ 0, 0 GET  oCodBarras VAR cCodBarras ;
                            NOBORDER ;
@@ -7934,13 +7934,13 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    end if
 
    /*
-   Comprobamos si tiene que introducir nÃºmeros de serie------------------------
+   Comprobamos si tiene que introducir números de serie------------------------
    */
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CCBATIL ], dbfArticulo, "lNumSer" ) .and. !( dbfTmpS )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CCBATIL ] ) )
 
       SetLostFocusOff()
-      MsgStop( "Tiene que introducir nÃºmeros de serie para este artÃ­culo." )
+      MsgStop( "Tiene que introducir números de serie para este artículo." )
       SetLostFocusOn()
 
       SetLostFocusOff()
@@ -7954,7 +7954,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    if lTwo .and. empty( aTmp[_CNCMTIL ] )
 
       SetLostFocusOff()
-      msgWait( "Introduzca artÃ­culo combinado", "Stop", 0 )
+      msgWait( "Introduzca artículo combinado", "Stop", 0 )
       SetLostFocusOn()
 
       aGet[ _CNCMTIL ]:setFocus()
@@ -7998,7 +7998,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          if lUsrMaster()
 
             SetLostFocusOff()
-            lOk   := ApoloMsgNoYes( "Precio igual a cero, Â¿desea continuar con la venta?" )
+            lOk   := ApoloMsgNoYes( "Precio igual a cero, ¿desea continuar con la venta?" )
             SetLostFocusOn()
 
             if !lOk
@@ -8016,7 +8016,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
       else
 
          SetLostFocusOff()
-         lOk   := ApoloMsgNoYes( "Precio igual a cero, Â¿desea continuar con la venta?" )
+         lOk   := ApoloMsgNoYes( "Precio igual a cero, ¿desea continuar con la venta?" )
          SetLostFocusOn()
 
          if !lOk
@@ -8059,7 +8059,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          if lNotVta
 
             SetLostFocusOff()
-            MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacÃ©n " + aTik[ _CALMTIK ] + "." )
+            MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + aTik[ _CALMTIK ] + "." )
             SetLostFocusOn()
 
             return .f.
@@ -8069,7 +8069,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          if lMsgVta
 
             SetLostFocusOff()
-            lOk   := ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacÃ©n " + aTik[ _CALMTIK ] + ".", "Â¿Continuar con la venta?" )
+            lOk   := ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + aTik[ _CALMTIK ] + ".", "¿Continuar con la venta?" )
             SetLostFocusOn()
 
             if !lOk
@@ -8089,7 +8089,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    lStdChange( aTmp, aGet )
 
    /*
-   Imprimo en el visor el nombre y precio del artÃ­culo-------------------------
+   Imprimo en el visor el nombre y precio del artículo-------------------------
    */
 
    if oVisor != nil
@@ -8107,7 +8107,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
       if aXbYStr[ 1 ] == 0
 
          /*
-         Chequeamos las ofertas por artÃ­culos X  *  Y--------------------------
+         Chequeamos las ofertas por artículos X  *  Y--------------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -8135,7 +8135,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          end if
 
          /*
-         Chequeamos las ofertas por tipo de artÃ­culos X  *  Y------------------
+         Chequeamos las ofertas por tipo de artículos X  *  Y------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -8244,7 +8244,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          else
 
             /*
-            AÃ±adimos el registro a la base de datos----------------------------
+            Añadimos el registro a la base de datos----------------------------
             */
 
             WinGather( aTmp, aGet, dbfTmpL, nil, nMode )
@@ -8328,7 +8328,7 @@ STATIC FUNCTION lCodigoArticulo( aGet, aTmp, lMessage, oDlg )
       if lMessage
 
          SetLostFocusOff()
-         MsgBeepStop( "ArtÃ­culo con cÃ³digo " + Rtrim( cCodArt ) + " no encontrado" )
+         MsgBeepStop( "Artículo con código " + Rtrim( cCodArt ) + " no encontrado" )
          SetLostFocusOn()
 
       end if
@@ -8347,7 +8347,7 @@ Return ( lCodArt )
 
 //-------------------------------------------------------------------------//
 /*
-Esta funciÂ¢n recoge los articulos del Escaner y los valida
+Esta funci¢n recoge los articulos del Escaner y los valida
 */
 
 STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lNotVta )
@@ -8368,7 +8368,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
 
    if Empty( cCodArt )
       if lRetCodArt()
-         //MsgStop( "No se pueden aÃ±adir lineas sin codificar" )
+         //MsgStop( "No se pueden añadir lineas sin codificar" )
          return .f.
       else
          return .t.
@@ -8394,7 +8394,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
    if aSeekProp( @cCodArt, @cValPr1, @cValPr2, dbfArticulo, dbfTblPro )
 
       if ( dbfArticulo )->lObs
-         MsgStop( "ArtÃ­culo catalogado como obsoleto" )
+         MsgStop( "Artículo catalogado como obsoleto" )
          return .f.
       end if
 
@@ -8435,7 +8435,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          end if
 
          /*
-         Familia del artÃ­culo--------------------------------------------------
+         Familia del artículo--------------------------------------------------
          */
 
          aTmp[ _CFAMTIL ]                    := ( dbfArticulo )->Familia
@@ -8528,7 +8528,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          end if
 
          /*
-         Recogemos el factor de conversiÃ³n-------------------------------------
+         Recogemos el factor de conversión-------------------------------------
          */
 
          if ( dbfArticulo )->lFacCnv
@@ -8548,7 +8548,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
             end if
 
             /*
-            Familia del artÃ­culo
+            Familia del artículo
             */
 
             aTmp[ _CFAMTIL ]        := ( dbfArticulo )->Familia
@@ -8620,7 +8620,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
       end if
 
       /*
-      He terminado de meter todo lo que no son precios ahora es cuando meterÃ© los precios con todas las opciones posibles
+      He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
       */
 
       cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
@@ -8628,7 +8628,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
       if ( cOldCodArt != cCodArt ) .or. ( cPrpArt != cOldPrpArt )
 
          /*
-         Obtenemos el precio del artÃ­culo
+         Obtenemos el precio del artículo
          */
 
          if nMode == APPD_MODE
@@ -8749,7 +8749,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          end if
 
          /*
-         Descuento de artÃ­culo----------------------------------------------
+         Descuento de artículo----------------------------------------------
          */
 
          nNumDto              := RetFld( aTik[ _CCLITIK ], dbfClient, "nDtoArt" )
@@ -9081,25 +9081,25 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    do case
       case nSave == SAVTIK
          cImageTitle := "Cashier_businessman2_48_alpha"
-         cTextTitle  := "El documento actual se cobrarÃ¡ y guardarÃ¡ como un ticket de cliente."
+         cTextTitle  := "El documento actual se cobrará y guardará como un ticket de cliente."
       case nSave == SAVALB
          cImageTitle := "Document_plain_businessman2_48_alpha"
-         cTextTitle  := "El documento actual se guardarÃ¡ como un albaran de cliente."
+         cTextTitle  := "El documento actual se guardará como un albaran de cliente."
       case nSave == SAVFAC
          cImageTitle := "Document_businessman2_48_alpha"
-         cTextTitle  := "El documento actual se guardarÃ¡ como una factura de cliente."
+         cTextTitle  := "El documento actual se guardará como una factura de cliente."
       case nSave == SAVDEV
          cImageTitle := "Cashier_delete_48_alpha"
-         cTextTitle  := "El documento actual se guardarÃ¡ como una devoluciÃ³n a cliente."
+         cTextTitle  := "El documento actual se guardará como una devolución a cliente."
       case nSave == SAVVAL .and. !aTmp[ _LFRETIK ]
          cImageTitle := "Cashier_delete_48_alpha"
-         cTextTitle  := "El documento actual se guardarÃ¡ como un vale a cliente."
+         cTextTitle  := "El documento actual se guardará como un vale a cliente."
       case nSave == SAVVAL .and. aTmp[ _LFRETIK ]
          cImageTitle := "Cashier_box_new_48_alpha"
-         cTextTitle  := "El documento actual se guardarÃ¡ como un cheque regalo."
+         cTextTitle  := "El documento actual se guardará como un cheque regalo."
       case nSave == SAVAPT
          cImageTitle := "Cashier_delete_48_alpha"
-         cTextTitle  := "El documento actual se guardarÃ¡ como un apartado."
+         cTextTitle  := "El documento actual se guardará como un apartado."
    end case
 
    /*
@@ -9122,7 +9122,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    DEFINE DIALOG oDlg RESOURCE cResource TITLE cTextTitle
 
       /*
-      Banner del tÃ­tulo-----------------------------------------------------------
+      Banner del título-----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpTitulo RESOURCE ( cImageTitle )   ID 500 OF oDlg
@@ -9340,7 +9340,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       Botones__________________________________________________________________
       */
 
-      oBtnInsertarCobro    := ApoloBtnBmp():Redefine( 554, "Money2_Add2_32", , , , ,            {|| lAddCobro( @aTmp, oTotDiv, oBrwPgo ) }, oDlg, , {|| lWhen }, .f., .f., "AÃ±adir cobro combinado", , , , .t., "TOP", .t., , , .f. )
+      oBtnInsertarCobro    := ApoloBtnBmp():Redefine( 554, "Money2_Add2_32", , , , ,            {|| lAddCobro( @aTmp, oTotDiv, oBrwPgo ) }, oDlg, , {|| lWhen }, .f., .f., "Añadir cobro combinado", , , , .t., "TOP", .t., , , .f. )
       oBtnAceptarRegalo    := ApoloBtnBmp():Redefine( 553, "Package_New_Disk_Green_32", , , , , {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., lRegalo := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar y ticket regalo", , , , .t., "TOP", .t., , , .f. )
       oBtnAceptarImprimir  := ApoloBtnBmp():Redefine( IDOK, "Printer2_Disk_Green_32", , , , ,   {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar e imprimir [F6]", ,,, .t., "TOP", .t., , , .f. )
       oBtnAceptar          := ApoloBtnBmp():Redefine( 552, "Check2_32", , , , ,                 {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .f., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar sin imprimir [F5]", ,,, .t., "TOP", .t., , , .f. )
@@ -9410,7 +9410,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          end with
 
          with object ( oBrwPgo:AddCol() )
-            :cHeader          := "SesiÃ³n"
+            :cHeader          := "Sesión"
             :bEditValue       := {|| ( dbfTmpE )->cTurRec }
             :nWidth           := 40
             :nDataStrAlign    := 1
@@ -9430,7 +9430,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          end with
 
          with object ( oBrwPgo:AddCol() )
-            :cHeader          := "DescripciÃ³n"
+            :cHeader          := "Descripción"
             :bEditValue       := {|| ( dbfTmpE )->cDescrip }
             :lHide            := .t.
             :nWidth           := 100
@@ -9506,7 +9506,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          end with
 
          with object ( oBrwPgo:AddCol() )
-            :cHeader          := "SesiÃ³n"
+            :cHeader          := "Sesión"
             :bEditValue       := {|| ( dbfTmpP )->cTurPgo }
             :nWidth           := 50
             :nDataStrAlign    := 1
@@ -9526,7 +9526,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          end with
 
          with object ( oBrwPgo:AddCol() )
-            :cHeader          := "DescripciÃ³n"
+            :cHeader          := "Descripción"
             :lHide            := .t.
             :bEditValue       := {|| ( dbfTmpP )->cPgdPor }
             :nWidth           := 100
@@ -9542,7 +9542,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          end with
 
          with object ( oBrwPgo:AddCol() )
-            :cHeader          := "DevoluciÃ³n"
+            :cHeader          := "Devolución"
             :bEditValue       := {|| ( dbfTmpP )->nDevTik }
             :cEditPicture     := cPorDiv
             :nWidth           := 80
@@ -9593,7 +9593,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       oBrwVal:cName           := "Vales.TPV"
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :bEditValue       := {|| ( dbfTmpV )->cSerTik + "/" + lTrim( ( dbfTmpV )->cNumTik ) + "/" + ( dbfTmpV )->cSufTik  }
          :nWidth           := 60
       end with
@@ -9605,7 +9605,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       end with
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "SesiÃ³n"
+         :cHeader          := "Sesión"
          :bEditValue       := {|| ( dbfTmpV )->cTurTik }
          :nWidth           := 50
          :nDataStrAlign    := 1
@@ -9614,7 +9614,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       end with
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :bEditValue       := {|| ( dbfTmpV )->cCliTik }
          :nWidth           := 60
       end with
@@ -9633,7 +9633,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       end with
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "AlmacÃ©n"
+         :cHeader          := "Almacén"
          :bEditValue       := {|| ( dbfTmpV )->cAlmTik }
          :nWidth           := 40
          :lHide            := .t.
@@ -9681,7 +9681,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       oBrwVal:cName           := "Anticipos.TPV"
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :bEditValue       := {|| ( dbfTmpA )->cSerAnt + "/" + lTrim( Str( ( dbfTmpA )->nNumAnt ) ) + "/" + ( dbfTmpA )->cSufAnt }
          :nWidth           := 80
       end with
@@ -9693,7 +9693,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       end with
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "SesiÃ³n"
+         :cHeader          := "Sesión"
          :bEditValue       := {|| ( dbfTmpA )->cTurAnt }
          :nWidth           := 50
          :nDataStrAlign    := 1
@@ -9701,7 +9701,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       end with
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :bEditValue       := {|| ( dbfTmpA )->cCodCli }
          :nWidth           := 80
       end with
@@ -9719,7 +9719,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       end with
 
       with object ( oBrwVal:AddCol() )
-         :cHeader          := "AlmacÃ©n"
+         :cHeader          := "Almacén"
          :bEditValue       := {|| ( dbfTmpA )->cCodAlm }
          :nWidth           := 40
       end with
@@ -9999,7 +9999,7 @@ Static Function lValidaCobro( aGet, aTmp, lGenVale, nDifVale, nSave, oDlg )
    local nTotalVale
 
    /*
-   Chequeamos la forma de pago para que no estÃ© vacÃ­a--------------------------
+   Chequeamos la forma de pago para que no esté vacía--------------------------
    */
 
    if Empty( aTmp[ _CFPGTIK ] )
@@ -10009,7 +10009,7 @@ Static Function lValidaCobro( aGet, aTmp, lGenVale, nDifVale, nSave, oDlg )
    end if
 
    /*
-   Desabilitamos los controles para los mÃ¡s rÃ¡pidos----------------------------
+   Desabilitamos los controles para los más rápidos----------------------------
    */
 
    aEval( oDlg:aControls, {|o| o:Disable() } )
@@ -10039,7 +10039,7 @@ Static Function lValidaCobro( aGet, aTmp, lGenVale, nDifVale, nSave, oDlg )
 
    if lNegativo( oTotDiv:nCambio ) .and. ( nSave == SAVTIK .or. nSave == SAVFAC .or. ( nSave == SAVVAL .and. aTmp[ _LFRETIK ] ) )
 
-      if !MsgBeepYesNo( "Â¿Desea vender a credito al cliente " + CRLF + Alltrim( aTmp[ _CNOMTIK ] ) + "?", "Importe insuficiente" )
+      if !MsgBeepYesNo( "¿Desea vender a credito al cliente " + CRLF + Alltrim( aTmp[ _CNOMTIK ] ) + "?", "Importe insuficiente" )
 
          aEval( oDlg:aControls, {|o| o:Enable() } )
 
@@ -10062,7 +10062,7 @@ Static Function lValidaCobro( aGet, aTmp, lGenVale, nDifVale, nSave, oDlg )
    */
 
    if nTotalVale > 0 .and. nDifVale > 0
-      if MsgBeepYesNo( "Â¿Desea generar un vale por la diferencia?", "Importe de vale excede el total" )
+      if MsgBeepYesNo( "¿Desea generar un vale por la diferencia?", "Importe de vale excede el total" )
          lGenVale          := .t.
       end if
    end if
@@ -10071,7 +10071,7 @@ Static Function lValidaCobro( aGet, aTmp, lGenVale, nDifVale, nSave, oDlg )
    aTmp[ _NCAMTIK ]        := oTotDiv:nCambio
 
    /*
-   Habilitamos de nuevo los controles para los mÃ¡s rÃ¡pidos---------------------
+   Habilitamos de nuevo los controles para los más rápidos---------------------
    */
 
    aEval( oDlg:aControls, {|o| o:Enable() } )
@@ -10152,8 +10152,8 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
    local oCbxOrd
    local oBtnSelect
    local oBtnUnSelect
-   local cCbxOrd        := "NÃºmero"
-   local aCbxOrd        := { 'NÃºmero', 'CÃ³digo cliente', 'Nombre cliente' }
+   local cCbxOrd        := "Número"
+   local aCbxOrd        := { 'Número', 'Código cliente', 'Nombre cliente' }
    local cCodCliente    := aTmp[ _CCLITIK ]
    local cText          := ""
    local nRecAnt        := ( dbfTikT )->( RecNo() )
@@ -10264,7 +10264,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "NÃºmero"
+         :cHeader             := "Número"
          :cSortOrder          := "cLiqVal"
          :bEditValue          := {|| ( dbfVal )->cSerTik + "/" + AllTrim( ( dbfVal )->cNumTik ) + "/" + ( dbfVal )->cSufTik }
          :nWidth              := 70
@@ -10278,7 +10278,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "CÃ³digo cliente"
+         :cHeader             := "Código cliente"
          :bEditValue          := {|| Rtrim( ( dbfVal )->cCliTik ) }
          :cSortOrder          := "cCliVal"
          :nWidth              := 75
@@ -10310,7 +10310,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "SesiÃ³n"
+         :cHeader             := "Sesión"
          :bEditValue          := {|| ( dbfVal )->cTurTik + "/" + ( dbfVal )->cSufTik }
          :nWidth              := 80
          :lHide               := .t.
@@ -10338,7 +10338,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "AlmacÃ©n"
+         :cHeader             := "Almacén"
          :bEditValue          := {|| ( dbfVal )->cAlmTik }
          :nWidth              := 80
          :lHide               := .t.
@@ -10389,7 +10389,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
 
             if ( dbfVal )->dFecTik + uFieldEmpresa( "nDiaVale" ) > GetSysDate()
                lError   := .t.
-               cText    += Space( 6 ) + "El vale " + ( dbfVal )->cSerTik + "/" +  AllTrim( ( dbfVal )->cNumTik ) + " no ha alcanzado la fecha para su liqidaciÃ³n." + CRLF
+               cText    += Space( 6 ) + "El vale " + ( dbfVal )->cSerTik + "/" +  AllTrim( ( dbfVal )->cNumTik ) + " no ha alcanzado la fecha para su liqidación." + CRLF
             end if
 
             if ( dbfVal )->cCliTik != cCodCliente
@@ -10410,7 +10410,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
       ( dbfVal )->( dbGoTop() )
 
       if !Empty( cText )
-         MsgStop( "AtenciÃ³n : " +  CRLF + cText )
+         MsgStop( "Atención : " +  CRLF + cText )
       end if
 
    end if
@@ -10589,7 +10589,7 @@ RETURN ( nVentasPrevias )
 
 //-------------------------------------------------------------------------//
 /*
-Esta funciÂ¢n chequea las ofertas, devuelve .t. si existen ofertas
+Esta funci¢n chequea las ofertas, devuelve .t. si existen ofertas
 */
 
 STATIC FUNCTION lChkOfe( aTmp, aTik, dbfTmpL, oBrw )
@@ -11043,7 +11043,7 @@ Static Function lValidDlgTpv( aTmp, aGet, nSaveMode )
 
    local lValid   := .t.
 
-   if ( dbfTmpL )->( ordKeyCount() ) != 0 .and. ApoloMsgNoYes( "Â¿Desea guardar el ticket antes de salir?", "Selecciona una opciÃ³n", .t. )
+   if ( dbfTmpL )->( ordKeyCount() ) != 0 .and. ApoloMsgNoYes( "¿Desea guardar el ticket antes de salir?", "Selecciona una opción", .t. )
       lValid      :=  TmpTiket( aTmp, aGet, nSaveMode, .f. )
    end if
 
@@ -11503,7 +11503,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       end if
 
       /*
-      Eliminamos las lineas antiguas del albarÃ¡n-------------------------------
+      Eliminamos las lineas antiguas del albarán-------------------------------
       */
 
       nOrdAnt  := ( dbfAlbCliL )->( OrdSetFocus( "NNUMALB" ) )
@@ -11972,7 +11972,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
 
          /*
-         Eliminamos las lineas antiguas del albarÃ¡n-------------------------------
+         Eliminamos las lineas antiguas del albarán-------------------------------
          */
 
          nOrdAnt  := ( dbfFacCliL )->( OrdSetFocus( "NNUMFAC" ) )
@@ -12802,7 +12802,7 @@ Function NameToField( cName )
    cName          := AllTrim( cName )
 
    do case
-      case cName == "CÃ³digo del artÃ­culo"
+      case cName == "Código del artículo"
          cField   := {|| ( dbfTmpL )->cCbaTil }
       case cName == "Unidades"
          cField   := {|| nTotNTpv( dbfTmpL, cPicUnd ) }
@@ -12814,11 +12814,11 @@ Function NameToField( cName )
          cField   := {|| ( dbfTmpL )->cLote }
       case cName == "Caducidad"
          cField   := {|| ( dbfTmpL )->dFecCad }
-      case cName == "MediciÃ³n 1"
+      case cName == "Medición 1"
          cField   := {|| Trans( ( dbfTmpL )->nMedUno, MasUnd() ) }
-      case cName == "MediciÃ³n 2"
+      case cName == "Medición 2"
          cField   := {|| Trans( ( dbfTmpL )->nMedDos, MasUnd() ) }
-      case cName == "MediciÃ³n 3"
+      case cName == "Medición 3"
          cField   := {|| Trans( ( dbfTmpL )->nMedTre, MasUnd() ) }
       case cName == "Detalle"
          cField   := {|| Rtrim( ( dbfTmpL )->cNomTil ) }
@@ -12830,15 +12830,15 @@ Function NameToField( cName )
          cField   := {|| Trans( ( dbfTmpL )->nDtoLin, "@E 999.99" ) }
       case cName == "Total"
          cField   := {|| Trans( nTotLTpv( dbfTmpL, nDouDiv, nDorDiv ), cPorDiv ) }
-      case cName == "NÃºmero de serie"
+      case cName == "Número de serie"
          cField   := {|| ( dbfTmpL )->mNumSer }
-      case cName == "PromociÃ³n"
+      case cName == "Promoción"
          cField   := {|| ( dbfTmpL )->lInPromo }
       case cName == "Oferta"
          cField   := {|| ( dbfTmpL )->lLinOfe }
-      case cName == "NÃºmero de lÃ­nea"
+      case cName == "Número de línea"
          cField   := {|| Trans( ( dbfTmpL )->nNumLin, "9999" ) }
-      case cName == "CÃ³digo de barras"
+      case cName == "Código de barras"
          cField   := {|| cCodigoBarrasDefecto( ( dbfTmpL )->cCbaTil, dbfCodeBar ) }
    end case
 
@@ -13060,13 +13060,13 @@ STATIC FUNCTION LqdVale( oWndBrw )
 
       else
 
-         msgStop( "Este documento ya estÃ¡ liquidado." )
+         msgStop( "Este documento ya está liquidado." )
 
       end if
 
    else
 
-      msgStop( "Este documento no se almacenÃ³ como vale." )
+      msgStop( "Este documento no se almacenó como vale." )
 
    end if
 
@@ -13376,10 +13376,10 @@ static function lFacturaAlbaran()
       if !RetFld( ( dbfTikT )->cNumDoc, dbfAlbCliT, "lFacturado" )
          FactCli( nil, nil, { "Albaran" => ( dbfTikT )->cNumDoc } )
       else
-         msgStop( "El albarÃ¡n ya ha sido facturado" )
+         msgStop( "El albarán ya ha sido facturado" )
       end if
    else
-      msgStop( "SÃ³lo se pueden generar facturas desde albaranes" )
+      msgStop( "Sólo se pueden generar facturas desde albaranes" )
    end if
 
 Return ( .t. )
@@ -13958,7 +13958,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
                   else
 
                      dbPass( tmpTikT, dbfTikT, .t. )
-                     ::oSender:SetText( "AÃ±adido : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
+                     ::oSender:SetText( "Añadido : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
 
                   end if
 
@@ -14128,7 +14128,7 @@ Static Function nGenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
 
    While nImpYet < nCopTik
 
-      if nImpYet < 1 .or. ApoloMsgNoYes( "Â¿Desea imprimir el tiket NÂº" + Str( nImpYet + 1, 2 ) + "?", "Elija una opciÃ³n" )
+      if nImpYet < 1 .or. ApoloMsgNoYes( "¿Desea imprimir el tiket Nº" + Str( nImpYet + 1, 2 ) + "?", "Elija una opción" )
 
          GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
 
@@ -14192,8 +14192,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
-   oFr:SetWorkArea(     "ArtÃ­culos", ( dbfArticulo )->( Select() ) )
-   oFr:SetFieldAliases( "ArtÃ­culos", cItemsToReport( aItmArt() ) )
+   oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
@@ -14201,14 +14201,14 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Orden comanda", oTComandas:oDbf:nArea )
    oFr:SetFieldAliases( "Orden comanda", cObjectsToReport( oTComandas:oDbf ) )
 
-   oFr:SetWorkArea(     "Unidades de mediciÃ³n",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de mediciÃ³n",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "CategorÃ­as", ( dbfCategoria )->( Select() ) )
-   oFr:SetFieldAliases( "CategorÃ­as", cItemsToReport( aItmCategoria() ) )
+   oFr:SetWorkArea(     "Categorías", ( dbfCategoria )->( Select() ) )
+   oFr:SetFieldAliases( "Categorías", cItemsToReport( aItmCategoria() ) )
 
-   oFr:SetWorkArea(     "Tipos de artÃ­culos",  oTipArt:Select() )
-   oFr:SetFieldAliases( "Tipos de artÃ­culos",  cObjectsToReport( oTipArt:oDbf ) )
+   oFr:SetWorkArea(     "Tipos de artículos",  oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipos de artículos",  cObjectsToReport( oTipArt:oDbf ) )
 
    oFr:SetWorkArea(     "Fabricantes",  oFabricante:Select() )
    oFr:SetFieldAliases( "Fabricantes",  cObjectsToReport( oFabricante:oDbf ) )
@@ -14238,12 +14238,12 @@ Static Function BuildRelationReport( oFr )
    oFr:SetMasterDetail( "Tickets", "Usuarios",                       {|| ( dbfTikT )->cCcjTik } )
    oFr:SetMasterDetail( "Tickets", "SalaVenta",                      {|| ( dbfTikT )->cCodSala } )
 
-   oFr:SetMasterDetail( "Lineas de tickets", "ArtÃ­culos",            {|| ( dbfTikL )->cCbaTil } )
+   oFr:SetMasterDetail( "Lineas de tickets", "Artículos",            {|| ( dbfTikL )->cCbaTil } )
    oFr:SetMasterDetail( "Lineas de tickets", "Familia",              {|| ( dbfTikL )->cFamTil } )
    oFr:SetMasterDetail( "Lineas de tickets", "Orden comanda",        {|| ( dbfTikL )->cCodTImp } )
-   oFr:SetMasterDetail( "Lineas de tickets", "Unidades de mediciÃ³n", {|| ( dbfTikL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de tickets", "CategorÃ­as",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodCate" ) } )
-   oFr:SetMasterDetail( "Lineas de tickets", "Tipos de artÃ­culos",   {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTip" ) } )
+   oFr:SetMasterDetail( "Lineas de tickets", "Unidades de medición", {|| ( dbfTikL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de tickets", "Categorías",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodCate" ) } )
+   oFr:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",   {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTip" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Fabricantes",          {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodFab" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Temporadas",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTemp" ) } )
 
@@ -14265,12 +14265,12 @@ Static Function BuildRelationReport( oFr )
    oFr:SetResyncPair(   "Tickets", "Usuarios" )
    oFr:SetResyncPair(   "Tickets", "SalaVenta" )
 
-   oFr:SetResyncPair(   "Lineas de tickets", "ArtÃ­culos" )
+   oFr:SetResyncPair(   "Lineas de tickets", "Artículos" )
    oFr:SetResyncPair(   "Lineas de tickets", "Familias" )
    oFr:SetResyncPair(   "Lineas de tickets", "Orden comanda" )
-   oFr:SetResyncPair(   "Lineas de tickets", "Unidades de mediciÃ³n" )
-   oFr:SetResyncPair(   "Lineas de tickets", "CategorÃ­as" )
-   oFr:SetResyncPair(   "Lineas de tickets", "Tipos de artÃ­culos" )
+   oFr:SetResyncPair(   "Lineas de tickets", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de tickets", "Categorías" )
+   oFr:SetResyncPair(   "Lineas de tickets", "Tipos de artículos" )
    oFr:SetResyncPair(   "Lineas de tickets", "Fabricantes" )
    oFr:SetResyncPair(   "Lineas de tickets", "Temporadas" )
 
@@ -14296,12 +14296,12 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearMasterDetail( "Usuarios" )
    oFr:ClearMasterDetail( "SalaVenta" )
 
-   oFr:ClearMasterDetail( "ArtÃ­culos" )
+   oFr:ClearMasterDetail( "Artículos" )
    oFr:ClearMasterDetail( "Familia" )
    oFr:ClearMasterDetail( "Orden comanda" )
-   oFr:ClearMasterDetail( "Unidades de mediciÃ³n" )
-   oFr:ClearMasterDetail( "CategorÃ­as" )
-   oFr:ClearMasterDetail( "Tipos de artÃ­culos" )
+   oFr:ClearMasterDetail( "Unidades de medición" )
+   oFr:ClearMasterDetail( "Categorías" )
+   oFr:ClearMasterDetail( "Tipos de artículos" )
    oFr:ClearMasterDetail( "Fabricantes" )
    oFr:ClearMasterDetail( "Temporadas" )
 
@@ -14323,12 +14323,12 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearResyncPair(   "Tickets", "Usuarios" )
    oFr:ClearResyncPair(   "Tickets", "SalaVenta" )
 
-   oFr:ClearResyncPair(   "Lineas de tickets", "ArtÃ­culos" )
+   oFr:ClearResyncPair(   "Lineas de tickets", "Artículos" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Familias" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Orden comanda" )
-   oFr:ClearResyncPair(   "Lineas de tickets", "Unidades de mediciÃ³n" )
-   oFr:ClearResyncPair(   "Lineas de tickets", "CategorÃ­as" )
-   oFr:ClearResyncPair(   "Lineas de tickets", "Tipos de artÃ­culos" )
+   oFr:ClearResyncPair(   "Lineas de tickets", "Unidades de medición" )
+   oFr:ClearResyncPair(   "Lineas de tickets", "Categorías" )
+   oFr:ClearResyncPair(   "Lineas de tickets", "Tipos de artículos" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Fabricantes" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Temporadas" )
 
@@ -14341,7 +14341,7 @@ Return nil
 Static Function VariableReport( oFr )
 
    /*
-   CreaciÃ³n de variables----------------------------------------------------
+   Creación de variables----------------------------------------------------
    */
 
    oFr:AddVariable(     "Tickets",             "Total ticket",                            "GetHbVar('nTotTik')" )
@@ -14349,7 +14349,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Tickets",             "Total neto",                              "GetHbVar('nTotNet')" )
    oFr:AddVariable(     "Tickets",             "Total " + cImp(),                         "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Tickets",             "Total IVM",                               "GetHbVar('nTotIvm')" )
-   oFr:AddVariable(     "Tickets",             "Total albarÃ¡n",                           "GetHbVar('nTotAlb')" )
+   oFr:AddVariable(     "Tickets",             "Total albarán",                           "GetHbVar('nTotAlb')" )
    oFr:AddVariable(     "Tickets",             "Total factura",                           "GetHbVar('nTotFac')" )
    oFr:AddVariable(     "Tickets",             "Precio por pax.",                         "GetHbVar('nTotPax')" )
    oFr:AddVariable(     "Tickets",             "Total descuento general",                 "GetHbVar('nTotDtoEsp')" )
@@ -14377,29 +14377,29 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Tickets",             "Total entregas a cuenta",                 "CallHbFunc('nTotalEntregado')" )
    oFr:AddVariable(     "Tickets",             "Total vales liquidados en compra",        "CallHbFunc('nTotValTikInfo')" )
 
-   oFr:AddVariable(     "Tickets",             "UbicaciÃ³n del ticket",                    "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
+   oFr:AddVariable(     "Tickets",             "Ubicación del ticket",                    "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
 
-   oFr:AddVariable(     "Lineas de tickets",   "Total unidades artÃ­culo",                       "CallHbFunc('nTotNTpv')" )
-   oFr:AddVariable(     "Lineas de tickets",   "Precio unitario del artÃ­culo",                  "CallHbFunc('nTotUTpv')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                       "CallHbFunc('nTotNTpv')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                  "CallHbFunc('nTotUTpv')" )
    oFr:AddVariable(     "Lineas de tickets",   "Precio unitario con descuentos",                "CallHbFunc('nNetLTpv')" )
-   oFr:AddVariable(     "Lineas de tickets",   "Importe descuento lÃ­nea del factura",           "CallHbFunc('nDtoUTpv')" )
-   oFr:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " lÃ­nea de factura",         "CallHbFunc('nIvaLTpv')" )
-   oFr:AddVariable(     "Lineas de tickets",   "Total IVMH lÃ­nea de factura",                   "CallHbFunc('nIvmLTpv')" )
-   oFr:AddVariable(     "Lineas de tickets",   "Total lÃ­nea de factura",                        "CallHbFunc('nTotLTpv')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",           "CallHbFunc('nDtoUTpv')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " línea de factura",         "CallHbFunc('nIvaLTpv')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                   "CallHbFunc('nIvmLTpv')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Total línea de factura",                        "CallHbFunc('nTotLTpv')" )
 
    oFr:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                     "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
    oFr:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",            "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )
-   oFr:AddVariable(     "Lineas de comandas",  "Detalle del artÃ­culo en comanda",               "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
+   oFr:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",               "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
 
-   oFr:AddVariable(     "Lineas de albaranes", "Detalle del artÃ­culo del albarÃ¡n",              "CallHbFunc('cTpvDesAlbCli')"  )
-   oFr:AddVariable(     "Lineas de albaranes", "Total unidades artÃ­culo del albarÃ¡n",           "CallHbFunc('nTpvTotNAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes", "Precio unitario del artÃ­culo del albarÃ¡n",      "CallHbFunc('nTpvTotUAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes", "Total lÃ­nea de albarÃ¡n",                        "CallHbFunc('nTpvTotLAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes", "Detalle del artículo del albarán",              "CallHbFunc('cTpvDesAlbCli')"  )
+   oFr:AddVariable(     "Lineas de albaranes", "Total unidades artículo del albarán",           "CallHbFunc('nTpvTotNAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes", "Precio unitario del artículo del albarán",      "CallHbFunc('nTpvTotUAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes", "Total línea de albarán",                        "CallHbFunc('nTpvTotLAlbCli')" )
 
-   oFr:AddVariable(     "Lineas de facturas",  "Detalle del artÃ­culo de la factura",            "CallHbFunc('cTpvDesFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",  "Total unidades artÃ­culo de la factura",         "CallHbFunc('nTpvTotNFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",  "Precio unitario del artÃ­culo de la factura",    "CallHbFunc('nTpvTotUFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",  "Total lÃ­nea de factura.",                       "CallHbFunc('nTpvTotLFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",  "Detalle del artículo de la factura",            "CallHbFunc('cTpvDesFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",  "Total unidades artículo de la factura",         "CallHbFunc('nTpvTotNFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",  "Precio unitario del artículo de la factura",    "CallHbFunc('nTpvTotUFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",  "Total línea de factura.",                       "CallHbFunc('nTpvTotLFacCli')" )
 
 Return nil
 
@@ -14470,13 +14470,13 @@ Function DesignReportTikCli( oFr, dbfDoc )
       BuildRelationReport( oFr )
 
       /*
-      DiseÃ±o de report---------------------------------------------------------
+      Diseño de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseÃ±ador----------------------------------------------------
+      Destruye el diseñador----------------------------------------------------
       */
 
       ClearRelationReport( oFr )
@@ -14578,13 +14578,13 @@ Function PrintReportTikCli( nDevice, nCopies, cPrinter )
    end if
 
    /*
-   Destruye el diseÃ±ador-------------------------------------------------------
+   Destruye el diseñador-------------------------------------------------------
    */
 
    ClearRelationReport( oFr )
 
    /*
-   Destruye el diseÃ±ador-------------------------------------------------------
+   Destruye el diseñador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -14597,7 +14597,7 @@ Return .t.
 /*
 Funciones que llaman a funciones de albaranes y facturas
 creadas para que se puedan llamar desde fuera, ya que
-para los formatos no podemos llamarlas con parÃ¡metros.
+para los formatos no podemos llamarlas con parámetros.
 */
 
 function cTpvDesAlbCli()
@@ -14791,7 +14791,7 @@ Return ( oDlg:nResult == IDOK )
 Static Function lValidAddFreeProduct( oGetDescripcion, oDlg )
 
    if Empty( oGetDescripcion:VarGet() )
-      MsgStop( "DescripciÃ³n no puede estar vacia" )
+      MsgStop( "Descripción no puede estar vacia" )
       Return .f.
    end if
 
@@ -15125,7 +15125,7 @@ Static Function EndInvitacion( nOpt, oLstInv, oBtnUnaLinea, dbfTmpL, dbfInv, oDl
 
    if nOpt == 0
 
-      msgStop( "Debe seleccionar una opciÃ³n vÃ¡lida." )
+      msgStop( "Debe seleccionar una opción válida." )
 
    else
 
@@ -15699,7 +15699,7 @@ Function ComentariosTPV( aGet, aTmp, dbfTmpL, cDefCom )
    local oFntDlg
 
    if ( dbfTmpL )->( ordKeyCount() ) == 0
-      MsgStop( "No puede aÃ±adir un comentario." )
+      MsgStop( "No puede añadir un comentario." )
       return .f.
    end if
 
@@ -15772,7 +15772,7 @@ Function ComentariosTPV( aGet, aTmp, dbfTmpL, cDefCom )
 
       obrwComentarios:cAlias           := dbfComentariosT
       obrwComentarios:nMarqueeStyle    := 6
-      obrwComentarios:cName            := "Comentarios de artÃ­culos"
+      obrwComentarios:cName            := "Comentarios de artículos"
       obrwComentarios:nRowHeight       := 40
       oBrwComentarios:lHeader          := .f.
       oBrwComentarios:lHScroll         := .f.
@@ -15793,7 +15793,7 @@ Function ComentariosTPV( aGet, aTmp, dbfTmpL, cDefCom )
 
       oBrwLineasComentarios:cAlias           := dbfComentariosL
       oBrwLineasComentarios:nMarqueeStyle    := 6
-      oBrwLineasComentarios:cName            := "Lineas comentarios de artÃ­culos"
+      oBrwLineasComentarios:cName            := "Lineas comentarios de artículos"
       oBrwLineasComentarios:nRowHeight       := 40
       oBrwLineasComentarios:lHeader          := .f.
       oBrwLineasComentarios:lHScroll         := .f.
@@ -15812,7 +15812,7 @@ Function ComentariosTPV( aGet, aTmp, dbfTmpL, cDefCom )
 
    RECOVER USING oError
 
-      msgStop( 'Imposible abrir ficheros de comentarios de artÃ­culos' + CRLF + ErrorMessage( oError ) )
+      msgStop( 'Imposible abrir ficheros de comentarios de artículos' + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -15897,7 +15897,7 @@ Return .t.
 
 static function lNumeroComensales( aTmp )
 
-   aTmp[ _NNUMCOM ]     := nVirtualNumKey( "Users1_32", "NÃºmero comensales" )
+   aTmp[ _NNUMCOM ]     := nVirtualNumKey( "Users1_32", "Número comensales" )
 
    lRecTotal( aTmp )
 
@@ -15911,7 +15911,7 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
    local oBlock
 
    /*
-   Comprobamos que no sea ni el primer registro ni el Ãºltimo-------------------
+   Comprobamos que no sea ni el primer registro ni el último-------------------
    */
 
    if lSubir
@@ -15924,7 +15924,7 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
    else
 
       if ( dbfTikT )->( OrdKeyno() ) == ( dbfTikT )->( OrdKeyCount() )
-         MsgStop( "Ya estas en el Ãºltimo registro" )
+         MsgStop( "Ya estas en el último registro" )
          return nil
       end if
 
@@ -16105,7 +16105,7 @@ Function pdaAbrirTablas()
 
       pdaCerrarTablas()
 
-      msgStop( "Error de conexiÃ³n con pc." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error de conexión con pc." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -16354,7 +16354,7 @@ Static Function EdtPda( cNumTik, nMode )
    end with
 
    with object ( oBrwLin:AddCol() )
-      :cHeader             := "DescripciÃ³n"
+      :cHeader             := "Descripción"
       :bEditValue          := {|| if( Empty( ( dbfTmpL )->cComent ), Upper( Rtrim( ( dbfTmpL )->cNomTil ) ),"[*] " + Upper( Rtrim( ( dbfTmpL )->cNomTil ) ) ) }
       :nWidth              := 110
    end with
@@ -16418,7 +16418,7 @@ Static Function EdtPda( cNumTik, nMode )
    oBrwArt:CreateFromResource( 120 )
 
    with object ( oBrwArt:AddCol() )
-      :cHeader                      := "ArtÃ­culos"
+      :cHeader                      := "Artículos"
       :bEditValue                   := {|| Upper( ( dbfArticulo )->Nombre ) }
       :nWidth                       := 220
    end with
@@ -16553,7 +16553,7 @@ Static Function RestaUnidad( aTmp, oBrwLin )
 
       if ( dbfTmpL )->nUntTil == 1
 
-         if ApoloMsgNoYes( "Â¿ Desea eliminar el artÃ­culo seleccionado ?", "Elija una opciÃ³n" )
+         if ApoloMsgNoYes( "¿ Desea eliminar el artículo seleccionado ?", "Elija una opción" )
             ( dbfTmpL )->nUntTil--
             ( dbfTmpL )->lAnulado   := .t.
          end if
@@ -16682,7 +16682,7 @@ static Function ComprobarFamilia( dbfTmpL, oFntTit, oBrwLin, cNumTik, oTitArt, o
    end if
 
    /*
-   Informamos del Ãºltimo artÃ­culo vendido--------------------------------------
+   Informamos del último artículo vendido--------------------------------------
    */
 
    if !Empty( oTitArt )
@@ -16697,7 +16697,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 /*
-   FunciÃ³n para poner un comentario a un articulo
+   Función para poner un comentario a un articulo
 */
 //---------------------------------------------------------------------------//
 
@@ -16710,7 +16710,7 @@ Static Function pdaComentario( oFntTit, dbfTmpL, cDefCom )
    local cGetComentario
 
    if ( dbfTmpL )->( ordKeyCount() ) == 0
-      MsgStop( "No puede aÃ±adir un comentario." )
+      MsgStop( "No puede añadir un comentario." )
       return .f.
    end if
 
@@ -16839,7 +16839,7 @@ Static Function pdaBtnFamilias( aTmp, aGet, nMode, oBrwArticulo, oDlgTpv )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "DescripciÃ³n"
+         :cHeader             := "Descripción"
          :bEditValue          := {|| if( Empty( ( dbfTmpL )->cComent ), Upper( Rtrim( ( dbfTmpL )->cNomTil ) ),"[*] " + Upper( Rtrim( ( dbfTmpL )->cNomTil ) ) ) }
          :nWidth              := 130
       end with
@@ -16919,7 +16919,7 @@ Static Function pdaBtnFamilias( aTmp, aGet, nMode, oBrwArticulo, oDlgTpv )
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "DescripciÃ³n"
+            :cHeader             := "Descripción"
             :bEditValue          := {|| if( Empty( ( dbfTmpL )->cComent ), Upper( Rtrim( ( dbfTmpL )->cNomTil ) ),"[*] " + Upper( Rtrim( ( dbfTmpL )->cNomTil ) ) ) }
             :nWidth              := 130
          end with
@@ -17272,7 +17272,7 @@ Return cZona
 
 //---------------------------------------------------------------------------//
 /*
-Funcion que guarda la sesiÃ³n que tenemos abierta
+Funcion que guarda la sesión que tenemos abierta
 */
 //---------------------------------------------------------------------------//
 
@@ -17944,15 +17944,15 @@ function aPgoTik()
    local aPgoTik  := {}
 
    aAdd( aPgoTik, { "cSerTik",  "C",      1,     0, "Serie del tiket"            } )
-   aAdd( aPgoTik, { "cNumTik",  "C",     10,     0, "NÃºmero del tiket"           } )
+   aAdd( aPgoTik, { "cNumTik",  "C",     10,     0, "Número del tiket"           } )
    aAdd( aPgoTik, { "cSufTik",  "C",      2,     0, "Sufijo del tiket"           } )
-   aAdd( aPgoTik, { "nNumRec",  "N",      2,     0, "NÃºmero de orden del pago"   } )
-   aAdd( aPgoTik, { "cCodCaj",  "C",      3,     0, "CÃ³digo de caja"             } )
+   aAdd( aPgoTik, { "nNumRec",  "N",      2,     0, "Número de orden del pago"   } )
+   aAdd( aPgoTik, { "cCodCaj",  "C",      3,     0, "Código de caja"             } )
    aAdd( aPgoTik, { "dPgoTik",  "D",      8,     0, "Fecha del pago"             } )
    aAdd( aPgoTik, { "cTimTik",  "C",      5,     0, "Hora del pago"              } )
    aAdd( aPgoTik, { "cFpgPgo",  "C",      2,     0, "Forma de pago del recibo"   } )
    aAdd( aPgoTik, { "nImpTik",  "N",     16,     6, "Importe del pago"           } )
-   aAdd( aPgoTik, { "nDevTik",  "N",     16,     6, "Importe de la devoluciÃ³n"   } )
+   aAdd( aPgoTik, { "nDevTik",  "N",     16,     6, "Importe de la devolución"   } )
    aAdd( aPgoTik, { "cPgdPor",  "C",     50,     0, "Pagado por"                 } )
    aAdd( aPgoTik, { "cDivPgo",  "C",      3,     0, "Divisa de pago"             } )
    aAdd( aPgoTik, { "nVdvPgo",  "N",     16,     6, "Valor de la divisa"         } )
@@ -17960,9 +17960,9 @@ function aPgoTik()
    aAdd( aPgoTik, { "cCtaPgo",  "C",     12,     0, "Cuenta de pago"             } )
    aAdd( aPgoTik, { "lCloPgo",  "L",      1,     0, "Pago cerrado (S/N)"         } )
    aAdd( aPgoTik, { "lSndPgo",  "L",      1,     0, "Enviar documento"           } )
-   aAdd( aPgoTik, { "cTurPgo",  "C",      6,     0, "SesiÃ³n del pago"            } )
+   aAdd( aPgoTik, { "cTurPgo",  "C",      6,     0, "Sesión del pago"            } )
    aAdd( aPgoTik, { "cCtaRec",  "C",     12,     0, "Cuenta de contabilidad"     } )
-   aAdd( aPgoTik, { "nNumPgo",  "N",      9,     0, "NÃºmero pago cliente"        } )
+   aAdd( aPgoTik, { "nNumPgo",  "N",      9,     0, "Número pago cliente"        } )
    aAdd( aPgoTik, { "cSufPgo",  "C",      2,     0, "Sufijo pago cliente"        } )
 
 RETURN ( aPgoTik )
@@ -17973,7 +17973,7 @@ function aMesTik()
 
    local aMesTik  := {}
 
-   aAdd( aMesTik , { "cCodSala", "C",      3,     0, "CÃ³digo de sala" }            )
+   aAdd( aMesTik , { "cCodSala", "C",      3,     0, "Código de sala" }            )
    aAdd( aMesTik , { "cPntVenta","C",     30,     0, "Punto de venta" }            )
 
 RETURN ( aMesTik )
@@ -17984,20 +17984,20 @@ function aPgoCli()
 
    local aPgoCli  := {}
 
-   aAdd( aPgoCli, { "nNumPgo",  "N",      9,     0, "Pago cliente.NÃºmero"                    } )
+   aAdd( aPgoCli, { "nNumPgo",  "N",      9,     0, "Pago cliente.Número"                    } )
    aAdd( aPgoCli, { "cSufPgo",  "C",      2,     0, "Pago cliente.Sufijo"                    } )
-   aAdd( aPgoCli, { "cCodCaj",  "C",      3,     0, "Pago cliente.NÃºmero de caja"            } )
+   aAdd( aPgoCli, { "cCodCaj",  "C",      3,     0, "Pago cliente.Número de caja"            } )
    aAdd( aPgoCli, { "dPgoTik",  "D",      8,     0, "Pago cliente.Fecha del pago"            } )
    aAdd( aPgoCli, { "cFpgPgo",  "C",      2,     0, "Pago cliente.Forma de pago del recibo"  } )
    aAdd( aPgoCli, { "nImpPgo",  "N",     16,     6, "Pago cliente.Importe del pago"          } )
-   aAdd( aPgoCli, { "nDevPgo",  "N",     16,     6, "Pago cliente.Importe de la devoluciÃ³n"  } )
+   aAdd( aPgoCli, { "nDevPgo",  "N",     16,     6, "Pago cliente.Importe de la devolución"  } )
    aAdd( aPgoCli, { "nTotPgo",  "N",     16,     6, "Pago cliente.Total importe pago"        } )
-   aAdd( aPgoCli, { "cCodCli",  "C",     12,     0, "Pago cliente.CÃ³digo cliente"            } )
+   aAdd( aPgoCli, { "cCodCli",  "C",     12,     0, "Pago cliente.Código cliente"            } )
    aAdd( aPgoCli, { "cDivPgo",  "C",      3,     0, "Pago cliente.Divisa de pago"            } )
    aAdd( aPgoCli, { "nVdvPgo",  "N",     16,     6, "Pago cliente.Valor de la divisa"        } )
    aAdd( aPgoCli, { "lCloPgo",  "L",      1,     0, "Pago cliente.Pago cerrado (S/N)"        } )
    aAdd( aPgoCli, { "cCtaRec",  "C",     12,     0, "Pago cliente.Cuenta de contabilidad"    } )
-   aAdd( aPgoCli, { "cTurPgo",  "C",      6,     0, "Pago cliente.SesiÃ³n"                    } )
+   aAdd( aPgoCli, { "cTurPgo",  "C",      6,     0, "Pago cliente.Sesión"                    } )
 
 RETURN ( aPgoCli )
 
@@ -18008,74 +18008,74 @@ function aItmTik()
    local aItmTik  := {}
 
    aAdd( aItmTik, { "cSerTik",  "C",      1,     0, "Serie del tiket" }                                       )
-   aAdd( aItmTik, { "cNumTik",  "C",     10,     0, "NÃºmero del tiket" }                                      )
+   aAdd( aItmTik, { "cNumTik",  "C",     10,     0, "Número del tiket" }                                      )
    aAdd( aItmTik, { "cSufTik",  "C",      2,     0, "Sufijo del tiket" }                                      )
    aAdd( aItmTik, { "cTipTik",  "C",      1,     0, "Tipo del documento" }                                    )
-   aAdd( aItmTik, { "cTurTik",  "C",      6,     0, "SesiÃ³n del tiket" }                                      )
+   aAdd( aItmTik, { "cTurTik",  "C",      6,     0, "Sesión del tiket" }                                      )
    aAdd( aItmTik, { "dFecTik",  "D",      8,     0, "Fecha del tiket" }                                       )
    aAdd( aItmTik, { "cHorTik",  "C",      5,     0, "Hora del tiket" }                                        )
-   aAdd( aItmTik, { "cCcjTik",  "C",      3,     0, "CÃ³digo del cajero" }                                     )
-   aAdd( aItmTik, { "cNcjTik",  "C",      3,     0, "CÃ³digo de caja" }                                        )
-   aAdd( aItmTik, { "cAlmTik",  "C",      3,     0, "CÃ³digo del almacÃ©n" }                                    )
-   aAdd( aItmTik, { "cCliTik",  "C",     12,     0, "CÃ³digo del cliente" }                                    )
+   aAdd( aItmTik, { "cCcjTik",  "C",      3,     0, "Código del cajero" }                                     )
+   aAdd( aItmTik, { "cNcjTik",  "C",      3,     0, "Código de caja" }                                        )
+   aAdd( aItmTik, { "cAlmTik",  "C",      3,     0, "Código del almacén" }                                    )
+   aAdd( aItmTik, { "cCliTik",  "C",     12,     0, "Código del cliente" }                                    )
    aAdd( aItmTik, { "nTarifa",  "N",      1,     0, "Tarifa de precios" }                                     )
    aAdd( aItmTik, { "cNomTik",  "C",     80,     0, "Nombre del cliente" }                                    )
    aAdd( aItmTik, { "cDirCli",  "C",    100,     0, "Domicilio del cliente" }                                 )
-   aAdd( aItmTik, { "cPobCli",  "C",     35,     0, "PoblaciÃ³n del cliente" }                                 )
+   aAdd( aItmTik, { "cPobCli",  "C",     35,     0, "Población del cliente" }                                 )
    aAdd( aItmTik, { "cPrvCli",  "C",     20,     0, "Provincia del cliente" }                                 )
-   aAdd( aItmTik, { "nCodProv", "N",      2,     0, "NÃºmero de provincia cliente" }                           )
-   aAdd( aItmTik, { "cPosCli",  "C",     15,     0, "CÃ³digo postal del cliente" }                             )
+   aAdd( aItmTik, { "nCodProv", "N",      2,     0, "Número de provincia cliente" }                           )
+   aAdd( aItmTik, { "cPosCli",  "C",     15,     0, "Código postal del cliente" }                             )
    aAdd( aItmTik, { "cDniCli",  "C",     30,     0, "DNI/Cif del cliente" }                                   )
-   aAdd( aItmTik, { "lModCli",  "L",      1,     0, "LÃ³gico de modificar datos del cliente" }                 )
+   aAdd( aItmTik, { "lModCli",  "L",      1,     0, "Lógico de modificar datos del cliente" }                 )
    aAdd( aItmTik, { "cFpgTik",  "C",      2,     0, "Forma de pago del tiket" }                               )
    aAdd( aItmTik, { "nCobTik",  "N",     16,     6, "Importe cobrado" }                                       )
-   aAdd( aItmTik, { "nCamTik",  "N",     16,     6, "DevoluciÃ³n" }                                            )
-   aAdd( aItmTik, { "cDivTik",  "C",      3,     0, "CÃ³digo de la divisa" }                                   )
+   aAdd( aItmTik, { "nCamTik",  "N",     16,     6, "Devolución" }                                            )
+   aAdd( aItmTik, { "cDivTik",  "C",      3,     0, "Código de la divisa" }                                   )
    aAdd( aItmTik, { "nVdvTik",  "N",     10,     3, "Valor de la divisa" }                                    )
-   aAdd( aItmTik, { "lCloTik",  "L",      1,     0, "LÃ³gico de cerrado" }                                     )
-   aAdd( aItmTik, { "lSndDoc",  "L",      1,     0, "LÃ³gico de enviado" }                                     )
-   aAdd( aItmTik, { "lPgdTik",  "L",      1,     0, "LÃ³gico de pagado" }                                      )
+   aAdd( aItmTik, { "lCloTik",  "L",      1,     0, "Lógico de cerrado" }                                     )
+   aAdd( aItmTik, { "lSndDoc",  "L",      1,     0, "Lógico de enviado" }                                     )
+   aAdd( aItmTik, { "lPgdTik",  "L",      1,     0, "Lógico de pagado" }                                      )
    aAdd( aItmTik, { "cRetPor",  "C",    100,     0, "Retirado por" }                                          )
-   aAdd( aItmTik, { "cRetMat",  "C",     20,     0, "MatrÃ­cula" }                                             )
-   aAdd( aItmTik, { "cNumDoc",  "C",     12,     0, "NÃºmero del documento" }                                  )
-   aAdd( aItmTik, { "cCodAge",  "C",      3,     0, "CÃ³digo del agente" }                                     )
-   aAdd( aItmTik, { "cCodRut",  "C",      4,     0, "CÃ³digo de la ruta" }                                     )
-   aAdd( aItmTik, { "cCodTar",  "C",      5,     0, "CÃ³digo de la tarifa" }                                   )
-   aAdd( aItmTik, { "cCodObr",  "C",     10,     0, "CÃ³digo de la obra" }                                     )
-   aAdd( aItmTik, { "nComAge",  "N",      6,     2, "Porcentaje de comisiÃ³n del agente" }                     )
+   aAdd( aItmTik, { "cRetMat",  "C",     20,     0, "Matrícula" }                                             )
+   aAdd( aItmTik, { "cNumDoc",  "C",     12,     0, "Número del documento" }                                  )
+   aAdd( aItmTik, { "cCodAge",  "C",      3,     0, "Código del agente" }                                     )
+   aAdd( aItmTik, { "cCodRut",  "C",      4,     0, "Código de la ruta" }                                     )
+   aAdd( aItmTik, { "cCodTar",  "C",      5,     0, "Código de la tarifa" }                                   )
+   aAdd( aItmTik, { "cCodObr",  "C",     10,     0, "Código de la obra" }                                     )
+   aAdd( aItmTik, { "nComAge",  "N",      6,     2, "Porcentaje de comisión del agente" }                     )
    aAdd( aItmTik, { "lLiqTik",  "L",      1,     0, "Tiket liquidado" }                                       )
-   aAdd( aItmTik, { "cCodPro",  "C",      9,     0, "CÃ³digo de proyecto en contabilidad"}                     )
+   aAdd( aItmTik, { "cCodPro",  "C",      9,     0, "Código de proyecto en contabilidad"}                     )
    aAdd( aItmTik, { "lConTik",  "L",      1,     0, "Tiket contabilizado" }                                   )
-   aAdd( aItmTik, { "dFecCre",  "D",      8,     0, "Fecha de creaciÃ³n del documento" }                       )
-   aAdd( aItmTik, { "cTimCre",  "C",      5,     0, "Hora de creaciÃ³n del documento" }                        )
+   aAdd( aItmTik, { "dFecCre",  "D",      8,     0, "Fecha de creación del documento" }                       )
+   aAdd( aItmTik, { "cTimCre",  "C",      5,     0, "Hora de creación del documento" }                        )
    aAdd( aItmTik, { "lSelDoc",  "L",      1,     0, "" }                                                      )
-   aAdd( aItmTik, { "cValDoc",  "C",     13,     0, "NÃºmero del vale relacionado" }                           )
-   aAdd( aItmTik, { "cTurVal",  "C",      6,     0, "SesiÃ³n de la liquidaciÃ³n del vale" }                     )
-   aAdd( aItmTik, { "lCnvTik",  "L",      1,     0, "LÃ³gico para tiket convertido a factura" }                )
-   aAdd( aItmTik, { "cCodDlg",  "C",      2,     0, "CÃ³digo delegaciÃ³n" }                                     )
-   aAdd( aItmTik, { "cCodGrp",  "C",      4,     0, "CÃ³digo de grupo de cliente" }                            )
-   aAdd( aItmTik, { "cCodSala", "C",      3,     0, "CÃ³digo de sala" }                                        )
+   aAdd( aItmTik, { "cValDoc",  "C",     13,     0, "Número del vale relacionado" }                           )
+   aAdd( aItmTik, { "cTurVal",  "C",      6,     0, "Sesión de la liquidación del vale" }                     )
+   aAdd( aItmTik, { "lCnvTik",  "L",      1,     0, "Lógico para tiket convertido a factura" }                )
+   aAdd( aItmTik, { "cCodDlg",  "C",      2,     0, "Código delegación" }                                     )
+   aAdd( aItmTik, { "cCodGrp",  "C",      4,     0, "Código de grupo de cliente" }                            )
+   aAdd( aItmTik, { "cCodSala", "C",      3,     0, "Código de sala" }                                        )
    aAdd( aItmTik, { "cPntVenta","C",     30,     0, "Punto de venta" }                                        )
-   aAdd( aItmTik, { "lAbierto", "L",      1,     0, "LÃ³gico de ticket abierto" }                              )
+   aAdd( aItmTik, { "lAbierto", "L",      1,     0, "Lógico de ticket abierto" }                              )
    aAdd( aItmTik, { "cAliasTik","C",     80,     0, "Alias del tiket" }                                       )
-   aAdd( aItmTik, { "nNumCom",  "N",      2,     0, "NÃºmero de comensales" }                                  )
-   aAdd( aItmTik, { "cAlbTik",  "C",     12,     0, "NÃºmero del albarÃ¡n del que proviene" }                   )
-   aAdd( aItmTik, { "cPedTik",  "C",     12,     0, "NÃºmero del pedido del que proviene" }                    )
-   aAdd( aItmTik, { "cPreTik",  "C",     12,     0, "NÃºmero del presupuesto del que proviene" }               )
-   aAdd( aItmTik, { "cDtoEsp",  "C",     50,     0, "DescripciÃ³n de porcentaje de descuento especial" }       )
+   aAdd( aItmTik, { "nNumCom",  "N",      2,     0, "Número de comensales" }                                  )
+   aAdd( aItmTik, { "cAlbTik",  "C",     12,     0, "Número del albarán del que proviene" }                   )
+   aAdd( aItmTik, { "cPedTik",  "C",     12,     0, "Número del pedido del que proviene" }                    )
+   aAdd( aItmTik, { "cPreTik",  "C",     12,     0, "Número del presupuesto del que proviene" }               )
+   aAdd( aItmTik, { "cDtoEsp",  "C",     50,     0, "Descripción de porcentaje de descuento especial" }       )
    aAdd( aItmTik, { "nDtoEsp",  "N",      6,     2, "Porcentaje de descuento especial" }                      )
-   aAdd( aItmTik, { "cDpp",     "C",     50,     0, "DescripciÃ³n de porcentaje de descuento por pronto pago" })
+   aAdd( aItmTik, { "cDpp",     "C",     50,     0, "Descripción de porcentaje de descuento por pronto pago" })
    aAdd( aItmTik, { "nDpp",     "N",      6,     2, "Porcentaje de descuento por pronto pago" }               )
-   aAdd( aItmTik, { "nPctPrm",  "N",      6,     2, "Porcentaje de promociÃ³n por fidelizaciÃ³n" }              )
+   aAdd( aItmTik, { "nPctPrm",  "N",      6,     2, "Porcentaje de promoción por fidelización" }              )
    aAdd( aItmTik, { "cTikVal",  "C",     13,     0, "Numero del tiket de quien se genero el vale" }           )
-   aAdd( aItmTik, { "cTlfCli",  "C",     20,     0, "TelÃ©fono del cliente" }                                  )
+   aAdd( aItmTik, { "cTlfCli",  "C",     20,     0, "Teléfono del cliente" }                                  )
    aAdd( aItmTik, { "lFreTik",  "L",      1,     0, "Ticket regalo" }                                         )
    aAdd( aItmTik, { "nTotNet",  "N",     16,     6, "Total neto" }                                            )
    aAdd( aItmTik, { "nTotIva",  "N",     16,     6, "Total " + cImp() }                                       )
    aAdd( aItmTik, { "nTotTik",  "N",     16,     6, "Total ticket" }                                          )
-   aAdd( aItmTik, { "lLiqDev",  "L",      1,     0, "Liquidado por devoluciÃ³n" }                              )
-   aAdd( aItmTik, { "nUbiTik",  "N",      1,     0, "Tipo de ubicaciÃ³n" }                                     )
-   aAdd( aItmTik, { "nRegIva",  "N",      1,     0, "RÃ©gimen de " + cImp() }                                  )
+   aAdd( aItmTik, { "lLiqDev",  "L",      1,     0, "Liquidado por devolución" }                              )
+   aAdd( aItmTik, { "nUbiTik",  "N",      1,     0, "Tipo de ubicación" }                                     )
+   aAdd( aItmTik, { "nRegIva",  "N",      1,     0, "Régimen de " + cImp() }                                  )
 
 return ( aItmTik )
 
@@ -18086,80 +18086,80 @@ function aColTik()
    local aColTik  :={}
 
    aAdd( aColTik, { "cSerTil",  "C",      1,     0, "Serie del tiket",                    "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cNumTil",  "C",     10,     0, "NÃºmero del tiket",                   "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cNumTil",  "C",     10,     0, "Número del tiket",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cSufTil",  "C",      2,     0, "Sufijo del tiket",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cTipTil",  "C",      1,     0, "Tipo de documento",                  "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCbaTil",  "C",     18,     0, "CÃ³digo del barras del producto",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCbaTil",  "C",     18,     0, "Código del barras del producto",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cNomTil",  "C",    250,     0, "Nombre del producto",                "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nPvpTil",  "N",     16,     6, "Precio de venta del producto",       "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nUntTil",  "N",     16,     6, "Unidades vendidas del producto",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nUndKit",  "N",     16,     6, "Unidades productos kit",             "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nIvaTil",  "N",      5,     2, "Porcentaje de " + cImp() + " del producto",     "",       "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cFamTil",  "C",      5,     0, "FamÃ­lia la que pertenece el producto", "",                "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cFamTil",  "C",      5,     0, "Família la que pertenece el producto", "",                "", "( cDbfCol )" } )
    aAdd( aColTik, { "lOfeTil",  "L",      1,     0, "Oferta ya aplicada",                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cComTil",  "C",     18,     0, "CÃ³digo de barras de combinado",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cComTil",  "C",     18,     0, "Código de barras de combinado",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cNcmTil",  "C",    100,     0, "Nombre del producto combinado",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nPcmTil",  "N",     16,     6, "Precio de venta del producto combinado", "",              "", "( cDbfCol )" } )
    aAdd( aColTik, { "cFcmTil",  "C",      5,     0, "Familia la que pertenece el producto combinado", "",      "", "( cDbfCol )" } )
    aAdd( aColTik, { "lFreTil",  "L",      1,     0, "Lineas sin cargo",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nDtoLin",  "N",      6,     2, "Descuento en linea",                 "'@E 999.9'",        "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodPr1",  "C",     20,     0, "CÃ³digo de la primera propiedad",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodPr2",  "C",     20,     0, "CÃ³digo de la segunda propiedad",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodPr1",  "C",     20,     0, "Código de la primera propiedad",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodPr2",  "C",     20,     0, "Código de la segunda propiedad",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cValPr1",  "C",     20,     0, "Valor de la primera propiedad",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cValPr2",  "C",     20,     0, "Valor de la segunda propiedad",      "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nFacCnv",  "N",     16,     6, "Factor de conversiÃ³n",               "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nFacCnv",  "N",     16,     6, "Factor de conversión",               "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nDtoDiv",  "N",     16,     6, "Descuento lineal de la compra",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lTipAcc",  "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCtlStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cAlmLin",  "C",      3,     0, "CÃ³digo de almacÃ©n en lÃ­nea",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cAlmLin",  "C",      3,     0, "Código de almacén en línea",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nValImp",  "N",     16,     6, "Importe del impuesto",               "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodImp",  "C",      3,     0, "CÃ³digo de IVMH",                     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodImp",  "C",      3,     0, "Código de IVMH",                     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCosDiv",  "N",     16,     6, "Precio de costo",                    "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nNumLin",  "N",      4,     0, "NÃºmero de la lÃ­nea",                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lKitArt",  "L",      1,     0, "LÃ­nea con escandallo",               "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lKitChl",  "L",      1,     0, "LÃ­nea pertenciente a escandallo",    "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nNumLin",  "N",      4,     0, "Número de la línea",                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lKitArt",  "L",      1,     0, "Línea con escandallo",               "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lKitChl",  "L",      1,     0, "Línea pertenciente a escandallo",    "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lKitPrc",  "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lImpLin",  "L",      1,     0, "Imprimir lÃ­nea",                     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nMesGrt",  "N",      2,     0, "Meses de garantÃ­a",                  "'99'",              "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lImpLin",  "L",      1,     0, "Imprimir línea",                     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nMesGrt",  "N",      2,     0, "Meses de garantía",                  "'99'",              "", "( cDbfCol )" } )
    aAdd( aColTik, { "lControl", "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "mNumSer",  "M",     10,     0, "",                                   "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodFam",  "C",     16,     0, "CÃ³digo de familia",                  "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cGrpFam",  "C",      3,     0, "CÃ³digo del grupo de familia",        "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodFam",  "C",     16,     0, "Código de familia",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cGrpFam",  "C",      3,     0, "Código del grupo de familia",        "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nLote",    "N",      9,     0, "",                                   "@Z 999999999",      "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cLote",    "C",     12,     0, "NÃºmero de lote",                     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nNumPgo",  "N",      9,     0, "NÃºmero pago cliente",                "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cLote",    "C",     12,     0, "Número de lote",                     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nNumPgo",  "N",      9,     0, "Número pago cliente",                "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cSufPgo",  "C",      2,     0, "Sufijo pago cliente",                "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nNumMed",  "N",      1,     0, "NÃºmero de mediciones",               "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nMedUno",  "N",     16,     6, "Primera unidad de mediciÃ³n",         "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nMedDos",  "N",     16,     6, "Segunda unidad de mediciÃ³n",         "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nMedTre",  "N",     16,     6, "Tercera unidad de mediciÃ³n",         "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodInv",  "C",      2,     0, "CÃ³digo invitaciÃ³n",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nNumMed",  "N",      1,     0, "Número de mediciones",               "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nMedUno",  "N",     16,     6, "Primera unidad de medición",         "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nMedDos",  "N",     16,     6, "Segunda unidad de medición",         "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nMedTre",  "N",     16,     6, "Tercera unidad de medición",         "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodInv",  "C",      2,     0, "Código invitación",                  "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nFcmCnv",  "N",     16,     6, "Factor de conversion para combinados","",                 "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodUsr",  "C",      3,     0, "CÃ³digo de usuario",                  "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lImpCom",  "L",      1,     0, "LÃ³gico para comanda impresa",        "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodUsr",  "C",      3,     0, "Código de usuario",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lImpCom",  "L",      1,     0, "Lógico para comanda impresa",        "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nImpCom",  "N",      3,     0, "Numero de unidades impresas",        "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nImpCom1", "N",      1,     0, "Primera impresora comanda",          "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nImpCom2", "N",      1,     0, "Segunda impresora comanda",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cComent",  "C",    250,     0, "Comentario para el artÃ­culo",        "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cComent",  "C",    250,     0, "Comentario para el artículo",        "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cNomCmd",  "M",     10,     0, "Comentario para la comanda",         "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lInPromo", "L",      1,     0, "LÃ³gico para linea en promociÃ³n",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lArtServ", "L",      1,     0, "LÃ³gico para artÃ­culo servido",       "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lInPromo", "L",      1,     0, "Lógico para linea en promoción",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lArtServ", "L",      1,     0, "Lógico para artículo servido",       "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cCodTImp", "C",      3,     0, "Codigo de tipo de comanda",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "nOrTImp",  "N",      1,     0, "Orden de impresiÃ³n tipo de comanda", "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nOrTImp",  "N",      1,     0, "Orden de impresión tipo de comanda", "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cUnidad",  "C",      2,     0, "Unidades de venta",                  "" ,                 "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lDev",     "L",      1,     0, "LÃ³gico para artÃ­culo devuelto",      "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cNumDev",  "C",     13,     0, "NÃºmero de devoluciÃ³n o vale",        "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lDev",     "L",      1,     0, "Lógico para artículo devuelto",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cNumDev",  "C",     13,     0, "Número de devolución o vale",        "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nUndAnt",  "N",     16,     6, "Unidades anteriores",                "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lAnulado", "L",      1,     0, "LÃ³gico lÃ­nea anulada",               "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lLinOfe",  "L",      1,     0, "LÃ­nea con oferta",                   "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lAnulado", "L",      1,     0, "Lógico línea anulada",               "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lLinOfe",  "L",      1,     0, "Línea con oferta",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cImpCom1", "C",     50,     0, "Primer tipo impresora comanda",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cImpCom2", "C",     50,     0, "Segundo tipo impresora comanda",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "dFecTik",  "D",      8,     0, "Fecha del tiket",                    "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCosTil",  "N",     16,     6, "Precio de costo de combinado",       "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cTxtInv",  "C",     30,     0, "Texto invitaciÃ³n",                   "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cOrdOrd",  "C",      2,     0, "CÃ³digo de orden de comanda",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cTxtInv",  "C",     30,     0, "Texto invitación",                   "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cOrdOrd",  "C",      2,     0, "Código de orden de comanda",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cNomOrd",  "C",     30,     0, "Orden de comanda",                   "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lDelTil",  "L",      1,     0, "LÃ­nea borrada",                      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lDelTil",  "L",      1,     0, "Línea borrada",                      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "dFecCad",  "D",      1,     0, "Fecha de caducidad",                 "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
@@ -18171,10 +18171,10 @@ function aImpTik()
    local aImpTik  := {}
 
    aAdd( aImpTik, { "cSerTik",  "C",      1,    0, "Serie del tiket"                        } )
-   aAdd( aImpTik, { "cNumTik",  "C",     10,    0, "NÃºmero del tiket"                       } )
+   aAdd( aImpTik, { "cNumTik",  "C",     10,    0, "Número del tiket"                       } )
    aAdd( aImpTik, { "cSufTik",  "C",      2,    0, "Sufijo del tiket"                       } )
-   aAdd( aImpTik, { "lComanda", "L",      1,    0, "LÃ³gio de comanda"                       } )
-   aAdd( aImpTik, { "lImp",     "L",      1,    0, "LÃ³gico de imprimido"                    } )
+   aAdd( aImpTik, { "lComanda", "L",      1,    0, "Lógio de comanda"                       } )
+   aAdd( aImpTik, { "lImp",     "L",      1,    0, "Lógico de imprimido"                    } )
    aAdd( aImpTik, { "dFecTik",  "D",      8,    0, "Fecha mandado a impresion"              } )
    aAdd( aImpTik, { "cHorTik",  "C",      5,    0, "Hora mandado a impresion"               } )
    aAdd( aImpTik, { "dFTikImp", "D",      8,    0, "Fecha de impresion"                     } )
@@ -18193,11 +18193,11 @@ function aSerTik()
    aAdd( aColTik,  { "cSufTik", "C",      2,    0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColTik,  { "cTipTil", "C",      1,    0, "Tipo de ticket",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik,  { "dFecTik", "D",      8,    0, "Fecha de ticket",                  "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik,  { "nNumLin", "N",      4,    0, "NÃºmero de la lÃ­nea",               "'9999'",            "", "( cDbfCol )" } )
-   aAdd( aColTik,  { "cCbaTil", "C",     18,    0, "Referencia del artÃ­culo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik,  { "cAlmLin", "C",      3,    0, "Almacen del artÃ­culo",             "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik,  { "lUndNeg", "L",      1,    0, "LÃ³gico de valor absoluto",         "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik,  { "cNumSer", "C",     30,    0, "NÃºmero de serie",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik,  { "nNumLin", "N",      4,    0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColTik,  { "cCbaTil", "C",     18,    0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik,  { "cAlmLin", "C",      3,    0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik,  { "lUndNeg", "L",      1,    0, "Lógico de valor absoluto",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik,  { "cNumSer", "C",     30,    0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
 
 return ( aColTik )
 
@@ -18738,7 +18738,7 @@ Function nDtoLTpv( uTmpL, nDec, nRouDec, nVdv )
 
    if nVdv != 0
       nCalculo          := nCalculo / nVdv
-   end if
+   end if 
 
 RETURN ( Round( nCalculo, nRouDec ) )
 
@@ -18894,7 +18894,7 @@ STATIC FUNCTION lRecTotal( aTmp, lRefreshTotal )
    end if
 
    if oGetRnt != nil
-      oGetRnt:SetText( AllTrim( Trans( nTotRnt, cPorDiv ) + Space( 1 ) + "â‚¬ : " + AllTrim( Trans( nTotPctRnt, "999.99" ) ) + "%" ) )
+      oGetRnt:SetText( AllTrim( Trans( nTotRnt, cPorDiv ) + Space( 1 ) + "€ : " + AllTrim( Trans( nTotPctRnt, "999.99" ) ) + "%" ) )
    end if
 
 RETURN .T.
@@ -19141,7 +19141,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
 
       ApoloBtnBmp():Redefine( 510, "Id_Card_Delete_32", , , , , {|| oDlg:end( IDOK ), appCli( .f. ) }, oDlg, , , .f., .f., "No, pero deseo tenerla. [ F6 ]", ,,, .t., "TOP", .t., , , .f., )
 
-      ApoloBtnBmp():Redefine( IDCANCEL, "Del32", , , , , {|| oDlg:end() }, oDlg, , , .f., .f., "Gracias, en otra ocasiÃ³n. [ ESC ]", ,,, .t., "TOP", .t., , , .f., )
+      ApoloBtnBmp():Redefine( IDCANCEL, "Del32", , , , , {|| oDlg:end() }, oDlg, , , .f., .f., "Gracias, en otra ocasión. [ ESC ]", ,,, .t., "TOP", .t., , , .f., )
 
       oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ), aGet[ _CCLITIK ]:SetFocus()} )
       oDlg:AddFastKey( VK_F6, {|| oDlg:end( IDOK ), appCli( .f. ) } )
@@ -19192,7 +19192,7 @@ Static Function GetVale( oBrwVal, aTmp )
 
             if ( dbfTikT )->dFecTik + uFieldEmpresa( "nDiaVale" ) > GetSysDate()
                lError   := .t.
-               MsgStop( "El vale introducido no han alcanzado la fecha para su liquidaciÃ³n." )
+               MsgStop( "El vale introducido no han alcanzado la fecha para su liquidación." )
             end if
 
             if ( dbfTikT )->cCliTik != cCodCli
@@ -19314,7 +19314,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
       end with
 
       with object ( oBrwDev:AddCol() )
-         :cHeader                := "CÃ³digo"
+         :cHeader                := "Código"
          :bEditValue             := {|| ( dbfTmp )->cCbaTil }
          :nWidth                 := 60
       end with
@@ -19405,7 +19405,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
       if lDevolucion
 
          for each o in ( aButtonsPago )
-            o:oButton         := ApoloBtnBmp():Redefine( ( 600 + hb_EnumIndex() ), o:cBigResource, , , , , {|o| FinalizaDevolucionTicket( o, aTmp, aGet, dbfTmp, oNumero, oBrwDev, oDlg ) }, oDlg, , , .f., .f., "DevoluciÃ³n " + Rtrim( o:cText ), , , , .t., "TOP", .t., , , .f. )
+            o:oButton         := ApoloBtnBmp():Redefine( ( 600 + hb_EnumIndex() ), o:cBigResource, , , , , {|o| FinalizaDevolucionTicket( o, aTmp, aGet, dbfTmp, oNumero, oBrwDev, oDlg ) }, oDlg, , , .f., .f., "Devolución " + Rtrim( o:cText ), , , , .t., "TOP", .t., , , .f. )
             o:oButton:Cargo   := o:cCode
          next
 
@@ -19597,7 +19597,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
 
    if len( oBrwDev:Cargo ) == 0
 
-      MsgStop( "Debe seleccionar al menos una lÃ­nea" )
+      MsgStop( "Debe seleccionar al menos una línea" )
 
    else
 
@@ -19647,7 +19647,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
       aTmp[ _CSUFTIK ]     := cSufijoTicket
 
       /*
-      AÃ±ade las lÃ­neas seleccionadas-------------------------------------------
+      Añade las líneas seleccionadas-------------------------------------------
       */
 
       for each nRec in ( oBrwDev:Cargo )
@@ -19685,7 +19685,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
       end if
 
       /*
-      Resto el total de vale cuando realizo una devoluciÃ³n---------------------
+      Resto el total de vale cuando realizo una devolución---------------------
       */
 
       nRec                       := ( dbfTikT )->( RecNo() )
@@ -19755,13 +19755,13 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
          nTotTicketResultado     := nTotTicketOriginal - nTotalDevolucion
 
          /*
-         Capturanmos el porcentaje de promociÃ³n--------------------------------
+         Capturanmos el porcentaje de promoción--------------------------------
          */
 
          nPorcentajeFidelizacion := oFideliza:nPorcentajePrograma( nTotTicketResultado  )
 
          /*
-         Vemos si cumple las condiciones para la promociÃ³n---------------------
+         Vemos si cumple las condiciones para la promoción---------------------
          */
 
          lValePromocion          := ( !Retfld( ( dbfTikT )->cCliTik, dbfClient, "lExcFid" ) .and. ( nPorcentajeFidelizacion != 0 ) )
@@ -19813,7 +19813,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
          aBlankL[ _CTIPTIK ]     := SAVVAL
          aBlankL[ _NUNTTIL ]     := 1
          aBlankL[ _NNUMLIN ]     := 1
-         aBlankL[ _CNOMTIL ]     := "Vale por promociÃ³n"
+         aBlankL[ _CNOMTIL ]     := "Vale por promoción"
          aBlankL[ _NPVPTIL ]     := nValePromocion
 
          dbGather( aBlankL, dbfTikL, .t. )
@@ -19930,19 +19930,19 @@ Static Function cInformeDevolucionTpv( dbfTmp )
    aInf           := {}
 
    if ( dbfTikL )->( dbSeek( ( dbfTmp )->cSerTil + ( dbfTmp )->cNumTil + ( dbfTmp )->cSufTil + Str( ( dbfTmp )->nNumLin ) ) )
-      aAdd( aInf, { "NÃºmero",       ( dbfTikL )->cSerTil + "/" + Alltrim( ( dbfTikL )->cNumTil ) + "/" + Alltrim( ( dbfTikL )->cSufTil ) } )
+      aAdd( aInf, { "Número",       ( dbfTikL )->cSerTil + "/" + Alltrim( ( dbfTikL )->cNumTil ) + "/" + Alltrim( ( dbfTikL )->cSufTil ) } )
       aAdd( aInf, { "Fecha",        Dtoc( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,   "dFecTik" ) ) } )
       aAdd( aInf, { "Hora",         RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cHorTik" ) } )
       aAdd( aInf, { "Usuario",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cCcjTik" ) } )
       aAdd( aInf, { "Caja",         RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cNcjTik" ) } )
       aAdd( aInf, { "Almacen",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cAlmTik" ) } )
-      aAdd( aInf, { "SesiÃ³n",       Alltrim( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,"cTurTik" ) ) } )
+      aAdd( aInf, { "Sesión",       Alltrim( RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,"cTurTik" ) ) } )
       aAdd( aInf, { "Cliente",      RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cNomTik" ) } )
-      aAdd( aInf, { "DirecciÃ³n",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cDirCli" ) } )
+      aAdd( aInf, { "Dirección",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cDirCli" ) } )
       aAdd( aInf, { "Cod. postal",  RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPosCli" ) } )
-      aAdd( aInf, { "PoblaciÃ³n",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPobCli" ) } )
+      aAdd( aInf, { "Población",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPobCli" ) } )
       aAdd( aInf, { "Provincia",    RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cPrvCli" ) } )
-      aAdd( aInf, { "TelÃ©fono",     RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cTlfCli" ) } )
+      aAdd( aInf, { "Teléfono",     RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT,         "cTlfCli" ) } )
       aAdd( aInf, { "Unidades",     AllTrim( nTotNTpv( dbfTikL, cPicUnd ) ) } )
       aAdd( aInf, { "Importe",      AllTrim( Trans( nTotLTpv( dbfTikL, nDouDiv, nDorDiv ), cPorDiv ) ) } )
    end if
@@ -19996,7 +19996,7 @@ Static Function cInformeDevolucionTpv( dbfTmp )
 
    else
 
-      MsgStop( "No se ha podido recopilar informaciÃ³n." )
+      MsgStop( "No se ha podido recopilar información." )
 
    end if
 
@@ -20014,7 +20014,7 @@ Static Function dFecMaxVale( cNumTik, cTikT  )
    DEFAULT cTikT        := dbfTikT
 
    /*
-   Guardamos los la posiciÃ³n y el orden de la tabla----------------------------
+   Guardamos los la posición y el orden de la tabla----------------------------
    */
 
    nRec                 := ( cTikT )->( Recno() )
@@ -20058,7 +20058,7 @@ Static Function BrwTikCli( oGet )
    local nOrd           := GetBrwOpt( "BrwTikCli" )
    local oCbxOrd
    local cCbxOrd
-   local aCbxOrd        := { "NÃºmero", "Fecha", "CÃ³digo cliente", "Nombre cliente" }
+   local aCbxOrd        := { "Número", "Fecha", "Código cliente", "Nombre cliente" }
    local nRecAnt        := ( dbfTikT )->( RecNo() )
    local nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
    local cText          := ""
@@ -20102,7 +20102,7 @@ Static Function BrwTikCli( oGet )
       oBrw:nMarqueeStyle      := 5
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "NÃºmero"
+         :cHeader             := "Número"
          :cSortOrder          := "cNumTik"
          :bEditValue          := {|| ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
          :nWidth              := 70
@@ -20118,7 +20118,7 @@ Static Function BrwTikCli( oGet )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "CÃ³digo cliente"
+         :cHeader             := "Código cliente"
          :bEditValue          := {|| Rtrim( ( dbfTikT )->cCliTik ) }
          :cSortOrder          := "cCliTik"
          :nWidth              := 75
@@ -20150,7 +20150,7 @@ Static Function BrwTikCli( oGet )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "SesiÃ³n"
+         :cHeader             := "Sesión"
          :bEditValue          := {|| ( dbfTikT )->cTurTik + "/" + ( dbfTikT )->cSufTik }
          :nWidth              := 80
          :lHide               := .t.
@@ -20178,7 +20178,7 @@ Static Function BrwTikCli( oGet )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "AlmacÃ©n"
+         :cHeader             := "Almacén"
          :bEditValue          := {|| ( dbfTikT )->cAlmTik }
          :nWidth              := 80
          :lHide               := .t.
@@ -20548,7 +20548,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
    if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
 
       /*
-      Buscamos si existen ofertas por artÃ­culo----------------------------
+      Buscamos si existen ofertas por artículo----------------------------
       */
 
       nTotalLinea := lCalcDeta( aTmp, nil, .t. )
@@ -20867,7 +20867,7 @@ Static Function lAddCobro( aTmp, oTotDiv, oBrwPgo )
          ( dbfTmpP )->nVdvPgo    := aTmp[ _NVDVTIK ]
          ( dbfTmpP )->nDevTik    := Max( aTmp[ _NCAMTIK ], 0 )
       else
-         MsgStop( "No se ha podido aÃ±adir el registro de pago" )
+         MsgStop( "No se ha podido añadir el registro de pago" )
       end if
 
    end if
