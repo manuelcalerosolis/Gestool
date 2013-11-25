@@ -3170,6 +3170,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProCab.Cdx"
    oDataTable:cDescription := "Producción"
    oDataTable:bCreateFile  := {| cPath | TProduccion():BuildFiles( .t., cPath ) }
+   oDataTable:hDefinition  := TProduccion():DefineHash()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -4683,6 +4684,7 @@ CLASS TDataTable
    DATA  cDescription   INIT ""
    DATA  aStruct    
    DATA  lTrigger       INIT .t.
+   DATA  hDefinition 
    DATA  bSyncFile   
    DATA  bCreateFile
    DATA  bCreateIndex   

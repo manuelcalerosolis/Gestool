@@ -30,6 +30,7 @@ CLASS TDetMaquina FROM TDet
    METHOD nTotCosto( oDbf )
 
    METHOD nTotal( oDbf )
+   METHOD cTotal( oDbf )               INLINE ( Trans( ::nTotal( oDbf ), ::oParent:cPorDiv ) )
 
    METHOD lTiempoEmpleado()
 
@@ -316,7 +317,7 @@ METHOD nTotal( oDbf )
 
    oDbf:SetStatus()
 
-RETURN ( Trans( Round( nTotal, ::oParent:nDorDiv ), ::oParent:cPorDiv ) )
+RETURN ( Round( nTotal, ::oParent:nDorDiv ) )
 
 //---------------------------------------------------------------------------//
 

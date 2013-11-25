@@ -15,7 +15,7 @@ CLASS TDetPersonal FROM TDet
 
    DATA  oBrwHorasTrabajador
 
-   DATA  lAppendTrabajador             INIT  .f.
+   DATA  lAppendTrabajador                   INIT  .f.
 
    METHOD New( cPath, oParent )  
    
@@ -35,10 +35,11 @@ CLASS TDetPersonal FROM TDet
    METHOD cTotTime( oDbf )
    METHOD lTotTime( oDbf )
 
-   METHOD nTotal( oDbf )
-   METHOD cTotal( oDbf )
+   METHOD nTotalTrabajador( oDbf )
+   METHOD cTotalTrabajador( cCodTra, oDbf )  INLINE ( Trans( ::nTotalTrabajador( cCodTra, oDbf ), ::oParent:cPorDiv ) )
 
-   METHOD nTotalTra( oDbf, oDbfHor )
+   METHOD nTotal( oDbf, oDbfHor )
+   METHOD cTotal( oDbf, oDbfHor )            INLINE ( Trans( ::nTotal( oDbf, oDbfHor ), ::oParent:cPorDiv ) )
 
    METHOD lTiempoEmpleado()
 
@@ -558,7 +559,7 @@ RETURN ( ::oGetTotalTime:cText( ::cTotTime( oDbf ) ), .t. )
 
 //--------------------------------------------------------------------------//
 
-METHOD nTotal( cCodTra, oDbf )
+METHOD nTotalTrabajador( cCodTra, oDbf )
 
    local nTotal   := 0
 
@@ -570,7 +571,7 @@ METHOD nTotal( cCodTra, oDbf )
 
    if oDbf:Seek( cCodTra )
       while cCodTra == oDbf:cCodTra .and. !oDbf:Eof()
-         nTotal      += oDbf:nNumHra * oDbf:nCosHra
+         nTotal   += oDbf:nNumHra * oDbf:nCosHra
          oDbf:Skip()
       end while
    end if
@@ -578,14 +579,6 @@ METHOD nTotal( cCodTra, oDbf )
    oDbf:SetStatus()
 
 RETURN ( nTotal )
-
-//---------------------------------------------------------------------------//
-
-METHOD cTotal( cCodTra, oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( Trans( ::nTotal( cCodTra, oDbf ), ::oParent:cPorDiv ) )
 
 //---------------------------------------------------------------------------//
 
@@ -623,7 +616,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD nTotalTra( oDbf, oDbfHor, lRound )
+METHOD nTotal( oDbf, oDbfHor, lRound )
 
    local nTotal   := 0
 
@@ -633,14 +626,14 @@ METHOD nTotalTra( oDbf, oDbfHor, lRound )
    oDbf:GetStatus()
 
    oDbf:GoTop()
-
    while !oDbf:Eof()
-      nTotal      += ::nTotal( oDbf:cCodTra, oDbfHor )
+      nTotal      += ::nTotalTrabajador( oDbf:cCodTra, oDbfHor )
       oDbf:Skip()
    end while
 
    oDbf:SetStatus()
 
-RETURN ( Trans( if( lRound, Round( nTotal, ::oParent:nDorDiv ), nTotal ), ::oParent:cPorDiv ) )
+RETURN ( if( lRound, Round( nTotal, ::oParent:nDorDiv ), nTotal ) )
 
 //---------------------------------------------------------------------------//
+
