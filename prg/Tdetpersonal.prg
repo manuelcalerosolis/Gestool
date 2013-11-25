@@ -566,7 +566,6 @@ METHOD nTotalTrabajador( cCodTra, oDbf )
    DEFAULT oDbf   := ::oDbf
 
    oDbf:GetStatus()
-
    oDbf:OrdSetFocus( "cCodTra" )
 
    if oDbf:Seek( cCodTra )

@@ -203,6 +203,7 @@ CLASS TProduccion FROM TMasDet
    METHOD DefineHash()
 
    METHOD Resource( nMode, aDatosAnterior )
+   METHOD StarResource( oFecIni )   
 
    METHOD Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg )
 
@@ -247,7 +248,7 @@ CLASS TProduccion FROM TMasDet
                                        ::oDetPersonal:nTotal( ::oDetPersonal:oDbfVir, ::oDetHorasPersonal:oDbfVir ) +;
                                        ::oDetMaquina:nTotal( ::oDetMaquina:oDbfVir ) )
 
-   METHOD CalculaCostes()     VIRTUAL
+   METHOD CalculaCostes()     
 
    METHOD DataReport( oFr )
    METHOD VariableReport( oFr )
@@ -1143,6 +1144,18 @@ METHOD Resource( nMode, aDatosAnterior )
    cSaySec                 := oRetFld( ::oDbf:cCodSec, ::oSeccion:oDbf )
    cSayOpe                 := oRetFld( ::oDbf:cCodOpe, ::oOperacion:oDbf )
 
+   ::oDetProduccion:oDbfVir:GetStatus()
+   ::oDetProduccion:oDbfVir:OrdSetFocus( "nNumLin" )
+
+   ::oDetMaterial:oDbfVir:GetStatus()
+   ::oDetMaterial:oDbfVir:OrdSetFocus( "nNumLin" )
+
+   ::oDetPersonal:oDbfVir:GetStatus()
+   ::oDetPersonal:oDbfVir:OrdSetFocus( "nNumLin" )
+
+   ::oDetMaquina:oDbfVir:GetStatus()
+   ::oDetMaquina:oDbfVir:OrdSetFocus( "nNumLin" )
+
    DEFINE DIALOG oDlg RESOURCE "Produccion" TITLE LblTitle( nMode ) + "parte de producción"
 
       REDEFINE FOLDER oFld;
@@ -1382,7 +1395,9 @@ METHOD Resource( nMode, aDatosAnterior )
       ::oBrwMaterialProducido:nMarqueeStyle  := 6
       ::oBrwMaterialProducido:cName          := "Lineas de partes de producción"
       ::oBrwMaterialProducido:lFooter        := .t.
-      // ::oBrwMaterialProducido:bChange        := {|| ::oBrwMaterialProducido:MakeTotals(), ::oBrwMaterialProducido:RefreshFooters() }
+
+      ::oBrwMaterialProducido:CreateFromResource( 200 )
+      ::oBrwMaterialProducido:MakeTotals()
 
       with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Número"
@@ -1412,10 +1427,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Total unidades"
-         :bStrData         := {|| ::oDetProduccion:cTotUnidades( ::oDetProduccion:oDbfVir ) }
+         :bEditValue       := {|| ::oDetProduccion:nUnidades( ::oDetProduccion:oDbfVir ) }
+         :cEditPicture     := ::cPicUnd 
          :nWidth           := 82
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM         
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
@@ -1428,7 +1446,7 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ::oDetProduccion:nTotPrecio( ::oDetProduccion:oDbfVir ) }
+         :bEditValue       := {|| ::oDetProduccion:nPrecio( ::oDetProduccion:oDbfVir ) }
          :cEditPicture     := ::cPorDiv
          :nWidth           := 85
          :nDataStrAlign    := AL_RIGHT
@@ -1436,9 +1454,6 @@ METHOD Resource( nMode, aDatosAnterior )
          :nFootStrAlign    := AL_RIGHT
          :nFooterType      := AGGR_SUM         
       end with
-
-      ::oBrwMaterialProducido:CreateFromResource( 200 )
-      ::oBrwMaterialProducido:MakeTotals()
 
       if nMode != ZOOM_MODE
          ::oBrwMaterialProducido:bLDblClick   := {|| ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oTotProducido:Refresh(), ::oBrwMaterialProducido:Refresh() }
@@ -1471,21 +1486,23 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh(), ::oBrwMateriaPrima:Refresh() )
+         ACTION   ( ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
 
-      ::oBrwMateriaPrima                 := IXBrowse():New( oFld:aDialogs[ 2 ] )
+      ::oBrwMateriaPrima                  := IXBrowse():New( oFld:aDialogs[ 2 ] )
 
-      ::oBrwMateriaPrima:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwMateriaPrima:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwMateriaPrima:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwMateriaPrima:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
       ::oBrwMateriaPrima:SetoDbf( ::oDetMaterial:oDbfVir )
 
-      ::oBrwMateriaPrima:nMarqueeStyle   := 6
-      ::oBrwMateriaPrima:cName           := "Materias primas produccion"
+      ::oBrwMateriaPrima:nMarqueeStyle    := 6
+      ::oBrwMateriaPrima:cName            := "Materias primas produccion"
 
-      ::oBrwMateriaPrima:bLDblClick      := { || ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() }
+      ::oBrwMateriaPrima:bLDblClick       := { || ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() }
+      ::oBrwMateriaPrima:lFooter          := .t.
 
       ::oBrwMateriaPrima:CreateFromResource( 200 )
+      ::oBrwMateriaPrima:MakeTotals()
 
       with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Número"
@@ -1515,10 +1532,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Total unidades"
-         :bStrData         := {|| ::oDetMaterial:cTotUnidades( ::oDetMaterial:oDbfVir ) }
+         :bEditValue       := {|| ::oDetMaterial:nUnidades( ::oDetMaterial:oDbfVir ) }
+         :cEditPicture     := ::cPicUnd 
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM         
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )
@@ -1531,13 +1551,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ::oDetMaterial:nTotPrecio( ::oDetMaterial:oDbfVir ) }
+         :bEditValue       := {|| ::oDetMaterial:nPrecio( ::oDetMaterial:oDbfVir ) }
          :cEditPicture     := ::cPorDiv
-         // :bStrData         := {|| ::oDetMaterial:cTotPrecio( ::oDetMaterial:oDbfVir ) }
          :nWidth           := 85
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM            
       end with
 
       /*
@@ -1548,13 +1568,13 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       500 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Append( ::oBrwPersonal ), ::oTotPersonal:Refresh(), ::oBrwPersonal:Refresh() )
+         ACTION   ( ::oDetPersonal:Append( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
 
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh(), ::oBrwPersonal:Refresh() )
+         ACTION   ( ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
 
 		REDEFINE BUTTON ;
          ID       502 ;
@@ -1565,20 +1585,23 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Del( ::oBrwPersonal ), ::oTotPersonal:Refresh(), ::oBrwPersonal:Refresh() )
+         ACTION   ( ::oDetPersonal:Del( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
 
-      ::oBrwPersonal                 := TXBrowse():New( oFld:aDialogs[3] )
+      ::oBrwPersonal                := IXBrowse():New( oFld:aDialogs[3] )
 
-      ::oBrwPersonal:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwPersonal:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwPersonal:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwPersonal:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwPersonal:cName          := "Personal produccion"
 
       ::oBrwPersonal:SetoDbf( ::oDetPersonal:oDbfVir )
 
-      ::oBrwPersonal:nMarqueeStyle   := 5
+      ::oBrwPersonal:nMarqueeStyle  := 5
 
-      ::oBrwPersonal:bLDblClick      := { || ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() }
+      ::oBrwPersonal:bLDblClick     := {|| ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() }
+      ::oBrwPersonal:lFooter        := .t.
 
       ::oBrwPersonal:CreateFromResource( 200 )
+      ::oBrwPersonal:MakeTotals()
 
       with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Personal"
@@ -1600,10 +1623,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| ::oDetPersonal:cTotalTrabajador( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :bEditValue       := {|| ::oDetPersonal:nTotalTrabajador( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :cEditPicture     := ::cPorDiv
          :nWidth           := 90
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM            
       end with
 
       /*
@@ -1633,18 +1659,21 @@ METHOD Resource( nMode, aDatosAnterior )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
 
-      ::oBrwMaquinaria                 := TXBrowse():New( oFld:aDialogs[4] )
+      ::oBrwMaquinaria                 := IXBrowse():New( oFld:aDialogs[4] )
 
       ::oBrwMaquinaria:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwMaquinaria:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwMaquinaria:cName           := "Maquinaria produccion"
 
       ::oBrwMaquinaria:SetoDbf( ::oDetMaquina:oDbfVir )
 
       ::oBrwMaquinaria:nMarqueeStyle   := 5
 
-      ::oBrwMaquinaria:bLDblClick      := { || ::oDetMaquina:Edit( ::oBrwPersonal ), ::oTotMaquinaria:Refresh() }
+      ::oBrwMaquinaria:bLDblClick      := {|| ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() }
+      ::oBrwMaquinaria:lFooter         := .t.
 
       ::oBrwMaquinaria:CreateFromResource( 200 )
+      ::oBrwMaquinaria:MakeTotals()
 
       with object ( ::oBrwMaquinaria:AddCol() )
          :cHeader             := "Maquina"
@@ -1660,10 +1689,13 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwMaquinaria:AddCol() )
          :cHeader             := "Total"
-         :bStrData            := {|| Trans( ::oDetMaquina:nTotCosto( ::oDetMaquina:oDbfVir ), ::cPorDiv ) }
+         :bEditValue          := {|| ::oDetMaquina:nTotCosto( ::oDetMaquina:oDbfVir ) }
+         :cEditPicture        := ::cPorDiv
          :nWidth              := 90
          :nDataStrAlign       := AL_RIGHT
          :nHeadStrAlign       := AL_RIGHT
+         :nFootStrAlign       := AL_RIGHT
+         :nFooterType         := AGGR_SUM            
       end with
 
       /*
@@ -1744,17 +1776,38 @@ METHOD Resource( nMode, aDatosAnterior )
       oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
       oDlg:AddFastKey( VK_F8, {|| oBtnAdelante:Click() } )
 
-      oDlg:bStart := {|| ::oBrwMaterialProducido:Load(), ::oBrwMateriaPrima:Load(), oFecIni:SetFocus() }
+      oDlg:bStart := {|| ::StarResource( oFecIni ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
    oFntTot:End()
+
    oBmpGeneral:End()
+
+   ::oDetProduccion:oDbfVir:SetStatus()
+   ::oDetMaterial:oDbfVir:GetStatus()
+   ::oDetPersonal:oDbfVir:GetStatus()
+   ::oDetMaquina:oDbfVir:GetStatus()
 
    ::oBrwMaterialProducido:CloseData()
    ::oBrwMateriaPrima:CloseData()
+   ::oBrwPersonal:CloseData()
+   ::oBrwMaquinaria:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+METHOD StarResource( oFecIni )
+
+   ::oBrwMaterialProducido:Load()
+   ::oBrwMateriaPrima:Load()
+   ::oBrwPersonal:Load()
+   ::oBrwMaquinaria:Load()
+
+   oFecIni:SetFocus()
+
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -3423,6 +3476,19 @@ function VisProduccion( cNumParte )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD CalculaCostes()     
+
+   local nTotalParte       := 0
+
+   nTotalParte             := ::nTotalParte() / ::oDetProduccion:nTotalUnidades( ::oDetProduccion:oDbfVir )
+
+   MsgStop( nTotalParte, "nTotParte" )
+
+RETURN ( nTotalParte )
+
+//---------------------------------------------------------------------------//
+
 #include "FastRepH.ch"
 
 METHOD DataReport( oFr )

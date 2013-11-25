@@ -53,17 +53,17 @@ CLASS TDetMaterial FROM TDetalleArticulos
    METHOD SaveDetails()
    METHOD DeleteDetails()
 
-   METHOD nTotUnidades( oDbf )
-   METHOD cTotUnidades( oDbf )
-   METHOD lTotUnidades( oDbf )
+   METHOD nUnidades( oDbf )
+   METHOD cUnidades( oDbf )      INLINE ( Trans( ::nUnidades( oDbf ), ::oParent:cPicUnd ) )
+   METHOD lUnidades( oDbf )      INLINE ( ( ::oGetTotalUnidades:cText( ::nUnidades( oDbf ) ), .t. ) )
 
-   METHOD nTotPrecio( oDbf )
-   METHOD cTotPrecio( oDbf )
-   METHOD lTotPrecio( oDbf )
+   METHOD nPrecio( oDbf )        INLINE ( Round( ::nUnidades( oDbf ) * oDbf:FieldGetByName( "nImpOrd" ), ::oParent:nDorDiv ) )
+   METHOD cPrecio( oDbf )        INLINE ( Trans( ::nPrecio( oDbf ), ::oParent:cPorDiv ) )
+   METHOD lPrecio( oDbf )        INLINE ( ::oGetTotalPrecio:cText( ::nPrecio( oDbf ) ), .t. )
 
    METHOD nTotal( oDbf )
-   METHOD cTotal( oDbf )
-   METHOD lTotal( oDbf )
+   METHOD cTotal( oDbf )         INLINE ( Trans( ::nTotal( oDbf ), ::oParent:cPorDiv ) )
+   METHOD lTotal( oDbf, oGet )   INLINE ( oGet:cText( ::nTotal( oDbf ) ), .t. )
 
    METHOD nTotPeso( oDbf )
    METHOD nTotVolumen( oDbf )
@@ -212,8 +212,8 @@ METHOD Resource( nMode )
       ::nStkAct         := 0
    end if
 
-   ::nGetTotalUnidades  := ::nTotUnidades( ::oDbfVir )
-   ::nGetTotalPrecio    := ::nTotPrecio( ::oDbfVir )
+   ::nGetTotalUnidades  := ::nUnidades( ::oDbfVir )
+   ::nGetTotalPrecio    := ::nPrecio( ::oDbfVir )
    ::nGetTotPes         := ::nTotPeso( ::oDbfVir )
    ::nGetTotVol         := ::nTotVolumen( ::oDbfVir )
 
@@ -313,8 +313,8 @@ METHOD Resource( nMode )
          PICTURE  ::oParent:cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      ::oGetCaja:bChange   := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
-      ::oGetCaja:bValid    := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetCaja:bChange   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetCaja:bValid    := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
 
       REDEFINE GET ::oGetUnidades VAR ::oDbfVir:nUndOrd ;
          ID       130;
@@ -323,8 +323,8 @@ METHOD Resource( nMode )
          PICTURE  ::oParent:cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      ::oGetUnidades:bChange  := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
-      ::oGetUnidades:bValid   := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetUnidades:bChange  := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetUnidades:bValid   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
 
       REDEFINE GET ::oGetTotalUnidades VAR ::nGetTotalUnidades ;
          ID       140;
@@ -339,8 +339,8 @@ METHOD Resource( nMode )
          PICTURE  ::oParent:cPouDiv ;
          OF       oFld:aDialogs[1]
 
-      ::oGetPrecio:bChange := {|| ::lTotPrecio( ::oDbfVir ) }
-      ::oGetPrecio:bChange := {|| ::lTotPrecio( ::oDbfVir ) }
+      ::oGetPrecio:bChange := {|| ::lPrecio( ::oDbfVir ) }
+      ::oGetPrecio:bChange := {|| ::lPrecio( ::oDbfVir ) }
 
       REDEFINE GET ::oGetTotalPrecio VAR ::nGetTotalPrecio ;
          ID       160;
@@ -611,8 +611,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
          end if
 
-         ::lTotUnidades( ::oDbfVir )
-         ::lTotPrecio( ::oDbfVir )
+         ::lUnidades( ::oDbfVir )
+         ::lPrecio( ::oDbfVir )
          ::lTotPeso( ::oDbfVir )
          ::lTotVolumen( ::oDbfVir )
 
@@ -659,51 +659,11 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-METHOD nTotUnidades( oDbf )
+METHOD nUnidades( oDbf )
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd, ::oParent:nDouDiv ), ( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd ) ) )
-
-//--------------------------------------------------------------------------//
-
-METHOD cTotUnidades( oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( Trans( ::nTotUnidades( oDbf ), ::oParent:cPicUnd ) )
-
-//--------------------------------------------------------------------------//
-
-METHOD lTotUnidades( oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( ::oGetTotalUnidades:cText( ::nTotUnidades( oDbf ) ), .t. )
-
-//--------------------------------------------------------------------------//
-
-METHOD nTotPrecio( oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( Round( ::nTotUnidades( oDbf ) * oDbf:nImpOrd, ::oParent:nDorDiv ) )
-
-//--------------------------------------------------------------------------//
-
-METHOD cTotPrecio( oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( Trans( ::nTotPrecio( oDbf ), ::oParent:cPorDiv ) )
-
-//--------------------------------------------------------------------------//
-
-METHOD lTotPrecio( oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( ::oGetTotalPrecio:cText( ::nTotPrecio( oDbf ) ), .t. )
+RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ), ::oParent:nDouDiv ), ( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ) ) ) )
 
 //--------------------------------------------------------------------------//
 
@@ -716,31 +676,14 @@ METHOD nTotal( oDbf )
    oDbf:GetStatus()
 
    oDbf:GoTop()
-
    while !oDbf:Eof()
-      nTotal      += ::nTotPrecio( oDbf )
+      nTotal      += ::nPrecio( oDbf )
       oDbf:Skip()
    end while
 
    oDbf:SetStatus()
 
 RETURN ( nTotal )
-
-//---------------------------------------------------------------------------//
-
-METHOD cTotal( oDbf )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( Trans( ::nTotal( oDbf ), ::oParent:cPorDiv ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD lTotal( oDbf, oGet )
-
-   DEFAULT oDbf   := ::oDbf
-
-RETURN ( oGet:cText( ::nTotal( oDbf ) ), .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -769,7 +712,7 @@ METHOD nTotPeso( oDbf )
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( Round( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd, ::oParent:nDouDiv ) * oDbf:nPeso )
+RETURN ( Round( ::nUnidades( oDbf ), ::oParent:nDouDiv ) * oDbf:nPeso )
 
 //---------------------------------------------------------------------------//
 
@@ -777,7 +720,7 @@ METHOD nTotVolumen( oDbf )
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( Round( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd, ::oParent:nDouDiv ) * oDbf:nVolumen )
+RETURN ( Round( ::nUnidades( oDbf ), ::oParent:nDouDiv ) * oDbf:nVolumen )
 
 //---------------------------------------------------------------------------//
 
@@ -1006,7 +949,7 @@ METHOD Resource( nMode ) CLASS TDetSeriesMaterial
       :nNumLin          := ::oParent:oDetMaterial:oDbfVir:nNumLin
       :cCodAlm          := ::oParent:oDbf:cAlmOrd
 
-      :nTotalUnidades   := ::oParent:oDetMaterial:nTotUnidades( ::oParent:oDetMaterial:oDbfVir )
+      :nTotalUnidades   := ::oParent:oDetMaterial:nUnidades( ::oParent:oDetMaterial:oDbfVir )
 
       :oStock           := ::oParent:oStock
 
