@@ -26,7 +26,7 @@ CLASS IXBrowse FROM TXBrowse
    Method GetOriginal()    INLINE ( ::cOriginal := ::SaveState() )
    Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
 
-   Method Load()           INLINE ( ::OpenData(), ::LoadData(), ::CloseData(), ::Refresh() )
+   Method Load()           INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
    Method Save()           INLINE ( ::OpenData(), ::SaveData( .t.), ::CloseData() )
 
    Method CreateData( cPath )
@@ -410,9 +410,9 @@ METHOD Refresh( lComplete )
 
    Super:Refresh( lComplete )
 
-   ::MakeTotals()
-
-   ::RefreshFooters()
+   if ::lFooter
+      ::MakeTotals()
+   end if
 
 return nil
 

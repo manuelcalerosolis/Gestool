@@ -31,6 +31,7 @@ static lCdx             := .f.
 
 static cIp              := ""
 static cData            := ""
+static nAdsServer       := 7
 
 static dSysDate
 
@@ -228,6 +229,16 @@ Function cData( cSetData )
    end if
 
 Return ( if( !Empty( cData ), cPath( cData ), "" ) )
+
+//----------------------------------------------------------------------------//
+
+Function nAdsServer( nServer )
+
+   if IsNum( nServer )
+      nAdsServer  := nServer
+   end if
+
+Return ( nAdsServer )
 
 //----------------------------------------------------------------------------//
 

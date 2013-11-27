@@ -903,7 +903,7 @@ METHOD ConnectDataDictionary()
 
    ::CreateDataDictionary()
 
-   ::lAdsConnection     := AdsConnect60( ::cDataDictionaryFile, 7, "ADSSYS", "", , @::hAdsConnection )
+   ::lAdsConnection     := AdsConnect60( ::cDataDictionaryFile, nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
 
    if !::lAdsConnection
 

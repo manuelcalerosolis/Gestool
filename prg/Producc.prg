@@ -3479,13 +3479,22 @@ RETURN ( .t. )
 
 METHOD CalculaCostes()     
 
-   local nTotalParte       := 0
+   local nCoste      := 0
+/*
+   nCoste            := ::nTotalParte() / ::oDetProduccion:nTotalUnidades( ::oDetProduccion:oDbfVir )
+   nCoste            := Round( nCoste, ::nDouDiv )
 
-   nTotalParte             := ::nTotalParte() / ::oDetProduccion:nTotalUnidades( ::oDetProduccion:oDbfVir )
+   ::oDetProduccion:oDbfVir:GetStatus()
+   ::oDetProduccion:oDbfVir:GoTop()
 
-   MsgStop( nTotalParte, "nTotParte" )
+   while ( !::oDetProduccion:oDbfVir:Eof() )
+      ::oDetProduccion:oDbfVir:FieldPutByName( "nImpOrd", nCoste )
+      ::oDetProduccion:oDbfVir:Skip()
+   end while
 
-RETURN ( nTotalParte )
+   ::oDetProduccion:oDbfVir:GetStatus()
+*/
+RETURN ( nCoste )
 
 //---------------------------------------------------------------------------//
 

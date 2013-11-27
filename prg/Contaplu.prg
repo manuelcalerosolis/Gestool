@@ -1453,7 +1453,7 @@ Function WriteAsiento( aTemp, cCodDiv, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( cDiario )
+   if !Empty( cDiario ) .and. !Empty( aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ] )
 
       WinGather( aTemp, , cDiario, , APPD_MODE, , .f. )
 

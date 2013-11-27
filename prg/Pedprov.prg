@@ -200,7 +200,7 @@ static dbfTmpLin
 static dbfTmpSer
 static cTmpArt
 static cTmpSer
-static cTmpPedL
+static cTmpPed
 static cTmpInc
 static cTmpDoc
 static dbfFamilia
@@ -7916,24 +7916,24 @@ Crea las bases de datos temporales que usaremos
 
 Static Function CreaTemporal()
 
-   local cDbfArt  := "PTmpArt"
-   local cDbfPedL := "PTmpPedL"
+   local cDbfArt  := "PArt"
+   local cDbfPed := "PPed"
 
    cTmpArt        := cGetNewFileName( cPatTmp() + cDbfArt )
-   cTmpPedL       := cGetNewFileName( cPatTmp() + cDbfPedL )
+   cTmpPed        := cGetNewFileName( cPatTmp() + cDbfPed )
 
    dbCreate( cTmpArt, aSqlStruct( aColTmpArt() ), cDriver() )
-   dbUseArea( .t., cDriver(), cTmpArt, cCheckArea( cDbfArt, @dbfTmpArt ), .f. )
+   dbUseArea( .t., cLocalDriver(), cTmpArt, cCheckArea( cDbfArt, @dbfTmpArt ), .f. )
    if !( dbfTmpArt )->( neterr() )
       ( dbfTmpArt )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfTmpArt )->( ordCreate( cTmpArt, "cRef", "cRef", {|| Field->CREF } ) )
    end if
 
-   dbCreate( cTmpPedL, aSqlStruct( aColPedPrv() ), cDriver() )
-   dbUseArea( .t., cDriver(), cTmpPedL, cCheckArea( cDbfPedL, @dbfTmpLin ), .f. )
+   dbCreate( cTmpPed, aSqlStruct( aColPedPrv() ), cDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpPed, cCheckArea( cDbfPed, @dbfTmpLin ), .f. )
    if !( dbfTmpLin )->( neterr() )
       ( dbfTmpLin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTmpLin )->( ordCreate( cTmpPedL, "cRef", "cRef", {|| Field->CREF } ) )
+      ( dbfTmpLin )->( ordCreate( cTmpPed, "cRef", "cRef", {|| Field->CREF } ) )
    end if
 
 Return nil
@@ -8055,7 +8055,7 @@ Static Function KillTemporal()
    end if
 
    dbfErase( cTmpArt )
-   dbfErase( cTmpPedL )
+   dbfErase( cTmpPed )
 
 Return nil
 

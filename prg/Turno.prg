@@ -6823,7 +6823,11 @@ METHOD Contabiliza()
 
          while ( ::lAllSesions .or. ::oFacCliT:cTurFac + ::oFacCliT:cSufFac == ::oDbf:cNumTur + ::oDbf:cSufTur ) .and. !::lBreak .and. !::oFacCliT:eof()
 
-            CntFacCli( ::lChkSimula, .t., nil, .f., ::oTreeSelect, nil, ::aSimula, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, ::oAlbCliT:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, ::oArticulo:cAlias, ::oFPago:cAlias, ::oIvaImp:cAlias, ::oNewImp )
+            if ::oFacCliT:dFecFac >= ::dFechaInicio .and. ::oFacCliT:dFecFac <= ::dFechaFin .and. lChkSer( ::oFacCliT:cSerie, ::aSer )
+
+               CntFacCli( ::lChkSimula, .t., nil, .f., ::oTreeSelect, nil, ::aSimula, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, ::oAlbCliT:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, ::oArticulo:cAlias, ::oFPago:cAlias, ::oIvaImp:cAlias, ::oNewImp )
+
+            end if 
 
             ::oFacCliT:Skip()
 
@@ -6856,7 +6860,11 @@ METHOD Contabiliza()
 
          while ( ::lAllSesions .or. ::oRctCliT:cTurFac + ::oRctCliT:cSufFac == ::oDbf:cNumTur + ::oDbf:cSufTur ) .and. !::lBreak .and. !::oRctCliT:eof()
 
-            CntFacRec( ::lChkSimula, .t., nil, .f., ::oTreeSelect, nil, ::aSimula, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oFacCliP:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, ::oArticulo:cAlias, ::oFPago:cAlias, ::oIvaImp:cAlias, ::oNewImp )
+            if ::oRctCliT:dFecFac >= ::dFechaInicio .and. ::oRctCliT:dFecFac <= ::dFechaFin .and. lChkSer( ::oRctCliT:cSerie, ::aSer )
+
+               CntFacRec( ::lChkSimula, .t., nil, .f., ::oTreeSelect, nil, ::aSimula, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oFacCliP:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, ::oArticulo:cAlias, ::oFPago:cAlias, ::oIvaImp:cAlias, ::oNewImp )
+
+            end if 
 
             ::oRctCliT:Skip()
 

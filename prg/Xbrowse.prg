@@ -9451,6 +9451,11 @@ METHOD PaintFooter( nRow, nCol, nHeight, lInvert ) CLASS TXBrwColumn
    endif
 
    if !lInvert
+
+     if isnil( ::bClrFooter )
+      ? "es nil"
+    end if
+
       aColors := Eval( ::bClrFooter )
    else
       aColors := { CLR_WHITE, CLR_BLUE }
