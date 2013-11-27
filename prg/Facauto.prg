@@ -1689,6 +1689,7 @@ CLASS TCreaFacAutomaticas
 
    DATA oCodigoGrupo 
    DATA cCodigoGrupo             INIT Space( 4 )
+   DATA aCodigoGrupo            
 
    DATA oCodigoPlantilla
    DATA cCodigoPlantilla         INIT Space( 3 )
@@ -2197,7 +2198,8 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
          while !::oFacAutT:oDbf:Eof()
 
             if ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) ) .and.;
-               ( Empty( ::cCodigoGrupo ) .or. ( ::oFacAutT:oDbf:cCodGrp == ::cCodigoGrupo ) )
+               ( Empty( ::cCodigoGrupo )     .or. ( ::oFacAutT:oDbf:cCodGrp == ::cCodigoGrupo ) )     .and.;
+               ( Empty( ::aCodigoGrupo )     .or. ( aScan( ::aCodigoGrupo, ::oFacAutT:oDbf:cCodGrp ) != 0 ) )
 
                aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 

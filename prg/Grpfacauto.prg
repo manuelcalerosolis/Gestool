@@ -45,13 +45,19 @@ CLASS TGrpFacturasAutomaticas FROM TMant
    INLINE METHOD RunPlantillaAutomatica( cCodigoGrupo )
 
       with object ( TCreaFacAutomaticas():New() )
-         :cCodigoGrupo     := cCodigoGrupo
+
          if :OpenFiles()
+
+            :aCodigoGrupo  := ::aChild( cCodigoGrupo, { cCodigoGrupo } )
+         
             if :lSelectCodigoPlantilla()
                :Run()
             end if
+         
             :CloseFiles()
+         
          end if 
+      
       end with
 
       Return ( Self )
