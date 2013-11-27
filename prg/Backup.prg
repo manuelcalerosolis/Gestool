@@ -232,7 +232,7 @@ Method OpenService( lExclusive, cPath)
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles( cPath )
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -1672,22 +1672,24 @@ Return ( .t. )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf 
+
    DEFAULT cPath     := cPatDat()
    DEFAULT cDriver   := cDriver()
 
-   DEFINE TABLE ::oDbf FILE "Backup.Dbf" CLASS "BACKUP" ALIAS "BACKUP" PATH ( cPath ) VIA ( cDriver )COMMENT "Registro de los backup"
+   DEFINE TABLE oDbf FILE "Backup.Dbf" CLASS "BACKUP" ALIAS "BACKUP" PATH ( cPath ) VIA ( cDriver )COMMENT "Registro de los backup"
 
-      FIELD NAME "FECHA"   TYPE "D" LEN  10 DEC 0  COMMENT "Fecha de la copia"         OF ::oDbf
-      FIELD NAME "HORA"    TYPE "C" LEN   8 DEC 0  COMMENT "Hora de la copia"          OF ::oDbf
-      FIELD NAME "USUARIO" TYPE "C" LEN   3 DEC 0  COMMENT "Usuario que la realiza"    OF ::oDbf
-      FIELD NAME "RESUMEN" TYPE "C" LEN 200 DEC 0  COMMENT "Resumen del proceso"       OF ::oDbf
+      FIELD NAME "FECHA"   TYPE "D" LEN  10 DEC 0  COMMENT "Fecha de la copia"         OF oDbf
+      FIELD NAME "HORA"    TYPE "C" LEN   8 DEC 0  COMMENT "Hora de la copia"          OF oDbf
+      FIELD NAME "USUARIO" TYPE "C" LEN   3 DEC 0  COMMENT "Usuario que la realiza"    OF oDbf
+      FIELD NAME "RESUMEN" TYPE "C" LEN 200 DEC 0  COMMENT "Resumen del proceso"       OF oDbf
 
-      INDEX TO "BACKUP.CDX" TAG "Fecha"   ON "Fecha"   COMMENT "Por fecha"   NODELETED OF ::oDbf
-      INDEX TO "BACKUP.CDX" TAG "Usuario" ON "Usuario" COMMENT "Por usuario" NODELETED OF ::oDbf
+      INDEX TO "BACKUP.CDX" TAG "Fecha"   ON "Fecha"   COMMENT "Por fecha"   NODELETED OF oDbf
+      INDEX TO "BACKUP.CDX" TAG "Usuario" ON "Usuario" COMMENT "Por usuario" NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //---------------------------------------------------------------------------//
 

@@ -16,7 +16,7 @@
 #define NUM_BTN_FAM               7
 #define NUM_BTN_ART              19
 
-#define FONT_NAME                "Segoe UI" // "Arial" //
+#define FONT_NAME                "Segoe UI" // "Arial" // 
 
 /*
 Ficheros-----------------------------------------------------------------------
@@ -18995,14 +18995,16 @@ return nil
 
 Static Function ChangeLineasComentarios( oGetComentario, cComentariosL )
 
-   local cText := AllTrim( oGetComentario:VarGet() )
+   local cText                
 
-   DEFAULT cComentariosL     := dbfComentariosL
+   DEFAULT cComentariosL   := dbfComentariosL
+
+   cText                   := AllTrim( oGetComentario:VarGet() )
 
    if Empty( cText )
-      cText := AllTrim( ( cComentariosL )->cDescri )
+      cText                := AllTrim( ( cComentariosL )->cDescri )
    else
-      cText += ", " + AllTrim( ( cComentariosL )->cDescri )
+      cText                += ", " + AllTrim( ( cComentariosL )->cDescri )
    end if
 
    oGetComentario:cText( Padr( cText, 250 ) )

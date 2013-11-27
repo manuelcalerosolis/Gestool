@@ -43,7 +43,9 @@ Return nil
 
 CLASS TProduccion FROM TMasDet
 
-   DATA  cMru        INIT "Worker2_Form_Red_16"
+   CLASSDATA hDefinition
+
+   DATA  cMru                 INIT "Worker2_Form_Red_16"
 
    DATA  oArt
    DATA  oAlm
@@ -111,6 +113,8 @@ CLASS TProduccion FROM TMasDet
    DATA  oTotPersonal
    DATA  oTotMaquinaria
 
+   DATA  oTotParte
+
    DATA  cOldCodSec           INIT ""
    DATA  cOldCodOpe           INIT ""
    DATA  dOldFecIni           INIT Ctod( "" )
@@ -118,8 +122,8 @@ CLASS TProduccion FROM TMasDet
    DATA  cOldHorIni           INIT ""
    DATA  cOldHorFin           INIT ""
 
-   DATA aCal
-   DATA cTime
+   DATA  aCal
+   DATA  cTime
 
    DATA  oDbfTemporal
 
@@ -136,6 +140,11 @@ CLASS TProduccion FROM TMasDet
    DATA oBtnAnterior
    DATA oBtnSiguiente
    DATA oBtnCancel
+
+   DATA oBrwMaterialProducido
+   DATA oBrwMateriaPrima
+   DATA oBrwPersonal 
+   DATA oBrwMaquinaria
 
    Data oSerieInicio
    Data cSerieInicio
@@ -191,10 +200,12 @@ CLASS TProduccion FROM TMasDet
    METHOD CloseService()
 
    METHOD DefineFiles()
+   METHOD DefineHash()
 
    METHOD Resource( nMode, aDatosAnterior )
+   METHOD StarResource( oFecIni )   
 
-   METHOD lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg )
+   METHOD Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg )
 
    METHOD nTotUnidades()   INLINE   ( NotCaja( ::oDbf:nCajArt ) * ::oDbf:nUndArt )
    METHOD lTotUnidades()   INLINE   ( ::oGetTotalUnidades:cText( Round( ::nTotUnidades(), ::nDouDiv ) ), .t. )
@@ -208,25 +219,17 @@ CLASS TProduccion FROM TMasDet
    METHOD lRecargaPersonal( oCodSec )
 
    METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter )
-
-   METHOD EPage( oInf, cCodDoc )
-
    METHOD lGenParte( oBrw, oBtn, nDevice )
-
    METHOD bGenParte( nDevice, cTitle, cCodDoc )
-
    METHOD nGenParte( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
    METHOD CreateTemporal( cNumeroParte )
 
    METHOD DefineTemporal()
-
    METHOD DestroyTemporal()
-
    METHOD DefineCalculate()
 
    METHOD PrnSerie()
-
    METHOD StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden )
 
    METHOD RecSiguente( oBrw )
@@ -234,23 +237,22 @@ CLASS TProduccion FROM TMasDet
    METHOD CargaPersonalAnterior( aDatosAnterior )
 
    METHOD nTotalProducido( cDocumento )
-
    METHOD nTotalMaterial( cDocumento )
-
    METHOD nTotalPersonal( cDocumento )
-
    METHOD nTotalMaquina( cDocumento )
-
    METHOD nTotalOperario( cDocOpe )
-
    METHOD nTotalVolumen( cDocumento )
 
+   METHOD nTotalParte()       INLINE ( ::oDetProduccion:nTotal( ::oDetProduccion:oDbfVir ) +;
+                                       ::oDetMaterial:nTotal( ::oDetMaterial:oDbfVir ) +;
+                                       ::oDetPersonal:nTotal( ::oDetPersonal:oDbfVir, ::oDetHorasPersonal:oDbfVir ) +;
+                                       ::oDetMaquina:nTotal( ::oDetMaquina:oDbfVir ) )
+
+   METHOD CalculaCostes()     
+
    METHOD DataReport( oFr )
-
    METHOD VariableReport( oFr )
-
    METHOD DesignReportProducc( oFr, dbfDoc )
-
    METHOD PrintReportProducc( nDevice, nCopies, cPrinter, dbfDoc )
 
    /*
@@ -258,48 +260,31 @@ CLASS TProduccion FROM TMasDet
    */
 
    METHOD CreateAsistenteEtiquetas()
-
    METHOD EndAsistenteEtiquetas()
-
    METHOD InitLabel()
-
    METHOD lCreateAuxiliar()
-
    METHOD DestroyAuxiliar()
-
    METHOD BotonAnterior()
-
    METHOD BotonSiguiente()
-
    METHOD LoadAuxiliar()
-
    METHOD DefineAuxiliar()
-
    METHOD PutLabel()
-   
    METHOD SelectAllLabels()
-   
    METHOD AddLabel()
-   
    METHOD DelLabel()
-   
    METHOD EditLabel()
-
    METHOD SelectColumn( oCombo )
-
    METHOD DesignLabelProducc()
-   
    METHOD lPrintLabels()
-   
    METHOD lCreateTemporalLbl()
-   
    METHOD DestroyTemporalLbl()
-   
    METHOD PrepareTemporalLbl()
-   
    METHOD DataLabel()
-
    METHOD LoadAuxiliarDesign()
+
+   /*
+   Metodos para actualizar el stock de prestashop------------------------------
+   */
 
    Method ActualizaStockWeb( cNumDoc )
 
@@ -1051,14 +1036,47 @@ RETURN ( ::oDbf )
 
 //---------------------------------------------------------------------------//
 
+METHOD DefineHash()
+
+   ::hDefinition  := {;
+      "Table" => "Procab",;
+      "ExtensionTable" => "Dbf",;
+      "Path" => cPatEmp(),;
+      "Comment" => "Partes de producción",;
+      "Fields" => {;
+         "cSerOrd" => { "Type" => "C", "Len" => 01, "Decimals" => 0, "Comment" => "Serie",            "Validate" => "Required" },;
+         "nNumOrd" => { "Type" => "N", "Len" => 09, "Decimals" => 0, "Comment" => "Número",           "Validate" => "Required" },;
+         "cSufOrd" => { "Type" => "C", "Len" => 02, "Decimals" => 0, "Comment" => "Sufijo",           "Validate" => "Required" },;
+         "dFecOrd" => { "Type" => "D", "Len" => 08, "Decimals" => 0, "Comment" => "Fecha inicio",     "Validate" => "Required" },;
+         "dFecFin" => { "Type" => "D", "Len" => 08, "Decimals" => 0, "Comment" => "Fecha fin",        "Validate" => "Required" },;
+         "cCodDiv" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Divisa",           "Validate" => "Required" },;
+         "nVdvDiv" => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Valor divisa",     "Validate" => "Required" },;
+         "cAlmOrd" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Almacén destino",  "Validate" => "Required" },;
+         "cCodSec" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Sección",          "Validate" => "Required" },;
+         "cHorIni" => { "Type" => "C", "Len" => 05, "Decimals" => 0, "Comment" => "Hora de inicio",   "Validate" => "Required", "Picture" => "@R 99:99" },;
+         "cHorFin" => { "Type" => "C", "Len" => 05, "Decimals" => 0, "Comment" => "Hora de fin",      "Validate" => "Required", "Picture" => "@R 99:99" },;
+         "cCodOpe" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Operación",        "Validate" => "Required" },;
+         "cAlmOrg" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Almacen Origen",   "Validate" => "" };
+      },;
+      "Index" => "Porcab",;
+      "ExtensionIndex" => "Cdx",;
+      "Tags" => {;
+         "cNumOrd" => { "Expresion" => "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd", "Comment" => "Número" },;
+         "dFecOrd" => { "Expresion" => "dFecOrd", "Comment" => "Fecha inicio" },;
+         "cCodOpe" => { "Expresion" => "cCodOpe", "Comment" => "Operación"    },;
+         "cCodSec" => { "Expresion" => "cCodSec", "Comment" => "Sección"      },;
+         "cAlmOrd" => { "Expresion" => "cAlmOrd", "Comment" => "Almacén"      };
+      };
+   }
+
+RETURN ( ::hDefinition )
+
+//---------------------------------------------------------------------------//
+
 METHOD Resource( nMode, aDatosAnterior )
 
    local oFld
    local oDlg
-   local oBrwMat
-   local oBrwMatPri
-   local oBrwPer
-   local oBrwMaq
    local oGetSer
    local oGetAlm
    local oSayAlm
@@ -1066,7 +1084,7 @@ METHOD Resource( nMode, aDatosAnterior )
    local oGetSec
    local oSaySec
    local cSaySec
-   local oFntTot              := TFont():New( "Arial", 8, 26, .F., .T. )
+   local oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )
    local oHorIni
    local oHorFin
    local oTmpEmp
@@ -1079,13 +1097,15 @@ METHOD Resource( nMode, aDatosAnterior )
    local oSayOrg
    local cSayOrg
    local oBmpGeneral
+   local oBtnAdelante
+   local oBtnAtras
 
    if nMode == APPD_MODE
 
       if !Empty( cDefSer() )
-         ::oDbf:cSerOrd       := cDefSer()
+         ::oDbf:cSerOrd    := cDefSer()
       else
-         ::oDbf:cSerOrd       := "A"
+         ::oDbf:cSerOrd    := "A"
       end if
 
       ::oDbf:cAlmOrd       := oUser():cAlmacen()
@@ -1106,7 +1126,6 @@ METHOD Resource( nMode, aDatosAnterior )
          ::oDbf:cHorFin    := SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
       end if
 
-
    end if
 
    ::cOldCodSec            := ::oDbf:cCodSec
@@ -1125,13 +1144,31 @@ METHOD Resource( nMode, aDatosAnterior )
    cSaySec                 := oRetFld( ::oDbf:cCodSec, ::oSeccion:oDbf )
    cSayOpe                 := oRetFld( ::oDbf:cCodOpe, ::oOperacion:oDbf )
 
+   ::oDetProduccion:oDbfVir:GetStatus()
+   ::oDetProduccion:oDbfVir:OrdSetFocus( "nNumLin" )
+
+   ::oDetMaterial:oDbfVir:GetStatus()
+   ::oDetMaterial:oDbfVir:OrdSetFocus( "nNumLin" )
+
+   ::oDetPersonal:oDbfVir:GetStatus()
+   ::oDetPersonal:oDbfVir:OrdSetFocus( "nNumLin" )
+
+   ::oDetMaquina:oDbfVir:GetStatus()
+   ::oDetMaquina:oDbfVir:OrdSetFocus( "nNumLin" )
+
    DEFINE DIALOG oDlg RESOURCE "Produccion" TITLE LblTitle( nMode ) + "parte de producción"
 
       REDEFINE FOLDER oFld;
          ID       400 ;
 			OF 		oDlg ;
-         PROMPT   "&Producción", "&Materias primas", "P&ersonal", "Maquinaria" ;
-         DIALOGS  "Produccion_1", "Produccion_2", "Produccion_3", "Produccion_4"
+         PROMPT   "&Producción",;
+                  "&Materias primas",;
+                  "P&ersonal",;
+                  "Maquinaria" ;
+         DIALOGS  "Produccion_1",;
+                  "Produccion_2",;
+                  "Produccion_3",;
+                  "Produccion_4"
 
       /*
       Operaciones--------------------------------------------------------------
@@ -1143,8 +1180,8 @@ METHOD Resource( nMode, aDatosAnterior )
          BITMAP   "LUPA" ;
 			OF 		oFld:aDialogs[1]
 
-         oGetOpe:bHelp     := {|| ::oOperacion:Buscar( oGetOpe ), ::lRecargaPersonal( , oGetOpe, , , , , oBrwPer, oBrwMaq ) }
-         oGetOpe:bValid    := {|| ::oOperacion:Existe( oGetOpe, oSayOpe, "cDesOpe", .t., .t., "0" ), ::lRecargaPersonal( , oGetOpe, , , , , oBrwPer, oBrwMaq ) }
+         oGetOpe:bHelp     := {|| ::oOperacion:Buscar( oGetOpe ), ::lRecargaPersonal( , oGetOpe ) }
+         oGetOpe:bValid    := {|| ::oOperacion:Existe( oGetOpe, oSayOpe, "cDesOpe", .t., .t., "0" ), ::lRecargaPersonal( , oGetOpe ) }
 
       REDEFINE GET oSayOpe VAR cSayOpe ;
          ID       220 ;
@@ -1219,8 +1256,8 @@ METHOD Resource( nMode, aDatosAnterior )
          BITMAP   "LUPA" ;
 			OF 		oFld:aDialogs[1]
 
-         oGetSec:bHelp     := {|| ::oSeccion:Buscar( oGetSec ), ::lRecargaPersonal( oGetSec, , , , , , oBrwPer, oBrwMaq ) }
-         oGetSec:bValid    := {|| ::oSeccion:Existe( oGetSec, oSaySec, "cDesSec", .t., .t., "0" ), ::lRecargaPersonal( oGetSec, , , , , , oBrwPer, oBrwMaq ) }
+         oGetSec:bHelp     := {|| ::oSeccion:Buscar( oGetSec ), ::lRecargaPersonal( oGetSec ) }
+         oGetSec:bValid    := {|| ::oSeccion:Existe( oGetSec, oSaySec, "cDesSec", .t., .t., "0" ), ::lRecargaPersonal( oGetSec ) }
 
       REDEFINE GET oSaySec VAR cSaySec ;
          ID       161 ;
@@ -1269,7 +1306,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      oFecIni:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ), ::lRecargaPersonal( , , oFecIni, , , , oBrwPer, oBrwMaq ) }
+      oFecIni:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ), ::lRecargaPersonal( , , oFecIni ) }
       oFecIni:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oFecFin VAR ::oDbf:dFecFin ;
@@ -1278,7 +1315,7 @@ METHOD Resource( nMode, aDatosAnterior )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      oFecFin:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ), ::lRecargaPersonal( , , , oFecFin, , , oBrwPer, oBrwMaq ) }
+      oFecFin:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ), ::lRecargaPersonal( , , , oFecFin ) }
       oFecFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       /*
@@ -1295,7 +1332,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       170 ;
          OF       oFld:aDialogs[1]
 
-         oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), .f. ), ::lRecargaPersonal( , , , , oHorIni, , oBrwPer, oBrwMaq ) }
+         oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), .f. ), ::lRecargaPersonal( , , , , oHorIni ) }
          oHorIni:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oHorFin ;
@@ -1308,7 +1345,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       180 ;
          OF       oFld:aDialogs[1]
 
-         oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), .f. ), ::lRecargaPersonal( , , , , , oHorFin , oBrwPer, oBrwMaq ) }
+         oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), .f. ), ::lRecargaPersonal( , , , , , oHorFin ) }
          oHorFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oTmpEmp ;
@@ -1325,40 +1362,44 @@ METHOD Resource( nMode, aDatosAnterior )
 			ID 		500 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Append( oBrwMat ), ::oTotProducido:Refresh(), oBrwMat:Refresh(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Edit( oBrwMat ), ::oTotProducido:Refresh(), oBrwMat:Refresh(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( ::oDetProduccion:Zoom(), oBrwMat:Refresh(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetProduccion:Zoom() )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Del( oBrwMat, oBrwMatPri ) )
+         ACTION   ( ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMateriaPrima ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
       /*
       Browse de materiales-----------------------------------------------------
       */
 
-      oBrwMat                 := IXBrowse():New( oFld:aDialogs[1] )
+      ::oBrwMaterialProducido                := IXBrowse():New( oFld:aDialogs[1] )
 
-      oBrwMat:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwMat:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwMaterialProducido:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwMaterialProducido:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwMat:SetoDbf( ::oDetProduccion:oDbfVir )
+      ::oBrwMaterialProducido:SetoDbf( ::oDetProduccion:oDbfVir )
 
-      oBrwMat:nMarqueeStyle   := 6
-      oBrwMat:cName           := "Lineas de partes de producción"
+      ::oBrwMaterialProducido:nMarqueeStyle  := 6
+      ::oBrwMaterialProducido:cName          := "Lineas de partes de producción"
+      ::oBrwMaterialProducido:lFooter        := .t.
 
-      with object ( oBrwMat:AddCol() )
+      ::oBrwMaterialProducido:CreateFromResource( 200 )
+      ::oBrwMaterialProducido:MakeTotals()
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Número"
          :bStrData         := {|| Trans( ::oDetProduccion:oDbfVir:FieldGetByName( "nNumLin" ), "9999" ) }
          :nWidth           := 60
@@ -1366,33 +1407,36 @@ METHOD Resource( nMode, aDatosAnterior )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwMat:AddCol() )
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Código"
          :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cCodArt" ) }
          :nWidth           := 80
       end with
 
-      with object ( oBrwMat:AddCol() )
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Nombre"
          :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cNomArt" ) }
          :nWidth           := 400
       end with
 
-      with object ( oBrwMat:AddCol() )
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Almacén"
          :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 55
       end with
 
-      with object ( oBrwMat:AddCol() )
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Total unidades"
-         :bStrData         := {|| ::oDetProduccion:cTotUnidades( ::oDetProduccion:oDbfVir ) }
+         :bEditValue       := {|| ::oDetProduccion:nUnidades( ::oDetProduccion:oDbfVir ) }
+         :cEditPicture     := ::cPicUnd 
          :nWidth           := 82
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM         
       end with
 
-      with object ( oBrwMat:AddCol() )
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Precio"
          :bStrData         := {|| Trans( ::oDetProduccion:oDbfVir:FieldGetByName( "nImpOrd" ), ::cPouDiv ) }
          :nWidth           := 85
@@ -1400,20 +1444,21 @@ METHOD Resource( nMode, aDatosAnterior )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwMat:AddCol() )
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| ::oDetProduccion:cTotPrecio( ::oDetProduccion:oDbfVir ) }
+         :bEditValue       := {|| ::oDetProduccion:nPrecio( ::oDetProduccion:oDbfVir ) }
+         :cEditPicture     := ::cPorDiv
          :nWidth           := 85
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM         
       end with
 
-      oBrwMat:CreateFromResource( 200 )
-
       if nMode != ZOOM_MODE
-         oBrwMat:bLDblClick   := {|| ::oDetProduccion:Edit( oBrwMat ), ::oTotProducido:Refresh(), oBrwMat:Refresh(), oBrwMatPri:Refresh() }
+         ::oBrwMaterialProducido:bLDblClick   := {|| ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oTotProducido:Refresh(), ::oBrwMaterialProducido:Refresh() }
       else
-         oBrwMat:bLDblClick   := {|| ::oDetProduccion:Zoom(), oBrwMat:Refresh(), oBrwMatPri:Refresh() }
+         ::oBrwMaterialProducido:bLDblClick   := {|| ::oDetProduccion:Zoom(), ::oBrwMaterialProducido:Refresh() }
       end if
 
       /*
@@ -1424,40 +1469,42 @@ METHOD Resource( nMode, aDatosAnterior )
 			ID 		500 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Append( oBrwMatPri ), ::oTotMaterias:Refresh(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetMaterial:Append( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Edit( oBrwMatPri ), ::oTotMaterias:Refresh(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
          OF       oFld:aDialogs[2] ;
-         ACTION   ( ::oDetMaterial:Zoom(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetMaterial:Zoom() )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Del( oBrwMatPri ), ::oTotMaterias:Refresh(), oBrwMatPri:Refresh() )
+         ACTION   ( ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
 
-      oBrwMatPri                 := IXBrowse():New( oFld:aDialogs[ 2 ] )
+      ::oBrwMateriaPrima                  := IXBrowse():New( oFld:aDialogs[ 2 ] )
 
-      oBrwMatPri:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwMatPri:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwMateriaPrima:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwMateriaPrima:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwMatPri:SetoDbf( ::oDetMaterial:oDbfVir )
+      ::oBrwMateriaPrima:SetoDbf( ::oDetMaterial:oDbfVir )
 
-      oBrwMatPri:nMarqueeStyle   := 6
-      oBrwMatPri:cName           := "Materias primas produccion"
+      ::oBrwMateriaPrima:nMarqueeStyle    := 6
+      ::oBrwMateriaPrima:cName            := "Materias primas produccion"
 
-      oBrwMatPri:bLDblClick      := { || ::oDetMaterial:Edit( oBrwMatPri ), ::oTotMaterias:Refresh() }
+      ::oBrwMateriaPrima:bLDblClick       := { || ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() }
+      ::oBrwMateriaPrima:lFooter          := .t.
 
-      oBrwMatPri:CreateFromResource( 200 )
+      ::oBrwMateriaPrima:CreateFromResource( 200 )
+      ::oBrwMateriaPrima:MakeTotals()
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Número"
          :bStrData         := {|| Trans( ::oDetMaterial:oDbfVir:FieldGetByName( "nNumLin" ), "9999" ) }
          :nWidth           := 60
@@ -1465,33 +1512,36 @@ METHOD Resource( nMode, aDatosAnterior )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Código"
          :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cCodArt" ) }
          :nWidth           := 85
       end with
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Nombre"
          :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cNomArt" ) }
          :nWidth           := 395
       end with
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Almacén"
          :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 60
       end with
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Total unidades"
-         :bStrData         := {|| ::oDetMaterial:cTotUnidades( ::oDetMaterial:oDbfVir ) }
+         :bEditValue       := {|| ::oDetMaterial:nUnidades( ::oDetMaterial:oDbfVir ) }
+         :cEditPicture     := ::cPicUnd 
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM         
       end with
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Precio"
          :bStrData         := {|| Trans( ::oDetMaterial:oDbfVir:nImpOrd, ::cPouDiv ) }
          :nWidth           := 85
@@ -1499,12 +1549,15 @@ METHOD Resource( nMode, aDatosAnterior )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      with object ( oBrwMatPri:AddCol() )
+      with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| ::oDetMaterial:cTotPrecio( ::oDetMaterial:oDbfVir ) }
+         :bEditValue       := {|| ::oDetMaterial:nPrecio( ::oDetMaterial:oDbfVir ) }
+         :cEditPicture     := ::cPorDiv
          :nWidth           := 85
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM            
       end with
 
       /*
@@ -1515,62 +1568,68 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       500 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Append( oBrwPer ), ::oTotPersonal:Refresh(), oBrwPer:Refresh() )
+         ACTION   ( ::oDetPersonal:Append( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
 
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Edit( oBrwPer ), ::oTotPersonal:Refresh(), oBrwPer:Refresh() )
+         ACTION   ( ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
 
 		REDEFINE BUTTON ;
          ID       502 ;
          OF       oFld:aDialogs[3] ;
-         ACTION   ( ::oDetPersonal:Zoom(), oBrwPer:Refresh() )
+         ACTION   ( ::oDetPersonal:Zoom(), ::oBrwPersonal:Refresh() )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Del( oBrwPer ), ::oTotPersonal:Refresh(), oBrwPer:Refresh() )
+         ACTION   ( ::oDetPersonal:Del( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
 
-      oBrwPer                 := TXBrowse():New( oFld:aDialogs[3] )
+      ::oBrwPersonal                := IXBrowse():New( oFld:aDialogs[3] )
 
-      oBrwPer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwPer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwPersonal:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwPersonal:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwPersonal:cName          := "Personal produccion"
 
-      oBrwPer:SetoDbf( ::oDetPersonal:oDbfVir )
+      ::oBrwPersonal:SetoDbf( ::oDetPersonal:oDbfVir )
 
-      oBrwPer:nMarqueeStyle   := 5
+      ::oBrwPersonal:nMarqueeStyle  := 5
 
-      oBrwPer:bLDblClick      := { || ::oDetPersonal:Edit( oBrwPer ), ::oTotPersonal:Refresh() }
+      ::oBrwPersonal:bLDblClick     := {|| ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() }
+      ::oBrwPersonal:lFooter        := .t.
 
-      oBrwPer:CreateFromResource( 200 )
+      ::oBrwPersonal:CreateFromResource( 200 )
+      ::oBrwPersonal:MakeTotals()
 
-      with object ( oBrwPer:AddCol() )
+      with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Personal"
          :bStrData         := {|| Rtrim( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ) ) + " - " + oRetFld( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oOperario:oDbf ) }
          :nWidth           := 325
       end with
 
-      with object ( oBrwPer:AddCol() )
+      with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Operación"
          :bStrData         := {|| ::oDetPersonal:oDbfVir:FieldGetByName( "cCodOpe" ) + " - " + oRetFld( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodOpe" ), ::oOperacion:oDbf ) }
          :nWidth           := 325
       end with
 
-      with object ( oBrwPer:AddCol() )
+      with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Tiempo empleado"
          :bStrData         := {|| cTiempo( ::oDetPersonal:oDbfVir:FieldGetByName( "dFecIni" ), ::oDetPersonal:oDbfVir:FieldGetByName( "dFecFin" ), ::oDetPersonal:oDbfVir:FieldGetByName( "cHorIni" ), ::oDetPersonal:oDbfVir:FieldGetByName( "cHorFin" ) ) }
          :nWidth           := 110
       end with
 
-      with object ( oBrwPer:AddCol() )
+      with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| ::oDetPersonal:cTotal( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :bEditValue       := {|| ::oDetPersonal:nTotalTrabajador( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :cEditPicture     := ::cPorDiv
          :nWidth           := 90
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :nFootStrAlign    := AL_RIGHT
+         :nFooterType      := AGGR_SUM            
       end with
 
       /*
@@ -1581,13 +1640,13 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       500 ;
          OF       oFld:aDialogs[4] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaquina:Append( oBrwMaq ), ::oTotMaquinaria:Refresh(), oBrwMaq:Refresh() )
+         ACTION   ( ::oDetMaquina:Append( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[4] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaquina:Edit( oBrwMaq ), ::oTotMaquinaria:Refresh(), oBrwMaq:Refresh() )
+         ACTION   ( ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -1598,97 +1657,161 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[4] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaquina:Del( oBrwMaq ), ::oTotMaquinaria:Refresh() )
+         ACTION   ( ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
 
-      oBrwMaq                 := TXBrowse():New( oFld:aDialogs[4] )
+      ::oBrwMaquinaria                 := IXBrowse():New( oFld:aDialogs[4] )
 
-      oBrwMaq:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwMaq:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwMaquinaria:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwMaquinaria:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwMaquinaria:cName           := "Maquinaria produccion"
 
-      oBrwMaq:SetoDbf( ::oDetMaquina:oDbfVir )
+      ::oBrwMaquinaria:SetoDbf( ::oDetMaquina:oDbfVir )
 
-      oBrwMaq:nMarqueeStyle   := 5
+      ::oBrwMaquinaria:nMarqueeStyle   := 5
 
-      oBrwMaq:bLDblClick      := { || ::oDetMaquina:Edit( oBrwPer ), ::oTotMaquinaria:Refresh() }
+      ::oBrwMaquinaria:bLDblClick      := {|| ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() }
+      ::oBrwMaquinaria:lFooter         := .t.
 
-      oBrwMaq:CreateFromResource( 200 )
+      ::oBrwMaquinaria:CreateFromResource( 200 )
+      ::oBrwMaquinaria:MakeTotals()
 
-      with object ( oBrwMaq:AddCol() )
+      with object ( ::oBrwMaquinaria:AddCol() )
          :cHeader             := "Maquina"
          :bStrData            := {|| Rtrim( ::oDetMaquina:oDbfVir:FieldGetByName( "cCodMaq" ) ) + " - " + oRetFld( ::oDetMaquina:oDbfVir:FieldGetByName( "cCodMaq" ), ::oMaquina:oDbf ) }
          :nWidth              := 645
       end with
 
-      with object ( oBrwMaq:AddCol() )
+      with object ( ::oBrwMaquinaria:AddCol() )
          :cHeader             := "Tiempo empleado"
          :bStrData            := {|| cTiempo( ::oDetMaquina:oDbfVir:FieldGetByName( "dFecIni" ), ::oDetMaquina:oDbfVir:FieldGetByName( "dFecFin" ), ::oDetMaquina:oDbfVir:FieldGetByName( "cIniMaq" ), ::oDetMaquina:oDbfVir:FieldGetByName( "cFinMaq" ) ) }
          :nWidth              := 120
       end with
 
-      with object ( oBrwMaq:AddCol() )
+      with object ( ::oBrwMaquinaria:AddCol() )
          :cHeader             := "Total"
-         :bStrData            := {|| Trans( ::oDetMaquina:nTotCosto( ::oDetMaquina:oDbfVir ), ::cPorDiv ) }
+         :bEditValue          := {|| ::oDetMaquina:nTotCosto( ::oDetMaquina:oDbfVir ) }
+         :cEditPicture        := ::cPorDiv
          :nWidth              := 90
          :nDataStrAlign       := AL_RIGHT
          :nHeadStrAlign       := AL_RIGHT
+         :nFootStrAlign       := AL_RIGHT
+         :nFooterType         := AGGR_SUM            
       end with
 
       /*
       Totales------------------------------------------------------------------
       */
 
-      REDEFINE SAY ::oTotProducido  PROMPT ::oDetProduccion:cTotal( ::oDetProduccion:oDbfVir )                              ID 810 OF oFld:aDialogs[ 1 ]
-      REDEFINE SAY ::oTotMaterias   PROMPT ::oDetMaterial:cTotal( ::oDetMaterial:oDbfVir )                                  ID 811 OF oFld:aDialogs[ 1 ]
-      REDEFINE SAY ::oTotPersonal   PROMPT ::oDetPersonal:nTotalTra( ::oDetPersonal:oDbfVir, ::oDetHorasPersonal:oDbfVir )  ID 812 OF oFld:aDialogs[ 1 ]
-      REDEFINE SAY ::oTotMaquinaria PROMPT ::oDetMaquina:nTotal( ::oDetMaquina:oDbfVir )                                    ID 813 OF oFld:aDialogs[ 1 ]
+      REDEFINE SAY ::oTotProducido ;
+         PROMPT   ( ::oDetProduccion:nTotal( ::oDetProduccion:oDbfVir ) ) ;
+         PICTURE  ( ::cPorDiv ) ;
+         ID       810 ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE SAY ::oTotMaterias   ;
+         PROMPT   ( ::oDetMaterial:nTotal( ::oDetMaterial:oDbfVir ) );
+         PICTURE  ( ::cPorDiv ) ;
+         ID       811 ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE SAY ::oTotPersonal   ;
+         PROMPT   ( ::oDetPersonal:nTotal( ::oDetPersonal:oDbfVir, ::oDetHorasPersonal:oDbfVir )  ) ;
+         PICTURE  ( ::cPorDiv ) ;
+         ID       812 ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE SAY ::oTotMaquinaria ;
+         PROMPT   ( ::oDetMaquina:nTotal( ::oDetMaquina:oDbfVir ) ) ;
+         PICTURE  ( ::cPorDiv ) ;
+         ID       813 ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE SAY ::oTotParte ;
+         PROMPT   ( ::nTotalParte() ) ;
+         PICTURE  ( ::cPorDiv ) ;
+         ID       814 ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE BUTTON oBtnAtras ;
+         ID       4 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) )
+
+      REDEFINE BUTTON oBtnAdelante ;
+         ID       5 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) ) 
 
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld ) )
+         ACTION   ( ::Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
 			OF 		oDlg ;
          ACTION   ( oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       559 ;
-			OF 		oDlg ;
-         ACTION   ( MsgInfo( "Ayuda no definida", "Perdonen las molestias") )
-
       if nMode != ZOOM_MODE
-      oFld:aDialogs[1]:AddFastKey( VK_F2, {|| ::oDetProduccion:Append( oBrwMat ), ::oTotProducido:Refresh() } )
-      oFld:aDialogs[1]:AddFastKey( VK_F3, {|| ::oDetProduccion:Edit( oBrwMat ), ::oTotProducido:Refresh() } )
-      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| ::oDetProduccion:Del( oBrwMat, oBrwMatPri ) } )
-      oFld:aDialogs[2]:AddFastKey( VK_F2, {|| ::oDetMaterial:Append( oBrwMatPri ), ::oTotMaterias:Refresh() } )
-      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ::oDetMaterial:Edit( oBrwMatPri ), ::oTotMaterias:Refresh() } )
-      oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ::oDetMaterial:Del( oBrwMatPri ), ::oTotMaterias:Refresh() } )
-      oFld:aDialogs[3]:AddFastKey( VK_F2, {|| ::oDetPersonal:Append( oBrwPer ), ::oTotPersonal:Refresh() } )
-      oFld:aDialogs[3]:AddFastKey( VK_F3, {|| ::oDetPersonal:Edit( oBrwPer ), ::oTotPersonal:Refresh() } )
-      oFld:aDialogs[3]:AddFastKey( VK_F4, {|| ::oDetPersonal:Del( oBrwPer ), ::oTotPersonal:Refresh() } )
-      oFld:aDialogs[4]:AddFastKey( VK_F2, {|| ::oDetMaquina:Append( oBrwMaq ), ::oTotMaquinaria:Refresh() } )
-      oFld:aDialogs[4]:AddFastKey( VK_F3, {|| ::oDetMaquina:Edit( oBrwMaq ), ::oTotMaquinaria:Refresh() } )
-      oFld:aDialogs[4]:AddFastKey( VK_F4, {|| ::oDetMaquina:Del( oBrwMaq ), ::oTotMaquinaria:Refresh() } )
-      oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg ) } )
+         oFld:aDialogs[1]:AddFastKey( VK_F2, {|| ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oTotProducido:Refresh() } )
+         oFld:aDialogs[1]:AddFastKey( VK_F3, {|| ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oTotProducido:Refresh() } )
+         oFld:aDialogs[1]:AddFastKey( VK_F4, {|| ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMateriaPrima ) } )
+         
+         oFld:aDialogs[2]:AddFastKey( VK_F2, {|| ::oDetMaterial:Append( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() } )
+         oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() } )
+         oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() } )
+         
+         oFld:aDialogs[3]:AddFastKey( VK_F2, {|| ::oDetPersonal:Append( ::oBrwPersonal ), ::oTotPersonal:Refresh() } )
+         oFld:aDialogs[3]:AddFastKey( VK_F3, {|| ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() } )
+         oFld:aDialogs[3]:AddFastKey( VK_F4, {|| ::oDetPersonal:Del( ::oBrwPersonal ), ::oTotPersonal:Refresh() } )
+         
+         oFld:aDialogs[4]:AddFastKey( VK_F2, {|| ::oDetMaquina:Append( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
+         oFld:aDialogs[4]:AddFastKey( VK_F3, {|| ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
+         oFld:aDialogs[4]:AddFastKey( VK_F4, {|| ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
+
+         oDlg:AddFastKey( VK_F5, {|| ::Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg ) } )
       end if
 
-      oDlg:bStart := { || oBrwMat:Load(), oBrwMatPri:Load(), oFecIni:SetFocus() }
+      oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
+      oDlg:AddFastKey( VK_F8, {|| oBtnAdelante:Click() } )
+
+      oDlg:bStart := {|| ::StarResource( oFecIni ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
    oFntTot:End()
+
    oBmpGeneral:End()
 
-   oBrwMat:CloseData()
-   oBrwMatPri:CloseData()
+   ::oDetProduccion:oDbfVir:SetStatus()
+   ::oDetMaterial:oDbfVir:GetStatus()
+   ::oDetPersonal:oDbfVir:GetStatus()
+   ::oDetMaquina:oDbfVir:GetStatus()
+
+   ::oBrwMaterialProducido:CloseData()
+   ::oBrwMateriaPrima:CloseData()
+   ::oBrwPersonal:CloseData()
+   ::oBrwMaquinaria:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-METHOD lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld )
+METHOD StarResource( oFecIni )
+
+   ::oBrwMaterialProducido:Load()
+   ::oBrwMateriaPrima:Load()
+   ::oBrwPersonal:Load()
+   ::oBrwMaquinaria:Load()
+
+   oFecIni:SetFocus()
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld )
 
    if Empty( ::oDbf:cAlmOrd )
       MsgStop( "Tiene que seleccionar un almacén." )
@@ -1718,6 +1841,11 @@ METHOD lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld )
       Return nil
    end if
 
+   oDlg:Disable()
+
+   ::CalculaCostes()
+
+   oDlg:Enable()
    oDlg:End( IDOK )
 
 Return ( .t. )
@@ -1726,7 +1854,7 @@ Return ( .t. )
 
 METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
-   local cCodArt  := oGetArticulo:VarGet()
+   local cCodArt     := oGetArticulo:VarGet()
 
    if Empty( cCodArt )
 
@@ -1746,7 +1874,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
       ::oArt:ordSetFocus( "CodeBar" )
 
       if ::oArt:Seek( cCodArt )
-         cCodArt  := ::oArt:Codigo
+         cCodArt     := ::oArt:Codigo
       end if
 
       ::oArt:ordSetFocus( "Codigo" )
@@ -1757,7 +1885,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
       if ::oArt:Seek( cCodArt ) .or. ::oArt:Seek( Upper( cCodArt ) )
 
-         cCodArt  := ::oArt:Codigo
+         cCodArt     := ::oArt:Codigo
 
          oGetNombre:cText( ::oArt:Nombre )
 
@@ -1786,7 +1914,7 @@ RETURN .t.
 
 METHOD GetNewCount()
 
-   ::oDbf:nNumOrd    := nNewDoc( ::oDbf:cSerOrd, ::oDbf:nArea, "nParPrd" )
+   ::oDbf:nNumOrd       := nNewDoc( ::oDbf:cSerOrd, ::oDbf:nArea, "nParPrd" )
 
 RETURN ( .t. )
 
@@ -1806,7 +1934,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD lRecargaPersonal( oCodSec, oCodOpe, oFecIni, oFecFin, oHorIni, oHorFin, oBrwPer, oBrwMaq )
+METHOD lRecargaPersonal( oCodSec, oCodOpe, oFecIni, oFecFin, oHorIni, oHorFin )
 
    local nOrdAnt     := ::oOperario:oDbf:OrdSetFocus( "cCodSec" )
    local nOrdAntHora := ::oDetHoras:oDbf:OrdSetFocus( "cCodTra" )
@@ -1940,68 +2068,60 @@ METHOD lRecargaPersonal( oCodSec, oCodOpe, oFecIni, oFecFin, oHorIni, oHorFin, o
 
    end if
 
-   /*Cambios en la operacion*/
+   /*
+   Cambios en la operacion-----------------------------------------------------
+   */
 
    if !Empty( cCodOpe ) .and. ::cOldCodOpe != cCodOpe
 
       ::oDetPersonal:oDbfVir:GoTop()
 
       while !::oDetPersonal:oDbfVir:Eof()
-
-         ::oDetPersonal:oDbfVir:Load()
-         ::oDetPersonal:oDbfVir:cCodOpe   := cCodOpe
-         ::oDetPersonal:oDbfVir:Save()
+         ::oDetPersonal:oDbfVir:FieldPutByName( "cCodOpe", cCodOpe )
          ::oDetPersonal:oDbfVir:Skip()
-
       end while
 
       ::cOldCodOpe   := cCodOpe
 
    end if
 
-   /*Cambios en la fecha de inicio*/
+   /*
+   Cambios en la fecha de inicio-----------------------------------------------
+   */
 
    if !Empty( dFecIni ) .and. ::dOldFecIni != dFecIni
 
-      /*Personal*/
+      /*
+      Personal-----------------------------------------------------------------
+      */
 
       ::oDetPersonal:oDbfVir:GoTop()
 
       while !::oDetPersonal:oDbfVir:Eof()
-
-         ::oDetPersonal:oDbfVir:Load()
-         ::oDetPersonal:oDbfVir:dFecIni      := dFecIni
-         ::oDetPersonal:oDbfVir:Save()
+         ::oDetPersonal:oDbfVir:FieldPutByName( "dFecIni", dFecIni )
          ::oDetPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Horas personal*/
+      /*
+      Horas personal------------------------------------------------------------
+      */
 
       ::oDetHorasPersonal:oDbfVir:GoTop()
 
       while !::oDetHorasPersonal:oDbfVir:Eof()
-
-         ::oDetHorasPersonal:oDbfVir:Load()
-         ::oDetHorasPersonal:oDbfVir:nNumHra := ::cTiempoEmpleado
-         ::oDetHorasPersonal:oDbfVir:Save()
+         ::oDetHorasPersonal:oDbfVir:FieldPutByName( "nNumHra", ::cTiempoEmpleado )
          ::oDetHorasPersonal:oDbfVir:Skip()
-
       end while
-
-
-      /*Maquinaria*/
+      
+      /*
+      Maquinaria---------------------------------------------------------------
+      */
 
       ::oDetMaquina:oDbfVir:GoTop()
-
       while !::oDetMaquina:oDbfVir:Eof()
-
-         ::oDetMaquina:oDbfVir:Load()
-         ::oDetMaquina:oDbfVir:dFecIni       := dFecIni
-         ::oDetMaquina:oDbfVir:nTotHra       := ::cTiempoEmpleado
-         ::oDetMaquina:oDbfVir:Save()
+         ::oDetMaquina:oDbfVir:FieldPutByName( "dFecIni", dFecIni )
+         ::oDetMaquina:oDbfVir:FieldPutByName( "nTotHra", ::cTiempoEmpleado )
          ::oDetMaquina:oDbfVir:Skip()
-
       end while
 
       ::dOldFecIni   := dFecIni
@@ -2012,140 +2132,126 @@ METHOD lRecargaPersonal( oCodSec, oCodOpe, oFecIni, oFecFin, oHorIni, oHorFin, o
 
    if !Empty( dFecFin ) .and. ::dOldFecFin != dFecFin
 
-      /*Personal*/
+      /*
+      Personal
+      */
 
       ::oDetPersonal:oDbfVir:GoTop()
 
       while !::oDetPersonal:oDbfVir:Eof()
-
-         ::oDetPersonal:oDbfVir:Load()
-         ::oDetPersonal:oDbfVir:dFecFin      := dFecFin
-         ::oDetPersonal:oDbfVir:Save()
+         ::oDetPersonal:oDbfVir:FieldPutByName( "dFecFin", dFecFin )
          ::oDetPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Horas personal*/
+      /*
+      Horas personal
+      */
 
       ::oDetHorasPersonal:oDbfVir:GoTop()
 
       while !::oDetHorasPersonal:oDbfVir:Eof()
-
-         ::oDetHorasPersonal:oDbfVir:Load()
-         ::oDetHorasPersonal:oDbfVir:nNumHra := ::cTiempoEmpleado
-         ::oDetHorasPersonal:oDbfVir:Save()
+         ::oDetHorasPersonal:oDbfVir:FieldPutByName( "nNumHra", ::cTiempoEmpleado )
          ::oDetHorasPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Maquinaria*/
+      /*
+      Maquinaria
+      */
 
       ::oDetMaquina:oDbfVir:GoTop()
 
       while !::oDetMaquina:oDbfVir:Eof()
-
-         ::oDetMaquina:oDbfVir:Load()
-         ::oDetMaquina:oDbfVir:dFecFin       := dFecFin
-         ::oDetMaquina:oDbfVir:nTotHra       := ::cTiempoEmpleado
-         ::oDetMaquina:oDbfVir:Save()
+         ::oDetMaquina:oDbfVir:FieldPutByName( "dFecFin", dFecFin )
+         ::oDetMaquina:oDbfVir:FieldPutByName( "nTotHra", ::cTiempoEmpleado )
          ::oDetMaquina:oDbfVir:Skip()
-
       end while
 
       ::dOldFecFin   := dFecFin
 
    end if
 
-   /*Cambios en la hora de inicio*/
+   /*
+   Cambios en la hora de inicio
+   */
 
    if !Empty( cHorIni ) .and. ::cOldHorIni != cHorIni
 
-      /*Personal*/
+      /*
+      Personal
+      */
 
       ::oDetPersonal:oDbfVir:GoTop()
 
       while !::oDetPersonal:oDbfVir:Eof()
-
-         ::oDetPersonal:oDbfVir:Load()
-         ::oDetPersonal:oDbfVir:cHorIni      := cHorIni
-         ::oDetPersonal:oDbfVir:Save()
+         ::oDetPersonal:oDbfVir:FieldPutByName( "cHorIni", cHorIni )
          ::oDetPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Horas personal*/
+      /*
+      Horas personal
+      */
 
       ::oDetHorasPersonal:oDbfVir:GoTop()
 
       while !::oDetHorasPersonal:oDbfVir:Eof()
-
-         ::oDetHorasPersonal:oDbfVir:Load()
-         ::oDetHorasPersonal:oDbfVir:nNumHra := ::cTiempoEmpleado
-         ::oDetHorasPersonal:oDbfVir:Save()
+         ::oDetHorasPersonal:oDbfVir:FieldPutByName( "nNumHra", ::cTiempoEmpleado )
          ::oDetHorasPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Maquinaria*/
+      /*
+      Maquinaria
+      */
 
       ::oDetMaquina:oDbfVir:GoTop()
 
       while !::oDetMaquina:oDbfVir:Eof()
-
-         ::oDetMaquina:oDbfVir:Load()
-         ::oDetMaquina:oDbfVir:cIniMaq       := cHorIni
-         ::oDetMaquina:oDbfVir:nTotHra       := ::cTiempoEmpleado
-         ::oDetMaquina:oDbfVir:Save()
+         ::oDetMaquina:oDbfVir:FieldPutByName( "cIniMaq", cHorIni )
+         ::oDetMaquina:oDbfVir:FieldPutByName( "nTotHra", ::cTiempoEmpleado )
          ::oDetMaquina:oDbfVir:Skip()
-
       end while
 
       ::cOldHorIni   := cHorIni
 
    end if
 
-   /*Cambios en la hora de fin*/
+   /*
+   Cambios en la hora de fin---------------------------------------------------
+   */
 
    if !Empty( cHorFin ) .and. ::cOldHorFin != cHorFin
 
-      /*Personal*/
+      /*
+      Personal-----------------------------------------------------------------
+      */
 
       ::oDetPersonal:oDbfVir:GoTop()
 
       while !::oDetPersonal:oDbfVir:Eof()
-
-         ::oDetPersonal:oDbfVir:Load()
-         ::oDetPersonal:oDbfVir:cHorFin         := cHorFin
-         ::oDetPersonal:oDbfVir:Save()
+         ::oDetPersonal:oDbfVir:FieldPutByName( "cHorFin", cHorFin )
          ::oDetPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Horas personal*/
+      /*
+      Horas personal-----------------------------------------------------------
+      */
 
       ::oDetHorasPersonal:oDbfVir:GoTop()
 
       while !::oDetHorasPersonal:oDbfVir:Eof()
-
-         ::oDetHorasPersonal:oDbfVir:Load()
-         ::oDetHorasPersonal:oDbfVir:nNumHra    := ::cTiempoEmpleado
-         ::oDetHorasPersonal:oDbfVir:Save()
+         ::oDetHorasPersonal:oDbfVir:FieldPutByName( "nNumHra", ::cTiempoEmpleado )
          ::oDetHorasPersonal:oDbfVir:Skip()
-
       end while
 
-      /*Maquinaria*/
+      /*
+      Maquinaria
+      */
 
       ::oDetMaquina:oDbfVir:GoTop()
 
       while !::oDetMaquina:oDbfVir:Eof()
-
-         ::oDetMaquina:oDbfVir:Load()
-         ::oDetMaquina:oDbfVir:cFinMaq          := cHorFin
-         ::oDetMaquina:oDbfVir:nTotHra          := ::cTiempoEmpleado
-         ::oDetMaquina:oDbfVir:Save()
+         ::oDetMaquina:oDbfVir:FieldPutByName( "cFinMaq", cHorFin )
+         ::oDetMaquina:oDbfVir:FieldPutByName( "nTotHra", ::cTiempoEmpleado )
          ::oDetMaquina:oDbfVir:Skip()
-
       end while
 
       ::cOldHorFin   := cHorFin
@@ -2163,27 +2269,15 @@ METHOD lRecargaPersonal( oCodSec, oCodOpe, oFecIni, oFecFin, oHorIni, oHorFin, o
    ::oTotPersonal:Refresh()
    ::oTotMaquinaria:Refresh()
 
-   if !Empty( oBrwPer )
-      oBrwPer:Refresh()
+   if !Empty( ::oBrwPersonal )
+      ::oBrwPersonal:Refresh()
    end if
 
-   if !Empty( oBrwMaq )
-      oBrwMaq:Refresh()
+   if !Empty( ::oBrwMaquinaria )
+      ::oBrwMaquinaria:Refresh()
    end if
 
 RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-Function aDocPro()
-
-   local aDoc        := {}
-
-   aAdd( aDoc, { "Empresa",         "EM" } )
-   aAdd( aDoc, { "Producción",      "PO" } )
-   aAdd( aDoc, { "Almacen",         "AL" } )
-
-RETURN ( aDoc )
 
 //---------------------------------------------------------------------------//
 
@@ -2215,7 +2309,6 @@ METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    ::CreateTemporal( cNumeroParte )
 
    ::oDbf:GetStatus( .t. )
-
    ::oDbf:Seek( cNumeroParte )
 
    if lVisualDocumento( cCodDoc, ::oDbfDoc:cAlias )
@@ -2229,70 +2322,9 @@ METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
       ::PrintReportProducc( nDevice, nCopies, cPrinter, ::oDbfDoc:cAlias )
 
-   else
+   else 
 
-      private oDbf            := ::oDbf
-      private cDbf            := ::oDbf:cAlias
-      private oDbfCol         := ::oDbfTemporal
-      private cDbfCol         := ::oDbfTemporal:cAlias
-      private oThis           := Self
-      private oDbfAlm         := ::oAlm
-      private cDbfAlm         := ::oAlm:cAlias
-      private oDbfSec         := ::oSeccion:oDbf
-      private cDbfSec         := ::oSeccion:oDbf:cAlias
-      private cPouDivPro      := ::cPouDiv
-      private cDetPro         := ::oDetProduccion:oDbf:cAlias
-      private cDetMat         := ::oDetMaterial:oDbf:cAlias
-      private cDetHPer        := ::oDetHorasPersonal:oDbf:cAlias
-      private cDetMaq         := ::oDetMaquina:oDbf:cAlias
-
-      if !Empty( cPrinter )
-         oDevice              := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !Empty( oInf ) .and. oInf:lCreated
-
-         oInf:lAutoland       := .f.
-         oInf:lFinish         := .f.
-         oInf:lNoCancel       := .t.
-         oInf:bSkip           := {|| ::oDbfTemporal:Skip() }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         do case
-            case nDevice == IS_PRINTER
-               oInf:bPreview  := {| oDevice | PrintPreview( oDevice ) }
-
-            case nDevice == IS_PDF
-               oInf:bPreview  := {| oDevice | PrintPdf( oDevice ) }
-
-         end case
-
-         SetMargin(  cCodDoc, oInf )
-         PrintColum( cCodDoc, oInf )
-
-      end if
-
-      RptAddGroup( {|| Self:oDbfTemporal:cTipo }, {|| cNombreTipo( oInf:aGroups[1]:cValue ) }, {|| "" }, , .f. )
-
-      END REPORT
-
-      if !Empty( oInf )
-
-         ACTIVATE REPORT oInf ;
-            WHILE       ( !::oDbfTemporal:Eof() );
-            ON ENDPAGE  ::EPage( oInf, cCodDoc )
-
-            if nDevice == IS_PRINTER
-               oInf:oDevice:end()
-            end if
-
-      end if
-
-      oInf  := nil
+      msgStop( "El documento no es de formato visual." )
 
    end if
 
@@ -2301,17 +2333,6 @@ METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    ::oDbf:SetStatus()
 
 RETURN ( NIL )
-
-//---------------------------------------------------------------------------//
-
-METHOD EPage( oInf, cCodDoc )
-
-	private nPagina		:= oInf:nPage
-	private lEnd			:= oInf:lFinish
-
-   PrintItems( cCodDoc, oInf )
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2870,7 +2891,7 @@ METHOD RecSiguente( oBrw )
    if( ::oWndBrw != nil, ::oWndBrw:Maximize(), )
 
    if ::bOnPreAppend != nil
-      lTrigger := Eval( ::bOnPreAppend, Self )
+      lTrigger       := Eval( ::bOnPreAppend, Self )
       if Valtype( lTrigger ) == "L" .and. !lTrigger
          return .f.
       end if
@@ -2881,7 +2902,7 @@ METHOD RecSiguente( oBrw )
 
    ::LoadDetails( .f. )
 
-   lAppend       := ::Resource( 1, aAnterior )
+   lAppend           := ::Resource( 1, aAnterior )
 
    if lAppend
 
@@ -3455,6 +3476,19 @@ function VisProduccion( cNumParte )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD CalculaCostes()     
+
+   local nTotalParte       := 0
+
+   nTotalParte             := ::nTotalParte() / ::oDetProduccion:nTotalUnidades( ::oDetProduccion:oDbfVir )
+
+   MsgStop( nTotalParte, "nTotParte" )
+
+RETURN ( nTotalParte )
+
+//---------------------------------------------------------------------------//
+
 #include "FastRepH.ch"
 
 METHOD DataReport( oFr )

@@ -53,9 +53,8 @@ CLASS IXBrowse FROM TXBrowse
 
    Method SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
-   /*
-   METHOD Refresh( lComplete )
-   */
+   Method Refresh( lComplete )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -406,38 +405,17 @@ METHOD ShowExtendInfo()
 return nil
 
 //----------------------------------------------------------------------------//
-/*
+
 METHOD Refresh( lComplete )
 
-   local nKeyNo
+   Super:Refresh( lComplete )
 
-   DEFAULT lComplete := .F.
+   ::MakeTotals()
 
+   ::RefreshFooters()
 
-   ::KeyCount()
+return nil
 
-   if lComplete
-      ::nRowSel  = 1
-      ::nArrayAt = Min( 1, ::nLen )
-   else
-      nKeyNo     = Eval( ::bKeyNo,,Self )
-      ::nArrayAt = Min( ::nArrayAt, ::nLen )
-      ::nRowSel  = Max( 1, Min( ::nRowSel, ::nLen ) )
-      ::nRowSel  = Max( 1, Min( ::nRowSel, nKeyNo ) ) // bKeyNo for ADS is approx. can be zero also
-      if nKeyNo == ::nLen .and. ::nLen > 1
-         ::nRowSel   := Min( ::nLen, ::RowCount() )
-      endif
-
-      if ::nArrayAt == 0 .and. ::nLen > 0
-         // when one or more rows are added to a blank array
-         ::nArrayAt  := 1
-      endif
-   endif
-
-   ::GetDisplayCols()
-
-return Super:Refresh( .T. )
-*/
 //----------------------------------------------------------------------------//
 /*
 

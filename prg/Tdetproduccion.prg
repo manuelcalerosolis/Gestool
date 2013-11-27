@@ -56,13 +56,15 @@ CLASS TDetProduccion FROM TDetalleArticulos
    METHOD SaveDetails()
    METHOD DeleteDetails()
 
-   METHOD nTotUnidades( oDbf )
-   METHOD cTotUnidades( oDbf )
-   METHOD lTotUnidades( oDbf )
+   METHOD nUnidades( oDbf )
+   METHOD cUnidades( oDbf )
+   METHOD lUnidades( oDbf )
 
-   METHOD nTotPrecio( oDbf )
-   METHOD cTotPrecio( oDbf )
-   METHOD lTotPrecio( oDbf )
+   METHOD nTotalUnidades( oDbf )
+
+   METHOD nPrecio( oDbf )
+   METHOD cPrecio( oDbf )
+   METHOD lPrecio( oDbf )
 
    METHOD nTotal( oDbf )
    METHOD cTotal( oDbf )
@@ -230,8 +232,8 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       ::nStkAct         := 0
    end if
 
-   ::nGetTotalUnidades  := ::nTotUnidades( ::oDbfVir )
-   ::nGetTotalPrecio    := ::nTotPrecio( ::oDbfVir )
+   ::nGetTotalUnidades  := ::nUnidades( ::oDbfVir )
+   ::nGetTotalPrecio    := ::nPrecio( ::oDbfVir )
    ::nGetTotPes         := ::nTotPeso( ::oDbfVir )
    ::nGetTotVol         := ::nTotVolumen( ::oDbfVir )
 
@@ -332,8 +334,8 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          PICTURE  ::oParent:cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      ::oGetCaja:bChange   := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
-      ::oGetCaja:bValid    := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetCaja:bChange   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetCaja:bValid    := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
 
       REDEFINE GET ::oGetUnd VAR ::oDbfVir:nUndOrd ;
          ID       130;
@@ -342,8 +344,8 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          PICTURE  ::oParent:cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      ::oGetUnd:bChange   := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
-      ::oGetUnd:bValid    := {|| ::lTotUnidades( ::oDbfVir ), ::lTotPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetUnd:bChange   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
+      ::oGetUnd:bValid    := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
 
       REDEFINE GET ::oGetTotalUnidades VAR ::nGetTotalUnidades ;
          ID       140;
@@ -362,8 +364,8 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          PICTURE  ::oParent:cPouDiv ;
          OF       oFld:aDialogs[1]
 
-      ::oImpOrd:bChange   := {|| ::lTotPrecio( ::oDbfVir ) }
-      ::oImpOrd:bValid    := {|| ::lTotPrecio( ::oDbfVir ) }
+      ::oImpOrd:bChange   := {|| ::lPrecio( ::oDbfVir ) }
+      ::oImpOrd:bValid    := {|| ::lPrecio( ::oDbfVir ) }
 
       REDEFINE GET ::oGetTotalPrecio VAR ::nGetTotalPrecio ;
          ID       160;
@@ -638,8 +640,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
          
          end if
 
-         ::lTotUnidades( ::oDbfVir )
-         ::lTotPrecio( ::oDbfVir )
+         ::lUnidades( ::oDbfVir )
+         ::lPrecio( ::oDbfVir )
          ::lTotPeso( ::oDbfVir )
          ::lTotVolumen( ::oDbfVir )
 
@@ -686,7 +688,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-METHOD nTotUnidades( oDbf ) CLASS TDetProduccion
+METHOD nUnidades( oDbf ) CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
@@ -694,43 +696,63 @@ RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:FieldGetByName( "
 
 //--------------------------------------------------------------------------//
 
-METHOD cTotUnidades( oDbf ) CLASS TDetProduccion
+METHOD cUnidades( oDbf ) CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( Trans( ::nTotUnidades( oDbf ), ::oParent:cPicUnd ) )
+RETURN ( Trans( ::nUnidades( oDbf ), ::oParent:cPicUnd ) )
 
 //--------------------------------------------------------------------------//
 
-METHOD lTotUnidades( oDbf ) CLASS TDetProduccion
+METHOD lUnidades( oDbf ) CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( ::oGetTotalUnidades:cText( ::nTotUnidades( oDbf ) ), .t. )
+RETURN ( ::oGetTotalUnidades:cText( ::nUnidades( oDbf ) ), .t. )
 
 //--------------------------------------------------------------------------//
 
-METHOD nTotPrecio( oDbf ) CLASS TDetProduccion
+METHOD nTotalUnidades( oDbf ) CLASS TDetProduccion
+
+   local nTotal   := 0
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( Round( ::nTotUnidades( oDbf ) * oDbf:FieldGetByName( "nImpOrd" ), ::oParent:nDorDiv ) )
+   oDbf:GetStatus()
+
+   oDbf:GoTop()
+   while !oDbf:Eof()
+      nTotal      += ::nUnidades( oDbf )
+      oDbf:Skip()
+   end while
+
+   oDbf:SetStatus()
+
+RETURN ( nTotal )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPrecio( oDbf ) CLASS TDetProduccion
+
+   DEFAULT oDbf   := ::oDbf
+
+RETURN ( Round( ::nUnidades( oDbf ) * oDbf:FieldGetByName( "nImpOrd" ), ::oParent:nDorDiv ) )
 
 //--------------------------------------------------------------------------//
 
-METHOD cTotPrecio( oDbf )  CLASS TDetProduccion
+METHOD cPrecio( oDbf )  CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( Trans( ::nTotPrecio( oDbf ), ::oParent:cPorDiv ) )
+RETURN ( Trans( ::nPrecio( oDbf ), ::oParent:cPorDiv ) )
 
 //--------------------------------------------------------------------------//
 
-METHOD lTotPrecio( oDbf )  CLASS TDetProduccion
+METHOD lPrecio( oDbf )  CLASS TDetProduccion
 
    DEFAULT oDbf   := ::oDbf
 
-RETURN ( ::oGetTotalPrecio:cText( ::nTotPrecio( oDbf ) ), .t. )
+RETURN ( ::oGetTotalPrecio:cText( ::nPrecio( oDbf ) ), .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -744,7 +766,7 @@ METHOD nTotal( oDbf ) CLASS TDetProduccion
 
    oDbf:GoTop()
    while !oDbf:Eof()
-      nTotal      += ::nTotPrecio( oDbf )
+      nTotal      += ::nPrecio( oDbf )
       oDbf:Skip()
    end while
 
@@ -890,7 +912,7 @@ METHOD SaveResource( oGetArt, oDlg, nMode ) CLASS TDetProduccion
                         ::oParent:oDetMaterial:oDbfVir:cNomArt    := ::oParent:oKitArt:cDesKit
                         ::oParent:oDetMaterial:oDbfVir:cAlmOrd    := ::oParent:oDbf:cAlmOrg
                         ::oParent:oDetMaterial:oDbfVir:nCajOrd    := 1
-                        ::oParent:oDetMaterial:oDbfVir:nUndOrd    := ::nTotUnidades( ::oDbfVir ) * ::oParent:oKitArt:nUndKit
+                        ::oParent:oDetMaterial:oDbfVir:nUndOrd    := ::nUnidades( ::oDbfVir ) * ::oParent:oKitArt:nUndKit
                         ::oParent:oDetMaterial:oDbfVir:nImpOrd    := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "pCosto" )
                         ::oParent:oDetMaterial:oDbfVir:nPeso      := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "nPesoKg" )
                         ::oParent:oDetMaterial:oDbfVir:cUndPes    := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "cUnidad" )
@@ -933,7 +955,7 @@ METHOD SaveResource( oGetArt, oDlg, nMode ) CLASS TDetProduccion
                ::oParent:oDetMaterial:oDbfVir:Load()
 
                if ::oParent:oKitArt:SeekInOrd( ::oDbfVir:cCodArt + ::oParent:oDetMaterial:oDbfVir:cCodArt, "cCodRef" )
-                  ::oParent:oDetMaterial:oDbfVir:nUndOrd    := ::nTotUnidades( ::oDbfVir ) * ::oParent:oKitArt:nUndKit
+                  ::oParent:oDetMaterial:oDbfVir:nUndOrd    := ::nUnidades( ::oDbfVir ) * ::oParent:oKitArt:nUndKit
                end if
 
                ::oParent:oDetMaterial:oDbfVir:Save()
@@ -1148,7 +1170,7 @@ METHOD Resource( nMode ) CLASS TDetSeriesProduccion
       :nNumLin          := ::oParent:oDetProduccion:oDbfVir:nNumLin
       :cCodAlm          := ::oParent:oDbf:cAlmOrd
 
-      :nTotalUnidades   := ::oParent:oDetProduccion:nTotUnidades( ::oParent:oDetProduccion:oDbfVir )
+      :nTotalUnidades   := ::oParent:oDetProduccion:nUnidades( ::oParent:oDetProduccion:oDbfVir )
 
       :oStock           := ::oParent:oStock
 
