@@ -6309,6 +6309,8 @@ METHOD AppendPedidoprestashop()
                            ::oPedCliL:cCodPr2     := ::oArt:cCodPrp2
                            ::oPedCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
                            ::oPedCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+                           ::oPedCliL:lLote       := ::oArt:lLote 
+                           ::oPedCliL:cLote       := ::oArt:cLote 
 
                         end if
 
