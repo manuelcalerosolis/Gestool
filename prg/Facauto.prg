@@ -537,6 +537,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TFacAutomatica
       FIELD NAME "nPerSel"   TYPE "N" LEN   3 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
       FIELD NAME "cPerSel"   TYPE "C" LEN  20 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
       FIELD NAME "dNexFac"   TYPE "D" LEN  08 DEC 0 COMMENT "Fecha de próxima factura"                               HIDE              OF ::oDbf
+      FIELD NAME "mGrpSel"   TYPE "M" LEN  10 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
 
       INDEX TO "FacAutT.Cdx" TAG "cCodFac" ON "Field->cCodFac" COMMENT "Código"  NODELETED   OF ::oDbf
       INDEX TO "FacAutT.Cdx" TAG "cNomFac" ON "Field->cNomFac" COMMENT "Nombre"  NODELETED   OF ::oDbf

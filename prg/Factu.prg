@@ -130,8 +130,8 @@ function Main( cParams )
       RddRegister(   'ADS', 1 )
       RddSetDefault( 'ADSCDX' )
 
-      AdsSetServerType( nAdsServer() )   // TODOS
-      AdsSetFileType( 2 )     // ADS_CDX
+      AdsSetServerType( nAdsServer() )    // TODOS
+      AdsSetFileType( 2 )                 // ADS_CDX
 
       AdsRightsCheck( .f. )
 
