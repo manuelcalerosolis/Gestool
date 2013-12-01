@@ -1,10 +1,5 @@
-#ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Error.ch"
-#else
-#include "FWCE.ch"
-REQUEST DBFCDX
-#endif
 #include "DbStruct.ch"
 #include "DbInfo.ch"
 #include "Factu.ch"
@@ -29,8 +24,6 @@ static aAdsDirectory          := {}
 // Funciones para DBF's
 //
 //--------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 FUNCTION DbSwapUp( cAlias, oBrw )
 
@@ -1146,8 +1139,6 @@ Static Function StartDbfInfo( dbfAlias, oTreeInfo )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-
-#endif
 
 //----------------------------------------------------------------------------//
 /*Parte de código comun a PDA y a la aplicación normal*/

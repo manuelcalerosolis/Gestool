@@ -6,14 +6,17 @@
 
 CLASS TGrpFacturasAutomaticas FROM TMant
 
-   DATA  cMru           INIT "Folder_gear_16"
+   DATA  cMru                                   INIT "Folder_gear_16"
 
-   DATA  cParentSelect  INIT Space( 4 )
+   DATA  cParentSelect                          INIT Space( 4 )
 
    DATA  oGetCodigo
    DATA  oGetNombre
 
    DATA  oTreePadre
+
+   DATA  oBrwFacturaAutomatica
+   DATA  aData                                  INIT {}
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
@@ -34,37 +37,17 @@ CLASS TGrpFacturasAutomaticas FROM TMant
    METHOD IsPadreMenor( cCodGrupo, cCodDesde )
 
    METHOD Tree( oGet )
-
    METHOD LoadTree( cCodGrupo )
    METHOD ChangeTreeState( oTree, aItems )
    METHOD GetTreeState( oTree, aItems )
    METHOD SetTreeState( oTree, aItems )
 
-   //-------------------------------------------------------------------------//
+   METHOD RedefineBrowse( id, oDlg )
+   METHOD LoadBrowse( aGrupos )
+   METHOD ClickBrowse()
+   METHOD BrowseToChar()
 
-   INLINE METHOD RunPlantillaAutomatica( cCodigoGrupo )
-
-      with object ( TCreaFacAutomaticas():New() )
-
-         if :OpenFiles()
-
-            :aCodigoGrupo  := ::aChild( cCodigoGrupo, { cCodigoGrupo } )
-         
-            if :lSelectCodigoPlantilla()
-               :Run()
-            end if
-         
-            :CloseFiles()
-         
-         end if 
-      
-      end with
-
-      Return ( Self )
-
-   ENDMETHOD
-
-   //-------------------------------------------------------------------------//
+   METHOD RunPlantillaAutomatica( cCodigoGrupo )
 
 END CLASS
 
@@ -247,8 +230,16 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      /*
+      Creamos el arbol---------------------------------------------------------
+      */
+
       ::oTreePadre                     := TTreeView():Redefine( 130, oDlg )
       ::oTreePadre:bItemSelectChanged  := {|| ::ChangeTreeState() }
+
+      /*
+      Creamos los botones------------------------------------------------------
+      */
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -581,7 +572,114 @@ RETURN ( uVal )
 
 //----------------------------------------------------------------------------//
 
-function cCodigoFacturasAutomaticas( cCodigoFacturasAutomaticas, oDbf )
+METHOD RedefineBrowse( id, oDlg )
+
+   /*
+   Browse de los Factura Automaticas-------------------------------------------
+   */
+
+   ::oBrwFacturaAutomatica                   := TXBrowse():New( oDlg )
+   
+   ::oBrwFacturaAutomatica:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwFacturaAutomatica:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   
+   ::oBrwFacturaAutomatica:SetArray( ::aData, , , .f. )
+   
+   ::oBrwFacturaAutomatica:lHScroll          := .f.
+   ::oBrwFacturaAutomatica:lVScroll          := .f.
+   
+   ::oBrwFacturaAutomatica:nMarqueeStyle     := 5
+   
+   ::oBrwFacturaAutomatica:lRecordSelector   := .f.
+   
+   ::oBrwFacturaAutomatica:bLDblClick        := {|| ::ClickBrowse() }
+
+   ::oBrwFacturaAutomatica:CreateFromResource( id )
+
+   with object ( ::oBrwFacturaAutomatica:AddCol() )
+      :cHeader       := "Sel."
+      :bEditValue    := {|| ::aData[ ::oBrwFacturaAutomatica:nArrayAt, 1 ] }
+      :nWidth        := 25
+      :SetCheck( { "Check2_16_2", "Nil16" } )
+   end with
+
+   with object ( ::oBrwFacturaAutomatica:AddCol() )
+      :cHeader       := "Código"
+      :bEditValue    := {|| ::aData[ ::oBrwFacturaAutomatica:nArrayAt, 2 ] }
+      :nWidth        := 60
+   end with
+
+   with object ( ::oBrwFacturaAutomatica:AddCol() )
+      :cHeader       := "Nombre"
+      :bEditValue    := {|| ::aData[ ::oBrwFacturaAutomatica:nArrayAt, 3 ] }
+      :nWidth        := 200
+   end with
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD LoadBrowse( cGrupos )
+
+   local aGrupos     := hb_ATokens( cGrupos, "," )
+
+   ::aData           := {}
+
+   ::oDbf:GoTop()
+   do while !::oDbf:Eof()
+      aAdd( ::aData, { aScan( aGrupos, Alltrim( ::oDbf:cCodGrp ) ) != 0, ::oDbf:cCodGrp, ::oDbf:cNomGrp } )
+      ::oDbf:Skip()
+   end while
+
+   ::oBrwFacturaAutomatica:SetArray( ::aData, , , .f. )
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD ClickBrowse()
+
+   ::aData[ ::oBrwFacturaAutomatica:nArrayAt, 1 ]  := !::aData[ ::oBrwFacturaAutomatica:nArrayAt, 1 ]
+
+   ::oBrwFacturaAutomatica:Refresh()
+
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD BrowseToChar()
+
+   local cMemo := ""
+
+   aEval( ::aData, {|aItem| if( aItem[ 1 ], cMemo += Rtrim( aItem[ 2 ] ) + ",", ) } )
+
+Return ( cMemo )
+
+//------------------------------------------------------------------------//
+
+METHOD RunPlantillaAutomatica( cCodigoGrupo )
+
+   with object ( TCreaFacAutomaticas():New() )
+
+      if :OpenFiles()
+
+         :aCodigoGrupo  := ::aChild( cCodigoGrupo, { cCodigoGrupo } )
+         
+         if :lSelectCodigoPlantilla()
+            :Run()
+         end if
+         
+         :CloseFiles()
+         
+      end if 
+      
+   end with
+
+Return ( Self )
+
+//-------------------------------------------------------------------------//
+
+Function cCodigoFacturasAutomaticas( cCodigoFacturasAutomaticas, oDbf )
 
    local cCodigo  := ""
 
@@ -589,11 +687,11 @@ function cCodigoFacturasAutomaticas( cCodigoFacturasAutomaticas, oDbf )
       cCodigo     := oDbf:cCodGrp
    end if
 
-return( cCodigo )
+Return( cCodigo )
 
 //---------------------------------------------------------------------------//
 
-function cNombreFacturasAutomaticas( cCodigoFacturasAutomaticas, oDbf )
+Function cNombreFacturasAutomaticas( cCodigoFacturasAutomaticas, oDbf )
 
    local cNombre  := ""
 
@@ -601,6 +699,6 @@ function cNombreFacturasAutomaticas( cCodigoFacturasAutomaticas, oDbf )
       cNombre     := oDbf:Nombre
    end if
 
-return( cNombre )
+Return( cNombre )
 
 //---------------------------------------------------------------------------//

@@ -139,8 +139,8 @@ METHOD lGenerate()
    ::oAlbPrvT:OrdSetFocus( "dFecAlb" )
    ::oAlbPrvL:OrdSetFocus( "nNumAlb" )
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       := ::oFilter:aExpFilter[ 1 ]
+   if !Empty( ::oFilter:cExpresionFilter ) 
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if
@@ -208,8 +208,8 @@ METHOD lGenerate()
    ::oFacPrvT:OrdSetFocus( "dFecFac" )
    ::oFacPrvL:OrdSetFocus( "nNumFac" )
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 2
-      cExpHead       := ::oFilter:aExpFilter[ 2 ]
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
    end if

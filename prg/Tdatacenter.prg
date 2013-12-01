@@ -22,6 +22,7 @@ CLASS TDataCenter
 
    CLASSDATA   aDataTables                INIT {}
    CLASSDATA   aEmpresaTables             INIT {}
+   CLASSDATA   hOperationDescription      INIT { "INSERT" => "Añadido", "UPDATE" => "Modificado", "DELETE" => "Eliminado" }
 
    DATA        aEmpresas                  INIT {}
 
@@ -75,6 +76,7 @@ CLASS TDataCenter
    DATA        cMsg                       INIT ""
    DATA        oMsg
 
+
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
 
@@ -122,10 +124,11 @@ CLASS TDataCenter
    METHOD CloseArea( cArea )              INLINE ( if( Select( cArea ) > 0, ( cArea )->( dbCloseArea() ), ), dbSelectArea( 0 ), .t. )
 
    METHOD CreateAllLocksTablesUsers()
+   METHOD DeleteAllLocksTablesUsers()
    METHOD GetAllLocksTablesUsers()
    METHOD CloseAllLocksTablesUsers()      INLINE ( ::CloseArea( "AllLocks" ) )
 
-   METHOD lAdministratorTask()
+   METHOD lAdministratorTask() 
    METHOD StartAdministratorTask()
 
    METHOD Auditor()
@@ -133,9 +136,11 @@ CLASS TDataCenter
 
    METHOD lSelectOperationLog()
    METHOD CloseOperationLog()             INLINE ( ::CloseArea( "SqlOperation" ) )
+   METHOD InlineSelectOperationLog()      INLINE ( CursorWait(), ::lSelectOperationLog(), ::oBrwOperation:Refresh(), ::oBrwOperation:GoTop(), CursorWE() )
 
-   METHOD lSelectColumnLog()
+   METHOD lSelectColumnLog( id )
    METHOD CloseColumnLog()                INLINE ( ::CloseArea( "SqlColumn" ) )
+   METHOD InlineSelectColumnLog( id )     INLINE ( CursorWait(), msgStop( id ), ::lSelectColumnLog( id ), ::oBrwColumn:Refresh(), ::oBrwColumn:GoTop(), CursorWait() )
 
    METHOD lCreaArrayPeriodos()
    METHOD lRecargaFecha()
@@ -904,7 +909,7 @@ METHOD ConnectDataDictionary()
    ::CreateDataDictionary()
 
    ::lAdsConnection     := AdsConnect60( ::cDataDictionaryFile, nAdsServer(), "ADSSYS", "", , @::hAdsConnection )
-
+   
    if !::lAdsConnection
 
       adsGetLastError( @cError )
@@ -1115,26 +1120,7 @@ METHOD CreateTriggerUpdate( oTable )
 
    cTrigger          += 'END NO MEMOS PRIORITY 1;' + CRLF
 
-   dbSelectArea( 0 )
-
-   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 7 )
-
-      lTrigger    := ADSExecuteSQLDirect( cTrigger )
-      if !lTrigger
-
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds + CRLF + cTrigger, 'ERROR CREATE TRIGGER en ADSExecuteSQLDirect' )
-
-         Return ( Self )
-
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds + CRLF + cTrigger, 'ERROR CREATE TRIGGER en ADSCreateSQLStatement' )
-
-   end if
+   ::ExecuteSqlStatement( cTrigger, Alltrim( oTable:cName ) )
 
 Return ( Self )
 
@@ -1182,10 +1168,7 @@ Return ( Self )
 
 METHOD CreateTriggerInsert( oTable, cAction )
 
-   local nError
    local cTrigger
-   local lTrigger
-   local cErrorAds
 
    if !isObject( oTable )
       Return ( .f. )
@@ -1225,28 +1208,7 @@ METHOD CreateTriggerInsert( oTable, cAction )
 
    cTrigger          += 'END NO MEMOS PRIORITY 1;' + CRLF
 
-   dbSelectArea( 0 )
-
-   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 7 )
-
-      lTrigger    := ADSExecuteSQLDirect( cTrigger )
-      if !lTrigger
-
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds + CRLF + cTrigger, 'ERROR CREATE TRIGGER en ADSExecuteSQLDirect' )
-
-         Return ( Self )
-
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds + CRLF + cTrigger, 'ERROR CREATE TRIGGER en ADSCreateSQLStatement' )
-
-   end if
-
-Return ( Self )
+Return ( ::ExecuteSqlStatement( cTrigger, Alltrim( oTable:cName ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1289,10 +1251,7 @@ Return ( Self )
 
 METHOD CreateTriggerDelete( oTable, cAction )
 
-   local nError
    local cTrigger
-   local lTrigger
-   local cErrorAds
 
    if !isObject( oTable )
       Return ( .f. )
@@ -1332,28 +1291,8 @@ METHOD CreateTriggerDelete( oTable, cAction )
 
    cTrigger          += 'END NO MEMOS PRIORITY 1;' + CRLF
 
-   dbSelectArea( 0 )
 
-   if ADSCreateSQLStatement( ( Alltrim( oTable:cName ) ), 7 )
-
-      lTrigger    := ADSExecuteSQLDirect( cTrigger )
-      if !lTrigger
-
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds + CRLF + cTrigger, 'ERROR CREATE TRIGGER en ADSExecuteSQLDirect' )
-
-         Return ( Self )
-
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds + CRLF + cTrigger, 'ERROR CREATE TRIGGER en ADSCreateSQLStatement' )
-
-   end if
-
-Return ( Self )
+Return ( ::ExecuteSqlStatement( cTrigger, Alltrim( oTable:cName ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1396,64 +1335,49 @@ Return ( Self )
 
 METHOD CreateAllLocksTablesUsers()
 
-   local lSql
    local cSql  
-   local nError
-   local cErrorAds
+
+   ::DeleteAllLocksTablesUsers()
 
    cSql        := "CREATE PROCEDURE mgGetAllLocksAllTablesAllUsers ( "     + CRLF 
-   cSql        += "     TableName CICHAR ( 255 ) OUTPUT, "                 + CRLF 
-   cSql        += "     RecNumber INTEGER OUTPUT, "                        + CRLF
-   cSql        += "     UserName CICHAR ( 50 ) OUTPUT, "                   + CRLF 
-   cSql        += "     IPAddress CICHAR ( 30 ) OUTPUT, "                  + CRLF 
-   cSql        += "     DictionaryUser CICHAR ( 50 ) OUTPUT ) "            + CRLF 
-   cSql        += "     BEGIN "                                            + CRLF
-   cSql        += "       DECLARE cTbls CURSOR AS EXECUTE PROCEDURE sp_mgGetAllTables(); " + CRLF 
-   cSql        += "       DECLARE cLocks CURSOR; "                         + CRLF
-   cSql        += "       DECLARE cUser CURSOR;  "                         + CRLF
-   cSql        += " "                                                      + CRLF 
-   cSql        += "          OPEN cTbls; "                                 + CRLF 
-   cSql        += " "                                                      + CRLF 
+   cSql        +=    "TableName CICHAR ( 255 ) OUTPUT, "                   + CRLF 
+   cSql        +=    "RecNumber INTEGER OUTPUT, "                          + CRLF
+   cSql        +=    "UserName CICHAR ( 50 ) OUTPUT, "                     + CRLF 
+   cSql        +=    "IPAddress CICHAR ( 30 ) OUTPUT, "                    + CRLF 
+   cSql        +=    "DictionaryUser CICHAR ( 50 ) OUTPUT ) "              + CRLF 
+   cSql        +=    "BEGIN "                                              + CRLF
+   cSql        +=       "DECLARE cTbls CURSOR AS EXECUTE PROCEDURE sp_mgGetAllTables(); " + CRLF 
+   cSql        +=       "DECLARE cLocks CURSOR; "                          + CRLF
+   cSql        +=       "DECLARE cUser CURSOR;  "                          + CRLF
+   cSql        +=       " "                                                + CRLF 
+   cSql        += "OPEN cTbls; "                                           + CRLF 
+   cSql        +=       " "                                                + CRLF 
    cSql        += "WHILE FETCH cTbls DO "                                  + CRLF
-   cSql        += "   OPEN cLocks AS EXECUTE PROCEDURE sp_mgGetAllLocks(cTbls.TableName); " + CRLF
-   cSql        += "   WHILE FETCH cLocks DO "                              + CRLF 
-   cSql        += "      OPEN cUser as EXECUTE PROCEDURE sp_mgGetLockOwner(cTbls.TableName, cLocks.LockedRecNo); " + CRLF 
-   cSql        += "      WHILE FETCH cUser DO "                            + CRLF 
-   cSql        += "         INSERT INTO __output VALUES (cTbls.TableName, cLocks.LockedRecNo, cUser.UserName, cUser.Address, cUser.DictionaryUser); " + CRLF
-   cSql        += "      END WHILE; "                                      + CRLF 
-   cSql        += "      CLOSE cUser; "                                    + CRLF 
-   cSql        += "   END WHILE; "                                         + CRLF 
-   cSql        += "   CLOSE cLocks; "                                      + CRLF 
+   cSql        +=    "OPEN cLocks AS EXECUTE PROCEDURE sp_mgGetAllLocks(cTbls.TableName); " + CRLF
+   cSql        +=    "WHILE FETCH cLocks DO "                              + CRLF 
+   cSql        +=       "OPEN cUser as EXECUTE PROCEDURE sp_mgGetLockOwner(cTbls.TableName, cLocks.LockedRecNo); " + CRLF 
+   cSql        +=       "WHILE FETCH cUser DO "                            + CRLF 
+   cSql        +=          "INSERT INTO __output VALUES (cTbls.TableName, cLocks.LockedRecNo, cUser.UserName, cUser.Address, cUser.DictionaryUser); " + CRLF
+   cSql        +=       "END WHILE; "                                      + CRLF 
+   cSql        +=       "CLOSE cUser; "                                    + CRLF 
+   cSql        +=    "END WHILE; "                                         + CRLF 
+   cSql        +=    "CLOSE cLocks; "                                      + CRLF 
    cSql        += "END WHILE; "                                            + CRLF 
    cSql        += "CLOSE cTbls; "                                          + CRLF 
    cSql        += "END; "                                                  + CRLF
   
-   if ADSCreateSQLStatement( "Locks", 7 )
+Return ( ::ExecuteSqlStatement( cSql, "Locks" ) )
 
-      lSql        := ADSExecuteSQLDirect( cSql )
-      if !lSql
+//---------------------------------------------------------------------------//
 
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds + CRLF + cSql, 'ERROR CREATE SQL en ADSExecuteSQLDirect' )
+METHOD DeleteAllLocksTablesUsers()
 
-         Return ( Self )
-
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( "Error : " + Str( nError ) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-Return ( Self )
+Return ( ::ExecuteSqlStatement( "DROP PROCEDURE mgGetAllLocksAllTablesAllUsers;", "Locks" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD GetAllLocksTablesUsers()
 
-   local lOk
    local cStm
 
    ::CloseAllLocksTablesUsers()
@@ -1464,13 +1388,7 @@ METHOD GetAllLocksTablesUsers()
 
    cStm           := "EXECUTE PROCEDURE mgGetAllLocksAllTablesAllUsers();"
 
-   /*
-   Creamos la snetencia--------------------------------------------------------
-   */
-
-   lOk            := ::ExecuteSqlStatement( cStm, "AllLocks" )
-
-RETURN ( lOk )
+RETURN ( ::ExecuteSqlStatement( cStm, "AllLocks" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -3471,91 +3389,45 @@ RETURN ( Self )
 
 METHOD CreateOperationLogTable()
 
-   local nError
    local cTable
-   local lTrigger
-   local cErrorAds
 
-   if File( "SqlOperationLog.adt" )
-      fErase( "SqlOperationLog.adt" )
+   if File( "Datos\SqlOperationLog.adt" )
+      fErase( "Datos\SqlOperationLog.adt" )
    end if
 
-   cTable         := 'CREATE TABLE SqlOperationLog (' + CRLF
-   cTable         += 'ID AUTOINC CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'DATETIME TIMESTAMP CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'USERNAME CHAR(50) CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'APPNAME CHAR(50),' + CRLF
-   cTable         += 'TABLENAME CHAR(150) CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'OPERATION CHAR(6) CONSTRAINT NOT NULL )' + CRLF
-   cTable         += 'IN DATABASE;' + CRLF
+   cTable         := 'CREATE TABLE Datos\SqlOperationLog ('          + CRLF
+   cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'            + CRLF
+   cTable         +=    'DATETIME TIMESTAMP CONSTRAINT NOT NULL,'    + CRLF
+   cTable         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'     + CRLF
+   cTable         +=    'APPNAME CHAR(50),'                          + CRLF
+   cTable         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'   + CRLF
+   cTable         +=    'OPERATION CHAR(6) CONSTRAINT NOT NULL )'    + CRLF
+   cTable         +=    'IN DATABASE;' + CRLF
 
-   dbSelectArea( 0 )
-
-   if ADSCreateSQLStatement( "OperationLog", 7 )
-
-      lTrigger    := ADSExecuteSQLDirect( cTable )
-      if !lTrigger
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds + CRLF + cTable, 'ERROR CREATE TABLE en ADSExecuteSQLDirect' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds + CRLF + cTable, 'ERROR CREATE TABLE en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-Return ( Self )
+Return ( ::ExecuteSqlStatement( cTable, "OperationLog" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD CreateColumnLogTable()
 
-   local nError
    local cTable
-   local lTrigger
-   local cErrorAds
 
-   if File( "SqlColumnLog.adt" )
-      fErase( "SqlColumnLog.adt" )
+   if File( "Datos\SqlColumnLog.adt" )
+      fErase( "Datos\SqlColumnLog.adt" )
    end if
 
-   cTable         := 'CREATE TABLE SqlColumnLog (' + CRLF
-   cTable         += 'ID AUTOINC CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'OPERATIONID INTEGER CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'COLUMNNAME CHAR(50) CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'USERNAME CHAR(50) CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'APPNAME CHAR(50),' + CRLF
-   cTable         += 'TABLENAME CHAR(150) CONSTRAINT NOT NULL,' + CRLF
-   cTable         += 'OLDVALUE CHAR(250),' + CRLF
-   cTable         += 'NEWVALUE CHAR(250) )' + CRLF
-   cTable         += 'IN DATABASE;' + CRLF
+   cTable         := 'CREATE TABLE Datos\SqlColumnLog ('             + CRLF
+   cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'            + CRLF
+   cTable         +=    'OPERATIONID INTEGER CONSTRAINT NOT NULL,'   + CRLF
+   cTable         +=    'COLUMNNAME CHAR(50) CONSTRAINT NOT NULL,'   + CRLF
+   cTable         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'     + CRLF
+   cTable         +=    'APPNAME CHAR(50),'                          + CRLF
+   cTable         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'   + CRLF
+   cTable         +=    'OLDVALUE CHAR(250),'                        + CRLF
+   cTable         +=    'NEWVALUE CHAR(250) )'                       + CRLF
+   cTable         +=    'IN DATABASE;'                               + CRLF
 
-   dbSelectArea( 0 )
-
-   if ADSCreateSQLStatement( "ColumnLog", 7 )
-
-      lTrigger    := ADSExecuteSQLDirect( cTable )
-      if !lTrigger
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds + CRLF + cTable, 'ERROR CREATE TABLE en ADSExecuteSQLDirect' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds + CRLF + cTable, 'ERROR CREATE TABLE en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-Return ( Self )
+Return ( ::ExecuteSqlStatement( cTable, "ColumnLog" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -3628,7 +3500,7 @@ METHOD Auditor()
       REDEFINE BUTTON ;
          ID          150 ;
          OF          ::oFldAuditor:aDialogs[1] ;
-         ACTION      ( ::lSelectOperationLog() )
+         ACTION      ( ::InlineSelectOperationLog() )
 
       /*
       Operaciones -------------------------------------------------------------
@@ -3655,7 +3527,7 @@ METHOD Auditor()
       ::oBrwOperation:bKeyCount              := {|| ( "SqlOperation" )->( ADSKeyCount( , , 1 ) ) }
 */
 
-      ::oBrwOperation:bChange                := {|| ::lSelectColumnLog( SqlOperation->Id ), ::oBrwColumn:GoTop(), ::oBrwColumn:Refresh() }
+      ::oBrwOperation:bChange                := {|| ::InlineSelectColumnLog( SqlOperation->Id ) }
 
       ::oBrwOperation:CreateFromResource( 200 )
 
@@ -3837,11 +3709,7 @@ METHOD lSelectOperationLog()
    local lOk
    local cStm
    local cOpe
-   local nError
-   local cErrorAds
    local cDateFormat
-
-   CursorWait()
 
    cDateFormat    := Set( _SET_DATEFORMAT )
 
@@ -3886,22 +3754,13 @@ METHOD lSelectOperationLog()
 
    lOk            := ::ExecuteSqlStatement( cStm, "SqlOperation" )
 
+   ? ( "SqlOperation")->( LastRec() )
+
    /*
    Dejamos la fechas como estaban----------------------------------------------
    */
 
    Set( _SET_DATEFORMAT, cDateFormat )
-
-   /*
-   Refresh en pantalla --------------------------------------------------------
-   */
-
-   if !Empty( ::oBrwOperation )
-      ::oBrwOperation:Refresh()
-      ::oBrwOperation:GoTop()
-   end if
-
-   CursorWE()
 
 RETURN ( lOk )
 
@@ -3909,15 +3768,9 @@ RETURN ( lOk )
 
 METHOD lSelectColumnLog( nOperationId )
 
-   local lOk
    local cStm
-   local cOpe
-   local nError
-   local cErrorAds
 
    DEFAULT nOperationId    := 0
-
-   CursorWait()
 
    /*
    Creamos la instruccion------------------------------------------------------
@@ -3932,15 +3785,7 @@ METHOD lSelectColumnLog( nOperationId )
 
    ::CloseColumnLog()
 
-   /*
-   Creamos la snetencia--------------------------------------------------------
-   */
-
-   lOk            := ::ExecuteSqlStatement( cStm, "SqlColumn" )
-
-   CursorWE()
-
-RETURN ( lOk )
+RETURN ( ::ExecuteSqlStatement( cStm, "SqlColumn" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4090,21 +3935,7 @@ Return ( cDescription )
 
 METHOD cOperationDescription( cOperation )
 
-   local cDescription   := "Desconocido"
-
-   do case
-      case cOperation == "INSERT"
-         cDescription   := "Añadido"
-
-      case cOperation == "UPDATE"
-         cDescription   := "Modificado"
-
-      case cOperation == "DELETE"
-         cDescription   := "Eliminado"
-
-   end case
-
-Return ( cDescription )
+Return ( ::hOperationDescription[ cOperation ] )
 
 //---------------------------------------------------------------------------//
 
@@ -4511,10 +4342,7 @@ Return ( Self )
 
 METHOD DisableTriggers()
 
-   local lOk
    local cStm
-   local nError
-   local cErrorAds
 
    /*
    Creamos la instruccion------------------------------------------------------
@@ -4522,42 +4350,13 @@ METHOD DisableTriggers()
 
    cStm           := "EXECUTE PROCEDURE sp_disableTriggers( NULL, NULL, FALSE, 0 );"
 
-   /*
-   Creamos la snetencia--------------------------------------------------------
-   */
-
-   if ADSCreateSQLStatement( "DisableTriggers", 7 )
-
-      lOk         := ADSExecuteSQLDirect( cStm )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-   if Select( "DisableTriggers" ) > 0
-      ( "DisableTriggers" )->( dbCloseArea() )
-   endif
-
-RETURN ( lOk )
+RETURN ( ::ExecuteSqlStatement( cStm, "DisableTriggers" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD EnableTriggers()
 
-   local lOk
    local cStm
-   local nError
-   local cErrorAds
 
    /*
    Creamos la instruccion------------------------------------------------------
@@ -4565,42 +4364,13 @@ METHOD EnableTriggers()
 
    cStm           := "EXECUTE PROCEDURE sp_enableTriggers( NULL, NULL, FALSE, 0 );"
 
-   /*
-   Creamos la snetencia--------------------------------------------------------
-   */
-
-   if ADSCreateSQLStatement( "EnableTriggers", 7 )
-
-      lOk         := ADSExecuteSQLDirect( cStm )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-   if Select( "EnableTriggers" ) > 0
-      ( "EnableTriggers" )->( dbCloseArea() )
-   endif
-
-RETURN ( lOk )
+RETURN ( ::ExecuteSqlStatement( cStm, "EnableTriggers" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD SetAplicationID( cNombreUsuario )
 
-   local lOk
    local cStm
-   local nError
-   local cErrorAds
 
    DEFAULT cNombreUsuario := "Administrador"
 
@@ -4610,34 +4380,7 @@ METHOD SetAplicationID( cNombreUsuario )
 
    cStm                    := "EXECUTE PROCEDURE sp_SetApplicationID( '" + Alltrim( cNombreUsuario ) + "' ) ;"
 
-   /*
-   Creamos la snetencia--------------------------------------------------------
-   */
-
-   if ADSCreateSQLStatement( "SetAplicationID", 7 )
-
-      lOk         := ADSExecuteSQLDirect( cStm )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
-      endif
-
-   else
-
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( nError, 'ERROR en ADSCreateSQLStatement' )
-      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   AdsCacheOpenCursors( 0 )
-   AdsClrCallBack()
-
-   if Select( "SetAplicationID" ) > 0
-      ( "SetAplicationID" )->( dbCloseArea() )
-   endif
-
-RETURN ( lOk )
+RETURN ( ::ExecuteSqlStatement( cStm, "SetAplicationID" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4646,6 +4389,10 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    local lOk
    local nError
    local cErrorAds
+
+   CursorWait()
+
+   dbSelectArea( 0 )
 
    lOk            := ADSCreateSQLStatement( cSqlStatement, 7 )
 
@@ -4668,6 +4415,13 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
       AdsCacheOpenCursors( 0 )
       AdsClrCallBack()
    endif
+
+/*
+   if Select( cSqlStatement ) > 0
+      ( cSqlStatement )->( dbCloseArea() )
+   endif
+*/
+   CursorWE()
 
 RETURN ( lOk )
 

@@ -283,7 +283,7 @@ METHOD GenIndices( oMsg )
          if ::lNotGrupo
 
             ::SetText( "Generando índices : Grupos de ventas", ::aProgress[ 2 ] )      ; rxGrpVenta( ::cPathEmp )
-            ::SetText( "Generando índices : Documentos", ::aProgress[ 2 ] )            ; rxDocs(     ::cPathEmp, , .t. )
+            ::SetText( "Generando índices : Documentos", ::aProgress[ 2 ] )            ; rxDocs(     ::cPathEmp )
             ::SetText( "Generando índices : Tarifas de precios", ::aProgress[ 2 ] )    ; rxTarifa(   ::cPatArt )
             ::SetText( "Generando índices : Promociones", ::aProgress[ 2 ] )           ; rxPromo(    ::cPatArt )
             ::SetText( "Generando índices : Movimientos", ::aProgress[ 2 ] )           ; rxHisMov(   ::cPathEmp )

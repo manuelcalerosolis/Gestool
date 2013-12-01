@@ -1901,7 +1901,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       /*
       Añadimos un nuevo registro
       */
-
+ 
       if ::InsertIfValid()
          ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta )
       end if

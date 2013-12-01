@@ -79,6 +79,7 @@ function Main( cParams )
    local cAdsType
    local cAdsIp
    local cAdsData
+   local cAdsLocal
    local nAdsServer
    
    local dbfUser
@@ -117,6 +118,8 @@ function Main( cParams )
    cAdsType          := GetPvProfString(  "ADS", "Type",     "",   FullCurDir() + "GstApolo.Ini" )
    cAdsData          := GetPvProfString(  "ADS", "Data",     "",   FullCurDir() + "GstApolo.Ini" )
    nAdsServer        := GetPvProfInt(     "ADS", "Server",   7,    FullCurDir() + "GstApolo.Ini" )
+   cAdsLocal         := GetPvProfString(  "ADS", "Local",    "",   FullCurDir() + "GstApolo.Ini" )
+
 
    // Motor de bases de datos--------------------------------------------------
 
@@ -126,6 +129,7 @@ function Main( cParams )
       cIp( cAdsIp )
       cData( cAdsData )
       nAdsServer( nAdsServer )
+      cAdsLocal( cAdsLocal )
 
       RddRegister(   'ADS', 1 )
       RddSetDefault( 'ADSCDX' )
