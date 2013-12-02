@@ -391,6 +391,14 @@ FUNCTION cGetValue( xVal, cType )
 
    DEFAULT cType  := ValType( xVal )
 
+   xVal           := AllTrim( xVal )
+
+   if left( xVal, 1 ) == "{" .and. right( xVal, 1 ) == "}"
+      xVal        := StrTran( xVal, "{", "" )
+      xVal        := StrTran( xVal, "}", "" )
+      xVal        := Eval( Compile( xVal ) )
+   end if
+
    do case
       case cType == "C" .or. cType == "M"
 

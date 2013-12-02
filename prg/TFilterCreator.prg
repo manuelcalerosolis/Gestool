@@ -76,6 +76,8 @@ CLASS TFilterCreator
    METHOD SetTextExpresion( cExpresion )     INLINE ( ::cExpresionFilter := cExpresion )
    METHOD GetTextExpresion()                 INLINE ( ::cExpresionFilter )
 
+   METHOD QuitExpresion()                    INLINE ( ::cExpresionFilter := "", ::bExpresionFilter := nil )
+
 	METHOD SetFields( aFieldStructure ) 
    METHOD SetDatabase( oDatabase )           
 
@@ -318,9 +320,9 @@ CLASS TFilterDialog
    METHOD ActivateDialog( cFilterName )
 
    METHOD InitDialog( cFilterName )
+   METHOD QuitDialog()
    METHOD EndDialog()
 
-   
    METHOD Save()     
    METHOD Load()          
    METHOD Delete()
@@ -445,6 +447,11 @@ METHOD ActivateDialog( cFilterName ) CLASS TFilterDialog
       */
 
       REDEFINE BUTTON ;
+         ID          3 ;
+         OF          ( ::oDlg );
+         ACTION      ( ::QuitDialog() )
+
+      REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ( ::oDlg );
          ACTION      ( ::EndDialog() )
@@ -475,6 +482,16 @@ METHOD InitDialog( cFilterName ) CLASS TFilterDialog
    else 
       ::oBrwAlmacenados:GoTop()
    end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD QuitDialog() CLASS TFilterDialog
+
+   ::oFilterCreator:QuitExpresion()
+   
+   ::oDlg:End()
 
 RETURN ( Self )
 
