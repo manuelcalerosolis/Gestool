@@ -5305,12 +5305,13 @@ Return ( nStockArticulo )
 METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
    local nStockArticulo := 0
+   local aSto
 
    ::aStockArticulo( cCodArt, cCodAlm  )
 
-   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )    .and.;
-                              ( Empty( cValPr1 ) .or. cValPr1 == o:cCodigoPropiedad1 ) .and.;
-                              ( Empty( cValPr2 ) .or. cValPr2 == o:cCodigoPropiedad2 ) .and.;                  
+   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )  .and.;
+                              ( Empty( cValPr1 ) .or. cValPr1 == o:cValorPropiedad ) .and.;
+                              ( Empty( cValPr2 ) .or. cValPr2 == o:cValorPropiedad ) .and.;                  
                               ( Empty( cLote   ) .or. cLote   == o:cLote   ),;
                               nStockArticulo += o:nUnidades, ) } )
 
