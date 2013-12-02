@@ -6133,6 +6133,12 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
+Function nStockLineaAlbPrv()
+
+Return ( oStock:nTotStockAct( ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->cAlmLin, ( dbfAlbPrvL )->cValPr1, ( dbfAlbPrvL )->cValPr2 ) )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION BrwAlbPrv( oGetNum, dbfAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv )
 
 	local oDlg
@@ -11180,36 +11186,36 @@ Static Function VariableReport( oFr )
    Creación de variables----------------------------------------------------
    */
 
-   oFr:AddVariable(     "Albaranes",             "Total albaran",                       "GetHbVar('nTotAlb')" )
-   oFr:AddVariable(     "Albaranes",             "Total bruto",                         "GetHbVar('nTotBrt')" )
-   oFr:AddVariable(     "Albaranes",             "Total descuento",                     "GetHbVar('nTotDto')" )
-   oFr:AddVariable(     "Albaranes",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
-   oFr:AddVariable(     "Albaranes",             "Total bruto",                         "GetHbVar('nTotBrt')" )
-   oFr:AddVariable(     "Albaranes",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
-   oFr:AddVariable(     "Albaranes",             "Total neto",                          "GetHbVar('nTotNet')" )
-   oFr:AddVariable(     "Albaranes",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
-   oFr:AddVariable(     "Albaranes",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "Albaranes",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
-   oFr:AddVariable(     "Albaranes",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "Albaranes",             "Total retención",                     "GetHbVar('nTotRet')" )
-   oFr:AddVariable(     "Albaranes",             "Bruto primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',1)" )
-   oFr:AddVariable(     "Albaranes",             "Bruto segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',1)" )
-   oFr:AddVariable(     "Albaranes",             "Bruto tercer tipo de " + cImp(),            "GetHbArrayVar('aIvaTre',1)" )
-   oFr:AddVariable(     "Albaranes",             "Base primer tipo de " + cImp(),             "GetHbArrayVar('aIvaUno',2)" )
-   oFr:AddVariable(     "Albaranes",             "Base segundo tipo de " + cImp(),            "GetHbArrayVar('aIvaDos',2)" )
-   oFr:AddVariable(     "Albaranes",             "Base tercer tipo de " + cImp(),             "GetHbArrayVar('aIvaTre',2)" )
-   oFr:AddVariable(     "Albaranes",             "Porcentaje primer tipo " + cImp(),          "GetHbArrayVar('aIvaUno',3)" )
-   oFr:AddVariable(     "Albaranes",             "Porcentaje segundo tipo " + cImp(),         "GetHbArrayVar('aIvaDos',3)" )
-   oFr:AddVariable(     "Albaranes",             "Porcentaje tercer tipo " + cImp(),          "GetHbArrayVar('aIvaTre',3)" )
-   oFr:AddVariable(     "Albaranes",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
-   oFr:AddVariable(     "Albaranes",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
-   oFr:AddVariable(     "Albaranes",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
-   oFr:AddVariable(     "Albaranes",             "Importe primer tipo " + cImp(),             "GetHbArrayVar('aIvaUno',5)" )
-   oFr:AddVariable(     "Albaranes",             "Importe segundo tipo " + cImp(),            "GetHbArrayVar('aIvaDos',5)" )
-   oFr:AddVariable(     "Albaranes",             "Importe tercer tipo " + cImp(),             "GetHbArrayVar('aIvaTre',5)" )
-   oFr:AddVariable(     "Albaranes",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',6)" )
-   oFr:AddVariable(     "Albaranes",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',6)" )
-   oFr:AddVariable(     "Albaranes",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',6)" )
+   oFr:AddVariable(     "Albaranes",             "Total albaran",                            "GetHbVar('nTotAlb')" )
+   oFr:AddVariable(     "Albaranes",             "Total bruto",                              "GetHbVar('nTotBrt')" )
+   oFr:AddVariable(     "Albaranes",             "Total descuento",                          "GetHbVar('nTotDto')" )
+   oFr:AddVariable(     "Albaranes",             "Total descuento pronto pago",              "GetHbVar('nTotDpp')" )
+   oFr:AddVariable(     "Albaranes",             "Total bruto",                              "GetHbVar('nTotBrt')" )
+   oFr:AddVariable(     "Albaranes",             "Total descuento pronto pago",              "GetHbVar('nTotDpp')" )
+   oFr:AddVariable(     "Albaranes",             "Total neto",                               "GetHbVar('nTotNet')" )
+   oFr:AddVariable(     "Albaranes",             "Total primer descuento definible",         "GetHbVar('nTotUno')" )
+   oFr:AddVariable(     "Albaranes",             "Total segundo descuento definible",        "GetHbVar('nTotDos')" )
+   oFr:AddVariable(     "Albaranes",             "Total " + cImp(),                          "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Albaranes",             "Total RE",                                 "GetHbVar('nTotReq')" )
+   oFr:AddVariable(     "Albaranes",             "Total retención",                          "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "Albaranes",             "Bruto primer tipo de " + cImp(),           "GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable(     "Albaranes",             "Bruto segundo tipo de " + cImp(),          "GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable(     "Albaranes",             "Bruto tercer tipo de " + cImp(),           "GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable(     "Albaranes",             "Base primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable(     "Albaranes",             "Base segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable(     "Albaranes",             "Base tercer tipo de " + cImp(),            "GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable(     "Albaranes",             "Porcentaje primer tipo " + cImp(),         "GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable(     "Albaranes",             "Porcentaje segundo tipo " + cImp(),        "GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable(     "Albaranes",             "Porcentaje tercer tipo " + cImp(),         "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable(     "Albaranes",             "Porcentaje primer tipo RE",                "GetHbArrayVar('aIvaUno',4)" )
+   oFr:AddVariable(     "Albaranes",             "Porcentaje segundo tipo RE",               "GetHbArrayVar('aIvaDos',4)" )
+   oFr:AddVariable(     "Albaranes",             "Porcentaje tercer tipo RE",                "GetHbArrayVar('aIvaTre',4)" )
+   oFr:AddVariable(     "Albaranes",             "Importe primer tipo " + cImp(),            "GetHbArrayVar('aIvaUno',5)" )
+   oFr:AddVariable(     "Albaranes",             "Importe segundo tipo " + cImp(),           "GetHbArrayVar('aIvaDos',5)" )
+   oFr:AddVariable(     "Albaranes",             "Importe tercer tipo " + cImp(),            "GetHbArrayVar('aIvaTre',5)" )
+   oFr:AddVariable(     "Albaranes",             "Importe primer RE",                        "GetHbArrayVar('aIvaUno',6)" )
+   oFr:AddVariable(     "Albaranes",             "Importe segundo RE",                       "GetHbArrayVar('aIvaDos',6)" )
+   oFr:AddVariable(     "Albaranes",             "Importe tercer RE",                        "GetHbArrayVar('aIvaTre',6)" )
 
    oFr:AddVariable(     "Lineas de albaranes",   "Código del artículo con propiedades",      "CallHbFunc('cCodAlbPrv')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                     "CallHbFunc('cDesAlbPrv')" )
@@ -11218,6 +11224,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",                   "CallHbFunc('nTotLAlbPrv')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Código de barras para primera propiedad",  "CallHbFunc('cBarPrp1')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Código de barras para segunda propiedad",  "CallHbFunc('cBarPrp2')" )
+
+   oFr:AddVariable(     "Lineas de albaranes",   "Stock actual en almacén",                  "CallHbFunc('nStockLineaAlbPrv')" )
 
 Return nil
 

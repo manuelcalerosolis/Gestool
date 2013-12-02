@@ -57,13 +57,15 @@ METHOD OpenFiles() CLASS PInfDiaParte
 
    BEGIN SEQUENCE
 
-      ::oProduccT    :=  TProduccion():Create( cPatEmp() )
+      ::oProduccT    := TProduccion():New( cPatEmp() )
       ::oProduccT:OpenFiles()
 
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
+      
       ::CloseFiles()
+      
       lOpen          := .f.
 
    END SEQUENCE

@@ -165,8 +165,8 @@ METHOD lGenerate()
       cExpLine       += ' .and. cCodPgo >= "' + ::cFpgDes + '" .and. cCodPgo <= "' + ::cFpgHas + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
+   if !Empty( ::oFilter:cExpresionFilter ) 
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -229,8 +229,8 @@ METHOD lGenerate()
       cExpLine       += ' .and. cCodPgo >= "' + ::cFpgDes + '" .and. cCodPgo <= "' + ::cFpgHas + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 2
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 2 ]
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

@@ -360,9 +360,9 @@ METHOD Resource( nMode )
 
       REDEFINE GET aGet[ _NIVA ] VAR ::oDbfVir:nIva ;
          ID       200 ;
-         WHEN     ( lModIva() .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( ( lModIva() .or. Empty( ::oDbfVir:cCodArt ) .and. nMode != ZOOM_MODE ) );
          PICTURE  "@E 999.99" ;
-         BITMAP   "LUPA" ;
+         BITMAP   "Lupa" ;
          OF       oDlg
 
          aGet[ _NIVA ]:bValid    := {|| lTiva( ::oDbfIva:cAlias, ::oDbfVir:nIva ) }

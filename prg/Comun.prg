@@ -31,6 +31,8 @@ static lCdx             := .f.
 
 static cIp              := ""
 static cData            := ""
+static nAdsServer       := 7
+static cAdsLocal        := ""
 
 static dSysDate
 
@@ -231,6 +233,26 @@ Return ( if( !Empty( cData ), cPath( cData ), "" ) )
 
 //----------------------------------------------------------------------------//
 
+Function nAdsServer( nServer )
+
+   if IsNum( nServer )
+      nAdsServer  := nServer
+   end if
+
+Return ( nAdsServer )
+
+//----------------------------------------------------------------------------//
+
+Function cAdsLocal( cLocal )
+
+   if IsChar( cLocal )
+      cAdsLocal    := cLocal
+   end if
+
+Return ( cAdsLocal )
+
+//----------------------------------------------------------------------------//
+
 Function cAdsUNC()
 
    if ( "localhost" $ cIp() )
@@ -326,14 +348,6 @@ Funciones para gst rotor
 */
 //---------------------------------------------------------------------------//
 
-#ifdef __SQLLIB__
-
-Function cPatDat()
-
-Return ( "Datos\" )
-
-#else
-
 Function cPatDat( lFull )
 
    DEFAULT lFull  := .f.
@@ -344,6 +358,30 @@ Function cPatDat( lFull )
 
    if lAIS() .and. lFull
       Return ( cAdsUNC() + "Datos\" )
+   end if
+
+   if lAIS() .and. !lFull
+      Return ( "Datos" )
+   end if
+
+   if lCdx()
+      Return ( FullCurDir() + "Datos\" )
+   end if
+
+Return ( FullCurDir() + "Datos\" )
+
+//----------------------------------------------------------------------------//
+
+Function cPatDatLocal( lFull )
+
+   DEFAULT lFull  := .f.
+
+   if lAds()
+      Return ( cAdsLocal() + "Datos\" )
+   end if
+
+   if lAIS() .and. lFull
+      Return ( cAdsLocal() + "Datos\" )
    end if
 
    if lAIS() .and. !lFull
@@ -1520,60 +1558,6 @@ Return ( GetPvProfInt( "browse", cName, 2, cPatEmp() + "Empresa.Ini" ) )
 
 //---------------------------------------------------------------------------//
 
-#else
-
-//---------------------------------------------------------------------------//
-/*
-funciones para gst PDA
-*/
-//---------------------------------------------------------------------------//
-
-Function cPatDat()
-
-Return ( CurDir() + "\Datos\" )
-
-//---------------------------------------------------------------------------//
-
-Function cPatBmp()
-
-Return ( CurDir() + "\Bmp\" )
-
-//---------------------------------------------------------------------------//
-
-Function cPatTmp()
-
-Return ( CurDir() + "\Tmp\")
-
-//---------------------------------------------------------------------------//
-
-Function FullCurDir( lInvert )
-
-   local cFullCurDir := CurDir() + "\"
-
-   if IsTrue( lInvert )
-      StrTran( cFullCurDir, "\", "/" )
-   end if
-
-Return ( cFullCurDir )
-
-//---------------------------------------------------------------------------//
-
-Function SetBrwOpt( cName, cOption )
-
-Return ( "" )
-
-//---------------------------------------------------------------------------//
-
-Function GetBrwOpt( cName )
-
-Return ( 2 )
-
-//---------------------------------------------------------------------------//
-
-#endif
-
-//---------------------------------------------------------------------------//
-
 Function cPatPc( cPath )
 
    if !Empty( cPath )
@@ -1582,11 +1566,6 @@ Function cPatPc( cPath )
 
 Return ( cPathPc )
 
-//----------------------------------------------------------------------------//
-
-/*
-funciones tanto para gst PDA como para gst rotor
-*/
 //---------------------------------------------------------------------------//
 
 Function cEmpUsr( cEmp )
@@ -2087,23 +2066,9 @@ FUNCTION cPatPrv( cPath, lFull, lEmpresa )
       Return ( FullCurDir() + cPatPrv + "\" )
    end if
 
-#ifdef __SQLLIB__
-   Return ( cPatPrv + "\" )
-#else
    Return ( if( !lFull, FullCurDir(), "" ) + cPatPrv + "\" )
-#endif
 
 //---------------------------------------------------------------------------//
-
-#else
-
-FUNCTION cPatPrv(); Return ( cPatGrp() )
-
-//---------------------------------------------------------------------------//
-
-#endif
-
-#ifndef __PDA__
 
 FUNCTION cPatAlm( cPath, lFull, lEmpresa )
 
@@ -2136,21 +2101,9 @@ FUNCTION cPatAlm( cPath, lFull, lEmpresa )
       Return ( FullCurDir() + cPatAlm + "\" )
    end if
 
-#ifdef __SQLLIB__
-Return ( cPatAlm + "\" )
-#else
 Return ( if( lFull, FullCurDir(), "" ) + cPatAlm + "\" )
-#endif
 
 //---------------------------------------------------------------------------//
-
-#else
-
-FUNCTION cPatAlm(); Return ( cPatGrp() )
-
-//---------------------------------------------------------------------------//
-
-#endif
 
 Function GetSysDate()
 
@@ -2193,11 +2146,7 @@ Return ( if( lFull, FullCurDir(), "" ) + cPatEmp + "\" )
 
 Function IsMuebles()
 
-#ifndef __PDA__
-   Return ( "MUEBLES" $ cParamsMain() )
-#else
-   Return .f.
-#endif
+Return ( "MUEBLES" $ cParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -2441,77 +2390,6 @@ Function LogWrite( cText, cFileName )
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-
-#ifdef __908__
-
-FUNCTION CtrlConnection( cIp )
-
-   	local oDlg
-   	local oBmp
-      local pConn
-   	local oBrush
-   	local lRetry	:= .t.
-
-	cIp	  			:= Padr( cIp, 100 )
-
-   	while lRetry
-
-   	pConn          	:= Net_OpenConnection( Alltrim( cIP ), 2813 )
-
-	if Empty( pConn )
-
-   		DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
-
-   		DEFINE DIALOG oDlg RESOURCE "InitConnect" BRUSH oBrush
-
-   		REDEFINE BITMAP oBmp ;
-      		RESOURCE "Lock_48" ;
-      		ID       600;
-      		OF       oDlg
-
-	   	REDEFINE GET cIp ;
-	   		ID       110 ;
-      		COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
-      		OF       oDlg
-
-         REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 120 OF oDlg
-
-   		REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 130 OF oDlg
-
-         TWebBtn():Redefine( 200,,,,, {|| goWeb( __GSTWEB__  ) }, oDlg,,,,, "LEFT",,,,, ( 255 * 65536 ), ( 255 * 65536 ) ):SetTransparent()
-
-   		REDEFINE BUTTON ;
-      		ID       IDOK ;
-      		OF       oDlg ;
-      		ACTION   ( oDlg:End( IDOK ) )
-
-   		REDEFINE BUTTON ;
-      		ID       IDCANCEL ;
-      		OF       oDlg ;
-      		ACTION   ( lRetry := .f., oDlg:End() ) 
-
-   		ACTIVATE DIALOG oDlg CENTER
-
-	   oBmp:end()
-   	   oBrush:end()
-
-		if oDlg:nResult != IDOK
-			return .f.
-		end if
-
-	else
-
-		lRetry		:= .f.
-
-	end if
-
-   	end while
-
-return .t.
-
-#endif
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
@@ -2551,36 +2429,11 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-
-/*
-Function cPatIn( lShort )
-
-   DEFAULT lShort  := .f.
-
-Return ( if( !lShort, FullCurDir(), "" ) + "In\" )
-*/
-
-//----------------------------------------------------------------------------//
-
-#ifndef __PDA__
-
 Function cPatLog( lShort )
 
    DEFAULT lShort  := .f.
 
 Return ( if( !lShort, FullCurDir(), "" ) + "Log\" )
-
-#else
-
-//---------------------------------------------------------------------------//
-
-Function cPatLog( lShort )
-
-   DEFAULT lShort  := .f.
-
-Return ( if( !lShort, AllTrim( cNombrePC() ), "" ) + "Log\" )
-
-#endif
 
 //----------------------------------------------------------------------------//
 
@@ -2594,7 +2447,6 @@ Return ( cCodEmp )
 
 //--------------------------------------------------------------------------//
 
-#ifndef __PDA__
 
 PROCEDURE xmlIterator( cFileName, cNode, cAttrib, cValue, cData )
 
@@ -2693,8 +2545,6 @@ endif
 
 
 RETURN
-
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -2947,150 +2797,6 @@ Function lValidMail( cMail )
 Return ( HB_RegExMatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", cMail, .f. ) )
 
 //----------------------------------------------------------------------------//
-/*
-#pragma BEGINDUMP
-
-#define STRICT
-#include <windows.h>
-#include <algorithm>
-using std::min;
-using std::max;
-#include <gdiplus.h>
-#include "hbapi.h"
-
-using namespace Gdiplus;
-
-static  GdiplusStartupInput gdiplusStartupInput;
-static  ULONG_PTR gdiplusToken;
-
-LPSTR WideToAnsi( BSTR wString )
-  {
-     char *cString;
-     int nConvertedLen = WideCharToMultiByte( CP_ACP, 0, wString, -1, NULL, 0, NULL, NULL );
-
-     if( nConvertedLen )
-     {
-        cString = (char *) hb_xgrab( nConvertedLen );
-        WideCharToMultiByte( CP_ACP, 0, wString, -1, cString, nConvertedLen, NULL, NULL );
-     }
-     else
-     {
-        cString = (char *) hb_xgrab( 1 );
-        cString[0] = '\0';
-     }
-
-     //wprintf( L"\nWide: '%s'\n", wString );
-     //printf( "\nAnsi: '%s'\n", cString );
-
-     return cString;
-  }
-
-   LPWSTR AnsiToWide( LPSTR cAnsi )
-   {
-      WORD wLen;
-      LPWSTR cString;
-
-      wLen  = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, cAnsi, -1, 0, 0 );
-
-      cString = (LPWSTR) hb_xgrab( wLen * 2 );
-      MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, cAnsi, -1, cString, wLen );
-
-      return ( cString );
-   }
-
-HB_FUNC( GDIPLUSSTARTUP )
-{
-
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-    hb_retni( (int) gdiplusToken );
-
-}
-
-HB_FUNC( GDIPLUSSHUTDOWN )
-{
-    GdiplusShutdown(gdiplusToken);
-    hb_ret();
-}
-
-HB_FUNC( PRUEBA )
-{
-  HDC hdc = (HDC) hb_parnl( 1 );
-
-   Graphics graphics(hdc);
-   Pen pen(Color(255, 0, 0, 255));
-
-   Matrix matrix;
-   matrix.Rotate(30.0f);                                 // first a rotation
-   matrix.Translate(150.0f, 100.0f, MatrixOrderAppend);  // then a translation
-
-   graphics.SetTransform(&matrix);
-
-   // Draw a tramsformed ellipse. The composite transformation
-   // is rotate 30 degrees, then translate 150 right and 100 down.
-   graphics.DrawEllipse(&pen, -40, -20, 80, 40);
-
-   // Draw rotated axes with the origin at the center of the ellipse.
-   graphics.DrawLine(&pen, -50, 0, 50, 0);
-   graphics.DrawLine(&pen, 0, -50, 0, 50);
-
-  hb_ret();
-}
-
-HB_FUNC( GRAPHICS )
-{
-   Graphics* pg = new Graphics( (HDC) hb_parnl( 1 ) );
-   hb_retnl( (long) pg );
-}
-
-HB_FUNC( DELETEG )
-{
-   Graphics* p = (Graphics*) hb_parnl( 1 );
-   delete p;
-   hb_ret();
-}
-
-HB_FUNC( DRAWIMAGE )
-{
-   Graphics* g = (Graphics*) hb_parnl( 1 );
-   Image* image = (Image*) hb_parnl( 2 );
-   g->DrawImage(image, (REAL) hb_parni( 4 ), (REAL) hb_parni( 3 ), (REAL)hb_parni( 5 ),  (REAL)hb_parni( 6 ) );
-}
-
-HB_FUNC( DELETEP )
-{
-   Image* p = (Image*) hb_parnl( 1 );
-   delete p;
-   hb_ret();
-}
-
-HB_FUNC( IMAGE )
-{
-   WCHAR* cImage =  AnsiToWide( (LPSTR) hb_parc( 1 ) );
-   //Image* i = new GdiPlus::Image(cImage, FALSE));
-   Image* i = new Image(cImage, FALSE);
-   hb_retnl( (long) i );
-}
-
-HB_FUNC( GDIPLOADIMAGEFROMFILE )
-{
-    Image* image;
-    WCHAR* filename =  AnsiToWide( (LPSTR)hb_parc( 1 ));
-    image = new Image( filename, FALSE );
-    hb_retnl( (long) image );
-}
-
-#pragma ENDDUMP
-*/
-//----------------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
 
 
 

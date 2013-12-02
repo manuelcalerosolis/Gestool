@@ -12842,16 +12842,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
    oFr:AddVariable(     "Facturas",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
    oFr:AddVariable(     "Facturas",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
-   oFr:AddVariable(     "Facturas",             "Saldo envase 16%",                    "CallHbFunc('nTotalSaldo16')" )
-   oFr:AddVariable(     "Facturas",             "Saldo envase 8%",                     "CallHbFunc('nTotalSaldo8')" )
-   oFr:AddVariable(     "Facturas",             "Saldo envase 4%",                     "CallHbFunc('nTotalSaldo4')" )
-   oFr:AddVariable(     "Facturas",             "Saldo actual envase 16%",             "CallHbFunc('nSaldoDoc16')" )
-   oFr:AddVariable(     "Facturas",             "Saldo actual envase 8%",              "CallHbFunc('nSaldoDoc8')" )
-   oFr:AddVariable(     "Facturas",             "Saldo actual envase 4%",              "CallHbFunc('nSaldoDoc4')" )
-   oFr:AddVariable(     "Facturas",             "Saldo anterior envase 16%",           "CallHbFunc('nSaldoAnt16')" )
-   oFr:AddVariable(     "Facturas",             "Saldo anterior envase 8%",            "CallHbFunc('nSaldoAnt8')" )
-   oFr:AddVariable(     "Facturas",             "Saldo anterior envase 4%",            "CallHbFunc('nSaldoAnt4')" )
-
+   
    oFr:AddVariable(     "Facturas",             "Cuenta bancaria cliente",                         "CallHbFunc('cCtaFacCli')" )
 
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                            "CallHbFunc('cDesFacCli')" )
@@ -12870,6 +12861,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
 
    oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   "CallHbFunc('cFacturaClienteDireccionSAT')" )
+
+   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             "CallHbFunc('nStockLineaFasCli')" )
 
 Return nil
 
@@ -21270,95 +21263,9 @@ RETURN nil
 Funcion exclusiva para envases Bodegas Raposo
 */
 
-Function nTotalSaldo16( cCodArt, cCodCli, dFecha )
+Function nStockLineaFacCli()
 
-   DEFAULT cCodArt   := Padr( "16", 18 )
-   DEFAULT cCodCli   := ( dbfFacCliT )->cCodCli
-   DEFAULT dFecha    := ( dbfFacCliT )->dFecFac
-
-Return oStock:nTotalSaldo( cCodArt, cCodCli, dFecha )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nTotalSaldo8( cCodArt, cCodCli, dFecha )
-
-   DEFAULT cCodArt   := Padr( "8", 18 )
-   DEFAULT cCodCli   := ( dbfFacCliT )->cCodCli
-   DEFAULT dFecha    := ( dbfFacCliT )->dFecFac
-
-Return oStock:nTotalSaldo( cCodArt, cCodCli, dFecha )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nTotalSaldo4( cCodArt, cCodCli, dFecha )
-
-   DEFAULT cCodArt   := Padr( "4", 18 )
-   DEFAULT cCodCli   := ( dbfFacCliT )->cCodCli
-   DEFAULT dFecha    := ( dbfFacCliT )->dFecFac
-
-Return oStock:nTotalSaldo( cCodArt, cCodCli, dFecha )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nSaldoDoc16( cCodArt, cNumDoc )
-
-   DEFAULT cCodArt   := Padr( "16", 18 )
-   DEFAULT cNumDoc   := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-
-Return oStock:nSaldoDocumento( cCodArt, cNumDoc )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nSaldoDoc8( cCodArt, cNumDoc )
-
-   DEFAULT cCodArt   := Padr( "8", 18 )
-   DEFAULT cNumDoc   := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-
-Return oStock:nSaldoDocumento( cCodArt, cNumDoc )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nSaldoDoc4( cCodArt, cNumDoc )
-
-   DEFAULT cCodArt   := Padr( "4", 18 )
-   DEFAULT cNumDoc   := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-
-Return oStock:nSaldoDocumento( cCodArt, cNumDoc )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nSaldoAnt16( cCodArt, cNumDoc )
-
-   DEFAULT cCodArt   := Padr( "16", 18 )
-   DEFAULT cNumDoc   := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-
-Return oStock:nSaldoAnterior( cCodArt, cNumDoc )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nSaldoAnt8( cCodArt, cNumDoc )
-
-   DEFAULT cCodArt   := Padr( "8", 18 )
-   DEFAULT cNumDoc   := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-
-Return oStock:nSaldoAnterior( cCodArt, cNumDoc )
-
-//---------------------------------------------------------------------------//
-/*Funcion exclusiva para envases Bodegas Raposo*/
-
-Function nSaldoAnt4( cCodArt, cNumDoc )
-
-   DEFAULT cCodArt   := Padr( "4", 18 )
-   DEFAULT cNumDoc   := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-
-Return oStock:nSaldoAnterior( cCodArt, cNumDoc )
+Return ( oStock:nTotStockAct( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2 ) )
 
 //---------------------------------------------------------------------------//
 

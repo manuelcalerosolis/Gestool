@@ -11139,6 +11139,12 @@ FUNCTION cBarPrp2FacPrv( uFacPrvL, uTblPro )
 RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//
+
+Function nStockLineaFacPrv()
+
+Return ( oStock:nTotStockAct( ( dbfFacPrvL )->cRef, ( dbfFacPrvL )->cAlmLin, ( dbfFacPrvL )->cValPr1, ( dbfFacPrvL )->cValPr2 ) )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
@@ -12447,6 +12453,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Total línea de factura",                    "CallHbFunc('nTotLFacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Código de barras para primera propiedad",   "CallHbFunc('cBarPrp1FacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Código de barras para segunda propiedad",   "CallHbFunc('cBarPrp2FacPrv')" )
+
+   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",                   "CallHbFunc('nStockLineaFacPrv')" )
 
 Return nil
 

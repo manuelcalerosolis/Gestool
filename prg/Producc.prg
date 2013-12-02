@@ -189,7 +189,7 @@ CLASS TProduccion FROM TMasDet
    Data oBrwLabel
 
    METHOD New( cPath, oWndParent, oMenuItem )
-   METHOD Create( cPath, oWndParent )
+   METHOD Create( cPath, oWndParent )  INLINE ( ::New( cPath, oWndParent ) )
 
    METHOD Activate()
 
@@ -207,8 +207,8 @@ CLASS TProduccion FROM TMasDet
 
    METHOD Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg )
 
-   METHOD nTotUnidades()   INLINE   ( NotCaja( ::oDbf:nCajArt ) * ::oDbf:nUndArt )
-   METHOD lTotUnidades()   INLINE   ( ::oGetTotalUnidades:cText( Round( ::nTotUnidades(), ::nDouDiv ) ), .t. )
+   METHOD nTotUnidades()               INLINE ( NotCaja( ::oDbf:nCajArt ) * ::oDbf:nUndArt )
+   METHOD lTotUnidades()               INLINE ( ::oGetTotalUnidades:cText( Round( ::nTotUnidades(), ::nDouDiv ) ), .t. )
 
    METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
@@ -243,10 +243,10 @@ CLASS TProduccion FROM TMasDet
    METHOD nTotalOperario( cDocOpe )
    METHOD nTotalVolumen( cDocumento )
 
-   METHOD nTotalParte()       INLINE ( ::oDetProduccion:nTotal( ::oDetProduccion:oDbfVir ) +;
-                                       ::oDetMaterial:nTotal( ::oDetMaterial:oDbfVir ) +;
+   METHOD nTotalParte()       INLINE ( ::oDetMaterial:nTotal( ::oDetMaterial:oDbfVir ) +;
                                        ::oDetPersonal:nTotal( ::oDetPersonal:oDbfVir, ::oDetHorasPersonal:oDbfVir ) +;
-                                       ::oDetMaquina:nTotal( ::oDetMaquina:oDbfVir ) )
+                                       ::oDetMaquina:nTotal( ::oDetMaquina:oDbfVir ) ) 
+   // ::oDetProduccion:nTotal( ::oDetProduccion:oDbfVir ) +;
 
    METHOD CalculaCostes()     
 
@@ -297,15 +297,19 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := GetWndFrame()
 
-   if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel             := nLevelUsr( oMenuItem )
-   else
-      ::nLevel             := 0
-   end if
+   if !Empty( oMenuItem )
 
-   if nAnd( ::nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return nil
+      if ::nLevel == nil
+         ::nLevel          := nLevelUsr( oMenuItem )
+      else
+         ::nLevel          := 0
+      end if
+
+      if nAnd( ::nLevel, 1 ) != 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end if
+
    end if
 
    ::cPath                 := cPath
@@ -351,58 +355,6 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::oTipoArticulo         := TTipArt():Create( cPatArt() )
 
    ::oFabricante           := TFabricantes():Create( cPatArt() )
-
-   ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
-   ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Create( cPath, oWndParent )
-
-   DEFAULT cPath           := cPatEmp()
-   DEFAULT oWndParent      := GetWndFrame()
-
-   ::cPath                 := cPath
-   ::oWndParent            := oWndParent
-
-   ::oOperario             := TOperarios():Create( cPath )
-
-   ::oOperacion            := TOperacion():CreateInit( cPath )
-
-   ::oMaquina              := TMaquina():CreateInit( cPath )
-
-   ::oSeccion              := TSeccion():Create( cPath )
-
-   ::oHoras                := THoras():Create( cPath )
-
-   ::oDetHoras             := TDetHoras():New( cPath, Self )
-
-   ::oDetHorasPersonal     := TDetHorasPersonal():New( cPath, Self )
-   ::AddDetail( ::oDetHorasPersonal )
-
-   ::oDetProduccion        := TDetProduccion():New( cPath, Self )
-   ::AddDetail( ::oDetProduccion )
-
-   ::oDetSeriesProduccion  := TDetSeriesProduccion():New( cPath, Self )
-   ::AddDetail( ::oDetSeriesProduccion )
-
-   ::oDetMaterial          := TDetMaterial():New( cPath, Self )
-   ::AddDetail( ::oDetMaterial )
-
-   ::oDetSeriesMaterial    := TDetSeriesMaterial():New( cPath, Self )
-   ::AddDetail( ::oDetSeriesMaterial )
-
-   ::oDetPersonal          := TDetPersonal():New( cPath, Self )
-   ::AddDetail( ::oDetPersonal )
-
-   ::oDetMaquina           := TDetMaquina():New( cPath, Self )
-   ::AddDetail( ::oDetMaquina )
-
-   ::oStock                := TStock():Create( cPatGrp() )
-
-   ::bFirstKey             := {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd }
 
    ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
    ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
@@ -694,12 +646,6 @@ METHOD OpenFiles( lExclusive )
       lOpen          := .f.
    end if 
 
-   if Empty( ::oDbfTemporal )
-      ::DefineTemporal()
-   end if
-
-   ::oDbfTemporal:Activate( .f., .f. )
-
    if !::oDetHoras:OpenFiles()
       lOpen          := .f.
    end if
@@ -724,9 +670,17 @@ METHOD OpenFiles( lExclusive )
       lOpen          := .f.
    end if
 
+
    if !::oStock:lOpenFiles()
       lOpen          := .f.
    end if
+
+
+   if Empty( ::oDbfTemporal )
+      ::DefineTemporal()
+   end if
+
+   ::oDbfTemporal:Activate( .f., .f. )
 
    RECOVER USING oError
 
@@ -3479,13 +3433,22 @@ RETURN ( .t. )
 
 METHOD CalculaCostes()     
 
-   local nTotalParte       := 0
+   local nCoste      := 0
 
-   nTotalParte             := ::nTotalParte() / ::oDetProduccion:nTotalUnidades( ::oDetProduccion:oDbfVir )
+   nCoste            := ::nTotalParte() / ::oDetProduccion:nTotalUnidades( ::oDetProduccion:oDbfVir )
+   nCoste            := Round( nCoste, ::nDouDiv )
 
-   MsgStop( nTotalParte, "nTotParte" )
+   ::oDetProduccion:oDbfVir:GetStatus()
+   ::oDetProduccion:oDbfVir:GoTop()
 
-RETURN ( nTotalParte )
+   while ( !::oDetProduccion:oDbfVir:Eof() )
+      ::oDetProduccion:oDbfVir:FieldPutByName( "nImpOrd", nCoste )
+      ::oDetProduccion:oDbfVir:Skip()
+   end while
+
+   ::oDetProduccion:oDbfVir:GetStatus()
+
+RETURN ( nCoste )
 
 //---------------------------------------------------------------------------//
 

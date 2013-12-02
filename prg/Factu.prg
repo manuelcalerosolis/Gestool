@@ -79,6 +79,9 @@ function Main( cParams )
    local cAdsType
    local cAdsIp
    local cAdsData
+   local cAdsLocal
+   local nAdsServer
+   
    local dbfUser
    local hAdsConnection
 
@@ -111,9 +114,12 @@ function Main( cParams )
       fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
    end if
 
-   cAdsIp            := GetPvProfString( "ADS", "Ip",    "", FullCurDir() + "GstApolo.Ini" )
-   cAdsType          := GetPvProfString( "ADS", "Type",  "", FullCurDir() + "GstApolo.Ini" )
-   cAdsData          := GetPvProfString( "ADS", "Data",  "", FullCurDir() + "GstApolo.Ini" )
+   cAdsIp            := GetPvProfString(  "ADS", "Ip",       "",   FullCurDir() + "GstApolo.Ini" )
+   cAdsType          := GetPvProfString(  "ADS", "Type",     "",   FullCurDir() + "GstApolo.Ini" )
+   cAdsData          := GetPvProfString(  "ADS", "Data",     "",   FullCurDir() + "GstApolo.Ini" )
+   nAdsServer        := GetPvProfInt(     "ADS", "Server",   7,    FullCurDir() + "GstApolo.Ini" )
+   cAdsLocal         := GetPvProfString(  "ADS", "Local",    "",   FullCurDir() + "GstApolo.Ini" )
+
 
    // Motor de bases de datos--------------------------------------------------
 
@@ -122,12 +128,14 @@ function Main( cParams )
       lAIS( .t. )
       cIp( cAdsIp )
       cData( cAdsData )
+      nAdsServer( nAdsServer )
+      cAdsLocal( cAdsLocal )
 
       RddRegister(   'ADS', 1 )
       RddSetDefault( 'ADSCDX' )
 
-      AdsSetServerType( 7 )   // TODOS
-      AdsSetFileType( 2 )     // ADS_CDX
+      AdsSetServerType( nAdsServer() )    // TODOS
+      AdsSetFileType( 2 )                 // ADS_CDX
 
       AdsRightsCheck( .f. )
 

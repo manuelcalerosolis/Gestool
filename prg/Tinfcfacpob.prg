@@ -253,8 +253,8 @@ METHOD lGenerate()
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 2
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 2 ]
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

@@ -177,8 +177,8 @@ METHOD lGenerate()
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
+   if !Empty( ::oFilter:cExpresionFilter ) 
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -225,8 +225,8 @@ METHOD lGenerate()
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 2
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 2 ]
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -273,8 +273,8 @@ METHOD lGenerate()
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 3
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 3 ]
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
    end if
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -322,8 +322,8 @@ METHOD lGenerate()
       cExpHead    += ' .and. cCliTik >= "' + Rtrim( ::cCliOrg ) + '" .and. cCliTik <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 4
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 4 ]
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
    end if
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )

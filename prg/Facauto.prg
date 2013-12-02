@@ -80,9 +80,6 @@ CLASS TFacAutomatica FROM TMasDet
    DATA  nTotIva
    DATA  nTotFac
 
-   DATA  oTreeSemana
-   DATA  oTreeMes
-
    DATA  oBrwIva
    DATA  oBrwLineas
    DATA  oBrwHistorial
@@ -110,39 +107,16 @@ CLASS TFacAutomatica FROM TMasDet
    METHOD Resource( nMode )
    METHOD NextResource( nMode )
    METHOD PriorResource( nMode )
-
    METHOD StartResource()
-
-   METHOD lPreSave()
-   METHOD lPostLoad()
+   METHOD SaveResource()
 
    METHOD nCalculoTotal()
 
    METHOD ShowKit( lSet )
 
-   METHOD ChangeTreeSemana()
-
-   METHOD ChangeTreeMes()                 VIRTUAL
-
    METHOD ExternalEdit( cCodFac )
 
-   //-------------------------------------------------------------------------//
-
-   INLINE METHOD RunPlantillaAutomatica( cCodigoPlantilla )
-
-      with object ( TCreaFacAutomaticas():New() )
-         :cCodigoPlantilla    := cCodigoPlantilla
-         if :OpenFiles()
-            if :lSelectCodigoPlantilla()
-               :Run()
-            end if
-            :CloseFiles()
-         end if 
-      end with
-
-      Return ( Self )
-
-   ENDMETHOD
+   METHOD RunPlantillaAutomatica( cCodigoPlantilla )
 
 ENDCLASS
 
@@ -537,6 +511,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TFacAutomatica
       FIELD NAME "nPerSel"   TYPE "N" LEN   3 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
       FIELD NAME "cPerSel"   TYPE "C" LEN  20 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
       FIELD NAME "dNexFac"   TYPE "D" LEN  08 DEC 0 COMMENT "Fecha de próxima factura"                               HIDE              OF ::oDbf
+      FIELD NAME "mGrpSel"   TYPE "M" LEN  10 DEC 0 COMMENT ""                                                       HIDE              OF ::oDbf
 
       INDEX TO "FacAutT.Cdx" TAG "cCodFac" ON "Field->cCodFac" COMMENT "Código"  NODELETED   OF ::oDbf
       INDEX TO "FacAutT.Cdx" TAG "cNomFac" ON "Field->cNomFac" COMMENT "Nombre"  NODELETED   OF ::oDbf
@@ -647,22 +622,6 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          ITEMS    ( { "Día", "Semana", "Mes", "Año" } ) ;
          OF       oFld:aDialogs[1]
 
-      ::oTreeSemana                       := TTreeView():Redefine( 500, oFld:aDialogs[1] )
-
-      ::oTreeMes                          := TTreeView():Redefine( 600, oFld:aDialogs[1] )
-
-      /*
-      REDEFINE GET ::aGet[ _NDIAFACT ] VAR ::oDbf:nDiaFact ;
-         ID       410 ;
-         PICTURE  "99" ;
-         SPINNER;
-         MIN      1 ;
-         MAX      31 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( ::oDbf:nDiaFact >= 1 .and. ::oDbf:nDiaFact <= 31 ) ;
-         OF       oFld:aDialogs[1]
-      */
-
       REDEFINE GET ::aGet[ ::oDbf:FieldPos( "dNexFac" ) ] VAR ::oDbf:dNexFac ;
          ID       410 ;
          SPINNER ;
@@ -708,6 +667,12 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          ID       420, 430 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
+
+      /*
+      Grupos-------------------------------------------------------------------
+      */
+
+      ::oGrpFacturasAutomaticas:RedefineBrowse( 500, oFld:aDialogs[ 1 ] )      
 
       /*
       Lineas
@@ -1125,7 +1090,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          ID       IDOK ;
          OF       ::oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( ::lPreSave( nMode, ::aGet ), ::oDlg:End( IDOK ), ) )
+         ACTION   ( if( ::SaveResource( nMode, ::aGet ), ::oDlg:End( IDOK ), ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -1136,7 +1101,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          ::oDlg:AddFastKey( VK_F2,       {|| ::oDetFacAutomatica:AppendDet( ::oBrwLineas ), ::nCalculoTotal() } )
          ::oDlg:AddFastKey( VK_F3,       {|| ::oDetFacAutomatica:Edit( ::oBrwLineas ), ::nCalculoTotal() } )
          ::oDlg:AddFastKey( VK_F4,       {|| ::oDetFacAutomatica:Del( ::oBrwLineas ), ::nCalculoTotal() } )
-         ::oDlg:AddFastKey( VK_F5,       {|| if( ::lPreSave( nMode, ::aGet ), ::oDlg:End( IDOK ), ) } )
+         ::oDlg:AddFastKey( VK_F5,       {|| if( ::SaveResource( nMode, ::aGet ), ::oDlg:End( IDOK ), ) } )
          ::oDlg:AddFastKey( VK_DELETE,   {|| ::oHisFacAutomatica:oDbfVir:Delete(), ::oBrwHistorial:Refresh() } )
       end if
 
@@ -1163,7 +1128,7 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 METHOD NextResource( nMode )
 
-   if !::lPreSave( nMode )
+   if !::SaveResource( nMode )
       Return ( .f. )
    end if
 
@@ -1195,7 +1160,7 @@ RETURN ( .t. )
 
 METHOD PriorResource( nMode )
 
-   if !::lPreSave( nMode )
+   if !::SaveResource( nMode )
       Return ( .f. )
    end if
 
@@ -1227,91 +1192,19 @@ RETURN ( .t. )
 
 METHOD StartResource( nMode ) CLASS TFacAutomatica
 
-   ::oTreeSemana:Add( "Lunes"      )
-   ::oTreeSemana:Add( "Martes"     )
-   ::oTreeSemana:Add( "Miércoles"  )
-   ::oTreeSemana:Add( "Jueves"     )
-   ::oTreeSemana:Add( "Viernes"    )
-   ::oTreeSemana:Add( "Sábado"     )
-   ::oTreeSemana:Add( "Domingo"    )
-
-   ::oTreeSemana:Expand()
-
-   ::oTreeMes:Add( "Enero"        )
-   ::oTreeMes:Add( "Febrero"      )
-   ::oTreeMes:Add( "Marzo"        )
-   ::oTreeMes:Add( "Abril"        )
-   ::oTreeMes:Add( "Mayo"         )
-   ::oTreeMes:Add( "Junio"        )
-   ::oTreeMes:Add( "Julio"        )
-   ::oTreeMes:Add( "Agosto"       )
-   ::oTreeMes:Add( "Septiembre"   )
-   ::oTreeMes:Add( "Octubre"      )
-   ::oTreeMes:Add( "Noviembre"    )
-   ::oTreeMes:Add( "Diciembre"    )
-
-   ::oTreeMes:Expand()
-
-   ::lPostLoad()
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD ChangeTreeSemana() CLASS TFacAutomatica
-
-   local oTree
-   local oItem
-   local lOnOff
-
-   oTree          := ::oTreeSemana:GetSelected()
-
-   ::oTreeSemana:Select( oTree )
-
-   lOnOff         := !( tvGetCheckState( ::oTreeSemana:hWnd, ::oTreeSemana:aItems[1]:hItem ) )
-
-   for each oItem in ::oTreeSemana:aItems[ 1 ]:aItems
-      tvSetCheckState( ::oTreeSemana:hWnd, oItem:hItem, lOnOff )
-   next
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD lPostLoad() CLASS TFacAutomatica
-
-   local cDia
-
-   for each cDia in hb_aTokens( ::oDbf:cDiaSel, "," )
-
-      if ( HB_EnumIndex() <= len( ::oTreeSemana:aItems ) )
-         sysrefresh()
-         tvSetCheckState( ::oTreeSemana:hWnd, ::oTreeSemana:aItems[ HB_EnumIndex() ]:hItem, ( cDia == ".T." ) )
-      end if
-
-   next
-
-   for each cDia in hb_aTokens( ::oDbf:cMesSel, "," )
-
-      if ( HB_EnumIndex() <= len( ::oTreeMes:aItems ) )
-         sysrefresh()
-         tvSetCheckState( ::oTreeMes:hWnd, ::oTreeMes:aItems[ HB_EnumIndex() ]:hItem, ( cDia == ".T." ) )
-      end if
-
-   next
+   ::oGrpFacturasAutomaticas:LoadBrowse( ::oDbf:mGrpSel )
 
    ::nCalculoTotal()
 
    ::ShowKit( .f. )
 
    ::aGet[ ::oDbf:FieldPos( "cCodPago" ) ]:lValid()
-   ::aGet[ ::oDbf:FieldPos( "cCodGrp" )  ]:lValid()
 
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD lPreSave( nMode ) CLASS TFacAutomatica
+METHOD SaveResource( nMode ) CLASS TFacAutomatica
 
    local oItem
    local lSemana  := .f.
@@ -1341,32 +1234,10 @@ METHOD lPreSave( nMode ) CLASS TFacAutomatica
       return .f.
    end if
 
-   /*
-   Sacamos la seleccion semanal------------------------------------------------
-   */
-
-   for each oItem in ::oTreeSemana:aItems
-
-      if tvGetCheckState( ::oTreeSemana:hWnd, oItem:hItem )
-         lSemana  := .t.
-      end if
-
-      cSemana     += cValToChar( tvGetCheckState( ::oTreeSemana:hWnd, oItem:hItem ) ) + ","
-
-   next
-
    ::oDbf:cDiaSel := cSemana
    ::oDbf:lDiaSel := lSemana
 
-   /*
-   Sacamos la seleccion mensual------------------------------------------------
-   */
-
-   for each oItem in ::oTreeMes:aItems
-      cMes        += cValToChar( tvGetCheckState( ::oTreeMes:hWnd, oItem:hItem ) ) + ","
-   next
-
-   ::oDbf:cMesSel := cMes
+   ::oDbf:mGrpSel := ::oGrpFacturasAutomaticas:BrowseToChar()
 
    ::oDetFacAutomatica:oDbfVir:KillFilter()
 
@@ -1611,6 +1482,28 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD RunPlantillaAutomatica( cCodigoPlantilla ) CLASS TFacAutomatica
+
+   with object ( TCreaFacAutomaticas():New() )
+
+      :cCodigoPlantilla    := cCodigoPlantilla
+      
+      if :OpenFiles()
+      
+         if :lSelectCodigoPlantilla()
+            :Run()
+         end if
+      
+         :CloseFiles()
+      
+      end if 
+      
+   end with
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 Function lFacturasAutomaticas()
 
    if !( oUser():lDocAuto() .or. lUsrMaster() )
@@ -1684,11 +1577,10 @@ CLASS TCreaFacAutomaticas
    DATA lMensaje   
 
    DATA oTreeSelector
-   DATA oTreeSemana
-   DATA oTreeMes
 
    DATA oCodigoGrupo 
    DATA cCodigoGrupo             INIT Space( 4 )
+   DATA aCodigoGrupo            
 
    DATA oCodigoPlantilla
    DATA cCodigoPlantilla         INIT Space( 3 )
@@ -1700,10 +1592,6 @@ CLASS TCreaFacAutomaticas
    METHOD OpenFiles()
 
    METHOD CloseFiles()
-
-   METHOD lMesSeleccionado()
-
-   METHOD lDiaSeleccionado()
 
    METHOD lLanzaAsistente()
 
@@ -1922,53 +1810,7 @@ RETURN ( .t. )
 
 METHOD StartAsistente()
 
-   local nTreeMes
-   local nTreeSemana
-   
    ::oBtnInforme:Disable()  
-
-   /*
-   ::oTreeSemana     := ::oTreeSelector:Add( "Semana" ) 
- 
-   ::oTreeSemana:Add( "Lunes"      ) 
-   ::oTreeSemana:Add( "Martes"     )
-   ::oTreeSemana:Add( "Miércoles"  ) 
-   ::oTreeSemana:Add( "Jueves"     )
-   ::oTreeSemana:Add( "Viernes"    )
-   ::oTreeSemana:Add( "Sábado"     )
-   ::oTreeSemana:Add( "Domingo"    )
-
-   ::oTreeMes        := ::oTreeSelector:Add( "Mes" )  
- 
-   ::oTreeMes:Add( "Enero"        )
-   ::oTreeMes:Add( "Febrero"      )
-   ::oTreeMes:Add( "Marzo"        )
-   ::oTreeMes:Add( "Abril"        )
-   ::oTreeMes:Add( "Mayo"         )
-   ::oTreeMes:Add( "Junio"        )
-   ::oTreeMes:Add( "Julio"        )
-   ::oTreeMes:Add( "Agosto"       )
-   ::oTreeMes:Add( "Septiembre"   )
-   ::oTreeMes:Add( "Octubre"      )
-   ::oTreeMes:Add( "Noviembre"    )
-   ::oTreeMes:Add( "Diciembre"    )
-
-   ::oTreeSemana:Expand()
-   ::oTreeMes:Expand()
- 
-   nTreeSemana       := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
-   nTreeMes          := Month( GetSysDate() )  
-
-   sysrefresh()
-
-   tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
-
-   sysrefresh()
-
-   tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
-
-   sysrefresh()
-   */
 
    ::oCodigoGrupo:lValid()
    ::oCodigoPlantilla:lValid()
@@ -2197,7 +2039,7 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
          while !::oFacAutT:oDbf:Eof()
 
             if ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) ) .and.;
-               ( Empty( ::cCodigoGrupo ) .or. ( ::oFacAutT:oDbf:cCodGrp == ::cCodigoGrupo ) )
+               ( Empty( ::aCodigoGrupo )     .or. ( lScanCodeInMemo( ::aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )
 
                aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 
@@ -2228,95 +2070,6 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
    ErrorBlock( oBlock )
 
 RETURN ( lSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD lMesSeleccionado() CLASS TCreaFacAutomaticas
-
-   local nMes
-   local aMes     
-   local oItem
-
-   aMes           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cMesSel ), "," )
-
-   if !Empty( ::oTreeMes )
-
-      for each oItem in ::oTreeMes:aItems
-
-         if tvGetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ hb_enumindex() ]:hItem )         
-
-            nMes  := hb_enumindex()
-
-            if nMes >= 1 .and. nMes <= len( aMes )
-               if aMes[ nMes ] == ".T."
-                  RETURN ( .t. )
-               end if
-            end if
-
-         end if
-
-      next
-
-   else
-
-      nMes        := Month( GetSysDate() )
-
-      if nMes >= 1 .and. nMes <= len( aMes )
-         if aMes[ nMes ] == ".T."
-            RETURN ( .t. )
-         end if
-      end if
-
-   end if
-
-
-RETURN ( .f. )
-
-//---------------------------------------------------------------------------//
-
-METHOD lDiaSeleccionado() CLASS TCreaFacAutomaticas
-
-   local nDia
-   local aDia
-   local oItem
-
-   if !::oFacAutT:oDbf:lDiaSel
-      Return ( .t. )
-   end if
-
-   aDia           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cDiaSel ), "," )
-
-   if !Empty( ::oTreeSemana )
-
-      for each oItem in ::oTreeSemana:aItems
-
-         if tvGetCheckState( ::oTreeSelector:hWnd, ::oTreeSemana:aItems[ hb_enumindex() ]:hItem )         
-
-            nDia  := hb_enumindex()
-
-            if nDia >= 1 .and. nDia <= len( aDia )
-               if aDia[ nDia ] == ".T."
-                  RETURN ( .t. )
-               end if
-            end if
-
-         end if
-
-      next
-
-   else
-
-      nDia        := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
-
-      if nDia >= 1 .and. nDia <= len( aDia )
-         if aDia[ nDia ] == ".T."
-            RETURN ( .t. )
-         end if
-      end if
-
-   end if
-
-RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 // Comprobamos que si tenemos que lanzar el asistente--------------------------
@@ -3202,5 +2955,17 @@ METHOD SetNextFechaFactura()
    end if
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+Static Function lScanCodeInMemo( aCodigoGrupo, cMemoGrupo )
+
+   local lScanCodeInMemo   := .f.
+
+   aEval( aCodigoGrupo, {|c| msgInfo( c, "c" ), msgInfo( cMemoGrupo, "cMemoGrupo" ), if( !lScanCodeInMemo, lScanCodeInMemo := c $ cMemoGrupo, .t. ) } )
+
+   msgInfo( lScanCodeInMemo, "lScanCodeInMemo" )
+
+Return ( lScanCodeInMemo )
 
 //---------------------------------------------------------------------------//
