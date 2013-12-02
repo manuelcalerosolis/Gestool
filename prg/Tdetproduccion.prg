@@ -134,7 +134,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
-      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT ""                              HIDE        OF oDbf              
+      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf              
 
       ::CommunFields( oDbf )
 
