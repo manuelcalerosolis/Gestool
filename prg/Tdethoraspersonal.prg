@@ -47,7 +47,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Operarios y horas"
 
-      FIELD NAME "cSerOrd"    TYPE "C" LEN 01  DEC 0 COMMENT "Código"               OF oDbf
+      FIELD NAME "cSerOrd"    TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                OF oDbf
       FIELD NAME "nNumOrd"    TYPE "N" LEN 09  DEC 0 COMMENT "Número"               OF oDbf
       FIELD NAME "cSufOrd"    TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"               OF oDbf
       FIELD NAME "cCodTra"    TYPE "C" LEN 05  DEC 0 COMMENT "Código trabajador"    OF oDbf

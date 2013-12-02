@@ -2472,7 +2472,7 @@ METHOD CreateTemporal( cNumeroParte )
       ::oDbfTemporal:nCajas      := 0
       ::oDbfTemporal:nUnidades   := 0
       ::oDbfTemporal:nUndHra     := nTiempoEntreFechas( ::oDetPersonal:oDbf:dFecIni, ::oDetPersonal:oDbf:dFecFin, ::oDetPersonal:oDbf:cHorIni, ::oDetPersonal:oDbf:cHorFin )
-      ::oDbfTemporal:nImporte    := ::oDetPersonal:nTotal( ::oDetPersonal:oDbf:cCodTra, ::oDetHorasPersonal:oDbf )
+      ::oDbfTemporal:nImporte    := ::oDetPersonal:nTotalTrabajador( ::oDetPersonal:oDbf:cCodTra, ::oDetHorasPersonal:oDbf )
       ::oDbfTemporal:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
       ::oDbfTemporal:nPeso       := 0
       ::oDbfTemporal:cUndPes     := Space(2)
@@ -3465,6 +3465,21 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Producción", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Producción", cObjectsToReport( ::oDbf ) )
 
+   oFr:SetWorkArea(     "Lineas de material producido", ::oDetProduccion:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de material producido", cObjectsToReport( ::oDetProduccion:oDbf ) )
+
+   oFr:SetWorkArea(     "Lineas de materias primas", ::oDetMaterial:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de materias primas", cObjectsToReport( ::oDetMaterial:oDbf ) )
+
+   oFr:SetWorkArea(     "Lineas de personal", ::oDetPersonal:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de personal", cObjectsToReport( ::oDetPersonal:oDbf ) )
+
+   oFr:SetWorkArea(     "Lineas de horas de personal", ::oDetHorasPersonal:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de horas de personal", cObjectsToReport( ::oDetHorasPersonal:oDbf ) )
+
+   oFr:SetWorkArea(     "Lineas de maquinaria", ::oDetMaquina:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de maquinaria", cObjectsToReport( ::oDetMaquina:oDbf ) )
+
    oFr:SetWorkArea(     "Lineas de producción", ::oDbfTemporal:nArea )
    oFr:SetFieldAliases( "Lineas de producción", cObjectsToReport( ::oDbfTemporal ) )
 
@@ -3480,13 +3495,28 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Operación", ::oOperacion:oDbf:nArea )
    oFr:SetFieldAliases( "Operación", cObjectsToReport( ::oOperacion:oDbf ) )
 
-   oFr:SetMasterDetail( "Producción", "Lineas de producción", {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
-   oFr:SetMasterDetail( "Producción", "Empresa",              {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Producción", "Almacenes",            {|| ::oDbf:cAlmOrd } )
-   oFr:SetMasterDetail( "Producción", "Sección",              {|| ::oDbf:cCodSec } )
-   oFr:SetMasterDetail( "Producción", "Operación",            {|| ::oDbf:cCodOpe } )
+   oFr:SetWorkArea(     "Personal", ::oDetPersonal:oDbf:nArea )
+   oFr:SetFieldAliases( "Personal", cObjectsToReport( ::oDetPersonal:oDbf ) )
 
+   oFr:SetMasterDetail( "Producción", "Lineas de material producido",      {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+   oFr:SetMasterDetail( "Producción", "Lineas de materias primas",         {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+   oFr:SetMasterDetail( "Producción", "Lineas de personal",                {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+   oFr:SetMasterDetail( "Producción", "Lineas de horas de personal",       {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+   oFr:SetMasterDetail( "Producción", "Lineas de maquinaria",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+   oFr:SetMasterDetail( "Producción", "Lineas de producción",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+
+   oFr:SetMasterDetail( "Producción", "Empresa",                           {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Producción", "Almacenes",                         {|| ::oDbf:cAlmOrd } )
+   oFr:SetMasterDetail( "Producción", "Sección",                           {|| ::oDbf:cCodSec } )
+   oFr:SetMasterDetail( "Producción", "Operación",                         {|| ::oDbf:cCodOpe } )
+
+   oFr:SetResyncPair(   "Producción", "Lineas de material producido" )
+   oFr:SetResyncPair(   "Producción", "Lineas de materias primas" )
+   oFr:SetResyncPair(   "Producción", "Lineas de personal" )
+   oFr:SetResyncPair(   "Producción", "Lineas de horas de prsonal" )
+   oFr:SetResyncPair(   "Producción", "Lineas de maquinaria" )
    oFr:SetResyncPair(   "Producción", "Lineas de producción" )
+
    oFr:SetResyncPair(   "Producción", "Empresa" )
    oFr:SetResyncPair(   "Producción", "Almacenes" )
    oFr:SetResyncPair(   "Producción", "Sección" )
@@ -4404,8 +4434,7 @@ METHOD DesignLabelProducc( oFr, dbfDoc ) CLASS TProduccion
 
    local oLabel   := ::InitLabel()
 
-   if !oLabel:lErrorOnCreate .and.;
-      ::lCreateTemporalLbl( .t. )
+   if !oLabel:lErrorOnCreate .and. ::lCreateTemporalLbl( .t. )
 
       /*
       Zona de datos---------------------------------------------------------

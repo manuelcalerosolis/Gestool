@@ -110,8 +110,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "nNumOrd"    TYPE "N" LEN 09  DEC 0 COMMENT "Número"                        HIDE        OF oDbf
       FIELD NAME "cSufOrd"    TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                        HIDE        OF oDbf
       FIELD NAME "nNumLin"    TYPE "N" LEN 04  DEC 0 COMMENT "Número de línea"               COLSIZE  20 OF oDbf
-      FIELD NAME "cCodArt"    TYPE "C" LEN 18  DEC 0 COMMENT "Artículo"                      COLSIZE  60 OF oDbf
-      FIELD NAME "cNomArt"    TYPE "C" LEN 100 DEC 0 COMMENT "Nombre"                        COLSIZE 240 OF oDbf
+      FIELD NAME "cCodArt"    TYPE "C" LEN 18  DEC 0 COMMENT "Código artículo"               COLSIZE  60 OF oDbf
+      FIELD NAME "cNomArt"    TYPE "C" LEN 100 DEC 0 COMMENT "Nombre artículo"               COLSIZE 240 OF oDbf
       FIELD NAME "cAlmOrd"    TYPE "C" LEN 03  DEC 0 COMMENT "Almacén"                       COLSIZE  50 OF oDbf
       FIELD NAME "nCajOrd"    TYPE "N" LEN 16  DEC 6 COMMENT "Cajas"                         HIDE        OF oDbf
       FIELD NAME "nUndOrd"    TYPE "N" LEN 16  DEC 6 COMMENT "Unidades"                      HIDE        OF oDbf

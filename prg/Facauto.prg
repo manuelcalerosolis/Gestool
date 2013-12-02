@@ -551,10 +551,6 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
       ::oDbf:dNexFac    := GetSysDate()
    end if
 
-   if Empty( ::oDbf:cMesSel )
-      ::oDbf:cMesSel    := ".T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,"
-   end if
-
    DEFINE DIALOG ::oDlg RESOURCE "FacAutomatica" TITLE LblTitle( nMode ) + "plantilla venta automática"
 
       /*
