@@ -742,7 +742,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
    FIELD NAME "cLote"      TYPE "C" LEN 12 DEC 0 COMMENT "Número de lote"                        OF ::oDbfStock
    FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "Número de serie"                       OF ::oDbfStock
-   FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Feha de caducidad"                     OF ::oDbfStock
+   FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
    FIELD NAME "nUnd"       TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades"                        OF ::oDbfStock
    FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
    FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
@@ -5305,12 +5305,13 @@ Return ( nStockArticulo )
 METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
    local nStockArticulo := 0
+   local aSto
 
    ::aStockArticulo( cCodArt, cCodAlm  )
 
-   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )    .and.;
-                              ( Empty( cValPr1 ) .or. cValPr1 == o:cCodigoPropiedad1 ) .and.;
-                              ( Empty( cValPr2 ) .or. cValPr2 == o:cCodigoPropiedad2 ) .and.;                  
+   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )  .and.;
+                              ( Empty( cValPr1 ) .or. cValPr1 == o:cValorPropiedad ) .and.;
+                              ( Empty( cValPr2 ) .or. cValPr2 == o:cValorPropiedad ) .and.;                  
                               ( Empty( cLote   ) .or. cLote   == o:cLote   ),;
                               nStockArticulo += o:nUnidades, ) } )
 

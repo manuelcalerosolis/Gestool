@@ -6257,7 +6257,7 @@ METHOD AppendPedidoprestashop()
                   ::oPedCliT:cTlfCli   := ::oCli:Telefono
                   ::oPedCliT:cCodGrp   := ::oCli:cCodGrp
                   ::oPedCliT:nRegIva   := ::oCli:nRegIva
-
+                  
                end if
 
                /*
