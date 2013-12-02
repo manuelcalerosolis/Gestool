@@ -5189,12 +5189,8 @@ METHOD EvalFilter( oDbf )
 
    if !Empty( ::oFilter ) .and. !Empty( ::oFilter:bExpresionFilter )
 
-      if IsObject( ::oFilter:oDbf )
-         ::oFilter:oDbf:SetFocus()
-      end if
-      
-      if IsChar( ::oFilter:oDbf )
-         Select( ::oFilter:oDbf )
+      if IsObject( ::oDbf )
+         ::oDbf:SetFocus()
       end if
       
       lFilter     := Eval( ::oFilter:bExpresionFilter )

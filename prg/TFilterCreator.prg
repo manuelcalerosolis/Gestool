@@ -128,7 +128,6 @@ METHOD Init( oTShell ) CLASS TFilterCreator
    ::oTShell            := oTShell
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
-
    ::oFilterDatabase:OpenFiles()
 
    ::oFilterDialog      := TFilterDialog():New( Self )
@@ -172,7 +171,6 @@ METHOD SetDatabase( oDatabase ) CLASS TFilterCreator
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD ScanStructure( cDescription, nPos )
 
