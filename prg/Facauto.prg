@@ -551,10 +551,6 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
       ::oDbf:dNexFac    := GetSysDate()
    end if
 
-   if Empty( ::oDbf:cMesSel )
-      ::oDbf:cMesSel    := ".T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,.T.,"
-   end if
-
    DEFINE DIALOG ::oDlg RESOURCE "FacAutomatica" TITLE LblTitle( nMode ) + "plantilla venta automática"
 
       /*
@@ -2021,11 +2017,8 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
    local oError
    local oBlock
-   local lSelect
-
-   lSelect                                := .f.
-
-   ::aPlantilla                           := {}
+   local lSelect                          := .f.
+   local aCodigoGrupo                     := {}
 
    oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2034,12 +2027,15 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
       if oUser():lDocAuto() .or. lUsrMaster()
 
-         ::oFacAutT:oDbf:GoTop()
+         aCodigoGrupo                     := ::oGrpFacturasAutomaticas:aChild( ::cCodigoGrupo, { ::cCodigoGrupo } )
 
+         ::aPlantilla                     := {}
+
+         ::oFacAutT:oDbf:GoTop()
          while !::oFacAutT:oDbf:Eof()
 
-            if ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) ) .and.;
-               ( Empty( ::aCodigoGrupo )     .or. ( lScanCodeInMemo( ::aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )
+            if ( Empty( aCodigoGrupo )       .or. ( lScanCodeInMemo( aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )  .and. ;
+               ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) )                
 
                aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 
@@ -2057,6 +2053,7 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
       if !Empty( ::oBrwPlantilla )
          ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. )
+         ::oBrwPlantilla:GoTop()
       end if
 
       CursorWE()
@@ -2071,6 +2068,7 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
 RETURN ( lSelect )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 // Comprobamos que si tenemos que lanzar el asistente--------------------------
 //---------------------------------------------------------------------------//
@@ -2142,6 +2140,7 @@ METHOD lLanzaAsistente() CLASS TCreaFacAutomaticas
 
       if !Empty( ::oBrwPlantilla )
          ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. )
+         ::oBrwPlantilla:GoTop()
       end if
 
    RECOVER USING oError
@@ -2962,9 +2961,7 @@ Static Function lScanCodeInMemo( aCodigoGrupo, cMemoGrupo )
 
    local lScanCodeInMemo   := .f.
 
-   aEval( aCodigoGrupo, {|c| msgInfo( c, "c" ), msgInfo( cMemoGrupo, "cMemoGrupo" ), if( !lScanCodeInMemo, lScanCodeInMemo := c $ cMemoGrupo, .t. ) } )
-
-   msgInfo( lScanCodeInMemo, "lScanCodeInMemo" )
+   aEval( aCodigoGrupo, {|c| if( !lScanCodeInMemo, lScanCodeInMemo := c $ cMemoGrupo, .t. ) } )
 
 Return ( lScanCodeInMemo )
 

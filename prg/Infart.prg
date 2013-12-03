@@ -186,8 +186,7 @@ METHOD lGenerate()
          ( ::lAllFam .or. ( ( ::cDbfArt )->Familia >= ::cFamOrg .and. ( ::cDbfArt )->Familia <= ::cFamDes ) )  .and.;
          ( if( ::lExcObsoletos, !( ::cDbfArt )->lObs, .t. ) )                                                  .and.;
          ( if( ::lExcPre, ( ::cDbfArt )->pVenta1 != 0 .or. ( ::cDbfArt )->pVenta2 != 0 .or. ( ::cDbfArt )->pVenta3 != 0 .or. ( ::cDbfArt )->pVenta4 != 0 .or. ( ::cDbfArt )->pVenta5 != 0 .or. ( ::cDbfArt )->pVenta6 != 0, .t. ) ) .and. ;
-         ( if( ::lOnlySelected, ( ::cDbfArt )->lLabel, .t. ) )                                                 .and.;
-         ::EvalFilter()
+         ( if( ::lOnlySelected, ( ::cDbfArt )->lLabel, .t. ) )                                                 
 
          if ::oDbf:Append()
 
@@ -309,6 +308,8 @@ METHOD lGenerate()
       end case
 
    end if
+
+   ::AplyFilter()
 
    ::oDlg:Enable()
 

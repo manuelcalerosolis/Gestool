@@ -25,8 +25,8 @@ END CLASS
 
 METHOD OpenFiles()
 
-   local lOpen    := .t.
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local lOpen       := .t.
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 

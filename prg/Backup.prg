@@ -106,9 +106,9 @@ CLASS TBackup
    Method DefineFiles()
 
    Method OpenFiles()
-   Method OpenService( lExclusive, cPath)
+   Method OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ))
 
-   Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseFiles() )
+   Method BuildFiles( lExclusive, cPath )    INLINE ( ::OpenFiles( lExclusive, cPath ), ::CloseFiles() )
 
    Method CloseFiles()
 
@@ -202,6 +202,10 @@ Method OpenFiles( lExclusive, cPath)
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
+
       ::oDbf:Activate( .f., .t. )
 
       DATABASE NEW ::oDbfEmpresa PATH ( cPatDat() ) FILE "Empresa.Dbf" VIA ( cDriver() ) SHARED INDEX "Empresa.Cdx"
@@ -210,41 +214,7 @@ Method OpenFiles( lExclusive, cPath)
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
-      lOpen       := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-Method OpenService( lExclusive, cPath)
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         
-
-   DEFAULT lExclusive   := .f.
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles( cPath )
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      lOpen          := .f.
-
-      ::oDbf:End()
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
+      lOpen             := .f.
 
    END SEQUENCE
 

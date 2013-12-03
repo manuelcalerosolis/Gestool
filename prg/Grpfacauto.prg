@@ -663,7 +663,7 @@ METHOD RunPlantillaAutomatica( cCodigoGrupo )
 
       if :OpenFiles()
 
-         :aCodigoGrupo  := ::aChild( cCodigoGrupo, { cCodigoGrupo } )
+         :cCodigoGrupo  := cCodigoGrupo
          
          if :lSelectCodigoPlantilla()
             :Run()

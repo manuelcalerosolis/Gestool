@@ -502,6 +502,10 @@ CLASS TInfGen
 
    METHOD EvalFilter( oDbf )
 
+   METHOD AplyFilter( oDbf )     INLINE ( if(   !Empty( ::oFilter ) .and. !Empty( ::oFilter:cExpresionFilter ),;
+                                                ::oDbf:SetFilter( ::oFilter:cExpresionFilter ),;
+                                                ::oDbf:SetFilter() ) )
+
    METHOD oDefDesHas()
 
    METHOD MakeVisor()
@@ -5187,17 +5191,15 @@ METHOD EvalFilter( oDbf )
 
    local lFilter  := .t.
 
+   DEFAULT oDbf   := ::oDbfMai
+
    if !Empty( ::oFilter ) .and. !Empty( ::oFilter:bExpresionFilter )
 
-      if IsObject( ::oFilter:oDbf )
-         ::oFilter:oDbf:SetFocus()
-      end if
+      if IsObject( oDbf ) .and. ( oDbf:Used() )
+         
+         lFilter  := ( oDbf:nArea )->( Eval( ::oFilter:bExpresionFilter ) )
       
-      if IsChar( ::oFilter:oDbf )
-         Select( ::oFilter:oDbf )
-      end if
-      
-      lFilter     := Eval( ::oFilter:bExpresionFilter )
+      end if 
 
    end if
 
@@ -5236,7 +5238,7 @@ METHOD lGenerate()
       ::oDbfMai:GoTop()
       while !::oDbfMai:Eof()
 
-      if ::oDbfMai:OrdKeyVal() >= ::cArtOrg .and. ::oDbfMai:OrdKeyVal() <= ::cArtDes .and. ::EvalFilter()
+      if ::oDbfMai:OrdKeyVal() >= ::cArtOrg .and. ::oDbfMai:OrdKeyVal() <= ::cArtDes .and. ::EvalFilter( ::oDbfMai )
 
          ::oDbf:Append()
 

@@ -113,12 +113,12 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Materiales producidos"
 
-      FIELD NAME "cSerOrd"    TYPE "C" LEN 01  DEC 0 COMMENT "Código"                        HIDE        OF oDbf
+      FIELD NAME "cSerOrd"    TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                         HIDE        OF oDbf
       FIELD NAME "nNumOrd"    TYPE "N" LEN 09  DEC 0 COMMENT "Número"                        HIDE        OF oDbf
       FIELD NAME "cSufOrd"    TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                        HIDE        OF oDbf
       FIELD NAME "nNumLin"    TYPE "N" LEN 04  DEC 0 COMMENT "Número de línea"               COLSIZE  20 OF oDbf
-      FIELD NAME "cCodArt"    TYPE "C" LEN 18  DEC 0 COMMENT "Artículo"                      COLSIZE  60 OF oDbf
-      FIELD NAME "cNomArt"    TYPE "C" LEN 100 DEC 0 COMMENT "Nombre"                        COLSIZE 240 OF oDbf
+      FIELD NAME "cCodArt"    TYPE "C" LEN 18  DEC 0 COMMENT "Código artículo"               COLSIZE  60 OF oDbf
+      FIELD NAME "cNomArt"    TYPE "C" LEN 100 DEC 0 COMMENT "Nombre artículo"               COLSIZE 240 OF oDbf
       FIELD NAME "cAlmOrd"    TYPE "C" LEN 03  DEC 0 COMMENT "Almacén"                       COLSIZE  50 OF oDbf
       FIELD NAME "nCajOrd"    TYPE "N" LEN 16  DEC 6 COMMENT "Cajas"                         HIDE        OF oDbf
       FIELD NAME "nUndOrd"    TYPE "N" LEN 16  DEC 6 COMMENT "Unidades"                      HIDE        OF oDbf
@@ -134,7 +134,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
-      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT ""                              HIDE        OF oDbf              
+      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf              
 
       ::CommunFields( oDbf )
 
