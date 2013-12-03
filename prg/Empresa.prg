@@ -59,6 +59,8 @@ static aItmEmp                := {}
 static aTiempo                := { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
 static aTiempoImp             := { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
+static aTipImpTpv             := { "No imprimir", "Imprimir", "Imprimir regalo" }
+
 static cTiempoPed
 
 static aDocumentos    
@@ -1347,10 +1349,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    end if
 
    if Empty( aTmp[ _CNOMIMP ] )
-      aTmp[ _CNOMIMP ]     := "IVA"
+      aTmp[ _CNOMIMP ]     := "IVA" 
    end if
 
-   cOldNomSer              := "A"
+   cOldNomSer              := "A" 
 
    n                       := aScan( aPrinters, {| cPrinter | Rtrim( cPrinter ) == Rtrim( aTmp[ _CPRNPDF ] ) } )
    if n != 0
@@ -1615,6 +1617,15 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
          ID       990 ;
          OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ _LTOTTIKCOB ] VAR aTmp[ _LTOTTIKCOB ] ;
+         ID       200 ;
+         OF       fldTPV
+
+      REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
+         ITEMS    aTipImpTpv ;
+         ID       210;
+         OF       fldTPV   
 
       /*
       Page 2 Defecto-----------------------------------------------------------
@@ -7213,6 +7224,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCtaPor",    "C", 12, 0, "Subcuenta de portes",                                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaGas",    "C", 12, 0, "Subcuenta de gastos",                                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lApeNomb",   "L",  1, 0, "Lógico recibir apellidos, nombre desde la web",         "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "Lógico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "Opción impresión al cobrar en tpv táctil",              "", "", "aEmp()", 1 } )
 
 Return ( aDbf  )
 

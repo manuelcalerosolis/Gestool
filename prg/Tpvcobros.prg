@@ -38,6 +38,7 @@ CLASS TpvCobros
    DATA oBtnAddCobro
    DATA oBtnTipoImpresion
    DATA oBtnAceptar
+   DATA oBtnCalcMoney
 
    DATA oTextoTotal
    DATA cTextoTotal
@@ -53,6 +54,9 @@ CLASS TpvCobros
    DATA nExit
 
    DATA nSalidaImpresora
+   DATA cBmpSalidaImpresora
+
+   DATA lEfectivoMoney
 
    DATA cResource
 
@@ -274,7 +278,7 @@ CLASS TpvCobros
 
    METHOD ChangeButtonsFormaPago( cTipo )
 
-   METHOD ChangeFormaPago()               INLINE ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ) )
+   METHOD ChangeFormaPago()               INLINE ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ), ::oBrwFormasPago:aRow[ "lEfectivo" ] )
 
    METHOD RedefineSayTotal()
 
@@ -283,6 +287,8 @@ CLASS TpvCobros
    METHOD RedefineButtonAddCobro()
    
    METHOD RedefineButtonTipoImpresion()
+
+   METHOD RedefineButtonChangeCalcMoney()
    
    METHOD RedefineButtonAceptar()
 
@@ -291,6 +297,10 @@ CLASS TpvCobros
    METHOD SetTextoTotal()
 
    METHOD ChangeBtnImpresion()
+
+   METHOD ChangeCalcMoney()
+
+   METHOD SalidaImpresoraDefecto()
 
 //---------------------------------------------------------------------------//
 
@@ -314,7 +324,9 @@ METHOD New( oSender ) CLASS TpvCobros
 
    ::sTotalesCobros           := STotalCobros()
 
-   ::nSalidaImpresora         := exitAceptar
+   ::SalidaImpresoraDefecto()
+   
+   ::lEfectivoMoney           := .t.
 
    ::SetTextoTotal()
 
@@ -467,6 +479,10 @@ METHOD lResource() CLASS TpvCobros
 
    ::sTotalesCobros:GetTotal( ::oSender:sTotal )
 
+   if uFieldEmpresa( "lTotTikCob" )
+      ::cGetEntregado         := Trans( ::sTotalesCobros:nCobrado, ::oSender:cPictureTotal )
+   end if
+
    DEFINE DIALOG ::oDlg RESOURCE ::cResource TITLE ::oSender:cTipoDocumento() FONT ::oSender:oFntDlg
 
       /*
@@ -516,6 +532,12 @@ METHOD lResource() CLASS TpvCobros
       */
 
       ::RedefineButtonsMoney()
+
+      /*
+      Boton cambiar teclado de monedas a calculadora---------------------------
+      */
+
+      ::RedefineButtonChangeCalcMoney()
 
       /*
       Boton de validar la cantidad introducida---------------------------------
@@ -595,10 +617,18 @@ METHOD RedefineButtonAddCobro() CLASS TpvCobros
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
+
+METHOD RedefineButtonChangeCalcMoney() CLASS TpvCobros
+
+   ::oBtnCalcMoney := TButtonBmp():ReDefine( 300, {|| ::ChangeCalcMoney() }, ::oDlg,,, .F.,,,, .F., "Calculator_32",, )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
    
 METHOD RedefineButtonTipoImpresion() CLASS TpvCobros
 
-   ::oBtnTipoImpresion := TButtonBmp():ReDefine( 110, {|| ::ChangeBtnImpresion() }, ::oDlg,,, .F.,,,, .F., "printer_delete",, )
+   ::oBtnTipoImpresion := TButtonBmp():ReDefine( 110, {|| ::ChangeBtnImpresion() }, ::oDlg,,, .F.,,,, .F., ::cBmpSalidaImpresora,, )
 
 Return ( Self )
 
@@ -730,6 +760,32 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD SalidaImpresoraDefecto CLASS TpvCobros
+
+   ::nSalidaImpresora         := uFieldEmpresa( "nTipImpTpv" )
+
+   do case
+      case uFieldEmpresa( "nTipImpTpv" ) <= 1
+      
+         ::cBmpSalidaImpresora   := "printer_delete"    
+
+      case uFieldEmpresa( "nTipImpTpv" ) == 2
+         
+         ::cBmpSalidaImpresora   := "printer_ok"
+
+      otherwise
+         
+         ::cBmpSalidaImpresora   := "printer_new"
+
+   end case
+
+
+   
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD SetTextoTotal() CLASS TpvCobros
 
    do case
@@ -805,11 +861,42 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeButtonsFormaPago( cTipo ) CLASS TpvCobros
+METHOD ChangeButtonsFormaPago( cTipo, lEfectivo ) CLASS TpvCobros
 
     AEval( ::aButtonsMoney, {|h| h[ "Object" ]:bAction := h[ cTipo, "Action" ], SetWindowText( h[ "Object" ]:hWnd, h[ cTipo, "Text" ] ) } )
 
+    if !Empty( ::oBtnCalcMoney )
+
+      if lEfectivo
+         ::oBtnCalcMoney:Show()
+         ::lEfectivoMoney := .t.
+      else
+         ::oBtnCalcMoney:Hide()
+      end if
+
+      ::oBtnCalcMoney:Refresh()
+
+   end if
+
 Return ( Self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeCalcMoney CLASS TpvCobros
+
+   if ::lEfectivoMoney
+      AEval( ::aButtonsMoney, {|h| h[ "Object" ]:bAction := h[ "Calculadora", "Action" ], SetWindowText( h[ "Object" ]:hWnd, h[ "Calculadora", "Text" ] ) } )
+      ::oBtnCalcMoney:LoadBitmap( "Money2_32" )
+      ::oBtnCalcMoney:Refresh()
+   else
+      AEval( ::aButtonsMoney, {|h| h[ "Object" ]:bAction := h[ "Money", "Action" ], SetWindowText( h[ "Object" ]:hWnd, h[ "Money", "Text" ] ) } )
+      ::oBtnCalcMoney:LoadBitmap( "Calculator_32" )
+      ::oBtnCalcMoney:Refresh()
+   end if   
+
+   ::lEfectivoMoney := !::lEfectivoMoney
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
