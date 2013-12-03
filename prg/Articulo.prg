@@ -16802,8 +16802,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       end if
 
       if !Empty( oGetCodigo )
-         //oGetCodigo:cText( Padr( cReturn, 200 ) )
-         oGetCodigo:cText( cReturn )
+         oGetCodigo:cText( Padr( cReturn, 200 ) )
       end if
 
       if !Empty( oGetNombre )
