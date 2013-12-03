@@ -2439,11 +2439,26 @@ Function dbDelKit( oBrw, dbfTmp, nNumLin )
 
    local nRec  := ( dbfTmp )->( Recno() )
    local nOrd  := ( dbfTmp )->( OrdSetFocus( "nNumLin" ) )
+   local cFlt  := ( dbfTmp )->( dbFilter() )
+   local nNum  := Str( nNumLin, 4 )
 
-   while ( dbfTmp )->( dbSeek( Str( nNumLin, 4 ) ) )
-      ( dbfTmp )->( dbDelete() )
-      SysRefresh()
-   end while
+   if !Empty( cFlt )
+      ( dbfTmp )->( dbSetFilter() )
+   end if 
+
+   if ( dbfTmp )->( dbSeek( nNum ) )
+      while Str( ( dbfTmp )->nNumLin, 4 ) == nNum .and. ( !( dbfTmp )->( Eof() ) )
+         if ( dbfTmp )->lKitChl      
+            ( dbfTmp )->( dbDelete() )
+         end if 
+         ( dbfTmp )->( dbSkip() )
+         SysRefresh()
+      end while
+   end if 
+
+   if !Empty( cFlt )
+      ( dbfTmp )->( dbSetFilter( c2Block( cFlt ), cFlt ) )
+   end if 
 
    ( dbfTmp )->( OrdSetFocus( nOrd ) )
    ( dbfTmp )->( dbGoTo( nRec ) )

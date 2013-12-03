@@ -222,7 +222,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSitua, oBrw, bWhen, bValid, nMode )
 
    REDEFINE GET aGet[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ] ;
       VAR      aTmp[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ] ;
-      ID       90 ;
+      ID       100 ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       oDlg
 
@@ -238,18 +238,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSitua, oBrw, bWhen, bValid, nMode )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   REDEFINE BUTTON ;
-      ID       9 ;
-      OF       oDlg ;
-      ACTION   ( msginfo( "Ayuda no definida" ) )
-
    //Teclas rápidas
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg ) } )
    end if
-
-   oDlg:AddFastKey ( VK_F1, {|| msginfo( "Ayuda no definida" ) } )
 
    oDlg:bStart := {|| aGet[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ]:SetFocus() }
 

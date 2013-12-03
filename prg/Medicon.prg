@@ -391,13 +391,7 @@ FUNCTION cGetValue( xVal, cType )
 
    DEFAULT cType  := ValType( xVal )
 
-   xVal           := AllTrim( xVal )
-
-   if left( xVal, 1 ) == "{" .and. right( xVal, 1 ) == "}"
-      xVal        := StrTran( xVal, "{", "" )
-      xVal        := StrTran( xVal, "}", "" )
-      xVal        := Eval( Compile( xVal ) )
-   end if
+   xVal           := IsCharBlock( xVal )
 
    do case
       case cType == "C" .or. cType == "M"
@@ -429,6 +423,28 @@ FUNCTION cGetValue( xVal, cType )
    end case
 
 RETURN ( Rtrim( cTemp ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function IsCharBlock( xVal )
+
+   if IsChar( xVal )
+
+      xVal           := AllTrim( xVal )
+
+      if left( xVal, 1 ) == "{" .and. right( xVal, 1 ) == "}"
+         xVal        := StrTran( xVal, "{", "" )
+         xVal        := StrTran( xVal, "}", "" )
+         xVal        := c2Block( xVal )
+         if IsBlock( xVal )
+            xVal     := Eval( xVal )
+         end if 
+
+      end if 
+
+   end if
+
+Return ( xVal )
 
 //---------------------------------------------------------------------------//
 

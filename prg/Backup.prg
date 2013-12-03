@@ -264,7 +264,7 @@ Method MuestraDialogo()
 
    ::CargarPreferencias()
 
-   //Caja de Dialogo
+   // Caja de Dialogo----------------------------------------------------------
 
    DEFINE DIALOG ::oDlg RESOURCE "Backup_0" OF oWnd()
 
@@ -278,7 +278,7 @@ Method MuestraDialogo()
          OF       ::oDlg ;
          DIALOGS  "Backup_1", "Backup_2", "Backup_3", "Backup_4", "Backup_5", "Backup_2", "Backup_8", "Backup_6", "Backup_7"
 
-   //definicion de botones de la ventana principal
+   // Definicion de botones de la ventana principal----------------------------
 
    REDEFINE BUTTON ::oBotonAnterior ;           // Boton de Anterior
          ID       20 ;

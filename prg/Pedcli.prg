@@ -1,12 +1,7 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Folder.ch"
-   #include "Report.ch"
-   #include "Menu.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Folder.ch"
+#include "Report.ch"
+#include "Menu.ch"
 
 #include "Factu.ch"
 
@@ -307,8 +302,6 @@ memvar cPorDivEnt
 memvar nTotPage
 memvar nTotalDto
 
-#ifndef __PDA__
-
 static aImpVto       := {}
 static aDatVto       := {}
 static bEdtRec       := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, cCodPre | EdtRec( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, cCodPre ) }
@@ -320,14 +313,6 @@ static nNumArt       := 0
 static nNumCaj       := 0
 static lExternal     := .f.
 static aTipPed       := { "Venta", "Alquiler" }
-
-#else
-
-static bEdtPda       := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode          | EdtPda( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode ) }
-static bDetPda       := { |aTmp, aGet, dbfPedCliL, oBrw, bWhen, bValid, nMode, aTmpPed | DetPda( aTmp, aGet, dbfPedCliL, oBrw, bWhen, bValid, nMode, aTmpPed ) }
-static bIncPda       := { |aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpLin | IncPda( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
-
-#endif
 
 static cOldCodCli    := ""
 static cOldCodArt    := ""
@@ -9438,6 +9423,9 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
 
    if !NetErr()
       ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfTmpPedLin )->( ordCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin, 4 ) } ) )
+
+      ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfTmpPedLin )->( ordCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
       ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
@@ -9445,7 +9433,6 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
 
       ( dbfTmpPedLin )->( ordCondSet( "lShow .and. lSelArt .and. !Deleted()", {|| Field->lShow .and. Field->lSelArt .and. !Deleted() }  ) )
       ( dbfTmpPedLin )->( ordCreate( cTmpLin, "cCodPrv", "cCodPrv", {|| Field->cCodPrv } ) )
-
    else
       lErrors     := .t.
    end if
@@ -9695,7 +9682,7 @@ Method Select() CLASS TPedidosClientes2PedidosProveedor
 
    ::oMtr:Set( ( dbfTmpPedLin )->( LastRec() ) )
 
-   cOrdAnt := (dbfTmpPedLin)->( OrdSetFocus( "lShow" ) )
+   cOrdAnt := ( dbfTmpPedLin )->( OrdSetFocus( "lShow" ) )
 
    ( dbfTmpPedLin )->( OrdScope( 0, .t. ) )
    ( dbfTmpPedLin )->( OrdScope( 1, .t. ) )
@@ -15648,6 +15635,8 @@ RETURN lValid
 
 STATIC FUNCTION BeginTrans( aTmp, nMode )
 
+   local oError
+   local oBlock
    local lErrors  := .f.
    local cDbfLin  := "PCliL"
    local cDbfInc  := "PCliI"
@@ -15655,8 +15644,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfRes  := "PCliR"
    local cDbfPgo  := "PCliP"
    local cPedido  := ""
-   local oError
-   local oBlock
    local nOrd
 
    if nMode != APPD_MODE
@@ -15683,9 +15670,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
-
-      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
    else
 
@@ -16355,7 +16339,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       Chequeamos las ofertas X * Y
       */
 
-      aXbYStr        := nXbYAtipica( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfCliAtp )
+      aXbYStr        			:= nXbYAtipica( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfCliAtp )
 
       if aXbYStr[ 1 ] == 0
 
@@ -16364,13 +16348,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          */
 
          if !aTmp[ _LLINOFE ]
-
-            aXbyStr  := nXbYOferta( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 1 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aXbyStr  			:= nXbYOferta( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 1 )
+            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -16378,13 +16357,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          */
 
          if !aTmp[ _LLINOFE ]
-
-            aXbyStr  := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "FAMILIA", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 2 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "Familia", "Codigo" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 2 )
+            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -16392,13 +16366,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          */
 
          if !aTmp[ _LLINOFE ]
-
-            aXbyStr  := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTIP", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 3 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTIP", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 3 )
+            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -16406,13 +16375,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          */
 
          if !aTmp[ _LLINOFE ]
-
-            aXbyStr  := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODCATE", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 4 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODCATE", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 4 )
+            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -16420,13 +16384,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          */
 
          if !aTmp[ _LLINOFE ]
-
-            aXbyStr  := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTEMP", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 5 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTEMP", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 5 )
+            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -16434,13 +16393,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          */
 
          if !aTmp[ _LLINOFE ]
-
-            aXbyStr  := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODFAB", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 6 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODFAB", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 6 )
+            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
          end if
 
       end if
@@ -16521,10 +16475,26 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       aTmp[ _NREQ ]                    := nPReq( dbfIva, aTmp[ _NIVA ] )
 
       /*
+      Eliminamos los elementos de tipo kit-------------------------------------
+      */
+
+      if aClo[ _LKITART ]
+			DbDelKit( oBrw, dbfTmpLin, aClo[ _NNUMLIN ] )	      
+	   end if
+
+      /*
       Guardamos el registro de manera normal-----------------------------------
       */
 
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
+
+      /*
+      Añadimos los kits--------------------------------------------------------
+      */
+
+      if aClo[ _LKITART ]
+         AppendKit( aClo, aTmpPed )
+      end if
 
    end if
 
@@ -16547,9 +16517,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
 
    if !Empty( bmpImage )
       bmpImage:Hide()
-   end if
-
-   if !Empty( bmpImage )
       PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
    end if
 
@@ -16760,13 +16727,13 @@ Static Function AppendKit( uTmpLin, aTmpPed )
                do case
                   case nStkActual - nUnidades < 0
 
-                       MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
+                       MsgStop( 	"No hay stock suficiente para realizar la venta" + CRLF + ;
                                  "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
                                  "¡Atención!" )
 
                   case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
 
-                       MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
+                       MsgStop( 	"El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
                                  "está bajo minimo." + CRLF + ;
                                  "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
                                  "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;

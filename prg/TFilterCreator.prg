@@ -687,6 +687,8 @@ CLASS TBrowseFilter
 
 	DATA oDlg
 
+   DATA oEditMemo
+
 	DATA oBrwFilter
 	
 	DATA oColCondicion
@@ -706,8 +708,9 @@ CLASS TBrowseFilter
                                                       {  "Lógico",   "Logico",   "L" } }
 
    DATA hConditions 									INIT 	{ 	"N" 	=> {  "Value"        => 0,;
-                                                                  "Edit"         => EDIT_GET,;
+                                                                  "Edit"         => EDIT_GET_BUTTON,;
                                                                   "List"         => nil,;
+                                                                  "Block"        => {| nRow, nCol, oBrw, nKey | msgStop( nRow ) },;
                                                                   "Conditions"   => { "Igual",;
                                                 					         				   "Distinto",;
 					                                                 					     	   "Mayor",;
@@ -715,13 +718,14 @@ CLASS TBrowseFilter
                               								                   		     	   "Mayor igual",;
                                                 					         				   "Menor igual" } },;
                               					      	"C" 	=> {  "Value"        => Space( 100 ),;
-                                                                  "Edit"         => EDIT_GET,;
+                                                                  "Edit"         => EDIT_GET_BUTTON,;
                                                                   "List"         => nil,;
+                                                                  "Block"        => {|| nil },;
                                                                   "Conditions"   => { 	"Igual",;
                                        									                     "Distinto",;
                                        									                     "Contenga" } },;
                               					      	"D"	=> {  "Value"        => GetSysDate(),;
-                                                                  "Edit"         => EDIT_GET,;
+                                                                  "Edit"         => EDIT_GET_BUTTON,;
                                                                   "List"         => nil,;
                                                                   "Conditions"   => {  "Igual",;
 						                              					                        "Distinto",;
@@ -755,6 +759,7 @@ CLASS TBrowseFilter
    METHOD GetEditType( cType )                     INLINE ( HGet( ::GetHashType( cType ), "Edit" ) )
    METHOD GetListType( cType )                     INLINE ( HGet( ::GetHashType( cType ), "List" ) )
    METHOD GetConditionsType( cType )               INLINE ( HGet( ::GetHashType( cType ), "Conditions" ) )
+   METHOD GetBlockType( cType )                    INLINE ( HGet( ::GetHashType( cType ), "Block" ) )
 
 	METHOD GetConditionsCaracter() 						INLINE ( HGet( ::GetHashType( "C" ), "Conditions" ) )
 	METHOD GetConditionsCaracterPos( nPos ) 			INLINE ( ::GetConditionsCaracter()[ nPos ] )
@@ -786,6 +791,7 @@ END CLASS
 METHOD New( oFilterDialog ) CLASS TBrowseFilter
 
    ::oFilterDialog   := oFilterDialog
+   ::oEditMemo       := EditMemo()
 
 	::SetDialog( ::oFilterDialog:oFld:aDialogs[ 1 ] )
 
@@ -909,9 +915,10 @@ METHOD Activate() CLASS TBrowseFilter
    with object ( ::oColValor := ::oBrwFilter:AddCol() )
       :cHeader                   := "Valor"
       :bEditValue                := {|| ::aFilter[ ::oBrwFilter:nArrayAt, fldValue ] }
-      :nEditType                 := EDIT_GET
+      :nEditType                 := EDIT_GET_BUTTON
       :nWidth                    := 200
       :bOnPostEdit               := {|o,x,n| If( n != VK_ESCAPE, ::SetFilterLineBrowse( fldValue, x ), ) } 
+      :bEditBlock                := {|n,c,o| ::oEditMemo:Show( o ) }
    end with
 
    with object ( ::oBrwFilter:AddCol() )
@@ -1336,4 +1343,53 @@ METHOD SeekFullKey( cFilterName ) CLASS TFilterDatabase
 RETURN .t.
 
 //---------------------------------------------------------------------------//
+
+CLASS EditMemo
+
+   DATA oDlg
+   DATA oMemo 
+   DATA cMemo
+
+   DATA oSender
+
+   METHOD SetMemo( oSender )  INLINE ( ::cMemo := oSender:VarGet() )
+   METHOD Show()
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Show( oSender ) CLASS EditMemo
+
+   ::SetMemo( oSender )
+
+   DEFINE DIALOG ::oDlg RESOURCE "EditMemo"
+
+      REDEFINE GET   ::oMemo ;
+         VAR         ::cMemo ;
+         MEMO ;
+         ID          100 ;
+         OF          ::oDlg 
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          ::oDlg ;
+         ACTION      ( ::oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          ::oDlg ;
+         ACTION      ( ::oDlg:end() )
+
+      ::oDlg:AddFastKey( VK_F5, {|| ::oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG ::oDlg CENTER
+
+   if ( ::oDlg:nResult == IDOK )
+      oSender:VarPut( ::cMemo ) 
+   end if
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
 
