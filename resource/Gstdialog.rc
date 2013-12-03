@@ -19112,9 +19112,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 111, 10
   CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 71, 10
   CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 67, 10
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 171
+  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 195, 82, 10
+  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 206, 96, 91
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 195
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones para el terminal punto de venta", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
+  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 209, 86, 8
 }
 
 FASTFILTROS DIALOG DISCARDABLE 9, 8, 490, 294

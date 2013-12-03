@@ -288,3 +288,5 @@
 #define _CCTAPOR			  288
 #define _CCTAGAS			  289
 #define _LAPENOMB 			  290
+#define _LTOTTIKCOB 		  291
+#define _NTIPIMPTPV 		  292
