@@ -6187,12 +6187,15 @@ METHOD OnClickCobro() CLASS TpvTactil
 
          do case
             case ::oTpvCobros:nExit == exitAceptarRegalo
+               //?"Regalo"
                ::ImprimeRegalo()
 
             case ::oTpvCobros:nExit == exitAceptarDesglosado
+               //?"Desglosado"
                ::ImprimeDesglosado()   
 
             case ::oTpvCobros:nExit == exitAceptarImprimir
+               //?"aceptarimprimir"
                ::ImprimeTicket()
 
          end case

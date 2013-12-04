@@ -257,7 +257,7 @@ METHOD OpenFiles( lExclusive )
       ::oTrans:OpenFiles()
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ), .f., .f. )
