@@ -3551,9 +3551,6 @@ METHOD DesignReportProducc( oFr, dbfDoc )
 
    if ::OpenFiles()
 
-      ::oDetMaterial:oDbf:GetStatus()
-      ::oDetMaterial:oDbf:OrdSetFocus( "nTipArt" )
-
       ::CreateTemporal( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd )
 
       public cTiempoEmp    := cTiempo( ::oDbf:dFecOrd, ::oDbf:dFecFin, ::oDbf:cHorIni, ::oDbf:cHorFin )
@@ -3629,8 +3626,6 @@ METHOD DesignReportProducc( oFr, dbfDoc )
 
       ::oDbfTemporal:Zap()
 
-      ::oDetMaterial:oDbf:SetStatus()
-
       ::CloseFiles()
 
    else
@@ -3670,6 +3665,9 @@ METHOD PrintReportProducc( nDevice, nCopies, cPrinter, dbfDoc )
    /*
    Zona de datos---------------------------------------------------------------
    */
+
+   ::oDetMaterial:oDbf:GetStatus()
+   ::oDetMaterial:oDbf:OrdSetFocus( "nTipArt" )
 
    ::DataReport( oFr )
 
@@ -3716,6 +3714,8 @@ METHOD PrintReportProducc( nDevice, nCopies, cPrinter, dbfDoc )
       end case
 
    end if
+
+   ::oDetMaterial:oDbf:SetStatus()
 
    /*
    Destruye el diseñador-------------------------------------------------------
