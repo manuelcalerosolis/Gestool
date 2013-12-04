@@ -3497,8 +3497,20 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Operación", ::oOperacion:oDbf:nArea )
    oFr:SetFieldAliases( "Operación", cObjectsToReport( ::oOperacion:oDbf ) )
 
-   oFr:SetWorkArea(     "Personal", ::oDetPersonal:oDbf:nArea )
-   oFr:SetFieldAliases( "Personal", cObjectsToReport( ::oDetPersonal:oDbf ) )
+   oFr:SetWorkArea(     "Operarios", ::oDetPersonal:oDbf:nArea )
+   oFr:SetFieldAliases( "Operarios", cObjectsToReport( ::oDetPersonal:oDbf ) )
+
+   oFr:SetWorkArea(     "Artículos.Lineas de material producido", ::oArt:nArea )
+   oFr:SetFieldAliases( "Artículos.Lineas de material producido", cItemsToReport( aItmArt() ) )
+
+   oFr:SetWorkArea(     "Artículos.Lineas de materias primas", ::oArt:nArea )
+   oFr:SetFieldAliases( "Artículos.Lineas de materias primas", cItemsToReport( aItmArt() ) )
+
+   oFr:SetWorkArea(     "Tipos de artículos.Lineas de material producido", ::oTipoArticulo:oDbf )
+   oFr:SetFieldAliases( "Tipos de artículos.Lineas de material producido", cObjectsToReport( ::oTipoArticulo:oDbf ) )
+
+   oFr:SetWorkArea(     "Tipos de artículos.Lineas de materias primas", ::oTipoArticulo:oDbf )
+   oFr:SetFieldAliases( "Tipos de artículos.Lineas de materias primas", cObjectsToReport( ::oTipoArticulo:oDbf ) )
 
    oFr:SetMasterDetail( "Producción", "Lineas de material producido",      {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de materias primas",         {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
@@ -3506,6 +3518,14 @@ METHOD DataReport( oFr )
    oFr:SetMasterDetail( "Producción", "Lineas de horas de personal",       {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de maquinaria",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de producción",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+   
+   oFr:SetMasterDetail( "Lineas de material producido", "Artículos.Lineas de material producido",           {|| ::oDetProduccion:oDbf:cCodArt } )  
+   oFr:SetMasterDetail( "Lineas de material producido", "Tipos de artículos.Lineas de material producido",  {|| ::oDetProduccion:oDbf:cCodTip } )  
+
+   oFr:SetMasterDetail( "Lineas de materias primas", "Artículos.Lineas de materias primas",                 {|| ::oDetMaterial:oDbf:cCodArt } )
+   oFr:SetMasterDetail( "Lineas de materias primas", "Tipos de artículos.Lineas de material producido",     {|| ::oDetMaterial:oDbf:cCodTip } )
+
+   oFr:SetMasterDetail( "Lineas de personal", "Operarios",                 {|| ::oDetPersonal:oDbf:cCodTra } )
 
    oFr:SetMasterDetail( "Producción", "Empresa",                           {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Producción", "Almacenes",                         {|| ::oDbf:cAlmOrd } )
@@ -3518,6 +3538,14 @@ METHOD DataReport( oFr )
    oFr:SetResyncPair(   "Producción", "Lineas de horas de prsonal" )
    oFr:SetResyncPair(   "Producción", "Lineas de maquinaria" )
    oFr:SetResyncPair(   "Producción", "Lineas de producción" )
+
+   oFr:SetResyncPair(   "Lineas de material producido", "Artículos.Lineas de material producido" )  
+   oFr:SetResyncPair(   "Lineas de material producido", "Tipos de artículos.Lineas de material producido" )  
+
+   oFr:SetResyncPair(   "Lineas de materias primas", "Artículos.Lineas de materias primas" )
+   oFr:SetResyncPair(   "Lineas de materias primas", "Tipos de artículos.Lineas de material producido" )
+
+   oFr:SetResyncPair(   "Lineas de personal", "Operarios" )
 
    oFr:SetResyncPair(   "Producción", "Empresa" )
    oFr:SetResyncPair(   "Producción", "Almacenes" )
@@ -5053,23 +5081,35 @@ RETURN ( Self )
 Function oProduccion( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    local uReturn  := ""
+   local nParams  := PCount() - 1
 
    if !Empty( oThis ) .and. !Empty( cMsg )
-      uReturn     := oSend( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
-      ? valtoprg( cMsg )
-      ? valtoprg( u1 )
-      ? valtoprg( u2 )
-      ? valtoprg( u3 )
-      ? valtoprg( u4 )
-      ? valtoprg( u5 )
-      ? valtoprg( u6 )
-      ? valtoprg( u7 )
-      ? valtoprg( u8 )
-      ? valtoprg( u9 )
-      ? valtoprg( u10 )
+      uReturn     := ApoloSender( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
    end if
 
 Return ( uReturn )
+
+//--------------------------------------------------------------------------//
+
+function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   local uResult
+
+   cMsg           := StrTran( cMsg, "()", "" )
+
+   do case
+      case IsNil( pValue( 3 ) )
+         uResult  := oObject:&( cMsg )()
+
+      case IsNil( pValue( 4 ) )
+         uResult  := oObject:&( cMsg )( u1 )
+
+      otherwise
+         ApoloSender( oObject:&( cMsg ), u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   end case 
+
+Return ( uResult )
 
 //--------------------------------------------------------------------------//
 
