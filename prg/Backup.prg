@@ -817,38 +817,6 @@ Method ZipFiles()
 
          aAdd( aFil, cZip )
 
-         /*
-         Si la empresa tiene grupo y no le hemos hecho copia de seguridad, se lo hacemos
-
-         cCodGrp              := cCodigoGrupo( ::aEmp[ n, 2 ] )
-
-         if !Empty( cCodGrp )
-
-            cGrp              := cPatSafe() + "Emp"
-            if ::lDate
-               cGrp           += Dtos( Date() )
-            end if
-            cGrp              += ".Zip"
-
-            if file( cGrp )
-               ferase( cGrp )
-            end if
-
-            ::nActualFile     := 0
-            aDir              := Directory( FullCurDir() + "Emp" + cCodGrp + "\*.*" )
-
-            ::oProgreso:SetTotal( Len( aDir ) )
-            ::oProgreso:cText := "Comprimiendo grupo " + cCodGrp
-
-            hb_SetDiskZip( {|| nil } )
-            aEval( aDir, { | cName, nIndex | hb_ZipFile( cGrp, FullCurDir() + "Emp" + cCodGrp + "\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
-            hb_gcAll()
-
-            aAdd( aFil, cGrp )
-
-         end if
-         */
-
       end if
 
       SysRefresh()

@@ -1350,8 +1350,6 @@ CLASS EditMemo
    DATA oMemo 
    DATA cMemo
 
-   DATA oSender
-
    METHOD SetMemo( oSender )  INLINE ( ::cMemo := oSender:VarGet() )
    METHOD Show()
 

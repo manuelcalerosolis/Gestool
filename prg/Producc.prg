@@ -3,6 +3,7 @@
 #include "MesDbf.ch"
 #include "Report.ch"
 #include "XBrowse.ch"
+#include "FastRepH.ch"
 
 memvar oDbf
 memvar cDbf
@@ -17,7 +18,6 @@ memvar cDetPro
 memvar cDetMat
 memvar cDetHPer
 memvar cDetMaq
-memvar oThis
 memvar nPagina
 memvar lEnd
 memvar cTiempoEmp
@@ -26,6 +26,8 @@ memvar nMat
 memvar nPer
 memvar nMaq
 memvar nParte
+
+static oThis
 
 //---------------------------------------------------------------------------//
 
@@ -358,6 +360,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
    ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
+
+   oThis                   := Self 
 
 RETURN ( Self )
 
@@ -1038,7 +1042,7 @@ METHOD Resource( nMode, aDatosAnterior )
    local oGetSec
    local oSaySec
    local cSaySec
-   local oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )
+   local oFntTot              := TFont():New( "Arial", 8, 26, .F., .T. )
    local oHorIni
    local oHorFin
    local oTmpEmp
@@ -3452,8 +3456,6 @@ RETURN ( nCoste )
 
 //---------------------------------------------------------------------------//
 
-#include "FastRepH.ch"
-
 METHOD DataReport( oFr )
 
    /*
@@ -3549,6 +3551,9 @@ METHOD DesignReportProducc( oFr, dbfDoc )
 
    if ::OpenFiles()
 
+      ::oDetMaterial:oDbf:GetStatus()
+      ::oDetMaterial:oDbf:OrdSetFocus( "nTipArt" )
+
       ::CreateTemporal( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd )
 
       public cTiempoEmp    := cTiempo( ::oDbf:dFecOrd, ::oDbf:dFecFin, ::oDbf:cHorIni, ::oDbf:cHorFin )
@@ -3623,6 +3628,8 @@ METHOD DesignReportProducc( oFr, dbfDoc )
       */
 
       ::oDbfTemporal:Zap()
+
+      ::oDetMaterial:oDbf:SetStatus()
 
       ::CloseFiles()
 
@@ -5019,29 +5026,51 @@ RETURN ( Self )
 
 METHOD LoadCommunFields() CLASS TDetalleArticulos
 
-      ::oGetGrupoFamilia:cText( cGruFam( ::oParent:oArt:Familia, ::oParent:oFam ) )
-      ::oGetGrupoFamilia:lValid()
+   ::oGetGrupoFamilia:cText( cGruFam( ::oParent:oArt:Familia, ::oParent:oFam ) )
+   ::oGetGrupoFamilia:lValid()
 
-      ::oGetFamilia:cText( ::oParent:oArt:Familia )
-      ::oGetFamilia:lValid()
+   ::oGetFamilia:cText( ::oParent:oArt:Familia )
+   ::oGetFamilia:lValid()
 
-      ::oGetTipo:cText( ::oParent:oArt:cCodTip )
-      ::oGetTipo:lValid()
+   ::oGetTipo:cText( ::oParent:oArt:cCodTip )
+   ::oGetTipo:lValid()
 
-      ::oGetCatalogo:cText( ::oParent:oArt:cCodCate )
-      ::oGetCatalogo:lValid()
+   ::oGetCatalogo:cText( ::oParent:oArt:cCodCate )
+   ::oGetCatalogo:lValid()
 
-      ::oGetTemporada:cText( ::oParent:oArt:cCodTemp )
-      ::oGetTemporada:lValid()
+   ::oGetTemporada:cText( ::oParent:oArt:cCodTemp )
+   ::oGetTemporada:lValid()
 
-      ::oGetFabricante:cText( ::oParent:oArt:cCodFab )
-      ::oGetFabricante:lValid()
+   ::oGetFabricante:cText( ::oParent:oArt:cCodFab )
+   ::oGetFabricante:lValid()
      
-      ::oClasificacionArticulo:SetNumber( ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip ) )
+   ::oClasificacionArticulo:SetNumber( ::oParent:oTipoArticulo:nTipo( ::oParent:oArt:cCodTip ) )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+Function oProduccion( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   local uReturn  := ""
+
+   if !Empty( oThis ) .and. !Empty( cMsg )
+      uReturn     := oSend( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+      ? valtoprg( cMsg )
+      ? valtoprg( u1 )
+      ? valtoprg( u2 )
+      ? valtoprg( u3 )
+      ? valtoprg( u4 )
+      ? valtoprg( u5 )
+      ? valtoprg( u6 )
+      ? valtoprg( u7 )
+      ? valtoprg( u8 )
+      ? valtoprg( u9 )
+      ? valtoprg( u10 )
+   end if
+
+Return ( uReturn )
+
+//--------------------------------------------------------------------------//
 
 
