@@ -3500,17 +3500,17 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Operarios", ::oDetPersonal:oDbf:nArea )
    oFr:SetFieldAliases( "Operarios", cObjectsToReport( ::oDetPersonal:oDbf ) )
 
+   oFr:SetWorkArea(     "Tipos.Lineas de material producido", ::oTipoArticulo:oDbf:nArea )
+   oFr:SetFieldAliases( "Tipos.Lineas de material producido", cObjectsToReport( ::oTipoArticulo:oDbf ) )
+
+   oFr:SetWorkArea(     "Tipos.Lineas de materias primas", ::oTipoArticulo:oDbf:nArea )
+   oFr:SetFieldAliases( "Tipos.Lineas de materias primas", cObjectsToReport( ::oTipoArticulo:oDbf ) )
+
    oFr:SetWorkArea(     "Artículos.Lineas de material producido", ::oArt:nArea )
    oFr:SetFieldAliases( "Artículos.Lineas de material producido", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Artículos.Lineas de materias primas", ::oArt:nArea )
    oFr:SetFieldAliases( "Artículos.Lineas de materias primas", cItemsToReport( aItmArt() ) )
-
-   oFr:SetWorkArea(     "Tipos de artículos.Lineas de material producido", ::oTipoArticulo:oDbf )
-   oFr:SetFieldAliases( "Tipos de artículos.Lineas de material producido", cObjectsToReport( ::oTipoArticulo:oDbf ) )
-
-   oFr:SetWorkArea(     "Tipos de artículos.Lineas de materias primas", ::oTipoArticulo:oDbf )
-   oFr:SetFieldAliases( "Tipos de artículos.Lineas de materias primas", cObjectsToReport( ::oTipoArticulo:oDbf ) )
 
    /*
    Relaciones------------------------------------------------------------------
@@ -3523,11 +3523,11 @@ METHOD DataReport( oFr )
    oFr:SetMasterDetail( "Producción", "Lineas de maquinaria",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de producción",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    
-   oFr:SetMasterDetail( "Lineas de material producido", "Artículos.Lineas de material producido",           {|| ::oDetProduccion:oDbf:cCodArt } )  
-   oFr:SetMasterDetail( "Lineas de material producido", "Tipos de artículos.Lineas de material producido",  {|| ::oDetProduccion:oDbf:cCodTip } )  
+   oFr:SetMasterDetail( "Lineas de material producido", "Artículos.Lineas de material producido",  {|| ::oDetProduccion:oDbf:cCodArt } )  
+   oFr:SetMasterDetail( "Lineas de material producido", "Tipos.Lineas de material producido",      {|| ::oDetProduccion:oDbf:cCodTip } )  
 
-   oFr:SetMasterDetail( "Lineas de materias primas", "Artículos.Lineas de materias primas",                 {|| ::oDetMaterial:oDbf:cCodArt } )
-   oFr:SetMasterDetail( "Lineas de materias primas", "Tipos de artículos.Lineas de material producido",     {|| ::oDetMaterial:oDbf:cCodTip } )
+   oFr:SetMasterDetail( "Lineas de materias primas", "Artículos.Lineas de materias primas",        {|| ::oDetMaterial:oDbf:cCodArt } )
+   oFr:SetMasterDetail( "Lineas de materias primas", "Tipos.Lineas de materias primas",            {|| ::oDetMaterial:oDbf:cCodTip } )
 
    oFr:SetMasterDetail( "Lineas de personal", "Operarios",                 {|| ::oDetPersonal:oDbf:cCodTra } )
 
@@ -3552,10 +3552,10 @@ METHOD DataReport( oFr )
    oFr:SetResyncPair(   "Producción", "Operación" )
 
    oFr:SetResyncPair(   "Lineas de material producido", "Artículos.Lineas de material producido" )  
-   oFr:SetResyncPair(   "Lineas de material producido", "Tipos de artículos.Lineas de material producido" )  
+   oFr:SetResyncPair(   "Lineas de material producido", "Tipos.Lineas de material producido" )  
 
    oFr:SetResyncPair(   "Lineas de materias primas", "Artículos.Lineas de materias primas" )
-   oFr:SetResyncPair(   "Lineas de materias primas", "Tipos de artículos.Lineas de material producido" )
+   oFr:SetResyncPair(   "Lineas de materias primas", "Tipos.Lineas de material producido" )
 
    oFr:SetResyncPair(   "Lineas de personal", "Operarios" )
 
