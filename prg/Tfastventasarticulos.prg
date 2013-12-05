@@ -20,6 +20,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  oStock
 
+
    METHOD lResource( cFld )
 
    METHOD Create()
@@ -59,6 +60,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD aStockArticulo()                INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
    METHOD SetUnidadesNegativo( lValue )   INLINE ( ::lUnidadesNegativo := lValue )
+
+   METHOD lExistencias                    INLINE ( ::cReportType == "Existencias" )
 
 END CLASS
 
@@ -731,12 +734,19 @@ METHOD DataReport() CLASS TFastVentasArticulos
    Relaciones entre tablas-----------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+   if ! ::lExistencias()
+      ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
+      ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
+      ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
+      ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+      ::oFastReport:SetMasterDetail(   "Informe", "Stock",                             {|| ::oDbf:cCodArt } )
+   else
+      ::oFastReport:SetMasterDetail(   "Stock", "Artículos.Informe",                 {|| ::oStock:oDbfStock:cCodigo } )
+      ::oFastReport:SetMasterDetail(   "Stock", "Imagenes",                          {|| ::oStock:oDbfStock:cCodigo } )
+      ::oFastReport:SetMasterDetail(   "Stock", "Escandallos",                       {|| ::oStock:oDbfStock:cCodigo } )
+      ::oFastReport:SetMasterDetail(   "Stock", "Códigos de barras",                 {|| ::oStock:oDbfStock:cCodigo } )
+   end if
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Stock",                             {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
@@ -763,12 +773,19 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
-   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
-   ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
-   ::oFastReport:SetResyncPair(     "Informe", "Stock" )
+   
+   if ! ::lExistencias()
+      ::oFastReport:SetResyncPair(  "Informe", "Artículos.Informe" )
+      ::oFastReport:SetResyncPair(  "Informe", "Imagenes" )
+      ::oFastReport:SetResyncPair(  "Informe", "Escandallos" )
+      ::oFastReport:SetResyncPair(  "Informe", "Códigos de barras" )
+      ::oFastReport:SetResyncPair(  "Informe", "Stock" )
+   else 
+      ::oFastReport:SetResyncPair(  "Stock", "Artículos.Informe" )
+      ::oFastReport:SetResyncPair(  "Stock", "Imagenes" )
+      ::oFastReport:SetResyncPair(  "Stock", "Escandallos" )
+      ::oFastReport:SetResyncPair(  "Stock", "Códigos de barras" )
+   end if
 
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
 

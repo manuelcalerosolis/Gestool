@@ -464,6 +464,10 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCuentasBancarias
    DEFINE DATABASE ::oDbf FILE "EmpBnc.Dbf" CLASS "EmpBnc" ALIAS "EmpBnc" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cuentas bancarias"
 
       FIELD NAME "cCodBnc"   TYPE "C"     LEN  3  DEC 0 COMMENT "Código"               PICTURE "@!"      COLSIZE  60 OF ::oDbf
+      
+      FIELD NAME "cPaiBnc"   TYPE "C"     LEN  2  DEC 0 COMMENT "País IBAN"               HIDE                       OF ::oDbf
+      FIELD NAME "cCtrBnc"   TYPE "C"     LEN  2  DEC 0 COMMENT "Dígito de control IBAN"  HIDE                       OF ::oDbf
+      
       FIELD NAME "cEntBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Entidad bancaria"     HIDE                          OF ::oDbf
       FIELD NAME "cSucBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Sucursal bancaria"    HIDE                          OF ::oDbf
       FIELD NAME "cDigBnc"   TYPE "C"     LEN  2  DEC 0 COMMENT "Dígito control"       HIDE                          OF ::oDbf
@@ -471,7 +475,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCuentasBancarias
       FIELD NAME "cNomBnc"   TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre del banco"                                   OF ::oDbf
 
       FIELD CALCULATE NAME "bCtaBnc"      LEN 14  DEC 0 COMMENT "Cuenta bancaria" ;
-         VAL {|| ::oDbf:cEntBnc + "-" + ::oDbf:cSucBnc + "-" + ::oDbf:cDigBnc + "-" + ::oDbf:cCtaBnc }   COLSIZE 150 OF ::oDbf
+         VAL {|| ::oDbf:cPaiBnc + ::oDbf:cCtrBnc + "-" + ::oDbf:cEntBnc + "-" + ::oDbf:cSucBnc + "-" + ::oDbf:cDigBnc + "-" + ::oDbf:cCtaBnc }   COLSIZE 150 OF ::oDbf
 
       FIELD NAME "cDirBnc"   TYPE "C"     LEN 35  DEC 0 COMMENT "Domicilio del banco"  HIDE                          OF ::oDbf
       FIELD NAME "cPobBnc"   TYPE "C"     LEN 25  DEC 0 COMMENT "Población del banco"  HIDE                          OF ::oDbf
@@ -483,8 +487,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCuentasBancarias
       FIELD NAME "cPaiBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Pais"                 PICTURE "@!"      COLSIZE 120 OF ::oDbf
       FIELD NAME "nSalIni"   TYPE "N"     LEN 16  DEC 0 COMMENT "Saldo inicial"        HIDE                          OF ::oDbf
 
-      INDEX TO "EmpBnc.Cdx" TAG "cCodBnc" ON "cCodBnc"                                 COMMENT "Código"  NODELETED   OF ::oDbf
-      INDEX TO "EmpBnc.Cdx" TAG "cCtaBnc" ON "cEntBnc + cSucBnc + cDigBnc + cCtaBnc"   COMMENT "Nombre"  NODELETED   OF ::oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cCodBnc" ON "cCodBnc"                                                   COMMENT "Código"  NODELETED   OF ::oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cCtaBnc" ON "cPaiBnc + cCtrBnc + cEntBnc + cSucBnc + cDigBnc + cCtaBnc" COMMENT "Cuenta"  NODELETED   OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -646,6 +650,21 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
          VAR      ::oDbf:cPContBnc ;
          ID       270 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ::oDbf:FieldPos( "cPaiBnc" ) ] ;
+         VAR      ::oDbf:cPaiBnc ;
+         PICTURE  "@!" ;
+         ID       370 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( .t. ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ::oDbf:FieldPos( "cCtrBnc" ) ] ;
+         VAR      ::oDbf:cCtrBnc ;
+         ID       380 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( .t. ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ::oDbf:FieldPos( "cEntBnc" ) ] ;

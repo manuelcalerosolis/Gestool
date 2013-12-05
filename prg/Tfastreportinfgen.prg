@@ -2302,6 +2302,8 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
       cText             := ::cInformeFastReport
       cText             := CutString( '<TfrxGroupHeader', '>', cText )
 
+      ? cText
+
       if !Empty( cText )
 
          cText          := CutString( 'Condition="', '"', cText )
@@ -2350,6 +2352,9 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
          end if
 
       end if
+
+      ? ( cIndex )
+      ? ( ::cFileIndx )
 
       if !Empty( cIndex )
          ::oDbf:AddTmpIndex( "Grupos", ( ::cFileIndx ), ( cIndex ), , , , , , , , , .t. )

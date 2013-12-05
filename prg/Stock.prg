@@ -749,7 +749,8 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
    FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 
-   INDEX TO "Stock.Cdx" TAG "cCodArt" ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote" COMMENT "Código" FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO "Stock.Cdx" TAG "dFecCad" ON "Dtos( dFecCad )"                                   COMMENT "Fecha caducidad"  FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO "Stock.Cdx" TAG "cCodArt" ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "Código"           FOR "!Deleted()" OF ::oDbfStock
 
    END DATABASE ::oDbfStock
 
