@@ -3512,6 +3512,10 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Tipos de artículos.Lineas de materias primas", ::oTipoArticulo:oDbf )
    oFr:SetFieldAliases( "Tipos de artículos.Lineas de materias primas", cObjectsToReport( ::oTipoArticulo:oDbf ) )
 
+   /*
+   Relaciones------------------------------------------------------------------
+   */
+
    oFr:SetMasterDetail( "Producción", "Lineas de material producido",      {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de materias primas",         {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de personal",                {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
@@ -3532,12 +3536,20 @@ METHOD DataReport( oFr )
    oFr:SetMasterDetail( "Producción", "Sección",                           {|| ::oDbf:cCodSec } )
    oFr:SetMasterDetail( "Producción", "Operación",                         {|| ::oDbf:cCodOpe } )
 
+   /*
+   Sincronizaciones------------------------------------------------------------
+   */
+
    oFr:SetResyncPair(   "Producción", "Lineas de material producido" )
    oFr:SetResyncPair(   "Producción", "Lineas de materias primas" )
    oFr:SetResyncPair(   "Producción", "Lineas de personal" )
    oFr:SetResyncPair(   "Producción", "Lineas de horas de prsonal" )
    oFr:SetResyncPair(   "Producción", "Lineas de maquinaria" )
    oFr:SetResyncPair(   "Producción", "Lineas de producción" )
+   oFr:SetResyncPair(   "Producción", "Empresa" )
+   oFr:SetResyncPair(   "Producción", "Almacenes" )
+   oFr:SetResyncPair(   "Producción", "Sección" )
+   oFr:SetResyncPair(   "Producción", "Operación" )
 
    oFr:SetResyncPair(   "Lineas de material producido", "Artículos.Lineas de material producido" )  
    oFr:SetResyncPair(   "Lineas de material producido", "Tipos de artículos.Lineas de material producido" )  
@@ -3546,11 +3558,6 @@ METHOD DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de materias primas", "Tipos de artículos.Lineas de material producido" )
 
    oFr:SetResyncPair(   "Lineas de personal", "Operarios" )
-
-   oFr:SetResyncPair(   "Producción", "Empresa" )
-   oFr:SetResyncPair(   "Producción", "Almacenes" )
-   oFr:SetResyncPair(   "Producción", "Sección" )
-   oFr:SetResyncPair(   "Producción", "Operación" )
 
 Return nil
 
@@ -3695,7 +3702,7 @@ METHOD PrintReportProducc( nDevice, nCopies, cPrinter, dbfDoc )
    */
 
    ::oDetMaterial:oDbf:GetStatus()
-   ::oDetMaterial:oDbf:OrdSetFocus( "nTipArt" )
+   ::oDetMaterial:oDbf:OrdSetFocus( "cCodTip" )
 
    ::DataReport( oFr )
 
