@@ -92,7 +92,7 @@ CLASS TSndRecInf
    Method OpenFiles()
    Method CloseFiles()
 
-   Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenFiles( lExclusive, cPath ), ::CloseFiles() )
+   Method BuildFiles( lExclusive, cPath ) INLINE ( ::DefineFiles( cPath ), ::oDbfSenderReciver:Create(), ::oDbfFilesReciver:Create() )
 
    Method BotonSiguiente()
    Method BotonAnterior()

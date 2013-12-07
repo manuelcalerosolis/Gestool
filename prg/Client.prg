@@ -2187,8 +2187,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwBnc:AddCol() )
          :cHeader          := "Cuenta"
-         :bEditValue       := {|| ( dbfTmpBnc )->cEntBnc + "-" + ( dbfTmpBnc )->cSucBnc + "-" + ( dbfTmpBnc )->cDigBnc + "-" + ( dbfTmpBnc )->cCtaBnc }
-         :nWidth           := 150
+         :bEditValue       := {|| PictureCuentaIBAN( dbfTmpBnc ) }
+         :nWidth           := 180
       end with
 
       with object ( oBrwBnc:AddCol() )
@@ -6422,7 +6422,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
    local oSayPai
    local cSayPai
    local lDis        := .f.
-   local lOldCtaBnc  := aTmp[ ( dbfTmpBnc )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( Fieldpos( "cSucBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( Fieldpos( "cDigBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( Fieldpos( "cCtaBnc" ) ) ]
+   local cOldCtaBnc  := aCuentaIBAN( aTmp, dbfTmpBnc )
 
    /*
    Control para que el primer banco que metamos se ponga por defecto
@@ -6431,10 +6431,14 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
    if nMode == APPD_MODE
       ( dbfTmpBnc )->( dbGoTop() )
       if ( dbfTmpBnc )->( Eof() )
-         aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ] := .t.
+         aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]   := .t.
          lDis        := .t.
       end if
    end if
+
+   if Empty( aTmp[ ( dbfTmpBnc )->( Fieldpos( "cPaisIBAN" ) ) ] )
+      aTmp[ ( dbfTmpBnc )->( Fieldpos( "cPaisIBAN" ) ) ]    := "ES"
+   end if 
 
    DEFINE DIALOG oDlg RESOURCE "Banco" TITLE LblTitle( nMode ) + "banco de cliente"
 
@@ -6510,25 +6514,65 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
+      REDEFINE GET aGet[ ( dbfTmpBnc )->( Fieldpos( "cPaisIBAN" ) ) ] ; 
+         VAR      aTmp[ ( dbfTmpBnc )->( Fieldpos( "cPaisIBAN" ) ) ] ;
+         PICTURE  "@!" ;
+         ID       370 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit(  aTmp[ ( dbfTmpBnc )->( Fieldpos( "cPaisIBAN" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ],;
+                                 aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ] ) ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ] ;
+         ID       380 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit(  aTmp[ ( dbfTmpBnc )->( Fieldpos( "cPaisIBAN" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ],;
+                                 aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ],;
+                                 aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ] ) ) ;
+         OF       oDlg
+
       REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] ;
          VAR      aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ];
          ID       310 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ],;
+                              aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ];
          VAR      aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ];
          ID       320 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ],;
+                              aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ];
          VAR      aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) )  ];
          ID       330 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ],;
+                              aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ];
@@ -6536,7 +6580,12 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
          ID       340 ;
          PICTURE  "9999999999" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ],;
+                              aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ],;
+                              aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ),;
+                     aGet[ ( dbfTmpBnc )->( Fieldpos( "cCtrlIBAN" ) ) ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ] ;
@@ -6560,7 +6609,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
          ID       500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, lOldCtaBnc ) )
+         ACTION   ( EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, cOldCtaBnc ) )
 
       REDEFINE BUTTON ;
          ID       550 ;
@@ -6573,7 +6622,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
    */
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, lOldCtaBnc ) } )
+      oDlg:AddFastKey( VK_F5, {|| EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, cOldCtaBnc ) } )
    end if
 
    oDlg:bStart := {|| if( aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]:Disable(), aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]:Enable() ) }
@@ -6591,37 +6640,21 @@ Return ( oDlg:nResult == IDOK )
 Funcion que termina el diálogo y comprueba que no falte ningún campo
 */
 
-Static Function EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, lOldCtaBnc )
+Static Function EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, cOldCtaBnc )
 
    local nRec
 
    aTmp[ ( dbfTmpBnc )->( FieldPos( "cCodCli" ) ) ]   := cCodCli
 
-   if lOldCtaBnc != aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]
-
-      /*
-      if Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] ) .or.;
-         Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] ) .or.;
-         Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) .or.;
-         Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] ) .or.;
-         Len( AllTrim( aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] ) ) < 10
-
-         msgStop( "La cuenta bancaria es incorrecta" )
-
-         aGet[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]:SetFocus()
-
-         return .f.
-
-      end if
-      */
+   if cOldCtaBnc != aCuentaIBAN( aTmp, dbfTmpBnc )
 
       nRec     := ( dbfTmpBnc )->( Recno() )
 
-      if ( dbfTmpBnc )->( dbSeek( cCodCli + aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] ) )
+      if ( dbfTmpBnc )->( dbSeek( cCodCli + aCuentaIBAN( aTmp, dbfTmpBnc ) ) )
 
          msgStop( "La cuenta bancaria ya existe" )
 
-         aGet[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ]:SetFocus()
+         aGet[ ( dbfTmpBnc )->( FieldPos( "cPaisIBAN" ) ) ]:SetFocus()
 
          ( dbfTmpBnc )->( dbGoTo( nRec ) )
 
@@ -6769,6 +6802,7 @@ Function SynClient( cPath )
    if OpenFiles( .f. )
 
       while !( dbfBanco )->( eof() )
+
          if Len( Rtrim( ( dbfBanco )->cCtaBnc ) ) >= 20
             if dbLock( dbfBanco )
                ( dbfBanco )->cEntBnc   := SubStr( ( dbfBanco )->cCtaBnc,  1,  4 )
@@ -6779,12 +6813,20 @@ Function SynClient( cPath )
             end if
          end if
 
-
          if Empty( ( dbfBanco )->cDigBnc )
 
             if dbLock( dbfBanco )
                ( dbfBanco )->cDigBnc   := cDgtControl( ( dbfBanco )->cEntBnc, ( dbfBanco )->cSucBnc, ( dbfBanco )->cDigBnc, ( dbfBanco )->cCtaBnc )
                ( dbfBanco )->( dbUnLock() )
+            end if
+
+         end if
+
+         if Empty( ( dbfBanco )->cPaisIBAN )
+
+            if dbLock( dbfBanco )
+               ( dbfBanco )->cPaisIBAN := "ES"
+               ( dbfBanco )->cCtrlIBAN := IbanDigit( ( dbfBanco )->cPaisIBAN, ( dbfBanco )->cCtrlIBAN, ( dbfBanco )->cEntBnc, ( dbfBanco )->cSucBnc, ( dbfBanco )->cDigBnc, ( dbfBanco )->cCtaBnc )
             end if
 
          end if
@@ -11422,13 +11464,13 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCodCli", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
 
       ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
+      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
       ( dbfClient )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
       ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cBncDef", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
 
       ( dbfClient )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODCLI + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
+      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODCLI + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
 
       ( dbfClient )->( dbCloseArea() )
 
@@ -11465,7 +11507,6 @@ FUNCTION rxClient( cPath, oMeter )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de incidencias" )
    end if
-
 
    // Tabla de contactos-------------------------------------------------------
 
@@ -11567,6 +11608,8 @@ FUNCTION aCliBnc()
    aAdd( aBase, { "cFaxBnc",     "C", 20, 0, "Fax",                                       "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPContBnc",   "C", 35, 0, "Persona de contacto",                       "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "Pais",                                      "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPaisIBAN",   "C",  2, 0, "País IBAN",                                 "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCtrlIBAN",   "C",  2, 0, "Dígito de control IBAN",                    "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cEntBnc",     "C",  4, 0, "Entidad de la cuenta bancaria",             "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cSucBnc",     "C",  4, 0, "Sucursal de la cuenta bancaria",            "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cDigBnc",     "C",  2, 0, "Dígito de control de la cuenta bancaria",   "",                   "", "( cDbfBnc )" } )
@@ -14641,8 +14684,8 @@ FUNCTION BrwBncCli( oGet, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodCli, dbfBancos
       with object ( oBrw:AddCol() )
          :cHeader          := "Cuenta"
          :cSortOrder       := "cCtaBnc"
-         :bEditValue       := {|| ( dbfBancos )->cEntBnc + "-" + ( dbfBancos )->cSucBnc + "-" + ( dbfBancos )->cDigBnc + "-" + ( dbfBancos )->cCtaBnc }
-         :nWidth           := 150
+         :bEditValue       := {|| PictureCuentaIBAN( dbfBancos ) }
+         :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 

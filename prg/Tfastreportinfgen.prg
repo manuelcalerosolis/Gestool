@@ -158,7 +158,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD OpenService( lExclusive, cPath )
    METHOD CloseService()
 
-   Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
+   Method BuildFiles( lExclusive, cPath ) INLINE ( ::DefineFiles( cPath ), ::oDbfInf:Create(), ::oDbfPersonalizado:Create() )
 
    METHOD lGenerate()
    

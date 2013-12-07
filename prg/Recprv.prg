@@ -52,10 +52,12 @@ Defines para las lineas de Pago
 #define _CSUCEMP                38
 #define _CDIGEMP                39
 #define _CCTAEMP                40
-#define _CENTPRV                41
-#define _CSUCPRV                42
-#define _CDIGPRV                43
-#define _CCTAPRV                44
+#define _CPAISIBAN              41
+#define _CCTRLIBAN              42
+#define _CENTPRV                43
+#define _CSUCPRV                44
+#define _CDIGPRV                45
+#define _CCTAPRV                46
 
 memvar cDbf
 memvar cDbfCol
@@ -715,10 +717,14 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
    local oBmpBancos
 
    if Empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := oUser():cCaja()
    end if
 
-   lOldDevuelto         := aTmp[ _LDEVUELTO ]
+   if Empty( aTmp[ _CPAISIBAN ] )
+      aTmp[ _CPAISIBAN ]   := "ES"
+   end if
+
+   lOldDevuelto            := aTmp[ _LDEVUELTO ]
 
    DEFINE DIALOG oDlg RESOURCE "Recibos" TITLE "Recibos de proveedor"
 
@@ -900,35 +906,56 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
          VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
          OF       oFld:aDialogs[2]
 
+      /*
+      Bnco de proveedor--------------------------------------------------------
+      */
+
       REDEFINE GET aGet[ _CBNCPRV ] VAR aTmp[ _CBNCPRV ];
          ID       200 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncPrv( aGet[ _CBNCPRV ], aGet[ _CENTPRV ], aGet[ _CSUCPRV ], aGet[ _CDIGPRV ], aGet[ _CCTAPRV ], aTmp[ _CCODPRV ] ) );
+         ON HELP  ( BrwBncPrv( aGet[ _CBNCPRV ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTPRV ], aGet[ _CSUCPRV ], aGet[ _CDIGPRV ], aGet[ _CCTAPRV ], aTmp[ _CCODPRV ] ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CCTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CCTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CENTPRV ] VAR aTmp[ _CENTPRV ];
          ID       210 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ) ) ;
+         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CSUCPRV ] VAR aTmp[ _CSUCPRV ];
          ID       220 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV], aGet[ _CDIGPRV ] ) ) ;
+         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CDIGPRV ] VAR aTmp[ _CDIGPRV ];
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ) ) ;
+         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCTAPRV ] VAR aTmp[ _CCTAPRV ];
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ) ) ;
+         VALID    ( lCalcDC( aTmp[ _CENTPRV ], aTmp[ _CSUCPRV ], aTmp[ _CDIGPRV ], aTmp[ _CCTAPRV ], aGet[ _CDIGPRV ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -2175,6 +2202,14 @@ function SynRecPrv( cPatEmp )
          ( dbfFacPrvP )->cCodUsr := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodUsr" )
       end if
 
+      if Empty( ( dbfFacPrvP )->cPaisIBAN )
+         ( dbfFacPrvP )->cPaisIBAN  := "ES"
+      end if 
+
+      if Empty( ( dbfFacPrvP )->cCtrlIBAN )
+         ( dbfFacPrvP )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvP )->cPaisIBAN, ( dbfFacPrvP )->cCtrlIBAN, ( dbfFacPrvP )->cEntPrv, ( dbfFacPrvP )->cSucPrv, ( dbfFacPrvP )->cDigPrv, ( dbfFacPrvP )->cCtaPrv )
+      end if 
+
       ( dbfFacPrvP )->( dbSkip() )
 
    end while
@@ -2435,7 +2470,7 @@ FUNCTION rxRecPrv( cPath, oMeter )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cRecDev", "cRecDev", {|| Field->cRecDev } ) )
 
       ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Field->lCobrado", {|| !Deleted() .and. Field->lCobrado } ) )
-      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
+      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cPaisIBAN + Field->cCtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
       ( dbfFacPrvP )->( dbCloseArea() )
 
@@ -2493,6 +2528,8 @@ function aItmRecPrv()
    aAdd( aRecFacPrv, { "cSucEmp"    ,"C",  4, 0, "Sucursal de la cuenta de la empresa",   "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cDigEmp"    ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",     "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cCtaEmp"    ,"C", 10, 0, "Cuenta bancaria de la empresa",         "",            "", "( cDbfRec )" } )
+   aAdd( aRecFacPrv, { "cPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta del proveedor",    "",          "", "( cDbfRec )" } )
+   aAdd( aRecFacPrv, { "cCtrlIBAN"  ,"C",  2, 0, "Digito de control IBAN de la cuenta del proveedor", "","", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cEntPrv"    ,"C",  4, 0, "Entidad de la cuenta del proveedor",    "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cSucPrv"    ,"C",  4, 0, "Sucursal de la cuenta del proveedor",   "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cDigPrv"    ,"C",  2, 0, "Dígito de control de la cuenta del proveedor", "",     "", "( cDbfRec )" } )

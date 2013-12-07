@@ -1787,7 +1787,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "EmpBnc.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "EmpBnc.Cdx"
    oDataTable:cDescription := "Cuentas bancos"
-   oDataTable:bCreateFile  := {| cPath | msgAlert( cPath ), TCuentasBancarias():BuildFiles( .t., cPath ) }
+   oDataTable:bCreateFile  := {| cPath | TCuentasBancarias():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -4166,7 +4166,12 @@ METHOD ActualizaTable( oTable, cPath )
    cOld              := oTable:cName 
    cTmp              := cEmpTmp() + cNoPath( oTable:cName )
      
+   if "EmpBnc" $ oTable:cName
+      msgStop( "mia en el tmp")
+   end if
+
    if !lExistTable( cTmp + ".Dbf" )
+      msgStop( "No existe" + cTmp + ".Dbf" )
       return .f.
    end if
    

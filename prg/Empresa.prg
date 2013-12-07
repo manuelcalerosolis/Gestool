@@ -3667,10 +3667,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lBancos
-         ? "TCuentasBancarias():Create( cPath ):CheckFiles( cPathOld + EmpBnc.Dbf )"
          TCuentasBancarias():Create( cPath ):CheckFiles( cPathOld + "EmpBnc.Dbf" )
       else
-         ? "TCuentasBancarias():Create( cPath ):CheckFiles()"
          TCuentasBancarias():Create( cPath ):CheckFiles()
       end if
 

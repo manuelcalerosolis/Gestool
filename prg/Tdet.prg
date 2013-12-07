@@ -91,7 +91,7 @@ CLASS TDet
    METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
    METHOD NotExiste( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
 
-   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
+   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::DefineFiles( cPath ):Create() )
 
 END CLASS
 

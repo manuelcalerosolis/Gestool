@@ -68,8 +68,8 @@ FUNCTION cDgtControl( cEntidad, cSucursal, cDigito, cCuenta )
 	local cD1
 	local cD2
 	local nPesos	:={ 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 }
-   local nD1      := 0      // primer digito
-	local nD2		:= 0
+  local nD1     := 0      // primer digito
+	local nD2		  := 0
 
    if Empty( cCuenta )
       Return ( cDigito )
@@ -131,31 +131,98 @@ RETURN ( cDc )
 
 //--------------------------------------------------------------------------//
 
-/*
-FUNCTION SegSoc( cSegSoc )
+Function cCuentaBancaria( dbf )
 
-	local nCalculo := val( cSegSoc ) % 97
+Return ( ( dbf )->cEntBnc + ( dbf )->cSucBnc + ( dbf )->cDigBnc + ( dbf )->cCtaBnc )
 
-RETURN ( RJust( str( nCalculo, 2 ), '0' ) )
-*/
-//---------------------------------------------------------------------------//
-/*
-FUNCTION CheckSS( oGet )
+//--------------------------------------------------------------------------//
 
-	local cSegSoc  := oGet:varGet()
+Function aCuentaBancaria( aTmp, dbf )
 
-   IF len( RTrim( cSegSoc ) ) < __LENSS__
+Return ( aTmp[ ( dbf )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cSucBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cDigBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cCtaBnc" ) ) ] )
 
-		cSegSoc = substr( cSegSoc, 1, 2 ) + rjust( substr( cSegSoc, 3, 8 ), '0')
-		cSegSoc = cSegSoc + SegSoc( cSegSoc )
+//--------------------------------------------------------------------------//
 
-		oGet:cText( cSegSoc )
+function Iban( cCountry, cAccount, nLen )
 
-	END IF
+  local cIban
 
-RETURN .T.
-*/
-//---------------------------------------------------------------------------//
+  if nLen  != len( cCountry + cAccount ) + 2
+    cIban := "incorrect IBAN code"
+  else
+    cIban := cCountry + IbanDigit( cCountry, cAccount ) + cAccount
+  endif
+
+return( cIban )
+
+//----------------------------------------------------------------//
+
+function lIbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta, oGet )
+
+  oGet:cText( IbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta ) )
+
+Return ( .t. )  
+
+//----------------------------------------------------------------//
+
+function IbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta )
+
+  local n
+  local cDC
+  local cIban       := cEntidad + cSucursal + cDigito + cCuenta
+  local cAlgorithm  := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  
+  cIban += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )
+  cIban += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
+  cIban += "00"
+ 
+  do while len( cIban ) > 3
+    cDC   := str( val(substr( cIban, 1, 9 )) % 97, 2 )
+    cIban := cDC + substr( cIban, 10 )
+  enddo
+  cDC := strzero( 98 - val(cDC), 2 )
+ 
+return( cDC ) 
+
+//----------------------------------------------------------------//
+
+function IbanCheck( cIban )
+
+ local cAlgorithm := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ local cCountry   := substr( cIban, 1, 2 )
+ local cDC        := substr( cIban, 3, 2 )
+
+ cIban := substr( cIban, 5 )
+ cIban += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )
+ cIban += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
+ cIban += cDC
+
+ do while len(cIban) > 3
+   cDC   := str( val(substr( cIban, 1, 9 )) % 97, 2 )
+   cIban := cDC + substr( cIban, 10 )
+ enddo
+ 
+return( val(cDC) == 1 )
+
+//----------------------------------------------------------------//
+
+Function cCuentaIBAN( dbf )
+
+Return ( ( dbf )->cPaisIBAN + ( dbf )->cCrtlIBAN + cCuentaBancaria( dbf ) )
+
+//----------------------------------------------------------------//
+
+Function aCuentaIBAN( aTmp, dbf )
+
+Return ( aTmp[ ( dbf )->( FieldPos( "cPaisIBAN" ) ) ] + aTmp[ ( dbf )->( FieldPos( "cCtrlIBAN" ) ) ] + aCuentaBancaria( aTmp, dbf ) )
+
+//----------------------------------------------------------------//
+
+Function PictureCuentaIBAN( dbf )
+
+Return ( ( dbf )->cPaisIBAN + ( dbf )->cCtrlIBAN + "-" + ( dbf )->cEntBnc + "-" + ( dbf )->cSucBnc + "-" + ( dbf )->cDigBnc + "-" + ( dbf )->cCtaBnc )
+
+//----------------------------------------------------------------//
 
 /*
 Esta funcion sirve para transformar numero en cadenas para EDM
