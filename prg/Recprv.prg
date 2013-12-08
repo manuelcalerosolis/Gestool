@@ -48,16 +48,18 @@ Defines para las lineas de Pago
 #define _CRECDEV                34      //   C     14     0
 #define _CBNCEMP                35
 #define _CBNCPRV                36
-#define _CENTEMP                37
-#define _CSUCEMP                38
-#define _CDIGEMP                39
-#define _CCTAEMP                40
-#define _CPAISIBAN              41
-#define _CCTRLIBAN              42
-#define _CENTPRV                43
-#define _CSUCPRV                44
-#define _CDIGPRV                45
-#define _CCTAPRV                46
+#define _CEPAISIBAN             37
+#define _CECTRLIBAN             38
+#define _CENTEMP                39
+#define _CSUCEMP                40
+#define _CDIGEMP                41
+#define _CCTAEMP                42
+#define _CPAISIBAN              43
+#define _CCTRLIBAN              44
+#define _CENTPRV                45
+#define _CSUCPRV                46
+#define _CDIGPRV                47
+#define _CCTAPRV                48
 
 memvar cDbf
 memvar cDbfCol
@@ -801,7 +803,6 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
       REDEFINE GET aGet[ _CPGDOPOR ] VAR aTmp[ _CPGDOPOR ] ;
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _NIMPORTE ] VAR aTmp[ _NIMPORTE ] ;
@@ -831,7 +832,6 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
          VALID    ( cDivOut( aGet[ _CDIVPGO ], oBmpDiv, aTmp[ _NVDVPGO ], @cPirDiv, @nDinDiv, nil, nil, nil, nil, nil, dbfDiv, oBandera ) );
          PICTURE  "@!";
          ID       170 ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          ON HELP  BrwDiv( aGet[ _CDIVPGO ], oBmpDiv, aTmp[ _NVDVPGO ], dbfDiv, oBandera ) ;
          OF       oFld:aDialogs[ 1 ]
@@ -875,35 +875,57 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
          TRANSPARENT ;
          OF       oFld:aDialogs[ 2 ]
 
+      /*
+      Bnco de empresa----------------------------------------------------------
+      */
+
       REDEFINE GET aGet[ _CBNCEMP ] VAR aTmp[ _CBNCEMP ];
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncEmp( aGet[ _CBNCEMP ], aGet[ _CENTEMP ], aGet[ _CSUCEMP ], aGet[ _CDIGEMP ], aGet[ _CCTAEMP ] ) );
+         ON HELP  ( BrwBncEmp( aGet[ _CBNCEMP ], aGet[ _CEPAISIBAN ], aGet[ _CECTRLIBAN ], aGet[ _CENTEMP ], aGet[ _CSUCEMP ], aGet[ _CDIGEMP ], aGet[ _CCTAEMP ] ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CEPAISIBAN ] VAR aTmp[ _CEPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       270 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CECTRLIBAN ] VAR aTmp[ _CECTRLIBAN ] ;
+         ID       280 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    (  lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CENTEMP ] VAR aTmp[ _CENTEMP ];
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
+         VALID    (  lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CSUCEMP ] VAR aTmp[ _CSUCEMP ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP], aGet[ _CDIGEMP ] ) ) ;
+         VALID    (  lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CDIGEMP ] VAR aTmp[ _CDIGEMP ];
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
+         VALID    (  lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCTAEMP ] VAR aTmp[ _CCTAEMP ];
          ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
+         VALID    (  lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -2202,12 +2224,28 @@ function SynRecPrv( cPatEmp )
          ( dbfFacPrvP )->cCodUsr := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodUsr" )
       end if
 
-      if Empty( ( dbfFacPrvP )->cPaisIBAN )
-         ( dbfFacPrvP )->cPaisIBAN  := "ES"
+      if !Empty( ( dbfFacPrvP )->cCtaEmp )
+
+         if Empty( ( dbfFacPrvP )->cEPaisIBAN )
+            ( dbfFacPrvP )->cEPaisIBAN  := "ES"
+         end if 
+
+         if Empty( ( dbfFacPrvP )->cECtrlIBAN )
+            ( dbfFacPrvP )->cECtrlIBAN  := IbanDigit( ( dbfFacPrvP )->cEPaisIBAN, ( dbfFacPrvP )->cECtrlIBAN, ( dbfFacPrvP )->cEntEmp, ( dbfFacPrvP )->cSucEmp, ( dbfFacPrvP )->cDigEmp, ( dbfFacPrvP )->cCtaEmp )
+         end if 
+
       end if 
 
-      if Empty( ( dbfFacPrvP )->cCtrlIBAN )
-         ( dbfFacPrvP )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvP )->cPaisIBAN, ( dbfFacPrvP )->cCtrlIBAN, ( dbfFacPrvP )->cEntPrv, ( dbfFacPrvP )->cSucPrv, ( dbfFacPrvP )->cDigPrv, ( dbfFacPrvP )->cCtaPrv )
+      if !Empty( ( dbfFacPrvP )->cCtaPrv )
+
+         if Empty( ( dbfFacPrvP )->cPaisIBAN )
+            ( dbfFacPrvP )->cPaisIBAN  := "ES"
+         end if 
+
+         if Empty( ( dbfFacPrvP )->cCtrlIBAN )
+            ( dbfFacPrvP )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvP )->cPaisIBAN, ( dbfFacPrvP )->cCtrlIBAN, ( dbfFacPrvP )->cEntPrv, ( dbfFacPrvP )->cSucPrv, ( dbfFacPrvP )->cDigPrv, ( dbfFacPrvP )->cCtaPrv )
+         end if 
+
       end if 
 
       ( dbfFacPrvP )->( dbSkip() )
@@ -2470,7 +2508,7 @@ FUNCTION rxRecPrv( cPath, oMeter )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cRecDev", "cRecDev", {|| Field->cRecDev } ) )
 
       ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Field->lCobrado", {|| !Deleted() .and. Field->lCobrado } ) )
-      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cPaisIBAN + Field->cCtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
+      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
       ( dbfFacPrvP )->( dbCloseArea() )
 
@@ -2524,6 +2562,8 @@ function aItmRecPrv()
    aAdd( aRecFacPrv, { "cRecDev"    ,"C", 14, 0, "Recibo de procedencia" ,                "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cBncEmp"    ,"C", 50, 0, "Banco de la empresa para el recibo" ,   "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cBncPrv"    ,"C", 50, 0, "Banco del proveedor para el recibo" ,   "",            "", "( cDbfRec )" } )
+   aAdd( aRecFacPrv, { "cEPaisIBAN" ,"C",  2, 0, "País IBAN de la cuenta de empresa",    "",             "", "( cDbfRec )" } )
+   aAdd( aRecFacPrv, { "cECtrlIBAN" ,"C",  2, 0, "Digito de control IBAN de la cuenta de empresa", "",   "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cEntEmp"    ,"C",  4, 0, "Entidad de la cuenta de la empresa",    "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cSucEmp"    ,"C",  4, 0, "Sucursal de la cuenta de la empresa",   "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cDigEmp"    ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",     "", "( cDbfRec )" } )

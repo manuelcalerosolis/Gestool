@@ -6928,7 +6928,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
+FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucursal, oGetDigitoControl, oGetCuenta, dbfBancos )
 
 	local oDlg
 	local oBrw
@@ -7006,15 +7006,15 @@ FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
       with object ( oBrw:AddCol() )
          :cHeader          := "Cuenta"
          :cSortOrder       := "cCtaBnc"
-         :bEditValue       := {|| ( dbfBancos )->cEntBnc + "-" + ( dbfBancos )->cSucBnc + "-" + ( dbfBancos )->cDigBnc + "-" + ( dbfBancos )->cCtaBnc }
-         :nWidth           := 150
+         :bEditValue       := {|| PictureCuentaIBAN( dbfBancos ) }
+         :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Domicilio"
          :bEditValue       := {|| ( dbfBancos )->cDirBnc }
-         :nWidth           := 120
+         :nWidth           := 180
       end with
 
       with object ( oBrw:AddCol() )
@@ -7078,21 +7078,12 @@ FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
 
       oGet:cText( ( dbfBancos )->cNomBnc )
 
-      if oGetEnt != NIL
-         oGetEnt:cText( ( dbfBancos )->cEntBnc )
-      end if
-
-      if oGetSuc != NIL
-         oGetSuc:cText( ( dbfBancos )->cSucBnc )
-      end if
-
-      if oGetDig != NIL
-         oGetDig:cText( ( dbfBancos )->cDigBnc )
-      end if
-
-      if oGetCta != NIL
-         oGetCta:cText( ( dbfBancos )->cCtaBnc )
-      end if
+      oGetPaisIBAN:cText( ( dbfBancos )->cPaisIBAN )
+      oGetControlIBAN:cText( ( dbfBancos )->cCtrlIBAN )
+      oGetEntidad:cText( ( dbfBancos )->cEntBnc )
+      oGetSucursal:cText( ( dbfBancos )->cSucBnc )
+      oGetDigitoControl:cText( ( dbfBancos )->cDigBnc )
+      oGetCuenta:cText( ( dbfBancos )->cCtaBnc )
 
    end if
 
