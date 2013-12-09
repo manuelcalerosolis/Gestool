@@ -1012,38 +1012,6 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[ 3 ]
 
-
-
-
-
-
-
-         /*REDEFINE GET aGet[ _CBANCO ] VAR aTmp[ _CBANCO ];
-         ID       340 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncPrv( aGet[ _CBANCO ], aGet[ _CCUENTA ], aTmp[ _CCODPRV ] ) );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CCUENTA ] VAR aTmp[ _CCUENTA ] ;
-         ID       320 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( CalcDigit( aTmp[ _CCUENTA ], aGet[ _CCUENTA ] ), .t. ) ;
-         PICTURE  "@R ####-####-##-##########" ;
-         OF       oFld:aDialogs[ 1 ]*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 		REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;

@@ -14604,7 +14604,7 @@ Return ( oReporting )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwBncCli( oGet, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodCli, dbfBancos )
+FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodCli, dbfBancos )
 
 	local oDlg
 	local oBrw
@@ -14635,8 +14635,8 @@ FUNCTION BrwBncCli( oGet, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodCli, dbfBancos
    if Empty( dbfBancos )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBancos ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
-      lClose      := .t.
-   END IF
+      lClose         := .t.
+   end if
 
    ( dbfBancos )->( ordSetFocus( nOrd ) )
 
@@ -14753,25 +14753,13 @@ FUNCTION BrwBncCli( oGet, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodCli, dbfBancos
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-
-      oGet:cText( ( dbfBancos )->CCODBNC )
-
-      if oEntBnc != NIL
-         oEntBnc:cText( ( dbfBancos )->CENTBNC )
-      end if
-
-      if oSucBnc != NIL
-         oSucBnc:cText( ( dbfBancos )->CSUCBNC )
-      end if
-
-      if oDigBnc != NIL
-         oDigBnc:cText( ( dbfBancos )->CDIGBNC )
-      end if
-
-      if oCtaBnc != NIL
-         oCtaBnc:cText( ( dbfBancos )->CCTABNC )
-      end if
-
+      oGet:cText( ( dbfBancos )->cCodBnc )
+      oPaisIBAN:cText( ( dbfBancos )->cPaisIBAN )
+      oControlIBAN:cText( ( dbfBancos )->cCtrlIBAN )
+      oEntBnc:cText( ( dbfBancos )->cEntBnc )
+      oSucBnc:cText( ( dbfBancos )->cSucBnc )
+      oDigBnc:cText( ( dbfBancos )->cDigBnc )
+      oCtaBnc:cText( ( dbfBancos )->cCtaBnc )
    end if
 
    DestroyFastFilter( dbfBancos )

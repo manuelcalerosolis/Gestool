@@ -130,13 +130,15 @@
 #define _CNFC              109
 #define _CFACPRV           110
 #define _CBANCO            111
-#define _CENTBNC           112
-#define _CSUCBNC           113
-#define _CDIGBNC           114
-#define _CCTABNC           115
-#define _NTOTLIQ           116
-#define _NTOTPDT           117
-#define _LOPERPV           118
+#define _CPAISIBAN         112
+#define _CCTRLIBAN         113
+#define _CENTBNC           114
+#define _CSUCBNC           115
+#define _CDIGBNC           116
+#define _CCTABNC           117
+#define _NTOTLIQ           118
+#define _NTOTPDT           119
+#define _LOPERPV           120
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -2859,32 +2861,49 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          ID       410 ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+         ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       424 ;
+         WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+         ID       425 ;
+         WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
          ID       420 ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
          ID       421 ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
          ID       422 ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
          ID       423 ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
          PICTURE  "9999999999" ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -2936,8 +2955,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-       Botones de acceso________________________________________________________________
-       */
+      Botones de acceso________________________________________________________
+      */
 
       REDEFINE BUTTON ;
          ID       500 ;
@@ -15668,6 +15687,8 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "Código NFC" ,                                         "'@!",                "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cFacPrv"     ,"C", 12,  0, "Factura de proveedor" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cBanco"      ,"C", 50,  0, "Nombre del banco del cliente" ,                       "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",              "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cEntBnc"     ,"C",  4,  0, "Entidad de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cSucBnc"     ,"C",  4,  0, "Sucursal de la cuenta bancaria del cliente" ,         "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cDigBnc"     ,"C",  2,  0, "Dígito de control de la cuenta bancaria del cliente" ,"",                   "", "( cDbf )"} )
@@ -17084,7 +17105,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
       /*
-      Asignamos el codigo siempre
+      Asignamos el codigo siempre----------------------------------------------
       */
 
       aGet[ _CCODCLI ]:cText( ( dbfClient )->Cod )
@@ -17216,6 +17237,16 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
                   aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
                   aGet[ _CBANCO ]:lValid()
                end if
+
+	            if !Empty( aGet[ _CPAISIBAN ] )
+	               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
+	               aGet[ _CPAISIBAN ]:lValid()
+	            end if
+
+   	         if !Empty( aGet[ _CCTRLIBAN ] )
+   	            aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
+   	            aGet[ _CCTRLIBAN ]:lValid()
+   	         end if
 
                if !Empty( aGet[ _CENTBNC ] )
                   aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
