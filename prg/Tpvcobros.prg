@@ -545,12 +545,6 @@ METHOD lResource() CLASS TpvCobros
 
       ::RedefineButtonAddCobro()
 
-   /*
-   Botones------------------------------------------------------------------
-
-   ::oDlg:AddFastKey( VK_F5, {|| ::OnClickAceptar( exitAceptar ) } )
-   ::oDlg:AddFastKey( VK_F6, {|| ::OnClickAceptar( exitAceptarImprimir ) } )*/
-
    ::oDlg:bStart  := {|| ::SetTextoTotal() }
 
    /*
@@ -762,25 +756,23 @@ Return ( Self )
 
 METHOD SalidaImpresoraDefecto CLASS TpvCobros
 
-   ::nSalidaImpresora         := uFieldEmpresa( "nTipImpTpv" )
-
    do case
       case uFieldEmpresa( "nTipImpTpv" ) <= 1
       
-         ::cBmpSalidaImpresora   := "printer_delete"    
+         ::nSalidaImpresora      := exitAceptar
+         ::cBmpSalidaImpresora   := "printer_delete"
 
       case uFieldEmpresa( "nTipImpTpv" ) == 2
          
+         ::nSalidaImpresora      := exitAceptarImprimir
          ::cBmpSalidaImpresora   := "printer_ok"
 
       otherwise
          
+         ::nSalidaImpresora      := exitAceptarRegalo
          ::cBmpSalidaImpresora   := "printer_new"
 
    end case
-
-
-   
 
 Return ( Self )
 

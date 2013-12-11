@@ -6170,7 +6170,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
 
          /*
-         Imprimimos en el visor---------------------------------------------------
+         Imprimimos en el visor------------------------------------------------
          */
 
          ::EscribeVisor()
@@ -6187,21 +6187,18 @@ METHOD OnClickCobro() CLASS TpvTactil
 
          do case
             case ::oTpvCobros:nExit == exitAceptarRegalo
-               //?"Regalo"
                ::ImprimeRegalo()
 
             case ::oTpvCobros:nExit == exitAceptarDesglosado
-               //?"Desglosado"
                ::ImprimeDesglosado()   
 
             case ::oTpvCobros:nExit == exitAceptarImprimir
-               //?"aceptarimprimir"
                ::ImprimeTicket()
 
          end case
 
          /*
-         Inicializa los valores para el documento---------------------------
+         Inicializa los valores para el documento------------------------------
          */
 
          ::InitDocumento( ubiGeneral )
@@ -6213,7 +6210,7 @@ METHOD OnClickCobro() CLASS TpvTactil
          ::SetUbicacion()
 
          /*
-         Datos del documento---------------------------------------------------------
+         Datos del documento---------------------------------------------------
          */
 
          ::SetInfo()
