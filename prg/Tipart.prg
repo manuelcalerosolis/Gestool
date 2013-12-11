@@ -511,3 +511,8 @@ RETURN ( cNombre )
 
 //---------------------------------------------------------------------------//
 
+Function GetNombreClasificacionTipoArticulo( nTipoArticulo )
+
+Return ( ClasificacionTipoArticulo():GetNombre( nTipoArticulo ) )
+
+//---------------------------------------------------------------------------//

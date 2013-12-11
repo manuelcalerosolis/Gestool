@@ -23,6 +23,13 @@ CLASS TBancos FROM TMant
 
    METHOD lPreSave( oGet, nMode )
 
+   METHOD GetCuentaBancaria()    INLINE ( ::oDbf:FieldGetByName( "cPaisIBAN" )   + ;
+                                          ::oDbf:FieldGetByName( "cCtrlIBAN" )   + ;
+                                          ::oDbf:FieldGetByName( "cEntBnc" )     + ;
+                                          ::oDbf:FieldGetByName( "cSucBnc" )     + ;
+                                          ::oDbf:FieldGetByName( "cDigBnc" )     + ;
+                                          ::oDbf:FieldGetByName( "cCtaBnc" ) )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -75,7 +82,7 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TBancos
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles( cPath )
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -110,30 +117,32 @@ RETURN .t.
 
 METHOD DefineFiles( cPath, cDriver ) CLASS TBancos
 
+   local oDbf
+
    DEFAULT cPath     := ::cPath
    DEFAULT cDriver   := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "Bancos.Dbf" CLASS "Bancos" ALIAS "Bancos" PATH ( cPath ) VIA ( cDriver ) COMMENT "Bancos de empresa"
+   DEFINE DATABASE oDbf FILE "Bancos.Dbf" CLASS "Bancos" ALIAS "Bancos" PATH ( cPath ) VIA ( cDriver ) COMMENT "Bancos de empresa"
 
-      FIELD NAME "cCodBnc"  TYPE "C"     LEN  4  DEC 0 COMMENT "Código"                   PICTURE "@!"      COLSIZE  60 OF ::oDbf
-      FIELD NAME "cNomBnc"  TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre"                   PICTURE "@!"      COLSIZE 300 OF ::oDbf
-      FIELD NAME "cNomSuc"  TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre sucursal"          HIDE OF ::oDbf
-      FIELD NAME "cDirBnc"  TYPE "C"     LEN 35  DEC 0 COMMENT "Domicilio del banco"      HIDE OF ::oDbf
-      FIELD NAME "cPobBnc"  TYPE "C"     LEN 25  DEC 0 COMMENT "Población del banco"      HIDE OF ::oDbf
-      FIELD NAME "cProBnc"  TYPE "C"     LEN 20  DEC 0 COMMENT "Provincia del banco"      HIDE OF ::oDbf
-      FIELD NAME "cPosBnc"  TYPE "C"     LEN 15  DEC 0 COMMENT "Código postal del banco"  HIDE OF ::oDbf
-      FIELD NAME "cTlfBnc"  TYPE "C"     LEN 20  DEC 0 COMMENT "Teléfono del banco"       HIDE OF ::oDbf
-      FIELD NAME "cFaxBnc"  TYPE "C"     LEN 20  DEC 0 COMMENT "Fax del banco"            HIDE OF ::oDbf
-      FIELD NAME "cPCoBnc"  TYPE "C"     LEN 35  DEC 0 COMMENT "Persona de contacto"      HIDE OF ::oDbf
-      FIELD NAME "cEntBnc"  TYPE "C"     LEN  4  DEC 0 COMMENT "Entidad"                  PICTURE "@!"      COLSIZE  60 OF ::oDbf
-      FIELD NAME "cOfiBnc"  TYPE "C"     LEN  4  DEC 0 COMMENT "Oficina"                  PICTURE "@!"      COLSIZE  60 OF ::oDbf
+      FIELD NAME "cCodBnc"  TYPE "C"     LEN  4  DEC 0 COMMENT "Código"                   PICTURE "@!"      COLSIZE  60 OF oDbf
+      FIELD NAME "cNomBnc"  TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre"                   PICTURE "@!"      COLSIZE 300 OF oDbf
+      FIELD NAME "cNomSuc"  TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre sucursal"          HIDE OF oDbf
+      FIELD NAME "cDirBnc"  TYPE "C"     LEN 35  DEC 0 COMMENT "Domicilio del banco"      HIDE OF oDbf
+      FIELD NAME "cPobBnc"  TYPE "C"     LEN 25  DEC 0 COMMENT "Población del banco"      HIDE OF oDbf
+      FIELD NAME "cProBnc"  TYPE "C"     LEN 20  DEC 0 COMMENT "Provincia del banco"      HIDE OF oDbf
+      FIELD NAME "cPosBnc"  TYPE "C"     LEN 15  DEC 0 COMMENT "Código postal del banco"  HIDE OF oDbf
+      FIELD NAME "cTlfBnc"  TYPE "C"     LEN 20  DEC 0 COMMENT "Teléfono del banco"       HIDE OF oDbf
+      FIELD NAME "cFaxBnc"  TYPE "C"     LEN 20  DEC 0 COMMENT "Fax del banco"            HIDE OF oDbf
+      FIELD NAME "cPCoBnc"  TYPE "C"     LEN 35  DEC 0 COMMENT "Persona de contacto"      HIDE OF oDbf
+      FIELD NAME "cEntBnc"  TYPE "C"     LEN  4  DEC 0 COMMENT "Entidad"                  PICTURE "@!"      COLSIZE  60 OF oDbf
+      FIELD NAME "cOfiBnc"  TYPE "C"     LEN  4  DEC 0 COMMENT "Oficina"                  PICTURE "@!"      COLSIZE  60 OF oDbf
 
-      INDEX TO "Bancos.Cdx" TAG "cCodBnc" ON "cCodBnc" COMMENT "Código"    NODELETED                                    OF ::oDbf
-      INDEX TO "Bancos.Cdx" TAG "cNomBnc" ON "cNomBnc" COMMENT "Nombre"    NODELETED                                    OF ::oDbf
+      INDEX TO "Bancos.Cdx" TAG "cCodBnc" ON "cCodBnc" COMMENT "Código"    NODELETED                                    OF oDbf
+      INDEX TO "Bancos.Cdx" TAG "cNomBnc" ON "cNomBnc" COMMENT "Nombre"    NODELETED                                    OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 
@@ -338,8 +347,10 @@ METHOD OpenFiles( lExclusive ) CLASS TCuentasBancarias
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
       DATABASE NEW ::oPedCliP PATH ( cPatEmp() ) CLASS "PedCliP" FILE "PedCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliP.Cdx"
 
@@ -348,8 +359,6 @@ METHOD OpenFiles( lExclusive ) CLASS TCuentasBancarias
       ::oFacCliP        := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) CLASS "FacPrvP" FILE "FacPrvP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacPrvP.Cdx"
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
 
       ::oPais           := TPais():Create( cPatDat() )
       ::oPais:OpenFiles()
@@ -425,7 +434,7 @@ METHOD OpenService( lExclusive, cPath ) CLASS TCuentasBancarias
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf         := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -458,37 +467,44 @@ RETURN ( .t. )
 
 METHOD DefineFiles( cPath, cDriver ) CLASS TCuentasBancarias
 
+   local oDbf
+
    DEFAULT cPath     := ::cPath
    DEFAULT cDriver   := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "EmpBnc.Dbf" CLASS "EmpBnc" ALIAS "EmpBnc" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cuentas bancarias"
+   DEFINE DATABASE oDbf FILE "EmpBnc.Dbf" CLASS "EmpBnc" ALIAS "EmpBnc" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cuentas bancarias"
 
-      FIELD NAME "cCodBnc"   TYPE "C"     LEN  3  DEC 0 COMMENT "Código"               PICTURE "@!"      COLSIZE  60 OF ::oDbf
-      FIELD NAME "cEntBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Entidad bancaria"     HIDE                          OF ::oDbf
-      FIELD NAME "cSucBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Sucursal bancaria"    HIDE                          OF ::oDbf
-      FIELD NAME "cDigBnc"   TYPE "C"     LEN  2  DEC 0 COMMENT "Dígito control"       HIDE                          OF ::oDbf
-      FIELD NAME "cCtaBnc"   TYPE "C"     LEN 10  DEC 0 COMMENT "Cuenta"               HIDE                          OF ::oDbf
-      FIELD NAME "cNomBnc"   TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre del banco"                                   OF ::oDbf
+      FIELD NAME "cCodBnc"   TYPE "C"     LEN  3  DEC 0 COMMENT "Código"               PICTURE "@!"      COLSIZE  60 OF oDbf
+      
+      FIELD NAME "cPaisIBAN" TYPE "C"     LEN  2  DEC 0 COMMENT "País IBAN"               HIDE                       OF oDbf
+      FIELD NAME "cCtrlIBAN" TYPE "C"     LEN  2  DEC 0 COMMENT "Dígito de control IBAN"  HIDE                       OF oDbf
+      
+      FIELD NAME "cEntBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Entidad bancaria"     HIDE                          OF oDbf
+      FIELD NAME "cSucBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Sucursal bancaria"    HIDE                          OF oDbf
+      FIELD NAME "cDigBnc"   TYPE "C"     LEN  2  DEC 0 COMMENT "Dígito control"       HIDE                          OF oDbf
+      FIELD NAME "cCtaBnc"   TYPE "C"     LEN 10  DEC 0 COMMENT "Cuenta"               HIDE                          OF oDbf
+      FIELD NAME "cNomBnc"   TYPE "C"     LEN 50  DEC 0 COMMENT "Nombre del banco"     COLSIZE 300                   OF oDbf
 
       FIELD CALCULATE NAME "bCtaBnc"      LEN 14  DEC 0 COMMENT "Cuenta bancaria" ;
-         VAL {|| ::oDbf:cEntBnc + "-" + ::oDbf:cSucBnc + "-" + ::oDbf:cDigBnc + "-" + ::oDbf:cCtaBnc }   COLSIZE 150 OF ::oDbf
+         VAL {|| oDbf:FieldGetByName( "cPaisIBAN" ) + oDbf:FieldGetByName( "cCtrlIBAN" ) + "-" + oDbf:FieldGetByName( "cEntBnc" ) + "-" + oDbf:FieldGetByName( "cSucBnc" ) + "-" + oDbf:FieldGetByName( "cDigBnc" ) + "-" + oDbf:FieldGetByName( "cCtaBnc" ) };
+                                                                                       COLSIZE 200                   OF oDbf
 
-      FIELD NAME "cDirBnc"   TYPE "C"     LEN 35  DEC 0 COMMENT "Domicilio del banco"  HIDE                          OF ::oDbf
-      FIELD NAME "cPobBnc"   TYPE "C"     LEN 25  DEC 0 COMMENT "Población del banco"  HIDE                          OF ::oDbf
-      FIELD NAME "cProBnc"   TYPE "C"     LEN 20  DEC 0 COMMENT "Provincia del banco"  HIDE                          OF ::oDbf
-      FIELD NAME "cCPBnc"    TYPE "C"     LEN 15  DEC 0 COMMENT "Código postal"        HIDE                          OF ::oDbf
-      FIELD NAME "cTlfBnc"   TYPE "C"     LEN 20  DEC 0 COMMENT "Teléfono"             PICTURE "@!"      COLSIZE  60 OF ::oDbf
-      FIELD NAME "cFaxBnc"   TYPE "C"     LEN 20  DEC 0 COMMENT "Fax"                  PICTURE "@!"      COLSIZE  60 OF ::oDbf
-      FIELD NAME "cPContBnc" TYPE "C"     LEN 35  DEC 0 COMMENT "Persona de contacto"                    COLSIZE 160 OF ::oDbf
-      FIELD NAME "cPaiBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Pais"                 PICTURE "@!"      COLSIZE 120 OF ::oDbf
-      FIELD NAME "nSalIni"   TYPE "N"     LEN 16  DEC 0 COMMENT "Saldo inicial"        HIDE                          OF ::oDbf
+      FIELD NAME "cDirBnc"   TYPE "C"     LEN 35  DEC 0 COMMENT "Domicilio del banco"  HIDE                          OF oDbf
+      FIELD NAME "cPobBnc"   TYPE "C"     LEN 25  DEC 0 COMMENT "Población del banco"  HIDE                          OF oDbf
+      FIELD NAME "cProBnc"   TYPE "C"     LEN 20  DEC 0 COMMENT "Provincia del banco"  HIDE                          OF oDbf
+      FIELD NAME "cCPBnc"    TYPE "C"     LEN 15  DEC 0 COMMENT "Código postal"        HIDE                          OF oDbf
+      FIELD NAME "cTlfBnc"   TYPE "C"     LEN 20  DEC 0 COMMENT "Teléfono"             PICTURE "@!"      COLSIZE  60 OF oDbf
+      FIELD NAME "cFaxBnc"   TYPE "C"     LEN 20  DEC 0 COMMENT "Fax"                  PICTURE "@!"      COLSIZE  60 OF oDbf
+      FIELD NAME "cPContBnc" TYPE "C"     LEN 35  DEC 0 COMMENT "Persona de contacto"                    COLSIZE 160 OF oDbf
+      FIELD NAME "cPaiBnc"   TYPE "C"     LEN  4  DEC 0 COMMENT "Pais"                 PICTURE "@!"      COLSIZE 120 OF oDbf
+      FIELD NAME "nSalIni"   TYPE "N"     LEN 16  DEC 0 COMMENT "Saldo inicial"        HIDE                          OF oDbf
 
-      INDEX TO "EmpBnc.Cdx" TAG "cCodBnc" ON "cCodBnc"                                 COMMENT "Código"  NODELETED   OF ::oDbf
-      INDEX TO "EmpBnc.Cdx" TAG "cCtaBnc" ON "cEntBnc + cSucBnc + cDigBnc + cCtaBnc"   COMMENT "Nombre"  NODELETED   OF ::oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cCodBnc" ON "cCodBnc"                                                   COMMENT "Código"  NODELETED   OF oDbf
+      INDEX TO "EmpBnc.Cdx" TAG "cCtaBnc" ON "cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc" COMMENT "Cuenta"  NODELETED   OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //---------------------------------------------------------------------------//
 
@@ -554,11 +570,15 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
    local cSayPai
    local oBmpBancos
 
-   aGet           := Array( ::oDbf:FieldCount() )
-   cBmp           := ::oPais:cBmp( ::oDbf:cPaiBnc )
-   cSayPai        := ::oPais:cNombre( ::oDbf:cPaiBnc )
+   aGet                 := Array( ::oDbf:FieldCount() )
+   cBmp                 := ::oPais:cBmp( ::oDbf:cPaiBnc )
+   cSayPai              := ::oPais:cNombre( ::oDbf:cPaiBnc )
 
-   ::lBreak       := .f.
+   ::lBreak             := .f.
+   
+   if Empty( ::oDbf:cPaisIBAN )
+      ::oDbf:cPaisIBAN  := "ES"
+   end if
 
    DEFINE DIALOG oDlg RESOURCE "BancoEmpresa" TITLE LblTitle( nMode ) + "cuentas bancarias"
 
@@ -648,25 +668,43 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
+      REDEFINE GET aGet[ ::oDbf:FieldPos( "cPaisIBAN" ) ] ;
+         VAR      ::oDbf:cPaisIBAN ;
+         PICTURE  "@!" ;
+         ID       370 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ) ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ;
+         VAR      ::oDbf:cCtrlIBAN ;
+         ID       380 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ) ) ;
+         OF       oDlg
+
       REDEFINE GET aGet[ ::oDbf:FieldPos( "cEntBnc" ) ] ;
          VAR      ::oDbf:cEntBnc ;
          ID       310 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) ) ;
+         VALID    (  lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) .and.;
+                     lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ::oDbf:FieldPos( "cSucBnc" ) ];
          VAR      ::oDbf:cSucBnc ;
          ID       320 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) ) ;
+         VALID    (  lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) .and.;
+                     lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ::oDbf:FieldPos( "cDigBnc" ) ];
          VAR      ::oDbf:cDigBnc;
          ID       330 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) ) ;
+         VALID    (  lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) .and.;
+                     lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ::oDbf:FieldPos( "cCtaBnc" ) ];
@@ -674,7 +712,8 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
          ID       340 ;
          PICTURE  "9999999999" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) ) ;
+         VALID    (  lCalcDC( ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cDigBnc" ) ] ) .and.;
+                     lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBnc, ::oDbf:cSucBnc, ::oDbf:cDigBnc, ::oDbf:cCtaBnc, aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ] ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ::oDbf:FieldPos( "nSalIni" ) ];
@@ -717,7 +756,7 @@ METHOD Resource( nMode ) CLASS TCuentasBancarias
          oDlg:AddFastKey( VK_F5, {|| ::lEndResource( aGet, oDlg, nMode ) } )
       end if
 
-      oDlg:bStart := {|| ::nSaldoActual() }
+      // oDlg:bStart := {|| ::nSaldoActual() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -788,7 +827,7 @@ METHOD nSaldoActual( cCta ) CLASS TCuentasBancarias
    local nOrd
    local nSaldo      := 0
 
-   DEFAULT cCta      := ::oDbf:cEntBnc + ::oDbf:cSucBnc + ::oDbf:cDigBnc + ::oDbf:cCtaBnc
+   DEFAULT cCta      := ::GetCuentaBancaria()
 
    if Empty( cCta )
       Return ( nSaldo )
@@ -1503,7 +1542,7 @@ Function isBancos()
 
    with object ( TBancos():Create() )
 
-      :DefineFiles()
+      :oDbf       := :DefineFiles()
 
       if !lExistTable( :oDbf:cFile )
          :oDbf:Create()

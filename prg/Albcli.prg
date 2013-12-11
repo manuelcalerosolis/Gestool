@@ -110,10 +110,12 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _NTOTPAG                  93
 #define _LOPERPV                  94
 #define _CBANCO                   95
-#define _CENTBNC                  96
-#define _CSUCBNC                  97
-#define _CDIGBNC                  98
-#define _CCTABNC                  99
+#define _CPAISIBAN                96
+#define _CCTRLIBAN                97
+#define _CENTBNC                  98
+#define _CSUCBNC                  99
+#define _CDIGBNC                  100
+#define _CCTABNC                  101
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -2451,32 +2453,49 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ID       410 ;
          WHEN     ( lWhen );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+         ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       424 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+         ID       425 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
          ID       420 ;
          WHEN     ( lWhen );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
          ID       421 ;
          WHEN     ( lWhen );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
          ID       422 ;
          WHEN     ( lWhen );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
          ID       423 ;
          WHEN     ( lWhen );
          PICTURE  "9999999999" ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -2538,7 +2557,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       */
 
       REDEFINE GET aGet[ _CDIVALB ] VAR aTmp[ _CDIVALB ];
-         WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+         WHEN     ( nMode == APPD_MODE .and. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          VALID    ( cDivOut( aGet[ _CDIVALB ], oBmpDiv, aTmp[ _NVDVALB ], @cPouDiv, @nDouDiv, @cPorDiv, @nDorDiv, @cPpvDiv, @nDpvDiv, oGetMasDiv, dbfDiv, oBandera ) );
          PICTURE  "@!";
          ID       230 ;
@@ -5808,31 +5827,35 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
                      ( dbfTmpPgo )->( dbAppend() )
 
-                     ( dbfTmpPgo )->nNumRec  := ( dbfTmpPgo )->( Recno() )
-                     ( dbfTmpPgo )->cCodCaj  := ( dbfPedCliP )->cCodCaj
-                     ( dbfTmpPgo )->cTurRec  := ( dbfPedCliP )->cTurRec
-                     ( dbfTmpPgo )->cCodCli  := ( dbfPedCliP )->cCodCli
-                     ( dbfTmpPgo )->dEntrega := ( dbfPedCliP )->dEntrega
-                     ( dbfTmpPgo )->nImporte := ( dbfPedCliP )->nImporte
-                     ( dbfTmpPgo )->cDescrip := ( dbfPedCliP )->cDesCrip
-                     ( dbfTmpPgo )->cPgdoPor := ( dbfPedCliP )->cPgdoPor
-                     ( dbfTmpPgo )->cDocPgo  := ( dbfPedCliP )->cDocPgo
-                     ( dbfTmpPgo )->cDivPgo  := ( dbfPedCliP )->cDivPgo
-                     ( dbfTmpPgo )->nVdvPgo  := ( dbfPedCliP )->nVdvPgo
-                     ( dbfTmpPgo )->cCodAge  := ( dbfPedCliP )->cCodAge
-                     ( dbfTmpPgo )->cCodPgo  := ( dbfPedCliP )->cCodPgo
-                     ( dbfTmpPgo )->cBncEmp  := ( dbfPedCliP )->cBncEmp
-                     ( dbfTmpPgo )->cBncCli  := ( dbfPedCliP )->cBncCli
-                     ( dbfTmpPgo )->cEntEmp  := ( dbfPedCliP )->cEntEmp
-                     ( dbfTmpPgo )->cSucEmp  := ( dbfPedCliP )->cSucEmp
-                     ( dbfTmpPgo )->cDigEmp  := ( dbfPedCliP )->cDigEmp
-                     ( dbfTmpPgo )->cCtaEmp  := ( dbfPedCliP )->cCtaEmp
-                     ( dbfTmpPgo )->cEntCli  := ( dbfPedCliP )->cEntCli
-                     ( dbfTmpPgo )->cSucCli  := ( dbfPedCliP )->cSucCli
-                     ( dbfTmpPgo )->cDigCli  := ( dbfPedCliP )->cDigCli
-                     ( dbfTmpPgo )->cCtaCli  := ( dbfPedCliP )->cCtaCli
-                     ( dbfTmpPgo )->lCloPgo  := .f.
-                     ( dbfTmpPgo )->cNumRec  := ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed + Str( ( dbfPedCliP )->nNumRec )
+                     ( dbfTmpPgo )->nNumRec     := ( dbfTmpPgo )->( Recno() )
+                     ( dbfTmpPgo )->cCodCaj     := ( dbfPedCliP )->cCodCaj
+                     ( dbfTmpPgo )->cTurRec     := ( dbfPedCliP )->cTurRec
+                     ( dbfTmpPgo )->cCodCli     := ( dbfPedCliP )->cCodCli
+                     ( dbfTmpPgo )->dEntrega    := ( dbfPedCliP )->dEntrega
+                     ( dbfTmpPgo )->nImporte    := ( dbfPedCliP )->nImporte
+                     ( dbfTmpPgo )->cDescrip    := ( dbfPedCliP )->cDesCrip
+                     ( dbfTmpPgo )->cPgdoPor    := ( dbfPedCliP )->cPgdoPor
+                     ( dbfTmpPgo )->cDocPgo     := ( dbfPedCliP )->cDocPgo
+                     ( dbfTmpPgo )->cDivPgo     := ( dbfPedCliP )->cDivPgo
+                     ( dbfTmpPgo )->nVdvPgo     := ( dbfPedCliP )->nVdvPgo
+                     ( dbfTmpPgo )->cCodAge     := ( dbfPedCliP )->cCodAge
+                     ( dbfTmpPgo )->cCodPgo     := ( dbfPedCliP )->cCodPgo
+                     ( dbfTmpPgo )->cBncEmp     := ( dbfPedCliP )->cBncEmp
+                     ( dbfTmpPgo )->cBncCli     := ( dbfPedCliP )->cBncCli
+                     ( dbfTmpPgo )->cEPaisIBAN  := ( dbfPedCliP )->cEPaisIBAN
+                     ( dbfTmpPgo )->cECtrlIBAN  := ( dbfPedCliP )->cECtrlIBAN
+                     ( dbfTmpPgo )->cEntEmp     := ( dbfPedCliP )->cEntEmp
+                     ( dbfTmpPgo )->cSucEmp     := ( dbfPedCliP )->cSucEmp
+                     ( dbfTmpPgo )->cDigEmp     := ( dbfPedCliP )->cDigEmp
+                     ( dbfTmpPgo )->cCtaEmp     := ( dbfPedCliP )->cCtaEmp
+                     ( dbfTmpPgo )->cPaisIBAN   := ( dbfPedCliP )->cPaisIBAN
+                     ( dbfTmpPgo )->cCtrlIBAN   := ( dbfPedCliP )->cCtrlIBAN
+                     ( dbfTmpPgo )->cEntCli     := ( dbfPedCliP )->cEntCli
+                     ( dbfTmpPgo )->cSucCli     := ( dbfPedCliP )->cSucCli
+                     ( dbfTmpPgo )->cDigCli     := ( dbfPedCliP )->cDigCli
+                     ( dbfTmpPgo )->cCtaCli     := ( dbfPedCliP )->cCtaCli
+                     ( dbfTmpPgo )->lCloPgo     := .f.
+                     ( dbfTmpPgo )->cNumRec     := ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed + Str( ( dbfPedCliP )->nNumRec )
 
                   end if
 
@@ -8180,17 +8203,21 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
 
          if dbSeekInOrd( aTmpAlb[ _CCODPAGO ], "cCodPago", dbfFPago ) .and. ( dbfFPago )->lUtlBnc
 
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncEmp" ) ) ]   := ( dbfFPago )->cBanco
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEntEmp" ) ) ]   := ( dbfFPago )->cEntBnc
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cSucEmp" ) ) ]   := ( dbfFPago )->cSucBnc
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cDigEmp" ) ) ]   := ( dbfFPago )->cDigBnc
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtaEmp" ) ) ]   := ( dbfFPago )->cCtaBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncEmp" ) ) ]      := ( dbfFPago )->cBanco
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]   := ( dbfFPago )->cPaisIBAN
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cECtrlIBAN" ) ) ]   := ( dbfFPago )->cCtrlIBAN
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEntEmp" ) ) ]      := ( dbfFPago )->cEntBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cSucEmp" ) ) ]      := ( dbfFPago )->cSucBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cDigEmp" ) ) ]      := ( dbfFPago )->cDigBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtaEmp" ) ) ]      := ( dbfFPago )->cCtaBnc
 
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncCli" ) ) ]   := aTmpAlb[ _CBANCO  ]
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEntCli" ) ) ]   := aTmpAlb[ _CENTBNC ]
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cSucCli" ) ) ]   := aTmpAlb[ _CSUCBNC ]
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cDigCli" ) ) ]   := aTmpAlb[ _CDIGBNC ]
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtaCli" ) ) ]   := aTmpAlb[ _CCTABNC ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncCli" ) ) ]      := aTmpAlb[ _CBANCO  ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cPaisIBAN" ) ) ]    := aTmpAlb[ _CPAISIBAN ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtrlIBAN" ) ) ]    := aTmpAlb[ _CCTRLIBAN ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEntCli" ) ) ]      := aTmpAlb[ _CENTBNC ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cSucCli" ) ) ]      := aTmpAlb[ _CSUCBNC ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cDigCli" ) ) ]      := aTmpAlb[ _CDIGBNC ]
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtaCli" ) ) ]      := aTmpAlb[ _CCTABNC ]
 
          end if
 
@@ -8219,7 +8246,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
          PROMPT   "&General",;
                   "Bancos";
          DIALOGS  "Entregas_1",;
-                  "Recibos_4"
+                  "RecibosProveedoresBancos"
 
       REDEFINE BITMAP oBmp ;
          ID       500 ;
@@ -8364,62 +8391,100 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncEmp( aGet[ ( dbfTmpPgo )->( FieldPos( "CBNCEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ] ) );
+         ON HELP  ( BrwBncEmp( aGet[ ( dbfTmpPgo )->( FieldPos( "CBNCEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "cECtrlIBAN" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ] ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ] ;
+         PICTURE  "@!" ;
+         ID       270 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CECTRLIBAN" ) ) ] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "cECtrlIBAN" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "cECtrlIBAN" ) ) ] ;
+         ID       280 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CECTRLIBAN" ) ) ] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ];
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ];
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ];
          ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAEMP" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGEMP" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
+
+      /*
+      Banco del cliente--------------------------------------------------------
+      */
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CBNCCLI" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CBNCCLI" ) ) ];
          ID       200 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncCli( aGet[ ( dbfTmpPgo )->( FieldPos( "CBNCCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ] ) );
+         ON HELP  ( BrwBncCli( aGet[ ( dbfTmpPgo )->( FieldPos( "CBNCCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CPAISIBAN" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTRLIBAN" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ] ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CPAISIBAN" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CPAISIBAN" ) ) ] ;
+         PICTURE  "@!" ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ ( dbfTmpPgo )->( FieldPos( "CPAISIBAN" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTRLIBAN" ) ) ] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTRLIBAN" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTRLIBAN" ) ) ] ;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ ( dbfTmpPgo )->( FieldPos( "CPAISIBAN" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCTRLIBAN" ) ) ] ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ];
          ID       210 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ];
          ID       220 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ];
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ];
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ ( dbfTmpPgo )->( FieldPos( "CENTCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUCCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ], aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTACLI" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CDIGCLI" ) ) ] ),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "cPaisIBAN" ) ) ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       //Botones
@@ -12588,7 +12653,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.CDX", "DENTREGA", "dEntrega", {|| Field->dEntrega } ) )
 
       ( dbfAlbCliT )->( ordCondSet("!Deleted() .and. !Field->lPasado", {|| !Deleted() .and. !Field->lPasado } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "cEPaisIBAN + cECtrlIBAN + cEntEmp + cSucEmp + cDigEmp + cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
@@ -12744,10 +12809,14 @@ function aItmAlbPgo()
    aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico de pasado",                   "",                  "", "( cDbfEnt )" } )
    aAdd( aBasRecCli, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",                  "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",                    "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta bancaria de la empresa",       "", "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria de la empresa", "", "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",                 "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",                "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",        "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                      "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "", "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "", "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",                   "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",                  "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",          "", "( cDbfEnt )", nil } )
@@ -12960,6 +13029,8 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "nTotPag",   "N", 16, 6, "Total anticipado" ,                                     "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "lOperPV",   "L",  1, 0, "Lógico para operar con punto verde" ,                   "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "cBanco"   , "C", 50, 0, "Nombre del banco del cliente",                          "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cPaisIBAN", "C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCtrlIBAN", "C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",                "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cEntBnc"  , "C",  4, 0, "Entidad de la cuenta bancaria del cliente",             "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cSucBnc"  , "C",  4, 0, "Sucursal de la cuenta bancaria del cliente",            "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
@@ -14406,6 +14477,16 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
                aGet[ _CBANCO ]:lValid()
             end if
 
+            if !Empty( aGet[ _CPAISIBAN ] )
+               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
+               aGet[ _CPAISIBAN ]:lValid()
+            end if
+
+            if !Empty( aGet[ _CCTRLIBAN ] )
+               aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
+               aGet[ _CCTRLIBAN ]:lValid()
+            end if
+
             if !Empty( aGet[ _CENTBNC ] )
                aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
                aGet[ _CENTBNC ]:lValid()
@@ -14455,22 +14536,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _LRECARGO ]:Click( ( dbfClient )->lReq ):Refresh()
 
             aGet[ _LOPERPV  ]:Click( ( dbfClient )->lPntVer ):Refresh()
-
-            /*
-            Retenciones desde la ficha de cliente----------------------------------
-
-            if !Empty( aGet[ _NTISATT ] )
-               aGet[ _NTISATT  ]:Select( ( dbfClient )->nTipRet )
-            else
-               aTmp[ _NTISATT  ] := ( dbfClient )->nTipRet
-            end if
-
-            if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( dbfClient )->nPctRet )
-            else
-               aTmp[ _NPCTRET  ] := ( dbfClient )->nPctRet
-            end if
-            */
 
             /*
             Descuentos desde la ficha de cliente----------------------------------
@@ -14538,9 +14603,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             MsgStop( Trim( ( dbfClient )->mComent ) )
          end if
 
-#ifndef __PDA__
          ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
-#endif
 
          if ( dbfClient )->lBlqCli
             msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarán" )
@@ -14549,8 +14612,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          if !( dbfClient )->lChgPre
             msgStop( "Este cliente no tiene autorización para venta a credito", "Imposible archivar como albarán" )
          end if
-
-
 
       end if
 
@@ -14629,7 +14690,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
          aGet[ _NDTODIV ]:Hide()
       end if
    end if
-
 
    if oRentLin != nil .and. oUser():lNotRentabilidad()
       oRentLin:Hide()

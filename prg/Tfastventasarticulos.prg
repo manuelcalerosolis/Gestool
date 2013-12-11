@@ -60,6 +60,12 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD SetUnidadesNegativo( lValue )   INLINE ( ::lUnidadesNegativo := lValue )
 
+   METHOD SetStockDataReport()
+
+   METHOD SetInformeDataReport()
+
+   METHOD lStocks()                       INLINE ( msgAlert( ::cReportType ),  ::cReportType == "Existencias por stocks" )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -486,7 +492,7 @@ RETURN ( Self )
 
 METHOD BuildReportCorrespondences()
    
-   ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::AddArticulo() } ,;
+   ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::AddArticulo( .f. ) } ,;
                                                          "Variable" =>  {||   nil },;
                                                          "Data" =>      {||   nil } },;
                      "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
@@ -574,7 +580,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
-                     "Existencias" =>                 {  "Generate" =>  {||   ::AddArticulo() },;
+                     "Existencias" =>                 {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
                                                          "Variable" =>  {||   nil },;
                                                          "Data" =>      {||   nil } } }
 
@@ -649,7 +655,8 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Existencias",                  "Image" => 16, "Type" => "Existencias",                  "Directory" => "Articulos\Existencias",        "File" => "Existencias.fr3" },;
+                     { "Title" => "Existencias por artículo",     "Image" => 16, "Type" => "Existencias por artículo",     "Directory" => "Articulos\Existencias\Articulos",  "File" => "Existencias por articulo.fr3" },;
+                     { "Title" => "Existencias por stocks",       "Image" => 16, "Type" => "Existencias por stocks",       "Directory" => "Articulos\Existencias\Stocks",     "File" => "Existencias por stock.fr3" },;
                   } ;
                   } }
 
@@ -731,12 +738,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    Relaciones entre tablas-----------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Stock",                             {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
@@ -763,13 +764,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
-   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
-   ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
-   ::oFastReport:SetResyncPair(     "Informe", "Stock" )
-
+   
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
@@ -777,7 +772,51 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
 
+   /*
+   Relacion en funcion del tipo de informe-------------------------------------
+   */
+
+   if ::lStocks()
+      ::SetStockDataReport()
+   else
+      ::SetInformeDataReport()
+   end if
+
    ::SetDataReport()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method SetStockDataReport()
+
+   ::oFastReport:SetMasterDetail(   "Stock", "Artículos.Informe",    {|| ::oStock:oDbfStock:cCodigo } )
+   ::oFastReport:SetMasterDetail(   "Stock", "Imagenes",             {|| ::oStock:oDbfStock:cCodigo } )
+   ::oFastReport:SetMasterDetail(   "Stock", "Escandallos",          {|| ::oStock:oDbfStock:cCodigo } )
+   ::oFastReport:SetMasterDetail(   "Stock", "Códigos de barras",    {|| ::oStock:oDbfStock:cCodigo } )
+
+   ::oFastReport:SetResyncPair(     "Stock", "Artículos.Informe" )
+   ::oFastReport:SetResyncPair(     "Stock", "Imagenes" )
+   ::oFastReport:SetResyncPair(     "Stock", "Escandallos" )
+   ::oFastReport:SetResyncPair(     "Stock", "Códigos de barras" )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method SetInformeDataReport()
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
+   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Stock",              {|| ::oDbf:cCodArt } )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
+   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
+   ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
+   ::oFastReport:SetResyncPair(     "Informe", "Stock" )
 
 Return ( Self )
 
@@ -1853,7 +1892,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddArticulo() CLASS TFastVentasArticulos
+METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
+
+   DEFAULT lStock          := .f.
 
    ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
 
@@ -1902,7 +1943,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       AÃ±adimos un nuevo registro
       */
  
-      if ::InsertIfValid()
+      if ::InsertIfValid() .and. lStock
          ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta )
       end if
 
@@ -2590,4 +2631,5 @@ METHOD StartDialog() CLASS TFastVentasArticulos
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 

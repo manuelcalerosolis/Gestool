@@ -1819,10 +1819,11 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
          cPwrDiv     := RetPic( ( dbfDiv )->nNwbDiv, ( dbfDiv )->nRwbDiv )
 
       else
-
+/*
          msgStop( "Divisa no encontrada " + cCodDiv + ", no puedo cargar" + CRLF + ;
                   "los valores necesarios para el programa.",;
                   "Fichero : " + cPatDat() + "Divisas.Dbf" )
+*/
       end if
 
    case ValType( dbfDiv ) == "O"
@@ -1846,11 +1847,11 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
          cPorDiv     := RetPic( dbfDiv:nNouDiv, dbfDiv:nRouDiv )
 
       else
-
+/*
          msgStop( "Divisa no encontrada " + cCodDiv + ", no puedo cargar" + CRLF + ;
                   "los valores necesarios para el programa.",;
                   "Fichero : " + cPatDat() + "Divisas.Dbf" )
-
+*/
       end if
 
    end case

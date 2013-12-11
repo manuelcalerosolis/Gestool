@@ -246,7 +246,7 @@ CLASS TDbf
 
     Method aCommentIndex()
 
-    Method lExistFile( cFile )            INLINE ( ::cRDD != "DBFCDX" .or. File( cFile ) )
+    Method lExistFile( cFile )            INLINE ( ::cRDD != "DBFCDX" .or. File( cFile ) ) // 
 
     Method aScatter()
 

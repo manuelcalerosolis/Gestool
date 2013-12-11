@@ -396,10 +396,6 @@ Method MkSndEdm()
 
          EdmRutCli( ( dbfRuta )->cCodRut, ::cPath, Self, oTipArt )
 
-         // Recibos de clientes
-
-         EdmRecCli( ( dbfRuta )->cCodRut, ::cPath, Self )
-
          // Ofertas a clientes
 
          EdmOfe( ( dbfRuta )->cCodRut, ::cPath, Self )
@@ -501,12 +497,6 @@ Method MkRecEdm()
       SynFacCli()
 
       ::oMetDos:Set( 0 )
-
-      /*
-      Recibiendo cobros de clientes
-      */
-
-      EdmCobCli( ( dbfRuta )->cCodRut, ::cPathOrg, Self, aSucces )
 
       ( dbfRuta )->( dbSkip() )
 

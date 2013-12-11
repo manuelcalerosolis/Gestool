@@ -364,34 +364,36 @@ RETURN NIL
 
 METHOD DefineFiles( cPath, cDriver ) CLASS TCobAge
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "RemAgeT.DBF" CLASS "RemAgeT" ALIAS "RemAgeT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Liquidación de agentes"
+   DEFINE DATABASE oDbf FILE "RemAgeT.DBF" CLASS "RemAgeT" ALIAS "RemAgeT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Liquidación de agentes"
 
-   FIELD NAME "lConta"     TYPE "L" LEN   1 DEC  0                      COMMENT ""        DEFAULT  .f.                                                                            HIDE OF ::oDbf
+   FIELD NAME "lConta"     TYPE "L" LEN   1 DEC  0                      COMMENT ""        DEFAULT  .f.                                                                            HIDE OF oDbf
    FIELD CALCULATE NAME "bConta"    LEN  14 DEC  0                      COMMENT { "Contabilizado", "BmpConta16", 3 } ;
-         VAL {|| ( ::oDbf:cAlias )->lConta } BITMAPS "Sel16", "Nil16"                                                                                                 COLSIZE  20      OF ::oDbf
+         VAL {|| ( oDbf:cAlias )->lConta } BITMAPS "Sel16", "Nil16"                                                                                                 COLSIZE  20      OF oDbf
    FIELD CALCULATE NAME "bGen"      LEN  14 DEC  0                      COMMENT { "Factura generada", "Document_businessman_16", 3 } ;
-         VAL {|| !Empty( ( ::oDbf:cAlias )->cNumFac ) }  BITMAPS "Sel16", "Nil16"                                                                                     COLSIZE  20      OF ::oDbf
-   FIELD NAME "nNumCob"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT "Número"                                                                  ALIGN RIGHT COLSIZE  80      OF ::oDbf
-   FIELD NAME "cSufCob"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT "Delegación"                                                                          COLSIZE  40      OF ::oDbf
-   FIELD NAME "dFecCob"    TYPE "D" LEN   8 DEC  0 DEFAULT GetSysDate() COMMENT "Fecha"                                                                               COLSIZE  80      OF ::oDbf
-   FIELD NAME "cCodAge"    TYPE "C" LEN   3 DEC  0                      COMMENT "Código agente"                                                                       COLSIZE  40      OF ::oDbf
-   FIELD CALCULATE NAME "cNomAge"   LEN  50 DEC  0                      COMMENT "Agente"  VAL cNbrAgent( ( ::oDbf:cAlias )->cCodAge, ::oAgentes:cAlias )              COLSIZE 350      OF ::oDbf
-   FIELD NAME "cCodDiv"    TYPE "C" LEN   3 DEC  0 DEFAULT cDivEmp()    COMMENT ""                                                                                                HIDE OF ::oDbf
-   FIELD NAME "nVdvDiv"    TYPE "N" LEN  10 DEC  6                      COMMENT ""        DEFAULT nChgDiv( cDivEmp(), ::oDivisas )                                                HIDE OF ::oDbf
-   FIELD NAME "nTotCob"    TYPE "N" LEN  16 DEC  6                      COMMENT "Total liquidación" ALIGN RIGHT PICTURE cPorDiv()                                     COLSIZE 100      OF ::oDbf
-   FIELD NAME "cCodPrv"    TYPE "C" LEN  12 DEC  0                      COMMENT "Proveedor"                                                                                       HIDE OF ::oDbf
-   FIELD NAME "cNumFac"    TYPE "C" LEN  12 DEC  0                      COMMENT "Factura de gastos"                                                                               HIDE OF ::oDbf
+         VAL {|| !Empty( ( oDbf:cAlias )->cNumFac ) }  BITMAPS "Sel16", "Nil16"                                                                                     COLSIZE  20      OF oDbf
+   FIELD NAME "nNumCob"    TYPE "N" LEN   9 DEC  0 PICTURE "999999999"  COMMENT "Número"                                                                  ALIGN RIGHT COLSIZE  80      OF oDbf
+   FIELD NAME "cSufCob"    TYPE "C" LEN   2 DEC  0 PICTURE "@!"         COMMENT "Delegación"                                                                          COLSIZE  40      OF oDbf
+   FIELD NAME "dFecCob"    TYPE "D" LEN   8 DEC  0 DEFAULT GetSysDate() COMMENT "Fecha"                                                                               COLSIZE  80      OF oDbf
+   FIELD NAME "cCodAge"    TYPE "C" LEN   3 DEC  0                      COMMENT "Código agente"                                                                       COLSIZE  40      OF oDbf
+   FIELD CALCULATE NAME "cNomAge"   LEN  50 DEC  0                      COMMENT "Agente"  VAL cNbrAgent( ( oDbf:cAlias )->cCodAge, ::oAgentes:cAlias )              COLSIZE 350      OF oDbf
+   FIELD NAME "cCodDiv"    TYPE "C" LEN   3 DEC  0 DEFAULT cDivEmp()    COMMENT ""                                                                                                HIDE OF oDbf
+   FIELD NAME "nVdvDiv"    TYPE "N" LEN  10 DEC  6                      COMMENT ""        DEFAULT nChgDiv( cDivEmp(), ::oDivisas )                                                HIDE OF oDbf
+   FIELD NAME "nTotCob"    TYPE "N" LEN  16 DEC  6                      COMMENT "Total liquidación" ALIGN RIGHT PICTURE cPorDiv()                                     COLSIZE 100      OF oDbf
+   FIELD NAME "cCodPrv"    TYPE "C" LEN  12 DEC  0                      COMMENT "Proveedor"                                                                                       HIDE OF oDbf
+   FIELD NAME "cNumFac"    TYPE "C" LEN  12 DEC  0                      COMMENT "Factura de gastos"                                                                               HIDE OF oDbf
 
-   INDEX TO "RemAgeT.Cdx" TAG "nNumCob"  ON "Str( nNumCob ) + cSufCob" COMMENT "Número"   NODELETED OF ::oDbf
-   INDEX TO "RemAgeT.Cdx" TAG "cCoaAge"  ON "cCodAge"                  COMMENT "Agente"   NODELETED OF ::oDbf
-   INDEX TO "RemAgeT.Cdx" TAG "dFecCob"  ON "dFecCob"                  COMMENT "Fecha"    NODELETED OF ::oDbf
+   INDEX TO "RemAgeT.Cdx" TAG "nNumCob"  ON "Str( nNumCob ) + cSufCob" COMMENT "Número"   NODELETED OF oDbf
+   INDEX TO "RemAgeT.Cdx" TAG "cCoaAge"  ON "cCodAge"                  COMMENT "Agente"   NODELETED OF oDbf
+   INDEX TO "RemAgeT.Cdx" TAG "dFecCob"  ON "dFecCob"                  COMMENT "Fecha"    NODELETED OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 
@@ -406,7 +408,7 @@ METHOD OpenService( lExclusive, cPath )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles( cPath )
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -454,7 +456,7 @@ METHOD OpenFiles( cPath ) CLASS TCobAge
       */
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::oDbf   := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., .t. )

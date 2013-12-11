@@ -7608,6 +7608,8 @@ Static Function ChkCodKit( aGet, oCos, dbfTmpKit )
    local nRecKit  := ( dbfTmpKit   )->( recno() )
 	local nRecArt	:= ( dbfArticulo )->( recno() )
 
+   cRefKit        := cSeekCodebar( cRefKit, dbfCodebar, dbfArticulo )
+
    if dbSeekInOrd( cRefKit, "Codigo", dbfArticulo )
 
       if dbSeekInOrd( cRefKit, "cRefKit", dbfTmpKit )
@@ -7616,6 +7618,7 @@ Static Function ChkCodKit( aGet, oCos, dbfTmpKit )
 
       else
 
+         aGet[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ]:cText( ( dbfArticulo )->Codigo  )
          aGet[ ( dbfTmpKit )->( fieldpos( "cDesKit" ) ) ]:cText( ( dbfArticulo )->Nombre  )
          aGet[ ( dbfTmpKit )->( fieldpos( "cUnidad" ) ) ]:cText( ( dbfArticulo )->cUnidad )
 

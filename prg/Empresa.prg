@@ -51,7 +51,6 @@ static cTmpCon
 static tmpDlgCon
 
 static bEdit                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
-static bEdtGrp                := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtGrp( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
 static bEdtC                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtCnf( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
 static bEdtDlg                := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod | EdtDet( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod ) }
 
@@ -391,7 +390,7 @@ end if
 
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( if( ( dbfEmp )->lGrupo, WinZooRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ), WinZooRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) );
+         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdit, dbfEmp ) );
          TOOLTIP  "(Z)oom";
          MRU ;
          HOTKEY   "Z";
@@ -415,7 +414,7 @@ if oUser():lCambiarEmpresa
 
       DEFINE BTNSHELL RESOURCE "CAL" GROUP OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( ActualizaEmpGrp( dbfEmp, dbfDlg, dbfUser, oWndBrw, oWnd ) );
+         ACTION   ( ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oWndBrw, oWnd ) );
          TOOLTIP  "Ac(t)ualizar ficheros";
          HOTKEY   "T" ;
          LEVEL    ACC_EDIT
@@ -1094,158 +1093,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    // InitServices()
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION EdtGrp( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
-
-	local oDlg
-   local oBtnOk
-	local oCodEmp
-   local cCodEmp              := Space( 4 )
-   local oCodGrp
-   local cCodGrp              := Space( 4 )
-   local oGrupoImportacion
-   local aImportacion         := aImportacion()
-
-   if nMode == APPD_MODE .and. nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return .f.
-   end if
-
-   // Paramos los servicios----------------------------------------------------
-
-   StopServices()
-
-   if nMode == APPD_MODE
-      aTmp[ _LGRUPO  ]  := .t.
-      aTmp[ _NCODCLI ]  := 7
-      aTmp[ _NCODPRV ]  := 7
-   end if
-
-   if BeginEdtRec( aTmp )
-      Return .f.
-   end if
-
-   DEFINE DIALOG oDlg RESOURCE "GRUPOEMP" TITLE LblTitle( nMode ) + "grupo de empresas"
-
-      REDEFINE GET   aGet[ _CODEMP ] VAR aTmp[ _CODEMP ];
-			ID 		100 ;
-         WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( aGet[ _CODEMP ], dbfEmp, .t., "0" ) .and. !Empty( aTmp[ _CODEMP ] ) ) ;
-         PICTURE  "@!" ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ _CNOMBRE ];
-			ID 		110 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			PICTURE 	"@!" ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ _CADMINIS ] ;
-         ID       120 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ _NCODCLI ];
-         ID       130 ;
-			PICTURE 	"99" ;
-         SPINNER ;
-         MIN      4 MAX 12 ;
-         VALID    ( aTmp[ _NCODCLI ] >= 4 .AND. aTmp[ _NCODCLI ] <= 12 ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ _NCODPRV ];
-         ID       140 ;
-			PICTURE 	"99" ;
-			SPINNER ;
-         MIN      4 MAX 12 ;
-         VALID    ( aTmp[ _NCODPRV ] >= 4 .AND. aTmp[ _NCODPRV ] <= 12 ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GROUP oGrupoImportacion ID 170 OF oDlg TRANSPARENT
-
-      REDEFINE GET oCodGrp VAR cCodGrp ;
-         ID       150 ;
-         IDTEXT   151 ;
-         IDSAY    152 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode == APPD_MODE .and. Empty( cCodEmp ) ) ;
-         VALID    ( if( cEmpresa( oCodGrp, dbfEmp, oCodGrp:oHelpText ) .and. cCodGrp != aTmp[ _CODEMP ], ( MsgStop( "Empresa martiz no valida"), .f. ), .t. ) );
-         BITMAP   "LUPA";
-         ON HELP  ( BrwEmpresa( oCodGrp, dbfEmp, oCodGrp:oHelpText ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oCodEmp VAR cCodEmp ;
-         ID       160 ;
-         IDTEXT   161 ;
-         IDSAY    162 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode == APPD_MODE .and. Empty( cCodGrp ) ) ;
-         VALID    ( if( cEmpresa( oCodEmp, dbfEmp, oCodEmp:oHelpText ), AppFromEmpresa( cCodEmp, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg ), .f. ) ) ;
-         BITMAP   "LUPA";
-         ON HELP  ( BrwEmpresa( oCodEmp, dbfEmp, oCodEmp:oHelpText ) ) ;
-         OF       oDlg
-
-      /*
-      Botones --------------------------------------------------------------------
-      */
-
-      REDEFINE BUTTON oBtnOk ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndGrpTrans( aTmp, aGet, oBrw, oDlg, oBtnOk, aImportacion, if( Empty( cCodGrp ), cCodEmp, cCodGrp ), !Empty( cCodGrp ), nMode ), oBrw:Refresh() )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-      if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
-      end if
-
-      oDlg:bStart := {|| SetDlgModeGrupo( aGet, oCodGrp, oCodEmp, oGrupoImportacion, nMode ) }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   /*
-   Matamos las tablas temporales-----------------------------------------------
-   */
-
-   KillTrans()
-
-   // Iniciamos los servicios----------------------------------------------------
-
-   InitServices()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-static function SetDlgModeGrupo( aGet, oCodGrp, oCodEmp, oGrupoImportacion, nMode )
-
-   if nMode == APPD_MODE
-
-      oCodGrp:Show()
-      oCodEmp:Show()
-      oGrupoImportacion:Show()
-
-   else
-
-      oCodGrp:Hide()
-      oCodEmp:Hide()
-      oGrupoImportacion:Hide()
-
-   end if
-
-   aGet[ _CODEMP  ]:SetFocus()
-
-return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4222,292 +4069,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 RETURN .t.
 
 //---------------------------------------------------------------------------//
-
-FUNCTION mkPathGrp( cCodGrpNew, cNomGrpNew, cCodGrpOld, aImportacion, lDialog, lNewGrp, lGrpOld, oMsg )
-
-   local oDlgWat
-   local oBmp
-   local lEnd           := .f.
-   local acImages       := { "BAR_01" }
-   local cMsg           := "Creando nueva empresa"
-   local cPath          := cPatGrpOld( cCodGrpNew )
-   local cPathOld       := if( !Empty( cCodGrpOld ), if( lGrpOld, cPatGrpOld( cCodGrpOld ), cPatEmpOld( cCodGrpOld ) ), nil )
-   local cCodGrp        := Space( 4 )
-
-   DEFAULT lDialog      := .f.
-   DEFAULT lNewGrp      := .f.
-   DEFAULT cNomGrpNew   := ""
-   DEFAULT aImportacion := aImportacion():False()
-
-   // Iniciamos los servicios--------------------------------------------------
-
-   StopServices()
-
-   if IsDirectory( cPath )
-      EraseFilesInDirectory(cPath )
-   end if
-
-   /*
-   Dialogo para mostrar nueva empresa------------------------------------------
-   */
-
-   if lDialog
-
-   DEFINE DIALOG oDlgWat NAME "CREAEMP" TITLE "Creando grupo : " + cCodGrpNew + " - " + cNomGrpNew
-
-      REDEFINE BITMAP oBmp ;
-         RESOURCE "CrearEmpresa" ;
-         ID       500 ;
-         OF       oDlgWat
-
-      TAnimat():Redefine( oDlgWat, 100, acImages, 1 )
-
-      REDEFINE SAY oMsg PROMPT cMsg ;
-         ID       110 ;
-         OF       oDlgWat
-
-   ACTIVATE DIALOG oDlgWat CENTER NOWAIT VALID ( lEnd )
-
-   end if
-
-   SysRefresh()
-
-   if lChDir( cNamePath( cPath ) ) .or. MakeDir( cNamePath( cPath ) ) != -1
-
-      if cCodGrpOld != nil
-
-         cCodGrp        := cCodigoGrupo( cCodGrpOld )
-
-         if !lGrpOld .and. !Empty( cCodGrp )
-            cPathOld    := cPatStk( cCodGrp, , , .t. )
-         end if
-
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando familias" )
-      end if
-      mkFamilia( cPath, aImportacion:lArticulos, cPathOld ); rxFamilia( cPath )       ; SysRefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando categorias" )
-      end if
-      mkCategoria( cPath, aImportacion:lArticulos, cPathOld ); rxCategoria( cPath )   ; SysRefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando grupos de familias" )
-      end if
-
-      if cPathOld != nil
-         TGrpFam():Create( cPath ):CheckFiles( cPathOld + "GrpFam.Dbf" )   ; SysRefresh()
-      else
-         TGrpFam():Create( cPath ):CheckFiles()                            ; sysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando fabricantes" )
-      end if
-
-      if cPathOld != nil
-         TFabricantes():Create( cPath ):CheckFiles( cPathOld + "Fabricantes.Dbf" )     ; SysRefresh()
-      else
-         TFabricantes():Create( cPath ):CheckFiles()                                   ; SysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando tipos de familias" )
-      end if
-      if cPathOld != nil
-         TComandas():Create( cPath ):CheckFiles( cPathOld + "TComandas.Dbf" )   ; SysRefresh()
-      else
-         TComandas():Create( cPath ):CheckFiles()                            ; sysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando movimientos de almacén" )
-      end if
-      TRemMovAlm():Create( cPath ):CheckFiles()                         ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando catálogos" )
-      end if
-      if cPathOld != nil
-         TCatalogo():Create( cPath ):CheckFiles( cPathOld + "Catalogo.Dbf" )   ; SysRefresh()
-      else
-         TCatalogo():Create( cPath ):CheckFiles()                            ; sysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando unidades de medición" )
-      end if
-      if cPathOld != nil
-         UniMedicion():Create( cPath ):CheckFiles( cPathOld + "UndMed.Dbf" )   ; SysRefresh()
-      else
-         UniMedicion():Create( cPath ):CheckFiles()                            ; sysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando propiedades" )
-      end if
-      mkPro(      cPath, aImportacion:lArticulos, cPathOld ); rxPro( cPath ) ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando artículos" )
-      end if
-      mkArticulo( cPath, aImportacion:lArticulos, cPathOld, nil, .f. )  ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando clientes" )
-      end if
-      mkClient(   cPath, aImportacion:lClientes, cPathOld )             ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando proveedores" )
-      end if
-      mkProvee(   cPath, aImportacion:lProveedor, cPathOld )            ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando agentes" )
-      end if
-      mkAgentes(  cPath, aImportacion:lClientes, cPathOld, nil )          ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando rutas" )
-      end if
-      mkRuta(     cPath, aImportacion:lClientes, cPathOld, nil )            ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando almacén" )
-      end if
-
-      mkAlmacen(  cPath, aImportacion:lAlmacen, cPathOld, nil )         ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando ubicaciones" )
-      end if
-
-      mkUbi(  cPath, aImportacion:lAlmacen, cPathOld, nil )         ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando ofertas" )
-      end if
-      mkOferta(   cPath, aImportacion:lArticulos, cPathOld )               ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando promociones" )
-      end if
-      mkPromo(    cPath, aImportacion:lArticulos, cPathOld )            ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando forma de pago" )
-      end if
-      mkFPago(    cPath, aImportacion:lFPago, cPathOld )                ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando bancos" )
-      end if
-      if cPathOld != nil .and. aImportacion:lFPago
-         TBancos():Create( cPath ):CheckFiles( cPathOld + "Bancos.Dbf" )   ; SysRefresh()
-      else
-         TBancos():Create( cPath ):CheckFiles()                            ; SysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando cuentas bancarias" )
-      end if
-      if cPathOld != nil .and. aImportacion:lFPago
-         TCuentasBancarias():Create( cPath ):CheckFiles( cPathOld + "EmpBnc.Dbf" ) ; SysRefresh()
-      else
-         TCuentasBancarias():Create( cPath ):CheckFiles()                  ; SysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando tipos de articulos" )
-      end if
-      if cPathOld != nil .and. aImportacion:lArticulos
-         TTipArt():Create( cPath ):CheckFiles( cPathOld + "TipArt.Dbf" )   ; SysRefresh()
-      else
-         TTipArt():Create( cPath ):CheckFiles()                            ; SysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando transportistas" )
-      end if
-
-      if cPathOld != nil .and. aImportacion:lClientes
-         TTrans():Create( cPath ):CheckFiles( cPathOld + "Transpor.Dbf" )  ; SysRefresh()
-      else
-         TTrans():Create( cPath ):CheckFiles()                             ; SysRefresh()
-      end if
-
-      if oMsg != nil
-         oMsg:SetText( "Creando grupos de proveedores" )
-      end if
-      if cPathOld != nil .and. aImportacion:lProveedor
-         TGrpPrv():Create( cPath ):CheckFiles( cPathOld + "GrpPrv.Dbf" )   ; SysRefresh()
-      else
-         TGrpPrv():Create( cPath ):CheckFiles()                            ; SysRefresh()
-      end if
-
-      /*if oMsg != nil
-         oMsg:SetText( "Creando stocks" )
-      end if
-      if aImportacion:lStockIni .and. cPathOld != nil
-
-         if lGrpOld
-            TStock():StockInit( cPath, cCodGrpOld, oMsg, !aImportacion:lAlbPrv, !aImportacion:lAlbCli, .t. )
-         else
-            TStock():StockInit( cPath, if( !Empty( cCodGrp ), cCodGrp, cPathOld ), oMsg, !aImportacion:lAlbPrv, !aImportacion:lAlbCli, if( !Empty( cCodGrp ), .t., .f. ) )
-         end if
-
-      end if*/
-
-      SysRefresh()
-
-      /*
-      Si hay nueva empresa calculamos stocks y regeneramos indices-------------
-      */
-
-      if lNewGrp
-
-         with object ( TReindex():New( nil, nil, cPath ) )
-            :lEmpresa      := .f.
-            :lMessageEnd   := .f.
-            :cCodEmp       := cCodGrpNew
-            :cPatCli       := cPatCli( cCodGrpNew, .f., .f. )
-            :cPatArt       := cPatArt( cCodGrpNew, .f., .f. )
-            :cPatPrv       := cPatPrv( cCodGrpNew, .f., .f. )
-            :cPatAlm       := cPatAlm( cCodGrpNew, .f., .f. )
-            :cPatGrp       := cPatGrp( cCodGrpNew, .f., .f. )
-            :cPathEmp      := cPatGrp( cCodGrpNew, .f., .f. )
-            :GenIndices( oMsg )
-         end with
-
-      end if
-
-   else
-
-      MsgStop( "Imposible crear el directorio " + cPath )
-
-   end if
-
-   if lDialog
-      lEnd  := .t.
-      oBmp:End()
-      oDlgWat:End()
-   end if
-
-   // Iniciamos los servicios--------------------------------------------------
-
-   InitServices()
-
-   SysRefresh()
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-
 /*
 Cambia los datos de una empresa a las nuevas estructuras
 */
@@ -4713,7 +4274,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          Ficheros del subdirectorio empresa------------------------------------
          */
 
-         ActDbf( cEmpOld, cEmpTmp, "FPago", "formas de pago", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "FPago",     "formas de pago", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Familias",  "familias", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FamPrv",    "familias de proveedores", oMet, oMsg, aMsg )
@@ -4850,11 +4411,11 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Añadiendo bancos" )
          TBancos():Create():SyncAllDbf()
 
-         oMsg:SetText( "Añadiendo backup" )
-         TBackup():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo cuentas bancarias" )
          TCuentasBancarias():Create():SyncAllDbf()
+
+         oMsg:SetText( "Añadiendo backup" )
+         TBackup():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo envios y recepciones" )
          TSndRecInf():Create():SyncAllDbf()
@@ -5334,93 +4895,6 @@ Static Function PrvTrans( oFld, oBtnOk )
 
 Return nil
 
-//-----------------------------------------------------------------------//
-
-STATIC FUNCTION EndGrpTrans( aTmp, aGet, oBrw, oDlg, oBtnOk, aImportacion, cCodGrpOld, lGrpOld, nMode )
-
-   DEFAULT lGrpOld  := .t.
-
-   oDlg:Disable()
-
-   /*
-   Valores por defecto---------------------------------------------------------
-   */
-
-   if nMode == APPD_MODE
-
-      if Empty( aTmp[ _CDEFFPG ] )
-         aTmp[ _CDEFFPG ]  := "00"
-      end if
-
-      if Empty( aTmp[ _CDEFALM ] )
-         aTmp[ _CDEFALM ]  := "000"
-      end if
-
-      if Empty( aTmp[ _CDEFCAJ ] )
-         aTmp[ _CDEFCAJ ]  := "000"
-      end if
-
-      if Empty( aTmp[ _CDEFCJR ] )
-         aTmp[ _CDEFCJR ]  := "000"
-      end if
-
-      if Empty( aTmp[ _CDIRIMG ] )
-         aTmp[ _CDIRIMG ]  := ".\Imagen"
-      end if
-
-   end if
-
-   /*
-   Grabamos el registro--------------------------------------------------------
-   */
-
-   WinGather( aTmp, aGet, dbfEmp, oBrw, nMode, , .f. )
-
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
-
-   dbCommitAll()
-
-   /*
-   Cerrando dialog-------------------------------------------------------------
-   */
-
-   oDlg:Enable()
-   oDlg:End( IDOK )
-
-   if nMode == APPD_MODE .and. !Empty( aTmp[ _CODEMP ] )
-
-      if oWndBrw != nil
-         oWndBrw:Minimize()
-      end if
-
-      /*
-      Cerramos todas los servicios---------------------------------------------
-      */
-
-      StopServices()
-
-      /*
-      Creamos el grupo---------------------------------------------------------
-      */
-
-      mkPathGrp( aTmp[ _CODEMP ], aTmp[ _CNOMBRE ], cCodGrpOld, aImportacion, .t., .t., lGrpOld )
-
-      /*
-      Abrimos los servicios ---------------------------------------------------
-      */
-
-      InitServices()
-
-      if oWndBrw != nil
-         oWndBrw:Restore()
-      end if
-
-   end if
-
-RETURN .t.
-
 //---------------------------------------------------------------------------//
 
 /*
@@ -5837,14 +5311,8 @@ Function ChkAllEmp( lForced )
          end if
 
          for n := 1 to len( aEmp )
-
-            if aEmp[ n, 3 ]
-               lActualizaGrupo( aEmp[ n, 1 ], aEmp[ n, 2 ] )
-            else
-               SetEmpresa( aEmp[ n, 1 ], , , , , , .t. )
-               lActualiza( aEmp[ n, 1 ], oWndBrw, .t., aEmp[ n, 2 ] )
-            end if
-
+            SetEmpresa( aEmp[ n, 1 ], , , , , , .t. )
+            lActualiza( aEmp[ n, 1 ], oWndBrw, .t., aEmp[ n, 2 ] )
          next
 
          if !Empty( oWnd() )
@@ -6490,263 +5958,6 @@ Function PriorEmpresa()
    oWnd():Enable()
 
    CursorWE()
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-function ActualizaEmpGrp( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
-
-   local cCodEmp  := ""
-   local cNomEmp  := ""
-   local cCodGrp  := ""
-   local cNomGrp  := ""
-
-   // Paramos los servicios----------------------------------------------------
-
-   CursorWait()
-
-   // Paramos los servicios----------------------------------------------------
-
-   oWnd:Disable()
-
-   StopServices()
-
-   cCodEmp        := ( dbfEmp )->CodEmp
-   cNomEmp        := ( dbfEmp )->cNombre
-   cCodGrp        := cCodigoGrupo( ( dbfEmp )->CodEmp, dbfEmp )
-   cNomGrp        := RetFld( ( dbfEmp )->CodEmp, dbfEmp )
-
-   if !( dbfEmp )->lGrupo
-      SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser, , , .t. )
-   end if
-
-   CursorWE()
-
-   oBrw:End()
-
-   SysRefresh()
-
-   if ( dbfEmp )->lGrupo
-
-      lActualizaGrupo( cCodEmp, cNomEmp, oBrw )
-
-   else
-
-      if lActualiza( cCodEmp, oBrw, .f., cNomEmp ) .and. !Empty( cCodGrp )
-         lActualizaGrupo( cCodGrp, cNomGrp )
-      end if
-
-   end if
-   
-   // Iniciamos los servicios----------------------------------------------------
-
-   InitServices()
-
-   oWnd:Enable()
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION lActualizaGrupo( cCodGrp, cNomGrp, oBrw )
-
-   local oBmp
-   local oAni
-   local oMsg
-   local cMsg        := ""
-   local aMsg        := {}
-   local oDlgWat
-   local acImages    := { "BAR_01" }
-
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return .f.
-   end if
-
-   if !TReindex():lFreeHandle()
-      msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
-               "en estos momentos, reintentelo pasados unos segundos." )
-      return .f.
-   end if
-
-   if !TReindex():lCreateHandle()
-      msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
-      return nil
-   end if
-
-   if oBrw != nil
-      oBrw:End( .t. )
-   end if
-
-   DEFINE DIALOG oDlgWat NAME "CREAEMP" TITLE "Actualizando grupo : " + cCodGrp + " - " + AllTrim( cNomGrp )
-
-      REDEFINE BITMAP oBmp ;
-         RESOURCE "ACTUALIZAREMPRESA" ;
-         ID       500 ;
-         OF       oDlgWat
-
-      oAni        := TAnimat():Redefine( oDlgWat, 100, acImages, 1 )
-
-      REDEFINE SAY oMsg PROMPT cMsg ;
-         ID       110 ;
-         OF       oDlgWat
-
-   ACTIVATE DIALOG oDlgWat CENTER NOWAIT
-
-   oDlgWat:bValid := {|| .f. }
-
-   /*
-   Proceso de actualización de grupo-------------------------------------------
-   */
-
-   CompressGrupo( cCodGrp, nil, nil, nil, oAni, oMsg )
-
-   ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, nil, .t. )
-
-   TReindex():lCloseHandle()
-
-   oAni:End()
-
-   oBmp:End()
-
-   oDlgWat:bValid := {|| .t. }
-
-   oDlgWat:End()
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
-
-   local oBlock
-   local oError
-   local cEmpTmp  := cPatGrpOld( "Tmp" )
-   local cEmpOld  := cPatGrpOld( cCodGrp )
-
-   oAni:Show()
-
-   oMsg:SetText( "Generando nueva estructura" )
-
-   /*
-   Cerramos todas las tablas---------------------------------------------------
-   */
-
-   dbCloseAll()
-
-   /*
-   Creamos el directorio-------------------------------------------------------
-   */
-   
-   if mkPathGrp( "Tmp", nil, nil, aImportacion():False(), .f., .f., nil, oMsg )
-
-      CloseFiles()
-   
-      oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-         /*
-         Ficheros del subdirectorio empresa------------------------------------
-         */
-   
-         ActDbf( cEmpOld, cEmpTmp, "FPago",     "formas de pago", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Familias",  "familias", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "FamPrv",    "familias de proveedores", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Categorias","categorías", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Pro",       "propiedades", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "TblPro",    "tabla de propiedades", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ObrasT",    "obras", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Articulo",  "artículos", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtCodebar","códigos de barras", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ProvArt",   "artículos por proveedor", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtDiv",    "precios por ventas propiedades", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtImg",    "artículos relación de imagenes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtKit",    "articulos kits", oMet, oMsg, aMsg )
-
-
-         ActDbf( cEmpOld, cEmpTmp, "Client",    "clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ClientD",   "documentos de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "CliAtp",    "atipicas de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "CliBnc",    "bancos de clientes", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Provee",    "proveedores", oMet, oMsg, aMsg )
-   
-         ActDbf( cEmpOld, cEmpTmp, "ProveeD",   "documentos de proveedor", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Agentes",   "agentes", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Ruta",      "rutas", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Almacen",   "almacen", oMet, oMsg, aMsg )
-
-         ActDbf( cEmpOld, cEmpTmp, "Oferta",    "ofertas", oMet, oMsg, aMsg )
-
-         oMsg:SetText( "Unidades de medición" )
-         UniMedicion():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo grupos de familias" )
-         TGrpFam():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo fabricantes" )
-         TFabricantes():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo tipos de comandas" )
-         TComandas():Create():SyncAllDbf()
-         oMsg:SetText( "Añadiendo tipos de artículos" )
-
-         TTipArt():Create():SyncAllDbf()
-         oMsg:SetText( "Añadiendo catálogos de artículos" )
-         
-         TCatalogo():Create():SyncAllDbf()
-         oMsg:SetText( "Añadiendo grupos de clientes" )
-         
-         TGrpCli():Create():SyncAllDbf()
-         oMsg:SetText( "Añadiendo grupos de proveedores" )
-         
-         TGrpPrv():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo invitaciones" )
-         TInvitacion():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo programas de fidelización" )
-         TFideliza():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo detalles programas de fidelización" )
-         TDetFideliza():Create():SyncAllDbf()
-
-      RECOVER USING oError
-
-         msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-      END SEQUENCE
-      ErrorBlock( oBlock )
-
-      /*
-      Eliminamos las classes---------------------------------------------------
-      */
-
-      InitDbClass()
-
-      /*
-      Regeneramos indices-------------------------------------------------------
-      */
-
-      with object ( TReindex():New() )
-         :lSincroniza   := .f.
-         :lNotGrupo     := .f.
-         :lMessageEnd   := .f.
-         :cPathEmp      := cPatGrp()
-         :GenIndices( oMsg )
-      end
-
-   end if
-
-   oAni:Hide()
 
 RETURN .t.
 
@@ -7691,7 +6902,7 @@ FUNCTION rxBnc( cPath, oMeter )
 
    local dbfBnc
 
-   DEFAULT cPath  := cPatGrp()
+   DEFAULT cPath  := cPatEmp()
 
    dbUseArea( .t., cDriver(), cPath + "EmpBnc.Dbf", cCheckArea( "EmpBnc", @dbfBnc ), .f. )
 
@@ -7717,7 +6928,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
+FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucursal, oGetDigitoControl, oGetCuenta, dbfBancos )
 
 	local oDlg
 	local oBrw
@@ -7745,7 +6956,7 @@ FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
       USE ( cPatGrp() + "EmpBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPBNC", @dbfBancos ) )
       SET ADSINDEX TO ( cPatGrp() + "EmpBnc.Cdx" ) ADDITIVE
       lClose         := .t.
-   END IF
+   end if
 
    nOrdAnt           := ( dbfBancos )->( ordSetFocus( nOrd ) )
 
@@ -7795,15 +7006,15 @@ FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
       with object ( oBrw:AddCol() )
          :cHeader          := "Cuenta"
          :cSortOrder       := "cCtaBnc"
-         :bEditValue       := {|| ( dbfBancos )->cEntBnc + "-" + ( dbfBancos )->cSucBnc + "-" + ( dbfBancos )->cDigBnc + "-" + ( dbfBancos )->cCtaBnc }
-         :nWidth           := 150
+         :bEditValue       := {|| PictureCuentaIBAN( dbfBancos ) }
+         :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Domicilio"
          :bEditValue       := {|| ( dbfBancos )->cDirBnc }
-         :nWidth           := 120
+         :nWidth           := 180
       end with
 
       with object ( oBrw:AddCol() )
@@ -7867,21 +7078,12 @@ FUNCTION BrwBncEmp( oGet, oGetEnt, oGetSuc, oGetDig, oGetCta, dbfBancos )
 
       oGet:cText( ( dbfBancos )->cNomBnc )
 
-      if oGetEnt != NIL
-         oGetEnt:cText( ( dbfBancos )->cEntBnc )
-      end if
-
-      if oGetSuc != NIL
-         oGetSuc:cText( ( dbfBancos )->cSucBnc )
-      end if
-
-      if oGetDig != NIL
-         oGetDig:cText( ( dbfBancos )->cDigBnc )
-      end if
-
-      if oGetCta != NIL
-         oGetCta:cText( ( dbfBancos )->cCtaBnc )
-      end if
+      oGetPaisIBAN:cText( ( dbfBancos )->cPaisIBAN )
+      oGetControlIBAN:cText( ( dbfBancos )->cCtrlIBAN )
+      oGetEntidad:cText( ( dbfBancos )->cEntBnc )
+      oGetSucursal:cText( ( dbfBancos )->cSucBnc )
+      oGetDigitoControl:cText( ( dbfBancos )->cDigBnc )
+      oGetCuenta:cText( ( dbfBancos )->cCtaBnc )
 
    end if
 
@@ -8168,3 +7370,42 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
+
+   local cCodEmp  := ""
+   local cNomEmp  := ""
+
+   // Paramos los servicios----------------------------------------------------
+
+   CursorWait()
+
+   // Paramos los servicios----------------------------------------------------
+
+   oWnd:Disable()
+
+   StopServices()
+
+   cCodEmp        := ( dbfEmp )->CodEmp
+   cNomEmp        := ( dbfEmp )->cNombre
+
+   if !( dbfEmp )->lGrupo
+      SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser, , , .t. )
+   end if
+
+   CursorWE()
+
+   oBrw:End()
+
+   SysRefresh()
+
+   lActualiza( cCodEmp, oBrw, .f., cNomEmp )
+   
+   // Iniciamos los servicios----------------------------------------------------
+
+   InitServices()
+
+   oWnd:Enable()
+
+RETURN nil
+
+//---------------------------------------------------------------------------//

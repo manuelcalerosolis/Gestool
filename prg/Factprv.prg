@@ -85,10 +85,12 @@
 #define _SUBCTA                  73
 #define _NTOTSUP                 74
 #define _CBANCO                  75
-#define _CENTBNC                 76
-#define _CSUCBNC                 77
-#define _CDIGBNC                 78
-#define _CCTABNC                 79
+#define _CPAISIBAN               76
+#define _CCTRLIBAN               77
+#define _CENTBNC                 78
+#define _CSUCBNC                 79
+#define _CDIGBNC                 80
+#define _CCTABNC                 81
 
 /*
 Lineas de Detalle
@@ -1692,32 +1694,49 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncPrv( aGet[ _CBANCO ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODPRV ] ) );
+         ON HELP  ( BrwBncPrv( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODPRV ] ) );
+         OF       oFld:aDialogs[1]
+       
+      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       305 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+         ID       306 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
          ID       301 ;
          WHEN     ( nMode != ZOOM_MODE .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
          ID       302 ;
          WHEN     ( nMode != ZOOM_MODE .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
          ID       303 ;
          WHEN     ( nMode != ZOOM_MODE .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
          ID       304 ;
          PICTURE  "9999999999" ;
          WHEN     ( nMode != ZOOM_MODE .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -5615,6 +5634,16 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
                   aGet[ _CBANCO ]:lValid()
                end if
 
+               if !Empty( aGet[ _CPAISIBAN ] )
+                  aGet[ _CPAISIBAN ]:cText( ( dbfPrvBnc )->cPaisIBAN )
+                  aGet[ _CPAISIBAN ]:lValid()
+               end if
+
+               if !Empty( aGet[ _CCTRLIBAN ] )
+                  aGet[ _CCTRLIBAN ]:cText( ( dbfPrvBnc )->cCtrlIBAN )
+                  aGet[ _CCTRLIBAN ]:lValid()
+               end if
+
                if !Empty( aGet[ _CENTBNC ] )
                   aGet[ _CENTBNC ]:cText( ( dbfPrvBnc )->cEntBnc )
                   aGet[ _CENTBNC ]:lValid()
@@ -7645,7 +7674,6 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( dbfFacPrvL )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacPrvL )->( ordCreate( cPath + "FACPRVL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
-
       ( dbfFacPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
@@ -8686,28 +8714,37 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
    local nTotAcu     := 0
    local nPlazos     := 0
    local cBanco
+   local cPaisIBAN
+   local cCtrlIBAN
    local cEntidad
    local cSucursal
    local cControl
    local cCuenta
 
    if aTmp != nil
-      cSerFac        := aTmp[ _CSERFAC ]
-      nNumFac        := aTmp[ _NNUMFAC ]
-      cSufFac        := aTmp[ _CSUFFAC ]
-      cDivFac        := aTmp[ _CDIVFAC ]
-      nVdvFac        := aTmp[ _NVDVFAC ]
-      dFecFac        := aTmp[ _DFECFAC ]
-      cCodPgo        := aTmp[ _CCODPAGO]
-      cCodPrv        := aTmp[ _CCODPRV ]
-      cNomPrv        := aTmp[ _CNOMPRV ]
-      cCodUsr        := aTmp[ _CCODUSR ]
-      cCodCaj        := aTmp[ _CCODCAJ ]
-      cEntidad       := aTmp[ _CENTBNC ]
-      cSucursal      := aTmp[ _CSUCBNC ]
-      cControl       := aTmp[ _CDIGBNC ]
-      cCuenta        := aTmp[ _CCTABNC ]
-      cBanco         := aTmp[ _CBANCO ]
+      cSerFac        := aTmp[ _CSERFAC    ]
+      nNumFac        := aTmp[ _NNUMFAC    ]
+      cSufFac        := aTmp[ _CSUFFAC    ]
+      cDivFac        := aTmp[ _CDIVFAC    ]
+      nVdvFac        := aTmp[ _NVDVFAC    ]
+      dFecFac        := aTmp[ _DFECFAC    ]
+      cCodPgo        := aTmp[ _CCODPAGO   ]
+      cCodPrv        := aTmp[ _CCODPRV    ]
+      cNomPrv        := aTmp[ _CNOMPRV    ]
+      cCodUsr        := aTmp[ _CCODUSR    ]
+      cCodCaj        := aTmp[ _CCODCAJ    ]
+      cEntidad       := aTmp[ _CENTBNC    ]
+      cSucursal      := aTmp[ _CSUCBNC    ]
+      cControl       := aTmp[ _CDIGBNC    ]
+      cCuenta        := aTmp[ _CCTABNC    ]
+      cBanco         := aTmp[ _CBANCO     ]
+      cPaisIBAN      := aTmp[ _CPAISIBAN  ]
+      cCtrlIBAN      := aTmp[ _CCTRLIBAN  ]
+      cEntidad       := aTmp[ _CENTBNC    ]
+      cSucursal      := aTmp[ _CSUCBNC    ]
+      cControl       := aTmp[ _CDIGBNC    ]
+      cCuenta        := aTmp[ _CCTABNC    ]
+
    else
       cSerFac        := ( dbfFacPrvT )->cSerFac
       nNumFac        := ( dbfFacPrvT )->nNumFac
@@ -8720,11 +8757,13 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
       cNomPrv        := ( dbfFacPrvT )->cNomPrv
       cCodUsr        := ( dbfFacPrvT )->cCodUsr
       cCodCaj        := ( dbfFacPrvT )->cCodCaj
-      cEntidad       := ( dbfFacPrvT )->cEntBnc
-      cSucursal      := ( dbfFacPrvT )->cSucBnc
-      cControl       := ( dbfFacPrvT )->cDigBnc
-      cCuenta        := ( dbfFacPrvT )->cCtaBnc
       cBanco         := ( dbfFacPrvT )->cBanco
+      cPaisIBAN      := ( dbfRctPrvT )->cPaisIBAN
+      cCtrlIBAN      := ( dbfRctPrvT )->cCtrlIBAN
+      cEntidad       := ( dbfRctPrvT )->cEntBnc
+      cSucursal      := ( dbfRctPrvT )->cSucBnc
+      cControl       := ( dbfRctPrvT )->cDigBnc
+      cCuenta        := ( dbfRctPrvT )->cCtaBnc
    end if
 
    /*
@@ -8772,44 +8811,48 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
 
             ( dbfFacPrvP)->( dbAppend() )
 
-            ( dbfFacPrvP )->cSerFac    := cSerFac
-            ( dbfFacPrvP )->nNumFac    := nNumFac
-            ( dbfFacPrvP )->cSufFac    := cSufFac
-            ( dbfFacPrvP )->cCodPrv    := cCodPrv
-            ( dbfFacPrvP )->cNomPrv    := cNomPrv
-            ( dbfFacPrvP )->nNumRec    := ++nInc
-            ( dbfFacPrvP )->nImporte   := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
-            ( dbfFacPrvP )->cTurRec    := cCurSesion()
-            ( dbfFacPrvP )->cDescrip   := "Recibo nº" + AllTrim( Str( ( dbfFacPrvP )->nNumRec ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
-            ( dbfFacPrvP )->cDivPgo    := cDivFac
-            ( dbfFacPrvP )->nVdvPgo    := nVdvFac
-            ( dbfFacPrvP )->lCobRado   := ( ( dbfFPago )->nCobRec == 1 )
-            ( dbfFacPrvP )->dPreCob    := dFecFac
-            ( dbfFacPrvP )->dFecVto    := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
-            ( dbfFacPrvP )->cCtaRec    := ( dbfFPago )->cCtaCobro
-            ( dbfFacPrvP )->dFecChg    := GetSysDate()
-            ( dbfFacPrvP )->cTimChg    := Time()
-            ( dbfFacPrvP )->cCodPgo    := cCodPgo
-            ( dbfFacPrvP )->lNotArqueo := .f.
-            ( dbfFacPrvP )->cCodCaj    := cCodCaj
-            ( dbfFacPrvP )->cCodUsr    := cCodUsr
+            ( dbfFacPrvP )->cSerFac       := cSerFac
+            ( dbfFacPrvP )->nNumFac       := nNumFac
+            ( dbfFacPrvP )->cSufFac       := cSufFac
+            ( dbfFacPrvP )->cCodPrv       := cCodPrv
+            ( dbfFacPrvP )->cNomPrv       := cNomPrv
+            ( dbfFacPrvP )->nNumRec       := ++nInc
+            ( dbfFacPrvP )->nImporte      := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
+            ( dbfFacPrvP )->cTurRec       := cCurSesion()
+            ( dbfFacPrvP )->cDescrip      := "Recibo nº" + AllTrim( Str( ( dbfFacPrvP )->nNumRec ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
+            ( dbfFacPrvP )->cDivPgo       := cDivFac
+            ( dbfFacPrvP )->nVdvPgo       := nVdvFac
+            ( dbfFacPrvP )->lCobRado      := ( ( dbfFPago )->nCobRec == 1 )
+            ( dbfFacPrvP )->dPreCob       := dFecFac
+            ( dbfFacPrvP )->dFecVto       := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
+            ( dbfFacPrvP )->cCtaRec       := ( dbfFPago )->cCtaCobro
+            ( dbfFacPrvP )->dFecChg       := GetSysDate()
+            ( dbfFacPrvP )->cTimChg       := Time()
+            ( dbfFacPrvP )->cCodPgo       := cCodPgo
+            ( dbfFacPrvP )->lNotArqueo    := .f.
+            ( dbfFacPrvP )->cCodCaj       := cCodCaj
+            ( dbfFacPrvP )->cCodUsr       := cCodUsr
 
             if ( dbfFPago )->lUtlBnc
-               ( dbfFacPrvP )->cBncEmp := ( dbfFPago )->cBanco
-               ( dbfFacPrvP )->cEntEmp := ( dbfFPago )->cEntBnc
-               ( dbfFacPrvP )->cSucEmp := ( dbfFPago )->cSucBnc
-               ( dbfFacPrvP )->cDigEmp := ( dbfFPago )->cDigBnc
-               ( dbfFacPrvP )->cCtaEmp := ( dbfFPago )->cCtaBnc
+               ( dbfFacPrvP )->cEPaisIBAN := ( dbfFPago )->cPaisIBAN
+               ( dbfFacPrvP )->cECtrlIBAN := ( dbfFPago )->cCtrlIBAN
+               ( dbfFacPrvP )->cBncEmp    := ( dbfFPago )->cBanco
+               ( dbfFacPrvP )->cEntEmp    := ( dbfFPago )->cEntBnc
+               ( dbfFacPrvP )->cSucEmp    := ( dbfFPago )->cSucBnc
+               ( dbfFacPrvP )->cDigEmp    := ( dbfFPago )->cDigBnc
+               ( dbfFacPrvP )->cCtaEmp    := ( dbfFPago )->cCtaBnc
             end if
 
-            ( dbfFacPrvP )->cBncPrv    := cBanco
-            ( dbfFacPrvP )->cEntPrv    := cEntidad
-            ( dbfFacPrvP )->cSucPrv    := cSucursal
-            ( dbfFacPrvP )->cDigPrv    := cControl
-            ( dbfFacPrvP )->cCtaPrv    := cCuenta
+            ( dbfFacPrvP )->cPaisIBAN     := cPaisIBAN
+            ( dbfFacPrvP )->cCtrlIBAN     := cCtrlIBAN
+            ( dbfFacPrvP )->cBncPrv       := cBanco
+            ( dbfFacPrvP )->cEntPrv       := cEntidad
+            ( dbfFacPrvP )->cSucPrv       := cSucursal
+            ( dbfFacPrvP )->cDigPrv       := cControl
+            ( dbfFacPrvP )->cCtaPrv       := cCuenta
 
             if ( dbfFPago )->nCobRec == 1
-               ( dbfFacPrvP )->dEntrada:= dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
+               ( dbfFacPrvP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
             end if
 
             ( dbfFacPrvP )->( dbUnLock() )
@@ -8834,9 +8877,10 @@ function nTotVFacPrv( cCodArt, dbfFacPrvL, nDinDiv, nDirDiv )
 
    if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
 
-      while ( dbfFacPrvL )->CREF == cCodArt .and. !( dbfFacPrvL )->( eof() )
+      while ( dbfFacPrvL )->cRef == cCodArt .and. !( dbfFacPrvL )->( eof() )
 
          nTotVta  += nTotLFacPrv( dbfFacPrvL, nDinDiv, nDirDiv )
+
          ( dbfFacPrvL )->( dbSkip() )
 
       end while
@@ -8907,7 +8951,6 @@ FUNCTION lConFacPrv( cFacPrv, dbfFacPrvT )
 RETURN ( lConFac )
 
 //----------------------------------------------------------------------------//
-
 /*
 Devuelve el codigo del Prvente pasando un numero de factura
 */
@@ -8923,7 +8966,6 @@ FUNCTION dPrvFacPrv( cFacPrv, dbfFacPrvT )
 RETURN ( cCodPrv )
 
 //----------------------------------------------------------------------------//
-
 /*
 Devuelve la forma de pago pasando un numero de factura
 */
@@ -9455,26 +9497,28 @@ function aItmFacPrv()
    aAdd( aItmFacPrv, { "dFecChg"    ,"D",  8, 0, "Fecha de modificación del documento",      "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cTimChg"    ,"C",  5, 0, "Hora de modificación del documento",       "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCodDlg"    ,"C",  2, 0, "Código delegación",                        "",                   "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "nRegIva"    ,"N",  1, 0, "Régimen de " + cImp(),                    "",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "nRegIva"    ,"N",  1, 0, "Régimen de " + cImp(),                     "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "lFacGas"    ,"L",  1, 0, "Lógico factura de gastos",                 "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "mComGas"    ,"M", 10, 0, "Comentario de gastos",                     "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nNetGas1"   ,"N", 16, 6, "Primer importe neto de gastos",            "cPirDivFac",         "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nNetGas2"   ,"N", 16, 6, "Segundo importe neto de gastos",           "cPirDivFac",         "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nNetGas3"   ,"N", 16, 6, "Tercer importe neto de gastos",            "cPirDivFac",         "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "nIvaGas1"   ,"N",  6, 2, "Porcentaje primer tipo " + cImp() + " de gastos",    "'@EZ 99.99'",        "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "nIvaGas2"   ,"N",  6, 2, "Porcentaje segundo tipo " + cImp() + " de gastos",   "'@EZ 99.99'",        "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "nIvaGas3"   ,"N",  6, 2, "Porcentaje tercer tipo " + cImp() + " de gastos",    "'@EZ 99.99'",        "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "nIvaGas1"   ,"N",  6, 2, "Porcentaje primer tipo " + cImp() + " de gastos",  "'@EZ 99.99'","", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "nIvaGas2"   ,"N",  6, 2, "Porcentaje segundo tipo " + cImp() + " de gastos", "'@EZ 99.99'","", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "nIvaGas3"   ,"N",  6, 2, "Porcentaje tercer tipo " + cImp() + " de gastos",  "'@EZ 99.99'","", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nReGas1"    ,"N",  6, 2, "Porcentaje primer R.E. de gastos",         "'@EZ 99.99'",        "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nReGas2"    ,"N",  6, 2, "Porcentaje segundo R.E. de gastos",        "'@EZ 99.99'",        "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nReGas3"    ,"N",  6, 2, "Porcentaje tercer R.E. de gastos",         "'@EZ 99.99'",        "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nTotNet"    ,"N", 16, 6, "Total neto",                               "",                   "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "nTotIva"    ,"N", 16, 6, "Total " + cImp(),                         "",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "nTotIva"    ,"N", 16, 6, "Total " + cImp(),                          "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nTotReq"    ,"N", 16, 6, "Total req",                                "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nTotFac"    ,"N", 16, 6, "Total factura",                            "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cNFC"       ,"C", 20, 0, "Código NFC" ,                              "'@!",                "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "SubCta"     ,"C", 12, 0, "Código subcuenta para gastos enlace contaplus", "",              "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "nTotSup"    ,"N", 16, 6, "Total gastos suplidos",                    "",                   "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cBanco"     ,"C", 50, 0, "Nombre del banco del proveedor" ,          "",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "cPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta bancaria del proveedor" ,          "",    "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "cCtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del proveedor" , "","", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cEntBnc"    ,"C",  4, 0, "Entidad de la cuenta bancaria del proveedor" ,          "",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cSucBnc"    ,"C",  4, 0, "Sucursal de la cuenta bancaria del proveedor" ,         "",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cDigBnc"    ,"C",  2, 0, "Dígito de control de la cuenta bancaria del proveedor" ,"",      "", "( cDbf )", nil } )
@@ -9760,6 +9804,14 @@ Function SynFacPrv( cPath )
       if Empty( ( dbfFacPrvT )->cCodCaj )
          ( dbfFacPrvT )->cCodCaj := "000"
       end if
+
+      if Empty( ( dbfFacPrvT )->cPaisIBAN )
+         ( dbfFacPrvT )->cPaisIBAN  := "ES"
+      end if 
+
+      if Empty( ( dbfFacPrvT )->cCtrlIBAN )
+         ( dbfFacPrvT )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvT )->cPaisIBAN, ( dbfFacPrvT )->cCtrlIBAN, ( dbfFacPrvT )->cEntBnc, ( dbfFacPrvT )->cSucBnc, ( dbfFacPrvT )->cDigBnc, ( dbfFacPrvT )->cCtaBnc )
+      end if 
 
       ( dbfFacPrvT )->( dbSkip() )
 

@@ -109,11 +109,13 @@ REQUEST DBFCDX
 #define _NTOTREQ            90
 #define _NTOTFAC            91
 #define _CBANCO             92
-#define _CENTBNC            93
-#define _CSUCBNC            94
-#define _CDIGBNC            95
-#define _CCTABNC            96
-#define _LOPERPV            97
+#define _CPAISIBAN          93
+#define _CCTRLIBAN          94
+#define _CENTBNC            95
+#define _CSUCBNC            96
+#define _CDIGBNC            97
+#define _CCTABNC            98
+#define _LOPERPV            99
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -2267,25 +2269,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
 
       REDEFINE GET aGet[_CPOSCLI] VAR aTmp[_CPOSCLI] ;
          ID       184 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CPOBCLI] VAR aTmp[_CPOBCLI] ;
          ID       185 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CPRVCLI] VAR aTmp[_CPRVCLI] ;
          ID       186 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CTLFCLI] VAR aTmp[_CTLFCLI] ;
          ID       187 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
@@ -2311,37 +2309,58 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
 
       REDEFINE GET aGet[ _CBANCO ] VAR aTmp[ _CBANCO ];
          ID       410 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+         ON HELP  ( BrwBncCli( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ], aTmp[ _CCODCLI ] ) );
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       305 ;
+         COLOR    CLR_GET ;
+         WHEN     ( nMode != ZOOM_MODE );
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+         ID       306 ;
+         COLOR    CLR_GET ;
+         WHEN     ( nMode != ZOOM_MODE );
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
-         ID       420 ;
+         ID       301 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE );
-         PICTURE  "9999" ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
-         ID       421 ;
+         ID       302 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE );
-         PICTURE  "9999" ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
-         ID       422 ;
+         ID       303 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE );
-         PICTURE  "99" ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
-         ID       423 ;
+         ID       304 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE );
          PICTURE  "9999999999" ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -2423,12 +2442,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
       Codigo de almacen________________________________________________________________
 		*/
 
-		REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM] ;
+		REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
          ID       230 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CCODALM], , oSay[ 2 ] ) ) ;
+         VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[_CCODALM], oSay[ 2 ] ) ) ;
+         ON HELP  ( BrwAlmacen( aGet[ _CCODALM ], oSay[ 2 ] ) ) ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
@@ -7353,6 +7372,16 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
                      aGet[ _CBANCO ]:lValid()
                   end if
 
+		            if !Empty( aGet[ _CPAISIBAN ] )
+		               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
+		               aGet[ _CPAISIBAN ]:lValid()
+		            end if
+
+   		         if !Empty( aGet[ _CCTRLIBAN ] )
+   		            aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
+   		            aGet[ _CCTRLIBAN ]:lValid()
+   		         end if
+
                   if !Empty( aGet[ _CENTBNC ] )
                      aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
                      aGet[ _CENTBNC ]:lValid()
@@ -10059,7 +10088,9 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"nTotReq"     ,"N", 16, 6, "Total recargo" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"nTotFac"     ,"N", 16, 6, "Total factura" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cBanco"      ,"C", 50, 0, "Nombre del banco del cliente" ,                        "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cEntBnc"     ,"C",  4, 0, "Entidad de la cuenta bancaria del cliente" ,           "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",               "", "( cDbf )"} )
+  	aAdd( aItmFacRec, {"cEntBnc"     ,"C",  4, 0, "Entidad de la cuenta bancaria del cliente" ,           "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cSucBnc"     ,"C",  4, 0, "Sucursal de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cDigBnc"     ,"C",  2, 0, "Dígito de control de la cuenta bancaria del cliente" , "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cCtaBnc"     ,"C", 10, 0, "Cuenta bancaria del cliente" ,                         "",                   "", "( cDbf )"} )
@@ -10835,6 +10866,12 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
 
       aGet[ _CBANCO ]:cText( ( dbfFacCliT )->cBanco )
       aGet[ _CBANCO ]:lValid()
+
+      aGet[ _CPAISIBAN ]:cText( ( dbfFacCliT )->cPaisIBAN )
+      aGet[ _CPAISIBAN ]:lValid()
+
+      aGet[ _CCTRLIBAN ]:cText( ( dbfFacCliT )->cCtrlIBAN )
+      aGet[ _CCTRLIBAN ]:lValid()
 
       aGet[ _CENTBNC ]:cText( ( dbfFacCliT )->cEntBnc )
       aGet[ _CENTBNC ]:lValid()

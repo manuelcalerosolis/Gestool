@@ -68,15 +68,20 @@ Defines para las lineas de Pago
 #define _LSNDDOC                 50      //   L      1     0
 #define _CBNCEMP                 51
 #define _CBNCCLI                 52
-#define _CENTEMP                 53
-#define _CSUCEMP                 54
-#define _CDIGEMP                 55
-#define _CCTAEMP                 56
-#define _CENTCLI                 57
-#define _CSUCCLI                 58
-#define _CDIGCLI                 59
-#define _CCTACLI                 60
-#define _LREMESA                 61
+#define _CEPAISIBAN              53
+#define _CECTRLIBAN              54
+#define _CENTEMP                 55
+#define _CSUCEMP                 56
+#define _CDIGEMP                 57
+#define _CCTAEMP                 58
+#define _CPAISIBAN               59
+#define _CCTRLIBAN               60
+#define _CENTCLI                 61
+#define _CSUCCLI                 62
+#define _CDIGCLI                 63
+#define _CCTACLI                 64
+#define _LREMESA                 65
+#define _CNUMMTR                 66
 
 memvar cDbfRec
 memvar cDbf
@@ -1002,7 +1007,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          OF       oFld:aDialogs[ 1 ]
 
       /*
-      Diálogo de bancos--------------------------------------------------------
+      Pestaña de bancos--------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpBancos ;
@@ -1015,63 +1020,115 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncEmp( aGet[ _CBNCEMP ], aGet[ _CENTEMP ], aGet[ _CSUCEMP ], aGet[ _CDIGEMP ], aGet[ _CCTAEMP ] ) );
+         ON HELP  ( BrwBncEmp( aGet[ _CBNCEMP], aGet[ _CEPAISIBAN ], aGet[ _CECTRLIBAN ], aGet[ _CENTEMP], aGet[ _CSUCEMP], aGet[ _CDIGEMP], aGet[ _CCTAEMP] ) );
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CENTEMP ] VAR aTmp[ _CENTEMP ];
-         ID       110 ;
+      REDEFINE GET aGet[ _CEPAISIBAN ] VAR aTmp[ _CEPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       270 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
+         VALID    ( lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ) ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CSUCEMP ] VAR aTmp[ _CSUCEMP ];
+      REDEFINE GET aGet[ _CECTRLIBAN ] VAR aTmp[ _CECTRLIBAN ] ;
+         ID       280 ;
+         PICTURE  "99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CENTEMP] VAR aTmp[ _CENTEMP];
+         ID       110 ;
+         PICTURE  "9999" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTEMP], aTmp[ _CSUCEMP], aTmp[ _CDIGEMP], aTmp[ _CCTAEMP], aGet[ _CDIGEMP] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CSUCEMP] VAR aTmp[ _CSUCEMP];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP], aGet[ _CDIGEMP ] ) ) ;
+         PICTURE  "9999" ;
+         VALID    (  lCalcDC( aTmp[ _CENTEMP], aTmp[ _CSUCEMP], aTmp[ _CDIGEMP], aTmp[ _CCTAEMP], aGet[ _CDIGEMP] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CDIGEMP ] VAR aTmp[ _CDIGEMP ];
+      REDEFINE GET aGet[ _CDIGEMP] VAR aTmp[ _CDIGEMP];
          ID       130 ;
+         PICTURE  "99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCTAEMP ] VAR aTmp[ _CCTAEMP ];
          ID       140 ;
+         PICTURE  "9999999999" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CDIGEMP ] ),;
+                     aGet[ _CEPAISIBAN ]:lValid() )  ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CBNCCLI ] VAR aTmp[ _CBNCCLI ];
+      /*
+       Banco del cliente--------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ _CBNCCLI] VAR aTmp[ _CBNCCLI];
          ID       200 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncCli( aGet[ _CBNCCLI ], aGet[ _CENTCLI ], aGet[ _CSUCCLI ], aGet[ _CDIGCLI ], aGet[ _CCTACLI ], aTmp[ _CCODCLI ] ) );
+         ON HELP  ( BrwBncCli( aGet[ _CBNCCLI], aGet[ _CPAISIBAN], aGet[ _CCTRLIBAN], aGet[ _CENTCLI], aGet[ _CSUCCLI], aGet[ _CDIGCLI], aGet[ _CCTACLI], aTmp[ _CCODCLI] ) );
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CENTCLI ] VAR aTmp[ _CENTCLI ];
+      REDEFINE GET aGet[ _CPAISIBAN] VAR aTmp[ _CPAISIBAN] ;
+         PICTURE  "@!" ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN], aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CCTRLIBAN] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CCTRLIBAN] VAR aTmp[ _CCTRLIBAN] ;
+         ID       260 ;
+         PICTURE  "99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN], aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CCTRLIBAN] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CENTCLI] VAR aTmp[ _CENTCLI];
          ID       210 ;
+         PICTURE  "9999" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTCLI ], aTmp[ _CSUCCLI ], aTmp[ _CDIGCLI ], aTmp[ _CCTACLI ], aGet[ _CDIGCLI ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
+                     aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CSUCCLI ] VAR aTmp[ _CSUCCLI ];
+      REDEFINE GET aGet[ _CSUCCLI] VAR aTmp[ _CSUCCLI];
          ID       220 ;
+         PICTURE  "9999" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTCLI ], aTmp[ _CSUCCLI ], aTmp[ _CDIGCLI ], aTmp[ _CCTACLI], aGet[ _CDIGCLI ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
+                     aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CDIGCLI ] VAR aTmp[ _CDIGCLI ];
+      REDEFINE GET aGet[ _CDIGCLI] VAR aTmp[ _CDIGCLI];
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTCLI ], aTmp[ _CSUCCLI ], aTmp[ _CDIGCLI ], aTmp[ _CCTACLI ], aGet[ _CDIGCLI ] ) ) ;
+         PICTURE  "99";
+         VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
+                     aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _CCTACLI ] VAR aTmp[ _CCTACLI ];
+      REDEFINE GET aGet[ _CCTACLI] VAR aTmp[ _CCTACLI];
          ID       240 ;
+         PICTURE  "9999999999" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTCLI ], aTmp[ _CSUCCLI ], aTmp[ _CDIGCLI ], aTmp[ _CCTACLI ], aGet[ _CDIGCLI ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTCLI], aTmp[ _CSUCCLI], aTmp[ _CDIGCLI], aTmp[ _CCTACLI], aGet[ _CDIGCLI] ),;
+                     aGet[ _CPAISIBAN]:lValid() ) ;
          OF       oFld:aDialogs[2]
+
+      /*
+      Recibo remesado----------------------------------------------------------
+      */
 
       REDEFINE CHECKBOX aGet[ _LREMESA ] VAR aTmp[ _LREMESA ] ;
          ID       300 ;
@@ -2365,34 +2422,34 @@ function SynRecCli( cPath )
    BEGIN SEQUENCE
 
    USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfFacCliT )->( ordListAdd( ( cPath + "FACCLIT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end 
+   if !lAIS() ; ( dbfFacCliT )->( ordListAdd( cPath + "FACCLIT.CDX" ) ); else ; ordSetFocus( 1 ) ; end 
 
    USE ( cPath + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfFacCliL )->( ordListAdd( ( cPath + "FACCLIL.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfFacCliL )->( ordListAdd( cPath + "FACCLIL.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfFacCliP )->( ordListAdd( ( cPath + "FACCLIP.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfFacCliP )->( ordListAdd( cPath + "FACCLIP.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfAntCliT )->( ordListAdd( ( cPath + "AntCliT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfAntCliT )->( ordListAdd( cPath + "AntCliT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACRECT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfFacRecT )->( ordListAdd( ( cPath + "FacRecT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfFacRecT )->( ordListAdd( cPath + "FacRecT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfFacRecL )->( ordListAdd( ( cPath + "FacRecL.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfFacRecL )->( ordListAdd( cPath + "FacRecL.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @dbfClient ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfClient )->( ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfClient )->( ordListAdd( cPatCli() + "CLIENT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @dbfFPago ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfFPago )->( ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfFPago )->( ordListAdd( cPatGrp() + "FPAGO.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Divisas", @dbfDiv ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfDiv )->( ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfDiv )->( ordListAdd( cPatDat() + "DIVISAS.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIva", @dbfIva ) ) EXCLUSIVE
-   if !lAIS() ; ( dbfIva )->( ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS() ; ( dbfIva )->( ordListAdd( cPatDat() + "TIVA.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    ( dbfFacCliP )->( OrdSetFocus( 0 ) )
    ( dbfFacCliP )->( dbGoTop() )
@@ -2537,310 +2594,6 @@ function SynRecCli( cPath )
 return nil
 
 //------------------------------------------------------------------------//
-
-/*
-Exporta el recibos pendientes a EDM
-*/
-
-/*
-N§ LC  LV  J  Descripci¢n       Observaciones
-1  8   No  D  CODIGO            c¢digo de cliente. Empieza con '+'
-2  10  No  I  FECHA             DD/MM/AAAA
-3  10  No  I  N§ NOTA           AAA/NNNNNN
-4  8   No  D  IMPORTE           Importe que queda pendiente de cobrar
-5  1   No  I  TIPO DE NOTA      (1)
-
-(1) Tipos de nota: 1- Factura Contado     2- Factura Credito
-                  3- Albaran Contado     4- Albaran Credito
-                  5- Adicional Contado   6- Adicional Credito
-                  7- Indirecto Contado   8- Indirecto Credito
-
-Ej: "+0000120@01/04/1996@003/123009@   90800@2"
-*/
-
-FUNCTION EdmRecCli( cCodRut, cPathTo, oStru )
-
-   local oBlock
-   local oError
-   local n           := 0
-   local cChr
-   local cCod
-   local fTar
-   local cFilEdm
-   local cFilOdb
-   local nWrote
-   local nRead
-   local dbfFacCliP
-   local dbfFacCliT
-
-   DEFAULT cCodRut   := "001"
-   DEFAULT cPathTo   := "C:\INTERS~1\"
-
-   cCodRut           := SubStr( cCodRut, -3 )
-
-   cFilEdm           := cPathTo + "EPEND" + cCodRut + ".TXT"
-   cFilOdb           := cPathTo + "EPEND" + cCodRut + ".ODB"
-
-   /*
-   Creamos el fichero destino
-   */
-
-   if file( cFilEdm )
-      fErase( cFilEdm )
-   end if
-
-   fTar              := fCreate( cFilEdm )
-
-   /*
-   Abrimos las bases de datos
-   */
-
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
-
-   oStru:oMetUno:cText   := "Pendientes de cobro"
-   oStru:oMetUno:SetTotal( ( dbfFacCliP )->( LastRec() ) )
-
-   WHILE !(dbfFacCliP)->( eof() )
-
-      if !( dbfFacCliP )->lCobrado .and. (dbfFacCliP)->nImporte != 0
-
-         cChr  := "+"
-         cCod  := cCliFacCli( (dbfFacCliP)->CSERIE + Str( (dbfFacCliP)->NNUMFAC ) + (dbfFacCliP)->CSUFFAC, dbfFacCliT )
-         cChr  += EdmRjust( cCod, "0", 7 )                                                            // Codigo de cliente
-         cChr  += EdmSubStr( (dbfFacCliP)->DPRECOB, 1, 10 )                                           // Fecha de recibo
-         cCod  := cAgeFacCli( (dbfFacCliP)->CSERIE + Str( (dbfFacCliP)->NNUMFAC ) + (dbfFacCliP)->CSUFFAC, dbfFacCliT )
-         cChr  += EdmRjust( Right( cCod, 3 ) + "/" + AllTrim( Str( (dbfFacCliP)->nNumFac ) ), 1, 10 ) // Numero del recibo
-         cChr  += EdmSubStr( Trans( (dbfFacCliP)->nImporte / (dbfFacCliP)->nVdvPgo, "99999999" ) )    // Importe
-         cChr  += "1"                                                                                 // Tipo de nota de momento 1 factura de contado
-         cChr  += CRLF
-
-      end if
-
-      nWrote:= fwrite( fTar, cChr, nRead )
-
-      oStru:oMetUno:Set( ++n )
-
-      /*
-      IF fError() != 0
-         msginfo( "Hay errores" )
-      END IF
-      */
-
-      (dbfFacCliP)->( dbSkip() )
-
-   END DO
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfFacCliP )
-   CLOSE ( dbfFacCliT )
-   
-   fClose( fTar )
-
-   if file( FullCurDir() + "CONVER.EXE" )
-      WinExec( FullCurDir() + "CONVER.EXE " + cFilEdm + " " + cFilOdb + " 44 -x", 6 ) // Minimized
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-/*
-NOMBRE FICHERO      : COBROxxx.PSI   (xxx = Agente)
-DESCRIPCION         : COBROS
-TIPO DE FICHERO     : SECUENCIAL SIN SEPARADOR DE CAMPOS
-NUM. DE CAMPOS      : 7
-LONG. DEL REGISTRO  : 51
-
-N§ PO  LC  Descripci¢n       Observaciones
-1  1   7   CODIGO CLIENTE
-2  8   10  NUM. NOTA         aaa/nnnnnn    (agente/numeronota)
-3  18  1   TIPO DE NOTA      (1)
-4  19  10  NUM. RECIBO       aaa/nnnnnn    (agente/numerorecibo)
-5  29  10  IMPORTE COBRADO
-6  39  10  FECHA             DD/MM/AAAA
-7  49  1   FORMA PAGO        (T)alon o (M)etalico
-8  50  2   FINAL REGISTRO    CR LF
-
-
-  (1) Tipos de nota: 1- Factura Contado     2- Factura Credito
-                     3- Albaran Contado     4- Albaran Credito
-                     5- Adicional Contado   6- Adicional Credito
-                     7- Indirecto Contado   8- Indirecto Credito
-
-       0        1         2         3         4         5
-       12345678901234567890123456789012345678901234567890
-  Ej: "0000131004/0003294003/000005     2340012/04/1996T"
-      (recibo 5, del albar n de cr‚dito 329 emitido por el vendedor 4, cobrado
-      por el vendedor 3 con fecha 12 de Abril de 1996, por importe de 23400.
-      Se pag¢ mediante tal¢n)
-*/
-
-FUNCTION EdmCobCli( cCodRut, cPathTo, oStru, aSucces )
-
-   local oBlock
-   local oError
-   local cLine
-   local cFilEdm
-   local oFilEdm
-   local dFecDoc
-   local cCodCli
-   local nImpDoc
-   local cNumDoc
-   local nNumDoc
-   local nNewCon
-   local cNumFac
-   local cTipDoc
-   local cCodPgo     := ""
-   local cCtaRec     := ""
-   local dbfAlbCliT
-
-   DEFAULT cCodRut   := "001"
-   DEFAULT cPathTo   := "C:\INTERS~1\"
-
-   cCodRut           := SubStr( cCodRut, -3 )
-
-   cFilEdm           := cPathTo + "COBRO" + cCodRut + ".PSI"
-
-   if !file( cFilEdm )
-      msgWait( "No existe el fichero " + Rtrim( cFilEdm ), "Atención", 1 )
-      return nil
-   end if
-
-   oFilEdm           := TTxtFile():New( cFilEdm )
-
-   OpenFiles()
-
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-      lOpenFiles     := .f.
-   end if
-
-   oStru:oMetDos:cText   := "Gestión de cobros"
-   oStru:oMetDos:SetTotal( oFilEdm:nTLines )
-
-   cLine             := oFilEdm:cLine
-
-   while ! oFilEdm:lEoF()
-
-      cCodCli        := SubStr( cLine,  1,  7 )
-      cNumDoc        := SubStr( cLine,  8, 10 )
-      nNumDoc        := Val( StrTran( cNumDoc, "/", "" ) )
-      nImpDoc        := Val( SubStr( cLine, 29, 10 ) )
-      dFecDoc        := Ctod( SubStr( cLine, 39, 10 ) )
-      cTipDoc        := SubStr( cLine, 49,  1 )
-
-      /*
-      Localizamos el numero de la factura--------------------------------------
-      */
-
-      if ( dbfClient )->( dbSeek( cCodCli  ) )
-
-         cNumFac     := RetFld( ( dbfClient )->Serie + Str( nNumDoc, 9 ) + RetSufEmp(), dbfAlbCliT, "cNumFac" )
-         if !Empty( cNumFac )
-
-            if cTipDoc $ "TM"
-
-               if nChkPagFacCli( cNumFac, dbfFacCliT, dbfFacCliP ) != 1
-
-                  if ( dbfFacCliT )->( dbSeek( cNumFac ) )
-
-                     cCodPgo     := RetFld( ( dbfFacCliT )->cCodCli, dbfClient, "CODPAGO" )
-                     if !Empty( cCodPgo )
-                        cCtaRec  := RetFld( cCodPgo, dbfFPago, "CCTACOBRO" )
-                     end if
-
-                     nNewCon                    := nNewReciboCliente( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, Space( 1 ), dbfFacCliP )
-
-                     ( dbfFacCliP )->( dbAppend() )
-                     ( dbfFacCliP )->cSerie     := ( dbfFacCliT )->cSerie
-                     ( dbfFacCliP )->nNumFac    := ( dbfFacCliT )->nNumFac
-                     ( dbfFacCliP )->cSufFac    := ( dbfFacCliT )->cSufFac
-                     ( dbfFacCliP )->nNumRec    := nNewCon
-                     ( dbfFacCliP )->cCodCli    := ( dbfFacCliT )->cCodCli
-                     ( dbfFacCliP )->cNomCli    := ( dbfFacCliT )->cNomCli
-                     ( dbfFacCliP )->dEntrada   := dFecDoc
-                     ( dbfFacCliP )->nImporte   := nImpDoc
-                     ( dbfFacCliP )->cDescrip   := "Recibo nº" + Str( nNewCon, 2 ) + " de factura  " + ( dbfFacCliP )->cSerie + '/' + Alltrim( Str( ( dbfFacCliP )->nNumFac ) ) + '/' + ( dbfFacCliP )->cSufFac + '-' + Str( ( dbfFacCliP )->nNumRec )
-                     ( dbfFacCliP )->dPreCob    := dFecDoc
-                     ( dbfFacCliP )->lCobrado   := .t.
-                     ( dbfFacCliP )->cTurRec    := cCurSesion()
-                     ( dbfFacCliP )->cDivPgo    := cDivEmp()
-                     ( dbfFacCliP )->nVdvPgo    := 1
-                     ( dbfFacCliP )->cCtaRec    := cCtaRec
-                     ( dbfFacCliP )->cCtaRem    := RetFld( ( dbfFacCliT )->cCodCli, dbfClient, "cCodRem" )
-                     ( dbfFacCliP )->lRecImp    := .f.
-                     ( dbfFacCliP )->dFecCre     := GetSysDate()
-                     ( dbfFacCliP )->cHorCre     := SubStr( Time(), 1, 5 )
-
-                     ChkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, .f. )
-
-                     aAdd( aSucces, { .f., "Nuevo recibo de clientes " + ( dbfFacCliP )->cSerie + '/' + Str( ( dbfFacCliP )->nNumFac ) + '/' + ( dbfFacCliP )->cSufFac + '/' + Str( ( dbfFacCliP )->nNumRec ) } )
-
-                  else
-
-                     aAdd( aSucces, { .f., "Factura de clientes no existe " + ( dbfClient )->Serie + '/' + Str( nNumDoc, 9 ) + '/' + RetSufEmp() + " en recibo " + cNumDoc } )
-
-                  end if
-
-               else
-
-                  aAdd( aSucces, { .f., "Factura ya liquidada " + ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac + " en recibo " + cNumDoc } )
-
-               end if
-
-            end if
-
-         else
-
-            aAdd( aSucces, { .f., "Albarán " + ( dbfClient )->Serie + Str( nNumDoc, 9 ) + RetSufEmp() + "no facturado" } )
-
-         end if
-
-      else
-
-         aAdd( aSucces, { .f., "No existe cliente " + cCodCli + " en recibo " + cNumDoc } )
-
-      end if
-
-      oFilEdm:Skip()
-
-      oStru:oMetDos:SetTotal( oFilEdm:nLine )
-
-      cLine    := oFilEdm:cLine
-
-   end do
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CloseFiles()
-   ( dbfAlbCliT )->( dbCloseArea() )
-
-   oFilEdm:Close()
-
-RETURN ( aSucces )
-
-//---------------------------------------------------------------------------//
 
 static function lGenRecCli( oBrw, oBtn, nDevice )
 
@@ -3190,6 +2943,8 @@ FUNCTION GenPgoFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfF
    local nPlazos     := 0
    local nRecCli
    local cBanco
+   local cPaisIBAN
+   local cCtrlIBAN
    local cEntidad
    local cSucursal
    local cControl
@@ -3211,6 +2966,8 @@ FUNCTION GenPgoFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfF
    cCodCaj           := ( dbfFacRecT )->cCodCaj
    cCodUsr           := ( dbfFacRecT )->cCodUsr
    cBanco            := ( dbfFacRecT )->cBanco
+   cPaisIBAN         := ( dbfFacRecT )->cPaisIBAN
+   cCtrlIBAN         := ( dbfFacRecT )->cCtrlIBAN
    cEntidad          := ( dbfFacRecT )->cEntBnc
    cSucursal         := ( dbfFacRecT )->cSucBnc
    cControl          := ( dbfFacRecT )->cDigBnc
@@ -3709,7 +3466,7 @@ STATIC FUNCTION PrnSerie()
       ID       100 ;
       VALID    ( cDocumento( oFmtRec, oSayRec, dbfDoc ) ) ;
       BITMAP   "LUPA" ;
-      ON HELP  ( BrwDocumento( oFmtRec, oSayRec, "RF" ) ) ;
+      ON HELP  ( BrwDocumento( oFmtRec, oSayRec, "RF" ) );
       OF       oDlg
 
    REDEFINE GET oSayRec VAR cSayRec ;
@@ -5083,10 +4840,14 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"lSndDoc"     ,"L",  1, 0, "Lógico para envio" ,"",                             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",            "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",              "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la empresa para el recibo" ,"",        "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la empresa para el recibo" ,"", "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",           "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",          "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",  "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN del cliente para el recibo" ,"",          "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN del cliente para el recibo" ,"", "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",            "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",    "", "( cDbfRec )" } )
@@ -5137,6 +4898,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    local nTotAcu     := 0
    local nPlazos     := 1
    local nRecCli
+   local cPaisIBAN
+   local cCtrlIBAN
    local cEntidad
    local cSucursal
    local cControl
@@ -5162,6 +4925,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    cCodCaj           := ( dbfFacCliT )->cCodCaj
    cCodUsr           := ( dbfFacCliT )->cCodUsr
    cBanco            := ( dbfFacCliT )->cBanco
+   cPaisIBAN         := ( dbfFacCliT )->cPaisIBAN 
+   cCtrlIBAN         := ( dbfFacCliT )->cCtrlIBAN
    cEntidad          := ( dbfFacCliT )->cEntBnc
    cSucursal         := ( dbfFacCliT )->cSucBnc
    cControl          := ( dbfFacCliT )->cDigBnc
@@ -5253,6 +5018,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
             ( dbfFacCliP )->cNomCli       := cNomCli
 
             if ( dbfFPago )->lUtlBnc
+               ( dbfFacCliP )->cPaisIBAN  := ( dbfFPago )->cPaisIBAN
+               ( dbfFacCliP )->cCtrlIBAN  := ( dbfFPago )->cCtrlIBAN
                ( dbfFacCliP )->cBncEmp    := ( dbfFPago )->cBanco
                ( dbfFacCliP )->cEntEmp    := ( dbfFPago )->cEntBnc
                ( dbfFacCliP )->cSucEmp    := ( dbfFPago )->cSucBnc
@@ -5260,6 +5027,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
                ( dbfFacCliP )->cCtaEmp    := ( dbfFPago )->cCtaBnc
             end if
 
+            ( dbfFacCliP )->cPaisIBAN     := cPaisIBAN
+            ( dbfFacCliP )->cCtrlIBAN     := cCtrlIBAN
             ( dbfFacCliP )->cBncCli       := cBanco
             ( dbfFacCliP )->cEntCli       := cEntidad
             ( dbfFacCliP )->cSucCli       := cSucursal
@@ -5457,10 +5226,14 @@ Function lChangeDevolucion( aGet, aTmp, lIntro )
       aGet[ _CTURREC    ]:HardDisable()
       aGet[ _CBNCEMP    ]:HardDisable()
       aGet[ _CBNCCLI    ]:HardDisable()
+      aGet[ _CEPAISIBAN ]:HardDisable()
+      aGet[ _CECTRLIBAN ]:HardDisable()      
       aGet[ _CENTEMP    ]:HardDisable()
       aGet[ _CSUCEMP    ]:HardDisable()
       aGet[ _CDIGEMP    ]:HardDisable()
       aGet[ _CCTAEMP    ]:HardDisable()
+      aGet[ _CPAISIBAN  ]:HardDisable()
+      aGet[ _CCTRLIBAN  ]:HardDisable()      
       aGet[ _CENTCLI    ]:HardDisable()
       aGet[ _CSUCCLI    ]:HardDisable()
       aGet[ _CDIGCLI    ]:HardDisable()
@@ -5609,11 +5382,11 @@ Return nil
 
 Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
 
+   local nRec        
    local nImp
    local nCon
    local aTabla
    local nOrdAnt
-   local nRec        
    local lImpNeg     := ( dbfFacCliP )->nImporte < 0
    local nImpFld     := abs( ( dbfFacCliP )->nImporte )
    local nImpTmp     := abs( aTmp[ _NIMPORTE ] )

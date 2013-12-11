@@ -42,11 +42,13 @@ REQUEST DBFCDX
 #define _NPCTDTO                   30      //
 #define _LUTLBNC                   31      //
 #define _CBANCO                    32      //
-#define _CENTBNC                   33      //
-#define _CSUCBNC                   34      //
-#define _CDIGBNC                   35      //
-#define _CCTABNC                   36      //
-#define _CCODWEB                   37  
+#define _CPAISIBAN                 33      //
+#define _CCTRLIBAN                 34      //
+#define _CENTBNC                   35      //
+#define _CSUCBNC                   36      //
+#define _CDIGBNC                   37      //
+#define _CCTABNC                   38      //
+#define _CCODWEB                   39  
 
 static oWndBrw
 static aBigResource
@@ -453,32 +455,49 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          ID       210 ;
          WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwBncEmp( aGet[ _CBANCO ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ] ) );
+         ON HELP  ( BrwBncEmp( aGet[ _CBANCO ], aGet[ _CPAISIBAN ], aGet[ _CCTRLIBAN ], aGet[ _CENTBNC ], aGet[ _CSUCBNC ], aGet[ _CDIGBNC ], aGet[ _CCTABNC ] ) );
+         OF       oDlg
+
+      REDEFINE GET aGet[ _CPAISIBAN ] VAR aTmp[ _CPAISIBAN ] ;
+         PICTURE  "@!" ;
+         ID       370 ;
+         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _CCTRLIBAN ] VAR aTmp[ _CCTRLIBAN ] ;
+         ID       380 ;
+         WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( aTmp[ _CPAISIBAN ], aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CCTRLIBAN ] ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CENTBNC ] VAR aTmp[ _CENTBNC ];
          ID       220 ;
          WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CSUCBNC ] VAR aTmp[ _CSUCBNC ];
          ID       230 ;
          WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CDIGBNC ] VAR aTmp[ _CDIGBNC ];
          ID       240 ;
          WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CCTABNC ] VAR aTmp[ _CCTABNC ];
          ID       250 ;
          PICTURE  "9999999999" ;
          WHEN     ( aTmp[ _LUTLBNC ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ) ) ;
+         VALID    (  lCalcDC( aTmp[ _CENTBNC ], aTmp[ _CSUCBNC ], aTmp[ _CDIGBNC ], aTmp[ _CCTABNC ], aGet[ _CDIGBNC ] ),;
+                     aGet[ _CPAISIBAN ]:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CCTACOBRO ] VAR aTmp[ _CCTACOBRO ] ;
@@ -1146,12 +1165,14 @@ function aItmFPago()
    aAdd( aBase, { "nEntIni",   "N",   6,   2, "Porcentaje de entrega inicial de la forma de pago"      ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "nPctDto",   "N",   6,   2, "Porcentaje de descuento de la forma de pago"            ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "lUtlBnc",   "L",   1,   0, "Utilizar entidad bancaria"                              ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cBanco",   "C",   50,   0, "Entidad bancaria"                                       ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cEntBnc",  "C",    4,   0, "Entidad de la cuenta"                                   ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cSucBnc",  "C",    4,   0, "Sucursal de la cuenta"                                  ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cDigBnc",  "C",    2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cCtaBnc",  "C",   10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cCodWeb",  "C",  100,   0, "Código web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cBanco",    "C",   50,  0, "Entidad bancaria"                                       ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cPaisIBAN", "C",   2,   0, "País IBAN de la cuenta bancaria"                        ,  "",   "", "( cDbfPgo )", nil } )
+   aAdd( aBase, { "cCtrlIBAN", "C",   2,   0, "Dígito de control IBAN de la cuenta bancaria"           ,  "",   "", "( cDbfPgo )", nil } )
+   aAdd( aBase, { "cEntBnc",   "C",   4,   0, "Entidad de la cuenta"                                   ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cSucBnc",   "C",   4,   0, "Sucursal de la cuenta"                                  ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cDigBnc",   "C",   2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cCtaBnc",   "C",  10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "cCodWeb",   "C", 100,   0, "Código web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
 
 return ( aBase )
 
