@@ -6804,6 +6804,7 @@ Function SynClient( cPath )
       while !( dbfBanco )->( eof() )
 
          if Len( Rtrim( ( dbfBanco )->cCtaBnc ) ) >= 20
+            
             if dbLock( dbfBanco )
                ( dbfBanco )->cEntBnc   := SubStr( ( dbfBanco )->cCtaBnc,  1,  4 )
                ( dbfBanco )->cSucBnc   := SubStr( ( dbfBanco )->cCtaBnc,  5,  4 )
@@ -6811,6 +6812,7 @@ Function SynClient( cPath )
                ( dbfBanco )->cCtaBnc   := SubStr( ( dbfBanco )->cCtaBnc, 11, 10 )
                ( dbfBanco )->( dbUnLock() )
             end if
+
          end if
 
          if Empty( ( dbfBanco )->cDigBnc )
@@ -6827,6 +6829,7 @@ Function SynClient( cPath )
             if dbLock( dbfBanco )
                ( dbfBanco )->cPaisIBAN := "ES"
                ( dbfBanco )->cCtrlIBAN := IbanDigit( ( dbfBanco )->cPaisIBAN, ( dbfBanco )->cCtrlIBAN, ( dbfBanco )->cEntBnc, ( dbfBanco )->cSucBnc, ( dbfBanco )->cDigBnc, ( dbfBanco )->cCtaBnc )
+               ( dbfBanco )->( dbUnLock() )
             end if
 
          end if
@@ -6834,57 +6837,6 @@ Function SynClient( cPath )
          ( dbfBanco )->( dbSkip() )
 
       end while
-
-      /*
-      Recorremos la tabla de cliente, y si no existe el banco lo añadimos
-
-      while !( dbfClient )->( Eof() )
-
-         if !Empty( ( dbfClient )->Cuenta )
-
-            if !( dbfBanco )->( dbSeek( ( dbfClient )->Cod + ( dbfClient )->Cuenta ) )
-
-               // Ponemos todos los bancos por defecto a falso--------------------
-
-               if ( dbfBanco )->( dbSeek( ( dbfClient )->Cod ) )
-                  while ( dbfBanco )->cCodCli == ( dbfClient )->Cod .and. !( dbfBanco )->( eof() )
-                     if dbLock( dbfBanco )
-                        ( dbfBanco )->lBncDef   := .f.
-                        ( dbfBanco )->( dbUnLock() )
-                     end if
-                     ( dbfBanco )->( dbSkip() )
-                  end while
-               end if
-
-               // Añadimos el banco en la tabla relacionada-----------------------
-
-               ( dbfBanco )->( dbAppend() )
-               ( dbfBanco )->lBncDef   := .t.
-               ( dbfBanco )->cCodCli   := ( dbfClient )->Cod
-               ( dbfBanco )->cEntBnc   := SubStr( ( dbfClient )->Cuenta,  1,  4 )
-               ( dbfBanco )->cSucBnc   := SubStr( ( dbfClient )->Cuenta,  5,  4 )
-               ( dbfBanco )->cDigBnc   := SubStr( ( dbfClient )->Cuenta,  9,  2 )
-               ( dbfBanco )->cCtaBnc   := SubStr( ( dbfClient )->Cuenta, 11, 10 )
-               ( dbfBanco )->cCodBnc   := ( dbfClient )->Banco
-               ( dbfBanco )->cDirBnc   := ( dbfClient )->DirBanco
-               ( dbfBanco )->cPobBnc   := ( dbfClient )->PobBanco
-               ( dbfBanco )->cProBnc   := ( dbfClient )->cProBanco
-               ( dbfBanco )->cPaiBnc   := ( dbfClient )->cCodPai
-               ( dbfBanco )->( dbUnLock() )
-
-            end if
-
-            if dbLock( dbfClient )
-               ( dbfClient )->Cuenta   := ""
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         ( dbfClient )->( dbSkip() )
-
-      end while
-      */
 
       /*
       Pasamos y limpiamos el campo antiguo de facturas automáticas-------------
@@ -6895,12 +6847,9 @@ Function SynClient( cPath )
          if Empty( ( dbfClient )->mFacAut ) .and. !Empty( ( dbfClient )->cFacAut )
 
             if dbLock( dbfClient )
-
                ( dbfClient )->mFacAut  := AllTrim( ( dbfClient )->cFacAut ) + ","
                ( dbfClient )->cFacAut  := ""
-
                ( dbfClient )->( dbUnLock() )
-
             end if
 
          end if

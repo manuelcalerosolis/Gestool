@@ -896,8 +896,7 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
       REDEFINE GET aGet[ _CECTRLIBAN ] VAR aTmp[ _CECTRLIBAN ] ;
          ID       280 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  lIbanDigit( aTmp[ _CEPAISIBAN ], aTmp[ _CENTEMP ], aTmp[ _CSUCEMP ], aTmp[ _CDIGEMP ], aTmp[ _CCTAEMP ], aGet[ _CECTRLIBAN ] ),;
-                     aGet[ _CEPAISIBAN ]:lValid() ) ;
+         VALID    ( aGet[ _CEPAISIBAN ]:lValid() ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CENTEMP ] VAR aTmp[ _CENTEMP ];
@@ -1390,18 +1389,12 @@ STATIC FUNCTION PrnSerie()
       MAX      99999 ;
       OF       oDlg
 
-
-
    REDEFINE GET oPrinter VAR cPrinter;
-         WHEN     ( .f. ) ;
-         ID       320 ;
-         OF       oDlg
+      WHEN     ( .f. ) ;
+      ID       320 ;
+      OF       oDlg
 
    TBtnBmp():ReDefine( 321, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
-
-
-
-
 
    REDEFINE CHECKBOX lInvOrden ;
       ID       500 ;
@@ -2132,7 +2125,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function SynRecPrv( cPatEmp )
+Function SynRecPrv( cPatEmp )
 
    local nCon
    local nTotFac
@@ -2219,6 +2212,7 @@ function SynRecPrv( cPatEmp )
       ( dbfFacPrvP )->( dbSkip() )
 
    end while
+   
    ( dbfFacPrvP )->( OrdSetFocus( 1 ) )
 
    // Repasamos los totales ---------------------------------------------------
@@ -2229,41 +2223,6 @@ function SynRecPrv( cPatEmp )
    while !( dbfFacPrvT )->( eof() )
 
       GenPgoFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfFPago, dbfDiv )
-
-      /*
-
-      nTotFac := nTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, nil, .f. )
-      nTotRec := nPagFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvP, nil, dbfDiv, .f. )
-
-      if nTotFac > nTotRec
-
-         nCon                       := nNewReciboProveedor( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, Space( 1 ), dbfFacPrvP )
-         
-         // Añadimos el nuevo recibo----------------------------------------------
-         
-         ( dbfFacPrvP )->( dbAppend() )
-         ( dbfFacPrvP )->cSerFac     := ( dbfFacPrvT )->cSerFac
-         ( dbfFacPrvP )->nNumFac     := ( dbfFacPrvT )->nNumFac
-         ( dbfFacPrvP )->cSufFac     := ( dbfFacPrvT )->cSufFac
-         ( dbfFacPrvP )->cCodPrv     := ( dbfFacPrvT )->cCodPrv
-         ( dbfFacPrvP )->cNomPrv     := ( dbfFacPrvT )->cNomPrv
-         ( dbfFacPrvP )->nNumRec     := nCon
-         ( dbfFacPrvP )->dEntrada    := Ctod( "" )
-         ( dbfFacPrvP )->nImporte    := nTotFac - nTotRec
-         ( dbfFacPrvP )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + ( dbfFacPrvT )->cSerFac + "/" + AllTrim( Str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac
-         ( dbfFacPrvP )->dPreCob     := GetSysDate()
-         ( dbfFacPrvP )->cPgdoPor    := ""
-         ( dbfFacPrvP )->lCobrado    := .f.
-         ( dbfFacPrvP )->cDivPgo     := ( dbfFacPrvT )->cDivFac
-         ( dbfFacPrvP )->nVdvPgo     := ( dbfFacPrvT )->nVdvFac
-         ( dbfFacPrvP )->lConPgo     := .f.
-         ( dbfFacPrvP )->cTurRec     := cCurSesion()
-         ( dbfFacPrvP )->lCloPgo     := .f.
-         ( dbfFacPrvP )->( dbUnLock() )
-      
-      end if
-
-      */
 
       ChkLqdFacPrv( , dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv )
 

@@ -5088,7 +5088,6 @@ RETURN ( Self )
 Function oProduccion( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    local uReturn  := ""
-   local nParams  := PCount() - 1
 
    if !Empty( oThis ) .and. !Empty( cMsg )
       uReturn     := ApoloSender( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
@@ -5097,27 +5096,4 @@ Function oProduccion( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 Return ( uReturn )
 
 //--------------------------------------------------------------------------//
-
-function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
-
-   local uResult
-
-   cMsg           := StrTran( cMsg, "()", "" )
-
-   do case
-      case IsNil( pValue( 3 ) )
-         uResult  := oObject:&( cMsg )()
-
-      case IsNil( pValue( 4 ) )
-         uResult  := oObject:&( cMsg )( u1 )
-
-      otherwise
-         ApoloSender( oObject:&( cMsg ), u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
-
-   end case 
-
-Return ( uResult )
-
-//--------------------------------------------------------------------------//
-
 

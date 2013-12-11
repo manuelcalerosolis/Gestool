@@ -8714,28 +8714,37 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
    local nTotAcu     := 0
    local nPlazos     := 0
    local cBanco
+   local cPaisIBAN
+   local cCtrlIBAN
    local cEntidad
    local cSucursal
    local cControl
    local cCuenta
 
    if aTmp != nil
-      cSerFac        := aTmp[ _CSERFAC ]
-      nNumFac        := aTmp[ _NNUMFAC ]
-      cSufFac        := aTmp[ _CSUFFAC ]
-      cDivFac        := aTmp[ _CDIVFAC ]
-      nVdvFac        := aTmp[ _NVDVFAC ]
-      dFecFac        := aTmp[ _DFECFAC ]
-      cCodPgo        := aTmp[ _CCODPAGO]
-      cCodPrv        := aTmp[ _CCODPRV ]
-      cNomPrv        := aTmp[ _CNOMPRV ]
-      cCodUsr        := aTmp[ _CCODUSR ]
-      cCodCaj        := aTmp[ _CCODCAJ ]
-      cEntidad       := aTmp[ _CENTBNC ]
-      cSucursal      := aTmp[ _CSUCBNC ]
-      cControl       := aTmp[ _CDIGBNC ]
-      cCuenta        := aTmp[ _CCTABNC ]
-      cBanco         := aTmp[ _CBANCO ]
+      cSerFac        := aTmp[ _CSERFAC    ]
+      nNumFac        := aTmp[ _NNUMFAC    ]
+      cSufFac        := aTmp[ _CSUFFAC    ]
+      cDivFac        := aTmp[ _CDIVFAC    ]
+      nVdvFac        := aTmp[ _NVDVFAC    ]
+      dFecFac        := aTmp[ _DFECFAC    ]
+      cCodPgo        := aTmp[ _CCODPAGO   ]
+      cCodPrv        := aTmp[ _CCODPRV    ]
+      cNomPrv        := aTmp[ _CNOMPRV    ]
+      cCodUsr        := aTmp[ _CCODUSR    ]
+      cCodCaj        := aTmp[ _CCODCAJ    ]
+      cEntidad       := aTmp[ _CENTBNC    ]
+      cSucursal      := aTmp[ _CSUCBNC    ]
+      cControl       := aTmp[ _CDIGBNC    ]
+      cCuenta        := aTmp[ _CCTABNC    ]
+      cBanco         := aTmp[ _CBANCO     ]
+      cPaisIBAN      := aTmp[ _CPAISIBAN  ]
+      cCtrlIBAN      := aTmp[ _CCTRLIBAN  ]
+      cEntidad       := aTmp[ _CENTBNC    ]
+      cSucursal      := aTmp[ _CSUCBNC    ]
+      cControl       := aTmp[ _CDIGBNC    ]
+      cCuenta        := aTmp[ _CCTABNC    ]
+
    else
       cSerFac        := ( dbfFacPrvT )->cSerFac
       nNumFac        := ( dbfFacPrvT )->nNumFac
@@ -8748,11 +8757,13 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
       cNomPrv        := ( dbfFacPrvT )->cNomPrv
       cCodUsr        := ( dbfFacPrvT )->cCodUsr
       cCodCaj        := ( dbfFacPrvT )->cCodCaj
-      cEntidad       := ( dbfFacPrvT )->cEntBnc
-      cSucursal      := ( dbfFacPrvT )->cSucBnc
-      cControl       := ( dbfFacPrvT )->cDigBnc
-      cCuenta        := ( dbfFacPrvT )->cCtaBnc
       cBanco         := ( dbfFacPrvT )->cBanco
+      cPaisIBAN      := ( dbfRctPrvT )->cPaisIBAN
+      cCtrlIBAN      := ( dbfRctPrvT )->cCtrlIBAN
+      cEntidad       := ( dbfRctPrvT )->cEntBnc
+      cSucursal      := ( dbfRctPrvT )->cSucBnc
+      cControl       := ( dbfRctPrvT )->cDigBnc
+      cCuenta        := ( dbfRctPrvT )->cCtaBnc
    end if
 
    /*
@@ -8800,44 +8811,48 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
 
             ( dbfFacPrvP)->( dbAppend() )
 
-            ( dbfFacPrvP )->cSerFac    := cSerFac
-            ( dbfFacPrvP )->nNumFac    := nNumFac
-            ( dbfFacPrvP )->cSufFac    := cSufFac
-            ( dbfFacPrvP )->cCodPrv    := cCodPrv
-            ( dbfFacPrvP )->cNomPrv    := cNomPrv
-            ( dbfFacPrvP )->nNumRec    := ++nInc
-            ( dbfFacPrvP )->nImporte   := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
-            ( dbfFacPrvP )->cTurRec    := cCurSesion()
-            ( dbfFacPrvP )->cDescrip   := "Recibo nº" + AllTrim( Str( ( dbfFacPrvP )->nNumRec ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
-            ( dbfFacPrvP )->cDivPgo    := cDivFac
-            ( dbfFacPrvP )->nVdvPgo    := nVdvFac
-            ( dbfFacPrvP )->lCobRado   := ( ( dbfFPago )->nCobRec == 1 )
-            ( dbfFacPrvP )->dPreCob    := dFecFac
-            ( dbfFacPrvP )->dFecVto    := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
-            ( dbfFacPrvP )->cCtaRec    := ( dbfFPago )->cCtaCobro
-            ( dbfFacPrvP )->dFecChg    := GetSysDate()
-            ( dbfFacPrvP )->cTimChg    := Time()
-            ( dbfFacPrvP )->cCodPgo    := cCodPgo
-            ( dbfFacPrvP )->lNotArqueo := .f.
-            ( dbfFacPrvP )->cCodCaj    := cCodCaj
-            ( dbfFacPrvP )->cCodUsr    := cCodUsr
+            ( dbfFacPrvP )->cSerFac       := cSerFac
+            ( dbfFacPrvP )->nNumFac       := nNumFac
+            ( dbfFacPrvP )->cSufFac       := cSufFac
+            ( dbfFacPrvP )->cCodPrv       := cCodPrv
+            ( dbfFacPrvP )->cNomPrv       := cNomPrv
+            ( dbfFacPrvP )->nNumRec       := ++nInc
+            ( dbfFacPrvP )->nImporte      := if( n != nPlazos, Round( nTotal / nPlazos, nDec ), Round( nTotAcu, nDec ) )
+            ( dbfFacPrvP )->cTurRec       := cCurSesion()
+            ( dbfFacPrvP )->cDescrip      := "Recibo nº" + AllTrim( Str( ( dbfFacPrvP )->nNumRec ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
+            ( dbfFacPrvP )->cDivPgo       := cDivFac
+            ( dbfFacPrvP )->nVdvPgo       := nVdvFac
+            ( dbfFacPrvP )->lCobRado      := ( ( dbfFPago )->nCobRec == 1 )
+            ( dbfFacPrvP )->dPreCob       := dFecFac
+            ( dbfFacPrvP )->dFecVto       := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
+            ( dbfFacPrvP )->cCtaRec       := ( dbfFPago )->cCtaCobro
+            ( dbfFacPrvP )->dFecChg       := GetSysDate()
+            ( dbfFacPrvP )->cTimChg       := Time()
+            ( dbfFacPrvP )->cCodPgo       := cCodPgo
+            ( dbfFacPrvP )->lNotArqueo    := .f.
+            ( dbfFacPrvP )->cCodCaj       := cCodCaj
+            ( dbfFacPrvP )->cCodUsr       := cCodUsr
 
             if ( dbfFPago )->lUtlBnc
-               ( dbfFacPrvP )->cBncEmp := ( dbfFPago )->cBanco
-               ( dbfFacPrvP )->cEntEmp := ( dbfFPago )->cEntBnc
-               ( dbfFacPrvP )->cSucEmp := ( dbfFPago )->cSucBnc
-               ( dbfFacPrvP )->cDigEmp := ( dbfFPago )->cDigBnc
-               ( dbfFacPrvP )->cCtaEmp := ( dbfFPago )->cCtaBnc
+               ( dbfFacPrvP )->cEPaisIBAN := ( dbfFPago )->cPaisIBAN
+               ( dbfFacPrvP )->cECtrlIBAN := ( dbfFPago )->cCtrlIBAN
+               ( dbfFacPrvP )->cBncEmp    := ( dbfFPago )->cBanco
+               ( dbfFacPrvP )->cEntEmp    := ( dbfFPago )->cEntBnc
+               ( dbfFacPrvP )->cSucEmp    := ( dbfFPago )->cSucBnc
+               ( dbfFacPrvP )->cDigEmp    := ( dbfFPago )->cDigBnc
+               ( dbfFacPrvP )->cCtaEmp    := ( dbfFPago )->cCtaBnc
             end if
 
-            ( dbfFacPrvP )->cBncPrv    := cBanco
-            ( dbfFacPrvP )->cEntPrv    := cEntidad
-            ( dbfFacPrvP )->cSucPrv    := cSucursal
-            ( dbfFacPrvP )->cDigPrv    := cControl
-            ( dbfFacPrvP )->cCtaPrv    := cCuenta
+            ( dbfFacPrvP )->cPaisIBAN     := cPaisIBAN
+            ( dbfFacPrvP )->cCtrlIBAN     := cCtrlIBAN
+            ( dbfFacPrvP )->cBncPrv       := cBanco
+            ( dbfFacPrvP )->cEntPrv       := cEntidad
+            ( dbfFacPrvP )->cSucPrv       := cSucursal
+            ( dbfFacPrvP )->cDigPrv       := cControl
+            ( dbfFacPrvP )->cCtaPrv       := cCuenta
 
             if ( dbfFPago )->nCobRec == 1
-               ( dbfFacPrvP )->dEntrada:= dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
+               ( dbfFacPrvP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfPrv )
             end if
 
             ( dbfFacPrvP )->( dbUnLock() )
@@ -8862,9 +8877,10 @@ function nTotVFacPrv( cCodArt, dbfFacPrvL, nDinDiv, nDirDiv )
 
    if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
 
-      while ( dbfFacPrvL )->CREF == cCodArt .and. !( dbfFacPrvL )->( eof() )
+      while ( dbfFacPrvL )->cRef == cCodArt .and. !( dbfFacPrvL )->( eof() )
 
          nTotVta  += nTotLFacPrv( dbfFacPrvL, nDinDiv, nDirDiv )
+
          ( dbfFacPrvL )->( dbSkip() )
 
       end while
@@ -8935,7 +8951,6 @@ FUNCTION lConFacPrv( cFacPrv, dbfFacPrvT )
 RETURN ( lConFac )
 
 //----------------------------------------------------------------------------//
-
 /*
 Devuelve el codigo del Prvente pasando un numero de factura
 */
@@ -8951,7 +8966,6 @@ FUNCTION dPrvFacPrv( cFacPrv, dbfFacPrvT )
 RETURN ( cCodPrv )
 
 //----------------------------------------------------------------------------//
-
 /*
 Devuelve la forma de pago pasando un numero de factura
 */

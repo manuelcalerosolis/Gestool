@@ -128,10 +128,10 @@ METHOD GenIndices( oMsg )
    if ::lCloseAll
       dbCloseAll()
    end if
-
+/*
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if !Empty( oMsg )
       ::oMsg         := oMsg
    end if
@@ -528,7 +528,7 @@ METHOD GenIndices( oMsg )
       ::oDlg:Enable()
       ::oDlg:End()
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
@@ -545,7 +545,7 @@ METHOD GenIndices( oMsg )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    StartAutoImp()
 
 RETURN ( nil )

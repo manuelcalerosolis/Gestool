@@ -9,7 +9,6 @@ static lExcelInstl
 static lCalcInstl
 static nxlLangID, cxlTrue := "=(1=1)", cxlFalse := "=(1=0)", cxlSum, cxlSubTotal, lxlEnglish := .f., hLib
 
-
 Static oThis
 
 //---------------------------------------------------------------------------//
@@ -6336,18 +6335,6 @@ Return ( ::oDbfGrp )
 
 //--------------------------------------------------------------------------//
 
-Function oTInfGen( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
-
-   local uReturn  := ""
-
-   if !Empty( oThis ) .and. !Empty( cMsg )
-      uReturn     := oSend( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
-   end if
-
-Return ( uReturn )
-
-//--------------------------------------------------------------------------//
-
 Function clp2xlnumpic( cPic )
 
    local cFormat, aPic, c, lEnglish := lxlEnglish
@@ -6388,3 +6375,43 @@ Function clp2xlnumpic( cPic )
 return Trim( cFormat )
 
 //------------------------------------------------------------------//
+
+Function oTInfGen( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   local uReturn  := ""
+
+   if !Empty( oThis ) .and. !Empty( cMsg )
+      uReturn     := ApoloSender( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+   end if
+
+Return ( uReturn )
+
+//--------------------------------------------------------------------------//
+
+function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   local uResult
+
+   cMsg           := StrTran( cMsg, "()", "" )
+
+   do case
+      case IsNil( pValue( 3 ) )
+         uResult  := oObject:&( cMsg )()
+
+      case IsNil( pValue( 4 ) )
+
+         ? valtoprg( oObject )
+         ? cMsg
+
+         uResult  := oObject:&( cMsg )( u1 )
+
+      otherwise
+         ApoloSender( oObject:&( cMsg ), u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   end case 
+
+Return ( uResult )
+
+//--------------------------------------------------------------------------//
+
+

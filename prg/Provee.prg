@@ -5735,14 +5735,14 @@ FUNCTION BrwBncPrv( oGet, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaB
          :cHeader          := "Cuenta"
          :cSortOrder       := "cCtaBnc"
          :bEditValue       := {|| PictureCuentaIBAN( dbfBancos ) }
-         :nWidth           := 150
+         :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Domicilio"
          :bEditValue       := {|| ( dbfBancos )->cDirBnc }
-         :nWidth           := 120
+         :nWidth           := 180
       end with
 
       with object ( oBrw:AddCol() )

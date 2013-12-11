@@ -43,29 +43,32 @@ END CLASS
 METHOD OpenFiles( lExclusive )
 
    local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oError
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end if
 
-   ::oBanco             := TBancos():Create()
-   ::oBanco:OpenFiles()
+      ::oBanco          := TBancos():Create()
+      ::oBanco:OpenFiles()
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
-   ::cFirstKey          := ::oDbf:cCodCta
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
-   RECOVER
+      ::cFirstKey       := ::oDbf:cCodCta
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+   RECOVER USING oError
+
+      lOpen             := .f.
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      msgStop( "Imposible abrir todas las bases de datos de cuentas de remesas." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -79,6 +82,7 @@ METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock
+   local oError
 
    DEFAULT lExclusive   := .f.
 
@@ -86,18 +90,18 @@ METHOD OpenService( lExclusive, cPath )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles( cPath )
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-   RECOVER
+   RECOVER USING oError
 
       lOpen             := .f.
 
       ::CloseFiles()
 
-      msgStop( "Imposible abrir todas las bases de datos de cuentas de remesas." )
+      msgStop( "Imposible abrir todas las bases de datos de cuentas de remesas." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -126,36 +130,47 @@ RETURN .t.
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "CTAREM.DBF" CLASS "CTAREM" ALIAS "CTAREM" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cuentas de remesas"
+   DEFINE DATABASE oDbf FILE "CTAREM.DBF" CLASS "CTAREM" ALIAS "CTAREM" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cuentas de remesas"
 
-      FIELD NAME "cCodCta" TYPE "C" LEN  3  DEC 0 PICTURE "@!"                         COMMENT "Código"           COLSIZE 40        OF ::oDbf
-      FIELD NAME "cNomCta" TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT "Nombre"           COLSIZE 140       OF ::oDbf
-      FIELD NAME "cDirCta" TYPE "C" LEN 80  DEC 0                                      COMMENT "Domicilio"        COLSIZE 200       OF ::oDbf
-      FIELD NAME "cEntBan" TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT "Entidad"          COLSIZE 50        OF ::oDbf
-      FIELD NAME "cAgcBan" TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT "Agencia"          COLSIZE 50        OF ::oDbf
-      FIELD NAME "cDgcBan" TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT "DC"               COLSIZE 40        OF ::oDbf
-      FIELD NAME "cCtaBan" TYPE "C" LEN 10  DEC 0 PICTURE "9999999999"                 COMMENT "Cuenta"           COLSIZE 100       OF ::oDbf
-      FIELD NAME "cSufCta" TYPE "C" LEN  3  DEC 0 PICTURE "@!"          DEFAULT "000"  COMMENT "Sufijo"                       HIDE  OF ::oDbf
-      FIELD NAME "cSufN58" TYPE "C" LEN  3  DEC 0 PICTURE "@!"                         COMMENT "Sufijo Norma 58"              HIDE  OF ::oDbf
-      FIELD NAME "cCodPre" TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cNifPre" TYPE "C" LEN  9  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cNomPre" TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cEntPre" TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cAgcPre" TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cSubCta" TYPE "C" LEN 12  DEC 0                                      COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cCtaDto" TYPE "C" LEN 12  DEC 0                                      COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cCodIne" TYPE "C" LEN  6  DEC 0                                      COMMENT ""                             HIDE  OF ::oDbf
-      FIELD NAME "cBanco"  TYPE "C" LEN 50  DEC 0                                      COMMENT ""                             HIDE  OF ::oDbf
+      FIELD NAME "cCodCta"    TYPE "C" LEN  3  DEC 0 PICTURE "@!"                         COMMENT "Código"           COLSIZE 40        OF oDbf
+      FIELD NAME "cNomCta"    TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT "Nombre"           COLSIZE 140       OF oDbf
+      FIELD NAME "cDirCta"    TYPE "C" LEN 80  DEC 0                                      COMMENT "Domicilio"        COLSIZE 200       OF oDbf
+      
+      FIELD NAME "cPaisIBAN"  TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT "País IBAN"                    HIDE  OF oDbf
+      FIELD NAME "cCtrlIBAN"  TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT "Dígito de control IBAN"       HIDE  OF oDbf
+      
+      FIELD NAME "cEntBan"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT "Entidad"                      HIDE  OF oDbf
+      FIELD NAME "cAgcBan"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT "Agencia"                      HIDE  OF oDbf
+      FIELD NAME "cDgcBan"    TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT "DC"                           HIDE  OF oDbf
+      FIELD NAME "cCtaBan"    TYPE "C" LEN 10  DEC 0 PICTURE "9999999999"                 COMMENT "Cuenta"                       HIDE  OF oDbf
 
-      INDEX TO "CtaRem.Cdx" TAG "cCodCta" ON "cCodCta" COMMENT "Código" NODELETED OF ::oDbf
-      INDEX TO "CtaRem.Cdx" TAG "cNomCta" ON "cNomCta" COMMENT "Nombre" NODELETED OF ::oDbf
+      FIELD CALCULATE NAME "bCtaBnc"   LEN 24  DEC 0                                      COMMENT "Cuenta bancaria" ;
+         VAL {|| oDbf:FieldGetByName( "cPaisIBAN" ) + oDbf:FieldGetByName( "cCtrlIBAN" ) + "-" + oDbf:FieldGetByName( "cEntBan" ) + "-" + oDbf:FieldGetByName( "cAgcBan" ) + "-" + oDbf:FieldGetByName( "cDgcBan" ) + "-" + oDbf:FieldGetByName( "cCtaBan" ) };
+                                                                                          COLSIZE 200                                  OF oDbf
 
-   END DATABASE ::oDbf
+      FIELD NAME "cSufCta"    TYPE "C" LEN  3  DEC 0 PICTURE "@!"          DEFAULT "000"  COMMENT "Sufijo"                       HIDE  OF oDbf
+      FIELD NAME "cSufN58"    TYPE "C" LEN  3  DEC 0 PICTURE "@!"                         COMMENT "Sufijo Norma 58"              HIDE  OF oDbf
+      FIELD NAME "cCodPre"    TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cNifPre"    TYPE "C" LEN  9  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cNomPre"    TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cEntPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cAgcPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cSubCta"    TYPE "C" LEN 12  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cCtaDto"    TYPE "C" LEN 12  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cCodIne"    TYPE "C" LEN  6  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cBanco"     TYPE "C" LEN 50  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
 
-RETURN ( ::oDbf )
+      INDEX TO "CtaRem.Cdx" TAG "cCodCta" ON "cCodCta" COMMENT "Código" NODELETED OF oDbf
+      INDEX TO "CtaRem.Cdx" TAG "cNomCta" ON "cNomCta" COMMENT "Nombre" NODELETED OF oDbf
+
+   END DATABASE oDbf
+
+RETURN ( oDbf )
 
 //---------------------------------------------------------------------------//
 
@@ -171,6 +186,8 @@ METHOD Resource( nMode )
    local oGetCtaDto
    local oGetDgtBan
    local oBanco
+   local oPaisIBAN
+   local oCtrlIBAN
    local oEntBnc
    local oSucBnc
    local oCtaBnc
@@ -204,34 +221,48 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         oBanco:bHelp   := {|| ::lCargaBanco( oBanco, oEntBnc, oSucBnc, oGetDgtBan, oCtaBnc, oEntPre, oAgcPre ) }
+      oBanco:bHelp   := {|| ::lCargaBanco( oBanco, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oGetDgtBan, oCtaBnc, oEntPre, oAgcPre ) }
+
+      REDEFINE GET oPaisIBAN VAR ::oDbf:cPaisIBAN ;
+         ID       130 ;
+         PICTURE  ::oDbf:FieldByName( "cPaisIBAN" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lIbanDigit( ::oDbf:cPaisIBAN, ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oCtrlIBAN ) ) ;
+         OF       oDlg
+
+      REDEFINE GET oCtrlIBAN VAR ::oDbf:cCtrlIBAN ;
+         ID       131 ;
+         PICTURE  ::oDbf:FieldByName( "cAgcBan" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oPaisIBAN:lValid() ) ;
+         OF       oDlg
 
       REDEFINE GET oEntBnc VAR ::oDbf:cEntBan ;
-         ID       130 ;
+         ID       132 ;
          PICTURE  ::oDbf:FieldByName( "cEntBan" ):cPict ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) ) ;
+         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ), oPaisIBAN:lValid() ) ;
 			OF 		oDlg
 
       REDEFINE GET oSucBnc VAR ::oDbf:cAgcBan ;
-         ID       140 ;
+         ID       133 ;
          PICTURE  ::oDbf:FieldByName( "cAgcBan" ):cPict ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) ) ;
+         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ), oPaisIBAN:lValid() ) ;
 			OF 		oDlg
 
       REDEFINE GET oGetDgtBan VAR ::oDbf:cDgcBan ;
-         ID       150 ;
+         ID       134 ;
          PICTURE  ::oDbf:FieldByName( "cDgcBan" ):cPict ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) ) ;
+         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ), oPaisIBAN:lValid() ) ;
 			OF 		oDlg
 
       REDEFINE GET oCtaBnc VAR ::oDbf:cCtaBan ;
-         ID       160 ;
+         ID       135 ;
          PICTURE  ::oDbf:FieldByName( "cCtaBan" ):cPict ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) ) ;
+         VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ), oPaisIBAN:lValid() ) ;
          OF       oDlg
 
       REDEFINE GET ::oDbf:cSufCta ;
