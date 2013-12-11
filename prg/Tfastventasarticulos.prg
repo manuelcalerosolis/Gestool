@@ -580,7 +580,10 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
-                     "Existencias" =>                 {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
+                     "Existencias por articulos" =>   {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
+                                                         "Variable" =>  {||   nil },;
+                                                         "Data" =>      {||   nil } },;
+                     "Existencias por stocks" =>      {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
                                                          "Variable" =>  {||   nil },;
                                                          "Data" =>      {||   nil } } }
 
