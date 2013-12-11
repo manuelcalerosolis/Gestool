@@ -2383,3 +2383,14 @@ METHOD ChangeExport()
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+CLASS Cuaderno
+
+   DATA cFile 
+   DATA hFile 
+
+   METHOD Write() VIRTUAL
+
+ENDCLASS
+
+CLASS Cuaderno19 

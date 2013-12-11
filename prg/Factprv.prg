@@ -8758,12 +8758,12 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
       cCodUsr        := ( dbfFacPrvT )->cCodUsr
       cCodCaj        := ( dbfFacPrvT )->cCodCaj
       cBanco         := ( dbfFacPrvT )->cBanco
-      cPaisIBAN      := ( dbfRctPrvT )->cPaisIBAN
-      cCtrlIBAN      := ( dbfRctPrvT )->cCtrlIBAN
-      cEntidad       := ( dbfRctPrvT )->cEntBnc
-      cSucursal      := ( dbfRctPrvT )->cSucBnc
-      cControl       := ( dbfRctPrvT )->cDigBnc
-      cCuenta        := ( dbfRctPrvT )->cCtaBnc
+      cPaisIBAN      := ( dbfFacPrvT )->cPaisIBAN
+      cCtrlIBAN      := ( dbfFacPrvT )->cCtrlIBAN
+      cEntidad       := ( dbfFacPrvT )->cEntBnc
+      cSucursal      := ( dbfFacPrvT )->cSucBnc
+      cControl       := ( dbfFacPrvT )->cDigBnc
+      cCuenta        := ( dbfFacPrvT )->cCtaBnc
    end if
 
    /*
