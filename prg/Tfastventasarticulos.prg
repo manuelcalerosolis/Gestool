@@ -60,7 +60,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD SetUnidadesNegativo( lValue )   INLINE ( ::lUnidadesNegativo := lValue )
 
-   METHOD SetExistenciasDataReport()
+   METHOD SetStockDataReport()
 
    METHOD SetInformeDataReport()
 
@@ -777,7 +777,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    */
 
    if ::lStocks()
-      ::SetExistenciasDataReport()
+      ::SetStockDataReport()
    else
       ::SetInformeDataReport()
    end if
@@ -788,7 +788,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SetExistenciasDataReport()
+Method SetStockDataReport()
 
    ::oFastReport:SetMasterDetail(   "Stock", "Artículos.Informe",    {|| ::oStock:oDbfStock:cCodigo } )
    ::oFastReport:SetMasterDetail(   "Stock", "Imagenes",             {|| ::oStock:oDbfStock:cCodigo } )
@@ -806,7 +806,7 @@ Return ( Self )
 
 Method SetInformeDataReport()
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } ) // 
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
