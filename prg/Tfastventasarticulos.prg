@@ -658,7 +658,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Existencias por artículo",     "Image" => 16, "Type" => "Existencias por artículo",     "Directory" => "Articulos\Existencias\Articulos",  "File" => "Existencias por articulo.fr3" },;
+                     { "Title" => "Existencias por articulo",     "Image" => 16, "Type" => "Existencias por articulo",     "Directory" => "Articulos\Existencias\Articulos",  "File" => "Existencias por articulo.fr3" },;
                      { "Title" => "Existencias por stocks",       "Image" => 16, "Type" => "Existencias por stocks",       "Directory" => "Articulos\Existencias\Stocks",     "File" => "Existencias por stock.fr3" },;
                   } ;
                   } }
