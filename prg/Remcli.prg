@@ -160,8 +160,8 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "bmpConta"           LEN  1  DEC 0                             VAL {|| ::oDbf:lConta }  BITMAPS "Sel16", "Nil16"  COMMENT { "Contabilizado", "bmpConta16", 3 } COLSIZE 20   OF ::oDbf
       FIELD NAME "lExport"             TYPE "L" LEN  1  DEC 0                             DEFAULT  .f.                                                                                 HIDE            OF ::oDbf
       FIELD CALCULATE NAME "bmpExport"          LEN  1  DEC 0                             VAL {|| ::oDbf:lExport } BITMAPS "Sel16", "Nil16"  COMMENT { "Exportado", "bmpExptar16", 3 }     COLSIZE 20  OF ::oDbf
-      FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"                                                            COMMENT "Número"              ALIGN RIGHT     COLSIZE 80  OF ::oDbf
-      FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                               COMMENT "Delegación"                          COLSIZE 20  OF ::oDbf
+      FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"                                                            COMMENT "NÃºmero"              ALIGN RIGHT     COLSIZE 80  OF ::oDbf
+      FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                               COMMENT "DelegaciÃ³n"                          COLSIZE 20  OF ::oDbf
       FIELD NAME "cCodRem"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Cuenta" COLSIZE  80                              OF ::oDbf
       FIELD CALCULATE NAME "cNomRem"            LEN 60  DEC 0                             VAL      ::cRetCtaRem()                            COMMENT "Nombre" COLSIZE 200                              OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"  COLSIZE  80                              OF ::oDbf
@@ -174,7 +174,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "dConta"              TYPE "D" LEN  8  DEC 0                                                                                COMMENT "Contab."                                         OF ::oDbf
       FIELD NAME "dExport"             TYPE "D" LEN  8  DEC 0                             DEFAULT CtoD( "" )                                                                           HIDE            OF ::oDbf
 
-      INDEX TO "RemCliT.Cdx" TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "Número" NODELETED OF ::oDbf
+      INDEX TO "RemCliT.Cdx" TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "NÃºmero" NODELETED OF ::oDbf
       INDEX TO "RemCliT.Cdx" TAG "cCodRem" ON "cCodRem"                    COMMENT "Cuenta" NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
@@ -319,7 +319,7 @@ METHOD Activate()
          NOBORDER ;
          ACTION   ( ::oWndBrw:RecAdd() );
          ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)ñadir";
+         TOOLTIP  "(A)Ã±adir";
          BEGIN GROUP ;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -379,7 +379,7 @@ METHOD Activate()
          TOOLTIP  "Rotor" ;
 
          DEFINE BTNSHELL RESOURCE "ADDRESS_BOOK2_" OF ::oWndBrw ;
-            ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) );
+            ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacÃ­a" ) ) );
             TOOLTIP  "Modificar cuenta" ;
             FROM     oRotor ;
 
@@ -697,13 +697,13 @@ METHOD Resource( nMode )
       ::oBrwDet:SetoDbf( ::oDbfVir )
 
       with object ( ::oBrwDet:AddCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :bEditValue       := {|| ::oDbfVir:cSerie + "/" + Alltrim( Str( ::oDbfVir:nNumFac ) ) + "-" + AllTrim( Str( ::oDbfVir:nNumRec ) ) }
          :nWidth           := 90
       end with
 
       with object ( ::oBrwDet:AddCol() )
-         :cHeader          := "Delegción"
+         :cHeader          := "DelegciÃ³n"
          :bEditValue       := {|| ::oDbfVir:cSufFac }
          :nWidth           := 40
       end with
@@ -727,7 +727,7 @@ METHOD Resource( nMode )
       end with
 
       with object ( ::oBrwDet:AddCol() )
-         :cHeader          := "Descripción"
+         :cHeader          := "DescripciÃ³n"
          :bStrData         := {|| ::oDbfVir:cDescrip }
          :nWidth           := 220
       end with
@@ -850,7 +850,7 @@ METHOD lSave( nMode )
    if nMode == APPD_MODE
 
       if Empty( ::oDbf:cCodRem )
-         MsgStop( "El número de cuenta no puede estar vacío." )
+         MsgStop( "El nÃºmero de cuenta no puede estar vacÃ­o." )
          ::oCodRem:SetFocus()
          lReturn  := .f.
       end if
@@ -959,10 +959,10 @@ METHOD SaveModelo()
    end if
 
    if ::oDbf:nTipRem == 2
-      cTitle      := "Remesa de recibos a soporte magnéticos según norma 58"
+      cTitle      := "Remesa de recibos a soporte magnÃ©ticos segÃºn norma 58"
       bAction     := {|| ::InitMod58( oDlg ) }
    else
-      cTitle      := "Remesa de recibos a soporte magnéticos según norma 19"
+      cTitle      := "Remesa de recibos a soporte magnÃ©ticos segÃºn norma 19"
       bAction     := {|| ::InitMod19( oDlg ) }
    end if
 
@@ -989,7 +989,7 @@ METHOD SaveModelo()
          VAR      ::cPatExp ;
          ID       130 ;
          BITMAP   "FOLDER" ;
-         ON HELP  ( oGet:cText( cGetFile( "*.txt", "Selección de fichero" ) ) ) ;
+         ON HELP  ( oGet:cText( cGetFile( "*.txt", "SelecciÃ³n de fichero" ) ) ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::lAgruparRecibos ;
@@ -1153,9 +1153,9 @@ METHOD InitMod58( oDlg )
                   cBuffer     += Left( ::oClientes:Titulo, 40 )   // Nombre del cliente
                   cBuffer     += Padr( cBanCli, 20 )              // Banco del cliente
                   cBuffer     += cToCeros( nImpRec, ::cPorDiv )   // Importe del recibo
-                  cBuffer     += Space( 6 )                       // Código para devoluciones
+                  cBuffer     += Space( 6 )                       // CÃ³digo para devoluciones
                   cBuffer     += ::oDbfDet:cSerie + cToCeros( ::oDbfDet:nNumFac, "999999999", 9 ) // Numero del recibo
-                  cBuffer     += Padr( "Recibo Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  Alltrim( ::oDbfDet:cSufFac ) + "-" + Alltrim( Str( ::oDbfDet:nNumRec ) ) + " de " + Dtoc( ::oDbfDet:dEntrada ), 40 )
+                  cBuffer     += Padr( "Recibo NÂº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  Alltrim( ::oDbfDet:cSufFac ) + "-" + Alltrim( Str( ::oDbfDet:nNumRec ) ) + " de " + Dtoc( ::oDbfDet:dEntrada ), 40 )
                   cBuffer     += Left( Dtoc( ::oDbfDet:dFecVto ), 2 ) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
                   cBuffer     := Padr( cBuffer, 162 )       // Para q llege a los 162 caracteres
                   cBuffer     += CRLF
@@ -1174,7 +1174,7 @@ METHOD InitMod58( oDlg )
                   cBuffer     += cHeader                    // Cabecera
                   cBuffer     += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )  // Codigo del cliente
                   cBuffer     += Space( 6 )
-                  cBuffer     += "Factura Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
+                  cBuffer     += "Factura NÂº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
                   cBuffer     += Space( 2 )                 // Para q llege a los 162 caracteres
                   cBuffer     := Padr( cBuffer, 162 )       // Para q llege a los 162 caracteres
                   cBuffer     += CRLF
@@ -1197,7 +1197,7 @@ METHOD InitMod58( oDlg )
                   cBuffer     += Left( ::oClientes:Domicilio, 40 )         // Domicilio del cliente
                   cBuffer     += ::oClientes:CodPostal                     // Codigo postal
                   cBuffer     += Space( 1 )
-                  cBuffer     += ::oClientes:Poblacion                     // Población
+                  cBuffer     += ::oClientes:Poblacion                     // PoblaciÃ³n
                   cBuffer     := Padr( cBuffer, 162 )                      // Para q llege a los 162 caracteres
                   cBuffer     += CRLF
 
@@ -1252,7 +1252,7 @@ METHOD InitMod58( oDlg )
       cBuffer  += "0"                              // Numero de linea
       cBuffer  += cHeader                          // Cabecera
       cBuffer  += Space( 52 )
-      cBuffer  += "0001"                           // Modificación para BCH internet
+      cBuffer  += "0001"                           // ModificaciÃ³n para BCH internet
       cBuffer  += Space( 16 )
       cBuffer  += cToCeros( nTotImp, ::cPorDiv )   // Importe total del Recibos
       cBuffer  += Space( 6 )
@@ -1264,8 +1264,8 @@ METHOD InitMod58( oDlg )
 
    end if
 
-   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + ;
-                     "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+   if ApoloMsgNoYes( "Proceso de exportaciÃ³n realizado con Ã©xito" + CRLF + ;
+                     "Â¿ Desea abrir el fichero resultante ?", "Elija una opciÃ³n." )
       ShellExecute( 0, "open", ::cPatExp, , , 1 )
    end if
 
@@ -1442,7 +1442,7 @@ RETURN ( Self )
 
 METHOD Del()
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("Â¿ Desea eliminar el registro en curso ?", "Confirme supresiÃ³n" )
 
       ::GetFirstKey()
 
@@ -1586,7 +1586,7 @@ METHOD Conta( lSimula )
 	*/
 
    if ::oDbf:lConta
-      if !ApoloMsgNoYes(  "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "¿ Desea contabilizarla de nuevo ?" )
+      if !ApoloMsgNoYes(  "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "Â¿ Desea contabilizarla de nuevo ?" )
          return .f.
       end if
    end if
@@ -1602,7 +1602,7 @@ METHOD Conta( lSimula )
 	*/
 
    if empty( cCodEmp ) .AND. !::lChkSelect
-      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierón empresas asociadas.", 0 )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierÃ³n empresas asociadas.", 0 )
       lErrorFound          := .t.
    end if
 
@@ -1676,7 +1676,7 @@ METHOD Conta( lSimula )
    */
 
    if Empty( ::oDbf:dConta )
-      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " sin fecha de contabilización", 0 )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " sin fecha de contabilizaciÃ³n", 0 )
       lErrorFound          := .t.
    end if
 
@@ -1685,7 +1685,7 @@ METHOD Conta( lSimula )
    end if
 
 	/*
-   Realización de Asientos
+   RealizaciÃ³n de Asientos
 	--------------------------------------------------------------------------
    */
 
@@ -2000,7 +2000,7 @@ METHOD EdtRecMenu( oDlg )
             MENUITEM    "&1. Modificar cuenta";
                MESSAGE  "Modificar cuenta" ;
                RESOURCE "Address_book2_16" ;
-               ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) )
+               ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacÃ­a" ) ) )
 
             MENUITEM    "&2. Visualizar recibo";
                MESSAGE  "Visualiza el recibo seleccionado" ;
@@ -2219,7 +2219,7 @@ METHOD InitMod19( oDlg )
                   cBuffer        += cHeader                    // Cabecera
                   cBuffer        += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )  // Codigo del cliente
                   cBuffer        += Space( 6 )
-                  cBuffer        += "Factura Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
+                  cBuffer        += "Factura NÂº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
                   cBuffer        += Space( 2 )                 // Para q llege a los 162 caracteres
                   cBuffer        := Padr( cBuffer, 162 )       // Para q llege a los 162 caracteres
                   cBuffer        += CRLF
@@ -2244,7 +2244,7 @@ METHOD InitMod19( oDlg )
                   cBuffer        += Left( ::oClientes:Domicilio, 40 )// Domicilio del cliente
                   cBuffer        += ::oClientes:CodPostal            // Codigo postal
                   cBuffer        += Space( 1 )
-                  cBuffer        += ::oClientes:Poblacion            // Población
+                  cBuffer        += ::oClientes:Poblacion            // PoblaciÃ³n
                   cBuffer        := Padr( cBuffer, 162 )             // Para q llege a los 162 caracteres
                   cBuffer        += CRLF
 
@@ -2333,7 +2333,7 @@ METHOD InitMod19( oDlg )
       cBuffer  += "0"                              // Numero de linea
       cBuffer  += cHeader                          // Cabecera
       cBuffer  += Space( 52 )
-      cBuffer  += cToCeros( nTotPre, "9999", 4 )   // Modificación para BCH internet
+      cBuffer  += cToCeros( nTotPre, "9999", 4 )   // ModificaciÃ³n para BCH internet
       cBuffer  += Space( 16 )
       cBuffer  += cToCeros( nTotImp, ::cPorDiv )   // Importe total del Recibos
       cBuffer  += Space( 6 )
@@ -2346,7 +2346,7 @@ METHOD InitMod19( oDlg )
 
    end if
 
-   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+   if ApoloMsgNoYes( "Proceso de exportaciÃ³n realizado con Ã©xito" + CRLF + "Â¿ Desea abrir el fichero resultante ?", "Elija una opciÃ³n." )
       ShellExecute( 0, "open", ::cPatExp, , , 1 )
    end if
 
@@ -2388,20 +2388,59 @@ CLASS Cuaderno
 
    DATA cFile                             INIT "c:\prueba.txt" 
    DATA hFile 
+
+   DATA cBuffer 
+
    DATA cCodigoRegistro
    DATA cVersionCuaderno
    DATA cNumeroDato
+   DATA cSufijo
+   DATA dFechaCobro
 
-   METHOD CodigoRegistro( cValue )        INLINE ( if( pCount() != 0, ::cCodigoRegistro := padr( cValue, 2 ), ::cCodigoRegistro ) )
-   METHOD VersionCuaderno( cValue )       INLINE ( if( pCount() != 0, ::cVersionCuaderno := padr( cValue, 5 ), ::cVersionCuaderno ) )
-   
+   METHOD InitBuffer()                    INLINE ( ::cBuffer := "" )
+
+   METHOD CodigoRegistro( cValue )        INLINE ( if( !Empty( cValue ), ::cCodigoRegistro   := padr( cValue, 2 ), ::cCodigoRegistro ) )
+   METHOD VersionCuaderno( cValue )       INLINE ( if( !Empty( cValue ), ::cVersionCuaderno  := padr( cValue, 5 ), ::cVersionCuaderno ) )
+   METHOD Sufijo( cValue )                INLINE ( if( !Empty( cValue ), ::cSufijo           := padr( cValue, 3 ), ::cSufijo ) )     
+
    //------------------------------------------------------------------------//
    
+   INLINE METHOD Time()                         
+
+      local cTime  := time()
+      cTime        := substr( cTime, 1, 2 ) + substr( cTime, 4, 2 ) + substr( cTime, 7, 2 )
+      
+      Return ( cTime )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD Date( date )
+      
+      local cDate
+      local cDateFrm := Set( 4, "yyyy/mm/dd" )
+      
+      DEFAULT date   := Date()
+
+      cDate          := dtos( date )
+
+      Set( 4, cDateFrm )
+      
+      Return( cDate )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+  
    INLINE METHOD Write()
 
       ::hFile  := fCreate( ::cFile )
 
-      fWrite( ::hFile, ::Make() )
+      if !Empty( ::hFile )
+         fWrite( ::hFile, ::CabeceraPresentador() )
+         fClose( ::hFile )
+      end if
 
       Return ( Self )
 
@@ -2409,13 +2448,120 @@ CLASS Cuaderno
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD Make()
+   INLINE METHOD CabeceraPresentador()
 
-      ::cBuffer   := ""
-      ::cBuffer   += ::CodigoRegistro()
-      ::cBuffer   += ::VersionCuaderno()
+      local cBuffer  := ""
 
-      Return ( ::cBuffer )
+      cBuffer        += ::CodigoRegistro()
+      cBuffer        += ::VersionCuaderno()
+      cBuffer        += ::oPresentador:Dato()
+      cBuffer        += ::oPresentador:Identificador()
+      cBuffer        += ::oPresentador:Nombre()
+      cBuffer        += ::Date()
+      cBuffer        += ::oPresentador:Referencia()
+      cBuffer        += ::oPresentador:Entidad()
+      cBuffer        += ::oPresentador:Oficina()
+      cBuffer        := padr( cBuffer, 600 ) + CRLF 
+
+      Return ( cBuffer )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD CabeceraAdeudos()
+
+      local cBuffer  := ""
+
+      cBuffer        += ::CodigoRegistro()
+      cBuffer        += ::VersionCuaderno()
+      cBuffer        += ::oAcreedor:Dato()
+      cBuffer        += ::oAcreedor:Identificador()
+      cBuffer        += ::oPresentador:Nombre()
+      cBuffer        += ::Date()
+      cBuffer        += ::oPresentador:Referencia()
+      cBuffer        += ::oPresentador:Entidad()
+      cBuffer        += ::oPresentador:Oficina()
+      cBuffer        := padr( cBuffer, 600 ) + CRLF 
+
+      Return ( cBuffer )
+
+   ENDMETHOD
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Cuaderno1914 FROM Cuaderno
+
+   DATA oPresentador
+   DATA oAcreedor
+
+   INLINE METHOD New()
+
+      ::oPresentador    := Presentador():New( Self )
+      ::oAcreedor       := Acreedor():New( Self )
+
+      Return ( Self )
+
+   ENDMETHOD
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Entidad
+
+   DATA oSender
+
+   DATA cNombre       
+   DATA cPais         
+   DATA cNif          
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD New( oSender )
+
+      ::oSender   := oSender 
+
+      Return ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   METHOD Nombre( cValue )       INLINE ( if( !Empty( cValue ), ::cNombre  := padr( cValue, 70 ), ::cNombre ) )
+   METHOD Pais( cValue )         INLINE ( if( !Empty( cValue ), ::cPais    := cValue,             ::cPais ) )
+   METHOD Nif( cValue )          INLINE ( if( !Empty( cValue ), ::cNif     := cValue,             ::cNif ) )     
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD Identificador()
+ 
+      local n
+      local cId
+      local nLen
+      local cValue
+      local cAlgorithm := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   
+      cId   := ""
+      nLen  := len( ::Nif() )
+
+      for n := 1 to nLen
+         cValue := substr( ::Nif(), n, 1 )
+         if isDigit(cValue)
+            cId += cValue
+         else
+            cId += str( at( cValue, cAlgorithm ) + 9, 2, 0 )
+         endif
+      next
+   
+      cId += str( at( substr( ::Pais(), 1, 1 ), cAlgorithm ) + 9, 2, 0 )
+      cId += str( at( substr( ::Pais(), 2, 1 ), cAlgorithm ) + 9, 2, 0 )
+      cId += "00"
+      cId := ::Pais() + strzero( 98 - ( val( cId ) % 97 ), 2 ) + ::oSender:Sufijo() + ::Nif()
+   
+      Return ( padr( cId, 35 ) )
 
    ENDMETHOD
 
@@ -2425,17 +2571,81 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-CLASS Cuaderno1944 FROM Cuaderno
+CLASS Presentador FROM Entidad
 
-   INLINE METHOD New()
+   DATA cEntidad     
+   DATA cOficina     
+   DATA cReferencia  
 
-      ::CodigoRegistro( "02" )
+   METHOD Entidad( cValue )      INLINE ( if( !Empty( cValue ), ::cEntidad    := padr( cValue, 4 ),      ::cEntidad ) )
+   METHOD Oficina( cValue )      INLINE ( if( !Empty( cValue ), ::cOficina    := padr( cValue, 4 ),      ::cOficina ) )    
+   METHOD Referencia( cValue )   INLINE ( if( !Empty( cValue ), ::cReferencia := ::File( cValue ), ::cReferencia ) )
+   METHOD Dato()                 INLINE ( '001' )
 
-      ::VersionCuaderno( "19143" )
+   //------------------------------------------------------------------------//
+   
+   INLINE METHOD File( cValue )
 
-   ENDMETHOD
+      local cId      := "PRE" + ::oSender:Date() + ::oSender:Time() + strzero( seconds(), 5 ) + cValue
+
+      Return padr( cId, 35 )
+
+   ENDMETHOD 
+   
+   //------------------------------------------------------------------------//
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
+
+CLASS Acreedor FROM Entidad
+
+   DATA cDireccion      
+   DATA cCodigoPostal
+   DATA cPoblacion 
+   DATA cProvincia      
+   DATA cCuentaIBAN     
+
+   METHOD Direccion( cValue )    INLINE ( if( !Empty( cValue ), ::cDireccion     := padr( cValue, 50 ),  ::cDireccion ) )    
+   METHOD CodigoPostal( cValue ) INLINE ( if( !Empty( cValue ), ::cCodigoPostal  := cValue,              rtrim( ::cCodigoPostal ) ) )    
+   METHOD Poblacion( cValue )    INLINE ( if( !Empty( cValue ), ::cPoblacion     := cValue,              rtrim( ::cPoblacion ) ) )    
+   METHOD Ciudad()               INLINE ( padr( ::CodigoPostal() + Space( 1 ) + ::Poblacion(), 50 ) )
+   METHOD Provincia( cValue )    INLINE ( if( !Empty( cValue ), ::cProvincia     := padr( cValue, 50 ),  ::cProvincia ) )
+   METHOD CuentaIBAN( cValue )   INLINE ( if( !Empty( cValue ), ::cCuentaIBAN    := padr( cValue, 34 ),  ::cCuentaIBAN ) )
+   METHOD Dato()                 INLINE ( '002' )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+Function TestCuaderno1914()
+/*
+   local oCuaderno   := Cuaderno1914():New()
+
+   oCuaderno:CodigoRegistro( '01' )
+   oCuaderno:VersionCuaderno( '19143' )
+   oCuaderno:Sufijo( '000' )
+
+   oCuaderno:oPresentador:Entidad( '0081' )
+   oCuaderno:oPresentador:Oficina( '1234' )
+   oCuaderno:oPresentador:Referencia( 'REMESA0000123' )            
+   oCuaderno:oPresentador:Nombre( "NOMBRE DEL PRESENTADOR, S.L." )
+   oCuaderno:oPresentador:Pais( "ES" )
+   oCuaderno:oPresentador:Nif( "W9614457A" )
+
+   oCuaderno:oAcreedor:Nombre( "NOMBRE DEL ACREEDOR, S.L." )
+   oCuaderno:oAcreedor:Direccion( "CALLE DEL ACREEDOR, 1234" )
+   oCuaderno:oAcreedor:CodigoPostal( "12345" )
+   oCuaderno:oAcreedor:Poblacion( "CIUDAD DEL ACREEDOR" )
+   oCuaderno:oAcreedor:Provincia( "PROVINCIA DEL ACREEDOR" )
+   oCuaderno:oAcreedor:Pais( "ES" )
+   oCuaderno:oAcreedor:Nif( "E77846772" )
+   oCuaderno:oAcreedor:CuentaIBAN( "ES7600811234461234567890" )
+
+   oCuaderno:Write()
+*/
+Return ( nil ) 
+
+//---------------------------------------------------------------------------//
+
 
