@@ -14,6 +14,7 @@ CLASS TSndRecInf
 
    DATA  lConnect
    DATA  lServer
+   DATA  lFranquiciado
    DATA  aSend
    DATA  aReciver
    DATA  acSay
@@ -224,6 +225,8 @@ Method LoadFromIni()
    end if
 
    ::lServer               := ( "Servidor" $ cCodEnvUsr() )
+
+   ::lFranquiciado         := ( "Franquiciado" $ cCodEnvUsr() )
 
    ::lPlanificarEnvio      := GetPvProfString( "Envioyrecepcion", "lPlanificarEnvio", cValToChar( ::lPlanificarEnvio ), ::cIniFile )
    ::lPlanificarEnvio      := Upper( ::lPlanificarEnvio ) == ".T."

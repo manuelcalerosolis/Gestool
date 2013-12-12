@@ -10465,27 +10465,41 @@ Return ( Self )
 
 Method ReciveData()
 
-   local n
-   local aExt
+   	local n
+   	local aExt
 
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
+   	if ::oSender:lServer
+      	aExt  := aRetDlgEmp()
+   	else
+      	aExt  := { "All" }
+   	end if
 
-   /*
-   Recibirlo de internet
-   */
+   	/*
+   	Recibirlo de internet
+   	*/
 
-   ::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
+   	if !::oSender:lFranquiciado
 
-   for n := 1 to len( aExt )
-      ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-   next
+   		::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
 
-   ::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
+   		for n := 1 to len( aExt )
+	      	ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      		ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   		next
+
+   		::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
+
+   	else
+   	
+   		::oSender:SetText( "Recibiendo facturas de clientes" )
+
+   		for n := 1 to len( aExt )
+	      	ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   		next
+
+   		::oSender:SetText( "Facturas de clientes recibidos" )
+
+   	end if	
 
 Return Self
 
@@ -10498,15 +10512,24 @@ Method Process()
    local dbfFacCliT
    local dbfFacCliL
    local dbfFacCliP
+   local dbfFacPrvT
+   local dbfFacPrvL
+   local dbfFacPrvP
    local dbfAntCliT
+   local dbfCount
    local tmpFacCliT
    local tmpFacCliL
    local tmpFacCliP
    local tmpAntCliT
+   local dbfClient
+   local dbfProvee
    local oBlock
    local oError
    local lClient     := ::oSender:lServer
    local aFiles      := Directory( cPatIn() + "FacCli*.*" )
+   local cSerie
+   local nNumero
+   local cSufijo
 
    for m := 1 to len( aFiles )
 
@@ -10519,142 +10542,442 @@ Method Process()
       descomprimimos el fichero
       */
 
-      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+    if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-         /*
-         Ficheros temporales
-         */
+        if !::oSender:lFranquiciado
 
-         if file( cPatSnd() + "FacCliT.Dbf" ) .and.;
-            file( cPatSnd() + "FacCliL.Dbf" ) .and.;
-            file( cPatSnd() + "FacCliP.Dbf" )
+         	/*
+         	Ficheros temporales
+         	*/
 
-            USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
+         	if file( cPatSnd() + "FacCliT.Dbf" ) .and.;
+	            file( cPatSnd() + "FacCliL.Dbf" ) .and.;
+            	file( cPatSnd() + "FacCliP.Dbf" )
 
-            USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliL.CDX" ) ADDITIVE
+            	USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
+            	SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
+            	USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
+            	SET ADSINDEX TO ( cPatSnd() + "FacCliL.CDX" ) ADDITIVE
 
-            USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
+            	USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
+            	SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
 
-            USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacCliL.CDX" ) ADDITIVE
+            	USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
+            	SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
 
-            USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
+            	USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
+            	SET ADSINDEX TO ( cPatEmp() + "FacCliL.CDX" ) ADDITIVE
 
-            USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-            SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+            	USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
+            	SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
 
-            USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-            SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
+            	USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+            	SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
-            while ( tmpFacCliT )->( !eof() )
+            	USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
+            	SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-               /*
-               Comprobamos que no exista la factura en la base de datos
-               */
+            	while ( tmpFacCliT )->( !eof() )
 
-               if lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) .and. ;
-                  !( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+               		/*
+               		Comprobamos que no exista la factura en la base de datos
+               		*/
 
-                  dbPass( tmpFacCliT, dbfFacCliT, .t. )
+               		if lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) .and. ;
+                  		!( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
 
-                  if lClient .and. dbLock( dbfFacCliT )
-                     ( dbfFacCliT )->lSndDoc := .f.
-                     ( dbfFacCliT )->( dbUnLock() )
-                  end if
+                  		dbPass( tmpFacCliT, dbfFacCliT, .t. )
 
-                  ::oSender:SetText( "Añadida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( Str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+                  		if lClient .and. dbLock( dbfFacCliT )
+                     		( dbfFacCliT )->lSndDoc := .f.
+                     		( dbfFacCliT )->( dbUnLock() )
+                  		end if
 
-                  if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
-                     while ( tmpFacCliL )->cSerie + Str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
-                        dbPass( tmpFacCliL, dbfFacCliL, .t. )
-                        ( tmpFacCliL )->( dbSkip() )
-                     end do
-                  end if
+                  		::oSender:SetText( "Añadida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( Str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
-               else
+                  		if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+                     		while ( tmpFacCliL )->cSerie + Str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
+	                        	dbPass( tmpFacCliL, dbfFacCliL, .t. )
+                        		( tmpFacCliL )->( dbSkip() )
+                     		end do
+                  		end if
 
-                  ::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( Str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+               		else
 
-               end if
+                  		::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( Str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
-               ( tmpFacCliT )->( dbSkip() )
+               		end if
 
-            end do
+            		( tmpFacCliT )->( dbSkip() )
 
-            /*
-            Ahora trabajamos sobre los recibos
-            */
+            	end do
 
-            while ( tmpFacCliP )->( !eof() )
+            	/*
+            	Ahora trabajamos sobre los recibos
+            	*/
 
-               if !( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + Str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec ) ) )
+            	while ( tmpFacCliP )->( !eof() )
 
-                  dbPass( tmpFacCliP, dbfFacCliP, .t. )
-                  ::oSender:SetText( "Añadido recibo     : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( Str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + Str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfClient ) )
+               		if !( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + Str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec ) ) )
 
-               else
+                  		dbPass( tmpFacCliP, dbfFacCliP, .t. )
+                  		::oSender:SetText( "Añadido recibo     : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( Str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + Str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfClient ) )
 
-                  ::oSender:SetText( "Desestimado recibo : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( Str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + Str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfClient ) )
+               		else
 
-               end if
+                  		::oSender:SetText( "Desestimado recibo : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( Str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + Str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfClient ) )
 
-               SysRefresh()
+               		end if
 
-               ( tmpFacCliP )->( dbSkip() )
+               		SysRefresh()
 
-            end do
+               		( tmpFacCliP )->( dbSkip() )
 
-            CLOSE ( dbfFacCliT )
-            CLOSE ( dbfFacCliL )
-            CLOSE ( dbfFacCliP )
-            CLOSE ( tmpFacCliT )
-            CLOSE ( tmpFacCliL )
-            CLOSE ( tmpFacCliP )
+            	end do
 
-            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+            	CLOSE ( dbfFacCliT )
+            	CLOSE ( dbfFacCliL )
+            	CLOSE ( dbfFacCliP )
+            	CLOSE ( dbfClient )
+	            CLOSE ( tmpFacCliT )
+	            CLOSE ( tmpFacCliL )
+            	CLOSE ( tmpFacCliP )
 
-         else
+            	::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
-            ::oSender:SetText( "Faltan ficheros" )
+        	else
 
-            if !file( cPatSnd() + "FacCliT.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
-            end if
+            	::oSender:SetText( "Faltan ficheros" )
 
-            if !file( cPatSnd() + "FacCliL.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliL.Dbf" )
-            end if
+           		if !file( cPatSnd() + "FacCliT.Dbf" )
+					::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
+            	end if
 
-            if !file( cPatSnd() + "FacCliP.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliP.Dbf" )
-            end if
+            	if !file( cPatSnd() + "FacCliL.Dbf" )
+               		::oSender:SetText( "Falta" + cPatSnd() + "FacCliL.Dbf" )
+            	end if
 
-         end if
+            	if !file( cPatSnd() + "FacCliP.Dbf" )
+               		::oSender:SetText( "Falta" + cPatSnd() + "FacCliP.Dbf" )
+            	end if
 
-      else
+        	end if
 
-         ::oSender:SetText( "Error al descomprimir fichero " + cPatIn() + aFiles[ m, 1 ] )
+        else
 
-      end if
+        	/*
+			Caso de que se trate de un cliente franquiciado--------------------
+        	*/
+
+        	/*
+         	Ficheros temporales
+         	*/
+
+         	if file( cPatSnd() + "FacCliT.Dbf" ) .and.;
+	            file( cPatSnd() + "FacCliL.Dbf" ) .and.;
+            	file( cPatSnd() + "FacCliP.Dbf" )
+
+            	USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
+            	SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
+
+            	USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
+            	SET ADSINDEX TO ( cPatSnd() + "FacCliL.CDX" ) ADDITIVE
+
+            	USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
+            	SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
+
+            	USE ( cPatEmp() + "FacPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvT", @dbfFacPrvT ) )
+            	SET ADSINDEX TO ( cPatEmp() + "FacPrvT.CDX" ) ADDITIVE
+
+            	USE ( cPatEmp() + "FacPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvL", @dbfFacPrvL ) )
+            	SET ADSINDEX TO ( cPatEmp() + "FacPrvL.CDX" ) ADDITIVE
+
+            	USE ( cPatEmp() + "FacPrvP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @dbfFacPrvP ) )
+            	SET ADSINDEX TO ( cPatEmp() + "FacPrvP.CDX" ) ADDITIVE
+
+            	USE ( cPatPrv() + "Provee.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
+            	SET ADSINDEX TO ( cPatPrv() + "Provee.CDX" ) ADDITIVE
+
+            	USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
+      			SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+
+            	while ( tmpFacCliT )->( !eof() )
+
+               		/*
+               		Comprobamos que no exista la factura en la base de datos---
+               		*/
+
+               		( dbfFacPrvT )->( OrdSetFocus( "cSuPed" ) )
+
+               		if !( dbfFacPrvT )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+
+               			/*
+						Pasamos las cabeceras----------------------------------
+               			*/
+
+                  		cSerie 		:= ( tmpFacCliT )->cSerie
+                  		nNumero    	:= nNewDoc( ( tmpFacCliT )->cSerie, dbfFacPrvT, "NFACPRV", , dbfCount )
+                  		cSufijo 	:= oUser():cDelegacion()
+
+                  		( dbfFacPrvT)->( dbAppend() )
+
+                  		( dbfFacPrvT)->CSERFAC    	:= cSerie
+   						( dbfFacPrvT)->NNUMFAC    	:= nNumero
+   						( dbfFacPrvT)->CSUFFAC    	:= cSufijo
+   						( dbfFacPrvT)->CTURFAC    	:= cCurSesion()
+   						( dbfFacPrvT)->DFECFAC    	:= ( tmpFacCliT )->dFecFac
+   						( dbfFacPrvT)->CCODPRV    	:= ( tmpFacCliT )->cCodCli
+   						( dbfFacPrvT)->CCODALM    	:= oUser():cAlmacen()
+   						( dbfFacPrvT)->CCODCAJ    	:= oUser():cCaja()
+   						( dbfFacPrvT)->CNOMPRV    	:= ( tmpFacCliT )->cNomCli
+   						( dbfFacPrvT)->CDIRPRV    	:= ( tmpFacCliT )->cDirCli
+   						( dbfFacPrvT)->CPOBPRV    	:= ( tmpFacCliT )->cPobCli
+   						( dbfFacPrvT)->CPROVPROV  	:= ( tmpFacCliT )->cPrvCli
+   						( dbfFacPrvT)->CPOSPRV    	:= ( tmpFacCliT )->cPosCli
+   						( dbfFacPrvT)->CDNIPRV    	:= ( tmpFacCliT )->cDniCli
+   						( dbfFacPrvT)->LLIQUIDADA 	:= ( tmpFacCliT )->lLiquidada
+   						( dbfFacPrvT)->LCONTAB    	:= .f.
+   						( dbfFacPrvT)->DFECENT    	:= ( tmpFacCliT )->DFECENT
+   						( dbfFacPrvT)->CSUPED    	:= ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac
+   						( dbfFacPrvT)->CCONDENT   	:= ( tmpFacCliT )->cCondEnt
+   						( dbfFacPrvT)->MCOMENT    	:= ( tmpFacCliT )->mComent
+   						( dbfFacPrvT)->CCODPAGO   	:= ( tmpFacCliT )->cCodPago
+   						( dbfFacPrvT)->CDTOESP    	:= ( tmpFacCliT )->cDtoEsp
+   						( dbfFacPrvT)->NDTOESP    	:= ( tmpFacCliT )->nDtoEsp
+   						( dbfFacPrvT)->CDPP       	:= ( tmpFacCliT )->cDpp
+   						( dbfFacPrvT)->NDPP       	:= ( tmpFacCliT )->nDpp
+   						( dbfFacPrvT)->LRECARGO   	:= ( tmpFacCliT )->lRecargo
+   						( dbfFacPrvT)->CDIVFAC    	:= ( tmpFacCliT )->cDivFac
+   						( dbfFacPrvT)->NVDVFAC    	:= ( tmpFacCliT )->nVdvFac
+   						( dbfFacPrvT)->LSNDDOC    	:= .t.
+   						( dbfFacPrvT)->CDTOUNO    	:= ( tmpFacCliT )->cDtoUno
+   						( dbfFacPrvT)->NDTOUNO    	:= ( tmpFacCliT )->nDtoUno
+   						( dbfFacPrvT)->CDTODOS    	:= ( tmpFacCliT )->cDtoDos
+   						( dbfFacPrvT)->NDTODOS    	:= ( tmpFacCliT )->nDtoDos
+   						( dbfFacPrvT)->LCLOFAC    	:= .f.
+   						( dbfFacPrvT)->CCODUSR    	:= cCurUsr()
+   						( dbfFacPrvT)->nTipRet    	:= ( tmpFacCliT )->nTipRet
+   						( dbfFacPrvT)->nPctRet    	:= ( tmpFacCliT )->nPctRet
+   						( dbfFacPrvT)->dFecChg    	:= GetSysDate()
+   						( dbfFacPrvT)->cTimChg    	:= Time()
+   						( dbfFacPrvT)->cCodDlg    	:= oUser():cDelegacion()
+   						( dbfFacPrvT)->nRegIva    	:= ( tmpFacCliT )->nRegIva
+   						( dbfFacPrvT)->nTotNet    	:= ( tmpFacCliT )->nTotNet
+   						( dbfFacPrvT)->nTotIva    	:= ( tmpFacCliT )->nTotIva
+   						( dbfFacPrvT)->nTotReq    	:= ( tmpFacCliT )->nTotReq
+   						( dbfFacPrvT)->nTotFac    	:= ( tmpFacCliT )->nTotFac
+
+            			( dbfFacPrvT )->( dbUnLock() )
+
+                  		::oSender:SetText( "Añadida factura     : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
+
+                  		/*
+                  		Pasamos las lineas de las facturas---------------------
+                  		*/	
+
+                  		if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+                     		
+                     		while ( tmpFacCliL )->cSerie + Str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
+	                        	
+                     			( dbfFacPrvL)->( dbAppend() )
+
+                     			( dbfFacPrvL)->CSERFAC    := cSerie
+                     			( dbfFacPrvL)->NNUMFAC    := nNumero
+                     			( dbfFacPrvL)->CSUFFAC    := cSufijo
+                     			( dbfFacPrvL)->CREF       := ( tmpFacCliL )->cRef
+                     			( dbfFacPrvL)->CREFPRV    := ( tmpFacCliL )->cRefPrv
+                     			( dbfFacPrvL)->CDETALLE   := ( tmpFacCliL )->cDetalle
+                     			( dbfFacPrvL)->NPREUNIT   := ( tmpFacCliL )->nPreUnit
+                     			( dbfFacPrvL)->NDTO       := ( tmpFacCliL )->nDto
+                     			( dbfFacPrvL)->NIVA       := ( tmpFacCliL )->nIva
+                     			( dbfFacPrvL)->NCANENT    := ( tmpFacCliL )->nCanEnt
+                     			( dbfFacPrvL)->LCONTROL   := ( tmpFacCliL )->lControl
+                     			( dbfFacPrvL)->CUNIDAD    := ( tmpFacCliL )->cUnidad
+                     			( dbfFacPrvL)->NUNICAJA   := ( tmpFacCliL )->nUniCaja
+                     			( dbfFacPrvL)->MLNGDES    := ( tmpFacCliL )->mLngDes
+                     			( dbfFacPrvL)->NDTOLIN    := ( tmpFacCliL )->nDtoDiv
+                     			( dbfFacPrvL)->NDTOPRM    := ( tmpFacCliL )->nDtoPrm
+                     			( dbfFacPrvL)->NIVALIN    := ( tmpFacCliL )->nIva
+                     			( dbfFacPrvL)->LIVALIN    := ( tmpFacCliL )->lIvaLin
+                     			( dbfFacPrvL)->CCODPR1    := ( tmpFacCliL )->cCodPr1
+                     			( dbfFacPrvL)->CCODPR2    := ( tmpFacCliL )->cCodPr2
+                     			( dbfFacPrvL)->CVALPR1    := ( tmpFacCliL )->cValPr1
+                     			( dbfFacPrvL)->CVALPR2    := ( tmpFacCliL )->cValPr2
+                     			( dbfFacPrvL)->NFACCNV    := ( tmpFacCliL )->nFacCnv
+                     			( dbfFacPrvL)->CALMLIN    := ( tmpFacCliL )->cAlmLin
+                     			( dbfFacPrvL)->NCTLSTK    := ( tmpFacCliL )->nCtlStk
+                     			( dbfFacPrvL)->LLOTE      := ( tmpFacCliL )->lLote
+                     			( dbfFacPrvL)->NLOTE      := ( tmpFacCliL )->nLote
+                     			( dbfFacPrvL)->CLOTE      := ( tmpFacCliL )->cLote
+                     			( dbfFacPrvL)->NNUMLIN    := ( tmpFacCliL )->nNumLin
+                     			( dbfFacPrvL)->NUNDKIT    := ( tmpFacCliL )->nUndKit
+                     			( dbfFacPrvL)->LKITART    := ( tmpFacCliL )->lKitArt
+                     			( dbfFacPrvL)->LKITCHL    := ( tmpFacCliL )->lKitChl
+                     			( dbfFacPrvL)->LKITPRC    := ( tmpFacCliL )->lKitPrc
+                     			( dbfFacPrvL)->MNUMSER    := ( tmpFacCliL )->mNumSer
+                     			( dbfFacPrvL)->CCODFAM    := ( tmpFacCliL )->cCodFam
+                     			( dbfFacPrvL)->CGRPFAM    := ( tmpFacCliL )->cGrpFam
+                     			( dbfFacPrvL)->NREQ       := ( tmpFacCliL )->nReq
+                     			( dbfFacPrvL)->MOBSLIN    := ( tmpFacCliL )->mObsLin
+                     			( dbfFacPrvL)->nNumMed    := ( tmpFacCliL )->nNumMed
+                     			( dbfFacPrvL)->nMedUno    := ( tmpFacCliL )->nMedUno
+                     			( dbfFacPrvL)->nMedDos    := ( tmpFacCliL )->nMedDos
+                     			( dbfFacPrvL)->nMedTre    := ( tmpFacCliL )->nMedTre
+                     			( dbfFacPrvL)->dFecCad    := ( tmpFacCliL )->dFecCad
+                     			( dbfFacPrvL)->cSuPed     := ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac
+                     			( dbfFacPrvL)->dFecFac    := ( tmpFacCliT )->dFecFac
+                     			( dbfFacPrvL)->cCodPrv    := ( tmpFacCliT )->cCodCli
+
+								( dbfFacPrvL )->( dbUnLock() )
+
+                        		( tmpFacCliL )->( dbSkip() )
+
+                     		end while
+
+                  		end if
+
+                  		/*
+						Pasamos los recibos de las facturas--------------------
+                  		*/
+
+                  		if ( tmpFacCliP )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+                     		
+                     		while ( tmpFacCliP )->cSerie + Str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac == ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliP )->( eof() )
+	                        	
+                     			( dbfFacPrvP)->( dbAppend() )
+
+                     			( dbfFacPrvP )->cSerFac    := cSerie
+                     			( dbfFacPrvP )->nNumFac    := nNumero
+                     			( dbfFacPrvP )->cSufFac    := cSufijo
+                     			( dbfFacPrvP )->nNumRec    := ( tmpFacCliP )->nNumRec
+                     			( dbfFacPrvP )->cTipRec    := ( tmpFacCliP )->cTipRec
+                     			( dbfFacPrvP )->CCODCAJ    := oUser():cCaja()
+                     			( dbfFacPrvP )->CCODPRV    := ( tmpFacCliT )->cCodCli
+                     			( dbfFacPrvP )->cNomPrv    := ( tmpFacCliP )->cNomCli
+                     			( dbfFacPrvP )->DENTRADA   := ( tmpFacCliP )->dEntrada
+                     			( dbfFacPrvP )->NIMPORTE   := ( tmpFacCliP )->nImporte
+                     			( dbfFacPrvP )->CDESCRIP   := ( tmpFacCliP )->cDescrip
+                     			( dbfFacPrvP )->DPRECOB    := ( tmpFacCliP )->dPreCob
+                     			( dbfFacPrvP )->CPGDOPOR   := ( tmpFacCliP )->cPgdoPor
+                     			( dbfFacPrvP )->LCOBRADO   := ( tmpFacCliP )->lCobrado
+                     			( dbfFacPrvP )->CDIVPGO    := ( tmpFacCliP )->cDivPgo
+                     			( dbfFacPrvP )->NVDVPGO    := ( tmpFacCliP )->nVdvPgo
+                     			( dbfFacPrvP )->DFECVTO    := ( tmpFacCliP )->dFecVto
+                     			( dbfFacPrvP )->cCodUsr    := cCurUsr()
+                     			( dbfFacPrvP )->dFecChg    := GetSysDate()
+                     			( dbfFacPrvP )->cTimChg    := Time()
+                     			( dbfFacPrvP )->cTurRec    := cCurSesion()
+                     			( dbfFacPrvP )->cCodPgo    := ( tmpFacCliP )->cCodPgo
+                   			
+                   				( dbfFacPrvP )->( dbUnLock() )
+
+                        		( tmpFacCliP )->( dbSkip() )
+
+                     		end while
+
+                  		end if
+
+               		else
+
+                  		::oSender:SetText( "Desestimada factura : " + ( tmpFacCliT )->cSerie + "/" + AllTrim( Str( ( tmpFacCliT )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+
+               		end if
+
+            		( tmpFacCliT )->( dbSkip() )
+
+            	end do
+
+            	CLOSE ( dbfFacPrvT )
+            	CLOSE ( dbfFacPrvL )
+            	CLOSE ( dbfFacPrvP )
+	            CLOSE ( tmpFacCliT )
+	            CLOSE ( tmpFacCliL )
+            	CLOSE ( tmpFacCliP )
+            	CLOSE ( dbfProvee  )
+            	CLOSE ( dbfCount   )
+
+            	::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+        	else
+
+            	::oSender:SetText( "Faltan ficheros" )
+
+           		if !file( cPatSnd() + "FacCliT.Dbf" )
+					::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
+            	end if
+
+            	if !file( cPatSnd() + "FacCliL.Dbf" )
+               		::oSender:SetText( "Falta" + cPatSnd() + "FacCliL.Dbf" )
+            	end if
+
+            	if !file( cPatSnd() + "FacCliP.Dbf" )
+               		::oSender:SetText( "Falta" + cPatSnd() + "FacCliP.Dbf" )
+            	end if
+
+        	end if
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+        end if 
+
+    else
+
+        ::oSender:SetText( "Error al descomprimir fichero " + cPatIn() + aFiles[ m, 1 ] )
+
+    end if
 
       RECOVER USING oError
 
-         CLOSE ( dbfFacCliT )
-         CLOSE ( dbfFacCliL )
-         CLOSE ( dbfFacCliP )
-         CLOSE ( tmpFacCliT )
-         CLOSE ( tmpFacCliL )
-         CLOSE ( tmpFacCliP )
+        CLOSE ( dbfFacCliT )
+        CLOSE ( dbfFacCliL )
+        CLOSE ( dbfFacCliP )
+        CLOSE ( dbfFacPrvT )
+        CLOSE ( dbfFacPrvL )
+        CLOSE ( dbfFacPrvP )
+        CLOSE ( tmpFacCliT )
+        CLOSE ( tmpFacCliL )
+        CLOSE ( tmpFacCliP )
+        CLOSE ( dbfClient  )
+        CLOSE ( dbfProvee  )
+        CLOSE ( dbfCount   )
 
-         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
-         ::oSender:SetText( ErrorMessage( oError ) )
+        ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+        ::oSender:SetText( ErrorMessage( oError ) )
 
       END SEQUENCE
 
