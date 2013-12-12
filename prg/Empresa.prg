@@ -2217,7 +2217,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          OF          fldEnvios
 
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
-            ITEMS    { "Cliente", "Servidor" } ;
+            ITEMS    { "Cliente", "Servidor", "Franquiciado" } ;
             ID       100 ;
             OF       fldEnvios
 
