@@ -64,7 +64,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD SetInformeDataReport()
 
-   METHOD lStocks()                       INLINE ( msgAlert( ::cReportType ),  ::cReportType == "Existencias por stocks" )
+   METHOD lStocks()                       INLINE ( ::cReportType == "Existencias por stocks" )
 
 END CLASS
 
