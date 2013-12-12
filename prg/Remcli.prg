@@ -2386,11 +2386,56 @@ Return .t.
 
 CLASS Cuaderno
 
-   DATA cFile 
+   DATA cFile                             INIT "c:\prueba.txt" 
    DATA hFile 
+   DATA cCodigoRegistro
+   DATA cVersionCuaderno
+   DATA cNumeroDato
 
-   METHOD Write() VIRTUAL
+   METHOD CodigoRegistro( cValue )        INLINE ( if( pCount() != 0, ::cCodigoRegistro := padr( cValue, 2 ), ::cCodigoRegistro ) )
+   METHOD VersionCuaderno( cValue )       INLINE ( if( pCount() != 0, ::cVersionCuaderno := padr( cValue, 5 ), ::cVersionCuaderno ) )
+   
+   //------------------------------------------------------------------------//
+   
+   INLINE METHOD Write()
+
+      ::hFile  := fCreate( ::cFile )
+
+      fWrite( ::hFile, ::Make() )
+
+      Return ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD Make()
+
+      ::cBuffer   := ""
+      ::cBuffer   += ::CodigoRegistro()
+      ::cBuffer   += ::VersionCuaderno()
+
+      Return ( ::cBuffer )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
 
 ENDCLASS
 
-CLASS Cuaderno19 
+//---------------------------------------------------------------------------//
+
+CLASS Cuaderno1944 FROM Cuaderno
+
+   INLINE METHOD New()
+
+      ::CodigoRegistro( "02" )
+
+      ::VersionCuaderno( "19143" )
+
+   ENDMETHOD
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
