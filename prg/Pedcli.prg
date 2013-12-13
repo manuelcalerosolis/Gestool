@@ -2685,13 +2685,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
 
 		REDEFINE BUTTON ;
 			ID 		525 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
