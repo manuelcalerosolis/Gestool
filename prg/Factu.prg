@@ -107,6 +107,12 @@ function Main( cParams )
    SetHandleCount( 240 )
 
    /*
+   Test------------------------------------------------------------------------
+   */
+
+   TestCuaderno1914()
+
+   /*
    Chequeamos la existencia del fichero de configuracion-----------------------
    */
 
