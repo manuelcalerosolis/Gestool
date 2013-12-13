@@ -1920,12 +1920,18 @@ Method lZipData( cFileName )
    local aName
 
    hb_SetDiskZip( {|| nil } )
+   
    for each aName in aDir
+
+      SysRefresh()
+
       lZip        := hb_ZipFile( cPatOut() + cFileName, cLastPath( cPatSnd() ) + aName[ 1 ], 9 )
       if !lZip
          exit
       end if
+
    next
+
    hb_gcAll()
 
 Return ( lZip )

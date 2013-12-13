@@ -2384,6 +2384,35 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Function DecimalToString( nValue, nLen )
+
+   local cValue       
+      
+   cValue   := str( nValue, nLen + 1, 2 )    // +1 espacio que resta punto decimal
+   cValue   := strtran( cValue, "." )        // Quitar punto decimal
+   cValue   := strtran( cValue, " ", "0" )   // Reemplazar espacios por 0
+   
+Return ( cValue )
+
+//---------------------------------------------------------------------------//
+
+Function TimeToString()                         
+
+   local cTime  := time()
+   cTime        := substr( cTime, 1, 2 ) + substr( cTime, 4, 2 ) + substr( cTime, 7, 2 )
+      
+Return ( cTime )
+
+//---------------------------------------------------------------------------//
+
+Function DateToString( dDate )
+      
+   DEFAULT dDate  := date()
+
+Return ( dtos( dDate ) )
+
+//---------------------------------------------------------------------------//
+
 CLASS Cuaderno
 
    DATA cFile                             INIT "c:\prueba.txt" 
@@ -2395,50 +2424,49 @@ CLASS Cuaderno
    DATA cVersionCuaderno
    DATA cNumeroDato
    DATA cSufijo
-   DATA dFechaCobro
+   DATA cFechaCobro                       
 
-   METHOD InitBuffer()                    INLINE ( ::cBuffer := "" )
+   //------------------------------------------------------------------------//
 
-   METHOD CodigoRegistro( cValue )        INLINE ( if( !Empty( cValue ), ::cCodigoRegistro   := padr( cValue, 2 ), ::cCodigoRegistro ) )
-   METHOD VersionCuaderno( cValue )       INLINE ( if( !Empty( cValue ), ::cVersionCuaderno  := padr( cValue, 5 ), ::cVersionCuaderno ) )
-   METHOD Sufijo( cValue )                INLINE ( if( !Empty( cValue ), ::cSufijo           := padr( cValue, 3 ), ::cSufijo ) )     
+   METHOD CodigoRegistro( cValue )        INLINE ( if( !Empty( cValue ), ::cCodigoRegistro   := padr( cValue, 2 ),      ::cCodigoRegistro ) )
+   METHOD VersionCuaderno( cValue )       INLINE ( if( !Empty( cValue ), ::cVersionCuaderno  := padr( cValue, 5 ),      ::cVersionCuaderno ) )
+   METHOD Sufijo( cValue )                INLINE ( if( !Empty( cValue ), ::cSufijo           := padr( cValue, 3 ),      ::cSufijo ) )   
+   METHOD FechaCobro( dValue )            INLINE ( if( !Empty( dValue ), ::cFechaCobro       := DateToString( dValue ), ::cFechaCobro ) )
 
    //------------------------------------------------------------------------//
    
-   INLINE METHOD Time()                         
+ENDCLASS
 
-      local cTime  := time()
-      cTime        := substr( cTime, 1, 2 ) + substr( cTime, 4, 2 ) + substr( cTime, 7, 2 )
-      
-      Return ( cTime )
+//---------------------------------------------------------------------------//
 
-   ENDMETHOD
+CLASS Cuaderno1914 FROM Cuaderno
 
-   //------------------------------------------------------------------------//
+   DATA oPresentador
+   DATA oAcreedor
+   DATA oDeudor
 
-   INLINE METHOD Date( date )
-      
-      local cDate
-      local cDateFrm := Set( 4, "yyyy/mm/dd" )
-      
-      DEFAULT date   := Date()
+   INLINE METHOD New()
 
-      cDate          := dtos( date )
+      ::FechaCobro( date() )
 
-      Set( 4, cDateFrm )
-      
-      Return( cDate )
+      ::oPresentador    := Presentador():New( Self )
+      ::oAcreedor       := Acreedor():New( Self )
+      ::oDeudor         := Deudor():New( Self )
+
+      Return ( Self )
 
    ENDMETHOD
 
    //------------------------------------------------------------------------//
-  
-   INLINE METHOD Write()
+
+   INLINE METHOD SerializeASCII()
 
       ::hFile  := fCreate( ::cFile )
 
       if !Empty( ::hFile )
-         fWrite( ::hFile, ::CabeceraPresentador() )
+         fWrite( ::hFile, ::oPresentador:SerializeASCII() )
+         fWrite( ::hFile, ::oAcreedor:SerializeASCII() )
+         fWrite( ::hFile, ::oDeudor:SerializeASCII() )
          fClose( ::hFile )
       end if
 
@@ -2448,64 +2476,6 @@ CLASS Cuaderno
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD CabeceraPresentador()
-
-      local cBuffer  := ""
-
-      cBuffer        += ::CodigoRegistro()
-      cBuffer        += ::VersionCuaderno()
-      cBuffer        += ::oPresentador:Dato()
-      cBuffer        += ::oPresentador:Identificador()
-      cBuffer        += ::oPresentador:Nombre()
-      cBuffer        += ::Date()
-      cBuffer        += ::oPresentador:Referencia()
-      cBuffer        += ::oPresentador:Entidad()
-      cBuffer        += ::oPresentador:Oficina()
-      cBuffer        := padr( cBuffer, 600 ) + CRLF 
-
-      Return ( cBuffer )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD CabeceraAdeudos()
-
-      local cBuffer  := ""
-
-      cBuffer        += ::CodigoRegistro()
-      cBuffer        += ::VersionCuaderno()
-      cBuffer        += ::oAcreedor:Dato()
-      cBuffer        += ::oAcreedor:Identificador()
-      cBuffer        += ::oPresentador:Nombre()
-      cBuffer        += ::Date()
-      cBuffer        += ::oPresentador:Referencia()
-      cBuffer        += ::oPresentador:Entidad()
-      cBuffer        += ::oPresentador:Oficina()
-      cBuffer        := padr( cBuffer, 600 ) + CRLF 
-
-      Return ( cBuffer )
-
-   ENDMETHOD
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS Cuaderno1914 FROM Cuaderno
-
-   DATA oPresentador
-   DATA oAcreedor
-
-   INLINE METHOD New()
-
-      ::oPresentador    := Presentador():New( Self )
-      ::oAcreedor       := Acreedor():New( Self )
-
-      Return ( Self )
-
-   ENDMETHOD
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -2514,9 +2484,9 @@ CLASS Entidad
 
    DATA oSender
 
-   DATA cNombre       
-   DATA cPais         
-   DATA cNif          
+   DATA cNombre                  INIT space( 70 )       
+   DATA cPais                    INIT 'ES'         
+   DATA cNif                     INIT ''
 
    //------------------------------------------------------------------------//
 
@@ -2530,9 +2500,9 @@ CLASS Entidad
 
    //------------------------------------------------------------------------//
 
-   METHOD Nombre( cValue )       INLINE ( if( !Empty( cValue ), ::cNombre  := padr( cValue, 70 ), ::cNombre ) )
-   METHOD Pais( cValue )         INLINE ( if( !Empty( cValue ), ::cPais    := cValue,             ::cPais ) )
-   METHOD Nif( cValue )          INLINE ( if( !Empty( cValue ), ::cNif     := cValue,             ::cNif ) )     
+   METHOD Nombre( cValue )       INLINE ( if( !Empty( cValue ), ::cNombre  := padr( cValue, 70 ),        ::cNombre ) )
+   METHOD Pais( cValue )         INLINE ( if( !Empty( cValue ), ::cPais    := cValue,                    ::cPais ) )
+   METHOD Nif( cValue )          INLINE ( if( !Empty( cValue ), ::cNif     := cValue,                    ::cNif ) )     
 
    //------------------------------------------------------------------------//
 
@@ -2549,7 +2519,7 @@ CLASS Entidad
 
       for n := 1 to nLen
          cValue := substr( ::Nif(), n, 1 )
-         if isDigit(cValue)
+         if isDigit( cValue )
             cId += cValue
          else
             cId += str( at( cValue, cAlgorithm ) + 9, 2, 0 )
@@ -2577,21 +2547,42 @@ CLASS Presentador FROM Entidad
    DATA cOficina     
    DATA cReferencia  
 
-   METHOD Entidad( cValue )      INLINE ( if( !Empty( cValue ), ::cEntidad    := padr( cValue, 4 ),      ::cEntidad ) )
-   METHOD Oficina( cValue )      INLINE ( if( !Empty( cValue ), ::cOficina    := padr( cValue, 4 ),      ::cOficina ) )    
-   METHOD Referencia( cValue )   INLINE ( if( !Empty( cValue ), ::cReferencia := ::File( cValue ), ::cReferencia ) )
+   METHOD Entidad( cValue )      INLINE ( if( !Empty( cValue ), ::cEntidad    := padr( cValue, 4 ),   ::cEntidad ) )
+   METHOD Oficina( cValue )      INLINE ( if( !Empty( cValue ), ::cOficina    := padr( cValue, 4 ),   ::cOficina ) )    
+   METHOD Referencia( cValue )   INLINE ( if( !Empty( cValue ), ::cReferencia := ::File( cValue ),    ::cReferencia ) )
    METHOD Dato()                 INLINE ( '001' )
 
    //------------------------------------------------------------------------//
    
    INLINE METHOD File( cValue )
 
-      local cId      := "PRE" + ::oSender:Date() + ::oSender:Time() + strzero( seconds(), 5 ) + cValue
+      local cId      := "PRE" + DateToString() + TimeToString() + strzero( seconds(), 5 ) + cValue
 
       Return padr( cId, 35 )
 
    ENDMETHOD 
    
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD SerializeASCII()
+
+      local cBuffer  := ""
+
+      cBuffer        += ::oSender:CodigoRegistro()
+      cBuffer        += ::oSender:VersionCuaderno()
+      cBuffer        += ::Dato()
+      cBuffer        += ::Identificador()
+      cBuffer        += ::Nombre()
+      cBuffer        += ::oSender:FechaCobro()
+      cBuffer        += ::Referencia()
+      cBuffer        += ::Entidad()
+      cBuffer        += ::Oficina()
+      cBuffer        := padr( cBuffer, 600 ) + CRLF 
+
+      Return ( cBuffer )
+
+   ENDMETHOD
+
    //------------------------------------------------------------------------//
 
 ENDCLASS
@@ -2610,21 +2601,127 @@ CLASS Acreedor FROM Entidad
    METHOD CodigoPostal( cValue ) INLINE ( if( !Empty( cValue ), ::cCodigoPostal  := cValue,              rtrim( ::cCodigoPostal ) ) )    
    METHOD Poblacion( cValue )    INLINE ( if( !Empty( cValue ), ::cPoblacion     := cValue,              rtrim( ::cPoblacion ) ) )    
    METHOD Ciudad()               INLINE ( padr( ::CodigoPostal() + Space( 1 ) + ::Poblacion(), 50 ) )
-   METHOD Provincia( cValue )    INLINE ( if( !Empty( cValue ), ::cProvincia     := padr( cValue, 50 ),  ::cProvincia ) )
+   METHOD Provincia( cValue )    INLINE ( if( !Empty( cValue ), ::cProvincia     := padr( cValue, 40 ),  ::cProvincia ) )
    METHOD CuentaIBAN( cValue )   INLINE ( if( !Empty( cValue ), ::cCuentaIBAN    := padr( cValue, 34 ),  ::cCuentaIBAN ) )
    METHOD Dato()                 INLINE ( '002' )
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD SerializeASCII()
+
+      local cBuffer  := ""
+
+      cBuffer        += ::oSender:CodigoRegistro()
+      cBuffer        += ::oSender:VersionCuaderno()
+      cBuffer        += ::Dato()
+      cBuffer        += ::Identificador()
+      cBuffer        += ::oSender:FechaCobro()
+      cBuffer        += ::Nombre()
+      cBuffer        += ::Direccion()
+      cBuffer        += ::Ciudad()
+      cBuffer        += ::Provincia()
+      cBuffer        += ::Pais()
+      cBuffer        += ::CuentaIBAN()
+      cBuffer        := padr( cBuffer, 600 ) + CRLF 
+
+      Return ( cBuffer )
+
+   ENDMETHOD
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS Deudor FROM Acreedor
+
+   DATA cReferencia                       INIT space( 35 )
+   DATA cReferenciaMandato                INIT space( 35 )
+   DATA cTipoAdeudo                       INIT 'OOFF'
+   DATA cCategoria                        INIT space( 4 )
+   DATA nImporte                          INIT 0
+   DATA cImporte                          INIT '0'
+   DATA cFechaMandato                     INIT DateToString()
+   DATA cEntidadBIC                       INIT space( 11 )
+   DATA cTipo                             INIT space( 1 )
+   DATA cEmisor                           INIT space( 1 )
+   DATA cIdentificadorCuenta              INIT 'A'
+   DATA cProposito                        INIT space( 4 )
+   DATA cConcepto                         INIT space( 140 )
+
+   METHOD Referencia( cValue )            INLINE ( if( !Empty( cValue ), ::cReferencia          := padr( cValue, 35 ),     ::cReferencia ) )
+   METHOD ReferenciaMandato( cValue )     INLINE ( if( !Empty( cValue ), ::cReferenciaMandato   := padr( cValue, 35 ),     ::cReferenciaMandato ) )
+   METHOD TipoAdeudo( cValue )            INLINE ( if( !Empty( cValue ), ::cTipoAdeudo          := padr( cValue, 4 ),      ::cTipoAdeudo ) )
+   METHOD Categoria( cValue )             INLINE ( if( !Empty( cValue ), ::cCategoria           := padr( cValue, 4 ),      ::cCategoria ) )
+   METHOD FechaMandato( dValue )          INLINE ( if( !Empty( dValue ), ::cFechaMandato        := DateToString( dValue ), ::cFechaMandato ) )
+   METHOD EntidadBIC( cValue )            INLINE ( if( !Empty( cValue ), ::cEntidadBIC          := padr( cValue, 11 ),     ::cEntidadBIC ) )
+   METHOD Tipo( cValue )                  INLINE ( if( !Empty( cValue ), ::cTipo                := padr( cValue, 1 ),      ::cTipo ) )
+   METHOD Emisor( cValue )                INLINE ( if( !Empty( cValue ), ::cEmisor              := padr( cValue, 1 ),      ::cEmisor ) )
+   METHOD IdentificadorCuenta( cValue )   INLINE ( if( !Empty( cValue ), ::cIdentificadorCuenta := padr( cValue, 1 ),      ::cIdentificadorCuenta ) )
+   METHOD Proposito( cValue )             INLINE ( if( !Empty( cValue ), ::cProposito           := padr( cValue, 4 ),      ::cProposito ) )
+   METHOD Concepto( cValue )              INLINE ( if( !Empty( cValue ), ::cConcepto            := padr( cValue, 140 ),    ::cConcepto ) )
+
+   METHOD Dato()                          INLINE ( '003' )
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD Importe( nValue )
+
+      if !Empty( nValue )
+         ::nImporte                    := nValue
+         ::cImporte                    := DecimalToString( nValue, 11 )
+      endif
+
+      Return ( ::cImporte ) 
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD SerializeASCII()
+
+      local cBuffer  := ""
+
+      cBuffer        += ::oSender:CodigoRegistro()
+      cBuffer        += ::oSender:VersionCuaderno()
+      cBuffer        += ::Dato()
+      cBuffer        += ::Referencia()
+      cBuffer        += ::ReferenciaMandato()
+      cBuffer        += ::TipoAdeudo()
+      cBuffer        += ::Categoria()
+      cBuffer        += ::Importe()
+      cBuffer        += ::FechaMandato()
+      cBuffer        += ::EntidadBIC()
+      cBuffer        += ::Nombre()
+      cBuffer        += ::Direccion()
+      cBuffer        += ::Ciudad()
+      cBuffer        += ::Provincia()
+      cBuffer        += ::Pais()
+      cBuffer        += ::CuentaIBAN()
+      cBuffer        += ::Tipo()
+      cBuffer        += ::Nif()
+      cBuffer        += ::Emisor()
+      cBuffer        += ::IdentificadorCuenta()
+      cBuffer        += ::CuentaIBAN()
+      cBuffer        += ::Proposito()
+      cBuffer        += ::Concepto()
+      cBuffer        := padr( cBuffer, 600 ) + CRLF 
+
+      Return ( cBuffer )
+
+   ENDMETHOD
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
 Function TestCuaderno1914()
-/*
+
    local oCuaderno   := Cuaderno1914():New()
 
    oCuaderno:CodigoRegistro( '01' )
    oCuaderno:VersionCuaderno( '19143' )
    oCuaderno:Sufijo( '000' )
+   oCuaderno:FechaCobro( Date() )
 
    oCuaderno:oPresentador:Entidad( '0081' )
    oCuaderno:oPresentador:Oficina( '1234' )
@@ -2642,8 +2739,21 @@ Function TestCuaderno1914()
    oCuaderno:oAcreedor:Nif( "E77846772" )
    oCuaderno:oAcreedor:CuentaIBAN( "ES7600811234461234567890" )
 
-   oCuaderno:Write()
-*/
+   oCuaderno:oDeudor:Referencia( 'RECIBO002401' )
+   oCuaderno:oDeudor:ReferenciaMandato( '2E5F9458BCD27E3C2B5908AF0B91551A' )
+   oCuaderno:oDeudor:Importe( 123.45 )
+   oCuaderno:oDeudor:Nombre( 'NOMBRE DEL DEUDOR, S.L.' )
+   oCuaderno:oDeudor:Direccion( "CALLE DEL DEUDOR, 1234" )
+   oCuaderno:oDeudor:CodigoPostal( "12345" )
+   oCuaderno:oDeudor:Poblacion( "CIUDAD DEL DEUDOR" )
+   oCuaderno:oDeudor:Provincia( "PROVINCIA DEL DEUDOR" )
+   oCuaderno:oDeudor:Pais( "ES" )
+   oCuaderno:oDeudor:Nif( "12345678Z" )
+   oCuaderno:oDeudor:CuentaIBAN( "ES0321001234561234567890" )
+   oCuaderno:oDeudor:Concepto( 'CONCEPTO DEL ADEUDO FRA.1234' )
+
+   oCuaderno:SerializeASCII()
+
 Return ( nil ) 
 
 //---------------------------------------------------------------------------//
