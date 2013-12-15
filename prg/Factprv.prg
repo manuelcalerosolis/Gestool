@@ -11812,14 +11812,20 @@ Method PrepareTemporal( oFr ) CLASS TFacturaProveedorLabelGenerator
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
    local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
-   local nItemsInColumn := int( nPaperHeight / nHeight )
+   local nItemsInColumn := 0
 
-   nBlancos             := ( ::nColumnaInicio - 1 ) * nItemsInColumn
-   nBlancos             += ( ::nFilaInicio - 1 )
+   if !Empty( nPaperHeight ) .and. !Empty( nHeight ) .and. !Empty( nColumns )
 
-   for n := 1 to nBlancos
-      dbPass( dbBlankRec( dbfFacPrvL ), tmpFacPrvL, .t. )
-   next
+      nItemsInColumn       := int( nPaperHeight / nHeight )
+
+      nBlancos             := ( ::nColumnaInicio - 1 ) * nItemsInColumn
+      nBlancos             += ( ::nFilaInicio - 1 )
+
+      for n := 1 to nBlancos
+         dbPass( dbBlankRec( dbfFacPrvL ), tmpFacPrvL, .t. )
+      next
+
+   end if 
 
    ( tmpFacPrvL )->( dbGoTop() )
 

@@ -370,7 +370,7 @@ ENDCLASS
 //---------------------------------------------------------------------------//
 
 Function TestCuaderno1914()
-
+/*
    local oCuaderno   := Cuaderno1914():New()
 
    // Presentador--------------------------------------------------------------
@@ -483,7 +483,7 @@ Function TestCuaderno1914()
    oCuaderno:SerializeASCII()
 
    WinExec( "notepad.exe " + AllTrim( oCuaderno:cFile ) )
-
+*/
 Return ( nil ) 
 
 //---------------------------------------------------------------------------//
