@@ -19,7 +19,7 @@ CLASS TRemesas FROM TMasDet
    DATA  oBandera
    DATA  cPorDiv
    DATA  dCarCta
-   DATA  cPatExp
+   DATA  cFicheroExportacion
    DATA  dExpedicionIni
    DATA  dExpedicionFin
    DATA  dVencimientoIni
@@ -36,6 +36,8 @@ CLASS TRemesas FROM TMasDet
    DATA  oCodRem
    DATA  oFecExp
    DATA  oExportado
+
+   DATA  oCuaderno
 
    METHOD New( cPath, oWndParent, oMenuItem )
 
@@ -78,11 +80,17 @@ CLASS TRemesas FROM TMasDet
 
    METHOD SaveModelo()
    METHOD InitMod19()
+   
    METHOD InitSepa19( oDlg )
+      METHOD InsertPresentador()
+      METHOD InsertAcreedor()
+      METHOD InsertDeudor()
+
    METHOD InitMod58()
+
    Method nAllRecCli()
 
-   METHOD nTotRemesaVir()  INLINE   0
+   METHOD nTotRemesaVir()     INLINE   0
 
    METHOD Report()
 
@@ -94,7 +102,7 @@ CLASS TRemesas FROM TMasDet
 
    METHOD cBmp()
 
-   METHOD cRetTipRem() INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
+   METHOD cRetTipRem()        INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
 
    METHOD GetNewCount()
 
@@ -107,6 +115,12 @@ CLASS TRemesas FROM TMasDet
    METHOD EndEdtRecMenu()
 
    METHOD ChangeExport()
+
+   METHOD FechaVencimiento()  INLINE ( if( ::lUsarVencimiento, ::oDbfDet:dFecVto, ::dCarCta ) )
+   METHOD CuentaCliente()     INLINE ( ::oDbfDet:cPaisIBAN + ::oDbfDet:cCtrlIBAN + ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli )
+   METHOD CuentaEmpresa()     INLINE ( ::oDbfDet:cEPaisIBAN + ::oDbfDet:cECtrlIBAN + ::oDbfDet:cEntEmp + ::oDbfDet:cSucEmp + ::oDbfDet:cDigEmp + ::oDbfDet:cCtaEmp )
+
+   METHOD GetValidCuentaCliente()
 
 END CLASS
 
@@ -141,7 +155,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::bmpConta           := LoadBitmap( GetResources(), "bConta" )
 
    ::dCarCta            := Date()
-   ::cPatExp            := PadR( "C:\Recibos.Txt", 200 )
+   ::cFicheroExportacion            := PadR( "C:\Recibos.Txt", 200 )
 
    ::bFirstKey          := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
    ::bWhile             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .and. !::oDbfVir:Eof() }
@@ -993,7 +1007,7 @@ METHOD SaveModelo()
          SPINNER
 
       REDEFINE GET oGet ;
-         VAR      ::cPatExp ;
+         VAR      ::cFicheroExportacion ;
          ID       130 ;
          BITMAP   "FOLDER" ;
          ON HELP  ( oGet:cText( cGetFile( "*.txt", "Selección de fichero" ) ) ) ;
@@ -1061,11 +1075,11 @@ METHOD InitMod58( oDlg )
 
    cPreMon        := if( cDivEmp() == "EUR", "5", "0" )
 
-   if file( Rtrim( ::cPatExp ) )
-      fErase( Rtrim( ::cPatExp ) )
+   if file( Rtrim( ::cFicheroExportacion ) )
+      fErase( Rtrim( ::cFicheroExportacion ) )
    end if
 
-   nHandle        := fCreate( Rtrim( ::cPatExp ) )
+   nHandle        := fCreate( Rtrim( ::cFicheroExportacion ) )
 
    if nHandle > 0
 
@@ -1273,7 +1287,7 @@ METHOD InitMod58( oDlg )
 
    if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + ;
                      "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
-      ShellExecute( 0, "open", ::cPatExp, , , 1 )
+      ShellExecute( 0, "open", ::cFicheroExportacion, , , 1 )
    end if
 
    RECOVER USING oError
@@ -2074,15 +2088,15 @@ METHOD InitMod19( oDlg )
 
    cPreMon           := if( cDivEmp() == "EUR", "5", "0" )
 
-   if file( Rtrim( ::cPatExp ) )
-      fErase( Rtrim( ::cPatExp ) )
+   if file( Rtrim( ::cFicheroExportacion ) )
+      fErase( Rtrim( ::cFicheroExportacion ) )
    end if
 
    if ::lAgruparRecibos
       ::oDbfDet:OrdSetFocus( "nNumCli" )
    end if
 
-   nHandle           := fCreate( Rtrim( ::cPatExp ) )
+   nHandle           := fCreate( Rtrim( ::cFicheroExportacion ) )
 
    if nHandle > 0
 
@@ -2354,7 +2368,7 @@ METHOD InitMod19( oDlg )
    end if
 
    if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
-      ShellExecute( 0, "open", ::cPatExp, , , 1 )
+      ShellExecute( 0, "open", ::cFicheroExportacion, , , 1 )
    end if
 
    if ::lAgruparRecibos
@@ -2381,23 +2395,7 @@ METHOD InitSepa19( oDlg )
 
    local oBlock
    local oError
-   local nHandle
-   local cBuffer
-   local cHeader
-   local cBanCli
-   local cCodCli
-   local cPreMon
    local dOldVto
-   local dFecVto
-   local nTotFec     := 0
-   local nImpRec     := 0
-   local nTotImp     := 0
-   local nTotRec     := 0
-   local nTotLin     := 0
-   local nTotPre     := 0
-   local nLinRec     := 0
-   local nRecFec     := 0
-   local oCuaderno   := Cuaderno1914():New()
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2406,32 +2404,53 @@ METHOD InitSepa19( oDlg )
       ::oDbfDet:OrdSetFocus( "nNumCli" )
    end if
 
+   ::oCuaderno         := Cuaderno1914():New()
+   ::oCuaderno:Fichero( ::cFicheroExportacion )
+
    // Presentador--------------------------------------------------------------
 
-   with object ( oCuaderno:GetPresentador() )
-      :Entidad( ::oCtaRem:oDbf:cEntPre )
-      :Oficina( ::oCtaRem:oDbf:cAgcPre )
-      :Referencia( 'REMESA0000123' )            
-      :Nombre( ::oCtaRem:oDbf:cNomPre )
-      :Nif( ::oCtaRem:oDbf:cNifPre )
-   end with
+   ::InsertPresentador()
 
-   with object ( oCuaderno:InsertAcreedor() )
-      :FechaCobro( Date() )
-      :Nombre( "NOMBRE DEL ACREEDOR #1, S.L." )
-      :Direccion( "CALLE DEL ACREEDOR #1, 1234" )
-      :CodigoPostal( "12345" )
-      :Poblacion( "CIUDAD DEL ACREEDOR #1" )
-      :Provincia( "PROVINCIA DEL ACREEDOR #1" )
-      :Pais( "ES" )
-      :Nif( "E77846772" )
-      :CuentaIBAN( "ES7600811234461234567890" )   
-   end with
+   // Recibos------------------------------------------------------------------
 
-   oCuaderno:SerializeASCII()
+   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+      while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem .and. !::oDbfDet:eof()
+
+         if ::oClientes:Seek( ::oDbfDet:cCodCli )
+
+            if !Empty( ::GetValidCuentaCliente() )
+
+               // Acreedores---------------------------------------------------
+
+               if ( dOldVto != ::FechaVencimiento()  )
+                  ::InsertAcreedor()
+               end if
+
+               // Deudores-----------------------------------------------------
+
+               ::InsertDeudor()
+
+            else 
+
+               MsgStop( "No se puede localizar una cuenta bancaria valida, para el cliente " + Rtrim( ::oDbfDet:cCodCli ) + "." )                
+
+            end if
+
+         end if 
+
+         ::oDbfDet:Skip()
+
+         dOldVto     := ::FechaVencimiento()
+
+      end while
+
+   end if
+
+   ::oCuaderno:SerializeASCII()
 
    if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
-      oCuaderno:Visualizar()
+      ::oCuaderno:Visualizar()
    end if
 
    if ::lAgruparRecibos
@@ -2446,11 +2465,79 @@ METHOD InitSepa19( oDlg )
 
    ErrorBlock( oBlock )
 
-   if !Empty( nHandle )
-      fClose( nHandle )
-   end if
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertPresentador()
+
+   // Presentador--------------------------------------------------------------
+
+   with object ( ::oCuaderno:GetPresentador() )
+      :Nombre( ::oCtaRem:oDbf:cNomPre )
+      :Referencia( ::cNumRem() )            
+      :Nif( ::oCtaRem:oDbf:cNifPre )
+      :Entidad( ::oCtaRem:oDbf:cEntPre )
+      :Oficina( ::oCtaRem:oDbf:cAgcPre )
+   end with
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertAcreedor()
+
+   with object ( ::oCuaderno:InsertAcreedor() )
+      :FechaCobro( Date() )
+      :Nombre( ::oCtaRem:oDbf:cNomPre )
+      :Direccion( ::oCtaRem:oDbf:cDirCta )
+      :CodigoPostal( "12345" )
+      :Poblacion( "CIUDAD DEL ACREEDOR #1" )
+      :Provincia( "PROVINCIA DEL ACREEDOR #1" )
+      :Pais( "ES" )
+      :Nif( "E77846772" )
+      :CuentaIBAN( "ES7600811234461234567890" )   
+   end with
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertDeudor()
+
+   with object ( ::oCuaderno:InsertDeudor() )
+      :Referencia( 'RECIBO002401' )
+      :ReferenciaMandato( '2E5F9458BCD27E3C2B5908AF0B91551A' )
+      :Importe( 123.45 )
+      :EntidadBIC( 'CAIXESBBXXX' )
+      :Nombre( 'NOMBRE DEL DEUDOR, S.L.' )
+      :Direccion( "CALLE DEL DEUDOR, 1234" )
+      :CodigoPostal( "12345" )
+      :Poblacion( "CIUDAD DEL DEUDOR" )
+      :Provincia( "PROVINCIA DEL DEUDOR" )
+      :Pais( "ES" )
+      :Nif( "12345678Z" )
+      :CuentaIBAN( "ES0321001234561234567890" )
+      :Concepto( 'CONCEPTO DEL ADEUDO FRA.1234' )
+   end with
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetValidCuentaCliente()
+
+   local cCuentaCliente
+
+   // Banco de cliente---------------------------------------------
+
+   cCuentaCliente       := ::CuentaCliente()
+
+   if Empty( cCuentaCliente ) 
+      cCuentaCliente    := cClientCuenta( ::oDbfDet:cCodCli )
+   end if
+
+RETURN ( cCuentaCliente )
 
 //---------------------------------------------------------------------------//
 
@@ -2467,5 +2554,3 @@ METHOD ChangeExport()
 Return .t.
 
 //---------------------------------------------------------------------------//
-
-

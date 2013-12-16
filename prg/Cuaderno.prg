@@ -37,6 +37,7 @@ CLASS Cuaderno
    DATA hFile 
    DATA cFechaCreacion                    INIT DateToString()
 
+   METHOD Fichero( cValue )               INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD FechaCreacion( dValue )         INLINE ( if( !Empty( dValue ), ::cFechaCreacion    := DateToString( dValue ), ::cFechaCreacion ) )
 
    METHOD Visualizar()                    INLINE ( WinExec( "notepad.exe " + AllTrim( ::cFile ) ) )

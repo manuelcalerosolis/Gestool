@@ -14747,12 +14747,12 @@ Function cClientCuenta( cCliente, dbfBncCli )
    end if
 
    if dbSeekInOrd( cCliente, "cBncDef", dbfBncCli )
-      cCuenta        := ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
+      cCuenta        := ( dbfBncCli )->cPaisIBAN + ( dbfBncCli )->cCtrlIBAN + ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
    end if
 
    if Empty( cCuenta )
       if dbSeekInOrd( cCliente, "cCodCli", dbfBncCli )
-         cCuenta     := ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
+         cCuenta     := ( dbfBncCli )->cPaisIBAN + ( dbfBncCli )->cCtrlIBAN + ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
       end if
    end if
 
