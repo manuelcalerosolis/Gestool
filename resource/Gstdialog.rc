@@ -2395,13 +2395,14 @@ STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 120, 39, 110, 41
+  CONTROL "Empresa franquiciada", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 41, 83, 12
   CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 47, 56, 102, 12
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 70, 306, 11
   CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 47, 84, 87, 12
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 98, 306, 11
   CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 120, 110, 120, 11
   CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 122, 120, 11
-  CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 371, 121, 55, 12
+  CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 121, 55, 12
   CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 140, 124, 12
   CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 170, 155, 12
   CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 119, 185, 306, 11

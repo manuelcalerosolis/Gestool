@@ -226,7 +226,7 @@ Method LoadFromIni()
 
    ::lServer               := ( "Servidor" $ cCodEnvUsr() )
 
-   ::lFranquiciado         := ( "Franquiciado" $ cCodEnvUsr() )
+   ::lFranquiciado         := uFieldEmpresa( "lEmpFrnq" )
 
    ::lPlanificarEnvio      := GetPvProfString( "Envioyrecepcion", "lPlanificarEnvio", cValToChar( ::lPlanificarEnvio ), ::cIniFile )
    ::lPlanificarEnvio      := Upper( ::lPlanificarEnvio ) == ".T."

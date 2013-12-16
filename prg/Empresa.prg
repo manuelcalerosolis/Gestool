@@ -2217,9 +2217,13 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          OF          fldEnvios
 
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
-            ITEMS    { "Cliente", "Servidor", "Franquiciado" } ;
+            ITEMS    { "Cliente", "Servidor" } ;
             ID       100 ;
             OF       fldEnvios
+
+      REDEFINE CHECKBOX aGet[ _LEMPFRNQ ] VAR aTmp[ _LEMPFRNQ ] ;
+            ID       400 ;
+            OF       fldEnvios      
 
       REDEFINE RADIO aTmp[ _NTIPCON ] ;
             ID       110, 111 ;
@@ -6437,6 +6441,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lApeNomb",   "L",  1, 0, "Lógico recibir apellidos, nombre desde la web",         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "Lógico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "Opción impresión al cobrar en tpv táctil",              "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"lEmpFrnq",   "L",  1, 0, "Lógico empresa franquiciada",                           "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )
 
