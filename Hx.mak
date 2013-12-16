@@ -1,31 +1,32 @@
-HB 				= 		\xHarbour
+HB 					= 	\xHarbour
 
-HBINCLUDE 		= 		\xHarbour\Include
-FWINCLUDE 		= 		\Fwh1204\Include
-GTINCLUDE 		= 		.\Include
+HBINCLUDE 			= 	\xHarbour\Include
+FWINCLUDE 			= 	\Fwh1204\Include
+GTINCLUDE 			= 	.\Include
 
-HBLIB 			= 		\xHarbour\Lib
-FWLIB 			= 		\Fwh102\Lib
+HBLIB 				= 	\xHarbour\Lib
+FWLIB 				= 	\Fwh102\Lib
 
-RESOURCE 		= 		.\Resource
+RESOURCE 			= 	.\Resource
 
-BORLAND 			= 		\Bcc55
-BORLANDLIB 		= 		\Bcc55\Lib\Psdk
+BORLAND 				= 	\Bcc55
+BORLANDLIB 			= 	\Bcc55\Lib\Psdk
 
-IMG2PDFLIB 		= 		\Img2Pdf
+IMG2PDFLIB 			= 	\Img2Pdf
 
-OBJ 				= 		Obj
-SOURCEPRG 		= 		Prg
-SOURCEC 			=		C
-PPO 				= 		Ppo
+OBJ 					= 	Obj
+SOURCEPRG 			= 	Prg
 
-EXE 				= 		Bin\Gestool.exe
+SOURCEC 				=	C
+PPO 					= 	Ppo
 
-.path.prg      = 		.\$(SOURCEPRG)
-.path.c       	= 		.\$(SOURCEC)
-.path.obj      = 		.\$(OBJ)
+EXE 					= 	Bin\Gestool.exe
 
-PRG            =       	\
+.path.prg      	=	.\$(SOURCEPRG)
+.path.c       		=	.\$(SOURCEC)
+.path.obj      	=	.\$(OBJ)
+
+PRG            	=    	\
 Factu.prg               \
 Font.prg                \
 DialogHb.prg            \
@@ -399,6 +400,7 @@ TpvSalon.prg            \
 TScripts.prg            \
 OutLook2010.prg         \
 TTreevc3.prg            \
+Cuaderno.prg 				\
 
 C               =       \
 Metafi32.c              \
@@ -810,6 +812,7 @@ TpvMesa.obj             \
 TpvSalon.obj            \
 TScripts.obj            \
 OutLook2010.obj         \
+Cuaderno.obj 				\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1193,6 +1196,7 @@ $(OBJ)\TpvPunto.obj             +
 $(OBJ)\TpvMesa.obj              +
 $(OBJ)\TpvSalon.obj             +
 $(OBJ)\TScripts.obj             +
+$(OBJ)\Cuaderno.obj 		  		  +
 $(OBJ)\MsTable.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +

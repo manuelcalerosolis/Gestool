@@ -7969,14 +7969,20 @@ Method PrepareTemporal( oFr ) CLASS TClienteLabelGenerator
    local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
    local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
    local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
-   local nItemsInColumn := int( nPaperHeight / nHeight )
+   local nItemsInColumn := 0
 
-   nBlancos             := ( ::nColumnaInicio - 1 ) * nItemsInColumn
-   nBlancos             += ( ::nFilaInicio - 1 )
+   if !Empty( nPaperHeight ) .and. !Empty( nHeight ) .and. !Empty( nColumns )
 
-   for n := 1 to nBlancos
-      dbPass( dbBlankRec( dbfClient ), tmpClient, .t. )
-   next
+      nItemsInColumn    := int( nPaperHeight / nHeight )
+
+      nBlancos          := ( ::nColumnaInicio - 1 ) * nItemsInColumn
+      nBlancos          += ( ::nFilaInicio - 1 )
+
+      for n := 1 to nBlancos
+         dbPass( dbBlankRec( dbfClient ), tmpClient, .t. )
+      next
+
+   end if 
 
    ( tmpClient )->( dbGoTop() )
 
