@@ -39,6 +39,8 @@ CLASS Cuaderno
 
    METHOD FechaCreacion( dValue )         INLINE ( if( !Empty( dValue ), ::cFechaCreacion    := DateToString( dValue ), ::cFechaCreacion ) )
 
+   METHOD Visualizar()                    INLINE ( WinExec( "notepad.exe " + AllTrim( ::cFile ) ) )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//

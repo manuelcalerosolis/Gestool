@@ -78,6 +78,7 @@ CLASS TRemesas FROM TMasDet
 
    METHOD SaveModelo()
    METHOD InitMod19()
+   METHOD InitSepa19( oDlg )
    METHOD InitMod58()
    Method nAllRecCli()
 
@@ -160,8 +161,8 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "bmpConta"           LEN  1  DEC 0                             VAL {|| ::oDbf:lConta }  BITMAPS "Sel16", "Nil16"  COMMENT { "Contabilizado", "bmpConta16", 3 } COLSIZE 20   OF ::oDbf
       FIELD NAME "lExport"             TYPE "L" LEN  1  DEC 0                             DEFAULT  .f.                                                                                 HIDE            OF ::oDbf
       FIELD CALCULATE NAME "bmpExport"          LEN  1  DEC 0                             VAL {|| ::oDbf:lExport } BITMAPS "Sel16", "Nil16"  COMMENT { "Exportado", "bmpExptar16", 3 }     COLSIZE 20  OF ::oDbf
-      FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"                                                            COMMENT "NÃºmero"              ALIGN RIGHT     COLSIZE 80  OF ::oDbf
-      FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                               COMMENT "DelegaciÃ³n"                          COLSIZE 20  OF ::oDbf
+      FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"                                                            COMMENT "Número"              ALIGN RIGHT     COLSIZE 80  OF ::oDbf
+      FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                               COMMENT "Delegación"                          COLSIZE 20  OF ::oDbf
       FIELD NAME "cCodRem"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Cuenta" COLSIZE  80                              OF ::oDbf
       FIELD CALCULATE NAME "cNomRem"            LEN 60  DEC 0                             VAL      ::cRetCtaRem()                            COMMENT "Nombre" COLSIZE 200                              OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"  COLSIZE  80                              OF ::oDbf
@@ -174,7 +175,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "dConta"              TYPE "D" LEN  8  DEC 0                                                                                COMMENT "Contab."                                         OF ::oDbf
       FIELD NAME "dExport"             TYPE "D" LEN  8  DEC 0                             DEFAULT CtoD( "" )                                                                           HIDE            OF ::oDbf
 
-      INDEX TO "RemCliT.Cdx" TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "NÃºmero" NODELETED OF ::oDbf
+      INDEX TO "RemCliT.Cdx" TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "Número" NODELETED OF ::oDbf
       INDEX TO "RemCliT.Cdx" TAG "cCodRem" ON "cCodRem"                    COMMENT "Cuenta" NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
@@ -198,67 +199,72 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia )
 
-      FIELD NAME "cSerie"    TYPE "C" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "nNumFac"   TYPE "N" LEN   9 DEC 0 OF oDbf
-      FIELD NAME "cSufFac"   TYPE "C" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "nNumRec"   TYPE "N" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "cTipRec"   TYPE "C" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "cCodPgo"   TYPE "C" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "cCodCaj"   TYPE "C" LEN   3 DEC 0 OF oDbf
-      FIELD NAME "cTurRec"   TYPE "C" LEN   6 DEC 0 OF oDbf
-      FIELD NAME "cCodCli"   TYPE "C" LEN  12 DEC 0 OF oDbf
-      FIELD NAME "cNomCli"   TYPE "C" LEN  80 DEC 0 OF oDbf
-      FIELD NAME "dEntrada"  TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "nImporte"  TYPE "N" LEN  16 DEC 6 OF oDbf
-      FIELD NAME "cDesCriP"  TYPE "C" LEN 100 DEC 0 OF oDbf
-      FIELD NAME "dPreCob"   TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "cPgdoPor"  TYPE "C" LEN  50 DEC 0 OF oDbf
-      FIELD NAME "cDocPgo"   TYPE "C" LEN  50 DEC 0 OF oDbf
-      FIELD NAME "lCobrado"  TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "cDivPgo"   TYPE "C" LEN   3 DEC 0 OF oDbf
-      FIELD NAME "nVdvPgo"   TYPE "N" LEN  10 DEC 6 OF oDbf
-      FIELD NAME "lConPgo"   TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "cCtaRec"   TYPE "C" LEN  12 DEC 0 OF oDbf
-      FIELD NAME "nImpEur"   TYPE "N" LEN  16 DEC 6 OF oDbf
-      FIELD NAME "lImpEur"   TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "nNumRem"   TYPE "N" LEN   9 DEC 0 OF oDbf
-      FIELD NAME "cSufRem"   TYPE "C" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "cCtaRem"   TYPE "C" LEN   3 DEC 0 OF oDbf
-      FIELD NAME "lRecImp"   TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "lRecDto"   TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "dFecDto"   TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "dFecVto"   TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "cCodAge"   TYPE "C" LEN   3 DEC 0 OF oDbf
-      FIELD NAME "nNumCob"   TYPE "N" LEN   9 DEC 0 OF oDbf
-      FIELD NAME "cSufCob"   TYPE "C" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "nImpCob"   TYPE "N" LEN  16 DEC 6 OF oDbf
-      FIELD NAME "nImpGas"   TYPE "N" LEN  16 DEC 6 OF oDbf
-      FIELD NAME "cCtaGas"   TYPE "C" LEN  12 DEC 0 OF oDbf
-      FIELD NAME "lEsperaDoc" TYPE "L" LEN  1 DEC 0 OF oDbf
-      FIELD NAME "lCloPgo"   TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "dFecImp"   TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "cHorImp"   TYPE "C" LEN   5 DEC 0 OF oDbf
-      FIELD NAME "lNotArqueo" TYPE "L" LEN  1 DEC 0 OF oDbf
-      FIELD NAME "cCodBnc"   TYPE "C" LEN   4 DEC 0 OF oDbf
-      FIELD NAME "dFecCre"   TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "cHorCre"   TYPE "C" LEN   5 DEC 0 OF oDbf
-      FIELD NAME "cCodUsr"   TYPE "C" LEN   3 DEC 0 OF oDbf
-      FIELD NAME "lDevuelto" TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "dFecDev"   TYPE "D" LEN   8 DEC 0 OF oDbf
-      FIELD NAME "cMotDev"   TYPE "C" LEN 250 DEC 0 OF oDbf
-      FIELD NAME "cRecDev"   TYPE "C" LEN  14 DEC 0 OF oDbf
-      FIELD NAME "lSndDoc"   TYPE "L" LEN   1 DEC 0 OF oDbf
-      FIELD NAME "cBncEmp"   TYPE "C" LEN  50 DEC 0 OF oDbf
-      FIELD NAME "cBncCli"   TYPE "C" LEN  50 DEC 0 OF oDbf
-      FIELD NAME "cEntEmp"   TYPE "C" LEN   4 DEC 0 OF oDbf
-      FIELD NAME "cSucEmp"   TYPE "C" LEN   4 DEC 0 OF oDbf
-      FIELD NAME "cDigEmp"   TYPE "C" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "cCtaEmp"   TYPE "C" LEN  10 DEC 0 OF oDbf
-      FIELD NAME "cEntCli"   TYPE "C" LEN   4 DEC 0 OF oDbf
-      FIELD NAME "cSucCli"   TYPE "c" LEN   4 DEC 0 OF oDbf
-      FIELD NAME "cDigCli"   TYPE "C" LEN   2 DEC 0 OF oDbf
-      FIELD NAME "cCtaCli"   TYPE "C" LEN  10 DEC 0 OF oDbf
-      FIELD NAME "lRemesa"   TYPE "L" LEN   1 DEC 0 OF oDbf
+      FIELD NAME "cSerie"     TYPE "C" LEN   1 DEC 0 OF oDbf           
+      FIELD NAME "nNumFac"    TYPE "N" LEN   9 DEC 0 OF oDbf     
+      FIELD NAME "cSufFac"    TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "nNumRec"    TYPE "N" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cTipRec"    TYPE "C" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cCodPgo"    TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cCodCaj"    TYPE "C" LEN   3 DEC 0 OF oDbf     
+      FIELD NAME "cTurRec"    TYPE "C" LEN   6 DEC 0 OF oDbf     
+      FIELD NAME "cCodCli"    TYPE "C" LEN  12 DEC 0 OF oDbf     
+      FIELD NAME "cNomCli"    TYPE "C" LEN  80 DEC 0 OF oDbf     
+      FIELD NAME "dEntrada"   TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "nImporte"   TYPE "N" LEN  16 DEC 6 OF oDbf     
+      FIELD NAME "cDesCriP"   TYPE "C" LEN 100 DEC 0 OF oDbf     
+      FIELD NAME "dPreCob"    TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "cPgdoPor"   TYPE "C" LEN  50 DEC 0 OF oDbf     
+      FIELD NAME "cDocPgo"    TYPE "C" LEN  50 DEC 0 OF oDbf     
+      FIELD NAME "lCobrado"   TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cDivPgo"    TYPE "C" LEN   3 DEC 0 OF oDbf     
+      FIELD NAME "nVdvPgo"    TYPE "N" LEN  10 DEC 6 OF oDbf     
+      FIELD NAME "lConPgo"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cCtaRec"    TYPE "C" LEN  12 DEC 0 OF oDbf     
+      FIELD NAME "nImpEur"    TYPE "N" LEN  16 DEC 6 OF oDbf     
+      FIELD NAME "lImpEur"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "nNumRem"    TYPE "N" LEN   9 DEC 0 OF oDbf     
+      FIELD NAME "cSufRem"    TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cCtaRem"    TYPE "C" LEN   3 DEC 0 OF oDbf     
+      FIELD NAME "lRecImp"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "lRecDto"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "dFecDto"    TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "dFecVto"    TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "cCodAge"    TYPE "C" LEN   3 DEC 0 OF oDbf     
+      FIELD NAME "nNumCob"    TYPE "N" LEN   9 DEC 0 OF oDbf     
+      FIELD NAME "cSufCob"    TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "nImpCob"    TYPE "N" LEN  16 DEC 6 OF oDbf     
+      FIELD NAME "nImpGas"    TYPE "N" LEN  16 DEC 6 OF oDbf     
+      FIELD NAME "cCtaGas"    TYPE "C" LEN  12 DEC 0 OF oDbf     
+      FIELD NAME "lEsperaDoc" TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "lCloPgo"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "dFecImp"    TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "cHorImp"    TYPE "C" LEN   5 DEC 0 OF oDbf     
+      FIELD NAME "lNotArqueo" TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cCodBnc"    TYPE "C" LEN   4 DEC 0 OF oDbf     
+      FIELD NAME "dFecCre"    TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "cHorCre"    TYPE "C" LEN   5 DEC 0 OF oDbf     
+      FIELD NAME "cCodUsr"    TYPE "C" LEN   3 DEC 0 OF oDbf     
+      FIELD NAME "lDevuelto"  TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "dFecDev"    TYPE "D" LEN   8 DEC 0 OF oDbf     
+      FIELD NAME "cMotDev"    TYPE "C" LEN 250 DEC 0 OF oDbf     
+      FIELD NAME "cRecDev"    TYPE "C" LEN  14 DEC 0 OF oDbf     
+      FIELD NAME "lSndDoc"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cBncEmp"    TYPE "C" LEN  50 DEC 0 OF oDbf     
+      FIELD NAME "cBncCli"    TYPE "C" LEN  50 DEC 0 OF oDbf     
+      FIELD NAME "cEPaisIBAN" TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cECtrlIBAN" TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cEntEmp"    TYPE "C" LEN   4 DEC 0 OF oDbf     
+      FIELD NAME "cSucEmp"    TYPE "C" LEN   4 DEC 0 OF oDbf     
+      FIELD NAME "cDigEmp"    TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cCtaEmp"    TYPE "C" LEN  10 DEC 0 OF oDbf     
+      FIELD NAME "cPaisIBAN"  TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cCtrlIBAN"  TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cEntCli"    TYPE "C" LEN   4 DEC 0 OF oDbf     
+      FIELD NAME "cSucCli"    TYPE "c" LEN   4 DEC 0 OF oDbf     
+      FIELD NAME "cDigCli"    TYPE "C" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cCtaCli"    TYPE "C" LEN  10 DEC 0 OF oDbf     
+      FIELD NAME "lRemesa"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cNumMtr"    TYPE "C" LEN  15 DEC 0 OF oDbf
 
       INDEX TO ( cFileName ) TAG "nNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodCli"   ON "cCodCli"                                                               NODELETED OF oDbf
@@ -280,6 +286,7 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
       INDEX TO ( cFileName ) TAG "rNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED FOR "!Empty( cTipRec )" OF oDbf
       INDEX TO ( cFileName ) TAG "cRecDec"   ON "cRecDev"                                                               NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "lCtaBnc"   ON "cEntEmp + cSucEmp + cDigEmp + cCtaEmp"                                 NODELETED FOR "lCobrado" OF oDbf
+      INDEX TO ( cFileName ) TAG "cNumMtr"   ON "cNumMtr"                                                               NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -319,7 +326,7 @@ METHOD Activate()
          NOBORDER ;
          ACTION   ( ::oWndBrw:RecAdd() );
          ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)Ã±adir";
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP ;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -379,7 +386,7 @@ METHOD Activate()
          TOOLTIP  "Rotor" ;
 
          DEFINE BTNSHELL RESOURCE "ADDRESS_BOOK2_" OF ::oWndBrw ;
-            ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacÃ­a" ) ) );
+            ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) );
             TOOLTIP  "Modificar cuenta" ;
             FROM     oRotor ;
 
@@ -697,13 +704,13 @@ METHOD Resource( nMode )
       ::oBrwDet:SetoDbf( ::oDbfVir )
 
       with object ( ::oBrwDet:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :bEditValue       := {|| ::oDbfVir:cSerie + "/" + Alltrim( Str( ::oDbfVir:nNumFac ) ) + "-" + AllTrim( Str( ::oDbfVir:nNumRec ) ) }
          :nWidth           := 90
       end with
 
       with object ( ::oBrwDet:AddCol() )
-         :cHeader          := "DelegciÃ³n"
+         :cHeader          := "Delegción"
          :bEditValue       := {|| ::oDbfVir:cSufFac }
          :nWidth           := 40
       end with
@@ -727,7 +734,7 @@ METHOD Resource( nMode )
       end with
 
       with object ( ::oBrwDet:AddCol() )
-         :cHeader          := "DescripciÃ³n"
+         :cHeader          := "Descripción"
          :bStrData         := {|| ::oDbfVir:cDescrip }
          :nWidth           := 220
       end with
@@ -850,7 +857,7 @@ METHOD lSave( nMode )
    if nMode == APPD_MODE
 
       if Empty( ::oDbf:cCodRem )
-         MsgStop( "El nÃºmero de cuenta no puede estar vacÃ­o." )
+         MsgStop( "El número de cuenta no puede estar vacío." )
          ::oCodRem:SetFocus()
          lReturn  := .f.
       end if
@@ -959,11 +966,11 @@ METHOD SaveModelo()
    end if
 
    if ::oDbf:nTipRem == 2
-      cTitle      := "Remesa de recibos a soporte magnÃ©ticos segÃºn norma 58"
+      cTitle      := "Remesa de recibos a soporte magnéticos según norma 58"
       bAction     := {|| ::InitMod58( oDlg ) }
    else
-      cTitle      := "Remesa de recibos a soporte magnÃ©ticos segÃºn norma 19"
-      bAction     := {|| ::InitMod19( oDlg ) }
+      cTitle      := "Remesa de recibos a soporte magnéticos según norma 19"
+      bAction     := {|| ::InitSepa19( oDlg ) }
    end if
 
    DEFINE DIALOG oDlg RESOURCE "Modelo19" TITLE cTitle
@@ -989,7 +996,7 @@ METHOD SaveModelo()
          VAR      ::cPatExp ;
          ID       130 ;
          BITMAP   "FOLDER" ;
-         ON HELP  ( oGet:cText( cGetFile( "*.txt", "SelecciÃ³n de fichero" ) ) ) ;
+         ON HELP  ( oGet:cText( cGetFile( "*.txt", "Selección de fichero" ) ) ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::lAgruparRecibos ;
@@ -1153,9 +1160,9 @@ METHOD InitMod58( oDlg )
                   cBuffer     += Left( ::oClientes:Titulo, 40 )   // Nombre del cliente
                   cBuffer     += Padr( cBanCli, 20 )              // Banco del cliente
                   cBuffer     += cToCeros( nImpRec, ::cPorDiv )   // Importe del recibo
-                  cBuffer     += Space( 6 )                       // CÃ³digo para devoluciones
+                  cBuffer     += Space( 6 )                       // Código para devoluciones
                   cBuffer     += ::oDbfDet:cSerie + cToCeros( ::oDbfDet:nNumFac, "999999999", 9 ) // Numero del recibo
-                  cBuffer     += Padr( "Recibo NÂº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  Alltrim( ::oDbfDet:cSufFac ) + "-" + Alltrim( Str( ::oDbfDet:nNumRec ) ) + " de " + Dtoc( ::oDbfDet:dEntrada ), 40 )
+                  cBuffer     += Padr( "Recibo Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  Alltrim( ::oDbfDet:cSufFac ) + "-" + Alltrim( Str( ::oDbfDet:nNumRec ) ) + " de " + Dtoc( ::oDbfDet:dEntrada ), 40 )
                   cBuffer     += Left( Dtoc( ::oDbfDet:dFecVto ), 2 ) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
                   cBuffer     := Padr( cBuffer, 162 )       // Para q llege a los 162 caracteres
                   cBuffer     += CRLF
@@ -1174,7 +1181,7 @@ METHOD InitMod58( oDlg )
                   cBuffer     += cHeader                    // Cabecera
                   cBuffer     += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )  // Codigo del cliente
                   cBuffer     += Space( 6 )
-                  cBuffer     += "Factura NÂº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
+                  cBuffer     += "Factura Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
                   cBuffer     += Space( 2 )                 // Para q llege a los 162 caracteres
                   cBuffer     := Padr( cBuffer, 162 )       // Para q llege a los 162 caracteres
                   cBuffer     += CRLF
@@ -1197,7 +1204,7 @@ METHOD InitMod58( oDlg )
                   cBuffer     += Left( ::oClientes:Domicilio, 40 )         // Domicilio del cliente
                   cBuffer     += ::oClientes:CodPostal                     // Codigo postal
                   cBuffer     += Space( 1 )
-                  cBuffer     += ::oClientes:Poblacion                     // PoblaciÃ³n
+                  cBuffer     += ::oClientes:Poblacion                     // Población
                   cBuffer     := Padr( cBuffer, 162 )                      // Para q llege a los 162 caracteres
                   cBuffer     += CRLF
 
@@ -1252,7 +1259,7 @@ METHOD InitMod58( oDlg )
       cBuffer  += "0"                              // Numero de linea
       cBuffer  += cHeader                          // Cabecera
       cBuffer  += Space( 52 )
-      cBuffer  += "0001"                           // ModificaciÃ³n para BCH internet
+      cBuffer  += "0001"                           // Modificación para BCH internet
       cBuffer  += Space( 16 )
       cBuffer  += cToCeros( nTotImp, ::cPorDiv )   // Importe total del Recibos
       cBuffer  += Space( 6 )
@@ -1264,8 +1271,8 @@ METHOD InitMod58( oDlg )
 
    end if
 
-   if ApoloMsgNoYes( "Proceso de exportaciÃ³n realizado con Ã©xito" + CRLF + ;
-                     "Â¿ Desea abrir el fichero resultante ?", "Elija una opciÃ³n." )
+   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + ;
+                     "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
       ShellExecute( 0, "open", ::cPatExp, , , 1 )
    end if
 
@@ -1442,7 +1449,7 @@ RETURN ( Self )
 
 METHOD Del()
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("Â¿ Desea eliminar el registro en curso ?", "Confirme supresiÃ³n" )
+   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
 
       ::GetFirstKey()
 
@@ -1586,7 +1593,7 @@ METHOD Conta( lSimula )
 	*/
 
    if ::oDbf:lConta
-      if !ApoloMsgNoYes(  "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "Â¿ Desea contabilizarla de nuevo ?" )
+      if !ApoloMsgNoYes(  "Remesa : " + ::cNumRem() + " contabilizada." + CRLF + "¿ Desea contabilizarla de nuevo ?" )
          return .f.
       end if
    end if
@@ -1602,7 +1609,7 @@ METHOD Conta( lSimula )
 	*/
 
    if empty( cCodEmp ) .AND. !::lChkSelect
-      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierÃ³n empresas asociadas.", 0 )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierón empresas asociadas.", 0 )
       lErrorFound          := .t.
    end if
 
@@ -1676,7 +1683,7 @@ METHOD Conta( lSimula )
    */
 
    if Empty( ::oDbf:dConta )
-      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " sin fecha de contabilizaciÃ³n", 0 )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " sin fecha de contabilización", 0 )
       lErrorFound          := .t.
    end if
 
@@ -1685,7 +1692,7 @@ METHOD Conta( lSimula )
    end if
 
 	/*
-   RealizaciÃ³n de Asientos
+   Realización de Asientos
 	--------------------------------------------------------------------------
    */
 
@@ -2000,7 +2007,7 @@ METHOD EdtRecMenu( oDlg )
             MENUITEM    "&1. Modificar cuenta";
                MESSAGE  "Modificar cuenta" ;
                RESOURCE "Address_book2_16" ;
-               ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacÃ­a" ) ) )
+               ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) )
 
             MENUITEM    "&2. Visualizar recibo";
                MESSAGE  "Visualiza el recibo seleccionado" ;
@@ -2219,7 +2226,7 @@ METHOD InitMod19( oDlg )
                   cBuffer        += cHeader                    // Cabecera
                   cBuffer        += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )  // Codigo del cliente
                   cBuffer        += Space( 6 )
-                  cBuffer        += "Factura NÂº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
+                  cBuffer        += "Factura Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
                   cBuffer        += Space( 2 )                 // Para q llege a los 162 caracteres
                   cBuffer        := Padr( cBuffer, 162 )       // Para q llege a los 162 caracteres
                   cBuffer        += CRLF
@@ -2244,7 +2251,7 @@ METHOD InitMod19( oDlg )
                   cBuffer        += Left( ::oClientes:Domicilio, 40 )// Domicilio del cliente
                   cBuffer        += ::oClientes:CodPostal            // Codigo postal
                   cBuffer        += Space( 1 )
-                  cBuffer        += ::oClientes:Poblacion            // PoblaciÃ³n
+                  cBuffer        += ::oClientes:Poblacion            // Población
                   cBuffer        := Padr( cBuffer, 162 )             // Para q llege a los 162 caracteres
                   cBuffer        += CRLF
 
@@ -2333,7 +2340,7 @@ METHOD InitMod19( oDlg )
       cBuffer  += "0"                              // Numero de linea
       cBuffer  += cHeader                          // Cabecera
       cBuffer  += Space( 52 )
-      cBuffer  += cToCeros( nTotPre, "9999", 4 )   // ModificaciÃ³n para BCH internet
+      cBuffer  += cToCeros( nTotPre, "9999", 4 )   // Modificación para BCH internet
       cBuffer  += Space( 16 )
       cBuffer  += cToCeros( nTotImp, ::cPorDiv )   // Importe total del Recibos
       cBuffer  += Space( 6 )
@@ -2346,8 +2353,85 @@ METHOD InitMod19( oDlg )
 
    end if
 
-   if ApoloMsgNoYes( "Proceso de exportaciÃ³n realizado con Ã©xito" + CRLF + "Â¿ Desea abrir el fichero resultante ?", "Elija una opciÃ³n." )
+   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
       ShellExecute( 0, "open", ::cPatExp, , , 1 )
+   end if
+
+   if ::lAgruparRecibos
+      ::oDbfDet:OrdSetFocus( "nNumRem" )
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !Empty( nHandle )
+      fClose( nHandle )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD InitSepa19( oDlg )
+
+   local oBlock
+   local oError
+   local nHandle
+   local cBuffer
+   local cHeader
+   local cBanCli
+   local cCodCli
+   local cPreMon
+   local dOldVto
+   local dFecVto
+   local nTotFec     := 0
+   local nImpRec     := 0
+   local nTotImp     := 0
+   local nTotRec     := 0
+   local nTotLin     := 0
+   local nTotPre     := 0
+   local nLinRec     := 0
+   local nRecFec     := 0
+   local oCuaderno   := Cuaderno1914():New()
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ::lAgruparRecibos
+      ::oDbfDet:OrdSetFocus( "nNumCli" )
+   end if
+
+   // Presentador--------------------------------------------------------------
+
+   with object ( oCuaderno:GetPresentador() )
+      :Entidad( ::oCtaRem:oDbf:cEntPre )
+      :Oficina( ::oCtaRem:oDbf:cAgcPre )
+      :Referencia( 'REMESA0000123' )            
+      :Nombre( ::oCtaRem:oDbf:cNomPre )
+      :Nif( ::oCtaRem:oDbf:cNifPre )
+   end with
+
+   with object ( oCuaderno:InsertAcreedor() )
+      :FechaCobro( Date() )
+      :Nombre( "NOMBRE DEL ACREEDOR #1, S.L." )
+      :Direccion( "CALLE DEL ACREEDOR #1, 1234" )
+      :CodigoPostal( "12345" )
+      :Poblacion( "CIUDAD DEL ACREEDOR #1" )
+      :Provincia( "PROVINCIA DEL ACREEDOR #1" )
+      :Pais( "ES" )
+      :Nif( "E77846772" )
+      :CuentaIBAN( "ES7600811234461234567890" )   
+   end with
+
+   oCuaderno:SerializeASCII()
+
+   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+      oCuaderno:Visualizar()
    end if
 
    if ::lAgruparRecibos
