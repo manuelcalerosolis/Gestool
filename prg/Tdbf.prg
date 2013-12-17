@@ -2143,13 +2143,31 @@ Return ( aDbf )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateFromHash( hDefinition )
+METHOD CreateFromHash( hDefinition, cDriver, cPath )
 
     local oDbf
+    local hField
 
     if Empty( hDefinition )
         Return ( nil )
     end if 
+
+    DEFAULT cDriver     := cDriver()
+    DEFAULT cPath       := cPatEmp()
+
+/*
+    oDbf        := DbfServer( FullDatabase( hDefinition ), hDefinition["Table"] )
+    if !Empty( oDbf )
+        oDbf:New( FullDatabase( hDefinition ), hDefinition[ "Table" ], ( cDriver ), hDefinition[ "Comment" ], ( cPath ) )
+*/
+
+        msgAlert( valtoprg( hDefinition[ "Fields" ] ) )
+
+        for each hField in hDefinition[ "Fields" ]
+            msgStop( valtoprg( hField ) )
+            // oDbf:AddField( hField[  ], "C", 01, 0,,,,, "Serie", .F.,, .F., {} )            
+        next
+
 /*
 
    ::oDbf := DbfServer( "ProCab.Dbf", "ProCab" ):New( "ProCab.Dbf", "ProCab", ( cDriver ), "Partes de producción", ( cPath ) )
@@ -2187,5 +2205,11 @@ static function FieldToData( oDb )
     ( oDb:nArea )->( AEval( oDb:aTField, { | oFld, i | GenDataField( oDb, i ) } ) )
 
 return ( oDb )
+
+//---------------------------------------------------------------------------//
+
+static function FullDatabase( hDefinition )
+
+return ( hDefinition[ "Table" ] + "." + hDefinition[ "ExtensionTable" ] )    
 
 //---------------------------------------------------------------------------//

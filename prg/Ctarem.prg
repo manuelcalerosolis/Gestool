@@ -138,8 +138,8 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE oDbf FILE "CTAREM.DBF" CLASS "CTAREM" ALIAS "CTAREM" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cuentas de remesas"
 
       FIELD NAME "cCodCta"    TYPE "C" LEN  3  DEC 0 PICTURE "@!"                         COMMENT "Código"           COLSIZE 40        OF oDbf
-      FIELD NAME "cNomCta"    TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT "Nombre"           COLSIZE 140       OF oDbf
-      FIELD NAME "cDirCta"    TYPE "C" LEN 80  DEC 0                                      COMMENT "Domicilio"        COLSIZE 200       OF oDbf
+      FIELD NAME "cNomCta"    TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT "Nombre"           COLSIZE 240       OF oDbf
+      FIELD NAME "cDirCta"    TYPE "C" LEN 80  DEC 0                                      COMMENT "Domicilio"        COLSIZE 340       OF oDbf
       
       FIELD NAME "cPaisIBAN"  TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT "País IBAN"                    HIDE  OF oDbf
       FIELD NAME "cCtrlIBAN"  TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT "Dígito de control IBAN"       HIDE  OF oDbf

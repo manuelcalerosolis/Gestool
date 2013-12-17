@@ -4859,6 +4859,117 @@ Return ( aBasRecCli )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION hRecibosClientes()
+
+   local hDefinition    := Hash()
+   
+   hSetAACompatibility( hDefinition, .f. )
+
+   hDefinition          := {;
+      "Table"           => "FacCliP",;
+      "ExtensionTable"  => "Dbf",;
+      "Path"            => cPatEmp(),;
+      "Comment"         => "Recibos de clientes",;
+      "Fields" => {;
+         "cSerie"       => { "Type" => "C", "Len" =>  1, "Decimals" => 0, "Comment" => "Serie de factura" },;                               
+         "nNumFac"      => { "Type" => "N", "Len" =>  9, "Decimals" => 0, "Comment" => "Número de factura" },;                              
+         "cSufFac"      => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Sufijo de factura" },;                              
+         "nNumRec"      => { "Type" => "N", "Len" =>  2, "Decimals" => 0, "Comment" => "Número del recibo" },;                              
+         "cTipRec"      => { "Type" => "C", "Len" =>  1, "Decimals" => 0, "Comment" => "Tipo de recibo" },;                                 
+         "cCodPgo"      => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Código de forma de pago" },;                        
+         "cCodCaj"      => { "Type" => "C", "Len" =>  3, "Decimals" => 0, "Comment" => "Código de caja" },;                                 
+         "cTurRec"      => { "Type" => "C", "Len" =>  6, "Decimals" => 0, "Comment" => "Sesión del recibo" },;                              
+         "cCodCli"      => { "Type" => "C", "Len" => 12, "Decimals" => 0, "Comment" => "Código de cliente" },;                              
+         "cNomCli"      => { "Type" => "C", "Len" => 80, "Decimals" => 0, "Comment" => "Nombre de cliente" },;                              
+         "dEntrada"     => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Fecha de cobro" },;                                
+         "nImporte"     => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Importe",                     "Picture" => "cPorDivRec" },;         
+         "cDesCrip"     => { "Type" => "C", "Len" =>100, "Decimals" => 0, "Comment" => "Concepto del pago"},;                              
+         "dPreCob"      => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Fecha de previsión de cobro"},;                    
+         "cPgdoPor"     => { "Type" => "C", "Len" => 50, "Decimals" => 0, "Comment" => "Pagado por"},;                                     
+         "cDocPgo"      => { "Type" => "C", "Len" => 50, "Decimals" => 0, "Comment" => "Documento de pago"},;                              
+         "lCobrado"     => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico de cobrado"},;                              
+         "cDivPgo"      => { "Type" => "C", "Len" =>  3, "Decimals" => 0, "Comment" => "Código de la divisa"},;                            
+         "nVdvPgo"      => { "Type" => "N", "Len" => 10, "Decimals" => 6, "Comment" => "Cambio de la divisa"},;                            
+         "lConPgo"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico de contabilizado"},;                        
+         "cCtaRec"      => { "Type" => "C", "Len" => 12, "Decimals" => 0, "Comment" => "Cuenta de contabilidad"},;                         
+         "nImpEur"      => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Importe del pago en Euros",   "Picture" => "cPorDivRec"},;         
+         "lImpEur"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico cobrar en Euros"},;                         
+         "nNumRem"      => { "Type" => "N", "Len" =>  9, "Decimals" => 0, "Comment" => "Número de la remesas"},;                           
+         "cSufRem"      => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Sufijo de remesas"},;                              
+         "cCtaRem"      => { "Type" => "C", "Len" =>  3, "Decimals" => 0, "Comment" => "Cuenta de remesa"},;                               
+         "lRecImp"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico ya impreso"},;                              
+         "lRecDto"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico descontado"},;                              
+         "dFecDto"      => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Fecha del descuento"},;                            
+         "dFecVto"      => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Fecha de vencimiento"},;                           
+         "cCodAge"      => { "Type" => "C", "Len" =>  3, "Decimals" => 0, "Comment" => "Código del agente"},;                              
+         "nNumCob"      => { "Type" => "N", "Len" =>  9, "Decimals" => 0, "Comment" => "Número de cobro"},;                                
+         "cSufCob"      => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Sufijo del cobro"},;                               
+         "nImpCob"      => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Importe del cobro",           "Picture" => "cPorDivRec"},;         
+         "nImpGas"      => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Importe de gastos",           "Picture" => "cPorDivRec"},;         
+         "cCtaGas"      => { "Type" => "C", "Len" => 12, "Decimals" => 0, "Comment" => "Subcuenta de gastos"},;                            
+         "lEsperaDoc"   => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico a la espera de documentación"},;            
+         "lCloPgo"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico de turno cerrado"},;                        
+         "dFecImp"      => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Última fecha de impresión" },;                     
+         "cHorImp"      => { "Type" => "C", "Len" =>  5, "Decimals" => 0, "Comment" => "Hora de la última impresión" },;                   
+         "lNotArqueo"   => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico de no incluir en arqueo"},;                 
+         "cCodBnc"      => { "Type" => "C", "Len" =>  4, "Decimals" => 0, "Comment" => "Código del banco"},;                               
+         "dFecCre"      => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Fecha de creación del registro"},;              
+         "cHorCre"      => { "Type" => "C", "Len" =>  5, "Decimals" => 0, "Comment" => "Hora de creación del registro"},;                 
+         "cCodUsr"      => { "Type" => "C", "Len" =>  3, "Decimals" => 0, "Comment" => "Código del usuario" },;                            
+         "lDevuelto"    => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico recibo devuelto" },;                        
+         "dFecDev"      => { "Type" => "D", "Len" =>  8, "Decimals" => 0, "Comment" => "Fecha devolución" },;                              
+         "cMotDev"      => { "Type" => "C", "Len" =>250, "Decimals" => 0, "Comment" => "Motivo devolución" },;                             
+         "cRecDev"      => { "Type" => "C", "Len" => 14, "Decimals" => 0, "Comment" => "Recibo de procedencia" },;                         
+         "lSndDoc"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico para envio" },;                             
+         "cBncEmp"      => { "Type" => "C", "Len" => 50, "Decimals" => 0, "Comment" => "Banco de la empresa para el recibo" },;            
+         "cBncCli"      => { "Type" => "C", "Len" => 50, "Decimals" => 0, "Comment" => "Banco del cliente para el recibo" },;              
+         "cEPaisIBAN"   => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "País IBAN de la empresa para el recibo" },;       
+         "cECtrlIBAN"   => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Dígito de control IBAN de la empresa para el recibo" },;
+         "cEntEmp"      => { "Type" => "C", "Len" =>  4, "Decimals" => 0, "Comment" => "Entidad de la cuenta de la empresa"},;           
+         "cSucEmp"      => { "Type" => "C", "Len" =>  4, "Decimals" => 0, "Comment" => "Sucursal de la cuenta de la empresa"},;          
+         "cDigEmp"      => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Dígito de control de la cuenta de la empresa"},;  
+         "cCtaEmp"      => { "Type" => "C", "Len" => 10, "Decimals" => 0, "Comment" => "Cuenta bancaria de la empresa"},;                
+         "cPaisIBAN"    => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "País IBAN del cliente para el recibo" },;          
+         "cCtrlIBAN"    => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Dígito de control IBAN del cliente para el recibo" },;
+         "cEntCli"      => { "Type" => "C", "Len" =>  4, "Decimals" => 0, "Comment" => "Entidad de la cuenta del cliente" },;             
+         "cSucCli"      => { "Type" => "C", "Len" =>  4, "Decimals" => 0, "Comment" => "Sucursal de la cuenta del cliente" },;            
+         "cDigCli"      => { "Type" => "C", "Len" =>  2, "Decimals" => 0, "Comment" => "Dígito de control de la cuenta del cliente" },;    
+         "cCtaCli"      => { "Type" => "C", "Len" => 10, "Decimals" => 0, "Comment" => "Cuenta bancaria del cliente" },;                  
+         "lRemesa"      => { "Type" => "L", "Len" =>  1, "Decimals" => 0, "Comment" => "Lógico de incluido en una remesa"},;             
+         "cNumMtr"      => { "Type" => "C", "Len" => 15, "Decimals" => 0, "Comment" => "Numero del recibo matriz" } ;                  
+      },;
+      "Index"           => "FacCliP",;
+      "ExtensionIndex"  => "Cdx",;
+      "Tags"            => {;
+         "nNumFac"      => { "Expresion" => "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec",    "Condicion" => "!Deleted()",                          "Comment" => "Número" },;
+         "cCodCli"      => { "Expresion" => "cCodCli",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Código cliente" },;
+         "cNomCli"      => { "Expresion" => "cNomCli",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Nombre de cliente" },;
+         "lCodCli"      => { "Expresion" => "lCodCli",                                                         "Condicion" => "!Deleted() .and. !lCobrado",          "Comment" => "Código de cliente no cobrado" },;
+         "dPreCob"      => { "Expresion" => "dPreCob",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Fecha expedición" },;
+         "dFecVto"      => { "Expresion" => "dFecVto",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Fecha vencimiento" },;
+         "dEntrada"     => { "Expresion" => "dEntrada",                                                        "Condicion" => "!Deleted()",                          "Comment" => "Fecha cobro" },;
+         "nImporte"     => { "Expresion" => "nImporte",                                                        "Condicion" => "!Deleted()",                          "Comment" => "Importe" },;
+         "pNumFac"      => { "Expresion" => "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec",    "Condicion" => "!Deleted() .and. !lCobrado",          "Comment" => "Número no cobrado" },;
+         "tNumFac"      => { "Expresion" => "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec",    "Condicion" => "!Deleted() .and. lCobrado",           "Comment" => "Número cobrado" },;
+         "nNumRem"      => { "Expresion" => "nNumRem + cSufRem",                                               "Condicion" => "!Deleted()",                          "Comment" => "Número de remesa" },;
+         "nNumCli"      => { "Expresion" => "Str( nNumRem ) + cSufRem + cCodCli",                              "Condicion" => "!Deleted()",                          "Comment" => "Número de remesa código cliente" },;
+         "cCtaRem"      => { "Expresion" => "cCtaRem",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Cuenta de remesa" },;
+         "cCodAge"      => { "Expresion" => "cCodAge",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Código del agente" },;
+         "nNumCob"      => { "Expresion" => "Str( nNumCob ) + cSufCob",                                        "Condicion" => "!Deleted()",                          "Comment" => "Número de cobro" },;
+         "cTurRec"      => { "Expresion" => "cTurRec + cSufFac + cCodCaj",                                     "Condicion" => "!Deleted()",                          "Comment" => "Sesión" },;
+         "fNumFac"      => { "Expresion" => "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec )",              "Condicion" => "!Deleted()",                          "Comment" => "Número de factura clientes" },;
+         "rNumFac"      => { "Expresion" => "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec )",              "Condicion" => "!Deleted() .and. !Empty( cTipRec )",  "Comment" => "Número de factura rectificativa" },;
+         "cRecDev"      => { "Expresion" => "cRecDev",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Recibo devuelto" },;
+         "lCtaBnc"      => { "Expresion" => "cEntEmp + cSucEmp + cDigEmp + cCtaEmp",                           "Condicion" => "!Deleted()",                          "Comment" => "Cuenta bancaria" },;
+         "lCtaBnc"      => { "Expresion" => "cEntEmp + cSucEmp + cDigEmp + cCtaEmp",                           "Condicion" => "!Deleted()",                          "Comment" => "Cuenta bancaria" },;
+         "cNumMtr"      => { "Expresion" => "cNumMtr",                                                         "Condicion" => "!Deleted()",                          "Comment" => "Número de recibo matriz" };
+      };
+   }
+
+Return ( hDefinition )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION aItmGruposRecibos()
 
    local aBasRecCli  := {}

@@ -55,6 +55,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD cIdeDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
             
    METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
+   METHOD nCostoMedio()                   INLINE ( ::oStock:nCostoMedio( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cCodPr1, ::oDbf:cCodPr2, ::oDbf:cValPr1, ::oDbf:cValPr2 ) )
 
    METHOD aStockArticulo()                INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
@@ -65,6 +66,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD SetInformeDataReport()
 
    METHOD lStocks()                       INLINE ( ::cReportType == "Existencias por stocks" )
+
+   METHOD AddVariableStock()              INLINE ( ::oFastReport:AddVariable( "Stock", "Costo medio",    "CallHbFunc( 'oTInfGen', ['nCostoMedio', ''])" ) )
 
 END CLASS
 
@@ -580,11 +583,11 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
-                     "Existencias por articulo" =>   {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
-                                                         "Variable" =>  {||   nil },;
+                     "Existencias por articulo" =>   {  "Generate" =>   {||   ::AddArticulo( .t. ) },;
+                                                         "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } },;
                      "Existencias por stocks" =>      {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
-                                                         "Variable" =>  {||   nil },;
+                                                         "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } } }
 
 Return ( Self )

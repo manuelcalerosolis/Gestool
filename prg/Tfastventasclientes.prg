@@ -48,7 +48,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD preCliInfo( cTitle )
 
    METHOD RiesgoAlcanzado()   INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
-   METHOD TotalFacturado()    INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli))
+   METHOD TotalFacturado()    INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
 
 END CLASS
 
