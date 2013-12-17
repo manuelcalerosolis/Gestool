@@ -155,11 +155,23 @@ METHOD DefineFiles( cPath, cDriver )
 
       FIELD NAME "cSufCta"    TYPE "C" LEN  3  DEC 0 PICTURE "@!"          DEFAULT "000"  COMMENT "Sufijo"                       HIDE  OF oDbf
       FIELD NAME "cSufN58"    TYPE "C" LEN  3  DEC 0 PICTURE "@!"                         COMMENT "Sufijo Norma 58"              HIDE  OF oDbf
+
       FIELD NAME "cCodPre"    TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cNifPre"    TYPE "C" LEN  9  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cNomPre"    TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cEntPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cAgcPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cPaiPre"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+
+      FIELD NAME "cCodAcr"    TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cPaiAcr"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cNifAcr"    TYPE "C" LEN  9  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cNomAcr"    TYPE "C" LEN 40  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cDirAcr"    TYPE "C" LEN 60  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cPosAcr"    TYPE "C" LEN 15  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cPobAcr"    TYPE "C" LEN 40  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+      FIELD NAME "cProAcr"    TYPE "C" LEN 40  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
+
       FIELD NAME "cSubCta"    TYPE "C" LEN 12  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cCtaDto"    TYPE "C" LEN 12  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cCodIne"    TYPE "C" LEN  6  DEC 0                                      COMMENT ""                             HIDE  OF oDbf
@@ -319,11 +331,21 @@ METHOD Resource( nMode )
 			WHEN 		.F. ;
          OF       oDlg
 
+      /*
+      Datos del presentador---------------------------------------------------
+      */
+
       REDEFINE GET ::oDbf:cCodPre ;
          ID       190 ;
          PICTURE  ::oDbf:FieldByName( "cCodPre" ):cPict ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET ::oDbf:cPaiPre ;
+         ID       270 ;
+         PICTURE  ::oDbf:FieldByName( "cPaiPre" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       REDEFINE GET ::oDbf:cNomPre ;
          ID       200 ;
@@ -353,6 +375,62 @@ METHOD Resource( nMode )
          ID       260 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      /*
+      Acreeedor----------------------------------------------------------------
+      */
+
+      REDEFINE GET ::oDbf:cCodAcr ;
+         ID       400 ;
+         PICTURE  ::oDbf:FieldByName( "cCodAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cPaiAcr ;
+         ID       410 ;
+         PICTURE  ::oDbf:FieldByName( "cPaiAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cNomAcr ;
+         ID       420 ;
+         PICTURE  ::oDbf:FieldByName( "cNomAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cNifAcr ;
+         ID       430 ;
+         PICTURE  ::oDbf:FieldByName( "cNifAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cDirAcr ;
+         ID       440 ;
+         PICTURE  ::oDbf:FieldByName( "cDirAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cPosAcr ;
+         ID       450 ;
+         PICTURE  ::oDbf:FieldByName( "cPosAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cPobAcr ;
+         ID       460 ;
+         PICTURE  ::oDbf:FieldByName( "cPobAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cProAcr ;
+         ID       470 ;
+         PICTURE  ::oDbf:FieldByName( "cProAcr" ):cPict ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      /*
+      Botones------------------------------------------------------------------
+      */
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -392,17 +470,6 @@ METHOD lCargaBanco( oBnc, oEnt, oSuc, oDig, oCta, oEntPre, oAgcPre )
 
       oEntPre:cText( oRetFld( cBanco, ::oBanco:oDbf, "cEntBnc" ) )
       oAgcPre:cText( oRetFld( cBanco, ::oBanco:oDbf, "cOfiBnc" ) )
-
-      /*
-      oBnc:Refresh()
-      oEnt:Refresh()
-      oSuc:Refresh()
-      oDig:Refresh()
-      oCta:Refresh()
-
-      oEntPre:Refresh()
-      oAgcPre:Refresh()
-      */
 
    end if
 

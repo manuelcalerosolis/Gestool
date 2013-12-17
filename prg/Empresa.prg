@@ -735,6 +735,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
+   REDEFINE CHECKBOX aGet[ _LCRICAJA ] VAR aTmp[ _LCRICAJA ] ;
+         ID       195 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
    /*
    Codigo de Divisas______________________________________________________________
    */
@@ -6442,6 +6447,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "Lógico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "Opción impresión al cobrar en tpv táctil",              "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lEmpFrnq",   "L",  1, 0, "Lógico empresa franquiciada",                           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lCriCaja",   "L",  1, 0, "Lógico régimen especial del criterio de caja",          "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )
 

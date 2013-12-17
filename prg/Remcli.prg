@@ -17,13 +17,17 @@ CLASS TRemesas FROM TMasDet
    DATA  oAntCliT
    DATA  oIva
    DATA  oBandera
+
    DATA  cPorDiv
-   DATA  dCarCta
+   
+   
    DATA  cFicheroExportacion
    DATA  dExpedicionIni
    DATA  dExpedicionFin
    DATA  dVencimientoIni
-   DATA  dVencimientoFin
+
+   DATA  dVencimeintoFin
+
    DATA  oMeter            AS OBJECT
    DATA  nMeter            AS NUMERIC  INIT  0
    DATA  bmpConta
@@ -36,6 +40,9 @@ CLASS TRemesas FROM TMasDet
    DATA  oCodRem
    DATA  oFecExp
    DATA  oExportado
+
+   DATA  dVencimiento
+   DATA  dAnteriorVencimiento
 
    DATA  oCuaderno
 
@@ -102,8 +109,6 @@ CLASS TRemesas FROM TMasDet
 
    METHOD cBmp()
 
-   METHOD cRetTipRem()        INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
-
    METHOD GetNewCount()
 
    METHOD lNowExist()
@@ -116,11 +121,18 @@ CLASS TRemesas FROM TMasDet
 
    METHOD ChangeExport()
 
-   METHOD FechaVencimiento()  INLINE ( if( ::lUsarVencimiento, ::oDbfDet:dFecVto, ::dCarCta ) )
-   METHOD CuentaCliente()     INLINE ( ::oDbfDet:cPaisIBAN + ::oDbfDet:cCtrlIBAN + ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli )
-   METHOD CuentaEmpresa()     INLINE ( ::oDbfDet:cEPaisIBAN + ::oDbfDet:cECtrlIBAN + ::oDbfDet:cEntEmp + ::oDbfDet:cSucEmp + ::oDbfDet:cDigEmp + ::oDbfDet:cCtaEmp )
+   METHOD TipoRemesa()           INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
+
+   METHOD FechaVencimiento()     INLINE ( if( ::lUsarVencimiento, ::oDbfDet:dFecVto, ::dVencimiento ) )
+   METHOD lCambiaVencimiento()   INLINE ( if( ::dAnteriorVencimiento != ::FechaVencimiento(), ( ::dAnteriorVencimiento := ::FechaVencimiento(), .t. ), .f. ) )
+
+   METHOD CuentaCliente()        INLINE ( ::oDbfDet:cPaisIBAN + ::oDbfDet:cCtrlIBAN + ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli )
+   METHOD CuentaEmpresa()        INLINE ( ::oDbfDet:cEPaisIBAN + ::oDbfDet:cECtrlIBAN + ::oDbfDet:cEntEmp + ::oDbfDet:cSucEmp + ::oDbfDet:cDigEmp + ::oDbfDet:cCtaEmp )
+   METHOD TextoDocumento()       INLINE ( ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac )
 
    METHOD GetValidCuentaCliente()
+
+   METHOD CuentaRemesa()         INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
 
 END CLASS
 
@@ -128,37 +140,32 @@ END CLASS
 
 METHOD New( cPath, oMenuItem, oWndParent )
 
-   DEFAULT cPath        := cPatEmp()
-   DEFAULT oWndParent   := GetWndFrame()
-   DEFAULT oMenuItem    := "01060"
+   DEFAULT cPath           := cPatEmp()
+   DEFAULT oWndParent      := GetWndFrame()
+   DEFAULT oMenuItem       := "01060"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel                := nLevelUsr( oMenuItem )
 
-   ::cPath              := cPath
-   ::oWndParent         := oWndParent
-   ::oDbf               := nil
-   ::oDbfDet            := nil
-   ::oDivisas           := nil
-   ::oDbfCnt            := nil
-   ::oBandera           := nil
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
 
-   ::dExpedicionIni     := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
-   ::dExpedicionFin     := Date()
-   ::dVencimientoIni    := ::dExpedicionIni
-   ::dVencimientoFin    := Date()
+   ::dExpedicionIni        := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
+   ::dExpedicionFin        := Date()
+   ::dVencimientoIni       := ::dExpedicionIni
+   ::dVencimeintoFin       := Date()
 
-   ::cNumDocKey         := "nNumRem"
-   ::cSufDocKey         := "cSufRem"
+   ::cNumDocKey            := "nNumRem"
+   ::cSufDocKey            := "cSufRem"
 
-   ::lMoveDlgSelect     := .t.
+   ::lMoveDlgSelect        := .t.
 
-   ::bmpConta           := LoadBitmap( GetResources(), "bConta" )
+   ::bmpConta              := LoadBitmap( GetResources(), "bConta" )
 
-   ::dCarCta            := Date()
-   ::cFicheroExportacion            := PadR( "C:\Recibos.Txt", 200 )
+   ::dVencimiento          := Date()
+   ::cFicheroExportacion   := PadR( "C:\Recibos.Txt", 200 )
 
-   ::bFirstKey          := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
-   ::bWhile             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .and. !::oDbfVir:Eof() }
+   ::bFirstKey             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
+   ::bWhile                := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .and. !::oDbfVir:Eof() }
 
 RETURN ( Self )
 
@@ -181,7 +188,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "cNomRem"            LEN 60  DEC 0                             VAL      ::cRetCtaRem()                            COMMENT "Nombre" COLSIZE 200                              OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"  COLSIZE  80                              OF ::oDbf
       FIELD NAME "nTipRem"             TYPE "N" LEN  1  DEC 0 PICTURE "9"                 DEFAULT  1                                         COMMENT ""                                HIDE            OF ::oDbf
-      FIELD CALCULATE NAME "cTipRem"            LEN 60  DEC 0                             VAL      ::cRetTipRem()                            COMMENT "Tipo"   COLSIZE  80                              OF ::oDbf
+      FIELD CALCULATE NAME "cTipRem"            LEN 60  DEC 0                             VAL      ::TipoRemesa()                            COMMENT "Tipo"   COLSIZE  80                              OF ::oDbf
       FIELD NAME "cCodDiv"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                DEFAULT  cDivEmp()                                 COMMENT ""                                HIDE            OF ::oDbf
       FIELD NAME "nVdvDiv"             TYPE "N" LEN 16  DEC 6 PICTURE "@E 999,999.9999"   DEFAULT  1                                         COMMENT ""                                HIDE            OF ::oDbf
       FIELD CALCULATE NAME "nTotRem"            LEN 16  DEC 6                             VAL      ::nTotRem(.t.)                            COMMENT "Total"  COLSIZE 100  ALIGN RIGHT                 OF ::oDbf
@@ -438,7 +445,7 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oDbfDet  FILE "FACCLIP.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
       ::oDbfDet:OrdSetFocus( "nNumRem" )
 
-      ::oFacCliT := TDataCenter():oFacCliT()
+      ::oFacCliT        := TDataCenter():oFacCliT()
 
       DATABASE NEW ::oFacCliL FILE "FACCLIL.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
@@ -452,11 +459,11 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oDbfCnt  FILE "nCount.Dbf"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
 
-      ::cPorDiv  := cPorDiv( cDivEmp(), ::oDivisas:cAlias ) // Picture de la divisa redondeada
+      ::cPorDiv         := cPorDiv( cDivEmp(), ::oDivisas:cAlias ) // Picture de la divisa redondeada
 
-      ::oBandera := TBandera():New()
+      ::oBandera        := TBandera():New()
 
-      ::oCtaRem  := TCtaRem():Create( cPatCli() )
+      ::oCtaRem         := TCtaRem():Create( cPatCli() )
       ::oCtaRem:OpenFiles()
 
    RECOVER USING oError
@@ -836,7 +843,7 @@ METHOD ImportResource( nMode )
          SPINNER ;
          OF       oDlg
 
-      REDEFINE GET ::dVencimientoFin UPDATE ;
+      REDEFINE GET ::dVencimeintoFin UPDATE ;
          ID       130 ;
          SPINNER ;
          OF       oDlg
@@ -1000,7 +1007,7 @@ METHOD SaveModelo()
          WHEN     ( ::oDbf:nTipRem != 2 ) ;
          OF       oDlg
 
-      REDEFINE GET ::dCarCta ;
+      REDEFINE GET ::dVencimiento ;
          ID       120 ;
          WHEN     ( !::lUsarVencimiento ) ;
          OF       oDlg ;
@@ -1121,7 +1128,7 @@ METHOD InitMod58( oDlg )
       cBuffer  += "0"                        // Numero de linea
       cBuffer  += cHeader                    // Cabecera
       cBuffer  += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
-      cBuffer  += Left( Dtoc( ::dCarCta ), 2) + SubStr( Dtoc( ::dCarCta ), 4, 2 ) + Right( Dtoc( ::dCarCta ), 2 )
+      cBuffer  += Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
       cBuffer  += ::oCtaRem:oDbf:cNomPre     // Nombre de la empresa igual a del presentador
       cBuffer  += ::oCtaRem:oDbf:cEntBan     // Entidad
       cBuffer  += ::oCtaRem:oDbf:cAgcBan     // Agencia
@@ -1334,7 +1341,7 @@ METHOD GetRecCli( oDlg, nMode )
                ::oDbfDet:dPreCob >= ::dExpedicionIni                                                                       .and.;
                ::oDbfDet:dPreCob <= ::dExpedicionFin                                                                       .and.;
                ::oDbfDet:dFecVto >= ::dVencimientoIni                                                                      .and.;
-               ::oDbfDet:dFecVto <= ::dVencimientoFin                                                                      .and.;
+               ::oDbfDet:dFecVto <= ::dVencimeintoFin                                                                      .and.;
                ::oDbfDet:nImporte > 0
 
                if ::oDbfVir:Append()
@@ -2146,7 +2153,7 @@ METHOD InitMod19( oDlg )
                   if ::lUsarVencimiento
                      dFecVto  := ::oDbfDet:dFecVto // Left( Dtoc( ::oDbfDet:dFecVto ), 2) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
                   else
-                     dFecVto  := ::dCarCta         // Left( Dtoc( ::dCarCta ), 2) + SubStr( Dtoc( ::dCarCta ), 4, 2 ) + Right( Dtoc( ::dCarCta ), 2 )
+                     dFecVto  := ::dVencimiento         // Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
                   end if
                end if
 
@@ -2307,7 +2314,7 @@ METHOD InitMod19( oDlg )
             if ::lUsarVencimiento
                dFecVto     := ::oDbfDet:dFecVto // Left( Dtoc( ::oDbfDet:dFecVto ), 2) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
             else
-               dFecVto     := ::dCarCta         // Left( Dtoc( ::dCarCta ), 2) + SubStr( Dtoc( ::dCarCta ), 4, 2 ) + Right( Dtoc( ::dCarCta ), 2 )
+               dFecVto     := ::dVencimiento         // Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
             end if
 
             /*
@@ -2396,15 +2403,17 @@ METHOD InitSepa19( oDlg )
    local oBlock
    local oError
    local dOldVto
-
+/*
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if ::lAgruparRecibos
       ::oDbfDet:OrdSetFocus( "nNumCli" )
    end if
 
-   ::oCuaderno         := Cuaderno1914():New()
+   ::dAnteriorVencimiento  := nil
+
+   ::oCuaderno             := Cuaderno1914():New()
    ::oCuaderno:Fichero( ::cFicheroExportacion )
 
    // Presentador--------------------------------------------------------------
@@ -2423,7 +2432,7 @@ METHOD InitSepa19( oDlg )
 
                // Acreedores---------------------------------------------------
 
-               if ( dOldVto != ::FechaVencimiento()  )
+               if ::lCambiaVencimiento()
                   ::InsertAcreedor()
                end if
 
@@ -2440,9 +2449,11 @@ METHOD InitSepa19( oDlg )
          end if 
 
          ::oDbfDet:Skip()
-
-         dOldVto     := ::FechaVencimiento()
-
+/*
+         if !Empty( dOldVto )
+            dOldVto     := ::FechaVencimiento()
+         end if
+*/
       end while
 
    end if
@@ -2456,7 +2467,7 @@ METHOD InitSepa19( oDlg )
    if ::lAgruparRecibos
       ::oDbfDet:OrdSetFocus( "nNumRem" )
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Imposible exportar  filtros " + CRLF + ErrorMessage( oError ) )
@@ -2464,7 +2475,7 @@ METHOD InitSepa19( oDlg )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2489,14 +2500,14 @@ METHOD InsertAcreedor()
 
    with object ( ::oCuaderno:InsertAcreedor() )
       :FechaCobro( Date() )
-      :Nombre( ::oCtaRem:oDbf:cNomPre )
-      :Direccion( ::oCtaRem:oDbf:cDirCta )
-      :CodigoPostal( "12345" )
-      :Poblacion( "CIUDAD DEL ACREEDOR #1" )
-      :Provincia( "PROVINCIA DEL ACREEDOR #1" )
-      :Pais( "ES" )
-      :Nif( "E77846772" )
-      :CuentaIBAN( "ES7600811234461234567890" )   
+      :Nombre( ::oCtaRem:oDbf:cNomAcr )
+      :Direccion( ::oCtaRem:oDbf:cDirAcr )
+      :CodigoPostal( ::oCtaRem:oDbf:cPosAcr )
+      :Poblacion( ::oCtaRem:oDbf:cPobAcr )
+      :Provincia( ::oCtaRem:oDbf:cProAcr )
+      :Pais( ::oCtaRem:oDbf:cPaiAcr )
+      :Nif( ::oCtaRem:oDbf:cNifPre )
+      :CuentaIBAN( ::CuentaRemesa() )   
    end with
 
 RETURN ( Self )
@@ -2506,19 +2517,19 @@ RETURN ( Self )
 METHOD InsertDeudor()
 
    with object ( ::oCuaderno:InsertDeudor() )
-      :Referencia( 'RECIBO002401' )
+      :Referencia( "Recibo" + ::TextoDocumento() )
       :ReferenciaMandato( '2E5F9458BCD27E3C2B5908AF0B91551A' )
-      :Importe( 123.45 )
+      :Importe( nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() ) )
       :EntidadBIC( 'CAIXESBBXXX' )
-      :Nombre( 'NOMBRE DEL DEUDOR, S.L.' )
-      :Direccion( "CALLE DEL DEUDOR, 1234" )
-      :CodigoPostal( "12345" )
-      :Poblacion( "CIUDAD DEL DEUDOR" )
-      :Provincia( "PROVINCIA DEL DEUDOR" )
+      :Nombre( ::oClientes:Titulo )
+      :Direccion( ::oClientes:Domicilio )
+      :CodigoPostal( ::oClientes:CodPostal )
+      :Poblacion( ::oClientes:Poblacion )
+      :Provincia( ::oClientes:Provincia )
       :Pais( "ES" )
-      :Nif( "12345678Z" )
-      :CuentaIBAN( "ES0321001234561234567890" )
-      :Concepto( 'CONCEPTO DEL ADEUDO FRA.1234' )
+      :Nif( ::oClientes:Provincia )
+      :CuentaIBAN( ::GetValidCuentaCliente() )
+      :Concepto( "Factura Nº" + ::TextoDocumento() )
    end with
 
 RETURN ( Self )

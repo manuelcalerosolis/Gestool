@@ -222,14 +222,14 @@ ENDCLASS
 
 CLASS Acreedor FROM Presentador
 
-   DATA cDireccion      
-   DATA cCodigoPostal
-   DATA cPoblacion 
-   DATA cProvincia      
-   DATA cCuentaIBAN     
+   DATA cDireccion               INIT Space( 50 )      
+   DATA cCodigoPostal            INIT Space( 10 )
+   DATA cPoblacion               INIT Space( 60 )       
+   DATA cProvincia               INIT Space( 40 )      
+   DATA cCuentaIBAN              INIT Space( 34 )
    DATA cFechaCobro              INIT DateToString()
 
-   DATA aChild                  INIT {}
+   DATA aChild                   INIT {}
 
    METHOD Direccion( cValue )    INLINE ( if( !Empty( cValue ), ::cDireccion     := padr( cValue, 50 ),     ::cDireccion ) )    
    METHOD CodigoPostal( cValue ) INLINE ( if( !Empty( cValue ), ::cCodigoPostal  := cValue,                 rtrim( ::cCodigoPostal ) ) )    

@@ -90,6 +90,7 @@
 #define _CNBREST                  73      //   C    150     0
 #define _CDIREST                  74      //   C    150     0
 #define _SERIE                    75      //   C    150     0
+#define _LCRICAJA                 76
 
 memvar dbfPrv
 memvar cDbfPrv
@@ -871,15 +872,25 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
       REDEFINE GET oSay[ 1 ] VAR cSay[ 1 ];
 			ID 		330 ;
 			WHEN 		.F. ;
-			COLOR		CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CCODGRP] VAR aTmp[_CCODGRP] ;
-         ID       400 ;
-         COLOR    CLR_GET ;
+      /*
+      Criterio de caja--------------------------------------------------------------
+      */
+
+      REDEFINE CHECKBOX aTmp[ _LCRICAJA ] ;
+         ID       195 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oGrpPrv:Existe( aGet[_CCODGRP], oSay[ 3 ], "cNomGrp", .t., .t., "0" ) );
-         ON HELP  ( oGrpPrv:Buscar( aGet[_CCODGRP] ) ) ;
+         OF       oFld:aDialogs[1]
+      /*
+      Código de grupo--------------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
+         ID       400 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oGrpPrv:Existe( aGet[ _CCODGRP ], oSay[ 3 ], "cNomGrp", .t., .t., "0" ) );
+         ON HELP  ( oGrpPrv:Buscar( aGet[ _CCODGRP ] ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
 
@@ -890,7 +901,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_DIAPAGO] VAR aTmp[_DIAPAGO] ;
+		REDEFINE GET aGet[ _DIAPAGO ] VAR aTmp[ _DIAPAGO ] ;
 			ID 		220 ;
          SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -898,7 +909,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 			PICTURE 	"99" ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_DIAPAGO2] VAR aTmp[_DIAPAGO2] ;
+      REDEFINE GET aGet[ _DIAPAGO2 ] VAR aTmp[ _DIAPAGO2 ] ;
          ID       221 ;
          SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -4928,7 +4939,7 @@ FUNCTION aItmPrv()
    aAdd( aItmPrv, { "dFecBlq",   "D",  8, 0, "Fecha de bloqueo del proveedor",       "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "cMotBlq",   "C", 50, 0, "Motivo del bloqueo del proveedor",     "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "cCodGrp",   "C",  4, 0, "Código grupo de proveedor",            "",                   "", "( cDbfPrv )" } )
-   aAdd( aItmPrv, { "nRegIva",   "N",  1, 0, "Regimen de " + cImp(),                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nRegIva",   "N",  1, 0, "Regimen de " + cImp(),                 "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "lMail",     "L",  1, 0, "Lógico para enviar mail",              "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "mObserv",   "M", 10, 0, "Observaciones",                        "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "lMosCom",   "L",  1, 0, "Mostrar comentario" ,                  "",                   "", "( cDbfPrv )" } )
@@ -4936,6 +4947,7 @@ FUNCTION aItmPrv()
    aAdd( aItmPrv, { "cNbrEst",   "C",150, 0, "Nombre del establecimiento" ,          "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "cDirEst",   "C",150, 0, "Dirección del establecimiento" ,       "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "Serie",     "C",  1, 0, "Serie del documento" ,                 "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lCriCaja",  "L",  1, 0, "Lógico régimen especial del criterio de caja",  "",          "", "( cDbfPrv )" } )
 
 RETURN ( aItmPrv )
 

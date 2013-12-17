@@ -447,11 +447,6 @@ METHOD ActivateDialog( cFilterName ) CLASS TFilterDialog
       */
 
       REDEFINE BUTTON ;
-         ID          3 ;
-         OF          ( ::oDlg );
-         ACTION      ( ::QuitDialog() )
-
-      REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ( ::oDlg );
          ACTION      ( ::EndDialog() )
