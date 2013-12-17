@@ -40,45 +40,45 @@ HB_FUNC( MAIN )
 {
    static const BYTE pcode[] =
    {
-/* 00000 */ HB_P_LINE, 245, 22,	/* 5877 */
+/* 00000 */ HB_P_LINE, 251, 22,	/* 5883 */
 	HB_P_PUSHFUNCSYM, 1, 0,	/* SET */
 	HB_P_PUSHBYTE, 4,	/* 4 */
 	HB_P_PUSHSTRSHORT, 11,	/* 11 */
 	'd', 'd', '/', 'm', 'm', '/', 'y', 'y', 'y', 'y', 0, 
 	HB_P_DOSHORT, 2,
-/* 00023 */ HB_P_LINE, 246, 22,	/* 5878 */
+/* 00023 */ HB_P_LINE, 252, 22,	/* 5884 */
 	HB_P_PUSHFUNCSYM, 1, 0,	/* SET */
 	HB_P_PUSHBYTE, 11,	/* 11 */
 	HB_P_PUSHSTRSHORT, 3,	/* 3 */
 	'O', 'N', 0, 
 	HB_P_DOSHORT, 2,
-/* 00038 */ HB_P_LINE, 247, 22,	/* 5879 */
+/* 00038 */ HB_P_LINE, 253, 22,	/* 5885 */
 	HB_P_PUSHFUNCSYM, 1, 0,	/* SET */
 	HB_P_PUSHBYTE, 5,	/* 5 */
 	HB_P_PUSHINT, 208, 7,	/* 2000 */
 	HB_P_DOSHORT, 2,
-/* 00051 */ HB_P_LINE, 248, 22,	/* 5880 */
+/* 00051 */ HB_P_LINE, 254, 22,	/* 5886 */
 	HB_P_PUSHFUNCSYM, 1, 0,	/* SET */
 	HB_P_PUSHBYTE, 44,	/* 44 */
 	HB_P_PUSHSTRSHORT, 3,	/* 3 */
 	'O', 'N', 0, 
 	HB_P_DOSHORT, 2,
-/* 00066 */ HB_P_LINE, 249, 22,	/* 5881 */
+/* 00066 */ HB_P_LINE, 255, 22,	/* 5887 */
 	HB_P_PUSHFUNCSYM, 1, 0,	/* SET */
 	HB_P_ONE,
 	HB_P_PUSHSTRSHORT, 3,	/* 3 */
 	'O', 'N', 0, 
 	HB_P_DOSHORT, 2,
-/* 00080 */ HB_P_LINE, 251, 22,	/* 5883 */
+/* 00080 */ HB_P_LINE, 1, 23,	/* 5889 */
 	HB_P_PUSHFUNCSYM, 2, 0,	/* MSGINFO */
-	HB_P_PUSHSTRSHORT, 23,	/* 23 */
-	'P', 'r', 'i', 'm', 'e', 'r', 'a', ' ', 'a', 'p', 'l', 'i', 'c', 'a', 'c', 'i', 243, 'n', ' ', 'p', 'd', 'a', 0, 
+	HB_P_PUSHSTRSHORT, 32,	/* 32 */
+	'P', 'u', 'e', 'b', 'a', ' ', 'p', 'a', 'r', 'a', ' ', 'a', 'p', 'l', 'i', 'c', 'a', 'c', 'i', 'o', 'n', ' ', 'p', 'd', 'a', ' ', 'R', 'O', 'C', 'I', 'O', 0, 
 	HB_P_DOSHORT, 1,
-/* 00113 */ HB_P_LINE, 253, 22,	/* 5885 */
+/* 00122 */ HB_P_LINE, 3, 23,	/* 5891 */
 	HB_P_PUSHNIL,
 	HB_P_RETVALUE,
 	HB_P_ENDPROC
-/* 00119 */
+/* 00128 */
    };
 
    hb_vmExecute( pcode, symbols );

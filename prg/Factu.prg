@@ -5886,7 +5886,7 @@ function Main()
    SET OPTIMIZE      ON
    SET EXACT         ON
 
-   msginfo("Primera aplicación pda")
+   msginfo("Pueba para aplicacion pda ROCIO")
 
 Return Nil 
 

@@ -5844,6 +5844,12 @@ static cTypeVersion  := ""
 
 
 
+
+
+
+
+
+
 function Main()
 
    Set( 4, "dd/mm/yyyy" )
@@ -5852,6 +5858,6 @@ function Main()
    Set( 44, "ON" )
    Set( 1, "ON" )
 
-   msginfo("Primera aplicación pda")
+   msginfo("Pueba para aplicacion pda ROCIO")
 
 Return Nil

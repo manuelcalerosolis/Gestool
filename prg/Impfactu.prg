@@ -1803,7 +1803,7 @@ METHOD Importar()
                oTemporal:nUniCaja      := ::oDbfPreLFac:nCanPed
                oTemporal:nPreDiv       := ::oDbfPreLFac:nPreUnit
                oTemporal:nDto          := ::oDbfPreLFac:nDto
-               oTemporal:cLote         := ::oDbfPreLFac:cLote
+               //oTemporal:cLote         := ::oDbfPreLFac:cLote
                oTemporal:nNumLin       := ::oDbfPreLFac:nServicio
 
                aAdd( aTemporalLineas, oTemporal )   
@@ -2935,7 +2935,7 @@ METHOD Importar()
                end if
                oTemporal:nUniCaja      := ::oDbfPepLFac:nCanPed
                oTemporal:nPreDiv       := ::oDbfPepLFac:nPreDiv
-               oTemporal:cLote         := ::oDbfPepLFac:cLote
+               //oTemporal:cLote         := ::oDbfPepLFac:cLote
                oTemporal:nNumLin       := ::oDbfPepLFac:nServicio
 
                aAdd( aTemporalLineas, oTemporal )   
