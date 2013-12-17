@@ -2073,7 +2073,11 @@ RETURN ( nUnits )
 METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, oSay ) CLASS TStock
 
    local cClass   := oSay:ClassName()
-   local nStock   := ::nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, nKitStk )
+   local nStock   := 0
+
+   if !uFieldEmpresa( "lNStkAct" )
+      nStock      := ::nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, nKitStk )
+   end if
 
    do case
       case cClass == "TGET" .or. cClass == "TGETHLP"
