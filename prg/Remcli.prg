@@ -2482,8 +2482,6 @@ RETURN ( Self )
 
 METHOD InsertPresentador()
 
-   // Presentador--------------------------------------------------------------
-
    with object ( ::oCuaderno:GetPresentador() )
       :Nombre( ::oCtaRem:oDbf:cNomPre )
       :Referencia( ::cNumRem() )            
@@ -2518,15 +2516,14 @@ METHOD InsertDeudor()
 
    with object ( ::oCuaderno:InsertDeudor() )
       :Referencia( "Recibo" + ::TextoDocumento() )
-      :ReferenciaMandato( '2E5F9458BCD27E3C2B5908AF0B91551A' )
+      :ReferenciaMandato( ::oDbfDet:cCodCli )
       :Importe( nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() ) )
-      :EntidadBIC( 'CAIXESBBXXX' )
+      :EntidadBIC( ::oCtaRem:oDbf:cBICPre )
       :Nombre( ::oClientes:Titulo )
       :Direccion( ::oClientes:Domicilio )
       :CodigoPostal( ::oClientes:CodPostal )
       :Poblacion( ::oClientes:Poblacion )
       :Provincia( ::oClientes:Provincia )
-      :Pais( "ES" )
       :Nif( ::oClientes:Provincia )
       :CuentaIBAN( ::GetValidCuentaCliente() )
       :Concepto( "Factura Nº" + ::TextoDocumento() )
@@ -2555,9 +2552,9 @@ RETURN ( cCuentaCliente )
 METHOD ChangeExport()
 
    if ::oDbf:lExport
-      ::oDbf:dExport := GetSysDate()
+      ::oDbf:dExport    := GetSysDate()
    else
-      ::oDbf:dExport := Ctod( "" )
+      ::oDbf:dExport    := Ctod( "" )
    end if
 
    ::oFecExp:Refresh()

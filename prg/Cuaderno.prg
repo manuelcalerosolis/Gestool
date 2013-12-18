@@ -1,4 +1,6 @@
-#include "FiveWin.Ch"
+#include "hbclass.ch"
+
+#define CRLF chr( 13 ) + chr( 10 )
 
 //---------------------------------------------------------------------------//
 
@@ -25,22 +27,22 @@ Return ( cTime )
 
 Function DateToString( dDate )
       
-   DEFAULT dDate  := date()
+   local cDateFrm := Set( 4, "yyyy/mm/dd" )
+   local strDate  := if( dDate != NIL, dtos( dDate ), dtos( date() ) )
+   Set( 4, cDateFrm )
 
-Return ( dtos( dDate ) )
+Return( strDate )
 
 //---------------------------------------------------------------------------//
 
 CLASS Cuaderno
 
-   DATA cFile                             INIT "c:\prueba.txt" 
+   DATA cFile                             INIT "prueba.txt" 
    DATA hFile 
    DATA cFechaCreacion                    INIT DateToString()
 
    METHOD Fichero( cValue )               INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD FechaCreacion( dValue )         INLINE ( if( !Empty( dValue ), ::cFechaCreacion    := DateToString( dValue ), ::cFechaCreacion ) )
-
-   METHOD Visualizar()                    INLINE ( WinExec( "notepad.exe " + AllTrim( ::cFile ) ) )
 
 ENDCLASS
 
@@ -305,17 +307,17 @@ CLASS Deudor FROM Acreedor
    METHOD CodigoRegistro()                INLINE ( ::oSender:oSender:CodigoRegistro() )
    METHOD VersionCuaderno()               INLINE ( ::oSender:oSender:VersionCuaderno() )
 
-   METHOD Referencia( cValue )            INLINE ( if( !Empty( cValue ), ::cReferencia          := padr( cValue, 35 ),     ::cReferencia ) )
-   METHOD ReferenciaMandato( cValue )     INLINE ( if( !Empty( cValue ), ::cReferenciaMandato   := padr( cValue, 35 ),     ::cReferenciaMandato ) )
-   METHOD TipoAdeudo( cValue )            INLINE ( if( !Empty( cValue ), ::cTipoAdeudo          := padr( cValue, 4 ),      ::cTipoAdeudo ) )
-   METHOD Categoria( cValue )             INLINE ( if( !Empty( cValue ), ::cCategoria           := padr( cValue, 4 ),      ::cCategoria ) )
-   METHOD FechaMandato( dValue )          INLINE ( if( !Empty( dValue ), ::cFechaMandato        := DateToString( dValue ), ::cFechaMandato ) )
-   METHOD EntidadBIC( cValue )            INLINE ( if( !Empty( cValue ), ::cEntidadBIC          := padr( cValue, 11 ),     ::cEntidadBIC ) )
-   METHOD Tipo( cValue )                  INLINE ( if( !Empty( cValue ), ::cTipo                := padr( cValue, 1 ),      ::cTipo ) )
-   METHOD Emisor( cValue )                INLINE ( if( !Empty( cValue ), ::cEmisor              := padr( cValue, 35 ),     ::cEmisor ) )
-   METHOD IdentificadorCuenta( cValue )   INLINE ( if( !Empty( cValue ), ::cIdentificadorCuenta := padr( cValue, 1 ),      ::cIdentificadorCuenta ) )
-   METHOD Proposito( cValue )             INLINE ( if( !Empty( cValue ), ::cProposito           := padr( cValue, 4 ),      ::cProposito ) )
-   METHOD Concepto( cValue )              INLINE ( if( !Empty( cValue ), ::cConcepto            := padr( cValue, 140 ),    ::cConcepto ) )
+   METHOD Referencia( cValue )            INLINE ( if( !Empty( cValue ), ::cReferencia          := padr( cValue, 35 ),           ::cReferencia ) )
+   METHOD ReferenciaMandato( cValue )     INLINE ( if( !Empty( cValue ), ::cReferenciaMandato   := hb_md5( padr( cValue, 35 ) ), ::cReferenciaMandato ) )
+   METHOD TipoAdeudo( cValue )            INLINE ( if( !Empty( cValue ), ::cTipoAdeudo          := padr( cValue, 4 ),            ::cTipoAdeudo ) )
+   METHOD Categoria( cValue )             INLINE ( if( !Empty( cValue ), ::cCategoria           := padr( cValue, 4 ),            ::cCategoria ) )
+   METHOD FechaMandato( dValue )          INLINE ( if( !Empty( dValue ), ::cFechaMandato        := DateToString( dValue ),       ::cFechaMandato ) )
+   METHOD EntidadBIC( cValue )            INLINE ( if( !Empty( cValue ), ::cEntidadBIC          := padr( cValue, 11 ),           ::cEntidadBIC ) )
+   METHOD Tipo( cValue )                  INLINE ( if( !Empty( cValue ), ::cTipo                := padr( cValue, 1 ),            ::cTipo ) )
+   METHOD Emisor( cValue )                INLINE ( if( !Empty( cValue ), ::cEmisor              := padr( cValue, 35 ),           ::cEmisor ) )
+   METHOD IdentificadorCuenta( cValue )   INLINE ( if( !Empty( cValue ), ::cIdentificadorCuenta := padr( cValue, 1 ),            ::cIdentificadorCuenta ) )
+   METHOD Proposito( cValue )             INLINE ( if( !Empty( cValue ), ::cProposito           := padr( cValue, 4 ),            ::cProposito ) )
+   METHOD Concepto( cValue )              INLINE ( if( !Empty( cValue ), ::cConcepto            := padr( cValue, 140 ),          ::cConcepto ) )
 
    METHOD Dato()                          INLINE ( '003' )
 

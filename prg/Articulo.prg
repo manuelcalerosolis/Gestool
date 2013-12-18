@@ -1472,27 +1472,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
-            ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 1 ) );
-            TOOLTIP  "Añadir movimiento entre almacenes" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
-            ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 2 ) );
-            TOOLTIP  "Añadir movimiento de regularización de almacenes simple" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
-            ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 3 ) );
-            TOOLTIP  "Añadir movimiento de regularización de almacenes por objetivo" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			ACTION 	( oWndBrw:End() ) ;
 			TOOLTIP 	"(S)alir" ;

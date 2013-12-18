@@ -2264,69 +2264,71 @@ FONT 8, "MS Sans Serif"
   CONTROL "Descripciones del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 
-CTAREM DIALOG DISCARDABLE 65, 36, 325, 331
+CTAREM DIALOG DISCARDABLE 65, 36, 325, 345
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Cuentas de remesas"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 102, 13, 46, 11
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 102, 25, 210, 11
-  CONTROL "", 120, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 102, 54, 210, 11
-  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 102, 66, 210, 11
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 102, 78, 22, 11
-  CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 125, 78, 22, 11
-  CONTROL "", 132, "Edit", WS_BORDER|WS_TABSTOP, 148, 78, 30, 11
-  CONTROL "", 133, "Edit", WS_BORDER|WS_TABSTOP, 179, 78, 30, 11
-  CONTROL "", 134, "Edit", WS_BORDER|WS_TABSTOP, 210, 78, 22, 11
-  CONTROL "", 135, "Edit", WS_BORDER|WS_TABSTOP, 234, 78, 78, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 102, 90, 45, 11
-  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 102, 102, 70, 11
-  CONTROL "", 241, "Edit", WS_BORDER|WS_TABSTOP, 174, 102, 138, 11
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 102, 114, 70, 11
-  CONTROL "", 251, "Edit", WS_BORDER|WS_TABSTOP, 174, 114, 138, 11
-  CONTROL "", 190, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 102, 140, 46, 11
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 278, 140, 34, 11
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 102, 152, 210, 11
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 102, 164, 70, 11
-  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 102, 177, 34, 11
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 138, 177, 34, 11
-  CONTROL "", 400, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 102, 204, 46, 11
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 278, 204, 34, 11
-  CONTROL "", 420, "Edit", WS_BORDER|WS_TABSTOP, 102, 216, 210, 11
-  CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 102, 228, 70, 11
-  CONTROL "", 440, "Edit", WS_BORDER|WS_TABSTOP, 102, 240, 210, 11
-  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 102, 252, 70, 11
-  CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 173, 252, 139, 11
-  CONTROL "", 470, "Edit", WS_BORDER|WS_TABSTOP, 102, 264, 210, 11
-  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 102, 293, 70, 11
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 212, 313, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 268, 313, 50, 14
+  CONTROL "", 120, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 102, 53, 210, 11
+  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 102, 65, 210, 11
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 102, 77, 22, 11
+  CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 125, 77, 22, 11
+  CONTROL "", 132, "Edit", WS_BORDER|WS_TABSTOP, 148, 77, 30, 11
+  CONTROL "", 133, "Edit", WS_BORDER|WS_TABSTOP, 179, 77, 30, 11
+  CONTROL "", 134, "Edit", WS_BORDER|WS_TABSTOP, 210, 77, 22, 11
+  CONTROL "", 135, "Edit", WS_BORDER|WS_TABSTOP, 234, 77, 78, 11
+  CONTROL "", 136, "Edit", WS_BORDER|WS_TABSTOP, 102, 89, 70, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 102, 101, 45, 11
+  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 102, 113, 70, 11
+  CONTROL "", 241, "Edit", WS_BORDER|WS_TABSTOP, 174, 113, 138, 11
+  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 102, 125, 70, 11
+  CONTROL "", 251, "Edit", WS_BORDER|WS_TABSTOP, 174, 125, 138, 11
+  CONTROL "", 190, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 102, 151, 46, 11
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 278, 151, 34, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 102, 163, 210, 11
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 102, 175, 70, 11
+  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 102, 188, 34, 11
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 138, 188, 34, 11
+  CONTROL "", 400, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 102, 215, 46, 11
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 278, 215, 34, 11
+  CONTROL "", 420, "Edit", WS_BORDER|WS_TABSTOP, 102, 227, 210, 11
+  CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 102, 239, 70, 11
+  CONTROL "", 440, "Edit", WS_BORDER|WS_TABSTOP, 102, 251, 210, 11
+  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 102, 263, 70, 11
+  CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 173, 263, 139, 11
+  CONTROL "", 470, "Edit", WS_BORDER|WS_TABSTOP, 102, 275, 210, 11
+  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 102, 304, 70, 11
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 212, 324, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 268, 324, 50, 14
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 2, 3, 316, 38
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 17, 60, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 28, 60, 8
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 44, 316, 85
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 8, 58, 60, 8
-  CONTROL "IBAN de abono", -1, "Static", WS_GROUP, 8, 82, 60, 8
-  CONTROL "Banco", -1, "Static", WS_GROUP, 8, 180, 26, 8
-  CONTROL "Sufijo", -1, "Static", WS_GROUP, 8, 93, 60, 8
-  CONTROL "Presentación", -1, "Button", BS_GROUPBOX, 2, 131, 316, 61
-  CONTROL "Código", -1, "Static", WS_GROUP, 8, 144, 27, 8
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 156, 30, 8
-  CONTROL "N.I.F.", -1, "Static", WS_GROUP, 8, 168, 23, 8
-  CONTROL "Cuenta banco", -1, "Static", WS_GROUP, 8, 105, 60, 8
-  CONTROL "Cuenta descuento", -1, "Static", WS_GROUP, 8, 117, 60, 8
-  CONTROL "Código INE (necesario para norma 58 del C.S.B.)", -1, "Button", BS_GROUPBOX, 2, 282, 316, 26
-  CONTROL "Código INE", -1, "Static", WS_GROUP, 8, 297, 60, 8
-  CONTROL "Banco", -1, "Static", WS_GROUP, 8, 69, 60, 8
-  CONTROL "Acreedor", -1, "Button", BS_GROUPBOX, 2, 195, 316, 83
-  CONTROL "Código", -1, "Static", WS_GROUP, 8, 208, 27, 8
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 220, 30, 8
-  CONTROL "N.I.F.", -1, "Static", WS_GROUP, 8, 232, 23, 8
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 8, 244, 30, 8
-  CONTROL "Código postal y población", -1, "Static", WS_GROUP, 8, 255, 85, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 8, 267, 35, 8
-  CONTROL "Código páis ISO", -1, "Static", WS_GROUP, 212, 143, 56, 8
-  CONTROL "Código país ISO", -1, "Static", WS_GROUP, 212, 207, 57, 8
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 43, 316, 97
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 8, 57, 60, 8
+  CONTROL "IBAN de abono", -1, "Static", WS_GROUP, 8, 80, 60, 8
+  CONTROL "Banco", -1, "Static", WS_GROUP, 8, 191, 26, 8
+  CONTROL "Sufijo", -1, "Static", WS_GROUP, 8, 104, 60, 8
+  CONTROL "Presentación", -1, "Button", BS_GROUPBOX, 2, 142, 316, 61
+  CONTROL "Código", -1, "Static", WS_GROUP, 8, 155, 27, 8
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 167, 30, 8
+  CONTROL "N.I.F.", -1, "Static", WS_GROUP, 8, 179, 23, 8
+  CONTROL "Cuenta banco", -1, "Static", WS_GROUP, 8, 116, 60, 8
+  CONTROL "Cuenta descuento", -1, "Static", WS_GROUP, 8, 128, 60, 8
+  CONTROL "Código INE (necesario para norma 58 del C.S.B.)", -1, "Button", BS_GROUPBOX, 2, 293, 316, 26
+  CONTROL "Código INE", -1, "Static", WS_GROUP, 8, 308, 60, 8
+  CONTROL "Banco", -1, "Static", WS_GROUP, 8, 68, 60, 8
+  CONTROL "Acreedor", -1, "Button", BS_GROUPBOX, 2, 206, 316, 83
+  CONTROL "Código", -1, "Static", WS_GROUP, 8, 219, 27, 8
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 231, 30, 8
+  CONTROL "N.I.F.", -1, "Static", WS_GROUP, 8, 243, 23, 8
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 8, 255, 30, 8
+  CONTROL "Código postal y población", -1, "Static", WS_GROUP, 8, 266, 92, 8
+  CONTROL "Provincia", -1, "Static", WS_GROUP, 8, 278, 35, 8
+  CONTROL "Código páis ISO", -1, "Static", WS_GROUP, 212, 154, 56, 8
+  CONTROL "Código país ISO", -1, "Static", WS_GROUP, 212, 218, 57, 8
+  CONTROL "BIC de abono", -1, "Static", WS_GROUP, 8, 92, 63, 8
 }
 
 EMPRESA DIALOG DISCARDABLE 137, 27, 465, 333

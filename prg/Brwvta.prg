@@ -1166,23 +1166,6 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
             RESOURCE "Cashier_user1_16";
             ACTION   ( AppTikCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
-            SEPARATOR
-
-            MENUITEM "&A. Añadir movimiento entre almacenes";
-            MESSAGE  "Realizar un nuevo movimiento entre almacenes" ;
-            RESOURCE "Pencil_Package_16";
-            ACTION   ( AppMovAlm( cCodArt, 1 ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) );
-
-            MENUITEM "&B. Añadir movimiento de regularización de almacenes simple";
-            MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes simple" ;
-            RESOURCE "Pencil_Package_16";
-            ACTION   ( AppMovAlm( cCodArt, 2 ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) );
-
-            MENUITEM "&C. Añadir movimiento de regularización de almacenes por objetivo";
-            MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes por objetivo" ;
-            RESOURCE "Pencil_Package_16";
-            ACTION   ( AppMovAlm( cCodArt, 3 ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) );
-
          ENDMENU
 
    ENDMENU
@@ -3563,23 +3546,6 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
                MESSAGE  "Abrir el informe del artículo" ;
                RESOURCE "Info16";
                ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
-
-            SEPARATOR
-
-            MENUITEM    "&4. Añadir movimiento entre almacenes";
-               MESSAGE  "Realizar un nuevo movimiento entre almacenes" ;
-               RESOURCE "Pencil_Package_16";
-               ACTION   ( if( !Empty( oCodArt:VarGet() ), AppMovAlm( oCodArt:VarGet(), 1 ), MsgStop( "No se encuentra artículo" ) ) );
-
-            MENUITEM    "&5. Añadir movimiento de regularización de almacenes simple";
-               MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes simple" ;
-               RESOURCE "Pencil_Package_16";
-               ACTION   ( if( !Empty( oCodArt:VarGet() ), AppMovAlm( oCodArt:VarGet(), 2 ), MsgStop( "No se encuentra artículo" ) ) );
-
-            MENUITEM    "&6. Añadir movimiento de regularización de almacenes por objetivo";
-               MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes por objetivo" ;
-               RESOURCE "Pencil_Package_16";
-               ACTION   ( if( !Empty( oCodArt:VarGet() ), AppMovAlm( oCodArt:VarGet(), 3 ), MsgStop( "No se encuentra artículo" ) ) );
 
          ENDMENU
 
