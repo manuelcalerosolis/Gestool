@@ -2420,6 +2420,10 @@ Function TGrpFacturasAutomaticas()
 
 Return nil 
 
+Function Cuaderno1914()
+
+Return nil 
+
 /*Function TOrdenComanda()
 
 Return nil*/

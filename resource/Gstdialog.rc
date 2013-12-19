@@ -1558,7 +1558,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 324, 100, 62, 11
   CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 104, 142, 282, 11
   CONTROL "", 194, "Edit", WS_BORDER|WS_TABSTOP, 104, 154, 282, 11
-  CONTROL "Empresa acogida al Régimen especial del criterio de caja", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 104, 173, 193, 10
+  CONTROL "", 195, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 104, 171, 106, 47
   CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 104, 239, 40, 11
   CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 147, 239, 239, 11
   CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 104, 253, 110, 10
@@ -1603,6 +1603,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Datos generales de la empresa", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 347, 8
   CONTROL "Dígitos", -1, "Button", BS_GROUPBOX, 175, 190, 111, 37
   CONTROL "", 4002, "Static", SS_ETCHEDHORZ, 48, 168, 342, 1
+  CONTROL "Régimen  I.V.A.", -1, "Static", WS_GROUP, 50, 174, 50, 8
 }
 
 ENTSAL DIALOG DISCARDABLE 240, 79, 390, 174

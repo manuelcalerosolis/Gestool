@@ -284,6 +284,9 @@ Defines para ficheros INI
 #define COLOR_INACTIVECAPTIONTEXT 19
 #define COLOR_BTNHIGHLIGHT      20
 
+#define REGIMENES_IVA_ITEMS     {       "Devengo",;
+                                        "Caja" }
+
 #define RECTIFICATIVA_ITEMS     {       "01. Número factura",;
                                         "02. Serie factura",;
                                         "03. Fecha expedición",;

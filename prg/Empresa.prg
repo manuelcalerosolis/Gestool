@@ -735,16 +735,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-   REDEFINE CHECKBOX aGet[ _LCRICAJA ] VAR aTmp[ _LCRICAJA ] ;
+   REDEFINE COMBOBOX aGet[ _CRECC ] VAR aTmp[ _CRECC ] ;
          ID       195 ;
+         ITEMS    REGIMENES_IVA_ITEMS ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[ 1 ]
 
    /*
    Codigo de Divisas______________________________________________________________
    */
 
-    REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
+   REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
          ID       400 ;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -6447,7 +6448,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "Lógico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "Opción impresión al cobrar en tpv táctil",              "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lEmpFrnq",   "L",  1, 0, "Lógico empresa franquiciada",                           "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lCriCaja",   "L",  1, 0, "Lógico régimen especial del criterio de caja",          "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cRECC",      "C",  8, 0, "Régimen especial del criterio de caja [Devengo|Caja]",  "", "", "aEmp()", "Devengo" } )
 
 Return ( aDbf  )
 

@@ -10,6 +10,7 @@ CLASS TRemesas FROM TMasDet
    DATA  oCtaRem
    DATA  oDivisas
    DATA  oDbfCnt
+   DATA  oCliBnc
    DATA  oRecibos
    DATA  oClientes
    DATA  oFacCliT
@@ -19,8 +20,7 @@ CLASS TRemesas FROM TMasDet
    DATA  oBandera
 
    DATA  cPorDiv
-   
-   
+      
    DATA  cFicheroExportacion
    DATA  dExpedicionIni
    DATA  dExpedicionFin
@@ -121,18 +121,24 @@ CLASS TRemesas FROM TMasDet
 
    METHOD ChangeExport()
 
-   METHOD TipoRemesa()           INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
+   METHOD TipoRemesa()              INLINE ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) )
 
-   METHOD FechaVencimiento()     INLINE ( if( ::lUsarVencimiento, ::oDbfDet:dFecVto, ::dVencimiento ) )
-   METHOD lCambiaVencimiento()   INLINE ( if( ::dAnteriorVencimiento != ::FechaVencimiento(), ( ::dAnteriorVencimiento := ::FechaVencimiento(), .t. ), .f. ) )
+   METHOD FechaVencimiento()        INLINE ( if( ::lUsarVencimiento, ::oDbfDet:dFecVto, ::dVencimiento ) )
+   METHOD lCambiaVencimiento()      INLINE ( if( ::dAnteriorVencimiento != ::FechaVencimiento(), ( ::dAnteriorVencimiento := ::FechaVencimiento(), .t. ), .f. ) )
 
-   METHOD CuentaCliente()        INLINE ( ::oDbfDet:cPaisIBAN + ::oDbfDet:cCtrlIBAN + ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli )
-   METHOD CuentaEmpresa()        INLINE ( ::oDbfDet:cEPaisIBAN + ::oDbfDet:cECtrlIBAN + ::oDbfDet:cEntEmp + ::oDbfDet:cSucEmp + ::oDbfDet:cDigEmp + ::oDbfDet:cCtaEmp )
-   METHOD TextoDocumento()       INLINE ( ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac )
+   METHOD CuentaCliente()           INLINE ( ::oDbfDet:cPaisIBAN + ::oDbfDet:cCtrlIBAN + ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli )
+   METHOD GetValidCuentaCliente()   INLINE ( if( Empty( ::CuentaCliente() ), cClientCuenta( ::oDbfDet:cCodCli, ::oCliBnc:cAlias ), ::CuentaCliente() ) )
+   
+   METHOD CuentaEmpresa()           INLINE ( ::oDbfDet:cEPaisIBAN + ::oDbfDet:cECtrlIBAN + ::oDbfDet:cEntEmp + ::oDbfDet:cSucEmp + ::oDbfDet:cDigEmp + ::oDbfDet:cCtaEmp )
 
-   METHOD GetValidCuentaCliente()
+   METHOD EntidadCliente()          INLINE ( ::oDbfDet:cEntCli )
+   METHOD GetValidEntidadCliente()  INLINE ( if( Empty( ::EntidadCliente() ), cClientEntidad( ::oDbfDet:cCodCli, ::oCliBnc:cAlias ), ::EntidadCliente() ) )
 
-   METHOD CuentaRemesa()         INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
+   METHOD GetBICClient()            INLINE ( GetBIC( ::GetValidEntidadCliente() ) )
+
+   METHOD TextoDocumento()          INLINE ( ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac )
+
+   METHOD CuentaRemesa()            INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
 
 END CLASS
 
@@ -459,6 +465,8 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oDbfCnt  FILE "nCount.Dbf"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
 
+      ::oCliBnc         := TDataCenter():oCliBnc()
+
       ::cPorDiv         := cPorDiv( cDivEmp(), ::oDivisas:cAlias ) // Picture de la divisa redondeada
 
       ::oBandera        := TBandera():New()
@@ -557,6 +565,10 @@ METHOD CloseFiles()
       ::oCtaRem:End()
    end if
 
+   if ::oCliBnc != nil .and. ::oCliBnc:Used()
+      ::oCliBnc:End()
+   end if 
+
    ::oDbf         := nil
    ::oDbfDet      := nil
    ::oDivisas     := nil
@@ -564,6 +576,7 @@ METHOD CloseFiles()
    ::oClientes    := nil
    ::oDbfDet      := nil
    ::oCtaRem      := nil
+   ::oCliBnc      := nil
 
    if ::bmpConta != nil
       DeleteObject( ::bmpConta )
@@ -2518,7 +2531,7 @@ METHOD InsertDeudor()
       :Referencia( "Recibo" + ::TextoDocumento() )
       :ReferenciaMandato( ::oDbfDet:cCodCli )
       :Importe( nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() ) )
-      :EntidadBIC( ::oCtaRem:oDbf:cBICPre )
+      :EntidadBIC( ::GetBICClient() )
       :Nombre( ::oClientes:Titulo )
       :Direccion( ::oClientes:Domicilio )
       :CodigoPostal( ::oClientes:CodPostal )
@@ -2530,22 +2543,6 @@ METHOD InsertDeudor()
    end with
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetValidCuentaCliente()
-
-   local cCuentaCliente
-
-   // Banco de cliente---------------------------------------------
-
-   cCuentaCliente       := ::CuentaCliente()
-
-   if Empty( cCuentaCliente ) 
-      cCuentaCliente    := cClientCuenta( ::oDbfDet:cCodCli )
-   end if
-
-RETURN ( cCuentaCliente )
 
 //---------------------------------------------------------------------------//
 

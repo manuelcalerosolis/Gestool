@@ -134,7 +134,7 @@
 #define _DFECNACI                119      //   D      8     0
 #define _NSEXO                   120      //   N      7     0 
 #define _NTARCMB                 121      //   N      1     0
-#define _LCRICAJA                122 
+#define _LRECC                   122 
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODART                  2      //   C     14     0
@@ -1543,7 +1543,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
       Criterio de caja--------------------------------------------------------------
       */
 
-      REDEFINE CHECKBOX aTmp[ _LCRICAJA ] ;
+      REDEFINE CHECKBOX aTmp[ _LRECC ] ;
          ID       195 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
@@ -11777,7 +11777,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "dFecNaci",  "D",  8, 0, "Fecha de nacimiento",                           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "nSexo",     "N",  1, 0, "Sexo del cliente",                              "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en táctil" ,     "",                   "", "( cDbfCli )" } )
-   aAdd( aBase, { "lCriCaja",  "L",  1, 0, "Lógico régimen especial del criterio de caja",  "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "lRECC",     "L",  1, 0, "Lógico régimen especial del criterio de caja",  "",                   "", "( cDbfCli )" } )
 
 RETURN ( aBase )
 
@@ -14771,6 +14771,26 @@ Function cClientCuenta( cCliente, dbfBncCli )
    if lCloseBnc
       CLOSE ( dbfBncCli )
    end if
+
+Return cCuenta
+
+//---------------------------------------------------------------------------//
+
+Function cClientEntidad( cCliente, dbfBncCli )
+
+   local cCuenta     := ""
+
+   if dbSeekInOrd( cCliente, "cBncDef", dbfBncCli )
+      cCuenta        := ( dbfBncCli )->cEntBnc
+   end if
+
+   if Empty( cCuenta )
+      if dbSeekInOrd( cCliente, "cCodCli", dbfBncCli )
+         cCuenta     := ( dbfBncCli )->cEntBnc
+      end if
+   end if
+
+   cCuenta           := Alltrim( cCuenta )
 
 Return cCuenta
 

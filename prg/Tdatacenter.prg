@@ -589,6 +589,18 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oCliBnc()
+
+      local oCliBnc
+
+      DATABASE NEW oCliBnc PATH ( cPatDat() ) FILE "CliBnc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliBnc.Cdx"
+
+      Return ( oCliBnc )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
 END CLASS
 
 //---------------------------------------------------------------------------//

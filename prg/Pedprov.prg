@@ -62,6 +62,7 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _NTOTREQ                  49
 #define _NTOTPED                  50
 #define _CNUMALB                  51
+#define _LRECC                    52
 
 /* Definici¢n de la base de datos de lineas de detalle */
 
@@ -1300,7 +1301,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "pedidos a proveedores"
 
-	REDEFINE FOLDER oFld ID 400 OF oDlg ;
+	REDEFINE FOLDER oFld ;
+         ID       400 ; 
+         OF       oDlg ;
          PROMPT   "&Pedido",  "Da&tos",   "&Incidencias",   "D&ocumentos" ;
          DIALOGS  "PEDPRV_1", "PEDPRV_2", "PEDCLI_3",       "PEDCLI_4"
 
@@ -6529,12 +6532,13 @@ function aItmPedPrv()
                      { "cTimChg",   "C",  5,   0, "Hora de modificación del documento",            "", "", "( cDbf )"},;
                      { "cCodDlg",   "C",  2,   0, "Código delegación",                             "", "", "( cDbf )"},;
                      { "cSituac",   "C", 20,   0, "Situación del documento",                       "", "", "( cDbf )"},;
-                     { "nRegIva",   "N",  1,   0, "Regimen de " + cImp(),                             "", "", "( cDbf )"},;
+                     { "nRegIva",   "N",  1,   0, "Regimen de " + cImp(),                          "", "", "( cDbf )"},;
                      { "nTotNet",   "N", 16,   6, "Total neto",                                    "", "", "( cDbf )"},;
-                     { "nTotIva",   "N", 16,   6, "Total " + cImp(),                                     "", "", "( cDbf )"},;
+                     { "nTotIva",   "N", 16,   6, "Total " + cImp(),                               "", "", "( cDbf )"},;
                      { "nTotReq",   "N", 16,   6, "Total recargo equivalencia",                    "", "", "( cDbf )"},;
                      { "nTotPed",   "N", 16,   6, "Total pedido",                                  "", "", "( cDbf )"},;
-                     { "cNumAlb",   "C", 12,   0, "Númeo del albarán en el se ha agrupado",        "", "", "( cDbf )"} }
+                     { "cNumAlb",   "C", 12,   0, "Númeo del albarán en el se ha agrupado",        "", "", "( cDbf )"},;
+                     { "lRECC",     "L",  1,   0, "Lógico régimen especial del criterio de caja",  "", "", "( cDbf )"} }
 
 return ( aBase )
 

@@ -723,6 +723,12 @@ Return ( aEmp()[ _CDIVEMP ] != "PTS" )
 
 //---------------------------------------------------------------------------//
 
+Function lEmpresaIVARegimenCaja()
+
+Return ( "Caja" $ uFieldEmpresa( "cRECC" ) )
+
+//---------------------------------------------------------------------------//
+
 Function uFieldEmpresa( cField, uDefault )
 
    local uField

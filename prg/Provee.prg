@@ -90,7 +90,7 @@
 #define _CNBREST                  73      //   C    150     0
 #define _CDIREST                  74      //   C    150     0
 #define _SERIE                    75      //   C    150     0
-#define _LCRICAJA                 76
+#define _LRECC                    76
 
 memvar dbfPrv
 memvar cDbfPrv
@@ -878,7 +878,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
       Criterio de caja--------------------------------------------------------------
       */
 
-      REDEFINE CHECKBOX aTmp[ _LCRICAJA ] ;
+      REDEFINE CHECKBOX aTmp[ _LRECC ] ;
          ID       195 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
@@ -4947,7 +4947,7 @@ FUNCTION aItmPrv()
    aAdd( aItmPrv, { "cNbrEst",   "C",150, 0, "Nombre del establecimiento" ,          "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "cDirEst",   "C",150, 0, "Dirección del establecimiento" ,       "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "Serie",     "C",  1, 0, "Serie del documento" ,                 "",                   "", "( cDbfPrv )" } )
-   aAdd( aItmPrv, { "lCriCaja",  "L",  1, 0, "Lógico régimen especial del criterio de caja",  "",          "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lRECC",  "L",  1, 0, "Lógico régimen especial del criterio de caja",  "",          "", "( cDbfPrv )" } )
 
 RETURN ( aItmPrv )
 
