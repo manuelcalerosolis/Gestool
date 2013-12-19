@@ -34,6 +34,7 @@ CLASS TRemesas FROM TMasDet
    DATA  aMsg              AS ARRAY    INIT  {}
    DATA  lAgruparRecibos               INIT  .f.
    DATA  lUsarVencimiento              INIT  .f.
+   DATA  lUsarSEPA                     INIT  .f.
    DATA  cMru                          INIT "Briefcase_document_16"
    DATA  cBitmap                       INIT clrTopArchivos
    DATA  oMenu
@@ -82,10 +83,12 @@ CLASS TRemesas FROM TMasDet
    METHOD cNumRem()        INLINE   ( Alltrim( Str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) )
 
    /*
-   Metodos para el modelo 19---------------------------------------------------
+   Metodos para exportacion de los modelos-------------------------------------
    */
 
    METHOD SaveModelo()
+      METHOD RunModelo( oDlg )
+
    METHOD InitMod19()
    
    METHOD InitSepa19( oDlg )
@@ -95,15 +98,19 @@ CLASS TRemesas FROM TMasDet
 
    METHOD InitMod58()
 
-   Method nAllRecCli()
+   /*
+   Otros metodos---------------------------------------------------------------
+   */
+
+   METHOD nAllRecCli()
 
    METHOD nTotRemesaVir()     INLINE   0
 
    METHOD Report()
 
    METHOD Conta()
-   Method ChangeConta( lConta )
-   Method lContabilizaRecibos( lConta )
+   METHOD ChangeConta( lConta )
+   METHOD lContabilizaRecibos( lConta )
 
    METHOD cRetCtaRem()
 
@@ -991,23 +998,17 @@ METHOD SaveModelo()
 
    local oDlg
    local oGet
-   local cTitle
-   local bAction
    local oBmpGeneral
 
    if ::oDbf:Recno() == 0
       RETURN ( Self )
    end if
 
-   if ::oDbf:nTipRem == 2
-      cTitle      := "Remesa de recibos a soporte magnéticos según norma 58"
-      bAction     := {|| ::InitMod58( oDlg ) }
-   else
-      cTitle      := "Remesa de recibos a soporte magnéticos según norma 19"
-      bAction     := {|| ::InitSepa19( oDlg ) }
-   end if
+   ::lUsarSEPA    := ( ::oDbf:nTipRem == 2 )
 
-   DEFINE DIALOG oDlg RESOURCE "Modelo19" TITLE cTitle
+   DEFINE DIALOG oDlg ;
+      RESOURCE    "Modelo19" ; 
+      TITLE       "Remesa de recibos a soporte magnéticos según norma " + ( if( ::oDbf:nTipRem == 2, "58", "19" ) )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
@@ -1038,17 +1039,22 @@ METHOD SaveModelo()
          WHEN     ( ::oDbf:nTipRem != 2 ) ;
          OF       oDlg
 
+      REDEFINE CHECKBOX ::lUsarSEPA ;
+         ID       110 ;
+         WHEN     ( ::oDbf:nTipRem != 2 ) ;
+         OF       oDlg
+
       REDEFINE BUTTON   ;
          ID       550 ;
          OF       oDlg ;
-         ACTION   ( oDlg:Disable(), Eval( bAction ), oDlg:Enable(), oDlg:End( IDOK ) )
+         ACTION   ( ::RunModelo( oDlg ) )
 
       REDEFINE BUTTON   ;
          ID       551 ;
          OF       oDlg ;
          ACTION   ( oDlg:End() )
 
-      oDlg:AddFastKey( VK_F5, bAction )
+      oDlg:AddFastKey( VK_F5, {|| ::RunModelo( oDlg ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -1070,6 +1076,27 @@ METHOD SaveModelo()
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD RunModelo( oDlg )
+
+   oDlg:Disable()
+
+   if ::oDbf:nTipRem == 2 
+      ::InitMod58( oDlg ) 
+   else
+      if ::lUsarSEPA
+         ::InitSepa19( oDlg )
+      else 
+         ::InitMod19( oDlg )
+      end if 
+   end if
+
+   oDlg:Enable()
+   oDlg:End( IDOK ) 
 
 RETURN ( Self )
 
@@ -2474,7 +2501,7 @@ METHOD InitSepa19( oDlg )
    ::oCuaderno:SerializeASCII()
 
    if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
-      ::oCuaderno:Visualizar()
+      ShellExecute( 0, "open", ::oCuaderno:cFile, , , 1 )
    end if
 
    if ::lAgruparRecibos

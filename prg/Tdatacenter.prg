@@ -593,7 +593,7 @@ CLASS TDataCenter
 
       local oCliBnc
 
-      DATABASE NEW oCliBnc PATH ( cPatDat() ) FILE "CliBnc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliBnc.Cdx"
+      DATABASE NEW oCliBnc PATH ( cPatCli() ) FILE "CliBnc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliBnc.Cdx"
 
       Return ( oCliBnc )   
 

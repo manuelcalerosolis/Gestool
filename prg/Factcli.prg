@@ -18107,14 +18107,14 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
       aGet[ _NIMPTRN  ]:HardDisable()
 
       if !Empty( aGet[ _NPNTVER ] )
-            aGet[ _NPNTVER  ]:HardDisable()
+         aGet[ _NPNTVER  ]:HardDisable()
       end if
 
       aGet[ _NDTO     ]:HardDisable()
       aGet[ _NDTOPRM  ]:HardDisable()
 
       if !Empty(  aGet[ _NDTODIV  ] )
-          aGet[ _NDTODIV  ]:HardDisable()
+         aGet[ _NDTODIV  ]:HardDisable()
       end if
    
    end if

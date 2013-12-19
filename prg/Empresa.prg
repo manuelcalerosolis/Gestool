@@ -735,10 +735,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-   REDEFINE COMBOBOX aGet[ _CRECC ] VAR aTmp[ _CRECC ] ;
+   REDEFINE CHECKBOX aGet[ _LRECC ] VAR aTmp[ _LRECC ] ;
          ID       195 ;
-         ITEMS    REGIMENES_IVA_ITEMS ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         ON CHANGE( if( aTmp[ _LRECC ], ( aGet[ _NINIRECC ]:varPut( Year( Date() ) + 1 ), aGet[ _NFINRECC ]:varPut( 0 ) ), ) ) ;
+         OF       oFld:aDialogs[ 1 ]
+
+   REDEFINE GET aGet[ _NINIRECC ] VAR aTmp[ _NINIRECC ] ;
+         PICTURE  "9999" ;
+         ID       196 ;
+         WHEN     ( aTmp[ _LRECC ] .and. nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 1 ]
+
+   REDEFINE GET aGet[ _NFINRECC ] VAR aTmp[ _NFINRECC ] ;
+         PICTURE  "9999" ;
+         ID       197 ;
+         WHEN     ( aTmp[ _LRECC ] .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
    /*
@@ -6448,7 +6460,9 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "Lógico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "Opción impresión al cobrar en tpv táctil",              "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lEmpFrnq",   "L",  1, 0, "Lógico empresa franquiciada",                           "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"cRECC",      "C",  8, 0, "Régimen especial del criterio de caja [Devengo|Caja]",  "", "", "aEmp()", "Devengo" } )
+   aAdd( aDbf, {"lRECC",      "L",  1, 0, "Régimen especial del criterio de caja",                 "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"nIniRECC",   "N",  4, 0, "Año inicio régimen especial del criterio de caja",      "", "", "aEmp()", } )
+   aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "Año fin régimen especial del criterio de caja",         "", "", "aEmp()", } )
 
 Return ( aDbf  )
 

@@ -91,6 +91,7 @@
 #define _CSUCBNC                 79
 #define _CDIGBNC                 80
 #define _CCTABNC                 81
+#define _LRECC                   82
 
 /*
 Lineas de Detalle
@@ -1755,7 +1756,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
       REDEFINE GET oGet[ 5 ] VAR cGet[ 5 ] ;
          ID       166 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      /*
+      Criterio de caja_________________________________________________________
+      */
+
+      REDEFINE CHECKBOX aGet[ _LRECC ] VAR aTmp[ _LRECC ] ;
+         ID       195 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON CHANGE( RecalculaTotal( aTmp ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -5703,6 +5713,9 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       if lChgCodCli
          aTmp[ _LRECARGO ] := ( dbfPrv )->lReq
          aGet[ _LRECARGO ]:Refresh()
+
+         aTmp[ _LRECC ]    := ( dbfPrv )->lRecc
+         aGet[ _LRECC ]:Refresh()        
       end if
 
       if ( dbfPrv )->lMosCom .and. !Empty( ( dbfPrv )->mComent ) .and. lChgCodCli
@@ -9523,6 +9536,7 @@ function aItmFacPrv()
    aAdd( aItmFacPrv, { "cSucBnc"    ,"C",  4, 0, "Sucursal de la cuenta bancaria del proveedor" ,         "",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cDigBnc"    ,"C",  2, 0, "Dígito de control de la cuenta bancaria del proveedor" ,"",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCtaBnc"    ,"C", 10, 0, "Cuenta bancaria del proveedor" ,                        "",      "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "lRECC"      ,"L",  1, 0, "Acogida al régimen especial del criterio de caja",      "",      "", "( cDbf )", .f. } )
 
 return ( aItmFacPrv )
 

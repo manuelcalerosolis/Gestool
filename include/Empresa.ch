@@ -291,4 +291,7 @@
 #define _LTOTTIKCOB 		  		291
 #define _NTIPIMPTPV 		  		292
 #define _LEMPFRNQ 			  	293	
-#define _CRECC 					294
+#define _LRECC 					294
+#define _NINIRECC 				295
+#define _NFINRECC					296
+

@@ -882,6 +882,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       195 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
+      
       /*
       Código de grupo--------------------------------------------------------------
       */
@@ -4947,7 +4948,7 @@ FUNCTION aItmPrv()
    aAdd( aItmPrv, { "cNbrEst",   "C",150, 0, "Nombre del establecimiento" ,          "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "cDirEst",   "C",150, 0, "Dirección del establecimiento" ,       "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "Serie",     "C",  1, 0, "Serie del documento" ,                 "",                   "", "( cDbfPrv )" } )
-   aAdd( aItmPrv, { "lRECC",  "L",  1, 0, "Lógico régimen especial del criterio de caja",  "",          "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lRECC",     "L",  1, 0, "Acogido al régimen especial del criterio de caja",  "",      "", "( cDbfPrv )" } )
 
 RETURN ( aItmPrv )
 

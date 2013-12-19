@@ -162,7 +162,6 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cEntPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cAgcPre"    TYPE "C" LEN  4  DEC 0 PICTURE "9999"                       COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cPaiPre"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
-      FIELD NAME "cBICPre"    TYPE "C" LEN 11  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
 
       FIELD NAME "cCodAcr"    TYPE "C" LEN  2  DEC 0 PICTURE "99"                         COMMENT ""                             HIDE  OF oDbf
       FIELD NAME "cPaiAcr"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                         COMMENT ""                             HIDE  OF oDbf
@@ -276,12 +275,6 @@ METHOD Resource( nMode )
          PICTURE  ::oDbf:FieldByName( "cCtaBan" ):cPict ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          VALID    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ), oPaisIBAN:lValid() ) ;
-         OF       oDlg
-
-      REDEFINE GET ::oDbf:cBICPre ;
-         ID       136 ;
-         PICTURE  ::oDbf:FieldByName( "cBICPre" ):cPict ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET ::oDbf:cSufCta ;
