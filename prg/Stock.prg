@@ -3858,6 +3858,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef" ) )
    local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
 
+   DEFAULT cCodPr1      := ""
+   DEFAULT cCodPr2      := ""
+   DEFAULT cValPr1      := ""
+   DEFAULT cValPr2      := ""
+
+
    /*
    Obtengo la fecha de consolidación-------------------------------------------
    */
@@ -3870,11 +3876,15 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
    if ( ::cHisMovT)->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
 
-      while ( ::cHisMovT)->cRefMov == cCodArt .and. ( ::cHisMovT)->cValPr1 == cValPr1 .and. ( ::cHisMovT)->cValPr2 == cValPr2 .and. !( ::cHisMovT)->( Eof() )
+      while ( ::cHisMovT)->cRefMov == cCodArt                        .and. ;
+         ( Empty( cValPr1 ) .or. ( ::cHisMovT)->cValPr1 == cValPr1 ) .and. ;
+         ( Empty( cValPr2 ) .or. ( ::cHisMovT)->cValPr2 == cValPr2 ) .and. ;
+         ( ::cHisMovT)->( !Eof() )
 
          if ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov )
 
-            if !Empty( ( ::cHisMovT)->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
+            if !Empty( ( ::cHisMovT)->cAloMov )                            .and.;
+               ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
                ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
 
                nUnidades   += nTotNMovAlm( ::cHisMovT)
@@ -3882,7 +3892,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
             end if
 
-            if !Empty( ( ::cHisMovT)->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
+            if !Empty( ( ::cHisMovT)->cAliMov )                            .and.;
+               ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
                ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
 
                nUnidades   += nTotNMovAlm( ::cHisMovT)
@@ -3904,7 +3915,10 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
 
-      while ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cValPr1 == cValPr1 .and. ( ::cAlbPrvL )->cValPr2 == cValPr2 .and. !( ::cAlbPrvL )->( eof() )
+      while ( ::cAlbPrvL )->cRef == cCodArt                             .and.;
+         ( Empty( cValPr1 ) .or. ( ::cAlbPrvL )->cValPr1 == cValPr1 )   .and.;
+         ( Empty( cValPr2 ) .or. ( ::cAlbPrvL )->cValPr2 == cValPr2 )   .and.;
+         !( ::cAlbPrvL )->( eof() )
 
       if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) .and.;
             Empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm )
@@ -3926,9 +3940,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
    if ( ::cFacPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
 
-      while ( ::cFacPrvL )->cRef == cCodArt .and. ( ::cFacPrvL )->cValPr1 == cValPr1 .and. ( ::cFacPrvL )->cValPr2 == cValPr2 .and. !( ::cFacPrvL )->( eof() )
+      while ( ::cFacPrvL )->cRef == cCodArt                          .and.;
+      ( Empty( cValPr1 ) .or.  ( ::cFacPrvL )->cValPr1 == cValPr1 )  .and.;
+      ( Empty( cValPr2 ) .or.  ( ::cFacPrvL )->cValPr2 == cValPr2 )  .and.;
+      !( ::cFacPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac )   .and.;
+         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) .and.;
             Empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNFacPrv( ::cFacPrvL )
@@ -3940,6 +3957,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
       end while
 
+   else 
+
    end if
 
    /*
@@ -3948,7 +3967,10 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
    if ( ::cRctPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
 
-      while ( ::cRctPrvL )->cRef == cCodArt .and. ( ::cRctPrvL )->cValPr1 == cValPr1 .and. ( ::cRctPrvL )->cValPr2 == cValPr2 .and. !( ::cRctPrvL )->( eof() )
+      while ( ::cRctPrvL )->cRef == cCodArt                          .and.;
+      ( Empty ( cValPr1 ) .or. ( ::cRctPrvL )->cValPr1 == cValPr1 )  .and.;
+      ( Empty ( cValPr2 ) .or. ( ::cRctPrvL )->cValPr2 == cValPr2 )  .and.;
+      !( ::cRctPrvL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac )   .and.;
             Empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm )
