@@ -55,7 +55,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD cIdeDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
             
    METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
-   METHOD nCostoMedio()                   INLINE ( ::oStock:nCostoMedio( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cCodPr1, ::oDbf:cCodPr2, ::oDbf:cValPr1, ::oDbf:cValPr2 ) )
+
+   METHOD nCostoMedio()                   INLINE ( ::oStock:nCostoMedio( ::oDbf:cCodArt, ::oDbf:cCodAlm ) )
+   METHOD nCostoMedioPropiedades()        INLINE ( ::oStock:nCostoMedio( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cCodPr1, ::oDbf:cCodPr2, ::oDbf:cValPr1, ::oDbf:cValPr2 ) )
 
    METHOD aStockArticulo()                INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
@@ -67,7 +69,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD lStocks()                       INLINE ( ::cReportType == "Existencias por stocks" )
 
-   METHOD AddVariableStock()              INLINE ( ::oFastReport:AddVariable( "Stock", "Costo medio",    "CallHbFunc( 'oTInfGen', ['nCostoMedio', ''])" ) )
+   METHOD AddVariableStock()              
 
 END CLASS
 
@@ -2637,5 +2639,19 @@ METHOD StartDialog() CLASS TFastVentasArticulos
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD AddVariableStock()
+   
+   ::oFastReport:AddVariable( "Stock", "Costo medio",             "CallHbFunc( 'oTInfGen', ['nCostoMedio', ''])" )
+   ::oFastReport:AddVariable( "Stock", "Costo medio propiedades", "CallHbFunc( 'oTInfGen', ['nCostoMedioPropiedades', ''])" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
+
+
+
 
 

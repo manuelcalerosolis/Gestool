@@ -13,7 +13,7 @@ CLASS AccessCode
 
    DATA  oDlg
    DATA  oDlgConnect
-   DATA  oBrwUser
+   DATA  oBrwUser 
    DATA  oBtnOk
    DATA  oBtnCancel
    DATA  oBtnFree

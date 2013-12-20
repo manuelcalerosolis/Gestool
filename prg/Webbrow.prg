@@ -15,7 +15,7 @@ Function OpenWebBrowser( oWndMain )
 
    if ( "TERMINAL" $ cParamsMain() ) // .or. !IsInternet() )
 
-      cFile                := FullCurDir() + "web\index.html"
+      cFile                := FullCurDir() + "web\index.html" 
 
       if !File( cFile )
          Return nil

@@ -318,7 +318,7 @@ Static Function CreateMainWindow( oIconApp )
    // Set the bar messages-----------------------------------------------------
 
    oWnd:Cargo                 := cParamsMain
-   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }
+   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
 
    // Mensajes-----------------------------------------------------------------
 
