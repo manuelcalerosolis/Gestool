@@ -723,6 +723,26 @@ Return ( aEmp()[ _CDIVEMP ] != "PTS" )
 
 //---------------------------------------------------------------------------//
 
+Function lRECCEmpresa( dFecha )
+
+   local nAnyo    
+
+   DEFAULT dFecha := GetSysDate()
+
+   nAnyo          := Year( dFecha )
+
+   if ( nAnyo < 2014 )
+      Return .f.
+   end if
+
+   if uFieldEmpresa( "lRECC" ) .and. ( nAnyo >= uFieldEmpresa( "nIniRECC" ) ) .and. ( nAnyo <= uFieldEmpresa( "nFinRECC" ) .or. uFieldEmpresa( "nFinRECC" ) == 0 )
+      Return .t.
+   end if 
+
+Return .f.
+
+//---------------------------------------------------------------------------//
+
 Function uFieldEmpresa( cField, uDefault )
 
    local uField

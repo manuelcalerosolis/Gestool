@@ -139,6 +139,7 @@
 #define _NTOTLIQ           118
 #define _NTOTPDT           119
 #define _LOPERPV           120
+#define _LRECC             121
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -2446,7 +2447,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
    local oSayGetRnt
    local cTipFac
    local oSayDias
-   local oBmpGeneral
+   local hBmp
+   local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 	"Dialog" => 1 },;
+   										{ "Resource" => "Folder2_red_alpha_48", 		"Dialog" => 2 },;
+   										{ "Resource" => "Information_48_alpha", 		"Dialog" => 3 },;
+   										{ "Resource" => "Address_book2_alpha_48", 	"Dialog" => 4 } }
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -2490,6 +2495,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
       aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
       aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
+      aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
    case nMode == DUPL_MODE
 
@@ -2515,6 +2521,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       aTmp[ _CNFC       ]  := Space( 20 )
       aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
       aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
+      aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
    case nMode == EDIT_MODE
 
@@ -2636,32 +2643,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       Datos del cliente--------------------------------------------------------
       */
 
-      REDEFINE BITMAP oBmpGeneral ;
-        ID       990 ;
-        RESOURCE "Factura_cliente_48_alpha" ;
-        TRANSPARENT ;
-        OF       oFld:aDialogs[1]
+      for each hBmp in hBmpGeneral
+      	TBitmap():ReDefine( 990, hBmp[ "Resource" ], , oFld:aDialogs[ hBmp[ "Dialog" ] ], , , .f., .f., , , .f., , , .t. )
+      next 
 
-      REDEFINE BITMAP oBmpGeneral ;
-        ID       990 ;
-        RESOURCE "Folder2_red_alpha_48" ;
-        TRANSPARENT ;
-        OF       oFld:aDialogs[2]
-
-      REDEFINE BITMAP oBmpGeneral ;
-        ID       990 ;
-        RESOURCE "Information_48_alpha" ;
-        TRANSPARENT ;
-        OF       oFld:aDialogs[3]
-
-      REDEFINE BITMAP oBmpGeneral ;
-        ID       990 ;
-        RESOURCE "Address_book2_alpha_48" ;
-        TRANSPARENT ;
-        OF       oFld:aDialogs[4]
-
-      REDEFINE GET aGet[ _CCODCLI ] ;
-         VAR      aTmp[ _CCODCLI ] ;
+      REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
          ID       170 ;
          WHEN     ( lWhen ) ;
          VALID    ( loaCli( aGet, aTmp, nMode, oRieCli ), RecalculaTotal( aTmp ) );
@@ -2802,8 +2788,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       Codigo de obra__________________________________________________________________
       */
 
-      REDEFINE GET aGet[ _CCODOBR ] ;
-         VAR      aTmp[ _CCODOBR ] ;
+      REDEFINE GET aGet[ _CCODOBR ] VAR aTmp[ _CCODOBR ] ;
          ID       220 ;
          WHEN     ( lWhen ) ;
          VALID    ( cObras( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
@@ -2941,12 +2926,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       Ruta____________________________________________________________________
       */
 
-      REDEFINE GET aGet[_CCODRUT] VAR aTmp[_CCODRUT] ;
+      REDEFINE GET aGet[ _CCODRUT ] VAR aTmp[ _CCODRUT ] ;
          ID       260 ;
          WHEN     ( lWhen ) ;
-         VALID    ( cRuta( aGet[_CCODRUT], dbfRuta, oSay[ 8 ] ) );
+         VALID    ( cRuta( aGet[ _CCODRUT ], dbfRuta, oSay[ 8 ] ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwRuta( aGet[_CCODRUT ], dbfRuta, oSay[ 8 ] ) );
+         ON HELP  ( BrwRuta( aGet[ _CCODRUT ], dbfRuta, oSay[ 8 ] ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
@@ -3537,10 +3522,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[1]
 
+      /*
+      Criterio de caja_________________________________________________________
+      */
+
+      REDEFINE CHECKBOX aGet[ _LRECC ] VAR aTmp[ _LRECC ] ;
+         ID       195 ;
+         WHEN     ( uFieldEmpresa( "lRECC" ) .and. nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
+      /*
       REDEFINE GET aGet[ _CNFC ] VAR aTmp[ _CNFC ] ;
          ID       570 ;
          WHEN     ( lWhen ) ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]*/
 
       REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
          ID       111 ;
@@ -4329,8 +4324,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
    if !Empty( oBmpEmp )
       oBmpEmp:end()
    end if
-
-   oBmpGeneral:End()
 
    /*
    Salida sin grabar-----------------------------------------------------------
@@ -6055,12 +6048,13 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[ _CCODOBR ]:cText( ( dbfAlbCliT )->CCODOBR )
          aGet[ _CCODOBR ]:lValid()
 
-         aGet[_CCODTRN ]:cText( ( dbfAlbCliT )->cCodTrn )
-         aGet[_CCODTRN ]:lValid()
+         aGet[ _CCODTRN ]:cText( ( dbfAlbCliT )->cCodTrn )
+         aGet[ _CCODTRN ]:lValid()
 
          aGet[ _LIVAINC  ]:Click( ( dbfAlbCliT )->lIvaInc )
          aGet[ _LRECARGO ]:Click( ( dbfAlbCliT )->lRecargo )
          aGet[ _LOPERPV  ]:Click( ( dbfAlbCliT )->lOperPv )
+         aGet[ _LRECC 	 ]:Click( lRECCEmpresa() )
 
          /*
          Pasamos los comentarios
@@ -7905,6 +7899,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[_LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
          aGet[_LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
          aGet[_LOPERPV ]:Click( ( dbfPedCliT )->lOperPv )
+         aGet[_LRECC   ]:Click( lRECCEmpresa() )
 
          aTmp[_CCODGRP]          := ( dbfPedCliT )->cCodGrp
          aTmp[_LMODCLI]          := ( dbfPedCliT )->lModCli
@@ -8297,6 +8292,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
          aGet[_LIVAINC ]:Click( ( dbfPreCliT )->lIvaInc )
          aGet[_LRECARGO]:Click( ( dbfPreCliT )->lRecargo )
          aGet[_LOPERPV ]:Click( ( dbfPreCliT )->lOperPv )
+         aGet[_LRECC   ]:Click( lRECCEmpresa() )
 
          aGet[_CCONDENT]:cText( ( dbfPreCliT )->cCondEnt )
          aGet[_MCOMENT ]:cText( ( dbfPreCliT )->mComent )
@@ -9138,6 +9134,7 @@ N§ PO  LC  Descripci¢n       Observaciones
                   ( dbfFacCliT )->nTarifa    := ( dbfClient )->nTarifa
                   ( dbfFacCliT )->lRecargo   := ( dbfClient )->lReq
                   ( dbfFacCliT )->lOperPv    := ( dbfClient )->lPntVer
+                  ( dbfFacCliT )->lRECC 		:= lRECCEmpresa()
                   ( dbfFacCliT )->nDtoEsp    := nDtoEsp
                   ( dbfFacCliT )->nDpp       := nDtoPp
                   ( dbfFacCliT )->( dbUnLock() )
@@ -9684,13 +9681,11 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             end if
 
             if ( dbfAlbCliT )->lRecargo
-               aTmp[ _LRECARGO ] := .t.
-               aGet[ _LRECARGO ]:Refresh()
+               aGet[ _LRECARGO ]:Click( .t. )
             end if
 
             if ( dbfAlbCliT )->lOperPv
-               aTmp[ _LOPERPV ]  := .t.
-               aGet[ _LOPERPV ]:Refresh()
+               aGet[ _LOPERPV ]:Click( .t. )
             end if
 
             cSuPed               := ( dbfAlbCliT )->cSuPed
@@ -15711,6 +15706,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTotLiq"     ,"N", 16,  6, "Total liquidado" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"", 						 "", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 
@@ -17310,7 +17306,8 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          if lChgCodCli
 
-            aGet[ _LRECARGO ]:Click( ( dbfClient )->lReq ):Refresh()
+            aGet[ _LRECARGO ]:Click( ( dbfClient )->lReq )
+            aGet[ _LRECC    ]:Click( lRECCEmpresa() )
 
             if !Empty( aGet[ _MOBSERV ] )
                aGet[ _MOBSERV ]:cText( ( dbfClient )->mComent )
@@ -22461,6 +22458,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
          aGet[ _LIVAINC ]:Click( ( dbfSatCliT )->lIvaInc )
          aGet[ _LRECARGO]:Click( ( dbfSatCliT )->lRecargo )
          aGet[ _LOPERPV ]:Click( ( dbfSatCliT )->lOperPv )
+         aGet[ _LRECC   ]:Click( lRECCEmpresa() )
 
          aGet[ _CCONDENT]:cText( ( dbfSatCliT )->cCondEnt )
          aGet[ _MCOMENT ]:cText( ( dbfSatCliT )->mComent )
@@ -22666,15 +22664,11 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
    local nTotRec
    local nTotPdt
    local lAlquiler   := .f.
-   local cCliente    := RTrim( aTmp[ _CNOMCLI ] )
+   local cCliente    := Rtrim( aTmp[ _CNOMCLI ] )
    local cObra       := if( Empty( aTmp[ _CCODOBR ] ), "Todas", Rtrim( aTmp[ _CCODOBR ] ) )  
    local cIva        := cImp() + Space( 1 ) + if( aTmp[ _LIVAINC ], "Incluido", "Desglosado" )
 
    aNumalb           := {}
-
-   if !Empty( oTipFac ) .and. ( oTipFac:nAt == 2 )
-      lAlquiler      := .t.
-   end if
 
    if Empty( cCodCli )
       msgStop( "Es necesario codificar un cliente", "Agrupar SAT" )
@@ -22686,6 +22680,9 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       return .t.
    end if
 
+   if !Empty( oTipFac ) .and. ( oTipFac:nAt == 2 )
+      lAlquiler      := .t.
+   end if
 
    /*
    Seleccion de Registros
@@ -22923,13 +22920,11 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
          if ( dbfSatCliT )->( dbSeek( aNumalb[ nItem, 3 ] ) ) .and. aNumalb[ nItem, 1 ]
 
             if ( dbfSatCliT )->lRecargo
-               aTmp[ _LRECARGO ] := .t.
-               aGet[ _LRECARGO ]:Refresh()
+               aGet[ _LRECARGO ]:Click( .t. )
             end if
 
             if ( dbfSatCliT )->lOperPv
-               aTmp[ _LOPERPV ] := .t.
-               aGet[ _LOPERPV ]:Refresh()
+               aGet[ _LOPERPV ]:Click( .t. )
             end if
 
          end if
@@ -23091,6 +23086,8 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       /*
       No dejamos importar Albaranes directos-----------------------------------
       */
+
+      aGet[ _LRECC 	]:Click( lRECCEmpresa() )
 
       aGet[ _CNUMSAT ]:bWhen           := {|| .f. }
       aGet[ _CNUMSAT ]:Disable()
