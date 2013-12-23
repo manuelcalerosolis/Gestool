@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Font.ch"
 #include "Report.ch"
 #include "MesDbf.ch"
@@ -146,7 +146,7 @@ METHOD SetFields( aFieldStructure ) CLASS TFilterCreator
 
    for each aField in aFieldStructure
 
-        if !Empty( aField[ 5 ] )
+      if !Empty( aField[ 5 ] )
          aAdd( ::aStructure, { aField[ 5 ], aField[ 1 ], aField[ 2 ] } )
      	end if
 
@@ -929,9 +929,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DescriptionsOnPostEdit( o, uNewValue, n ) CLASS TBrowseFilter
+METHOD DescriptionsOnPostEdit( o, uNewValue, nKey ) CLASS TBrowseFilter
 
-   if IsNum( n ) .and. ( n != VK_ESCAPE )
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE )
 
       if !IsNil( uNewValue )
          

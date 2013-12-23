@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Font.ch"
 #include "..\..\clipper5\include\RddSys.ch"
 #include "Menu.ch"

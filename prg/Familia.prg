@@ -9,7 +9,7 @@
    #include "FWCE.ch"   
    REQUEST DBFCDX
 #endif
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define DT_TOP                      0x00000000
 #define DT_LEFT                     0x00000000

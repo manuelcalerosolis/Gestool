@@ -2,7 +2,7 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #else
 #include "FWCE.ch"
 REQUEST DBFCDX

@@ -7,7 +7,7 @@
    REQUEST DBFCDX
 #endif
 
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #ifndef __PDA__
    static bEdit      := {| aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli | EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli ) }

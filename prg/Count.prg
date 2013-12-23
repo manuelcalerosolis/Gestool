@@ -1,10 +1,5 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Factu.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Factu.ch" 
 
 static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                    , .t., .t., .t., .f. },;
                            {"NALBPRV", "Albaran de proveedores"                  , .t., .t., .t., .f. },;
@@ -33,7 +28,6 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
                            {"NENTPED", "Entrega a cuenta pedido"                 , .f., .t., .f., .f. },;
                            {"NENTALB", "Entrega a cuenta albarán"                , .f., .t., .f., .f. } }
 
-#ifndef __PDA__
 
 //--------------------------------------------------------------------------//
 //Funciones del programa
@@ -70,7 +64,7 @@ Return ( nil )
 
 Function synCount( cPath, nSemilla )
 
-   local n
+   local cDoc
    local dbf
    local oError
    local oBlock
@@ -85,73 +79,78 @@ Function synCount( cPath, nSemilla )
       Deben de existir todos los tipos de documentos------------------------------
       */
 
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+      USE ( cPath + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbf ) )
+      SET ADSINDEX TO ( cPath + "NCOUNT.CDX" ) ADDITIVE
 
-      for n := 1 to len( aDoc )
+      if !( dbf )->( neterr() )
 
-         if !( dbf )->( dbSeek( aDoc[ n, 1 ] ) )
+         ( dbf )->( ordsetfocus( "Doc" ) )
 
-            if dbAppe( dbf )
-               ( dbf )->Doc   := aDoc[ n, 1 ]
-               ( dbf )->Des   := aDoc[ n, 2 ]
-               ( dbf )->lSerie:= aDoc[ n, 3 ]
-               ( dbf )->lDoc  := aDoc[ n, 4 ]
-               ( dbf )->lCon  := aDoc[ n, 5 ]
-               ( dbf )->lNFC  := aDoc[ n, 6 ]
-               ( dbf )->A     := nSemilla
-               ( dbf )->B     := nSemilla
-               ( dbf )->C     := nSemilla
-               ( dbf )->D     := nSemilla
-               ( dbf )->E     := nSemilla
-               ( dbf )->H     := nSemilla
-               ( dbf )->I     := nSemilla
-               ( dbf )->J     := nSemilla
-               ( dbf )->K     := nSemilla
-               ( dbf )->L     := nSemilla
-               ( dbf )->M     := nSemilla
-               ( dbf )->N     := nSemilla
-               ( dbf )->O     := nSemilla
-               ( dbf )->P     := nSemilla
-               ( dbf )->Q     := nSemilla
-               ( dbf )->R     := nSemilla
-               ( dbf )->S     := nSemilla
-               ( dbf )->T     := nSemilla
-               ( dbf )->U     := nSemilla
-               ( dbf )->V     := nSemilla
-               ( dbf )->W     := nSemilla
-               ( dbf )->X     := nSemilla
-               ( dbf )->Y     := nSemilla
-               ( dbf )->Z     := nSemilla
-               ( dbf )->( dbUnLock() )
+         for each cDoc in aDoc
+
+            if !( dbf )->( dbSeek( cDoc[ 1 ] ) )
+
+               if dbAppe( dbf )
+                  ( dbf )->Doc   := cDoc[ 1 ]
+                  ( dbf )->Des   := cDoc[ 2 ]
+                  ( dbf )->lSerie:= cDoc[ 3 ]
+                  ( dbf )->lDoc  := cDoc[ 4 ]
+                  ( dbf )->lCon  := cDoc[ 5 ]
+                  ( dbf )->lNFC  := cDoc[ 6 ]
+                  ( dbf )->A     := nSemilla
+                  ( dbf )->B     := nSemilla
+                  ( dbf )->C     := nSemilla
+                  ( dbf )->D     := nSemilla
+                  ( dbf )->E     := nSemilla
+                  ( dbf )->H     := nSemilla
+                  ( dbf )->I     := nSemilla
+                  ( dbf )->J     := nSemilla
+                  ( dbf )->K     := nSemilla
+                  ( dbf )->L     := nSemilla
+                  ( dbf )->M     := nSemilla
+                  ( dbf )->N     := nSemilla
+                  ( dbf )->O     := nSemilla
+                  ( dbf )->P     := nSemilla
+                  ( dbf )->Q     := nSemilla
+                  ( dbf )->R     := nSemilla
+                  ( dbf )->S     := nSemilla
+                  ( dbf )->T     := nSemilla
+                  ( dbf )->U     := nSemilla
+                  ( dbf )->V     := nSemilla
+                  ( dbf )->W     := nSemilla
+                  ( dbf )->X     := nSemilla
+                  ( dbf )->Y     := nSemilla
+                  ( dbf )->Z     := nSemilla
+                  ( dbf )->( dbUnLock() )
+               end if
+
+            else
+
+               if ( dbf )->( dbRLock() )
+                  ( dbf )->lSerie:= cDoc[ 3 ]
+                  ( dbf )->lDoc  := cDoc[ 4 ]
+                  ( dbf )->lCon  := cDoc[ 5 ]
+                  ( dbf )->lNFC  := cDoc[ 6 ]
+                  ( dbf )->( dbUnLock() )
+               end if
+
             end if
 
-         else
+         next 
 
-            if ( dbf )->( dbRLock() )
-               ( dbf )->lSerie:= aDoc[ n, 3 ]
-               ( dbf )->lDoc  := aDoc[ n, 4 ]
-               ( dbf )->lCon  := aDoc[ n, 5 ]
-               ( dbf )->lNFC  := aDoc[ n, 6 ]
-               ( dbf )->( dbUnLock() )
-            end if
-
-         end if
-
-      next
+      end if 
 
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir la tabla de contadores" )
 
    END SEQUENCE
+   
    ErrorBlock( oBlock )
 
    CLOSE ( dbf )
 
 Return nil
-
-#endif
 
 //---------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
@@ -204,10 +203,12 @@ FUNCTION rxCount( cPath, oMeter )
    Comprobamos que los campos que tenemos son lo mismos q debemos tener--------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "NCOUNT", @dbf ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "nCount", @dbf ), .f. )
 
    if !( dbf )->( netErr() )
+      
       n           := ( dbf )->( fCount() )
+      
       ( dbf )->( dbCloseArea() )
 
       if n < len( aItmCount() )

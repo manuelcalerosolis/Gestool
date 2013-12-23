@@ -4,7 +4,7 @@
 #include "Image.ch"
 #include "Xbrowse.ch"
 #include "FastRepH.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define GWL_STYLE                   -16
 #define TVS_TRACKSELECT             512 //   0x0200

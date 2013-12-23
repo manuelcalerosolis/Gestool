@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 /*
 Realiza asientos en Contaplus, partiendo de la factura

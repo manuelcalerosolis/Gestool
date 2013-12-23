@@ -1,6 +1,6 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 //---------------------------------------------------------------------------//
 
@@ -145,7 +145,7 @@ METHOD lResource( cFld )
 
    /*Monta el filtro para el informe*/
 
-   ::CreateFilter( aItmVentas(), { ::oAlbCliT, ::oFacCliT, ::oFacRecT, ::oTikCliT }, .t. )
+   ::CreateFilter( , ::oDbf, .t. )
 
 RETURN .t.
 

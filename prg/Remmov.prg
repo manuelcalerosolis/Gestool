@@ -2,7 +2,7 @@
 #include "Report.ch"
 #include "Xbrowse.ch"
 #include "MesDbf.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "FastRepH.ch"
 
 #define IDFOUND            3

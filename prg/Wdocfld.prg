@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _CTIPDOC                  1      //   C      2     0
 #define _CFLDDOC                  2      //   C    100     0

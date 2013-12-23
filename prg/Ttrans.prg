@@ -5,7 +5,7 @@
 REQUEST DBFCDX
 #endif
 #include "MesDbf.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 static dbfTranspor
 

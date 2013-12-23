@@ -8,7 +8,7 @@
    REQUEST DBFCDX
 #endif
 
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 //--------------------------------------------------------------------------//

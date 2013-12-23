@@ -3,7 +3,7 @@
 #include "constant.ch"
 #include "xbrowse.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 //----------------------------------------------------------------------------//
 

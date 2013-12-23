@@ -1,7 +1,7 @@
 #include "Fivewin.ch"
 #include "Font.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Ads.ch"
 
 #ifdef __SQLLIB__
@@ -2424,9 +2424,9 @@ Function Cuaderno1914()
 
 Return nil 
 
-/*Function TOrdenComanda()
+Function GetBic()
 
-Return nil*/
+Return nil
 
 /*
 //---------------------------------------------------------------------------//

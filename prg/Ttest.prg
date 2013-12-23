@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Objects.ch"
 #include "Menu.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "WColors.ch"
 #include "Font.ch"
 #include "Constant.ch"

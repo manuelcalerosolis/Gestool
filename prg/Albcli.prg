@@ -3,7 +3,7 @@
 #include "Report.ch"
 #include "Menu.ch"
 #include "Xbrowse.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define CLR_BAR                   14197607
 #define _MENUITEM_                "01057"
@@ -12105,17 +12105,18 @@ FUNCTION nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    else
 
       /*
-      Tomamos los valores redondeados
+      Tomamos los valores redondeados------------------------------------------
       */
 
       nCalculo       := nTotUAlbCli( cAlbCliL, nDec, nVdv )
-      nCalculo       -= Round( ( cAlbCliL )->nDtoDiv , nDec )
 
       /*
       Descuentos---------------------------------------------------------------
       */
 
       if lDto
+
+         nCalculo    -= Round( ( cAlbCliL )->nDtoDiv , nDec )
 
          if ( cAlbCliL )->nDto != 0
             nCalculo -= nCalculo * ( cAlbCliL )->nDto / 100
@@ -12128,30 +12129,33 @@ FUNCTION nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
       end if
 
       /*
+      Punto Verde--------------------------------------------------------------
+      */
+
+      if lPntVer
+         nCalculo    += ( cAlbCliL )->nPntVer
+      end if
+
+      /*
+      Transporte---------------------------------------------------------------
+      */
+
+      if lImpTrn 
+         nCalculo    += ( cAlbCliL )->nImpTrn 
+      end if
+
+      /*
       Unidades-----------------------------------------------------------------
       */
 
       nCalculo       *= nTotNAlbCli( cAlbCliL )
 
       /*
-      Punto Verde--------------------------------------------------------------
+      Redondeo-----------------------------------------------------------------
       */
-
-      if lPntVer
-         nCalculo    += nPntLAlbCli( cAlbCliL, nDec, nVdv )
-      end if
-
 
       if nRou != nil
          nCalculo    := Round( nCalculo, nRou )
-      end if
-
-      /*
-      Transporte
-      */
-
-      if lImpTrn .and. ( cAlbCliL )->nImpTrn != 0
-         nCalculo    += ( cAlbCliL )->nImpTrn * nTotNAlbCli( cAlbCliL )
       end if
 
    end if

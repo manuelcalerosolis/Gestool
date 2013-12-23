@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Empresa.ch"
 #include "Image.ch"
 #include "Xbrowse.ch"
@@ -3504,6 +3504,15 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          cPathGrp       := cPathOld
       end if
 
+      /*
+      Contadores---------------------------------------------------------------
+      */
+
+      if oMsg != nil
+         oMsg:SetText( "Creando contadores" )
+      end if
+      mkCount( cPath ); synCount( cPath, nGetSemilla)                   ; sysrefresh()
+
 		/*
       Ficheros Maestros--------------------------------------------------------
 		*/
@@ -3593,11 +3602,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando propiedades" )
       end if
       mkPro(      cPath, aImportacion:lArticulos, cPathGrp ); rxPro( cPath ) ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando contadores" )
-      end if
-      mkCount( cPath ); synCount( cPath, nGetSemilla)                   ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando tarifas" )

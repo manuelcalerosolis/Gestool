@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define  NUM_IND     80
 

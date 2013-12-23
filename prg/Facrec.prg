@@ -1,7 +1,7 @@
 #ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Folder.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Report.ch"
 #include "Print.ch"
 #include "Xbrowse.ch"
@@ -13155,9 +13155,9 @@ FUNCTION nTotLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDi
 
       // Descuentos------------------------------------------------------------
 
-      nCalculo       -= Round( ( cFacRecL )->nDtoDiv / nVdv , nDec )
-
       if lDto
+
+      	nCalculo    -= Round( ( cFacRecL )->nDtoDiv / nVdv , nDec )
 
          if ( cFacRecL )->nDto != 0
             nCalculo -= nCalculo * ( cFacRecL )->nDto / 100
@@ -13179,8 +13179,8 @@ FUNCTION nTotLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDi
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn .and. ( cFacRecL )->nImpTrn != 0
-         nCalculo    += ( cFacRecL )->nImpTrn * nTotNFacRec( cFacRecL )
+      if lImpTrn 
+         nCalculo    += ( cFacRecL )->nImpTrn 
       end if
 
       // Unidades--------------------------------------------------------------

@@ -2,7 +2,7 @@
 #include "Folder.ch"
 #include "Font.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Label.ch"
 
 #define FW_NORMAL                400

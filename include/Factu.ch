@@ -56,11 +56,11 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
         #define __GSTOTROS__            "Teléfono: +34 955776888 Correo electónico: manuelmiguez@asemasl.es"
 #endif
 
-#ifdef __MK__
-#define SERIALNUMBER                    1234554321
-#else
+/*
 #define SERIALNUMBER                    9876556789
-#endif
+*/
+
+#define SERIALNUMBER                    1234554321
 
 #define __DAYS__                        5
 

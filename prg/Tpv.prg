@@ -4,7 +4,7 @@
 #include "Xbrowse.ch"
 #include "FastRepH.ch"
 
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "DbInfo.ch"
 
 #define CABECERA                 "1"
