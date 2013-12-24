@@ -5443,13 +5443,13 @@ Static Function lControlAcceso()
 
    end if 
 
-   if lCheckSaasMode()
+   /*if lCheckSaasMode()
 
       lDemoMode( .f. )
 
       return .t.
 
-   end if
+   end if*/
 
 Return .f.
 
