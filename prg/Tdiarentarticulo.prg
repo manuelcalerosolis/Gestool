@@ -34,7 +34,7 @@ END CLASS
 METHOD Create()
 
    ::AddField( "cNumDoc",     "C", 14, 0,  {|| "" },        "Documento",                  .f., "Número documento"          , 14, .f. )
-   ::AddField( "cCodArt",     "C", 18, 0,  {|| "@!" },      "Cod. art.",                  .f., "Código artículo"           , 14, .f. )
+   ::AddField( "cCodArt",     "C", 18, 0,  {|| "@!" },      "Código artículo",                  .f., "Código artículo"           , 14, .f. )
    ::AddField( "cNomArt",     "C",100, 0,  {|| "@!" },      "Artículo",                   .f., "Nombre artículo"           , 35, .f. )
    ::AddField( "nNumCaj",     "N", 16, 6,  {|| MasUnd() },  cNombreCajas(),               .f., cNombreCajas()              ,  8, .t. )
    ::AddField( "nUniDad",     "N", 16, 6,  {|| MasUnd() },  cNombreUnidades(),            .f., cNombreUnidades()           ,  8, .t. )

@@ -173,7 +173,7 @@ METHOD GenIndices( oMsg )
                ::nProgress[ 1 ]  += 1
             end if
 
-            ::nProgress[ 1 ]     += 8
+            ::nProgress[ 1 ]     += 9
 
             if ::lNotGrupo
                ::nProgress[ 1 ]  += 9
@@ -222,6 +222,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Grupos de clientes", ::aProgress[ 1 ] )    ; TGrpCli():Create( ::cPatCli ):Reindexa()
          ::SetText( "Generando índices : Grupos de proveedores", ::aProgress[ 1 ] ) ; TGrpPrv():Create( ::cPatPrv ):Reindexa()
          ::SetText( "Generando índices : Tipos de artículos", ::aProgress[ 1 ] )    ; TTipArt():Create( ::cPatArt ):Reindexa()
+         ::SetText( "Generando índices : Proyectos", ::aProgress[ 1 ] )             ; TProyecto():Create( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPatGrp ):Reindexa()
          ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPatGrp ):Reindexa()
          ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()

@@ -110,6 +110,7 @@ Almacen.prg             \
 Agenda.prg              \
 Tmov.prg                \
 Tipart.prg              \
+Tproyecto.prg 				\
 TFraPub.prg             \
 SalaVta.prg             \
 Tvta.prg                \
@@ -493,6 +494,7 @@ Tmov.obj                \
 Almacen.obj             \
 Agenda.obj              \
 Tipart.obj              \
+Tproyecto.obj 				\
 TFraPub.obj             \
 SalaVta.obj             \
 Tvta.obj                \
@@ -903,6 +905,7 @@ $(OBJ)\Almacen.obj              +
 $(OBJ)\Agenda.obj               +
 $(OBJ)\Tmov.obj                 +
 $(OBJ)\Tipart.obj               +
+$(OBJ)\Tproyecto.obj            +
 $(OBJ)\TFraPub.obj              +
 $(OBJ)\SalaVta.obj              +
 $(OBJ)\Tvta.obj                 +

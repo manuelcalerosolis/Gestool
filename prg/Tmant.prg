@@ -89,7 +89,7 @@ CLASS TMant
 
    Method Play( cPath, oWndParent, oMenuItem )
 
-   METHOD OpenFiles()   VIRTUAL
+   METHOD OpenFiles()  
    METHOD DefineFiles() VIRTUAL
    METHOD CheckFiles( cFileAppendFrom )
 
@@ -309,6 +309,37 @@ RETURN ( Self )
 #endif
 
 //---------------------------------------------------------------------------//
+
+METHOD OpenFiles( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lExclusive   := .f.
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::DefineFiles( cPath )
+   end if
+
+   ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER
+
+      msgStop( "Imposible abrir las bases de datos." )
+
+      ::CloseFiles()
+      
+      lOpen             := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//----------------------------------------------------------------------------//
 
 METHOD CloseFiles() CLASS TMant
 

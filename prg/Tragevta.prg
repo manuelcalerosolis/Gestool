@@ -48,7 +48,7 @@ METHOD Create()
 
    ::AddField ( "cCodAge", "C",  3, 0,  {|| "@!" },         "Cod. age.",     .f., "Código agente",            3 )
    ::AddField ( "cNomAge", "C", 50, 0,  {|| "@!" },         "Agente",        .f., "Nombre agente",           25 )
-   ::AddField ( "cRefArt", "C", 18, 0,  {|| "@!" },         "Cod. art.",     .t., "Código artículo",         10 )
+   ::AddField ( "cRefArt", "C", 18, 0,  {|| "@!" },         "Código artículo",     .t., "Código artículo",         10 )
    ::AddField ( "cDesArt", "C", 50, 0,  {|| "@!" },         "Artículo",      .t., "Artículo",                35 )
    ::AddField ( "nUndCaj", "N", 16, 6,  {|| MasUnd () },    "Cajas",         .f., "Cajas",                    8 )
    ::AddField ( "nUndArt", "N", 16, 6,  {|| MasUnd () },    "Und.",          .t., "Unidades",                 8 )

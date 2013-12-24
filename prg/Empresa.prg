@@ -3723,6 +3723,16 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
+         oMsg:SetText( "Creando proyectos" )
+      end if
+
+      if cPathOld != nil 
+         TProyecto():Create( cPath ):CheckFiles( cPath + "Proyecto.Dbf" )   ; SysRefresh()
+      else
+         TProyecto():Create( cPath ):CheckFiles()                            ; SysRefresh()
+      end if
+
+      if oMsg != nil
          oMsg:SetText( "Creando grupos de clientes" )
       end if
 
@@ -4502,6 +4512,9 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
 
          oMsg:SetText( "Añadiendo tipos de artículos" )
          TTipArt():Create():SyncAllDbf()
+
+         oMsg:SetText( "Añadiendo proyectos" )
+         TProyecto():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo catálogos de artículos" )
          TCatalogo():Create():SyncAllDbf()

@@ -45,7 +45,7 @@ METHOD Create ()
 
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },      "Cod. Fam",      .f., "Cod. Fam"                   , 14, .f. )
    ::AddField( "cNomFam", "C", 50, 0, {|| "@!" },      "Familia",       .f., "Familia"                    , 35, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },      "Cod. Art",      .t., "Cod. Art."                  , 14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },      "Cod. Art",      .t., "Código artículo"                  , 14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },      "Artículo",      .t., "Artículo"                   , 35, .f. )
    ::AddField( "cCodBar", "C", 18, 0, {|| "@!" },      "Cod. Barras",   .f., "Código de barras"           , 20, .f. )
    ::FldPropiedades()

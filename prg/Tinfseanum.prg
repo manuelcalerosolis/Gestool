@@ -37,7 +37,7 @@ METHOD Create()
 
    ::AddField( "cTipDoc",  "C",27, 0, {|| "@!" },     "Tip. Doc.",    .t., "Tipo de documento",     25, .f.  )
    ::AddField( "cNumDoc",  "C",12, 0, {|| "@!" },     "Num. Doc.",    .t., "Número del documento",  15, .f.  )
-   ::AddField( "cCodArt",  "C",18, 0, {|| "@!" },     "Cod. Art.",    .t., "Código del artículo",   18, .f.  )
+   ::AddField( "cCodArt",  "C",18, 0, {|| "@!" },     "Código artículo",    .t., "Código del artículo",   18, .f.  )
    ::AddField( "dFecDoc",  "D", 8, 0, {|| "@!" },     "Fecha",        .t., "Fecha del documento",   12, .f.  )
    ::AddField( "cCodCli",  "C",12, 0, {|| "@!" },     "Cod. Cli/Prv", .t., "Código del Cli/Prv",    15, .f.  )
    ::AddField( "cCliPrv",  "C",50, 0, {|| "@!" },     "Nom. Cli/Prv", .t., "Nombre del Cli/Prv",    50, .f.  )

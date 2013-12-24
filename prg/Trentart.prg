@@ -93,7 +93,7 @@ RETURN ( Self )
 
 METHOD Create() CLASS TInfRentArt
 
-   ::AddField( "CCODART", "C", 18, 0, {|| "@!" },           "Cod. art.",         .t., "Codigo artículo", 14, .f. )
+   ::AddField( "CCODART", "C", 18, 0, {|| "@!" },           "Código artículo",         .t., "Codigo artículo", 14, .f. )
    ::AddField( "CNOMART", "C",100, 0, {|| "@!" },           "Descripción",       .t., "Descripción",     35, .f. )
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },           "Família",           .f., "Família",          5, .f. )
    ::AddField( "NTOTCAJ", "N", 16, 6, {|| MasUnd() },       "Cajas",             .f., "Cajas",           12, .t. )

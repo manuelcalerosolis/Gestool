@@ -29,7 +29,7 @@ END CLASS
 METHOD Create()
 
    ::AddField( "cCodFam",  "C", 16, 0, {|| "@!" },        'Familia',        .f., 'Familia'                ,  5, .f. )
-   ::AddField( "cCodArt",  "C", 18, 0, {|| "@!" },        'Cod. art.',      .t., 'Cod. artículo'          , 15, .f. )
+   ::AddField( "cCodArt",  "C", 18, 0, {|| "@!" },        'Código artículo',      .t., 'Cod. artículo'          , 15, .f. )
    ::AddField( "cNomArt",  "C",100, 0, {|| "@!" },        'Descripción',    .t., 'Descripción'            , 50, .f. )
    ::AddField( "LastChg",  "D",  8, 0, {|| "@!" },        'Cambio',         .t., 'Fecha de cambio'        , 10, .f. )
    ::AddField( "TipoIva",  "N",  5, 1, {|| "@!" },        '% impuestos',       .t., '% I.V.A'                ,  8, .f. )

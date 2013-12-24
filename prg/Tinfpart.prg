@@ -79,7 +79,7 @@ RETURN ( self )
 
 METHOD RentCreateFields()
 
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Cod. art.",         .f., "Codigo artículo",       14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Código artículo",         .f., "Codigo artículo",       14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },           "Artículo",          .f., "Nombre artículo",       35, .f. )
    ::FldPropiedades()
    ::AddField( "cLote",   "C", 12, 0,  ,    "Lote",              .f., "Número de lote",        10, .f. )
@@ -106,7 +106,7 @@ RETURN ( self )
 
 METHOD AcuCreate()
 
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Cod. Art",      .t., "Cod. Art."         , 14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Cod. Art",      .t., "Código artículo"         , 14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },           "Artículo",      .t., "Artículo"          , 35, .f. )
    ::FldPropiedades()
    ::AddField( "cLote",   "C", 12, 0,  ,    "Lote",          .f., "Número de lote"    , 10, .f. )

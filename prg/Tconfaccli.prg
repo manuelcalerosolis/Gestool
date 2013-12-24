@@ -42,7 +42,7 @@ METHOD Create()
 
    ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },      "Cód. cli.",            .f., "Cod. Cliente",           8, .f. )
    ::AddField( "cNomCli", "C", 50, 0, {|| "@!" },      "Cliente",              .f., "Nom. Cliente",          30, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },      "Cod. art.",            .f., "Cod. Artículo",         14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },      "Código artículo",            .f., "Cod. Artículo",         14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },      "Artículo",             .t., "Artículo",              25, .f. )
    ::AddField( "nCajEnt", "N", 16, 6, {|| MasUnd() },  cNombreCajas(),         .f., cNombreCajas(),          12, .t. )
    ::AddField( "nUniDad", "N", 16, 6, {|| MasUnd() },  cNombreunidades(),      .f., cNombreUnidades(),       12, .t. )

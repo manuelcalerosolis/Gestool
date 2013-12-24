@@ -1937,9 +1937,9 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Frases publicitarias'
-   oItem:cMessage       := 'Frases publicitarias'
-   oItem:bAction        := {|| TFrasesPublicitarias():New( cPatArt(), oWnd, "01104" ):Activate() }
+   oItem:cPrompt        := 'Proyectos'
+   oItem:cMessage       := 'Proyectos'
+   oItem:bAction        := {|| TProyecto():New( cPatArt(), oWnd, "01104" ):Activate() }
    oItem:cId            := "01104"
    oItem:cBmp           := "Led_Red_16"
    oItem:cBmpBig        := "Led_Red_32"

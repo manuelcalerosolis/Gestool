@@ -14,7 +14,7 @@ FUNCTION TmCliFac()
 
    aAdd( aCol, { "CCODCLI", "C", 12, 0, {|| "@!" },         "Código",                    .f., "Código cliente",              8 } )
    aAdd( aCol, { "CNOMCLI", "C", 50, 0, {|| "@!" },         "Cliente",                   .f., "Nombre cliente",             40 } )
-   aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },         "Cod. Art.",                 .t., "Cod. Artículo",              14 } )
+   aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },         "Código artículo",                 .t., "Cod. Artículo",              14 } )
    aAdd( aCol, { "CNOMART", "C",100, 0, {|| "@!" },         "Artículo",                  .t., "Descripción",                25 } )
    aAdd( aCol, { "CNIFCLI", "C", 15, 0, {|| "@!" },         "Nif",                       .f., "Nif",                         8 } )
    aAdd( aCol, { "CDOMCLI", "C", 35, 0, {|| "@!" },         "Domicilio",                 .f., "Domicilio",                  25 } )

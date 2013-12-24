@@ -6827,7 +6827,7 @@ Function SynClient( cPath )
 
             if dbLock( dbfBanco )
                ( dbfBanco )->cPaisIBAN := "ES"
-               ( dbfBanco )->cCtrlIBAN := IbanDigit( ( dbfBanco )->cPaisIBAN, ( dbfBanco )->cCtrlIBAN, ( dbfBanco )->cEntBnc, ( dbfBanco )->cSucBnc, ( dbfBanco )->cDigBnc, ( dbfBanco )->cCtaBnc )
+               ( dbfBanco )->cCtrlIBAN := IbanDigit( ( dbfBanco )->cPaisIBAN, ( dbfBanco )->cEntBnc, ( dbfBanco )->cSucBnc, ( dbfBanco )->cDigBnc, ( dbfBanco )->cCtaBnc )
                ( dbfBanco )->( dbUnLock() )
             end if
 

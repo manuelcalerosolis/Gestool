@@ -25,7 +25,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "cCodArt",  "C", 18, 0, {|| "@!" },        'Cod. art.',                 .f., 'Cod. artículo'            , 15, .f. )
+   ::AddField( "cCodArt",  "C", 18, 0, {|| "@!" },        'Código artículo',                 .f., 'Cod. artículo'            , 15, .f. )
    ::AddField( "cNomArt",  "C",100, 0, {|| "@!" },        'Descripción',               .f., 'Descripción'              , 50, .f. )
    ::AddField( "cCodBar",  "C", 20, 0, {|| "@!" },        'Código de barras',          .t., 'Código de barras'         , 25, .f. )
    ::AddField( "cTipBar",  "C", 40, 0, {|| "@!" },        'Tipo de código de barras',  .t., 'Tipo de código de barras' , 40, .f. )

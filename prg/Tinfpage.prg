@@ -88,7 +88,7 @@ METHOD RentFields()
 
    ::AddField( "cCodAge", "C",  3, 0, {|| "@!" },           "Cod. Age. ",        .f., "Código agente",          3, .f. )
    ::AddField( "cNomAge", "C", 50, 0, {|| "@!" },           "Agente",            .f., "Nombre agente",         28, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Cod. art.",         .f., "Codigo artículo",       14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Código artículo",         .f., "Codigo artículo",       14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },           "Descripción",       .f., "Descripción",           35, .f. )
    ::FldPropiedades()
    ::AddField( "cLote",   "C", 12, 0,  ,    "Lote",              .f., "Número de lote",        10, .f. )

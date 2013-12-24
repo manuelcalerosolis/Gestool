@@ -45,7 +45,7 @@ CLASS TStkMinArt FROM TInfGen
 METHOD Create()
 
    ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },            "Alm.",          .f., "Código almacén",    3 )
-   ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },            "Cod. Art.",     .t., "Código artículo",  14 )
+   ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },            "Código artículo",     .t., "Código artículo",  14 )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },            "Artículo",      .t., "Artículo",         40 )
    ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },            "Fam.",          .t., "Familia artículo",  5 )
    ::AddField ( "nNumUnd", "N", 13, 6, {|| MasUnd() },        cNombreUnidades(),.t., cNombreunidades(), 12 )

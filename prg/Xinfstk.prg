@@ -61,7 +61,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "CCODART", "C", 18, 0, {|| "@!" },          "Cod. art.",     .f., "Código artículo",          14, .f. )
+   ::AddField( "CCODART", "C", 18, 0, {|| "@!" },          "Código artículo",     .f., "Código artículo",          14, .f. )
    ::AddField( "CNOMART", "C",100, 0, {|| "@!" },          "Artículo",      .f., "Artículo",                 35, .f. )
    ::AddField( "CVALPR1", "C", 10, 0, {|| "@!" },          "Prp. 1",        .f., "Propiedad 1",               6, .f. )
    ::AddField( "CVALPR2", "C", 10, 0, {|| "@!" },          "Prp. 2",        .f., "Propiedad 2",               6, .f. )

@@ -1980,6 +1980,14 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "Proyecto"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Proyecto.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Proyecto.Cdx"
+   oDataTable:cDescription := "Proyectos"
+   oDataTable:bCreateFile  := {| cPath | TProyecto():BuildFiles( .t., cPath ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "Fabricantes"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Fabricantes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Fabricantes.Cdx"

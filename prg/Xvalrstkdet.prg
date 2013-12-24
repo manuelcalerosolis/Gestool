@@ -41,7 +41,7 @@ METHOD Create()
 
    ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },          "Fecha",         .t., "Fecha",                    10, .f. )
    ::AddField( "cTimMov", "C",  5, 0, {|| "@!" },          "Hora",          .t., "Hora",                      5, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },          "Cod. art.",     .f., "Código artículo",          14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },          "Código artículo",     .f., "Código artículo",          14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },          "Artículo",      .f., "Nombre artículo",          35, .f. )
    ::FldPropiedades()
    ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },          "Cod.",          .t., "Código almacén",           10, .f. )

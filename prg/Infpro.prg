@@ -30,7 +30,7 @@ METHOD Create()
 
    ::AddField( "cCodPro",   "C",  5, 0, {|| "" },           "Cód. prm.",      .t., "Código de la promoción",   5, .f. )
    ::AddField( "cNomPro",   "C", 25, 0, {|| "" },           "Nombre",         .f., "Nombre de la promoción",  20, .f. )
-   ::AddField( "cCodArt",   "C", 18, 0, {|| "" },           "Cod. art.",      .t., "Código del artículo",     15, .f. )
+   ::AddField( "cCodArt",   "C", 18, 0, {|| "" },           "Código artículo",      .t., "Código del artículo",     15, .f. )
    ::AddField( "cNomArt",   "C",100, 0, {|| "" },           "Artículo",       .t., "Nombre del artículo",     50, .f. )
    ::AddField( "dIniPro",   "D",  8, 0, {|| "" },           "Inicio",         .t., "Fecha inicio promoción",  10, .f. )
    ::AddField( "dFinPro",   "D",  8, 0, {|| "" },           "Fin",            .t., "Fecha fin promoción",     10, .f. )

@@ -41,7 +41,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },          "Cod. art.",     .t., "Código artículo",          14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },          "Código artículo",     .t., "Código artículo",          14, .f. )
    ::AddField( "cCodAlm", "C", 18, 0, {|| "@!" },          "Cod. alm.",     .f., "Código almacén",           14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },          "Artículo",      .t., "Artículo",                 50, .f. )
    ::AddField( "nExtArt", "N", 10, 0, {|| "@!" },          "Existencias",   .t., "Existencias",              10, .f. )

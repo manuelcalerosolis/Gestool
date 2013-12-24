@@ -25,7 +25,7 @@ METHOD Create()
    ::AddField( "cNomRut",     "C", 30, 0,  {|| "@!" },        "Ruta",        .f., "Nombre ruta",            14, .f. )
    ::AddField( "cCodCli",     "C", 12, 0,  {|| "@!" },        "Cod. Cli.",   .f., "Código cliente",         14, .f. )
    ::AddField( "cNomCli",     "C", 80, 0,  {|| "@!" },        "Cliente",     .f., "Nombre cliente",         14, .f. )
-   ::AddField( "cCodArt",     "C", 18, 0,  {|| "@!" },        "Cod. art.",   .f., "Código artículo",        14, .f. )
+   ::AddField( "cCodArt",     "C", 18, 0,  {|| "@!" },        "Código artículo",   .f., "Código artículo",        14, .f. )
    ::AddField( "cNomArt",     "C",100, 0,  {|| "@!" },        "Artículo",    .f., "Nombre artículo",        14, .f. )
    ::AddField( "cFactura",    "C", 12, 0,  {|| "@!" },        "Factura",     .f., "Número factura",         14, .f. )
 

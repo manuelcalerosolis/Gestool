@@ -202,7 +202,7 @@ Name: "{userdesktop}\Gestool 2Ktorce";            Filename: "{app}\Gestool.exe";
 Name: "{userdesktop}\Gestool táctil 2Ktorce";     Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
 
 [Run]
-Filename: "{app}\Gestool.exe";                    Description: "Iniciar Gestool 2K13"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Gestool.exe";                    Description: "Iniciar Gestool 2Ktorce"; Flags: nowait postinstall skipifsilent
 
 [Code]
 

@@ -3497,8 +3497,8 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Operación", ::oOperacion:oDbf:nArea )
    oFr:SetFieldAliases( "Operación", cObjectsToReport( ::oOperacion:oDbf ) )
 
-   oFr:SetWorkArea(     "Operarios", ::oDetPersonal:oDbf:nArea )
-   oFr:SetFieldAliases( "Operarios", cObjectsToReport( ::oDetPersonal:oDbf ) )
+   oFr:SetWorkArea(     "Operarios", ::oOperario:oDbf:nArea )
+   oFr:SetFieldAliases( "Operarios", cObjectsToReport( ::oOperario:oDbf ) )
 
    oFr:SetWorkArea(     "Tipos.Lineas de material producido", ::oTipoArticulo:oDbf:nArea )
    oFr:SetFieldAliases( "Tipos.Lineas de material producido", cObjectsToReport( ::oTipoArticulo:oDbf ) )

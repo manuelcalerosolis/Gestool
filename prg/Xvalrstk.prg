@@ -41,7 +41,7 @@ METHOD Create()
 
    ::AddField( "cCodAlm", "C",   3, 0, {|| "@!" },          "Cod.",          .f., "Código almacén",           10, .f. )
    ::AddField( "cNomAlm", "C",  20, 0, {|| "@!" },          "Almacén",       .f., "Nombre almacén",           30, .f. )
-   ::AddField( "cCodArt", "C",  18, 0, {|| "@!" },          "Cod. art.",     .t., "Código artículo",          14, .f. )
+   ::AddField( "cCodArt", "C",  18, 0, {|| "@!" },          "Código artículo",     .t., "Código artículo",          14, .f. )
    ::AddField( "cNomArt", "C", 100, 0, {|| "@!" },          "Artículo",      .t., "Nombre artículo",          35, .f. )
    ::AddField( "nTotStk", "N",  16, 6, {|| MasUnd() },      "Und.Stk.",      .t., "Total stock",              10, .f. )
    ::AddField( "nPreStk", "N",  16, 6, {|| ::cPicImp },     "Pre.Med.",      .t., "Precio stock",             10, .f. )

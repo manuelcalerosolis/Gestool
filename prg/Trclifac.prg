@@ -34,7 +34,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField ( "CCODART", "C", 18, 0, {|| "@!" },         "Cod. art.",                 .f., "Cod. Artículo"       , 14 )
+   ::AddField ( "CCODART", "C", 18, 0, {|| "@!" },         "Código artículo",                 .f., "Cod. Artículo"       , 14 )
    ::AddField ( "CNOMART", "C",100, 0, {|| "@!" },         "Artículo",                  .t., "Artículo"            , 25 )
    ::AddField ( "NCAJENT", "N", 19, 6, {|| MasUnd() },     cNombreCajas(),              .f., cNombreCajas()        , 10 )
    ::AddField ( "NUNIDAD", "N", 19, 6, {|| MasUnd() },     cNombreUnidades(),           .t., cNombreUnidades()     , 10 )

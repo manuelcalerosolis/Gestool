@@ -11,7 +11,7 @@ FUNCTION TVenAlb()
    local aCol  := {}
    local aIdx  := {}
 
-   aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },             "Cod. art.",      .t., "Código artículo",  14,} )
+   aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },             "Código artículo",      .t., "Código artículo",  14,} )
    aAdd( aCol, { "CNOMART", "C",100, 0, {|| "@!" },             "Descripción",    .t., "Descripción",      45,} )
    aAdd( aCol, { "cCodFam", "C", 16, 0, {|| "@!" },             "Fam.",           .t., "Familia",           5,} )
    aAdd( aCol, { "NCAJENT", "N", 19, 6, {|| MasUnd() },         "Caj.",           .t., "Cajas",            12,} )

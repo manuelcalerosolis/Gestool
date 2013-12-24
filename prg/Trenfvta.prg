@@ -41,7 +41,7 @@ METHOD Create()
 
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },           "Cod.",              .t., "Códogo familia",         5, .f. )
    ::AddField( "cNomFam", "C", 50, 0, {|| "@!" },           "Família",           .t., "Família",               35, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Cod. art.",         .f., "Codigo artículo",       14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Código artículo",         .f., "Codigo artículo",       14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },           "Descripción",       .f., "Descripción",           35, .f. )
    ::FldPropiedades()
    ::AddField( "nTotCaj", "N", 16, 6, {|| MasUnd() },       "Cajas",             .f., "Cajas",                 12, .t. )

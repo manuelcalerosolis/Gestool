@@ -30,7 +30,7 @@ END CLASS
 
 METHOD Create() CLASS TInfArtAlb
 
-   ::AddField(  "CCODART", "C", 18, 0, {|| "@!" },            "Cod. Art.",    .f., "Código artículo" , 14 )
+   ::AddField(  "CCODART", "C", 18, 0, {|| "@!" },            "Código artículo",    .f., "Código artículo" , 14 )
    ::AddField(  "CNOMART", "C",100, 0, {|| "@!" },            "Nom. Art.",    .f., "Nombre artículo" , 35 )
    ::AddField(  "CDOCMOV", "C", 18, 0, {|| "@!" },            "Albaran",      .t., "Albaran"         , 10 )
    ::AddField(  "DFECMOV", "D",  8, 0, {|| "@!" },            "Fecha",        .t., "Fecha"           ,  8 )

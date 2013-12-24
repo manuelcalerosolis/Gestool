@@ -44,7 +44,7 @@ METHOD Create()
 
    ::AddField( "cCodPrv", "C", 12, 0, {|| "@!" },      "Cod. Prv.",     .f., "Cod. Proveedor"               ,  9, .f. )
    ::AddField( "cNomPrv", "C", 50, 0, {|| "@!" },      "Proveedor",     .f., "Nombre Proveedor"             , 35, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },      "Cod. Art",      .t., "Cod. Art."                    , 14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },      "Cod. Art",      .t., "Código artículo"                    , 14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },      "Artículo",      .t., "Artículo"                     , 35, .f. )
    ::FldPropiedades()
    ::AddField( "nNumUni", "N", 16, 6, {|| MasUnd() },  cNombreUnidades(),.t., cNombreUnidades()             , 12, .t. )

@@ -118,7 +118,7 @@ RETURN ( Self )
 METHOD Create() CLASS TInfLot
 
    ::AddField( "cNumLot", "C", 12, 0, {|| "@!" },           "Lote",              .f., "Lote",             9, .f. )
-   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Cod. art.",         .t., "Código artículo", 14, .f. )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Código artículo",         .t., "Código artículo", 14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },           "Artículo",          .t., "Artículo",        35, .f. )
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },           "Família",           .f., "Família",          5, .f. )
    ::AddField( "cCodCli", "C", 18, 0, {|| "@!" },           "Cod. cli.",         .t., "Código cliente",  12, .f. )

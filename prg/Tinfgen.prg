@@ -4607,7 +4607,7 @@ METHOD FamAnuCreateFld()
 
    ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },         "Cod.fam.",         .t., "Cod. familia",               5 )
    ::AddField ( "cNomFam", "C", 40, 0, {|| "@!" },         "Família",          .t., "Nom. família",              40 )
-   ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },         "Cod. art.",        .f., "Cod. artículo",             14 )
+   ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },         "Código artículo",        .f., "Cod. artículo",             14 )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },         "Artículo",         .f., "Nom. artículo",             20 )
    ::AddField ( "nImpEne", "N", 16, 6, {|| ::cPicOut },    "Ene",              .t., "Enero",                     12 )
    ::AddField ( "nImpFeb", "N", 16, 6, {|| ::cPicOut },    "Feb",              .t., "Febrero",                   12 )

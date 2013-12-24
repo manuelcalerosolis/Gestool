@@ -35,7 +35,7 @@ METHOD Create()
 
    ::AddField( "cCodAge", "C",  3, 0,  {|| "@!" },         "Cod. age.",                 .f., "Código agente",               3 )
    ::AddField( "cNomAge", "C", 50, 0,  {|| "@!" },         "Agente",                    .f., "Agente",                     25 )
-   ::AddField( "cRefArt", "C", 18, 0,  {|| "@!" },         "Cod. art.",                 .t., "Código artículo",            10 )
+   ::AddField( "cRefArt", "C", 18, 0,  {|| "@!" },         "Código artículo",                 .t., "Código artículo",            10 )
    ::AddField( "cDesArt", "C", 50, 0,  {|| "@!" },         "Artículo",                  .t., "Artículo",                   25 )
    ::FldCliente()
    ::AddField( "cDocMov", "C", 14, 0,  {|| "@!" },         "N/Albarán",                 .f., "Nuestro albarán",            14 )

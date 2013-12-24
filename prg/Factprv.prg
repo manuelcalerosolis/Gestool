@@ -9824,7 +9824,7 @@ Function SynFacPrv( cPath )
       end if 
 
       if Empty( ( dbfFacPrvT )->cCtrlIBAN )
-         ( dbfFacPrvT )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvT )->cPaisIBAN, ( dbfFacPrvT )->cCtrlIBAN, ( dbfFacPrvT )->cEntBnc, ( dbfFacPrvT )->cSucBnc, ( dbfFacPrvT )->cDigBnc, ( dbfFacPrvT )->cCtaBnc )
+         ( dbfFacPrvT )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvT )->cPaisIBAN, ( dbfFacPrvT )->cEntBnc, ( dbfFacPrvT )->cSucBnc, ( dbfFacPrvT )->cDigBnc, ( dbfFacPrvT )->cCtaBnc )
       end if 
 
       ( dbfFacPrvT )->( dbSkip() )
