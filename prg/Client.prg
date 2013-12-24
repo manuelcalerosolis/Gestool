@@ -14794,3 +14794,41 @@ function lAtipicacliente( cCodCli, dbfAtpCli )
 return ( dbfAtpCli )->( dbSeek( cCodCli ) )
 
 //---------------------------------------------------------------------------//
+
+Function lConditionAtipica( dFecha, dbfClientAtp )
+
+   if !Empty( ( dbfClientAtp )->cCodArt )    .and.;
+      ( dbfClientAtp )->nTipAtp <= 1         .and.;
+      ( ( dbfClientAtp )->dFecIni <= dFecha .or. Empty( ( dbfClientAtp )->dFecIni ) ) .and. ;
+      ( ( dbfClientAtp )->dFecFin >= dFecha .or. Empty( ( dbfClientAtp )->dFecFin ) )
+
+      Return .t.
+
+   end if   
+
+Return .f.
+
+//---------------------------------------------------------------------------//
+
+function nPrecioAtipica( nTarifa, lIvaInc, dbfClientAtp )
+
+   local nPrecio  := 0
+
+   do case
+      case nTarifa == 1
+         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva1, ( dbfClientAtp )->nPrcArt )
+      case nTarifa == 2
+         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva2, ( dbfClientAtp )->nPrcArt2 )
+      case nTarifa == 3
+         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva3, ( dbfClientAtp )->nPrcArt3 )
+      case nTarifa == 4
+         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva4, ( dbfClientAtp )->nPrcArt4 )
+      case nTarifa == 5
+         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva5, ( dbfClientAtp )->nPrcArt5 )
+      case nTarifa == 6
+         nPrecio     := if( lIvaInc, ( dbfClientAtp )->nPreIva6, ( dbfClientAtp )->nPrcArt6 )
+   end case
+
+Return nPrecio
+
+//---------------------------------------------------------------------------//
