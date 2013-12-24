@@ -1,6 +1,6 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
@@ -144,7 +144,7 @@ METHOD lResource( cFld ) CLASS TRenXVta
       return .f.
    end if
 
-   ::CreateFilter( aItmVentas(), { ::oAlbCliT, ::oFacCliT, ::oFacRecT, ::oTikCliT }, .t. )
+   ::CreateFilter( , ::oDbf, .t. )
 
    /*
    Montamos grupos de clientes

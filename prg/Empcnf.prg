@@ -1,14 +1,7 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
-#include "Factu.ch"
+#include "FiveWin.Ch"
+#include "Factu.ch" 
 #include "Empresa.ch"
 
-#ifndef __PDA__
 //---------------------------------------------------------------------------//
 //Funciones del programa
 //---------------------------------------------------------------------------//
@@ -106,11 +99,6 @@ FUNCTION cUsrSql() ; return ( aEmp()[ _CUSRSQL ] )
 FUNCTION cPswSql() ; return ( aEmp()[ _CPSWSQL ] )
 FUNCTION nPrtSql() ; return ( aEmp()[ _NPRTSQL ] )
 FUNCTION cDtbSql() ; return ( aEmp()[ _CDTBSQL ] )
-
-//---------------------------------------------------------------------------//
-
-// FUNCTION nCurTur() ; RETURN ( if( aEmp()[ _NNUMTUR ] == 0, 1, aEmp()[ _NNUMTUR ] ) )
-// FUNCTION nCurLiq() ; RETURN ( if( aEmp()[ _NNUMLIQ ] == 0, 1, aEmp()[ _NNUMLIQ ] ) )
 
 //---------------------------------------------------------------------------//
 
@@ -632,8 +620,6 @@ Function nDiasValidez() ; Return ( aEmp()[ _NDIAVAL ] )
 //---------------------------------------------------------------------------//
 //Funciones para el programa y para pda
 //---------------------------------------------------------------------------//
-
-#endif
 
 FUNCTION MasUnd( lCeros )
 

@@ -1,6 +1,6 @@
 #include "FiveWin.Ch"
 
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 #define stateMesaLibre                    1

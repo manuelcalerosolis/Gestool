@@ -1,6 +1,6 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
@@ -206,7 +206,7 @@ METHOD lResource( cFld ) CLASS TAcuRCVta
 
    ::lExcCero := .f.
 
-   ::CreateFilter( aItmVentas(), { ::oAlbCliT, ::oFacCliT, ::oFacRecT, ::oTikCliT }, .t. )
+   ::CreateFilter( , ::oDbf, .t. )
 
 RETURN .t.
 

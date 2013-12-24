@@ -7,7 +7,7 @@
 REQUEST DBFCDX
 #endif
 
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _CCODUSE                  1      //   C      3      0
 #define _CNBRUSE                  2      //   C     30      0

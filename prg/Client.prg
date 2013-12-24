@@ -10,7 +10,7 @@
    #include "FWCE.ch"
    REQUEST DBFCDX
 #endif
-   #include "Factu.ch"
+   #include "Factu.ch" 
    #include "Ini.ch"
 
 #define _COD                       1      //   C      7     0

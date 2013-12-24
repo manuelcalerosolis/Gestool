@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define  _CCODALM    1
 #define  _CNOMALM    2

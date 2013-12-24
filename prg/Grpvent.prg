@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _CGRPCONTA               1     //   C      9     0
 #define _CGRPNOM                 2     //   C     25     0

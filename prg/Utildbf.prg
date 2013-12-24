@@ -2,7 +2,7 @@
 #include "Error.ch"
 #include "DbStruct.ch"
 #include "DbInfo.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define HB_FF_AUTOINC         0x0008 /* Column is autoincrementing */
 

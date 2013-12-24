@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Gestool 2K13
-AppVerName=Gestool 2K13
+AppName=Gestool 2Ktorce
+AppVerName=Gestool 2Ktorce
 AppPublisher=Gestool 
 AppPublisherURL=http://www.gestool.es
 AppSupportURL=http://www.gestool.es
@@ -196,10 +196,10 @@ Source: "c:\fw195\gestool\client\client.exe";     DestDir: "{app}\Client";    Fl
 Source: "c:\fw195\actualiza\chkemp.nil";          DestDir: "{app}";           Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Gestool 2K13";                     Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{group}\Gestool táctil 2K13";              Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
-Name: "{userdesktop}\Gestool 2K13";               Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
-Name: "{userdesktop}\Gestool táctil 2K13";        Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{group}\Gestool 2Ktorce";                  Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{group}\Gestool táctil 2Ktorce";           Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
+Name: "{userdesktop}\Gestool 2Ktorce";            Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico"
+Name: "{userdesktop}\Gestool táctil 2Ktorce";     Filename: "{app}\Gestool.exe";       WorkingDir: "{app}"; IconFilename: "{app}\Gestool.ico" ; Parameters: "/TACTIL"
 
 [Run]
 Filename: "{app}\Gestool.exe";                    Description: "Iniciar Gestool 2K13"; Flags: nowait postinstall skipifsilent

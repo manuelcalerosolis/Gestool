@@ -1,6 +1,6 @@
 #ifndef __PDA__
 
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Menu.ch" 
 #include "Font.ch"
 #include "Inkey.ch"
@@ -5598,7 +5598,7 @@ Function IsStandard()
 
    if IsNil( lStandard )
 
-      if File( FullCurDir() + "scmmrc" ) .or.;
+      if File( FullCurDir() + "scmmrc" ) .or.; 
          File( FullCurDir() + "prfsnl" ) .or.;
          File( FullCurDir() + "stndrd" )
 

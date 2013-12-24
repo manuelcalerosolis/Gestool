@@ -1,6 +1,6 @@
 #include "FiveWin.Ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _CCODPLT                   1      //   C      3     0
 #define _CDESPLT                   2      //   C     50     0

@@ -2,7 +2,7 @@
 #include "Folder.ch"
 #include "Report.ch"
 #include "Label.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Menu.ch"
 #include "Xbrowse.ch"
 #include "FastRepH.ch" 

@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 #include "Font.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
@@ -130,7 +130,7 @@ METHOD lResource( cFld )
       return .f.
    end if
 
-   ::CreateFilter( aItmVentas(), { ::oAlbCliT, ::oFacCliT, ::oFacRecT, ::oTikCliT }, .t. )
+   ::CreateFilter( , ::oDbf, .t. )
 
    if !::oDefAlmInf( 150, 151, 160, 161, 170 )
       return .f.

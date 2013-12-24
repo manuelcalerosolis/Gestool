@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
@@ -2528,21 +2528,21 @@ METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TS
 
             if dbAppe( dbfRemMov )
 
-               nNumDoc                          := nNewDoc( nil, dbfHisMov, "nMovAlm", nil, dbfCnt )
-               ( dbfRemMov )->nNumRem           := nNumDoc
-               ( dbfRemMov )->cSufRem           := RetSufEmp()
-               ( dbfRemMov )->nTipMov           := 4
-               ( dbfRemMov )->cCodUsr           := cCurUsr()
-               ( dbfRemMov )->cCodDlg           := ""
-               ( dbfRemMov )->cCodAge           := ""
-               ( dbfRemMov )->cCodMov           := "EI"
-               ( dbfRemMov )->dFecRem           := Date()
-               ( dbfRemMov )->cTimRem           := Time()
-               ( dbfRemMov )->cAlmOrg           := ( dbfAlm )->cCodAlm
-               ( dbfRemMov )->cAlmDes           := ( dbfAlm )->cCodAlm
-               ( dbfRemMov )->cCodDiv           := cDivEmp()
-               ( dbfRemMov )->nVdvDiv           := nChgDiv()
-               ( dbfRemMov )->nTotRem           := 0
+               nNumDoc                       := nNewDoc( nil, dbfHisMov, "nMovAlm", nil, dbfCnt )
+               ( dbfRemMov )->nNumRem        := nNumDoc
+               ( dbfRemMov )->cSufRem        := RetSufEmp()
+               ( dbfRemMov )->nTipMov        := 4
+               ( dbfRemMov )->cCodUsr        := cCurUsr()
+               ( dbfRemMov )->cCodDlg        := ""
+               ( dbfRemMov )->cCodAge        := ""
+               ( dbfRemMov )->cCodMov        := "EI"
+               ( dbfRemMov )->dFecRem        := Date()
+               ( dbfRemMov )->cTimRem        := Time()
+               ( dbfRemMov )->cAlmOrg        := ( dbfAlm )->cCodAlm
+               ( dbfRemMov )->cAlmDes        := ( dbfAlm )->cCodAlm
+               ( dbfRemMov )->cCodDiv        := cDivEmp()
+               ( dbfRemMov )->nVdvDiv        := nChgDiv()
+               ( dbfRemMov )->nTotRem        := 0
                ( dbfRemMov )->( dbUnLock() )
 
                for each sStk in aStk

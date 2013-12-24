@@ -2,7 +2,7 @@
    #include "FiveWin.Ch"
    #include "DbInfo.ch"
    #include "Ord.ch"
-   #include "Factu.ch"
+   #include "Factu.ch" 
 #else
    #include "FWCE.ch"
    #include "DbInfo.ch"

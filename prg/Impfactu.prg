@@ -3,7 +3,7 @@ Importación de datos de factuplus clientes, y artículos.
 */
 
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 CLASS TImpFactu

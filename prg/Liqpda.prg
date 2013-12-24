@@ -1,7 +1,7 @@
 #ifdef __PDA__
 #include "FWCE.ch"
 REQUEST DBFCDX
-#include "Factu.ch"
+#include "Factu.ch" 
 
 static dFechaLiquidacion
 

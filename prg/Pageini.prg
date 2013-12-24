@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Xbrowse.ch"
 
 static nLevel

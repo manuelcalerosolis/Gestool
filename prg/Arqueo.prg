@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 #include "Folder.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Ini.ch"
 
 #define SAVTIK                   "1"      // Salvar como tiket

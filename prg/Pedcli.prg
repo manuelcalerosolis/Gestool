@@ -3,7 +3,7 @@
 #include "Report.ch"
 #include "Menu.ch"
 
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define CLR_BAR                    14197607
 #define _MENUITEM_                 "01056"
@@ -15574,46 +15574,58 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    else
 
       nCalculo       := nTotUPedCli( cPedCliL, nDec )
-      nCalculo       *= nTotNPedCli( cPedCliL )
 
+      /*
+      Descuentos lineales------------------------------------------------------
+      */
+
+      if lDto
+
+      	nCalculo  	-= Round( ( cPedCliL )->nDtoDiv / nVdv , nDec )
       
-      if ( cPedCliL )->nDto != 0
-            nCalculo -= nCalculo * ( cPedCliL )->nDto    / 100
-      end if
+      	if ( cPedCliL )->nDto != 0
+         	nCalculo -= nCalculo * ( cPedCliL )->nDto    / 100
+      	end if
 
-      if ( cPedCliL )->nDtoPrm != 0
-            nCalculo -= nCalculo * ( cPedCliL )->nDtoPrm / 100
-      end if
+      	if ( cPedCliL )->nDtoPrm != 0
+         	nCalculo -= nCalculo * ( cPedCliL )->nDtoPrm / 100
+      	end if
+
+      end if 
 
       /*
       Punto Verde--------------------------------------------------------------
       */
 
-      if lPntVer .and. ( cPedCliL )->nPntVer != 0
-         nCalculo    += ( cPedCliL )->nPntVer * nTotNPedCli( cPedCliL )
+      if lPntVer
+         nCalculo    += ( cPedCliL )->nPntVer
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn .and. ( cPedCliL )->nImpTrn != 0
-         nCalculo    += ( cPedCliL )->nImpTrn * nTotNPedCli( cPedCliL )
+      if lImpTrn 
+         nCalculo    += ( cPedCliL )->nImpTrn
       end if
+
+      /* 
+      Unidades-----------------------------------------------------------------
+      */
+
+      nCalculo       *= nTotNPedCli( cPedCliL )
 
    end if
 
    if nVdv != 0
-      nCalculo       := nCalculo / nVdv
+      nCalculo       := Div( nCalculo / nVdv )
    end if
 
    if nRou != nil
       nCalculo       := Round( nCalculo, nRou )
    end if
 
-   
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
 
 //---------------------------------------------------------------------------//
 

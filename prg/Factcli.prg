@@ -5,7 +5,7 @@
 #include "TWMail.ch"
 #include "FastRepH.ch"
 #include "Xbrowse.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define OFN_PATHMUSTEXIST    0x00000800
 #define OFN_NOCHANGEDIR      0x00000008
@@ -15032,11 +15032,6 @@ FUNCTION nTotLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
             nCalculo -= nCalculo * ( dbfLin )->nDtoPrm / 100
          end if
 
-         /*
-         nCalculo    -= nDtoGral
-         nCalculo    -= nDtoProm
-         */
-
       end if
 
       // Punto verde--------------------------------------------------------------
@@ -15049,8 +15044,8 @@ FUNCTION nTotLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn .and. ( dbfLin )->nImpTrn != 0
-         nCalculo    += ( dbfLin )->nImpTrn * nTotNFacCli( dbfLin )
+      if lImpTrn 
+         nCalculo    += ( dbfLin )->nImpTrn // * nTotNFacCli( dbfLin )
       end if
 
       // Unidades-----------------------------------------------------------------

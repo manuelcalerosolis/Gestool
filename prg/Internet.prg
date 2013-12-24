@@ -1,6 +1,6 @@
 #include "FiveWin.Ch"
 #include "Struct.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Ini.ch"
 #include "MesDbf.ch"
 #include "Report.ch"

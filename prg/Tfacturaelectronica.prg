@@ -4,7 +4,7 @@
 #include "Hbclass.ch"
 #include "Fileio.ch"
 
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define SchemaVersion            '3.1'
 #define Modality                 'I'   // "individual" (I)

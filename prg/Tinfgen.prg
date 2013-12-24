@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Report.ch"
 #include "MesDbf.ch"
 
@@ -5178,6 +5178,7 @@ METHOD CreateFilter( aTField, oDbf, lMultyExpresion )
    do case
       case !Empty( aTField )
          ::oFilter:SetFields( aTField )
+
       case !Empty( oDbf )
          ::oFilter:SetDatabase( oDbf )
    end case 

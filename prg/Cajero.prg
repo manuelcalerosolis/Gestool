@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _CCODCAJ                 1      //   C      3     0
 #define _CNOMCAJ                 2      //   C     30     0

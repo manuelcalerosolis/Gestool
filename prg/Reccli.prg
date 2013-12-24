@@ -8,7 +8,7 @@
    #include "FWCE.ch"
    REQUEST DBFCDX
 #endif
-   #include "Factu.ch"
+   #include "Factu.ch" 
 
 #define _MENUITEM_               "01059"
 

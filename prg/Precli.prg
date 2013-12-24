@@ -1,7 +1,7 @@
 #ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Folder.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Report.ch"
 #include "Menu.ch"
 #else
@@ -7195,7 +7195,7 @@ FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 
    else
 
-      nCalculo          := nTotUPreCli( cPreCliL, nDec ) * nTotNPreCli( cPreCliL )
+      nCalculo          := nTotUPreCli( cPreCliL, nDec )
 
       /*
       Descuentos---------------------------------------------------------------
@@ -7215,17 +7215,23 @@ FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
       Punto Verde--------------------------------------------------------------
       */
 
-      if lPntVer .and. ( cPreCliL )->nPntVer != 0
-         nCalculo       += ( cPreCliL )->nPntVer * nTotNPreCli( cPreCliL )
+      if lPntVer 
+         nCalculo       += ( cPreCliL )->nPntVer
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn .and. ( cPreCliL )->nImpTrn != 0
-         nCalculo       += ( cPreCliL )->nImpTrn * nTotNPreCli( cPreCliL )
+      if lImpTrn 
+         nCalculo       += ( cPreCliL )->nImpTrn
       end if
+
+      /* 
+      Unidades-----------------------------------------------------------------
+      */
+
+      nCalculo          *= nTotNPreCli( cPreCliL )
 
    end if
 

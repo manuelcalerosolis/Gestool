@@ -2,7 +2,7 @@
 #include "Font.ch"
 #include "Folder.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Xbrowse.ch"
 
 static oWndBrw

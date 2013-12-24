@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Empresa.ch"
 #include "hbxml.ch"
 #include "Xbrowse.ch"

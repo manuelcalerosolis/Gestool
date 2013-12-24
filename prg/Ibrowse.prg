@@ -5,7 +5,7 @@
 #include "Constant.ch"
 #include "Report.ch"
 #include "MesDbf.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #else
 #include "FWCE.ch"
 REQUEST DBFCDX

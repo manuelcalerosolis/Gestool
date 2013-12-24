@@ -1,7 +1,7 @@
 /* Importación de datos de factucont */
 
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 CLASS TImpFacCom

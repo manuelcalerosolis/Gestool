@@ -2,7 +2,7 @@
 #include "Menu.ch"
 #include "Font.ch"
 #include "Inkey.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Button.ch"
 
 #define CABECERA                 "1"

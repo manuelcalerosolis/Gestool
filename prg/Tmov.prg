@@ -7,7 +7,7 @@
    REQUEST DBFCDX
 #endif
 
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _CCODMOV                  1      //   C      2     0
 #define _CDESMOV                  2      //   C     20     0

@@ -8,7 +8,7 @@
    REQUEST DBFCDX
 #endif
 
-#include "Factu.ch"
+#include "Factu.ch" 
 
 /*
 Estructura de la base de datos Tabla de conversión

@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "TDbfVirt.ch"
 #include "Xbrowse.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "MesDbf.ch"
 
 static dbfAlbCliT

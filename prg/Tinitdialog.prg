@@ -2,7 +2,7 @@
 
 #include "FiveWin.Ch"
 #include "Splitter.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Constant.ch"
 
 #define NUMERO_DOCUMENTOS     5

@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Report.ch"
 
 #define _NUMERO                    1      //   C     10     0

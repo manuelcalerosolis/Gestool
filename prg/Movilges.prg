@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "report.ch"
 #include "MesDbf.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 #include "Folder.ch"
 
 STATIC oReport                   //para imprimir los ficheros de texto
