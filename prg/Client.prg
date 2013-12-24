@@ -14784,3 +14784,13 @@ Function cClientEntidad( cCliente, dbfBncCli )
 Return cCuenta
 
 //---------------------------------------------------------------------------//
+
+/*
+Nos informa si tenemos atipicas para este cliente------------------------------
+*/
+
+function lAtipicacliente( cCodCli, dbfAtpCli )
+
+return ( dbfAtpCli )->( dbSeek( cCodCli ) )
+
+//---------------------------------------------------------------------------//

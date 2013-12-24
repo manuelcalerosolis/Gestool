@@ -231,6 +231,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LGASSUP            84
 #define _dCNUMPED           85
 #define _dCNUMSAT           86
+#define _DFECUNTCOM 		87
 
 /*
 Definici¢n de Array para impuestos
@@ -528,6 +529,7 @@ static oBtnAlb
 static oBtnGrp
 static oBtnSat
 static oBtnKit
+static oBtnAtp
 
 static cOldCodCli          := ""
 static cOldCodArt          := ""
@@ -552,6 +554,7 @@ static cFiltroUsuario      := ""
 
 static oMeter
 static nMeter              := 1
+static hTablasAsistenteAtipicas	:= {}
 
 static bEdtRec             := { |aTmp, aGet, dbfFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, dbfFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDet             := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
@@ -2650,7 +2653,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
          ID       170 ;
          WHEN     ( lWhen ) ;
-         VALID    ( loaCli( aGet, aTmp, nMode, oRieCli ), RecalculaTotal( aTmp ) );
+         VALID    ( loaCli( aGet, aTmp, nMode, oRieCli ), RecalculaTotal( aTmp ) ); 
          BITMAP   "Lupa" ;
          ON HELP  ( BrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ), ::lValid() ) ;
          OF       oFld:aDialogs[1]
@@ -2989,6 +2992,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1] ;
          ACTION   ( lEscandalloEdtRec( .t., oBrwLin ) )
 
+      REDEFINE BUTTON oBtnAtp;
+         ID       527 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( CargaAtipicasCliente( aTmp[ _CCODCLI ], hTablasAsistenteAtipicas, oBrwLin ) )
+
       /*
       Detalle------------------------------------------------------------------
       */
@@ -3011,6 +3019,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
          :nWidth              := 60
+         :lHide 			  := .t.	
          :SetCheck( { "Star_Red_16", "Nil16" } )
       end with
 
@@ -3039,7 +3048,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Descripción"
          :bEditValue          := {|| Descrip( dbfTmpLin ) }
-         :nWidth              := 240
+         :nWidth              := 300
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Última venta"
+         :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
+         :nWidth              := 80
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3092,10 +3108,36 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := cNombreUnidades()
-         :bEditValue          := {|| nTotNFacCli( dbfTmpLin ) }
+         :cHeader             := cNombreCajas()
+         :bEditValue          := {|| ( dbfTmpLin )->nCanEnt }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := cNombreUnidades()
+         :bEditValue          := {|| ( dbfTmpLin )->nUniCaja }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nEditType     	  := 1
+         :bOnPostEdit   	  := {|| MsgStop( "Pasamos" ), RecalculaTotal( aTmp ) }
+      end with
+
+
+
+
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Total " + cNombreUnidades()
+         :bEditValue          := {|| nTotNFacCli( dbfTmpLin ) }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
       end with
@@ -3104,6 +3146,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :cHeader             := "Unidad de medición"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
          :nWidth              := 105
+         :lHide 			  := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -15576,7 +15619,8 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 							  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -17076,6 +17120,17 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
 
    end if
+
+   /*
+	Cargamos en un hash los datos necesarios para el asistente de atípicas-----
+   */
+
+   hTablasAsistenteAtipicas 		:= { "Temporal" => dbfTmpLin ,;
+   										 "Atipica"  => dbfClientAtp ,;
+   										 "AlbaranT" => dbfAlbCliT ,;
+   										 "AlbaranL" => dbfAlbCliL ,;
+   										 "FacturaT" => dbfFacCliT ,;
+   										 "FacturaL" => dbfFacCliL }
 
    RECOVER USING oError
 
@@ -23180,6 +23235,44 @@ static Function ActualizaStockWeb( cNumDoc )
 
    ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
    ( dbfFacCliL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function CargaAtipicasCliente( cCodCli, hTablasAsistenteAtipicas, oBrw )
+
+	/*
+	Controlamos que no nos pase código de cliente vacío------------------------
+	*/
+
+	if Empty( cCodCli )
+		MsgStop( "Código de cliente no puede estar vacío para utilizar el asistente." )
+		Return .f.
+	end if
+
+	/*
+	Controlamos que el cliente tenga atipicas----------------------------------
+	*/
+
+	if !lAtipicacliente( cCodCli, hTablasAsistenteAtipicas[ "Atipica" ] )
+		MsgStop( "No existen atípicas para este cliente." )
+		Return .f.
+	end if
+
+
+
+
+	/*hTablasAsistenteAtipicas 		:= { "Temporal" => dbfTmpLin ,;
+   										 "Atipica"  => dbfClientAtp ,;
+   										 "AlbaranT" => dbfAlbCliT ,;
+   										 "AlbaranL" => dbfAlbCliL ,;
+   										 "FacturaT" => dbfFacCliT ,;
+   										 "FacturaL" => dbfFacCliL }*/
+
+
+
+   	?cCodCli
 
 Return .t.
 
