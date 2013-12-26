@@ -35,6 +35,7 @@ CLASS TDetPersonal FROM TDet
    METHOD cTotTime( oDbf )
    METHOD lTotTime( oDbf )
 
+   METHOD nHorasTrabajador( oDbf )
    METHOD nTotalTrabajador( oDbf )
    METHOD cTotalTrabajador( cCodTra, oDbf )  INLINE ( Trans( ::nTotalTrabajador( cCodTra, oDbf ), ::oParent:cPorDiv ) )
 
@@ -348,19 +349,19 @@ METHOD Resource( nMode ) CLASS TDetPersonal
 
       with object ( ::oBrwHorasTrabajador:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| ::oParent:oDetHorasPersonal:oDbfVir:cCodHra }
+         :bStrData         := {|| ::oParent:oDetHorasPersonal:oDbfVir:FieldGetByName( "cCodHra" ) }
          :nWidth           := 60
       end with
 
       with object ( ::oBrwHorasTrabajador:AddCol() )
          :cHeader          := "Tipo de hora"
-         :bStrData         := {|| oRetFld( ::oParent:oDetHorasPersonal:oDbfVir:cCodHra, ::oParent:oHoras:oDbf, , "cCodHra" ) }
+         :bStrData         := {|| oRetFld( ::oParent:oDetHorasPersonal:oDbfVir:FieldGetByName( "cCodHra" ), ::oParent:oHoras:oDbf, , "cCodHra" ) }
          :nWidth           := 200
       end with
 
       with object ( ::oBrwHorasTrabajador:AddCol() )
          :cHeader          := "Horas"
-         :bStrData         := {|| Trans( ::oParent:oDetHorasPersonal:oDbfVir:nNumHra, "99.99" ) }
+         :bStrData         := {|| Trans( ::oParent:oDetHorasPersonal:oDbfVir:FieldGetByName( "nNumHra" ), "99.99" ) }
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -368,7 +369,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
 
       with object ( ::oBrwHorasTrabajador:AddCol() )
          :cHeader          := "Precio"
-         :bStrData         := {|| Trans( ::oParent:oDetHorasPersonal:oDbfVir:nCosHra, ::oParent:cPouDiv ) }
+         :bStrData         := {|| Trans( ::oParent:oDetHorasPersonal:oDbfVir:FieldGetByName( "nCosHra" ), ::oParent:cPouDiv ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -376,7 +377,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
 
       with object ( ::oBrwHorasTrabajador:AddCol() )
          :cHeader          := "Total"
-         :bStrData         := {|| Trans( ::oParent:oDetHorasPersonal:oDbfVir:nNumHra * ::oParent:oDetHorasPersonal:oDbfVir:nCosHra, ::oParent:cPorDiv ) }
+         :bStrData         := {|| Trans( ::oParent:oDetHorasPersonal:oDbfVir:FieldGetByName( "nNumHra" ) * ::oParent:oDetHorasPersonal:oDbfVir:FieldGetByName( "nCosHra" ), ::oParent:cPorDiv ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -559,6 +560,28 @@ RETURN ( ::oGetTotalTime:cText( ::cTotTime( oDbf ) ), .t. )
 
 //--------------------------------------------------------------------------//
 
+METHOD nHorasTrabajador( cCodTra, oDbf )
+
+   local nTotal   := 0
+
+   DEFAULT oDbf   := ::oDbf
+
+   oDbf:GetStatus()
+   oDbf:OrdSetFocus( "cCodTra" )
+
+   if oDbf:Seek( cCodTra )
+      while cCodTra == oDbf:cCodTra .and. !oDbf:Eof()
+         nTotal   += oDbf:nNumHra
+         oDbf:Skip()
+      end while
+   end if
+
+   oDbf:SetStatus()
+
+RETURN ( nTotal )
+
+//---------------------------------------------------------------------------//
+
 METHOD nTotalTrabajador( cCodTra, oDbf )
 
    local nTotal   := 0
@@ -603,7 +626,7 @@ RETURN ( Self )
 
 METHOD lTiempoEmpleado()
 
-   ::cTiempoEmpleado    := nTiempoEntreFechas( ::oDbfVir:dFecIni, ::oDbfVir:dFecFin, ::oDbfVir:cHorIni, ::oDbfVir:cHorFin )
+   ::cTiempoEmpleado    := nTiempoEntreFechas( ::oDbfVir:FieldGetByName( "dFecIni" ), ::oDbfVir:FieldGetByName( "dFecFin" ), ::oDbfVir:FieldGetByName( "cHorIni" ), ::oDbfVir:FieldGetByName( "cHorFin" ) )
    ::cTmpEmp            := cFormatoDDHHMM( ::cTiempoEmpleado )
 
    if ::oTmpEmp != nil

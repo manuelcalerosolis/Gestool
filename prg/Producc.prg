@@ -240,6 +240,7 @@ CLASS TProduccion FROM TMasDet
 
    METHOD nTotalProducido( cDocumento )
    METHOD nTotalMaterial( cDocumento )
+   METHOD nHorasPersonal( cDocumento )
    METHOD nTotalPersonal( cDocumento )
    METHOD nTotalMaquina( cDocumento )
    METHOD nTotalOperario( cDocOpe )
@@ -1575,7 +1576,8 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Tiempo empleado"
-         :bStrData         := {|| cTiempo( ::oDetPersonal:oDbfVir:FieldGetByName( "dFecIni" ), ::oDetPersonal:oDbfVir:FieldGetByName( "dFecFin" ), ::oDetPersonal:oDbfVir:FieldGetByName( "cHorIni" ), ::oDetPersonal:oDbfVir:FieldGetByName( "cHorFin" ) ) }
+         :bEditValue       := {|| ::oDetPersonal:nHorasTrabajador( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :cEditPicture     := "@E 99.99"
          :nWidth           := 110
       end with
 
@@ -3177,13 +3179,56 @@ RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
+METHOD nHorasPersonal( cDocumento )
+
+   local nTotal   := 0
+   local nRec     := ::oDetPersonal:oDbf:Recno()
+   local nOrdAnt  := ::oDetPersonal:oDbf:OrdSetFocus( "cNumOrd" )
+   local nRecLin  := ::oDetHorasPersonal:oDbf:Recno()
+   local nOrdLin  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumOrd" )
+
+   ::oDetPersonal:oDbf:GoTop()
+   ::oDetHorasPersonal:oDbf:GoTop()
+
+   if ::oDetPersonal:oDbf:Seek( cDocumento )
+
+      while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd == cDocumento .and. !::oDetPersonal:oDbf:Eof()
+
+         if ::oDetHorasPersonal:oDbf:Seek( ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra )
+
+            while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra == ::oDetHorasPersonal:oDbf:cSerOrd + Str( ::oDetHorasPersonal:oDbf:nNumOrd ) + ::oDetHorasPersonal:oDbf:cSufOrd + ::oDetHorasPersonal:oDbf:cCodTra .and. ;
+                  !::oDetHorasPersonal:oDbf:Eof()
+
+               nTotal   += ::oDetHorasPersonal:oDbf:nNumHra 
+
+               ::oDetHorasPersonal:oDbf:Skip()
+
+            end while
+
+         end if
+
+         ::oDetPersonal:oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oDetHorasPersonal:oDbf:OrdSetFocus( nOrdLin )
+   ::oDetHorasPersonal:oDbf:GoTo( nRecLin )
+   ::oDetPersonal:oDbf:OrdSetFocus( nOrdAnt )
+   ::oDetPersonal:oDbf:GoTo( nRec )
+
+RETURN ( nTotal )
+
+//---------------------------------------------------------------------------//
+
 METHOD nTotalPersonal( cDocumento )
 
    local nTotal   := 0
    local nRec     := ::oDetPersonal:oDbf:Recno()
    local nOrdAnt  := ::oDetPersonal:oDbf:OrdSetFocus( "cNumOrd" )
    local nRecLin  := ::oDetHorasPersonal:oDbf:Recno()
-   local nOrdLin  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumTra" )
+   local nOrdLin  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumOrd" )
 
    ::oDetPersonal:oDbf:GoTop()
    ::oDetHorasPersonal:oDbf:GoTop()
@@ -3249,7 +3294,7 @@ METHOD nTotalOperario( cDocOpe )
 
    local nTotal   := 0
    local nRec     := ::oDetHorasPersonal:oDbf:Recno()
-   local nOrdAnt  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumTra" )
+   local nOrdAnt  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumOrd" )
 
    if ::oDetHorasPersonal:oDbf:Seek( cDocOpe )
 
@@ -3519,9 +3564,13 @@ METHOD DataReport( oFr )
    oFr:SetMasterDetail( "Producción", "Lineas de material producido",      {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de materias primas",         {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de personal",                {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
-   oFr:SetMasterDetail( "Producción", "Lineas de horas de personal",       {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de maquinaria",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
    oFr:SetMasterDetail( "Producción", "Lineas de producción",              {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd } )
+
+   oFr:SetMasterDetail( "Producción", "Empresa",                              {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Producción", "Almacenes",                            {|| ::oDbf:cAlmOrd } )
+   oFr:SetMasterDetail( "Producción", "Sección",                              {|| ::oDbf:cCodSec } )
+   oFr:SetMasterDetail( "Producción", "Operación",                            {|| ::oDbf:cCodOpe } )
    
    oFr:SetMasterDetail( "Lineas de material producido", "Artículos.Lineas de material producido",  {|| ::oDetProduccion:oDbf:cCodArt } )  
    oFr:SetMasterDetail( "Lineas de material producido", "Tipos.Lineas de material producido",      {|| ::oDetProduccion:oDbf:cCodTip } )  
@@ -3529,12 +3578,9 @@ METHOD DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de materias primas", "Artículos.Lineas de materias primas",        {|| ::oDetMaterial:oDbf:cCodArt } )
    oFr:SetMasterDetail( "Lineas de materias primas", "Tipos.Lineas de materias primas",            {|| ::oDetMaterial:oDbf:cCodTip } )
 
-   oFr:SetMasterDetail( "Lineas de personal", "Operarios",                 {|| ::oDetPersonal:oDbf:cCodTra } )
+   oFr:SetMasterDetail( "Lineas de personal", "Operarios",                    {|| ::oDetPersonal:oDbf:cCodTra } )
 
-   oFr:SetMasterDetail( "Producción", "Empresa",                           {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Producción", "Almacenes",                         {|| ::oDbf:cAlmOrd } )
-   oFr:SetMasterDetail( "Producción", "Sección",                           {|| ::oDbf:cCodSec } )
-   oFr:SetMasterDetail( "Producción", "Operación",                         {|| ::oDbf:cCodOpe } )
+   oFr:SetMasterDetail( "Lineas de personal", "Lineas de horas de personal",  {|| ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra } )
 
    /*
    Sincronizaciones------------------------------------------------------------
@@ -3543,7 +3589,6 @@ METHOD DataReport( oFr )
    oFr:SetResyncPair(   "Producción", "Lineas de material producido" )
    oFr:SetResyncPair(   "Producción", "Lineas de materias primas" )
    oFr:SetResyncPair(   "Producción", "Lineas de personal" )
-   oFr:SetResyncPair(   "Producción", "Lineas de horas de prsonal" )
    oFr:SetResyncPair(   "Producción", "Lineas de maquinaria" )
    oFr:SetResyncPair(   "Producción", "Lineas de producción" )
    oFr:SetResyncPair(   "Producción", "Empresa" )
@@ -3558,6 +3603,8 @@ METHOD DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de materias primas", "Tipos.Lineas de material producido" )
 
    oFr:SetResyncPair(   "Lineas de personal", "Operarios" )
+
+   oFr:SetResyncPair(   "Lineas de personal", "Lineas de horas de personal" )
 
 Return nil
 
