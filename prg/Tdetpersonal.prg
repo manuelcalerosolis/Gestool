@@ -37,7 +37,7 @@ CLASS TDetPersonal FROM TDet
 
    METHOD nHorasTrabajador( oDbf )
    METHOD nTotalTrabajador( oDbf )
-   METHOD cTotalTrabajador( cCodTra, oDbf )  INLINE ( Trans( ::nTotalTrabajador( cCodTra, oDbf ), ::oParent:cPorDiv ) )
+   METHOD cTotalTrabajador( cKeyTra, oDbf )  INLINE ( Trans( ::nTotalTrabajador( cKeyTra, oDbf ), ::oParent:cPorDiv ) )
 
    METHOD nTotal( oDbf, oDbfHor )
    METHOD cTotal( oDbf, oDbfHor )            INLINE ( Trans( ::nTotal( oDbf, oDbfHor ), ::oParent:cPorDiv ) )
@@ -75,9 +75,9 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia )COMMENT "personal"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "personal"
 
-      FIELD NAME "cSerOrd" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"         OF oDbf
+      FIELD NAME "cSerOrd" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"          OF oDbf
       FIELD NAME "nNumOrd" TYPE "N" LEN 09  DEC 0 COMMENT "Número"         OF oDbf
       FIELD NAME "cSufOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"         OF oDbf
       FIELD NAME "cCodTra" TYPE "C" LEN 05  DEC 0 COMMENT "Trabajador"     OF oDbf
@@ -87,6 +87,14 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"      OF oDbf
       FIELD NAME "cHorIni" TYPE "C" LEN 05  DEC 0 COMMENT "Hora inicio"    OF oDbf
       FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora fin"       OF oDbf
+
+      FIELD CALCULATE NAME "cKeyOrd" LEN 12  DEC 0  ;
+         VAL {|| oDbf:FieldGetByName( "cSerOrd" ) + Str( oDbf:FieldGetByName( "nNumOrd" ), 9 ) + oDbf:FieldGetByName( "cSufOrd" ) };
+         OF oDbf
+
+      FIELD CALCULATE NAME "cKeyTra" LEN 17  DEC 0  ;
+         VAL {|| oDbf:FieldGetByName( "cSerOrd" ) + Str( oDbf:FieldGetByName( "nNumOrd" ), 9 ) + oDbf:FieldGetByName( "cSufOrd" ) + oDbf:FieldGetByName( "cCodTra" ) };
+         OF oDbf
 
       INDEX TO ( cFileName ) TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodTra" ON "cCodTra"                                 NODELETED OF oDbf
@@ -159,7 +167,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
    local oHorIni
    local oHorFin
 
-   nOrdAnt                 := ::oParent:oDetHorasPersonal:oDbfVir:OrdSetFocus( "cCodTra" )
+   nOrdAnt                 := ::oParent:oDetHorasPersonal:oDbfVir:OrdSetFocus( "cNumTra" )
 
    if nMode == APPD_MODE
 
@@ -173,13 +181,13 @@ METHOD Resource( nMode ) CLASS TDetPersonal
          ::oParent:oDetHorasPersonal:oDbfVir:Delete(.f.)
       end if
 
-      ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( Space( 5 ) )
+      ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cKeyOrd + Space( 5 ) )
 
       ::lAppendTrabajador  := .f.
 
    else
 
-      ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cCodTra )
+      ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cKeyTra )
 
    end if
 
@@ -341,7 +349,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
       ::oBrwHorasTrabajador:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwHorasTrabajador:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrwHorasTrabajador:SetoDbf( ::oParent:oDetHorasPersonal:oDbfVir )
+      ::oParent:oDetHorasPersonal:oDbfVir:SetBrowse( ::oBrwHorasTrabajador )
 
       ::oBrwHorasTrabajador:nMarqueeStyle   := 6
 
@@ -560,17 +568,17 @@ RETURN ( ::oGetTotalTime:cText( ::cTotTime( oDbf ) ), .t. )
 
 //--------------------------------------------------------------------------//
 
-METHOD nHorasTrabajador( cCodTra, oDbf )
+METHOD nHorasTrabajador( cKeyTra, oDbf )
 
    local nTotal   := 0
 
    DEFAULT oDbf   := ::oDbf
 
    oDbf:GetStatus()
-   oDbf:OrdSetFocus( "cCodTra" )
+   oDbf:OrdSetFocus( "cNumTra" )
 
-   if oDbf:Seek( cCodTra )
-      while cCodTra == oDbf:cCodTra .and. !oDbf:Eof()
+   if oDbf:Seek( cKeyTra )
+      while cKeyTra == oDbf:cSerOrd + Str( oDbf:nNumOrd, 9 ) + oDbf:cSufOrd + oDbf:cCodTra .and. !oDbf:Eof()
          nTotal   += oDbf:nNumHra
          oDbf:Skip()
       end while
@@ -582,17 +590,17 @@ RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD nTotalTrabajador( cCodTra, oDbf )
+METHOD nTotalTrabajador( cKeyTra, oDbf )
 
    local nTotal   := 0
 
    DEFAULT oDbf   := ::oDbf
 
    oDbf:GetStatus()
-   oDbf:OrdSetFocus( "cCodTra" )
+   oDbf:OrdSetFocus( "cNumTra" )
 
-   if oDbf:Seek( cCodTra )
-      while cCodTra == oDbf:cCodTra .and. !oDbf:Eof()
+   if oDbf:Seek( cKeyTra )
+      while cKeyTra == oDbf:cSerOrd + Str( oDbf:nNumOrd, 9 ) + oDbf:cSufOrd + oDbf:cCodTra .and. !oDbf:Eof()
          nTotal   += oDbf:nNumHra * oDbf:nCosHra
          oDbf:Skip()
       end while
@@ -649,7 +657,7 @@ METHOD nTotal( oDbf, oDbfHor, lRound )
 
    oDbf:GoTop()
    while !oDbf:Eof()
-      nTotal      += ::nTotalTrabajador( oDbf:cCodTra, oDbfHor )
+      nTotal      += ::nTotalTrabajador( oDbf:cKeyTra, oDbfHor )
       oDbf:Skip()
    end while
 

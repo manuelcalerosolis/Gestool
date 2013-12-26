@@ -55,8 +55,9 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "nNumHra"    TYPE "N" LEN 16  DEC 6 COMMENT "Número de horas"      OF oDbf
       FIELD NAME "nCosHra"    TYPE "N" LEN 16  DEC 6 COMMENT "Coste"                OF oDbf
 
-      INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodTra"   NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"             NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cCodTra" ON "cCodTra"                                           NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "cNumTra" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodTra"   NODELETED OF oDbf
 
    END DATABASE oDbf
 

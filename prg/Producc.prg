@@ -127,8 +127,6 @@ CLASS TProduccion FROM TMasDet
    DATA  aCal
    DATA  cTime
 
-   DATA  oDbfTemporal
-
    DATA  cFileName
 
    /*
@@ -225,10 +223,8 @@ CLASS TProduccion FROM TMasDet
    METHOD bGenParte( nDevice, cTitle, cCodDoc )
    METHOD nGenParte( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
-   METHOD CreateTemporal( cNumeroParte )
-
-   METHOD DefineTemporal()
-   METHOD DestroyTemporal()
+   METHOD PrepareDataReport()
+   METHOD RestoreDataReport()
    METHOD DefineCalculate()
 
    METHOD PrnSerie()
@@ -279,8 +275,8 @@ CLASS TProduccion FROM TMasDet
    METHOD SelectColumn( oCombo )
    METHOD DesignLabelProducc()
    METHOD lPrintLabels()
-   METHOD lCreateTemporalLbl()
-   METHOD DestroyTemporalLbl()
+   METHOD lPrepareDataReportLbl()
+   METHOD RestoreDataReportLbl()
    METHOD PrepareTemporalLbl()
    METHOD DataLabel()
    METHOD LoadAuxiliarDesign()
@@ -680,13 +676,6 @@ METHOD OpenFiles( lExclusive )
       lOpen          := .f.
    end if
 
-
-   if Empty( ::oDbfTemporal )
-      ::DefineTemporal()
-   end if
-
-   ::oDbfTemporal:Activate( .f., .f. )
-
    RECOVER USING oError
 
       lOpen          := .f.
@@ -944,8 +933,6 @@ METHOD CloseFiles()
    if !Empty( ::oDbfDiv ) .and. ::oDbfDiv:Used()
       ::oDbfDiv:End()
    end if
-
-   ::DestroyTemporal()
 
    ::oDbfDiv   := nil
 
@@ -1576,14 +1563,14 @@ METHOD Resource( nMode, aDatosAnterior )
 
       with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Tiempo empleado"
-         :bEditValue       := {|| ::oDetPersonal:nHorasTrabajador( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :bEditValue       := {|| ::oDetPersonal:nHorasTrabajador( ::oDetPersonal:oDbfVir:cKeyTra, ::oDetHorasPersonal:oDbfVir ) }
          :cEditPicture     := "@E 99.99"
          :nWidth           := 110
       end with
 
       with object ( ::oBrwPersonal:AddCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ::oDetPersonal:nTotalTrabajador( ::oDetPersonal:oDbfVir:FieldGetByName( "cCodTra" ), ::oDetHorasPersonal:oDbfVir ) }
+         :bEditValue       := {|| ::oDetPersonal:nTotalTrabajador( ::oDetPersonal:oDbfVir:cKeyTra, ::oDetHorasPersonal:oDbfVir ) }
          :cEditPicture     := ::cPorDiv
          :nWidth           := 90
          :nDataStrAlign    := AL_RIGHT
@@ -2266,7 +2253,7 @@ METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    cNumeroParte            := ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd
 
-   ::CreateTemporal( cNumeroParte )
+   ::PrepareDataReport( cNumeroParte )
 
    ::oDbf:GetStatus( .t. )
    ::oDbf:Seek( cNumeroParte )
@@ -2288,7 +2275,7 @@ METHOD GenParte( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    end if
 
-   ::oDbfTemporal:Zap()
+   ::RestoreDataReport()
 
    ::oDbf:SetStatus()
 
@@ -2344,274 +2331,17 @@ RETURN ( bGen )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateTemporal( cNumeroParte )
+METHOD PrepareDataReport( cNumeroParte )
 
-   local nOrdPR      := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
-   local nOrdMP      := ::oDetMaterial:oDbf:OrdSetFocus( "cNumOrd" )
-   local nOrdOP      := ::oDetPersonal:oDbf:OrdSetFocus( "cNumOrd" )
-   local nOrdMQ      := ::oDetMaquina:oDbf:OrdSetFocus( "cNumOrd" )
-
-   /*
-   Metemos las líneas con los materiales producidos "PR"-----------------------
-   */
-
-   ::oDetProduccion:oDbf:GoTop()
-
-   if ::oDetProduccion:oDbf:Seek( cNumeroParte )
-
-      while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd == cNumeroParte .and. !::oDetProduccion:oDbf:Eof()
-
-      ::oDbfTemporal:Append()
-
-      ::oDbfTemporal:cSerOrd     := ::oDbf:cSerOrd
-      ::oDbfTemporal:nNumOrd     := ::oDbf:nNumOrd
-      ::oDbfTemporal:cSufOrd     := ::oDbf:cSufOrd
-      ::oDbfTemporal:cTipo       := "PR"
-      ::oDbfTemporal:cCodigo     := ::oDetProduccion:oDbf:cCodArt
-      ::oDbfTemporal:cNombre     := ::oDetProduccion:oDbf:cNomArt
-      ::oDbfTemporal:cTxtSer     := SerialDescrip( ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd + Str( ::oDetProduccion:oDbf:nNumLin ), ::oDetSeriesProduccion:oDbf:cAlias )
-      ::oDbfTemporal:cCodAlm     := ::oDetProduccion:oDbf:cAlmOrd
-      ::oDbfTemporal:cCodSec     := Space(3)
-      ::oDbfTemporal:cCodOpe     := Space(3)
-      ::oDbfTemporal:dFecIni     := ::oDbf:dFecOrd
-      ::oDbfTemporal:dFecFin     := ::oDbf:dFecFin
-      ::oDbfTemporal:cHorIni     := ::oDbf:cHorIni
-      ::oDbfTemporal:cHorFin     := ::oDbf:cHorFin
-      ::oDbfTemporal:nCajas      := ::oDetProduccion:oDbf:nCajOrd
-      ::oDbfTemporal:nUnidades   := ::oDetProduccion:oDbf:nUndOrd
-      ::oDbfTemporal:nUndHra     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
-      ::oDbfTemporal:nImporte    := ::oDetProduccion:oDbf:nImpOrd
-      ::oDbfTemporal:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
-      ::oDbfTemporal:nPeso       := ::oDetProduccion:oDbf:nPeso
-      ::oDbfTemporal:cUndPes     := ::oDetProduccion:oDbf:cUndPes
-      ::oDbfTemporal:nVolumen    := ::oDetProduccion:oDbf:nVolumen
-      ::oDbfTemporal:cUndVol     := ::oDetProduccion:oDbf:cUndVol
-      ::oDbfTemporal:cCodPr1     := ::oDetProduccion:oDbf:cCodPr1
-      ::oDbfTemporal:cCodPr2     := ::oDetProduccion:oDbf:cCodPr2
-      ::oDbfTemporal:cValPr1     := ::oDetProduccion:oDbf:cValPr1
-      ::oDbfTemporal:cValPr2     := ::oDetProduccion:oDbf:cValPr2
-      ::oDbfTemporal:lLote       := ::oDetProduccion:oDbf:lLote
-      ::oDbfTemporal:cLote       := ::oDetProduccion:oDbf:cLote
-
-      ::oDbfTemporal:Save()
-
-      ::oDetProduccion:oDbf:Skip()
-
-      end while
-
-   end if
-
-   /*
-   Metemos las líneas con las materias primas necesitadas "MP"-----------------
-   */
-
-   ::oDetMaterial:oDbf:GoTop()
-
-   if ::oDetMaterial:oDbf:Seek( cNumeroParte )
-
-      while ::oDetMaterial:oDbf:cSerOrd + Str( ::oDetMaterial:oDbf:nNumOrd ) + ::oDetMaterial:oDbf:cSufOrd == cNumeroParte .and. !::oDetMaterial:oDbf:Eof()
-
-      ::oDbfTemporal:Append()
-
-      ::oDbfTemporal:cSerOrd     := ::oDbf:cSerOrd
-      ::oDbfTemporal:nNumOrd     := ::oDbf:nNumOrd
-      ::oDbfTemporal:cSufOrd     := ::oDbf:cSufOrd
-      ::oDbfTemporal:cTipo       := "MP"
-      ::oDbfTemporal:cCodigo     := ::oDetMaterial:oDbf:cCodArt
-      ::oDbfTemporal:cNombre     := ::oDetMaterial:oDbf:cNomArt
-      ::oDbfTemporal:cCodAlm     := ::oDetMaterial:oDbf:cAlmOrd
-      ::oDbfTemporal:cCodSec     := Space(3)
-      ::oDbfTemporal:cCodOpe     := Space(3)
-      ::oDbfTemporal:dFecIni     := ::oDbf:dFecOrd
-      ::oDbfTemporal:dFecFin     := ::oDbf:dFecFin
-      ::oDbfTemporal:cHorIni     := ::oDbf:cHorIni
-      ::oDbfTemporal:cHorFin     := ::oDbf:cHorFin
-      ::oDbfTemporal:nCajas      := ::oDetMaterial:oDbf:nCajOrd
-      ::oDbfTemporal:nUnidades   := ::oDetMaterial:oDbf:nUndOrd
-      ::oDbfTemporal:nUndHra     := ::oDetMaterial:oDbf:nCajOrd * ::oDetMaterial:oDbf:nUndOrd
-      ::oDbfTemporal:nImporte    := ::oDetMaterial:oDbf:nImpOrd
-      ::oDbfTemporal:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
-      ::oDbfTemporal:nPeso       := ::oDetMaterial:oDbf:nPeso
-      ::oDbfTemporal:cUndPes     := ::oDetMaterial:oDbf:cUndPes
-      ::oDbfTemporal:nVolumen    := ::oDetMaterial:oDbf:nVolumen
-      ::oDbfTemporal:cUndVol     := ::oDetMaterial:oDbf:cUndVol
-      ::oDbfTemporal:cCodPr1     := ::oDetMaterial:oDbf:cCodPr1
-      ::oDbfTemporal:cCodPr2     := ::oDetMaterial:oDbf:cCodPr2
-      ::oDbfTemporal:cValPr1     := ::oDetMaterial:oDbf:cValPr1
-      ::oDbfTemporal:cValPr2     := ::oDetMaterial:oDbf:cValPr2
-      ::oDbfTemporal:lLote       := ::oDetMaterial:oDbf:lLote
-      ::oDbfTemporal:cLote       := ::oDetMaterial:oDbf:cLote
-
-      ::oDbfTemporal:Save()
-
-      ::oDetMaterial:oDbf:Skip()
-
-      end while
-
-   end if
-
-   /*
-   Metemos las líneas con los operarios que intervinieron "OP"-----------------
-   */
-
-   ::oDetPersonal:oDbf:GoTop()
-
-   if ::oDetPersonal:oDbf:Seek( cNumeroParte )
-
-      while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd == cNumeroParte .and. !::oDetPersonal:oDbf:Eof()
-
-      ::oDbfTemporal:Append()
-
-      ::oDbfTemporal:cSerOrd     := ::oDbf:cSerOrd
-      ::oDbfTemporal:nNumOrd     := ::oDbf:nNumOrd
-      ::oDbfTemporal:cSufOrd     := ::oDbf:cSufOrd
-      ::oDbfTemporal:cTipo       := "OP"
-      ::oDbfTemporal:cCodigo     := ::oDetPersonal:oDbf:cCodTra
-      ::oDbfTemporal:cNombre     := oRetFld( ::oDetPersonal:oDbf:cCodTra, ::oOperario:oDbf )
-      ::oDbfTemporal:cCodAlm     := Space(3)
-      ::oDbfTemporal:cCodSec     := ::oDetPersonal:oDbf:cCodSec
-      ::oDbfTemporal:cCodOpe     := ::oDetPersonal:oDbf:cCodOpe
-      ::oDbfTemporal:dFecIni     := ::oDetPersonal:oDbf:dFecIni
-      ::oDbfTemporal:dFecFin     := ::oDetPersonal:oDbf:dFecFin
-      ::oDbfTemporal:cHorIni     := ::oDetPersonal:oDbf:cHorIni
-      ::oDbfTemporal:cHorFin     := ::oDetPersonal:oDbf:cHorFin
-      ::oDbfTemporal:nCajas      := 0
-      ::oDbfTemporal:nUnidades   := 0
-      ::oDbfTemporal:nUndHra     := nTiempoEntreFechas( ::oDetPersonal:oDbf:dFecIni, ::oDetPersonal:oDbf:dFecFin, ::oDetPersonal:oDbf:cHorIni, ::oDetPersonal:oDbf:cHorFin )
-      ::oDbfTemporal:nImporte    := ::oDetPersonal:nTotalTrabajador( ::oDetPersonal:oDbf:cCodTra, ::oDetHorasPersonal:oDbf )
-      ::oDbfTemporal:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
-      ::oDbfTemporal:nPeso       := 0
-      ::oDbfTemporal:cUndPes     := Space(2)
-      ::oDbfTemporal:nVolumen    := 0
-      ::oDbfTemporal:cUndVol     := Space(2)
-      ::oDbfTemporal:cCodPr1     := Space(5)
-      ::oDbfTemporal:cCodPr2     := Space(5)
-      ::oDbfTemporal:cValPr1     := Space(5)
-      ::oDbfTemporal:cValPr2     := Space(5)
-      ::oDbfTemporal:lLote       := .f.
-      ::oDbfTemporal:cLote       := Space(12)
-
-      ::oDbfTemporal:Save()
-
-      ::oDetPersonal:oDbf:Skip()
-
-      end if
-
-   end if
-
-   /*
-   Metemos las líneas con la maquinaria usada en la operación "MQ"-------------
-   */
-
-   ::oDetMaquina:oDbf:GoTop()
-
-   if ::oDetMaquina:oDbf:Seek( cNumeroParte )
-
-      while ::oDetMaquina:oDbf:cSerOrd + Str( ::oDetMaquina:oDbf:nNumOrd ) + ::oDetMaquina:oDbf:cSufOrd == cNumeroParte .and. !::oDetMaquina:oDbf:Eof()
-
-      ::oDbfTemporal:Append()
-
-      ::oDbfTemporal:cSerOrd     := ::oDbf:cSerOrd
-      ::oDbfTemporal:nNumOrd     := ::oDbf:nNumOrd
-      ::oDbfTemporal:cSufOrd     := ::oDbf:cSufOrd
-      ::oDbfTemporal:cTipo       := "MQ"
-      ::oDbfTemporal:cCodigo     := ::oDetMaquina:oDbf:cCodMaq
-      ::oDbfTemporal:cNombre     := oRetFld( ::oDetMaquina:oDbf:cCodMaq, ::oMaquina:oDbf )
-      ::oDbfTemporal:cCodAlm     := Space(3)
-      ::oDbfTemporal:cCodSec     := ::oDetMaquina:oDbf:cCodSec
-      ::oDbfTemporal:cCodOpe     := Space(3)
-      ::oDbfTemporal:dFecIni     := ::oDetMaquina:oDbf:dFecIni
-      ::oDbfTemporal:dFecFin     := ::oDetMaquina:oDbf:dFecFin
-      ::oDbfTemporal:cHorIni     := ::oDetMaquina:oDbf:cIniMaq
-      ::oDbfTemporal:cHorFin     := ::oDetMaquina:oDbf:cFinMaq
-      ::oDbfTemporal:nCajas      := 0
-      ::oDbfTemporal:nUnidades   := 0
-      ::oDbfTemporal:nUndHra     := ::oDetMaquina:oDbf:nTotHra
-      ::oDbfTemporal:nImporte    := ::oDetMaquina:oDbf:nCosHra
-      ::oDbfTemporal:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
-      ::oDbfTemporal:nPeso       := 0
-      ::oDbfTemporal:cUndPes     := Space(2)
-      ::oDbfTemporal:nVolumen    := 0
-      ::oDbfTemporal:cUndVol     := Space(2)
-      ::oDbfTemporal:cCodPr1     := Space(5)
-      ::oDbfTemporal:cCodPr2     := Space(5)
-      ::oDbfTemporal:cValPr1     := Space(5)
-      ::oDbfTemporal:cValPr2     := Space(5)
-      ::oDbfTemporal:lLote       := .f.
-      ::oDbfTemporal:cLote       := Space(12)
-
-      ::oDbfTemporal:Save()
-
-      ::oDetMaquina:oDbf:Skip()
-
-      end while
-
-   end if
-
-   ::oDetProduccion:oDbf:OrdSetFocus( nOrdPR )
-   ::oDetMaterial:oDbf:OrdSetFocus( nOrdMP )
-   ::oDetPersonal:oDbf:OrdSetFocus( nOrdOP )
-   ::oDetMaquina:oDbf:OrdSetFocus( nOrdMQ )
-
-   ::oDbfTemporal:GoTop()
+   ::oDetHorasPersonal:oDbf:ordSetFocus( "cNumTra" )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DefineTemporal()
+METHOD RestoreDataReport()
 
-   ::cFileName      := cGetNewFileName( cPatTmp() + "TPro" )
-
-   DEFINE DATABASE ::oDbfTemporal FILE ( ::cFileName ) CLASS "TPro" ALIAS "TPro" PATH ( cPatTmp() ) VIA ( cLocalDriver() )COMMENT "líneas de producción"
-
-      FIELD NAME "cSerOrd"    TYPE "C" LEN  01  DEC 0 COMMENT "Serie"                                    OF ::oDbfTemporal
-      FIELD NAME "nNumOrd"    TYPE "N" LEN  09  DEC 0 COMMENT "Número"                                   OF ::oDbfTemporal
-      FIELD NAME "cSufOrd"    TYPE "C" LEN  02  DEC 0 COMMENT "Sufijo"                                   OF ::oDbfTemporal
-      FIELD NAME "cTipo"      TYPE "C" LEN  02  DEC 0 COMMENT "Tipo"                                     OF ::oDbfTemporal
-      FIELD NAME "cCodigo"    TYPE "C" LEN  18  DEC 0 COMMENT "Código"                                   OF ::oDbfTemporal
-      FIELD NAME "cNombre"    TYPE "C" LEN 100  DEC 0 COMMENT "Nombre"                                   OF ::oDbfTemporal
-      FIELD NAME "cTxtSer"    TYPE "M" LEN  10  DEC 0 COMMENT "Series"                                   OF ::oDbfTemporal
-      FIELD NAME "cCodAlm"    TYPE "C" LEN  03  DEC 0 COMMENT "Almacén"                                  OF ::oDbfTemporal
-      FIELD NAME "cCodSec"    TYPE "C" LEN  03  DEC 0 COMMENT "Sección"                                  OF ::oDbfTemporal
-      FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::oDbfTemporal
-      FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::oDbfTemporal
-      FIELD NAME "dFecFin"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha fin"                                OF ::oDbfTemporal
-      FIELD NAME "cHorIni"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"        OF ::oDbfTemporal
-      FIELD NAME "cHorFin"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"        OF ::oDbfTemporal
-      FIELD NAME "nCajas"     TYPE "N" LEN  16  DEC 6 COMMENT "Cajas"                                    OF ::oDbfTemporal
-      FIELD NAME "nUnidades"  TYPE "N" LEN  16  DEC 6 COMMENT "Unidades"                                 OF ::oDbfTemporal
-      FIELD NAME "nUndHra"    TYPE "N" LEN  16  DEC 6 COMMENT "Tot. und/hra"                             OF ::oDbfTemporal
-      FIELD NAME "nImporte"   TYPE "N" LEN  16  DEC 6 COMMENT "Importe"                                  OF ::oDbfTemporal
-      FIELD NAME "nTotLin"    TYPE "N" LEN  16  DEC 6 COMMENT "Total línea"                              OF ::oDbfTemporal
-      FIELD NAME "nPeso"      TYPE "N" LEN  16  DEC 6 COMMENT "Peso del artículo"                        OF ::oDbfTemporal
-      FIELD NAME "cUndPes"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del peso"                          OF ::oDbfTemporal
-      FIELD NAME "nVolumen"   TYPE "N" LEN  16  DEC 6 COMMENT "Volumen del artículo"                     OF ::oDbfTemporal
-      FIELD NAME "cUndVol"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del volumen"                       OF ::oDbfTemporal
-      FIELD NAME "cCodPr1"    TYPE "C" LEN  10  DEC 0 COMMENT "Código de primera propiedad"              OF ::oDbfTemporal
-      FIELD NAME "cCodPr2"    TYPE "C" LEN  10  DEC 0 COMMENT "Código de segunda propiedad"              OF ::oDbfTemporal
-      FIELD NAME "cValPr1"    TYPE "C" LEN  10  DEC 0 COMMENT "Valor de primera propiedad"               OF ::oDbfTemporal
-      FIELD NAME "cValPr2"    TYPE "C" LEN  10  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::oDbfTemporal
-      FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::oDbfTemporal
-      FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::oDbfTemporal
-
-      INDEX TO ( ::cFileName ) TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT "Número"    NODELETED OF ::oDbfTemporal
-
-   END DATABASE ::oDbfTemporal
-
-RETURN ( ::oDbfTemporal )
-
-//---------------------------------------------------------------------------//
-
-METHOD DestroyTemporal()
-
-   if !Empty( ::oDbfTemporal ) .and. ::oDbfTemporal:Used()
-      ::oDbfTemporal:End()
-   end if
-
-   dbfErase( ::cFileName )
-
-   ::oDbfTemporal := nil
+   ::oDetHorasPersonal:oDbf:ordSetFocus( "cNumOrd" )
 
 RETURN ( Self )
 
@@ -3190,9 +2920,20 @@ METHOD nHorasPersonal( cDocumento )
    ::oDetPersonal:oDbf:GoTop()
    ::oDetHorasPersonal:oDbf:GoTop()
 
+   ? "cDocumento"
+   ? cDocumento
+
    if ::oDetPersonal:oDbf:Seek( cDocumento )
 
       while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd == cDocumento .and. !::oDetPersonal:oDbf:Eof()
+
+
+         ? "Busco"
+         ? ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra
+
+         ? "ordkey( orderNumOrName, [cOrderBagName] )"
+         ? ::oDetHorasPersonal:oDbf:Ordkeyval
+
 
          if ::oDetHorasPersonal:oDbf:Seek( ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra )
 
@@ -3527,9 +3268,6 @@ METHOD DataReport( oFr )
    oFr:SetWorkArea(     "Lineas de maquinaria", ::oDetMaquina:oDbf:nArea )
    oFr:SetFieldAliases( "Lineas de maquinaria", cObjectsToReport( ::oDetMaquina:oDbf ) )
 
-   oFr:SetWorkArea(     "Lineas de producción", ::oDbfTemporal:nArea )
-   oFr:SetFieldAliases( "Lineas de producción", cObjectsToReport( ::oDbfTemporal ) )
-
    oFr:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
@@ -3633,8 +3371,6 @@ METHOD DesignReportProducc( oFr, dbfDoc )
 
    if ::OpenFiles()
 
-      ::CreateTemporal( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd )
-
       public cTiempoEmp    := cTiempo( ::oDbf:dFecOrd, ::oDbf:dFecFin, ::oDbf:cHorIni, ::oDbf:cHorFin )
       public nProd         := nTotProd( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd, ::oDetProduccion:oDbf:cAlias )
       public nMat          := nTotMat( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd, ::oDetMaterial:oDbf:cAlias )
@@ -3642,9 +3378,12 @@ METHOD DesignReportProducc( oFr, dbfDoc )
       public nMaq          := nTotMaq( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd, ::oDetMaquina:oDbf:cAlias )
       public nParte        := nTotParte( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd, ::oDetProduccion:oDbf:cAlias, ::oDetMaterial:oDbf:cAlias, ::oDetHorasPersonal:oDbf:cAlias, ::oDetMaquina:oDbf:cAlias )
 
+      ::PrepareDataReport()
+
       /*
       Zona de datos------------------------------------------------------------
       */
+    
 
       ::DataReport( oFr )
 
@@ -3706,7 +3445,7 @@ METHOD DesignReportProducc( oFr, dbfDoc )
       Cierra ficheros----------------------------------------------------------
       */
 
-      ::oDbfTemporal:Zap()
+      ::RestoreDataReport()
 
       ::CloseFiles()
 
@@ -4377,7 +4116,7 @@ Method LoadAuxiliar() CLASS TProduccion
             ::cAreaTmpLabel:nUnidades   := ::oDetProduccion:oDbf:nUndOrd
             ::cAreaTmpLabel:nUndHra     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
             ::cAreaTmpLabel:nImporte    := ::oDetProduccion:oDbf:nImpOrd
-            ::cAreaTmpLabel:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
+            ::cAreaTmpLabel:nTotLin     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd * ::oDetProduccion:oDbf:nImpOrd
             ::cAreaTmpLabel:nPeso       := ::oDetProduccion:oDbf:nPeso
             ::cAreaTmpLabel:cUndPes     := ::oDetProduccion:oDbf:cUndPes
             ::cAreaTmpLabel:nVolumen    := ::oDetProduccion:oDbf:nVolumen
@@ -4523,7 +4262,7 @@ METHOD DesignLabelProducc( oFr, dbfDoc ) CLASS TProduccion
 
    local oLabel   := ::InitLabel()
 
-   if !oLabel:lErrorOnCreate .and. ::lCreateTemporalLbl( .t. )
+   if !oLabel:lErrorOnCreate .and. ::lPrepareDataReportLbl( .t. )
 
       /*
       Zona de datos---------------------------------------------------------
@@ -4566,7 +4305,7 @@ METHOD DesignLabelProducc( oFr, dbfDoc ) CLASS TProduccion
       Cierra ficheros-------------------------------------------------------
       */
 
-      ::DestroyTemporalLbl()
+      ::RestoreDataReportLbl()
 
       oLabel:End()
 
@@ -4588,7 +4327,7 @@ Method lPrintLabels( dbfDoc ) CLASS TProduccion
    local nDevice      := IS_SCREEN
    local cPrinter     := PrnGetName()
 
-   if ::lCreateTemporalLbl()
+   if ::lPrepareDataReportLbl()
 
       SysRefresh()
 
@@ -4659,7 +4398,7 @@ Method lPrintLabels( dbfDoc ) CLASS TProduccion
 
       oFr:DestroyFr()
 
-      ::DestroyTemporalLbl()
+      ::RestoreDataReportLbl()
 
    end if
 
@@ -4667,14 +4406,14 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method lCreateTemporalLbl( lDesign ) CLASS TProduccion
+Method lPrepareDataReportLbl( lDesign ) CLASS TProduccion
 
    local n
    local nRec
    local oBlock
    local oError
    local nBlancos
-   local lCreateTemporal   := .t.
+   local lPrepareDataReport   := .t.
 
    DEFAULT lDesign         := .f.
 
@@ -4757,7 +4496,7 @@ Method lCreateTemporalLbl( lDesign ) CLASS TProduccion
 
    RECOVER USING oError
 
-      lCreateTemporal      := .f.
+      lPrepareDataReport      := .f.
 
       MsgStop( 'Imposible crear un fichero temporal de materiales producidos' + CRLF + ErrorMessage( oError ) )
 
@@ -4765,11 +4504,11 @@ Method lCreateTemporalLbl( lDesign ) CLASS TProduccion
 
    ErrorBlock( oBlock )
 
-Return ( lCreateTemporal )
+Return ( lPrepareDataReport )
 
 //---------------------------------------------------------------------------//
 
-Method DestroyTemporalLbl() CLASS TProduccion
+Method RestoreDataReportLbl() CLASS TProduccion
 
    if !Empty( ::cAreaTemporalLabel ) .and. ::cAreaTemporalLabel:Used()
       ::cAreaTemporalLabel:End()
@@ -4897,7 +4636,7 @@ Method LoadAuxiliarDesign() CLASS TProduccion
             ::cAreaTemporalLabel:nUnidades   := ::oDetProduccion:oDbf:nUndOrd
             ::cAreaTemporalLabel:nUndHra     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
             ::cAreaTemporalLabel:nImporte    := ::oDetProduccion:oDbf:nImpOrd
-            ::cAreaTemporalLabel:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
+            ::cAreaTemporalLabel:nTotLin     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd * ::oDetProduccion:oDbf:nImpOrd
             ::cAreaTemporalLabel:nPeso       := ::oDetProduccion:oDbf:nPeso
             ::cAreaTemporalLabel:cUndPes     := ::oDetProduccion:oDbf:cUndPes
             ::cAreaTemporalLabel:nVolumen    := ::oDetProduccion:oDbf:nVolumen
