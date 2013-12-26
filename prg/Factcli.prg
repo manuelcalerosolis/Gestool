@@ -15372,6 +15372,9 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "iNumFac", "'11' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
+      ( dbfFacCliL )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfFacCliL )->( ordCreate( cPath + "FACCLIL.CDX", "cRefFec", "cRef + dTos( dFecFac )", {|| Field->cRef + dTos( Field->dFecFac ) } ) )
+
       ( dbfFacCliL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de clientes" )
@@ -15480,6 +15483,9 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( dbfFacCliT)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'11' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+
+      ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CNUMCLI", "CSERIE + Str(NNUMFAC) + CSUFFAC + CCODCLI", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Field->cCodCli }, ) )
 
       ( dbfFacCliT )->( dbCloseArea() )
 
@@ -19976,14 +19982,38 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       /*
       Ahora escribimos en el fichero definitivo-----------------------------------
+      Controlando que no metan lineas con unidades a 0 por el tema----------------
+      de la importacion de las atipicas-------------------------------------------
       */
 
       ( dbfTmpLin )->( dbGoTop() )
+
       while ( dbfTmpLin )->( !eof() )
-         ( dbfTmpLin )->dFecFac  := dFecFac
-         dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
+
+         if ( dbfTmpLin )->nUniCaja == 0
+
+         	if Empty( ( dbfTmpLin )->cRef ) 	.or.;
+         	   ( dbfTmpLin )->lControl 			.or.;
+         	   ( dbfTmpLin )->lTotLin
+
+         	   ( dbfTmpLin )->dFecFac  := dFecFac
+
+         	   dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
+
+         	end if	
+         	
+         else
+
+         	( dbfTmpLin )->dFecFac  := dFecFac
+
+         	dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
+
+         end if 	
+
          ( dbfTmpLin )->( dbSkip() )
+
          SysRefresh()
+
       end while
 
       /*
@@ -23289,7 +23319,7 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 
 		  			( dbfTmpLin )->nPreUnit  		:= nPrecioAtipica( aTmpFac[ _NTARIFA ], aTmpFac[ _LIVAINC ], dbfClientAtp )
 
-		  			//( dbfTmpLin )->dFecUltCom 		:= 
+		  			( dbfTmpLin )->dFecUltCom 		:= dFechaUltimaVenta( aTmpFac[ _CCODCLI ], ( dbfClientAtp )->cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
 
 		  		end if	
 
@@ -23427,5 +23457,101 @@ Static Function RestaUnidadLinea( aTmp )
     RecalculaTotal( aTmp )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
+
+	local dFechaUltimaVenta 	:= cTod( "" )
+	local nRecAlbT				:= ( dbfAlbCliT )->( Recno() )
+	local nRecAlbL 				:= ( dbfAlbCliL )->( Recno() )
+	local nRecFacT 				:= ( dbfFacCliT )->( Recno() )
+	local nRecFacL 				:= ( dbfFacCliL )->( Recno() )
+	local nOrdAntAlbT 			:= ( dbfAlbCliT )->( OrdSetFocus( "cNumCli" ) )
+	local nOrdAntAlbL			:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdAntFacT			:= ( dbfFacCliT )->( OrdSetFocus( "cNumCli" ) )
+	local nOrdAntFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+
+	CursorWait()
+
+	oMsgText( "Calculando última fecha de venta" )
+
+    oMeter:SetTotal( ( dbfAlbCliL )->( Lastrec() ) )  
+
+	/*
+	Buscamos por los albaranes no facturados-----------------------------------
+	*/
+
+	if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+
+		while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( Eof() )
+
+			if ( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb + cCodCli ) )
+
+				dFechaUltimaVenta 	:= ( dbfAlbCliL )->dFecAlb 
+
+				exit
+
+			end if	
+
+			( dbfAlbCliL )->( dbSkip() )
+
+			oMeter:AutoInc()
+
+		end while	
+
+	end if
+
+	oMeter:AutoInc( ( dbfAlbCliL )->( Lastrec() ) )
+
+	oMeter:Set( 0 )
+
+	oMeter:SetTotal( ( dbfAlbCliL )->( Lastrec() ) )  
+
+	/*
+	Buscamos ahora por loas facturas
+	*/
+
+	if ( dbfFacCliL )->( dbSeek( cCodArt ) )
+
+		while ( dbfFacCliL )->cRef == cCodArt .and. !( dbfFacCliL )->( Eof() )
+
+			if ( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac + cCodCli ) )
+
+				if ( dbfFacCliL )->dFecFac > dFechaUltimaVenta
+					dFechaUltimaVenta 	:= ( dbfFacCliL )->dFecFac 
+				end if
+
+				exit
+
+			end if	
+
+			( dbfFacCliL )->( dbSkip() )
+
+			oMeter:AutoInc()
+
+		end while	
+
+	end if
+
+	oMeter:AutoInc( ( dbfAlbCliL )->( Lastrec() ) )  
+
+	/*
+	Dejamos las tablas como estaban------------------------------------------
+	*/
+
+	( dbfAlbCliT )->( OrdSetFocus( nOrdAntAlbT ) )
+	( dbfAlbCliL )->( OrdSetFocus( nOrdAntAlbL ) )
+	( dbfFacCliT )->( OrdSetFocus( nOrdAntFacT ) )
+	( dbfFacCliL )->( OrdSetFocus( nOrdAntFacL ) )
+
+	( dbfAlbCliT )->( dbGoTo( nRecAlbT ) )
+	( dbfAlbCliL )->( dbGoTo( nRecAlbL ) )
+	( dbfFacCliT )->( dbGoTo( nRecFacT ) )
+	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
+
+	CursorWE()
+
+return dFechaUltimaVenta
 
 //---------------------------------------------------------------------------//
