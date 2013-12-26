@@ -35,7 +35,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    end if
 
    /*
-   Cerramos todas las ventanas
+   Cerramos todas las ventanas-------------------------------------------------
    */
 
    if oWndParent != nil
@@ -70,11 +70,11 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT "Proyectos"
+   DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT I18n( "Proyectos" )
 
       FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"       COLSIZE 80           OF ::oDbf
       FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"       COLSIZE 200          OF ::oDbf
-      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"  COLSIZE 80           OF ::oDbf
+      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"  HIDE                 OF ::oDbf
 
       INDEX TO "Proyecto.Cdx" TAG "cCodPry" ON "cCodPry"   COMMENT "Código"        NODELETED    OF ::oDbf
       INDEX TO "Proyecto.Cdx" TAG "cNomPry" ON "cNomPry"   COMMENT "Nombre"        NODELETED    OF ::oDbf
