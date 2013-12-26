@@ -7901,7 +7901,6 @@ function SynAlbCli( cPath )
          ( dbfAlbCliT )->( dbUnLock() )
 
       end if
-      */
 
       /*
       Rellenamos los campos de totales-----------------------------------------
@@ -12589,6 +12588,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
+
       ( dbfAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
@@ -12631,6 +12633,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + dTos( dFecAlb )", {|| Field->cRef + dTos( Field->dFecAlb ) } ) )
 
       ( dbfAlbCliT )->( dbCloseArea() )
    else
