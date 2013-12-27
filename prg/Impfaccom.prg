@@ -718,10 +718,6 @@ METHOD Importar()
 
             if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "A"
 
-               ?"entro a hacer un append"
-
-               ?::oDbfAlbLFac:RfaLin
-
                ::oDbfAlbLGst:Append()
 
                ::oDbfAlbLGst:cSerAlb     := "A"
