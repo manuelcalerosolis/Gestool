@@ -140,6 +140,7 @@
 #define _NTOTPDT           119
 #define _LOPERPV           120
 #define _LRECC             121
+#define _CCODPRY           122
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -223,7 +224,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NMEDTRE            76
 #define _NTARLIN            77      //   L      1     0
 #define _LIMPFRA            78
-#define _CCODFRA            79
+#define __CCODPRY           79
 #define _CTXTFRA            80
 #define _DESCRIP            81
 #define _LLINOFE            82       // L       1    0
@@ -231,7 +232,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LGASSUP            84
 #define _dCNUMPED           85
 #define _dCNUMSAT           86
-#define _DFECUNTCOM 		87
+#define _DFECUNTCOM 			 87
 
 /*
 Definici¢n de Array para impuestos
@@ -1162,6 +1163,8 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
+      TProyecto():GetInstance()
+
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
       /*
@@ -1607,6 +1610,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oPais )
       oPais:End()
    end if
+
+   TProyecto():EndInstance()
 
    dbfIva      := nil
    dbfFPago    := nil
@@ -5285,14 +5290,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE GET aGet[ _CCODFRA ] VAR  aTmp[ _CCODFRA ] ;
+      REDEFINE GET aGet[ __CCODPRY ] VAR  aTmp[ __CCODPRY ] ;
          ID       320 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[ 2 ]
 
-         aGet[ _CCODFRA ]:bValid := {|| oFraPub:lValid( aGet[ _CCODFRA ], aGet[ _CTXTFRA ] ) }
-         aGet[ _CCODFRA ]:bHelp  := {|| oFraPub:Buscar( aGet[ _CCODFRA ] ) }
+         aGet[ __CCODPRY ]:bValid := {|| oFraPub:lValid( aGet[ __CCODPRY ], aGet[ _CTXTFRA ] ) }
+         aGet[ __CCODPRY ]:bHelp  := {|| TProyecto():GetInstance():Buscar( aGet[ __CCODPRY ], .t. ) }
 
       REDEFINE GET aGet[ _CTXTFRA ] VAR aTmp[ _CTXTFRA ] ;
          ID       321 ;
@@ -15633,7 +15638,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nMedTre"    ,"N", 16, 6, "Tercera unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nTarLin"    ,"N",  1, 0, "Tarifa de precio aplicada"             , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lImpFra",   "L",   1, 0, "Lógico de imprimir frase publicitaria" , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodFra",   "C",   3, 0, "Código de la frase publicitaria"       , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       				  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cTxtFra",   "C", 250, 0, "Texto de la frase publicitaria"        , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "Descrip",   "M",  10, 0, "Descripción larga"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lLinOfe",   "L",   1, 0, "Linea con oferta"                      , "",              "", "( cDbfCol )" } )
@@ -15642,8 +15647,8 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 	  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 	  , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -15774,6 +15779,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"", 						 "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodPry" 		,"C", 4,   0, "Código del proyecto", 											"", 						 "", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 
@@ -18545,11 +18551,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
             end if
 
-            if aGet[ _CCODFRA ] != nil
-               aGet[ _CCODFRA ]:cText( cCodFra( cCodFam, dbfFamilia ) )
-               aGet[ _CCODFRA ]:lValid()
+            if aGet[ __CCODPRY ] != nil
+               aGet[ __CCODPRY ]:cText( aTmpFac[ _CCODPRY ] )
+               aGet[ __CCODPRY ]:lValid()
             else
-               aTmp[ _CCODFRA ]  := cCodFra( cCodFam, dbfFamilia )
+               aTmp[ __CCODPRY ]  := aTmpFac[ _CCODPRY ]
             end if
 
          else
@@ -18564,9 +18570,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                aGet[ _CGRPFAM ]:lValid()
             end if
 
-            if aGet[ _CCODFRA ] != nil
-               aGet[ _CCODFRA ]:cText( Space( 3 ) )
-               aGet[ _CCODFRA ]:lValid()
+            if aGet[ __CCODPRY ] != nil
+               aGet[ __CCODPRY ]:cText( Space( 3 ) )
+               aGet[ __CCODPRY ]:lValid()
             end if
 
          end if
@@ -18668,7 +18674,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Si la comisi¢n del articulo hacia el agente es distinto de cero-------
          */
 
-         aGet[_NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
+         aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
 
          /*
          Código de la frase publicitaria---------------------------------------
@@ -18676,11 +18682,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          if !Empty( ( dbfArticulo )->cCodFra )
 
-            if aGet[ _CCODFRA ] != nil
-               aGet[ _CCODFRA ]:cText( ( dbfArticulo )->cCodFra )
-               aGet[ _CCODFRA ]:lValid()
+            if aGet[ __CCODPRY ] != nil
+               aGet[ __CCODPRY ]:cText( aTmpFac[ _CCODPRY ] )
+               aGet[ __CCODPRY ]:lValid()
             else
-               aTmp[ _CCODFRA ]  := ( dbfArticulo )->cCodFra
+               aTmp[ __CCODPRY ]	:= aTmpFac[ _CCODPRY ]
             end if
 
          end if
@@ -23295,6 +23301,7 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 	*/
 
 	if !( dbfClientAtp )->( dbSeek( aTmpFac[ _CCODCLI ] ) )
+
 		MsgStop( "No existen atípicas para este cliente." )
 		Return .f.
 
@@ -23306,8 +23313,7 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 
 		while ( dbfClientAtp )->cCodCli == aTmpFac[ _CCODCLI ] .and. !( dbfClientAtp )->( Eof() )
 
-		  	if lConditionAtipica( aTmpFac[ _DFECFAC ], dbfClientAtp ) 	.and.;
-		  	   ( dbfClientAtp )->lAplFac
+		  	if lConditionAtipica( aTmpFac[ _DFECFAC ], dbfClientAtp ) .and. ( dbfClientAtp )->lAplFac
 
 		  	   if !dbSeekInOrd( ( dbfClientAtp )->cCodArt, "cRef", dbfTmpLin )
 
@@ -23335,11 +23341,11 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 	Recalculamos la factura y refrescamos la pantalla--------------------------
 	*/
 
-   	RecalculaTotal( aTmpFac )
+   RecalculaTotal( aTmpFac )
 
-   	if !Empty( oBrwLin )
-   		oBrwLin:Refresh()
-   	end if
+   if !Empty( oBrwLin )
+   	oBrwLin:Refresh()
+   end if
 
 Return .t.
 
@@ -23347,22 +23353,22 @@ Return .t.
 
 Static Function AppendDatosAtipicas( aTmpFac )
 
-   	( dbfTmpLin )->CREF        	:= ( dbfClientAtp )->cCodArt
-   	( dbfTmpLin )->NDTO        	:= ( dbfClientAtp )->nDtoArt
-   	( dbfTmpLin )->NDTOPRM     	:= ( dbfClientAtp )->nDprArt
-   	( dbfTmpLin )->NCANENT     	:= 1
-   	( dbfTmpLin )->NUNICAJA    	:= 0
-   	( dbfTmpLin )->CCODPR1     	:= ( dbfClientAtp )->cCodPr1
-   	( dbfTmpLin )->CCODPR2     	:= ( dbfClientAtp )->cCodPr2
-   	( dbfTmpLin )->CVALPR1     	:= ( dbfClientAtp )->cValPr1
-   	( dbfTmpLin )->CVALPR2     	:= ( dbfClientAtp )->cValPr2
-   	( dbfTmpLin )->NDTODIV     	:= ( dbfClientAtp )->nDtoDiv
-   	( dbfTmpLin )->NNUMLIN     	:= nLastNum( dbfTmpLin )
-   	( dbfTmpLin )->NCOSDIV     	:= ( dbfClientAtp )->nPrcCom
-   	( dbfTmpLin )->CALMLIN     	:= aTmpFac[ _CCODALM ]
-   	( dbfTmpLin )->LIVALIN     	:= aTmpFac[ _LIVAINC ]
-   	( dbfTmpLin )->nTarLin     	:= aTmpFac[ _NTARIFA ]
-   	( dbfTmpLin )->dFecFac    	:= aTmpFac[ _DFECFAC ]
+   ( dbfTmpLin )->cRef        	:= ( dbfClientAtp )->cCodArt
+   ( dbfTmpLin )->nDto        	:= ( dbfClientAtp )->nDtoArt
+   ( dbfTmpLin )->nDtoPrm     	:= ( dbfClientAtp )->nDprArt
+   ( dbfTmpLin )->nCanEnt     	:= 1
+   ( dbfTmpLin )->nUniCaja    	:= 0
+   ( dbfTmpLin )->cCodPr1     	:= ( dbfClientAtp )->cCodPr1
+   ( dbfTmpLin )->cCodPr2     	:= ( dbfClientAtp )->cCodPr2
+   ( dbfTmpLin )->cValPr1     	:= ( dbfClientAtp )->cValPr1
+   ( dbfTmpLin )->cValPr2     	:= ( dbfClientAtp )->cValPr2
+   ( dbfTmpLin )->nDtoDiv     	:= ( dbfClientAtp )->nDtoDiv
+   ( dbfTmpLin )->nNumLin     	:= nLastNum( dbfTmpLin )
+   ( dbfTmpLin )->nCosDiv     	:= ( dbfClientAtp )->nPrcCom
+   ( dbfTmpLin )->cAlmLin     	:= aTmpFac[ _CCODALM ]
+   ( dbfTmpLin )->lIvaLin     	:= aTmpFac[ _LIVAINC ]
+   ( dbfTmpLin )->nTarLin     	:= aTmpFac[ _NTARIFA ]
+   ( dbfTmpLin )->dFecFac    		:= aTmpFac[ _DFECFAC ]
 
 Return ( nil )
 
@@ -23370,19 +23376,17 @@ Return ( nil )
 
 static function AppendDatosArticulos( aTmpFac )
 
-   	if ( dbfArticulo )->( dbSeek( ( dbfClientAtp )->cCodArt ) )
-
-		( dbfTmpLin )->CDETALLE    	:= ( dbfArticulo )->Nombre
-   		( dbfTmpLin )->NIVA        	:= nIva( dbfIva, ( dbfArticulo )->TipoIva )
-   		( dbfTmpLin )->CUNIDAD     	:= ( dbfArticulo )->cUnidad
-		( dbfTmpLin )->NCTLSTK     	:= ( dbfArticulo )->NCTLSTOCK
-   		( dbfTmpLin )->LLOTE       	:= ( dbfArticulo )->lLote
-   		( dbfTmpLin )->LMSGVTA     	:= ( dbfArticulo )->lMsgVta
-   		( dbfTmpLin )->LNOTVTA     	:= ( dbfArticulo )->lNotVta
-   		( dbfTmpLin )->CCODTIP     	:= ( dbfArticulo )->cCodTip
-   		( dbfTmpLin )->CCODFAM     	:= ( dbfArticulo )->Familia
-
-   	end if
+ 	if ( dbfArticulo )->( dbSeek( ( dbfClientAtp )->cCodArt ) )
+		( dbfTmpLin )->cDetalle    	:= ( dbfArticulo )->Nombre
+ 		( dbfTmpLin )->nIva        	:= nIva( dbfIva, ( dbfArticulo )->TipoIva )
+ 		( dbfTmpLin )->cUniDad     	:= ( dbfArticulo )->cUnidad
+		( dbfTmpLin )->nCtlStk     	:= ( dbfArticulo )->nCtlStock
+ 		( dbfTmpLin )->lLotE       	:= ( dbfArticulo )->lLote
+ 		( dbfTmpLin )->lMsgVta     	:= ( dbfArticulo )->lMsgVta
+ 		( dbfTmpLin )->lNotVta     	:= ( dbfArticulo )->lNotVta
+ 		( dbfTmpLin )->cCodTip     	:= ( dbfArticulo )->cCodTip
+ 		( dbfTmpLin )->cCodFam     	:= ( dbfArticulo )->Familia
+ 	end if
 
 Return ( nil )
 
@@ -23394,17 +23398,13 @@ Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
 	Cambiamos el valor de las unidades de la linea de la factura---------------
 	*/
 
-	if IsNum( nKey ) .and. ( nKey != VK_ESCAPE )
+	if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
 
-      if !IsNil( uNewValue )
+      ( dbfTmpLin )->nUnicaja 		:= uNewValue
 
-      		( dbfTmpLin )->nUnicaja 	:= uNewValue
+      RecalculaTotal( aTmp )
 
-      		RecalculaTotal( aTmp )
-
-      end if
-
-    end if  
+   end if  
 
 Return .t.
 
@@ -23416,45 +23416,41 @@ Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
 	Cambiamos el valor del precio de la linea de la factura--------------------
 	*/
 
-	if IsNum( nKey ) .and. ( nKey != VK_ESCAPE )
+	if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
 
-      if !IsNil( uNewValue )
+      SetUFacCli( dbfTmpLin, uNewValue )
 
-      		SetUFacCli( dbfTmpLin, uNewValue )
-
-      		RecalculaTotal( aTmp )
-
-      end if
+      RecalculaTotal( aTmp )
 
     end if  
 
 Return .t.
 
 //---------------------------------------------------------------------------//
+/*
+Sumamos una unidad a la linea de la factura--------------------------------
+*/
 
 Static Function SumaUnidadLinea( aTmp )
 
-	/*
-	Sumamos una unidad a la linea de la factura--------------------------------
-	*/
 
-	( dbfTmpLin )->nUniCaja += 1
+	( dbfTmpLin )->nUniCaja++
 
-    RecalculaTotal( aTmp )  
+   RecalculaTotal( aTmp )  
 
 Return .t.
 
 //---------------------------------------------------------------------------//
+/*
+Restamos una unidad a la linea de la factura-------------------------------
+*/
 
 Static Function RestaUnidadLinea( aTmp )
 
-	/*
-	Restamos una unidad a la linea de la factura-------------------------------
-	*/
 
-    ( dbfTmpLin )->nUniCaja -= 1
+   ( dbfTmpLin )->nUniCaja--
 
-    RecalculaTotal( aTmp )
+   RecalculaTotal( aTmp )
 
 Return .t.
 
@@ -23463,14 +23459,14 @@ Return .t.
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
 
 	local dFechaUltimaVenta 	:= cTod( "" )
-	local nRecAlbT				:= ( dbfAlbCliT )->( Recno() )
+	local nRecAlbT					:= ( dbfAlbCliT )->( Recno() )
 	local nRecAlbL 				:= ( dbfAlbCliL )->( Recno() )
 	local nRecFacT 				:= ( dbfFacCliT )->( Recno() )
 	local nRecFacL 				:= ( dbfFacCliL )->( Recno() )
 	local nOrdAntAlbT 			:= ( dbfAlbCliT )->( OrdSetFocus( "cNumCli" ) )
-	local nOrdAntAlbL			:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
-	local nOrdAntFacT			:= ( dbfFacCliT )->( OrdSetFocus( "cNumCli" ) )
-	local nOrdAntFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdAntAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdAntFacT				:= ( dbfFacCliT )->( OrdSetFocus( "cNumCli" ) )
+	local nOrdAntFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
 
 	CursorWait()
 
@@ -23484,7 +23480,7 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT
 
 			if ( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb + cCodCli ) )
 
-				dFechaUltimaVenta 	:= ( dbfAlbCliL )->dFecAlb 
+				dFechaUltimaVenta := ( dbfAlbCliL )->dFecAlb 
 
 				exit
 
@@ -23497,7 +23493,7 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT
 	end if
 
 	/*
-	Buscamos ahora por loas facturas
+	Buscamos ahora por loas facturas--------------------------------------------
 	*/
 
 	if ( dbfFacCliL )->( dbSeek( cCodArt ) )
@@ -23536,6 +23532,6 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT
 
 	CursorWE()
 
-return dFechaUltimaVenta
+Return dFechaUltimaVenta
 
 //---------------------------------------------------------------------------//

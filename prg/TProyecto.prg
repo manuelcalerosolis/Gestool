@@ -6,6 +6,8 @@
 
 CLASS TProyecto FROM TMant
 
+   CLASSDATA oInstance
+
    DATA  cMru                                   INIT "Led_Red_16"
 
    DATA  oGetCodigo
@@ -20,15 +22,19 @@ CLASS TProyecto FROM TMant
    METHOD   StartResource()                     VIRTUAL
    METHOD   lSaveResource()
 
+   METHOD GetInstance()
+   METHOD EndInstance()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01104"
+
+   ::Create( cPath )
 
    if Empty( ::nLevel )
       ::nLevel          := nLevelUsr( oMenuItem )
@@ -44,11 +50,9 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent
-   ::oDbf               := nil
 
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.
-   ::cHtmlHelp          := "Proyectos"
 
 RETURN ( Self )
 
@@ -70,7 +74,7 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT ( "Proyectos" )
+   DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT GetTraslation( "Proyectos" )
 
       FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"       COLSIZE 80           OF ::oDbf
       FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"       COLSIZE 200          OF ::oDbf
@@ -90,7 +94,7 @@ METHOD Resource( nMode )
 
 	local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Proyectos"
+   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + GetTraslation( "Proyecto" )
 
       REDEFINE GET ::oGetCodigo ;
          VAR      ::oDbf:cCodPry ;
@@ -141,7 +145,7 @@ Method lSaveResource( nMode, oDlg )
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       if Empty( ::oDbf:cCodPry )
-         MsgStop( "Código de proyecto no puede estar vacío" )
+         MsgStop( "Código de " + GetTraslation( "Proyecto" ) + " no puede estar vacío" )
          ::oGetCodigo:SetFocus()
          Return nil
       end if
@@ -155,12 +159,34 @@ Method lSaveResource( nMode, oDlg )
    end if
 
    if Empty( ::oDbf:cNomPry )
-      MsgStop( "Nombre de proyecto no puede estar vacío" )
+      MsgStop( "Nombre de "+ GetTraslation( "Proyecto" ) + " no puede estar vacío" )
       ::oGetNombre:SetFocus()
       Return nil
    end if
 
 Return oDlg:end( IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetInstance()
+
+   if empty( ::oInstance )
+      ::oInstance    := ::Create()
+      ::oInstance:OpenFiles()
+   end if 
+
+Return ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+METHOD EndInstance()
+
+   if !empty( ::oInstance )
+      ::oInstance:CloseFiles()
+      ::oInstance    := nil
+   end if 
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
