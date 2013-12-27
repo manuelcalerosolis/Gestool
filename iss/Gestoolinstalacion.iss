@@ -9,7 +9,7 @@ AppPublisherURL=http://www.gestool.es
 AppSupportURL=http://www.gestool.es
 AppUpdatesURL=http://www.gestool.es
 DefaultDirName={pf}\Gestool
-DefaultGroupName=Gestool 2K13
+DefaultGroupName=Gestool 2Ktorce
 AllowNoIcons=yes
 OutputDir=c:\fw195\gestool\iss\exe\
 

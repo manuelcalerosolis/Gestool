@@ -312,18 +312,19 @@ RETURN ( Self )
 
 METHOD OpenFiles( lExclusive, cPath )
 
-   local lOpen          := .t.
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    DEFAULT lExclusive   := .f.
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles( cPath )
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+      ::lOpenFiles      := .t.
 
    RECOVER
 
@@ -331,13 +332,13 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::CloseFiles()
       
-      lOpen             := .f.
+      ::lOpenFiles      := .f.
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
-RETURN ( lOpen )
+RETURN ( ::lOpenFiles )
 
 //----------------------------------------------------------------------------//
 
@@ -725,8 +726,6 @@ RETURN ( uVal )
 
 //----------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 METHOD Filter( cTipoDocumento, oButton, oDbfFilter ) CLASS TMant
 
    local oFilter     := TFilterCreator():Init()
@@ -747,17 +746,11 @@ RETURN NIL
 METHOD LoadFilter() CLASS TMant
 
    if !Empty( ::oWndBrw )
-      ::oWndBrw:oActiveFilter:oDbf        := ::oDbf
-      ::oWndBrw:oActiveFilter:aTField     := aClone( ::oDbf:aTField )
-      ::oWndBrw:oActiveFilter:cDbfFilter  := ::oDbfFilter:nArea
-      ::oWndBrw:oActiveFilter:cTipFilter  := ::cTipoDocumento
+      ::oWndBrw:oActiveFilter:SetDatabase( ::oDbf ) 
+      ::oWndBrw:oActiveFilter:SetFilterType( ::cTipoDocumento )
    end if
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-#endif
 
 //----------------------------------------------------------------------------//
 

@@ -723,16 +723,6 @@ Method InitialCheck() CLASS AccessCode
          rxCajPorta( cPatDat() )
       end while
 
-      // Situaciones por defecto--------------------------------------------------
-
-      if !Empty( ::oMessage )
-         ::oMessage:SetText( "Comprobando situaciones..." )
-      end if
-
-      while !IsSitua()
-         rxSitua( cPatDat() )
-      end while
-
       // Tipos de impresoras por defecto------------------------------------------
 
       if !Empty( ::oMessage )
