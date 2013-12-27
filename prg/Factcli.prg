@@ -23474,10 +23474,6 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT
 
 	CursorWait()
 
-	oMsgText( "Calculando última fecha de venta" )
-
-    oMeter:SetTotal( ( dbfAlbCliL )->( Lastrec() ) )  
-
 	/*
 	Buscamos por los albaranes no facturados-----------------------------------
 	*/
@@ -23496,17 +23492,9 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT
 
 			( dbfAlbCliL )->( dbSkip() )
 
-			oMeter:AutoInc()
-
 		end while	
 
 	end if
-
-	oMeter:AutoInc( ( dbfAlbCliL )->( Lastrec() ) )
-
-	oMeter:Set( 0 )
-
-	oMeter:SetTotal( ( dbfAlbCliL )->( Lastrec() ) )  
 
 	/*
 	Buscamos ahora por loas facturas
@@ -23528,13 +23516,9 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT
 
 			( dbfFacCliL )->( dbSkip() )
 
-			oMeter:AutoInc()
-
 		end while	
 
 	end if
-
-	oMeter:AutoInc( ( dbfAlbCliL )->( Lastrec() ) )  
 
 	/*
 	Dejamos las tablas como estaban------------------------------------------
