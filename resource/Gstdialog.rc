@@ -17797,6 +17797,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "S&ubir", 524, "Button", WS_TABSTOP, 318, 129, 50, 14
   CONTROL "&Bajar", 525, "Button", WS_TABSTOP, 373, 129, 50, 14
   CONTROL "Ocultar Esc&ll.", 526, "Button", WS_TABSTOP, 428, 129, 50, 14
+  CONTROL "Importar tarifa", 527, "Button", WS_TABSTOP, 483, 129, 50, 14
   CONTROL "", 240, "TXBrowse", WS_TABSTOP|0x00300000, 44, 145, 622, 139
   CONTROL "Descuentos", 700, "Button", BS_GROUPBOX, 44, 288, 154, 61
   CONTROL "", 172, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 391, 30, 52, 11
