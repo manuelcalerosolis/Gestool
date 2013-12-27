@@ -94,6 +94,8 @@ CLASS TTrazarLote
 
    Method nTreeImagen()
 
+   METHOD InformeLote()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -461,7 +463,7 @@ METHOD Activate( oMenuItem, oWnd )
 
    ::oBrw:CreateFromResource( 150 )
 
-   ::oBrw:SetoDbf( ::oDbfTmp )
+   ::oDbfTmp:SetBrowse( ::oBrw )
 
       with object ( ::oBrw:AddCol() )
          :cHeader          := "Lote"
@@ -530,9 +532,6 @@ METHOD Activate( oMenuItem, oWnd )
          :nWidth           := 120
       end with
 
-      
-
-
       ::oBrw:bRClicked     := {| nRow, nCol, nFlags | ::oBrw:RButtonDown( nRow, nCol, nFlags ) }
       ::oBrw:bLDblClick    := {|| ::Zoom() }
       ::oBrw:bChange       := {|| ::oBrw:Refresh() }
@@ -570,13 +569,15 @@ METHOD Activate( oMenuItem, oWnd )
    REDEFINE BUTTON oBotonInforme;
       ID       250 ;
       OF       oDlg ;
-      ACTION   ( TInfTrazLot():New( "Informe detallado de trazas de un lotes", , , , , , { ::oDbfTmp, ::cLote } ):Play() )
+      ACTION   ( ::InformeLote( oDlg ) )
 
    oDlg:AddFastKey( VK_F5, {|| if( ::Search( oLote, oBtnCancel, oBtnBuscar ), ( oBotonImprimir:Show(), oBotonVer:Show(), oBotonZoom:Show(), oFiltro:Show(), oBotonInforme:Enable() ), ) } )
 
    oDlg:bStart := {|| oCodArt:SetFocus() }
 
-   ACTIVATE DIALOG oDlg CENTER ON INIT ( oBotonImprimir:Hide(), oBotonVer:Hide(), oBotonZoom:Hide(), oFiltro:Hide(), oBotonInforme:Disable() )
+   ACTIVATE DIALOG oDlg ;
+      CENTER ;
+      ON INIT ( oBotonImprimir:Hide(), oBotonVer:Hide(), oBotonZoom:Hide(), oFiltro:Hide(), oBotonInforme:Disable() )
 
    RECOVER USING oError
 
@@ -1457,5 +1458,35 @@ Method nTreeImagen()
    end case
 
 Return ( 1 )
+
+//---------------------------------------------------------------------------//
+
+METHOD InformeLote( oDlg )
+
+   local oReport
+   local oBlock
+   local oError
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
+   BEGIN SEQUENCE
+
+      oDlg:Disable()
+
+      oReport           := TInfTrazLot():New( "Informe detallado de trazas de un lotes" )
+      oReport:cLote     := ::cLote
+      oReport:dbfTmp    := ::oDbfTmp:cAlias
+      oReport:Play() 
+
+      oDlg:Enable()
+
+   RECOVER USING oError
+      
+      msgStop( ErrorMessage( oError ), "Imposible ejecutar informe de trazabilidad" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return (  Self )   
 
 //---------------------------------------------------------------------------//

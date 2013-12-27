@@ -19,6 +19,7 @@ static hStatus
 static aResources             := {}
 static aAdsDirectory          := {}
 
+static hTraslations           := {=>}
 
 //--------------------------------------------------------------------------//
 // Funciones para DBF's
@@ -3142,6 +3143,23 @@ function DbDialog( cTitle )
    ErrorBlock( oBlock )
 
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+Function GetTraslation( cText )
+
+   local cTraslation    := ""
+
+   if HHasKey( hTraslations, cText )
+      cTraslation       := HGet( hTraslations, cText )
+   else 
+      cTraslation       := GetPvProfString( "Traslations", cText, "", FullCurDir() + "GstApolo.Ini" )      
+      if !empty( cTraslation )
+         hSet( hTraslations, cText, cTraslation )   
+      end if
+   end if 
+
+return ( if( !Empty( cTraslation ), cTraslation, cText ) )   
 
 //---------------------------------------------------------------------------//
 

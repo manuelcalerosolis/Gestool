@@ -126,7 +126,6 @@ function Main( cParams )
    nAdsServer        := GetPvProfInt(     "ADS", "Server",   7,    FullCurDir() + "GstApolo.Ini" )
    cAdsLocal         := GetPvProfString(  "ADS", "Local",    "",   FullCurDir() + "GstApolo.Ini" )
 
-
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADSINTERNET" $ cAdsType )
@@ -1937,8 +1936,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Proyectos'
-   oItem:cMessage       := 'Proyectos'
+   oItem:cPrompt        := GetTraslation( 'Proyectos' )
+   oItem:cMessage       := GetTraslation( 'Proyectos' )
    oItem:bAction        := {|| TProyecto():New( cPatArt(), oWnd, "01104" ):Activate() }
    oItem:cId            := "01104"
    oItem:cBmp           := "Led_Red_16"
