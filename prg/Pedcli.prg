@@ -383,7 +383,6 @@ static dbfTikCliL
 static dbfProLin
 static dbfProMat
 static dbfHisMov
-static dbfSitua
 static cOrdAnt
 static oBandera
 static oTrans
@@ -855,9 +854,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
       SET TAG TO "cRefMov"
-
-      USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
-      SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
@@ -2844,7 +2840,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( lWhen );
-         ITEMS    ( aSituacion( dbfSitua ) ) ;
+         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oTipPed VAR cTipPed ;
@@ -11376,7 +11372,7 @@ Static FUNCTION EdtPda( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
          ID       111 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ITEMS    ( aSituacion( dbfSitua ) ) ;
+         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ] ;
@@ -13979,7 +13975,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfProMat  ), ( dbfProMat  )->( dbCloseArea() ), )
    if( !Empty( dbfHisMov  ), ( dbfHisMov  )->( dbCloseArea() ), )
    if( !Empty( dbfCliInc  ), ( dbfCliInc  )->( dbCloseArea() ), )
-   if( !Empty( dbfSitua   ), ( dbfSitua   )->( dbCloseArea() ), )
    if( !Empty( dbfCliBnc  ), ( dbfCliBnc  )->( dbCloseArea() ), )
 
    if( !Empty( oStock     ), oStock:end(),  )
@@ -14058,7 +14053,6 @@ STATIC FUNCTION CloseFiles()
    dbfProMat      := nil
    dbfHisMov      := nil
    dbfCliInc      := nil
-   dbfSitua       := nil
    dbfCliBnc      := nil
 
    oStock         := nil

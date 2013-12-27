@@ -22,9 +22,6 @@ CLASS TProyecto FROM TMant
    METHOD   StartResource()                     VIRTUAL
    METHOD   lSaveResource()
 
-   METHOD GetInstance()                         INLINE ( if( empty( ::oInstance ), ::oInstance := ::Create(), ) ) 
-   METHOD EndInstance()                         INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ) ) 
-
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -76,15 +73,18 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT GetTraslation( "Proyectos" )
 
-      FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"             COLSIZE 80           OF ::oDbf
-      FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"             COLSIZE 200          OF ::oDbf
-      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"        HIDE                 OF ::oDbf
-      FIELD NAME "cSerNum"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"    COLSIZE 200          OF ::oDbf
-      FIELD NAME "cSerNum"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"    COLSIZE 200          OF ::oDbf
+      FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"                               COLSIZE 80  OF ::oDbf
+      FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"                               COLSIZE 200 OF ::oDbf
+      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"                          HIDE        OF ::oDbf
+      FIELD NAME "cSerPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"                      COLSIZE 200 OF ::oDbf
+      FIELD NAME "cSitPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Situación"                            COLSIZE 200 OF ::oDbf
+      FIELD NAME "cFecPry"  TYPE "D" LEN  8  DEC 0  COMMENT "Fecha de compra"                      COLSIZE 200 OF ::oDbf
+      FIELD NAME "nComPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio compra"   PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
+      FIELD NAME "nCosPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Costo diario"    PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
 
-      INDEX TO "Proyecto.Cdx" TAG "cCodPry" ON "cCodPry"   COMMENT "Código"        NODELETED    OF ::oDbf
-      INDEX TO "Proyecto.Cdx" TAG "cNomPry" ON "cNomPry"   COMMENT "Nombre"        NODELETED    OF ::oDbf
-      INDEX TO "Proyecto.Cdx" TAG "cCodPdr" ON "cCodPdr"   COMMENT "Grupo padre"   NODELETED    OF ::oDbf
+      INDEX TO "Proyecto.Cdx" TAG "cCodPry" ON "cCodPry"   COMMENT "Código"        NODELETED                   OF ::oDbf
+      INDEX TO "Proyecto.Cdx" TAG "cNomPry" ON "cNomPry"   COMMENT "Nombre"        NODELETED                   OF ::oDbf
+      INDEX TO "Proyecto.Cdx" TAG "cCodPdr" ON "cCodPdr"   COMMENT "Grupo padre"   NODELETED                   OF ::oDbf
 
    END DATABASE ::oDbf
 

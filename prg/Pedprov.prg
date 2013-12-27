@@ -227,7 +227,6 @@ static dbfTikCliL
 static dbfProLin
 static dbfProMat
 static dbfHisMov
-static dbfSitua
 static dbfClient
 static oStock
 static oGetNet
@@ -408,9 +407,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
       SET TAG TO "cRefMov"
-
-      USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
-      SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
@@ -643,10 +639,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfHisMov )->( dbCloseArea() )
    end if
 
-   if dbfSitua != nil
-      ( dbfSitua )->( dbCloseArea() )
-   end if
-
    if dbfClient != nil
       ( dbfClient )->( dbCloseArea() )
    end if
@@ -691,7 +683,6 @@ STATIC FUNCTION CloseFiles()
    dbfProLin   := nil
    dbfProMat   := nil
    dbfHisMov   := nil
-   dbfSitua    := nil
    dbfClient   := nil
 
    lOpenFiles  := .f.
@@ -1894,7 +1885,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE );
-         ITEMS    ( aSituacion( dbfSitua ) ) ;
+         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;

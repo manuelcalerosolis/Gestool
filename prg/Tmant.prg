@@ -150,8 +150,6 @@ CLASS TMant
 
    METHOD lLoadDivisa()
 
-#ifndef __PDA__
-
    METHOD Filter()
 
    METHOD LoadFilter()
@@ -160,7 +158,8 @@ CLASS TMant
 
    METHOD CreateShell( nLevel )
 
-#endif
+   METHOD GetInstance()                   INLINE ( if( empty( ::oInstance ), ::oInstance := ::Create(), ), ::oInstance ) 
+   METHOD EndInstance()                   INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
 
 END CLASS
 

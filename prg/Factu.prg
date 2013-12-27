@@ -1938,7 +1938,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := GetTraslation( 'Proyectos' )
    oItem:cMessage       := GetTraslation( 'Proyectos' )
-   oItem:bAction        := {|| TProyecto():New( cPatArt(), oWnd, "01104" ):Activate() }
+   oItem:bAction        := {|| TProyecto():New( cPatArt(), oWnd ):Activate() }
    oItem:cId            := "01104"
    oItem:cBmp           := "Led_Red_16"
    oItem:cBmpBig        := "Led_Red_32"
@@ -1988,7 +1988,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| Situaciones( "01096", oWnd ) }
+   oItem:bAction        := {|| TSituaciones():New( cPatDat(), oWnd ) }
    oItem:cId            := "01096"
    oItem:cBmp           := "Document_Attachment_16"
    oItem:cBmpBig        := "Document_Attachment_32"
@@ -3623,8 +3623,8 @@ Function BuildMenu()
 
                   MENUITEM    "&3. Situaciones de documentos";
                      MESSAGE  "Tipos de situaciones en documentos de compra y venta" ;
-                     HELPID   "01115" ;
-                     ACTION   ( Situaciones( oMenuItem, oWnd ) );
+                     HELPID   "01096" ;
+                     ACTION   ( TSituaciones():New( cPatDat(), oWnd ) );
                      RESOURCE "Document_Attachment_16" ;
 
                   MENUITEM    "&4. Tipos de comandas";
