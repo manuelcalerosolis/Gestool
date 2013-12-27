@@ -4294,10 +4294,6 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
             ActDbf( cEmpOld, cEmpTmp, "LogPorta", "log cajón portamonedas", oMet, oMsg, aMsg )
          end if
 
-         if mkSitua( cEmpTmp )
-            ActDbf( cEmpDat, cEmpTmp, "Situa", "situaciones", oMet, oMsg, aMsg )
-         end if
-
          if mkTipImp( cEmpTmp )
             ActDbf( cEmpDat, cEmpTmp, "TipImp", "Tipos de impresoras", oMet, oMsg, aMsg )
          end if
@@ -4440,6 +4436,15 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "AntCliT",   "anticipos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AntCliI",   "anticipos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AntCliD",   "documentos de anticipos de clientes", oMet, oMsg, aMsg )
+
+         oMsg:SetText( "Situaciones" )
+         TSituaciones():GetInstance():SyncAllDbf()
+
+         /*
+         if mkSitua( cEmpTmp )
+            ActDbf( cEmpDat, cEmpTmp, "Situa", "situaciones", oMet, oMsg, aMsg )
+         end if
+         */
 
          oMsg:SetText( "Unidades de medición" )
          UniMedicion():Create():SyncAllDbf()

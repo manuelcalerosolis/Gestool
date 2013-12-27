@@ -22,8 +22,8 @@ CLASS TProyecto FROM TMant
    METHOD   StartResource()                     VIRTUAL
    METHOD   lSaveResource()
 
-   METHOD GetInstance()
-   METHOD EndInstance()
+   METHOD GetInstance()                         INLINE ( if( empty( ::oInstance ), ::oInstance := ::Create(), ) ) 
+   METHOD EndInstance()                         INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ) ) 
 
 END CLASS
 
@@ -76,9 +76,11 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Proyecto.Dbf" CLASS "Proyecto" ALIAS "Proyecto" PATH ( cPath ) VIA ( cDriver ) COMMENT GetTraslation( "Proyectos" )
 
-      FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"       COLSIZE 80           OF ::oDbf
-      FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"       COLSIZE 200          OF ::oDbf
-      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"  HIDE                 OF ::oDbf
+      FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"             COLSIZE 80           OF ::oDbf
+      FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"             COLSIZE 200          OF ::oDbf
+      FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"        HIDE                 OF ::oDbf
+      FIELD NAME "cSerNum"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"    COLSIZE 200          OF ::oDbf
+      FIELD NAME "cSerNum"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"    COLSIZE 200          OF ::oDbf
 
       INDEX TO "Proyecto.Cdx" TAG "cCodPry" ON "cCodPry"   COMMENT "Código"        NODELETED    OF ::oDbf
       INDEX TO "Proyecto.Cdx" TAG "cNomPry" ON "cNomPry"   COMMENT "Nombre"        NODELETED    OF ::oDbf
@@ -165,28 +167,6 @@ Method lSaveResource( nMode, oDlg )
    end if
 
 Return oDlg:end( IDOK )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetInstance()
-
-   if empty( ::oInstance )
-      ::oInstance    := ::Create()
-      ::oInstance:OpenFiles()
-   end if 
-
-Return ( ::oInstance )
-
-//---------------------------------------------------------------------------//
-
-METHOD EndInstance()
-
-   if !empty( ::oInstance )
-      ::oInstance:CloseFiles()
-      ::oInstance    := nil
-   end if 
-
-Return ( nil )
 
 //---------------------------------------------------------------------------//
 

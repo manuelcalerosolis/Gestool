@@ -345,7 +345,6 @@ static dbfTikCliT
 static dbfProLin
 static dbfProMat
 static dbfHisMov
-static dbfSitua
 static cTmpLin
 static cTmpInc
 static cTmpDoc
@@ -648,9 +647,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
       SET TAG TO "cRefMov"
-
-      USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
-      SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
@@ -1001,10 +997,6 @@ STATIC FUNCTION CloseFiles()
 
    if dbfCliInc != nil
       ( dbfCliInc )->( dbCloseArea() )
-   end if
-
-   if dbfSitua != nil
-      ( dbfSitua )->( dbCloseArea() )
    end if
 
    if dbfFacCliP != nil
@@ -2554,7 +2546,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ITEMS    ( aSituacion( dbfSitua ) ) ;
+         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUSAT ] VAR aTmp[ _CSUSAT ] ;

@@ -1677,8 +1677,7 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Situa.Cdx"
    oDataTable:cDescription := "Situaciones"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
-   oDataTable:bCreateFile  := {| cPath | mkSitua( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxSitua( cPath ) }
+   oDataTable:bCreateFile  := {| cPath | TSituaciones():BuildFiles( .t., cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()

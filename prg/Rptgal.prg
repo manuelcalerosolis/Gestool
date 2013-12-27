@@ -2428,6 +2428,10 @@ Function GetBic()
 
 Return nil
 
+Function TProyecto()
+
+Return nil
+
 /*
 //---------------------------------------------------------------------------//
 

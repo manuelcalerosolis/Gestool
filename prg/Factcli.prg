@@ -1163,7 +1163,9 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
-      TProyecto():GetInstance()
+      if !TProyecto():GetInstance():Openfiles()
+      	lOpenFiles		:= .f.
+      end if
 
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
@@ -1611,7 +1613,7 @@ STATIC FUNCTION CloseFiles()
       oPais:End()
    end if
 
-   TProyecto():EndInstance()
+   TProyecto():GetInstance():CloseFiles()
 
    dbfIva      := nil
    dbfFPago    := nil

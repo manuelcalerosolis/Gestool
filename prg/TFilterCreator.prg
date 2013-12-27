@@ -1092,7 +1092,7 @@ END CLASS
 
 METHOD New( oFilterCreator ) CLASS TFilterDatabase
 
-   ::oFilterCreator  := oFilterCreator
+   ::oFilterCreator     := oFilterCreator
 
 RETURN ( Self )   
 
