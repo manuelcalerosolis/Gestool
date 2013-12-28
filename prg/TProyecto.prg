@@ -26,15 +26,15 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, oWndParent, nLevel )
 
    DEFAULT oWndParent   := GetWndFrame()
-   DEFAULT oMenuItem    := "01104"
+   DEFAULT nLevel       := "01104"
 
    ::Create( cPath )
 
    if Empty( ::nLevel )
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := nLevelUsr( nLevel )
    end if
 
    /*
@@ -96,7 +96,7 @@ METHOD Resource( nMode )
 
 	local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + GetTraslation( "Proyecto" )
+   DEFINE DIALOG oDlg RESOURCE "Proyecto" TITLE LblTitle( nMode ) + GetTraslation( "Proyecto" )
 
       REDEFINE GET ::oGetCodigo ;
          VAR      ::oDbf:cCodPry ;
@@ -111,6 +111,39 @@ METHOD Resource( nMode )
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET ;
+         VAR      ::oDbf:cSerPry ;
+         ID       120 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX ::oDbf:cSitPry ;
+         ID       130 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+         OF       oDlg
+
+      REDEFINE GET ;
+         VAR      ::oDbf:dFecPry ;
+         SPINNER ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ;
+         VAR      ::oDbf:nComPry ;
+         ID       150 ;
+         PICTURE  ::oDbf:nComPry:cPicture ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ;
+         VAR      ::oDbf:nCosPry ;
+         ID       160 ;
+         PICTURE  ::oDbf:nCosPry:cPicture ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       /*
       Creamos los botones------------------------------------------------------
