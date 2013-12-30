@@ -1145,7 +1145,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( dbfFacPrvT )->nTotNet }
-         :cEditPicture     := cPirDiv( ( dbfFacPrvT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1155,7 +1155,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
          :bEditValue       := {|| ( dbfFacPrvT )->nTotIva }
-         :cEditPicture     := cPirDiv( ( dbfFacPrvT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1165,7 +1165,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
          :bEditValue       := {|| ( dbfFacPrvT )->nTotReq }
-         :cEditPicture     := cPirDiv( ( dbfFacPrvT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1175,7 +1175,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( dbfFacPrvT )->nTotFac }
-         :cEditPicture     := cPirDiv( ( dbfFacPrvT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1

@@ -900,7 +900,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( dbfPedPrvT )->nTotNet }
-         :cEditPicture     := cPirDiv( ( dbfPedPrvT )->cDivPed, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -910,7 +910,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
          :bEditValue       := {|| ( dbfPedPrvT )->nTotIva }
-         :cEditPicture     := cPirDiv( ( dbfPedPrvT )->cDivPed, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -920,7 +920,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
          :bEditValue       := {|| ( dbfPedPrvT )->nTotReq }
-         :cEditPicture     := cPirDiv( ( dbfPedPrvT )->cDivPed, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -930,7 +930,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( dbfPedPrvT )->nTotPed }
-         :cEditPicture     := cPirDiv( ( dbfPedPrvT )->cDivPed, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1

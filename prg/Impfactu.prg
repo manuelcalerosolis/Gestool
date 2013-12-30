@@ -2093,7 +2093,6 @@ METHOD Importar()
             /*
             Buscamos la serie del documento en la cabecera, la que factuplus---
             no guarda la serie en las lineas de los albaranes
-            */
 
             ::oDbfAlbTGst:GoTop()
 
@@ -2106,7 +2105,9 @@ METHOD Importar()
                ::oDbfAlbTGst:Skip()
 
             end while
+            */
 
+            ::oDbfAlbLGst:cSerAlb      := "A" // ::oDbfAlbLFac:nNumAlb
             ::oDbfAlbLGst:nNumAlb      := ::oDbfAlbLFac:nNumAlb
             ::oDbfAlbLGst:cSufAlb      := Space( 2 )
             ::oDbfAlbLGst:cRef         := ::oDbfAlbLFac:cRef
@@ -2445,7 +2446,9 @@ METHOD Importar()
                ::oDbfFacRecTGst:nVdvFac         := 1
                ::oDbfFacRecTGst:cCodTrn         := ::oDbfFacTFac:cCodTran
 
-               ::oDbfFacRecTGst:cNumFac         := SubStr( ::oDbfFacTFac:cNumFacRec, 1, 1 ) +  SubStr( ::oDbfFacTFac:cNumFacRec, 3, 9 )
+               if __objHasData( ::oDbfFacTFac, "cNumFacRec" )
+                  ::oDbfFacRecTGst:cNumFac      := SubStr( ::oDbfFacTFac:cNumFacRec, 1, 1 ) +  SubStr( ::oDbfFacTFac:cNumFacRec, 3, 9 )
+               endif
 
                ::oDbfFacRecTGst:Save()
 
@@ -3074,7 +3077,7 @@ METHOD Importar()
             */
 
             ::oDbfAlpTGst:GoTop()
-
+/*
             while !::oDbfAlpTGst:Eof()
 
                if ::oDbfAlpTGst:nNumAlb == ::oDbfAlpLFac:nNumAlb
@@ -3084,7 +3087,9 @@ METHOD Importar()
                ::oDbfAlpTGst:Skip()
 
             end while
+*/
 
+            ::oDbfAlpLGst:cSerAlb      := "A"
             ::oDbfAlpLGst:nNumAlb      := ::oDbfAlpLFac:nNumAlb
             ::oDbfAlpLGst:cSufAlb      := Space( 2 )
             ::oDbfAlpLGst:cRef         := ::oDbfAlpLFac:cRef

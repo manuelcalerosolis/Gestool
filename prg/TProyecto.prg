@@ -78,7 +78,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"                          HIDE        OF ::oDbf
       FIELD NAME "cSerPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"                      COLSIZE 200 OF ::oDbf
       FIELD NAME "cSitPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Situación"                            COLSIZE 200 OF ::oDbf
-      FIELD NAME "cFecPry"  TYPE "D" LEN  8  DEC 0  COMMENT "Fecha de compra"                      COLSIZE 200 OF ::oDbf
+      FIELD NAME "dFecPry"  TYPE "D" LEN  8  DEC 0  COMMENT "Fecha de compra"                      COLSIZE 200 OF ::oDbf
       FIELD NAME "nComPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio compra"   PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
       FIELD NAME "nCosPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Costo diario"    PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
 
@@ -112,8 +112,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
-      REDEFINE GET ;
-         VAR      ::oDbf:cSerPry ;
+      REDEFINE GET ::oDbf:cSerPry ;
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -124,22 +123,19 @@ METHOD Resource( nMode )
          ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          OF       oDlg
 
-      REDEFINE GET ;
-         VAR      ::oDbf:dFecPry ;
+      REDEFINE GET ::oDbf:dFecPry ;
          SPINNER ;
          ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET ;
-         VAR      ::oDbf:nComPry ;
+      REDEFINE GET ::oDbf:nComPry ;
          ID       150 ;
          PICTURE  ::oDbf:nComPry:cPicture ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET ;
-         VAR      ::oDbf:nCosPry ;
+      REDEFINE GET ::oDbf:nCosPry ;
          ID       160 ;
          PICTURE  ::oDbf:nCosPry:cPicture ;
          WHEN     ( nMode != ZOOM_MODE ) ;

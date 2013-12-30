@@ -2041,7 +2041,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( dbfFacCliT )->nTotNet }
-         :cEditPicture     := cPorDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -2051,7 +2051,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
          :bEditValue       := {|| ( dbfFacCliT )->nTotIva }
-         :cEditPicture     := cPorDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -2061,7 +2061,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
          :bEditValue       := {|| ( dbfFacCliT )->nTotReq }
-         :cEditPicture     := cPorDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -2071,7 +2071,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( dbfFacCliT )->nTotFac }
-         :cEditPicture     := cPorDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -22924,7 +22924,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       with object ( oBrwLin:AddCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| aNumalb[ oBrwLin:nArrayAt, 10 ] }
-         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1

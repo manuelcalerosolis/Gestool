@@ -1706,7 +1706,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( dbfAlbCliT )->nTotNet }
-         :cEditPicture     := cPorDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1716,7 +1716,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
          :bEditValue       := {|| ( dbfAlbCliT )->nTotIva }
-         :cEditPicture     := cPorDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1726,7 +1726,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
          :bEditValue       := {|| ( dbfAlbCliT )->nTotReq }
-         :cEditPicture     := cPorDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1736,7 +1736,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( dbfAlbCliT )->nTotAlb }
-         :cEditPicture     := cPorDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1754,7 +1754,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Entregado"
          :bEditValue       := {|| ( dbfAlbCliT )->nTotPag }
-         :cEditPicture     := cPorDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -7785,6 +7785,8 @@ function SynAlbCli( cPath )
    local oError
    local oBlock
    local aTotAlb
+   local cNumAlb
+   local nNumLin     := 0
    local cCodImp
    local cNumSer
    local aNumSer
@@ -8011,6 +8013,21 @@ function SynAlbCli( cPath )
       if Empty( ( dbfAlbCliL )->cAlmLin )
          ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
       end if
+
+      // Numeros de linea------------------------------------------------------
+
+      if cNumAlb != ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
+         cNumAlb                       := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
+         nNumLin                       := 0
+      end if 
+
+      cNumAlb                          := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
+
+      if ( dbfAlbCliL )->nNumLin == 0
+         ( dbfAlbCliL )->nNumLin       := ++nNumLin
+      end if 
+
+      // Numeros de serie------------------------------------------------------
 
       if !Empty( ( dbfAlbCliL )->mNumSer )
          aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
@@ -18189,7 +18206,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       with object ( oBrwLin:AddCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| aSats[ oBrwLin:nArrayAt, 10 ] }
-         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1

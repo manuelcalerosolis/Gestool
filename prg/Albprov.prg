@@ -1075,7 +1075,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( dbfAlbPrvT )->nTotNet }
-         :cEditPicture     := cPirDiv( ( dbfAlbPrvT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1085,7 +1085,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
          :bEditValue       := {|| ( dbfAlbPrvT )->nTotIva }
-         :cEditPicture     := cPirDiv( ( dbfAlbPrvT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1095,7 +1095,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
          :bEditValue       := {|| ( dbfAlbPrvT )->nTotReq }
-         :cEditPicture     := cPirDiv( ( dbfAlbPrvT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1105,7 +1105,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( dbfAlbPrvT )->nTotAlb }
-         :cEditPicture     := cPirDiv( ( dbfAlbPrvT )->cDivAlb, dbfDiv )
+         :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1

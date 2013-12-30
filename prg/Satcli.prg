@@ -1330,7 +1330,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
          :bEditValue       := {|| ( dbfSatCliT )->nTotNet }
-         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1340,7 +1340,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
          :bEditValue       := {|| ( dbfSatCliT )->nTotIva }
-         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1350,7 +1350,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
          :bEditValue       := {|| ( dbfSatCliT )->nTotReq }
-         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1360,7 +1360,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( dbfSatCliT )->nTotSat }
-         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
+         :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
