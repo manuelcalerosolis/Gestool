@@ -8064,12 +8064,16 @@ function SynAlbCli( cPath )
          ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
       end if
 
+      if ( dbfAlbCliL )->cCodCli != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
+         ( dbfAlbCliL )->cCodCli    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
+      end if
+
       if Empty( ( dbfAlbCliL )->cAlmLin )
          ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
       end if
 
       // Numeros de linea------------------------------------------------------
-
+      /*
       if cNumAlb != ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
          cNumAlb                       := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
          nNumLin                       := 0
@@ -8080,7 +8084,7 @@ function SynAlbCli( cPath )
       if ( dbfAlbCliL )->nNumLin == 0
          ( dbfAlbCliL )->nNumLin       := ++nNumLin
       end if 
-
+      */
       // Numeros de serie------------------------------------------------------
 
       if !Empty( ( dbfAlbCliL )->mNumSer )
@@ -8213,7 +8217,7 @@ function SynAlbCli( cPath )
       oNewImp:end()
    end if
 
-   oNewImp     := nil
+   oNewImp              := nil
 
    /*
    Estado de los pedidos-------------------------------------------------------
@@ -12723,7 +12727,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
       ( dbfAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + dTos( dFecAlb )", {|| Field->cRef + dTos( Field->dFecAlb ) } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
 
       ( dbfAlbCliT )->( dbCloseArea() )
    else
@@ -13021,8 +13025,13 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
+<<<<<<< HEAD
+   aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
+=======
    aAdd( aColAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
+>>>>>>> c660b7e0bd866e1d5c694eb90ccfa85e0b7dfe71
 
 Return ( aColAlbCli )
 
@@ -13118,8 +13127,8 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                    "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                     "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMTIK",   "C", 13, 0, "Número del ticket" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CTLFCLI",   "C", 20, 0, "Teléfono del cliente" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "nTotNet",   "N", 16, 6, "Total neto" ,                                           "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "nTotIva",   "N", 16, 6, "Total " + cImp() ,                                      "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "nTotReq",   "N", 16, 6, "Total recargo" ,                                        "",                   "", "( cDbf )"} )
@@ -16712,11 +16721,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Comprobamos la fecha del documento------------------------------------------
    */
 
-   #ifndef __PDA__
    if !lValidaOperacion( aTmp[ _DFECALB ] )
       Return .f.
    end if
-   #endif
 
    /*
    Estos campos no pueden estar vacios-----------------------------------------
@@ -16873,13 +16880,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    end case
 
    /*
-   Guardamos el albaran
+   Guardamos el albaran--------------------------------------------------------
    */
 
    ( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )
 
       ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
+      ( dbfTmpLin )->cCodCli  := aTmp[ _CCODCLI ]
 
       dbPass( dbfTmpLin, dbfAlbCliL, .t., cSerAlb, nNumAlb, cSufAlb )
 
