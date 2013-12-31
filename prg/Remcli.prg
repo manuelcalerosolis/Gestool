@@ -2498,7 +2498,7 @@ METHOD InitSepa19( oDlg )
 
    end if
 
-   ::oCuaderno:SerializeASCII()
+   ::oCuaderno:WriteASCII()
 
    if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + CRLF + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
       ShellExecute( 0, "open", ::oCuaderno:cFile, , , 1 )

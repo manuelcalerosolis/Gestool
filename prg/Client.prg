@@ -14784,7 +14784,6 @@ Function cClientEntidad( cCliente, dbfBncCli )
 Return cCuenta
 
 //---------------------------------------------------------------------------//
-
 /*
 Nos informa si tenemos atipicas para este cliente------------------------------
 */
