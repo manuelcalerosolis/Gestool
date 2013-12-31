@@ -16996,17 +16996,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    if !NetErr()
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-<<<<<<< HEAD
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "str( nNumLin, 4 )", {|| str( Field->nNumLin ) } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "str( Recno() )", {|| str( Recno() ) } ) )
-=======
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
-
-      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
->>>>>>> c660b7e0bd866e1d5c694eb90ccfa85e0b7dfe71
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
@@ -23470,24 +23463,12 @@ Return .t.
 
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
-<<<<<<< HEAD
 	local dUltimoAlbaran 		:= ctod( "" )
-	local dUltimaFactura			:= ctod( "" )
-=======
-	local dFechaUltimaVenta 	:= cTod( "" )
-	local nRecAlbT				:= ( dbfAlbCliT )->( Recno() )
->>>>>>> c660b7e0bd866e1d5c694eb90ccfa85e0b7dfe71
+	local dUltimaFactura		:= ctod( "" )
 	local nRecAlbL 				:= ( dbfAlbCliL )->( Recno() )
 	local nRecFacL 				:= ( dbfFacCliL )->( Recno() )
-<<<<<<< HEAD
-	local nOrdAlbL					:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
-	local nOrdFacL					:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-=======
-	local nOrdAntAlbT 			:= ( dbfAlbCliT )->( OrdSetFocus( "cNumCli" ) )
-	local nOrdAntAlbL			:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
-	local nOrdAntFacT			:= ( dbfFacCliT )->( OrdSetFocus( "cNumCli" ) )
-	local nOrdAntFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
->>>>>>> c660b7e0bd866e1d5c694eb90ccfa85e0b7dfe71
+	local nOrdAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
 
 	CursorWait()
 

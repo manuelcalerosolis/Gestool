@@ -214,7 +214,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLINOFE                  91      //   L      1     0
 #define _LVOLIMP                  92
 #define __DFECALB                 93
-#define _DFECULTCOM               94  
+#define __CCODCLI                 94
+#define _DFECULTCOM               95  
 
 /*
 Definici¢n de Array para impuestos
@@ -13025,13 +13026,9 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
-<<<<<<< HEAD
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
-=======
-   aAdd( aColAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
->>>>>>> c660b7e0bd866e1d5c694eb90ccfa85e0b7dfe71
 
 Return ( aColAlbCli )
 
