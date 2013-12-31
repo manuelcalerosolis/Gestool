@@ -525,6 +525,9 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
       SET TAG TO "cRefMov"
 
+      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
+      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
+
       // Unidades de medicion--------------------------------------------------
 
       oUndMedicion      := UniMedicion():Create( cPatGrp() )
@@ -11157,10 +11160,10 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",   {|| ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",        {|| ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Documentos de albaranes",         {|| ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Albaranes", "Proveedor",                       {|| ( dbfAlbPrvT )->cCodPrv } )
    oFr:SetMasterDetail( "Albaranes", "Almacenes",                       {|| ( dbfAlbPrvT )->cCodAlm } )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                  {|| ( dbfAlbPrvT )->cCodPgo } )
-   oFr:SetMasterDetail( "Albaranes", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
 
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",             {|| ( dbfAlbPrvL )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Código de proveedores", {|| ( dbfAlbPrvT )->cCodPrv + ( dbfAlbPrvL )->cRef } )
