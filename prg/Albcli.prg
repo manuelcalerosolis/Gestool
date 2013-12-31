@@ -214,6 +214,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLINOFE                  91      //   L      1     0
 #define _LVOLIMP                  92
 #define __DFECALB                 93
+#define _DFECULTCOM               94  
 
 /*
 Definici¢n de Array para impuestos
@@ -458,6 +459,7 @@ static oGrpFam
 static oFraPub
 
 static oBtnKit
+static oBtnAtp
 
 static oBtnPre
 static oBtnSat
@@ -3094,6 +3096,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
          ACTION   ( lEscandalloEdtRec( .t., oBrwLin ) )
+
+      REDEFINE BUTTON oBtnAtp;
+         ID       527 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin ) )
 
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
          ID       100 ;
@@ -12954,8 +12961,13 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
+<<<<<<< HEAD
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
+=======
+   aAdd( aColAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
+>>>>>>> c660b7e0bd866e1d5c694eb90ccfa85e0b7dfe71
 
 Return ( aColAlbCli )
 
@@ -14019,6 +14031,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
 
       if !NetErr() .and. ( dbfTmpLin )->( Used() )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
@@ -18567,6 +18582,177 @@ Static Function ActualizaStockWeb( cNumDoc )
 
    ( dbfAlbCliL )->( OrdSetFocus( nOrdAnt ) )
    ( dbfAlbCliL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
+
+   /*
+   Controlamos que no nos pase código de cliente vacío------------------------
+   */
+
+   if Empty( aTmpAlb[ _CCODCLI ] )
+      MsgStop( "Código de cliente no puede estar vacío para utilizar el asistente." )
+      Return .f.
+   end if
+
+   /*
+   Controlamos que el cliente tenga atipicas----------------------------------
+   */
+
+   if !( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
+
+      MsgStop( "No existen atípicas para este cliente." )
+      Return .f.
+
+   else
+   
+      /*
+      Importamos las tarifas de precios del cliente--------------------------
+      */
+
+      while ( dbfCliAtp )->cCodCli == aTmpAlb[ _CCODCLI ] .and. !( dbfCliAtp )->( Eof() )
+
+         if lConditionAtipica( aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
+
+            if !dbSeekInOrd( ( dbfCliAtp )->cCodArt, "cRef", dbfTmpLin )
+
+               ( dbfTmpLin )->( dbAppend() )
+
+               AppendDatosAtipicas( aTmpAlb )
+
+               AppendDatosArticulos()
+
+               ( dbfTmpLin )->nPreUnit       := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+
+               ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
+
+            end if   
+
+         end if
+
+         ( dbfCliAtp )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Recalculamos la factura y refrescamos la pantalla--------------------------
+   */
+
+   RecalculaTotal( aTmpAlb )
+
+   if !Empty( oBrwLin )
+      oBrwLin:Refresh()
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function AppendDatosAtipicas( aTmpAlb )
+
+   ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
+   ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
+   ( dbfTmpLin )->nDtoPrm        := ( dbfCliAtp )->nDprArt
+   ( dbfTmpLin )->nCanEnt        := 1
+   ( dbfTmpLin )->nUniCaja       := 0
+   ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1
+   ( dbfTmpLin )->cCodPr2        := ( dbfCliAtp )->cCodPr2
+   ( dbfTmpLin )->cValPr1        := ( dbfCliAtp )->cValPr1
+   ( dbfTmpLin )->cValPr2        := ( dbfCliAtp )->cValPr2
+   ( dbfTmpLin )->nDtoDiv        := ( dbfCliAtp )->nDtoDiv
+   ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
+   ( dbfTmpLin )->nCosDiv        := ( dbfCliAtp )->nPrcCom
+   ( dbfTmpLin )->cAlmLin        := aTmpAlb[ _CCODALM ]
+   ( dbfTmpLin )->lIvaLin        := aTmpAlb[ _LIVAINC ]
+   ( dbfTmpLin )->nTarLin        := aTmpAlb[ _NTARIFA ]
+   ( dbfTmpLin )->dFecAlb        := aTmpAlb[ _DFECALB ]
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+static function AppendDatosArticulos()
+
+   if ( dbfArticulo )->( dbSeek( ( dbfCliAtp )->cCodArt ) )
+      ( dbfTmpLin )->cDetalle       := ( dbfArticulo )->Nombre
+      ( dbfTmpLin )->nIva           := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+      ( dbfTmpLin )->cUniDad        := ( dbfArticulo )->cUnidad
+      ( dbfTmpLin )->nCtlStk        := ( dbfArticulo )->nCtlStock
+      ( dbfTmpLin )->lLotE          := ( dbfArticulo )->lLote
+      ( dbfTmpLin )->lMsgVta        := ( dbfArticulo )->lMsgVta
+      ( dbfTmpLin )->lNotVta        := ( dbfArticulo )->lNotVta
+      ( dbfTmpLin )->cCodTip        := ( dbfArticulo )->cCodTip
+      ( dbfTmpLin )->cCodFam        := ( dbfArticulo )->Familia
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   /*if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmpLin )->nUnicaja       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if*/  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
+
+   /*
+   Cambiamos el valor del precio de la linea de la factura--------------------
+   */
+
+   /*if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      SetUFacCli( dbfTmpLin, uNewValue )
+
+      RecalculaTotal( aTmp )
+
+    end if*/  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Sumamos una unidad a la linea de la factura--------------------------------
+*/
+
+Static Function SumaUnidadLinea( aTmp )
+
+
+   /*( dbfTmpLin )->nUniCaja++
+
+   RecalculaTotal( aTmp )  */
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Restamos una unidad a la linea de la factura-------------------------------
+*/
+
+Static Function RestaUnidadLinea( aTmp )
+
+
+   /*( dbfTmpLin )->nUniCaja--
+
+   RecalculaTotal( aTmp )*/
 
 Return .t.
 
