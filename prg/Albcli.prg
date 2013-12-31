@@ -2643,6 +2643,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Última venta"
+         :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
+         :nWidth              := 80
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "Código proveedor"
          :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
          :nWidth              := 50
@@ -2703,6 +2710,46 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := cNombreUnidades()
+         :bEditValue          := {|| ( dbfTmpLin )->nUniCaja }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nEditType           := 1
+         :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Sumar unidades"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| SumaUnidadLinea( aTmp ) }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Navigate_Plus_16" )
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Restar unidades"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| RestaUnidadLinea( aTmp ) }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Navigate_Minus_16" )
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Total " + cNombreUnidades()
          :bEditValue          := {|| nTotNAlbCli( dbfTmpLin ) }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
@@ -12336,6 +12383,23 @@ FUNCTION nTotUAlbCli( uTmpLin, nDec, nVdv )
 RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
+/*
+Cambia el importe unitario de la linea
+*/
+
+FUNCTION SetUAlbCli( dbfLin, nNewVal )
+
+      DEFAULT dbfLin             := dbfAlbCliL
+
+    if ( dbfLin )->lAlquiler
+       ( dbfLin )->nPreAlq       := nNewVal
+    else
+       ( dbfLin )->nPreUnit   := nNewVal
+    end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //
 // Valor del punto verde
 //
@@ -18692,13 +18756,13 @@ Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
    Cambiamos el valor de las unidades de la linea de la factura---------------
    */
 
-   /*if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
 
       ( dbfTmpLin )->nUnicaja       := uNewValue
 
       RecalculaTotal( aTmp )
 
-   end if*/  
+   end if
 
 Return .t.
 
@@ -18710,13 +18774,13 @@ Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
    Cambiamos el valor del precio de la linea de la factura--------------------
    */
 
-   /*if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
 
-      SetUFacCli( dbfTmpLin, uNewValue )
+      SetUAlbCli( dbfTmpLin, uNewValue )
 
       RecalculaTotal( aTmp )
 
-    end if*/  
+    end if  
 
 Return .t.
 
@@ -18727,10 +18791,9 @@ Sumamos una unidad a la linea de la factura--------------------------------
 
 Static Function SumaUnidadLinea( aTmp )
 
+   ( dbfTmpLin )->nUniCaja++
 
-   /*( dbfTmpLin )->nUniCaja++
-
-   RecalculaTotal( aTmp )  */
+   RecalculaTotal( aTmp )
 
 Return .t.
 
@@ -18741,10 +18804,9 @@ Restamos una unidad a la linea de la factura-------------------------------
 
 Static Function RestaUnidadLinea( aTmp )
 
+   ( dbfTmpLin )->nUniCaja--
 
-   /*( dbfTmpLin )->nUniCaja--
-
-   RecalculaTotal( aTmp )*/
+   RecalculaTotal( aTmp )
 
 Return .t.
 
