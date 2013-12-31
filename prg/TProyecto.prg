@@ -76,11 +76,11 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodPry"  TYPE "C" LEN  4  DEC 0  COMMENT "Código"                               COLSIZE 80  OF ::oDbf
       FIELD NAME "cNomPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"                               COLSIZE 200 OF ::oDbf
       FIELD NAME "cCodPdr"  TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"                          HIDE        OF ::oDbf
-      FIELD NAME "cSerPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"                      COLSIZE 200 OF ::oDbf
+      FIELD NAME "cSerPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Número serie"                         COLSIZE 200 OF ::oDbf
       FIELD NAME "cSitPry"  TYPE "C" LEN 30  DEC 0  COMMENT "Situación"                            COLSIZE 200 OF ::oDbf
-      FIELD NAME "dFecPry"  TYPE "D" LEN  8  DEC 0  COMMENT "Fecha de compra"                      COLSIZE 200 OF ::oDbf
-      FIELD NAME "nComPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio compra"   PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
-      FIELD NAME "nCosPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Costo diario"    PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
+      FIELD NAME "dFecPry"  TYPE "D" LEN  8  DEC 0  COMMENT "Fecha compra"                         COLSIZE 80  OF ::oDbf
+      FIELD NAME "nComPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio compra"   PICTURE cPorDiv()    HIDE        OF ::oDbf
+      FIELD NAME "nCosPry"  TYPE "N" LEN 16  DEC 6  COMMENT "Costo dia"       PICTURE cPorDiv()    HIDE        OF ::oDbf
 
       INDEX TO "Proyecto.Cdx" TAG "cCodPry" ON "cCodPry"   COMMENT "Código"        NODELETED                   OF ::oDbf
       INDEX TO "Proyecto.Cdx" TAG "cNomPry" ON "cNomPry"   COMMENT "Nombre"        NODELETED                   OF ::oDbf
@@ -131,13 +131,13 @@ METHOD Resource( nMode )
 
       REDEFINE GET ::oDbf:nComPry ;
          ID       150 ;
-         PICTURE  ::oDbf:nComPry:cPicture ;
+         PICTURE  ( cPorDiv() ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET ::oDbf:nCosPry ;
          ID       160 ;
-         PICTURE  ::oDbf:nCosPry:cPicture ;
+         PICTURE  ( cPorDiv() ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
