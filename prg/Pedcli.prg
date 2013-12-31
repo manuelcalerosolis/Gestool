@@ -16025,10 +16025,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    if !NetErr()
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
    else
 

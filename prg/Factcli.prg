@@ -16994,13 +16994,13 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    if !NetErr()
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-
-      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
       if ( dbfFacCliL )->( dbSeek( cFac ) )
          while ( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) == cFac .and. !( dbfFacCliL )->( eof() )
@@ -23370,7 +23370,7 @@ Static Function AppendDatosAtipicas( aTmpFac )
    ( dbfTmpLin )->cAlmLin     	:= aTmpFac[ _CCODALM ]
    ( dbfTmpLin )->lIvaLin     	:= aTmpFac[ _LIVAINC ]
    ( dbfTmpLin )->nTarLin     	:= aTmpFac[ _NTARIFA ]
-   ( dbfTmpLin )->dFecFac    		:= aTmpFac[ _DFECFAC ]
+   ( dbfTmpLin )->dFecFac    	:= aTmpFac[ _DFECFAC ]
 
 Return ( nil )
 
@@ -23461,14 +23461,14 @@ Return .t.
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
 
 	local dFechaUltimaVenta 	:= cTod( "" )
-	local nRecAlbT					:= ( dbfAlbCliT )->( Recno() )
+	local nRecAlbT				:= ( dbfAlbCliT )->( Recno() )
 	local nRecAlbL 				:= ( dbfAlbCliL )->( Recno() )
 	local nRecFacT 				:= ( dbfFacCliT )->( Recno() )
 	local nRecFacL 				:= ( dbfFacCliL )->( Recno() )
 	local nOrdAntAlbT 			:= ( dbfAlbCliT )->( OrdSetFocus( "cNumCli" ) )
-	local nOrdAntAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
-	local nOrdAntFacT				:= ( dbfFacCliT )->( OrdSetFocus( "cNumCli" ) )
-	local nOrdAntFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdAntAlbL			:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdAntFacT			:= ( dbfFacCliT )->( OrdSetFocus( "cNumCli" ) )
+	local nOrdAntFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
 
 	CursorWait()
 
