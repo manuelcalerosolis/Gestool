@@ -847,7 +847,7 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+      SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles     := .f.
@@ -12348,7 +12348,7 @@ function SynFacCli( cPath )
       SET ADSINDEX TO ( cPath + "FacCliT.CDX" ) ADDITIVE
 
       USE ( cPath + "FacCliL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "FacCliT.Cdx" ) ADDITIVE
+      SET ADSINDEX TO ( cPath + "FacCliL.Cdx" ) ADDITIVE
 
       USE ( cPath + "FacCliS.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliS", @dbfFacCliS ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPath + "FacCliS.Cdx" ) ADDITIVE
@@ -23477,7 +23477,7 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 	*/
 
 	if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimoAlbaran 			:= ( dbfAlbCliT )->dFecAlb 
+		dUltimoAlbaran 			:= ( dbfAlbCliL )->dFecAlb 
 	end if
 
 	/*
@@ -23485,7 +23485,7 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 	*/
 
 	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimaFactura 			:= ( dbfFacCliT )->dFecFac
+		dUltimaFactura 			:= ( dbfFacCliL )->dFecFac
 	end if
 
 	/*
