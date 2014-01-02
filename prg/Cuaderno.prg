@@ -233,7 +233,15 @@ CLASS Cuaderno1914 FROM Cuaderno
    METHOD InsertAcreedor()                INLINE ( ::GetPresentador():InsertAcreedor() )
    METHOD InsertDeudor()                  INLINE ( ::GetPresentador():GetAcreedor():InsertDeudor() )
 
+   METHOD CodigoRegistro()                INLINE ( '99' )
+
+   METHOD TotalImporte()                  INLINE ( ::oPresentador:TotalImporte() )
+   METHOD TotalRegistros()                INLINE ( strzero( ::oPresentador:nTotalRegistros() ) )
+   METHOD TotalFinalRegistros()           INLINE ( strzero( ::oPresentador:nTotalRegistros() + 5, 10 ) )
+
    METHOD New()
+   METHOD WriteASCII()
+
    METHOD SerializeASCII()
 
 ENDCLASS
@@ -248,16 +256,31 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
-   METHOD SerializeASCII() CLASS Cuaderno1914
+   METHOD WriteASCII()
 
       ::hFile  := fCreate( ::cFile )
 
       if !Empty( ::hFile )
-         fWrite( ::hFile, ::GetPresentador():SerializeASCII() )
+         fWrite( ::hFile, ::SerializeASCII() )
          fClose( ::hFile )
       end if
 
    Return ( Self )
+
+   //------------------------------------------------------------------------//
+
+   METHOD SerializeASCII() CLASS Cuaderno1914
+
+      local cBuffer     := ""
+
+      cBuffer           := ::GetPresentador():SerializeASCII()
+
+      cBuffer           += ::CodigoRegistro()
+      cBuffer           += ::TotalImporte() 
+      cBuffer           += ::TotalRegistros() 
+      cBuffer           += ::TotalFinalRegistros()
+
+   Return ( cBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -389,7 +412,7 @@ ENDCLASS
       cBuffer        += ::TotalImporte()
       cBuffer        += ::TotalRegistros()
       cBuffer        += ::TotalFinalRegistros()
-      cBuffer        += padr( cBuffer, 520 ) + CRLF 
+      cBuffer        += padr( '', 520 ) + CRLF 
 
    Return ( cBuffer )
 
@@ -414,13 +437,15 @@ CLASS Acreedor FROM Presentador
    METHOD CuentaIBAN( cValue )   INLINE ( if( !Empty( cValue ), ::cCuentaIBAN    := padr( cValue, 34 ),     ::cCuentaIBAN ) )
    METHOD FechaCobro( dValue )   INLINE ( if( !Empty( dValue ), ::cFechaCobro    := DateToString( dValue ), ::cFechaCobro ) )
 
-   METHOD CodigoRegistro()       INLINE ( '01' )
+   METHOD CodigoRegistro()       INLINE ( '02' )
    METHOD CodigoRegistroTotal()  INLINE ( '04' )
    METHOD Dato()                 INLINE ( '002' )
 
    METHOD GetDeudor()            INLINE ( atail( ::aChild ) )
    METHOD InsertDeudor()         INLINE ( aadd( ::aChild, Deudor():New( Self ) ), ::GetDeudor() )
-   
+
+   METHOD TotalFinalRegistros()  INLINE ( strzero( ::nTotalRegistros() + 2, 10 ) )
+
    METHOD SerializeASCII()
 
 ENDCLASS
@@ -481,7 +506,7 @@ CLASS Deudor FROM Acreedor
    METHOD VersionCuaderno()               INLINE ( ::oSender:oSender:VersionCuaderno() )
 
    METHOD Referencia( cValue )            INLINE ( if( !Empty( cValue ), ::cReferencia          := padr( cValue, 35 ),           ::cReferencia ) )
-   METHOD ReferenciaMandato( cValue )     INLINE ( if( !Empty( cValue ), ::cReferenciaMandato   := hb_md5( padr( cValue, 35 ) ), ::cReferenciaMandato ) )
+   METHOD ReferenciaMandato( cValue )     INLINE ( if( !Empty( cValue ), ::cReferenciaMandato   := padr( hb_md5( cValue ), 35 ), ::cReferenciaMandato ) )
    METHOD TipoAdeudo( cValue )            INLINE ( if( !Empty( cValue ), ::cTipoAdeudo          := padr( cValue, 4 ),            ::cTipoAdeudo ) )
    METHOD Categoria( cValue )             INLINE ( if( !Empty( cValue ), ::cCategoria           := padr( cValue, 4 ),            ::cCategoria ) )
    METHOD FechaMandato( dValue )          INLINE ( if( !Empty( dValue ), ::cFechaMandato        := DateToString( dValue ),       ::cFechaMandato ) )
@@ -492,6 +517,7 @@ CLASS Deudor FROM Acreedor
    METHOD Proposito( cValue )             INLINE ( if( !Empty( cValue ), ::cProposito           := padr( cValue, 4 ),            ::cProposito ) )
    METHOD Concepto( cValue )              INLINE ( if( !Empty( cValue ), ::cConcepto            := padr( cValue, 140 ),          ::cConcepto ) )
 
+   METHOD CodigoRegistro()                INLINE ( '03' )
    METHOD Dato()                          INLINE ( '003' )
 
    METHOD nTotalRegistros()               INLINE ( 1 )
@@ -524,6 +550,7 @@ ENDCLASS
       cBuffer        += ::Dato()
       cBuffer        += ::Referencia()
       cBuffer        += ::ReferenciaMandato()
+
       cBuffer        += ::TipoAdeudo()
       cBuffer        += ::Categoria()
       cBuffer        += ::Importe()
