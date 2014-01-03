@@ -5560,7 +5560,7 @@ static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt,
    local nIvaPct  := 0
    local nOrdArt  := ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
    local nRecAtp  := ( dbfTmpAtp )->( RecNo() )
-   local nOrdAnt  := ( dbfTmpAtp )->( OrdSetFocus( "cCodArt" ) )
+   local nOrdAnt  := ( dbfTmpAtp )->( OrdSetFocus( "cCliArt" ) )
 
    oDlg:Disable()
 
@@ -8362,6 +8362,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       DisableAcceso()
 
+      // TDataCenter():CreateView()
+
       lOpenFiles           := .t.
 
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
@@ -8412,9 +8414,6 @@ STATIC FUNCTION OpenFiles( lExt )
       /*
       Articulos-------------------------------------------------------------------
       */
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
@@ -8468,6 +8467,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+
+      if !TDataCenter():OpenArticulo( @dbfArticulo )
+         lOpenFiles        := .f.
+      end if
 
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles        := .f.
@@ -8552,6 +8555,8 @@ RETURN ( lOpenFiles )
 STATIC FUNCTION CloseFiles( lDestroy )
 
 	DEFAULT lDestroy	:= .f.
+
+   TDataCenter():DeleteView()
 
    DisableAcceso()
 
@@ -11793,7 +11798,7 @@ Function nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
    local nTipXbY  := 0
    local nUndGrt  := 0
    local aXbYRet  := { 0, 0 }
-   local nOrd     := ( dbfAtpCli )->( OrdSetFocus( "cCodArt" ) )
+   local nOrd     := ( dbfAtpCli )->( OrdSetFocus( "cCliArt" ) )
 
 	/*
 	Primero buscar si existe el articulo en la oferta
@@ -12026,10 +12031,10 @@ return ( nPre )
 function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    local lSea        := .f.
-   local nOrd        := ( dbfCliAtp )->( OrdSetFocus( "CCODART" ) )
+   local nOrd        := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
 
-   DEFAULT cCodPrp   := Space(10)
-   DEFAULT cValPrp   := Space(10)
+   DEFAULT cCodPrp   := Space(20)
+   DEFAULT cValPrp   := Space(20)
 
    if ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
 
@@ -12398,12 +12403,12 @@ static function BeginTrans( aTmp, nMode )
    dbUseArea( .t., cLocalDriver(), cTmpAtp, cCheckArea( "TmpAtp", @dbfTmpAtp ), .f. )
 
    ( dbfTmpAtp )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-   ( dbfTmpAtp )->( OrdCreate( cTmpAtp, "cCodArt", "CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+   ( dbfTmpAtp )->( OrdCreate( cTmpAtp, "cCliArt", "CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
 
    ( dbfTmpAtp )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
    ( dbfTmpAtp )->( OrdCreate( cTmpAtp, "cCodFam", "cCodFam", {|| Field->cCodFam } ) )
 
-   ( dbfTmpAtp )->( OrdSetFocus( "cCodArt" ) )
+   ( dbfTmpAtp )->( OrdSetFocus( "cCliArt" ) )
 
    dbCreate( cTmpInc, aSqlStruct( aCliInc() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( "TmpInc", @dbfTmpInc ), .f. )
@@ -14097,7 +14102,7 @@ Static Function dbSeekAtp( aTmp, dbfTmpAtp, lFam )
       end if
       ( dbfTmpAtp )->( OrdSetFocus( nOrdAnt ) )
    else
-      nOrdAnt  := ( dbfTmpAtp )->( OrdSetFocus( "cCodArt" ) )
+      nOrdAnt  := ( dbfTmpAtp )->( OrdSetFocus( "cCliArt" ) )
       if ( dbfTmpAtp )->( dbSeek( aTmp[ _aCCODART ] + aTmp[ _aCCODPR1 ] + aTmp[ _aCCODPR2 ] + aTmp[ _aCVALPR1 ] + aTmp[ _aCVALPR2 ] ) )
          if ( dbfTmpAtp )->dFecFin >= aTmp[ _aDFECINI ] .and. !Empty( aTmp[ _aDFECINI ] )
             lSeek := .t.

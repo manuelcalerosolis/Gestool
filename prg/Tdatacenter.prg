@@ -76,7 +76,8 @@ CLASS TDataCenter
    DATA        cMsg                       INIT ""
    DATA        oMsg
 
-   DATA        nView                      INIT 0
+   CLASSDATA   hViews                     INIT {=>}
+   CLASSDATA   nView                      INIT 0
 
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
@@ -166,47 +167,53 @@ CLASS TDataCenter
    METHOD ActualizaEmpresaTable( oTable )    INLINE  ( ::ActualizaTable( oTable, cPatEmp() ) )
    METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
-/*
-   METHOD CreateView( cView )
-   METHOD DeleteView( cView )
-   METHOD AddDatabaseView( cDatabase )
 
    METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ) )
+   METHOD DeleteView( cView )                INLINE   ( if( HHasKey( ::hViews, ::nView ), ( HDel( ::hViews, ::nView ), --::nView ), ) )
 
-   METHOD AddDatabaseView( cDatabase )
+   INLINE METHOD AddDatabaseView( cDatabase, cHandle )
 
       local hView
 
-      if empty( ::cView )
-         msgStop( "No hay vistas disponibles.")
+      if empty( ::nView )
+         // msgStop( "No hay vistas disponibles.")
          Return ( Self )
       end if
 
-      if !HHasKey( ::hViews, ::cView )
-         msgStop( "Vista " + ::cView + " no encontrada." )
+      if !HHasKey( ::hViews, ::nView )
+         msgStop( "Vista " + Str( ::nView ) + " no encontrada." )
          Return ( Self )
       end if 
 
-      hView    := HGet( ::hViews, ::cView )
+      hView    := HGet( ::hViews, ::nView )
       if !empty( hView )
-         hSet( hView, cDatabase )
+         hSet( hView, { cDatabase => cHandle } )
       end if 
 
-      msgAlert( cvaltoprg( ::hViews ) )
+      msgAlert( valtoprg( ::hViews ) )
 
-   RETURN ( Self )
+      RETURN ( Self )
 
-   METHOD DeleteView( cView )
+   ENDMETHOD
 
-      if HHasKey( ::hViews, cView )
-         HDel( ::hViews, cView )
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD OpenArticulo( dbf )
+
+      local lOpen
+
+      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Articulo", @dbf ) )
+      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+         ::AddDatabaseView( "Articulo", dbf )
       end if 
 
-      ::cView  := cView
+      Return ( lOpen )   
+   
+   ENDMETHOD
 
-   RETURN ( Self )
-
-*/
    //------------------------------------------------------------------------//
 
    INLINE METHOD oFacCliT()
@@ -257,7 +264,7 @@ CLASS TDataCenter
 
          end if
 
-
+         ::AddDatabaseView( "FacCliT", dbf )
 
       end if 
 
