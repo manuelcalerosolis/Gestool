@@ -3717,7 +3717,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lArticulos
-         TTipArt():Create( cPath ):CheckFiles( cPathGrp + "TipArt.Dbf" )   ; SysRefresh()
+         TTipArt():Create( cPath ):CheckFiles( cPathOld + "TipArt.Dbf" )   ; SysRefresh()
       else
          TTipArt():Create( cPath ):CheckFiles()                            ; SysRefresh()
       end if
@@ -3726,10 +3726,20 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando proyectos" )
       end if
 
-      if cPathOld != nil 
-         TProyecto():Create( cPath ):CheckFiles( cPath + "Proyecto.Dbf" )   ; SysRefresh()
+      if cPathOld != nil .and. aImportacion:lArticulos
+         TProyecto():Create( cPath ):CheckFiles( cPathOld + "Proyecto.Dbf" )  ; SysRefresh()
       else
-         TProyecto():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TProyecto():Create( cPath ):CheckFiles()                             ; SysRefresh()
+      end if
+
+      if oMsg != nil
+         oMsg:SetText( "Creando atipiacas de clientes y grupos" )
+      end if
+
+      if cPathOld != nil .and. aImportacion:lArticulos
+         TAtipicas():Create( cPath ):CheckFiles( cPathOld + "CliAtp.Dbf" ) ; SysRefresh()
+      else
+         TAtipicas():Create( cPath ):CheckFiles()                          ; SysRefresh()
       end if
 
       if oMsg != nil
@@ -3737,7 +3747,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
-         TGrpCli():Create( cPath ):CheckFiles( cPathGrp + "GrpCli.Dbf" )   ; SysRefresh()
+         TGrpCli():Create( cPath ):CheckFiles( cPathOld + "GrpCli.Dbf" )   ; SysRefresh()
       else
          TGrpCli():Create( cPath ):CheckFiles()                            ; SysRefresh()
       end if
@@ -3747,7 +3757,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
-         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathGrp + "GrpFac.Dbf" )   ; SysRefresh()
+         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathOld + "GrpFac.Dbf" )   ; SysRefresh()
       else
          TGrpFacturasAutomaticas():Create( cPath ):CheckFiles()                            ; SysRefresh()
       end if
@@ -3757,7 +3767,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
-         TTrans():Create( cPath ):CheckFiles( cPathGrp + "Transpor.Dbf" )  ; SysRefresh()
+         TTrans():Create( cPath ):CheckFiles( cPathOld + "Transpor.Dbf" )  ; SysRefresh()
       else
          TTrans():Create( cPath ):CheckFiles()                             ; SysRefresh()
       end if
@@ -3767,7 +3777,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lProveedor
-         TGrpPrv():Create( cPath ):CheckFiles( cPathGrp + "GrpPrv.Dbf" )   ; SysRefresh()
+         TGrpPrv():Create( cPath ):CheckFiles( cPathOld + "GrpPrv.Dbf" )   ; SysRefresh()
       else
          TGrpPrv():Create( cPath ):CheckFiles()                            ; SysRefresh()
       end if

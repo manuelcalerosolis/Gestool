@@ -671,7 +671,6 @@ METHOD OpenFiles( lExclusive )
       lOpen          := .f.
    end if
 
-
    if !::oStock:lOpenFiles()
       lOpen          := .f.
    end if
@@ -2920,20 +2919,9 @@ METHOD nHorasPersonal( cDocumento )
    ::oDetPersonal:oDbf:GoTop()
    ::oDetHorasPersonal:oDbf:GoTop()
 
-   ? "cDocumento"
-   ? cDocumento
-
    if ::oDetPersonal:oDbf:Seek( cDocumento )
 
       while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd == cDocumento .and. !::oDetPersonal:oDbf:Eof()
-
-
-         ? "Busco"
-         ? ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra
-
-         ? "ordkey( orderNumOrName, [cOrderBagName] )"
-         ? ::oDetHorasPersonal:oDbf:Ordkeyval
-
 
          if ::oDetHorasPersonal:oDbf:Seek( ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra )
 

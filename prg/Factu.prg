@@ -562,7 +562,7 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
    local n 
    local nSerialCRC
    local aSerialCRC     := {}
-   local cFileIni       := FullCurDir() + "2K10.Num"
+   local cFileIni       := FullCurDir() + "2Ktorce.Num"
 
    do case
       case nLicencia == 1
@@ -5622,15 +5622,17 @@ Return ( cParamsMain )
 Function lCheckPerpetuoMode( nSerialUSR )
 
    local n 
+   local cFileIni       
    local oSerialHD
    local nSerialHD      := Abs( nSerialHD() )
    local aSerialCRC     := {}
    local nSerialCRC     := 0
-   local cFileIni       := FullCurDir() + "2K10.Num"
 
    if Empty( nSerialHD )
       Return .f.
    end if
+
+   cFileIni             := FullCurDir() + "2Ktorce.Num"  
 
    // Leemos las claves--------------------------------------------------------
 

@@ -15653,6 +15653,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 	  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 	  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  						  , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  						  , "",          		"", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -16996,13 +16997,13 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    if !NetErr()
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "str( nNumLin, 4 )", {|| str( Field->nNumLin ) } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
-
-      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
       if ( dbfFacCliL )->( dbSeek( cFac ) )
          while ( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) == cFac .and. !( dbfFacCliL )->( eof() )
@@ -17011,7 +17012,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          end while
       endif
 
-      ( dbfTmpLin )->( OrdSetFocus( "nNumLin" ) )
+      ( dbfTmpLin )->( OrdSetFocus( "Recno" ) )
       ( dbfTmpLin )->( dbGoTop() )
 
       oStock:SetTmpFacCliL( dbfTmpLin )
@@ -20003,18 +20004,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       while ( dbfTmpLin )->( !eof() )
 
-         if ( dbfTmpLin )->nUniCaja == 0
-
-         	if Empty( ( dbfTmpLin )->cRef ) .or. ( dbfTmpLin )->lControl .or. ( dbfTmpLin )->lTotLin
-
-         	   ( dbfTmpLin )->dFecFac  := dFecFac
-         	   ( dbfTmpLin )->cCodCli 	:= cCodCli
-
-         	   dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
-
-         	end if	
-         	
-         else
+         if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
          	( dbfTmpLin )->dFecFac  	:= dFecFac
        	   ( dbfTmpLin )->cCodCli 		:= cCodCli
@@ -23329,6 +23319,8 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 
 		  			AppendDatosArticulos( aTmpFac )
 
+		  			( dbfTmpLin )->lFromAtp 		:= .t.
+
 		  			( dbfTmpLin )->nPreUnit  		:= nPrecioAtipica( aTmpFac[ _NTARIFA ], aTmpFac[ _LIVAINC ], dbfClientAtp )
 
 		  			( dbfTmpLin )->dFecUltCom 		:= dFechaUltimaVenta( aTmpFac[ _CCODCLI ], ( dbfClientAtp )->cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
@@ -23351,6 +23343,7 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 
    if !Empty( oBrwLin )
    	oBrwLin:Refresh()
+   	oBrwLin:GoTop()
    end if
 
 Return .t.
@@ -23374,7 +23367,7 @@ Static Function AppendDatosAtipicas( aTmpFac )
    ( dbfTmpLin )->cAlmLin     	:= aTmpFac[ _CCODALM ]
    ( dbfTmpLin )->lIvaLin     	:= aTmpFac[ _LIVAINC ]
    ( dbfTmpLin )->nTarLin     	:= aTmpFac[ _NTARIFA ]
-   ( dbfTmpLin )->dFecFac    	:= aTmpFac[ _DFECFAC ]
+   ( dbfTmpLin )->dFecFac    		:= aTmpFac[ _DFECFAC ]
 
 Return ( nil )
 
@@ -23463,21 +23456,22 @@ Return .t.
 
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
-	local dUltimoAlbaran 		:= ctod( "" )
+	local dUltimoAlbaran 	:= ctod( "" )
 	local dUltimaFactura		:= ctod( "" )
-	local nRecAlbL 				:= ( dbfAlbCliL )->( Recno() )
-	local nRecFacL 				:= ( dbfFacCliL )->( Recno() )
+	local nRecAlbL 			:= ( dbfAlbCliL )->( Recno() )
+	local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
 	local nOrdAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
 	local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
 
 	CursorWait()
+
 
 	/*
 	Buscamos por los albaranes no facturados-----------------------------------
 	*/
 
 	if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimoAlbaran 			:= ( dbfAlbCliL )->dFecAlb 
+		dUltimoAlbaran 		:= ( dbfAlbCliL )->dFecAlb 
 	end if
 
 	/*
@@ -23485,7 +23479,7 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 	*/
 
 	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimaFactura 			:= ( dbfFacCliL )->dFecFac
+		dUltimaFactura 		:= ( dbfFacCliL )->dFecFac
 	end if
 
 	/*

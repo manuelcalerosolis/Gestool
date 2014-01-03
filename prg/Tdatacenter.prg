@@ -166,6 +166,9 @@ CLASS TDataCenter
    METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
 
+   METHOD CreateView()
+
+
    //------------------------------------------------------------------------//
 
    INLINE METHOD oFacCliT()
@@ -197,7 +200,7 @@ CLASS TDataCenter
       local lOpen
       local cFilter
 
-      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbf ) )
+      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbf ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
 
       lOpen             := !neterr()
@@ -215,6 +218,8 @@ CLASS TDataCenter
             ( dbf )->( AdsSetAOF( cFilter ) )
 
          end if
+
+         
 
       end if 
 

@@ -831,11 +831,6 @@ CLASS TDetSeriesMaterial FROM TDet
 
    METHOD DefineFiles()
 
-   METHOD OpenFiles( lExclusive )
-   METHOD CloseFiles()
-
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
-
    METHOD SaveDetails()
 
    METHOD Resource( nMode, lLiteral )
@@ -891,48 +886,6 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetSeriesMateri
 
 RETURN ( oDbf )
 
-//--------------------------------------------------------------------------//
-
-METHOD OpenFiles( lExclusive, cPath ) CLASS TDetSeriesMaterial
-
-   local lOpen             := .t.
-   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT  lExclusive     := .f.
-
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles( cPath )
-      end if
-
-      ::oDbf:Activate( .f., !lExclusive )
-
-   RECOVER
-
-      lOpen                := .f.
-
-      ::CloseFiles()
-
-      msgStop( "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//--------------------------------------------------------------------------//
-
-METHOD CloseFiles() CLASS TDetSeriesMaterial
-
-   if ::oDbf != nil .and. ::oDbf:Used()
-      ::oDbf:End()
-      ::oDbf         := nil
-   end if
-
-RETURN .t.
-
 //---------------------------------------------------------------------------//
 
 METHOD SaveDetails() CLASS TDetSeriesMaterial
@@ -975,86 +928,3 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-Function Metro()
-
-   local oWnd, oFont, oBrw, oFont2, oFont3
-   local aItems   := {  {  "Wrench_48_alpha",            "General"               },;
-                        {  "Preferences_Edit_48_alpha",  "Valores por defecto"   },;
-                        {  "Cube_Yellow_Alpha_48",       "Artículos"             },;
-                        {  "Document_Edit_48_alpha",     "Contadores y docs."    },;
-                        {  "Folder2_red_Alpha_48",       "Contabilidad"          },;
-                        {  "Satellite_dish_48_alpha",    "Envios"                },;
-                        {  "Earth2_Alpha_48",            "Comunicaciones"        } }
-
-
-   DEFINE FONT oFont NAME "Segoe UI Light" SIZE 0, -52
-
-   DEFINE FONT oFont2 NAME "Segoe UI Light" SIZE 0, -30
-
-   DEFINE FONT oFont3 NAME "Segoe UI Light" SIZE 0, -16
-
-   DEFINE WINDOW oWnd STYLE nOr( WS_POPUP, WS_VISIBLE ) ;
-      COLOR RGB( 170, 170, 170 ), CLR_WHITE
-
-   @ 2, 10 SAY "Control Panel" FONT oFont SIZE 300, 100
-
-   @ 2, 80 SAY "Personalize" FONT oFont SIZE 300, 100
-
-   @ 10, 7  XBROWSE  oBrw ;
-            ARRAY    aItems ;
-            COLUMNS  {1,2} ;
-            FONT     oFont2 ;
-            SIZE     400, 650 ;
-            NOBORDER ;
-            OF       oWnd
-
-   oBrw:nDataLines = 1
-   oBrw:lRecordSelector = .F.
-   oBrw:lHeader   = .F.
-   oBrw:lHScroll  = .F.
-   oBrw:lVScroll  = .F.
-   oBrw:nStretchCol = 1
-
-   oBrw:nMarqueeStyle := MARQSTYLE_HIGHLROWMS
-
-   oBrw:bClrSel       := {|| { CLR_WHITE, RGB( 251, 140,  60 ) } }
-   oBrw:bClrSelFocus  := {|| { CLR_WHITE, RGB( 251, 140,  60 ) } } // Rgb( 34, 177, 76 )
-
-
-   oBrw:aCols[ 1 ]:nEditType       := TYPE_IMAGE
-   oBrw:aCols[ 1 ]:lBmpStretch     := .f.
-   oBrw:aCols[ 1 ]:lBmpTransparent := .t.
-   oBrw:aCols[ 1 ]:nDataBmpAlign   := AL_LEFT
-   oBrw:aCols[ 1 ]:nWidth          := 20
-   oBrw:aCols[ 1 ]:bAlphaLevel     := {|| 255 }
-   oBrw:aCols[ 1 ]:bStrData        := {|| oBrw:aRow[ 2 ] }
-   oBrw:aCols[ 1 ]:bStrImage       := {|oCol, oBrw| oBrw:aRow[ 1 ] }
-
-   oBrw:aCols[ 2 ]:bStrData        := {|| oBrw:aRow[ 2 ] }
-   oBrw:aCols[ 2 ]:nWidth          := 280
- 
-   oBrw:CreateFromCode()
-
-   oBrw:aCols[ 1 ]:bPaintText = { | oCol, hDC, cText, aCoors, aColors, lHighlight | DrawRow( oCol, hDC, cText, aCoors, oFont3 )  }
-
-   oBrw:SetFocus()
-
-   ACTIVATE WINDOW oWNd MAXIMIZED ;
-      ON CLICK oWnd:End()
-
-return nil
-
-function DrawRow( oCol, hDC, cText, aCoors, oFont )
-
-   local hOldFont
-   local aItems := { "Customize your lock screen and user tile",;
-                     "Change your account or add new ones",;
-                     "Choose if apps notify you" }
-
-   DrawText( hDC, cText, aCoors )
-   aCoors[ 1 ] += 45
-   hOldFont = SelectObject( hDC, oFont:hFont )
-   DrawText( hDC, aItems[ oCol:oBrw:KeyNo ], aCoors )
-   SelectObject( hDC, hOldFont )
-
-return nil

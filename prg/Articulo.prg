@@ -970,6 +970,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :lHide            := .t. 
       end with
 
+/*
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Stocks"
          :bStrData         := {|| Trans( oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , lEscandallo( dbfArticulo ), ( dbfArticulo )->nKitStk, ( dbfArticulo )->nCtlStock ), cPicUnd ) }
@@ -979,7 +980,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :lHide            := .t.
       end with
 
-/*
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }

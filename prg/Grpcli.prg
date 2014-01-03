@@ -4,11 +4,11 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TGrpCli FROM TMant
+CLASS TGrpCli FROM TMasDet
 
-   DATA  cMru           INIT "Users2_16"
+   DATA  cMru                                   INIT "Users2_16"
 
-   DATA  cParentSelect  INIT Space( 4 )
+   DATA  cParentSelect                          INIT Space( 4 )
 
    DATA  oGetCodigo
    DATA  oGetNombre
@@ -17,9 +17,10 @@ CLASS TGrpCli FROM TMant
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
+   METHOD End()                                 INLINE ( Super:CloseFiles(), TAtipicas():EndInstance(), Self := nil )
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )            METHOD OpenFiles( lExclusive )
+   METHOD CloseFiles()                          INLINE ( Super:CloseFiles(), TAtipicas():GetInstance():CloseFiles() )
 
    METHOD DefineFiles()
 
@@ -64,9 +65,10 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
-   //::lAutoButtons       := .t.
    ::lCreateShell       := .f.
    ::cHtmlHelp          := "Grupos de clientes"
+
+   ::AddDetail( TAtipicas():GetInstance( ::cPath, Self ) )
 
 RETURN ( Self )
 
@@ -94,18 +96,20 @@ METHOD OpenFiles( lExclusive, cPath )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if Empty( ::oDbf )
-         ::DefineFiles( cPath )
-      end if
+      if !Super:OpenFiles()
+         lOpen          := .f.
+      end if 
 
-      ::oDbf:Activate( .f., !( lExclusive ) )
+      if !TAtipicas():GetInstance():OpenFiles()
+         lOpen          := .f.
+      end if 
 
    RECOVER USING oError
 
       lOpen             := .f.
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de clientes" )
 
    END SEQUENCE
+
    ErrorBlock( oBlock )
 
    if !lOpen

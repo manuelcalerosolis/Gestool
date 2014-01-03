@@ -1,16 +1,12 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "Font.ch"
 
 //---------------------------------------------------------------------------//
 
 CLASS TDet
+
+   CLASSDATA oInstance
 
    DATA  oParent
 
@@ -62,7 +58,7 @@ CLASS TDet
    METHOD Duplicate()
 
    METHOD DefineFiles()                      VIRTUAL
-   METHOD OpenFiles( lExclusive, cPath )     VIRTUAL
+   METHOD OpenFiles( lExclusive, cPath )     
    METHOD CloseFiles()
 
    METHOD OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ) )
@@ -93,6 +89,9 @@ CLASS TDet
 
    METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::DefineFiles( cPath ):Create() )
 
+   METHOD GetInstance( cPath, oParent )   INLINE ( if( empty( ::oInstance ), ::oInstance := ::Create( cPath, oParent ), ), ::oInstance ) 
+   METHOD EndInstance()                   INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -105,6 +104,38 @@ METHOD New( cPath, oParent ) CLASS TDet
    ::oParent            := oParent
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDet
+
+   local lOpen             := .t.
+   local oError
+   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT  lExclusive     := .f.
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf            := ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !lExclusive )
+
+   RECOVER USING oError
+
+      lOpen                := .f.
+
+      ::CloseFiles()
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 

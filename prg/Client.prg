@@ -11217,10 +11217,6 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       dbCreate( cPath + "CLIENT.DBF", aSqlStruct( aItmCli() ), cDriver() )
    END IF
 
-   IF !lExistTable( cPath + "CLIATP.DBF" )
-      dbCreate( cPath + "CLIATP.DBF", aSqlStruct( aItmAtp() ), cDriver() )
-   END IF
-
    IF !lExistTable( cPath + "OBRAST.DBF" )
       dbCreate( cPath + "OBRAST.DBF", aSqlStruct( aItmObr() ), cDriver() )
    END IF
@@ -11245,7 +11241,6 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
 
    if lAppend .and. lIsDir( cPathOld )
       AppDbf( cPathOld, cPath, "Client"         )
-      AppDbf( cPathOld, cPath, "CliAtp"         )
       AppDbf( cPathOld, cPath, "ObrasT"         )
       AppDbf( cPathOld, cPath, "CliBnc"         )
       AppDbf( cPathOld, cPath, "CliInc"         )
@@ -11338,39 +11333,6 @@ FUNCTION rxClient( cPath, oMeter )
 
       msgStop( "Imposible abrir en modo exclusivo la tabla de clientes" )
 
-   end if
-
-   fEraseIndex( cPath + "CliAtp.Cdx" )
-
-   dbUseArea( .t., cDriver(), cPath + "CliAtp.Dbf", cCheckArea( "CLIATP", @dbfClient ), .f. )
-   if !( dbfClient )->( neterr() )
-
-      while !( dbfClient )->( eof() )
-         if ( dbfClient )->nTipAtp == 0
-            ( dbfClient )->nTipAtp  := 1
-         end if
-         ( dbfClient )->( dbSkip() )
-      end while
-
-      ( dbfClient )->( dbGoTop() )
-
-      ( dbfClient )->( __dbPack() )
-
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliAtp.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
-
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliAtp.Cdx", "cCliArt", "cCodCli + cCodArt", {|| Field->cCodCli + Field->cCodArt } ) )
-
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliAtp.Cdx", "cCodArt", "cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->CCODCLI + Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
-
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIATP.CDX", "CCODFAM", "CCODCLI + CCODFAM", {|| Field->CCODCLI + Field->CCODFAM } ) )
-
-      ( dbfClient )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de atipicas" )
    end if
 
    fEraseIndex( cPath + "ObrasT.CDX" )
@@ -11591,7 +11553,8 @@ FUNCTION aItmAtp()
 
    local aBase := {}
 
-   aAdd( aBase,  { "cCodCli",   "C", 12, 0, "Código del cliente"}                      )
+   aAdd( aBase,  { "cCodCli",   "C", 12, 0, "Código del cliente" }                     )
+   aAdd( aBase,  { "cCodGrp",   "C",  4, 0, "Código de grupo de cliente" }             )
    aAdd( aBase,  { "cCodArt",   "C", 18, 0, "Código de artículo en atipicas" }         )
    aAdd( aBase,  { "cCodFam",   "C", 16, 0, "Código de familias en atipicas" }         )
    aAdd( aBase,  { "nTipAtp",   "N",  1, 0, "Tipo de atípicas" }                       )
