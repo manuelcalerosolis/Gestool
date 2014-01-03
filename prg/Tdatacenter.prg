@@ -165,8 +165,36 @@ CLASS TDataCenter
    METHOD ActualizaEmpresaTable( oTable )    INLINE  ( ::ActualizaTable( oTable, cPatEmp() ) )
    METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
-
+/*
    METHOD CreateView()
+
+   METHOD CreateView( cView )
+
+      if !HHasKey( ::hViews, cView )
+         HSet( ::hViews, cView, {=>} )
+      end if 
+
+      ::cView  := cView
+
+   RETURN ( Self )
+
+   METHOD AddView( cDatabase )
+
+      if empty( ::cView )
+         msgStop( "No hay vistas disponibles.")
+
+      else 
+
+         if !HHasKey( ::hViews, ::cView )
+            HGet( ::hViews, cView, {=>} )
+         end if 
+
+         ::cView  := cView
+      end if 
+
+
+   RETURN ( Self )
+*/
 
 
    //------------------------------------------------------------------------//
@@ -219,7 +247,7 @@ CLASS TDataCenter
 
          end if
 
-         
+
 
       end if 
 

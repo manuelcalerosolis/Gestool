@@ -8518,7 +8518,7 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenfiles        := .f.
       end if
 
-      oBanco            := TBancos():Create()
+      oBanco               := TBancos():Create()
       oBanco:OpenFiles()
 
       cPinDiv              := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa de compra

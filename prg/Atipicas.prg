@@ -655,4 +655,160 @@ METHOD Resource( nMode ) CLASS TAtipicas
 RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+/*
+METHOD Browse( Id, oDialog )
+
+   oBrwAtp                 := IXBrowse():New( oDialog )
+
+   oBrwAtp:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrwAtp:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   
+   oBrwAtp:nMarqueeStyle   := 6
+   oBrwAtp:cName           := "Clientes.Atipicas"
+
+   ::oDbfVir:SetBrowse( oBrwAtp )
+
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Tipo"
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, "Artículo", "Familia" ) }
+      :nWidth           := 60
+   end with
+
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Of. Artículo en oferta"
+      :bEditValue       := {|| ::oDbfVir:nTipAtp <= 1 } // .and. lArticuloEnOferta( ::oDbfVir:cCodArt, ( dbfClient )->Cod, ( dbfClient )->cCodGrp ) }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
+
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Código"
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, ::oDbfVir:cCodArt, ::oDbfVir:cCodFam ) }
+      :nWidth           := 80
+   end with
+
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Nombre"
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, RetArticulo( ::oDbfVir:cCodArt, dbfArticulo ), RetFamilia( ::oDbfVir:cCodFam, dbfFamilia ) ) }
+      :nWidth           := 160
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Prop.1"
+      :bEditValue       := {|| ::oDbfVir:cValPr1 }
+      :nWidth           := 40
+      :lHide            := .t.
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Prop.2"
+      :bEditValue       := {|| ::oDbfVir:cValPr2 }
+      :nWidth           := 40
+      :lHide            := .t.
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
+      :bEditValue       := {|| ::oDbfVir:nPrcArt }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
+      :bEditValue       := {|| ::oDbfVir:nPrcArt2 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
+      :bEditValue       := {|| ::oDbfVir:nPrcArt3 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
+      :bEditValue       := {|| ::oDbfVir:nPrcArt4 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
+      :bEditValue       := {|| ::oDbfVir:nPrcArt5 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
+      :bEditValue       := {|| ::oDbfVir:nPrcArt6 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "% Descuento"
+      :bEditValue       := {|| ::oDbfVir:nDtoArt }
+      :cEditPicture     := "@E 999.99"
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Descuento lineal"
+      :bEditValue       := {|| ::oDbfVir:nDtoDiv }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "% Agente"
+      :bEditValue       := {|| ::oDbfVir:nComAge }
+      :cEditPicture     := "@E 999.99"
+      :nWidth           := 80
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Inicio"
+      :bEditValue       := {|| ::oDbfVir:dFecIni }
+      :nWidth           := 80
+   end with
+   
+   with object ( oBrwAtp:AddCol() )
+      :cHeader          := "Fin"
+      :bEditValue       := {|| ::oDbfVir:dFecFin }
+      :nWidth           := 80
+   end with
+
+   if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
+      oBrwAtp:bLDblClick   := {|| MsgStop( "Edicion de atipicas" ) }
+   end if
+   
+
+   oBrwAtp:bRClicked       := {| nRow, nCol, nFlags | oBrwAtp:RButtonDown( nRow, nCol, nFlags ) }
+
+   oBrwAtp:CreateFromResource( 400 )
+*/
+
+
 
