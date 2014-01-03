@@ -17366,24 +17366,24 @@ FUNCTION retArticulo( cCodArt, dbfArticulo )
    local lClose   := .f.
 	local cTemp		:= Space( 30 )
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if ( dbfArticulo ) == NIL
+   if empty( dbfArticulo ) 
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
-   if ValType( dbfArticulo ) == "O"
+   if IsObject( dbfArticulo )
       nRecno      := dbfArticulo:Recno()
-      If dbfArticulo:Seek( cCodArt )
+      if dbfArticulo:Seek( cCodArt )
          cTemp    := Rtrim( dbfArticulo:Nombre )
-      End if
+      end if
       dbfArticulo:GoTo( nRecno )
    else
       nRecno      := ( dbfArticulo )->( Recno() )
-      if ( dbfArticulo )->( DbSeek( cCodArt ) )
+      if ( dbfArticulo )->( dbSeek( cCodArt ) )
          cTemp    := Rtrim( ( dbfArticulo )->Nombre )
       end if
       ( dbfArticulo )->( dbGoTo( nRecno ) )
@@ -17391,7 +17391,7 @@ FUNCTION retArticulo( cCodArt, dbfArticulo )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos de agentes" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible abrir todas las bases de datos de articulos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 

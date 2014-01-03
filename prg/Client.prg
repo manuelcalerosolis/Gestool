@@ -227,7 +227,6 @@ static dbfTikP
 static dbfArticulo
 static dbfArtKit
 static dbfFPago
-static dbfIva
 static dbfDoc
 static cFpago
 static dbfDiv
@@ -5578,7 +5577,7 @@ static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt,
 
                if !( dbfTmpAtp )->( dbSeek( ( dbfArticulo )->Codigo ) )
 
-                  nIvaPct                    := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+                  nIvaPct                    := nIva( TDataCenter():Get( "TIva" ), ( dbfArticulo )->TipoIva )
 
                   ( dbfTmpAtp )->( dbAppend() )
 
@@ -5846,7 +5845,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
    REDEFINE GET oTipIva VAR cTipIva ;
 		ID 		120 ;
       PICTURE  "@!" ;
-      VALID    ( cTiva( oTipIva, dbfIva, oTxtIva ) );
+      VALID    ( cTiva( oTipIva, TDataCenter():Get( "TIva" ), oTxtIva ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwIva( oTipIva, nil, oTxtIva ) );
 		COLOR 	CLR_GET ;
@@ -8362,7 +8361,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       DisableAcceso()
 
-      // TDataCenter():CreateView()
+      TDataCenter():CreateView()
 
       lOpenFiles           := .t.
 
@@ -8428,8 +8427,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+      // USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+      // SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
@@ -8530,6 +8529,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       LoaIniCli( cPatEmp() )
 
+      TDataCenter():Get( "TIva" )
+
       EnableAcceso()
 
    RECOVER USING oError
@@ -8556,8 +8557,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
 	DEFAULT lDestroy	:= .f.
 
-   TDataCenter():DeleteView()
-
    DisableAcceso()
 
    CLOSE ( dbfClient    )
@@ -8571,7 +8570,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfObrasT    )
    CLOSE ( dbfContactos )
    CLOSE ( dbfFPago     )
-   CLOSE ( dbfIva       )
    CLOSE ( dbfDiv       )
    CLOSE ( dbfAlmT      )
    CLOSE ( dbfFamilia   )
@@ -8600,7 +8598,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfObrasT      := nil
    dbfContactos   := nil
    dbfFPago       := nil
-   dbfIva         := nil
    dbfDiv         := nil
    dbfAlmT        := nil
    dbfFamilia     := nil
@@ -8649,13 +8646,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oBanco:End()
    end if
 
-   oPais          := nil
-   oGrpCli        := nil
-   oCtaRem        := nil
-   oNewImp        := nil
-   oTrans         := nil
-   oFacAut        := nil
-   oBanco         := nil
+   TDataCenter():DeleteView()
 
    if lDestroy
       oWndBrw     := nil
@@ -9492,8 +9483,8 @@ STATIC FUNCTION pdaOpenFiles( lExt )
    USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
    SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+   // USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+   // SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
    SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
@@ -9560,7 +9551,7 @@ STATIC FUNCTION pdaCloseFiles( lDestroy )
    CLOSE ( dbfObrasT    )
    CLOSE ( dbfContactos )
    CLOSE ( dbfFPago     )
-   CLOSE ( dbfIva       )
+   //CLOSE ( dbfIva       )
    CLOSE ( dbfDiv       )
    CLOSE ( dbfAlmT      )
    CLOSE ( dbfFamilia   )
@@ -9579,7 +9570,6 @@ STATIC FUNCTION pdaCloseFiles( lDestroy )
    dbfObrasT      := nil
    dbfContactos   := nil
    dbfFPago       := nil
-   dbfIva         := nil
    dbfDiv         := nil
    dbfAlmT        := nil
    dbfFamilia     := nil
@@ -14117,7 +14107,7 @@ Return ( lSeek )
 
 Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
 
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
    /*
    Despues si tiene impuesto especial qitarlo----------------------------------
@@ -14144,7 +14134,7 @@ Return .t.
 Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
 
 	local nNewPre
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
 	/*
    Primero es quitar el impuestos
@@ -14172,7 +14162,7 @@ Return .t.
 
 Function nCalIva( nPrecio, lIvaInc, cTipIva, cCodImp )
 
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
    /*
    Despues si tiene impuesto especial qitarlo
@@ -14195,7 +14185,7 @@ Return nPrecio
 Function nCalBas( nPrecio, lIvaInc, cTipIva, cCodImp )
 
 	local nNewPre
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
 	/*
    Primero es quitar el impuestos

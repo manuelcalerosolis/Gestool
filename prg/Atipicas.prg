@@ -689,7 +689,7 @@ METHOD Browse( Id, oDialog )
 
    with object ( oBrwAtp:AddCol() )
       :cHeader          := "Nombre"
-      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, RetArticulo( ::oDbfVir:cCodArt, dbfArticulo ), RetFamilia( ::oDbfVir:cCodFam, dbfFamilia ) ) }
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, retArticulo( ::oDbfVir:cCodArt, TDataCenter():GetArticulo() ), RetFamilia( ::oDbfVir:cCodFam, dbfFamilia ) ) }
       :nWidth           := 160
    end with
    
@@ -808,7 +808,8 @@ METHOD Browse( Id, oDialog )
    oBrwAtp:bRClicked       := {| nRow, nCol, nFlags | oBrwAtp:RButtonDown( nRow, nCol, nFlags ) }
 
    oBrwAtp:CreateFromResource( 400 )
-*/
 
+RETURN ( Self )
+*/
 
 

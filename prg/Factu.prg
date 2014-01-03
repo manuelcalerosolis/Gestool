@@ -179,6 +179,8 @@ function Main( cParams )
 
       RddSetDefault( 'DBFCDX' )
 
+      TDataCenter():BuildData()
+
    end if
 
    /*
