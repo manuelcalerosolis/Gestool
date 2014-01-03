@@ -1544,7 +1544,9 @@ METHOD CloseFiles() CLASS TMasDet
    if Valtype( ::oDbfDet ) == "A"
       aSend( ::oDbfDet, "End()" )
    else
-      ::oDbfDet:End()
+      if !Empty( ::oDbfDet ) .and. ::oDbfDet:Used()
+         ::oDbfDet:End()
+      end if
    end if
 
 RETURN ( .t. )

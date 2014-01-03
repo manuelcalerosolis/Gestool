@@ -76,6 +76,7 @@ CLASS TDataCenter
    DATA        cMsg                       INIT ""
    DATA        oMsg
 
+   DATA        nView                      INIT 0
 
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
@@ -166,37 +167,46 @@ CLASS TDataCenter
    METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
 /*
-   METHOD CreateView()
-
    METHOD CreateView( cView )
+   METHOD DeleteView( cView )
+   METHOD AddDatabaseView( cDatabase )
 
-      if !HHasKey( ::hViews, cView )
-         HSet( ::hViews, cView, {=>} )
+   METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ) )
+
+   METHOD AddDatabaseView( cDatabase )
+
+      local hView
+
+      if empty( ::cView )
+         msgStop( "No hay vistas disponibles.")
+         Return ( Self )
+      end if
+
+      if !HHasKey( ::hViews, ::cView )
+         msgStop( "Vista " + ::cView + " no encontrada." )
+         Return ( Self )
+      end if 
+
+      hView    := HGet( ::hViews, ::cView )
+      if !empty( hView )
+         hSet( hView, cDatabase )
+      end if 
+
+      msgAlert( cvaltoprg( ::hViews ) )
+
+   RETURN ( Self )
+
+   METHOD DeleteView( cView )
+
+      if HHasKey( ::hViews, cView )
+         HDel( ::hViews, cView )
       end if 
 
       ::cView  := cView
 
    RETURN ( Self )
 
-   METHOD AddView( cDatabase )
-
-      if empty( ::cView )
-         msgStop( "No hay vistas disponibles.")
-
-      else 
-
-         if !HHasKey( ::hViews, ::cView )
-            HGet( ::hViews, cView, {=>} )
-         end if 
-
-         ::cView  := cView
-      end if 
-
-
-   RETURN ( Self )
 */
-
-
    //------------------------------------------------------------------------//
 
    INLINE METHOD oFacCliT()
