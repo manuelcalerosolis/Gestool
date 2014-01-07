@@ -842,6 +842,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       DisableAcceso()
 
+      TDataCenter():CreateView()
+
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
       end if
@@ -1699,6 +1701,8 @@ STATIC FUNCTION CloseFiles()
    oUndMedicion:= nil
    oBanco      := nil
    oPais       := nil
+
+   TDataCenter():DeleteView()
 
    lOpenFiles  := .f.
 

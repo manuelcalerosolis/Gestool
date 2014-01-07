@@ -2432,6 +2432,10 @@ Function TProyecto()
 
 Return nil
 
+Function TAtipicas()
+
+Return nil 
+
 /*
 //---------------------------------------------------------------------------//
 

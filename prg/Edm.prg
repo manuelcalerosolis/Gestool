@@ -568,3 +568,193 @@ function EdmRjust( cChar, cSep, nLen, lSep )
 return ( Rjust( cChar, cSep, nLen ) + if( lSep, ",", "" ) )
 
 //--------------------------------------------------------------------------//
+
+/*
+Exporta el fichero de articulos a EDM
+*/
+
+FUNCTION EdmCli( cCodRut, cPathTo, oStru )
+
+   local n           := 0
+   local cChr
+   local fTar
+   local cFilEdm
+   local cFilOdb
+   local nWrote
+   local nRead
+   local oError
+   local oBlock
+   local dbfClient
+
+   DEFAULT cCodRut   := "001"
+   DEFAULT cPathTo   := "C:\INTERS~1\"
+
+   cCodRut           := SubStr( cCodRut, -3 )
+
+   cFilEdm           := cPathTo + "ECLIE" + cCodRut + ".TXT"
+   cFilOdb           := cPathTo + "ECLIE" + cCodRut + ".ODB"
+
+   /*
+   Creamos el fichero destino
+   */
+
+   IF file( cFilEdm )
+      fErase( cFilEdm )
+   END IF
+
+   fTar              := fCreate( cFilEdm )
+
+   /*
+   Abrimos las bases de datos
+   */
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+
+   oStru:oMetUno:cText   := "Clientes"
+   oStru:oMetUno:SetTotal( ( dbfClient )->( LastRec() ) )
+
+   WHILE !(dbfClient)->( eof() )
+
+      cChr  := "+"
+      cChr  += Rjust( (dbfClient)->COD, "0", 7 ) + ","                        // Codigo de cliente
+
+      if !empty( (dbfClient)->NBREST )
+      cChr  += EdmSubStr( (dbfClient)->NBREST, 1, 35 )                        // Nombre del estblecimiento
+      else
+      cChr  += EdmSubStr( (dbfClient)->TITULO, 1, 35 )                        // Nombre de cliente
+      end if
+
+      cChr  += EdmSubStr( (dbfClient)->TITULO, 1, 35 )                        // Nombre de cliente
+      cChr  += EdmSubStr( (dbfClient)->DOMICILIO, 1, 35 )                     // Domicilio
+      cChr  += EdmSubStr( (dbfClient)->POBLACION, 1, 25 )                     // Población
+      cChr  += EdmSubStr( (dbfClient)->NIF, 1, 14 )                           // N.I.F.
+      cChr  += EdmLogicSN( (dbfClient)->LREQ )                                // Recargo de Equivalencia
+      cChr  += EdmLocig12( (dbfClient)->LMAYORISTA )                          // Tipo de tarifa
+      cChr  += EdmSubStr( "S" )                                               // Valoración de albaranes
+      cChr  += EdmSubStr( Trans( (dbfClient)->NDTOESP, "@ 99.99" ), 1, 5 )    // Descuento de cliente
+      cChr  += EdmSubStr( "0" )                                               // Numero para grupo de ofertas
+      cChr  += EdmSubStr( Trans( (dbfClient)->RIESGO, "@ 9999.99" ), 1, 7 )   // Riesgo
+      cChr  += EdmSubStr( Trans( (dbfClient)->NDPP, "@ 99.99" ), 1, 5 )       // Descuento pronto pago de cliente
+      cChr  += EdmSubStr( "S", 1, 1, .f. )                                    // S/N Imprime en Euros o en Ptas
+      //cChr  += EdmSubStr( (dbfClient)->Telefono, 1, 10 )                      // Telefono
+      cChr  += CRLF
+
+      nWrote:= fwrite( fTar, cChr, nRead )
+
+      oStru:oMetUno:Set( ++n )
+
+      /*
+      IF fError() != 0
+         msginfo( "Hay errores" )
+      END IF
+      */
+
+      (dbfClient)->( dbSkip() )
+
+   END DO
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfClient )
+   fClose( fTar )
+
+   /*
+   Conversion a formato exportable a la psion
+   */
+
+   if file( FullCurDir() + "CONVER.EXE" )
+      WinExec( FullCurDir() + "CONVER.EXE " + cFilEdm + " " + cFilOdb + " 44 -x", 6 ) // Minimized
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+/*
+Exporta el fichero de rutas y clientes a EDM
+*/
+
+FUNCTION EdmRutCli( cCodRut, cPathTo, oStru )
+
+   local n           := 0
+   local cChr
+   local fTar
+   local nWrote
+   local nRead
+   local cFilEdm
+   local cFilOdb
+   local cRutCli
+   local dbfClient
+
+   DEFAULT cCodRut   := "001"
+   DEFAULT cPathTo   := "C:\INTERS~1\"
+
+   cRutCli           := cCodRut
+
+   cCodRut           := SubStr( cCodRut, -3 )
+
+   cFilEdm           := cPathTo + "ERUTA" + cCodRut + ".TXT"    //  de momento ruta unica
+   cFilOdb           := cPathTo + "ERUTA" + cCodRut + ".ODB"    //  de momento ruta unica
+
+   /*
+   Creamos el fichero destino
+   */
+
+   if file( cFilEdm )
+      fErase( cFilEdm )
+   end if
+
+   fTar              := fCreate( cFilEdm )
+
+   /*
+   Abrimos las bases de datos
+   */
+
+   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+
+   oStru:oMetUno:cText   := "Rutas"
+   oStru:oMetUno:SetTotal( ( dbfClient )->( LastRec() ) )
+
+   WHILE !(dbfClient)->( eof() )
+
+      if ( dbfClient )->cCodRut == cRutCli
+
+         cChr  := Right( cCodRut, 1 )                             // Codigo de ruta
+         cChr  += Rjust( (dbfClient)->COD, "0", 7 )               // Codigo de cliente
+         cChr  += CRLF
+
+         nWrote:= fwrite( fTar, cChr, nRead )
+
+      end if
+
+      oStru:oMetUno:Set( ++n )
+
+      /*
+      IF fError() != 0
+         msginfo( "Hay errores" )
+      END IF
+      */
+
+      ( dbfClient )->( dbSkip() )
+
+   END DO
+
+   CLOSE ( dbfClient )
+   fClose( fTar )
+
+   if file( FullCurDir() + "CONVER.EXE" )
+      WinExec( FullCurDir() + "CONVER.EXE " + cFilEdm + " " + cFilOdb + " 44 -x", 6 ) // Minimized
+   end if
+
+RETURN NIL
+

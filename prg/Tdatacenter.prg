@@ -169,32 +169,13 @@ CLASS TDataCenter
    METHOD ActualizaEmpresa()
 
    METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ) )
-   METHOD DeleteView( cView )                INLINE   ( if( HHasKey( ::hViews, ::nView ), ( HDel( ::hViews, ::nView ), --::nView ), ) )
-
-   INLINE METHOD AddDatabaseView( cDatabase, cHandle )
-
-      local hView
-
-      if empty( ::nView )
-         // msgStop( "No hay vistas disponibles.")
-         Return ( Self )
-      end if
-
-      if !HHasKey( ::hViews, ::nView )
-         msgStop( "Vista " + Str( ::nView ) + " no encontrada." )
-         Return ( Self )
-      end if 
-
-      hView    := HGet( ::hViews, ::nView )
-      if !empty( hView )
-         hSet( hView, { cDatabase => cHandle } )
-      end if 
-
-      msgAlert( valtoprg( ::hViews ) )
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD DeleteView( cView )
+   METHOD AssertView()
+   METHOD AddDatabaseView( cDatabase, cHandle )
+   METHOD Get( cDatabase )
+   METHOD GetDatabaseView( cDatabase )
+   METHOD ScanDatabase( cDatabase )
+   METHOD OpenDatabase( oDataTable )
 
    //---------------------------------------------------------------------------//
 
@@ -208,6 +189,24 @@ CLASS TDataCenter
       lOpen             := !neterr()
       if lOpen
          ::AddDatabaseView( "Articulo", dbf )
+      end if 
+
+      Return ( lOpen )   
+   
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD OpenFamilia( dbf )
+
+      local lOpen
+
+      USE ( cPatArt() + "Familia.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Familia", @dbf ) )
+      SET ADSINDEX TO ( cPatArt() + "Familia.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+         ::AddDatabaseView( "Familia", dbf )
       end if 
 
       Return ( lOpen )   
@@ -263,8 +262,6 @@ CLASS TDataCenter
             ( dbf )->( AdsSetAOF( cFilter ) )
 
          end if
-
-         ::AddDatabaseView( "FacCliT", dbf )
 
       end if 
 
@@ -3819,8 +3816,6 @@ METHOD lSelectOperationLog()
 
    lOk            := ::ExecuteSqlStatement( cStm, "SqlOperation" )
 
-   ? ( "SqlOperation")->( LastRec() )
-
    /*
    Dejamos la fechas como estaban----------------------------------------------
    */
@@ -4496,6 +4491,141 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
 RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
+
+   METHOD DeleteView( cView )
+
+      local hView
+
+      if hHasKey( ::hViews, ::nView )
+
+         hView          := hGet( ::hViews, ::nView )
+         if hb_ishash( hView ) 
+            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
+         end if 
+
+         HDel( ::hViews, ::nView )
+         
+         --::nView
+
+      end if 
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD AssertView()
+
+      if empty( ::nView )
+         msgStop( "No hay vistas disponibles.")
+         Return ( .f. )
+      end if
+
+      if !hHasKey( ::hViews, ::nView )
+         msgStop( "Vista " + Str( ::nView ) + " no encontrada." )
+         Return ( .t. )
+      end if 
+
+   Return ( .t. )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD AddDatabaseView( cDatabase, cHandle )
+
+      local hView
+
+      if ::AssertView()
+
+         hView    := hGet( ::hViews, ::nView )
+         if hb_ishash( hView )
+            hSet( hView, Upper( cDatabase ), cHandle )
+         end if 
+
+      end if  
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD Get( cDatabase )
+
+      local cHandle
+
+      cHandle        := ::GetDatabaseView( cDatabase )
+
+      if empty( cHandle )
+         ::OpenDatabase( cDatabase )
+      end if
+
+   RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD GetDatabaseView( cDatabase )
+
+      local hView
+      local cHandle
+
+      if ::AssertView()
+
+         hView          := hGet( ::hViews, ::nView )
+         if hb_ishash( hView ) 
+            if hHasKey( hView, Upper( cDatabase ) )
+               cHandle  := hGet( hView, Upper( cDatabase ) )
+            end if 
+         end if 
+
+      end if 
+
+   RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD ScanDatabase( cDatabase )
+
+      local nScan
+
+      nScan    := aScan( ::aDataTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+      if nScan != 0
+         Return ( ::aDataTables[ nScan ] )
+      end if 
+
+      if nScan == 0
+         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+         if nScan != 0
+            Return ( ::aEmpresaTables[ nScan ] )
+         end if 
+      end if
+ 
+   Return ( nil )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD OpenDatabase( cDatabase )
+
+      local dbf
+      local lOpen
+      local oDataTable
+
+      oDataTable        := ::ScanDatabase( cDatabase )
+      if !empty( oDataTable )
+
+         dbUseArea( .t., ( cDriver() ), ( oDataTable:cDataFile ), ( cCheckArea( oDataTable:cFileName(), @dbf ) ), .t., .f. )
+         if( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
+
+         lOpen          := !neterr()
+         if lOpen
+            ::AddDatabaseView( oDataTable:cFileName(), dbf )
+         end if 
+
+         Return ( lOpen )   
+
+      end if
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -4512,6 +4642,8 @@ CLASS TDataTable
    DATA  bSyncFile   
    DATA  bCreateFile
    DATA  bCreateIndex   
+
+   METHOD cFileName()   INLINE ( Upper( cNoPath( ::cName ) ) )
 
 END CLASS
 

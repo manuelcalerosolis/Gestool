@@ -1,17 +1,12 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Report.ch"
-   #include "Folder.ch"
-   #include "Label.ch"
-   #include "RichEdit.ch"
-   #include "Xbrowse.ch"
-   #include "FastRepH.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-   #include "Factu.ch" 
-   #include "Ini.ch"
+#include "FiveWin.Ch"
+#include "Report.ch"
+#include "Folder.ch"
+#include "Label.ch"
+#include "RichEdit.ch"
+#include "Xbrowse.ch"
+#include "FastRepH.ch"
+#include "Factu.ch" 
+#include "Ini.ch"
 
 #define _COD                       1      //   C      7     0
 #define _TITULO                    2      //   C     50     0
@@ -136,48 +131,49 @@
 #define _NTARCMB                 121      //   N      1     0
 
 #define _aCCODCLI                  1      //   C     12     0
-#define _aCCODART                  2      //   C     14     0
-#define _aCCODFAM                  3      //   C      8     0
-#define _aNTIPATP                  4      //   N      1     0
-#define _aCCODPR1                  5      //   C      5     0
-#define _aCVALPR1                  6      //   C      5     0
-#define _aCCODPR2                  7      //   C      5     0
-#define _aCVALPR2                  8      //   C      5     0
-#define _aDFECINI                  9      //   D      8     0
-#define _aDFECFIN                 10      //   D      8     0
-#define _aLPRCCOM                 11      //   L      1     0
-#define _aNPRCCOM                 12      //   N     16     6
-#define _aNPRCART                 13      //   N     16     6
-#define _aNPRCART2                14      //   N     16     6
-#define _aNPRCART3                15      //   N     16     6
-#define _aNPRCART4                16      //   N     16     6
-#define _aNPRCART5                17      //   N     16     6
-#define _aNPRCART6                18      //   N     16     6
-#define _aNPREIVA1                19      //   N     16     6
-#define _aNPREIVA2                20      //   N     16     6
-#define _aNPREIVA3                21      //   N     16     6
-#define _aNPREIVA4                22      //   N     16     6
-#define _aNPREIVA5                23      //   N     16     6
-#define _aNPREIVA6                24      //   N     16     6
-#define _aNDTOART                 25      //   N      6     2
-#define _aNDPRART                 26      //   N      6     2
-#define _aLCOMAGE                 27      //   L      1     0
-#define _aNCOMAGE                 28      //   N      6     2
-#define _aNDTODIV                 29      //   N     16     6
-#define _aLAPLPRE                 30      //   L      1     0
-#define _aLAPLPED                 31      //   L      1     0
-#define _aLAPLALB                 32      //   L      1     0
-#define _aLAPLFAC                 33      //   L      1     0
-#define _aLAPLSAT                 34      //   L      1     0
-#define _aNUNVOFE                 35      //   N      3     0
-#define _aNUNCOFE                 36      //   N      3     0
-#define _aNTIPXBY                 37      //   N      1     0
-#define _aNDTO1                   38      //   N     16     6
-#define _aNDTO2                   39      //   N     16     6
-#define _aNDTO3                   40      //   N     16     6
-#define _aNDTO4                   41      //   N     16     6
-#define _aNDTO5                   42      //   N     16     6
-#define _aNDTO6                   43      //   N     16     6
+#define _aCCODGRP                  2      //   C     12     0
+#define _aCCODART                  3     //   C     14     0
+#define _aCCODFAM                  4     //   C      8     0
+#define _aNTIPATP                  5     //   N      1     0
+#define _aCCODPR1                  6     //   C      5     0
+#define _aCVALPR1                  7     //   C      5     0
+#define _aCCODPR2                  8     //   C      5     0
+#define _aCVALPR2                  9     //   C      5     0
+#define _aDFECINI                 10     //   D      8     0
+#define _aDFECFIN                 11     //   D      8     0
+#define _aLPRCCOM                 12     //   L      1     0
+#define _aNPRCCOM                 13     //   N     16     6
+#define _aNPRCART                 14     //   N     16     6
+#define _aNPRCART2                15     //   N     16     6
+#define _aNPRCART3                16     //   N     16     6
+#define _aNPRCART4                17     //   N     16     6
+#define _aNPRCART5                18     //   N     16     6
+#define _aNPRCART6                19     //   N     16     6
+#define _aNPREIVA1                20     //   N     16     6
+#define _aNPREIVA2                21     //   N     16     6
+#define _aNPREIVA3                22     //   N     16     6
+#define _aNPREIVA4                23     //   N     16     6
+#define _aNPREIVA5                24     //   N     16     6
+#define _aNPREIVA6                25     //   N     16     6
+#define _aNDTOART                 26     //   N      6     2
+#define _aNDPRART                 27     //   N      6     2
+#define _aLCOMAGE                 28     //   L      1     0
+#define _aNCOMAGE                 29     //   N      6     2
+#define _aNDTODIV                 30     //   N     16     6
+#define _aLAPLPRE                 31     //   L      1     0
+#define _aLAPLPED                 32     //   L      1     0
+#define _aLAPLALB                 33     //   L      1     0
+#define _aLAPLFAC                 34     //   L      1     0
+#define _aLAPLSAT                 35     //   L      1     0
+#define _aNUNVOFE                 36     //   N      3     0
+#define _aNUNCOFE                 37     //   N      3     0
+#define _aNTIPXBY                 38     //   N      1     0
+#define _aNDTO1                   39     //   N     16     6
+#define _aNDTO2                   40     //   N     16     6
+#define _aNDTO3                   41     //   N     16     6
+#define _aNDTO4                   42     //   N     16     6
+#define _aNDTO5                   43     //   N     16     6
+#define _aNDTO6                   44      //   N     16     6
 
 #define fldGeneral                oFld:aDialogs[1]
 #define fldComercial              oFld:aDialogs[2]
@@ -192,9 +188,7 @@
 #define fldIncidencias            oFld:aDialogs[11]
 #define fldObservaciones          oFld:aDialogs[12]
 
-#ifndef __PDA__
-   #define FW_BOLD               700
-#endif
+#define FW_BOLD                   700
 
 memvar dbfCli
 memvar cDbfCli
@@ -206,7 +200,7 @@ memvar cDbfCon
 static oWndBrw
 static dbfConfig
 
-static dbfClient
+//static dbfClient
 static filClient
 static tmpClient
 
@@ -227,10 +221,8 @@ static dbfTikP
 static dbfArticulo
 static dbfArtKit
 static dbfFPago
-static dbfIva
 static dbfDoc
 static cFpago
-static dbfDiv
 static dbfFamilia
 static oBandera
 static dbfObrasT
@@ -288,30 +280,343 @@ static lOpenFiles       := .f.
 
 static nLabels          := 1
 
-#ifndef __PDA__
-
 static aIniCli          := Array( 11 )
 
-static bEdtRec          := { | aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode ) }
-static bEdtBig          := { | aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode | EdtBig( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode ) }
-static bEdtAtp          := { | aTmp, aGet, dbfCliAtp, oBrw, bWhen, bValid, nMode | EdtAtp( aTmp, aGet, dbfCliAtp, oBrw, bWhen, bValid, nMode ) }
-static bEdtDoc          := { | aTmp, aGet, dbfClientD, oBrw, bWhen, bValid, nMode, cCodCli | EdtDoc( aTmp, aGet, dbfClientD, oBrw, bWhen, bValid, nMode, cCodCli ) }
-static bEdtBnc          := { | aTmp, aGet, dbfBanco, oBrw, bWhen, bValid, nMode, cCodCli | EdtBnc( aTmp, aGet, dbfBanco, oBrw, bWhen, bValid, nMode, cCodCli ) }
-static bEdtInc          := { | aTmp, aGet, dbfCliInc, oBrw, bWhen, bValid, nMode | EdtInc( aTmp, aGet, dbfCliInc, oBrw, bWhen, bValid, nMode ) }
-
-#else
-
-static bEdtPda          := { | aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode | EdtPda( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode ) }
-static bAtpPda          := { | aTmp, aGet, dbfCliAtp, oBrw, bWhen, bValid, nMode | AtpPda( aTmp, aGet, dbfCliAtp, oBrw, bWhen, bValid, nMode ) }
-static aClientes        := {}
-static aDbfBmp
-static cComboOrden
-
-#endif
+static bEdtRec          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtBig          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtBig( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtAtp          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtAtp( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtDoc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli ) }
+static bEdtBnc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli | EdtBnc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli ) }
+static bEdtInc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 
 static oReporting
 
-#ifndef __PDA__
+//-----------------------------------------------------------------------------
+
+STATIC FUNCTION OpenFiles( lExt )
+
+   local oBlock
+   local oError
+
+   if lOpenFiles
+      MsgStop( 'Imposible abrir ficheros de clientes' )
+      Return ( .f. )
+   end if
+
+   DEFAULT  lExt        := .f.
+
+   lExternal            := lExt
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      DisableAcceso()
+
+      TDataCenter():CreateView()
+
+      lOpenFiles           := .t.
+
+      TDataCenter():Get( "TIva" )
+
+      TDataCenter():Get( "Divisas" )
+
+      TDataCenter():Get( "Client" )
+
+      TDataCenter():Get( "ClientD" )
+
+      TDataCenter():Get( "CliAtp" )
+
+      // USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+      // SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
+      // USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      // SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+
+      /*
+      Documentos asociados al cliente---------------------------------------------
+      */
+
+      // USE ( cPatCli() + "ClientD.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENTD", @dbfClientD ) )
+      // SET ADSINDEX TO ( cPatCli() + "ClientD.Cdx" ) ADDITIVE
+
+      /*
+      Tarifas personalizadas------------------------------------------------------
+      */
+
+      //USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
+      //SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
+
+      /*
+      Apertura de fichero de Obras------------------------------------------------
+      */
+
+      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+
+      /*
+      Apertura de fichero de Contactos--------------------------------------------
+      */
+
+      USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
+      SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
+
+      /*
+      Apertura de fichero de Bancos------------------------------------------------
+      */
+
+      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBanco ) )
+      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+
+      /*
+      Apertura de fichero de Indicencias--------------------------------------------
+      */
+
+      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
+      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
+
+      /*
+      Articulos-------------------------------------------------------------------
+      */
+
+      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
+      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
+
+      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @cAgente ) )
+      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+
+      /*
+      Otros Ficheros--------------------------------------------------------------
+      */
+
+      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+
+      // USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+      // SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+
+      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+
+      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
+      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+
+      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
+      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
+      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
+      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
+      SET TAG TO "CTIPO"
+
+      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOfe ) )
+      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
+
+      USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
+      SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
+      SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
+      SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+
+      if !TDataCenter():OpenArticulo( @dbfArticulo )
+         lOpenFiles        := .f.
+      end if
+
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles        := .f.
+      end if
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles        := .f.
+      end if
+
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
+
+      oBandera             := TBandera():New()
+
+      oStock               := TStock():Create( cPatGrp() )
+      if !oStock:lOpenFiles()
+         lOpenFiles        := .f.
+      end if
+
+      oGrpCli              := TGrpCli():Create( cPatCli() )
+      if !oGrpCli:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
+      oPais                := TPais():Create( cPatDat() )
+      if !oPais:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
+      oCtaRem              := TCtaRem():Create( cPatCli() )
+      if !oCtaRem:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
+      oNewImp              := TNewImp():Create( cPatEmp() )
+      if !oNewImp:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
+      oTrans               := TTrans():Create( cPatCli() )
+      if !oTrans:OpenFiles()
+         lOpenFiles        := .f.
+      end if
+
+      oFacAut              := TFacAutomatica():Create( cPatEmp() )
+      if !oFacAut:Openfiles()
+         lOpenfiles        := .f.
+      end if
+
+      oBanco               := TBancos():Create()
+      oBanco:OpenFiles()
+
+      cPinDiv              := cPinDiv( cDivEmp() ) // Picture de la divisa de compra
+      cPouDiv              := cPouDiv( cDivEmp() ) // Picture de la divisa
+      cPorDiv              := cPorDiv( cDivEmp() ) // Picture de la divisa redondeada
+
+      LoaIniCli( cPatEmp() )
+
+      EnableAcceso()
+
+   RECOVER USING oError
+
+      lOpenFiles        := .f.
+
+      EnableAcceso()
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !lOpenFiles
+      CloseFiles()
+   end if
+
+RETURN ( lOpenFiles )
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION CloseFiles( lDestroy )
+
+   DEFAULT lDestroy  := .f.
+
+   DisableAcceso()
+
+   // CLOSE ( dbfClient    )
+   // CLOSE ( dbfClientD   )
+   // CLOSE ( dbfCliAtp    )
+   CLOSE ( dbfArticulo  )
+   CLOSE ( dbfArtKit    )
+   CLOSE ( dbfCliInc    )
+   CLOSE ( cFPago       )
+   CLOSE ( cAgente      )
+   CLOSE ( dbfObrasT    )
+   CLOSE ( dbfContactos )
+   CLOSE ( dbfFPago     )
+   CLOSE ( dbfAlmT      )
+   CLOSE ( dbfFamilia   )
+   CLOSE ( dbfPro       )
+   CLOSE ( dbfProL      )
+   CLOSE ( dbfDoc       )
+   CLOSE ( dbfBanco     )
+   CLOSE ( dbfInci      )
+   CLOSE ( dbfOfe       )
+   CLOSE ( dbfArtDiv    )
+   CLOSE ( dbfAntCliT   )
+   CLOSE ( dbfFacCliT   )
+   CLOSE ( dbfFacCliP   )
+   CLOSE ( dbfAlbCliT   )
+   CLOSE ( dbfAntCliT   )
+   CLOSE ( dbfTikT      )
+   CLOSE ( dbfTikL      )
+
+   // dbfClientD     := nil
+   // dbfCliAtp      := nil
+   dbfArticulo    := nil
+   dbfArtKit      := nil
+   dbfCliInc      := nil
+   cFPago         := nil
+   cAgente        := nil
+   dbfObrasT      := nil
+   dbfContactos   := nil
+   dbfFPago       := nil
+   dbfAlmT        := nil
+   dbfFamilia     := nil
+   dbfPro         := nil
+   dbfProL        := nil
+   dbfDoc         := nil
+   dbfBanco       := nil
+   dbfInci        := nil
+   dbfOfe         := nil
+   dbfArtDiv      := nil
+   dbfAntCliT     := nil
+   dbfAlbCliT     := nil
+   dbfAntCliT     := nil
+   dbfTikT        := nil
+   dbfTikL        := nil
+
+   if !Empty( oStock )
+      oStock:end()
+   end if
+
+   if oPais != nil
+      oPais:end()
+   end if
+
+   if oGrpCli != nil
+      oGrpCli:end()
+   end if
+
+   if oCtaRem != nil
+      oCtaRem:end()
+   end if
+
+   if oNewImp != nil
+      oNewImp:end()
+   end if
+
+   if !Empty( oTrans )
+      oTrans:End()
+   end if
+
+   if !Empty( oFacAut )
+      oFacAut:End()
+   end if
+
+   if !Empty( oBanco )
+      oBanco:End()
+   end if
+
+   TDataCenter():DeleteView()
+
+   if lDestroy
+      oWndBrw     := nil
+   end if
+
+   lOpenFiles     := .f.
+
+   EnableAcceso()
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
 
 //--------------------------------------------------------------------------//
 //Funciones del programa
@@ -379,12 +684,12 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
                   if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) ) ,;
                   if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) ) ,;
                   if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) ) ;
-         ALIAS    ( dbfClient ) ;
+         ALIAS    TDataCenter():Get( "Client" ) ;
          MRU      "User1_16";
-         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfClient ) );
-         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfClient ) );
-         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfClient ) ) ;
-         DELETE   ( WinDelRec( oWndBrw:oBrw, dbfClient ) ) ;
+         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataCenter():Get( "Client" ) ) );
+         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataCenter():Get( "Client" ) ) );
+         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataCenter():Get( "Client" ) ) ) ;
+         DELETE   ( WinDelRec( oWndBrw:oBrw, TDataCenter():Get( "Client" ) ) ) ;
          LEVEL    nLevel ;
          OF       oWnd
 
@@ -392,7 +697,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Bloqueado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfClient )->lBlqCli }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->lBlqCli }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "stop_16" )
@@ -402,7 +707,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfClient )->lSndInt }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->lSndInt }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "LBl16" )
@@ -413,7 +718,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cSortOrder       := "lPubInt"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfClient )->lPubInt }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->lPubInt }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -424,7 +729,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Tarifas atipicas"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfCliAtp )->( dbSeek( ( dbfClient )->Cod ) ) }
+         :bEditValue       := {|| ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( ( TDataCenter():Get( "Client" ) )->Cod ) ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "PERCENT_16" )
@@ -434,7 +739,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Potencial"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfClient )->nTipCli == 2 }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->nTipCli == 2 }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "CLIPOT" )
@@ -443,7 +748,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( dbfClient )->Cod }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Cod }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -451,7 +756,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( dbfClient )->Titulo }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Titulo }
          :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -465,7 +770,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cEditPicture     := "@R 999999999-9"
          end if
          :cSortOrder       := "Nif"
-         :bEditValue       := {|| ( dbfClient )->Nif }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Nif }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -473,21 +778,21 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Teléfono"
          :cSortOrder       := "Telefono"
-         :bEditValue       := {|| ( dbfClient )->Telefono }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Telefono }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fax"
-         :bEditValue       := {|| ( dbfClient )->Fax }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Fax }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Domicilio"
-         :bEditValue       := {|| ( dbfClient )->Domicilio }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Domicilio }
          :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -495,7 +800,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
          :cSortOrder       := "Poblacion"
-         :bEditValue       := {|| ( dbfClient )->Poblacion }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Poblacion }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -503,7 +808,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
-         :bEditValue       := {|| ( dbfClient )->CodPostal }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->CodPostal }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -511,7 +816,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Provincia"
          :cSortOrder       := "Provincia"
-         :bEditValue       := {|| ( dbfClient )->Provincia }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Provincia }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -519,7 +824,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Establecimiento"
          :cSortOrder       := "NbrEst"
-         :bEditValue       := {|| ( dbfClient )->NbrEst }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->NbrEst }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -527,14 +832,14 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Correo electrónico"
          :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( dbfClient )->cMeiInt }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cMeiInt }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Riesgo"
-         :bEditValue       := {|| Trans( ( dbfClient )->Riesgo, PicOut() ) }
+         :bEditValue       := {|| Trans( ( TDataCenter():Get( "Client" ) )->Riesgo, PicOut() ) }
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -542,20 +847,20 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Contacto"
-         :bEditValue       := {|| ( dbfClient )->cPerCto }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cPerCto }
          :nWidth           := 200
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Observaciones"
-         :bEditValue       := {|| ( dbfClient )->mComent }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->mComent }
          :nWidth           := 200
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cliente web"
          :cSortOrder       := "cCliWeb"
-         :bEditValue       := {|| aStrClients[ Min( Max( ( dbfClient )->nTipCli, 1 ), len( aStrClients ) ) ] }
+         :bEditValue       := {|| aStrClients[ Min( Max( ( TDataCenter():Get( "Client" ) )->nTipCli, 1 ), len( aStrClients ) ) ] }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -564,7 +869,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) )
          :cSortOrder       := "cUsrDef01"
-         :bEditValue       := {|| ( dbfClient )->cUsrDef01 }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cUsrDef01 }
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -573,7 +878,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) )
          :cSortOrder       := "cUsrDef02"
-         :bEditValue       := {|| ( dbfClient )->cUsrDef02 }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cUsrDef02 }
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -582,7 +887,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) )
          :cSortOrder       := "cUsrDef03"
-         :bEditValue       := {|| ( dbfClient )->cUsrDef03 }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cUsrDef03 }
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -625,7 +930,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
 		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfClient ) );
+         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, ( TDataCenter():Get( "Client" ) ) ) );
 			TOOLTIP 	"(Z)oom";
 			HOTKEY 	"Z"
 
@@ -648,7 +953,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( BrwVtaCli( ( dbfClient )->Cod, ( dbfClient )->Titulo ) );
+         ACTION   ( BrwVtaCli( ( TDataCenter():Get( "Client" ) )->Cod, ( TDataCenter():Get( "Client" ) )->Titulo ) );
          TOOLTIP  "(I)nforme cliente" ;
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
@@ -682,7 +987,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( TGenMailing():ClientResource( dbfClient, aItmCli(), oWndBrw ) ) ;
+         ACTION   ( TGenMailing():ClientResource( ( TDataCenter():Get( "Client" ) ), aItmCli(), oWndBrw ) ) ;
          TOOLTIP  "Enviar correos" ;
          HOTKEY   "V" ;
          LEVEL    ACC_IMPR
@@ -692,13 +997,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          MENU     This:Toggle() ;
          TOOLTIP  "En(v)iar" ;
          MESSAGE  "Seleccionar clientes para ser enviados" ;
-         ACTION   lSndCli( oWndBrw, dbfClient ) ;
+         ACTION   lSndCli( oWndBrw ) ;
          HOTKEY   "V";
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
             NOBORDER ;
-            ACTION   lSndCli( oWndBrw, dbfClient, .t. ) ;
+            ACTION   lSndCli( oWndBrw, .t. ) ;
             TOOLTIP  "Seleccionar para envio" ;
             FROM     oSnd ;
             CLOSED ;
@@ -706,7 +1011,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
          DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
             NOBORDER ;
-            ACTION   lSndCli( oWndBrw, dbfClient, .f. ) ;
+            ACTION   lSndCli( oWndBrw, .f. ) ;
             TOOLTIP  "Deseleccionar para envio" ;
             FROM     oSnd ;
             CLOSED ;
@@ -723,7 +1028,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
          DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( ChgPrc( dbfCliAtp, oWndBrw ) ) ;
+            ACTION   ( ChgPrc( oWndBrw ) ) ;
             TOOLTIP  "(C)ambiar precios" ;
             HOTKEY   "C";
             LEVEL    ACC_APPD
@@ -731,13 +1036,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
             NOBORDER ;
             MENU     This:Toggle() ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfClient, aItmCli(), CLI_TBL ) ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, ( TDataCenter():Get( "Client" ) ), aItmCli(), CLI_TBL ) ) ;
             TOOLTIP  "Cambiar campos" ;
             LEVEL    ACC_APPD
 
             DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
                NOBORDER ;
-               ACTION   ( ReplaceCreator( oWndBrw, dbfCliAtp, aItmAtp() ) ) ;
+               ACTION   ( ReplaceCreator( oWndBrw, ( TDataCenter():Get( "CliAtp" ) ), aItmAtp() ) ) ;
                TOOLTIP  "Tarifa" ;
                FROM     oRpl ;
                CLOSED ;
@@ -747,7 +1052,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
 		DEFINE BTNSHELL RESOURCE "CNFCLI" GROUP OF oWndBrw ;
 			NOBORDER ;
-			ACTION 	( CnfCli( dbfClient ) ) ;
+			ACTION 	( CnfCli( TDataCenter():Get( "Client" ) ) ) ;
          TOOLTIP  "Confi(g)urar" ;
          HOTKEY   "G";
          LEVEL    ACC_APPD
@@ -760,35 +1065,35 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( PreCli( nil, oWnd, ( dbfClient )->Cod, nil ) );
+            ACTION   ( PreCli( nil, oWnd, ( TDataCenter():Get( "Client" ) )->Cod, nil ) );
             TOOLTIP  "Añadir presupuesto de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( PedCli( nil, oWnd, ( dbfClient )->Cod, nil ) );
+            ACTION   ( PedCli( nil, oWnd, ( TDataCenter():Get( "Client" ) )->Cod, nil ) );
             TOOLTIP  "Añadir pedido de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( dbfClient )->Cod } ) );
+            ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( TDataCenter():Get( "Client" ) )->Cod } ) );
             TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( dbfClient )->Cod } ) );
+            ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( TDataCenter():Get( "Client" ) )->Cod } ) );
             TOOLTIP  "Añadir factura de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( FrontTpv( nil, oWnd, ( dbfClient )->Cod, nil ) );
+            ACTION   ( FrontTpv( nil, oWnd, ( TDataCenter():Get( "Client" ) )->Cod, nil ) );
             TOOLTIP  "Añadir tiket de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
@@ -828,14 +1133,14 @@ Return ( .t. )
 Edita el cliente en el tactil
 */
 
-STATIC FUNCTION EdtBig( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
    local oBmpGeneral
    local cResource      := "BigEdtCliente"
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], dbfClient, "0", RetNumCodCliEmp() )
+      aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], ( TDataCenter():Get( "Client" ) ), "0", RetNumCodCliEmp() )
       aTmp[ _LSNDINT ]  := .t.
       aTmp[ _LMODDAT ]  := .t.
       aTmp[ _LCHGPRE ]  := .t.
@@ -865,7 +1170,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          ID       100 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) );
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( aGet[ _COD ], dbfClient, .t., "0", 1, RetNumCodCliEmp() ) ) ;
+         VALID    ( NotValid( aGet[ _COD ], ( TDataCenter():Get( "Client" ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _TITULO ] VAR aTmp[ _TITULO ];
@@ -943,7 +1248,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ) )
+         ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -952,7 +1257,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
 			ACTION 	( oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ) } )
+         oDlg:AddFastKey( VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
       end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -966,7 +1271,7 @@ RETURN ( oDlg:nResult == IDOK )
 Edita el cliente
 */
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
 	local oFld
@@ -1062,7 +1367,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          aTmp[ _NTARCMB ]  := 1
 
       case nMode == DUPL_MODE
-         aTmp[ _COD ]      := NextKey( aTmp[ _COD ], dbfClient, "0", RetNumCodCliEmp() )
+         aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( TDataCenter():Get( "Client" ) ), "0", RetNumCodCliEmp() )
 
       otherwise
          nImpRie           := oStock:nRiesgo( aTmp[ _COD ] )
@@ -1139,9 +1444,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
 			ID 		110 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) );
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         ON HELP  ( oGet:cText( NextKey( aTmp[ _COD ], dbfClient, "0", RetNumCodCliEmp() ) ) ) ;
+         ON HELP  ( oGet:cText( NextKey( aTmp[ _COD ], ( TDataCenter():Get( "Client" ) ), "0", RetNumCodCliEmp() ) ) ) ;
          BITMAP   "BOT" ;
-         VALID    ( NotValid( oGet, dbfClient, .t., "0", 1, RetNumCodCliEmp() ) ) ;
+         VALID    ( NotValid( oGet, ( TDataCenter():Get( "Client" ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
          OF       fldGeneral
 
       REDEFINE COMBOBOX aGet[ _NTIPCLI ] VAR cTipCli ;
@@ -2588,14 +2893,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          OF       fldTarifa ;
          ACTION   ( Searching( dbfTmpAtp, { "Artículo", "Familia" }, oBrwAtp ) )
 
-#ifndef __TACTIL__
+      #ifndef __TACTIL__
 
       REDEFINE BUTTON ;
          ID       506 ;
          OF       fldTarifa ;
          ACTION   ( TInfAtp():New( "Plantilla de condiciones especificas", , , , , , { dbfTmpAtp, aGet, aTmp } ):Play() )
 
-#endif
+      #endif
 
       REDEFINE COMBOBOX oFiltroAtp VAR cFiltroAtp ;
          ID       507 ;
@@ -2624,7 +2929,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwAtp:AddCol() )
          :cHeader          := "Of. Artículo en oferta"
-         :bEditValue       := {|| ( dbfTmpAtp )->nTipAtp <= 1 .and. lArticuloEnOferta( ( dbfTmpAtp )->cCodArt, ( dbfClient )->Cod, ( dbfClient )->cCodGrp ) }
+         :bEditValue       := {|| ( dbfTmpAtp )->nTipAtp <= 1 .and. lArticuloEnOferta( ( dbfTmpAtp )->cCodArt, ( TDataCenter():Get( "Client" ) )->Cod, ( TDataCenter():Get( "Client" ) )->cCodGrp ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
       end with
@@ -3101,7 +3406,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ) )
+         ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -3135,14 +3440,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          fldIncidencias:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
          fldIncidencias:AddFastKey( VK_F4, {|| DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .t. ) } )
 
-         oDlg:AddFastKey(             VK_F5, {|| SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ) } )
+         oDlg:AddFastKey(             VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
 
       end if
 
    oDlg:bStart := { || ShowComentario( aTmp ), ShowInciCliente( aTmp[ _COD ], dbfCliInc ), ShowFld( aTmp, aGet ), FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ), oGet:SetFocus(), oBrwBnc:Load(), oBrwObr:Load(), oBrwCta:Load(), oBrwAtp:Load() }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ) ) ;
+      ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode ) ) ;
       VALID    ( KillTrans( oBmpDiv, oBrwBnc, oBrwObr, oBrwCta, oBrwAtp, oBrwInc, oBrwCon ) ) ;
       CENTER
 
@@ -3261,7 +3566,7 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static Function EdtDoc( aTmp, aGet, dbfClientD, oBrw, bWhen, bValid, nMode, aTmpLin )
+Static Function EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
 
    local oDlg
    local oRuta
@@ -3316,7 +3621,7 @@ Static Function ShowFld( aTmp, aGet )
 
    for n := 1 TO 10
       if Empty( Rtrim( aIniCli[ n ] ) )
-         aGet[ ( dbfClient )->( fieldpos( "cUsrDef" + Rjust( str( n ), "0", 2 ) ) ) ]:hide()
+         aGet[ ( TDataCenter():Get( "Client" ) )->( fieldpos( "cUsrDef" + Rjust( str( n ), "0", 2 ) ) ) ]:hide()
       end if
    next
 
@@ -3362,8 +3667,8 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
    local cNaturaleza    := "Artículo"
    local aNaturaleza    := { "Artículo", "Familia" }
    local oBrwRen
-   local cPouEmp        := cPouDiv( cDivEmp(), dbfDiv )
-   local cPouChg        := cPouDiv( cDivChg(), dbfDiv )
+   local cPouEmp        := cPouDiv( cDivEmp() )
+   local cPouChg        := cPouDiv( cDivChg() )
    local oBtnRen
    local oSayLabels     := Array( 16 )
 
@@ -3434,7 +3739,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          ON HELP  ( BrwArticulo( aGet[ 2 ], oGetArticulo ) );
          BITMAP   "LUPA" ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
+         VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataCenter():Get( "CliAtp" ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET oGetArticulo VAR cGetArticulo ;
@@ -3465,7 +3770,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          WHEN     ( nMode == APPD_MODE ) ;
          ON HELP  ( brwPrpAct( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ] ) ) ;
          VALID    ( if( lPrpAct( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ], dbfProL ),;
-                    IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
+                    IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataCenter():Get( "CliAtp" ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
                     .f. ) ) ;
          OF       oFld:aDialogs[1]
 
@@ -3484,7 +3789,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          WHEN     ( nMode == APPD_MODE ) ;
          ON HELP  ( brwPrpAct( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ] ) ) ;
          VALID    ( if( lPrpAct( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ], dbfProL ),;
-                    IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
+                    IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataCenter():Get( "CliAtp" ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
                     .f. ) ) ;
          OF       oFld:aDialogs[1]
 
@@ -3822,7 +4127,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
                   aRentabilidad[ oBrwRen:nAt, 1 ],;
                   aRentabilidad[ oBrwRen:nAt, 2 ],;
                   if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( aRentabilidad[ oBrwRen:nAt, 3 ], cPouEmp ), Trans( aRentabilidad[ oBrwRen:nAt, 3 ], "999.99" ) + " %" ),;
-                  if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( nCnv2Div( aRentabilidad[ oBrwRen:nAt, 3 ], cDivEmp(), cDivChg(), dbfDiv ), cPouChg ), "" ),;
+                  if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( nCnv2Div( aRentabilidad[ oBrwRen:nAt, 3 ], cDivEmp(), cDivChg() ), cPouChg ), "" ),;
                   "";
          HEAD ;
                   "",;
@@ -3978,670 +4283,7 @@ Static Function cValoresProp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSay
 
 Return nil
 
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION GenReport( dbfClient, oWndBrw )
-
-	local oDlg
-	local oSayDesde
-	local cSayDesde
-	local oSayHasta
-	local cSayHasta
-	local oCliDesde
-   local oCliHasta
-   local oFlt
-   local nFont       := 12
-   local nOrden      := 1
-	local cPostal		:= Space( 7 )
-	local nRecno  		:= ( dbfClient )->( RecNo() )
-	local cTag    		:= ( dbfClient )->( OrdSetFocus() )
-	local cCliDesde	:= dbFirst( dbfClient, 1 )
-	local cCliHasta	:= dbLast(  dbfClient, 1 )
-   local cTitulo     := Padr( cCodEmp() + " - " + cNbrEmp(), 100 )
-	local cSubTitulo	:= Padr( "Listado de Clientes", 100 )
-   local alOption    := { .f., .t., .f., .t. }
-
-	/*
-	Llamada a la funcion que activa la caja de dialogo
-	*/
-
-	DEFINE DIALOG oDlg RESOURCE "REP_CLIENT"
-
-	REDEFINE RADIO nOrden ;
-		ID 		100, 101 ;
-		ON CHANGE( ( dbfClient )->( OrdSetFocus( nOrden ) ),;
-						oSayDesde:cText( dbFirst( dbfClient, _TITULO ) ),;
-						oSayHasta:cText( dbLast(  dbfClient, _TITULO ) ),;
-						oCliDesde:cText( dbFirst( dbfClient, _COD ) ),;
-						oCliHasta:cText( dbLast(  dbfClient, _COD ) ) );
-		OF 		oDlg
-
-	REDEFINE GET oCliDesde VAR cCliDesde ;
-		ID 		110 ;
-		WHEN		( nOrden == 1 );
-		VALID 	( cClient( oCliDesde, dbfClient, oSayDesde ) );
-      ON HELP  ( BrwCli( oCliDesde, oSayDesde, dbfClient ) );
-      BITMAP   "LUPA" ;
-      COLOR    CLR_GET ;
-		OF 		oDlg
-
-	REDEFINE GET oSayDesde VAR cSayDesde ;
-      ID       120 ;
-      WHEN     ( nOrden == 2 );
-      ON HELP  ( BrwCli( oCliDesde, oSayDesde, dbfClient ) );
-      BITMAP   "LUPA" ;
-      COLOR    CLR_GET ;
-		OF 		oDlg
-
-	REDEFINE GET oCliHasta VAR cCliHasta ;
-		ID 		130 ;
-		WHEN		( nOrden == 1 );
-		VALID 	( cClient( oCliHasta, dbfClient, oSayHasta ) );
-      ON HELP  ( BrwCli( oCliHasta, oSayHasta, dbfClient ) );
-      BITMAP   "LUPA" ;
-      COLOR    CLR_GET ;
-		OF 		oDlg
-
-	REDEFINE GET oSayHasta VAR cSayHasta ;
-		WHEN		( nOrden == 2 );
-		ID 		140 ;
-      ON HELP  ( BrwCli( oCliHasta, oSayHasta, dbfClient ) );
-      BITMAP   "LUPA" ;
-      COLOR    CLR_GET ;
-		OF 		oDlg
-
-	REDEFINE GET cPostal ;
-		ID 		150 ;
-		OF 		oDlg
-
-   REDEFINE GET nFont ;
-		PICTURE	"@E 99" ;
-		SPINNER ;
-		MIN 6 MAX 72 ;
-		VALID		nFont >= 6 .AND. nFont <= 72 ;
-      ID       155 ;
-		OF 		oDlg
-
-   REDEFINE CHECKBOX alOption[1] ;
-		ID 		160 ;
-		OF 		oDlg
-
-   REDEFINE CHECKBOX alOption[2] ;
-      ID       161 ;
-		OF 		oDlg
-
-   REDEFINE CHECKBOX alOption[3] ;
-      ID       162 ;
-		OF 		oDlg
-
-   REDEFINE CHECKBOX alOption[4] ;
-      ID       163 ;
-		OF 		oDlg
-
-	REDEFINE GET cTitulo ;
-		ID 		170 ;
-		OF 		oDlg
-
-	REDEFINE GET cSubTitulo ;
-		ID 		180 ;
-		OF 		oDlg
-
-	REDEFINE BUTTON ;
-		ID 		531 ;
-		OF 		oDlg ;
-      ACTION   ( nil )
-
-	REDEFINE BUTTON ;
-		ID 		508;
-		OF 		oDlg ;
-		ACTION 	( 	IF ( nOrden == 1,;
-                     PrnReport( cCliDesde, cCliHasta, cPostal, oFlt, cTitulo, cSubTitulo, 1, alOption, nFont ),;
-                     PrnReport( cSayDesde, cSayHasta, cPostal, oFlt, cTitulo, cSubTitulo, 1, alOption, nFont ) );
-					)
-
-	REDEFINE BUTTON ;
-		ID 		505;
-		OF 		oDlg ;
-		ACTION 	( 	IF ( nOrden == 1,;
-                     PrnReport( cCliDesde, cCliHasta, cPostal, oFlt, cTitulo, cSubTitulo, 2, alOption, nFont ),;
-                     PrnReport( cSayDesde, cSayHasta, cPostal, oFlt, cTitulo, cSubTitulo, 2, alOption, nFont ) );
-					)
-
-	REDEFINE BUTTON ;
-		ID 		510;
-		OF 		oDlg ;
-		ACTION 	( oDlg:end() )
-
-	ACTIVATE DIALOG oDlg CENTER ;
-		ON PAINT ( oCliDesde:lValid(), oCliHasta:lValid() )
-
-	( dbfClient )->( OrdSetFocus( cTag ) )
-	( dbfClient )->( dbGoto( nRecno ) )
-
-	IF oWndBrw != NIL
-		oWndBrw:refresh()
-	END IF
-
-RETURN ( oDlg:nResult == IDOK )
-
-//------------------------------------------------------------------------//
-
-STATIC FUNCTION PrnReport( cCliDesde, cCliHasta, cPostal, oFlt, cTitulo, cSubTitulo, nDevice, alOption, nFont )
-
-   local oReport
-   local oFont1   := TFont():New( "Courier New", 0, - ( nFont ), .f., .t. )
-   local oFont2   := TFont():New( "Courier New", 0, - ( nFont ), .f., .f. )
-
-	/*
-	Posicionamos en el primer registro
-	*/
-
-	( dbfClient )->( DbSeek( cCliDesde ) )
-
-	IF nDevice == 1
-
-		REPORT oReport ;
-				TITLE  	Rtrim( cTitulo ),;
-							Rtrim( cSubTitulo ) ;
-				FONT   	oFont1, oFont2 ;
-				HEADER 	"Fecha: " + dtoc(date()) RIGHT ;
-            FOOTER   "Página : " + str( oReport:nPage, 3 ) CENTERED;
-            CAPTION  "Listado de clientes";
-				PREVIEW
-
-	ELSE
-
-		REPORT oReport ;
-				TITLE  	Rtrim( cTitulo ),;
-							Rtrim( cSubTitulo ) ;
-				FONT   	oFont1, oFont2 ;
-            HEADER   "Fecha: " + dtoc( date() ) RIGHT ;
-            FOOTER   "Página : " + str( oReport:nPage, 3 ) CENTERED ;
-            CAPTION  "Listado de clientes";
-				TO PRINTER
-
-	END IF
-
-		COLUMN TITLE "Codg." ;
-				DATA (dbfClient)->COD ;
-				SIZE 10 ;
-				FONT 2
-
-      COLUMN TITLE "Nombre", "Contacto", If( alOption[1], "D.N.I. / C.I.F.", "" ) ;
-            DATA  (dbfClient)->Titulo,;
-                  (dbfClient)->cPerCto,;
-                   If( alOption[1], (dbfClient)->NIF, "" ) ;
-            SIZE 44 ;
-				FONT 2
-
-      COLUMN TITLE "Domicilio", "Población", "Cod.Pos. - Provincia" ;
-            DATA  (dbfClient)->DOMICILIO,;
-                  (dbfClient)->POBLACION,;
-                  (dbfClient)->CODPOSTAL + " - " + (dbfClient)->PROVINCIA;
-            SIZE  60 ;
-            FONT  2
-
-      IF alOption[2]
-
-         COLUMN TITLE "Teléfono", "Móvil", "Fax" ;
-            DATA  ( dbfClient)->Telefono,;
-                  ( dbfClient)->Movil   ,;
-                  ( dbfClient)->Fax      ;
-            SIZE  18 ;
-            FONT  2
-
-      END IF
-
-      IF alOption[3]
-
-         COLUMN TITLE "Riesgo" ;
-            DATA  Trans( ( dbfClient )->Riesgo, cPorDiv ) ;
-            SIZE  18 ;
-            FONT  2
-
-      END IF
-
-      IF alOption[4]
-
-         COLUMN TITLE "Cuenta" ;
-            DATA  Trans( cClientCuenta( dbfClient ), "@R ####-####-##-##########" ) ;
-            SIZE  20 ;
-            FONT  2
-
-      END IF
-
-		END REPORT
-
-      IF !Empty( oReport ) .and. oReport:lCreated
-			oReport:Margin(0, RPT_RIGHT, RPT_CMETERS)
-         oReport:bSkip        := {|| (dbfClient)->(DbSkip()) }
-         oReport:lSeparator   := .t.
-		END IF
-
-      ACTIVATE REPORT oReport ;
-         FOR            ( dbfClient )->( OrdKeyVal() ) >= cCliDesde                 .AND.;
-                        ( dbfClient )->( OrdKeyVal() ) <= cCliHasta                 .AND.;
-                        IF( !empty( oFlt ) .and. !empty( oFlt:bExpFilter ), ( dbfClient )->( eval( oFlt:bExpFilter ) ), .t. )  .AND.;
-                        IF( empty( cPostal ), .t., ( dbfClient )->CodPostal == cPostal ) ;
-         WHILE          !( dbfClient )->( eof() )
-
-	oFont1:end()
-	oFont2:end()
-
-   if !Empty( oReport )
-      oReport:End()
-   end if
-
-RETURN NIL
-
 //--------------------------------------------------------------------------//
-
-FUNCTION BrwCli( oGet, oGet2, dbfClient )
-
-   local oDlg
-	local oBrw
-   local hBmp
-	local oGet1
-	local cGet1
-   local nOrd     := GetBrwOpt( "BrwCli" )
-	local oCbxOrd
-   local aCbxOrd  := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
-   local cCbxOrd
-   local cReturn  := Space( 12 )
-
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
-
-   nOrd           := ( dbfClient )->( OrdSetFocus( nOrd ) )
-
-   ( dbfClient )->( dbGoTop() )
-
-   DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE "Seleccionar clientes"
-
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-			ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfClient ) ;
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfClient )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
-
-      oBrw                 := IXBrowse():New( oDlg )
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:cAlias          := dbfClient
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Browse.Clientes.Report"
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Bl. Bloqueado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfClient )->lBlqCli }
-         :nWidth           := 20
-         :SetCheck( { "Cnt16", "Nil16" } )
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( dbfClient )->Cod }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( dbfClient )->Titulo }
-         :nWidth           := 280
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "NIF/CIF"
-         :cSortOrder       := "Nif"
-         :bEditValue       := {|| ( dbfClient )->Nif }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Teléfono"
-         :cSortOrder       := "Telefono"
-         :bEditValue       := {|| ( dbfClient )->Telefono }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Fax"
-         :bEditValue       := {|| ( dbfClient )->Fax }
-         :nWidth           := 80
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Domicilio"
-         :bEditValue       := {|| ( dbfClient )->Domicilio }
-         :nWidth           := 300
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Población"
-         :cSortOrder       := "Poblacion"
-         :bEditValue       := {|| ( dbfClient )->Poblacion }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Código postal"
-         :cSortOrder       := "CodPostal"
-         :bEditValue       := {|| ( dbfClient )->CodPostal }
-         :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Provincia"
-         :cSortOrder       := "Provincia"
-         :bEditValue       := {|| ( dbfClient )->Provincia }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Establecimiento"
-         :cSortOrder       := "NbrEst"
-         :bEditValue       := {|| ( dbfClient )->NbrEst }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Correo electrónico"
-         :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( dbfClient )->cMeiInt }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Riesgo"
-         :bEditValue       := {|| Trans( ( dbfClient )->Riesgo, PicOut() ) }
-         :nWidth           := 60
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Contacto"
-         :bEditValue       := {|| ( dbfClient )->cPerCto }
-         :nWidth           := 100
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Observaciones"
-         :bEditValue       := {|| ( dbfClient )->mComent }
-         :nWidth           := 200
-      end with
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
-
-      oBrw:CreateFromResource( 105 )
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         ACTION   ( oDlg:end(IDOK) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
-
-      REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
-         WHEN     .f. ;
-         ACTION   ( nil )
-
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
-         WHEN     .f. ;
-         ACTION   ( nil )
-
-   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-
-   oDlg:bStart                := {|| oBrw:Load() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   CursorWait()
-
-   if oDlg:nResult == IDOK
-
-      cReturn  := ( dbfClient )->Cod
-
-      if !Empty( oGet )
-         oGet:cText( ( dbfClient )->Cod )
-         oGet:lValid()
-      end if
-
-      if ValType( oGet2 ) == "O"
-         oGet2:cText( ( dbfClient )->Titulo )
-         if ( dbfClient )->nColor != 0
-            oGet2:SetColor( , ( dbfClient )->nColor )
-         end if
-      end if
-
-   end if
-
-   SetBrwOpt( "BrwCli", ( dbfClient )->( OrdNumber() ) )
-
-   ( dbfClient )->( OrdSetFocus( nOrd ) )
-
-   if !Empty( oBrw )
-      oBrw:end()
-   end if
-
-   CursorWE()
-
-   if !Empty( oGet )
-      oGet:SetFocus()
-   end if
-
-RETURN cReturn
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve la cuenta del banco cliente
-*/
-
-FUNCTION cCtaBanCli( cCodCli, dbfBanco )
-
-   local nRec
-   local oBlock
-   local oError
-   local nOrdAnt
-   local cText    := ""
-   local lClose   := .f.
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfBanco )
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBanco ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
-      SET TAG TO CCODDEF
-      lClose      := .t.
-   else
-      nRec        := ( dbfBanco )->( Recno() )
-      nOrdAnt     := ( dbfBanco )->( OrdSetFocus( "cCodDef" ) )
-   end if
-
-   if ( dbfBanco )->( dbSeek( cCodCli ) )
-      cText       := ( dbfBanco )->cCtaBnc
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de bancos" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   if lClose
-      CLOSE ( dbfBanco )
-   else
-      ( dbfBanco )->( OrdSetFocus( nOrdAnt ) )
-      ( dbfBanco )->( dbGoTo( nRec ) )
-   end if
-
-Return ( cText )
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve la cuenta contable de un cliente
-*/
-
-FUNCTION cCliCta( cCodCli, dbfClient )
-
-   local oBlock
-   local oError
-   local cText    := ""
-   local lClose   := .f.
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfClient )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-      lClose      := .t.
-   end if
-
-   if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-      cText       := Rtrim( ( dbfClient )->SubCta )
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-	IF lClose
-		CLOSE ( dbfClient )
-	END IF
-
-RETURN cText
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve la cuenta de Venta de un cliente
-*/
-
-FUNCTION cCliCtaVta( cCodCli, dbfClient )
-
-   local oBlock
-   local oError
-   local lClose      := .f.
-   local cCliCtaVta  := ""
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfClient )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-      lClose         := .t.
-   end if
-
-   if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-      cCliCtaVta     := ( dbfClient )->CtaVenta
-   end if
-
-   if Empty( cCliCtaVta )
-      cCliCtaVta     := cCtaCli()
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   if lClose
-		CLOSE ( dbfClient )
-   end if
-
-RETURN ( cCliCtaVta )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cBanco( cCodCli, dbfClient )
-
-   local oBlock
-   local oError
-   local cText    := ""
-   local lClose   := .f.
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfClient )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-      lClose      := .t.
-   end if
-
-   IF ( dbfClient )->( dbSeek( Rjust( cCodCli, "0" ) ) )
-      cText       := ( dbfClient )->Banco
-	END IF
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-	IF lClose
-		CLOSE ( dbfClient )
-	END IF
-
-RETURN cText
-
-//---------------------------------------------------------------------------//
-
-FUNCTION lCliCreditoSolicitado( cCodCli, dbfClient )
-
-   local lRet     := .f.
-
-   if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-      lRet        := ( dbfClient )->lCreSol
-   end if
-
-RETURN lRet
-
-//---------------------------------------------------------------------------//
-
 /*
 Chequea las cuentas de contaplus
 */
@@ -4650,8 +4292,8 @@ STATIC FUNCTION ChkAllSubCta()
 
    local oDlg
    local cArea
-   local nRecno      := ( dbfClient )->( RecNo() )
-   local cTag        := ( dbfClient )->( OrdSetFocus( 1 ) )
+   local nRecno      := ( TDataCenter():Get( "Client" ) )->( RecNo() )
+   local cTag        := ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( 1 ) )
    local cRuta       := cRutCnt()
    local cCodEmp     := cEmpCnt( "A" )
    local oChkCreate
@@ -4684,10 +4326,10 @@ STATIC FUNCTION ChkAllSubCta()
 	Obtenemos los valores del primer y ultimo codigo
 	*/
 
-   cCliOrg           := dbFirst( dbfClient, 1 )
-   cCliDes           := dbLast(  dbfClient, 1 )
-   cSayCliOrg        := dbFirst( dbfClient, 2 )
-   cSayCliDes        := dbLast(  dbfClient, 2 )
+   cCliOrg           := dbFirst( ( TDataCenter():Get( "Client" ) ), 1 )
+   cCliDes           := dbLast(  ( TDataCenter():Get( "Client" ) ), 1 )
+   cSayCliOrg        := dbFirst( ( TDataCenter():Get( "Client" ) ), 2 )
+   cSayCliDes        := dbLast(  ( TDataCenter():Get( "Client" ) ), 2 )
 
    oImageList        := TImageList():New( 16, 16 )
    oImageList:AddMasked( TBitmap():Define( "bRed" ),     Rgb( 255, 0, 255 ) )
@@ -4705,9 +4347,9 @@ STATIC FUNCTION ChkAllSubCta()
 
    REDEFINE GET oCliOrg VAR cCliOrg;
       ID       80 ;
-      VALID    cClient( oCliOrg, dbfClient, oSayCliOrg );
+      VALID    cClient( oCliOrg, ( TDataCenter():Get( "Client" ) ), oSayCliOrg );
       BITMAP   "LUPA" ;
-      ON HELP  BrwCli( oCliOrg, oSayCliOrg, dbfClient );
+      ON HELP  BrwCli( oCliOrg, oSayCliOrg, ( TDataCenter():Get( "Client" ) ) );
       OF       oDlg
 
    REDEFINE GET oSayCliOrg VAR cSayCliOrg ;
@@ -4717,9 +4359,9 @@ STATIC FUNCTION ChkAllSubCta()
 
    REDEFINE GET oCliDes VAR cCliDes;
       ID       90 ;
-      VALID    cClient( oCliDes, dbfClient, oSayCliDes );
+      VALID    cClient( oCliDes, ( TDataCenter():Get( "Client" ) ), oSayCliDes );
       BITMAP   "LUPA" ;
-      ON HELP  BrwCli( oCliDes, oSayCliDes, dbfClient );
+      ON HELP  BrwCli( oCliDes, oSayCliDes, ( TDataCenter():Get( "Client" ) ) );
       OF       oDlg
 
    REDEFINE GET oSayCliDes VAR cSayCliDes ;
@@ -4752,8 +4394,8 @@ STATIC FUNCTION ChkAllSubCta()
       CENTER ;
       ON INIT  ( oTree:SetImageList( oImageList ) )
 
-	( dbfClient )->( dbGoTo( nRecno ) )
-	( dbfClient )->( OrdSetFocus( cTag ) )
+	( TDataCenter():Get( "Client" ) )->( dbGoTo( nRecno ) )
+	( TDataCenter():Get( "Client" ) )->( OrdSetFocus( cTag ) )
 
    CLOSE ( cArea )
 
@@ -4779,52 +4421,52 @@ Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, a
 
    nLen              := nLenCuentaContaplus()
 
-   if ( dbfClient )->( dbSeek( cCliOrg ) )
+   if ( TDataCenter():Get( "Client" ) )->( dbSeek( cCliOrg ) )
 
-      while ( dbfClient )->Cod <= cCliDes .and. !( dbfClient )->( Eof() )
+      while ( TDataCenter():Get( "Client" ) )->Cod <= cCliDes .and. !( TDataCenter():Get( "Client" ) )->( Eof() )
 
-         if Empty( AllTrim( ( dbfClient )->SubCta ) ) .and. lChkCuenta
-            if dbLock( dbfClient )
-               ( dbfClient )->SubCta      := "430" + Right( Rtrim( ( dbfClient )->Cod ), nLen )
-               ( dbfClient )->( dbUnLock() )
+         if Empty( AllTrim( ( TDataCenter():Get( "Client" ) )->SubCta ) ) .and. lChkCuenta
+            if dbLock( TDataCenter():Get( "Client" ) )
+               ( TDataCenter():Get( "Client" ) )->SubCta      := "430" + Right( Rtrim( ( TDataCenter():Get( "Client" ) )->Cod ), nLen )
+               ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
             end if
          end if
 
-         if !Empty( AllTrim( ( dbfClient )->SubCta ) )
+         if !Empty( AllTrim( ( TDataCenter():Get( "Client" ) )->SubCta ) )
 
-            if !( cArea )->( dbSeek( ( dbfClient )->SubCta, .t. ) )
+            if !( cArea )->( dbSeek( ( TDataCenter():Get( "Client" ) )->SubCta, .t. ) )
 
-               if lChkCreate .or. ApoloMsgNoYes(   "Subcuenta : " + Rtrim( ( dbfClient )->SubCta ) + " no existe" + CRLF + ;
+               if lChkCreate .or. ApoloMsgNoYes(   "Subcuenta : " + Rtrim( ( TDataCenter():Get( "Client" ) )->SubCta ) + " no existe" + CRLF + ;
                                                    "¿ Desea crearla ?",;
                                                    "Enlace con contaplus ®" )
 
                   ( cArea )->( dbAppend() )
-                  ( cArea )->Cod         := ( dbfClient )->Subcta
-                  ( cArea )->Titulo      := ( dbfClient )->Titulo
-                  ( cArea )->Nif         := ( dbfClient )->Nif
-                  ( cArea )->Domicilio   := ( dbfClient )->Domicilio
-                  ( cArea )->Poblacion   := ( dbfClient )->Poblacion
-                  ( cArea )->Provincia   := ( dbfClient )->Provincia
-                  ( cArea )->CodPostal   := ( dbfClient )->CodPostal
+                  ( cArea )->Cod         := ( TDataCenter():Get( "Client" ) )->Subcta
+                  ( cArea )->Titulo      := ( TDataCenter():Get( "Client" ) )->Titulo
+                  ( cArea )->Nif         := ( TDataCenter():Get( "Client" ) )->Nif
+                  ( cArea )->Domicilio   := ( TDataCenter():Get( "Client" ) )->Domicilio
+                  ( cArea )->Poblacion   := ( TDataCenter():Get( "Client" ) )->Poblacion
+                  ( cArea )->Provincia   := ( TDataCenter():Get( "Client" ) )->Provincia
+                  ( cArea )->CodPostal   := ( TDataCenter():Get( "Client" ) )->CodPostal
                   ( cArea )->( dbCommit() )
 
-                  oItem := oTree:Add( "Cuenta " + Rtrim( ( dbfClient )->Subcta ) + " del cliente " + Rtrim( ( dbfClient )->Cod ) + ", " + Rtrim( ( dbfClient )->Titulo ) + " creada", 1 )
+                  oItem := oTree:Add( "Cuenta " + Rtrim( ( TDataCenter():Get( "Client" ) )->Subcta ) + " del cliente " + Rtrim( ( TDataCenter():Get( "Client" ) )->Cod ) + ", " + Rtrim( ( TDataCenter():Get( "Client" ) )->Titulo ) + " creada", 1 )
 
                else
 
-                  oItem := oTree:Add( "Cuenta " + Rtrim( ( dbfClient )->Subcta ) + " del cliente " + Rtrim( ( dbfClient )->Cod ) + ", " + Rtrim( ( dbfClient )->Titulo ) + " creación cancelada", 1 )
+                  oItem := oTree:Add( "Cuenta " + Rtrim( ( TDataCenter():Get( "Client" ) )->Subcta ) + " del cliente " + Rtrim( ( TDataCenter():Get( "Client" ) )->Cod ) + ", " + Rtrim( ( TDataCenter():Get( "Client" ) )->Titulo ) + " creación cancelada", 1 )
 
                end if
 
             else
 
-               oItem    := oTree:Add( "Cuenta " + Rtrim( ( dbfClient )->Subcta ) + " del cliente " + Rtrim( ( dbfClient )->Cod ) + ", " + Rtrim( ( dbfClient )->Titulo ) + " ya existe", 0 )
+               oItem    := oTree:Add( "Cuenta " + Rtrim( ( TDataCenter():Get( "Client" ) )->Subcta ) + " del cliente " + Rtrim( ( TDataCenter():Get( "Client" ) )->Cod ) + ", " + Rtrim( ( TDataCenter():Get( "Client" ) )->Titulo ) + " ya existe", 0 )
 
             end if
 
          else
 
-            oItem       := oTree:Add( "El Cliente : " + Rtrim( ( dbfClient )->Cod ) + ", " + Rtrim( ( dbfClient )->Titulo ) + " no tiene codificada cuenta en Contaplus", 0 )
+            oItem       := oTree:Add( "El Cliente : " + Rtrim( ( TDataCenter():Get( "Client" ) )->Cod ) + ", " + Rtrim( ( TDataCenter():Get( "Client" ) )->Titulo ) + " no tiene codificada cuenta en Contaplus", 0 )
 
          end if
 
@@ -4832,7 +4474,7 @@ Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, a
 
          SysRefresh()
 
-         ( dbfClient )->( dbSkip() )
+         ( TDataCenter():Get( "Client" ) )->( dbSkip() )
 
       end do
 
@@ -4850,7 +4492,7 @@ Return nil
 Devuelve la estructura de la base de datos en funcion del codigo de cliente
 */
 
-STATIC FUNCTION CnfCli( dbfClient )
+STATIC FUNCTION CnfCli()
 
 	local oDlg
    local cIniCli  := cPatEmp() + "Client.Ini"
@@ -4916,261 +4558,34 @@ STATIC FUNCTION WrtIniCli( cIniCli )
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-/*
-Exporta el fichero de articulos a EDM
-*/
 
-FUNCTION EdmCli( cCodRut, cPathTo, oStru )
-
-   local n           := 0
-   local cChr
-   local fTar
-   local cFilEdm
-   local cFilOdb
-   local nWrote
-   local nRead
-   local oError
-   local oBlock
-   local dbfClient
-
-   DEFAULT cCodRut   := "001"
-   DEFAULT cPathTo   := "C:\INTERS~1\"
-
-   cCodRut           := SubStr( cCodRut, -3 )
-
-   cFilEdm           := cPathTo + "ECLIE" + cCodRut + ".TXT"
-   cFilOdb           := cPathTo + "ECLIE" + cCodRut + ".ODB"
-
-   /*
-   Creamos el fichero destino
-   */
-
-   IF file( cFilEdm )
-      fErase( cFilEdm )
-   END IF
-
-   fTar              := fCreate( cFilEdm )
-
-   /*
-   Abrimos las bases de datos
-   */
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   oStru:oMetUno:cText   := "Clientes"
-   oStru:oMetUno:SetTotal( ( dbfClient )->( LastRec() ) )
-
-   WHILE !(dbfClient)->( eof() )
-
-      cChr  := "+"
-      cChr  += Rjust( (dbfClient)->COD, "0", 7 ) + ","                        // Codigo de cliente
-
-      if !empty( (dbfClient)->NBREST )
-      cChr  += EdmSubStr( (dbfClient)->NBREST, 1, 35 )                        // Nombre del estblecimiento
-      else
-      cChr  += EdmSubStr( (dbfClient)->TITULO, 1, 35 )                        // Nombre de cliente
-      end if
-
-      cChr  += EdmSubStr( (dbfClient)->TITULO, 1, 35 )                        // Nombre de cliente
-      cChr  += EdmSubStr( (dbfClient)->DOMICILIO, 1, 35 )                     // Domicilio
-      cChr  += EdmSubStr( (dbfClient)->POBLACION, 1, 25 )                     // Población
-      cChr  += EdmSubStr( (dbfClient)->NIF, 1, 14 )                           // N.I.F.
-      cChr  += EdmLogicSN( (dbfClient)->LREQ )                                // Recargo de Equivalencia
-      cChr  += EdmLocig12( (dbfClient)->LMAYORISTA )                          // Tipo de tarifa
-      cChr  += EdmSubStr( "S" )                                               // Valoración de albaranes
-      cChr  += EdmSubStr( Trans( (dbfClient)->NDTOESP, "@ 99.99" ), 1, 5 )    // Descuento de cliente
-      cChr  += EdmSubStr( "0" )                                               // Numero para grupo de ofertas
-      cChr  += EdmSubStr( Trans( (dbfClient)->RIESGO, "@ 9999.99" ), 1, 7 )   // Riesgo
-      cChr  += EdmSubStr( Trans( (dbfClient)->NDPP, "@ 99.99" ), 1, 5 )       // Descuento pronto pago de cliente
-      cChr  += EdmSubStr( "S", 1, 1, .f. )                                    // S/N Imprime en Euros o en Ptas
-      //cChr  += EdmSubStr( (dbfClient)->Telefono, 1, 10 )                      // Telefono
-      cChr  += CRLF
-
-      nWrote:= fwrite( fTar, cChr, nRead )
-
-      oStru:oMetUno:Set( ++n )
-
-      /*
-      IF fError() != 0
-         msginfo( "Hay errores" )
-      END IF
-      */
-
-      (dbfClient)->( dbSkip() )
-
-   END DO
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfClient )
-   fClose( fTar )
-
-   /*
-   Conversion a formato exportable a la psion
-   */
-
-   if file( FullCurDir() + "CONVER.EXE" )
-      WinExec( FullCurDir() + "CONVER.EXE " + cFilEdm + " " + cFilOdb + " 44 -x", 6 ) // Minimized
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-/*
-Exporta el fichero de rutas y clientes a EDM
-*/
-
-FUNCTION EdmRutCli( cCodRut, cPathTo, oStru )
-
-   local n           := 0
-   local cChr
-   local fTar
-   local nWrote
-   local nRead
-   local cFilEdm
-   local cFilOdb
-   local cRutCli
-   local dbfClient
-
-   DEFAULT cCodRut   := "001"
-   DEFAULT cPathTo   := "C:\INTERS~1\"
-
-   cRutCli           := cCodRut
-
-   cCodRut           := SubStr( cCodRut, -3 )
-
-   cFilEdm           := cPathTo + "ERUTA" + cCodRut + ".TXT"    //  de momento ruta unica
-   cFilOdb           := cPathTo + "ERUTA" + cCodRut + ".ODB"    //  de momento ruta unica
-
-   /*
-   Creamos el fichero destino
-   */
-
-   if file( cFilEdm )
-      fErase( cFilEdm )
-   end if
-
-   fTar              := fCreate( cFilEdm )
-
-   /*
-   Abrimos las bases de datos
-   */
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   oStru:oMetUno:cText   := "Rutas"
-   oStru:oMetUno:SetTotal( ( dbfClient )->( LastRec() ) )
-
-   WHILE !(dbfClient)->( eof() )
-
-      if ( dbfClient )->cCodRut == cRutCli
-
-         cChr  := Right( cCodRut, 1 )                             // Codigo de ruta
-         cChr  += Rjust( (dbfClient)->COD, "0", 7 )               // Codigo de cliente
-         cChr  += CRLF
-
-         nWrote:= fwrite( fTar, cChr, nRead )
-
-      end if
-
-      oStru:oMetUno:Set( ++n )
-
-      /*
-      IF fError() != 0
-         msginfo( "Hay errores" )
-      END IF
-      */
-
-      ( dbfClient )->( dbSkip() )
-
-   END DO
-
-   CLOSE ( dbfClient )
-   fClose( fTar )
-
-   if file( FullCurDir() + "CONVER.EXE" )
-      WinExec( FullCurDir() + "CONVER.EXE " + cFilEdm + " " + cFilOdb + " 44 -x", 6 ) // Minimized
-   end if
-
-RETURN NIL
-
-//-------------------------------------------------------------------------//
-/*
-Selecciona todos los registros
-*/
-
-STATIC FUNCTION lSelAll( oBrw, dbf, lSel )
-
-   local nRecAct  := ( dbf )->( Recno() )
-
-   DEFAULT lSel   := .t.
-
-   CursorWait()
-
-   ( dbf )->( dbGoTop() )
-
-   while !( dbf )->( eof() )
-
-      if dbLock( dbf )
-         ( dbf )->lSndInt := lSel
-         ( dbf )->( dbUnlock() )
-      end if
-
-      ( dbf )->( dbSkip() )
-
-   end do
-
-   ( dbf )->( dbGoTo( nRecAct ) )
-
-   if oBrw != nil
-      oBrw:Refresh()
-      oBrw:SetFocus()
-   end if
-
-   CursorWe()
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-FUNCTION lSndCli( oWndBrw, dbf, lVal )
+FUNCTION lSndCli( oWndBrw, lVal )
 
    local nRecAct
-   local nRecOld           := ( dbf )->( Recno() )
+   local nRecOld           := ( TDataCenter():Get( "Client") )->( Recno() )
 
    for each nRecAct in ( oWndBrw:oBrw:aSelected )
-      ( dbf )->( dbGoTo( nRecAct ) )
+      ( TDataCenter():Get( "Client") )->( dbGoTo( nRecAct ) )
 
-      if dbDialogLock( dbf )
+      if dbDialogLock( TDataCenter():Get( "Client") )
 
          if Empty( lVal )
-            ( dbf )->lSndInt  := !( dbf )->lSndInt
+            ( TDataCenter():Get( "Client") )->lSndInt  := !( TDataCenter():Get( "Client") )->lSndInt
          else
-            ( dbf )->lSndInt  := lVal
+            ( TDataCenter():Get( "Client") )->lSndInt  := lVal
          end if
 
-         ( dbf )->( dbUnlock() )
+         ( TDataCenter():Get( "Client") )->( dbUnlock() )
 
       end if
 
    next
 
-   ( dbf )->( dbGoTo( nRecOld ) )
+   ( TDataCenter():Get( "Client") )->( dbGoTo( nRecOld ) )
 
-    oWndBrw:Refresh()
+   oWndBrw:Refresh()
 
-    oWndBrw:oBrw:Select()
+   oWndBrw:oBrw:Select()
 
 Return nil
 
@@ -5180,130 +4595,25 @@ Return nil
 Devuelve el codigo del Grupo de Cliente de un cliente determinado
 */
 
-FUNCTION RetGrpCli( cCodCli, dbfClient )
+FUNCTION RetGrpCli( cCodCli, dbfCli )
 
    local cGrpCli  := ""
 
-   if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-      cGrpCli     := ( dbfClient )->cCodGrp
+   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+      cGrpCli     := ( dbfCli )->cCodGrp
    end if
 
 RETURN ( cGrpCli )
 
 //----------------------------------------------------------------------------//
-/*
-static function ComCorCli()
 
-   local oDoc
-   local oText
-   local oFind
-   local cFound
-   local bError
-   local cText
-   local oWord
-   local cFile    := FullCurDir() + "Test.doc"
-   local cAreAnt  := Alias()
-   local nRecAnt  := ( dbfClient )->( RecNo() )
-
-   Select( dbfClient )
-
-   if File( cFile )
-
-      oWord := TOleAuto():New( "Word.Application" )
-      oWord:Set( "Visible", .t. )      //set it to .f. for faster results
-      oWord:Set( "WindowState", 1 )    // Maximizado
-
-      oDoc  := oWord:Get( "Documents" )
-      oDoc:Open( cFile )
-
-      while !( dbfClient )->( eof() )
-
-         oText := oWord:Selection()
-         oFind := oText:Find()
-
-         while .t.
-
-            oFind:Set( "ClearFormatting" )
-
-            oFind:Text  :="#*#"
-            oFind:Wrap  :=1
-            oFind:Set("MatchWildcards",.t.)
-
-            oFind:Execute()
-
-            cFound      := Alltrim( SubStr( oText:Text, 2, Len( Alltrim( oText:Text) ) -2 ) )
-
-            if Empty( cFound )
-               exit
-            end if
-
-
-            cText := cValToChar( Eval( &( '{||' + cFound + '}' ) ) )
-            if Empty( cText )
-               oText:TypeText( "" )
-            else
-               oText:TypeText( cText )
-            end if
-
-         ( dbfClient )->( dbSkip() )
-
-         end do
-
-      end do
-
-   else
-
-      MsgInfo( "Cannot find " + cFile )
-
-   endif
-
-   if cAreaAnt != ""
-      Select( cAreaAnt )
-   end if
-
-   ( dbfClient )->( dbGoTo( nRecAnt ) )
-
-RETURN ( nil )
-*/
-
-//----------------------------------------------------------------------------//
-/*
-static function MkDocCli()
-
-   local oDoc
-   local oText
-   local oFind
-   local cFound
-   local bError
-   local cText
-   local oWord
-
-   oWord := TOleAuto():New( "Word.Application" )
-   oWord:Set( "Visible", .t. )      //set it to .f. for faster results
-   oWord:Set( "WindowState", 1 )    // Maximizado
-   oWord:Documents:Add()
-
-   oText             := oWord:Selection()
-   oText:Text        := "Clientes"
-   oText:Font:Name   := "Arial"
-   oText:Font:Size   := 20
-   oText:Font:Bold   := .t.
-
-   oDoc              := oWord:Get("ActiveDocument")
-   oDoc              := ActiveDocument.Range(0, 0)
-   oDoc:Tables:Add( oDoc:Range( 0, 0 ), 1, ( dbfClient )->( fCount() ) )
-
-RETURN ( nil )
-*/
-//----------------------------------------------------------------------------//
-
-function CalRiesgo( cPatEmp, cCodCli, oMeter, oMessage, lMessage )
+function CalRiesgo()
 
 return ( 0 )
 
 //---------------------------------------------------------------------------//
 
-function SetRiesgo( cCodCli, dbfClient, oRieCli )
+function SetRiesgo()
 
 return ( 0 )
 
@@ -5343,13 +4653,11 @@ static function AddFamilia( oBrwAtp, dbfTmpAtp, cCodCli )
       VALID    cFamilia( oFamIni, dbfFamilia, oFamIniTxt ) ;
       BITMAP   "LUPA" ;
       ON HELP  BrwFamilia( oFamIni, oFamIniTxt ) ;
-		COLOR 	CLR_GET ;
       OF       oDlg
 
    REDEFINE GET oFamIniTxt VAR cFamIniTxt ;
       ID       110 ;
       WHEN     .f.;
-      COLOR    CLR_GET ;
       OF       oDlg
 
    REDEFINE GET oFamFin VAR cFamFin;
@@ -5357,13 +4665,11 @@ static function AddFamilia( oBrwAtp, dbfTmpAtp, cCodCli )
       VALID    cFamilia( oFamFin, dbfFamilia, oFamFinTxt ) ;
       BITMAP   "LUPA" ;
       ON HELP  BrwFamilia( oFamFin, oFamFinTxt ) ;
-		COLOR 	CLR_GET ;
       OF       oDlg
 
    REDEFINE GET oFamFinTxt VAR cFamFinTxt ;
       ID       130 ;
       WHEN     .f.;
-      COLOR    CLR_GET ;
       OF       oDlg
 
    REDEFINE CHECKBOX aPre[ 1 ] ;
@@ -5555,7 +4861,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt, nDtoDiv, nDprArt, nComAge, dFecIni, dFecFin, lAplPre, lAplPed, lAplAlb, lAplFac, lAplSat, oDlg )
+STATIC FUNCTION AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt, nDtoDiv, nDprArt, nComAge, dFecIni, dFecFin, lAplPre, lAplPed, lAplAlb, lAplFac, lAplSat, oDlg )
 
    local nIvaPct  := 0
    local nOrdArt  := ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
@@ -5578,7 +4884,7 @@ static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt,
 
                if !( dbfTmpAtp )->( dbSeek( ( dbfArticulo )->Codigo ) )
 
-                  nIvaPct                    := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+                  nIvaPct                    := nIva( TDataCenter():Get( "TIva" ), ( dbfArticulo )->TipoIva )
 
                   ( dbfTmpAtp )->( dbAppend() )
 
@@ -5671,31 +4977,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-function RefBrwCta( oBrwCta, cSubCta, dbfDiario )
-
-   if dbfDiario != nil
-
-      if !Empty( cSubCta )
-         ( dbfDiario )->( OrdScope( 0, cSubCta ) )
-         ( dbfDiario )->( OrdScope( 1, cSubCta ) )
-      else
-         ( dbfDiario )->( OrdScope( 0, Replicate( "9", 12 ) ) )
-         ( dbfDiario )->( OrdScope( 1, Replicate( "9", 12 ) ) )
-      end if
-
-      ( dbfDiario )->( dbGoTop() )
-
-      if oBrwCta != nil
-         oBrwCta:Refresh()
-      end if
-
-   end if
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
+STATIC FUNCTION ChgPrc( oWndBrw )
 
 	local oDlg
    local cFam              := Space( 5 )
@@ -5732,7 +5014,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
    local lRnd              := .f.
    local lGenerateTarifa   := .f.
    local lAppTarifaFecha   := .f.
-   local nDec              := nRouDiv( cDivEmp(), dbfDiv )
+   local nDec              := nRouDiv( cDivEmp() )
    local cArtOrg
    local cArtDes
    local oArtOrg
@@ -5743,7 +5025,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
    local cSayArtDes
    local dIniPrc           := Date()
    local dFinPrc           := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
-   local aStaCli           := aGetStatus( dbfClient, .t. )
+   local aStaCli           := aGetStatus( TDataCenter():Get( "Client" ), .t. )
 
 	/*
 	Llamada a la funcion que activa la caja de dialogo
@@ -5755,10 +5037,10 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 	Obtenemos los valores del primer y ultimo codigo
 	*/
 
-   cCliOrg        := dbFirst( dbfClient, 1 )
-   cCliDes        := dbLast ( dbfClient, 1 )
-   cSayCliOrg     := dbFirst( dbfClient, 2 )
-   cSayCliDes     := dbLast ( dbfClient, 2 )
+   cCliOrg        := dbFirst( TDataCenter():Get( "Client" ), 1 )
+   cCliDes        := dbLast ( TDataCenter():Get( "Client" ), 1 )
+   cSayCliOrg     := dbFirst( TDataCenter():Get( "Client" ), 2 )
+   cSayCliDes     := dbLast ( TDataCenter():Get( "Client" ), 2 )
 
    cArtOrg        := dbFirst( dbfArticulo, 1 )
    cArtDes        := dbLast ( dbfArticulo, 1 )
@@ -5771,9 +5053,9 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 
    REDEFINE GET oCliOrg VAR cCliOrg;
       ID       80 ;
-      VALID    cClient( oCliOrg, dbfClient, oSayCliOrg );
+      VALID    cClient( oCliOrg, ( TDataCenter():Get( "Client" ) ), oSayCliOrg );
       BITMAP   "LUPA" ;
-      ON HELP  BrwCli( oCliOrg, oSayCliOrg, dbfClient );
+      ON HELP  BrwCli( oCliOrg, oSayCliOrg, TDataCenter():Get( "Client" ) );
       OF       oDlg
 
    REDEFINE GET oSayCliOrg VAR cSayCliOrg ;
@@ -5783,9 +5065,9 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 
    REDEFINE GET oCliDes VAR cCliDes;
       ID       90 ;
-      VALID    cClient( oCliDes, dbfClient, oSayCliDes );
+      VALID    cClient( oCliDes, TDataCenter():Get( "Client" ), oSayCliDes );
       BITMAP   "LUPA" ;
-      ON HELP  BrwCli( oCliDes, oSayCliDes, dbfClient );
+      ON HELP  BrwCli( oCliDes, oSayCliDes, TDataCenter():Get( "Client" ) );
       OF       oDlg
 
    REDEFINE GET oSayCliDes VAR cSayCliDes ;
@@ -5846,7 +5128,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
    REDEFINE GET oTipIva VAR cTipIva ;
 		ID 		120 ;
       PICTURE  "@!" ;
-      VALID    ( cTiva( oTipIva, dbfIva, oTxtIva ) );
+      VALID    ( cTiva( oTipIva, TDataCenter():Get( "TIva" ), oTxtIva ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwIva( oTipIva, nil, oTxtIva ) );
 		COLOR 	CLR_GET ;
@@ -5920,13 +5202,18 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
       ITEMS    aComBox ;
       OF       oDlg
 
-   /*monta el radio para elejir el tipo de descuente*/
+   /*
+   Monta el radio para elejir el tipo de descuente
+   */
 
    REDEFINE RADIO oRad VAR nRad ;
 		ID 		170, 172 ;
 		OF 		oDlg
 
-   /*Porcentual*/
+   /*
+   Porcentual
+   */
+
    REDEFINE GET nPctInc ;
 		WHEN		( nRad == 1 ) ;
 		PICTURE	"@E 999.99" ;
@@ -5934,14 +5221,20 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 		ID 		171 ;
 		OF 		oDlg
 
-   /*Lineal*/
+   /*
+   Lineal
+   */
+
    REDEFINE GET nUndInc ;
 		WHEN		( nRad == 2 ) ;
       PICTURE  cPouDiv ;
 		ID 		173 ;
 		OF 		oDlg
 
-   /*Elige si quiere redondeo y la cantidad*/
+   /*
+   Elige si quiere redondeo y la cantidad
+   */
+
    REDEFINE CHECKBOX lRnd ;
 		ID 		180 ;
 		OF 		oDlg
@@ -5957,7 +5250,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 		PROMPT	"Procesando" ;
       ID       220 ;
 		OF 		oDlg ;
-      TOTAL    ( dbfCliAtp )->( lastrec() )
+      TOTAL    ( TDataCenter():Get( "CliAtp" ) )->( lastrec() )
 
    REDEFINE BUTTON ;
       ID       IDOK;
@@ -5975,7 +5268,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   SetStatus( dbfClient, aStaCli )
+   SetStatus( ( TDataCenter():Get( "Client" ) ), aStaCli )
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -6018,19 +5311,19 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
       oDlg:Disable()
 
-      nRecAct           := ( dbfCliAtp )->( RecNo() )
-      nOrdAct           := ( dbfCliAtp )->( OrdSetFocus( "cCodCli" ) )
+      nRecAct           := ( TDataCenter():Get( "CliAtp" ) )->( RecNo() )
+      nOrdAct           := ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( "cCodCli" ) )
 
-      if ( dbfCliAtp )->( dbSeek( cCliOrg ) )
+      if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCliOrg ) )
 
-      while ( dbfCliAtp )->cCodCli <= cCliDes .and. !( dbfCliAtp )->( eof() )
+      while ( TDataCenter():Get( "CliAtp" ) )->cCodCli <= cCliDes .and. !( TDataCenter():Get( "CliAtp" ) )->( eof() )
 
-         if ( ( dbfCliAtp )->cCodArt >= cArtOrg .and. ( dbfCliAtp )->cCodArt <= cArtDes )             .and.;
-            ( empty( cFam ) .or. RetFld( ( dbfCliAtp )->cCodArt, dbfArticulo, "Familia" ) == cFam )   .and.;
-            ( empty( cIva ) .or. RetFld( ( dbfCliAtp )->cCodArt, dbfArticulo, "TipoIva" ) == cIva )   .and.;
-            ( !lAppTarifaFecha  .or. ( dbfCliAtp )->dFecFin >= GetSysDate() )
+         if ( ( TDataCenter():Get( "CliAtp" ) )->cCodArt >= cArtOrg .and. ( TDataCenter():Get( "CliAtp" ) )->cCodArt <= cArtDes )             .and.;
+            ( empty( cFam ) .or. RetFld( ( TDataCenter():Get( "CliAtp" ) )->cCodArt, dbfArticulo, "Familia" ) == cFam )   .and.;
+            ( empty( cIva ) .or. RetFld( ( TDataCenter():Get( "CliAtp" ) )->cCodArt, dbfArticulo, "TipoIva" ) == cIva )   .and.;
+            ( !lAppTarifaFecha  .or. ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= GetSysDate() )
 
-            aTmpAtp  := dbScatter( dbfCliAtp )
+            aTmpAtp  := dbScatter( TDataCenter():Get( "CliAtp" ) )
 
             /*
             Cambio la fecha de fin a la tarifa anterior y pongo la fecha en la nueva tarifa
@@ -6038,17 +5331,17 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
             if lGenerateTarifa
 
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "dFecIni" ) ) ]   := dIniPre
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "dFecFin" ) ) ]   := dFinPre
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "dFecIni" ) ) ]   := dIniPre
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "dFecFin" ) ) ]   := dFinPre
 
-               if Empty( ( dbfCliAtp )->dFecFin ) .or. ( dbfCliAtp )->dFecFin >= dIniPre
+               if Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin ) .or. ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dIniPre
 
-                  if( dbfCliAtp )->( dbRLock() )
-                     if Empty( ( dbfCliAtp )->dFecIni )
-                        ( dbfCliAtp )->dFecIni                       := CtoD( "01/01/" + Str( Year( Date() ) ) )
+                  if( TDataCenter():Get( "CliAtp" ) )->( dbRLock() )
+                     if Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni )
+                        ( TDataCenter():Get( "CliAtp" ) )->dFecIni                       := CtoD( "01/01/" + Str( Year( Date() ) ) )
                      end if
-                     ( dbfCliAtp )->dFecFin                          := dIniPre - 1
-                     ( dbfCliAtp )->( dbUnLock() )
+                     ( TDataCenter():Get( "CliAtp" ) )->dFecFin                          := dIniPre - 1
+                     ( TDataCenter():Get( "CliAtp" ) )->( dbUnLock() )
                   end if
 
                end if
@@ -6061,96 +5354,96 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
             if lTarifa1
 
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt" ) ) ]     := nVal2Change( nPrecio, ( dbfCliAtp )->nPrcArt )
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt" ) ) ]     := nVal2Change( nPrecio, ( TDataCenter():Get( "CliAtp" ) )->nPrcArt )
 
-                  if nRad == 1
-                     aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt" ) ) ] ) * nPctInc / 100
-                  else
-                     aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt" ) ) ]  += nUndInc
-                  end if
+               if nRad == 1
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt" ) ) ] ) * nPctInc / 100
+               else
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt" ) ) ]  += nUndInc
+               end if
 
-                  if lRnd
-                     aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt" ) ) ]  := Round( aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt" ) ) ], nDec )
-                  end if
+               if lRnd
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt" ) ) ]  := Round( aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt" ) ) ], nDec )
+               end if
 
             end if
 
             if lTarifa2
 
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt2" ) ) ]     := nVal2Change( nPrecio, ( dbfCliAtp )->nPrcArt2 )
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt2" ) ) ]     := nVal2Change( nPrecio, ( TDataCenter():Get( "CliAtp" ) )->nPrcArt2 )
 
                if nRad == 1
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt2" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt2" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt2" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt2" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt2" ) ) ]  += nUndInc
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt2" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt2" ) ) ]  := Round( aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt2" ) ) ], nDec )
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt2" ) ) ]  := Round( aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt2" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa3
 
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt3" ) ) ]     := nVal2Change( nPrecio, ( dbfCliAtp )->nPrcArt3 )
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt3" ) ) ]     := nVal2Change( nPrecio, ( TDataCenter():Get( "CliAtp" ) )->nPrcArt3 )
 
                if nRad == 1
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt3" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt3" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt3" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt3" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt3" ) ) ]  += nUndInc
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt3" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt3" ) ) ]  := Round( aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt3" ) ) ], nDec )
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt3" ) ) ]  := Round( aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt3" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa4
 
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt4" ) ) ]     := nVal2Change( nPrecio, ( dbfCliAtp )->nPrcArt4 )
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt4" ) ) ]     := nVal2Change( nPrecio, ( TDataCenter():Get( "CliAtp" ) )->nPrcArt4 )
 
                if nRad == 1
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt4" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt4" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt4" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt4" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt4" ) ) ]  += nUndInc
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt4" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt4" ) ) ]  := Round( aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt4" ) ) ], nDec )
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt4" ) ) ]  := Round( aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt4" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa5
 
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt5" ) ) ]     := nVal2Change( nPrecio, ( dbfCliAtp )->nPrcArt5 )
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt5" ) ) ]     := nVal2Change( nPrecio, ( TDataCenter():Get( "CliAtp" ) )->nPrcArt5 )
 
                if nRad == 1
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt5" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt5" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt5" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt5" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt5" ) ) ]  += nUndInc
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt5" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt5" ) ) ]  := Round( aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt5" ) ) ], nDec )
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt5" ) ) ]  := Round( aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt5" ) ) ], nDec )
                end if
 
             end if
 
             if lTarifa6
 
-               aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt6" ) ) ]     := nVal2Change( nPrecio, ( dbfCliAtp )->nPrcArt6 )
+               aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt6" ) ) ]     := nVal2Change( nPrecio, ( TDataCenter():Get( "CliAtp" ) )->nPrcArt6 )
 
                if nRad == 1
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt6" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt6" ) ) ] ) * nPctInc / 100
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt6" ) ) ]  += nVal2Change( nPrecio, aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt6" ) ) ] ) * nPctInc / 100
                else
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt6" ) ) ]  += nUndInc
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt6" ) ) ]  += nUndInc
                end if
 
                if lRnd
-                  aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt6" ) ) ]  := Round( aTmpAtp[ ( dbfCliAtp )->( Fieldpos( "nPrcArt6" ) ) ], nDec )
+                  aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt6" ) ) ]  := Round( aTmpAtp[ ( TDataCenter():Get( "CliAtp" ) )->( Fieldpos( "nPrcArt6" ) ) ], nDec )
                end if
 
             end if
@@ -6163,9 +5456,9 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
          end if
 
-         ( dbfCliAtp )->( dbSkip() )
+         ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
 
-         oMtr:Set( ( dbfCliAtp )->( OrdKeyNo() ) )
+         oMtr:Set( ( TDataCenter():Get( "CliAtp" ) )->( OrdKeyNo() ) )
 
       end do
 
@@ -6179,10 +5472,10 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
 
       end if
 
-      oMtr:Set( ( dbfCliAtp )->( LastRec() ) )
+      oMtr:Set( ( TDataCenter():Get( "CliAtp" ) )->( LastRec() ) )
 
-      ( dbfCliAtp )->( OrdSetFocus( nOrdAct ) )
-      ( dbfCliAtp )->( dbGoto( nRecAct ) )
+      ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( nOrdAct ) )
+      ( TDataCenter():Get( "CliAtp" ) )->( dbGoto( nRecAct ) )
 
       oDlg:Enable()
 
@@ -6204,17 +5497,17 @@ Static Function nVal2Change( nPrecio, nImporte )
       case nPrecio == 1
          nVal2Change := nImporte
       case nPrecio == 2
-         nVal2Change := ( dbfCliAtp )->nPrcArt
+         nVal2Change := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt
       case nPrecio == 3
-         nVal2Change := ( dbfCliAtp )->nPrcArt2
+         nVal2Change := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt2
       case nPrecio == 4
-         nVal2Change := ( dbfCliAtp )->nPrcArt3
+         nVal2Change := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt3
       case nPrecio == 5
-         nVal2Change := ( dbfCliAtp )->nPrcArt4
+         nVal2Change := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt4
       case nPrecio == 6
-         nVal2Change := ( dbfCliAtp )->nPrcArt5
+         nVal2Change := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt5
       case nPrecio == 7
-         nVal2Change := ( dbfCliAtp )->nPrcArt6
+         nVal2Change := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt6
    end case
 
 RETURN nVal2Change
@@ -6242,7 +5535,8 @@ FUNCTION AppCli( lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         WinAppRec( nil, bEdtRec, dbfClient )
+         WinAppRec( nil, bEdtRec, ( TDataCenter():Get( "Client" ) ) )
+         
          CloseFiles()
 
       end if
@@ -6267,7 +5561,7 @@ FUNCTION EdtCli( cCodCli, lOpenBrowse )
    if lOpenBrowse
 
       if Client()
-         if dbSeekInOrd( cCodCli, "Cod", dbfClient )
+         if dbSeekInOrd( cCodCli, "Cod", ( TDataCenter():Get( "Client" ) ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra cliente" )
@@ -6278,8 +5572,8 @@ FUNCTION EdtCli( cCodCli, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-            WinEdtRec( nil, bEdtRec, dbfClient )
+         if dbSeekInOrd( cCodCli, "Cod", ( TDataCenter():Get( "Client" ) ) )
+            WinEdtRec( nil, bEdtRec, ( TDataCenter():Get( "Client" ) ) )
          end if
 
          CloseFiles()
@@ -6306,15 +5600,15 @@ Function InfCliente( cCodCli, oBrw )
       return nil
    end if
 
-#ifndef __TACTIL__
+   #ifndef __TACTIL__
 
-   if ( dbfClient )->( dbSeek( cCodCli ) )
-      BrwVtaCli( cCodCli, ( dbfClient )->Titulo )
+   if ( TDataCenter():Get( "Client" ) )->( dbSeek( cCodCli ) )
+      BrwVtaCli( cCodCli, ( TDataCenter():Get( "Client" ) )->Titulo )
    else
       MsgStop( "No se encuentra cliente" )
    end if
 
-#endif
+   #endif
 
    if oBrw != nil
       oBrw:Refresh()
@@ -6326,7 +5620,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtRotorMenu( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
+STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
    MENU oMenu
 
@@ -6334,14 +5628,14 @@ Static Function EdtRotorMenu( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
 
       MENU
 
-#ifndef __TACTIL__
+         #ifndef __TACTIL__
 
          MENUITEM "&1. Informe del cliente";
          MESSAGE  "Muestra el informe del Cliente" ;
          RESOURCE "info16" ;
-         ACTION   ( BrwVtaCli( ( dbfClient )->Cod, ( dbfClient )->Titulo ) )
+         ACTION   ( BrwVtaCli( ( TDataCenter():Get( "Client" ) )->Cod, ( TDataCenter():Get( "Client" ) )->Titulo ) )
 
-#endif
+         #endif
 
          if !lExternal
 
@@ -6350,27 +5644,27 @@ Static Function EdtRotorMenu( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
             MENUITEM "&1. Añadir presupuesto de cliente";
             MESSAGE  "Añade un presupuesto de cliente" ;
             RESOURCE "Notebook_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), PreCli( nil, nil, ( dbfClient )->Cod, nil ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), PreCli( nil, nil, ( TDataCenter():Get( "Client" ) )->Cod, nil ) )
 
             MENUITEM "&2. Añadir pedido de cliente";
             MESSAGE  "Añade un pedido de cliente" ;
             RESOURCE "Clipboard_empty_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), PedCli( nil, nil, ( dbfClient )->Cod, nil ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), PedCli( nil, nil, ( TDataCenter():Get( "Client" ) )->Cod, nil ) )
 
             MENUITEM "&3. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), AlbCli( nil, nil,  { "Cliente" => ( dbfClient )->Cod } ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), AlbCli( nil, nil,  { "Cliente" => ( TDataCenter():Get( "Client" ) )->Cod } ) )
 
             MENUITEM "&4. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
             RESOURCE "Document_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), FactCli( nil, nil, { "Cliente" => ( dbfClient )->Cod } ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), FactCli( nil, nil, { "Cliente" => ( TDataCenter():Get( "Client" ) )->Cod } ) )
 
             MENUITEM "&5. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;
             RESOURCE "Cashier_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), FrontTpv( nil, nil, ( dbfClient )->Cod, nil ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), FrontTpv( nil, nil, ( TDataCenter():Get( "Client" ) )->Cod, nil ) )
 
          end if
 
@@ -6384,7 +5678,7 @@ Return ( oMenu )
 
 //---------------------------------------------------------------------------//
 
-Static Function EndEdtRotorMenu()
+STATIC FUNCTION EndEdtRotorMenu()
 
 Return ( oMenu:End() )
 
@@ -6393,7 +5687,7 @@ Return ( oMenu:End() )
 Esta función carga el valor del precio de compra segun el campo LPRCCOM
 */
 
-Static Function  lChangeCostoParticular( aGet, aTmp, oCosto, nMode )
+STATIC FUNCTION lChangeCostoParticular( aGet, aTmp, oCosto, nMode )
 
    if aTmp[ _aLPRCCOM ]
       oCosto:Hide()
@@ -6596,7 +5890,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
       REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ];
          VAR      aTmp[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ];
          ID       350 ;
-         PICTURE  cPorDiv( cDivEmp(), dbfDiv ) ;
+         PICTURE  cPorDiv( cDivEmp() ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
@@ -6841,19 +6135,19 @@ Function SynClient( cPath )
       Pasamos y limpiamos el campo antiguo de facturas automáticas-------------
       */
 
-      while !( dbfClient )->( Eof() )
+      while !( TDataCenter():Get( "Client" ) )->( Eof() )
 
-         if Empty( ( dbfClient )->mFacAut ) .and. !Empty( ( dbfClient )->cFacAut )
+         if Empty( ( TDataCenter():Get( "Client" ) )->mFacAut ) .and. !Empty( ( TDataCenter():Get( "Client" ) )->cFacAut )
 
-            if dbLock( dbfClient )
-               ( dbfClient )->mFacAut  := AllTrim( ( dbfClient )->cFacAut ) + ","
-               ( dbfClient )->cFacAut  := ""
-               ( dbfClient )->( dbUnLock() )
+            if dbLock( TDataCenter():Get( "Client" ) )
+               ( TDataCenter():Get( "Client" ) )->mFacAut  := AllTrim( ( TDataCenter():Get( "Client" ) )->cFacAut ) + ","
+               ( TDataCenter():Get( "Client" ) )->cFacAut  := ""
+               ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
             end if
 
          end if
 
-         ( dbfClient )->( dbSkip() )
+         ( TDataCenter():Get( "Client" ) )->( dbSkip() )
 
       end while
 
@@ -6889,7 +6183,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
          Return nil
       end if
 
-      dbfCli               := dbfClient
+      dbfCli               := ( TDataCenter():Get( "Client" ) )
       lClose               := .t.
 
    end if
@@ -7218,8 +6512,8 @@ Method lDefault() CLASS TClienteLabelGenerator
       ::cCriterio          := "Ningún criterio"
       ::aCriterio          := { "Ningún criterio", "Grupo clientes", "Fecha modificación" }
 
-      ::cGrupoInicio       := ( dbfClient )->cCodGrp
-      ::cGrupoFin          := ( dbfClient )->cCodGrp
+      ::cGrupoInicio       := ( TDataCenter():Get( "Client" ) )->cCodGrp
+      ::cGrupoFin          := ( TDataCenter():Get( "Client" ) )->cCodGrp
 
       ::dFechaInicio       := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
       ::dFechaFin          := GetSysDate()
@@ -7364,8 +6658,8 @@ Method Create() CLASS TClienteLabelGenerator
             BITMAP   "FIND" ;
             OF       ::oFld:aDialogs[ 2 ]
 
-         oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, dbfClient ) }
-         oGetOrd:bValid    := {|| ( dbfClient )->( OrdScope( 0, nil ) ), ( dbfClient )->( OrdScope( 1, nil ) ), ::oBrwLabel:Refresh(), .t. }
+         oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, ( TDataCenter():Get( "Client" ) ) ) }
+         oGetOrd:bValid    := {|| ( TDataCenter():Get( "Client" ) )->( OrdScope( 0, nil ) ), ( TDataCenter():Get( "Client" ) )->( OrdScope( 1, nil ) ), ::oBrwLabel:Refresh(), .t. }
 
          REDEFINE COMBOBOX oCbxOrd ;
             VAR      cCbxOrd ;
@@ -7408,12 +6702,12 @@ Method Create() CLASS TClienteLabelGenerator
          REDEFINE BUTTON ;
             ID       160 ;
             OF       ::oFld:aDialogs[ 2 ] ;
-            ACTION   ( WinEdtRec( ::oBrwLabel, bEdtRec, dbfClient ) )
+            ACTION   ( WinEdtRec( ::oBrwLabel, bEdtRec, ( TDataCenter():Get( "Client" ) ) ) )
 
          REDEFINE BUTTON ;
             ID       165 ;
             OF       ::oFld:aDialogs[ 2 ] ;
-            ACTION   ( WinZooRec( ::oBrwLabel, bEdtRec, dbfClient ) )
+            ACTION   ( WinZooRec( ::oBrwLabel, bEdtRec, ( TDataCenter():Get( "Client" ) ) ) )
 
          REDEFINE BUTTON oBtnPrp ;
             ID       220 ;
@@ -7426,7 +6720,7 @@ Method Create() CLASS TClienteLabelGenerator
          ::oBrwLabel:nColSel         := 2
 
          ::oBrwLabel:lHScroll        := .f.
-         ::oBrwLabel:cAlias          := dbfClient
+         ::oBrwLabel:cAlias          := ( TDataCenter():Get( "Client" ) )
 
          ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -7437,7 +6731,7 @@ Method Create() CLASS TClienteLabelGenerator
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Sl. Seleccionado"
             :bStrData         := {|| "" }
-            :bEditValue       := {|| ( dbfClient )->lLabel }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->lLabel }
             :nWidth           := 20
             :SetCheck( { "Sel16", "Nil16" } )
          end with
@@ -7445,7 +6739,7 @@ Method Create() CLASS TClienteLabelGenerator
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Código"
             :cSortOrder       := "Cod"
-            :bEditValue       := {|| ( dbfClient )->Cod }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Cod }
             :nWidth           := 80
             :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
          end with
@@ -7453,80 +6747,80 @@ Method Create() CLASS TClienteLabelGenerator
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Nombre"
             :cSortOrder       := "Titulo"
-            :bEditValue       := {|| ( dbfClient )->Titulo }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Titulo }
             :nWidth           := 280
             :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "N. etiquetas"
-            :bEditValue       := {|| ( dbfClient )->nLabel }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->nLabel }
             :cEditPicture     := "@E 99,999"
             :nWidth           := 80
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
             :nEditType        := 1
-            :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfClient ), ( ( dbfClient )->nLabel := x, ( dbfClient )->( dbUnlock() ) ), ) }
+            :bOnPostEdit      := {|o,x| if( dbDialogLock( TDataCenter():Get( "Client" ) ), ( ( TDataCenter():Get( "Client" ) )->nLabel := x, ( TDataCenter():Get( "Client" ) )->( dbUnlock() ) ), ) }
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "NIF/CIF"
             :cSortOrder       := "Nif"
-            :bEditValue       := {|| ( dbfClient )->Nif }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Nif }
             :nWidth           := 80
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Teléfono"
             :cSortOrder       := "Telefono"
-            :bEditValue       := {|| ( dbfClient )->Telefono }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Telefono }
             :nWidth           := 80
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Fax"
-            :bEditValue       := {|| ( dbfClient )->Fax }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Fax }
             :nWidth           := 80
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Domicilio"
-            :bEditValue       := {|| ( dbfClient )->Domicilio }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Domicilio }
             :nWidth           := 300
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Población"
             :cSortOrder       := "Poblacion"
-            :bEditValue       := {|| ( dbfClient )->Poblacion }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Poblacion }
             :nWidth           := 200
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Código postal"
             :cSortOrder       := "CodPostal"
-            :bEditValue       := {|| ( dbfClient )->CodPostal }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->CodPostal }
             :nWidth           := 60
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Provincia"
             :cSortOrder       := "Provincia"
-            :bEditValue       := {|| ( dbfClient )->Provincia }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Provincia }
             :nWidth           := 100
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Establecimiento"
             :cSortOrder       := "NbrEst"
-            :bEditValue       := {|| ( dbfClient )->NbrEst }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->NbrEst }
             :nWidth           := 100
          end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Correo electrónico"
             :cSortOrder       := "cMeiInt"
-            :bEditValue       := {|| ( dbfClient )->cMeiInt }
+            :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cMeiInt }
             :nWidth           := 100
          end with
 
@@ -7535,7 +6829,7 @@ Method Create() CLASS TClienteLabelGenerator
             PROMPT   "" ;
             ID       190 ;
             OF       ::oFld:aDialogs[ 2 ] ;
-            TOTAL    ( dbfClient )->( lastrec() )
+            TOTAL    ( TDataCenter():Get( "Client" ) )->( lastrec() )
 
          ::oMtrLabel:nClrText   := rgb( 128,255,0 )
          ::oMtrLabel:nClrBar    := rgb( 128,255,0 )
@@ -7637,12 +6931,12 @@ Return ( Self )
 
 Method PutLabel() CLASS TClienteLabelGenerator
 
-   if dbLock( dbfClient )
-      ( dbfClient )->lLabel      := !( dbfClient )->lLabel
-      if ( dbfClient )->lLabel .and. Empty( ( dbfClient )->nLabel )
-         ( dbfClient )->nLabel   := 1
+   if dbLock( TDataCenter():Get( "Client" ) )
+      ( TDataCenter():Get( "Client" ) )->lLabel      := !( TDataCenter():Get( "Client" ) )->lLabel
+      if ( TDataCenter():Get( "Client" ) )->lLabel .and. Empty( ( TDataCenter():Get( "Client" ) )->nLabel )
+         ( TDataCenter():Get( "Client" ) )->nLabel   := 1
       end if
-      ( dbfClient )->( dbUnLock() )
+      ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
    end if
 
    ::oBrwLabel:Refresh()
@@ -7655,25 +6949,25 @@ Return ( Self )
 Method SelectAllLabels( lSelect ) CLASS TClienteLabelGenerator
 
 	local n			:= 0
-   local nRecno   := ( dbfClient )->( Recno() )
+   local nRecno   := ( TDataCenter():Get( "Client" ) )->( Recno() )
 
 	CursorWait()
 
-   ( dbfClient )->( dbGoTop() )
-   while !( dbfClient )->( eof() )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTop() )
+   while !( TDataCenter():Get( "Client" ) )->( eof() )
 
-      if dbLock( dbfClient )
-         ( dbfClient )->lLabel := lSelect
-         ( dbfClient )->( dbUnLock() )
+      if dbLock( TDataCenter():Get( "Client" ) )
+         ( TDataCenter():Get( "Client" ) )->lLabel := lSelect
+         ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
       end if
 
-      ( dbfClient )->( dbSkip() )
+      ( TDataCenter():Get( "Client" ) )->( dbSkip() )
 
       ::oMtrLabel:Set( ++n )
 
    end while
 
-   ( dbfClient )->( dbGoTo( nRecno ) )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRecno ) )
 
    ::oBrwLabel:Refresh()
 
@@ -7689,41 +6983,41 @@ Return ( Self )
 Method SelectCriterioLabels() CLASS TClienteLabelGenerator
 
 	local n			:= 0
-   local nRecno   := ( dbfClient )->( Recno() )
+   local nRecno   := ( TDataCenter():Get( "Client" ) )->( Recno() )
 
 	CursorWait()
 
-   ( dbfClient )->( dbGoTop() )
-   while !( dbfClient )->( eof() )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTop() )
+   while !( TDataCenter():Get( "Client" ) )->( eof() )
 
-      if dbLock( dbfClient )
+      if dbLock( TDataCenter():Get( "Client" ) )
 
          do case
-            case ::oCriterio:nAt == 2 .and. ( dbfClient )->cCodGrp >= ::cGrupoInicio .and. ( dbfClient )->cCodGrp <= ::cGrupoFin
-               ( dbfClient )->lLabel := .t.
-               ( dbfClient )->nLabel := ::nUnidadesLabels
+            case ::oCriterio:nAt == 2 .and. ( TDataCenter():Get( "Client" ) )->cCodGrp >= ::cGrupoInicio .and. ( TDataCenter():Get( "Client" ) )->cCodGrp <= ::cGrupoFin
+               ( TDataCenter():Get( "Client" ) )->lLabel := .t.
+               ( TDataCenter():Get( "Client" ) )->nLabel := ::nUnidadesLabels
 
-            case ::oCriterio:nAt == 3 .and. ( dbfClient )->dFecChg >= ::dFechaInicio .and. ( dbfClient )->dFecChg <= ::dFechaFin
-               ( dbfClient )->lLabel := .t.
-               ( dbfClient )->nLabel := ::nUnidadesLabels
+            case ::oCriterio:nAt == 3 .and. ( TDataCenter():Get( "Client" ) )->dFecChg >= ::dFechaInicio .and. ( TDataCenter():Get( "Client" ) )->dFecChg <= ::dFechaFin
+               ( TDataCenter():Get( "Client" ) )->lLabel := .t.
+               ( TDataCenter():Get( "Client" ) )->nLabel := ::nUnidadesLabels
 
             otherwise
-               ( dbfClient )->lLabel := .f.
-               ( dbfClient )->nLabel := 1
+               ( TDataCenter():Get( "Client" ) )->lLabel := .f.
+               ( TDataCenter():Get( "Client" ) )->nLabel := 1
 
          end case
 
-         ( dbfClient )->( dbUnLock() )
+         ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
 
       end if
 
-      ( dbfClient )->( dbSkip() )
+      ( TDataCenter():Get( "Client" ) )->( dbSkip() )
 
       ::oMtrLabel:Set( ++n )
 
    end while
 
-   ( dbfClient )->( dbGoTo( nRecno ) )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRecno ) )
 
    ::oBrwLabel:Refresh()
 
@@ -7738,9 +7032,9 @@ Return ( Self )
 
 Method AddLabel() CLASS TClienteLabelGenerator
 
-   if dbLock( dbfClient )
-      ( dbfClient )->nLabel++
-      ( dbfClient )->( dbUnLock() )
+   if dbLock( TDataCenter():Get( "Client" ) )
+      ( TDataCenter():Get( "Client" ) )->nLabel++
+      ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
    end if
 
    ::oBrwLabel:Refresh()
@@ -7752,10 +7046,10 @@ Return ( Self )
 
 Method DelLabel() CLASS TClienteLabelGenerator
 
-   if ( dbfClient )->nLabel > 1
-      if dbLock( dbfClient )
-         ( dbfClient )->nLabel--
-         ( dbfClient )->( dbUnLock() )
+   if ( TDataCenter():Get( "Client" ) )->nLabel > 1
+      if dbLock( TDataCenter():Get( "Client" ) )
+         ( TDataCenter():Get( "Client" ) )->nLabel--
+         ( TDataCenter():Get( "Client" ) )->( dbUnLock() )
       end if
    end if
 
@@ -7805,8 +7099,6 @@ Method ChangeCriterio() CLASS TClienteLabelGenerator
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 Method lPrintLabels() CLASS TClienteLabelGenerator
 
@@ -7929,23 +7221,23 @@ Method lCreateTemporal() CLASS TClienteLabelGenerator
       Cargamos a la temporal---------------------------------------------------
       */
 
-      nRec                 := ( dbfClient )->( Recno() )
+      nRec                 := ( TDataCenter():Get( "Client" ) )->( Recno() )
 
-      ( dbfClient )->( dbGoTop() )
-      while !( dbfClient )->( eof() )
+      ( TDataCenter():Get( "Client" ) )->( dbGoTop() )
+      while !( TDataCenter():Get( "Client" ) )->( eof() )
 
-         if ( dbfClient )->lLabel
-            for n := 1 to ( dbfClient )->nLabel
-               dbPass( dbfClient, tmpClient, .t. )
+         if ( TDataCenter():Get( "Client" ) )->lLabel
+            for n := 1 to ( TDataCenter():Get( "Client" ) )->nLabel
+               dbPass( ( TDataCenter():Get( "Client" ) ), tmpClient, .t. )
             next
          end if
 
-         ( dbfClient )->( dbSkip() )
+         ( TDataCenter():Get( "Client" ) )->( dbSkip() )
 
       end while
       ( tmpClient )->( dbGoTop() )
 
-      ( dbfClient )->( dbGoTo( nRec ) )
+      ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRec ) )
 
    RECOVER USING oError
 
@@ -7978,7 +7270,7 @@ Method PrepareTemporal( oFr ) CLASS TClienteLabelGenerator
       nBlancos          += ( ::nFilaInicio - 1 )
 
       for n := 1 to nBlancos
-         dbPass( dbBlankRec( dbfClient ), tmpClient, .t. )
+         dbPass( dbBlankRec( TDataCenter():Get( "Client" ) ), tmpClient, .t. )
       next
 
    end if 
@@ -8030,9 +7322,6 @@ Method SelectColumn( oCombo ) CLASS TClienteLabelGenerator
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
-#endif
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -8101,11 +7390,11 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    Origen de busqueda----------------------------------------------------------
    */
 
-   if !Empty( cTxtOrigen ) .and. !( dbfClient )->( dbSeek( cTxtOrigen ) )
-      ( dbfClient )->( OrdSetFocus( nOrdAnt ) )
-      ( dbfClient )->( dbGoTop() )
+   if !Empty( cTxtOrigen ) .and. !( TDataCenter():Get( "Client" ) )->( dbSeek( cTxtOrigen ) )
+      ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( nOrdAnt ) )
+      ( TDataCenter():Get( "Client" ) )->( dbGoTop() )
    else
-      ( dbfClient )->( OrdSetFocus( nOrdAnt ) )
+      ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( nOrdAnt ) )
    end if
 
    /*
@@ -8115,16 +7404,14 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    do case
    case lBigStyle
       DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar clientes"
-   case ( "PDA" $ cParamsMain() )
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar clientes"
    otherwise
       DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar clientes"
    end case
 
       REDEFINE GET uGet1 VAR cGet1;
 			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfClient, .t. ) );
-         VALID    ( OrdClearScope( oBrw, dbfClient ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, ( TDataCenter():Get( "Client" ) ), .t. ) );
+         VALID    ( OrdClearScope( oBrw, ( TDataCenter():Get( "Client" ) ) ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -8132,7 +7419,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 			VAR 		cCbxOrd ;
 			ID 		102 ;
          ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfClient )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), uGet1:SetFocus() ) ;
+         ON CHANGE( ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), uGet1:SetFocus() ) ;
 			OF 		oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -8140,14 +7427,14 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias          := dbfClient
+      oBrw:cAlias          := ( TDataCenter():Get( "Client" ) )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Browse.Clientes"
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Bl. Bloqueado"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfClient )->lBlqCli }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->lBlqCli }
          :nWidth           := 20
          :SetCheck( { "Cnt16", "Nil16" } )
       end with
@@ -8155,7 +7442,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
          :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( dbfClient )->Cod }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Cod }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8163,7 +7450,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( dbfClient )->Titulo }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Titulo }
          :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8171,7 +7458,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "NIF/CIF"
          :cSortOrder       := "Nif"
-         :bEditValue       := {|| ( dbfClient )->Nif }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Nif }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8179,20 +7466,20 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Teléfono"
          :cSortOrder       := "Telefono"
-         :bEditValue       := {|| ( dbfClient )->Telefono }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Telefono }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Fax"
-         :bEditValue       := {|| ( dbfClient )->Fax }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Fax }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Domicilio"
-         :bEditValue       := {|| ( dbfClient )->Domicilio }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Domicilio }
          :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8200,7 +7487,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Población"
          :cSortOrder       := "Poblacion"
-         :bEditValue       := {|| ( dbfClient )->Poblacion }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Poblacion }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8208,7 +7495,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Código postal"
          :cSortOrder       := "CodPostal"
-         :bEditValue       := {|| ( dbfClient )->CodPostal }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->CodPostal }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8216,7 +7503,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Provincia"
          :cSortOrder       := "Provincia"
-         :bEditValue       := {|| ( dbfClient )->Provincia }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->Provincia }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8224,7 +7511,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Establecimiento"
          :cSortOrder       := "NbrEst"
-         :bEditValue       := {|| ( dbfClient )->NbrEst }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->NbrEst }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -8232,14 +7519,14 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       with object ( oBrw:AddCol() )
          :cHeader          := "Correo electrónico"
          :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( dbfClient )->cMeiInt }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cMeiInt }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Riesgo"
-         :bEditValue       := {|| Trans( ( dbfClient )->nImpRie, PicOut() ) }
+         :bEditValue       := {|| Trans( ( TDataCenter():Get( "Client" ) )->nImpRie, PicOut() ) }
          :nWidth           := 60
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
@@ -8247,13 +7534,13 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Contacto"
-         :bEditValue       := {|| ( dbfClient )->cPerCto }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->cPerCto }
          :nWidth           := 100
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Observaciones"
-         :bEditValue       := {|| ( dbfClient )->mComent }
+         :bEditValue       := {|| ( TDataCenter():Get( "Client" ) )->mComent }
          :nWidth           := 200
       end with
 
@@ -8268,14 +7555,6 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
          oBrw:nLineHeight     := 36
       end if
 
-      if ( "PDA" $ cParamsMain() )
-
-         REDEFINE SAY oSayText VAR cSayText ;
-            ID       100 ;
-            OF       oDlg
-
-      end if
-
 		REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -8286,24 +7565,20 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 			OF 		oDlg ;
 			ACTION 	( oDlg:end() )
 
-   if !( "PDA" $ cParamsMain() )
-
       REDEFINE BUTTON ;
 			ID 		500 ;
 			OF 		oDlg ;
          WHEN     nAnd( nLevel, ACC_APPD ) != 0 ;
-         ACTION   ( WinAppRec( oBrw, bEdtRec, dbfClient ) )
+         ACTION   ( WinAppRec( oBrw, bEdtRec, ( TDataCenter():Get( "Client" ) ) ) )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
 			OF 		oDlg ;
          WHEN     nAnd( nLevel, ACC_EDIT ) != 0;
-         ACTION   ( WinEdtRec( oBrw, bEdtRec, dbfClient ) )
+         ACTION   ( WinEdtRec( oBrw, bEdtRec, ( TDataCenter():Get( "Client" ) ) ) )
 
-      oDlg:AddFastKey( VK_F2,    {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtRec, dbfClient ), ) } )
-      oDlg:AddFastKey( VK_F3,    {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdtRec, dbfClient ), ) } )
-
-   end if
+      oDlg:AddFastKey( VK_F2,    {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtRec, ( TDataCenter():Get( "Client" ) ) ), ) } )
+      oDlg:AddFastKey( VK_F3,    {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdtRec, ( TDataCenter():Get( "Client" ) ) ), ) } )
 
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -8315,21 +7590,21 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    if oDlg:nResult == IDOK
 
       if ValType( uGet ) == "O"
-         uGet:cText( (dbfClient)->Cod )
+         uGet:cText( ( TDataCenter():Get( "Client" ) )->Cod )
          uGet:lValid()
       else
-         uGet  := ( dbfClient )->Cod
+         uGet  := ( TDataCenter():Get( "Client" ) )->Cod
       end if
 
       if ValType( uGetName ) == "O"
-         uGetName:cText( ( dbfClient )->Titulo )
+         uGetName:cText( ( TDataCenter():Get( "Client" ) )->Titulo )
       end if
 
    end if
 
-   DestroyFastFilter( dbfClient )
+   DestroyFastFilter( TDataCenter():Get( "Client" ) )
 
-   SetBrwOpt( "BrwClient", ( dbfClient )->( OrdNumber() ) )
+   SetBrwOpt( "BrwClient", ( TDataCenter():Get( "Client" ) )->( OrdNumber() ) )
 
    CloseFiles()
 
@@ -8342,332 +7617,6 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 RETURN oDlg:nResult == IDOK
 
 //---------------------------------------------------------------------------//
-
-STATIC FUNCTION OpenFiles( lExt )
-
-   local oBlock
-   local oError
-
-   if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de clientes' )
-      Return ( .f. )
-   end if
-
-   DEFAULT  lExt        := .f.
-
-   lExternal            := lExt
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      DisableAcceso()
-
-      // TDataCenter():CreateView()
-
-      lOpenFiles           := .t.
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      /*
-      Documentos asociados al cliente---------------------------------------------
-      */
-
-      USE ( cPatCli() + "ClientD.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENTD", @dbfClientD ) )
-      SET ADSINDEX TO ( cPatCli() + "ClientD.Cdx" ) ADDITIVE
-
-      /*
-      Tarifas personalizadas------------------------------------------------------
-      */
-
-      USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-      SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-      /*
-      Apertura de fichero de Obras------------------------------------------------
-      */
-
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-      /*
-      Apertura de fichero de Contactos--------------------------------------------
-      */
-
-      USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
-
-      /*
-      Apertura de fichero de Bancos------------------------------------------------
-      */
-
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBanco ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
-
-      /*
-      Apertura de fichero de Indicencias--------------------------------------------
-      */
-
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
-
-      /*
-      Articulos-------------------------------------------------------------------
-      */
-
-      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @cAgente ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-      /*
-      Otros Ficheros--------------------------------------------------------------
-      */
-
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
-
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
-
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOfe ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
-
-      if !TDataCenter():OpenArticulo( @dbfArticulo )
-         lOpenFiles        := .f.
-      end if
-
-      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-         lOpenFiles        := .f.
-      end if
-
-      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-         lOpenFiles        := .f.
-      end if
-
-      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-         lOpenFiles     := .f.
-      end if
-
-      oBandera             := TBandera():New()
-
-      oStock               := TStock():Create( cPatGrp() )
-      if !oStock:lOpenFiles()
-         lOpenFiles        := .f.
-      end if
-
-      oGrpCli              := TGrpCli():Create( cPatCli() )
-      if !oGrpCli:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
-      oPais                := TPais():Create( cPatDat() )
-      if !oPais:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
-      oCtaRem              := TCtaRem():Create( cPatCli() )
-      if !oCtaRem:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
-      oNewImp              := TNewImp():Create( cPatEmp() )
-      if !oNewImp:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
-      oTrans               := TTrans():Create( cPatCli() )
-      if !oTrans:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
-      oFacAut              := TFacAutomatica():Create( cPatEmp() )
-      if !oFacAut:Openfiles()
-         lOpenfiles        := .f.
-      end if
-
-      oBanco               := TBancos():Create()
-      oBanco:OpenFiles()
-
-      cPinDiv              := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa de compra
-      cPouDiv              := cPouDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
-      cPorDiv              := cPorDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
-
-      LoaIniCli( cPatEmp() )
-
-      EnableAcceso()
-
-   RECOVER USING oError
-
-      lOpenFiles        := .f.
-
-      EnableAcceso()
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !lOpenFiles
-      CloseFiles()
-   end if
-
-RETURN ( lOpenFiles )
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION CloseFiles( lDestroy )
-
-	DEFAULT lDestroy	:= .f.
-
-   TDataCenter():DeleteView()
-
-   DisableAcceso()
-
-   CLOSE ( dbfClient    )
-   CLOSE ( dbfClientD   )
-   CLOSE ( dbfCliAtp    )
-   CLOSE ( dbfArticulo  )
-   CLOSE ( dbfArtKit    )
-   CLOSE ( dbfCliInc    )
-   CLOSE ( cFPago       )
-   CLOSE ( cAgente      )
-   CLOSE ( dbfObrasT    )
-   CLOSE ( dbfContactos )
-   CLOSE ( dbfFPago     )
-   CLOSE ( dbfIva       )
-   CLOSE ( dbfDiv       )
-   CLOSE ( dbfAlmT      )
-   CLOSE ( dbfFamilia   )
-   CLOSE ( dbfPro       )
-   CLOSE ( dbfProL      )
-   CLOSE ( dbfDoc       )
-   CLOSE ( dbfBanco     )
-   CLOSE ( dbfInci      )
-   CLOSE ( dbfOfe       )
-   CLOSE ( dbfArtDiv    )
-   CLOSE ( dbfAntCliT   )
-   CLOSE ( dbfFacCliT   )
-   CLOSE ( dbfFacCliP   )
-   CLOSE ( dbfAlbCliT   )
-   CLOSE ( dbfAntCliT   )
-   CLOSE ( dbfTikT      )
-   CLOSE ( dbfTikL      )
-
-   dbfClientD     := nil
-   dbfCliAtp      := nil
-   dbfArticulo    := nil
-   dbfArtKit      := nil
-   dbfCliInc      := nil
-   cFPago         := nil
-   cAgente        := nil
-   dbfObrasT      := nil
-   dbfContactos   := nil
-   dbfFPago       := nil
-   dbfIva         := nil
-   dbfDiv         := nil
-   dbfAlmT        := nil
-   dbfFamilia     := nil
-   dbfPro         := nil
-   dbfProL        := nil
-   dbfDoc         := nil
-   dbfBanco       := nil
-   dbfInci        := nil
-   dbfOfe         := nil
-   dbfArtDiv      := nil
-   dbfAntCliT     := nil
-   dbfAlbCliT     := nil
-   dbfAntCliT     := nil
-   dbfTikT        := nil
-   dbfTikL        := nil
-
-   if !Empty( oStock )
-      oStock:end()
-   end if
-
-   if oPais != nil
-      oPais:end()
-   end if
-
-   if oGrpCli != nil
-      oGrpCli:end()
-   end if
-
-   if oCtaRem != nil
-      oCtaRem:end()
-   end if
-
-   if oNewImp != nil
-      oNewImp:end()
-   end if
-
-   if !Empty( oTrans )
-      oTrans:End()
-   end if
-
-   if !Empty( oFacAut )
-      oFacAut:End()
-   end if
-
-   if !Empty( oBanco )
-      oBanco:End()
-   end if
-
-   oPais          := nil
-   oGrpCli        := nil
-   oCtaRem        := nil
-   oNewImp        := nil
-   oTrans         := nil
-   oFacAut        := nil
-   oBanco         := nil
-
-   if lDestroy
-      oWndBrw     := nil
-   end if
-
-   lOpenFiles     := .f.
-
-   EnableAcceso()
-
-Return .t.
-
-//----------------------------------------------------------------------------//
 
 FUNCTION LoaIniCli( cPath, cIniCli )
 
@@ -8723,2443 +7672,10 @@ RETURN ( aIniCli )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-
-CLASS TClienteSenderReciver FROM TSenderReciverItem
-
-   Method CreateData()
-
-   Method RestoreData()
-
-   Method SendData()
-
-   Method ReciveData()
-
-   Method Process()
-
-   Method CleanRelation( cCodCli )
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData() CLASS TClienteSenderReciver
-
-   local lSnd        := .f.
-   local tmpCli
-   local tmpAtp
-   local tmpObr
-   local tmpCon
-   local oError
-   local oBlock
-   local cFileName
-
-   if ::oSender:lServer
-      cFileName      := "Cli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
-   else
-      cFileName      := "Cli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
-   end if
-
-   ::oSender:SetText( "Enviando clientes" )
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-   ( dbfClient )->( OrdSetFocus( "lSndInt" ) )
-
-   USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-   SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-   USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
-   SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
-
-   /*
-   Creamos todas las bases de datos temporales
-   */
-
-   mkClient( cPatSnd() )
-
-   dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
-   ( tmpCli )->( ordListAdd( cPatSnd() + "Client.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
-   ( tmpAtp )->( ordListAdd( cPatSnd() + "CliAtp.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
-   ( tmpObr )->( ordListAdd( cPatSnd() + "ObrasT.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
-   ( tmpCon )->( ordListAdd( cPatSnd() + "CliContactos.Cdx" ) )
-
-   if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfClient )->( lastrec() )
-   end if
-
-   ( dbfClient )->( dbGoTop() )
-   while !( dbfClient )->( eof() )
-
-      /*
-      No dejamos que viajen los clientes portenciales
-      */
-
-      if ( dbfClient )->lSndInt .and. ( dbfClient )->nTipCli != 2
-
-         lSnd  := .t.
-
-         dbPass( dbfClient, tmpCli, .t. )
-         ::oSender:SetText( AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
-
-         if ( dbfObrasT )->( dbSeek( ( dbfClient )->Cod ) )
-            while ( dbfObrasT )->cCodCli == ( dbfClient )->Cod
-               dbPass( dbfObrasT, tmpObr, .t. )
-               ( dbfObrasT )->( dbSkip() )
-            end while
-         end if
-
-         if ( dbfContactos )->( dbSeek( ( dbfClient )->Cod ) )
-            while ( dbfContactos )->cCodCli == ( dbfClient )->Cod
-               dbPass( dbfContactos, tmpCon, .t. )
-               ( dbfContactos )->( dbSkip() )
-            end while
-         end if
-
-         if ( dbfCliAtp )->( dbSeek( ( dbfClient )->Cod ) )
-            while ( dbfCliAtp )->cCodCli == ( dbfClient )->Cod
-               dbPass( dbfCliAtp, tmpAtp, .t. )
-               ( dbfCliAtp )->( dbSkip() )
-            end while
-         end if
-
-      end if
-
-      SysRefresh()
-
-      ( dbfClient )->( dbSkip() )
-
-      if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( dbfClient )->( OrdKeyNo() ) )
-      end if
-
-   end while
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   CLOSE ( tmpCli       )
-   CLOSE ( tmpAtp       )
-   CLOSE ( tmpObr       )
-   CLOSE ( tmpCon       )
-   CLOSE ( dbfClient    )
-   CLOSE ( dbfCliAtp    )
-   CLOSE ( dbfObrasT    )
-   CLOSE ( dbfContactos )
-
-   /*
-   Comprimir los archivos------------------------------------------------------
-   */
-
-   if lSnd
-
-      ::oSender:SetText( "Comprimiendo clientes" )
-
-      if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
-      else
-         ::oSender:SetText( "ERROR al crear fichero comprimido" )
-      end if
-
-   else
-
-      ::oSender:SetText( "No hay clientes para enviar" )
-
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method RestoreData() CLASS TClienteSenderReciver
-
-   local oError
-   local oBlock
-   local dbfClient
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if ::lSuccesfullSend
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      while !( dbfClient )->( eof() )
-
-         if ( dbfClient )->lSndInt .and. dbLock( dbfClient )
-            ( dbfClient )->lSndInt := .f.
-            ( dbfClient )->( dbUnlock() )
-         end if
-
-         ( dbfClient )->( dbSkip() )
-
-      end do
-
-      CLOSE ( dbfClient )
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method SendData() CLASS TClienteSenderReciver
-
-   local cFileName
-
-   if ::oSender:lServer
-      cFileName      := "Cli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
-   else
-      cFileName      := "Cli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
-   end if
-
-   /*
-   Enviarlos a internet--------------------------------------------------------
-   */
-
-   if file( cPatOut() + cFileName )
-
-      if FtpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
-         ::IncNumberToSend()
-         ::lSuccesfullSend := .t.
-         ::oSender:SetText( "Ficheros de clientes enviados " + cFileName )
-      else
-         ::oSender:SetText( "ERROR fichero de clientes no enviado" )
-      end if
-
-   end if
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-Method ReciveData() CLASS TClienteSenderReciver
-
-   local n
-   local aExt
-
-   /*
-   Recibirlo de internet
-   */
-
-   if ::oSender:lServer
-      aExt              := aRetDlgEmp()
-   else
-      aExt              := { "All" }
-   end if
-
-   ::oSender:SetText( "Recibiendo clientes" )
-
-   for n := 1 to len( aExt )
-      FtpGetFiles( "Cli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-   next
-
-   ::oSender:SetText( "Clientes recibidos" )
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-Method Process() CLASS TClienteSenderReciver
-
-   local m
-   local tmpCli
-   local tmpAtp
-   local tmpObr
-   local tmpCon
-   local aFiles               := Directory( cPatIn() + "Cli*.*" )
-   local oBlock
-   local oError
-
-   /*
-   Procesamos los ficheros recibidos
-   */
-
-   for m := 1 to len( aFiles )
-
-      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
-
-      if fSize( cPatIn() + aFiles[ m, 1 ] ) > 0
-
-         /*
-         Procesamos los ficheros recibidos
-         */
-
-         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
-
-            if lExistTable( cPatSnd() + "Client.Dbf" ) .and.;
-               lExistTable( cPatSnd() + "CliAtp.Dbf" ) .and.;
-               lExistTable( cPatSnd() + "ObrasT.Dbf" ) .and.;
-               lExistTable( cPatSnd() + "CliContactos.Dbf" )
-
-               dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
-
-               dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
-
-               dbUseArea( .t., cDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
-
-               dbUseArea( .t., cDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
-
-               USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-               SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-               USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-               SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-               SET TAG TO "cCliArt"
-
-               USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-               SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-               USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
-               SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
-
-               if !Empty( ::oSender:oMtr )
-                  ::oSender:oMtr:nTotal := ( tmpCli )->( lastrec() )
-               end if
-
-               ( tmpCli )->( dbGoTop() )
-               while !( tmpCli )->( eof() )
-
-                  if ( dbfClient )->( dbSeek( ( tmpCli )->Cod ) )
-                     if !::oSender:lServer
-                        dbPass( tmpCli, dbfClient, .f. )
-                        ::oSender:SetText( "Reemplazado : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
-                        ::CleanRelation( ( tmpCli )->Cod )
-                     else
-                        ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
-                     end if
-                  else
-                        dbPass( tmpCli, dbfClient, .t. )
-                        ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
-                        ::CleanRelation( ( tmpCli )->Cod )
-                  end if
-
-                  ( tmpCli )->( dbSkip() )
-
-                  if !Empty( ::oSender:oMtr )
-                     ::oSender:oMtr:Set( ( tmpCli )->( recno() ) )
-                  end if
-
-                  SysRefresh()
-
-               end while
-
-               if !Empty( ::oSender:oMtr )
-                  ::oSender:oMtr:nTotal := ( tmpAtp )->( lastrec() )
-               end if
-
-               ( tmpAtp )->( dbGoTop() )
-               while !( tmpAtp )->( eof() )
-
-                  if ( dbfCliAtp )->( dbSeek( ( tmpAtp )->cCodCli + ( tmpAtp )->cCodArt ) )
-                     if !::oSender:lServer
-                        dbPass( tmpAtp, dbfCliAtp, .f. )
-                        ::oSender:SetText( "Reemplazado : " + Rtrim( ( tmpAtp )->cCodCli ) + "; " + Rtrim( ( tmpAtp )->cCodArt + "; " + Rtrim( ( tmpAtp )->cCodFam ) ) )
-                     else
-                        ::oSender:SetText( "Desestimado : " + Rtrim( ( tmpAtp )->cCodCli ) + "; " + Rtrim( ( tmpAtp )->cCodArt + "; " + Rtrim( ( tmpAtp )->cCodFam ) ) )
-                     end if
-                  else
-                        dbPass( tmpAtp, dbfCliAtp, .t. )
-                        ::oSender:SetText( "Añadido     : " + Rtrim( ( tmpAtp )->cCodCli ) + "; " + Rtrim( ( tmpAtp )->cCodArt + "; " + Rtrim( ( tmpAtp )->cCodFam ) ) )
-                  end if
-
-                  ( tmpAtp )->( dbSkip() )
-
-                  if !Empty( ::oSender:oMtr )
-                     ::oSender:oMtr:Set( ( tmpAtp )->( recno() ) )
-                  end if
-
-                  SysRefresh()
-
-               end while
-
-               ( tmpObr )->( dbGoTop() )
-               while !( tmpObr )->( eof() )
-
-                  if ( dbfObrasT )->( dbSeek( ( tmpObr )->cCodCli + ( tmpObr )->cCodObr ) )
-                     if !::oSender:lServer
-                        dbPass( tmpObr, dbfObrasT, .f. )
-                     end if
-                  else
-                        dbPass( tmpObr, dbfObrasT, .t. )
-                  end if
-
-                  ( tmpObr )->( dbSkip() )
-
-                  if !Empty( ::oSender:oMtr )
-                     ::oSender:oMtr:Set( ( tmpObr )->( recno() ) )
-                  end if
-
-                  SysRefresh()
-
-               end while
-
-               ( tmpCon )->( dbGoTop() )
-               while !( tmpCon )->( eof() )
-
-                  if ( dbfObrasT )->( dbSeek( ( tmpCon )->cCodCli ) )
-                     if !::oSender:lServer
-                        dbPass( tmpCon, dbfContactos, .f. )
-                     end if
-                  else
-                        dbPass( tmpCon, dbfContactos, .t. )
-                  end if
-
-                  ( tmpCon )->( dbSkip() )
-
-                  if !Empty( ::oSender:oMtr )
-                     ::oSender:oMtr:Set( ( tmpCon )->( recno() ) )
-                  end if
-
-                  SysRefresh()
-
-               end while
-
-               CLOSE ( tmpCli    )
-               CLOSE ( tmpAtp    )
-               CLOSE ( tmpObr    )
-               CLOSE ( tmpCon    )
-               CLOSE ( dbfClient )
-               CLOSE ( dbfCliAtp )
-               CLOSE ( dbfObrasT )
-               CLOSE ( dbfContactos )
-
-               ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
-
-            else
-
-               ::oSender:SetText( "Faltan ficheros" )
-
-               if !lExistTable( cPatSnd() + "Client.Dbf" )
-                  ::oSender:SetText( "Falta" + cPatSnd() + "Client.Dbf" )
-               end if
-
-               if !lExistTable( cPatSnd() + "CliAtp.Dbf" )
-                  ::oSender:SetText( "Falta" + cPatSnd() + "CliAtp.Dbf" )
-               end if
-
-               if !lExistTable( cPatSnd() + "ObrasT.Dbf" )
-                  ::oSender:SetText( "Falta" + cPatSnd() + "ObrasT.Dbf" )
-               end if
-
-               if !lExistTable( cPatSnd() + "CliContactos.Dbf" )
-                  ::oSender:SetText( "Falta" + cPatSnd() + "CliContactos.Dbf" )
-               end if
-
-            end if
-
-         else
-
-            ::oSender:SetText( "Error en ficheros comprimidos" )
-
-         end if
-
-      else
-
-         ::oSender:SetText( "Fichero vacio" )
-
-      end if
-
-      RECOVER USING oError
-
-         CLOSE ( tmpCli       )
-         CLOSE ( tmpAtp       )
-         CLOSE ( tmpObr       )
-         CLOSE ( tmpCon       )
-         CLOSE ( dbfClient    )
-         CLOSE ( dbfCliAtp    )
-         CLOSE ( dbfObrasT    )
-         CLOSE ( dbfContactos )
-
-         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
-         ::oSender:SetText( ErrorMessage( oError ) )
-
-      END SEQUENCE
-      ErrorBlock( oBlock )
-
-   next
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-Method CleanRelation( cCodCli ) CLASS TClienteSenderReciver
-
-   while ( dbfCliAtp )->( dbSeek( cCodCli ) )
-      dbDel( dbfCliAtp )
-   end while
-
-   SysRefresh()
-
-   while ( dbfObrasT )->( dbSeek( cCodCli ) )
-      dbDel( dbfObrasT )
-   end while
-
-   SysRefresh()
-
-   while ( dbfContactos )->( dbSeek( cCodCli ) )
-      dbDel( dbfContactos )
-   end while
-
-   SysRefresh()
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-#else
-
 //---------------------------------------------------------------------------//
-//Funciones del PDA
-//---------------------------------------------------------------------------//
-
-FUNCTION pdaBrwClient( uGet, uGetName )
-
-	local oDlg
-   local oSayTit
-   local oBtn
-   local oFont
-   local hBmp
-	local oBrw
-   local uGet1
-	local cGet1
-   local cTxtOrigen  := uGet:VarGet()
-   local nOrdAnt     := GetBrwOpt( "BrwClient" )
-	local oCbxOrd
-   local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento" }
-   local cCbxOrd     := "Código"
-   local nLevel      := nLevelUsr( "01032" )
-   local dbfClient
-
-   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrdAnt ]
-
-   hBmp              := LoadBitmap( GetResources(), "bStop"  )
-
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   /*
-   Origen de busqueda----------------------------------------------------------
-   */
-
-   if !Empty( cTxtOrigen ) .and. !( dbfClient )->( dbSeek( cTxtOrigen ) )
-      ( dbfClient )->( OrdSetFocus( nOrdAnt ) )
-      ( dbfClient )->( dbGoTop() )
-   else
-      ( dbfClient )->( OrdSetFocus( nOrdAnt ) )
-   end if
-
-   /*
-   Distintas cajas de dialogo--------------------------------------------------
-   */
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar clientes"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Buscando clientes" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "user1_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE GET uGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfClient, .t. ) );
-         VALID    ( OrdClearScope( oBrw, dbfClient ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfClient )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfClient )->( dbGoTop() ), oBrw:refresh(), uGet1:SetFocus(), oCbxOrd:refresh() ) ;
-			OF 		oDlg
-
-      REDEFINE IBROWSE oBrw ;
-         FIELDS   if( ( dbfClient )->lBlqCli, hBmp, "" ),;
-                  ( dbfClient )->Cod + CRLF + ( dbfClient )->NbrEst,;
-                  ( dbfClient )->Titulo + CRLF + ( dbfClient )->Telefono,;
-                  ( dbfClient )->Domicilio,;
-                  ( dbfClient )->Nif,;
-                  ( dbfClient )->Poblacion,;
-                  ( dbfClient )->Provincia,;
-                  ( dbfClient )->CodPostal,;
-                  ( dbfClient )->mComent;
-         HEAD     "B",;
-                  "Código" + CRLF + "Establec.",;
-                  "Nombre" + CRLF + "Teléfono",;
-                  "Domicilio",;
-                  "NIF/CIF",;
-                  "Población",;
-                  "Provincia",;
-                  "Cod. postal",;
-                  "Observaciones";
-         FIELDSIZES ;
-                  16,;
-                  90,;
-                  300,;
-                  300,;
-                  100,;
-                  100,;
-                  80,;
-                  80,;
-                  300 ;
-         JUSTIFY  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f. ;
-			ALIAS 	( dbfClient ) ;
-         ID       105 ;
-			OF 		oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaMenuEdtRec( oDlg , dbfClient , uGet , uGetName ) ) )
-
-      if oDlg:nResult == IDOK
-
-         if ValType( uGet ) == "O"
-            uGet:cText( ( dbfClient )->Cod )
-            uGet:lValid()
-         else
-            uGet  := ( dbfClient )->Cod
-         end if
-
-         if ValType( uGetName ) == "O"
-            uGetName:cText( ( dbfClient )->Titulo )
-         end if
-
-      end if
-
-   DestroyFastFilter( dbfClient )
-
-   CLOSE ( dbfClient )
-
-   if Valtype( uGet ) == "O"
-      uGet:setFocus()
-   end if
-
-   DeleteObject( hBmp )
-
-   /*
-   Guardo los campos del browse
-   */
-
-   oBrw:CloseData()
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuEdtRec( oDlg , dbfClient , uGet , uGetName )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION pdaOpenFiles( lExt )
-
-   local oBlock
-   local oError
-
-   if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de clientes' )
-      Return ( .f. )
-   end if
-
-   DEFAULT  lExt        := .f.
-
-   lExternal            := lExt
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   lOpenFiles           := .t.
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   /*
-   Documentos asociados al cliente---------------------------------------------
-   */
-   USE ( cPatCli() + "ClientD.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENTD", @dbfClientD ) )
-   SET ADSINDEX TO ( cPatCli() + "ClientD.Cdx" ) ADDITIVE
-
-   /*
-   Tarifas personalizadas------------------------------------------------------
-   */
-
-   USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-   SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-   /*
-   Apertura de fichero de Obras------------------------------------------------
-   */
-
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-   USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
-   SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
-
-   /*
-   Apertura de fichero de Bancos------------------------------------------------
-   */
-
-   USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBanco ) )
-   SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
-
-   /*
-   Apertura de fichero de Indicencias--------------------------------------------
-   */
-
-   USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-   SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
-
-   /*
-   Articulos-------------------------------------------------------------------
-   */
-
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-   USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @cAgente ) )
-   SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-   /*
-   Otros Ficheros--------------------------------------------------------------
-   */
-
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
-
-   USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-   SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-   USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-   SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
-
-   USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
-   SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
-
-   aDbfBmp           := {  LoadBitmap( GetResources(), "Sel16" ),;
-                           LoadBitmap( GetResources(), "Nil16"   ) }
-
-   cPouDiv              := cPouDiv( cDivEmp(), dbfDiv )
-
-   RECOVER USING oError
-
-      lOpenFiles  := .f.
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !lOpenFiles
-      pdaCloseFiles()
-   end if
-
-RETURN ( lOpenFiles )
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION pdaCloseFiles( lDestroy )
-
-	DEFAULT lDestroy	:= .f.
-
-   if aDbfBmp != nil
-      aEval( aDbfBmp, { | hBmp | DeleteObject( hBmp ) } )
-   end if
-
-   if lDestroy
-		oWndBrw:oBrw:lCloseArea()
-      oWndBrw        := nil
-   else
-      CLOSE ( dbfClient )
-   end if
-
-   CLOSE ( dbfClientD   )
-   CLOSE ( dbfCliAtp    )
-   CLOSE ( dbfArticulo  )
-   CLOSE ( dbfArtKit    )
-   CLOSE ( dbfCliInc    )
-   CLOSE ( cFPago       )
-   CLOSE ( cAgente      )
-   CLOSE ( dbfObrasT    )
-   CLOSE ( dbfContactos )
-   CLOSE ( dbfFPago     )
-   CLOSE ( dbfIva       )
-   CLOSE ( dbfDiv       )
-   CLOSE ( dbfAlmT      )
-   CLOSE ( dbfFamilia   )
-   CLOSE ( dbfPro       )
-   CLOSE ( dbfProL      )
-   CLOSE ( dbfBanco     )
-   CLOSE ( dbfInci      )
-
-   dbfClientD     := nil
-   dbfCliAtp      := nil
-   dbfArticulo    := nil
-   dbfArtKit      := nil
-   dbfCliInc      := nil
-   cFPago         := nil
-   cAgente        := nil
-   dbfObrasT      := nil
-   dbfContactos   := nil
-   dbfFPago       := nil
-   dbfIva         := nil
-   dbfDiv         := nil
-   dbfAlmT        := nil
-   dbfFamilia     := nil
-   dbfPro         := nil
-   dbfProL        := nil
-   dbfBanco       := nil
-   dbfInci        := nil
-
-   if oPais != nil
-      oPais:end()
-   end if
-
-   if oGrpCli != nil
-      oGrpCli:end()
-   end if
-
-   if oCtaRem != nil
-      oCtaRem:end()
-   end if
-
-   if oNewImp != nil
-      oNewImp:end()
-   end if
-
-   if !Empty( oTrans )
-      oTrans:End()
-   end if
-
-   oPais          := nil
-   oGrpCli        := nil
-   oCtaRem        := nil
-   oNewImp        := nil
-   oTrans         := nil
-
-   lOpenFiles     := .f.
-
-Return .t.
-
-//----------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS pdaPcClienteSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus ) CLASS pdaPcClienteSenderReciver
-
-   local lExist      := .f.
-   local pdaClient
-   local dbfClient
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @pdaClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   /*
-   Usamos las bases de datos del PC--------------------------------------------
-   */
-
-   dbUseArea( .t., cDriver(), cPatPc() + "Client.Dbf", cCheckArea( "Client", @dbfClient ), .t. )
-   ( dbfClient )->( ordListAdd( cPatPc() + "Client.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( pdaClient )->( OrdKeyCount() ) )
-   end if
-
-   ( pdaClient )->( dbGoTop() )
-
-   while !( pdaClient )->( eof() )
-
-      if ( dbfClient )->( dbSeek( ( pdaClient )->Cod ) )
-         if !( dbfClient )->lSndInt
-            dbPass( pdaClient, dbfClient , .f. )
-         end if
-      else
-         dbPass( pdaClient, dbfClient, .t. )
-      end if
-
-      /*
-      Siguiente cliente-----------------------------------------------------
-      */
-
-      if dbLock( pdaClient )
-         ( pdaClient )->lSndInt        := .f.
-         ( pdaClient )->( dbUnLock() )
-      end if
-
-      ( pdaClient )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando clientes " + Alltrim( Str( ( pdaClient )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pdaClient )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( pdaClient )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( dbfClient )
-   CLOSE ( pdaClient )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-/*function pdaOrdenar( uGet, uGetName )
-
-   local oDlg
-   local oSayTit
-   local oBtn
-   local oFont
-   local hBmp
-   local oBrw
-   local uGet1
-   local cGet1
-   local nOrdAnt     := GetBrwOpt( "BrwClient" )
-   local oCbxOrd
-   local aCbxOrd     := { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" }
-   local nLevel      := nLevelUsr( "01032" )
-
-   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
-   cComboOrden       := aCbxOrd[ Dow( Date() - 1 ) ]
-
-   hBmp              := LoadBitmap( GetResources(), "bStop"  )
-
-   if !pdaOpenFiles()
-      return .f.
-   end if*/
-
-   /*
-   Distintas cajas de dialogo--------------------------------------------------
-   */
-
-/*   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "ORDENAR_PDA"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Ordenar clientes" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "calendar.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE COMBOBOX oCbxOrd ;
-         VAR      cComboOrden ;
-         ID       200 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ChangeDay( oCbxOrd, oBrw, dbfClient, oDlg ) ) ;
-         OF       oDlg
-
-      REDEFINE IBROWSE oBrw ;
-         FIELDS   ;
-                  ( dbfClient )->Cod + CRLF + ( dbfClient )->Telefono,;
-                  ( dbfClient )->Titulo + CRLF + ( dbfClient )->Domicilio,;
-                  ( dbfClient )->Nif,;
-                  ( dbfClient )->Poblacion,;
-                  ( dbfClient )->Provincia,;
-                  ( dbfClient )->CodPostal,;
-                  ( dbfClient )->mComent;
-         HEAD     ;
-                  "Código" + CRLF + "Teléfono",;
-                  "Nombre" + CRLF + "Domicilio",;
-                  "NIF/CIF",;
-                  "Población",;
-                  "Provincia",;
-                  "Cod. postal",;
-                  "Observaciones";
-         FIELDSIZES ;
-                  90,;
-                  300,;
-                  100,;
-                  100,;
-                  80,;
-                  80,;
-                  300 ;
-         JUSTIFY  ;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f. ;
-         ALIAS    ( dbfClient ) ;
-         ID       210 ;
-         OF       oDlg
-
-      oDlg:bStart := {|| ChangeDay( oCbxOrd, oBrw, dbfClient, oDlg ) }
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaOrdenarMenu( oDlg, oBrw ) ) )
-
-   /*
-   Guardo los campos del browse
-   */
-
-  /* pdaCloseFiles()
-
-   //Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-return .t.*/
-
-//---------------------------------------------------------------------------//
-
-/*static function pdaAddClientes( oBrw )
-
-   local oDlg
-   local nOrd
-   local nRec
-   local oSayTit
-   local oBtn
-   local oFont
-   local hBmp
-   local oBrwCli
-   local uGet1
-   local cGet1
-   local nOrdAnt     := GetBrwOpt( "BrwClient" )
-   local nLevel      := nLevelUsr( "01032" )
-   local cCodCli
-
-   hBmp              := LoadBitmap( GetResources(), "bStop"  )
-
-   /*
-   Distintas cajas de dialogo--------------------------------------------------
-   */
-
-  /* nRec              := ( dbfClient )->( Recno() )
-   nOrd              := ( dbfClient )->( OrdSetFocus( "COD" ) )
-
-   ( dbfClient )->( dbGoTop() )
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "ADDCLI_PDA"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Añadir clientes" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "user.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE IBROWSE oBrwCli ;
-         FIELDS   ;
-                  pdaEstado(),;
-                  ( dbfClient )->Cod + CRLF + ( dbfClient )->Telefono,;
-                  ( dbfClient )->Titulo + CRLF + ( dbfClient )->Domicilio,;
-                  ( dbfClient )->Nif,;
-                  ( dbfClient )->Poblacion,;
-                  ( dbfClient )->Provincia,;
-                  ( dbfClient )->CodPostal,;
-                  ( dbfClient )->mComent;
-         HEAD     ;
-                  "",;
-                  "Código" + CRLF + "Teléfono",;
-                  "Nombre" + CRLF + "Domicilio",;
-                  "NIF/CIF",;
-                  "Población",;
-                  "Provincia",;
-                  "Cod. postal",;
-                  "Observaciones";
-         FIELDSIZES ;
-                  17,;
-                  90,;
-                  300,;
-                  100,;
-                  100,;
-                  80,;
-                  80,;
-                  300 ;
-         JUSTIFY  ;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f. ;
-         ALIAS    ( dbfClient ) ;
-         ID       210 ;
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT     ( oDlg:SetMenu( pdaSeleccionarMenu( oDlg, oBrw ) ) )
-
-   oBrwCli:Refresh()
-
-   /*
-   Limpiar el array------------------------------------------------------------
-   */
-   /*
-   aClientes      := {}
-
-   /*
-   Restaurar orden y recno-----------------------------------------------------
-   */
-   /*
-   ( dbfClient )->( OrdSetFocus( nOrd ) )
-   ( dbfClient )->( dbGoTo( nRec ) )
-
-   //Restauramos la ventana----------------------------------------------------
-
-   oWnd():Show()
-
-return .t.*/
-
-//---------------------------------------------------------------------------//
-
-function pdaOrdenar( uGet, uGetName )
-
-   local oDlg
-   local oSayTit
-   local oBtn
-   local oFont
-   local hBmp
-   local oBrw
-   local uGet1
-   local cGet1
-   local nOrdAnt     := GetBrwOpt( "BrwClient" )
-   local nLevel      := nLevelUsr( "01032" )
-   local oGetBuscar
-   local cGetBuscar  := Space( 100 )
-   local oCbxOrden
-   local cCbxOrden      := "Código"
-
-   hBmp              := LoadBitmap( GetResources(), "bStop"  )
-
-   if !pdaOpenFiles()
-      return .f.
-   end if
-
-   /*
-   Distintas cajas de dialogo--------------------------------------------------
-   */
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "CLIENTES"
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "user1_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Clientes" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE GET oGetBuscar ;
-         VAR      cGetBuscar;
-         ID       150 ;
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-      oGetBuscar:bChange   := {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetBuscar, oBrw, dbfClient ) }
-
-      REDEFINE COMBOBOX oCbxOrden ;
-         VAR      cCbxOrden ;
-         ID       151 ;
-         ITEMS    { "Código", "Nombre" } ;
-			OF 		oDlg
-
-      oCbxOrden:bChange    := {|| ( dbfClient )->( OrdSetFocus( oCbxOrden:nAt ) ), ( dbfClient )->( dbGoTop() ), oBrw:Refresh(), oGetBuscar:SetFocus(), oCbxOrden:Refresh() }
-
-      REDEFINE IBROWSE oBrw ;
-         FIELDS   ;
-                  ( dbfClient )->Cod + CRLF + ( dbfClient )->NbrEst,;
-                  ( dbfClient )->Titulo + CRLF + ( dbfClient )->Domicilio,;
-                  ( dbfClient )->Nif,;
-                  ( dbfClient )->Poblacion,;
-                  ( dbfClient )->Provincia,;
-                  ( dbfClient )->CodPostal,;
-                  ( dbfClient )->mComent;
-         HEAD     ;
-                  "Código" + CRLF + "Nombre comercial",;
-                  "Nombre" + CRLF + "Domicilio",;
-                  "NIF/CIF",;
-                  "Población",;
-                  "Provincia",;
-                  "Cod. postal",;
-                  "Observaciones";
-         FIELDSIZES ;
-                  122,;
-                  300,;
-                  100,;
-                  100,;
-                  80,;
-                  80,;
-                  300 ;
-         JUSTIFY  ;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f. ;
-         ALIAS    ( dbfClient ) ;
-         ID       210 ;
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaOrdenarMenu( oDlg, oBrw ) ) )
-
-   /*
-   Guardo los campos del browse
-   */
-
-   pdaCloseFiles()
-
-   //Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static function pdaOrdenarMenu( oDlg, oBrw )
-
-  local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 700 ;
-      BITMAPS  150 ; // bitmaps resoruces ID
-      IMAGES   4     // number of images in the bitmap
-
-      //REDEFINE MENUITEM ID 310 OF oMenu ACTION ( WinAppRec( oBrw, bEdtPda, dbfClient, oDlg ) )
-
-      REDEFINE MENUITEM ID 710 OF oMenu ACTION ( WinEdtRec( oBrw, bEdtPda, dbfClient, oDlg ) )
-
-      REDEFINE MENUITEM ID 720 OF oMenu ACTION ( DBDelRec( oBrw, dbfClient ) )
-
-      REDEFINE MENUITEM ID 730 OF oMenu ACTION ( WinZooRec( oBrw, bEdtPda, dbfClient, oDlg ) )
-
-      REDEFINE MENUITEM ID 740 OF oMenu ACTION ( oDlg:End() )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-static function pdaDelClientes( oBrw )
-
-   //CASO LUNES
-
-   if cComboOrden == "Lunes"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisLun  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   //CASO MARTES
-
-   if cComboOrden == "Martes"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisMar  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   //CASO MIÉRCOLES
-
-   if cComboOrden == "Miércoles"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisMie  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   //CASO JUEVES
-
-   if cComboOrden == "Jueves"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisJue  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   //CASO VIERNES
-
-   if cComboOrden == "Viernes"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisVie  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   //CASO SÁBADO
-
-   if cComboOrden == "Sábado"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisSab  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   //CASO DOMINGO
-
-   if cComboOrden == "Domingo"
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lVisDom  := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   end if
-
-   oBrw:Refresh()
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static function pdaCambiarPosicion( oBrw, lUpDown )
-
-   local aPos
-   local nPos     := 1
-   local aRec     := {}
-   local nRec     := ( dbfClient )->( Recno() )
-   local cField
-   local lField
-
-   CursorWait()
-
-   do case
-      case cComboOrden == "Lunes"
-         cField    := "nVisLun"
-         lField    := "lVisLun"
-
-      case cComboOrden == "Martes"
-         cField    := "nVisMar"
-         lField    := "lVisMar"
-
-      case cComboOrden == "Miércoles"
-         cField    := "nVisMie"
-         lField    := "lVisMie"
-
-      case cComboOrden == "Jueves"
-         cField    := "nVisJue"
-         lField    := "lVisJue"
-
-      case cComboOrden == "Viernes"
-         cField    := "nVisVie"
-         lField    := "lVisVie"
-
-      case cComboOrden == "Sábado"
-         cField    := "nVisSab"
-         lField    := "lVisSab"
-
-      case cComboOrden == "Domingo"
-         cField    := "nVisDom"
-         lField    := "lVisDom"
-   end case
-
-   do case
-      case IsTrue( lUpDown )
-
-         if ( dbfClient )->( dbRLock() )
-            ( dbfClient )->( FieldPut( FieldPos( cField ), FieldGet( FieldPos( cField ) ) - 1.5 ) )
-         end if
-         ( dbfClient )->( dbUnLock() )
-
-      case IsFalse( lUpDown )
-
-         if ( dbfClient )->( dbRLock() )
-            ( dbfClient )->( FieldPut( FieldPos( cField ), FieldGet( FieldPos( cField ) ) + 1.5 ) )
-         end if
-         ( dbfClient )->( dbUnLock() )
-   end case
-
-   //--------------------------------------------------------------------------
-
-   ( dbfClient )->( dbGoTop() )
-
-   while !( dbfClient )->( eof() )
-
-      if ( dbfClient )->( FieldGet( FieldPos( lField ) ) )
-         aAdd( aRec, { ( dbfClient )->( Recno() ), nPos++ } )
-      end if
-
-      ( dbfClient )->( dbSkip() )
-
-   end while
-
-   //--------------------------------------------------------------------------
-
-   for each aPos in aRec
-
-      ( dbfClient )->( dbGoTo( aPos[ 1 ] ) )
-
-      if ( dbfClient )->( dbRLock() )
-         ( dbfClient )->( FieldPut( FieldPos( cField ), aPos[ 2 ] ) )
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-   next
-
-   //--------------------------------------------------------------------------
-
-   CursorWE()
-
-   ( dbfClient )->( dbGoTo( nRec ) )
-
-   oBrw:Refresh()
-
-return ( nil )
-
-//---------------------------------------------------------------------------//
-
-static function pdaSetClientes()
-
-   local cCodCli
-
-   /*
-   Añadiendo clientes desde el Array-------------------------------------------
-   */
-
-   for each cCodCli in aClientes
-
-      if !Empty( cCodCli ) .and. ( dbfClient )->( dbSeek( cCodCli ) )
-
-         //CASO LUNES
-
-         if cComboOrden == "Lunes"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisLun  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         //CASO MARTES
-
-         if cComboOrden == "Martes"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisMar  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         //CASO MIÉRCOLES
-
-         if cComboOrden == "Miércoles"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisMie  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         //CASO JUEVES
-
-         if cComboOrden == "Jueves"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisJue  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         //CASO VIERNES
-
-         if cComboOrden == "Viernes"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisVie  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         //CASO SÁBADO
-
-         if cComboOrden == "Sábado"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisSab  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-         //CASO DOMINGO
-
-         if cComboOrden == "Domingo"
-
-            if dbLock( dbfClient )
-               ( dbfClient )->lVisDom  := .t.
-               ( dbfClient )->( dbUnLock() )
-            end if
-
-         end if
-
-      end if
-
-   next
-
-return aClientes
-
-//---------------------------------------------------------------------------//
-
-function pdaAddArray( oDlg, oBrwCli )
-
-   local nScan    := aScan( aClientes, ( dbfClient )->Cod )
-
-   if nScan == 0
-      aAdd( aClientes, ( dbfClient )->Cod )
-   else
-      aDel( aClientes, nScan, .t. )
-   end if
-
-   oBrwCli:Refresh()
-
-return aClientes
-
-//---------------------------------------------------------------------------//
-
-static function EdtPda( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
-
-   local oDlg
-   local aBtn        := Array( 4 )
-   local oGet
-   local oSayPgo
-   local cSayPgo
-   local cRuta
-   local oRuta
-   local oSayAge
-   local cSayAge
-   local oBrwAtp
-   local oFiltroAtp
-   local cFiltroAtp     := "Activas"
-   local aFiltroAtp     := { "Todas", "Activas" }
-
-   if BeginTrans( aTmp, nMode )
-      Return .f.
-   end if
-
-   if nMode == APPD_MODE
-      aTmp[ _LSNDINT ]  := .t.
-      aTmp[ _LMODDAT ]  := .t.
-      aTmp[ _LCHGPRE ]  := .t.
-      aTmp[ _COPIASF ]  := 0
-      aTmp[ _NLABEL  ]  := 1
-      aTmp[ _NTARIFA ]  := 1
-      aTmp[ _NTARCMB ]  := 1
-   end if
-
-   if Empty( aTmp[ _CDTOESP ] )
-      aTmp[ _CDTOESP ]  := Padr( "General", 50 )
-   end if
-
-   if Empty( aTmp[ _CDPP ] )
-      aTmp[ _CDPP ]     := Padr( "Pronto pago", 50 )
-   end if
-
-   if Empty( aTmp[ _CDTOATP ] )
-      aTmp[ _CDTOATP ]  := Padr( "Atipico", 50 )
-   end if
-
-
-   DEFINE DIALOG oDlg RESOURCE "PEDCLI_PDA_4"
-
-   REDEFINE FOLDER oFld ;
-      ID          200 ;
-      OF          oDlg ;
-      PROMPT      "General",        "Comercial",      "Tarifa";
-      DIALOGS     "CLIENT_PDA",     "COMERCIAL_PDA",  "TARIFA_PDA"
-
-   /*
-   Primera Pestaña: General----------------------------------------------------
-   */
-
-   REDEFINE GET oGet VAR aTmp[ _COD ];
-      ID       210 ;
-      WHEN     ( nMode == APPD_MODE ) ;
-      ON HELP  ( oGet:cText( NextKey( aTmp[ _COD ], dbfClient, "0", RetNumCodCliEmp() ) ) );
-      BITMAP   "BOT" ;
-      VALID    ( NotValid( oGet, dbfClient, .t., "0", 1, RetNumCodCliEmp() ) ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_NIF] VAR aTmp[_NIF] ;
-      ID       220 ;
-      PICTURE  "@!" ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( CheckCif( aGet[_NIF] ), if( nMode == APPD_MODE, lValidCif( aGet[_NIF] ), .t. ) );
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_TITULO] VAR aTmp[_TITULO];
-      ID       230 ;
-      PICTURE  "@!" ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( if( nMode == APPD_MODE, lValidNombre( aGet[_TITULO] ), .t. ) ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[ _DOMICILIO ] VAR aTmp[ _DOMICILIO ];
-      ID       240 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
-      ID       250 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[ _CODPOSTAL ] VAR aTmp[ _CODPOSTAL ] ;
-      ID       260 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[ _PROVINCIA ] VAR aTmp[ _PROVINCIA ] ;
-      ID       270 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[ _CPERCTO ] VAR aTmp[ _CPERCTO ];
-      ID       280 ;
-      PICTURE  "@!" ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ] ;
-      ID       290 ;
-      PICTURE  "9" ;
-      WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-      VALID    ( aTmp[_NTARIFA] >= 1 .AND. aTmp[_NTARIFA] <= 6 );
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_TELEFONO] VAR aTmp[_TELEFONO] ;
-      ID       291 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[_TELEFONO] ), .t. ) ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_FAX] VAR aTmp[_FAX] ;
-      ID       300 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_MOVIL] VAR aTmp[_MOVIL] ;
-      ID       310 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_CODPAGO] VAR aTmp[_CODPAGO];
-      ID       320 ;
-      PICTURE  "@!" ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( cFPago( aGet[_CODPAGO], , oSayPgo ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( pdaBrwFPago( aGet[_CODPAGO ], dbfFpago, oSayPgo ) );
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET oSayPgo VAR cSayPgo  ;
-       ID       321 ;
-       WHEN     .f. ;
-       OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_CCODRUT] VAR aTmp[_CCODRUT] ;
-      ID       330 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( cRuta( aGet[_CCODRUT], nil, oRuta ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( pdaBrwRuta( aGet[_CCODRUT], nil, oRuta ) ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET oRuta VAR cRuta ;
-      ID       331 ;
-      WHEN     .f. ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET aGet[_CAGENTE] VAR aTmp[_CAGENTE] ;
-      ID       340 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      VALID    ( cAgentes( aGet[_CAGENTE], , oSayAge ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( pdaBrwAgentes( aGet[_CAGENTE], oSayAge ) ) ;
-      OF       oFld:aDialogs[1]
-
-   REDEFINE GET oSayAge VAR cSayAge ;
-      WHEN     .F. ;
-      ID       341 ;
-      OF       oFld:aDialogs[1]
-
-   /*
-   Segunda Pestaña: Comercial--------------------------------------------------
-   */
-
-   REDEFINE GET aGet[_NBREST] VAR aTmp[_NBREST];
-      ID       100 ;
-      PICTURE  "@!" ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE GET aGet[_DIREST] VAR aTmp[_DIREST] ;
-      ID       110 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE GET aGet[_CMEIINT] VAR aTmp[_CMEIINT] ;
-      ID       120 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE GET aGet[_CWEBINT] VAR aTmp[_CWEBINT] ;
-      ID       130 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE RADIO aGet[ _NREGIVA ] ;
-      VAR      aTmp[ _NREGIVA ] ;
-      ID       200,;
-               220,;
-               230,;
-               240 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LREQ] ;
-      ID       210 ;
-      WHEN     ( aTmp[_NREGIVA] == 1 .AND. nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISLUN] ;
-      ID       300 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISMAR] ;
-      ID       310 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISMIE] ;
-      ID       320 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISJUE] ;
-      ID       330 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISVIE] ;
-      ID       340 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISSAB] ;
-      ID       350 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE CHECKBOX aTmp[_LVISDOM] ;
-      ID       360 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oFld:aDialogs[2]
-
-   REDEFINE GET aGet[ _NVISLUN ] ;
-         VAR      aTmp[ _NVISLUN ] ;
-         ID       400 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISLUN ] );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NVISMAR ] ;
-         VAR      aTmp[ _NVISMAR ] ;
-         ID       410 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISMAR ] );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NVISMIE ] ;
-         VAR aTmp[ _NVISMIE ] ;
-         ID       420 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISMIE ] );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NVISJUE ] ;
-         VAR aTmp[ _NVISJUE ] ;
-         ID       430 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISJUE ] );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NVISVIE ] ;
-         VAR aTmp[ _NVISVIE ] ;
-         ID       440 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISVIE ] );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NVISSAB ] ;
-         VAR aTmp[ _NVISSAB ] ;
-         ID       450 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISSAB ] );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NVISDOM ] ;
-         VAR aTmp[ _NVISDOM ] ;
-         ID       460 ;
-         PICTURE  "999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LVISDOM ] );
-         OF       oFld:aDialogs[2]
-
-   /*
-   Tercera Pestaña: Tarifa--------------------------------------------------
-   */
-
-      REDEFINE BTNBMP aBtn[1] ;
-         ID       100 ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "New16" ;
-         NOBORDER ;
-         ACTION   ( WinAppRec( oBrwAtp, bAtpPda, dbfTmpAtp, aTmp, aGet ) )
-
-      aBtn[1]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE BTNBMP aBtn[2] ;
-         ID       110 ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Edit16" ;
-         NOBORDER ;
-         ACTION   ( WinEdtRec( oBrwAtp, bAtpPda, dbfTmpAtp, aTmp, aGet ) )
-
-      aBtn[2]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE BTNBMP aBtn[3] ;
-         ID       120 ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Del16" ;
-         NOBORDER ;
-         ACTION   ( dbDelRec( oBrwAtp, dbfTmpAtp ) )
-
-      aBtn[3]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE BTNBMP aBtn[4] ;
-         ID       130 ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 3 ] ;
-         RESOURCE "Zoom16" ;
-         NOBORDER ;
-         ACTION   ( WinZooRec( oBrwAtp, bAtpPda, dbfTmpAtp, aTmp, aGet ) )
-
-      aBtn[4]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-   REDEFINE COMBOBOX oFiltroAtp VAR cFiltroAtp ;
-      ID       140 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      ITEMS    aFiltroAtp ;
-      ON CHANGE( FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ) );
-      OF       oFld:aDialogs[3]
-
-   REDEFINE IBROWSE oBrwAtp ;
-      FIELDS ;
-               if( ( dbfTmpAtp )->nTipAtp <= 1, ( dbfTmpAtp )->cCodArt, ( dbfTmpAtp )->cCodFam ),;
-               if( ( dbfTmpAtp )->nTipAtp <= 1, RetArticulo( ( dbfTmpAtp )->CCODART, dbfArticulo ), RetFamilia( ( dbfTmpAtp )->cCodFam, dbfFamilia ) ),;
-               Tran( ( dbfTmpAtp )->nPrcArt,   cPouDiv ) ;
-      TITLE ;
-               "Código",;
-               "Artículo/Familia",;
-               "Precio 1";
-      SIZES ;
-               100,;
-               220,;
-               80;
-      JUSTIFY  .f., .f., .f. ;
-      ALIAS    ( dbfTmpAtp ) ;
-      OF       oFld:aDialogs[3] ;
-      ID       150
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaMenuEdtCli( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ) ) )
-
-   // Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuEdtCli( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION AtpPda( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
-
-   local oDlg
-   local oFld
-   local oGetArticulo
-   local cGetArticulo
-   local oGetFamilia
-   local cGetFamilia
-   local oSayPr1
-   local oSayPr2
-   local oSayVp1
-   local oSayVp2
-   local cSayPr1
-   local cSayPr2
-   local cSayVp1
-   local cSayVp2
-   local oCosto
-   local cCosto
-   local oSobre
-   local cSobre         := "Precio 1"
-   local aSobre         := { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
-   local cNaturaleza    := "Artículo"
-   local aNaturaleza    := { "Artículo", "Familia" }
-   local oBrwRen
-   local cPouEmp        := cPouDiv( cDivEmp(), dbfDiv )
-   local cPouChg        := cPouDiv( cDivChg(), dbfDiv )
-   local oBtnRen
-   local oSayLabels     := Array( 16 )
-
-   if nMode == APPD_MODE
-
-      cCosto            := 0
-      aTmp[ _aCCODCLI ] := aTmpCli[ _COD ]
-      aTmp[ _aDFECINI ] := Ctod( "" )
-      aTmp[ _aDFECFIN ] := Ctod( "" )
-      aTmp[ _aLAPLPRE ] := .t.
-      aTmp[ _aLAPLPED ] := .t.
-      aTmp[ _aLAPLALB ] := .t.
-      aTmp[ _aLAPLFAC ] := .t.
-      aTmp[ _aLAPLSAT ] := .t.
-      aTmp[ _aNTIPXBY ] := 2
-      aTmp[ _aNUNVOFE ] := 1
-      aTmp[ _aNUNCOFE ] := 1
-
-      if !Empty( aTmpCli[ _CAGENTE ] )
-         if ( cAgente )->( dbSeek( aTmpCli[ _CAGENTE ] ) )
-            aTmp[ _aNCOMAGE ]    := ( cAgente )->nCom1
-            if ( cAgente )->nCom1 != 0
-               aTmp[ _aLCOMAGE ] := .t.
-            end if
-         end if
-      end if
-
-   else
-
-      cNaturaleza       := Max( Min( aTmp[ _aNTIPATP ], len( aNaturaleza ) ), 1 )
-
-      cGetArticulo      := RetArticulo( aTmp[ _aCCODART ] )
-
-      if !Empty( aTmp[ _aCCODPR1 ] )
-         cSayPr1        := retProp( aTmp[ _aCCODPR1 ], dbfPro )
-         cSayVp1        := retValProp( aTmp[ _aCCODPR1 ] + aTmp[ _aCVALPR1 ], dbfProL )
-      end if
-
-      if !Empty( aTmp[ _aCCODPR2 ] )
-         cSayPr2        := retProp( aTmp[ _aCCODPR2 ], dbfPro )
-         cSayVp2        := retValProp( aTmp[ _aCCODPR2 ] + aTmp[ _aCVALPR2 ], dbfProL )
-      end if
-
-      cGetFamilia       := retFld( aTmp[ _aCCODFAM ], dbfFamilia )
-
-   end if
-
-   DEFINE DIALOG oDlg RESOURCE "ATIPICA_PDA"
-
-      REDEFINE COMBOBOX aGet[ _aNTIPATP ] VAR cNaturaleza ;
-         ITEMS    aNaturaleza ;
-         ID       100 ;
-         ON CHANGE( ChangeNaturaleza( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oCosto, nMode, oSayLabels ) ) ;
-         WHEN     ( nMode == APPD_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aCCODART ] VAR aTmp[ _aCCODART ];
-         ID       110 ;
-         WHEN     ( nMode == APPD_MODE );
-         ON HELP  ( BrwArticulo( aGet[ 2 ], oGetArticulo ) );
-         BITMAP   "LUPA" ;
-         VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oGetArticulo VAR cGetArticulo ;
-         ID       120 ;
-			WHEN  	( .F. );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aCCODFAM ] VAR aTmp[ _aCCODFAM ];
-         ID       130 ;
-         WHEN     ( nMode == APPD_MODE );
-         VALID    cFamilia( aGet[ _aCCODFAM ], dbfFamilia, oGetFamilia ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  pdaBrwFamilia( aGet[ _aCCODFAM ], oGetFamilia ) ;
-         OF       oDlg
-
-      REDEFINE GET oGetFamilia VAR cGetFamilia ;
-         ID       140 ;
-         WHEN     ( .F. );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNDTOART ] VAR aTmp[ _aNDTOART ];
-         ID       200 ;
-         WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
-         VALID    ( ( aTmp[_aNDTOART] >= 0 .AND. aTmp[_aNDTOART] <= 100 ) )  ;
-         PICTURE  "@E 999.99";
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNDTODIV ] VAR aTmp[ _aNDTODIV ];
-         ID       210 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         SPINNER ;
-         PICTURE  cPouDiv ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPRCART ] VAR aTmp[ _aNPRCART ];
-         ID       300 ;
-         SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA1 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPRCART2 ] VAR aTmp[ _aNPRCART2 ];
-         ID       310 ;
-         SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART2 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA2 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPRCART3 ] VAR aTmp[ _aNPRCART3 ];
-         ID       320 ;
-         SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART3 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA3 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPRCART4 ] VAR aTmp[ _aNPRCART4 ];
-         ID       330 ;
-         SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART4 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA4 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPRCART5 ] VAR aTmp[ _aNPRCART5 ];
-         ID       340 ;
-         SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART5 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA5 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPRCART6 ] VAR aTmp[ _aNPRCART6 ];
-         ID       350 ;
-         SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART6 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA6 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPREIVA1 ] VAR aTmp[ _aNPREIVA1 ] ;
-         ID       360 ;
-         SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA1 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPREIVA2 ] VAR aTmp[ _aNPREIVA2 ] ;
-         ID       370 ;
-         PICTURE  cPouDiv ;
-         SPINNER ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA2 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART2 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPREIVA3 ] VAR aTmp[ _aNPREIVA3 ] ;
-         ID       380 ;
-         SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA3 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART3 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPREIVA4 ] VAR aTmp[ _aNPREIVA4 ] ;
-         ID       390 ;
-         SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA4 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART4 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPREIVA5 ] VAR aTmp[ _aNPREIVA5 ] ;
-         ID       400 ;
-         SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA5 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART5 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aNPREIVA6 ] VAR aTmp[ _aNPREIVA6 ] ;
-         ID       410 ;
-         SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA6 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART6 ] ) );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aDFECINI ] VAR aTmp[ _aDFECINI ];
-         ID       500 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _aDFECFIN ] VAR aTmp[ _aDFECFIN ];
-         ID       510 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaMenuAtpCli( aGet, aTmp, dbfTmpAtp, oBrw, oDlg, nMode ) ) )
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuAtpCli( aGet, aTmp, dbfTmpAtp, oBrw, oDlg, nMode )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( SaveEdtAtp( aGet, aTmp, dbfTmpAtp, oBrw, oDlg, nMode ), oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-#endif
-//---------------------------------------------------------------------------//
-
-CLASS pdaClienteSenderReciver
-
-   Method CreateData()
-
-   Method CleanRelation()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaClienteSenderReciver
-
-   local lExist      := .f.
-   local pdaCliAtp
-   local pdaClient
-   local pdaObrasT
-   local pdaContactos
-   local dbfClient
-   local dbfCliAtp
-   local dbfObrasT
-   local dbfContactos
-   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
-
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @pdaClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @pdaCliAtp ) )
-   SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @pdaObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-   USE ( cPatCli() + "CliContactos.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @pdaContactos ) )
-   SET ADSINDEX TO ( cPatCli() + "CliContactos.Cdx" ) ADDITIVE
-
-   /*
-   Usamos las bases de datos del PC--------------------------------------------
-   */
-
-   dbUseArea( .t., cDriver(), cPatPc + "Client.Dbf", cCheckArea( "Client", @dbfClient ), .t. )
-   ( dbfClient )->( ordListAdd( cPatPc + "Client.Cdx" ) )
-   ( dbfClient )->( OrdSetFocus( "lSndEnviar" ) )
-
-   dbUseArea( .t., cDriver(), cPatPc + "CliAtp.Dbf", cCheckArea( "CliAtp", @dbfCliAtp ), .t. )
-   ( dbfCliAtp )->( ordListAdd( cPatPc + "CliAtp.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatPc + "ObrasT.Dbf", cCheckArea( "ObrasT", @dbfObrasT ), .t. )
-   ( dbfObrasT )->( ordListAdd( cPatPc + "ObrasT.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatPc + "CliContactos.Dbf", cCheckArea( "CLICONTA", @dbfContactos ), .t. )
-   ( dbfContactos )->( ordListAdd( cPatPc + "CliContactos.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( dbfClient )->( OrdKeyCount() ) )
-   end if
-
-   ( dbfClient )->( dbGoTop() )
-   while !( dbfClient )->( eof() )
-
-      ::CleanRelation( ( dbfClient )->Cod, pdaCliAtp, pdaObrasT, pdaContactos )
-
-      if ( pdaClient )->( dbSeek( ( dbfClient )->Cod ) )
-         dbPass( dbfClient, pdaClient, .f. )
-      else
-         dbPass( dbfClient, pdaClient, .t. )
-      end if
-
-      /*
-      Situaciones atipicas--------------------------------------------------
-      */
-
-      if ( dbfCliAtp )->( dbSeek( ( dbfClient )->Cod ) )
-         while ( dbfCliAtp )->cCodCli == ( dbfClient )->Cod .and. !( dbfCliAtp )->( eof() )
-            dbPass( dbfCliAtp, pdaCliAtp, .t. )
-            ( dbfCliAtp )->( dbSkip() )
-         end while
-      end if
-
-      /*
-      Situaciones atipicas----------------------------------------------------
-      */
-
-      if ( dbfObrasT )->( dbSeek( ( dbfClient )->Cod ) )
-         while ( dbfObrasT )->cCodCli == ( dbfClient )->Cod .and. !( dbfObrasT )->( eof() )
-            dbPass( dbfObrasT, pdaObrasT, .t. )
-            ( dbfObrasT )->( dbSkip() )
-         end while
-      end if
-
-      /*
-      Situaciones atipicas----------------------------------------------------
-      */
-
-      if ( dbfContactos )->( dbSeek( ( dbfClient )->Cod ) )
-         while ( dbfContactos )->cCodCli == ( dbfClient )->Cod .and. !( dbfContactos )->( eof() )
-            dbPass( dbfContactos, pdaContactos, .t. )
-            ( dbfContactos )->( dbSkip() )
-         end while
-      end if
-
-      /*
-      Desmarcamos el cliente------------------------------------------------
-      */
-
-      if dbLock( dbfClient )
-         ( dbfClient )->lSndInt        := .f.
-         ( dbfClient )->( dbUnLock() )
-      end if
-
-      /*
-      Siguiente cliente--------------------------------------------------------
-      */
-
-      ( dbfClient )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando clientes " + Alltrim( Str( ( dbfClient )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( dbfClient )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( dbfClient )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( dbfClient    )
-   CLOSE ( dbfCliAtp    )
-   CLOSE ( dbfObrasT    )
-   CLOSE ( dbfContactos )
-   CLOSE ( pdaClient    )
-   CLOSE ( pdaCliAtp    )
-   CLOSE ( pdaObrasT    )
-   CLOSE ( pdaContactos )
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method CleanRelation( cCodCli, dbfCliAtp, dbfObrasT, dbfContactos ) CLASS pdaClienteSenderReciver
-
-   while ( dbfCliAtp )->( dbSeek( cCodCli ) )
-      dbDel( dbfCliAtp )
-   end while
-
-   while ( dbfObrasT )->( dbSeek( cCodCli ) )
-      dbDel( dbfObrasT )
-   end while
-
-   while ( dbfContactos )->( dbSeek( cCodCli ) )
-      dbDel( dbfContactos )
-   end while
-
-   SysRefresh()
-
-Return Self
-
 //---------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 Function IsClient( cPath )
 
@@ -11755,7 +8271,7 @@ RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-function GetRiesgo( cCodCli, dbfCli, oRieCli )
+FUNCTION GetRiesgo( cCodCli, dbfCli, oRieCli )
 
    local nImpRiesgo := 0
    local aCliStatus
@@ -11880,16 +8396,16 @@ Return ( aXbYRet )
 function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
 
    local lSea     := .f.
-   local nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cCodFam" ) )
+   local nOrd     := ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( "cCodFam" ) )
 
-   if ( dbfCliAtp )->( dbSeek( cCadSea ) )
+   if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea ) )
 
-      while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCadSea .and.;
-            !( dbfCliAtp )->( eof() )
+      while ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodFam == cCadSea .and.;
+            !( TDataCenter():Get( "CliAtp" ) )->( eof() )
 
-         if ( ( dbfCliAtp )->dFecIni <= dFecDoc .or. Empty( ( dbfCliAtp )->dFecIni ) ) .and. ;
-            ( ( dbfCliAtp )->dFecFin >= dFecDoc .or. Empty( ( dbfCliAtp )->dFecFin ) ) .and. ;
-            ( dbfCliAtp )->nTipAtp == 2
+         if ( ( TDataCenter():Get( "CliAtp" ) )->dFecIni <= dFecDoc .or. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni ) ) .and. ;
+            ( ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dFecDoc .or. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin ) ) .and. ;
+            ( TDataCenter():Get( "CliAtp" ) )->nTipAtp == 2
 
             lSea  := .t.
             
@@ -11897,7 +8413,7 @@ function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
 
          else
 
-            ( dbfCliAtp )->( dbSkip() )
+            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
 
          end if
 
@@ -11905,7 +8421,7 @@ function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
 
    end if
 
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+   ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( nOrd ) )
 
 return ( lSea )
 
@@ -11925,17 +8441,17 @@ function nDtoAtp( nTarifa, dbfCliAtp, oDto, oTarifa )
 
       do case
          case nTarifa == 1
-            nDto     := ( dbfCliAtp )->nDto1
+            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto1
          case nTarifa == 2
-            nDto     := ( dbfCliAtp )->nDto2
+            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto2
          case nTarifa == 3
-            nDto     := ( dbfCliAtp )->nDto3
+            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto3
          case nTarifa == 4
-            nDto     := ( dbfCliAtp )->nDto4
+            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto4
          case nTarifa == 5
-            nDto     := ( dbfCliAtp )->nDto5
+            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto5
          case nTarifa == 6
-            nDto     := ( dbfCliAtp )->nDto6
+            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto6
       end do
 
       if nDto == 0 .and. nTarifa > 1 .and. lBuscaImportes()
@@ -11952,7 +8468,7 @@ function nDtoAtp( nTarifa, dbfCliAtp, oDto, oTarifa )
    */
 
    if nDto == 0
-      nDto           := ( dbfCliAtp )->nDtoArt
+      nDto           := ( TDataCenter():Get( "CliAtp" ) )->nDtoArt
    end if
 
    /*
@@ -11990,17 +8506,17 @@ function nImpAtp( nTarifa, dbfCliAtp, uPreUnt, nIva, oTarifa )
 
       do case
          case nTarifa == 1
-            nPre     := ( dbfCliAtp )->nPrcArt
+            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt
          case nTarifa == 2
-            nPre     := ( dbfCliAtp )->nPrcArt2
+            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt2
          case nTarifa == 3
-            nPre     := ( dbfCliAtp )->nPrcArt3
+            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt3
          case nTarifa == 4
-            nPre     := ( dbfCliAtp )->nPrcArt4
+            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt4
          case nTarifa == 5
-            nPre     := ( dbfCliAtp )->nPrcArt5
+            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt5
          case nTarifa == 6
-            nPre     := ( dbfCliAtp )->nPrcArt6
+            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt6
       end do
 
       if nPre == 0 .and. nTarifa > 1 .and. lBuscaImportes()
@@ -12031,24 +8547,24 @@ return ( nPre )
 function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    local lSea        := .f.
-   local nOrd        := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
+   local nOrd        := ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( "cCliArt" ) )
 
    DEFAULT cCodPrp   := Space(20)
    DEFAULT cValPrp   := Space(20)
 
-   if ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
+   if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
 
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
+      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt + ( TDataCenter():Get( "CliAtp" ) )->cCodPr1 + ( TDataCenter():Get( "CliAtp" ) )->cCodPr2 + ( TDataCenter():Get( "CliAtp" ) )->cValPr1 + ( TDataCenter():Get( "CliAtp" ) )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
+            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
 
-         if ( dbfCliAtp )->dFecIni <= dFecDoc .and. ( dbfCliAtp )->dFecFin >= dFecDoc .and. ( dbfCliAtp )->nTipAtp <= 1
+         if ( TDataCenter():Get( "CliAtp" ) )->dFecIni <= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->nTipAtp <= 1
 
             lSea     := .t.
             exit
 
          else
 
-            ( dbfCliAtp )->( dbSkip() )
+            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
 
          end if
 
@@ -12056,19 +8572,19 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    end if
 
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + Space( 20 ) ) )
+   if !lSea .and. ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + Space( 20 ) ) )
 
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCadSea ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
+      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt == cCadSea ) .and.;
+            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
 
-         if ( dbfCliAtp )->dFecIni <= dFecDoc .and. ( dbfCliAtp )->dFecFin >= dFecDoc .and. ( dbfCliAtp )->nTipAtp <= 1
+         if ( TDataCenter():Get( "CliAtp" ) )->dFecIni <= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->nTipAtp <= 1
 
             lSea     := .t.
             exit
 
          else
 
-            ( dbfCliAtp )->( dbSkip() )
+            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
 
          end if
 
@@ -12080,19 +8596,19 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
    Ahora vamos a ver si hay con fechas vacias----------------------------------
    */
 
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
+   if !lSea .and. ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
 
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
+      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt + ( TDataCenter():Get( "CliAtp" ) )->cCodPr1 + ( TDataCenter():Get( "CliAtp" ) )->cCodPr2 + ( TDataCenter():Get( "CliAtp" ) )->cValPr1 + ( TDataCenter():Get( "CliAtp" ) )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
+            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
 
-         if Empty( ( dbfCliAtp )->dFecIni ) .and. Empty( ( dbfCliAtp )->dFecFin ) .and. ( dbfCliAtp )->nTipAtp <= 1
+         if Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni ) .and. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin ) .and. ( TDataCenter():Get( "CliAtp" ) )->nTipAtp <= 1
 
             lSea     := .t.
             exit
 
          else
 
-            ( dbfCliAtp )->( dbSkip() )
+            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
 
          end if
 
@@ -12100,19 +8616,19 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    end if
 
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + Space( 20 ) ) )
+   if !lSea .and. ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + Space( 20 ) ) )
 
-      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCadSea ) .and.;
-            (!( dbfCliAtp )->( eof() ) )
+      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt == cCadSea ) .and.;
+            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
 
-         if Empty( ( dbfCliAtp )->dFecIni ) .and. Empty( ( dbfCliAtp )->dFecFin )
+         if Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni ) .and. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin )
 
             lSea     := .t.
             exit
 
          else
 
-            ( dbfCliAtp )->( dbSkip() )
+            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
 
          end if
 
@@ -12120,7 +8636,7 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    end if
 
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+   ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( nOrd ) )
 
 return ( lSea )
 
@@ -12142,7 +8658,7 @@ RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-function AddRiesgo( nImpRie, cCodCli, dbfClient )
+FUNCTION AddRiesgo( nImpRie, cCodCli, dbfClient )
 
    local aCliStatus  := aGetStatus( dbfClient, .t. )
 
@@ -12158,7 +8674,7 @@ return ( nil )
 
 //---------------------------------------------------------------------------//
 
-function DelRiesgo( nImpRie, cCodCli, dbfClient )
+FUNCTION DelRiesgo( nImpRie, cCodCli, dbfClient )
 
    local aCliStatus  := aGetStatus( dbfClient, .t. )
 
@@ -12220,7 +8736,7 @@ RETURN cText
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cClient( oGet, dbfClient, oGet2 )
+FUNCTION cClient( oGet, dbfCli, oGet2 )
 
    local oBlock
    local oError
@@ -12247,22 +8763,22 @@ FUNCTION cClient( oGet, dbfClient, oGet2 )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfClient )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   if Empty( dbfCli )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
-   if dbSeekInOrd( xValor, "Cod", dbfClient )
+   if dbSeekInOrd( xValor, "Cod", dbfCli )
 
       if IsObject( oGet )
-         oGet:cText( ( dbfClient )->Cod )
+         oGet:cText( ( dbfCli )->Cod )
       end if
 
       if IsObject( oGet2 )
-         oGet2:cText( ( dbfClient )->Titulo )
-         if ( dbfClient )->nColor != 0
-            oGet2:SetColor( , ( dbfClient )->nColor )
+         oGet2:cText( ( dbfCli )->Titulo )
+         if ( dbfCli )->nColor != 0
+            oGet2:SetColor( , ( dbfCli )->nColor )
          end if
       end if
 
@@ -12283,7 +8799,7 @@ FUNCTION cClient( oGet, dbfClient, oGet2 )
    ErrorBlock( oBlock )
 
    if lClose
-      CLOSE ( dbfClient )
+      CLOSE ( dbfCli )
    end if
 
 RETURN lValid
@@ -12299,64 +8815,64 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Static Function lValidNombre( oGet )
+STATIC FUNCTION lValidNombre( oGet )
 
    local cNombre  := oGet:VarGet()
-   local nRec     := ( dbfClient )->( Recno() )
-   local nOrd     := ( dbfClient )->( OrdSetFocus( "Titulo" ) )
+   local nRec     := ( TDataCenter():Get( "Client" ) )->( Recno() )
+   local nOrd     := ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( "Titulo" ) )
 
-   if !Empty( cNombre ) .and. ( dbfClient )->( dbSeek( cNombre ) )
+   if !Empty( cNombre ) .and. ( TDataCenter():Get( "Client" ) )->( dbSeek( cNombre ) )
       msgStop( 'El nombre introducido ya existe en la base de datos' )
    end if
 
-   ( dbfClient )->( dbGoTo( nRec ) )
-   ( dbfClient )->( OrdSetFocus( nOrd ) )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRec ) )
+   ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( nOrd ) )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function lValidCif( oGet )
+STATIC FUNCTION lValidCif( oGet )
 
    local cCif     := oGet:VarGet()
-   local nRec     := ( dbfClient )->( Recno() )
-   local nOrd     := ( dbfClient )->( OrdSetFocus( "Nif" ) )
+   local nRec     := ( TDataCenter():Get( "Client" ) )->( Recno() )
+   local nOrd     := ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( "Nif" ) )
 
-   if !Empty( cCif ) .and. ( dbfClient )->( dbSeek( cCif ) )
+   if !Empty( cCif ) .and. ( TDataCenter():Get( "Client" ) )->( dbSeek( cCif ) )
       msgStop( 'C.I.F / N.I.F. ya existe' )
    end if
 
-   ( dbfClient )->( dbGoTo( nRec ) )
-   ( dbfClient )->( OrdSetFocus( nOrd ) )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRec ) )
+   ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( nOrd ) )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function lValidTlf( oGet )
+STATIC FUNCTION lValidTlf( oGet )
 
    local cTlf     := oGet:VarGet()
-   local nRec     := ( dbfClient )->( Recno() )
-   local nOrd     := ( dbfClient )->( OrdSetFocus( "Telefono" ) )
+   local nRec     := ( TDataCenter():Get( "Client" ) )->( Recno() )
+   local nOrd     := ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( "Telefono" ) )
 
-   if !Empty( cTlf ) .and. ( dbfClient )->( dbSeek( cTlf ) )
+   if !Empty( cTlf ) .and. ( TDataCenter():Get( "Client" ) )->( dbSeek( cTlf ) )
       msgStop( 'El télefono introducido ya existe en la base de datos' )
    end if
 
-   ( dbfClient )->( dbGoTo( nRec ) )
-   ( dbfClient )->( OrdSetFocus( nOrd ) )
+   ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRec ) )
+   ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( nOrd ) )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-static function BeginTrans( aTmp, nMode )
+STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    local oError
    local oBlock
    local lErrors     := .f.
-   local cCodCli     := aTmp[ ( dbfClient )->( fieldpos( "Cod" ) ) ]
-   local cCodSubCta  := aTmp[ ( dbfClient )->( fieldpos( "SubCta" ) ) ]
+   local cCodCli     := aTmp[ ( TDataCenter():Get( "Client" ) )->( fieldpos( "Cod" ) ) ]
+   local cCodSubCta  := aTmp[ ( TDataCenter():Get( "Client" ) )->( fieldpos( "SubCta" ) ) ]
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -12375,11 +8891,9 @@ static function BeginTrans( aTmp, nMode )
    ( dbfTmpSubCta )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
    ( dbfTmpSubCta )->( OrdCreate( cTmpCta, "dFecha", "dFecha", {|| Field->dFecha } ) )
 
-#ifndef __PDA__
    if nMode != APPD_MODE
       LoadSubCta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
    end if
-#endif
 
    dbCreate( cTmpDoc, aSqlStruct( aCliDoc() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( "TmpDoc", @dbfTmpDoc ), .f. )
@@ -12454,12 +8968,12 @@ static function BeginTrans( aTmp, nMode )
 
    if nMode != APPD_MODE
 
-      ( dbfCliAtp )->( dbGoTop() )
+      ( TDataCenter():Get( "CliAtp" ) )->( dbGoTop() )
 
-      if ( dbfCliAtp )->( dbSeek( cCodCli ) )
-         while ( ( dbfCliAtp )->cCodCli == cCodCli ) .and. ( dbfCliAtp )->( !eof() )
+      if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCodCli ) )
+         while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli == cCodCli ) .and. ( TDataCenter():Get( "CliAtp" ) )->( !eof() )
             dbPass( dbfCliAtp, dbfTmpAtp, .t. )
-            ( dbfCliAtp )->( dbSkip() )
+            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
          end while
       end if
 
@@ -12469,10 +8983,10 @@ static function BeginTrans( aTmp, nMode )
       Añadimos desde el fichero de documentos
       */
 
-      if ( dbfClientD )->( dbSeek( cCodCli ) )
-         while ( ( dbfClientD )->cCodCli == cCodCli ) .and. ( dbfClientD )->( !eof() )
+      if ( TDataCenter():Get( "ClientD" ) )->( dbSeek( cCodCli ) )
+         while ( ( TDataCenter():Get( "ClientD" ) )->cCodCli == cCodCli ) .and. ( TDataCenter():Get( "ClientD" ) )->( !eof() )
             dbPass( dbfClientD, dbfTmpDoc, .t. )
-            ( dbfClientD )->( dbSkip() )
+            ( TDataCenter():Get( "ClientD" ) )->( dbSkip() )
          end while
       end if
 
@@ -12620,7 +9134,7 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Static Function aItmSubcuenta()
+STATIC FUNCTION aItmSubcuenta()
 
    local aBase := {}
 
@@ -12638,17 +9152,17 @@ Return ( aBase )
 
 //--------------------------------------------------------------------------//
 
-static function SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
+STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
    local cText       := ""
    local cFacAut
-   local nVisLun     := ( dbfClient )->nVisLun
-   local nVisMar     := ( dbfClient )->nVisMar
-   local nVisMie     := ( dbfClient )->nVisMie
-   local nVisJue     := ( dbfClient )->nVisJue
-   local nVisVie     := ( dbfClient )->nVisVie
-   local nVisSab     := ( dbfClient )->nVisSab
-   local nVisDom     := ( dbfClient )->nVisDom
+   local nVisLun     := ( TDataCenter():Get( "Client" ) )->nVisLun
+   local nVisMar     := ( TDataCenter():Get( "Client" ) )->nVisMar
+   local nVisMie     := ( TDataCenter():Get( "Client" ) )->nVisMie
+   local nVisJue     := ( TDataCenter():Get( "Client" ) )->nVisJue
+   local nVisVie     := ( TDataCenter():Get( "Client" ) )->nVisVie
+   local nVisSab     := ( TDataCenter():Get( "Client" ) )->nVisSab
+   local nVisDom     := ( TDataCenter():Get( "Client" ) )->nVisDom
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
@@ -12657,7 +9171,7 @@ static function SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
          return nil
       end if
 
-      if Existe( aTmp[ _COD ], dbfClient, "Cod" )
+      if Existe( aTmp[ _COD ], TDataCenter():Get( "Client" ), "Cod" )
          MsgStop( "Código ya existe " + Rtrim( aTmp[ _COD ] ) )
          return nil
       end if
@@ -12788,11 +9302,9 @@ static function SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
 
    oDlg:Disable()
 
-#ifndef __PDA__
    oMsgText( "Archivando" )
 
    oMsgProgress()
-#endif
 
    /*
    Guardamos el array con las facturas automáticas-----------------------------
@@ -12864,8 +9376,8 @@ if !Empty( dbfTmpAtp )
    oMsgText( "Eliminando tarifas anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
 
-   while ( dbfCliAtp )->( dbSeek( aTmp[ _COD ] ) ) .and. !( dbfCliAtp )->( eof() )
-      dbDel( dbfCliAtp )
+   while ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( aTmp[ _COD ] ) ) .and. !( TDataCenter():Get( "CliAtp" ) )->( eof() )
+      dbDel( TDataCenter():Get( "CliAtp" ) )
    end while
 
    oMsgText( "Archivando tarifas cliente" )
@@ -12886,30 +9398,22 @@ end if
 
 if !Empty( dbfTmpDoc )
 
-#ifndef __PDA__
    oMsgText( "Eliminando documentos anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
-#endif
 
-   while ( dbfClientD )->( dbSeek( aTmp[ _COD ] ) )
-      dbDel( dbfClientD )
-#ifndef __PDA__
+   while ( TDataCenter():Get( "ClientD" ) )->( dbSeek( aTmp[ _COD ] ) )
+      dbDel( TDataCenter():Get( "ClientD" ) )
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
-#ifndef __PDA__
    oMsgText( "Archivando documentos cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
-#endif
 
    ( dbfTmpDoc )->( dbGoTop() )
    while ( dbfTmpDoc )->( !eof() )
       dbPass( dbfTmpDoc, dbfClientD, .t., aTmp[ _COD ] )
       ( dbfTmpDoc )->( dbSkip() )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
 end if
@@ -12920,30 +9424,22 @@ end if
 
 if !Empty( dbfTmpObr )
 
-#ifndef __PDA__
    oMsgText( "Eliminando direcciones anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpObr )->( LastRec() ) )
-#endif
 
    while ( dbfObrasT )->( dbSeek( aTmp[ _COD ] ) )
       dbDel( dbfObrasT )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
-#ifndef __PDA__
    oMsgText( "Archivando direcciones cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpObr )->( LastRec() ) )
-#endif
 
    ( dbfTmpObr )->( dbGoTop() )
    while ( dbfTmpObr )->( !eof() )
       dbPass( dbfTmpObr, dbfObrasT, .t., aTmp[ _COD ] )
       ( dbfTmpObr )->( dbSkip() )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
 end if
@@ -12954,30 +9450,22 @@ end if
 
 if !Empty( dbfTmpCon )
 
-#ifndef __PDA__
    oMsgText( "Eliminando contactos anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
-#endif
 
    while ( dbfContactos )->( dbSeek( aTmp[ _COD ] ) )
       dbDel( dbfContactos )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
-#ifndef __PDA__
    oMsgText( "Archivando contactos cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpCon )->( LastRec() ) )
-#endif
 
    ( dbfTmpCon )->( dbGoTop() )
    while ( dbfTmpCon )->( !eof() )
       dbPass( dbfTmpCon, dbfContactos, .t., aTmp[ _COD ] )
       ( dbfTmpCon )->( dbSkip() )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
 end if
@@ -12988,30 +9476,22 @@ end if
 
 if !Empty( dbfTmpBnc )
 
-#ifndef __PDA__
    oMsgText( "Eliminanado bancos anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
-#endif
 
    while ( dbfBanco )->( dbSeek( aTmp[ _COD ] ) )
       dbDel( dbfBanco )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
-#ifndef __PDA__
    oMsgText( "Archivando bancos cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
-#endif
 
    ( dbfTmpBnc )->( dbGoTop() )
    while !( dbfTmpBnc )->( eof() )
       dbPass( dbfTmpBnc, dbfBanco, .t., aTmp[ _COD ] )
       ( dbfTmpBnc )->( dbSkip() )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
 end if
@@ -13022,47 +9502,37 @@ end if
 
 if !Empty( dbfTmpInc )
 
-#ifndef __PDA__
    oMsgText( "Eliminando incidencias cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
-#endif
 
    while ( dbfCliInc )->( dbSeek( aTmp[ _COD ] ) )
       dbDel( dbfCliInc )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
-#ifndef __PDA__
    oMsgText( "Archivando incidencias cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
-#endif
 
    ( dbfTmpInc )->( dbGoTop() )
    while !( dbfTmpInc )->( eof() )
       dbPass( dbfTmpInc, dbfCliInc, .t., aTmp[ _COD ] )
       ( dbfTmpInc )->( dbSkip() )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
 end if
 
    //-----------------------------------------------------------------------------
 
-   WinGather( aTmp, aGet, dbfClient, oBrw, nMode )
+   WinGather( aTmp, aGet, ( TDataCenter():Get( "Client" ) ), oBrw, nMode )
 
    if oWndBrw != nil
       oWndBrw:KillProcess()
    end if
 
-#ifndef __PDA__
    oMsgText()
 
    EndProgress()
-#endif
 
    /*
    Habilitamos la ventana------------------------------------------------------
@@ -13506,7 +9976,7 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
 
    if aTmp[ _aNDTODIV ] != 0
 
-      aAdd( aRentabilidad, { Space(3) + "Dto. lineal", Trans( aTmp[ _aNDTODIV ], cPouDiv( cDivEmp(), dbfDiv ) ), - ( aTmp[ _aNDTODIV ] ), .f., .f. } )
+      aAdd( aRentabilidad, { Space(3) + "Dto. lineal", Trans( aTmp[ _aNDTODIV ], cPouDiv( cDivEmp() ) ), - ( aTmp[ _aNDTODIV ] ), .f., .f. } )
 
       nNetoBase -= aTmp[ _aNDTODIV ]
 
@@ -13898,11 +10368,9 @@ Static Function ChangeNaturaleza( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          aGet[ _aNDTO6    ]:Show()
       end if
 
-#ifndef __PDA__
       if !Empty( oSayLabels )
          aEval( oSayLabels, {|o| o:Show() } )
       end if
-#endif
 
    else
 
@@ -14023,11 +10491,9 @@ Static Function ChangeNaturaleza( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          aGet[ _aNDTO6    ]:Hide()
       end if
 
-#ifndef __PDA__
       if !Empty( oSayLabels )
          aEval( oSayLabels, {|o| o:Hide() } )
       end if
-#endif
 
    end if
 
@@ -14117,7 +10583,7 @@ Return ( lSeek )
 
 Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
 
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
    /*
    Despues si tiene impuesto especial qitarlo----------------------------------
@@ -14144,7 +10610,7 @@ Return .t.
 Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
 
 	local nNewPre
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
 	/*
    Primero es quitar el impuestos
@@ -14172,7 +10638,7 @@ Return .t.
 
 Function nCalIva( nPrecio, lIvaInc, cTipIva, cCodImp )
 
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
    /*
    Despues si tiene impuesto especial qitarlo
@@ -14195,7 +10661,7 @@ Return nPrecio
 Function nCalBas( nPrecio, lIvaInc, cTipIva, cCodImp )
 
 	local nNewPre
-   local nIvaPct  := nIva( dbfIva, cTipIva )
+   local nIvaPct  := nIva( TDataCenter():Get( "TIva" ), cTipIva )
 
 	/*
    Primero es quitar el impuestos
@@ -14215,10 +10681,6 @@ Return nNewPre
 
 //--------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
-#include "FastRepH.ch"
-
 Static Function DataReport( oFr, lTemporal )
 
    /*
@@ -14230,14 +10692,14 @@ Static Function DataReport( oFr, lTemporal )
    if lTemporal
       oFr:SetWorkArea(  "Clientes",          ( tmpClient )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
-      oFr:SetWorkArea(  "Clientes",          ( dbfClient )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+      oFr:SetWorkArea(  "Clientes",          ( TDataCenter():Get( "Client" ) )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    end if
    oFr:SetFieldAliases( "Clientes",          cItemsToReport( aItmCli() ) )
 
-   oFr:SetWorkArea(     "Documetos",         ( dbfClientD )->( Select() ) )
+   oFr:SetWorkArea(     "Documetos",         ( TDataCenter():Get( "ClientD" ) )->( Select() ) )
    oFr:SetFieldAliases( "Documetos",         cItemsToReport( aCliDoc() ) )
 
-   oFr:SetWorkArea(     "Tarifas clientes",  ( dbfCliAtp )->( Select() ) )
+   oFr:SetWorkArea(     "Tarifas clientes",  ( TDataCenter():Get( "CliAtp" ) )->( Select() ) )
    oFr:SetFieldAliases( "Tarifas clientes",  cItemsToReport( aItmAtp() ) )
 
    oFr:SetWorkArea(     "Direcciones",       ( dbfObrasT )->( Select() ) )
@@ -14260,12 +10722,12 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Clientes",       "Bancos",            {|| ( tmpClient )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Incidencias",       {|| ( tmpClient )->Cod } )
    else
-      oFr:SetMasterDetail( "Clientes",       "Documentos",        {|| ( dbfClient )->Cod } )
-      oFr:SetMasterDetail( "Clientes",       "Tarifas clientes",  {|| ( dbfClient )->Cod } )
-      oFr:SetMasterDetail( "Clientes",       "Direcciones",       {|| ( dbfClient )->Cod } )
-      oFr:SetMasterDetail( "Clientes",       "Contactos",         {|| ( dbfClient )->Cod } )
-      oFr:SetMasterDetail( "Clientes",       "Bancos",            {|| ( dbfClient )->Cod } )
-      oFr:SetMasterDetail( "Clientes",       "Incidencias",       {|| ( dbfClient )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Documentos",        {|| ( TDataCenter():Get( "Client" ) )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Tarifas clientes",  {|| ( TDataCenter():Get( "Client" ) )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Direcciones",       {|| ( TDataCenter():Get( "Client" ) )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Contactos",         {|| ( TDataCenter():Get( "Client" ) )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Bancos",            {|| ( TDataCenter():Get( "Client" ) )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Incidencias",       {|| ( TDataCenter():Get( "Client" ) )->Cod } )
    end if
 
    oFr:SetResyncPair(      "Clientes",       "Documentos" )
@@ -14293,8 +10755,8 @@ Function DesignReportClient( oFr, dbfDoc )
 
    if lOpenFiles
       lFlag       := .t.
-      nRec        := ( dbfClient )->( Recno() )
-      nOrd        := ( dbfClient )->( OrdSetFocus( "Cod" ) )
+      nRec        := ( TDataCenter():Get( "Client" ) )->( Recno() )
+      nOrd        := ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( "Cod" ) )
    else
       if Openfiles()
          lFlag    := .t.
@@ -14362,11 +10824,11 @@ Function DesignReportClient( oFr, dbfDoc )
    end if
 
    if !Empty( nRec )
-      ( dbfClient )->( dbGoTo( nRec ) )
+      ( TDataCenter():Get( "Client" ) )->( dbGoTo( nRec ) )
    end if
 
    if !Empty( nOrd )
-      ( dbfClient )->( OrdSetFocus( nOrd ) )
+      ( TDataCenter():Get( "Client" ) )->( OrdSetFocus( nOrd ) )
    end if
 
    if lOpen
@@ -14468,7 +10930,6 @@ Static Function lPubInt( nMode, aTmp )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-#endif
 
 Static Function lArticuloEnOferta( cCodigoArticulo, cCodigoCliente, cCodigoGrupo )
 
@@ -14502,27 +10963,416 @@ Return ( lOferta )
 
 //---------------------------------------------------------------------------//
 
-Function nTotalValesCliente( cCodCli, dDesde, dHasta, cTikT, cTikL, cDiv, nYear )
-
-   local nTotal
-
-   DEFAULT cCodCli   := ( dbfClient )->Cod
-   DEFAULT cTikT     := dbfTikT
-   DEFAULT cTikL     := dbfTikL
-   DEFAULT cDiv      := dbfDiv
-
-   nTotal            := nValTik( cCodCli, dDesde, dHasta, cTikT, cTikL, dbfDiv, nYear )
-
-Return ( nTotal )
-
-//---------------------------------------------------------------------------//
-
 Static Function ReportingClient()
 
    oReporting        := TFastVentasClientes():New()
    oReporting:Play()
 
 Return ( oReporting )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION BrwCli( oGet, oGet2, dbfCli )
+
+   local oDlg
+   local oBrw
+   local hBmp
+   local oGet1
+   local cGet1
+   local nOrd     := GetBrwOpt( "BrwCli" )
+   local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
+   local cCbxOrd
+   local cReturn  := Space( 12 )
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   nOrd           := ( dbfCli )->( OrdSetFocus( nOrd ) )
+
+   ( dbfCli )->( dbGoTop() )
+
+   DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE "Seleccionar clientes"
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
+         ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfCli ) ;
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE( ( dbfCli )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
+         OF       oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfCli
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Clientes.Report"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Bl. Bloqueado"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfCli )->lBlqCli }
+         :nWidth           := 20
+         :SetCheck( { "Cnt16", "Nil16" } )
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Cod"
+         :bEditValue       := {|| ( dbfCli )->Cod }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Titulo"
+         :bEditValue       := {|| ( dbfCli )->Titulo }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "NIF/CIF"
+         :cSortOrder       := "Nif"
+         :bEditValue       := {|| ( dbfCli )->Nif }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Teléfono"
+         :cSortOrder       := "Telefono"
+         :bEditValue       := {|| ( dbfCli )->Telefono }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fax"
+         :bEditValue       := {|| ( dbfCli )->Fax }
+         :nWidth           := 80
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfCli )->Domicilio }
+         :nWidth           := 300
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| ( dbfCli )->Poblacion }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| ( dbfCli )->CodPostal }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| ( dbfCli )->Provincia }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Establecimiento"
+         :cSortOrder       := "NbrEst"
+         :bEditValue       := {|| ( dbfCli )->NbrEst }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Correo electrónico"
+         :cSortOrder       := "cMeiInt"
+         :bEditValue       := {|| ( dbfCli )->cMeiInt }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Riesgo"
+         :bEditValue       := {|| Trans( ( dbfCli )->Riesgo, PicOut() ) }
+         :nWidth           := 60
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Contacto"
+         :bEditValue       := {|| ( dbfCli )->cPerCto }
+         :nWidth           := 100
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| ( dbfCli )->mComent }
+         :nWidth           := 200
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     .f. ;
+         ACTION   ( nil )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     .f. ;
+         ACTION   ( nil )
+
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+
+   oDlg:bStart                := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   CursorWait()
+
+   if oDlg:nResult == IDOK
+
+      cReturn  := ( dbfCli )->Cod
+
+      if !Empty( oGet )
+         oGet:cText( ( dbfCli )->Cod )
+         oGet:lValid()
+      end if
+
+      if ValType( oGet2 ) == "O"
+         oGet2:cText( ( dbfCli)->Titulo )
+         if ( dbfCli )->nColor != 0
+            oGet2:SetColor( , ( dbfCli )->nColor )
+         end if
+      end if
+
+   end if
+
+   SetBrwOpt( "BrwCli", ( dbfCli )->( OrdNumber() ) )
+
+   ( dbfCli )->( OrdSetFocus( nOrd ) )
+
+   if !Empty( oBrw )
+      oBrw:end()
+   end if
+
+   CursorWE()
+
+   if !Empty( oGet )
+      oGet:SetFocus()
+   end if
+
+RETURN cReturn
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve la cuenta del banco cliente
+*/
+
+FUNCTION cCtaBanCli( cCodCli, dbfBanco )
+
+   local nRec
+   local oBlock
+   local oError
+   local nOrdAnt
+   local cText    := ""
+   local lClose   := .f.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfBanco )
+      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBanco ) )
+      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      SET TAG TO CCODDEF
+      lClose      := .t.
+   else
+      nRec        := ( dbfBanco )->( Recno() )
+      nOrdAnt     := ( dbfBanco )->( OrdSetFocus( "cCodDef" ) )
+   end if
+
+   if ( dbfBanco )->( dbSeek( cCodCli ) )
+      cText       := ( dbfBanco )->cCtaBnc
+   end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de bancos" )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   if lClose
+      CLOSE ( dbfBanco )
+   else
+      ( dbfBanco )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfBanco )->( dbGoTo( nRec ) )
+   end if
+
+Return ( cText )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve la cuenta contable de un cliente
+*/
+
+FUNCTION cCliCta( cCodCli, dbfCli )
+
+   local oBlock
+   local oError
+   local cText    := ""
+   local lClose   := .f.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfCli )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      lClose      := .t.
+   end if
+
+   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+      cText       := Rtrim( ( dbfCli )->SubCta )
+   end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   IF lClose
+      CLOSE ( dbfCli )
+   END IF
+
+RETURN cText
+
+//---------------------------------------------------------------------------//
+
+/*
+Devuelve la cuenta de Venta de un cliente
+*/
+
+FUNCTION cCliCtaVta( cCodCli, dbfCli )
+
+   local oBlock
+   local oError
+   local lClose      := .f.
+   local cCliCtaVta  := ""
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfCli )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      lClose         := .t.
+   end if
+
+   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+      cCliCtaVta     := ( dbfCli )->CtaVenta
+   end if
+
+   if Empty( cCliCtaVta )
+      cCliCtaVta     := cCtaCli()
+   end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   if lClose
+      CLOSE ( dbfCli )
+   end if
+
+RETURN ( cCliCtaVta )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cBanco( cCodCli, dbfCli )
+
+   local oBlock
+   local oError
+   local cText    := ""
+   local lClose   := .f.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfCli )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      lClose      := .t.
+   end if
+
+   IF ( dbfCli )->( dbSeek( Rjust( cCodCli, "0" ) ) )
+      cText       := ( dbfCli )->Banco
+   END IF
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de clientes" )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   IF lClose
+      CLOSE ( dbfCli )
+   END IF
+
+RETURN cText
+
+//---------------------------------------------------------------------------//
+
+FUNCTION lCliCreditoSolicitado( cCodCli, dbfCli )
+
+   local lRet     := .f.
+
+   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+      lRet        := ( dbfCli )->lCreSol
+   end if
+
+RETURN lRet
 
 //---------------------------------------------------------------------------//
 
@@ -14799,3 +11649,28 @@ function nPrecioAtipica( nTarifa, lIvaInc, dbfClientAtp )
 Return nPrecio
 
 //---------------------------------------------------------------------------//
+
+FUNCTION RefBrwCta( oBrwCta, cSubCta, dbfDiario )
+
+   if dbfDiario != nil
+
+      if !Empty( cSubCta )
+         ( dbfDiario )->( OrdScope( 0, cSubCta ) )
+         ( dbfDiario )->( OrdScope( 1, cSubCta ) )
+      else
+         ( dbfDiario )->( OrdScope( 0, Replicate( "9", 12 ) ) )
+         ( dbfDiario )->( OrdScope( 1, Replicate( "9", 12 ) ) )
+      end if
+
+      ( dbfDiario )->( dbGoTop() )
+
+      if oBrwCta != nil
+         oBrwCta:Refresh()
+      end if
+
+   end if
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
