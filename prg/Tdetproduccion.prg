@@ -697,7 +697,7 @@ RETURN .t.
 
 METHOD nUnidades( oDbf ) CLASS TDetProduccion
 
-   DEFAULT oDbf   := ::oDbf
+   DEFAULT oDbf      := ::oDbf
 
 RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ), ::oParent:nDouDiv ), ( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ) ) ) )
 
@@ -883,6 +883,7 @@ RETURN ( ::oGetTotVol:cText( ::nTotVolumen( oDbf ) ), .t. )
 METHOD SaveResource( oGetArt, oDlg, nMode ) CLASS TDetProduccion
 
    local nOrdAnt
+   local nUnidades := 0
 
    if Empty( ::oDbfVir:cCodArt )
       MsgStop( "Tiene que seleccionar un artículo." )
@@ -909,6 +910,8 @@ METHOD SaveResource( oGetArt, oDlg, nMode ) CLASS TDetProduccion
 
                   while ::oParent:oKitArt:cCodKit == ::oDbfVir:cCodArt .and. !::oParent:oKitArt:Eof()
 
+                     nUnidades := NotCaja( ::oDbfVir:nCajOrd ) * ::oDbfVir:nUndOrd
+
                      /*Añadimos todos los arículos del kit*/
 
                      if !::oParent:oKitArt:lExcPro
@@ -919,7 +922,7 @@ METHOD SaveResource( oGetArt, oDlg, nMode ) CLASS TDetProduccion
                         ::oParent:oDetMaterial:oDbfVir:cNomArt    := ::oParent:oKitArt:cDesKit
                         ::oParent:oDetMaterial:oDbfVir:cAlmOrd    := ::oParent:oDbf:cAlmOrg
                         ::oParent:oDetMaterial:oDbfVir:nCajOrd    := 1
-                        ::oParent:oDetMaterial:oDbfVir:nUndOrd    := ::nUnidades( ::oDbfVir ) * ::oParent:oKitArt:nUndKit
+                        ::oParent:oDetMaterial:oDbfVir:nUndOrd    := nUnidades * ::oParent:oKitArt:nUndKit
                         ::oParent:oDetMaterial:oDbfVir:nImpOrd    := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "pCosto" )
                         ::oParent:oDetMaterial:oDbfVir:nPeso      := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "nPesoKg" )
                         ::oParent:oDetMaterial:oDbfVir:cUndPes    := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "cUnidad" )
