@@ -263,8 +263,6 @@ CLASS TDataCenter
 
          end if
 
-         ::AddDatabaseView( "FacCliT", dbf )
-
       end if 
 
       Return ( lOpen )   
@@ -3818,8 +3816,6 @@ METHOD lSelectOperationLog()
 
    lOk            := ::ExecuteSqlStatement( cStm, "SqlOperation" )
 
-   ? ( "SqlOperation")->( LastRec() )
-
    /*
    Dejamos la fechas como estaban----------------------------------------------
    */
@@ -4504,7 +4500,7 @@ RETURN ( lOk )
 
          hView          := hGet( ::hViews, ::nView )
          if hb_ishash( hView ) 
-            hEval( hView, {|k,v| msgAlert( v, "voy a cerrar"), if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
+            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
          end if 
 
          HDel( ::hViews, ::nView )
@@ -4542,7 +4538,6 @@ RETURN ( lOk )
          hView    := hGet( ::hViews, ::nView )
          if hb_ishash( hView )
             hSet( hView, Upper( cDatabase ), cHandle )
-            msgAlert( valtoprg( hView ) )
          end if 
 
       end if  
@@ -4589,12 +4584,17 @@ RETURN ( lOk )
 
       local nScan
 
-      ? len( ::aDataTables)
-
       nScan    := aScan( ::aDataTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
       if nScan != 0
          Return ( ::aDataTables[ nScan ] )
       end if 
+
+      if nScan == 0
+         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+         if nScan != 0
+            Return ( ::aEmpresaTables[ nScan ] )
+         end if 
+      end if
  
    Return ( nil )
 

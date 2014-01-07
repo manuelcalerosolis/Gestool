@@ -3219,9 +3219,10 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    end if
    
    /*
-   Comprobamos q el codigo de la delegacion no este vacio----------------------
-   cCodigoDelegacionEnUso( "00" )
+   Cargamos la estructura de ficheros de la empresa----------------------------
    */
+
+   TDataCenter():BuildEmpresa()
 
    /*
    Ponemos el titulo de la empresa---------------------------------------------

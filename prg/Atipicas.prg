@@ -28,6 +28,8 @@ CLASS TAtipicas FROM TDet
    DATA oCosto
    DATA cCosto
 
+
+
    DATA oSobre
    DATA cSobre          INIT "Precio 1"
    DATA aSobre          INIT { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
@@ -50,6 +52,8 @@ CLASS TAtipicas FROM TDet
    METHOD Start()          INLINE ( MsgStop( "Start" ) )
    METHOD Save()           INLINE ( MsgStop( "Save" ) )
    METHOD PreSaveDetail()  INLINE ( MsgStop( "PreSaveDetail" ) )
+
+   METHOD Browse( Id, oDialog )
 
 END CLASS
 
@@ -655,9 +659,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
 RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD Browse( Id, oDialog )
 
+METHOD Browse( Id, oDialog )
+/*
    oBrwAtp                 := IXBrowse():New( oDialog )
 
    oBrwAtp:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -803,13 +807,12 @@ METHOD Browse( Id, oDialog )
    if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
       oBrwAtp:bLDblClick   := {|| MsgStop( "Edicion de atipicas" ) }
    end if
-   
 
    oBrwAtp:bRClicked       := {| nRow, nCol, nFlags | oBrwAtp:RButtonDown( nRow, nCol, nFlags ) }
 
    oBrwAtp:CreateFromResource( 400 )
-
-RETURN ( Self )
 */
+RETURN ( Self )
 
+//---------------------------------------------------------------------------//
 

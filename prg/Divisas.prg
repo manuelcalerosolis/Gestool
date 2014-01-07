@@ -1990,58 +1990,33 @@ RETURN ( Rtrim( aDivBuf[ _CSMBDIV ] ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, dbfDiv, lRound )
+FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, lRound )
 
    local nDec     := 0
 
    DEFAULT lRound := .t.
 
    /*
-   Conversiones directas
+   Conversiones directas-------------------------------------------------------
    */
 
    do case
-      case ValType( dbfDiv ) == "C"
-
-         do case
-            case cDivOrg == "PTS" .AND. cDivDes == "EUR"
-               if dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv ) .and. ( dbfDiv )->nEurDiv != 0
-                  nImpChg     := nImpChg / ( dbfDiv )->nEurDiv
-               end if
-            case cDivOrg == "EUR" .and. cDivDes == "PTS"
-               if dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv ) .and. ( dbfDiv )->nPtsDiv != 0
-                  nImpChg     := nImpChg * ( dbfDiv )->nPtsDiv
-               end if
-         end case
-
-         if lRound
-            if dbSeekInOrd( cDivDes, "cCodDiv", dbfDiv )
-               nDec           := ( dbfDiv )->nDouDiv
-            end if
-            nImpChg           := Round( nImpChg, nDec )
+      case cDivOrg == "PTS" .AND. cDivDes == "EUR"
+         if dbSeekInOrd( cDivOrg, "cCodDiv", TDataCenter():Get( "Divisas") ) .and. ( TDataCenter():Get( "Divisas") )->nEurDiv != 0
+            nImpChg     := nImpChg / ( TDataCenter():Get( "Divisas") )->nEurDiv
          end if
-
-      case ValType( dbfDiv ) == "O"
-
-         do case
-            case cDivOrg == "PTS" .AND. cDivDes == "EUR"
-               if dbfDiv:SeekInOrd( cDivOrg, "cCodDiv" ) .and. dbfDiv:nEurDiv != 0
-                  nImpChg     := nImpChg / dbfDiv:nEurDiv
-               end if
-            case cDivOrg == "EUR" .AND. cDivDes == "PTS"
-               if dbfDiv:SeekInOrd( cDivOrg, "cCodDiv" ) .and. dbfDiv:nPtsDiv != 0
-                  nImpChg     := nImpChg * dbfDiv:nPtsDiv
-               end if
-         end case
-
-         if lRound
-            if dbfDiv:Seek( cDivDes )
-               nDec           := dbfDiv:nDouDiv
-            end if
-            nImpChg           := Round( nImpChg, nDec )
+      case cDivOrg == "EUR" .and. cDivDes == "PTS"
+         if dbSeekInOrd( cDivOrg, "cCodDiv", TDataCenter():Get( "Divisas") ) .and. ( TDataCenter():Get( "Divisas") )->nPtsDiv != 0
+            nImpChg     := nImpChg * ( TDataCenter():Get( "Divisas") )->nPtsDiv
          end if
+   end case
 
-      end case
+   if lRound
+      if dbSeekInOrd( cDivDes, "cCodDiv", TDataCenter():Get( "Divisas") )
+         nDec           := ( TDataCenter():Get( "Divisas") )->nDouDiv
+      end if
+      nImpChg           := Round( nImpChg, nDec )
+   end if
 
 RETURN ( nImpChg )
 

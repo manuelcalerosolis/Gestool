@@ -172,7 +172,7 @@ METHOD Search( oDlg )
    Sinconizacion de tablas de clientes-----------------------------------------
    */
 
-   pdaClienteSenderReciver():CreateData( , ::oMessage, cPatServidor )
+   // pdaClienteSenderReciver():CreateData( , ::oMessage, cPatServidor )
 
    /*
    Sinconizacion de tablas de familias-----------------------------------------
