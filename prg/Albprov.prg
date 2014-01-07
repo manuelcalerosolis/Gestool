@@ -184,6 +184,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __DFECALB                105
 #define _LNUMSER                 106
 #define _LAUTSER                 107
+#define _NPNTVER                 108
 
 /*
 Definici¢n de Array para impuestos
@@ -195,18 +196,21 @@ Definici¢n de Array para impuestos
 #define _NPCTREQ1                aTotIva[ 1, 4 ]
 #define _NIMPIVA1                aTotIva[ 1, 5 ]
 #define _NIMPREQ1                aTotIva[ 1, 6 ]
+#define _NPNTVER1                aTotIva[ 1, 7 ]
 #define _NBRTIVA2                aTotIva[ 2, 1 ]
 #define _NBASIVA2                aTotIva[ 2, 2 ]
 #define _NPCTIVA2                aTotIva[ 2, 3 ]
 #define _NPCTREQ2                aTotIva[ 2, 4 ]
 #define _NIMPIVA2                aTotIva[ 2, 5 ]
 #define _NIMPREQ2                aTotIva[ 2, 6 ]
+#define _NPNTVER2                aTotIva[ 2, 7 ]
 #define _NBRTIVA3                aTotIva[ 3, 1 ]
 #define _NBASIVA3                aTotIva[ 3, 2 ]
 #define _NPCTIVA3                aTotIva[ 3, 3 ]
 #define _NPCTREQ3                aTotIva[ 3, 4 ]
 #define _NIMPIVA3                aTotIva[ 3, 5 ]
 #define _NIMPREQ3                aTotIva[ 3, 6 ]
+#define _NPNTVER3                aTotIva[ 3, 7 ]
 
 memvar cDbf
 memvar cDbfCol
@@ -558,7 +562,7 @@ STATIC FUNCTION OpenFiles( lExt )
       public nTotIva       := 0
       public nTotReq       := 0
       public nTotImp       := 0
-      public aTotIva       := { { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 } }
+      public aTotIva       := { { 0,0,nil,0,0,0,0 }, { 0,0,nil,0,0,0,0 }, { 0,0,nil,0,0,0,0 } }
       public aIvaUno       := aTotIva[ 1 ]
       public aIvaDos       := aTotIva[ 2 ]
       public aIvaTre       := aTotIva[ 3 ]
@@ -3189,6 +3193,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbPrvL, oBrw, aTmpAlb, cCodArtEnt, nMode
          OF       oFld:aDialogs[1]
 
       aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
+
+      REDEFINE GET aGet[ _NPNTVER ] VAR aTmp[ _NPNTVER ] ;
+         ID       171 ;
+         IDSAY    172 ;
+         SPINNER ;
+         PICTURE  cPirDiv ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( lCalcDeta( aTmp, aTmpAlb, aGet, oTotal  ) );
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPREDIV ] VAR aTmp[ _NPREDIV ] ;
 			ID 		160 ;
@@ -8017,7 +8030,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "CREF",         "C", 18,  0, "Código de artículo",          "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CREFPRV",      "C", 18,  0, "Referencia del proveedor",    "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CDETALLE",     "C",240,  0, "Nombre del artículo",         "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "NIVA",         "N",  6,  2, cImp() + " del artículo",            "'@EZ 999.99'",        "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "NIVA",         "N",  6,  2, cImp() + " del artículo",      "'@EZ 999.99'",        "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NUNICAJA",     "N", 16,  6, "Unidades por caja",           "cMasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NCANENT",      "N", 16,  6, "Cantidad recibida",           "cPirDivAlb",          "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NPREDIV",      "N", 16,  6, "Precio",                      "cPirDivAlb",          "", "( cDbfCol )" } )
@@ -8118,6 +8131,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "dFecAlb",      "D",  8,  0, "Fecha de albaran",            "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "lNumSer",      "L",  1, 0, "Lógico solicitar numero de serie", "",                "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "lAutSer",      "L",  1, 0, "Lógico de autoserializar",     "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,        "cPirDivAlb",          "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 
