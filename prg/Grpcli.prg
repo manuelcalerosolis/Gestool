@@ -17,10 +17,10 @@ CLASS TGrpCli FROM TMasDet
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
-   METHOD End()                                 INLINE ( Super:CloseFiles(), TAtipicas():EndInstance(), Self := nil )
+   METHOD End()                                 INLINE ( ::CloseFiles(), TAtipicas():EndInstance(), Self := nil, .t. )
 
    METHOD OpenFiles( lExclusive )
-   METHOD CloseFiles()                          INLINE ( Super:CloseFiles(), TAtipicas():GetInstance():CloseFiles() )
+   METHOD CloseFiles()                          
 
    METHOD DefineFiles()
 
@@ -96,6 +96,8 @@ METHOD OpenFiles( lExclusive, cPath )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      TDataCenter():CreateView()
+
       if !Super:OpenFiles()
          lOpen          := .f.
       end if 
@@ -103,6 +105,10 @@ METHOD OpenFiles( lExclusive, cPath )
       if !TAtipicas():GetInstance():OpenFiles()
          lOpen          := .f.
       end if 
+
+      TDataCenter():Get( "Articulo" )
+
+      TDataCenter():Get( "Familia" )
 
    RECOVER USING oError
 
@@ -117,6 +123,18 @@ METHOD OpenFiles( lExclusive, cPath )
    end if
 
 RETURN ( lOpen )
+
+//----------------------------------------------------------------------------//
+
+METHOD CloseFiles()
+
+   Super:CloseFiles()
+
+   TAtipicas():GetInstance():CloseFiles()
+
+   TDataCenter():DeleteView()
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -144,8 +162,17 @@ RETURN ( ::oDbf )
 METHOD Resource( nMode )
 
 	local oDlg
+   local oFld
 
    DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de clientes"
+
+      REDEFINE FOLDER oFld ;
+         ID       500 ;
+         OF       oDlg ;
+         PROMPT   "&General",;
+                  "&Tarifas" ;
+         DIALOGS  "GRPCLI_01" ,;
+                  "GRPCLI_02"
 
       REDEFINE GET ::oGetCodigo ;
          VAR      ::oDbf:cCodGrp ;
@@ -153,16 +180,32 @@ METHOD Resource( nMode )
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          VALID    NotValid( ::oGetCodigo, ::oDbf:cAlias, .t., "0" ) ;
 			PICTURE 	"@!" ;
-			OF 		oDlg
+			OF 		oFld:aDialogs[ 1 ]
 
       REDEFINE GET ::oGetNombre ;
          VAR      ::oDbf:cNomGrp ;
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
+			OF 		oFld:aDialogs[ 1 ]
 
-      ::oTreePadre                     := TTreeView():Redefine( 130, oDlg )
+      ::oTreePadre                     := TTreeView():Redefine( 130, oFld:aDialogs[ 1 ] )
       ::oTreePadre:bItemSelectChanged  := {|| ::ChangeTreeState() }
+
+      /*
+      Browse para atipicas-----------------------------------------------------
+      */
+
+      TAtipicas():GetInstance():ButtonAppend( 110, oFld:aDialogs[ 2 ] )
+
+      TAtipicas():GetInstance():ButtonEdit( 120, oFld:aDialogs[ 2 ] )
+
+      TAtipicas():GetInstance():ButtonDel( 130, oFld:aDialogs[ 2 ] )
+
+      TAtipicas():GetInstance():Browse( 100, oFld:aDialogs[ 2 ] )
+
+      /*
+      Botones generales--------------------------------------------------------
+      */
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -209,7 +252,7 @@ Method lSaveResource( nMode, oDlg )
    end if
 
    if Empty( ::oDbf:cNomGrp )
-      MsgStop( "Nombre de grupo de clientes no puede estar vacío" )
+      MsgStop( "Nombre de grupo de clientes no puede estar vacío" ) 
       ::oGetNombre:SetFocus()
       Return nil
    end if
