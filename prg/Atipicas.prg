@@ -57,6 +57,9 @@ CLASS TAtipicas FROM TDet
    METHOD Save()           INLINE ( MsgStop( "Save" ) )
    METHOD PreSaveDetail()  INLINE ( MsgStop( "PreSaveDetail" ) )
 
+   METHOD ButtonAppend( Id, oDialog )
+   METHOD ButtonEdit( Id, oDialog )
+   METHOD ButtonDel( Id, oDialog )
    METHOD Browse( Id, oDialog )
 
 END CLASS
@@ -664,38 +667,41 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD ButtonAdd( Id, oDialog )
+METHOD ButtonAppend( Id, oDialog )
 
    REDEFINE BUTTON  ;
       ID       ( Id ) ;
-      OF       oDialog ;
-      WHEN     ( oUser():lCambiarPrecio() );
-      ACTION   ( WinAppRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
+      OF       ( oDialog ) ;
+      WHEN     ( oUser():lCambiarPrecio() ) ;
+      ACTION   ( ::Append( ::oBrwAtipica ) )
 
-      REDEFINE BUTTON  ;
-         ID       501 ;
-         OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( WinEdtRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
+RETURN ( Self )
 
-      REDEFINE BUTTON ;
-         ID       503 ;
-         OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( WinZooRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
+//---------------------------------------------------------------------------//
 
-      REDEFINE BUTTON  ;
-         ID       502 ;
-         OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( WinDelRec( oBrwAtp, dbfTmpAtp ) )
+METHOD ButtonEdit( Id, oDialog )
 
-      REDEFINE BUTTON ;
-         ID       504 ;
-         OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
-         ACTION   ( AddFamilia( oBrwAtp, dbfTmpAtp, aTmp[_COD] ) )
+   REDEFINE BUTTON  ;
+      ID       ( Id ) ;
+      OF       ( oDialog ) ;
+      WHEN     ( oUser():lCambiarPrecio() ) ;
+      ACTION   ( ::Edit( ::oBrwAtipica ) )
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ButtonDel( Id, oDialog )
+
+   REDEFINE BUTTON  ;
+      ID       ( Id ) ;
+      OF       ( oDialog ) ;
+      WHEN     ( oUser():lCambiarPrecio() ) ;
+      ACTION   ( ::Del( ::oBrwAtipica ) )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD Browse( Id, oDialog )
 

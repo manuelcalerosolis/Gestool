@@ -17,7 +17,7 @@ CLASS TGrpCli FROM TMasDet
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
-   METHOD End()                                 INLINE ( ::CloseFiles(), TAtipicas():EndInstance(), Self := nil )
+   METHOD End()                                 INLINE ( ::CloseFiles(), TAtipicas():EndInstance(), Self := nil, .t. )
 
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()                          
@@ -194,6 +194,12 @@ METHOD Resource( nMode )
       /*
       Browse para atipicas-----------------------------------------------------
       */
+
+      TAtipicas():GetInstance():ButtonAppend( 110, oFld:aDialogs[ 2 ] )
+
+      TAtipicas():GetInstance():ButtonEdit( 120, oFld:aDialogs[ 2 ] )
+
+      TAtipicas():GetInstance():ButtonDel( 130, oFld:aDialogs[ 2 ] )
 
       TAtipicas():GetInstance():Browse( 100, oFld:aDialogs[ 2 ] )
 
