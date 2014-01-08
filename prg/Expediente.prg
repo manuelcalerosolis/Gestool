@@ -745,7 +745,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cSerExp" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                                                                       OF oDbf
       FIELD NAME "nNumExp" TYPE "N" LEN 09  DEC 0 COMMENT "Número"                                                                      OF oDbf
       FIELD NAME "cSufExp" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                                                                      OF oDbf
-      FIELD NAME "lExpEnd" TYPE "L" LEN 01  DEC 0 COMMENT "Expediente finalizado"   HIDE                                                OF oDbf
+      FIELD NAME "lExpEnd" TYPE "L" LEN 01  DEC 0 COMMENT "Expediente finalizado"                                                       OF oDbf
       FIELD NAME "dFecOrd" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                                                                OF oDbf
       FIELD NAME "cHorOrd" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de inicio"          PICTURE "@R 99:99"                                  OF oDbf
       FIELD NAME "dFecVto" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha vencimiento"                                                           OF oDbf

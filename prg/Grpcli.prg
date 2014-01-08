@@ -17,7 +17,7 @@ CLASS TGrpCli FROM TMasDet
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
-   METHOD End()                                 INLINE ( ::CloseFiles(), TAtipicas():EndInstance(), Self := nil, .t. )
+   //METHOD End()
 
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()                          
@@ -137,8 +137,18 @@ METHOD CloseFiles()
 
    TDataCenter():DeleteView()
 
-RETURN ( Self )
+RETURN ( .t. )
 
+//----------------------------------------------------------------------------//
+/*
+METHOD End()
+   
+   ::CloseFiles()
+   
+   TAtipicas():EndInstance()
+
+RETURN ( .t. )   
+*/
 //----------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cDriver )

@@ -61,6 +61,22 @@ CLASS TAtipicas FROM TDet
    DATA oNombreFamilia 
    DATA cNombreFamilia 
 
+   DATA oTextoPrimeraPropiedad 
+   DATA cTextoPrimeraPropiedad 
+
+   DATA oCodigoPrimeraPropiedad 
+
+   DATA oValorPrimeraPropiedad 
+   DATA cValorPrimeraPropiedad 
+
+   DATA oTextoSegundaPropiedad 
+   DATA cTextoSegundaPropiedad 
+
+   DATA oCodigoSegundaPropiedad 
+
+   DATA oValorSegundaPropiedad 
+   DATA cValorSegundaPropiedad 
+
    METHOD Resource()
    METHOD Start()          INLINE ( MsgStop( "Start" ) )
    METHOD Save()           INLINE ( MsgStop( "Save" ) )
@@ -260,45 +276,58 @@ METHOD Resource( nMode ) CLASS TAtipicas
          ID       106 ;
          WHEN     ( .f. );
          OF       ::oFld:aDialogs[1]
-/*
-      REDEFINE SAY oSayPr1 VAR cSayPr1;
+
+      /*
+      Primera propiedad--------------------------------------------------------
+      */
+
+      REDEFINE SAY ::oTextoPrimeraPropiedad ;
+         VAR      ::cTextoPrimeraPropiedad ;
          ID       888 ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _acValPr1 ] VAR aTmp[ _acValPr1 ];
+      REDEFINE GET ::oCodigoPrimeraPropiedad ;
+         VAR      ::oDbfVir:cValPr1 ;
          ID       250 ;
          BITMAP   "LUPA" ;
-         WHEN     ( nMode == APPD_MODE ) ;
-         ON HELP  ( brwPrpAct( aGet[ _acValPr1 ], oSayVp1, aTmp[ _acCodPr1 ] ) ) ;
-         VALID    ( if( lPrpAct( aGet[ _acValPr1 ], oSayVp1, aTmp[ _acCodPr1 ], dbfProL ),;
-                    IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
-                    .f. ) ) ;
+         WHEN     ( ::nMode == APPD_MODE ) ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET oSayVp1 VAR cSayVp1;
+         ::oCodigoPrimeraPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoPrimeraPropiedad, ::oTextoPrimeraPropiedad, ::oDbfVir:cCodPr1 ) }
+         ::oCodigoPrimeraPropiedad:bValid    := {|| ::LoadAtipica() }
+
+      REDEFINE GET ::oValorPrimeraPropiedad ;
+         VAR      ::cValorPrimeraPropiedad ;
          ID       251 ;
          WHEN     .f. ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE SAY oSayPr2 VAR cSayPr2;
+      /*
+      segunda propiedad--------------------------------------------------------
+      */
+
+      REDEFINE SAY ::oTextoSegundaPropiedad ;
+         VAR      ::cTextoSegundaPropiedad ;
          ID       999 ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _acValPr2 ] VAR aTmp[ _acValPr2 ];
+      REDEFINE GET ::oCodigoSegundaPropiedad ;
+         VAR      ::oDbfVir:cValPr2 ;
          ID       260 ;
          BITMAP   "LUPA" ;
-         WHEN     ( nMode == APPD_MODE ) ;
-         ON HELP  ( brwPrpAct( aGet[ _acValPr2 ], oSayVp2, aTmp[ _acCodPr2 ] ) ) ;
-         VALID    ( if( lPrpAct( aGet[ _acValPr2 ], oSayVp2, aTmp[ _acCodPr2 ], dbfProL ),;
-                    IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
-                    .f. ) ) ;
+         WHEN     ( ::nMode == APPD_MODE ) ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET oSayVp2 VAR cSayVp2;
+         ::oCodigoSegundaPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoSegundaPropiedad, ::oTextoSegundaPropiedad, ::oDbfVir:cCodPr2 ) }
+         ::oCodigoSegundaPropiedad:bValid    := {|| ::LoadAtipica() }
+
+      REDEFINE GET ::oValorSegundaPropiedad ;
+         VAR      ::cValorSegundaPropiedad ;
          ID       261 ;
          WHEN     .f. ;
          OF       ::oFld:aDialogs[1]
 
+/*
       REDEFINE GET aGet[ _aNPRCCOM ] VAR aTmp[ _aNPRCCOM ];
          ID       120 ;
          WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE );
@@ -307,7 +336,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          SPINNER  ;
          PICTURE  cPinDiv ;
          OF       ::oFld:aDialogs[1]
-
+/*
       REDEFINE CHECKBOX aGet[ _aLPRCCOM ] VAR aTmp[ _aLPRCCOM ] ;
          ID       122 ;
          ON CHANGE( lChangeCostoParticular( aGet, aTmp, oCosto, nMode ) );

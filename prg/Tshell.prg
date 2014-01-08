@@ -820,9 +820,7 @@ METHOD End( lForceExit ) CLASS TShell
    // Evaluamos el bValid------------------------------------------------------
 
    if ::bValid != nil
-      if !Eval( ::bValid )
-         Return .f.
-      end if
+      Eval( ::bValid )
    end if
 
    ::oWndClient:ChildClose( Self )
@@ -2382,21 +2380,25 @@ Method CreateXBrowse() CLASS TShell
 
          ::oBrw:nDataType  := 0 // DATATYPE_RDD
          ::oBrw:cAlias     := ::xAlias
-         ::oBrw:bGoTop     := {|| ( ::xAlias )->( dbGoTop() ) }
-         ::oBrw:bGoBottom  := {|| ( ::xAlias )->( dbGoBottom() ) }
-         ::oBrw:bSkip      := {| n | iif( n == nil, n := 1, ), ( ::xAlias )->( dbSkipper( n ) ) }
-         ::oBrw:bBof       := {|| ( ::xAlias )->( Bof() ) }
-         ::oBrw:bEof       := {|| ( ::xAlias )->( Eof() ) }
-         ::oBrw:bBookMark  := {| n | iif( n == nil, ( ::xAlias )->( RecNo() ), ( ::xAlias )->( dbGoto( n ) ) ) }
-         ::oBrw:bLock      := {|| ( ::xAlias )->( dbrLock() ) }
-         ::oBrw:bUnlock    := {|| ( ::xAlias )->( dbrUnlock() ) }
+         ::oBrw:bGoTop     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoTop() ), ) }
+         ::oBrw:bGoBottom  := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoBottom() ), ) }
+         ::oBrw:bSkip      := {| n | iif( n == nil, n := 1, ), ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbSkipper( n ) ), ) ) }
+         ::oBrw:bBof       := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( Bof() ), ) }
+         ::oBrw:bEof       := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( Eof() ), ) }
+         ::oBrw:bBookMark  := {| n | iif( n == nil, ( ::xAlias )->( RecNo() ), ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoto( n ) ), ) ) ) }
+         ::oBrw:bLock      := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbrLock() ), ) }
+         ::oBrw:bUnlock    := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbrUnlock() ), ) }
 
          if lAdsRdd()
-         ::oBrw:bKeyNo     := {| n | iif( n == nil, Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ) ) }
-         ::oBrw:bKeyCount  := {|| ( ::xAlias )->( ADSKeyCount(,,1) ) }
+         ::oBrw:bKeyNo     := {| n | iif( n == nil,;
+                                          ( if( ( ::xAlias )->( Used() ), Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ) ),;
+                                          ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ), ) ) ) }
+         ::oBrw:bKeyCount  := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSKeyCount(,,1) ), ) }
          else
-         ::oBrw:bKeyNo     := {| n | iif( n == nil, ( ::xAlias )->( OrdKeyNo() ), ( ::xAlias )->( OrdKeyGoto( n ) ) ) }
-         ::oBrw:bKeyCount  := {|| ( ::xAlias )->( OrdKeyCount() ) }
+         ::oBrw:bKeyNo     := {| n | iif( n == nil,;
+                                          ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyNo() ), ) ),;
+                                          ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyGoto( n ) ), ) ) ) }
+         ::oBrw:bKeyCount  := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyCount() ), ) }
          end if
 
          ::oBrw:lFastEdit  := .t.

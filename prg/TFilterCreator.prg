@@ -1157,8 +1157,10 @@ RETURN ( oDbf )
 
 METHOD SetScope( uScope )
 
-   ::oDbf:SetScope( uScope, uScope ) 
-   ::oDbf:GoTop()
+   if !Empty( ::oDbf ) .and. ( ::oDbf:Used() )
+      ::oDbf:SetScope( uScope, uScope ) 
+      ::oDbf:GoTop()
+   end if 
 
 RETURN ( Self )
 
@@ -1240,7 +1242,6 @@ METHOD Dialog() CLASS TFilterDatabase
 
    REDEFINE GET ::cFilterName ;
       ID          100 ;
-      PICTURE     "@!" ;
       OF          oDlg
 
    REDEFINE CHECKBOX ::lDefault ;
@@ -1332,7 +1333,7 @@ RETURN ( aArrayFilter )
 METHOD SeekFullKey( cFilterName ) CLASS TFilterDatabase
    
    if !Empty( cFilterName )
-      RETURN ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + cFilterName ) )
+      RETURN ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + Upper( cFilterName ) ) )
    end if
 
 RETURN .t.

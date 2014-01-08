@@ -256,6 +256,7 @@ METHOD lGenerate()
          ::oDbf:cProBanco  := ::oDbfCli:cProBanco
          ::oDbf:Cuenta     := ::oDbfCli:Cuenta
          ::oDbf:CodPago    := ::oDbfCli:CodPago
+         ::oDbf:cAgente    := ::oDbfCli:cAgente
          ::oDbf:NomPago    := oRetFld( ::oDbfCli:CodPago, ::oDbfFpg )
          ::oDbf:cCodGrp    := ::oDbfCli:cCodGrp
          ::oDbf:nRiesgo    := ::oDbfCli:Riesgo
