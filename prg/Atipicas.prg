@@ -1,6 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "MesDbf.ch"
+#include "Xbrowse.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -28,8 +29,6 @@ CLASS TAtipicas FROM TDet
    DATA oCosto
    DATA cCosto
 
-
-
    DATA oSobre
    DATA cSobre          INIT "Precio 1"
    DATA aSobre          INIT { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
@@ -39,10 +38,15 @@ CLASS TAtipicas FROM TDet
    DATA aNaturaleza     INIT { "Artículo", "Familia" }
 
    DATA oBrwRen
+
    DATA cPouEmp         INIT cPouDiv( cDivEmp() )
    DATA cPouChg         INIT cPouDiv( cDivChg() )
+
+   DATA cRoundPrice     INIT cPorDiv()
    
    DATA oBtnExpandir
+
+   DATA oBrwAtipica
 
    METHOD New()
 
@@ -660,112 +664,145 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+METHOD ButtonAdd( Id, oDialog )
+
+   REDEFINE BUTTON  ;
+      ID       ( Id ) ;
+      OF       oDialog ;
+      WHEN     ( oUser():lCambiarPrecio() );
+      ACTION   ( WinAppRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
+
+      REDEFINE BUTTON  ;
+         ID       501 ;
+         OF       fldTarifa ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( WinEdtRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
+
+      REDEFINE BUTTON ;
+         ID       503 ;
+         OF       fldTarifa ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( WinZooRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
+
+      REDEFINE BUTTON  ;
+         ID       502 ;
+         OF       fldTarifa ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( WinDelRec( oBrwAtp, dbfTmpAtp ) )
+
+      REDEFINE BUTTON ;
+         ID       504 ;
+         OF       fldTarifa ;
+         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         ACTION   ( AddFamilia( oBrwAtp, dbfTmpAtp, aTmp[_COD] ) )
+
+
 METHOD Browse( Id, oDialog )
-/*
-   oBrwAtp                 := IXBrowse():New( oDialog )
 
-   oBrwAtp:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwAtp:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrwAtipica                 := IXBrowse():New( oDialog )
+
+   ::oBrwAtipica:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwAtipica:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
    
-   oBrwAtp:nMarqueeStyle   := 6
-   oBrwAtp:cName           := "Clientes.Atipicas"
+   ::oBrwAtipica:nMarqueeStyle   := 6
+   ::oBrwAtipica:cName           := "Clientes.Atipicas"
 
-   ::oDbfVir:SetBrowse( oBrwAtp )
+   ::oDbfVir:SetBrowse( ::oBrwAtipica )
 
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Tipo"
       :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, "Artículo", "Familia" ) }
       :nWidth           := 60
    end with
 
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Of. Artículo en oferta"
       :bEditValue       := {|| ::oDbfVir:nTipAtp <= 1 } // .and. lArticuloEnOferta( ::oDbfVir:cCodArt, ( dbfClient )->Cod, ( dbfClient )->cCodGrp ) }
       :nWidth           := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
 
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Código"
       :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, ::oDbfVir:cCodArt, ::oDbfVir:cCodFam ) }
       :nWidth           := 80
    end with
 
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Nombre"
-      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, retArticulo( ::oDbfVir:cCodArt, TDataCenter():GetArticulo() ), RetFamilia( ::oDbfVir:cCodFam, dbfFamilia ) ) }
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, retArticulo( ::oDbfVir:cCodArt, TDataCenter():Get( "Articulo" ) ), retFamilia( ::oDbfVir:cCodFam, TDataCenter():Get( "Familia" ) ) ) }
       :nWidth           := 160
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Prop.1"
       :bEditValue       := {|| ::oDbfVir:cValPr1 }
       :nWidth           := 40
       :lHide            := .t.
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Prop.2"
       :bEditValue       := {|| ::oDbfVir:cValPr2 }
       :nWidth           := 40
       :lHide            := .t.
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
       :bEditValue       := {|| ::oDbfVir:nPrcArt }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
       :bEditValue       := {|| ::oDbfVir:nPrcArt2 }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
 
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
       :bEditValue       := {|| ::oDbfVir:nPrcArt3 }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
       :bEditValue       := {|| ::oDbfVir:nPrcArt4 }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
       :bEditValue       := {|| ::oDbfVir:nPrcArt5 }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
       :bEditValue       := {|| ::oDbfVir:nPrcArt6 }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "% Descuento"
       :bEditValue       := {|| ::oDbfVir:nDtoArt }
       :cEditPicture     := "@E 999.99"
@@ -774,16 +811,16 @@ METHOD Browse( Id, oDialog )
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Descuento lineal"
       :bEditValue       := {|| ::oDbfVir:nDtoDiv }
-      :cEditPicture     := cPouDiv
+      :cEditPicture     := ::cRoundPrice
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "% Agente"
       :bEditValue       := {|| ::oDbfVir:nComAge }
       :cEditPicture     := "@E 999.99"
@@ -792,26 +829,26 @@ METHOD Browse( Id, oDialog )
       :nHeadStrAlign    := AL_RIGHT
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Inicio"
       :bEditValue       := {|| ::oDbfVir:dFecIni }
       :nWidth           := 80
    end with
    
-   with object ( oBrwAtp:AddCol() )
+   with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Fin"
       :bEditValue       := {|| ::oDbfVir:dFecFin }
       :nWidth           := 80
    end with
 
-   if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
-      oBrwAtp:bLDblClick   := {|| MsgStop( "Edicion de atipicas" ) }
+   if oUser():lCambiarPrecio() 
+      ::oBrwAtipica:bLDblClick   := {|| MsgStop( "Edicion de atipicas" ) }
    end if
 
-   oBrwAtp:bRClicked       := {| nRow, nCol, nFlags | oBrwAtp:RButtonDown( nRow, nCol, nFlags ) }
+   ::oBrwAtipica:bRClicked       := {| nRow, nCol, nFlags | ::oBrwAtipica:RButtonDown( nRow, nCol, nFlags ) }
 
-   oBrwAtp:CreateFromResource( 400 )
-*/
+   ::oBrwAtipica:CreateFromResource( Id )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

@@ -11936,8 +11936,8 @@ Static Function IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoL
       cInforme                += "Articulo " + cRefLin + " no existe en la base de datos, albaran número " + cSerDoc + "/" + Alltrim( Str( nNumAlb ) ) + "/" + RetSufEmp() + CRLF
       lIncidencia             := .t.
    else 
-      if ( Round( ( dbfArticulo )->pCosto, 2 ) != ( Round( nPvpLin, 2 ) ) )
-         cInforme             += "Articulo " + cRefLin + " ha variado su precio de costo, percio nuevo " + Alltrim( Str( Round( nPvpLin, 2 ) ) ) + CRLF
+      if ( Round( ( dbfArticulo )->pCosto, 2 ) != ( Round( ( nPvpLin ) - ( nPvpLin * nDtoLin / 100 ), 2 ) ) )
+         cInforme             += "Articulo " + cRefLin + " ha variado su precio de costo, percio nuevo " + Alltrim( Str( Round( ( nPvpLin ) - ( nPvpLin * nDtoLin / 100 ), 2 ) ) ) + CRLF
          lIncidencia          := .t.
       end if
    end if
