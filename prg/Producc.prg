@@ -1307,13 +1307,13 @@ METHOD Resource( nMode, aDatosAnterior )
 			ID 		500 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
+         ACTION   ( ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
+         ACTION   ( ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
