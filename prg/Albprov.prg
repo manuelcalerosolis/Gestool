@@ -3826,6 +3826,12 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
       aTmp[ _CALMLIN ]  := aTmpAlb[ _CCODALM ]
    end if
 
+   if aGet[ _NPNTVER ] != nil
+      if !uFieldEmpresa( "lUsePnt", .f. ) 
+         aGet[ _NPNTVER ]:Hide()
+      end if
+   end if
+
    oBrwPrp:Hide()
    oGetIra:Hide()
 
