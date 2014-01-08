@@ -22,6 +22,9 @@ CLASS TGrpCli FROM TMasDet
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()                          
 
+   METHOD OpenService( lExclusive, cPath )      INLINE ( Super:OpenService() )
+   METHOD CloseService()                        INLINE ( Super:CloseService() )
+
    METHOD DefineFiles()
 
    METHOD Resource( nMode )

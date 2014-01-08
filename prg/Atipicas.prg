@@ -9,13 +9,8 @@ CLASS TAtipicas FROM TDet
 
    DATA oDlg
    DATA oFld
-   DATA oSayLabels      INIT array( 16 )
 
-   DATA oGetArticulo
-   DATA cGetArticulo
-
-   DATA oGetFamilia
-   DATA cGetFamilia
+   DATA oSayLabels         INIT array( 16 )
 
    DATA oSayPr1
    DATA oSayPr2
@@ -30,19 +25,19 @@ CLASS TAtipicas FROM TDet
    DATA cCosto
 
    DATA oSobre
-   DATA cSobre          INIT "Precio 1"
-   DATA aSobre          INIT { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
+   DATA cSobre             INIT "Precio 1"
+   DATA aSobre             INIT { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
    
    DATA oNaturaleza
-   DATA cNaturaleza     INIT "Artículo"
-   DATA aNaturaleza     INIT { "Artículo", "Familia" }
+   DATA cNaturaleza        INIT "Artículo"
+   DATA aNaturaleza        INIT { "Artículo", "Familia" }
 
    DATA oBrwRen
 
-   DATA cPouEmp         INIT cPouDiv( cDivEmp() )
-   DATA cPouChg         INIT cPouDiv( cDivChg() )
+   DATA cPouEmp            INIT cPouDiv( cDivEmp() )
+   DATA cPouChg            INIT cPouDiv( cDivChg() )
 
-   DATA cRoundPrice     INIT cPorDiv()
+   DATA cRoundPrice        INIT cPorDiv()
    
    DATA oBtnExpandir
 
@@ -51,6 +46,20 @@ CLASS TAtipicas FROM TDet
    METHOD New()
 
    METHOD DefineFiles()
+
+   // Propiedades del dialogo -------------------------------------------------
+
+   DATA oCodigoArticulo
+   DATA cCodigoArticulo
+
+   DATA oCodigoFamilia
+   DATA cCodigoFamilia 
+
+   DATA oNombreArticulo 
+   DATA cNombreArticulo 
+
+   DATA oNombreFamilia 
+   DATA cNombreFamilia 
 
    METHOD Resource()
    METHOD Start()          INLINE ( MsgStop( "Start" ) )
@@ -61,6 +70,10 @@ CLASS TAtipicas FROM TDet
    METHOD ButtonEdit( Id, oDialog )
    METHOD ButtonDel( Id, oDialog )
    METHOD Browse( Id, oDialog )
+
+   METHOD LoadAtipica()
+
+   METHOD ClaculaRentabilidad()   VIRTUAL
 
 END CLASS
 
@@ -208,40 +221,46 @@ METHOD Resource( nMode ) CLASS TAtipicas
          DIALOGS  "CLIATP_0"  ,;
                   "CLIATP_1"  ;
 
-      REDEFINE COMBOBOX ::oNaturaleza VAR ::cNaturaleza ;
+      REDEFINE COMBOBOX ::oNaturaleza ;
+         VAR      ::cNaturaleza ;
          ITEMS    ::aNaturaleza ;
          ID       90 ;
          ON CHANGE( ::ChangeNaturaleza() ) ;
          WHEN     ( nMode == APPD_MODE ) ;
 			OF 		::oFld:aDialogs[1]
-/*
-      REDEFINE GET aGet[ _acCodArt ] VAR aTmp[ _acCodArt ];
+
+      REDEFINE GET ::oCodigoArticulo ;
+         VAR      ::oDbfVir:cCodArt ;
 			ID 		100 ;
-         WHEN     ( nMode == APPD_MODE );
-         ON HELP  ( BrwArticulo( aGet[ 2 ], oGetArticulo ) );
-         BITMAP   "LUPA" ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
+         WHEN     ( ::nMode == APPD_MODE );
+         ON HELP  ( BrwArticulo( ::oCodigoArticulo, ::oNombreArticulo ) );
+         BITMAP   "Lupa" ;
+         ON CHANGE( ::ClaculaRentabilidad() );
+         VALID    ( ::LoadAtipica() ) ;
 			OF 		::oFld:aDialogs[1]
 
-      REDEFINE GET oGetArticulo VAR cGetArticulo ;
+      REDEFINE GET ::oNombreArticulo ;
+         VAR      ::cNombreArticulo ;
 			ID 		110 ;
-			WHEN  	( .F. );
+			WHEN  	( .f. );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _acCodFam ] VAR aTmp[ _acCodFam ];
+      REDEFINE GET ::oCodigoFamilia ;
+         VAR      ::oDbfVir:cCodFam;
          ID       105 ;
-         WHEN     ( nMode == APPD_MODE );
-         VALID    cFamilia( aGet[ _acCodFam ], dbfFamilia, oGetFamilia ) ;
+         WHEN     ( ::nMode == APPD_MODE );
          BITMAP   "LUPA" ;
-         ON HELP  BrwFamilia( aGet[ _acCodFam ], oGetFamilia ) ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET oGetFamilia VAR cGetFamilia ;
+         ::oCodigoFamilia:bValid := {|| cFamilia( ::oCodigoFamilia, TDataCenter():Get( "Familia" ), ::oNombreFamilia ) }
+         ::oCodigoFamilia:bHelp  := {|| BrwFamilia( ::oCodigoFamilia, ::oNombreFamilia ) }
+
+      REDEFINE GET ::oNombreFamilia ;
+         VAR      ::cNombreFamilia ;
          ID       106 ;
          WHEN     ( .f. );
          OF       ::oFld:aDialogs[1]
-
+/*
       REDEFINE SAY oSayPr1 VAR cSayPr1;
          ID       888 ;
          OF       ::oFld:aDialogs[1]
@@ -858,4 +877,29 @@ METHOD Browse( Id, oDialog )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD LoadAtipica()
+
+   if Empty( ::cCodigoArticulo )
+      ::oNombreArticulo:cText( "" )
+      Return ( .t. )
+   end if
+
+   if ::nMode == APPD_MODE
+
+      if ( TDataCenter():Get( "Articulo" ) )->( dbSeek( ::cCodigoArticulo ) )
+
+         ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo" ) )->Nombre )
+
+      else
+
+         Return ( .f. )
+
+      end if
+
+   end if
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
 

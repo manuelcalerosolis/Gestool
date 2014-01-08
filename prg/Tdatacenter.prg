@@ -170,6 +170,7 @@ CLASS TDataCenter
 
    METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ) )
    METHOD DeleteView( cView )
+   METHOD InfoView()                         INLINE   ( MsgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
    METHOD AssertView()
    METHOD AddDatabaseView( cDatabase, cHandle )
    METHOD Get( cDatabase )

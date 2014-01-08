@@ -441,7 +441,7 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-         lOpenFiles     := .f.
+         lOpenFiles        := .f.
       end if
 
       oBandera             := TBandera():New()
@@ -452,7 +452,7 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       oGrpCli              := TGrpCli():Create( cPatCli() )
-      if !oGrpCli:OpenFiles()
+      if !oGrpCli:OpenService()
          lOpenFiles        := .f.
       end if
 
@@ -7775,80 +7775,80 @@ RETURN NIL
 
 FUNCTION rxClient( cPath, oMeter )
 
-   local dbfClient
+   local dbfCli
 
    DEFAULT cPath  := cPatCli()
 
    fEraseIndex( cPath + "CLIENT.CDX" )
 
-   dbUseArea( .t., cDriver(), cPath + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfClient ), .f. )
-   if !( dbfClient )->( neterr() )
-      ( dbfClient )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfCli ), .f. )
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "COD", "Field->COD", {|| Field->COD } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "COD", "Field->COD", {|| Field->COD } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "TITULO", "UPPER( Field->TITULO )", {|| UPPER( Field->TITULO ) }, ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "TITULO", "UPPER( Field->TITULO )", {|| UPPER( Field->TITULO ) }, ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "NIF", "Field->NIF", {|| Field->NIF }, ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "NIF", "Field->NIF", {|| Field->NIF }, ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "POBLACION", "UPPER( Field->POBLACION )", {|| UPPER( Field->POBLACION ) } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "POBLACION", "UPPER( Field->POBLACION )", {|| UPPER( Field->POBLACION ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "PROVINCIA", "UPPER( Field->PROVINCIA )", {|| UPPER( Field->PROVINCIA ) } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "PROVINCIA", "UPPER( Field->PROVINCIA )", {|| UPPER( Field->PROVINCIA ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "CodPostal", "Field->CodPostal", {|| Field->CodPostal } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "CodPostal", "Field->CodPostal", {|| Field->CodPostal } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "Telefono", "Field->Telefono", {|| Field->Telefono } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "Telefono", "Field->Telefono", {|| Field->Telefono } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "NbrEst", "Field->NbrEst", {|| Field->NbrEst } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "NbrEst", "Field->NbrEst", {|| Field->NbrEst } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "cMeiInt", "Upper( Field->cMeiInt )", {|| Upper( Field->cMeiInt ) } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cMeiInt", "Upper( Field->cMeiInt )", {|| Upper( Field->cMeiInt ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted() .and. nTipCli == 3", {||!Deleted() .and. Field->nTipCli == 3 } ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "cCliWeb", "COD", {|| Field->COD } ) )
+      ( dbfCli )->( ordCondSet("!Deleted() .and. nTipCli == 3", {||!Deleted() .and. Field->nTipCli == 3 } ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCliWeb", "COD", {|| Field->COD } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "CCODRUT", "UPPER( Field->CCODRUT )", {|| UPPER( Field->CCODRUT ) } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "CCODRUT", "UPPER( Field->CCODRUT )", {|| UPPER( Field->CCODRUT ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "lSndInt", "Field->lSndInt", {|| Field->lSndInt } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lSndInt", "Field->lSndInt", {|| Field->lSndInt } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "Client.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfCli )->( ordCreate( cPath + "Client.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "CODBIG", "UPPER( Field->COD )", {|| UPPER( Field->COD ) } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "CODBIG", "UPPER( Field->COD )", {|| UPPER( Field->COD ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted() .and. Field->lSndInt" , {||!Deleted() .and. Field->lSndInt }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "lSndEnviar", "Field->Cod", {|| Field->Cod } ) )
+      ( dbfCli )->( ordCondSet("!Deleted() .and. Field->lSndInt" , {||!Deleted() .and. Field->lSndInt }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lSndEnviar", "Field->Cod", {|| Field->Cod } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted() .and. Field->lSndInt .and. Field->lPubInt" , {||!Deleted() .and. Field->lSndInt .and. Field->lPubInt }  ) )
-      ( dbfClient )->( ordCreate( cPath + "Client.CDX", "lPubInt", "Field->Cod", {|| Field->Cod } ) )
+      ( dbfCli )->( ordCondSet("!Deleted() .and. Field->lSndInt .and. Field->lPubInt" , {||!Deleted() .and. Field->lSndInt .and. Field->lPubInt }  ) )
+      ( dbfCli )->( ordCreate( cPath + "Client.CDX", "lPubInt", "Field->Cod", {|| Field->Cod } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef01", "UPPER( Field->cUsrDef01 )", {|| UPPER( Field->cUsrDef01 ) } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef01", "UPPER( Field->cUsrDef01 )", {|| UPPER( Field->cUsrDef01 ) } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef02", "UPPER( Field->cUsrDef02 )", {|| UPPER( Field->cUsrDef02 ) } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef02", "UPPER( Field->cUsrDef02 )", {|| UPPER( Field->cUsrDef02 ) } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef03", "UPPER( Field->cUsrDef03 )", {|| UPPER( Field->cUsrDef03 ) } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef03", "UPPER( Field->cUsrDef03 )", {|| UPPER( Field->cUsrDef03 ) } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted() .and. !Field->lBlqCli", {|| !Deleted() .and. !Field->lBlqCli }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CLIENT.CDX", "lBlqCli", "Field->Cod", {|| Field->Cod } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. !Field->lBlqCli", {|| !Deleted() .and. !Field->lBlqCli }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lBlqCli", "Field->Cod", {|| Field->Cod } ) )
 
-      ( dbfClient )->( dbCloseArea() )
+      ( dbfCli )->( dbCloseArea() )
 
    else
 
@@ -7858,58 +7858,58 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "ObrasT.CDX" )
 
-   dbUseArea( .t., cDriver(), cPath + "OBRAST.DBF", cCheckArea( "OBRAST", @dbfClient ), .f. )
-   if !( dbfClient )->( neterr() )
-      ( dbfClient )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "OBRAST.DBF", cCheckArea( "OBRAST", @dbfCli ), .f. )
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "ObrasT.CDX", "CCODCLI", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ObrasT.CDX", "CCODCLI", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMOBR", "cCodCli + cNomObr", {|| Field->cCodCli + Field->cNomObr } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMOBR", "cCodCli + cNomObr", {|| Field->cCodCli + Field->cNomObr } ) )
 
-      ( dbfClient )->( ordCondSet("lDefObr .and. !Deleted()", {|| Field->lDefObr .and. !Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "OBRAST.CDX", "LDEFOBR", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
+      ( dbfCli )->( ordCondSet("lDefObr .and. !Deleted()", {|| Field->lDefObr .and. !Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "LDEFOBR", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "OBRAST.CDX", "CCODIGO", "cCodObr", {|| Field->cCodObr } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "CCODIGO", "cCodObr", {|| Field->cCodObr } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMBRE", "cNomObr", {|| Field->cNomObr } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMBRE", "cNomObr", {|| Field->cNomObr } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "ObrasT.Cdx", "CCODWEB", "Str( cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CCODWEB", "Str( cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "ObrasT.Cdx", "CDIROBR", "Upper( cDirObr )", {|| Upper( Field->cDirObr ) } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CDIROBR", "Upper( cDirObr )", {|| Upper( Field->cDirObr ) } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "OBRAST.CDX", "cCodPos", "cCodPos", {|| Field->cCodPos } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "cCodPos", "cCodPos", {|| Field->cCodPos } ) )
 
-      ( dbfClient )->( dbCloseArea() )
+      ( dbfCli )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de obras" )
    end if
 
    fEraseIndex( cPath + "CliBnc.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliBnc.DBF", cCheckArea( "CliBnc", @dbfClient ), .f. )
-   if !( dbfClient )->( neterr() )
-      ( dbfClient )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "CliBnc.DBF", cCheckArea( "CliBnc", @dbfCli ), .f. )
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCodCli", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodCli", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cBncDef", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
+      ( dbfCli )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cBncDef", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
 
-      ( dbfClient )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfClient )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODCLI + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
+      ( dbfCli )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODCLI + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
 
-      ( dbfClient )->( dbCloseArea() )
+      ( dbfCli )->( dbCloseArea() )
 
    else
 
@@ -7919,28 +7919,28 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "ClientD.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "ClientD.DBF", cCheckArea( "ClientD", @dbfClient ), .f. )
-   if !( dbfClient )->( neterr() )
-      ( dbfClient )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "ClientD.DBF", cCheckArea( "ClientD", @dbfCli ), .f. )
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
 
-      ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "ClientD.CDX", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ClientD.CDX", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
-      ( dbfClient )->( dbCloseArea() )
+      ( dbfCli )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de documentos" )
    end if
 
    fEraseIndex( cPath + "CliInc.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliInc.Dbf", cCheckArea( "CliInc", @dbfClient ), .f. )
-   if !( dbfClient )->( neterr() )
-      ( dbfClient )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "CliInc.Dbf", cCheckArea( "CliInc", @dbfCli ), .f. )
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliInc.Cdx", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliInc.Cdx", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
 
-      ( dbfClient )->( dbCloseArea() )
+      ( dbfCli )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de incidencias" )
    end if
@@ -7949,30 +7949,30 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "CliContactos.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliContactos.Dbf", cCheckArea( "CLICONTA", @dbfClient ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "CliContactos.Dbf", cCheckArea( "CLICONTA", @dbfCli ), .f. )
 
-   if !( dbfClient )->( neterr() )
-      ( dbfClient )->( __dbPack() )
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliContactos.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliContactos.Cdx", "cNomCon", "cNomCon", {|| Field->cNomCon } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cNomCon", "cNomCon", {|| Field->cNomCon } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliContactos.Cdx", "cPosCon", "cPosCon", {|| Field->cPosCon } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cPosCon", "cPosCon", {|| Field->cPosCon } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliContactos.Cdx", "cTelCon", "cTelCon", {|| Field->cTelCon } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cTelCon", "cTelCon", {|| Field->cTelCon } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliContactos.Cdx", "cMovCon", "cMovCon", {|| Field->cMovCon } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cMovCon", "cMovCon", {|| Field->cMovCon } ) )
 
-      ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "CliContactos.Cdx", "cMaiCon", "cMaiCon", {|| Field->cMaiCon } ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliContactos.Cdx", "cMaiCon", "cMaiCon", {|| Field->cMaiCon } ) )
 
-      ( dbfClient )->( dbCloseArea() )
+      ( dbfCli )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de contactos de clientes." )
    end if
@@ -8259,12 +8259,12 @@ RETURN ( aBase )
 Devuelve si el cliente tiene autorización para ventas de credito
 */
 
-FUNCTION lCliBlq( cCodCli, dbfClient )
+FUNCTION lCliBlq( cCodCli, dbfCli )
 
    local lRet     := .f.
 
-   if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-      lRet        := ( dbfClient )->lBlqCli
+   if dbSeekInOrd( cCodCli, "Cod", dbfCli )
+      lRet        := ( dbfCli )->lBlqCli
    end if
 
 RETURN lRet

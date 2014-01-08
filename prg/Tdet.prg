@@ -24,6 +24,8 @@ CLASS TDet
 
    DATA  nRegisterLoaded      AS NUMERIC  INIT  0
 
+   DATA  nMode           
+
    DATA  bOnPreAppend, bOnPostAppend
    DATA  bOnPreEdit, bOnPostEdit
    DATA  bOnPreDelete, bOnPostDelete
@@ -255,7 +257,9 @@ METHOD Append( oBrw, xOthers ) CLASS TDet
       Eval( ::bOnPreAppend, Self )
    end if
 
-   if ::Resource( 1, xOthers )
+   ::nMode           := APPD_MODE
+
+   if ::Resource( ::nMode, xOthers )
 
       if ::bOnPreSave != nil
          Eval( ::bOnPreSave, Self )
@@ -293,7 +297,9 @@ METHOD Edit( oBrw ) CLASS TDet
       Eval( ::bOnPreEdit, Self )
    end if
 
-   if ::Resource( 2 )
+   ::nMode           := EDIT_MODE
+
+   if ::Resource( ::nMode )
 
       if ::bOnPreSave != nil
          Eval( ::bOnPreSave, Self )
@@ -327,7 +333,9 @@ METHOD Zoom() CLASS TDet
 
    ::oDbfVir:Load()
 
-   ::Resource( 3 )
+   ::nMode           := ZOOM_MODE
+
+   ::Resource( ::nMode )
 
    ::oDbfVir:Cancel()
 
