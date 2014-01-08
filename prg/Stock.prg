@@ -6433,7 +6433,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    DEFAULT cValPrp2     := Space( 20 )
    DEFAULT cLote        := Space( 12 )
 
-   ::dConsolidacion     := nil
+   //::dConsolidacion     := nil
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
 
