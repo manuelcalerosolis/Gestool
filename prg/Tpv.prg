@@ -6050,7 +6050,7 @@ Function nTotLCobTik( dbfTikP, dbfDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, dbfDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 
@@ -6125,7 +6125,7 @@ Function nImpValTik( cNumTik, cTikT, cTikL, cDiv, cDivRet )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-      nTotTik        := nCnv2Div( nTotTik, cCodDiv, cDivRet, cDiv )
+      nTotTik        := nCnv2Div( nTotTik, cCodDiv, cDivRet )
    end if
 
 Return ( nTotTik )
@@ -6194,7 +6194,7 @@ Function nImpValCli( cCliTik, cTikT, cTikL, cDiv, cDivRet )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-      nTotTik        := nCnv2Div( nTotTik, cCodDiv, cDivRet, cDiv )
+      nTotTik        := nCnv2Div( nTotTik, cCodDiv, cDivRet )
    end if
 
 Return ( nTotTik )
@@ -6255,7 +6255,7 @@ Function nTotValTik( cNumTik, cTikT, cTikL, cDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, cDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 Return ( if( lPic, Trans( nTotal, cPorDiv ), nTotal ) )
@@ -6324,7 +6324,7 @@ Function nTotValTikInfo( cNumTik, cTikT, cDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, cDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
    /*
@@ -6380,7 +6380,7 @@ Function nTmpValTik( cTikT, cTikL, cDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, cDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 Return ( if( lPic, Trans( nTotal, cPorDiv ), nTotal ) )
@@ -18384,21 +18384,6 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    nTotTik           := Round( nTotTik, nDorDiv )
 
    /*
-   Si nos piden q devolvamos el valor en distinta divisa
-   */
-
-   /*
-   if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet      := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva      := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotIvm      := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotTik      := nCnv2Div( nTotTik, cCodDiv, cDivRet, cDiv )
-      nTotPax      := nCnv2Div( nTotPax, cCodDiv, cDivRet, cDiv )
-      cPorDiv      := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-   end if
-   */
-
-   /*
    Reposicionamiento-----------------------------------------------------------
    */
 
@@ -18525,20 +18510,6 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
 
    nTotPax         := nTotTik / NotCero( nNumCom )
    nTotTik         := Round( nTotTik, nDorDiv )
-
-   /*
-   Si nos piden q devolvamos el valor en distinta divisa
-   */
-
-   /*
-   if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet      := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva      := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotIvm      := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotTik      := nCnv2Div( nTotTik, cCodDiv, cDivRet, cDiv )
-      nTotPax      := nCnv2Div( nTotPax, cCodDiv, cDivRet, cDiv )
-      cPorDiv      := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-   end if
 
    /*
    Reposicionamiento-----------------------------------------------------------
@@ -18874,7 +18845,7 @@ STATIC FUNCTION lRecTotal( aTmp, lRefreshTotal )
    end if
 
    if oEurTot != NIL
-      oEurTot:SetText( Trans( nCnv2Div( nTotal, aTmp[ _CDIVTIK ], cDivChg(), dbfDiv ), cPicEur ) )
+      oEurTot:SetText( Trans( nCnv2Div( nTotal, aTmp[ _CDIVTIK ], cDivChg() ), cPicEur ) )
    end if
 
    if lRefreshTotal
@@ -18936,7 +18907,7 @@ Function nTotCobTik( cNumTik, dbfTikP, dbfDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, dbfDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 Return ( if( lPic, Trans( nTotal, cPorDiv ), nTotal ) )

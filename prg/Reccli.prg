@@ -2226,7 +2226,7 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    if cDivRet != cDivPgo
       nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
       cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet, cDbfDiv )
+      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
 RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
@@ -2284,7 +2284,7 @@ function nTotCobCli( uFacCliP, uDiv, cDivRet, lPic )
    if cDivRet != cDivPgo
       nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
       cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotCob        := nCnv2Div( nTotRec, cDivPgo, cDivRet, cDbfDiv )
+      nTotCob        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
 RETURN if( lPic, Trans( nTotCob, cPorDiv ), nTotCob )
@@ -2343,7 +2343,7 @@ function nTotGasCli( uFacCliP, uDiv, cDivRet, lPic )
    if cDivRet != cDivPgo
       nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
       cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet, cDbfDiv )
+      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
 RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )

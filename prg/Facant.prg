@@ -3452,7 +3452,7 @@ FUNCTION nNetAntFacCli( cFactura, dbfAntCliT, dbfIva, dbfDiv, cDivRet, lPic )
    end case
 
    if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotAnt              := nCnv2Div( nTotAnt, cCodDiv, cDivRet, dbfDiv )
+      nTotAnt              := nCnv2Div( nTotAnt, cCodDiv, cDivRet )
       cPorDiv              := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
       nRouDiv              := nRouDiv( cDivRet, dbfDiv )
    end if
@@ -5106,11 +5106,11 @@ FUNCTION nTotAntCli( cAntCliT, cIva, cDiv, aTmp, cDivRet, lPic )
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet  := nCnv2Div( nTotNet, cCodDiv, cDivRet, dbfDiv )
-      nTotIva  := nCnv2Div( nTotIva, cCodDiv, cDivRet, dbfDiv )
-      nTotReq  := nCnv2Div( nTotReq, cCodDiv, cDivRet, dbfDiv )
-      nTotAnt  := nCnv2Div( nTotAnt, cCodDiv, cDivRet, dbfDiv )
-      nTotRet  := nCnv2Div( nTotRet, cCodDiv, cDivRet, dbfDiv )
+      nTotNet  := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva  := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq  := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotAnt  := nCnv2Div( nTotAnt, cCodDiv, cDivRet )
+      nTotRet  := nCnv2Div( nTotRet, cCodDiv, cDivRet )
       cPorDiv  := cPorDiv( cDivRet, dbfDiv )
    end if
 
@@ -5237,7 +5237,7 @@ FUNCTION nTotAntFacCli( cFactura, dbfAntCliT, dbfIva, dbfDiv, cDivRet, lPic )
    end case
 
    if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotAnt              := nCnv2Div( nTotAnt, cCodDiv, cDivRet, dbfDiv )
+      nTotAnt              := nCnv2Div( nTotAnt, cCodDiv, cDivRet )
       cPorDiv              := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
       nRouDiv              := nRouDiv( cDivRet, dbfDiv )
    end if

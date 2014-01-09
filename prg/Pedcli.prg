@@ -7213,7 +7213,7 @@ STATIC FUNCTION RecPedCli( aTmpPed )
 
          nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpPed[ _DFECPED ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
-            ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpPed[ _CDIVPED ], dbfDiv )
+            ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpPed[ _CDIVPED ] )
          end if
 
          /*
@@ -15116,13 +15116,13 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotPed     := nCnv2Div( nTotPed, cCodDiv, cDivRet, cDiv )
-      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
-      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
+      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
+      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotPed     := nCnv2Div( nTotPed, cCodDiv, cDivRet )
+      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
+      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
       cPorDiv     := cPorDiv( cDivRet, cDiv )
    end if
 
@@ -15392,7 +15392,7 @@ FUNCTION nPagPedCli( cNumPed, dbfPedCliP, dbfDiv, cDivRet, lPic, lAll )
    end if
 
    if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotPag           := nCnv2Div( nTotPag, cCodDiv, cDivRet, dbfDiv )
+      nTotPag           := nCnv2Div( nTotPag, cCodDiv, cDivRet )
       cPorDiv           := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
       nRouDiv           := nRouDiv( cDivRet, dbfDiv )
    end if
@@ -15438,7 +15438,7 @@ function nEntPedCli( uPedCliP, cDbfDiv, cDivRet, lPic )
    if cDivRet != cDivPgo
       nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
       cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet, cDbfDiv )
+      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
 RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )

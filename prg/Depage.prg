@@ -1143,7 +1143,7 @@ FUNCTION nTotDepAge( nNumDep, dbfMaster, dbfLine, cDbfIva, cDbfDiv, aTmp, cDivRe
    nTotDep         := nTotNet + nTotalImp
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotDep   := nCnv2Div( nTotDep, cCodDiv, cDivRet, cDbfDiv )
+      nTotDep   := nCnv2Div( nTotDep, cCodDiv, cDivRet )
       cPorDiv     := cPorDiv( cDivRet, cDbfDiv )
    end if
 

@@ -280,19 +280,19 @@ METHOD lGenerate()
          if ::cDivInf == cDivChg()
 
             if ( dbfTmpAtp )->lPrcCom
-               ::oDbf:nCosto   := nCnv2Div( ( dbfTmpAtp )->nPrcCom, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+               ::oDbf:nCosto   := nCnv2Div( ( dbfTmpAtp )->nPrcCom, cDivEmp(), cDivChg() )
             else
-               ::oDbf:nCosto   := nCnv2Div( nCosto( nil, ::oDbfArt:cAlias, ::oDbfArtKit:cAlias ), cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+               ::oDbf:nCosto   := nCnv2Div( nCosto( nil, ::oDbfArt:cAlias, ::oDbfArtKit:cAlias ), cDivEmp(), cDivChg() )
             end if
 
-            ::oDbf:nTarifa1    := nCnv2Div( ( dbfTmpAtp )->nPrcArt, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
-            ::oDbf:nTarifa2    := nCnv2Div( ( dbfTmpAtp )->nPrcArt2, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
-            ::oDbf:nTarifa3    := nCnv2Div( ( dbfTmpAtp )->nPrcArt3, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
-            ::oDbf:nTarifa4    := nCnv2Div( ( dbfTmpAtp )->nPrcArt4, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
-            ::oDbf:nTarifa5    := nCnv2Div( ( dbfTmpAtp )->nPrcArt5, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
-            ::oDbf:nTarifa6    := nCnv2Div( ( dbfTmpAtp )->nPrcArt6, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nTarifa1    := nCnv2Div( ( dbfTmpAtp )->nPrcArt,  cDivEmp(), cDivChg() )
+            ::oDbf:nTarifa2    := nCnv2Div( ( dbfTmpAtp )->nPrcArt2, cDivEmp(), cDivChg() )
+            ::oDbf:nTarifa3    := nCnv2Div( ( dbfTmpAtp )->nPrcArt3, cDivEmp(), cDivChg() )
+            ::oDbf:nTarifa4    := nCnv2Div( ( dbfTmpAtp )->nPrcArt4, cDivEmp(), cDivChg() )
+            ::oDbf:nTarifa5    := nCnv2Div( ( dbfTmpAtp )->nPrcArt5, cDivEmp(), cDivChg() )
+            ::oDbf:nTarifa6    := nCnv2Div( ( dbfTmpAtp )->nPrcArt6, cDivEmp(), cDivChg() )
 
-            ::oDbf:nDtoLin     := nCnv2Div( ( dbfTmpAtp )->nDtoDiv, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nDtoLin     := nCnv2Div( ( dbfTmpAtp )->nDtoDiv, cDivEmp(), cDivChg() )
 
          end if
 
@@ -413,7 +413,7 @@ METHOD lGenerate()
          ::oDbf:nNeto1          -= nDtoAtipico
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nNeto1      := nCnv2Div( ::oDbf:nNeto1, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nNeto1      := nCnv2Div( ::oDbf:nNeto1, cDivEmp(), cDivChg() )
          end if
 
          /*Neto base 2*/
@@ -491,7 +491,7 @@ METHOD lGenerate()
          ::oDbf:nNeto2         -= nDtoAtipico
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nNeto2      := nCnv2Div( ::oDbf:nNeto2, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nNeto2      := nCnv2Div( ::oDbf:nNeto2, cDivEmp(), cDivChg() )
          end if
 
          /*Neto base 3*/
@@ -569,7 +569,7 @@ METHOD lGenerate()
          ::oDbf:nNeto3         -= nDtoAtipico
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nNeto3      := nCnv2Div( ::oDbf:nNeto3, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nNeto3      := nCnv2Div( ::oDbf:nNeto3, cDivEmp(), cDivChg() )
          end if
 
          /*Neto base 4*/
@@ -647,7 +647,7 @@ METHOD lGenerate()
          ::oDbf:nNeto4         -= nDtoAtipico
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nNeto4      := nCnv2Div( ::oDbf:nNeto4, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nNeto4      := nCnv2Div( ::oDbf:nNeto4, cDivEmp(), cDivChg() )
          end if
 
          /*Neto base 5*/
@@ -725,7 +725,7 @@ METHOD lGenerate()
          ::oDbf:nNeto5         -= nDtoAtipico
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nNeto5      := nCnv2Div( ::oDbf:nNeto5, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nNeto5      := nCnv2Div( ::oDbf:nNeto5, cDivEmp(), cDivChg() )
          end if
 
          /*Neto base 6*/
@@ -803,7 +803,7 @@ METHOD lGenerate()
          ::oDbf:nNeto6         -= nDtoAtipico
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nNeto6      := nCnv2Div( ::oDbf:nNeto6, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nNeto6      := nCnv2Div( ::oDbf:nNeto6, cDivEmp(), cDivChg() )
          end if
 
          /*Punto verde*/
@@ -811,7 +811,7 @@ METHOD lGenerate()
          ::oDbf:nPntVer        := ::oDbfArt:nPntVer1
 
          if ::cDivInf == cDivChg()
-            ::oDbf:nPntVer     := nCnv2Div( ::oDbf:nPntVer, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nPntVer     := nCnv2Div( ::oDbf:nPntVer, cDivEmp(), cDivChg() )
          end if
 
          ::oDbf:nNetVer1       := ::oDbf:nNeto1 + ::oDbf:nPntVer

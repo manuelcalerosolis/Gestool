@@ -516,7 +516,7 @@ METHOD cTotalCosteDia( cCod, cDiv, oDbf )
    cPorDiv        := cPorDiv( cDiv, ::oDbfDiv )
 
    if cDiv != ::oDbf:cCodDiv
-      nTotCos     := nCnv2Div( nTotCos, ::oDbf:cCodDiv, cDiv, ::oDbfDiv )
+      nTotCos     := nCnv2Div( nTotCos, ::oDbf:cCodDiv, cDiv, )
    end if
 
 RETURN ( Trans( nTotCos, cPorDiv ) )
@@ -566,7 +566,7 @@ METHOD cTotalCosteHora( cCod, cDiv, oDbf, oDbfCos )
    cPorDiv        := cPorDiv( cDiv, ::oDbfDiv )
 
    if cDiv != ::oDbf:cCodDiv
-      nTotCos     := nCnv2Div( nTotCos, ::oDbf:cCodDiv, cDiv, ::oDbfDiv )
+      nTotCos     := nCnv2Div( nTotCos, ::oDbf:cCodDiv, cDiv )
    end if
 
 Return ( Trans( nTotCos, cPorDiv ) )

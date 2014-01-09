@@ -5623,13 +5623,13 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotPre     := nCnv2Div( nTotPre, cCodDiv, cDivRet, cDiv )
-      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
-      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
+      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
+      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotPre     := nCnv2Div( nTotPre, cCodDiv, cDivRet )
+      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
+      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
       cPorDiv     := cPorDiv( cDivRet, cDiv )
    end if
 

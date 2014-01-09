@@ -4196,7 +4196,7 @@ FUNCTION nPagRctPrv( cFactura, cFacPrvP, cDivRet, dbfDiv, lOnlyCob, aTmp )
    ( cFacPrvP )->( dbGoTo( nRec ) )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotalPagado   := nCnv2Div( nTotalPagado, cCodDiv, cDivRet, dbfDiv )
+      nTotalPagado   := nCnv2Div( nTotalPagado, cCodDiv, cDivRet )
    else
       nTotalPagado   := Round( nTotalPagado, nRinDiv )
    end if
@@ -5062,10 +5062,10 @@ FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDbfDiv )
-      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDbfDiv )
-      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDbfDiv )
-      nTotFac     := nCnv2Div( nTotFac, cCodDiv, cDivRet, cDbfDiv )
+      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotFac     := nCnv2Div( nTotFac, cCodDiv, cDivRet )
       cPirDiv     := cPirDiv( cDivRet, cDbfDiv )
    end if
 

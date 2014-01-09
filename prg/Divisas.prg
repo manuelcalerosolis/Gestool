@@ -1992,9 +1992,9 @@ RETURN ( Rtrim( aDivBuf[ _CSMBDIV ] ) )
 
 FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, lRound )
 
-   local nDec     := 0
+   local nDec        := 0
 
-   DEFAULT lRound := .t.
+   DEFAULT lRound    := .t.
 
    /*
    Conversiones directas-------------------------------------------------------
@@ -2003,19 +2003,19 @@ FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, lRound )
    do case
       case cDivOrg == "PTS" .AND. cDivDes == "EUR"
          if dbSeekInOrd( cDivOrg, "cCodDiv", TDataCenter():Get( "Divisas") ) .and. ( TDataCenter():Get( "Divisas") )->nEurDiv != 0
-            nImpChg     := nImpChg / ( TDataCenter():Get( "Divisas") )->nEurDiv
+            nImpChg  := nImpChg / ( TDataCenter():Get( "Divisas") )->nEurDiv
          end if
       case cDivOrg == "EUR" .and. cDivDes == "PTS"
          if dbSeekInOrd( cDivOrg, "cCodDiv", TDataCenter():Get( "Divisas") ) .and. ( TDataCenter():Get( "Divisas") )->nPtsDiv != 0
-            nImpChg     := nImpChg * ( TDataCenter():Get( "Divisas") )->nPtsDiv
+            nImpChg  := nImpChg * ( TDataCenter():Get( "Divisas") )->nPtsDiv
          end if
    end case
 
-   if lRound
+   if isTrue( lRound )
       if dbSeekInOrd( cDivDes, "cCodDiv", TDataCenter():Get( "Divisas") )
-         nDec           := ( TDataCenter():Get( "Divisas") )->nDouDiv
+         nDec        := ( TDataCenter():Get( "Divisas") )->nDouDiv
       end if
-      nImpChg           := Round( nImpChg, nDec )
+      nImpChg        := Round( nImpChg, nDec )
    end if
 
 RETURN ( nImpChg )

@@ -4001,7 +4001,7 @@ STATIC FUNCTION lRecTotal( aTmp )
    end if
 
    if oEurTot != NIL
-      oEurTot:SetText( Trans( nCnv2Div( nTotal, aTmp[ _CDIVTIK ], cDivChg(), dbfDiv ), cPicEur ) )
+      oEurTot:SetText( Trans( nCnv2Div( nTotal, aTmp[ _CDIVTIK ], cDivChg() ), cPicEur ) )
    end if
 
    if oTxtTot != NIL
@@ -4070,7 +4070,7 @@ FUNCTION nTotLCobTik( dbfTikP, dbfDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, dbfDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 
@@ -4118,7 +4118,7 @@ FUNCTION nTotCobTik( cNumTik, dbfTikP, dbfDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, dbfDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 RETURN ( if( lPic, Trans( nTotal, cPorDiv ), nTotal ) )
@@ -4180,7 +4180,7 @@ FUNCTION nTotValTik( cNumTik, dbfTikT, dbfTikL, dbfDiv, cDivRet, lPic )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
       cPorDiv        := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
-      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet, dbfDiv )
+      nTotal         := nCnv2Div( nTotal, cCodDiv, cDivRet )
    end if
 
 RETURN ( if( lPic, Trans( nTotal, cPorDiv ), nTotal ) )
@@ -7332,9 +7332,9 @@ static function CalImpCob( aTmp )
    oTotDiv:nCobrado           := ( oTotDiv:nTotal - oTotDiv:nEntregado )
    oTotDiv:nCambio            := - ( oTotDiv:nTotal - oTotDiv:nEntregado - oTotDiv:nCobrado )
 
-   oTotDiv:nTotalDivisa       := nCnv2Div( oTotDiv:nTotal,     aTmp[ _CDIVTIK ], cDivChg(), dbfDiv )
-   oTotDiv:nEntregadoDivisa   := nCnv2Div( oTotDiv:nEntregado, aTmp[ _CDIVTIK ], cDivChg(), dbfDiv )
-   oTotDiv:nCambioDivisa      := nCnv2Div( oTotDiv:nCambio,    aTmp[ _CDIVTIK ], cDivChg(), dbfDiv )  // A cobrar menos entregado
+   oTotDiv:nTotalDivisa       := nCnv2Div( oTotDiv:nTotal,     aTmp[ _CDIVTIK ], cDivChg() )
+   oTotDiv:nEntregadoDivisa   := nCnv2Div( oTotDiv:nEntregado, aTmp[ _CDIVTIK ], cDivChg() )
+   oTotDiv:nCambioDivisa      := nCnv2Div( oTotDiv:nCambio,    aTmp[ _CDIVTIK ], cDivChg() )  // A cobrar menos entregado
 
    oTotDiv:oTotalDivisa:Refresh()
    oTotDiv:oEntregado:Refresh()
@@ -7351,7 +7351,7 @@ static function ChkCobro( aTmp )
 
    oTotDiv:nCambio            := - ( oTotDiv:nTotal - oTotDiv:nEntregado - oTotDiv:nCobrado )
 
-   oTotDiv:nCambioDivisa      := nCnv2Div( oTotDiv:nCambio,    aTmp[ _CDIVTIK ], cDivChg(), dbfDiv )
+   oTotDiv:nCambioDivisa      := nCnv2Div( oTotDiv:nCambio,    aTmp[ _CDIVTIK ], cDivChg() )
 
    oTotDiv:oCobrado:Refresh()
    oTotDiv:oCambio:Refresh()
@@ -15444,11 +15444,11 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet      := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva      := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotIvm      := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotTik      := nCnv2Div( nTotTik, cCodDiv, cDivRet, cDiv )
-      nTotPax      := nCnv2Div( nTotPax, cCodDiv, cDivRet, cDiv )
+      nTotNet      := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva      := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotIvm      := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
+      nTotTik      := nCnv2Div( nTotTik, cCodDiv, cDivRet )
+      nTotPax      := nCnv2Div( nTotPax, cCodDiv, cDivRet )
       cPorDiv      := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
    end if
 

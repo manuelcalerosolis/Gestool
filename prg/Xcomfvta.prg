@@ -374,10 +374,10 @@ METHOD lGenerate()
                   ::oDbf:nNumUnd := nCompras - nVentas + nAlmacen + nFacRec
 
                   if !oUser():lNotCostos()
-                     ::oDbf:pCosto  := nCnv2Div( nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias ), cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
+                     ::oDbf:pCosto  := nCnv2Div( nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias ), cDivEmp(), ::cDivInf)
                   end if
 
-                  ::oDbf:PvpRec     := nCnv2Div( ::oDbfArt:PvpRec, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
+                  ::oDbf:PvpRec     := nCnv2Div( ::oDbfArt:PvpRec, cDivEmp(), ::cDivInf )
 
                   ::oDbf:Benef1     := ::oDbfArt:Benef1
                   ::oDbf:Benef2     := ::oDbfArt:Benef2
@@ -386,19 +386,19 @@ METHOD lGenerate()
                   ::oDbf:Benef5     := ::oDbfArt:Benef5
                   ::oDbf:Benef6     := ::oDbfArt:Benef6
 
-                  ::oDbf:pVenta1    := nCnv2Div( ::oDbfArt:pVenta1, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVenta2    := nCnv2Div( ::oDbfArt:pVenta2, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVenta3    := nCnv2Div( ::oDbfArt:pVenta3, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVenta4    := nCnv2Div( ::oDbfArt:pVenta4, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVenta5    := nCnv2Div( ::oDbfArt:pVenta5, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVenta6    := nCnv2Div( ::oDbfArt:pVenta6, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
+                  ::oDbf:pVenta1    := nCnv2Div( ::oDbfArt:pVenta1, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVenta2    := nCnv2Div( ::oDbfArt:pVenta2, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVenta3    := nCnv2Div( ::oDbfArt:pVenta3, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVenta4    := nCnv2Div( ::oDbfArt:pVenta4, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVenta5    := nCnv2Div( ::oDbfArt:pVenta5, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVenta6    := nCnv2Div( ::oDbfArt:pVenta6, cDivEmp(), ::cDivInf )
 
-                  ::oDbf:pVtaIva1   := nCnv2Div( ::oDbfArt:pVtaIva1, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVtaIva2   := nCnv2Div( ::oDbfArt:pVtaIva2, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVtaIva3   := nCnv2Div( ::oDbfArt:pVtaIva3, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVtaIva4   := nCnv2Div( ::oDbfArt:pVtaIva4, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVtaIva5   := nCnv2Div( ::oDbfArt:pVtaIva5, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-                  ::oDbf:pVtaIva6   := nCnv2Div( ::oDbfArt:pVtaIva6, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
+                  ::oDbf:pVtaIva1   := nCnv2Div( ::oDbfArt:pVtaIva1, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVtaIva2   := nCnv2Div( ::oDbfArt:pVtaIva2, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVtaIva3   := nCnv2Div( ::oDbfArt:pVtaIva3, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVtaIva4   := nCnv2Div( ::oDbfArt:pVtaIva4, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVtaIva5   := nCnv2Div( ::oDbfArt:pVtaIva5, cDivEmp(), ::cDivInf )
+                  ::oDbf:pVtaIva6   := nCnv2Div( ::oDbfArt:pVtaIva6, cDivEmp(), ::cDivInf )
 
                   ::oDbf:Save()
 

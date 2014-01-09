@@ -5439,13 +5439,13 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotSat     := nCnv2Div( nTotSat, cCodDiv, cDivRet, cDiv )
-      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
-      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
+      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
+      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotSat     := nCnv2Div( nTotSat, cCodDiv, cDivRet )
+      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
+      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
       cPorDiv     := cPorDiv( cDivRet, cDiv )
    end if
 
@@ -9090,7 +9090,7 @@ STATIC FUNCTION RecSatCli( aTmpSat )
 
          nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
-            ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpSat[ _CDIVSAT ], dbfDiv )
+            ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpSat[ _CDIVSAT ] )
          end if
 
          /*

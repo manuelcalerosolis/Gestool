@@ -1651,7 +1651,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
             cCtaPgo  := cCtaCob()
          end if
 
-         nTotPgo     := nCnv2Div( ( dbfTikP )->nImpTik, ( dbfTikP )->cDivPgo, cDivEmp(), dbfDiv )
+         nTotPgo     := nCnv2Div( ( dbfTikP )->nImpTik, ( dbfTikP )->cDivPgo, cDivEmp() )
 
          if lDev
             nTotPgo  := - nTotPgo

@@ -2543,9 +2543,9 @@ Static Function ImportarExcel( aTmpPed, dbfTmpLin, dbfArticulo, dbfDiv, oBrw )
 
                   nComPro                    := nComPro( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, dbfArtCom )
                   if nComPro != 0
-                     ( dbfTmpLin )->nPreDiv  := nCnv2Div( nComPro, cDivEmp(), aTmpPed[ _CDIVPED ], dbfDiv )
+                     ( dbfTmpLin )->nPreDiv  := nCnv2Div( nComPro, cDivEmp(), aTmpPed[ _CDIVPED ] )
                   else
-                     ( dbfTmpLin )->nPreDiv  := nCnv2Div( ( dbfArticulo )->pCosto, cDivEmp(), aTmpPed[ _CDIVPED ], dbfDiv )
+                     ( dbfTmpLin )->nPreDiv  := nCnv2Div( ( dbfArticulo )->pCosto, cDivEmp(), aTmpPed[ _CDIVPED ] )
                   end if
 
                   ( dbfTmpLin )->( dbUnLock() )
@@ -4412,10 +4412,10 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotPed        := nCnv2Div( nTotPed, cCodDiv, cDivRet, cDiv )
+      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotPed        := nCnv2Div( nTotPed, cCodDiv, cDivRet )
       cPirDiv        := cPirDiv( cDivRet, cDiv )
    end if
 

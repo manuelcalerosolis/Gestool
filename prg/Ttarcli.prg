@@ -189,7 +189,7 @@ METHOD lGenerate() CLASS TarCli
          if ::oCliAtp:nTipAtp <= 1
             ::oDbf:cCodArt    := ::oCliAtp:cCodArt
             if ::oDbfArt:Seek( ::oCliAtp:cCodArt )
-               ::oDbf:nPrcCos := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias, .f., ::cDivInf, ::oDbfDiv:cAlias )
+               ::oDbf:nPrcCos := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias, .f., ::cDivInf )
             end if
          else
             ::oDbf:cCodArt    := ::oCliAtp:cCodFam
@@ -201,12 +201,12 @@ METHOD lGenerate() CLASS TarCli
             ::oDbf:cNomArt    := RetFamilia( ::oCliAtp:cCodFam, ::oDbfFam )
          end if
 
-         ::oDbf:nPrcArt1      := nCnv2Div( ::oCliAtp:nPrcArt,  cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-         ::oDbf:nPrcArt2      := nCnv2Div( ::oCliAtp:nPrcArt2, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-         ::oDbf:nPrcArt3      := nCnv2Div( ::oCliAtp:nPrcArt3, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-         ::oDbf:nPrcArt4      := nCnv2Div( ::oCliAtp:nPrcArt4, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-         ::oDbf:nPrcArt5      := nCnv2Div( ::oCliAtp:nPrcArt5, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
-         ::oDbf:nPrcArt6      := nCnv2Div( ::oCliAtp:nPrcArt6, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
+         ::oDbf:nPrcArt1      := nCnv2Div( ::oCliAtp:nPrcArt,  cDivEmp(), ::cDivInf )
+         ::oDbf:nPrcArt2      := nCnv2Div( ::oCliAtp:nPrcArt2, cDivEmp(), ::cDivInf )
+         ::oDbf:nPrcArt3      := nCnv2Div( ::oCliAtp:nPrcArt3, cDivEmp(), ::cDivInf )
+         ::oDbf:nPrcArt4      := nCnv2Div( ::oCliAtp:nPrcArt4, cDivEmp(), ::cDivInf )
+         ::oDbf:nPrcArt5      := nCnv2Div( ::oCliAtp:nPrcArt5, cDivEmp(), ::cDivInf )
+         ::oDbf:nPrcArt6      := nCnv2Div( ::oCliAtp:nPrcArt6, cDivEmp(), ::cDivInf )
          ::oDbf:nDtoArt       := ::oCliAtp:nDtoArt
          ::oDbf:nDtoPrm       := ::oCliAtp:nDprArt
          ::oDbf:nDtoDiv       := ::oCliAtp:nDtoDiv

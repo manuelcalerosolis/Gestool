@@ -10714,10 +10714,6 @@ FUNCTION nRetPreIva( nTarifa, cCodDiv, dbfArticulo, dbfDiv )
 
    end while
 
-     /* if cCodDiv != cDivEmp()
-         nPre  := nCnv2Div( nPre, cDivEmp(), cCodDiv, dbfDiv )
-      end if */
-
 return ( nPre )
 
 //---------------------------------------------------------------------------//
@@ -10824,7 +10820,7 @@ Function nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfD
 
    if dbfDiv != nil
       if cDivRet != nil .and. cDivRet != cDivEmp()
-         nCosto   := nCnv2Div( nCosto, cDivEmp(), cDivRet, dbfDiv )
+         nCosto   := nCnv2Div( nCosto, cDivEmp(), cDivRet )
          if lPic
             nCosto:= Trans( nCosto, cPinDiv( cDivRet, dbfDiv ) )
          end if
@@ -10852,7 +10848,7 @@ Function nCostoLin( cCodArt, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
 
       if cDivRet != nil .and. cDivRet != cDivEmp()
 
-         nCosto   := nCnv2Div( nCosto, cDivEmp(), cDivRet, dbfDiv )
+         nCosto   := nCnv2Div( nCosto, cDivEmp(), cDivRet )
          if lPic
             nCosto:= Trans( nCosto, cPinDiv( cDivRet, dbfDiv ) )
          end if
@@ -16128,12 +16124,6 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
       oTarifa:cText( nTarifa )
    end if
 
-/*
-   if cCodDiv != cDivEmp()
-      nPre  := nCnv2Div( nPre, cDivEmp(), cCodDiv, dbfDiv )
-   end if
-*/
-
    RECOVER USING oError
 
    END SEQUENCE
@@ -16238,7 +16228,7 @@ Function pCosto( dbfArticulo, lPic, cDivRet, dbfDiv, lFacCnv )
 
    if dbfDiv != nil
       if cDivRet != nil .and. cDivRet != cDivEmp()
-         nCosto      := nCnv2Div( nCosto, cDivEmp(), cDivRet, dbfDiv )
+         nCosto      := nCnv2Div( nCosto, cDivEmp(), cDivRet )
          if lPic
             nCosto   := Trans( nCosto, cPinDiv( cDivRet, dbfDiv ) )
          end if
@@ -17064,7 +17054,7 @@ STATIC FUNCTION TransPrecio( nImporte, lChg )
    DEFAULT lChg   := .f.
 
    IF lChg
-      nImporte    := nCnv2Div( nImporte, cDivEmp(), cDivChg(), dbfDiv )
+      nImporte    := nCnv2Div( nImporte, cDivEmp(), cDivChg() )
 	END IF
 
 RETURN ( Trans( nImporte, if( lChg, cPouChg, cPouDiv ) ) )

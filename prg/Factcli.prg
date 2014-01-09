@@ -8928,7 +8928,7 @@ static function RecFacCli( aTmpFac, lMessage )
 
          nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
-            ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ], dbfDiv )
+            ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ] )
          end if
 
          /*
@@ -16577,14 +16577,14 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotFac        := nCnv2Div( nTotFac, cCodDiv, cDivRet, cDiv )
-      nTotRet        := nCnv2Div( nTotRet, cCodDiv, cDivRet, cDiv )
-      nTotPnt        := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
-      nTotTrn        := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
-      nTotAnt        := nCnv2Div( nTotAnt, cCodDiv, cDivRet, cDiv )
+      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotFac        := nCnv2Div( nTotFac, cCodDiv, cDivRet )
+      nTotRet        := nCnv2Div( nTotRet, cCodDiv, cDivRet )
+      nTotPnt        := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
+      nTotTrn        := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
+      nTotAnt        := nCnv2Div( nTotAnt, cCodDiv, cDivRet )
       cPorDiv        := cPorDiv( cDivRet, cDiv )
    end if
 
@@ -17681,7 +17681,7 @@ FUNCTION nPagFacCli( cFactura, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, cDivRet, 
    end if
 
    if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotalPagado      := nCnv2Div( nTotalPagado, cCodDiv, cDivRet, dbfDiv )
+      nTotalPagado      := nCnv2Div( nTotalPagado, cCodDiv, cDivRet )
       cPorDiv           := cPorDiv( cDivRet, dbfDiv ) // Picture de la divisa redondeada
       nRouDiv           := nRouDiv( cDivRet, dbfDiv )
    end if

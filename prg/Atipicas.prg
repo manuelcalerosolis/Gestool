@@ -89,7 +89,7 @@ CLASS TAtipicas FROM TDet
 
    METHOD LoadAtipica()
 
-   METHOD ClaculaRentabilidad()   VIRTUAL
+   METHOD CalculaRentabilidad()   VIRTUAL
 
 END CLASS
 
@@ -327,14 +327,14 @@ METHOD Resource( nMode ) CLASS TAtipicas
          WHEN     .f. ;
          OF       ::oFld:aDialogs[1]
 
-/*
-      REDEFINE GET aGet[ _aNPRCCOM ] VAR aTmp[ _aNPRCCOM ];
+      REDEFINE GET ::oPrecioCompra ;
+         VAR      ::oDbfVir:nPreCom ;
          ID       120 ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         VALID    ( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         WHEN     ( ::oDbfVir:nPreCom <= 1 .and. ::nMode != ZOOM_MODE );
+         ON CHANGE( ::CalculaRentabilidad()  );
+         VALID    ( ::CalculaRentabilidad()  );
          SPINNER  ;
-         PICTURE  cPinDiv ;
+         PICTURE  cPinDiv() ;
          OF       ::oFld:aDialogs[1]
 /*
       REDEFINE CHECKBOX aGet[ _aLPRCCOM ] VAR aTmp[ _aLPRCCOM ] ;
@@ -657,7 +657,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
                   aRentabilidad[ oBrwRen:nAt, 1 ],;
                   aRentabilidad[ oBrwRen:nAt, 2 ],;
                   if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( aRentabilidad[ oBrwRen:nAt, 3 ], cPouEmp ), Trans( aRentabilidad[ oBrwRen:nAt, 3 ], "999.99" ) + " %" ),;
-                  if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( nCnv2Div( aRentabilidad[ oBrwRen:nAt, 3 ], cDivEmp(), cDivChg(), dbfDiv ), cPouChg ), "" ),;
+                  if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( nCnv2Div( aRentabilidad[ oBrwRen:nAt, 3 ], cDivEmp(), cDivChg() ), cPouChg ), "" ),;
                   "";
          HEAD ;
                   "",;

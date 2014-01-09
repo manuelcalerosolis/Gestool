@@ -7811,7 +7811,7 @@ Static Function RecAlbCli( aTmpAlb, oDlg )
 
          nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpAlb[ _DFECALB ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
-            ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpAlb[ _CDIVALB ], dbfDiv )
+            ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpAlb[ _CDIVALB ] )
          end if
 
          /*
@@ -13733,13 +13733,13 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
    // Solicitan una divisa distinta a la q se hizo originalmente la factura
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIvm        := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
-      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotAlb        := nCnv2Div( nTotAlb, cCodDiv, cDivRet, cDiv )
-      nTotPnt        := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
-      nTotTrn        := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
+      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIvm        := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
+      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotAlb        := nCnv2Div( nTotAlb, cCodDiv, cDivRet )
+      nTotPnt        := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
+      nTotTrn        := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
       cPorDiv        := cPorDiv( cDivRet, cDiv )
    end if
 
@@ -14370,7 +14370,7 @@ FUNCTION nPagAlbCli( cNumAlb, cAlbCliP, cDiv, cDivRet, lPic )
    ( cAlbCliP )->( dbGoTo( nRec ) )
 
    if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotPag           := nCnv2Div( nTotPag, cCodDiv, cDivRet, cDiv )
+      nTotPag           := nCnv2Div( nTotPag, cCodDiv, cDivRet )
       cPorDiv           := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
       nRouDiv           := nRouDiv( cDivRet, cDiv )
    end if
@@ -14413,7 +14413,7 @@ function nEntAlbCli( uAlbCliP, cDbfDiv, cDivRet, lPic )
    if cDivRet != cDivPgo
       nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
       cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet, cDbfDiv )
+      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
 RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )

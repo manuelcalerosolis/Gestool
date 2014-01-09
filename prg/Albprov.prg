@@ -4941,10 +4941,10 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotAlb     := nCnv2Div( nTotAlb, cCodDiv, cDivRet, cDiv )
+      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotAlb     := nCnv2Div( nTotAlb, cCodDiv, cDivRet )
       cPirDiv     := cPirDiv( cDivRet, cDiv )
    end if
 
@@ -5417,7 +5417,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             Ponemos el precio de venta recomendado-----------------------------
             */
 
-            aTmp[ _NPVPREC ]        := nCnv2Div( ( dbfArticulo )->PvpRec, cDivEmp(), aTmpAlb[ _CDIVALB ], dbfDiv )
+            aTmp[ _NPVPREC ]        := nCnv2Div( ( dbfArticulo )->PvpRec, cDivEmp(), aTmpAlb[ _CDIVALB ] )
 
             /*
             Situacion posterior------------------------------------------------
@@ -5462,7 +5462,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             Guardamos el precio de costo para posteriores comprobaciones
             */
 
-            nPreCos  := nCnv2Div( ( dbfArticulo )->pCosto, cDivEmp(), aTmpAlb[ _CDIVALB ], dbfDiv )
+            nPreCos  := nCnv2Div( ( dbfArticulo )->pCosto, cDivEmp(), aTmpAlb[ _CDIVALB ] )
 
          end if
 
@@ -7583,7 +7583,7 @@ STATIC FUNCTION loaAnt( aTmpAlb, oPre, aGet )
 
    if ( dbfArticulo )->( dbSeek( cCod ) )
 
-      oPre[  1 ]:SetText( nCnv2Div( ( dbfArticulo )->pCosto, cDivEmp(), aTmpAlb[ _CDIVALB ], dbfDiv, .f. ) )
+      oPre[  1 ]:SetText( nCnv2Div( ( dbfArticulo )->pCosto, cDivEmp(), aTmpAlb[ _CDIVALB ], .f. ) )
       oPre[  2 ]:SetText( ( dbfArticulo )->BENEF1   )
       oPre[  3 ]:SetText( if( ( dbfArticulo )->lIvaInc, ( dbfArticulo )->PVTAIVA1, ( dbfArticulo )->PVENTA1 ) )
       oPre[  4 ]:SetText( ( dbfArticulo )->BENEF2   )
