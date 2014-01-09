@@ -37,6 +37,7 @@ static bEdit   := { |aTemp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBan | Ed
 #endif
 
 static dbfDiv
+
 static oWndBrw
 static cCodBuf
 static cPouDiv
@@ -47,6 +48,9 @@ static cPirDiv
 static cPorDiv
 static cPwbDiv
 static cPwrDiv
+static nEurDiv
+static nPtsDiv
+static nDouDiv
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -1810,6 +1814,10 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
             aAdd( aDivBuf, ( dbfDiv )->( FieldGet( n ) ) )
          next
 
+         nDouDiv     := ( dbfDiv )->nDouDiv 
+         nEurDiv     := ( dbfDiv )->nEurDiv
+         nPtsDiv     := ( dbfDiv )->nPtsDiv
+
          cPouDiv     := RetPic( ( dbfDiv )->nNouDiv, ( dbfDiv )->nDouDiv )
          cPpvDiv     := RetPic( ( dbfDiv )->nNpvDiv, ( dbfDiv )->nDpvDiv )
          cPinDiv     := RetPic( ( dbfDiv )->nNinDiv, ( dbfDiv )->nDinDiv )
@@ -1818,12 +1826,6 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
          cPwbDiv     := RetPic( ( dbfDiv )->nNwbDiv, ( dbfDiv )->nDwbDiv )
          cPwrDiv     := RetPic( ( dbfDiv )->nNwbDiv, ( dbfDiv )->nRwbDiv )
 
-      else
-/*
-         msgStop( "Divisa no encontrada " + cCodDiv + ", no puedo cargar" + CRLF + ;
-                  "los valores necesarios para el programa.",;
-                  "Fichero : " + cPatDat() + "Divisas.Dbf" )
-*/
       end if
 
    case ValType( dbfDiv ) == "O"
@@ -1840,18 +1842,18 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
             aAdd( aDivBuf, dbfDiv:FieldGet( n ) )
          next
 
+         nDouDiv     := dbfDiv:nDouDiv 
+         nEurDiv     := dbfDiv:nEurDiv
+         nPtsDiv     := dbfDiv:nPtsDiv
+
          cPouDiv     := RetPic( dbfDiv:nNouDiv, dbfDiv:nDouDiv )
          cPpvDiv     := RetPic( dbfDiv:nNpvDiv, dbfDiv:nDpvDiv )
          cPinDiv     := RetPic( dbfDiv:nNinDiv, dbfDiv:nDinDiv )
          cPirDiv     := RetPic( dbfDiv:nNinDiv, dbfDiv:nRinDiv )
          cPorDiv     := RetPic( dbfDiv:nNouDiv, dbfDiv:nRouDiv )
+         cPwbDiv     := RetPic( dbfDiv:nNwbDiv, dbfDiv:nDwbDiv )
+         cPwrDiv     := RetPic( dbfDiv:nNwbDiv, dbfDiv:nRwbDiv )
 
-      else
-/*
-         msgStop( "Divisa no encontrada " + cCodDiv + ", no puedo cargar" + CRLF + ;
-                  "los valores necesarios para el programa.",;
-                  "Fichero : " + cPatDat() + "Divisas.Dbf" )
-*/
       end if
 
    end case
@@ -1944,31 +1946,24 @@ Devuelve el cambio de una divisa
 
 FUNCTION nDiv2Div( cDivOrg, cDivDes, dbfDiv )
 
-	local nPtsVal	:= 1
-	local cAreaAnt := Alias()
+	local nPtsVal	   := 1
+
+   if Empty( aDivBuf )
+      aDivBuf( cDivOrg, dbfDiv )
+   end if
 
    /*
    Conversiones directas
    */
 
-   DO CASE
-      CASE cDivOrg == "PTS" .AND. cDivDes == "EUR"
-         IF dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv )
-            nPtsVal     := (dbfDiv)->nEurDiv
-         ELSE
-            msgStop( "Divisa no encontrada", cDivOrg )
-         END IF
-      CASE cDivOrg == "EUR" .AND. cDivDes == "PTS"
-         IF dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv )
-            nPtsVal     := 1 / (dbfDiv)->nPtsDiv
-         ELSE
-            msgStop( "Divisa no encontrada", cDivOrg )
-         END IF
-   END CASE
+   do case
+      case cDivOrg == "PTS" .and. cDivDes == "EUR"
+         nPtsVal     := aDivBuf[ _NEURDIV ]
 
-	IF cAreaAnt != ""
-		SELECT( cAreaAnt )
-	END IF
+      case cDivOrg == "EUR" .and. cDivDes == "PTS"
+         nPtsVal     := 1 / aDivBuf[ _NPTSDIV ]
+
+   end case
 
 RETURN ( nPtsVal )
 
@@ -1996,26 +1991,25 @@ FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, lRound )
 
    DEFAULT lRound    := .t.
 
+   if Empty( aDivBuf )
+      aDivBuf( cDivOrg, dbfDiv )
+   end if
+
    /*
    Conversiones directas-------------------------------------------------------
    */
 
    do case
       case cDivOrg == "PTS" .AND. cDivDes == "EUR"
-         if dbSeekInOrd( cDivOrg, "cCodDiv", TDataCenter():Get( "Divisas") ) .and. ( TDataCenter():Get( "Divisas") )->nEurDiv != 0
-            nImpChg  := nImpChg / ( TDataCenter():Get( "Divisas") )->nEurDiv
-         end if
+         nImpChg     := nImpChg / aDivBuf[ _NEURDIV ]
+
       case cDivOrg == "EUR" .and. cDivDes == "PTS"
-         if dbSeekInOrd( cDivOrg, "cCodDiv", TDataCenter():Get( "Divisas") ) .and. ( TDataCenter():Get( "Divisas") )->nPtsDiv != 0
-            nImpChg  := nImpChg * ( TDataCenter():Get( "Divisas") )->nPtsDiv
-         end if
+         nImpChg     := nImpChg * aDivBuf[ _NPTSDIV ]
+
    end case
 
    if isTrue( lRound )
-      if dbSeekInOrd( cDivDes, "cCodDiv", TDataCenter():Get( "Divisas") )
-         nDec        := ( TDataCenter():Get( "Divisas") )->nDouDiv
-      end if
-      nImpChg        := Round( nImpChg, nDec )
+      nImpChg        := Round( nImpChg, nDouDiv )
    end if
 
 RETURN ( nImpChg )
