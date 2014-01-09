@@ -8396,16 +8396,16 @@ Return ( aXbYRet )
 function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
 
    local lSea     := .f.
-   local nOrd     := ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( "cCodFam" ) )
+   local nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cCodFam" ) )
 
-   if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea ) )
+   if ( dbfCliAtp )->( dbSeek( cCadSea ) )
 
-      while ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodFam == cCadSea .and.;
-            !( TDataCenter():Get( "CliAtp" ) )->( eof() )
+      while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCadSea .and.;
+            !( dbfCliAtp )->( eof() )
 
-         if ( ( TDataCenter():Get( "CliAtp" ) )->dFecIni <= dFecDoc .or. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni ) ) .and. ;
-            ( ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dFecDoc .or. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin ) ) .and. ;
-            ( TDataCenter():Get( "CliAtp" ) )->nTipAtp == 2
+         if ( ( dbfCliAtp )->dFecIni <= dFecDoc .or. Empty( ( dbfCliAtp )->dFecIni ) ) .and. ;
+            ( ( dbfCliAtp )->dFecFin >= dFecDoc .or. Empty( ( dbfCliAtp )->dFecFin ) ) .and. ;
+            ( dbfCliAtp )->nTipAtp == 2
 
             lSea  := .t.
             
@@ -8413,7 +8413,7 @@ function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
 
          else
 
-            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
+            ( dbfCliAtp )->( dbSkip() )
 
          end if
 
@@ -8421,7 +8421,7 @@ function lSeekAtpFam( cCadSea, dFecDoc, dbfCliAtp )
 
    end if
 
-   ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( nOrd ) )
+   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
 
 return ( lSea )
 
@@ -8441,17 +8441,17 @@ function nDtoAtp( nTarifa, dbfCliAtp, oDto, oTarifa )
 
       do case
          case nTarifa == 1
-            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto1
+            nDto     := ( dbfCliAtp)->nDto1
          case nTarifa == 2
-            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto2
+            nDto     := ( dbfCliAtp)->nDto2
          case nTarifa == 3
-            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto3
+            nDto     := ( dbfCliAtp)->nDto3
          case nTarifa == 4
-            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto4
+            nDto     := ( dbfCliAtp)->nDto4
          case nTarifa == 5
-            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto5
+            nDto     := ( dbfCliAtp)->nDto5
          case nTarifa == 6
-            nDto     := ( TDataCenter():Get( "CliAtp" ) )->nDto6
+            nDto     := ( dbfCliAtp)->nDto6
       end do
 
       if nDto == 0 .and. nTarifa > 1 .and. lBuscaImportes()
@@ -8468,7 +8468,7 @@ function nDtoAtp( nTarifa, dbfCliAtp, oDto, oTarifa )
    */
 
    if nDto == 0
-      nDto           := ( TDataCenter():Get( "CliAtp" ) )->nDtoArt
+      nDto           := ( dbfCliAtp)->nDtoArt
    end if
 
    /*
@@ -8506,17 +8506,17 @@ function nImpAtp( nTarifa, dbfCliAtp, uPreUnt, nIva, oTarifa )
 
       do case
          case nTarifa == 1
-            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt
+            nPre     := ( dbfCliAtp )->nPrcArt
          case nTarifa == 2
-            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt2
+            nPre     := ( dbfCliAtp )->nPrcArt2
          case nTarifa == 3
-            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt3
+            nPre     := ( dbfCliAtp )->nPrcArt3
          case nTarifa == 4
-            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt4
+            nPre     := ( dbfCliAtp )->nPrcArt4
          case nTarifa == 5
-            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt5
+            nPre     := ( dbfCliAtp )->nPrcArt5
          case nTarifa == 6
-            nPre     := ( TDataCenter():Get( "CliAtp" ) )->nPrcArt6
+            nPre     := ( dbfCliAtp )->nPrcArt6
       end do
 
       if nPre == 0 .and. nTarifa > 1 .and. lBuscaImportes()
@@ -8547,24 +8547,24 @@ return ( nPre )
 function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    local lSea        := .f.
-   local nOrd        := ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( "cCliArt" ) )
+   local nOrd        := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
 
-   DEFAULT cCodPrp   := Space(20)
-   DEFAULT cValPrp   := Space(20)
+   DEFAULT cCodPrp   := Space( 20 )
+   DEFAULT cValPrp   := Space( 20 )
 
-   if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
+   if ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
 
-      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt + ( TDataCenter():Get( "CliAtp" ) )->cCodPr1 + ( TDataCenter():Get( "CliAtp" ) )->cCodPr2 + ( TDataCenter():Get( "CliAtp" ) )->cValPr1 + ( TDataCenter():Get( "CliAtp" ) )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
-            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
+      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
+            (!( dbfCliAtp )->( eof() ) )
 
-         if ( TDataCenter():Get( "CliAtp" ) )->dFecIni <= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->nTipAtp <= 1
+         if ( dbfCliAtp )->dFecIni <= dFecDoc .and. ( dbfCliAtp )->dFecFin >= dFecDoc .and. ( dbfCliAtp )->nTipAtp <= 1
 
             lSea     := .t.
             exit
 
          else
 
-            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
+            ( dbfCliAtp )->( dbSkip() )
 
          end if
 
@@ -8572,19 +8572,19 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    end if
 
-   if !lSea .and. ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + Space( 20 ) ) )
+   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + Space( 20 ) ) )
 
-      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt == cCadSea ) .and.;
-            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
+      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCadSea ) .and.;
+            (!( dbfCliAtp )->( eof() ) )
 
-         if ( TDataCenter():Get( "CliAtp" ) )->dFecIni <= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->dFecFin >= dFecDoc .and. ( TDataCenter():Get( "CliAtp" ) )->nTipAtp <= 1
+         if ( dbfCliAtp )->dFecIni <= dFecDoc .and. ( dbfCliAtp )->dFecFin >= dFecDoc .and. ( dbfCliAtp )->nTipAtp <= 1
 
             lSea     := .t.
             exit
 
          else
 
-            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
+            ( dbfCliAtp )->( dbSkip() )
 
          end if
 
@@ -8596,19 +8596,19 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
    Ahora vamos a ver si hay con fechas vacias----------------------------------
    */
 
-   if !lSea .and. ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
+   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
 
-      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt + ( TDataCenter():Get( "CliAtp" ) )->cCodPr1 + ( TDataCenter():Get( "CliAtp" ) )->cCodPr2 + ( TDataCenter():Get( "CliAtp" ) )->cValPr1 + ( TDataCenter():Get( "CliAtp" ) )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
-            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
+      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCadSea + cCodPrp + cValPrp ) .and.;
+            (!( dbfCliAtp )->( eof() ) )
 
-         if Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni ) .and. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin ) .and. ( TDataCenter():Get( "CliAtp" ) )->nTipAtp <= 1
+         if Empty( ( dbfCliAtp )->dFecIni ) .and. Empty( ( dbfCliAtp )->dFecFin ) .and. ( dbfCliAtp )->nTipAtp <= 1
 
             lSea     := .t.
             exit
 
          else
 
-            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
+            ( dbfCliAtp )->( dbSkip() )
 
          end if
 
@@ -8616,19 +8616,19 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    end if
 
-   if !lSea .and. ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCadSea + Space( 20 ) ) )
+   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCadSea + Space( 20 ) ) )
 
-      while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli + ( TDataCenter():Get( "CliAtp" ) )->cCodArt == cCadSea ) .and.;
-            (!( TDataCenter():Get( "CliAtp" ) )->( eof() ) )
+      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCadSea ) .and.;
+            (!( dbfCliAtp )->( eof() ) )
 
-         if Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecIni ) .and. Empty( ( TDataCenter():Get( "CliAtp" ) )->dFecFin )
+         if Empty( ( dbfCliAtp )->dFecIni ) .and. Empty( ( dbfCliAtp )->dFecFin )
 
             lSea     := .t.
             exit
 
          else
 
-            ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
+            ( dbfCliAtp )->( dbSkip() )
 
          end if
 
@@ -8636,7 +8636,7 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
 
    end if
 
-   ( TDataCenter():Get( "CliAtp" ) )->( OrdSetFocus( nOrd ) )
+   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
 
 return ( lSea )
 

@@ -2009,7 +2009,7 @@ FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, lRound )
    end case
 
    if isTrue( lRound )
-      nImpChg        := Round( nImpChg, nDouDiv )
+      nImpChg        := Round( nImpChg, aDivBuf[ _NDOUDIV ] )
    end if
 
 RETURN ( nImpChg )
