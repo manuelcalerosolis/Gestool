@@ -181,13 +181,17 @@ METHOD Resource( nMode ) CLASS TDetPersonal
          ::oParent:oDetHorasPersonal:oDbfVir:Delete(.f.)
       end if
 
-      ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cKeyOrd + Space( 5 ) )
+      if IsChar( ::oDbfVir:cKeyOrd )
+         ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cKeyOrd + Space( 5 ) )
+      end if 
 
       ::lAppendTrabajador  := .f.
 
    else
 
-      ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cKeyTra )
+      if IsChar( ::oDbfVir:cKeyTra )
+         ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( ::oDbfVir:cKeyTra )
+      end if 
 
    end if
 
