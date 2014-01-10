@@ -5414,6 +5414,14 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             end if
 
             /*
+            Punto verde
+            */
+
+            if !Empty( aGet[_NPNTVER ] )
+               aGet[_NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
+            end if
+
+            /*
             Ponemos el precio de venta recomendado-----------------------------
             */
 
