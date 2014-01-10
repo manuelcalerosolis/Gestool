@@ -3687,10 +3687,10 @@ RETURN ( ::nTotalSaldo( cCodArt, cCodCli, dFecha ) - ::nSaldoDocAlb( cCodArt, cN
 METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero, lExcImp, aSer, oMtr ) CLASS TStock
 
    local nPreMed        := 0
-   local aMovimientos   := {}
    local nSalAnt        := 0
    local nImpAnt        := 0
    local aMov           := {}
+   local aMovimientos   := {}
    local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast") )
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"    ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"    ) )
@@ -3857,6 +3857,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef" ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef" ) )
    local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
+   local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cCodArt" ) )
 
    DEFAULT cCodPr1      := ""
    DEFAULT cCodPr2      := ""
@@ -3987,6 +3988,31 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    end if
 
    /*
+   Recorremos partes de producción---------------------------
+   */
+
+   if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+
+      while ( ::cProducL )->cCodArt == cCodArt                          .and.;
+         ( Empty ( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )  .and.;
+         ( Empty ( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )  .and.;
+         !( ::cProducL )->( eof() )
+
+         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd ) .and.;
+            Empty( cCodAlm ) .or. ( ( ::cProducL )->cAlmOrd == cCodAlm )
+
+            nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
+            nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
+
+         end if
+
+         ( ::cProducL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
    Calculo del costo medio-----------------------------------------------------
    */
 
@@ -4010,6 +4036,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
    ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
    ( ::cHisMovT )->( OrdSetFocus( nOrdMovAlm  ) )
+   ( ::cProducL )->( OrdSetFocus( nOrdProducL ) )
 
 RETURN ( nCostoMedio )
 
