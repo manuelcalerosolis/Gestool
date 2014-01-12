@@ -3163,6 +3163,11 @@ return ( if( !Empty( cTraslation ), cTraslation, cText ) )
 
 //---------------------------------------------------------------------------//
 
+Function ValToMoney( cMoney )
+
+Return ( Val( StrTran( cMoney, ",", "." ) ) )
+
+
 /*
 function AddResource( nHResource, cType )
 

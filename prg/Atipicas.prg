@@ -136,6 +136,14 @@ CLASS TAtipicas FROM TDet
 
    METHOD CalculaRentabilidad()     INLINE   ( .t. )
 
+   METHOD SetPrimeraPropiedad( cValue )
+
+   METHOD ShowPrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Show(), ::oValorPrimeraPropiedad:Show(), ::oCodigoPrimeraPropiedad:Show() )
+   METHOD ShowSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Show(), ::oValorSegundaPropiedad:Show(), ::oCodigoSegundaPropiedad:Show() )
+
+   METHOD HidePrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Hide(), ::oValorPrimeraPropiedad:Hide(), ::oCodigoPrimeraPropiedad:Hide() )
+   METHOD HideSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Hide(), ::oValorSegundaPropiedad:Hide(), ::oCodigoSegundaPropiedad:Hide() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -150,7 +158,7 @@ METHOD New( cPath, oParent ) CLASS TAtipicas
    ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
 
 RETURN ( Self )
-
+ 
 //---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TAtipicas
@@ -1100,26 +1108,40 @@ RETURN ( Self )
 
 METHOD LoadAtipica()
 
-   if Empty( ::cCodigoArticulo )
+   if Empty( ::oDbfVir:cCodArt )
       ::oNombreArticulo:cText( "" )
       Return ( .t. )
    end if
 
-   if ::nMode == APPD_MODE
+   if ( TDataCenter():Get( "Articulo" ) )->( dbSeek( ::oDbfVir:cCodArt ) )
 
-      if ( TDataCenter():Get( "Articulo" ) )->( dbSeek( ::cCodigoArticulo ) )
+      ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo" ) )->Nombre )
 
-         ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo" ) )->Nombre )
+      ::SetPrimeraPropiedad( ( TDataCenter():Get( "Articulo" ) )->cCodPrp1 )
 
-      else
+   else
 
-         Return ( .f. )
-
-      end if
+      Return ( .f. )
 
    end if
 
 RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD SetPrimeraPropiedad( cValue )
+
+   ? cValue
+
+   if !empty( cValue )
+      ::oCodigoPrimeraPropiedad:cText( cValue )
+      ::oTextoPrimeraPropiedad:SetText( cValue ) // retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
+      ::ShowPrimeraPropiedad()
+   else 
+      ::HidePrimeraPropiedad()
+   end if 
+
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 

@@ -349,6 +349,7 @@ CLASS TpvTactil
    DATA nDialogHeight
 
    DATA nNumeroLinea
+   DATA nUnidades
 
    DATA aTemporalOriginal
    DATA aTemporalNuevoTicket
@@ -487,8 +488,8 @@ CLASS TpvTactil
 
       nUnidades            := Val( ::cGetUnidades )
 
-      if lUnaUnidad
-         nUnidades         := Max( nUnidades, 1 )
+      if lUnaUnidad .and. ( nUnidades == 0 )
+         nUnidades         := 1 // Max( nUnidades, 1 )
       end if
 
       ::oGetUnidades:cText( "" )
@@ -2321,9 +2322,9 @@ METHOD OpenFiles() CLASS TpvTactil
    Visor-----------------------------------------------------------------------
    */
 
-   cVisor               := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+   cVisor                     := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
    if !Empty( cVisor )
-      ::oVisor            := TVisor():Create( cVisor )
+      ::oVisor                := TVisor():Create( cVisor )
       if !Empty( ::oVisor )
          ::oVisor:Wellcome()
       end if
@@ -3272,8 +3273,7 @@ METHOD Resource() CLASS TpvTactil
 
       ::oBtnSSalon               := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
       ::oBtnSEntregar            := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
-      ::oBtnSCobrar              := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
-      
+      ::oBtnSCobrar              := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )   
 
    end if
 
@@ -4521,6 +4521,8 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
       if !::lCombinando
 
+         ::nUnidades                      := ::nGetUnidades( .t. )
+
          if !::lAcumulaArticulo()
 
             CursorWait()
@@ -4533,6 +4535,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:Blank()
 
             ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+            ::oTemporalLinea:nUntTil      := ::nUnidades
             ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
             ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
             ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
@@ -4540,8 +4543,6 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
             ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
             ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
-
-            ::oTemporalLinea:nUntTil      := ::nGetUnidades( .t. )
 
             if ( ::oArticulo:lFacCnv )
                ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
@@ -4673,7 +4674,7 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
    local nPrecioLinea
 
    if ( ::oTemporalLinea:ordKeyCount() == 0 )
-      Return ( .f. )
+      Return .f.
    end if
 
    /*
@@ -4703,13 +4704,14 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
          */
 
          if Empty( ::oTemporalLinea:cComTil )                              .and. ;
+            Empty( ::oTemporalLinea:cComent )                              .and. ;
+            Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
             !::oTemporalLinea:lKitChl                                      .and. ;
             !::oTemporalLinea:lDelTil                                      .and. ;
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
-            Empty( ::oTemporalLinea:cComent )                              .and. ;
-            Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
-            ::oTemporalLinea:cOrdOrd == ::oArticulo:cOrdOrd                
+            ::oTemporalLinea:cOrdOrd == ::oArticulo:cOrdOrd                .and. ;
+            ::nUnidades > 0
 
             /*
             Sumamos------------------------------------------------------------
@@ -4721,7 +4723,7 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             Tomamos el valor de retorno y saliendo-----------------------------
             */
 
-            lReturn  := .t.
+            lReturn     := .t.
 
             exit
 
@@ -6139,93 +6141,93 @@ RETURN ( sTotalCobros )
 METHOD OnClickCobro() CLASS TpvTactil
 
    if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
-
       MsgStop( "No puede almacenar un documento sin línea" )
-
       Return .f.
+   end if
 
-   else
+   ::oDlg:Enable()
 
-      ::nTipoDocumento := documentoTicket
+   ::nTipoDocumento := documentoTicket
 
-      if ::oTpvCobros:lCobro()
+   if ::oTpvCobros:lCobro()
 
-         /*
-         Guarda documento------------------------------------------------------
-         */
+      /*
+      Guarda documento------------------------------------------------------
+      */
 
-         ::GuardaDocumentoPagado()
+      ::GuardaDocumentoPagado()
 
-         /*
-         Generar vale----------------------------------------------------------
-         */
+      /*
+      Generar vale----------------------------------------------------------
+      */
 
-         ::GeneraVale()
+      ::GeneraVale()
 
-         /*
-         Pintamos en la pizarra el ultimo cambio-------------------------------
-         */
+      /*
+      Pintamos en la pizarra el ultimo cambio-------------------------------
+      */
 
-         ::UltimoCambio()
+      ::UltimoCambio()
 
+      /*
+      Imprimimos en el visor------------------------------------------------
+      */
 
-         /*
-         Imprimimos en el visor------------------------------------------------
-         */
+      ::EscribeVisor()
 
-         ::EscribeVisor()
+      /*
+      Abrimos el cajón portamonedas antes de imprimir-----------------------
+      */
 
-         /*
-         Abrimos el cajón portamonedas antes de imprimir-----------------------
-         */
+      oUser():OpenCajon()
 
-         oUser():OpenCajon()
+      /*
+      Imprimimos el documento-----------------------------------------------
+      */
 
-         /*
-         Imprimimos el documento-----------------------------------------------
-         */
+      do case
+         case ::oTpvCobros:nExit == exitAceptarRegalo
+            ::ImprimeRegalo()
 
-         do case
-            case ::oTpvCobros:nExit == exitAceptarRegalo
-               ::ImprimeRegalo()
+         case ::oTpvCobros:nExit == exitAceptarDesglosado
+            ::ImprimeDesglosado()   
 
-            case ::oTpvCobros:nExit == exitAceptarDesglosado
-               ::ImprimeDesglosado()   
+         case ::oTpvCobros:nExit == exitAceptarImprimir
+            ::ImprimeTicket()
 
-            case ::oTpvCobros:nExit == exitAceptarImprimir
-               ::ImprimeTicket()
+      end case
 
-         end case
+      /*
+      Inicializa los valores para el documento------------------------------
+      */
 
-         /*
-         Inicializa los valores para el documento------------------------------
-         */
+      ::InitDocumento( ubiGeneral )
 
-         ::InitDocumento( ubiGeneral )
+      /*
+      Datos de la ubicacion-------------------------------------------------
+      */
 
-         /*
-         Datos de la ubicacion-------------------------------------------------
-         */
+      ::SetUbicacion()
 
-         ::SetUbicacion()
+      /*
+      Datos del documento---------------------------------------------------
+      */
 
-         /*
-         Datos del documento---------------------------------------------------
-         */
+      ::SetInfo()
+      
+      ::SetCliente()
+      
+      ::SetSerie()
 
-         ::SetInfo()
-         ::SetCliente()
-         ::SetSerie()
+      /*
+      Recoger usuario-------------------------------------------------------
+      */
 
-         /*
-         Recoger usuario-------------------------------------------------------
-         */
-
-         ::GetUsuario()
-
-      end if
+      ::GetUsuario()
 
    end if
+
+   ::oDlg:Enable()
 
 Return .t.
 
@@ -6624,8 +6626,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    DEFAULT lZap                     := .t.
    DEFAULT nSave                    := SAVTIK
 
-   ::oDlg:Disable()
-
    ::CargaValoresDefecto()
 
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -6758,8 +6758,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    /*
    Dialogo se vuelve a habilitar para volcer al trabajo------------------------
    */
-
-   ::oDlg:Enable()
 
    CursorWE()
 
@@ -7239,6 +7237,8 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::oDlg:Disable()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7311,6 +7311,8 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
       end if
 
    end if
+
+   ::oDlg:Enable()
 
    RECOVER USING oError
 
@@ -9061,10 +9063,6 @@ METHOD AceptarDividirMesa( oDlg ) Class TpvTactil
       */
 
       ::CreaNuevoTicket( oDlg, cCodSala, cPntVenta )
-
-      /*
-      Limpiamos y recargamos los temporales---------------------------------------
-      */
 
    end if
 

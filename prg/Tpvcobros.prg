@@ -117,7 +117,7 @@ CLASS TpvCobros
          ::cGetEntregado            := Space( 25 )
       end if
 
-      ::cGetEntregado               := Trans( Val( ::cGetEntregado ) + nImporte, ::oSender:cPictureTotal )
+      ::cGetEntregado               := Trans( ValToMoney( ::cGetEntregado ) + nImporte, ::oSender:cPictureTotal )
 
       if !Empty( ::oGetEntregado )
          ::oGetEntregado:Refresh()
@@ -152,7 +152,7 @@ CLASS TpvCobros
 
    METHOD CreaCobro()
    METHOD EliminaCobro()            INLINE ( aDel( ::aCobros, ::oBrwPago:nArrayAt, .t. ) )
-   METHOD ValidCobro()
+   METHOD ValidCobro()              INLINE ( ( ::sTotalesCobros:nTotal ) >= ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado ) )
 
    METHOD CargaCobros( cNumeroTicket )
    METHOD EliminaCobros()
@@ -162,7 +162,7 @@ CLASS TpvCobros
 
    INLINE METHOD OnClickAnnadirCobro()
 
-      ::sTotalesCobros:nCobrado     := Val( ::cGetEntregado )
+      ::sTotalesCobros:nCobrado     := ValToMoney( ::cGetEntregado )
 
       ::CreaCobro()
 
@@ -214,45 +214,52 @@ CLASS TpvCobros
 
    INLINE METHOD OnClickAceptar( nExit )
 
+      local lEnd        := .f.
+
+      if ::oSender:nTipoDocumento == documentoAlbaran
+         Return .f.
+      end if
+
       ::oDlg:Disable()
 
-      if ::oSender:nTipoDocumento != documentoAlbaran
+      ::ValidTotalesCobro()
 
-         ::ValidTotalesCobro()
+      if ::nUbiTik == ubiEncargar
 
-         if ::nUbiTik == ubiEncargar
-
-            if ( ::sTotalesCobros:nTotal ) > ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado )
-               ::nEstado   := estadoParcial
-            else
-               ::nEstado   := estadoPagado
-            end if
-
-            ::CreaCobro()
-
-            ::nExit        := nExit
-
+         if ::ValidCobro()
+            ::nEstado   := estadoPagado
          else
-
-            if ::ValidCobro()
-
-               ::CreaCobro()
-
-               ::nEstado   := estadoPagado
-               ::nExit     := nExit
-
-            end if
-
+            ::nEstado   := estadoParcial
          end if
+
+         ::CreaCobro()
+
+         ::nExit        := nExit
 
       else
 
-         ::nExit           := nExit
-         
-      end if   
+         if ::ValidCobro()
+
+            ::CreaCobro()
+
+            ::nEstado   := estadoPagado
+            ::nExit     := nExit
+
+         else 
+
+            msgStop( "Importe insuficiente." )
+
+            lEnd        := .f. 
+
+         end if
+
+      end if
 
       ::oDlg:Enable()
-      ::oDlg:End( IDOK )
+
+      if lEnd
+         ::oDlg:End( IDOK )
+      end if
 
       RETURN ( Self )
 
@@ -312,72 +319,66 @@ METHOD New( oSender ) CLASS TpvCobros
 
    ::oSender                  := oSender
 
-   ::InitCobros()
-
-   /*if oUser():lUsrZur()
-      ::cResource             := "BIG_COBRO_RIGHT"
-   else
-      ::cResource             := "BIG_COBRO_RIGHT"
-   end if*/
-
    ::cResource                := "NEWCOBRO"
 
    ::sTotalesCobros           := STotalCobros()
 
-   ::SalidaImpresoraDefecto()
-   
    ::lEfectivoMoney           := .t.
 
+   ::InitCobros()
+
+   ::SalidaImpresoraDefecto()
+   
    ::SetTextoTotal()
 
    ::aButtonsMoney            := {  {  "Id" => 170,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "50", "Action" => {|| ::PushMoney( 50 ) } },;
-                                       "Calculadora" => { "Text" => "7", "Action" => {|| ::PushCalculadora( "7" ) } } },;
+                                       "Money" =>        { "Text" => "50",    "Action" => {|| ::PushMoney( 50 ) } },;
+                                       "Calculadora" =>  { "Text" => "7",     "Action" => {|| ::PushCalculadora( "7" ) } } },;
                                     {  "Id" => 180,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "20", "Action" => {|| ::PushMoney( 20 ) } },;
-                                       "Calculadora" => { "Text" => "8", "Action" => {|| ::PushCalculadora( "8" ) } } },;   
+                                       "Money" =>        { "Text" => "20",    "Action" => {|| ::PushMoney( 20 ) } },;
+                                       "Calculadora" =>  { "Text" => "8",     "Action" => {|| ::PushCalculadora( "8" ) } } },;   
                                     {  "Id" => 190,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "10", "Action" => {|| ::PushMoney( 10 ) } },;
-                                       "Calculadora" => { "Text" => "9", "Action" => {|| ::PushCalculadora( "9" ) } } },;   
+                                       "Money" =>        { "Text" => "10",    "Action" => {|| ::PushMoney( 10 ) } },;
+                                       "Calculadora" =>  { "Text" => "9",     "Action" => {|| ::PushCalculadora( "9" ) } } },;   
                                     {  "Id" => 200,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "5", "Action" => {|| ::PushMoney( 5 ) } },;
-                                       "Calculadora" => { "Text" => "4", "Action" => {|| ::PushCalculadora( "4" ) } } },;   
+                                       "Money" =>        { "Text" => "5",     "Action" => {|| ::PushMoney( 5 ) } },;
+                                       "Calculadora" =>  { "Text" => "4",     "Action" => {|| ::PushCalculadora( "4" ) } } },;   
                                     {  "Id" => 210,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "2", "Action" => {|| ::PushMoney( 2 ) } },;
-                                       "Calculadora" => { "Text" => "5", "Action" => {|| ::PushCalculadora( "5" ) } } },;   
+                                       "Money" =>        { "Text" => "2",     "Action" => {|| ::PushMoney( 2 ) } },;
+                                       "Calculadora" =>  { "Text" => "5",     "Action" => {|| ::PushCalculadora( "5" ) } } },;   
                                     {  "Id" => 220,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "1", "Action" => {|| ::PushMoney( 1 ) } },;
-                                       "Calculadora" => { "Text" => "6", "Action" => {|| ::PushCalculadora( "6" ) } } },;   
+                                       "Money" =>        { "Text" => "1",     "Action" => {|| ::PushMoney( 1 ) } },;
+                                       "Calculadora" =>  { "Text" => "6",     "Action" => {|| ::PushCalculadora( "6" ) } } },;   
                                     {  "Id" => 230,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "0.50", "Action" => {|| ::PushMoney( 0.50 ) } },;
-                                       "Calculadora" => { "Text" => "1", "Action" => {|| ::PushCalculadora( "1" ) } } },;   
+                                       "Money" =>        { "Text" => "0,50",  "Action" => {|| ::PushMoney( 0.50 ) } },;
+                                       "Calculadora" =>  { "Text" => "1",     "Action" => {|| ::PushCalculadora( "1" ) } } },;   
                                     {  "Id" => 240,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "0.20", "Action" => {|| ::PushMoney( 0.20 ) } },;
-                                       "Calculadora" => { "Text" => "2", "Action" => {|| ::PushCalculadora( "2" ) } } },;   
+                                       "Money" =>        { "Text" => "0,20",  "Action" => {|| ::PushMoney( 0.20 ) } },;
+                                       "Calculadora" =>  { "Text" => "2",     "Action" => {|| ::PushCalculadora( "2" ) } } },;   
                                     {  "Id" => 250,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "0.10", "Action" => {|| ::PushMoney( 0.10 ) } },;
-                                       "Calculadora" => { "Text" => "3", "Action" => {|| ::PushCalculadora( "3" ) } } },;      
+                                       "Money" =>        { "Text" => "0,10",  "Action" => {|| ::PushMoney( 0.10 ) } },;
+                                       "Calculadora" =>  { "Text" => "3",     "Action" => {|| ::PushCalculadora( "3" ) } } },;      
                                     {  "Id" => 260,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "0.05", "Action" => {|| ::PushMoney( 0.05 ) } },;
-                                       "Calculadora" => { "Text" => "0", "Action" => {|| ::PushCalculadora( "0" ) } } },;         
+                                       "Money" =>        { "Text" => "0,05",  "Action" => {|| ::PushMoney( 0.05 ) } },;
+                                       "Calculadora" =>  { "Text" => "0",     "Action" => {|| ::PushCalculadora( "0" ) } } },;         
                                     {  "Id" => 270,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "0.02", "Action" => {|| ::PushMoney( 0.02 ) } },;
-                                       "Calculadora" => { "Text" => ".", "Action" => {|| ::PushCalculadora( "." ) } } },;   
+                                       "Money" =>        { "Text" => "0,02",  "Action" => {|| ::PushMoney( 0.02 ) } },;
+                                       "Calculadora" =>  { "Text" => ",",     "Action" => {|| ::PushCalculadora( "." ) } } },;   
                                     {  "Id" => 280,;
                                        "Object" => nil,;
-                                       "Money" => { "Text" => "0.01", "Action" => {|| ::PushMoney( 0.01 ) } },;
-                                       "Calculadora" => { "Text" => "", "Action" => {|| ::PushCalculadora( "" ) } } } }
+                                       "Money" =>        { "Text" => "0.01",  "Action" => {|| ::PushMoney( 0.01 ) } },;
+                                       "Calculadora" =>  { "Text" => "",      "Action" => {|| ::PushCalculadora( "" ) } } } }
 
 Return Self
 
@@ -1031,20 +1032,6 @@ METHOD nButtonsCobro( oGrupo ) CLASS TpvCobros
    end if
 
 RETURN ( nButtons )
-
-//---------------------------------------------------------------------------//
-
-METHOD ValidCobro() CLASS TpvCobros
-
-   if ( ::sTotalesCobros:nTotal ) > ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado )
-
-      msgStop( "Importe insuficiente " )
-
-      Return .f.
-
-   end if
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
