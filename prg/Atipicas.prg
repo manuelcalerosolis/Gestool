@@ -14,7 +14,7 @@ CLASS TAtipicas FROM TDet
 
    DATA oSayPr1
    DATA oSayPr2
-   DATA oSayVp1
+   DATA oSayVp1                                                  
    DATA oSayVp2
    DATA cSayPr1
    DATA cSayPr2
