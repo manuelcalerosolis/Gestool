@@ -2082,3 +2082,4 @@ FUNCTION nRwbDiv( cCodDiv, dbfDiv )
 RETURN ( aDivBuf[ _NRWBDIV ] )
 
 //---------------------------------------------------------------------------//
+

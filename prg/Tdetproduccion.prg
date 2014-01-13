@@ -139,7 +139,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       ::CommunFields( oDbf )
 
       INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd,9 ) + cSufOrd"                       NODELETED OF oDbf
-      INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt"                                                    NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt + cValPr1 + cValPr2"                                NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "nNumLin" ON "Str( nNumLin, 4 )"                                          NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cLote"   ON "cLote"                                                      NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cGrpFam" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cGrpFam"            NODELETED OF oDbf       

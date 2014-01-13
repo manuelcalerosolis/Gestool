@@ -11552,10 +11552,12 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Function cClientCuenta( cCliente, dbfBncCli )
+Function cClientCuenta( cCliente, dbfBncCli, lIBAN )
 
    local lCloseBnc   := .f.
    local cCuenta     := ""
+
+   DEFAULT lIBAN     := .t.
 
    if Empty( dbfBncCli )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBncCli ) )
@@ -11564,12 +11566,18 @@ Function cClientCuenta( cCliente, dbfBncCli )
    end if
 
    if dbSeekInOrd( cCliente, "cBncDef", dbfBncCli )
-      cCuenta        := ( dbfBncCli )->cPaisIBAN + ( dbfBncCli )->cCtrlIBAN + ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
+      if lIBAN
+         cCuenta     := ( dbfBncCli )->cPaisIBAN + ( dbfBncCli )->cCtrlIBAN 
+      end if 
+      cCuenta        +=  ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
    end if
 
    if Empty( cCuenta )
       if dbSeekInOrd( cCliente, "cCodCli", dbfBncCli )
-         cCuenta     := ( dbfBncCli )->cPaisIBAN + ( dbfBncCli )->cCtrlIBAN + ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
+         if lIBAN
+            cCuenta  := ( dbfBncCli )->cPaisIBAN + ( dbfBncCli )->cCtrlIBAN 
+         end if 
+         cCuenta     +=  ( dbfBncCli )->cEntBnc + ( dbfBncCli )->cSucBnc + ( dbfBncCli )->cDigBnc + ( dbfBncCli )->cCtaBnc
       end if
    end if
 

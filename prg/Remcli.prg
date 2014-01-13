@@ -2191,9 +2191,9 @@ METHOD InitMod19( oDlg )
 
                if Empty( dFecVto )
                   if ::lUsarVencimiento
-                     dFecVto  := ::oDbfDet:dFecVto // Left( Dtoc( ::oDbfDet:dFecVto ), 2) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
+                     dFecVto  := ::oDbfDet:dFecVto       // Left( Dtoc( ::oDbfDet:dFecVto ), 2) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
                   else
-                     dFecVto  := ::dVencimiento         // Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
+                     dFecVto  := ::dVencimiento          // Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
                   end if
                end if
 
@@ -2202,7 +2202,7 @@ METHOD InitMod19( oDlg )
                cBanCli        := ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli
 
                if Empty( cBanCli ) .or. Len( AllTrim( cBanCli ) ) != 20
-                  cBanCli     := cClientCuenta( cCodCli )
+                  cBanCli     := cClientCuenta( cCodCli, , .f. )  // No quiero IBAN
                end if
 
                if !Empty( cBanCli )
@@ -2352,9 +2352,9 @@ METHOD InitMod19( oDlg )
             */
 
             if ::lUsarVencimiento
-               dFecVto     := ::oDbfDet:dFecVto // Left( Dtoc( ::oDbfDet:dFecVto ), 2) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
+               dFecVto     := ::oDbfDet:dFecVto       // Left( Dtoc( ::oDbfDet:dFecVto ), 2) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
             else
-               dFecVto     := ::dVencimiento         // Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
+               dFecVto     := ::dVencimiento          // Left( Dtoc( ::dVencimiento ), 2) + SubStr( Dtoc( ::dVencimiento ), 4, 2 ) + Right( Dtoc( ::dVencimiento ), 2 )
             end if
 
             /*

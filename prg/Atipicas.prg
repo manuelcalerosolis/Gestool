@@ -77,10 +77,55 @@ CLASS TAtipicas FROM TDet
    DATA oValorSegundaPropiedad 
    DATA cValorSegundaPropiedad 
 
+   DATA oPrecioArticulo1   
+   DATA oPrecioArticulo2   
+   DATA oPrecioArticulo3   
+   DATA oPrecioArticulo4   
+   DATA oPrecioArticulo5   
+   DATA oPrecioArticulo6   
+
+   DATA oIvaArticulo1
+   DATA oIvaArticulo2   
+   DATA oIvaArticulo3
+   DATA oIvaArticulo4
+   DATA oIvaArticulo5   
+   DATA oIvaArticulo6
+
+   DATA oDescuento1
+   DATA oDescuento2
+   DATA oDescuento3
+   DATA oDescuento4
+   DATA oDescuento5
+   DATA oDescuento6
+
+   DATA oPrecioCompra
+
+   DATA oCostoParticular
+
+   DATA nPrecioCosto
+   DATA oPrecioCosto
+
+   DATA oSayLabels               INIT array( 16 )
+
+   DATA oDescuentoPorcentualArticulo
+   DATA oDescuentoLinealArticulo
+   DATA oDescuentoPromocionArticulo
+
+   DATA oComisionAgente
+
+   DATA oOfertaXbY
+
    METHOD Resource()
-   METHOD Start()          INLINE ( MsgStop( "Start" ) )
-   METHOD Save()           INLINE ( MsgStop( "Save" ) )
-   METHOD PreSaveDetail()  INLINE ( MsgStop( "PreSaveDetail" ) )
+      METHOD Start()                INLINE   ( MsgStop( "Start" ) )
+      METHOD Save()                 INLINE   ( MsgStop( "Save" ) )
+      METHOD PreSaveDetail()        INLINE   ( MsgStop( "PreSaveDetail" ) )
+
+      METHOD WhenTipoArticulo()     INLINE   ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
+      METHOD WhenTipoArticuloIva()  INLINE   ( ::WhenTipoArticulo() .and. ( TDataCenter():Get( "Articulo" ) )->lIvaInc ) 
+      METHOD WhenTipoArticuloBase() INLINE   ( ::WhenTipoArticulo() .and. !( TDataCenter():Get( "Articulo" ) )->lIvaInc ) 
+      METHOD WhenOfertaXbY()        INLINE   ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
+
+      METHOD ChangeNaturaleza()
 
    METHOD ButtonAppend( Id, oDialog )
    METHOD ButtonEdit( Id, oDialog )
@@ -89,7 +134,15 @@ CLASS TAtipicas FROM TDet
 
    METHOD LoadAtipica()
 
-   METHOD CalculaRentabilidad()   VIRTUAL
+   METHOD CalculaRentabilidad()     INLINE   ( .t. )
+
+   METHOD SetPrimeraPropiedad( cValue )
+
+   METHOD ShowPrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Show(), ::oValorPrimeraPropiedad:Show(), ::oCodigoPrimeraPropiedad:Show() )
+   METHOD ShowSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Show(), ::oValorSegundaPropiedad:Show(), ::oCodigoSegundaPropiedad:Show() )
+
+   METHOD HidePrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Hide(), ::oValorPrimeraPropiedad:Hide(), ::oCodigoPrimeraPropiedad:Hide() )
+   METHOD HideSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Hide(), ::oValorSegundaPropiedad:Hide(), ::oCodigoSegundaPropiedad:Hide() )
 
 END CLASS
 
@@ -105,7 +158,7 @@ METHOD New( cPath, oParent ) CLASS TAtipicas
    ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
 
 RETURN ( Self )
-
+ 
 //---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TAtipicas
@@ -241,19 +294,21 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VAR      ::cNaturaleza ;
          ITEMS    ::aNaturaleza ;
          ID       90 ;
-         ON CHANGE( ::ChangeNaturaleza() ) ;
          WHEN     ( nMode == APPD_MODE ) ;
 			OF 		::oFld:aDialogs[1]
+
+      ::oNaturaleza:bChange      := {|| ::ChangeNaturaleza() }
 
       REDEFINE GET ::oCodigoArticulo ;
          VAR      ::oDbfVir:cCodArt ;
 			ID 		100 ;
          WHEN     ( ::nMode == APPD_MODE );
-         ON HELP  ( BrwArticulo( ::oCodigoArticulo, ::oNombreArticulo ) );
          BITMAP   "Lupa" ;
-         ON CHANGE( ::ClaculaRentabilidad() );
-         VALID    ( ::LoadAtipica() ) ;
 			OF 		::oFld:aDialogs[1]
+
+      ::oCodigoArticulo:bHelp    := {|| BrwArticulo( ::oCodigoArticulo, ::oNombreArticulo ) }
+      ::oCodigoArticulo:bChange  := {|| ::ClaculaRentabilidad() }
+      ::oCodigoArticulo:bValid   := {|| ::LoadAtipica() }
 
       REDEFINE GET ::oNombreArticulo ;
          VAR      ::cNombreArticulo ;
@@ -328,316 +383,345 @@ METHOD Resource( nMode ) CLASS TAtipicas
          OF       ::oFld:aDialogs[1]
 
       REDEFINE GET ::oPrecioCompra ;
-         VAR      ::oDbfVir:nPreCom ;
+         VAR      ::oDbfVir:nPrcCom ;
          ID       120 ;
-         WHEN     ( ::oDbfVir:nPreCom <= 1 .and. ::nMode != ZOOM_MODE );
+         WHEN     ( ::oDbfVir:nPrcCom <= 1 .and. ::nMode != ZOOM_MODE );
          ON CHANGE( ::CalculaRentabilidad()  );
          VALID    ( ::CalculaRentabilidad()  );
          SPINNER  ;
          PICTURE  cPinDiv() ;
          OF       ::oFld:aDialogs[1]
-/*
-      REDEFINE CHECKBOX aGet[ _aLPRCCOM ] VAR aTmp[ _aLPRCCOM ] ;
+
+      REDEFINE CHECKBOX ::oCostoParticular ;
+         VAR      ::oDbfVir:lPrcCom ;
          ID       122 ;
-         ON CHANGE( lChangeCostoParticular( aGet, aTmp, oCosto, nMode ) );
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE ) ;
+         ON CHANGE( ::lChangeCostoParticular() );
+         WHEN     ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[ 1 ]
 
-      REDEFINE GET oCosto VAR cCosto;
+      REDEFINE GET ::oPrecioCosto ;
+         VAR      ::nPrecioCosto ;
          ID       123 ;
          WHEN     ( .f. );
          SPINNER  ;
-         PICTURE  cPinDiv ;
+         PICTURE  cPinDiv() ;
          OF       ::oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet[ _aNPRCART ] VAR aTmp[ _aNPRCART ];
+      REDEFINE GET ::oPrecioArticulo1 ;
+         VAR      ::oDbfVir:nPrcArt ;
          ID       121 ;
          SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA1 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloIva() ) ;
+         VALID    ( ::CalculaIva( ::oPrecioArticulo1 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPRCART2 ] VAR aTmp[ _aNPRCART2 ];
+      REDEFINE GET ::oPrecioArticulo2 ;
+         VAR      ::oDbfVir:nPrcArt2 ;
          ID       124 ;
          SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART2 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA2 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloIva() ) ;
+         VALID    ( ::CalculaIva( ::oPrecioArticulo2 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPRCART3 ] VAR aTmp[ _aNPRCART3 ];
+      REDEFINE GET ::oPrecioArticulo3 ;
+         VAR      ::oDbfVir:nPrcArt3 ;
          ID       125 ;
          SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART3 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA3 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloIva() ) ;
+         VALID    ( ::CalculaIva( ::oPrecioArticulo3 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPRCART4 ] VAR aTmp[ _aNPRCART4 ];
+      REDEFINE GET ::oPrecioArticulo4 ;
+         VAR      ::oDbfVir:nPrcArt4 ;
          ID       126 ;
          SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART4 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA4 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloIva() ) ;
+         VALID    ( ::CalculaIva( ::oPrecioArticulo4 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPRCART5 ] VAR aTmp[ _aNPRCART5 ];
+      REDEFINE GET ::oPrecioArticulo5 ;
+         VAR      ::oDbfVir:nPrcArt5 ;
          ID       127 ;
          SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART5 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA5 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloIva() ) ;
+         VALID    ( ::CalculaIva( ::oPrecioArticulo5 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPRCART6 ] VAR aTmp[ _aNPRCART6 ];
+      REDEFINE GET ::oPrecioArticulo6 ;
+         VAR      ::oDbfVir:nPrcArt6 ;
          ID       128 ;
          SPINNER  ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE .and. !( dbfArticulo )->lIvaInc );
-         VALID    ( CalIva( aTmp[ _aNPRCART6 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPREIVA6 ] ),lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloIva() ) ;
+         VALID    ( ::CalculaIva( ::oPrecioArticulo6 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
-*/
+
       /*
-      Precios con impuestos
+      Precios con impuestos----------------------------------------------------
       */
-/*
-      REDEFINE GET aGet[ _aNPREIVA1 ] VAR aTmp[ _aNPREIVA1 ] ;
+
+      REDEFINE GET ::oIvaArticulo1 ; 
+         VAR      ::oDbfVir:nPreIva1 ;
          ID       300 ;
          SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA1 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloBase() ) ;
+         VALID    ( ::CalculaBase( ::oIvaArticulo1 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPREIVA2 ] VAR aTmp[ _aNPREIVA2 ] ;
+      REDEFINE GET ::oIvaArticulo2 ; 
+         VAR      ::oDbfVir:nPreIva2 ;
          ID       310 ;
-         PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA2 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART2 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloBase() ) ;
+         VALID    ( ::CalculaBase( ::oIvaArticulo2 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPREIVA3 ] VAR aTmp[ _aNPREIVA3 ] ;
+      REDEFINE GET ::oIvaArticulo3 ; 
+         VAR      ::oDbfVir:nPreIva3 ;
          ID       320 ;
          SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA3 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART3 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloBase() ) ;
+         VALID    ( ::CalculaBase( ::oIvaArticulo3 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPREIVA4 ] VAR aTmp[ _aNPREIVA4 ] ;
+      REDEFINE GET ::oIvaArticulo4 ; 
+         VAR      ::oDbfVir:nPreIva4 ;
          ID       330 ;
          SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA4 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART4 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloBase() ) ;
+         VALID    ( ::CalculaBase( ::oIvaArticulo4 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPREIVA5 ] VAR aTmp[ _aNPREIVA5 ] ;
+      REDEFINE GET ::oIvaArticulo5 ; 
+         VAR      ::oDbfVir:nPreIva5 ;
          ID       340 ;
          SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA5 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART5 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloBase() ) ;
+         VALID    ( ::CalculaBase( ::oIvaArticulo5 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNPREIVA6 ] VAR aTmp[ _aNPREIVA6 ] ;
+      REDEFINE GET ::oIvaArticulo6 ; 
+         VAR      ::oDbfVir:nPreIva6 ;
          ID       350 ;
          SPINNER ;
-         PICTURE  cPouDiv ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .AND. nMode != ZOOM_MODE .and. ( dbfArticulo )->lIvaInc ) ;
-         VALID    ( CalBas( aTmp[ _aNPREIVA6 ], ( dbfArticulo )->lIvaInc, ( dbfArticulo )->TipoIva, ( dbfArticulo )->cCodImp, aGet[ _aNPRCART6 ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         PICTURE  cPouDiv() ;
+         WHEN     ( ::WhenTipoArticuloBase() ) ;
+         VALID    ( ::CalculaBase( ::oIvaArticulo6 ) );
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTOART ] VAR aTmp[ _aNDTOART ];
+      /*
+      Descuentos---------------------------------------------------------------
+      */     
+
+      REDEFINE GET ::oDescuentoPorcentualArticulo;
+         VAR      ::oDbfVir:nDtoArt;
 			ID 		130 ;
-         WHEN     ( nMode != ZOOM_MODE );
+         WHEN     ( ::nMode != ZOOM_MODE );
 			SPINNER ;
-         VALID    ( ( aTmp[_aNDTOART] >= 0 .AND. aTmp[_aNDTOART] <= 100 ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ))  ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         VALID    ( ( ::oDbfVir:nDtoArt >= 0 .and. ::oDbfVir:nDtoArt <= 100 ), ::CalculaRentabilidad() )  ;
+         ON CHANGE( ::ClaculaRentabilidad() );
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTODIV ] VAR aTmp[ _aNDTODIV ];
+      REDEFINE GET ::oDescuentoLinealArticulo ;
+         VAR      ::oDbfVir:nDtoDiv ;
          ID       135 ;
-         WHEN     ( nMode != ZOOM_MODE );
          SPINNER ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         VALID    ( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         PICTURE  cPouDiv ;
+         WHEN     ( ::nMode != ZOOM_MODE );
+         VALID    ( ::CalculaRentabilidad() );
+         ON CHANGE( ::CalculaRentabilidad() );
+         PICTURE  cPouDiv() ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_aNDPRART] VAR aTmp[_aNDPRART];
+      REDEFINE GET ::oDescuentoPromocionArticulo ;
+         VAR      ::oDbfVir:nDprArt ;
          ID       601 ;
-         WHEN     ( nMode != ZOOM_MODE );
+         WHEN     ( ::nMode != ZOOM_MODE );
 			SPINNER ;
-         VALID    ( ( aTmp[_aNDPRART] >= 0 .AND. aTmp[_aNDPRART] <= 100 ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) ) ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         VALID    ( ( ::oDbfVir:nDprArt >= 0 .and. ::oDbfVir:nDprArt <= 100 ), ::CalculaRentabilidad() )  ;
+         ON CHANGE( ::CalculaRentabilidad() );
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX aTmp[ _aLCOMAGE ] ;
+      REDEFINE CHECKBOX ::oDbfVir:lComAge ;
          ID       151 ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON CHANGE( ::CalculaRentabilidad() );
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNCOMAGE ] VAR aTmp[ _aNCOMAGE ];
+      REDEFINE GET ::oComisionAgente ;
+         VAR      ::oDbfVir:nComAge ;
 			ID 		150 ;
-         WHEN     ( nMode != ZOOM_MODE );
+         WHEN     ( ::nMode != ZOOM_MODE );
 			SPINNER ;
-         VALID    ( ( aTmp[_aNCOMAGE] >= 0 .AND. aTmp[_aNCOMAGE] <= 100 ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) ) ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         VALID    ( ( ::oDbfVir:nComAge >= 0 .and. ::oDbfVir:nComAge <= 100 ), ::CalculaRentabilidad() ) ;
+         ON CHANGE( ::CalculaRentabilidad() );
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GROUP oSayLabels[ 1 ]   ID 700 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
-      REDEFINE GROUP oSayLabels[ 2 ]   ID 701 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
-      REDEFINE GROUP oSayLabels[ 3 ]   ID 702 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
-      REDEFINE SAY   oSayLabels[ 4 ]   ID 703 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 5 ]   ID 704 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 6 ]   ID 705 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 7 ]   ID 706 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 8 ]   ID 707 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 9 ]   ID 708 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 10]   ID 709 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 11]   ID 710 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 12]   ID 711 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 13]   ID 712 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 14]   ID 713 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 15]   ID 714 OF ::oFld:aDialogs[ 1 ]
-      REDEFINE GROUP oSayLabels[ 16]   ID 715 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
+      REDEFINE GROUP ::oSayLabels[ 1 ]   ID 700 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
+      REDEFINE GROUP ::oSayLabels[ 2 ]   ID 701 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
+      REDEFINE GROUP ::oSayLabels[ 3 ]   ID 702 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
+      REDEFINE SAY   ::oSayLabels[ 4 ]   ID 703 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 5 ]   ID 704 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 6 ]   ID 705 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 7 ]   ID 706 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 8 ]   ID 707 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 9 ]   ID 708 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 10]   ID 709 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 11]   ID 710 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 12]   ID 711 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 13]   ID 712 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 14]   ID 713 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY   ::oSayLabels[ 15]   ID 714 OF ::oFld:aDialogs[ 1 ]
+      REDEFINE GROUP ::oSayLabels[ 16]   ID 715 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
 
-      REDEFINE GET aGet[ _aNDTO1 ] VAR aTmp[ _aNDTO1 ];
+      REDEFINE GET ::oDescuento1 ;
+         VAR      ::oDbfVir:nDto1 ;
          ID       400 ;
          WHEN     ( nMode != ZOOM_MODE );
 			SPINNER ;
-         VALID    ( ( aTmp[ _aNDTO1 ] >= 0 .AND. aTmp[ _aNDTO1 ] <= 100 ) ) ;
+         VALID    ( ( ::oDbfVir:nDto1 >= 0 .and. ::oDbfVir:nDto1 <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTO2 ] VAR aTmp[ _aNDTO2 ];
+      REDEFINE GET ::oDescuento2 ;
+         VAR      ::oDbfVir:nDto2 ;
          ID       410 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
-         VALID    ( ( aTmp[ _aNDTO2 ] >= 0 .AND. aTmp[ _aNDTO2 ] <= 100 ) ) ;
+         SPINNER ;
+         VALID    ( ( ::oDbfVir:nDto2 >= 0 .and. ::oDbfVir:nDto2 <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTO3 ] VAR aTmp[ _aNDTO3 ];
+      REDEFINE GET ::oDescuento3 ;
+         VAR      ::oDbfVir:nDto3 ;
          ID       420 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
-         VALID    ( ( aTmp[ _aNDTO3 ] >= 0 .AND. aTmp[ _aNDTO3 ] <= 100 ) ) ;
+         SPINNER ;
+         VALID    ( ( ::oDbfVir:nDto3 >= 0 .and. ::oDbfVir:nDto3 <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTO4 ] VAR aTmp[ _aNDTO4 ];
+      REDEFINE GET ::oDescuento4 ;
+         VAR      ::oDbfVir:nDto4 ;
          ID       430 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
-         VALID    ( ( aTmp[ _aNDTO4 ] >= 0 .AND. aTmp[ _aNDTO4 ] <= 100 ) ) ;
+         SPINNER ;
+         VALID    ( ( ::oDbfVir:nDto4 >= 0 .and. ::oDbfVir:nDto4 <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTO5 ] VAR aTmp[ _aNDTO5 ];
+      REDEFINE GET ::oDescuento5 ;
+         VAR      ::oDbfVir:nDto5 ;
          ID       440 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
-         VALID    ( ( aTmp[ _aNDTO5 ] >= 0 .AND. aTmp[ _aNDTO5 ] <= 100 ) ) ;
+         SPINNER ;
+         VALID    ( ( ::oDbfVir:nDto5 >= 0 .and. ::oDbfVir:nDto5 <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _aNDTO6 ] VAR aTmp[ _aNDTO6 ];
+      REDEFINE GET ::oDescuento6 ;
+         VAR      ::oDbfVir:nDto6 ;
          ID       450 ;
-         WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
-         VALID    ( ( aTmp[ _aNDTO6 ] >= 0 .AND. aTmp[ _aNDTO6 ] <= 100 ) ) ;
+         WHEN     ( ::nMode != ZOOM_MODE );
+         SPINNER ;
+         VALID    ( ( ::oDbfVir:nDto6 >= 0 .and. ::oDbfVir:nDto6 <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
-*/
+
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
-/*
-      REDEFINE GET aGet[ _aDFECINI ] VAR aTmp[ _aDFECINI ];
+
+      REDEFINE GET ::oDbfVir:dFecIni ;
          ID       160 ;
-         WHEN     ( nMode != ZOOM_MODE );
+         WHEN     ( ::nMode != ZOOM_MODE );
          SPINNER ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _aDFECFIN ] VAR aTmp[ _aDFECFIN ];
+      REDEFINE GET ::oDbfVir:dFecFin ;
          ID       170 ;
-         WHEN     ( nMode != ZOOM_MODE );
+         WHEN     ( ::nMode != ZOOM_MODE );
          SPINNER ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aTmp[ _aLAPLPRE ] ;
+      REDEFINE CHECKBOX ::oDbfVir:lAplPre ;
          ID       180 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aTmp[ _aLAPLPED ] ;
+      REDEFINE CHECKBOX ::oDbfVir:lAplPed ;
          ID       190 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aTmp[ _aLAPLALB ] ;
+      REDEFINE CHECKBOX ::oDbfVir:lAplAlb ;
          ID       200 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aTmp[ _aLAPLFAC ] ;
+      REDEFINE CHECKBOX ::oDbfVir:lAplFac ;
          ID       210 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aTmp[ _aLAPLSAT ] ;
+      REDEFINE CHECKBOX ::oDbfVir:lAplSat ;
          ID       250 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oFld:aDialogs[2]   
-*/
+
       /*
-      Ofertas de X*Y
+      Ofertas de X*Y-----------------------------------------------------------
       */
-/*
-      REDEFINE RADIO aGet[ _aNTIPXBY ] VAR aTmp[ _aNTIPXBY ] ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE ) ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+
+      REDEFINE RADIO ::oOfertaXbY ;
+         VAR      ::oDbfVir:nTipXby ;
+         WHEN     ( ::WhenOfertaXbY() ) ;
+         ON CHANGE( ::CalculaRentabilidad() );
          ID       220, 221 ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _aNUNVOFE ] VAR aTmp[ _aNUNVOFE ] ;
+      REDEFINE GET ::oDbfVir:nUnvOfe ;
          ID       230 ;
          PICTURE  "@E 999" ;
          SPINNER ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and. nMode != ZOOM_MODE ) ;
-         VALID    ( isBig( aTmp[ _aNUNVOFE ], aTmp[ _aNUNCOFE ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) ) ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         WHEN     ( ::WhenOfertaXbY() ) ;
+         VALID    ( isBig( ::oDbfVir:nUnvOfe, ::oDbfVir:nUncOfe ), ::CalculaRentabilidad() ) ;
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _aNUNCOFE ] VAR aTmp[ _aNUNCOFE ] ;
+      REDEFINE GET ::oDbfVir:nUncOfe ;
          ID       240 ;
          PICTURE  "@E 999" ;
          SPINNER ;
-         WHEN     ( aTmp[ _aNTIPATP ] <= 1 .and.  nMode != ZOOM_MODE ) ;
-         VALID    ( isBig( aTmp[ _aNUNVOFE ], aTmp[ _aNUNCOFE ] ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) ) ;
-         ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
+         WHEN     ( ::WhenOfertaXbY() ) ;
+         VALID    ( isBig( ::oDbfVir:nUnvOfe, ::oDbfVir:nUncOfe ), ::CalculaRentabilidad() ) ;
+         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[2]
-*/
+
       /*
       Estudio rentabilidad - segunda pestaña-----------------------------------
       */
@@ -712,6 +796,121 @@ METHOD Resource( nMode ) CLASS TAtipicas
          //ON INIT  ( lExpandir( oDlg, oBtnRen, .f. ), if( nMode != APPD_MODE, aGet[ _acCodArt ]:lValid(), ), EdtDetMenu( aGet[ _acCodArt ], oDlg, lArticuloEnOferta( aTmp[ _acCodArt ], aTmpCli[ _COD ], aTmpCli[ _CCODGRP ] ) ) )
 
 RETURN ( ::oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeNaturaleza()
+
+   if ::nMode == APPD_MODE
+
+      ::oCodigoArticulo:cText( Space( 18 ) )
+      ::oNombreArticulo:cText( "" )
+      
+      ::oCodigoFamilia:cText( Space( 5 ) )
+      ::oNombreFamilia:cText( "" )
+
+      ::oPrecioCosto:cText( 0 )
+
+      ::oPrecioCompra:cText( 0 )
+
+      ::oPrecioArticulo1:cText( 0 )
+      ::oPrecioArticulo2:cText( 0 )
+      ::oPrecioArticulo3:cText( 0 )
+      ::oPrecioArticulo4:cText( 0 )
+      ::oPrecioArticulo5:cText( 0 )
+      ::oPrecioArticulo6:cText( 0 )
+
+      ::oIvaArticulo1:cText( 0 )
+      ::oIvaArticulo2:cText( 0 )
+      ::oIvaArticulo3:cText( 0 )
+      ::oIvaArticulo4:cText( 0 )
+      ::oIvaArticulo5:cText( 0 )
+      ::oIvaArticulo6:cText( 0 )
+
+      ::oTextoPrimeraPropiedad:SetText( "" )
+      ::oTextoSegundaPropiedad:SetText( "" )
+
+      ::oCodigoPrimeraPropiedad:cText( space( 20 ) )
+      ::oCodigoSegundaPropiedad:cText( space( 20 ) )
+
+      ::oValorPrimeraPropiedad:cText( "" )
+      ::oValorSegundaPropiedad:cText( "" )
+
+   end if
+
+   if ( ::oNaturaleza:nAt <= 1 )
+
+      ::oCodigoArticulo:Show()
+      ::oNombreArticulo:Show()
+
+      ::oCodigoFamilia:Hide()
+      ::oNombreFamilia:Hide()
+
+      ::oPrecioCompra:Show()
+      ::oCostoParticular:Show()
+      ::oPrecioCosto:Show()
+
+      ::oPrecioArticulo1:Show()
+      ::oPrecioArticulo2:Show()
+      ::oPrecioArticulo3:Show()
+      ::oPrecioArticulo4:Show()
+      ::oPrecioArticulo5:Show()
+      ::oPrecioArticulo6:Show()
+
+      ::oIvaArticulo1:Show()
+      ::oIvaArticulo2:Show()
+      ::oIvaArticulo3:Show()
+      ::oIvaArticulo4:Show()
+      ::oIvaArticulo5:Show()
+      ::oIvaArticulo6:Show()
+
+      ::oDescuento1:Show()
+      ::oDescuento2:Show()
+      ::oDescuento3:Show()
+      ::oDescuento4:Show()
+      ::oDescuento5:Show()
+      ::oDescuento6:Show()
+
+      aEval( ::oSayLabels, {|o| o:Show() } )
+
+   else
+
+      ::oCodigoArticulo:Hide()
+      ::oNombreArticulo:Hide()
+
+      ::oCodigoFamilia:Show()
+      ::oNombreFamilia:Show()
+
+      ::oPrecioCompra:Hide()
+      ::oCostoParticular:Hide()
+      ::oPrecioCosto:Hide()
+
+      ::oPrecioArticulo1:Hide()
+      ::oPrecioArticulo2:Hide()
+      ::oPrecioArticulo3:Hide()
+      ::oPrecioArticulo4:Hide()
+      ::oPrecioArticulo5:Hide()
+      ::oPrecioArticulo6:Hide()
+
+      ::oIvaArticulo1:Hide()
+      ::oIvaArticulo2:Hide()
+      ::oIvaArticulo3:Hide()
+      ::oIvaArticulo4:Hide()
+      ::oIvaArticulo5:Hide()
+      ::oIvaArticulo6:Hide()
+
+      ::oDescuento1:Hide()
+      ::oDescuento2:Hide()
+      ::oDescuento3:Hide()
+      ::oDescuento4:Hide()
+      ::oDescuento5:Hide()
+      ::oDescuento6:Hide()
+
+      aEval( ::oSayLabels, {|o| o:Hide() } )
+
+   end if
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -909,26 +1108,40 @@ RETURN ( Self )
 
 METHOD LoadAtipica()
 
-   if Empty( ::cCodigoArticulo )
+   if Empty( ::oDbfVir:cCodArt )
       ::oNombreArticulo:cText( "" )
       Return ( .t. )
    end if
 
-   if ::nMode == APPD_MODE
+   if ( TDataCenter():Get( "Articulo" ) )->( dbSeek( ::oDbfVir:cCodArt ) )
 
-      if ( TDataCenter():Get( "Articulo" ) )->( dbSeek( ::cCodigoArticulo ) )
+      ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo" ) )->Nombre )
 
-         ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo" ) )->Nombre )
+      ::SetPrimeraPropiedad( ( TDataCenter():Get( "Articulo" ) )->cCodPrp1 )
 
-      else
+   else
 
-         Return ( .f. )
-
-      end if
+      Return ( .f. )
 
    end if
 
 RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD SetPrimeraPropiedad( cValue )
+
+   ? cValue
+
+   if !empty( cValue )
+      ::oCodigoPrimeraPropiedad:cText( cValue )
+      ::oTextoPrimeraPropiedad:SetText( cValue ) // retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
+      ::ShowPrimeraPropiedad()
+   else 
+      ::HidePrimeraPropiedad()
+   end if 
+
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 

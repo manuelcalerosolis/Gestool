@@ -10211,7 +10211,7 @@ Method CreateData()
       cFileNameAnticipos      := "AntCli" + StrZero( ::nGetAnticipoNumberToSend(), 6 ) + ".All"
    else
       cFileNameFacturas       := "FacCli" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
-      cFileNameAnticipos      := "AntCli" + StrZero( ::nGetAnticipoNumberToSend(), 6 ) + "." + RetSufEmp()
+      cFileNameAnticipos      := "AntCli" + StrZero( ::nGetAnticipoNumberToSend(), 6 ) + "." + RetSufEmp() 
    end if
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -10221,7 +10221,7 @@ Method CreateData()
    SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
 
    USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
    SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
@@ -10232,7 +10232,7 @@ Method CreateData()
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
    ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-
+ 
    /*
    Creamos todas las bases de datos relacionadas con Articulos
    */
@@ -10244,7 +10244,7 @@ Method CreateData()
    SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
    USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacCliT.Cdx" ) ADDITIVE
+   SET ADSINDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
 
    USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
    SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
