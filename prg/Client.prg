@@ -9385,7 +9385,7 @@ if !Empty( dbfTmpAtp )
 
    ( dbfTmpAtp )->( dbGoTop() )
    while ( dbfTmpAtp )->( !eof() )
-      dbPass( dbfTmpAtp, dbfCliAtp, .t., aTmp[ _COD ] )
+      dbPass( dbfTmpAtp, ( TDataCenter():Get( "CliAtp" ) ), .t., aTmp[ _COD ] )
       ( dbfTmpAtp )->( dbSkip() )
       oMsgProgress():DeltaPos( 1 )
    end while
@@ -9411,7 +9411,7 @@ if !Empty( dbfTmpDoc )
 
    ( dbfTmpDoc )->( dbGoTop() )
    while ( dbfTmpDoc )->( !eof() )
-      dbPass( dbfTmpDoc, dbfClientD, .t., aTmp[ _COD ] )
+      dbPass( dbfTmpDoc, ( TDataCenter():Get( "ClientD" ) ), .t., aTmp[ _COD ] )
       ( dbfTmpDoc )->( dbSkip() )
       oMsgProgress():DeltaPos( 1 )
    end while
