@@ -410,7 +410,7 @@ CLASS TpvTactil
    METHOD EndResource()
    METHOD PaintResource()
 
-   METHOD l1024()                   INLINE ( ::nScreenHorzRes >= 1024 )
+   METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
 
    METHOD CargaBrowseFamilias()
 
@@ -1081,7 +1081,7 @@ CLASS TpvTactil
       end if
 
       if !Empty( ::oTotalTicket )
-         ::oTotalTicket:SetText( ::oTpvCobros:sTotalesCobros:nCambio )
+         ::oTotalTicket:SetText( ::oTpvCobros:Cambio() )
       end if
 
       RETURN ( Self )
@@ -1094,7 +1094,7 @@ CLASS TpvTactil
 
       if ::oVisor != nil
          ::oVisor:SetBufferLine( { "Total: ",  Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 1 )
-         ::oVisor:SetBufferLine( { "Cambio: ", Trans( ::oTpvCobros:sTotalesCobros:nCambio, ::cPictureTotal ) }, 2 )
+         ::oVisor:SetBufferLine( { "Cambio: ", Trans( ::oTpvCobros:Cambio(), ::cPictureTotal ) }, 2 )
          ::oVisor:WriteBufferLine()
       end if
 
@@ -5866,8 +5866,8 @@ METHOD sTotalTiket() CLASS TpvTactil
    Calculo de pagos------------------------------------------------------------
    */
 
-   ::sTotal:nCobrado    := ::oTpvCobros:nTotalCobro()
-   ::sTotal:nCambio     := ::oTpvCobros:nTotalCambio()
+   // ::sTotal:nCobrado    := ::oTpvCobros:nTotalCobro()
+   // ::sTotal:nCambio     := ::oTpvCobros:nTotalCambio()
 
 Return ( ::sTotal )
 
@@ -6273,7 +6273,7 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       Inicializa los cobros para el proximo ticket-----------------------------
       */
 
-      ::oTpvCobros:InitCobros()
+      // ::oTpvCobros:InitCobros()
 
       /*
       Vaciamos las lineas------------------------------------------------------
@@ -6696,7 +6696,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       Inicializa los cobros para el proximo ticket-----------------------------
       */
 
-      ::oTpvCobros:InitCobros()
+      //::oTpvCobros:InitCobros()
 
       /*
       Vaciamos las lineas------------------------------------------------------
@@ -6939,7 +6939,7 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
    ::oDlg:Disable()
 
-   ::oTpvCobros:InitCobros()
+   //::oTpvCobros:InitCobros()
 
    if ::oTiketCabecera:Seek( cNumeroTicket )
 

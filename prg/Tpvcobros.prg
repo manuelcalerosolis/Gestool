@@ -48,26 +48,28 @@ CLASS TpvCobros
       DATA cTextoTotal
 
       DATA oGetEntregado
-      DATA nGetEntregado               INIT 0
-      DATA cGetEntregado               INIT Space( 25 )
+      DATA nGetEntregado            INIT 0
+      DATA cGetEntregado            INIT Space( 25 )
 
       DATA oBrwPago
       DATA oBrwFormasPago
       DATA cBmpSalidaImpresora
 
    DATA lEfectivoMoney
+   DATA lClickMoneda                INIT .f.
 
    DATA cCodigoFormaPago
 
-   DATA lClickMoneda       INIT .f.
+   DATA nUbiTik                     INIT ubiGeneral
+   DATA nEstado                     INIT estadoPagado
 
-   DATA aCobros            INIT {}
+   DATA nTotal                      INIT 0
 
-   DATA nUbiTik            INIT ubiGeneral
+   DATA aCobros                     INIT {}
 
-   DATA nEstado            INIT estadoPagado
-
-   DATA nTotal 
+   /*
+   Constructores---------------------------------------------------------------
+   */
 
    METHOD New( oSender ) CONSTRUCTOR
 
@@ -89,22 +91,24 @@ CLASS TpvCobros
       METHOD PushCalculadora( cTexto )
       METHOD PushMoney( nImporte )
 
-      METHOD ClickBotonCobro( oBtnPago )
-
       METHOD OnClickReset()            INLINE ( ::oGetEntregado:cText( 0 ) )
-      METHOD OnClickCalculadora()      INLINE ( Calculadora( 0, ::sTotalesCobros:oCobrado ), ::sTotalesCobros:Recalcula()  )
       METHOD OnClickFormadePago( oBoton )
       METHOD OnClickAnnadirCobro()
+      METHOD OnClickEliminarCobro()    INLINE ( ::EliminaCobro(), ::RefreshResource() )
+      METHOD OnClickAceptar()
 
-   //------------------------------------------------------------------------//
+      METHOD ChangeButtonsFormaPago( cTipo )
+      METHOD ChangeFormaPago()         INLINE ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ), ::oBrwFormasPago:aRow[ "lEfectivo" ] )
+      METHOD ChangeBtnImpresion()
+      METHOD ChangeCalcMoney()
 
-
+      METHOD Resource()                INLINE ( if( ::oSender:l1024(), "NewCobro", "NewCobro" ) )
 
    //------------------------------------------------------------------------//
 
    METHOD CreaCobro()
-   METHOD EliminaCobro()            INLINE ( aDel( ::aCobros, ::oBrwPago:nArrayAt, .t. ) )
-   METHOD ValidCobro()              INLINE ( ( ::sTotalesCobros:nEntregado ) >= ( ::sTotalesCobros:nTotal ) )
+   METHOD EliminaCobro()               INLINE ( aDel( ::aCobros, ::oBrwPago:nArrayAt, .t. ) )
+   METHOD ValidCobro()                 INLINE ( ::Entregado() >= ::Total() )
 
    METHOD CargaCobros( cNumeroTicket )
    METHOD EliminaCobros()
@@ -112,93 +116,15 @@ CLASS TpvCobros
 
    //------------------------------------------------------------------------//
 
-  //------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickEliminarCobro()
-
-      if ApoloMsgNoYes( , , .t.)
-
-         ::EliminaCobro()
-
-         ::sTotalesCobros:nEntregado   := ::nTotal()
-
-         ::sTotalesCobros:SetCobrado()
-         ::sTotalesCobros:Recalcula()
-         ::sTotalesCobros:Refresh()
-
-      end if      
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickAceptar()
-
-      local lEnd     := .t.
-
-      if ( ::oSender:nTipoDocumento == documentoAlbaran )
-         Return .f.
-      end if
-
-      ::oDlg:Disable()
-
-      ::ValidTotalesCobro()
-
-      ::CreaCobro()
-
-      ::RefreshResource()
-
-      if ::ValidCobro() 
-         ::nEstado   := estadoPagado
-      else 
-         msgStop( "Importe insuficiente." )
-         lEnd        := .f. 
-      end if
-
-      ::oDlg:Enable()
-
-      if lEnd
-         ::oDlg:End( IDOK )
-      end if
-
-      RETURN ( .t. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   METHOD nTotalCobro()
-   METHOD nTotalCambio()
-
-   METHOD InitCobros()                    INLINE ( ::aCobros := {} )
-
    METHOD CargaFormasdePago()
-
-   METHOD ChangeButtonsFormaPago( cTipo )
-
-   METHOD ChangeFormaPago()               INLINE ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ), ::oBrwFormasPago:aRow[ "lEfectivo" ] )
-
-   METHOD ValidTotalesCobro()             INLINE ( ::sTotalesCobros:Recalcula() )
 
    METHOD SetTextoTotal()
 
-   METHOD ChangeBtnImpresion()
-
-   METHOD ChangeCalcMoney()
-
    METHOD SalidaImpresoraDefecto()
 
-   METHOD Total()                         INLINE ( ::nTotal )
-
+   METHOD Total()                      INLINE ( ::nTotal )
    METHOD Entregado() 
-
-   METHOD Cambio()                        INLINE ( ::Total() - ::Entregado() ) 
-
-//---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
+   METHOD Cambio()                     INLINE ( ::Total() - ::Entregado() ) 
 
 END CLASS
 
@@ -315,10 +241,6 @@ METHOD lCobroExactoTicket() CLASS TpvCobros
 
    ::cCodigoFormaPago         := ::oSender:oTiketCabecera:cFpgTik
 
-   ::sTotalesCobros:GetTotal( ::oSender:sTotal )
-
-   ::sTotalesCobros:nCobrado  := ::sTotalesCobros:nTotal
-
    ::CreaCobro()
 
    ::nEstado                  := estadoPagado
@@ -357,7 +279,7 @@ METHOD lResource() CLASS TpvCobros
       ::nGetEntregado   := ( ::Total() - ::Entregado() )
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE "NewCobro" TITLE ::oSender:cTipoDocumento() FONT ::oSender:oFntDlg
+   DEFINE DIALOG ::oDlg RESOURCE ( ::Resource() ) TITLE ( ::oSender:cTipoDocumento() ) FONT ::oSender:oFntDlg
 
       /*
       SAY con la imformación de los cobros-------------------------------------
@@ -438,6 +360,7 @@ METHOD lResource() CLASS TpvCobros
       ::oBrwFormasPago:lHeader         := .f.
       ::oBrwFormasPago:lFooter         := .f.
       ::oBrwFormasPago:lRecordSelector := .f.
+      ::oBrwFormasPago:nRowHeight      := 50
    
       ::oBrwFormasPago:SetArray( ::aFormasdePago, , , .f. )
    
@@ -669,6 +592,37 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD OnClickAceptar()
+
+   local lEnd     := .t.
+
+   if ( ::oSender:nTipoDocumento == documentoAlbaran )
+      Return .f.
+   end if
+
+   ::oDlg:Disable()
+
+   ::CreaCobro( ::nGetEntregado )
+
+   ::RefreshResource()
+
+   if ::ValidCobro() 
+      ::nEstado   := estadoPagado
+   else 
+      msgStop( "Importe insuficiente." )
+      lEnd        := .f. 
+   end if
+
+   ::oDlg:Enable()
+
+   if lEnd
+      ::oDlg:End( IDOK )
+   end if
+
+RETURN ( .t. )
+
+//------------------------------------------------------------------------//
+
 METHOD ChangeCalcMoney CLASS TpvCobros
 
    if ::lEfectivoMoney
@@ -686,24 +640,6 @@ METHOD ChangeCalcMoney CLASS TpvCobros
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD ClickBotonCobro( oBtnCobro ) CLASS TpvCobros
-
-   aEval( ::aCobros, {|o| o:oButton:lBtnDown := .f., o:oButton:Refresh() } )
-
-   oBtnCobro:lBtnDown      := .t.
-
-   if !oBtnCobro:Cargo:lEfectivo
-      aEval( ::aButtonsMoney, {|o| o:Hide() } )
-   else
-      aEval( ::aButtonsMoney, {|o| o:Show() } )
-   end if
-
-   ::cCodigoFormaPago      := oBtnCobro:Cargo
-
-Return ( nil )
-
-//-------------------------------------------------------------------------//
 
 METHOD OnClickFormadePago( oBoton ) CLASS TpvCobros
 
@@ -743,7 +679,7 @@ METHOD CreaCobro( nImporte ) CLASS TpvCobros
 
    CursorWait()
 
-   if nImporte != 0
+   if !empty( nImporte )
 
       sTipoCobro              := STipoCobro()
 
@@ -799,48 +735,17 @@ METHOD CargaCobros( cNumeroTicket ) CLASS TpvCobros
 
    end if
 
-   /*
-   Cargamos los vales----------------------------------------------------------
-
-   ::oSender:oTiketCabecera:GetStatus()
-   ::oSender:oTiketCabecera:OrdSetFocus( "cDocVal" )
-
-   if ::oSender:oTiketCabecera:Seek( cNumeroTicket )
-
-      while ( ::oSender:oTiketCabecera:FieldGetByName( "cValDoc" ) == cNumeroTicket ) .and. !( ::oSender:oTiketCabecera:eof() )
-
-         sTipoCobro           := STipoCobro()
-         sTipoCobro:lVale     := .t.
-         sTipoCobro:cTexto    := "Vale " + ::oSender:oTiketCabecera:FieldGetByName( "cSerTik" ) + "/" + ltrim( ::oSender:oTiketCabecera:FieldGetByName( "cNumTik" ) ) + "/" + ltrim( ::oSender:oTiketCabecera:FieldGetByName( "cSufTik" ) )
-         sTipoCobro:cSerie    := ::oSender:oTiketCabecera:FieldGetByName( "cSerTik" )
-         sTipoCobro:cNumero   := ::oSender:oTiketCabecera:FieldGetByName( "cNumTik" )
-         sTipoCobro:cSufijo   := ::oSender:oTiketCabecera:FieldGetByName( "cSufTik" )
-         sTipoCobro:nImporte  := ::oSender:oTiketCabecera:FieldGetByName( "nTotTik" )
-
-         sTipoCobro:AddVale( ::aCobros )
-
-         ::oSender:oTiketCabecera:Skip()
-
-      end while
-
-   end if
-
-   ::oSender:oTiketCabecera:SetStatus()
-   */
-
 Return .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD EliminaCobros() CLASS TpvCobros
 
-   local cNumeroTicket
-
-   ::oSender:oTiketCabecera:GetStatus()
-
-   cNumeroTicket        := ::oSender:cNumeroTicket()
+   local cNumeroTicket  := ::oSender:cNumeroTicket()
 
    if !Empty( cNumeroTicket )
+
+      ::oSender:oTiketCabecera:GetStatus()
 
       /*
       Elimina los pagos--------------------------------------------------------
@@ -861,9 +766,9 @@ METHOD EliminaCobros() CLASS TpvCobros
          ::oSender:oTiketCabecera:FieldPutByName( "cTurVal", "" )
       end if
 
-   end if
+      ::oSender:oTiketCabecera:SetStatus()
 
-   ::oSender:oTiketCabecera:SetStatus()
+   end if
 
 Return .t.
 
@@ -871,40 +776,32 @@ Return .t.
 
 METHOD Entregado() CLASS TpvCobros
 
-   local sCobro   
    local nEntregado  := 0
    
-   for each sCobro in ::aCobros
-      nEntregado     += sCobro:nImporte
-   next 
+   aEval( ::aCobros, {|sCobro| nEntregado += sCobro:nImporte } )
 
 RETURN ( nEntregado )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD GuardaCobros() CLASS TpvCobros
 
    local sCobro
-   local cSerTik                          := ::oSender:oTiketCabecera:cSerTik
-   local cNumTik                          := ::oSender:oTiketCabecera:cNumTik
-   local cSufTik                          := ::oSender:oTiketCabecera:cSufTik
 
    for each sCobro in ::aCobros
 
       ::oSender:oTiketCobro:Append()
 
-      ::oSender:oTiketCobro:cSerTik    := cSerTik
-      ::oSender:oTiketCobro:cNumTik    := cNumTik
-      ::oSender:oTiketCobro:cSufTik    := cSufTik
+      ::oSender:oTiketCobro:cSerTik    := ::oSender:oTiketCabecera:cSerTik
+      ::oSender:oTiketCobro:cNumTik    := ::oSender:oTiketCabecera:cNumTik
+      ::oSender:oTiketCobro:cSufTik    := ::oSender:oTiketCabecera:cSufTik
 
       ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
+      ::oSender:oTiketCobro:lCloPgo    := sCobro:lCloseCobro
 
       if sCobro:lCloseCobro
-         ::oSender:oTiketCobro:lCloPgo := sCobro:lCloseCobro
          ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
       else
-         ::oSender:oTiketCobro:lCloPgo := sCobro:lCloseCobro
          ::oSender:oTiketCobro:cTurPgo := cCurSesion()
       end if
 
@@ -922,26 +819,6 @@ METHOD GuardaCobros() CLASS TpvCobros
    next
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD nTotalCobro() CLASS TpvCobros
-
-   local nTotal   := 0
-
-   aEval( ::aCobros, {|u| nTotal += u:nImporte } )
-
-RETURN ( nTotal )
-
-//---------------------------------------------------------------------------//
-
-METHOD nTotalCambio() CLASS TpvCobros
-
-   local nTotal   := 0
-
-   aEval( ::aCobros, {|u| nTotal += u:nCambio } )
-
-RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -966,34 +843,9 @@ CLASS STipoCobro
    DATA  cNumero              INIT ""
    DATA  cSufijo              INIT ""
 
-   //------------------------------------------------------------------------//
-
    METHOD cNumeroVale()       INLINE ( ::cSerie + ::cNumero + ::cSufijo )
 
-   //------------------------------------------------------------------------//
-
    METHOD AddCobro( aCobros ) INLINE aAdd( aCobros, Self )
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddVale( aCobros )
-
-      local u
-      local nScan
-
-      for each u in aCobros
-
-         if u:lVale == ::lVale .and. u:cSerie == ::cSerie .and. u:cNumero == ::cNumero .and. u:cSufijo == ::cSufijo
-            RETURN ( .f. )
-         end if
-
-      next
-
-      aAdd( aCobros, Self )
-
-      RETURN ( .t. )
-
-   ENDMETHOD
 
 END CLASS
 
