@@ -87,6 +87,8 @@ CLASS TpvCobros
    */
 
    METHOD lResource()
+
+      METHOD Resource()                INLINE ( if( ::oSender:l1024(), "NewCobro", "NewCobro" ) )
       METHOD RefreshResource()         INLINE ( ::oBrwPago:Refresh(), ::SetTextoTotal() )
       METHOD PushCalculadora( cTexto )
       METHOD PushMoney( nImporte )
@@ -98,11 +100,11 @@ CLASS TpvCobros
       METHOD OnClickAceptar()
 
       METHOD ChangeButtonsFormaPago( cTipo )
-      METHOD ChangeFormaPago()         INLINE ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ), ::oBrwFormasPago:aRow[ "lEfectivo" ] )
+      METHOD ChangeFormaPago()         INLINE ( ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ), ::oBrwFormasPago:aRow[ "lEfectivo" ] ) )
       METHOD ChangeBtnImpresion()
       METHOD ChangeCalcMoney()
 
-      METHOD Resource()                INLINE ( if( ::oSender:l1024(), "NewCobro", "NewCobro" ) )
+      METHOD SetTextoTotal()
 
    //------------------------------------------------------------------------//
 
@@ -117,8 +119,6 @@ CLASS TpvCobros
    //------------------------------------------------------------------------//
 
    METHOD CargaFormasdePago()
-
-   METHOD SetTextoTotal()
 
    METHOD SalidaImpresoraDefecto()
 
@@ -209,6 +209,10 @@ Si nos piden cobros exactos o cobros rapidos no mostramos el dialogo-----------
 */
 
 METHOD lCobro() CLASS TpvCobros
+
+   ::nTotal             := ::oSender:sTotal:nTotalDocumento
+   ::nUbiTik            := ::oSender:oTiketCabecera:nUbiTik
+   ::cCodigoFormaPago   := ::oSender:oTiketCabecera:cFpgTik
   
    if lImporteExacto()
       Return ::lCobroExacto()
@@ -237,11 +241,7 @@ Return .t.
 
 METHOD lCobroExactoTicket() CLASS TpvCobros
 
-   ::nUbiTik                  := ::oSender:oTiketCabecera:nUbiTik
-
-   ::cCodigoFormaPago         := ::oSender:oTiketCabecera:cFpgTik
-
-   ::CreaCobro()
+   ::CreaCobro( ::Total() )
 
    ::nEstado                  := estadoPagado
 
@@ -269,9 +269,6 @@ METHOD lResource() CLASS TpvCobros
    */
 
    ::CargaCobros( ::oSender:cNumeroTicket() )
-
-   ::nTotal             := ::oSender:sTotal:nTotalDocumento
-   ::nUbiTik            := ::oSender:oTiketCabecera:nUbiTik
 
    ::lClickMoneda       := .f.
 
@@ -675,22 +672,23 @@ RETURN ( Self )
 
 METHOD CreaCobro( nImporte ) CLASS TpvCobros
 
+   local cCodigo
    local sTipoCobro
 
    CursorWait()
+
+   if lImporteExacto() 
+      cCodigo                 := ::cCodigoFormaPago
+   else
+      cCodigo                 := ::oBrwFormasPago:aRow[ "Codigo" ]
+   end if
 
    if !empty( nImporte )
 
       sTipoCobro              := STipoCobro()
 
-      if lImporteExacto() 
-         sTipoCobro:cCodigo   := ::cCodigoFormaPago
-         sTipoCobro:cTexto    := oRetFld( ::cCodigoFormaPago, ::oSender:oFormaPago )
-      else
-         sTipoCobro:cCodigo   := ::oBrwFormasPago:aRow[ "Codigo" ]
-         sTipoCobro:cTexto    := oRetFld( ::oBrwFormasPago:aRow[ "Codigo" ], ::oSender:oFormaPago )
-      end if
-
+      sTipoCobro:cCodigo      := cCodigo
+      sTipoCobro:cTexto       := oRetFld( cCodigo, ::oSender:oFormaPago )
       sTipoCobro:nImporte     := nImporte
       sTipoCobro:nCambio      := Max( ::Cambio(), 0 )
 
@@ -738,6 +736,9 @@ METHOD CargaCobros( cNumeroTicket ) CLASS TpvCobros
 Return .t.
 
 //---------------------------------------------------------------------------//
+/*
+Elimina los pagos--------------------------------------------------------
+*/
 
 METHOD EliminaCobros() CLASS TpvCobros
 
@@ -747,24 +748,9 @@ METHOD EliminaCobros() CLASS TpvCobros
 
       ::oSender:oTiketCabecera:GetStatus()
 
-      /*
-      Elimina los pagos--------------------------------------------------------
-      */
-
       while ( ::oSender:oTiketCobro:Seek( cNumeroTicket ) )
          ::oSender:oTiketCobro:Delete(.f.)
       end while
-
-      /*
-      Elimina los vales--------------------------------------------------------
-      */
-
-      while ( ::oSender:oTiketCabecera:SeekInOrd( cNumeroTicket, "cDocVal" ) )
-         ::oSender:oTiketCabecera:FieldPutByName( "lLiqTik", .f. )
-         ::oSender:oTiketCabecera:FieldPutByName( "lSndDoc", .t. )
-         ::oSender:oTiketCabecera:FieldPutByName( "cValDoc", "" )
-         ::oSender:oTiketCabecera:FieldPutByName( "cTurVal", "" )
-      end if
 
       ::oSender:oTiketCabecera:SetStatus()
 
@@ -799,12 +785,6 @@ METHOD GuardaCobros() CLASS TpvCobros
       ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
       ::oSender:oTiketCobro:lCloPgo    := sCobro:lCloseCobro
 
-      if sCobro:lCloseCobro
-         ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
-      else
-         ::oSender:oTiketCobro:cTurPgo := cCurSesion()
-      end if
-
       ::oSender:oTiketCobro:dPgoTik    := GetSysDate()
       ::oSender:oTiketCobro:cTimTik    := SubStr( Time(), 1, 5 )
       ::oSender:oTiketCobro:cCodCaj    := oUser():cCaja()
@@ -813,6 +793,12 @@ METHOD GuardaCobros() CLASS TpvCobros
       ::oSender:oTiketCobro:cFpgPgo    := sCobro:cCodigo
       ::oSender:oTiketCobro:nImpTik    := sCobro:nImporte
       ::oSender:oTiketCobro:nDevTik    := sCobro:nCambio
+
+      if sCobro:lCloseCobro
+         ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
+      else
+         ::oSender:oTiketCobro:cTurPgo := cCurSesion()
+      end if
 
       ::oSender:oTiketCobro:Save()
 

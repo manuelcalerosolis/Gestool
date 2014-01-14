@@ -362,6 +362,8 @@ CLASS TpvTactil
    DATA oListViewInvitacion
    DATA oImageListInvitacion
 
+   DATA lValidResource     
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -405,10 +407,13 @@ CLASS TpvTactil
    //------------------------------------------------------------------------//
 
    METHOD Resource()
-   METHOD ResizedResource()
-   METHOD StartResource()
-   METHOD EndResource()
-   METHOD PaintResource()
+      METHOD ResizedResource()
+      METHOD StartResource()
+      METHOD EndResource()
+      METHOD PaintResource()
+
+      METHOD DisableDialog()           INLINE ( ::lValidResource := .f., ::oDlg:Disable() )
+      METHOD EnableDialog()            INLINE ( ::lValidResource := .t., ::oDlg:Enable() )
 
    METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
 
@@ -1953,11 +1958,6 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   /*if !( ::nScreenHorzRes >= 1024 )
-      MsgStop( __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + "táctil solo permite resoluciones de 1024 o superiores" )
-      Return .f.
-   end if*/
-
    if !lCurSesion()
       MsgStop( "No hay sesiones activas, imposible añadir documentos." )
       Return .f.
@@ -3401,7 +3401,7 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
@@ -3666,6 +3666,14 @@ Return ( nil )
 METHOD EndResource() CLASS TpvTactil
 
    local lEnd           := .t.
+
+   /*
+   No lo dejamos salir si esta puesto este flag--------------------------------
+   */
+
+   if IsFalse( ::lValidResource )
+      return .f.
+   end if
 
    if !::lKillResource
 
@@ -7197,6 +7205,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
    DEFAULT nSelectOption   := ubiSala
 
+
    /*
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
@@ -7231,7 +7240,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7306,7 +7315,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
    end if
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    RECOVER USING oError
 
