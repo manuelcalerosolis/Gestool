@@ -6965,12 +6965,6 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
       end if
 
-      /*
-      Cargamos los cobros------------------------------------------------------
-      */
-
-      ::oTpvCobros:CargaCobros( cNumeroTicket )
-
    end if
 
    /*
@@ -7367,6 +7361,8 @@ METHOD OnClickGeneral() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::oDlg:Disable()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7407,6 +7403,8 @@ METHOD OnClickGeneral() CLASS TpvTactil
       end if
 
    end if
+
+   ::oDlg:Enable()
 
    RECOVER USING oError
 
@@ -7461,6 +7459,8 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::oDlg:Disable()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7501,6 +7501,8 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
       end if
 
    end if
+
+   ::oDlg:Enable()
 
    RECOVER USING oError
 
@@ -7555,6 +7557,8 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::oDlg:Disable()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7601,6 +7605,8 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
    */
 
    ::SetInfo()
+
+   ::oDlg:Enable()
 
    RECOVER USING oError
 
@@ -7655,6 +7661,8 @@ METHOD OnClickEncargar() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::oDlg:Disable()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7702,6 +7710,8 @@ METHOD OnClickEncargar() CLASS TpvTactil
 
    ::SetInfo()
 
+   ::oDlg:Enable()
+
    RECOVER USING oError
 
       msgStop( "Error al montar la salas de venta" + CRLF + ErrorMessage( oError ) )
@@ -7732,6 +7742,8 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   ::oDlg:Disable()
 
    if ::lEmptyNumeroTicket()
 
@@ -7790,6 +7802,8 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
       end if
 
    end if
+
+   ::oDlg:Enable()
 
    RECOVER USING oError
 
@@ -9622,6 +9636,95 @@ function CheckRes()
 
 return nil
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS STotalCobros
+
+   DATA  oTotal
+   DATA  oEntregado
+   DATA  oCobrado
+   DATA  oCobradoDivisa
+   DATA  oCambio
+
+   DATA  nTotal               INIT  0
+   DATA  nEntregado           INIT  0
+   DATA  nCobrado             INIT  0
+   DATA  nVale                INIT  0
+   DATA  nAnticipo            INIT  0
+   DATA  nCambio              INIT  0
+
+   METHOD lValeMayorTotal()   INLINE ( ( ::nVale <= ::nTotal ) .or. ( ::nTotal < 0 ) )
+
+   METHOD Recalcula()         INLINE ( ::nCambio   := - ( ::nTotal - ::nEntregado - ::nCobrado ) )
+
+   METHOD SetCobrado()        INLINE ( ::nCobrado  := ( ::nTotal - ::nEntregado ) )
+
+   METHOD GetTotal( sTotal )
+
+   METHOD Refresh()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD GetTotal( sTotal ) CLASS STotalCobros
+
+   ::nVale                    := 0
+   ::nAnticipo                := 0
+   ::nCambio                  := 0
+   ::nTotal                   := sTotal:nTotalDocumento
+   ::nEntregado               := sTotal:nTotalCobro()
+
+   ::nCobrado                 := ::nTotal - ::nEntregado
+
+   ::Recalcula()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Refresh() CLASS STotalCobros
+
+   ::Recalcula()
+
+   if !Empty( ::oTotal )
+      ::oTotal:Refresh()
+   end if
+
+   if !Empty( ::oEntregado )
+      ::oEntregado:Refresh()
+   end if
+
+   if !Empty( ::oCobrado )
+      ::oCobrado:Refresh()
+   end if
+
+   if !Empty( ::oCobradoDivisa )
+      ::oCobradoDivisa:Refresh()
+   end if
+
+   if !Empty( ::oCambio )
+      ::oCambio:Refresh()
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 #pragma BEGINDUMP

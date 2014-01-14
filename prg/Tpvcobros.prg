@@ -29,42 +29,35 @@ static oThis
 
 CLASS TpvCobros  
 
-   DATA oDlg
    DATA oSender
-   DATA sTotalesCobros
-
-   DATA aButtonsMoney
-   DATA oBtnLimpiarTexto
-   DATA oBtnAddCobro
-   DATA oBtnTipoImpresion
-   DATA oBtnAceptar
-   DATA oBtnCalcMoney
-
-   DATA oTextoTotal
-   DATA cTextoTotal
-
-   DATA oGetEntregado
-   DATA cGetEntregado      INIT Space( 25 )
-
-   DATA aFormasdePago
-
-   DATA oBrwPago
-   DATA oBrwFormasPago
 
    DATA nExit
 
-   DATA nSalidaImpresora
-   DATA cBmpSalidaImpresora
-
-   DATA lEfectivoMoney
-
-   DATA cResource
+   CLASSDATA aFormasdePago          INIT {}
 
    DATA oDlg
 
-   DATA cCodigoFormaPago
+      DATA aButtonsMoney
+      DATA oBtnLimpiarTexto
+      DATA oBtnAddCobro
+      DATA oBtnTipoImpresion
+      DATA oBtnAceptar
+      DATA oBtnCalcMoney
 
-   DATA oGrupoCobro
+      DATA oTextoTotal
+      DATA cTextoTotal
+
+      DATA oGetEntregado
+      DATA nGetEntregado               INIT 0
+      DATA cGetEntregado               INIT Space( 25 )
+
+      DATA oBrwPago
+      DATA oBrwFormasPago
+      DATA cBmpSalidaImpresora
+
+   DATA lEfectivoMoney
+
+   DATA cCodigoFormaPago
 
    DATA lClickMoneda       INIT .f.
 
@@ -73,6 +66,8 @@ CLASS TpvCobros
    DATA nUbiTik            INIT ubiGeneral
 
    DATA nEstado            INIT estadoPagado
+
+   DATA nTotal 
 
    METHOD New( oSender ) CONSTRUCTOR
 
@@ -85,74 +80,31 @@ CLASS TpvCobros
    METHOD lCobroExactoTicket()
    METHOD lCobroExactoAlbaran()
 
+   /*
+   Metodos para el recurso-----------------------------------------------------
+   */
+
    METHOD lResource()
-   METHOD StartResource()
+      METHOD RefreshResource()         INLINE ( ::oBrwPago:Refresh(), ::SetTextoTotal() )
+      METHOD PushCalculadora( cTexto )
+      METHOD PushMoney( nImporte )
 
-   METHOD ClickBotonCobro( oBtnPago )
+      METHOD ClickBotonCobro( oBtnPago )
 
-   METHOD ValidTotalesCobro()
-   METHOD CreateButtonsCobro()
-   METHOD nButtonsCobro( oGrupo )
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD PushCalculadora( cTexto )
-
-      ::cGetEntregado               := AllTrim( ::cGetEntregado ) + cTexto
-
-      if !Empty( ::oGetEntregado )
-         ::oGetEntregado:Refresh()
-      end if   
-
-      RETURN ( Self )
-
-   ENDMETHOD
+      METHOD OnClickReset()            INLINE ( ::oGetEntregado:cText( 0 ) )
+      METHOD OnClickCalculadora()      INLINE ( Calculadora( 0, ::sTotalesCobros:oCobrado ), ::sTotalesCobros:Recalcula()  )
+      METHOD OnClickFormadePago( oBoton )
+      METHOD OnClickAnnadirCobro()
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD PushMoney( nImporte )
 
-      if !::lClickMoneda
-         ::sTotalesCobros:nCobrado  := 0
-         ::cGetEntregado            := Space( 25 )
-      end if
-
-      ::cGetEntregado               := Trans( ValToMoney( ::cGetEntregado ) + nImporte, ::oSender:cPictureTotal )
-
-      if !Empty( ::oGetEntregado )
-         ::oGetEntregado:Refresh()
-      end if   
-
-      ::lClickMoneda                := .t.
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickReset()
-
-      ::cGetEntregado               := Space( 25 )
-
-      if !Empty( ::oGetEntregado )
-         ::oGetEntregado:Refresh()
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   METHOD OnClickCalculadora()      INLINE ( Calculadora( 0, ::sTotalesCobros:oCobrado ), ::sTotalesCobros:Recalcula()  )
-   METHOD OnClickFormadePago( oBoton )
 
    //------------------------------------------------------------------------//
 
    METHOD CreaCobro()
    METHOD EliminaCobro()            INLINE ( aDel( ::aCobros, ::oBrwPago:nArrayAt, .t. ) )
-   METHOD ValidCobro()              INLINE ( ( ::sTotalesCobros:nTotal ) >= ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado ) )
+   METHOD ValidCobro()              INLINE ( ( ::sTotalesCobros:nEntregado ) >= ( ::sTotalesCobros:nTotal ) )
 
    METHOD CargaCobros( cNumeroTicket )
    METHOD EliminaCobros()
@@ -160,49 +112,19 @@ CLASS TpvCobros
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD OnClickAnnadirCobro()
-
-      ::sTotalesCobros:nCobrado     := ValToMoney( ::cGetEntregado )
-
-      ::CreaCobro()
-
-      ::sTotalesCobros:nEntregado   := ::nTotal()
-
-      ::sTotalesCobros:SetCobrado()
-      ::sTotalesCobros:Recalcula()
-      ::sTotalesCobros:Refresh()
-
-      ::cGetEntregado               := Space( 25 )
-
-      if !Empty( ::oGetEntregado )
-         ::oGetEntregado:Refresh()
-      end if
-
-      ::oBrwPago:Refresh()
-
-      ::SetTextoTotal()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+  //------------------------------------------------------------------------//
 
    INLINE METHOD OnClickEliminarCobro()
 
       if ApoloMsgNoYes( , , .t.)
 
-            ::EliminaCobro()
+         ::EliminaCobro()
 
-            ::sTotalesCobros:nEntregado   := ::nTotal()
+         ::sTotalesCobros:nEntregado   := ::nTotal()
 
-            ::sTotalesCobros:SetCobrado()
-            ::sTotalesCobros:Recalcula()
-            ::sTotalesCobros:Refresh()
-
-            ::oBrwPago:Refresh()
-
-            ::SetTextoTotal()
+         ::sTotalesCobros:SetCobrado()
+         ::sTotalesCobros:Recalcula()
+         ::sTotalesCobros:Refresh()
 
       end if      
 
@@ -212,11 +134,11 @@ CLASS TpvCobros
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD OnClickAceptar( nExit )
+   INLINE METHOD OnClickAceptar()
 
-      local lEnd        := .f.
+      local lEnd     := .t.
 
-      if ::oSender:nTipoDocumento == documentoAlbaran
+      if ( ::oSender:nTipoDocumento == documentoAlbaran )
          Return .f.
       end if
 
@@ -224,35 +146,15 @@ CLASS TpvCobros
 
       ::ValidTotalesCobro()
 
-      if ::nUbiTik == ubiEncargar
+      ::CreaCobro()
 
-         if ::ValidCobro()
-            ::nEstado   := estadoPagado
-         else
-            ::nEstado   := estadoParcial
-         end if
+      ::RefreshResource()
 
-         ::CreaCobro()
-
-         ::nExit        := nExit
-
-      else
-
-         if ::ValidCobro()
-
-            ::CreaCobro()
-
-            ::nEstado   := estadoPagado
-            ::nExit     := nExit
-
-         else 
-
-            msgStop( "Importe insuficiente." )
-
-            lEnd        := .f. 
-
-         end if
-
+      if ::ValidCobro() 
+         ::nEstado   := estadoPagado
+      else 
+         msgStop( "Importe insuficiente." )
+         lEnd        := .f. 
       end if
 
       ::oDlg:Enable()
@@ -261,17 +163,12 @@ CLASS TpvCobros
          ::oDlg:End( IDOK )
       end if
 
-      RETURN ( Self )
+      RETURN ( .t. )
 
    ENDMETHOD
 
    //------------------------------------------------------------------------//
 
-   METHOD OnClickAnnadirVales()
-
-   //------------------------------------------------------------------------//
-
-   METHOD nTotal()
    METHOD nTotalCobro()
    METHOD nTotalCambio()
 
@@ -279,27 +176,11 @@ CLASS TpvCobros
 
    METHOD CargaFormasdePago()
 
-   METHOD RedefineButtonsMoney() 
-   METHOD RedefineBrowsePagos()
-   METHOD RedefineBrowseFormasdePago()
-
    METHOD ChangeButtonsFormaPago( cTipo )
 
    METHOD ChangeFormaPago()               INLINE ::ChangeButtonsFormaPago( if( ::oBrwFormasPago:aRow[ "lEfectivo" ], "Money", "Calculadora" ), ::oBrwFormasPago:aRow[ "lEfectivo" ] )
 
-   METHOD RedefineSayTotal()
-
-   METHOD RedefineButtonLimpieza()
-
-   METHOD RedefineButtonAddCobro()
-   
-   METHOD RedefineButtonTipoImpresion()
-
-   METHOD RedefineButtonChangeCalcMoney()
-   
-   METHOD RedefineButtonAceptar()
-
-   METHOD RedefineGetEntrega()
+   METHOD ValidTotalesCobro()             INLINE ( ::sTotalesCobros:Recalcula() )
 
    METHOD SetTextoTotal()
 
@@ -308,6 +189,14 @@ CLASS TpvCobros
    METHOD ChangeCalcMoney()
 
    METHOD SalidaImpresoraDefecto()
+
+   METHOD Total()                         INLINE ( ::nTotal )
+
+   METHOD Entregado() 
+
+   METHOD Cambio()                        INLINE ( ::Total() - ::Entregado() ) 
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 
@@ -319,17 +208,7 @@ METHOD New( oSender ) CLASS TpvCobros
 
    ::oSender                  := oSender
 
-   ::cResource                := "NEWCOBRO"
-
-   ::sTotalesCobros           := STotalCobros()
-
    ::lEfectivoMoney           := .t.
-
-   ::InitCobros()
-
-   ::SalidaImpresoraDefecto()
-   
-   ::SetTextoTotal()
 
    ::aButtonsMoney            := {  {  "Id" => 170,;
                                        "Object" => nil,;
@@ -380,6 +259,10 @@ METHOD New( oSender ) CLASS TpvCobros
                                        "Money" =>        { "Text" => "0.01",  "Action" => {|| ::PushMoney( 0.01 ) } },;
                                        "Calculadora" =>  { "Text" => "",      "Action" => {|| ::PushCalculadora( "" ) } } } }
 
+   ::SalidaImpresoraDefecto()
+   
+   ::CargaFormasdePago()
+
 Return Self
 
 //--------------------------------------------------------------------------//
@@ -395,21 +278,16 @@ METHOD End() CLASS TpvCobros
 Return Self
 
 //--------------------------------------------------------------------------//
+/*
+Si nos piden cobros exactos o cobros rapidos no mostramos el dialogo-----------
+*/
 
 METHOD lCobro() CLASS TpvCobros
-   
-   /*
-   Provisional para ponerselo al bollito---------------------------------------
-   */
-
+  
    if lImporteExacto()
-
       Return ::lCobroExacto()
-
    else
-
       Return ::lResource()
-
    end if
 
 Return .t.
@@ -461,90 +339,166 @@ Return .t.
 
 METHOD lResource() CLASS TpvCobros
 
-   local n
-   local aFPago         := {}
-
-   /*
-   Cargamos las formas de pago para mostrarlas en el browse--------------------
-   */
-
-   ::CargaFormasdePago()
+   local cResFormaPago
+   local aResFormaPago  := aMiddleResourceFormaPago()
 
    /*
    Tomamos valores por defecto-------------------------------------------------
    */
 
+   ::CargaCobros( ::oSender:cNumeroTicket() )
+
+   ::nTotal             := ::oSender:sTotal:nTotalDocumento
    ::nUbiTik            := ::oSender:oTiketCabecera:nUbiTik
 
    ::lClickMoneda       := .f.
 
-   ::sTotalesCobros:GetTotal( ::oSender:sTotal )
-
    if uFieldEmpresa( "lTotTikCob" )
-      ::cGetEntregado         := Trans( ::sTotalesCobros:nCobrado, ::oSender:cPictureTotal )
+      ::nGetEntregado   := ( ::Total() - ::Entregado() )
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE ::cResource TITLE ::oSender:cTipoDocumento() FONT ::oSender:oFntDlg
+   DEFINE DIALOG ::oDlg RESOURCE "NewCobro" TITLE ::oSender:cTipoDocumento() FONT ::oSender:oFntDlg
 
       /*
       SAY con la imformación de los cobros-------------------------------------
       */
 
-      ::RedefineSayTotal()
+      REDEFINE SAY   ::oTextoTotal ;
+         VAR         ::cTextoTotal ;
+         ID          100 ;
+         OF          ::oDlg
 
       /*
       Boton para cambiar el tipo de impresión----------------------------------
       */
 
-      ::RedefineButtonTipoImpresion()
+      ::oBtnTipoImpresion  := TButtonBmp():ReDefine( 110, {|| ::ChangeBtnImpresion() }, ::oDlg,,, .f.,,,, .f., ::cBmpSalidaImpresora )
 
       /*
       Boton de finalizar el cobro----------------------------------------------
       */
 
-      ::RedefineButtonAceptar()
+      ::oBtnAceptar        := TButtonBmp():ReDefine( 120, {|| ::OnClickAceptar() }, ::oDlg,,, .f.,,,, .f., "Check_32" )
 
       /*
       Browse con los diferentes pagos------------------------------------------
       */
 
-      ::RedefineBrowsePagos()
+      ::oBrwPago                 := TXBrowse():New( ::oDlg )
+      ::oBrwPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwPago:lVScroll        := .t.
+      ::oBrwPago:lHScroll        := .f.
+      ::oBrwPago:nMarqueeStyle   := 5
+      ::oBrwPago:lHeader         := .f.
+      ::oBrwPago:lFooter         := .f.
+      ::oBrwPago:lRecordSelector := .f.
+   
+      ::oBrwPago:SetArray( ::aCobros, , , .f. )
+   
+      with object ( ::oBrwPago:AddCol() )
+         :cHeader                := "Pago"
+         :bEditValue             := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:cTexto }
+         :nWidth                 := 210
+      end with
+   
+      with object ( ::oBrwPago:AddCol() )
+         :cHeader                := "Importe"
+         :bEditValue             := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:nImporte }
+         :cEditPicture           := ::oSender:cPictureTotal
+         :nWidth                 := 150
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end with
+   
+      with object ( ::oBrwPago:AddCol() )
+         :cHeader                := "Restar unidades"
+         :bStrData               := {|| "" }
+         :bOnPostEdit            := {|| .t. }
+         :bEditBlock             := {|| ::OnClickEliminarCobro() }
+         :nEditType              := 5
+         :nWidth                 := 40
+         :nBtnBmp                := 1
+         :nHeadBmpAlign          := 1
+         :AddResource( "Delete2_24" )
+      end with
+   
+      ::oBrwPago:CreateFromResource( 130 )
 
       /*
       Browse con las formas de pago--------------------------------------------
       */
 
-      ::RedefineBrowseFormasdePago() 
+      ::oBrwFormasPago                 := TXBrowse():New( ::oDlg )
+      ::oBrwFormasPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwFormasPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwFormasPago:lVScroll        := .f.
+      ::oBrwFormasPago:lHScroll        := .f.
+      ::oBrwFormasPago:nMarqueeStyle   := 5
+      ::oBrwFormasPago:lHeader         := .f.
+      ::oBrwFormasPago:lFooter         := .f.
+      ::oBrwFormasPago:lRecordSelector := .f.
+   
+      ::oBrwFormasPago:SetArray( ::aFormasdePago, , , .f. )
+   
+      ::oBrwFormasPago:bChange         := {|| ::ChangeFormaPago() }
+    
+      with object ( ::oBrwFormasPago:AddCol() )
+         :cHeader                      := "Imagen"
+         :bBmpData                     := {|| ::oBrwFormasPago:aRow[ "Imagen" ] }
+         :nWidth                       := 24
+               
+         for each cResFormaPago in aResFormaPago
+            :AddResource( cResFormaPago )
+         next
+   
+      end with
+   
+      with object ( ::oBrwFormasPago:AddCol() )
+         :cHeader                      := "Forma"
+         :bEditValue                   := {|| ::oBrwFormasPago:aRow[ "Descripcion" ] }
+         :nWidth                       := 90
+      end with
+
+      ::oBrwFormasPago:CreateFromResource( 140 )
 
       /*
       Caja de texto para escribir la cantidad----------------------------------
       */
 
-      ::RedefineGetEntrega()
+      REDEFINE GET   ::oGetEntregado ;
+         VAR         ::nGetEntregado ;
+         PICTURE     ::oSender:cPictureTotal ;
+         ID          150 ;
+         OF          ::oDlg
 
       /*
       Boton para limpiar la caja de texto--------------------------------------
       */
 
-      ::RedefineButtonLimpieza()
+      ::oBtnLimpiarTexto   := TButton():ReDefine( 160, {|| ::OnClickReset() }, ::oDlg )  
 
       /*
       Botones del teclado------------------------------------------------------
       */
 
-      ::RedefineButtonsMoney()
+      aEval( ::aButtonsMoney, {|h| h[ "Object" ] := TButton():ReDefine( h[ "Id" ], h[ "Money", "Action" ], ::oDlg ) } ) 
 
       /*
       Boton cambiar teclado de monedas a calculadora---------------------------
       */
 
-      ::RedefineButtonChangeCalcMoney()
+      ::oBtnCalcMoney      := TButtonBmp():ReDefine( 300, {|| ::ChangeCalcMoney() }, ::oDlg,,, .f.,,,, .f., "Calculator_32",, )
 
       /*
       Boton de validar la cantidad introducida---------------------------------
       */
 
-      ::RedefineButtonAddCobro()
+      ::oBtnAddCobro       := TButtonBmp():ReDefine( 290, {|| ::OnClickAnnadirCobro() }, ::oDlg,,, .f.,,,, .f., "New32",, )
+
+   /*
+   Evento a lanzar a inicio----------------------------------------------------
+   */
 
    ::oDlg:bStart  := {|| ::SetTextoTotal() }
 
@@ -569,187 +523,27 @@ Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD RedefineSayTotal() CLASS TpvCobros
-
-   REDEFINE SAY ::oTextoTotal ;
-         VAR      ::cTextoTotal ;
-         ID       100 ;
-         OF       ::oDlg
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineButtonsMoney() CLASS TpvCobros
-
-Return ( AEval( ::aButtonsMoney, {|h| h[ "Object" ] := TButton():ReDefine( h[ "Id" ], h[ "Money", "Action" ], ::oDlg ) } ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineGetEntrega() CLASS TpvCobros
-
-   REDEFINE GET ::oGetEntregado ;
-      VAR      ::cGetEntregado ;
-      ID       150 ;
-      OF       ::oDlg
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineButtonLimpieza() CLASS TpvCobros
-
-   ::oBtnLimpiarTexto := TButton():ReDefine( 160, {|| ::OnClickReset() }, ::oDlg )
-
-Return ( Self )   
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineButtonAddCobro() CLASS TpvCobros
-
-   ::oBtnAddCobro := TButtonBmp():ReDefine( 290, {|| ::OnClickAnnadirCobro() }, ::oDlg,,, .F.,,,, .F., "NEW32",, )
-
-Return ( Self )   
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineButtonChangeCalcMoney() CLASS TpvCobros
-
-   ::oBtnCalcMoney := TButtonBmp():ReDefine( 300, {|| ::ChangeCalcMoney() }, ::oDlg,,, .F.,,,, .F., "Calculator_32",, )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-   
-METHOD RedefineButtonTipoImpresion() CLASS TpvCobros
-
-   ::oBtnTipoImpresion := TButtonBmp():ReDefine( 110, {|| ::ChangeBtnImpresion() }, ::oDlg,,, .F.,,,, .F., ::cBmpSalidaImpresora,, )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-   
-METHOD RedefineButtonAceptar() CLASS TpvCobros
-
-   ::oBtnAceptar := TButtonBmp():ReDefine( 120, {|| ::OnClickAceptar( ::nSalidaImpresora ) }, ::oDlg,,, .F.,,,, .F., "Check_32",, )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineBrowsePagos() CLASS TpvCobros
-
-   ::oBrwPago                 := TXBrowse():New( ::oDlg )
-   ::oBrwPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-   ::oBrwPago:lVScroll        := .t.
-   ::oBrwPago:lHScroll        := .f.
-   ::oBrwPago:nMarqueeStyle   := 5
-   ::oBrwPago:lHeader         := .f.
-   ::oBrwPago:lFooter         := .f.
-   ::oBrwPago:lRecordSelector := .f.
-
-   ::oBrwPago:SetArray( ::aCobros, , , .f. )
-
-   with object ( ::oBrwPago:AddCol() )
-      :cHeader                := "Pago"
-      :bEditValue             := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:cTexto }
-      :nWidth                 := 210
-   end with
-
-   with object ( ::oBrwPago:AddCol() )
-      :cHeader                := "Importe"
-      :bEditValue             := {|| ::aCobros[ ::oBrwPago:nArrayAt ]:nImporte }
-      :cEditPicture           := ::oSender:cPictureTotal
-      :nWidth                 := 150
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-   end with
-
-   with object ( ::oBrwPago:AddCol() )
-      :cHeader             := "Restar unidades"
-      :bStrData            := {|| "" }
-      :bOnPostEdit         := {|| .t. }
-      :bEditBlock          := {|| ::OnClickEliminarCobro() }
-      :nEditType           := 5
-      :nWidth              := 40
-      :nBtnBmp             := 1
-      :nHeadBmpAlign       := 1
-      :AddResource( "Delete2_24" )
-   end with
-
-   ::oBrwPago:CreateFromResource( 130 )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD RedefineBrowseFormasdePago() CLASS TpvCobros
-
-   local cResFormaPago
-   local aResFormaPago              := aMiddleResourceFormaPago()
-
-   ::oBrwFormasPago                 := TXBrowse():New( ::oDlg )
-   ::oBrwFormasPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwFormasPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-   ::oBrwFormasPago:lVScroll        := .f.
-   ::oBrwFormasPago:lHScroll        := .f.
-   ::oBrwFormasPago:nMarqueeStyle   := 5
-   ::oBrwFormasPago:lHeader         := .f.
-   ::oBrwFormasPago:lFooter         := .f.
-   ::oBrwFormasPago:lRecordSelector := .f.
-
-   ::oBrwFormasPago:SetArray( ::aFormasdePago, , , .f. )
-
-   ::oBrwFormasPago:bChange := {|| ::ChangeFormaPago() }
-
-   ::oBrwFormasPago:CreateFromResource( 140 )
-   
-   with object ( ::oBrwFormasPago:AddCol() )
-      :cHeader          := "Imagen"
-      :bBmpData         := {|| ::oBrwFormasPago:aRow[ "Imagen" ] }
-      :nWidth           := 24
-
-      for each cResFormaPago in aResFormaPago
-         :AddResource( cResFormaPago )
-      next
-
-   end with
-
-   with object ( ::oBrwFormasPago:AddCol() )
-      :cHeader          := "Forma"
-      :bEditValue       := {|| ::oBrwFormasPago:aRow[ "Descripcion" ] }
-      :nWidth           := 90
-   end with
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD ChangeBtnImpresion() CLASS TpvCobros
 
    do case
-      case ::nSalidaImpresora == exitAceptar
+      case ::nExit == exitAceptar
 
-         ::nSalidaImpresora   := exitAceptarImprimir
+         ::nExit   := exitAceptarImprimir
          ::oBtnTipoImpresion:LoadBitmap( "printer_ok" )
-         ::oBtnTipoImpresion:Refresh()
 
+      case ::nExit == exitAceptarImprimir
 
-      case ::nSalidaImpresora == exitAceptarImprimir
-
-         ::nSalidaImpresora   := exitAceptarRegalo
+         ::nExit   := exitAceptarRegalo
          ::oBtnTipoImpresion:LoadBitmap( "printer_new" )
-         ::oBtnTipoImpresion:Refresh()
 
+      case ::nExit == exitAceptarRegalo
 
-      case ::nSalidaImpresora == exitAceptarRegalo
-
-         ::nSalidaImpresora   := exitAceptar
+         ::nExit   := exitAceptar
          ::oBtnTipoImpresion:LoadBitmap( "printer_delete" )
-         ::oBtnTipoImpresion:Refresh()
 
    end case
+
+   ::oBtnTipoImpresion:Refresh()
 
 Return ( Self )
 
@@ -760,17 +554,17 @@ METHOD SalidaImpresoraDefecto CLASS TpvCobros
    do case
       case uFieldEmpresa( "nTipImpTpv" ) <= 1
       
-         ::nSalidaImpresora      := exitAceptar
+         ::nExit                 := exitAceptar
          ::cBmpSalidaImpresora   := "printer_delete"
 
       case uFieldEmpresa( "nTipImpTpv" ) == 2
          
-         ::nSalidaImpresora      := exitAceptarImprimir
+         ::nExit                 := exitAceptarImprimir
          ::cBmpSalidaImpresora   := "printer_ok"
 
       otherwise
          
-         ::nSalidaImpresora      := exitAceptarRegalo
+         ::nExit                 := exitAceptarRegalo
          ::cBmpSalidaImpresora   := "printer_new"
 
    end case
@@ -781,74 +575,74 @@ Return ( Self )
 
 METHOD SetTextoTotal() CLASS TpvCobros
 
-   do case
-      case ::sTotalesCobros:nCobrado < 0
-
-         if !Empty( ::oTextoTotal )
-            ::oTextoTotal:SetText( "Cambio: " + AllTrim( Trans( Abs( ::sTotalesCobros:nCobrado ), ::oSender:cPictureTotal ) ) )
-         end if
-
-         ::cTextoTotal  := "Cambio: " + AllTrim( Trans( Abs( ::sTotalesCobros:nCobrado ), ::oSender:cPictureTotal ) )
-
-      case ::sTotalesCobros:nCobrado == 0
-
-         if Len( ::aCobros ) == 0
-
-           if !Empty( ::oTextoTotal )
-               ::oTextoTotal:SetText( "Pendiente: " + AllTrim( Trans( ::sTotalesCobros:nCobrado, ::oSender:cPictureTotal ) ) )
-            end if
-
-            ::cTextoTotal  := "Pendiente: " + AllTrim( Trans( ::sTotalesCobros:nCobrado, ::oSender:cPictureTotal )  )
-
-         else
-
-            if !Empty( ::oTextoTotal )
-               ::oTextoTotal:SetText( "Importe exaxto" )
-            end if
-
-            ::cTextoTotal  := "Importe exaxto"
-
-         end if   
-
-      case ::sTotalesCobros:nCobrado > 0      
-
-         if !Empty( ::oTextoTotal )
-            ::oTextoTotal:SetText( "Pendiente: " + AllTrim( Trans( ::sTotalesCobros:nCobrado, ::oSender:cPictureTotal ) ) )
-         end if
-
-         ::cTextoTotal  := "Pendiente: " + AllTrim( Trans( ::sTotalesCobros:nCobrado, ::oSender:cPictureTotal ) )
-
-   end case   
+   if ::Entregado() >= ::Total()
+      ::oTextoTotal:SetText( "Cambio: " + alltrim( Trans( Abs( ::Cambio() ), ::oSender:cPictureTotal ) ) )
+   else 
+      ::oTextoTotal:SetText( "Pendiente: " + alltrim( Trans( ::Cambio(), ::oSender:cPictureTotal ) ) )
+   end if 
 
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaFormasdePago CLASS TpvCobros
+METHOD PushCalculadora( cTexto )
 
-   ::aFormasdePago      := {}
+   if ::nGetEntregado == 0
+      ::nGetEntregado            += ValToMoney( cTexto )
+   else 
+      ::nGetEntregado            *= 10
+      ::nGetEntregado            += ValToMoney( cTexto )
+   end if 
 
-   if ( ::oSender:oFormaPago:Used() )
+   ::oGetEntregado:cText( ::nGetEntregado )
 
-      ::oSender:oFormaPago:GetStatus()
+RETURN ( Self )
 
-      ::oSender:oFormaPago:OrdSetFocus( "nPosTpv" )
+//------------------------------------------------------------------------//
 
-      ::oSender:oFormaPago:GoTop()
-      while !::oSender:oFormaPago:eof()
+METHOD PushMoney( nImporte )
 
-         aAdd( ::aFormasdePago, { "Codigo" => ::oSender:oFormaPago:cCodPago,;
-                                  "Descripcion" => Rtrim( ::oSender:oFormaPago:cDesPago ),;
-                                  "lEfectivo" => ( ::oSender:oFormaPago:nTipPgo <= 1 ) ,;
-                                  "Imagen" => ::oSender:oFormaPago:nImgTpv } )
-
-         ::oSender:oFormaPago:Skip()
-
-      end while
-
-      ::oSender:oFormaPago:SetStatus()
-
+   if !::lClickMoneda
+      ::oGetEntregado:cText( 0 )
    end if
+
+   ::nGetEntregado               += nImporte
+
+   ::oGetEntregado:cText( ::nGetEntregado )
+
+   ::lClickMoneda                := .t.
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD CargaFormasdePago() CLASS TpvCobros
+
+   if empty( ::aFormasdePago )
+
+      if ( ::oSender:oFormaPago:Used() )
+
+         ::oSender:oFormaPago:GetStatus()
+
+         ::oSender:oFormaPago:OrdSetFocus( "nPosTpv" )
+
+         ::oSender:oFormaPago:GoTop()
+         while !::oSender:oFormaPago:eof()
+
+            aAdd( ::aFormasdePago, { "Codigo" =>      ::oSender:oFormaPago:cCodPago,;
+                                     "Descripcion" => Rtrim( ::oSender:oFormaPago:cDesPago ),;
+                                     "lEfectivo" =>   ( ::oSender:oFormaPago:nTipPgo <= 1 ) ,;
+                                     "Imagen" =>      ::oSender:oFormaPago:nImgTpv } )
+
+            ::oSender:oFormaPago:Skip()
+
+         end while
+
+         ::oSender:oFormaPago:SetStatus()
+
+      end if
+
+   end if 
 
 Return ( Self )
 
@@ -911,130 +705,6 @@ Return ( nil )
 
 //-------------------------------------------------------------------------//
 
-METHOD StartResource() CLASS TpvCobros
-
-   local oBoton
-   local oGrupo
-   local oCarpeta
-   local oGrupoImprimir
-
-   ::oOfficeBar            := TDotNetBar():New( 0, 0, 1020, 120, ::oDlg, 1 )
-
-   ::oOfficeBar:lPaintAll  := .f.
-   ::oOfficeBar:lDisenio   := .f.
-
-   ::oOfficeBar:SetStyle( 1 )
-
-   oCarpeta                := TCarpeta():New( ::oOfficeBar, "Gestión de cobros" )
-
-   ::oGrupoCobro              := TDotNetGroup():New( oCarpeta, ( ( ::nButtonsCobro() * 60 ) + 6 ), "Formas", .f. )
-      ::CreateButtonsCobro()
-
-   if ::oSender:nTipoDocumento != documentoAlbaran
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66,   "Vales", .f. )
-                                 TDotNetButton():New( 60, oGrupo,    "Document_Money2_32",               "Liquidar vales",     1, {|| ::OnClickAnnadirVales() }, , , .f., .f., .f. )
-   end if                              
-
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 126,  "Cobro combinado", .f. )
-                                 TDotNetButton():New( 60, oGrupo,    "Money2_Add2_32",                   "Añadir cobro",       1, {|| ::OnClickAnnadirCobro() }, , , .f., .f., .f. )
-                                 TDotNetButton():New( 60, oGrupo,    "Money2_Minus_32",                  "Eliminar cobro",     2, {|| ::OnClickEliminarCobro() }, , , .f., .f., .f. )
-
-   
-   if ::oSender:nTipoDocumento != documentoAlbaran
-
-      oGrupoImprimir          := TDotNetGroup():New( oCarpeta, 186,  "Imprimir", .f. )
-                                 TDotNetButton():New( 60, oGrupoImprimir,   "Check2_Printer2_32",        "Aceptar [F6]",       1, {|| ::OnClickAceptar( exitAceptarImprimir ) }, , , .f., .f., .f. )
-                                 TDotNetButton():New( 60, oGrupoImprimir,   "package_new_printer2_32",   "Aceptar regalo",     2, {|| ::OnClickAceptar( exitAceptarRegalo ) }, , , .f., .f., .f. )
-                                 TDotNetButton():New( 60, oGrupoImprimir,   "document_text_printer2_32", "Aceptar desglosado", 3, {|| ::OnClickAceptar( exitAceptarDesglosado ) }, , , .f., .f., .f. )
-
-   else
-
-      oGrupoImprimir          := TDotNetGroup():New( oCarpeta, 66,  "Imprimir", .f. )
-                                 TDotNetButton():New( 60, oGrupoImprimir,   "Check2_Printer2_32",        "Aceptar [F6]",       1, {|| ::OnClickAceptar( exitAceptarImprimir ) }, , , .f., .f., .f. )
-   
-   end if                              
-                              
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 66,  "No imprimir", .f. ) 
-                              
-                                 TDotNetButton():New( 60, oGrupo,   "Check_32",                          "Aceptar F5]",       1, {|| ::OnClickAceptar( exitAceptar ) }, , , .f., .f., .f. )
-
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 66,  "Salida", .f. )
-                              
-                                 TDotNetButton():New( 60, oGrupo,   "End32",                             "Salida",             1, {|| ::oDlg:End() }, , , .f., .f., .f. )
-
-   ::oDlg:oTop                := ::oOfficeBar
-   
-Return .t.
-
-//-------------------------------------------------------------------------//
-
-METHOD ValidTotalesCobro() CLASS TpvCobros
-
-   ::sTotalesCobros:nCambio   := - ( ::sTotalesCobros:nTotal - ::sTotalesCobros:nEntregado - ::sTotalesCobros:nCobrado )
-
-   ::sTotalesCobros:Refresh()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD CreateButtonsCobro() CLASS TpvCobros
-
-   local n                       := 1
-   local oBoton
-   local aBigResourceFormaPago   := aBigResourceFormaPago()
-   local aPressResourceFormaPago := aPressResourceFormaPago()
-
-   if ( ::oSender:oFormaPago:Used() )
-
-      ::oSender:oFormaPago:GetStatus()
-
-      ::oSender:oFormaPago:OrdSetFocus( "nPosTpv" )
-
-      ::oSender:oFormaPago:GoTop()
-      while !::oSender:oFormaPago:eof()
-
-         oBoton                  := TDotNetButton():New( 60, ::oGrupoCobro, aBigResourceFormaPago[ Min( Max( ::oSender:oFormaPago:nImgTpv, 1 ), len( aBigResourceFormaPago ) ) ], Rtrim( ::oSender:oFormaPago:cDesPago ), n, {| oBoton | ::OnClickFormadePago( oBoton ) }, , , .f., .f., .f. )
-         oBoton:Cargo            := SButtonCobros()
-         oBoton:Cargo:cCodigo    := ::oSender:oFormaPago:cCodPago
-         oBoton:Cargo:cTexto     := Rtrim( ::oSender:oFormaPago:cDesPago )
-         oBoton:Cargo:lEfectivo  := ::oSender:oFormaPago:nTipPgo <= 1
-
-         oBoton:lSelected        := ( n == 1 )
-
-         n++
-
-         ::oSender:oFormaPago:Skip()
-
-      end while
-
-      ::oSender:oFormaPago:SetStatus()
-
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD nButtonsCobro( oGrupo ) CLASS TpvCobros
-
-   local nButtons          := 0
-
-   if ( ::oSender:oFormaPago:Used() )
-
-      ::oSender:oFormaPago:GetStatus()
-      ::oSender:oFormaPago:OrdSetFocus( "nPosTpv" )
-
-      nButtons             := ::oSender:oFormaPago:OrdKeyCount()
-
-      ::oSender:oFormaPago:SetStatus()
-
-   end if
-
-RETURN ( nButtons )
-
-//---------------------------------------------------------------------------//
-
 METHOD OnClickFormadePago( oBoton ) CLASS TpvCobros
 
    if !Empty( ::oGrupoCobro )
@@ -1055,13 +725,25 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD CreaCobro() CLASS TpvCobros
+METHOD OnClickAnnadirCobro()
+
+   ::CreaCobro( ::nGetEntregado )
+   
+   ::oGetEntregado:cText( 0 )
+   
+   ::RefreshResource()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreaCobro( nImporte ) CLASS TpvCobros
 
    local sTipoCobro
 
    CursorWait()
 
-   if ::sTotalesCobros:nCobrado != 0
+   if nImporte != 0
 
       sTipoCobro              := STipoCobro()
 
@@ -1073,8 +755,8 @@ METHOD CreaCobro() CLASS TpvCobros
          sTipoCobro:cTexto    := oRetFld( ::oBrwFormasPago:aRow[ "Codigo" ], ::oSender:oFormaPago )
       end if
 
-      sTipoCobro:nImporte     := ::sTotalesCobros:nCobrado
-      sTipoCobro:nCambio      := Max( ::sTotalesCobros:nCambio, 0 )
+      sTipoCobro:nImporte     := nImporte
+      sTipoCobro:nCambio      := Max( ::Cambio(), 0 )
 
       sTipoCobro:AddCobro( ::aCobros )
 
@@ -1085,14 +767,15 @@ METHOD CreaCobro() CLASS TpvCobros
 Return .t.
 
 //---------------------------------------------------------------------------//
+/*
+Cargamos los pagos-------------------------------------------------------------
+*/
 
 METHOD CargaCobros( cNumeroTicket ) CLASS TpvCobros
 
    local sTipoCobro
 
-   /*
-   Cargamos los pagos----------------------------------------------------------
-   */
+   ::aCobros                     := {} 
 
    if ::oSender:oTiketCobro:Seek( cNumeroTicket )
 
@@ -1118,7 +801,6 @@ METHOD CargaCobros( cNumeroTicket ) CLASS TpvCobros
 
    /*
    Cargamos los vales----------------------------------------------------------
-   */
 
    ::oSender:oTiketCabecera:GetStatus()
    ::oSender:oTiketCabecera:OrdSetFocus( "cDocVal" )
@@ -1144,6 +826,7 @@ METHOD CargaCobros( cNumeroTicket ) CLASS TpvCobros
    end if
 
    ::oSender:oTiketCabecera:SetStatus()
+   */
 
 Return .t.
 
@@ -1186,6 +869,20 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD Entregado() CLASS TpvCobros
+
+   local sCobro   
+   local nEntregado  := 0
+   
+   for each sCobro in ::aCobros
+      nEntregado     += sCobro:nImporte
+   next 
+
+RETURN ( nEntregado )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD GuardaCobros() CLASS TpvCobros
 
    local sCobro
@@ -1195,106 +892,36 @@ METHOD GuardaCobros() CLASS TpvCobros
 
    for each sCobro in ::aCobros
 
-      if !sCobro:lVale
+      ::oSender:oTiketCobro:Append()
 
-         ::oSender:oTiketCobro:Append()
+      ::oSender:oTiketCobro:cSerTik    := cSerTik
+      ::oSender:oTiketCobro:cNumTik    := cNumTik
+      ::oSender:oTiketCobro:cSufTik    := cSufTik
 
-         ::oSender:oTiketCobro:cSerTik    := cSerTik
-         ::oSender:oTiketCobro:cNumTik    := cNumTik
-         ::oSender:oTiketCobro:cSufTik    := cSufTik
+      ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
 
-         ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
-
-         if sCobro:lCloseCobro
-            ::oSender:oTiketCobro:lCloPgo := sCobro:lCloseCobro
-            ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
-         else
-            ::oSender:oTiketCobro:lCloPgo := sCobro:lCloseCobro
-            ::oSender:oTiketCobro:cTurPgo := cCurSesion()
-         end if
-
-         ::oSender:oTiketCobro:dPgoTik    := GetSysDate()
-         ::oSender:oTiketCobro:cTimTik    := SubStr( Time(), 1, 5 )
-         ::oSender:oTiketCobro:cCodCaj    := oUser():cCaja()
-         ::oSender:oTiketCobro:cDivPgo    := cDivEmp()
-         ::oSender:oTiketCobro:nVdvPgo    := nChgDiv( cDivEmp(), ::oSender:oDivisas:cAlias )
-         ::oSender:oTiketCobro:cFpgPgo    := sCobro:cCodigo
-         ::oSender:oTiketCobro:nImpTik    := sCobro:nImporte
-         ::oSender:oTiketCobro:nDevTik    := sCobro:nCambio
-
-         ::oSender:oTiketCobro:Save()
-
+      if sCobro:lCloseCobro
+         ::oSender:oTiketCobro:lCloPgo := sCobro:lCloseCobro
+         ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
       else
-
-         ::oSender:oTiketCabecera:GetStatus()
-
-         if ::oSender:oTiketCabecera:Seek( sCobro:cNumeroVale() )
-            ::oSender:oTiketCabecera:FieldPutByName( "lLiqTik", .t. )
-            ::oSender:oTiketCabecera:FieldPutByName( "lSndDoc", .t. )
-            ::oSender:oTiketCabecera:FieldPutByName( "cValDoc", cSerTik + cNumTik + cSufTik )
-            ::oSender:oTiketCabecera:FieldPutByName( "cTurVal", cCurSesion() )
-         end if
-
-         ::oSender:oTiketCabecera:SetStatus()
-
+         ::oSender:oTiketCobro:lCloPgo := sCobro:lCloseCobro
+         ::oSender:oTiketCobro:cTurPgo := cCurSesion()
       end if
+
+      ::oSender:oTiketCobro:dPgoTik    := GetSysDate()
+      ::oSender:oTiketCobro:cTimTik    := SubStr( Time(), 1, 5 )
+      ::oSender:oTiketCobro:cCodCaj    := oUser():cCaja()
+      ::oSender:oTiketCobro:cDivPgo    := cDivEmp()
+      ::oSender:oTiketCobro:nVdvPgo    := nChgDiv( cDivEmp(), ::oSender:oDivisas:cAlias )
+      ::oSender:oTiketCobro:cFpgPgo    := sCobro:cCodigo
+      ::oSender:oTiketCobro:nImpTik    := sCobro:nImporte
+      ::oSender:oTiketCobro:nDevTik    := sCobro:nCambio
+
+      ::oSender:oTiketCobro:Save()
 
    next
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD OnClickAnnadirVales() CLASS TpvCobros
-
-   local u
-   local sTipoCobro
-
-   CursorWait()
-
-   if ::oSender:oTpvListaTicket:lVales()
-
-      for each u in ( ::oSender:oTpvListaTicket:oBrwListaTicket:Cargo )
-
-         ::oSender:oTiketCabecera:GoTo( u )
-
-         sTipoCobro           := STipoCobro()
-         sTipoCobro:lVale     := .t.
-         sTipoCobro:cTexto    := "Vale " + ::oSender:oTiketCabecera:FieldGetByName( "cSerTik" ) + "/" + ltrim( ::oSender:oTiketCabecera:FieldGetByName( "cNumTik" ) ) + "/" + ltrim( ::oSender:oTiketCabecera:FieldGetByName( "cSufTik" ) )
-         sTipoCobro:cSerie    := ::oSender:oTiketCabecera:FieldGetByName( "cSerTik" )
-         sTipoCobro:cNumero   := ::oSender:oTiketCabecera:FieldGetByName( "cNumTik" )
-         sTipoCobro:cSufijo   := ::oSender:oTiketCabecera:FieldGetByName( "cSufTik" )
-         sTipoCobro:nImporte  := ::oSender:oTiketCabecera:FieldGetByName( "nTotTik" )
-
-         sTipoCobro:AddVale( ::aCobros )
-
-      next
-
-   end if
-
-   ::oSender:oTpvListaTicket:End()
-
-   ::sTotalesCobros:nEntregado   := ::nTotal()
-
-   ::sTotalesCobros:SetCobrado()
-   ::sTotalesCobros:Recalcula()
-   ::sTotalesCobros:Refresh()
-
-   ::oBrwPago:Refresh()
-
-   CursorWE()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD nTotal() CLASS TpvCobros
-
-   local nTotal   := 0
-
-   aEval( ::aCobros, {|u| nTotal += ( u:nImporte - u:nCambio ) } )
-
-RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
@@ -1319,106 +946,6 @@ RETURN ( nTotal )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS STotalCobros
-
-   DATA  oTotal
-   DATA  oEntregado
-   DATA  oCobrado
-   DATA  oCobradoDivisa
-   DATA  oCambio
-
-   DATA  nTotal               INIT  0
-   DATA  nEntregado           INIT  0
-   DATA  nCobrado             INIT  0
-   DATA  nVale                INIT  0
-   DATA  nAnticipo            INIT  0
-   DATA  nCambio              INIT  0
-
-   METHOD lValeMayorTotal()   INLINE ( ( ::nVale <= ::nTotal ) .or. ( ::nTotal < 0 ) )
-
-   METHOD Recalcula()         INLINE ( ::nCambio   := - ( ::nTotal - ::nEntregado - ::nCobrado ) )
-
-   METHOD SetCobrado()        INLINE ( ::nCobrado  := ( ::nTotal - ::nEntregado ) )
-
-   METHOD GetTotal( sTotal )
-
-   METHOD Refresh()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD GetTotal( sTotal ) CLASS STotalCobros
-
-   ::nVale                    := 0
-   ::nAnticipo                := 0
-   ::nCambio                  := 0
-   ::nTotal                   := sTotal:nTotalDocumento
-   ::nEntregado               := sTotal:nTotalCobro()
-
-   ::nCobrado                 := ::nTotal - ::nEntregado
-
-   ::Recalcula()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Refresh() CLASS STotalCobros
-
-   ::Recalcula()
-
-   if !Empty( ::oTotal )
-      ::oTotal:Refresh()
-   end if
-
-   if !Empty( ::oEntregado )
-      ::oEntregado:Refresh()
-   end if
-
-   if !Empty( ::oCobrado )
-      ::oCobrado:Refresh()
-   end if
-
-   if !Empty( ::oCobradoDivisa )
-      ::oCobradoDivisa:Refresh()
-   end if
-
-   if !Empty( ::oCambio )
-      ::oCambio:Refresh()
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS SButtonCobros
-
-   DATA  oButton
-   DATA  oSay
-
-   DATA  cTexto               INIT ""
-   DATA  cCodigo              INIT ""
-   DATA  lEfectivo            INIT .f.
-   DATA  cBigResource         INIT ""
-   DATA  cPressResource       INIT ""
-
-END CLASS
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
