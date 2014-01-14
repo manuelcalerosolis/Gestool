@@ -3736,7 +3736,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aCCODART ] VAR aTmp[ _aCCODART ];
 			ID 		100 ;
          WHEN     ( nMode == APPD_MODE );
-         ON HELP  ( BrwArticulo( aGet[ 2 ], oGetArticulo ) );
+         ON HELP  ( BrwArticulo( aGet[ _aCCODART ], oGetArticulo ) );
          BITMAP   "LUPA" ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
          VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataCenter():Get( "CliAtp" ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
@@ -8972,7 +8972,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       if ( TDataCenter():Get( "CliAtp" ) )->( dbSeek( cCodCli ) )
          while ( ( TDataCenter():Get( "CliAtp" ) )->cCodCli == cCodCli ) .and. ( TDataCenter():Get( "CliAtp" ) )->( !eof() )
-            dbPass( dbfCliAtp, dbfTmpAtp, .t. )
+            dbPass( ( TDataCenter():Get( "CliAtp" ) ), dbfTmpAtp, .t. )
             ( TDataCenter():Get( "CliAtp" ) )->( dbSkip() )
          end while
       end if
@@ -8985,7 +8985,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       if ( TDataCenter():Get( "ClientD" ) )->( dbSeek( cCodCli ) )
          while ( ( TDataCenter():Get( "ClientD" ) )->cCodCli == cCodCli ) .and. ( TDataCenter():Get( "ClientD" ) )->( !eof() )
-            dbPass( dbfClientD, dbfTmpDoc, .t. )
+            dbPass( ( TDataCenter():Get( "ClientD" ) ), dbfTmpDoc, .t. )
             ( TDataCenter():Get( "ClientD" ) )->( dbSkip() )
          end while
       end if
