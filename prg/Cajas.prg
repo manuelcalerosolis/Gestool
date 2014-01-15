@@ -295,6 +295,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
 
       aTmp[ ( dbfCajT )->( FieldPos( "cPrnWin" ) ) ]     := PrnGetName()
       aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ]     := PrnGetName()
+      aTmp[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ]    := PrnGetName()
 
       aTmp[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ]     := 1
@@ -402,6 +403,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       TBtnBmp():ReDefine( 151, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
+
+      /*
+      Impresora de entrega de nota
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ] ;
+         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ] ;
+         ID       180 ;
+         OF       oFld:aDialogs[1]
+
+      TBtnBmp():ReDefine( 181, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ] ) }, oFld:aDialogs[1], .f., , .f.,  )
 
       REDEFINE BUTTON ;
 			ID 		500 ;
@@ -2247,6 +2260,7 @@ Function aItmCaja()
    aAdd( aBase, { "lPrnCie",   "L",  1,   0, "Lógico impresora normal arqueos ciegos" } )
    aAdd( aBase, { "cPrnCie",   "C",  3,   0, "Formato para arqueos ciegos" } )
    aAdd( aBase, { "nCopCie",   "N",  2,   0, "Copias para arqueos ciegos" } )
+   aAdd( aBase, { "cPrnNota",  "C",  250, 0, "Impresora de entregas de notas" } )
 
 Return ( aBase )
 
@@ -2896,9 +2910,17 @@ Function cPrinterEntrega( cCodCaj, dbfCajT )
    if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
 
       if ( dbfCajT )->lPrnEnt
+
          cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
+
       else
-         cPrn     := Rtrim( ( dbfCajT )->cWinTik )
+         
+         if !Empty( ( dbfCajT )->cPrnNota )
+            cPrn  := Rtrim( ( dbfCajT )->cPrnNota )
+         else
+            cPrn  := Rtrim( ( dbfCajT )->cWinTik )
+         end if
+
       endif
 
    end if
