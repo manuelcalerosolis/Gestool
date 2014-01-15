@@ -690,7 +690,7 @@ METHOD CreaCobro( nImporte ) CLASS TpvCobros
       sTipoCobro:cCodigo      := cCodigo
       sTipoCobro:cTexto       := oRetFld( cCodigo, ::oSender:oFormaPago )
       sTipoCobro:nImporte     := nImporte
-      sTipoCobro:nCambio      := Max( ::Cambio(), 0 )
+      sTipoCobro:nCambio      := abs( ::Total() - ::Entregado() - nImporte )
 
       sTipoCobro:AddCobro( ::aCobros )
 

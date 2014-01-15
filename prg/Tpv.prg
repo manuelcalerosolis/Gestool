@@ -17952,7 +17952,7 @@ function aPgoTik()
    aAdd( aPgoTik, { "cTimTik",  "C",      5,     0, "Hora del pago"              } )
    aAdd( aPgoTik, { "cFpgPgo",  "C",      2,     0, "Forma de pago del recibo"   } )
    aAdd( aPgoTik, { "nImpTik",  "N",     16,     6, "Importe del pago"           } )
-   aAdd( aPgoTik, { "nDevTik",  "N",     16,     6, "Importe de la devolución"   } )
+   aAdd( aPgoTik, { "nDevTik",  "N",     16,     6, "Importe del cambio"         } ) // la vuelta
    aAdd( aPgoTik, { "cPgdPor",  "C",     50,     0, "Pagado por"                 } )
    aAdd( aPgoTik, { "cDivPgo",  "C",      3,     0, "Divisa de pago"             } )
    aAdd( aPgoTik, { "nVdvPgo",  "N",     16,     6, "Valor de la divisa"         } )

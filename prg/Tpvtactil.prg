@@ -412,8 +412,13 @@ CLASS TpvTactil
       METHOD EndResource()
       METHOD PaintResource()
 
-      METHOD DisableDialog()           INLINE ( ::lValidResource := .f., ::oDlg:Disable() )
-      METHOD EnableDialog()            INLINE ( ::lValidResource := .t., ::oDlg:Enable() )
+      METHOD DisableDialog()           INLINE ( ::lValidResource := .f.,;
+                                                aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Disable(), ) } ),;
+                                                SysRefresh() )
+
+      METHOD EnableDialog()            INLINE ( ::lValidResource := .t.,;
+                                                aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Enable(), ) } ),;
+                                                SysRefresh() )
 
    METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
 
@@ -715,12 +720,16 @@ CLASS TpvTactil
 
    INLINE METHOD OnClickIniciarSesion()
 
+      ::DisableDialog()
+
       if ::oTurno:OpenFiles()
          ::oTurno:lNowOpen( oWnd() )
          ::oTurno:CloseFiles()
       end if
 
       ::SetInfo()
+
+      ::EnableDialog()
 
       RETURN ( Self )
 
@@ -730,9 +739,13 @@ CLASS TpvTactil
 
    INLINE METHOD OnClickComensales()
 
+      ::DisableDialog()
+
       ::oTiketCabecera:nNumCom         := nVirtualNumKey( "Users1_32", "Número comensales", ::oTiketCabecera:nNumCom )
 
       ::TotalTemporal()
+
+      ::EnableDialog()
 
       RETURN ( .t. )
 
@@ -1086,7 +1099,7 @@ CLASS TpvTactil
       end if
 
       if !Empty( ::oTotalTicket )
-         ::oTotalTicket:SetText( ::oTpvCobros:Cambio() )
+         ::oTotalTicket:SetText( abs( ::oTpvCobros:Cambio() ) )
       end if
 
       RETURN ( Self )
@@ -3676,11 +3689,9 @@ METHOD EndResource() CLASS TpvTactil
    end if
 
    if !::lKillResource
-
       if ( !::lEmptyDocumento() .or. ::lAlone )
          lEnd           := ApoloMsgNoYes( "¿ Desea salir del TPV táctil ?", "Atención", .t. )
       end if
-
    end if
 
 Return ( lEnd )
@@ -4719,13 +4730,14 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
             ::oTemporalLinea:cOrdOrd == ::oArticulo:cOrdOrd                .and. ;
+            ::oTemporalLinea:nUntTil > 0                                   .and. ;
             ::nUnidades > 0
 
             /*
             Sumamos------------------------------------------------------------
             */
 
-            ::SumarUnidades()
+            ::SumarUnidades( ::nUnidades )
 
             /*
             Tomamos el valor de retorno y saliendo-----------------------------
@@ -5723,6 +5735,8 @@ METHOD OnClickUsuarios() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::DisableDialog()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -5744,6 +5758,8 @@ METHOD OnClickUsuarios() CLASS TpvTactil
       end if
 
    end if
+
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -6153,7 +6169,7 @@ METHOD OnClickCobro() CLASS TpvTactil
       Return .f.
    end if
 
-   ::oDlg:Enable()
+   ::DisableDialog()
 
    ::nTipoDocumento := documentoTicket
 
@@ -6235,7 +6251,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
    end if
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
 Return .t.
 
@@ -6246,22 +6262,18 @@ METHOD OnClickAlbaran() CLASS TpvTactil
    local lOpenCaj    := .f.
 
    if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
-
       MsgStop( "No puede almacenar un documento sin línea" )
-
       Return .f.
-
    end if 
 
    if Empty( ::oTiketCabecera:cCliTik )
-
       MsgStop( "Para generar un albarán necesita seleccionar un cliente.", "Información" )
-
       Return .f.
-
    end if
 
    ::nTipoDocumento := documentoAlbaran
+
+   ::DisableDialog()
 
    if ::oTpvCobros:lCobro()
 
@@ -6362,6 +6374,8 @@ METHOD OnClickAlbaran() CLASS TpvTactil
 
    end if   
 
+   ::EnableDialog()
+
 Return .t.
 
 //---------------------------------------------------------------------------//
@@ -6407,6 +6421,8 @@ METHOD OnClickPendientes() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::DisableDialog()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -6426,6 +6442,8 @@ METHOD OnClickPendientes() CLASS TpvTactil
       end if
 
    end if
+
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -6480,6 +6498,8 @@ METHOD OnClickLista() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::DisableDialog()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -6489,16 +6509,14 @@ METHOD OnClickLista() CLASS TpvTactil
       ::oTiketCabecera:Cancel()
 
       if ::oTpvListaTicket:lResource() .and. !Empty( ::oTpvListaTicket:cSelectedTicket() )
-
          ::CargaDocumento( ::oTpvListaTicket:cSelectedTicket() )
-
       else
-
          ::InitDocumento()
-
       end if
 
    end if
+
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -6530,6 +6548,8 @@ METHOD OnClickEntrega() CLASS TpvTactil
       Return ( .t. )
    end if
 
+   ::EnableDialog()
+
    /*
    Guarda documento------------------------------------------------------------
    */
@@ -6541,6 +6561,8 @@ METHOD OnClickEntrega() CLASS TpvTactil
    */
 
    ::ImprimeEntrega()
+
+   ::DisableDialog()
 
 RETURN ( Self )
 
@@ -6589,6 +6611,8 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::EnableDialog()
+
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -6610,6 +6634,8 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
       ::SetInfo()
 
    end if
+
+   ::DisableDialog()
 
    RECOVER USING oError
 
@@ -6787,7 +6813,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
 
    CursorWait()
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    n                                      := 1
    cSerAlb                                := ::oTiketCabecera:cSerTik //cNewSer( "NALBCLI", ::oContadores:cAlias )
@@ -6933,7 +6959,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    Dialogo se vuelve a habilitar para volcer al trabajo------------------------
    */
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    CursorWE()
 
@@ -6945,7 +6971,7 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
    CursorWait()
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    //::oTpvCobros:InitCobros()
 
@@ -7003,7 +7029,7 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
    Dialogo se vuelve a habilitar para volcer al trabajo------------------------
    */
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    CursorWE()
 
@@ -7015,7 +7041,7 @@ METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
 
    CursorWait()
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    if ::oTiketCabecera:Seek( cNumeroTicket )
       ::oTiketCabecera:Delete()
@@ -7025,7 +7051,7 @@ METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
       ::oTiketLinea:Delete(.f.)
    end while
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    CursorWE()
 
@@ -7205,7 +7231,6 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
    DEFAULT nSelectOption   := ubiSala
 
-
    /*
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
@@ -7370,7 +7395,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oDlg:Disable()
+   ::EnableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7413,7 +7438,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
 
    end if
 
-   ::oDlg:Enable()
+   ::DisableDialog()
 
    RECOVER USING oError
 
@@ -7468,7 +7493,7 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7511,7 +7536,7 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
 
    end if
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -7566,7 +7591,7 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7615,7 +7640,7 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
 
    ::SetInfo()
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -7670,7 +7695,7 @@ METHOD OnClickEncargar() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7719,7 +7744,7 @@ METHOD OnClickEncargar() CLASS TpvTactil
 
    ::SetInfo()
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -7752,7 +7777,7 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    if ::lEmptyNumeroTicket()
 
@@ -7812,7 +7837,7 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
 
    end if
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -8109,15 +8134,17 @@ Return ( Self )
 
 METHOD OnClickCopiaComanda() CLASS TpvTactil
 
+   ::DisableDialog()
+
    /*
    Comprobamos si tenemos que imprimir la comanda------------------------------
    */
 
    if !::lEmptyNumeroTicket()
-
       ::ProcesaComandas( .t. )
-
    end if 
+
+   ::EnableDialog()
 
 Return ( Self )
 
@@ -8141,6 +8168,8 @@ METHOD OnClickGuardar() CLASS TpvTactil
       Return ( .t. )
    end if
 
+   ::DisableDialog()
+
    ::GuardaDocumento( .f. )
 
    /*
@@ -8148,6 +8177,8 @@ METHOD OnClickGuardar() CLASS TpvTactil
    */
 
    ::ProcesaComandas( .f. )
+
+   ::EnableDialog()
 
 Return ( Self )
 
@@ -8741,7 +8772,7 @@ METHOD GeneraVale() CLASS TpvTactil
       Return ( .f. )
    end if
 
-   ::oDlg:Disable()
+   ::DisableDialog()
 
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -8807,7 +8838,7 @@ METHOD GeneraVale() CLASS TpvTactil
 
    ErrorBlock( oBlock )
 
-   ::oDlg:Enable()
+   ::EnableDialog()
 
 Return ( Self )
 
@@ -8842,6 +8873,8 @@ METHOD OnclickDividirMesa() Class TpvTactil
    if !::lInitCheckDividirMesas()
       Return .f.
    end if
+
+   ::DisableDialog()
 
    /*
    Rellenamos la temporal oiginal----------------------------------------------
@@ -8985,6 +9018,8 @@ METHOD OnclickDividirMesa() Class TpvTactil
    end if
 
    ::oOfficeBarDividirMesas      := nil
+
+   ::EnableDialog()
 
 Return ( Self )
 

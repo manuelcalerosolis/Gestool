@@ -3239,6 +3239,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ::cCajTur      := cCurUsr()
       end if
 
+      ::oDbf:FieldPutByName( "dCloTur", GetSysDate() )
+      ::oDbf:FieldPutByName( "cHorClo", Substr( Time(), 1, 5 ) )
+
    end if
 
    if Empty( ::cCodCaj ) 
