@@ -14572,29 +14572,32 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 119, 37, 30, 11
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 119, 50, 277, 11
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 119, 50, 276, 11
   CONTROL "No incluir en sesiones", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 119, 64, 84, 10
   CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 119, 88, 40, 11
-  CONTROL "", 131, "Edit", ES_AUTOHSCROLL|WS_BORDER, 161, 88, 235, 11
-  CONTROL "", 140, "Edit", WS_BORDER, 119, 115, 263, 11
-  CONTROL "", 141, "TBtnBmp", 0x00000000, 384, 115, 12, 11
-  CONTROL "", 150, "Edit", WS_BORDER, 119, 128, 263, 11
-  CONTROL "", 151, "TBtnBmp", 0x00000000, 384, 128, 12, 11
+  CONTROL "", 131, "Edit", ES_AUTOHSCROLL|WS_BORDER, 160, 88, 235, 11
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 119, 115, 263, 11
+  CONTROL "", 141, "TBtnBmp", 0x00000000, 383, 115, 12, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 119, 128, 263, 11
+  CONTROL "", 151, "TBtnBmp", 0x00000000, 383, 128, 12, 11
+  CONTROL "", 180, "Edit", WS_BORDER, 119, 141, 263, 11
+  CONTROL "", 181, "TBtnBmp", 0x00000000, 383, 141, 12, 11
   CONTROL "Nombre", -1, "Static", WS_GROUP, 49, 54, 41, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 40, 41, 8
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 44, 29, 355, 49
   CONTROL "Captura", -1, "Button", BS_GROUPBOX, 44, 79, 355, 23
   CONTROL "Código captura", -1, "Static", WS_GROUP, 49, 90, 49, 8
-  CONTROL "Impresoras", -1, "Button", BS_GROUPBOX, 44, 106, 355, 38
+  CONTROL "Impresoras", -1, "Button", BS_GROUPBOX, 44, 106, 355, 53
   CONTROL "Impresora", -1, "Static", WS_GROUP, 49, 118, 34, 8
   CONTROL "Impresora de tickets", -1, "Static", WS_GROUP, 49, 131, 67, 8
-  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 49, 154, 50, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 103, 154, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 154, 50, 14
-  CONTROL "", 160, "TXBrowse", 0x00200000, 49, 171, 347, 135
-  CONTROL "Impresoras de comandas", -1, "Button", BS_GROUPBOX, 44, 144, 355, 166
+  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 49, 172, 50, 14
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 103, 172, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 172, 50, 14
+  CONTROL "", 160, "TXBrowse", 0x00200000, 49, 188, 346, 118
+  CONTROL "Impresoras de comandas", -1, "Button", BS_GROUPBOX, 44, 161, 355, 151
   CONTROL "", 800, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales de la caja ", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 355, 8
+  CONTROL "Impresora de notas", -1, "Static", WS_GROUP, 49, 144, 67, 8
 }
 
 CAJAS_02 DIALOG DISCARDABLE 51, 46, 407, 331
