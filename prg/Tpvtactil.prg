@@ -2074,6 +2074,10 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::lOpenFiles               := .t.
 
+   TDataCenter():CreateView()
+
+   TDataCenter():Get( "LogPorta" )
+
    DATABASE NEW ::oTiketCabecera                            PATH ( cPatEmp() )   FILE "TIKET.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
    DATABASE NEW ::oTiketLinea                               PATH ( cPatEmp() )   FILE "TIKEL.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
@@ -2724,6 +2728,8 @@ METHOD CloseFiles() CLASS TpvTactil
    if !Empty( ::oVisor )
       ::oVisor:End()
    end if
+
+   TDataCenter():DeleteView()
 
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil
@@ -7395,7 +7401,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::EnableDialog()
+   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7438,7 +7444,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
 
    end if
 
-   ::DisableDialog()
+   ::EnableDialog()
 
    RECOVER USING oError
 

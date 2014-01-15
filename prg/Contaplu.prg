@@ -1341,6 +1341,7 @@ FUNCTION MkAsiento( 	Asien,;
       nImporte             := abs( nImporteDebe )
       nImporteDebe         := abs( nImporteHaber )
       nImporteHaber        := nImporte
+      BaseImpo             := abs( BaseImpo )
    end if
 
    /*

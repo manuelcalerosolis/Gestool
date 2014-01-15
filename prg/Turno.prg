@@ -2202,8 +2202,6 @@ Method lAllCloseTurno()
 
       ::oDbf:Load()
 
-      ::oDbf:dCloTur       := ::dFecTur
-      ::oDbf:cHorClo       := ::cHorTur
       ::oDbf:cCajTur       := ::cCajTur
 
       ::oDbf:lSndTur       := .t.
@@ -4223,6 +4221,9 @@ Method InitDlgImprimir()
                      oSubTree:Add( "Albaranes de proveedores" )
                      oSubTree:Add( "Facturas de proveedores" )
                      oSubTree:Add( "Facturas rectificativas de proveedores" )
+
+   oSubTree       := ::oTreeImpresion:Add( "Incidencias" )
+                     oSubTree:Add( "Tickets lineas borradas" )
 
    oSubTree       := ::oTreeImpresion:Add( "Liquidaciones" )
                      oSubTree:Add( "Vales liquidados de clientes" )
@@ -9031,6 +9032,49 @@ METHOD FillTemporal( cCodCaj )
       ::oTikT:OrdSetFocus( "cTurTik" )
 
    end if
+
+   /*
+   Tickets de clientes lineas borradas-----------------------------------------
+   */
+
+   if ::GetItemCheckState( "Tickets lineas borradas" )
+
+      if ::oTikT:Seek( cTurnoCaja )
+
+         while ::oTikT:cTurTik + ::oTikT:cSufTik + ::oTikT:cNcjTik == cTurnoCaja .and. !::oTikT:eof()
+
+            if ::oTikT:cTipTik == SAVTIK
+
+               if ::oTikL:Seek( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
+
+                  while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
+
+                     if ::oTikL:lDelTil 
+
+                        ::AppendInTemporal( nil, ::oTikT:cSerTik + "/"+ alltrim( ::oTikT:cNumTik ) + "/" + alltrim( ::oTikT:cSufTik ) + space( 1 ) + rtrim( ::oTikL:cCbaTil ) + space( 1 ) + rtrim( ::oTikL:cNomTil ), nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
+
+                     end if 
+
+                     ::oTikL:Skip()
+
+                     SysRefresh()
+
+                  end while
+
+               end if
+
+            end if
+
+            ::oTikT:Skip()
+
+            SysRefresh()
+
+         end while
+
+      end if
+
+   end if
+
 
    /*
    Anticipos liquidados de clientes--------------------------------------------

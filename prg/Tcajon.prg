@@ -77,7 +77,7 @@ METHOD Create( cCodCaj )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    if dbfCajPorta != nil
       ( dbfCajPorta )->( dbCloseArea() )
    end if
@@ -144,28 +144,21 @@ METHOD LogCajon()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if IsLogPorta()
+   if !Empty( TDataCenter():Get( "LogPorta") )
 
-      USE ( cPatEmp() + "LOGPORTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "LOGPORTA", @dbfLogPorta ) )
-      SET ADSINDEX TO ( cPatEmp() + "LOGPORTA.CDX" ) ADDITIVE
+      ( TDataCenter():Get( "LogPorta" ) )->( dbAppend() )
 
-      ( dbfLogPorta )->( dbAppend() )
+      ( TDataCenter():Get( "LogPorta" ) )->cNumTur   := cCurSesion()
+      ( TDataCenter():Get( "LogPorta" ) )->cSufTur   := RetSufEmp()
+      ( TDataCenter():Get( "LogPorta" ) )->cCodUse   := cCurUsr()
+      ( TDataCenter():Get( "LogPorta" ) )->dFecApt   := GetSysDate()
+      ( TDataCenter():Get( "LogPorta" ) )->cHorApt   := Substr( Time(), 1, 5 )
 
-      ( dbfLogPorta )->cNumTur   := cCurSesion()
-      ( dbfLogPorta )->cSufTur   := RetSufEmp()
-      ( dbfLogPorta )->cCodUse   := cCurUsr()
-      ( dbfLogPorta )->dFecApt   := GetSysDate()
-      ( dbfLogPorta )->cHorApt   := Substr( Time(), 1, 5 )
-
-      ( dbfLogPorta )->( dbUnLock() )
-
-      CLOSE ( dbfLogPorta )
+      ( TDataCenter():Get( "LogPorta" ) )->( dbUnLock() )
 
    end if
 
    RECOVER USING oError
-
-      CLOSE ( dbfLogPorta )
 
       msgStop( "Imposible abrir bases de datos log de cajón portamonedas" + CRLF + ErrorMessage( oError ) )
 
