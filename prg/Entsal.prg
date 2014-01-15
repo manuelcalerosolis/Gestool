@@ -26,7 +26,6 @@
 static oWndBrw
 static dbfEntT
 static dbfDivisa
-static dbfCajT
 
 static cPorDiv
 static oBandera
@@ -327,14 +326,15 @@ STATIC FUNCTION OpenFiles()
 		mkEntSal()
 	END IF
 
+   TDataCenter():CreateView()
+
+   TDataCenter():Get( "LogPorta" )
+
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDivisa ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
-   SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
    USE ( cPatDat() + "USERS.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "USERS", @dbfUser ) )
    SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
@@ -367,13 +367,13 @@ STATIC FUNCTION CloseFiles()
 
    CLOSE ( dbfEntT   )
    CLOSE ( dbfDivisa )
-   CLOSE ( dbfCajT   )
    CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
 
+   TDataCenter():DeleteView()
+
    dbfEntT     := nil
    dbfDivisa   := nil
-   dbfCajT     := nil
    dbfUser     := nil
    dbfCaj      := nil
 
@@ -499,7 +499,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
          WHEN     ( lUsrMaster() .and. nMode != ZOOM_MODE ) ;
-         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oSay ) ;
+         VALID    cCajas( aGet[ _CCODCAJ ], dbfCaj, oSay ) ;
          ID       150 ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oSay ) ) ;

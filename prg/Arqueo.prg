@@ -88,6 +88,10 @@ STATIC FUNCTION OpenFiles( lZoom )
 
    BEGIN SEQUENCE
 
+   TDataCenter():CreateView()
+
+   TDataCenter():Get( "LogPorta" )
+
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
    SET TAG TO "CTURENT"
@@ -233,6 +237,8 @@ STATIC FUNCTION CloseFiles( lDel )
 
    oTurno:CloseFiles()
    oTurno:end()
+
+   TDataCenter():DeleteView()
 
    dbfTikT     := NIL
    dbfTikL     := NIL
@@ -1807,7 +1813,7 @@ STATIC FUNCTION PrnArqueo( lPrev )
 	oPrn:End()
 
 	/*
-	Apertura de Cajón
+	Apertura de Cajón-----------------------------------------------------------
 	*/
 
    oUser():OpenCajon() //OpnCaj()

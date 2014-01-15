@@ -361,6 +361,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
    BEGIN SEQUENCE
 
+   TDataCenter():CreateView()
+
+   TDataCenter():Get( "LogPorta" )
+
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
@@ -570,6 +574,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oStock )
       oStock:end()
    end if
+
+   TDataCenter():DeleteView()
 
    dbfIva      := nil
    dbfFPago    := nil

@@ -18,13 +18,14 @@ CLASS TCajon
    DATA  nBitsParidad
    DATA  nDriver
    DATA  cPrinter
-   DATA  cApertura         INIT ""
+   DATA  cApertura                  INIT ""
 
    Method Create()   CONSTRUCTOR
 
    Method New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, cApertura )
 
    Method Open()
+   Method OpenTest()                INLINE ( ::Open( .f. ) )
 
    Method End()      VIRTUAL
 
@@ -112,7 +113,9 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-METHOD Open()
+METHOD Open( lLog )
+
+   DEFAULT lLog   := .t.
 
    if ::nDriver != 2
 
@@ -129,7 +132,9 @@ METHOD Open()
 
    end if
 
-   ::LogCajon()
+   if lLog
+      ::LogCajon()
+   end if 
 
 RETURN ( Self )
 

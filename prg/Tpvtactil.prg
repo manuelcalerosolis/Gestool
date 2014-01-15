@@ -5738,10 +5738,10 @@ METHOD OnClickUsuarios() CLASS TpvTactil
       lGuardaDocumento     := .f.
    end if
 
+   ::DisableDialog()
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -5765,8 +5765,6 @@ METHOD OnClickUsuarios() CLASS TpvTactil
 
    end if
 
-   ::EnableDialog()
-
    RECOVER USING oError
 
       msgStop( "Error al montar la salas de venta" + CRLF + ErrorMessage( oError ) )
@@ -5774,6 +5772,8 @@ METHOD OnClickUsuarios() CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return ( .t. )
 
@@ -6449,8 +6449,6 @@ METHOD OnClickPendientes() CLASS TpvTactil
 
    end if
 
-   ::EnableDialog()
-
    RECOVER USING oError
 
       msgStop( "Error al montar la lista de tickets pendientes" + CRLF + ErrorMessage( oError ) )
@@ -6458,6 +6456,8 @@ METHOD OnClickPendientes() CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return .t.
 
@@ -6501,10 +6501,10 @@ METHOD OnClickLista() CLASS TpvTactil
       lGuardaDocumento     := .f.
    end if
 
+   ::DisableDialog()
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -6522,8 +6522,6 @@ METHOD OnClickLista() CLASS TpvTactil
 
    end if
 
-   ::EnableDialog()
-
    RECOVER USING oError
 
       msgStop( "Error al montar la lista de tickets" + CRLF + ErrorMessage( oError ) )
@@ -6531,6 +6529,8 @@ METHOD OnClickLista() CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return .t.
 
@@ -6554,7 +6554,7 @@ METHOD OnClickEntrega() CLASS TpvTactil
       Return ( .t. )
    end if
 
-   ::EnableDialog()
+   ::DisableDialog()
 
    /*
    Guarda documento------------------------------------------------------------
@@ -6568,7 +6568,7 @@ METHOD OnClickEntrega() CLASS TpvTactil
 
    ::ImprimeEntrega()
 
-   ::DisableDialog()
+   ::EnableDialog()
 
 RETURN ( Self )
 
@@ -6614,10 +6614,10 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
       lGuardaDocumento     := .f.
    end if
 
+   ::DisableDialog()
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   ::EnableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -6641,8 +6641,6 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
 
    end if
 
-   ::DisableDialog()
-
    RECOVER USING oError
 
       msgStop( "Error al cerrar sesión" + CRLF + ErrorMessage( oError ) )
@@ -6650,6 +6648,8 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return .t.
 
@@ -7268,10 +7268,10 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
       lGuardaDocumento     := .f.
    end if
 
+   ::DisableDialog()
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7346,8 +7346,6 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
    end if
 
-   ::EnableDialog()
-
    RECOVER USING oError
 
       msgStop( "Error al montar la salas de venta" + CRLF + ErrorMessage( oError ) )
@@ -7355,6 +7353,8 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return ( lReturn )
 
@@ -7398,10 +7398,10 @@ METHOD OnClickGeneral() CLASS TpvTactil
       lGuardaDocumento     := .f.
    end if
 
+   ::DisableDialog()
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   ::DisableDialog()
 
    /*
    Guarda la venta actual------------------------------------------------------
@@ -7444,8 +7444,6 @@ METHOD OnClickGeneral() CLASS TpvTactil
 
    end if
 
-   ::EnableDialog()
-
    RECOVER USING oError
 
       msgStop( "Error al montar abrir la ubicación general" + CRLF + ErrorMessage( oError ) )
@@ -7453,6 +7451,8 @@ METHOD OnClickGeneral() CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   ::EnableDialog()
 
 Return ( lReturn )
 
@@ -8779,7 +8779,7 @@ METHOD GeneraVale() CLASS TpvTactil
    end if
 
    ::DisableDialog()
-
+   
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 

@@ -3410,7 +3410,7 @@ Function SelectCajas()
 
       ChkTurno()
 
-      SetKey( VK_F12, {|| oUser():OpenCajon() } )
+      SetKey( VK_F12, {|| oUser():OpenCajonTest() } )
 
    else
 
@@ -3438,7 +3438,7 @@ Function SelectCajon()
       oUser():oCajon      := TCajon():Create( cCajonEnCaja( oUser():cCaja(), dbfCajT ) )
    end if
 
-   SetKey( VK_F12, {|| oUser():OpenCajon() } )
+   SetKey( VK_F12, {|| oUser():OpenCajonTest() } )
 
    CloseFiles()
 
