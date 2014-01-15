@@ -202,8 +202,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  87
 #define _NPRODUC                  88
 #define _DFECCAD                  89
-#define _DFECULTCOM 			  90	
-
+#define _DFECULTCOM 			  		 90	
+#define _LFROMATP						 91
 /*
 Array para impuestos
 */
@@ -13709,6 +13709,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "nProduc",   "N",    1,  0, "Lógico de producido",              "",                  "", "( cDbfCol )", .f. } )
    aAdd( aColPedCli, { "dFecCad",   "D",    8,  0, "Fecha de caducidad",               "",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "dFecUltCom","D",    8,  0, "Fecha ultima venta",               "",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 											"",          			"", "( cDbfCol )", .f. } )
 
 return ( aColPedCli )
 
@@ -14340,17 +14341,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
          end if
       end if
 
-      if ( dbfTmpLin )->nUniCaja == 0
-
-      	if Empty( ( dbfTmpLin )->cRef ) 	.or.;
-         	( dbfTmpLin )->lControl 		.or.;
-         	( dbfTmpLin )->lTotLin
-
-         	dbPass( dbfTmpLin, dbfPedCliL, .t., cSerPed, nNumPed, cSufPed )
-
-        end if
-
-      else
+      if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
       	dbPass( dbfTmpLin, dbfPedCliL, .t., cSerPed, nNumPed, cSufPed )
 
@@ -14358,11 +14349,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
       ( dbfTmpLin )->( dbSkip() )
 
-   #ifndef __PDA__
-      if !( "PDA" $ cParamsMain() )
-         oMsgProgress():Deltapos(1)
-      end if
-   #endif
+      oMsgProgress():Deltapos(1)
 
    end while
 
@@ -16025,6 +16012,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    if !NetErr()
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
@@ -16102,12 +16092,14 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
             ( dbfPedCliL )->( dbRUnLock() )
          end if
          dbPass( dbfPedCliL, dbfTmpLin )
-			( dbfPedCliL )->( DbSkip() )
+
+			( dbfPedCliL )->( dbSkip() )
 
       end while
 
    end if
 
+	( dbfTmpLin )->( OrdSetFocus( "Recno" ) )
    ( dbfTmpLin )->( dbGoTop() )
 
    /*
@@ -19203,6 +19195,8 @@ Static Function CargaAtipicasCliente( aTmpPed, oBrwLin )
 		  			AppendDatosAtipicas( aTmpPed )
 
 		  			AppendDatosArticulos()
+
+		  			( dbfTmpLin )->lFromAtp 		:= .t.
 
 		  			( dbfTmpLin )->nPreDiv  		:= nPrecioAtipica( aTmpPed[ _NTARIFA ], aTmpPed[ _LIVAINC ], dbfCliAtp )
 
