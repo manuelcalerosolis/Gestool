@@ -358,7 +358,6 @@ STATIC FUNCTION OpenFiles( lExt )
    lExternal            := lExt
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
    BEGIN SEQUENCE
 
    TDataCenter():CreateView()

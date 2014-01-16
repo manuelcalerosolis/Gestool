@@ -306,21 +306,21 @@ STATIC FUNCTION OpenFiles( lExt )
    DEFAULT  lExt        := .f.
 
    lExternal            := lExt
-
+/*
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
       DisableAcceso()
 
       TDataCenter():CreateView()
 
       lOpenFiles           := .t.
 
+      TDataCenter():Get( "Client" )
+
       TDataCenter():Get( "TIva" )
 
       TDataCenter():Get( "Divisas" )
-
-      TDataCenter():Get( "Client" )
 
       TDataCenter():Get( "ClientD" )
 
@@ -329,8 +329,6 @@ STATIC FUNCTION OpenFiles( lExt )
       // USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       // SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      // USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      // SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
       /*
       Documentos asociados al cliente---------------------------------------------
@@ -345,6 +343,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       //USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
       //SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
+
+      // USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+      // SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
       /*
       Apertura de fichero de Obras------------------------------------------------
@@ -390,9 +391,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
-
-      // USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      // SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
@@ -491,7 +489,7 @@ STATIC FUNCTION OpenFiles( lExt )
       LoaIniCli( cPatEmp() )
 
       EnableAcceso()
-
+/*
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -503,7 +501,7 @@ STATIC FUNCTION OpenFiles( lExt )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    if !lOpenFiles
       CloseFiles()
    end if
@@ -7898,7 +7896,7 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( __dbPack() )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodCli", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
@@ -9479,8 +9477,9 @@ if !Empty( dbfTmpBnc )
    oMsgText( "Eliminanado bancos anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpBnc )->( LastRec() ) )
 
-   while ( dbfBanco )->( dbSeek( aTmp[ _COD ] ) )
+   while ( dbfBanco )->( dbSeek( aTmp[ _COD ] ) ) .and. !( dbfBanco )->( eof() )
       dbDel( dbfBanco )
+      msgAlert( (dbfBanco)->( ordkeyno()), "Recno")
       oMsgProgress():DeltaPos( 1 )
    end while
 

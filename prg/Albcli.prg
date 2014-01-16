@@ -520,8 +520,6 @@ STATIC FUNCTION OpenFiles()
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      // DisableAcceso()
-
       lOpenFiles        := .t.
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
@@ -552,10 +550,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "PreCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliD", @dbfPreCliD ) )
       SET ADSINDEX TO ( cPatEmp() + "PreCliD.CDX" ) ADDITIVE
 
-      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
-         lOpenFiles        := .f.
-      end if
-
       USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
@@ -567,10 +561,6 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatEmp() + "SatCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliS", @dbfSatCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliS.CDX" ) ADDITIVE
-
-      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
-         lOpenFiles     := .f.
-      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -782,17 +772,33 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oBandera             := TBandera():New()
-
-      oStock               := TStock():Create( cPatGrp() )
-      if !oStock:lOpenFiles()
+      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
          lOpenFiles        := .f.
       end if
 
-      oGrpCli           := TGrpCli():Create( cPatCli() )
-      if !oGrpCli:OpenFiles()
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      end if 
+
+      oBandera          := TBandera():New()
+
+      oStock               := TStock():Create( cPatGrp() )
+      if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if
+
+      oGrpCli           := TGrpCli():Create( cPatCli() )
+      if !oGrpCli:OpenService()
+         lOpenFiles     := .f.
+      end if
+
+      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
+         lOpenFiles        := .f.
+      end if
+
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      end if 
 
       oNewImp           := TNewImp():Create( cPatEmp() )
       if !oNewImp:OpenFiles()
@@ -1494,6 +1500,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    end if
 
    if !OpenFiles()
+      ? "salgo por aki"
       return .f.
    end if
 

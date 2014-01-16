@@ -2043,12 +2043,12 @@ return ( nNum )
 
 Function dbDel( cAlias )
 
-   if dbLock( cAlias )
+   if dbDialogLock( cAlias )
       ( cAlias )->( dbDelete() )
       ( cAlias )->( dbUnLock() )
    end if
 
-   ( cAlias )->( dbSkip( 0 ) )
+   // ( cAlias )->( dbSkip( 0 ) )
 
    /*
    if ( cAlias )->( Eof() )

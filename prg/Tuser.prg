@@ -46,7 +46,7 @@ CLASS TUser
    Method   cImagen( cNewVal )         INLINE if( cNewVal != nil, ::_Imagen := cNewVal, ::_Imagen )
 
    Data     _SelectorFamilia           INIT .f.
-   Method   lSelectorFamilia( lNewVal )INLINE if( lNewVal != nil, ::_SelectorFamilia := lNewVal, ::_SelectorFamilia )
+   Method   lSelectorFamilia( lNewVal )INLINE if( isLogic( lNewVal ), ::_SelectorFamilia := lNewVal, ::_SelectorFamilia )
 
    Data     _GrupoUsuario              INIT 1
    Method   nGrupoUsuario( nNewVal )   INLINE if( nNewVal != nil, ::_GrupoUsuario := nNewVal, ::_GrupoUsuario )
@@ -55,30 +55,30 @@ CLASS TUser
    Method   nHandle( nNewVal )         INLINE if( nNewVal != nil, ::_Handle := nNewVal, ::_Handle )
 
    Data     _Master                    INIT .f.
-   Method   lMaster( lNewVal )         INLINE if( lNewVal != nil, ::_Master := lNewVal, ::_Master )
+   Method   lMaster( lNewVal )         INLINE if( isLogic( lNewVal ), ::_Master := lNewVal, ::_Master )
 
    Data     _Administrador             INIT .f.
-   Method   lAdministrador( lNewVal )  INLINE if( lNewVal != nil, ::_Administrador := lNewVal, ::_Administrador )
+   Method   lAdministrador( lNewVal )  INLINE if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )
 
    Data     _NotBitmap                 INIT .f.
    Method   lNotBitmap( lNewVal )
 
    Data     _NotBitmapGrupo
-   Method   lNotBitmapGrupo( lNewVal )    INLINE ( if( lNewVal != nil, ::_NotBitmapGrupo := lNewVal, ::_NotBitmapGrupo ) )
+   Method   lNotBitmapGrupo( lNewVal )    INLINE ( if( isLogic( lNewVal ), ::_NotBitmapGrupo := lNewVal, ::_NotBitmapGrupo ) )
 
    Data     _NotCambiarPrecio             INIT .f.
    Method   lNotCambiarPrecio( lNewVal )
    Method   lCambiarPrecio()              INLINE ( !::lNotCambiarPrecio() )
 
    Data     _NotCambiarPrecioGrupo
-   Method   lNotCambiarPrecioGrupo( lNewVal )   INLINE if( lNewVal != nil, ::_NotCambiarPrecioGrupo := lNewVal, ::_NotCambiarPrecioGrupo )
+   Method   lNotCambiarPrecioGrupo( lNewVal )   INLINE if( isLogic( lNewVal ), ::_NotCambiarPrecioGrupo := lNewVal, ::_NotCambiarPrecioGrupo )
    Method   lCambiarPrecioGrupo()               INLINE ( !::_NotCambiarPrecioGrupo )
 
    Data     _NotRentabilidad           INIT .f.
    Method   lNotRentabilidad( lNewVal )
 
    Data     _NotRentabilidadGrupo
-   Method   lNotRentabilidadGrupo( lNewVal ) INLINE if( lNewVal != nil, ::_NotRentabilidadGrupo := lNewVal, ::_NotRentabilidadGrupo )
+   Method   lNotRentabilidadGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotRentabilidadGrupo := lNewVal, ::_NotRentabilidadGrupo )
 
    Data     _NotInicio                 INIT .f.
    Method   lNotInicio( lNewVal )
@@ -93,16 +93,16 @@ CLASS TUser
    Method   lNoOpenCajon( cNewVal )    INLINE if( cNewVal != nil, ::_lNoOpenCajon := cNewVal, ::_lNoOpenCajon )
 
    Data     _NotInicioGrupo
-   Method   lNotInicioGrupo( lNewVal ) INLINE if( lNewVal != nil, ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
+   Method   lNotInicioGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
 
-   Data     _FiltroVentas              INIT .f.
-   Method   lFiltroVentas( lNewVal )   INLINE if( lNewVal != nil, ::_FiltroVentas := lNewVal, ::_FiltroVentas )
+   Data     _FiltroVentas              INIT     .f.
+   Method   lFiltroVentas( lNewVal )   INLINE   ( if( isLogic( lNewVal ), ::_FiltroVentas := lNewVal, ::_FiltroVentas ) )
 
-   Data     _PcName                    INIT ""
-   Method   cPcName( cNewVal )         INLINE if( cNewVal != nil, ::_PcName := cNewVal, ::_PcName )
+   Data     _PcName                    INIT     ""
+   Method   cPcName( cNewVal )         INLINE   ( if( cNewVal != nil, ::_PcName := cNewVal, ::_PcName ) )
 
-   Data     _EnUso                     INIT .f.
-   Method   lEnUso( lNewVal )          INLINE if( lNewVal != nil, ::_EnUso := lNewVal, ::_EnUso )
+   Data     _EnUso                     INIT     .f.
+   Method   lEnUso( lNewVal )          INLINE   ( if( isLogic( lNewVal ), ::_EnUso := lNewVal, ::_EnUso ) )
 
    //------------------------------------------------------------------------//
 
@@ -276,7 +276,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
    ::_NotCostosGrupo          := nil
    ::_NotBitmapGrupo          := nil
    ::_NotInicioGrupo          := nil
-   ::_FiltroVentas            := nil
+   ::_FiltroVentas            := .f.
 
    nOrd                       := ( ::oDbf )->( OrdSetFocus( "cCodUse" ) )
 
@@ -498,7 +498,7 @@ Method MixPermisosGrupo( cCodGrp )
       ::_NotCostosGrupo             := nil
       ::_NotBitmapGrupo             := nil
       ::_NotInicioGrupo             := nil
-      ::_FiltroVentas               := nil
+      ::_FiltroVentas               := .f.
 
       if dbSeekInOrd( cCodGrp, "cCodGrp", ::oDbf )
 

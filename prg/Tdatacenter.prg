@@ -178,6 +178,9 @@ CLASS TDataCenter
    METHOD ScanDatabase( cDatabase )
    METHOD OpenDatabase( oDataTable )
 
+   METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
+   METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
+
    //---------------------------------------------------------------------------//
 
    INLINE METHOD OpenArticulo( dbf )
@@ -216,59 +219,11 @@ CLASS TDataCenter
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD oFacCliT()
-
-      local cFilter
-      local oFacCliT
-
-      DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
-
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
-
-            ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
-
-         end if
-
-      Return ( oFacCliT )   
-
-   ENDMETHOD
+   METHOD oFacCliT()
+   
+   METHOD OpenFacCliT( dbf )
 
    //------------------------------------------------------------------------//
-
-   INLINE METHOD OpenFacCliT( dbf )
-
-      local lOpen
-      local cFilter
-
-      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
-
-      lOpen             := !neterr()
-      if lOpen
-
-         // Limitaciones de cajero y cajas----------------------------------------
-
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
-
-            ( dbf )->( AdsSetAOF( cFilter ) )
-
-         end if
-
-      end if 
-
-      Return ( lOpen )   
-   
-   ENDMETHOD
 
    //---------------------------------------------------------------------------//
 
@@ -653,6 +608,58 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD oFacCliT()
+
+   local cFilter
+   local oFacCliT
+
+   DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
+
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
+
+         ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+      end if
+
+Return ( oFacCliT )   
+
+//---------------------------------------------------------------------------//
+
+METHOD OpenFacCliT( dbf )
+
+   local lOpen
+   local cFilter
+
+   USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbf ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+
+   lOpen             := !neterr()
+   if lOpen
+
+      // Limitaciones de cajero y cajas----------------------------------------
+
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+Return ( lOpen )   
+
+//---------------------------------------------------------------------------//
+   
 METHOD CreateTemporalTable( oTable )
 
    local oError
@@ -1625,6 +1632,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Divisas"
    oDataTable:cName        := cPatDat() + "Divisas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Divisas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Divisas.Cdx"
@@ -1635,6 +1643,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TIva"
    oDataTable:cName        := cPatDat() + "TIva"
    oDataTable:cDataFile    := cPatDat( .t. ) + "TIva.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TIva.Cdx"
@@ -1777,6 +1786,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "LogPorta"
    oDataTable:cName        := cPatEmp() + "LogPorta"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "LogPorta.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "LogPorta.Cdx"
@@ -2195,6 +2205,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Client"
    oDataTable:cName        := cPatEmp() + "Client"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Client.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Client.Cdx"
@@ -2205,6 +2216,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ClientD"
    oDataTable:cName        := cPatEmp() + "ClientD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ClientD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ClientD.Cdx"
@@ -2213,6 +2225,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "CliAtp"   
    oDataTable:cName        := cPatEmp() + "CliAtp"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliAtp.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliAtp.Cdx"
@@ -3040,7 +3053,7 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Anticipos de clientes"
    oDataTable:bCreateIndex := {| cPath | rxAntCli( cPath ) }
    oDataTable:bCreateFile  := {| cPath | mkAntCli( cPath ) }
-   oDataTable:bSyncFile    := {|| SynAntCli( cPatEmp() ) }
+   // oDataTable:bSyncFile    := {|| SynAntCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -4585,13 +4598,13 @@ RETURN ( lOk )
 
       local nScan
 
-      nScan    := aScan( ::aDataTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+      nScan    := aScan( ::aDataTables, {|o| o:cFileName() == ::DataName( cDatabase ) } )   
       if nScan != 0
          Return ( ::aDataTables[ nScan ] )
       end if 
 
       if nScan == 0
-         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDatabase ) } )   
          if nScan != 0
             Return ( ::aEmpresaTables[ nScan ] )
          end if 
@@ -4608,14 +4621,15 @@ RETURN ( lOk )
       local oDataTable
 
       oDataTable        := ::ScanDatabase( cDatabase )
+
       if !empty( oDataTable )
 
-         dbUseArea( .t., ( cDriver() ), ( oDataTable:cDataFile ), ( cCheckArea( oDataTable:cFileName(), @dbf ) ), .t., .f. )
+         dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
          if( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
 
          lOpen          := !neterr()
          if lOpen
-            ::AddDatabaseView( oDataTable:cFileName(), dbf )
+            ::AddDatabaseView( oDataTable:cArea, dbf )
          end if 
 
          Return ( lOpen )   
@@ -4634,6 +4648,7 @@ RETURN ( lOk )
 CLASS TDataTable
 
    DATA  cName
+   DATA  cArea
    DATA  cDataFile
    DATA  cIndexFile
    DATA  cDescription   INIT ""
@@ -4645,6 +4660,7 @@ CLASS TDataTable
    DATA  bCreateIndex   
 
    METHOD cFileName()   INLINE ( Upper( cNoPath( ::cName ) ) )
+   METHOD cAreaName()   INLINE ( if( lAIS(), ::cFileName() + ".Dbf", ::cDataFile ) )
 
 END CLASS
 
