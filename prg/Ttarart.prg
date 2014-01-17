@@ -128,7 +128,7 @@ METHOD lResource( cFld ) CLASS TarArt
 
    ::oMtrInf:SetTotal( ::oCliAtp:Lastrec() )
 
-   ::CreateFilter( aItmAtp(), ::oCliAtp:cAlias )
+   ::oBtnFilter:Disable()
 
 RETURN .t.
 
@@ -138,8 +138,6 @@ Esta funcion crea la base de datos para generar posteriormente el informe
 */
 
 METHOD lGenerate() CLASS TarArt
-
-   local cExpHead := ".t."
 
    ::oDlg:Disable()
    ::oBtnCancel:Enable()
@@ -153,26 +151,14 @@ METHOD lGenerate() CLASS TarArt
 
    ::oCliAtp:OrdSetFocus( "CCODART" )
 
-   if !::lAllCli
-      cExpHead       += ' .and. cCodCli >= "' + ::cCliOrg + '" .and. cCodCli <= "' + ::cCliDes + '"'
-   end if
-
-   if !::lAllArt
-      cExpHead       += ' .and. cCodArt >= "' + ::cArtOrg + '" .and. cCodArt <= "' + ::cArtDes + '"'
-   end if
-
-   if !Empty( ::oFilter:cExpresionFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
-   end if
-
-   ::oCliAtp:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oCliAtp:cFile ), ::oCliAtp:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
    ::oCliAtp:GoTop()
 
    while !::lBreak .and. !::oCliAtp:Eof()
 
       if ( ::oCliAtp:dFecIni >= ::dIniInf .or. Empty( ::oCliAtp:dFecIni ) .or. Empty( ::dIniInf ) ) .and.;
-         ( ::oCliAtp:dFecFin <= ::dFinInf .or. Empty( ::oCliAtp:dFecFin ) .or. Empty( ::dFinInf ) )
+         ( ::oCliAtp:dFecFin <= ::dFinInf .or. Empty( ::oCliAtp:dFecFin ) .or. Empty( ::dFinInf ) ) .and.;
+         ( ::lAllCli .or. ( ::oCliAtp:cCodCli >= ::cCliOrg .and. ::oCliAtp:cCodCli <= ::cCliDes ) ) .and.;
+         ( ::lAllArt .or. ( ::oCliAtp:cCodArt >= ::cArtOrg .and. ::oCliAtp:cCodArt <= ::cArtDes ) )
 
          /*
          Posicionamos en las lineas de detalle --------------------------------
@@ -221,11 +207,11 @@ METHOD lGenerate() CLASS TarArt
 
    end while
 
-   ::oCliAtp:IdxDelete( cCurUsr(), GetFileNoExt( ::oCliAtp:cFile ) )
-
    ::oMtrInf:AutoInc( ::oCliAtp:LastRec() )
 
    ::oDlg:Enable()
+
+   ::oBtnFilter:Disable()
 
 RETURN ( ::oDbf:LastRec() > 0 )
 
