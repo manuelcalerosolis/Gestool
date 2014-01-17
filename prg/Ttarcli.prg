@@ -137,7 +137,7 @@ METHOD lResource( cFld ) CLASS TarCli
 
    ::oMtrInf:SetTotal( ::oCliAtp:Lastrec() )
 
-   ::CreateFilter( aItmAtp(), ::oCliAtp:cAlias )
+   ::oBtnFilter:Disable()
 
 RETURN .t.
 
@@ -148,10 +148,9 @@ Esta funcion crea la base de datos para generar posteriormente el informe
 
 METHOD lGenerate() CLASS TarCli
 
-   local cExpHead := ""
-
    ::oDlg:Disable()
    ::oBtnCancel:Enable()
+   ::oBtnFilter:Disable()
    ::oDbf:Zap()
 
    ::aHeader   := {  {|| "Fecha    : " + Dtoc( Date() ) },;
@@ -160,14 +159,6 @@ METHOD lGenerate() CLASS TarCli
                      {|| "Divisa   : " + ::cDivInf + " - " + cNomDiv( ::cDivInf, ::oDbfDiv:cAlias ) }}
 
    ::oCliAtp:OrdSetFocus( "CCODART" )
-
-   if !Empty( ::oFilter:cExpresionFilter )
-      cExpHead       := ::oFilter:cExpresionFilter
-   else
-      cExpHead       := '.t.'
-   end if
-
-   ::oCliAtp:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oCliAtp:cFile ), ::oCliAtp:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oCliAtp:GoTop()
 
@@ -224,11 +215,10 @@ METHOD lGenerate() CLASS TarCli
 
    end while
 
-   ::oCliAtp:IdxDelete( cCurUsr(), GetFileNoExt( ::oCliAtp:cFile ) )
-
    ::oMtrInf:AutoInc( ::oCliAtp:LastRec() )
 
    ::oDlg:Enable()
+   ::oBtnFilter:Disable()
 
 RETURN ( ::oDbf:LastRec() > 0 )
 

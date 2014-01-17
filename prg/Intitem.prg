@@ -120,6 +120,7 @@ Method CreateData() CLASS TClienteSenderReciver
    local oError
    local oBlock
    local cFileName
+   local oAtipicas
 
    if ::oSender:lServer
       cFileName      := "Cli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
@@ -154,14 +155,20 @@ Method CreateData() CLASS TClienteSenderReciver
    dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
    ( tmpCli )->( ordListAdd( cPatSnd() + "Client.Cdx" ) )
 
-   dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
-   ( tmpAtp )->( ordListAdd( cPatSnd() + "CliAtp.Cdx" ) )
-
    dbUseArea( .t., cDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
    ( tmpObr )->( ordListAdd( cPatSnd() + "ObrasT.Cdx" ) )
 
    dbUseArea( .t., cDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
    ( tmpCon )->( ordListAdd( cPatSnd() + "CliContactos.Cdx" ) )
+
+   /*
+   Creamos la temporal de atípicas---------------------------------------------
+   */
+
+   oAtipicas   := TAtipicas():Create( cPatSnd() ):CheckFiles() ; SysRefresh()
+
+   dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
+   ( tmpAtp )->( ordListAdd( cPatSnd() + "CliAtp.Cdx" ) )
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfClient )->( lastrec() )
@@ -221,8 +228,9 @@ Method CreateData() CLASS TClienteSenderReciver
    END SEQUENCE
    ErrorBlock( oBlock )
 
+   oAtipicas:End()
+
    CLOSE ( tmpCli       )
-   CLOSE ( tmpAtp       )
    CLOSE ( tmpObr       )
    CLOSE ( tmpCon       )
    CLOSE ( dbfClient    )
