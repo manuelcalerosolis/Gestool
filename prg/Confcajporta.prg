@@ -578,18 +578,18 @@ FUNCTION BrwSelCajPorta( oGet, dbfCajPorta, oGet2 )
       TITLE       "Seleccionar cajón portamonedas"
 
    REDEFINE GET oGet1 VAR cGet1;
-      ID       104 ;
-      ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajPorta ) );
-      VALID    ( OrdClearScope( oBrw, dbfCajPorta ) );
-      BITMAP   "FIND" ;
-      OF       oDlg
+      ID          104 ;
+      ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajPorta ) );
+      VALID       ( OrdClearScope( oBrw, dbfCajPorta ) );
+      BITMAP      "FIND" ;
+      OF          oDlg
 
    REDEFINE COMBOBOX oCbxOrd ;
-      VAR      cCbxOrd ;
-      ID       102 ;
-      ITEMS    aCbxOrd ;
-      ON CHANGE( ( dbfCajPorta )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
-      OF       oDlg
+      VAR         cCbxOrd ;
+      ID          102 ;
+      ITEMS       aCbxOrd ;
+      ON CHANGE   ( ( dbfCajPorta )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
+      OF          oDlg
 
    oBrw                 := TXBrowse():New( oDlg )
 
@@ -721,7 +721,7 @@ Static Function TestCajon( aTmp, cPort, cBitsSec, cBitsParada, cBitsDatos, cBits
    oCajon            := TCajon():New( cPort, cBitsSec, cBitsParada, cBitsDatos, cBitsParidad, cApertura, aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ], aTmp[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] )
 
    if !Empty( oCajon )
-      oCajon:Open()
+      oCajon:OpenTest()
    end if
 
 Return ( nil )
@@ -749,7 +749,7 @@ Function OpnCaj()
       oCajon         := TCajon():Create( cCajon )
 
       if oCajon != nil
-         oCajon:Open()
+         oCajon:OpenTest()
          oCajon:End()
       end if
 

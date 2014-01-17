@@ -183,11 +183,11 @@ function Main( cParams )
 
    TDataCenter():BuildData()
 
+   // TDataCenter():CheckData()   
+
    /*
    Opciones especiales de arranque hace la operacion y salir-------------------
    */
-
-   // TFilterCreator():Init()
 
    do case
    case ( "ENVIO" $ cParamsMain )

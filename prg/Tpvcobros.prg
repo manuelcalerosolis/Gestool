@@ -49,11 +49,13 @@ CLASS TpvCobros
 
       DATA oGetEntregado
       DATA nGetEntregado            INIT 0
-      DATA cGetEntregado            INIT Space( 25 )
+      DATA cGetEntregado            INIT ""
 
       DATA oBrwPago
       DATA oBrwFormasPago
       DATA cBmpSalidaImpresora
+
+      DATA lDecimalPoint            INIT .f.
 
    DATA lEfectivoMoney
    DATA lClickMoneda                INIT .f.
@@ -93,7 +95,7 @@ CLASS TpvCobros
       METHOD PushCalculadora( cTexto )
       METHOD PushMoney( nImporte )
 
-      METHOD OnClickReset()            INLINE ( ::oGetEntregado:cText( 0 ) )
+      METHOD OnClickReset()            INLINE ( ::oGetEntregado:cText( 0 ), ::cGetEntregado := "" )
       METHOD OnClickFormadePago( oBoton )
       METHOD OnClickAnnadirCobro()
       METHOD OnClickEliminarCobro()    INLINE ( ::EliminaCobro(), ::RefreshResource() )
@@ -183,7 +185,7 @@ METHOD New( oSender ) CLASS TpvCobros
                                     {  "Id" => 280,;
                                        "Object" => nil,;
                                        "Money" =>        { "Text" => "0.01",  "Action" => {|| ::PushMoney( 0.01 ) } },;
-                                       "Calculadora" =>  { "Text" => "",      "Action" => {|| ::PushCalculadora( "" ) } } } }
+                                       "Calculadora" =>  { "Text" => "",      "Action" => {|| ::PushCalculadora( "." ) } } } }
 
    ::SalidaImpresoraDefecto()
    
@@ -507,14 +509,9 @@ Return ( Self )
 
 METHOD PushCalculadora( cTexto )
 
-   if ::nGetEntregado == 0
-      ::nGetEntregado            += ValToMoney( cTexto )
-   else 
-      ::nGetEntregado            *= 10
-      ::nGetEntregado            += ValToMoney( cTexto )
-   end if 
+   ::cGetEntregado            += cTexto
 
-   ::oGetEntregado:cText( ::nGetEntregado )
+   ::oGetEntregado:cText( ValToMoney( ::cGetEntregado ) )
 
 RETURN ( Self )
 
@@ -526,11 +523,11 @@ METHOD PushMoney( nImporte )
       ::oGetEntregado:cText( 0 )
    end if
 
-   ::nGetEntregado               += nImporte
+   ::nGetEntregado      += nImporte
 
    ::oGetEntregado:cText( ::nGetEntregado )
 
-   ::lClickMoneda                := .t.
+   ::lClickMoneda       := .t.
 
 RETURN ( Self )
 
@@ -578,6 +575,7 @@ METHOD ChangeButtonsFormaPago( cTipo, lEfectivo ) CLASS TpvCobros
          ::oBtnCalcMoney:Show()
          ::lEfectivoMoney := .t.
       else
+         ::oGetEntregado:cText( ::Cambio() )
          ::oBtnCalcMoney:Hide()
       end if
 

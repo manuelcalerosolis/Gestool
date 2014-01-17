@@ -306,10 +306,10 @@ STATIC FUNCTION OpenFiles( lExt )
    DEFAULT  lExt        := .f.
 
    lExternal            := lExt
-/*
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
       DisableAcceso()
 
       TDataCenter():CreateView()
@@ -328,7 +328,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       // USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       // SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
 
       /*
       Documentos asociados al cliente---------------------------------------------
@@ -489,7 +488,7 @@ STATIC FUNCTION OpenFiles( lExt )
       LoaIniCli( cPatEmp() )
 
       EnableAcceso()
-/*
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -501,7 +500,7 @@ STATIC FUNCTION OpenFiles( lExt )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    if !lOpenFiles
       CloseFiles()
    end if
@@ -516,9 +515,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    DisableAcceso()
 
-   // CLOSE ( dbfClient    )
-   // CLOSE ( dbfClientD   )
-   // CLOSE ( dbfCliAtp    )
    CLOSE ( dbfArticulo  )
    CLOSE ( dbfArtKit    )
    CLOSE ( dbfCliInc    )
@@ -544,8 +540,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfTikT      )
    CLOSE ( dbfTikL      )
 
-   // dbfClientD     := nil
-   // dbfCliAtp      := nil
    dbfArticulo    := nil
    dbfArtKit      := nil
    dbfCliInc      := nil
@@ -613,9 +607,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
 Return .t.
 
-//----------------------------------------------------------------------------//
-
-
 //--------------------------------------------------------------------------//
 //Funciones del programa
 //--------------------------------------------------------------------------//
@@ -682,7 +673,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
                   if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) ) ,;
                   if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) ) ,;
                   if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) ) ;
-         ALIAS    TDataCenter():Get( "Client" ) ;
+         ALIAS    ( TDataCenter():Get( "Client" ) );
          MRU      "User1_16";
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataCenter():Get( "Client" ) ) );
          DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataCenter():Get( "Client" ) ) );
@@ -6093,19 +6084,7 @@ Function SynClient( cPath )
    if OpenFiles( .f. )
 
       while !( dbfBanco )->( eof() )
-
-         if Len( Rtrim( ( dbfBanco )->cCtaBnc ) ) >= 20
-            
-            if dbLock( dbfBanco )
-               ( dbfBanco )->cEntBnc   := SubStr( ( dbfBanco )->cCtaBnc,  1,  4 )
-               ( dbfBanco )->cSucBnc   := SubStr( ( dbfBanco )->cCtaBnc,  5,  4 )
-               ( dbfBanco )->cDigBnc   := SubStr( ( dbfBanco )->cCtaBnc,  9,  2 )
-               ( dbfBanco )->cCtaBnc   := SubStr( ( dbfBanco )->cCtaBnc, 11, 10 )
-               ( dbfBanco )->( dbUnLock() )
-            end if
-
-         end if
-
+/*
          if Empty( ( dbfBanco )->cDigBnc )
 
             if dbLock( dbfBanco )
@@ -6114,7 +6093,7 @@ Function SynClient( cPath )
             end if
 
          end if
-
+*/
          if Empty( ( dbfBanco )->cPaisIBAN )
 
             if dbLock( dbfBanco )
@@ -6133,6 +6112,7 @@ Function SynClient( cPath )
       Pasamos y limpiamos el campo antiguo de facturas automáticas-------------
       */
 
+      ( TDataCenter():Get( "Client" ) )->( dbGoTop() )
       while !( TDataCenter():Get( "Client" ) )->( Eof() )
 
          if Empty( ( TDataCenter():Get( "Client" ) )->mFacAut ) .and. !Empty( ( TDataCenter():Get( "Client" ) )->cFacAut )
@@ -7902,10 +7882,10 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cBncDef", "cCodCli + cCodBnc", {|| Field->cCodCli + Field->cCodBnc } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cBncDef", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODCLI + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
       ( dbfCli )->( dbCloseArea() )
 
@@ -9479,7 +9459,6 @@ if !Empty( dbfTmpBnc )
 
    while ( dbfBanco )->( dbSeek( aTmp[ _COD ] ) ) .and. !( dbfBanco )->( eof() )
       dbDel( dbfBanco )
-      msgAlert( (dbfBanco)->( ordkeyno()), "Recno")
       oMsgProgress():DeltaPos( 1 )
    end while
 
@@ -9523,7 +9502,7 @@ end if
 
    //-----------------------------------------------------------------------------
 
-   WinGather( aTmp, aGet, ( TDataCenter():Get( "Client" ) ), oBrw, nMode )
+   WinGather( aTmp, aGet, TDataCenter():Get( "Client" ), oBrw, nMode )
 
    if oWndBrw != nil
       oWndBrw:KillProcess()

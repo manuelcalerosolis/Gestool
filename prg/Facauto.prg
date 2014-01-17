@@ -2086,10 +2086,17 @@ METHOD lLanzaAsistente() CLASS TCreaFacAutomaticas
 
    CursorWait()
 
+   if empty( ::oFacAutT:oDbf ) .or. !( ::oFacAutT:oDbf:used() )
+      Return ( lLanza )
+   end if 
+
+   if !( oUser():lDocAuto() .or. lUsrMaster() )
+      Return ( lLanza )
+   end if 
+
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if oUser():lDocAuto() .or. lUsrMaster()
 
          ::oFacAutT:oDbf:GoTop()
 
@@ -2133,8 +2140,6 @@ METHOD lLanzaAsistente() CLASS TCreaFacAutomaticas
             ::oFacAutT:oDbf:Skip()
 
          end while
-
-      end if
 
       aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
 

@@ -2081,16 +2081,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          VAR         aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          ID          110 ;
-         WHEN     ( !lEscandallo( aTmp ) .and. nMode != ZOOM_MODE ) ;
-         VALID    (  aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef2" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef3" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef4" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef5" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef6" ) ) ]:lValid(),;
-                     aEval( oSayWeb, {|o| if( o != nil, o:Refresh(), ) } ), .t. );
+         WHEN        ( !lEscandallo( aTmp ) .and. nMode != ZOOM_MODE ) ;
+         VALID       ( ValidPrecioCosto( aGet, oSayWeb ) ) ;
          SPINNER ;
-         ON CHANGE(  ::lValid() ) ;
          PICTURE     cPinDiv ;
          OF          fldPrecios ;
 
@@ -18697,3 +18690,19 @@ Static Function lValidImporteIva( oGet, uValue, nKey, hFields ) // { "Base" => "
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function ValidPrecioCosto( aGet, oSayWeb )
+? 1
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ]:lValid()
+? 2
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef2" ) ) ]:lValid()
+? 3
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef3" ) ) ]:lValid()
+? 4   
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef4" ) ) ]:lValid()
+? 5   
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef5" ) ) ]:lValid()
+? 6   
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef6" ) ) ]:lValid()
+? 7
+Return ( .t. )

@@ -3224,6 +3224,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    TDataCenter():BuildEmpresa()
 
+   // TDataCenter():CheckEmpresa()
+
    /*
    Ponemos el titulo de la empresa---------------------------------------------
    */

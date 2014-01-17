@@ -2043,12 +2043,14 @@ return ( nNum )
 
 Function dbDel( cAlias )
 
-   if dbDialogLock( cAlias )
+   if ( cAlias )->( dbRLock() ) //dbLock( cAlias )
       ( cAlias )->( dbDelete() )
       ( cAlias )->( dbUnLock() )
+   else
+      msgAlert( "No he podido bloquear.")
    end if
 
-   // ( cAlias )->( dbSkip( 0 ) )
+   ( cAlias )->( dbSkip( 0 ) )
 
    /*
    if ( cAlias )->( Eof() )
@@ -2102,6 +2104,8 @@ FUNCTION WinGather( aTmp, aGet, cAlias, oBrw, nMode, bPostAction, lEmpty )
       dbSafeUnLock( cAlias )
    end if
 
+   ( cAlias )->( dbCommit() )
+
    if lEmpty
       aCopy( dbBlankRec( cAlias ), aTmp )
       if !Empty( aGet )
@@ -2116,8 +2120,6 @@ FUNCTION WinGather( aTmp, aGet, cAlias, oBrw, nMode, bPostAction, lEmpty )
    if oBrw != nil
       oBrw:Refresh()
    end if
-
-   ( cAlias )->( dbCommit() )
 
    CursorWe()
 
