@@ -10620,7 +10620,7 @@ Method Process()
             SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
             USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliT.Cdx" ) ADDITIVE
+            SET ADSINDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
 
             USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
             SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
@@ -10629,7 +10629,7 @@ Method Process()
             SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
 
             USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+            SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
 
             USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
             SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE

@@ -129,8 +129,8 @@ Method CreateData() CLASS TClienteSenderReciver
 
    ::oSender:SetText( "Enviando clientes" )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
    SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
@@ -150,6 +150,8 @@ Method CreateData() CLASS TClienteSenderReciver
    */
 
    mkClient( cPatSnd() )
+
+   TAtipicas():Create():CheckFiles( cPatSnd() + "CliAtp.Dbf" ) ; SysRefresh()
 
    dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
    ( tmpCli )->( ordListAdd( cPatSnd() + "Client.Cdx" ) )
@@ -214,7 +216,7 @@ Method CreateData() CLASS TClienteSenderReciver
 
    end while
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
@@ -228,7 +230,7 @@ Method CreateData() CLASS TClienteSenderReciver
    CLOSE ( dbfClient    )
    CLOSE ( dbfCliAtp    )
    CLOSE ( dbfObrasT    )
-   CLOSE ( dbfContactos )
+   CLOSE ( dbfContactos )*/
 
    /*
    Comprimir los archivos------------------------------------------------------

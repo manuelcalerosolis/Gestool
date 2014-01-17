@@ -3734,7 +3734,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando atipiacas de clientes y grupos" )
+         oMsg:SetText( "Creando atípicas de clientes y grupos" )
       end if
 
       if cPathOld != nil .and. aImportacion:lArticulos
