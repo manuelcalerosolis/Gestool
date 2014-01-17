@@ -315,7 +315,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lDocAuto(          ( ::oDbf )->lDocAut )
          ::dUltAuto(          ( ::oDbf )->dUltAut )
          ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
-         ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj)
+         ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
@@ -332,7 +332,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          */
 
          if !Empty( ( ::oDbf )->cCodDlg ) .and. !::lMaster()
-            ::cDelegacion( ( ::oDbf )->cCodDlg )
+            ::cDelegacion(    ( ::oDbf )->cCodDlg )
          end if
 
          /*
@@ -359,7 +359,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
 
       ::lCreated              := .f.
 
-      msgStop( "No puedo encontrar el usuario " + cCodUsr )
+      msgStop( "Usuario " + cCodUsr + "no encontrado." )
 
    end if
 

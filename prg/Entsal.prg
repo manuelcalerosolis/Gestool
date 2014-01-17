@@ -336,17 +336,17 @@ STATIC FUNCTION OpenFiles()
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDivisa ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "USERS.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "USERS", @dbfUser ) )
+   USE ( cPatDat() + "USERS.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "USERS", @dbfUser ) )
    SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "CAJAS.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
+   USE ( cPatDat() + "CAJAS.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
    SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
 
    cPorDiv  := cPorDiv( cDivEmp(), dbfDivisa ) // Picture de la divisa redondeada
 
    oBandera := TBandera():New
 
-   bBmp     := LoadBitmap( GetResources(), "BMPLOCK" )
+   bBmp     := LoadBitmap( GetResources(), "BmpLock" )
    bBmpSnd  := LoadBitmap( GetResources(), "Send16" )
 
    RECOVER

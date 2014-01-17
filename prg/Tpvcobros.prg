@@ -187,8 +187,7 @@ METHOD New( oSender ) CLASS TpvCobros
                                        "Money" =>        { "Text" => "0.01",  "Action" => {|| ::PushMoney( 0.01 ) } },;
                                        "Calculadora" =>  { "Text" => "",      "Action" => {|| ::PushCalculadora( "." ) } } } }
 
-   ::SalidaImpresoraDefecto()
-   
+ 
    ::CargaFormasdePago()
 
 Return Self
@@ -269,6 +268,8 @@ METHOD lResource() CLASS TpvCobros
    /*
    Tomamos valores por defecto-------------------------------------------------
    */
+
+   ::SalidaImpresoraDefecto()
 
    ::CargaCobros( ::oSender:cNumeroTicket() )
 

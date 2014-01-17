@@ -893,8 +893,6 @@ METHOD StartAdministratorTask()
 
       ::oSayProceso:SetText( "Eliminando tablas anteriores de diccionario de datos" )
 
-      ? "delete"
-
       ::DeleteAllTable()
 
       /*
