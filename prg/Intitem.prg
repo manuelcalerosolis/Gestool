@@ -120,6 +120,7 @@ Method CreateData() CLASS TClienteSenderReciver
    local oError
    local oBlock
    local cFileName
+   local oAtipicas
 
    if ::oSender:lServer
       cFileName      := "Cli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
@@ -129,8 +130,8 @@ Method CreateData() CLASS TClienteSenderReciver
 
    ::oSender:SetText( "Enviando clientes" )
 
-   /*oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
    SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
@@ -151,19 +152,23 @@ Method CreateData() CLASS TClienteSenderReciver
 
    mkClient( cPatSnd() )
 
-   TAtipicas():Create():CheckFiles( cPatSnd() + "CliAtp.Dbf" ) ; SysRefresh()
-
    dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
    ( tmpCli )->( ordListAdd( cPatSnd() + "Client.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
-   ( tmpAtp )->( ordListAdd( cPatSnd() + "CliAtp.Cdx" ) )
 
    dbUseArea( .t., cDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
    ( tmpObr )->( ordListAdd( cPatSnd() + "ObrasT.Cdx" ) )
 
    dbUseArea( .t., cDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
    ( tmpCon )->( ordListAdd( cPatSnd() + "CliContactos.Cdx" ) )
+
+   /*
+   Creamos la temporal de atípicas---------------------------------------------
+   */
+
+   oAtipicas   := TAtipicas():Create( cPatSnd() ):CheckFiles() ; SysRefresh()
+
+   dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
+   ( tmpAtp )->( ordListAdd( cPatSnd() + "CliAtp.Cdx" ) )
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfClient )->( lastrec() )
@@ -216,21 +221,22 @@ Method CreateData() CLASS TClienteSenderReciver
 
    end while
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
 
+   oAtipicas:End()
+
    CLOSE ( tmpCli       )
-   CLOSE ( tmpAtp       )
    CLOSE ( tmpObr       )
    CLOSE ( tmpCon       )
    CLOSE ( dbfClient    )
    CLOSE ( dbfCliAtp    )
    CLOSE ( dbfObrasT    )
-   CLOSE ( dbfContactos )*/
+   CLOSE ( dbfContactos )
 
    /*
    Comprimir los archivos------------------------------------------------------
