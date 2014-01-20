@@ -818,11 +818,11 @@ METHOD End( lForceExit ) CLASS TShell
    end if
 
    // Evaluamos el bValid------------------------------------------------------
-
+/*
    if ::bValid != nil
       Eval( ::bValid )
    end if
-
+*/
    ::oWndClient:ChildClose( Self )
 
    ::Super:End()

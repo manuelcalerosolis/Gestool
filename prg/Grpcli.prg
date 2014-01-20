@@ -99,7 +99,7 @@ METHOD OpenFiles( lExclusive, cPath )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TDataCenter():CreateView()
+      ::nView           := TDataCenter():CreateView()
 
       if !Super:OpenFiles()
          lOpen          := .f.
@@ -109,11 +109,13 @@ METHOD OpenFiles( lExclusive, cPath )
          lOpen          := .f.
       end if 
 
-      TDataCenter():Get( "Articulo" )
+      TDataCenter():Get( "Articulo", ::nView )
 
-      TDataCenter():Get( "Familia" )
+      TDataCenter():Get( "Familia", ::nView )
 
    RECOVER USING oError
+
+      MsgStop( ErrorMessage( oError ), 'Imposible abrir ficheros de grupos de clientes' )
 
       lOpen             := .f.
 
@@ -135,7 +137,7 @@ METHOD CloseFiles()
 
    TAtipicas():GetInstance():CloseFiles()
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( ::nView )
 
 RETURN ( .t. )
 
@@ -153,22 +155,24 @@ RETURN ( .t. )
 
 METHOD DefineFiles( cPath, cDriver )
 
+   local oDbf 
+
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "GRPCLI.DBF" CLASS "GRPCLI" ALIAS "GRPCLI" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de clientes"
+   DEFINE DATABASE oDbf FILE "GRPCLI.DBF" CLASS "GRPCLI" ALIAS "GRPCLI" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de clientes"
 
-      FIELD NAME "CCODGRP"    TYPE "C" LEN  4  DEC 0  COMMENT "Código"              COLSIZE 80  OF ::oDbf
-      FIELD NAME "CNOMGRP"    TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"              COLSIZE 200 OF ::oDbf
-      FIELD NAME "CCODPDR"    TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"         COLSIZE 80  OF ::oDbf
+      FIELD NAME "CCODGRP"    TYPE "C" LEN  4  DEC 0  COMMENT "Código"              COLSIZE 80  OF oDbf
+      FIELD NAME "CNOMGRP"    TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"              COLSIZE 200 OF oDbf
+      FIELD NAME "CCODPDR"    TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"         COLSIZE 80  OF oDbf
 
-      INDEX TO "GRPCLI.CDX" TAG "CCODGRP" ON "CCODGRP"   COMMENT "Código"           NODELETED   OF ::oDbf
-      INDEX TO "GRPCLI.CDX" TAG "CNOMGRP" ON "CNOMGRP"   COMMENT "Nombre"           NODELETED   OF ::oDbf
-      INDEX TO "GRPCLI.CDX" TAG "CCODPDR" ON "CCODPDR"   COMMENT "Grupo padre"      NODELETED   OF ::oDbf
+      INDEX TO "GRPCLI.CDX" TAG "CCODGRP" ON "CCODGRP"   COMMENT "Código"           NODELETED   OF oDbf
+      INDEX TO "GRPCLI.CDX" TAG "CNOMGRP" ON "CNOMGRP"   COMMENT "Nombre"           NODELETED   OF oDbf
+      INDEX TO "GRPCLI.CDX" TAG "CCODPDR" ON "CCODPDR"   COMMENT "Grupo padre"      NODELETED   OF oDbf
 
-   END DATABASE ::oDbf
+   END DATABASE oDbf
 
-RETURN ( ::oDbf )
+RETURN ( oDbf )
 
 //----------------------------------------------------------------------------//
 

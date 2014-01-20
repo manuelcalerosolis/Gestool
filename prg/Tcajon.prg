@@ -24,8 +24,8 @@ CLASS TCajon
 
    Method New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, cApertura )
 
-   Method Open()
-   Method OpenTest()                INLINE ( ::Open( .f. ) )
+   Method Open( nView )
+   Method OpenTest()                INLINE ( ::Open() )
 
    Method End()      VIRTUAL
 
@@ -113,9 +113,7 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-METHOD Open( lLog )
-
-   DEFAULT lLog   := .t.
+METHOD Open( nView )
 
    if ::nDriver != 2
 
@@ -132,15 +130,15 @@ METHOD Open( lLog )
 
    end if
 
-   if lLog
-      ::LogCajon()
+   if IsNum( nView )
+      ::LogCajon( nView )
    end if 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LogCajon()
+METHOD LogCajon( nView )
 
    local oBlock
    local oError
@@ -149,17 +147,17 @@ METHOD LogCajon()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( TDataCenter():Get( "LogPorta" ) )
+   if !Empty( TDataCenter():Get( "LogPorta", nView ) )
 
-      ( TDataCenter():Get( "LogPorta" ) )->( dbAppend() )
+      ( TDataCenter():Get( "LogPorta", nView ) )->( dbAppend() )
 
-      ( TDataCenter():Get( "LogPorta" ) )->cNumTur   := cCurSesion()
-      ( TDataCenter():Get( "LogPorta" ) )->cSufTur   := RetSufEmp()
-      ( TDataCenter():Get( "LogPorta" ) )->cCodUse   := cCurUsr()
-      ( TDataCenter():Get( "LogPorta" ) )->dFecApt   := GetSysDate()
-      ( TDataCenter():Get( "LogPorta" ) )->cHorApt   := Substr( Time(), 1, 5 )
+      ( TDataCenter():Get( "LogPorta", nView ) )->cNumTur   := cCurSesion()
+      ( TDataCenter():Get( "LogPorta", nView ) )->cSufTur   := RetSufEmp()
+      ( TDataCenter():Get( "LogPorta", nView ) )->cCodUse   := cCurUsr()
+      ( TDataCenter():Get( "LogPorta", nView ) )->dFecApt   := GetSysDate()
+      ( TDataCenter():Get( "LogPorta", nView ) )->cHorApt   := Substr( Time(), 1, 5 )
 
-      ( TDataCenter():Get( "LogPorta" ) )->( dbUnLock() )
+      ( TDataCenter():Get( "LogPorta", nView ) )->( dbUnLock() )
 
    end if
 

@@ -122,7 +122,7 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
-   if !::lGrupoGCliente( .t. )
+   if !::lGrupoGrupoCliente( .t. )
       return .f.
    end if
 
@@ -249,10 +249,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       Stocks de articulos------------------------------------------------------
       */
 
-      ::oStock                := TStock():Create( cPatGrp() )
+      ::oStock    := TStock():Create( cPatGrp() )
       if !::oStock:lOpenFiles()
          
-         lOpen                := .f.
+         lOpen    := .f.
 
       else 
 

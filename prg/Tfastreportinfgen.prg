@@ -214,6 +214,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nFacturaClientes()
    METHOD nPagosClientes()
 
+   METHOD GetReportType()                                         INLINE ( if( !empty( ::hReport ) .and. hHasKey( ::hReport, ::cReportType ), hGet( ::hReport, ::cReportType ), ) )
+
    METHOD FastReportSATCliente()
    METHOD FastReportPresupuestoCliente()
    METHOD FastReportPedidoCliente()
@@ -1496,10 +1498,6 @@ METHOD End() CLASS TFastReportInfGen
       ::oDbfFab:End()
    end if
 
-   if ::oGrpCli != nil
-      ::oGrpCli:End()
-   end if
-
    if ::oGrpPrv != nil
       ::oGrpPrv:End()
    end if
@@ -1677,7 +1675,7 @@ METHOD lGenerate() CLASS TFastReportInfGen
 
    // Generamos el informe-----------------------------------------------------
 
-   aGenerate         := hGet( ::hReport, ( ::cReportType ) )
+   aGenerate   := ::GetReportType()
    if !Empty( aGenerate )
       Eval( hGet( aGenerate, "Generate" ) )
    end if 
@@ -1696,7 +1694,7 @@ METHOD SetDataReport() CLASS TFastReportInfGen
 
    local aData
 
-   aData       := hGet( ::hReport, ( ::cReportType ) )
+   aData       := ::GetReportType()
    if !Empty( aData )
       Eval( hGet( aData, "Data" ) )
    end if 
@@ -1711,7 +1709,7 @@ METHOD AddVariable() CLASS TFastReportInfGen
 
    Super:AddVariable()
 
-   aVariable   := hGet( ::hReport, ( ::cReportType ) )
+   aVariable   := ::GetReportType()
    if !Empty( aVariable )
       Eval( hGet( aVariable, "Variable" ) )
    end if 

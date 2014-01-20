@@ -26,6 +26,8 @@ CLASS TDet
 
    DATA  nMode           
 
+   DATA  nView
+
    DATA  bOnPreAppend, bOnPostAppend
    DATA  bOnPreEdit, bOnPostEdit
    DATA  bOnPreDelete, bOnPostDelete

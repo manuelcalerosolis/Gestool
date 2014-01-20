@@ -24,6 +24,9 @@
 #define _CRUTDOC                14      //   C    250     0
 
 static oWndBrw
+
+static nView
+
 static dbfEntT
 static dbfDivisa
 
@@ -326,9 +329,9 @@ STATIC FUNCTION OpenFiles()
 		mkEntSal()
 	END IF
 
-   TDataCenter():CreateView()
+   nView          := TDataCenter():CreateView()
 
-   TDataCenter():Get( "LogPorta" )
+   TDataCenter():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
@@ -370,7 +373,7 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( nView )
 
    dbfEntT     := nil
    dbfDivisa   := nil
@@ -905,7 +908,7 @@ Static Function SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode )
 
    WinGather( aTmp, aGet, dbfEntT, oBrw, nMode )
 
-   oUser():OpenCajon() //OpnCaj()
+   oUser():OpenCajon( nView ) //OpnCaj()
 
 RETURN ( oDlg:end( IDOK ) )
 

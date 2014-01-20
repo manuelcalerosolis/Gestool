@@ -36,6 +36,8 @@ CLASS TMant
 
    DATA oReport
 
+   DATA nView
+
    DATA cFirstKey
    DATA bFirstKey       INIT {|| .t. }
 
@@ -311,23 +313,25 @@ RETURN ( Self )
 
 METHOD OpenFiles( lExclusive, cPath )
 
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oError
+   local oBlock         
 
    DEFAULT lExclusive   := .f.
-
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles( cPath )
+         ::oDbf         := ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
       ::lOpenFiles      := .t.
 
-   RECOVER
+   RECOVER USING oError
 
-      msgStop( "Imposible abrir las bases de datos." )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos." )
 
       ::CloseFiles()
       
@@ -347,7 +351,7 @@ METHOD CloseFiles() CLASS TMant
       ::oDbf:End()
    end if
 
-    ::oDbf      := nil
+   ::oDbf      := nil
 
 RETURN .t.
 
@@ -377,7 +381,7 @@ METHOD CreateFiles( cPath, lAppend, cPathOld, oMeter ) CLASS TMant
 
 RETURN NIL
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD Reindexa()
 
@@ -399,7 +403,7 @@ METHOD Reindexa()
 
 RETURN ( Self )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD Reindex( oMeter ) CLASS TMant
 

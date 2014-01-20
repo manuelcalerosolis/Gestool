@@ -133,7 +133,7 @@ METHOD lResource( cFld )
    Agregamos los desde - hasta-------------------------------------------------
    */
 
-   if !::lGrupoGCliente( .f. )
+   if !::lGrupoGrupoCliente( .f. )
       return .f.
    end if
 

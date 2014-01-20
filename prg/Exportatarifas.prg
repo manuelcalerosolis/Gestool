@@ -289,7 +289,7 @@ METHOD lResource( cFld ) CLASS TExportaTarifas
    Montamos los desde - hasta--------------------------------------------------
    */
 
-   ::lGrupoGCliente()
+   ::lGrupoGrupoCliente()
 
    ::lGrupoRuta()
 

@@ -171,8 +171,8 @@ CLASS TDataCenter
    METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
 
-   METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ) )
-   METHOD DeleteView( cView )
+   METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ), ::nView )
+   METHOD DeleteView( nView )
    METHOD InfoView()                         INLINE   ( MsgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
    METHOD AssertView()
    METHOD AddDatabaseView( cDatabase, cHandle )
@@ -185,42 +185,6 @@ CLASS TDataCenter
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
 
    //---------------------------------------------------------------------------//
-
-   INLINE METHOD OpenArticulo( dbf )
-
-      local lOpen
-
-      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Articulo", @dbf ) )
-      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
-
-      lOpen             := !neterr()
-      if lOpen
-         ::AddDatabaseView( "Articulo", dbf )
-      end if 
-
-      Return ( lOpen )   
-   
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD OpenFamilia( dbf )
-
-      local lOpen
-
-      USE ( cPatArt() + "Familia.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Familia", @dbf ) )
-      SET ADSINDEX TO ( cPatArt() + "Familia.Cdx" ) ADDITIVE
-
-      lOpen             := !neterr()
-      if lOpen
-         ::AddDatabaseView( "Familia", dbf )
-      end if 
-
-      Return ( lOpen )   
-   
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
 
    METHOD oFacCliT()
    
@@ -1987,6 +1951,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Articulo"
    oDataTable:cName        := cPatEmp() + "Articulo"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Articulo.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Articulo.Cdx"
@@ -4565,52 +4530,52 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
 
 RETURN ( lOk )
 
-//---------------------------------------------------------------------------//
+   //---------------------------------------------------------------------------//
 
-   METHOD DeleteView( cView )
+   METHOD AssertView( nView )
 
-      local hView
-
-      if hHasKey( ::hViews, ::nView )
-
-         hView          := hGet( ::hViews, ::nView )
-         if hb_ishash( hView ) 
-            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
-         end if 
-
-         HDel( ::hViews, ::nView )
-         
-         --::nView
-
-      end if 
-
-   Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD AssertView()
-
-      if empty( ::nView )
-         msgStop( "No hay vistas disponibles.")
+      if empty( nView )
+         msgStop( "No hay vistas disponibles." )
          Return ( .f. )
       end if
 
-      if !hHasKey( ::hViews, ::nView )
-         msgStop( "Vista " + Str( ::nView ) + " no encontrada." )
+      if !hHasKey( ::hViews, nView )
+         msgStop( "Vista " + Str( nView ) + " no encontrada." )
          Return ( .t. )
       end if 
 
    Return ( .t. )
 
-   //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-   METHOD AddDatabaseView( cDatabase, cHandle )
+   METHOD DeleteView( nView )
 
       local hView
 
-      if ::AssertView()
+      if ::AssertView( nView )
 
-         hView    := hGet( ::hViews, ::nView )
+         hView          := hGet( ::hViews, nView )
+         if hb_ishash( hView ) 
+            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
+         end if 
+
+         HDel( ::hViews, nView )
+         
+      end if 
+
+      msgAlert( nView, "delete view" )      
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD AddDatabaseView( cDatabase, cHandle, nView )
+
+      local hView
+
+      if ::AssertView( nView )
+
+         hView    := hGet( ::hViews, nView )
          if hb_ishash( hView )
             hSet( hView, Upper( cDatabase ), cHandle )
          end if 
@@ -4621,28 +4586,28 @@ RETURN ( lOk )
 
    //---------------------------------------------------------------------------//
 
-   METHOD Get( cDatabase )
+   METHOD Get( cDatabase, nView )
 
       local cHandle
 
-      cHandle        := ::GetDatabaseView( cDatabase )
+      cHandle        := ::GetDatabaseView( cDatabase, nView )
 
       if empty( cHandle )
-         ::OpenDatabase( cDatabase )
+         ::OpenDatabase( cDatabase, nView )
       end if
 
    RETURN ( cHandle )
 
    //---------------------------------------------------------------------------//
 
-   METHOD GetDatabaseView( cDatabase )
+   METHOD GetDatabaseView( cDatabase, nView )
 
       local hView
       local cHandle
 
-      if ::AssertView()
+      if ::AssertView( nView )
 
-         hView          := hGet( ::hViews, ::nView )
+         hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
             if hHasKey( hView, Upper( cDatabase ) )
                cHandle  := hGet( hView, Upper( cDatabase ) )
@@ -4675,7 +4640,7 @@ RETURN ( lOk )
 
    //---------------------------------------------------------------------------//
 
-   METHOD OpenDatabase( cDatabase )
+   METHOD OpenDatabase( cDatabase, nView )
 
       local dbf
       local lOpen
@@ -4690,7 +4655,7 @@ RETURN ( lOk )
 
          lOpen          := !neterr()
          if lOpen
-            ::AddDatabaseView( oDataTable:cArea, dbf )
+            ::AddDatabaseView( oDataTable:cArea, dbf, nView )
          end if 
 
          Return ( lOpen )   

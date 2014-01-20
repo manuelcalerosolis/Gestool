@@ -10,6 +10,9 @@
 #define SAVAPT                   "5"      // Salvar como apartado
 
 static nLevel
+
+static nView
+
 static dbfTikT
 static dbfTikL
 static dbfTikP
@@ -88,9 +91,9 @@ STATIC FUNCTION OpenFiles( lZoom )
 
    BEGIN SEQUENCE
 
-   TDataCenter():CreateView()
+   nView          := TDataCenter():CreateView()
 
-   TDataCenter():Get( "LogPorta" )
+   TDataCenter():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
@@ -238,7 +241,7 @@ STATIC FUNCTION CloseFiles( lDel )
    oTurno:CloseFiles()
    oTurno:end()
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( nView )
 
    dbfTikT     := NIL
    dbfTikL     := NIL

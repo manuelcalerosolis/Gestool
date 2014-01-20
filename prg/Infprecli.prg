@@ -112,7 +112,7 @@ METHOD lResource( cFld )
       return .f.
    end if
 
-   if !::lGrupoGCliente( .f. )
+   if !::lGrupoGrupoCliente( .f. )
       return .f.
    end if
 

@@ -149,7 +149,7 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD lGrupoTransportista( lInitGroup, lImp )
 
-   METHOD lGrupoGCliente( lInitGroup, lImp )
+   METHOD lGrupoGrupoCliente( lInitGroup, lImp )
 
    METHOD lGrupoGProveedor( lInitGroup, lImp )
 
@@ -238,6 +238,8 @@ CLASS TNewInfGen FROM TInfGen
    METHOD SaveReport()
 
    METHOD MoveReport()
+
+   METHOD End()
 
 END CLASS
 
@@ -1801,7 +1803,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD lGrupoGCliente( lInitGroup, lImp ) CLASS TNewInfGen
+METHOD lGrupoGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
    local oError
@@ -1813,7 +1815,7 @@ METHOD lGrupoGCliente( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    ::oGrpCli                         := TGrpCli():Create( cPatCli() )
-   ::oGrpCli:OpenFiles()
+   ::oGrpCli:OpenService()
 
    ::oGrupoGCliente                  := TRGroup():New( {|| ::oDbf:cCodGCli }, {|| "Grp. cliente : " + AllTrim( ::oDbf:cCodGCli ) + " - " + AllTRim( ::oDbf:cNomGCli ) }, {|| "Total grp. cliente : " + ::oDbf:cCodGCli }, {|| 3 }, ::lSalto )
 
@@ -1866,7 +1868,7 @@ METHOD lGrupoGCliente( lInitGroup, lImp ) CLASS TNewInfGen
       msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
 
       if !Empty( ::oGrpCli )
-         ::oGrpCli:End()
+         ::oGrpCli:CloseService()
       end if
 
       lOpen          := .f.
@@ -3968,3 +3970,18 @@ METHOD lShowFecha() CLASS TNewInfGen
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD End() CLASS TNewInfGen
+
+   ::Super:End()
+
+   if ::oGrpCli != nil
+      ::oGrpCli:CloseService()
+   end if
+
+   ? "CloseService TNewInfGen"
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+

@@ -58,28 +58,29 @@ RETURN ( self )
 
 METHOD OpenFiles()
 
-   local lOpen    := .t.
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local lOpen       := .t.
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 
+      ::oFacCliT     := TDataCenter():oFacCliT()
 
-   ::oFacCliT := TDataCenter():oFacCliT()
+      DATABASE NEW ::oFacCliL   PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oFacCliL   PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
+      DATABASE NEW ::oFacRecT   PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
-   DATABASE NEW ::oFacRecT   PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
+      DATABASE NEW ::oFacRecL   PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oFacRecL   PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
+      DATABASE NEW ::oDbfTvta   PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
-   DATABASE NEW ::oDbfTvta   PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
-   DATABASE NEW ::oDbfCli    PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfCli    PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
+
       ::CloseFiles()
+      
       lOpen          := .f.
 
    END SEQUENCE

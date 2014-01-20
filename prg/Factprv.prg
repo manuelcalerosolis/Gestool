@@ -1410,6 +1410,11 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       TOOLTIP  "(S)alir" ;
       HOTKEY   "S"
 
+   if !oUser():lFiltroVentas()
+      oWndBrw:oActiveFilter:SetFields( aItmFacPrv() )
+      oWndBrw:oActiveFilter:SetFilterType( ALB_PRV )
+   end if
+
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
    EnableAcceso()
