@@ -261,10 +261,6 @@ METHOD lGenerate()
 
    cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-   if !Empty( ::oFilter:cExpresionFilter ) 
-      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
-   end if
-
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
@@ -328,10 +324,6 @@ METHOD lGenerate()
 
    cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-   if !Empty( ::oFilter:cExpresionFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
-   end if
-
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
@@ -394,10 +386,6 @@ METHOD lGenerate()
    ::oFacRecT:OrdSetFocus( "dFecFac" )
 
    cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-
-   if !Empty( ::oFilter:cExpresionFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
-   end if
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -464,10 +452,6 @@ METHOD lGenerate()
 
    cExpHead       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
 
-   if !Empty( ::oFilter:cExpresionFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
-   end if
-
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
@@ -525,6 +509,18 @@ METHOD lGenerate()
    /*Destruimos los filtros creados anteriormente*/
 
    ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+
+   /*
+   Ponemos el filtro en la tabla temporal--------------------------------------
+   */
+
+   if !Empty( ::oFilter:cExpresionFilter )
+      cExpHead       := ::oFilter:cExpresionFilter 
+   else
+      cExpHead       := ".t."   
+   end if
+
+   ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:AutoInc( ::oTikCliT:Lastrec() )
 

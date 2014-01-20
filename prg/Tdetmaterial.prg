@@ -249,7 +249,7 @@ METHOD Resource( nMode )
          OF       oFld:aDialogs[1]
 
       oGetArt:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
-      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom ) }
+      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr1  ) }
 
       REDEFINE GET oGetNom VAR ::oDbfVir:cNomArt ;
          ID       111 ;
@@ -602,11 +602,19 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
             end if
 
             if ::oParent:oArt:lLote
+               
                ::oLote:Show()
-               ::oLote:cText( ::oParent:oArt:cLote )
+
+               if Empty( ::oLote:VarGet() )
+                  ::oLote:cText( ::oParent:oArt:cLote )
+               end if
+
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
+
             else
+
                ::oLote:Hide()
+               
             end if
 
             ::oGetPes:cText(     ::oParent:oArt:nPesoKg )

@@ -7647,6 +7647,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                      FONT     oBrw:oFont ;
                      WHEN     ( nMode != ZOOM_MODE ) ;
                      ACTION   ( SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode, oBtn, cPorDiv, cPicEur, lMsgVta, lNotVta, cCodArt, oStock ) ) ;
+                     DEFAULT  ;
                      OF       oDlgDet
 
       oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
