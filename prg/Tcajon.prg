@@ -149,7 +149,7 @@ METHOD LogCajon()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( TDataCenter():Get( "LogPorta") )
+   if !Empty( TDataCenter():Get( "LogPorta" ) )
 
       ( TDataCenter():Get( "LogPorta" ) )->( dbAppend() )
 

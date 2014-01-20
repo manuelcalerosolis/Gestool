@@ -67,9 +67,9 @@ FUNCTION cDgtControl( cEntidad, cSucursal, cDigito, cCuenta )
 	local cC2
 	local cD1
 	local cD2
-	local nPesos	:={ 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 }
-  local nD1     := 0      // primer digito
-	local nD2		  := 0
+	local nPesos	  := { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 }
+  local nD1       := 0      // primer digito
+	local nD2		    := 0
 
    if Empty( cCuenta )
       Return ( cDigito )
@@ -192,14 +192,14 @@ function IbanCheck( cIban )
  local cCountry   := substr( cIban, 1, 2 )
  local cDC        := substr( cIban, 3, 2 )
 
- cIban := substr( cIban, 5 )
- cIban += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )
- cIban += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
- cIban += cDC
+ cIban            := substr( cIban, 5 )
+ cIban            += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )
+ cIban            += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
+ cIban            += cDC
 
- do while len(cIban) > 3
-   cDC   := str( val(substr( cIban, 1, 9 )) % 97, 2 )
-   cIban := cDC + substr( cIban, 10 )
+ do while len( cIban ) > 3
+   cDC            := str( val(substr( cIban, 1, 9 )) % 97, 2 )
+   cIban          := cDC + substr( cIban, 10 )
  enddo
  
 return( val(cDC) == 1 )

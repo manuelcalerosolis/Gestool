@@ -2081,16 +2081,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          VAR         aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          ID          110 ;
-         WHEN     ( !lEscandallo( aTmp ) .and. nMode != ZOOM_MODE ) ;
-         VALID    (  aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef2" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef3" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef4" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef5" ) ) ]:lValid(),;
-                     aGet[ ( dbfArticulo )->( fieldpos( "Benef6" ) ) ]:lValid(),;
-                     aEval( oSayWeb, {|o| if( o != nil, o:Refresh(), ) } ), .t. );
+         WHEN        ( !lEscandallo( aTmp ) .and. nMode != ZOOM_MODE ) ;
+         VALID       ( ValidPrecioCosto( aGet, oSayWeb ) ) ;
          SPINNER ;
-         ON CHANGE(  ::lValid() ) ;
          PICTURE     cPinDiv ;
          OF          fldPrecios ;
 
@@ -2148,8 +2141,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    Tarifa1 ______________________________________________________________________________
    */
 
-      REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "LBNF1" ) ) ] ;
-         VAR            aTmp[ ( dbfArticulo )->( fieldpos( "LBNF1" ) ) ] ;
+      REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] ;
+         VAR            aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] ;
          ID       150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       fldPrecios
@@ -2204,8 +2197,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                                  aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
          PICTURE  cPouDiv ;
          OF       fldPrecios
-
-//         ON CHANGE( ::lValid() ) ;
 
       REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
@@ -18695,5 +18686,20 @@ Static Function lValidImporteIva( oGet, uValue, nKey, hFields ) // { "Base" => "
    end if 
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function ValidPrecioCosto( aGet, oSayWeb )
+
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ]:lValid()
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef2" ) ) ]:lValid()
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef3" ) ) ]:lValid()
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef4" ) ) ]:lValid()
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef5" ) ) ]:lValid()
+   aGet[ ( dbfArticulo )->( fieldpos( "Benef6" ) ) ]:lValid()
+
+   aeval( oSayWeb, {|o| if( !empty(o), o:refresh(), ) } )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

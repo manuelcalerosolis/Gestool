@@ -16,7 +16,7 @@ STATIC FUNCTION OpenFiles ()
   BEGIN SEQUENCE
 
      if !File ( cPatDat() + "VISOR.DBF" )
-        mkVisor ( cPatDat() )
+        mkVisor( cPatDat() )
      end if
 
      USE ( cPatDat() + "VISOR.DBF" ) NEW VIA ( cDriver() )SHARE ALIAS ( cCheckArea ( "VISOR", @dbfVisor ) )
@@ -560,7 +560,9 @@ FUNCTION rxVisor( cPath, oMeter )
 
 RETURN NIL
 //--------------------------------------------------------------------------//
-/*Funcion que crea un visor por defecto si no existe*/
+/*
+Funcion que crea un visor por defecto si no existe
+*/
 
 FUNCTION IsVisor()
 

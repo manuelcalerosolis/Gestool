@@ -113,6 +113,9 @@ CLASS TDataCenter
    METHOD BuildData()
    METHOD BuildEmpresa()
 
+   METHOD CheckData()
+   METHOD CheckEmpresa()
+
    METHOD BuildTrigger()
 
    METHOD AddDataTable( oTable )          INLINE aAdd( ::aDataTables, oTable )
@@ -178,6 +181,9 @@ CLASS TDataCenter
    METHOD ScanDatabase( cDatabase )
    METHOD OpenDatabase( oDataTable )
 
+   METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
+   METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
+
    //---------------------------------------------------------------------------//
 
    INLINE METHOD OpenArticulo( dbf )
@@ -216,59 +222,11 @@ CLASS TDataCenter
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD oFacCliT()
-
-      local cFilter
-      local oFacCliT
-
-      DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
-
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
-
-            ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
-
-         end if
-
-      Return ( oFacCliT )   
-
-   ENDMETHOD
+   METHOD oFacCliT()
+   
+   METHOD OpenFacCliT( dbf )
 
    //------------------------------------------------------------------------//
-
-   INLINE METHOD OpenFacCliT( dbf )
-
-      local lOpen
-      local cFilter
-
-      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
-
-      lOpen             := !neterr()
-      if lOpen
-
-         // Limitaciones de cajero y cajas----------------------------------------
-
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
-
-            ( dbf )->( AdsSetAOF( cFilter ) )
-
-         end if
-
-      end if 
-
-      Return ( lOpen )   
-   
-   ENDMETHOD
 
    //---------------------------------------------------------------------------//
 
@@ -653,6 +611,78 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD CheckData()
+
+   if lAIS()
+      aeval( ::aDataTables, {|oTable| ::AddTable( oTable, .t. ) } )
+   end if 
+
+RETURN ( Self )  
+
+//---------------------------------------------------------------------------//
+
+METHOD CheckEmpresa()
+
+   if lAIS()
+      aeval( ::aEmpresaTables, {|oTable| ::AddTable( oTable, .t. ) } )
+   end if
+
+RETURN ( Self )  
+
+//---------------------------------------------------------------------------//
+
+METHOD oFacCliT()
+
+   local cFilter
+   local oFacCliT
+
+   DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
+
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
+
+         ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+      end if
+
+Return ( oFacCliT )   
+
+//---------------------------------------------------------------------------//
+
+METHOD OpenFacCliT( dbf )
+
+   local lOpen
+   local cFilter
+
+   USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbf ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+
+   lOpen             := !neterr()
+   if lOpen
+
+      // Limitaciones de cajero y cajas----------------------------------------
+
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+Return ( lOpen )   
+
+//---------------------------------------------------------------------------//
+   
 METHOD CreateTemporalTable( oTable )
 
    local oError
@@ -694,7 +724,7 @@ METHOD lAdministratorTask()
 
    while !( dbfEmp )->( eof() )
       if !( dbfEmp )->lGrupo
-         aAdd( ::aEmpresas, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo, .f., .f. } )
+         aAdd( ::aEmpresas, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo, .f., .f., .t. } )
       end if 
       ( dbfEmp )->( dbSkip() )
    end while
@@ -723,6 +753,17 @@ METHOD lAdministratorTask()
       ::oBrwEmpresas:CreateFromResource( 100 )
 
       ::oBrwEmpresas:SetArray( ::aEmpresas, , , .f. )
+
+      ::oBrwEmpresas:bLDblClick              := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] := !::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ], ::oBrwEmpresas:Refresh() }
+
+      with object ( ::oBrwEmpresas:AddCol() )
+         :cHeader          := "Sl. Seleccionada"
+         :bStrData         := {|| "" }
+         :nWidth           := 20
+         :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 6 ] }
+         :bLClickHeader    := {|| aeval( ::aEmpresas, {|a| a[6] := !a[6] } ), ::oBrwEmpresas:Refresh() }
+         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+      end with 
 
       with object ( ::oBrwEmpresas:AddCol() )
          :cHeader          := "Ac. Actualizada"
@@ -815,14 +856,18 @@ METHOD StartAdministratorTask()
 
    for each cEmp in ::aEmpresas
 
-      ::oSayProceso:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+      if cEmp[ 6 ]
 
-      ::oMtrActualiza:Set( hb_EnumIndex() )
+         ::oSayProceso:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
-      SetEmpresa( cEmp[ 1 ], , , , , , .t. )
-      lActualiza( cEmp[ 1 ], , .t., cEmp[ 2 ], .f. )
+         ::oMtrActualiza:Set( hb_EnumIndex() )
 
-      cEmp[ 4 ]      := .t.
+         SetEmpresa( cEmp[ 1 ], , , , , , .t. )
+         lActualiza( cEmp[ 1 ], , .t., cEmp[ 2 ], .f. )
+
+         cEmp[ 4 ]      := .t.
+
+      end if 
 
       ::oBrwEmpresas:GoDown()
       ::oBrwEmpresas:Refresh()
@@ -868,16 +913,20 @@ METHOD StartAdministratorTask()
 
       for each cEmp in ::aEmpresas
 
-         ::oSayProceso:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+         if cEmp[ 6 ]
 
-         ::oMtrActualiza:Set( hb_EnumIndex() )
+            ::oSayProceso:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
-         SetEmpresa( cEmp[ 1 ], , , , , , .t. )
+            ::oMtrActualiza:Set( hb_EnumIndex() )
 
-         ::BuildEmpresa()     
-         ::CreateEmpresaTable()
+            SetEmpresa( cEmp[ 1 ], , , , , , .t. )
 
-         cEmp[ 5 ]   := .t.
+            ::BuildEmpresa()     
+            ::CreateEmpresaTable()
+
+            cEmp[ 5 ]   := .t.
+
+         end if
 
          ::oBrwEmpresas:GoDown()
          ::oBrwEmpresas:Refresh()
@@ -1448,10 +1497,12 @@ RETURN ( ::ExecuteSqlStatement( cStm, "AllLocks" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddTable( oTable )
+METHOD AddTable( oTable, lSilent )
 
    local cError
    local lAddTable      := .t.
+
+   DEFAULT lSilent      := .f.
 
    if !::ExistTable( oTable )
 
@@ -1472,18 +1523,24 @@ METHOD AddTable( oTable )
       else
 
          if !file( oTable:cDataFile )
-            msgAlert( "No existe " + ( oTable:cDataFile ), "Atención", 1 )
+            if !lSilent
+               msgAlert( "No existe " + ( oTable:cDataFile ), "Atención", 1 )
+            end if 
          end if
 
          if !file( oTable:cIndexFile )
-            msgAlert( "No existe " + ( oTable:cIndexFile ), "Atención", 1 )
+            if !lSilent
+               msgAlert( "No existe " + ( oTable:cIndexFile ), "Atención", 1 )
+            end if
          end if
 
       end if
 
    else 
-
-      msgStop( "La tabla " + ( oTable:cDataFile ) + "ya existe en el diccionario de datos." )
+      
+      if !lSilent
+         msgStop( "La tabla " + ( oTable:cDataFile ) + "ya existe en el diccionario de datos." )
+      end if
 
    end if
 
@@ -1625,6 +1682,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Divisas"
    oDataTable:cName        := cPatDat() + "Divisas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Divisas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Divisas.Cdx"
@@ -1635,6 +1693,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TIva"
    oDataTable:cName        := cPatDat() + "TIva"
    oDataTable:cDataFile    := cPatDat( .t. ) + "TIva.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TIva.Cdx"
@@ -1777,6 +1836,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "LogPorta"
    oDataTable:cName        := cPatEmp() + "LogPorta"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "LogPorta.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "LogPorta.Cdx"
@@ -2195,6 +2255,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Client"
    oDataTable:cName        := cPatEmp() + "Client"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Client.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Client.Cdx"
@@ -2205,6 +2266,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ClientD"
    oDataTable:cName        := cPatEmp() + "ClientD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ClientD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ClientD.Cdx"
@@ -2213,6 +2275,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "CliAtp"   
    oDataTable:cName        := cPatEmp() + "CliAtp"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliAtp.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliAtp.Cdx"
@@ -3040,7 +3103,7 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Anticipos de clientes"
    oDataTable:bCreateIndex := {| cPath | rxAntCli( cPath ) }
    oDataTable:bCreateFile  := {| cPath | mkAntCli( cPath ) }
-   oDataTable:bSyncFile    := {|| SynAntCli( cPatEmp() ) }
+   // oDataTable:bSyncFile    := {|| SynAntCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -4226,15 +4289,14 @@ METHOD ActualizaTable( oTable, cPath )
    local dbfTmp
    local nField      
    local aField
+
+   local oError
+   local oBlock
    
-   lCopy             := .t.
+   lCopy             := .f.
    cOld              := oTable:cName 
    cTmp              := cEmpTmp() + cNoPath( oTable:cName )
      
-   if "EmpBnc" $ oTable:cName
-      msgStop( "mia en el tmp")
-   end if
-
    if !lExistTable( cTmp + ".Dbf" )
       msgStop( "No existe" + cTmp + ".Dbf" )
       return .f.
@@ -4246,16 +4308,17 @@ METHOD ActualizaTable( oTable, cPath )
 
    if lExistTable( cOld + ".Dbf" )
 
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
       USE ( cOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
       if NetErr()
-         msgStop(  cOld + ".Dbf", "Error de apertura" )
-         return .f.
+         msgStop(  cOld + ".Dbf", "Error de apertura " )
       end if
       
       USE ( cTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
       if NetErr()
-         msgStop(  cTmp + ".Dbf", "Error de apertura" )
-         return .f.
+         msgStop( cTmp + ".Dbf", "Error de apertura" )
       end if
    
       // Preparamos los campos ---------------------------------------------------
@@ -4283,6 +4346,12 @@ METHOD ActualizaTable( oTable, cPath )
    
       CLOSE ( dbfOld )
       CLOSE ( dbfTmp )
+
+      RECOVER USING oError
+         msgStop( "Imposible actualizar tablas." + CRLF + ErrorMessage( oError ) )
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
 
    end if 
    
@@ -4316,22 +4385,12 @@ METHOD ActualizaEmpresa( oMsg )
       ::oMsg            := oMsg
    end if               
 
-   ::BuildData()
+   // ::BuildData()
 
-   ::BuildEmpresa()
+   // ::BuildEmpresa()
 
    // Eliminando tablas del diccionario----------------------------------------
-
-   for each oTable in ::aDataTables
-      ::oMsg:SetText( "Eliminado tabla del diccionario : " + oTable:cDescription )
-      ::DeleteTable( oTable )
-   next 
-
-   for each oTable in ::aEmpresaTables
-      ::oMsg:SetText( "Eliminado tabla del diccionario : " + oTable:cDescription )
-      ::DeleteTable( oTable )
-   next 
-   
+  
    // Recargamos el diccionario de datos---------------------------------------
 
    ::ReLoadTables()
@@ -4347,26 +4406,26 @@ METHOD ActualizaEmpresa( oMsg )
    // Creamos las nuesvas estructuras------------------------------------------
 
    for each oTable in ::aDataTables
+
       ::oMsg:SetText( "Creando nueva tabla : " + oTable:cDescription )
       ::CreateTemporalTable( oTable )
+
+      ::oMsg:SetText( "Actualizando tabla : " + oTable:cDescription )
+      ::ActualizaDataTable( oTable )
+
    next 
 
    for each oTable in ::aEmpresaTables
+
       ::oMsg:SetText( "Creando nueva tabla : " + oTable:cDescription )
       ::CreateTemporalTable( oTable )
+
+      ::oMsg:SetText( "Actualizando tabla : " + oTable:cDescription )
+      ::ActualizaEmpresaTable( oTable )
+
    next 
 
    // Creamos las nuesvas estructuras------------------------------------------
-
-   for each oTable in ::aDataTables
-      ::oMsg:SetText( "Actualizando tabla : " + oTable:cDescription )
-      ::ActualizaDataTable( oTable )
-   next 
-
-   for each oTable in ::aEmpresaTables
-      ::oMsg:SetText( "Actualizando tabla : " + oTable:cDescription )
-      ::ActualizaEmpresaTable( oTable )
-   next 
 
    SetIndexToAIS()
 
@@ -4377,25 +4436,29 @@ METHOD ActualizaEmpresa( oMsg )
    // Creamos las nuesvas estructuras------------------------------------------
 
    for each oTable in ::aDataTables
+
+      ::oMsg:SetText( "Eliminado tabla del diccionario : " + oTable:cDescription )
+      ::DeleteTable( oTable )
+
       ::oMsg:SetText( "Añadiendo tabla al diccionario de datos : " + oTable:cDescription )
       ::AddTable( oTable )
+
+      ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
+      ::ReindexTable( oTable )
+
    next 
 
    for each oTable in ::aEmpresaTables
+
+      ::oMsg:SetText( "Eliminado tabla del diccionario : " + oTable:cDescription )
+      ::DeleteTable( oTable )
+
       ::oMsg:SetText( "Añadiendo tabla al diccionario de datos : " + oTable:cDescription )
       ::AddTable( oTable )
-   next 
 
-   // Reindexando tablas ------------------------------------------------------
-
-   for each oTable in ::aDataTables
       ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
-   next 
 
-   for each oTable in ::aEmpresaTables
-      ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
-      ::ReindexTable( oTable )
    next 
 
    // Recargamos el diccionario de datos---------------------------------------
@@ -4454,33 +4517,44 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
 
    local lOk
    local nError
+   local oError
+   local oBlock
    local cErrorAds
 
    CursorWait()
 
-   dbSelectArea( 0 )
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   lOk            := ADSCreateSQLStatement( cSqlStatement, 7 )
-
-   if lOk
-
-      lOk         := ADSExecuteSQLDirect( cSql )
-      if !lOk
-         nError   := AdsGetLastError( @cErrorAds )
-         msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
+      dbSelectArea( 0 )
+   
+      lOk            := ADSCreateSQLStatement( cSqlStatement, 7 )
+   
+      if lOk
+   
+         lOk         := ADSExecuteSQLDirect( cSql )
+         if !lOk
+            nError   := AdsGetLastError( @cErrorAds )
+            msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
+         endif
+   
+      else
+   
+         nError      := AdsGetLastError( @cErrorAds )
+         msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
+   
+      end if
+   
+      if lOk 
+         AdsCacheOpenCursors( 0 )
+         AdsClrCallBack()
       endif
 
-   else
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "ExecuteSqlStatement" )
+   END SEQUENCE
 
-      nError      := AdsGetLastError( @cErrorAds )
-      msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
-
-   end if
-
-   if lOk 
-      AdsCacheOpenCursors( 0 )
-      AdsClrCallBack()
-   endif
+   ErrorBlock( oBlock )
 
 /*
    if Select( cSqlStatement ) > 0
@@ -4585,13 +4659,13 @@ RETURN ( lOk )
 
       local nScan
 
-      nScan    := aScan( ::aDataTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+      nScan    := aScan( ::aDataTables, {|o| o:cFileName() == ::DataName( cDatabase ) } )   
       if nScan != 0
          Return ( ::aDataTables[ nScan ] )
       end if 
 
       if nScan == 0
-         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == Upper( cDatabase ) } )   
+         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDatabase ) } )   
          if nScan != 0
             Return ( ::aEmpresaTables[ nScan ] )
          end if 
@@ -4608,14 +4682,15 @@ RETURN ( lOk )
       local oDataTable
 
       oDataTable        := ::ScanDatabase( cDatabase )
+
       if !empty( oDataTable )
 
-         dbUseArea( .t., ( cDriver() ), ( oDataTable:cDataFile ), ( cCheckArea( oDataTable:cFileName(), @dbf ) ), .t., .f. )
+         dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
          if( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
 
          lOpen          := !neterr()
          if lOpen
-            ::AddDatabaseView( oDataTable:cFileName(), dbf )
+            ::AddDatabaseView( oDataTable:cArea, dbf )
          end if 
 
          Return ( lOpen )   
@@ -4634,6 +4709,7 @@ RETURN ( lOk )
 CLASS TDataTable
 
    DATA  cName
+   DATA  cArea
    DATA  cDataFile
    DATA  cIndexFile
    DATA  cDescription   INIT ""
@@ -4645,6 +4721,7 @@ CLASS TDataTable
    DATA  bCreateIndex   
 
    METHOD cFileName()   INLINE ( Upper( cNoPath( ::cName ) ) )
+   METHOD cAreaName()   INLINE ( if( lAIS(), ::cFileName() + ".Dbf", ::cDataFile ) )
 
 END CLASS
 
