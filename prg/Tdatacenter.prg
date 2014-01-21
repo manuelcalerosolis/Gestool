@@ -4540,8 +4540,8 @@ RETURN ( lOk )
       end if
 
       if !hHasKey( ::hViews, nView )
-         msgStop( "Vista " + Str( nView ) + " no encontrada." )
-         Return ( .t. )
+         msgStop( "Vista " + Alltrim( Str( nView ) ) + " no encontrada." )
+         Return ( .f. )
       end if 
 
    Return ( .t. )
@@ -4562,8 +4562,6 @@ RETURN ( lOk )
          HDel( ::hViews, nView )
          
       end if 
-
-      msgAlert( nView, "delete view" )      
 
    Return ( Self )
 

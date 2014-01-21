@@ -186,6 +186,8 @@ CLASS TUser
 
    Data     _Empresa                   INIT ""
 
+   //------------------------------------------------------------------------//
+
    Inline Method cEmpresa( cNewVal )
 
       if cNewVal != nil

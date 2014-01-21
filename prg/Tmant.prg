@@ -382,12 +382,11 @@ METHOD CreateFiles( cPath, lAppend, cPathOld, oMeter ) CLASS TMant
 RETURN NIL
 
 //---------------------------------------------------------------------------//
+/*
+Definicion del master----------------------------------------------------------
+*/
 
 METHOD Reindexa()
-
-   /*
-   Definicion del master-------------------------------------------------------
-   */
 
    if Empty( ::oDbf )
       ::oDbf   := ::DefineFiles()
@@ -399,7 +398,7 @@ METHOD Reindexa()
       ::oDbf:Pack()
    end if
 
-   ::CloseFiles()
+   ::CloseService()
 
 RETURN ( Self )
 

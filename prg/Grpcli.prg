@@ -184,26 +184,26 @@ METHOD Resource( nMode )
    DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de clientes"
 
       REDEFINE FOLDER oFld ;
-         ID       500 ;
-         OF       oDlg ;
-         PROMPT   "&General",;
-                  "&Tarifas" ;
-         DIALOGS  "GRPCLI_01" ,;
-                  "GRPCLI_02"
+         ID          500 ;
+         OF          oDlg ;
+         PROMPT      "&General",;
+                     "&Tarifas" ;
+         DIALOGS     "GRPCLI_01" ,;
+                     "GRPCLI_02"
 
-      REDEFINE GET ::oGetCodigo ;
-         VAR      ::oDbf:cCodGrp ;
-			ID 		100 ;
-         WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    NotValid( ::oGetCodigo, ::oDbf:cAlias, .t., "0" ) ;
-			PICTURE 	"@!" ;
-			OF 		oFld:aDialogs[ 1 ]
+      REDEFINE GET   ::oGetCodigo ;
+         VAR         ::oDbf:cCodGrp ;
+			ID          100 ;
+         WHEN        ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
+         VALID       NotValid( ::oGetCodigo, ::oDbf:cAlias, .t., "0" ) ;
+			PICTURE 	   "@!" ;
+			OF          oFld:aDialogs[ 1 ]
 
-      REDEFINE GET ::oGetNombre ;
-         VAR      ::oDbf:cNomGrp ;
-			ID 		110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oFld:aDialogs[ 1 ]
+      REDEFINE GET   ::oGetNombre ;
+         VAR         ::oDbf:cNomGrp ;
+			ID          110 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+			OF          oFld:aDialogs[ 1 ]
 
       ::oTreePadre                     := TTreeView():Redefine( 130, oFld:aDialogs[ 1 ] )
       ::oTreePadre:bItemSelectChanged  := {|| ::ChangeTreeState() }

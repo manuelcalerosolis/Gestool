@@ -277,6 +277,8 @@ METHOD lResource() CLASS TpvCobros
 
    if uFieldEmpresa( "lTotTikCob" )
       ::nGetEntregado   := ( ::Total() - ::Entregado() )
+   else 
+      ::nGetEntregado   := 0
    end if
 
    DEFINE DIALOG ::oDlg RESOURCE ( ::Resource() ) TITLE ( ::oSender:cTipoDocumento() ) FONT ::oSender:oFntDlg
@@ -423,7 +425,7 @@ METHOD lResource() CLASS TpvCobros
    Evento a lanzar a inicio----------------------------------------------------
    */
 
-   ::oDlg:bStart  := {|| ::SetTextoTotal() }
+   ::oDlg:bStart           := {|| ::SetTextoTotal() }
 
    /*
    Activamos el dialogo--------------------------------------------------------

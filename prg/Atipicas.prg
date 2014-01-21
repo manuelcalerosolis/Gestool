@@ -121,8 +121,8 @@ CLASS TAtipicas FROM TDet
       METHOD PreSaveDetail()        INLINE   ( MsgStop( "PreSaveDetail" ) )
 
       METHOD WhenTipoArticulo()     INLINE   ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
-      METHOD WhenTipoArticuloIva()  INLINE   ( ::WhenTipoArticulo() .and. ( TDataCenter():Get( "Articulo", ::nView ) )->lIvaInc ) 
-      METHOD WhenTipoArticuloBase() INLINE   ( ::WhenTipoArticulo() .and. !( TDataCenter():Get( "Articulo", ::nView ) )->lIvaInc ) 
+      METHOD WhenTipoArticuloIva()  INLINE   ( ::WhenTipoArticulo() .and. ( TDataCenter():Get( "Articulo", ::View() ) )->lIvaInc ) 
+      METHOD WhenTipoArticuloBase() INLINE   ( ::WhenTipoArticulo() .and. !( TDataCenter():Get( "Articulo", ::View() ) )->lIvaInc ) 
       METHOD WhenOfertaXbY()        INLINE   ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
 
       METHOD ChangeNaturaleza()
@@ -144,6 +144,8 @@ CLASS TAtipicas FROM TDet
    METHOD HidePrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Hide(), ::oValorPrimeraPropiedad:Hide(), ::oCodigoPrimeraPropiedad:Hide() )
    METHOD HideSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Hide(), ::oValorSegundaPropiedad:Hide(), ::oCodigoSegundaPropiedad:Hide() )
 
+   METHOD View()                    INLINE ( ::oParent:nView )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -154,7 +156,6 @@ METHOD New( cPath, oParent ) CLASS TAtipicas
 
    ::cPath              := cPath
    ::oParent            := oParent
-   ::nView              := oParent:nView
 
    ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
 
@@ -324,7 +325,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          BITMAP   "LUPA" ;
          OF       ::oFld:aDialogs[1]
 
-         ::oCodigoFamilia:bValid := {|| cFamilia( ::oCodigoFamilia, TDataCenter():Get( "Familia", ::nView ), ::oNombreFamilia ) }
+         ::oCodigoFamilia:bValid := {|| cFamilia( ::oCodigoFamilia, TDataCenter():Get( "Familia", ::View() ), ::oNombreFamilia ) }
          ::oCodigoFamilia:bHelp  := {|| BrwFamilia( ::oCodigoFamilia, ::oNombreFamilia ) }
 
       REDEFINE GET ::oNombreFamilia ;
@@ -984,7 +985,7 @@ METHOD Browse( Id, oDialog )
 
    with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Nombre"
-      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, retArticulo( ::oDbfVir:cCodArt, TDataCenter():Get( "Articulo", ::nView ) ), retFamilia( ::oDbfVir:cCodFam, TDataCenter():Get( "Familia", ::nView ) ) ) }
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, retArticulo( ::oDbfVir:cCodArt, TDataCenter():Get( "Articulo", ::View() ) ), retFamilia( ::oDbfVir:cCodFam, TDataCenter():Get( "Familia", ::View() ) ) ) }
       :nWidth           := 160
    end with
    
@@ -1114,11 +1115,11 @@ METHOD LoadAtipica()
       Return ( .t. )
    end if
 
-   if ( TDataCenter():Get( "Articulo", ::nView ) )->( dbSeek( ::oDbfVir:cCodArt ) )
+   if ( TDataCenter():Get( "Articulo", ::View() ) )->( dbSeek( ::oDbfVir:cCodArt ) )
 
-      ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo", ::nView ) )->Nombre )
+      ::oNombreArticulo:cText( ( TDataCenter():Get( "Articulo", ::View() ) )->Nombre )
 
-      ::SetPrimeraPropiedad( ( TDataCenter():Get( "Articulo", ::nView ) )->cCodPrp1 )
+      ::SetPrimeraPropiedad( ( TDataCenter():Get( "Articulo", ::View() ) )->cCodPrp1 )
 
    else
 

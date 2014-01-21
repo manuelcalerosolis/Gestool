@@ -360,6 +360,9 @@ Variables Staticas para todo el .prg logico no!--------------------------------
 */
 
 static oWndBrw
+
+static nView
+
 static oBrwIva
 static dbfRuta
 static dbfTikT
@@ -842,7 +845,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       DisableAcceso()
 
-      TDataCenter():CreateView()
+      nView 				:= TDataCenter():CreateView()
 
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
@@ -1702,7 +1705,7 @@ STATIC FUNCTION CloseFiles()
    oBanco      := nil
    oPais       := nil
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( nView )
 
    lOpenFiles  := .f.
 

@@ -66,6 +66,9 @@ CLASS TpvTactil
 
    DATA oWnd
    DATA oDlg
+
+   DATA nView
+
    DATA nScreenHorzRes
    DATA nScreenVertRes
 
@@ -2074,9 +2077,9 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::lOpenFiles               := .t.
 
-   TDataCenter():CreateView()
+   ::nView                    := TDataCenter():CreateView()
 
-   TDataCenter():Get( "LogPorta" )
+   TDataCenter():Get( "LogPorta", ::nView )
 
    DATABASE NEW ::oTiketCabecera                            PATH ( cPatEmp() )   FILE "TIKET.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
@@ -2729,7 +2732,7 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oVisor:End()
    end if
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( ::nView )
 
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil
@@ -3289,11 +3292,9 @@ METHOD Resource() CLASS TpvTactil
    */
 
    if !::l1024()
-
       ::oBtnSSalon               := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
       ::oBtnSEntregar            := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
       ::oBtnSCobrar              := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )   
-
    end if
 
    /*
@@ -3320,7 +3321,7 @@ METHOD Resource() CLASS TpvTactil
 
    ::oDlg:Activate( , , , .t., {|| ::EndResource() } )
 
-   ::End()
+   // ::End()
 
 Return .t.
 
@@ -3415,7 +3416,7 @@ METHOD StartResource() CLASS TpvTactil
          oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",     1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| oUser():OpenCajon( ::nView ) }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
@@ -6209,7 +6210,7 @@ METHOD OnClickCobro() CLASS TpvTactil
       Abrimos el cajón portamonedas antes de imprimir-----------------------
       */
 
-      oUser():OpenCajon()
+      oUser():OpenCajon( ::nView )
 
       /*
       Imprimimos el documento-----------------------------------------------
@@ -6331,7 +6332,7 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       */
 
       if lOpenCaj
-         oUser():OpenCajon()
+         oUser():OpenCajon( ::nView )
       end if
 
       /*

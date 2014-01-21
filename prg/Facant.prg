@@ -116,6 +116,9 @@ Variables Staticas para todo el .prg logico no!
 */
 
 static oWndBrw
+
+static nView
+
 static oBrw
 static dbfUsr
 static dbfTikCliT
@@ -360,9 +363,9 @@ STATIC FUNCTION OpenFiles( lExt )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   TDataCenter():CreateView()
+   nView                := TDataCenter():CreateView()
 
-   TDataCenter():Get( "LogPorta" )
+   TDataCenter():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
@@ -574,7 +577,7 @@ STATIC FUNCTION CloseFiles()
       oStock:end()
    end if
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( nView )
 
    dbfIva      := nil
    dbfFPago    := nil
@@ -2728,7 +2731,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
    */
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
-      oUser():OpenCajon() // OpnCaj()
+      oUser():OpenCajon( nView ) // OpnCaj()
    end if
 
    oDlg:Enable()

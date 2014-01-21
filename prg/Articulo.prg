@@ -2106,9 +2106,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ITEMS    { "Ventas", "Alquiler" } ;
          ID       610 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage ) ) ;
          OF       fldPrecios
 
+         // ON CHANGE( StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage ) ) ;
    /*
    Etiquetas de tarifas--------------------------------------------------------
    */
@@ -2151,7 +2151,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR         aTmp[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ] ;
          ID       160 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 11 ]:nAt <= 1,;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
@@ -2181,7 +2180,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] ;
          ID       170 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 11 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ],;
@@ -2243,7 +2241,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "BENEF2" ) ) ] ;
          ID       200 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF2" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 12 ]:nAt <= 1,;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
@@ -2261,7 +2258,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] ;
          ID       210 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 12 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2321,7 +2317,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "BENEF3" ) ) ] ;
          ID       240 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF3" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 13 ]:nAt <= 1,;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
@@ -2398,7 +2393,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "BENEF4" ) ) ] ;
          ID       280 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF4" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 14 ]:nAt <= 1,;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
@@ -2416,7 +2410,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] ;
          ID       290 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 14 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2476,7 +2469,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "BENEF5" ) ) ] ;
          ID       320 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF5" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 15 ]:nAt <= 1,;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
@@ -2494,7 +2486,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] ;
          ID       330 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 15 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2555,7 +2546,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "Benef6" ) ) ] ;
          ID       360 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF6" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 16 ]:nAt <= 1,;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
@@ -2573,7 +2563,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] ;
          ID       370 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 16 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2650,7 +2639,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlq1" ) ) ] ;
          ID       620 ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfPts(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2667,7 +2655,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlqIva1" ) ) ] ;
          ID       680 ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfIva(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2684,7 +2671,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlq2" ) ) ] ;
          ID       630 ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfPts(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2701,7 +2687,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlqIva2" ) ) ] ;
          ID       690 ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfIva(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2718,7 +2703,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlq3" ) ) ] ;
          ID       640 ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfPts(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2735,7 +2719,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlqIva3" ) ) ] ;
          ID       700 ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfIva(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2752,7 +2735,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlq4" ) ) ] ;
          ID       650 ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfPts(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2769,7 +2751,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlqIva4" ) ) ] ;
          ID       710 ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfIva(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2786,7 +2767,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlq5" ) ) ] ;
          ID       660 ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfPts(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2803,7 +2783,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlqIva5" ) ) ] ;
          ID       720 ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfIva(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2820,7 +2799,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlq6" ) ) ] ;
          ID       670 ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfPts(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -2837,7 +2815,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pAlqIva6" ) ) ] ;
          ID       730 ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    ( CalBnfIva(   .f.,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  0,;
@@ -6329,7 +6306,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ] ;
          ID       600 ;
          WHEN     ( !aArt[ ( dbfArticulo )->( fieldPos( "lKitArt") ) ] .and. nMode != ZOOM_MODE ) ;
-         ON CHANGE( ::lValid() ) ;
          VALID    (  aGet[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ]:lValid(),;
                      aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ]:lValid(),;
                      aGet[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ]:lValid(),;
@@ -6356,7 +6332,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ] ;
          ID       310 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    (  lCalPre( oSay[ 1 ]:nAt <= 1,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6383,7 +6358,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta1" ) ) ] ;
          ID       330 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 1 ]:nAt <= 1,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6401,7 +6375,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva1" ) ) ] ;
          ID       340 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 1 ]:nAt <= 1,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6429,7 +6402,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ] ;
          ID       360 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 2 ]:nAt <= 2,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6456,7 +6428,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta2" ) ) ] ;
          ID       380 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 2 ]:nAt <= 2,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6474,7 +6445,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva2" ) ) ] ;
          ID       390 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 2 ]:nAt <= 2,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6502,7 +6472,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ] ;
          ID       410 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(  oSay[ 3 ]:nAt <= 3,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6529,7 +6498,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta3" ) ) ] ;
          ID       430 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 3 ]:nAt <= 3,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6547,7 +6515,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva3" ) ) ] ;
          ID       440 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 3 ]:nAt <= 3,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6575,7 +6542,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ] ;
          ID       460 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 4 ]:nAt <= 4,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6602,7 +6568,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta4" ) ) ] ;
          ID       480 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 4 ]:nAt <= 4,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6620,7 +6585,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva4" ) ) ] ;
          ID       490 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 4 ]:nAt <= 4,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6648,7 +6612,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ] ;
          ID       510 ;
 			SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 5 ]:nAt <= 5,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6675,7 +6638,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta5" ) ) ] ;
          ID       530 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 5 ]:nAt <= 5,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6693,7 +6655,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva5" ) ) ] ;
          ID       540 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 5 ]:nAt <= 5,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6721,7 +6682,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ] ;
          ID       560 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 6 ]:nAt <= 6,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6748,7 +6708,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta6" ) ) ] ;
          ID       580 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 6 ]:nAt <= 6,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
@@ -6766,7 +6725,6 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva6" ) ) ] ;
          ID       590 ;
          SPINNER ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 6 ]:nAt <= 6,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;

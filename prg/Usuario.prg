@@ -1107,6 +1107,7 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
 
    aSta                 := aGetStatus( dbfUsr )
 
+   ( dbfUsr )->( OrdSetFocus( "CCODUSE" ) )
    ( dbfUsr )->( dbGoTop() )
 
    if !lBigStyle
@@ -1115,19 +1116,20 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
       DEFINE DIALOG oDlg RESOURCE "BigHelpEntry" TITLE "Seleccionar usuarios"
    end if
 
-      REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, oGet1, oBrw, dbfUsr ) );
-         VALID    ( OrdClearScope( oBrw, dbfUsr ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+      REDEFINE GET      oGet1 ;
+         VAR            cGet1 ;
+			ID             104 ;
+         ON CHANGE      ( AutoSeek( nKey, nFlags, oGet1, oBrw, dbfUsr ) );
+         VALID          ( OrdClearScope( oBrw, dbfUsr ) );
+         BITMAP         "FIND" ;
+         OF             oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfUsr )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
+			VAR            cCbxOrd ;
+			ID             102 ;
+         ITEMS          aCbxOrd ;
+         ON CHANGE      ( ( dbfUsr )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
+			OF             oDlg
 
       oBrw                 := TXBrowse():New( oDlg )
 

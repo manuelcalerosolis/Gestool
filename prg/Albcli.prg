@@ -1166,7 +1166,7 @@ STATIC FUNCTION CloseFiles()
       oStock:end()
    end if
    if !Empty( oGrpCli )
-      oGrpCli:end()
+      oGrpCli:CloseService()
    end if
    if !Empty( oNewImp )
       oNewImp:end()

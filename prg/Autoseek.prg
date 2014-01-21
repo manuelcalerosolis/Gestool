@@ -223,6 +223,12 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha )
 
    cSort       := ( xAlias )->( OrdSetFocus() )
 
+   ? "lMiniSeek"
+   ? cPrefij
+   ? xCadena
+   ? xAlias
+   ? nLen
+
    lRet        := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
    if uFieldEmpresa( "lBusCir" )
@@ -321,6 +327,9 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
          end if
 
       case cType == "C"
+
+         ? "desde lMiniSeek"
+         ? xCadena
 
          /*   
          if Empty( nLen )

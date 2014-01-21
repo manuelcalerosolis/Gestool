@@ -8224,6 +8224,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
 
    /*
+   Escribe los datos pendientes------------------------------------------------
+   */
+
+   CommitTransaction()
+
+   /*
    Generar los pagos de las facturas-------------------------------------------
    */
 
@@ -8257,18 +8263,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    end if
 
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
-
-   dbCommitAll()
-
-   CommitTransaction()
-
    RECOVER USING oError
 
       RollBackTransaction()
-      msgStop( "Imposible almacenar documentos" + CRLF + ErrorMessage( oError ) )
+
+      msgStop( ErrorMessage( oError ), "Imposible almacenar documentos"  )
 
    END SEQUENCE
    ErrorBlock( oBlock )

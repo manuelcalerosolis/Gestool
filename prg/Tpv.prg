@@ -231,10 +231,13 @@ memvar nTotCos
 memvar nTotRnt
 memvar nTotPctRnt
 
+static oWndBrw
+
+static nView
+
 static oFr
 
 static nLevel
-static oWndBrw
 static oWndBig
 static dbfClient
 static dbfUsr
@@ -536,7 +539,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
       DisableAcceso()
 
-      lOpenFiles           := .t.
+      lOpenFiles        := .t.
 
       if !lExistTable( cPatEmp + "TikeT.Dbf" )  .or.;
          !lExistTable( cPatEmp + "TikeL.Dbf" )  .or.;
@@ -544,9 +547,9 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          mkTpv()
       end if
 
-      TDataCenter():CreateView()
+      nView             := TDataCenter():CreateView()
 
-      TDataCenter():Get( "LogPorta" )
+      TDataCenter():Get( "LogPorta", nView )
 
       USE ( cPatEmp + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
       SET ADSINDEX TO ( cPatEmp + "TIKET.CDX" ) ADDITIVE
@@ -1014,7 +1017,7 @@ STATIC FUNCTION CloseFiles()
       oFabricante:End()
    end if
 
-   TDataCenter():DeleteView()
+   TDataCenter():DeleteView( nView )
 
    dbfTikT           := nil
    dbfTikL           := nil
@@ -4265,7 +4268,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
          if ( dbfTikT )->cTipTik != SAVALB
-            oUser():OpenCajon()
+            oUser():OpenCajon( nView )
          end if
 
          /*
@@ -5377,7 +5380,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
 		*/
 
       if ( dbfTikT )->cTipTik != SAVALB
-         oUser():OpenCajon()
+         oUser():OpenCajon( nView )
       end if
 
       /*
@@ -19710,7 +19713,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
       Abrir la caja -----------------------------------------------------------
       */
 
-      oUser():OpenCajon()
+      oUser():OpenCajon( nView )
 
       /*
       Imprimir el registro-----------------------------------------------------
