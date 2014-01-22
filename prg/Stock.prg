@@ -3848,7 +3848,7 @@ RETURN ( nPreMed )
 
 //---------------------------------------------------------------------------//
 
-METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS TStock
+METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote ) CLASS TStock
 
    local nUnidades      := 0
    local nImporte       := 0
@@ -3859,10 +3859,11 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
    local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cCodArt" ) )
 
-   DEFAULT cCodPr1      := ""
-   DEFAULT cCodPr2      := ""
-   DEFAULT cValPr1      := ""
-   DEFAULT cValPr2      := ""
+   DEFAULT cCodPr1      := Space( 20 )
+   DEFAULT cCodPr2      := Space( 20 )
+   DEFAULT cValPr1      := Space( 20 )
+   DEFAULT cValPr2      := Space( 20 )
+   DEFAULT cLote        := Space( 12 )
 
 
    /*
@@ -3875,11 +3876,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Recorremos movimientos de almacén-------------------------------------------
    */
 
-   if ( ::cHisMovT)->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+   if ( ::cHisMovT )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
-      while ( ::cHisMovT)->cRefMov == cCodArt                        .and. ;
-         ( Empty( cValPr1 ) .or. ( ::cHisMovT)->cValPr1 == cValPr1 ) .and. ;
-         ( Empty( cValPr2 ) .or. ( ::cHisMovT)->cValPr2 == cValPr2 ) .and. ;
+      while ( ::cHisMovT)->cRefMov == cCodArt                        .and.;
+         ( Empty( cValPr1 ) .or. ( ::cHisMovT)->cValPr1 == cValPr1 ) .and.;
+         ( Empty( cValPr2 ) .or. ( ::cHisMovT)->cValPr2 == cValPr2 ) .and.;
+         ( Empty( cLote )   .or. ( ::cHisMovT )->cLote == cLote )    .and.;
          ( ::cHisMovT)->( !Eof() )
 
          if ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov )
@@ -3914,11 +3916,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Recorremos Albaranes de proveedores-----------------------------------------
    */
 
-   if ( ::cAlbPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+   if ( ::cAlbPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cAlbPrvL )->cRef == cCodArt                             .and.;
          ( Empty( cValPr1 ) .or. ( ::cAlbPrvL )->cValPr1 == cValPr1 )   .and.;
          ( Empty( cValPr2 ) .or. ( ::cAlbPrvL )->cValPr2 == cValPr2 )   .and.;
+         ( Empty( cLote )   .or. ( ::cAlbPrvL )->cLote == cLote )       .and.;
          !( ::cAlbPrvL )->( eof() )
 
       if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) .and.;
@@ -3939,11 +3942,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Recorremos Facturas de proveedores------------------------------------------
    */
 
-   if ( ::cFacPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+   if ( ::cFacPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
-      while ( ::cFacPrvL )->cRef == cCodArt                          .and.;
-      ( Empty( cValPr1 ) .or.  ( ::cFacPrvL )->cValPr1 == cValPr1 )  .and.;
-      ( Empty( cValPr2 ) .or.  ( ::cFacPrvL )->cValPr2 == cValPr2 )  .and.;
+      while ( ::cFacPrvL )->cRef == cCodArt                         .and.;
+      ( Empty( cValPr1 ) .or. ( ::cFacPrvL )->cValPr1 == cValPr1 )  .and.;
+      ( Empty( cValPr2 ) .or. ( ::cFacPrvL )->cValPr2 == cValPr2 )  .and.;
+      ( Empty( cLote )   .or. ( ::cFacPrvL )->cLote == cLote )      .and.;
       !( ::cFacPrvL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) .and.;
@@ -3966,11 +3970,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Recorremos Facturas rectificativas de proveedores---------------------------
    */
 
-   if ( ::cRctPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+   if ( ::cRctPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cRctPrvL )->cRef == cCodArt                          .and.;
       ( Empty ( cValPr1 ) .or. ( ::cRctPrvL )->cValPr1 == cValPr1 )  .and.;
       ( Empty ( cValPr2 ) .or. ( ::cRctPrvL )->cValPr2 == cValPr2 )  .and.;
+      ( Empty( cLote )    .or. ( ::cRctPrvL )->cLote == cLote )      .and.;
       !( ::cRctPrvL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac )   .and.;
@@ -3991,11 +3996,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Recorremos partes de producción---------------------------
    */
 
-   if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+   if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cProducL )->cCodArt == cCodArt                          .and.;
          ( Empty ( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )  .and.;
          ( Empty ( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )  .and.;
+         ( Empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
 
          if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd ) .and.;
