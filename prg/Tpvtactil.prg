@@ -866,7 +866,6 @@ CLASS TpvTactil
    INLINE METHOD GuardaDocumentoPendiente()
 
       ::oTiketCabecera:cTipTik      := SAVTIK
-      // ::oTiketCabecera:lPgdTik      := .f.
 
       ::GuardaDocumento()
 
@@ -6725,19 +6724,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       Si este ticket ya tiene numero debemos quitar pagos anteriores-----------
       */
 
-      ::oTpvCobros:EliminaCobros()
-
-      /*
-      Pasamos del array de cobros al fichero definitivo------------------------
-      */
-
-      ::oTpvCobros:GuardaCobros()
-
-      /*
-      Inicializa los cobros para el proximo ticket-----------------------------
-      */
-
-      //::oTpvCobros:InitCobros()
+      ::oTpvCobros:ArchivaCobros()
 
       /*
       Vaciamos las lineas------------------------------------------------------

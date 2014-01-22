@@ -819,6 +819,8 @@ METHOD SaveResource()
       RETURN( Self )
    end if 
 
+   ::oDbfVir:nTipAtp := ::oNaturaleza:nAt 
+
    MsgStop( ::oDbfVir:nTipAtp, "::oDbfVir:nTipAtp" )
 
    ::oDlg:end( IDOK )

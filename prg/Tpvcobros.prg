@@ -118,6 +118,9 @@ CLASS TpvCobros
    METHOD CargaCobros( cNumeroTicket )
    METHOD EliminaCobros()
    METHOD GuardaCobros()
+   METHOD InitCobros()                 INLINE ( ::aCobros := {} )
+
+   METHOD ArchivaCobros()              INLINE ( ::EliminaCobros(), ::GuardaCobros(), ::InitCobros() )
 
    //------------------------------------------------------------------------//
 
@@ -196,8 +199,6 @@ Return Self
 //--------------------------------------------------------------------------//
 
 METHOD End() CLASS TpvCobros
-
-   ::aCobros            := {}
 
    if !Empty( ::oDlg )
       ::oDlg:End()
@@ -283,7 +284,7 @@ METHOD lResource() CLASS TpvCobros
       ::nGetEntregado   := 0
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE ( ::Resource() ) TITLE ( ::oSender:cTipoDocumento() ) FONT ::oSender:oFntDlg
+   DEFINE DIALOG ::oDlg RESOURCE ( ::Resource() ) TITLE ( ::oSender:cTipoDocumento() ) FONT ( ::oSender:oFntDlg )
 
       /*
       SAY con la imformación de los cobros-------------------------------------
@@ -712,7 +713,7 @@ METHOD CargaCobros() CLASS TpvCobros
    local sTipoCobro
    local cNumeroTicket           := ::oSender:cNumeroTicket()
 
-   ::aCobros                     := {} 
+   ::InitCobros()
 
    if ::oSender:oTiketCobro:Seek( cNumeroTicket )
 
