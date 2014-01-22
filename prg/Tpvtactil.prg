@@ -3292,9 +3292,9 @@ METHOD Resource() CLASS TpvTactil
    */
 
    if !::l1024()
-      ::oBtnSSalon               := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
-      ::oBtnSEntregar            := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
-      ::oBtnSCobrar              := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )   
+      ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
+      ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
+      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )   
    end if
 
    /*

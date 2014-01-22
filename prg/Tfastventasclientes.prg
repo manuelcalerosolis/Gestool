@@ -196,8 +196,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TFastVentasClientes
 
-   ? "close files de TFastVentasClientes"
-
    if !Empty( ::oSatCliL ) .and. ( ::oSatCliL:Used() )
       ::oSatCliL:end()
    end if
@@ -289,8 +287,6 @@ METHOD CloseFiles() CLASS TFastVentasClientes
    if !Empty( ::oStock )
       ::oStock:End()
    end if
-
-   ? "salgo de close files de TFastVentasClientes"
 
 RETURN .t.
 

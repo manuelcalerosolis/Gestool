@@ -11139,8 +11139,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 400, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 368, 12, 60, 72
   CONTROL "", 450, "TXBrowse", WS_TABSTOP|0x00300000, 308, 27, 215, 238
   CONTROL "Rentabilidad >", 600, "Button", WS_TABSTOP, 1, 273, 50, 14
-  CONTROL "&Aceptar [F5]", 500, "Button", WS_TABSTOP, 197, 273, 50, 14
-  CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 252, 273, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 197, 273, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 252, 273, 50, 14
   CONTROL "Sobre", -1, "Static", WS_GROUP, 308, 16, 56, 8
   CONTROL "Estudio rentabilidad", -1, "Button", BS_GROUPBOX, 304, 2, 222, 266
   CONTROL "", 100, "SysTabControl32", 0x00000000, 2, 2, 300, 266

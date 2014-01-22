@@ -34,6 +34,7 @@ CLASS TpvCobros
    DATA nExit
 
    CLASSDATA aFormasdePago          INIT {}
+   CLASSDATA aResourceFormaPago     INIT aMiddleResourceFormaPago()
 
    DATA oDlg
 
@@ -196,6 +197,8 @@ Return Self
 
 METHOD End() CLASS TpvCobros
 
+   ::aCobros            := {}
+
    if !Empty( ::oDlg )
       ::oDlg:End()
    end if
@@ -262,8 +265,7 @@ Return .t.
 
 METHOD lResource() CLASS TpvCobros
 
-   local cResFormaPago
-   local aResFormaPago  := aMiddleResourceFormaPago()
+   local cResourceFormaPago
 
    /*
    Tomamos valores por defecto-------------------------------------------------
@@ -271,7 +273,7 @@ METHOD lResource() CLASS TpvCobros
 
    ::SalidaImpresoraDefecto()
 
-   ::CargaCobros( ::oSender:cNumeroTicket() )
+   ::CargaCobros()
 
    ::lClickMoneda       := .f.
 
@@ -373,10 +375,9 @@ METHOD lResource() CLASS TpvCobros
          :bBmpData                     := {|| ::oBrwFormasPago:aRow[ "Imagen" ] }
          :nWidth                       := 24
                
-         for each cResFormaPago in aResFormaPago
-            :AddResource( cResFormaPago )
+         for each cResourceFormaPago in ::aResourceFormaPago
+            :AddResource( cResourceFormaPago )
          next
-   
       end with
    
       with object ( ::oBrwFormasPago:AddCol() )
@@ -706,9 +707,10 @@ Return .t.
 Cargamos los pagos-------------------------------------------------------------
 */
 
-METHOD CargaCobros( cNumeroTicket ) CLASS TpvCobros
+METHOD CargaCobros() CLASS TpvCobros
 
    local sTipoCobro
+   local cNumeroTicket           := ::oSender:cNumeroTicket()
 
    ::aCobros                     := {} 
 

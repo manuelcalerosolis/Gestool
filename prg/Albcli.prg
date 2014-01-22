@@ -1500,7 +1500,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    end if
 
    if !OpenFiles()
-      ? "salgo por aki"
       return .f.
    end if
 

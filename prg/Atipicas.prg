@@ -105,7 +105,7 @@ CLASS TAtipicas FROM TDet
    DATA nPrecioCosto
    DATA oPrecioCosto
 
-   DATA oSayLabels               INIT array( 16 )
+   DATA oSayLabels                  INIT array( 16 )
 
    DATA oDescuentoPorcentualArticulo
    DATA oDescuentoLinealArticulo
@@ -116,35 +116,42 @@ CLASS TAtipicas FROM TDet
    DATA oOfertaXbY
 
    METHOD Resource()
-      METHOD Start()                INLINE   ( MsgStop( "Start" ) )
-      METHOD Save()                 INLINE   ( MsgStop( "Save" ) )
-      METHOD PreSaveDetail()        INLINE   ( MsgStop( "PreSaveDetail" ) )
+      METHOD StartResource()           INLINE   ( MsgStop( "Start" ) )
+      METHOD SaveResource()                 
+      METHOD PreSaveDetail()           INLINE   ( MsgStop( "PreSaveDetail" ) )
 
-      METHOD WhenTipoArticulo()     INLINE   ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
-      METHOD WhenTipoArticuloIva()  INLINE   ( ::WhenTipoArticulo() .and. ( TDataCenter():Get( "Articulo", ::View() ) )->lIvaInc ) 
-      METHOD WhenTipoArticuloBase() INLINE   ( ::WhenTipoArticulo() .and. !( TDataCenter():Get( "Articulo", ::View() ) )->lIvaInc ) 
-      METHOD WhenOfertaXbY()        INLINE   ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
+      METHOD WhenTipoArticulo()        INLINE   ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
+      METHOD WhenTipoArticuloIva()     INLINE   ( ::WhenTipoArticulo() .and. ( TDataCenter():Get( "Articulo", ::View() ) )->lIvaInc ) 
+      METHOD WhenTipoArticuloBase()    INLINE   ( ::WhenTipoArticulo() .and. !( TDataCenter():Get( "Articulo", ::View() ) )->lIvaInc ) 
+      METHOD WhenOfertaXbY()           INLINE   ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
 
       METHOD ChangeNaturaleza()
+      METHOD lChangeCostoParticular()  VIRTUAL
+      METHOD CalculaIva()              VIRTUAL
+
+      METHOD ShowPrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Show(), ::oValorPrimeraPropiedad:Show(), ::oCodigoPrimeraPropiedad:Show() )
+      METHOD ShowSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Show(), ::oValorSegundaPropiedad:Show(), ::oCodigoSegundaPropiedad:Show() )
+
+      METHOD HidePrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Hide(), ::oValorPrimeraPropiedad:Hide(), ::oCodigoPrimeraPropiedad:Hide() )
+      METHOD HideSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Hide(), ::oValorSegundaPropiedad:Hide(), ::oCodigoSegundaPropiedad:Hide() )
 
    METHOD ButtonAppend( Id, oDialog )
    METHOD ButtonEdit( Id, oDialog )
    METHOD ButtonDel( Id, oDialog )
    METHOD Browse( Id, oDialog )
 
+   METHOD NombreArticulo()             INLINE ( retfld( ::oDbfVir:cCodArt, TDataCenter():Get( "Articulo", ::View() ), "Nombre", "Codigo" ) )
+   METHOD NombreFamilia()              INLINE ( retfld( ::oDbfVir:cCodFam, TDataCenter():Get( "Familia", ::View() ), "cNomFam", "cCodFam" ) )
+
    METHOD LoadAtipica()
 
-   METHOD CalculaRentabilidad()     INLINE   ( .t. )
+   METHOD CalculaRentabilidad()        INLINE   ( .t. )
 
    METHOD SetPrimeraPropiedad( cValue )
 
-   METHOD ShowPrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Show(), ::oValorPrimeraPropiedad:Show(), ::oCodigoPrimeraPropiedad:Show() )
-   METHOD ShowSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Show(), ::oValorSegundaPropiedad:Show(), ::oCodigoSegundaPropiedad:Show() )
+   METHOD View()                       INLINE ( ::oParent:nView )
 
-   METHOD HidePrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Hide(), ::oValorPrimeraPropiedad:Hide(), ::oCodigoPrimeraPropiedad:Hide() )
-   METHOD HideSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Hide(), ::oValorSegundaPropiedad:Hide(), ::oCodigoSegundaPropiedad:Hide() )
-
-   METHOD View()                    INLINE ( ::oParent:nView )
+   METHOD SaveDetails()
 
 END CLASS
 
@@ -156,6 +163,8 @@ METHOD New( cPath, oParent ) CLASS TAtipicas
 
    ::cPath              := cPath
    ::oParent            := oParent
+
+   MsgStop( valtoprg( oParent ) )
 
    ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
 
@@ -251,6 +260,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
       ::oDbfVir:nUnvOfe := 1
       ::oDbfVir:nUncOfe := 1
 
+      ::cNombreArticulo := ""
+      ::cNombreFamilia  := ""
+
       /*
       if !Empty( ::cAgente )
          if ( cAgente )->( dbSeek( aTmpCli[ _CAGENTE ] ) )
@@ -266,7 +278,8 @@ METHOD Resource( nMode ) CLASS TAtipicas
 
       ::cNaturaleza     := Max( Min( ::oDbfVir:nTipAtp, len( ::aNaturaleza ) ), 1 )
 
-      ::cGetArticulo    := retArticulo( ::oDbfVir:cCodArt )
+      ::cNombreArticulo := ::NombreArticulo()
+      ::cNombreFamilia  := ::NombreFamilia()
 
       if !Empty( ::oDbfVir:cCodPr1 )
          ::cSayPr1      := retProp( ::oDbfVir:cCodPr1 )
@@ -277,8 +290,6 @@ METHOD Resource( nMode ) CLASS TAtipicas
          ::cSayPr2      := retProp( ::oDbfVir:cCodPr2 )
          ::cSayVp2      := retValProp( ::oDbfVir:cCodPr2 + ::oDbfVir:cValPr2 )
       end if
-
-      ::cGetFamilia     := retFld( ::oDbfVir:cCodFam )
 
    end if
 
@@ -777,27 +788,50 @@ METHOD Resource( nMode ) CLASS TAtipicas
          ACTION   ( ::Expandir() ) // lExpandir( oDlg, oBtnRen ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) )
 
       REDEFINE BUTTON ;
-         ID       500 ;
+         ID       IDOK ;
          OF       ::oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::Save() ) // SaveEdtAtp( aGet, aTmp, dbfTmpAtp, oBrw, oDlg, nMode ) )
+         ACTION   ( ::SaveResource() ) // SaveEdtAtp( aGet, aTmp, dbfTmpAtp, oBrw, oDlg, nMode ) )
 
       REDEFINE BUTTON ;
-         ID       550 ;
+         ID       IDCANCEL ;
          OF       ::oDlg ;
          CANCEL ;
          ACTION   ( ::oDlg:end() )
 
    if nMode != ZOOM_MODE
-      ::oDlg:AddFastKey( VK_F5, {|| ::Save() } )
+      ::oDlg:AddFastKey( VK_F5, {|| ::SaveResource() } )
    end if
 
-   ::oDlg:bStart    := {|| ::Start() } //  StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oSayLabels, oCosto, oBtnRen ) }
+   ::oDlg:bStart    := {|| ::StartResource() } //  StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oSayLabels, oCosto, oBtnRen ) }
 
    ACTIVATE DIALOG ::oDlg CENTER ;
          //ON INIT  ( lExpandir( oDlg, oBtnRen, .f. ), if( nMode != APPD_MODE, aGet[ _acCodArt ]:lValid(), ), EdtDetMenu( aGet[ _acCodArt ], oDlg, lArticuloEnOferta( aTmp[ _acCodArt ], aTmpCli[ _COD ], aTmpCli[ _CCODGRP ] ) ) )
 
 RETURN ( ::oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveResource()
+
+   if empty( ::oDbfVir:cCodArt ) .and. empty( ::oDbfVir:cCodFam )
+      MsgStop( "La tarifa debe contener un código de artículo o de familia." )
+      RETURN( Self )
+   end if 
+
+   MsgStop( ::oDbfVir:nTipAtp, "::oDbfVir:nTipAtp" )
+
+   ::oDlg:end( IDOK )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveDetails()
+
+   ::oDbfVir:cCodCli    := ::oParent:oDbf:cCodCli
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -985,7 +1019,7 @@ METHOD Browse( Id, oDialog )
 
    with object ( ::oBrwAtipica:AddCol() )
       :cHeader          := "Nombre"
-      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, retArticulo( ::oDbfVir:cCodArt, TDataCenter():Get( "Articulo", ::View() ) ), retFamilia( ::oDbfVir:cCodFam, TDataCenter():Get( "Familia", ::View() ) ) ) }
+      :bEditValue       := {|| if( ::oDbfVir:nTipAtp <= 1, ::NombreArticulo(), ::NombreFamilia() ) }
       :nWidth           := 160
    end with
    

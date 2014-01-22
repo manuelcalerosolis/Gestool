@@ -136,6 +136,7 @@ METHOD CloseFiles()
    Super:CloseFiles()
 
    TAtipicas():GetInstance():CloseFiles()
+   TAtipicas():EndInstance()
 
    TDataCenter():DeleteView( ::nView )
 

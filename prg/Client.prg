@@ -7875,13 +7875,13 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCtaBnc", "cCodCli + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
       ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cBncDef", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliBnc.CDX", "cCodDef", "cCodCli + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodCli + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
       ( dbfCli )->( dbCloseArea() )
 
