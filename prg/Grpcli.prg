@@ -182,7 +182,9 @@ METHOD Resource( nMode )
 	local oDlg
    local oFld
 
-   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de clientes"
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "GRPCLI" ;
+      TITLE          LblTitle( nMode ) + "Grupos de clientes"
 
       REDEFINE FOLDER oFld ;
          ID          500 ;
