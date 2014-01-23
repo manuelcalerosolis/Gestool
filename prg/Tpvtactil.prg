@@ -6754,14 +6754,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::oProgressBar:Refresh()
 
       /*
-      Imprimimos la comanda si procede-----------------------------------------
-
-      if ( nSave == SAVTIK )
-         ::OnClickCopiaComanda()
-      end if
-      */
-
-      /*
       Encendemos el flag para cargar de nuevo el usuario-----------------------
       */
 

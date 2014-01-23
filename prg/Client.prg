@@ -4547,26 +4547,26 @@ RETURN NIL
 FUNCTION lSndCli( oWndBrw, lVal )
 
    local nRecAct
-   local nRecOld           := ( TDataCenter():Get( "Client") )->( Recno() )
+   local nRecOld           := ( TDataCenter():Get( "Client", nView ) )->( Recno() )
 
    for each nRecAct in ( oWndBrw:oBrw:aSelected )
-      ( TDataCenter():Get( "Client") )->( dbGoTo( nRecAct ) )
+      ( TDataCenter():Get( "Client", nView ) )->( dbGoTo( nRecAct ) )
 
-      if dbDialogLock( TDataCenter():Get( "Client") )
+      if dbDialogLock( TDataCenter():Get( "Client", nView ) )
 
          if Empty( lVal )
-            ( TDataCenter():Get( "Client") )->lSndInt  := !( TDataCenter():Get( "Client") )->lSndInt
+            ( TDataCenter():Get( "Client", nView ) )->lSndInt  := !( TDataCenter():Get( "Client", nView ) )->lSndInt
          else
-            ( TDataCenter():Get( "Client") )->lSndInt  := lVal
+            ( TDataCenter():Get( "Client", nView ) )->lSndInt  := lVal
          end if
 
-         ( TDataCenter():Get( "Client") )->( dbUnlock() )
+         ( TDataCenter():Get( "Client", nView ) )->( dbUnlock() )
 
       end if
 
    next
 
-   ( TDataCenter():Get( "Client") )->( dbGoTo( nRecOld ) )
+   ( TDataCenter():Get( "Client", nView ) )->( dbGoTo( nRecOld ) )
 
    oWndBrw:Refresh()
 
