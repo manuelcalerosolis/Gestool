@@ -329,9 +329,9 @@ STATIC FUNCTION OpenFiles()
 		mkEntSal()
 	END IF
 
-   nView          := TDataCenter():CreateView()
-
-   TDataCenter():Get( "LogPorta", nView )
+   nView          := TDataView():CreateView()
+   
+   TDataView():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
@@ -345,12 +345,12 @@ STATIC FUNCTION OpenFiles()
    USE ( cPatDat() + "CAJAS.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
    SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
 
-   cPorDiv  := cPorDiv( cDivEmp(), dbfDivisa ) // Picture de la divisa redondeada
+   cPorDiv        := cPorDiv( cDivEmp(), dbfDivisa ) // Picture de la divisa redondeada
 
-   oBandera := TBandera():New
+   oBandera       := TBandera():New
 
-   bBmp     := LoadBitmap( GetResources(), "BmpLock" )
-   bBmpSnd  := LoadBitmap( GetResources(), "Send16" )
+   bBmp           := LoadBitmap( GetResources(), "BmpLock" )
+   bBmpSnd        := LoadBitmap( GetResources(), "Send16" )
 
    RECOVER
 
@@ -373,7 +373,7 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
 
-   TDataCenter():DeleteView( nView )
+   TDataView():DeleteView( nView )
 
    dbfEntT     := nil
    dbfDivisa   := nil

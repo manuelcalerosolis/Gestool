@@ -1178,7 +1178,7 @@ METHOD nTotCom() CLASS TCobAge
 
       nTotImp        += ::oDetCobAge:oDbfVir:nImpCom * ::oDetCobAge:oDbfVir:nComAge / 100
 
-         ::oDetCobAge:oDbfVir:Skip()
+      ::oDetCobAge:oDbfVir:Skip()
 
    end while
 

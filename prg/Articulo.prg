@@ -17239,6 +17239,8 @@ Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
       cCodBar                 := cCodigo
    end if
 
+   msgAlert( Rtrim( cCodigo ) + cPropiedades )
+
 Return ( cCodBar )
 
 //---------------------------------------------------------------------------//

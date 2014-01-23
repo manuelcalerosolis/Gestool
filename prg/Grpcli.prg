@@ -99,7 +99,7 @@ METHOD OpenFiles( lExclusive, cPath )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::nView           := TDataCenter():CreateView()
+      ::nView           := TDataView():CreateView()
 
       if !Super:OpenFiles()
          lOpen          := .f.
@@ -109,9 +109,9 @@ METHOD OpenFiles( lExclusive, cPath )
          lOpen          := .f.
       end if 
 
-      TDataCenter():Get( "Articulo", ::nView )
+      TDataView():Get( "Articulo", ::nView )
 
-      TDataCenter():Get( "Familia", ::nView )
+      TDataView():Get( "Familias", ::nView )
 
    RECOVER USING oError
 
@@ -138,7 +138,7 @@ METHOD CloseFiles()
    TAtipicas():GetInstance():CloseFiles()
    TAtipicas():EndInstance()
 
-   TDataCenter():DeleteView( ::nView )
+   TDataView():DeleteView( ::nView )
 
 RETURN ( .t. )
 
@@ -228,20 +228,20 @@ METHOD Resource( nMode )
       */
 
       REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lSaveResource( nMode, oDlg ) )
+         ID          IDOK ;
+			OF          oDlg ;
+			WHEN        ( nMode != ZOOM_MODE ) ;
+         ACTION      ( ::lSaveResource( nMode, oDlg ) )
 
 		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
+         ID          IDCANCEL ;
+			OF          oDlg ;
          CANCEL ;
-			ACTION 	( oDlg:end() )
+			ACTION      ( oDlg:end() )
 
    oDlg:AddFastKey( VK_F5, {|| ::lSaveResource( nMode, oDlg ) } )
 
-   oDlg:bStart          := {|| ::StartResource() }
+   oDlg:bStart       := {|| ::StartResource() }
 
 	ACTIVATE DIALOG oDlg	CENTER
 
