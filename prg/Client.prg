@@ -314,8 +314,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       nView             := TDataClient():CreateView()
 
-      ? valtoprg( TDataClient():aDataTables )
-
       lOpenFiles        := .t.
 
       TDataClient():Get( "Client", nView )

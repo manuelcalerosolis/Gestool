@@ -190,8 +190,6 @@ CLASS TDataCenter
    
    METHOD OpenFacCliT( dbf )
 
-   //------------------------------------------------------------------------//
-
    //---------------------------------------------------------------------------//
 
    INLINE METHOD oFacCliP()
@@ -4535,6 +4533,8 @@ RETURN ( lOk )
 
    METHOD AssertView( nView )
 
+      DEFAULT nView  := ::nView
+
       if empty( nView )
          msgStop( "No hay vistas disponibles." )
          Return ( .f. )
@@ -4552,6 +4552,8 @@ RETURN ( lOk )
    METHOD DeleteView( nView )
 
       local hView
+
+      DEFAULT nView  := ::nView
 
       if ::AssertView( nView )
 
@@ -4572,6 +4574,8 @@ RETURN ( lOk )
 
       local hView
 
+      DEFAULT nView  := ::nView
+
       if ::AssertView( nView )
 
          hView    := hGet( ::hViews, nView )
@@ -4589,6 +4593,8 @@ RETURN ( lOk )
 
       local cHandle
 
+      DEFAULT nView  := ::nView
+
       cHandle        := ::GetDatabaseView( cDatabase, nView )
 
       if empty( cHandle )
@@ -4603,6 +4609,8 @@ RETURN ( lOk )
 
       local hView
       local cHandle
+
+      DEFAULT nView  := ::nView
 
       if ::AssertView( nView )
 
