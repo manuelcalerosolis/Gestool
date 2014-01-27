@@ -100,6 +100,7 @@ CLASS TComercio
    DATA  lImagenes            INIT .f.
    DATA  lClientes            INIT .f.
 
+   DATA  olSincAll
    DATA  oArticulos
    DATA  oPedidos
    DATA  oTipIva
@@ -188,6 +189,7 @@ CLASS TComercio
    Method CloseFiles()
 
    Method Activate( oWnd )
+   Method StartDlg()
 
    METHOD ChangeSincAll()
 
@@ -675,7 +677,7 @@ METHOD Activate( oWnd ) CLASS TComercio
 
       // Opciones de sincronización--------------------------------------------
 
-      REDEFINE CHECKBOX ::lSincAll;
+      REDEFINE CHECKBOX ::olSincAll VAR ::lSincAll;
          ID       100 ;
          ON CHANGE( ::ChangeSincAll() );
          OF       ::oDlg
@@ -767,6 +769,8 @@ METHOD Activate( oWnd ) CLASS TComercio
          OF       ::oDlg ;
          ACTION   ( ::oDlg:end() )
 
+         ::oDlg:bStart := {|| ::StartDlg() }
+
    ACTIVATE DIALOG ::oDlg CENTER
 
    /*
@@ -776,6 +780,28 @@ METHOD Activate( oWnd ) CLASS TComercio
    ::oBmp:End()
 
 Return Nil
+
+//---------------------------------------------------------------------------//
+
+Method StartDlg() CLASS TComercio
+
+   if uFieldEmpresa( "lHExpWeb" )
+      ::oBtnExportar:Hide()
+      ::olSincAll:Hide()
+      ::oTipIva:Hide()
+      ::oArticulos:Hide()
+      ::oCliente:Hide()
+      ::oImagenes:Hide()
+   else
+      ::oBtnExportar:Show()
+      ::olSincAll:Show()
+      ::oTipIva:Show()
+      ::oArticulos:Show()
+      ::oCliente:Show()
+      ::oImagenes:Show()
+   end if
+
+Return nil
 
 //---------------------------------------------------------------------------//
 
