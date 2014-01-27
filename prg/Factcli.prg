@@ -845,7 +845,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       DisableAcceso()
 
-      nView 				:= TDataCenter():CreateView()
+      nView 				:= TDataView():CreateView()
 
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
@@ -1705,7 +1705,7 @@ STATIC FUNCTION CloseFiles()
    oBanco      := nil
    oPais       := nil
 
-   TDataCenter():DeleteView( nView )
+   TDataView():DeleteView( nView )
 
    lOpenFiles  := .f.
 
@@ -18266,6 +18266,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nCosPro
    local cCodFam
    local cProveedor
+   local cValPr1 					:= ""
+   local cValPr2 					:= ""
    local cPrpArt
    local nNumDto              := 0
    local nPrePro              := 0
@@ -18354,9 +18356,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    Ahora buscamos por el codigo interno----------------------------------------
    */
 
-   ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
-
-   if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
+   if aSeekProp( @cCodArt, @cValPr1, @cValPr2, dbfArticulo, dbfTblPro )
 
       /*
       Estos valores lo recogemos siempre------------------------------------
@@ -18382,6 +18382,31 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
          aTmp[ _CREF ]        := cCodArt
+
+         /*
+         Buscamos la familia del articulo y anotamos las propiedades-----------
+         */
+
+         aTmp[ _CCODPR1 ]        := ( dbfArticulo )->cCodPrp1
+         aTmp[ _CCODPR2 ]        := ( dbfArticulo )->cCodPrp2
+
+         if !Empty( aTmp[ _CCODPR1 ] ) .and. !Empty( aGet[ _CVALPR1 ] )
+
+            if !Empty( cValPr1 )
+               aGet[ _CVALPR1 ]:cText( cCodPrp( aTmp[ _CCODPR1 ], cValPr1, dbfTblPro ) )
+               aGet[ _CVALPR1 ]:lValid()
+            end if
+
+         end if
+
+         if !empty( aTmp[ _CCODPR2 ] ) .and. !Empty( aGet[ _CVALPR2 ] )
+
+            if !Empty( cValPr2 )
+               aGet[ _CVALPR2 ]:cText( cCodPrp( aTmp[ _CCODPR2 ], cValPr2, dbfTblPro ) )
+               aGet[ _CVALPR2 ]:lValid()
+            end if
+
+         end if
 
    	   /*
       	Imagen del producto---------------------------------------------------

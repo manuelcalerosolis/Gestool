@@ -200,7 +200,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTImp, oBrw, bWhen, bValid, nMode )
 
    REDEFINE GET aGet[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ] ;
       VAR      aTmp[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ] ;
-      ID       90 ;
+      ID       100 ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       oDlg
 

@@ -547,9 +547,9 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          mkTpv()
       end if
 
-      nView             := TDataCenter():CreateView()
+      nView             := TDataView():CreateView()
 
-      TDataCenter():Get( "LogPorta", nView )
+      TDataView():Get( "LogPorta", nView )
 
       USE ( cPatEmp + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
       SET ADSINDEX TO ( cPatEmp + "TIKET.CDX" ) ADDITIVE
@@ -1017,7 +1017,7 @@ STATIC FUNCTION CloseFiles()
       oFabricante:End()
    end if
 
-   TDataCenter():DeleteView( nView )
+   TDataView():DeleteView( nView )
 
    dbfTikT           := nil
    dbfTikL           := nil

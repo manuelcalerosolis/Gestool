@@ -76,9 +76,6 @@ CLASS TDataCenter
    DATA        cMsg                       INIT ""
    DATA        oMsg
 
-   CLASSDATA   hViews                     INIT {=>}
-   CLASSDATA   nView                      INIT 0
-
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
 
@@ -171,15 +168,9 @@ CLASS TDataCenter
    METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
 
-   METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ), ::nView )
-   METHOD DeleteView( nView )
-   METHOD InfoView()                         INLINE   ( MsgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
-   METHOD AssertView()
-   METHOD AddDatabaseView( cDatabase, cHandle )
-   METHOD Get( cDatabase )
-   METHOD GetDatabaseView( cDatabase )
-   METHOD ScanDatabase( cDatabase )
-   METHOD OpenDatabase( oDataTable )
+   //---------------------------------------------------------------------------//
+
+   METHOD ScanDataTable()
 
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
@@ -1010,6 +1001,26 @@ METHOD CreateDataTable()
    ::ReLoadTables()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ScanDataTable( cDataTable ) 
+
+   local nScan
+
+   nScan    := aScan( TDataCenter():aDataTables, {|o| o:cFileName() == ::DataName( cDataTable ) } )   
+   if nScan != 0
+      Return ( TDataCenter():aDataTables[ nScan ] )
+   end if 
+
+   if nScan == 0
+      nScan    := aScan( TDataCenter():aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDataTable ) } )   
+      if nScan != 0
+         Return ( TDataCenter():aEmpresaTables[ nScan ] )
+      end if 
+   end if
+ 
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2008,6 +2019,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Familias"
    oDataTable:cName        := cPatEmp() + "Familias"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Familias.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Familias.Cdx"
@@ -4529,149 +4541,6 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
 
 RETURN ( lOk )
 
-   //---------------------------------------------------------------------------//
-
-   METHOD AssertView( nView )
-
-      DEFAULT nView  := ::nView
-
-      if empty( nView )
-         msgStop( "No hay vistas disponibles." )
-         Return ( .f. )
-      end if
-
-      if !hHasKey( ::hViews, nView )
-         msgStop( "Vista " + Alltrim( Str( nView ) ) + " no encontrada." )
-         Return ( .f. )
-      end if 
-
-   Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-   METHOD DeleteView( nView )
-
-      local hView
-
-      DEFAULT nView  := ::nView
-
-      if ::AssertView( nView )
-
-         hView          := hGet( ::hViews, nView )
-         if hb_ishash( hView ) 
-            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
-         end if 
-
-         HDel( ::hViews, nView )
-         
-      end if 
-
-   Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD AddDatabaseView( cDatabase, cHandle, nView )
-
-      local hView
-
-      DEFAULT nView  := ::nView
-
-      if ::AssertView( nView )
-
-         hView    := hGet( ::hViews, nView )
-         if hb_ishash( hView )
-            hSet( hView, Upper( cDatabase ), cHandle )
-         end if 
-
-      end if  
-
-   RETURN ( Self )
-
-   //---------------------------------------------------------------------------//
-
-   METHOD Get( cDatabase, nView )
-
-      local cHandle
-
-      DEFAULT nView  := ::nView
-
-      cHandle        := ::GetDatabaseView( cDatabase, nView )
-
-      if empty( cHandle )
-         ::OpenDatabase( cDatabase, nView )
-      end if
-
-   RETURN ( cHandle )
-
-   //---------------------------------------------------------------------------//
-
-   METHOD GetDatabaseView( cDatabase, nView )
-
-      local hView
-      local cHandle
-
-      DEFAULT nView  := ::nView
-
-      if ::AssertView( nView )
-
-         hView          := hGet( ::hViews, nView )
-         if hb_ishash( hView ) 
-            if hHasKey( hView, Upper( cDatabase ) )
-               cHandle  := hGet( hView, Upper( cDatabase ) )
-            end if 
-         end if 
-
-      end if 
-
-   RETURN ( cHandle )
-
-   //---------------------------------------------------------------------------//
-
-   METHOD ScanDatabase( cDatabase )
-
-      local nScan
-
-      nScan    := aScan( ::aDataTables, {|o| o:cFileName() == ::DataName( cDatabase ) } )   
-      if nScan != 0
-         Return ( ::aDataTables[ nScan ] )
-      end if 
-
-      if nScan == 0
-         nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDatabase ) } )   
-         if nScan != 0
-            Return ( ::aEmpresaTables[ nScan ] )
-         end if 
-      end if
- 
-   Return ( nil )
-
-   //---------------------------------------------------------------------------//
-
-   METHOD OpenDatabase( cDatabase, nView )
-
-      local dbf
-      local lOpen
-      local oDataTable
-
-      oDataTable        := ::ScanDatabase( cDatabase )
-
-      if !empty( oDataTable )
-
-         dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
-         if( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
-
-         lOpen          := !neterr()
-         if lOpen
-            ::AddDatabaseView( oDataTable:cArea, dbf, nView )
-         end if 
-
-         Return ( lOpen )   
-
-      end if
-
-   Return ( Self )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -4901,4 +4770,169 @@ RETURN lGood
 
 //---------------------------------------------------------------------------//
 
+CLASS TDataView
+
+   CLASSDATA   hViews                        INIT {=>}
+   CLASSDATA   nView                         INIT 0
+
+   METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ), ::nView )
+   METHOD DeleteView( nView )
+
+   METHOD InfoView()                         INLINE   ( MsgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
+
+   METHOD AssertView()
+
+   METHOD AddDatabaseView( cDatabase, cHandle )
+   METHOD GetDatabaseView( cDatabase )
+
+   METHOD Get( cDatabase )
+
+   METHOD ScanDatabase( cDatabase )
+   METHOD OpenDatabase( oDataTable )
+
+ENDCLASS
+
+   //---------------------------------------------------------------------------//
+
+   METHOD AssertView( nView ) CLASS TDataView
+
+      DEFAULT nView  := ::nView
+
+      if empty( nView )
+         msgStop( "No hay vistas disponibles." )
+         Return ( .f. )
+      end if
+
+      if !hHasKey( ::hViews, nView )
+         msgStop( "Vista " + Alltrim( Str( nView ) ) + " no encontrada." )
+         Return ( .f. )
+      end if 
+
+   Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+   METHOD DeleteView( nView ) CLASS TDataView
+
+      local hView
+
+      DEFAULT nView  := ::nView
+
+      if ::AssertView( nView )
+
+         hView          := hGet( ::hViews, nView )
+         if hb_ishash( hView ) 
+            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
+         end if 
+
+         HDel( ::hViews, nView )
+         
+      end if 
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD AddDatabaseView( cDatabase, cHandle, nView ) CLASS TDataView
+
+      local hView
+
+      DEFAULT nView  := ::nView
+
+      if ::AssertView( nView )
+
+         hView    := hGet( ::hViews, nView )
+         if hb_ishash( hView )
+            hSet( hView, Upper( cDatabase ), cHandle )
+         end if 
+
+      end if  
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD Get( cDatabase, nView ) CLASS TDataView
+
+      local cHandle
+
+      cHandle        := ::GetDatabaseView( cDatabase, nView )
+
+      if empty( cHandle )
+         ::OpenDatabase( cDatabase, nView )
+      end if
+
+   RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD GetDatabaseView( cDatabase, nView ) CLASS TDataView
+
+      local hView
+      local cHandle
+
+      if ::AssertView( nView )
+
+         hView          := hGet( ::hViews, nView )
+         if hb_ishash( hView ) 
+            if hHasKey( hView, Upper( cDatabase ) )
+               cHandle  := hGet( hView, Upper( cDatabase ) )
+            end if 
+         end if 
+
+      end if 
+
+   RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD ScanDatabase( cDatabase ) CLASS TDataView
+
+      local nScan
+
+      nScan    := aScan( TDataCenter():aDataTables, {|o| o:cFileName() == ::DataName( cDatabase ) } )   
+      if nScan != 0
+         Return ( TDataCenter():aDataTables[ nScan ] )
+      end if 
+
+      if nScan == 0
+         nScan    := aScan( TDataCenter():aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDatabase ) } )   
+         if nScan != 0
+            Return ( TDataCenter():aEmpresaTables[ nScan ] )
+         end if 
+      end if
+ 
+   Return ( nil )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD OpenDatabase( cDataTable, nView ) CLASS TDataView
+
+      local dbf
+      local lOpen
+      local oDataTable
+
+      oDataTable        := TDataCenter():ScanDataTable( cDataTable )
+
+      if !empty( oDataTable )
+
+         dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
+         if( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
+
+         lOpen          := !neterr()
+         if lOpen
+            ::AddDatabaseView( oDataTable:cArea, dbf, nView )
+         end if 
+
+      else 
+
+         msgStop( "No puedo encontrar la tabla " + cDataTable )   
+
+         Return ( .f. )
+
+      end if
+
+   Return ( .t. )
+
+//---------------------------------------------------------------------------//
 

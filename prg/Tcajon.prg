@@ -147,17 +147,17 @@ METHOD LogCajon( nView )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( TDataCenter():Get( "LogPorta", nView ) )
+   if !Empty( TDataView():Get( "LogPorta", nView ) )
 
-      ( TDataCenter():Get( "LogPorta", nView ) )->( dbAppend() )
+      ( TDataView():Get( "LogPorta", nView ) )->( dbAppend() )
 
-      ( TDataCenter():Get( "LogPorta", nView ) )->cNumTur   := cCurSesion()
-      ( TDataCenter():Get( "LogPorta", nView ) )->cSufTur   := RetSufEmp()
-      ( TDataCenter():Get( "LogPorta", nView ) )->cCodUse   := cCurUsr()
-      ( TDataCenter():Get( "LogPorta", nView ) )->dFecApt   := GetSysDate()
-      ( TDataCenter():Get( "LogPorta", nView ) )->cHorApt   := Substr( Time(), 1, 5 )
+      ( TDataView():Get( "LogPorta", nView ) )->cNumTur   := cCurSesion()
+      ( TDataView():Get( "LogPorta", nView ) )->cSufTur   := RetSufEmp()
+      ( TDataView():Get( "LogPorta", nView ) )->cCodUse   := cCurUsr()
+      ( TDataView():Get( "LogPorta", nView ) )->dFecApt   := GetSysDate()
+      ( TDataView():Get( "LogPorta", nView ) )->cHorApt   := Substr( Time(), 1, 5 )
 
-      ( TDataCenter():Get( "LogPorta", nView ) )->( dbUnLock() )
+      ( TDataView():Get( "LogPorta", nView ) )->( dbUnLock() )
 
    end if
 

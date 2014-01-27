@@ -91,9 +91,10 @@ STATIC FUNCTION OpenFiles( lZoom )
 
    BEGIN SEQUENCE
 
-   nView          := TDataCenter():CreateView()
+   nView          := TDataView():CreateView()
 
-   TDataCenter():Get( "LogPorta", nView )
+   
+TDataView():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
@@ -241,7 +242,7 @@ STATIC FUNCTION CloseFiles( lDel )
    oTurno:CloseFiles()
    oTurno:end()
 
-   TDataCenter():DeleteView( nView )
+   TDataView():DeleteView( nView )
 
    dbfTikT     := NIL
    dbfTikL     := NIL
