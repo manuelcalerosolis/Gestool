@@ -83,7 +83,6 @@ CLASS TpvTactil
    DATA oTiketCabecera
    DATA oTiketLinea
    DATA oTiketCobro
-   DATA oTiketMesa
    DATA oTiketNumeroSerie
    DATA oCliente
    DATA oCajaCabecera
@@ -1535,47 +1534,6 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD lLockMesa( oPunto )
-
-      if !::oTiketMesa:Seek( oPunto:cPunto )
-         ::oTiketMesa:Append()
-         ::oTiketMesa:cCodSala   := oPunto:cCodigoSala
-         ::oTiketMesa:cPntVenta  := oPunto:cPuntoVenta
-         ::oTiketMesa:Save()
-      end if
-
-      RETURN ( ::oTiketMesa:RecLock() )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD lFreeMesa( oPunto )
-
-      if ::oTiketMesa:Seek( oPunto:cPunto )
-
-         /*
-         Liberamos el registro-------------------------------------------------
-         */
-
-         ::oTiketMesa:UnLock()
-
-         /*
-         Borramos el registro--------------------------------------------------
-         */
-
-         if ::oTiketMesa:RecLock()
-            ::oTiketMesa:Delete(.f.)
-         end if
-
-      end if
-
-      RETURN ( ::oTiketMesa:RecLock() )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
    INLINE METHOD cTextoLinea()
 
       local cTexto
@@ -2086,8 +2044,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oTiketCobro                               PATH ( cPatEmp() )   FILE "TIKEP.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
 
-   DATABASE NEW ::oTiketMesa                                PATH ( cPatEmp() )   FILE "TIKEM.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKEM.CDX"
-
    DATABASE NEW ::oTiketNumeroSerie                         PATH ( cPatEmp() )   FILE "TIKES.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKES.CDX"
 
    DATABASE NEW ::oCliente                                  PATH ( cPatCli() )   FILE "CLIENT.DBF"          VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
@@ -2381,10 +2337,6 @@ METHOD CloseFiles() CLASS TpvTactil
 
    if ::oTiketCobro != nil .and. ::oTiketCobro:Used()
       ::oTiketCobro:End()
-   end if
-
-   if ::oTiketMesa != nil .and. ::oTiketMesa:Used()
-      ::oTiketMesa:End()
    end if
 
    if ::oTiketNumeroSerie != nil .and. ::oTiketNumeroSerie:Used()
@@ -2736,7 +2688,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil
    ::oTiketCobro                             := nil
-   ::oTiketMesa                              := nil
    ::oTiketNumeroSerie                       := nil
    ::oCliente                                := nil
    ::oCajaCabecera                           := nil

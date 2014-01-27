@@ -68,6 +68,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
+   ::bFirstKey          := {|| ::oDbf:cCodGrp }
+
    ::lCreateShell       := .f.
    ::cHtmlHelp          := "Grupos de clientes"
 
@@ -107,6 +109,8 @@ METHOD OpenFiles( lExclusive, cPath )
 
       if !TAtipicas():GetInstance():OpenFiles()
          lOpen          := .f.
+      else 
+         TAtipicas():GetInstance():oDbf:OrdSetFocus( "cCodGrp" )
       end if 
 
       TDataView():Get( "Articulo", ::nView )

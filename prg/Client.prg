@@ -3819,7 +3819,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Precios con impuestos
+      Precios con impuestos----------------------------------------------------
       */
 
       REDEFINE GET aGet[ _aNPREIVA1 ] VAR aTmp[ _aNPREIVA1 ] ;
@@ -9871,7 +9871,9 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
       nCosto         := cCosto
    end if
 
-   /*Costo*/
+   /*
+   Costo-----------------------------------------------------------------------
+   */
 
    aAdd( aRentabilidad, { "Costo", "", nCosto, .f., .f. } )
 

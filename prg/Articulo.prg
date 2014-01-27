@@ -14085,7 +14085,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 Static Function lLabel( dbfTmpLbl )
 
    oMsgProgress():Deltapos( 1 )

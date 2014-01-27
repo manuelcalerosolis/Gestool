@@ -414,9 +414,7 @@ METHOD LButtonUp( nRow, nCol, nKeyFlags ) CLASS TTpvMesa
 
          if ::nUbicacion == ubiGeneral
 
-            if ::oTactil():lLockMesa( ::oSender )
-               ::oSender:GetSalon():SelectPunto( ::oSender )
-            end if
+            ::oSender:GetSalon():SelectPunto( ::oSender )
 
          else
 

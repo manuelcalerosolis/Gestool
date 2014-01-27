@@ -1945,26 +1945,12 @@ METHOD LButtonDown( nRow, nCol, nKeyFlags ) CLASS TMesa
       do case
          case Empty( ::sPunto:cTiket() )
 
-            if ::sPunto:cPuntoVenta != "General" .and. ::sPunto:cPuntoVenta != "Llevar"
+            ::oSalon:oSelectedPunto    := ::sPunto
+            ::oSalon:Close( IDOK )
 
-               if !lLockMesa( ::sPunto:cCodigoSala, ::sPunto:cPuntoVenta )
+         case !Empty( ::sPunto:cTiket() ) 
 
-                  ::oSalon:oSelectedPunto := ::sPunto
-                  ::oSalon:Close( IDOK )
-
-               end if
-
-            else
-
-               ::oSalon:oSelectedPunto    := ::sPunto
-               ::oSalon:Close( IDOK )
-
-            end if
-
-
-         case !Empty( ::sPunto:cTiket() ) .and. dbSeekInOrd( ::sPunto:cTiket(), "cNumTik", ::sPunto:cTikT )
-
-            if dbDialogLock( ::sPunto:cTikT )
+            if dbSeekInOrd( ::sPunto:cTiket(), "cNumTik", ::sPunto:cTikT ) .and. dbDialogLock( ::sPunto:cTikT )
                ::oSalon:oSelectedPunto := ::sPunto
                ::oSalon:Close( IDOK )
             end if
@@ -1981,7 +1967,7 @@ METHOD RButtonDown( nRow, nCol, nKeyFlags ) CLASS TMesa
 
    local oMenu
    local bMenuSelect
-   local aPoint      := { nRow, nCol }
+   local aPoint         := { nRow, nCol }
 
    if ::lDesign
 
@@ -2009,27 +1995,6 @@ METHOD RButtonDown( nRow, nCol, nKeyFlags ) CLASS TMesa
       ::bMenuSelect     := bMenuSelect
 
       oMenu:end()
-
-   else
-
-      if lUsrMaster()
-
-         oMenu             := MenuBegin( .t. )
-         bMenuSelect       := ::bMenuSelect
-
-         ::bMenuSelect     := nil
-
-         MenuAddItem( "&Liberar", "Liberar la mesa del salón", .f., .t., {|| lFreeMesa( ::sPunto:cCodigoSala, ::sPunto:cPuntoVenta ) }, , "Del16", oMenu )
-
-         MenuEnd()
-
-         oMenu:Activate( nRow, nCol, Self )
-
-         ::bMenuSelect     := bMenuSelect
-
-         oMenu:end()
-
-      end if
 
    end if
 

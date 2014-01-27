@@ -39,10 +39,13 @@ CLASS TAtipicas FROM TDet
 
    DATA cRoundPrice        INIT cPorDiv()
    
-   DATA lExpandida         INIT .t.
+   DATA lExpandida         INIT .f.
    DATA oBtnExpandir
 
    DATA oBrwAtipica
+   DATA oBrwRentabilidad
+
+   DATA aRentabilidad      INIT {}
 
    METHOD New()
 
@@ -103,10 +106,10 @@ CLASS TAtipicas FROM TDet
 
    DATA oCostoParticular
 
-   DATA nPrecioCosto
+   DATA nPrecioCosto                   INIT 0
    DATA oPrecioCosto
 
-   DATA oSayLabels                  INIT array( 16 )
+   DATA oSayLabels                     INIT array( 16 )
 
    DATA oDescuentoPorcentualArticulo
    DATA oDescuentoLinealArticulo
@@ -115,6 +118,12 @@ CLASS TAtipicas FROM TDet
    DATA oComisionAgente
 
    DATA oOfertaXbY
+   DATA oUnidadesVender
+   DATa oUnidadesCobrar
+
+   DATA oRentabilidadSobre
+   DATA cRentabilidadSobre
+   DATA aRentabilidadSobre             INIT { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
 
    METHOD Resource()
       METHOD StartResource()           INLINE   ( MsgStop( "Start" ) )
@@ -127,7 +136,7 @@ CLASS TAtipicas FROM TDet
       METHOD WhenOfertaXbY()           INLINE   ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
 
       METHOD ChangeNaturaleza()
-      METHOD lChangeCostoParticular()  VIRTUAL
+      METHOD lChangeCostoParticular()  INLINE   ( if( ::oDbfVir:lPrcCom, ( ::oPrecioCosto:Hide(), ::oPrecioCompra:Show() ), ( ::oPrecioCosto:Show(), ::oPrecioCompra:Hide() ) ) )
       METHOD CalculaIva()              VIRTUAL
 
       METHOD ShowPrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Show(), ::oValorPrimeraPropiedad:Show(), ::oCodigoPrimeraPropiedad:Show() )
@@ -148,7 +157,7 @@ CLASS TAtipicas FROM TDet
 
    METHOD LoadAtipica()
 
-   METHOD CalculaRentabilidad()        INLINE   ( .t. )
+   METHOD CalculaRentabilidad()        
 
    METHOD SetPrimeraPropiedad( cValue )
    METHOD SetSegundaPropiedad( cValue )
@@ -168,8 +177,6 @@ METHOD New( cPath, oParent ) CLASS TAtipicas
 
    ::cPath              := cPath
    ::oParent            := oParent
-
-   MsgStop( valtoprg( oParent ) )
 
    ::bOnPreSaveDetail   := {|| ::SaveDetails() }
    ::bOnPreDelete       := {|| ::DeleteDetails() }
@@ -268,17 +275,6 @@ METHOD Resource( nMode ) CLASS TAtipicas
 
       ::cNombreArticulo := ""
       ::cNombreFamilia  := ""
-
-      /*
-      if !Empty( ::cAgente )
-         if ( cAgente )->( dbSeek( aTmpCli[ _CAGENTE ] ) )
-            aTmp[ _aNCOMAGE ]    := ( cAgente )->nCom1
-            if ( cAgente )->nCom1 != 0
-               aTmp[ _aLCOMAGE ] := .t.
-            end if
-         end if
-      end if
-      */
 
    else
 
@@ -395,36 +391,45 @@ METHOD Resource( nMode ) CLASS TAtipicas
          ::oCodigoSegundaPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoSegundaPropiedad, ::oTextoSegundaPropiedad, ::oDbfVir:cCodPr2 ) }
          ::oCodigoSegundaPropiedad:bValid    := {|| ::LoadAtipica() }
 
-      REDEFINE GET ::oValorSegundaPropiedad ;
-         VAR      ::cValorSegundaPropiedad ;
-         ID       261 ;
-         WHEN     .f. ;
-         OF       ::oFld:aDialogs[1]
+      REDEFINE GET      ::oValorSegundaPropiedad ;
+         VAR            ::cValorSegundaPropiedad ;
+         ID             261 ;
+         WHEN           .f. ;
+         OF             ::oFld:aDialogs[1]
 
-      REDEFINE GET ::oPrecioCompra ;
-         VAR      ::oDbfVir:nPrcCom ;
-         ID       120 ;
-         WHEN     ( ::oDbfVir:nPrcCom <= 1 .and. ::nMode != ZOOM_MODE );
-         ON CHANGE( ::CalculaRentabilidad()  );
-         VALID    ( ::CalculaRentabilidad()  );
-         SPINNER  ;
-         PICTURE  cPinDiv() ;
-         OF       ::oFld:aDialogs[1]
+      /*
+      Precios de costo---------------------------------------------------------
+      */
 
       REDEFINE CHECKBOX ::oCostoParticular ;
-         VAR      ::oDbfVir:lPrcCom ;
-         ID       122 ;
-         ON CHANGE( ::lChangeCostoParticular() );
-         WHEN     ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) ;
-         OF       ::oFld:aDialogs[ 1 ]
+         VAR            ::oDbfVir:lPrcCom ;
+         ID             122 ;
+         ON CHANGE      ( ::lChangeCostoParticular() );
+         WHEN           ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) ;
+         OF             ::oFld:aDialogs[ 1 ]
 
-      REDEFINE GET ::oPrecioCosto ;
-         VAR      ::nPrecioCosto ;
-         ID       123 ;
-         WHEN     ( .f. );
-         SPINNER  ;
-         PICTURE  cPinDiv() ;
-         OF       ::oFld:aDialogs[ 1 ]
+      REDEFINE GET      ::oPrecioCompra ;
+         VAR            ::oDbfVir:nPrcCom ;
+         ID             120 ;
+         WHEN           ( ::nMode != ZOOM_MODE );
+         SPINNER        ;
+         PICTURE        cPinDiv() ;
+         OF             ::oFld:aDialogs[1]
+
+      ::oPrecioCompra:bChange                := {|| ::CalculaRentabilidad() }
+      ::oPrecioCompra:bValid                 := {|| ::CalculaRentabilidad() } 
+
+      REDEFINE GET      ::oPrecioCosto ;
+         VAR            ::nPrecioCosto ;
+         ID             123 ;
+         WHEN           ( .f. );
+         SPINNER        ;
+         PICTURE        cPinDiv() ;
+         OF             ::oFld:aDialogs[ 1 ]
+
+      /*
+      Precios de venta---------------------------------------------------------
+      */
 
       REDEFINE GET ::oPrecioArticulo1 ;
          VAR      ::oDbfVir:nPrcArt ;
@@ -433,8 +438,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloIva() ) ;
          VALID    ( ::CalculaIva( ::oPrecioArticulo1 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oPrecioArticulo1:bValid              := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo2 ;
          VAR      ::oDbfVir:nPrcArt2 ;
@@ -443,8 +449,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloIva() ) ;
          VALID    ( ::CalculaIva( ::oPrecioArticulo2 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oPrecioArticulo2:bValid              := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo3 ;
          VAR      ::oDbfVir:nPrcArt3 ;
@@ -453,8 +460,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloIva() ) ;
          VALID    ( ::CalculaIva( ::oPrecioArticulo3 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oPrecioArticulo3:bValid              := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo4 ;
          VAR      ::oDbfVir:nPrcArt4 ;
@@ -463,8 +471,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloIva() ) ;
          VALID    ( ::CalculaIva( ::oPrecioArticulo4 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oPrecioArticulo4:bValid              := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo5 ;
          VAR      ::oDbfVir:nPrcArt5 ;
@@ -473,8 +482,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloIva() ) ;
          VALID    ( ::CalculaIva( ::oPrecioArticulo5 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oPrecioArticulo5:bValid              := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo6 ;
          VAR      ::oDbfVir:nPrcArt6 ;
@@ -483,8 +493,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloIva() ) ;
          VALID    ( ::CalculaIva( ::oPrecioArticulo6 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oPrecioArticulo6:bValid              := {|| ::CalculaRentabilidad() } 
 
       /*
       Precios con impuestos----------------------------------------------------
@@ -497,8 +508,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloBase() ) ;
          VALID    ( ::CalculaBase( ::oIvaArticulo1 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oIvaArticulo1:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oIvaArticulo2 ; 
          VAR      ::oDbfVir:nPreIva2 ;
@@ -507,8 +519,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloBase() ) ;
          VALID    ( ::CalculaBase( ::oIvaArticulo2 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oIvaArticulo2:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oIvaArticulo3 ; 
          VAR      ::oDbfVir:nPreIva3 ;
@@ -517,8 +530,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloBase() ) ;
          VALID    ( ::CalculaBase( ::oIvaArticulo3 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oIvaArticulo3:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oIvaArticulo4 ; 
          VAR      ::oDbfVir:nPreIva4 ;
@@ -527,8 +541,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloBase() ) ;
          VALID    ( ::CalculaBase( ::oIvaArticulo4 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oIvaArticulo4:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oIvaArticulo5 ; 
          VAR      ::oDbfVir:nPreIva5 ;
@@ -537,8 +552,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloBase() ) ;
          VALID    ( ::CalculaBase( ::oIvaArticulo5 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oIvaArticulo5:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oIvaArticulo6 ; 
          VAR      ::oDbfVir:nPreIva6 ;
@@ -547,8 +563,9 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE  cPouDiv() ;
          WHEN     ( ::WhenTipoArticuloBase() ) ;
          VALID    ( ::CalculaBase( ::oIvaArticulo6 ) );
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[1]
+
+      ::oIvaArticulo6:bChange             := {|| ::CalculaRentabilidad() } 
 
       /*
       Descuentos---------------------------------------------------------------
@@ -560,9 +577,10 @@ METHOD Resource( nMode ) CLASS TAtipicas
          WHEN     ( ::nMode != ZOOM_MODE );
 			SPINNER ;
          VALID    ( ( ::oDbfVir:nDtoArt >= 0 .and. ::oDbfVir:nDtoArt <= 100 ), ::CalculaRentabilidad() )  ;
-         ON CHANGE( ::ClaculaRentabilidad() );
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
+
+      ::oDescuentoPorcentualArticulo:bChange    := {|| ::CalculaRentabilidad() }
 
       REDEFINE GET ::oDescuentoLinealArticulo ;
          VAR      ::oDbfVir:nDtoDiv ;
@@ -570,9 +588,10 @@ METHOD Resource( nMode ) CLASS TAtipicas
          SPINNER ;
          WHEN     ( ::nMode != ZOOM_MODE );
          VALID    ( ::CalculaRentabilidad() );
-         ON CHANGE( ::CalculaRentabilidad() );
          PICTURE  cPouDiv() ;
          OF       ::oFld:aDialogs[1]
+
+      ::oDescuentoLinealArticulo:bChange    := {|| ::CalculaRentabilidad() }
 
       REDEFINE GET ::oDescuentoPromocionArticulo ;
          VAR      ::oDbfVir:nDprArt ;
@@ -580,9 +599,10 @@ METHOD Resource( nMode ) CLASS TAtipicas
          WHEN     ( ::nMode != ZOOM_MODE );
 			SPINNER ;
          VALID    ( ( ::oDbfVir:nDprArt >= 0 .and. ::oDbfVir:nDprArt <= 100 ), ::CalculaRentabilidad() )  ;
-         ON CHANGE( ::CalculaRentabilidad() );
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
+
+      ::oDescuentoPromocionArticulo:bChange  := {|| ::CalculaRentabilidad() }
 
       REDEFINE CHECKBOX ::oDbfVir:lComAge ;
          ID       151 ;
@@ -596,9 +616,10 @@ METHOD Resource( nMode ) CLASS TAtipicas
          WHEN     ( ::nMode != ZOOM_MODE );
 			SPINNER ;
          VALID    ( ( ::oDbfVir:nComAge >= 0 .and. ::oDbfVir:nComAge <= 100 ), ::CalculaRentabilidad() ) ;
-         ON CHANGE( ::CalculaRentabilidad() );
          PICTURE  "@E 999.99";
          OF       ::oFld:aDialogs[1]
+
+      ::oComisionAgente:bChange              := {|| ::CalculaRentabilidad() }
 
       REDEFINE GROUP ::oSayLabels[ 1 ]   ID 700 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
       REDEFINE GROUP ::oSayLabels[ 2 ]   ID 701 OF ::oFld:aDialogs[ 1 ] TRANSPARENT
@@ -718,32 +739,88 @@ METHOD Resource( nMode ) CLASS TAtipicas
 
       REDEFINE RADIO ::oOfertaXbY ;
          VAR      ::oDbfVir:nTipXby ;
-         WHEN     ( ::WhenOfertaXbY() ) ;
-         ON CHANGE( ::CalculaRentabilidad() );
+         WHEN     ( ::WhenTipoArticulo() ) ;
          ID       220, 221 ;
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE GET ::oDbfVir:nUnvOfe ;
+      ::oOfertaXbY:bChange       := {|| ::CalculaRentabilidad() }
+
+      REDEFINE GET ::oUnidadesVender ;
+         VAR      ::oDbfVir:nUnvOfe ;
          ID       230 ;
          PICTURE  "@E 999" ;
          SPINNER ;
-         WHEN     ( ::WhenOfertaXbY() ) ;
+         WHEN     ( ::WhenTipoArticulo() ) ;
          VALID    ( isBig( ::oDbfVir:nUnvOfe, ::oDbfVir:nUncOfe ), ::CalculaRentabilidad() ) ;
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[2]
 
-      REDEFINE GET ::oDbfVir:nUncOfe ;
+      ::oUnidadesVender:bChange  := {|| ::CalculaRentabilidad() }
+
+      REDEFINE GET ::oUnidadesCobrar ;
+         VAR      ::oDbfVir:nUncOfe ;
          ID       240 ;
          PICTURE  "@E 999" ;
          SPINNER ;
-         WHEN     ( ::WhenOfertaXbY() ) ;
+         WHEN     ( ::WhenTipoArticulo() ) ;
          VALID    ( isBig( ::oDbfVir:nUnvOfe, ::oDbfVir:nUncOfe ), ::CalculaRentabilidad() ) ;
-         ON CHANGE( ::CalculaRentabilidad() );
          OF       ::oFld:aDialogs[2]
 
+      ::oUnidadesCobrar:bChange  := {|| ::CalculaRentabilidad() }
+
       /*
-      Estudio rentabilidad - segunda pestaña-----------------------------------
+      Estudio rentabilidad ----------------------------------------------------
       */
+
+      REDEFINE COMBOBOX ::oRentabilidadSobre ;
+         VAR      ::cRentabilidadSobre ;
+         ITEMS    ::aRentabilidadSobre ;
+         ID       400 ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
+         OF       ::oDlg
+
+      ::oRentabilidadSobre:bChange        := {|| ::CalculaRentabilidad() }
+
+
+      ::oBrwRentabilidad                  := TXBrowse():New( ::oDlg )
+      ::oBrwRentabilidad:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwRentabilidad:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwRentabilidad:lVScroll         := .t.
+      ::oBrwRentabilidad:lHScroll         := .f.
+      ::oBrwRentabilidad:nMarqueeStyle    := 5
+      ::oBrwRentabilidad:lFooter          := .f.
+      ::oBrwRentabilidad:lRecordSelector  := .t.
+   
+      ::oBrwRentabilidad:SetArray( ::aRentabilidad, , , .f. )
+   
+      with object ( ::oBrwRentabilidad:AddCol() )
+         :cHeader                         := ""
+         :bEditValue                      := {|| hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Alerta" ) }
+         :nWidth                          := 18
+      end with
+   
+      with object ( ::oBrwRentabilidad:AddCol() )
+         :cHeader                         := "Naturaleza"
+         :bEditValue                      := {|| hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Naturaleza" ) }
+         :nWidth                          := 96
+      end with
+
+      with object ( ::oBrwRentabilidad:AddCol() )
+         :cHeader                         := "Tipo"
+         :bEditValue                      := {|| hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Tipo" ) }
+         :nWidth                          := 48
+      end with
+
+      with object ( ::oBrwRentabilidad:AddCol() )
+         :cHeader                         := "Importe " + cDivEmp()
+         :bEditValue                      := {|| if(  !hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Porcentual" ),;
+                                                      Trans( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Importe" ), cPouDiv() ),;
+                                                      Trans( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Importe" ), "999.99" ) + " %" ) }
+         :nWidth                          := 48
+      end with
+
+   
+      ::oBrwRentabilidad:CreateFromResource( 450 )
+
 /*
       REDEFINE COMBOBOX oSobre VAR cSobre ;
          ITEMS    aSobre ;
@@ -791,7 +868,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          ID       600 ;
          OF       ::oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::Expandir() ) // lExpandir( oDlg, oBtnRen ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) )
+         ACTION   ( ::Expandir( .t. ) ) // lExpandir( oDlg, oBtnRen ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -809,7 +886,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
       ::oDlg:AddFastKey( VK_F5, {|| ::SaveResource() } )
    end if
 
-   ::oDlg:bStart  := {|| ::Expandir() } //  StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oSayLabels, oCosto, oBtnRen ) }
+   ::oDlg:bStart  := {|| ::Expandir(), ::CalculaRentabilidad() } //  StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oSayLabels, oCosto, oBtnRen ) }
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
@@ -826,8 +903,6 @@ METHOD SaveResource()
 
    ::oDbfVir:nTipAtp := ::oNaturaleza:nAt 
 
-   MsgStop( ::oDbfVir:nTipAtp, "::oDbfVir:nTipAtp" )
-
    ::oDlg:end( IDOK )
    
 RETURN ( Self )
@@ -835,8 +910,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD SaveDetails()
-
-   MsgStop( ::oParent:oDbf:cCodGrp, "SaveDetails")
 
    ::oDbfVir:cCodGrp    := ::oParent:oDbf:cCodGrp
 
@@ -846,12 +919,6 @@ RETURN ( Self )
 
 METHOD DeleteDetails()
 
-   MsgStop( ::oParent:oDbf:cCodGrp, "Delete DeleteDetails")
-/*
-   while ::oParent:oDetSeriesMaterial:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cCodArt, "nNumLin" )
-      ::oParent:oDetSeriesMaterial:oDbfVir:Delete(.f.)
-   end while
-*/
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
@@ -971,11 +1038,15 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Expandir()
+METHOD Expandir( lSet )
 
    local oRect       := ::oDlg:GetRect()
 
-   ::lExpandida      := !::lExpandida
+   DEFAULT lSet      := .f.
+
+   if lSet
+      ::lExpandida   := !::lExpandida
+   end if 
 
    if ::lExpandida
       SetWindowText( ::oBtnExpandir:hWnd, "Retabilidad <" )
@@ -1170,7 +1241,7 @@ METHOD Browse( Id, oDialog )
    end with
 
    if oUser():lCambiarPrecio() 
-      ::oBrwAtipica:bLDblClick   := {|| MsgStop( "Edicion de atipicas" ) }
+      ::oBrwAtipica:bLDblClick   := {|| ::Edit( ::oBrwAtipica ) }
    end if
 
    ::oBrwAtipica:bRClicked       := {| nRow, nCol, nFlags | ::oBrwAtipica:RButtonDown( nRow, nCol, nFlags ) }
@@ -1234,3 +1305,66 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
+METHOD CalculaRentabilidad()        
+
+   local nCosto      := 0
+   local nNetoBase   := 0
+   local nResultado  := 0
+
+   CursorWait()
+
+   ::aRentabilidad   := {}
+
+   // Costo -------------------------------------------------------------------
+
+   if ::oDbfVir:lPrcCom
+      nCosto         := ::nPrecioCosto
+   else
+      nCosto         := ::oDbfVir:nPrcCom 
+   end if
+
+   aAdd( ::aRentabilidad, { "Naturaleza" => "Costo",     "Tipo" => "", "Importe" => nCosto,     "Porcentual" => .f., "Alerta" => .f. } )   
+
+   // Base --------------------------------------------------------------------
+
+   switch ::oRentabilidadSobre:nAt
+      case 1
+         nNetoBase   := ::oDbf:nPrcArt
+      case 2
+         nNetoBase   := ::oDbf:nPrcArt2
+      case 3
+         nNetoBase   := ::oDbf:nPrcArt3
+      case 4
+         nNetoBase   := ::oDbf:nPrcArt4
+      case 5
+         nNetoBase   := ::oDbf:nPrcArt5
+      case 6
+         nNetoBase   := ::oDbf:nPrcArt6
+   end 
+
+   aAdd( ::aRentabilidad, { "Naturaleza" => "Neto base", "Tipo" => "", "Importe" => nNetoBase,  "Porcentual" => .f., "Alerta" => .f. } )
+
+   // Dto X*Y*-----------------------------------------------------------------
+
+   if ( ::oDbfVir:nUncOfe != 0 .and. ::oDbfVir:nUnvOfe != 0 )
+
+      if ( ::oDbfVir:nUncOfe != 1 .and. ::oDbfVir:nUnvOfe != 1 )
+
+         nResultado  := nNetoBase - ( Div( ( nNetoBase * ::oDbf:nUncOfe ), ::oDbfVir:nUnvOfe ) )
+
+         aAdd( ::aRentabilidad, { "Naturaleza" => Space( 3 ) + "Dto. X*Y", "Tipo" => alltrim( str( ::oDbfVir:nUnvOfe ) ) + " * " + alltrim( str( ::oDbfVir:nUncOfe ) ), "Importe" => - ( nResultado ), "Porcentual" => .f., "Alerta" => .f. } )
+
+         nNetoBase   -= nResultado
+
+      end if
+
+   end if
+
+   CursorWE()
+
+   ::oBrwRentabilidad:SetArray( ::aRentabilidad )
+   ::oBrwRentabilidad:Refresh()
+
+RETURN ( .t. )   
+
+//--------------------------------------------------------------------------//
