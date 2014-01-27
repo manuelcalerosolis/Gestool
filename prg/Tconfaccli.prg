@@ -709,7 +709,7 @@ RETURN ( ::oDbf:LastRec() > 0 )
 METHOD nCosteCli( cCodCli, cCodArt )
 
    local nCoste
-   local nOrdAnt  := ::oDbfCliAtp:OrdSetFocus( "CCODART" )
+   local nOrdAnt  := ::oDbfCliAtp:OrdSetFocus( "cCliArt" )
 
    if ::oDbfCliAtp:Seek( cCodCli + cCodArt )
       if ::oDbfCliAtp:lPrcCom

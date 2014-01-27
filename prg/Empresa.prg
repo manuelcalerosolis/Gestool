@@ -2382,6 +2382,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       420 ;
             OF       fldComunicaciones      
 
+      REDEFINE CHECKBOX aGet[ _LHEXPWEB ] VAR aTmp[ _LHEXPWEB ] ;
+            ID       430 ;
+            OF       fldComunicaciones      
+
       REDEFINE GET aTmp[ _CHSTFTPIMG ] ;
             ID       250;
             OF       fldComunicaciones
@@ -6498,6 +6502,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRECC",      "L",  1, 0, "Régimen especial del criterio de caja",                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nIniRECC",   "N",  4, 0, "Año inicio régimen especial del criterio de caja",      "", "", "aEmp()", } )
    aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "Año fin régimen especial del criterio de caja",         "", "", "aEmp()", } )
+   aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botón exportar web",                            "", "", "aEmp()", } )
 
 Return ( aDbf  )
 
