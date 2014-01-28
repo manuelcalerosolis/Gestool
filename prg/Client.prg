@@ -5411,7 +5411,7 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
       if lGenerateTarifa
 
          for x := 1 to Len( aTmpGenerate )
-            DBGather( aTmpGenerate[ x ], dbfCliAtp, .t. )
+            DBGather( aTmpGenerate[ x ], TDataView():Get( "CliAtp", nView ), .t. )
          next
 
       end if
