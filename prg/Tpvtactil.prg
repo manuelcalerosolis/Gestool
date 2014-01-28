@@ -8027,6 +8027,9 @@ METHOD ProcesaComandas( lCopia )
 
          while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
 
+            msgAlert( ::oTiketLinea:cCbaTil, "cCbaTil")
+            msgAlert( ::nUnidadesLinea(), "nUnidadesLinea" )
+
             ::oTiketLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea() )
 
             ::oTiketLinea:Skip()
@@ -8044,6 +8047,9 @@ METHOD ProcesaComandas( lCopia )
 
       ::oTemporalLinea:GoTop()
       while !::oTemporalLinea:Eof()
+
+            msgAlert( ::oTemporalLinea:cCbaTil, " TEmporal cCbaTil")
+            msgAlert( ::nUnidadesLinea( ::oTemporalLinea ), " Temporal nUnidadesLinea" )
 
          ::oTemporalLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea( ::oTemporalLinea ) )
 

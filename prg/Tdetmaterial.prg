@@ -574,11 +574,11 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
          cCodArt  := ::oParent:oArt:Codigo
       end if
 
-      ::oParent:oArt:ordSetFocus( "Codigo" )
-
       /*
-      Ahora buscamos por el codigo interno
+      Ahora buscamos por el codigo interno-------------------------------------
       */
+
+      ::oParent:oArt:ordSetFocus( "Codigo" )
 
       if ::oParent:oArt:Seek( cCodArt ) .or. ::oParent:oArt:Seek( Upper( cCodArt ) )
 
@@ -600,10 +600,6 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                ::oGetUnidades:cText( ::oParent:oArt:nUniCaja )
             end if
 
-            if Empty( ::oDbf:nImpOrd )
-               ::oGetPrecio:cText( nPreMedCom( cCodArt, nil, ::oParent:oAlbPrvT:cAlias, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvT:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDbf:nVdvDiv, ::oParent:nDouDiv, ::oParent:nDorDiv, ::oParent:oHisMov:cAlias ) )
-            end if
-
             if ::oParent:oArt:lLote
                
                ::oLote:Show()
@@ -620,8 +616,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                
             end if
 
-            msgAlert( ::oParent:oStock:nCostoMedio( cCodArt, ::oParent:oDbf:cAlmOrd, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote ) )
-
+            ::oGetPrecio:cText(  ::oParent:oStock:nCostoMedio( cCodArt, ::oParent:oDbf:cAlmOrd, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote ) )
             ::oGetPes:cText(     ::oParent:oArt:nPesoKg )
             ::oGetUndPes:cText(  ::oParent:oArt:cUndDim )
             ::oGetVol:cText(     ::oParent:oArt:nVolumen )
