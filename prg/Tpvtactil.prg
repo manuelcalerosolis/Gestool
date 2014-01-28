@@ -4544,7 +4544,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
             Agregamos los kits si es el caso-----------------------------------
             */
 
-            ::AgregarKit( cCodigoArticulo )
+            ::AgregarKit( cCodigoArticulo, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
 
             CursorWE()
 
@@ -4722,7 +4722,7 @@ Return ( lReturn )
 
 //-------------------------------------------------------------------------//
 
-METHOD AgregarKit( cCodigoArticulo ) CLASS TpvTactil
+METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS TpvTactil
 
    if ::oArticulosEscandallos:Seek( cCodigoArticulo )
 
@@ -4744,14 +4744,18 @@ METHOD AgregarKit( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
             ::oTemporalLinea:nUntTil      := ::oArticulosEscandallos:nUndKit
 
+            // Impresoras del compuesto----------------------------------------
+
+            ::oTemporalLinea:cImpCom1     := cTipoImpresora1
+            ::oTemporalLinea:cImpCom2     := cTipoImpresora2
+
+
             if ( ::oArticulo:lFacCnv )
                ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
             end if
 
             ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
             ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
-            ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
-            ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
             ::oTemporalLinea:cComent      := ""
 
             ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
@@ -4789,12 +4793,6 @@ METHOD AgregarKit( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
 
             ::oTemporalLinea:Save()
-
-            /*
-            if ( dbfArticulo )->lKitArt
-               AppendKit( dbfTmpL, aTik )
-            end if
-            */
 
          end if
 

@@ -226,45 +226,48 @@ METHOD Resource( nMode )
 
    cSayAlm              := RetAlmacen( ::oDbfVir:cAlmOrd, ::oParent:oAlm )
 
-   DEFINE DIALOG  oDlg ;
-      RESOURCE    "LProducido" ;
-      TITLE       LblTitle( nMode ) + "articulos producidos"
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "LProducido" ;
+      TITLE          LblTitle( nMode ) + "articulos producidos"
       
       REDEFINE FOLDER oFld ;
-         ID       400 ;
-         OF       oDlg ;
-         PROMPT   "&Artículo",;
-                  "Da&tos" ;
-         DIALOGS  "LProducido_1",;
-                  "LProducido_2"
+         ID          400 ;
+         OF          oDlg ;
+         PROMPT      "&Artículo",;
+                     "Da&tos" ;
+         DIALOGS     "LProducido_1",;
+                     "LProducido_2"
 
       /*
       Codigo de articulo-------------------------------------------------------
       */
 
-      REDEFINE GET oGetArt VAR ::oDbfVir:cCodArt;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   oGetArt ;
+         VAR         ::oDbfVir:cCodArt;
+         ID          110 ;
+         WHEN        ( nMode != ZOOM_MODE );
+         BITMAP      "LUPA" ;
+         OF          oFld:aDialogs[1]
 
       oGetArt:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
       oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr1  ) }
 
-      REDEFINE GET oGetNom VAR ::oDbfVir:cNomArt ;
-         ID       111 ;
-         WHEN     ( lModDes() .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET oGetNom ;
+         VAR         ::oDbfVir:cNomArt ;
+         ID          111 ;
+         WHEN        ( lModDes() .and. nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
       /*
       Lotes-------------------------------------------------------------------
       */
 
-      REDEFINE GET ::oLote VAR ::oDbfVir:cLote;
-         ID       210 ;
-         IDSAY    211 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   ::oLote ;
+         VAR         ::oDbfVir:cLote ;
+         ID          210 ;
+         IDSAY       211 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
        /*
       Propiedades--------------------------------------------------------------
@@ -547,7 +550,7 @@ RETURN ( Self )
 
 METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
-   local cCodArt  := oGetArticulo:VarGet()
+   local cCodArt     := oGetArticulo:VarGet()
    local lChgCodArt  := ( Empty( ::cOldCodArt ) .or. Rtrim( ::cOldCodArt ) != Rtrim( cCodArt ) )
 
    if Empty( cCodArt )
@@ -616,6 +619,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                ::oLote:Hide()
                
             end if
+
+            msgAlert( ::oParent:oStock:nCostoMedio( cCodArt, ::oParent:oDbf:cAlmOrd, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote ) )
 
             ::oGetPes:cText(     ::oParent:oArt:nPesoKg )
             ::oGetUndPes:cText(  ::oParent:oArt:cUndDim )

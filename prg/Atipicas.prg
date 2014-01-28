@@ -155,9 +155,16 @@ CLASS TAtipicas FROM TDet
    METHOD NombreArticulo()             INLINE ( retfld( ::oDbfVir:cCodArt, TDataView():Get( "Articulo", ::View() ), "Nombre", "Codigo" ) )
    METHOD NombreFamilia()              INLINE ( retfld( ::oDbfVir:cCodFam, TDataView():Get( "Familias", ::View() ), "cNomFam", "cCodFam" ) )
 
+
    METHOD LoadAtipica()
 
    METHOD CalculaRentabilidad()        
+      METHOD AlertaRentabilidad()      INLINE ( hHasKey( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Alerta" ) .and. hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Alerta" ) )
+      METHOD NaturalezaRentabilidad()  INLINE ( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Naturaleza" ) )
+      METHOD TipoRentabilidad()        INLINE ( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Tipo" ) )
+      METHOD ImporteRentabilidad()     INLINE ( if (  hHasKey( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Porcentual" ) .and. hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Porcentual" ),;
+                                                      Trans( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Importe" ), "999.99" ) + " %",;
+                                                      Trans( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Importe" ), cPouDiv() ) ) )
 
    METHOD SetPrimeraPropiedad( cValue )
    METHOD SetSegundaPropiedad( cValue )
@@ -794,30 +801,31 @@ METHOD Resource( nMode ) CLASS TAtipicas
    
       with object ( ::oBrwRentabilidad:AddCol() )
          :cHeader                         := ""
-         :bEditValue                      := {|| hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Alerta" ) }
+         :bStrData                        := {|| "" }
+         :bEditValue                      := {|| ::AlertaRentabilidad() }
          :nWidth                          := 18
+         :SetCheck( { "Alert", "Nil16" } )
       end with
-   
+
       with object ( ::oBrwRentabilidad:AddCol() )
          :cHeader                         := "Naturaleza"
-         :bEditValue                      := {|| hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Naturaleza" ) }
+         :bEditValue                      := {|| ::NaturalezaRentabilidad() }
          :nWidth                          := 96
       end with
 
       with object ( ::oBrwRentabilidad:AddCol() )
          :cHeader                         := "Tipo"
-         :bEditValue                      := {|| hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Tipo" ) }
+         :bEditValue                      := {|| ::TipoRentabilidad() }
          :nWidth                          := 48
       end with
 
       with object ( ::oBrwRentabilidad:AddCol() )
          :cHeader                         := "Importe " + cDivEmp()
-         :bEditValue                      := {|| if(  !hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Porcentual" ),;
-                                                      Trans( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Importe" ), cPouDiv() ),;
-                                                      Trans( hGet( ::aRentabilidad[ ::oBrwRentabilidad:nArrayAt ], "Importe" ), "999.99" ) + " %" ) }
-         :nWidth                          := 48
+         :bEditValue                      := {|| ::ImporteRentabilidad() }
+         :nDataStrAlign                   := 1
+         :nHeadStrAlign                   := 1
+         :nWidth                          := 68
       end with
-
    
       ::oBrwRentabilidad:CreateFromResource( 450 )
 
@@ -1308,6 +1316,7 @@ RETURN ( Self )
 METHOD CalculaRentabilidad()        
 
    local nCosto      := 0
+   local nDtoAtpico  := 0
    local nNetoBase   := 0
    local nResultado  := 0
 
@@ -1323,7 +1332,7 @@ METHOD CalculaRentabilidad()
       nCosto         := ::oDbfVir:nPrcCom 
    end if
 
-   aAdd( ::aRentabilidad, { "Naturaleza" => "Costo",     "Tipo" => "", "Importe" => nCosto,     "Porcentual" => .f., "Alerta" => .f. } )   
+   aAdd( ::aRentabilidad, { "Naturaleza" => "Costo",     "Tipo" => "", "Importe" => nCosto } )   
 
    // Base --------------------------------------------------------------------
 
@@ -1342,22 +1351,73 @@ METHOD CalculaRentabilidad()
          nNetoBase   := ::oDbf:nPrcArt6
    end 
 
-   aAdd( ::aRentabilidad, { "Naturaleza" => "Neto base", "Tipo" => "", "Importe" => nNetoBase,  "Porcentual" => .f., "Alerta" => .f. } )
+   aAdd( ::aRentabilidad, { "Naturaleza" => "Neto base", "Tipo" => "", "Importe" => nNetoBase } )
 
    // Dto X*Y*-----------------------------------------------------------------
 
-   if ( ::oDbfVir:nUncOfe != 0 .and. ::oDbfVir:nUnvOfe != 0 )
+   if ( ::oDbfVir:nUncOfe > 1 .and. ::oDbfVir:nUnvOfe >= 1 )
 
-      if ( ::oDbfVir:nUncOfe != 1 .and. ::oDbfVir:nUnvOfe != 1 )
+      nResultado     := nNetoBase - ( Div( ( nNetoBase * ::oDbf:nUncOfe ), ::oDbfVir:nUnvOfe ) )
 
-         nResultado  := nNetoBase - ( Div( ( nNetoBase * ::oDbf:nUncOfe ), ::oDbfVir:nUnvOfe ) )
+      aAdd( ::aRentabilidad, { "Naturaleza" => Space( 3 ) + "Dto. X*Y", "Tipo" => alltrim( str( ::oDbfVir:nUnvOfe ) ) + " * " + alltrim( str( ::oDbfVir:nUncOfe ) ), "Importe" => - ( nResultado ) } )
 
-         aAdd( ::aRentabilidad, { "Naturaleza" => Space( 3 ) + "Dto. X*Y", "Tipo" => alltrim( str( ::oDbfVir:nUnvOfe ) ) + " * " + alltrim( str( ::oDbfVir:nUncOfe ) ), "Importe" => - ( nResultado ), "Porcentual" => .f., "Alerta" => .f. } )
+      nNetoBase      -= nResultado
 
+   end if
+
+   // Dto Art------------------------------------------------------------------
+
+   if ::oDbfVir:nDtoArt != 0
+
+      nResultado     := ( ( nNetoBase * ::oDbfVir:nDtoArt ) / 100 )
+
+      aAdd( ::aRentabilidad, { "Naturaleza" => space(3) + "Dto. art.", "Tipo" => alltrim( str( ::oDbfVir:nDtoArt  ) ) + " %", "Importe" => - ( nResultado ) } )
+
+      nNetoBase      -= nResultado
+
+   end if
+
+   // Dto Lin------------------------------------------------------------------
+
+   if ::oDbfVir:nDtoDiv != 0
+
+      aAdd( ::aRentabilidad, { "Naturaleza" => space(3) + "Dto. lineal", "Tipo" => Trans( ::oDbfVir:nDtoDiv, cPouDiv( cDivEmp() ) ), "Importe" => - ( ::oDbfVir:nDtoDiv ) } )
+
+      nNetoBase      -= ::oDbfVir:nDtoDiv
+
+   end if
+
+   // Dto Promo ---------------------------------------------------------------
+
+   if ::oDbfVir:nDprArt != 0
+
+      nResultado     := ( ( nNetoBase * ::oDbfVir:nDprArt ) / 100 )
+
+      aAdd( ::aRentabilidad, { "Naturaleza" => space(3) + "Dto. promo.", "Tipo" => alltrim( str( ::oDbfVir:nDprArt ) ) + " %", "Importe" => - ( nResultado ) } )
+
+      nNetoBase      -= nResultado
+
+   end if
+
+   // Comisión agente----------------------------------------------------------
+
+   if ::oDbfVir:nComAge != 0
+
+      nResultado     := ( ( nNetoBase * ::oDbfVir:nComAge ) / 100 )
+
+      if ::oDbfVir:lComAge
+         aAdd( ::aRentabilidad, { "Naturaleza" => space(3) + "Com. agente", "Tipo" => AllTrim( Str( ::oDbfVir:nComAge ) ) + " %", "Importe" => - ( nResultado ) } )
          nNetoBase   -= nResultado
-
+      else
+         aAdd( ::aRentabilidad, { "Naturaleza" => space(3) + "Com. agente", "Tipo" => AllTrim( Str( ::oDbfVir:nComAge ) ) + " %", "Importe" => nResultado } )
       end if
 
+   end if
+
+   // Atipico con la opcion 1--------------------------------------------------
+
+   if ::oRentabilidadSobre:nAt == 1 .and. ::oDbfVir:nDtoAtp != 0
+      nDtoAtpico     := ( ( nNetoBase * ::oDbfVir:nDtoAtp ) / 100 )
    end if
 
    CursorWE()
