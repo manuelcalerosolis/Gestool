@@ -676,11 +676,15 @@ CLASS TpvTactil
 
    INLINE METHOD GetUsuario( lForced )
 
+      local lShow
+
       DEFAULT lForced                  := .f.
 
       if ( lForced ) .or. ( ::lGetUsuario .and. lRecogerUsuario() )
 
-         if !::ShowUsuario()
+         lShow                         := ::ShowUsuario()
+
+         if !lShow
 
             ::KillResource()
 
@@ -1509,7 +1513,7 @@ CLASS TpvTactil
 
    METHOD SetCalculadora()
 
-   METHOD KillResource()         INLINE ( ::lKillResource   := .t., ::oDlg:End() )
+   METHOD KillResource()         INLINE ( ::lKillResource   := .t., ::EnableDialog(), ::oDlg:End() )
 
    METHOD GeneraVale()
    METHOD lLiquidaVale( sCobro )
@@ -7198,10 +7202,10 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    end if
 
    ::DisableDialog()
-
+/*
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7274,7 +7278,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
       end if
 
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Error al montar la salas de venta" + CRLF + ErrorMessage( oError ) )
@@ -7282,7 +7286,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    ::EnableDialog()
 
 Return ( lReturn )
