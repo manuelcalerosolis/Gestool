@@ -8041,7 +8041,7 @@ METHOD ProcesaComandas( lCopia )
 
       /*
       Lineas temporales--------------------------------------------------------
-      Esto hay q hacerlo para cuando se guraa sin salir del doc ---------------
+      Esto hay q hacerlo para cuando se guarda sin salir del doc --------------
       */
 
       ::oTemporalLinea:GetStatus()
