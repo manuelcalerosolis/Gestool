@@ -4319,13 +4319,13 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
       return nil
    end if
 
-   if Empty( aTmp[ _CALMLIN ] ) .and. !Empty( aTmp[ _CREF ] )
-      msgStop( "Código de almacén no puede estar vacío", "Atención" )
-      Return nil
+   if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
+      return nil
    end if
 
-   if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
-      Return nil
+   if Empty( aTmp[ _CALMLIN ] ) .and. !Empty( aTmp[ _CREF ] )
+      msgStop( "Código de almacén no puede estar vacío", "Atención" )
+      return nil
    end if
 
    SysRefresh()
@@ -4343,7 +4343,10 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
       Chequeamos las atipicas X * Y--------------------------------------------
       */
 
-      aXbYStr                    := nXbYAtipica( aTmp[ _CREF ], aTmpPre[ _CCODCLI ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfCliAtp )
+      ? aTmpPre[ _CCODCLI ]
+      ? aTmpPre[ _CCODGRP ]
+
+      aXbYStr                    := aXbYAtipica( aTmp[ _CREF ], aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfCliAtp )
 
       if aXbYStr[ 1 ] == 0
 
@@ -4352,13 +4355,8 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
          */
 
          if !aTmp[ _LLINOFE ]
-
             aXbyStr              := nXbYOferta( aTmp[ _CREF ], aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 1 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -4366,13 +4364,8 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
          */
 
          if !aTmp[ _LLINOFE ]
-
             aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "FAMILIA", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 2 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -4380,13 +4373,8 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
          */
 
          if !aTmp[ _LLINOFE ]
-
             aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTIP", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 3 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -4394,13 +4382,8 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
          */
 
          if !aTmp[ _LLINOFE ]
-
             aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODCATE", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 4 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -4408,13 +4391,8 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
          */
 
          if !aTmp[ _LLINOFE ]
-
             aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTEMP", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 5 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
          end if
 
          /*
@@ -4422,13 +4400,8 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
          */
 
          if !aTmp[ _LLINOFE ]
-
             aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODFAB", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 6 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
+            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
          end if
 
       end if
@@ -6425,22 +6398,22 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                end if
 
                /*
-               Descuentos por tarifas de precios----------------------------
+               Descuentos por tarifas de precios-------------------------------
                */
 
                nImpAtp     := nDtoAtp( nTarOld, dbfCliAtp )
                aGet[ _NDTO ]:cText( nImpAtp )
 
                /*
-               Descuento por promocion--------------------------------------
+               Descuento por promocion-----------------------------------------
                */
 
                if ( dbfCliAtp )->nDprArt != 0
-                  aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
+                  aGet[ _NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
                end if
 
                if ( dbfCliAtp )->nComAge != 0
-                  aGet[_NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
+                  aGet[ _NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0
@@ -6452,23 +6425,20 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                end if
 
             /*
-            Atipicas de clientes por familias
+            Atipicas de clientes por familias----------------------------------
             */
 
             case lSeekAtpFam( aTmpPre[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpPre[ _DFECPRE ], dbfCliAtp ) .and. ;
                   ( dbfCliAtp )->lAplPre
 
-               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
-               //if ( dbfCliAtp )->nDtoArt != 0
-                  aGet[_NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
-               //end if
+               aGet[ _NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
 
                if ( dbfCliAtp )->nDprArt != 0
-                  aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
+                  aGet[ _NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
                end if
 
                if ( dbfCliAtp )->nComAge != 0
-                  aGet[_NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
+                  aGet[ _NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0

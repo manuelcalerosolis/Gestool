@@ -3340,6 +3340,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
+<<<<<<< HEAD
       REDEFINE GET aGet[ _CSUPED ] VAR aTmp[ _CSUPED ];
          ID       129 ;
          WHEN     ( lWhen ) ;
@@ -3348,6 +3349,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       /*
 		Cajas____________________________________________________________________
 		*/
+=======
+   REDEFINE GET   oFmtDoc ;
+      VAR         cFmtDoc ;
+      ID          90 ;
+      VALID       ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      BITMAP      "LUPA" ;
+      ON HELP     ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
+      OF          oDlg
+
+   REDEFINE GET   oSayFmt ;
+      VAR         cSayFmt ;
+      ID          91 ;
+      WHEN        ( .f. );
+      OF          oDlg
+>>>>>>> 2b06bbd4d8344da1b4af3df233ee261000421b02
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
          WHEN     ( lWhen ) ;
@@ -3358,9 +3374,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oSay[ 9 ] ) ) ;
          OF       oFld:aDialogs[2]
 
+<<<<<<< HEAD
       /*
       Retirado por________________________________________________________________
 		*/
+=======
+   REDEFINE GET   oPrinter ;
+      VAR         cPrinter ;
+      WHEN        ( .f. ) ;
+      ID          160 ;
+      OF          oDlg
+>>>>>>> 2b06bbd4d8344da1b4af3df233ee261000421b02
 
       REDEFINE GET aGet[_CRETPOR] VAR aTmp[_CRETPOR] ;
          ID       160 ;

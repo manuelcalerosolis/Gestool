@@ -17217,28 +17217,11 @@ Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
 
    ( dbfCodebar )->( OrdSetFocus( nOrdenAnterior ) )
 
-   /*
-
-   Esto tiene q desaparecer
-
-   ( dbfCodebar )->( OrdSetFocus( nOrdenAnterior ) )
-
-   nOrdenAnterior          := ( dbfArticulo )->( OrdSetFocus( "CodeBar" ) )
-
-   if ( dbfArticulo )->( dbSeek( cCodigo ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodigo ) ) )
-      cCodigo              := ( dbfArticulo )->Codigo
-   end if
-
-   ( dbfArticulo )->( OrdSetFocus( nOrdenAnterior ) )
-   */
-
    if !Empty( cPropiedades )
       cCodBar                 := Rtrim( cCodigo ) + cPropiedades
    else
       cCodBar                 := cCodigo
    end if
-
-   msgAlert( Rtrim( cCodigo ) + cPropiedades )
 
 Return ( cCodBar )
 
