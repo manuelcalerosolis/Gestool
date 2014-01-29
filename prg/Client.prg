@@ -8243,11 +8243,12 @@ return ( nImpRiesgo )
 
 Function nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
 
-   local nModOfe  := 0
-   local nTipXbY  := 0
-   local nUndGrt  := 0
-   local aXbYRet  := { 0, 0 }
-   local nOrd     := ( dbfAtpCli )->( OrdSetFocus( "cCliArt" ) )
+   local a
+   local nModOfe     := 0
+   local nTipXbY     := 0
+   local nUndGrt     := 0
+   local aXbYRet     := { 0, 0 }
+   local nOrd        := ( dbfAtpCli )->( OrdSetFocus( "cCliArt" ) )
 
 	/*
 	Primero buscar si existe el articulo en la oferta
@@ -8257,62 +8258,12 @@ Function nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
 
       while ( dbfAtpCli )->cCodCli + ( dbfAtpCli )->cCodArt == cCodCli + cCodArt .and. !( dbfAtpCli )->( eof() )
 
-			/*
-			Comprobamos si esta entre las fechas
-			*/
+         a           := aXbY( nCajVen, nUndVen, dFecOfe, dbfAtpCli )
 
-         if ( dFecOfe >= ( dbfAtpCli )->dFecIni .or. Empty( ( dbfAtpCli )->dFecIni ) ) .and. ;
-            ( dFecOfe <= ( dbfAtpCli )->dFecFin .or. Empty( ( dbfAtpCli )->dFecFin ) ) .and. ;
-            ( dbfAtpCli )->nUnvOfe != 0                                                .and. ;
-            ( dbfAtpCli )->nUncOfe != 0
-
-            /*
-            Vamos a comprobar si la oferta es de unidades o de cajas
-            */
-
-            nTipXbY  := ( dbfAtpCli )->nTipXbY
-
-            if nTipXbY == 1   // Cajas
-
-               if mod( nCajVen, ( dbfAtpCli )->nUnvOfe ) == 0
-
-                  /*
-                  Multiplos de la oferta
-                  */
-
-                  nModOfe     := Int( Div( nCajVen, ( dbfAtpCli )->nUnvOfe ) )
-                  nUndGrt     := ( ( dbfAtpCli )->nUnvOfe - ( dbfAtpCli )->nUncOfe ) * nModOfe
-                  aXbYRet     := { nTipXbY, nUndGrt }
-
-                  exit
-
-               end if
-
-            else
-
-               /*
-               Comprobamos el numero de unidades a vender es igual a de la oferta
-               o si al dividirlo devuelve un numero de resto 0 tendremos un
-               multiplo de la oferta
-               */
-
-               if mod( nCajVen * nUndVen, ( dbfAtpCli )->nUnvOfe ) == 0
-
-                  /*
-                  Multiplos de la oferta
-                  */
-
-                  nModOfe     := Int( Div( ( nCajVen * nUndVen ), ( dbfAtpCli )->nUnvOfe ) )
-                  nUndGrt     := ( ( dbfAtpCli )->nUnvOfe - ( dbfAtpCli )->nUncOfe ) * nModOfe
-                  aXbYRet     := { nTipXbY, nUndGrt }
-
-                  exit
-
-               end if
-
-            end if
-
-         end if
+         if IsArray( a )
+            aXbYRet  := a
+            exit 
+         end if 
 
          ( dbfAtpCli )->( dbSkip() )
 
@@ -8323,6 +8274,115 @@ Function nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
    ( dbfAtpCli )->( OrdSetFocus( nOrd ) )
 
 Return ( aXbYRet )
+
+//---------------------------------------------------------------------------//
+
+Function aXbYGrupo( cCodArt, cCodGrp, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
+
+   local a
+   local aXbYRet     := { 0, 0 }
+   local nOrd        := ( dbfAtpCli )->( OrdSetFocus( "cGrpArt" ) )
+
+   /*
+   Primero buscar si existe el articulo en la oferta
+   */
+
+   if ( dbfAtpCli )->( dbSeek( cCodGrp + cCodArt ) )
+
+      while ( dbfAtpCli )->cCodGrp + ( dbfAtpCli )->cCodArt == cCodGrp + cCodArt .and. !( dbfAtpCli )->( eof() )
+
+         a           := aXbY( nCajVen, nUndVen, dFecOfe, dbfAtpCli )
+
+         if IsArray( a )
+            aXbYRet  := a
+            exit 
+         end if 
+
+         ( dbfAtpCli )->( dbSkip() )
+
+      end do
+
+   end if
+
+   ( dbfAtpCli )->( OrdSetFocus( nOrd ) )
+
+Return ( aXbYRet )
+
+//---------------------------------------------------------------------------//
+
+Function aXbYAtipica( cCodArt, cCodCli, cCodGrp, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
+
+   local aXbY  := nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli ) 
+
+   if Empty( aXbY )
+      aXbY     := aXbYGrupo( cCodArt, cCodGrp, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
+   end if
+
+Return ( aXbY )
+
+//---------------------------------------------------------------------------//
+
+Static Function aXbY( nCajVen, nUndVen, dFecOfe, dbfAtpCli )
+
+   local aXbYRet  
+   local nModOfe  := 0
+   local nTipXbY  := 0
+   local nUndGrt  := 0
+
+   /*
+   Comprobamos si esta entre las fechas----------------------------------
+   */
+
+   if ( dFecOfe >= ( dbfAtpCli )->dFecIni .or. Empty( ( dbfAtpCli )->dFecIni ) ) .and. ;
+      ( dFecOfe <= ( dbfAtpCli )->dFecFin .or. Empty( ( dbfAtpCli )->dFecFin ) ) .and. ;
+      ( dbfAtpCli )->nUnvOfe != 0                                                .and. ;
+      ( dbfAtpCli )->nUncOfe != 0
+
+      /*
+      Vamos a comprobar si la oferta es de unidades o de cajas-----------
+      */
+
+      nTipXbY     := ( dbfAtpCli )->nTipXbY
+
+      if nTipXbY == 1   // Cajas
+
+         if mod( nCajVen, ( dbfAtpCli )->nUnvOfe ) == 0
+
+            /*
+            Multiplos de la oferta---------------------------------------
+            */
+
+            nModOfe     := Int( Div( nCajVen, ( dbfAtpCli )->nUnvOfe ) )
+            nUndGrt     := ( ( dbfAtpCli )->nUnvOfe - ( dbfAtpCli )->nUncOfe ) * nModOfe
+            aXbYRet     := { nTipXbY, nUndGrt }
+
+         end if
+
+      else
+
+         /*
+         Comprobamos el numero de unidades a vender es igual a de la oferta
+         o si al dividirlo devuelve un numero de resto 0 tendremos un
+         multiplo de la oferta
+         */
+
+         if mod( nCajVen * nUndVen, ( dbfAtpCli )->nUnvOfe ) == 0
+
+            /*
+            Multiplos de la oferta
+            */
+            
+            nModOfe     := Int( Div( ( nCajVen * nUndVen ), ( dbfAtpCli )->nUnvOfe ) )
+            nUndGrt     := ( ( dbfAtpCli )->nUnvOfe - ( dbfAtpCli )->nUncOfe ) * nModOfe
+            aXbYRet     := { nTipXbY, nUndGrt }
+
+         end if
+
+      end if
+
+   end if 
+
+Return ( aXbyRet )
 
 //---------------------------------------------------------------------------//
 

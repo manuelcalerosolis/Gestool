@@ -5514,10 +5514,6 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
    end if
 
    if nImpTmp > nImpFld
-
-      msgAlert( nImpTmp, "nImpTmp" )
-      msgAlert( nImpFld, "nImpFld" )
-
       msgStop( "El importe no puede ser superior al actual." )
       return nil
    end if

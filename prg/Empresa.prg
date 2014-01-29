@@ -6895,7 +6895,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
 
       if lExistTable( dbfNamOld + ".Dbf" )
          fEraseTable( dbfNamOld + ".Dbf" )
-         msgAlert( dbfNamOld + ".Dbf", "" )
+         msgStop( dbfNamOld + ".Dbf", "" )
       end if
 
       if lExistTable( dbfNamOld + ".Fpt" )

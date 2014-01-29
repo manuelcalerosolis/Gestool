@@ -3532,7 +3532,7 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
 
          MENU
 
-            MENUITEM    "&1. Modificar de artículo";
+            MENUITEM    "&1. Modificar artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
                RESOURCE "Cube_Yellow_16";
                ACTION   ( EdtArticulo( oCodArt:VarGet() ) );

@@ -5071,26 +5071,27 @@ STATIC FUNCTION PrnSerie()
       MAX         99999 ;
       OF          oDlg
 
-   REDEFINE GET oFmtDoc VAR cFmtDoc ;
-      ID       90 ;
-      COLOR    CLR_GET ;
-      VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
-      OF       oDlg
+   REDEFINE GET   oFmtDoc ;
+      VAR         cFmtDoc ;
+      ID          90 ;
+      VALID       ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      BITMAP      "LUPA" ;
+      ON HELP     ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
+      OF          oDlg
 
-   REDEFINE GET oSayFmt VAR cSayFmt ;
-      ID       91 ;
-      WHEN     ( .f. );
-      COLOR    CLR_GET ;
-      OF       oDlg
+   REDEFINE GET   oSayFmt ;
+      VAR         cSayFmt ;
+      ID          91 ;
+      WHEN        ( .f. );
+      OF          oDlg
 
    TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
-   REDEFINE GET oPrinter VAR cPrinter;
-      WHEN     ( .f. ) ;
-      ID       160 ;
-      OF       oDlg
+   REDEFINE GET   oPrinter ;
+      VAR         cPrinter ;
+      WHEN        ( .f. ) ;
+      ID          160 ;
+      OF          oDlg
 
    TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
