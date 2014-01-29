@@ -4985,87 +4985,91 @@ STATIC FUNCTION PrnSerie()
 
    DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de albaranes"
 
-   REDEFINE RADIO oRango VAR nRango ;
-      ID       201, 202 ;
-      OF       oDlg
+   REDEFINE RADIO oRango ;
+      VAR         nRango ;
+      ID          201, 202 ;
+      OF          oDlg
 
-   REDEFINE GET oSerIni VAR cSerIni ;
-      ID       100 ;
-      PICTURE  "@!" ;
+   REDEFINE GET   oSerIni ;
+      VAR         cSerIni ;
+      ID          100 ;
+      PICTURE     "@!" ;
       UPDATE ;
       SPINNER ;
-      ON UP    ( UpSerie( oSerIni ) );
-      ON DOWN  ( DwSerie( oSerIni ) );
-      VALID    ( cSerIni >= "A" .AND. cSerIni <= "Z"  );
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
-
-   REDEFINE GET oSerFin VAR cSerFin ;
-      ID       110 ;
-      PICTURE  "@!" ;
+      ON UP       ( UpSerie( oSerIni ) );
+      ON DOWN     ( DwSerie( oSerIni ) );
+      VALID       ( cSerIni >= "A" .and. cSerIni <= "Z"  );
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
+   
+   REDEFINE GET   oSerFin ;
+      VAR         cSerFin ;
+      ID          110 ;
+      PICTURE     "@!" ;
       UPDATE ;
       SPINNER ;
-      ON UP    ( UpSerie( oSerFin ) );
-      ON DOWN  ( DwSerie( oSerFin ) );
-      VALID    ( cSerFin >= "A" .AND. cSerFin <= "Z"  );
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+      ON UP       ( UpSerie( oSerFin ) );
+      ON DOWN     ( DwSerie( oSerFin ) );
+      VALID       ( cSerFin >= "A" .and. cSerFin <= "Z"  );
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET nDocIni;
-      ID       120 ;
-		PICTURE 	"999999999" ;
+   REDEFINE GET   nDocIni;
+      ID          120 ;
+		PICTURE     "999999999" ;
       SPINNER ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET nDocFin;
-      ID       130 ;
-		PICTURE 	"999999999" ;
+   REDEFINE GET   nDocFin;
+      ID          130 ;
+		PICTURE 	   "999999999" ;
       SPINNER ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET cSufIni ;
-      ID       140 ;
-      PICTURE  "##" ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+   REDEFINE GET   cSufIni ;
+      ID          140 ;
+      PICTURE     "##" ;
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET cSufFin ;
-      ID       150 ;
-      PICTURE  "##" ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+   REDEFINE GET   cSufFin ;
+      ID          150 ;
+      PICTURE     "##" ;
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET dFecDesde ;
-      ID       210 ;
-      WHEN     ( nRango == 2 ) ;
+   REDEFINE GET   dFecDesde ;
+      ID          210 ;
+      WHEN        ( nRango == 2 ) ;
       SPINNER ;
-      OF       oDlg
+      OF          oDlg
 
-   REDEFINE GET dFecHasta ;
-      ID       220 ;
-      WHEN     ( nRango == 2 ) ;
+   REDEFINE GET   dFecHasta ;
+      ID          220 ;
+      WHEN        ( nRango == 2 ) ;
       SPINNER ;
-      OF       oDlg   
+      OF          oDlg   
 
    REDEFINE CHECKBOX lInvOrden ;
-      ID       500 ;
-      OF       oDlg
+      ID          500 ;
+      OF          oDlg
 
    REDEFINE CHECKBOX lCopiasPre ;
-      ID       170 ;
-      OF       oDlg
+      ID          170 ;
+      OF          oDlg
 
-   REDEFINE GET oNumCop VAR nNumCop;
-      ID       180 ;
-      WHEN     !lCopiasPre ;
-      VALID    nNumCop > 0 ;
-		PICTURE 	"999999999" ;
+   REDEFINE GET   oNumCop ;
+      VAR         nNumCop;
+      ID          180 ;
+      WHEN        !lCopiasPre ;
+      VALID       nNumCop > 0 ;
+		PICTURE 	   "999999999" ;
       SPINNER ;
-      MIN      1 ;
-      MAX      99999 ;
-      OF       oDlg
+      MIN         1 ;
+      MAX         99999 ;
+      OF          oDlg
 
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
       ID       90 ;
