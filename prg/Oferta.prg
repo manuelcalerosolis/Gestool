@@ -1984,7 +1984,7 @@ FUNCTION nXbYOferta( cCodArt, cCodCli, cGrpCli, nCajVen, nUndVen, dFecOfe, dbfOf
 			Comprobamos si esta entre las fechas
 			*/
 
-         if ( dbfOferta )->nTblOfe  == nTblOfe                                         .AND.;
+         if ( dbfOferta )->nTblOfe  == nTblOfe                                         .AND. ;
             ( dFecOfe >= ( dbfOferta )->DINIOFE .OR. empty( ( dbfOferta )->DINIOFE ) ) .AND. ;
             ( dFecOfe <= ( dbfOferta )->DFINOFE .OR. empty( ( dbfOferta )->DFINOFE ) ) .AND. ;
             ( dbfOferta )->NTIPOFE == 2                                                .AND. ;

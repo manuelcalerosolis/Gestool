@@ -227,7 +227,7 @@ METHOD Search( oDlg )
    Sinconizacion de tablas de albcli-------------------------------------------
    */
 
-   pdaAlbCliSenderReciver():CreateData( , ::oMessage, cPatServidor )
+   //pdaAlbCliSenderReciver():CreateData( , ::oMessage, cPatServidor )
 
    /*
    Sinconizacion de tablas de faccli-------------------------------------------

@@ -402,7 +402,8 @@ TpvSalon.prg            \
 TScripts.prg            \
 OutLook2010.prg         \
 TTreevc3.prg            \
-Cuaderno.prg 				\
+Cuaderno.prg 			\
+FacturarLineasAlbaranes.prg \
 
 C               =       \
 Metafi32.c              \
@@ -816,7 +817,8 @@ TpvMesa.obj             \
 TpvSalon.obj            \
 TScripts.obj            \
 OutLook2010.obj         \
-Cuaderno.obj 				\
+Cuaderno.obj 			\
+FacturarLineasAlbaranes.obj \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1202,7 +1204,8 @@ $(OBJ)\TpvPunto.obj             +
 $(OBJ)\TpvMesa.obj              +
 $(OBJ)\TpvSalon.obj             +
 $(OBJ)\TScripts.obj             +
-$(OBJ)\Cuaderno.obj 		  		  +
+$(OBJ)\Cuaderno.obj 		  	+
+$(OBJ)\FacturarLineasAlbaranes.obj +
 $(OBJ)\MsTable.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +

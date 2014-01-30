@@ -2047,7 +2047,7 @@ Function dbDel( cAlias )
       ( cAlias )->( dbDelete() )
       ( cAlias )->( dbUnLock() )
    else
-      msgAlert( "No he podido bloquear.")
+      msgStop( "No he podido bloquear.")
    end if
 
    ( cAlias )->( dbSkip( 0 ) )

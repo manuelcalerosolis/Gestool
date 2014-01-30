@@ -501,10 +501,641 @@ static bEdtInc          := { | aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMod
 static bEdtDoc          := { | aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo          := { | aTmp, aGet, dbfAlbCliP, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtEnt( aTmp, aGet, dbfAlbCliP, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 
-#ifndef __PDA__
-
 //--------------------------------------------------------------------------//
-//Funciones para el programa
+
+FUNCTION AlbCli( oMenuItem, oWnd, hHash )
+
+   local oRpl
+   local oSnd
+   local oPrv
+   local oImp
+   local oDel
+   local oPdf
+   local oMail
+   local oDup
+   local oBtnEur
+   local nLevel
+   local oRotor
+   local lEuro          := .f.
+
+   DEFAULT  oMenuItem   := _MENUITEM_
+   DEFAULT  oWnd        := oWnd()
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      return .f.
+   end if
+
+   /*
+   Cerramos todas las ventanas
+   */
+
+   if oWnd != nil
+      oWnd:CloseAll()
+   end if
+
+   if !OpenFiles()
+      return .f.
+   end if
+
+   DisableAcceso()
+
+   DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
+      XBROWSE ;
+      TITLE    "Albaranes de clientes" ;
+      PROMPT   "Número",;
+               "Fecha",;
+               "Código",;
+               "Nombre",;
+               "Obra",;
+               "Agente",;
+               "Su albarán",;
+               "Facturado";
+      MRU      "Document_plain_user1_16";
+      BITMAP   clrTopArchivos ;
+      ALIAS    ( dbfAlbCliT );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) ) ;
+      LEVEL    nLevel ;
+      OF       oWnd
+
+      oWndBrw:lFechado     := .t.
+
+      oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Sesión cerrada"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAlbCliT )->lCloAlb }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Zoom16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Facturado"
+         :nHeadBmpNo       := 3
+         :cSortOrder       := "lFacturado"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAlbCliT )->lFacturado }
+         :nWidth           := 20
+         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+         :AddResource( "trafficlight_on_16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAlbCliT )->lSndDoc }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Lbl16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Entregado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAlbCliT )->lEntregado }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "hand_paper_16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Incidencia"
+         :nHeadBmpNo       := 4
+         :bStrData         := {|| "" }
+         :bBmpData         := {|| nEstadoIncidencia( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) }
+         :nWidth           := 20
+         :lHide            := .t.
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "informacion_16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Impreso"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAlbCliT )->lImprimido }
+         :nWidth           := 20
+         :lHide            := .t.
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "IMP16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Tipo"
+         :bEditValue       := {|| aTipAlb[ if( ( dbfAlbCliT )->lAlquiler, 2, 1 ) ] }
+         :nWidth           := 50
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumAlb"
+         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfAlbCliT )->cSufAlb }
+         :nWidth           := 40
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Sesión"
+         :bEditValue       := {|| Trans( ( dbfAlbCliT )->cTurAlb, "######" ) }
+         :nWidth           := 40
+         :lHide            := .t.
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( oWndBrw:AddXCol() )   
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecAlb"
+         :bEditValue       := {|| Dtoc( ( dbfAlbCliT )->dFecAlb ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Caja"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodCaj }
+         :nWidth           := 40
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Usuario"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodUsr }
+         :nWidth           := 40
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodCli"
+         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cCodCli ) }
+         :nWidth           := 70
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomCli"
+         :bEditValue       := {|| ( dbfAlbCliT )->cNomCli }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Su albarán"
+         :cSortOrder       := "cCodSuAlb"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodSuAlb }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Agente"
+         :cSortOrder       := "cCodAge"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodAge }
+         :nWidth           := 50
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Ruta"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodRut }
+         :nWidth           := 40
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Almacén"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodAlm }
+         :nWidth           := 60
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Obra"
+         :cSortOrder       := "cObra"
+         :bEditValue       := {|| ( dbfAlbCliT )->cCodObr }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Su pedido"
+         :cSortOrder       := "cSuPed"
+         :bEditValue       := {|| ( dbfAlbCliT )->cSuPed }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Base"
+         :bEditValue       := {|| ( dbfAlbCliT )->nTotNet }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := cImp()
+         :bEditValue       := {|| ( dbfAlbCliT )->nTotIva }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "R.E."
+         :bEditValue       := {|| ( dbfAlbCliT )->nTotReq }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| ( dbfAlbCliT )->nTotAlb }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Div."
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfAlbCliT )->cDivAlb ), dbfDiv ) }
+         :nWidth           := 30
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Entregado"
+         :bEditValue       := {|| ( dbfAlbCliT )->nTotPag }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Total und."
+         :bEditValue       := {|| nTotalUnd( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, MasUnd() ) }
+         :nWidth           := 95
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      oWndBrw:CreateXFromCode()
+
+   DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oWndBrw:SearchSetFocus() ) ;
+      TOOLTIP  "(B)uscar";
+      HOTKEY   "B"
+
+   oWndBrw:AddSeaBar()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oWndBrw:RecAdd() );
+      ON DROP  ( oWndBrw:RecDup() );
+      TOOLTIP  "(A)ñadir";
+      HOTKEY   "A";
+      BEGIN GROUP ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL oDup RESOURCE "DUP" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oWndBrw:RecDup() );
+      MENU     This:Toggle() ;
+      TOOLTIP  "(D)uplicar";
+      HOTKEY   "D";
+      LEVEL    ACC_APPD
+
+#ifdef __HARBOUR__
+
+      DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( DupSerie( oWndBrw ) );
+         TOOLTIP  "Series" ;
+         FROM     oDup ;
+         CLOSED ;
+         LEVEL    ACC_APPD
+
+#endif
+
+   DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oWndBrw:RecEdit() );
+      TOOLTIP  "(M)odificar";
+      HOTKEY   "M" ;
+      MRU;
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oWndBrw:RecZoom() );
+      TOOLTIP  "(Z)oom";
+      HOTKEY   "Z" ;
+      MRU;
+      LEVEL    ACC_ZOOM
+
+   DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) );
+      TOOLTIP  "(E)liminar";
+      HOTKEY   "E";
+      LEVEL    ACC_DELE
+
+      /*DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( AlbRecDel( .t., .f. ) );
+         TOOLTIP  "Solo cabecera" ;
+         FROM     oDel ;
+         CLOSED ;
+         LEVEL    ACC_DELE
+
+      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( AlbRecDel( .f., .t. ) );
+         TOOLTIP  "Solo detalle" ;
+         FROM     oDel ;
+         CLOSED ;
+         LEVEL    ACC_DELE*/
+
+      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( DelSerie( oWndBrw ) );
+         TOOLTIP  "Series" ;
+         FROM     oDel ;
+         CLOSED ;
+         LEVEL    ACC_DELE
+
+   DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( GenAlbCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
+      TOOLTIP  "(I)mprimir";
+      HOTKEY   "I";
+      LEVEL    ACC_IMPR
+
+      lGenAlbCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
+
+   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( PrnSerie(), oWndBrw:Refresh() ) ;
+      TOOLTIP  "Imp(r)imir series";
+      HOTKEY   "R";
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL oPrv RESOURCE "Prev1" OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( GenAlbCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
+      TOOLTIP  "(P)revisualizar";
+      HOTKEY   "P";
+      LEVEL    ACC_IMPR
+
+      lGenAlbCli( oWndBrw:oBrw, oPrv, IS_SCREEN ) ;
+
+   DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( GenAlbCli( IS_PDF ) ) ;
+      TOOLTIP  "Pd(f)";
+      HOTKEY   "F";
+      LEVEL    ACC_IMPR
+
+      lGenAlbCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
+
+   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( GenAlbCli( IS_MAIL ) ) ;
+      TOOLTIP  "Correo electrónico";
+      LEVEL    ACC_IMPR
+
+      lGenAlbCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+
+   DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( If( !( dbfAlbCliT )->lFacturado, WinAppRec( oWndBrw:oBrw, bEdtPgo, dbfAlbCliP ), MsgStop( "El albarán ya fue facturado." ) ) );
+      TOOLTIP  "Entregas a (c)uenta" ;
+      HOTKEY   "C";
+      LEVEL    ACC_APPD
+
+   if oUser():lAdministrador()
+
+      DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( GenFCli( oWndBrw:oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oGrpCli, oStock ) );
+         TOOLTIP  "(G)enerar facturas";
+         HOTKEY   "G";
+         LEVEL    ACC_APPD
+
+      DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !( dbfAlbCliT )->lFacturado, oWndBrw:oBrw ), ) ) ;
+         TOOLTIP  "Cambiar Es(t)ado" ;
+         HOTKEY   "T";
+         LEVEL    ACC_EDIT
+
+   end if
+
+   DEFINE BTNSHELL RESOURCE "Sel" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( SelSend( oWndBrw:oBrw ) ) ;
+      TOOLTIP  "Entregad(o)" ;
+      HOTKEY   "O";
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      TOOLTIP  "En(v)iar" ;
+      MESSAGE  "Seleccionar albaranes para ser enviados" ;
+      ACTION   lSnd( oWndBrw, dbfAlbCliT ) ;
+      HOTKEY   "V";
+      LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .t., .t., .t. ) );
+         TOOLTIP  "Todos" ;
+         FROM     oSnd ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .f., .t., .t. ) );
+         TOOLTIP  "Ninguno" ;
+         FROM     oSnd ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .t., .f., .t. ) );
+         TOOLTIP  "Abajo" ;
+         FROM     oSnd ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
+      TOOLTIP  "M(o)neda";
+      HOTKEY   "O"
+
+   if oUser():lAdministrador()
+
+      DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliT, aItmAlbCli(), ALB_CLI ) ) ;
+         TOOLTIP  "Cambiar campos" ;
+         LEVEL    ACC_EDIT
+
+         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliL, aColAlbCli() ) ) ;
+            TOOLTIP  "Líneas" ;
+            FROM     oRpl ;
+            CLOSED ;
+            LEVEL    ACC_EDIT
+
+    end if
+
+   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+      ACTION   ( TTrazaDocumento():Activate( ALB_CLI, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) ) ;
+      TOOLTIP  "I(n)forme documento" ;
+      HOTKEY   "N" ;
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oRotor:Expand() ) ;
+      TOOLTIP  "Rotor" ;
+
+      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( EdtCli( ( dbfAlbCliT )->cCodCli ) );
+         TOOLTIP  "Modificar cliente" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( InfCliente( ( dbfAlbCliT )->cCodCli ) );
+         TOOLTIP  "Informe de cliente" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( EdtObras( ( dbfAlbCliT )->cCodCli, ( dbfAlbCliT )->cCodObr, dbfObrasT ) );
+         TOOLTIP  "Modificar obra" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
+         ACTION   ( if( !Empty( ( dbfAlbCliT )->cNumPed ), ZooPedCli( ( dbfAlbCliT )->cNumPed ), MsgStop( "El albarán no procede de un pedido" ) ) );
+         TOOLTIP  "Visualizar pedido" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( if( !( dbfAlbCliT )->lFacturado, FactCli( nil, nil, { "Albaran" => ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
+         TOOLTIP  "Generar factura" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
+         ACTION   ( if( !Empty( ( dbfAlbCliT )->cNumFac ), EdtFacCli( ( dbfAlbCliT )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
+         TOOLTIP  "Modificar factura" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( FacAntCli( nil, nil, ( dbfAlbCliT )->cCodCli ) );
+         TOOLTIP  "Generar anticipo" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( AlbCliNotas() );
+         TOOLTIP  "Generar nota de agenda" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( if( !( dbfAlbCliT )->lFacturado .and. Empty( ( dbfAlbCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
+         TOOLTIP  "Convertir a ticket" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( TFacturarLineasAlbaranes():FacturarLineas( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) );
+         TOOLTIP  "Facturar lineas" ;
+         FROM     oRotor ;
+
+   DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw;
+      NOBORDER ;
+      ACTION   ( oWndBrw:End() ) ;
+      TOOLTIP  "(S)alir" ;
+      HOTKEY   "S"
+
+      /*
+      Datos para el filtro-----------------------------------------------------
+      */
+
+   if !oUser():lFiltroVentas()
+      oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
+      oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
+   end if
+
+   ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
+
+   EnableAcceso()
+
+   if !Empty( hHash ) 
+
+      if !Empty( oWndBrw )
+         oWndBrw:RecAdd()
+      end if
+
+      hHash    := nil
+
+   end if
+
+Return .t.
+
 //--------------------------------------------------------------------------//
 
 STATIC FUNCTION OpenFiles()
@@ -1445,7 +2076,7 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
-Static Function AlbCliReportSkipper( dbfAlbCliL )
+Static Function AlbCliReportSkipper()
 
    ( dbfAlbCliL )->( dbSkip() )
 
@@ -1466,635 +2097,6 @@ STATIC FUNCTION EPage( oInf, cCodDoc )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-
-FUNCTION AlbCli( oMenuItem, oWnd, hHash )
-
-   local oRpl
-   local oSnd
-   local oPrv
-   local oImp
-   local oDel
-   local oPdf
-   local oMail
-   local oDup
-   local oBtnEur
-   local nLevel
-   local oRotor
-   local lEuro          := .f.
-
-   DEFAULT  oMenuItem   := _MENUITEM_
-   DEFAULT  oWnd        := oWnd()
-
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return .f.
-   end if
-
-   /*
-   Cerramos todas las ventanas
-   */
-
-   if oWnd != nil
-      oWnd:CloseAll()
-   end if
-
-   if !OpenFiles()
-      return .f.
-   end if
-
-   DisableAcceso()
-
-   DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
-      XBROWSE ;
-      TITLE    "Albaranes de clientes" ;
-      PROMPT   "Número",;
-               "Fecha",;
-               "Código",;
-               "Nombre",;
-               "Obra",;
-               "Agente",;
-               "Su albarán",;
-               "Facturado";
-      MRU      "Document_plain_user1_16";
-      BITMAP   clrTopArchivos ;
-      ALIAS    ( dbfAlbCliT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) ) ;
-      LEVEL    nLevel ;
-      OF       oWnd
-
-      oWndBrw:lFechado     := .t.
-
-	   oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión cerrada"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lCloAlb }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Facturado"
-         :nHeadBmpNo       := 3
-         :cSortOrder       := "lFacturado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lFacturado }
-         :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-         :AddResource( "trafficlight_on_16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Envio"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lSndDoc }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Entregado"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lEntregado }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "hand_paper_16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Incidencia"
-         :nHeadBmpNo       := 4
-         :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) }
-         :nWidth           := 20
-         :lHide            := .t.
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "informacion_16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Impreso"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lImprimido }
-         :nWidth           := 20
-         :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipAlb[ if( ( dbfAlbCliT )->lAlquiler, 2, 1 ) ] }
-         :nWidth           := 50
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Número"
-         :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSufAlb }
-         :nWidth           := 40
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( dbfAlbCliT )->cTurAlb, "######" ) }
-         :nWidth           := 40
-         :lHide            := .t.
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      with object ( oWndBrw:AddXCol() )   
-         :cHeader          := "Fecha"
-         :cSortOrder       := "dFecAlb"
-         :bEditValue       := {|| Dtoc( ( dbfAlbCliT )->dFecAlb ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Caja"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodCaj }
-         :nWidth           := 40
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Usuario"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodUsr }
-         :nWidth           := 40
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cCodCli ) }
-         :nWidth           := 70
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| ( dbfAlbCliT )->cNomCli }
-         :nWidth           := 180
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Su albarán"
-         :cSortOrder       := "cCodSuAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodSuAlb }
-         :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Agente"
-         :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodAge }
-         :nWidth           := 50
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Ruta"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodRut }
-         :nWidth           := 40
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Almacén"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodAlm }
-         :nWidth           := 60
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
-         :cSortOrder       := "cObra"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodObr }
-         :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Su pedido"
-         :cSortOrder       := "cSuPed"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSuPed }
-         :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t.
-      end with
-
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Base"
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotNet }
-         :cEditPicture     := cPorDiv()
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := cImp()
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotIva }
-         :cEditPicture     := cPorDiv()
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "R.E."
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotReq }
-         :cEditPicture     := cPorDiv()
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotAlb }
-         :cEditPicture     := cPorDiv()
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfAlbCliT )->cDivAlb ), dbfDiv ) }
-         :nWidth           := 30
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Entregado"
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotPag }
-         :cEditPicture     := cPorDiv()
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Total und."
-         :bEditValue       := {|| nTotalUnd( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliL, MasUnd() ) }
-         :nWidth           := 95
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :lHide            := .t.
-      end with
-
-      oWndBrw:CreateXFromCode()
-
-   DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:SearchSetFocus() ) ;
-      TOOLTIP  "(B)uscar";
-      HOTKEY   "B"
-
-   oWndBrw:AddSeaBar()
-
-   DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecAdd() );
-      ON DROP  ( oWndBrw:RecDup() );
-      TOOLTIP  "(A)ñadir";
-      HOTKEY   "A";
-      BEGIN GROUP ;
-      LEVEL    ACC_APPD
-
-   DEFINE BTNSHELL oDup RESOURCE "DUP" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecDup() );
-      MENU     This:Toggle() ;
-      TOOLTIP  "(D)uplicar";
-      HOTKEY   "D";
-      LEVEL    ACC_APPD
-
-#ifdef __HARBOUR__
-
-      DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( DupSerie( oWndBrw ) );
-         TOOLTIP  "Series" ;
-         FROM     oDup ;
-         CLOSED ;
-         LEVEL    ACC_APPD
-
-#endif
-
-   DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecEdit() );
-      TOOLTIP  "(M)odificar";
-      HOTKEY   "M" ;
-      MRU;
-      LEVEL    ACC_EDIT
-
-   DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecZoom() );
-      TOOLTIP  "(Z)oom";
-      HOTKEY   "Z" ;
-      MRU;
-      LEVEL    ACC_ZOOM
-
-   DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) );
-      TOOLTIP  "(E)liminar";
-      HOTKEY   "E";
-      LEVEL    ACC_DELE
-
-      /*DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( AlbRecDel( .t., .f. ) );
-         TOOLTIP  "Solo cabecera" ;
-         FROM     oDel ;
-         CLOSED ;
-         LEVEL    ACC_DELE
-
-      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( AlbRecDel( .f., .t. ) );
-         TOOLTIP  "Solo detalle" ;
-         FROM     oDel ;
-         CLOSED ;
-         LEVEL    ACC_DELE*/
-
-      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( DelSerie( oWndBrw ) );
-         TOOLTIP  "Series" ;
-         FROM     oDel ;
-         CLOSED ;
-         LEVEL    ACC_DELE
-
-   DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
-      TOOLTIP  "(I)mprimir";
-      HOTKEY   "I";
-      LEVEL    ACC_IMPR
-
-      lGenAlbCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
-
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( PrnSerie(), oWndBrw:Refresh() ) ;
-      TOOLTIP  "Imp(r)imir series";
-      HOTKEY   "R";
-      LEVEL    ACC_IMPR
-
-   DEFINE BTNSHELL oPrv RESOURCE "Prev1" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
-      TOOLTIP  "(P)revisualizar";
-      HOTKEY   "P";
-      LEVEL    ACC_IMPR
-
-      lGenAlbCli( oWndBrw:oBrw, oPrv, IS_SCREEN ) ;
-
-   DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_PDF ) ) ;
-      TOOLTIP  "Pd(f)";
-      HOTKEY   "F";
-      LEVEL    ACC_IMPR
-
-      lGenAlbCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
-
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
-      LEVEL    ACC_IMPR
-
-      lGenAlbCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
-
-   DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( If( !( dbfAlbCliT )->lFacturado, WinAppRec( oWndBrw:oBrw, bEdtPgo, dbfAlbCliP ), MsgStop( "El albarán ya fue facturado." ) ) );
-      TOOLTIP  "Entregas a (c)uenta" ;
-      HOTKEY   "C";
-      LEVEL    ACC_APPD
-
-   if oUser():lAdministrador()
-
-      DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( GenFCli( oWndBrw:oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oGrpCli, oStock ) );
-         TOOLTIP  "(G)enerar facturas";
-         HOTKEY   "G";
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !( dbfAlbCliT )->lFacturado, oWndBrw:oBrw ), ) ) ;
-         TOOLTIP  "Cambiar Es(t)ado" ;
-         HOTKEY   "T";
-         LEVEL    ACC_EDIT
-
-   end if
-
-   DEFINE BTNSHELL RESOURCE "Sel" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( SelSend( oWndBrw:oBrw ) ) ;
-      TOOLTIP  "Entregad(o)" ;
-      HOTKEY   "O";
-      LEVEL    ACC_APPD
-
-   DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      TOOLTIP  "En(v)iar" ;
-      MESSAGE  "Seleccionar albaranes para ser enviados" ;
-      ACTION   lSnd( oWndBrw, dbfAlbCliT ) ;
-      HOTKEY   "V";
-      LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .t., .t., .t. ) );
-         TOOLTIP  "Todos" ;
-         FROM     oSnd ;
-         CLOSED ;
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .f., .t., .t. ) );
-         TOOLTIP  "Ninguno" ;
-         FROM     oSnd ;
-         CLOSED ;
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .t., .f., .t. ) );
-         TOOLTIP  "Abajo" ;
-         FROM     oSnd ;
-         CLOSED ;
-         LEVEL    ACC_EDIT
-
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
-      TOOLTIP  "M(o)neda";
-      HOTKEY   "O"
-
-   if oUser():lAdministrador()
-
-      DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
-         NOBORDER ;
-         MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliT, aItmAlbCli(), ALB_CLI ) ) ;
-         TOOLTIP  "Cambiar campos" ;
-         LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliL, aColAlbCli() ) ) ;
-            TOOLTIP  "Líneas" ;
-            FROM     oRpl ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-    end if
-
-   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-      ACTION   ( TTrazaDocumento():Activate( ALB_CLI, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) ) ;
-      TOOLTIP  "I(n)forme documento" ;
-      HOTKEY   "N" ;
-      LEVEL    ACC_EDIT
-
-   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oRotor:Expand() ) ;
-      TOOLTIP  "Rotor" ;
-
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( EdtCli( ( dbfAlbCliT )->cCodCli ) );
-         TOOLTIP  "Modificar cliente" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( InfCliente( ( dbfAlbCliT )->cCodCli ) );
-         TOOLTIP  "Informe de cliente" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( EdtObras( ( dbfAlbCliT )->cCodCli, ( dbfAlbCliT )->cCodObr, dbfObrasT ) );
-         TOOLTIP  "Modificar obra" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
-         ACTION   ( if( !Empty( ( dbfAlbCliT )->cNumPed ), ZooPedCli( ( dbfAlbCliT )->cNumPed ), MsgStop( "El albarán no procede de un pedido" ) ) );
-         TOOLTIP  "Visualizar pedido" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-         ALLOW    EXIT ;
-         ACTION   ( if( !( dbfAlbCliT )->lFacturado, FactCli( nil, nil, { "Albaran" => ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
-         TOOLTIP  "Generar factura" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-         ACTION   ( if( !Empty( ( dbfAlbCliT )->cNumFac ), EdtFacCli( ( dbfAlbCliT )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
-         TOOLTIP  "Modificar factura" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
-         ALLOW    EXIT ;
-         ACTION   ( FacAntCli( nil, nil, ( dbfAlbCliT )->cCodCli ) );
-         TOOLTIP  "Generar anticipo" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
-         ALLOW    EXIT ;
-         ACTION   ( AlbCliNotas() );
-         TOOLTIP  "Generar nota de agenda" ;
-         FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
-         ALLOW    EXIT ;
-         ACTION   ( if( !( dbfAlbCliT )->lFacturado .and. Empty( ( dbfAlbCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
-         TOOLTIP  "Convertir a ticket" ;
-         FROM     oRotor ;
-
-   DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw;
-      NOBORDER ;
-      ACTION   ( oWndBrw:End() ) ;
-      TOOLTIP  "(S)alir" ;
-      HOTKEY   "S"
-
-      /*
-      Datos para el filtro-----------------------------------------------------
-      */
-
-   if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
-      oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
-   end if
-
-   ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
-
-   EnableAcceso()
-
-   if !Empty( hHash ) 
-
-      if !Empty( oWndBrw )
-         oWndBrw:RecAdd()
-      end if
-
-      hHash    := nil
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
 
@@ -2724,7 +2726,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          :nHeadStrAlign       := 1
          :lHide               := .t.
          :nEditType           := 1
-         :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
+         :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3338,6 +3340,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
+<<<<<<< HEAD
       REDEFINE GET aGet[ _CSUPED ] VAR aTmp[ _CSUPED ];
          ID       129 ;
          WHEN     ( lWhen ) ;
@@ -3346,6 +3349,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       /*
 		Cajas____________________________________________________________________
 		*/
+=======
+   REDEFINE GET   oFmtDoc ;
+      VAR         cFmtDoc ;
+      ID          90 ;
+      VALID       ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      BITMAP      "LUPA" ;
+      ON HELP     ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
+      OF          oDlg
+
+   REDEFINE GET   oSayFmt ;
+      VAR         cSayFmt ;
+      ID          91 ;
+      WHEN        ( .f. );
+      OF          oDlg
+>>>>>>> 2b06bbd4d8344da1b4af3df233ee261000421b02
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
          WHEN     ( lWhen ) ;
@@ -3356,9 +3374,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oSay[ 9 ] ) ) ;
          OF       oFld:aDialogs[2]
 
+<<<<<<< HEAD
       /*
       Retirado por________________________________________________________________
 		*/
+=======
+   REDEFINE GET   oPrinter ;
+      VAR         cPrinter ;
+      WHEN        ( .f. ) ;
+      ID          160 ;
+      OF          oDlg
+>>>>>>> 2b06bbd4d8344da1b4af3df233ee261000421b02
 
       REDEFINE GET aGet[_CRETPOR] VAR aTmp[_CRETPOR] ;
          ID       160 ;
@@ -4828,11 +4854,7 @@ Static Function EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmp
       end if
    end if
 
-   if ( "PDA" $ cParamsMain() )
-      DEFINE DIALOG oDlg RESOURCE "ALBCLI_INC_PDA"
-   else
-      DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
-   end if
+   DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
 
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
@@ -4870,14 +4892,6 @@ Static Function EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmp
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      if ( "PDA" $ cParamsMain() )
-
-         REDEFINE SAY oTitulo VAR cTitulo;
-               ID       1000 ;
-               OF       oDlg
-
-      end if
-
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
@@ -4895,8 +4909,6 @@ Static Function EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmp
    end if
 
    ACTIVATE DIALOG oDlg CENTER
-
-
 
 Return ( oDlg:nResult == IDOK )
 
@@ -4985,87 +4997,91 @@ STATIC FUNCTION PrnSerie()
 
    DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de albaranes"
 
-   REDEFINE RADIO oRango VAR nRango ;
-      ID       201, 202 ;
-      OF       oDlg
+   REDEFINE RADIO oRango ;
+      VAR         nRango ;
+      ID          201, 202 ;
+      OF          oDlg
 
-   REDEFINE GET oSerIni VAR cSerIni ;
-      ID       100 ;
-      PICTURE  "@!" ;
+   REDEFINE GET   oSerIni ;
+      VAR         cSerIni ;
+      ID          100 ;
+      PICTURE     "@!" ;
       UPDATE ;
       SPINNER ;
-      ON UP    ( UpSerie( oSerIni ) );
-      ON DOWN  ( DwSerie( oSerIni ) );
-      VALID    ( cSerIni >= "A" .AND. cSerIni <= "Z"  );
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
-
-   REDEFINE GET oSerFin VAR cSerFin ;
-      ID       110 ;
-      PICTURE  "@!" ;
+      ON UP       ( UpSerie( oSerIni ) );
+      ON DOWN     ( DwSerie( oSerIni ) );
+      VALID       ( cSerIni >= "A" .and. cSerIni <= "Z"  );
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
+   
+   REDEFINE GET   oSerFin ;
+      VAR         cSerFin ;
+      ID          110 ;
+      PICTURE     "@!" ;
       UPDATE ;
       SPINNER ;
-      ON UP    ( UpSerie( oSerFin ) );
-      ON DOWN  ( DwSerie( oSerFin ) );
-      VALID    ( cSerFin >= "A" .AND. cSerFin <= "Z"  );
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+      ON UP       ( UpSerie( oSerFin ) );
+      ON DOWN     ( DwSerie( oSerFin ) );
+      VALID       ( cSerFin >= "A" .and. cSerFin <= "Z"  );
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET nDocIni;
-      ID       120 ;
-		PICTURE 	"999999999" ;
+   REDEFINE GET   nDocIni;
+      ID          120 ;
+		PICTURE     "999999999" ;
       SPINNER ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET nDocFin;
-      ID       130 ;
-		PICTURE 	"999999999" ;
+   REDEFINE GET   nDocFin;
+      ID          130 ;
+		PICTURE 	   "999999999" ;
       SPINNER ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET cSufIni ;
-      ID       140 ;
-      PICTURE  "##" ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+   REDEFINE GET   cSufIni ;
+      ID          140 ;
+      PICTURE     "##" ;
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET cSufFin ;
-      ID       150 ;
-      PICTURE  "##" ;
-      WHEN     ( nRango == 1 ); 
-      OF       oDlg
+   REDEFINE GET   cSufFin ;
+      ID          150 ;
+      PICTURE     "##" ;
+      WHEN        ( nRango == 1 ); 
+      OF          oDlg
 
-   REDEFINE GET dFecDesde ;
-      ID       210 ;
-      WHEN     ( nRango == 2 ) ;
+   REDEFINE GET   dFecDesde ;
+      ID          210 ;
+      WHEN        ( nRango == 2 ) ;
       SPINNER ;
-      OF       oDlg
+      OF          oDlg
 
-   REDEFINE GET dFecHasta ;
-      ID       220 ;
-      WHEN     ( nRango == 2 ) ;
+   REDEFINE GET   dFecHasta ;
+      ID          220 ;
+      WHEN        ( nRango == 2 ) ;
       SPINNER ;
-      OF       oDlg   
+      OF          oDlg   
 
    REDEFINE CHECKBOX lInvOrden ;
-      ID       500 ;
-      OF       oDlg
+      ID          500 ;
+      OF          oDlg
 
    REDEFINE CHECKBOX lCopiasPre ;
-      ID       170 ;
-      OF       oDlg
+      ID          170 ;
+      OF          oDlg
 
-   REDEFINE GET oNumCop VAR nNumCop;
-      ID       180 ;
-      WHEN     !lCopiasPre ;
-      VALID    nNumCop > 0 ;
-		PICTURE 	"999999999" ;
+   REDEFINE GET   oNumCop ;
+      VAR         nNumCop;
+      ID          180 ;
+      WHEN        !lCopiasPre ;
+      VALID       nNumCop > 0 ;
+		PICTURE 	   "999999999" ;
       SPINNER ;
-      MIN      1 ;
-      MAX      99999 ;
-      OF       oDlg
+      MIN         1 ;
+      MAX         99999 ;
+      OF          oDlg
 
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
       ID       90 ;
@@ -5256,7 +5272,7 @@ RETURN NIL
 Total de unidades en un albaran
 */
 
-static function nTotalUnd( nAlbaran, dbfAlbCliL, cPicUnd )
+static function nTotalUnd( nAlbaran, cPicUnd )
 
    local nTotUnd  := 0
    local nRecNum  := ( dbfAlbCliL )->( RecNo() )
@@ -5271,42 +5287,6 @@ static function nTotalUnd( nAlbaran, dbfAlbCliL, cPicUnd )
    ( dbfAlbCliL )->( dbGoTo( nRecNum ) )
 
 RETURN ( Trans( nTotUnd, cPicUnd ) )
-
-//--------------------------------------------------------------------------//
-
-Function aTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
-
-   nTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
-
-Return ( { nTotNet, nTotIva, nTotReq, nTotAlb, nTotPnt, nTotTrn, nTotAge, aTotIva, nTotCos, nTotIvm, nTotRnt, nTotDto, nTotDpp, nTotUno, nTotDos, nTotBrt } )
-
-//--------------------------------------------------------------------------//
-
-Function sTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
-
-   local sTotal
-
-   nTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
-
-   sTotal                                 := sTotal()
-   sTotal:nTotalBruto                     := nTotBrt
-   sTotal:nTotalNeto                      := nTotNet
-   sTotal:nTotalIva                       := nTotIva
-   sTotal:aTotalIva                       := aTotIva
-   sTotal:nTotalRecargoEquivalencia       := nTotReq
-   sTotal:nTotalDocumento                 := nTotAlb
-   sTotal:nTotalPuntoVerde                := nTotPnt
-   sTotal:nTotalTransporte                := nTotTrn
-   sTotal:nTotalAgente                    := nTotAge
-   sTotal:nTotalCosto                     := nTotCos
-   sTotal:nTotalImpuestoHidrocarburos     := nTotIvm
-   sTotal:nTotalRentabilidad              := nTotRnt
-   sTotal:nTotalDescuentoGeneral          := nTotDto
-   sTotal:nTotalDescuentoProntoPago       := nTotDpp
-   sTotal:nTotalDescuentoUno              := nTotUno
-   sTotal:nTotalDescuentoDos              := nTotDos
-
-Return ( sTotal )
 
 //--------------------------------------------------------------------------//
 
@@ -5459,152 +5439,6 @@ Static Function QuiAlbCli()
 Return .t.
 
 //--------------------------------------------------------------------------//
-
-FUNCTION BrwAlbCli( oGet, oIva )
-
-	local oDlg
-	local oBrw
-   local oGet1
-   local cGet1
-   local lIva     := oIva:VarGet()
-   local oCbxOrd
-   local cCbxOrd
-   local nOrd
-   local aCbxOrd
-
-   if !OpenFiles()
-      Return .f.
-   end if
-
-   aCbxOrd        := { "N. albarán", "Fecha", "Cliente", "Nombre", "Su albarán" }
-   nOrd           := GetBrwOpt( "BrwAlbCli" )
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
-
-   ( dbfAlbCliT )->( dbSetFilter( {|| !Field->lFacturado .and. Field->lIvaInc == lIva }, "!lFacturado .and. lIvaInc == lIva" ) )
-   ( dbfAlbCliT )->( dbGoTop() )
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE if( lIva, "Albaranes de clientes con " + cImp() + " incluido", "Albaranes de clientes con " + cImp() + " desglosado" )
-
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlbCliT, .t., nil, .t. ) );
-         VALID    ( OrdClearScope( oBrw, dbfAlbCliT ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfAlbCliT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
-
-      oBrw                 := IXBrowse():New( oDlg )
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:cAlias          := dbfAlbCliT
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Albaran de cliente.Browse"
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-
-      oBrw:CreateFromResource( 105 )
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipAlb[ if( ( dbfAlbCliT )->lAlquiler, 2, 1  ) ] }
-         :nWidth           := 50
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Número"
-         :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb }
-         :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Fecha"
-         :cSortOrder       := "dFecAlb"
-         :bEditValue       := {|| dtoc( ( dbfAlbCliT )->dFecAlb ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Cliente"
-         :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cCodCli ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cNomCli ) }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Importe"
-         :bEditValue       := {|| nTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .t. )  }
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-		REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
-         ACTION   ( WinAppRec( oBrw, bEdtRec, dbfAlbCliT ) )
-
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
-         ACTION   ( WinEdtRec( oBrw, bEdtRec, dbfAlbCliT ) )
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
-
-      oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
-
-      oDlg:bStart    := {|| oBrw:Refresh( .t. ) }
-
-   ACTIVATE DIALOG oDlg ;
-   ON INIT ( oBrw:Load() ) ;
-   CENTER
-
-   DestroyFastFilter( dbfAlbCliT )
-
-   SetBrwOpt( "BrwAlbCli", ( dbfAlbCliT )->( OrdNumber() ) )
-
-   ( dbfAlbCliT )->( dbClearFilter() )
-
-   if oDlg:nResult == IDOK
-      oGet:cText( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb )
-      oGet:lValid()
-   end if
-
-   CloseFiles()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
 //
 // Importa pedidos de clientes
 //
@@ -5987,345 +5821,6 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nNetUAlbCli( uTmp, nDec, nVdv, lIva )
-
-   local nCalculo
-
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
-   DEFAULT lIva      := .f.
-
-   nCalculo          := nTotUAlbCli( uTmp, nDec, nVdv )
-
-   if ( dbfAlbCliL )->nIva != 0
-      do case
-         case !lIva .and. ( dbfAlbCliL )->lIvaLin
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfAlbCliL )->nIva + 1 ), nDec )
-         case lIva .and. !( dbfAlbCliL )->lIvaLin
-            nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nDec )
-      end case
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nBrtLAlbCli( uTmpCab, uTmpLin, nDec, nRec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT nDec      := 2
-   DEFAULT nVdv      := 1
-
-   nCalculo          := nImpUAlbCli( uTmpCab, uTmpLin, nDec, nVdv, cPorDiv )
-   nCalculo          *= nTotNAlbCli( uTmpLin )
-
-   nCalculo          := Round( nCalculo / nVdv, nRec )
-
-Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve el valor del impuestos de un artículo
-*/
-/*
-FUNCTION nIvaUAlbCli( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-   nCalculo       := nTotUAlbCli( dbfTmpLin, nDec, nVdv )
-
-   if !( dbfTmpLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfTmpLin )->nIva / 100
-   else
-      nCalculo    -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
-   end if
-
-   if nVdv != 0
-      nCalculo    := nCalculo / nVdv
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-  */
-//---------------------------------------------------------------------------//
-/*
-Devuelve el precio unitario impuestos incluido
-*/
-
-FUNCTION nIncUAlbCli( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-   nCalculo       := nTotUAlbCli( dbfTmpLin, nDec, nVdv )
-
-   if !( dbfTmpLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfTmpLin )->nIva / 100
-   end if
-
-	IF nVdv != 0
-      nCalculo    := nCalculo / nVdv
-	END IF
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cDesAlbCli( cAlbCliL, cAlbCliS )
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-   DEFAULT cAlbCliS  := dbfAlbCliS
-
-RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFraAlbCli( cAlbCliL )
-
-   local cTxtFra     := ""
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-
-   if ( cAlbCliL )->lImpFra
-      cTxtFra        := ( cAlbCliL )->cTxtFra
-   end if
-
-Return ( cTxtFra )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el precio del articulo una vez realizados los descuentos en linea
-*/
-
-FUNCTION nTotPAlbCli( dbfLin, nDec, nVdv, lDto, cPouDiv )
-
-	local nCalculo
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
-   DEFAULT lDto      := .t.
-
-   if ( dbfLin )->lTotLin
-
-      nCalculo       := nTotUAlbCli( dbfLin, nDec, nVdv )
-
-   else
-
-      /*
-      Tomamos los valores redondeados
-      */
-
-      nCalculo       := nTotUAlbCli( dbfLin, nDec, nVdv )
-
-      nCalculo       -= Round( ( dbfLin )->nDtoDiv , nDec )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      IF lDto
-
-         IF ( dbfLin )->NDTO != 0
-            nCalculo -= nCalculo * ( dbfLin )->NDTO / 100
-         END IF
-
-         IF ( dbfLin )->NDTOPRM != 0
-            nCalculo -= nCalculo * ( dbfLin )->NDTOPRM / 100
-         END IF
-
-      END IF
-
-      nCalculo       := Round( nCalculo, nDec )
-
-   end if
-
-RETURN ( if( cPouDiv != NIL, trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve el total de una linea con impuestos incluido
-*/
-
-FUNCTION nIncLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-
-   local nCalculo := nTotLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-
-   if !( dbfLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfLin )->nIva / 100
-   end if
-
-RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nRou      := nRouDiv()
-   DEFAULT nVdv      := 1
-   DEFAULT lDto      := .t.
-   DEFAULT lPntVer   := .t.
-   DEFAULT lImpTrn   := .t.
-
-   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
-
-   if !( cAlbCliL )->lIvaLin
-      nCalculo       := nCalculo * ( cAlbCliL )->nIva / 100
-   else
-      nCalculo       -= nCalculo / ( 1 + ( cAlbCliL )->nIva / 100 )
-   end if
-
-   nCalculo          := Round( nCalculo, nRou )
-
-RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-//
-// Devuelve el neto de una linea una vez quitados los Dtos.
-//
-
-FUNCTION nNetLAlbCli( cAlbCliT, cAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn, lPntVer, cPouDiv )
-
-   local nCalculo
-
-   DEFAULT cAlbCliT  := dbfAlbCliT
-   DEFAULT cAlbCliL  := dbfAlbCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nRou      := nRouDiv()
-   DEFAULT nVdv      := 1
-   DEFAULT lIva      := .t.
-   DEFAULT lDto      := .t.
-   DEFAULT lPntVer   := .t.
-   DEFAULT lImpTrn   := .t.
-
-   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lImpTrn, lPntVer )
-
-   if ( cAlbCliL )->nIva != 0
-      do case
-         case !lIva .and. ( cAlbCliT )->lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / ( cAlbCliL )->nIva  + 1 ), nRou )
-         case lIva .and. !( cAlbCliT )->lIvaInc
-            nCalculo += nCalculo * ( cAlbCliL )->nIva / 100
-      end case
-   end if
-
-RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nDtoAtpAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lImpTrn, lPntVer )
-
-   local nCalculo
-   local nDtoAtp  := 0
-
-   DEFAULT nDec   := 0
-   DEFAULT nRou   := 0
-   DEFAULT nVdv   := 1
-   DEFAULT lPntVer:= .f.
-   DEFAULT lImpTrn:= .f.
-
-   nCalculo       := nTotLAlbCli( dbfAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
-
-   if ( uAlbCliT )->nSbrAtp <= 1 .and. ( uAlbCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
-   end if
-
-   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoEsp / 100, nRou )
-
-   if ( uAlbCliT )->nSbrAtp == 2 .and. ( uAlbCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
-   end if
-
-   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDpp    / 100, nRou )
-
-   if ( uAlbCliT )->nSbrAtp == 3 .and. ( uAlbCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
-   end if
-
-   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoUno / 100, nRou )
-
-   if ( uAlbCliT )->nSbrAtp == 4 .and. ( uAlbCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
-   end if
-
-   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoDos / 100, nRou )
-
-   if ( uAlbCliT )->nSbrAtp == 5 .and. ( uAlbCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
-   end if
-
-RETURN ( nDtoAtp )
-
-//---------------------------------------------------------------------------//
-
-/*
-Funciones auxiliares para comunicarnos desde fuera del PRG
-*/
-
-FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
-
-   local oBlock
-   local oError
-   local nOrdAnt
-   local cNumAlb
-
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "cNumPed" ) )
-
-      if ( dbfAlbCliT )->( dbSeek( cNumPed ) )
-         cNumAlb  := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-      end if
-
-      if !Empty( cNumAlb )
-         EdtAlbCli( cNumAlb )
-      else
-         msgStop( "No hay albarán asociado" )
-      end if
-
-      ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos de albaranes" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-   
-   ErrorBlock( oBlock )
-
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve en numero de articulos en una linea de detalle
-*/
-
-/*STATIC FUNCTION nTotLNumArt( dbfDetalle )
-
-	local nCalculo := 0
-
-   if lCalCaj() .AND. (dbfDetalle)->NCANENT != 0 .AND. (dbfDetalle)->NSATUNIT != 0
-		nCalculo := (dbfDetalle)->NCANENT
-   end if
-
-RETURN ( nCalculo )*/
-
-//---------------------------------------------------------------------------//
-
 STATIC FUNCTION SelSend( oBrw )
 
    local oDlg
@@ -6388,70 +5883,6 @@ STATIC FUNCTION SelSend( oBrw )
 RETURN NIL
 
 //-------------------------------------------------------------------------//
-/*
-Devuelve la fecha de un albaran de cliente
-*/
-
-FUNCTION dFecAlbCli( cAlbCli, uAlbCliT )
-
-   local dFecAlb  := CtoD( "" )
-
-   if ValType( uAlbCliT ) == "C"
-
-      if dbSeekInOrd( cAlbCli, "nNumAlb", uAlbCliT )
-         dFecAlb  := ( uAlbCliT )->dFecAlb
-      end if
-
-   else
-
-      if uAlbCliT:SeekInOrd( cAlbCli, "nNumAlb" )
-         dFecAlb  := uAlbCliT:dFecAlb
-      end if
-
-   end if
-
-RETURN ( dFecAlb )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cCliAlbCli( cAlbCli, uAlbCliT )
-
-   local cCodCli  := ""
-
-   do case
-      case ValType( uAlbCliT ) == "C"
-         if (uAlbCliT)->( dbSeek( cAlbCli ) )
-            cCodCli     := (uAlbCliT)->CCODCLI
-         end if
-      case ValType( uAlbCliT ) == "O"
-         if uAlbCliT:Seek( cAlbCli )
-            cCodCli     := uAlbCliT:cCodCli
-         end if
-   end case
-
-RETURN ( cCodCli )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION cNbrAlbCli( cAlbCli, uAlbCliT )
-
-   local cCodCli  := ""
-
-   do case
-      case ValType( uAlbCliT ) == "C"
-         if (uAlbCliT)->( dbSeek( cAlbCli ) )
-            cCodCli     := ( uAlbCliT )->cNomCli
-         end if
-      case ValType( uAlbCliT ) == "O"
-         if uAlbCliT:Seek( cAlbCli )
-            cCodCli     := uAlbCliT:cNomCli
-         end if
-   end case
-
-RETURN ( cCodCli )
-
-//----------------------------------------------------------------------------//
-
 /*
 Funcion que nos permite a¤adir a los albaranes pedidos ye existentes
 */
@@ -6990,178 +6421,6 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-function lGenAlbCli( oBrw, oBtn, nDevice )
-
-   local bAction
-
-   DEFAULT nDevice   := IS_PRINTER
-
-   if Empty( oBtn )
-      return nil
-   end if
-
-   IF !( dbfDoc )->( dbSeek( "AC" ) )
-
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( msgStop( "No hay documentos predefinidos" ) );
-         TOOLTIP  "No hay documentos" ;
-         FROM     oBtn ;
-         CLOSED ;
-         LEVEL    ACC_EDIT
-
-   ELSE
-
-      WHILE ( dbfDoc )->CTIPO == "AC" .AND. !( dbfDoc )->( eof() )
-
-         bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( dbfDoc )->CODIGO )
-
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
-
-         ( dbfDoc )->( dbSkip() )
-
-      END DO
-
-   END IF
-
-   SysRefresh()
-
-return nil
-
-//---------------------------------------------------------------------------//
-//
-// Devuelve el total de la venta en albaranes de clientes de un articulo
-//
-
-/*function nTotVAlbCli( cCodArt, dbfAlbCliL, nDouDiv, nDorDiv )
-
-   local nTotVta  := 0
-   local nRecno   := ( dbfAlbCliL )->( Recno() )
-
-   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
-
-      while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( eof() )
-
-         if !( dbfAlbCliL )->lTotLin
-            nTotVta += nTotLAlbCli( dbfAlbCliL, nDouDiv, nDorDiv )
-         end if
-
-         ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAlbCliL )->( dbGoTo( nRecno ) )
-
-return ( nTotVta )*/
-
-//---------------------------------------------------------------------------//
-//
-// Devuelve el total de la compra en albaranes de clientes de un articulo
-//
-
-function nTotDAlbCli( cCodArt, dbfAlbCliL, dbfAlbCliT, cCodAlm )
-
-   local lFacAlb        := .f.
-   local nTotVta        := 0
-   local nRecno         := ( dbfAlbCliL )->( Recno() )
-
-   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
-
-      while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( eof() )
-
-         if dbfAlbCliT != nil
-            lFacAlb     := lFacAlbCli( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + ( dbfAlbCliL )->CSUFALB, dbfAlbCliT )
-         end if
-
-         if !( dbfAlbCliL )->lTotLin .and. !lFacAlb
-            if cCodAlm != nil
-               if cCodAlm == ( dbfAlbCliL )->cAlmLin
-                  nTotVta  += nTotNAlbPrv( dbfAlbCliL ) * NotCero( ( dbfAlbCliL )->nFacCnv )
-               end if
-            else
-               nTotVta     += nTotNAlbCli( dbfAlbCliL ) * NotCero( ( dbfAlbCliL )->nFacCnv )
-            end if
-         end if
-
-         ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAlbCliL )->( dbGoTo( nRecno ) )
-
-return ( nTotVta )
-
-//---------------------------------------------------------------------------//
-
-//
-// Devuelve el precio de compra real de un articulo una vez aplicados los descuentos
-//
-/*
-FUNCTION nPreAlbCli( dbfAlbCliL, uTmp, nDec, lIva )
-
-   local cDivAlb
-   local nDtoEsp
-   local nDtoPp
-   local nDtoUno
-   local nDtoDos
-   local nCalculo := ( dbfAlbCliL )->NSATUNIT
-
-   DEFAULT lIva   := .t.
-
-   if valtype( uTmp ) == "A"
-      cDivAlb     := uTmp[ _CDIVALB ]
-      nDtoEsp     := uTmp[ _NDTOESP ]
-      nDtoPp      := uTmp[ _NDPP    ]
-      nDtoUno     := uTmp[ _NDTOUNO ]
-      nDtoDos     := uTmp[ _NDTODOS ]
-   else
-      cDivAlb     := (uTmp)->CDIVALB
-      nDtoEsp     := (uTmp)->NDTOESP
-      nDtoPp      := (uTmp)->NDPP
-      nDtoUno     := (uTmp)->NDTOUNO
-      nDtoDos     := (uTmp)->NDTODOS
-   end if
-
-   DEFAULT nDec   := nDouDiv( cDivAlb, dbfDiv )
-
-   nCalculo       -= (dbfAlbCliL)->nDtoDiv
-
-   IF (dbfAlbCliL)->NDTO != 0
-      nCalculo    -= nCalculo * (dbfAlbCliL)->NDTO / 100
-	END IF
-
-   IF (dbfAlbCliL)->NDTOPRM != 0
-      nCalculo    -= nCalculo * (dbfAlbCliL)->NDTOPRM / 100
-	END IF
-
-   IF nDtoEsp != 0
-      nCalculo    -= nCalculo * nDtoEsp / 100
-   END IF
-
-   IF nDtoPp != 0
-      nCalculo    -= nCalculo * nDtoPp / 100
-   END IF
-
-   IF nDtoUno != 0
-      nCalculo    -= nCalculo * nDtoUno / 100
-   END IF
-
-   IF nDtoDos != 0
-      nCalculo    -= nCalculo * nDtoDos / 100
-   END IF
-
-   IF lIva
-      nCalculo    += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nDec )
-   END IF
-
-RETURN ( round( nCalculo, nDec ) )
-  */
-//----------------------------------------------------------------------------//
-
 static function bGenAlbCli( nDevice, cTitle, cCodDoc )
 
    local bGen
@@ -7176,502 +6435,6 @@ static function bGenAlbCli( nDevice, cTitle, cCodDoc )
    end if
 
 return ( bGen )
-
-//---------------------------------------------------------------------------//
-//
-// Devuelve el total de la venta en albaranes de un clientes determinado
-//
-
-
-function nVtaAlbCli( cCodCli, dDesde, dHasta, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, lNotFac, nYear )
-
-   local nCon        := 0
-   local nRec        := ( dbfAlbCliT )->( Recno() )
-
-   DEFAULT lNotFac   := .f.
-
-   /*
-   Albaranes a Clientes -------------------------------------------------------
-   */
-
-   if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
-
-      while ( dbfAlbCliT )->cCodCli == cCodCli .and. !( dbfAlbCliT )->( Eof() )
-
-         if ( dDesde == nil .or. ( dbfAlbCliT )->dFecAlb >= dDesde )    .and.;
-            ( dHasta == nil .or. ( dbfAlbCliT )->dFecAlb <= dHasta )    .and.;
-            ( if( lNotFac, !( dbfAlbCliT )->lFacturado, .t. ) )         .and.;
-            ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
-
-            nCon  += nTotAlbCli( ( dbfAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
-
-         end if
-
-         ( dbfAlbCliT )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-   end if
-
-   ( dbfAlbCliT )->( dbGoTo( nRec ) )
-
-return nCon
-
-//---------------------------------------------------------------------------//
-
-/*
-NOMBRE FICHERO      : TALBAxxx.PSI   (xxx = Agente)
-DESCRIPCION         : CABECERAS  ALBARAN
-TIPO DE FICHERO     : SECUENCIAL SIN SEPARADOR DE CAMPOS
-NUM. DE CAMPOS      : 20
-LONG. DEL REGISTRO  : 143
-
-N§ PO  LC  Descripci¢n       Observaciones
-1  1   7   CODIGO CLIENTE
-2  8   10  NUM. NOTA         aaa/nnnnnn    (agente/numeronota)
-3  18  1   TIPO NOTA         (1)
-4  19  2   COD. PROVEEDOR    diferente de espacios si es venta indirecta
-5  21  8   BASE IMPONIBLE 1
-6  29  8   BASE IMPONIBLE 2
-7  37  8   BASE IMPONIBLE 3
-8  45  8   impuestos TIPO 1
-9  53  8   impuestos TIPO 2
-10 61  8   impuestos TIPO 3
-11 69  8   R.E. TIPO 1
-12 77  8   R.E. TIPO 2
-13 85  8   R.E. TIPO 3
-14 93  5   DESC. CONCERTADO  Descuento que figura en la ficha del cliente
-15 98  5   DESC. PRONTO PAGO Descuento opcional al final de factura
-16 103 8   IMPORTE PVERDE    Cargo por impuesto punto verde
-17 111 8   IMPORTE NOTA      Importe total del documento (incluye pverde)
-18 119 8   IMPORTE COBRADO   (2)
-19 127 10  FECHA             DD/MM/AAAA
-20 137 5   HORA              HH:MM
-21 142 2   FINAL REGISTRO    CR LF
-
-
-  (1) Tipos de nota: 1- Factura Contado     2- Factura Credito
-                     3- Albaran Contado     4- Albaran Credito
-                     5- Adicional Contado   6- Adicional Credito
-                     7- Indirecto Contado   8- Indirecto Credit
-o
-
-  (2) S¢lo s
-er  igual a ImporteNota si se trata de contado-met lico.
-      Si es credito o contado-tal¢n ira con 0.
-
- Ej: "000032100   20000       0       0    3200       0       0       0
-             0       0 0.00 0.00       0   23300   2330012/03/199618:15"
-     (Factura de contado n§ 10900 emitida al cliente 321 por el vendedor 4
-      el d¡a 12 de Marzo de 1996, por un importe de 23200, sin descuentos,
-      ni punto verde, a las 6 y cuarto de la tarde. El tipo de impuestos fue el 1)
-
-
-NOMBRE FICHERO      : EALBAxxx.PSI   (xxx = Agente)
-DESCRIPCION         : LINEAS DE  ALBARAN
-TIPO DE FICHERO     : SECUENCIAL SIN SEPARADOR DE CAMPOS
-NUM. DE CAMPOS      : 13
-LONG. DEL REGISTRO  : 70
-
-N§ PO  LC  Descripci¢n       Observaciones
-1  1   7   CODIGO CLIENTE
-2  8   10  NUM. NOTA         aaa/nnnnnn   (agente/numeronota)
-3  18  1   TIPO NOTA         (1)
-4  19  13  COD. ARTICULO
-5  32  7   SATCIO            Precio de venta sin descuentos
-6  39  5   DESC.             Descuento por unidad en euros o ptas
-7  44  5   DESC. PORCENTUAL  Descuento por unidad en %
-8  49  4   UNID. VALORA. 1   cajas
-9  53  7   UNID. VALORA  2   kilos/unidades
-10 60  1   TIPO LINEA        (2)
-11 61  1   tipo impuestos          1, 2 ¢ 3
-12 62  1   EUROS S/N         Indica si se hizo en euros o en pts (3)
-13 63  7   PVERDE            Cargo unitario por Punto Verde
-14 70  2   FINAL REGISTRO    CR LF  ( chr$(13) y chr$(10) )
-
-  (1) Tipos de nota:  1- Factura Contado     2- Factura Credito
-                      3- Albaran Contado     4- Albaran Credito
-                      5- Adicional Contado   6- Adicional Credito
-                      7- Indirecto Contado   8- Indirecto Credito
-
-  (2) Tipos de linea: 0- Venta      1- Devoluci¢n      2- Defectuoso
-                      3- Caducado   4- Abono  7- Regalo mercancia Automat.
-
-  (3) Si el cliente est  en euros, los campos precio y desc. vendran en
-      euros, y si estaba en ptas, vendr n en ptas.
-*/
-
-FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
-
-   local n           := 0
-   local cSerie
-   local cFilEdm
-   local oFilEdm
-   local dFecAlb
-   local cCodCli
-   local nNumAlb
-   local cNumDoc
-   local nCajEnt     := 0
-   local cTipDoc
-   local aHeadLine   := {}
-   local aLotes      := {}
-
-   DEFAULT cCodRut   := "001"
-   DEFAULT cPathTo   := "C:\INTERS~1\"
-
-   /*
-   Obtenemos la fecha del albaran----------------------------------------------
-   */
-
-   cCodRut           := SubStr( cCodRut, -3 )
-
-   cFilEdm           := cPathTo + "TALBA" + cCodRut + ".PSI"
-
-   if !file( cFilEdm )
-      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
-      return nil
-   end if
-
-   oFilEdm           := TTxtFile():New( cFilEdm )
-
-   /*
-   Abrimos las bases de datos--------------------------------------------------
-   */
-
-   while ! oFilEdm:lEoF()
-      aAdd( aHeadLine, { SubStr( oFilEdm:cLine, 8, 10 ), Ctod( SubStr( oFilEdm:cLine, 127, 10 ) ) } )
-      oFilEdm:Skip()
-   end while
-
-   oFilEdm:Close()
-
-   /*
-   Nuevo fichero con los lotes-------------------------------------------------
-   */
-
-   cFilEdm           := cPathTo + "LALBA" + cCodRut + ".PSI"
-
-   if !file( cFilEdm )
-
-      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
-
-   else
-
-      oFilEdm           := TTxtFile():New( cFilEdm )
-
-      /*
-      Abrimos las bases de datos--------------------------------------------------
-      */
-
-      while ! oFilEdm:lEoF()
-
-         cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
-
-         if ( cTipDoc == "3" .or. cTipDoc == "4" )
-            aAdd( aLotes, { SubStr( oFilEdm:cLine, 8, 10 ),;                // Num. nota
-                            LTrim( SubStr( oFilEdm:cLine, 19, 13 ) ),;      // Código del artículo
-                            RTrim( SubStr( oFilEdm:cLine, 43, 21 ) ) } )    // Num. lote
-         end if
-
-         oFilEdm:Skip()
-
-      end while
-
-   oFilEdm:Close()
-
-   end if
-
-   /*
-   ----------------------------------------------------------------------------
-   */
-
-   cFilEdm           := cPathTo + "EALBA" + cCodRut + ".PSI"
-
-   /*
-   Creamos el fichero destino--------------------------------------------------
-   */
-
-   if !file( cFilEdm )
-      msgStop( cFilEdm, "No existe" )
-      return nil
-   end if
-
-   oFilEdm           := TTxtFile():New( cFilEdm )
-
-   /*
-   Abrimos las bases de datos--------------------------------------------------
-   */
-
-   OpenFiles()
-
-   oStru:oMetDos:cText   := "Alb. Clientes"
-   oStru:oMetDos:SetTotal( oFilEdm:nTLines )
-
-   /*
-   Mientras no estemos en el final del archivo
-   */
-
-   while !oFilEdm:lEoF()
-      /*
-      Tomamos el codigo del cliente
-      */
-
-      cCodCli        := SubStr( oFilEdm:cLine,  1,  7 )
-      cNumDoc        := SubStr( oFilEdm:cLine,  8, 10 )
-      cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
-
-      if ( cTipDoc == "3" .or. cTipDoc == "4" )
-
-         if dbSeekInOrd( cCodCli, "Cod", dbfClient )
-
-            nNumAlb                          := Val( StrTran( cNumDoc, "/", "" ) )
-
-            if Empty( ( dbfClient )->Serie )
-               cSerie                        := "A"
-            else
-               cSerie                        := ( dbfClient )->Serie
-            end if
-
-            if !( dbfAlbCliT )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
-
-               n  := aScan( aHeadLine, {|a| a[1] == cNumDoc } )
-               if n != 0
-                  dFecAlb                    := aHeadLine[n,2]
-
-                  ( dbfAlbCliT )->( dbAppend() )
-                  ( dbfAlbCliT )->cSerAlb    := cSerie
-                  ( dbfAlbCliT )->nNumAlb    := nNumAlb
-                  ( dbfAlbCliT )->cSufAlb    := RetSufEmp()
-                  ( dbfAlbCliT )->dFecAlb    := dFecAlb
-                  ( dbfAlbCliT )->cCodAlm    := oUser():cAlmacen()
-                  ( dbfAlbCliT )->cDivAlb    := cDivEmp()
-                  ( dbfAlbCliT )->nVdvAlb    := nChgDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
-                  ( dbfAlbCliT )->lFacturado := .f.
-                  ( dbfAlbCliT )->cCodCli    := ( dbfClient )->Cod
-                  ( dbfAlbCliT )->cNomCli    := ( dbfClient )->Titulo
-                  ( dbfAlbCliT )->cDirCli    := ( dbfClient )->Domicilio
-                  ( dbfAlbCliT )->cPobCli    := ( dbfClient )->Poblacion
-                  ( dbfAlbCliT )->cPrvCli    := ( dbfClient )->Provincia
-                  ( dbfAlbCliT )->cPosCli    := ( dbfClient )->CodPostal
-                  ( dbfAlbCliT )->cDniCli    := ( dbfClient )->Nif
-                  ( dbfAlbCliT )->cCodTar    := ( dbfClient )->cCodTar
-                  ( dbfAlbCliT )->cCodPago   := ( dbfClient )->CodPago
-                  ( dbfAlbCliT )->cCodAge    := ( dbfClient )->cAgente
-                  ( dbfAlbCliT )->cCodRut    := ( dbfClient )->cCodRut
-                  ( dbfAlbCliT )->nTarifa    := ( dbfClient )->nTarifa
-                  ( dbfAlbCliT )->lRecargo   := ( dbfClient )->lReq
-                  ( dbfAlbCliT )->lOperPv    := ( dbfClient )->lPntVer
-                  ( dbfAlbCliT )->cDtoEsp    := ( dbfClient )->cDtoEsp
-                  ( dbfAlbCliT )->cDpp       := ( dbfClient )->cDpp
-                  ( dbfAlbCliT )->nDtoEsp    := ( dbfClient )->nDtoEsp
-                  ( dbfAlbCliT )->nDpp       := ( dbfClient )->nDpp
-                  ( dbfAlbCliT )->nDtoUno    := ( dbfClient )->nDtoCnt
-                  ( dbfAlbCliT )->cDtoUno    := ( dbfClient )->cDtoUno
-                  ( dbfAlbCliT )->nDtoDos    := ( dbfClient )->nDtoRap
-                  ( dbfAlbCliT )->cDtoDos    := ( dbfClient )->cDtoDos
-                  ( dbfAlbCliT )->( dbUnLock() )
-
-                  aAdd( aSucces, { .t., "Nuevo albarán de clientes " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb } )
-
-                  /*
-                  Mientras estemos en el mismo albarán pasamos las lineas------
-                  */
-
-                  while cNumDoc == SubStr( oFilEdm:cLine,  8, 10 ) .and. ! oFilEdm:lEoF()
-
-                     if cTipDoc == "3" .or. cTipDoc == "4"
-
-                        if ( dbfAlbCliT )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
-
-                           ( dbfAlbCliL )->( dbAppend() )
-                           ( dbfAlbCliL )->cSerAlb       := ( dbfAlbCliT )->cSerAlb
-                           ( dbfAlbCliL )->nNumAlb       := ( dbfAlbCliT )->nNumAlb
-                           ( dbfAlbCliL )->cSufAlb       := ( dbfAlbCliT )->cSufAlb
-                           ( dbfAlbCliL )->cRef          := Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) )
-                           ( dbfAlbCliL )->cDetalle      := RetFld( ( dbfAlbCliL )->cRef, dbfArticulo )
-                           ( dbfAlbCliL )->nPreUnit      := Val( SubStr( oFilEdm:cLine, 32,  7 ) )
-                           ( dbfAlbClil )->nDtoDiv       := Val( SubStr( oFilEdm:cLine, 39,  5 ) )
-                           ( dbfAlbClil )->nDto          := Val( SubStr( oFilEdm:cLine, 44,  5 ) )
-                           ( dbfAlbClil )->nIva          := nIvaCodTer( SubStr( oFilEdm:cLine, 61, 1 ), dbfIva )
-                           ( dbfAlbClil )->nPntVer       := Val( SubStr( oFilEdm:cLine, 63, 7 ) )
-                           ( dbfAlbCliL )->nCanEnt       := 1
-                           ( dbfAlbCliL )->nUniCaja      := Val( SubStr( oFilEdm:cLine, 53,  7 ) )
-
-                           /*
-                           Buscamos en el array l numero de lote---------------
-                           */
-
-                           if ( n  := aScan( aLotes, {|a| a[1] == cNumDoc .and. a[2] == Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) ) } ) ) != 0
-                              ( dbfAlbCliL )->lLote      := .t.
-                              ( dbfAlbCliL )->cLote      := aLotes[ n, 3 ]
-                           end if
-
-                           ( dbfAlbCliL )->( dbUnLock() )
-
-                        end if
-
-                     end if
-
-                     oFilEdm:Skip()
-
-                  end do
-
-               else
-
-                  aAdd( aSucces, { .f., "Líneas de albarán huerfanas, cliente " + cCodCli + " documento : " + cNumDoc } )
-                  oFilEdm:Skip()
-
-               end if
-
-            else
-
-               aAdd( aSucces, { .f., "Albarán de clientes ya existe " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb } )
-               oFilEdm:Skip()
-
-            end if
-
-         else
-
-            aAdd( aSucces, { .f., "No existe cliente " + cCodCli + " de albarán " + AllTrim( cNumDoc ) } )
-            oFilEdm:Skip()
-
-         end if
-
-      else
-
-         oFilEdm:Skip()
-
-      end if
-
-      oStru:oMetDos:Set( oFilEdm:nLine )
-
-   end do
-
-   oStru:oMetDos:SetTotal( oFilEdm:nTLines )
-
-   CloseFiles()
-
-   oFilEdm:Close()
-
-RETURN ( aSucces )
-
-//---------------------------------------------------------------------------//
-
-
-//-----------------------------------------------------------------------------//
-
-Function aDocAlbCli( lEntregas )
-
-   local aDoc        := {}
-
-   DEFAULT lEntregas := .f.
-
-   /*
-   Itmes-----------------------------------------------------------------------
-   */
-
-   aAdd( aDoc, { "Empresa",         "EM" } )
-   aAdd( aDoc, { "Albaran",         "AC" } )
-
-   if lEntregas
-      aAdd( aDoc, { "Entregas a cuenta",  "EA" } )
-   end if
-
-   aAdd( aDoc, { "Cliente",         "CL" } )
-   aAdd( aDoc, { "Almacen",         "AL" } )
-   aAdd( aDoc, { "Obras",           "OB" } )
-   aAdd( aDoc, { "Rutas",           "RT" } )
-   aAdd( aDoc, { "Agentes",         "AG" } )
-   aAdd( aDoc, { "Divisas",         "DV" } )
-   aAdd( aDoc, { "Formas de pago",  "PG" } )
-   aAdd( aDoc, { "Transportistas",  "TR" } )
-
-RETURN ( aDoc )
-
-//---------------------------------------------------------------------------//
-
-Function aCalAlbCli()
-
-   local aCalAlbCli  := {}
-
-   aAdd( aCalAlbCli, { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndAlb",  "" } )
-   aAdd( aCalAlbCli, { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndAlb",  "" } )
-   aAdd( aCalAlbCli, { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivAlb",  "aTotIva[1,1] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivAlb",  "aTotIva[2,1] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPorDivAlb",  "aTotIva[3,1] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPorDivAlb",  "aTotIva[1,2] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPorDivAlb",  "aTotIva[2,2] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPorDivAlb",  "aTotIva[3,2] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[1,3] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "aTotIva[2,3] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[3,3] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "aTotIva[1,4] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "aTotIva[2,4] != 0" } )
-   aAdd( aCalAlbCli, { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "aTotIva[3,4] != 0" } )
-   aAdd( aCalAlbCli, { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDouDivAlb )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPorDivAlb",  "aTotIva[1,2] != 0" } )
-   aAdd( aCalAlbCli, { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDouDivAlb )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPorDivAlb",  "aTotIva[2,2] != 0" } )
-   aAdd( aCalAlbCli, { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDouDivAlb )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPorDivAlb",  "aTotIva[3,2] != 0" } )
-   aAdd( aCalAlbCli, { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDouDivAlb )",    "N", 16,  6, "Importe primer RE",           "cPorDivAlb",  "aTotIva[1,2] != 0" } )
-   aAdd( aCalAlbCli, { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDouDivAlb )",    "N", 16,  6, "Importe segundo RE",          "cPorDivAlb",  "aTotIva[2,2] != 0" } )
-   aAdd( aCalAlbCli, { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDouDivAlb )",    "N", 16,  6, "Importe tercer RE",           "cPorDivAlb",  "aTotIva[3,2] != 0" } )
-   aAdd( aCalAlbCli, { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotUno",                                                   "N", 16,  6, "Total primer descuento personalizable",  "cPorDivAlb",  "lEnd" }   )
-   aAdd( aCalAlbCli, { "nTotDos",                                                   "N", 16,  6, "Total segundo descuento personalizable", "cPorDivAlb",  "lEnd" }   )
-   aAdd( aCalAlbCli, { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),                   "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotIvm",                                                   "N", 16,  6, "Total IVMH",                  "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotAlb",                                                   "N", 16,  6, "Total albarán",               "cPorDivAlb",  "lEnd" }              )
-   aAdd( aCalAlbCli, { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivAlb",  "!lEnd"}              )
-   aAdd( aCalAlbCli, { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" }            )
-   aAdd( aCalAlbCli, { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivAlb",  "lEnd" }            )
-   aAdd( aCalAlbCli, { "nImpEuros( nTotAlb, (cDbf)->cDivAlb, cDbfDiv )",            "N", 16,  6, "Total albarán (Euros)",       "",            "lEnd" }              )
-   aAdd( aCalAlbCli, { "nImpPesetas( nTotAlb, (cDbf)->cDivAlb, cDbfDiv )",          "N", 16,  6, "Total albarán (Pesetas)",     "",            "lEnd" }              )
-   aAdd( aCalAlbCli, { "nPagina",                                                   "N",  2,  0, "Número de página",            "'99'",        "" }                  )
-   aAdd( aCalAlbCli, { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" }                  )
-
-Return ( aCalAlbCli )
-
-//---------------------------------------------------------------------------//
-
-Function aCocAlbCli()
-
-   local aCocAlbCli  := {}
-
-   aAdd( aCocAlbCli, { "( Descrip( cDbfCol ) )",                                                   "C", 100,0, "Detalle del artículo",           "",            "Descripción", "" } )
-   aAdd( aCocAlbCli, { "( nTotNAlbCli( cDbfCol ) )",                                               "N", 16, 6, "Total unidades",                 "cPicUndAlb",  "Unds.",       "" } )
-   aAdd( aCocAlbCli, { "( nTotUAlbCli( cDbfCol, nDouDivAlb, nVdvDivAlb ) )",                       "N", 16, 6, "Precio unitario",                "cPouDivAlb",  "Precio",      "" } )
-   aAdd( aCocAlbCli, { "( nNetUAlbCli( cDbfCol, nDouDivAlb, nVdvDivAlb, .f. ) )",                  "N", 16, 6, "Precio unitario sin " + cImp(),     "cPouDivAlb",  "Precio",      "" } )
-   aAdd( aCocAlbCli, { "( nTotPAlbCli( cDbfCol, nVdvDivAlb ) )",                                   "N", 16, 6, "Precio unitario con descuentos", "cPouDivAlb",  "Precio",      "" } )
-   aAdd( aCocAlbCli, { "( nPesLAlbCli( cDbfCol ) )",                                               "N", 16, 6, "Total peso por línea",           "'@E 999,999.99'","Peso",     "" } )
-   aAdd( aCocAlbCli, { "( nTotLAlbCli( cDbfCol, nDouDivAlb, nRouDivAlb, nVdvDivAlb ) )",           "N", 16, 6, "Total linea de albarán",         "cPorDivAlb",  "Total",       "" } )
-   aAdd( aCocAlbCli, { "( nNetLAlbCli( cDbf, cDbfCol, nDouDivAlb, nRouDivAlb, nVdvDivAlb, .f. ) )","N", 16, 6, "Total linea sin " + cImp(),         "cPorDivAlb",  "Total",       "" } )
-   aAdd( aCocAlbCli, { "cFrasePublicitaria( cDbfCol )",                                            "C", 50, 0, "Texto de frase publicitaria",    "",            "Publicidad",  "" } )
-
-Return ( aCocAlbCli )
-
-//---------------------------------------------------------------------------//
-
-function aSerAlbCli()
-
-   local aColAlbCli  := {}
-
-   aAdd( aColAlbCli,  { "cSerAlb",     "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "nNumAlb",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "cSufAlb",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "dFecAlb",     "D",  8,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "lFacturado",  "L",  1,   0, "Lógico de facturado",              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "cAlmLin",     "C",  3,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
-
-return ( aColAlbCli )
 
 //---------------------------------------------------------------------------//
 
@@ -7840,414 +6603,6 @@ Static Function RecAlbCli( aTmpAlb, oDlg )
 return nil
 
 //--------------------------------------------------------------------------//
-
-function SynAlbCli( cPath )
-
-   local oError
-   local oBlock
-   local aTotAlb
-   local cNumAlb
-   local nNumLin     := 0
-   local cCodImp
-   local cNumSer
-   local aNumSer
-   local cNumPed
-   local aNumPed     := {}
-
-   DEFAULT cPath     := cPatEmp()
-
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIS.DBF", cCheckArea( "ALBCLIS", @dbfAlbCliS ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLII.DBF", cCheckArea( "ALBCLII", @dbfAlbCliI ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLII.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliP ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIP.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatCli() + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfClient ), .f. )
-   if !lAIS(); ordListAdd( cPatCli() + "CLIENT.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
-   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
-   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @dbfPedCliT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PEDCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @dbfPedCliL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PEDCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "FACCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   oNewImp              := TNewImp():Create( cPatEmp() )
-   if !oNewImp:OpenFiles()
-      lOpenFiles     := .f.
-   end if
-
-   ( dbfAlbCliT )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliT )->( dbGoTop() )
-
-   while !( dbfAlbCliT )->( eof() )
-
-      if Empty( ( dbfAlbCliT )->cSufAlb )
-         ( dbfAlbCliT )->cSufAlb := "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumPre ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPre ) ) != 12
-         ( dbfAlbCliT )->cNumPre := AllTrim( ( dbfAlbCliT )->cNumPre ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPed ) ) != 12
-         ( dbfAlbCliT )->cNumPed := AllTrim( ( dbfAlbCliT )->cNumPed ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumSat ) ) != 12
-         ( dbfAlbCliT )->cNumSat := AllTrim( ( dbfAlbCliT )->cNumSat ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumFac ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumFac ) ) != 12
-         ( dbfAlbCliT )->cNumFac := AllTrim( ( dbfAlbCliT )->cNumFac ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumDoc ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumDoc ) ) != 12
-         ( dbfAlbCliT )->cNumDoc := AllTrim( ( dbfAlbCliT )->cNumDoc ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumTik ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumTik ) ) != 13
-         ( dbfAlbCliT )->cNumTik := AllTrim( ( dbfAlbCliT )->cNumTik ) + "00"
-      end if
-
-      if Empty( ( dbfAlbCliT )->cCodCaj )
-         ( dbfAlbCliT )->cCodCaj := "000"
-      end if
-
-      if Empty( ( dbfAlbCliT )->cCodGrp )
-         ( dbfAlbCliT )->cCodGrp := RetGrpCli( ( dbfAlbCliT )->cCodCli, dbfClient )
-      end if
-
-      if Empty( ( dbfAlbCliT )->cNomCli ) .and. !Empty ( ( dbfAlbCliT )->cCodCli )
-         ( dbfAlbCliT )->cNomCli    := RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "Titulo" )
-      end if
-
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-      */
-
-      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
-
-         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
-
-         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
-         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
-         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
-         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
-
-         ( dbfAlbCliT )->( dbUnLock() )
-
-      end if
-
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-
-      if ( dbfAlbCliT )->nTotPag == 0 .and. dbLock( dbfAlbCliT )
-         ( dbfAlbCliT )->nTotPag := nPagAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliP, dbfDiv )
-         ( dbfAlbCliT )->( dbUnLock() )
-      end if
-      */
-
-      /*
-      Si el albarán está creado desde un pedido le revisamos el estado---------
-      */
-
-      aAdd( aNumPed, ( dbfAlbCliT )->cNumPed )
-
-      ( dbfAlbCliT )->( dbSkip() )
-
-   end while
-
-   ( dbfAlbCliT )->( ordSetFocus( 1 ) )
-
-   /*
-   Repasamos para que siempre esten rellenos los campos de totales-------------
-   */
-
-   ( dbfAlbCliT )->( dbGoTop() )
-
-   while !( dbfAlbCliT )->( eof() )
-
-      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
-
-         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
-
-         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
-         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
-         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
-         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
-
-         ( dbfAlbCliT )->( dbUnLock() )
-
-      end if
-      
-      ( dbfAlbCliT )->( dbSkip() )
-
-   end while
-
-   /*
-   Lineas----------------------------------------------------------------------
-   */
-
-   ( dbfAlbCliL )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliL )->( dbGoTop() )
-
-   while !( dbfAlbCliL )->( eof() )
-
-      if Empty( ( dbfAlbCliL )->cSufAlb )
-         ( dbfAlbCliL )->cSufAlb    := "00"
-      end if
-
-      if !Empty( ( dbfAlbCliL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumPed ) ) != 12
-         ( dbfAlbCliL )->cNumPed := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliL )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumSat ) ) != 12
-         ( dbfAlbCliL )->cNumSat := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
-      end if
-
-      if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
-         ( dbfAlbCliL )->cLote      := AllTrim( Str( ( dbfAlbCliL )->nLote ) )
-      end if
-
-      if Empty( ( dbfAlbCliL )->nValImp )
-         cCodImp                    := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
-         if !Empty( cCodImp )
-            ( dbfAlbCliL )->nValImp := oNewImp:nValImp( cCodImp )
-         end if
-      end if
-
-      if Empty( ( dbfAlbCliL )->nVolumen )
-         ( dbfAlbCliL )->nVolumen   := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
-      end if
-
-      if ( dbfAlbCliL )->lIvaLin != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
-         ( dbfAlbCliL )->lIvaLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
-      end if
-
-      if !Empty( ( dbfAlbCliL )->cRef ) .and. Empty( ( dbfAlbCliL )->cCodFam )
-         ( dbfAlbCliL )->cCodFam    := RetFamArt( ( dbfAlbCliL )->cRef, dbfArticulo )
-      end if
-
-      if !Empty( ( dbfAlbCliL )->cRef ) .and. !Empty( ( dbfAlbCliL )->cCodFam )
-         ( dbfAlbCliL )->cGrpFam    := cGruFam( ( dbfAlbCliL )->cCodFam, dbfFamilia )
-      end if
-
-      if Empty( ( dbfAlbCliL )->nReq )
-         ( dbfAlbCliL )->nReq       := nPReq( dbfIva, ( dbfAlbCliL )->nIva )
-      end if
-
-      if ( dbfAlbCliL )->lFacturado != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
-         ( dbfAlbCliL )->lFacturado := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
-      end if
-
-      if ( dbfAlbCliL )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-         ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-      end if
-
-      if ( dbfAlbCliL )->cCodCli != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
-         ( dbfAlbCliL )->cCodCli    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
-      end if
-
-      if Empty( ( dbfAlbCliL )->cAlmLin )
-         ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
-      end if
-
-      // Numeros de linea------------------------------------------------------
-      /*
-      if cNumAlb != ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
-         cNumAlb                       := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
-         nNumLin                       := 0
-      end if 
-
-      cNumAlb                          := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
-
-      if ( dbfAlbCliL )->nNumLin == 0
-         ( dbfAlbCliL )->nNumLin       := ++nNumLin
-      end if 
-      */
-      // Numeros de serie------------------------------------------------------
-
-      if !Empty( ( dbfAlbCliL )->mNumSer )
-         aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
-         for each cNumSer in aNumSer
-            ( dbfAlbCliS )->( dbAppend() )
-            ( dbfAlbCliS )->cSerAlb    := ( dbfAlbCliL )->cSerAlb
-            ( dbfAlbCliS )->nNumAlb    := ( dbfAlbCliL )->nNumAlb
-            ( dbfAlbCliS )->cSufAlb    := ( dbfAlbCliL )->cSufAlb
-            ( dbfAlbCliS )->cRef       := ( dbfAlbCliL )->cRef
-            ( dbfAlbCliS )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
-            ( dbfAlbCliS )->nNumLin    := ( dbfAlbCliL )->nNumLin
-            ( dbfAlbCliS )->lFacturado := ( dbfAlbCliL )->lFacturado
-            ( dbfAlbCliS )->cNumSer    := cNumSer
-         next
-         ( dbfAlbCliL )->mNumSer       := ""
-      end if
-
-      ( dbfAlbCliL )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   ( dbfAlbCliL )->( ordSetFocus( 1 ) )
-
-   // Incidencias--------------------------------------------------------------
-
-   ( dbfAlbCliI )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliI )->( dbGoTop() )
-
-   while !( dbfAlbCliI )->( eof() )
-
-      if Empty( ( dbfAlbCliI )->cSufAlb )
-         ( dbfAlbCliI )->cSufAlb    := "00"
-      end if
-
-      ( dbfAlbCliI )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   ( dbfAlbCliI )->( OrdSetFocus( 1 ) )
-
-   // Series ---------------------------------------------------------------
-
-   ( dbfAlbCliS )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliS )->( dbGoTop() )
-
-   while !( dbfAlbCliS )->( eof() )
-
-      if Empty( ( dbfAlbCliS )->cSufAlb )
-         ( dbfAlbCliS )->cSufAlb    := "00"
-      end if
-
-      if ( dbfAlbCliS )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-         ( dbfAlbCliS )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-      end if
-
-      ( dbfAlbCliS )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   ( dbfAlbCliS )->( ordSetFocus( 1 ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible sincronizar albaranes de clientes" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !Empty( dbfAlbCliT ) .and. ( dbfAlbCliT )->( Used() )
-      ( dbfAlbCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliL ) .and. ( dbfAlbCliL )->( Used() )
-      ( dbfAlbCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliS ) .and. ( dbfAlbCliS )->( Used() )
-      ( dbfAlbCliS )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliI ) .and. ( dbfAlbCliI )->( Used() )
-      ( dbfAlbCliI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliP ) .and. ( dbfAlbCliP )->( Used() )
-      ( dbfAlbCliP )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
-      ( dbfFamilia )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfClient ) .and. ( dbfClient )->( Used() )
-      ( dbfClient )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
-      ( dbfIva )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
-      ( dbfDiv )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliT ) .and. ( dbfPedCliT )->( Used() )
-      ( dbfPedCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliL ) .and. ( dbfPedCliL )->( Used() )
-      ( dbfPedCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliL ) .and. ( dbfFacCliL )->( Used() )
-      ( dbfFacCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( oNewImp )
-      oNewImp:end()
-   end if
-
-   oNewImp              := nil
-
-   /*
-   Estado de los pedidos-------------------------------------------------------
-   */
-
-   oStock               := TStock():Create()
-   if oStock:lOpenFiles()
-
-      for each cNumPed in aNumPed
-         oStock:SetEstadoPedCli( cNumPed )
-      end if
-
-   end if
-       
-   if !Empty( oStock )
-      oStock:end()
-   end if
-
-   oStock      := nil
-
-return nil
-
-//------------------------------------------------------------------------//
 
 Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
@@ -8574,7 +6929,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpPgo ) )
+         ACTION   ( ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -8585,7 +6940,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
    oDlg:bStart    := {|| aGet[ ( dbfTmpPgo )->( FieldPos( "nImporte" ) ) ]:SetFocus() }
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpPgo ) } )
+      oDlg:AddFastKey( VK_F5, {|| ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode ) } )
    end if
 
    ACTIVATE DIALOG oDlg CENTER;
@@ -8611,7 +6966,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpPgo )
+Static Function ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode )
 
    if nMode == APPD_MODE
       aTmp[ ( dbfTmpPgo )->( FieldPos( "nNumRec" ) ) ]   := ( dbfTmpPgo )->( LastRec() ) + 1
@@ -9044,21 +7399,6 @@ Method Process()
 Return Self
 
 //----------------------------------------------------------------------------//
-/*
-Static Function LoopDeta( oBrw, bEdt, aTmp, cNumAlb )
-
-   while !( dbfTmpLin )->( eof() )
-
-      EdtDeta( oBrw, bEdt, aTmp, , cNumAlb )
-
-      ( dbfTmpLin )->( dbSkip() )
-
-   end while
-
-return nil
- */
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION DelSerie( oWndBrw )
 
@@ -9300,303 +7640,6 @@ RETURN ( oDlg:End() )
    ( dbfAlbCliI )->( OrdSetFocus( nOrdAnt ) )
 
 Return ( nEstado )
-
-//---------------------------------------------------------------------------//
-//NOTA: Esta funcion se utiliza para el estado de generado de pedidos de clientes
-//
-
-function nEstadoGenerado( cNumPed, dbfPedCliL, dbfPedPrvL )
-
-   local nEstado := 0
-   local nOrdAnt
-
-   if IsMuebles()
-      nOrdAnt := ( dbfPedPrvL )->( OrdSetFocus( "CPEDCLIREFDET" ) )
-   else
-      nOrdAnt := ( dbfPedPrvL )->( OrdSetFocus( "CPEDCLIREF" ) )
-   end if
-
-   ( dbfPedCliL )->( dbSeek( cNumPed ) )
-
-   while ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cNumPed .and. !( dbfPedCliL )->( Eof() )
-
-      if IsMuebles()
-
-         if ( dbfPedPrvL )->( dbSeek( cNumPed + ( dbfPedCliL )->cRef + ( dbfPedCliL )->cRefPrv + ( dbfPedCliL )->cDetalle ) )
-
-            do case
-               case nEstado == 0 .or. nEstado == 3
-                  nEstado := 3
-               case nEstado == 1
-                  nEstado := 2
-            end case
-         else
-            do case
-               case nEstado == 0
-                  nEstado := 1
-               case nEstado == 3
-                  nEstado := 2
-            end case
-         end if
-
-      else
-
-         if( dbfPedPrvL )->( dbSeek( cNumPed + ( dbfPedCliL )->cRef ) )
-            do case
-               case nEstado == 0 .or. nEstado == 3
-                  nEstado := 3
-               case nEstado == 1
-                  nEstado := 2
-            end case
-         else
-            do case
-               case nEstado == 0
-                  nEstado := 1
-               case nEstado == 3
-                  nEstado := 2
-            end case
-         end if
-
-      end if
-
-   ( dbfPedCliL )->( dbSkip() )
-
-   end while
-
-   ( dbfPedPrvL )->( OrdSetFocus( nOrdAnt ) )
-
-return ( Max( nEstado, 1 ) )
-
-//---------------------------------------------------------------------------//
-
-Function AppAlbCli( hHash, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if AlbCli( nil, nil, hHash )
-         oWndBrw:RecAdd()
-      end if
-
-   else
-
-      if OpenFiles( nil, .t. )
-         nTotAlbCli()
-         WinAppRec( nil, bEdtRec, dbfAlbCliT, hHash )
-         CloseFiles()
-      end if
-
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-Function EdtAlbCli( cNumAlb, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            oWndBrw:RecEdit()
-         else
-            MsgStop( "No se encuentra albaran" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( nil, .t. )
-
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            nTotAlbCli()
-            WinEdtRec( nil, bEdtRec, dbfAlbCliT )
-         end if
-
-         CloseFiles()
-
-      end if
-
-   end if
-
-Return .t.
-
-//----------------------------------------------------------------------------//
-
-FUNCTION ZooAlbCli( cNumAlb, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            oWndBrw:RecZoom()
-         else
-            MsgStop( "No se encuentra albaran" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( nil, .t. )
-
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            nTotAlbCli()
-            WinZooRec( nil, bEdtRec, dbfAlbCliT )
-         end if
-
-         CloseFiles()
-
-      end if
-
-   end if
-
-Return .t.
-
-//----------------------------------------------------------------------------//
-
-FUNCTION DelAlbCli( cNumAlb, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
-         else
-            MsgStop( "No se encuentra albaran" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( nil, .t. )
-
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            nTotAlbCli()
-            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
-         end if
-
-         CloseFiles()
-
-      end if
-
-   end if
-
-Return .t.
-
-//----------------------------------------------------------------------------//
-
-FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
-         else
-            MsgStop( "No se encuentra albaran" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( nil, .t. )
-
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            nTotAlbCli()
-            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
-         end if
-
-         CloseFiles()
-
-      end if
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
-         else
-            MsgStop( "No se encuentra albaran" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( nil, .t. )
-
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            nTotAlbCli()
-            GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
-         end if
-
-         CloseFiles()
-
-      end if
-
-   end if
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -9916,70 +7959,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION PrnEntAlb( cNumEnt, lPrint, dbfAlbCliP )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if OpenFiles( nil, .t. )
-
-      if dbSeekInOrd( cNumEnt, "nNumAlb", dbfAlbCliP )
-         PrnEntregas( lPrint, dbfAlbCliP )
-      end if
-
-      CloseFiles()
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 #ifdef __HARBOUR__
-
-/*Static Function EditMenu( nLevel, oBrw, oDlg )
-
-   MENU oMenu
-
-      MENUITEM    "Albaranes"
-
-      MENUITEM    "&1. Edición"
-
-         MENU
-
-            MENUITEM    "&1. Añadir";
-               ACTION   ( if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtPda, dbfAlbCliT ),  MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&2. Modificar";
-               ACTION   ( if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdtPda, dbfAlbCliT ),  MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&3. Eliminar";
-               ACTION   ( if( nAnd( nLevel, ACC_DELE ) != 0, ( AlbRecDel(), oBrw:Refresh() ),         MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&4. Zoom";
-               ACTION   ( if( nAnd( nLevel, ACC_ZOOM ) != 0, WinZooRec( oBrw, bEdtPda, dbfAlbCliT ),  MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&5. Generar nota";
-               ACTION   ( if( nAnd( nLevel, ACC_ZOOM ) != 0, AlbCliNotas(),                           MsgStop( "Acceso no permitido" ) ) );
-
-         ENDMENU
-
-      MENUITEM    "&S. Salir";
-         MESSAGE  "Salir de la ventana actual" ;
-         RESOURCE "End" ;
-         ACTION   ( oDlg:End() );
-
-   ENDMENU
-
-   oDlg:SetMenu( oMenu )
-
-Return ( oMenu )*/
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION DupSerie( oWndBrw )
 
@@ -10357,35 +8337,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function nPesAlbCli( cAlbaran, dbfAlbCliL, lPicture )
-
-   local nOrd           := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
-   local nTotPes        := 0
-
-   DEFAULT lPicture     := .f.
-
-   if ( dbfAlbCliL )->( dbSeek( cAlbaran ) )
-
-      while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. ( dbfAlbCliL )->( !eof() )
-
-         if lValLine( dbfAlbCliL )
-
-            nTotPes     += nPesLAlbCli( dbfAlbCliL )
-
-         end if
-
-         ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAlbCliL )->( OrdSetFocus( nOrd ) )
-
-Return ( if( lPicture, Trans( nTotPes, MasUnd() ), nTotPes ) )
-
-//--------------------------------------------------------------------------//
-
 STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
    local cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
@@ -10731,19 +8682,6 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Albaranes",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
    oFr:AddVariable(     "Albaranes",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
    oFr:AddVariable(     "Albaranes",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
-
-   /*
-   oFr:AddVariable(     "Albaranes",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
-   oFr:AddVariable(     "Albaranes",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
-   oFr:AddVariable(     "Albaranes",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
-   oFr:AddVariable(     "Albaranes",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
-   oFr:AddVariable(     "Albaranes",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
-   oFr:AddVariable(     "Albaranes",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
-   oFr:AddVariable(     "Albaranes",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
-   oFr:AddVariable(     "Albaranes",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
-   oFr:AddVariable(     "Albaranes",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
-   oFr:AddVariable(     "Albaranes",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
-   */
    
    oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                "CallHbFunc('cDesAlbCli')"  )
    oFr:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",             "CallHbFunc('nTotNAlbCli')" )
@@ -10759,239 +8697,6 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de albaranes",   "Dirección del SAT",                   "CallHbFunc('cDireccionSAT')" )
 
 Return nil
-
-//---------------------------------------------------------------------------//
-
-Function DesignReportAlbCli( oFr, dbfDoc )
-
-   local lOpen    := .f.
-   local lFlag    := .f.
-
-   /*
-   Tratamiento para no hacer dos veces el openfiles al editar el documento en imprimir series
-   */
-
-   if lOpenFiles
-      lFlag       := .t.
-   else
-      if Openfiles()
-         lFlag    := .t.
-         lOpen    := .t.
-      else
-         lFlag    := .f.
-      end if
-   end if
-
-   if lFlag
-
-      /*
-      Zona de datos------------------------------------------------------------
-      */
-
-      DataReport( oFr )
-
-      /*
-      Paginas y bandas---------------------------------------------------------
-      */
-
-      if !Empty( ( dbfDoc )->mReport )
-
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      else
-
-         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-         oFr:SetProperty(     "Report.ScriptText", "Text",;
-                                                   + ;
-                                                   "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
-                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "   CallHbFunc('nTotAlbCli');"                              + Chr(13) + Chr(10) + ;
-                                                   "end;"                                                      + Chr(13) + Chr(10) + ;
-                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "end." )
-
-         oFr:AddPage(         "MainPage" )
-
-         oFr:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
-         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
-
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Albaranes" )
-
-         oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
-         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
-         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de albaranes" )
-         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
-
-         oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
-         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
-
-      end if
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReport( oFr )
-
-      /*
-      Diseño de report---------------------------------------------------------
-      */
-
-      oFr:DesignReport()
-
-      /*
-      Destruye el diseñador----------------------------------------------------
-      */
-
-      oFr:DestroyFr()
-
-      /*
-      Cierra ficheros----------------------------------------------------------
-      */
-
-      if lOpen
-         CloseFiles()
-      end if
-
-   else
-
-      Return .f.
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
-
-   local oFr
-   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, " ", "" ) + ".Pdf"
-
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
-
-   SysRefresh()
-
-   oFr                  := frReportManager():New()
-
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
-   oFr:SetIcon( 1 )
-
-   oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   DataReport( oFr )
-
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
-
-   if !Empty( ( dbfDoc )->mReport )
-
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReport( oFr )
-
-      /*
-      Preparar el report-------------------------------------------------------
-      */
-
-      oFr:PrepareReport()
-
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
-
-      do case
-         case nDevice == IS_SCREEN
-
-            oFr:ShowPreparedReport()
-
-         case nDevice == IS_PRINTER
-
-            oFr:PrintOptions:SetPrinter( cPrinter )
-            oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetShowDialog( .f. )
-            oFr:Print()
-
-         case nDevice == IS_PDF
-
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
-            oFr:DoExport(     "PDFExport" )
-
-         case nDevice == IS_MAIL
-
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
-            oFr:DoExport(     "PDFExport" )
-
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nAlbCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de albaran de cliente número " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :GeneralResource( dbfAlbCliT, aItmAlbCli() )
-
-               end with
-
-            end if
-
-      end case
-
-   end if
-
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
-
-   oFr:DestroyFr()
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -11113,1722 +8818,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportEntAlbCli( oFr, dbfDoc )
-
-   if OpenFiles()
-
-      /*
-      Zona de datos------------------------------------------------------------
-      */
-
-      DataReportEntAlbCli( oFr )
-
-      /*
-      Paginas y bandas---------------------------------------------------------
-      */
-
-      if !Empty( ( dbfDoc )->mReport )
-
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      else
-
-         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-         oFr:SetProperty(     "Report.ScriptText", "Text",;
-                                                   + ;
-                                                   "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
-                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "CallHbFunc('nTotAlbCli');"                                 + Chr(13) + Chr(10) + ;
-                                                   "end;"                                                      + Chr(13) + Chr(10) + ;
-                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "end." )
-
-         oFr:AddPage(         "MainPage" )
-
-         oFr:SetProperty(     "MainPage",          "OnBeforePrint", "DetalleOnMasterDetail" )
-
-         oFr:AddBand(         "CuerpoDocumento",   "MainPage", frxPageHeader )
-         oFr:SetProperty(     "CuerpoDocumento",   "Top", 0 )
-         oFr:SetProperty(     "CuerpoDocumento",   "Height", 300 )
-
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 300 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Entrega" )
-
-      end if
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReportEntAlbCli( oFr )
-
-      /*
-      Diseño de report---------------------------------------------------------
-      */
-
-      oFr:DesignReport()
-
-      /*
-      Destruye el diseñador----------------------------------------------------
-      */
-
-      oFr:DestroyFr()
-
-      /*
-      Cierra ficheros----------------------------------------------------------
-      */
-
-      CloseFiles()
-
-   else
-
-      Return .f.
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
-
-   local oFr
-   local nRecAlbCliT    := ( dbfAlbCliT )->( Recno() )
-
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
-   DEFAULT lTicket      := .f.
-
-   SysRefresh()
-
-   oFr                  := frReportManager():New()
-
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
-   oFr:SetIcon( 1 )
-
-   oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
-
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
-
-   if !Empty( ( dbfDoc )->mReport )
-
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReportEntAlbCli( oFr )
-
-      /*
-      Preparar el report-------------------------------------------------------
-      */
-
-      oFr:PrepareReport()
-
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
-
-      do case
-         case nDevice == IS_SCREEN
-            oFr:ShowPreparedReport()
-
-         case nDevice == IS_PRINTER
-            oFr:PrintOptions:SetPrinter( cPrinter )
-            oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetShowDialog( .f. )
-            oFr:Print()
-
-         case nDevice == IS_PDF
-            oFr:DoExport( "PDFExport" )
-
-      end case
-
-   end if
-
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
-
-   oFr:DestroyFr()
-
-   ( dbfAlbCliT )->( dbGoTo( nRecAlbCliT ) )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if OpenFiles( nil, .t. )
-
-      if ( dbfTmpEnt )->( Used() )
-         ( dbfTmpEnt )->( dbSetFilter( {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumRec ) == cNumDoc }, "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumRec ) == cNumDoc" ) )
-         ( dbfTmpEnt )->( dbGoTop() )
-      end if
-
-      PrnEntregas( lPrint, dbfTmpEnt, .t. )
-
-      ( dbfTmpEnt )->( DbClearFilter() )
-
-      CloseFiles()
-
-   end if
-
-Return .t.
-
-#else
-
-//---------------------------------------------------------------------------//
-//Funciones de PDA
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION pdaOpenFiles( lExt )
-
-   local oError
-   local oBlock
-
-   if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de albaranes de clientes' )
-      Return ( .f. )
-   end if
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      lOpenFiles        := .t.
-
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLII", @dbfAlbCliI ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLII.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLID", @dbfAlbCliD ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLID.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-      SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
-      SET ADSINDEX TO ( cPatGrp() + "ArtCodebar.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ArtDiv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtDiv.Cdx" ) ADDITIVE
-
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
-
-      USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
-      SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
-
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
-
-      oTrans            := TTrans():Create( cPatCli() )
-      if !oTrans:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
-      if !oUndMedicion:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-   RECOVER USING oError
-
-      lOpenFiles        := .f.
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !lOpenFiles
-      pdaCloseFiles()
-   end if
-
-Return ( lOpenFiles )
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION pdaCloseFiles()
-
-   if !Empty( oFont )
-      oFont:end()
-   end if
-
-   if oWndBrw     != nil
-		oWndBrw:oBrw:lCloseArea()
-      oWndBrw     := nil
-   else
-      if !Empty( dbfAlbCliT )
-         ( dbfAlbCliT )->( dbCloseArea() )
-      end if
-   end if
-   if !Empty( dbfClient )
-      ( dbfClient    )->( dbCloseArea() )
-   end if
-   if !Empty( dbfIva )
-      ( dbfIva       )->( dbCloseArea() )
-   end if
-   if !Empty( dbfFPago )
-      ( dbfFPago     )->( dbCloseArea() )
-   end if
-   if !Empty( dbfAlbCliL )
-      ( dbfAlbCliL   )->( dbCloseArea() )
-   end if
-   if !Empty( dbfAlbCliI )
-      ( dbfAlbCliI   )->( dbCloseArea() )
-   end if
-   if !Empty( dbfAlbCliD )
-      ( dbfAlbCliD   )->( dbCloseArea() )
-   end if
-   if !Empty( dbfAlbCliP )
-      ( dbfAlbCliP   )->( dbCloseArea() )
-   end if
-   if !Empty( dbfAgent )
-      ( dbfAgent     )->( dbCloseArea() )
-   end if
-   if !Empty( dbfArtPrv )
-      ( dbfArtPrv     )->( dbCloseArea() )
-   end if
-   if !Empty( dbfArtDiv )
-      ( dbfArtDiv     )->( dbCloseArea() )
-   end if
-   if !Empty( dbfArticulo )
-      ( dbfArticulo  )->( dbCloseArea() )
-   end if
-   if !Empty( dbfCodebar )
-      ( dbfCodebar   )->( dbCloseArea() )
-   end if
-   if !Empty( dbfFamilia )
-      ( dbfFamilia   )->( dbCloseArea() )
-   end if
-   if !Empty( dbfKit )
-      ( dbfKit       )->( dbCloseArea() )
-   end if
-   if !Empty( dbfAlm )
-      ( dbfAlm       )->( dbCloseArea() )
-   end if
-   if !Empty( dbfCliAtp )
-      ( dbfCliAtp    )->( dbCloseArea() )
-   end if
-   if !Empty( dbfDiv )
-      ( dbfDiv       )->( dbCloseArea() )
-   end if
-   if !Empty( dbfOferta )
-      ( dbfOferta    )->( dbCloseArea() )
-   end if
-   if !Empty( dbfObrasT )
-      ( dbfObrasT    )->( dbCloseArea() )
-   end if
-   if !Empty( dbfRuta )
-      ( dbfRuta      )->( dbCloseArea() )
-   end if
-   if !Empty( dbfUsr )
-      ( dbfUsr )->( dbCloseArea() )
-   end if
-   if dbfInci != nil
-      ( dbfInci )->( dbCloseArea() )
-   end if
-   if dbfCount != nil
-      ( dbfCount )->( dbCloseArea() )
-   end if
-
-   if !Empty( oTrans )
-      oTrans:end()
-   end if
-   if !Empty( oUndMedicion )
-      oUndMedicion:end()
-   end if
-
-   dbfClient      := nil
-   dbfIva         := nil
-   dbfAlbCliL     := nil
-   dbfAlbCliT     := nil
-   dbfAlbCliI     := nil
-   dbfAlbCliD     := nil
-   dbfAlbCliP     := nil
-   dbfPedCliT     := nil
-   dbfPedCliL     := nil
-   dbfPedCliR     := nil
-   dbfPedCliP     := nil
-   dbfPedCliI     := nil
-   dbfPedCliD     := nil
-   dbfTikT        := nil
-   dbfFPago       := nil
-   dbfAgent       := nil
-   dbfAlm         := nil
-   dbfTarPreL     := nil
-   dbfTarPreS     := nil
-   dbfPromoT      := nil
-   dbfPromoL      := nil
-   dbfPromoC      := nil
-   dbfArticulo    := nil
-   dbfCodebar     := nil
-   dbfFamilia     := nil
-   dbfKit         := nil
-   dbfCliAtp      := nil
-   dbfTVta        := nil
-   dbfDiv         := nil
-   oBandera       := nil
-   dbfDoc         := nil
-   dbfTblCnv      := nil
-   dbfOferta      := nil
-   dbfObrasT      := nil
-   dbfPro         := nil
-   dbfTblPro      := nil
-   dbfRuta        := nil
-   dbfArtDiv      := nil
-   dbfCajT        := nil
-   dbfUsr         := nil
-   dbfInci        := nil
-   dbfArtPrv      := nil
-   dbfAntCliT     := nil
-   dbfDelega      := nil
-   dbfCount       := nil
-   dbfUbicaL      := nil
-   dbfAgeCom      := nil
-   dbfFacCliT     := nil
-   dbfFacRecT     := nil
-   dbfFacRecL     := nil
-   dbfTikT        := nil
-   dbfEmp         := nil
-
-   oStock         := nil
-   oGrpCli        := nil
-   oNewImp        := nil
-   oTrans         := nil
-   oTipArt        := nil
-   oGrpFam        := nil
-   oUndMedicion   := nil
-   oFraPub        := nil
-
-   lOpenFiles     := .f.
-
-   oWndBrw        := nil
-
-Return .t.
-
-//--------------------------------------------------------------------------//
-
-Function pdaAlbCli( oMenuItem )
-
-   local oDlg
-   local oBrw
-   local nLevel
-   local oGetBuscar
-   local cGetBuscar     := Space( 100 )
-   local oCbxOrden
-   local cCbxOrden      := "Número"
-   local oSayTit
-   local oFont
-   local oBtn
-
-   nLevel               := nLevelUsr( _MENUITEM_ )
-
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return .f.
-   end if
-
-   /*
-   Abrimos los ficheros--------------------------------------------------------
-   */
-
-   if !pdaOpenFiles()
-      return .f.
-   end if
-
-   /*
-   Creamos el Shell------------------------------------------------------------
-   */
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-      DEFINE DIALOG oDlg RESOURCE "Dlg_info"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Albaranes" ;
-         ID       140 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       130 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "document_plain_user1_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE GET oGetBuscar ;
-         VAR      cGetBuscar;
-         ID       110 ;
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-      oGetBuscar:bChange   := {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetBuscar, oBrw, dbfAlbCliT ) }
-
-      REDEFINE COMBOBOX oCbxOrden ;
-         VAR      cCbxOrden ;
-         ID       120 ;
-         ITEMS    { "Número", "Fecha", "Código", "Nombre" } ;
-			OF 		oDlg
-
-      oCbxOrden:bChange    := {|| ( dbfAlbCliT )->( OrdSetFocus( oCbxOrden:nAt ) ), ( dbfAlbCliT )->( dbGoTop() ), oBrw:Refresh(), oGetBuscar:SetFocus(), oCbxOrden:Refresh() }
-
-      REDEFINE IBROWSE oBrw;
-         FIELDS   (dbfAlbCliT)->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb + CRLF + Dtoc( (dbfAlbCliT)->dFecAlb ) ,;
-                  (dbfAlbCliT)->cNomCli,;
-                  nTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .t. );
-         HEAD     "Número" + CRLF + "Fecha",;
-                  "Cliente",;
-                  "Importe ";
-         FIELDSIZES ;
-                  100,;
-                  180,;
-                  40;
-         JUSTIFY  .f.,;
-                  .f.,;
-                  .t. ;
-         ALIAS    ( dbfAlbCliT ) ;
-         ID       100 ;
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaBuildMenu( oDlg, oBrw ) ) )
-
-   pdaCloseFiles()
-
-   oFont:End()
-
-   // Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-static function pdaBuildMenu( oDlg, oBrw )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 500 ;
-      BITMAPS  60 ; // bitmaps resoruces ID
-      IMAGES   6     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 510 OF oMenu ACTION ( WinAppRec( oBrw, bEdtPda, dbfAlbCliT ) )
-
-      REDEFINE MENUITEM ID 520 OF oMenu ACTION ( WinEdtRec( oBrw, bEdtPda, dbfAlbCliT, oDlg ) )
-
-      REDEFINE MENUITEM ID 530 OF oMenu ACTION ( WinDelRec( oBrw, dbfAlbCliT, {|| QuiAlbPda() } ) )
-
-      REDEFINE MENUITEM ID 540 OF oMenu ACTION ( WinZooRec( oBrw, bEdtPda, dbfAlbCliT, oDlg ) )
-
-      REDEFINE MENUITEM ID 550 OF oMenu ACTION ( pdaGenAlbCli( oBrw, dbfAlbCliT, dbfAlbCliL ) )
-
-      REDEFINE MENUITEM ID 560 OF oMenu ACTION ( oDlg:End() )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-Static Function pdaGenAlbCli( oBrw, dbfAlbCliT, dbfAlbCliL )
-
-   local cTextToPrint   := ""
-   local cCodAlbCli     := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-   local oError
-   local oBlock
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   /*
-   Cargamos los valores iniciales con nTotAlbCli-------------------------------
-   */
-
-   nTotAlbCli( cCodAlbCli, dbfAlbCliT, dbfAlbCliL )
-
-   /*
-   Cabecera del documento------------------------------------------------------
-   */
-
-   cTextToPrint         += CRLF + CRLF
-
-   cTextToPrint         += "Albaran    : " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "-" + ( dbfAlbCliT )->cSufAlb + CRLF
-
-   cTextToPrint         += "Fecha      : " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + CRLF
-
-   cTextToPrint         += "Cliente    : " + AllTrim( ( dbfAlbCliT )->cCodCli ) + " - " + RTrim( ( dbfAlbCliT )->cNomCli ) + CRLF
-
-   cTextToPrint         += "Establec.  : " + Padr( RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "NbrEst" ), 46 ) + CRLF
-
-   cTextToPrint         += "N.I.F.     : " + ( dbfAlbCliT )->cDniCli + CRLF
-
-   cTextToPrint         += "Direccion  : " + RTrim( ( dbfAlbCliT )->cDirCli ) + CRLF
-
-   cTextToPrint         += "CP y Pobl. : " + RTrim( ( dbfAlbCliT )->cPosCli ) + Space( 1 ) + RTrim( ( dbfAlbCliT )->cPobCli ) + CRLF
-
-   cTextToPrint         += "Provincia  : " + RTrim( ( dbfAlbCliT )->cPrvCli ) + CRLF
-
-   cTextToPrint         += Replicate( "_" , 60 ) + CRLF
-
-   /*
-   Lineas del documento--------------------------------------------------------
-   */
-                        //           1         2         3         4         5         6
-                        //  123456789012345678901234567890123456789012345678901234567890
-   cTextToPrint         += "Codigo Descripcion                     Und.  Precio    Total" + CRLF
-   cTextToPrint         += "------ ------------------------------ ----- ------- --------" + CRLF
-
-   if ( dbfAlbCliL )->( dbSeek( cCodAlbCli ) )
-
-      while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cCodAlbCli .and. !( dbfAlbCliL )->( eof() )
-
-          cTextToPrint  += SubStr( ( dbfAlbCliL )->cRef, 1, 6 )                                         + Space( 1 )
-          cTextToPrint  += SubStr( ( dbfAlbCliL )->cDetalle, 1, 30 )                                    + Space( 1 )
-          cTextToPrint  += Right( Trans( nTotNAlbCli( dbfAlbCliL ), MasUnd() ), 5 )                     + Space( 1 )
-          cTextToPrint  += Right( Trans( nTotUAlbCli( dbfAlbCliL, nDouDiv ), cPouDiv ), 7 )             + Space( 1 )
-          cTextToPrint  += Right( Trans( nTotLAlbCli( dbfAlbCliL, nDouDiv, nRouDiv ), cPorDiv ), 8 )    + CRLF
-
-          if ( dbfAlbCliL )->lLote
-             cTextToPrint  += "       Lote: " + Padr( ( dbfAlbCliL )->cLote, 47 )                       + CRLF
-          end if
-
-          ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   /*
-   Pie del documento-----------------------------------------------------------
-   */
-
-   cTextToPrint         += Replicate( "_" , 60 ) + CRLF
-
-                        //           1         2         3         4         5         6
-                        //  123456789012345678901234567890123456789012345678901234567890
-   cTextToPrint         += "   Base impuestos%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
-   cTextToPrint         += "------- ---- --------- ---- ---------   impuestos " + Right( Str( nTotIva ), 12 ) + CRLF
-
-   cTextToPrint         += Right( Trans( aIvaUno[ 2 ], cPorDiv )  , 7 ) + Space(1)
-   cTextToPrint         += Right( Trans( aIvaUno[ 3 ], "@E 99.9" ), 4 ) + Space(1)
-   cTextToPrint         += Right( Trans( aIvaUno[ 8 ], cPorDiv )  , 9 ) + Space(1)
-   cTextToPrint         += Right( Trans( aIvaUno[ 4 ], "@E 99.9" ), 4 ) + Space(1)
-   cTextToPrint         += Right( Trans( aIvaUno[ 9 ], cPorDiv )  , 9 ) + Space(3)
-   cTextToPrint         += "R.E.   " + Right( Str( nTotReq ), 12 )
-
-   if aIvaDos[ 3 ] != nil
-
-      cTextToPrint      += Right( Trans( aIvaDos[ 2 ], cPorDiv )  , 9 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaDos[ 3 ], "@E 99.9" ), 4 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaDos[ 8 ], cPorDiv )  , 9 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaUno[ 4 ], "@E 99.9" ), 4 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaUno[ 9 ], cPorDiv )  , 9 ) + Space(3)
-      cTextToPrint      += "-------------------"
-
-   else
-                        //           1         2         3         4         5         6
-                        //  123456789012345678901234567890123456789012345678901234567890
-      cTextToPrint      += "                                         -------------------"
-
-   end if
-
-   if aIvaTre[ 3 ] != nil
-
-      cTextToPrint      += Right( Trans( aIvaTre[ 2 ], cPorDiv )  , 9 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaTre[ 3 ], "@E 99.9" ), 4 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaTre[ 8 ], cPorDiv )  , 9 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaUno[ 4 ], "@E 99.9" ), 4 ) + Space(1)
-      cTextToPrint      += Right( Trans( aIvaUno[ 9 ], cPorDiv )  , 9 ) + Space(3)
-      cTextToPrint       += "TOTAL  " + Right( Str( nTotAlb ) , 12 ) + CRLF
-
-   else
-                        //           1         2         3         4         5         6
-                        //  123456789012345678901234567890123456789012345678901234567890
-      cTextToPrint      += "                                         TOTAL  " + Right( Str( nTotAlb ) , 12 ) + CRLF
-
-   end if
-
-   cTextToPrint         += Replicate( "_" , 60 ) + CRLF
-
-   msginfo( "Compruebe si la impresora está en línea y si tiene papel suficiente" )
-   SendText( cTextToPrint )
-
-   RECOVER
-
-      msgStop( "Ocurrió un error a la hora de imprimir albaranes" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-#endif
-
-//---------------------------------------------------------------------------//
-
-CLASS pdaAlbCliSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaAlbCliSenderReciver
-
-   local pdaAlbCliT
-   local pdaAlbCliL
-   local pdaAlbCliI
-   local pdaAlbCliP
-   local pdaAlbCliD
-   local dbfAlbCliT
-   local dbfAlbCliL
-   local dbfAlbCliI
-   local dbfAlbCliP
-   local dbfAlbCliD
-   local lExist         := .f.
-   local cFileName
-   local cNumAlbCliT
-   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
-
-   //Cabeceras de las tablas
-
-   USE ( cPatPc + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
-   SET ADSINDEX TO ( cPatPc + "AlbCliT.CDX" ) ADDITIVE
-   ( dbfAlbCliT )->( OrdSetFocus( "lSndDoc" ) )
-
-   USE ( cPatPc + "AlbCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @dbfAlbCliL ) )
-   SET ADSINDEX TO ( cPatPc + "AlbCliL.CDX" ) ADDITIVE
-
-   USE ( cPatPc + "AlbCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliI", @dbfAlbCliI ) )
-   SET ADSINDEX TO ( cPatPc + "AlbCliI.CDX" ) ADDITIVE
-
-   USE ( cPatPc + "AlbCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliP", @dbfAlbCliP ) )
-   SET ADSINDEX TO ( cPatPc + "AlbCliP.CDX" ) ADDITIVE
-
-   USE ( cPatPc + "AlbCliD.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliD", @dbfAlbCliD ) )
-   SET ADSINDEX TO ( cPatPc + "AlbCliD.Cdx" ) ADDITIVE
-
-   dbUseArea( .t., cDriver(), cPatEmp() + "AlbCliT.Dbf", cCheckArea( "AlbCliT", @pdaAlbCliT ), .t. )
-   ( pdaAlbCliT )->( ordListAdd( cPatEmp() + "AlbCliT.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatEmp() + "AlbCliL.Dbf", cCheckArea( "AlbCliL", @pdaAlbCliL ), .t. )
-   ( pdaAlbCliL )->( ordListAdd( cPatEmp() + "AlbCliL.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatEmp() + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @pdaAlbCliI ), .t. )
-   ( pdaAlbCliI )->( ordListAdd( cPatEmp() + "AlbCliI.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatEmp() + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @pdaAlbCliP ), .t. )
-   ( pdaAlbCliP )->( ordListAdd( cPatEmp() + "AlbCliP.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatEmp() + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @pdaAlbCliD ), .t. )
-   ( pdaAlbCliD )->( ordListAdd( cPatEmp() + "AlbCliD.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( pdaAlbCliT )->( OrdKeyCount() ) )
-   end if
-
-   ( pdaAlbCliT )->( dbGoTop() )
-   while !( pdaAlbCliT )->( eof() )
-
-      if ( pdaAlbCliT )->lSndDoc
-
-         cNumAlbCliT    := ( pdaAlbCliT )->cSeralb + Str( ( pdaAlbCliT )->nNumalb ) + ( pdaAlbCliT )->cSufalb
-
-         if !( dbfAlbCliT )->( dbSeek( cNumAlbCliT ) )
-
-            dbPass( pdaAlbCliT, dbfAlbCliT, .t. )
-
-            /*
-            Lineas de albaranes--------------------------------------------------
-            */
-
-            if ( pdaAlbCliL )->( dbSeek( cNumAlbCliT ) )
-               while ( pdaAlbCliL )->cSeralb + Str( ( pdaAlbCliL )->nNumalb ) + ( pdaAlbCliL )->cSufalb == cNumAlbCliT .and. !( pdaAlbCliL )->( eof() )
-                  dbPass( pdaAlbCliL, dbfAlbCliL, .t. )
-                  ( pdaAlbCliL )->( dbSkip() )
-               end while
-            end if
-
-            /*
-            Incidencias de albaranes---------------------------------------------
-            */
-
-            if ( pdaAlbCliI )->( dbSeek( cNumAlbCliT ) )
-               while ( pdaAlbCliI )->cSeralb + Str( ( pdaAlbCliI )->nNumalb ) + ( pdaAlbCliI )->cSufalb == cNumAlbCliT .AND. !( pdaAlbCliI )->( eof() )
-                  dbPass( pdaAlbCliI, dbfAlbCliI, .t. )
-                  ( pdaAlbCliI )->( dbSkip() )
-               end while
-            end if
-
-            /*
-            Pagos de albaranes---------------------------------------------------
-            */
-
-            if ( pdaAlbCliP )->( dbSeek( cNumAlbCliT ) )
-               while ( pdaAlbCliP )->cSeralb + Str( ( pdaAlbCliP )->nNumalb ) + ( pdaAlbCliP )->cSufalb == cNumAlbCliT .AND. !( pdaAlbCliP )->( eof() )
-                  dbPass( pdaAlbCliP, dbfAlbCliP, .t. )
-                  ( pdaAlbCliP )->( dbSkip() )
-               end while
-            end if
-
-            /*
-            Documentos de albaranes----------------------------------------------
-            */
-
-            if ( pdaAlbCliD )->( dbSeek( cNumAlbCliT ) )
-               while ( pdaAlbCliD )->cSeralb + Str( ( pdaAlbCliD )->nNumalb ) + ( pdaAlbCliD )->cSufalb == cNumAlbCliT .AND. !( pdaAlbCliD )->( eof() )
-                  dbPass( pdaAlbCliD, dbfAlbCliD, .t. )
-                  ( pdaAlbCliD )->( dbSkip() )
-               end while
-            end if
-
-             if dbLock( pdaAlbCliT )
-               ( pdaAlbCliT )->lSndDoc  := .f.
-               ( pdaAlbCliT )->( dbUnLock() )
-            end if
-
-         end if
-
-      end if
-
-      ( pdaAlbCliT )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando albaranes " + Alltrim( Str( ( pdaAlbCliT )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pdaAlbCliT )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( pdaAlbCliT )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( pdaAlbCliT )
-   CLOSE ( pdaAlbCliL )
-   CLOSE ( pdaAlbCliI )
-   CLOSE ( pdaAlbCliP )
-   CLOSE ( pdaAlbCliD )
-   CLOSE ( dbfAlbCliT )
-   CLOSE ( dbfAlbCliL )
-   CLOSE ( dbfAlbCliI )
-   CLOSE ( dbfAlbCliP )
-   CLOSE ( dbfAlbCliD )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
-//Funciones comunes para el programa y pda
-//---------------------------------------------------------------------------//
-
-//
-// Devuelve el numero de unidades reservadas en albaranes a clientes
-//
-
-function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, cDetalle, dbfAlbCliL )
-
-   local nTot        := 0
-   local aStaLin     := aGetStatus( dbfAlbCliL, .f. )
-
-   DEFAULT cCodPr1   := Space( 20 )
-   DEFAULT cCodPr2   := Space( 20 )
-   DEFAULT cRefPrv   := Space( 18 )
-   DEFAULT cDetalle  := Space( 250 )
-
-   if ( IsMuebles() )
-
-      ( dbfAlbCliL )->( OrdSetFocus( "cNumPedDet" ) )
-
-      if ( dbfAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cRefPrv + cDetalle ) )
-         while ( dbfAlbCliL )->cNumPed + ( dbfAlbCliL )->cRef + ( dbfAlbCliL )->cCodPr1 + ( dbfAlbCliL )->cCodPr2 + ( dbfAlbCliL )->cRefPrv + ( dbfAlbCliL )->cDetalle == cNumPed + cCodArt + cCodPr1 + cCodPr2 + cRefPrv + cDetalle .and. !( dbfAlbCliL )->( eof() )
-            nTot     += nTotNAlbCli( dbfAlbCliL )
-            ( dbfAlbCliL )->( dbSkip() )
-         end while
-      end if
-
-   else
-
-      ( dbfAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
-
-      if ( dbfAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
-         while ( dbfAlbCliL )->cNumPed + ( dbfAlbCliL )->cRef + ( dbfAlbCliL )->cCodPr1 + ( dbfAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( dbfAlbCliL )->( eof() )
-            nTot     += nTotNAlbCli( dbfAlbCliL )
-            ( dbfAlbCliL )->( dbSkip() )
-         end while
-      end if
-
-   end if
-
-   SetStatus( dbfAlbCliL, aStaLin )
-
-return ( nTot )
-
-//---------------------------------------------------------------------------//
-
-function nTotNAlbCli( uDbf )
-
-   local nTotUnd
-
-   DEFAULT uDbf   := dbfAlbCliL
-
-   do case
-      case ValType( uDbf ) == "A"
-
-         if uDbf[ __LALQUILER ]
-
-            nTotUnd  := NotCaja( uDbf[ _NCANENT ] )
-            nTotUnd  *= uDbf[ _NUNICAJA ]
-            nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
-            nTotUnd  *= NotCero( uDbf[ __DFECENT ] - uDbf[ __DFECSAL ] )
-            nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
-            nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
-            nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
-
-
-         else
-
-            nTotUnd  := NotCaja( uDbf[ _NCANENT ] )
-            nTotUnd  *= uDbf[ _NUNICAJA ]
-            nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
-            nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
-            nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
-            nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
-
-
-         end if
-
-      case ValType( uDbf ) == "C"
-
-         if ( uDbf )->lAlquiler
-
-            nTotUnd  := NotCaja( ( uDbf )->nCanEnt )
-            nTotUnd  *= ( uDbf )->nUniCaja
-            nTotUnd  *= NotCero( ( uDbf )->nUndKit )
-            nTotUnd  *= NotCero( ( uDbf )->dFecEnt - ( uDbf )->dFecSal )
-            nTotUnd  *= NotCero( ( uDbf )->nMedUno )
-            nTotUnd  *= NotCero( ( uDbf )->nMedDos )
-            nTotUnd  *= NotCero( ( uDbf )->nMedTre )
-
-         else
-
-            nTotUnd  := NotCaja( ( uDbf )->nCanEnt )
-            nTotUnd  *= ( uDbf )->nUniCaja
-            nTotUnd  *= NotCero( ( uDbf )->nUndKit )
-            nTotUnd  *= NotCero( ( uDbf )->nMedUno )
-            nTotUnd  *= NotCero( ( uDbf )->nMedDos )
-            nTotUnd  *= NotCero( ( uDbf )->nMedTre )
-
-         end if
-
-
-      otherwise
-
-         if uDbf:lAlquiler
-
-            nTotUnd  := NotCaja( uDbf:nCanEnt )
-            nTotUnd  *= uDbf:nUniCaja
-            nTotUnd  *= NotCero( uDbf:nUndKit )
-            nTotUnd  *= NotCero( uDbf:dFecEnt - uDbf:dFecSal )
-            nTotUnd  *= NotCero( uDbf:nMedUno )
-            nTotUnd  *= NotCero( uDbf:nMedDos )
-            nTotUnd  *= NotCero( uDbf:nMedTre )
-
-
-         else
-
-            nTotUnd  := NotCaja( uDbf:nCanEnt )
-            NtotUnd  *= uDbf:nUniCaja
-            nTotUnd  *= NotCero( uDbf:nUndKit )
-            nTotUnd  *= NotCero( uDbf:nMedUno )
-            nTotUnd  *= NotCero( uDbf:nMedDos )
-            nTotUnd  *= NotCero( uDbf:nMedTre )
-
-         end if
-
-   end case
-
-return ( nTotUnd )
-
-//---------------------------------------------------------------------------//
-
-function nTotVAlbCli( uDbf )
-
-   local nTotUnd
-
-   DEFAULT uDbf   := dbfAlbCliL
-
-   do case
-      case ValType( uDbf ) == "A"
-
-         nTotUnd  := nTotNAlbCli( uDbf ) * NotCero( uDbf[ _NFACCNV ] )
-
-      case ValType( uDbf ) == "C"
-
-         nTotUnd  := nTotNAlbCli( uDbf ) * NotCero( ( uDbf )->nFacCnv )
-
-      otherwise
-
-         nTotUnd  := nTotNAlbCli( uDbf ) * NotCero( uDbf:nFacCnv )
-
-   end case
-
-return ( nTotUnd )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-
-	local nCalculo
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nRou      := nRouDiv()
-   DEFAULT nVdv      := 1
-   DEFAULT lDto      := .t.
-   DEFAULT lPntVer   := .t.
-   DEFAULT lImpTrn   := .t.
-
-   if ( cAlbCliL )->lTotLin
-
-      nCalculo       := nTotUAlbCli( cAlbCliL, nDec, nVdv )
-
-   else
-
-      /*
-      Tomamos los valores redondeados------------------------------------------
-      */
-
-      nCalculo       := nTotUAlbCli( cAlbCliL, nDec, nVdv )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      if lDto
-
-         nCalculo    -= Round( ( cAlbCliL )->nDtoDiv , nDec )
-
-         if ( cAlbCliL )->nDto != 0
-            nCalculo -= nCalculo * ( cAlbCliL )->nDto / 100
-         end if
-
-         if ( cAlbCliL )->nDtoPrm != 0
-            nCalculo -= nCalculo * ( cAlbCliL )->nDtoPrm / 100
-         end if
-
-      end if
-
-      /*
-      Punto Verde--------------------------------------------------------------
-      */
-
-      if lPntVer
-         nCalculo    += ( cAlbCliL )->nPntVer
-      end if
-
-      /*
-      Transporte---------------------------------------------------------------
-      */
-
-      if lImpTrn 
-         nCalculo    += ( cAlbCliL )->nImpTrn 
-      end if
-
-      /*
-      Unidades-----------------------------------------------------------------
-      */
-
-      nCalculo       *= nTotNAlbCli( cAlbCliL )
-
-      /*
-      Redondeo-----------------------------------------------------------------
-      */
-
-      if nRou != nil
-         nCalculo    := Round( nCalculo, nRou )
-      end if
-
-   end if
-
-RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-//
-// Precio del punto verde por linea
-//
-
-FUNCTION nPntLAlbCli( dbfLin, nDec, nVdv )
-
-   local nPntVer
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
-
-   /*
-   Punto Verde
-   */
-
-   nPntVer           := ( dbfLin )->nPntVer * nTotNAlbCli( dbfLin )
-
-RETURN ( Round( nPntVer, nDec ) )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el importe de descuento porcentual por cada linea---------------------
-*/
-
-FUNCTION nDtoLAlbCli( cAlbCliL, nDec, nRou, nVdv )
-
-   local nCalculo       := 0
-
-   DEFAULT cAlbCliL     := dbfAlbCliL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
-   DEFAULT nVdv         := 1
-
-   if ( cAlbCliL )->nDto != 0 .and. !( cAlbCliL )->lTotLin
-
-      nCalculo          := nTotUAlbCli( cAlbCliL, nDec ) * nTotNAlbCli( cAlbCliL )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      nCalculo          -= Round( ( cAlbCliL )->nDtoDiv / nVdv , nDec )
-
-      nCalculo          := nCalculo * ( cAlbCliL )->nDto / 100
-
-
-      if nVdv != 0
-         nCalculo       := nCalculo / nVdv
-      end if
-
-      if nRou != nil
-         nCalculo       := Round( nCalculo, nRou )
-      end if
-
-   end if
-
-RETURN ( nCalculo ) 
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el importe de descuento porcentual en promociones por cada linea------
-*/
-
-FUNCTION nPrmLAlbCli( cAlbCliL, nDec, nRou, nVdv )
-
-   local nCalculo       := 0
-
-   DEFAULT cAlbCliL     := dbfAlbCliL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
-   DEFAULT nVdv         := 1
-
-   if ( cAlbCliL )->nDtoPrm != 0 .and. !( cAlbCliL )->lTotLin
-
-      nCalculo          := nTotUAlbCli( cAlbCliL, nDec ) * nTotNAlbCli( cAlbCliL )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      nCalculo          -= Round( ( cAlbCliL )->nDtoDiv / nVdv , nDec )
-
-      if ( cAlbCliL )->nDto != 0 
-         nCalculo       -= nCalculo * ( cAlbCliL )->nDto / 100
-      end if
-
-      nCalculo          := nCalculo * ( cAlbCliL )->nDtoPrm / 100
-
-      if nVdv != 0
-         nCalculo       := nCalculo / nVdv
-      end if
-
-      if nRou != nil
-         nCalculo       := Round( nCalculo, nRou )
-      end if
-
-   end if
-
-RETURN ( nCalculo ) 
-
-//---------------------------------------------------------------------------//
-
-//
-// Precio unitario
-//
-
-FUNCTION nTotUAlbCli( uTmpLin, nDec, nVdv )
-
-   local nCalculo    := 0
-
-   DEFAULT uTmpLin   := dbfAlbCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
-
-   do case
-      case IsChar( uTmpLin )
-
-         if ( uTmpLin )->lAlquiler
-            nCalculo    := ( uTmpLin )->nPreAlq
-         else
-            nCalculo    := ( uTmpLin )->nPreUnit
-         end if
-
-      case IsObject( uTmpLin )
-
-         if uTmpLin:lAlquiler
-            nCalculo    := uTmpLin:nPreAlq
-         else
-            nCalculo    := uTmpLin:nPreUnit
-         end if
-
-      case IsArray( uTmpLin )
-
-         if uTmpLin[ __LALQUILER ]
-            nCalculo    := uTmpLin[ _NSATALQ ]
-         else
-            nCalculo    := uTmpLin[ _NSATUNIT ]
-         end if
-
-   end case
-
-   if nVdv != 0
-      nCalculo          := nCalculo / nVdv
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-/*
-Cambia el importe unitario de la linea
-*/
-
-FUNCTION SetUAlbCli( dbfLin, nNewVal )
-
-      DEFAULT dbfLin             := dbfAlbCliL
-
-    if ( dbfLin )->lAlquiler
-       ( dbfLin )->nPreAlq       := nNewVal
-    else
-       ( dbfLin )->nPreUnit   := nNewVal
-    end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//
-// Valor del punto verde
-//
-
-Function nPntUAlbCli( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo := ( dbfTmpLin )->nPntVer
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-	IF nVdv != 0
-      nCalculo    := ( dbfTmpLin )->nPntVer / nVdv
-	END IF
-
-Return ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION IsAlbCli( cPath )
-
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "AlbCliT.Dbf" )
-      dbCreate( cPath + "AlbCliT.Dbf", aSqlStruct( aItmAlbCli() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbCliL.Dbf" )
-      dbCreate( cPath + "AlbCliL.Dbf", aSqlStruct( aColAlbCli() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbCliP.Dbf" )
-      dbCreate( cPath + "AlbCliP.Dbf", aSqlStruct( aItmAlbPgo() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbCliI.Dbf" )
-      dbCreate( cPath + "AlbCliI.Dbf", aSqlStruct( aIncAlbCli() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbCliD.Dbf" )
-      dbCreate( cPath + "AlbCliD.Dbf", aSqlStruct( aAlbCliDoc() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "AlbCliT.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AlbCliL.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AlbCliP.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AlbCliI.Cdx" ) .or. ;
-      !lExistTable( cPath + "AlbCliD.Cdx" )
-
-      rxAlbCli( cPath )
-
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
-
-   local oBlock
-   local oError
-	local dbfAlbCliT
-   local dbfAlbCliL
-   local dbfAlbCliI
-   local dbfAlbCliD
-   local dbfAlbCliP
-   local oldAlbCliT
-   local oldAlbCliL
-   local oldAlbCliI
-   local oldAlbCliD
-   local oldAlbCliP
-
-   DEFAULT lAppend   := .f.
-   DEFAULT bFor      := {|| .t. }
-
-   if oMeter != nil
-		oMeter:cText	:= "Generando Bases"
-		sysrefresh()
-   end if
-
-   CreateFiles( cPath )
-
-   rxAlbCli( cPath, oMeter )
-
-   if lAppend .and. lIsDir( cPathOld )
-
-      oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-      dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-      ( dbfAlbCliT )->( ordListAdd( cPath + "ALBCLIT.CDX" ) )
-
-      dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
-      ( dbfAlbCliL )->( ordListAdd( cPath + "ALBCLIL.CDX" ) )
-
-      dbUseArea( .t., cDriver(), cPath + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @dbfAlbCliI ), .f. )
-      ( dbfAlbCliI )->( ordListAdd( cPath + "AlbCliI.Cdx"  ) )
-
-      dbUseArea( .t., cDriver(), cPath + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @dbfAlbCliD ), .f. )
-      ( dbfAlbCliD )->( ordListAdd( cPath + "AlbCliD.Cdx"  ) )
-
-      dbUseArea( .t., cDriver(), cPath + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @dbfAlbCliP ), .f. )
-      ( dbfAlbCliP )->( ordListAdd( cPath + "AlbCliP.Cdx"  ) )
-
-      dbUseArea( .t., cDriver(), cPathOld + "AlbCLIT.DBF", cCheckArea( "AlbCLIT", @oldAlbCliT ), .f. )
-      ( oldAlbCliT )->( ordListAdd( cPathOld + "AlbCLIT.CDX"  ) )
-
-      dbUseArea( .t., cDriver(), cPathOld + "AlbCLIL.DBF", cCheckArea( "AlbCLIL", @oldAlbCliL ), .f. )
-      ( oldAlbCliL )->( ordListAdd( cPathOld + "AlbCLIL.CDX"  ) )
-
-      dbUseArea( .t., cDriver(), cPathOld + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @oldAlbCliI ), .f. )
-      ( oldAlbCliI )->( ordListAdd( cPathOld + "AlbCliI.Cdx"  ) )
-
-      dbUseArea( .t., cDriver(), cPathOld + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @oldAlbCliD ), .f. )
-      ( oldAlbCliD )->( ordListAdd( cPathOld + "AlbCliD.Cdx"  ) )
-
-      dbUseArea( .t., cDriver(), cPathOld + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @oldAlbCliP ), .f. )
-      ( oldAlbCliP )->( ordListAdd( cPathOld + "AlbCliP.Cdx"  ) )
-
-      while !( oldAlbCliT )->( eof() )
-
-         if eval( bFor, oldAlbCliT )
-            dbCopy( oldAlbCliT, dbfAlbCliT, .t. )
-
-            if ( oldAlbCliL )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
-               while ( oldAlbCliL )->CSERALB + Str( ( oldAlbCliL )->NNUMALB ) + ( oldAlbCliL )->CSUFALB == (oldAlbCliT)->CSERALB + Str( (dbfAlbCliT)->NNUMALB ) + (dbfAlbCliT)->CSUFALB .and. !(oldAlbCliL)->( eof() )
-                  dbCopy( oldAlbCliL, dbfAlbCliL, .t. )
-                  ( oldAlbCliL )->( dbSkip() )
-               end while
-            end if
-
-            if ( oldAlbCliI )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
-               while ( oldAlbCliI )->CSERALB + Str( ( oldAlbCliI )->NNUMALB ) + ( oldAlbCliI )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
-                  dbCopy( oldAlbCliI, dbfAlbCliI, .t. )
-                  ( oldAlbCliI )->( dbSkip() )
-               end while
-            end if
-
-            if ( oldAlbCliD )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
-               while ( oldAlbCliD )->CSERALB + Str( ( oldAlbCliD )->NNUMALB ) + ( oldAlbCliD )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
-                  dbCopy( oldAlbCliD, dbfAlbCliD, .t. )
-                  ( oldAlbCliD )->( dbSkip() )
-               end while
-            end if
-
-            if ( oldAlbCliP )->( dbSeek( ( oldAlbCliT )->CSERALB + Str( ( oldAlbCliT )->NNUMALB ) + ( oldAlbCliT )->CSUFALB ) )
-               while ( oldAlbCliP )->CSERALB + Str( ( oldAlbCliP )->NNUMALB ) + ( oldAlbCliP )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
-                  dbCopy( oldAlbCliP, dbfAlbCliP, .t. )
-                  ( oldAlbCliP )->( dbSkip() )
-               end while
-            end if
-
-         end if
-
-         ( oldAlbCliT )->( dbSkip() )
-
-      end while
-
-      /*
-      Reemplaza la antigua sesion----------------------------------------------
-      */
-
-      ( dbfAlbCliT )->( dbEval( {|| ( dbfAlbCliT )->cTurAlb := Space( 6 ) },,,,, .f. ) )
-
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-      ( dbfAlbCliL )->( dbCloseArea() )
-      ( dbfAlbCliI )->( dbCloseArea() )
-      ( dbfAlbCliD )->( dbCloseArea() )
-      ( dbfAlbCliP )->( dbCloseArea() )
-
-      ( oldAlbCliT )->( dbCloseArea() )
-      ( oldAlbCliL )->( dbCloseArea() )
-      ( oldAlbCliI )->( dbCloseArea() )
-      ( oldAlbCliD )->( dbCloseArea() )
-      ( oldAlbCliP )->( dbCloseArea() )
-
-      RECOVER USING oError
-
-         msgStop( "Imposible abrir todas las bases de datos de albaranes de clientes" + CRLF + ErrorMessage( oError ) )
-
-      END SEQUENCE
-      ErrorBlock( oBlock )
-
-   end if
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION rxAlbCli( cPath, oMeter )
-
-	local dbfAlbCliT
-
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "ALBCLIT.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIL.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLII.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLID.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIP.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIS.DBF" )
-
-      CreateFiles( cPath )
-
-   end if
-
-   fEraseIndex( cPath + "ALBCLIT.CDX" )
-   fEraseIndex( cPath + "ALBCLIL.CDX" )
-   fEraseIndex( cPath + "ALBCLII.CDX" )
-   fEraseIndex( cPath + "ALBCLID.CDX" )
-   fEraseIndex( cPath + "ALBCLIP.CDX" )
-   fEraseIndex( cPath + "ALBCLIS.CDX" )
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cObra", "cCodObr + Dtos( dFecAlb )", {|| Field->cCodObr + Dtos( Field->dFecAlb ) } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCodAge", "cCodAge + Dtos( dFecAlb )", {|| Field->cCodAge + Dtos( Field->dFecAlb ) } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODSUALB", "CCODSUALB", {|| Field->CCODSUALB } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LFACTURADO", "LFACTURADO", {|| Field->LFACTURADO } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cNumFac", "CNUMFAC", {|| Field->CNUMFAC }, ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CTURALB", "CTURALB + CSUFALB + CCODCAJ", {|| Field->CTURALB + Field->CSUFALB + Field->CCODCAJ } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMORD", "Str( nNumOrd ) + cSufOrd", {|| Str( Field->nNumOrd ) + Field->cSufOrd } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODTRN", "CCODTRN", {|| Field->CCODTRN } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ))
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliT ), .f. )
-
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRef", "cRef + cCodPr1 + cCodPr2 + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "Lote", "cLote" , {|| Field->cLote } ) )
-
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCLIL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedDet", "cNumPed + cRef + cCodPr1 + cCodPr2 + cRefPrv", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cRefPrv } ) ) // + cDetalle
-
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
-
-      ( dbfAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
-   end if
-
-   // Pagos de albaranes
-
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliT ), .f. )
-
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB + STR( NNUMREC )", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB + STR( Field->NNUMREC ) } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CTURREC", "cTurRec + cSufAlb + cCodCaj", {|| Field->cTurRec + Field->cSufAlb + Field->cCodCaj } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CCODCLI", "cCodCli", {|| Field->cCodCli } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.CDX", "DENTREGA", "dEntrega", {|| Field->dEntrega } ) )
-
-      ( dbfAlbCliT )->( ordCondSet("!Deleted() .and. !Field->lPasado", {|| !Deleted() .and. !Field->lPasado } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "cEPaisIBAN + cECtrlIBAN + cEntEmp + cSucEmp + cDigEmp + cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "AlbCliI.DBF", cCheckArea( "AlbCliI", @dbfAlbCliT ), .f. )
-
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
-
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "AlbCliD.DBF", cCheckArea( "AlbCliD", @dbfAlbCliT ), .f. )
-
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
-
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "AlbCliS.Dbf", cCheckArea( "AlbCliS", @dbfAlbCliT ), .f. )
-
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
-
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de albaranes de clientes" )
-   end if
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
 STATIC FUNCTION CreateFiles( cPath )
 
    if !lExistTable( cPath + "AlbCliT.Dbf" )
@@ -12858,1153 +8847,6 @@ STATIC FUNCTION CreateFiles( cPath )
 RETURN NIL
 
 //--------------------------------------------------------------------//
-
-function aAlbCliDoc()
-
-   local aAlbCliDoc  := {}
-
-   aAdd( aAlbCliDoc, { "cSerAlb", "C",    1,  0, "Serie de albarán" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aAlbCliDoc, { "nNumAlb", "N",    9,  0, "Número de albarán" ,               "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aAlbCliDoc, { "cSufAlb", "C",    2,  0, "Sufijo de albarán" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aAlbCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aAlbCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aAlbCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
-
-return ( aAlbCliDoc )
-
-//---------------------------------------------------------------------------//
-
-function aIncAlbCli()
-
-   local aIncAlbCli  := {}
-
-   aAdd( aIncAlbCli, { "cSerAlb", "C",    1,  0, "Serie de albarán" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "nNumAlb", "N",    9,  0, "Número de albarán" ,               "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "cSufAlb", "C",    2,  0, "Sufijo de albarán" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
-
-return ( aIncAlbCli )
-
-//---------------------------------------------------------------------------//
-
-function aItmAlbPgo()
-
-   local aBasRecCli  := {}
-
-   aAdd( aBasRecCli, {"cSerAlb"     ,"C",  1, 0, "Serie de albarán" ,                  "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"nNumAlb"     ,"N",  9, 0, "Número de albarán" ,                 "'999999999'",       "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cSufAlb"     ,"C",  2, 0, "Sufijo de albarán" ,                 "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"nNumRec"     ,"N",  2, 0, "Número del recibo",                  "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                     "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cTurRec"     ,"C",  6, 0, "Sesión del recibo",                  "######",            "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cCodCli"     ,"C", 12, 0, "Código de cliente",                  "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"dEntrega"    ,"D",  8, 0, "Fecha de cobro",                     "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"nImporte"    ,"N", 16, 6, "Importe",                            "cPorDivEnt",        "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cDescrip"    ,"C",100, 0, "Concepto del pago",                  "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cPgdoPor"    ,"C", 50, 0, "Pagado por",                         "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cDocPgo"     ,"C", 50, 0, "Documento de pago",                  "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cDivPgo"     ,"C",  3, 0, "Código de la divisa",                "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"nVdvPgo"     ,"N", 10, 6, "Cambio de la divisa",                "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cCodAge"     ,"C",  3, 0, "Código del agente",                  "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "Código de la forma de pago",         "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"lCloPgo"     ,"L",  1, 0, "Logico de turno cerrado",            "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cNumAnt"     ,"C", 14, 0, "Número del anticipo en el pedido",   "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "Número del pedido al que pertenece", "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico de pasado",                   "",                  "", "( cDbfEnt )" } )
-   aAdd( aBasRecCli, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",                  "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",                    "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta bancaria de la empresa",       "", "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria de la empresa", "", "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",                 "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",                "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",        "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                      "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "", "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "", "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",                  "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",          "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",  "",                        "", "( cDbfEnt )", nil } )
-
-
-return ( aBasRecCli )
-
-//---------------------------------------------------------------------------//
-
-Function aColAlbCli()
-
-   local aColAlbCli  := {}
-
-   aAdd( aColAlbCli, { "cSerAlb",   "C",  1, 0, "Serie del albarán" ,            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nNumAlb",   "N",  9, 0, "Número del albarán" ,           "'999999999'",       "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cSufAlb",   "C",  2, 0, "Sufijo del albarán" ,           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cRef",      "C", 18, 0, "Referencia de artículo" ,       "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cDetalle",  "C",250, 0, "Detalle de artículo" ,          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nPreUnit",  "N", 16, 6, "Precio artículo" ,              "cPouDivAlb",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nPntVer",   "N", 16, 6, "Importe punto verde" ,          "cPpvDivAlb",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nImpTrn",   "N", 16, 6, "Importe del porte" ,            "cPouDivAlb",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nDto",      "N",  6, 2, "Descuento de artículo" ,        "'@E 999.9'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nDtoPrm",   "N",  6, 2, "Descuento de promoción" ,       "'@E 999.9'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nIva",      "N",  4, 1, cImp() + " del artículo" ,             "'@E 99'",           "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nCanEnt",   "N", 16, 6, cNombreCajas(),                  "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nCanFac",   "N", 16, 6, "Cantidad facturada" ,           "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lControl",  "L",  1, 0, "Control reservado" ,            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nPesoKg",   "N", 16, 6, "Peso del producto" ,            "'@E 9,999.99'",     "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cPesoKg",   "C",  2, 0, "Unidad de peso del producto" ,  "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cUnidad",   "C",  2, 0, "Unidad de venta" ,              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nComAge",   "N",  6, 2, "Comisión del agente" ,          "'@E 999.9'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nUniCaja",  "N", 16, 6, cNombreUnidades(),               "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nUndKit",   "N", 16, 6, "Unidades del producto kit",     "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "dFecha",    "D",  8, 0, "Fecha de linea" ,               "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cTipMov",   "C",  2, 0, "Tipo de movimiento" ,           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "mLngDes",   "M", 10, 0, "Descripción larga" ,            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lTotLin",   "L",  1, 0, "Línea de total" ,               "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lImpLin",   "L",  1, 0, "Línea no imprimible" ,          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lNewLin",   "L",  1, 0, "" ,                             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cNumPed"   ,"C", 12, 0, "Número del pedido" ,            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",    "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad",    "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nFacCnv",   "N", 16, 6, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nDtoDiv",   "N", 16, 6, "Descuento en línea",            "cPouDivAlb",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nNumLin",   "N",  4, 0, "Número de la línea",            "'9999'",            "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nCtlStk",   "N",  1, 0, "Tipo de stock de la linea",     "9",                 "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nCosDiv",   "N", 16, 6, "Precio de costo",               "cPouDivAlb",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nPvpRec",   "N", 16, 6, "Precio de venta recomendado",   "cPouDivAlb",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cAlmLin",   "C",  3, 0, "Código del almacen",            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lIvaLin",   "L",  1, 0, cImp() + " incluido",            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nValImp",   "N", 16, 6, "Importe de impuesto",           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodImp",   "C",  3, 0, "Código del IVMH",               "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lLote",     "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nLote",     "N",  9, 0, "",                              "'999999999'",       "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cLote",     "C", 12, 0, "Número de lote",                "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "dFecCad",   "D",  8, 0, "Fecha de caducidad",            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lKitArt",   "L",  1, 0, "Línea con escandallo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lKitChl",   "L",  1, 0, "Línea pertenciente a escandallo", "",                "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lKitPrc",   "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nMesGrt",   "N",  2, 0, "Meses de garantía",             "'99'",              "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lMsgVta",   "L",  1, 0, "Avisar venta sin stocks",       "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lNotVta",   "L",  1, 0, "No permitir venta sin stocks",  "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "mNumSer",   "M", 10, 0, "" ,                             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodTip",   "C",  3, 0, "Código del tipo de artículo",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodFam",   "C", 16, 0, "Código de familia",             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cGrpFam",   "C",  3, 0, "Código del grupo de familia",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nReq",      "N", 16, 6, "Recargo de equivalencia",       "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "mObsLin",   "M", 10, 0, "Observación de línea",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodPrv",   "C", 12, 0, "Código del proveedor",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cNomPrv",   "C", 30, 0, "Nombre del proveedor",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cImagen",   "C",250, 0, "Fichero de imagen" ,            "",                  "", "( cDbfCol )", .t. } )
-   aAdd( aColAlbCli, { "nPuntos",   "N", 15, 6, "Puntos del artículo",           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nValPnt",   "N", 16, 6, "Valor del punto",               "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nDtoPnt",   "N",  5, 2, "Descuento puntos",              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nIncPnt",   "N",  5, 2, "Incremento porcentual",         "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cRefPrv",   "C", 18, 0, "Referencia proveedor",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nVolumen",  "N", 16, 6, "Volumen del producto" ,         "'@E 9,999.99'",     "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cVolumen",  "C",  2, 0, "Unidad del volumen" ,           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "dFecEnt" ,  "D",  8, 0, "Fecha de entrada del alquiler", "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "dFecSal" ,  "D",  8, 0, "Fecha de salida del alquiler",  "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nPreAlq" ,  "N", 16, 6, "Precio de alquiler",            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nNumMed",   "N",  1, 0, "Número de mediciones",          "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nMedUno",   "N", 16, 6, "Primera unidad de medición",    "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nMedDos",   "N", 16, 6, "Segunda unidad de medición",    "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nMedTre",   "N", 16, 6, "Tercera unidad de medición",    "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nTarLin",   "N", 16, 6, "Tarifa de precio aplicada",     "MasUnd()",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodUbi1",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodUbi2",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodUbi3",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValUbi1",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValUbi2",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValUbi3",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cNomUbi1",  "C", 30, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cNomUbi2",  "C", 30, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cNomUbi3",  "C", 30, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lImpFra",   "L",  1, 0, "Lógico de imprimir frase publicitaria", "",          "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodFra",   "C",  3, 0, "Código de frase publicitaria",  "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cTxtFra",   "C",250, 0, "",                              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "Descrip",   "M", 10, 0, "Observación de línea",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lFacturado","L",  1, 0, "Lógico de facturado",           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
-
-Return ( aColAlbCli )
-
-//---------------------------------------------------------------------------//
-
-Function aItmAlbCli()
-
-   local aItmAlbCli := {}
-
-   aAdd( aItmAlbCli, { "CSERALB"   ,"C",  1, 0, "Serie del albarán" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NNUMALB"   ,"N",  9, 0, "Número del albarán" ,                                   "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CSUFALB"   ,"C",  2, 0, "Sufijo del albarán" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CTURALB"   ,"C",  6, 0, "Sesión del albarán",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "DFECALB"   ,"D",  8, 0, "Fecha del albarán" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODCLI"   ,"C", 12, 0, "Código del cliente" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODALM"   ,"C",  3, 0, "Código de almacén" ,                                    "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNOMCLI"   ,"C", 80, 0, "Nombre del cliente" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDIRCLI"   ,"C",100, 0, "Domicilio del cliente" ,                                "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CPOBCLI"   ,"C", 35, 0, "Población del cliente" ,                                "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CPRVCLI"   ,"C", 20, 0, "Provincia del cliente" ,                                "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CPOSCLI"   ,"C", 15, 0, "Código postal del cliente" ,                            "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDNICLI"   ,"C", 30, 0, "DNI/CIF del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LMODCLI"   ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LFACTURADO","L",  1, 0, "Lógico de facturado" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lEntregado","L",  1, 0, "Lógico albarán enviado" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "DFECENT"   ,"D",  8, 0, "Fecha de entrada del albarán" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODSUALB" ,"C", 25, 0, "Referencia a su albarán" ,                              "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCONDENT"  ,"C",100, 0, "Condición de entrada" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "MCOMENT"   ,"M", 10, 0, "Cometarios del albarán" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "MOBSERV"   ,"M", 10, 0, "Observaciones" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODPAGO"  ,"C",  2, 0, "Código de la forma de pago" ,                           "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  3, 0, "Número de bultos" ,                                     "'999'",              "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NPORTES"   ,"N", 16, 6, "Importe de los portes" ,                                "cPouDivAlb",         "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODAGE"   ,"C",  3, 0, "Código del agente" ,                                    "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de obra" ,                                       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa" ,                                     "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODRUT"   ,"C",  4, 0, "Código de ruta" ,                                       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMPED"   ,"C", 12, 0, "Número del pedido" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cNumPre"   ,"C", 12, 0, "Número del presupuesto" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,                                       "",                   "", "( cDbf )" } )
-   aAdd( aItmAlbCli, { "NTIPOALB"  ,"N",  1, 0, "Tipo de albarán" ,                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMFAC"   ,"C", 12, 0, "Número del documento facturado" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LMAYOR"    ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NTARIFA"   ,"N",  1, 0, "Tarifa de precio aplicada" ,                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDTOESP"   ,"C", 50, 0, "Descripción porcentaje de descuento",                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOESP"   ,"N",  6, 2, "Porcentaje de descuento",                               "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDPP"      ,"C", 50, 0, "Descripción pct. de dto. por pronto pago",              "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDPP"      ,"N",  6, 2, "Porcentaje de dto. por pronto pago",                    "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDTOUNO"   ,"C", 25, 0, "Descripción del primer descuento personalizado",        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOUNO"   ,"N",  4, 1, "Porcentaje del primer descuento pers.",                 "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDTODOS"   ,"C", 25, 0, "Descripción del segundo descuento pers.",               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTODOS"   ,"N",  4, 1, "Descripción del segundo descuento pers.",               "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOCNT"   ,"N",  6, 2, "Pct. de dto. por pago contado",                         "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTORAP"   ,"N",  6, 2, "Pct. de dto. por rappel",                               "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOPUB"   ,"N",  6, 2, "Pct. de dto. por publicidad",                           "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOPGO"   ,"N",  6, 2, "Pct. de dto. por pago centralizado",                    "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOPTF"   ,"N",  7, 2, ""                                 ,                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LRECARGO"  ,"L",  1, 0, "Lógico recargo de equivalencia",                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NPCTCOMAGE","N",  6, 2, "Pct. de comisión del agente",                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LSNDDOC"   ,"L",  1, 0, "Lógico de documento a enviar",                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDIVALB"   ,"C",  3, 0, "Código de divisa",                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NVDVALB"   ,"N", 10, 4, "Valor del cambio de la divisa",                         "'@EZ 999,999.9999'", "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CRETPOR"   ,"C",100, 0, "Retirado por" ,                                         "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CRETMAT"   ,"C", 20, 0, "Matrícula" ,                                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMDOC"   ,"C", 12, 0, "",                                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CSUPED"    ,"C", 50, 0, "Su pedido",                                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LIVAINC"   ,"L",  1, 0, cImp() + " incluido",                                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NREGIVA"   ,"N",  1, 0, "Regimen de " + cImp(),                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LGENLQD"   ,"L",  1, 0, "Generado por liquidación",                              "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NNUMORD"   ,"N",  9, 0, "Número de la orden de carga" ,                          "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CSUFORD"   ,"C",  2, 0, "Sufijo de la orden de carga" ,                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "DFECORD"   ,"D",  8, 0, "Fecha de la orden de carga" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NIVAMAN"   ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,                       "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NMANOBR"   ,"N", 16, 6, "Gastos" ,                                               "cPorDivAlb",         "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodTrn"   ,"C",  9, 0, "Código del transportista" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nKgsTrn"   ,"N", 16, 6, "TARA del transportista" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lCloAlb"   ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodUsr"   ,"C",  3, 0, "Código de usuario",                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecCre"   ,"D",  8, 0, "Fecha de creación/modificación del documento",          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cTimCre"   ,"C",  5, 0, "Hora de creación/modificación del documento",           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecEnv"   ,"D",  8, 0, "Fecha de envio",                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodGrp"   ,"C",  4, 0, "Código de grupo de cliente" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lImprimido","L",  1, 0, "Lógico de imprimido" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecImp"   ,"D",  8, 0, "Última fecha de impresión" ,                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                      "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotNet",   "N", 16, 6, "Total neto" ,                                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotIva",   "N", 16, 6, "Total " + cImp() ,                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotReq",   "N", 16, 6, "Total recargo" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotAlb",   "N", 16, 6, "Total albarán" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotPag",   "N", 16, 6, "Total anticipado" ,                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lOperPV",   "L",  1, 0, "Lógico para operar con punto verde" ,                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cBanco"   , "C", 50, 0, "Nombre del banco del cliente",                          "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cPaisIBAN", "C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCtrlIBAN", "C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",                "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cEntBnc"  , "C",  4, 0, "Entidad de la cuenta bancaria del cliente",             "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cSucBnc"  , "C",  4, 0, "Sucursal de la cuenta bancaria del cliente",            "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                           "",                   "", "( cDbf )", nil } )
-
-Return ( aItmAlbCli )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lPic, lExcCnt, lNeto )
-
-   local nRecno
-	local bCondition
-   local dFecAlb
-   local lRecargo
-   local nDtoUno
-   local nDtoDos
-   local nDtoEsp
-	local nDtoPP
-	local nDtoCnt
-	local nDtoRap
-	local nDtoPub
-	local nDtoPgo
-	local nDtoPtf
-	local cCodDiv
-	local cCodPgo
-   local lIvaInc
-   local nDtoAtp
-   local nSbrAtp
-   local nKgsTrn
-   local nIvaMan
-   local nManObr           := 0
-   local nTotalArt         := 0
-   local nTotalUnd         := 0
-   local nTotalLin         := 0
-   local nTotalTrn         := 0
-   local nTotalPnt         := 0
-   local nTotalIvm         := 0
-   local nImpIva           := { 0, 0, 0 }
-   local nImpReq           := { 0, 0, 0 }
-   local aTotalDto         := { 0, 0, 0 }
-   local aTotalDPP         := { 0, 0, 0 }
-   local aTotalUno         := { 0, 0, 0 }
-   local aTotalDos         := { 0, 0, 0 }
-   local aTotalAtp         := { 0, 0, 0 }
-   local nDescuentosLineas := 0
-   local lOperarPntVer     := .f.
-
-   DEFAULT cAlbCliT        := dbfAlbCliT
-   DEFAULT cAlbCliL        := dbfAlbCliL
-   DEFAULT cAlbaran        := ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb
-   DEFAULT cIva            := dbfIva
-   DEFAULT cDiv            := dbfDiv
-   DEFAULT lPic            := .f.
-   DEFAULT lNeto           := .f.
-
-   if Empty( Select( cAlbCliT ) )
-      Return ( 0 )
-   end if
-
-   if Empty( Select( cAlbCliL ) )
-      Return ( 0 )
-   end if
-
-   if Empty( Select( cIva ) )
-      Return ( 0 )
-   end if
-
-   if Empty( Select( cDiv ) )
-      Return ( 0 )
-   end if
-
-   public nTotBrt    := 0
-   public nTotAlb    := 0
-   public nTotDto    := 0
-   public nTotDPP    := 0
-   public nTotNet    := 0
-   public nTotIva    := 0
-   public nTotIvm    := 0
-   public nTotAge    := 0
-   public nTotReq    := 0
-   public nTotPnt    := 0
-   public nTotUno    := 0
-   public nTotDos    := 0
-   public nTotCos    := 0
-   public nTotPes    := 0
-   public nTotDif    := 0
-   public nTotAtp    := 0
-   public nTotTrn    := 0
-   public nPctRnt    := 0
-   public nTotRnt    := 0
-   public cCtaCli    := cClientCuenta( ( cAlbCliT )->cCodCli )
-
-   public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
-   public aIvaUno    := aTotIva[ 1 ]
-   public aIvaDos    := aTotIva[ 2 ]
-   public aIvaTre    := aTotIva[ 3 ]
-
-   public aTotIvm    := { { 0,nil,0 }, { 0,nil,0 }, { 0,nil,0 }, }
-   public aIvmUno    := aTotIvm[ 1 ]
-   public aIvmDos    := aTotIvm[ 2 ]
-   public aIvmTre    := aTotIvm[ 3 ]
-
-
-   public nTotalDto  := 0
-
-   public nTotArt    := 0
-   public nTotCaj    := 0
-
-   nImpIva           := { 0,0,0 }
-   nImpReq           := { 0,0,0 }
-
-   nRecno            := ( cAlbCliL )->( recno() )
-
-   if aTmp != nil
-      nDtoUno        := aTmp[ _NDTOUNO ]
-      nDtoDos        := aTmp[ _NDTODOS ]
-      dFecAlb        := aTmp[ _DFECALB ]
-		nDtoEsp			:= aTmp[ _NDTOESP ]
-      nDtoPP         := aTmp[ _NDPP    ]
-		nDtoCnt			:= aTmp[ _NDTOCNT ]
-		nDtoRap     	:= aTmp[ _NDTORAP ]
-		nDtoPub     	:= aTmp[ _NDTOPUB ]
-		nDtoPgo     	:= aTmp[ _NDTOPGO ]
-		nDtoPtf			:= aTmp[ _NDTOPTF ]
-      lRecargo       := aTmp[ _LRECARGO]
-      nIvaMan        := aTmp[ _NIVAMAN ]
-      nManObr        := aTmp[ _NMANOBR ]
-      cCodDiv        := aTmp[ _CDIVALB ]
-      nVdvDiv        := aTmp[ _NVDVALB ]
-		cCodPgo			:= aTmp[ _CCODPAGO]
-      lIvaInc        := aTmp[ _LIVAINC ]
-      nDtoAtp        := aTmp[ _NDTOATP ]
-      nSbrAtp        := aTmp[ _NSBRATP ]
-      nKgsTrn        := aTmp[ _NKGSTRN ]
-      lOperarPntVer  := aTmp[ _LOPERPV ]
-      bCondition     := {|| ( cAlbCliL )->( !eof() ) }
-      ( cAlbCliL )->( dbGoTop() )
-   else
-      nDtoUno        := ( cAlbCliT )->nDtoUno
-      nDtoDos        := ( cAlbCliT )->nDtoDos
-      dFecAlb        := ( cAlbCliT )->dFecAlb
-      nDtoEsp        := ( cAlbCliT )->nDtoEsp
-      nDtoPP         := ( cAlbCliT )->nDpp
-      nDtoCnt        := ( cAlbCliT )->nDtoCnt
-      nDtoRap        := ( cAlbCliT )->nDtoRap
-      nDtoPub        := ( cAlbCliT )->nDtoPub
-      nDtoPgo        := ( cAlbCliT )->nDtoPgo
-      nDtoPtf        := ( cAlbCliT )->nDtoPtf
-      lRecargo       := ( cAlbCliT )->lRecargo
-      nIvaMan        := ( cAlbCliT )->nIvaMan
-      nManObr        := ( cAlbCliT )->nManObr
-      cCodDiv        := ( cAlbCliT )->cDivAlb
-      nVdvDiv        := ( cAlbCliT )->nVdvAlb
-      cCodPgo        := ( cAlbCliT )->cCodPago
-      lIvaInc        := ( cAlbCliT )->lIvaInc
-      nDtoAtp        := ( cAlbCliT )->nDtoAtp
-      nSbrAtp        := ( cAlbCliT )->nSbrAtp
-      nKgsTrn        := ( cAlbCliT )->nKgsTrn
-      lOperarPntVer  := ( cAlbCliT )->lOperPV
-      bCondition     := {|| ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb == cAlbaran .and. ( cAlbCliL )->( !eof() ) }
-      ( cAlbCliL )->( dbSeek( cAlbaran ) )
-   endif
-
-    /*
-	Cargamos los pictures dependiendo de la moneda
-   */
-
-   cPorDiv           := cPorDiv( cCodDiv, cDiv )
-   cPouDiv           := cPouDiv( cCodDiv, cDiv )
-   nDouDiv           := nDouDiv( cCodDiv, cDiv )
-   nRouDiv           := nRouDiv( cCodDiv, cDiv )
-   nDpvDiv           := nDpvDiv( cCodDiv, cDiv )
-
-   while Eval( bCondition )
-
-      if lValLine( cAlbCliL )
-
-         if ( lExcCnt == nil                                .or.;    // Entran todos
-            ( lExcCnt .and. ( cAlbCliL )->nCtlStk != 2 )    .or.;    // Articulos sin contadores
-            ( !lExcCnt .and. ( cAlbCliL )->nCtlStk == 2 ) )          // Articulos con contadores
-
-            if ( cAlbCliL )->lTotLin
-
-               // Esto es para evitar escirbir en el fichero muchas veces
-
-               if ( cAlbCliL )->nPreUnit != nTotalLin .or. ( cAlbCliL )->nUniCaja != nTotalUnd
-
-                  if dbLock( cAlbCliL )
-                     ( cAlbCliL )->nPreUnit := nTotalLin
-                     ( cAlbCliL )->nUniCaja := nTotalUnd
-                     ( cAlbCliL )->( dbUnLock() )
-                  end if
-
-               end if
-
-               // Limpien
-
-               nTotalLin         := 0
-               nTotalUnd         := 0
-
-            else
-
-               nTotalArt         := nTotLAlbCli( cAlbCliL, nDouDiv, nRouDiv, nil, .t., .f., .f. )
-               nTotalTrn         := nTrnLAlbCli( cAlbCliL, nDouDiv )
-               nTotalPnt         := if( lOperarPntVer, nPntLAlbCli( cAlbCliL, nDpvDiv ), 0 )
-               nTotalIvm         := nTotIAlbCli( cAlbCliL, nDouDiv, nRouDiv )
-               nTotCos           += nCosLAlbCli( cAlbCliL, nDouDiv, nDorDiv )
-               nTotPes           += nPesLAlbCli( cAlbCliL )
-               nDescuentosLineas += nTotDtoLAlbCli( cAlbCliL, nDouDiv )
-
-               if aTmp != nil
-                  nTotAge        += nComLAlbCli( aTmp, cAlbCliL, nDouDiv, nRouDiv )
-               else
-                  nTotAge        += nComLAlbCli( cAlbCliT, cAlbCliL, nDouDiv, nRouDiv )
-               end if
-
-               // Acumuladores para las lineas de totales----------------------
-
-               nTotalLin         += nTotalArt
-               nTotalUnd         += nTotNAlbCli( cAlbCliL )
-
-               nTotArt           += nTotNAlbCli( cAlbCliL )
-               nTotCaj           += ( cAlbCliL )->nCanEnt
-
-               // Estudio de impuestos-----------------------------------------------
-
-               if nTotalArt + nTotalIvm + nTotalTrn + nTotalPnt != 0
-
-                  do case
-                     case _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cAlbCliL )->nIva
-
-                        _NPCTIVA1   := ( cAlbCliL )->nIva
-                        _NPCTREQ1   := ( cAlbCliL )->nReq
-                        _NBRTIVA1   += nTotalArt
-                        _NIVMIVA1   += nTotalIvm
-                        _NTRNIVA1   += nTotalTrn
-                        _NPNTVER1   += nTotalPnt
-
-                     case _NPCTIVA2 == nil .OR. _NPCTIVA2 == ( cAlbCliL )->nIva
-
-                        _NPCTIVA2   := (cAlbCliL)->nIva
-                        _NPCTREQ2   := (cAlbCliL)->nReq
-                        _NBRTIVA2   += nTotalArt
-                        _NIVMIVA2   += nTotalIvm
-                        _NTRNIVA2   += nTotalTrn
-                        _NPNTVER3   += nTotalPnt
-
-                     case _NPCTIVA3 == nil .OR. _NPCTIVA3 == ( cAlbCliL )->nIva
-
-                        _NPCTIVA3   := ( cAlbCliL )->nIva
-                        _NPCTREQ3   := ( cAlbCliL )->nReq
-                        _NBRTIVA3   += nTotalArt
-                        _NIVMIVA3   += nTotalIvm
-                        _NTRNIVA3   += nTotalTrn
-                        _NPNTVER3   += nTotalPnt
-
-                  end case
-
-                  //Estudio de los impuestos especiales------------------------
-
-                  if ( cAlbCliL )->nValImp != 0
-
-                     do case
-                        case aTotIvm[ 1, 2 ] == nil .or. aTotIvm[ 1, 2 ] == ( cAlbCliL )->nValImp
-                           aTotIvm[ 1, 1 ]      += nTotNAlbCli( cAlbCliL ) * if( ( cAlbCliL )->lVolImp, NotCero( ( cAlbCliL )->nVolumen ), 1 )
-                           aTotIvm[ 1, 2 ]      := ( cAlbCliL )->nValImp
-                           aTotIvm[ 1, 3 ]      := aTotIvm[ 1, 1 ] * aTotIvm[ 1, 2 ]
-
-                        case aTotIvm[ 2, 2 ] == nil .or. aTotIvm[ 2, 2 ] == ( cAlbCliL )->nValImp
-                           aTotIvm[ 2, 1 ]      += nTotNAlbCli( cAlbCliL ) * if( ( cAlbCliL )->lVolImp, NotCero( ( cAlbCliL )->nVolumen ), 1 )
-                           aTotIvm[ 2, 2 ]      := ( cAlbCliL )->nValImp
-                           aTotIvm[ 2, 3 ]      := aTotIvm[ 2, 1 ] * aTotIvm[ 2, 2 ]
-
-                        case aTotIvm[ 3, 2 ] == nil .or. aTotIvm[ 3, 2 ] == ( cAlbCliL )->nValImp
-                           aTotIvm[ 3, 1 ]      += nTotNAlbCli( cAlbCliL ) * if( ( cAlbCliL )->lVolImp, NotCero( ( cAlbCliL )->nVolumen ), 1 )
-                           aTotIvm[ 3, 2 ]      := ( cAlbCliL )->nValImp
-                           aTotIvm[ 3, 3 ]      := aTotIvm[ 3, 1 ] * aTotIvm[ 3, 2 ]
-
-                     end case
-
-                  end if
-
-               end if
-
-            end if
-
-         else
-
-           // Limpien tambien si tenemos una linea de control
-
-            nTotalLin   := 0
-            nTotalUnd   := 0
-
-         end if
-
-      end if
-
-      ( cAlbCliL )->( dbSkip() )
-
-   end while
-
-   ( cAlbCliL )->( dbGoto( nRecno ) )
-
-   // Ordenamos los impuestosS de menor a mayor
-
-   aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
-
-   _NBASIVA1         := Round( _NBRTIVA1, nRouDiv )
-   _NBASIVA2         := Round( _NBRTIVA2, nRouDiv )
-   _NBASIVA3         := Round( _NBRTIVA3, nRouDiv )
-
-   nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
-
-   // Descuentos atipicos sobre base
-
-   if nSbrAtp <= 1 .and. nDtoAtp != 0
-
-      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
-
-      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
-
-   end if
-
-   // Descuentos Especiales
-
-   if nDtoEsp  != 0
-
-      aTotalDto[1]   := Round( _NBASIVA1 * nDtoEsp / 100, nRouDiv )
-      aTotalDto[2]   := Round( _NBASIVA2 * nDtoEsp / 100, nRouDiv )
-      aTotalDto[3]   := Round( _NBASIVA3 * nDtoEsp / 100, nRouDiv )
-
-      nTotDto        := aTotalDto[1] + aTotalDto[2] + aTotalDto[3]
-
-		_NBASIVA1		-= aTotalDto[1]
-		_NBASIVA2		-= aTotalDto[2]
-		_NBASIVA3		-= aTotalDto[3]
-
-   end if
-
-   // Descuentos atipicos sobre Descuentos especiales
-
-
-   if nSbrAtp == 2 .and. nDtoAtp != 0
-
-      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
-
-      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
-
-   end if
-
-   // Descuentos por Pronto Pago estos son los buenos
-
-	IF nDtoPP	!= 0
-
-      aTotalDPP[1]   := Round( _NBASIVA1 * nDtoPP / 100, nRouDiv )
-      aTotalDPP[2]   := Round( _NBASIVA2 * nDtoPP / 100, nRouDiv )
-      aTotalDPP[3]   := Round( _NBASIVA3 * nDtoPP / 100, nRouDiv )
-
-      nTotDPP        := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
-
-		_NBASIVA1		-= aTotalDPP[1]
-		_NBASIVA2		-= aTotalDPP[2]
-		_NBASIVA3		-= aTotalDPP[3]
-
-	END IF
-
-   // Descuentos atipicos sobre Descuento Pronto Pago
-
-   if nSbrAtp == 3 .and. nDtoAtp != 0
-
-      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
-
-      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
-
-   end if
-
-	IF nDtoUno != 0
-
-      aTotalUno[1]   := Round( _NBASIVA1 * nDtoUno / 100, nRouDiv )
-      aTotalUno[2]   := Round( _NBASIVA2 * nDtoUno / 100, nRouDiv )
-      aTotalUno[3]   := Round( _NBASIVA3 * nDtoUno / 100, nRouDiv )
-
-      nTotUno        := aTotalUno[1] + aTotalUno[2] + aTotalUno[3]
-
-		_NBASIVA1		-= aTotalUno[1]
-		_NBASIVA2		-= aTotalUno[2]
-		_NBASIVA3		-= aTotalUno[3]
-
-	END IF
-
-   // Descuentos atipicos sobre Descuento definido 1
-
-   if nSbrAtp == 4 .and. nDtoAtp != 0
-
-      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
-
-      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
-
-   end if
-
-	IF nDtoDos != 0
-
-      aTotalDos[1]   := Round( _NBASIVA1 * nDtoDos / 100, nRouDiv )
-      aTotalDos[2]   := Round( _NBASIVA2 * nDtoDos / 100, nRouDiv )
-      aTotalDos[3]   := Round( _NBASIVA3 * nDtoDos / 100, nRouDiv )
-
-      nTotDos        := aTotalDos[1] + aTotalDos[2] + aTotalDos[3]
-
-		_NBASIVA1		-= aTotalDos[1]
-		_NBASIVA2		-= aTotalDos[2]
-		_NBASIVA3		-= aTotalDos[3]
-
-	END IF
-
-   // Descuentos atipicos sobre Descuento definido 2
-
-   if nSbrAtp == 5 .and. nDtoAtp != 0
-
-      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
-
-      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
-
-   end if
-
-   /*
-   Estudio de impuestos para el Gasto despues de los descuentos----------------------
-   */
-
-   if nManObr != 0
-
-      do case
-      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
-
-         _NPCTIVA1   := nIvaMan
-         _NBASIVA1   += nManObr
-
-      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
-
-         _NPCTIVA2   := nIvaMan
-         _NBASIVA2   += nManObr
-
-      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
-
-         _NPCTIVA3   := nIvaMan
-         _NBASIVA3   += nManObr
-
-      end case
-
-   end if
-
-   // Una vez echos los descuentos le sumamos los transportes------------------
-
-   _NBASIVA1         += _NTRNIVA1
-   _NBASIVA2         += _NTRNIVA2
-   _NBASIVA3         += _NTRNIVA3
-
-   // Una vez echos los descuentos le sumamos el punto verde-------------------
-
-   _NBASIVA1         += _NPNTVER1
-   _NBASIVA2         += _NPNTVER2
-   _NBASIVA3         += _NPNTVER3
-
-   /*
-   Una vez echos los descuentos le sumamos el IVMH-----------------------------
-	*/
-
-   if uFieldEmpresa( "lIvaImpEsp" )
-      _NBASIVA1      += _NIVMIVA1
-      _NBASIVA2      += _NIVMIVA2
-      _NBASIVA3      += _NIVMIVA3
-   end if
-
-   // Calculamos los impuestosS-----------------------------------------------------
-
-   if !lIvaInc
-
-      //Calculos de impuestos
-
-      _NIMPIVA1      := if ( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
-      _NIMPIVA2      := if ( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
-      _NIMPIVA3      := if ( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
-
-      //Calculo de recargo
-
-      if lRecargo
-         _NIMSATQ1   := if ( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
-         _NIMSATQ2   := if ( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
-         _NIMSATQ3   := if ( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
-      end if
-
-   else
-
-      if _NPCTIVA1 != 0
-         _NIMPIVA1   := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
-      end if
-
-      if _NPCTIVA2 != 0
-         _NIMPIVA2   := if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
-      end if
-
-      if _NPCTIVA3 != 0
-         _NIMPIVA3   := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
-      end if
-
-      if lRecargo
-         if _NPCTREQ1 != 0
-            _NIMSATQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( 100 / _NPCTREQ1 + 1 ), nRouDiv ), 0 )
-         end if
-         if _NPCTREQ2 != 0
-            _NIMSATQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( 100 / _NPCTREQ2 + 1 ), nRouDiv ), 0 )
-         end if
-         if _NPCTREQ3 != 0
-            _NIMSATQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( 100 / _NPCTREQ3 + 1 ), nRouDiv ), 0 )
-         end if
-      end if
-
-      _NBASIVA1      -= _NIMPIVA1
-      _NBASIVA2      -= _NIMPIVA2
-      _NBASIVA3      -= _NIMPIVA3
-
-      _NBASIVA1      -= _NIMSATQ1
-      _NBASIVA2      -= _NIMSATQ2
-      _NBASIVA3      -= _NIMSATQ3
-
-   end if
-
-   //Neto del Albaran
-
-   nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
-
-   // Total IVMH
-
-   nTotIvm           := Round( aTotIvm[ 1, 3 ] + aTotIvm[ 2, 3 ] + aTotIvm[ 3, 3 ], nRouDiv )
-
-   //Total Transpote
-
-   nTotTrn           := Round( _NTRNIVA1 + _NTRNIVA2 + _NTRNIVA3, nRouDiv )
-
-   //Total punto verde
-
-   nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
-
-   //Total de impuestos
-
-   nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
-
-   //Total de R.E.
-
-   nTotReq           := Round( _NIMSATQ1 + _NIMSATQ2 + _NIMSATQ3, nRouDiv )
-
-   //Total de impuestos
-
-   nTotImp           := nTotIva + nTotReq // + nTotIvm
-
-   /*
-   Total rentabilidad----------------------------------------------------------
-   */
-
-   nTotRnt           := Round(         nTotNet - nManObr - nTotAge - nTotPnt - nTotAtp - nTotCos, nRouDiv )
-
-   nPctRnt           := nRentabilidad( nTotNet - nManObr - nTotAge - nTotPnt,  nTotAtp,  nTotCos )
-
-   // Diferencias de pesos
-
-   if nKgsTrn != 0
-      nTotDif        := nKgsTrn - nTotPes
-   else
-      nTotDif        := 0
-   end if
-
-   // Total facturas-----------------------------------------------------------
-
-   nTotAlb           := nTotNet + nTotImp
-
-   if nTotNet == 0
-      nPctRnt        := 0
-   end if
-
-   /*
-   Total de descuentos del albaran---------------------------------------------
-   */
-
-   nTotalDto         := nDescuentosLineas + nTotDto + nTotDpp + nTotUno + nTotDos + nTotAtp
-
-   // Solicitan una divisa distinta a la q se hizo originalmente la factura
-
-   if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
-      nTotIvm        := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
-      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
-      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
-      nTotAlb        := nCnv2Div( nTotAlb, cCodDiv, cDivRet )
-      nTotPnt        := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
-      nTotTrn        := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
-      cPorDiv        := cPorDiv( cDivRet, cDiv )
-   end if
-
-RETURN ( if( lPic, Trans( if( lNeto, nTotNet, nTotAlb ), cPorDiv ), if( lNeto, nTotNet, nTotAlb ) ) )
-
-//--------------------------------------------------------------------------//
-
-/*
-Devuelve la comisi¢n de un agente en una linea de detalle
-*/
-
-FUNCTION nComLAlbCli( dbfAlbCliT, dbfAlbCliL, nDecOut, nDerOut )
-
-   local nImp  := nImpLAlbCli( dbfAlbCliT, dbfAlbCliL, nDecOut, nDerOut, , .f., .t., .f., .f. )
-
-RETURN ( Round( ( nImp * ( dbfAlbCliL )->nComAge / 100 ), nDerOut ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nImpUAlbCli( uAlbCliT, uAlbCliL, nDec, nVdv, lIva, cPouDiv )
-
-   local nIva
-   local lIvaInc
-   local nCalculo
-
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
-   DEFAULT lIva      := .f.
-
-   nCalculo          := nTotUAlbCli( uAlbCliL, nDec, nVdv )
-
-   do case
-   case ValType( uAlbCliT ) == "A"
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOESP ]  / 100, nDec )
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDPP    ]  / 100, nDec )
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOUNO ]  / 100, nDec )
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTODOS ]  / 100, nDec )
-
-      lIvaInc        := uAlbCliT[ _LIVAINC ]
-
-   case ValType( uAlbCliT ) == "C"
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoEsp / 100, nDec )
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDpp    / 100, nDec )
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoUno / 100, nDec )
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoDos / 100, nDec )
-
-      lIvaInc        := ( uAlbCliT )->lIvaInc
-
-   case ValType( uAlbCliT ) == "O"
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoEsp / 100, nDec )
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDpp    / 100, nDec )
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoUno / 100, nDec )
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoDos / 100, nDec )
-
-      lIvaInc        := uAlbCliT:lIvaInc
-
-   end case
-
-   do case
-   case IsArray( uAlbCliL )
-      nIva           := uAlbCliL[ _NIVA    ]
-
-   case IsChar( uAlbCliL )
-      nIva           := ( uAlbCliL )->nIva
-
-   case IsObject( uAlbCliL )
-      nIva           := uAlbCliL:nIva
-
-   end case
-
-   if nIva != 0
-      if lIva  // lo quermos con impuestos
-         if !lIvaInc
-            nCalculo += Round( nCalculo * nIva / 100, nDec )
-         end if
-      else     // lo queremos sin impuestos
-         if lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / nIva  + 1 ), nDec )
-         end if
-      end if
-   end if
-
-RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nImpLAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn, lPntVer, cPouDiv )
-
-   local lIvaInc
-   local nCalculo
-
-   DEFAULT nDec      := 0
-   DEFAULT nRou      := 0
-   DEFAULT nVdv      := 1
-   DEFAULT lIva      := .f.
-   DEFAULT lDto      := .t.
-   DEFAULT lPntVer   := .f.
-   DEFAULT lImpTrn   := .f.
-
-   nCalculo          := nTotLAlbCli( dbfAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
-
-   do case
-   case ValType( uAlbCliT ) == "A"
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOESP ]  / 100, nRou )
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDPP    ]  / 100, nRou )
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOUNO ]  / 100, nRou )
-      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTODOS ]  / 100, nRou )
-
-      lIvaInc        := uAlbCliT[ _LIVAINC ]
-
-   case ValType( uAlbCliT ) == "C"
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoEsp / 100, nRou )
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDpp    / 100, nRou )
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoUno / 100, nRou )
-      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoDos / 100, nRou )
-
-      lIvaInc        := ( uAlbCliT )->lIvaInc
-
-   case ValType( uAlbCliT ) == "O"
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoEsp / 100, nRou )
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDpp    / 100, nRou )
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoUno / 100, nRou )
-      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoDos / 100, nRou )
-
-      lIvaInc        := uAlbCliT:lIvaInc
-
-   end if
-
-   if ( dbfAlbCliL )->nIva != 0
-      if lIva  // lo quermos con impuestos
-         if !lIvaInc
-            nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nRou )
-         end if
-      else     // lo queremos sin impuestos
-         if lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfAlbCliL )->nIva  + 1 ), nRou )
-         end if
-      end if
-   end if
-
-RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nPesLAlbCli( cAlbCliL )
-
-	local nCalculo
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-
-   if !( cAlbCliL )->lTotLin
-      nCalculo       := Abs( nTotNAlbCli( cAlbCliL ) ) * ( cAlbCliL )->nPesoKg
-   end if
-
-RETURN ( nCalculo )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nCosLAlbCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
-
-   local nCalculo       := 0
-
-   DEFAULT nDec         := 0
-   DEFAULT nRec         := 0
-   DEFAULT nVdv         := 1
-
-   if !( dbfLine )->lKitChl
-      nCalculo          := nTotNAlbCli( dbfLine )
-      nCalculo          *= ( dbfLine )->nCosDiv
-   end if
-
-   if nVdv != 0
-      nCalculo          := nCalculo / nVdv
-   end if
-
-   nCalculo             := Round( nCalculo, nRec )
-
-RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-//
-// Devuelve el valor del IVMH
-//
-
-FUNCTION nTotIAlbCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := 0
-   DEFAULT nRouDec   := 0
-   DEFAULT nVdv      := 1
-
-   if !( dbfLin )->lTotLin
-
-      /*
-      Tomamos los valores redondeados------------------------------------------
-      */
-
-      nCalculo       := Round( ( dbfLin )->nValImp, nDec )
-
-      /*
-      Unidades-----------------------------------------------------------------
-      */
-
-      nCalculo       *= nTotNAlbCli( dbfLin )
-
-         if ( dbfLin )->LVOLIMP
-            nCalculo *= NotCero( ( dbfLin )->nVolumen )
-         end if
-
-      nCalculo       := Round( nCalculo / nVdv, nRouDec )
-
-   end if
-
-RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION nTrnLAlbCli( dbfLin, nDec, nRou, nVdv )
-
-   local nImpTrn
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := 2
-   DEFAULT nRou      := 2
-   DEFAULT nVdv      := 1
-
-   /*
-   Punto Verde-----------------------------------------------------------------
-   */
-
-   nImpTrn           := nTrnUAlbCli( dbfLin, nDec ) * nTotNAlbCli( dbfLin )
-
-   IF nVdv != 0
-      nImpTrn        := nImpTrn / nVdv
-	END IF
-
-RETURN ( Round( nImpTrn, nRou ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nTrnUAlbCli( dbfTmpLin, nDec, nVdv )
-
-	local nCalculo
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-   nCalculo       := ( dbfTmpLin )->nImpTrn
-
-	IF nVdv != 0
-      nCalculo    := nCalculo / nVdv
-	END IF
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION KillTrans()
 
@@ -14328,103 +9170,6 @@ Static Function RecalculaTotal( aTmpAlb )
 Return .t.
 
 //--------------------------------------------------------------------------//
-
-//
-// Total anticipos de un albaran
-//
-
-FUNCTION nPagAlbCli( cNumAlb, cAlbCliP, cDiv, cDivRet, lPic )
-
-   local nRec
-   local nOrd
-   local cCodDiv
-   local cPorDiv
-   local nRouDiv
-
-   public nTotPag       := 0
-
-   DEFAULT cAlbCliP     := dbfAlbCliP
-   DEFAULT cDiv         := dbfDiv
-   DEFAULT lPic         := .f.
-
-   nRec                 := ( cAlbCliP )->( Recno() )
-   nOrd                 := ( cAlbCliP )->( OrdSetFocus( "nNumAlb" ) )
-   cCodDiv              := cDivEmp()
-   cPorDiv              := cPorDiv( cCodDiv, cDiv ) // Picture de la divisa redondeada
-   nRouDiv              := nRouDiv( cCodDiv, cDiv )
-
-   if IsNil( cNumAlb )
-
-      ( cAlbCliP )->( dbGoTop() )
-      while !( cAlbCliP )->( Eof() )
-         nTotPag        += nEntAlbCli( cAlbCliP, cDiv, cDivRet )
-         ( cAlbCliP )->( dbSkip() )
-      end while
-
-   else
-
-      if ( cAlbCliP )->( dbSeek( cNumAlb ) )
-         while ( cAlbCliP )->cSerAlb + Str( ( cAlbCliP )->nNumAlb ) + ( cAlbCliP )->cSufAlb == cNumAlb .and. !( cAlbCliP )->( eof() )
-            nTotPag     += nEntAlbCli( cAlbCliP, cDiv, cDivRet )
-            ( cAlbCliP )->( dbSkip() )
-         end while
-      end if
-
-   end if
-
-   ( cAlbCliP )->( OrdSetFocus( nOrd ) )
-   ( cAlbCliP )->( dbGoTo( nRec ) )
-
-   if cDivRet != nil .and. cCodDiv != cDivRet
-      nTotPag           := nCnv2Div( nTotPag, cCodDiv, cDivRet )
-      cPorDiv           := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
-      nRouDiv           := nRouDiv( cDivRet, cDiv )
-   end if
-
-   nTotPag              := Round( nTotPag, nRouDiv )
-
-   if lPic
-      nTotPag           := Trans( nTotPag, cPorDiv )
-   end if
-
-RETURN ( nTotPag )
-
-//--------------------------------------------------------------------------//
-
-function nEntAlbCli( uAlbCliP, cDbfDiv, cDivRet, lPic )
-
-   local cDivPgo
-   local nRouDiv
-   local cPorDiv
-   local nTotRec
-
-   DEFAULT uAlbCliP  := dbfAlbCliP
-   DEFAULT cDbfDiv   := dbfDiv
-   DEFAULT cDivRet   := cDivEmp()
-   DEFAULT lPic      := .f.
-
-   if ValType( uAlbCliP ) == "O"
-      cDivPgo        := uAlbCliP:cDivPgo
-      nTotRec        := uAlbCliP:nImporte
-   else
-      cDivPgo        := ( uAlbCliP )->cDivPgo
-      nTotRec        := ( uAlbCliP )->nImporte
-   end if
-
-   nRouDiv           := nRouDiv( cDivPgo, cDbfDiv )
-   cPorDiv           := cPorDiv( cDivPgo, cDbfDiv )
-
-   nTotRec           := Round( nTotRec, nRouDiv )
-
-   if cDivRet != cDivPgo
-      nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
-      cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
-   end if
-
-RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
@@ -15212,22 +9957,6 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oMargen, cCodDiv, lTo
 RETURN ( if( !lTotal, .t., nCalculo ) )
 
 //--------------------------------------------------------------------------//
-
-FUNCTION nDtoUAlbCli( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo := ( dbfTmpLin )->nDtoDiv
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-	IF nVdv != 0
-      nCalculo    := ( dbfTmpLin )->nDtoDiv / nVdv
-	END IF
-
-RETURN ( round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
 /*
 Funcion Auxiliar para A¤adir lineas de detalle a un albaran
 */
@@ -15239,39 +9968,6 @@ STATIC FUNCTION AppDeta( oBrwLin, bEdtDet, aTmpAlb, lTot, nMode, cCodArt )
    WinAppRec( oBrwLin, bEdtDet, dbfTmpLin, lTot, cCodArt, aTmpAlb )
 
 RETURN ( RecalculaTotal( aTmpAlb ) )
-
-//---------------------------------------------------------------------------//
-
-function nTotFAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-
-   local nCalculo := 0
-
-   nCalculo       += nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-   nCalculo       += nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-
-return ( nCalculo )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION lFacAlbCli( cAlbCli, uAlbCliT )
-
-   local lFacAlb  := .f.
-
-   if ValType( uAlbCliT ) == "C"
-
-      if ( uAlbCliT )->( dbSeek( cAlbCli ) )
-         lFacAlb  := ( uAlbCliT )->lFacturado
-      end if
-
-   else
-
-      if uAlbCliT:Seek( cAlbCli )
-         lFacAlb  := uAlbCliT:lFacturado
-      end if
-
-   end if
-
-RETURN ( lFacAlb )
 
 //---------------------------------------------------------------------------//
 
@@ -16067,7 +10763,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          Buscamos si hay ofertas-----------------------------------------------
          */
 
-         lBuscaOferta( aTmp[ _CREF ], aGet, aTmp, aTmpAlb, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+         lBuscaOferta( aTmp[ _CREF ], aGet, aTmp, aTmpAlb, dbfDiv, dbfKit, dbfIva  )
 
          /*
          Cargamos los valores para los cambios---------------------------------
@@ -16801,8 +11497,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       return .f.
    end if
 
-   #ifndef __PDA__
-
    if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
       msgStop( "Agente no puede estar vacío." )
       aGet[ _CCODAGE ]:SetFocus()
@@ -16814,8 +11508,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       aGet[ _CCODOBR ]:SetFocus()
       return .f.
    end if
-
-   #endif
 
    if ( dbfTmpLin )->( eof() )
       MsgStop( "No puede almacenar un documento sin líneas." )
@@ -17092,218 +11784,6 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbCliS, cNumFac )
-
-   local nOrd
-   local nRec
-   local nRecHead             := ( cAlbCliT )->( Recno() )
-
-   DEFAULT lFacturado         := .f.
-   DEFAULT cNumFac            := Space( 12 )
-   DEFAULT cAlbCliT           := dbfAlbCliT
-   DEFAULT cAlbCliL           := dbfAlbCliL
-   DEFAULT cAlbCliS           := dbfAlbCliS
-
-   if oBrw != nil
-
-      for each nRec in ( oBrw:aSelected )
-
-         nRecHead             := nRec
-
-         ( cAlbCliT )->( dbGoTo( nRec ) )
-
-         /*
-         Restauramos los datos de cabecera----------------------------------------
-         */
-
-         if dbLock( cAlbCliT )
-            ( cAlbCliT )->lFacturado := lFacturado
-            ( cAlbCliT )->cNumFac    := cNumFac
-            ( cAlbCliT )->( dbUnLock() )
-         end if
-
-         /*
-         Cambiamos el estado en las lineas-------------------------------------------
-         */
-
-         nOrd                 := ( cAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
-
-         if ( cAlbCliL )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
-
-            while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb .and. !( cAlbCliL )->( Eof() )
-
-               if dbLock( cAlbCliL )
-                  ( cAlbCliL )->lFacturado := lFacturado
-                  ( cAlbCliL )->( dbUnlock() )
-                end if
-
-               ( cAlbCliL )->( dbSkip() )
-
-            end while
-
-         end if
-
-         ( cAlbCliL )->( OrdSetFocus( nOrd ) )
-
-         /*
-         Cambiamos el estado en las series-------------------------------------------
-         */
-
-         nOrd                 := ( cAlbCliS )->( OrdSetFocus( "nNumAlb" ) )
-
-         if ( cAlbCliS )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
-
-            while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliS )->cSerAlb + Str( ( cAlbCliS )->nNumAlb ) + ( cAlbCliS )->cSufAlb .and. !( cAlbCliS )->( Eof() )
-
-               if dbLock( cAlbCliS )
-                  ( cAlbCliS )->lFacturado := lFacturado
-                  ( cAlbCliS )->( dbUnlock() )
-                end if
-
-               ( cAlbCliS )->( dbSkip() )
-
-            end while
-
-         end if
-
-         ( cAlbCliS )->( OrdSetFocus( nOrd ) )
-
-      next
-
-   else
-
-      /*
-      Restauramos los datos de cabecera----------------------------------------
-      */
-
-      if dbLock( cAlbCliT )
-         ( cAlbCliT )->lFacturado := lFacturado
-         ( cAlbCliT )->cNumFac    := cNumFac
-         ( cAlbCliT )->( dbUnLock() )
-      end if
-
-      /*
-      Cambiamos el estado en las lineas-------------------------------------------
-      */
-
-      nOrd                    := ( cAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
-
-      if ( cAlbCliL )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
-
-         while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb .and. !( cAlbCliL )->( Eof() )
-
-            if dbLock( cAlbCliL )
-               ( cAlbCliL )->lFacturado := lFacturado
-               ( cAlbCliL )->( dbUnlock() )
-             end if
-
-            ( cAlbCliL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( cAlbCliL )->( OrdSetFocus( nOrd ) )
-
-      /*
-      Cambiamos el estado en las series-------------------------------------------
-      */
-
-      nOrd                   := ( cAlbCliS )->( OrdSetFocus( "nNumAlb" ) )
-
-      if ( cAlbCliS )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
-
-         while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliS )->cSerAlb + Str( ( cAlbCliS )->nNumAlb ) + ( cAlbCliS )->cSufAlb .and. !( cAlbCliS )->( Eof() )
-
-            if dbLock( cAlbCliS )
-               ( cAlbCliS )->lFacturado := lFacturado
-               ( cAlbCliS )->( dbUnlock() )
-             end if
-
-            ( cAlbCliS )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( cAlbCliS )->( OrdSetFocus( nOrd ) )
-
-   end if
-
-   /*
-   Dejamos la tabla en el registro que estaba----------------------------------
-   */
-
-   ( cAlbCliT )->( dbGoTo( nRecHead ) )
-
-   if oBrw != nil
-      oBrw:Refresh()
-      oBrw:SetFocus()
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-
-Function nTotDtoLAlbCli( dbfLin, nDec, nVdv, cPorDiv )
-
-   local nCalculo
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
-
-   nCalculo          := nDtoLAlbCli( dbfLin, nDec, nVdv ) * nTotNAlbCli( dbfLin )
-
-   if nVdv != 0
-      nCalculo       := nCalculo / nVdv
-   end if
-
-   nCalculo          := Round( nCalculo, nDec )
-
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//----------------------------------------------------------------------------//
-
-Function dJulianoAlbCli( cAlbCliL )
-
-   local cPrefijo
-   local cLote
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-
-   cLote             := ( cAlbCliL )->cLote
-
-   cPrefijo          := Substr( ( cAlbCliL )->cLote, 1, 1 )
-
-   if Val( cPrefijo ) == 0
-      cLote          := Substr( ( cAlbCliL )->cLote, 2 )
-   end if
-
-RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 6 ) )
-
-//---------------------------------------------------------------------------//
-
-Function dJulianoAlbAnio( cAlbCliL )
-
-   local cPrefijo
-   local cLote
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-
-   cLote             := ( cAlbCliL )->cLote
-
-   cPrefijo          := Substr( ( cAlbCliL )->cLote, 1, 1 )
-
-   if Val( cPrefijo ) == 0
-      cLote          := Substr( ( cAlbCliL )->cLote, 2 )
-   end if
-
-RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 8 ) )
-
-//---------------------------------------------------------------------------//
-
 Static Function YearComboBoxChange()
 
    if oWndBrw:oWndBar:lAllYearComboBox()
@@ -17322,7 +11802,7 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-Static Function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+Static Function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfDiv, dbfKit, dbfIva  )
 
    local sOfeArt
    local nTotalLinea    := 0
@@ -18631,24 +13111,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function cDireccionSAT()
-
-   local dbfObras
-   local cDireccion  := ""
-
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-   if ( dbfObras )->( dbSeek( ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr ) )
-      cDireccion     := ( dbfObras )->cNomObr
-   end if
-
-   CLOSE ( dbfObras )
-
-Return ( cDireccion )
-
-//---------------------------------------------------------------------------//
-
 Static Function ActualizaStockWeb( cNumDoc )
 
    local nRec     := ( dbfAlbCliL )->( Recno() )
@@ -18788,7 +13250,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
+Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
 
    /*
    Cambiamos el valor de las unidades de la linea de la factura---------------
@@ -18801,24 +13263,6 @@ Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
       RecalculaTotal( aTmp )
 
    end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp, dbfTmpLin )
-
-   /*
-   Cambiamos el valor del precio de la linea de la factura--------------------
-   */
-
-   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
-
-      SetUAlbCli( dbfTmpLin, uNewValue )
-
-      RecalculaTotal( aTmp )
-
-    end if  
 
 Return .t.
 
@@ -18847,5 +13291,4624 @@ Static Function RestaUnidadLinea( aTmp )
    RecalculaTotal( aTmp )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+/*------------------------FUNCIONES GLOBALESS--------------------------------*/
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+/*
+NOTA: Esta funcion se utiliza para el estado de generado de pedidos de clientes
+*/
+
+function nEstadoGenerado( cNumPed, dbfPedCliL, dbfPedPrvL )
+
+   local nEstado := 0
+   local nOrdAnt
+
+   if IsMuebles()
+      nOrdAnt := ( dbfPedPrvL )->( OrdSetFocus( "CPEDCLIREFDET" ) )
+   else
+      nOrdAnt := ( dbfPedPrvL )->( OrdSetFocus( "CPEDCLIREF" ) )
+   end if
+
+   ( dbfPedCliL )->( dbSeek( cNumPed ) )
+
+   while ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cNumPed .and. !( dbfPedCliL )->( Eof() )
+
+      if IsMuebles()
+
+         if ( dbfPedPrvL )->( dbSeek( cNumPed + ( dbfPedCliL )->cRef + ( dbfPedCliL )->cRefPrv + ( dbfPedCliL )->cDetalle ) )
+
+            do case
+               case nEstado == 0 .or. nEstado == 3
+                  nEstado := 3
+               case nEstado == 1
+                  nEstado := 2
+            end case
+         else
+            do case
+               case nEstado == 0
+                  nEstado := 1
+               case nEstado == 3
+                  nEstado := 2
+            end case
+         end if
+
+      else
+
+         if( dbfPedPrvL )->( dbSeek( cNumPed + ( dbfPedCliL )->cRef ) )
+            do case
+               case nEstado == 0 .or. nEstado == 3
+                  nEstado := 3
+               case nEstado == 1
+                  nEstado := 2
+            end case
+         else
+            do case
+               case nEstado == 0
+                  nEstado := 1
+               case nEstado == 3
+                  nEstado := 2
+            end case
+         end if
+
+      end if
+
+   ( dbfPedCliL )->( dbSkip() )
+
+   end while
+
+   ( dbfPedPrvL )->( OrdSetFocus( nOrdAnt ) )
+
+return ( Max( nEstado, 1 ) )
+
+//---------------------------------------------------------------------------//
+
+Function AppAlbCli( hHash, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli( nil, nil, hHash )
+         oWndBrw:RecAdd()
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+         nTotAlbCli()
+         WinAppRec( nil, bEdtRec, dbfAlbCliT, hHash )
+         CloseFiles()
+      end if
+
+   end if
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+Function EdtAlbCli( cNumAlb, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli()
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            oWndBrw:RecEdit()
+         else
+            MsgStop( "No se encuentra albaran" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            nTotAlbCli()
+            WinEdtRec( nil, bEdtRec, dbfAlbCliT )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+FUNCTION ZooAlbCli( cNumAlb, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli()
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            oWndBrw:RecZoom()
+         else
+            MsgStop( "No se encuentra albaran" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            nTotAlbCli()
+            WinZooRec( nil, bEdtRec, dbfAlbCliT )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+FUNCTION DelAlbCli( cNumAlb, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli()
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
+         else
+            MsgStop( "No se encuentra albaran" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            nTotAlbCli()
+            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli()
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+         else
+            MsgStop( "No se encuentra albaran" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            nTotAlbCli()
+            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli()
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
+         else
+            MsgStop( "No se encuentra albaran" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+
+         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+            nTotAlbCli()
+            GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function aTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+
+   nTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
+
+Return ( { nTotNet, nTotIva, nTotReq, nTotAlb, nTotPnt, nTotTrn, nTotAge, aTotIva, nTotCos, nTotIvm, nTotRnt, nTotDto, nTotDpp, nTotUno, nTotDos, nTotBrt } )
+
+//--------------------------------------------------------------------------//
+
+Function sTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+
+   local sTotal
+
+   nTotAlbCli( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotAlb
+   sTotal:nTotalPuntoVerde                := nTotPnt
+   sTotal:nTotalTransporte                := nTotTrn
+   sTotal:nTotalAgente                    := nTotAge
+   sTotal:nTotalCosto                     := nTotCos
+   sTotal:nTotalImpuestoHidrocarburos     := nTotIvm
+   sTotal:nTotalRentabilidad              := nTotRnt
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION BrwAlbCli( oGet, oIva )
+
+   local oDlg
+   local oBrw
+   local oGet1
+   local cGet1
+   local lIva     := oIva:VarGet()
+   local oCbxOrd
+   local cCbxOrd
+   local nOrd
+   local aCbxOrd
+
+   if !OpenFiles()
+      Return .f.
+   end if
+
+   aCbxOrd        := { "N. albarán", "Fecha", "Cliente", "Nombre", "Su albarán" }
+   nOrd           := GetBrwOpt( "BrwAlbCli" )
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   ( dbfAlbCliT )->( dbSetFilter( {|| !Field->lFacturado .and. Field->lIvaInc == lIva }, "!lFacturado .and. lIvaInc == lIva" ) )
+   ( dbfAlbCliT )->( dbGoTop() )
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE if( lIva, "Albaranes de clientes con " + cImp() + " incluido", "Albaranes de clientes con " + cImp() + " desglosado" )
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlbCliT, .t., nil, .t. ) );
+         VALID    ( OrdClearScope( oBrw, dbfAlbCliT ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE( ( dbfAlbCliT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         OF       oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfAlbCliT
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Albaran de cliente.Browse"
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Tipo"
+         :bEditValue       := {|| aTipAlb[ if( ( dbfAlbCliT )->lAlquiler, 2, 1  ) ] }
+         :nWidth           := 50
+         :lHide            := .t.
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumAlb"
+         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecAlb"
+         :bEditValue       := {|| dtoc( ( dbfAlbCliT )->dFecAlb ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Cliente"
+         :cSortOrder       := "cCodCli"
+         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cCodCli ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomCli"
+         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cNomCli ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Importe"
+         :bEditValue       := {|| nTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .t. )  }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         ACTION   ( WinAppRec( oBrw, bEdtRec, dbfAlbCliT ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         ACTION   ( WinEdtRec( oBrw, bEdtRec, dbfAlbCliT ) )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+      oDlg:bStart    := {|| oBrw:Refresh( .t. ) }
+
+   ACTIVATE DIALOG oDlg ;
+   ON INIT ( oBrw:Load() ) ;
+   CENTER
+
+   DestroyFastFilter( dbfAlbCliT )
+
+   SetBrwOpt( "BrwAlbCli", ( dbfAlbCliT )->( OrdNumber() ) )
+
+   ( dbfAlbCliT )->( dbClearFilter() )
+
+   if oDlg:nResult == IDOK
+      oGet:cText( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb )
+      oGet:lValid()
+   end if
+
+   CloseFiles()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nNetUAlbCli( uTmp, nDec, nVdv, lIva )
+
+   local nCalculo
+
+   DEFAULT nDec      := 0
+   DEFAULT nVdv      := 1
+   DEFAULT lIva      := .f.
+
+   nCalculo          := nTotUAlbCli( uTmp, nDec, nVdv )
+
+   if ( dbfAlbCliL )->nIva != 0
+      do case
+         case !lIva .and. ( dbfAlbCliL )->lIvaLin
+            nCalculo -= Round( nCalculo / ( 100 / ( dbfAlbCliL )->nIva + 1 ), nDec )
+         case lIva .and. !( dbfAlbCliL )->lIvaLin
+            nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nDec )
+      end case
+   end if
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nBrtLAlbCli( uTmpCab, uTmpLin, nDec, nRec, nVdv, cPorDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT nDec      := 2
+   DEFAULT nVdv      := 1
+
+   nCalculo          := nImpUAlbCli( uTmpCab, uTmpLin, nDec, nVdv, cPorDiv )
+   nCalculo          *= nTotNAlbCli( uTmpLin )
+
+   nCalculo          := Round( nCalculo / nVdv, nRec )
+
+Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+/*
+Devuelve el precio unitario impuestos incluido
+*/
+
+FUNCTION nIncUAlbCli( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   nCalculo       := nTotUAlbCli( dbfTmpLin, nDec, nVdv )
+
+   if !( dbfTmpLin )->lIvaLin
+      nCalculo    += nCalculo * ( dbfTmpLin )->nIva / 100
+   end if
+
+   IF nVdv != 0
+      nCalculo    := nCalculo / nVdv
+   END IF
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesAlbCli( cAlbCliL, cAlbCliS )
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+   DEFAULT cAlbCliS  := dbfAlbCliS
+
+RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
+
+//---------------------------------------------------------------------------//
+
+Function cFraAlbCli( cAlbCliL )
+
+   local cTxtFra     := ""
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+
+   if ( cAlbCliL )->lImpFra
+      cTxtFra        := ( cAlbCliL )->cTxtFra
+   end if
+
+Return ( cTxtFra )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el precio del articulo una vez realizados los descuentos en linea
+*/
+
+FUNCTION nTotPAlbCli( dbfLin, nDec, nVdv, lDto, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT dbfLin    := dbfAlbCliL
+   DEFAULT nDec      := 0
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+
+   if ( dbfLin )->lTotLin
+
+      nCalculo       := nTotUAlbCli( dbfLin, nDec, nVdv )
+
+   else
+
+      /*
+      Tomamos los valores redondeados
+      */
+
+      nCalculo       := nTotUAlbCli( dbfLin, nDec, nVdv )
+
+      nCalculo       -= Round( ( dbfLin )->nDtoDiv , nDec )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      IF lDto
+
+         IF ( dbfLin )->NDTO != 0
+            nCalculo -= nCalculo * ( dbfLin )->NDTO / 100
+         END IF
+
+         IF ( dbfLin )->NDTOPRM != 0
+            nCalculo -= nCalculo * ( dbfLin )->NDTOPRM / 100
+         END IF
+
+      END IF
+
+      nCalculo       := Round( nCalculo, nDec )
+
+   end if
+
+RETURN ( if( cPouDiv != NIL, trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el total de una linea con impuestos incluido
+*/
+
+FUNCTION nIncLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo := nTotLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   if !( dbfLin )->lIvaLin
+      nCalculo    += nCalculo * ( dbfLin )->nIva / 100
+   end if
+
+RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+   if !( cAlbCliL )->lIvaLin
+      nCalculo       := nCalculo * ( cAlbCliL )->nIva / 100
+   else
+      nCalculo       -= nCalculo / ( 1 + ( cAlbCliL )->nIva / 100 )
+   end if
+
+   nCalculo          := Round( nCalculo, nRou )
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+//
+// Devuelve el neto de una linea una vez quitados los Dtos.
+//
+
+FUNCTION nNetLAlbCli( cAlbCliT, cAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn, lPntVer, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT cAlbCliT  := dbfAlbCliT
+   DEFAULT cAlbCliL  := dbfAlbCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lIva      := .t.
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lImpTrn, lPntVer )
+
+   if ( cAlbCliL )->nIva != 0
+      do case
+         case !lIva .and. ( cAlbCliT )->lIvaInc
+            nCalculo -= Round( nCalculo / ( 100 / ( cAlbCliL )->nIva  + 1 ), nRou )
+         case lIva .and. !( cAlbCliT )->lIvaInc
+            nCalculo += nCalculo * ( cAlbCliL )->nIva / 100
+      end case
+   end if
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nDtoAtpAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lImpTrn, lPntVer )
+
+   local nCalculo
+   local nDtoAtp  := 0
+
+   DEFAULT nDec   := 0
+   DEFAULT nRou   := 0
+   DEFAULT nVdv   := 1
+   DEFAULT lPntVer:= .f.
+   DEFAULT lImpTrn:= .f.
+
+   nCalculo       := nTotLAlbCli( dbfAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
+
+   if ( uAlbCliT )->nSbrAtp <= 1 .and. ( uAlbCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
+   end if
+
+   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoEsp / 100, nRou )
+
+   if ( uAlbCliT )->nSbrAtp == 2 .and. ( uAlbCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
+   end if
+
+   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDpp    / 100, nRou )
+
+   if ( uAlbCliT )->nSbrAtp == 3 .and. ( uAlbCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
+   end if
+
+   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoUno / 100, nRou )
+
+   if ( uAlbCliT )->nSbrAtp == 4 .and. ( uAlbCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
+   end if
+
+   nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoDos / 100, nRou )
+
+   if ( uAlbCliT )->nSbrAtp == 5 .and. ( uAlbCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
+   end if
+
+RETURN ( nDtoAtp )
+
+//---------------------------------------------------------------------------//
+
+/*
+Funciones auxiliares para comunicarnos desde fuera del PRG
+*/
+
+FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
+
+   local oBlock
+   local oError
+   local nOrdAnt
+   local cNumAlb
+
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "cNumPed" ) )
+
+      if ( dbfAlbCliT )->( dbSeek( cNumPed ) )
+         cNumAlb  := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+      end if
+
+      if !Empty( cNumAlb )
+         EdtAlbCli( cNumAlb )
+      else
+         msgStop( "No hay albarán asociado" )
+      end if
+
+      ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de albaranes" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+   
+   ErrorBlock( oBlock )
+
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve la fecha de un albaran de cliente
+*/
+
+FUNCTION dFecAlbCli( cAlbCli, uAlbCliT )
+
+   local dFecAlb  := CtoD( "" )
+
+   if ValType( uAlbCliT ) == "C"
+
+      if dbSeekInOrd( cAlbCli, "nNumAlb", uAlbCliT )
+         dFecAlb  := ( uAlbCliT )->dFecAlb
+      end if
+
+   else
+
+      if uAlbCliT:SeekInOrd( cAlbCli, "nNumAlb" )
+         dFecAlb  := uAlbCliT:dFecAlb
+      end if
+
+   end if
+
+RETURN ( dFecAlb )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cCliAlbCli( cAlbCli, uAlbCliT )
+
+   local cCodCli  := ""
+
+   do case
+      case ValType( uAlbCliT ) == "C"
+         if (uAlbCliT)->( dbSeek( cAlbCli ) )
+            cCodCli     := (uAlbCliT)->CCODCLI
+         end if
+      case ValType( uAlbCliT ) == "O"
+         if uAlbCliT:Seek( cAlbCli )
+            cCodCli     := uAlbCliT:cCodCli
+         end if
+   end case
+
+RETURN ( cCodCli )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION cNbrAlbCli( cAlbCli, uAlbCliT )
+
+   local cCodCli  := ""
+
+   do case
+      case ValType( uAlbCliT ) == "C"
+         if (uAlbCliT)->( dbSeek( cAlbCli ) )
+            cCodCli     := ( uAlbCliT )->cNomCli
+         end if
+      case ValType( uAlbCliT ) == "O"
+         if uAlbCliT:Seek( cAlbCli )
+            cCodCli     := uAlbCliT:cNomCli
+         end if
+   end case
+
+RETURN ( cCodCli )
+
+//----------------------------------------------------------------------------//
+
+function lGenAlbCli( oBrw, oBtn, nDevice )
+
+   local bAction
+
+   DEFAULT nDevice   := IS_PRINTER
+
+   if Empty( oBtn )
+      return nil
+   end if
+
+   IF !( dbfDoc )->( dbSeek( "AC" ) )
+
+      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( msgStop( "No hay documentos predefinidos" ) );
+         TOOLTIP  "No hay documentos" ;
+         FROM     oBtn ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
+
+   ELSE
+
+      WHILE ( dbfDoc )->CTIPO == "AC" .AND. !( dbfDoc )->( eof() )
+
+         bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( dbfDoc )->CODIGO )
+
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+
+         ( dbfDoc )->( dbSkip() )
+
+      END DO
+
+   END IF
+
+   SysRefresh()
+
+return nil
+
+//---------------------------------------------------------------------------//
+
+//
+// Devuelve el total de la compra en albaranes de clientes de un articulo
+//
+
+function nTotDAlbCli( cCodArt, dbfAlbCliL, dbfAlbCliT, cCodAlm )
+
+   local lFacAlb        := .f.
+   local nTotVta        := 0
+   local nRecno         := ( dbfAlbCliL )->( Recno() )
+
+   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+
+      while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( eof() )
+
+         if dbfAlbCliT != nil
+            lFacAlb     := lFacAlbCli( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + ( dbfAlbCliL )->CSUFALB, dbfAlbCliT )
+         end if
+
+         if !( dbfAlbCliL )->lTotLin .and. !lFacAlb
+            if cCodAlm != nil
+               if cCodAlm == ( dbfAlbCliL )->cAlmLin
+                  nTotVta  += nTotNAlbPrv( dbfAlbCliL ) * NotCero( ( dbfAlbCliL )->nFacCnv )
+               end if
+            else
+               nTotVta     += nTotNAlbCli( dbfAlbCliL ) * NotCero( ( dbfAlbCliL )->nFacCnv )
+            end if
+         end if
+
+         ( dbfAlbCliL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfAlbCliL )->( dbGoTo( nRecno ) )
+
+return ( nTotVta )
+
+//---------------------------------------------------------------------------//
+
+//
+// Devuelve el total de la venta en albaranes de un clientes determinado
+//
+
+
+function nVtaAlbCli( cCodCli, dDesde, dHasta, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, lNotFac, nYear )
+
+   local nCon        := 0
+   local nRec        := ( dbfAlbCliT )->( Recno() )
+
+   DEFAULT lNotFac   := .f.
+
+   /*
+   Albaranes a Clientes -------------------------------------------------------
+   */
+
+   if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
+
+      while ( dbfAlbCliT )->cCodCli == cCodCli .and. !( dbfAlbCliT )->( Eof() )
+
+         if ( dDesde == nil .or. ( dbfAlbCliT )->dFecAlb >= dDesde )    .and.;
+            ( dHasta == nil .or. ( dbfAlbCliT )->dFecAlb <= dHasta )    .and.;
+            ( if( lNotFac, !( dbfAlbCliT )->lFacturado, .t. ) )         .and.;
+            ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
+
+            nCon  += nTotAlbCli( ( dbfAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
+
+         end if
+
+         ( dbfAlbCliT )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+   end if
+
+   ( dbfAlbCliT )->( dbGoTo( nRec ) )
+
+return nCon
+
+//---------------------------------------------------------------------------//
+
+/*
+NOMBRE FICHERO      : TALBAxxx.PSI   (xxx = Agente)
+DESCRIPCION         : CABECERAS  ALBARAN
+TIPO DE FICHERO     : SECUENCIAL SIN SEPARADOR DE CAMPOS
+NUM. DE CAMPOS      : 20
+LONG. DEL REGISTRO  : 143
+
+N§ PO  LC  Descripci¢n       Observaciones
+1  1   7   CODIGO CLIENTE
+2  8   10  NUM. NOTA         aaa/nnnnnn    (agente/numeronota)
+3  18  1   TIPO NOTA         (1)
+4  19  2   COD. PROVEEDOR    diferente de espacios si es venta indirecta
+5  21  8   BASE IMPONIBLE 1
+6  29  8   BASE IMPONIBLE 2
+7  37  8   BASE IMPONIBLE 3
+8  45  8   impuestos TIPO 1
+9  53  8   impuestos TIPO 2
+10 61  8   impuestos TIPO 3
+11 69  8   R.E. TIPO 1
+12 77  8   R.E. TIPO 2
+13 85  8   R.E. TIPO 3
+14 93  5   DESC. CONCERTADO  Descuento que figura en la ficha del cliente
+15 98  5   DESC. PRONTO PAGO Descuento opcional al final de factura
+16 103 8   IMPORTE PVERDE    Cargo por impuesto punto verde
+17 111 8   IMPORTE NOTA      Importe total del documento (incluye pverde)
+18 119 8   IMPORTE COBRADO   (2)
+19 127 10  FECHA             DD/MM/AAAA
+20 137 5   HORA              HH:MM
+21 142 2   FINAL REGISTRO    CR LF
+
+
+  (1) Tipos de nota: 1- Factura Contado     2- Factura Credito
+                     3- Albaran Contado     4- Albaran Credito
+                     5- Adicional Contado   6- Adicional Credito
+                     7- Indirecto Contado   8- Indirecto Credit
+o
+
+  (2) S¢lo s
+er  igual a ImporteNota si se trata de contado-met lico.
+      Si es credito o contado-tal¢n ira con 0.
+
+ Ej: "000032100   20000       0       0    3200       0       0       0
+             0       0 0.00 0.00       0   23300   2330012/03/199618:15"
+     (Factura de contado n§ 10900 emitida al cliente 321 por el vendedor 4
+      el d¡a 12 de Marzo de 1996, por un importe de 23200, sin descuentos,
+      ni punto verde, a las 6 y cuarto de la tarde. El tipo de impuestos fue el 1)
+
+
+NOMBRE FICHERO      : EALBAxxx.PSI   (xxx = Agente)
+DESCRIPCION         : LINEAS DE  ALBARAN
+TIPO DE FICHERO     : SECUENCIAL SIN SEPARADOR DE CAMPOS
+NUM. DE CAMPOS      : 13
+LONG. DEL REGISTRO  : 70
+
+N§ PO  LC  Descripci¢n       Observaciones
+1  1   7   CODIGO CLIENTE
+2  8   10  NUM. NOTA         aaa/nnnnnn   (agente/numeronota)
+3  18  1   TIPO NOTA         (1)
+4  19  13  COD. ARTICULO
+5  32  7   SATCIO            Precio de venta sin descuentos
+6  39  5   DESC.             Descuento por unidad en euros o ptas
+7  44  5   DESC. PORCENTUAL  Descuento por unidad en %
+8  49  4   UNID. VALORA. 1   cajas
+9  53  7   UNID. VALORA  2   kilos/unidades
+10 60  1   TIPO LINEA        (2)
+11 61  1   tipo impuestos          1, 2 ¢ 3
+12 62  1   EUROS S/N         Indica si se hizo en euros o en pts (3)
+13 63  7   PVERDE            Cargo unitario por Punto Verde
+14 70  2   FINAL REGISTRO    CR LF  ( chr$(13) y chr$(10) )
+
+  (1) Tipos de nota:  1- Factura Contado     2- Factura Credito
+                      3- Albaran Contado     4- Albaran Credito
+                      5- Adicional Contado   6- Adicional Credito
+                      7- Indirecto Contado   8- Indirecto Credito
+
+  (2) Tipos de linea: 0- Venta      1- Devoluci¢n      2- Defectuoso
+                      3- Caducado   4- Abono  7- Regalo mercancia Automat.
+
+  (3) Si el cliente est  en euros, los campos precio y desc. vendran en
+      euros, y si estaba en ptas, vendr n en ptas.
+*/
+
+FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
+
+   local n           := 0
+   local cSerie
+   local cFilEdm
+   local oFilEdm
+   local dFecAlb
+   local cCodCli
+   local nNumAlb
+   local cNumDoc
+   local nCajEnt     := 0
+   local cTipDoc
+   local aHeadLine   := {}
+   local aLotes      := {}
+
+   DEFAULT cCodRut   := "001"
+   DEFAULT cPathTo   := "C:\INTERS~1\"
+
+   /*
+   Obtenemos la fecha del albaran----------------------------------------------
+   */
+
+   cCodRut           := SubStr( cCodRut, -3 )
+
+   cFilEdm           := cPathTo + "TALBA" + cCodRut + ".PSI"
+
+   if !file( cFilEdm )
+      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
+      return nil
+   end if
+
+   oFilEdm           := TTxtFile():New( cFilEdm )
+
+   /*
+   Abrimos las bases de datos--------------------------------------------------
+   */
+
+   while ! oFilEdm:lEoF()
+      aAdd( aHeadLine, { SubStr( oFilEdm:cLine, 8, 10 ), Ctod( SubStr( oFilEdm:cLine, 127, 10 ) ) } )
+      oFilEdm:Skip()
+   end while
+
+   oFilEdm:Close()
+
+   /*
+   Nuevo fichero con los lotes-------------------------------------------------
+   */
+
+   cFilEdm           := cPathTo + "LALBA" + cCodRut + ".PSI"
+
+   if !file( cFilEdm )
+
+      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
+
+   else
+
+      oFilEdm           := TTxtFile():New( cFilEdm )
+
+      /*
+      Abrimos las bases de datos--------------------------------------------------
+      */
+
+      while ! oFilEdm:lEoF()
+
+         cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
+
+         if ( cTipDoc == "3" .or. cTipDoc == "4" )
+            aAdd( aLotes, { SubStr( oFilEdm:cLine, 8, 10 ),;                // Num. nota
+                            LTrim( SubStr( oFilEdm:cLine, 19, 13 ) ),;      // Código del artículo
+                            RTrim( SubStr( oFilEdm:cLine, 43, 21 ) ) } )    // Num. lote
+         end if
+
+         oFilEdm:Skip()
+
+      end while
+
+   oFilEdm:Close()
+
+   end if
+
+   /*
+   ----------------------------------------------------------------------------
+   */
+
+   cFilEdm           := cPathTo + "EALBA" + cCodRut + ".PSI"
+
+   /*
+   Creamos el fichero destino--------------------------------------------------
+   */
+
+   if !file( cFilEdm )
+      msgStop( cFilEdm, "No existe" )
+      return nil
+   end if
+
+   oFilEdm           := TTxtFile():New( cFilEdm )
+
+   /*
+   Abrimos las bases de datos--------------------------------------------------
+   */
+
+   OpenFiles()
+
+   oStru:oMetDos:cText   := "Alb. Clientes"
+   oStru:oMetDos:SetTotal( oFilEdm:nTLines )
+
+   /*
+   Mientras no estemos en el final del archivo
+   */
+
+   while !oFilEdm:lEoF()
+      /*
+      Tomamos el codigo del cliente
+      */
+
+      cCodCli        := SubStr( oFilEdm:cLine,  1,  7 )
+      cNumDoc        := SubStr( oFilEdm:cLine,  8, 10 )
+      cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
+
+      if ( cTipDoc == "3" .or. cTipDoc == "4" )
+
+         if dbSeekInOrd( cCodCli, "Cod", dbfClient )
+
+            nNumAlb                          := Val( StrTran( cNumDoc, "/", "" ) )
+
+            if Empty( ( dbfClient )->Serie )
+               cSerie                        := "A"
+            else
+               cSerie                        := ( dbfClient )->Serie
+            end if
+
+            if !( dbfAlbCliT )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
+
+               n  := aScan( aHeadLine, {|a| a[1] == cNumDoc } )
+               if n != 0
+                  dFecAlb                    := aHeadLine[n,2]
+
+                  ( dbfAlbCliT )->( dbAppend() )
+                  ( dbfAlbCliT )->cSerAlb    := cSerie
+                  ( dbfAlbCliT )->nNumAlb    := nNumAlb
+                  ( dbfAlbCliT )->cSufAlb    := RetSufEmp()
+                  ( dbfAlbCliT )->dFecAlb    := dFecAlb
+                  ( dbfAlbCliT )->cCodAlm    := oUser():cAlmacen()
+                  ( dbfAlbCliT )->cDivAlb    := cDivEmp()
+                  ( dbfAlbCliT )->nVdvAlb    := nChgDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
+                  ( dbfAlbCliT )->lFacturado := .f.
+                  ( dbfAlbCliT )->cCodCli    := ( dbfClient )->Cod
+                  ( dbfAlbCliT )->cNomCli    := ( dbfClient )->Titulo
+                  ( dbfAlbCliT )->cDirCli    := ( dbfClient )->Domicilio
+                  ( dbfAlbCliT )->cPobCli    := ( dbfClient )->Poblacion
+                  ( dbfAlbCliT )->cPrvCli    := ( dbfClient )->Provincia
+                  ( dbfAlbCliT )->cPosCli    := ( dbfClient )->CodPostal
+                  ( dbfAlbCliT )->cDniCli    := ( dbfClient )->Nif
+                  ( dbfAlbCliT )->cCodTar    := ( dbfClient )->cCodTar
+                  ( dbfAlbCliT )->cCodPago   := ( dbfClient )->CodPago
+                  ( dbfAlbCliT )->cCodAge    := ( dbfClient )->cAgente
+                  ( dbfAlbCliT )->cCodRut    := ( dbfClient )->cCodRut
+                  ( dbfAlbCliT )->nTarifa    := ( dbfClient )->nTarifa
+                  ( dbfAlbCliT )->lRecargo   := ( dbfClient )->lReq
+                  ( dbfAlbCliT )->lOperPv    := ( dbfClient )->lPntVer
+                  ( dbfAlbCliT )->cDtoEsp    := ( dbfClient )->cDtoEsp
+                  ( dbfAlbCliT )->cDpp       := ( dbfClient )->cDpp
+                  ( dbfAlbCliT )->nDtoEsp    := ( dbfClient )->nDtoEsp
+                  ( dbfAlbCliT )->nDpp       := ( dbfClient )->nDpp
+                  ( dbfAlbCliT )->nDtoUno    := ( dbfClient )->nDtoCnt
+                  ( dbfAlbCliT )->cDtoUno    := ( dbfClient )->cDtoUno
+                  ( dbfAlbCliT )->nDtoDos    := ( dbfClient )->nDtoRap
+                  ( dbfAlbCliT )->cDtoDos    := ( dbfClient )->cDtoDos
+                  ( dbfAlbCliT )->( dbUnLock() )
+
+                  aAdd( aSucces, { .t., "Nuevo albarán de clientes " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb } )
+
+                  /*
+                  Mientras estemos en el mismo albarán pasamos las lineas------
+                  */
+
+                  while cNumDoc == SubStr( oFilEdm:cLine,  8, 10 ) .and. ! oFilEdm:lEoF()
+
+                     if cTipDoc == "3" .or. cTipDoc == "4"
+
+                        if ( dbfAlbCliT )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
+
+                           ( dbfAlbCliL )->( dbAppend() )
+                           ( dbfAlbCliL )->cSerAlb       := ( dbfAlbCliT )->cSerAlb
+                           ( dbfAlbCliL )->nNumAlb       := ( dbfAlbCliT )->nNumAlb
+                           ( dbfAlbCliL )->cSufAlb       := ( dbfAlbCliT )->cSufAlb
+                           ( dbfAlbCliL )->cRef          := Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) )
+                           ( dbfAlbCliL )->cDetalle      := RetFld( ( dbfAlbCliL )->cRef, dbfArticulo )
+                           ( dbfAlbCliL )->nPreUnit      := Val( SubStr( oFilEdm:cLine, 32,  7 ) )
+                           ( dbfAlbClil )->nDtoDiv       := Val( SubStr( oFilEdm:cLine, 39,  5 ) )
+                           ( dbfAlbClil )->nDto          := Val( SubStr( oFilEdm:cLine, 44,  5 ) )
+                           ( dbfAlbClil )->nIva          := nIvaCodTer( SubStr( oFilEdm:cLine, 61, 1 ), dbfIva )
+                           ( dbfAlbClil )->nPntVer       := Val( SubStr( oFilEdm:cLine, 63, 7 ) )
+                           ( dbfAlbCliL )->nCanEnt       := 1
+                           ( dbfAlbCliL )->nUniCaja      := Val( SubStr( oFilEdm:cLine, 53,  7 ) )
+
+                           /*
+                           Buscamos en el array l numero de lote---------------
+                           */
+
+                           if ( n  := aScan( aLotes, {|a| a[1] == cNumDoc .and. a[2] == Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) ) } ) ) != 0
+                              ( dbfAlbCliL )->lLote      := .t.
+                              ( dbfAlbCliL )->cLote      := aLotes[ n, 3 ]
+                           end if
+
+                           ( dbfAlbCliL )->( dbUnLock() )
+
+                        end if
+
+                     end if
+
+                     oFilEdm:Skip()
+
+                  end do
+
+               else
+
+                  aAdd( aSucces, { .f., "Líneas de albarán huerfanas, cliente " + cCodCli + " documento : " + cNumDoc } )
+                  oFilEdm:Skip()
+
+               end if
+
+            else
+
+               aAdd( aSucces, { .f., "Albarán de clientes ya existe " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb } )
+               oFilEdm:Skip()
+
+            end if
+
+         else
+
+            aAdd( aSucces, { .f., "No existe cliente " + cCodCli + " de albarán " + AllTrim( cNumDoc ) } )
+            oFilEdm:Skip()
+
+         end if
+
+      else
+
+         oFilEdm:Skip()
+
+      end if
+
+      oStru:oMetDos:Set( oFilEdm:nLine )
+
+   end do
+
+   oStru:oMetDos:SetTotal( oFilEdm:nTLines )
+
+   CloseFiles()
+
+   oFilEdm:Close()
+
+RETURN ( aSucces )
+
+//---------------------------------------------------------------------------//
+
+Function aDocAlbCli( lEntregas )
+
+   local aDoc        := {}
+
+   DEFAULT lEntregas := .f.
+
+   /*
+   Itmes-----------------------------------------------------------------------
+   */
+
+   aAdd( aDoc, { "Empresa",         "EM" } )
+   aAdd( aDoc, { "Albaran",         "AC" } )
+
+   if lEntregas
+      aAdd( aDoc, { "Entregas a cuenta",  "EA" } )
+   end if
+
+   aAdd( aDoc, { "Cliente",         "CL" } )
+   aAdd( aDoc, { "Almacen",         "AL" } )
+   aAdd( aDoc, { "Obras",           "OB" } )
+   aAdd( aDoc, { "Rutas",           "RT" } )
+   aAdd( aDoc, { "Agentes",         "AG" } )
+   aAdd( aDoc, { "Divisas",         "DV" } )
+   aAdd( aDoc, { "Formas de pago",  "PG" } )
+   aAdd( aDoc, { "Transportistas",  "TR" } )
+
+RETURN ( aDoc )
+
+//---------------------------------------------------------------------------//
+
+Function aCalAlbCli()
+
+   local aCalAlbCli  := {}
+
+   aAdd( aCalAlbCli, { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndAlb",  "" } )
+   aAdd( aCalAlbCli, { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndAlb",  "" } )
+   aAdd( aCalAlbCli, { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivAlb",  "aTotIva[1,1] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivAlb",  "aTotIva[2,1] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPorDivAlb",  "aTotIva[3,1] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPorDivAlb",  "aTotIva[1,2] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPorDivAlb",  "aTotIva[2,2] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPorDivAlb",  "aTotIva[3,2] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[1,3] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "aTotIva[2,3] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[3,3] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "aTotIva[1,4] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "aTotIva[2,4] != 0" } )
+   aAdd( aCalAlbCli, { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "aTotIva[3,4] != 0" } )
+   aAdd( aCalAlbCli, { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDouDivAlb )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPorDivAlb",  "aTotIva[1,2] != 0" } )
+   aAdd( aCalAlbCli, { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDouDivAlb )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPorDivAlb",  "aTotIva[2,2] != 0" } )
+   aAdd( aCalAlbCli, { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDouDivAlb )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPorDivAlb",  "aTotIva[3,2] != 0" } )
+   aAdd( aCalAlbCli, { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDouDivAlb )",    "N", 16,  6, "Importe primer RE",           "cPorDivAlb",  "aTotIva[1,2] != 0" } )
+   aAdd( aCalAlbCli, { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDouDivAlb )",    "N", 16,  6, "Importe segundo RE",          "cPorDivAlb",  "aTotIva[2,2] != 0" } )
+   aAdd( aCalAlbCli, { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDouDivAlb )",    "N", 16,  6, "Importe tercer RE",           "cPorDivAlb",  "aTotIva[3,2] != 0" } )
+   aAdd( aCalAlbCli, { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotUno",                                                   "N", 16,  6, "Total primer descuento personalizable",  "cPorDivAlb",  "lEnd" }   )
+   aAdd( aCalAlbCli, { "nTotDos",                                                   "N", 16,  6, "Total segundo descuento personalizable", "cPorDivAlb",  "lEnd" }   )
+   aAdd( aCalAlbCli, { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),                   "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotIvm",                                                   "N", 16,  6, "Total IVMH",                  "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotAlb",                                                   "N", 16,  6, "Total albarán",               "cPorDivAlb",  "lEnd" }              )
+   aAdd( aCalAlbCli, { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivAlb",  "!lEnd"}              )
+   aAdd( aCalAlbCli, { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" }            )
+   aAdd( aCalAlbCli, { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivAlb",  "lEnd" }            )
+   aAdd( aCalAlbCli, { "nImpEuros( nTotAlb, (cDbf)->cDivAlb, cDbfDiv )",            "N", 16,  6, "Total albarán (Euros)",       "",            "lEnd" }              )
+   aAdd( aCalAlbCli, { "nImpPesetas( nTotAlb, (cDbf)->cDivAlb, cDbfDiv )",          "N", 16,  6, "Total albarán (Pesetas)",     "",            "lEnd" }              )
+   aAdd( aCalAlbCli, { "nPagina",                                                   "N",  2,  0, "Número de página",            "'99'",        "" }                  )
+   aAdd( aCalAlbCli, { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" }                  )
+
+Return ( aCalAlbCli )
+
+//---------------------------------------------------------------------------//
+
+Function aCocAlbCli()
+
+   local aCocAlbCli  := {}
+
+   aAdd( aCocAlbCli, { "( Descrip( cDbfCol ) )",                                                   "C", 100,0, "Detalle del artículo",           "",            "Descripción", "" } )
+   aAdd( aCocAlbCli, { "( nTotNAlbCli( cDbfCol ) )",                                               "N", 16, 6, "Total unidades",                 "cPicUndAlb",  "Unds.",       "" } )
+   aAdd( aCocAlbCli, { "( nTotUAlbCli( cDbfCol, nDouDivAlb, nVdvDivAlb ) )",                       "N", 16, 6, "Precio unitario",                "cPouDivAlb",  "Precio",      "" } )
+   aAdd( aCocAlbCli, { "( nNetUAlbCli( cDbfCol, nDouDivAlb, nVdvDivAlb, .f. ) )",                  "N", 16, 6, "Precio unitario sin " + cImp(),     "cPouDivAlb",  "Precio",      "" } )
+   aAdd( aCocAlbCli, { "( nTotPAlbCli( cDbfCol, nVdvDivAlb ) )",                                   "N", 16, 6, "Precio unitario con descuentos", "cPouDivAlb",  "Precio",      "" } )
+   aAdd( aCocAlbCli, { "( nPesLAlbCli( cDbfCol ) )",                                               "N", 16, 6, "Total peso por línea",           "'@E 999,999.99'","Peso",     "" } )
+   aAdd( aCocAlbCli, { "( nTotLAlbCli( cDbfCol, nDouDivAlb, nRouDivAlb, nVdvDivAlb ) )",           "N", 16, 6, "Total linea de albarán",         "cPorDivAlb",  "Total",       "" } )
+   aAdd( aCocAlbCli, { "( nNetLAlbCli( cDbf, cDbfCol, nDouDivAlb, nRouDivAlb, nVdvDivAlb, .f. ) )","N", 16, 6, "Total linea sin " + cImp(),         "cPorDivAlb",  "Total",       "" } )
+   aAdd( aCocAlbCli, { "cFrasePublicitaria( cDbfCol )",                                            "C", 50, 0, "Texto de frase publicitaria",    "",            "Publicidad",  "" } )
+
+Return ( aCocAlbCli )
+
+//---------------------------------------------------------------------------//
+
+function aSerAlbCli()
+
+   local aColAlbCli  := {}
+
+   aAdd( aColAlbCli,  { "cSerAlb",     "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "nNumAlb",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "cSufAlb",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "dFecAlb",     "D",  8,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "lFacturado",  "L",  1,   0, "Lógico de facturado",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "cAlmLin",     "C",  3,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
+
+return ( aColAlbCli )
+
+//---------------------------------------------------------------------------//
+
+function SynAlbCli( cPath )
+
+   local oError
+   local oBlock
+   local aTotAlb
+   local cNumAlb
+   local nNumLin     := 0
+   local cCodImp
+   local cNumSer
+   local aNumSer
+   local cNumPed
+   local aNumPed     := {}
+
+   DEFAULT cPath     := cPatEmp()
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIS.DBF", cCheckArea( "ALBCLIS", @dbfAlbCliS ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIS.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLII.DBF", cCheckArea( "ALBCLII", @dbfAlbCliI ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ALBCLII.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliP ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIP.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
+   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatCli() + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfClient ), .f. )
+   if !lAIS(); ordListAdd( cPatCli() + "CLIENT.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
+   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
+   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @dbfPedCliT ), .f. )
+   if !lAIS(); ordListAdd( cPath + "PEDCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @dbfPedCliL ), .f. )
+   if !lAIS(); ordListAdd( cPath + "PEDCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
+   if !lAIS(); ordListAdd( cPath + "FACCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   oNewImp              := TNewImp():Create( cPatEmp() )
+   if !oNewImp:OpenFiles()
+      lOpenFiles     := .f.
+   end if
+
+   ( dbfAlbCliT )->( ordSetFocus( 0 ) )
+   ( dbfAlbCliT )->( dbGoTop() )
+
+   while !( dbfAlbCliT )->( eof() )
+
+      if Empty( ( dbfAlbCliT )->cSufAlb )
+         ( dbfAlbCliT )->cSufAlb := "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumPre ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPre ) ) != 12
+         ( dbfAlbCliT )->cNumPre := AllTrim( ( dbfAlbCliT )->cNumPre ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPed ) ) != 12
+         ( dbfAlbCliT )->cNumPed := AllTrim( ( dbfAlbCliT )->cNumPed ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumSat ) ) != 12
+         ( dbfAlbCliT )->cNumSat := AllTrim( ( dbfAlbCliT )->cNumSat ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumFac ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumFac ) ) != 12
+         ( dbfAlbCliT )->cNumFac := AllTrim( ( dbfAlbCliT )->cNumFac ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumDoc ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumDoc ) ) != 12
+         ( dbfAlbCliT )->cNumDoc := AllTrim( ( dbfAlbCliT )->cNumDoc ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumTik ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumTik ) ) != 13
+         ( dbfAlbCliT )->cNumTik := AllTrim( ( dbfAlbCliT )->cNumTik ) + "00"
+      end if
+
+      if Empty( ( dbfAlbCliT )->cCodCaj )
+         ( dbfAlbCliT )->cCodCaj := "000"
+      end if
+
+      if Empty( ( dbfAlbCliT )->cCodGrp )
+         ( dbfAlbCliT )->cCodGrp := RetGrpCli( ( dbfAlbCliT )->cCodCli, dbfClient )
+      end if
+
+      if Empty( ( dbfAlbCliT )->cNomCli ) .and. !Empty ( ( dbfAlbCliT )->cCodCli )
+         ( dbfAlbCliT )->cNomCli    := RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "Titulo" )
+      end if
+
+      /*
+      Rellenamos los campos de totales-----------------------------------------
+      */
+
+      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
+
+         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
+
+         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
+         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
+         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
+         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
+
+         ( dbfAlbCliT )->( dbUnLock() )
+
+      end if
+
+      /*
+      Si el albarán está creado desde un pedido le revisamos el estado---------
+      */
+
+      aAdd( aNumPed, ( dbfAlbCliT )->cNumPed )
+
+      ( dbfAlbCliT )->( dbSkip() )
+
+   end while
+
+   ( dbfAlbCliT )->( ordSetFocus( 1 ) )
+
+   /*
+   Repasamos para que siempre esten rellenos los campos de totales-------------
+   */
+
+   ( dbfAlbCliT )->( dbGoTop() )
+
+   while !( dbfAlbCliT )->( eof() )
+
+      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
+
+         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
+
+         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
+         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
+         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
+         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
+
+         ( dbfAlbCliT )->( dbUnLock() )
+
+      end if
+      
+      ( dbfAlbCliT )->( dbSkip() )
+
+   end while
+
+   /*
+   Lineas----------------------------------------------------------------------
+   */
+
+   ( dbfAlbCliL )->( ordSetFocus( 0 ) )
+   ( dbfAlbCliL )->( dbGoTop() )
+
+   while !( dbfAlbCliL )->( eof() )
+
+      if Empty( ( dbfAlbCliL )->cSufAlb )
+         ( dbfAlbCliL )->cSufAlb    := "00"
+      end if
+
+      if !Empty( ( dbfAlbCliL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumPed ) ) != 12
+         ( dbfAlbCliL )->cNumPed := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliL )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumSat ) ) != 12
+         ( dbfAlbCliL )->cNumSat := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
+      end if
+
+      if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
+         ( dbfAlbCliL )->cLote      := AllTrim( Str( ( dbfAlbCliL )->nLote ) )
+      end if
+
+      if Empty( ( dbfAlbCliL )->nValImp )
+         cCodImp                    := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
+         if !Empty( cCodImp )
+            ( dbfAlbCliL )->nValImp := oNewImp:nValImp( cCodImp )
+         end if
+      end if
+
+      if Empty( ( dbfAlbCliL )->nVolumen )
+         ( dbfAlbCliL )->nVolumen   := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
+      end if
+
+      if ( dbfAlbCliL )->lIvaLin != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
+         ( dbfAlbCliL )->lIvaLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
+      end if
+
+      if !Empty( ( dbfAlbCliL )->cRef ) .and. Empty( ( dbfAlbCliL )->cCodFam )
+         ( dbfAlbCliL )->cCodFam    := RetFamArt( ( dbfAlbCliL )->cRef, dbfArticulo )
+      end if
+
+      if !Empty( ( dbfAlbCliL )->cRef ) .and. !Empty( ( dbfAlbCliL )->cCodFam )
+         ( dbfAlbCliL )->cGrpFam    := cGruFam( ( dbfAlbCliL )->cCodFam, dbfFamilia )
+      end if
+
+      if Empty( ( dbfAlbCliL )->nReq )
+         ( dbfAlbCliL )->nReq       := nPReq( dbfIva, ( dbfAlbCliL )->nIva )
+      end if
+
+      if ( dbfAlbCliL )->lFacturado != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
+         ( dbfAlbCliL )->lFacturado := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
+      end if
+
+      if ( dbfAlbCliL )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+         ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+      end if
+
+      if ( dbfAlbCliL )->cCodCli != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
+         ( dbfAlbCliL )->cCodCli    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
+      end if
+
+      if Empty( ( dbfAlbCliL )->cAlmLin )
+         ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
+      end if
+
+      // Numeros de serie------------------------------------------------------
+
+      if !Empty( ( dbfAlbCliL )->mNumSer )
+         aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
+         for each cNumSer in aNumSer
+            ( dbfAlbCliS )->( dbAppend() )
+            ( dbfAlbCliS )->cSerAlb    := ( dbfAlbCliL )->cSerAlb
+            ( dbfAlbCliS )->nNumAlb    := ( dbfAlbCliL )->nNumAlb
+            ( dbfAlbCliS )->cSufAlb    := ( dbfAlbCliL )->cSufAlb
+            ( dbfAlbCliS )->cRef       := ( dbfAlbCliL )->cRef
+            ( dbfAlbCliS )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
+            ( dbfAlbCliS )->nNumLin    := ( dbfAlbCliL )->nNumLin
+            ( dbfAlbCliS )->lFacturado := ( dbfAlbCliL )->lFacturado
+            ( dbfAlbCliS )->cNumSer    := cNumSer
+         next
+         ( dbfAlbCliL )->mNumSer       := ""
+      end if
+
+      ( dbfAlbCliL )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfAlbCliL )->( ordSetFocus( 1 ) )
+
+   // Incidencias--------------------------------------------------------------
+
+   ( dbfAlbCliI )->( ordSetFocus( 0 ) )
+   ( dbfAlbCliI )->( dbGoTop() )
+
+   while !( dbfAlbCliI )->( eof() )
+
+      if Empty( ( dbfAlbCliI )->cSufAlb )
+         ( dbfAlbCliI )->cSufAlb    := "00"
+      end if
+
+      ( dbfAlbCliI )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfAlbCliI )->( OrdSetFocus( 1 ) )
+
+   // Series ---------------------------------------------------------------
+
+   ( dbfAlbCliS )->( ordSetFocus( 0 ) )
+   ( dbfAlbCliS )->( dbGoTop() )
+
+   while !( dbfAlbCliS )->( eof() )
+
+      if Empty( ( dbfAlbCliS )->cSufAlb )
+         ( dbfAlbCliS )->cSufAlb    := "00"
+      end if
+
+      if ( dbfAlbCliS )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+         ( dbfAlbCliS )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+      end if
+
+      ( dbfAlbCliS )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfAlbCliS )->( ordSetFocus( 1 ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible sincronizar albaranes de clientes" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !Empty( dbfAlbCliT ) .and. ( dbfAlbCliT )->( Used() )
+      ( dbfAlbCliT )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfAlbCliL ) .and. ( dbfAlbCliL )->( Used() )
+      ( dbfAlbCliL )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfAlbCliS ) .and. ( dbfAlbCliS )->( Used() )
+      ( dbfAlbCliS )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfAlbCliI ) .and. ( dbfAlbCliI )->( Used() )
+      ( dbfAlbCliI )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfAlbCliP ) .and. ( dbfAlbCliP )->( Used() )
+      ( dbfAlbCliP )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
+      ( dbfArticulo )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
+      ( dbfFamilia )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfClient ) .and. ( dbfClient )->( Used() )
+      ( dbfClient )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
+      ( dbfIva )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
+      ( dbfDiv )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfPedCliT ) .and. ( dbfPedCliT )->( Used() )
+      ( dbfPedCliT )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfPedCliL ) .and. ( dbfPedCliL )->( Used() )
+      ( dbfPedCliL )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfFacCliL ) .and. ( dbfFacCliL )->( Used() )
+      ( dbfFacCliL )->( dbCloseArea() )
+   end if
+
+   if !Empty( oNewImp )
+      oNewImp:end()
+   end if
+
+   oNewImp              := nil
+
+   /*
+   Estado de los pedidos-------------------------------------------------------
+   */
+
+   oStock               := TStock():Create()
+   if oStock:lOpenFiles()
+
+      for each cNumPed in aNumPed
+         oStock:SetEstadoPedCli( cNumPed )
+      end if
+
+   end if
+       
+   if !Empty( oStock )
+      oStock:end()
+   end if
+
+   oStock      := nil
+
+return nil
+
+//------------------------------------------------------------------------//
+
+FUNCTION PrnEntAlb( cNumEnt, lPrint, dbfAlbCliP )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( nil, .t. )
+
+      if dbSeekInOrd( cNumEnt, "nNumAlb", dbfAlbCliP )
+         PrnEntregas( lPrint, dbfAlbCliP )
+      end if
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function nPesAlbCli( cAlbaran, dbfAlbCliL, lPicture )
+
+   local nOrd           := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
+   local nTotPes        := 0
+
+   DEFAULT lPicture     := .f.
+
+   if ( dbfAlbCliL )->( dbSeek( cAlbaran ) )
+
+      while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. ( dbfAlbCliL )->( !eof() )
+
+         if lValLine( dbfAlbCliL )
+
+            nTotPes     += nPesLAlbCli( dbfAlbCliL )
+
+         end if
+
+         ( dbfAlbCliL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfAlbCliL )->( OrdSetFocus( nOrd ) )
+
+Return ( if( lPicture, Trans( nTotPes, MasUnd() ), nTotPes ) )
+
+//--------------------------------------------------------------------------//
+
+Function DesignReportAlbCli( oFr, dbfDoc )
+
+   local lOpen    := .f.
+   local lFlag    := .f.
+
+   /*
+   Tratamiento para no hacer dos veces el openfiles al editar el documento en imprimir series
+   */
+
+   if lOpenFiles
+      lFlag       := .t.
+   else
+      if Openfiles()
+         lFlag    := .t.
+         lOpen    := .t.
+      else
+         lFlag    := .f.
+      end if
+   end if
+
+   if lFlag
+
+      /*
+      Zona de datos------------------------------------------------------------
+      */
+
+      DataReport( oFr )
+
+      /*
+      Paginas y bandas---------------------------------------------------------
+      */
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+         oFr:SetProperty(     "Report.ScriptText", "Text",;
+                                                   + ;
+                                                   "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
+                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
+                                                   "   CallHbFunc('nTotAlbCli');"                              + Chr(13) + Chr(10) + ;
+                                                   "end;"                                                      + Chr(13) + Chr(10) + ;
+                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
+                                                   "end." )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Albaranes" )
+
+         oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
+         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
+         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de albaranes" )
+         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end if
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReport( oFr )
+
+      /*
+      Diseño de report---------------------------------------------------------
+      */
+
+      oFr:DesignReport()
+
+      /*
+      Destruye el diseñador----------------------------------------------------
+      */
+
+      oFr:DestroyFr()
+
+      /*
+      Cierra ficheros----------------------------------------------------------
+      */
+
+      if lOpen
+         CloseFiles()
+      end if
+
+   else
+
+      Return .f.
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
+
+   local oFr
+   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, " ", "" ) + ".Pdf"
+
+   DEFAULT nDevice      := IS_SCREEN
+   DEFAULT nCopies      := 1
+   DEFAULT cPrinter     := PrnGetName()
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+   /*
+   Manejador de eventos--------------------------------------------------------
+   */
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   DataReport( oFr )
+
+   /*
+   Cargar el informe-----------------------------------------------------------
+   */
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReport( oFr )
+
+      /*
+      Preparar el report-------------------------------------------------------
+      */
+
+      oFr:PrepareReport()
+
+      /*
+      Imprimir el informe------------------------------------------------------
+      */
+
+      do case
+         case nDevice == IS_SCREEN
+
+            oFr:ShowPreparedReport()
+
+         case nDevice == IS_PRINTER
+
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:Print()
+
+         case nDevice == IS_PDF
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
+            oFr:DoExport(     "PDFExport" )
+
+         case nDevice == IS_MAIL
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
+            oFr:DoExport(     "PDFExport" )
+
+            if file( cFilePdf )
+
+               with object ( TGenMailing():New() )
+
+                  :SetTypeDocument( "nAlbCli" )
+                  :SetDe(           uFieldEmpresa( "cNombre" ) )
+                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAdjunto(      cFilePdf )
+                  :SetPara(         RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "cMeiInt" ) )
+                  :SetAsunto(       "Envio de albaran de cliente número " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + Space( 1 ) )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      "Reciba un cordial saludo." )
+
+                  :GeneralResource( dbfAlbCliT, aItmAlbCli() )
+
+               end with
+
+            end if
+
+      end case
+
+   end if
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function DesignReportEntAlbCli( oFr, dbfDoc )
+
+   if OpenFiles()
+
+      /*
+      Zona de datos------------------------------------------------------------
+      */
+
+      DataReportEntAlbCli( oFr )
+
+      /*
+      Paginas y bandas---------------------------------------------------------
+      */
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+         oFr:SetProperty(     "Report.ScriptText", "Text",;
+                                                   + ;
+                                                   "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
+                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
+                                                   "CallHbFunc('nTotAlbCli');"                                 + Chr(13) + Chr(10) + ;
+                                                   "end;"                                                      + Chr(13) + Chr(10) + ;
+                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
+                                                   "end." )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:SetProperty(     "MainPage",          "OnBeforePrint", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "CuerpoDocumento",   "MainPage", frxPageHeader )
+         oFr:SetProperty(     "CuerpoDocumento",   "Top", 0 )
+         oFr:SetProperty(     "CuerpoDocumento",   "Height", 300 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 300 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Entrega" )
+
+      end if
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReportEntAlbCli( oFr )
+
+      /*
+      Diseño de report---------------------------------------------------------
+      */
+
+      oFr:DesignReport()
+
+      /*
+      Destruye el diseñador----------------------------------------------------
+      */
+
+      oFr:DestroyFr()
+
+      /*
+      Cierra ficheros----------------------------------------------------------
+      */
+
+      CloseFiles()
+
+   else
+
+      Return .f.
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
+
+   local oFr
+   local nRecAlbCliT    := ( dbfAlbCliT )->( Recno() )
+
+   DEFAULT nDevice      := IS_SCREEN
+   DEFAULT nCopies      := 1
+   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT lTicket      := .f.
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+   /*
+   Manejador de eventos--------------------------------------------------------
+   */
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
+
+   /*
+   Cargar el informe-----------------------------------------------------------
+   */
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReportEntAlbCli( oFr )
+
+      /*
+      Preparar el report-------------------------------------------------------
+      */
+
+      oFr:PrepareReport()
+
+      /*
+      Imprimir el informe------------------------------------------------------
+      */
+
+      do case
+         case nDevice == IS_SCREEN
+            oFr:ShowPreparedReport()
+
+         case nDevice == IS_PRINTER
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:Print()
+
+         case nDevice == IS_PDF
+            oFr:DoExport( "PDFExport" )
+
+      end case
+
+   end if
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   ( dbfAlbCliT )->( dbGoTo( nRecAlbCliT ) )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( nil, .t. )
+
+      if ( dbfTmpEnt )->( Used() )
+         ( dbfTmpEnt )->( dbSetFilter( {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumRec ) == cNumDoc }, "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumRec ) == cNumDoc" ) )
+         ( dbfTmpEnt )->( dbGoTop() )
+      end if
+
+      PrnEntregas( lPrint, dbfTmpEnt, .t. )
+
+      ( dbfTmpEnt )->( DbClearFilter() )
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+//
+// Devuelve el numero de unidades reservadas en albaranes a clientes
+//
+
+function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, cDetalle, dbfAlbCliL )
+
+   local nTot        := 0
+   local aStaLin     := aGetStatus( dbfAlbCliL, .f. )
+
+   DEFAULT cCodPr1   := Space( 20 )
+   DEFAULT cCodPr2   := Space( 20 )
+   DEFAULT cRefPrv   := Space( 18 )
+   DEFAULT cDetalle  := Space( 250 )
+
+   if ( IsMuebles() )
+
+      ( dbfAlbCliL )->( OrdSetFocus( "cNumPedDet" ) )
+
+      if ( dbfAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cRefPrv + cDetalle ) )
+         while ( dbfAlbCliL )->cNumPed + ( dbfAlbCliL )->cRef + ( dbfAlbCliL )->cCodPr1 + ( dbfAlbCliL )->cCodPr2 + ( dbfAlbCliL )->cRefPrv + ( dbfAlbCliL )->cDetalle == cNumPed + cCodArt + cCodPr1 + cCodPr2 + cRefPrv + cDetalle .and. !( dbfAlbCliL )->( eof() )
+            nTot     += nTotNAlbCli( dbfAlbCliL )
+            ( dbfAlbCliL )->( dbSkip() )
+         end while
+      end if
+
+   else
+
+      ( dbfAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
+
+      if ( dbfAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
+         while ( dbfAlbCliL )->cNumPed + ( dbfAlbCliL )->cRef + ( dbfAlbCliL )->cCodPr1 + ( dbfAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( dbfAlbCliL )->( eof() )
+            nTot     += nTotNAlbCli( dbfAlbCliL )
+            ( dbfAlbCliL )->( dbSkip() )
+         end while
+      end if
+
+   end if
+
+   SetStatus( dbfAlbCliL, aStaLin )
+
+return ( nTot )
+
+//---------------------------------------------------------------------------//
+
+function nTotNAlbCli( uDbf )
+
+   local nTotUnd
+
+   DEFAULT uDbf   := dbfAlbCliL
+
+   do case
+      case ValType( uDbf ) == "A"
+
+         if uDbf[ __LALQUILER ]
+
+            nTotUnd  := NotCaja( uDbf[ _NCANENT ] )
+            nTotUnd  *= uDbf[ _NUNICAJA ]
+            nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
+            nTotUnd  *= NotCero( uDbf[ __DFECENT ] - uDbf[ __DFECSAL ] )
+            nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
+            nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
+            nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
+
+
+         else
+
+            nTotUnd  := NotCaja( uDbf[ _NCANENT ] )
+            nTotUnd  *= uDbf[ _NUNICAJA ]
+            nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
+            nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
+            nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
+            nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
+
+
+         end if
+
+      case ValType( uDbf ) == "C"
+
+         if ( uDbf )->lAlquiler
+
+            nTotUnd  := NotCaja( ( uDbf )->nCanEnt )
+            nTotUnd  *= ( uDbf )->nUniCaja
+            nTotUnd  *= NotCero( ( uDbf )->nUndKit )
+            nTotUnd  *= NotCero( ( uDbf )->dFecEnt - ( uDbf )->dFecSal )
+            nTotUnd  *= NotCero( ( uDbf )->nMedUno )
+            nTotUnd  *= NotCero( ( uDbf )->nMedDos )
+            nTotUnd  *= NotCero( ( uDbf )->nMedTre )
+
+         else
+
+            nTotUnd  := NotCaja( ( uDbf )->nCanEnt )
+            nTotUnd  *= ( uDbf )->nUniCaja
+            nTotUnd  *= NotCero( ( uDbf )->nUndKit )
+            nTotUnd  *= NotCero( ( uDbf )->nMedUno )
+            nTotUnd  *= NotCero( ( uDbf )->nMedDos )
+            nTotUnd  *= NotCero( ( uDbf )->nMedTre )
+
+         end if
+
+
+      otherwise
+
+         if uDbf:lAlquiler
+
+            nTotUnd  := NotCaja( uDbf:nCanEnt )
+            nTotUnd  *= uDbf:nUniCaja
+            nTotUnd  *= NotCero( uDbf:nUndKit )
+            nTotUnd  *= NotCero( uDbf:dFecEnt - uDbf:dFecSal )
+            nTotUnd  *= NotCero( uDbf:nMedUno )
+            nTotUnd  *= NotCero( uDbf:nMedDos )
+            nTotUnd  *= NotCero( uDbf:nMedTre )
+
+
+         else
+
+            nTotUnd  := NotCaja( uDbf:nCanEnt )
+            NtotUnd  *= uDbf:nUniCaja
+            nTotUnd  *= NotCero( uDbf:nUndKit )
+            nTotUnd  *= NotCero( uDbf:nMedUno )
+            nTotUnd  *= NotCero( uDbf:nMedDos )
+            nTotUnd  *= NotCero( uDbf:nMedTre )
+
+         end if
+
+   end case
+
+return ( nTotUnd )
+
+//---------------------------------------------------------------------------//
+
+function nTotVAlbCli( uDbf )
+
+   local nTotUnd
+
+   DEFAULT uDbf   := dbfAlbCliL
+
+   do case
+      case ValType( uDbf ) == "A"
+
+         nTotUnd  := nTotNAlbCli( uDbf ) * NotCero( uDbf[ _NFACCNV ] )
+
+      case ValType( uDbf ) == "C"
+
+         nTotUnd  := nTotNAlbCli( uDbf ) * NotCero( ( uDbf )->nFacCnv )
+
+      otherwise
+
+         nTotUnd  := nTotNAlbCli( uDbf ) * NotCero( uDbf:nFacCnv )
+
+   end case
+
+return ( nTotUnd )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   if ( cAlbCliL )->lTotLin
+
+      nCalculo       := nTotUAlbCli( cAlbCliL, nDec, nVdv )
+
+   else
+
+      /*
+      Tomamos los valores redondeados------------------------------------------
+      */
+
+      nCalculo       := nTotUAlbCli( cAlbCliL, nDec, nVdv )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      if lDto
+
+         nCalculo    -= Round( ( cAlbCliL )->nDtoDiv , nDec )
+
+         if ( cAlbCliL )->nDto != 0
+            nCalculo -= nCalculo * ( cAlbCliL )->nDto / 100
+         end if
+
+         if ( cAlbCliL )->nDtoPrm != 0
+            nCalculo -= nCalculo * ( cAlbCliL )->nDtoPrm / 100
+         end if
+
+      end if
+
+      /*
+      Punto Verde--------------------------------------------------------------
+      */
+
+      if lPntVer
+         nCalculo    += ( cAlbCliL )->nPntVer
+      end if
+
+      /*
+      Transporte---------------------------------------------------------------
+      */
+
+      if lImpTrn 
+         nCalculo    += ( cAlbCliL )->nImpTrn 
+      end if
+
+      /*
+      Unidades-----------------------------------------------------------------
+      */
+
+      nCalculo       *= nTotNAlbCli( cAlbCliL )
+
+      /*
+      Redondeo-----------------------------------------------------------------
+      */
+
+      if nRou != nil
+         nCalculo    := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+//
+// Precio del punto verde por linea
+//
+
+FUNCTION nPntLAlbCli( dbfLin, nDec, nVdv )
+
+   local nPntVer
+
+   DEFAULT dbfLin    := dbfAlbCliL
+   DEFAULT nDec      := 0
+   DEFAULT nVdv      := 1
+
+   /*
+   Punto Verde
+   */
+
+   nPntVer           := ( dbfLin )->nPntVer * nTotNAlbCli( dbfLin )
+
+RETURN ( Round( nPntVer, nDec ) )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
+
+FUNCTION nDtoLAlbCli( cAlbCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cAlbCliL     := dbfAlbCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cAlbCliL )->nDto != 0 .and. !( cAlbCliL )->lTotLin
+
+      nCalculo          := nTotUAlbCli( cAlbCliL, nDec ) * nTotNAlbCli( cAlbCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cAlbCliL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cAlbCliL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLAlbCli( cAlbCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cAlbCliL     := dbfAlbCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cAlbCliL )->nDtoPrm != 0 .and. !( cAlbCliL )->lTotLin
+
+      nCalculo          := nTotUAlbCli( cAlbCliL, nDec ) * nTotNAlbCli( cAlbCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cAlbCliL )->nDtoDiv / nVdv , nDec )
+
+      if ( cAlbCliL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cAlbCliL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cAlbCliL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+
+//
+// Precio unitario
+//
+
+FUNCTION nTotUAlbCli( uTmpLin, nDec, nVdv )
+
+   local nCalculo    := 0
+
+   DEFAULT uTmpLin   := dbfAlbCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nVdv      := 1
+
+   do case
+      case IsChar( uTmpLin )
+
+         if ( uTmpLin )->lAlquiler
+            nCalculo    := ( uTmpLin )->nPreAlq
+         else
+            nCalculo    := ( uTmpLin )->nPreUnit
+         end if
+
+      case IsObject( uTmpLin )
+
+         if uTmpLin:lAlquiler
+            nCalculo    := uTmpLin:nPreAlq
+         else
+            nCalculo    := uTmpLin:nPreUnit
+         end if
+
+      case IsArray( uTmpLin )
+
+         if uTmpLin[ __LALQUILER ]
+            nCalculo    := uTmpLin[ _NSATALQ ]
+         else
+            nCalculo    := uTmpLin[ _NSATUNIT ]
+         end if
+
+   end case
+
+   if nVdv != 0
+      nCalculo          := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+/*
+Cambia el importe unitario de la linea
+*/
+
+FUNCTION SetUAlbCli( dbfLin, nNewVal )
+
+      DEFAULT dbfLin             := dbfAlbCliL
+
+    if ( dbfLin )->lAlquiler
+       ( dbfLin )->nPreAlq       := nNewVal
+    else
+       ( dbfLin )->nPreUnit   := nNewVal
+    end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//
+// Valor del punto verde
+//
+
+Function nPntUAlbCli( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo := ( dbfTmpLin )->nPntVer
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   IF nVdv != 0
+      nCalculo    := ( dbfTmpLin )->nPntVer / nVdv
+   END IF
+
+Return ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION IsAlbCli( cPath )
+
+   DEFAULT cPath  := cPatEmp()
+
+   if !lExistTable( cPath + "AlbCliT.Dbf" )
+      dbCreate( cPath + "AlbCliT.Dbf", aSqlStruct( aItmAlbCli() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "AlbCliL.Dbf" )
+      dbCreate( cPath + "AlbCliL.Dbf", aSqlStruct( aColAlbCli() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "AlbCliP.Dbf" )
+      dbCreate( cPath + "AlbCliP.Dbf", aSqlStruct( aItmAlbPgo() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "AlbCliI.Dbf" )
+      dbCreate( cPath + "AlbCliI.Dbf", aSqlStruct( aIncAlbCli() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "AlbCliD.Dbf" )
+      dbCreate( cPath + "AlbCliD.Dbf", aSqlStruct( aAlbCliDoc() ), cDriver() )
+   end if
+
+   if !lExistIndex( cPath + "AlbCliT.Cdx" ) .or. ;
+      !lExistIndex( cPath + "AlbCliL.Cdx" ) .or. ;
+      !lExistIndex( cPath + "AlbCliP.Cdx" ) .or. ;
+      !lExistIndex( cPath + "AlbCliI.Cdx" ) .or. ;
+      !lExistTable( cPath + "AlbCliD.Cdx" )
+
+      rxAlbCli( cPath )
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
+
+   local oBlock
+   local oError
+   local dbfAlbCliT
+   local dbfAlbCliL
+   local dbfAlbCliI
+   local dbfAlbCliD
+   local dbfAlbCliP
+   local oldAlbCliT
+   local oldAlbCliL
+   local oldAlbCliI
+   local oldAlbCliD
+   local oldAlbCliP
+
+   DEFAULT lAppend   := .f.
+   DEFAULT bFor      := {|| .t. }
+
+   if oMeter != nil
+      oMeter:cText   := "Generando Bases"
+      sysrefresh()
+   end if
+
+   CreateFiles( cPath )
+
+   rxAlbCli( cPath, oMeter )
+
+   if lAppend .and. lIsDir( cPathOld )
+
+      oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
+      ( dbfAlbCliT )->( ordListAdd( cPath + "ALBCLIT.CDX" ) )
+
+      dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
+      ( dbfAlbCliL )->( ordListAdd( cPath + "ALBCLIL.CDX" ) )
+
+      dbUseArea( .t., cDriver(), cPath + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @dbfAlbCliI ), .f. )
+      ( dbfAlbCliI )->( ordListAdd( cPath + "AlbCliI.Cdx"  ) )
+
+      dbUseArea( .t., cDriver(), cPath + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @dbfAlbCliD ), .f. )
+      ( dbfAlbCliD )->( ordListAdd( cPath + "AlbCliD.Cdx"  ) )
+
+      dbUseArea( .t., cDriver(), cPath + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @dbfAlbCliP ), .f. )
+      ( dbfAlbCliP )->( ordListAdd( cPath + "AlbCliP.Cdx"  ) )
+
+      dbUseArea( .t., cDriver(), cPathOld + "AlbCLIT.DBF", cCheckArea( "AlbCLIT", @oldAlbCliT ), .f. )
+      ( oldAlbCliT )->( ordListAdd( cPathOld + "AlbCLIT.CDX"  ) )
+
+      dbUseArea( .t., cDriver(), cPathOld + "AlbCLIL.DBF", cCheckArea( "AlbCLIL", @oldAlbCliL ), .f. )
+      ( oldAlbCliL )->( ordListAdd( cPathOld + "AlbCLIL.CDX"  ) )
+
+      dbUseArea( .t., cDriver(), cPathOld + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @oldAlbCliI ), .f. )
+      ( oldAlbCliI )->( ordListAdd( cPathOld + "AlbCliI.Cdx"  ) )
+
+      dbUseArea( .t., cDriver(), cPathOld + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @oldAlbCliD ), .f. )
+      ( oldAlbCliD )->( ordListAdd( cPathOld + "AlbCliD.Cdx"  ) )
+
+      dbUseArea( .t., cDriver(), cPathOld + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @oldAlbCliP ), .f. )
+      ( oldAlbCliP )->( ordListAdd( cPathOld + "AlbCliP.Cdx"  ) )
+
+      while !( oldAlbCliT )->( eof() )
+
+         if eval( bFor, oldAlbCliT )
+            dbCopy( oldAlbCliT, dbfAlbCliT, .t. )
+
+            if ( oldAlbCliL )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
+               while ( oldAlbCliL )->CSERALB + Str( ( oldAlbCliL )->NNUMALB ) + ( oldAlbCliL )->CSUFALB == (oldAlbCliT)->CSERALB + Str( (dbfAlbCliT)->NNUMALB ) + (dbfAlbCliT)->CSUFALB .and. !(oldAlbCliL)->( eof() )
+                  dbCopy( oldAlbCliL, dbfAlbCliL, .t. )
+                  ( oldAlbCliL )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldAlbCliI )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
+               while ( oldAlbCliI )->CSERALB + Str( ( oldAlbCliI )->NNUMALB ) + ( oldAlbCliI )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
+                  dbCopy( oldAlbCliI, dbfAlbCliI, .t. )
+                  ( oldAlbCliI )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldAlbCliD )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
+               while ( oldAlbCliD )->CSERALB + Str( ( oldAlbCliD )->NNUMALB ) + ( oldAlbCliD )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
+                  dbCopy( oldAlbCliD, dbfAlbCliD, .t. )
+                  ( oldAlbCliD )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldAlbCliP )->( dbSeek( ( oldAlbCliT )->CSERALB + Str( ( oldAlbCliT )->NNUMALB ) + ( oldAlbCliT )->CSUFALB ) )
+               while ( oldAlbCliP )->CSERALB + Str( ( oldAlbCliP )->NNUMALB ) + ( oldAlbCliP )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
+                  dbCopy( oldAlbCliP, dbfAlbCliP, .t. )
+                  ( oldAlbCliP )->( dbSkip() )
+               end while
+            end if
+
+         end if
+
+         ( oldAlbCliT )->( dbSkip() )
+
+      end while
+
+      /*
+      Reemplaza la antigua sesion----------------------------------------------
+      */
+
+      ( dbfAlbCliT )->( dbEval( {|| ( dbfAlbCliT )->cTurAlb := Space( 6 ) },,,,, .f. ) )
+
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+      ( dbfAlbCliL )->( dbCloseArea() )
+      ( dbfAlbCliI )->( dbCloseArea() )
+      ( dbfAlbCliD )->( dbCloseArea() )
+      ( dbfAlbCliP )->( dbCloseArea() )
+
+      ( oldAlbCliT )->( dbCloseArea() )
+      ( oldAlbCliL )->( dbCloseArea() )
+      ( oldAlbCliI )->( dbCloseArea() )
+      ( oldAlbCliD )->( dbCloseArea() )
+      ( oldAlbCliP )->( dbCloseArea() )
+
+      RECOVER USING oError
+
+         msgStop( "Imposible abrir todas las bases de datos de albaranes de clientes" + CRLF + ErrorMessage( oError ) )
+
+      END SEQUENCE
+      ErrorBlock( oBlock )
+
+   end if
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+FUNCTION rxAlbCli( cPath, oMeter )
+
+   local dbfAlbCliT
+
+   DEFAULT cPath  := cPatEmp()
+
+   if !lExistTable( cPath + "ALBCLIT.DBF" )   .OR. ;
+      !lExistTable( cPath + "ALBCLIL.DBF" )   .OR. ;
+      !lExistTable( cPath + "ALBCLII.DBF" )   .OR. ;
+      !lExistTable( cPath + "ALBCLID.DBF" )   .OR. ;
+      !lExistTable( cPath + "ALBCLIP.DBF" )   .OR. ;
+      !lExistTable( cPath + "ALBCLIS.DBF" )
+
+      CreateFiles( cPath )
+
+   end if
+
+   fEraseIndex( cPath + "ALBCLIT.CDX" )
+   fEraseIndex( cPath + "ALBCLIL.CDX" )
+   fEraseIndex( cPath + "ALBCLII.CDX" )
+   fEraseIndex( cPath + "ALBCLID.CDX" )
+   fEraseIndex( cPath + "ALBCLIP.CDX" )
+   fEraseIndex( cPath + "ALBCLIS.CDX" )
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
+
+   if !( dbfAlbCliT )->( neterr() )
+      ( dbfAlbCliT )->( __dbPack() )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cObra", "cCodObr + Dtos( dFecAlb )", {|| Field->cCodObr + Dtos( Field->dFecAlb ) } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCodAge", "cCodAge + Dtos( dFecAlb )", {|| Field->cCodAge + Dtos( Field->dFecAlb ) } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODSUALB", "CCODSUALB", {|| Field->CCODSUALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LFACTURADO", "LFACTURADO", {|| Field->LFACTURADO } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cNumFac", "CNUMFAC", {|| Field->CNUMFAC }, ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CTURALB", "CTURALB + CSUFALB + CCODCAJ", {|| Field->CTURALB + Field->CSUFALB + Field->CCODCAJ } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMORD", "Str( nNumOrd ) + cSufOrd", {|| Str( Field->nNumOrd ) + Field->cSufOrd } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODTRN", "CCODTRN", {|| Field->CCODTRN } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ))
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliT ), .f. )
+
+   if !( dbfAlbCliT )->( neterr() )
+      ( dbfAlbCliT )->( __dbPack() )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRef", "cRef + cCodPr1 + cCodPr2 + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "Lote", "cLote" , {|| Field->cLote } ) )
+
+      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCLIL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedDet", "cNumPed + cRef + cCodPr1 + cCodPr2 + cRefPrv", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cRefPrv } ) ) // + cDetalle
+
+      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
+
+      ( dbfAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+   end if
+
+   // Pagos de albaranes
+
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliT ), .f. )
+
+   if !( dbfAlbCliT )->( neterr() )
+      ( dbfAlbCliT )->( __dbPack() )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB + STR( NNUMREC )", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB + STR( Field->NNUMREC ) } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CTURREC", "cTurRec + cSufAlb + cCodCaj", {|| Field->cTurRec + Field->cSufAlb + Field->cCodCaj } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CCODCLI", "cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.CDX", "DENTREGA", "dEntrega", {|| Field->dEntrega } ) )
+
+      ( dbfAlbCliT )->( ordCondSet("!Deleted() .and. !Field->lPasado", {|| !Deleted() .and. !Field->lPasado } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "cEPaisIBAN + cECtrlIBAN + cEntEmp + cSucEmp + cDigEmp + cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "AlbCliI.DBF", cCheckArea( "AlbCliI", @dbfAlbCliT ), .f. )
+
+   if !( dbfAlbCliT )->( neterr() )
+      ( dbfAlbCliT )->( __dbPack() )
+
+      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "AlbCliD.DBF", cCheckArea( "AlbCliD", @dbfAlbCliT ), .f. )
+
+   if !( dbfAlbCliT )->( neterr() )
+      ( dbfAlbCliT )->( __dbPack() )
+
+      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "AlbCliS.Dbf", cCheckArea( "AlbCliS", @dbfAlbCliT ), .f. )
+
+   if !( dbfAlbCliT )->( neterr() )
+      ( dbfAlbCliT )->( __dbPack() )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
+      ( dbfAlbCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de albaranes de clientes" )
+   end if
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+function aAlbCliDoc()
+
+   local aAlbCliDoc  := {}
+
+   aAdd( aAlbCliDoc, { "cSerAlb", "C",    1,  0, "Serie de albarán" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aAlbCliDoc, { "nNumAlb", "N",    9,  0, "Número de albarán" ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aAlbCliDoc, { "cSufAlb", "C",    2,  0, "Sufijo de albarán" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aAlbCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aAlbCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aAlbCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+
+return ( aAlbCliDoc )
+
+//---------------------------------------------------------------------------//
+
+function aIncAlbCli()
+
+   local aIncAlbCli  := {}
+
+   aAdd( aIncAlbCli, { "cSerAlb", "C",    1,  0, "Serie de albarán" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "nNumAlb", "N",    9,  0, "Número de albarán" ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "cSufAlb", "C",    2,  0, "Sufijo de albarán" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
+
+return ( aIncAlbCli )
+
+//---------------------------------------------------------------------------//
+
+function aItmAlbPgo()
+
+   local aBasRecCli  := {}
+
+   aAdd( aBasRecCli, {"cSerAlb"     ,"C",  1, 0, "Serie de albarán" ,                  "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"nNumAlb"     ,"N",  9, 0, "Número de albarán" ,                 "'999999999'",       "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cSufAlb"     ,"C",  2, 0, "Sufijo de albarán" ,                 "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"nNumRec"     ,"N",  2, 0, "Número del recibo",                  "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                     "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cTurRec"     ,"C",  6, 0, "Sesión del recibo",                  "######",            "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cCodCli"     ,"C", 12, 0, "Código de cliente",                  "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"dEntrega"    ,"D",  8, 0, "Fecha de cobro",                     "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"nImporte"    ,"N", 16, 6, "Importe",                            "cPorDivEnt",        "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cDescrip"    ,"C",100, 0, "Concepto del pago",                  "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cPgdoPor"    ,"C", 50, 0, "Pagado por",                         "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cDocPgo"     ,"C", 50, 0, "Documento de pago",                  "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cDivPgo"     ,"C",  3, 0, "Código de la divisa",                "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"nVdvPgo"     ,"N", 10, 6, "Cambio de la divisa",                "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cCodAge"     ,"C",  3, 0, "Código del agente",                  "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "Código de la forma de pago",         "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"lCloPgo"     ,"L",  1, 0, "Logico de turno cerrado",            "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cNumAnt"     ,"C", 14, 0, "Número del anticipo en el pedido",   "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "Número del pedido al que pertenece", "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico de pasado",                   "",                  "", "( cDbfEnt )" } )
+   aAdd( aBasRecCli, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",                  "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",                    "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta bancaria de la empresa",       "", "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria de la empresa", "", "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",                 "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",                "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",        "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                      "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "", "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "", "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",                  "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",          "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",  "",                        "", "( cDbfEnt )", nil } )
+
+
+return ( aBasRecCli )
+
+//---------------------------------------------------------------------------//
+
+Function aColAlbCli()
+
+   local aColAlbCli  := {}
+
+   aAdd( aColAlbCli, { "cSerAlb",   "C",  1, 0, "Serie del albarán" ,            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nNumAlb",   "N",  9, 0, "Número del albarán" ,           "'999999999'",       "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cSufAlb",   "C",  2, 0, "Sufijo del albarán" ,           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cRef",      "C", 18, 0, "Referencia de artículo" ,       "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cDetalle",  "C",250, 0, "Detalle de artículo" ,          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nPreUnit",  "N", 16, 6, "Precio artículo" ,              "cPouDivAlb",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nPntVer",   "N", 16, 6, "Importe punto verde" ,          "cPpvDivAlb",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nImpTrn",   "N", 16, 6, "Importe del porte" ,            "cPouDivAlb",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nDto",      "N",  6, 2, "Descuento de artículo" ,        "'@E 999.9'",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nDtoPrm",   "N",  6, 2, "Descuento de promoción" ,       "'@E 999.9'",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nIva",      "N",  4, 1, cImp() + " del artículo" ,             "'@E 99'",           "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nCanEnt",   "N", 16, 6, cNombreCajas(),                  "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nCanFac",   "N", 16, 6, "Cantidad facturada" ,           "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lControl",  "L",  1, 0, "Control reservado" ,            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nPesoKg",   "N", 16, 6, "Peso del producto" ,            "'@E 9,999.99'",     "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cPesoKg",   "C",  2, 0, "Unidad de peso del producto" ,  "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cUnidad",   "C",  2, 0, "Unidad de venta" ,              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nComAge",   "N",  6, 2, "Comisión del agente" ,          "'@E 999.9'",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nUniCaja",  "N", 16, 6, cNombreUnidades(),               "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nUndKit",   "N", 16, 6, "Unidades del producto kit",     "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecha",    "D",  8, 0, "Fecha de linea" ,               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cTipMov",   "C",  2, 0, "Tipo de movimiento" ,           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "mLngDes",   "M", 10, 0, "Descripción larga" ,            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lTotLin",   "L",  1, 0, "Línea de total" ,               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lImpLin",   "L",  1, 0, "Línea no imprimible" ,          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lNewLin",   "L",  1, 0, "" ,                             "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cNumPed"   ,"C", 12, 0, "Número del pedido" ,            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",    "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad",    "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nFacCnv",   "N", 16, 6, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nDtoDiv",   "N", 16, 6, "Descuento en línea",            "cPouDivAlb",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nNumLin",   "N",  4, 0, "Número de la línea",            "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nCtlStk",   "N",  1, 0, "Tipo de stock de la linea",     "9",                 "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nCosDiv",   "N", 16, 6, "Precio de costo",               "cPouDivAlb",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nPvpRec",   "N", 16, 6, "Precio de venta recomendado",   "cPouDivAlb",        "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cAlmLin",   "C",  3, 0, "Código del almacen",            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lIvaLin",   "L",  1, 0, cImp() + " incluido",            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nValImp",   "N", 16, 6, "Importe de impuesto",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodImp",   "C",  3, 0, "Código del IVMH",               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lLote",     "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nLote",     "N",  9, 0, "",                              "'999999999'",       "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cLote",     "C", 12, 0, "Número de lote",                "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecCad",   "D",  8, 0, "Fecha de caducidad",            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lKitArt",   "L",  1, 0, "Línea con escandallo",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lKitChl",   "L",  1, 0, "Línea pertenciente a escandallo", "",                "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lKitPrc",   "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nMesGrt",   "N",  2, 0, "Meses de garantía",             "'99'",              "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lMsgVta",   "L",  1, 0, "Avisar venta sin stocks",       "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lNotVta",   "L",  1, 0, "No permitir venta sin stocks",  "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "mNumSer",   "M", 10, 0, "" ,                             "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodTip",   "C",  3, 0, "Código del tipo de artículo",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodFam",   "C", 16, 0, "Código de familia",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cGrpFam",   "C",  3, 0, "Código del grupo de familia",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nReq",      "N", 16, 6, "Recargo de equivalencia",       "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "mObsLin",   "M", 10, 0, "Observación de línea",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodPrv",   "C", 12, 0, "Código del proveedor",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cNomPrv",   "C", 30, 0, "Nombre del proveedor",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cImagen",   "C",250, 0, "Fichero de imagen" ,            "",                  "", "( cDbfCol )", .t. } )
+   aAdd( aColAlbCli, { "nPuntos",   "N", 15, 6, "Puntos del artículo",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nValPnt",   "N", 16, 6, "Valor del punto",               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nDtoPnt",   "N",  5, 2, "Descuento puntos",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nIncPnt",   "N",  5, 2, "Incremento porcentual",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cRefPrv",   "C", 18, 0, "Referencia proveedor",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nVolumen",  "N", 16, 6, "Volumen del producto" ,         "'@E 9,999.99'",     "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cVolumen",  "C",  2, 0, "Unidad del volumen" ,           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecEnt" ,  "D",  8, 0, "Fecha de entrada del alquiler", "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecSal" ,  "D",  8, 0, "Fecha de salida del alquiler",  "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nPreAlq" ,  "N", 16, 6, "Precio de alquiler",            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",            "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nNumMed",   "N",  1, 0, "Número de mediciones",          "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nMedUno",   "N", 16, 6, "Primera unidad de medición",    "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nMedDos",   "N", 16, 6, "Segunda unidad de medición",    "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nMedTre",   "N", 16, 6, "Tercera unidad de medición",    "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nTarLin",   "N", 16, 6, "Tarifa de precio aplicada",     "MasUnd()",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodUbi1",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodUbi2",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodUbi3",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValUbi1",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValUbi2",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValUbi3",  "C",  5, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cNomUbi1",  "C", 30, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cNomUbi2",  "C", 30, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cNomUbi3",  "C", 30, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lImpFra",   "L",  1, 0, "Lógico de imprimir frase publicitaria", "",          "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodFra",   "C",  3, 0, "Código de frase publicitaria",  "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cTxtFra",   "C",250, 0, "",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "Descrip",   "M", 10, 0, "Observación de línea",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lFacturado","L",  1, 0, "Lógico de facturado",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
+
+Return ( aColAlbCli )
+
+//---------------------------------------------------------------------------//
+
+Function aItmAlbCli()
+
+   local aItmAlbCli := {}
+
+   aAdd( aItmAlbCli, { "CSERALB"   ,"C",  1, 0, "Serie del albarán" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NNUMALB"   ,"N",  9, 0, "Número del albarán" ,                                   "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CSUFALB"   ,"C",  2, 0, "Sufijo del albarán" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CTURALB"   ,"C",  6, 0, "Sesión del albarán",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "DFECALB"   ,"D",  8, 0, "Fecha del albarán" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODCLI"   ,"C", 12, 0, "Código del cliente" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODALM"   ,"C",  3, 0, "Código de almacén" ,                                    "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                       "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CNOMCLI"   ,"C", 80, 0, "Nombre del cliente" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDIRCLI"   ,"C",100, 0, "Domicilio del cliente" ,                                "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CPOBCLI"   ,"C", 35, 0, "Población del cliente" ,                                "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CPRVCLI"   ,"C", 20, 0, "Provincia del cliente" ,                                "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CPOSCLI"   ,"C", 15, 0, "Código postal del cliente" ,                            "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDNICLI"   ,"C", 30, 0, "DNI/CIF del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LMODCLI"   ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LFACTURADO","L",  1, 0, "Lógico de facturado" ,                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "lEntregado","L",  1, 0, "Lógico albarán enviado" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "DFECENT"   ,"D",  8, 0, "Fecha de entrada del albarán" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODSUALB" ,"C", 25, 0, "Referencia a su albarán" ,                              "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCONDENT"  ,"C",100, 0, "Condición de entrada" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "MCOMENT"   ,"M", 10, 0, "Cometarios del albarán" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "MOBSERV"   ,"M", 10, 0, "Observaciones" ,                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODPAGO"  ,"C",  2, 0, "Código de la forma de pago" ,                           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  3, 0, "Número de bultos" ,                                     "'999'",              "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NPORTES"   ,"N", 16, 6, "Importe de los portes" ,                                "cPouDivAlb",         "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODAGE"   ,"C",  3, 0, "Código del agente" ,                                    "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de obra" ,                                       "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa" ,                                     "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODRUT"   ,"C",  4, 0, "Código de ruta" ,                                       "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CNUMPED"   ,"C", 12, 0, "Número del pedido" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cNumPre"   ,"C", 12, 0, "Número del presupuesto" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,                                       "",                   "", "( cDbf )" } )
+   aAdd( aItmAlbCli, { "NTIPOALB"  ,"N",  1, 0, "Tipo de albarán" ,                                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CNUMFAC"   ,"C", 12, 0, "Número del documento facturado" ,                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LMAYOR"    ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NTARIFA"   ,"N",  1, 0, "Tarifa de precio aplicada" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDTOESP"   ,"C", 50, 0, "Descripción porcentaje de descuento",                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTOESP"   ,"N",  6, 2, "Porcentaje de descuento",                               "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDPP"      ,"C", 50, 0, "Descripción pct. de dto. por pronto pago",              "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDPP"      ,"N",  6, 2, "Porcentaje de dto. por pronto pago",                    "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDTOUNO"   ,"C", 25, 0, "Descripción del primer descuento personalizado",        "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTOUNO"   ,"N",  4, 1, "Porcentaje del primer descuento pers.",                 "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDTODOS"   ,"C", 25, 0, "Descripción del segundo descuento pers.",               "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTODOS"   ,"N",  4, 1, "Descripción del segundo descuento pers.",               "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTOCNT"   ,"N",  6, 2, "Pct. de dto. por pago contado",                         "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTORAP"   ,"N",  6, 2, "Pct. de dto. por rappel",                               "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTOPUB"   ,"N",  6, 2, "Pct. de dto. por publicidad",                           "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTOPGO"   ,"N",  6, 2, "Pct. de dto. por pago centralizado",                    "'@EZ 999.99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NDTOPTF"   ,"N",  7, 2, ""                                 ,                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LRECARGO"  ,"L",  1, 0, "Lógico recargo de equivalencia",                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NPCTCOMAGE","N",  6, 2, "Pct. de comisión del agente",                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LSNDDOC"   ,"L",  1, 0, "Lógico de documento a enviar",                          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CDIVALB"   ,"C",  3, 0, "Código de divisa",                                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NVDVALB"   ,"N", 10, 4, "Valor del cambio de la divisa",                         "'@EZ 999,999.9999'", "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CRETPOR"   ,"C",100, 0, "Retirado por" ,                                         "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CRETMAT"   ,"C", 20, 0, "Matrícula" ,                                            "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CNUMDOC"   ,"C", 12, 0, "",                                                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CSUPED"    ,"C", 50, 0, "Su pedido",                                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LIVAINC"   ,"L",  1, 0, cImp() + " incluido",                                          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NREGIVA"   ,"N",  1, 0, "Regimen de " + cImp(),                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LGENLQD"   ,"L",  1, 0, "Generado por liquidación",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NNUMORD"   ,"N",  9, 0, "Número de la orden de carga" ,                          "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CSUFORD"   ,"C",  2, 0, "Sufijo de la orden de carga" ,                          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "DFECORD"   ,"D",  8, 0, "Fecha de la orden de carga" ,                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NIVAMAN"   ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,                       "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NMANOBR"   ,"N", 16, 6, "Gastos" ,                                               "cPorDivAlb",         "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cCodTrn"   ,"C",  9, 0, "Código del transportista" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nKgsTrn"   ,"N", 16, 6, "TARA del transportista" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "lCloAlb"   ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cCodUsr"   ,"C",  3, 0, "Código de usuario",                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "dFecCre"   ,"D",  8, 0, "Fecha de creación/modificación del documento",          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cTimCre"   ,"C",  5, 0, "Hora de creación/modificación del documento",           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "dFecEnv"   ,"D",  8, 0, "Fecha de envio",                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cCodGrp"   ,"C",  4, 0, "Código de grupo de cliente" ,                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "lImprimido","L",  1, 0, "Lógico de imprimido" ,                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "dFecImp"   ,"D",  8, 0, "Última fecha de impresión" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                      "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,             "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nTotNet",   "N", 16, 6, "Total neto" ,                                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nTotIva",   "N", 16, 6, "Total " + cImp() ,                                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nTotReq",   "N", 16, 6, "Total recargo" ,                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nTotAlb",   "N", 16, 6, "Total albarán" ,                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "nTotPag",   "N", 16, 6, "Total anticipado" ,                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "lOperPV",   "L",  1, 0, "Lógico para operar con punto verde" ,                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cBanco"   , "C", 50, 0, "Nombre del banco del cliente",                          "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cPaisIBAN", "C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCtrlIBAN", "C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",                "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cEntBnc"  , "C",  4, 0, "Entidad de la cuenta bancaria del cliente",             "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cSucBnc"  , "C",  4, 0, "Sucursal de la cuenta bancaria del cliente",            "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                           "",                   "", "( cDbf )", nil } )
+
+Return ( aItmAlbCli )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lPic, lExcCnt, lNeto )
+
+   local nRecno
+   local bCondition
+   local dFecAlb
+   local lRecargo
+   local nDtoUno
+   local nDtoDos
+   local nDtoEsp
+   local nDtoPP
+   local nDtoCnt
+   local nDtoRap
+   local nDtoPub
+   local nDtoPgo
+   local nDtoPtf
+   local cCodDiv
+   local cCodPgo
+   local lIvaInc
+   local nDtoAtp
+   local nSbrAtp
+   local nKgsTrn
+   local nIvaMan
+   local nManObr           := 0
+   local nTotalArt         := 0
+   local nTotalUnd         := 0
+   local nTotalLin         := 0
+   local nTotalTrn         := 0
+   local nTotalPnt         := 0
+   local nTotalIvm         := 0
+   local nImpIva           := { 0, 0, 0 }
+   local nImpReq           := { 0, 0, 0 }
+   local aTotalDto         := { 0, 0, 0 }
+   local aTotalDPP         := { 0, 0, 0 }
+   local aTotalUno         := { 0, 0, 0 }
+   local aTotalDos         := { 0, 0, 0 }
+   local aTotalAtp         := { 0, 0, 0 }
+   local nDescuentosLineas := 0
+   local lOperarPntVer     := .f.
+
+   DEFAULT cAlbCliT        := dbfAlbCliT
+   DEFAULT cAlbCliL        := dbfAlbCliL
+   DEFAULT cAlbaran        := ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb
+   DEFAULT cIva            := dbfIva
+   DEFAULT cDiv            := dbfDiv
+   DEFAULT lPic            := .f.
+   DEFAULT lNeto           := .f.
+
+   if Empty( Select( cAlbCliT ) )
+      Return ( 0 )
+   end if
+
+   if Empty( Select( cAlbCliL ) )
+      Return ( 0 )
+   end if
+
+   if Empty( Select( cIva ) )
+      Return ( 0 )
+   end if
+
+   if Empty( Select( cDiv ) )
+      Return ( 0 )
+   end if
+
+   public nTotBrt    := 0
+   public nTotAlb    := 0
+   public nTotDto    := 0
+   public nTotDPP    := 0
+   public nTotNet    := 0
+   public nTotIva    := 0
+   public nTotIvm    := 0
+   public nTotAge    := 0
+   public nTotReq    := 0
+   public nTotPnt    := 0
+   public nTotUno    := 0
+   public nTotDos    := 0
+   public nTotCos    := 0
+   public nTotPes    := 0
+   public nTotDif    := 0
+   public nTotAtp    := 0
+   public nTotTrn    := 0
+   public nPctRnt    := 0
+   public nTotRnt    := 0
+   public cCtaCli    := cClientCuenta( ( cAlbCliT )->cCodCli )
+
+   public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
+   public aIvaUno    := aTotIva[ 1 ]
+   public aIvaDos    := aTotIva[ 2 ]
+   public aIvaTre    := aTotIva[ 3 ]
+
+   public aTotIvm    := { { 0,nil,0 }, { 0,nil,0 }, { 0,nil,0 }, }
+   public aIvmUno    := aTotIvm[ 1 ]
+   public aIvmDos    := aTotIvm[ 2 ]
+   public aIvmTre    := aTotIvm[ 3 ]
+
+
+   public nTotalDto  := 0
+
+   public nTotArt    := 0
+   public nTotCaj    := 0
+
+   nImpIva           := { 0,0,0 }
+   nImpReq           := { 0,0,0 }
+
+   nRecno            := ( cAlbCliL )->( recno() )
+
+   if aTmp != nil
+      nDtoUno        := aTmp[ _NDTOUNO ]
+      nDtoDos        := aTmp[ _NDTODOS ]
+      dFecAlb        := aTmp[ _DFECALB ]
+      nDtoEsp        := aTmp[ _NDTOESP ]
+      nDtoPP         := aTmp[ _NDPP    ]
+      nDtoCnt        := aTmp[ _NDTOCNT ]
+      nDtoRap        := aTmp[ _NDTORAP ]
+      nDtoPub        := aTmp[ _NDTOPUB ]
+      nDtoPgo        := aTmp[ _NDTOPGO ]
+      nDtoPtf        := aTmp[ _NDTOPTF ]
+      lRecargo       := aTmp[ _LRECARGO]
+      nIvaMan        := aTmp[ _NIVAMAN ]
+      nManObr        := aTmp[ _NMANOBR ]
+      cCodDiv        := aTmp[ _CDIVALB ]
+      nVdvDiv        := aTmp[ _NVDVALB ]
+      cCodPgo        := aTmp[ _CCODPAGO]
+      lIvaInc        := aTmp[ _LIVAINC ]
+      nDtoAtp        := aTmp[ _NDTOATP ]
+      nSbrAtp        := aTmp[ _NSBRATP ]
+      nKgsTrn        := aTmp[ _NKGSTRN ]
+      lOperarPntVer  := aTmp[ _LOPERPV ]
+      bCondition     := {|| ( cAlbCliL )->( !eof() ) }
+      ( cAlbCliL )->( dbGoTop() )
+   else
+      nDtoUno        := ( cAlbCliT )->nDtoUno
+      nDtoDos        := ( cAlbCliT )->nDtoDos
+      dFecAlb        := ( cAlbCliT )->dFecAlb
+      nDtoEsp        := ( cAlbCliT )->nDtoEsp
+      nDtoPP         := ( cAlbCliT )->nDpp
+      nDtoCnt        := ( cAlbCliT )->nDtoCnt
+      nDtoRap        := ( cAlbCliT )->nDtoRap
+      nDtoPub        := ( cAlbCliT )->nDtoPub
+      nDtoPgo        := ( cAlbCliT )->nDtoPgo
+      nDtoPtf        := ( cAlbCliT )->nDtoPtf
+      lRecargo       := ( cAlbCliT )->lRecargo
+      nIvaMan        := ( cAlbCliT )->nIvaMan
+      nManObr        := ( cAlbCliT )->nManObr
+      cCodDiv        := ( cAlbCliT )->cDivAlb
+      nVdvDiv        := ( cAlbCliT )->nVdvAlb
+      cCodPgo        := ( cAlbCliT )->cCodPago
+      lIvaInc        := ( cAlbCliT )->lIvaInc
+      nDtoAtp        := ( cAlbCliT )->nDtoAtp
+      nSbrAtp        := ( cAlbCliT )->nSbrAtp
+      nKgsTrn        := ( cAlbCliT )->nKgsTrn
+      lOperarPntVer  := ( cAlbCliT )->lOperPV
+      bCondition     := {|| ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb == cAlbaran .and. ( cAlbCliL )->( !eof() ) }
+      ( cAlbCliL )->( dbSeek( cAlbaran ) )
+   endif
+
+    /*
+   Cargamos los pictures dependiendo de la moneda
+   */
+
+   cPorDiv           := cPorDiv( cCodDiv, cDiv )
+   cPouDiv           := cPouDiv( cCodDiv, cDiv )
+   nDouDiv           := nDouDiv( cCodDiv, cDiv )
+   nRouDiv           := nRouDiv( cCodDiv, cDiv )
+   nDpvDiv           := nDpvDiv( cCodDiv, cDiv )
+
+   while Eval( bCondition )
+
+      if lValLine( cAlbCliL )
+
+         if ( lExcCnt == nil                                .or.;    // Entran todos
+            ( lExcCnt .and. ( cAlbCliL )->nCtlStk != 2 )    .or.;    // Articulos sin contadores
+            ( !lExcCnt .and. ( cAlbCliL )->nCtlStk == 2 ) )          // Articulos con contadores
+
+            if ( cAlbCliL )->lTotLin
+
+               // Esto es para evitar escirbir en el fichero muchas veces
+
+               if ( cAlbCliL )->nPreUnit != nTotalLin .or. ( cAlbCliL )->nUniCaja != nTotalUnd
+
+                  if dbLock( cAlbCliL )
+                     ( cAlbCliL )->nPreUnit := nTotalLin
+                     ( cAlbCliL )->nUniCaja := nTotalUnd
+                     ( cAlbCliL )->( dbUnLock() )
+                  end if
+
+               end if
+
+               // Limpien
+
+               nTotalLin         := 0
+               nTotalUnd         := 0
+
+            else
+
+               nTotalArt         := nTotLAlbCli( cAlbCliL, nDouDiv, nRouDiv, nil, .t., .f., .f. )
+               nTotalTrn         := nTrnLAlbCli( cAlbCliL, nDouDiv )
+               nTotalPnt         := if( lOperarPntVer, nPntLAlbCli( cAlbCliL, nDpvDiv ), 0 )
+               nTotalIvm         := nTotIAlbCli( cAlbCliL, nDouDiv, nRouDiv )
+               nTotCos           += nCosLAlbCli( cAlbCliL, nDouDiv, nDorDiv )
+               nTotPes           += nPesLAlbCli( cAlbCliL )
+               nDescuentosLineas += nTotDtoLAlbCli( cAlbCliL, nDouDiv )
+
+               if aTmp != nil
+                  nTotAge        += nComLAlbCli( aTmp, cAlbCliL, nDouDiv, nRouDiv )
+               else
+                  nTotAge        += nComLAlbCli( cAlbCliT, cAlbCliL, nDouDiv, nRouDiv )
+               end if
+
+               // Acumuladores para las lineas de totales----------------------
+
+               nTotalLin         += nTotalArt
+               nTotalUnd         += nTotNAlbCli( cAlbCliL )
+
+               nTotArt           += nTotNAlbCli( cAlbCliL )
+               nTotCaj           += ( cAlbCliL )->nCanEnt
+
+               // Estudio de impuestos-----------------------------------------------
+
+               if nTotalArt + nTotalIvm + nTotalTrn + nTotalPnt != 0
+
+                  do case
+                     case _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cAlbCliL )->nIva
+
+                        _NPCTIVA1   := ( cAlbCliL )->nIva
+                        _NPCTREQ1   := ( cAlbCliL )->nReq
+                        _NBRTIVA1   += nTotalArt
+                        _NIVMIVA1   += nTotalIvm
+                        _NTRNIVA1   += nTotalTrn
+                        _NPNTVER1   += nTotalPnt
+
+                     case _NPCTIVA2 == nil .OR. _NPCTIVA2 == ( cAlbCliL )->nIva
+
+                        _NPCTIVA2   := (cAlbCliL)->nIva
+                        _NPCTREQ2   := (cAlbCliL)->nReq
+                        _NBRTIVA2   += nTotalArt
+                        _NIVMIVA2   += nTotalIvm
+                        _NTRNIVA2   += nTotalTrn
+                        _NPNTVER3   += nTotalPnt
+
+                     case _NPCTIVA3 == nil .OR. _NPCTIVA3 == ( cAlbCliL )->nIva
+
+                        _NPCTIVA3   := ( cAlbCliL )->nIva
+                        _NPCTREQ3   := ( cAlbCliL )->nReq
+                        _NBRTIVA3   += nTotalArt
+                        _NIVMIVA3   += nTotalIvm
+                        _NTRNIVA3   += nTotalTrn
+                        _NPNTVER3   += nTotalPnt
+
+                  end case
+
+                  //Estudio de los impuestos especiales------------------------
+
+                  if ( cAlbCliL )->nValImp != 0
+
+                     do case
+                        case aTotIvm[ 1, 2 ] == nil .or. aTotIvm[ 1, 2 ] == ( cAlbCliL )->nValImp
+                           aTotIvm[ 1, 1 ]      += nTotNAlbCli( cAlbCliL ) * if( ( cAlbCliL )->lVolImp, NotCero( ( cAlbCliL )->nVolumen ), 1 )
+                           aTotIvm[ 1, 2 ]      := ( cAlbCliL )->nValImp
+                           aTotIvm[ 1, 3 ]      := aTotIvm[ 1, 1 ] * aTotIvm[ 1, 2 ]
+
+                        case aTotIvm[ 2, 2 ] == nil .or. aTotIvm[ 2, 2 ] == ( cAlbCliL )->nValImp
+                           aTotIvm[ 2, 1 ]      += nTotNAlbCli( cAlbCliL ) * if( ( cAlbCliL )->lVolImp, NotCero( ( cAlbCliL )->nVolumen ), 1 )
+                           aTotIvm[ 2, 2 ]      := ( cAlbCliL )->nValImp
+                           aTotIvm[ 2, 3 ]      := aTotIvm[ 2, 1 ] * aTotIvm[ 2, 2 ]
+
+                        case aTotIvm[ 3, 2 ] == nil .or. aTotIvm[ 3, 2 ] == ( cAlbCliL )->nValImp
+                           aTotIvm[ 3, 1 ]      += nTotNAlbCli( cAlbCliL ) * if( ( cAlbCliL )->lVolImp, NotCero( ( cAlbCliL )->nVolumen ), 1 )
+                           aTotIvm[ 3, 2 ]      := ( cAlbCliL )->nValImp
+                           aTotIvm[ 3, 3 ]      := aTotIvm[ 3, 1 ] * aTotIvm[ 3, 2 ]
+
+                     end case
+
+                  end if
+
+               end if
+
+            end if
+
+         else
+
+           // Limpien tambien si tenemos una linea de control
+
+            nTotalLin   := 0
+            nTotalUnd   := 0
+
+         end if
+
+      end if
+
+      ( cAlbCliL )->( dbSkip() )
+
+   end while
+
+   ( cAlbCliL )->( dbGoto( nRecno ) )
+
+   // Ordenamos los impuestosS de menor a mayor
+
+   aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
+
+   _NBASIVA1         := Round( _NBRTIVA1, nRouDiv )
+   _NBASIVA2         := Round( _NBRTIVA2, nRouDiv )
+   _NBASIVA3         := Round( _NBRTIVA3, nRouDiv )
+
+   nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
+
+   // Descuentos atipicos sobre base
+
+   if nSbrAtp <= 1 .and. nDtoAtp != 0
+
+      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
+
+      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
+
+   end if
+
+   // Descuentos Especiales
+
+   if nDtoEsp  != 0
+
+      aTotalDto[1]   := Round( _NBASIVA1 * nDtoEsp / 100, nRouDiv )
+      aTotalDto[2]   := Round( _NBASIVA2 * nDtoEsp / 100, nRouDiv )
+      aTotalDto[3]   := Round( _NBASIVA3 * nDtoEsp / 100, nRouDiv )
+
+      nTotDto        := aTotalDto[1] + aTotalDto[2] + aTotalDto[3]
+
+      _NBASIVA1      -= aTotalDto[1]
+      _NBASIVA2      -= aTotalDto[2]
+      _NBASIVA3      -= aTotalDto[3]
+
+   end if
+
+   // Descuentos atipicos sobre Descuentos especiales
+
+
+   if nSbrAtp == 2 .and. nDtoAtp != 0
+
+      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
+
+      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
+
+   end if
+
+   // Descuentos por Pronto Pago estos son los buenos
+
+   IF nDtoPP   != 0
+
+      aTotalDPP[1]   := Round( _NBASIVA1 * nDtoPP / 100, nRouDiv )
+      aTotalDPP[2]   := Round( _NBASIVA2 * nDtoPP / 100, nRouDiv )
+      aTotalDPP[3]   := Round( _NBASIVA3 * nDtoPP / 100, nRouDiv )
+
+      nTotDPP        := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
+
+      _NBASIVA1      -= aTotalDPP[1]
+      _NBASIVA2      -= aTotalDPP[2]
+      _NBASIVA3      -= aTotalDPP[3]
+
+   END IF
+
+   // Descuentos atipicos sobre Descuento Pronto Pago
+
+   if nSbrAtp == 3 .and. nDtoAtp != 0
+
+      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
+
+      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
+
+   end if
+
+   IF nDtoUno != 0
+
+      aTotalUno[1]   := Round( _NBASIVA1 * nDtoUno / 100, nRouDiv )
+      aTotalUno[2]   := Round( _NBASIVA2 * nDtoUno / 100, nRouDiv )
+      aTotalUno[3]   := Round( _NBASIVA3 * nDtoUno / 100, nRouDiv )
+
+      nTotUno        := aTotalUno[1] + aTotalUno[2] + aTotalUno[3]
+
+      _NBASIVA1      -= aTotalUno[1]
+      _NBASIVA2      -= aTotalUno[2]
+      _NBASIVA3      -= aTotalUno[3]
+
+   END IF
+
+   // Descuentos atipicos sobre Descuento definido 1
+
+   if nSbrAtp == 4 .and. nDtoAtp != 0
+
+      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
+
+      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
+
+   end if
+
+   IF nDtoDos != 0
+
+      aTotalDos[1]   := Round( _NBASIVA1 * nDtoDos / 100, nRouDiv )
+      aTotalDos[2]   := Round( _NBASIVA2 * nDtoDos / 100, nRouDiv )
+      aTotalDos[3]   := Round( _NBASIVA3 * nDtoDos / 100, nRouDiv )
+
+      nTotDos        := aTotalDos[1] + aTotalDos[2] + aTotalDos[3]
+
+      _NBASIVA1      -= aTotalDos[1]
+      _NBASIVA2      -= aTotalDos[2]
+      _NBASIVA3      -= aTotalDos[3]
+
+   END IF
+
+   // Descuentos atipicos sobre Descuento definido 2
+
+   if nSbrAtp == 5 .and. nDtoAtp != 0
+
+      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
+
+      nTotAtp        := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
+
+   end if
+
+   /*
+   Estudio de impuestos para el Gasto despues de los descuentos----------------------
+   */
+
+   if nManObr != 0
+
+      do case
+      case _NPCTIVA1 == nil .or. _NPCTIVA1 == nIvaMan
+
+         _NPCTIVA1   := nIvaMan
+         _NBASIVA1   += nManObr
+
+      case _NPCTIVA2 == nil .or. _NPCTIVA2 == nIvaMan
+
+         _NPCTIVA2   := nIvaMan
+         _NBASIVA2   += nManObr
+
+      case _NPCTIVA3 == nil .or. _NPCTIVA3 == nIvaMan
+
+         _NPCTIVA3   := nIvaMan
+         _NBASIVA3   += nManObr
+
+      end case
+
+   end if
+
+   // Una vez echos los descuentos le sumamos los transportes------------------
+
+   _NBASIVA1         += _NTRNIVA1
+   _NBASIVA2         += _NTRNIVA2
+   _NBASIVA3         += _NTRNIVA3
+
+   // Una vez echos los descuentos le sumamos el punto verde-------------------
+
+   _NBASIVA1         += _NPNTVER1
+   _NBASIVA2         += _NPNTVER2
+   _NBASIVA3         += _NPNTVER3
+
+   /*
+   Una vez echos los descuentos le sumamos el IVMH-----------------------------
+   */
+
+   if uFieldEmpresa( "lIvaImpEsp" )
+      _NBASIVA1      += _NIVMIVA1
+      _NBASIVA2      += _NIVMIVA2
+      _NBASIVA3      += _NIVMIVA3
+   end if
+
+   // Calculamos los impuestosS-----------------------------------------------------
+
+   if !lIvaInc
+
+      //Calculos de impuestos
+
+      _NIMPIVA1      := if ( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
+      _NIMPIVA2      := if ( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
+      _NIMPIVA3      := if ( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
+
+      //Calculo de recargo
+
+      if lRecargo
+         _NIMSATQ1   := if ( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
+         _NIMSATQ2   := if ( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
+         _NIMSATQ3   := if ( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
+      end if
+
+   else
+
+      if _NPCTIVA1 != 0
+         _NIMPIVA1   := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
+      end if
+
+      if _NPCTIVA2 != 0
+         _NIMPIVA2   := if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
+      end if
+
+      if _NPCTIVA3 != 0
+         _NIMPIVA3   := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
+      end if
+
+      if lRecargo
+         if _NPCTREQ1 != 0
+            _NIMSATQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( 100 / _NPCTREQ1 + 1 ), nRouDiv ), 0 )
+         end if
+         if _NPCTREQ2 != 0
+            _NIMSATQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( 100 / _NPCTREQ2 + 1 ), nRouDiv ), 0 )
+         end if
+         if _NPCTREQ3 != 0
+            _NIMSATQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( 100 / _NPCTREQ3 + 1 ), nRouDiv ), 0 )
+         end if
+      end if
+
+      _NBASIVA1      -= _NIMPIVA1
+      _NBASIVA2      -= _NIMPIVA2
+      _NBASIVA3      -= _NIMPIVA3
+
+      _NBASIVA1      -= _NIMSATQ1
+      _NBASIVA2      -= _NIMSATQ2
+      _NBASIVA3      -= _NIMSATQ3
+
+   end if
+
+   //Neto del Albaran
+
+   nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
+
+   // Total IVMH
+
+   nTotIvm           := Round( aTotIvm[ 1, 3 ] + aTotIvm[ 2, 3 ] + aTotIvm[ 3, 3 ], nRouDiv )
+
+   //Total Transpote
+
+   nTotTrn           := Round( _NTRNIVA1 + _NTRNIVA2 + _NTRNIVA3, nRouDiv )
+
+   //Total punto verde
+
+   nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
+
+   //Total de impuestos
+
+   nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
+
+   //Total de R.E.
+
+   nTotReq           := Round( _NIMSATQ1 + _NIMSATQ2 + _NIMSATQ3, nRouDiv )
+
+   //Total de impuestos
+
+   nTotImp           := nTotIva + nTotReq // + nTotIvm
+
+   /*
+   Total rentabilidad----------------------------------------------------------
+   */
+
+   nTotRnt           := Round(         nTotNet - nManObr - nTotAge - nTotPnt - nTotAtp - nTotCos, nRouDiv )
+
+   nPctRnt           := nRentabilidad( nTotNet - nManObr - nTotAge - nTotPnt,  nTotAtp,  nTotCos )
+
+   // Diferencias de pesos
+
+   if nKgsTrn != 0
+      nTotDif        := nKgsTrn - nTotPes
+   else
+      nTotDif        := 0
+   end if
+
+   // Total facturas-----------------------------------------------------------
+
+   nTotAlb           := nTotNet + nTotImp
+
+   if nTotNet == 0
+      nPctRnt        := 0
+   end if
+
+   /*
+   Total de descuentos del albaran---------------------------------------------
+   */
+
+   nTotalDto         := nDescuentosLineas + nTotDto + nTotDpp + nTotUno + nTotDos + nTotAtp
+
+   // Solicitan una divisa distinta a la q se hizo originalmente la factura
+
+   if cDivRet != nil .and. cDivRet != cCodDiv
+      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIvm        := nCnv2Div( nTotIvm, cCodDiv, cDivRet )
+      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotAlb        := nCnv2Div( nTotAlb, cCodDiv, cDivRet )
+      nTotPnt        := nCnv2Div( nTotPnt, cCodDiv, cDivRet )
+      nTotTrn        := nCnv2Div( nTotTrn, cCodDiv, cDivRet )
+      cPorDiv        := cPorDiv( cDivRet, cDiv )
+   end if
+
+RETURN ( if( lPic, Trans( if( lNeto, nTotNet, nTotAlb ), cPorDiv ), if( lNeto, nTotNet, nTotAlb ) ) )
+
+//--------------------------------------------------------------------------//
+
+/*
+Devuelve la comisi¢n de un agente en una linea de detalle
+*/
+
+FUNCTION nComLAlbCli( dbfAlbCliT, dbfAlbCliL, nDecOut, nDerOut )
+
+   local nImp  := nImpLAlbCli( dbfAlbCliT, dbfAlbCliL, nDecOut, nDerOut, , .f., .t., .f., .f. )
+
+RETURN ( Round( ( nImp * ( dbfAlbCliL )->nComAge / 100 ), nDerOut ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nImpUAlbCli( uAlbCliT, uAlbCliL, nDec, nVdv, lIva, cPouDiv )
+
+   local nIva
+   local lIvaInc
+   local nCalculo
+
+   DEFAULT nDec      := 0
+   DEFAULT nVdv      := 1
+   DEFAULT lIva      := .f.
+
+   nCalculo          := nTotUAlbCli( uAlbCliL, nDec, nVdv )
+
+   do case
+   case ValType( uAlbCliT ) == "A"
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOESP ]  / 100, nDec )
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDPP    ]  / 100, nDec )
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOUNO ]  / 100, nDec )
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTODOS ]  / 100, nDec )
+
+      lIvaInc        := uAlbCliT[ _LIVAINC ]
+
+   case ValType( uAlbCliT ) == "C"
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoEsp / 100, nDec )
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDpp    / 100, nDec )
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoUno / 100, nDec )
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoDos / 100, nDec )
+
+      lIvaInc        := ( uAlbCliT )->lIvaInc
+
+   case ValType( uAlbCliT ) == "O"
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoEsp / 100, nDec )
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDpp    / 100, nDec )
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoUno / 100, nDec )
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoDos / 100, nDec )
+
+      lIvaInc        := uAlbCliT:lIvaInc
+
+   end case
+
+   do case
+   case IsArray( uAlbCliL )
+      nIva           := uAlbCliL[ _NIVA    ]
+
+   case IsChar( uAlbCliL )
+      nIva           := ( uAlbCliL )->nIva
+
+   case IsObject( uAlbCliL )
+      nIva           := uAlbCliL:nIva
+
+   end case
+
+   if nIva != 0
+      if lIva  // lo quermos con impuestos
+         if !lIvaInc
+            nCalculo += Round( nCalculo * nIva / 100, nDec )
+         end if
+      else     // lo queremos sin impuestos
+         if lIvaInc
+            nCalculo -= Round( nCalculo / ( 100 / nIva  + 1 ), nDec )
+         end if
+      end if
+   end if
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nImpLAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn, lPntVer, cPouDiv )
+
+   local lIvaInc
+   local nCalculo
+
+   DEFAULT nDec      := 0
+   DEFAULT nRou      := 0
+   DEFAULT nVdv      := 1
+   DEFAULT lIva      := .f.
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .f.
+   DEFAULT lImpTrn   := .f.
+
+   nCalculo          := nTotLAlbCli( dbfAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
+
+   do case
+   case ValType( uAlbCliT ) == "A"
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOESP ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDPP    ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTOUNO ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uAlbCliT[ _NDTODOS ]  / 100, nRou )
+
+      lIvaInc        := uAlbCliT[ _LIVAINC ]
+
+   case ValType( uAlbCliT ) == "C"
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoEsp / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDpp    / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoUno / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uAlbCliT )->nDtoDos / 100, nRou )
+
+      lIvaInc        := ( uAlbCliT )->lIvaInc
+
+   case ValType( uAlbCliT ) == "O"
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoEsp / 100, nRou )
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDpp    / 100, nRou )
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoUno / 100, nRou )
+      nCalculo       -= Round( nCalculo * uAlbCliT:nDtoDos / 100, nRou )
+
+      lIvaInc        := uAlbCliT:lIvaInc
+
+   end if
+
+   if ( dbfAlbCliL )->nIva != 0
+      if lIva  // lo quermos con impuestos
+         if !lIvaInc
+            nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nRou )
+         end if
+      else     // lo queremos sin impuestos
+         if lIvaInc
+            nCalculo -= Round( nCalculo / ( 100 / ( dbfAlbCliL )->nIva  + 1 ), nRou )
+         end if
+      end if
+   end if
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nPesLAlbCli( cAlbCliL )
+
+   local nCalculo
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+
+   if !( cAlbCliL )->lTotLin
+      nCalculo       := Abs( nTotNAlbCli( cAlbCliL ) ) * ( cAlbCliL )->nPesoKg
+   end if
+
+RETURN ( nCalculo )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nCosLAlbCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
+
+   local nCalculo       := 0
+
+   DEFAULT nDec         := 0
+   DEFAULT nRec         := 0
+   DEFAULT nVdv         := 1
+
+   if !( dbfLine )->lKitChl
+      nCalculo          := nTotNAlbCli( dbfLine )
+      nCalculo          *= ( dbfLine )->nCosDiv
+   end if
+
+   if nVdv != 0
+      nCalculo          := nCalculo / nVdv
+   end if
+
+   nCalculo             := Round( nCalculo, nRec )
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+//
+// Devuelve el valor del IVMH
+//
+
+FUNCTION nTotIAlbCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT dbfLin    := dbfAlbCliL
+   DEFAULT nDec      := 0
+   DEFAULT nRouDec   := 0
+   DEFAULT nVdv      := 1
+
+   if !( dbfLin )->lTotLin
+
+      /*
+      Tomamos los valores redondeados------------------------------------------
+      */
+
+      nCalculo       := Round( ( dbfLin )->nValImp, nDec )
+
+      /*
+      Unidades-----------------------------------------------------------------
+      */
+
+      nCalculo       *= nTotNAlbCli( dbfLin )
+
+         if ( dbfLin )->LVOLIMP
+            nCalculo *= NotCero( ( dbfLin )->nVolumen )
+         end if
+
+      nCalculo       := Round( nCalculo / nVdv, nRouDec )
+
+   end if
+
+RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION nTrnLAlbCli( dbfLin, nDec, nRou, nVdv )
+
+   local nImpTrn
+
+   DEFAULT dbfLin    := dbfAlbCliL
+   DEFAULT nDec      := 2
+   DEFAULT nRou      := 2
+   DEFAULT nVdv      := 1
+
+   /*
+   Punto Verde-----------------------------------------------------------------
+   */
+
+   nImpTrn           := nTrnUAlbCli( dbfLin, nDec ) * nTotNAlbCli( dbfLin )
+
+   IF nVdv != 0
+      nImpTrn        := nImpTrn / nVdv
+   END IF
+
+RETURN ( Round( nImpTrn, nRou ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTrnUAlbCli( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   nCalculo       := ( dbfTmpLin )->nImpTrn
+
+   IF nVdv != 0
+      nCalculo    := nCalculo / nVdv
+   END IF
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+//
+// Total anticipos de un albaran
+//
+
+FUNCTION nPagAlbCli( cNumAlb, cAlbCliP, cDiv, cDivRet, lPic )
+
+   local nRec
+   local nOrd
+   local cCodDiv
+   local cPorDiv
+   local nRouDiv
+
+   public nTotPag       := 0
+
+   DEFAULT cAlbCliP     := dbfAlbCliP
+   DEFAULT cDiv         := dbfDiv
+   DEFAULT lPic         := .f.
+
+   nRec                 := ( cAlbCliP )->( Recno() )
+   nOrd                 := ( cAlbCliP )->( OrdSetFocus( "nNumAlb" ) )
+   cCodDiv              := cDivEmp()
+   cPorDiv              := cPorDiv( cCodDiv, cDiv ) // Picture de la divisa redondeada
+   nRouDiv              := nRouDiv( cCodDiv, cDiv )
+
+   if IsNil( cNumAlb )
+
+      ( cAlbCliP )->( dbGoTop() )
+      while !( cAlbCliP )->( Eof() )
+         nTotPag        += nEntAlbCli( cAlbCliP, cDiv, cDivRet )
+         ( cAlbCliP )->( dbSkip() )
+      end while
+
+   else
+
+      if ( cAlbCliP )->( dbSeek( cNumAlb ) )
+         while ( cAlbCliP )->cSerAlb + Str( ( cAlbCliP )->nNumAlb ) + ( cAlbCliP )->cSufAlb == cNumAlb .and. !( cAlbCliP )->( eof() )
+            nTotPag     += nEntAlbCli( cAlbCliP, cDiv, cDivRet )
+            ( cAlbCliP )->( dbSkip() )
+         end while
+      end if
+
+   end if
+
+   ( cAlbCliP )->( OrdSetFocus( nOrd ) )
+   ( cAlbCliP )->( dbGoTo( nRec ) )
+
+   if cDivRet != nil .and. cCodDiv != cDivRet
+      nTotPag           := nCnv2Div( nTotPag, cCodDiv, cDivRet )
+      cPorDiv           := cPorDiv( cDivRet, cDiv ) // Picture de la divisa redondeada
+      nRouDiv           := nRouDiv( cDivRet, cDiv )
+   end if
+
+   nTotPag              := Round( nTotPag, nRouDiv )
+
+   if lPic
+      nTotPag           := Trans( nTotPag, cPorDiv )
+   end if
+
+RETURN ( nTotPag )
+
+//--------------------------------------------------------------------------//
+
+function nEntAlbCli( uAlbCliP, cDbfDiv, cDivRet, lPic )
+
+   local cDivPgo
+   local nRouDiv
+   local cPorDiv
+   local nTotRec
+
+   DEFAULT uAlbCliP  := dbfAlbCliP
+   DEFAULT cDbfDiv   := dbfDiv
+   DEFAULT cDivRet   := cDivEmp()
+   DEFAULT lPic      := .f.
+
+   if ValType( uAlbCliP ) == "O"
+      cDivPgo        := uAlbCliP:cDivPgo
+      nTotRec        := uAlbCliP:nImporte
+   else
+      cDivPgo        := ( uAlbCliP )->cDivPgo
+      nTotRec        := ( uAlbCliP )->nImporte
+   end if
+
+   nRouDiv           := nRouDiv( cDivPgo, cDbfDiv )
+   cPorDiv           := cPorDiv( cDivPgo, cDbfDiv )
+
+   nTotRec           := Round( nTotRec, nRouDiv )
+
+   if cDivRet != cDivPgo
+      nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
+      cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
+      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
+   end if
+
+RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nDtoUAlbCli( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo := ( dbfTmpLin )->nDtoDiv
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   IF nVdv != 0
+      nCalculo    := ( dbfTmpLin )->nDtoDiv / nVdv
+   END IF
+
+RETURN ( round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+function nTotFAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   nCalculo       += nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+return ( nCalculo )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION lFacAlbCli( cAlbCli, uAlbCliT )
+
+   local lFacAlb  := .f.
+
+   if ValType( uAlbCliT ) == "C"
+
+      if ( uAlbCliT )->( dbSeek( cAlbCli ) )
+         lFacAlb  := ( uAlbCliT )->lFacturado
+      end if
+
+   else
+
+      if uAlbCliT:Seek( cAlbCli )
+         lFacAlb  := uAlbCliT:lFacturado
+      end if
+
+   end if
+
+RETURN ( lFacAlb )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbCliS, cNumFac )
+
+   local nOrd
+   local nRec
+   local nRecHead             := ( cAlbCliT )->( Recno() )
+
+   DEFAULT lFacturado         := .f.
+   DEFAULT cNumFac            := Space( 12 )
+   DEFAULT cAlbCliT           := dbfAlbCliT
+   DEFAULT cAlbCliL           := dbfAlbCliL
+   DEFAULT cAlbCliS           := dbfAlbCliS
+
+   if oBrw != nil
+
+      for each nRec in ( oBrw:aSelected )
+
+         nRecHead             := nRec
+
+         ( cAlbCliT )->( dbGoTo( nRec ) )
+
+         /*
+         Restauramos los datos de cabecera----------------------------------------
+         */
+
+         if dbLock( cAlbCliT )
+            ( cAlbCliT )->lFacturado := lFacturado
+            ( cAlbCliT )->cNumFac    := cNumFac
+            ( cAlbCliT )->( dbUnLock() )
+         end if
+
+         /*
+         Cambiamos el estado en las lineas-------------------------------------------
+         */
+
+         nOrd                 := ( cAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
+
+         if ( cAlbCliL )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
+
+            while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb .and. !( cAlbCliL )->( Eof() )
+
+               if dbLock( cAlbCliL )
+                  ( cAlbCliL )->lFacturado := lFacturado
+                  ( cAlbCliL )->( dbUnlock() )
+                end if
+
+               ( cAlbCliL )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( cAlbCliL )->( OrdSetFocus( nOrd ) )
+
+         /*
+         Cambiamos el estado en las series-------------------------------------------
+         */
+
+         nOrd                 := ( cAlbCliS )->( OrdSetFocus( "nNumAlb" ) )
+
+         if ( cAlbCliS )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
+
+            while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliS )->cSerAlb + Str( ( cAlbCliS )->nNumAlb ) + ( cAlbCliS )->cSufAlb .and. !( cAlbCliS )->( Eof() )
+
+               if dbLock( cAlbCliS )
+                  ( cAlbCliS )->lFacturado := lFacturado
+                  ( cAlbCliS )->( dbUnlock() )
+                end if
+
+               ( cAlbCliS )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( cAlbCliS )->( OrdSetFocus( nOrd ) )
+
+      next
+
+   else
+
+      /*
+      Restauramos los datos de cabecera----------------------------------------
+      */
+
+      if dbLock( cAlbCliT )
+         ( cAlbCliT )->lFacturado := lFacturado
+         ( cAlbCliT )->cNumFac    := cNumFac
+         ( cAlbCliT )->( dbUnLock() )
+      end if
+
+      /*
+      Cambiamos el estado en las lineas-------------------------------------------
+      */
+
+      nOrd                    := ( cAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
+
+      if ( cAlbCliL )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
+
+         while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb .and. !( cAlbCliL )->( Eof() )
+
+            if dbLock( cAlbCliL )
+               ( cAlbCliL )->lFacturado := lFacturado
+               ( cAlbCliL )->( dbUnlock() )
+             end if
+
+            ( cAlbCliL )->( dbSkip() )
+
+         end while
+
+      end if
+
+      ( cAlbCliL )->( OrdSetFocus( nOrd ) )
+
+      /*
+      Cambiamos el estado en las series-------------------------------------------
+      */
+
+      nOrd                   := ( cAlbCliS )->( OrdSetFocus( "nNumAlb" ) )
+
+      if ( cAlbCliS )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
+
+         while ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb == ( cAlbCliS )->cSerAlb + Str( ( cAlbCliS )->nNumAlb ) + ( cAlbCliS )->cSufAlb .and. !( cAlbCliS )->( Eof() )
+
+            if dbLock( cAlbCliS )
+               ( cAlbCliS )->lFacturado := lFacturado
+               ( cAlbCliS )->( dbUnlock() )
+             end if
+
+            ( cAlbCliS )->( dbSkip() )
+
+         end while
+
+      end if
+
+      ( cAlbCliS )->( OrdSetFocus( nOrd ) )
+
+   end if
+
+   /*
+   Dejamos la tabla en el registro que estaba----------------------------------
+   */
+
+   ( cAlbCliT )->( dbGoTo( nRecHead ) )
+
+   if oBrw != nil
+      oBrw:Refresh()
+      oBrw:SetFocus()
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+
+Function nTotDtoLAlbCli( dbfLin, nDec, nVdv, cPorDiv )
+
+   local nCalculo
+
+   DEFAULT dbfLin    := dbfAlbCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nVdv      := 1
+
+   nCalculo          := nDtoLAlbCli( dbfLin, nDec, nVdv ) * nTotNAlbCli( dbfLin )
+
+   if nVdv != 0
+      nCalculo       := nCalculo / nVdv
+   end if
+
+   nCalculo          := Round( nCalculo, nDec )
+
+RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//----------------------------------------------------------------------------//
+
+Function dJulianoAlbCli( cAlbCliL )
+
+   local cPrefijo
+   local cLote
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+
+   cLote             := ( cAlbCliL )->cLote
+
+   cPrefijo          := Substr( ( cAlbCliL )->cLote, 1, 1 )
+
+   if Val( cPrefijo ) == 0
+      cLote          := Substr( ( cAlbCliL )->cLote, 2 )
+   end if
+
+RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 6 ) )
+
+//---------------------------------------------------------------------------//
+
+Function dJulianoAlbAnio( cAlbCliL )
+
+   local cPrefijo
+   local cLote
+
+   DEFAULT cAlbCliL  := dbfAlbCliL
+
+   cLote             := ( cAlbCliL )->cLote
+
+   cPrefijo          := Substr( ( cAlbCliL )->cLote, 1, 1 )
+
+   if Val( cPrefijo ) == 0
+      cLote          := Substr( ( cAlbCliL )->cLote, 2 )
+   end if
+
+RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 8 ) )
+
+//---------------------------------------------------------------------------//
+
+Function cDireccionSAT()
+
+   local dbfObras
+   local cDireccion  := ""
+
+   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
+   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+
+   if ( dbfObras )->( dbSeek( ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr ) )
+      cDireccion     := ( dbfObras )->cNomObr
+   end if
+
+   CLOSE ( dbfObras )
+
+Return ( cDireccion )
 
 //---------------------------------------------------------------------------//

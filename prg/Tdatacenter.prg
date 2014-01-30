@@ -1497,13 +1497,13 @@ METHOD AddTable( oTable, lSilent )
 
          if !file( oTable:cDataFile )
             if !lSilent
-               msgAlert( "No existe " + ( oTable:cDataFile ), "Atención", 1 )
+               msgStop( "No existe " + ( oTable:cDataFile ), "Atención", 1 )
             end if 
          end if
 
          if !file( oTable:cIndexFile )
             if !lSilent
-               msgAlert( "No existe " + ( oTable:cIndexFile ), "Atención", 1 )
+               msgStop( "No existe " + ( oTable:cIndexFile ), "Atención", 1 )
             end if
          end if
 
