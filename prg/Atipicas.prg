@@ -1258,12 +1258,22 @@ METHOD LoadAtipica()
       */
 
       ::oPrecioArticulo1:cText( ::PrecioBase( 1 ) )
+      ::oPrecioArticulo2:cText( ::PrecioBase( 2 ) )
+      ::oPrecioArticulo3:cText( ::PrecioBase( 3 ) )
+      ::oPrecioArticulo4:cText( ::PrecioBase( 4 ) )
+      ::oPrecioArticulo5:cText( ::PrecioBase( 5 ) )
+      ::oPrecioArticulo6:cText( ::PrecioBase( 6 ) )
 
       /*
       Primer precio de venta impuestos incluido--------------------------------
       */
 
       ::oIvaArticulo1:cText( ::PrecioIva( 1 ) )
+      ::oIvaArticulo2:cText( ::PrecioIva( 2 ) )
+      ::oIvaArticulo3:cText( ::PrecioIva( 3 ) )
+      ::oIvaArticulo4:cText( ::PrecioIva( 4 ) )
+      ::oIvaArticulo5:cText( ::PrecioIva( 5 ) )
+      ::oIvaArticulo6:cText( ::PrecioIva( 6 ) )
 
    else
 
