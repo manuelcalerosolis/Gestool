@@ -1264,7 +1264,7 @@ Static Function VisualizaDocument( oBrwTmp )
          PrnEntPed( Left( oDbfTmp:cNumDoc, 12 ) + Str( oDbfTmp:nNumRec ), .f., dbfPedCliP )
 
       case oDbfTmp:nTypDoc == ENT_ALB
-         PrnEntAlb( Left( oDbfTmp:cNumDoc, 12 ) + Str( oDbfTmp:nNumRec ), .f., dbfAlbCliP )
+         PrnEntAlb( Left( oDbfTmp:cNumDoc, 12 ) + Str( oDbfTmp:nNumRec ), .f. )
 
    end case
 
@@ -1303,7 +1303,7 @@ Static Function PrintDocument( oBrwTmp )
          PrnEntPed( Left( oDbfTmp:cNumDoc, 12 ) + Str( oDbfTmp:nNumRec ), .t., dbfPedCliP )
 
       case oDbfTmp:nTypDoc == ENT_ALB
-         PrnEntAlb( Left( oDbfTmp:cNumDoc, 12 ) + Str( oDbfTmp:nNumRec ), .t., dbfAlbCliP )
+         PrnEntAlb( Left( oDbfTmp:cNumDoc, 12 ) + Str( oDbfTmp:nNumRec ), .t. )
 
    end case
 

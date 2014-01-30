@@ -332,6 +332,7 @@ Definici¢n de Array para objetos impuestos
 
 static oWndBrw
 static oBrwIva
+static nView
 static dbfUsr
 static dbfAlbCliT
 static dbfAlbCliL
@@ -3300,13 +3301,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      REDEFINE CHECKBOX aTmp[ _LENTREGADO ] ;
-         ID       166 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-      */
-
-      /*
       Segunda caja de dialogo
       */
 
@@ -3340,30 +3334,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
-<<<<<<< HEAD
       REDEFINE GET aGet[ _CSUPED ] VAR aTmp[ _CSUPED ];
          ID       129 ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
-
       /*
 		Cajas____________________________________________________________________
 		*/
-=======
-   REDEFINE GET   oFmtDoc ;
-      VAR         cFmtDoc ;
-      ID          90 ;
-      VALID       ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
-      BITMAP      "LUPA" ;
-      ON HELP     ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
-      OF          oDlg
-
-   REDEFINE GET   oSayFmt ;
-      VAR         cSayFmt ;
-      ID          91 ;
-      WHEN        ( .f. );
-      OF          oDlg
->>>>>>> 2b06bbd4d8344da1b4af3df233ee261000421b02
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
          WHEN     ( lWhen ) ;
@@ -3374,18 +3351,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oSay[ 9 ] ) ) ;
          OF       oFld:aDialogs[2]
 
-<<<<<<< HEAD
       /*
       Retirado por________________________________________________________________
 		*/
-=======
-   REDEFINE GET   oPrinter ;
-      VAR         cPrinter ;
-      WHEN        ( .f. ) ;
-      ID          160 ;
-      OF          oDlg
->>>>>>> 2b06bbd4d8344da1b4af3df233ee261000421b02
-
+      
       REDEFINE GET aGet[_CRETPOR] VAR aTmp[_CRETPOR] ;
          ID       160 ;
 			COLOR 	CLR_GET ;
@@ -8689,7 +8658,6 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",              "CallHbFunc('nTotLAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Total peso por línea",                "CallHbFunc('nPesLAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Total línea sin " + cImp(),           "CallHbFunc('nNetLAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes",   "Frase publicitaria en línea",         "CallHbFunc('cFraAlbCli')" )
 
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 8 meses",            "CallHbFunc('dJulianoAlbAnio')" )
@@ -13293,6 +13261,218 @@ Static Function RestaUnidadLinea( aTmp )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
+
+   local oFr
+   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, " ", "" ) + ".Pdf"
+
+   DEFAULT nDevice      := IS_SCREEN
+   DEFAULT nCopies      := 1
+   DEFAULT cPrinter     := PrnGetName()
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+   /*
+   Manejador de eventos--------------------------------------------------------
+   */
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   DataReport( oFr )
+
+   /*
+   Cargar el informe-----------------------------------------------------------
+   */
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReport( oFr )
+
+      /*
+      Preparar el report-------------------------------------------------------
+      */
+
+      oFr:PrepareReport()
+
+      /*
+      Imprimir el informe------------------------------------------------------
+      */
+
+      do case
+         case nDevice == IS_SCREEN
+
+            oFr:ShowPreparedReport()
+
+         case nDevice == IS_PRINTER
+
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:Print()
+
+         case nDevice == IS_PDF
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
+            oFr:DoExport(     "PDFExport" )
+
+         case nDevice == IS_MAIL
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
+            oFr:DoExport(     "PDFExport" )
+
+            if file( cFilePdf )
+
+               with object ( TGenMailing():New() )
+
+                  :SetTypeDocument( "nAlbCli" )
+                  :SetDe(           uFieldEmpresa( "cNombre" ) )
+                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAdjunto(      cFilePdf )
+                  :SetPara(         RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "cMeiInt" ) )
+                  :SetAsunto(       "Envio de albaran de cliente número " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + Space( 1 ) )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      "Reciba un cordial saludo." )
+
+                  :GeneralResource( dbfAlbCliT, aItmAlbCli() )
+
+               end with
+
+            end if
+
+      end case
+
+   end if
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
+
+   local oFr
+   local nRecAlbCliT    := ( dbfAlbCliT )->( Recno() )
+
+   DEFAULT nDevice      := IS_SCREEN
+   DEFAULT nCopies      := 1
+   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT lTicket      := .f.
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+   /*
+   Manejador de eventos--------------------------------------------------------
+   */
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
+
+   /*
+   Cargar el informe-----------------------------------------------------------
+   */
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReportEntAlbCli( oFr )
+
+      /*
+      Preparar el report-------------------------------------------------------
+      */
+
+      oFr:PrepareReport()
+
+      /*
+      Imprimir el informe------------------------------------------------------
+      */
+
+      do case
+         case nDevice == IS_SCREEN
+            oFr:ShowPreparedReport()
+
+         case nDevice == IS_PRINTER
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:Print()
+
+         case nDevice == IS_PDF
+            oFr:DoExport( "PDFExport" )
+
+      end case
+
+   end if
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   ( dbfAlbCliT )->( dbGoTo( nRecAlbCliT ) )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 /*------------------------FUNCIONES GLOBALESS--------------------------------*/
 //---------------------------------------------------------------------------//
 
@@ -13301,65 +13481,36 @@ Return .t.
 NOTA: Esta funcion se utiliza para el estado de generado de pedidos de clientes
 */
 
-function nEstadoGenerado( cNumPed, dbfPedCliL, dbfPedPrvL )
+function nEstadoGenerado( cNumPed, cPedCliL, cPedPrvL )
 
-   local nEstado := 0
-   local nOrdAnt
+   local nEstado     := 0
+   local nOrdAnt     := ( cPedPrvL )->( OrdSetFocus( "CPEDCLIREF" ) )
 
-   if IsMuebles()
-      nOrdAnt := ( dbfPedPrvL )->( OrdSetFocus( "CPEDCLIREFDET" ) )
-   else
-      nOrdAnt := ( dbfPedPrvL )->( OrdSetFocus( "CPEDCLIREF" ) )
-   end if
+   ( cPedCliL )->( dbSeek( cNumPed ) )
 
-   ( dbfPedCliL )->( dbSeek( cNumPed ) )
+   while ( cPedCliL )->cSerPed + Str( ( cPedCliL )->nNumPed ) + ( cPedCliL )->cSufPed == cNumPed .and. !( cPedCliL )->( Eof() )
 
-   while ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cNumPed .and. !( dbfPedCliL )->( Eof() )
-
-      if IsMuebles()
-
-         if ( dbfPedPrvL )->( dbSeek( cNumPed + ( dbfPedCliL )->cRef + ( dbfPedCliL )->cRefPrv + ( dbfPedCliL )->cDetalle ) )
-
-            do case
-               case nEstado == 0 .or. nEstado == 3
-                  nEstado := 3
-               case nEstado == 1
-                  nEstado := 2
-            end case
-         else
-            do case
-               case nEstado == 0
-                  nEstado := 1
-               case nEstado == 3
-                  nEstado := 2
-            end case
-         end if
-
+      if( cPedPrvL )->( dbSeek( cNumPed + ( cPedCliL )->cRef ) )
+         do case
+            case nEstado == 0 .or. nEstado == 3
+               nEstado := 3
+            case nEstado == 1
+               nEstado := 2
+         end case
       else
-
-         if( dbfPedPrvL )->( dbSeek( cNumPed + ( dbfPedCliL )->cRef ) )
-            do case
-               case nEstado == 0 .or. nEstado == 3
-                  nEstado := 3
-               case nEstado == 1
-                  nEstado := 2
-            end case
-         else
-            do case
-               case nEstado == 0
-                  nEstado := 1
-               case nEstado == 3
-                  nEstado := 2
-            end case
-         end if
-
+         do case
+            case nEstado == 0
+               nEstado := 1
+            case nEstado == 3
+               nEstado := 2
+         end case
       end if
 
-   ( dbfPedCliL )->( dbSkip() )
+   ( cPedCliL )->( dbSkip() )
 
    end while
 
-   ( dbfPedPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( cPedPrvL )->( OrdSetFocus( nOrdAnt ) )
 
 return ( Max( nEstado, 1 ) )
 
@@ -13777,29 +13928,6 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nNetUAlbCli( uTmp, nDec, nVdv, lIva )
-
-   local nCalculo
-
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
-   DEFAULT lIva      := .f.
-
-   nCalculo          := nTotUAlbCli( uTmp, nDec, nVdv )
-
-   if ( dbfAlbCliL )->nIva != 0
-      do case
-         case !lIva .and. ( dbfAlbCliL )->lIvaLin
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfAlbCliL )->nIva + 1 ), nDec )
-         case lIva .and. !( dbfAlbCliL )->lIvaLin
-            nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nDec )
-      end case
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION nBrtLAlbCli( uTmpCab, uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    local nCalculo    := 0
@@ -13820,17 +13948,17 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 Devuelve el precio unitario impuestos incluido
 */
 
-FUNCTION nIncUAlbCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nIncUAlbCli( cTmpLin, nDec, nVdv )
 
    local nCalculo
 
    DEFAULT nDec   := 0
    DEFAULT nVdv   := 1
 
-   nCalculo       := nTotUAlbCli( dbfTmpLin, nDec, nVdv )
+   nCalculo       := nTotUAlbCli( cTmpLin, nDec, nVdv )
 
    if !( dbfTmpLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfTmpLin )->nIva / 100
+      nCalculo    += nCalculo * ( cTmpLin )->nIva / 100
    end if
 
    IF nVdv != 0
@@ -13849,80 +13977,16 @@ FUNCTION cDesAlbCli( cAlbCliL, cAlbCliS )
 RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
 
 //---------------------------------------------------------------------------//
-
-Function cFraAlbCli( cAlbCliL )
-
-   local cTxtFra     := ""
-
-   DEFAULT cAlbCliL  := dbfAlbCliL
-
-   if ( cAlbCliL )->lImpFra
-      cTxtFra        := ( cAlbCliL )->cTxtFra
-   end if
-
-Return ( cTxtFra )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el precio del articulo una vez realizados los descuentos en linea
-*/
-
-FUNCTION nTotPAlbCli( dbfLin, nDec, nVdv, lDto, cPouDiv )
-
-   local nCalculo
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
-   DEFAULT lDto      := .t.
-
-   if ( dbfLin )->lTotLin
-
-      nCalculo       := nTotUAlbCli( dbfLin, nDec, nVdv )
-
-   else
-
-      /*
-      Tomamos los valores redondeados
-      */
-
-      nCalculo       := nTotUAlbCli( dbfLin, nDec, nVdv )
-
-      nCalculo       -= Round( ( dbfLin )->nDtoDiv , nDec )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      IF lDto
-
-         IF ( dbfLin )->NDTO != 0
-            nCalculo -= nCalculo * ( dbfLin )->NDTO / 100
-         END IF
-
-         IF ( dbfLin )->NDTOPRM != 0
-            nCalculo -= nCalculo * ( dbfLin )->NDTOPRM / 100
-         END IF
-
-      END IF
-
-      nCalculo       := Round( nCalculo, nDec )
-
-   end if
-
-RETURN ( if( cPouDiv != NIL, trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
 /*
 Devuelve el total de una linea con impuestos incluido
 */
 
-FUNCTION nIncLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIncLAlbCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo := nTotLAlbCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   if !( dbfLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfLin )->nIva / 100
+   if !( cDbfLin )->lIvaLin
+      nCalculo    += nCalculo * ( cDbfLin )->nIva / 100
    end if
 
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
@@ -13987,7 +14051,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nDtoAtpAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lImpTrn, lPntVer )
+FUNCTION nDtoAtpAlbCli( uAlbCliT, uAlbCliL, nDec, nRou, nVdv, lImpTrn, lPntVer )
 
    local nCalculo
    local nDtoAtp  := 0
@@ -13998,7 +14062,7 @@ FUNCTION nDtoAtpAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lImpTrn, lPntVer
    DEFAULT lPntVer:= .f.
    DEFAULT lImpTrn:= .f.
 
-   nCalculo       := nTotLAlbCli( dbfAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
+   nCalculo       := nTotLAlbCli( uAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
 
    if ( uAlbCliT )->nSbrAtp <= 1 .and. ( uAlbCliT )->nDtoAtp != 0
       nDtoAtp     += Round( nCalculo * ( uAlbCliT )->nDtoAtp / 100, nRou )
@@ -14036,7 +14100,7 @@ RETURN ( nDtoAtp )
 Funciones auxiliares para comunicarnos desde fuera del PRG
 */
 
-FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
+FUNCTION Ped2AlbCli( cNumPed, cAlbCliT )
 
    local oBlock
    local oError
@@ -14046,10 +14110,10 @@ FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "cNumPed" ) )
+      nOrdAnt     := ( cAlbCliT )->( OrdSetFocus( "cNumPed" ) )
 
-      if ( dbfAlbCliT )->( dbSeek( cNumPed ) )
-         cNumAlb  := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+      if ( cAlbCliT )->( dbSeek( cNumPed ) )
+         cNumAlb  := ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb
       end if
 
       if !Empty( cNumAlb )
@@ -14058,7 +14122,7 @@ FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
          msgStop( "No hay albarán asociado" )
       end if
 
-      ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
+      ( cAlbCliT )->( OrdSetFocus( nOrdAnt ) )
 
    RECOVER USING oError
 
@@ -14067,7 +14131,6 @@ FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
    END SEQUENCE
    
    ErrorBlock( oBlock )
-
 
 RETURN NIL
 
@@ -14105,7 +14168,7 @@ FUNCTION cCliAlbCli( cAlbCli, uAlbCliT )
    do case
       case ValType( uAlbCliT ) == "C"
          if (uAlbCliT)->( dbSeek( cAlbCli ) )
-            cCodCli     := (uAlbCliT)->CCODCLI
+            cCodCli     := ( uAlbCliT )->cCodCli
          end if
       case ValType( uAlbCliT ) == "O"
          if uAlbCliT:Seek( cAlbCli )
@@ -14175,56 +14238,53 @@ function lGenAlbCli( oBrw, oBtn, nDevice )
 return nil
 
 //---------------------------------------------------------------------------//
-
 //
 // Devuelve el total de la compra en albaranes de clientes de un articulo
 //
 
-function nTotDAlbCli( cCodArt, dbfAlbCliL, dbfAlbCliT, cCodAlm )
+function nTotDAlbCli( cCodArt, cAlbCliL, cAlbCliT, cCodAlm )
 
    local lFacAlb        := .f.
    local nTotVta        := 0
-   local nRecno         := ( dbfAlbCliL )->( Recno() )
+   local nRecno         := ( cAlbCliL )->( Recno() )
 
-   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+   if ( cAlbCliL )->( dbSeek( cCodArt ) )
 
-      while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( eof() )
+      while ( cAlbCliL )->cRef == cCodArt .and. !( cAlbCliL )->( eof() )
 
-         if dbfAlbCliT != nil
-            lFacAlb     := lFacAlbCli( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + ( dbfAlbCliL )->CSUFALB, dbfAlbCliT )
+         if cAlbCliT != nil
+            lFacAlb     := lFacAlbCli( ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->nNumAlb ) + ( cAlbCliL )->cSufAlb, cAlbCliT )
          end if
 
-         if !( dbfAlbCliL )->lTotLin .and. !lFacAlb
+         if !( cAlbCliL )->lTotLin .and. !lFacAlb
             if cCodAlm != nil
-               if cCodAlm == ( dbfAlbCliL )->cAlmLin
-                  nTotVta  += nTotNAlbPrv( dbfAlbCliL ) * NotCero( ( dbfAlbCliL )->nFacCnv )
+               if cCodAlm == ( cAlbCliL )->cAlmLin
+                  nTotVta  += nTotNAlbPrv( cAlbCliL ) * NotCero( ( cAlbCliL )->nFacCnv )
                end if
             else
-               nTotVta     += nTotNAlbCli( dbfAlbCliL ) * NotCero( ( dbfAlbCliL )->nFacCnv )
+               nTotVta     += nTotNAlbCli( cAlbCliL ) * NotCero( ( cAlbCliL )->nFacCnv )
             end if
          end if
 
-         ( dbfAlbCliL )->( dbSkip() )
+         ( cAlbCliL )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfAlbCliL )->( dbGoTo( nRecno ) )
+   ( cAlbCliL )->( dbGoTo( nRecno ) )
 
 return ( nTotVta )
 
 //---------------------------------------------------------------------------//
-
 //
 // Devuelve el total de la venta en albaranes de un clientes determinado
 //
 
-
-function nVtaAlbCli( cCodCli, dDesde, dHasta, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, lNotFac, nYear )
+function nVtaAlbCli( cCodCli, dDesde, dHasta, cAlbCliT, cAlbCliL, cDbfIva, cDbfDiv, lNotFac, nYear )
 
    local nCon        := 0
-   local nRec        := ( dbfAlbCliT )->( Recno() )
+   local nRec        := ( cAlbCliT )->( Recno() )
 
    DEFAULT lNotFac   := .f.
 
@@ -14232,20 +14292,20 @@ function nVtaAlbCli( cCodCli, dDesde, dHasta, dbfAlbCliT, dbfAlbCliL, dbfIva, db
    Albaranes a Clientes -------------------------------------------------------
    */
 
-   if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
+   if ( cAlbCliT )->( dbSeek( cCodCli ) )
 
-      while ( dbfAlbCliT )->cCodCli == cCodCli .and. !( dbfAlbCliT )->( Eof() )
+      while ( cAlbCliT )->cCodCli == cCodCli .and. !( cAlbCliT )->( Eof() )
 
-         if ( dDesde == nil .or. ( dbfAlbCliT )->dFecAlb >= dDesde )    .and.;
-            ( dHasta == nil .or. ( dbfAlbCliT )->dFecAlb <= dHasta )    .and.;
-            ( if( lNotFac, !( dbfAlbCliT )->lFacturado, .t. ) )         .and.;
-            ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
+         if ( dDesde == nil .or. ( cAlbCliT )->dFecAlb >= dDesde )    .and.;
+            ( dHasta == nil .or. ( cAlbCliT )->dFecAlb <= dHasta )    .and.;
+            ( if( lNotFac, !( cAlbCliT )->lFacturado, .t. ) )         .and.;
+            ( nYear == nil .or. Year( ( cAlbCliT )->dFecAlb ) == nYear )
 
-            nCon  += nTotAlbCli( ( dbfAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
+            nCon  += nTotAlbCli( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb, cAlbCliT, cAlbCliL, cDbfIva, cDbfDiv, nil, cDivEmp(), .f. )
 
          end if
 
-         ( dbfAlbCliT )->( dbSkip() )
+         ( cAlbCliT )->( dbSkip() )
 
          SysRefresh()
 
@@ -14253,7 +14313,7 @@ function nVtaAlbCli( cCodCli, dDesde, dHasta, dbfAlbCliT, dbfAlbCliL, dbfIva, db
 
    end if
 
-   ( dbfAlbCliT )->( dbGoTo( nRec ) )
+   ( cAlbCliT )->( dbGoTo( nRec ) )
 
 return nCon
 
@@ -14673,24 +14733,6 @@ Return ( aCalAlbCli )
 
 //---------------------------------------------------------------------------//
 
-Function aCocAlbCli()
-
-   local aCocAlbCli  := {}
-
-   aAdd( aCocAlbCli, { "( Descrip( cDbfCol ) )",                                                   "C", 100,0, "Detalle del artículo",           "",            "Descripción", "" } )
-   aAdd( aCocAlbCli, { "( nTotNAlbCli( cDbfCol ) )",                                               "N", 16, 6, "Total unidades",                 "cPicUndAlb",  "Unds.",       "" } )
-   aAdd( aCocAlbCli, { "( nTotUAlbCli( cDbfCol, nDouDivAlb, nVdvDivAlb ) )",                       "N", 16, 6, "Precio unitario",                "cPouDivAlb",  "Precio",      "" } )
-   aAdd( aCocAlbCli, { "( nNetUAlbCli( cDbfCol, nDouDivAlb, nVdvDivAlb, .f. ) )",                  "N", 16, 6, "Precio unitario sin " + cImp(),     "cPouDivAlb",  "Precio",      "" } )
-   aAdd( aCocAlbCli, { "( nTotPAlbCli( cDbfCol, nVdvDivAlb ) )",                                   "N", 16, 6, "Precio unitario con descuentos", "cPouDivAlb",  "Precio",      "" } )
-   aAdd( aCocAlbCli, { "( nPesLAlbCli( cDbfCol ) )",                                               "N", 16, 6, "Total peso por línea",           "'@E 999,999.99'","Peso",     "" } )
-   aAdd( aCocAlbCli, { "( nTotLAlbCli( cDbfCol, nDouDivAlb, nRouDivAlb, nVdvDivAlb ) )",           "N", 16, 6, "Total linea de albarán",         "cPorDivAlb",  "Total",       "" } )
-   aAdd( aCocAlbCli, { "( nNetLAlbCli( cDbf, cDbfCol, nDouDivAlb, nRouDivAlb, nVdvDivAlb, .f. ) )","N", 16, 6, "Total linea sin " + cImp(),         "cPorDivAlb",  "Total",       "" } )
-   aAdd( aCocAlbCli, { "cFrasePublicitaria( cDbfCol )",                                            "C", 50, 0, "Texto de frase publicitaria",    "",            "Publicidad",  "" } )
-
-Return ( aCocAlbCli )
-
-//---------------------------------------------------------------------------//
-
 function aSerAlbCli()
 
    local aColAlbCli  := {}
@@ -15096,7 +15138,7 @@ return nil
 
 //------------------------------------------------------------------------//
 
-FUNCTION PrnEntAlb( cNumEnt, lPrint, dbfAlbCliP )
+FUNCTION PrnEntAlb( cNumEnt, lPrint )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -15118,35 +15160,6 @@ FUNCTION PrnEntAlb( cNumEnt, lPrint, dbfAlbCliP )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
-Function nPesAlbCli( cAlbaran, dbfAlbCliL, lPicture )
-
-   local nOrd           := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
-   local nTotPes        := 0
-
-   DEFAULT lPicture     := .f.
-
-   if ( dbfAlbCliL )->( dbSeek( cAlbaran ) )
-
-      while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. ( dbfAlbCliL )->( !eof() )
-
-         if lValLine( dbfAlbCliL )
-
-            nTotPes     += nPesLAlbCli( dbfAlbCliL )
-
-         end if
-
-         ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAlbCliL )->( OrdSetFocus( nOrd ) )
-
-Return ( if( lPicture, Trans( nTotPes, MasUnd() ), nTotPes ) )
-
-//--------------------------------------------------------------------------//
 
 Function DesignReportAlbCli( oFr, dbfDoc )
 
@@ -15256,131 +15269,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
-
-   local oFr
-   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, " ", "" ) + ".Pdf"
-
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
-
-   SysRefresh()
-
-   oFr                  := frReportManager():New()
-
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
-   oFr:SetIcon( 1 )
-
-   oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   DataReport( oFr )
-
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
-
-   if !Empty( ( dbfDoc )->mReport )
-
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReport( oFr )
-
-      /*
-      Preparar el report-------------------------------------------------------
-      */
-
-      oFr:PrepareReport()
-
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
-
-      do case
-         case nDevice == IS_SCREEN
-
-            oFr:ShowPreparedReport()
-
-         case nDevice == IS_PRINTER
-
-            oFr:PrintOptions:SetPrinter( cPrinter )
-            oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetShowDialog( .f. )
-            oFr:Print()
-
-         case nDevice == IS_PDF
-
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
-            oFr:DoExport(     "PDFExport" )
-
-         case nDevice == IS_MAIL
-
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
-            oFr:DoExport(     "PDFExport" )
-
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nAlbCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de albaran de cliente número " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :GeneralResource( dbfAlbCliT, aItmAlbCli() )
-
-               end with
-
-            end if
-
-      end case
-
-   end if
-
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
-
-   oFr:DestroyFr()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 Function DesignReportEntAlbCli( oFr, dbfDoc )
 
    if OpenFiles()
@@ -15461,91 +15349,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
-
-   local oFr
-   local nRecAlbCliT    := ( dbfAlbCliT )->( Recno() )
-
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
-   DEFAULT lTicket      := .f.
-
-   SysRefresh()
-
-   oFr                  := frReportManager():New()
-
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
-   oFr:SetIcon( 1 )
-
-   oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
-
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
-
-   if !Empty( ( dbfDoc )->mReport )
-
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReportEntAlbCli( oFr )
-
-      /*
-      Preparar el report-------------------------------------------------------
-      */
-
-      oFr:PrepareReport()
-
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
-
-      do case
-         case nDevice == IS_SCREEN
-            oFr:ShowPreparedReport()
-
-         case nDevice == IS_PRINTER
-            oFr:PrintOptions:SetPrinter( cPrinter )
-            oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetShowDialog( .f. )
-            oFr:Print()
-
-         case nDevice == IS_PDF
-            oFr:DoExport( "PDFExport" )
-
-      end case
-
-   end if
-
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
-
-   oFr:DestroyFr()
-
-   ( dbfAlbCliT )->( dbGoTo( nRecAlbCliT ) )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
@@ -15573,46 +15376,30 @@ FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
 //
-// Devuelve el numero de unidades reservadas en albaranes a clientes
+// Devuelve el numero de unidades recibidas en albaranes a clientes
 //
 
-function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, cDetalle, dbfAlbCliL )
+function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, cDetalle, cAlbCliL )
 
    local nTot        := 0
-   local aStaLin     := aGetStatus( dbfAlbCliL, .f. )
+   local aStaLin     := aGetStatus( cAlbCliL, .f. )
 
    DEFAULT cCodPr1   := Space( 20 )
    DEFAULT cCodPr2   := Space( 20 )
    DEFAULT cRefPrv   := Space( 18 )
    DEFAULT cDetalle  := Space( 250 )
 
-   if ( IsMuebles() )
+   ( cAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
-      ( dbfAlbCliL )->( OrdSetFocus( "cNumPedDet" ) )
-
-      if ( dbfAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 + cRefPrv + cDetalle ) )
-         while ( dbfAlbCliL )->cNumPed + ( dbfAlbCliL )->cRef + ( dbfAlbCliL )->cCodPr1 + ( dbfAlbCliL )->cCodPr2 + ( dbfAlbCliL )->cRefPrv + ( dbfAlbCliL )->cDetalle == cNumPed + cCodArt + cCodPr1 + cCodPr2 + cRefPrv + cDetalle .and. !( dbfAlbCliL )->( eof() )
-            nTot     += nTotNAlbCli( dbfAlbCliL )
-            ( dbfAlbCliL )->( dbSkip() )
-         end while
-      end if
-
-   else
-
-      ( dbfAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
-
-      if ( dbfAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
-         while ( dbfAlbCliL )->cNumPed + ( dbfAlbCliL )->cRef + ( dbfAlbCliL )->cCodPr1 + ( dbfAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( dbfAlbCliL )->( eof() )
-            nTot     += nTotNAlbCli( dbfAlbCliL )
-            ( dbfAlbCliL )->( dbSkip() )
-         end while
-      end if
-
+   if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
+      while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )
+         nTot     += nTotNAlbCli( cAlbCliL )
+         ( cAlbCliL )->( dbSkip() )
+      end while
    end if
 
-   SetStatus( dbfAlbCliL, aStaLin )
+   SetStatus( cAlbCliL, aStaLin )
 
 return ( nTot )
 
@@ -15956,36 +15743,19 @@ FUNCTION nTotUAlbCli( uTmpLin, nDec, nVdv )
 RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
-/*
-Cambia el importe unitario de la linea
-*/
-
-FUNCTION SetUAlbCli( dbfLin, nNewVal )
-
-      DEFAULT dbfLin             := dbfAlbCliL
-
-    if ( dbfLin )->lAlquiler
-       ( dbfLin )->nPreAlq       := nNewVal
-    else
-       ( dbfLin )->nPreUnit   := nNewVal
-    end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
 //
 // Valor del punto verde
 //
 
-Function nPntUAlbCli( dbfTmpLin, nDec, nVdv )
+Function nPntUAlbCli( cDbfTmpLin, nDec, nVdv )
 
-   local nCalculo := ( dbfTmpLin )->nPntVer
+   local nCalculo := ( cDbfTmpLin )->nPntVer
 
    DEFAULT nDec   := 0
    DEFAULT nVdv   := 1
 
    IF nVdv != 0
-      nCalculo    := ( dbfTmpLin )->nPntVer / nVdv
+      nCalculo    := ( cDbfTmpLin )->nPntVer / nVdv
    END IF
 
 Return ( Round( nCalculo, nDec ) )
@@ -17289,11 +17059,11 @@ RETURN ( if( lPic, Trans( if( lNeto, nTotNet, nTotAlb ), cPorDiv ), if( lNeto, n
 Devuelve la comisi¢n de un agente en una linea de detalle
 */
 
-FUNCTION nComLAlbCli( dbfAlbCliT, dbfAlbCliL, nDecOut, nDerOut )
+FUNCTION nComLAlbCli( cAlbCliT, cAlbCliL, nDecOut, nDerOut )
 
-   local nImp  := nImpLAlbCli( dbfAlbCliT, dbfAlbCliL, nDecOut, nDerOut, , .f., .t., .f., .f. )
+   local nImp  := nImpLAlbCli( cAlbCliT, cAlbCliL, nDecOut, nDerOut, , .f., .t., .f., .f. )
 
-RETURN ( Round( ( nImp * ( dbfAlbCliL )->nComAge / 100 ), nDerOut ) )
+RETURN ( Round( ( nImp * ( cAlbCliL )->nComAge / 100 ), nDerOut ) )
 
 //---------------------------------------------------------------------------//
 
@@ -17364,7 +17134,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nImpLAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn, lPntVer, cPouDiv )
+FUNCTION nImpLAlbCli( uAlbCliT, uAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn, lPntVer, cPouDiv )
 
    local lIvaInc
    local nCalculo
@@ -17377,7 +17147,7 @@ FUNCTION nImpLAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTr
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLAlbCli( dbfAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
+   nCalculo          := nTotLAlbCli( uAlbCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
 
    do case
    case ValType( uAlbCliT ) == "A"
@@ -17406,10 +17176,10 @@ FUNCTION nImpLAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTr
 
    end if
 
-   if ( dbfAlbCliL )->nIva != 0
+   if ( uAlbCliL )->nIva != 0
       if lIva  // lo quermos con impuestos
          if !lIvaInc
-            nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nRou )
+            nCalculo += Round( nCalculo * ( uAlbCliL )->nIva / 100, nRou )
          end if
       else     // lo queremos sin impuestos
          if lIvaInc
@@ -17521,14 +17291,14 @@ RETURN ( Round( nImpTrn, nRou ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTrnUAlbCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nTrnUAlbCli( dbfLin, nDec, nVdv )
 
    local nCalculo
 
    DEFAULT nDec   := 0
    DEFAULT nVdv   := 1
 
-   nCalculo       := ( dbfTmpLin )->nImpTrn
+   nCalculo       := ( dbfLin )->nImpTrn
 
    IF nVdv != 0
       nCalculo    := nCalculo / nVdv
@@ -17635,15 +17405,15 @@ RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nDtoUAlbCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nDtoUAlbCli( dbfLin, nDec, nVdv )
 
-   local nCalculo := ( dbfTmpLin )->nDtoDiv
+   local nCalculo := ( dbfLin )->nDtoDiv
 
    DEFAULT nDec   := 0
    DEFAULT nVdv   := 1
 
    IF nVdv != 0
-      nCalculo    := ( dbfTmpLin )->nDtoDiv / nVdv
+      nCalculo    := ( dbfLin )->nDtoDiv / nVdv
    END IF
 
 RETURN ( round( nCalculo, nDec ) )
