@@ -11682,7 +11682,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Function lBuscarAtipica( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfCliAtp )
+Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfCliAtp )
 
    local nOrd        
    local lSea        := .f.
@@ -11698,7 +11698,7 @@ Function lBuscarAtipica( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, c
 
       while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
 
-         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
             lSea     := .t.
             exit
@@ -11717,7 +11717,7 @@ Function lBuscarAtipica( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, c
 
       while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCodCli + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
 
-         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
             lSea     := .t.
             exit
@@ -11738,13 +11738,11 @@ Function lBuscarAtipica( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, c
 
    nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cGrpArt" ) )
 
-   msgAlert( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 )
-
    if ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
 
       while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
 
-         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
             lSea     := .t.
             exit
@@ -11762,11 +11760,9 @@ Function lBuscarAtipica( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, c
 
    if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt ) )
 
-      msgAlert( cCodGrp + cCodArt ) 
-
       while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
 
-         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
             lSea     := .t.
             exit
@@ -11796,12 +11792,9 @@ Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, cCodFam, dFecDoc, dbfCliAtp )
 
       while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCodCli + cCodFam  .and. !( dbfCliAtp )->( eof() )
 
-         if ( ( dbfCliAtp )->dFecIni <= dFecDoc .or. Empty( ( dbfCliAtp )->dFecIni ) ) .and. ;
-            ( ( dbfCliAtp )->dFecFin >= dFecDoc .or. Empty( ( dbfCliAtp )->dFecFin ) ) .and. ;
-            ( dbfCliAtp )->nTipAtp == 2
+         if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
 
             lSea  := .t.
-            
             exit
 
          else
@@ -11816,14 +11809,51 @@ Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, cCodFam, dFecDoc, dbfCliAtp )
 
    ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
 
-return ( lSea )
+   // Buscamos por grupo de cliente--------------------------------------------
 
+   nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cGrpFam" ) )
+
+   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodFam ) )
+
+      while ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodFam == cCodGrp + cCodFam  .and. !( dbfCliAtp )->( eof() )
+
+         if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
+
+            lSea  := .t.
+            exit
+
+         else
+
+            ( dbfCliAtp )->( dbSkip() )
+
+         end if
+
+      end while
+
+   end if
+
+   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+
+Return ( lSea )
+
+//---------------------------------------------------------------------------//
 
 Static Function lCheckFechaAtipica( dFecDoc, dbfCliAtp )
 
 Return ( ( empty( ( dbfCliAtp )->dFecIni ) .or. ( dbfCliAtp )->dFecIni <= dFecDoc ) .and. ;
-         ( empty( ( dbfCliAtp )->dFecFin ) .or. ( dbfCliAtp )->dFecFin >= dFecDoc ) .and. ;
-         ( dbfCliAtp )->nTipAtp <= 1 )
+         ( empty( ( dbfCliAtp )->dFecFin ) .or. ( dbfCliAtp )->dFecFin >= dFecDoc ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
+
+Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp <= 1 )
+
+//---------------------------------------------------------------------------//
+
+Static Function lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
+
+Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp == 2 )
 
 //---------------------------------------------------------------------------//
 

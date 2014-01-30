@@ -6381,12 +6381,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            /*
-            Atipicas de clientes por artículo
-            */
+            // Atipicas de clientes por artículo-------------------------------
 
             do case
-            case lBuscarAtipica( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
+            case lBuscarAtipicaArticulo( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
                ( dbfCliAtp )->lAplPre
 
                nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
@@ -6399,18 +6397,20 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                */
 
                nImpAtp     := nDtoAtp( nTarOld, dbfCliAtp )
-               aGet[ _NDTO ]:cText( nImpAtp )
+               if nImpAtp != 0
+                  aGet[ _NDTO ]:cText( nImpAtp )
+               end if 
 
                /*
                Descuento por promocion-----------------------------------------
                */
 
                if ( dbfCliAtp )->nDprArt != 0
-                  aGet[ _NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
+                  aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
                end if
 
                if ( dbfCliAtp )->nComAge != 0
-                  aGet[ _NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
+                  aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0
@@ -6425,17 +6425,19 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             Atipicas de clientes por familias----------------------------------
             */
 
-            case lSeekAtpFam( aTmpPre[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpPre[ _DFECPRE ], dbfCliAtp ) .and. ;
-                  ( dbfCliAtp )->lAplPre
+            case lBuscarAtipicaFamilia( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _CCODFAM ], aTmpPre[ _DFECPRE ], dbfCliAtp ) .and. ;
+               ( dbfCliAtp )->lAplPre
 
-               aGet[ _NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
+               msgAlert( ( dbfCliAtp )->nDtoArt, "nDtoArt" )
+               
+               aGet[ _NDTO ]:cText( ( dbfCliAtp )->nDtoArt )
 
                if ( dbfCliAtp )->nDprArt != 0
-                  aGet[ _NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
+                  aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
                end if
 
                if ( dbfCliAtp )->nComAge != 0
-                  aGet[ _NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
+                  aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0
@@ -6447,6 +6449,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                end if
 
             end case
+
+            // Mediciones------------------------------------------------------
 
             if oUndMedicion:oDbf:Seek( ( dbfArticulo )->cUnidad )
 
@@ -9201,7 +9205,7 @@ STATIC FUNCTION RecPreCli( aTmpPre )
          */
 
          do case
-         case lBuscarAtipica( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp ) .and. ;
+         case lBuscarAtipicaArticulo( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp, dbfCliAtp ) .and. ;
             ( dbfCliAtp )->lAplPre
 
             nImpAtp  := nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
