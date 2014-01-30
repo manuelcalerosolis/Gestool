@@ -4795,6 +4795,9 @@ CLASS TDataView
 
    METHOD Get( cDatabase )
 
+   METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
+   METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
+
    METHOD ScanDatabase( cDatabase )
    METHOD OpenDatabase( oDataTable )
 

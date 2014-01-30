@@ -132,9 +132,9 @@ CLASS TAtipicas FROM TDet
       METHOD PreSaveDetail()           INLINE ( MsgStop( "PreSaveDetail" ) )
 
       METHOD WhenTipoArticulo()        INLINE ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
-      METHOD WhenTipoArticuloIva()     INLINE ( ::WhenTipoArticulo() .and. ( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
-      METHOD WhenTipoArticuloBase()    INLINE ( ::WhenTipoArticulo() .and. !( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
       METHOD WhenOfertaXbY()           INLINE ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
+      METHOD WhenTipoArticuloIva()     INLINE ( ::WhenTipoArticulo() .and. !( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
+      METHOD WhenTipoArticuloBase()    INLINE ( ::WhenTipoArticulo() .and. ( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
 
       METHOD ChangeNaturaleza()
       METHOD lChangeCostoParticular()  INLINE ( if( ::oDbfVir:lPrcCom, ( ::oCostoParticular:Show(), ::oPrecioCompra:Hide() ), ( ::oCostoParticular:Hide(), ::oPrecioCompra:Show() ) ) )
@@ -455,7 +455,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VALID    ( ::CalculaIva( ::oPrecioArticulo1, ::oIvaArticulo1 ) );
          OF       ::oFld:aDialogs[1]
 
-      ::oPrecioArticulo1:bValid              := {|| ::CalculaRentabilidad() } 
+      ::oPrecioArticulo1:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo2 ;
          VAR      ::oDbfVir:nPrcArt2 ;
@@ -466,7 +466,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VALID    ( ::CalculaIva( ::oPrecioArticulo2, ::oIvaArticulo2 ) );
          OF       ::oFld:aDialogs[1]
 
-      ::oPrecioArticulo2:bValid              := {|| ::CalculaRentabilidad() } 
+      ::oPrecioArticulo2:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo3 ;
          VAR      ::oDbfVir:nPrcArt3 ;
@@ -477,7 +477,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VALID    ( ::CalculaIva( ::oPrecioArticulo3, ::oIvaArticulo3 ) );
          OF       ::oFld:aDialogs[1]
 
-      ::oPrecioArticulo3:bValid              := {|| ::CalculaRentabilidad() } 
+      ::oPrecioArticulo3:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo4 ;
          VAR      ::oDbfVir:nPrcArt4 ;
@@ -488,7 +488,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VALID    ( ::CalculaIva( ::oPrecioArticulo4, ::oIvaArticulo4 ) );
          OF       ::oFld:aDialogs[1]
 
-      ::oPrecioArticulo4:bValid              := {|| ::CalculaRentabilidad() } 
+      ::oPrecioArticulo4:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo5 ;
          VAR      ::oDbfVir:nPrcArt5 ;
@@ -499,7 +499,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VALID    ( ::CalculaIva( ::oPrecioArticulo5, ::oIvaArticulo5 ) );
          OF       ::oFld:aDialogs[1]
 
-      ::oPrecioArticulo5:bValid              := {|| ::CalculaRentabilidad() } 
+      ::oPrecioArticulo5:bChange             := {|| ::CalculaRentabilidad() } 
 
       REDEFINE GET ::oPrecioArticulo6 ;
          VAR      ::oDbfVir:nPrcArt6 ;
@@ -510,7 +510,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          VALID    ( ::CalculaIva( ::oPrecioArticulo6, ::oIvaArticulo6 ) );
          OF       ::oFld:aDialogs[1]
 
-      ::oPrecioArticulo6:bValid              := {|| ::CalculaRentabilidad() } 
+      ::oPrecioArticulo6:bChange             := {|| ::CalculaRentabilidad() } 
 
       /*
       Precios con impuestos----------------------------------------------------
@@ -1451,7 +1451,7 @@ RETURN ( .t. )
 
 METHOD CalculaIva( oPrecioBase, oPrecioIva )
 
-   local nPrecio        := 0
+   local nPrecio        := oPrecioBase:varGet()
    local nPorcentajeIVA := 0
    local cTipoIVA       := retfld( ::oDbfVir:cCodArt, TDataView():Get( "Articulo", ::View() ), "TipoIva", "Codigo" )
 
@@ -1459,11 +1459,15 @@ METHOD CalculaIva( oPrecioBase, oPrecioIva )
       nPorcentajeIVA    := nIva( TDataView():Get( "TIva", ::View() ), cTipoIva )
    end if 
 
+   ? nPorcentajeIVA
+
    /*
    Sumar impuestos-------------------------------------------------------------
    */
 
    nPrecio              += ( nPrecio * nPorcentajeIVA / 100 )
+
+   ? nPrecio
 
    /*
    Actualizamos----------------------------------------------------------------

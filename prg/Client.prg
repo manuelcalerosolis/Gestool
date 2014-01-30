@@ -6072,10 +6072,10 @@ Function SynClient( cPath )
 
          if Empty( ( TDataView():Get( "Client", nView ) )->mFacAut ) .and. !Empty( ( TDataView():Get( "Client", nView ) )->cFacAut )
 
-            if dbLock( TDataView():Get( "Client", nView ) )
+            if TDataView():Lock( "Client", nView ) )
                ( TDataView():Get( "Client", nView ) )->mFacAut  := AllTrim( ( TDataView():Get( "Client", nView ) )->cFacAut ) + ","
                ( TDataView():Get( "Client", nView ) )->cFacAut  := ""
-               ( TDataView():Get( "Client", nView ) )->( dbUnLock() )
+               TDataView():UnLock( "Client", nView ) 
             end if
 
          end if
