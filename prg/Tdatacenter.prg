@@ -1979,6 +1979,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ArtDiv"
    oDataTable:cName        := cPatEmp() + "ArtDiv"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtDiv.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtDiv.Cdx"
@@ -1987,6 +1988,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Artkit"
    oDataTable:cName        := cPatEmp() + "ArtKit"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtKit.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtKit.Cdx"
@@ -2859,6 +2861,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliT"
    oDataTable:cName        := cPatEmp() + "AlbCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliT.Cdx"
@@ -2869,6 +2872,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliL"
    oDataTable:cName        := cPatEmp() + "AlbCliL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliL.Cdx"
@@ -2877,6 +2881,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliI"
    oDataTable:cName        := cPatEmp() + "AlbCliI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliI.Cdx"
@@ -2885,6 +2890,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliD"
    oDataTable:cName        := cPatEmp() + "AlbCliD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliD.Cdx"
@@ -2893,6 +2899,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliP"
    oDataTable:cName        := cPatEmp() + "AlbCliP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliP.Cdx"
@@ -2901,6 +2908,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliS"
    oDataTable:cName        := cPatEmp() + "AlbCliS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliS.Cdx"

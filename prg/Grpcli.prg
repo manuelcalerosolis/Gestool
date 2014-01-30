@@ -117,6 +117,10 @@ METHOD OpenFiles( lExclusive, cPath )
 
       TDataView():Get( "Familias", ::nView )
 
+      TDataView():Get( "Artkit", ::nView )
+
+      TDataView():Get( "Artdiv", ::nView )
+
    RECOVER USING oError
 
       MsgStop( ErrorMessage( oError ), 'Imposible abrir ficheros de grupos de clientes' )

@@ -3999,8 +3999,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
       while ( ::cProducL )->cCodArt == cCodArt                          .and.;
-         ( Empty ( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )  .and.;
-         ( Empty ( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )  .and.;
+         ( Empty( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )   .and.;
+         ( Empty( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )   .and.;
          ( Empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
 
