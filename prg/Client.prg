@@ -6072,7 +6072,7 @@ Function SynClient( cPath )
 
          if Empty( ( TDataView():Get( "Client", nView ) )->mFacAut ) .and. !Empty( ( TDataView():Get( "Client", nView ) )->cFacAut )
 
-            if TDataView():Lock( "Client", nView ) )
+            if TDataView():Lock( "Client", nView )
                ( TDataView():Get( "Client", nView ) )->mFacAut  := AllTrim( ( TDataView():Get( "Client", nView ) )->cFacAut ) + ","
                ( TDataView():Get( "Client", nView ) )->cFacAut  := ""
                TDataView():UnLock( "Client", nView ) 
@@ -11681,4 +11681,151 @@ FUNCTION RefBrwCta( oBrwCta, cSubCta, dbfDiario )
 return .t.
 
 //---------------------------------------------------------------------------//
+
+Function lBuscarAtipica( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfCliAtp )
+
+   local nOrd        
+   local lSea        := .f.
+
+   DEFAULT cCodPr1   := Space( 20 )
+   DEFAULT cCodPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr1   := Space( 20 )
+
+   nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
+
+   if ( dbfCliAtp )->( dbSeek( cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+
+      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
+
+         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+
+            lSea     := .t.
+            exit
+
+         else
+
+            ( dbfCliAtp )->( dbSkip() )
+
+         end if
+
+      end while
+
+   end if
+
+   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodCli + cCodArt ) )
+
+      while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCodCli + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
+
+         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+
+            lSea     := .t.
+            exit
+
+         else
+
+            ( dbfCliAtp )->( dbSkip() )
+
+         end if
+
+      end while
+
+   end if
+
+   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+
+   // Buscamos por gupos de clientes-------------------------------------------
+
+   nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cGrpArt" ) )
+
+   msgAlert( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 )
+
+   if ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+
+      while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
+
+         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+
+            lSea     := .t.
+            exit
+
+
+         else
+
+            ( dbfCliAtp )->( dbSkip() )
+
+         end if
+
+      end while
+
+   end if
+
+   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt ) )
+
+      msgAlert( cCodGrp + cCodArt ) 
+
+      while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
+
+         if lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+
+            lSea     := .t.
+            exit
+
+         else
+
+            ( dbfCliAtp )->( dbSkip() )
+
+         end if
+
+      end while
+
+   end if
+
+   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+
+Return ( lSea )
+
+//---------------------------------------------------------------------------//
+
+Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, cCodFam, dFecDoc, dbfCliAtp )
+
+   local lSea     := .f.
+   local nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cCodFam" ) )
+
+   if ( dbfCliAtp )->( dbSeek( cCodCli + cCodFam ) )
+
+      while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCodCli + cCodFam  .and. !( dbfCliAtp )->( eof() )
+
+         if ( ( dbfCliAtp )->dFecIni <= dFecDoc .or. Empty( ( dbfCliAtp )->dFecIni ) ) .and. ;
+            ( ( dbfCliAtp )->dFecFin >= dFecDoc .or. Empty( ( dbfCliAtp )->dFecFin ) ) .and. ;
+            ( dbfCliAtp )->nTipAtp == 2
+
+            lSea  := .t.
+            
+            exit
+
+         else
+
+            ( dbfCliAtp )->( dbSkip() )
+
+         end if
+
+      end while
+
+   end if
+
+   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+
+return ( lSea )
+
+
+Static Function lCheckFechaAtipica( dFecDoc, dbfCliAtp )
+
+Return ( ( empty( ( dbfCliAtp )->dFecIni ) .or. ( dbfCliAtp )->dFecIni <= dFecDoc ) .and. ;
+         ( empty( ( dbfCliAtp )->dFecFin ) .or. ( dbfCliAtp )->dFecFin >= dFecDoc ) .and. ;
+         ( dbfCliAtp )->nTipAtp <= 1 )
+
+//---------------------------------------------------------------------------//
+
+
 

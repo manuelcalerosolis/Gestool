@@ -1459,15 +1459,11 @@ METHOD CalculaIva( oPrecioBase, oPrecioIva )
       nPorcentajeIVA    := nIva( TDataView():Get( "TIva", ::View() ), cTipoIva )
    end if 
 
-   ? nPorcentajeIVA
-
    /*
    Sumar impuestos-------------------------------------------------------------
    */
 
    nPrecio              += ( nPrecio * nPorcentajeIVA / 100 )
-
-   ? nPrecio
 
    /*
    Actualizamos----------------------------------------------------------------
