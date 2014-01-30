@@ -7903,6 +7903,9 @@ function SynAlbCli( cPath )
    dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
    if !lAIS(); ordListAdd( cPath + "FACCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
+   dbUseArea( .t., cDriver(), cPath + "ARTKIT.DBF", cCheckArea( "ARTKIT", @dbfKit ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ARTKIT.CDX" ); else ; ordSetFocus( 1 ) ; end
+
    oNewImp              := TNewImp():Create( cPatEmp() )
    if !oNewImp:OpenFiles()
       lOpenFiles     := .f.
@@ -8030,11 +8033,11 @@ function SynAlbCli( cPath )
       end if
 
       if !Empty( ( dbfAlbCliL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumPed ) ) != 12
-         ( dbfAlbCliL )->cNumPed := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
+         ( dbfAlbCliL )->cNumPed    := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
       end if
 
       if !Empty( ( dbfAlbCliL )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumSat ) ) != 12
-         ( dbfAlbCliL )->cNumSat := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
+         ( dbfAlbCliL )->cNumSat    := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
       end if
 
       if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
@@ -8042,7 +8045,7 @@ function SynAlbCli( cPath )
       end if
 
       if Empty( ( dbfAlbCliL )->nValImp )
-         cCodImp                    := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
+         cCodImp                    := RetFld( ( dbfAlbCliL )->cRef, dbfArticulo, "cCodImp" )
          if !Empty( cCodImp )
             ( dbfAlbCliL )->nValImp := oNewImp:nValImp( cCodImp )
          end if
@@ -8084,19 +8087,19 @@ function SynAlbCli( cPath )
          ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
       end if
 
-      // Numeros de linea------------------------------------------------------
       /*
-      if cNumAlb != ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
-         cNumAlb                       := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
-         nNumLin                       := 0
-      end if 
-
-      cNumAlb                          := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
-
-      if ( dbfAlbCliL )->nNumLin == 0
-         ( dbfAlbCliL )->nNumLin       := ++nNumLin
+      if ( dbfAlbCliL )->nCosDiv == 0
+         if !uFieldEmpresa( "lCosAct" )
+            nCosto                  := oStock:nCostoMedio( ( dbfAlbCliL )->cRef, ( dbfAlbCliL )->cAlmLin, ( dbfAlbCliL )->cCodPr1, ( dbfAlbCliL )->cValPr1, ( dbfAlbCliL )->cCodPr2, ( dbfAlbCliL )->cValPr2  )
+            if nCosto == 0
+               nCosto               := nCosto( ( dbfAlbCliL )->cRef, dbfArticulo, dbfKit, .f., , dbfDiv )
+            end if
+         else
+            nCosPro                 := nCosto( ( dbfAlbCliL )->cRef, dbfArticulo, dbfKit, .f., , dbfDiv )
+         end if
       end if 
       */
+
       // Numeros de serie------------------------------------------------------
 
       if !Empty( ( dbfAlbCliL )->mNumSer )
@@ -8223,6 +8226,10 @@ function SynAlbCli( cPath )
 
    if !Empty( dbfFacCliL ) .and. ( dbfFacCliL )->( Used() )
       ( dbfFacCliL )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfKit ) .and. ( dbfKit )->( Used() )
+      ( dbfKit )->( dbCloseArea() )
    end if
 
    if !Empty( oNewImp )

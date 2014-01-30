@@ -103,11 +103,12 @@ CLASS TAtipicas FROM TDet
    DATA oDescuento6
 
    DATA oPrecioCompra
+   DATA nPrecioCompra                  INIT 0
+
+
+   DATA oChangeCostoParticular
 
    DATA oCostoParticular
-
-   DATA nPrecioCosto                   INIT 0
-   DATA oPrecioCosto
 
    DATA oSayLabels                     INIT array( 16 )
 
@@ -126,17 +127,17 @@ CLASS TAtipicas FROM TDet
    DATA aRentabilidadSobre             INIT { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
 
    METHOD Resource()
-      METHOD StartResource()           INLINE   ( MsgStop( "Start" ) )
+      METHOD StartResource()           INLINE ( MsgStop( "Start" ) )
       METHOD SaveResource()                 
-      METHOD PreSaveDetail()           INLINE   ( MsgStop( "PreSaveDetail" ) )
+      METHOD PreSaveDetail()           INLINE ( MsgStop( "PreSaveDetail" ) )
 
-      METHOD WhenTipoArticulo()        INLINE   ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
-      METHOD WhenTipoArticuloIva()     INLINE   ( ::WhenTipoArticulo() .and. ( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
-      METHOD WhenTipoArticuloBase()    INLINE   ( ::WhenTipoArticulo() .and. !( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
-      METHOD WhenOfertaXbY()           INLINE   ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
+      METHOD WhenTipoArticulo()        INLINE ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) 
+      METHOD WhenTipoArticuloIva()     INLINE ( ::WhenTipoArticulo() .and. ( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
+      METHOD WhenTipoArticuloBase()    INLINE ( ::WhenTipoArticulo() .and. !( TDataView():Get( "Articulo", ::View() ) )->lIvaInc ) 
+      METHOD WhenOfertaXbY()           INLINE ( ::oDbfVir:nTipXby <= 1 .and. ::nMode != ZOOM_MODE )
 
       METHOD ChangeNaturaleza()
-      METHOD lChangeCostoParticular()  INLINE   ( if( ::oDbfVir:lPrcCom, ( ::oPrecioCosto:Hide(), ::oPrecioCompra:Show() ), ( ::oPrecioCosto:Show(), ::oPrecioCompra:Hide() ) ) )
+      METHOD lChangeCostoParticular()  INLINE ( if( ::oDbfVir:lPrcCom, ( ::oCostoParticular:Show(), ::oPrecioCompra:Hide() ), ( ::oCostoParticular:Hide(), ::oPrecioCompra:Show() ) ) )
 
       METHOD ShowPrimeraPropiedad()    INLINE ( ::oTextoPrimeraPropiedad:Show(), ::oValorPrimeraPropiedad:Show(), ::oCodigoPrimeraPropiedad:Show() )
       METHOD ShowSegundaPropiedad()    INLINE ( ::oTextoSegundaPropiedad:Show(), ::oValorSegundaPropiedad:Show(), ::oCodigoSegundaPropiedad:Show() )
@@ -166,6 +167,9 @@ CLASS TAtipicas FROM TDet
    
    METHOD CalculaIva()              
    METHOD CalculaBase()
+
+   METHOD PrecioIva( nTarifa )
+   METHOD PrecioBase( nTarifa )
 
    METHOD SetPrimeraPropiedad( cValue )
    METHOD SetSegundaPropiedad( cValue )
@@ -409,14 +413,14 @@ METHOD Resource( nMode ) CLASS TAtipicas
       Precios de costo---------------------------------------------------------
       */
 
-      REDEFINE CHECKBOX ::oCostoParticular ;
+      REDEFINE CHECKBOX ::oChangeCostoParticular ;
          VAR            ::oDbfVir:lPrcCom ;
          ID             122 ;
          ON CHANGE      ( ::lChangeCostoParticular() );
          WHEN           ( ::oDbfVir:nTipAtp <= 1 .and. ::nMode != ZOOM_MODE ) ;
          OF             ::oFld:aDialogs[ 1 ]
 
-      REDEFINE GET      ::oPrecioCompra ;
+      REDEFINE GET      ::oCostoParticular ;
          VAR            ::oDbfVir:nPrcCom ;
          ID             120 ;
          WHEN           ( ::nMode != ZOOM_MODE );
@@ -424,16 +428,19 @@ METHOD Resource( nMode ) CLASS TAtipicas
          PICTURE        cPinDiv() ;
          OF             ::oFld:aDialogs[1]
 
-      ::oPrecioCompra:bChange                := {|| ::CalculaRentabilidad() }
-      ::oPrecioCompra:bValid                 := {|| ::CalculaRentabilidad() } 
+      ::oCostoParticular:bChange              := {|| ::CalculaRentabilidad() }
+      ::oCostoParticular:bValid               := {|| ::CalculaRentabilidad() } 
 
-      REDEFINE GET      ::oPrecioCosto ;
-         VAR            ::nPrecioCosto ;
+      REDEFINE GET      ::oPrecioCompra ;
+         VAR            ::nPrecioCompra ;
          ID             123 ;
          WHEN           ( .f. );
          SPINNER        ;
          PICTURE        cPinDiv() ;
          OF             ::oFld:aDialogs[ 1 ]
+
+      ::oPrecioCompra:bChange                := {|| ::CalculaRentabilidad() }
+      ::oPrecioCompra:bValid                 := {|| ::CalculaRentabilidad() } 
 
       /*
       Precios de venta---------------------------------------------------------
@@ -903,7 +910,7 @@ METHOD ChangeNaturaleza()
       ::oCodigoFamilia:cText( space( 5 ) )
       ::oNombreFamilia:cText( "" )
 
-      ::oPrecioCosto:cText( 0 )
+      ::oCostoParticular:cText( 0 )
       ::oPrecioCompra:cText( 0 )
 
       ::oPrecioArticulo1:cText( 0 )
@@ -939,7 +946,7 @@ METHOD ChangeNaturaleza()
       ::oCodigoFamilia:Hide()
       ::oNombreFamilia:Hide()
 
-      ::oPrecioCosto:Show()
+      ::oCostoParticular:Show()
       ::oPrecioCompra:Show()
       ::oCostoParticular:Show()
 
@@ -974,9 +981,8 @@ METHOD ChangeNaturaleza()
       ::oCodigoFamilia:Show()
       ::oNombreFamilia:Show()
 
-      ::oPrecioCosto:Hide()
-      ::oPrecioCompra:Hide()
       ::oCostoParticular:Hide()
+      ::oPrecioCompra:Hide()
 
       ::oPrecioArticulo1:Hide()
       ::oPrecioArticulo2:Hide()
@@ -1223,7 +1229,7 @@ RETURN ( Self )
 
 METHOD LoadAtipica()
 
-   local nPrecioCompra
+   local nPrecio
 
    if Empty( ::oDbfVir:cCodArt )
       ::oNombreArticulo:cText( "" )
@@ -1234,15 +1240,30 @@ METHOD LoadAtipica()
 
       ::oNombreArticulo:cText( ( TDataView():Get( "Articulo", ::View() ) )->Nombre )
 
-      ::SetPrimeraPropiedad( ( TDataView():Get( "Articulo", ::View() ) )->cCodPrp1, ( TDataView():Get( "Articulo", ::View() ) )->cValPrp1 )
+      ::oDbfVir:cCodPr1    := ( TDataView():Get( "Articulo", ::View() ) )->cCodPrp1
+      ::oDbfVir:cCodPr2    := ( TDataView():Get( "Articulo", ::View() ) )->cCodPrp2
 
-      ::SetSegundaPropiedad( ( TDataView():Get( "Articulo", ::View() ) )->cCodPrp2, ( TDataView():Get( "Articulo", ::View() ) )->cValPrp2 )
+      ::SetPrimeraPropiedad( ::oDbfVir:cCodPr1, ( TDataView():Get( "Articulo", ::View() ) )->cValPrp1 )
+
+      ::SetSegundaPropiedad( ::oDbfVir:cCodPr2, ( TDataView():Get( "Articulo", ::View() ) )->cValPrp2 )
 
       /*
-      Precio de costo
-
-      nCosto( nil, TDataView():Get( "Articulo", ::View() ), dbfArtKit )
+      Precio de costo----------------------------------------------------------
       */
+
+      ::oPrecioCompra:cText( nCosto( nil, TDataView():Get( "Articulo", ::View() ), TDataView():Get( "Artkit", ::View() ) ) )
+
+      /*
+      Primer precio de venta---------------------------------------------------
+      */
+
+      ::oPrecioArticulo1:cText( ::PrecioBase( 1 ) )
+
+      /*
+      Primer precio de venta impuestos incluido--------------------------------
+      */
+
+      ::oIvaArticulo1:cText( ::PrecioIva( 1 ) )
 
    else
 
@@ -1296,7 +1317,7 @@ METHOD CalculaRentabilidad()
    // Costo -------------------------------------------------------------------
 
    if ::oDbfVir:lPrcCom
-      nCosto         := ::nPrecioCosto
+      nCosto         := ::nCostoParticular
    else
       nCosto         := ::oDbfVir:nPrcCom 
    end if
@@ -1444,3 +1465,32 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
+METHOD PrecioBase( nTarifa )
+
+   local nPrecio     := 0
+
+   DEFAULT nTarifa   := 1
+
+   nPrecio           := nPrePro( ::oDbfVir:cCodArt, ::oDbfVir:cCodPr1, ::oDbfVir:cValPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr2, nTarifa, .f., TDataView():Get( "Artdiv", ::View() ) )
+   if nPrecio == 0
+      nPrecio        := ( TDataView():Get( "Articulo", ::View() ) )->( FieldGet( FieldPos( "pVenta" + alltrim(str( nTarifa ) ) ) ) ) 
+   end if
+
+RETURN ( nPrecio )
+
+//--------------------------------------------------------------------------//
+
+METHOD PrecioIva( nTarifa )
+
+   local nPrecio     := 0
+
+   DEFAULT nTarifa   := 1
+
+   nPrecio           := nPrePro( ::oDbfVir:cCodArt, ::oDbfVir:cCodPr1, ::oDbfVir:cValPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr2, nTarifa, .t., TDataView():Get( "Artdiv", ::View() ) )
+   if nPrecio == 0
+      nPrecio        := ( TDataView():Get( "Articulo", ::View() ) )->( FieldGet( FieldPos( "pVtaIva" + alltrim(str( nTarifa ) ) ) ) ) 
+   end if
+
+RETURN ( nPrecio )
+
+//--------------------------------------------------------------------------//
