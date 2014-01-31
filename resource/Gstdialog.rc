@@ -15615,6 +15615,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 57, 11, 50, 14
   CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 108, 11, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 159, 11, 50, 14
+  CONTROL "Enviar a costo", 504, "Button", WS_TABSTOP, 368, 11, 54, 14
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 6, 27, 416, 113
   CONTROL "&Aceptar [F5]", 550, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 318, 149, 50, 14
   CONTROL "&Cancelar", 560, "Button", WS_TABSTOP, 373, 149, 50, 14

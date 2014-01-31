@@ -2100,7 +2100,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       REDEFINE BUTTON aBtnDiv[ 5 ]; 
          ID       510 ;
          OF       fldPrecios;
-         ACTION   ( CodificacionProveedor( aTmp, nMode ) )
+         ACTION   ( CodificacionProveedor( aTmp, aGet, nMode ) )
 
       REDEFINE COMBOBOX oCbxPrecio VAR cCbxPrecio ;
          ITEMS    { "Ventas", "Alquiler" } ;
@@ -4645,7 +4645,7 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-static function CodificacionProveedor( aTmp, nMode )
+static function CodificacionProveedor( aTmp, aGet, nMode )
 
    local oDlg
    local oBrwPrv
@@ -4766,6 +4766,12 @@ static function CodificacionProveedor( aTmp, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          ACTION   ( DelPrv( aTmp, oBrwPrv, dbfTmpPrv ) )
 
+      REDEFINE BUTTON ;
+         ID       504 ;
+         OF       oDlg;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ActualizaCostoProveedor( aTmp, aGet, dbfTmpPrv ) )
+
    REDEFINE BUTTON ;
          ID       550 ;
 			OF 		oDlg ;
@@ -4791,6 +4797,22 @@ static function CodificacionProveedor( aTmp, nMode )
 return ( nil )
 
 //--------------------------------------------------------------------------//
+
+Static Function ActualizaCostoProveedor( aTmp, aGet, dbfTmpPrv )
+
+   if ApoloMsgNoYes( "¿Desea actualizar el costo del producto?", "Seleccione una opción" )
+
+      aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ]   := nTotImpPrv( dbfTmpPrv, dbfDiv )
+
+      if !Empty( aGet[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ] )
+         aGet[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ]:Refresh()
+      end if   
+
+   end if    
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
