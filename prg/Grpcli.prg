@@ -68,10 +68,10 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
-   ::bFirstKey          := {|| ::oDbf:cCodGrp }
-
    ::lCreateShell       := .f.
    ::cHtmlHelp          := "Grupos de clientes"
+
+   ::bFirstKey          := {|| ::oDbf:cCodGrp }
 
    ::AddDetail( TAtipicas():GetInstance( ::cPath, Self ) )
 
@@ -85,6 +85,10 @@ METHOD Create( cPath )
 
    ::cPath              := cPath
    ::oDbf               := nil
+
+   ::bFirstKey          := {|| ::oDbf:cCodGrp }
+
+   ::AddDetail( TAtipicas():GetInstance( ::cPath, Self ) )
 
 RETURN ( Self )
 

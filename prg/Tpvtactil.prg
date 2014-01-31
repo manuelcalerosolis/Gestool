@@ -957,6 +957,11 @@ CLASS TpvTactil
 
    INLINE METHOD ImprimeTicket()
 
+      if ::lEmptyDocumento()
+         MsgStop( "El documento no contiene líneas." )
+         Return ( .t. )
+      end if
+
       do case
       case ::nTipoDocumento == documentoAlbaran
          
@@ -985,6 +990,11 @@ CLASS TpvTactil
    //-----------------------------------------------------------------------//
 
    INLINE METHOD PrevisualizaTicket()
+
+      if ::lEmptyDocumento()
+         MsgStop( "El documento no contiene líneas." )
+         Return ( .t. )
+      end if
 
       ::cFormato        := ::oFormatosImpresion:cFormatoTiket
       ::cImpresora      := ::oFormatosImpresion:cPrinterTik
@@ -8177,8 +8187,6 @@ METHOD BuildReport() CLASS TpvTactil
    /*
    Zona de datos------------------------------------------------------------
    */
-
-   // ::DataReport()
 
    ::BuildRelationReport()
 
