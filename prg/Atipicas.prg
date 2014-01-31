@@ -262,6 +262,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TAtipicas
       INDEX TO ( cFileName ) TAG "cCliArt" ON "cCodCli + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2"   NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cGrpArt" ON "cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2"   NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCodFam" ON "cCodCli + cCodFam"                                           NODELETED   OF oDbf
+      INDEX TO ( cFileName ) TAG "cGrpFam" ON "cCodGrp + cCodFam"                                           NODELETED   OF oDbf
 
    END DATABASE oDbf
 
@@ -1459,15 +1460,11 @@ METHOD CalculaIva( oPrecioBase, oPrecioIva )
       nPorcentajeIVA    := nIva( TDataView():Get( "TIva", ::View() ), cTipoIva )
    end if 
 
-   ? nPorcentajeIVA
-
    /*
    Sumar impuestos-------------------------------------------------------------
    */
 
    nPrecio              += ( nPrecio * nPorcentajeIVA / 100 )
-
-   ? nPrecio
 
    /*
    Actualizamos----------------------------------------------------------------

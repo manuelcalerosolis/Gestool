@@ -153,6 +153,7 @@ POLICEMAN_USA_16        BITMAP "..\\bmp\\Policeman_Usa_16.bmp"
 
 LED_RED_16              BITMAP "..\\bmp\\Led_Red_16.bmp"
 LED_RED_32              BITMAP "..\\bmp\\Led_Red_32.bmp"
+LED_GREEN_32            BITMAP "..\\bmp\\Led_Green_32.bmp"
 
 DATA_REPLACE_16         BITMAP "..\\bmp\\Data_Replace_16.bmp"
 

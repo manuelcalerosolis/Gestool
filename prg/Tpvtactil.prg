@@ -327,6 +327,11 @@ CLASS TpvTactil
    DATA lComanda
 
    DATA lCombinando
+   DATA lCombinandoDos
+   DATA lShowCombinado
+
+   DATA oTimer
+
    DATA cCodigoFamilia
 
    DATA nTarifaSolo
@@ -429,7 +434,8 @@ CLASS TpvTactil
    METHOD CargaArticulosFamilia( cCodFam )
 
    METHOD ChangeFamilias()
-   METHOD SetFamilia()
+      METHOD SetFamilia()
+      METHOD GoFamilia()
 
    METHOD KeyChar( cKey )
    METHOD oDlgKeyDown( o, nKey, nFlag )
@@ -455,18 +461,23 @@ CLASS TpvTactil
    METHOD CargaFavoritos()
 
    METHOD AgregarLineas()
+      METHOD AgregarPrincipal()
+      METHOD AgregarCombinado()
+      METHOD AgregarKit()
+      METHOD AgregarPLU()
+      METHOD AgregarFavoritos( cNombreArticulo )
+
+      METHOD AgregarLibre()
+         METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
+         METHOD GuardarAgregarLibre()
 
    METHOD nPrecioArticulo()
 
    METHOD lAcumulaArticulo()
 
-   METHOD AgregarKit()
-
    METHOD SumarUnidades( nUnidades )
-   
+  
    METHOD IncrementarUnidades()
-
-   METHOD AgregarPLU()
 
    METHOD cNombreArticulo()            INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
@@ -536,11 +547,6 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
-   METHOD AgregarLibre()
-   METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
-   METHOD GuardarAgregarLibre()
-
-   METHOD AgregarFavoritos( cNombreArticulo )
 
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
@@ -1435,52 +1441,37 @@ CLASS TpvTactil
 
    INLINE METHOD SetCombinando( lCombinando )
 
-      local cCodigoFamilia       := ""
-      local cCodigoCombinada     := ""
-
       DEFAULT lCombinando        := !::lCombinando
 
       ::lCombinando              := lCombinando
-
-      if ::lCombinando .and. ::lEmptyDocumento()
-         MsgInfo( "No hay producto para combinar." )
-         ::lCombinando           := .f.
-      end if
+      ::lCombinandoDos           := .f.
 
       if ::lCombinando
-
-         ::oBtnCombinado:LoadBitmap( "Cocktail_red_32" )
-
-         cCodigoFamilia          := ::oTemporalLinea:cCodFam
-
-         if Empty( cCodigoFamilia )
-            cCodigoFamilia       := ::oTemporalLinea:cFamTil
-         end if
-
-         if !Empty( cCodigoFamilia )
-
-            ::cCodigoFamilia     := cCodigoFamilia
-
-            if ::oFamilias:SeekInOrd( cCodigoFamilia, "cCodFam" )
-               cCodigoCombinada  := ::oFamilias:cFamCmb
-            end if
-
-            if !Empty( cCodigoCombinada )
-               ::SetFamilia( cCodigoCombinada )
-            end if
-
-         end if
-
+         ::oTimer:Activate()
       else
+         ::oTimer:Deactivate()
+         ::ShowCombinado( .f. )
+      end if 
 
-         ::oBtnCombinado:LoadBitmap( "Cocktail_32" )
+      RETURN ( Self )
 
-         if !Empty( ::cCodigoFamilia )
-            ::SetFamilia( ::cCodigoFamilia )
-            ::cCodigoFamilia     := ""
-         end if
+   ENDMETHOD
 
-      end if
+   //-----------------------------------------------------------------------//
+
+   INLINE METHOD ShowCombinado( lShowCombinando )
+
+      DEFAULT lShowCombinando := !::lShowCombinado
+
+      ::lShowCombinado        := lShowCombinando
+
+      if lShowCombinando
+         ::oBtnCombinado:LoadBitmap( "Led_green_32" )
+      else
+         ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
+      end if 
+       
+      ::oBtnCombinado:Refresh() 
 
       RETURN ( Self )
 
@@ -1823,6 +1814,10 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::nTarifaCombinado         := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
 
    ::lCombinando              := .f.
+   ::lCombinandoDos           := .f.
+   ::lShowCombinado           := .f.
+
+   ::oTimer                   := TTimer():New( 1000, {|| ::ShowCombinado() }, oWnd() )
 
    oThis                      := Self
 
@@ -1897,6 +1892,8 @@ METHOD End() CLASS TpvTactil
    end if
 
    ::DestroyFastReport()
+
+   ::oTimer:End()
 
    ::oTpvCobros      := nil
    ::oTpvListaTicket := nil
@@ -2889,7 +2886,7 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SetOrdenComanda() },         ::oDlg, , , .f., , , , .f., "Sort_az_descending_32" ) //
 
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
-   ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Cocktail_32" )
+   ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
 
    if !::l1024()
@@ -4203,6 +4200,35 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD GoFamilia() CLASS TpvTactil
+
+   local cCodigoFamilia
+   local cCodigoCombinada
+
+   cCodigoFamilia          := ::oTemporalLinea:cCodFam
+
+   if Empty( cCodigoFamilia )
+      cCodigoFamilia       := ::oTemporalLinea:cFamTil
+   end if
+
+   if !Empty( cCodigoFamilia )
+
+      ::cCodigoFamilia     := cCodigoFamilia
+
+      if ::oFamilias:SeekInOrd( cCodigoFamilia, "cCodFam" )
+         cCodigoCombinada  := ::oFamilias:cFamCmb
+      end if
+
+      if !Empty( cCodigoCombinada )
+         ::SetFamilia( cCodigoCombinada )
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 METHOD KeyChar( cKey ) CLASS TpvTactil
 
    if !::lEditableDocumento()
@@ -4489,105 +4515,42 @@ RETURN ( cFile )
 
 METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
-   /*
-   Buscamos dentro la tablas articulos por nombre de articulo------------------
-   */
+   // Tomamos las unidades del teclado-----------------------------------------
+
+   ::nUnidades                      := ::nGetUnidades( .t. )
+
+   // Buscamos dentro la tablas articulos por nombre de articulo---------------
 
    if ::oArticulo:Seek( cCodigoArticulo )
 
-      /*
-      Vemos si este atículo es acumulable--------------------------------------
-      */
+      if ::lCombinandoDos
+      
+         ::AgregarCombinado( cCodigoArticulo )
+             
+      else 
 
-      if !::lCombinando
-
-         ::nUnidades                      := ::nGetUnidades( .t. )
+         // Vemos si este atículo es acumulable--------------------------------
 
          if !::lAcumulaArticulo()
 
-            CursorWait()
+            ::AgregarPrincipal( cCodigoArticulo )
 
-            SysRefresh()
+            ::InitComentarios()
 
-            ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
-
-            ::oTemporalLinea:Append()
-            ::oTemporalLinea:Blank()
-
-            ::oTemporalLinea:nNumLin      := ::nNumeroLinea
-            ::oTemporalLinea:nUntTil      := ::nUnidades
-            ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
-            ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
-            ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
-            ::oTemporalLinea:cLote        := ::oArticulo:cLote
-            ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
-            ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
-            ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
-
-            if ( ::oArticulo:lFacCnv )
-               ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
-            end if
-
-            ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
-            ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-            ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
-            ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
-            ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
-            ::oTemporalLinea:cComent      := ""
-
-            ::oTemporalLinea:lKitArt      := ::oArticulo:lKitArt
-            ::oTemporalLinea:lKitPrc      := lPreciosCompuestos( ::oArticulo:Codigo, ::oArticulo:cAlias )
-
-            ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
-
-            ::oTemporalLinea:cOrdOrd      := ::oArticulo:cOrdOrd
-
-            ::oTemporalLinea:Save()
-
-            /*
-            Agregamos los kits si es el caso-----------------------------------
-            */
-
-            ::AgregarKit( cCodigoArticulo, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
-
-            CursorWE()
-
-            if oRetFld( ::oTemporalLinea:cCodFam, ::oFamilias, "lMostrar", "cCodFam" )
-               ::InitComentarios()
+            if ::lCombinando
+               ::lCombinandoDos     := .t.
+               ::GoFamilia()
             end if
 
          end if
-
-         /*
-         Informamos en el visor---------------------------------------------
-         */
-
-         ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
-
-      else
-
-         CursorWait()
-
-         ::oTemporalLinea:Load()
-
-         ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
-         ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
-         ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
-         ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-         ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-         ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
-
-         if ( ::oArticulo:lFacCnv )
-            ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
-         end if
-
-         ::oTemporalLinea:Save()
-
-         ::SetCombinando( .f. )
-
-         CursorWE()
 
       end if
+
+      // Informamos en el visor------------------------------------------------
+
+      ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
+
+      // refrescos de pantalla-------------------------------------------------
 
       ::oBrwLineas:Refresh()
 
@@ -4601,6 +4564,82 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
    end if
 
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AgregarPrincipal( cCodigoArticulo )
+
+   CursorWait()
+
+   SysRefresh()
+
+   ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+
+   ::oTemporalLinea:Append()
+   ::oTemporalLinea:Blank()
+
+   ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+   ::oTemporalLinea:nUntTil      := ::nUnidades
+   ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
+   ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
+   ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
+   ::oTemporalLinea:cLote        := ::oArticulo:cLote
+   ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
+   ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
+   ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
+
+   if ( ::oArticulo:lFacCnv )
+      ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
+   end if 
+         
+   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
+   ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
+   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
+   ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
+   ::oTemporalLinea:cComent      := ""
+
+   ::oTemporalLinea:lKitArt      := ::oArticulo:lKitArt
+   ::oTemporalLinea:lKitPrc      := lPreciosCompuestos( ::oArticulo:Codigo, ::oArticulo:cAlias )
+
+   ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
+
+   ::oTemporalLinea:cOrdOrd      := ::oArticulo:cOrdOrd
+
+   ::oTemporalLinea:Save()
+
+   // Agregamos los kits si es el caso-----------------------------------
+
+   ::AgregarKit( cCodigoArticulo, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+
+   CursorWE()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AgregarCombinado()
+
+   CursorWait()
+
+   ::oTemporalLinea:Load()
+   ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
+   ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
+   ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
+   ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+   ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+   ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
+
+   if ( ::oArticulo:lFacCnv )
+      ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
+   end if
+
+   ::oTemporalLinea:Save()
+
+   ::SetCombinando( .f. )
+
+   CursorWE()
 
 Return ( .t. )
 
@@ -4657,9 +4696,13 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
       Return .f.
    end if
 
-   /*
-   Comprobamos que el artículo sea acumulable----------------------------------
-   */
+   // si no estamos combinando-------------------------------------------------
+
+   if ::lCombinando
+      Return .f.
+   end if
+
+   // Comprobamos que el artículo sea acumulable-------------------------------
 
    if oRetFld( ::oArticulo:Familia, ::oFamilias, "lAcum", "cCodFam" )
       Return .f.
@@ -4982,9 +5025,13 @@ METHOD InitComentarios() CLASS TpvTactil
    local oBrwLineasComentarios
    local oDlgComentarios
 
+   if !oRetFld( ::oTemporalLinea:cCodFam, ::oFamilias, "lMostrar", "cCodFam" )
+      RETURN ( nil )
+   end if 
+
    if !::lEditableDocumento()
       MsgStop( "El documento ya está cerrado" )
-      RETURN ( .t. )
+      RETURN ( nil )
    end if
 
    /*
@@ -4993,7 +5040,7 @@ METHOD InitComentarios() CLASS TpvTactil
 
    if ::oTemporalLinea:ordKeyCount() == 0
       MsgStop( "No puede añadir un comentario." )
-      return .f.
+      RETURN ( nil )
    end if
 
    /*
