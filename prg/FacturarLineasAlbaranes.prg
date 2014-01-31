@@ -9,6 +9,10 @@ CLASS TFacturarLineasAlbaranes
 
    DATA cPath
 
+   DATA nView
+
+   DATA cNumAlb
+
    METHOD FacturarLineas( cNumAlb )
 
    METHOD CreaTemporales()
@@ -25,11 +29,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD FacturarLineas( cNumAlb ) CLASS TFacturarLineasAlbaranes
+METHOD FacturarLineas( cNumAlb, nView ) CLASS TFacturarLineasAlbaranes
+
+   ::nView     := nView
+   ::cNumAlb   := cNumAlb
 
    MsgAlert( "Entro en el método" )
-
-   MsgAlert( cNumAlb, "Número de albarán" )
+   
+   MsgAlert( ::cNumAlb, "Número de albarán" )
+   MsgAlert( ::nView, "Vista abierta" )
 
 Return ( Self )
 

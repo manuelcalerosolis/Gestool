@@ -126,7 +126,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _dCSUFALB                 3
 #define _CREF                     4
 #define _CDETALLE                 5
-#define _NSATUNIT                 6
+#define _NPREUNIT                 6
 #define _NPNTVER                  7
 #define _NIMPTRN                  8
 #define _NDTO                     9
@@ -190,7 +190,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CVOLUMEN                 67
 #define __DFECENT                 68
 #define __DFECSAL                 69
-#define _NSATALQ                  70
+#define _NPREALQ                  70
 #define __LALQUILER               71
 #define _NNUMMED                  72
 #define _NMEDUNO                  73
@@ -496,7 +496,7 @@ static oBrwDoc
 static aPedidos         := {}
 static aSats            := {}
 
-static bEdtRec          := { | aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, hHash | EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, hHash ) }
+static bEdtRec          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, hHash | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, hHash ) }
 static bEdtDet          := { | aTmp, aGet, dbfAlbCliL, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 static bEdtInc          := { | aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { | aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
@@ -555,12 +555,12 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
                "Facturado";
       MRU      "Document_plain_user1_16";
       BITMAP   clrTopArchivos ;
-      ALIAS    ( dbfAlbCliT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, hHash ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) ) ;
+      ALIAS    ( TDataView():Get( "AlbCliT", nView ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataView():Get( "AlbCliT", nView ), hHash ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataView():Get( "AlbCliT", nView ), hHash ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataView():Get( "AlbCliT", nView ), hHash ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, TDataView():Get( "AlbCliT", nView ) ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), {|| QuiAlbCli() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
@@ -572,7 +572,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lCloAlb }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->lCloAlb }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -583,7 +583,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nHeadBmpNo       := 3
          :cSortOrder       := "lFacturado"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lFacturado }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->lFacturado }
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
          :AddResource( "trafficlight_on_16" )
@@ -593,7 +593,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lSndDoc }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -603,7 +603,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :cHeader          := "Entregado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lEntregado }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->lEntregado }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "hand_paper_16" )
@@ -613,7 +613,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -626,7 +626,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :cHeader          := "Impreso"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfAlbCliT )->lImprimido }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -635,7 +635,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipAlb[ if( ( dbfAlbCliT )->lAlquiler, 2, 1 ) ] }
+         :bEditValue       := {|| aTipAlb[ if( ( TDataView():Get( "AlbCliT", nView ) )->lAlquiler, 2, 1 ) ] }
          :nWidth           := 50
          :lHide            := .t.
       end with
@@ -643,21 +643,21 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSufAlb }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( dbfAlbCliT )->cTurAlb, "######" ) }
+         :bEditValue       := {|| Trans( ( TDataView():Get( "AlbCliT", nView ) )->cTurAlb, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -667,21 +667,21 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )   
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecAlb"
-         :bEditValue       := {|| Dtoc( ( dbfAlbCliT )->dFecAlb ) }
+         :bEditValue       := {|| Dtoc( ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodCaj }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodUsr }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
@@ -689,7 +689,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -697,7 +697,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| ( dbfAlbCliT )->cNomCli }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cNomCli }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -705,7 +705,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Su albarán"
          :cSortOrder       := "cCodSuAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodSuAlb }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodSuAlb }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -714,27 +714,27 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodAge }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodRut }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodRut }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodAlm }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Obra"
          :cSortOrder       := "cObra"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodObr }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodObr }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -742,7 +742,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Su pedido"
          :cSortOrder       := "cSuPed"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSuPed }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cSuPed }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -751,7 +751,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotNet }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nTotNet }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -761,7 +761,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotIva }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nTotIva }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -771,7 +771,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotReq }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nTotReq }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -781,7 +781,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotAlb }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -790,7 +790,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfAlbCliT )->cDivAlb ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():Get( "AlbCliT", nView ) )->cDivAlb ), dbfDiv ) }
          :nWidth           := 30
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -799,7 +799,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Entregado"
-         :bEditValue       := {|| ( dbfAlbCliT )->nTotPag }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nTotPag }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -809,7 +809,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total und."
-         :bEditValue       := {|| nTotalUnd( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, MasUnd() ) }
+         :bEditValue       := {|| nTotalUnd( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, MasUnd() ) }
          :nWidth           := 95
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -873,7 +873,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) );
+      ACTION   ( WinDelRec( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), {|| QuiAlbCli() } ) );
       TOOLTIP  "(E)liminar";
       HOTKEY   "E";
       LEVEL    ACC_DELE
@@ -950,7 +950,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( If( !( dbfAlbCliT )->lFacturado, WinAppRec( oWndBrw:oBrw, bEdtPgo, dbfAlbCliP ), MsgStop( "El albarán ya fue facturado." ) ) );
+      ACTION   ( If( !( TDataView():Get( "AlbCliT", nView ) )->lFacturado, WinAppRec( oWndBrw:oBrw, bEdtPgo, dbfAlbCliP ), MsgStop( "El albarán ya fue facturado." ) ) );
       TOOLTIP  "Entregas a (c)uenta" ;
       HOTKEY   "C";
       LEVEL    ACC_APPD
@@ -959,14 +959,14 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( GenFCli( oWndBrw:oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oGrpCli, oStock ) );
+         ACTION   ( GenFCli( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oGrpCli, oStock ) );
          TOOLTIP  "(G)enerar facturas";
          HOTKEY   "G";
          LEVEL    ACC_APPD
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !( dbfAlbCliT )->lFacturado, oWndBrw:oBrw ), ) ) ;
+         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !( TDataView():Get( "AlbCliT", nView ) )->lFacturado, oWndBrw:oBrw ), ) ) ;
          TOOLTIP  "Cambiar Es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
@@ -985,13 +985,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
       MESSAGE  "Seleccionar albaranes para ser enviados" ;
-      ACTION   lSnd( oWndBrw, dbfAlbCliT ) ;
+      ACTION   lSnd( oWndBrw, TDataView():Get( "AlbCliT", nView ) ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, TDataView():Get( "AlbCliT", nView ), "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -999,7 +999,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, TDataView():Get( "AlbCliT", nView ), "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1007,7 +1007,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfAlbCliT, "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, TDataView():Get( "AlbCliT", nView ), "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1024,7 +1024,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, dbfAlbCliT, aItmAlbCli(), ALB_CLI ) ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, TDataView():Get( "AlbCliT", nView ), aItmAlbCli(), ALB_CLI ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1038,7 +1038,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
     end if
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-      ACTION   ( TTrazaDocumento():Activate( ALB_CLI, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( ALB_CLI, ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1050,41 +1050,41 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( EdtCli( ( dbfAlbCliT )->cCodCli ) );
+         ACTION   ( EdtCli( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) );
          TOOLTIP  "Modificar cliente" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( InfCliente( ( dbfAlbCliT )->cCodCli ) );
+         ACTION   ( InfCliente( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) );
          TOOLTIP  "Informe de cliente" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( EdtObras( ( dbfAlbCliT )->cCodCli, ( dbfAlbCliT )->cCodObr, dbfObrasT ) );
+         ACTION   ( EdtObras( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, ( TDataView():Get( "AlbCliT", nView ) )->cCodObr, dbfObrasT ) );
          TOOLTIP  "Modificar obra" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
-         ACTION   ( if( !Empty( ( dbfAlbCliT )->cNumPed ), ZooPedCli( ( dbfAlbCliT )->cNumPed ), MsgStop( "El albarán no procede de un pedido" ) ) );
+         ACTION   ( if( !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumPed ), ZooPedCli( ( TDataView():Get( "AlbCliT", nView ) )->cNumPed ), MsgStop( "El albarán no procede de un pedido" ) ) );
          TOOLTIP  "Visualizar pedido" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( !( dbfAlbCliT )->lFacturado, FactCli( nil, nil, { "Albaran" => ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
+         ACTION   ( if( !( TDataView():Get( "AlbCliT", nView ) )->lFacturado, FactCli( nil, nil, { "Albaran" => ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-         ACTION   ( if( !Empty( ( dbfAlbCliT )->cNumFac ), EdtFacCli( ( dbfAlbCliT )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
+         ACTION   ( if( !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumFac ), EdtFacCli( ( TDataView():Get( "AlbCliT", nView ) )->cNumFac ), msgStop( "No hay factura asociada" ) ) );
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( FacAntCli( nil, nil, ( dbfAlbCliT )->cCodCli ) );
+         ACTION   ( FacAntCli( nil, nil, ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) );
          TOOLTIP  "Generar anticipo" ;
          FROM     oRotor ;
 
@@ -1096,13 +1096,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( !( dbfAlbCliT )->lFacturado .and. Empty( ( dbfAlbCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
+         ACTION   ( if( !( TDataView():Get( "AlbCliT", nView ) )->lFacturado .and. Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
          TOOLTIP  "Convertir a ticket" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( TFacturarLineasAlbaranes():FacturarLineas( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) );
+         ACTION   ( TFacturarLineasAlbaranes():FacturarLineas( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) );
          TOOLTIP  "Facturar lineas" ;
          FROM     oRotor ;
 
@@ -1153,6 +1153,10 @@ STATIC FUNCTION OpenFiles()
    BEGIN SEQUENCE
 
       lOpenFiles        := .t.
+
+      nView             := TDataView():CreateView()
+
+      TDataView():Get( "AlbCliT", nView )
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
@@ -1392,10 +1396,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "MATSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MATSER", @dbfMatSer ) )
       SET ADSINDEX TO ( cPatEmp() + "MATSER.CDX" ) ADDITIVE
 
-      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-         lOpenFiles     := .f.
-      end if
-
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
       end if
@@ -1423,14 +1423,6 @@ STATIC FUNCTION OpenFiles()
       if !oGrpCli:OpenService()
          lOpenFiles     := .f.
       end if
-
-      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
-         lOpenFiles        := .f.
-      end if
-
-      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
-         lOpenFiles     := .f.
-      end if 
 
       oNewImp           := TNewImp():Create( cPatEmp() )
       if !oNewImp:OpenFiles()
@@ -1512,7 +1504,7 @@ STATIC FUNCTION OpenFiles()
             cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
          end if 
 
-         ( dbfAlbCliT )->( AdsSetAOF( cFiltroUsuario ) )
+         ( TDataView():Get( "AlbCliT", nView ) )->( AdsSetAOF( cFiltroUsuario ) )
 
       end if
 
@@ -1538,14 +1530,10 @@ STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   DestroyFastFilter( dbfAlbCliT, .t., .t. )
+   DestroyFastFilter( TDataView():Get( "AlbCliT", nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
-   end if
-
-   if !Empty( dbfAlbCliT )
-      ( dbfAlbCliT )->( dbCloseArea() )
    end if
 
    if !Empty( dbfClient )
@@ -1607,6 +1595,7 @@ STATIC FUNCTION CloseFiles()
    if !Empty( dbfPedCliT )
       ( dbfPedCliT   )->( dbCloseArea() )
    end if
+
    if !Empty( dbfPedCliL )
       ( dbfPedCliL   )->( dbCloseArea() )
    end if
@@ -1819,10 +1808,11 @@ STATIC FUNCTION CloseFiles()
       oFraPub:end()
    end if
 
+   TDataView():DeleteView( nView )
+
    dbfClient      := nil
    dbfIva         := nil
    dbfAlbCliL     := nil
-   dbfAlbCliT     := nil
    dbfAlbCliI     := nil
    dbfAlbCliD     := nil
    dbfAlbCliP     := nil
@@ -1909,16 +1899,16 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local oDevice
    local cAlbaran
 
-   if ( dbfAlbCliT )->( Lastrec() ) == 0
+   if ( TDataView():Get( "AlbCliT", nView ) )->( Lastrec() ) == 0
       Return nil
    end if
 
-   cAlbaran             := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+   cAlbaran             := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo albaranes a clientes"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "AC", dbfDoc )
@@ -1942,7 +1932,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Recalculamos el albaran
       */
 
-      nTotAlbCli( cAlbaran, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv )
+      nTotAlbCli( cAlbaran, TDataView():Get( "AlbCliT", nView ), dbfAlbCliL, dbfIva, dbfDiv )
       nPagAlbCli( cAlbaran, dbfAlbCliP, dbfDiv )
 
       /*
@@ -1956,16 +1946,16 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Posicionamos en ficheros auxiliares
       */
 
-      ( dbfClient)->( dbSeek( ( dbfAlbCliT )->cCodCli ) )
-      ( dbfAgent )->( dbSeek( ( dbfAlbCliT )->cCodAge ) )
-      ( dbfFPago )->( dbSeek( ( dbfAlbCliT )->cCodPago) )
-      ( dbfObrasT)->( dbSeek( ( dbfAlbCliT )->cCodCli + ( dbfAlbCliT )->cCodObr ) )
-      ( dbfDelega)->( dbSeek( ( dbfAlbCliT )->cCodDlg ) )
+      ( dbfClient)->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) )
+      ( dbfAgent )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodAge ) )
+      ( dbfFPago )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodPago) )
+      ( dbfObrasT)->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli + ( TDataView():Get( "AlbCliT", nView ) )->cCodObr ) )
+      ( dbfDelega)->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodDlg ) )
 
-      oTrans:oDbf:Seek( ( dbfAlbCliT )->cCodTrn )
+      oTrans:oDbf:Seek( ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn )
 
       private oInf
-      private cDbf         := dbfAlbCliT
+      private cDbf         := TDataView():Get( "AlbCliT", nView )
       private cDbfCol      := dbfAlbCliL
       private cDbfPag      := dbfAlbCliP
       private cCliente     := dbfClient
@@ -2071,7 +2061,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Funcion para marcar el documento como imprimido-----------------------------
    */
 
-   lChgImpDoc( dbfAlbCliT )
+   lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
 
 Return nil
 
@@ -2099,7 +2089,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    local oDlg
    local oFld
@@ -2233,7 +2223,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       aTmp[ _CTLFCLI ]        := RetFld( aTmp[ _CCODCLI ], dbfClient, "Telefono" )
    end if
 
-   nOrd                       := ( dbfAlbCliT )->( ordSetFocus( "nNumAlb" ) )
+   nOrd                       := ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( "nNumAlb" ) )
 
    oFont                      := TFont():New( "Arial", 8, 26, .f., .t. )
 
@@ -3157,6 +3147,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnAtp;
          ID       527 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen ) ;
          ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin ) )
 
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
@@ -3778,7 +3769,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
    oBrwPgo:CloseData()
    oBrwInc:CloseData()
 
-   ( dbfAlbCliT )->( ordSetFocus( nOrd ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrd ) )
 
    KillTrans()
 
@@ -4322,10 +4313,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  "@E 999,999.999999";
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _NSATUNIT ] VAR aTmp[ _NSATUNIT ];
+      REDEFINE GET aGet[ _NPREUNIT ] VAR aTmp[ _NPREUNIT ];
          ID       150 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin) ;
+         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  cPouDiv;
@@ -4393,7 +4384,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       if aTmp[ __LALQUILER ]
 
-         REDEFINE GET aGet[ _NSATALQ ] VAR aTmp[ _NSATALQ ] ;
+         REDEFINE GET aGet[ _NPREALQ ] VAR aTmp[ _NPREALQ ] ;
             ID       250 ;
             SPINNER ;
             WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
@@ -4936,23 +4927,23 @@ STATIC FUNCTION PrnSerie()
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin   
-   local cSerIni     := (dbfAlbCliT)->cSerAlb
-   local cSerFin     := (dbfAlbCliT)->cSerAlb
-   local nDocIni     := (dbfAlbCliT)->nNumAlb
-   local nDocFin     := (dbfAlbCliT)->nNumAlb
-   local cSufIni     := (dbfAlbCliT)->cSufAlb
-   local cSufFin     := (dbfAlbCliT)->cSufAlb
+   local cSerIni     := (TDataView():Get( "AlbCliT", nView ))->cSerAlb
+   local cSerFin     := (TDataView():Get( "AlbCliT", nView ))->cSerAlb
+   local nDocIni     := (TDataView():Get( "AlbCliT", nView ))->nNumAlb
+   local nDocFin     := (TDataView():Get( "AlbCliT", nView ))->nNumAlb
+   local cSufIni     := (TDataView():Get( "AlbCliT", nView ))->cSufAlb
+   local cSufFin     := (TDataView():Get( "AlbCliT", nView ))->cSufAlb
    local oPrinter
    local cPrinter    := PrnGetName()
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -5108,57 +5099,57 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    if nRango == 1
 
-      nRecno      := ( dbfAlbCliT )->( recno() )
-      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+      nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( recno() )
+      nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
       if !lInvOrden
 
-         ( dbfAlbCliT )->( DbSeek( cDocIni, .t. ) )
+         ( TDataView():Get( "AlbCliT", nView ) )->( DbSeek( cDocIni, .t. ) )
 
-         while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb >= cDocIni .AND. ;
-               ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb <= cDocFin
+         while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= cDocIni .AND. ;
+               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin
 
-               lChgImpDoc( dbfAlbCliT )
+               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
 
             if lCopiasPre
 
-               nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
 
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
             else
 
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
             end if
 
-            ( dbfAlbCliT )->( DbSkip( 1 ) )
+            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( 1 ) )
 
          end do
 
       else
 
-      ( dbfAlbCliT )->( DbSeek( cDocFin ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( DbSeek( cDocFin ) )
 
-         while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb >= cDocIni .and.;
-               ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb <= cDocFin .and.;
-               !( dbfAlbCliT )->( Bof() )
+         while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= cDocIni .and.;
+               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin .and.;
+               !( TDataView():Get( "AlbCliT", nView ) )->( Bof() )
 
-               lChgImpDoc( dbfAlbCliT )
+               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
 
             if lCopiasPre
 
-               nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
 
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
             else
 
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
             end if
 
-            ( dbfAlbCliT )->( DbSkip( -1 ) )
+            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( -1 ) )
 
          end while
 
@@ -5166,62 +5157,62 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    else
 
-      nRecno      := ( dbfAlbCliT )->( recno() )
-      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
+      nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( recno() )
+      nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "dFecAlb" ) )
 
       if !lInvOrden
 
-         ( dbfAlbCliT )->( dbGoTop() )
+         ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTop() )
 
-         while !( dbfAlbCliT )->( Eof() )
+         while !( TDataView():Get( "AlbCliT", nView ) )->( Eof() )
 
-            if ( dbfAlbCliT )->dFecAlb >= dFecDesde .and. ( dbfAlbCliT )->dFecAlb <= dFecHasta
+            if ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecDesde .and. ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecHasta
 
-               lChgImpDoc( dbfAlbCliT )
+               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
 
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if  
 
-            ( dbfAlbCliT )->( DbSkip( 1 ) )
+            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( 1 ) )
 
          end while
 
       else
 
-         ( dbfAlbCliT )->( dbGoBottom() )
+         ( TDataView():Get( "AlbCliT", nView ) )->( dbGoBottom() )
 
-         while !( dbfAlbCliT )->( Bof() )
+         while !( TDataView():Get( "AlbCliT", nView ) )->( Bof() )
 
-            if ( dbfAlbCliT )->dFecAlb >= dFecDesde .and. ( dbfAlbCliT )->dFecAlb <= dFecHasta
+            if ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecDesde .and. ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecHasta
 
-               lChgImpDoc( dbfAlbCliT )
+               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
 
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if
 
-            ( dbfAlbCliT )->( DbSkip( -1 ) )
+            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( -1 ) )
 
          end while
 
@@ -5229,8 +5220,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
    
    end if   
 
-   ( dbfAlbCliT )->( dbGoTo( nRecNo ) )
-   ( dbfAlbCliT )->( ordSetFocus( nOrdAnt ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oDlg:enable()
 
@@ -5269,7 +5260,7 @@ Static Function QuiAlbCli()
    local cNumSat
    local aNumPed
 
-   if ( dbfAlbCliT )->lCloAlb .and. !oUser():lAdministrador()
+   if ( TDataView():Get( "AlbCliT", nView ) )->lCloAlb .and. !oUser():lAdministrador()
       msgStop( "Solo pueden eliminar albarares cerrados los administradores." )
       Return .f.
    end if
@@ -5277,8 +5268,8 @@ Static Function QuiAlbCli()
    CursorWait()
 
    aNumPed        := {}
-   cNumPed        := ( dbfAlbCliT )->cNumPed
-   cNumSat        := ( dbfAlbCliT )->cNumSat
+   cNumPed        := ( TDataView():Get( "AlbCliT", nView ) )->cNumPed
+   cNumSat        := ( TDataView():Get( "AlbCliT", nView ) )->cNumSat
    nOrdLin        := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
    nOrdPgo        := ( dbfAlbCliP )->( OrdSetFocus( "nNumAlb" ) )
    nOrdInc        := ( dbfAlbCliI )->( OrdSetFocus( "nNumAlb" ) )
@@ -5288,7 +5279,7 @@ Static Function QuiAlbCli()
    Eliminamos las entregas-----------------------------------------------------
    */
 
-   while ( dbfAlbCliP )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) ) .and. !( dbfAlbCliP )->( eof() )
+   while ( dbfAlbCliP )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) ) .and. !( dbfAlbCliP )->( eof() )
 
       if ( dbfPedCliP )->( dbSeek( ( dbfAlbCliP )->cNumRec ) )
          if dbLock( dbfPedCliP )
@@ -5310,7 +5301,7 @@ Static Function QuiAlbCli()
    Detalle---------------------------------------------------------------------
    */
 
-   while ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) ) .and. !( dbfAlbCliL )->( eof() )
+   while ( dbfAlbCliL )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( dbfAlbCliL )->( eof() )
       
       if aScan( aNumPed, ( dbfAlbCliL )->cNumPed ) == 0
          aAdd( aNumPed, ( dbfAlbCliL )->cNumPed )
@@ -5327,7 +5318,7 @@ Static Function QuiAlbCli()
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( dbfAlbCliI )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) ) .and. !( dbfAlbCliI )->( eof() )
+   while ( dbfAlbCliI )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( dbfAlbCliI )->( eof() )
       if dbLock( dbfAlbCliI )
          ( dbfAlbCliI )->( dbDelete() )
          ( dbfAlbCliI )->( dbUnLock() )
@@ -5338,7 +5329,7 @@ Static Function QuiAlbCli()
    Documentos------------------------------------------------------------------
    */
 
-   while ( dbfAlbCliD )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) ) .and. !( dbfAlbCliD )->( eof() )
+   while ( dbfAlbCliD )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( dbfAlbCliD )->( eof() )
       if dbLock( dbfAlbCliD )
          ( dbfAlbCliD )->( dbDelete() )
          ( dbfAlbCliD )->( dbUnLock() )
@@ -5349,7 +5340,7 @@ Static Function QuiAlbCli()
    Series----------------------------------------------------------------------
    */
 
-   while ( dbfAlbCliS )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) ) .and. !( dbfAlbCliS )->( eof() )
+   while ( dbfAlbCliS )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( dbfAlbCliS )->( eof() )
       if dbLock( dbfAlbCliS )
          ( dbfAlbCliS )->( dbDelete() )
          ( dbfAlbCliS )->( dbUnLock() )
@@ -5361,7 +5352,7 @@ Static Function QuiAlbCli()
    */
 
    if !Empty( cNumPed )
-      oStock:SetEstadoPedCli( cNumPed, .t., ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb )
+      oStock:SetEstadoPedCli( cNumPed, .t., ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb )
    end if
 
    /*
@@ -5377,14 +5368,14 @@ Static Function QuiAlbCli()
    */
 
    if !Empty( cNumSat )
-      oStock:SetEstadoSatCli( cNumSat, .t., ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb )
+      oStock:SetEstadoSatCli( cNumSat, .t., ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb )
    end if
 
    /*
    Estado de los sat cuando es agrupando-----------------------------------
    */
 
-   while dbSeekInOrd( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb, "cNumAlb", dbfSatCliT ) .and. !( dbfSatCliT )->( Eof() )
+   while dbSeekInOrd( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb, "cNumAlb", dbfSatCliT ) .and. !( dbfSatCliT )->( Eof() )
 
       if dbLock( dbfSatCliT )
          ( dbfSatCliT )->cNumAlb    := ""
@@ -5796,14 +5787,14 @@ STATIC FUNCTION SelSend( oBrw )
    local oFecEnv
    local dFecEnv  := GetSysDate()
 
-   if dbDialogLock( dbfAlbCliT )
+   if dbDialogLock( TDataView():Get( "AlbCliT", nView ) )
 
-      if ( dbfAlbCliT )->lEntregado
+      if ( TDataView():Get( "AlbCliT", nView ) )->lEntregado
 
          if lUsrMaster()
 
-            ( dbfAlbCliT )->lEntregado := !( dbfAlbCliT )->lEntregado
-            ( dbfAlbCliT )->dFecEnv    := Ctod( "" )
+            ( TDataView():Get( "AlbCliT", nView ) )->lEntregado := !( TDataView():Get( "AlbCliT", nView ) )->lEntregado
+            ( TDataView():Get( "AlbCliT", nView ) )->dFecEnv    := Ctod( "" )
 
          else
 
@@ -5825,9 +5816,9 @@ STATIC FUNCTION SelSend( oBrw )
             REDEFINE BUTTON ;
                ID       501 ;
                OF       oDlg ;
-               ACTION   (  ( dbfAlbCliT )->lEntregado := !( dbfAlbCliT )->lEntregado ,;
-                           ( dbfAlbCliT )->dFecEnv    := dFecEnv ,;
-                           ( dbfAlbCliT )->lSndDoc    := .t. ,;
+               ACTION   (  ( TDataView():Get( "AlbCliT", nView ) )->lEntregado := !( TDataView():Get( "AlbCliT", nView ) )->lEntregado ,;
+                           ( TDataView():Get( "AlbCliT", nView ) )->dFecEnv    := dFecEnv ,;
+                           ( TDataView():Get( "AlbCliT", nView ) )->lSndDoc    := .t. ,;
                            oDlg:end() )
 
             REDEFINE BUTTON ;
@@ -5835,14 +5826,14 @@ STATIC FUNCTION SelSend( oBrw )
                OF       oDlg ;
                ACTION   ( oDlg:end() )
 
-         oDlg:AddFastKey( VK_F5, {|| ( dbfAlbCliT )->lEntregado := !( dbfAlbCliT )->lEntregado , ( dbfAlbCliT )->dFecEnv    := dFecEnv , ( dbfAlbCliT )->lSndDoc    := .t. , oDlg:end() } )
+         oDlg:AddFastKey( VK_F5, {|| ( TDataView():Get( "AlbCliT", nView ) )->lEntregado := !( TDataView():Get( "AlbCliT", nView ) )->lEntregado , ( TDataView():Get( "AlbCliT", nView ) )->dFecEnv    := dFecEnv , ( TDataView():Get( "AlbCliT", nView ) )->lSndDoc    := .t. , oDlg:end() } )
          oDlg:bStart := { || oFecEnv:SetFocus() }
 
          ACTIVATE DIALOG oDlg CENTER
 
       end if
 
-   ( dbfAlbCliT )->( dbUnLock() )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbUnLock() )
 
    end if
 
@@ -6071,7 +6062,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
       HideImportacion( aGet )
 
       /*
-      A¤adimos los albaranes seleccionado para despues-------------------------
+      Aadimos los albaranes seleccionado para despues-------------------------
       */
 
       for nItem := 1 to Len( aPedidos )
@@ -6590,7 +6581,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
    local cPorDiv
    local oBmpBancos
 
-   DEFAULT aTmpAlb   := dbScatter( dbfAlbCliT )
+   DEFAULT aTmpAlb   := dbScatter( TDataView():Get( "AlbCliT", nView ) )
 
    do case
       case nMode == APPD_MODE
@@ -6898,7 +6889,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode ) )
+         ACTION   ( ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpPgo ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -6909,7 +6900,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
    oDlg:bStart    := {|| aGet[ ( dbfTmpPgo )->( FieldPos( "nImporte" ) ) ]:SetFocus() }
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode ) } )
+      oDlg:AddFastKey( VK_F5, {|| ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpPgo ) } )
    end if
 
    ACTIVATE DIALOG oDlg CENTER;
@@ -6935,7 +6926,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode )
+Static Function ValidEdtEnt( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpPgo )
 
    if nMode == APPD_MODE
       aTmp[ ( dbfTmpPgo )->( FieldPos( "nNumRec" ) ) ]   := ( dbfTmpPgo )->( LastRec() ) + 1
@@ -6999,7 +6990,7 @@ Method CreateData()
    local oError
    local lSnd        := .f.
    local nOrd
-   local dbfAlbCliT
+   local cAlbCliT
    local dbfAlbCliL
    local dbfAlbCliI
    local tmpAlbCliT
@@ -7018,7 +7009,7 @@ Method CreateData()
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "AlbCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIT", @dbfAlbCliT ) )
+   USE ( cPatEmp() + "AlbCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIT", @cAlbCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AlbCLIT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "AlbCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIL", @dbfAlbCliL ) )
@@ -7043,31 +7034,31 @@ Method CreateData()
    SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfAlbCliT )->( LastRec() )
+      ::oSender:oMtr:nTotal := ( cAlbCliT )->( LastRec() )
    end if
 
-   nOrd  := ( dbfAlbCliT )->( OrdSetFocus( "lSndDoc" ) )
+   nOrd  := ( cAlbCliT )->( OrdSetFocus( "lSndDoc" ) )
 
-   if ( dbfAlbCliT )->( dbSeek( .t. ) )
+   if ( cAlbCliT )->( dbSeek( .t. ) )
 
-      while !( dbfAlbCliT )->( eof() )
+      while !( cAlbCliT )->( eof() )
 
-         if ( lEnviarEntregados() .and. ( dbfAlbCliT )->lEntregado ) .or. !lEnviarEntregados()
+         if ( lEnviarEntregados() .and. ( cAlbCliT )->lEntregado ) .or. !lEnviarEntregados()
 
             lSnd  := .t.
 
-            dbPass( dbfAlbCliT, tmpAlbCliT, .t. )
-            ::oSender:SetText( ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( dbfAlbCliT )->cSufAlb ) + "; " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + "; " + AllTrim( ( dbfAlbCliT )->cCodCli ) + "; " + ( dbfAlbCliT )->cNomCli )
+            dbPass( cAlbCliT, tmpAlbCliT, .t. )
+            ::oSender:SetText( ( cAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( cAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( cAlbCliT )->cSufAlb ) + "; " + Dtoc( ( cAlbCliT )->dFecAlb ) + "; " + AllTrim( ( cAlbCliT )->cCodCli ) + "; " + ( cAlbCliT )->cNomCli )
 
-            if ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->CSERAlb + Str( ( dbfAlbCliT )->NNUMAlb ) + ( dbfAlbCliT )->CSUFAlb ) )
-               while ( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->NNUMAlb ) + ( dbfAlbCliL )->CSUFAlb ) == ( ( dbfAlbCliT )->CSERAlb + Str( ( dbfAlbCliT )->NNUMAlb ) + ( dbfAlbCliT )->CSUFAlb ) .AND. !( dbfAlbCliL )->( eof() )
+            if ( dbfAlbCliL )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->NNUMAlb ) + ( cAlbCliT )->CSUFAlb ) )
+               while ( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->NNUMAlb ) + ( dbfAlbCliL )->CSUFAlb ) == ( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->NNUMAlb ) + ( cAlbCliT )->CSUFAlb ) .AND. !( dbfAlbCliL )->( eof() )
                   dbPass( dbfAlbCliL, tmpAlbCliL, .t. )
                   ( dbfAlbCliL )->( dbSkip() )
                end do
             end if
 
-            if ( dbfAlbCliI )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) )
-               while ( ( dbfAlbCliI )->cSerAlb + Str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb ) == ( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) .AND. !( dbfAlbCliI )->( eof() )
+            if ( dbfAlbCliI )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
+               while ( ( dbfAlbCliI )->cSerAlb + Str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb ) == ( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) .AND. !( dbfAlbCliI )->( eof() )
                   dbPass( dbfAlbCliI, tmpAlbCliI, .t. )
                   ( dbfAlbCliI )->( dbSkip() )
                end do
@@ -7077,17 +7068,17 @@ Method CreateData()
 
          SysRefresh()
 
-         ( dbfAlbCliT )->( dbSkip() )
+         ( cAlbCliT )->( dbSkip() )
 
          if !Empty( ::oSender:oMtr )
-            ::oSender:oMtr:Set( ( dbfAlbCliT )->( OrdKeyNo() ) )
+            ::oSender:oMtr:Set( ( cAlbCliT )->( OrdKeyNo() ) )
          end if
 
       end do
 
    end if
 
-   ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+   ( cAlbCliT )->( OrdSetFocus( nOrd ) )
 
    RECOVER USING oError
 
@@ -7096,7 +7087,7 @@ Method CreateData()
    END SEQUENCE
    ErrorBlock( oBlock )
 
-   CLOSE ( dbfAlbCliT )
+   CLOSE ( cAlbCliT )
    CLOSE ( dbfAlbCliL )
    CLOSE ( dbfAlbCliI )
    CLOSE ( tmpAlbCliT )
@@ -7127,7 +7118,7 @@ Method RestoreData()
 
    local oBlock
    local oError
-   local dbfAlbCliT
+   local cAlbCliT
 
    /*
    Retorna el valor anterior
@@ -7138,15 +7129,15 @@ Method RestoreData()
       oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-         USE ( cPatEmp() + "AlbCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIT", @dbfAlbCliT ) )
+         USE ( cPatEmp() + "AlbCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIT", @cAlbCliT ) )
          SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
 
-         ( dbfAlbCliT )->( OrdSetFocus( "lSndDoc" ) )
+         ( cAlbCliT )->( OrdSetFocus( "lSndDoc" ) )
 
-         while ( dbfAlbCliT )->( dbSeek( .t. ) ) .and. !( dbfAlbCliT )->( eof() )
-            if dbLock( dbfAlbCliT )
-               ( dbfAlbCliT )->lSndDoc := .f.
-               ( dbfAlbCliT )->( dbRUnlock() )
+         while ( cAlbCliT )->( dbSeek( .t. ) ) .and. !( cAlbCliT )->( eof() )
+            if dbLock( cAlbCliT )
+               ( cAlbCliT )->lSndDoc := .f.
+               ( cAlbCliT )->( dbRUnlock() )
             end if
          end do
 
@@ -7157,7 +7148,7 @@ Method RestoreData()
       END SEQUENCE
       ErrorBlock( oBlock )
 
-      CLOSE ( dbfAlbCliT )
+      CLOSE ( cAlbCliT )
 
    end if
 
@@ -7225,7 +7216,7 @@ Return Self
 Method Process()
 
    local m
-   local dbfAlbCliT
+   local cAlbCliT
    local dbfAlbCliL
    local dbfAlbCliI
    local tmpAlbCliT
@@ -7262,7 +7253,7 @@ Method Process()
                USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
                SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
+               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @cAlbCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "AlbCliT.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "AlbCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @dbfAlbCliL ) )
@@ -7274,13 +7265,13 @@ Method Process()
                while ( tmpAlbCliT )->( !eof() )
 
                   if lValidaOperacion( ( tmpAlbCliT )->dFecAlb, .f. ) .and. ;
-                     !( dbfAlbCliT )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) )
+                     !( cAlbCliT )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) )
 
-                     dbPass( tmpAlbCliT, dbfAlbCliT, .t. )
+                     dbPass( tmpAlbCliT, cAlbCliT, .t. )
 
-                     if lClient .and. dbLock( dbfAlbCliT )
-                        ( dbfAlbCliT )->lSndDoc := .f.
-                        ( dbfAlbCliT )->( dbUnLock() )
+                     if lClient .and. dbLock( cAlbCliT )
+                        ( cAlbCliT )->lSndDoc := .f.
+                        ( cAlbCliT )->( dbUnLock() )
                      end if
 
                      ::oSender:SetText( "Añadido     : " + ( tmpAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbCliT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbCliT )->dFecAlb ) + "; " + AllTrim( ( tmpAlbCliT )->cCodCli ) + "; " + ( tmpAlbCliT )->cNomCli )
@@ -7311,7 +7302,7 @@ Method Process()
 
                end do
 
-               CLOSE ( dbfAlbCliT )
+               CLOSE ( cAlbCliT )
                CLOSE ( dbfAlbCliL )
                CLOSE ( dbfAlbCliI )
                CLOSE ( tmpAlbCliT )
@@ -7350,7 +7341,7 @@ Method Process()
 
       RECOVER USING oError
 
-         CLOSE ( dbfAlbCliT )
+         CLOSE ( cAlbCliT )
          CLOSE ( dbfAlbCliL )
          CLOSE ( dbfAlbCliI )
          CLOSE ( tmpAlbCliT )
@@ -7376,9 +7367,9 @@ STATIC FUNCTION DelSerie( oWndBrw )
    local oSerFin
    local oTxtDel
    local nTxtDel     := 0
-   local nRecno      := ( dbfAlbCliT )->( Recno() )
-   local nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( dbfAlbCliT )->cSerAlb, ( dbfAlbCliT )->nNumAlb, ( dbfAlbCliT )->cSufAlb, GetSysDate() )
+   local nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( Recno() )
+   local nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb, ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -7466,13 +7457,13 @@ STATIC FUNCTION DelSerie( oWndBrw )
    REDEFINE METER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( dbfAlbCliT )->( OrdKeyCount() ) ;
+      TOTAL    ( TDataView():Get( "AlbCliT", nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( dbfAlbCliT )->( dbGoTo( nRecNo ) )
-   ( dbfAlbCliT )->( ordSetFocus( nOrdAnt ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -7492,71 +7483,71 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd                 := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+      nOrd                 := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-      ( dbfAlbCliT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
-      while !lCancel .and. ( dbfAlbCliT )->( !eof() )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      while !lCancel .and. ( TDataView():Get( "AlbCliT", nView ) )->( !eof() )
 
-         if ( dbfAlbCliT )->cSerAlb >= oDesde:cSerieInicio  .and.;
-            ( dbfAlbCliT )->cSerAlb <= oDesde:cSerieFin     .and.;
-            ( dbfAlbCliT )->nNumAlb >= oDesde:nNumeroInicio .and.;
-            ( dbfAlbCliT )->nNumAlb <= oDesde:nNumeroFin    .and.;
-            ( dbfAlbCliT )->cSufAlb >= oDesde:cSufijoInicio .and.;
-            ( dbfAlbCliT )->cSufAlb <= oDesde:cSufijoFin
+         if ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb >= oDesde:cSerieInicio  .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb <= oDesde:cSerieFin     .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb >= oDesde:nNumeroInicio .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb <= oDesde:nNumeroFin    .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= oDesde:cSufijoInicio .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= oDesde:cSufijoFin
 
             ++nDeleted
 
-            oTxtDel:cText  := "Eliminando : " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
+            oTxtDel:cText  := "Eliminando : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
 
             //AlbRecDel( .t., .t., .f., .f. )
 
-            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
+            WinDelRec( nil, TDataView():Get( "AlbCliT", nView ), {|| QuiAlbCli() } )
 
          else
 
-            ( dbfAlbCliT )->( dbSkip() )
+            ( TDataView():Get( "AlbCliT", nView ) )->( dbSkip() )
 
          end if
 
          ++nProcesed
 
-         oTxtDel:Set( ( dbfAlbCliT )->( OrdKeyNo() ) )
+         oTxtDel:Set( ( TDataView():Get( "AlbCliT", nView ) )->( OrdKeyNo() ) )
 
       end do
 
-      ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd                 := ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
+      nOrd                 := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "dFecAlb" ) )
 
-      ( dbfAlbCliT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
-      while !lCancel .and. ( dbfAlbCliT )->( !eof() )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      while !lCancel .and. ( TDataView():Get( "AlbCliT", nView ) )->( !eof() )
 
-         if ( dbfAlbCliT )->dFecAlb >= oDesde:dFechaInicio  .and.;
-            ( dbfAlbCliT )->dFecAlb <= oDesde:dFechaFin
+         if ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= oDesde:dFechaInicio  .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= oDesde:dFechaFin
 
             ++nDeleted
 
-            oTxtDel:cText  := "Eliminando : " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
+            oTxtDel:cText  := "Eliminando : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
 
             //AlbRecDel( .t., .t., .f., .f. )
 
-            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
+            WinDelRec( nil, TDataView():Get( "AlbCliT", nView ), {|| QuiAlbCli() } )
 
          else
 
-            ( dbfAlbCliT )->( dbSkip() )
+            ( TDataView():Get( "AlbCliT", nView ) )->( dbSkip() )
 
          end if
 
          ++nProcesed
 
-         oTxtDel:Set( ( dbfAlbCliT )->( OrdKeyNo() ) )
+         oTxtDel:Set( ( TDataView():Get( "AlbCliT", nView ) )->( OrdKeyNo() ) )
 
       end do
 
-      ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -7720,13 +7711,13 @@ Static Function AlbCliNotas()
    local cObserv  := ""
    local aData    := {}
 
-   aAdd( aData, "Albaran " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + Alltrim( ( dbfAlbCliT )->cSufAlb ) + " de " + Rtrim( ( dbfAlbCliT )->cNomCli ) )
+   aAdd( aData, "Albaran " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + AllTrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + Alltrim( ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) + " de " + Rtrim( ( TDataView():Get( "AlbCliT", nView ) )->cNomCli ) )
    aAdd( aData, ALB_CLI )
-   aAdd( aData, ( dbfAlbCliT )->cCodCli )
-   aAdd( aData, ( dbfAlbCliT )->cNomCli )
-   aAdd( aData, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb )
+   aAdd( aData, ( TDataView():Get( "AlbCliT", nView ) )->cCodCli )
+   aAdd( aData, ( TDataView():Get( "AlbCliT", nView ) )->cNomCli )
+   aAdd( aData, ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb )
 
-   if ( dbfClient )->( dbSeek( ( dbfAlbCliT )->cCodCli ) )
+   if ( dbfClient )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) )
 
       if !Empty( ( dbfClient )->cPerCto )
          cObserv  += Rtrim( ( dbfClient )->cPerCto ) + Space( 1 )
@@ -7863,7 +7854,7 @@ Static Function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, cAlbCliP, lT
 
    else
 
-      private cDbf         := dbfAlbCliT
+      private cDbf         := TDataView():Get( "AlbCliT", nView )
       private cDbfEnt      := cAlbCliP
       private cCliente     := dbfClient
       private cDbfCli      := dbfClient
@@ -7937,9 +7928,9 @@ STATIC FUNCTION DupSerie( oWndBrw )
    local oSerFin
    local oTxtDup
    local nTxtDup     := 0
-   local nRecno      := ( dbfAlbCliT )->( Recno() )
-   local nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( dbfAlbCliT )->cSerAlb, ( dbfAlbCliT )->nNumAlb, ( dbfAlbCliT )->cSufAlb, GetSysDate() )
+   local nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( Recno() )
+   local nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb, ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -8034,15 +8025,15 @@ STATIC FUNCTION DupSerie( oWndBrw )
    REDEFINE METER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( dbfAlbCliT )->( OrdKeyCount() ) ;
+      TOTAL    ( TDataView():Get( "AlbCliT", nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( dbfAlbCliT )->( dbGoTo( nRecNo ) )
-   ( dbfAlbCliT )->( ordSetFocus( nOrdAnt ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -8062,28 +8053,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd              := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+      nOrd              := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-      ( dbfAlbCliT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
 
-      while !lCancel .and. ( dbfAlbCliT )->( !eof() )
+      while !lCancel .and. ( TDataView():Get( "AlbCliT", nView ) )->( !eof() )
 
-         if ( dbfAlbCliT )->cSerAlb >= oDesde:cSerieInicio  .and.;
-            ( dbfAlbCliT )->cSerAlb <= oDesde:cSerieFin     .and.;
-            ( dbfAlbCliT )->nNumAlb >= oDesde:nNumeroInicio .and.;
-            ( dbfAlbCliT )->nNumAlb <= oDesde:nNumeroFin    .and.;
-            ( dbfAlbCliT )->cSufAlb >= oDesde:cSufijoInicio .and.;
-            ( dbfAlbCliT )->cSufAlb <= oDesde:cSufijoFin
+         if ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb >= oDesde:cSerieInicio  .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb <= oDesde:cSerieFin     .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb >= oDesde:nNumeroInicio .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb <= oDesde:nNumeroFin    .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= oDesde:cSufijoInicio .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= oDesde:cSufijoFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
+            oTxtDup:cText  := "Duplicando : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
 
             DupAlbaran( cFecDoc )
 
          end if
 
-         ( dbfAlbCliT )->( dbSkip() )
+         ( TDataView():Get( "AlbCliT", nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -8091,28 +8082,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd              := ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
+      nOrd              := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "dFecAlb" ) )
 
-      ( dbfAlbCliT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
 
-      while !lCancel .and. ( dbfAlbCliT )->( !eof() )
+      while !lCancel .and. ( TDataView():Get( "AlbCliT", nView ) )->( !eof() )
 
-         if ( dbfAlbCliT )->dFecAlb >= oDesde:dFechaInicio  .and.;
-            ( dbfAlbCliT )->dFecAlb <= oDesde:dFechaFin
+         if ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= oDesde:dFechaInicio  .and.;
+            ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= oDesde:dFechaFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
+            oTxtDup:cText  := "Duplicando : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
 
             DupAlbaran( cFecDoc )
 
          end if
 
-         ( dbfAlbCliT )->( dbSkip() )
+         ( TDataView():Get( "AlbCliT", nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -8120,7 +8111,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -8199,20 +8190,20 @@ STATIC FUNCTION DupAlbaran( cFecDoc )
 
    //Recogemos el nuevo numero de factura--------------------------------------
 
-   nNewNumAlb        := nNewDoc( ( dbfAlbCliT )->cSerAlb, dbfAlbCliT, "NALBCLI", , dbfCount )
+   nNewNumAlb        := nNewDoc( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, TDataView():Get( "AlbCliT", nView ), "NALBCLI", , dbfCount )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
-   AlbRecDup( dbfAlbCliT, ( dbfAlbCliT )->cSerAlb, nNewNumAlb, ( dbfAlbCliT )->cSufAlb, .t., cFecDoc )
+   AlbRecDup( TDataView():Get( "AlbCliT", nView ), ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, nNewNumAlb, ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, .t., cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) )
+   if ( dbfAlbCliL )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) )
 
-      while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb .and. ;
+      while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb == ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb .and. ;
             !( dbfAlbCliL )->( Eof() )
 
-         AlbRecDup( dbfAlbCliL, ( dbfAlbCliT )->cSerAlb, nNewNumAlb, ( dbfAlbCliT )->cSufAlb, .f. )
+         AlbRecDup( dbfAlbCliL, ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, nNewNumAlb, ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, .f. )
 
          ( dbfAlbCliL )->( dbSkip() )
 
@@ -8222,12 +8213,12 @@ STATIC FUNCTION DupAlbaran( cFecDoc )
 
    //Duplicamos los documentos-------------------------------------------------
 
-   if ( dbfAlbCliD )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) )
+   if ( dbfAlbCliD )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) )
 
-      while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == ( dbfAlbCliD )->cSerAlb + Str( ( dbfAlbCliD )->nNumAlb ) + ( dbfAlbCliD )->cSufAlb .and. ;
+      while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb == ( dbfAlbCliD )->cSerAlb + Str( ( dbfAlbCliD )->nNumAlb ) + ( dbfAlbCliD )->cSufAlb .and. ;
             !( dbfAlbCliD )->( Eof() )
 
-         AlbRecDup( dbfAlbCliD, ( dbfAlbCliT )->cSerAlb, nNewNumAlb, ( dbfAlbCliT )->cSufAlb, .f. )
+         AlbRecDup( dbfAlbCliD, ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, nNewNumAlb, ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, .f. )
 
          ( dbfAlbCliD )->( dbSkip() )
 
@@ -8410,13 +8401,13 @@ Static Function ChangeTarifa( aTmp, aGet, aTmpAlb )
       end if
 
       if nPrePro != 0
-         aGet[ _NSATUNIT ]:cText( nPrePro )
+         aGet[ _NPREUNIT ]:cText( nPrePro )
       end if
 
    else
 
-      aGet[ _NSATUNIT ]:cText( 0 )
-      aGet[ _NSATALQ  ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], dbfArticulo ) )
+      aGet[ _NPREUNIT ]:cText( 0 )
+      aGet[ _NPREALQ  ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], dbfArticulo ) )
 
    end if
 
@@ -8484,7 +8475,7 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Albaranes", ( dbfAlbCliT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Albaranes", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Albaranes", cItemsToReport( aItmAlbCli() ) )
 
    oFr:SetWorkArea(     "Lineas de albaranes", ( dbfAlbCliL )->( Select() ) )
@@ -8544,20 +8535,20 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
-   oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",             {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
-   oFr:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",   {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
-   oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",        {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
-   oFr:SetMasterDetail( "Albaranes", "Documentos de albaranes",         {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
-   oFr:SetMasterDetail( "Albaranes", "Entregas de albaranes",           {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
-   oFr:SetMasterDetail( "Albaranes", "Clientes",                        {|| ( dbfAlbCliT )->cCodCli } )
-   oFr:SetMasterDetail( "Albaranes", "Obras",                           {|| ( dbfAlbCliT )->cCodCli + ( dbfAlbCliT )->cCodObr } )
-   oFr:SetMasterDetail( "Albaranes", "Almacen",                         {|| ( dbfAlbCliT )->cCodAlm } )
-   oFr:SetMasterDetail( "Albaranes", "Rutas",                           {|| ( dbfAlbCliT )->cCodRut } )
-   oFr:SetMasterDetail( "Albaranes", "Agentes",                         {|| ( dbfAlbCliT )->cCodAge } )
-   oFr:SetMasterDetail( "Albaranes", "Formas de pago",                  {|| ( dbfAlbCliT )->cCodPago} )
-   oFr:SetMasterDetail( "Albaranes", "Transportistas",                  {|| ( dbfAlbCliT )->cCodTrn } )
+   oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",             {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",   {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",        {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Documentos de albaranes",         {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Entregas de albaranes",           {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Clientes",                        {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Albaranes", "Obras",                           {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodCli + ( TDataView():Get( "AlbCliT", nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "Albaranes", "Almacen",                         {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Albaranes", "Rutas",                           {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "Albaranes", "Agentes",                         {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "Albaranes", "Formas de pago",                  {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodPago} )
+   oFr:SetMasterDetail( "Albaranes", "Transportistas",                  {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Albaranes", "Usuarios",                        {|| ( dbfAlbCliT )->cCodUsr } )
+   oFr:SetMasterDetail( "Albaranes", "Usuarios",                        {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",             {|| ( dbfAlbCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",         {|| ( dbfAlbCliL )->cTipMov } )
@@ -8686,10 +8677,10 @@ Static Function DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
    oFr:SetFieldAliases( "Entrega", cItemsToReport( aItmAlbPgo() ) )
 
    if lTicket
-   oFr:SetWorkArea(     "Albarán de cliente", ( dbfAlbCliT )->( Select() ) )
+   oFr:SetWorkArea(     "Albarán de cliente", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Albarán de cliente", cItemsToReport( aItmAlbCli() ) )
    else
-   oFr:SetWorkArea(     "Albarán de cliente", ( dbfAlbCliT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Albarán de cliente", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Albarán de cliente", cItemsToReport( aItmAlbCli() ) )
    end if
 
@@ -9068,7 +9059,7 @@ Calcula el Total del albaran
 
 Static Function RecalculaTotal( aTmpAlb )
 
-   local nTotAlbCli     := nTotAlbCli( nil, dbfAlbCliT, dbfTmpLin, dbfIva, dbfDiv, aTmpAlb )
+   local nTotAlbCli     := nTotAlbCli( nil, TDataView():Get( "AlbCliT", nView ), dbfTmpLin, dbfIva, dbfDiv, aTmpAlb )
    local nEntAlbCli     := nPagAlbCli( nil, dbfTmpPgo, dbfDiv )
 
    if oBrwIva != nil
@@ -9522,8 +9513,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    end if
 
    if aTmp[ __LALQUILER ]
-      aGet[ _NSATUNIT ]:Hide()
-      aGet[ _NSATALQ  ]:Show()
+      aGet[ _NPREUNIT ]:Hide()
+      aGet[ _NPREALQ  ]:Show()
    end if
 
    do case
@@ -9695,10 +9686,10 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    Solo pueden modificar los precios los administradores-----------------------
    */
 
-   if ( Empty( aTmp[ _NSATUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
 
-      if !Empty( aGet[ _NSATUNIT ] )
-         aGet[ _NSATUNIT ]:HardEnable()
+      if !Empty( aGet[ _NPREUNIT ] )
+         aGet[ _NPREUNIT ]:HardEnable()
       end if
 
       aGet[ _NIMPTRN ]:HardEnable()
@@ -9716,7 +9707,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
 
    else
 
-      aGet[ _NSATUNIT ]:HardDisable()
+      aGet[ _NPREUNIT ]:HardDisable()
       aGet[ _NIMPTRN  ]:HardDisable()
 
       if !Empty( aGet[ _NPNTVER ] )
@@ -9833,9 +9824,9 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oMargen, cCodDiv, lTo
    DEFAULT lTotal := .f.
 
    if aTmp[ __LALQUILER ]
-      nCalculo    := aTmp[ _NSATALQ  ]
+      nCalculo    := aTmp[ _NPREALQ  ]
    else
-      nCalculo    := aTmp[ _NSATUNIT  ]
+      nCalculo    := aTmp[ _NPREUNIT  ]
    end if
 
    nCalculo       -= aTmp[ _NDTODIV  ]
@@ -10596,16 +10587,16 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpAlb[_CCODTAR] )
             if nPrePro == 0
-               if !Empty( aGet[ _NSATUNIT ] )
-                  aGet[ _NSATUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpAlb[ _CDIVALB ], aTmpAlb[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
+               if !Empty( aGet[ _NPREUNIT ] )
+                  aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpAlb[ _CDIVALB ], aTmpAlb[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
                end if
             else
-               aGet[ _NSATUNIT ]:cText( nPrePro )
+               aGet[ _NPREUNIT ]:cText( nPrePro )
             end if
 
             if aTmp[ __LALQUILER ]
-               aGet[ _NSATUNIT ]:cText( 0 )
-               aGet[ _NSATALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpAlb[_LIVAINC], dbfArticulo ) )
+               aGet[ _NPREUNIT ]:cText( 0 )
+               aGet[ _NPREALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpAlb[_LIVAINC], dbfArticulo ) )
             end if
 
             /*
@@ -10620,7 +10611,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                nImpOfe     := RetPrcTar( aTmp[ _CREF ], aTmpAlb[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
                if nImpOfe  != 0
-                  aGet[ _NSATUNIT ]:cText( nImpOfe )
+                  aGet[ _NPREUNIT ]:cText( nImpOfe )
                end if
 
                //--Descuento porcentual--//
@@ -10670,7 +10661,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                   nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
                   if nImpAtp  != 0
-                     aGet[ _NSATUNIT ]:cText( nImpAtp )
+                     aGet[ _NPREUNIT ]:cText( nImpAtp )
                   end if
 
                   /*
@@ -10744,10 +10735,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          Solo pueden modificar los precios los administradores--------------
          */
 
-         if Empty( aTmp[ _NSATUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+         if Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
 
-            if !Empty( aGet[ _NSATUNIT ] )
-                aGet[ _NSATUNIT ]:HardEnable()
+            if !Empty( aGet[ _NPREUNIT ] )
+                aGet[ _NPREUNIT ]:HardEnable()
             end if
 
              aGet[ _NIMPTRN  ]:HardEnable()
@@ -10764,7 +10755,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             end if
 
          else
-            aGet[ _NSATUNIT ]:HardDisable()
+            aGet[ _NPREUNIT ]:HardDisable()
             aGet[ _NIMPTRN  ]:HardDisable()
             aGet[ _NPNTVER  ]:HardDisable()
             aGet[ _NDTO     ]:HardDisable()
@@ -10995,7 +10986,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
             */
 
             aTmp[ _NCANENT  ] := aXbYStr[ 2 ]
-            aTmp[ _NSATUNIT ] := 0
+            aTmp[ _NPREUNIT ] := 0
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
@@ -11031,7 +11022,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
                aTmp[ _NUNICAJA ] := aXbYStr[ 2 ]
             end if
 
-            aTmp[ _NSATUNIT ] := 0
+            aTmp[ _NPREUNIT ] := 0
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
@@ -11526,7 +11517,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumAlb              := nNewDoc( aTmp[ _CSERALB ], dbfAlbCliT, "NALBCLI", , dbfCount )
+      nNumAlb              := nNewDoc( aTmp[ _CSERALB ], TDataView():Get( "AlbCliT", nView ), "NALBCLI", , dbfCount )
       aTmp[ _NNUMALB ]     := nNumAlb
       nTotOld              := 0
 
@@ -11597,7 +11588,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    aTmp[ _NTOTALB ]     := nTotAlb
    aTmp[ _NTOTPAG ]     := nTotPag
 
-   WinGather( aTmp, , dbfAlbCliT, , nMode )
+   WinGather( aTmp, , TDataView():Get( "AlbCliT", nView ), , nMode )
 
    /*
    Actualizamos el stock en la web------------------------------------------
@@ -11755,14 +11746,14 @@ RETURN .t.
 Static Function YearComboBoxChange()
 
    if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( dbfAlbCliT )
-      CreateUserFilter( "", dbfAlbCliT, .f., , , "all" )
+      DestroyFastFilter( TDataView():Get( "AlbCliT", nView ) )
+      CreateUserFilter( "", TDataView():Get( "AlbCliT", nView ), .f., , , "all" )
    else
-      DestroyFastFilter( dbfAlbCliT )
-      CreateUserFilter( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfAlbCliT, .f., , , "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
+      DestroyFastFilter( TDataView():Get( "AlbCliT", nView ) )
+      CreateUserFilter( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox(), TDataView():Get( "AlbCliT", nView ), .f., , , "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
    end if
 
-   ( dbfAlbCliT )->( dbGoTop() )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTop() )
 
    oWndBrw:Refresh()
 
@@ -11787,7 +11778,7 @@ Static Function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfDiv, dbfKit, dbfI
 
       if !Empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )
-            aGet[ _NSATUNIT ]:cText( sOfeArt:nPrecio )
+            aGet[ _NPREUNIT ]:cText( sOfeArt:nPrecio )
          end if 
          if ( sOfeArt:nDtoPorcentual != 0 )
             aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
@@ -13151,7 +13142,7 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
                ( dbfTmpLin )->nPreUnit       := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
 
-               ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
+               ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliT", nView ), dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikT, dbfTikL )
 
             end if   
 
@@ -13265,7 +13256,7 @@ Return .t.
 Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, " ", "" ) + ".Pdf"
+   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -13359,15 +13350,15 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de albaran de cliente número " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( dbfAlbCliT )->dFecAlb ) + Space( 1 ) )
+                  :SetPara(         RetFld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "cMeiInt" ) )
+                  :SetAsunto(       "Envio de albaran de cliente número " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( dbfAlbCliT, aItmAlbCli() )
+                  :GeneralResource( TDataView():Get( "AlbCliT", nView ), aItmAlbCli() )
 
                end with
 
@@ -13390,7 +13381,7 @@ Return .t.
 Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
 
    local oFr
-   local nRecAlbCliT    := ( dbfAlbCliT )->( Recno() )
+   local nRecAlbCliT    := ( TDataView():Get( "AlbCliT", nView ) )->( Recno() )
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -13466,7 +13457,7 @@ Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCl
 
    oFr:DestroyFr()
 
-   ( dbfAlbCliT )->( dbGoTo( nRecAlbCliT ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecAlbCliT ) )
 
 Return .t.
 
@@ -13537,7 +13528,7 @@ Function AppAlbCli( hHash, lOpenBrowse )
 
       if OpenFiles( nil, .t. )
          nTotAlbCli()
-         WinAppRec( nil, bEdtRec, dbfAlbCliT, hHash )
+         WinAppRec( nil, bEdtRec, TDataView():Get( "AlbCliT", nView ), hHash )
          CloseFiles()
       end if
 
@@ -13561,7 +13552,7 @@ Function EdtAlbCli( cNumAlb, lOpenBrowse )
    if lOpenBrowse
 
       if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra albaran" )
@@ -13572,9 +13563,9 @@ Function EdtAlbCli( cNumAlb, lOpenBrowse )
 
       if OpenFiles( nil, .t. )
 
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
-            WinEdtRec( nil, bEdtRec, dbfAlbCliT )
+            WinEdtRec( nil, bEdtRec, TDataView():Get( "AlbCliT", nView ) )
          end if
 
          CloseFiles()
@@ -13601,7 +13592,7 @@ FUNCTION ZooAlbCli( cNumAlb, lOpenBrowse )
    if lOpenBrowse
 
       if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             oWndBrw:RecZoom()
          else
             MsgStop( "No se encuentra albaran" )
@@ -13612,9 +13603,9 @@ FUNCTION ZooAlbCli( cNumAlb, lOpenBrowse )
 
       if OpenFiles( nil, .t. )
 
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
-            WinZooRec( nil, bEdtRec, dbfAlbCliT )
+            WinZooRec( nil, bEdtRec, TDataView():Get( "AlbCliT", nView ) )
          end if
 
          CloseFiles()
@@ -13641,8 +13632,8 @@ FUNCTION DelAlbCli( cNumAlb, lOpenBrowse )
    if lOpenBrowse
 
       if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
-            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
+            WinDelRec( nil, TDataView():Get( "AlbCliT", nView ), {|| QuiAlbCli() } )
          else
             MsgStop( "No se encuentra albaran" )
          end if
@@ -13652,9 +13643,9 @@ FUNCTION DelAlbCli( cNumAlb, lOpenBrowse )
 
       if OpenFiles( nil, .t. )
 
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
-            WinDelRec( nil, dbfAlbCliT, {|| QuiAlbCli() } )
+            WinDelRec( nil, TDataView():Get( "AlbCliT", nView ), {|| QuiAlbCli() } )
          end if
 
          CloseFiles()
@@ -13681,7 +13672,7 @@ FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
    if lOpenBrowse
 
       if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          else
             MsgStop( "No se encuentra albaran" )
@@ -13692,7 +13683,7 @@ FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if OpenFiles( nil, .t. )
 
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
             GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          end if
@@ -13721,7 +13712,7 @@ FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
    if lOpenBrowse
 
       if AlbCli()
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          else
             MsgStop( "No se encuentra albaran" )
@@ -13732,7 +13723,7 @@ FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if OpenFiles( nil, .t. )
 
-         if dbSeekInOrd( cNumAlb, "nNumAlb", dbfAlbCliT )
+         if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
             GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          end if
@@ -13804,15 +13795,15 @@ FUNCTION BrwAlbCli( oGet, oIva )
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
 
-   ( dbfAlbCliT )->( dbSetFilter( {|| !Field->lFacturado .and. Field->lIvaInc == lIva }, "!lFacturado .and. lIvaInc == lIva" ) )
-   ( dbfAlbCliT )->( dbGoTop() )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbSetFilter( {|| !Field->lFacturado .and. Field->lIvaInc == lIva }, "!lFacturado .and. lIvaInc == lIva" ) )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTop() )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE if( lIva, "Albaranes de clientes con " + cImp() + " incluido", "Albaranes de clientes con " + cImp() + " desglosado" )
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlbCliT, .t., nil, .t. ) );
-         VALID    ( OrdClearScope( oBrw, dbfAlbCliT ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, TDataView():Get( "AlbCliT", nView ), .t., nil, .t. ) );
+         VALID    ( OrdClearScope( oBrw, TDataView():Get( "AlbCliT", nView ) ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -13820,7 +13811,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
          VAR      cCbxOrd ;
          ID       102 ;
          ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfAlbCliT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         ON CHANGE( ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
          OF       oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -13828,7 +13819,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias          := dbfAlbCliT
+      oBrw:cAlias          := TDataView():Get( "AlbCliT", nView )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Albaran de cliente.Browse"
 
@@ -13838,7 +13829,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipAlb[ if( ( dbfAlbCliT )->lAlquiler, 2, 1  ) ] }
+         :bEditValue       := {|| aTipAlb[ if( ( TDataView():Get( "AlbCliT", nView ) )->lAlquiler, 2, 1  ) ] }
          :nWidth           := 50
          :lHide            := .t.
       end with
@@ -13846,7 +13837,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
       with object ( oBrw:AddCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb }
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -13854,7 +13845,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
       with object ( oBrw:AddCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecAlb"
-         :bEditValue       := {|| dtoc( ( dbfAlbCliT )->dFecAlb ) }
+         :bEditValue       := {|| dtoc( ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -13862,7 +13853,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
       with object ( oBrw:AddCol() )
          :cHeader          := "Cliente"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -13870,14 +13861,14 @@ FUNCTION BrwAlbCli( oGet, oIva )
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| AllTrim( ( dbfAlbCliT )->cNomCli ) }
+         :bEditValue       := {|| AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNomCli ) }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .t. )  }
+         :bEditValue       := {|| nTotAlbCli( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, TDataView():Get( "AlbCliT", nView ), dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .t. )  }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -13886,12 +13877,12 @@ FUNCTION BrwAlbCli( oGet, oIva )
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
-         ACTION   ( WinAppRec( oBrw, bEdtRec, dbfAlbCliT ) )
+         ACTION   ( WinAppRec( oBrw, bEdtRec, TDataView():Get( "AlbCliT", nView ) ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
-         ACTION   ( WinEdtRec( oBrw, bEdtRec, dbfAlbCliT ) )
+         ACTION   ( WinEdtRec( oBrw, bEdtRec, TDataView():Get( "AlbCliT", nView ) ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -13911,14 +13902,14 @@ FUNCTION BrwAlbCli( oGet, oIva )
    ON INIT ( oBrw:Load() ) ;
    CENTER
 
-   DestroyFastFilter( dbfAlbCliT )
+   DestroyFastFilter( TDataView():Get( "AlbCliT", nView ) )
 
-   SetBrwOpt( "BrwAlbCli", ( dbfAlbCliT )->( OrdNumber() ) )
+   SetBrwOpt( "BrwAlbCli", ( TDataView():Get( "AlbCliT", nView ) )->( OrdNumber() ) )
 
-   ( dbfAlbCliT )->( dbClearFilter() )
+   ( TDataView():Get( "AlbCliT", nView ) )->( dbClearFilter() )
 
    if oDlg:nResult == IDOK
-      oGet:cText( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb )
+      oGet:cText( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb )
       oGet:lValid()
    end if
 
@@ -14026,7 +14017,7 @@ FUNCTION nNetLAlbCli( cAlbCliT, cAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTrn,
 
    local nCalculo
 
-   DEFAULT cAlbCliT  := dbfAlbCliT
+   DEFAULT cAlbCliT  := TDataView():Get( "AlbCliT", nView )
    DEFAULT cAlbCliL  := dbfAlbCliL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
@@ -14532,46 +14523,46 @@ FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
                cSerie                        := ( dbfClient )->Serie
             end if
 
-            if !( dbfAlbCliT )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
+            if !( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
 
                n  := aScan( aHeadLine, {|a| a[1] == cNumDoc } )
                if n != 0
                   dFecAlb                    := aHeadLine[n,2]
 
-                  ( dbfAlbCliT )->( dbAppend() )
-                  ( dbfAlbCliT )->cSerAlb    := cSerie
-                  ( dbfAlbCliT )->nNumAlb    := nNumAlb
-                  ( dbfAlbCliT )->cSufAlb    := RetSufEmp()
-                  ( dbfAlbCliT )->dFecAlb    := dFecAlb
-                  ( dbfAlbCliT )->cCodAlm    := oUser():cAlmacen()
-                  ( dbfAlbCliT )->cDivAlb    := cDivEmp()
-                  ( dbfAlbCliT )->nVdvAlb    := nChgDiv( ( dbfAlbCliT )->cDivAlb, dbfDiv )
-                  ( dbfAlbCliT )->lFacturado := .f.
-                  ( dbfAlbCliT )->cCodCli    := ( dbfClient )->Cod
-                  ( dbfAlbCliT )->cNomCli    := ( dbfClient )->Titulo
-                  ( dbfAlbCliT )->cDirCli    := ( dbfClient )->Domicilio
-                  ( dbfAlbCliT )->cPobCli    := ( dbfClient )->Poblacion
-                  ( dbfAlbCliT )->cPrvCli    := ( dbfClient )->Provincia
-                  ( dbfAlbCliT )->cPosCli    := ( dbfClient )->CodPostal
-                  ( dbfAlbCliT )->cDniCli    := ( dbfClient )->Nif
-                  ( dbfAlbCliT )->cCodTar    := ( dbfClient )->cCodTar
-                  ( dbfAlbCliT )->cCodPago   := ( dbfClient )->CodPago
-                  ( dbfAlbCliT )->cCodAge    := ( dbfClient )->cAgente
-                  ( dbfAlbCliT )->cCodRut    := ( dbfClient )->cCodRut
-                  ( dbfAlbCliT )->nTarifa    := ( dbfClient )->nTarifa
-                  ( dbfAlbCliT )->lRecargo   := ( dbfClient )->lReq
-                  ( dbfAlbCliT )->lOperPv    := ( dbfClient )->lPntVer
-                  ( dbfAlbCliT )->cDtoEsp    := ( dbfClient )->cDtoEsp
-                  ( dbfAlbCliT )->cDpp       := ( dbfClient )->cDpp
-                  ( dbfAlbCliT )->nDtoEsp    := ( dbfClient )->nDtoEsp
-                  ( dbfAlbCliT )->nDpp       := ( dbfClient )->nDpp
-                  ( dbfAlbCliT )->nDtoUno    := ( dbfClient )->nDtoCnt
-                  ( dbfAlbCliT )->cDtoUno    := ( dbfClient )->cDtoUno
-                  ( dbfAlbCliT )->nDtoDos    := ( dbfClient )->nDtoRap
-                  ( dbfAlbCliT )->cDtoDos    := ( dbfClient )->cDtoDos
-                  ( dbfAlbCliT )->( dbUnLock() )
+                  ( TDataView():Get( "AlbCliT", nView ) )->( dbAppend() )
+                  ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb    := cSerie
+                  ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb    := nNumAlb
+                  ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb    := RetSufEmp()
+                  ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb    := dFecAlb
+                  ( TDataView():Get( "AlbCliT", nView ) )->cCodAlm    := oUser():cAlmacen()
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDivAlb    := cDivEmp()
+                  ( TDataView():Get( "AlbCliT", nView ) )->nVdvAlb    := nChgDiv( ( TDataView():Get( "AlbCliT", nView ) )->cDivAlb, dbfDiv )
+                  ( TDataView():Get( "AlbCliT", nView ) )->lFacturado := .f.
+                  ( TDataView():Get( "AlbCliT", nView ) )->cCodCli    := ( dbfClient )->Cod
+                  ( TDataView():Get( "AlbCliT", nView ) )->cNomCli    := ( dbfClient )->Titulo
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDirCli    := ( dbfClient )->Domicilio
+                  ( TDataView():Get( "AlbCliT", nView ) )->cPobCli    := ( dbfClient )->Poblacion
+                  ( TDataView():Get( "AlbCliT", nView ) )->cPrvCli    := ( dbfClient )->Provincia
+                  ( TDataView():Get( "AlbCliT", nView ) )->cPosCli    := ( dbfClient )->CodPostal
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDniCli    := ( dbfClient )->Nif
+                  ( TDataView():Get( "AlbCliT", nView ) )->cCodTar    := ( dbfClient )->cCodTar
+                  ( TDataView():Get( "AlbCliT", nView ) )->cCodPago   := ( dbfClient )->CodPago
+                  ( TDataView():Get( "AlbCliT", nView ) )->cCodAge    := ( dbfClient )->cAgente
+                  ( TDataView():Get( "AlbCliT", nView ) )->cCodRut    := ( dbfClient )->cCodRut
+                  ( TDataView():Get( "AlbCliT", nView ) )->nTarifa    := ( dbfClient )->nTarifa
+                  ( TDataView():Get( "AlbCliT", nView ) )->lRecargo   := ( dbfClient )->lReq
+                  ( TDataView():Get( "AlbCliT", nView ) )->lOperPv    := ( dbfClient )->lPntVer
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDtoEsp    := ( dbfClient )->cDtoEsp
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDpp       := ( dbfClient )->cDpp
+                  ( TDataView():Get( "AlbCliT", nView ) )->nDtoEsp    := ( dbfClient )->nDtoEsp
+                  ( TDataView():Get( "AlbCliT", nView ) )->nDpp       := ( dbfClient )->nDpp
+                  ( TDataView():Get( "AlbCliT", nView ) )->nDtoUno    := ( dbfClient )->nDtoCnt
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDtoUno    := ( dbfClient )->cDtoUno
+                  ( TDataView():Get( "AlbCliT", nView ) )->nDtoDos    := ( dbfClient )->nDtoRap
+                  ( TDataView():Get( "AlbCliT", nView ) )->cDtoDos    := ( dbfClient )->cDtoDos
+                  ( TDataView():Get( "AlbCliT", nView ) )->( dbUnLock() )
 
-                  aAdd( aSucces, { .t., "Nuevo albarán de clientes " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb } )
+                  aAdd( aSucces, { .t., "Nuevo albarán de clientes " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + AllTrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
 
                   /*
                   Mientras estemos en el mismo albarán pasamos las lineas------
@@ -14581,12 +14572,12 @@ FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
 
                      if cTipDoc == "3" .or. cTipDoc == "4"
 
-                        if ( dbfAlbCliT )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
+                        if ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( cSerie + Str( nNumAlb, 9 ) + RetSufEmp() ) )
 
                            ( dbfAlbCliL )->( dbAppend() )
-                           ( dbfAlbCliL )->cSerAlb       := ( dbfAlbCliT )->cSerAlb
-                           ( dbfAlbCliL )->nNumAlb       := ( dbfAlbCliT )->nNumAlb
-                           ( dbfAlbCliL )->cSufAlb       := ( dbfAlbCliT )->cSufAlb
+                           ( dbfAlbCliL )->cSerAlb       := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb
+                           ( dbfAlbCliL )->nNumAlb       := ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb
+                           ( dbfAlbCliL )->cSufAlb       := ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
                            ( dbfAlbCliL )->cRef          := Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) )
                            ( dbfAlbCliL )->cDetalle      := RetFld( ( dbfAlbCliL )->cRef, dbfArticulo )
                            ( dbfAlbCliL )->nPreUnit      := Val( SubStr( oFilEdm:cLine, 32,  7 ) )
@@ -14625,7 +14616,7 @@ FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
 
             else
 
-               aAdd( aSucces, { .f., "Albarán de clientes ya existe " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb } )
+               aAdd( aSucces, { .f., "Albarán de clientes ya existe " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + AllTrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb } )
                oFilEdm:Skip()
 
             end if
@@ -14754,8 +14745,6 @@ return ( aColAlbCli )
 
 function SynAlbCli( cPath )
 
-   local oError
-   local oBlock
    local aTotAlb
    local cNumAlb
    local nNumLin     := 0
@@ -14767,353 +14756,360 @@ function SynAlbCli( cPath )
 
    DEFAULT cPath     := cPatEmp()
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   if OpenFiles()
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
+      ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 0 ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTop() )
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
+      while !( TDataView():Get( "AlbCliT", nView ) )->( eof() )
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIS.DBF", cCheckArea( "ALBCLIS", @dbfAlbCliS ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIS.CDX" ); else ; ordSetFocus( 1 ) ; end
+         if Empty( ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb )
+            
+            if TDataView():Lock( "AlbCliT", nView )
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLII.DBF", cCheckArea( "ALBCLII", @dbfAlbCliI ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLII.CDX" ); else ; ordSetFocus( 1 ) ; end
+               ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb := "00"
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliP ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBCLIP.CDX" ); else ; ordSetFocus( 1 ) ; end
+               TDataView():UnLock( "AlbCliT", nView )
+            
+            end if
 
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatCli() + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfClient ), .f. )
-   if !lAIS(); ordListAdd( cPatCli() + "CLIENT.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
-   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
-   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @dbfPedCliT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PEDCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @dbfPedCliL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PEDCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "FACCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   oNewImp              := TNewImp():Create( cPatEmp() )
-   if !oNewImp:OpenFiles()
-      lOpenFiles     := .f.
-   end if
-
-   ( dbfAlbCliT )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliT )->( dbGoTop() )
-
-   while !( dbfAlbCliT )->( eof() )
-
-      if Empty( ( dbfAlbCliT )->cSufAlb )
-         ( dbfAlbCliT )->cSufAlb := "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumPre ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPre ) ) != 12
-         ( dbfAlbCliT )->cNumPre := AllTrim( ( dbfAlbCliT )->cNumPre ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPed ) ) != 12
-         ( dbfAlbCliT )->cNumPed := AllTrim( ( dbfAlbCliT )->cNumPed ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumSat ) ) != 12
-         ( dbfAlbCliT )->cNumSat := AllTrim( ( dbfAlbCliT )->cNumSat ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumFac ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumFac ) ) != 12
-         ( dbfAlbCliT )->cNumFac := AllTrim( ( dbfAlbCliT )->cNumFac ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumDoc ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumDoc ) ) != 12
-         ( dbfAlbCliT )->cNumDoc := AllTrim( ( dbfAlbCliT )->cNumDoc ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliT )->cNumTik ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumTik ) ) != 13
-         ( dbfAlbCliT )->cNumTik := AllTrim( ( dbfAlbCliT )->cNumTik ) + "00"
-      end if
-
-      if Empty( ( dbfAlbCliT )->cCodCaj )
-         ( dbfAlbCliT )->cCodCaj := "000"
-      end if
-
-      if Empty( ( dbfAlbCliT )->cCodGrp )
-         ( dbfAlbCliT )->cCodGrp := RetGrpCli( ( dbfAlbCliT )->cCodCli, dbfClient )
-      end if
-
-      if Empty( ( dbfAlbCliT )->cNomCli ) .and. !Empty ( ( dbfAlbCliT )->cCodCli )
-         ( dbfAlbCliT )->cNomCli    := RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "Titulo" )
-      end if
-
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-      */
-
-      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
-
-         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
-
-         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
-         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
-         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
-         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
-
-         ( dbfAlbCliT )->( dbUnLock() )
-
-      end if
-
-      /*
-      Si el albarán está creado desde un pedido le revisamos el estado---------
-      */
-
-      aAdd( aNumPed, ( dbfAlbCliT )->cNumPed )
-
-      ( dbfAlbCliT )->( dbSkip() )
-
-   end while
-
-   ( dbfAlbCliT )->( ordSetFocus( 1 ) )
-
-   /*
-   Repasamos para que siempre esten rellenos los campos de totales-------------
-   */
-
-   ( dbfAlbCliT )->( dbGoTop() )
-
-   while !( dbfAlbCliT )->( eof() )
-
-      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
-
-         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
-
-         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
-         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
-         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
-         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
-
-         ( dbfAlbCliT )->( dbUnLock() )
-
-      end if
-      
-      ( dbfAlbCliT )->( dbSkip() )
-
-   end while
-
-   /*
-   Lineas----------------------------------------------------------------------
-   */
-
-   ( dbfAlbCliL )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliL )->( dbGoTop() )
-
-   while !( dbfAlbCliL )->( eof() )
-
-      if Empty( ( dbfAlbCliL )->cSufAlb )
-         ( dbfAlbCliL )->cSufAlb    := "00"
-      end if
-
-      if !Empty( ( dbfAlbCliL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumPed ) ) != 12
-         ( dbfAlbCliL )->cNumPed := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
-      end if
-
-      if !Empty( ( dbfAlbCliL )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumSat ) ) != 12
-         ( dbfAlbCliL )->cNumSat := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
-      end if
-
-      if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
-         ( dbfAlbCliL )->cLote      := AllTrim( Str( ( dbfAlbCliL )->nLote ) )
-      end if
-
-      if Empty( ( dbfAlbCliL )->nValImp )
-         cCodImp                    := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
-         if !Empty( cCodImp )
-            ( dbfAlbCliL )->nValImp := oNewImp:nValImp( cCodImp )
          end if
-      end if
 
-      if Empty( ( dbfAlbCliL )->nVolumen )
-         ( dbfAlbCliL )->nVolumen   := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
-      end if
+         if !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumPre ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumPre ) ) != 12
+            
+            if TDataView():Lock( "AlbCliT", nView )
 
-      if ( dbfAlbCliL )->lIvaLin != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
-         ( dbfAlbCliL )->lIvaLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
-      end if
+               ( TDataView():Get( "AlbCliT", nView ) )->cNumPre := AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumPre ) + "00"
 
-      if !Empty( ( dbfAlbCliL )->cRef ) .and. Empty( ( dbfAlbCliL )->cCodFam )
-         ( dbfAlbCliL )->cCodFam    := RetFamArt( ( dbfAlbCliL )->cRef, dbfArticulo )
-      end if
+               TDataView():UnLock( "AlbCliT", nView )
 
-      if !Empty( ( dbfAlbCliL )->cRef ) .and. !Empty( ( dbfAlbCliL )->cCodFam )
-         ( dbfAlbCliL )->cGrpFam    := cGruFam( ( dbfAlbCliL )->cCodFam, dbfFamilia )
-      end if
+            end if   
 
-      if Empty( ( dbfAlbCliL )->nReq )
-         ( dbfAlbCliL )->nReq       := nPReq( dbfIva, ( dbfAlbCliL )->nIva )
-      end if
+         end if
 
-      if ( dbfAlbCliL )->lFacturado != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
-         ( dbfAlbCliL )->lFacturado := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
-      end if
+         if !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumPed ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumPed ) ) != 12
+            
+            if TDataView():Lock( "AlbCliT", nView )
+               
+               ( TDataView():Get( "AlbCliT", nView ) )->cNumPed := AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumPed ) + "00"
+            
+               TDataView():UnLock( "AlbCliT", nView )
 
-      if ( dbfAlbCliL )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-         ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-      end if
+            end if
 
-      if ( dbfAlbCliL )->cCodCli != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
-         ( dbfAlbCliL )->cCodCli    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
-      end if
+         end if
 
-      if Empty( ( dbfAlbCliL )->cAlmLin )
-         ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
-      end if
+         if !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumSat ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumSat ) ) != 12
+            
+            if TDataView():Lock( "AlbCliT", nView )
 
-      // Numeros de serie------------------------------------------------------
+               ( TDataView():Get( "AlbCliT", nView ) )->cNumSat := AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumSat ) + "00"
 
-      if !Empty( ( dbfAlbCliL )->mNumSer )
-         aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
-         for each cNumSer in aNumSer
-            ( dbfAlbCliS )->( dbAppend() )
-            ( dbfAlbCliS )->cSerAlb    := ( dbfAlbCliL )->cSerAlb
-            ( dbfAlbCliS )->nNumAlb    := ( dbfAlbCliL )->nNumAlb
-            ( dbfAlbCliS )->cSufAlb    := ( dbfAlbCliL )->cSufAlb
-            ( dbfAlbCliS )->cRef       := ( dbfAlbCliL )->cRef
-            ( dbfAlbCliS )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
-            ( dbfAlbCliS )->nNumLin    := ( dbfAlbCliL )->nNumLin
-            ( dbfAlbCliS )->lFacturado := ( dbfAlbCliL )->lFacturado
-            ( dbfAlbCliS )->cNumSer    := cNumSer
-         next
-         ( dbfAlbCliL )->mNumSer       := ""
-      end if
+               TDataView():UnLock( "AlbCliT", nView )
 
-      ( dbfAlbCliL )->( dbSkip() )
+            end if
 
-      SysRefresh()
+         end if
 
-   end while
+         if !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumFac ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumFac ) ) != 12
+            
+            if TDataView():Lock( "AlbCliT", nView )
 
-   ( dbfAlbCliL )->( ordSetFocus( 1 ) )
+               ( TDataView():Get( "AlbCliT", nView ) )->cNumFac := AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumFac ) + "00"
 
-   // Incidencias--------------------------------------------------------------
+               TDataView():UnLock( "AlbCliT", nView )
 
-   ( dbfAlbCliI )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliI )->( dbGoTop() )
+            end if   
 
-   while !( dbfAlbCliI )->( eof() )
+         end if
 
-      if Empty( ( dbfAlbCliI )->cSufAlb )
-         ( dbfAlbCliI )->cSufAlb    := "00"
-      end if
+         if !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumDoc ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumDoc ) ) != 12
+            
+            if TDataView():Lock( "AlbCliT", nView )
+            
+               ( TDataView():Get( "AlbCliT", nView ) )->cNumDoc := AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumDoc ) + "00"
 
-      ( dbfAlbCliI )->( dbSkip() )
+               TDataView():UnLock( "AlbCliT", nView )
 
-      SysRefresh()
+            end if   
 
-   end while
+         end if
 
-   ( dbfAlbCliI )->( OrdSetFocus( 1 ) )
+         if !Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNumTik ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumTik ) ) != 13
+            
+            if TDataView():Lock( "AlbCliT", nView )
+            
+               ( TDataView():Get( "AlbCliT", nView ) )->cNumTik := AllTrim( ( TDataView():Get( "AlbCliT", nView ) )->cNumTik ) + "00"
 
-   // Series ---------------------------------------------------------------
+               TDataView():UnLock( "AlbCliT", nView )
 
-   ( dbfAlbCliS )->( ordSetFocus( 0 ) )
-   ( dbfAlbCliS )->( dbGoTop() )
+            end if
 
-   while !( dbfAlbCliS )->( eof() )
+         end if
 
-      if Empty( ( dbfAlbCliS )->cSufAlb )
-         ( dbfAlbCliS )->cSufAlb    := "00"
-      end if
+         if Empty( ( TDataView():Get( "AlbCliT", nView ) )->cCodCaj )
+            
+            if TDataView():Lock( "AlbCliT", nView )
 
-      if ( dbfAlbCliS )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-         ( dbfAlbCliS )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
-      end if
+               ( TDataView():Get( "AlbCliT", nView ) )->cCodCaj := "000"
 
-      ( dbfAlbCliS )->( dbSkip() )
+               TDataView():UnLock( "AlbCliT", nView )
 
-      SysRefresh()
+            end if   
 
-   end while
+         end if
 
-   ( dbfAlbCliS )->( ordSetFocus( 1 ) )
+         if Empty( ( TDataView():Get( "AlbCliT", nView ) )->cCodGrp )
+            
+            if TDataView():Lock( "AlbCliT", nView )
 
-   RECOVER USING oError
+               ( TDataView():Get( "AlbCliT", nView ) )->cCodGrp := RetGrpCli( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient )
 
-      msgStop( "Imposible sincronizar albaranes de clientes" + CRLF + ErrorMessage( oError ) )
+               TDataView():UnLock( "AlbCliT", nView )
 
-   END SEQUENCE
+            end if   
 
-   ErrorBlock( oBlock )
+         end if
 
-   if !Empty( dbfAlbCliT ) .and. ( dbfAlbCliT )->( Used() )
-      ( dbfAlbCliT )->( dbCloseArea() )
+         if Empty( ( TDataView():Get( "AlbCliT", nView ) )->cNomCli ) .and. !Empty ( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli )
+            
+            if TDataView():Lock( "AlbCliT", nView )
+
+               ( TDataView():Get( "AlbCliT", nView ) )->cNomCli    := RetFld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "Titulo" )
+
+               TDataView():UnLock( "AlbCliT", nView )
+
+            end if   
+         
+         end if
+
+         /*
+         Rellenamos los campos de totales-----------------------------------------
+         */
+
+         if ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb == 0 .and.;
+            TDataView():Lock( "AlbCliT", nView )
+
+            aTotAlb                 := aTotAlbCli( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, TDataView():Get( "AlbCliT", nView ), dbfAlbCliL, dbfIva, dbfDiv, ( TDataView():Get( "AlbCliT", nView ) )->cDivAlb )
+
+            ( TDataView():Get( "AlbCliT", nView ) )->nTotNet := aTotAlb[1]
+            ( TDataView():Get( "AlbCliT", nView ) )->nTotIva := aTotAlb[2]
+            ( TDataView():Get( "AlbCliT", nView ) )->nTotReq := aTotAlb[3]
+            ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb := aTotAlb[4]
+
+            TDataView():UnLock( "AlbCliT", nView )
+
+         end if
+
+         /*
+         Si el albarán está creado desde un pedido le revisamos el estado---------
+         */
+
+         aAdd( aNumPed, ( TDataView():Get( "AlbCliT", nView ) )->cNumPed )
+
+         ( TDataView():Get( "AlbCliT", nView ) )->( dbSkip() )
+
+      end while
+
+      ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
+
+      /*
+      Lineas----------------------------------------------------------------------
+      */
+
+      ( dbfAlbCliL )->( ordSetFocus( 0 ) )
+      ( dbfAlbCliL )->( dbGoTop() )
+
+      while !( dbfAlbCliL )->( eof() )
+
+         if Empty( ( dbfAlbCliL )->cSufAlb )
+            
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cSufAlb    := "00"
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if
+
+         end if
+
+         if !Empty( ( dbfAlbCliL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumPed ) ) != 12
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cNumPed := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if   
+         end if
+
+         if !Empty( ( dbfAlbCliL )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumSat ) ) != 12
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cNumSat := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
+               ( dbfAlbCliL )->( dbUnlock() )
+            end if   
+         end if
+
+         if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cLote      := AllTrim( Str( ( dbfAlbCliL )->nLote ) )
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if
+         end if
+
+         if Empty( ( dbfAlbCliL )->nValImp )
+            cCodImp                    := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
+            if !Empty( cCodImp )
+               if dbLock( dbfAlbCliL )
+                  ( dbfAlbCliL )->nValImp := oNewImp:nValImp( cCodImp )
+                  ( dbfAlbCliL )->( dbUnlock() )
+               end if   
+            end if
+         end if
+
+         if Empty( ( dbfAlbCliL )->nVolumen )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->nVolumen   := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
+               ( dbfAlbCliL )->( dbUnlock() )
+            end if
+         end if
+
+         if ( dbfAlbCliL )->lIvaLin != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "lIvaInc" )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->lIvaLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "lIvaInc" )
+               ( dbfAlbCliL )->( dbUnlock() )
+            end if
+         end if
+
+         if !Empty( ( dbfAlbCliL )->cRef ) .and. Empty( ( dbfAlbCliL )->cCodFam )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cCodFam    := RetFamArt( ( dbfAlbCliL )->cRef, dbfArticulo )
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if   
+         end if
+
+         if !Empty( ( dbfAlbCliL )->cRef ) .and. !Empty( ( dbfAlbCliL )->cCodFam )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cGrpFam    := cGruFam( ( dbfAlbCliL )->cCodFam, dbfFamilia )
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if
+         end if
+
+         if Empty( ( dbfAlbCliL )->nReq )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->nReq       := nPReq( dbfIva, ( dbfAlbCliL )->nIva )
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if
+         end if
+
+         if ( dbfAlbCliL )->lFacturado != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "lFacturado" )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->lFacturado := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "lFacturado" )
+               ( dbfAlbCliL )->( dbUnlock() )
+            end if
+         end if
+
+         if ( dbfAlbCliL )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "dFecAlb" )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "dFecAlb" )
+               ( dbfAlbCliL )->( dbUnlock() )
+            end if   
+         end if
+
+         if ( dbfAlbCliL )->cCodCli != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "cCodCli" )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cCodCli    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "cCodCli" )
+               ( dbfAlbCliL )->( dbUnlock() )
+            end if   
+         end if
+
+         if Empty( ( dbfAlbCliL )->cAlmLin )
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "cCodAlm" )
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if   
+         end if
+
+         // Numeros de serie------------------------------------------------------
+
+         if !Empty( ( dbfAlbCliL )->mNumSer )
+            aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
+            for each cNumSer in aNumSer
+               ( dbfAlbCliS )->( dbAppend() )
+               ( dbfAlbCliS )->cSerAlb    := ( dbfAlbCliL )->cSerAlb
+               ( dbfAlbCliS )->nNumAlb    := ( dbfAlbCliL )->nNumAlb
+               ( dbfAlbCliS )->cSufAlb    := ( dbfAlbCliL )->cSufAlb
+               ( dbfAlbCliS )->cRef       := ( dbfAlbCliL )->cRef
+               ( dbfAlbCliS )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
+               ( dbfAlbCliS )->nNumLin    := ( dbfAlbCliL )->nNumLin
+               ( dbfAlbCliS )->lFacturado := ( dbfAlbCliL )->lFacturado
+               ( dbfAlbCliS )->cNumSer    := cNumSer
+               ( dbfAlbCliS )->( dbUnLock() )
+            next
+            
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->mNumSer    := ""
+            end if
+              
+         end if
+
+         ( dbfAlbCliL )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+      ( dbfAlbCliL )->( ordSetFocus( 1 ) )
+
+      // Incidencias--------------------------------------------------------------
+
+      ( dbfAlbCliI )->( ordSetFocus( 0 ) )
+      ( dbfAlbCliI )->( dbGoTop() )
+
+      while !( dbfAlbCliI )->( eof() )
+
+         if Empty( ( dbfAlbCliI )->cSufAlb )
+            if dbLock( dbfAlbCliI )
+               ( dbfAlbCliI )->cSufAlb    := "00"
+               ( dbfAlbCliI )->( dbUnLock() )
+            end if   
+         end if
+
+         ( dbfAlbCliI )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+      ( dbfAlbCliI )->( OrdSetFocus( 1 ) )
+
+      // Series ---------------------------------------------------------------
+
+      ( dbfAlbCliS )->( ordSetFocus( 0 ) )
+      ( dbfAlbCliS )->( dbGoTop() )
+
+      while !( dbfAlbCliS )->( eof() )
+
+         if Empty( ( dbfAlbCliS )->cSufAlb )
+            if dbLock( dbfAlbCliS )
+               ( dbfAlbCliS )->cSufAlb    := "00"
+               ( dbfAlbCliS )->( dbUnLock() )
+            end if   
+         end if
+
+         if ( dbfAlbCliS )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "dFecAlb" )
+            if dbLock( dbfAlbCliS )
+               ( dbfAlbCliS )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, TDataView():Get( "AlbCliT", nView ), "dFecAlb" )
+               ( dbfAlbCliS )->( dbUnlock() )
+            end
+         end if
+
+         ( dbfAlbCliS )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+      ( dbfAlbCliS )->( ordSetFocus( 1 ) )
+
+      CloseFiles()
+
    end if
-
-   if !Empty( dbfAlbCliL ) .and. ( dbfAlbCliL )->( Used() )
-      ( dbfAlbCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliS ) .and. ( dbfAlbCliS )->( Used() )
-      ( dbfAlbCliS )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliI ) .and. ( dbfAlbCliI )->( Used() )
-      ( dbfAlbCliI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliP ) .and. ( dbfAlbCliP )->( Used() )
-      ( dbfAlbCliP )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
-      ( dbfFamilia )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfClient ) .and. ( dbfClient )->( Used() )
-      ( dbfClient )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
-      ( dbfIva )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
-      ( dbfDiv )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliT ) .and. ( dbfPedCliT )->( Used() )
-      ( dbfPedCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliL ) .and. ( dbfPedCliL )->( Used() )
-      ( dbfPedCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliL ) .and. ( dbfFacCliL )->( Used() )
-      ( dbfFacCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( oNewImp )
-      oNewImp:end()
-   end if
-
-   oNewImp              := nil
 
    /*
    Estado de los pedidos-------------------------------------------------------
@@ -15729,9 +15725,9 @@ FUNCTION nTotUAlbCli( uTmpLin, nDec, nVdv )
       case IsArray( uTmpLin )
 
          if uTmpLin[ __LALQUILER ]
-            nCalculo    := uTmpLin[ _NSATALQ ]
+            nCalculo    := uTmpLin[ _NPREALQ ]
          else
-            nCalculo    := uTmpLin[ _NSATUNIT ]
+            nCalculo    := uTmpLin[ _NPREUNIT ]
          end if
 
    end case
@@ -15804,11 +15800,11 @@ FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
    local oBlock
    local oError
-   local dbfAlbCliT
-   local dbfAlbCliL
-   local dbfAlbCliI
-   local dbfAlbCliD
-   local dbfAlbCliP
+   local cAlbCliT
+   local cAlbCliL
+   local cAlbCliI
+   local cAlbCliD
+   local cAlbCliP
    local oldAlbCliT
    local oldAlbCliL
    local oldAlbCliI
@@ -15832,20 +15828,20 @@ FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
       oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-      ( dbfAlbCliT )->( ordListAdd( cPath + "ALBCLIT.CDX" ) )
+      dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @cAlbCliT ), .f. )
+      ( cAlbCliT )->( ordListAdd( cPath + "ALBCLIT.CDX" ) )
 
-      dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
-      ( dbfAlbCliL )->( ordListAdd( cPath + "ALBCLIL.CDX" ) )
+      dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @cAlbCliL ), .f. )
+      ( cAlbCliL )->( ordListAdd( cPath + "ALBCLIL.CDX" ) )
 
-      dbUseArea( .t., cDriver(), cPath + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @dbfAlbCliI ), .f. )
-      ( dbfAlbCliI )->( ordListAdd( cPath + "AlbCliI.Cdx"  ) )
+      dbUseArea( .t., cDriver(), cPath + "AlbCliI.Dbf", cCheckArea( "AlbCliI", @cAlbCliI ), .f. )
+      ( cAlbCliI )->( ordListAdd( cPath + "AlbCliI.Cdx"  ) )
 
-      dbUseArea( .t., cDriver(), cPath + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @dbfAlbCliD ), .f. )
-      ( dbfAlbCliD )->( ordListAdd( cPath + "AlbCliD.Cdx"  ) )
+      dbUseArea( .t., cDriver(), cPath + "AlbCliD.Dbf", cCheckArea( "AlbCliD", @cAlbCliD ), .f. )
+      ( cAlbCliD )->( ordListAdd( cPath + "AlbCliD.Cdx"  ) )
 
-      dbUseArea( .t., cDriver(), cPath + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @dbfAlbCliP ), .f. )
-      ( dbfAlbCliP )->( ordListAdd( cPath + "AlbCliP.Cdx"  ) )
+      dbUseArea( .t., cDriver(), cPath + "AlbCliP.Dbf", cCheckArea( "AlbCliP", @cAlbCliP ), .f. )
+      ( cAlbCliP )->( ordListAdd( cPath + "AlbCliP.Cdx"  ) )
 
       dbUseArea( .t., cDriver(), cPathOld + "AlbCLIT.DBF", cCheckArea( "AlbCLIT", @oldAlbCliT ), .f. )
       ( oldAlbCliT )->( ordListAdd( cPathOld + "AlbCLIT.CDX"  ) )
@@ -15865,32 +15861,32 @@ FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
       while !( oldAlbCliT )->( eof() )
 
          if eval( bFor, oldAlbCliT )
-            dbCopy( oldAlbCliT, dbfAlbCliT, .t. )
+            dbCopy( oldAlbCliT, cAlbCliT, .t. )
 
             if ( oldAlbCliL )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
-               while ( oldAlbCliL )->CSERALB + Str( ( oldAlbCliL )->NNUMALB ) + ( oldAlbCliL )->CSUFALB == (oldAlbCliT)->CSERALB + Str( (dbfAlbCliT)->NNUMALB ) + (dbfAlbCliT)->CSUFALB .and. !(oldAlbCliL)->( eof() )
-                  dbCopy( oldAlbCliL, dbfAlbCliL, .t. )
+               while ( oldAlbCliL )->CSERALB + Str( ( oldAlbCliL )->NNUMALB ) + ( oldAlbCliL )->CSUFALB == (oldAlbCliT)->CSERALB + Str( (cAlbCliT)->NNUMALB ) + (cAlbCliT)->CSUFALB .and. !(oldAlbCliL)->( eof() )
+                  dbCopy( oldAlbCliL, cAlbCliL, .t. )
                   ( oldAlbCliL )->( dbSkip() )
                end while
             end if
 
             if ( oldAlbCliI )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
-               while ( oldAlbCliI )->CSERALB + Str( ( oldAlbCliI )->NNUMALB ) + ( oldAlbCliI )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
-                  dbCopy( oldAlbCliI, dbfAlbCliI, .t. )
+               while ( oldAlbCliI )->CSERALB + Str( ( oldAlbCliI )->NNUMALB ) + ( oldAlbCliI )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( cAlbCliT )->NNUMALB ) + ( cAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
+                  dbCopy( oldAlbCliI, cAlbCliI, .t. )
                   ( oldAlbCliI )->( dbSkip() )
                end while
             end if
 
             if ( oldAlbCliD )->( dbSeek( (oldAlbCliT)->CSERALB + Str( (oldAlbCliT)->NNUMALB ) + (oldAlbCliT)->CSUFALB ) )
-               while ( oldAlbCliD )->CSERALB + Str( ( oldAlbCliD )->NNUMALB ) + ( oldAlbCliD )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
-                  dbCopy( oldAlbCliD, dbfAlbCliD, .t. )
+               while ( oldAlbCliD )->CSERALB + Str( ( oldAlbCliD )->NNUMALB ) + ( oldAlbCliD )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( cAlbCliT )->NNUMALB ) + ( cAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
+                  dbCopy( oldAlbCliD, cAlbCliD, .t. )
                   ( oldAlbCliD )->( dbSkip() )
                end while
             end if
 
             if ( oldAlbCliP )->( dbSeek( ( oldAlbCliT )->CSERALB + Str( ( oldAlbCliT )->NNUMALB ) + ( oldAlbCliT )->CSUFALB ) )
-               while ( oldAlbCliP )->CSERALB + Str( ( oldAlbCliP )->NNUMALB ) + ( oldAlbCliP )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( dbfAlbCliT )->NNUMALB ) + ( dbfAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
-                  dbCopy( oldAlbCliP, dbfAlbCliP, .t. )
+               while ( oldAlbCliP )->CSERALB + Str( ( oldAlbCliP )->NNUMALB ) + ( oldAlbCliP )->CSUFALB == ( oldAlbCliT )->CSERALB + Str( ( cAlbCliT )->NNUMALB ) + ( cAlbCliT )->CSUFALB .and. !( oldAlbCliI )->( eof() )
+                  dbCopy( oldAlbCliP, cAlbCliP, .t. )
                   ( oldAlbCliP )->( dbSkip() )
                end while
             end if
@@ -15905,13 +15901,13 @@ FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
       Reemplaza la antigua sesion----------------------------------------------
       */
 
-      ( dbfAlbCliT )->( dbEval( {|| ( dbfAlbCliT )->cTurAlb := Space( 6 ) },,,,, .f. ) )
+      ( cAlbCliT )->( dbEval( {|| ( cAlbCliT )->cTurAlb := Space( 6 ) },,,,, .f. ) )
 
 
-      ( dbfAlbCliT )->( dbCloseArea() )
-      ( dbfAlbCliL )->( dbCloseArea() )
-      ( dbfAlbCliI )->( dbCloseArea() )
-      ( dbfAlbCliD )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
+      ( cAlbCliL )->( dbCloseArea() )
+      ( cAlbCliI )->( dbCloseArea() )
+      ( cAlbCliD )->( dbCloseArea() )
       ( dbfAlbCliP )->( dbCloseArea() )
 
       ( oldAlbCliT )->( dbCloseArea() )
@@ -15935,7 +15931,7 @@ RETURN .t.
 
 FUNCTION rxAlbCli( cPath, oMeter )
 
-   local dbfAlbCliT
+   local cAlbCliT
 
    DEFAULT cPath  := cPatEmp()
 
@@ -15957,202 +15953,201 @@ FUNCTION rxAlbCli( cPath, oMeter )
    fEraseIndex( cPath + "ALBCLIP.CDX" )
    fEraseIndex( cPath + "ALBCLIS.CDX" )
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @cAlbCliT ), .f. )
 
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
+   if !( cAlbCliT )->( neterr() )
+      ( cAlbCliT )->( __dbPack() )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cObra", "cCodObr + Dtos( dFecAlb )", {|| Field->cCodObr + Dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cObra", "cCodObr + Dtos( dFecAlb )", {|| Field->cCodObr + Dtos( Field->dFecAlb ) } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCodAge", "cCodAge + Dtos( dFecAlb )", {|| Field->cCodAge + Dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCodAge", "cCodAge + Dtos( dFecAlb )", {|| Field->cCodAge + Dtos( Field->dFecAlb ) } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODSUALB", "CCODSUALB", {|| Field->CCODSUALB } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODSUALB", "CCODSUALB", {|| Field->CCODSUALB } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LFACTURADO", "LFACTURADO", {|| Field->LFACTURADO } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LFACTURADO", "LFACTURADO", {|| Field->LFACTURADO } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cNumFac", "CNUMFAC", {|| Field->CNUMFAC }, ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cNumFac", "CNUMFAC", {|| Field->CNUMFAC }, ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CTURALB", "CTURALB + CSUFALB + CCODCAJ", {|| Field->CTURALB + Field->CSUFALB + Field->CCODCAJ } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CTURALB", "CTURALB + CSUFALB + CCODCAJ", {|| Field->CTURALB + Field->CSUFALB + Field->CCODCAJ } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMORD", "Str( nNumOrd ) + cSufOrd", {|| Str( Field->nNumOrd ) + Field->cSufOrd } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMORD", "Str( nNumOrd ) + cSufOrd", {|| Str( Field->nNumOrd ) + Field->cSufOrd } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODTRN", "CCODTRN", {|| Field->CCODTRN } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODTRN", "CCODTRN", {|| Field->CCODTRN } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ))
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ))
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
 
-      ( dbfAlbCliT )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @cAlbCliT ), .f. )
 
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
+   if !( cAlbCliT )->( neterr() )
+      ( cAlbCliT )->( __dbPack() )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRef", "cRef + cCodPr1 + cCodPr2 + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRef", "cRef + cCodPr1 + cCodPr2 + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "Lote", "cLote" , {|| Field->cLote } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "Lote", "cLote" , {|| Field->cLote } ) )
 
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCLIL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCLIL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedDet", "cNumPed + cRef + cCodPr1 + cCodPr2 + cRefPrv", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cRefPrv } ) ) // + cDetalle
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedDet", "cNumPed + cRef + cCodPr1 + cCodPr2 + cRefPrv", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cRefPrv } ) ) // + cDetalle
 
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
 
-      ( dbfAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
+      ( cAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
-
-      ( dbfAlbCliT )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
    // Pagos de albaranes
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @cAlbCliT ), .f. )
 
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
+   if !( cAlbCliT )->( neterr() )
+      ( cAlbCliT )->( __dbPack() )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB + STR( NNUMREC )", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB + STR( Field->NNUMREC ) } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB + STR( NNUMREC )", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB + STR( Field->NNUMREC ) } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CTURREC", "cTurRec + cSufAlb + cCodCaj", {|| Field->cTurRec + Field->cSufAlb + Field->cCodCaj } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CTURREC", "cTurRec + cSufAlb + cCodCaj", {|| Field->cTurRec + Field->cSufAlb + Field->cCodCaj } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CCODCLI", "cCodCli", {|| Field->cCodCli } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIP.CDX", "CCODCLI", "cCodCli", {|| Field->cCodCli } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.CDX", "DENTREGA", "dEntrega", {|| Field->dEntrega } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliP.CDX", "DENTREGA", "dEntrega", {|| Field->dEntrega } ) )
 
-      ( dbfAlbCliT )->( ordCondSet("!Deleted() .and. !Field->lPasado", {|| !Deleted() .and. !Field->lPasado } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "cEPaisIBAN + cECtrlIBAN + cEntEmp + cSucEmp + cDigEmp + cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
+      ( cAlbCliT )->( ordCondSet("!Deleted() .and. !Field->lPasado", {|| !Deleted() .and. !Field->lPasado } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "cEPaisIBAN + cECtrlIBAN + cEntEmp + cSucEmp + cDigEmp + cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliI.DBF", cCheckArea( "AlbCliI", @dbfAlbCliT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "AlbCliI.DBF", cCheckArea( "AlbCliI", @cAlbCliT ), .f. )
 
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
+   if !( cAlbCliT )->( neterr() )
+      ( cAlbCliT )->( __dbPack() )
 
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliI.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliI.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliD.DBF", cCheckArea( "AlbCliD", @dbfAlbCliT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "AlbCliD.DBF", cCheckArea( "AlbCliD", @cAlbCliT ), .f. )
 
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
+   if !( cAlbCliT )->( neterr() )
+      ( cAlbCliT )->( __dbPack() )
 
-      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliD.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliD.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliS.Dbf", cCheckArea( "AlbCliS", @dbfAlbCliT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "AlbCliS.Dbf", cCheckArea( "AlbCliS", @cAlbCliT ), .f. )
 
-   if !( dbfAlbCliT )->( neterr() )
-      ( dbfAlbCliT )->( __dbPack() )
+   if !( cAlbCliT )->( neterr() )
+      ( cAlbCliT )->( __dbPack() )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
+      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( dbfAlbCliT )->( dbCloseArea() )
+      ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de albaranes de clientes" )
    end if
@@ -16491,7 +16486,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
    local nDescuentosLineas := 0
    local lOperarPntVer     := .f.
 
-   DEFAULT cAlbCliT        := dbfAlbCliT
+   DEFAULT cAlbCliT        := TDataView():Get( "AlbCliT", nView )
    DEFAULT cAlbCliL        := dbfAlbCliL
    DEFAULT cAlbaran        := ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb
    DEFAULT cIva            := dbfIva
@@ -17461,7 +17456,7 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
 
    DEFAULT lFacturado         := .f.
    DEFAULT cNumFac            := Space( 12 )
-   DEFAULT cAlbCliT           := dbfAlbCliT
+   DEFAULT cAlbCliT           := TDataView():Get( "AlbCliT", nView )
    DEFAULT cAlbCliL           := dbfAlbCliL
    DEFAULT cAlbCliS           := dbfAlbCliS
 

@@ -4801,6 +4801,8 @@ CLASS TDataView
    METHOD ScanDatabase( cDatabase )
    METHOD OpenDatabase( oDataTable )
 
+   METHOD AlbaranesClientes( nView )         INLINE ( ::Get( "AlbCliT", nView ) )
+
 ENDCLASS
 
    //---------------------------------------------------------------------------//
