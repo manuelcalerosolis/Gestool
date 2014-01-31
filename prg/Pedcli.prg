@@ -7140,29 +7140,45 @@ STATIC FUNCTION RecPedCli( aTmpPed )
          */
 
          do case
-         case  lSeekAtpArt( aTmpPed[ _CCODCLI ] + ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2, aTmpPed[ _DFECPED ], dbfCliAtp ) .and. ;
-               ( dbfCliAtp )->lAplPed
+         case lBuscarAtipicaArticulo( aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp ) .and. ;
+            ( dbfCliAtp )->lAplPed
 
-               nImpAtp  := nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
-               if nImpAtp != 0
-                  ( dbfTmpLin )->nPreDiv  := nImpAtp
-               end if
+            nImpAtp  						:= nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
+            if nImpAtp != 0
+               ( dbfTmpLin )->nPreDiv  := nImpAtp
+            end if
 
-               nImpAtp  := nDtoAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
-               if nImpAtp != 0
-                  ( dbfTmpLin )->nDto     := nImpAtp
-               end if
+            ( dbfTmpLin )->nDto        := nDtoAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
 
-               if ( dbfCliAtp )->nDprArt != 0
-                  ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt
-               end if
+            if ( dbfCliAtp )->nDprArt != 0
+               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt
+            end if
 
-               if ( dbfCliAtp )->nComAge != 0
-                  ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge
-               end if
+            if ( dbfCliAtp )->nComAge != 0
+               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge
+            end if
+
+         case lBuscarAtipicaFamilia( aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], ( dbfTmpLin )->cCodFam, dbfCliAtp ) .and. ;
+            ( dbfCliAtp )->lAplPed
+
+            if ( dbfCliAtp )->nDtoArt != 0
+               ( dbfTmpLin )->nDto     := ( dbfCliAtp )->nDtoArt 
+            end if 
+
+            if ( dbfCliAtp )->nDprArt != 0
+               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt 
+            end if
+
+            if ( dbfCliAtp )->nComAge != 0
+               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge 
+            end if
+
+            if ( dbfCliAtp )->nDtoDiv != 0
+               ( dbfTmpLin )->nDtoDiv  := ( dbfCliAtp )->nDtoDiv 
+            end if
 
          /*
-         Precios en tarifas
+         Precios en tarifas----------------------------------------------------
          */
 
          case !Empty( aTmpPed[ _CCODTAR ] )
@@ -17943,56 +17959,47 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            //--Atipicas de clientes por artículos--//
+            /*
+            Atipicas de clientes por artículo----------------------------------
+            */
 
             do case
-            case  lSeekAtpArt( aTmpPed[ _CCODCLI ] + aTmp[ _CREF ], aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], dFecPed, dbfCliAtp ) .AND. ;
-                  ( dbfCliAtp )->lAplPed
+            case lBuscarAtipicaArticulo( aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
+               ( dbfCliAtp )->lAplPed
 
                nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
                if nImpAtp  != 0
                   aGet[ _NPREDIV ]:cText( nImpAtp )
                end if
 
-               /*
-               Descuentos por tarifas de precios-------------------------------
-               */
+               // Descuentos por tarifas de precios----------------------------
 
-               nImpAtp     := nDtoAtp( nTarOld, dbfCliAtp )
-               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/  
-               //if nImpAtp  != 0
-                  aGet[ _NDTO ]:cText( nImpAtp )
-               //end if
+               aGet[ _NDTO ]:cText( nDtoAtp( nTarOld, dbfCliAtp ) )
 
-               /*
-               Descuento por promocion-----------------------------------------
-               */
+               // Descuento por promocion--------------------------------------
 
                if ( dbfCliAtp )->nDprArt != 0
-                  aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
+                  aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
                end if
 
                if ( dbfCliAtp )->nComAge != 0
-                  aGet[_NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
+                  aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0
-                  if !Empty( aGet[ _NDTODIV ] )
+                  if aGet[ _NDTODIV ] != nil
                      aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
                   else
-                     aGet[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv
+                     aTmp[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv
                   end if
                end if
 
-            //--Atipicas de clientes por familias--//
+            // Atipicas de clientes por familias-------------------------------
 
-            case  lSeekAtpFam( aTmpPed[ _CCODCLI ] + aTmp[ _CCODFAM ], dFecPed, dbfCliAtp ) .and. ;
-                  ( dbfCliAtp )->lAplPed
+            case lBuscarAtipicaFamilia( aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], aTmp[ _CCODFAM ], dbfCliAtp ) .and. ;
+               ( dbfCliAtp )->lAplPed
 
-               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/
-               //if ( dbfCliAtp )->nDtoArt != 0
-                  aGet[_NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
-               //end if
+               aGet[ _NDTO ]:cText( ( dbfCliAtp )->nDtoArt )
 
                if ( dbfCliAtp )->nDprArt != 0
                   aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
@@ -18003,7 +18010,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0
-                  if !Empty( aGet[ _NDTODIV ] )
+                  if aGet[ _NDTODIV ] != nil
                      aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
                   else
                      aGet[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv

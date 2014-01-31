@@ -8830,27 +8830,25 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          //--Atipicas de clientes por articulos--//
 
          do case
-         case  lSeekAtpArt( aTik[ _CCLITIK ] + cCodArt, aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], aTik[ _DFECTIK ], dbfCliAtp ) .and. ;
-               ( dbfCliAtp )->lAplFac
+         case lBuscarAtipicaArticulo( aTik[ _CCLITIK ], aTik[ _CCODGRP ], aTik[ _DFECTIK ], aTmp[ _CCBATIL ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp )
+
+            // Precios---------------------------------------------------------
 
             nImpOfe     := nImpAtp( aTik[ _NTARIFA ], dbfCliAtp, aGet[ _NPVPTIL ], aTmp[ _NIVATIL ] )
             if nImpOfe  != 0
                aGet[ _NPVPTIL ]:cText( nImpOfe )
             end if
 
-            /*
-            Descuentos por tarifas de precios----------------------------------
-            */
+            // Descuentos lineal tarifas de precios----------------------------
 
             nImpOfe     := nDtoAtp( aTik[ _NTARIFA ], dbfCliAtp )
-            /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
-            //if nImpOfe  != 0
-               if !Empty( aGet[ _NDTOLIN ] )
-                  aGet[ _NDTOLIN ]:cText( nImpOfe )
-               else
-                  aTmp[ _NDTOLIN ]     := nImpOfe
-               end if
-            //end if
+            if !Empty( aGet[ _NDTOLIN ] )
+               aGet[ _NDTOLIN ]:cText( nImpOfe )
+            else
+               aTmp[ _NDTOLIN ]        := nImpOfe
+            end if
+
+            // Descuentos porcentual tarifas de precios------------------------
 
             if ( dbfCliAtp )->nDtoDiv != 0
                if !Empty( aGet[ _NDTODIV ] )
@@ -8860,20 +8858,15 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
                end if
             end if
 
-         /*
-         Atipicas de clientes por familias-------------------------------------
-         */
+         // Atipicas de clientes por familias----------------------------------
 
-         case  lSeekAtpFam( aTik[ _CCLITIK ] + cCodFam, aTik[ _DFECTIK ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplFac
+         case lBuscarAtipicaFamilia( aTik[ _CCLITIK ], aTik[ _CCODGRP ], aTik[ _DFECTIK ], aTmp[ _CCODFAM ], dbfCliAtp )
 
-            /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
-            //if ( dbfCliAtp )->nDtoArt != 0
-               if !Empty( aGet[ _NDTOLIN ] )
-                  aGet[ _NDTOLIN ]:cText( ( dbfCliAtp )->nDtoArt )
-               else
-                  aTmp[ _NDTOLIN ]     := ( dbfCliAtp )->nDtoArt
-               end if
-            //end if
+            if !Empty( aGet[ _NDTOLIN ] )
+               aGet[ _NDTOLIN ]:cText( ( dbfCliAtp )->nDtoArt )
+            else
+               aTmp[ _NDTOLIN ]     := ( dbfCliAtp )->nDtoArt
+            end if
 
             if ( dbfCliAtp )->nDtoDiv != 0
                if !Empty( aGet[ _NDTODIV ] )
@@ -8883,7 +8876,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
                end if
             end if
 
-         //--Tarifas de precios--//
+         //Tarifas de precios--------------------------------------------------
 
          case !Empty( aTik[ _CCODTAR ] )
 
