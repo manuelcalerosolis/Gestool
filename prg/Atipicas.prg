@@ -947,6 +947,8 @@ METHOD ChangeNaturaleza()
       ::oCodigoFamilia:Hide()
       ::oNombreFamilia:Hide()
 
+      ::oChangeCostoParticular:Show()
+
       ::oCostoParticular:Show()
       ::oPrecioCompra:Show()
       ::oCostoParticular:Show()
@@ -981,6 +983,8 @@ METHOD ChangeNaturaleza()
 
       ::oCodigoFamilia:Show()
       ::oNombreFamilia:Show()
+
+      ::oChangeCostoParticular:Hide()
 
       ::oCostoParticular:Hide()
       ::oPrecioCompra:Hide()

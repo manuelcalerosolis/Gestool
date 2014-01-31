@@ -6239,34 +6239,26 @@ end if
             */
 
             do case
-            case  lSeekAtpArt( aTmpSat[ _CCODCLI ] + cCodArt, aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], aTmpSat[ _DFECSAT ], dbfCliAtp ) .AND. ;
-                  ( dbfCliAtp )->lAplSat
+            case lBuscarAtipicaArticulo( aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
+               ( dbfCliAtp )->lAplSat
 
                nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
                if nImpAtp  != 0
                   aGet[ _NPREDIV ]:cText( nImpAtp )
                end if
 
-               /*
-               Descuentos por tarifas de precios----------------------------
-               */
+               // Descuentos por tarifas de precios----------------------------
 
-               nImpAtp     := nDtoAtp( nTarOld, dbfCliAtp )
-               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
-               //if nImpAtp  != 0
-                  aGet[ _NDTO ]:cText( nImpAtp )
-               //end if
+               aGet[ _NDTO ]:cText( nDtoAtp( nTarOld, dbfCliAtp ) )
 
-               /*
-               Descuento por promocion--------------------------------------
-               */
+               // Descuento por promocion--------------------------------------
 
                if ( dbfCliAtp )->nDprArt != 0
-                  aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
+                  aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
                end if
 
                if ( dbfCliAtp )->nComAge != 0
-                  aGet[_NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
+                  aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
                end if
 
                if ( dbfCliAtp )->nDtoDiv != 0
@@ -6277,17 +6269,12 @@ end if
                   end if
                end if
 
-            /*
-            Atipicas de clientes por familias
-            */
+            // Atipicas de clientes por familias-------------------------------
 
-            case lSeekAtpFam( aTmpSat[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpSat[ _DFECSAT ], dbfCliAtp ) .and. ;
-                  ( dbfCliAtp )->lAplSat
+            case lBuscarAtipicaFamilia( aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], aTmp[ _CCODFAM ], dbfCliAtp ) .and. ;
+               ( dbfCliAtp )->lAplSat
 
-               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
-               //if ( dbfCliAtp )->nDtoArt != 0
-                  aGet[_NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
-               //end if
+               aGet[ _NDTO ]:cText( ( dbfCliAtp )->nDtoArt )
 
                if ( dbfCliAtp )->nDprArt != 0
                   aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
@@ -8962,17 +8949,18 @@ STATIC FUNCTION RecSatCli( aTmpSat )
    local nRecno
    local cCodFam
 
-   if !ApoloMsgNoYes( "¡Atención!,"                                      + CRLF + ;
-                  "todos los precios se recalcularán en función de"  + CRLF + ;
-                  "los valores en las bases de datos.",;
-                  "¿Desea proceder?" )
+   if !ApoloMsgNoYes(   "¡Atención!,"                                      + CRLF + ;
+                        "todos los precios se recalcularán en función de"  + CRLF + ;
+                        "los valores en las bases de datos.",;
+                        "¿Desea proceder?" )
       return nil
    end if
 
    nRecno         := ( dbfTmpLin )->( RecNo() )
 
    ( dbfTmpLin )->( dbGotop() )
-   ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+
+   ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
 
    while !( dbfTmpLin )->( eof() )
 
@@ -9000,46 +8988,103 @@ STATIC FUNCTION RecSatCli( aTmpSat )
          Tomamos los precios de la base de datos de articulos---------------------
          */
 
-         ( dbfTmpLin )->nPreDiv  := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+         ( dbfTmpLin )->nPreDiv     := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
 
          /*
          Linea por contadores-----------------------------------------------------
          */
 
-         ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
-         ( dbfTmpLin )->nCosDiv  := nCosto( nil, dbfArticulo, dbfKit )
+         ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
+         ( dbfTmpLin )->nCosDiv     := nCosto( nil, dbfArticulo, dbfKit )
 
          /*
          Punto verde--------------------------------------------------------------
          */
 
-         ( dbfTmpLin )->nPntVer  := ( dbfArticulo )->nPntVer1
+         ( dbfTmpLin )->nPntVer     := ( dbfArticulo )->nPntVer1
 
          /*
          Chequeamos situaciones especiales y comprobamos las fechas
          */
 
          do case
-         case lSeekAtpArt( aTmpSat[ _CCODCLI ] + ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2, aTmpSat[ _DFECSAT ], dbfCliAtp ) .and. ;
-               ( dbfCliAtp )->lAplSat
+         case lBuscarAtipicaArticulo( aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp ) .and. ;
+            ( dbfCliAtp )->lAplSat
 
-               nImpAtp  := nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
-               if nImpAtp != 0
-                  ( dbfTmpLin )->nPreDiv  := nImpAtp
-               end if
+            nImpAtp  := nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
+            if nImpAtp != 0
+               ( dbfTmpLin )->nPreDiv  := nImpAtp
+            end if
 
-               nImpAtp  := nDtoAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
-               if nImpAtp != 0
-                  ( dbfTmpLin )->nDto     := nImpAtp
-               end if
+            ( dbfTmpLin )->nDto        := nDtoAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
 
-               if ( dbfCliAtp )->nDprArt != 0
-                  ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt
-               end if
+            if ( dbfCliAtp )->nDprArt != 0
+               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt
+            end if
 
-               if ( dbfCliAtp )->nComAge != 0
-                  ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge
-               end if
+            if ( dbfCliAtp )->nComAge != 0
+               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge
+            end if
+
+         case lBuscarAtipicaFamilia( aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], ( dbfTmpLin )->cCodFam, dbfCliAtp ) .and. ;
+            ( dbfCliAtp )->lAplSat
+
+            if ( dbfCliAtp )->nDtoArt != 0
+               ( dbfTmpLin )->nDto     := ( dbfCliAtp )->nDtoArt 
+            end if 
+
+            if ( dbfCliAtp )->nDprArt != 0
+               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt 
+            end if
+
+            if ( dbfCliAtp )->nComAge != 0
+               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge 
+            end if
+
+            if ( dbfCliAtp )->nDtoDiv != 0
+               ( dbfTmpLin )->nDtoDiv  := ( dbfCliAtp )->nDtoDiv 
+            end if
+
+         /*
+         Precios en tarifas----------------------------------------------------
+         */
+
+         case !Empty( aTmpSat[ _CCODTAR ] )
+
+            cCodFam  := ( dbfTmpLin )->cCodFam
+
+            nImpOfe  := RetPrcTar( ( dbfTmpLin )->cRef, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
+            if nImpOfe != 0
+               ( dbfTmpLin )->nPreDiv  := nImpOfe
+            end if
+
+            nImpOfe  := RetPctTar( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL )
+            if nImpOfe != 0
+               ( dbfTmpLin )->nDto     := nImpOfe
+            end if
+
+            nImpOfe  := RetComTar( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpSat[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            if nImpOfe != 0
+               ( dbfTmpLin )->nComAge  := nImpOfe
+            end if
+
+            /*
+            Descuento de promoci¢n, esta funci¢n comprueba si existe y si es asi devuelve el descunto de la promoci¢n.
+            */
+
+            nImpOfe  := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpSat[ _DFECSAT ], dbfTarPreL )
+            if nImpOfe != 0
+               ( dbfTmpLin )->nDtoPrm  := nImpOfe
+            end if
+
+            /*
+            Obtenemos el descuento de Agente
+            */
+
+            nDtoAge  := RetDtoAge( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpSat[ _DFECSAT ], aTmpSat[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            if nDtoAge != 0
+               ( dbfTmpLin )->nComAge  := nDtoAge
+            end if
 
          /*
          Precios en tarifas

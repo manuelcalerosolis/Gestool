@@ -11783,7 +11783,7 @@ Return ( lSea )
 
 //---------------------------------------------------------------------------//
 
-Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, cCodFam, dFecDoc, dbfCliAtp )
+Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, dFecDoc, cCodFam, dbfCliAtp )
 
    local lSea     := .f.
    local nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cCodFam" ) )

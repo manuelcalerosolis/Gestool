@@ -6297,7 +6297,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                if !Empty( aGet[ _NDTO ] )
                   aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
                else
-                  aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, dbfFamilia )
+                  aTmp[ _NDTO ]  := nDescuentoFamilia( cCodFam, dbfFamilia )
                end if
 
             end if
@@ -6318,7 +6318,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             if !aTmp[ __LALQUILER ]
 
-               nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[_CCODTAR] )
+               nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[_CCODTAR] )
 
                if nPrePro == 0
                   aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
@@ -6396,9 +6396,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                Descuentos por tarifas de precios-------------------------------
                */
 
-               nImpAtp     := nDtoAtp( nTarOld, dbfCliAtp )
                if nImpAtp != 0
-                  aGet[ _NDTO ]:cText( nImpAtp )
+                  aGet[ _NDTO ]:cText( nDtoAtp( nTarOld, dbfCliAtp ) )
                end if 
 
                /*
@@ -6425,11 +6424,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             Atipicas de clientes por familias----------------------------------
             */
 
-            case lBuscarAtipicaFamilia( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _CCODFAM ], aTmpPre[ _DFECPRE ], dbfCliAtp ) .and. ;
+            case lBuscarAtipicaFamilia( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], aTmp[ _CCODFAM ], dbfCliAtp ) .and. ;
                ( dbfCliAtp )->lAplPre
 
-               msgAlert( ( dbfCliAtp )->nDtoArt, "nDtoArt" )
-               
                aGet[ _NDTO ]:cText( ( dbfCliAtp )->nDtoArt )
 
                if ( dbfCliAtp )->nDprArt != 0
@@ -9205,7 +9202,7 @@ STATIC FUNCTION RecPreCli( aTmpPre )
          */
 
          do case
-         case lBuscarAtipicaArticulo( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp, dbfCliAtp ) .and. ;
+         case lBuscarAtipicaArticulo( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp ) .and. ;
             ( dbfCliAtp )->lAplPre
 
             nImpAtp  := nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
@@ -9224,6 +9221,25 @@ STATIC FUNCTION RecPreCli( aTmpPre )
 
             if ( dbfCliAtp )->nComAge != 0
                ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge
+            end if
+
+         case lBuscarAtipicaFamilia( aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], ( dbfTmpLin )->cCodFam, dbfCliAtp ) .and. ;
+            ( dbfCliAtp )->lAplPre
+
+            if ( dbfCliAtp )->nDtoArt != 0
+               ( dbfTmpLin )->nDto     := ( dbfCliAtp )->nDtoArt 
+            end if 
+
+            if ( dbfCliAtp )->nDprArt != 0
+               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt 
+            end if
+
+            if ( dbfCliAtp )->nComAge != 0
+               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge 
+            end if
+
+            if ( dbfCliAtp )->nDtoDiv != 0
+               ( dbfTmpLin )->nDtoDiv  := ( dbfCliAtp )->nDtoDiv 
             end if
 
          /*
