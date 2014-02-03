@@ -290,10 +290,10 @@ METHOD lResource() CLASS TpvCobros
       SAY con la imformación de los cobros-------------------------------------
       */
 
-      REDEFINE SAY   ::oTextoTotal ;
-         VAR         ::cTextoTotal ;
-         ID          100 ;
-         OF          ::oDlg
+      REDEFINE SAY      ::oTextoTotal ;
+         VAR            ::cTextoTotal ;
+         ID             100 ;
+         OF             ::oDlg
 
       /*
       Boton para cambiar el tipo de impresión----------------------------------
@@ -780,31 +780,39 @@ METHOD GuardaCobros() CLASS TpvCobros
 
    for each sCobro in ::aCobros
 
-      ::oSender:oTiketCobro:Append()
+      if ::oSender:oTiketCobro:Append()
 
-      ::oSender:oTiketCobro:cSerTik    := ::oSender:oTiketCabecera:cSerTik
-      ::oSender:oTiketCobro:cNumTik    := ::oSender:oTiketCabecera:cNumTik
-      ::oSender:oTiketCobro:cSufTik    := ::oSender:oTiketCabecera:cSufTik
+         ::oSender:oTiketCobro:cSerTik    := ::oSender:oTiketCabecera:cSerTik
+         ::oSender:oTiketCobro:cNumTik    := ::oSender:oTiketCabecera:cNumTik
+         ::oSender:oTiketCobro:cSufTik    := ::oSender:oTiketCabecera:cSufTik
 
-      ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
-      ::oSender:oTiketCobro:lCloPgo    := sCobro:lCloseCobro
+         ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
+         ::oSender:oTiketCobro:dPgoTik    := GetSysDate()
+         ::oSender:oTiketCobro:cTimTik    := SubStr( Time(), 1, 5 )
+         ::oSender:oTiketCobro:cCodCaj    := oUser():cCaja()
 
-      ::oSender:oTiketCobro:dPgoTik    := GetSysDate()
-      ::oSender:oTiketCobro:cTimTik    := SubStr( Time(), 1, 5 )
-      ::oSender:oTiketCobro:cCodCaj    := oUser():cCaja()
-      ::oSender:oTiketCobro:cDivPgo    := cDivEmp()
-      ::oSender:oTiketCobro:nVdvPgo    := nChgDiv( cDivEmp(), ::oSender:oDivisas:cAlias )
-      ::oSender:oTiketCobro:cFpgPgo    := sCobro:cCodigo
-      ::oSender:oTiketCobro:nImpTik    := sCobro:nImporte
-      ::oSender:oTiketCobro:nDevTik    := sCobro:nCambio
+         ::oSender:oTiketCobro:cDivPgo    := cDivEmp()
+         ::oSender:oTiketCobro:nVdvPgo    := nChgDiv( cDivEmp(), ::oSender:oDivisas:cAlias )
 
-      if sCobro:lCloseCobro
-         ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
-      else
-         ::oSender:oTiketCobro:cTurPgo := cCurSesion()
+         ::oSender:oTiketCobro:lCloPgo    := sCobro:lCloseCobro
+         ::oSender:oTiketCobro:cFpgPgo    := sCobro:cCodigo
+         ::oSender:oTiketCobro:nImpTik    := sCobro:nImporte
+         ::oSender:oTiketCobro:nDevTik    := sCobro:nCambio
+
+         if sCobro:lCloseCobro
+            ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
+         else
+            ::oSender:oTiketCobro:cTurPgo := cCurSesion()
+         end if
+
+         ::oSender:oTiketCobro:Save()
+
+      else 
+
+         msgStop( "No he podido almacenar los pagos del ticket " + ::oSender:cNumeroTicketFormato() )
+         Return .f.
+
       end if
-
-      ::oSender:oTiketCobro:Save()
 
    next
 
