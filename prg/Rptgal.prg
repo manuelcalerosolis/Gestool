@@ -2436,6 +2436,9 @@ Function TAtipicas()
 
 Return nil 
 
+Function TFacturarLineasAlbaranes()
+
+Return nil
 /*
 //---------------------------------------------------------------------------//
 

@@ -41,6 +41,7 @@ CLASS TpvCobros
       DATA aButtonsMoney
       DATA oBtnLimpiarTexto
       DATA oBtnAddCobro
+      DATA oBtnDelCobro
       DATA oBtnTipoImpresion
       DATA oBtnAceptar
       DATA oBtnCalcMoney
@@ -337,9 +338,9 @@ METHOD lResource() CLASS TpvCobros
          :nDataStrAlign          := 1
          :nHeadStrAlign          := 1
       end with
-   
+   /*
       with object ( ::oBrwPago:AddCol() )
-         :cHeader                := "Restar unidades"
+         :cHeader                := "Eliminar"
          :bStrData               := {|| "" }
          :bOnPostEdit            := {|| .t. }
          :bEditBlock             := {|| ::OnClickEliminarCobro() }
@@ -349,7 +350,7 @@ METHOD lResource() CLASS TpvCobros
          :nHeadBmpAlign          := 1
          :AddResource( "Delete2_24" )
       end with
-   
+   */
       ::oBrwPago:CreateFromResource( 130 )
 
       /*
@@ -422,6 +423,12 @@ METHOD lResource() CLASS TpvCobros
       */
 
       ::oBtnAddCobro       := TButtonBmp():ReDefine( 290, {|| ::OnClickAnnadirCobro() }, ::oDlg,,, .f.,,,, .f., "New32",, )
+
+      /*
+      Boton de eliminar cobro--------------------------------------------------
+      */
+
+      ::oBtnDelCobro       := TButtonBmp():ReDefine( 310, {|| ::OnClickEliminarCobro() }, ::oDlg,,, .f.,,,, .f., "Del32",, )
 
    /*
    Evento a lanzar a inicio----------------------------------------------------

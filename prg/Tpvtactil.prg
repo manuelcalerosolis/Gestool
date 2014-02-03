@@ -938,6 +938,26 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
+   INLINE METHOD ImprimePago()
+
+      do case
+         case ::oTpvCobros:nExit == exitAceptarRegalo
+            ::ImprimeRegalo()
+
+         case ::oTpvCobros:nExit == exitAceptarDesglosado
+            ::ImprimeDesglosado()   
+
+         case ::oTpvCobros:nExit == exitAceptarImprimir
+            ::ImprimeTicket()
+
+      end case
+
+      RETURN ( Self )  
+
+   ENDMETHOD
+
+   //-----------------------------------------------------------------------//
+
    INLINE METHOD ImprimeComanda( cImpresora )
 
       ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
@@ -1137,6 +1157,10 @@ CLASS TpvTactil
       end if
 
    ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   METHOD OpenCajon()               INLINE ( oUser():OpenCajon( ::nView ) )
 
    //------------------------------------------------------------------------//
 
@@ -1805,11 +1829,11 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::oBtnNum                  := Array( 15 )
 
    ::oFntNum                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 46 ), .f., .f. )
+   ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
    ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
+   ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
    ::oFntFld                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 26 ), .f., .t. )
    ::oFntBrw                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 20 ), .f., .t. )
-   ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
-   ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
 
    ::cSayZona                 := "Zona"  
    ::cSayInfo                 := ""
@@ -3376,7 +3400,7 @@ METHOD StartResource() CLASS TpvTactil
          oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",     1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| oUser():OpenCajon( ::nView ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| ::OpenCajon() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
@@ -6228,23 +6252,13 @@ METHOD OnClickCobro() CLASS TpvTactil
       Abrimos el cajón portamonedas antes de imprimir-----------------------
       */
 
-      oUser():OpenCajon( ::nView )
+      ::OpenCajon()
 
       /*
       Imprimimos el documento-----------------------------------------------
       */
 
-      do case
-         case ::oTpvCobros:nExit == exitAceptarRegalo
-            ::ImprimeRegalo()
-
-         case ::oTpvCobros:nExit == exitAceptarDesglosado
-            ::ImprimeDesglosado()   
-
-         case ::oTpvCobros:nExit == exitAceptarImprimir
-            ::ImprimeTicket()
-
-      end case
+      ::ImprimePago()
 
       /*
       Inicializa los valores para el documento------------------------------
@@ -6284,8 +6298,6 @@ Return .t.
 
 METHOD OnClickAlbaran() CLASS TpvTactil
 
-   local lOpenCaj    := .f.
-
    if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
       MsgStop( "No puede almacenar un documento sin línea" )
       Return .f.
@@ -6309,16 +6321,12 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       ::GuardaDocumentoAlbaran()
 
       /*
-      Vemos si hay que abrir el cajon------------------------------------------
+      Abrimos el cajón portamonedas antes de imprimir-----------------------
       */
 
-      lOpenCaj    := ( ::oTpvCobros:nTotalCobro != 0 )
-
-      /*
-      Inicializa los cobros para el proximo ticket-----------------------------
-      */
-
-      // ::oTpvCobros:InitCobros()
+      if ( ::oTpvCobros:nTotalCobro != 0 )
+         ::OpenCajon()
+      end if
 
       /*
       Vaciamos las lineas------------------------------------------------------
@@ -6344,14 +6352,6 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       */
 
       ::lGetUsuario                 := .t.
-
-      /*
-      Abrimos el cajón portamonedas antes de imprimir-----------------------
-      */
-
-      if lOpenCaj
-         oUser():OpenCajon( ::nView )
-      end if
 
       /*
       Imprimimos el documento--------------------------------------------
@@ -9615,71 +9615,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-function SetResDebug( lOnOff ) // for backwards compatibility
-
-return nil
-
-//----------------------------------------------------------------------------//
-
-function FWAddResource( nHResource, cType )
-
-   local n := 3, cInfo := ""
-
-   while ! Empty( ProcName( n ) )
-      cInfo += ProcName( n ) + "(" + Alltrim( Str( ProcLine( n ) ) ) + ")->"
-      n++
-   end
-
-   if ! Empty( cInfo )
-      cInfo = SubStr( cInfo, 1, Len( cInfo ) - 2 )
-   endif
-
-   AAdd( aResources, { cType, nHResource, cInfo } )
-
-return nil
-
-//----------------------------------------------------------------------------//
-
-function FWDelResource( nHResource )
-
-   local nAt
-
-   if ( nAt := AScan( aResources, { | aRes | aRes[ 2 ] == nHResource } ) ) != 0
-      ADel( aResources, nAt )
-      ASize( aResources, Len( aResources ) - 1 )
-   endif
-
-return nil
-
-//----------------------------------------------------------------------------//
-
-function CheckRes()
-
-   local cInfo := "", n
-
-   ferase( "checkres.txt" )
-
-   for n = 1 to Len( aResources )
-      if aResources[ n, 2 ] != 0
-         cInfo = aResources[ n, 1 ] + "," + AllTrim( Str( aResources[ n, 2 ] ) ) + "," + aResources[ n, 3 ] + CRLF
-         LogFile( "checkres.txt", { cInfo } )
-      endif
-   next
-
-   LogFile( "checkres.txt", { Replicate( "=", 100 ) } )
-
-return nil
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 CLASS STotalCobros
 
    DATA  oTotal
@@ -9759,6 +9694,63 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+function SetResDebug( lOnOff ) // for backwards compatibility
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+function FWAddResource( nHResource, cType )
+
+   local n := 3, cInfo := ""
+
+   while ! Empty( ProcName( n ) )
+      cInfo += ProcName( n ) + "(" + Alltrim( Str( ProcLine( n ) ) ) + ")->"
+      n++
+   end
+
+   if ! Empty( cInfo )
+      cInfo = SubStr( cInfo, 1, Len( cInfo ) - 2 )
+   endif
+
+   AAdd( aResources, { cType, nHResource, cInfo } )
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+function FWDelResource( nHResource )
+
+   local nAt
+
+   if ( nAt := AScan( aResources, { | aRes | aRes[ 2 ] == nHResource } ) ) != 0
+      ADel( aResources, nAt )
+      ASize( aResources, Len( aResources ) - 1 )
+   endif
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+function CheckRes()
+
+   local cInfo := "", n
+
+   ferase( "checkres.txt" )
+
+   for n = 1 to Len( aResources )
+      if aResources[ n, 2 ] != 0
+         cInfo = aResources[ n, 1 ] + "," + AllTrim( Str( aResources[ n, 2 ] ) ) + "," + aResources[ n, 3 ] + CRLF
+         LogFile( "checkres.txt", { cInfo } )
+      endif
+   next
+
+   LogFile( "checkres.txt", { Replicate( "=", 100 ) } )
+
+return nil
+
 //---------------------------------------------------------------------------//
 
 #pragma BEGINDUMP
