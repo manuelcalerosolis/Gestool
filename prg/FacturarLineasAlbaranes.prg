@@ -7,6 +7,8 @@
 
 CLASS TFacturarLineasAlbaranes
 
+   DATA oDlg
+
    DATA cPath
 
    DATA nView
@@ -39,6 +41,14 @@ END CLASS
 
 METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
 
+   /*
+   Comproba----------------------------------------------------
+   */
+  
+
+
+
+
    ::nView     := nView
    ::cNumAlb   := ( TDataView():Get( "AlbCliT", ::nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", ::nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
 
@@ -47,6 +57,12 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    */
 
    ::CreaTemporales()
+
+   /*
+   Montamos el recurso---------------------------------------------------------
+   */
+
+   ::Resource()
 
    MsgAlert( "Entro en el método" )
    
@@ -139,13 +155,39 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DividirenPorcentaje() CLASS TFacturarLineasAlbaranes
+METHOD Resource() CLASS TFacturarLineasAlbaranes
+
+   DEFINE DIALOG ::oDlg RESOURCE "FacturaLineasAlbaranes"
+
+      
+
+
+
+
+
+
+
+
+
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       ::oDlg ;
+         ACTION   ( ::oDlg:End() )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       ::oDlg ;
+         CANCEL ;
+         ACTION   ( ::oDlg:End() )
+
+   ACTIVATE DIALOG ::oDlg CENTER
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource() CLASS TFacturarLineasAlbaranes
+METHOD DividirenPorcentaje() CLASS TFacturarLineasAlbaranes
 
 Return ( Self )
 
