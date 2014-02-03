@@ -1,10 +1,10 @@
 //----------------------------------------------------------------------------//
-//  AUTOR.....: Manuel Exp¢sito Su rez    Soft 4U '1994-2001                  //
+//  AUTOR.....: Manuel Expsito Surez    Soft 4U '1994-2001                  //
 //  e-Mail....: maex14@dipusevilla.es                                         //
 //  CLASE.....: TDbf                                                          //
 //  FECHA MOD.: 24/01/2002                                                    //
 //  VERSION...: 11.00                                                         //
-//  PROPOSITO.: Gesti¢n y control de DBFs                                     //
+//  PROPOSITO.: Gestin y control de DBFs                                     //
 //----------------------------------------------------------------------------//
 
 #include "Obj2Hb.ch"
@@ -409,7 +409,7 @@ METHOD Activate( lRecycle, lShared, lReadOnly, lProtec, lAutoField, lAutoIndex, 
 
       /*
       if !ApoloMsgNoYes( ::aMsg( dbCONT ), ::aMsg( dbSELEC ) )
-         QUIT        // <----------------------  ­­ Ojo se sale del programa !!
+         QUIT        // <----------------------  ï¿½ï¿½ Ojo se sale del programa !!
       endif
       */
 
@@ -1020,8 +1020,8 @@ METHOD _Eval( bBlock, bFor, bWhile, nNext, nRecord, lRest ) CLASS TDbf
 return( nEval )
 
 //----------------------------------------------------------------------------//
-// El m‚todo LOCATE establece los CodeBlock ::bLFor y ::bLWhile
-// para que funcione el m‚todo CONTINUE
+// El mï¿½todo LOCATE establece los CodeBlock ::bLFor y ::bLWhile
+// para que funcione el mï¿½todo CONTINUE
 // Devuelve .f. si no encuentra mas ocurrencias
 //@
 
@@ -1180,7 +1180,7 @@ METHOD IdxByOrder( nOrder, cFile ) CLASS TDbf
 return( oIdx )
 
 //----------------------------------------------------------------------------//
-// A¤ade un array de definicion de orden a ::aTIndex
+// Aï¿½ade un array de definicion de orden a ::aTIndex
 //
 METHOD AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp ) CLASS TDbf
 
@@ -1197,7 +1197,7 @@ METHOD AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOptio
 return( oIdx )
 
 //----------------------------------------------------------------------------//
-// A¤ade un array de definicion de orden a ::aTIndex durante la ejecucion.
+// Aï¿½ade un array de definicion de orden a ::aTIndex durante la ejecucion.
 // Para indices posteriores o temporales o subindices
 //
 
@@ -1269,7 +1269,7 @@ METHOD AddBag( cFile ) CLASS TDbf
         else
             if !ApoloMsgNoYes( "No existe INDEX BAG FILE: " + cFile  )
                 ::End()
-                QUIT   // <----------------  ­­ Ojo se sale del programa !!
+                QUIT   // <----------------  ï¿½ï¿½ Ojo se sale del programa !!
             endif
         endif
 
@@ -1278,7 +1278,7 @@ METHOD AddBag( cFile ) CLASS TDbf
 return( Self )
 
 //----------------------------------------------------------------------------//
-// Activa los ¡ndices como un SET ADSINDEX TO y pone el foco en el primero:
+// Activa los ï¿½ndices como un SET ADSINDEX TO y pone el foco en el primero:
 //
 //@
 METHOD IdxActivate() CLASS TDbf
@@ -1293,7 +1293,7 @@ METHOD IdxActivate() CLASS TDbf
       ( ::nArea )->( ::IdxFCheck() )
       ( ::nArea )->( OrdListClear() )
 
-      // Añadimos todos los indices a la lista de ordenes
+      // Aï¿½adimos todos los indices a la lista de ordenes
 
       while ++nNum <= nLen
          ::aTIndex[ nNum ]:Add()
@@ -1697,7 +1697,7 @@ return( nOldCount )
 
 //----------------------------------------------------------------------------//
 // Establece los CodeBlock de movimiento en Browses, muy util para los Scopes
-// Atencion a¤adir el ClassName del Browse si no est  contemplado aqu¡.
+// Atencion aï¿½adir el ClassName del Browse si no estï¿½ contemplado aquï¿½.
 
 METHOD SetBrowse( oBrw ) CLASS TDbf
 
@@ -2068,7 +2068,7 @@ Return ( ( ::nArea )->( OrdSetFocus( cnTag, cFile ) ) )
 
 //---------------------------------------------------------------------------//
 /*
-Relación de ordenes
+Relaciï¿½n de ordenes
 */
 
 Method aCommentIndex() CLASS TDbf
@@ -2170,27 +2170,27 @@ METHOD CreateFromHash( hDefinition, cDriver, cPath )
 
 /*
 
-   ::oDbf := DbfServer( "ProCab.Dbf", "ProCab" ):New( "ProCab.Dbf", "ProCab", ( cDriver ), "Partes de producción", ( cPath ) )
+   ::oDbf := DbfServer( "ProCab.Dbf", "ProCab" ):New( "ProCab.Dbf", "ProCab", ( cDriver ), "Partes de producciï¿½n", ( cPath ) )
 
       ::oDbf:AddField( "cSerOrd", "C", 01, 0,,,,, "Serie", .F.,, .F., {} )
-      ::oDbf:AddField( "nNumOrd", "N", 09, 0,,,,, "Número", .F.,, .F., {} )
+      ::oDbf:AddField( "nNumOrd", "N", 09, 0,,,,, "Nï¿½mero", .F.,, .F., {} )
       ::oDbf:AddField( "cSufOrd", "C", 02, 0,,,,, "Sufijo", .F.,, .F., {} )
       ::oDbf:AddField( "dFecOrd", "D", 08, 0,,,,, "Fecha inicio", .F.,, .F., {} )
       ::oDbf:AddField( "dFecFin", "D", 08, 0,,,,, "Fecha fin", .F.,, .F., {} )
       ::oDbf:AddField( "cCodDiv", "C", 03, 0,,,,, "Divisa", .F.,, .F., {} )
       ::oDbf:AddField( "nVdvDiv", "N", 16, 6,,,,, "Valor divisa", .F.,, .F., {} )
-      ::oDbf:AddField( "cAlmOrd", "C", 03, 0,,,,, "Almacén destino", .F.,, .F., {} )
-      ::oDbf:AddField( "cCodSec", "C", 03, 0,,,,, "Sección", .F.,, .F., {} )
+      ::oDbf:AddField( "cAlmOrd", "C", 03, 0,,,,, "Almacï¿½n destino", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodSec", "C", 03, 0,,,,, "Secciï¿½n", .F.,, .F., {} )
       ::oDbf:AddField( "cHorIni", "C", 05, 0, "@R 99:99",,,, "Hora de inicio", .F.,, .F., {} )
       ::oDbf:AddField( "cHorFin", "C", 05, 0, "@R 99:99",,,, "Hora de fin", .F.,, .F., {} )
-      ::oDbf:AddField( "cCodOpe", "C", 03, 0,,,,, "Operación", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodOpe", "C", 03, 0,,,,, "Operaciï¿½n", .F.,, .F., {} )
       ::oDbf:AddField( "cAlmOrg", "C", 03, 0,,,,, "Almacen Origen", .F.,, .F., {} )
 
-      ::oDbf:AddIndex( "cNumOrd", "ProCab.Cdx", "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd",,, .F., .F., "Número",,, .T., .F. )
+      ::oDbf:AddIndex( "cNumOrd", "ProCab.Cdx", "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd",,, .F., .F., "Nï¿½mero",,, .T., .F. )
       ::oDbf:AddIndex( "dFecOrd", "ProCab.Cdx", "dFecOrd",,, .F., .F., "Fecha inicio",,, .T., .F. )
-      ::oDbf:AddIndex( "cCodOpe", "ProCab.Cdx", "cCodOpe",,, .F., .F., "Operación",,, .T., .F. )
-      ::oDbf:AddIndex( "cCodSec", "ProCab.Cdx", "cCodSec",,, .F., .F., "Sección",,, .T., .F. )
-      ::oDbf:AddIndex( "cAlmOrd", "ProCab.Cdx", "cAlmOrd",,, .F., .F., "Almacén",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodOpe", "ProCab.Cdx", "cCodOpe",,, .F., .F., "Operaciï¿½n",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodSec", "ProCab.Cdx", "cCodSec",,, .F., .F., "Secciï¿½n",,, .T., .F. )
+      ::oDbf:AddIndex( "cAlmOrd", "ProCab.Cdx", "cAlmOrd",,, .F., .F., "Almacï¿½n",,, .T., .F. )
 */
 
 RETURN ( Self )
@@ -2212,4 +2212,4 @@ static function FullDatabase( hDefinition )
 
 return ( hDefinition[ "Table" ] + "." + hDefinition[ "ExtensionTable" ] )    
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------
