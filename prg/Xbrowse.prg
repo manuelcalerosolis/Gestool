@@ -10428,7 +10428,7 @@ return nil
 
 //------------------------------------------------------------------------------
 
-METHOD ChangeBitmap( ) CLASS TXBrwColumn // BtnGet
+METHOD ChangeBitmap() CLASS TXBrwColumn // BtnGet
 
    if ::nBtnBmp > 0 .and. len( ::aBitmaps ) >= ::nBtnBmp
       ::oBtnElip:hBitmap1 := ::aBitMaps[::nBtnBmp, BITMAP_HANDLE ]

@@ -110,7 +110,7 @@ function Main( cParams )
    Test------------------------------------------------------------------------
    */
 
-   TestCuaderno1914()
+   SetResDebug( .t. )
 
    /*
    Chequeamos la existencia del fichero de configuracion-----------------------
