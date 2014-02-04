@@ -1086,7 +1086,7 @@ METHOD Resource( nMode, aDatosAnterior )
       oBrwActuacion:nMarqueeStyle   := 6
       oBrwActuacion:cName           := "Expediente.Lineas de actuacion"
 
-      oBrwActuacion:SetoDbf( ::oDetActuaciones:oDbfVir )
+      ::oDetActuaciones:oDbfVir:SetBrowse( oBrwActuacion )
 
       with object ( oBrwActuacion:AddCol() )
          :cHeader          := "Finalizada"

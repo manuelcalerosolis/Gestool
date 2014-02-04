@@ -606,7 +606,7 @@ METHOD Resource( nMode ) CLASS TPlantillaXML
       ::oBrwCabecera:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwCabecera:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrwCabecera:SetoDbf( ::oDetCabeceraPlantillaXML:oDbfVir )
+      ::oDetCabeceraPlantillaXML:oDbfVir:SetBrowse( ::oBrwCabecera ) 
 
       ::oBrwCabecera:nMarqueeStyle  := 6
       ::oBrwCabecera:cName          := "Cabeceras de plantillas XML"

@@ -801,7 +801,7 @@ METHOD Resource( nMode ) CLASS TCobAge
       ::oBrwDet:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwDet:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrwDet:SetoDbf( ::oDetCobAge:oDbfVir )
+      ::oDetCobAge:oDbfVir:SetBrowse( ::oBrwDet )
 
       ::oBrwDet:nMarqueeStyle    := 6
       ::oBrwDet:cName            := "Lineas de liquidación de agentes"

@@ -1335,7 +1335,7 @@ METHOD Resource( nMode, aDatosAnterior )
       ::oBrwMaterialProducido:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwMaterialProducido:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrwMaterialProducido:SetoDbf( ::oDetProduccion:oDbfVir )
+      ::oDetProduccion:oDbfVir:SetBrowse( ::oBrwMaterialProducido ) 
 
       ::oBrwMaterialProducido:nMarqueeStyle  := 6
       ::oBrwMaterialProducido:cName          := "Lineas de partes de producción"
@@ -1438,7 +1438,7 @@ METHOD Resource( nMode, aDatosAnterior )
       ::oBrwMateriaPrima:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwMateriaPrima:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrwMateriaPrima:SetoDbf( ::oDetMaterial:oDbfVir )
+      ::oDetMaterial:oDbfVir:SetBrowse( ::oBrwMateriaPrima )
 
       ::oBrwMateriaPrima:nMarqueeStyle    := 6
       ::oBrwMateriaPrima:cName            := "Materias primas produccion"
@@ -1538,7 +1538,7 @@ METHOD Resource( nMode, aDatosAnterior )
       ::oBrwPersonal:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
       ::oBrwPersonal:cName          := "Personal produccion"
 
-      ::oBrwPersonal:SetoDbf( ::oDetPersonal:oDbfVir )
+      ::oDetPersonal:oDbfVir:SetBrowse( ::oBrwPersonal )
 
       ::oBrwPersonal:nMarqueeStyle  := 5
 
@@ -1611,7 +1611,7 @@ METHOD Resource( nMode, aDatosAnterior )
       ::oBrwMaquinaria:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
       ::oBrwMaquinaria:cName           := "Maquinaria produccion"
 
-      ::oBrwMaquinaria:SetoDbf( ::oDetMaquina:oDbfVir )
+      ::oDetMaquina:oDbfVir:SetBrowse( ::oBrwMaquinaria ) 
 
       ::oBrwMaquinaria:nMarqueeStyle   := 5
 
@@ -3802,11 +3802,12 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
 
          ::oBrwLabel                 := TXBrowse():New( ::oFldLbl:aDialogs[ 2 ] )
 
+         ::cAreaTmpLabel:SetBrowse( ::oBrwLabel ) 
+
          ::oBrwLabel:nMarqueeStyle   := 5
          ::oBrwLabel:nColSel         := 2
 
          ::oBrwLabel:lHScroll        := .f.
-         ::oBrwLabel:SetoDbf( ::cAreaTmpLabel )
 
          ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

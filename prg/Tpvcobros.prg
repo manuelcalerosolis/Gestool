@@ -720,21 +720,15 @@ METHOD CargaCobros() CLASS TpvCobros
    local sTipoCobro
    local cNumeroTicket           
 
-   msgAlert( ::oSender:lBlankTicket() )
-
    if ::oSender:lBlankTicket()
       return .f.
    endif
 
    cNumeroTicket                 := ::oSender:cNumeroTicket()
 
-   msgAlert( cNumeroTicket, "cNumeroTicket" )
-
    ::InitCobros()
 
    if ::oSender:oTiketCobro:Seek( cNumeroTicket )
-
-      msgAlert( cNumeroTicket, "found")
 
       while ( ::oSender:oTiketCobro:cSerTik + ::oSender:oTiketCobro:cNumTik + ::oSender:oTiketCobro:cSufTik == cNumeroTicket ) .and. !( ::oSender:oTiketCobro:Eof() )
 
@@ -753,10 +747,6 @@ METHOD CargaCobros() CLASS TpvCobros
       end while
 
       ::oSender:oTemporalCobro:GoTop()
-
-   else 
-
-      msgAlert( cNumeroTicket, " not found")
 
    end if
 

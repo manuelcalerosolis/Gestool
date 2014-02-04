@@ -340,7 +340,7 @@ METHOD Resource( nMode )
       oBrwCos:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwCos:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwCos:SetoDbf( ::oDetCostes:oDbfVir )
+      ::oDetCostes:oDbfVir:SetBrowse( oBrwCos ) 
 
       oBrwCos:nMarqueeStyle      := 5
 

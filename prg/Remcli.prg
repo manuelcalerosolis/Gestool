@@ -742,7 +742,7 @@ METHOD Resource( nMode )
       ::oBrwDet:cName         := "Remesas.Lineas"
       ::oBrwDet:lFooter       := .t.
 
-      ::oBrwDet:SetoDbf( ::oDbfVir )
+      ::oDbfVir:SetBrowse( ::oBrwDet )
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Número"

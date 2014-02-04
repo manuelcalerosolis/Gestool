@@ -896,10 +896,12 @@ CLASS TpvTactil
 
       do case
          case ::oTpvCobros:nEstado == nParcial
+
             ::oTiketCabecera:lPgdTik   := .f.
             ::oTiketCabecera:lAbierto  := .t.
 
          case ::oTpvCobros:nEstado == nPagado
+
             ::oTiketCabecera:lPgdTik   := .t.
             ::oTiketCabecera:lAbierto  := .f.
 
@@ -5577,8 +5579,6 @@ METHOD SelecionaCliente() CLASS TpvTactil
    cTarifaSoloOld       := ::nTarifaSolo
    cTarifaCombinadoOld  := ::nTarifaCombinado
 
-
-
    do case
       case ::oTiketCabecera:nUbiTik == ubiLlevar
          cCliente    := BrwCliTactil( nil, nil, nil, .t., "Selecione un cliente para llevar", "wheel_48_alpha" )
@@ -6217,35 +6217,27 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       ::GuardaDocumento()
 
-      // Envia las comandas a impresoras---------------------------------------
-
-      ::ProcesaComandas()
-
       // Guardamos los cobros--------------------------------------------------
 
       ::GuardaCobros()
 
-      /*
-      Generar vale----------------------------------------------------------
-      */
+      // Envia las comandas a impresoras---------------------------------------
+
+      ::ProcesaComandas()
+
+      // Generar vale----------------------------------------------------------
 
       ::GeneraVale()
 
-      /*
-      Pintamos en la pizarra el ultimo cambio-------------------------------
-      */
+      // Pintamos en la pizarra el ultimo cambio-------------------------------
 
       ::UltimoCambio()
 
-      /*
-      Imprimimos en el visor------------------------------------------------
-      */
+      // Imprimimos en el visor------------------------------------------------
 
       ::EscribeVisor()
 
-      /*
-      Abrimos el cajón portamonedas antes de imprimir-----------------------
-      */
+      // Abrimos el cajón portamonedas antes de imprimir-----------------------
 
       ::OpenCajon()
 
@@ -6679,30 +6671,24 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       BeginTransaction()
 
-      /*
-      Si el numero de ticket esta vacio debemos tomar un nuevo numero----------
-      */
+      // Si el numero de ticket esta vacio debemos tomar un nuevo numero----------
 
-      if Empty( ::oTiketCabecera:cNumTik )
+      if ::lBlankTicket()
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
          ::oTiketCabecera:Insert()
       else
          ::oTiketCabecera:Save( !lZap )
       end if
 
-      /*
-      Si este ticket ya tiene numero debemos quitar las lineas anteriores------
-      */
+      // Si este ticket ya tiene numero debemos quitar las lineas anteriores------
 
-      if !Empty( ::oTiketCabecera:cNumTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
-         while ::oTiketLinea:Seek( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik ) .and. !::oTiketLinea:eof()
+      if !( ::lBlankTicket() ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
+         while ::oTiketLinea:Seek( ::cNumeroTicket() ) .and. !::oTiketLinea:eof()
             ::oTiketLinea:Delete(.f.)
          end while
       end if
 
-      /*
-      Guarda las lineas del ticket---------------------------------------------
-      */
+      // Guarda las lineas del ticket---------------------------------------------
 
       ::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "lRecNum" )

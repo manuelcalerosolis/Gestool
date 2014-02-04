@@ -1638,13 +1638,16 @@ METHOD Save( lLock ) CLASS TDbf
 
     DEFAULT lLock       := .t.
 
-    if lLock .and. ::RecLock()
-        ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
-        if lLock
+    if lLock
+        if ::RecLock()
+            ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+            lRet        := .t.
             ::UnLock()
-        end if
+        end if 
+    else 
+        ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
         lRet            := .t.
-    end if
+    end if 
 
     ::lAppend           := .f.
     ::lBuffer           := .f.

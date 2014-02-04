@@ -414,7 +414,7 @@ METHOD Resource( nMode )
       oBrwLineas:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwLineas:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwLineas:SetoDbf( ::oDetFideliza:oDbfVir )
+      ::oDetFideliza:oDbfVir:SetBrowse( oBrwLineas )
 
       oBrwLineas:nMarqueeStyle      := 5
 

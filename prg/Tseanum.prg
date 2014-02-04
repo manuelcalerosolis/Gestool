@@ -553,7 +553,7 @@ METHOD Activate( oMenuItem, oWnd, lStart )
 
    ::oBrw:nMarqueeStyle := 5
 
-   ::oBrw:SetODbf( ::oDbfTmp )
+   ::oDbfTmp:SetBrowse( ::oBrw )
 
    with object ( ::oBrw:AddCol() )
       :cHeader          := "Tipo de documento"

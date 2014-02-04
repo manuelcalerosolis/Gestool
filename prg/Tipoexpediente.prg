@@ -221,7 +221,7 @@ METHOD Resource( nMode )
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:SetoDbf( ::oSubTipoExpediente:oDbfVir )
+      ::oSubTipoExpediente:oDbfVir:SetBrowse( oBrw ) 
 
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Lineas subtipos de expedientes"

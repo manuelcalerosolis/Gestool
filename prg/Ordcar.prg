@@ -498,7 +498,8 @@ METHOD Resource( nMode )
 
       ::oBrwDet                     := IXBrowse():New( oDlg )
 
-      ::oBrwDet:SetoDbf( ::oDetOrdCar:oDbfVir )
+      ::oDetOrdCar:oDbfVir:SetBrowse( ::oBrwDet )
+
       ::oBrwDet:nMarqueeStyle       := 5
       ::oBrwDet:cName               := "Lineas de ordenes de carga"
       ::oBrwDet:lRecordSelector     := .f.
@@ -836,7 +837,8 @@ METHOD ImpAlbCli()
 
       oBrw                    := IXBrowse():New( oDlg )
 
-      oBrw:SetoDbf( ::oAlbCliT )
+      ::oAlbCliT:SetBrowse( oBrw )
+
       oBrw:nMarqueeStyle      := 6
       oBrw:cName              := "Albaranes de clientes"
       oBrw:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
