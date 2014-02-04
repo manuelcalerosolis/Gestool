@@ -19392,3 +19392,30 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 4, 20, 430, 185
 }
 
+FACTURALINEASALBARANES DIALOG DISCARDABLE 79, -78, 672, 328
+STYLE WS_POPUP|DS_MODALFRAME|DS_CONTEXTHELP|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Albaranes de clientes"
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 99, 15, 40, 11
+  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 435, 28, 40, 11
+  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 435, 41, 60, 11
+  CONTROL "", 110, "TXBrowse", WS_TABSTOP|0x00300000, 5, 56, 326, 230
+  CONTROL "", 230, "TXBrowse", WS_TABSTOP|0x00300000, 340, 56, 326, 230
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 565, 310, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 310, 50, 14
+  CONTROL "Serie", -1, "Static", WS_GROUP, 340, 31, 30, 8
+  CONTROL "Fecha\r\n", -1, "Static", WS_GROUP, 340, 44, 25, 8
+  CONTROL "Porcentaje albarán", -1, "Static", WS_GROUP, 5, 18, 77, 8
+  CONTROL "Factura de cliente", -1, "Button", BS_GROUPBOX, 336, 2, 334, 305
+  CONTROL "Albarán de cliente", -1, "Button", BS_GROUPBOX, 2, 2, 332, 305
+  CONTROL "", 200, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 435, 15, 40, 11
+  CONTROL "Porcentaje factura", -1, "Static", WS_GROUP, 340, 18, 77, 8
+  CONTROL "< Pasar unidad", 240, "Button", WS_TABSTOP, 340, 289, 54, 14
+  CONTROL "< Pasar linea", 250, "Button", WS_TABSTOP, 398, 289, 54, 14
+  CONTROL "<< Pasar todo", 260, "Button", WS_TABSTOP, 612, 289, 54, 14
+  CONTROL "Pasar todo >>", 120, "Button", WS_TABSTOP, 5, 289, 54, 14
+  CONTROL "Pasar linea >", 130, "Button", WS_TABSTOP, 219, 289, 54, 14
+  CONTROL "Pasar unidad >", 140, "Button", WS_TABSTOP, 277, 289, 54, 14
+}
+
