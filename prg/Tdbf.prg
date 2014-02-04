@@ -199,10 +199,14 @@ CLASS TDbf
     METHOD  Blank()
     METHOD  Insert()    INLINE if( ::Append(), ::Save(), .f. )
     METHOD  SetBuffer( lVal )
+    
+    METHOD  LoadLock()  INLINE if( ::RecLock(), ::Load(), .f. )
     METHOD  Load()
     METHOD  Cancel()    INLINE ::RollBack()     // mcs like VB does
     METHOD  RollBack()
     METHOD  Save()
+    METHOD  SaveLock()  
+    METHOD  SaveOnly()  INLINE ( ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) ) )
     METHOD  Update()    INLINE ::Save()
     METHOD  Valid()
     METHOD  Commit()    INLINE ( ::nArea )->( DBCommit() )
@@ -313,11 +317,7 @@ METHOD New( cFile, cName, cRDD, cComment, cPath ) CLASS TDbf
     ::bOnOpen     := { || .t. }
     ::bOnClose    := { || .t. }
 
-    ::bNetError   := { | o | ApoloMsgNoYes( "Alias " + ::cAlias + CRLF + ;
-                             o:aMsg( dbBLOCREG ) + "  Num. " +;
-                             AllTrim( str( o:RecNo() ) ) + CRLF + ;
-                             o:aMsg( dbRETRY ), o:aMsg( dbSELEC ) ) }
-
+    ::bNetError   := { | o | ApoloMsgNoYes( o:aMsg( dbBLOCREG ) + " Num. " + alltrim( str( o:RecNo() ) ), o:aMsg( dbRETRY ) ) }
     ::bOpenError  := { | o | MsgStop( o:aMsg( dbOPENDB ) + CRLF + o:cFile, o:aMsg( dbSELEC ) ) }
 
     ::oIndex      := GetIdxNone( Self )
@@ -1605,11 +1605,16 @@ return( Self )
 //----------------------------------------------------------------------------//
 //  Carga la tabla con los valores actuales en ::aBuffer para RollBack
 
-METHOD Load() CLASS TDbf
+METHOD Load( lLock ) CLASS TDbf
 
-    ::lBuffer  := .t.
-    ::aBuffer  := {}
-    ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Load() ) } ) )
+    ::lBuffer           := .t.
+    ::aBuffer           := {}
+
+    DEFAULT lLock       := .f.
+
+    if ::RecLock()
+        ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Load() ) } ) )
+    end if 
 
 return( Self )
 
@@ -1625,51 +1630,38 @@ METHOD RollBack() CLASS TDbf
 return( Self )
 
 //----------------------------------------------------------------------------//
-/*
-METHOD Save() CLASS TDbf
-
-   local lRet       := .f.
-
-   if ::RecLock()
-
-      ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
-
-      ::UnLock()
-
-    endif
-
-    ::lAppend := .f.
-
-return( lRet )
-*/
 //----------------------------------------------------------------------------//
 
-METHOD Save() CLASS TDbf
+METHOD Save( lLock ) CLASS TDbf
 
-    local lRet       := .f.
-    local lContinue  := .t.
+    local lRet          := .f.
 
-    if lContinue .and. ::RecLock()
+    DEFAULT lLock       := .t.
 
-        if ::Valid()
-            ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
-            lRet     := .t.
-        else
-            if ApoloMsgNoYes( ::cFldInvalid + CRLF + ::aMsg( dbNOVAL ) + ::aMsg( dbCONT ), ::aMsg( dbSELEC ) )
-                ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
-                lRet := .t.
-            else
-                if( ::lAppend, ::Delete(), ::RollBack() )
-            endif
-        endif
-        ::UnLock()
+    if lLock .and. ::RecLock()
+        ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+        if lLock
+            ::UnLock()
+        end if
+        lRet            := .t.
+    end if
 
-    endif
-
-    ::lAppend        := .f.
-    ::lBuffer        := .f.
+    ::lAppend           := .f.
+    ::lBuffer           := .f.
 
 return( lRet )
+
+//----------------------------------------------------------------------------//
+
+METHOD SaveLock() CLASS TDbf
+
+    ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+
+    ::UnLock()
+
+    ::lAppend       := .f.
+
+return( .t. )
 
 //----------------------------------------------------------------------------//
 

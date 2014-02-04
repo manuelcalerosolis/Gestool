@@ -551,6 +551,7 @@ CLASS TpvTactil
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+   METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
 
    METHOD cNumeroTicketByName()        INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + ::oTiketCabecera:FieldGetByName( "cNumTik" ) + ::oTiketCabecera:FieldGetByName( "cSufTik" ) )
 
@@ -755,7 +756,7 @@ CLASS TpvTactil
 
       ::oTiketCabecera:nNumCom         := nVirtualNumKey( "Users1_32", "Número comensales", ::oTiketCabecera:nNumCom )
 
-      ::TotalTemporal()
+      ::SetTotal()
 
       ::EnableDialog()
 
@@ -793,7 +794,7 @@ CLASS TpvTactil
 
       end if
 
-      ::TotalTemporal()
+      ::SetTotal()
 
       Return ( .t. )
 
@@ -1109,18 +1110,14 @@ CLASS TpvTactil
 
    INLINE METHOD InitDocumento( nUbicacion )
 
-      /*
-      Carga los valores del registro actual---------------------------------
-      */
+      // Carga los valores del registro actual---------------------------------
 
       CursorWait()
 
       ::oTiketCabecera:Blank()
       ::oTiketCabecera:SetDefault()
 
-      /*
-      Cargamos los valores por defecto--------------------------------------
-      */
+      // Cargamos los valores por defecto--------------------------------------
 
       ::CargaValoresDefecto( nUbicacion, .t. )
 
@@ -1180,7 +1177,7 @@ CLASS TpvTactil
    
    //------------------------------------------------------------------------//
 
-   INLINE METHOD TotalTemporal()
+   INLINE METHOD SetTotal()
 
       ::sTotal    := ::sTotalTiket()
 
@@ -1830,8 +1827,8 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
    ::oFntNum                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 46 ), .f., .f. )
    ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
-   ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
    ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
+   ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
    ::oFntFld                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 26 ), .f., .t. )
    ::oFntBrw                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 20 ), .f., .t. )
 
@@ -3507,9 +3504,7 @@ METHOD StartResource() CLASS TpvTactil
 
    ::CargaFavoritos()
 
-   /*
-   Datos del cliente-----------------------------------------------------------
-   */
+   // Datos del cliente-----------------------------------------------------------
 
    ::SetCliente()
 
@@ -4008,7 +4003,7 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
       ::oBrwLineas:Refresh()
    end if
 
-   ::TotalTemporal()
+   ::SetTotal()
 
    CursorWE()
 
@@ -4307,7 +4302,7 @@ METHOD KeyChar( cKey ) CLASS TpvTactil
 
    ::oGetUnidades:cText( AllTrim ( ::cGetUnidades ) )
 
-   ::TotalTemporal()
+   ::SetTotal()
 
 Return ( nil )
 
@@ -4587,7 +4582,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
       ::oBrwLineas:Refresh()
 
-      ::TotalTemporal()
+      ::SetTotal()
 
       ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
 
@@ -4924,7 +4919,7 @@ METHOD SumarUnidades( nNuevasUnidades ) CLASS TpvTactil
 
       ::oTemporalLinea:SetStatus()
 
-      ::TotalTemporal()
+      ::SetTotal()
 
       ::oBrwLineas:Refresh()
 
@@ -4972,7 +4967,7 @@ METHOD IncrementarUnidades() CLASS TpvTactil
 
       ::cGetUnidades                      := ""
 
-      ::TotalTemporal()
+      ::SetTotal()
 
       ::oBrwLineas:Refresh()
 
@@ -5019,7 +5014,7 @@ METHOD AgregarFavoritos( cNombreArticulo ) CLASS TpvTactil
 
    ::oArticulo:SetStatus()
 
-   ::TotalTemporal()
+   ::SetTotal()
 
    CursorWE()
 
@@ -5331,7 +5326,7 @@ METHOD OnClickInvitacion() CLASS TpvTactil
       ::oBrwLineas:Refresh()
    end if
 
-   ::TotalTemporal()
+   ::SetTotal()
 
 Return ( nil )
 
@@ -5563,7 +5558,7 @@ METHOD OnClickDescuento() CLASS TpvTactil
 
    end if
 
-   ::TotalTemporal()   
+   ::SetTotal()   
 
    if !Empty( ::oBrwLineas )
       ::oBrwLineas:Refresh()
@@ -5682,7 +5677,7 @@ METHOD ActualizaTarifaCliente() CLASS TpvTactil
 
    ::oTemporalLinea:SetStatus()
 
-   ::TotalTemporal()
+   ::SetTotal()
 
    ::oBrwLineas:Refresh()
 
@@ -6254,27 +6249,19 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       ::OpenCajon()
 
-      /*
-      Imprimimos el documento-----------------------------------------------
-      */
+      // Imprimimos el documento-----------------------------------------------
 
       ::ImprimePago()
 
-      /*
-      Inicializa los valores para el documento------------------------------
-      */
+      // Inicializa los valores para el documento------------------------------
 
       ::InitDocumento( ubiGeneral )
 
-      /*
-      Datos de la ubicacion-------------------------------------------------
-      */
+      // Datos de la ubicacion-------------------------------------------------
 
       ::SetUbicacion()
 
-      /*
-      Datos del documento---------------------------------------------------
-      */
+      // Datos del documento---------------------------------------------------
 
       ::SetInfo()
       
@@ -6700,9 +6687,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
          ::oTiketCabecera:Insert()
       else
-         ::oTiketCabecera:Save()
+         ::oTiketCabecera:Save( !lZap )
       end if
-
 
       /*
       Si este ticket ya tiene numero debemos quitar las lineas anteriores------
@@ -6740,44 +6726,32 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       end while
 
-      /*
-      Vaciamos las lineas------------------------------------------------------
-      */
-
       ::oTemporalLinea:SetStatus()
 
-      if !lZap
-         ::oTiketCabecera:Load()
-      else
+      // Vaciamos las lineas si estamos en un nuevo ticket---------------------
+
+      if lZap
+
          ::oTemporalLinea:Zap()
+
+         ::oBrwLineas:Refresh()
+      
+      else
+   
+         ::oTiketCabecera:Load()
+      
       end if
 
       CommitTransaction()
 
-      /*
-      Refrescamos las lineas---------------------------------------------------
-      */
-
-      ::oBrwLineas:Refresh()
-
-      /*
-      Barra de progreso vuelve a su estado-------------------------------------
-      */
+      // Barra de progreso vuelve a su estado-------------------------------------
 
       ::oProgressBar:Set( 0 )
       ::oProgressBar:Refresh()
 
-      /*
-      Encendemos el flag para cargar de nuevo el usuario-----------------------
-      */
+      // Encendemos el flag para cargar de nuevo el usuario-----------------------
 
       ::lGetUsuario                 := .t.
-
-      ::SetCliente()
-
-      ::SetSerie()
-
-      ::SetInfo()
 
    RECOVER USING oError
 
@@ -6969,15 +6943,17 @@ Return .t.
 
 METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
-   //::oTpvCobros:InitCobros()
+   if empty( cNumeroTicket )
+      return .f.
+   end if
 
-   if ::oTiketCabecera:Seek( cNumeroTicket )
+   if ::oTiketCabecera:Seek( cNumeroTicket ) .and. ::oTiketCabecera:RecLock()
 
-      ::oTiketCabecera:Load()
+      // Cargo el registro sin bloquear pq ya esta bloqueado-------------------
 
-      /*
-      Cargamos las lineas------------------------------------------------------
-      */
+      ::oTiketCabecera:Load()  
+
+      // Cargamos las lineas------------------------------------------------------
 
       if ::oTiketLinea:Seek( cNumeroTicket )
 
@@ -6995,33 +6971,31 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
       end if
 
+      // Refrescamos el browse-------------------------------------------------------
+   
+      ::oBrwLineas:Refresh()
+   
+      // Calculamos el total---------------------------------------------------------
+   
+      ::SetTotal()
+   
+      // Pintamos la información de la zona donde nos encontramos--------------------
+   
+      ::SetUbicacion()
+
+      // Cliente---------------------------------------------------------------
+
+      ::SetCliente()
+   
+      // Datos del documento---------------------------------------------------------
+   
+      ::SetInfo()
+
+      return .t.
+
    end if
 
-   /*
-   Refrescamos el browse-------------------------------------------------------
-   */
-
-   ::oBrwLineas:Refresh()
-
-   /*
-   Calculamos el total---------------------------------------------------------
-   */
-
-   ::TotalTemporal()
-
-   /*
-   Pintamos la información de la zona donde nos encontramos--------------------
-   */
-
-   ::SetUbicacion()
-
-   /*
-   Datos del documento---------------------------------------------------------
-   */
-
-   ::SetInfo()
-
-Return .t.
+Return .f.
 
 //---------------------------------------------------------------------------//
 
@@ -7276,11 +7250,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
          if ::oRestaurante:Sala( nil, .t., nSelectOption ) //  nil, .f. )
 
-            if !Empty( ::oRestaurante:cSelectedTicket() )
-
-               ::CargaDocumento( ::oRestaurante:cSelectedTicket() )
-
-            else
+            if !( ::CargaDocumento( ::oRestaurante:cSelectedTicket() ) )
 
                if !Empty( ::oRestaurante:cSelectedSala )
 
@@ -7288,11 +7258,10 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
                   Inicializa los valores para el documento---------------------
                   */
 
-                  ::InitDocumento( ubiSala )
+                  ::InitDocumento()
 
                   /*
                   Asignando valores--------------------------------------------
-                  */
 
                   ::nTarifaSolo              := ::oRestaurante:nSelectedPrecio
                   ::nTarifaCombinado         := ::oRestaurante:nSelectedCombinado
@@ -7300,20 +7269,33 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
                   ::oTiketCabecera:nTarifa   := ::oRestaurante:nSelectedPrecio
                   ::oTiketCabecera:cCodSala  := ::oRestaurante:cSelectedSala
                   ::oTiketCabecera:cPntVenta := ::oRestaurante:cSelectedPunto
-
-                  /*
-                  Pintamos la información de la zona donde nos encontramos-----
                   */
 
-                  ::SetUbicacion()
+               else 
 
-                  /*
-                  Datos del documento------------------------------------------
-                  */
-
-                  ::SetInfo()
+                  ::InitDocumento()
 
                end if
+
+               // Pintamos la información de la zona donde nos encontramos-----
+
+               ::SetUbicacion()
+
+               // Datos del documento------------------------------------------
+
+               ::SetInfo()
+
+               // Cliente------------------------------------------------------
+
+               ::SetCliente()
+
+               // Serie -------------------------------------------------------
+
+               ::SetSerie()
+
+               // Total documento----------------------------------------------
+
+               ::SetTotal()
 
             end if
 
@@ -8143,17 +8125,13 @@ Return ( Self )
 
 METHOD OnClickGuardar() CLASS TpvTactil
 
-   /*
-   Si el documento es nuevo y no tiene lineas no lo guardo------------------
-   */
+   // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
    if ::lEmptyDocumento()
       Return ( .t. )
    end if
 
-   /*
-   Vamos a detectar si estoy en un General----------------------------------
-   */
+   // Vamos a detectar si estoy en un General----------------------------------
 
    if ::lEmptyAlias() .and. !::SetAliasDocumento()
       Return ( .t. )
@@ -8163,9 +8141,7 @@ METHOD OnClickGuardar() CLASS TpvTactil
 
    ::GuardaDocumento( .f. )
 
-   /*
-   Mandamos las comandas a imprimir--------------------------------------------
-   */
+   // Mandamos las comandas a imprimir--------------------------------------------
 
    ::ProcesaComandas( .f. )
 
