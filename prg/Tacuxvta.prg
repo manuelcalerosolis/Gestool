@@ -1,3 +1,4 @@
+
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Factu.ch" 
@@ -54,11 +55,11 @@ METHOD OpenFiles() CLASS TAcuXVta
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) CLASS "TIKETL" FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   ::oAlbCliT := TDataCenter():oAlbCliT()
+   DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) CLASS "ALBCLIT" FILE "ALBCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL" FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   ::oFacCliT := TDataCenter():oFacCliT()
+   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) CLASS "FACCLIT" FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL" FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
@@ -149,6 +150,7 @@ METHOD lResource( cFld ) CLASS TAcuXVta
    /*
    Montamos grupos de clientes
    */
+
    if !::oDefGrpCli ( 70, 71, 80, 81, 90 )
       return .f.
    end if

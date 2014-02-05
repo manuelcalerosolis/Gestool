@@ -5140,7 +5140,7 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
             ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
             ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
-            ( dbfTmpLin )->cCodFra     := cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
+            //( dbfTmpLin )->cCodFra     := cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
 
             /*
             Datos de la cabecera-----------------------------------------------

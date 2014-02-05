@@ -3318,10 +3318,15 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
    local cSayGrpOrg
    local lOpen
 
-   DEFAULT oDlg      := ::oFld:aDialogs[1]
+   ?"1"
 
    ::oGrpCli         :=  TGrpCli():Create( cPatCli() )
+
+   ?"2"
+
    if ::oGrpCli:OpenFiles()
+
+   ?"3"
 
       /*
       Si nos pasan la BD montamos los valores
@@ -3342,7 +3347,7 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
          ID       ( nIdOrg );
          WHEN     ( !::lGrpAll );
          BITMAP   "LUPA" ;
-         OF       oDlg
+         OF       ::oFld:aDialogs[1]
 
          oGrpOrg:bValid := {|| ::oGrpCli:Existe( oGrpOrg, oSayGrpOrg ) }
          oGrpOrg:bHelp  := {|| ::oGrpCli:Buscar( oGrpOrg ) }
@@ -3350,13 +3355,13 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
       REDEFINE GET oSayGrpOrg VAR cSayGrpOrg ;
          ID       ( nIdSayOrg );
          WHEN     .f.;
-         OF       oDlg
+         OF       ::oFld:aDialogs[1]
 
       REDEFINE GET oGrpDes VAR ::cGrpDes;
          ID       ( nIdDes );
          WHEN     ( !::lGrpAll );
          BITMAP   "LUPA" ;
-         OF       oDlg
+         OF       ::oFld:aDialogs[1]
 
          oGrpDes:bValid := {|| ::oGrpCli:Existe( oGrpDes, oSayGrpDes ) }
          oGrpDes:bHelp  := {|| ::oGrpCli:Buscar( oGrpDes ) }
@@ -3364,14 +3369,14 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
       REDEFINE GET oSayGrpDes VAR cSayGrpDes ;
          ID       ( nIdSayDes );
          WHEN     .f.;
-         OF       oDlg
+         OF       ::oFld:aDialogs[1]
 
       if !Empty( nIdGrp )
 
          ::lGrpAll      := .t.
          REDEFINE CHECKBOX ::lGrpAll ;
             ID       ( nIdGrp ) ;
-            OF       oDlg
+            OF       ::oFld:aDialogs[1]
       else
          ::lGrpAll   := .f.
       end if
