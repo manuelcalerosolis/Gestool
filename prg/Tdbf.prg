@@ -186,30 +186,32 @@ CLASS TDbf
 
 //-- NETWORK OPERATION METHODS -----------------------------------------------//
 
-    METHOD  Lock()      INLINE ( ::nArea )->( FLock() )
+    METHOD  Lock()          INLINE ( ::nArea )->( FLock() )
     METHOD  RecLock()
-    METHOD  UnLock()    INLINE ( ::nArea )->( DBUnLock() ), Self
+    METHOD  UnLock()        INLINE ( ::nArea )->( DBUnLock() ), Self
 
 //-- MISCELLANEOUS AND NEWS METHODS ------------------------------------------//
 
     METHOD  Protec( nAcction )
-    METHOD  Used()      INLINE ( ::nArea )->( Used() )
+    METHOD  Used()          INLINE ( ::nArea )->( Used() )
 
     METHOD  aField()
     METHOD  Blank()
-    METHOD  Insert()    INLINE if( ::Append(), ::Save(), .f. )
+    METHOD  Insert()        INLINE if( ::Append(), ::Save(), .f. )
     METHOD  SetBuffer( lVal )
     
-    METHOD  LoadLock()  INLINE if( ::RecLock(), ::Load(), .f. )
+    METHOD  LoadLock()      INLINE if( ::RecLock(), ::Load(), .f. )
     METHOD  Load()
-    METHOD  Cancel()    INLINE ::RollBack()     // mcs like VB does
+    METHOD  Cancel()        INLINE ::RollBack()     // mcs like VB does
     METHOD  RollBack()
+
     METHOD  Save()
-    METHOD  SaveLock()  
-    METHOD  SaveOnly()  INLINE ( ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) ) )
-    METHOD  Update()    INLINE ::Save()
+    METHOD  SaveFields()    INLINE ( ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) ) )
+    METHOD  SaveUnLock()    INLINE ( ::SaveFields(), ::UnLock(), ::lAppend := .f. )
+    METHOD  Update()        INLINE ::Save()
+
     METHOD  Valid()
-    METHOD  Commit()    INLINE ( ::nArea )->( DBCommit() )
+    METHOD  Commit()        INLINE ( ::nArea )->( DBCommit() )
 
     METHOD  SetCalField( cName, bSetGet, cPic, cComment  )
     METHOD  SetFieldEmpresa( nCount )
@@ -1640,12 +1642,12 @@ METHOD Save( lLock ) CLASS TDbf
 
     if lLock
         if ::RecLock()
-            ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+            ::SaveFields()
             lRet        := .t.
             ::UnLock()
         end if 
     else 
-        ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+        ::SaveFields()
         lRet            := .t.
     end if 
 
@@ -1653,18 +1655,6 @@ METHOD Save( lLock ) CLASS TDbf
     ::lBuffer           := .f.
 
 return( lRet )
-
-//----------------------------------------------------------------------------//
-
-METHOD SaveLock() CLASS TDbf
-
-    ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
-
-    ::UnLock()
-
-    ::lAppend       := .f.
-
-return( .t. )
 
 //----------------------------------------------------------------------------//
 

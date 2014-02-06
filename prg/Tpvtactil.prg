@@ -371,6 +371,8 @@ CLASS TpvTactil
 
    DATA lValidResource     
 
+   DATA lCopiaComanda
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -641,11 +643,10 @@ CLASS TpvTactil
    METHOD OnClickParaLlevar()
    METHOD OnClickParaRecoger()
    METHOD OnClickEncargar()
+   
    METHOD OnclickDividirMesa()
-
-   METHOD StartDividirMesas( oDlg )
-
-   METHOD lInitCheckDividirMesas()
+      METHOD StartDividirMesas( oDlg )
+      METHOD lInitCheckDividirMesas()
 
    METHOD OnClickEntrega()
 
@@ -811,7 +812,7 @@ CLASS TpvTactil
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
 
-   METHOD nPrecioLinea()               INLINE ( Round( ::oTiketLinea:nPvpTil, ::nDecimalesImporte ) )  // Precio
+   METHOD nPrecioLinea()               INLINE ( Round( ::oTiketLinea:nPvpTil, ::nDecimalesImporte ) + Round( ::oTiketLinea:nPcmTil, ::nDecimalesImporte ) )  // Precio
 
    METHOD nTotalLinea( uTmpL, lPic )
    METHOD nTotalLineaUno( uTmpL, nVdv )
@@ -1761,6 +1762,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::lOpenFiles               := .f. 
    ::lKillResource            := .f.
    ::lHideCalculadora         := .t.
+   ::lCopiaComanda            := .f.
 
    if ::l1024()
       ::cResource             := "TpvTactil"
@@ -6677,7 +6679,19 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
          ::oTiketCabecera:Insert()
       else
-         ::oTiketCabecera:Save( !lZap )
+         if !lZap
+            
+            // Solo salvar pq continuo editando--------------------------------
+            
+            ::oTiketCabecera:SaveFields()
+
+         else 
+            
+            // Salvar y desbloquear pq finalizao la edición--------------------
+            
+            ::oTiketCabecera:SaveUnLock()
+            
+         end if 
       end if
 
       // Si este ticket ya tiene numero debemos quitar las lineas anteriores------
@@ -7240,28 +7254,28 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
                if !Empty( ::oRestaurante:cSelectedSala )
 
-                  /*
-                  Inicializa los valores para el documento---------------------
-                  */
+                  // Inicializa los valores para el documento---------------------
 
                   ::InitDocumento()
 
-                  /*
-                  Asignando valores--------------------------------------------
+                  // Asignando valores--------------------------------------------
 
                   ::nTarifaSolo              := ::oRestaurante:nSelectedPrecio
                   ::nTarifaCombinado         := ::oRestaurante:nSelectedCombinado
 
+                  ::oTiketCabecera:nUbiTik   := nSelectOption
+
                   ::oTiketCabecera:nTarifa   := ::oRestaurante:nSelectedPrecio
                   ::oTiketCabecera:cCodSala  := ::oRestaurante:cSelectedSala
                   ::oTiketCabecera:cPntVenta := ::oRestaurante:cSelectedPunto
-                  */
 
                else 
 
                   ::InitDocumento()
 
                end if
+
+            end if
 
                // Pintamos la información de la zona donde nos encontramos-----
 
@@ -7283,7 +7297,6 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
                ::SetTotal()
 
-            end if
 
          else
 
@@ -7886,9 +7899,7 @@ METHOD SetAliasDocumento( cTexto ) CLASS TpvTactil
 
       ::SetUbicacion()
 
-      /*
-      Datos del documento---------------------------------------------------------
-      */
+      // Datos del documento---------------------------------------------------------
 
       ::SetInfo()
 
@@ -7923,7 +7934,9 @@ METHOD ImprimeDocumento() CLASS TpvTactil
 
    CursorWait()
 
-   ::BuildReport()   
+   if !empty( ::cImpresora )
+      ::BuildReport()   
+   end if 
 
    CursorWE()
 
@@ -8095,12 +8108,12 @@ METHOD OnClickCopiaComanda() CLASS TpvTactil
 
    ::DisableDialog()
 
-   /*
-   Comprobamos si tenemos que imprimir la comanda------------------------------
-   */
+   // Comprobamos si tenemos que imprimir la comanda---------------------------
 
    if !::lEmptyNumeroTicket()
+      ::lCopiaComanda      := .t.
       ::ProcesaComandas( .t. )
+      ::lCopiaComanda      := .f.
    end if 
 
    ::EnableDialog()
@@ -8615,6 +8628,8 @@ METHOD VariableReport() CLASS TpvTactil
          */
 
          ::oFastReport:AddVariable(     "Tickets",             "Ubicación del ticket",              "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
+
+         ::oFastReport:AddVariable(     "Tickets",             "Copia comanda",                     "CallHbFunc( 'oTpvTactil', [ 'lCopiaComanda()' ] )" )
 
          ::oFastReport:AddVariable(     "Tickets",             "Total ticket",                      "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDocumento' ] )" )
          ::oFastReport:AddVariable(     "Tickets",             "Precio por pax.",                   "CallHbFunc( 'oTpvTactil', [ 'nPrecioPorPersona()' ] )" )

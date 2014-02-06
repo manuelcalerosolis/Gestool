@@ -3454,7 +3454,7 @@ Function cNombreImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
 
    cTipImp        := Padr( Upper( cTipImp ), 50 )
 
-   if dbSeekInOrd( cCodCaj + cTipImp, "CCODCAJ", dbfCajL )
+   if dbSeekInOrd( cCodCaj + cTipImp, "cCodCaj", dbfCajL )
       cNombre     := ( dbfCajL )->cNomPrn
    end if
 
