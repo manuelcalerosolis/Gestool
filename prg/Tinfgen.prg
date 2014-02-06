@@ -787,6 +787,7 @@ METHOD End() CLASS TInfGen
 
    if ::oGrpCli != nil
       ::oGrpCli:End()
+      ::oGrpCli := nil
    end if
 
    if ::oGrpPrv != nil
@@ -3318,15 +3319,9 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
    local cSayGrpOrg
    local lOpen
 
-   ?"1"
-
    ::oGrpCli         :=  TGrpCli():Create( cPatCli() )
 
-   ?"2"
-
    if ::oGrpCli:OpenFiles()
-
-   ?"3"
 
       /*
       Si nos pasan la BD montamos los valores
@@ -3386,6 +3381,7 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
    else
       lOpen := .f.
    end if
+
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
