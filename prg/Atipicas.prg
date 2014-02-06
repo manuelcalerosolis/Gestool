@@ -20,7 +20,7 @@ CLASS TAtipicas FROM TDet
    DATA cSayPr2
    DATA cSayVp1
    DATA cSayVp2
-
+ 
    DATA oCosto
    DATA cCosto
 

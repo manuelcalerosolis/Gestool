@@ -171,6 +171,8 @@ Function Main( cCodEmp, cCodUsr, cIp )
 
    end case
 
+   TDataCenter():BuildData()
+
    // Apertura de ficheros-----------------------------------------------------
 
    USE ( cPatDat() + "EMPRESA.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
@@ -242,6 +244,12 @@ Function Main( cCodEmp, cCodUsr, cIp )
    cCodigoEmpresaEnUso( cCodEmp )
 
    aEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, .t. )
+
+   /*
+   Cargamos la estructura de ficheros de la empresa----------------------------
+   */
+
+   TDataCenter():BuildEmpresa()
 
    CLOSE ( dbfEmp )
    CLOSE ( dbfDlg )
@@ -2431,10 +2439,6 @@ Return nil
 Function TProyecto()
 
 Return nil
-
-Function TAtipicas()
-
-Return nil 
 
 Function TFacturarLineasAlbaranes()
 

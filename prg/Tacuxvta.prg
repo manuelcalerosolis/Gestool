@@ -148,7 +148,7 @@ METHOD lResource( cFld ) CLASS TAcuXVta
    ::CreateFilter( , ::oDbf, .t. )
 
    /*
-   Montamos grupos de clientes
+   Montamos grupos de clientes  
    */
 
    if !::oDefGrpCli ( 70, 71, 80, 81, 90 )
