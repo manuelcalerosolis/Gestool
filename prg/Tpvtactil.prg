@@ -608,12 +608,6 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
-   METHOD OnClickInvitacion()
-   METHOD EndInvitacion( nOpt, oLstInv, oDlg )
-   METHOD InitInvitacion( oDlg, oImgInv, oLstInv )
-   METHOD SelectInvitacion( nOpt, oLstInv, oTxtInv ) 
-
-   METHOD OnClickDescuento()
 
    METHOD SelectUnaLineaInvitacion()
    METHOD SelectTodasLineasInvitacion()
@@ -657,6 +651,54 @@ CLASS TpvTactil
 
    METHOD OnclickEntrdaSalida          INLINE ( AppEntSal() )
    METHOD OnClickSeleccionarCajas()    INLINE ( SelCajTactil() )
+
+   METHOD OnClickInvitacion()
+      METHOD EndInvitacion( nOpt, oLstInv, oDlg )
+      METHOD InitInvitacion( oDlg, oImgInv, oLstInv )
+      METHOD SelectInvitacion( nOpt, oLstInv, oTxtInv ) 
+
+   METHOD OnClickDescuento()
+
+   METHOD OnClickCopiaComanda()
+   METHOD OnClickGuardar()
+   METHOD OnClickCloseTurno( lParcial )
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD OnClickIniciarSesion()
+
+      ::DisableDialog()
+
+      if ::oTurno:OpenFiles()
+         ::oTurno:lNowOpen( oWnd() )
+         ::oTurno:CloseFiles()
+      end if
+
+      ::SetInfo()
+
+      ::EnableDialog()
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD OnClickComensales()
+
+      ::DisableDialog()
+
+      ::oTiketCabecera:nNumCom         := nVirtualNumKey( "Users1_32", "Número comensales", ::oTiketCabecera:nNumCom )
+
+      ::SetTotal()
+
+      ::EnableDialog()
+
+      RETURN ( .t. )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
 
    /*
    Si pulsamos sobre el boton de usuario nos crea el dialogo para cambiar de usuario
@@ -722,54 +764,7 @@ CLASS TpvTactil
 
    ENDMETHOD
 
-   //------------------------------------------------------------------------//
-
-   METHOD OnClickCopiaComanda()
-
-   METHOD OnClickGuardar()
-
-   METHOD OnClickCloseTurno( lParcial )
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickIniciarSesion()
-
-      ::DisableDialog()
-
-      if ::oTurno:OpenFiles()
-         ::oTurno:lNowOpen( oWnd() )
-         ::oTurno:CloseFiles()
-      end if
-
-      ::SetInfo()
-
-      ::EnableDialog()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickComensales()
-
-      ::DisableDialog()
-
-      ::oTiketCabecera:nNumCom         := nVirtualNumKey( "Users1_32", "Número comensales", ::oTiketCabecera:nNumCom )
-
-      ::SetTotal()
-
-      ::EnableDialog()
-
-      RETURN ( .t. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   /*
-   Comentarios-----------------------------------------------------------------
-   */
+   // Comentarios--------------------------------------------------------------
 
    METHOD InitComentarios( cDefCom )
    METHOD EndComentarios( oDlg, oGetComentario )
@@ -1499,9 +1494,11 @@ CLASS TpvTactil
       ::lShowCombinado        := lShowCombinando
 
       if lShowCombinando
-         ::oBtnCombinado:LoadBitmap( "Led_green_32" )
-      else
          ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
+         ::oSayImporte:SetText( "Combinando..." )
+      else
+         ::oBtnCombinado:LoadBitmap( "Led_green_32" )
+         ::oSayImporte:SetText( "Total" )
       end if 
        
       ::oBtnCombinado:Refresh() 
@@ -1851,7 +1848,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::lCombinandoDos           := .f.
    ::lShowCombinado           := .f.
 
-   ::oTimer                   := TTimer():New( 1000, {|| ::ShowCombinado() }, oWnd() )
+   ::oTimer                   := TTimer():New( 500, {|| ::ShowCombinado() }, oWnd() )
 
    oThis                      := Self
 
@@ -2961,7 +2958,7 @@ METHOD Resource() CLASS TpvTactil
    */
 
    REDEFINE SAY ::oSayImporte ; 
-      PROMPT   "Importe";
+      PROMPT   "Total";
       FONT     ::oFntDlg ;
       ID       210 ;
       OF       ::oDlg

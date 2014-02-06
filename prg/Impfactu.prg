@@ -200,6 +200,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfObrGst  PATH ( cPatCli() )  FILE "OBRAST.DBF"     VIA ( cDriver() )       CLASS "Obrgst"  SHARED INDEX "OBRAST.CDX"
       DATABASE NEW ::oDbfAtpGst  PATH ( cPatCli() )  FILE "CLIATP.DBF"     VIA ( cDriver() )       CLASS "Atpgst"  SHARED INDEX "CLIATP.CDX"
       DATABASE NEW ::oDbfBncGst  PATH ( cPatCli() )  FILE "CliBnc.DBF"     VIA ( cDriver() )       CLASS "Clibnc"  SHARED INDEX "CliBnc.CDX"
+
       DATABASE NEW ::oDbfCliFac  PATH ( ::cPathFac ) FILE "CLIENTES.DBF"   VIA ( cLocalDriver() )  CLASS "Clifac"
       DATABASE NEW ::oDbfObrFac  PATH ( ::cPathFac ) FILE "DIRCLI.DBF"     VIA ( cLocalDriver() )  CLASS "Obrfac"
       DATABASE NEW ::oDbfBncFac  PATH ( ::cPathFac ) FILE "BancosCL.DBF"   VIA ( cLocalDriver() )  CLASS "Bancoscl"
@@ -1434,8 +1435,13 @@ METHOD Importar()
          while !( ::oDbfAtpFac:eof() )
 
             ::oDbfAtpGst:Append()
+            ::oDbfAtpGst:Blank()
 
-            ::oDbfAtpGst:cCodCli    := SpecialPadr( ::oDbfAtpFac:cCodCli, "0", RetNumCodCliEmp() )
+            if ::oDbfAtpFac:cClaveC == "G"   // Atipica de grupo
+               ::oDbfAtpGst:cCodGrp := SpecialPadr( ::oDbfAtpFac:cCodCli, "0", 4 )
+            else
+               ::oDbfAtpGst:cCodCli := SpecialPadr( ::oDbfAtpFac:cCodCli, "0", RetNumCodCliEmp() )
+            end if 
 
             if ::oDbfAtpFac:cClaveA == "P"
                ::oDbfAtpGst:cCodArt := ::oDbfAtpFac:cRef
