@@ -55,8 +55,6 @@ CLASS TFacturarLineasAlbaranes
 
    METHOD InitResource()
 
-   METHOD GenerarFactura()
-
    METHOD ActualizaPorcentajes()
 
    METHOD PasaUnidadAlbaran()
@@ -66,6 +64,12 @@ CLASS TFacturarLineasAlbaranes
    METHOD PasaUnidadFactura()
    METHOD PasaLineaFactura()
    METHOD PasaTodoFactura()
+
+   METHOD GuardaAlbaran()
+
+   METHOD GeneraFactura()
+
+   METHOD EndResource()
 
 END CLASS
 
@@ -150,6 +154,9 @@ METHOD CreaTemporales() CLASS TFacturarLineasAlbaranes
    dbUseArea( .t., cLocalDriver(), ::cTmpAlbLin, cCheckArea( cDbfAlbLin, @::cTemporalLineaAlbaran ), .f. )
 
    ( ::cTemporalLineaAlbaran )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+   ( ::cTemporalLineaAlbaran )->( OrdCreate( ::cTmpAlbLin, "cLinArt", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin ) + Field->cRef } ) )
+
+   ( ::cTemporalLineaAlbaran )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
    ( ::cTemporalLineaAlbaran )->( OrdCreate( ::cTmpAlbLin, "nNumAlb", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
    /*
@@ -169,8 +176,11 @@ METHOD CreaTemporales() CLASS TFacturarLineasAlbaranes
    Creamos la base de datos temporal de lineas de facturas---------------------
    */
 
-   dbCreate( ::cTmpFacLin, aSqlStruct( aColFacCli() ), cLocalDriver() )
+   dbCreate( ::cTmpFacLin, aSqlStruct( aColAlbCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), ::cTmpFacLin, cCheckArea( cDbfFacLin, @::cTemporalLineaFactura ), .f. )
+
+   ( ::cTemporalLineaFactura )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+   ( ::cTemporalLineaFactura )->( OrdCreate( ::cTmpFacLin, "cLinArt", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin ) + Field->cRef } ) )
 
    ( ::cTemporalLineaFactura )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
    ( ::cTemporalLineaFactura )->( OrdCreate( ::cTmpFacLin, "nNumFac", "Str( Recno() )", {|| Str( Recno() ) } ) )
@@ -473,6 +483,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nWidth              := 50
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( ::oBrwLineasFactura:AddCol() )
@@ -529,7 +540,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       ::oDlg ;
-         ACTION   ( ::GenerarFactura() )
+         ACTION   ( ::EndResource() )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -558,10 +569,76 @@ Return ( .t. )
 
 METHOD PasaUnidadAlbaran() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Unidad Albaran" )
+   /*
+   Comprobamos que hayan registros que pasar-----------------------------------
+   */
+
+   if ( ::cTemporalLineaAlbaran )->( OrdKeyCount() ) == 0
+      Return .t.
+   end if
 
    /*
-   Actualizamos los porcentajes------------------------------------------------
+   Pasamos los registros-------------------------------------------------------
+   */
+
+   do case
+      case ( ::cTemporalLineaAlbaran )->nUniCaja > 1
+
+         if !dbSeekInOrd( Str( ( ::cTemporalLineaAlbaran )->nNumLin, 4 ) + ( ::cTemporalLineaAlbaran )->cRef , "cLinArt", ::cTemporalLineaFactura )
+
+            dbPass( ::cTemporalLineaAlbaran, ::cTemporalLineaFactura, .t. )
+            
+            if dbDialogLock( ::cTemporalLineaFactura )
+               ( ::cTemporalLineaFactura )->nUniCaja := 1
+               ( ::cTemporalLineaFactura )->( dbUnLock() )
+            end if   
+
+         else
+
+            if dbDialogLock( ::cTemporalLineaFactura )
+               ( ::cTemporalLineaFactura )->nUnicaja++
+               ( ::cTemporalLineaFactura )->( dbUnLock() )
+            end if
+
+         end if
+
+         if dbDialogLock( ::cTemporalLineaAlbaran )
+            ( ::cTemporalLineaAlbaran )->nUniCaja--
+            ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+         end if
+
+      case ( ::cTemporalLineaAlbaran )->nUniCaja <= 0
+
+         dbPass( ::cTemporalLineaAlbaran, ::cTemporalLineaFactura, .t. )
+
+         if dbDialogLock( ::cTemporalLineaAlbaran )
+            ( ::cTemporalLineaAlbaran )->( dbDelete() )
+            ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+         end if         
+
+      otherwise // == 1
+
+         if !dbSeekInOrd( Str( ( ::cTemporalLineaAlbaran )->nNumLin, 4 ) + ( ::cTemporalLineaAlbaran )->cRef , "cLinArt", ::cTemporalLineaFactura )
+
+            dbPass( ::cTemporalLineaAlbaran, ::cTemporalLineaFactura, .t. )
+            
+         else
+
+            if dbDialogLock( ::cTemporalLineaFactura )
+               ( ::cTemporalLineaFactura )->nUniCaja++
+               ( ::cTemporalLineaFactura )->( dbUnLock() )
+            end if
+
+         end if
+
+         if dbDialogLock( ::cTemporalLineaAlbaran )
+            ( ::cTemporalLineaAlbaran )->( dbDelete() )
+            ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+         end if
+
+   end case
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
    ::ActualizaPorcentajes()
@@ -572,10 +649,31 @@ Return ( Self )
 
 METHOD PasaLineaAlbaran() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Linea Albaran" )
+   if ( ::cTemporalLineaAlbaran )->( OrdKeyCount() ) == 0
+      Return .t.
+   end if
 
    /*
-   Actualizamos los porcentajes------------------------------------------------
+   Añado a la tabla de facturas------------------------------------------------
+   */
+
+   dbPass( ::cTemporalLineaAlbaran, ::cTemporalLineaFactura, .t. )
+
+   /*
+   Elimino de albaranes--------------------------------------------------------
+   */
+
+   if dbDialogLock( ::cTemporalLineaAlbaran )
+      ( ::cTemporalLineaAlbaran )->( dbDelete() )
+      ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+   end if
+
+   if ( ::cTemporalLineaAlbaran )->( OrdKeyCount() ) == 0
+      ( ::cTemporalLineaAlbaran )->( dbZap() )
+   end if
+
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
    ::ActualizaPorcentajes()
@@ -586,10 +684,28 @@ Return ( Self )
 
 METHOD PasaTodoAlbaran() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Todo Albaran" )
+   /*
+   Añado a la tabla de facturas------------------------------------------------
+   */
+
+   ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+
+   while !( ::cTemporalLineaAlbaran )->( Eof() )
+
+      dbPass( ::cTemporalLineaAlbaran, ::cTemporalLineaFactura, .t. )
+
+      ( ::cTemporalLineaAlbaran )->( dbSkip() )
+
+   end while
 
    /*
-   Actualizamos los porcentajes------------------------------------------------
+   Elimino de albaranes--------------------------------------------------------
+   */
+
+   ( ::cTemporalLineaAlbaran )->( dbZap() )
+
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
    ::ActualizaPorcentajes()
@@ -600,10 +716,82 @@ Return ( Self )
 
 METHOD PasaUnidadFactura() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Unidad Factura" )
+   /*
+   Comprobamos que hayan registros que pasar-----------------------------------
+   */
+
+   if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
+      Return .t.
+   end if
 
    /*
-   Actualizamos los porcentajes------------------------------------------------
+   Pasamos los registros-------------------------------------------------------
+   */
+
+   do case
+      case ( ::cTemporalLineaFactura )->nUniCaja > 1
+
+         if !dbSeekInOrd( Str( ( ::cTemporalLineaFactura )->nNumLin, 4 ) + ( ::cTemporalLineaFactura )->cRef , "cLinArt", ::cTemporalLineaAlbaran )
+
+            dbPass( ::cTemporalLineaFactura, ::cTemporalLineaAlbaran, .t. )
+            
+            if dbDialogLock( ::cTemporalLineaAlbaran )
+               ( ::cTemporalLineaAlbaran )->nUniCaja := 1
+               ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+            end if   
+
+         else
+
+            if dbDialogLock( ::cTemporalLineaAlbaran )
+               ( ::cTemporalLineaAlbaran )->nUnicaja++
+               ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+            end if
+
+         end if
+
+         if dbDialogLock( ::cTemporalLineaFactura )
+            ( ::cTemporalLineaFactura )->nUniCaja--
+            ( ::cTemporalLineaFactura )->( dbUnLock() )
+         end if
+
+      case ( ::cTemporalLineaFactura )->nUniCaja <= 0
+
+         dbPass( ::cTemporalLineaFactura, ::cTemporalLineaAlbaran, .t. )
+
+         if dbDialogLock( ::cTemporalLineaFactura )
+            ( ::cTemporalLineaFactura )->( dbDelete() )
+            ( ::cTemporalLineaFactura )->( dbUnLock() )
+         end if         
+
+      otherwise
+
+         if !dbSeekInOrd( Str( ( ::cTemporalLineaFactura )->nNumLin, 4 ) + ( ::cTemporalLineaFactura )->cRef , "cLinArt", ::cTemporalLineaAlbaran )
+
+            dbPass( ::cTemporalLineaFactura, ::cTemporalLineaAlbaran, .t. )
+            
+         else
+
+            if dbDialogLock( ::cTemporalLineaAlbaran )
+               ( ::cTemporalLineaAlbaran )->nUniCaja++
+               ( ::cTemporalLineaAlbaran )->( dbUnLock() )
+            end if
+
+         end if
+
+         if dbDialogLock( ::cTemporalLineaFactura )
+            ( ::cTemporalLineaFactura )->( dbDelete() )
+            ( ::cTemporalLineaFactura )->( dbUnLock() )
+         end if
+
+   end case
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
+   */
+
+   ::ActualizaPorcentajes()
+
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
    ::ActualizaPorcentajes()
@@ -614,10 +802,35 @@ Return ( Self )
 
 METHOD PasaLineaFactura() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Linea Factura" )
+   /*
+   Comprobamos que haya mas registros------------------------------------------
+   */
+
+   if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
+      Return .f.
+   end if
 
    /*
-   Actualizamos los porcentajes------------------------------------------------
+   Añado a la tabla de facturas------------------------------------------------
+   */
+
+   dbPass( ::cTemporalLineaFactura, ::cTemporalLineaAlbaran, .t. )
+
+   /*
+   Elimino de albaranes--------------------------------------------------------
+   */
+
+   if dbDialogLock( ::cTemporalLineaFactura )
+      ( ::cTemporalLineaFactura )->( dbDelete() )
+      ( ::cTemporalLineaFactura )->( dbUnLock() )
+   end if
+
+   if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
+      ( ::cTemporalLineaFactura )->( dbZap() )
+   end if
+
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
    ::ActualizaPorcentajes()
@@ -628,10 +841,28 @@ Return ( Self )
 
 METHOD PasaTodoFactura() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Todo Factura" )
+   /*
+   Añado a la tabla de facturas------------------------------------------------
+   */
+
+   ( ::cTemporalLineaFactura )->( dbGoTop() )
+
+   while !( ::cTemporalLineaFactura )->( Eof() )
+
+      dbPass( ::cTemporalLineaFactura, ::cTemporalLineaAlbaran, .t. )
+
+      ( ::cTemporalLineaFactura )->( dbSkip() )
+
+   end while
 
    /*
-   Actualizamos los porcentajes------------------------------------------------
+   Elimino de factura----------------------------------------------------------
+   */
+
+   ( ::cTemporalLineaFactura )->( dbZap() )
+
+   /*
+   Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
    ::ActualizaPorcentajes()
@@ -642,21 +873,212 @@ Return ( Self )
 
 METHOD ActualizaPorcentajes() CLASS TFacturarLineasAlbaranes
 
-   Msginfo( ::nPorcentajeAlbaran, "Por Albaran" )
-   Msginfo( ::nPorcentajeFactura, "Por Factura" )
+   /*
+   Refrescamos los browse------------------------------------------------------
+   */
 
-   ::oBrwLineasAlbaran:Refresh()
-   ::oBrwLineasFactura:Refresh()
+   if !Empty( ::oBrwLineasAlbaran )
+      ::oBrwLineasAlbaran:Refresh()
+   end if
+
+   if !Empty( ::oBrwLineasFactura )
+      ::oBrwLineasFactura:Refresh()
+   end if
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GenerarFactura() CLASS TFacturarLineasAlbaranes
+METHOD EndResource() CLASS TFacturarLineasAlbaranes
 
-   MsgInfo( "Generamos la Factura y actualizamos el albarán" )
+   ::GuardaAlbaran()
+
+   ::GeneraFactura()
 
    ::oDlg:End( IDOK )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaAlbaran() CLASS TFacturarLineasAlbaranes
+
+   /*
+   Hacemos un RollBack---------------------------------------------------------
+   */
+
+   while ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) ) .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
+      if dbLock( TDataView():Get( "AlbCliL", ::nView ) )
+         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbDelete() )
+         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbUnLock() )
+      end if
+   end while
+
+   /*
+   Escribimos definitivamente en la tabla--------------------------------------
+   */
+
+   ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+
+   while !( ::cTemporalLineaAlbaran )->( eof() )
+
+      dbPass( ::cTemporalLineaAlbaran, TDataView():Get( "AlbCliL", ::nView ), .t. )
+
+      ( ::cTemporalLineaAlbaran )->( dbSkip() )
+
+   end while
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
+
+   local nNumFac
+   local cSufFac
+
+   /*
+   Pasamos la cabecera de la factura-------------------------------------------
+   */
+
+   nNumFac     := nNewDoc( ::cSerieFactura, TDataView():Get( "FacCliT", ::nView ), "NFACCLI", , TDataView():Get( "NCount", ::nView ) )
+
+   ( TDataView():Get( "FacCliT", ::nView ) )->( dbAppend() )
+
+   ( TDataView():Get( "FacCliT", ::nView ) )->cSerie     := ::cSerieFactura
+   ( TDataView():Get( "FacCliT", ::nView ) )->nNumFac    := nNumFac
+   ( TDataView():Get( "FacCliT", ::nView ) )->cSufFac    := ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
+   ( TDataView():Get( "FacCliT", ::nView ) )->dFecFac    := ::dFechaFactura
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cNomCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cNomCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cDirCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cDirCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cPobCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cPobCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cPrvCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cPrvCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cPosCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cPosCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cDniCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cDniCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cTlfCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->cTlfCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodAlm    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodAlm
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodCaj    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodCaj
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodPago   := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodPago
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodAge    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodAge
+   ( TDataView():Get( "FacCliT", ::nView ) )->nPctComAge := ( TDataView():Get( "AlbCliT", ::nView ) )->nPctComAge
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodTar    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodTar
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodRut    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodRut
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodObr    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodObr
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodTrn    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodTrn
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCondEnt   := ( TDataView():Get( "AlbCliT", ::nView ) )->cCondEnt
+   ( TDataView():Get( "FacCliT", ::nView ) )->mComent    := ( TDataView():Get( "AlbCliT", ::nView ) )->mComent
+   ( TDataView():Get( "FacCliT", ::nView ) )->mObserv    := ( TDataView():Get( "AlbCliT", ::nView ) )->mObserv
+   ( TDataView():Get( "FacCliT", ::nView ) )->cSuFac     := ( TDataView():Get( "AlbCliT", ::nView ) )->cSuPed
+   ( TDataView():Get( "FacCliT", ::nView ) )->cDtoEsp    := ( TDataView():Get( "AlbCliT", ::nView ) )->cDtoEsp
+   ( TDataView():Get( "FacCliT", ::nView ) )->cDpp       := ( TDataView():Get( "AlbCliT", ::nView ) )->cDpp
+   ( TDataView():Get( "FacCliT", ::nView ) )->nDtoEsp    := ( TDataView():Get( "AlbCliT", ::nView ) )->nDtoEsp
+   ( TDataView():Get( "FacCliT", ::nView ) )->nDpp       := ( TDataView():Get( "AlbCliT", ::nView ) )->nDpp
+   ( TDataView():Get( "FacCliT", ::nView ) )->cDtoUno    := ( TDataView():Get( "AlbCliT", ::nView ) )->cDtoUno
+   ( TDataView():Get( "FacCliT", ::nView ) )->nDtoUno    := ( TDataView():Get( "AlbCliT", ::nView ) )->nDtoUno
+   ( TDataView():Get( "FacCliT", ::nView ) )->cDtoDos    := ( TDataView():Get( "AlbCliT", ::nView ) )->cDtoDos
+   ( TDataView():Get( "FacCliT", ::nView ) )->nDtoDos    := ( TDataView():Get( "AlbCliT", ::nView ) )->nDtoDos
+   ( TDataView():Get( "FacCliT", ::nView ) )->cManObr    := ( TDataView():Get( "AlbCliT", ::nView ) )->cManObr
+   ( TDataView():Get( "FacCliT", ::nView ) )->nIvaMan    := ( TDataView():Get( "AlbCliT", ::nView ) )->nIvaMan
+   ( TDataView():Get( "FacCliT", ::nView ) )->nManObr    := ( TDataView():Get( "AlbCliT", ::nView ) )->nManObr
+   ( TDataView():Get( "FacCliT", ::nView ) )->nBultos    := ( TDataView():Get( "AlbCliT", ::nView ) )->nBultos
+   ( TDataView():Get( "FacCliT", ::nView ) )->cRetPor    := ( TDataView():Get( "AlbCliT", ::nView ) )->cRetPor
+   ( TDataView():Get( "FacCliT", ::nView ) )->cCodGrp    := ( TDataView():Get( "AlbCliT", ::nView ) )->cCodGrp
+   ( TDataView():Get( "FacCliT", ::nView ) )->lModCli    := ( TDataView():Get( "AlbCliT", ::nView ) )->lModCli
+   ( TDataView():Get( "FacCliT", ::nView ) )->lOperPv    := ( TDataView():Get( "AlbCliT", ::nView ) )->lOperPv
+
+   ( TDataView():Get( "FacCliT", ::nView ) )->( dbUnLock() )
+
+   /*
+   Lineas de facturas----------------------------------------------------------
+   */
+
+   ( ::cTemporalLineaFactura )->( dbGoTop() )
+
+   while !( ::cTemporalLineaFactura )->( Eof() )
+
+      ( TDataView():Get( "FacCliL", ::nView ) )->( dbAppend() )
+
+      ( TDataView():Get( "FacCliL", ::nView ) )->cSerie     := ::cSerieFactura
+      ( TDataView():Get( "FacCliL", ::nView ) )->nNumFac    := nNumFac
+      ( TDataView():Get( "FacCliL", ::nView ) )->cSufFac    := ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
+      ( TDataView():Get( "FacCliL", ::nView ) )->nNumLin    := ( ::cTemporalLineaFactura )->nNumLin
+      ( TDataView():Get( "FacCliL", ::nView ) )->cRef       := ( ::cTemporalLineaFactura )->cRef
+      ( TDataView():Get( "FacCliL", ::nView ) )->cDetalle   := ( ::cTemporalLineaFactura )->cDetalle
+      ( TDataView():Get( "FacCliL", ::nView ) )->mLngDes    := ( ::cTemporalLineaFactura )->mLngDes
+      ( TDataView():Get( "FacCliL", ::nView ) )->mNumSer    := ( ::cTemporalLineaFactura )->mNumSer
+      ( TDataView():Get( "FacCliL", ::nView ) )->nPreUnit   := ( ::cTemporalLineaFactura )->nPreUnit
+      ( TDataView():Get( "FacCliL", ::nView ) )->nPntVer    := ( ::cTemporalLineaFactura )->nPntVer
+      ( TDataView():Get( "FacCliL", ::nView ) )->nImpTrn    := ( ::cTemporalLineaFactura )->nImpTrn
+      ( TDataView():Get( "FacCliL", ::nView ) )->nCanEnt    := ( ::cTemporalLineaFactura )->nCanEnt
+      ( TDataView():Get( "FacCliL", ::nView ) )->cUnidad    := ( ::cTemporalLineaFactura )->cUnidad
+      ( TDataView():Get( "FacCliL", ::nView ) )->nUniCaja   := ( ::cTemporalLineaFactura )->nUniCaja
+      ( TDataView():Get( "FacCliL", ::nView ) )->nDto       := ( ::cTemporalLineaFactura )->nDto
+      ( TDataView():Get( "FacCliL", ::nView ) )->nDtoPrm    := ( ::cTemporalLineaFactura )->nDtoPrm
+      ( TDataView():Get( "FacCliL", ::nView ) )->nIva       := ( ::cTemporalLineaFactura )->nIva
+      ( TDataView():Get( "FacCliL", ::nView ) )->nReq       := ( ::cTemporalLineaFactura )->nReq
+      ( TDataView():Get( "FacCliL", ::nView ) )->nPesoKg    := ( ::cTemporalLineaFactura )->nPesoKg
+      ( TDataView():Get( "FacCliL", ::nView ) )->cPesoKg    := ( ::cTemporalLineaFactura )->cPesoKg
+      ( TDataView():Get( "FacCliL", ::nView ) )->nVolumen   := ( ::cTemporalLineaFactura )->nVolumen
+      ( TDataView():Get( "FacCliL", ::nView ) )->cVolumen   := ( ::cTemporalLineaFactura )->cVolumen
+      ( TDataView():Get( "FacCliL", ::nView ) )->nComAge    := ( ::cTemporalLineaFactura )->nComAge
+      ( TDataView():Get( "FacCliL", ::nView ) )->dFecha     := ::dFechaFactura
+      ( TDataView():Get( "FacCliL", ::nView ) )->cTipMov    := ( ::cTemporalLineaFactura )->cTipMov
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodAlb    := ::cNumAlb
+      ( TDataView():Get( "FacCliL", ::nView ) )->lTotLin    := ( ::cTemporalLineaFactura )->lTotLin
+      ( TDataView():Get( "FacCliL", ::nView ) )->nDtoDiv    := ( ::cTemporalLineaFactura )->nDtoDiv
+      ( TDataView():Get( "FacCliL", ::nView ) )->nCtlStk    := ( ::cTemporalLineaFactura )->nCtlStk
+      ( TDataView():Get( "FacCliL", ::nView ) )->cAlmLin    := ( ::cTemporalLineaFactura )->cAlmLin
+      ( TDataView():Get( "FacCliL", ::nView ) )->cTipMov    := ( ::cTemporalLineaFactura )->cTipMov
+      ( TDataView():Get( "FacCliL", ::nView ) )->lIvaLin    := ( ::cTemporalLineaFactura )->lIvaLin
+      ( TDataView():Get( "FacCliL", ::nView ) )->lImpLin    := ( ::cTemporalLineaFactura )->lImpLin
+      ( TDataView():Get( "FacCliL", ::nView ) )->nValImp    := ( ::cTemporalLineaFactura )->nValImp
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodImp    := ( ::cTemporalLineaFactura )->cCodImp
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodPr1    := ( ::cTemporalLineaFactura )->cCodPr1
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodPr2    := ( ::cTemporalLineaFactura )->cCodPr2
+      ( TDataView():Get( "FacCliL", ::nView ) )->cValPr1    := ( ::cTemporalLineaFactura )->cValPr1
+      ( TDataView():Get( "FacCliL", ::nView ) )->cValPr2    := ( ::cTemporalLineaFactura )->cValPr2
+      ( TDataView():Get( "FacCliL", ::nView ) )->nCosDiv    := ( ::cTemporalLineaFactura )->nCosDiv
+      ( TDataView():Get( "FacCliL", ::nView ) )->lKitArt    := ( ::cTemporalLineaFactura )->lKitArt
+      ( TDataView():Get( "FacCliL", ::nView ) )->lKitChl    := ( ::cTemporalLineaFactura )->lKitChl
+      ( TDataView():Get( "FacCliL", ::nView ) )->lKitPrc    := ( ::cTemporalLineaFactura )->lKitPrc
+      ( TDataView():Get( "FacCliL", ::nView ) )->nMesGrt    := ( ::cTemporalLineaFactura )->nMesGrt
+      ( TDataView():Get( "FacCliL", ::nView ) )->lLote      := ( ::cTemporalLineaFactura )->lLote
+      ( TDataView():Get( "FacCliL", ::nView ) )->nLote      := ( ::cTemporalLineaFactura )->nLote
+      ( TDataView():Get( "FacCliL", ::nView ) )->cLote      := ( ::cTemporalLineaFactura )->cLote
+      ( TDataView():Get( "FacCliL", ::nView ) )->dFecCad    := ( ::cTemporalLineaFactura )->dFecCad
+      ( TDataView():Get( "FacCliL", ::nView ) )->lControl   := ( ::cTemporalLineaFactura )->lControl
+      ( TDataView():Get( "FacCliL", ::nView ) )->lMsgVta    := ( ::cTemporalLineaFactura )->lMsgVta
+      ( TDataView():Get( "FacCliL", ::nView ) )->lNotVta    := ( ::cTemporalLineaFactura )->lNotVta
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodTip    := ( ::cTemporalLineaFactura )->cCodTip
+      ( TDataView():Get( "FacCliL", ::nView ) )->mObsLin    := ( ::cTemporalLineaFactura )->mObsLin
+      ( TDataView():Get( "FacCliL", ::nView ) )->Descrip    := ( ::cTemporalLineaFactura )->Descrip
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodPrv    := ( ::cTemporalLineaFactura )->cCodPrv
+      ( TDataView():Get( "FacCliL", ::nView ) )->cNomPrv    := ( ::cTemporalLineaFactura )->cNomPrv
+      ( TDataView():Get( "FacCliL", ::nView ) )->cImagen    := ( ::cTemporalLineaFactura )->cImagen
+      ( TDataView():Get( "FacCliL", ::nView ) )->cCodFam    := ( ::cTemporalLineaFactura )->cCodFam
+      ( TDataView():Get( "FacCliL", ::nView ) )->cGrpFam    := ( ::cTemporalLineaFactura )->cGrpFam
+      ( TDataView():Get( "FacCliL", ::nView ) )->cRefPrv    := ( ::cTemporalLineaFactura )->cRefPrv
+      ( TDataView():Get( "FacCliL", ::nView ) )->dFecEnt    := ( ::cTemporalLineaFactura )->dFecEnt
+      ( TDataView():Get( "FacCliL", ::nView ) )->dFecSal    := ( ::cTemporalLineaFactura )->dFecSal
+      ( TDataView():Get( "FacCliL", ::nView ) )->nPreAlq    := ( ::cTemporalLineaFactura )->nPreAlq
+      ( TDataView():Get( "FacCliL", ::nView ) )->lAlquiler  := ( ::cTemporalLineaFactura )->lAlquiler
+      ( TDataView():Get( "FacCliL", ::nView ) )->nNumMed    := ( ::cTemporalLineaFactura )->nNumMed
+      ( TDataView():Get( "FacCliL", ::nView ) )->nMedUno    := ( ::cTemporalLineaFactura )->nMedUno
+      ( TDataView():Get( "FacCliL", ::nView ) )->nMedDos    := ( ::cTemporalLineaFactura )->nMedDos
+      ( TDataView():Get( "FacCliL", ::nView ) )->nMedTre    := ( ::cTemporalLineaFactura )->nMedTre
+      ( TDataView():Get( "FacCliL", ::nView ) )->nPuntos    := ( ::cTemporalLineaFactura )->nPuntos
+      ( TDataView():Get( "FacCliL", ::nView ) )->nValPnt    := ( ::cTemporalLineaFactura )->nValPnt
+      ( TDataView():Get( "FacCliL", ::nView ) )->nDtoPnt    := ( ::cTemporalLineaFactura )->nDtoPnt
+      ( TDataView():Get( "FacCliL", ::nView ) )->nIncPnt    := ( ::cTemporalLineaFactura )->nIncPnt
+      ( TDataView():Get( "FacCliL", ::nView ) )->nFacCnv    := ( ::cTemporalLineaFactura )->nFacCnv
+      ( TDataView():Get( "FacCliL", ::nView ) )->lLinOfe    := ( ::cTemporalLineaFactura )->lLinOfe
+
+      ( TDataView():Get( "FacCliL", ::nView ) )->( dbUnLock() )
+
+      ( ::cTemporalLineaFactura )->( dbSkip() )
+
+   end while   
 
 Return ( Self )
 
