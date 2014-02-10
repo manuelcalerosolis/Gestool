@@ -1789,6 +1789,7 @@ METHOD BuildEmpresa()
    ::aEmpresaTables        := {}
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "NCount"
    oDataTable:cName        := cPatEmp() + "NCount"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "NCount.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "NCount.Cdx"
