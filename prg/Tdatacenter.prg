@@ -1836,6 +1836,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FPago"
    oDataTable:cName        := cPatEmp() + "FPago"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FPago.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FPago.Cdx"
@@ -3088,6 +3089,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AntCliT"
    oDataTable:cName        := cPatEmp() + "AntCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AntCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AntCliT.Cdx"

@@ -2788,6 +2788,106 @@ Return ( lPass )
 
 //----------------------------------------------------------------------------//
 
+FUNCTION AppendPass( cAliOrigen, cAliDestino, hHash )
+
+   local lPass    := .f.
+
+   ( cAliDestino )->( dbAppend() )
+
+   if ( cAliDestino )->( !NetErr() )
+
+         PassField( cAliOrigen, cAliDestino )
+
+         PassHash( cAliDestino, hHash )
+
+      ( cAliDestino )->( dbUnLock() )
+
+      lPass       := .t.
+
+   end if
+
+Return ( lPass )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION EditPass( cAliOrigen, cAliDestino, hHash )
+
+   if ( cAliDestino )->( dbRLock() )
+
+      PassField( cAliOrigen, cAliDestino )
+
+      PassHash( cAliDestino, hHash )
+      
+      dbSafeUnLock( cAliDestino )
+
+   end if
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION PassField( cAliOrigen, cAliDestino )
+
+   local i
+   local cNom
+   local xVal
+   local nPos
+   local nField   := ( cAliDestino )->( fCount() )
+
+   for i = 1 to nField
+
+      cNom     := ( cAliDestino )->( FieldName( i ) )
+      nPos     := ( cAliOrigen  )->( FieldPos( cNom ) )
+
+      if nPos != 0
+         xVal  := ( cAliOrigen )->( FieldGet( nPos ) )
+         ( cAliDestino )->( FieldPut( i, xVal ) )
+      end if
+
+   next
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION PassHash( cAliDestino, hHash )
+
+   local h
+   local nPos
+
+   for each h in hHash
+      nPos     := ( cAliDestino )->( FieldPos( h:key ) )
+      if nPos != 0
+         ( cAliDestino )->( FieldPut( nPos, h:value ) )
+      end if
+   next
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------------------------------------//
+
 Function IsTrue( u )
 
 Return ( Valtype( u ) == "L" .and. u )
