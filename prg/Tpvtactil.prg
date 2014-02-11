@@ -337,6 +337,9 @@ CLASS TpvTactil
    DATA nTarifaSolo
    DATA nTarifaCombinado
 
+   DATA oBtnTarifaSolo
+   DATA oBtnTarifaCombinado
+
    DATA lKillResource
 
    DATA lHideCalculadora
@@ -549,7 +552,6 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
-
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
@@ -624,6 +626,10 @@ CLASS TpvTactil
    METHOD SetOptionLineas()            VIRTUAL // INLINE ( if( !Empty( ::oOfficeBar ) .and. ::oOfficeBar:nOption != 2, ( ::oOfficeBar:SetOption( 2 ), ::oOfficeBar:Refresh() ), ), .t. )
 
    METHOD nNuevoNumeroTicket()         INLINE ( Str( nNewDoc( ::oTiketCabecera:cSerTik, ::oTiketCabecera:cAlias, "nTikCli", 10, ::oContadores:cAlias ), 10 ) )
+
+   METHOD cTextoTarifa( nPrecio )      INLINE ( uFieldEmpresa( "cTxtTar" + alltrim( str( nPrecio ) ), "Precio" + space( 1 ) + alltrim( str( nPrecio ) ) ) )
+   METHOD SetTarifaSolo( nPrecio ) 
+   METHOD SetTarifaCombinado() 
 
    /*
    Eventos---------------------------------------------------------------------
@@ -1559,21 +1565,25 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD cTextoLinea()
+   METHOD cTextoLineaTicket()    INLINE ( ::cTextoLinea( ::oTiketLinea ) )
+
+   INLINE METHOD cTextoLinea( oDbf )
 
       local cTexto
 
-      cTexto         := Rtrim( ::oTemporalLinea:cNomTil )
+      DEFAULT oDbf   := ::oTemporalLinea
 
-      if !Empty( ::oTemporalLinea:cComent )
+      cTexto         := Rtrim( oDbf:cNomTil )
+
+      if !Empty( oDbf:cComent )
          cTexto      := "[*] " + cTexto
       end if
 
-      if !Empty( ::oTemporalLinea:cNcmTil )
-         cTexto      += " con " + CRLF + ::oTemporalLinea:cNcmTil
+      if !Empty( oDbf:cNcmTil )
+         cTexto      += " con " + CRLF + oDbf:cNcmTil
       end if
 
-      if !Empty( ::oTemporalLinea:lKitChl )
+      if !Empty( oDbf:lKitChl )
          cTexto      := Space( 3 ) + "<" + cTexto + ">"
       end if
 
@@ -1848,8 +1858,6 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::lCombinandoDos           := .f.
    ::lShowCombinado           := .f.
 
-   ::oTimer                   := TTimer():New( 500, {|| ::ShowCombinado() }, oWnd() )
-
    oThis                      := Self
 
 Return Self
@@ -1924,7 +1932,9 @@ METHOD End() CLASS TpvTactil
 
    ::DestroyFastReport()
 
-   ::oTimer:End()
+   if !empty(::oTimer)
+      ::oTimer:End()
+   end if 
 
    ::oTpvCobros      := nil
    ::oTpvListaTicket := nil
@@ -2200,16 +2210,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oComentariosLinea                         PATH ( cPatArt() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
 
-   if uFieldEmpresa( "lOrdNomTpv" )
-
-      ::oComentariosCabecera:OrdSetFocus( "cDescri" )
-      ::oComentariosCabecera:GoTop()
-
-      ::oComentariosLinea:OrdSetFocus( "cCodDes" )
-      ::oComentariosLinea:GoTop()
-
-   end if
-
    DATABASE NEW ::oTipoImpresoraComandas                    PATH ( cPatDat() )   FILE "TIPIMP.DBF"          VIA ( cDriver() ) SHARED INDEX "TIPIMP.CDX"
 
    DATABASE NEW ::oTemporadas                               PATH ( cPatArt() )   FILE "Temporadas.DBF"      VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
@@ -2225,6 +2225,16 @@ METHOD OpenFiles() CLASS TpvTactil
    DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oTipoVenta                                PATH ( cPatDat() )   FILE "TVTA.DBF"            VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+
+   if uFieldEmpresa( "lOrdNomTpv" )
+
+      ::oComentariosCabecera:OrdSetFocus( "cDescri" )
+      ::oComentariosCabecera:GoTop()
+
+      ::oComentariosLinea:OrdSetFocus( "cCodDes" )
+      ::oComentariosLinea:GoTop()
+
+   end if
 
    ::oCaptura                 := TCaptura():New( cPatDat() )
    ::oCaptura:OpenFiles()
@@ -3442,6 +3452,10 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
 
+      oGrupo                     := TDotNetGroup():New( oCarpeta, 226, "Tarifas", .f., , "User1_32" )
+         ::oBtnTarifaSolo        := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
+         ::oBtnTarifaCombinado   := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
+
    end if 
 
    /*
@@ -3469,6 +3483,10 @@ METHOD StartResource() CLASS TpvTactil
    end if
 
    end if
+
+   // Creamos el timer --------------------------------------------------------
+
+   ::oTimer                   := TTimer():New( 500, {|| ::ShowCombinado() }, ::oDlg )
 
    /*
    Si no tienen orden de comandas no mostramos el botón-----------------------
@@ -3508,6 +3526,11 @@ METHOD StartResource() CLASS TpvTactil
    // Datos del cliente-----------------------------------------------------------
 
    ::SetCliente()
+
+   // Tarifas de ventas--------------------------------------------------------
+
+   ::SetTarifaSolo()
+   ::SetTarifaCombinado()
 
    /*
    Datos de la serie-----------------------------------------------------------
@@ -4653,19 +4676,20 @@ METHOD AgregarCombinado()
    CursorWait()
 
    ::oTemporalLinea:Load()
-   ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
-   ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
-   ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
-   ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-   ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-   ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
+   
+      ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
+      ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
+      ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
+      ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+      ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+      ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
 
-   if ( ::oArticulo:lFacCnv )
-      ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
-   end if
-
+      if ( ::oArticulo:lFacCnv )
+         ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
+      end if
+   
    ::oTemporalLinea:Save()
-
+   
    ::SetCombinando( .f. )
 
    CursorWE()
@@ -4677,38 +4701,30 @@ Return ( .t. )
 METHOD nPrecioArticulo() CLASS TpvTactil
 
    local sOferta
-   local cCodGrpCli
+   local cCodGrp
    local nPrecio        := 0
    local nTotalLinea    := 0
    local cCodArt        := ::oArticulo:Codigo
    local cCodCli        := ::oTiketCabecera:cCliTik
    local nTarifa        := ::nTarifaSolo
 
-   /*
-   Obtenemos el precio normal del artículo-------------------------------------
-   */
+   // Obtenemos el precio normal del artículo-------------------------------------
 
    nPrecio              := cRetPreArt( cCodArt, nTarifa, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
 
-   /*
-   Si el artículo está de oferta cambiamos el precio hasta la oferta-----------
-   */
+   // Si el artículo está de oferta cambiamos el precio hasta la oferta-----------
 
-   cCodGrpCli           := RetGrpCli( ::oTiketCabecera:cCliTik, ::oCliente:cAlias )
-   sOferta              := sOfertaArticulo( cCodArt, ::oTiketCabecera:cCliTik, cCodGrpCli, 1, GetSysDate(), ::oArticulosOfertas:cAlias, nTarifa, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
+   cCodGrp              := RetGrpCli( ::oTiketCabecera:cCliTik, ::oCliente:cAlias )
 
+   sOferta              := sOfertaArticulo( cCodArt, ::oTiketCabecera:cCliTik, cCodGrp, 1, GetSysDate(), ::oArticulosOfertas:cAlias, nTarifa, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
    if !Empty( sOferta ) 
       nPrecio           := sOferta:nPrecio
    end if
 
-   /*
-   Si el cliente tiene una tarifa atípica la buscamos tb-----------------------
-   */
+   // Si el cliente tiene una tarifa atípica la buscamos tb-----------------------
 
-   if lSeekAtpArt( cCodCli + cCodArt, Space( 20 ) + Space( 20 ), Space( 20 ) + Space( 20 ), GetSysDate(), ::oAtipicasCliente:cAlias )
-
+   if lBuscarAtipicaArticulo( cCodCli, cCodGrp, GetSysDate(), cCodArt, Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oAtipicasCliente:cAlias )
       nPrecio           := nImpAtp( nTarifa, ::oAtipicasCliente:cAlias, , nIva( ::oTipoIva, ::oArticulo:TipoIva ) )
-
    end if   
 
 Return ( nPrecio )
@@ -5572,11 +5588,8 @@ Return ( nil )
 METHOD SelecionaCliente() CLASS TpvTactil
 
    local cCliente
-   local cTarifaSoloOld
-   local cTarifaCombinadoOld
-
-   cTarifaSoloOld       := ::nTarifaSolo
-   cTarifaCombinadoOld  := ::nTarifaCombinado
+   local nTarifaSolo
+   local nTarifaCombinado
 
    do case
       case ::oTiketCabecera:nUbiTik == ubiLlevar
@@ -5587,9 +5600,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
          cCliente    := BrwCliTactil( nil, nil, nil, .t. )
    end case
 
-   /*
-   Si selecionamos un cliente que no este vacio nos inserta sus datos en el TPV
-   */
+   // Si selecionamos un cliente que no este vacio nos inserta sus datos en el TPV
 
    if !Empty( cCliente )
 
@@ -5602,8 +5613,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
       ::oTiketCabecera:cDniCli      := oRetFld( cCliente, ::oCliente, "Nif" )
       ::oTiketCabecera:nTarifa      := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
 
-      ::nTarifaSolo                 := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
-      ::nTarifaCombinado            := Max( oRetFld( cCliente, ::oCliente, "nTarCmb" ), 1 )
+      // Formas de pago--------------------------------------------------------
 
       if Empty( oRetFld( cCliente, ::oCliente, "CodPago" ) )
          ::oTiketCabecera:cFpgTik   := cDefFpg()
@@ -5613,25 +5623,27 @@ METHOD SelecionaCliente() CLASS TpvTactil
 
       ::SetCliente()
 
-      /*
-      Datos de la serie---------------------------------------------------------
-      */
+      // Datos de la serie-----------------------------------------------------
 
       ::SetSerie()
 
-      /*
-      Comprobamos que han cambiado la tarifa del cliente-----------------------
-      */
+      // Situamos las tarifas--------------------------------------------------
 
-      if ::oTemporalLinea:RecCount() != 0
+      nTarifaSolo                   := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 ) // ::nTarifaSolo
+      nTarifaCombinado              := Max( oRetFld( cCliente, ::oCliente, "nTarCmb" ), 1 ) // ::nTarifaCombinado
 
-         if cTarifaSoloOld != ::nTarifaSolo
+      if ( nTarifaSolo != ::nTarifaSolo .or. nTarifaCombinado != ::nTarifaCombinado )
 
-            if ApoloMsgNoYes( "La tarifa del cliente ha cambiado, ¿desea actualizar los precios de todas las líneas?", "Confirmación", .t. )
+         ::SetTarifaSolo( nTarifaSolo )      
 
-               ::ActualizaTarifaCliente()
+         ::SetTarifaCombinado( nTarifaCombinado )
 
-            end if
+         // Comprobamos que han cambiado la tarifa del cliente-----------------
+
+         if ( ::oTemporalLinea:RecCount() != 0 ) .and. ;
+            ApoloMsgNoYes( "La tarifa del cliente ha cambiado, ¿desea actualizar los precios de todas las líneas?", "Confirmación", .t. )
+
+            ::ActualizaTarifaCliente()
 
          end if
 
@@ -5663,9 +5675,7 @@ METHOD ActualizaTarifaCliente() CLASS TpvTactil
       else
 
          ::oTemporalLinea:Load()
-
          ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oTemporalLinea:cCbaTil, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
-
          ::oTemporalLinea:Save()
 
       end if
@@ -5724,6 +5734,36 @@ METHOD SetSerie() Class TpvTactil
    end if   
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD SetTarifaSolo( nPrecio ) CLASS TpvTactil
+
+   DEFAULT nPrecio   := ::nTarifaSolo
+
+   ::nTarifaSolo     := nPrecio
+
+   if !empty( ::oBtnTarifaSolo )
+      ::oBtnTarifaSolo:cCaption( "Precio solo : " + ::cTextoTarifa( nPrecio ) )
+      ::oBtnTarifaSolo:Refresh()
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD SetTarifaCombinado( nPrecio ) CLASS TpvTactil
+
+   DEFAULT nPrecio      := ::nTarifaCombinado
+
+   ::nTarifaCombinado   := nPrecio
+
+   if !empty( ::oBtnTarifaCombinado )
+      ::oBtnTarifaCombinado:cCaption( "Precio combinado : " +::cTextoTarifa( nPrecio ) )
+      ::oBtnTarifaCombinado:Refresh()
+   end if
+
+Return nil 
 
 //---------------------------------------------------------------------------//
 
@@ -7161,15 +7201,8 @@ METHOD CargaValoresDefecto( nUbicacion, lInit ) CLASS TpvTactil
       ::oTiketCabecera:lSndDoc   := .t.
 
       if !Empty( cDefCli() )
-
-         ::nTarifaSolo           := Max( oRetFld( cDefCli(), ::oCliente, "nTarifa" ), 1 )
-         ::nTarifaCombinado      := Max( oRetFld( cDefCli(), ::oCliente, "nTarCmb" ), 1 )
-
-      else
-
-         ::nTarifaSolo           := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-         ::nTarifaCombinado      := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
-
+         ::SetTarifaSolo(        Max( oRetFld( cDefCli(), ::oCliente, "nTarifa" ), 1 ) )
+         ::SetTarifaCombinado(   Max( oRetFld( cDefCli(), ::oCliente, "nTarCmb" ), 1 ) )
       end if
 
    end if
@@ -7257,8 +7290,8 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
                   // Asignando valores--------------------------------------------
 
-                  ::nTarifaSolo              := ::oRestaurante:nSelectedPrecio
-                  ::nTarifaCombinado         := ::oRestaurante:nSelectedCombinado
+                  ::SetTarifaSolo(        ::oRestaurante:nSelectedPrecio )
+                  ::SetTarifaCombinado(   ::oRestaurante:nSelectedCombinado )
 
                   ::oTiketCabecera:nUbiTik   := nSelectOption
 
@@ -7274,26 +7307,25 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
             end if
 
-               // Pintamos la información de la zona donde nos encontramos-----
+            // Pintamos la información de la zona donde nos encontramos-----
 
-               ::SetUbicacion()
+            ::SetUbicacion()
 
-               // Datos del documento------------------------------------------
+            // Datos del documento------------------------------------------
 
-               ::SetInfo()
+            ::SetInfo()
 
-               // Cliente------------------------------------------------------
+            // Cliente------------------------------------------------------
 
-               ::SetCliente()
+            ::SetCliente()
 
-               // Serie -------------------------------------------------------
+            // Serie -------------------------------------------------------
 
-               ::SetSerie()
+            ::SetSerie()
 
-               // Total documento----------------------------------------------
+            // Total documento----------------------------------------------
 
-               ::SetTotal()
-
+            ::SetTotal()
 
          else
 
@@ -7384,21 +7416,16 @@ METHOD OnClickGeneral() CLASS TpvTactil
 
          ::InitDocumento( ubiGeneral )
 
-         /*
-         Cargamos las tarifas-----------------------------------------------------
-         */
+         // Cargamos las tarifas-----------------------------------------------------
 
-         ::nTarifaSolo           := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-         ::nTarifaCombinado      := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
-
-         /*
-         Pintamos la información de la zona donde nos encontramos-----------------
-         */
+         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
+         
+         // Pintamos la información de la zona donde nos encontramos-----------------
 
          ::SetUbicacion()
 
-         /*
-         Datos del documento------------------------------------------------------
+         // Datos del documento------------------------------------------------------
          */
 
          ::SetInfo()
@@ -7482,16 +7509,12 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
 
          ::InitDocumento( ubiRecoger )
 
-         /*
-         Cargamos las tarifas-----------------------------------------------------
-         */
+         // Cargamos las tarifas-----------------------------------------------------
 
-         ::nTarifaSolo           := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-         ::nTarifaCombinado      := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
 
-         /*
-         Pintamos la información de la zona donde nos encontramos-----------------
-         */
+         // Pintamos la información de la zona donde nos encontramos-----------------
 
          ::SetUbicacion()
 
@@ -7580,16 +7603,12 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
 
          ::InitDocumento( ubiLlevar )
 
-         /*
-         Cargamos las tarifas-----------------------------------------------------
-         */
+         // Cargamos las tarifas-----------------------------------------------------
 
-         ::nTarifaSolo        := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-         ::nTarifaCombinado   := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
 
-         /*
-         Muestro el dialogo de clientes-------------------------------------------
-         */
+         // Muestro el dialogo de clientes-------------------------------------------
 
          ::SelecionaCliente()
 
@@ -7684,16 +7703,12 @@ METHOD OnClickEncargar() CLASS TpvTactil
 
          ::InitDocumento( ubiEncargar )
 
-         /*
-         Cargamos las tarifas-----------------------------------------------------
-         */
+         // Cargamos las tarifas-----------------------------------------------------
 
-         ::nTarifaSolo        := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-         ::nTarifaCombinado   := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+         ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+         ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
 
-         /*
-         Muestro el dialogo de clientes-------------------------------------------
-         */
+         // Muestro el dialogo de clientes-------------------------------------------
 
          ::SelecionaCliente()
 
@@ -7856,7 +7871,7 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnCalculadora:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
 
       if !Empty( ::oBtnSSalir )
-         ::oBtnSSalir:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
+         ::oBtnSSalir:Move(         nBtnFamiliasTop + calcDistance, , , , .t. )
       end if   
 
    else
@@ -7873,7 +7888,7 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnCalculadora:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
 
       if !Empty( ::oBtnSSalir )
-         ::oBtnSSalir:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
+         ::oBtnSSalir:Move(         nBtnFamiliasTop - calcDistance, , , , .t. )
       end if
 
    end if
@@ -8671,7 +8686,7 @@ METHOD VariableReport() CLASS TpvTactil
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",          "CallHbFunc('nDtoUTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " línea de factura",        "CallHbFunc('nIvaLTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                  "CallHbFunc('nIvmLTpv')" )
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLinea()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
 
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                    "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",           "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )

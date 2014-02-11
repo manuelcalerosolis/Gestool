@@ -292,7 +292,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
    end if 
 
    if nMode == APPD_MODE
-
       aTmp[ ( dbfCajT )->( FieldPos( "cPrnWin" ) ) ]     := PrnGetName()
       aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ]     := PrnGetName()
       aTmp[ ( dbfCajT )->( FieldPos( "cPrnNota" ) ) ]    := PrnGetName()
@@ -311,7 +310,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopApt" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ]     := 1
-
    end if
 
    if BeginTrans( aTmp )
@@ -3545,3 +3543,43 @@ Function nCajasArqueo( oCajas )
 Return ( nCajas )
 
 //---------------------------------------------------------------------------//
+
+Function EdtCajas( cCodigoCaja, lOpenBrowse )
+
+   local nLevel         := "01040"
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if Cajas()
+         if dbSeekInOrd( cCodigoCaja, "cCodCaj", dbfCajT )
+            oWndBrw:RecEdit()
+         else
+            MsgStop( "No se encuentra caha" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( nil, .t. )
+
+         if dbSeekInOrd( cCodigoCaja, "cCodCaj", dbfCajT )
+            WinEdtRec( nil, bEdit, dbfCajT )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+

@@ -15979,7 +15979,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
 
       if ( dbfArticulo )->lKitArt
 
-         nIva        := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+         nIva              := nIva( dbfIva, ( dbfArticulo )->TipoIva )
 
          do case
             case nTarifa == 1
