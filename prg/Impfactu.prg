@@ -1451,14 +1451,25 @@ METHOD Importar()
                ::oDbfAtpGst:nTipAtp := 2
             end if
 
+            nRegIva                 := nIva( ::oDbfIvaGst, oRetfld( ::oDbfAtpGst:cCodArt, ::oDbfArtGst, "TipoIva", "Codigo" ) )
+
             ::oDbfAtpGst:dFecIni    := ::oDbfAtpFac:dFecIni
             ::oDbfAtpGst:dFecFin    := ::oDbfAtpFac:dFecFin
+
             ::oDbfAtpGst:nPrcArt    := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nPrcArt2   := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nPrcArt3   := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nPrcArt4   := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nPrcArt5   := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nPrcArt6   := ::oDbfAtpFac:nPrecio
+
+            ::oDbfAtpGst:nPreIva1   := ( ::oDbfAtpFac:nPrecio ) + ( ::oDbfAtpFac:nPrecio * nRegIVA / 100 )
+            ::oDbfAtpGst:nPreIva2   := ( ::oDbfAtpFac:nPrecio ) + ( ::oDbfAtpFac:nPrecio * nRegIVA / 100 )
+            ::oDbfAtpGst:nPreIva3   := ( ::oDbfAtpFac:nPrecio ) + ( ::oDbfAtpFac:nPrecio * nRegIVA / 100 )
+            ::oDbfAtpGst:nPreIva4   := ( ::oDbfAtpFac:nPrecio ) + ( ::oDbfAtpFac:nPrecio * nRegIVA / 100 )
+            ::oDbfAtpGst:nPreIva5   := ( ::oDbfAtpFac:nPrecio ) + ( ::oDbfAtpFac:nPrecio * nRegIVA / 100 )
+            ::oDbfAtpGst:nPreIva6   := ( ::oDbfAtpFac:nPrecio ) + ( ::oDbfAtpFac:nPrecio * nRegIVA / 100 )
+            
             ::oDbfAtpGst:nDtoArt    := ::oDbfAtpFac:nDto
             ::oDbfAtpGst:lAplPre    := .t.
             ::oDbfAtpGst:lAplPed    := .t.
