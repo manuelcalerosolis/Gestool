@@ -4728,17 +4728,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oDlg ;
          ACTION   ( EditarNumeroSerie( aTmp, oStock, nMode ) )
 
+   // Keys --------------------------------------------------------------------
+
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oStkAct, nStkAct, oTotal, cCodArt, oBtn, oBtnSer ) } )
+      if uFieldEmpresa( "lGetLot")
+         oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+      end if 
+      oDlg:AddFastKey( VK_F5,          {|| oBtn:SetFocus(), oBtn:Click() } )
    end if
 
-   oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
+   oDlg:AddFastKey( VK_F6,             {|| oBtnSer:Click() } )
+
+   // Start --------------------------------------------------------------------
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
-
-
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -11537,10 +11542,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    ( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )
 
-      ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
-      ( dbfTmpLin )->cCodCli  := aTmp[ _CCODCLI ]
+      if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
-      dbPass( dbfTmpLin, TDataView():Get( "AlbCliL", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
+         ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
+         ( dbfTmpLin )->cCodCli  := aTmp[ _CCODCLI ]
+
+         dbPass( dbfTmpLin, TDataView():Get( "AlbCliL", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
+
+      end if   
 
       ( dbfTmpLin )->( dbSkip() )
 
@@ -13110,9 +13119,11 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
                AppendDatosArticulos()
 
+               ( dbfTmpLin )->lFromAtp       := .t.
+
                ( dbfTmpLin )->nPreUnit       := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
 
-               ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikT, dbfTikL )
+               ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
 
             end if   
 
@@ -16025,13 +16036,14 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
 
+      ( cAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
+
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
-
-      ( cAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbCliT )->( dbCloseArea() )
    else
@@ -16302,6 +16314,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
 
 Return ( aColAlbCli )
 

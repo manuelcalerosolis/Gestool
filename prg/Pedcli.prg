@@ -5151,7 +5151,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       if nMode != ZOOM_MODE
 
-         oDlg:AddFastKey( VK_F5, {|| SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oEstadoProduccion, oBtn ) } )
+         if uFieldEmpresa( "lGetLot")
+            oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+         end if 
+
+         oDlg:AddFastKey( VK_F5, 			{|| oBtn:SetFocus(), oBtn:Click() } )
 
          oFld:aDialogs[4]:AddFastKey( VK_F2, {|| WinAppRec( oBrwResCli, bEdtRes, dbfTmpRes, oTot, nil, aTmp ) } )
          oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwResCli, bEdtRes, dbfTmpRes, oTot, nil, aTmp ) } )

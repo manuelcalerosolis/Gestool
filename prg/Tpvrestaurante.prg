@@ -167,8 +167,10 @@ CLASS TTpvRestaurante FROM TMasDet
    DATA cSelectedSala
    DATA cSelectedPunto
    DATA oSelectedPunto
+
    DATA nSelectedPrecio    AS NUMERIC  INIT  1
    DATA nSelectedCombinado AS NUMERIC  INIT  2
+
    DATA cSelectedTiket
 
    DATA cSelectedImagen
@@ -250,6 +252,14 @@ CLASS TTpvRestaurante FROM TMasDet
 
    Method SetSalaVta( aTmp, dbfTikT )
 
+   METHOD SelectedPrecio( nPrecio )       INLINE ( if(   !empty( nPrecio ),;
+                                                         ::nSelectedPrecio    := if( nPrecio == 7, Max( uFieldEmpresa( "nPreTPro" ), 1 ), nPrecio ),;
+                                                         ::nSelectedPrecio ) )
+
+   METHOD SelectedCombinado( nPrecio )    INLINE ( if(   !empty( nPrecio ),;
+                                                         ::nSelectedCombinado := if( nPrecio == 7, Max( uFieldEmpresa( "nPreTCmb" ), 1 ), nPrecio ),;
+                                                         ::nSelectedCombinado ) )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -271,13 +281,13 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TTpvRestaurante
 
    ::bFirstKey             := {|| ::oDbf:cCodigo }
 
-   ::nSelectedPrecio       := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-   ::nSelectedCombinado    := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
-
    ::oSalon                := TTpvSalon():New( Self )
 
    ::oDetSalaVta           := TDetSalaVenta():New( cPath, Self )
    ::AddDetail( ::oDetSalaVta )
+
+   ::SelectedPrecio(    Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+   ::SelectedCombinado( Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
 
 RETURN ( Self )
 
@@ -365,9 +375,10 @@ Method SetTicket( sPunto ) CLASS TTpvRestaurante
 
       ::cSelectedSala                  := ::oSelectedPunto:cSala
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
-      ::nSelectedPrecio                := ::oSelectedPunto:nPrecio
 
-      ::nSelectedCombinado             := ::oSelectedPunto:nPreCmb
+      ::SelectedPrecio(    ::oSelectedPunto:nPrecio )
+      ::SelectedCombinado( ::oSelectedPunto:nPreCmb )
+
       ::cSelectedImagen                := ::oSelectedPunto:cImagen
       ::cSelectedTiket                 := ::oSelectedPunto:cTiket()
       ::cSelectedTexto                 := ::oSelectedPunto:cTextoPunto()
@@ -404,11 +415,13 @@ Method Sala( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
          ::cSelectedTiket     := ""
          ::cSelectedPunto     := ""
          ::oSelectedPunto     := nil
+
          ::cSelectedSala      := ::aSalas[ ::nTarifa ]:cCodigo
-         ::nSelectedPrecio    := ::aSalas[ ::nTarifa ]:nPrecio
-         ::nSelectedCombinado := ::aSalas[ ::nTarifa ]:nPreCmb
          ::cSelectedImagen    := ::aSalas[ ::nTarifa ]:cImagen
          ::cSelectedTexto     := ::aSalas[ ::nTarifa ]:cDescripcion
+
+         ::SelectedPrecio(    ::aSalas[ ::nTarifa ]:nPrecio )
+         ::SelectedCombinado( ::aSalas[ ::nTarifa ]:nPreCmb )
 
    end case
 
@@ -469,8 +482,9 @@ Method InitSala() CLASS TTpvRestaurante
    do case
       case ( IsTrue( ::lPuntosVenta ) )
 
-         ::nSelectedPrecio       := Max( uFieldEmpresa( "nPreTPro" ), 1 )
-         ::nSelectedCombinado    := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+         ::SelectedPrecio(    Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
+         ::SelectedCombinado( Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
+
          ::cSelectedSala         := ""
          ::cSelectedTiket        := ""
          ::cSelectedImagen       := ""
@@ -480,9 +494,10 @@ Method InitSala() CLASS TTpvRestaurante
 
       case ( IsFalse( ::lPuntosVenta ) .and. ( len( ::aSalas ) > 0 ) )
 
+         ::SelectedPrecio(    ::aSalas[ 1 ]:nPrecio )
+         ::SelectedCombinado( ::aSalas[ 1 ]:nPreCmb )
+
          ::cSelectedSala      := ::aSalas[ 1 ]:cCodigo
-         ::nSelectedPrecio    := ::aSalas[ 1 ]:nPrecio
-         ::nSelectedCombinado := ::aSalas[ 1 ]:nPreCmb
          ::cSelectedImagen    := ::aSalas[ 1 ]:cImagen
          ::cSelectedTexto     := ::aSalas[ 1 ]:cDescripcion
          ::cSelectedTiket     := ""
@@ -1007,8 +1022,9 @@ Method SelectTikets( nOpt, oDlg, oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestauran
 
    local sPunto            := ::aTikets[ Min( Max( nOpt, 1 ), len( ::aTikets ) ) ]
 
+   ::SelectedPrecio( sPunto:nPrecio() )
+
    ::cSelectedSala         := sPunto:cSala()
-   ::nSelectedPrecio       := sPunto:nPrecio()
    ::cSelectedTiket        := sPunto:cTiket()
    ::cSelectedImagen       := sPunto:cImagen()
    ::cSelectedTexto        := sPunto:cTextoPunto()
@@ -1280,8 +1296,10 @@ Method SetGenerico( sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := ""
    ::cSelectedPunto              := "General"
-   ::nSelectedPrecio             := sPunto:nPrecio
-   ::nSelectedCombinado          := sPunto:nPreCmb
+
+   ::SelectedPrecio(    sPunto:nPrecio )
+   ::SelectedCombinado( sPunto:nPreCmb )
+   
    ::cSelectedImagen             := sPunto:cImagen
    ::cSelectedTiket              := sPunto:cTiket()
    ::cSelectedTexto              := sPunto:cTextoPunto()
@@ -1297,11 +1315,13 @@ Method SetLlevar( sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := ""
    ::cSelectedPunto              := "Llevar"
-   ::nSelectedPrecio             := sPunto:nPrecio
-   ::nSelectedCombinado          := sPunto:nPreCmb
+   
    ::cSelectedImagen             := sPunto:cImagen
    ::cSelectedTiket              := sPunto:cTiket()
    ::cSelectedTexto              := sPunto:cTextoPunto()
+
+   ::SelectedPrecio(    sPunto:nPrecio )
+   ::SelectedCombinado( sPunto:nPreCmb )
 
    ::SetSelectedImagen()
    ::SetSelectedTexto()
@@ -1363,8 +1383,10 @@ Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := sPunto:cSala
    ::cSelectedPunto              := sPunto:cPuntoVenta
-   ::nSelectedPrecio             := sPunto:nPrecio
-   ::nSelectedCombinado          := sPunto:nPreCmb
+
+   ::SelectedPrecio(    sPunto:nPrecio )
+   ::SelectedCombinado( sPunto:nPreCmb )
+   
    ::cSelectedImagen             := sPunto:cImagen
    ::cSelectedTiket              := sPunto:cTiket()
    ::cSelectedTexto              := sPunto:cTextoPunto()
@@ -1383,27 +1405,6 @@ Method GetSelectedTexto( lExtend ) CLASS TTpvRestaurante
    local cTextoPunto    := Rtrim( ::cSelectedPunto )
 
    DEFAULT lExtend      := .f.
-
-   /*if !Empty( ::cTikT )
-
-      nRecno            := ( ::cTikT )->( Recno() )
-
-      if dbSeekInOrd( ::cSelectedTiket, "cNumTik", ::cTikT )
-
-         if !Empty( ( ::cTikT )->cAliasTik )
-            if lExtend
-               cTextoPunto += "-"
-               cTextoPunto += Upper( Rtrim( ( ::cTikT )->cAliasTik ) )
-            else
-               cTextoPunto := Upper( Rtrim( ( ::cTikT )->cAliasTik ) )
-            end if
-         end if
-
-      end if
-
-      ( ::cTikT )->( dbGoTo( nRecno ) )
-
-   end if*/
 
 Return ( cTextoPunto )
 
@@ -1449,9 +1450,10 @@ Method SetPunto( sPunto ) CLASS TTpvRestaurante
 
       ::cSelectedSala                  := ::oSelectedPunto:cSala
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
-      ::nSelectedPrecio                := ::oSelectedPunto:nPrecio
+     
+      ::SelectedPrecio(    ::oSelectedPunto:nPrecio )             
+      ::SelectedCombinado( ::oSelectedPunto:nPreCmb )             
 
-      ::nSelectedCombinado             := ::oSelectedPunto:nPreCmb
       ::cSelectedImagen                := ::oSelectedPunto:cImagen
 
       ::cSelectedTiket                 := ::oSelectedPunto:cTiket()

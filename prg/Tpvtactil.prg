@@ -788,8 +788,6 @@ CLASS TpvTactil
 
       if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
 
-         // ::oTemporalLinea:Delete()
-
          ::oTemporalLinea:lDelTil   := .t.
 
          ::oBrwLineas:Refresh()
@@ -2024,17 +2022,11 @@ METHOD Activate( lAlone ) CLASS TpvTactil
 
       ::InitDocumento( ubiGeneral )
 
-      /*
-      Creamos el objeto FastReport---------------------------------------------
-      */
+      // Creamos el objeto FastReport---------------------------------------------
 
       ::InstanceFastReport()
 
-     // ::VariableReport()
-
-      /*
-      Cargamos los valores por defecto-----------------------------------------
-      */
+      // Cargamos los valores por defecto-----------------------------------------
 
       ::Resource()
 
@@ -3446,8 +3438,9 @@ METHOD StartResource() CLASS TpvTactil
          oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Up32",                    "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Down32",                  "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajas", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Propiedades",       2, {|| EdtCajas() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
@@ -3455,6 +3448,7 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                     := TDotNetGroup():New( oCarpeta, 226, "Tarifas", .f., , "User1_32" )
          ::oBtnTarifaSolo        := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
          ::oBtnTarifaCombinado   := TDotNetButton():New( 220, oGrupo, "Money2_16",                 "",                  1, {|| nil }, , , .f., .f., .f. )
+                                    TDotNetButton():New( 220, oGrupo, "",                          "",                  1, {|| nil }, , , .f., .f., .f. )
 
    end if 
 
@@ -8677,6 +8671,7 @@ METHOD VariableReport() CLASS TpvTactil
 
          ::oFastReport:AddVariable(     "Tickets",             "Total IVMH",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalImpuestoHidrocarburos()' ] )" )
 
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLinea()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLinea()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLinea()' ] )" )
@@ -8685,10 +8680,6 @@ METHOD VariableReport() CLASS TpvTactil
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",          "CallHbFunc('nDtoUTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " línea de factura",        "CallHbFunc('nIvaLTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                  "CallHbFunc('nIvmLTpv')" )
-<<<<<<< HEAD
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
-=======
->>>>>>> 6dbefdffdc80a07e8e974d5a2f2330379d62e555
 
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                    "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",           "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )

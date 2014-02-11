@@ -4335,12 +4335,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 			OF 		oDlg ;
          ACTION   ( EditarNumeroSerie( aTmp, oStock, nMode ) )
 
+   // Keys --------------------------------------------------------------------
+
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
-      oDlg:AddFastKey( VK_F5, {|| SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer ) } )
+      if uFieldEmpresa( "lGetLot")
+         oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+      end if 
+     	oDlg:AddFastKey( VK_F5, 			{|| oBtn:SetFocus(), oBtn:Click() } )
    end if
 
-   oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Añadir_v" ) } )
+   oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
    oDlg:bStart    := {|| SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac ) }
 

@@ -3546,8 +3546,9 @@ Return ( nCajas )
 
 Function EdtCajas( cCodigoCaja, lOpenBrowse )
 
-   local nLevel         := "01040"
+   local nLevel         := nLevelUsr("01040" )
 
+   DEFAULT cCodigoCaja  := oUser():cCaja()
    DEFAULT lOpenBrowse  := .f.
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
@@ -3561,13 +3562,13 @@ Function EdtCajas( cCodigoCaja, lOpenBrowse )
          if dbSeekInOrd( cCodigoCaja, "cCodCaj", dbfCajT )
             oWndBrw:RecEdit()
          else
-            MsgStop( "No se encuentra caha" )
+            MsgStop( "No se encuentra caja" )
          end if
       end if
 
    else
 
-      if OpenFiles( nil, .t. )
+      if lOpenFiles( nil, .t. )
 
          if dbSeekInOrd( cCodigoCaja, "cCodCaj", dbfCajT )
             WinEdtRec( nil, bEdit, dbfCajT )
