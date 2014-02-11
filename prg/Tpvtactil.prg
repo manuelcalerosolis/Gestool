@@ -8677,7 +8677,6 @@ METHOD VariableReport() CLASS TpvTactil
 
          ::oFastReport:AddVariable(     "Tickets",             "Total IVMH",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalImpuestoHidrocarburos()' ] )" )
 
-
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLinea()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLinea()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLinea()' ] )" )
@@ -8686,7 +8685,10 @@ METHOD VariableReport() CLASS TpvTactil
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",          "CallHbFunc('nDtoUTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " línea de factura",        "CallHbFunc('nIvaLTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                  "CallHbFunc('nIvmLTpv')" )
+<<<<<<< HEAD
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
+=======
+>>>>>>> 6dbefdffdc80a07e8e974d5a2f2330379d62e555
 
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                    "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",           "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )

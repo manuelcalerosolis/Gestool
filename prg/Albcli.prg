@@ -345,7 +345,6 @@ static dbfTmpPgo
 static dbfTmpSer
 static dbfAntCliT
 static dbfDelega
-static dbfCount
 static cTmpLin
 static cTmpInc
 static cTmpDoc
@@ -949,7 +948,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( GenFCli( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "AlbCliP", nView ), TDataView():Get( "AlbCliS", nView ), dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oGrpCli, oStock ) );
+         ACTION   ( GenFCli( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "AlbCliP", nView ), TDataView():Get( "AlbCliS", nView ), dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, TDataView():Get( "NCount", nView ), oGrpCli, oStock ) );
          TOOLTIP  "(G)enerar facturas";
          HOTKEY   "G";
          LEVEL    ACC_APPD
@@ -1174,6 +1173,12 @@ STATIC FUNCTION OpenFiles()
 
       TDataView():Get( "FacCliS", nView )
 
+      /*
+      Contadores---------------------------------------------------------------
+      */
+
+      TDataView():Get( "NCount", nView )
+
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
          lOpenFiles     := .f.
       end if 
@@ -1323,10 +1328,7 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
+      
       USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
       SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
 
@@ -1667,9 +1669,6 @@ STATIC FUNCTION CloseFiles()
    if dbfDelega != nil
       ( dbfDelega )->( dbCloseArea() )
    end if
-   if dbfCount != nil
-      ( dbfCount )->( dbCloseArea() )
-   end if
    if dbfUbicaL != nil
       ( dbfUbicaL )->( dbCloseArea() )
    end if
@@ -1809,7 +1808,6 @@ STATIC FUNCTION CloseFiles()
    dbfArtPrv      := nil
    dbfAntCliT     := nil
    dbfDelega      := nil
-   dbfCount       := nil
    dbfUbicaL      := nil
    dbfAgeCom      := nil
    dbfFacRecT     := nil
@@ -1859,8 +1857,8 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo albaranes a clientes"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "AC", dbfDoc )
@@ -2093,7 +2091,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _LFACTURADO]   := .f.
          aTmp[ _LSNDDOC   ]   := .t.
          aTmp[ _CSUFALB   ]   := RetSufEmp()
-         aTmp[ _CSERALB   ]   := cNewSer( "NALBCLI", dbfCount )
+         aTmp[ _CSERALB   ]   := cNewSer( "NALBCLI", TDataView():Get( "NCount", nView ) )
          aTmp[ _DFECENV   ]   := Ctod( "" )
          aTmp[ _DFECIMP   ]   := Ctod( "" )
          aTmp[ _CCODDLG   ]   := oUser():cDelegacion()
@@ -4884,7 +4882,7 @@ STATIC FUNCTION PrnSerie()
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
    local oSayFmt
    local cSayFmt
    local oSerIni
@@ -4900,7 +4898,7 @@ STATIC FUNCTION PrnSerie()
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -5070,7 +5068,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
 
                GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
@@ -5096,7 +5094,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
 
                GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
@@ -5129,7 +5127,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
 
                   GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
@@ -5157,7 +5155,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
 
                   GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
@@ -7739,9 +7737,9 @@ STATIC FUNCTION PrnEntregas( lPrint, cAlbCliP, lTicket )
       cPrinter       := cPrinterEntregasCuenta( oUser():cCaja(), dbfCajT )
       nCopPrn        := nCopiasEntregasCuentaEnCaja( oUser():cCaja(), dbfCajT )
    else
-      cFmtEnt        := cFormatoDocumento( nil, "NENTALB", dbfCount )
+      cFmtEnt        := cFormatoDocumento( nil, "NENTALB", TDataView():Get( "NCount", nView ) )
       cPrinter       := PrnGetName()
-      nCopPrn        := nCopiasDocumento( nil, "NENTALB", dbfCount )
+      nCopPrn        := nCopiasDocumento( nil, "NENTALB", TDataView():Get( "NCount", nView ) )
    end if
 
    cSayEnt           := cNombreDoc( cFmtEnt )
@@ -8163,7 +8161,7 @@ STATIC FUNCTION DupAlbaran( cFecDoc )
 
    //Recogemos el nuevo numero de factura--------------------------------------
 
-   nNewNumAlb        := nNewDoc( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, TDataView():Get( "AlbCliT", nView ), "NALBCLI", , dbfCount )
+   nNewNumAlb        := nNewDoc( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, TDataView():Get( "AlbCliT", nView ), "NALBCLI", , TDataView():Get( "NCount", nView ) )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
@@ -11489,7 +11487,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumAlb              := nNewDoc( aTmp[ _CSERALB ], TDataView():Get( "AlbCliT", nView ), "NALBCLI", , dbfCount )
+      nNumAlb              := nNewDoc( aTmp[ _CSERALB ], TDataView():Get( "AlbCliT", nView ), "NALBCLI", , TDataView():Get( "NCount", nView ) )
       aTmp[ _NNUMALB ]     := nNumAlb
       nTotOld              := 0
 

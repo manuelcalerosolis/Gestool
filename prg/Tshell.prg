@@ -2424,7 +2424,7 @@ Method CreateXBrowse() CLASS TShell
       ::oBrw:bKeyNo        := {| n | iif( n == nil,;
                                        ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyNo() ), ) ),;
                                        ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyGoto( n ) ), ) ) ) }
-      ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyCount() ), ) }
+      ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyCount() ), 0 ) }
       end if
 
       ::oBrw:lFastEdit     := .t.
