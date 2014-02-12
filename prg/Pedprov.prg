@@ -1489,6 +1489,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
+      oBrwLin:lFooter         := .t.
       oBrwLin:cName           := "Lineas de pedidos a proveedor"
 
          with object ( oBrwLin:AddCol() )
@@ -1563,6 +1564,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
             :nWidth           := 60
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
+            :nFooterType      := AGGR_SUM
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -1621,6 +1623,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
             :nWidth           := 80
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
+            :nFooterType      := AGGR_SUM
          end with
 
          if nMode != ZOOM_MODE

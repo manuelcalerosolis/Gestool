@@ -3022,6 +3022,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
+      oBrwLin:lFooter 		  := .t.	
       oBrwLin:cName           := "Factura de cliente.Detalle"
 
       oBrwLin:CreateFromResource( IDOK )
@@ -3127,6 +3128,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
          :lHide               := .t.
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3139,6 +3141,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :lHide               := .t.
          :nEditType     	  := 1
          :bOnPostEdit   	  := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3176,6 +3179,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3288,6 +3292,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :nWidth              := 94
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )

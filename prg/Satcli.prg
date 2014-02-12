@@ -4,6 +4,7 @@
 #include "Factu.ch" 
 #include "Report.ch"
 #include "Menu.ch"
+#include "Xbrowse.ch"
 #else
 #include "FWCE.ch"
 REQUEST DBFCDX
@@ -2046,6 +2047,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
+      oBrwLin:lFooter         := .t.
       oBrwLin:cName           := "Satsupuesto a cliente.Detalle"
 
       oBrwLin:CreateFromResource( 210 )
@@ -2135,6 +2137,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2233,6 +2236,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       if nMode != ZOOM_MODE

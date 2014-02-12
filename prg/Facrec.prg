@@ -2591,6 +2591,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
+      oBrwLin:lFooter 		  := .t.
       oBrwLin:cName           := "Rectificativa.Detalle"
 
       oBrwLin:CreateFromResource( IDOK )
@@ -2688,6 +2689,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
          :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2781,10 +2783,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nTotLFacRec( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t., cPorDiv ) }
+         :bEditValue          := {|| nTotLFacRec( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
+         :cEditPicture        := cPorDiv
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )

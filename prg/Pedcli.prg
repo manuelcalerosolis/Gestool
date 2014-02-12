@@ -2,6 +2,7 @@
 #include "Folder.ch"
 #include "Report.ch"
 #include "Menu.ch"
+#include "Xbrowse.ch"
 
 #include "Factu.ch" 
 
@@ -2207,6 +2208,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
+      oBrwLin:lFooter 		  := .t.
       oBrwLin:cName           := "Pedido a cliente.Detalle"
 
       oBrwLin:CreateFromResource( 210 )
@@ -2324,6 +2326,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
          :lHide               := .t.
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2336,6 +2339,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
          :lHide               := .t.
          :nEditType     	  := 1
          :bOnPostEdit   	  := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2373,6 +2377,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2483,6 +2488,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
       end with
 
       if nMode != ZOOM_MODE
