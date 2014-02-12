@@ -3722,11 +3722,13 @@ end if
          ACTION   ( EditarNumeroSerie( aTmp, oStock, nMode ) )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Click() } )
-         oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
+         if uFieldEmpresa( "lGetLot")
+            oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+         end if 
+         oDlg:AddFastKey( VK_F5,          {|| oBtn:SetFocus(), oBtn:Click() } )
       end if
 
-      oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Añadir_v" ) } )
+      oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin ),;
                            if( !Empty( oGetCaducidad ), oGetCaducidad:Hide(), ),;

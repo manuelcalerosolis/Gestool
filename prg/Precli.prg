@@ -3936,8 +3936,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oDlg ;
          ACTION   ( ChmHelp( "Añadir_v" ) )
 
+      // Keys --------------------------------------------------------------------
+
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Click() } )
+         if uFieldEmpresa( "lGetLot")
+            oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+         end if 
+         oDlg:AddFastKey( VK_F5,          {|| oBtn:SetFocus(), oBtn:Click() } )
       end if
 
       oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Añadir_v" ) } )
