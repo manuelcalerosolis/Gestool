@@ -882,7 +882,7 @@ CLASS TpvTactil
 
       ::GuardaDocumento()
 
-      ::ProcesaComandas()
+      ::ProcesaDocumentosInternos()
 
       RETURN ( .t. )
 
@@ -919,7 +919,7 @@ CLASS TpvTactil
 
       ::GuardaDocumento( .f. )
 
-      ::ProcesaComandas()
+      ::ProcesaDocumentosInternos()
 
       RETURN ( Self )
 
@@ -936,6 +936,16 @@ CLASS TpvTactil
    METHOD GetLineaAlbaranes( uValue )  INLINE ( Eval( &( uValue ), ::oAlbaranClienteLinea:cAlias ) )
 
    METHOD ProcesaComandas()
+
+   METHOD ProcesaAnulacion()
+
+   METHOD ProcesaLineas()
+
+   //-----------------------------------------------------------------------//
+
+   METHOD ProcesaDocumentosInternos()  INLINE ( ::ProcesaComandas(), ::ProcesaAnulacion(), ::ProcesaLineas() )
+
+   //-----------------------------------------------------------------------//
 
    METHOD ImprimeDocumento()
 
@@ -976,6 +986,23 @@ CLASS TpvTactil
    ENDMETHOD
 
    //-----------------------------------------------------------------------//
+
+   INLINE METHOD ImprimeAnulacion( cImpresora )
+
+      ::cFormato        := cFormatoAnulacionEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+      ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+      ::nDispositivo    := IS_PRINTER
+      ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+      ::lComanda        := .t.
+
+      ::ImprimeDocumento()
+
+      RETURN ( Self )  
+
+   ENDMETHOD
+
+   //-----------------------------------------------------------------------//
+
 
    INLINE METHOD ImprimeTicket()
 
@@ -6256,7 +6283,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       // Envia las comandas a impresoras---------------------------------------
 
-      ::ProcesaComandas()
+      ::ProcesaDocumentosInternos()
 
       // Generar vale----------------------------------------------------------
 
@@ -7961,9 +7988,11 @@ METHOD ProcesaComandas( lCopia )
 
    CursorWait()
 
-   /*
-   Guaradamos la posicion del orden--------------------------------------------
-   */
+   // Matamos la temporal------------------------------------------------------
+
+   ::oTemporalComanda:Zap()
+
+   // Guaradamos la posicion del orden-----------------------------------------
 
    if ::oTiketLinea:Seek( ::cNumeroTicket() )
 
@@ -7973,9 +8002,7 @@ METHOD ProcesaComandas( lCopia )
 
          if !( ::oTiketLinea:lDelTil ) .and. ( lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) )
 
-            /*
-            Impresora Uno------------------------------------------------------
-            */
+            // Impresora Uno---------------------------------------------------
 
             if !Empty( ::oTiketLinea:cImpCom1 ) .and. AllTrim( ::oTiketLinea:cImpCom1 ) != "No imprimir"
 
@@ -7987,9 +8014,7 @@ METHOD ProcesaComandas( lCopia )
 
             end if
 
-            /*
-            Impresora Dos------------------------------------------------------
-            */
+            // Impresora Dos---------------------------------------------------
 
             if !Empty( ::oTiketLinea:cImpCom2 ) .and. AllTrim( ::oTiketLinea:cImpCom2 ) != "No imprimir"
 
@@ -8001,9 +8026,7 @@ METHOD ProcesaComandas( lCopia )
 
             end if
 
-            /*
-            Añadimos esta linea al temporal de comandas------------------------
-            */
+            // Añadimos esta linea al temporal de comandas---------------------
 
             if lAppend
 
@@ -8017,9 +8040,7 @@ METHOD ProcesaComandas( lCopia )
 
          end if
 
-         /*
-         Siguiente linea-------------------------------------------------------
-         */
+         // Siguiente linea----------------------------------------------------
 
          ::oTiketLinea:Skip()
 
@@ -8027,85 +8048,63 @@ METHOD ProcesaComandas( lCopia )
 
    end if
 
-   /*
-   Impimimos la comanda por las impresoras deseadas----------------------------
-   */
+   // Impimimos la comanda por las impresoras deseadas-------------------------
 
    for each cImp in aImp
 
-      /*
-      Filtramos para que solo entren las comandas no impresas------------------
-      */
+      // Filtramos para que solo entren las comandas no impresas---------------
 
       ::oTemporalComanda:SetFilter( "Rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' .or. Rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "'" )
       ::oTemporalComanda:GoTop()
 
-      /*
-      Imprimimos la comanda por la impresora correspondiente-------------------
-      */
+      // Imprimimos la comanda por la impresora correspondiente-------------------
 
       ::ImprimeComanda( cImp )
 
-      /*
-      Reproducimos el archivo Wav----------------------------------------------
-      */
+      // Reproducimos el archivo Wav-------------------------------------------
 
       ::SonidoComanda( cImp )
 
-      /*
-      Destruimos el filtro-----------------------------------------------------
-      */
+      // Destruimos el filtro--------------------------------------------------
 
       ::oTemporalComanda:SetFilter()
 
    next
 
-   /*
-   Ponemos la marca para saber que el producto está imprimido------------------
-   */
-
-   if !lCopia
-
-      if ::oTiketLinea:Seek( ::cNumeroTicket() )
-
-         while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
-
-            ::oTiketLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea() )
-
-            ::oTiketLinea:Skip()
-
-         end while
-
-      end if
-
-      /*
-      Lineas temporales--------------------------------------------------------
-      Esto hay q hacerlo para cuando se guarda sin salir del doc --------------
-      */
-
-      ::oTemporalLinea:GetStatus()
-
-      ::oTemporalLinea:GoTop()
-      while !::oTemporalLinea:Eof()
-
-         ::oTemporalLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea( ::oTemporalLinea ) )
-
-         ::oTemporalLinea:Skip()
-
-      end while
-
-      ::oTemporalLinea:SetStatus()
-
-   end if
-
-   /*
-   Matamos la temporal---------------------------------------------------------
-   */
+   // Matamos la temporal------------------------------------------------------
 
    ::oTemporalComanda:Zap()
 
    CursorWE()
    
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ProcesaLineas()
+
+   // Ponemos la marca para saber que el producto está imprimido---------------
+
+   if ::oTiketLinea:Seek( ::cNumeroTicket() )
+      while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
+         ::oTiketLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea() )
+         ::oTiketLinea:Skip()
+      end while
+   end if
+
+   // Lineas temporales-----------------------------------------------------
+   // Esto hay q hacerlo para cuando se guarda sin salir del doc -----------
+
+   ::oTemporalLinea:GetStatus()
+
+   ::oTemporalLinea:GoTop()
+   while !::oTemporalLinea:Eof()
+      ::oTemporalLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea( ::oTemporalLinea ) )
+      ::oTemporalLinea:Skip()
+   end while
+
+   ::oTemporalLinea:SetStatus()
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -8124,6 +8123,102 @@ METHOD OnClickCopiaComanda() CLASS TpvTactil
 
    ::EnableDialog()
 
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ProcesaAnulacion()
+
+   local cImp
+   local aImp           := {}
+   local cWav           := ""
+   local lAppend        := .f.
+
+   CursorWait()
+
+   // Matamos la temporal------------------------------------------------------
+
+   ::oTemporalComanda:Zap()
+
+   // Guaradamos la posicion del orden-----------------------------------------
+
+   if ::oTiketLinea:Seek( ::cNumeroTicket() )
+
+      while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
+
+         lAppend        := .f.
+
+         if !( ::oTiketLinea:lDelTil ) .and. ( ::nUnidadesLinea() < 0 ) .and. ( ::nUnidadesImpresas() > ::nUnidadesLinea() ) 
+
+            // Impresora Uno---------------------------------------------------
+
+            if !Empty( ::oTiketLinea:cImpCom1 ) .and. AllTrim( ::oTiketLinea:cImpCom1 ) != "No imprimir"
+
+               if aScan( aImp, ::oTiketLinea:cImpCom1 ) == 0
+                  aAdd( aImp, ::oTiketLinea:cImpCom1 )
+               end if
+
+               lAppend  := .t.
+
+            end if
+
+            // Impresora Dos---------------------------------------------------
+
+            if !Empty( ::oTiketLinea:cImpCom2 ) .and. AllTrim( ::oTiketLinea:cImpCom2 ) != "No imprimir"
+
+               if aScan( aImp, ::oTiketLinea:cImpCom2 ) == 0
+                  aAdd( aImp, ::oTiketLinea:cImpCom2 )
+               end if
+
+               lAppend  := .t.
+
+            end if
+
+            // Añadimos esta linea al temporal de comandas---------------------
+
+            if lAppend
+               ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
+            end if
+
+         end if
+
+         // Siguiente linea----------------------------------------------------
+
+         ::oTiketLinea:Skip()
+
+      end while
+
+   end if
+
+   // Impimimos la comanda por las impresoras deseadas-------------------------
+
+   for each cImp in aImp
+
+      // Filtramos para que solo entren las comandas no impresas---------------
+
+      ::oTemporalComanda:SetFilter( "Rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' .or. Rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "'" )
+      ::oTemporalComanda:GoTop()
+
+      // Imprimimos la comanda por la impresora correspondiente----------------
+
+      ::ImprimeAnulacion( cImp )
+
+      // Reproducimos el archivo Wav-------------------------------------------
+
+      ::SonidoComanda( cImp )
+
+      // Destruimos el filtro--------------------------------------------------
+
+      ::oTemporalComanda:SetFilter()
+
+   next
+
+   // Matamos la temporal------------------------------------------------------
+
+   ::oTemporalComanda:Zap()
+
+   CursorWE()
+   
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -8148,7 +8243,7 @@ METHOD OnClickGuardar() CLASS TpvTactil
 
    // Mandamos las comandas a imprimir--------------------------------------------
 
-   ::ProcesaComandas( .f. )
+   ::ProcesaDocumentosInternos()
 
    ::EnableDialog()
 

@@ -236,7 +236,7 @@ CLASS Cuaderno1914 FROM Cuaderno
    METHOD CodigoRegistro()                INLINE ( '99' )
 
    METHOD TotalImporte()                  INLINE ( ::oPresentador:TotalImporte() )
-   METHOD TotalRegistros()                INLINE ( strzero( ::oPresentador:nTotalRegistros() ) )
+   METHOD TotalRegistros()                INLINE ( strzero( ::oPresentador:nTotalRegistros(), 8 ) )
    METHOD TotalFinalRegistros()           INLINE ( strzero( ::oPresentador:nTotalRegistros() + 5, 10 ) )
 
    METHOD New()
