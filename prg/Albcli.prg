@@ -11048,6 +11048,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       SysRefresh()
 
+      if !Empty( aGet[ _CREF ] )
+         aGet[ _CREF ]:SetFocus()
+      end if
+
    else
 
       oDlg:End( IDOK )

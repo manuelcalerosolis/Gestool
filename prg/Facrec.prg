@@ -4959,6 +4959,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
       SysRefresh()
 
+      if !Empty( aGet[ _CREF ] )
+         aGet[ _CREF ]:SetFocus()
+      end if
+
    else
 
       oDlg:end( IDOK )

@@ -953,11 +953,11 @@ METHOD CalculaPorcentajes() CLASS TFacturarLineasAlbaranes
 
    local nTotal
 
-   nTotal               := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
+   nTotal                  := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
 
-   nPorcentajeAlbaran   := ( ::oColTotalAlbaran:nTotal * 100 ) / nTotal
+   ::nPorcentajeAlbaran    := ( ::oColTotalAlbaran:nTotal * 100 ) / nTotal
 
-   nPorcentajeFactura   := ( ::oColTotalFactura:nTotal * 100 ) / nTotal
+   ::nPorcentajeFactura    := ( ::oColTotalFactura:nTotal * 100 ) / nTotal
 
    /*
    Refrescamos los browse------------------------------------------------------
