@@ -62,7 +62,9 @@ CLASS TFacturarLineasAlbaranes
 
    METHOD InitResource()
 
-   METHOD ActualizaPorcentajes()
+   METHOD ActualizaPantalla()
+
+   METHOD CalculaPorcentajes()
 
    METHOD PasaUnidadAlbaran()
    METHOD PasaLineaAlbaran()
@@ -699,7 +701,7 @@ METHOD PasaUnidadAlbaran() CLASS TFacturarLineasAlbaranes
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
@@ -734,7 +736,7 @@ METHOD PasaLineaAlbaran() CLASS TFacturarLineasAlbaranes
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
@@ -766,7 +768,7 @@ METHOD PasaTodoAlbaran() CLASS TFacturarLineasAlbaranes
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
@@ -846,13 +848,7 @@ METHOD PasaUnidadFactura() CLASS TFacturarLineasAlbaranes
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
-   ::ActualizaPorcentajes()
-
-   /*
-   Actualizamos los porcentajes y  el browse-----------------------------------
-   */
-
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
@@ -891,7 +887,7 @@ METHOD PasaLineaFactura() CLASS TFacturarLineasAlbaranes
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
@@ -923,13 +919,13 @@ METHOD PasaTodoFactura() CLASS TFacturarLineasAlbaranes
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
 
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActualizaPorcentajes() CLASS TFacturarLineasAlbaranes
+METHOD ActualizaPantalla() CLASS TFacturarLineasAlbaranes
 
    /*
    Refrescamos los browse------------------------------------------------------
@@ -947,10 +943,34 @@ METHOD ActualizaPorcentajes() CLASS TFacturarLineasAlbaranes
    Calculamos los porcentajes del Browse-------------------------------------//
    */
 
-   //MsgInfo( ::oColTotalAlbaran:nTotal, "Total albaran" )
+   ::CalculaPorcentajes()
 
-   //MsgInfo( ::oColTotalFactura:nTotal, "Total factura" )
+Return ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD CalculaPorcentajes() CLASS TFacturarLineasAlbaranes
+
+   local nTotal
+
+   nTotal               := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
+
+   nPorcentajeAlbaran   := ( ::oColTotalAlbaran:nTotal * 100 ) / nTotal
+
+   nPorcentajeFactura   := ( ::oColTotalFactura:nTotal * 100 ) / nTotal
+
+   /*
+   Refrescamos los browse------------------------------------------------------
+   */
+
+   if !Empty( ::oBrwLineasAlbaran )
+      ::oBrwLineasAlbaran:Refresh()
+   end if
+
+   if !Empty( ::oBrwLineasFactura )
+      ::oBrwLineasFactura:Refresh()
+   end if
+   
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -1124,7 +1144,7 @@ METHOD CambioIva() CLASS TFacturarLineasAlbaranes
    Actualizamos Browses y porcentajes------------------------------------------
    */
 
-   ::ActualizaPorcentajes()
+   ::ActualizaPantalla()
 
 Return ( Self )
 
