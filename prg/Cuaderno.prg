@@ -288,9 +288,9 @@ CLASS Presentador
 
    DATA oSender
 
-   DATA cEntidad     
-   DATA cOficina     
-   DATA cReferencia  
+   DATA cEntidad                 INIT ''     
+   DATA cOficina                 INIT ''     
+   DATA cReferencia              INIT ''
 
    DATA cPais                    INIT 'ES'         
    DATA cNombre                  INIT space( 70 )       
