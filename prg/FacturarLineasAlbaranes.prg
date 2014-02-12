@@ -46,8 +46,22 @@ CLASS TFacturarLineasAlbaranes
    DATA cSufijoFactura
    DATA oFechaFactura
    DATA dFechaFactura
+
+   DATA oSayNeto
+   DATA nSayNeto
+   DATA oSayIva
+   DATA nSayIva
+   DATA oSayTotal
+   DATA nSayTotal
+   DATA oSayTextoTotal
    
    DATA nTotalAlbaran
+
+   DATA oColNetoAlbaran
+   DATA oColNetoFactura
+
+   DATA oColIVAAlbaran
+   DATA oColIVAFactura
 
    DATA oColTotalAlbaran
    DATA oColTotalFactura
@@ -76,11 +90,13 @@ CLASS TFacturarLineasAlbaranes
 
    METHOD GuardaAlbaran()
 
+   METHOD GuardaAlbaranModa()
+
    METHOD GeneraFactura()
 
    METHOD EndResource()
 
-   METHOD CambioIva()
+   METHOD CalculaTotales()
 
 END CLASS
 
@@ -124,18 +140,18 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    ::nPorcentajePropuestoAlbaran := 0
    ::nPorcentajePropuestoFactura := 0
 
+   ::nSayNeto                    := 0
+   ::nSayIva                     := 0
+   ::nSayTotal                   := 0
+
    ::cSerieFactura               := "A"
-   ::dFechaFactura               := GetSysDate()
+   ::dFechaFactura               := GetSysDate() 
 
    /*
    Creamos los temporales necesarios-------------------------------------------
    */
 
    ::CreaTemporales()
-
-   /*
-   Guardamos el total del albara
-   */
 
    /*
    Montamos el recurso---------------------------------------------------------
@@ -225,6 +241,8 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD Resource() CLASS TFacturarLineasAlbaranes
+
+   local oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
    DEFINE DIALOG ::oDlg RESOURCE "FacturaLineasAlbaranes"
 
@@ -339,6 +357,20 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nHeadStrAlign       := 1
       end with
 
+      if ( "MODA" $ cParamsMain() )
+
+      with object ( ::oColTotalAlbaran := ::oBrwLineasAlbaran:AddCol() )
+         :cHeader             := "Total"
+         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) }
+         :cEditPicture        := cPorDiv()
+         :nWidth              := 80
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
+      end with
+
+      else
+
       with object ( ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "% " + cImp()
          :bEditValue          := {|| ( ::cTemporalLineaAlbaran )->nIva }
@@ -346,10 +378,9 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nWidth              := 35
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
-         :bLClickFooter       := {|| ::CambioIva() }
       end with
 
-      with object ( ::oBrwLineasAlbaran:AddCol() )
+      with object ( ::oColNetoAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Base"
          :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) }
          :cEditPicture        := cPorDiv()
@@ -359,7 +390,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nFooterType         := AGGR_SUM
       end with
 
-      with object ( ::oBrwLineasAlbaran:AddCol() )
+      with object ( ::oColIVAAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "IVA"
          :bEditValue          := {|| nIvaLAlbCli( ::cTemporalLineaAlbaran ) }
          :cEditPicture        := cPorDiv()
@@ -372,7 +403,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColTotalAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nTotLAlbCli( ::cTemporalLineaAlbaran ) }
+         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaAlbaran ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 45
          :nDataStrAlign       := 1
@@ -380,6 +411,8 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nFooterType         := AGGR_SUM
          :lHide               := .t.
       end with
+
+      end if
 
       /*
       Botones de albaran-------------------------------------------------------
@@ -542,7 +575,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nHeadStrAlign       := 1
       end with
 
-      with object ( ::oBrwLineasFactura:AddCol() )
+      with object ( ::oColNetoFactura := ::oBrwLineasFactura:AddCol() )
          :cHeader             := "Base"
          :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaFactura, , , , .f. ) }
          :cEditPicture        := cPorDiv()
@@ -552,7 +585,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nFooterType         := AGGR_SUM
       end with
 
-      with object ( ::oBrwLineasFactura:AddCol() )
+      with object ( ::oColIVAFactura := ::oBrwLineasFactura:AddCol() )
          :cHeader             := "IVA"
          :bEditValue          := {|| nIvaLAlbCli( ::cTemporalLineaFactura ) }
          :cEditPicture        := cPorDiv()
@@ -565,7 +598,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColTotalFactura := ::oBrwLineasFactura:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nTotLAlbCli( ::cTemporalLineaFactura ) }
+         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaFactura, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaFactura ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -594,6 +627,28 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          ACTION   ( ::PasaTodoFactura )
 
       /*
+      Say de totales-----------------------------------------------------------
+      */
+
+      REDEFINE SAY ::oSayNeto VAR ::nSayNeto ;
+         ID       270 ;
+         OF       ::oDlg
+
+      REDEFINE SAY ::oSayIva VAR ::nSayIva ;
+         ID       280 ;
+         OF       ::oDlg
+         
+      REDEFINE SAY ::oSayTotal VAR ::nSayTotal ;
+         ID       290 ;
+         FONT     oFont ;
+         OF       ::oDlg
+
+      REDEFINE SAY ::oSayTextoTotal ;
+         ID       291 ;
+         FONT     oFont ;
+         OF       ::oDlg
+
+      /*
       Botones generales--------------------------------------------------------
       */   
 
@@ -608,10 +663,14 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          CANCEL ;
          ACTION   ( ::oDlg:End() )
 
+      ::oDlg:bStart  := {|| ::ActualizaPantalla() }
+
       ::oDlg:Activate( , , , .t., , , {|| ::InitResource() } )
 
       ::oBrwLineasAlbaran:CloseData()
       ::oBrwLineasFactura:CloseData()
+
+      oFont:End()
 
 Return ( Self )
 
@@ -697,6 +756,7 @@ METHOD PasaUnidadAlbaran() CLASS TFacturarLineasAlbaranes
          end if
 
    end case
+
    /*
    Actualizamos los porcentajes y  el browse-----------------------------------
    */
@@ -940,10 +1000,16 @@ METHOD ActualizaPantalla() CLASS TFacturarLineasAlbaranes
    end if
 
    /*
-   Calculamos los porcentajes del Browse-------------------------------------//
+   Calculamos los porcentajes del Browse---------------------------------------
    */
 
    ::CalculaPorcentajes()
+
+   /*
+   Calcula totales-------------------------------------------------------------
+   */
+
+   ::CalculaTotales()
 
 Return ( Self )
 
@@ -982,7 +1048,15 @@ METHOD EndResource() CLASS TFacturarLineasAlbaranes
       Return .f.
    end if
 
-   ::GuardaAlbaran()
+   if ( "MODA" $ cParamsMain() )
+
+      ::GuardaAlbaranModa()
+
+   else
+
+      ::GuardaAlbaran()
+
+   end if   
 
    ::GeneraFactura()
 
@@ -993,6 +1067,8 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD GuardaAlbaran() CLASS TFacturarLineasAlbaranes
+
+   local aTotAlb
 
    /*
    Hacemos un RollBack---------------------------------------------------------
@@ -1019,7 +1095,79 @@ METHOD GuardaAlbaran() CLASS TFacturarLineasAlbaranes
 
    end while
 
+   /*
+   Rellenamos los campos de totales de la factura------------------------------
+   */
+
+   aTotAlb  := aTotAlbCli( ::cNumAlb,;
+                           TDataView():Get( "AlbCliT", ::nView ),;
+                           TDataView():Get( "AlbCliL", ::nView ),;
+                           TDataView():Get( "TIva", ::nView ),;
+                           TDataView():Get( "Divisas", ::nView ) )
+
+   if dbLock( TDataView():Get( "AlbCliT", ::nView ) )
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotNet    := aTotAlb[1]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotIva    := aTotAlb[2]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotReq    := aTotAlb[3]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotAlb    := aTotAlb[4]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
+   end if
+
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
+
+   local aTotAlb
+
+   /*
+   Hacemos un RollBack---------------------------------------------------------
+   */
+
+   while ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) ) .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
+      if dbLock( TDataView():Get( "AlbCliL", ::nView ) )
+         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbDelete() )
+         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbUnLock() )
+      end if
+   end while
+
+   /*
+   Escribimos definitivamente en la tabla--------------------------------------
+   */
+
+   ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+
+   while !( ::cTemporalLineaAlbaran )->( eof() )
+
+      appendPass( ::cTemporalLineaAlbaran,;
+               TDataView():Get( "AlbCliL", ::nView ),;
+               {  "nIva"    => 0 } )
+
+      ( ::cTemporalLineaAlbaran )->( dbSkip() )
+
+   end while
+
+   /*
+   Rellenamos los campos de totales de la factura------------------------------
+   */
+
+   aTotAlb  := aTotAlbCli( ::cNumAlb,;
+                           TDataView():Get( "AlbCliT", ::nView ),;
+                           TDataView():Get( "AlbCliL", ::nView ),;
+                           TDataView():Get( "TIva", ::nView ),;
+                           TDataView():Get( "Divisas", ::nView ) )
+
+   if dbLock( TDataView():Get( "AlbCliT", ::nView ) )
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotNet    := aTotAlb[1]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotIva    := aTotAlb[2]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotReq    := aTotAlb[3]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotAlb    := aTotAlb[4]
+      ( TDataView():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
+   end if
+
+Return ( Self )
+
 
 //---------------------------------------------------------------------------//
 
@@ -1078,6 +1226,7 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
       ( TDataView():Get( "FacCliT", ::nView ) )->nTotIva    := aTotFac[2]
       ( TDataView():Get( "FacCliT", ::nView ) )->nTotReq    := aTotFac[3]
       ( TDataView():Get( "FacCliT", ::nView ) )->nTotFac    := aTotFac[4]
+      ( TDataView():Get( "FacCliT", ::nView ) )->( dbUnLock() )
    end if   
 
    /*
@@ -1115,36 +1264,41 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CambioIva() CLASS TFacturarLineasAlbaranes
-
-   local nRec
-
-   if ApoloMsgNoYes( "¿Desea cambiar el tipo de I.V.A.?", "Elija una opción" )
-
-      nRec     := ( ::cTemporalLineaAlbaran )->( Recno() )
-
-      ( ::cTemporalLineaAlbaran )->( dbGoTop() )
-
-      while !( ::cTemporalLineaAlbaran )->( Eof() )
-      
-         if dbDialogLock( ::cTemporalLineaAlbaran )
-            ( ::cTemporalLineaAlbaran )->nIva := 0
-            ( ::cTemporalLineaAlbaran )->( dbUnLock() )
-         end if
-
-         ( ::cTemporalLineaAlbaran )->( dbSkip() )
-
-      end while
-
-      ( ::cTemporalLineaAlbaran )->( dbGoTo( nRec ) )
-
-   end if   
+METHOD CalculaTotales() CLASS TFacturarLineasAlbaranes
 
    /*
-   Actualizamos Browses y porcentajes------------------------------------------
+   Calculamos los totales------------------------------------------------------
    */
 
-   ::ActualizaPantalla()
+   if ( "MODA" $ cParamsMain() )
+
+      ::nSayNeto  := ::oColNetoFactura:nTotal
+      ::nSayIva   := ::oColIVAFactura:nTotal
+      ::nSayTotal := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal   
+
+   else
+
+      ::nSayNeto  := ::oColNetoAlbaran:nTotal + ::oColNetoFactura:nTotal
+      ::nSayIva   := ::oColIVAAlbaran:nTotal + ::oColIVAFactura:nTotal
+      ::nSayTotal := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
+
+   end if
+
+   /*
+   Refrescamos los totales-----------------------------------------------------
+   */
+
+   if !Empty( ::oSayNeto )
+      ::oSayNeto:Refresh()
+   end if
+   
+   if !Empty( ::oSayIva )
+      ::oSayIva:Refresh()
+   end if   
+
+   if !Empty( ::oSayTotal )
+      ::oSayTotal:Refresh()
+   end if
 
 Return ( Self )
 
