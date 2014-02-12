@@ -6214,6 +6214,10 @@ METHOD cDescripcionComanda( uTmpL ) CLASS TpvTactil
       cReturn        := Rtrim( ::oTemporalComanda:cNomTil )
    end if
 
+   if !Empty( ::oTemporalComanda:cNcmTil )
+      cReturn        += " con " + CRLF + Rtrim( ::oTemporalComanda:cNcmTil )
+   end if
+
    if !Empty( ::oTemporalComanda:cComent )
       cReturn        += "[*]" + Space( 1 ) + Alltrim( ::oTemporalComanda:cComent )
    end if
