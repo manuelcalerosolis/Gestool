@@ -1086,7 +1086,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( TFacturarLineasAlbaranes():FacturarLineas( nView ) );
+         ACTION   ( FacturarLineas() );
          TOOLTIP  "Facturar lineas" ;
          FROM     oRotor ;
 
@@ -13432,6 +13432,29 @@ Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCl
    ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecAlbCliT ) )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function FacturarLineas()
+
+   local lPrint   := .f.
+
+   lPrint         := TFacturarLineasAlbaranes():FacturarLineas( nView )
+
+   /*
+   Imprimimos si nos han dado a aceptar e imprimir-----------------------------
+   */
+
+   if lPrint
+      GenAlbCli()
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+
+
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
