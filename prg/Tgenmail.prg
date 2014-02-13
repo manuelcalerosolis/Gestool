@@ -555,11 +555,11 @@ Method InitClientResource() CLASS TGenMailing
 
    RECOVER USING oError
 
-      msgStop( "Error al instanciar el control." + CRLF + ErrorMessage( oError ) )
+     msgStop( "Error al instanciar el control." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+  ErrorBlock( oBlock )
 
 Return ( Self )
 
