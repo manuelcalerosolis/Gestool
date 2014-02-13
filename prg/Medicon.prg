@@ -472,17 +472,23 @@ Function AutoMeterDialog( oDialog )
 
 RETURN ( oMeter )
 
+//---------------------------------------------------------------------------//
+
 Function SetTotalAutoMeterDialog( nSet )
 
    oMeter:SetTotal( nSet )
 
 RETURN ( oMeter )
 
+//---------------------------------------------------------------------------//
+
 Function SetAutoMeterDialog( nSet )
 
    oMeter:Set( nSet )
 
 RETURN ( oMeter )
+
+//---------------------------------------------------------------------------//
 
 Function EndAutoMeterDialog( nSet )
 

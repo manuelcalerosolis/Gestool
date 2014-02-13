@@ -2070,7 +2070,12 @@ METHOD EdtRecMenu( oDlg )
                RESOURCE "Address_book2_16" ;
                ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) )
 
-            MENUITEM    "&2. Visualizar recibo";
+            MENUITEM    "&2. Modificar recibo";
+               MESSAGE  "Modificar el recibo seleccionado" ;
+               RESOURCE "Briefcase_user1_16" ;
+               ACTION   ( EdtRecCli( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) ) );
+
+            MENUITEM    "&3. Visualizar recibo";
                MESSAGE  "Visualiza el recibo seleccionado" ;
                RESOURCE "Briefcase_user1_16" ;
                ACTION   ( ZooRecCli( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) ) );

@@ -350,6 +350,8 @@ METHOD Importar()
 
    local nCount  := 0
    local nOrdAnt
+   local cSerie := ""
+   local nNumero := ""
 
    if ::OpenFiles()
 
@@ -622,19 +624,23 @@ METHOD Importar()
          ::oDbfAlbTFac:GoTop()
          while !( ::oDbfAlbTFac:eof() )
 
-            while ::oDbfAlbTGst:Seek( "A" + Str( Val( ::oDbfAlbTFac:Numero ), 9 ) + Space(2) )
+         cSerie                        := SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 1, 1 )
+         nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 2 ) )
+
+            while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + Space(2) )
                ::oDbfAlbTGst:Delete( .f. )
             end
 
-            while ::oDbfAlbLGst:Seek( "A" + Str( Val( ::oDbfAlbTFac:Numero), 9 ) + Space(2) )
+            while ::oDbfAlbLGst:Seek( cSerie + str( nNumero, 9 ) + Space(2) )
+
                ::oDbfAlbLGst:Delete( .f. )
             end
 
             ::oDbfAlbTGst:Append()
             ::oDbfAlbTGst:Blank()
 
-            ::oDbfAlbTGst:cSerAlb        := "A"
-            ::oDbfAlbTGst:nNumAlb        := Val( ::oDbfAlbTFac:Numero )
+            ::oDbfAlbTGst:cSerAlb        := cSerie
+            ::oDbfAlbTGst:nNumAlb        := nNumero
             ::oDbfAlbTGst:cSufAlb        := Space( 2 )
             ::oDbfAlbTGst:cTurAlb        := cCurSesion()
             ::oDbfAlbTGst:dFecAlb        := ::oDbfAlbTFac:Fecha
@@ -718,10 +724,13 @@ METHOD Importar()
 
             if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "A"
 
+               cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 1 )
+               nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
+
                ::oDbfAlbLGst:Append()
 
-               ::oDbfAlbLGst:cSerAlb     := "A"
-               ::oDbfAlbLGst:nNumAlb     := Val( SubStr( ::oDbfAlbLFac:RfaLin, 5, 7 ) )
+               ::oDbfAlbLGst:cSerAlb     := cSerie
+               ::oDbfAlbLGst:nNumAlb     := nNumero
                ::oDbfAlbLGst:cSufAlb     := Space( 2 )
                ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
                ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
@@ -732,6 +741,7 @@ METHOD Importar()
                ::oDbfAlbLGst:nUniCaja    := ::oDbfAlbLFac:Cantidad
                ::oDbfAlbLGst:dFecha      := ::oDbfAlbLFac:Fecha
                ::oDbfAlbLGst:cAlmLin     := oUser():cAlmacen()
+               ::oDbfAlbLGst:nNumLin     := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 6 ) ) 
 
                ::oDbfArtGst:GoTop()
                if ::oDbfArtGst:Seek( ::oDbfAlbLFac:Codigo )
@@ -874,6 +884,7 @@ METHOD Importar()
                ::oDbfFacLGst:nUniCaja    := ::oDbfAlbLFac:Cantidad
                ::oDbfFacLGst:dFecha      := ::oDbfAlbLFac:Fecha
                ::oDbfFacLGst:cAlmLin     := oUser():cAlmacen()
+               ::oDbfFacLGst:NNumLin     := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 6 ) )
 
                ::oDbfArtGst:GoTop()
                if ::oDbfArtGst:Seek( ::oDbfAlbLFac:Codigo )
