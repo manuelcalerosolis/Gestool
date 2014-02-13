@@ -13089,6 +13089,7 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
    if !( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
 
       MsgStop( "No existen atípicas para este cliente." )
+
       Return .f.
 
    else
