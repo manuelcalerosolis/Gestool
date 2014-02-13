@@ -19423,5 +19423,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Impuestos", -1, "Static", WS_GROUP, 488, 322, 53, 8
   CONTROL "Total", 291, "Static", WS_GROUP, 488, 335, 87, 16
   CONTROL "0", 290, "Static", SS_RIGHT|WS_GROUP, 579, 335, 86, 16
+  CONTROL "", 101, "TBtnBmp", 0x00000000, 142, 15, 12, 11
+  CONTROL "", 201, "TBtnBmp", 0x00000000, 478, 15, 12, 11
+  CONTROL "Aceptar e imprimir [F6]", 500, "Button", WS_TABSTOP, 481, 353, 79, 14
 }
 

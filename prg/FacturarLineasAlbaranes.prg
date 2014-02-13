@@ -14,6 +14,9 @@ CLASS TFacturarLineasAlbaranes
    DATA nView
 
    DATA cNumAlb
+   DATA cNumFac
+
+   DATA lPrint
 
    DATA cTmpAlbLin
    DATA cTmpFacLin
@@ -70,6 +73,8 @@ CLASS TFacturarLineasAlbaranes
 
    METHOD CreaTemporales()
 
+   METHOD CargaTemporal()
+
    METHOD EliminaTemporales()
 
    METHOD Resource()
@@ -98,6 +103,20 @@ CLASS TFacturarLineasAlbaranes
 
    METHOD CalculaTotales()
 
+   METHOD ChangePorcentajePropuestoAlbaran()
+
+   METHOD ChangePorcentajePropuestoFactura()
+
+   METHOD RecalculaPorcentajes()
+
+   METHOD RefreshPorcentajePropuesto()    INLINE ( ::oPorcentajePropuestoAlbaran:Refresh(), ::oPorcentajePropuestoFactura:Refresh() )
+
+   METHOD ComprobacionesCalculoPorcentajes()
+
+   METHOD lPorcentajeAlcanzado() INLINE ( ( Round( ::nPorcentajeFactura, 0 ) < ::nPorcentajePropuestoFactura ) )
+
+   METHOD SaltoReistro()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -110,6 +129,8 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
 
    ::nView     := nView
    ::cNumAlb   := ( TDataView():Get( "AlbCliT", ::nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", ::nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
+   ::cNumFac   := ""
+   ::lPrint    := .f.
 
    /*
    Comprobaciones antes de entrar----------------------------------------------
@@ -134,18 +155,23 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    Valores iniciales ----------------------------------------------------------
    */
 
-   ::nPorcentajeAlbaran          := 100
-   ::nPorcentajeFactura          := 0
+   ::nPorcentajeAlbaran             := 100
+   ::nPorcentajeFactura             := 0
 
-   ::nPorcentajePropuestoAlbaran := 0
-   ::nPorcentajePropuestoFactura := 0
+   if ( "MODA" $ cParamsMain() )
+      ::nPorcentajePropuestoAlbaran := 50
+      ::nPorcentajePropuestoFactura := 50
+   else
+      ::nPorcentajePropuestoAlbaran := 100
+      ::nPorcentajePropuestoFactura := 0
+   end if   
 
-   ::nSayNeto                    := 0
-   ::nSayIva                     := 0
-   ::nSayTotal                   := 0
+   ::nSayNeto                       := 0
+   ::nSayIva                        := 0
+   ::nSayTotal                      := 0
 
-   ::cSerieFactura               := "A"
-   ::dFechaFactura               := GetSysDate() 
+   ::cSerieFactura                  := "A"
+   ::dFechaFactura                  := GetSysDate() 
 
    /*
    Creamos los temporales necesarios-------------------------------------------
@@ -165,7 +191,7 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
 
    ::EliminaTemporales()
 
-Return ( Self )
+Return ( ::lPrint )
 
 //---------------------------------------------------------------------------//
 
@@ -194,14 +220,7 @@ METHOD CreaTemporales() CLASS TFacturarLineasAlbaranes
    Pasamos la información de la tabla definitiva a la temporal-----------------
    */
 
-   if ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) )
-      while ( ( TDataView():Get( "AlbCliL", ::nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", ::nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", ::nView ) )->cSufAlb ) == ::cNumAlb .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
-         dbPass( TDataView():Get( "AlbCliL", ::nView ), ::cTemporalLineaAlbaran, .t. )
-         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSkip() )
-      end while
-      end if
-
-   ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+   ::CargaTemporal()
 
    /*
    Creamos la base de datos temporal de lineas de facturas---------------------
@@ -217,6 +236,21 @@ METHOD CreaTemporales() CLASS TFacturarLineasAlbaranes
    ( ::cTemporalLineaFactura )->( OrdCreate( ::cTmpFacLin, "nNumFac", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
 Return ( Self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaTemporal() CLASS TFacturarLineasAlbaranes
+
+   if ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) )
+      while ( ( TDataView():Get( "AlbCliL", ::nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", ::nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", ::nView ) )->cSufAlb ) == ::cNumAlb .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
+         dbPass( TDataView():Get( "AlbCliL", ::nView ), ::cTemporalLineaAlbaran, .t. )
+         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSkip() )
+      end while
+      end if
+
+   ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -250,10 +284,19 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
       Porcentaje propuesto de albarán------------------------------------------
       */
 
-      REDEFINE GET ::oPorcentajePropuestoAlbaran VAR ::nPorcentajePropuestoAlbaran ;
+      REDEFINE GET ::oPorcentajePropuestoAlbaran ;
+         VAR      ::nPorcentajePropuestoAlbaran ;
          ID       100 ;
-         WHEN     ( .f. ) ;
+         VALID    ( ::nPorcentajePropuestoAlbaran > 0 .and. ::nPorcentajePropuestoAlbaran < 101 );
+         PICTURE  "999";
+         SPINNER ;
+         MIN      0 ;
+         MAX      100 ;
          OF       ::oDlg
+
+         ::oPorcentajePropuestoAlbaran:bChange  := {|| ::ChangePorcentajePropuestoAlbaran() }
+
+      TBtnBmp():ReDefine( 101, "Recycle_16",,,,,{|| ::RecalculaPorcentajes() }, ::oDlg, .f., , .f.,  )      
 
       /*
       Detalle de albaranes-----------------------------------------------------
@@ -437,10 +480,19 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
       Porcentaje propuesto de factura------------------------------------------
       */
 
-      REDEFINE GET ::oPorcentajePropuestoFactura VAR ::nPorcentajePropuestoFactura ;
+      REDEFINE GET ::oPorcentajePropuestoFactura ;
+         VAR      ::nPorcentajePropuestoFactura ;
          ID       200 ;
-         WHEN     ( .f. ) ;
-         OF       ::oDlg
+         VALID    ( ::nPorcentajePropuestoFactura > 0 .and. ::nPorcentajePropuestoFactura < 101 );
+         PICTURE  "999";
+         SPINNER ;
+         MIN      0 ;
+         MAX      100 ;
+         OF       ::oDlg   
+
+         ::oPorcentajePropuestoFactura:bChange  := {|| ::ChangePorcentajePropuestoFactura() }
+
+      TBtnBmp():ReDefine( 201, "Recycle_16",,,,,{|| ::RecalculaPorcentajes() }, ::oDlg, .f., , .f.,  )   
 
       /*
       Serie de la factura------------------------------------------------------
@@ -653,6 +705,11 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
       */   
 
       REDEFINE BUTTON ;
+         ID       500 ;
+         OF       ::oDlg ;
+         ACTION   ( ::EndResource( .t. ) )
+
+      REDEFINE BUTTON ;
          ID       IDOK ;
          OF       ::oDlg ;
          ACTION   ( ::EndResource() )
@@ -663,7 +720,12 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          CANCEL ;
          ACTION   ( ::oDlg:End() )
 
-      ::oDlg:bStart  := {|| ::ActualizaPantalla() }
+      if ( "MODA" $ cParamsMain() )
+         ::oDlg:bStart  := {|| ::RecalculaPorcentajes() }
+      else
+         ::oDlg:bStart  := {|| ::ActualizaPantalla() }
+      end if   
+
 
       ::oDlg:Activate( , , , .t., , , {|| ::InitResource() } )
 
@@ -956,18 +1018,17 @@ Return ( Self )
 METHOD PasaTodoFactura() CLASS TFacturarLineasAlbaranes
 
    /*
-   Añado a la tabla de facturas------------------------------------------------
+   Elimino de albaran----------------------------------------------------------
    */
 
-   ( ::cTemporalLineaFactura )->( dbGoTop() )
+   ( ::cTemporalLineaAlbaran )->( dbZap() )
 
-   while !( ::cTemporalLineaFactura )->( Eof() )
 
-      dbPass( ::cTemporalLineaFactura, ::cTemporalLineaAlbaran, .t. )
+   /*
+   Cargo de albaran------------------------------------------------------------
+   */   
 
-      ( ::cTemporalLineaFactura )->( dbSkip() )
-
-   end while
+   ::CargaTemporal()
 
    /*
    Elimino de factura----------------------------------------------------------
@@ -1041,12 +1102,18 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EndResource() CLASS TFacturarLineasAlbaranes
+METHOD EndResource( lPrint ) CLASS TFacturarLineasAlbaranes
+
+   DEFAULT lPrint    := .f.
 
    if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
       MsgStop( "Tiene que pasar almenos una linea del albarán para crear una nueva factura." )
       Return .f.
    end if
+
+   /*
+   Guardamos el albarán--------------------------------------------------------
+   */
 
    if ( "MODA" $ cParamsMain() )
 
@@ -1058,7 +1125,24 @@ METHOD EndResource() CLASS TFacturarLineasAlbaranes
 
    end if   
 
+   /*
+   Guardamos la factura--------------------------------------------------------
+   */
+
    ::GeneraFactura()
+
+   /*
+   Imprimimos los documentos---------------------------------------------------
+   */
+
+   if lPrint
+      ::lPrint       := lPrint
+      PrnFacCli( ::cNumFac )
+   end if 
+
+   /*
+   Cerramos el diálogo---------------------------------------------------------
+   */  
 
    ::oDlg:End( IDOK )
 
@@ -1201,13 +1285,21 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    Pasamos los datos de las lineas---------------------------------------------
    */
 
-   appendPass( ::cTemporalLineaFactura,;
-               TDataView():Get( "FacCliL", ::nView ),;
-               {  "cSerie"    => ::cSerieFactura,;
-                  "nNumFac"   => ::nNumeroFactura,;
-                  "cSufFac"   => ::cSufijoFactura,;
-                  "dFecFac"   => ::dFechaFactura,;
-                  "cCodAlb"   => ::cNumAlb } )
+   ( ::cTemporalLineaFactura )->( dbGoTop() )
+
+   while !( ::cTemporalLineaFactura )->( Eof() )
+
+      appendPass( ::cTemporalLineaFactura,;
+                  TDataView():Get( "FacCliL", ::nView ),;
+                  {  "cSerie"    => ::cSerieFactura,;
+                     "nNumFac"   => ::nNumeroFactura,;
+                     "cSufFac"   => ::cSufijoFactura,;
+                     "dFecFac"   => ::dFechaFactura,;
+                     "cCodAlb"   => ::cNumAlb } )
+
+      ( ::cTemporalLineaFactura )->( dbSkip() )
+
+   end while   
 
    /*
    Rellenamos los campos de totales de la factura------------------------------
@@ -1299,6 +1391,110 @@ METHOD CalculaTotales() CLASS TFacturarLineasAlbaranes
    if !Empty( ::oSayTotal )
       ::oSayTotal:Refresh()
    end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangePorcentajePropuestoAlbaran() CLASS TFacturarLineasAlbaranes
+
+   ::oPorcentajePropuestoFactura:cText( 100 - ::nPorcentajePropuestoAlbaran )
+
+   ::RefreshPorcentajePropuesto()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangePorcentajePropuestoFactura() CLASS TFacturarLineasAlbaranes
+
+   ::oPorcentajePropuestoAlbaran:cText( 100 - ::nPorcentajePropuestoFactura )
+
+   ::RefreshPorcentajePropuesto()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD RecalculaPorcentajes() CLASS TFacturarLineasAlbaranes
+
+   local nUnidadesCalculadas  := 0
+
+   /*
+   Compruebo que el porcentaje de albaran no sea 100%--------------------------
+   */
+
+   if ::nPorcentajePropuestoAlbaran == 100 .and. ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
+      Return .f.
+   end if
+
+   ::ComprobacionesCalculoPorcentajes()
+
+   /*
+   Calculo de porcentaje-------------------------------------------------------
+   */
+
+   while ::lPorcentajeAlcanzado()
+
+      ::PasaUnidadAlbaran()
+
+      ::SaltoReistro()
+
+   end while
+
+   /*
+   Actualizamos la pantalla----------------------------------------------------
+   */
+
+   ::ActualizaPantalla()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ComprobacionesCalculoPorcentajes() CLASS TFacturarLineasAlbaranes
+
+   /*
+   Si no existen lineas en la temporal de facturas inicializamos las dos tablas
+   */
+
+   if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) != 0
+
+      /*
+      Elimino de albaran-------------------------------------------------------
+      */
+
+      ( ::cTemporalLineaAlbaran )->( dbZap() )
+
+      /* 
+      Cargo de albaran---------------------------------------------------------
+      */   
+
+      ::CargaTemporal()
+
+      /*
+      Elimino de factura-------------------------------------------------------
+      */
+
+      ( ::cTemporalLineaFactura )->( dbZap() )
+
+   end if
+
+   ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaltoReistro() CLASS TFacturarLineasAlbaranes
+
+   ( ::cTemporalLineaAlbaran )->( dbSkip() )
+
+   if ( ::cTemporalLineaAlbaran )->( Eof() )
+
+      ( ::cTemporalLineaAlbaran )->( dbGoTop() )
+
+   end if   
 
 Return ( Self )
 
