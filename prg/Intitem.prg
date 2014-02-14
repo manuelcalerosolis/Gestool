@@ -165,10 +165,7 @@ Method CreateData() CLASS TClienteSenderReciver
    Creamos la temporal de atípicas---------------------------------------------
    */
 
-   oAtipicas   := TAtipicas():Create( cPatSnd() ):CheckFiles() ; SysRefresh()
-
-   dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
-   ( tmpAtp )->( ordListAdd( cPatSnd() + "CliAtp.Cdx" ) )
+   TAtipicas():GetInstance( cPatSnd() ):OpenFiles()
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfClient )->( lastrec() )
@@ -204,7 +201,7 @@ Method CreateData() CLASS TClienteSenderReciver
 
          if ( dbfCliAtp )->( dbSeek( ( dbfClient )->Cod ) )
             while ( dbfCliAtp )->cCodCli == ( dbfClient )->Cod
-               dbPass( dbfCliAtp, tmpAtp, .t. )
+               dbPass( dbfCliAtp, TAtipicas():GetInstance( cPatSnd() ):oDbf:cAlias, .t. )
                ( dbfCliAtp )->( dbSkip() )
             end while
          end if
@@ -228,7 +225,8 @@ Method CreateData() CLASS TClienteSenderReciver
    END SEQUENCE
    ErrorBlock( oBlock )
 
-   oAtipicas:End()
+   TAtipicas():GetInstance( cPatSnd() ):CloseFiles()
+   TAtipicas():EndInstance( cPatSnd() )
 
    CLOSE ( tmpCli       )
    CLOSE ( tmpObr       )
