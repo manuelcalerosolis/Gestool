@@ -171,7 +171,7 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    ::nSayTotal                      := 0
 
    ::cSerieFactura                  := "A"
-   ::dFechaFactura                  := GetSysDate() 
+   ::dFechaFactura                  := GetSysDate()
 
    /*
    Creamos los temporales necesarios-------------------------------------------
@@ -1226,7 +1226,8 @@ METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
 
       appendPass( ::cTemporalLineaAlbaran,;
                TDataView():Get( "AlbCliL", ::nView ),;
-               {  "nIva"    => 0 } )
+               {  "nIva" => 0,;
+                  "nReq" => 0 } )
 
       ( ::cTemporalLineaAlbaran )->( dbSkip() )
 
@@ -1347,6 +1348,19 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
                  TDataView():Get( "AntCliT", ::nView ),;
                  TDataView():Get( "TIva", ::nView ),;
                  TDataView():Get( "Divisas", ::nView ) )
+
+   /*
+   Quito el recargo del albaran en modo modas----------------------------------
+   */
+
+   if ( "MODA" $ cParamsMain() )
+
+      if dbLock( TDataView():Get( "AlbCliT", ::nView ) )
+         ( TDataView():Get( "AlbCliT", ::nView ) )->lRecargo   := .f.
+         ( TDataView():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
+      end if
+
+   end if   
 
    CursorWe()
 

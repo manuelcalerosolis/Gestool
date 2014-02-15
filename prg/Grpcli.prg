@@ -115,8 +115,8 @@ METHOD OpenFiles( lExclusive, cPath )
          lOpen          := .f.
       else 
          TAtipicas():GetInstance():oDbf:OrdSetFocus( "cCodGrp" ) 
-      end if 
-
+      end if
+      
       TDataView():Get( "Articulo", ::nView )
 
       TDataView():Get( "Familias", ::nView )

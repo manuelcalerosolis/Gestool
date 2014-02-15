@@ -1952,7 +1952,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       */
  
       if ::InsertIfValid() .and. lStock
-         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta )
+         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta, , ::dFinInf )
       end if
 
       ::oDbfArt:Skip()

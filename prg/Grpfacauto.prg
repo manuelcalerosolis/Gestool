@@ -214,7 +214,7 @@ METHOD Resource( nMode )
 
 	local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de plantillas automáticas"
+   DEFINE DIALOG oDlg RESOURCE "GRPAUT" TITLE LblTitle( nMode ) + "Grupos de plantillas automáticas"
 
       REDEFINE GET ::oGetCodigo ;
          VAR      ::oDbf:cCodGrp ;
