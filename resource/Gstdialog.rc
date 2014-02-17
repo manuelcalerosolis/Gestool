@@ -2343,7 +2343,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 402, 2, 59, 48
 }
 
-EMPRESA_2 DIALOG DISCARDABLE 31, 12, 441, 313
+EMPRESA_2 DIALOG DISCARDABLE 31, 12, 441, 340
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -2375,21 +2375,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 199, 125, 10
   CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 229, 135, 10
   CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 229, 137, 10
-  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 258, 39, 10
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 257, 314, 11
-  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 270, 51, 10
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 109, 269, 314, 11
-  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 282, 54, 10
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 109, 281, 314, 11
-  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 294, 47, 10
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 109, 293, 314, 11
+  CONTROL "Recalcular costes de las lineas producidas", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 256, 151, 10
+  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 284, 39, 10
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 283, 314, 11
+  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 296, 51, 10
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 109, 295, 314, 11
+  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 308, 54, 10
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 109, 307, 314, 11
+  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 320, 47, 10
+  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 109, 319, 314, 11
   CONTROL "Generales", -1, "Button", BS_GROUPBOX, 44, 29, 386, 73
-  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 246, 386, 63
+  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 272, 386, 63
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones generales del programa", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
   CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 104, 386, 110
   CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 217, 386, 26
   CONTROL "Nombre del impuesto", -1, "Static", WS_GROUP, 234, 90, 70, 8
+  CONTROL "Producción", -1, "Button", BS_GROUPBOX, 44, 244, 386, 26
 }
 
 CONSERFAC DIALOG DISCARDABLE 111, 68, 313, 288
@@ -7283,6 +7285,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Parte de produción", -1, "Static", WS_GROUP, 44, 3, 120, 8
   CONTROL "0", 814, "Static", SS_RIGHT|WS_GROUP, 581, 90, 75, 9
   CONTROL "TOTAL PARTE", -1, "Static", WS_GROUP, 520, 91, 55, 8
+  CONTROL "Recalcula costos", 300, "Button", BS_AUTOCHECKBOX, 89, 89, 70, 10
 }
 
 PRODUCCION_2 DIALOG DISCARDABLE 97, 39, 670, 375

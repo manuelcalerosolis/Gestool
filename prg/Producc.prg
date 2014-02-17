@@ -968,6 +968,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"   OF ::oDbf
       FIELD NAME "cCodOpe" TYPE "C" LEN 03  DEC 0 COMMENT "Operación"                           OF ::oDbf
       FIELD NAME "cAlmOrg" TYPE "C" LEN 03  DEC 0 COMMENT "Almacen Origen"                      OF ::oDbf
+      FIELD NAME "lRecCos" TYPE "L" LEN 01  DEC 0 COMMENT "Recalcula"      HIDE                 OF ::oDbf
 
       INDEX TO "ProCab.Cdx" TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT "Número"        NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "dFecOrd" ON "dFecOrd"                                 COMMENT "Fecha inicio"  NODELETED OF ::oDbf
@@ -1044,6 +1045,7 @@ METHOD Resource( nMode, aDatosAnterior )
    local oBmpGeneral
    local oBtnAdelante
    local oBtnAtras
+   local oRecCos
 
    if nMode == APPD_MODE
 
@@ -1070,6 +1072,8 @@ METHOD Resource( nMode, aDatosAnterior )
          ::oDbf:cHorIni    := uFieldEmpresa( "cIniJor" )
          ::oDbf:cHorFin    := SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
       end if
+
+      ::oDbf:lRecCos       := uFieldEmpresa( "lRecCostes" )
 
    end if
 
@@ -1262,6 +1266,10 @@ METHOD Resource( nMode, aDatosAnterior )
 
       oFecFin:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ), ::lRecargaPersonal( , , , oFecFin ) }
       oFecFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
+
+      REDEFINE CHECKBOX oRecCos VAR ::oDbf:lRecCos ;
+         ID       300 ;   
+         OF       oFld:aDialogs[1]   
 
       /*
       Hora inicio, hora fin, tiempo empleado-----------------------------------
@@ -1789,7 +1797,9 @@ METHOD Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld )
 
    oDlg:Disable()
 
-   ::CalculaCostes()
+   if ::oDbf:lRecCos
+      ::CalculaCostes()
+   end if   
 
    oDlg:Enable()
    oDlg:End( IDOK )

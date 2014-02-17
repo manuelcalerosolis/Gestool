@@ -3854,7 +3854,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    local nImporte       := 0
    local nCostoMedio    := 0
    local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkRef" ) )
-   local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef" ) )
+   local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRefLote" ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef" ) )
    local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
    local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cCodArt" ) )
@@ -3864,7 +3864,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    DEFAULT cValPr1      := Space( 20 )
    DEFAULT cValPr2      := Space( 20 )
    DEFAULT cLote        := Space( 12 )
-
 
    /*
    Obtengo la fecha de consolidación-------------------------------------------

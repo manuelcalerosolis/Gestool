@@ -269,7 +269,8 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oFld:aDialogs[1]
 
       oGetArt:bValid := {|| cArticulo( oGetArt, ::oParent:oArt:cAlias, oGetNom ), ::LoaArticulo( oGetArt, oGetNom ) }
-      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom ), ::LoaArticulo( oGetArt, oGetNom ) }
+      oGetArt:bHelp  := {|| ::LoaArticulo( oGetArt, oGetNom ) }
+
 
       REDEFINE GET oGetNom VAR ::oDbfVir:cNomArt ;
          ID       111 ;
@@ -631,7 +632,6 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
 
             ::oGetPes:cText(     ::oParent:oArt:nPesoKg )
             ::oGetVol:cText(     ::oParent:oArt:nVolumen )
-            ::oImpOrd:cText(     ::oParent:oArt:pCosto )
             ::oGetUndPes:cText(  ::oParent:oArt:cUndDim )
             ::oGetUndVol:cText(  ::oParent:oArt:cVolumen )
 
@@ -644,6 +644,12 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
             end if
 
             ::LoadCommunFields()
+
+            if !uFieldEmpresa( "lCosAct" )
+               ::oImpOrd:cText( ::oParent:oStock:nCostoMedio( cCodArt, ::oParent:oDbf:cAlmOrd, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote ) )         
+            else
+               ::oImpOrd:cText( ::oParent:oArt:pCosto )
+            end if
          
          end if
 
