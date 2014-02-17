@@ -4873,23 +4873,23 @@ STATIC FUNCTION PrnSerie()
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin   
-   local cSerIni     := (TDataView():Get( "AlbCliT", nView ))->cSerAlb
-   local cSerFin     := (TDataView():Get( "AlbCliT", nView ))->cSerAlb
-   local nDocIni     := (TDataView():Get( "AlbCliT", nView ))->nNumAlb
-   local nDocFin     := (TDataView():Get( "AlbCliT", nView ))->nNumAlb
-   local cSufIni     := (TDataView():Get( "AlbCliT", nView ))->cSufAlb
-   local cSufFin     := (TDataView():Get( "AlbCliT", nView ))->cSufAlb
+   local cSerIni     := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb
+   local cSerFin     := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb
+   local nDocIni     := ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb
+   local nDocFin     := ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb
+   local cSufIni     := ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
+   local cSufFin     := ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
    local oPrinter
    local cPrinter    := PrnGetName()
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
    local nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
+   local cFmtDoc     := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -4903,11 +4903,6 @@ STATIC FUNCTION PrnSerie()
 
    DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de albaranes"
 
-   REDEFINE RADIO oRango ;
-      VAR         nRango ;
-      ID          201, 202 ;
-      OF          oDlg
-
    REDEFINE GET   oSerIni ;
       VAR         cSerIni ;
       ID          100 ;
@@ -4917,7 +4912,6 @@ STATIC FUNCTION PrnSerie()
       ON UP       ( UpSerie( oSerIni ) );
       ON DOWN     ( DwSerie( oSerIni ) );
       VALID       ( cSerIni >= "A" .and. cSerIni <= "Z"  );
-      WHEN        ( nRango == 1 ); 
       OF          oDlg
    
    REDEFINE GET   oSerFin ;
@@ -4929,44 +4923,37 @@ STATIC FUNCTION PrnSerie()
       ON UP       ( UpSerie( oSerFin ) );
       ON DOWN     ( DwSerie( oSerFin ) );
       VALID       ( cSerFin >= "A" .and. cSerFin <= "Z"  );
-      WHEN        ( nRango == 1 ); 
       OF          oDlg
 
    REDEFINE GET   nDocIni;
       ID          120 ;
       PICTURE     "999999999" ;
       SPINNER ;
-      WHEN        ( nRango == 1 ); 
       OF          oDlg
 
    REDEFINE GET   nDocFin;
       ID          130 ;
       PICTURE     "999999999" ;
       SPINNER ;
-      WHEN        ( nRango == 1 ); 
       OF          oDlg
 
    REDEFINE GET   cSufIni ;
       ID          140 ;
       PICTURE     "##" ;
-      WHEN        ( nRango == 1 ); 
       OF          oDlg
 
    REDEFINE GET   cSufFin ;
       ID          150 ;
       PICTURE     "##" ;
-      WHEN        ( nRango == 1 ); 
       OF          oDlg
 
    REDEFINE GET   dFecDesde ;
       ID          210 ;
-      WHEN        ( nRango == 2 ) ;
       SPINNER ;
       OF          oDlg
 
    REDEFINE GET   dFecHasta ;
       ID          220 ;
-      WHEN        ( nRango == 2 ) ;
       SPINNER ;
       OF          oDlg   
 
@@ -4990,40 +4977,38 @@ STATIC FUNCTION PrnSerie()
       OF          oDlg
 
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
-      ID       90 ;
-      COLOR    CLR_GET ;
-      VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
-      OF       oDlg
+      ID          90 ;
+      VALID       ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      BITMAP      "LUPA" ;
+      ON HELP     ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
+      OF          oDlg
 
    REDEFINE GET oSayFmt VAR cSayFmt ;
-      ID       91 ;
-      WHEN     ( .f. );
-      COLOR    CLR_GET ;
-      OF       oDlg
+      ID          91 ;
+      WHEN        ( .f. );
+      OF          oDlg
 
    TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
 
    REDEFINE GET oPrinter VAR cPrinter;
-      WHEN     ( .f. ) ;
-      ID       160 ;
-      OF       oDlg
+      WHEN        ( .f. ) ;
+      ID          160 ;
+      OF          oDlg
 
    TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
 
    REDEFINE BUTTON ;
-      ID       IDOK ;
-      OF       oDlg ;
-      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ),;
-                  oDlg:end( IDOK ) )
+      ID          IDOK ;
+      OF          oDlg ;
+      ACTION      (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ),;
+                     oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       oDlg ;
-      ACTION   ( oDlg:end() )
+      ID          IDCANCEL ;
+      OF          oDlg ;
+      ACTION      ( oDlg:end() )
 
-   oDlg:bStart := { || oSerIni:SetFocus() }
+   oDlg:bStart    := { || oSerIni:SetFocus() }
 
    oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ), oDlg:end( IDOK ) } )
 
@@ -5035,139 +5020,37 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta )
+STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, nRango, dFecDesde, dFecHasta )
 
-   local nCopyClient
    local nRecno
    local nOrdAnt
 
    oDlg:disable()
 
-   if nRango == 1
-
       nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( recno() )
       nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-      if !lInvOrden
-
-         ( TDataView():Get( "AlbCliT", nView ) )->( DbSeek( cDocIni, .t. ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( cDocIni, .t. ) )
 
          while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= cDocIni .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin
+               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin .AND. ;
+               ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecDesde .AND. ;
+               ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecHasta 
 
                lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
 
             if lCopiasPre
+               nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
+            end if 
 
-               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
-
-            else
-
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
-
-            end if
+            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
             ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( 1 ) )
 
          end do
 
-      else
-
-      ( TDataView():Get( "AlbCliT", nView ) )->( DbSeek( cDocFin ) )
-
-         while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= cDocIni .and.;
-               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin .and.;
-               !( TDataView():Get( "AlbCliT", nView ) )->( Bof() )
-
-               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
-
-            if lCopiasPre
-
-               nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
-
-            else
-
-               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
-
-            end if
-
-            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( -1 ) )
-
-         end while
-
-      end if
-
-   else
-
-      nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "dFecAlb" ) )
-
-      if !lInvOrden
-
-         ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTop() )
-
-         while !( TDataView():Get( "AlbCliT", nView ) )->( Eof() )
-
-            if ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecDesde .and. ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecHasta
-
-               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
-
-               if lCopiasPre
-
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
-
-               else
-
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ))->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
-
-               end if
-
-            end if  
-
-            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( 1 ) )
-
-         end while
-
-      else
-
-         ( TDataView():Get( "AlbCliT", nView ) )->( dbGoBottom() )
-
-         while !( TDataView():Get( "AlbCliT", nView ) )->( Bof() )
-
-            if ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecDesde .and. ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecHasta
-
-               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
-
-               if lCopiasPre
-
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
-
-               else
-
-                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
-
-               end if
-
-            end if
-
-            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( -1 ) )
-
-         end while
-
-      end if
-   
-   end if   
-
-   ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
-   ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oDlg:enable()
 
@@ -13073,6 +12956,8 @@ Return .t.
 
 Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
+   local nPrecioAtipica
+
    /*
    Controlamos que no nos pase código de cliente vacío------------------------
    */
@@ -13112,7 +12997,12 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
                ( dbfTmpLin )->lFromAtp       := .t.
 
-               ( dbfTmpLin )->nPreUnit       := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+               nPrecioAtipica                := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+               if nPrecioAtipica != 0
+                  ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
+               else 
+                  ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
+               end if
 
                ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
 

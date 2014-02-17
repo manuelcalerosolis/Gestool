@@ -772,10 +772,10 @@ CLASS TpvTactil
 
    // Comentarios--------------------------------------------------------------
 
-   METHOD InitComentarios( cDefCom )
-   METHOD EndComentarios( oDlg, oGetComentario )
-   METHOD ChangeComentarios( oBrwLineasComentarios )
-   METHOD ChangeLineasComentarios( oGetComentario, cComentariosL )
+   METHOD InitComentarios( lForced )
+      METHOD EndComentarios( oDlg, oGetComentario )
+      METHOD ChangeComentarios( oBrwLineasComentarios )
+      METHOD ChangeLineasComentarios( oGetComentario, cComentariosL )
 
    //------------------------------------------------------------------------//
 
@@ -3134,7 +3134,7 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },    ::oDlg, , , .f., , , , .f., "Navigate_up" )
    ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },  ::oDlg, , , .f., , , , .f., "Navigate_down" )
    ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::EliminarLinea() },      ::oDlg, , , .f., , , , .f., "Garbage_Empty_32" )
-   ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios() },    ::oDlg, , , .f., , , , .f., "Message_32" )
+   ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) }, ::oDlg, , , .f., , , , .f., "Message_32" )
    ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },   ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
 
    /*
@@ -4608,7 +4608,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
             ::AgregarPrincipal( cCodigoArticulo )
 
-            ::InitComentarios()
+            ::InitComentarios( .f. )
 
             if ::lCombinando
                ::lCombinandoDos     := .t.
@@ -5080,7 +5080,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD InitComentarios() CLASS TpvTactil
+METHOD InitComentarios( lForced ) CLASS TpvTactil
 
    local oCbxOrd
    local cNumPed
@@ -5091,7 +5091,9 @@ METHOD InitComentarios() CLASS TpvTactil
    local oBrwLineasComentarios
    local oDlgComentarios
 
-   if !oRetFld( ::oTemporalLinea:cCodFam, ::oFamilias, "lMostrar", "cCodFam" )
+   DEFAULT lForced   := .f.
+
+   if !lForced .and. !oRetFld( ::oTemporalLinea:cCodFam, ::oFamilias, "lMostrar", "cCodFam" )
       RETURN ( nil )
    end if 
 
@@ -5105,7 +5107,7 @@ METHOD InitComentarios() CLASS TpvTactil
    */
 
    if ::oTemporalLinea:ordKeyCount() == 0
-      MsgStop( "No puede añadir un comentario." )
+      MsgStop( "No hay líneas para introducir comentarios." )
       RETURN ( nil )
    end if
 
