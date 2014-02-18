@@ -1271,6 +1271,8 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    ::nNumeroFactura     := nNewDoc( ::cSerieFactura, TDataView():Get( "FacCliT", ::nView ), "NFACCLI", , TDataView():Get( "NCount", ::nView ) )
    ::cSufijoFactura     := ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
 
+   ::cNumFac            := ::cSerieFactura + Str( ::nNumeroFactura ) + ::cSufijoFactura
+
    /*
    Pasamos los datos de la cabecera--------------------------------------------
    */
