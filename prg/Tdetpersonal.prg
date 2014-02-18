@@ -329,7 +329,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
 			ID 		500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oParent:oDetHorasPersonal:Append( ::oBrwHorasTrabajador ), ::oBrwHorasTrabajador:Refresh() )
+         ACTION   ( ::oParent:oDetHorasPersonal:Append( ::oBrwHorasTrabajador ) )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
