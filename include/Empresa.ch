@@ -295,4 +295,4 @@
 #define _NINIRECC 			  295
 #define _NFINRECC			  296
 #define _LHEXPWEB			  297
-
+#define _LRECCOSTES 		  298

@@ -1391,6 +1391,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       260 ;   
          OF       fldGeneral
 
+      REDEFINE CHECKBOX aGet[ _LRECCOSTES ] VAR aTmp[ _LRECCOSTES ] ;
+         ID       360 ;   
+         OF       fldGeneral   
+
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
          ID       270 ;
          OF       fldGeneral
@@ -6503,6 +6507,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nIniRECC",   "N",  4, 0, "Año inicio régimen especial del criterio de caja",      "", "", "aEmp()", } )
    aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "Año fin régimen especial del criterio de caja",         "", "", "aEmp()", } )
    aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botón exportar web",                            "", "", "aEmp()", } )
+   aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
 
 Return ( aDbf  )
 

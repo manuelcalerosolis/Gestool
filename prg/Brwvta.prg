@@ -2091,7 +2091,7 @@ Static Function LoadPedidoProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPedPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPedPrv( dbfPedPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfPedPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLPedPrv( dbfPedPrvL )
             oDbfTmp:Save()
 
          end if
@@ -2132,7 +2132,7 @@ Static Function LoadAlbaranProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfAlbPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUAlbPrv( dbfAlbPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfAlbPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLAlbPrv( dbfAlbPrvL )
             oDbfTmp:Save()
 
          end if
@@ -2175,7 +2175,7 @@ Static Function LoadFacturaProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfFacPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUFacPrv( dbfFacPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLFacPrv( dbfFacPrvL )
             oDbfTmp:Save()
 
          end if
@@ -2217,7 +2217,7 @@ Static Function LoadRectificativaProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfRctPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotURctPrv( dbfRctPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfRctPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLRctPrv( dbfRctPrvL )
             oDbfTmp:Save()
 
          end if
@@ -2259,7 +2259,7 @@ Static Function LoadSATCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfSatCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUSatCli( dbfSatCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfSatCliL )->nDto
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLSatCli( dbfSatCliL )
             oDbfTmp:Save()
 
          end if
@@ -2302,7 +2302,7 @@ Static Function LoadPresupuestoCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPreCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPreCli( dbfPreCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPreCliL )->nDto
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLPreCli( dbfPreCliL )
             oDbfTmp:Save()
 
          end if
@@ -2347,7 +2347,7 @@ Static Function LoadPedidosCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPedCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPedCli( dbfPedCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPedCliL )->nDto
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLPedCli( dbfPedCliL )
             oDbfTmp:Save()
 
          end if
@@ -2389,7 +2389,7 @@ Static Function LoadAlbaranesCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfAlbCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUAlbCli( dbfAlbCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfAlbCliL )->nDto
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLAlbCli( dbfAlbCliL )
             oDbfTmp:Save()
 
          end if
@@ -2433,7 +2433,7 @@ Static Function LoadFacturasCliente( cCodArt, nYear )
             oDbfTmp:nDtoDoc   := ( dbfFacCliL )->nDto
             oDbfTmp:nUndDoc   := nTotNFacCli( dbfFacCliL )
             oDbfTmp:nImpDoc   := nImpUFacCli( dbfFacCliT, dbfFacCliL, nDouDiv )
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLFacCli( dbfFacCliL )
             oDbfTmp:Save()
 
          end if
@@ -2474,7 +2474,7 @@ Static Function LoadFacturasRectificativas( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfFacRecL )->nFacCnv
             oDbfTmp:nImpDoc   := nImpUFacRec( dbfFacRecT, dbfFacRecL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacRecL )->nDto
-            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+            oDbfTmp:nTotDoc   := nTotLFacRec( dbfFacRecL )
             oDbfTmp:Save()
 
          end if

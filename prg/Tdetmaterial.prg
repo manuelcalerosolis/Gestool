@@ -616,7 +616,12 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                
             end if
 
-            ::oGetPrecio:cText(  ::oParent:oStock:nCostoMedio( cCodArt, ::oParent:oDbf:cAlmOrd, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote ) )
+            if !uFieldEmpresa( "lCosAct" )
+               ::oGetPrecio:cText( ::oParent:oStock:nCostoMedio( cCodArt, ::oParent:oDbf:cAlmOrd, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote ) )         
+            else
+               ::oGetPrecio:cText( ::oParent:oArt:pCosto ) 
+            end if
+
             ::oGetPes:cText(     ::oParent:oArt:nPesoKg )
             ::oGetUndPes:cText(  ::oParent:oArt:cUndDim )
             ::oGetVol:cText(     ::oParent:oArt:nVolumen )
