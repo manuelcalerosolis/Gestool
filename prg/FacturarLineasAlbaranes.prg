@@ -1282,7 +1282,9 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
                {  "cSerie"    => ::cSerieFactura,;
                   "nNumFac"   => ::nNumeroFactura,;
                   "cSufFac"   => ::cSufijoFactura,;
-                  "dFecFac"   => ::dFechaFactura } )
+                  "dFecFac"   => ::dFechaFactura,;
+                  "cTurFac"   => cCurSesion(),;
+                  "lCloFac"   => .f. } )
 
    /*
    Pasamos los datos de las lineas---------------------------------------------
