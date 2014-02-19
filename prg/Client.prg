@@ -11736,48 +11736,52 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
    // Buscamos por gupos de clientes-------------------------------------------
 
-   nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cGrpArt" ) )
+   if !Empty( cCodGrp )
 
-   if ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+      nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cGrpArt" ) )
 
-      while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
+      if ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
 
-         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
+         while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
 
-            lSea     := .t.
-            exit
+            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
+
+               lSea     := .t.
+               exit
 
 
-         else
+            else
 
-            ( dbfCliAtp )->( dbSkip() )
+               ( dbfCliAtp )->( dbSkip() )
 
-         end if
+            end if
 
-      end while
+         end while
 
-   end if
+      end if
 
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt ) )
+      if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt ) )
 
-      while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
+         while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
 
-         if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
+            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
-            lSea     := .t.
-            exit
+               lSea     := .t.
+               exit
 
-         else
+            else
 
-            ( dbfCliAtp )->( dbSkip() )
+               ( dbfCliAtp )->( dbSkip() )
 
-         end if
+            end if
 
-      end while
+         end while
 
-   end if
+      end if
 
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+
+   end if   
 
 Return ( lSea )
 
@@ -11811,28 +11815,32 @@ Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, dFecDoc, cCodFam, dbfCliAtp )
 
    // Buscamos por grupo de cliente--------------------------------------------
 
-   nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cGrpFam" ) )
+   if !Empty( cCodGrp )
 
-   if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodFam ) )
+      nOrd     := ( dbfCliAtp )->( OrdSetFocus( "cGrpFam" ) )
 
-      while ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodFam == cCodGrp + cCodFam  .and. !( dbfCliAtp )->( eof() )
+      if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodFam ) )
 
-         if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
+         while ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodFam == cCodGrp + cCodFam  .and. !( dbfCliAtp )->( eof() )
 
-            lSea  := .t.
-            exit
+            if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
 
-         else
+               lSea  := .t.
+               exit
 
-            ( dbfCliAtp )->( dbSkip() )
+            else
 
-         end if
+               ( dbfCliAtp )->( dbSkip() )
 
-      end while
+            end if
 
-   end if
+         end while
 
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+      end if
+
+      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+
+   end if   
 
 Return ( lSea )
 
