@@ -22,6 +22,8 @@ CLASS TDataCenter
 
    CLASSDATA   aDataTables                INIT {}
    CLASSDATA   aEmpresaTables             INIT {}
+   CLASSDATA   aEmpresaObject             INIT {}
+
    CLASSDATA   hOperationDescription      INIT { "INSERT" => "Añadido", "UPDATE" => "Modificado", "DELETE" => "Eliminado" }
 
    DATA        aEmpresas                  INIT {}
@@ -117,6 +119,7 @@ CLASS TDataCenter
 
    METHOD AddDataTable( oTable )          INLINE aAdd( ::aDataTables, oTable )
    METHOD AddEmpresaTable( oTable )       INLINE aAdd( ::aEmpresaTables, oTable )
+   METHOD AddEmpresaObject( oObject )     INLINE aAdd( ::aEmpresaObject, oObject )
 
    METHOD CreateOperationLogTable()
    METHOD CreateColumnLogTable()
@@ -171,6 +174,7 @@ CLASS TDataCenter
    //---------------------------------------------------------------------------//
 
    METHOD ScanDataTable()
+   METHOD ScanObject()
 
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
@@ -1020,6 +1024,19 @@ METHOD ScanDataTable( cDataTable )
       end if 
    end if
  
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD ScanObject( cName ) CLASS TDataCenter
+
+   local nScan
+
+   nScan    := aScan( ::aEmpresaObject, {|o| o:cName == cName } )   
+   if nScan != 0
+      Return ( ::aEmpresaObject[ nScan ] )
+   end if 
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -2295,6 +2312,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "GrpCli"
    oDataTable:cName        := cPatCli() + "GrpCli"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "GrpCli.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "GrpCli.Cdx"
@@ -2485,6 +2503,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RDocumen"
    oDataTable:cName        := cPatEmp() + "RDocumen"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RDocumen.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RDocumen.Cdx"
@@ -3491,6 +3510,11 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Reportes"
    oDataTable:bCreateFile  := {| cPath | TScripts():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
+
+   // Objetos -----------------------------------------------------------------
+
+   oDataTable              := TGrpCli():Create( cPatCli() )
+   ::AddEmpresaObject( oDataTable )
 
 RETURN ( Self )
 
@@ -4799,16 +4823,34 @@ CLASS TDataView
 
    METHOD AssertView()
 
-   METHOD AddDatabaseView( cDatabase, cHandle )
-   METHOD GetDatabaseView( cDatabase )
+   METHOD Get( cDatabase, nView )
+      METHOD AddView( cDatabase, cHandle )
+      METHOD GetView( cDatabase )
+      METHOD OpenDataBase( cDataTable, nView )
 
-   METHOD Get( cDatabase )
+   METHOD GetObject( cObject, nView )
+
+   METHOD AlbaranesClientes( nView )         INLINE ( ::Get( "AlbCliT", nView ) )
+      METHOD AlbaranesClientesId( nView )    INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
+
+   METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
+   METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
+   METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
+
+   METHOD GruposClientes( nView )            INLINE ( ::GetObject( "GruposClientes", nView ) )
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
 
-   METHOD ScanDatabase( cDatabase )
-   METHOD OpenDatabase( oDataTable )
+   METHOD GetStatus( cDatabase, nView )      INLINE ( aGetStatus( ::Get( cDatabase, nView ) ) )
+   METHOD GetInitStatus( cDatabase, nView )  INLINE ( aGetStatus( ::Get( cDatabase, nView ), .t. ) )
+   METHOD SetStatus( cDatabase, nView, aStatus ) ;
+                                             INLINE ( SetStatus( ::Get( cDatabase, nView ), aStatus ) ) 
+
+   METHOD Top( cDatabase, nView )            INLINE ( dbFirst( ::Get( cDatabase, nView ) ) )
+   METHOD Bottom( cDatabase, nView )         INLINE ( dbLast( ::Get( cDatabase, nView ) ) )
+
+   METHOD OpenObject( oDataTable )
 
 ENDCLASS
 
@@ -4834,15 +4876,23 @@ ENDCLASS
 
    METHOD DeleteView( nView ) CLASS TDataView
 
+      local o
       local hView
-
-      DEFAULT nView  := ::nView
 
       if ::AssertView( nView )
 
          hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
-            hEval( hView, {|k,v| if( ( v )->( used() ), ( v )->( dbCloseArea() ), ) } )
+
+            for each o in hView
+               do case
+                  case isChar( o:value() )
+                     if( ( o:value() )->( used() ), ( o:value() )->( dbCloseArea() ), )
+                  case isObject( o:value() )
+                     o:value():CloseService()
+               end case
+            next 
+
          end if 
 
          HDel( ::hViews, nView )
@@ -4853,30 +4903,9 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD AddDatabaseView( cDatabase, cHandle, nView ) CLASS TDataView
-
-      local hView
-
-      DEFAULT nView  := ::nView
-
-      if ::AssertView( nView )
-
-         hView    := hGet( ::hViews, nView )
-         if hb_ishash( hView )
-            hSet( hView, Upper( cDatabase ), cHandle )
-         end if 
-
-      end if  
-
-   RETURN ( Self )
-
-   //---------------------------------------------------------------------------//
-
    METHOD Get( cDatabase, nView ) CLASS TDataView
 
-      local cHandle
-
-      cHandle        := ::GetDatabaseView( cDatabase, nView )
+      local cHandle  := ::GetView( cDatabase, nView )
 
       if empty( cHandle )
          ::OpenDatabase( cDatabase, nView )
@@ -4886,7 +4915,19 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD GetDatabaseView( cDatabase, nView ) CLASS TDataView
+   METHOD GetObject( cName, nView ) CLASS TDataView
+
+      local cHandle  := ::GetView( cName, nView )
+
+      if empty( cHandle )
+         ::OpenObject( cName, nView )
+      end if
+
+   Return ( cHandle )
+
+//---------------------------------------------------------------------------//
+
+   METHOD GetView( cDatabase, nView ) CLASS TDataView
 
       local hView
       local cHandle
@@ -4906,27 +4947,24 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD ScanDatabase( cDatabase ) CLASS TDataView
+   METHOD AddView( cDatabase, cHandle, nView ) CLASS TDataView
 
-      local nScan
+      local hView
 
-      nScan    := aScan( TDataCenter():aDataTables, {|o| o:cFileName() == ::DataName( cDatabase ) } )   
-      if nScan != 0
-         Return ( TDataCenter():aDataTables[ nScan ] )
-      end if 
+      if ::AssertView( nView )
 
-      if nScan == 0
-         nScan    := aScan( TDataCenter():aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDatabase ) } )   
-         if nScan != 0
-            Return ( TDataCenter():aEmpresaTables[ nScan ] )
+         hView    := hGet( ::hViews, nView )
+         if hb_ishash( hView )
+            hSet( hView, Upper( cDatabase ), cHandle )
          end if 
-      end if
- 
-   Return ( nil )
+
+      end if  
+
+   RETURN ( Self )
 
    //---------------------------------------------------------------------------//
 
-   METHOD OpenDatabase( cDataTable, nView ) CLASS TDataView
+   METHOD OpenDataBase( cDataTable, nView ) CLASS TDataView
 
       local dbf
       local lOpen
@@ -4941,7 +4979,7 @@ ENDCLASS
 
          lOpen          := !neterr()
          if lOpen
-            ::AddDatabaseView( oDataTable:cArea, dbf, nView )
+            ::AddView( oDataTable:cArea, dbf, nView )
          end if 
 
       else 
@@ -4956,3 +4994,26 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
+   METHOD OpenObject( cObject, nView ) CLASS TDataView
+
+      local lOpen
+      local oObject     := TDataCenter():ScanObject( cObject )
+
+      if !empty( oObject )
+
+         lOpen          := oObject:OpenService()
+         if lOpen
+            ::AddView( cObject, oObject, nView )
+         end if 
+
+      else 
+
+         msgStop( "No puedo encontrar el objeto " + cObject )   
+
+         Return ( .f. )
+
+      end if
+
+   Return ( .t. )
+
+//---------------------------------------------------------------------------//

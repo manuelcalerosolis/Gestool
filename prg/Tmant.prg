@@ -163,6 +163,9 @@ CLASS TMant
    METHOD GetInstance()                   INLINE ( if( empty( ::oInstance ), ::oInstance := ::Create(), ), ::oInstance ) 
    METHOD EndInstance()                   INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
 
+   METHOD Top()                           INLINE ( dbFirst( ::oDbf:cAlias ) )
+   METHOD Bottom()                        INLINE ( dbLast( ::oDbf:cAlias ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

@@ -5093,21 +5093,23 @@ METHOD InitComentarios( lForced ) CLASS TpvTactil
 
    DEFAULT lForced   := .f.
 
+   // Si no tenemos ningun articulo en las lineas nos aparece este comentario-----
+
+   if ::oTemporalLinea:ordKeyCount() == 0
+      MsgStop( "No hay líneas para introducir comentarios." )
+      RETURN ( nil )
+   end if
+
+   // si ls familia tiene la marca de comentarios los mostramos o si nos fuerzan
+
    if !lForced .and. !oRetFld( ::oTemporalLinea:cCodFam, ::oFamilias, "lMostrar", "cCodFam" )
       RETURN ( nil )
    end if 
 
+   // Si el domumento es editable----------------------------------------------
+
    if !::lEditableDocumento()
       MsgStop( "El documento ya está cerrado" )
-      RETURN ( nil )
-   end if
-
-   /*
-   Si no tenemos ningun articulo en las lineas nos aparece este comentario-----
-   */
-
-   if ::oTemporalLinea:ordKeyCount() == 0
-      MsgStop( "No hay líneas para introducir comentarios." )
       RETURN ( nil )
    end if
 

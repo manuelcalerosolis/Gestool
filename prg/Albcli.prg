@@ -402,13 +402,11 @@ static dbfEmp
 static oFont
 static oMenu
 static oStock
-static oGrpCli
 static oTrans
 static oNewImp
 static oUndMedicion
 static oBandera
 static dbfKit
-static dbfDoc
 static dbfTblCnv
 static dbfOferta
 static dbfObrasT
@@ -898,7 +896,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( PrnSerie(), oWndBrw:Refresh() ) ;
+      ACTION   ( ImprimirSeriesAlbaranes() ) ;
       TOOLTIP  "Imp(r)imir series";
       HOTKEY   "R";
       LEVEL    ACC_IMPR
@@ -943,7 +941,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "GENFAC" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( GenFCli( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "AlbCliP", nView ), TDataView():Get( "AlbCliS", nView ), TDataView():Get( "Client", nView ), dbfCliAtp, TDataView():Get( "TIva", nView ), TDataView():Get( "Divisas", nView ), TDataView():Get( "FPago", nView ), dbfUsr, TDataView():Get( "NCount", nView ), oGrpCli, oStock ) );
+         ACTION   ( GenFCli( oWndBrw:oBrw, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "AlbCliP", nView ), TDataView():Get( "AlbCliS", nView ), TDataView():Get( "Client", nView ), dbfCliAtp, TDataView():Get( "TIva", nView ), TDataView():Get( "Divisas", nView ), TDataView():Get( "FPago", nView ), dbfUsr, TDataView():Get( "NCount", nView ), TDataview():GruposClientes( nView ), oStock ) );
          TOOLTIP  "(G)enerar facturas";
          HOTKEY   "G";
          LEVEL    ACC_APPD
@@ -1132,10 +1130,10 @@ STATIC FUNCTION OpenFiles()
       MsgStop( 'Imposible abrir ficheros de albaranes de clientes' )
       Return ( .f. )
    end if
-
+/*
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
       lOpenFiles        := .t.
 
       nView             := TDataView():CreateView()
@@ -1199,6 +1197,14 @@ STATIC FUNCTION OpenFiles()
       */
 
       TDataView():Get( "TIva", nView )
+
+      TDataView():Documentos( nView )
+
+      // TDataview con objetos-------------------------------------------------
+
+      TDataview():GruposClientes( nView )
+
+      // Aperturas ------------------------------------------------------------
 
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
          lOpenFiles     := .f.
@@ -1295,9 +1301,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
       SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
 
       USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
       SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
@@ -1414,10 +1417,6 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oGrpCli           := TGrpCli():Create( cPatCli() )
-      if !oGrpCli:OpenService()
-         lOpenFiles     := .f.
-      end if
 
       oNewImp           := TNewImp():Create( cPatEmp() )
       if !oNewImp:OpenFiles()
@@ -1502,7 +1501,7 @@ STATIC FUNCTION OpenFiles()
          ( TDataView():Get( "AlbCliT", nView ) )->( AdsSetAOF( cFiltroUsuario ) )
 
       end if
-
+/*
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -1512,7 +1511,7 @@ STATIC FUNCTION OpenFiles()
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    if !lOpenFiles
       CloseFiles()
    end if
@@ -1620,9 +1619,6 @@ STATIC FUNCTION CloseFiles()
    end if
    if !Empty( dbfTVta )
       ( dbfTVta      )->( dbCloseArea() )
-   end if
-   if !Empty( dbfDoc )
-      ( dbfDoc       )->( dbCloseArea() )
    end if
    if !Empty( dbfTblCnv )
       ( dbfTblCnv    )->( dbCloseArea() )
@@ -1736,9 +1732,7 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oStock )
       oStock:end()
    end if
-   if !Empty( oGrpCli )
-      oGrpCli:CloseService()
-   end if
+
    if !Empty( oNewImp )
       oNewImp:end()
    end if
@@ -1781,7 +1775,6 @@ STATIC FUNCTION CloseFiles()
    dbfCliAtp      := nil
    dbfTVta        := nil
    oBandera       := nil
-   dbfDoc         := nil
    dbfTblCnv      := nil
    dbfOferta      := nil
    dbfObrasT      := nil
@@ -1812,7 +1805,6 @@ STATIC FUNCTION CloseFiles()
    dbfCliBnc      := nil
 
    oStock         := nil
-   oGrpCli        := nil
    oNewImp        := nil
    oTrans         := nil
    oTipArt        := nil
@@ -1847,10 +1839,10 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
 
    if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "AC", dbfDoc )
+      cCodDoc           := cFirstDoc( "AC", TDataView():Documentos( nView ) )
    end if
 
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, TDataView():Documentos( nView ) )
       return nil
    end if
 
@@ -1858,9 +1850,9 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, TDataView():Documentos( nView ) )
 
-      PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
+      PrintReportAlbCli( nDevice, nCopies, cPrinter, TDataView():Documentos( nView ) )
 
    else
 
@@ -4869,194 +4861,6 @@ Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION PrnSerie()
-
-   local oDlg
-   local oFmtDoc
-   local oSayFmt
-   local cSayFmt
-   local oSerIni
-   local oSerFin   
-   local cSerIni     := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb
-   local cSerFin     := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb
-   local nDocIni     := ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb
-   local nDocFin     := ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb
-   local cSufIni     := ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
-   local cSufFin     := ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
-   local oPrinter
-   local cPrinter    := PrnGetName()
-   local lCopiasPre  := .t.
-   local lInvOrden   := .f.
-   local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
-   local oRango
-   local nRango      := 1
-   local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
-   local dFecHasta   := Date()
-
-   if Empty( cFmtDoc )
-      cFmtDoc        := cSelPrimerDoc( "AC" )
-   end if
-
-   cSayFmt           := cNombreDoc( cFmtDoc )
-
-   DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de albaranes"
-
-   REDEFINE GET   oSerIni ;
-      VAR         cSerIni ;
-      ID          100 ;
-      PICTURE     "@!" ;
-      UPDATE ;
-      SPINNER ;
-      ON UP       ( UpSerie( oSerIni ) );
-      ON DOWN     ( DwSerie( oSerIni ) );
-      VALID       ( cSerIni >= "A" .and. cSerIni <= "Z"  );
-      OF          oDlg
-   
-   REDEFINE GET   oSerFin ;
-      VAR         cSerFin ;
-      ID          110 ;
-      PICTURE     "@!" ;
-      UPDATE ;
-      SPINNER ;
-      ON UP       ( UpSerie( oSerFin ) );
-      ON DOWN     ( DwSerie( oSerFin ) );
-      VALID       ( cSerFin >= "A" .and. cSerFin <= "Z"  );
-      OF          oDlg
-
-   REDEFINE GET   nDocIni;
-      ID          120 ;
-      PICTURE     "999999999" ;
-      SPINNER ;
-      OF          oDlg
-
-   REDEFINE GET   nDocFin;
-      ID          130 ;
-      PICTURE     "999999999" ;
-      SPINNER ;
-      OF          oDlg
-
-   REDEFINE GET   cSufIni ;
-      ID          140 ;
-      PICTURE     "##" ;
-      OF          oDlg
-
-   REDEFINE GET   cSufFin ;
-      ID          150 ;
-      PICTURE     "##" ;
-      OF          oDlg
-
-   REDEFINE GET   dFecDesde ;
-      ID          210 ;
-      SPINNER ;
-      OF          oDlg
-
-   REDEFINE GET   dFecHasta ;
-      ID          220 ;
-      SPINNER ;
-      OF          oDlg   
-
-   REDEFINE CHECKBOX lInvOrden ;
-      ID          500 ;
-      OF          oDlg
-
-   REDEFINE CHECKBOX lCopiasPre ;
-      ID          170 ;
-      OF          oDlg
-
-   REDEFINE GET   oNumCop ;
-      VAR         nNumCop;
-      ID          180 ;
-      WHEN        !lCopiasPre ;
-      VALID       nNumCop > 0 ;
-      PICTURE     "999999999" ;
-      SPINNER ;
-      MIN         1 ;
-      MAX         99999 ;
-      OF          oDlg
-
-   REDEFINE GET oFmtDoc VAR cFmtDoc ;
-      ID          90 ;
-      VALID       ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
-      BITMAP      "LUPA" ;
-      ON HELP     ( BrwDocumento( oFmtDoc, oSayFmt, "AC" ) ) ;
-      OF          oDlg
-
-   REDEFINE GET oSayFmt VAR cSayFmt ;
-      ID          91 ;
-      WHEN        ( .f. );
-      OF          oDlg
-
-   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .f., , .f.,  )
-
-   REDEFINE GET oPrinter VAR cPrinter;
-      WHEN        ( .f. ) ;
-      ID          160 ;
-      OF          oDlg
-
-   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .f., , .f.,  )
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          oDlg ;
-      ACTION      (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ),;
-                     oDlg:end( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          oDlg ;
-      ACTION      ( oDlg:end() )
-
-   oDlg:bStart    := { || oSerIni:SetFocus() }
-
-   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ), oDlg:end( IDOK ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   oWndBrw:oBrw:refresh()
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, nRango, dFecDesde, dFecHasta )
-
-   local nRecno
-   local nOrdAnt
-
-   oDlg:disable()
-
-      nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "nNumAlb" ) )
-
-      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( cDocIni, .t. ) )
-
-         while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= cDocIni .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecDesde .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecHasta 
-
-               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
-
-            if lCopiasPre
-               nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-            end if 
-
-            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ))->nNumAlb ) + (TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
-
-            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( 1 ) )
-
-         end do
-
-      ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
-      ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
-
-   oDlg:enable()
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
 /*
 Total de unidades en un albaran
 */
@@ -7623,7 +7427,7 @@ STATIC FUNCTION PrnEntregas( lPrint, cAlbCliP, lTicket )
    REDEFINE GET oFmtEnt VAR cFmtEnt ;
       ID       100 ;
       COLOR    CLR_GET ;
-      VALID    ( cDocumento( oFmtEnt, oSayEnt, dbfDoc ) ) ;
+      VALID    ( cDocumento( oFmtEnt, oSayEnt, TDataView():Documentos( nView ) ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwDocumento( oFmtEnt, oSayEnt, "EA" ) ) ;
       OF       oDlg
@@ -7689,13 +7493,13 @@ Static Function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, cAlbCliP, lT
       return nil
    end if
 
-   if !lExisteDocumento( cFmtEnt, dbfDoc )
+   if !lExisteDocumento( cFmtEnt, TDataView():Documentos( nView ) )
       return nil
    end if
 
-   if lVisualDocumento( cFmtEnt, dbfDoc )
+   if lVisualDocumento( cFmtEnt, TDataView():Documentos( nView ) )
 
-      PrintReportEntAlbCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
+      PrintReportEntAlbCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, TDataView():Documentos( nView ), cAlbCliP, lTicket )
 
    else
 
@@ -13115,7 +12919,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
+Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
 
    local oFr
    local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, " ", "" ) + ".Pdf"
@@ -13138,7 +12942,7 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( TDataView():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -13150,9 +12954,9 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !Empty( ( TDataView():Documentos( nView ) )->mReport )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( TDataView():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -13240,7 +13044,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCliP, lTicket )
+Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, cAlbCliP, lTicket )
 
    local oFr
    local nRecAlbCliT    := ( TDataView():Get( "AlbCliT", nView ) )->( Recno() )
@@ -13264,7 +13068,7 @@ Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCl
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( TDataView():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -13276,9 +13080,9 @@ Static Function PrintReportEntAlbCli( nDevice, nCopies, cPrinter, dbfDoc, cAlbCl
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !Empty( ( TDataView():Documentos( nView ) )->mReport )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( TDataView():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -13343,15 +13147,68 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Static Function ImprimirSeriesAlbaranes()
 
+   local aStatus
+   local oPrinter    
 
+   // Cremaos el dialogo-------------------------------------------------------
+
+   oPrinter          := PrintSeries():New( nView )
+
+   // Establecemos sus valores-------------------------------------------------
+
+   oPrinter:Serie(      ( TDataView():AlbaranesClientes( nView ) )->cSerAlb )
+   oPrinter:Documento(  ( TDataView():AlbaranesClientes( nView ) )->nNumAlb )
+   oPrinter:Sufijo(     ( TDataView():AlbaranesClientes( nView ) )->cSufAlb )
+
+   oPrinter:oClienteInicio:Top()
+   oPrinter:oClienteFin:Bottom()
+
+   oPrinter:oGrupoClienteInicio:Top()
+   oPrinter:oGrupoClienteFin:Bottom()
+
+   oPrinter:oFormatoDocumento:TypeDocumento( "AC" )   
+   oPrinter:oFormatoDocumento:cText( cFormatoDocumento( ( TDataView():AlbaranesClientes( nView ) )->cSerAlb, "nAlbCli", TDataView():Contadores( nView ) ) )
+
+   // Codeblocks para que trabaje----------------------------------------------
+
+   aStatus           := TDataview():GetInitStatus( "AlbCliT", nView )
+
+   oPrinter:bInit    := {||   ( TDataview():AlbaranesClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
+
+   oPrinter:bWhile   := {||   TDataView():AlbaranesClientesId( nView ) >= oPrinter:DocumentoInicio()                 .and. ;
+                              TDataView():AlbaranesClientesId( nView ) <= oPrinter:DocumentoFin()                    .and. ;
+                              ( TDataView():AlbaranesClientes( nView ) )->dFecAlb >= oPrinter:oFechaInicio:Value()   .and. ;
+                              ( TDataView():AlbaranesClientes( nView ) )->dFecAlb <= oPrinter:oFechaFin:Value()      .and. ;
+                              ( TDataView():AlbaranesClientes( nView ) )->( !eof() ) }
+
+   oPrinter:bFor     := {||   ( TDataView():AlbaranesClientes( nView ) )->cCodCli >= oPrinter:oClienteInicio:Value() .and. ;
+                              ( TDataView():AlbaranesClientes( nView ) )->cCodCli <= oPrinter:oClienteFin:Value()    .and. ;
+                              retGrpCli( ( TDataView():AlbaranesClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) >= oPrinter:oGrupoClienteInicio:Value() .and. ;
+                              retGrpCli( ( TDataView():AlbaranesClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) <= oPrinter:oGrupoClienteInicio:Value() }    
+
+   oPrinter:bSkip    := {||   ( TDataView():AlbaranesClientes( nView ) )->( dbSkip() ) }
+
+   oPrinter:bAction  := {||   GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+
+   // Abrimos el dialogo-------------------------------------------------------
+
+   oPrinter:Resource()
+
+   // Restore -----------------------------------------------------------------
+
+   TDataview():SetStatus( "AlbCliT", nView, aStatus )
+   
+   oWndBrw:Refresh()
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 /*------------------------FUNCIONES GLOBALESS--------------------------------*/
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 /*
 NOTA: Esta funcion se utiliza para el estado de generado de pedidos de clientes
@@ -14075,7 +13932,7 @@ RETURN ( cCodCli )
 
 //----------------------------------------------------------------------------//
 
-function lGenAlbCli( oBrw, oBtn, nDevice )
+Static Function lGenAlbCli( oBrw, oBtn, nDevice )
 
    local bAction
 
@@ -14085,7 +13942,7 @@ function lGenAlbCli( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   IF !( dbfDoc )->( dbSeek( "AC" ) )
+   IF !( TDataView():Documentos( nView ) )->( dbSeek( "AC" ) )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
          NOBORDER ;
@@ -14097,13 +13954,13 @@ function lGenAlbCli( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->CTIPO == "AC" .AND. !( dbfDoc )->( eof() )
+      WHILE ( TDataView():Documentos( nView ) )->CTIPO == "AC" .AND. !( TDataView():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( dbfDoc )->CODIGO )
+         bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( TDataView():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( TDataView():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( TDataView():Documentos( nView ) )->( dbSkip() )
 
       END DO
 

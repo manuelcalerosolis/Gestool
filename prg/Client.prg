@@ -11857,5 +11857,3 @@ Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp =
 
 //---------------------------------------------------------------------------//
 
-
-
