@@ -9307,18 +9307,13 @@ METHOD CreaNuevoTicket( oDlg, cCodSala, cPntVenta ) Class TpvTactil
 
       while !::oTemporalDivisionNuevoTicket:Eof()
 
-         ::oTiketLinea:Blank()
-         ::oTiketLinea:cSerTil         := ::oTiketCabecera:cSerTik
-         ::oTiketLinea:cNumTil         := ::oTiketCabecera:cNumTik
-         ::oTiketLinea:cSufTil         := ::oTiketCabecera:cSufTik
-         ::oTiketLinea:cTipTil         := ::oTiketCabecera:cTipTik
-         ::oTiketLinea:dFecTik         := ::oTiketCabecera:dFecTik
-         ::oTiketLinea:nUntTil         := ::oTemporalDivisionNuevoTicket:nUntTil
-         ::oTiketLinea:nNumLin         := ::oTemporalDivisionNuevoTicket:nNumLin
-         ::oTiketLinea:cCbaTil         := ::oTemporalDivisionNuevoTicket:cCbaTil
-         ::oTiketLinea:cNomTil         := ::oTemporalDivisionNuevoTicket:cNomTil
-         ::oTiketLinea:nPvpTil         := ::oTemporalDivisionNuevoTicket:nPvpTil
-         ::oTiketLinea:Insert()
+         appendPass( ::oTemporalDivisionNuevoTicket:cAlias,;
+                     ::oTiketLinea:cAlias,;
+                     {  "cSerTil" => ::oTiketCabecera:cSerTik,;
+                        "cNumTil" => ::oTiketCabecera:cNumTik,;
+                        "cSufTil" => ::oTiketCabecera:cSufTik,;
+                        "dTipTil" => ::oTiketCabecera:cTipTik,;
+                        "dFecTik" => ::oTiketCabecera:dFecTik } )
 
          ::oTemporalDivisionNuevoTicket:Skip()
 
