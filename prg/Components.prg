@@ -45,6 +45,10 @@ CLASS PrintSeries
 
    DATA oFormatoDocumento
 
+   DATA oInforme
+
+   DATA oImageList
+
    METHOD New( nView )
 
    METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
@@ -101,6 +105,10 @@ METHOD New( nView ) CLASS PrintSeries
 
    ::oCopias               := GetCopias():New( 170, 180, Self )
 
+   ::oImageList            := TImageList():New( 16, 16 )
+   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -119,6 +127,8 @@ METHOD Resource() CLASS PrintSeries
 
    aEval( ::aComponents, {| o | o:Resource() } )
 
+   ::oInforme     := TTreeView():Redefine( 400, ::oDlg )
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDlg ;
@@ -136,12 +146,18 @@ METHOD Resource() CLASS PrintSeries
    ACTIVATE DIALOG ::oDlg CENTER
 
    oBmp:end()   
+   
+   ::oImageList:End()
+
+   ::oInforme:Destroy()
 
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
 METHOD StartResource() CLASS PrintSeries
+
+   ::oInforme:SetImageList( ::oImageList )
 
    ::oClienteInicio:Valid()   
    ::oClienteFin:Valid()

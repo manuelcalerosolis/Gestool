@@ -164,6 +164,7 @@ CLASS TGenMailing
 
    Endmethod
 
+   METHOD IsMailServer()
 
 END CLASS
 
@@ -1560,6 +1561,17 @@ Return ( lCheck )
 
 //---------------------------------------------------------------------------//
 
+METHOD IsMailServer()
+
+   if Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword )
+      MsgStop( "Debe cumplimentar servidor y cuenta de correos," + CRLF + "en configurar empresa." )
+      RETURN .f.
+   end if
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
 Function lInitHTMEditor()
 
    local oBlock
@@ -1635,3 +1647,4 @@ FUNCTION HtmlEntities( cString, cQuote_style )
 RETURN HtmlConvertChars( cString, cQuote_style, aTranslations )
 
 //---------------------------------------------------------------------------//
+

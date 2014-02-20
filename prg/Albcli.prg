@@ -13012,19 +13012,23 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
 
                with object ( TGenMailing():New() )
 
-                  :SetTypeDocument( "nAlbCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de albaran de cliente número " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
+                  if :IsMailServer()
 
-                  :GeneralResource( TDataView():Get( "AlbCliT", nView ), aItmAlbCli() )
+                     :SetTypeDocument( "nAlbCli" )
+                     :SetDe(           uFieldEmpresa( "cNombre" ) )
+                     :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                     :SetAdjunto(      cFilePdf )
+                     :SetPara(         RetFld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "cMeiInt" ) )
+                     :SetAsunto(       "Envio de albaran de cliente número " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) )
+                     :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) ) + Space( 1 ) )
+                     :SetMensaje(      "de fecha " + Dtoc( ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb ) + Space( 1 ) )
+                     :SetMensaje(      CRLF )
+                     :SetMensaje(      CRLF )
+                     :SetMensaje(      "Reciba un cordial saludo." )
+
+                     :GeneralResource( TDataView():Get( "AlbCliT", nView ), aItmAlbCli() )
+
+                  end if 
 
                end with
 
@@ -13175,7 +13179,7 @@ Static Function ImprimirSeriesAlbaranes()
 
    cFormato          := cFormatoDocumento( ( TDataView():AlbaranesClientes( nView ) )->cSerAlb, "nAlbCli", TDataView():Contadores( nView ) )
    if empty( cFormato )
-      cFormato       := cSelPrimerDoc( "AC" )   
+      cFormato       := cFirstDoc( "AC", TDataView():Documentos( nView ) )
    end if
    oPrinter:oFormatoDocumento:cText( cFormato )
 

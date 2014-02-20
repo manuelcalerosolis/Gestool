@@ -4032,26 +4032,6 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cSelPrimerDoc( cTipDoc )
-
-   local cCodigo  := Space( 3 )
-
-   if !OpenFiles( .t. )
-      Return nil
-   end if
-
-   ( dbfDoc )->( OrdSetFocus( "CTIPO" ) )
-
-   if ( dbfDoc )->( dbSeek( cTipDoc ) )
-      cCodigo     := ( dbfDoc )->Codigo
-   end if
-
-   CloseFiles()
-
-RETURN ( cCodigo )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION cNombreDoc( cCodigo )
 
    local cNombre  := Space( 100 )
@@ -4404,5 +4384,25 @@ Function cFirstDoc( cTipo, dbfDoc )
    end case
 
 Return ( cFirstDoc )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cSelPrimerDoc( cTipDoc )
+
+   local cCodigo  := Space( 3 )
+
+   if !OpenFiles( .t. )
+      Return nil
+   end if
+
+   ( dbfDoc )->( OrdSetFocus( "cTipo" ) )
+
+   if ( dbfDoc )->( dbSeek( cTipDoc ) )
+      cCodigo     := ( dbfDoc )->Codigo
+   end if
+
+   CloseFiles()
+
+RETURN ( cCodigo )
 
 //---------------------------------------------------------------------------//
