@@ -2375,18 +2375,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 199, 125, 10
   CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 229, 135, 10
   CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 229, 137, 10
-<<<<<<< HEAD
-  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 258, 39, 10
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 257, 314, 11
-  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 270, 51, 10
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 109, 269, 314, 11
-  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 282, 54, 10
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 109, 281, 314, 11
-  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 294, 47, 10
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 109, 293, 314, 11
-  CONTROL "Generales", -1, "Button", BS_GROUPBOX, 44, 29, 386, 73
-  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 246, 386, 63
-=======
   CONTROL "Recalcular costes de las lineas producidas", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 256, 151, 10
   CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 284, 39, 10
   CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 283, 314, 11
@@ -2398,7 +2386,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 109, 319, 314, 11
   CONTROL "Generales", -1, "Button", BS_GROUPBOX, 44, 29, 386, 73
   CONTROL "Facturaci�n [ Incluir las l�neas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 272, 386, 63
->>>>>>> 354e69ddcb8b0f6908a3cd4b816bd58552a1380e
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones generales del programa", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
   CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 104, 386, 110
