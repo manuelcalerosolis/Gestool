@@ -13,6 +13,8 @@ CLASS PrintSeries
    DATA bSkip                          INIT {|| .t. }
    DATA bExit 
 
+   DATA nTotalPrinted                  INIT 0
+
    DATA aComponents                    INIT {}
 
    DATA nView
@@ -49,6 +51,7 @@ CLASS PrintSeries
 
    METHOD Resource()
       METHOD StartResource()
+      METHOD End()                     INLINE ( ::oDlg:end() )
 
    METHOD StartPrint()
 
@@ -104,7 +107,15 @@ RETURN ( Self )
 
 METHOD Resource() CLASS PrintSeries
 
+   local oBmp
+
    DEFINE DIALOG ::oDlg RESOURCE "ImprimirSeries" TITLE "Imprimir series de documentos"
+
+   REDEFINE BITMAP oBmp ;
+      ID          500 ;
+      RESOURCE    "Printer_alpha_48" ;
+      TRANSPARENT ;
+      OF          ::oDlg
 
    aEval( ::aComponents, {| o | o:Resource() } )
 
@@ -124,7 +135,9 @@ METHOD Resource() CLASS PrintSeries
 
    ACTIVATE DIALOG ::oDlg CENTER
 
-RETURN NIL
+   oBmp:end()   
+
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -133,7 +146,12 @@ METHOD StartResource() CLASS PrintSeries
    ::oClienteInicio:Valid()   
    ::oClienteFin:Valid()
 
-RETURN NIL
+   ::oGrupoClienteInicio:Valid()   
+   ::oGrupoClienteFin:Valid()
+
+   ::oFormatoDocumento:Valid()
+
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -142,20 +160,13 @@ METHOD StartPrint() CLASS PrintSeries
    local nRecno
    local nOrdAnt
 
-   ::oDlg:disable()
+   ::nTotalPrinted   := 0
 
-   msgAlert( TDataView():AlbaranesClientesId( ::nView ), "Antes de bInit" ) 
+   ::oDlg:disable()
 
    if !empty( ::bInit )
       eval( ::bInit )
    end if 
-
-   msgAlert( TDataView():AlbaranesClientesId( ::nView ), "Despues de bInit" )
-
-   msgAlert( ::DocumentoFin(), "depues del bInit" )
-   msgAlert( TDataView():AlbaranesClientesId( ::nView ) <= ::DocumentoFin(), "ComparacionTDataView()AlbaranesClientesId()" ) 
-
-   msgAlert( eval( ::bWhile ), "eval bWhile" )
 
    while eval( ::bWhile )
 
@@ -163,6 +174,7 @@ METHOD StartPrint() CLASS PrintSeries
 
          if !empty( ::bAction )
             eval( ::bAction )
+            ++::nTotalPrinted
          end if
 
       end if 
@@ -175,36 +187,9 @@ METHOD StartPrint() CLASS PrintSeries
       eval( ::bExit )
    end if 
 
-
-/*
-      nRecno      := ( TDataView():Get( "AlbCliT", nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():Get( "AlbCliT", nView ) )->( OrdSetFocus( "nNumAlb" ) )
-
-      ( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( cDocIni, .t. ) )
-
-         while ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb >= cDocIni .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb <= cDocFin .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb <= dFecDesde .AND. ;
-               ( TDataView():Get( "AlbCliT", nView ) )->dFecAlb >= dFecHasta 
-
-               lChgImpDoc( TDataView():Get( "AlbCliT", nView ) )
-
-            if lCopiasPre
-               nNumCop     := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
-            end if 
-
-            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( (TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ))->cSufAlb, cFmtDoc, cPrinter, nNumCop )
-
-            ( TDataView():Get( "AlbCliT", nView ) )->( DbSkip( 1 ) )
-
-         end do
-
-      ( TDataView():Get( "AlbCliT", nView ) )->( dbGoTo( nRecNo ) )
-      ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( nOrdAnt ) )
-*/
    ::oDlg:enable()
 
-RETURN NIL
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 

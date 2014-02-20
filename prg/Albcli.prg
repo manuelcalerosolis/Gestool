@@ -13150,7 +13150,8 @@ Return .t.
 Static Function ImprimirSeriesAlbaranes()
 
    local aStatus
-   local oPrinter    
+   local oPrinter   
+   local cFormato 
 
    // Cremaos el dialogo-------------------------------------------------------
 
@@ -13169,7 +13170,14 @@ Static Function ImprimirSeriesAlbaranes()
    oPrinter:oGrupoClienteFin:Bottom()
 
    oPrinter:oFormatoDocumento:TypeDocumento( "AC" )   
-   oPrinter:oFormatoDocumento:cText( cFormatoDocumento( ( TDataView():AlbaranesClientes( nView ) )->cSerAlb, "nAlbCli", TDataView():Contadores( nView ) ) )
+
+   // Formato de documento-----------------------------------------------------
+
+   cFormato          := cFormatoDocumento( ( TDataView():AlbaranesClientes( nView ) )->cSerAlb, "nAlbCli", TDataView():Contadores( nView ) )
+   if empty( cFormato )
+      cFormato       := cSelPrimerDoc( "AC" )   
+   end if
+   oPrinter:oFormatoDocumento:cText( cFormato )
 
    // Codeblocks para que trabaje----------------------------------------------
 
@@ -13194,7 +13202,7 @@ Static Function ImprimirSeriesAlbaranes()
 
    // Abrimos el dialogo-------------------------------------------------------
 
-   oPrinter:Resource()
+   oPrinter:Resource():End()
 
    // Restore -----------------------------------------------------------------
 
