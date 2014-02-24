@@ -228,7 +228,7 @@ CLASS TStock
 
    METHOD SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente )
 
-   METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 )
+   METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote )
 
    METHOD lCheckConsolidacion()
 
@@ -3857,7 +3857,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRefLote" ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef" ) )
    local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
-   local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cCodArt" ) )
+   local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cArtLot" ) )
 
    DEFAULT cCodPr1      := Space( 20 )
    DEFAULT cCodPr2      := Space( 20 )
@@ -4002,13 +4002,14 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( Empty( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )   .and.;
          ( Empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
-
+        
          if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd ) .and.;
             Empty( cCodAlm ) .or. ( ( ::cProducL )->cAlmOrd == cCodAlm )
-
+           
             nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
+            
             nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
-
+            
          end if
 
          ( ::cProducL )->( dbSkip() )
