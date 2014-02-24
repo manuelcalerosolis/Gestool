@@ -139,9 +139,10 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       ::CommunFields( oDbf )
 
       INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd,9 ) + cSufOrd"                       NODELETED OF oDbf
-      INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt + cValPr1 + cValPr2"                                NODELETED OF oDbf
-      INDEX TO ( cFileName )  TAG "nNumLin" ON "Str( nNumLin, 4 )"                                          NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt"                                                    NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "cArtLot" ON "cCodArt + cValPr1 + cValPr2 + cLote"                        NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cLote"   ON "cLote"                                                      NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "nNumLin" ON "Str( nNumLin, 4 )"                                          NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cGrpFam" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cGrpFam"            NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "cCodFam" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodFam"            NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "cCodTip" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodTip"            NODELETED OF oDbf        
@@ -269,8 +270,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oFld:aDialogs[1]
 
       oGetArt:bValid := {|| cArticulo( oGetArt, ::oParent:oArt:cAlias, oGetNom ), ::LoaArticulo( oGetArt, oGetNom ) }
-      oGetArt:bHelp  := {|| ::LoaArticulo( oGetArt, oGetNom ) }
-
+      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr1  ) }
 
       REDEFINE GET oGetNom VAR ::oDbfVir:cNomArt ;
          ID       111 ;

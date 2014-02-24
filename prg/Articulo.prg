@@ -12698,23 +12698,6 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             RESOURCE "Cashier_user1_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FrontTpv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
 
-            SEPARATOR
-
-            MENUITEM "&B. Añadir movimiento entre almacenes";
-            MESSAGE  "Realizar un nuevo movimiento entre almacenes" ;
-            RESOURCE "Pencil_Package_16";
-            ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 1 ) );
-
-            MENUITEM "&C. Añadir movimiento de regularización de almacenes simple";
-            MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes simple" ;
-            RESOURCE "Pencil_Package_16";
-            ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 2 ) );
-
-            MENUITEM "&D. Añadir movimiento de regularización de almacenes por objetivo";
-            MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes por objetivo" ;
-            RESOURCE "Pencil_Package_16";
-            ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 3 ) );
-
             end if
 
          ENDMENU
@@ -16684,7 +16667,6 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       end if
 
    if !IsReport() .and. !uFieldEmpresa( "lNStkAct" )
-
       REDEFINE BUTTON oBtnAceptarpropiedades ;
          ID       550 ;
 			OF 		oDlg ;
