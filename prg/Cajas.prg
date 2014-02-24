@@ -15,6 +15,7 @@ static dbfDoc
 static dbfTmpLin
 static cTmpLin
 static oCaptura
+static nNumTur
 static bEdit         := { |aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet       := { |aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmpCaj | EdtDet( aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmpCaj ) }
 
@@ -310,6 +311,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopApt" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ]     := 1
+      aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := 1
    end if
 
    if BeginTrans( aTmp )
@@ -361,6 +363,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
+      /*
+      Proximo turno------------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ] ;
+         VAR      nNumTur ;
+         ID       190 ;
+         SPINNER ;
+         MIN      0 ;
+         MAX      999999 ;
+         PICTURE  "999999" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
 
       /*
       Captura por defecto
@@ -1089,7 +1104,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-static function StartRec( aGet, aTmp )
+Static Function StartRec( aGet, aTmp )
 
    aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]:SetFocus()
 
@@ -1111,7 +1126,7 @@ static function StartRec( aGet, aTmp )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ], dbfDoc, "cDescrip" ) )
 
-return .t.
+Return .t.
 
 //--------------------------------------------------------------------------//
 
@@ -1136,8 +1151,8 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
 
    while ( dbfCajL )->( dbSeek( aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ] ) )
       if dbLock( dbfCajL )
-      ( dbfCajL )->( dbDelete() )
-      ( dbfCajL )->( dbUnLock() )
+         ( dbfCajL )->( dbDelete() )
+         ( dbfCajL )->( dbUnLock() )
       end if
    end while
 
@@ -1153,7 +1168,7 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
 
    end if
 
-   //Guardamos los temporales--------------------------------------------------
+   // Guardamos los temporales-------------------------------------------------
 
    ( dbfTmpLin )->( dbGoTop() )
    while ( dbfTmpLin )->( !eof() )
@@ -1161,7 +1176,11 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
       ( dbfTmpLin )->( dbSkip() )
    end while
 
-   //Guardamos el registro definitivo------------------------------------------
+   // Asignación a la variable de texto----------------------------------------
+
+   aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]  := Str( nNumTur, 6 )
+
+   // Guardamos el registro definitivo-----------------------------------------
 
    WinGather( aTmp, aGet, dbfCajT, oBrw, nMode )
 
@@ -1852,11 +1871,14 @@ STATIC FUNCTION BeginTrans( aTmp )
    local nOrd
    local lErrors  := .f.
    local cDbfLin  := "CCAJASL"
-   local cCaj     := aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]
+   local cCodCaj
    local oError
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
+
+   cCodCaj        := aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]
+   nNumTur        := Max( Val( aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ] ), 1 )
 
    /*
    Actualizacion de riesgo-----------------------------------------------------
@@ -1879,8 +1901,8 @@ STATIC FUNCTION BeginTrans( aTmp )
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cTipImp", "Upper( cTipImp )", {|| Upper( Field->cTipImp ) } ) )
 
-      if ( dbfCajL )->( dbSeek( cCaj ) )
-         while ( dbfCajL )->cCodCaj == cCaj .AND. !( dbfCajL )->( eof() )
+      if ( dbfCajL )->( dbSeek( cCodCaj ) )
+         while ( dbfCajL )->cCodCaj == cCodCaj .AND. !( dbfCajL )->( eof() )
             dbPass( dbfCajL, dbfTmpLin, .t. )
             ( dbfCajL )->( DbSkip() )
          end while
@@ -2050,6 +2072,7 @@ Function IsCaja()
       ( dbfCaja )->nCopReg := 1
       ( dbfCaja )->nCopPar := 1
       ( dbfCaja )->nCopCom := 1
+      ( dbfCaja )->cNumTur := str( 1, 6 )
       ( dbfCaja )->( dbUnLock() )
    end if
 
@@ -2259,6 +2282,7 @@ Function aItmCaja()
    aAdd( aBase, { "cPrnCie",   "C",  3,   0, "Formato para arqueos ciegos" } )
    aAdd( aBase, { "nCopCie",   "N",  2,   0, "Copias para arqueos ciegos" } )
    aAdd( aBase, { "cPrnNota",  "C",  250, 0, "Impresora de entregas de notas" } )
+   aAdd( aBase, { "cNumTur",   "C",  6,   0, "Número del turno" } )
 
 Return ( aBase )
 
@@ -3584,3 +3608,26 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
+Function cNumeroSesionCaja( cCodCaj, dbfCajaT, dbfTurnoT )
+
+   local cNumeroSesion  := space( 6 )
+
+   while .t.
+
+      if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajaT )
+         cNumeroSesion  := ( dbfCajT )->cNumTur
+         if !dbSeekInOrd( cNumeroSesion + RetSufEmp() + cCodCaj, "cCajTur", dbfTurnoT )
+            exit 
+         else 
+            if dbLock( dbfCajT )
+               ( dbfCajT )->cNumTur := str( val( ( dbfCajT )->cNumTur + 1 ), 6 )
+               ( dbfCajT )->( dbUnLock() )
+            end if
+         end if 
+      end if
+
+   end while
+
+Return ( cNumeroSesion )
+
+//---------------------------------------------------------------------------//

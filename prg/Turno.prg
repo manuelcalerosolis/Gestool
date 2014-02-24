@@ -205,9 +205,9 @@ CLASS TTurno FROM TMasDet
    DATA  cCajTur
 
    DATA  oFechaInicio
-   DATA  dFechaInicio         INIT CtoD( "01/01/" + Str( Year( Date() ) ) )
+   DATA  dFechaInicio                              INIT CtoD( "01/01/" + Str( Year( Date() ) ) )
    DATA  oFechaFin
-   DATA  dFechaFin            INIT Date();
+   DATA  dFechaFin                                 INIT Date();
 
    DATA  oGrpDiferencias
    DATA  oDiferenciaEfectivo
@@ -217,17 +217,20 @@ CLASS TTurno FROM TMasDet
    DATA  oDiferenciaTotal
    DATA  oSayDiferenciaTotal
 
+   DATA  oBtnSelectAllCajas
+   DATA  oBtnUnSelectAllCajas
+
    DATA  cComentario
 
    DATA  oTreeImpresion
    DATA  oTreeGeneral
 
-   DATA  aOpcionImp           AS ARRAY    INIT  ( aFill( Array( 19 ), .t. ) )
-   DATA  oIniArqueo           AS OBJECT
+   DATA  aOpcionImp                                AS ARRAY    INIT  ( aFill( Array( 19 ), .t. ) )
+   DATA  oIniArqueo                                AS OBJECT
 
    DATA  oNoImprimirArqueo
-   DATA  lNoImprimirArqueo    AS LOGIC    INIT .f.
-   DATA  lCerrado             AS LOGIC    INIT .f.
+   DATA  lNoImprimirArqueo                         AS LOGIC    INIT .f.
+   DATA  lCerrado                                  AS LOGIC    INIT .f.
 
    DATA  oBtnPrv
    DATA  oBtnNxt
@@ -237,27 +240,27 @@ CLASS TTurno FROM TMasDet
 
    DATA  oAni
    DATA  oTxt
-   DATA  aSimula              AS ARRAY    INIT {}
-   DATA  nAsiento             AS NUMERIC  INIT 0
-   DATA  aFac                 AS ARRAY    INIT {}
+   DATA  aSimula                                   AS ARRAY    INIT {}
+   DATA  nAsiento                                  AS NUMERIC  INIT 0
+   DATA  aFac                                      AS ARRAY    INIT {}
    DATA  aMsg
-   DATA  oMeter               AS OBJECT
-   DATA  nMeter               AS NUMERIC  INIT 0
+   DATA  oMeter                                    AS OBJECT
+   DATA  nMeter                                    AS NUMERIC  INIT 0
    DATA  oPrnTiket
-   DATA  oNewImp              AS OBJECT
+   DATA  oNewImp                                   AS OBJECT
 
-   DATA  oTotales             AS OBJECT
+   DATA  oTotales                                  AS OBJECT
 
    DATA  oPrnArq
    DATA  cPrnArq
    DATA  cWinArq
 
    DATA  oCmbReport
-   DATA  cCmbReport           INIT "Visualizar"
-   DATA  aCmbReport           INIT { "Visualizar", "Imprimir",    "Adobe PDF",   "Excel",    "HTML" }
-   DATA  aBmpReport           INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "SndInt16" }
-   DATA  aBmpReportTactil     INIT { "Prev124",    "ImpButton24", "DocLock24",   "Table24",  "SndInt24" }
-   DATA  nCmbReport           INIT 1
+   DATA  cCmbReport                                INIT "Visualizar"
+   DATA  aCmbReport                                INIT { "Visualizar", "Imprimir",    "Adobe PDF",   "Excel",    "HTML" }
+   DATA  aBmpReport                                INIT { "Prev116",    "ImpButton",   "DocLock",     "Table",    "SndInt16" }
+   DATA  aBmpReportTactil                          INIT { "Prev124",    "ImpButton24", "DocLock24",   "Table24",  "SndInt24" }
+   DATA  nCmbReport                                INIT 1
 
    DATA  cText
    DATA  oSender
@@ -267,19 +270,19 @@ CLASS TTurno FROM TMasDet
 
    DATA  lSuccesfullSend
 
-   DATA  lTikAbiertos         AS LOGIC    INIT .f.
-   DATA  cTikAbiertos         INIT ""
+   DATA  lTikAbiertos                              AS LOGIC    INIT .f.
+   DATA  cTikAbiertos                              INIT ""
 
-   DATA  nNumberSend          INIT 0
-   DATA  nNumberRecive        INIT 0
+   DATA  nNumberSend                               INIT 0
+   DATA  nNumberRecive                             INIT 0
 
    DATA  dOpenTurno
    DATA  cHoraTurno
    DATA  cCajeroTurno
    DATA  cDescripcionTurno
 
-   DATA  nImporteTurno        INIT 0
-   DATA  nObjetivoTurno       INIT 0
+   DATA  nImporteTurno                             INIT 0
+   DATA  nObjetivoTurno                            INIT 0
 
    DATA  oGrpCobros
    DATA  oTotalEfectivo
@@ -298,50 +301,50 @@ CLASS TTurno FROM TMasDet
    DATA  oImporteRetirado
    DATA  oImporteCambio
 
-   DATA  nImporteEfectivo     INIT 0
-   DATA  nImporteNoEfectivo   INIT 0
-   DATA  nImporteTarjeta      INIT 0
-   DATA  nImporteRetirado     INIT 0
-   DATA  nImporteCambio       INIT 0
-   DATA  nImportePresupuesto  INIT 0
+   DATA  nImporteEfectivo                          INIT 0
+   DATA  nImporteNoEfectivo                        INIT 0
+   DATA  nImporteTarjeta                           INIT 0
+   DATA  nImporteRetirado                          INIT 0
+   DATA  nImporteCambio                            INIT 0
+   DATA  nImportePresupuesto                       INIT 0
 
-   DATA  aFilesProcessed      AS ARRAY    INIT {}
+   DATA  aFilesProcessed                           AS ARRAY    INIT {}
 
    DATA  oSaySalidaImpresion
    DATA  oBtnOpcionesImpresion
    DATA  oGrpOpcionesImpresion
 
-   DATA  lEnvioInformacion    AS LOGIC    INIT .t.
-   DATA  lImprimirEnvio       AS LOGIC    INIT .t.
+   DATA  lEnvioInformacion                         AS LOGIC    INIT .t.
+   DATA  lImprimirEnvio                            AS LOGIC    INIT .t.
 
-   DATA  oEnvioInformacion    AS OBJECT
-   DATA  oImprimirEnvio       AS OBJECT
-   DATA  oChkEnviarMail       AS OBJECT
+   DATA  oEnvioInformacion                         AS OBJECT
+   DATA  oImprimirEnvio                            AS OBJECT
+   DATA  oChkEnviarMail                            AS OBJECT
    DATA  oGetEnviarMail
    DATA  oGrpNotificacion
    DATA  oGrpOpcionesEnvioInformacion
 
-   DATA  lEnviarMail          AS LOGIC    INIT .f.
-   DATA  cEnviarMail          INIT Space( 200 )
-   DATA  cMensajeMail         INIT ""
+   DATA  lEnviarMail                               AS LOGIC    INIT .f.
+   DATA  cEnviarMail                               INIT Space( 200 )
+   DATA  cMensajeMail                              INIT ""
 
-   DATA  lDefaultPrinter      AS LOGIC    INIT .t.
+   DATA  lDefaultPrinter                           AS LOGIC    INIT .t.
    DATA  cPrinter
 
-   DATA  lPdfShowDialog       AS LOGIC    INIT .t.
-   DATA  cPdfDefaultPath      INIT ""
-   DATA  cPdfFileName         INIT ""
-   DATA  cHtmlFileName        INIT ""
+   DATA  lPdfShowDialog                            AS LOGIC    INIT .t.
+   DATA  cPdfDefaultPath                           INIT ""
+   DATA  cPdfFileName                              INIT ""
+   DATA  cHtmlFileName                             INIT ""
 
-   CLASSDATA  cCurTurno       INIT ""
+   CLASSDATA  cCurTurno                            INIT ""
 
-   DATA  cGrupoEnUso          INIT ""
-   DATA  nGrupoPeso           INIT 0
+   DATA  cGrupoEnUso                               INIT ""
+   DATA  nGrupoPeso                                INIT 0
 
-   DATA  lCreated             AS LOGIC    INIT .f.
+   DATA  lCreated                                  AS LOGIC    INIT .f.
    DATA  oBandera
 
-   DATA  aTipIva              AS ARRAY    INIT {}
+   DATA  aTipIva                                   AS ARRAY    INIT {}
 
    DATA  oBrwTotales
    DATA  oGrpArqueo
@@ -399,18 +402,17 @@ CLASS TTurno FROM TMasDet
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
+   // Ficheros ----------------------------------------------------------------
 
    Method OpenFiles( lExclusive )
    Method OpenService( lExclusive )
    Method CloseFiles()
    Method CloseService()
    Method DefineFiles()
-
    Method CheckFiles()
 
    Method Resource( nMode )
-
-   Method Activate()
+      Method Activate()
 
    Method lOpenTurno()
    Method lOpenCaja()
@@ -429,23 +431,29 @@ CLASS TTurno FROM TMasDet
 
    Method cNombreUser()
 
-   METHOD SetCurrentTurno()   INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
+   METHOD SetCurrentTurno()                        INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
    Method GetCurrentTurno()
    Method GoCurrentTurno()
 
    Method cValidTurno()
 
    Method lSelectTurno( lSel )
-
    Method lSelectAll( lSel )
-
    Method MarkTurno( lMark )
 
    Method lInvCierre()
    Method InvCierre( oAni, oMsg )
 
+   // Dialogo de cierre de turno-----------------------------------------------
+
+   DATA  oDlgTurno
+   DATA  oFldTurno
+
    Method lArqueoTurno( lZoom, lParcial )
-   Method InitArqueoTurno()
+      Method InitArqueoTurno()
+      Method StartArqueoTurno()
+      Method GoPrev( oBrwCnt, oBrwCaj )
+      Method GoNext()
 
    Method lIsContadores()
    Method LoadContadores()
@@ -478,8 +486,6 @@ CLASS TTurno FROM TMasDet
 
    Method EdtLine( oLbx )
 
-   Method GoPrev( oFld, oDlg, oBrwCnt, oBrwCaj )
-   Method GoNext( oFld, oDlg )
 
    Method SyncAllDbf()
    Method Reindexa( oMeter )
@@ -500,9 +506,7 @@ CLASS TTurno FROM TMasDet
    Method FillTemporal( cCodCaj )
 
    Method lNowOpen( oWnd )
-
    Method RellenaIva()
-
    Method RollBack()          VIRTUAL
 
    Method lCloTiket( lClose )
@@ -519,6 +523,8 @@ CLASS TTurno FROM TMasDet
 
    Method ActTactil()
 
+   // Envios-------------------------------------------------------------------
+
    Method CreateData()
    Method RestoreData()
    Method SendData()
@@ -527,8 +533,6 @@ CLASS TTurno FROM TMasDet
    Method SetNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
    Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
    Method lContaTiket()       VIRTUAL
-
-
    Method Process()
 
    Method Save()
@@ -536,9 +540,9 @@ CLASS TTurno FROM TMasDet
 
    Method ChangedTreeImpresion() VIRTUAL
 
-   Method InitDlgImprimir()
-   Method StartArqueoTurno( oFld, oBtnMod, oCajTur )
+   // Impresion----------------------------------------------------------------
 
+   Method InitDlgImprimir()
    Method PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    Method DataReport( oFastReport )
    Method VariableReport( oFastReport )
@@ -1224,8 +1228,11 @@ METHOD DefineFiles( cPath )
       FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } ;
                                                    VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
       FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
+
       FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
       FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"                                                          COLSIZE 40               OF ::oDbf
+      FIELD NAME "cCodCaj" TYPE "C"  LEN  3  DEC 0 COMMENT "Caja"                                                                COLSIZE 50               OF ::oDbf
+
       FIELD NAME "dOpnTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"                                                        COLSIZE 80               OF ::oDbf
       FIELD NAME "cHorOpn" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"                                                         COLSIZE 60               OF ::oDbf
       FIELD NAME "dCloTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"                                                           COLSIZE 80               OF ::oDbf
@@ -1236,7 +1243,8 @@ METHOD DefineFiles( cPath )
       FIELD NAME "mComTur" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"                                                         COLSIZE 300              OF ::oDbf
       FIELD NAME "nStaTur" TYPE "N"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
 
-      INDEX TO "Turno.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur"            COMMENT "Número"        FOR "!Deleted()"     OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "cCajTur" ON "cNumTur + cSufTur + cCodCaj"  COMMENT "Número y caja" FOR "!Deleted()"     OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "dOpnTur" ON "dOpnTur"                            FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "lSndTur" ON "lSndTur"                            FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "nStaTur" ON "nStaTur"                            FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
@@ -1248,6 +1256,7 @@ METHOD DefineFiles( cPath )
       FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT ""                                                  OF ::oDbfCaj
       FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT ""                                                  OF ::oDbfCaj
       FIELD NAME "cCodCaj" TYPE "C"  LEN  3  DEC 0 COMMENT "Caja"                                              OF ::oDbfCaj
+      
       FIELD NAME "lCajClo" TYPE "L"  LEN  1  DEC 0 COMMENT "Caja cerrada"                                      OF ::oDbfCaj
       FIELD NAME "lCajSel" TYPE "L"  LEN  1  DEC 0 COMMENT "Caja seleccionada"                                 OF ::oDbfCaj
       FIELD NAME "cCajTur" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario cierre"                                    OF ::oDbfCaj
@@ -1276,7 +1285,7 @@ METHOD DefineFiles( cPath )
    END DATABASE ::oDbfCaj
 
    /*
-   Chequa la concordancia entre estructuras
+   Chequa la concordancia entre estructuras------------------------------------
    */
 
    DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Lineas de contadores en turnos de venta"
@@ -2201,17 +2210,10 @@ Method lAllCloseTurno()
    if ::oDbf:Seek( ::cCurTurno )
 
       ::oDbf:Load()
-
-      ::oDbf:cCajTur       := ::cCajTur
-
-      ::oDbf:lSndTur       := .t.
-
-      ::oDbf:nStaTur       := cajCerrrada
-
-      if !::oDbf:lBefClo
-         ::oDbf:lBefClo    := .t.
-      end if
-
+         ::oDbf:cCajTur    := ::cCajTur
+         ::oDbf:lSndTur    := .t.
+         ::oDbf:nStaTur    := cajCerrrada
+         ::oDbf:lBefClo    := !::oDbf:lBefClo
       ::oDbf:Save()
 
       /*
@@ -2241,13 +2243,11 @@ Method lAllCloseTurno()
       end if
 
       ::oMeter:Set( 0 )
-
       */
 
       /*
       Turnos cerrados----------------------------------------------------------
       */
-
 
       if !Empty( ::oTxt )
          ::oTxt:SetText( "Cerrando la sesión" )
@@ -2496,6 +2496,7 @@ Method CreateTurno( oDlg )
       ::oDbf:Append()
       ::oDbf:cNumTur    := ::cValidTurno()
       ::oDbf:cSufTur    := RetSufEmp()
+      ::oDbf:cCajCaj    := oUser():cCaja()
       ::oDbf:dOpnTur    := ::dOpenTurno
       ::oDbf:cHorOpn    := ::cHoraTurno
       ::oDbf:cCajTur    := ::cCajeroTurno
@@ -2548,17 +2549,23 @@ METHOD cNombreUser()
 
 RETURN ( cRet )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+/*
+Tomamos el turno de los contadores---------------------------------------------
+*/
 
 METHOD cValidTurno()
 
-   /*
-   Tomamos el turno de los contadores------------------------------------------
-   */
+   local nCurTur  
 
-   local nCurTur  := nNewDoc( nil, ::oDbf:nArea, "nSesion", 6, ::oDbfCnt:nArea ) 
+   if uFieldEmpresa( "lDesCaja" )
+      nCurTur     := cNumeroSesionCaja( oUser():cCaja(), ::oCaja:nArea, ::oDbf:nArea )
+   else 
+      nCurTur     := nNewDoc( nil, ::oDbf:nArea, "nSesion", 6, ::oDbfCnt:nArea ) 
+      nCurTur     := Str( nCurTur, 6 ) 
+   end if 
 
-RETURN ( Str( nCurTur, 6 ) )
+RETURN ( nCurTur )
 
 //--------------------------------------------------------------------------//
 
@@ -2659,7 +2666,7 @@ METHOD MarkTurno( lMark )
       end do
 
    end if
-
+   
    CursorWe()
 
 return ( Self )
@@ -3174,8 +3181,6 @@ RETURN ( nEfectivo )
 
 METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
-   local oDlg
-   local oFld
    local oFnt
    local oCol
    local oError
@@ -3324,14 +3329,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       oFntSay           := TFont():New( "Segoe UI", 0, 30, .f., .t. )
       oFntBrw           := TFont():New( "Segoe UI", 0, 17, .f., .f. )
 
-      DEFINE DIALOG oDlg ;
+      DEFINE DIALOG ::oDlgTurno ;
          RESOURCE       "ARQUEO_TCT";
          TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
-         REDEFINE PAGES oFld ;
+         REDEFINE PAGES ::oFldTurno ;
             ID          200 ;
             FONT        oFnt ;
-            OF          oDlg ;
+            OF          ::oDlgTurno ;
             DIALOGS     "ARQUEO_1_TCT",;
                         "ARQUEO_2_TCT",;
                         "ARQUEO_3_TCT",;
@@ -3339,13 +3344,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    else
 
-      DEFINE DIALOG oDlg ;
+      DEFINE DIALOG ::oDlgTurno ;
          RESOURCE       "ARQUEO";
          TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
-      REDEFINE PAGES    oFld ;
+      REDEFINE PAGES    ::oFldTurno ;
          ID             200 ;
-         OF             oDlg ;
+         OF             ::oDlgTurno ;
          DIALOGS        "ARQUEO_1",;
                         "ARQUEO_2",;
                         "ARQUEO_3",;
@@ -3359,23 +3364,23 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       80 ;
          WHEN     .f. ;
          UPDATE ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       REDEFINE GET ::oDbf:cHorOpn ;
          ID       90 ;
          WHEN     .f. ;
          UPDATE ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       REDEFINE GET ::oDbf:dCloTur ;
          ID       100 ;
          WHEN     .f. ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       REDEFINE GET ::oDbf:cHorClo ;
          ID       110 ;
          WHEN     .f. ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       if !::lArqueoTactil() .and. ::lArqueoParcial
 
@@ -3383,7 +3388,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       990 ;
          RESOURCE "clock_refresh_48_alpha" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       end if
   
@@ -3395,7 +3400,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          VALID    ( !Empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwUser( oCajTur, nil, oNomCaj ) ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       else
 
@@ -3403,7 +3408,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       500 ;
          RESOURCE if ( lParcial, "clock_refresh_48_alpha", "clock_stop_48_alpha" ) ;
          TRANSPARENT ;
-         OF       oDlg
+         OF       ::oDlgTurno
 
       REDEFINE GET oCajTur VAR ::cCajTur;
          ID       120 ;
@@ -3411,7 +3416,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          VALID    ( !Empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
          BITMAP   "LUPA_24" ;
          ON HELP  ( BrwUserTactil( oCajTur, nil, oNomCaj ) ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       oCajTur:nMargin   := 25
 
@@ -3420,29 +3425,29 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET oNomCaj VAR cNomCaj ;
          ID       130 ;
          WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
+         OF       ::oFldTurno:aDialogs[1]
 
       REDEFINE BUTTON ;
          ID       501;
-         OF       oFld:aDialogs[1] ;
+         OF       ::oFldTurno:aDialogs[1] ;
          WHEN     ( oUser():lAdministrador() );
          ACTION   ( ::SelCajas( .t., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ;
          ID       502;
-         OF       oFld:aDialogs[1] ;
+         OF       ::oFldTurno:aDialogs[1] ;
          WHEN     ( oUser():lAdministrador() );
          ACTION   ( ::SelCajas( .f., oBrwCaj, .t. ) )
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON ::oBtnSelectAllCajas ;
          ID       503;
-         OF       oFld:aDialogs[1] ;
+         OF       ::oFldTurno:aDialogs[1] ;
          WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .t., oBrwCaj ) )
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON ::oBtnUnSelectAllCajas ;
          ID       504;
-         OF       oFld:aDialogs[1] ;
+         OF       ::oFldTurno:aDialogs[1] ;
          WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .f., oBrwCaj ) )
 
@@ -3450,13 +3455,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BUTTON ;
          ID       505;
-         OF       oFld:aDialogs[ 1 ] ;
+         OF       ::oFldTurno:aDialogs[ 1 ] ;
          WHEN     ( oUser():lMaster() );
          ACTION   ( oBrwCaj:GoUp() )
 
       REDEFINE BUTTON ;
          ID       506;
-         OF       oFld:aDialogs[ 1 ] ;
+         OF       ::oFldTurno:aDialogs[ 1 ] ;
          WHEN     ( oUser():lAdministrador() );
          ACTION   ( oBrwCaj:GoDown() )
 
@@ -3464,7 +3469,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Cajas--------------------------------------------------------------------
 
-      oBrwCaj                 := IXBrowse():New( oFld:aDialogs[1] )
+      oBrwCaj                 := IXBrowse():New( ::oFldTurno:aDialogs[1] )
 
       oBrwCaj:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwCaj:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -3542,13 +3547,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BUTTON oBtnMod ;
          ID       501;
-         OF       oFld:aDialogs[2] ;
+         OF       ::oFldTurno:aDialogs[2] ;
          WHEN     !::lArqueoParcial ;
          ACTION   ( oCol:Edit() )
 
       ::oDbfDet:lCount        := .t.
 
-      oBrwCnt                 := IXBrowse():New( oFld:aDialogs[2] )
+      oBrwCnt                 := IXBrowse():New( ::oFldTurno:aDialogs[2] )
 
       oBrwCnt:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwCnt:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -3637,7 +3642,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          HEADERS  "",;
                   "Importes";
          ID       800 ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
          ::oBrwTotales:oFont        := oFntBrw
          ::oBrwTotales:bKeyChar     := { | nKey, nFlags | if( nKey == 13, ( ::oBrwTotales:Cargo:Toggle(), ::oBrwTotales:Refresh() ), ) }
@@ -3649,7 +3654,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET ::oCodCaj ;
          VAR      ::cCodCaj ;
          ID       140 ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
          ::oCodCaj:bHelp   := {|| BrwCajaTactil( ::oCodCaj, oCajNbr ) }
          ::oCodCaj:bValid  := {|| ::lChangeCajas( oCajNbr ) }
@@ -3657,7 +3662,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET oCajNbr VAR cCajNbr ;
          ID       141 ;
          WHEN     .f. ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
       else
 
@@ -3665,7 +3670,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          VAR      ::cCodCaj ;
          ID       140 ;
          BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
          ::oCodCaj:bHelp   := {|| BrwCajas( ::oCodCaj, oCajNbr ) }
          ::oCodCaj:bValid  := {|| ::lChangeCajas( oCajNbr ) }
@@ -3673,7 +3678,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET oCajNbr VAR cCajNbr ;
          ID       141 ;
          WHEN     .f. ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
       end if
 
@@ -3687,23 +3692,23 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE SAY ::oSayTotalEfectivo ;
          ID       401 ;
-         OF       oFld:aDialogs[3]
+         OF       ::oFldTurno:aDialogs[3]
 
       REDEFINE SAY ::oSayTotalTarjeta ;
          ID       402 ;
-         OF       oFld:aDialogs[3]  
+         OF       ::oFldTurno:aDialogs[3]  
             
       REDEFINE SAY ::oSayTotalNoEfectivo ;
          ID       403 ;
-         OF       oFld:aDialogs[3]     
+         OF       ::oFldTurno:aDialogs[3]     
 
       REDEFINE SAY ::oSayTotalCobros ;
          ID      404 ;
-         OF      oFld:aDialogs[3] 
+         OF      ::oFldTurno:aDialogs[3] 
             
       REDEFINE GROUP ::oGrpCobros ;
          ID      500;
-         OF      oFld:aDialogs[3]    
+         OF      ::oFldTurno:aDialogs[3]    
 
       if ::lArqueoTactil()
 
@@ -3712,28 +3717,28 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
             ID       400 ;
             FONT     oFntSay ;
             PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+            OF       ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY ::oTotalTarjeta ;
             VAR      ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ;
             ID       410 ;
             FONT     oFntSay ;
             PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+            OF       ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY ::oTotalNoEfectivo ;
             VAR      ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
             ID       411 ;
             FONT     oFntSay ;
             PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+            OF       ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY ::oTotalCobros ;
             VAR      ( ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) + ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ) ;
             ID       415 ;
             FONT     oFntSay ;
             PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+            OF       ::oFldTurno:aDialogs[3]
 
       else
 
@@ -3741,25 +3746,25 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
             VAR         ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
             ID          400 ;
             PICTURE     ::cPorDiv ;
-            OF          oFld:aDialogs[3]
+            OF          ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY   ::oTotalTarjeta ;
             VAR         ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ;
             ID          410 ;
             PICTURE     ::cPorDiv ;
-            OF          oFld:aDialogs[3]
+            OF          ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY   ::oTotalNoEfectivo ;
             VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
             ID          411 ;
             PICTURE     ::cPorDiv ;
-            OF          oFld:aDialogs[3]
+            OF          ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY   ::oTotalCobros ;
             VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) + ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ) ;
             ID          415 ;
             PICTURE     ::cPorDiv ;
-            OF          oFld:aDialogs[3]
+            OF          ::oFldTurno:aDialogs[3]
 
       end if
 
@@ -3767,14 +3772,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BUTTONBMP ;
          ID       220 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
          BITMAP   "Money2_32" ;
          ACTION   ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
 
       else
 
-         TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
+         TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
 
       end if
 
@@ -3784,7 +3789,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          FONT     oFntSay ;
          WHEN     !::lCerrado ;
          PICTURE  ::cPorDiv ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
       ::oImporteEfectivo:bChange    := {|| ::RefreshTurno() }
 
@@ -3792,14 +3797,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BUTTONBMP ;
          ID       230 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
          BITMAP   "Calculator_32" ;
          ACTION   ( Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() )
 
       else
 
-         TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
+         TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
 
       end if
 
@@ -3809,14 +3814,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE BUTTONBMP ;
          ID       235 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
          BITMAP   "Money2_32" ;
          ACTION   ( ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() )
 
       else
 
-         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
+         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
 
       end if
 
@@ -3826,7 +3831,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          FONT     oFntSay ;
          WHEN     !::lCerrado ;
          PICTURE  ::cPorDiv ;
-         OF       oFld:aDialogs[3]
+         OF       ::oFldTurno:aDialogs[3]
 
       ::oImporteRetirado:bChange    := {|| ::RefreshTurno() }
 
@@ -3835,7 +3840,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       465 ;
          FONT     oFntSay ;
          PICTURE  ::cPorDiv ;
-         OF       oFld:aDialogs[3]
+         OF       ::oFldTurno:aDialogs[3]
 
       // Diferencias------------------------------------------------------------
 
@@ -3845,46 +3850,46 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          FONT     oFntSay ;
          WHEN     !::lCerrado ;
          PICTURE  ::cPorDiv ;
-         OF       oFld:aDialogs[ 3 ]
+         OF       ::oFldTurno:aDialogs[ 3 ]
 
       ::oImporteTarjeta:bChange     := {|| ::oDiferenciaTarjeta:Refresh(), ::RefreshTurno() }
 
       REDEFINE GROUP ::oGrpDiferencias ;
          ID          480;
-         OF          oFld:aDialogs[ 3 ]
+         OF          ::oFldTurno:aDialogs[ 3 ]
 
       REDEFINE SAY   ::oSayDiferenciaEfectivo ;
          ID          441 ;
-         OF          oFld:aDialogs[ 3 ]
+         OF          ::oFldTurno:aDialogs[ 3 ]
 
       REDEFINE SAY   ::oDiferenciaEfectivo VAR ( ::nImporteEfectivo - ::oTotales:nTotSaldoEfectivo( ::cCodCaj )  ) ;
          ID          440 ;
          PICTURE     ::cPorDiv ;
          FONT        oFntSay ;
          COLOR       CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
-         OF          oFld:aDialogs[ 3 ]
+         OF          ::oFldTurno:aDialogs[ 3 ]
 
       REDEFINE SAY   ::oSayDiferenciaTarjeta ;
          ID          451 ;
-         OF          oFld:aDialogs[ 3 ]      
+         OF          ::oFldTurno:aDialogs[ 3 ]      
 
       REDEFINE SAY   ::oDiferenciaTarjeta VAR ( ::nImporteTarjeta - ::oTotales:nTotCobroTarjeta( ::cCodCaj ) );
          ID          450 ;
          PICTURE     ::cPorDiv ;
          FONT        oFntSay ;
          COLOR       CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
-         OF          oFld:aDialogs[ 3 ]
+         OF          ::oFldTurno:aDialogs[ 3 ]
 
       REDEFINE SAY   ::oSayDiferenciaTotal ;
          ID          471 ;
-         OF          oFld:aDialogs[ 3 ]
+         OF          ::oFldTurno:aDialogs[ 3 ]
 
       REDEFINE SAY   ::oDiferenciaTotal VAR ( ::oDiferenciaEfectivo:VarGet() + ::oDiferenciaTarjeta:VarGet() ) ;
          ID          470 ;
          PICTURE     ::cPorDiv ;
          FONT        oFntSay ;
          COLOR       CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
-         OF          oFld:aDialogs[3]
+         OF          ::oFldTurno:aDialogs[3]
 
       // Comentarios--------------------------------------------------------------
 
@@ -3893,14 +3898,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          WHEN     !::lArqueoParcial ;
          MEMO ;
          ID       200 ;
-         OF       oFld:aDialogs[4]
+         OF       ::oFldTurno:aDialogs[4]
 
       // Impresión----------------------------------------------------------------
 
       REDEFINE CHECKBOX ::oNoImprimirArqueo ;
          VAR      ::lNoImprimirArqueo ;
          ID       600 ;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       if ::lArqueoTactil()
 
@@ -3908,7 +3913,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          VAR      ::cCmbReport ;
          ID       620 ;
          WHEN     ( !::lNoImprimirArqueo ) ;
-         OF       oFld:aDialogs[ 4 ] ;
+         OF       ::oFldTurno:aDialogs[ 4 ] ;
          ITEMS    ::aCmbReport ;
          BITMAPS  ::aBmpReportTactil
 
@@ -3918,90 +3923,90 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          VAR      ::cCmbReport ;
          ID       620 ;
          WHEN     ( !::lNoImprimirArqueo ) ;
-         OF       oFld:aDialogs[ 4 ] ;
+         OF       ::oFldTurno:aDialogs[ 4 ] ;
          ITEMS    ::aCmbReport ;
          BITMAPS  ::aBmpReport
 
       REDEFINE SAY  ::oSaySalidaImpresion ;
          ID        621 ;
-         OF        oFld:aDialogs[4]
+         OF        ::oFldTurno:aDialogs[4]
 
       end if
 
       REDEFINE SAY  ::oGrpOpcionesImpresion ;
          ID        601 ;
-         OF        oFld:aDialogs[4]
+         OF        ::oFldTurno:aDialogs[4]
 
       REDEFINE BUTTON ::oBtnOpcionesImpresion;
          ID       610 ;
-         OF       oFld:aDialogs[ 4 ] ;
+         OF       ::oFldTurno:aDialogs[ 4 ] ;
          WHEN     ( !::lNoImprimirArqueo ) ;
          ACTION   ( ::DlgImprimir( , ::lArqueoTactil() ) )
 
       REDEFINE GROUP ::oGrpOpcionesEnvioInformacion ;
          ID       701;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       REDEFINE CHECKBOX ::oEnvioInformacion VAR ::lEnvioInformacion ;
          ID       700 ;
          WHEN     !::lArqueoParcial ;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       REDEFINE CHECKBOX ::oImprimirEnvio VAR ::lImprimirEnvio ;
          ID       710 ;
          WHEN     ::lEnvioInformacion ;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       REDEFINE GROUP ::oGrpNotificacion ;
          ID       721;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       REDEFINE CHECKBOX ::oChkEnviarMail VAR ::lEnviarMail ;
          WHEN     lUsrMaster() .and. !::lArqueoParcial ;
          ID       720 ;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       REDEFINE GET ::oGetEnviarMail ;
          VAR      ::cEnviarMail ;
          WHEN     ( ::lEnviarMail .and. lUsrMaster() ) ;
          ID       730 ;
-         OF       oFld:aDialogs[ 4 ]
+         OF       ::oFldTurno:aDialogs[ 4 ]
 
       // Botones generales--------------------------------------------------------
 
-      ::oMeter    := TMeter():ReDefine( 130, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+      ::oMeter    := TMeter():ReDefine( 130, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, ::oDlgTurno, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
 
       REDEFINE SAY ::oTxt ;
          PROMPT   "" ;
          ID       140 ;
-         OF       oDlg
+         OF       ::oDlgTurno
 
       REDEFINE BUTTON ::oBtnRecalcular ;
          ID       300 ;
-         OF       oDlg ;
-         ACTION   ( ::lCalTurno( nil, ::cCodCaj, oDlg ) )
+         OF       ::oDlgTurno ;
+         ACTION   ( ::lCalTurno( nil, ::cCodCaj ) )
 
       REDEFINE BUTTON ::oBtnPrv ;
          ID       100 ;
-         OF       oDlg ;
-         ACTION   ::GoPrev( oFld, oDlg, oBrwCnt, oBrwCaj )
+         OF       ::oDlgTurno ;
+         ACTION   ::GoPrev( oBrwCnt, oBrwCaj )
 
       REDEFINE BUTTON ::oBtnNxt ;
          ID       110 ;
-         OF       oDlg ;
-         ACTION   ::GoNext( oFld, oDlg, oCajTur, oBrwCnt )
+         OF       ::oDlgTurno ;
+         ACTION   ::GoNext( oCajTur, oBrwCnt )
 
       REDEFINE BUTTON ;
          ID       120 ;
-         OF       oDlg ;
-         ACTION   oDlg:End()
+         OF       ::oDlgTurno ;
+         ACTION   ::oDlgTurno:End()
 
-      oDlg:bStart := {|| ::StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario ) }
+      ::oDlgTurno:bStart := {|| ::StartArqueoTurno( oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario ) }
 
-      oFld:aDialogs[ 2 ]:AddFastKey( VK_F2, {|| ::EdtAnt( oBrwCnt ) } )
-      oFld:aDialogs[ 2 ]:AddFastKey( VK_F3, {|| ::EdtCol( oBrwCnt ) } )
+      ::oFldTurno:aDialogs[ 2 ]:AddFastKey( VK_F2, {|| ::EdtAnt( oBrwCnt ) } )
+      ::oFldTurno:aDialogs[ 2 ]:AddFastKey( VK_F3, {|| ::EdtCol( oBrwCnt ) } )
 
-   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitArqueoTurno() } )
+   ::oDlgTurno:Activate( , , , .t., {|| .t. }, , {|| ::InitArqueoTurno() } )
 
    /*
    Repos de las bases de datos-------------------------------------------------
@@ -4023,7 +4028,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    Comprobamos si hay nuevos turnos abiertos-----------------------------------
    */
 
-   if oDlg:nResult == IDOK
+   if ::oDlgTurno:nResult == IDOK
 
       /*
       Guardamos las opciones---------------------------------------------------
@@ -4044,8 +4049,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    RECOVER USING oError
 
-      if !Empty( oDlg )
-         oDlg:End()
+      if !Empty( ::oDlgTurno )
+         ::oDlgTurno:End()
       end if
 
       msgStop( "Error al iniciar el proceso de cierre." + CRLF + ErrorMessage( oError ) )
@@ -4096,11 +4101,16 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oWndBrw:Refresh()
    end if
 
-Return ( oDlg:nResult == IDOK )
+Return ( ::oDlgTurno:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
 Method InitArqueoTurno()
+
+   if uFieldEmpresa( "lDesCajas") 
+      ::oBtnSelectAllCajas:Hide()
+      ::oBtnUnSelectAllCajas:Hide()
+   end if
 
    if ::lArqueoCiego    
 
@@ -4155,16 +4165,6 @@ Method InitArqueoTurno()
       end if
 
       ::oGrpDiferencias:Hide()
-
-      /*if !Empty( ::oNoImprimirArqueo )
-         ::oNoImprimirArqueo:Hide()
-      end if*/
-
-      //::oCmbReport:Hide()
-
-      /*if !Empty( ::oSaySalidaImpresion )
-         ::oSaySalidaImpresion:Hide()
-      end if*/
 
       ::oBtnOpcionesImpresion:Hide()
 
@@ -4268,7 +4268,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
+Method StartArqueoTurno( oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
 
    ::oBtnPrv:Hide()
 
@@ -4281,7 +4281,7 @@ Method StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
    oCajTur:lValid()
 
    if ::lZoom
-      oFld:SetOption( 1 )
+      ::oFldTurno:SetOption( 1 )
       oBtnMod:Hide()
    end if
 
@@ -4306,7 +4306,7 @@ Return ( Self )
 METHOD GoPrev( oFld, oDlg, oBrw, oBrwCaj )
 
    do case
-      case oFld:nOption == 2
+      case ::oFldTurno:nOption == 2
 
          ::oBtnPrv:Hide()
 
@@ -4314,16 +4314,16 @@ METHOD GoPrev( oFld, oDlg, oBrw, oBrwCaj )
 
          oBrwCaj:Refresh()
 
-      case oFld:nOption == 3
+      case ::oFldTurno:nOption == 3
 
          if !::lIsContadores()
-            oFld:GoPrev()
+            ::oFldTurno:GoPrev()
             ::oBtnPrv:Hide()
          end if
 
          ::oBtnRecalcular:Hide()
 
-      case oFld:nOption == 4
+      case ::oFldTurno:nOption == 4
 
          SetWindowText( ::oBtnNxt:hWnd, "S&iguiente >" )
 
@@ -4331,20 +4331,20 @@ METHOD GoPrev( oFld, oDlg, oBrw, oBrwCaj )
 
    end case
 
-   oFld:GoPrev()
+   ::oFldTurno:GoPrev()
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
+METHOD GoNext( oCajTur, oBrwCnt )
 
    local oItem
    local nCodCaj  := 0
    local cCodCaj  := ""
 
    do case
-      case oFld:nOption == 1
+      case ::oFldTurno:nOption == 1
 
          ::oBtnPrv:Show()
 
@@ -4370,7 +4370,7 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
 
          if ::lIsContadores()
 
-            oFld:GoNext()
+            ::oFldTurno:GoNext()
 
             ::LoadContadores()
 
@@ -4379,7 +4379,7 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
 
          else
 
-            ::lCalTurno( nil, nil, oDlg )
+            ::lCalTurno()
 
             ::LoadImporte( ::cCodCaj )
 
@@ -4388,7 +4388,7 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
             if ::lTikAbiertos .and. !::lArqueoParcial
                MsgStop( "Existen tickets abiertos: " + CRLF + ::cTikAbiertos )
             else
-               oFld:GoNext(); oFld:GoNext()
+               ::oFldTurno:GoNext(); ::oFldTurno:GoNext()
             end if
 
          end if
@@ -4427,44 +4427,44 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
 
          ::RefreshTurno()
 
-      case oFld:nOption == 2
+      case ::oFldTurno:nOption == 2
 
-         ::lCalTurno( nil, ::cCodCaj, oDlg )
+         ::lCalTurno( nil, ::cCodCaj )
 
          ::oBtnRecalcular:Show()
 
          if ::lTikAbiertos .and. !::lArqueoParcial
             MsgStop( "Existen tickets abiertos: " + CRLF + ::cTikAbiertos )
          else
-            oFld:GoNext()
+            ::oFldTurno:GoNext()
          end if
 
          ::RefreshTurno()
 
-      case oFld:nOption == 3
+      case ::oFldTurno:nOption == 3
 
          ::oBtnRecalcular:Hide()
 
          ::SaveImporte( ::cCodCaj )
 
-         oFld:GoNext()
+         ::oFldTurno:GoNext()
 
          SetWindowText( ::oBtnNxt:hWnd, "&Terminar" )
 
          ::oBrwTotales:SetFocus()
          ::oBrwTotales:Refresh()
 
-      case oFld:nOption == 4
+      case ::oFldTurno:nOption == 4
 
          if !::lZoom
 
-            if ::lCloseCajasEleccionada( oDlg )
-               oDlg:end( IDOK )
+            if ::lCloseCajasEleccionada( ::oDlgTurno )
+               ::oDlgTurno:end( IDOK )
             end if
 
          else
 
-            oDlg:end()
+            ::oDlgTurno:end()
 
          end if
 
@@ -4827,7 +4827,7 @@ Return ( .t. )
 Calcula el turno
 */
 
-METHOD lCalTurno( cTurno, cCaja, oDlg )
+METHOD lCalTurno( cTurno, cCaja )
 
    local oError
    local oBlock
@@ -4841,8 +4841,8 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
    oBlock                        := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if !Empty( oDlg )
-         oDlg:Disable()
+      if !Empty( ::oDlgTurno )
+         ::oDlgTurno:Disable()
       end if
 
       if !Empty( ::oMeter )
@@ -5126,8 +5126,8 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
    Habilitamos el dialogo------------------------------------------------------
    */
 
-   if !Empty( oDlg )
-      oDlg:Enable()
+   if !Empty( ::oDlgTurno )
+      ::oDlgTurno:Enable()
    end if
 
 RETURN ( .t. )
@@ -6224,10 +6224,10 @@ METHOD DlgImprimir( nDevice, lTactil )
       do case
 
          case ::nScreenVertRes == 560
-              DEFINE DIALOG oDlg RESOURCE "ARQUEOIMP_1024x576" TITLE "Sesión : " + ::oDbf:cNumTur
+            DEFINE DIALOG oDlg RESOURCE "ARQUEOIMP_1024x576" TITLE "Sesión : " + ::oDbf:cNumTur
 
          case ::nScreenVertRes != 560
-              DEFINE DIALOG oDlg RESOURCE "ARQUEOIMPBIG" TITLE "Sesión : " + ::oDbf:cNumTur
+            DEFINE DIALOG oDlg RESOURCE "ARQUEOIMPBIG" TITLE "Sesión : " + ::oDbf:cNumTur
 
       end case
 
@@ -6409,7 +6409,7 @@ Method PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCop
 
    if lVisualDocumento( cDocumento, ::oDbfDoc:cAlias )
 
-      ::lCalTurno( cTurno, cCaja, .f., .t. )
+      ::lCalTurno( cTurno, cCaja )
 
       ::FillTemporal( cCaja )
 
@@ -6422,136 +6422,6 @@ Method PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCop
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-FUNCTION Turnos( oMenuItem, oWnd )
-
-   local oTurno
-
-   DEFAULT  oMenuItem   := "01002"
-   DEFAULT  oWnd        := oWnd()
-
-   /*
-   Cerramos todas las ventanas
-   */
-
-   if !Empty( oWnd )
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
-      oWnd:Disable()
-   end if
-
-   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
-   if !Empty( oTurno ) .and. oTurno:lAccess
-      if oTurno:OpenFiles()
-         oTurno:Activate()
-      else
-         oTurno:CloseFiles()
-      end if
-   end if
-
-   if !Empty( oWnd )
-      oWnd:Enable()
-   end if
-
-   if oTurno != nil
-      oTurno:SetFocus()
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-//
-// Cierra el turno en curso
-//
-
-FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
-
-   local oTurno
-
-   DEFAULT  oMenuItem   := "01001"
-   DEFAULT  oWnd        := oWnd()
-   DEFAULT  lParcial    := .f.
-
-   /*
-   Cerramos todas las ventanas-------------------------------------------------
-   */
-
-   if !lTactilMode() .and. !lTpvMode() .and. !Empty( oWnd )
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
-   end if
-
-   DisableMainWnd( oWnd )
-
-   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
-
-   if !Empty( oTurno ) .and. oTurno:lCreated
-
-      if oTurno:OpenFiles()
-
-         if !lTactilMode() .and. !lTpvMode()
-            oTurno:Activate()
-         end if
-
-         oTurno:lArqueoTurno( .f., lParcial )
-
-      else
-
-         oTurno:CloseFiles()
-
-      end if
-
-   end if
-
-   EnableMainWnd( oWnd )
-
-   if !Empty( oTurno ) .and. oTurno:lCreated
-      oTurno:SetFocus()
-   end if
-
-RETURN ( .t. )
-
-//--------------------------------------------------------------------------//
-
-FUNCTION Arqueos( oMenuItem, oWnd )
-
-   local oTurno
-
-   DEFAULT  oMenuItem   := "01040"
-   DEFAULT  oWnd        := oWnd()
-
-   /*
-   Cerramos todas las ventanas
-   */
-
-   if !Empty( oWnd )
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
-      oWnd:Disable()
-   end if
-
-   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
-
-   if !Empty( oTurno ) .and. oTurno:lCreated
-      if oTurno:OpenFiles()
-         oTurno:lArqueoTurno( .f. )
-      end if
-      oTurno:End()
-   end if
-
-   oWnd:Enable()
-
-   if !Empty( oTurno ) .and. oTurno:lCreated
-      oTurno:SetFocus()
-   end if
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
 
 METHOD Reindexa( oMeter )
 
@@ -7629,21 +7499,14 @@ METHOD RellenaIva()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+//
+// Comprueba si hay trunos abiertos
+//
 
 METHOD lNowOpen( oWnd )
 
-   /*
-   Si hay turnos abiertos y no hay cajas cerradas------------------------------
-   */
-
-   if !::lOpenCaja() 
-
-      if !::lCreateTurno()
-
-         MsgStop( "Es necesario iniciar una sesión para trabajar." ) 
-
-      end if
-
+   if !::lOpenCaja() .and. !::lCreateTurno()
+      MsgStop( "Es necesario iniciar una sesión para trabajar." ) 
    end if
 
    ::GetCurrentTurno()
@@ -8053,137 +7916,6 @@ Method nGetNumberToSend()
 Return ( ::nNumberSend )
 
 //----------------------------------------------------------------------------//
-
-Function lCajaOpen( cCodCaj )
-
-   local oTurno         := TTurno():New( cPatEmp() )
-   local lCajaOpen      := .t.
-
-   if !Empty( oTurno )
-
-      if oTurno:OpenService()
-
-         if oTurno:oDbfCaj:SeekInOrd( oTurno:GetCurrentTurno() + cCodCaj, "cNumTur" )
-            lCajaOpen   := !oTurno:oDbfCaj:lCajClo
-         end if
-
-         oTurno:CloseService()
-
-      end if
-
-      oTurno:End()
-
-   end if
-
-Return ( lCajaOpen )
-
-//-------------------------------------------------------------------------//
-//
-// Chequea q haya turnos abiertos
-//
-
-Function ChkTurno( oMenuItem, oWnd )
-
-   local oTurno
-
-   oTurno         := TTurno():New( cPatEmp(), oWnd, oMenuItem )   
-
-   if !Empty( oTurno )
-
-      if oTurno:OpenFiles()
-
-         oTurno:lNowOpen( oWnd )
-
-         oTurno:CloseFiles()
-
-      else
-
-         msgStop( "No se han abierto las tablas de turnos.")
-
-      end if
-
-      oTurno:End()
-
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-//
-// Hay turnos abiertos
-//
-
-Function lCurSesion( cDbfCaj )
-
-   local lCurSesion  := .f.
-   local lOpen       := .f.
-
-   if Empty( cDbfCaj )
-
-      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @cDbfCaj ) )
-      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
-      lOpen          := .t.
-
-   end if
-
-   lCurSesion        := !Empty( TTurno():cCurTurno ) .or. RetFld( oUser():cCaja(), cDbfCaj, "lNoArq" )
-
-   if lOpen
-
-      if !Empty( cDbfCaj )
-         ( cDbfCaj )->( dbCloseArea() )
-      end if
-
-      cDbfCaj        := nil
-
-   end if
-
-Return ( lCurSesion )
-
-//---------------------------------------------------------------------------//
-//
-// No hay turnos activos
-//
-
-Function CloSesion()
-
-   TTurno():cCurTurno   := nil
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-function AddImpTactil( nImpVta, cCodArt, uArt )
-
-   local aArtStatus
-
-   do case
-      case ValType( uArt ) == "C"
-
-         aArtStatus  := aGetStatus( uArt, .t. )
-
-         if ( uArt )->( dbSeek( cCodArt ) ) .and. ( uArt )->( dbRLock() )
-            ( uArt )->nPosTcl  += nImpVta
-            ( uArt )->( dbRUnlock() )
-         end if
-
-         SetStatus( uArt, aArtStatus )
-
-      case ValType( uArt ) == "O"
-
-         uArt:GetStatus()
-
-         if uArt:Seek( cCodArt )
-            uArt:FieldPutByName( "nPosTcl", uArt:nPosTcl + nImpVta )
-         end if
-
-         uArt:SetStatus()
-
-   end case
-
-return ( nil )
-
-//---------------------------------------------------------------------------//
 
 METHOD CheckFiles( cFileAppendFrom )
 
@@ -11264,13 +10996,13 @@ METHOD ContabilizaSesiones()
 
    REDEFINE GET ::oFechaInicio ;
       VAR      ::dFechaInicio ;
-		SPINNER ;
+      SPINNER ;
       ID       120 ;
       OF       ::oDlgSelect
 
    REDEFINE GET ::oFechaFin ;
       VAR      ::dFechaFin ;
-		SPINNER ;
+      SPINNER ;
       ID       130 ;
       OF       ::oDlgSelect
 
@@ -11663,6 +11395,268 @@ METHOD MailArqueo( cCurrentTruno )
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION Turnos( oMenuItem, oWnd )
+
+   local oTurno
+
+   DEFAULT  oMenuItem   := "01002"
+   DEFAULT  oWnd        := oWnd()
+
+   /*
+   Cerramos todas las ventanas
+   */
+
+   if !Empty( oWnd )
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      oWnd:Disable()
+   end if
+
+   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+   if !Empty( oTurno ) .and. oTurno:lAccess
+      if oTurno:OpenFiles()
+         oTurno:Activate()
+      else
+         oTurno:CloseFiles()
+      end if
+   end if
+
+   if !Empty( oWnd )
+      oWnd:Enable()
+   end if
+
+   if oTurno != nil
+      oTurno:SetFocus()
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+//
+// Cierra el turno en curso
+//
+
+FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
+
+   local oTurno
+
+   DEFAULT  oMenuItem   := "01001"
+   DEFAULT  oWnd        := oWnd()
+   DEFAULT  lParcial    := .f.
+
+   /*
+   Cerramos todas las ventanas-------------------------------------------------
+   */
+
+   if !lTactilMode() .and. !lTpvMode() .and. !Empty( oWnd )
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end if
+
+   DisableMainWnd( oWnd )
+
+   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+
+   if !Empty( oTurno ) .and. oTurno:lCreated
+
+      if oTurno:OpenFiles()
+
+         if !lTactilMode() .and. !lTpvMode()
+            oTurno:Activate()
+         end if
+
+         oTurno:lArqueoTurno( .f., lParcial )
+
+      else
+
+         oTurno:CloseFiles()
+
+      end if
+
+   end if
+
+   EnableMainWnd( oWnd )
+
+   if !Empty( oTurno ) .and. oTurno:lCreated
+      oTurno:SetFocus()
+   end if
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION Arqueos( oMenuItem, oWnd )
+
+   local oTurno
+
+   DEFAULT  oMenuItem   := "01040"
+   DEFAULT  oWnd        := oWnd()
+
+   /*
+   Cerramos todas las ventanas
+   */
+
+   if !Empty( oWnd )
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      oWnd:Disable()
+   end if
+
+   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+
+   if !Empty( oTurno ) .and. oTurno:lCreated
+      if oTurno:OpenFiles()
+         oTurno:lArqueoTurno( .f. )
+      end if
+      oTurno:End()
+   end if
+
+   oWnd:Enable()
+
+   if !Empty( oTurno ) .and. oTurno:lCreated
+      oTurno:SetFocus()
+   end if
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+Function lCajaOpen( cCodCaj )
+
+   local oTurno         := TTurno():New( cPatEmp() )
+   local lCajaOpen      := .t.
+
+   if !Empty( oTurno )
+
+      if oTurno:OpenService()
+
+         if oTurno:oDbfCaj:SeekInOrd( oTurno:GetCurrentTurno() + cCodCaj, "cNumTur" )
+            lCajaOpen   := !oTurno:oDbfCaj:lCajClo
+         end if
+
+         oTurno:CloseService()
+
+      end if
+
+      oTurno:End()
+
+   end if
+
+Return ( lCajaOpen )
+
+//-------------------------------------------------------------------------//
+//
+// Chequea q haya turnos abiertos
+//
+
+Function ChkTurno( oMenuItem, oWnd )
+
+   local oTurno
+
+   oTurno         := TTurno():New( cPatEmp(), oWnd, oMenuItem )   
+
+   if !Empty( oTurno )
+
+      if oTurno:OpenFiles()
+
+         oTurno:lNowOpen( oWnd )
+
+         oTurno:CloseFiles()
+
+      else
+
+         msgStop( "No se han abierto las tablas de turnos.")
+
+      end if
+
+      oTurno:End()
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+//
+// Hay turnos abiertos
+//
+
+Function lCurSesion( cDbfCaj )
+
+   local lCurSesion  := .f.
+   local lOpen       := .f.
+
+   if Empty( cDbfCaj )
+
+      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @cDbfCaj ) )
+      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
+      lOpen          := .t.
+
+   end if
+
+   lCurSesion        := !Empty( TTurno():cCurTurno ) .or. RetFld( oUser():cCaja(), cDbfCaj, "lNoArq" )
+
+   if lOpen
+
+      if !Empty( cDbfCaj )
+         ( cDbfCaj )->( dbCloseArea() )
+      end if
+
+      cDbfCaj        := nil
+
+   end if
+
+Return ( lCurSesion )
+
+//---------------------------------------------------------------------------//
+//
+// No hay turnos activos
+//
+
+Function CloSesion()
+
+   TTurno():cCurTurno   := nil
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function AddImpTactil( nImpVta, cCodArt, uArt )
+
+   local aArtStatus
+
+   do case
+      case ValType( uArt ) == "C"
+
+         aArtStatus  := aGetStatus( uArt, .t. )
+
+         if ( uArt )->( dbSeek( cCodArt ) ) .and. ( uArt )->( dbRLock() )
+            ( uArt )->nPosTcl  += nImpVta
+            ( uArt )->( dbRUnlock() )
+         end if
+
+         SetStatus( uArt, aArtStatus )
+
+      case ValType( uArt ) == "O"
+
+         uArt:GetStatus()
+
+         if uArt:Seek( cCodArt )
+            uArt:FieldPutByName( "nPosTcl", uArt:nPosTcl + nImpVta )
+         end if
+
+         uArt:SetStatus()
+
+   end case
+
+return ( nil )
+
+//---------------------------------------------------------------------------//
+
 //
 // Turno en curso
 //

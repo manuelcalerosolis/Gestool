@@ -14579,8 +14579,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 119, 37, 30, 11
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 119, 50, 276, 11
   CONTROL "No incluir en sesiones", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 119, 64, 84, 10
-  CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 119, 88, 40, 11
-  CONTROL "", 131, "Edit", ES_AUTOHSCROLL|WS_BORDER, 160, 88, 235, 11
+  CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 119, 90, 52, 11
+  CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 119, 102, 40, 11
+  CONTROL "", 131, "Edit", ES_AUTOHSCROLL|WS_BORDER, 160, 102, 235, 11
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 119, 115, 263, 11
   CONTROL "", 141, "TBtnBmp", 0x00000000, 383, 115, 12, 11
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 119, 128, 263, 11
@@ -14590,19 +14591,19 @@ FONT 8, "MS Sans Serif"
   CONTROL "Nombre", -1, "Static", WS_GROUP, 49, 54, 41, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 40, 41, 8
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 44, 29, 355, 49
-  CONTROL "Captura", -1, "Button", BS_GROUPBOX, 44, 79, 355, 23
-  CONTROL "Código captura", -1, "Static", WS_GROUP, 49, 90, 49, 8
-  CONTROL "Impresoras", -1, "Button", BS_GROUPBOX, 44, 106, 355, 53
-  CONTROL "Impresora", -1, "Static", WS_GROUP, 49, 118, 34, 8
+  CONTROL "Código captura", -1, "Static", WS_GROUP, 49, 105, 49, 8
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 80, 355, 77
+  CONTROL "Impresora general", -1, "Static", WS_GROUP, 49, 118, 66, 8
   CONTROL "Impresora de tickets", -1, "Static", WS_GROUP, 49, 131, 67, 8
-  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 49, 172, 50, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 103, 172, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 172, 50, 14
-  CONTROL "", 160, "TXBrowse", 0x00200000, 49, 188, 346, 118
-  CONTROL "Impresoras de comandas", -1, "Button", BS_GROUPBOX, 44, 161, 355, 151
+  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 49, 170, 50, 14
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 103, 170, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 170, 50, 14
+  CONTROL "", 160, "TXBrowse", 0x00200000, 49, 185, 346, 121
+  CONTROL "Impresoras de comandas", -1, "Button", BS_GROUPBOX, 44, 159, 355, 153
   CONTROL "", 800, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales de la caja ", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 355, 8
   CONTROL "Impresora de notas", -1, "Static", WS_GROUP, 49, 144, 67, 8
+  CONTROL "Proxima sesión", -1, "Static", WS_GROUP, 49, 93, 52, 8
 }
 
 CAJAS_02 DIALOG DISCARDABLE 51, 46, 407, 331
@@ -19101,25 +19102,26 @@ EMPRESA_12 DIALOG DISCARDABLE 31, 12, 439, 313
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Importes exactos en tickets", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 40, 99, 10
-  CONTROL "Recoger ubicaciones en sala", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 52, 105, 10
-  CONTROL "Mostrar la sala antes de iniciar la venta", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 64, 135, 10
-  CONTROL "Ordenar artículos por nombre", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 76, 105, 10
-  CONTROL "Asistente para devoluciones y vales", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 88, 126, 10
-  CONTROL "Habilitar programa de fideliazación", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 100, 121, 10
-  CONTROL "Usar colores en los artículos del táctil", 990, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 112, 131, 10
-  CONTROL "Crear tickets para recoger desde táctil", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 124, 133, 10
-  CONTROL "Crear tickets para llevar desde táctil", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 136, 125, 10
-  CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 148, 132, 10
-  CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 111, 10
-  CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 71, 10
-  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 67, 10
-  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 195, 82, 10
-  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 206, 96, 91
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 195
+  CONTROL "Sesiónes por cajas", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 40, 99, 10
+  CONTROL "Importes exactos en tickets", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 52, 99, 10
+  CONTROL "Recoger ubicaciones en sala", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 64, 105, 10
+  CONTROL "Mostrar la sala antes de iniciar la venta", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 76, 135, 10
+  CONTROL "Ordenar artículos por nombre", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 88, 105, 10
+  CONTROL "Asistente para devoluciones y vales", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 100, 126, 10
+  CONTROL "Habilitar programa de fideliazación", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 112, 121, 10
+  CONTROL "Usar colores en los artículos del táctil", 990, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 124, 131, 10
+  CONTROL "Crear tickets para recoger desde táctil", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 136, 133, 10
+  CONTROL "Crear tickets para llevar desde táctil", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 148, 125, 10
+  CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 132, 10
+  CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 111, 10
+  CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 71, 10
+  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 196, 67, 10
+  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 208, 82, 10
+  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 219, 96, 91
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 207
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones para el terminal punto de venta", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
-  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 209, 86, 8
+  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 222, 86, 8
 }
 
 FASTFILTROS DIALOG DISCARDABLE 9, 8, 490, 294
