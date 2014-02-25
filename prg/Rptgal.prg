@@ -2443,6 +2443,11 @@ Return nil
 Function TFacturarLineasAlbaranes()
 
 Return nil
+
+Function PrintSeries()
+
+Return nil
+
 /*
 //---------------------------------------------------------------------------//
 
@@ -2523,3 +2528,5 @@ HB_FUNC( SETWINDOWRGN )
 }
 
 #pragma ENDDUMP
+
+//------------------------------------------------------------------//

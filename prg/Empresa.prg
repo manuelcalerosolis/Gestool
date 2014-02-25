@@ -1433,6 +1433,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          TRANSPARENT ;
          OF       fldTPV
 
+      REDEFINE CHECKBOX aGet[ _LDESCAJAS ] VAR aTmp[ _LDESCAJAS ] ;
+         ID       185 ;
+         OF       fldTPV
+
       REDEFINE CHECKBOX aGet[ _LIMPEXA ] VAR aTmp[ _LIMPEXA ] ;
          ID       186 ;
          OF       fldTPV
@@ -6508,6 +6512,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "Año fin régimen especial del criterio de caja",         "", "", "aEmp()", } )
    aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botón exportar web",                            "", "", "aEmp()", } )
    aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
+   aAdd( aDbf, {"lDesCajas",  "L",  1, 0, "Cajas desconectadas",                                   "", "", "aEmp()", } )
 
 Return ( aDbf  )
 
