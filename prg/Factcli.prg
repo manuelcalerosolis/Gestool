@@ -439,6 +439,7 @@ static dbfOferta
 static dbfDiv
 static dbfObrasT
 static dbfFamilia
+static dbfProvee
 static dbfKit
 static dbfDoc
 
@@ -1115,6 +1116,10 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
+
+      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+
       oBandera          := TBandera():New()
 
       oStock            := TStock():Create( cPatGrp() )
@@ -1577,6 +1582,10 @@ STATIC FUNCTION CloseFiles()
       ( dbfProMat )->( dbCloseArea() )
    end if
 
+   if dbfProvee != nil
+      ( dbfProvee )->( dbCloseArea() )
+   end if
+
    if !Empty( oStock )
       oStock:end()
    end if
@@ -1694,6 +1703,7 @@ STATIC FUNCTION CloseFiles()
    dbfCliInc   := nil
    dbfPedPrvL  := nil
    dbfProMat   := nil
+   dbfProvee   := nil	
 
    oStock      := nil
    oNewImp     := nil
@@ -3069,27 +3079,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
          :nWidth              := 80
          :lHide               := .t.
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Código proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Nombre proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cNomPrv ) }
-         :nWidth              := 150
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Referencia proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cRefPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -4771,7 +4760,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       if aTmp[ __LALQUILER ]
 
-         REDEFINE FOLDER oFld ;
+        REDEFINE FOLDER oFld ;
             ID       400 ;
             OF       oDlg ;
             PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
@@ -4779,7 +4768,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       else
 
-         REDEFINE FOLDER oFld ;
+        REDEFINE FOLDER oFld ;
             ID       400 ;
             OF       oDlg ;
             PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
@@ -5298,24 +5287,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       161 ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aGet[ _LIMPFRA ] VAR aTmp[ _LIMPFRA ]  ;
-         ID       310 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
-
-      REDEFINE GET aGet[ __CCODPRY ] VAR  aTmp[ __CCODPRY ] ;
-         ID       320 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-         aGet[ __CCODPRY ]:bValid := {|| oFraPub:lValid( aGet[ __CCODPRY ], aGet[ _CTXTFRA ] ) }
-         aGet[ __CCODPRY ]:bHelp  := {|| TProyecto():GetInstance():Buscar( aGet[ __CCODPRY ], .t. ) }
-
-      REDEFINE GET aGet[ _CTXTFRA ] VAR aTmp[ _CTXTFRA ] ;
-         ID       321 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
+    REDEFINE GET aGet[ _CCODPRV ] VAR  aTmp[ _CCODPRV ] ;
+        ID       320 ;
+        IDTEXT 	 321 ;	
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        VALID    ( cProvee( aGet[ _CCODPRV ], dbfProvee, aGet[ _CCODPRV ]:oHelpText ) );
+        BITMAP   "LUPA" ;
+        ON HELP  ( BrwProvee( aGet[ _CCODPRV ], aGet[ _CCODPRV ]:oHelpText ) ) ;
+        OF       oFld:aDialogs[ 2 ]
 
       REDEFINE GET oRentabilidadLinea VAR cRentabilidadLinea ;
          ID       300 ;
@@ -5342,65 +5321,51 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
-      /*
-      Tercera caja de dialogo--------------------------------------------------
-      */
+    /*
+    Tercera caja de dialogo--------------------------------------------------
+    */
 
-      REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
-         MEMO ;
-         ID       100 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[3]
+    REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
+        MEMO ;
+        ID       100 ;
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        OF       oFld:aDialogs[3]
 
-      REDEFINE GET aGet[ _DESCRIP ] VAR aTmp[ _DESCRIP ] ;
-         MEMO ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[3]
+    REDEFINE GET aGet[ _DESCRIP ] VAR aTmp[ _DESCRIP ] ;
+        MEMO ;
+        ID       110 ;
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        OF       oFld:aDialogs[3]
 
-if ( IsMuebles() )
+    REDEFINE BITMAP bmpImage ;
+        ID       220 ;
+        FILE     ( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) );
+        ON RIGHT CLICK ( bmpImage:lStretch := !bmpImage:lStretch, bmpImage:Refresh() );
+        OF       oDlg
 
-    REDEFINE GET aGet[ _CCODPRV ] VAR aTmp[ _CCODPRV ] ;
-         ID       800 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
+        bmpImage:SetColor( , GetSysColor( 15 ) )
 
-    REDEFINE GET aGet[ _CNOMPRV ] VAR aTmp[ _CNOMPRV ] ;
-         ID       801 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[1]
+    REDEFINE BUTTON oBtn;
+        ID       IDOK ;
+        OF       oDlg ;
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        ACTION   SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
 
-end if
+    REDEFINE BUTTON ;
+        ID       IDCANCEL ;
+        OF       oDlg ;
+        CANCEL ;
+        ACTION   ( oDlg:end() )
 
-      REDEFINE BITMAP bmpImage ;
-         ID       220 ;
-         FILE     ( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) );
-         ON RIGHT CLICK ( bmpImage:lStretch := !bmpImage:lStretch, bmpImage:Refresh() );
-         OF       oDlg
+    REDEFINE BUTTON ;
+        ID       9 ;
+        OF       oDlg ;
+        ACTION   ( ChmHelp( "Añadir_v" ) )
 
-         bmpImage:SetColor( , GetSysColor( 15 ) )
-
-      REDEFINE BUTTON oBtn;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       9 ;
-         OF       oDlg ;
-         ACTION   ( ChmHelp( "Añadir_v" ) )
-
-      REDEFINE BUTTON oBtnSer;
-         ID       552 ;
-         OF       oDlg ;
-         ACTION   ( EditarNumeroSerie( aTmp, oStock, nMode ) )
+    REDEFINE BUTTON oBtnSer;
+        ID       552 ;
+        OF       oDlg ;
+        ACTION   ( EditarNumeroSerie( aTmp, oStock, nMode ) )
 
    // Keys --------------------------------------------------------------------
 
@@ -5414,7 +5379,7 @@ end if
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
-                           if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
+                           if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ), aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -6281,7 +6246,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->mObsLin    := (dbfAlbCliL)->mObsLin
                (dbfTmpLin)->Descrip    := (dbfAlbCliL)->Descrip
                (dbfTmpLin)->cCodPrv    := (dbfAlbCliL)->cCodPrv
-               (dbfTmpLin)->cNomPrv    := (dbfAlbCliL)->cNomPrv
                (dbfTmpLin)->cImagen    := (dbfAlbCliL)->cImagen
                (dbfTmpLin)->cCodFam    := (dbfAlbCliL)->cCodFam
                (dbfTmpLin)->cGrpFam    := (dbfAlbCliL)->cGrpFam
@@ -6583,7 +6547,6 @@ STATIC FUNCTION cFacPrv( cFacPrv, aGet, aTmp, oBrw, nMode )
                ( dbfTmpLin )->cCodFam    	:= ( dbfFacPrvL )->cCodFam
                ( dbfTmpLin )->cGrpFam    	:= ( dbfFacPrvL )->cGrpFam
                ( dbfTmpLin )->cCodPrv    	:= ( dbfFacPrvT )->cCodPrv
-               ( dbfTmpLin )->cNomPrv    	:= ( dbfFacPrvT )->cNomPrv
                ( dbfTmpLin )->nNumMed    	:= ( dbfFacPrvL )->nNumMed
                ( dbfTmpLin )->nMedUno    	:= ( dbfFacPrvL )->nMedUno
                ( dbfTmpLin )->nMedDos    	:= ( dbfFacPrvL )->nMedDos
@@ -8104,7 +8067,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->mObsLin    := (dbfPedCliL)->mObsLin
                (dbfTmpLin)->Descrip    := (dbfPedCliL)->Descrip
                (dbfTmpLin)->cCodPrv    := (dbfPedCliL)->cCodPrv
-               (dbfTmpLin)->cNomPrv    := (dbfPedCliL)->cNomPrv
                (dbfTmpLin)->cImagen    := (dbfPedCliL)->cImagen
                (dbfTmpLin)->cCodFam    := (dbfPedCliL)->cCodFam
                (dbfTmpLin)->cGrpFam    := (dbfPedCliL)->cGrpFam
@@ -8484,7 +8446,6 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->mObsLin    := (dbfPreCliL)->mObsLin
                (dbfTmpLin)->Descrip    := (dbfPedCliL)->Descrip
                (dbfTmpLin)->cCodPrv    := (dbfPreCliL)->cCodPrv
-               (dbfTmpLin)->cNomPrv    := (dbfPreCliL)->cNomPrv
                (dbfTmpLin)->cImagen    := (dbfPreCliL)->cImagen
                (dbfTmpLin)->cCodFam    := (dbfPreCliL)->cCodFam
                (dbfTmpLin)->cGrpFam    := (dbfPreCliL)->cGrpFam
@@ -9863,7 +9824,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->mObsLin  := ( dbfAlbCliL )->mObsLin
                ( dbfTmpLin )->Descrip  := ( dbfAlbCliL )->Descrip
                ( dbfTmpLin )->cCodPrv  := ( dbfAlbCliL )->cCodPrv
-               ( dbfTmpLin )->cNomPrv  := ( dbfAlbCliL )->cNomPrv
                ( dbfTmpLin )->cImagen  := ( dbfAlbCliL )->cImagen
                ( dbfTmpLin )->cCodFam  := ( dbfAlbCliL )->cCodFam
                ( dbfTmpLin )->cGrpFam  := ( dbfAlbCliL )->cGrpFam
@@ -15651,7 +15611,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nMedTre"    ,"N", 16, 6, "Tercera unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nTarLin"    ,"N",  1, 0, "Tarifa de precio aplicada"             , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lImpFra",   "L",   1, 0, "Lógico de imprimir frase publicitaria" , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       				  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       			 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cTxtFra",   "C", 250, 0, "Texto de la frase publicitaria"        , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "Descrip",   "M",  10, 0, "Descripción larga"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lLinOfe",   "L",   1, 0, "Linea con oferta"                      , "",              "", "( cDbfCol )" } )
@@ -15660,10 +15620,10 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 	  , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 	  , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  						  , "'@!'",          "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  						  , "",          		"", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			 , "",          	"", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -18434,79 +18394,78 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             MsgStop( Trim( ( dbfArticulo )->mComent ) )
          end if
 
-         if !Empty( cProveedor )
+        /*
+		Metemos el proveedor por defecto---------------------------------------
+        */
 
-            aTmp[ _CCODPRV ]  := cProveedor
-            aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( cProveedor ) )
-            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], Padr( cProveedor, 12 ) , dbfArtPrv ), 18 )
+        if !Empty( aGet[ _CCODPRV ] )
+        	aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+        	aGet[ _CCODPRV ]:lValid()
+        else
+        	aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab	
+        end if	
 
-         else
+        aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
 
-            aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab
-            aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( ( dbfArticulo )->cPrvHab ) )
-            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
+        aGet[ _CDETALLE ]:show()
+        aGet[ _MLNGDES  ]:hide()
 
-         end if
+        aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre  )
 
-         aGet[ _CDETALLE ]:show()
-         aGet[ _MLNGDES  ]:hide()
+        if aGet[ _MLNGDES ] != nil
+           aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
+        else
+           aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
+        end if
 
-         aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre  )
+        /*
+        Peso y volumen
+        ----------------------------------------------------------------------
+        */
 
-         if aGet[ _MLNGDES ] != nil
-            aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
-         else
-            aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
-         end if
+        if !Empty( aGet[ _NPESOKG ] )
+           aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
+        else
+           aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
+        end if
 
-         /*
-         Peso y volumen
-         -------------------------------------------------------------------
-         */
+        if !Empty( aGet[ _CPESOKG ] )
+            aGet[ _CPESOKG ]:cText( ( dbfArticulo )->cUndDim )
+        else
+            aTmp[ _CPESOKG ] := ( dbfArticulo )->cUndDim
+        end if
 
-         if !Empty( aGet[ _NPESOKG ] )
-            aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
-         else
-            aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
-         end if
+        if !Empty( aGet[ _NVOLUMEN ] )
+           aGet[ _NVOLUMEN ]:cText( ( dbfArticulo )->nVolumen )
+        else
+           aGet[ _NVOLUMEN ] := ( dbfArticulo )->nVolumen
+        end if
 
-         if !Empty( aGet[ _CPESOKG ] )
-             aGet[ _CPESOKG ]:cText( ( dbfArticulo )->cUndDim )
-         else
-             aTmp[ _CPESOKG ] := ( dbfArticulo )->cUndDim
-         end if
+        if !Empty( aGet[ _CUNIDAD ] )
+            aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
+            aGet[ _CUNIDAD ]:lValid()
+        else
+            aTmp[ _CUNIDAD ] := ( dbfArticulo )->cUnidad
+        end if
 
-         if !Empty( aGet[ _NVOLUMEN ] )
-            aGet[ _NVOLUMEN ]:cText( ( dbfArticulo )->nVolumen )
-         else
-            aGet[ _NVOLUMEN ] := ( dbfArticulo )->nVolumen
-         end if
+        if !Empty( aGet[ _CVOLUMEN ] )
+            aGet[ _CVOLUMEN ]:cText( ( dbfArticulo )->cVolumen )
+        else
+            aTmp[ _CVOLUMEN ]:= ( dbfArticulo )->cVolumen
+        end if
 
-         if !Empty( aGet[ _CUNIDAD ] )
-             aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
-             aGet[ _CUNIDAD ]:lValid()
-         else
-             aTmp[ _CUNIDAD ] := ( dbfArticulo )->cUnidad
-         end if
+        if !Empty( aGet[_CCODTIP ] )
+           aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
+        else
+           aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
+        end if
 
-         if !Empty( aGet[ _CVOLUMEN ] )
-             aGet[ _CVOLUMEN ]:cText( ( dbfArticulo )->cVolumen )
-         else
-             aTmp[ _CVOLUMEN ]:= ( dbfArticulo )->cVolumen
-         end if
+        /*
+        Factor de comversion
+        ----------------------------------------------------------------------
+        */
 
-         if !Empty( aGet[_CCODTIP ] )
-            aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
-         else
-            aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
-         end if
-
-         /*
-         Factor de comversion
-         ----------------------------------------------------------------------
-         */
-
-         aTmp[ _NFACCNV ]     := 1
+        aTmp[ _NFACCNV ]     := 1
 
          /*
          Lotes
@@ -22678,7 +22637,6 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->mObsLin    := (dbfSatCliL)->mObsLin
                (dbfTmpLin)->Descrip    := (dbfPedCliL)->Descrip
                (dbfTmpLin)->cCodPrv    := (dbfSatCliL)->cCodPrv
-               (dbfTmpLin)->cNomPrv    := (dbfSatCliL)->cNomPrv
                (dbfTmpLin)->cImagen    := (dbfSatCliL)->cImagen
                (dbfTmpLin)->cCodFam    := (dbfSatCliL)->cCodFam
                (dbfTmpLin)->cGrpFam    := (dbfSatCliL)->cGrpFam
@@ -23131,7 +23089,6 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
                ( dbfTmpLin )->mObsLin     := ( dbfSatCliL )->mObsLin
                ( dbfTmpLin )->Descrip     := ( dbfSatCliL )->Descrip
                ( dbfTmpLin )->cCodPrv     := ( dbfSatCliL )->cCodPrv
-               ( dbfTmpLin )->cNomPrv     := ( dbfSatCliL )->cNomPrv
                ( dbfTmpLin )->cCodFam     := ( dbfSatCliL )->cCodFam
                ( dbfTmpLin )->cGrpFam     := ( dbfSatCliL )->cGrpFam
                ( dbfTmpLin )->cAlmLin     := ( dbfSatCliL )->cAlmLin
