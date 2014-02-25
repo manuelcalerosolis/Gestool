@@ -41,10 +41,11 @@ END CLASS
 METHOD Create()
 
    ::FldDiario( .t. )
-   ::AddField( "cTipDoc",     "C",  14, 0, {|| "@!" },         "Tip.Doc.",          .t., "Tipo documento",                 14 )
+   ::AddField( "cTipDoc",     "C",  14, 0, {|| "@!" },         "Tipo documento",    .t., "Tipo documento",                 14 )
    ::AddField( "cEstado",     "C",  20, 0, {|| "@!" },         "Estado",            .f., "Estado documento",               20 )
-   ::AddField( "cFpago",      "C",   2, 0, {|| "@!" },         "Cod. pago",         .f., "Forma de pago",                  10 )
+   ::AddField( "cFpago",      "C",   2, 0, {|| "@!" },         "Código pago",       .f., "Código de pago",                 10 )
    ::AddField( "cDesFPago",   "C", 150, 0, {|| "@!" },         "Forma pago",        .f., "Forma de pago",                  20 )
+   ::AddField( "cCodCaj",     "C",   3, 0, {|| "@!" },         "Código caja",       .f., "Código de caja",                 10 )
 
    if ::xOthers
    ::AddTmpIndex( "CCODCLI", "CCODCLI" )
@@ -257,6 +258,7 @@ METHOD lGenerate()
 
             ::oDbf:cCodCli    := ::oTikCliT:cCliTik
             ::oDbf:dFecMov    := ::oTikCliT:dFecTik
+            ::oDbf:cCodCaj    := ::oTikCliT:cCodCaj
 
             ::oDbf:nTotNet    := if( ::oTikCliT:cTipTik == "4", - aTotTmp[1], aTotTmp[1] )
             ::oDbf:nTotIva    := if( ::oTikCliT:cTipTik == "4", - aTotTmp[2], aTotTmp[2] )
@@ -323,6 +325,7 @@ METHOD lGenerate()
             ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
             ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
             ::oDbf:dFecMov    := ::oAlbCliT:dFecAlb
+            ::oDbf:cCodCaj    := ::oAlbCliT:cCodCaj
 
             ::oDbf:nTotNet    := aTotTmp[1] - aTotTmp[5] - aTotTmp[6]
             ::oDbf:nTotIva    := aTotTmp[2]
@@ -384,6 +387,7 @@ METHOD lGenerate()
             ::oDbf:cCodCli    := ::oFacCliT:cCodCli
             ::oDbf:cNomCli    := ::oFacCliT:cNomCli
             ::oDbf:dFecMov    := ::oFacCliT:dFecFac
+            ::oDbf:cCodCaj    := ::oFacCliT:cCodCaj
 
             ::oDbf:nTotNet    := aTotTmp[1] - aTotTmp[5] - aTotTmp[6]
             ::oDbf:nTotIva    := aTotTmp[2]
@@ -439,6 +443,8 @@ METHOD lGenerate()
 
          ::oDbf:cCodCli    := ::oFacRecT:cCodCli
          ::oDbf:cNomCli    := ::oFacRecT:cNomCli
+         ::oDbf:cCodCaj    := ::oFacRecT:cCodCaj
+
          ::AddCliente( ::oFacRecT:cCodCli, ::oFacRecT, .f. )
          ::oDbf:dFecMov    := ::oFacRecT:dFecFac
 

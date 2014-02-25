@@ -1184,11 +1184,11 @@ RETURN cAlias
 Function dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
 
    local nOrd
-   local lRet        := .f.
+   local lRet  := .f.
 
    if ( cAlias )->( Used() )
-      nOrd           := ( cAlias )->( OrdSetFocus( cOrd ) )
-      lRet           := ( cAlias )->( dbSeek( uVal, lSoft, lLast ) )
+      nOrd     := ( cAlias )->( OrdSetFocus( cOrd ) )
+      lRet     := ( cAlias )->( dbSeek( uVal, lSoft, lLast ) )
       ( cAlias )->( OrdSetFocus( nOrd ) )
    end if
 

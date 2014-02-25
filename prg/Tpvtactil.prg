@@ -4850,7 +4850,7 @@ METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS Tpv
 
             ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
             ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
-            ::oTemporalLinea:nCosDiv      := ::oArticulo:pCosto
+            ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
             ::oTemporalLinea:cLote        := ::oArticulo:cLote
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
             ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
@@ -5031,7 +5031,7 @@ METHOD AgregarFavoritos( cNombreArticulo ) CLASS TpvTactil
       ::oTemporalLinea:Append()
       ::oTemporalLinea:cCbaTil   := ::oArticulo:Codigo
       ::oTemporalLinea:cNomTil   := ::cNombreArticulo()
-      ::oTemporalLinea:nCosDiv   := ::oArticulo:pCosto
+      ::oTemporalLinea:nCosDiv   := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
       ::oTemporalLinea:cLote     := ::oArticulo:cLote
       ::oTemporalLinea:cCodFam   := ::oArticulo:Familia
       ::oTemporalLinea:nCtlStk   := ::oArticulo:nCtlStock
@@ -5881,7 +5881,6 @@ METHOD sTotalTiket() CLASS TpvTactil
    local cCodDiv
    local nVdvDiv
    local cTipTik
-   local nOrdAnt
    local nTotLin           := 0
    local nBasLin           := 0
    local nBrtLin           := 0
@@ -5919,6 +5918,8 @@ METHOD sTotalTiket() CLASS TpvTactil
          else
             nBasLin        := nTotLin
          end if
+         
+         ::sTotal:nTotalCosto                            += ::oTemporalLinea:nCosDiv
 
          do case
             case ::sTotal:aPorcentajeIva[ 1 ] == nil .or. ::sTotal:aPorcentajeIva[ 1 ] == ::oTemporalLinea:nIvaTil
@@ -5950,10 +5951,6 @@ METHOD sTotalTiket() CLASS TpvTactil
          ::sTotal:nTotalDocumento                        += nTotLin
          ::sTotal:nTotalDescuentoGeneral                 += nDescuento
 
-         if !Empty( ::oStock )
-            ::sTotal:nTotalCosto                         += ::oStock:nCostoMedio( ::oTemporalLinea:cCbaTil, ::oTemporalLinea:cAlmLin, ::oTemporalLinea:cCodPr1, ::oTemporalLinea:cValPr1, ::oTemporalLinea:cCodPr2, ::oTemporalLinea:cValPr2 ) * ::nUnidadesLinea( ::oTemporalLinea )
-         end if
-
          if ::oTemporalLinea:lInPromo
             ::sTotal:nPromocion                          += nTotLin - nDescuento
          end if
@@ -5977,10 +5974,6 @@ METHOD sTotalTiket() CLASS TpvTactil
    /*
    Reposicionamiento-----------------------------------------------------------
    */
-
-   if !Empty( nOrdAnt )
-      ::oTemporalLinea:OrdSetFocus( nOrdAnt )
-   end if
 
    ::oTemporalLinea:GoTo( nRecLin )
 
@@ -7009,9 +7002,15 @@ Return .t.
 
 METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
+   local oError
+   local oBlock
+
    if empty( cNumeroTicket )
       return .f.
    end if
+
+   oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    if ::oTiketCabecera:Seek( cNumeroTicket ) .and. ::oTiketCabecera:RecLock()
 
@@ -7042,7 +7041,7 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
       ::oBrwLineas:Refresh()
    
       // Calculamos el total---------------------------------------------------------
-   
+
       ::SetTotal()
    
       // Pintamos la información de la zona donde nos encontramos--------------------
@@ -7057,11 +7056,17 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
    
       ::SetInfo()
 
-      return .t.
-
    end if
 
-Return .f.
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error al cargar el documento." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
