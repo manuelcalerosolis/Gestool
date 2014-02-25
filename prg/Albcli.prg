@@ -13763,6 +13763,28 @@ FUNCTION nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION nReqLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT cAlbCliL  := TDataView():Get( "AlbCliL", nView )
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+   nCalculo          := nCalculo * ( cAlbCliL )->nReq / 100
+
+   nCalculo          := Round( nCalculo, nRou )
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
 //
 // Devuelve el neto de una linea una vez quitados los Dtos.
 //

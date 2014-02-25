@@ -3159,7 +3159,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
    Ahora buscamos por el codigo interno
    */
 
-   if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
+   if aSeekProp( @aTmp[ ( dbfTmpLin )->( FieldPos( "cRefMov" ) ) ], @aTmp[ ( dbfTmpLin )->( FieldPos( "cValPr1" ) ) ], @aTmp[ ( dbfTmpLin )->( FieldPos( "cValPr2" ) ) ], dbfArticulo, dbfTblPro )
 
       if ( dbfArticulo )->lObs
          MsgStop( "Artículo catalogado como obsoleto" )
@@ -3977,8 +3977,15 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 			ACTION 	( oDlg:end() )
 
       if nMode != ZOOM_MODE
+
+         if uFieldEmpresa( "lGetLot")
+            oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+         end if 
+
+         oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
+
          oDlg:AddFastKey( VK_F6, {|| ::oBtnSerie:Click() } )
-         oDlg:AddFastKey( VK_F5, {|| ::ValidResource( nMode, oDlg, oBtn ) } )
+         
       end if
 
       oDlg:bStart             := {|| ::SetDlgMode( nMode, oSayTotal, oSayPre ) }

@@ -66,6 +66,9 @@ CLASS TFacturarLineasAlbaranes
    DATA oColIVAAlbaran
    DATA oColIVAFactura
 
+   DATA oColReqAlbaran
+   DATA oColReqFactura
+
    DATA oColTotalAlbaran
    DATA oColTotalFactura
 
@@ -444,6 +447,17 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :lHide               := .t.
       end with
 
+      with object ( ::oColReqAlbaran := ::oBrwLineasAlbaran:AddCol() )
+         :cHeader             := "R.E."
+         :bEditValue          := {|| nReqLAlbCli( ::cTemporalLineaAlbaran ) }
+         :cEditPicture        := cPorDiv()
+         :nWidth              := 45
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
+         :lHide               := .t.
+      end with
+
       with object ( ::oColTotalAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Total"
          :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaAlbaran ) }
@@ -640,6 +654,17 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
       with object ( ::oColIVAFactura := ::oBrwLineasFactura:AddCol() )
          :cHeader             := "IVA"
          :bEditValue          := {|| nIvaLAlbCli( ::cTemporalLineaFactura ) }
+         :cEditPicture        := cPorDiv()
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
+         :lHide               := .t.
+      end with
+
+      with object ( ::oColReqFactura := ::oBrwLineasFactura:AddCol() )
+         :cHeader             := "R.E."
+         :bEditValue          := {|| nReqLAlbCli( ::cTemporalLineaFactura ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -1382,15 +1407,31 @@ METHOD CalculaTotales() CLASS TFacturarLineasAlbaranes
 
    if ( "MODA" $ cParamsMain() )
 
-      ::nSayNeto  := ::oColNetoFactura:nTotal
-      ::nSayIva   := ::oColIVAFactura:nTotal
-      ::nSayTotal := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal   
+      ::nSayNeto     := ::oColTotalAlbaran:nTotal + ::oColNetoFactura:nTotal
+
+      ::nSayIva      := ::oColIVAFactura:nTotal
+
+      ::nSayTotal    := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal   
+
+      if ( TDataView():Get( "AlbCliT", ::nView ) )->lRecargo
+         ::nSayIva   += ::oColReqFactura:nTotal
+         ::nSayTotal += ::oColReqFactura:nTotal
+      end if   
 
    else
 
       ::nSayNeto  := ::oColNetoAlbaran:nTotal + ::oColNetoFactura:nTotal
+
       ::nSayIva   := ::oColIVAAlbaran:nTotal + ::oColIVAFactura:nTotal
+
       ::nSayTotal := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
+
+      if ( TDataView():Get( "AlbCliT", ::nView ) )->lRecargo
+         ::nSayIva   += ::oColReqAlbaran:nTotal
+         ::nSayIva   += ::oColReqFactura:nTotal
+         ::nSayTotal += ::oColReqAlbaran:nTotal
+         ::nSayTotal += ::oColReqFactura:nTotal
+      end if
 
    end if
 
