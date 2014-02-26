@@ -130,10 +130,10 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    Tomamos los valores iniciales-----------------------------------------------
    */
 
-   ::nView     := nView
-   ::cNumAlb   := ( TDataView():Get( "AlbCliT", ::nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", ::nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
    ::cNumFac   := ""
    ::lPrint    := .f.
+   ::nView     := nView
+   ::cNumAlb   := TDataView():AlbaranesClientesId( ::nView ) 
 
    /*
    Comprobaciones antes de entrar----------------------------------------------
@@ -1132,7 +1132,7 @@ METHOD EndResource( lPrint ) CLASS TFacturarLineasAlbaranes
    DEFAULT lPrint    := .f.
 
    if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
-      MsgStop( "Tiene que pasar almenos una linea del albarán para crear una nueva factura." )
+      MsgStop( "Tiene que pasar al menos una línea del albarán para crear una nueva factura." )
       Return .f.
    end if
 
@@ -1141,13 +1141,9 @@ METHOD EndResource( lPrint ) CLASS TFacturarLineasAlbaranes
    */
 
    if ( "MODA" $ cParamsMain() )
-
       ::GuardaAlbaranModa()
-
    else
-
       ::GuardaAlbaran()
-
    end if   
 
    /*
@@ -1250,9 +1246,9 @@ METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
    while !( ::cTemporalLineaAlbaran )->( eof() )
 
       appendPass( ::cTemporalLineaAlbaran,;
-               TDataView():Get( "AlbCliL", ::nView ),;
-               {  "nIva" => 0,;
-                  "nReq" => 0 } )
+                  TDataView():Get( "AlbCliL", ::nView ),;
+                  {  "nIva" => 0,;
+                     "nReq" => 0 } )
 
       ( ::cTemporalLineaAlbaran )->( dbSkip() )
 

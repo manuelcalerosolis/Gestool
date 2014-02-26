@@ -311,7 +311,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopApt" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ]     := 1
-      aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := 1
+      aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := str( 1, 6 )
    end if
 
    if BeginTrans( aTmp )
@@ -1902,7 +1902,7 @@ STATIC FUNCTION BeginTrans( aTmp )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cTipImp", "Upper( cTipImp )", {|| Upper( Field->cTipImp ) } ) )
 
       if ( dbfCajL )->( dbSeek( cCodCaj ) )
-         while ( dbfCajL )->cCodCaj == cCodCaj .AND. !( dbfCajL )->( eof() )
+         while ( dbfCajL )->cCodCaj == cCodCaj .and. !( dbfCajL )->( eof() )
             dbPass( dbfCajL, dbfTmpLin, .t. )
             ( dbfCajL )->( DbSkip() )
          end while
@@ -3642,3 +3642,19 @@ Function cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
 Return ( cNumeroSesion )
 
 //---------------------------------------------------------------------------//
+
+Function SetNumeroSesionCaja( cNumeroSesion, cCodigoCaja, dbfCaja )
+
+   if dbSeekInOrd( cCodigoCaja, "cCodCaj", dbfCaja )
+
+      if dbLock( dbfCaja )
+         ( dbfCaja )->cNumTur := cNumeroSesion
+         ( dbfCaja )->( dbUnLock() )
+      end if
+
+   end if
+
+Return ( cNumeroSesion )
+
+//---------------------------------------------------------------------------//
+
