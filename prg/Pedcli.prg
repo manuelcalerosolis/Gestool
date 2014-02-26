@@ -26,7 +26,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CPOSCLI                  11      //"CPOSCLI"
 #define _CDNICLI                  12      //"CDNICLI"
 #define _LMODCLI                  13      //
-#define _CCODAGE                  14      //"CCODAGE"dbfAlbCliT
+#define _CCODAGE                  14      //"CCODAGE"
 #define _CCODOBR                  15      //"CCODOBR"
 #define _CCODTAR                  16      //"CCODTAR"
 #define _CCODALM                  17      //"CCODALM"
@@ -2277,27 +2277,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Código proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Nombre proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cNomPrv ) }
-         :nWidth              := 150
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Referencia proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cRefPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
          :cHeader             := "Prop. 1"
          :bEditValue          := {|| ( dbfTmpLin )->cValPr1 }
          :nWidth              := 40
@@ -3945,13 +3924,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local oBrwAlbCli
    local oBrwFacCli
    local oBrwAlbPrv
-	local oGet2
+   local oGet2
    local cGet2
    local oGet3
    local cGet3
    local oTot           	:= Array( 6 )
    local oTotal
-	local nTotal
+   local nTotal
    local oSayPr1
    local oSayPr2
    local cSayPr1        	:= ""
@@ -4006,7 +3985,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _CALMLIN    ] 	:= aTmpPed[ _CCODALM ]
       aTmp[ _LIVALIN    ] 	:= aTmpPed[ _LIVAINC ]
       aTmp[ _NTARLIN    ] 	:= aTmpPed[ _NTARIFA ]
-      aTmp[ _LIMPFRA    ] 	:= .t.
       aTmp[ _DFECCAD    ] 	:= Ctod( "" )
 		aTmp[ _NPRODUC    ]	:= 0
       aTmp[ __DFECSAL   ] 	:= aTmpPed[ _DFECSAL ]
@@ -4661,25 +4639,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
 			ID 		161 ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aGet[ _LIMPFRA ] VAR aTmp[ _LIMPFRA ]  ;
-         ID       310 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
-
-      REDEFINE GET aGet[ _CCODFRA ] VAR aTmp[ _CCODFRA ] ;
-         ID       320 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-         aGet[ _CCODFRA ]:bValid := {|| oFraPub:lValid( aGet[ _CCODFRA ], aGet[ _CTXTFRA ] ) }
-         aGet[ _CCODFRA ]:bHelp  := {|| oFraPub:Buscar( aGet[ _CCODFRA ] ) }
-
-      REDEFINE GET aGet[ _CTXTFRA ] VAR aTmp[ _CTXTFRA ] ;
-         ID       321 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
-
       REDEFINE GET oRentLin VAR cRentLin ;
          ID       300 ;
          IDSAY    301 ;
@@ -5174,7 +5133,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli ),;
                            if( !Empty( oBtnSer ), oBtnSer:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid() }
+                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg ; 
          ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ), oBrwResCli:Load() );
@@ -6131,7 +6090,6 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
                (dbfTmpLin)->mObsLin    := (dbfPreCliL)->mObsLin
                (dbfTmpLin)->Descrip    := (dbfPreCliL)->Descrip
                (dbfTmpLin)->cCodPrv    := (dbfPreCliL)->cCodPrv
-               (dbfTmpLin)->cNomPrv    := (dbfPreCliL)->cNomPrv
                (dbfTmpLin)->cImagen    := (dbfPreCliL)->cImagen
                (dbfTmpLin)->cCodFam    := (dbfPreCliL)->cCodFam
                (dbfTmpLin)->cGrpFam    := (dbfPreCliL)->cGrpFam
@@ -17031,7 +16989,6 @@ Static Function AppendKit( uTmpLin, aTmpPed )
 
             ( dbfTmpLin )->cCodFam 		:= ( dbfArticulo )->Familia
             ( dbfTmpLin )->cGrpFam 		:= cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
-            ( dbfTmpLin )->cCodFra 		:= cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
 
             /*
             Datos de la cabecera-----------------------------------------------
@@ -17375,34 +17332,16 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                MsgStop( Trim( ( dbfArticulo )->mComent ) )
             end if
 
-            if !IsNil( cProveedor )
+            /*
+			Proveedor del artículo---------------------------------------------
+            */
 
-               aGet[ _CCODPRV ]:cText( cProveedor )
-               aGet[ _CCODPRV ]:lValid()
-
-               aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], Padr( cProveedor, 12 ) , dbfArtPrv ), 18 )
-
-               if IsMuebles()
-                  aGet[ _CNOMPRV ]:cText( AllTrim( RetProvee( cProveedor ) ) )
-                  aGet[ _CREFPRV ]:cText( Padr( cRefPrvArt( aTmp[ _CREF ], Padr( cProveedor, 12 ) , dbfArtPrv ), 18 ) )
-               end if
-
-            else
-
-               if !Empty( aGet[ _CCODPRV ] )
-                  aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
-                  aGet[ _CCODPRV ]:lValid()
-               end if
-
-               aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ) , 18 )
-
-               if IsMuebles()
-                  aGet[ _CCODPRV ]:cText( (dbfArticulo)->cPrvHab )
-                  aGet[ _CNOMPRV ]:cText( AllTrim( RetProvee( (dbfArticulo)->cPrvHab ) ) )
-                  aGet[ _CREFPRV ]:cText( Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ) , 18 ) )
-               end if
-
+            if !Empty( aGet[ _CCODPRV ] )
+                aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+                aGet[ _CCODPRV ]:lValid()
             end if
+
+            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ) , 18 )
 
             /*
             Descripciones largas--------------------------------------------------
@@ -17510,13 +17449,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                   aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
                end if
 
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( cCodFra( cCodFam, dbfFamilia ) )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := cCodFra( cCodFam, dbfFamilia )
-               end if
-
             else
 
                if !Empty( aGet[ _CCODFAM ] )
@@ -17531,13 +17463,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                   aGet[ _CGRPFAM ]:lValid()
                else
                   aTmp[ _CGRPFAM ]  := Space( 3 )
-               end if
-
-               if !Empty( aGet[ _CCODFRA ] )
-                  aGet[ _CCODFRA ]:cText( Space( 3 ) )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := Space( 3 )
                end if
 
             end if
@@ -17634,21 +17559,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                end if
 
                aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
-
-            end if
-
-            /*
-            Código de la frase publicitaria------------------------------------
-            */
-
-            if !Empty( ( dbfArticulo )->cCodFra )
-
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( ( dbfArticulo )->cCodFra )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := ( dbfArticulo )->cCodFra
-               end if
 
             end if
 
@@ -18503,27 +18413,6 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
          :cHeader             := "Descripción"
          :bEditValue          := {|| if( Empty( ( dbfTmpLin )->cRef ), ( dbfTmpLin )->mLngDes, ( dbfTmpLin )->cDetalle ) }
          :nWidth              := 215
-      end with
-
-      with object ( oBrwDetallesPedidos:AddCol() )
-         :cHeader             := "Código proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwDetallesPedidos:AddCol() )
-         :cHeader             := "Nombre proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cNomPrv ) }
-         :nWidth              := 150
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwDetallesPedidos:AddCol() )
-         :cHeader             := "Referencia proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cRefPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
       end with
 
       with object ( oBrwDetallesPedidos:AddCol() )

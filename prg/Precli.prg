@@ -318,6 +318,7 @@ static dbfObrasT
 static dbfAlm
 static dbfAgent
 static dbfFamilia
+static dbfProvee
 static dbfCliAtp
 static dbfDoc
 static dbfOferta
@@ -780,6 +781,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
 
+      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+
       if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpenFiles     := .f.
       end if
@@ -1136,6 +1140,10 @@ STATIC FUNCTION CloseFiles()
       ( dbfAntCliT )->( dbCloseArea() )
    end if
 
+   if dbfProvee != nil
+      ( dbfProvee )->( dbCloseArea() )
+   end if
+
    if !Empty( oNewImp )
       oNewImp:End()
    end if
@@ -1222,6 +1230,8 @@ STATIC FUNCTION CloseFiles()
    dbfProMat      := nil
    dbfHisMov      := nil
    dbfCliInc      := nil
+
+   dbfProvee      := nil
 
    lOpenFiles     := .f.
 
@@ -2265,27 +2275,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Código proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Nombre proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cNomPrv ) }
-         :nWidth              := 150
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Referencia proveedor"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cRefPrv ) }
-         :nWidth              := 50
-         :lHide               := !( IsMuebles() )
-      end with
-
-      with object ( oBrwLin:AddCol() )
          :cHeader             := "Prop. 1"
          :bEditValue          := {|| ( dbfTmpLin )->cValPr1 }
          :nWidth              := 40
@@ -3306,7 +3295,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _LIVALIN  ]    := aTmpPre[ _LIVAINC ]
       aTmp[ _CALMLIN  ]    := aTmpPre[ _CCODALM ]
       aTmp[ _NTARLIN  ]    := aTmpPre[ _NTARIFA ]
-      aTmp[ _LIMPFRA  ]    := .t.
       aTmp[ _DFECCAD  ]    := Ctod( "" )
       aTmp[ __DFECSAL ]    := aTmpPre[ _DFECSAL ]
       aTmp[ __DFECENT ]    := aTmpPre[ _DFECENTR ]
@@ -3863,25 +3851,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          IDSAY    301 ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE CHECKBOX aGet[ _LIMPFRA ] VAR aTmp[ _LIMPFRA ]  ;
-         ID       310 ;
+      REDEFINE GET aGet[ _CCODPRV ] VAR  aTmp[ _CCODPRV ] ;
+         ID       200 ;
+         IDTEXT   201 ;   
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
-
-      REDEFINE GET aGet[ _CCODFRA ] ;
-         VAR      aTmp[ _CCODFRA ] ;
-         ID       320 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cProvee( aGet[ _CCODPRV ], dbfProvee, aGet[ _CCODPRV ]:oHelpText ) );
          BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-         aGet[ _CCODFRA ]:bValid := {|| oFraPub:lValid( aGet[ _CCODFRA ], aGet[ _CTXTFRA ] ) }
-         aGet[ _CCODFRA ]:bHelp  := {|| oFraPub:Buscar( aGet[ _CCODFRA ] ) }
-
-      REDEFINE GET aGet[ _CTXTFRA ] ;
-         VAR      aTmp[ _CTXTFRA ] ;
-         ID       321 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON HELP  ( BrwProvee( aGet[ _CCODPRV ], aGet[ _CCODPRV ]:oHelpText ) ) ;
          OF       oFld:aDialogs[ 2 ]
 
       REDEFINE CHECKBOX aGet[ _LKITCHL ] VAR aTmp[ _LKITCHL ]  ;
@@ -3953,7 +3929,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre,  oRentLin ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid() }
+                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -5782,15 +5758,18 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                MsgStop( Trim( ( dbfArticulo )->mComent ) )
             end if
 
-            if !Empty( cProveedor )
-               aTmp[ _CCODPRV ]  := cProveedor
-               aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( cProveedor ) )
-               aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], Padr( cProveedor, 12 ) , dbfArtPrv ), 18 )
+            /*
+            Metemos el proveedor habitual--------------------------------------
+            */
+
+            if !Empty( aGet[ _CCODPRV ] )
+               aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+               aGet[ _CCODPRV ]:lValid()
             else
-               aTmp[ _CCODPRV ]  := (dbfArticulo)->cPrvHab
-               aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( (dbfArticulo)->cPrvHab ) )
-               aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
+               aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab   
             end if
+
+            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
 
             /*
             Lotes--------------------------------------------------------------
@@ -5856,13 +5835,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                   aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
                end if
 
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( cCodFra( cCodFam, dbfFamilia ) )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := cCodFra( cCodFam, dbfFamilia )
-               end if
-
             else
 
                if aGet[ _CCODFAM ] != nil
@@ -5873,11 +5845,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                if aGet[ _CGRPFAM ] != nil
                   aGet[ _CGRPFAM ]:cText( Space( 3 ) )
                   aGet[ _CGRPFAM ]:lValid()
-               end if
-
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( Space( 3 ) )
-                  aGet[ _CCODFRA ]:lValid()
                end if
 
             end if
@@ -5989,21 +5956,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                end if
 
                aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
-
-            end if
-
-            /*
-            Código de la frase publicitaria------------------------------------
-            */
-
-            if !Empty( ( dbfArticulo )->cCodFra )
-
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( ( dbfArticulo )->cCodFra )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := ( dbfArticulo )->cCodFra
-               end if
 
             end if
 
@@ -10525,7 +10477,6 @@ Static Function AppendKit( uTmpLin, aTmpPre )
 
             ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
             ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
-            ( dbfTmpLin )->cCodFra     := cCodFra( ( dbfTmpLin )->cCodFam, dbfFamilia ) 
 
             /*
             Datos de la cabecera-----------------------------------------------
@@ -11231,10 +11182,6 @@ Return .t.
 Function cFrasePublicitaria( cDbfCol )
 
    local cTxtFra  := ""
-
-   if ( cDbfCol )->lImpFra
-      cTxtFra     := ( cDbfCol )->cTxtFra
-   end if
 
 Return ( cTxtFra )
 

@@ -319,6 +319,7 @@ static dbfObrasT
 static dbfAlm
 static dbfAgent
 static dbfFamilia
+static dbfProvee
 static dbfCliAtp
 static dbfDoc
 static dbfOferta
@@ -651,6 +652,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
+
+      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
 
       if !TDataCenter():OpenSatCliT( @dbfSatCliT )
          lOpenFiles     := .f.
@@ -3110,7 +3114,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _LIVALIN  ]    := aTmpSat[ _LIVAINC ]
       aTmp[ _CALMLIN  ]    := aTmpSat[ _CCODALM ]
       aTmp[ _NTARLIN  ]    := aTmpSat[ _NTARIFA ]
-      aTmp[ _LIMPFRA  ]    := .t.
 
       if !Empty( cCodArtEnt )
          cCodArt           := Padr( cCodArtEnt, 32 )
@@ -3622,31 +3625,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       161 ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ _CCODPRV ] VAR  aTmp[ _CCODPRV ] ;
+        ID       200 ;
+        IDTEXT   201 ;   
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        VALID    ( cProvee( aGet[ _CCODPRV ], dbfProvee, aGet[ _CCODPRV ]:oHelpText ) );
+        BITMAP   "LUPA" ;
+        ON HELP  ( BrwProvee( aGet[ _CCODPRV ], aGet[ _CCODPRV ]:oHelpText ) ) ;
+        OF       oFld:aDialogs[ 2 ]   
+
       REDEFINE GET oRentLin VAR cRentLin ;
          ID       300 ;
          IDSAY    301 ;
          OF       oFld:aDialogs[2]
-
-      REDEFINE CHECKBOX aGet[ _LIMPFRA ] VAR aTmp[ _LIMPFRA ]  ;
-         ID       310 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
-
-      REDEFINE GET aGet[ _CCODFRA ] ;
-         VAR      aTmp[ _CCODFRA ] ;
-         ID       320 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[ 2 ]
-
-         aGet[ _CCODFRA ]:bValid := {|| oFraPub:lValid( aGet[ _CCODFRA ], aGet[ _CTXTFRA ] ) }
-         aGet[ _CCODFRA ]:bHelp  := {|| oFraPub:Buscar( aGet[ _CCODFRA ] ) }
-
-      REDEFINE GET aGet[ _CTXTFRA ] ;
-         VAR      aTmp[ _CTXTFRA ] ;
-         ID       321 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ]
 
       REDEFINE CHECKBOX aGet[ _LKITCHL ] VAR aTmp[ _LKITCHL ]  ;
          ID       330 ;
@@ -3674,22 +3665,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
-
-if ( IsMuebles() )
-
-      REDEFINE GET aGet[_CCODPRV] VAR aTmp[_CCODPRV] ;
-         ID       800 ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMPRV] VAR aTmp[_CNOMPRV] ;
-         ID       801 ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
-
-end if
 
       REDEFINE BITMAP bmpImage ;
          ID       220 ;
@@ -3737,7 +3712,7 @@ end if
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin ),;
                            if( !Empty( oGetCaducidad ), oGetCaducidad:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid() }
+                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -5620,29 +5595,18 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                MsgStop( Trim( ( dbfArticulo )->mComent ) )
             end if
 
-            if !Empty( cProveedor )
-               aTmp[ _CCODPRV ]  := cProveedor
-               aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( cProveedor ) )
-               aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, Padr( cProveedor, 12 ) , dbfArtPrv ), 18 )
+            /*
+            Metemos el proveedor habitual--------------------------------------
+            */
 
-if ( IsMuebles() )
-               aGet[ _CCODPRV ]:cText( cProveedor )
-               aGet[ _CNOMPRV ]:cText( AllTrim( RetProvee( cProveedor ) ) )
-               aGet[ _CREFPRV ]:cText( Padr( cRefPrvArt( cCodArt, Padr( cProveedor, 12 ) , dbfArtPrv ), 18 ) )
-end if
-
+            if !Empty( aGet[ _CCODPRV ] )
+               aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+               aGet[ _CCODPRV ]:lValid()
             else
-               aTmp[ _CCODPRV ]  := (dbfArticulo)->cPrvHab
-               aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( (dbfArticulo)->cPrvHab ) )
-               aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
-
-if ( IsMuebles() )
-               aGet[ _CCODPRV ]:cText( (dbfArticulo)->cPrvHab )
-               aGet[ _CNOMPRV ]:cText( AllTrim( RetProvee( (dbfArticulo)->cPrvHab ) ) )
-               aGet[ _CREFPRV ]:cText( Padr( cRefPrvArt( cCodArt, ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 ) )
-end if
-
+               aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab   
             end if
+
+            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
 
             /*
             Lotes
@@ -5706,13 +5670,6 @@ end if
                   aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
                end if
 
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( cCodFra( cCodFam, dbfFamilia ) )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := cCodFra( cCodFam, dbfFamilia )
-               end if
-
             else
 
                if aGet[ _CCODFAM ] != nil
@@ -5723,11 +5680,6 @@ end if
                if aGet[ _CGRPFAM ] != nil
                   aGet[ _CGRPFAM ]:cText( Space( 3 ) )
                   aGet[ _CGRPFAM ]:lValid()
-               end if
-
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( Space( 3 ) )
-                  aGet[ _CCODFRA ]:lValid()
                end if
 
             end if
@@ -5839,21 +5791,6 @@ end if
                end if
 
                aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
-
-            end if
-
-            /*
-            Código de la frase publicitaria------------------------------------
-            */
-
-            if !Empty( ( dbfArticulo )->cCodFra )
-
-               if aGet[ _CCODFRA ] != nil
-                  aGet[ _CCODFRA ]:cText( ( dbfArticulo )->cCodFra )
-                  aGet[ _CCODFRA ]:lValid()
-               else
-                  aTmp[ _CCODFRA ]  := ( dbfArticulo )->cCodFra
-               end if
 
             end if
 

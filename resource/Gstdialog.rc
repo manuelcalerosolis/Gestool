@@ -5369,9 +5369,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 5, 158, 68, 10
   CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 171, 49, 10
   CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 184, 71, 10
-  CONTROL "Imprimir frase publicitaria", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 198, 89, 10
-  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 100, 197, 60, 11
-  CONTROL "", 321, "Edit", WS_BORDER, 161, 197, 194, 11
   CONTROL "Fecha de entrega", 901, "Static", WS_GROUP, 5, 30, 61, 8
   CONTROL "Imagen", -1, "Static", WS_GROUP, 5, 102, 73, 8
   CONTROL "Grupo de familia", -1, "Static", WS_GROUP, 5, 43, 55, 8
@@ -16214,6 +16211,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 151, "Edit", WS_BORDER, 161, 70, 194, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 100, 82, 60, 11
   CONTROL "", 161, "Edit", WS_BORDER, 161, 82, 194, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 105, 94, 60, 11
+  CONTROL "", 201, "Edit", WS_BORDER, 161, 94, 194, 11
   CONTROL "Linea de artículo compuesto", 331, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 140, 106, 10
   CONTROL "Linea de artículo componente", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 151, 107, 10
   CONTROL "Precio en escandallo", 340, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 162, 79, 10
@@ -16227,6 +16226,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Grupo de familia", -1, "Static", WS_GROUP, 5, 73, 55, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 5, 85, 55, 8
   CONTROL "Utilizar el volumen en el cálculo de impuestos especiales", 411, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 129, 192, 10
+  CONTROL "Proveedor", -1, "Static", WS_GROUP, 5, 97, 55, 8
 }
 
 LCAJAS DIALOG DISCARDABLE 51, -26, 321, 119
