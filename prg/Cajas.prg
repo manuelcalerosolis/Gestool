@@ -1990,13 +1990,13 @@ FUNCTION rxCajas( cPath, oMeter )
       ( dbfCajT )->( __dbPack() )
 
       ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "CCODCAJ", "Upper( CCODCAJ )", {|| Upper( Field->CCODCAJ ) }, ) )
+      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "cCodCaj", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
 
       ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "CNOMCAJ", "Upper( CNOMCAJ )", {|| Upper( Field->CNOMCAJ ) } ) )
+      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "cNomCaj", "Upper( cNomCaj )", {|| Upper( Field->cNomCaj ) } ) )
 
       ( dbfCajT )->( ordCondSet("!Deleted() .and. !Field->lNoArq", {|| !Deleted() .and. !Field->lNoArq }  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "lNoArq", "Upper( CCODCAJ )", {|| Upper( Field->CCODCAJ ) }, ) )
+      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "lNoArq", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
 
       ( dbfCajT )->( dbCloseArea() )
 
@@ -3570,7 +3570,7 @@ Return ( nCajas )
 
 Function EdtCajas( cCodigoCaja, lOpenBrowse )
 
-   local nLevel         := nLevelUsr("01040" )
+   local nLevel         := nLevelUsr( "01040" )
 
    DEFAULT cCodigoCaja  := oUser():cCaja()
    DEFAULT lOpenBrowse  := .f.
@@ -3608,25 +3608,36 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-Function cNumeroSesionCaja( cCodCaj, dbfCajaT, dbfTurnoT )
+Function cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
 
    local cNumeroSesion  := space( 6 )
 
-   while .t.
+   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCaja )
 
-      if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajaT )
-         cNumeroSesion  := ( dbfCajT )->cNumTur
-         if !dbSeekInOrd( cNumeroSesion + RetSufEmp() + cCodCaj, "cCajTur", dbfTurnoT )
-            exit 
-         else 
-            if dbLock( dbfCajT )
-               ( dbfCajT )->cNumTur := str( val( ( dbfCajT )->cNumTur + 1 ), 6 )
-               ( dbfCajT )->( dbUnLock() )
+      while .t.
+
+         cNumeroSesion  := ( dbfCaja )->cNumTur
+
+         if dbSeekInOrd( cNumeroSesion + RetSufEmp() + cCodCaj, "cNumTur", dbfTurno )
+
+            if dbLock( dbfCaja )
+               ( dbfCaja )->cNumTur := str( val( ( dbfCaja )->cNumTur ) + 1, 6 )
+               ( dbfCaja )->( dbUnLock() )
             end if
-         end if 
-      end if
 
-   end while
+         else 
+
+            Return ( cNumeroSesion ) 
+
+         end if 
+      
+      end while
+
+   else 
+
+      msgStop( "Código de caja " + cCodCaj + " no encontrada." )
+
+   end if
 
 Return ( cNumeroSesion )
 
