@@ -9799,23 +9799,22 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 151, "Edit", WS_BORDER, 161, 79, 194, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 100, 91, 60, 11
   CONTROL "", 161, "Edit", WS_BORDER, 161, 91, 194, 11
-  CONTROL "", 300, "Edit", ES_RIGHT|WS_BORDER, 100, 104, 100, 11
-  CONTROL "Imprimir frase publicitaria", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 116, 89, 10
-  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 100, 127, 60, 11
-  CONTROL "", 321, "Edit", WS_BORDER, 161, 127, 194, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 100, 104, 60, 11
+  CONTROL "", 201, "Edit", WS_BORDER, 161, 104, 194, 11
+  CONTROL "", 300, "Edit", ES_RIGHT|WS_BORDER, 100, 117, 100, 11
   CONTROL "Nº Línea", -1, "Static", WS_GROUP, 5, 4, 30, 8
   CONTROL "Precio vta. recomendado", -1, "Static", WS_GROUP, 5, 55, 80, 8
   CONTROL "Fecha de entrega", -1, "Static", WS_GROUP, 5, 29, 66, 8
   CONTROL "Imágen ", -1, "Static", WS_GROUP, 5, 68, 73, 8
   CONTROL "Grupo de familia", -1, "Static", WS_GROUP, 5, 82, 55, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 5, 94, 55, 8
-  CONTROL "Margen", 301, "Static", WS_GROUP, 5, 106, 24, 8
-  CONTROL "Frase publicitaria", -1, "Static", WS_GROUP, 5, 130, 69, 8
-  CONTROL "Línea de escandallo", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 143, 78, 10
-  CONTROL "Precio en escandallo", 340, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 156, 79, 10
-  CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 5, 170, 68, 10
-  CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 183, 49, 10
-  CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 196, 71, 10
+  CONTROL "Margen", 301, "Static", WS_GROUP, 5, 119, 24, 8
+  CONTROL "Línea de escandallo", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 130, 78, 10
+  CONTROL "Precio en escandallo", 340, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 143, 79, 10
+  CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 5, 157, 68, 10
+  CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 170, 49, 10
+  CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 183, 71, 10
+  CONTROL "Proveedor", -1, "Static", WS_GROUP, 5, 107, 55, 8
 }
 
 INF_CLIATP DIALOG DISCARDABLE -2, -14, 406, 244

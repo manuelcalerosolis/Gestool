@@ -2390,6 +2390,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Provee"
    oDataTable:cName        := cPatPrv() + "Provee"
    oDataTable:cDataFile    := cPatPrv( , .t. ) + "Provee.Dbf"
    oDataTable:cIndexFile   := cPatPrv( , .t. ) + "Provee.Cdx"
