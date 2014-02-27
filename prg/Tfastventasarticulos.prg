@@ -489,7 +489,11 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cHorDoc",     "C",  2, 0, {|| "" },   "Hora del documento"                      )
    ::AddField( "cMinDoc",     "C",  2, 0, {|| "" },   "Minutos del documento"                   )
 
+   ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "Código proveedor lineas"                 )
+   ::AddField( "cNomPrv",     "C", 80, 0, {|| "@!" }, "Nombre proveedor lineas"                 )
+
    ::AddTmpIndex( "cCodArt", "cCodArt" )
+   ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
 
 RETURN ( Self )
 
@@ -887,6 +891,9 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:cValPr1    := ::oSatCliL:cValPr1
                   ::oDbf:cValPr2    := ::oSatCliL:cValPr2
 
+                  ::oDbf:cCodPrv    := ::oSatCliL:cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ::oSatCliL:cCodPrv, ::oDbfPrv:cAlias )
+
                   ::oDbf:cCodFam    := ::oSatCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oSatCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
@@ -1035,6 +1042,9 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cValPr1    := ::oPreCliL:cValPr1
                   ::oDbf:cValPr2    := ::oPreCliL:cValPr2
 
+                  ::oDbf:cCodPrv    := ::oPreCliL:cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ::oPreCliL:cCodPrv, ::oDbfPrv:cAlias )
+
                   ::oDbf:cCodFam    := ::oPreCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPreCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
@@ -1169,6 +1179,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:cCodArt    := ::oPedCliL:cRef
                   ::oDbf:cNomArt    := ::oPedCliL:cDetalle
+
+                  ::oDbf:cCodPrv    := ::oPedCliL:cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ::oPedCliL:cCodPrv, ::oDbfPrv:cAlias )
 
                   ::oDbf:cCodFam    := ::oPedCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
@@ -1316,6 +1329,9 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodArt    := ::oAlbCliL:cRef
                   ::oDbf:cNomArt    := ::oAlbCliL:cDetalle
 
+                  ::oDbf:cCodPrv    := ::oAlbCliL:cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ::oAlbCliL:cCodPrv, ::oDbfPrv:cAlias )
+
                   ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
@@ -1459,6 +1475,9 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cCodArt    := ::oFacCliL:cRef
                   ::oDbf:cNomArt    := ::oFacCliL:cDetalle
 
+                  ::oDbf:cCodPrv    := ::oFacCliL:cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ::oFacCliL:cCodPrv, ::oDbfPrv:cAlias )
+
                   ::oDbf:cCodFam    := ::oFacCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oFacCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
@@ -1598,6 +1617,9 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
                   ::oDbf:cCodArt    := ::oFacRecL:cRef
                   ::oDbf:cNomArt    := ::oFacRecL:cDetalle
+
+                  ::oDbf:cCodPrv    := ::oFacRecL:cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ::oFacRecL:cCodPrv, ::oDbfPrv:cAlias )
 
                   ::oDbf:cCodFam    := ::oFacRecL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oFacRecL:nIva )

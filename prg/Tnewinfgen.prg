@@ -16,6 +16,8 @@ memvar cGrupoRutaDesde
 memvar cGrupoRutaHasta
 memvar cGrupoAgenteDesde
 memvar cGrupoAgenteHasta
+memvar cGrupoProveedorDesde
+memvar cGrupoProveedorHasta
 
 //---------------------------------------------------------------------------//
 
@@ -3822,21 +3824,36 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoProveedor )
+
+      public cGrupoProveedorDesde      := ::oGrupoProveedor:Cargo:Desde
+      public cGrupoProveedorHasta      := ::oGrupoProveedor:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de proveedor",  "GetHbVar('cGrupoProveedorDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de proveedor",  "GetHbVar('cGrupoProveedorHasta')" )
+
    end if
+
    if !Empty( ::oGrupoOperacion )
    end if
+
    if !Empty( ::oGrupoSeccion )
    end if
+
    if !Empty( ::oGrupoAlmacen )
    end if
+
    if !Empty( ::oGrupoMaquina )
    end if
+
    if !Empty( ::oGrupoOperario )
    end if
+
    if !Empty( ::oGrupoFpago )
    end if
+
    if !Empty( ::oGrupoBanco )
    end if
+
    if !Empty( ::oGrupoAgente )
 
       public cGrupoAgenteDesde         := ::oGrupoAgente:Cargo:Desde
@@ -3846,30 +3863,43 @@ Method AddVariable() CLASS TNewInfGen
       ::oFastReport:AddVariable(       "Informe", "Hasta código de agente",  "GetHbVar('cGrupoAgenteHasta')" )
 
    end if
+
    if !Empty( ::oGrupoUsuario )
    end if
+
    if !Empty( ::oGrupoCaja )
    end if
+
    if !Empty( ::oGrupoTransportista )
    end if
+
    if !Empty( ::oGrupoGCliente )
    end if
+
    if !Empty( ::oGrupoGProveedor )
    end if
+
    if !Empty( ::oGrupoObra )
    end if
+
    if !Empty( ::oGrupoFamilia )
    end if
+
    if !Empty( ::oGrupoGFamilia )
    end if
+
    if !Empty( ::oGrupoTArticulo )
    end if
+
    if !Empty( ::oGrupoFabricante )
    end if
+
    if !Empty( ::oGrupoTOperacion )
    end if
+
    if !Empty( ::oGrupoCategoria )
    end if
+
    if !Empty( ::oGrupoRuta )
 
       public cGrupoRutaDesde           := ::oGrupoRuta:Cargo:Desde
@@ -3879,14 +3909,19 @@ Method AddVariable() CLASS TNewInfGen
       ::oFastReport:AddVariable(       "Informe", "Hasta código de ruta",  "GetHbVar('cGrupoRutaHasta')" )
 
    end if
+
    if !Empty( ::oGrupoFacturas )
    end if
+
    if !Empty( ::oGrupoFacturasCompras )
    end if
+
    if !Empty( ::oGrupoTemporada )
    end if
+
    if !Empty( ::oGrupoIVA )
    end if
+   
    if !Empty( ::oGrupoSerie )
    end if
 
