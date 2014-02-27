@@ -7503,6 +7503,8 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
 
       else
 
+         aGet[ _CSERFAC ]:cText( ( dbfAlbPrvT )->cSerAlb )
+
          aGet[ _CCODPRV ]:cText( ( dbfAlbPrvT )->cCodPrv )
          aGet[ _CCODPRV ]:lValid()
 
