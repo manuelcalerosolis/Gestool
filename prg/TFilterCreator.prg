@@ -109,7 +109,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( ) CLASS TFilterCreator
+METHOD New() CLASS TFilterCreator
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
 
@@ -239,9 +239,11 @@ RETURN ( ::bExpresionFilter != nil )
 
 METHOD FiltersName() CLASS TFilterCreator
 
-   ::SetFiltersName( ::oFilterDatabase:FiltersName() )
+   local aFilters             := ::oFilterDatabase:FiltersName()
 
-RETURN ( Self )
+   ::SetFiltersName( aFilters )
+
+RETURN ( aFilters )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -304,6 +306,8 @@ CLASS TFilterDialog
    DATA cResource                      INIT "FastFiltros"
    DATA cIcon                          INIT "Funnel_48_alpha" // Replace2_48_alpha
 
+   DATA cFilterName                    INIT ""
+
 	DATA oFilterCreator
    DATA oFilterDatabase
 
@@ -351,6 +355,8 @@ RETURN ( Self )
 
 METHOD Dialog( cFilterName ) CLASS TFilterDialog
 
+   ::cFilterName        := cFilterName
+
    ::SetExpresion()
 
    ::HeaderDialog()
@@ -361,7 +367,7 @@ METHOD Dialog( cFilterName ) CLASS TFilterDialog
    
    ::AlmacenadosDialog()   
 
-   ::ActivateDialog( cFilterName )
+   ::ActivateDialog()
 
 RETURN ( Self )
 
@@ -440,7 +446,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateDialog( cFilterName ) CLASS TFilterDialog
+METHOD ActivateDialog() CLASS TFilterDialog
 
       /*
       Botones de los filtros almacenados---------------------------------------
@@ -458,7 +464,7 @@ METHOD ActivateDialog( cFilterName ) CLASS TFilterDialog
 
       ::oDlg:AddFastKey( VK_F5, {|| ::EndDialog() } )
 
-   ::oDlg:Activate( , , , .t., , .t., {|| ::InitDialog( cFilterName ) } )
+   ::oDlg:Activate( , , , .t., , .t., {|| ::InitDialog() } )
 
    ::oBmp:End()
 
@@ -466,10 +472,10 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD InitDialog( cFilterName ) CLASS TFilterDialog
+METHOD InitDialog() CLASS TFilterDialog
 
-   if !Empty( cFilterName )   
-      ::Load( cFilterName )
+   if !Empty( ::cFilterName )   
+      ::Load( ::cFilterName )
    end if          
 
    if !::Ready()
@@ -505,7 +511,7 @@ RETURN ( Self )
 METHOD Save() CLASS TFilterDialog
 
    if ::oFilterCreator:BuildFilter( ::oBrwFilter:aFilter )
-      ::oFilterDatabase:Save()
+      ::oFilterDatabase:Save( ::cFilterName )
    end if 
 
 RETURN ( Self )
@@ -522,9 +528,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Load( cFilterName ) CLASS TFilterDialog
+METHOD Load() CLASS TFilterDialog
 
-   local aArrayFilter   := ::oFilterDatabase:ArrayFilter( cFilterName ) 
+   local aArrayFilter   := ::oFilterDatabase:ArrayFilter( ::cFilterName ) 
       
    if !Empty( aArrayFilter )
       ::SetFilter( aArrayFilter )
@@ -1210,7 +1216,11 @@ RETURN ( aFilter )
 
 //----------------------------------------------------------------------------//
 
-METHOD Save() CLASS TFilterDatabase
+METHOD Save( cFilterName ) CLASS TFilterDatabase
+
+   if !empty( cFilterName )
+      ::cFilterName     := padr( cFilterName, 100 )
+   end if 
 
    if ::Dialog()
 
@@ -1333,7 +1343,7 @@ RETURN ( aArrayFilter )
 METHOD SeekFullKey( cFilterName ) CLASS TFilterDatabase
    
    if !Empty( cFilterName )
-      RETURN ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + Upper( cFilterName ) ) )
+      RETURN ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + upper( alltrim( cFilterName ) ) ) )
    end if
 
 RETURN .t.

@@ -1007,6 +1007,23 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          OF       oFld:aDialogs[ 1 ]
 
       /*
+      Cajas____________________________________________________________________
+      */
+
+      REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oGetCaj ) ;
+         ID       280 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oGetCaj ) ) ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE GET oGetCaj VAR cGetCaj ;
+         ID       281 ;
+         WHEN     .f. ;
+         OF       oFld:aDialogs[ 1 ]
+
+      /*
       Pestaña de bancos--------------------------------------------------------
       */
 
@@ -1313,23 +1330,6 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
       REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
          ID       251 ;
 			WHEN 		.F. ;
-         OF       oFld:aDialogs[ 5 ]
-
-      /*
-		Cajas____________________________________________________________________
-		*/
-
-      REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oGetCaj ) ;
-         ID       280 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oGetCaj ) ) ;
-         OF       oFld:aDialogs[ 5 ]
-
-      REDEFINE GET oGetCaj VAR cGetCaj ;
-         ID       281 ;
-         WHEN     .f. ;
          OF       oFld:aDialogs[ 5 ]
 
       REDEFINE CHECKBOX aGet[_LRECIMP] VAR aTmp[_LRECIMP];
@@ -5289,6 +5289,8 @@ Function ValCheck( aGet, aTmp )
 
       aGet[ _DENTRADA ]:cText( GetSysDate() )
       aGet[ _CTURREC  ]:cText( cCurSesion( nil, .f. ) )
+      aGet[ _CCODCAJ  ]:cText( oUser():cCaja() )
+      aGet[ _CCODCAJ  ]:lValid()
 
       if aTmp[ _NIMPCOB ] == 0
          aGet[ _NIMPCOB ]:cText( aTmp[ _NIMPORTE ] )
@@ -5464,12 +5466,6 @@ function nNewReciboCliente( cNumFac, cTipRec, dbfFacCliP )
    ( dbfFacCliP )->( dbGoTo( nRec ) )
 
 return ( nCon )
-
-//------------------------------------------------------------------------//
-
-Function SetHeadEuro()
-
-Return nil
 
 //------------------------------------------------------------------------//
 

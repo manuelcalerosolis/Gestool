@@ -1412,7 +1412,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:SetFields( aItmFacPrv() )
-      oWndBrw:oActiveFilter:SetFilterType( ALB_PRV )
+      oWndBrw:oActiveFilter:SetFilterType( FAC_PRV )
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )

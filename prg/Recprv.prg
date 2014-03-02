@@ -87,6 +87,8 @@ static dbfCount
 static dbfDoc
 static dbfEmp
 static dbfBncPrv
+static dbfCajT
+
 static oMenu
 static cFiltroUsuario   := ""
 static lOldDevuelto     := .f.
@@ -151,6 +153,9 @@ STATIC FUNCTION OpenFiles( cPatEmp )
       USE ( cPatPrv() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBncPrv ) )
       SET ADSINDEX TO ( cPatPrv() + "PRVBNC.CDX" ) ADDITIVE
       SET TAG TO "cCodDef"
+
+      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
+      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
       oBandera          := TBandera():New
 
@@ -229,6 +234,9 @@ STATIC FUNCTION CloseFiles()
    if dbfBncPrv != nil
       ( dbfBncPrv )->( dbCloseArea() )
    end if
+   if dbfCajT != nil
+      ( dbfCajT )->( dbCloseArea() )
+   end if
 
    dbfFacPrvP  := nil
    dbfDiv      := nil
@@ -243,6 +251,7 @@ STATIC FUNCTION CloseFiles()
    dbfEmp      := nil
    dbfCount    := nil
    dbfBncPrv   := nil
+   dbfCajT     := nil 
 
    oWndBrw     := nil
 
@@ -709,10 +718,12 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
 
    local oDlg
    local oBmpDiv
+   local oGetCaj
+   local cGetCaj
    local oGetSubCta
    local cGetSubCta
-   local cPirDiv        := cPirDiv( aTmp[ _CDIVPGO ], dbfDiv )
-   local nDinDiv        := nRinDiv( aTmp[ _CDIVPGO ], dbfDiv )
+   local cPirDiv           := cPirDiv( aTmp[ _CDIVPGO ], dbfDiv )
+   local nDinDiv           := nRinDiv( aTmp[ _CDIVPGO ], dbfDiv )
    local oFld
    local oBmpGeneral
    local oBmpDevolucion
@@ -736,7 +747,7 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
          PROMPT   "&General",;
                   "Bancos",;
                   "Devolución" ;
-         DIALOGS  "Pgo_Prv_1",;
+         DIALOGS  "RecibosProveedoresGeneral",;
                   "RecibosProveedoresBancos",;
                   "Recibos_2"
 
@@ -844,6 +855,23 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
          ID       220 ;
          ON CHANGE( lValCheck( aGet, aTmp ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 1 ]
+
+      /*
+      Cajas____________________________________________________________________
+      */
+
+      REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oGetCaj ) ;
+         ID       280 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oGetCaj ) ) ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE GET oGetCaj VAR cGetCaj ;
+         ID       281 ;
+         WHEN     .f. ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE CHECKBOX aGet[ _LNOTARQUEO ] VAR aTmp[ _LNOTARQUEO ];
@@ -1062,6 +1090,8 @@ Static Function lValCheck( aGet, aTmp )
    if aTmp[ _LCOBRADO ]
       aGet[ _DENTRADA ]:cText( GetSysDate() )
       aGet[ _CTURREC  ]:cText( cCurSesion( nil, .f. ) )
+      aGet[ _CCODCAJ  ]:cText( oUser():cCaja() )      
+      aGet[ _CCODCAJ  ]:lValid()
    else
       aGet[ _DENTRADA ]:cText( Ctod( "" ) )
    end if

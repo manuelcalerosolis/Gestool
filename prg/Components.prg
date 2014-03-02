@@ -67,6 +67,15 @@ CLASS PrintSeries
    METHOD DocumentoInicio()            INLINE ( ::oSerieInicio:Value() + str( ::oDocumentoInicio:Value(), 9 ) + ::oSufijoInicio:Value() )
    METHOD DocumentoFin()               INLINE ( ::oSerieFin:Value() + str( ::oDocumentoFin:Value(), 9 ) + ::oSufijoFin:Value() )
 
+   // Metdos auxiliares para comparaciones -----------------------------------
+
+   METHOD InRangeDocumento( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::DocumentoInicio() .and. uValue <= ::DocumentoFin() ) )
+   
+   METHOD InRangeCliente( uValue )        INLINE ( empty( uValue ) .or. ( uValue >= ::oClienteInicio:Value() .and. uValue <= ::oClienteFin:Value() ) )
+   METHOD InRangeGrupoCliente( uValue )   INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoClienteInicio:Value() .and. uValue <= ::oGrupoClienteFin:Value() ) )
+
+   METHOD InRangeFecha( uValue )          INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -204,6 +213,7 @@ METHOD StartPrint() CLASS PrintSeries
    end if 
 
    ::oDlg:enable()
+   ::oDlg:end( IDOK )
 
 RETURN ( Self )
 

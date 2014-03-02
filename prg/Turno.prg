@@ -2464,8 +2464,6 @@ Method CreateTurno( oDlg )
 
    // Creamos el registros para el turno---------------------------------------
 
-   msgalert( ::GetCurrentTurno(), "CreateTurno" )
-
    if empty( ::GetCurrentTurno() )
 
       ::CreateCabeceraTruno()
@@ -11313,8 +11311,6 @@ METHOD GetCurrentTurno( lDelega )
 
    DEFAULT  lDelega  := .t.
 
-   msgalert( ::GetLastOpen(), "::GetLastOpen()" )
-
    ::cCurTurno       := ::GetLastOpen()
 
    if !lDelega
@@ -11334,7 +11330,6 @@ METHOD GoCurrentTurno( lDelega )
 RETURN ( ::oDbf:SeekInOrd( ::cCurTurno, "cNumTur" ) )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD MailArqueo( cCurrentTruno )
 

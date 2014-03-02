@@ -269,9 +269,12 @@ CLASS TShell FROM TMdiChild
    Method ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
    Method HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
 
-   Method AddFilter()                        INLINE ( if( !Empty( ::oActiveFilter ), ::oActiveFilter:AddFilter(), ) )
-   Method EditFilter()                       INLINE ( if( !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ), ::oActiveFilter:EditFilter( ::oWndBar:GetComboFilter() ), ) )
-   Method KillFilter()                       INLINE ( if( !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ), ( ::oActiveFilter:KillFilter(), ::oWndBar:HideButtonFilter(), ::oWndBar:HideEditButtonFilter(), ), ) )
+   Method AddFilter()                        INLINE ( if(   !Empty( ::oActiveFilter ),;
+                                                            ( ::oActiveFilter:AddFilter(), ::EnableComboFilter( ::oActiveFilter:FiltersName() ) ), ) )
+   Method EditFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
+                                                            ( ::oActiveFilter:EditFilter( ::oWndBar:GetComboFilter() ), ::ChgFilter() ), ) )
+   Method KillFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
+                                                            ( ::oActiveFilter:KillFilter(), ::oWndBar:HideButtonFilter(), ::oWndBar:HideEditButtonFilter(), ), ) )
 
    Method CreateData()
    Method OpenData()
@@ -524,8 +527,8 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
       ::oWndBar:EnableComboBox( ::aPrompt )
 
       if !Empty( ::oActiveFilter:Ready() )
-         ::EnableComboFilter(       ::oActiveFilter:aFiltersName )
-         ::SetDefaultComboFilter(   ::oActiveFilter:aFiltersName )
+         ::EnableComboFilter( ::oActiveFilter:aFiltersName )
+         ::SetDefaultComboFilter()
          ::ShowAddButtonFilter()
       end if 
 

@@ -138,7 +138,7 @@ CLASS TAcceso
 
    Method DisableComboFilter()            INLINE ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Hide() ), ) )
    Method EnableComboFilter( aItems )
-   Method SetDefaultComboFilter( aItems )
+   Method SetDefaultComboFilter()         INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:Set( txtFilters ), ) )
    Method SetComboFilter( cItem )         INLINE ( if( !Empty( ::oComboFilter ) .and. !Empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
 
    Method SetGetChange( bBlock )          INLINE ( if( !Empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) )
@@ -267,13 +267,9 @@ Method CreateTree( oTree, aAccesos )
    for n := 1 to len( aAccesos )
 
       if len( aAccesos[ n ]:aAccesos ) > 0
-
          ::CreateTree( ::AddTree( oTree, aAccesos[ n ] ), aAccesos[ n ]:aAccesos )
-
       else
-
          ::AddTree( oTree, aAccesos[ n ] )
-
       end if
 
    next
@@ -1016,18 +1012,6 @@ Method EnableComboFilter( aItems )
       ::oComboFilter:Show()
       ::oComboFilter:Enable()
 
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method SetDefaultComboFilter( aItems )
-
-   local aItem
-
-   if !Empty( ::oComboFilter )
-      ::oComboFilter:Set( txtFilters )
    end if
 
 Return ( Self )

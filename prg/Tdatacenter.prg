@@ -1673,6 +1673,7 @@ METHOD BuildData()
 
    oDataTable              := TDataTable()
    oDataTable:cArea        := "Divisas"
+   oDataTable:cPath        := cPatDat()
    oDataTable:cName        := cPatDat() + "Divisas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Divisas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Divisas.Cdx"
@@ -4593,6 +4594,7 @@ CLASS TDataTable
 
    DATA  cName
    DATA  cArea
+   DATA  cPath
    DATA  cDataFile
    DATA  cIndexFile
    DATA  cDescription   INIT ""
@@ -4602,6 +4604,10 @@ CLASS TDataTable
    DATA  bSyncFile   
    DATA  bCreateFile
    DATA  bCreateIndex   
+
+   METHOD Name()        INLINE ( ::cPath + ::cArea )
+   METHOD NameTable()   INLINE ( ::cArea + ".Dbf" )
+   METHOD NameIndex()   INLINE ( ::cArea + ".Cdx" )
 
    METHOD cFileName()   INLINE ( Upper( cNoPath( ::cName ) ) )
    METHOD cAreaName()   INLINE ( if( lAIS(), ::cFileName() + ".Dbf", ::cDataFile ) )
@@ -5018,3 +5024,36 @@ ENDCLASS
    Return ( .t. )
 
 //---------------------------------------------------------------------------//
+/*
+   METHOD OpenTDbf( cDataTable, nView ) CLASS TDataView
+
+      local oDbf
+      local lOpen
+      local oDataTable
+
+      oDataTable        := TDataCenter():ScanDataTable( cDataTable )
+
+      if !empty( oDataTable )
+
+         DATABASE NEW oDbf PATH ( oDataTable:cPath ) FILE ( oDataTable:NameTable() ) VIA ( cDriver() ) SHARED INDEX ( oDataTable:NameIndex() )
+         lOpen          := !neterr()
+         if lOpen
+            ::AddView( oDataTable:cArea, oDbf, nView )
+         end if 
+
+      else 
+
+         msgStop( "No puedo encontrar la tabla " + cDataTable )   
+
+         Return ( .f. )
+
+      end if
+
+   Return ( .t. )
+*/
+
+//---------------------------------------------------------------------------//
+
+
+
+

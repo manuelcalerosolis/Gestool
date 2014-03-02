@@ -13132,16 +13132,12 @@ Static Function ImprimirSeriesAlbaranes()
 
    oPrinter:bInit    := {||   ( TDataview():AlbaranesClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
-   oPrinter:bWhile   := {||   TDataView():AlbaranesClientesId( nView ) >= oPrinter:DocumentoInicio()                 .and. ;
-                              TDataView():AlbaranesClientesId( nView ) <= oPrinter:DocumentoFin()                    .and. ;
-                              ( TDataView():AlbaranesClientes( nView ) )->dFecAlb >= oPrinter:oFechaInicio:Value()   .and. ;
-                              ( TDataView():AlbaranesClientes( nView ) )->dFecAlb <= oPrinter:oFechaFin:Value()      .and. ;
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():AlbaranesClientesId( nView ) )                  .and. ;
+                              oPrinter:InRangeFecha( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )           .and. ;
                               ( TDataView():AlbaranesClientes( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   ( TDataView():AlbaranesClientes( nView ) )->cCodCli >= oPrinter:oClienteInicio:Value() .and. ;
-                              ( TDataView():AlbaranesClientes( nView ) )->cCodCli <= oPrinter:oClienteFin:Value()    .and. ;
-                              retGrpCli( ( TDataView():AlbaranesClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) >= oPrinter:oGrupoClienteInicio:Value() .and. ;
-                              retGrpCli( ( TDataView():AlbaranesClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) <= oPrinter:oGrupoClienteInicio:Value() }    
+   oPrinter:bFor     := {||   oPrinter:InRangeCliente( ( TDataView():AlbaranesClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeGrupoCliente( retGrpCli( ( TDataView():AlbaranesClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( TDataView():AlbaranesClientes( nView ) )->( dbSkip() ) }
 

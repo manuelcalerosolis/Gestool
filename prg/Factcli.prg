@@ -620,7 +620,9 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    */
 
    if lVisualDocumento( cCodDoc, dbfDoc )
+
       PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
+
    else
 
       /*
@@ -12866,7 +12868,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Total neto",                          "GetHbVar('nTotNet')" )
    oFr:AddVariable(     "Facturas",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
    oFr:AddVariable(     "Facturas",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "Facturas",             "Total " + cImp(),                    "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Facturas",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Facturas",             "Total RE",                            "GetHbVar('nTotReq')" )
    oFr:AddVariable(     "Facturas",             "Total página",                        "GetHbVar('nTotPag')" )
    oFr:AddVariable(     "Facturas",             "Total retención",                     "GetHbVar('nTotRet')" )
@@ -12881,21 +12883,21 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Total descuento por entrega inicial", "GetHbVar('nTotDtoEnt')" )
    oFr:AddVariable(     "Facturas",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
 
-   oFr:AddVariable(     "Facturas",             "Bruto primer tipo de " + cImp(),     "GetHbArrayVar('aIvaUno',1)" )
-   oFr:AddVariable(     "Facturas",             "Bruto segundo tipo de " + cImp(),    "GetHbArrayVar('aIvaDos',1)" )
-   oFr:AddVariable(     "Facturas",             "Bruto tercer tipo de " + cImp(),     "GetHbArrayVar('aIvaTre',1)" )
-   oFr:AddVariable(     "Facturas",             "Base primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',2)" )
-   oFr:AddVariable(     "Facturas",             "Base segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',2)" )
-   oFr:AddVariable(     "Facturas",             "Base tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',2)" )
-   oFr:AddVariable(     "Facturas",             "Porcentaje primer tipo " + cImp(),   "GetHbArrayVar('aIvaUno',3)" )
-   oFr:AddVariable(     "Facturas",             "Porcentaje segundo tipo " + cImp(),  "GetHbArrayVar('aIvaDos',3)" )
-   oFr:AddVariable(     "Facturas",             "Porcentaje tercer tipo " + cImp(),   "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable(     "Facturas",             "Bruto primer tipo de " + cImp(),     	"GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable(     "Facturas",             "Bruto segundo tipo de " + cImp(),    	"GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable(     "Facturas",             "Bruto tercer tipo de " + cImp(),     	"GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable(     "Facturas",             "Base primer tipo de " + cImp(),      	"GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable(     "Facturas",             "Base segundo tipo de " + cImp(),     	"GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable(     "Facturas",             "Base tercer tipo de " + cImp(),      	"GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable(     "Facturas",             "Porcentaje primer tipo " + cImp(),   	"GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable(     "Facturas",             "Porcentaje segundo tipo " + cImp(),  	"GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable(     "Facturas",             "Porcentaje tercer tipo " + cImp(),   	"GetHbArrayVar('aIvaTre',3)" )
    oFr:AddVariable(     "Facturas",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
    oFr:AddVariable(     "Facturas",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
    oFr:AddVariable(     "Facturas",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
-   oFr:AddVariable(     "Facturas",             "Importe primer tipo " + cImp(),      "GetHbArrayVar('aIvaUno',8)" )
-   oFr:AddVariable(     "Facturas",             "Importe segundo tipo " + cImp(),     "GetHbArrayVar('aIvaDos',8)" )
-   oFr:AddVariable(     "Facturas",             "Importe tercer tipo " + cImp(),      "GetHbArrayVar('aIvaTre',8)" )
+   oFr:AddVariable(     "Facturas",             "Importe primer tipo " + cImp(),      	"GetHbArrayVar('aIvaUno',8)" )
+   oFr:AddVariable(     "Facturas",             "Importe segundo tipo " + cImp(),     	"GetHbArrayVar('aIvaDos',8)" )
+   oFr:AddVariable(     "Facturas",             "Importe tercer tipo " + cImp(),      	"GetHbArrayVar('aIvaTre',8)" )
    oFr:AddVariable(     "Facturas",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',9)" )
    oFr:AddVariable(     "Facturas",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',9)" )
    oFr:AddVariable(     "Facturas",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',9)" )
@@ -12938,9 +12940,10 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
 
-   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   "CallHbFunc('cFacturaClienteDireccionSAT')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
 
-   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             "CallHbFunc('nStockLineaFasCli')" )
+   // oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             								"CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
 Return nil
 
@@ -23485,3 +23488,16 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
 //---------------------------------------------------------------------------//
+
+Function FacturaClienteLineaOrdSetFocus( cOrderName )
+
+	DEFAULT cOrderName 	:= "nNumRef"
+
+	if !empty( dbfFacCliL ) .and. ( dbfFacCliL )->( used() )
+		( dbfFacCliL )->( ordSetFocus( cOrderName ) )
+	end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
