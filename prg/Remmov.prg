@@ -463,7 +463,7 @@ METHOD Activate()
 
       DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( TMovimientoAlmacenLabelGenerator():Create() ) ;
+         ACTION   ( TMovimientoAlmacenLabelGenerator():Create( Self ) ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
@@ -5477,8 +5477,6 @@ RETURN ( .t. )
 
 CLASS TMovimientoAlmacenLabelGenerator FROM TLabelGenerator
 
-   DATA oLabelGenerator
-
    METHOD Create()
 
    METHOD ValoresDefecto()
@@ -5487,13 +5485,18 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Create() CLASS TMovimientoAlmacenLabelGenerator
+METHOD Create( oParent ) CLASS TMovimientoAlmacenLabelGenerator
 
-   MsgStop( "entro en el metodo create desde movimientos" )
+   ::oParent               := oParent
+   ::lMovimientoAlmacen    := .t.
+
+   ::nRecno                := ::oParent:oDbf:Recno()
 
    ::ValoresDefecto()
 
-   ::Resource()
+   ::Resource( ::oParent, .t. )
+
+   ::oParent:oDbf:GoTo( ::nRecno() )
 
 Return ( Self )
 
@@ -5501,16 +5504,18 @@ Return ( Self )
 
 METHOD ValoresDefecto() CLASS TMovimientoAlmacenLabelGenerator
 
-      ::cSerieInicio       := "A" //( dbfFacPrvT )->cSerFac
-      ::cSerieFin          := "A" //( dbfFacPrvT )->cSerFac
+      ::cSerieInicio       := ""
+      ::cSerieFin          := ""
 
-      ::nDocumentoInicio   := 1500 //( dbfFacPrvT )->nNumFac
-      ::nDocumentoFin      := 1500 //( dbfFacPrvT )->nNumFac
+      ::nDocumentoInicio   := ::oParent:oDbf:nNumRem
+      ::nDocumentoFin      := ::oParent:oDbf:nNumRem
 
-      ::cSufijoInicio      := "" //( dbfFacPrvT )->cSufFac
-      ::cSufijoFin         := "" //( dbfFacPrvT )->cSufFac
+      ::cSufijoInicio      := ::oParent:oDbf:cSufRem
+      ::cSufijoFin         := ::oParent:oDbf:cSufRem
 
-      //::oLabelGenerator:nRecno             := ( dbfFacPrvT )->( Recno() )
+      ::cTipoFormato       := "FC"
+
+      ::oDbfDoc            := ::oParent:oDbfDoc
 
       ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Movimiento almacen", Space( 3 ), cPatEmp() + "Empresa.Ini" )
       if len( ::cFormatoLabel ) < 3

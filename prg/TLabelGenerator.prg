@@ -12,6 +12,10 @@ CLASS TLabelGenerator
    Data oDlg
    Data oFld
 
+   Data oParent
+
+   Data lMovimientoAlmacen       INIT .f.
+
    Data oSerieInicio
    Data cSerieInicio
 
@@ -42,8 +46,6 @@ CLASS TLabelGenerator
 
    Data lClose
 
-   Data lErrorOnCreate
-
    Data oBtnSiguiente
    Data oBtnAnterior
    Data oBtnCancel
@@ -53,13 +55,23 @@ CLASS TLabelGenerator
    Data cFileTmpLabel
    Data cAreaTmpLabel
 
+   DATA oDbfDoc
+
+   DATA cTipoFormato
+
+   DATA oBtnPrp
+   DATA oBtnMod
+   DATA oBtnZoo
+
    Method Resource()
 
-   /*Method lCreateAuxiliar()
+   METHOD StartResource()
 
-   Method lCreateTemporal()
+   Method lCreateAuxiliar()
+
+   /*Method lCreateTemporal()
    Method PrepareTemporal( oFr )
-   Method DestroyTemporal()
+   Method DestroyTemporal()*/
 
    Method End()
 
@@ -77,13 +89,13 @@ CLASS TLabelGenerator
 
    Method EditLabel()
 
-   Method LoadAuxiliar()
+   /*Method LoadAuxiliar()
 
    Method lPrintLabels()
 
-   Method InitLabel( oLabel )
+   Method InitLabel( oLabel )*/
 
-   Method SelectColumn( oCombo )*/
+   Method SelectColumn( oCombo )
 
 END CLASS
 
@@ -91,18 +103,13 @@ END CLASS
 
 Method Resource() CLASS TLabelGenerator
 
-   local oBtnPrp
-   local oBtnMod
-   local oBtnZoo
    local oGetOrd
    local cGetOrd     := Space( 100 )
    local oCbxOrd
-   local cCbxOrd     := "CÃ³digo"
-   local aCbxOrd     := { "CÃ³digo", "Nombre" }
+   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "Código", "Nombre" }
 
-   //::New()
-
-   //if !::lErrorOnCreate .and. ::lCreateAuxiliar()
+   if ::lCreateAuxiliar()
 
       DEFINE DIALOG ::oDlg RESOURCE "SelectLabels_0"
 
@@ -127,9 +134,14 @@ Method Resource() CLASS TLabelGenerator
             SPINNER ;
             ON UP    ( UpSerie( ::oSerieInicio ) );
             ON DOWN  ( DwSerie( ::oSerieInicio ) );
-            VALID    ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" );
             UPDATE ;
             OF       ::oFld:aDialogs[ 1 ]
+
+            if ::lMovimientoAlmacen
+               ::oSerieInicio:bValid   := {|| .t. }
+            else
+               ::oSerieInicio:bValid   := {|| ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" ) }
+            end if
 
          REDEFINE GET ::oSerieFin VAR ::cSerieFin ;
             ID       110 ;
@@ -137,9 +149,14 @@ Method Resource() CLASS TLabelGenerator
             SPINNER ;
             ON UP    ( UpSerie( ::oSerieFin ) );
             ON DOWN  ( DwSerie( ::oSerieFin ) );
-            VALID    ( ::cSerieFin >= "A" .and. ::cSerieFin <= "Z" );
             UPDATE ;
             OF       ::oFld:aDialogs[ 1 ]
+
+            if ::lMovimientoAlmacen
+               ::oSerieFin:bValid   := {|| .t. }
+            else
+               ::oSerieFin:bValid   := {|| ( ::cSerieFin >= "A" .and. ::cSerieFin<= "Z" ) }
+            end if
 
          REDEFINE GET ::nDocumentoInicio ;
             ID       120 ;
@@ -181,8 +198,8 @@ Method Resource() CLASS TLabelGenerator
             BITMAP   "LUPA" ;
             OF       ::oFld:aDialogs[ 1 ]
 
-            //::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "FL" ) }
-            //::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "FL" ) }
+            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::oDbfDoc:cAlias, ::cTipoFormato ) }
+            ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::cTipoFormato ) }
 
          TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
@@ -201,7 +218,7 @@ Method Resource() CLASS TLabelGenerator
 
          /*
          Segunda caja de dialogo--------------------------------------------------
-         
+         */
 
          REDEFINE GET oGetOrd ;
             VAR      cGetOrd ;
@@ -250,17 +267,17 @@ Method Resource() CLASS TLabelGenerator
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( ::EditLabel() )
 
-         REDEFINE BUTTON oBtnMod;
+         REDEFINE BUTTON ::oBtnMod;
             ID       160 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         REDEFINE BUTTON oBtnZoo;
+         REDEFINE BUTTON ::oBtnZoo;
             ID       165 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         REDEFINE BUTTON oBtnPrp ;
+         REDEFINE BUTTON ::oBtnPrp ;
             ID       220 ;
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
@@ -287,7 +304,7 @@ Method Resource() CLASS TLabelGenerator
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "CÃ³digo"
+            :cHeader          := "Código"
             :bEditValue       := {|| ( ::cAreaTmpLabel )->cRef }
             :nWidth           := 80
             :cSortOrder       := "cRef"
@@ -340,34 +357,64 @@ Method Resource() CLASS TLabelGenerator
         Botones generales--------------------------------------------------------
         */
 
-        REDEFINE BUTTON ::oBtnAnterior ;          	// Boton anterior
+        REDEFINE BUTTON ::oBtnAnterior ;
             ID       20 ;
             OF       ::oDlg ;
-            ACTION   ( msginfo( "Anterior" ) )    	//::BotonAnterior() )
+            ACTION   ( ::BotonAnterior() )
 
-        REDEFINE BUTTON ::oBtnSiguiente ;         	// Boton de Siguiente
+        REDEFINE BUTTON ::oBtnSiguiente ;
             ID       30 ;
             OF       ::oDlg ;
-            ACTION   ( msginfo( "Siguiente" ) ) 	//::BotonSiguiente() )
+            ACTION   ( ::BotonSiguiente() )
 
-        REDEFINE BUTTON ::oBtnCancel ;            	// Boton de Siguiente
+        REDEFINE BUTTON ::oBtnCancel ;
             ID       IDCANCEL ;
             OF       ::oDlg ;
             ACTION   ( ::oDlg:End() )
 
-      //::oDlg:bStart  := {|| ::oBtnAnterior:Hide(), ::oFormatoLabel:lValid(), oBtnMod:Hide(), oBtnZoo:Hide(), oBtnPrp:Hide() }
+      ::oDlg:bStart  := {|| ::StartResource() }
 
       ACTIVATE DIALOG ::oDlg CENTER
 
-      //::End()
+      ::End()
 
-   //end if
+   end if
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-/*Method lCreateAuxiliar() CLASS TLabelGenerator
+METHOD StartResource() CLASS TLabelGenerator
+
+   if ::lMovimientoAlmacen
+
+      if !Empty( ::oSerieInicio )
+         ::oSerieInicio:Hide()
+      end if
+
+      if !Empty( ::oSerieFin )
+         ::oSerieFin:Hide()
+      end if
+
+   end if
+
+   if !Empty( ::oBtnAnterior ) 
+      ::oBtnAnterior:Hide()
+   end if
+
+   if !Empty( ::oFormatoLabel ) 
+      ::oFormatoLabel:lValid()
+   end if
+
+   ::oBtnMod:Hide()
+   ::oBtnZoo:Hide()
+   ::oBtnPrp:Hide()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method lCreateAuxiliar() CLASS TLabelGenerator
 
    local oBlock
    local oError
@@ -429,7 +476,7 @@ Method BotonSiguiente() CLASS TLabelGenerator
 
          else
 
-            ::LoadAuxiliar()
+            //::LoadAuxiliar()
 
             ::oFld:GoNext()
             ::oBtnAnterior:Show()
@@ -439,11 +486,11 @@ Method BotonSiguiente() CLASS TLabelGenerator
 
       case ::oFld:nOption == 2
 
-         if ::lPrintLabels()
+         //if ::lPrintLabels()
 
             SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
 
-         end if
+         //end if
 
    end case
 
@@ -451,7 +498,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lCreateTemporal() CLASS TLabelGenerator
+/*Method lCreateTemporal() CLASS TLabelGenerator
 
    local n
    local nRec
@@ -494,7 +541,7 @@ Method lCreateTemporal() CLASS TLabelGenerator
 
       lCreateTemporal      := .f.
 
-      MsgStop( 'Imposible abrir ficheros de artÃ­culos' + CRLF + ErrorMessage( oError ) )
+      MsgStop( 'Imposible abrir ficheros de artículos' + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -566,7 +613,7 @@ Method lPrintLabels() CLASS TLabelGenerator
 
       oFr:SetIcon( 1 )
 
-      oFr:SetTitle(        "DiseÃ±ador de documentos" )
+      oFr:SetTitle(        "Diseñador de documentos" )
 
 
       /*
@@ -626,7 +673,7 @@ Method lPrintLabels() CLASS TLabelGenerator
       end if
 
       /*
-      Destruye el diseÃ±ador-------------------------------------------------------
+      Destruye el diseñador-------------------------------------------------------
       
 
       oFr:DestroyFr()
@@ -640,26 +687,16 @@ Method lPrintLabels() CLASS TLabelGenerator
    end if
 
 Return .t.
-
+*/
 //---------------------------------------------------------------------------//
 
 Method End() CLASS TLabelGenerator
-
-   if !Empty( ::nRecno )
-      ( dbfFacPrvT )->( dbGoTo( ::nRecno ) )
-   end if
-
-   if IsTrue( ::lClose )
-      CloseFiles()
-   end if
 
    if !Empty( ::cAreaTmpLabel ) .and. ( ::cAreaTmpLabel )->( Used() )
       ( ::cAreaTmpLabel )->( dbCloseArea() )
    end if
 
    dbfErase( ::cFileTmpLabel )
-
-   WritePProString( "Etiquetas", "Factura proveedor", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
 
 Return ( Self )
 
@@ -739,7 +776,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method LoadAuxiliar() CLASS TLabelGenerator
+/*Method LoadAuxiliar() CLASS TLabelGenerator
 
    local nRec
    local nOrd
@@ -903,7 +940,7 @@ Method InitLabel( oLabel ) CLASS TLabelGenerator
       oLabel:nLblCurrent   := ::nColumnaInicio
    end if
 
-Return ( Self )
+Return ( Self )*/
 
 //---------------------------------------------------------------------------//
 
@@ -933,6 +970,6 @@ Method SelectColumn( oCombo ) CLASS TLabelGenerator
 
    end if
 
-Return ( Self )*/
+Return ( Self )
 
 //---------------------------------------------------------------------------//
