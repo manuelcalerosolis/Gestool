@@ -405,6 +405,7 @@ TTreevc3.prg            \
 Cuaderno.prg 				\
 FacturarLineasAlbaranes.prg \
 Components.prg 			\
+TLabelGenerator.prg 	\
 
 C               =       \
 Metafi32.c              \
@@ -821,6 +822,7 @@ OutLook2010.obj         \
 Cuaderno.obj 				\
 FacturarLineasAlbaranes.obj \
 Components.obj 			\
+TLabelGenerator.obj 	\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1206,9 +1208,10 @@ $(OBJ)\TpvPunto.obj             +
 $(OBJ)\TpvMesa.obj              +
 $(OBJ)\TpvSalon.obj             +
 $(OBJ)\TScripts.obj             +
-$(OBJ)\Cuaderno.obj 		  		  +
+$(OBJ)\Cuaderno.obj 		  	+
 $(OBJ)\FacturarLineasAlbaranes.obj +
-$(OBJ)\Components.obj 			  +
+$(OBJ)\Components.obj 			+
+$(OBJ)\TLabelGenerator.obj 		+
 $(OBJ)\MsTable.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +

@@ -461,6 +461,13 @@ METHOD Activate()
 
       ::lGenRemMov( ::oWndBrw:oBrw, oPrv, .f. )
 
+      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TMovimientoAlmacenLabelGenerator():Create() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
+
       DEFINE BTNSHELL oSnd RESOURCE "LBL" OF ::oWndBrw ;
          ACTION   ( ::lSelMov(), ::oWndBrw:Refresh() );
          MENU     This:Toggle() ;
@@ -5460,5 +5467,66 @@ function VisMovimientosAlmacen( cNumParte )
    end if
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TMovimientoAlmacenLabelGenerator CLASS TLabelGenerator
+
+   DATA oLabelGenerator
+
+   METHOD Create()
+
+   METHOD ValoresDefecto()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Create() CLASS TMovimientoAlmacenLabelGenerator
+
+   MsgStop( "entro en el metodo create desde movimientos" )
+
+   ::ValoresDefecto()
+
+   ::Resource()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD ValoresDefecto() CLASS TMovimientoAlmacenLabelGenerator
+
+      ::cSerieInicio       := "A" //( dbfFacPrvT )->cSerFac
+      ::cSerieFin          := "A" //( dbfFacPrvT )->cSerFac
+
+      ::nDocumentoInicio   := 1500 //( dbfFacPrvT )->nNumFac
+      ::nDocumentoFin      := 1500 //( dbfFacPrvT )->nNumFac
+
+      ::cSufijoInicio      := "" //( dbfFacPrvT )->cSufFac
+      ::cSufijoFin         := "" //( dbfFacPrvT )->cSufFac
+
+      //::oLabelGenerator:nRecno             := ( dbfFacPrvT )->( Recno() )
+
+      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Movimiento almacen", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+      if len( ::cFormatoLabel ) < 3
+         ::cFormatoLabel   := Space( 3 )
+      end if
+
+      ::nMtrLabel          := 0
+
+      ::nFilaInicio        := 1
+      ::nColumnaInicio     := 1
+
+      ::nCantidadLabels    := 1
+      ::nUnidadesLabels    := 1
+
+      ::aSearch            := { "Código", "Nombre" }
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
