@@ -123,7 +123,7 @@ Method Resource() CLASS TLabelGenerator
 
          REDEFINE GET ::oSerieInicio VAR ::cSerieInicio ;
             ID       100 ;
-            PICTURE  "@!" ;
+            PICTURE  "@!";
             SPINNER ;
             ON UP    ( UpSerie( ::oSerieInicio ) );
             ON DOWN  ( DwSerie( ::oSerieInicio ) );

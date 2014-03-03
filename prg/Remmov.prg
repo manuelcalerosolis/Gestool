@@ -5475,7 +5475,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TMovimientoAlmacenLabelGenerator CLASS TLabelGenerator
+CLASS TMovimientoAlmacenLabelGenerator FROM TLabelGenerator
 
    DATA oLabelGenerator
 
