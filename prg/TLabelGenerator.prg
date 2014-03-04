@@ -63,11 +63,13 @@ CLASS TLabelGenerator
    DATA oBtnMod
    DATA oBtnZoo
 
-   Method Resource()
+   METHOD Create()
+
+   METHOD Resource()
 
    METHOD StartResource()
 
-   Method lCreateAuxiliar()
+   METHOD lCreateAuxiliar()
 
    /*Method lCreateTemporal()
    Method PrepareTemporal( oFr )
@@ -97,9 +99,47 @@ CLASS TLabelGenerator
 
    Method SelectColumn( oCombo )
 
+   METHOD SerieInicio( cSerieInicio )              INLINE ( if( !empty( cSerieInicio ), ::cSerieInicio := cSerieInicio, ::cSerieInicio ) )
+   METHOD SerieFin( cSerieFin )                    INLINE ( if( !empty( cSerieFin ), ::cSerieFin := cSerieFin, ::cSerieFin ) )
+   METHOD DocumentoInicio( nDocumentoInicio )      INLINE ( if( !empty( nDocumentoInicio ), ::nDocumentoInicio := nDocumentoInicio, ::nDocumentoInicio ) )
+   METHOD DocumentoFin( nDocumentoFin )            INLINE ( if( !empty( nDocumentoFin ), ::nDocumentoFin := nDocumentoFin, ::nDocumentoFin ) )
+   METHOD SufijoInicio( cSufijoInicio )            INLINE ( if( !empty( cSufijoInicio ), ::cSufijoInicio := cSufijoInicio, ::cSufijoInicio ) )
+   METHOD SufijoFin( cSufijoFin )                  INLINE ( if( !empty( cSufijoFin ), ::cSufijoFin := cSufijoFin, ::cSufijoFin ) )
+   METHOD TipoFormato( cTipoFormato )              INLINE ( if( !empty( cTipoFormato ), ::cTipoFormato := cTipoFormato, ::cTipoFormato ) )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
+
+METHOD Create() CLASS TLabelGenerator
+
+   ::cSerieInicio         := ""
+   ::cSerieFin            := ""
+   ::nDocumentoInicio     := 0
+   ::nDocumentoFin        := 0
+   ::cSufijoInicio        := ""
+   ::cSufijoFin           := ""   
+   ::cTipoFormato         := ""
+
+   ::nMtrLabel          := 0
+
+   ::nFilaInicio        := 1
+   ::nColumnaInicio     := 1
+
+   ::nCantidadLabels    := 1
+   ::nUnidadesLabels    := 1
+
+   ::aSearch            := { "Código", "Nombre" }
+
+   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Movimiento almacen", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+    
+   if len( ::cFormatoLabel ) < 3
+      ::cFormatoLabel   := Space( 3 )
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 
 Method Resource() CLASS TLabelGenerator
 
@@ -198,7 +238,7 @@ Method Resource() CLASS TLabelGenerator
             BITMAP   "LUPA" ;
             OF       ::oFld:aDialogs[ 1 ]
 
-            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::oDbfDoc:cAlias, ::cTipoFormato ) }
+            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::oDbfDoc, ::cTipoFormato ) }
             ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::cTipoFormato ) }
 
          TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
@@ -697,6 +737,8 @@ Method End() CLASS TLabelGenerator
    end if
 
    dbfErase( ::cFileTmpLabel )
+
+   WritePProString( "Etiquetas", "Movimiento almacen", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
 
 Return ( Self )
 

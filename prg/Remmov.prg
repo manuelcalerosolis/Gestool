@@ -242,6 +242,8 @@ CLASS TRemMovAlm FROM TMasDet
 
    Method ActualizaStockWeb( cNumDoc )
 
+   METHOD GenerarEtiquetas()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -463,7 +465,7 @@ METHOD Activate()
 
       DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( TMovimientoAlmacenLabelGenerator():Create( Self ) ) ;
+         ACTION   ( ::GenerarEtiquetas() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
@@ -5310,6 +5312,55 @@ RETURN ( cResultado )
 
 //---------------------------------------------------------------------------//
 
+METHOD GenerarEtiquetas CLASS TRemMovAlm
+
+   local oLabelGenetator
+
+   /*
+   Tomamos el estado de la tabla-----------------------------------------------
+   */
+
+   ::oDbf:GetStatus()
+
+   /*
+   Instanciamos la clase-------------------------------------------------------
+   */
+
+   oLabelGenetator      := TLabelGenerator():Create( Self )
+
+   /*
+   Le damos valores por defecto------------------------------------------------
+   */
+
+   oLabelGenetator:DocumentoInicio( ::oDbf:nNumRem )
+   oLabelGenetator:DocumentoFin( ::oDbf:nNumRem )      
+   oLabelGenetator:SufijoInicio( ::oDbf:cSufRem )      
+   oLabelGenetator:SufijoFin( ::oDbf:cSufRem )            
+   oLabelGenetator:TipoFormato( "FC" )
+   oLabelGenetator:lMovimientoAlmacen := .t.
+
+   /*
+   Pasamos los alias de las tablas---------------------------------------------
+   */
+
+   oLabelGenetator:oDbfDoc            := ::oDbfDoc:cAlias
+
+   /*
+   Lanzamos el recurso---------------------------------------------------------
+   */
+   
+   oLabelGenetator:Resource( .t. )
+
+   /*
+   Dejamos la tabla como estaba------------------------------------------------
+   */
+
+   ::oDbf:SetStatus()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 Function AppMovimientosAlmacen()
 
    local oRemMovAlm
@@ -5467,71 +5518,5 @@ function VisMovimientosAlmacen( cNumParte )
    end if
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS TMovimientoAlmacenLabelGenerator FROM TLabelGenerator
-
-   METHOD Create()
-
-   METHOD ValoresDefecto()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD Create( oParent ) CLASS TMovimientoAlmacenLabelGenerator
-
-   ::oParent               := oParent
-   ::lMovimientoAlmacen    := .t.
-
-   ::nRecno                := ::oParent:oDbf:Recno()
-
-   ::ValoresDefecto()
-
-   ::Resource( ::oParent, .t. )
-
-   ::oParent:oDbf:GoTo( ::nRecno() )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD ValoresDefecto() CLASS TMovimientoAlmacenLabelGenerator
-
-      ::cSerieInicio       := ""
-      ::cSerieFin          := ""
-
-      ::nDocumentoInicio   := ::oParent:oDbf:nNumRem
-      ::nDocumentoFin      := ::oParent:oDbf:nNumRem
-
-      ::cSufijoInicio      := ::oParent:oDbf:cSufRem
-      ::cSufijoFin         := ::oParent:oDbf:cSufRem
-
-      ::cTipoFormato       := "FC"
-
-      ::oDbfDoc            := ::oParent:oDbfDoc
-
-      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Movimiento almacen", Space( 3 ), cPatEmp() + "Empresa.Ini" )
-      if len( ::cFormatoLabel ) < 3
-         ::cFormatoLabel   := Space( 3 )
-      end if
-
-      ::nMtrLabel          := 0
-
-      ::nFilaInicio        := 1
-      ::nColumnaInicio     := 1
-
-      ::nCantidadLabels    := 1
-      ::nUnidadesLabels    := 1
-
-      ::aSearch            := { "Código", "Nombre" }
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
