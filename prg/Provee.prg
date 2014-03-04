@@ -4789,13 +4789,13 @@ FUNCTION rxProvee( cPath, oMeter )
       ( dbfProvee )->( ordCreate( cPath + "PrvBnc.CDX", "cCodPrv", "cCodPrv + cCodBnc", {|| Field->cCodPrv + Field->cCodBnc } ) )
 
       ( dbfProvee )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfProvee )->( ordCreate( cPath + "PrvBnc.CDX", "cCtaBnc", "cCodPrv + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodPrv + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
+      ( dbfProvee )->( ordCreate( cPath + "PrvBnc.CDX", "cCtaBnc", "cCodPrv + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodPrv + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
 
       ( dbfProvee )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
       ( dbfProvee )->( ordCreate( cPath + "PrvBnc.CDX", "cBncDef", "cCodPrv + cCodBnc", {|| Field->cCodPrv + Field->cCodBnc } ) )
 
       ( dbfProvee )->( ordCondSet("!Deleted() .and. lBncDef", {|| !Deleted() .and. Field->lBncDef } ) )
-      ( dbfProvee )->( ordCreate( cPath + "PrvBnc.CDX", "cCodDef", "cCodPrv + cPaisIBAN + cCtrlIBAN + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODPrv + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
+      ( dbfProvee )->( ordCreate( cPath + "PrvBnc.CDX", "cCodDef", "cCodPrv + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->CCODPrv + Field->CENTBNC + Field->CSUCBNC + Field->CDIGBNC + Field->CCTABNC } ) )
 
       ( dbfProvee )->( dbCloseArea() )
 

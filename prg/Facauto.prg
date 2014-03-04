@@ -105,10 +105,10 @@ CLASS TFacAutomatica FROM TMasDet
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
-   METHOD NextResource( nMode )
-   METHOD PriorResource( nMode )
-   METHOD StartResource()
-   METHOD SaveResource()
+      METHOD NextResource( nMode )
+      METHOD PriorResource( nMode )
+      METHOD StartResource()
+      METHOD SaveResource()
 
    METHOD nCalculoTotal()
 
@@ -1502,7 +1502,7 @@ Return ( Self )
 
 Function lFacturasAutomaticas()
 
-   if !( oUser():lDocAuto() .or. lUsrMaster() )
+   if !( oUser():lDocAuto() )
       Return .f.
    end if
 
@@ -1555,7 +1555,7 @@ CLASS TCreaFacAutomaticas
    DATA oBtnInforme
 
    DATA oChkIgnoraProcesado 
-   DATA lChkIgnoraProcesado         INIT .f.
+   DATA lChkIgnoraProcesado      INIT .f.
 
    DATA cPorDiv
 
@@ -1582,22 +1582,17 @@ CLASS TCreaFacAutomaticas
    DATA cCodigoPlantilla         INIT Space( 3 )
 
    Method New()
-
    METHOD Run()
 
    METHOD OpenFiles()
-
    METHOD CloseFiles()
 
    METHOD lLanzaAsistente()
-
-   METHOD StartAsistente()
+      METHOD IniciarAsistente()
+      METHOD StartAsistente()
 
    METHOD CreaAlbaran()
-
    METHOD CreaFactura()
-
-   METHOD IniciarAsistente()
 
    METHOD lCompruebaFecha()
 
@@ -1606,7 +1601,6 @@ CLASS TCreaFacAutomaticas
    METHOD lSeekClient( cCodFac )
 
    METHOD OnClickRefreshAsistente()    INLINE   ( ::lLanzaAsistente() ) 
-
    METHOD OnClickIgnoraProcesado()     INLINE   ( ::oBtnIgnoraProcesado:Toggle() )
 
    METHOD SetNextFechaFactura()
@@ -2090,15 +2084,14 @@ METHOD lLanzaAsistente() CLASS TCreaFacAutomaticas
       Return ( lLanza )
    end if 
 
-   if !( oUser():lDocAuto() .or. lUsrMaster() )
+   if !( oUser():lDocAuto() )
       Return ( lLanza )
    end if 
 
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-
-         ::oFacAutT:oDbf:GoTop()
+      ::oFacAutT:oDbf:GoTop()
 
          while !::oFacAutT:oDbf:Eof()
 
@@ -2141,11 +2134,13 @@ METHOD lLanzaAsistente() CLASS TCreaFacAutomaticas
 
          end while
 
-      aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
-
       if !Empty( ::oBrwPlantilla )
+
+         aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
+
          ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. )
          ::oBrwPlantilla:GoTop()
+
       end if
 
    RECOVER USING oError
