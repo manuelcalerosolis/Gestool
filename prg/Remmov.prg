@@ -242,6 +242,8 @@ CLASS TRemMovAlm FROM TMasDet
 
    Method ActualizaStockWeb( cNumDoc )
 
+   METHOD GenerarEtiquetas()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -460,6 +462,13 @@ METHOD Activate()
          LEVEL    ACC_IMPR
 
       ::lGenRemMov( ::oWndBrw:oBrw, oPrv, .f. )
+
+      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::GenerarEtiquetas() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
 
       DEFINE BTNSHELL oSnd RESOURCE "LBL" OF ::oWndBrw ;
          ACTION   ( ::lSelMov(), ::oWndBrw:Refresh() );
@@ -5300,6 +5309,55 @@ METHOD cMostrarSerie() CLASS TRemMovAlm
    ::oDetSeriesMovimientos:oDbfVir:Goto( nNumRec )
 
 RETURN ( cResultado )
+
+//---------------------------------------------------------------------------//
+
+METHOD GenerarEtiquetas CLASS TRemMovAlm
+
+   local oLabelGenetator
+
+   /*
+   Tomamos el estado de la tabla-----------------------------------------------
+   */
+
+   ::oDbf:GetStatus()
+
+   /*
+   Instanciamos la clase-------------------------------------------------------
+   */
+
+   oLabelGenetator      := TLabelGenerator():Create( Self )
+
+   /*
+   Le damos valores por defecto------------------------------------------------
+   */
+
+   oLabelGenetator:DocumentoInicio( ::oDbf:nNumRem )
+   oLabelGenetator:DocumentoFin( ::oDbf:nNumRem )      
+   oLabelGenetator:SufijoInicio( ::oDbf:cSufRem )      
+   oLabelGenetator:SufijoFin( ::oDbf:cSufRem )            
+   oLabelGenetator:TipoFormato( "FC" )
+   oLabelGenetator:lMovimientoAlmacen := .t.
+
+   /*
+   Pasamos los alias de las tablas---------------------------------------------
+   */
+
+   oLabelGenetator:oDbfDoc            := ::oDbfDoc:cAlias
+
+   /*
+   Lanzamos el recurso---------------------------------------------------------
+   */
+   
+   oLabelGenetator:Resource( .t. )
+
+   /*
+   Dejamos la tabla como estaba------------------------------------------------
+   */
+
+   ::oDbf:SetStatus()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
