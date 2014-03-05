@@ -55,13 +55,18 @@ CLASS TLabelGenerator
    Data cFileTmpLabel
    Data cAreaTmpLabel
 
-   DATA oDbfDoc
-
    DATA cTipoFormato
 
    DATA oBtnPrp
    DATA oBtnMod
    DATA oBtnZoo
+
+   DATA aFieldsAuxiliarArticulo
+
+   DATA cDbfDocumento
+   DATA cDbfCabecera
+   DATA cDbfLinea
+   DATA cDbfArticulo
 
    METHOD Create()
 
@@ -69,35 +74,37 @@ CLASS TLabelGenerator
 
    METHOD StartResource()
 
-   METHOD lCreateAuxiliar()
+   METHOD lCreateAuxiliarArticulo()
 
-   /*Method lCreateTemporal()
-   Method PrepareTemporal( oFr )
-   Method DestroyTemporal()*/
+   METHOD LoadAuxiliarMovimientoAlmacen()
 
-   Method End()
+   /*METHOD lCreateTemporal()
+   METHOD PrepareTemporal( oFr )
+   METHOD DestroyTemporal()*/
 
-   Method BotonAnterior()
+   METHOD End()
 
-   Method BotonSiguiente()
+   METHOD BotonAnterior()
 
-   Method PutLabel()
+   METHOD BotonSiguiente()
 
-   Method SelectAllLabels()
+   METHOD PutLabel()
 
-   Method AddLabel()
+   METHOD SelectAllLabels()
 
-   Method DelLabel()
+   METHOD AddLabel()
 
-   Method EditLabel()
+   METHOD DelLabel()
 
-   /*Method LoadAuxiliar()
+   METHOD EditLabel()
 
-   Method lPrintLabels()
+   /*METHOD LoadAuxiliar()
 
-   Method InitLabel( oLabel )*/
+   METHOD lPrintLabels()
 
-   Method SelectColumn( oCombo )
+   METHOD InitLabel( oLabel )*/
+
+   METHOD SelectColumn( oCombo )
 
    METHOD SerieInicio( cSerieInicio )              INLINE ( if( !empty( cSerieInicio ), ::cSerieInicio := cSerieInicio, ::cSerieInicio ) )
    METHOD SerieFin( cSerieFin )                    INLINE ( if( !empty( cSerieFin ), ::cSerieFin := cSerieFin, ::cSerieFin ) )
@@ -107,19 +114,24 @@ CLASS TLabelGenerator
    METHOD SufijoFin( cSufijoFin )                  INLINE ( if( !empty( cSufijoFin ), ::cSufijoFin := cSufijoFin, ::cSufijoFin ) )
    METHOD TipoFormato( cTipoFormato )              INLINE ( if( !empty( cTipoFormato ), ::cTipoFormato := cTipoFormato, ::cTipoFormato ) )
 
+   METHOD cDbfCabecera( cDbfCabecera )             INLINE ( if( !empty( cDbfCabecera ), ::cDbfCabecera:= cDbfCabecera, ::cDbfCabecera ) )
+   METHOD cDbfLinea( cDbfLinea )                   INLINE ( if( !empty( cDbfLinea ), ::cDbfLinea:= cDbfLinea, ::cDbfLinea ) )
+   METHOD cDbfDocumento( cDbfDocumento )           INLINE ( if( !empty( cDbfDocumento ), ::cDbfDocumento:= cDbfDocumento, ::cDbfDocumento ) )
+   METHOD cDbfArticulo( cDbfArticulo )             INLINE ( if( !empty( cDbfArticulo ), ::cDbfArticulo:= cDbfArticulo, ::cDbfArticulo ) )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD Create() CLASS TLabelGenerator
 
-   ::cSerieInicio         := ""
-   ::cSerieFin            := ""
-   ::nDocumentoInicio     := 0
-   ::nDocumentoFin        := 0
-   ::cSufijoInicio        := ""
-   ::cSufijoFin           := ""   
-   ::cTipoFormato         := ""
+   ::cSerieInicio       := ""
+   ::cSerieFin          := ""
+   ::nDocumentoInicio   := 0
+   ::nDocumentoFin      := 0
+   ::cSufijoInicio      := ""
+   ::cSufijoFin         := ""   
+   ::cTipoFormato       := ""
 
    ::nMtrLabel          := 0
 
@@ -137,6 +149,14 @@ METHOD Create() CLASS TLabelGenerator
       ::cFormatoLabel   := Space( 3 )
    end if
 
+   ::aFieldsAuxiliarArticulo  := {  { "cCodArt"  ,"C",  18, 0, "Código del artículo" },;
+                                    { "cNomArt"  ,"C",  18, 0, "Nombre del artículo" },;
+                                    { "nLabel"   ,"N",  16, 6, "Número de etiquetas" },;
+                                    { "lLabel"   ,"L",   1, 0, "Lógico etiqueta seleccionada" },;
+                                    { "cValPrp1" ,"C",  18, 0, "Valor de la propiedad 1" },;
+                                    { "cValPrp2" ,"C",  18, 0, "Valor de la propiedad 2" },;
+                                    { "cLote"    ,"C",  18, 0, "Lote del producto" } }
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -149,14 +169,12 @@ Method Resource() CLASS TLabelGenerator
    local cCbxOrd     := "Código"
    local aCbxOrd     := { "Código", "Nombre" }
 
-   if ::lCreateAuxiliar()
-
       DEFINE DIALOG ::oDlg RESOURCE "SelectLabels_0"
 
          REDEFINE PAGES ::oFld ;
             ID       10;
             OF       ::oDlg ;
-            DIALOGS  "SelectLabels_1",;
+            DIALOGS  "SelectLabels_1",; 
                      "SelectLabels_2"
 
          /*
@@ -238,7 +256,7 @@ Method Resource() CLASS TLabelGenerator
             BITMAP   "LUPA" ;
             OF       ::oFld:aDialogs[ 1 ]
 
-            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::oDbfDoc, ::cTipoFormato ) }
+            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::cDbfDocumento(), ::cTipoFormato ) }
             ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::cTipoFormato ) }
 
          TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
@@ -345,30 +363,37 @@ Method Resource() CLASS TLabelGenerator
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Código"
-            :bEditValue       := {|| ( ::cAreaTmpLabel )->cRef }
+            :bEditValue       := {|| ( ::cAreaTmpLabel )->cCodArt }
             :nWidth           := 80
-            :cSortOrder       := "cRef"
+            :cSortOrder       := "cCodArt"
             :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
          with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Nombre"
-            :bEditValue       := {|| ( ::cAreaTmpLabel )->cDetalle }
+            :bEditValue       := {|| ( ::cAreaTmpLabel )->cNomArt }
             :nWidth           := 250
-            :cSortOrder       := "cDetalle"
+            :cSortOrder       := "cNomArt"
             :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
         with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Prp. 1"
-            :bEditValue       := {|| ( ::cAreaTmpLabel )->cValPr1 }
+            :bEditValue       := {|| ( ::cAreaTmpLabel )->cValPrp1 }
             :nWidth           := 40
         end with
 
         with object ( ::oBrwLabel:AddCol() )
             :cHeader          := "Prp. 2"
-            :bEditValue       := {|| ( ::cAreaTmpLabel )->cValPr2 }
+            :bEditValue       := {|| ( ::cAreaTmpLabel )->cValPrp2 }
             :nWidth           := 40
+        end with
+
+        with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Lote"
+            :bEditValue       := {|| ( ::cAreaTmpLabel )->cLote }
+            :nWidth           := 40
+            :lHide            := .t.
         end with
 
         with object ( ::oBrwLabel:AddCol() )
@@ -418,8 +443,6 @@ Method Resource() CLASS TLabelGenerator
 
       ::End()
 
-   end if
-
 Return ( Self )
 
 //--------------------------------------------------------------------------//
@@ -454,7 +477,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lCreateAuxiliar() CLASS TLabelGenerator
+Method lCreateAuxiliarArticulo() CLASS TLabelGenerator
 
    local oBlock
    local oError
@@ -466,18 +489,20 @@ Method lCreateAuxiliar() CLASS TLabelGenerator
       ::cAreaTmpLabel      := "Lbl" + cCurUsr()
       ::cFileTmpLabel      := cGetNewFileName( cPatTmp() + "Lbl" )
 
-      dbCreate( ::cFileTmpLabel, aSqlStruct( aColFacPrv() ), cLocalDriver() )
+      dbCreate( ::cFileTmpLabel, aSqlStruct( ::aFieldsAuxiliarArticulo ), cLocalDriver() )
       dbUseArea( .t., cLocalDriver(), ::cFileTmpLabel, ::cAreaTmpLabel, .f. )
 
-      if!( ::cAreaTmpLabel )->( neterr() )
-         ( ::cAreaTmpLabel )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( ::cAreaTmpLabel )->( OrdCreate( ::cFileTmpLabel, "cRef", "cRef", {|| Field->cRef } ) )
+      if !( ::cAreaTmpLabel )->( neterr() )
 
-         ( ::cAreaTmpLabel )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( ::cAreaTmpLabel )->( OrdCreate( ::cFileTmpLabel, "cDetalle", "Upper( cDetalle )", {|| Upper( Field->cDetalle ) } ) )
+          ( ::cAreaTmpLabel )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+          ( ::cAreaTmpLabel )->( OrdCreate( ::cFileTmpLabel, "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
+
+          ( ::cAreaTmpLabel )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+          ( ::cAreaTmpLabel )->( OrdCreate( ::cFileTmpLabel, "cNomArt", "Upper( cNomArt )", {|| Upper( Field->cNomArt ) } ) )
+
       end if
 
-      ( ::cAreaTmpLabel )->( OrdsetFocus( "cRef" ) )
+      ( ::cAreaTmpLabel )->( OrdsetFocus( "cCodArt" ) )
 
    RECOVER USING oError
 
@@ -492,6 +517,74 @@ Method lCreateAuxiliar() CLASS TLabelGenerator
 Return ( lCreateAuxiliar )
 
 //--------------------------------------------------------------------------//
+
+METHOD LoadAuxiliarMovimientoAlmacen() CLASS TLabelGenerator
+
+   local nRec
+   local nOrd
+
+   /*
+   Limpiamos la base de datos temporal-----------------------------------------
+   */
+
+   ( ::cAreaTmpLabel )->( __dbZap() )
+
+   /*
+   Llenamos la tabla temporal--------------------------------------------------
+   */
+
+   nRec           := ( ::cDbfCabecera() )->( Recno() )
+   nOrd           := ( ::cDbfCabecera() )->( OrdSetFocus( "cNumRem" ) )
+
+   if ( ::cDbfCabecera() )->( dbSeek( Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio, .t. ) )
+
+      while Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem >= Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio .and. ;
+            Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem <= Str( ::nDocumentoFin, 9 ) + ::cSufijoFin       .and. ;
+            !( ::cDbfCabecera() )->( eof() )
+
+         if ( ::cDbfLinea() )->( dbSeek( Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem ) )
+
+            while ( Str( ( ::cDbfLinea() )->nNumRem ) + ( ::cDbfLinea() )->cSufRem == Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem ) .and. ( ::cDbfLinea() )->( !eof() )
+
+               if !Empty( ( ::cDbfLinea() )->cRef )
+
+                  ( ::cAreaTmpLabel )->( dbAppend() )
+
+                  ( ::cAreaTmpLabel )->cCodArt  := ( ::cDbfLinea() )->cRefMov
+                  ( ::cAreaTmpLabel )->cNomArt  := RetFld( ( ::cDbfLinea() )->cRefMov, ::cDbfArticulo() )
+                  ( ::cAreaTmpLabel )->cValPrp1 := ( ::cDbfLinea() )->cValPr1
+                  ( ::cAreaTmpLabel )->cValPrp2 := ( ::cDbfLinea() )->cValPr2
+                  ( ::cAreaTmpLabel )->cLote    := ( ::cDbfLinea() )->cLote
+                  ( ::cAreaTmpLabel )->lLabel   := .t.
+
+                  if ::nCantidadLabels == 1
+                  ( ::cAreaTmpLabel )->nLabel   := ( ::cDbfLinea() )->nUndMov
+                  else
+                  ( ::cAreaTmpLabel )->nLabel   := ::nUnidadesLabels
+                  end if
+
+               end if
+
+               ( ::cDbfLinea() )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( ::cDbfCabecera() )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::cDbfCabecera() )->( OrdSetFocus( nOrd ) )
+   ( ::cDbfCabecera() )->( dbGoTo( nRec ) )
+
+   ( ::cAreaTmpLabel )->( dbGoTop() )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 
 Method BotonAnterior() CLASS TLabelGenerator
 
@@ -519,7 +612,11 @@ Method BotonSiguiente() CLASS TLabelGenerator
             //::LoadAuxiliar()
 
             ::oFld:GoNext()
+
+            ::oBrwLabel:Refresh()
+
             ::oBtnAnterior:Show()
+
             SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
          end if
@@ -812,7 +909,7 @@ Return ( Self )
 
 Method EditLabel() CLASS TLabelGenerator
 
-   ::oBrwLabel:aCols[ 6 ]:Edit()
+   ::oBrwLabel:aCols[ 7 ]:Edit()
 
 Return ( Self )
 

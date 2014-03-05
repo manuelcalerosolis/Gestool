@@ -5340,16 +5340,33 @@ METHOD GenerarEtiquetas CLASS TRemMovAlm
    oLabelGenetator:lMovimientoAlmacen := .t.
 
    /*
-   Pasamos los alias de las tablas---------------------------------------------
+   Bases de datos--------------------------------------------------------------
    */
 
-   oLabelGenetator:oDbfDoc            := ::oDbfDoc:cAlias
+   oLabelGenetator:cDbfCabecera( ::oDbf:cAlias )
+   oLabelGenetator:cDbfLinea( ::oDetMovimientos:oDbf:cAlias )
+   oLabelGenetator:cDbfDocumento( ::oDbfDoc:cAlias )
+   oLabelGenetator:cDbfArticulo( ::oArt:cAlias )
 
    /*
    Lanzamos el recurso---------------------------------------------------------
    */
    
-   oLabelGenetator:Resource( .t. )
+   if oLabelGenetator:lCreateAuxiliarArticulo()
+
+      //?"llego"
+
+      /*
+      Llenamos la tabla auxiliar-----------------------------------------------
+      */
+
+      //oLabelGenetator:LoadAuxiliarMovimientoAlmacen()
+
+      //?"Paso"
+
+      oLabelGenetator:Resource( .t. )
+
+   end if   
 
    /*
    Dejamos la tabla como estaba------------------------------------------------
