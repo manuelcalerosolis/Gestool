@@ -10911,12 +10911,17 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&6. Informe de cliente";
+            MENUITEM    "&6. Modificar cliente contactos";
+               MESSAGE  "Modifica la ficha del cliente en contactos" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
+
+            MENUITEM    "&7. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&7. Modificar obra";
+            MENUITEM    "&8. Modificar obra";
                MESSAGE  "Modifica ficha de la obra" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
@@ -10925,7 +10930,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&8. Informe del documento";
+            MENUITEM    "&9. Informe del documento";
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( FAC_CLI, aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) );

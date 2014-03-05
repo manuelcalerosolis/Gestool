@@ -3149,12 +3149,17 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) )
 
-            MENUITEM    "&2. Informe de cliente";
+            MENUITEM    "&2. Modificar cliente contactos";
+               MESSAGE  "Modifica la ficha del cliente en contactos" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
+
+            MENUITEM    "&3. Informe de cliente";
                MESSAGE  "Abrir el informe del cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) );
 
-            MENUITEM    "&3. Modificar obra";
+            MENUITEM    "&4. Modificar obra";
                MESSAGE  "Modificar ficha de la obra" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) )
@@ -3163,7 +3168,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&4. Informe del documento";
+            MENUITEM    "&5. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( PRE_CLI, aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ] ) )

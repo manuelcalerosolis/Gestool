@@ -372,13 +372,13 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
 
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70;
       XBROWSE ;
-	TITLE 	"Documentos" ;
-      PROMPT   "Código" ,;
-               "Documento" ;
-      MRU      "Document_edit_16" ;
-      BITMAP   clrTopHerramientas ;
+	TITLE      "Documentos" ;
+      PROMPT      "Código" ,;
+                  "Documento" ;
+      MRU         "Document_edit_16" ;
+      BITMAP      clrTopHerramientas ;
 	ALIAS		( dbfDoc ) ;
-	APPEND     ( WinAppRec( oWndBrw:oBrw, bEdit0, dbfDoc, , {|oGet| NotValid( oGet, dbfDoc ) } ) );
+	APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit0, dbfDoc, , {|oGet| NotValid( oGet, dbfDoc ) } ) );
       EDIT     ( VisualEdtDocs( dbfDoc ) ) ;
       DELETE   ( WinDelRec( oWndBrw:oBrw, dbfDoc, {|| DocDelRec() } ) );
       LEVEL    nLevel ;
@@ -842,8 +842,9 @@ FUNCTION SetMargin( cTipo, oReport )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDocment ) )
+      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDocment ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
+      
       lOpenFiles     := .t.
 
    RECOVER USING oError
@@ -1573,88 +1574,6 @@ FUNCTION rxDocs( cPath, oMeter, cVia )
 Return ( lReindexFiles )
 
 //--------------------------------------------------------------------------//
-
-/*Static Function SayMemo( oReport, cMemo, nCol )
-
-	local cText
-	local cLine
-	local nFor
-	local nLines
-
-	cText 	:= cMemo
-   nLines   := mlCount( cText, 50 )
-
-	oReport:BackLine( 1 )
-
-   for nFor := 1 to nLines
-      cLine := Alltrim( MemoLine( cText, 50, nFor ) )
-		oReport:StartLine()
-		oReport:Say( nCol, cLine )
-		oReport:EndLine()
-   next
-
-	oReport:Newline()
-
-RETURN NIL*/
-
-//--------------------------------------------------------------------------//
-
-/*
-Esta funcion valida el tipo de documento si es valido para la importaci¢n
-*/
-
-/*STATIC FUNCTION lImpDoc( cTipDoc, cCodDes, dbfDoc, oGetDesDes )
-
-	local lRet	:= .f.
-	local nRec	:= ( dbfDoc )->( recno() )
-
-   IF ( dbfDoc )->( dbSeek( cCodDes ) )
-
-		/*
-		Ahora comprobamos que los documentos son del mismo tipo
-
-		IF ( dbfDoc )->CTIPO == cTipDoc
-
-			oGetDesDes:cText( ( dbfDoc )->CDESCRIP )
-			lRet	:= .t.
-
-		ELSE
-
-         msgStop( "Tipo de documentos no coinciden", "Debe retocar el documento" )
-			lRet	:= .t.
-
-		END IF
-
-	ELSE
-
-      msgStop( "Código no encontrado" )
-
-	END IF
-
-	( dbfDoc )->( dbgoto( nRec ) )
-
-RETURN lRet*/
-
-//--------------------------------------------------------------------------//
-
-/*STATIC FUNCTION EdtFld( dbf, oLbx )
-
-   local uVar     := ( dbf )->CDESDOC
-
-   IF oLbx:EditCol( 1, @uVar, , { || .T. } )
-
-      IF dbDialogLock( dbf )
-         ( dbf )->CDESDOC := uVar
-         ( dbf )->( dbUnlock() )
-      END IF
-
-      oLbx:drawSelect()
-
-   END IF
-
-RETURN NIL*/
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION ActTitle( nKey, nFlags, oGet, nMode, oDlg )
 
@@ -4090,11 +4009,6 @@ Static Function VisualEdtDocs( dbfDoc )
 
    local oFr
    local cTipo          
-
-   if !lUsrMaster()
-      msgInfo( "Solo pueden modificar los formatos el usuario Administrador" )
-      Return .f.
-   end if
 
    if !( dbfDoc )->lVisual
       msgInfo( "No se puede modificar el formato, tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" )

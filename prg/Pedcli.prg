@@ -3819,10 +3819,15 @@ Static Function CreateMenuEntrega( aTmp, oDlg )
 
          MENU
 
-            MENUITEM    "&2. Modificar cliente";
+            MENUITEM    "&1. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), MsgStop( "Código de cliente vacío" ) ) )
+
+            MENUITEM    "&2. Modificar cliente contactos";
+               MESSAGE  "Modifica la ficha del cliente en contactos" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&3. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
@@ -3882,12 +3887,17 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "User1_16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&4. Informe de cliente";
+            MENUITEM    "&4. Modificar cliente contactos";
+               MESSAGE  "Modifica la ficha del cliente en contactos" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
+
+            MENUITEM    "&5. Informe de cliente";
                MESSAGE  "Abrir el informe del cliente" ;
                RESOURCE "Info16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&5. Modificar obra";
+            MENUITEM    "&6. Modificar obra";
                MESSAGE  "Modifica la obra del documento" ;
                RESOURCE "Worker16";
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
@@ -3896,7 +3906,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&6. Informe del documento";
+            MENUITEM    "&7. Informe del documento";
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16";
                ACTION   ( TTrazaDocumento():Activate( PED_CLI, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) );

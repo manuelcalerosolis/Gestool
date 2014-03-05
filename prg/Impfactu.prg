@@ -2107,23 +2107,6 @@ METHOD Importar()
 
             ::oDbfAlbLGst:Append()
 
-            /*
-            Buscamos la serie del documento en la cabecera, la que factuplus---
-            no guarda la serie en las lineas de los albaranes
-
-            ::oDbfAlbTGst:GoTop()
-
-            while !::oDbfAlbTGst:Eof()
-
-               if ::oDbfAlbTGst:nNumAlb == ::oDbfAlbLFac:nNumAlb
-                  ::oDbfAlbLGst:cSerAlb  := ::oDbfAlbTGst:cSerAlb
-               end if
-
-               ::oDbfAlbTGst:Skip()
-
-            end while
-            */
-
             ::oDbfAlbLGst:cSerAlb      := "A" // ::oDbfAlbLFac:nNumAlb
             ::oDbfAlbLGst:nNumAlb      := ::oDbfAlbLFac:nNumAlb
             ::oDbfAlbLGst:cSufAlb      := Space( 2 )
@@ -3094,17 +3077,6 @@ METHOD Importar()
             */
 
             ::oDbfAlpTGst:GoTop()
-/*
-            while !::oDbfAlpTGst:Eof()
-
-               if ::oDbfAlpTGst:nNumAlb == ::oDbfAlpLFac:nNumAlb
-                  ::oDbfAlpLGst:cSerAlb      := ::oDbfAlpTGst:cSerAlb
-               end if
-
-               ::oDbfAlpTGst:Skip()
-
-            end while
-*/
 
             ::oDbfAlpLGst:cSerAlb      := "A"
             ::oDbfAlpLGst:nNumAlb      := ::oDbfAlpLFac:nNumAlb

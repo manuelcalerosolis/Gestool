@@ -25,8 +25,11 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfContactos, oBrw, bWhen, bValid, nMode,
 
 	local oDlg
 
-   if nMode == APPD_MODE .AND. !Empty( cCodCli )
-      aBlank[ ( dbfContactos )->( FieldPos( "cCodCli" ) ) ] := cCodCli
+   if nMode == APPD_MODE 
+      if !Empty( cCodCli )
+         aBlank[ ( dbfContactos )->( FieldPos( "cCodCli" ) ) ] := cCodCli
+      end if
+      aBlank[ ( dbfContactos )->( FieldPos( "dLlaCon" ) ) ]    := ctod( "" )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "Contactos" TITLE LblTitle( nMode ) + "contactos de clientes"
@@ -78,6 +81,27 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfContactos, oBrw, bWhen, bValid, nMode,
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      REDEFINE GET aoGet[ ( dbfContactos )->( FieldPos( "cObsCon" ) ) ] ; 
+         VAR      aBlank[ ( dbfContactos )->( FieldPos( "cObsCon" ) ) ] ;
+         ID       200 ;
+         MEMO ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aoGet[ ( dbfContactos )->( FieldPos( "dLlaCon" ) ) ] ; 
+         VAR      aBlank[ ( dbfContactos )->( FieldPos( "dLlaCon" ) ) ] ;
+         ID       190 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aoGet[ ( dbfContactos )->( FieldPos( "cTimCon" ) ) ] ; 
+         VAR      aBlank[ ( dbfContactos )->( FieldPos( "cTimCon" ) ) ] ;
+         ID       191 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      TBtnBmp():ReDefine( 192, "Recycle_16",,,,,{|| LlamadaAhora( aoGet, dbfContactos ) }, oDlg, .f., , .f.,  )               
+
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -116,6 +140,15 @@ Static Function EndTrans( aBlank, aoGet, dbfContactos, oBrw, nMode, oDlg )
    oBrw:Refresh()
 
 Return ( oDlg:end( IDOK ) )
+
+//--------------------------------------------------------------------------//
+
+Static Function LlamadaAhora( aoGet, dbfContactos )
+
+   aoGet[ ( dbfContactos )->( FieldPos( "dLlaCon" ) ) ]:cText( date() )
+   aoGet[ ( dbfContactos )->( FieldPos( "cTimCon" ) ) ]:cText( left( time(), 5 ) )
+
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -201,6 +234,20 @@ FUNCTION DelContactos( dbfContactos, oBrw )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
+
+Function LlamadaContactos( dbfContactos, oBrw )
+
+   ( dbfContactos )->dLlaCon  := date()
+   ( dbfContactos )->cTimCon  := left( time(), 5)
+
+   oBrw:Refresh()
+
+Return ( .t. )
+
+//--------------------------------------------------------------------------//
+
+
+
 //Funciones comunes del programa y pda
 //--------------------------------------------------------------------------//
 
@@ -208,16 +255,19 @@ FUNCTION aItmContacto()
 
    local aItmCon  := {}
 
-   aAdd( aItmCon, { "cCodCli",   "C",   12,    0, "Código del cliente" ,            "",                  "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cNomCon",   "C",  150,    0, "Nombre del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cDirCon",   "C",  100,    0, "Domicilio del contacto" ,        "'@!'",              "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cPobCon",   "C",  100,    0, "Población del contacto" ,        "'@!'",              "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cPrvCon",   "C",   20,    0, "Provincia del contacto" ,        "'@!'",              "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cPosCon",   "C",   10,    0, "Código postal del contacto" ,    "'@!'",              "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cTelCon",   "C",   17,    0, "Teléfono del contacto" ,         "",                  "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cMovCon",   "C",   17,    0, "Teléfono movil del contacto" ,   "",                  "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cFaxCon",   "C",   17,    0, "Fax del contacto" ,              "",                  "", "( cDbfCon )" } )
-   aAdd( aItmCon, { "cMaiCon",   "C",  200,    0, "Email del contacto" ,            "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cCodCli",   "C",   12,    0, "Código del cliente" ,               "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cNomCon",   "C",  150,    0, "Nombre del contacto" ,              "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cDirCon",   "C",  100,    0, "Domicilio del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cPobCon",   "C",  100,    0, "Población del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cPrvCon",   "C",   20,    0, "Provincia del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cPosCon",   "C",   10,    0, "Código postal del contacto" ,       "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cTelCon",   "C",   17,    0, "Teléfono del contacto" ,            "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cMovCon",   "C",   17,    0, "Teléfono movil del contacto" ,      "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cFaxCon",   "C",   17,    0, "Fax del contacto" ,                 "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cMaiCon",   "C",  200,    0, "Email del contacto" ,               "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "dLlaCon",   "D",    8,    0, "Última llamada del contacto" ,      "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cTimCon",   "C",    5,    0, "Hora última llamada del contacto" , "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cObsCon",   "M",   10,    0, "Observaciones del contacto" ,       "",                  "", "( cDbfCon )" } )
 
 RETURN ( aItmCon )
 

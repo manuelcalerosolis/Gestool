@@ -4670,7 +4670,7 @@ Return ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 FUNCTION nImpLTpv( uTikT, uTikL, nDec, nRou, nVdv, cPouDiv, nPrc )
 
-   local nCalculo
+   local nCalculo    := 0
    local nDtoEsp     := 0
    local nDtoPp      := 0
 
@@ -4679,7 +4679,13 @@ FUNCTION nImpLTpv( uTikT, uTikL, nDec, nRou, nVdv, cPouDiv, nPrc )
    DEFAULT nVdv      := 1
    DEFAULT nPrc      := 0
 
-   nCalculo          := nTotLTpv( uTikL, nDec, nRou, nVdv, nPrc )
+   if nPrc == 0 .or. nPrc == 1
+      nCalculo       += nTotLUno( uTikL, nDec, nRou, nVdv, nPrc )
+   end if 
+
+   if nPrc == 0 .or. nPrc == 2
+      nCalculo       += nTotLDos( uTikL, nDec, nRou, nVdv, nPrc )
+   end if 
 
    do case
       case IsChar( uTikL )

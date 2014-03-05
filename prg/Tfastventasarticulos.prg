@@ -1752,7 +1752,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl )
 
-                  ::oDbf:Blank()
+               ::oDbf:Blank()
+               
                   ::oDbf:cCodArt    := ::oTikCliL:cCbaTil
                   ::oDbf:cNomArt    := ::oTikCliL:cNomTil
                   ::oDbf:cCodCli    := ::oTikCliT:cCliTik
@@ -1822,21 +1823,16 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
+               // Añadimos un nuevo registro-----------------------------------
 
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
+               ::InsertIfValid()
 
             end if
 
             if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl )
 
-                  ::oDbf:Blank()
+               ::oDbf:Blank()
+               
                   ::oDbf:cCodArt    := ::oTikCliL:cComTil
                   ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
 
@@ -1875,7 +1871,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
@@ -1897,7 +1893,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
-                  ::InsertIfValid()
+               ::InsertIfValid()
 
             end if
 

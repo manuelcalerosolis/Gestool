@@ -4367,10 +4367,11 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
 
          ActDbf( cEmpOld, cEmpTmp, "HisMov",    "historicos de movimientos", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "Client",    "clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ClientD",   "documentos de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "CliAtp",    "atipicas de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "CliBnc",    "bancos de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "Client",       "clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ClientD",      "documentos de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "CliAtp",       "atipicas de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "CliBnc",       "bancos de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "CliContactos", "contactos de clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Provee",    "proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ProveeD",   "documentos de proveedor", oMet, oMsg, aMsg )

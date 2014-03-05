@@ -1215,7 +1215,7 @@ RETURN ( oDlg:nResult == IDOK )
 Edita el cliente
 */
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
 	local oDlg
 	local oFld
@@ -2306,6 +2306,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
          OF       fldContactos ;
          ACTION   ( ZoomContactos( dbfTmpCon, oBrwCon ) )
 
+      REDEFINE BUTTON ;
+         ID       504 ;
+         OF       fldContactos ;
+         ACTION   ( LlamadaContactos( dbfTmpCon, oBrwCon ) )
+
       oBrwCon                 := IXBrowse():New( fldContactos )
 
       oBrwCon:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -2369,6 +2374,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
          :cHeader             := "Email"
          :bEditValue          := {|| ( dbfTmpCon )->cMaiCon }
          :nWidth              := 120
+      end with
+
+      with object ( oBrwCon:AddCol() )
+         :cHeader             := "Última llamada"
+         :bEditValue          := {|| dtoc( ( dbfTmpCon )->dLlaCon ) + space( 1 ) + ( dbfTmpCon )->cTimCon }
+         :nWidth              := 100
       end with
 
       oBrwCon:bRClicked       := {| nRow, nCol, nFlags | oBrwCon:RButtonDown( nRow, nCol, nFlags ) }
@@ -3388,7 +3399,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
 
       end if
 
-   oDlg:bStart := { || ShowComentario( aTmp ), ShowInciCliente( aTmp[ _COD ], dbfCliInc ), ShowFld( aTmp, aGet ), FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ), oGet:SetFocus(), oBrwBnc:Load(), oBrwObr:Load(), oBrwCta:Load(), oBrwAtp:Load() }
+   oDlg:bStart := {||   ShowComentario( aTmp ),;
+                        ShowInciCliente( aTmp[ _COD ], dbfCliInc ),;
+                        ShowFld( aTmp, aGet ),;
+                        FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ),;
+                        oGet:SetFocus(),;
+                        oBrwBnc:Load(),;
+                        oBrwObr:Load(),;
+                        oBrwCta:Load(),;
+                        oBrwAtp:Load(),;
+                        if( !empty( nTab ), oFld:setOption( nTab ), ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode ) ) ;
@@ -5491,11 +5511,12 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION EdtCli( cCodCli, lOpenBrowse )
+FUNCTION EdtCli( cCodCli, lOpenBrowse, nTabInicio )
 
    local nLevel         := nLevelUsr( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
+   DEFAULT nTabInicio   := 1
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -5517,7 +5538,7 @@ FUNCTION EdtCli( cCodCli, lOpenBrowse )
       if OpenFiles( .t. )
 
          if dbSeekInOrd( cCodCli, "Cod", ( TDataView():Get( "Client", nView ) ) )
-            WinEdtRec( nil, bEdtRec, ( TDataView():Get( "Client", nView ) ) )
+            WinEdtRec( nil, bEdtRec, ( TDataView():Get( "Client", nView ) ), nTabInicio )
          end if
 
          CloseFiles()
@@ -7657,15 +7678,7 @@ Return ( .t. )
 Crea las BD clientes
 */
 
-FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
-
-   DEFAULT cPath        := cPatCli()
-   DEFAULT lAppend      := .f.
-
-   IF oMeter != NIL
-		oMeter:cText		:= "Generando Bases"
-      sysRefresh()
-	END IF
+FUNCTION AssertClient( cPath )
 
    IF !lExistTable( cPath + "CLIENT.DBF" )
       dbCreate( cPath + "CLIENT.DBF", aSqlStruct( aItmCli() ), cDriver() )
@@ -7691,6 +7704,22 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
 
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
+
+   DEFAULT cPath        := cPatCli()
+   DEFAULT lAppend      := .f.
+
+   AssertClient( cPath )
+
+   if oMeter != NIL
+      oMeter:cText      := "Generando Bases"
+      sysRefresh()
+   end if
+
    rxClient( cPath, oMeter )
 
    if lAppend .and. lIsDir( cPathOld )
@@ -7711,6 +7740,8 @@ FUNCTION rxClient( cPath, oMeter )
    local dbfCli
 
    DEFAULT cPath  := cPatCli()
+
+   AssertClient( cPath )
 
    fEraseIndex( cPath + "CLIENT.CDX" )
 
