@@ -35,6 +35,7 @@ METHOD Create()
    ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },                        "Fecha",      .t., "Fecha de expedición",       14 )
    ::AddField( "dFecCob", "D",  8, 0, {|| "@!" },                        "Cobro",      .t., "Fecha de cobro",            14 )
    ::AddField( "dFecVto", "D",  8, 0, {|| "@!" },                        "Vencimiento",.t., "Fecha de vencimiento",      14 )
+   ::AddField( "cCodCaj", "C",  3, 0, {|| "@!" },                        "Caja",       .f., "Código de caja",            14 )
    ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },                        "Cod. cli.",  .t., "Código cliente",             8 )
    ::AddField( "cNomCli", "C", 50, 0, {|| "@!" },                        "Cliente",    .t., "Nombre cliente",            40 )
    ::AddField( "cFpgPgo", "C",  2, 0, {|| "" },                          "FP",         .t., "Forma de pago del recibo",   2 )
@@ -44,7 +45,7 @@ METHOD Create()
 
    ::AddTmpIndex( "DFECMOV", "CCODCLI + Dtos( DFECMOV )" )
 
-   ::AddGroup( {|| ::oDbf:cCodCli }, {|| "Cliente  : " + Rtrim( ::oDbf:cCodCli ) + "-" + Rtrim( ::oDbf:cNomCli ) }, {||"Total cliente..."} )
+   ::AddGroup( {|| ::oDbf:cCodCli }, {|| "Cliente : " + Rtrim( ::oDbf:cCodCli ) + "-" + Rtrim( ::oDbf:cNomCli ) }, {|| "Total cliente..." } )
 
    ::aHeader      := {  {|| "Fecha   : " + Dtoc( Date() ) },;
                         {|| "Cliente : " + if( ::lAllCli, "Todos", AllTrim( ::cCliOrg ) + " > " + AllTrim( ::cCliDes ) ) } }
@@ -62,7 +63,7 @@ METHOD OpenFiles() CLASS TDiaCRecCob
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   ::oFacCliP := TDataCenter():oFacCliP()
+   ::oFacCliP     := TDataCenter():oFacCliP()
 
    DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
@@ -73,8 +74,10 @@ METHOD OpenFiles() CLASS TDiaCRecCob
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
+
       ::CloseFiles()
-      lOpen          := .f.
+      
+      lOpen       := .f.
 
    END SEQUENCE
 
@@ -116,19 +119,17 @@ METHOD lResource( cFld ) CLASS TDiaCRecCob
 
    ::StdResource( "INFDIARECCOB" )
 
-   ::oBtnFilter:Disable()
+   // Creamos el filtro
 
-   /*
-   Monta los obras de manera automatica
-   */
+   ::CreateFilter( , ::oDbf, .t. )   
+
+   // Monta los obras de manera automatica
 
    if !::oDefCliInf( 70, 80, 90, 100, , 600 )
       return .f.
    end if
 
-   /*
-   Damos valor al meter
-   */
+   // Damos valor al meter
 
    ::oMtrInf:SetTotal( ::oFacCliP:Lastrec() )
 
@@ -181,6 +182,9 @@ METHOD lGenerate() CLASS TDiaCRecCob
             ::oDbf:dFecMov    := ::oFacCliP:dPreCob
             ::oDbf:dFecCob    := ::oFacCliP:dEntrada
             ::oDbf:dFecVto    := ::oFacCliP:dFecVto
+
+            ::oDbf:cCodCaj    := ::oFacCliP:cCodCaj
+
             ::oDbf:nTotDoc    := nTotRecCli( ::oFacCliP, ::oDbfDiv )
             ::oDbf:cDocMov    := ::oFacCliP:cSerie + "/" + AllTrim( Str( ::oFacCliP:nNumFac ) ) + "/" + ::oFacCliP:cSufFac
             ::oDbf:cTipDoc    := "Factura"
@@ -229,6 +233,9 @@ METHOD lGenerate() CLASS TDiaCRecCob
             ::oDbf:dFecMov    := ::oTikCliP:dPgoTik
             ::oDbf:dFecCob    := ::oTikCliP:dPgoTik
             ::oDbf:dFecVto    := ::oTikCliP:dPgoTik
+
+            ::oDbf:cCodCaj    := ::oTikCliP:cCodCaj
+
             ::oDbf:nTotDoc    := nTotUCobTik( ::oTikCliP, ::nDerOut, ::nValDiv )
             ::oDbf:cDocMov    := ::oTikCliP:cSerTik + "/" + AllTrim( Right( ::oTikCliP:cNumTik, 9 ) ) + "/" + ::oTikCliP:cSufTik
             ::oDbf:cFpgPgo    := ::oTikCliP:cFpgPgo

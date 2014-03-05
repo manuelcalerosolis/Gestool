@@ -74,7 +74,7 @@ METHOD Create()
                      {|| "Periodo : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) },;
                      {|| "Estado  : " + ::aEstado[ ::oEstado:nAt ]                    },;
                      {|| "Cliente : " + ::cCliOrg         + " > " + ::cCliDes         },;
-                     {|| "F. pago : " + ::cFpgDes         + " > " + ::cFpgHas         } }
+                     {|| "Pago    : " + ::cFpgDes         + " > " + ::cFpgHas         } }
 
 RETURN ( Self )
 
@@ -220,8 +220,8 @@ METHOD lGenerate()
 
          ::oDbf:Append()
 
-         ::oDbf:cDocMov := ::oFacCliP:cSerie + "/" + Str( ::oFacCliP:nNumFac ) + "/" + ::oFacCliP:cSufFac + "/" + Str( ::oFacCliP:nNumRec )
-         ::oDbf:cCodCli := ::oFacCliP:cCodCli
+         ::oDbf:cDocMov    := ::oFacCliP:cSerie + "/" + Str( ::oFacCliP:nNumFac ) + "/" + ::oFacCliP:cSufFac + "/" + Str( ::oFacCliP:nNumRec )
+         ::oDbf:cCodCli    := ::oFacCliP:cCodCli
          if ::oDbfCli:Seek( ::oFacCliP:cCodCli )
             ::oDbf:cNomCli := ::oDbfCli:Titulo
             ::oDbf:cNifCli := ::oDbfCli:Nif

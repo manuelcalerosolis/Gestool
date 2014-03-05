@@ -4462,9 +4462,6 @@ METHOD GoNext( oCajTur, oBrwCnt )
          if !::lZoom
 
             if ::lCloseCajaSeleccionada()
-
-               ? "debe cerrar el diaolog"
-
                ::oDlgTurno:end( IDOK )
             end if
 
@@ -5279,9 +5276,7 @@ METHOD TotVenta( cTurno, cCaja )
 
    ::oTikT:OrdSetFocus( "cTurTik" )
 
-   /*
-   Ventas por albaranes--------------------------------------------------------
-   */
+   // Ventas por albaranes no facturados------------------------------------------
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oAlbCliT:LastRec() )
@@ -5294,9 +5289,14 @@ METHOD TotVenta( cTurno, cCaja )
    if ::oAlbCliT:Seek( cTurno + cCaja )
 
       while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurno + cCaja  .and. !::oAlbCliT:eof()
-         ::oTotales:addTotAlbCliContadores(  cCaja, ::oAlbCliT:cSerAlb, ::nCntAlbaranCliente(), ::cTxtAlbaranCliente(), ::bEdtAlbaranCliente() )
-         ::oTotales:addTotAlbCliVentas(      cCaja, ::oAlbCliT:cSerAlb, ::nTotAlbaranCliente(), ::cTxtAlbaranCliente(), ::bEdtAlbaranCliente() )
-         ::oTotales:addNumeroAlbaranes(      cCaja )
+
+         if !::oAlbCliT:lFacturado
+
+            ::oTotales:addTotAlbCliContadores(  cCaja, ::oAlbCliT:cSerAlb, ::nCntAlbaranCliente(), ::cTxtAlbaranCliente(), ::bEdtAlbaranCliente() )
+            ::oTotales:addTotAlbCliVentas(      cCaja, ::oAlbCliT:cSerAlb, ::nTotAlbaranCliente(), ::cTxtAlbaranCliente(), ::bEdtAlbaranCliente() )
+            ::oTotales:addNumeroAlbaranes(      cCaja )
+
+         end if 
 
          ::oAlbCliT:Skip()
 
@@ -5537,15 +5537,13 @@ METHOD TotEntrada( cTurno, cCaja )
 
 RETURN ( Self )
 
-//------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD TotCompra( cTurno, cCaja )
 
    DEFAULT cTurno       := ::cCurTurno
 
-   /*
-   Albaranes de proveedores_________________________________________________________
-   */
+   // Albaranes de proveedores_________________________________________________
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oAlbPrvT:LastRec() )
@@ -5575,9 +5573,7 @@ METHOD TotCompra( cTurno, cCaja )
 
    end if
 
-   /*
-   Facturas de proveedores_________________________________________________________
-   */
+   // Facturas de proveedores__________________________________________________
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oFacPrvT:LastRec() )
@@ -5601,9 +5597,7 @@ METHOD TotCompra( cTurno, cCaja )
 
    end if
 
-   /*
-   Facturas rectificativa de proveedores_________________________________________________________
-   */
+   // Facturas rectificativa de proveedores____________________________________
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oRctPrvT:LastRec() )
