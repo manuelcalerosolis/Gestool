@@ -2448,6 +2448,10 @@ Function PrintSeries()
 
 Return nil
 
+Function TLabelGenerator()
+
+RETURN nil
+
 /*
 //---------------------------------------------------------------------------//
 

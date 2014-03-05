@@ -149,11 +149,15 @@ METHOD lGenerate() CLASS TDiaCRecCob
    ::oBtnCancel:Enable()
    ::oDbf:Zap()
 
-   cExpHead          := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          := ' lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
    if !::lAllCli
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
+
+   if !empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
+   end if 
 
    ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -163,37 +167,29 @@ METHOD lGenerate() CLASS TDiaCRecCob
 
    while !::lBreak .and. !::oFacCliP:Eof()
 
-      if lChkSer( ::oFacCliP:cSerie, ::aSer )
+      if lChkSer( ::oFacCliP:cSerie, ::aSer ) .and. !( ::lExcCero .and. nTotRecCli( ::oFacCliP, ::oDbfDiv ) == 0 )
 
-         /*
-         Posicionamos en las lineas de detalle --------------------------------
-         */
+         ::oDbf:Append()
 
-         if !( ::lExcCero .and. nTotRecCli( ::oFacCliP, ::oDbfDiv ) == 0 )
+         ::oDbf:cCodCli    := ::oFacCliP:cCodCli
 
-            ::oDbf:Append()
-
-            ::oDbf:cCodCli    := ::oFacCliP:cCodCli
-
-            if ::oDbfCli:Seek( ::oFacCliP:cCodCli )
-               ::oDbf:cNomCli := ::oDbfCli:Titulo
-            end if
-
-            ::oDbf:dFecMov    := ::oFacCliP:dPreCob
-            ::oDbf:dFecCob    := ::oFacCliP:dEntrada
-            ::oDbf:dFecVto    := ::oFacCliP:dFecVto
-
-            ::oDbf:cCodCaj    := ::oFacCliP:cCodCaj
-
-            ::oDbf:nTotDoc    := nTotRecCli( ::oFacCliP, ::oDbfDiv )
-            ::oDbf:cDocMov    := ::oFacCliP:cSerie + "/" + AllTrim( Str( ::oFacCliP:nNumFac ) ) + "/" + ::oFacCliP:cSufFac
-            ::oDbf:cTipDoc    := "Factura"
-            ::oDbf:cBanco     := ::oFacCliP:cBncCli
-            ::oDbf:cCuenta    := ::oFacCliP:cEntCli + "-" + ::oFacCliP:cSucCli + "-" + ::oFacCliP:cDigCli + "-" + ::oFacCliP:cCtaCli
-
-            ::oDbf:Save()
-
+         if ::oDbfCli:Seek( ::oFacCliP:cCodCli )
+            ::oDbf:cNomCli := ::oDbfCli:Titulo
          end if
+
+         ::oDbf:dFecMov    := ::oFacCliP:dPreCob
+         ::oDbf:dFecCob    := ::oFacCliP:dEntrada
+         ::oDbf:dFecVto    := ::oFacCliP:dFecVto
+
+         ::oDbf:cCodCaj    := ::oFacCliP:cCodCaj
+
+         ::oDbf:nTotDoc    := nTotRecCli( ::oFacCliP, ::oDbfDiv )
+         ::oDbf:cDocMov    := ::oFacCliP:cSerie + "/" + AllTrim( Str( ::oFacCliP:nNumFac ) ) + "/" + ::oFacCliP:cSufFac
+         ::oDbf:cTipDoc    := "Factura"
+         ::oDbf:cBanco     := ::oFacCliP:cBncCli
+         ::oDbf:cCuenta    := ::oFacCliP:cEntCli + "-" + ::oFacCliP:cSucCli + "-" + ::oFacCliP:cDigCli + "-" + ::oFacCliP:cCtaCli
+
+         ::oDbf:Save()
 
       end if
 
@@ -209,7 +205,11 @@ METHOD lGenerate() CLASS TDiaCRecCob
    Ahora sobre los tikets------------------------------------------------------
    */
 
-   cExpHead       := 'dPgoTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPgoTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead       := ' dPgoTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPgoTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+
+   if !empty( ::oFilter:cExpresionFilter )
+      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
+   end if 
 
    ::oTikCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliP:cFile ), ::oTikCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -221,9 +221,7 @@ METHOD lGenerate() CLASS TDiaCRecCob
 
       cCodCli  := oRetFld( ::oTikCliP:cSerTik + ::oTikCliP:cNumTik + ::oTikCliP:cSufTik, ::oTikCliT, "cCliTik" )
 
-      if ( ::lAllCli .or. ( cCodCli >= ::cCliOrg .and. cCodCli <= ::cCliDes ) )
-
-         if lChkSer( ::oTikCliP:cSerTik, ::aSer )
+      if lChkSer( ::oTikCliP:cSerTik, ::aSer ) .and. ( ::lAllCli .or. ( cCodCli >= ::cCliOrg .and. cCodCli <= ::cCliDes ) )
 
             ::oDbf:Append()
 
@@ -242,8 +240,6 @@ METHOD lGenerate() CLASS TDiaCRecCob
             ::oDbf:cTipDoc    := "Tiket"
 
             ::oDbf:Save()
-
-         end if
 
       end if
 

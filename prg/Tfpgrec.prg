@@ -89,9 +89,9 @@ METHOD OpenFiles()
 
    ::oFacCliT     := TDataCenter():oFacCliT()  
 
-   DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE  "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
+   ::oFacCliP     := TDataCenter():oFacCliP()
 
-   ::oFacCliP := TDataCenter():oFacCliP()
+   DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE  "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE  "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -100,8 +100,10 @@ METHOD OpenFiles()
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
+      
       ::CloseFiles()
-      lOpen          := .f.
+
+      lOpen       := .f.
 
    END SEQUENCE
 
@@ -125,7 +127,6 @@ METHOD CloseFiles()
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
-
    if !Empty( ::oAntCliT ) .and. ::oAntCliT:Used()
       ::oAntCliT:End()
    end if
@@ -205,7 +206,7 @@ METHOD lGenerate()
       Condiciones
       */
 
-      cCodPgo  := cPgoFacCli( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT )
+      cCodPgo        := cPgoFacCli( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT )
 
       if ::lIsValid()                                                                                 .AND.;
          ::oFacCliP:dPreCob >= ::dIniInf                                                              .AND.;
@@ -222,6 +223,7 @@ METHOD lGenerate()
 
          ::oDbf:cDocMov    := ::oFacCliP:cSerie + "/" + Str( ::oFacCliP:nNumFac ) + "/" + ::oFacCliP:cSufFac + "/" + Str( ::oFacCliP:nNumRec )
          ::oDbf:cCodCli    := ::oFacCliP:cCodCli
+
          if ::oDbfCli:Seek( ::oFacCliP:cCodCli )
             ::oDbf:cNomCli := ::oDbfCli:Titulo
             ::oDbf:cNifCli := ::oDbfCli:Nif
@@ -241,17 +243,18 @@ METHOD lGenerate()
             ::oDbf:cDefI09 := ::oDbfCli:CusRDef09
             ::oDbf:cDefI10 := ::oDbfCli:CusRDef10
          end if
-         ::oDbf:dFecMov := ::oFacCliP:dPreCob
-         ::oDbf:dFecCob := ::oFacCliP:dEntrada
-         ::oDbf:nTotDoc := nTotRecCli( ::oFacCliP:cAlias, ::oDbfDiv:cAlias, ::cDivInf )
-         ::oDbf:nTotFac := nTotFacCli( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias )
-         ::oDbf:nTotCob := nPagFacCli( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT:cAlias, ::oFacCliP:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::cDivInf,.t. )
-         ::oDbf:nTotPen := ::oDbf:nTotCob - ::oDbf:nTotFac
-         ::oDbf:cBanco  := ::oFacCliP:cBncCli
-         ::oDbf:cCuenta := ::oFacCliP:cEntCli + "-" + ::oFacCliP:cSucCli + "-" + ::oFacCliP:cDigCli + "-" + ::oFacCliP:cCtaCli
 
-         ::oDbf:cCodPgo := cCodPgo
-         ::oDbf:cNomPgo := cNbrFPago( cCodPgo, ::oDbfFpg )
+         ::oDbf:dFecMov    := ::oFacCliP:dPreCob
+         ::oDbf:dFecCob    := ::oFacCliP:dEntrada
+         ::oDbf:nTotDoc    := nTotRecCli( ::oFacCliP:cAlias, ::oDbfDiv:cAlias, ::cDivInf )
+         ::oDbf:nTotFac    := nTotFacCli( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias )
+         ::oDbf:nTotCob    := nPagFacCli( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT:cAlias, ::oFacCliP:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::cDivInf,.t. )
+         ::oDbf:nTotPen    := ::oDbf:nTotCob - ::oDbf:nTotFac
+         ::oDbf:cBanco     := ::oFacCliP:cBncCli
+         ::oDbf:cCuenta    := ::oFacCliP:cEntCli + "-" + ::oFacCliP:cSucCli + "-" + ::oFacCliP:cDigCli + "-" + ::oFacCliP:cCtaCli
+
+         ::oDbf:cCodPgo    := cCodPgo
+         ::oDbf:cNomPgo    := cNbrFPago( cCodPgo, ::oDbfFpg )
 
          ::oDbf:Save()
 

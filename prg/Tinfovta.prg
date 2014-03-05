@@ -133,15 +133,13 @@ METHOD lResource( cFld )
 
    ::CreateFilter( , ::oDbf, .t. )
 
-   /* Monta forma de pago */
+   // Monta forma de pago -----------------------------------------------------
 
    if !::oDefFpgInf( 1450, 1451, 1460, 1461, 920 )
       return .f.
    end if
 
-   /*
-   Monta los articulos de manera automatica
-   */
+   // Monta los articulos de manera automatica---------------------------------
 
    if !::lDefArtInf( 1470, 1471, 1480, 1481, 800 )
       return .f.
