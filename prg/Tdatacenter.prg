@@ -2305,6 +2305,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "CliInc"
    oDataTable:cName        := cPatCli() + "CliInc"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "CliInc.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliInc.Cdx"
@@ -2429,6 +2430,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TipInci"
    oDataTable:cName        := cPatEmp() + "TipInci"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TipInci.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TipInci.Cdx"

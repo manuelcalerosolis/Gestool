@@ -11896,3 +11896,10 @@ Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp =
 
 //---------------------------------------------------------------------------//
 
+FUNCTION EdtCliIncidencia( nView )
+
+   WinEdtRec( nil, bEdtInc, ( TDataView():Get( "CliAtp", nView ) ) )
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
