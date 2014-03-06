@@ -1307,6 +1307,7 @@ METHOD Importar()
             ::oDbfCliGst:cAgente    := ::oDbfCliFac:cCodAge
             ::oDbfCliGst:lBlqCli    := .f.
             ::oDbfCliGst:nDtoArt    := ::oDbfCliFac:nDto
+            ::oDbfCliGst:cCodRut    := ::oDbfCliFac:cCodProv
 
             if Val( ::oDbfCliFac:cCodCli ) >= 10000 .and. Val( ::oDbfCliFac:cCodCli ) <= 99999
                ::oDbfCliGst:lChgPre := .f.

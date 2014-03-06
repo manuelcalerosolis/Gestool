@@ -220,6 +220,7 @@ static dbfObrasT
 static dbfContactos
 static dbfBanco
 static dbfAlmT
+static dbfRuta
 static dbfTmpDoc
 static dbfTmpObr
 static dbfTmpBnc
@@ -410,6 +411,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
       SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
 
+      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+
       oBandera             := TBandera():New()
 
       oStock               := TStock():Create( cPatGrp() )
@@ -504,6 +508,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfInci      )
    CLOSE ( dbfOfe       )
    CLOSE ( dbfArtDiv    )
+   CLOSE ( dbfRuta      )
 
    if !Empty( oStock )
       oStock:end()
@@ -551,6 +556,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfInci        := nil
    dbfOfe         := nil
    dbfArtDiv      := nil
+   dbfRuta        := nil
 
    if lDestroy
       oWndBrw     := nil
@@ -625,6 +631,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
                   "Establecimiento",;
                   "Correo electrónico",;
                   "Cliente web" ,;
+                  "Ruta" ,;
                   if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) ) ,;
                   if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) ) ,;
                   if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) ) ;
@@ -805,6 +812,15 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Cliente web"
          :cSortOrder       := "cCliWeb"
          :bEditValue       := {|| aStrClients[ Min( Max( ( TDataView():Get( "Client", nView ) )->nTipCli, 1 ), len( aStrClients ) ) ] }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Ruta"
+         :cSortOrder       := "cCodRut"
+         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->cCodRut  + if( !Empty( ( TDataView():Get( "Client", nView ) )->cCodRut ), " - ", "" ) + RetFld( ( TDataView():Get( "Client", nView ) )->cCodRut, dbfRuta ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -7776,11 +7792,11 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cMeiInt", "Upper( Field->cMeiInt )", {|| Upper( Field->cMeiInt ) } ) )
 
-      ( dbfCli )->( ordCondSet("!Deleted() .and. nTipCli == 3", {||!Deleted() .and. Field->nTipCli == 3 } ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCliWeb", "COD", {|| Field->COD } ) )
-
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "CCODRUT", "UPPER( Field->CCODRUT )", {|| UPPER( Field->CCODRUT ) } ) )
+
+      ( dbfCli )->( ordCondSet("!Deleted() .and. nTipCli == 3", {||!Deleted() .and. Field->nTipCli == 3 } ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCliWeb", "COD", {|| Field->COD } ) )      
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lSndInt", "Field->lSndInt", {|| Field->lSndInt } ) )
