@@ -10262,12 +10262,13 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             */
 
             // Atipicas de clientes por artículos---------------------------------
-   
+
             do case
                case lBuscarAtipicaArticulo( aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
                   ( dbfCliAtp )->lAplAlb
    
                   nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
+
                   if nImpAtp  != 0
                      aGet[ _NPREUNIT ]:cText( nImpAtp )
                   end if
