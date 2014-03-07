@@ -15473,6 +15473,9 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliT)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
+      ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecFac )", {|| Field->cCodCli + dtos( Field->dFecFac ) } ) )
+
       ( dbfFacCliT )->( dbCloseArea() )
 
    else
@@ -23454,12 +23457,12 @@ Return .t.
 
 Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
-	local dUltimoAlbaran 	:= ctod( "" )
-	local dUltimaFactura		:= ctod( "" )
 	local nRecAlbL 			:= ( dbfAlbCliL )->( Recno() )
 	local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
 	local nOrdAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
 	local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+	local dUltimaFactura		:= ctod( "" )
+	local dUltimoAlbaran 	:= ctod( "" )
 
 	CursorWait()
 
@@ -23493,6 +23496,49 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
 //---------------------------------------------------------------------------//
+
+Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
+
+	local nRecAlbT 			:= ( dbfAlbCliT )->( Recno() )
+	local nRecFacT 			:= ( dbfFacCliT )->( Recno() )
+	local nOrdAlbT				:= ( dbfAlbCliT )->( OrdSetFocus( "cCliFec" ) )
+	local nOrdFacT				:= ( dbfFacCliT )->( OrdSetFocus( "cCliFec" ) )
+	local dUltimaFactura		:= ctod( "" )
+	local dUltimoAlbaran 	:= ctod( "" )
+
+	CursorWait()
+
+	/*
+	Buscamos por los albaranes no facturados-----------------------------------
+	*/
+
+	if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
+		dUltimoAlbaran 		:= ( dbfAlbCliL )->dFecAlb 
+	end if
+
+	/*
+	Buscamos ahora por loas facturas--------------------------------------------
+	*/
+
+	if ( dbfFacCliT )->( dbSeek( cCodCli ) )
+		dUltimaFactura 		:= ( dbfFacCliL )->dFecFac
+	end if
+
+	/*
+	Dejamos las tablas como estaban------------------------------------------
+	*/
+
+	( dbfAlbCliT )->( OrdSetFocus( nOrdAlbT ) )
+	( dbfFacCliT )->( OrdSetFocus( nOrdFacT ) )
+	( dbfAlbCliT )->( dbGoTo( nRecAlbT ) )
+	( dbfFacCliT )->( dbGoTo( nRecFacT ) )
+
+	CursorWE()
+
+Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
+
+//---------------------------------------------------------------------------//
+
 
 Function FacturaClienteLineaOrdSetFocus( cOrderName )
 

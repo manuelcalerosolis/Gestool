@@ -4,6 +4,12 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
+#define  fldRecibosClientes      oFld:aDialogs[ 1 ]
+#define  fldRecibosProveedores   oFld:aDialogs[ 2 ]
+#define  fldIncidencias          oFld:aDialogs[ 3 ]
+
+static nView
+
 static nLevel
 static dbfFacCliP
 static dbfFacPrvP
@@ -50,6 +56,9 @@ static oEstadoPrv
 static aEstadoPrv    := { "Pendientes", "Pagados", "Todos" }
 static cEstadoPrv
 
+static cCodigoCliente
+static cCodigoProveedor
+
 static oBrwRecCli
 static oBrwRecPrv
 
@@ -64,6 +73,14 @@ STATIC FUNCTION OpenFiles()
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
+
+   nView          := TDataView():CreateView()
+
+   TDataView():Get( "Client", nView )
+
+   TDataView():Get( "CliInc", nView )
+
+   TDataView():Get( "TipInci", nView )
 
    USE ( cPatEmp() + "FACCLIP.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
    SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
@@ -145,7 +162,9 @@ STATIC FUNCTION OpenFiles()
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
+
       CloseFiles()
+
       lOpen          := .f.
 
    END SEQUENCE
@@ -230,6 +249,8 @@ STATIC FUNCTION CloseFiles()
       ( dbfDiv )->( dbCloseArea() )
    end if
 
+   TDataView():DeleteView( nView )  
+
    dbfFacCliP              := nil
    dbfFacPrvP              := nil
    dbfClient               := nil
@@ -251,14 +272,16 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION PageIni( oMenuItem, oWnd )
+FUNCTION PageIni( oMenuItem, oWnd, cCodCli, cCodPrv )
 
    local oDlg
    local oFld
    local oError
    local oBlock
+   local oBrwInc
    local oBmpCobros
    local oBmpPagos
+   local oBmpIncidencias
 
    // Return nil
 
@@ -296,17 +319,18 @@ FUNCTION PageIni( oMenuItem, oWnd )
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   /*
-   Cargamos los valores por defecto--------------------------------------------
-   */
+   cCodigoCliente          := cCodCli
+   cCodigoProveedor        := cCodPrv
 
-   cEstadoCli  := "Pendientes"
-   cEstadoPrv  := "Pendientes"
+   // Cargamos los valores por defecto-----------------------------------------
 
-   aPeriodoCli := aCreaArrayPeriodos()
-   cPeriodoCli := "Hoy"
-   aPeriodoPrv := aCreaArrayPeriodos()
-   cPeriodoPrv := "Hoy"
+   cEstadoCli              := "Pendientes"
+   cEstadoPrv              := "Pendientes"
+
+   aPeriodoCli             := aCreaArrayPeriodos()
+   cPeriodoCli             := "Hoy"
+   aPeriodoPrv             := aCreaArrayPeriodos()
+   cPeriodoPrv             := "Hoy"
 
    /*
    Caja de dialogo_____________________________________________________________
@@ -318,64 +342,66 @@ FUNCTION PageIni( oMenuItem, oWnd )
          ID       200 ;
          OF       oDlg ;
          PROMPT   "&Cobros",;
-                  "&Pagos" ;
+                  "&Pagos",;
+                  "Incidencias" ;
          DIALOGS  "PAGEINI_01",;
-                  "PAGEINI_02"
+                  "PAGEINI_02",;
+                  "PAGEINI_03"
 
       /*
       PRIMERA CAJA DE DIALOGO--------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpCobros ;
-         ID       500 ;
-         RESOURCE "SAFE_INTO_ALPHA_48" ;
+         ID          500 ;
+         RESOURCE    "SAFE_INTO_ALPHA_48" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[1]
+         OF          fldRecibosClientes
 
       REDEFINE COMBOBOX oPeriodoCli ;
          VAR         cPeriodoCli ;
          ID          100 ;
          ITEMS       aPeriodoCli ;
          ON CHANGE   ( lRecFechaCli(), LoadPageIni( .t., .f. ) ) ;
-         OF          oFld:aDialogs[1]
+         OF          fldRecibosClientes
 
       REDEFINE GET oFecIniCli VAR dFecIniCli;
-         ID       110 ;
+         ID          110 ;
 			SPINNER ;
-         VALID    ( LoadPageIni( .t., .f. ) );
-         OF       oFld:aDialogs[1]
+         VALID       ( LoadPageIni( .t., .f. ) );
+         OF          fldRecibosClientes
 
       REDEFINE GET oFecFinCli VAR dFecFinCli;
-         ID       120 ;
+         ID          120 ;
 			SPINNER ;
-         VALID    ( LoadPageIni( .t., .f. ) );
-         OF       oFld:aDialogs[1]
+         VALID       ( LoadPageIni( .t., .f. ) );
+         OF          fldRecibosClientes
 
       REDEFINE COMBOBOX oEstadoCli VAR cEstadoCli ;
-         ID       130 ;
-         ITEMS    aEstadoCli ;
-         ON CHANGE( LoadPageIni( .t., .f. ) );
-         OF       oFld:aDialogs[1]
+         ID          130 ;
+         ITEMS       aEstadoCli ;
+         ON CHANGE   ( LoadPageIni( .t., .f. ) );
+         OF          fldRecibosClientes
 
       REDEFINE BUTTON ;
-         ID       140 ;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( SelAllRecCli( .t. ) )
+         ID          140 ;
+         OF          fldRecibosClientes ;
+         ACTION      ( SelAllRecCli( .t. ) )
 
       REDEFINE BUTTON ;
-         ID       150 ;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( SelAllRecCli( .f. ) )
+         ID          150 ;
+         OF          fldRecibosClientes ;
+         ACTION      ( SelAllRecCli( .f. ) )
 
       REDEFINE BUTTON ;
-         ID       160 ;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( SelRecCli() )
+         ID          160 ;
+         OF          fldRecibosClientes ;
+         ACTION      ( SelRecCli() )
 
       REDEFINE BUTTON ;
-         ID       180 ;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( if( !Empty( ( dbfNewRecCli )->cSerie ), EdtRecCli( ( dbfNewRecCli )->cSerie + Str( ( dbfNewRecCli )->nNumFac ) +  ( dbfNewRecCli )->cSufFac + Str( ( dbfNewRecCli )->nNumRec ), .f., !Empty( ( dbfNewRecCli )->cTipRec ) ), ) )
+         ID          180 ;
+         OF          fldRecibosClientes ;
+         ACTION      ( if( !Empty( ( dbfNewRecCli )->cSerie ), EdtRecCli( ( dbfNewRecCli )->cSerie + Str( ( dbfNewRecCli )->nNumFac ) +  ( dbfNewRecCli )->cSufFac + Str( ( dbfNewRecCli )->nNumRec ), .f., !Empty( ( dbfNewRecCli )->cTipRec ) ), ) )
 
       oBrwRecCli                 := TXBrowse():New( oFld:aDialogs[1] )
 
@@ -445,15 +471,81 @@ FUNCTION PageIni( oMenuItem, oWnd )
          :nHeadStrAlign          := 1
       end with
 
-      REDEFINE BUTTON ;
-         ID       510;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( LiquidaRecCli() )
+      // Incidencias de clientes ----------------------------------------------
+
+      REDEFINE BITMAP oBmpIncidencias ;
+         ID          500 ;
+         RESOURCE    "Sign_warning_Alpha_48" ;
+         TRANSPARENT ;
+         OF          fldIncidencias
+
+      oBrwInc                 := IXBrowse():New( fldIncidencias )
+
+      oBrwInc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwInc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwInc:cAlias          := TDataView():Get( "CliInc", nView )
+      oBrwInc:nMarqueeStyle   := 5
+      oBrwInc:cName           := "Clientes.Incidencias"
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Rs. Resuelta"
+         :bStrData            := {|| "" }
+         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->lListo }
+         :nWidth              := 18
+         :SetCheck( { "Sel16", "Nil16" } )
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Código"
+         :cSortOrder          := "cCodTip"
+         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->cCodTip }
+         :nWidth              := 80
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Incidencia"
+         :bEditValue          := {|| cNomInci( ( TDataView():Get( "CliInc", nView ) )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
+         :nWidth              := 180
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Fecha"
+         :cSortOrder          := "cCodCli"
+         :bEditValue          := {|| Dtoc( ( TDataView():Get( "CliInc", nView ) )->dFecInc ) }
+         :nWidth              := 80
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Descripción"
+         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->mDesInc }
+         :nWidth              := 300
+      end with
+
+      oBrwInc:bLDblClick      := {|| EdtCliIncidencia( nView ) }
+      oBrwInc:bRClicked       := {| nRow, nCol, nFlags | oBrwInc:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrwInc:CreateFromResource( 400 )
 
       REDEFINE BUTTON ;
-         ID       520;
-         OF       oFld:aDialogs[1] ;
-         ACTION   ( oDlg:end() )
+         ID       100 ;
+         OF       fldIncidencias ;
+         ACTION   ( Msginfo( "add") )
+
+      REDEFINE BUTTON ;
+         ID       110 ;
+         OF       fldIncidencias ;
+         ACTION   ( EdtCliIncidencia( nView ) )
+
+      REDEFINE BUTTON ;
+         ID       120 ;
+         OF       fldIncidencias ;
+         ACTION   ( Msginfo( "Del") )
+
+      REDEFINE BUTTON ;
+         ID       130 ;
+         OF       fldIncidencias ;
+         ACTION   ( Msginfo( "Zoo") )
 
       /*
       SEGUNDA CAJA DE DIALOGO--------------------------------------------------
@@ -463,54 +555,54 @@ FUNCTION PageIni( oMenuItem, oWnd )
          ID       500 ;
          RESOURCE "SAFE_OUT_ALPHA_48" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[2]
+         OF       fldRecibosProveedores
 
       REDEFINE COMBOBOX oPeriodoPrv ;
          VAR         cPeriodoPrv ;
          ID          100 ;
          ITEMS       aPeriodoPrv ;
          ON CHANGE   ( lRecFechaPrv(), LoadPageIni( .f., .t. ) );
-         OF          oFld:aDialogs[2]
+         OF       fldRecibosProveedores
 
       REDEFINE GET oFecIniPrv VAR dFecIniPrv;
          ID       110 ;
 			SPINNER ;
          VALID    ( LoadPageIni( .f., .t. ) );
-         OF       oFld:aDialogs[2]
+         OF       fldRecibosProveedores
 
       REDEFINE GET oFecFinPrv VAR dFecFinPrv;
          ID       120 ;
 			SPINNER ;
          VALID    ( LoadPageIni( .f., .t. ) );
-         OF       oFld:aDialogs[2]
+         OF       fldRecibosProveedores
 
       REDEFINE COMBOBOX oEstadoPrv VAR cEstadoPrv ;
          ID       130 ;
          ITEMS    aEstadoPrv ;
          ON CHANGE( LoadPageIni( .f., .t. ) );
-         OF       oFld:aDialogs[2]
+         OF       fldRecibosProveedores
 
       REDEFINE BUTTON ;
          ID       140 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldRecibosProveedores ;
          ACTION   ( SelAllRecPrv( .t. ) )
 
       REDEFINE BUTTON ;
          ID       150 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldRecibosProveedores ;
          ACTION   ( SelAllRecPrv( .f. ) )
 
       REDEFINE BUTTON ;
          ID       160 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldRecibosProveedores ;
          ACTION   ( SelRecPrv() )
 
       REDEFINE BUTTON ;
          ID       180 ;
-         OF       oFld:aDialogs[2] ;
+         OF       fldRecibosProveedores ;
          ACTION   ( if( !Empty( ( dbfNewRecPrv )->cSerFac ), EdtRecPrv( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ) ), ) )
 
-      oBrwRecPrv                 := IXBrowse():New( oFld:aDialogs[2] )
+      oBrwRecPrv                 := IXBrowse():New( fldRecibosProveedores )
 
       oBrwRecPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwRecPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -578,31 +670,23 @@ FUNCTION PageIni( oMenuItem, oWnd )
          :nHeadStrAlign          := 1
       end with
 
-      REDEFINE BUTTON ;
-         ID       510;
-         OF       oFld:aDialogs[2] ;
-         ACTION   ( LiquidaRecPrv() )
-
-      REDEFINE BUTTON ;
-         ID       520;
-         OF       oFld:aDialogs[2] ;
-         ACTION   ( oDlg:end() )
-
-      /*
-      Redefinimos el meter-----------------------------------------------------
-      */
+      // Redefinimos el meter--------------------------------------------------
 
       oMeter                     := TMeter():ReDefine( 210, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, ( dbfNewRecPrv )->( LastRec() ), oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
+         ACTION      ( oDlg:End() )
 
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| if( !Empty( ( dbfNewRecCli )->cSerie ), EdtRecCli( ( dbfNewRecCli )->cSerie + Str( ( dbfNewRecCli )->nNumFac ) +  ( dbfNewRecCli )->cSufFac + Str( ( dbfNewRecCli )->nNumRec ), .f., !Empty( ( dbfNewRecCli )->cTipRec ) ), ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F5, {|| LiquidaRecCli() } )
       oFld:aDialogs[2]:AddFastKey( VK_F3, {|| if( !Empty( ( dbfNewRecPrv )->cSerFac ), EdtRecPrv( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ) ), ) } )
       oFld:aDialogs[2]:AddFastKey( VK_F5, {|| LiquidaRecPrv() } )
 
-      oDlg:bStart                := {|| lRecFechaCli(), lRecFechaPrv(), LoadPageIni( .t., .t.) }
+      oDlg:bStart                := {|| StartPageIni( oFld ) }
 
-   ACTIVATE DIALOG oDlg ;
-      CENTER
+   ACTIVATE DIALOG oDlg CENTER
 
    /*
    Guardamos la configuracion de los browse------------------------------------
@@ -628,13 +712,24 @@ FUNCTION PageIni( oMenuItem, oWnd )
    Matamos el objeto imagen----------------------------------------------------
    */
 
-   if !Empty( oBmpCobros )
-      oBmpCobros:End()
-   end if
+   oBmpCobros:End()
+   oBmpPagos:End()
+   oBmpIncidencias:End()
 
-   if !Empty( oBmpPagos )
-      oBmpPagos:End()
-   end if
+RETURN ( NIL )
+
+//----------------------------------------------------------------------------//
+
+Static Function StartPageIni( oFld )
+
+   lRecFechaCli()
+   lRecFechaPrv()
+
+   if empty( cCodigoCliente )
+      oFld:DelItem( 2 )
+   end if 
+
+   LoadPageIni( .t., .t.)
 
 RETURN ( NIL )
 

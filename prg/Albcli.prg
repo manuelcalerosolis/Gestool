@@ -214,8 +214,10 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLINOFE                  91      //   L      1     0
 #define _LVOLIMP                  92
 #define __DFECALB                 93
-#define __CCODCLI                 94
-#define _DFECULTCOM               95  
+#define __CNUMSAT                 94
+#define _LFROMATP                 95
+#define __CCODCLI                 96
+#define _DFECULTCOM               97  
 
 /*
 Definici¢n de Array para impuestos
@@ -2579,6 +2581,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Última venta"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
+         :bClrStd             := {|| { if( ( GetSysDate() - ( dbfTmpLin )->dFecUltCom ) > 30, CLR_HRED, CLR_BLACK ), GetSysColor( COLOR_WINDOW )} }
          :nWidth              := 80
          :lHide               := .t.
       end with
@@ -9660,19 +9663,21 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab   
             end if
 
-            aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
+            aTmp[ _CREFPRV ]     := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
 
             aGet[ _CDETALLE ]:show()
             aGet[ _MLNGDES  ]:hide()
 
             aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
 
-            /*
-            Buscamos la familia del articulo y anotamos las propiedades--------
-            */
+            // Ultima fecha de venta-------------------------------------------
+
+            aTmp[ _DFECULTCOM ]  := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], aTmp[ _CREF ], TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
+
+            // Buscamos la familia del articulo y anotamos las propiedades--------
    
-            aTmp[ _CCODPR1 ]        := ( dbfArticulo )->cCodPrp1
-            aTmp[ _CCODPR2 ]        := ( dbfArticulo )->cCodPrp2
+            aTmp[ _CCODPR1 ]     := ( dbfArticulo )->cCodPrp1
+            aTmp[ _CCODPR2 ]     := ( dbfArticulo )->cCodPrp2
    
             if !Empty( aTmp[ _CCODPR1 ] ) .and. !Empty( aGet[ _CVALPR1 ] )
    
@@ -15758,6 +15763,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb )", {|| Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+
       ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
@@ -15795,7 +15803,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
 
-      ( cAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -16071,9 +16079,9 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
 
 Return ( aColAlbCli )
 
