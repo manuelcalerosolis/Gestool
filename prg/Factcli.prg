@@ -23513,7 +23513,7 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
 	*/
 
 	if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
-		dUltimoAlbaran 		:= ( dbfAlbCliL )->dFecAlb 
+		dUltimoAlbaran 		:= ( dbfAlbCliT )->dFecAlb 
 	end if
 
 	/*
@@ -23521,7 +23521,7 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
 	*/
 
 	if ( dbfFacCliT )->( dbSeek( cCodCli ) )
-		dUltimaFactura 		:= ( dbfFacCliL )->dFecFac
+		dUltimaFactura 		:= ( dbfFacCliT )->dFecFac
 	end if
 
 	/*
@@ -23536,19 +23536,6 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
 	CursorWE()
 
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
-
-//---------------------------------------------------------------------------//
-
-
-Function FacturaClienteLineaOrdSetFocus( cOrderName )
-
-	DEFAULT cOrderName 	:= "nNumRef"
-
-	if !empty( dbfFacCliL ) .and. ( dbfFacCliL )->( used() )
-		( dbfFacCliL )->( ordSetFocus( cOrderName ) )
-	end if 
-
-Return ( nil )
 
 //---------------------------------------------------------------------------//
 

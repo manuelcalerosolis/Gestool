@@ -1255,7 +1255,7 @@ METHOD Del() CLASS TMant
    
       if ::oDbf:RecLock()
    
-         if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+         if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión" )
             CursorWait()
             lDel     := ::oDbf:Delete()
             CursorWE()

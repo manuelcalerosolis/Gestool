@@ -320,6 +320,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():Get( "Articulo", nView )
 
+      TDataView():Get( "AlbCliT", nView )
+
+      TDataView():Get( "FacCliT", nView )
 
       // USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       // SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -827,6 +830,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Última venta"
+         :bEditValue       := {|| dtoc( dUltimaVentaCliente( ( TDataView():Get( "Client", nView ) )->Cod, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "FacCliT", nView ) ) ) } 
+         :nWidth           := 80
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) )
          :cSortOrder       := "cUsrDef01"
          :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->cUsrDef01 }
@@ -1038,11 +1048,17 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( TDataView():Get( "Client", nView ) )->Cod } ) );
+            ACTION   ( appAlbCli( { "Cliente" => ( TDataView():Get( "Client", nView ) )->Cod } ) );
             TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
+/*
+         DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+            ALLOW    EXIT ;
+            ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( TDataView():Get( "Client", nView ) )->Cod } ) );
+            TOOLTIP  "Ir a albarán de cliente" ;
+            FROM     oRotor ;
+            LEVEL    ACC_EDIT*/
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
             ALLOW    EXIT ;

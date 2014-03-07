@@ -2552,7 +2552,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Número"
+         :cSortOrder          := "nNumLin"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
          :cEditPicture        := "9999"
          :nWidth              := 65
          :nDataStrAlign       := 1
@@ -2561,7 +2563,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
+         :cSortOrder          := "cRef"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
          :nWidth              := 70
       end with
 
@@ -2574,7 +2578,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Descripción"
+         :cSortOrder          := "cDetalle"
          :bEditValue          := {|| Descrip( dbfTmpLin ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
          :nWidth              := 260
       end with
 
@@ -8530,6 +8536,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "cDetalle", "Left( cDetalle, 100 )", {|| Left( Field->cDetalle, 100 ) } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
