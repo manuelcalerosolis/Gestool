@@ -730,7 +730,7 @@ METHOD Importar()
 
             ::oDbfAlbTGst:cSerAlb        := cSerie
             ::oDbfAlbTGst:nNumAlb        := nNumero
-            ::oDbfAlbTGst:cSufAlb        := Space( 2 )
+            ::oDbfAlbTGst:cSufAlb        := "00"
             ::oDbfAlbTGst:cTurAlb        := cCurSesion()
             ::oDbfAlbTGst:dFecAlb        := ::oDbfAlbTFac:Fecha
             ::oDbfAlbTGst:cCodAlm        := oUser():cAlmacen()
@@ -820,7 +820,7 @@ METHOD Importar()
 
                ::oDbfAlbLGst:cSerAlb     := cSerie
                ::oDbfAlbLGst:nNumAlb     := nNumero
-               ::oDbfAlbLGst:cSufAlb     := Space( 2 )
+               ::oDbfAlbLGst:cSufAlb     := "00"
                ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
                ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
                ::oDbfAlbLGst:nPreUnit    := ::oDbfAlbLFac:Precio
@@ -860,15 +860,15 @@ METHOD Importar()
          ::oDbfFacTFac:GoTop()
          while !( ::oDbfFacTFac:eof() )
 
-               while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + Space(2) )
+               while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + "00" )
                   ::oDbfFacTGst:Delete( .f. )
                end
 
-               while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
+               while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
                   ::oDbfFacLGst:Delete( .f. )
                end
 
-               while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
+               while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
                   ::oDbfFacPGst:Delete( .f. )
                end 
 
@@ -877,7 +877,7 @@ METHOD Importar()
 
                ::oDbfFacTGst:cSerie      := "A"
                ::oDbfFacTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
-               ::oDbfFacTGst:cSufFac     := Space( 2 )
+               ::oDbfFacTGst:cSufFac     := "00"
                ::oDbfFacTGst:cTurFac     := cCurSesion()
                ::oDbfFacTGst:dFecFac     := ::oDbfFacTFac:Fecha
                ::oDbfFacTGst:cCodAlm     := oUser():cAlmacen()
@@ -963,7 +963,7 @@ METHOD Importar()
 
                ::oDbfFacLGst:cSerie      := "A"
                ::oDbfFacLGst:nNumFac     := Val( SubStr( ::oDbfAlbLFac:RfaLin, 5, 7 ) )
-               ::oDbfFacLGst:cSufFac     := Space( 2 )
+               ::oDbfFacLGst:cSufFac     := "00"
                ::oDbfFacLGst:cRef        := ::oDbfAlbLFac:Codigo
                ::oDbfFacLGst:cDetalle    := ::oDbfAlbLFac:Concepto
                ::oDbfFacLGst:nPreUnit    := ::oDbfAlbLFac:Precio
@@ -1016,24 +1016,24 @@ METHOD Importar()
          ::oDbfFacPrvTFac:GoTop()
          while !( ::oDbfFacPrvTFac:Eof() )
 
-            while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + Space(2) )
-               ::oDbfFacTGst:Delete( .f. )
+            while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacPrvTFac:Numero ), 9 ) + "00" )
+               ::oDbfFacPrvTGst:Delete( .f. )
             end while
 
-            while ::oDbfFacPrvLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
-               ::oDbfFacLGst:Delete( .f. )
+            while ::oDbfFacPrvLGst:Seek( "A" + Str( Val( ::oDbfFacPrvTFac:Numero), 9 ) + "00" )
+               ::oDbfFacPrvLGst:Delete( .f. )
             end while
 
-            while ::oDbfFacPrvPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
-               ::oDbfFacPGst:Delete( .f. )
+            while ::oDbfFacPrvPGst:Seek( "A" + Str( Val( ::oDbfFacPrvTFac:Numero), 9 ) + "00" )
+               ::oDbfFacPrvPGst:Delete( .f. )
             end while
 
             ::oDbfFacPrvTGst:Append()
             ::oDbfFacPrvTGst:Blank()
 
             ::oDbfFacPrvTGst:cSerFac     := "A"
-            ::oDbfFacPrvTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
-            ::oDbfFacPrvTGst:cSufFac     := Space( 2 )
+            ::oDbfFacPrvTGst:nNumFac     := Val( ::oDbfFacPrvTFac:Numero )
+            ::oDbfFacPrvTGst:cSufFac     := "00"
             ::oDbfFacPrvTGst:cTurFac     := cCurSesion()
             ::oDbfFacPrvTGst:dFecFac     := ::oDbfFacPrvTFac:Fecha
             ::oDbfFacPrvTGst:cCodAlm     := oUser():cAlmacen()
@@ -1046,7 +1046,6 @@ METHOD Importar()
             ::oDbfFacPrvTGst:cCodUsr     := cCurUsr()
             ::oDbfFacPrvTGst:dFecChg     := GetSysDate()
             ::oDbfFacPrvTGst:cTimChg     := Time()
-
 
             nOrdAnt := ::oDbfPrvGst:OrdSetFocus( "TITULO" )
             ::oDbfPrvGst:GoTop()
@@ -1064,7 +1063,7 @@ METHOD Importar()
                end if 
                ::oDbfFacPrvTGst:cProvProv    := ::oDbfPrvGst:Provincia
                ::oDbfFacPrvTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
-               ::oDbfFacPrvTGst:lRecargo     := ::oDvfPrvGst:lReq
+               ::oDbfFacPrvTGst:lRecargo     := ::oDbfPrvGst:lReq
                ::oDbffacPrvTGst:nRegIva      := ::odbfPrvGst:nRegIva
 
                if !Empty( ::oDbfPrvGst:cDtoEsp )
@@ -1085,6 +1084,7 @@ METHOD Importar()
                ::oDbfFacPrvTGst:cDniPrv      := ::oDbfPrvGst:Nif
                ::oDbfFacPrvTGst:cDtoEsp      := Padr( "General", 50 )
                ::oDbfFacPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
+
             end if 
 
             ::oDbfPrvGst:OrdSetFocus( nOrdAnt )
