@@ -11297,8 +11297,6 @@ METHOD GetLastOpen()
 
    CursorWE()
 
-   msgAlert( cLasTur, "GetLastOpen" )   
-
 RETURN ( cLasTur )
 
 //--------------------------------------------------------------------------//
@@ -11312,8 +11310,6 @@ METHOD GetCurrentTurno( lDelega )
    if !lDelega
       ::cCurTurno    := ::cNumeroCurrentTurno()
    end if
-
-   msgAlert( ::cCurTurno, "GetCurrentTurno" )
 
 RETURN ( ::cCurTurno )
 
@@ -11389,9 +11385,7 @@ METHOD MailArqueo( cCurrentTruno )
 
    end with
 
-   /*
-   Borramos los temporales
-   */
+   // Borramos los temporales--------------------------------------------------
 
    if File( ::cPdfDefaultPath + ::cPdfFileName )
       fErase( ::cPdfDefaultPath + ::cPdfFileName )

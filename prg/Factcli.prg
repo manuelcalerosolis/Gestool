@@ -23497,6 +23497,59 @@ Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
 //---------------------------------------------------------------------------//
 
+Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
+
+	local nUnidades 			:= 0
+	local nRecAlbL 			:= ( dbfAlbCliL )->( Recno() )
+	local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
+	local nOrdAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+	local dUltimaFactura		:= ctod( "" )
+	local dUltimoAlbaran 	:= ctod( "" )
+
+	CursorWait()
+
+	/*
+	Buscamos por los albaranes no facturados-----------------------------------
+	*/
+
+	if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
+		dUltimoAlbaran 		:= ( dbfAlbCliL )->dFecAlb 
+	end if
+
+	/*
+	Buscamos ahora por loas facturas--------------------------------------------
+	*/
+
+	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
+		dUltimaFactura 		:= ( dbfFacCliL )->dFecFac
+	end if
+
+	if !empty(dUltimaFactura) .or. !empty(dUltimoAlbaran)
+
+		if ( dUltimaFactura > dUltimoAlbaran )
+			nUnidades 			:= nTotNFacCli( dbfFacCliL )
+		else 
+			nUnidades 			:= nTotNAlbCli( dbfAlbCliL )
+		end if
+
+	end if
+
+	/*
+	Dejamos las tablas como estaban------------------------------------------
+	*/
+
+	( dbfAlbCliL )->( OrdSetFocus( nOrdAlbL ) )
+	( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
+	( dbfAlbCliL )->( dbGoTo( nRecAlbL ) )
+	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
+
+	CursorWE()
+
+Return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
 Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
 
 	local nRecAlbT 			:= ( dbfAlbCliT )->( Recno() )

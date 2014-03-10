@@ -129,6 +129,8 @@
 #define _DFECNACI                119      //   D      8     0
 #define _NSEXO                   120      //   N      7     0 
 #define _NTARCMB                 121      //   N      1     0
+#define _DLLACLI                 122
+#define _CTIMCLI                 123
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -836,6 +838,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() ) 
+         :cHeader          := "Última llamada"
+         :bEditValue       := {|| dtoc( ( TDataView():Get( "Client", nView ) )->dLlaCli ) + space( 1 ) + ( TDataView():Get( "Client", nView ) )->cTimCli } 
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
       with object ( oWndBrw:AddXCol() )
          :cHeader          := if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) )
          :cSortOrder       := "cUsrDef01"
@@ -920,6 +929,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
             LEVEL    ACC_DELE
 
       #ifndef __TACTIL__
+
+      DEFINE BTNSHELL RESOURCE "Telephone_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( LlamadaAhora(), oWndBrw:Refresh() );
+         TOOLTIP  "(L)lamada ahora";
+         HOTKEY   "L" ;
+         LEVEL    ACC_DELE
 
       DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -1341,9 +1357,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          aTmp[ _NLABEL  ]  := 1
          aTmp[ _NTARIFA ]  := 1
          aTmp[ _NTARCMB ]  := 1
+         aTmp[ _DLLACLI ]  := ctod( "" )
 
       case nMode == DUPL_MODE
          aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( TDataView():Get( "Client", nView ) ), "0", RetNumCodCliEmp() )
+         aTmp[ _DLLACLI ]  := ctod( "" )
 
       otherwise
          nImpRie           := oStock:nRiesgo( aTmp[ _COD ] )
@@ -2144,6 +2162,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       158 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
+
+      // Ultima llamada--------------------------------------------------------
+
+      REDEFINE GET aGet[ _DLLACLI ] ; 
+         VAR      aTmp[ _DLLACLI ] ;
+         ID       600 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CTIMCLI ] ; 
+         VAR      aTmp[ _CTIMCLI ] ;
+         ID       601 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      TBtnBmp():ReDefine( 602, "Recycle_16",,,,,{|| LlamadaAhora( aGet ) }, fldComercial, .f., , .f.,  )               
 
       /*
       Tercera pestaña----------------------------------------------------------
@@ -8247,6 +8281,8 @@ FUNCTION aItmCli()
    aAdd( aBase, { "dFecNaci",  "D",  8, 0, "Fecha de nacimiento",                           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "nSexo",     "N",  1, 0, "Sexo del cliente",                              "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en táctil" ,     "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "dLlaCli",   "D",  8, 0, "Última llamada del cliente" ,                   "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora última llamada del cliente" ,              "",                   "", "( cDbfCli )" } )
 
 RETURN ( aBase )
 
@@ -8547,7 +8583,7 @@ return ( nDto )
 
 //---------------------------------------------------------------------------//
 
-function nImpAtp( nTarifa, dbfCliAtp, uPreUnt, nIva, oTarifa )
+Function nImpAtp( nTarifa, dbfCliAtp, uPreUnt, nIva, oTarifa )
 
    local nPre        := 0
 
@@ -11764,6 +11800,7 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
          if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
             lSea     := .t.
+
             exit
 
          else
@@ -11810,8 +11847,8 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
             if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
                lSea     := .t.
-               exit
 
+               exit
 
             else
 
@@ -11830,6 +11867,7 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
             if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
 
                lSea     := .t.
+
                exit
 
             else
@@ -11859,9 +11897,10 @@ Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, dFecDoc, cCodFam, dbfCliAtp )
 
       while ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodFam == cCodCli + cCodFam  .and. !( dbfCliAtp )->( eof() )
 
-         if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
+         if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
 
             lSea  := .t.
+
             exit
 
          else
@@ -11886,9 +11925,10 @@ Function lBuscarAtipicaFamilia( cCodCli, cCodGrp, dFecDoc, cCodFam, dbfCliAtp )
 
          while ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodFam == cCodGrp + cCodFam  .and. !( dbfCliAtp )->( eof() )
 
-            if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
+            if lCheckAtipicaFamilia( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
 
                lSea  := .t.
+               
                exit
 
             else
@@ -11927,6 +11967,40 @@ Static Function lCheckAtipicaFamilia( dFecDoc, dbfCliAtp )
 Return ( lCheckFechaAtipica( dFecDoc, dbfCliAtp ) .and. ( dbfCliAtp )->nTipAtp == 2 )
 
 //---------------------------------------------------------------------------//
+
+Static Function lVaciaAtipicaArticulo( dbfCliAtp )
+
+Return ( empty( ( dbfCliAtp )->nPrcArt  ) .and. ;
+         empty( ( dbfCliAtp )->nPrcArt2 ) .and. ;
+         empty( ( dbfCliAtp )->nPrcArt3 ) .and. ;
+         empty( ( dbfCliAtp )->nPrcArt4 ) .and. ;
+         empty( ( dbfCliAtp )->nPrcArt5 ) .and. ;
+         empty( ( dbfCliAtp )->nPrcArt6 ) .and. ;
+         empty( ( dbfCliAtp )->nDto1 )    .and. ;
+         empty( ( dbfCliAtp )->nDto2 )    .and. ;
+         empty( ( dbfCliAtp )->nDto3 )    .and. ;
+         empty( ( dbfCliAtp )->nDto4 )    .and. ;
+         empty( ( dbfCliAtp )->nDto5 )    .and. ;
+         empty( ( dbfCliAtp )->nDto6 ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function LlamadaAhora( aGet )
+
+   if empty( aGet )
+      if TDataView():Lock( "Client", nView )
+         ( TDataView():Get( "Client", nView ) )->dLlaCli := date()
+         ( TDataView():Get( "Client", nView ) )->cTimCli := left( time(), 5 )
+         TDataView():UnLock( "Client", nView ) 
+      end if 
+   else 
+      aGet[ _DLLACLI ]:cText( date() )
+      aGet[ _CTIMCLI ]:cText( left( time(), 5 ) )
+   end if
+
+Return ( .t. )
+
+//--------------------------------------------------------------------------//
 
 FUNCTION EdtCliIncidencia( nView )
 

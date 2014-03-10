@@ -218,6 +218,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LFROMATP                 95
 #define __CCODCLI                 96
 #define _DFECULTCOM               97  
+#define _DUNIULTCOM               98
 
 /*
 Definici¢n de Array para impuestos
@@ -2586,10 +2587,25 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Última venta"
+         :cSortOrder          := "dFecUltCom"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
          :bClrStd             := {|| { if( ( GetSysDate() - ( dbfTmpLin )->dFecUltCom ) > 30, CLR_HRED, CLR_BLACK ), GetSysColor( COLOR_WINDOW )} }
          :nWidth              := 80
          :lHide               := .t.
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Última unidades"
+         :cSortOrder          := "nUniUltCom"
+         :bEditValue          := {|| ( dbfTmpLin )->nUniUltCom }
+         :cEditPicture        := MasUnd()
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nFooterType         := AGGR_SUM
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2633,6 +2649,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := cNombreUnidades()
+         :cSortOrder          := "nUniCaja"
          :bEditValue          := {|| ( dbfTmpLin )->nUniCaja }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
@@ -2642,6 +2659,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nEditType           := 1
          :nFooterType         := AGGR_SUM
          :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2674,6 +2692,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Total " + cNombreUnidades()
+         :cSortOrder          := "n"
          :bEditValue          := {|| nTotNAlbCli( dbfTmpLin ) }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
@@ -5102,28 +5121,28 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          Pasamos todos los Descuentos------------------------------------------
          */
 
-         aGet[_CDTOESP]:cText( ( dbfPedCliT )->cDtoEsp )
-         aGet[_NDTOESP]:cText( ( dbfPedCliT )->nDtoEsp )
-         aGet[_CDPP   ]:cText( ( dbfPedCliT )->cDpp    )
-         aGet[_NDPP   ]:cText( ( dbfPedCliT )->nDpp    )
-         aGet[_CDTOUNO]:cText( ( dbfPedCLiT )->cDtoUno )
-         aGet[_NDTOUNO]:cText( ( dbfPedCLiT )->nDtoUno )
-         aGet[_CDTODOS]:cText( ( dbfPedCLiT )->cDtoDos )
-         aGet[_NDTODOS]:cText( ( dbfPedCLiT )->nDtoDos )
-         aGet[_CMANOBR]:cText( ( dbfPedCliT )->cManObr )
-         aGet[_NIVAMAN]:cText( ( dbfPedCliT )->nIvaMan )
-         aGet[_NMANOBR]:cText( ( dbfPedCliT )->nManObr )
-         aGet[_NBULTOS]:cText( ( dbfPedCliT )->nBultos )
+         aGet[ _CDTOESP ]:cText( ( dbfPedCliT )->cDtoEsp )
+         aGet[ _NDTOESP ]:cText( ( dbfPedCliT )->nDtoEsp )
+         aGet[ _CDPP    ]:cText( ( dbfPedCliT )->cDpp    )
+         aGet[ _NDPP    ]:cText( ( dbfPedCliT )->nDpp    )
+         aGet[ _CDTOUNO ]:cText( ( dbfPedCLiT )->cDtoUno )
+         aGet[ _NDTOUNO ]:cText( ( dbfPedCLiT )->nDtoUno )
+         aGet[ _CDTODOS ]:cText( ( dbfPedCLiT )->cDtoDos )
+         aGet[ _NDTODOS ]:cText( ( dbfPedCLiT )->nDtoDos )
+         aGet[ _CMANOBR ]:cText( ( dbfPedCliT )->cManObr )
+         aGet[ _NIVAMAN ]:cText( ( dbfPedCliT )->nIvaMan )
+         aGet[ _NMANOBR ]:cText( ( dbfPedCliT )->nManObr )
+         aGet[ _NBULTOS ]:cText( ( dbfPedCliT )->nBultos )
 
-         aTmp[_CSUPED ]                := ( dbfPedCliT )->cSuPed
+         aTmp[ _CSUPED ]                := ( dbfPedCliT )->cSuPed
 
          /*
-         Código de grupo
+         Código de grupo-----------------------------------------------------
          */
 
-         aTmp[_CCODGRP]                := ( dbfPedCliT )->cCodGrp
-         aTmp[_LMODCLI]                := ( dbfPedCliT )->lModCli
-         aTmp[_LOPERPV]                := ( dbfPedCliT )->lOperPv
+         aTmp[ _CCODGRP ]               := ( dbfPedCliT )->cCodGrp
+         aTmp[ _LMODCLI ]               := ( dbfPedCliT )->lModCli
+         aTmp[ _LOPERPV ]               := ( dbfPedCliT )->lOperPv
 
          /*
          Datos de alquileres---------------------------------------------------
@@ -8546,6 +8565,15 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumAlb", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nUniCaja", "nUniCaja", {|| Field->nUniCaja } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "dFecUltCom", "dFecUltCom", {|| Field->dFecUltCom } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nUniUltCom", "nUniUltCom", {|| Field->nUniUltCom } ) )
+
          if ( TDataView():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb ) == cAlbaran .and. !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
                dbPass( TDataView():Get( "AlbCliL", nView ), dbfTmpLin, .t. )
@@ -9682,6 +9710,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             // Ultima fecha de venta-------------------------------------------
 
             aTmp[ _DFECULTCOM ]  := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], aTmp[ _CREF ], TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
+            aTmp[ _DUNIULTCOM ]  := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], aTmp[ _CREF ], TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
 
             // Buscamos la familia del articulo y anotamos las propiedades--------
    
@@ -12722,7 +12751,7 @@ Return .t.
 
 Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
-   local nPrecioAtipica
+   local nOrder
 
    /*
    Controlamos que no nos pase código de cliente vacío------------------------
@@ -12737,42 +12766,15 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
    Controlamos que el cliente tenga atipicas----------------------------------
    */
 
-   if !( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
+   nOrder         := ( dbfCliAtp )->( OrdSetFocus( "cCodCli" ) )
 
-      MsgStop( "No existen atípicas para este cliente." )
-
-      Return .f.
-
-   else
-   
-      /*
-      Importamos las tarifas de precios del cliente--------------------------
-      */
+   if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
 
       while ( dbfCliAtp )->cCodCli == aTmpAlb[ _CCODCLI ] .and. !( dbfCliAtp )->( Eof() )
 
          if lConditionAtipica( aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
 
-            if !dbSeekInOrd( ( dbfCliAtp )->cCodArt, "cRef", dbfTmpLin )
-
-               ( dbfTmpLin )->( dbAppend() )
-
-               AppendDatosAtipicas( aTmpAlb )
-
-               AppendDatosArticulos()
-
-               ( dbfTmpLin )->lFromAtp       := .t.
-
-               nPrecioAtipica                := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
-               if nPrecioAtipica != 0
-                  ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
-               else 
-                  ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
-               end if
-
-               ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
-
-            end if   
+            AppendDatosAtipicas( aTmpAlb )
 
          end if
 
@@ -12783,12 +12785,35 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
    end if
 
    /*
-   Recalculamos la factura y refrescamos la pantalla--------------------------
+   Controlamos el grupo del cliente tenga atipicas----------------------------------
    */
+
+   ( dbfCliAtp )->( OrdSetFocus( "cCodGrp" ) )
+
+   if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
+
+      while ( dbfCliAtp )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( dbfCliAtp )->( Eof() )
+
+         if lConditionAtipica( aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
+
+            AppendDatosAtipicas( aTmpAlb )
+
+         end if
+
+         ( dbfCliAtp )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfCliAtp )->( OrdSetFocus( nOrder ) )
+
+   // Recalculamos la factura y refrescamos la pantalla--------------------------
 
    RecalculaTotal( aTmpAlb )
 
    if !Empty( oBrwLin )
+      oBrwLin:GoTop()
       oBrwLin:Refresh()
    end if
 
@@ -12798,40 +12823,51 @@ Return .t.
 
 Static Function AppendDatosAtipicas( aTmpAlb )
 
-   ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
-   ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
-   ( dbfTmpLin )->nDtoPrm        := ( dbfCliAtp )->nDprArt
-   ( dbfTmpLin )->nCanEnt        := 1
-   ( dbfTmpLin )->nUniCaja       := 0
-   ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1
-   ( dbfTmpLin )->cCodPr2        := ( dbfCliAtp )->cCodPr2
-   ( dbfTmpLin )->cValPr1        := ( dbfCliAtp )->cValPr1
-   ( dbfTmpLin )->cValPr2        := ( dbfCliAtp )->cValPr2
-   ( dbfTmpLin )->nDtoDiv        := ( dbfCliAtp )->nDtoDiv
-   ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
-   ( dbfTmpLin )->nCosDiv        := ( dbfCliAtp )->nPrcCom
-   ( dbfTmpLin )->cAlmLin        := aTmpAlb[ _CCODALM ]
-   ( dbfTmpLin )->lIvaLin        := aTmpAlb[ _LIVAINC ]
-   ( dbfTmpLin )->nTarLin        := aTmpAlb[ _NTARIFA ]
-   ( dbfTmpLin )->dFecAlb        := aTmpAlb[ _DFECALB ]
+   local nPrecioAtipica
 
-Return ( nil )
+   if !dbSeekInOrd( ( dbfCliAtp )->cCodArt, "cRef", dbfTmpLin )
 
-//---------------------------------------------------------------------------//
+      ( dbfTmpLin )->( dbAppend() )
+      ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
+      ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
+      ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
+      ( dbfTmpLin )->nDtoPrm        := ( dbfCliAtp )->nDprArt
+      ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1
+      ( dbfTmpLin )->cCodPr2        := ( dbfCliAtp )->cCodPr2
+      ( dbfTmpLin )->cValPr1        := ( dbfCliAtp )->cValPr1
+      ( dbfTmpLin )->cValPr2        := ( dbfCliAtp )->cValPr2
+      ( dbfTmpLin )->nDtoDiv        := ( dbfCliAtp )->nDtoDiv
+      ( dbfTmpLin )->nCosDiv        := ( dbfCliAtp )->nPrcCom
+      ( dbfTmpLin )->cAlmLin        := aTmpAlb[ _CCODALM ]
+      ( dbfTmpLin )->lIvaLin        := aTmpAlb[ _LIVAINC ]
+      ( dbfTmpLin )->nTarLin        := aTmpAlb[ _NTARIFA ]
+      ( dbfTmpLin )->dFecAlb        := aTmpAlb[ _DFECALB ]
+      ( dbfTmpLin )->nCanEnt        := 1
+      ( dbfTmpLin )->nUniCaja       := 0
+      ( dbfTmpLin )->lFromAtp       := .t.
+   
+      if ( dbfArticulo )->( dbSeek( ( dbfCliAtp )->cCodArt ) )
+         ( dbfTmpLin )->cDetalle    := ( dbfArticulo )->Nombre
+         ( dbfTmpLin )->nIva        := nIva( TDataView():Get( "TIva", nView ), ( dbfArticulo )->TipoIva )
+         ( dbfTmpLin )->cUniDad     := ( dbfArticulo )->cUnidad
+         ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
+         ( dbfTmpLin )->lLotE       := ( dbfArticulo )->lLote
+         ( dbfTmpLin )->lMsgVta     := ( dbfArticulo )->lMsgVta
+         ( dbfTmpLin )->lNotVta     := ( dbfArticulo )->lNotVta
+         ( dbfTmpLin )->cCodTip     := ( dbfArticulo )->cCodTip
+         ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
+      end if
+   
+      nPrecioAtipica                := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+      if nPrecioAtipica != 0
+         ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
+      else 
+         ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
+      end if
+      ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
+      ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
 
-static function AppendDatosArticulos()
-
-   if ( dbfArticulo )->( dbSeek( ( dbfCliAtp )->cCodArt ) )
-      ( dbfTmpLin )->cDetalle       := ( dbfArticulo )->Nombre
-      ( dbfTmpLin )->nIva           := nIva( TDataView():Get( "TIva", nView ), ( dbfArticulo )->TipoIva )
-      ( dbfTmpLin )->cUniDad        := ( dbfArticulo )->cUnidad
-      ( dbfTmpLin )->nCtlStk        := ( dbfArticulo )->nCtlStock
-      ( dbfTmpLin )->lLotE          := ( dbfArticulo )->lLote
-      ( dbfTmpLin )->lMsgVta        := ( dbfArticulo )->lMsgVta
-      ( dbfTmpLin )->lNotVta        := ( dbfArticulo )->lNotVta
-      ( dbfTmpLin )->cCodTip        := ( dbfArticulo )->cCodTip
-      ( dbfTmpLin )->cCodFam        := ( dbfArticulo )->Familia
-   end if
+   end if 
 
 Return ( nil )
 
@@ -15154,7 +15190,6 @@ function nTotNAlbCli( uDbf )
             nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
             nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
 
-
          else
 
             nTotUnd  := NotCaja( uDbf[ _NCANENT ] )
@@ -16004,7 +16039,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nImpTrn",   "N", 16, 6, "Importe del porte" ,            "cPouDivAlb",        "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nDto",      "N",  6, 2, "Descuento de artículo" ,        "'@E 999.9'",        "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nDtoPrm",   "N",  6, 2, "Descuento de promoción" ,       "'@E 999.9'",        "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "nIva",      "N",  4, 1, cImp() + " del artículo" ,             "'@E 99'",           "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nIva",      "N",  4, 1, cImp() + " del artículo" ,       "'@E 99'",           "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nCanEnt",   "N", 16, 6, cNombreCajas(),                  "MasUnd()",          "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nCanFac",   "N", 16, 6, "Cantidad facturada" ,           "MasUnd()",          "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lControl",  "L",  1, 0, "Control reservado" ,            "",                  "", "( cDbfCol )" } )
@@ -16091,6 +16126,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",        "",                  "", "( cDbfCol )" } )
 
 Return ( aColAlbCli )
 

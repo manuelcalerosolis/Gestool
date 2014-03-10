@@ -1305,7 +1305,6 @@ METHOD Importar()
             ::oDbfCliGst:SubCta     := ::oDbfCliFac:cSubCta
             ::oDbfCliGst:CtaVenta   := ::oDbfCliFac:cCtaVtas
             ::oDbfCliGst:cAgente    := ::oDbfCliFac:cCodAge
-            ::oDbfCliGst:lBlqCli    := .f.
             ::oDbfCliGst:nDtoArt    := ::oDbfCliFac:nDto
             ::oDbfCliGst:cCodRut    := ::oDbfCliFac:cCodProv
 
@@ -1316,15 +1315,19 @@ METHOD Importar()
             end if
 
             if ::oDbfCliFac:FieldPos( "lBloqueado" ) != 0
+
+               ::oDbfCliGst:lBlqCli    := ::oDbfCliFac:lBloqueado
+
                if ::oDbfCliFac:lBloqueado
-                  ::oDbfCliGst:lChgPre    := .f.
+                  ::oDbfCliGst:lChgPre := .f.
                end if
+            
             end if
 
             if ::oDbfCliFac:lMayorista
-               ::oDbfCliGst:nTarifa := 2
+               ::oDbfCliGst:nTarifa    := 2
             else             
-               ::oDbfCliGst:nTarifa := 1
+               ::oDbfCliGst:nTarifa    := 1
             end if
 
             ::oDbfCliGst:nLabel     := ::oDbfCliFac:nEtiquetas
@@ -2298,22 +2301,26 @@ METHOD Importar()
                ::oDbfFacLGst:cSerie       := ::oDbfFacLFac:cSerie
                ::oDbfFacLGst:nNumFac      := ::oDbfFacLFac:nNumFac
                ::oDbfFacLGst:cSufFac      := Space( 2 )
+               
                ::oDbfFacLGst:cRef         := ::oDbfFacLFac:cRef
 
-               if Empty( ::oDbfFacLGst:cRef )
+               if Empty( ::oDbfFacLFac:cRef )
                   ::oDbfFacLGst:mLngDes   := ::oDbfFacLFac:cDetalle
                   ::oDbfFacLGst:cDetalle  := Space(250)
                else
                   ::oDbfFacLGst:cDetalle  := ::oDbfFacLFac:cDetalle
                end if
+
                ::oDbfFacLGst:nPreUnit     := ::oDbfFacLFac:nPreUnit
                ::oDbfFacLGst:nDto         := ::oDbfFacLFac:nDto
+
                if nRegIva <= 1
                   ::oDbfFacLGst:nIva      := ::oDbfFacLFac:nIva
                else
                   ::oDbfFacLGst:nIva      := 0
                end if
-               ::oDbfFacLGst:lConTrol     := ::oDbfFacLFac:lConTrol
+
+               ::oDbfFacLGst:lControl     := ::oDbfFacLFac:lControl
                ::oDbfFacLGst:nComAge      := ::oDbfFacLFac:nComision
                ::oDbfFacLGst:nUniCaja     := ::oDbfFacLFac:nCanEnt
                ::oDbfFacLGst:dFecAlb      := ::oDbfFacLFac:dFecAlb
@@ -2891,7 +2898,7 @@ METHOD Importar()
             ::oDbfPepTGst:cCodCaj      := "000"
             ::oDbfPepTGst:cCodPgo      := ::oDbfPepTFac:cCodPago
             ::oDbfPepTGst:cObsErv      := ::oDbfPepTFac:cObserv
-            ::oDbfPepTGst:nEstado      := if( ::oDbfPepTFac:cEstado == "T", 3, 1 )
+            ::oDbfPepTGst:nEstado      := if( upper( ::oDbfPepTFac:cEstado ) == "R", 3, 1 )
             
             if ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfPepTFac:cCodPro, "0", RetNumCodPrvEmp() ) )
                ::oDbfPepTGst:cNomPrv   := ::oDbfPrvGst:Titulo
@@ -2922,74 +2929,31 @@ METHOD Importar()
          ::oDbfPepLFac:GoTop()
          while !( ::oDbfPepLFac:eof() )
 
-            n                          := aScan( aTemporalLineas, {|o| o:nNumPed == ::oDbfPepLFac:nNumPed .and. o:nNumLin == ::oDbfPepLFac:nServicio } )
+            ::oDbfPepLGst:Append()
 
-            if n == 0
+            ::oDbfPepLGst:cSerPed      := "A"
+            ::oDbfPepLGst:nNumPed      := ::oDbfPepLFac:nNumPed
+            ::oDbfPepLGst:cSufPed      := space( 2 )
+            ::oDbfPepLGst:cRef         := ::oDbfPepLFac:cRef
 
-               oTemporal               := SLineasPedidos()
-               oTemporal:cSerPed       := "A"  
-               oTemporal:nNumPed       := ::oDbfPepLFac:nNumPed   
-               oTemporal:cSufPed       := Space( 2 )
-               oTemporal:cRef          := ::oDbfPepLFac:cRef
-               if Empty( ::oDbfPepLFac:cRef )
-                  oTemporal:mLngDes    := ::oDbfPepLFac:cDetalle
-                  oTemporal:cDetalle   := Space( 250 )
-               else
-                  oTemporal:cDetalle   := ::oDbfPepLFac:cDetalle
-               end if
-               oTemporal:nUniCaja      := ::oDbfPepLFac:nCanPed
-               oTemporal:nPreDiv       := ::oDbfPepLFac:nPreDiv
-               //oTemporal:cLote         := ::oDbfPepLFac:cLote
-               oTemporal:nNumLin       := ::oDbfPepLFac:nServicio
-
-               aAdd( aTemporalLineas, oTemporal )   
-
+            if Empty( ::oDbfPepLFac:cRef )
+               ::oDbfPepLGst:mLngDes   := ::oDbfPepLFac:cDetalle
+               ::oDbfPepLGst:cDetalle  := Space( 250 )
             else
-            
-               if Empty( aTemporalLineas[n]:mLngDes )
-                  aTemporalLineas[n]:mLngDes := ::oDbfPepLFac:cDetalle   
-               else
-                  aTemporalLineas[n]:mLngDes += ::oDbfPepLFac:cDetalle
-               end if
+               ::oDbfPepLGst:cDetalle  := ::oDbfPepLFac:cDetalle
+            end if
 
-               if aTemporalLineas[n]:nUniCaja == 0
-                  aTemporalLineas[n]:nUniCaja := ::oDbfPepLFac:nCanPed
-               end if
+            ::oDbfPepLGst:nUniCaja     := ::oDbfPepLFac:nCanPed 
+            ::oDbfPepLGst:nPreDiv      := ::oDbfPepLFac:nPreDiv
+            ::oDbfPepLGst:nNumLin      := ::oDbfPepLFac:nServicio
 
-               if aTemporalLineas[n]:nPreDiv == 0
-                  aTemporalLineas[n]:nPreDiv := ::oDbfPepLFac:nPreDiv
-               end if
-
-            end if   
+            ::oDbfPepLGst:Save()
 
             ::aMtrIndices[ 22 ]:Set( ::oDbfPepLFac:Recno() )
 
             ::oDbfPepLFac:Skip()
 
          end while
-
-         /*
-         Pasamos los datos del array a la base de datos------------------------
-         */
-
-         for each aLinea in aTemporalLineas
-
-            ::oDbfPepLGst:Append()
-
-            ::oDbfPepLGst:cSerPed      := aLinea:cSerPed
-            ::oDbfPepLGst:nNumPed      := aLinea:nNumPed
-            ::oDbfPepLGst:cSufPed      := aLinea:cSufPed
-            ::oDbfPepLGst:cRef         := aLinea:cRef
-            ::oDbfPepLGst:mLngDes      := aLinea:mLngDes 
-            ::oDbfPepLGst:cDetalle     := aLinea:cDetalle
-            ::oDbfPepLGst:nUniCaja     := aLinea:nUniCaja 
-            ::oDbfPepLGst:nPreDiv      := aLinea:nPreDiv
-            ::oDbfPepLGst:cLote        := aLinea:cLote
-            ::oDbfPepLGst:nNumLin      := aLinea:nNumLin
-
-            ::oDbfPepLGst:Save()
-
-         next
 
       end if
 
@@ -3343,9 +3307,9 @@ METHOD Importar()
 
       ::CloseFiles()
 
-      SynFacCli( cPatEmp() )
-      SynFacRec( cPatEmp() )
-      SynRecCli( cPatEmp() )
+//      SynFacCli( cPatEmp() )
+//      SynFacRec( cPatEmp() )
+//      SynRecCli( cPatEmp() )
 
       msgInfo( "Traspaso realizado con éxito.", "Bienvenido a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ )
 
