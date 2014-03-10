@@ -11540,16 +11540,18 @@ FONT 8, "MS Sans Serif"
   CONTROL "Artículos", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 94, 41, 12
   CONTROL "Albaranes de clientes", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 106, 79, 12
   CONTROL "Facturas de clientes", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 118, 79, 12
+  CONTROL "Facturas de proveedores", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 130, 92, 12
   CONTROL "&Todos", 500, "Button", WS_TABSTOP, 2, 252, 50, 14
   CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 57, 252, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 252, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 252, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 252, 50, 14
-  CONTROL "TMeter", 111, "TMeter", 0x00800000, 86, 70, 270, 10
-  CONTROL "TMeter", 121, "TMeter", 0x00800000, 86, 82, 270, 10
-  CONTROL "TMeter", 131, "TMeter", 0x00800000, 86, 94, 270, 10
-  CONTROL "TMeter", 151, "TMeter", 0x00800000, 86, 106, 270, 10
-  CONTROL "TMeter", 161, "TMeter", 0x00800000, 86, 118, 270, 10
+  CONTROL "TMeter", 111, "TMeter", 0x00800000, 98, 70, 258, 10
+  CONTROL "TMeter", 121, "TMeter", 0x00800000, 98, 82, 258, 10
+  CONTROL "TMeter", 131, "TMeter", 0x00800000, 98, 94, 258, 10
+  CONTROL "TMeter", 151, "TMeter", 0x00800000, 98, 106, 258, 10
+  CONTROL "TMeter", 161, "TMeter", 0x00800000, 98, 118, 258, 10
+  CONTROL "TMeter", 171, "TMeter", 0x00800000, 98, 130, 258, 10
   CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 63, 360, 178
   CONTROL "Directorio de factucont", -1, "Static", WS_GROUP, 5, 52, 74, 8

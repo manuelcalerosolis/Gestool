@@ -11813,6 +11813,15 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
    end if
 
+   /*
+   Me voy para que el registro se quede bienposicionado------------------------
+   */
+
+   if lSea
+      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+      Return lSea
+   end if
+
    if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodCli + cCodArt ) )
 
       while ( ( dbfCliAtp )->cCodCli + ( dbfCliAtp )->cCodArt == cCodCli + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
@@ -11832,7 +11841,14 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
    end if
 
-   ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+   /*
+   Me voy para que el registro se quede bienposicionado------------------------
+   */
+
+   if lSea
+      ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+      Return lSea
+   end if
 
    // Buscamos por gupos de clientes-------------------------------------------
 
@@ -11860,6 +11876,15 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
       end if
 
+      /*
+      Me voy para que el registro se quede bienposicionado------------------------
+      */
+
+      if lSea
+         ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+         Return lSea
+      end if
+
       if !lSea .and. ( dbfCliAtp )->( dbSeek( cCodGrp + cCodArt ) )
 
          while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
@@ -11882,7 +11907,16 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
       ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
 
-   end if   
+      /*
+      Me voy para que el registro se quede bienposicionado------------------------
+      */
+
+      if lSea
+         ( dbfCliAtp )->( OrdSetFocus( nOrd ) )
+         Return lSea
+      end if
+
+   end if 
 
 Return ( lSea )
 
