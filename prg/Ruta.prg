@@ -218,18 +218,17 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfRuta, oBrw, bWhen, bValid, nMode )
 
 	DEFINE DIALOG oDlg RESOURCE "RUTA" TITLE LblTitle( nMode ) + "Rutas"
 
-		REDEFINE GET oGet VAR aTemp[_CCODRUT] ;
+		REDEFINE GET oGet VAR aTemp[ _CCODRUT ] ;
          ID       101 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( oGet, dbfRuta, .t., "0" ) ) ;
-         COLOR    CLR_GET ;
+         VALID    ( NotValid( oGet, dbfRuta ) ) ;
          OF       oDlg
 
-		REDEFINE GET aoGet[_CDESRUT] VAR aTemp[_CDESRUT];
+		REDEFINE GET aoGet[ _CDESRUT ] ;
+         VAR      aTemp[ _CDESRUT ];
          ID       102 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@!" ;
-         COLOR    CLR_GET ;
          OF       oDlg
 
       REDEFINE BUTTON ;
@@ -265,6 +264,7 @@ RETURN ( oDlg:nResult == IDOK )
 STATIC FUNCTION lPreSave( aTemp, aoGet, dbfRuta, oBrw, nMode, oDlg, oGet )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
+
       if Empty( aTemp[_CCODRUT] )
          MsgStop( "El código de la ruta no puede estar vacío." )
          oGet:SetFocus()
@@ -297,16 +297,14 @@ FUNCTION RetRuta( cCodRut, dbfRuta )
 	local lClose 	:= .F.
 
 	IF dbfRuta == NIL
-
       USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
       SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
 		lClose := .T.
-
 	END IF
 
-   IF (dbfRuta)->( DbSeek( Rjust( cCodRut, "0", 4 ) ) )
-      cText       := (dbfRuta)->CDESRUT
-	END IF
+   if ( dbfRuta )->( dbSeek( cCodRut ) )
+      cText       := ( dbfRuta )->cDesRut
+	end if
 
 	IF lClose
 		CLOSE ( dbfRuta )
@@ -723,9 +721,6 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaRutaSenderRec
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
-
-//---------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
 //---------------------------------------------------------------------------//
 
@@ -862,25 +857,23 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
    nOrd              := ( dbfRuta )->( OrdSetFocus( nOrd ) )
    ( dbfRuta )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY"         TITLE "Seleccionar rutas"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar rutas"
 
-      REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfRuta ) );
-         VALID    ( OrdClearScope( oBrw, dbfRuta ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+      REDEFINE GET   oGet1 VAR cGet1;
+         ID          104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfRuta ) );
+         VALID       ( OrdClearScope( oBrw, dbfRuta ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfRuta )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus(), oCbxOrd:refresh() ) ;
-			OF 		oDlg
+			VAR         cCbxOrd ;
+			ID          102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( dbfRuta )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus(), oCbxOrd:refresh() ) ;
+			OF          oDlg
 
-#ifndef __PDA__
       oBrw                 := IXBrowse():New( oDlg )
-#endif
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -970,6 +963,7 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
       end if
 
    end if
+
    DestroyFastFilter( dbfRuta )
 
    SetBrwOpt( "BrwRuta", ( dbfRuta )->( OrdNumber() ) )
@@ -1007,8 +1001,6 @@ FUNCTION cRuta( oGet, dbfRuta, oGet2 )
       lClose      := .t.
    end if
 
-   xValor         := Rjust( xValor, "0", 4 )
-
    if ( dbfRuta )->( dbSeek( xValor ) )
 
       if IsObject( oGet )
@@ -1022,9 +1014,9 @@ FUNCTION cRuta( oGet, dbfRuta, oGet2 )
       lValid      := .t.
 
    else
-#ifndef __PDA__
+
       msgStop( "Ruta no encontrada" )
-#endif
+
    end if
 
    if lClose

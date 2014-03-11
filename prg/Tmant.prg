@@ -599,9 +599,13 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    Estado de la base de datos--------------------------------------------------
    */
 
-   nOrdAnt        := ::oDbf:OrdSetFocus( nOrd )
-
    ::oDbf:GoTop()
+
+   if !empty( oGet )
+      ::oDbf:Seek( oGet:varGet(), .t. )
+   end if 
+
+   nOrdAnt        := ::oDbf:OrdSetFocus( nOrd )
 
    /*
    Creamos el dialogo----------------------------------------------------------

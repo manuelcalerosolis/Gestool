@@ -1,3 +1,4 @@
+
 #include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Factu.ch" 
@@ -1179,6 +1180,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
    local oSay                 := Array( 5 )
    local cSay                 := Array( 5 )
    local oSayLabels           := Array( 7 )
+   local oBtnAtp
    local oBmpDiv
    local oBmpEmp
    local cEstPed
@@ -1608,6 +1610,36 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
+            :cHeader          := "Stock actual"
+            :bEditValue       := {|| ( dbfTmpLin )->nStkAct }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Pendiente recibir"
+            :bEditValue       := {|| ( dbfTmpLin )->nPdtRec }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Stock mínimo"
+            :bEditValue       := {|| ( dbfTmpLin )->nStkMin }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
             :cHeader          := "% " + cImp()
             :bEditValue       := {|| ( dbfTmpLin )->nIva }
             :cEditPicture     := "@E 999.99"
@@ -1632,65 +1664,70 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
          oBrwLin:CreateFromResource( 190 )
 
-		REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oFld:aDialogs[1] ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( AppDeta( oBrwLin, bEdtDet, aTmp ) )
+            REDEFINE BUTTON ;
+                  ID          500 ;
+                  OF          oFld:aDialogs[1] ;
+                  WHEN        ( nMode != ZOOM_MODE ) ;
+                  ACTION      ( AppDeta( oBrwLin, bEdtDet, aTmp ) )
 
 		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oFld:aDialogs[1] ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( EdtDeta( oBrwLin, bEdtDet, aTmp ) )
+                  ID          501 ;
+                  OF          oFld:aDialogs[1] ;
+                  WHEN 	      ( nMode != ZOOM_MODE ) ;
+                  ACTION      ( EdtDeta( oBrwLin, bEdtDet, aTmp ) )
 
-		REDEFINE BUTTON ;
-			ID 		502 ;
-			OF 		oFld:aDialogs[1] ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinDelRec( oBrwLin, dbfTmpLin, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) )
+            REDEFINE BUTTON ;
+                  ID          502 ;
+                  OF          oFld:aDialogs[1] ;
+                  WHEN        ( nMode != ZOOM_MODE ) ;
+                  ACTION      ( WinDelRec( oBrwLin, dbfTmpLin, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) )
 
 		REDEFINE BUTTON ;
 			ID 		503 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( EdtZoom( oBrwLin, bEdtDet, aTmp ) )
+                  ACTION      ( EdtZoom( oBrwLin, bEdtDet, aTmp ) )
 
-		REDEFINE BUTTON ;
+            REDEFINE BUTTON ;
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
+                  ACTION      ( DbSwapUp( dbfTmpLin, oBrwLin ) )
 
-		REDEFINE BUTTON ;
-			ID 		525 ;
-			OF 		oFld:aDialogs[1] ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+	REDEFINE BUTTON ;
+	   ID 	525 ;
+	   OF 	oFld:aDialogs[1] ;
+	   WHEN 	( nMode != ZOOM_MODE ) ;
          ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
 
+      REDEFINE BUTTON oBtnAtp;
+         ID       526 ;
+         OF       oFld:aDialogs[1] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( CargaComprasProveedor( aTmp, oBrwLin ) )
+
       /*
-		Descuentos______________________________________________________________
-		*/
+	Descuentos______________________________________________________________
+	*/
 
       REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
-         ID       199 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON CHANGE( RecalculaTotal( aTmp ) );
-			OF 		oFld:aDialogs[1]
+            ID          199 ;
+            WHEN        ( nMode != ZOOM_MODE ) ;
+            ON CHANGE   ( RecalculaTotal( aTmp ) );
+            OF 		oFld:aDialogs[1]
 
-		REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
-			ID 		200 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         PICTURE  "@E 999.99" ;
-         SPINNER ;
-			COLOR 	CLR_GET ;
-         ON CHANGE( RecalculaTotal( aTmp ) );
-			OF 		oFld:aDialogs[1]
+	REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
+		ID 		200 ;
+		WHEN 		( nMode != ZOOM_MODE ) ;
+            PICTURE     "@E 999.99" ;
+            SPINNER ;
+            ON CHANGE   ( RecalculaTotal( aTmp ) );
+		OF 		oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
-         ID       209 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON CHANGE( RecalculaTotal( aTmp ) );
-			OF 		oFld:aDialogs[1]
+            ID          209 ;
+            WHEN 		( nMode != ZOOM_MODE ) ;
+            ON CHANGE   ( RecalculaTotal( aTmp ) );
+		OF 		oFld:aDialogs[1]
 
 		REDEFINE GET aGet[ _NDPP ] VAR aTmp[ _NDPP ];
 			ID 		210 ;
@@ -3382,8 +3419,8 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             Buscamos la familia del articulo y anotamos las propiedades--------
             */
 
-            aTmp[_CCODPR1 ]         := ( dbfArticulo )->cCodPrp1
-            aTmp[_CCODPR2 ]         := ( dbfArticulo )->cCodPrp2
+            aTmp[ _CCODPR1 ]        := ( dbfArticulo )->cCodPrp1
+            aTmp[ _CCODPR2 ]        := ( dbfArticulo )->cCodPrp2
 
             if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ;
                ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
@@ -6626,6 +6663,10 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nMedUno", "N", 16,   6, "Primera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nMedDos", "N", 16,   6, "Segunda unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nMedTre", "N", 16,   6, "Tercera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nStkAct", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nStkMin", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPdtRec", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConRea", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
 
 return ( aColPedPrv )
 
@@ -8899,18 +8940,165 @@ Return .t.
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
+	if oWndBrw:oWndBar:lAllYearComboBox()
+            DestroyFastFilter( dbfPedPrvT )
+            CreateUserFilter( "", dbfPedPrvT, .f., , , "all" )
+	else
 		DestroyFastFilter( dbfPedPrvT )
-      CreateUserFilter( "", dbfPedPrvT, .f., , , "all" )
-	 else
-		DestroyFastFilter( dbfPedPrvT )
-      CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfPedPrvT, .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+            CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfPedPrvT, .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
+	end if
 
-	 ( dbfPedPrvT )->( dbGoTop() )
+	( dbfPedPrvT )->( dbGoTop() )
 
-	 oWndBrw:Refresh()
+	oWndBrw:Refresh()
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function CargaComprasProveedor( aTmp, oBrwLin )
+
+      local nOrd
+      local nPreCom
+
+      if empty( aTmp[ _CCODPRV ] )
+            msgStop( "Código del proveedor no puede esta vacio.")
+            return .f.
+      end if
+
+      nOrd        := ( dbfArticulo )->( ordSetFocus( "cPrvHab" ) )
+
+      if ( dbfArticulo )->( dbSeek( aTmp[ _CCODPRV ] ) )
+
+            while ( dbfArticulo )->cPrvHab == aTmp[ _CCODPRV ] .and. !( dbfArticulo )->( eof() )
+
+            if !( dbfArticulo )->lObs
+                  
+                  ( dbfTmpLin )->( dbAppend() )
+                  ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )                  
+                  ( dbfTmpLin )->cRef           := ( dbfArticulo )->Codigo
+                  ( dbfTmpLin )->cDetalle       := ( dbfArticulo )->Nombre      
+                  ( dbfTmpLin )->nIva           := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+                  ( dbfTmpLin )->nReq           := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+                  ( dbfTmpLin )->cAlmLin        := aTmp[ _CCODALM ]
+
+                  if ( dbfArticulo )->nCajEnt != 0
+                        ( dbfTmpLin )->nCanPed  := ( dbfArticulo )->nCajEnt 
+                  end if
+
+                  if ( dbfArticulo )->nUniCaja != 0
+                        ( dbfTmpLin )->nUniCaja := ( dbfArticulo )->nUniCaja 
+                  end if
+
+                  if ( dbfArticulo )->lLote  
+                        ( dbfTmpLin )->cLote    := ( dbfArticulo )->lLote
+                  end if 
+
+                  /*
+                  Tratamientos kits-----------------------------------------------------
+                  */
+
+                  if ( dbfArticulo )->lKitArt
+                        ( dbfTmpLin )->lKitArt  := ( dbfArticulo )->lKitArt                        // Marcamos como padre del kit
+                        ( dbfTmpLin )->lImpLin  := lImprimirCompuesto( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
+                        ( dbfTmpLin )->lKitPrc  := lPreciosCompuestos( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
+                  end if 
+
+                  if lStockCompuestos( ( dbfArticulo )->Codigo, dbfArticulo )
+                        ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
+                  else
+                        ( dbfTmpLin )->nCtlStk  := STOCK_NO_CONTROLAR // No controlar Stock
+                  end if
+
+                  /*
+                  Buscamos la familia del articulo y anotamos las propiedades--------
+                  */
+
+                  ( dbfTmpLin )->cCodPr1        := ( dbfArticulo )->cCodPrp1
+                  ( dbfTmpLin )->cCodPr2        := ( dbfArticulo )->cCodPrp2
+
+                  /*
+                  Precios de compra--------------------------------------------------
+                  */
+
+                  nPreCom                       := nComPro( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr2, dbfArtCom )
+                  if nPrecom  != 0
+                        ( dbfTmpLin )->nPreDiv  := nPreCom
+                  end if
+
+                  if uFieldEmpresa( "lCosPrv", .f. )
+                        nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, dbfArtPrv )
+                  end if
+
+                  if nPreCom != 0
+                        ( dbfTmpLin )->nPreDiv  := nPreCom
+                  else
+                        ( dbfTmpLin )->nPreDiv  := nCosto( nil, dbfArticulo, dbfKit, .f., aTmp[ _CDIVPED ], dbfDiv )
+                  end if
+
+                  /*
+                  Descuento de articulo----------------------------------------------
+                  */
+
+                  if uFieldEmpresa( "lCosPrv", .f. )
+
+                        nPreCom     := nDtoArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, dbfArtPrv )
+                        if nPreCom != 0
+                              ( dbfTmpLin )->nDtoLin  := nPreCom 
+                        end if
+
+                        /*
+                        Descuento de promocional----------------------------------------------
+                        */
+
+                        nPreCom     := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, dbfArtPrv )
+                        if nPreCom != 0
+                              ( dbfTmpLin )->nDtoPrm  := nPreCom
+                        end if
+
+                  end if
+
+                  /*
+                  Recogemos las familias y los grupos de familias--------------------
+                  */
+      
+                  ( dbfTmpLin )->cCodFam        := ( dbfArticulo )->Familia
+                  ( dbfTmpLin )->cGrpFam        := cGruFam( ( dbfArticulo )->Familia, dbfFamilia )
+
+                  /*
+                  Ponemos el precio de venta recomendado-----------------------------
+                  */
+      
+                  ( dbfTmpLin )->nPvpRec        := ( dbfArticulo )->PvpRec
+                  ( dbfTmpLin )->cUnidad        := ( dbfArticulo )->cUnidad
+      
+                  /*
+                  Ponemos el stock---------------------------------------------------
+                  */
+
+                  oStock:nPutStockActual( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, ( dbfTmpLin )->lKitArt )
+
+                  ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
+                  ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
+                  ( dbfTmpLin )->nStkMin        := ( dbfArticulo )->nMinimo
+                  ( dbfTmpLin )->nConRea        := 0
+
+                  ( dbfTmpLin )->( dbUnlock() )
+
+            end if
+
+            ( dbfArticulo )->( dbSkip() )
+
+            end while
+      
+      end if 
+
+      oBrwLin:Refresh()
+
+      ( dbfArticulo )->( ordSetFocus( nOrd ) )
+
+      RecalculaTotal( aTmp )
+
+Return nil 
 
 //---------------------------------------------------------------------------//

@@ -174,7 +174,7 @@ CLASS TAtipicas FROM TDet
    METHOD SetPrimeraPropiedad( cValue )
    METHOD SetSegundaPropiedad( cValue )
 
-   METHOD View()                       INLINE ( ::oParent:nView )
+   METHOD View()                       INLINE ( ::oParent:View() )
 
    METHOD SaveDetails()
    METHOD DeleteDetails()
@@ -354,52 +354,52 @@ METHOD Resource( nMode ) CLASS TAtipicas
          ::oCodigoFamilia:bValid := {|| cFamilia( ::oCodigoFamilia, TDataView():Get( "Familias", ::View() ), ::oNombreFamilia ) }
          ::oCodigoFamilia:bHelp  := {|| BrwFamilia( ::oCodigoFamilia, ::oNombreFamilia ) }
 
-      REDEFINE GET ::oNombreFamilia ;
-         VAR      ::cNombreFamilia ;
-         ID       106 ;
-         WHEN     ( .f. );
-         OF       ::oFld:aDialogs[1]
+      REDEFINE GET      ::oNombreFamilia ;
+         VAR            ::cNombreFamilia ;
+         ID             106 ;
+         WHEN           ( .f. );
+         OF             ::oFld:aDialogs[1]
 
       /*
       Primera propiedad--------------------------------------------------------
       */
 
-      REDEFINE SAY ::oTextoPrimeraPropiedad ;
-         VAR      ::cTextoPrimeraPropiedad ;
-         ID       888 ;
-         OF       ::oFld:aDialogs[1]
+      REDEFINE SAY      ::oTextoPrimeraPropiedad ;
+         VAR            ::cTextoPrimeraPropiedad ;
+         ID             888 ;
+         OF             ::oFld:aDialogs[1]
 
-      REDEFINE GET ::oCodigoPrimeraPropiedad ;
-         VAR      ::oDbfVir:cValPr1 ;
-         ID       250 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( ::nMode == APPD_MODE ) ;
-         OF       ::oFld:aDialogs[1]
+      REDEFINE GET      ::oCodigoPrimeraPropiedad ;
+         VAR            ::oDbfVir:cValPr1 ;
+         ID             250 ;
+         BITMAP         "LUPA" ;
+         WHEN           ( ::nMode == APPD_MODE ) ;
+         OF             ::oFld:aDialogs[1]
 
          ::oCodigoPrimeraPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoPrimeraPropiedad, ::oTextoPrimeraPropiedad, ::oDbfVir:cCodPr1 ) }
          ::oCodigoPrimeraPropiedad:bValid    := {|| ::LoadAtipica() }
 
-      REDEFINE GET ::oValorPrimeraPropiedad ;
-         VAR      ::cValorPrimeraPropiedad ;
-         ID       251 ;
-         WHEN     .f. ;
-         OF       ::oFld:aDialogs[1]
+      REDEFINE GET      ::oValorPrimeraPropiedad ;
+         VAR            ::cValorPrimeraPropiedad ;
+         ID             251 ;
+         WHEN           .f. ;
+         OF             ::oFld:aDialogs[1]
 
       /*
       segunda propiedad--------------------------------------------------------
       */
 
-      REDEFINE SAY ::oTextoSegundaPropiedad ;
-         VAR      ::cTextoSegundaPropiedad ;
-         ID       999 ;
-         OF       ::oFld:aDialogs[1]
+      REDEFINE SAY      ::oTextoSegundaPropiedad ;
+         VAR            ::cTextoSegundaPropiedad ;
+         ID             999 ;
+         OF             ::oFld:aDialogs[1]
 
-      REDEFINE GET ::oCodigoSegundaPropiedad ;
-         VAR      ::oDbfVir:cValPr2 ;
-         ID       260 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( ::nMode == APPD_MODE ) ;
-         OF       ::oFld:aDialogs[1]
+      REDEFINE GET      ::oCodigoSegundaPropiedad ;
+         VAR            ::oDbfVir:cValPr2 ;
+         ID             260 ;
+         BITMAP         "LUPA" ;
+         WHEN           ( ::nMode == APPD_MODE ) ;
+         OF             ::oFld:aDialogs[1]
 
          ::oCodigoSegundaPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoSegundaPropiedad, ::oTextoSegundaPropiedad, ::oDbfVir:cCodPr2 ) }
          ::oCodigoSegundaPropiedad:bValid    := {|| ::LoadAtipica() }

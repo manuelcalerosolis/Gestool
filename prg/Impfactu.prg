@@ -106,6 +106,9 @@ CLASS TImpFactu
    DATA oDbfDiv
    DATA oDbfStocks
 
+   DATA oDbfRutGst
+   DATA oDbfRutFac
+
    DATA cPathFac
    DATA cPathMov      INIT "C:\ARCHIV~1\AZUDSO~1\UTILID~1\Datos\TBLS04\"
 
@@ -200,6 +203,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfObrGst  PATH ( cPatCli() )  FILE "OBRAST.DBF"     VIA ( cDriver() )       CLASS "Obrgst"  SHARED INDEX "OBRAST.CDX"
       DATABASE NEW ::oDbfAtpGst  PATH ( cPatCli() )  FILE "CLIATP.DBF"     VIA ( cDriver() )       CLASS "Atpgst"  SHARED INDEX "CLIATP.CDX"
       DATABASE NEW ::oDbfBncGst  PATH ( cPatCli() )  FILE "CliBnc.DBF"     VIA ( cDriver() )       CLASS "Clibnc"  SHARED INDEX "CliBnc.CDX"
+      DATABASE NEW ::oDbfRutGst  PATH ( cPatCli() )  FILE "Ruta.DBF"       VIA ( cDriver() )       CLASS "Ruta"    SHARED INDEX "Ruta.CDX"
 
       DATABASE NEW ::oDbfCliFac  PATH ( ::cPathFac ) FILE "CLIENTES.DBF"   VIA ( cLocalDriver() )  CLASS "Clifac"
       DATABASE NEW ::oDbfObrFac  PATH ( ::cPathFac ) FILE "DIRCLI.DBF"     VIA ( cLocalDriver() )  CLASS "Obrfac"
@@ -918,6 +922,10 @@ METHOD CloseFiles()
 
    ::oDbfDiv         := nil
 
+   if !empty( ::oDbfRutGst )
+      ::oDbfRutGst:End()
+   end if 
+
 RETURN .T.
 
 // ----------------------------------------------------------------------------- //
@@ -1295,7 +1303,8 @@ METHOD Importar()
             ::oDbfCliGst:PobBanco   := ::oDbfCliFac:cPobBco
             ::oDbfCliGst:cProBanco  := ::oDbfCliFac:cProvBco
             ::oDbfCliGst:Cuenta     := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
-            ::oDbfCliGst:CodPago    := ::oDbfCliFac:cCodPAgo
+            ::oDbfCliGst:CodPago    := ::oDbfCliFac:cCodPago
+            ::oDbfCliGst:nDtoEsp    := ::oDbfCliFac:nDtoEsp
             ::oDbfCliGst:nDpp       := ::oDbfCliFac:nDpp
             ::oDbfCliGst:Riesgo     := ::oDbfCliFac:nRiesgo
             ::oDbfCliGst:CopiasF    := ::oDbfCliFac:nCopFac
@@ -1485,6 +1494,32 @@ METHOD Importar()
             ::aMtrIndices[ 5 ]:Set( ::oDbfAtpFac:Recno() )
 
             ::oDbfAtpFac:Skip()
+
+         end while
+
+         /*
+         Trasbase de Rutas-----------------------------------------------------
+         */
+
+         ::oDbfRutGst:GoTop()
+         while !::oDbfRutGst:Eof()
+            ::oDbfRutGst:Delete( .f. )
+            ::oDbfRutGst:Skip()
+         end if
+
+         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfProvFac:LastRec() )
+
+         while !( ::oDbfProvFac:eof() )
+
+            ::oDbfRutGst:Append()
+            ::oDbfRutGst:Blank()
+            ::oDbfRutGst:cCodRut    := ::oDbfProvFac:cCodProv
+            ::oDbfRutGst:cDesRut    := ::oDbfProvFac:cNomProv
+            ::oDbfRutGst:Save()
+
+            ::aMtrIndices[ 5 ]:Set( ::oDbfProvFac:Recno() )
+
+            ::oDbfProvFac:Skip()
 
          end while
 

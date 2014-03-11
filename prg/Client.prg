@@ -11713,7 +11713,7 @@ Return cCuenta
 Nos informa si tenemos atipicas para este cliente------------------------------
 */
 
-function lAtipicacliente( cCodCli, dbfAtpCli )
+function lAtipicaCliente( cCodCli, dbfAtpCli )
 
 return ( dbfAtpCli )->( dbSeek( cCodCli ) )
 
@@ -11723,14 +11723,37 @@ Function lConditionAtipica( dFecha, dbfClientAtp )
 
    if !Empty( ( dbfClientAtp )->cCodArt )    .and.;
       ( dbfClientAtp )->nTipAtp <= 1         .and.;
-      ( ( dbfClientAtp )->dFecIni <= dFecha .or. Empty( ( dbfClientAtp )->dFecIni ) ) .and. ;
-      ( ( dbfClientAtp )->dFecFin >= dFecha .or. Empty( ( dbfClientAtp )->dFecFin ) )
+      ( empty( dFecha ) .or. empty( ( dbfClientAtp )->dFecIni ) .or. ( dbfClientAtp )->dFecIni <= dFecha  ) .and. ;
+      ( empty( dFecha ) .or. empty( ( dbfClientAtp )->dFecFin ) .or. ( dbfClientAtp )->dFecFin >= dFecha  )
 
       Return .t.
 
    end if   
 
 Return .f.
+
+//---------------------------------------------------------------------------//
+
+Function nImporteAtipica( cCodigoArticulo, cCodigoCliente, cCodigoGrupo, nTarifa, lIvaIncluido, dbfCliAtp )
+
+   local nOrd              := ( dbfCliAtp )->( ordSetFocus() ) 
+   local nRec              := ( dbfCliAtp )->( Recno() )
+   local nImporteAtipica   := 0
+
+   if dbSeekInOrd( cCodigoCliente + cCodigoArticulo, "cCliArt", dbfCliAtp )
+      nImporteAtipica      := nPrecioAtipica( nTarifa, lIvaIncluido, dbfCliAtp )
+   end if 
+
+   if empty( nImporteAtipica )
+      if dbSeekInOrd( cCodigoGrupo + cCodigoArticulo, "cGrpArt", dbfCliAtp )
+         nImporteAtipica   := nPrecioAtipica( nTarifa, lIvaIncluido, dbfCliAtp )
+      end if 
+   end if 
+
+   ( dbfCliAtp )->( ordSetFocus( nOrd ) ) 
+   ( dbfCliAtp )->( dbGoTo( nRec ) )
+
+Return ( nImporteAtipica )
 
 //---------------------------------------------------------------------------//
 
@@ -11860,7 +11883,7 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
          while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt + ( dbfCliAtp )->cCodPr1 + ( dbfCliAtp )->cCodPr2 + ( dbfCliAtp )->cValPr1 + ( dbfCliAtp )->cValPr2 == cCodGrp + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) .and. !( dbfCliAtp )->( eof() ) 
 
-            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
+            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
 
                lSea     := .t.
 
@@ -11889,7 +11912,7 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
          while ( ( dbfCliAtp )->cCodGrp + ( dbfCliAtp )->cCodArt == cCodGrp + cCodArt ) .and. !( dbfCliAtp )->( eof() ) 
 
-            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp )
+            if lCheckAtipicaArticulo( dFecDoc, dbfCliAtp ) .and. !lVaciaAtipicaArticulo( dbfCliAtp )
 
                lSea     := .t.
 
