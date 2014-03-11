@@ -686,6 +686,52 @@ CLASS TStock
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD nUnidadesInStock()  
+         
+      local o
+      local nStockArticulo := 0
+
+      for each o in ::aStocks
+         nStockArticulo    += o:nUnidades 
+      next
+
+      RETURN ( nStockArticulo )
+
+   ENDMETHOD      
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD nPendientesRecibirInStock()  
+      
+      local o
+      local nStockArticulo := 0
+
+      for each o in ::aStocks
+         nStockArticulo    += o:nPendientesRecibir
+      next 
+
+      RETURN ( nStockArticulo )
+
+   ENDMETHOD      
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD nPendientesEntregarInStock()  
+      
+      local o
+      local nStockArticulo := 0
+
+      for each o in ::aStocks
+         nStockArticulo    += o:nPendientesEntregar
+      next 
+
+      RETURN ( nStockArticulo )
+
+   ENDMETHOD      
+
+   //---------------------------------------------------------------------------//
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -2100,15 +2146,7 @@ return ( nStock )
 
 METHOD lPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, oSay ) CLASS TStock
 
-   local cClass   := oSay:ClassName()
-   local nStock   := ::nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk )
-
-   do case
-      case cClass == "TGET" .or. cClass == "TGETHLP"
-         oSay:cText( nStock )
-      case cClass == "TSAY"
-         oSay:SetText( nStock )
-   end case
+   ::nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, oSay )
 
 return ( .t. )
 
@@ -4985,7 +5023,6 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 Return ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
