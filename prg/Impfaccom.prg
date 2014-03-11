@@ -1007,7 +1007,7 @@ METHOD Importar()
 
       end if
 
-      //*Traspaso de facturas de proveedores*/
+      //Traspaso de facturas de proveedores------------------------------------
 
       if ::aLgcIndices[ 6 ]
 
