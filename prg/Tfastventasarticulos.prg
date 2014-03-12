@@ -1750,7 +1750,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
          while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
 
-            if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl )
+            if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTik )
 
                ::oDbf:Blank()
                
@@ -1829,7 +1829,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             end if
 
-            if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl )
+            if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTik )
 
                ::oDbf:Blank()
                
@@ -2263,17 +2263,17 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
    ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando albaranes a proveedor"
+   ::oMtrInf:cText      := "Procesando albaranes a proveedor"
    ::oMtrInf:SetTotal( ::oAlbPrvT:OrdKeyCount() )
 
    /*
    Lineas de Albturas----------------------------------------------------------
    */
 
-   cExpLine          := '!lControl'
+   cExpLine             := '!lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
    end if
 
    ::oAlbPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvL:cFile ), ::oAlbPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )

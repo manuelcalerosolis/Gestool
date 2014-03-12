@@ -4033,7 +4033,7 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
 
    CursorWait()
 
-   ::oTemporalLinea:Append()
+   ::oTemporalLinea:Blank()
    ::oTemporalLinea:cNomTil      := ::cDescripcionLibre
    ::oTemporalLinea:nUntTil      := ::nUnidadesLibre
    ::oTemporalLinea:nPvpTil      := ::nImporteLibre
@@ -4042,7 +4042,7 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
    ::oTemporalLinea:cImpCom1     := ::cImpresoraLibre
    ::oTemporalLinea:nNumLin      := nLastNum( ::oTemporalLinea )
    ::oTemporalLinea:cOrdOrd      := ::oOrdenComanda:cOrden( ::cOrdenComandaLibre ) 
-   ::oTemporalLinea:Save()
+   ::oTemporalLinea:Insert()
  
    if !Empty( ::oBrwLineas )
       ::oBrwLineas:Refresh()

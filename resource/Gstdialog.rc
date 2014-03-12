@@ -18311,10 +18311,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Situación", -1, "Static", WS_GROUP, 44, 81, 49, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Pedidos a proveedores", -1, "Static", WS_GROUP, 44, 3, 120, 8
-  CONTROL "&Importar tarifa", 526, "Button", WS_TABSTOP, 374, 106, 50, 14
-  CONTROL "", 4002, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 487, 109, 50, 11
-  CONTROL "Crecimto.", -1, "Static", WS_GROUP, 456, 112, 31, 8
-  CONTROL "%", -1, "Static", WS_GROUP, 539, 111, 11, 8
+  CONTROL "&Importar", 526, "Button", WS_TABSTOP, 611, 106, 50, 14
 }
 
 PEDPRV_2 DIALOG DISCARDABLE 4, 18, 670, 375
@@ -19528,5 +19525,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "Incidencias de clientes", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 2, 151, 8
   CONTROL "Zoom", 130, "Button", WS_TABSTOP, 217, 48, 50, 14
   CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 50, 65, 401, 231
+}
+
+LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
+
+ImportarProductosProveedor DIALOGEX DISCARDABLE 6, 18, 153, 67
+STYLE WS_POPUP|DS_MODALFRAME|DS_CONTEXTHELP|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Importar productos de proveedor"
+FONT 8, "MS Sans Serif", 0, 0, 1
+{
+  CONTROL "", 100, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 52, 4, 60, 11
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 52, 17, 60, 11
+  CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 52, 31, 47, 11
+  CONTROL "&Aceptar", IDOK, "Button", WS_TABSTOP, 40, 48, 50, 15
+  CONTROL "Cancelar", IDCANCEL, "Button", WS_TABSTOP, 98, 48, 50, 15
+  CONTROL "Desde", -1, "Static", WS_GROUP, 8, 7, 30, 8
+  CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 20, 30, 8
+  CONTROL "Incremento", -1, "Static", WS_GROUP, 8, 34, 41, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 102, 33, 11, 8
 }
 

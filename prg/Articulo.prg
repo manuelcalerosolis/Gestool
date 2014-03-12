@@ -10470,20 +10470,6 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-
-function nLastDay( nMes )
-
-   local cMes     := Str( if( nMes == 12, 1, nMes + 1 ), 2 )
-   local cAno     := Str( if( nMes == 12, Year( Date() ) + 1, Year( Date() ) ) )
-
-return ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
-
-//---------------------------------------------------------------------------//
-
-function nFirstDay( nMes )
-
-return ( Ctod( "01/" + Str( nMes, 2 ) + "/" + Str( Year( date() ) ) ) )
-
 //---------------------------------------------------------------------------//
 //
 // Actualiza las unidades pendientes de recibir

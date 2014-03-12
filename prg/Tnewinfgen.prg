@@ -3660,8 +3660,8 @@ METHOD lRecargaFecha() CLASS TNewInfGen
 
       case ::cPeriodo == "Mes anterior"
 
-         ::oIniInf:cText( CtoD( "01/" + Str( Month( GetSysDate() ) - 1 ) + "/" + Str( Year( GetSysDate() ) ) ) )
-         ::oFinInf:cText( nLastDay( Month( GetSysDate() ) - 1 ) )
+         ::oIniInf:cText( BoM( addMonth( GetSysDate(), -1 ) ) ) 
+         ::oFinInf:cText( EoM( addMonth( GetSysDate(), -1 ) ) )
 
       case ::cPeriodo == "Primer trimestre"
 

@@ -2452,6 +2452,14 @@ Function TLabelGenerator()
 
 RETURN nil
 
+Function ImportarProductosProveedor()
+
+Return nil
+
+Function PageIniClient()
+
+Return nil
+
 /*
 //---------------------------------------------------------------------------//
 
