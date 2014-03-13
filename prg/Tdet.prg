@@ -93,7 +93,8 @@ CLASS TDet
 
    METHOD BuildFiles( lExclusive, cPath )    INLINE ( ::DefineFiles( cPath ):Create() )
 
-   METHOD GetInstance( cPath, oParent )      INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( cPath, oParent ), ), ::oInstance ) 
+   METHOD NewInstance( cPath, oParent )      INLINE ( ::EndInstance(), ::oInstance := ::New( cPath, oParent ), ::oInstance ) 
+   METHOD GetInstance( cPath, oParent )      INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( cPath, oParent ), ::oInstance ) ) 
    METHOD EndInstance()                      INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
 
 END CLASS

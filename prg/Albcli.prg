@@ -2692,7 +2692,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Total " + cNombreUnidades()
-         :cSortOrder          := "n"
          :bEditValue          := {|| nTotNAlbCli( dbfTmpLin ) }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
@@ -12753,6 +12752,7 @@ Return .t.
 Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
    local nOrder
+   local lSearch     := .f.
 
    /*
    Controlamos que no nos pase código de cliente vacío------------------------
@@ -12767,13 +12767,13 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
    Controlamos que el cliente tenga atipicas----------------------------------
    */
 
-   nOrder         := ( dbfCliAtp )->( OrdSetFocus( "cCodCli" ) )
+   nOrder            := ( dbfCliAtp )->( OrdSetFocus( "cCodCli" ) )
 
    if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
 
       while ( dbfCliAtp )->cCodCli == aTmpAlb[ _CCODCLI ] .and. !( dbfCliAtp )->( Eof() )
 
-         if lConditionAtipica( aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
+         if lConditionAtipica( nil, dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
 
             AppendDatosAtipicas( aTmpAlb )
 
@@ -12789,25 +12789,29 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
    Controlamos el grupo del cliente tenga atipicas----------------------------------
    */
 
-   ( dbfCliAtp )->( OrdSetFocus( "cCodGrp" ) )
+   if !lSearch
 
-   if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
+      ( dbfCliAtp )->( OrdSetFocus( "cCodGrp" ) )
+   
+      if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
+   
+         while ( dbfCliAtp )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( dbfCliAtp )->( Eof() )
+   
+            if lConditionAtipica( nil, dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
+   
+               AppendDatosAtipicas( aTmpAlb )
+   
+            end if
+   
+            ( dbfCliAtp )->( dbSkip() )
+   
+         end while
+   
+      end if
+   
+      ( dbfCliAtp )->( OrdSetFocus( nOrder ) )
 
-      while ( dbfCliAtp )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( dbfCliAtp )->( Eof() )
-
-         if lConditionAtipica( aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
-
-            AppendDatosAtipicas( aTmpAlb )
-
-         end if
-
-         ( dbfCliAtp )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfCliAtp )->( OrdSetFocus( nOrder ) )
+   end if 
 
    // Recalculamos la factura y refrescamos la pantalla--------------------------
 
@@ -12829,6 +12833,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
    if !dbSeekInOrd( ( dbfCliAtp )->cCodArt, "cRef", dbfTmpLin )
 
       ( dbfTmpLin )->( dbAppend() )
+   
       ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
       ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
       ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
@@ -12859,7 +12864,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
          ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
       end if
    
-      nPrecioAtipica                := nPrecioAtipica( aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+      nPrecioAtipica                := nImporteAtipica( ( dbfCliAtp )->cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
       if nPrecioAtipica != 0
          ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
       else 

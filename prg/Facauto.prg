@@ -1486,7 +1486,7 @@ METHOD RunPlantillaAutomatica( cCodigoPlantilla ) CLASS TFacAutomatica
       
       if :OpenFiles()
       
-         if :lSelectCodigoPlantilla()      
+         if :lSelectCodigoPlantilla()
             :Run()
          end if
       
@@ -2020,7 +2020,7 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
       CursorWait()
 
       if oUser():lDocAuto() .or. lUsrMaster()
-      
+
          aCodigoGrupo                     := ::oGrpFacturasAutomaticas:aChild( ::cCodigoGrupo, { ::cCodigoGrupo } )
 
          ::aPlantilla                     := {}
@@ -2030,7 +2030,7 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
             if ( Empty( aCodigoGrupo )       .or. ( lScanCodeInMemo( aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )  .and. ;
                ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) )                
-              
+
                aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 
                lSelect                    := .t.

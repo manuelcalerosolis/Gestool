@@ -19,6 +19,8 @@ CLASS TGrpCli FROM TMasDet
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
+
+   METHOD View()                                INLINE ( ::nView )
    //METHOD End()
 
    METHOD OpenFiles( lExclusive )
@@ -75,7 +77,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::bFirstKey          := {|| ::oDbf:cCodGrp }
 
-   ::AddDetail( TAtipicas():GetInstance( ::cPath, Self ) )
+   ::AddDetail( TAtipicas():NewInstance( ::cPath, Self ) )
 
 RETURN ( Self )
 

@@ -1,4 +1,4 @@
-/* Importación de datos de factucont */
+/* ImportaciÃ³n de datos de factucont */
 
 #include "FiveWin.Ch"
 #include "Factu.ch" 
@@ -32,6 +32,7 @@ CLASS TImpFacCom
    DATA oDbfAntTGst
    DATA oDbfFacPrvTFac
    DATA oDbfFacPrvTGst
+   DATA oDbfFacPrvLFac
    DATA oDbfFacPrvLGst
    DATA oDbfFacPrvPGst
    DATA cPathFac
@@ -64,7 +65,7 @@ METHOD OpenFiles()
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    if Empty( ::cPathFac )
-      MsgStop( "Ruta de factucont ® está vacía" )
+      MsgStop( "Ruta de factucont Â® estÃ¡ vacÃ­a" )
       return .f.
    end if
 
@@ -97,7 +98,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Articulo.DBF" )
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de artículos", ::cPathFac + "ARTICULO.DBF" )
+      msgStop( "No existe fichero de artÃ­culos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtPrv PATH ( cPatArt() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
       DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
@@ -106,55 +107,9 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTFAC"
    end if
 
-//Comprobamos si existe el fichero donde se guardan las líneas de todos los documentos
-
-   if !File( ::cPathFac + "CONTENI1.DBF" )
-      ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
-      ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
-      ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de detalle de líneas", ::cPathFac + "CONTENI1.DBF" )
-   else
-
-      DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "CONTENI1.DBF"   VIA ( cDriver() )CLASS "ALBLFAC"
-
-      if !File( ::cPathFac + "ALBARAN1.DBF" )
-         ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
-         msgStop( "No existe fichero de albaranes", ::cPathFac + "ALBARAN1.DBF" )
-      else
-         DATABASE NEW ::oDbfAlbTGst PATH ( cPatEmp() )  FILE "ALBCLIT.DBF"    VIA ( cDriver() )CLASS "ALBTGST"  INDEX "ALBCLIT.CDX"
-         DATABASE NEW ::oDbfAlbTFac PATH ( ::cPathFac ) FILE "ALBARAN1.DBF"   VIA ( cDriver() )CLASS "ALBTFAC"
-         DATABASE NEW ::oDbfAlbLGst PATH ( cPatEmp() )  FILE "ALBCLIL.DBF"    VIA ( cDriver() )CLASS "ALBLGST"  INDEX "ALBCLIL.CDX"
-      end if 
-
-      if !File( ::cPathFac + "INGRESO1.DBF" )
-         ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
-         msgStop( "No existe fichero de facturas de clientes", ::cPathFac + "INGRESO1.DBF" )
-      else
-         DATABASE NEW ::oDbfFacTGst PATH ( cPatEmp() )  FILE "FACCLIT.DBF"    VIA ( cDriver() )CLASS "FACTGST"  INDEX "FACCLIT.CDX"
-         DATABASE NEW ::oDbfFacTFac PATH ( ::cPathFac ) FILE "INGRESO1.DBF"   VIA ( cDriver() )CLASS "FACTFAC"
-         DATABASE NEW ::oDbfFacLGst PATH ( cPatEmp() )  FILE "FACCLIL.DBF"    VIA ( cDriver() )CLASS "FACLGST"  INDEX "FACCLIL.CDX"
-         DATABASE NEW ::oDbfFacPGst PATH ( cPatEmp() )  FILE "FACCLIP.DBF"    VIA ( cDriver() )CLASS "FACPGST"  INDEX "FACCLIP.CDX"
-         DATABASE NEW ::oDbfAntTGst PATH ( cPatEmp() )  FILE "ANTCLIT.DBF"    VIA ( cDriver() )CLASS "ANTTGST"  INDEX "ANTCLIT.CDX"
-      end if 
-
-      if !File( ::cPathFac + "GASTOS1.DBF" )
-         ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-         msgStop( "No existe fichero de facturas de proveedores ", ::cPathFac + "GASTOS1.DBF" )
-      else
-         DATABASE NEW ::oDbfFacPrvTGst PATH ( cPatEmp() )    FILE "FACPRVT.DBF"  VIA ( cDriver() )CLASS "FACPRVTGST" INDEX "FACPRVT.CDX"
-         DATABASE NEW ::oDbfFacPrvTFac PATH ( ::CPathFac() ) FILE "GASTOS1.DBF"  VIA ( cDriver() )CLASS "FACPRVTFAC"
-         DATABASE NEW ::oDbfFacPrvLGst PATH ( cPatEmp() )    FILE "FACPRVL.DBF"  VIA ( cDriver() )CLASS "FACPRVLGST" INDEX "FACPRVL.CDX"
-         DATABASE NEW ::oDbfFacPrvPGst PATH ( cPatEmp() )    FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FACPRVPGST" INDEX "FACPRVP.CDX"
-      end if 
-
-   end if
-
-/*
-
    if !File( ::cPathFac + "ALBARAN1.DBF" ) .or. !File( ::cPathFac + "INGRESO1.DBF" ) .or. !File( ::cPathFac + "CONTENI1.DBF" )
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
-
       msgStop( "No existe fichero de albaranes", ::cPathFac + "ALBARAN1.DBF, ni" + ::cPathFac + "CONTENI1.DBF" )
    else
       DATABASE NEW ::oDbfAlbTGst PATH ( cPatEmp() )  FILE "ALBCLIT.DBF"    VIA ( cDriver() )CLASS "ALBTGST"  INDEX "ALBCLIT.CDX"
@@ -169,7 +124,7 @@ METHOD OpenFiles()
    end if
 
    if !File( ::cPathFac + "GASTOS1.DBF" ) .or. !File( ::cPathFac + "CONTENI1.DBF" )
-      ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
+      ::aChkIndices[ 6 ]:Clik( .f. ):Refresh()
       msgStop( "No existe fichero de facturas de proveedores", ::cPathFac + "GASTOS1.DBF, ni " + ::cPathFac + "CONTENI1.DBF" )
    else
       DATABASE NEW ::oDbfFacPrvTGst PATH ( cPatEmp() ) FILE "FACPRVT.DBF"  VIA ( cDriver() )CLASS "FACPRVTGST" INDEX "FACPRVT.CDX"
@@ -178,8 +133,6 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfFacPrvLFac PATH ( cPatEmp() ) FILE "CONTENI1.DBF" VIA ( cDriver() )CLASS "FACPRVLFAC" 
       DATABASE NEW ::oDbfFacPrvPGst PATH ( cPatEmp() ) FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FACPRVPGST" INDEX "FACPRVP.CDX"
    end if
-
-*/
 
    RECOVER USING oError
 
@@ -343,16 +296,22 @@ METHOD CloseFiles()
       ::oDbfFacPrvLGst := nil 
    end if 
 
+   if !Empty( ::oDbfFacPrvLFac )
+      ::oDbfFacPrvLFac:end()
+   else
+      ::oDbfFacPrvLFac := nil 
+   end if 
+
    if !Empty( ::odbfFacPrvPGst )
       ::oDbfFacPrvPGst:End()
    else
-      ::oDbfFacPrvPGst := nil 
+      ::oDbfFacPrvP := nil 
    end if 
 
 RETURN .T.
 
 // ----------------------------------------------------------------------------- //
-/*Constructor para el método*/
+/*Constructor para el mÃ©todo*/
 
 METHOD New()
 
@@ -374,7 +333,7 @@ METHOD Resource()
    local oGet
 
    if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
       return nil
    end if
 
@@ -382,7 +341,7 @@ METHOD Resource()
       oWnd():CloseAll()
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE "IMPFACCOM" TITLE "Importación desde factucont ®" OF oWnd()
+   DEFINE DIALOG ::oDlg RESOURCE "IMPFACCOM" TITLE "ImportaciÃ³n desde factucont Â®" OF oWnd()
 
       REDEFINE GET oGet VAR ::cPathFac ID 100 BITMAP "FOLDER" ON HELP ( oGet:cText( cGetDir32( "Seleccione destino" ) ) ) OF ::oDlg
 
@@ -407,9 +366,9 @@ METHOD Resource()
 
       REDEFINE BUTTON ID IDOK       OF ::oDlg ACTION ( ::Importar() )
       REDEFINE BUTTON ID IDCANCEL   OF ::oDlg ACTION ( ::oDlg:end() )
-      REDEFINE BUTTON ID 998        OF ::oDlg ACTION ( msginfo( "Ayuda no definida", "Información" ) )
+      REDEFINE BUTTON ID 998        OF ::oDlg ACTION ( msginfo( "Ayuda no definida", "InformaciÃ³n" ) )
 
-   ::oDlg:AddFastKey( VK_F1, {|| msginfo( "Ayuda no definida", "Información" ) } )
+   ::oDlg:AddFastKey( VK_F1, {|| msginfo( "Ayuda no definida", "InformaciÃ³n" ) } )
    ::oDlg:AddFastKey( VK_F5, {|| ::Importar() } )
 
    ACTIVATE DIALOG ::oDlg CENTER
@@ -433,7 +392,7 @@ METHOD SelectChk( lSet )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-/*Proceso de importación*/
+/*Proceso de importaciÃ³n*/
 
 METHOD Importar()
 
@@ -461,7 +420,7 @@ METHOD Importar()
 
             while ::oDbfPrvGst:Seek( ::oDbfPrvFac:Codigo )
                ::oDbfPrvGst:Delete( .f. )
-            end while
+            end if
 
             ::oDbfPrvGst:Append()
 
@@ -571,11 +530,11 @@ METHOD Importar()
 
       end if
 
-      /*Traspaso de artículos*/
+      /*Traspaso de artÃ­culos*/
 
       if ::aLgcIndices[ 3 ]
 
-         /*Lo primero es meter las familias, ya que hay que crearles el código*/
+         /*Lo primero es meter las familias, ya que hay que crearles el cÃ³digo*/
 
          ::aMtrIndices[ 3 ]:SetTotal( ::oDbfArtFac:LastRec() )
 
@@ -605,7 +564,7 @@ METHOD Importar()
          end while
 
          /*
-         Empezamos el trasbase de artículos
+         Empezamos el trasbase de artÃ­culos
          */
 
          ::aMtrIndices[ 3 ]:SetTotal( ::oDbfArtFac:LastRec() )
@@ -616,7 +575,7 @@ METHOD Importar()
 
             while ::oDbfArtGst:Seek( ::oDbfArtFac:Codigo )
                ::oDbfArtGst:Delete( .f. )
-            end while
+            end if
 
             ::oDbfArtGst:Append()
             ::oDbfArtGst:Blank()
@@ -713,24 +672,24 @@ METHOD Importar()
          ::oDbfAlbTFac:GoTop()
          while !( ::oDbfAlbTFac:eof() )
 
-            cSerie                        := SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 1, 1 )
-            nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 2 ) )
+         cSerie                        := SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 1, 1 )
+         nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 2 ) )
 
             while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
                ::oDbfAlbTGst:Delete( .f. )
-            end while
+            end
 
             while ::oDbfAlbLGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
 
                ::oDbfAlbLGst:Delete( .f. )
-            end while
+            end
 
             ::oDbfAlbTGst:Append()
             ::oDbfAlbTGst:Blank()
 
             ::oDbfAlbTGst:cSerAlb        := cSerie
             ::oDbfAlbTGst:nNumAlb        := nNumero
-            ::oDbfAlbTGst:cSufAlb        := "00"
+            ::oDbfAlbTGst:cSufAlb        := Space( 2 )
             ::oDbfAlbTGst:cTurAlb        := cCurSesion()
             ::oDbfAlbTGst:dFecAlb        := ::oDbfAlbTFac:Fecha
             ::oDbfAlbTGst:cCodAlm        := oUser():cAlmacen()
@@ -820,6 +779,7 @@ METHOD Importar()
 
                ::oDbfAlbLGst:cSerAlb     := cSerie
                ::oDbfAlbLGst:nNumAlb     := nNumero
+<<<<<<< HEAD
                ::oDbfAlbLGst:cSufAlb     := "00"
 
                if ::oDbfAlbLFac:Codigo == ""
@@ -829,6 +789,11 @@ METHOD Importar()
                   ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
                end if 
                
+=======
+               ::oDbfAlbLGst:cSufAlb     := Space( 2 )
+               ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
+               ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
+>>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
                ::oDbfAlbLGst:nPreUnit    := ::oDbfAlbLFac:Precio
                ::oDbfAlbLGst:nDto        := ::oDbfAlbLFac:Descuento
                ::oDbfAlbLGst:nIva        := ::oDbfAlbLFac:Iva
@@ -866,15 +831,15 @@ METHOD Importar()
          ::oDbfFacTFac:GoTop()
          while !( ::oDbfFacTFac:eof() )
 
-               while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + "00" )
+               while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + Space(2) )
                   ::oDbfFacTGst:Delete( .f. )
                end
 
-               while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
+               while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
                   ::oDbfFacLGst:Delete( .f. )
                end
 
-               while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
+               while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
                   ::oDbfFacPGst:Delete( .f. )
                end 
 
@@ -883,7 +848,7 @@ METHOD Importar()
 
                ::oDbfFacTGst:cSerie      := "A"
                ::oDbfFacTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
-               ::oDbfFacTGst:cSufFac     := "00"
+               ::oDbfFacTGst:cSufFac     := Space( 2 )
                ::oDbfFacTGst:cTurFac     := cCurSesion()
                ::oDbfFacTGst:dFecFac     := ::oDbfFacTFac:Fecha
                ::oDbfFacTGst:cCodAlm     := oUser():cAlmacen()
@@ -947,7 +912,7 @@ METHOD Importar()
                   ::oDbfFacTGst:cDtoEsp        := Padr( "General", 50 )
                   ::oDbfFacTGst:cDpp           := Padr( "Pronto pago", 50 )
                end if
-
+//hasta aqui
             ::oDbfCliGst:OrdSetFocus( nOrdAnt )
 
             ::oDbfFacTGst:Save()
@@ -969,7 +934,7 @@ METHOD Importar()
 
                ::oDbfFacLGst:cSerie      := "A"
                ::oDbfFacLGst:nNumFac     := Val( SubStr( ::oDbfAlbLFac:RfaLin, 5, 7 ) )
-               ::oDbfFacLGst:cSufFac     := "00"
+               ::oDbfFacLGst:cSufFac     := Space( 2 )
                ::oDbfFacLGst:cRef        := ::oDbfAlbLFac:Codigo
                ::oDbfFacLGst:cDetalle    := ::oDbfAlbLFac:Concepto
                ::oDbfFacLGst:nPreUnit    := ::oDbfAlbLFac:Precio
@@ -1014,13 +979,14 @@ METHOD Importar()
 
       end if
 
-      //*Traspaso de facturas de proveedores*/
+      //Traspaso de facturas de proveedores------------------------------------
 
       if ::aLgcIndices[ 6 ]
 
          ::aMtrIndices[ 6 ]:SetTotal( ::oDbfFacPrvTFac:LastRec() )
 
          ::oDbfFacPrvTFac:GoTop()
+<<<<<<< HEAD
          while !( ::oDbfFacPrvTFac:Eof() )
 
             while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacPrvTFac:Numero ), 9 ) + "00" )
@@ -1096,19 +1062,82 @@ METHOD Importar()
                ::oDbfFacPrvTGst:cDniPrv      := ::oDbfPrvGst:Nif
                ::oDbfFacPrvTGst:cDtoEsp      := Padr( "General", 50 )
                ::oDbfFacPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
+=======
+         while !( ::oDbfFacPrvTFac:oef() )
 
-            end if 
+            while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + Space(2) )
+                  ::oDbfFacTGst:Delete( .f. )
+               end
+>>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
 
-            ::oDbfPrvGst:OrdSetFocus( nOrdAnt )
+               while ::oDbfFacPrvLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
+                  ::oDbfFacLGst:Delete( .f. )
+               end
 
+               while ::oDbfFacPrvPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + Space(2) )
+                  ::oDbfFacPGst:Delete( .f. )
+               end 
+
+<<<<<<< HEAD
             ::oDbfFacPrvTGst:Save()
+=======
+               ::oDbfFacPrvTGst:Append()
+               ::oDbfFacPrvTGst:Blank()
 
-            ::aMtrIndices[ 6 ]:Set( ::oDbfFacPrvTFac:Recno() )
+               ::oDbfFacPrvTGst:cSerFac     := "A"
+               ::oDbfFacPrvTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
+               ::oDbfFacPrvTGst:cSufFac     := Space( 2 )
+               ::oDbfFacPrvTGst:cTurFac     := cCurSesion()
+               ::oDbfFacPrvTGst:dFecFac     := ::oDbfFacPrvTFac:Fecha
+               ::oDbfFacPrvTGst:cCodAlm     := oUser():cAlmacen()
+               ::oDbfFacPrvTGst:cCodCaj     := cDefCaj()
+               ::oDbfFacPrvTGst:dFecEnt     := ::oDbfFacPrvTFac:Fecha
+               ::oDbfFacPrvTGst:lLiquidada  := .t.
+               ::oDbfFacPrvTGst:lContab     := .f.
+               ::oDbfFacPrvTGst:cCodPago    := cDefFpg()
+               ::oDbfFacPrvTGst:lIvaInc     := ::oDbfFacPrvTFac:IvaIncl
+               ::oDbfFacPrvTGst:cDivFac     := cDivEmp()
+               ::oDbfFacPrvTGst:cCodUsr     := cCurUsr()
+               ::oDbfFacPrvTGst:dFecChg     := GetSysDate()
+               ::oDbfFacPrvTGst:cTimChg     := Time()
 
-            ::oDbfFacPrvTFac:Skip()
+
+               nOrdAnt := ::oDbfPrvGst:OrdSetFocus( "TITULO" )
+               ::oDbfPrvGst:GoTop()
+
+               if !Empty( ::oDbfFacPrvTFac:NombreF ) .and. ::oDbfPrvGst:Seek( UPPER( ::oDbfFacPrvTFac:NombreF ) )
+
+                  ::oDbfFacPrvTGst:cCodPrv      := ::oDbfPrvGst:Cod
+                  ::odbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
+                  ::oDbfFacPrvTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
+                  ::odbfFacPrvTGst:cPobPrv      := ::oDbfPrvGst:Poblacion
+                  if !Empty( ::odbfFacPrvTFac )
+                     ::oDbfFacPrvTGst:cDniPrv   := ::oDbfFacPrvTFac:Cif
+                  else
+                     ::oDbfFacPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
+                  end if 
+                  ::oDbfFacPrvTGst:cProvProv    := ::oDbfPrvGst:Provincia
+                  ::oDbfFacPrvTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
+                  ::oDbfFacPrvTGst:lRecargo     := ::oDvfPrvGst:lReq
+                  
+>>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
+
+                  ::oDbfFacTGst:lRecargo       := ::oDbfCliGst:lReq
+                  ::oDbfFacTGst:nRegIva        := ::oDbfCliGst:nRegIva
+
+               else
+                  ::oDbfFacTGst:cNomCli        := UPPER( ::oDbfFacTFac:NombreF )
+                  ::oDbfFacTGst:cDirCli        := ::oDbfFacTFac:DireccionF
+                  ::oDbfFacTGst:cPobCli        := ::oDbfFacTFac:CiudadF
+                  ::oDbfFacTGst:cDniCli        := ::oDbfFacTFac:cif
+                  ::oDbfFacTGst:cDtoEsp        := Padr( "General", 50 )
+                  ::oDbfFacTGst:cDpp           := Padr( "Pronto pago", 50 )
+               end if               
+//hasta aqui el if de clientes
 
          end while
 
+<<<<<<< HEAD
          ::aMtrIndices[ 6 ]:SetTotal( ::oDbfAlbLFac:LastRec() )  
 
          ::oDbfAlbLFac:GoTop()  //go top en la tabla de lineas conteni1.dbf
@@ -1173,12 +1202,14 @@ METHOD Importar()
 
          end while
 
+=======
+>>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
       end if 
 
 
       ::CloseFiles()
 
-      msgInfo( "Traspaso realizado con éxito.", "Bienvenido a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ )
+      msgInfo( "Traspaso realizado con Ã©xito.", "Bienvenido a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ )
 
       ::oDlg:Enable()
       ::oDlg:end()
