@@ -716,11 +716,11 @@ METHOD Importar()
             cSerie                        := SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 1, 1 )
             nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 2 ) )
 
-            while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + Space(2) )
+            while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
                ::oDbfAlbTGst:Delete( .f. )
             end while
 
-            while ::oDbfAlbLGst:Seek( cSerie + str( nNumero, 9 ) + Space(2) )
+            while ::oDbfAlbLGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
 
                ::oDbfAlbLGst:Delete( .f. )
             end while
@@ -821,8 +821,14 @@ METHOD Importar()
                ::oDbfAlbLGst:cSerAlb     := cSerie
                ::oDbfAlbLGst:nNumAlb     := nNumero
                ::oDbfAlbLGst:cSufAlb     := "00"
-               ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
-               ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
+
+               if ::oDbfAlbLFac:Codigo == ""
+                  ::oDbfFacPrvLGst:mLngDes := ::oDbfAlbLFac:Concepto            
+               else 
+                  ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
+                  ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
+               end if 
+               
                ::oDbfAlbLGst:nPreUnit    := ::oDbfAlbLFac:Precio
                ::oDbfAlbLGst:nDto        := ::oDbfAlbLFac:Descuento
                ::oDbfAlbLGst:nIva        := ::oDbfAlbLFac:Iva
@@ -995,6 +1001,7 @@ METHOD Importar()
          ::aMtrIndices[ 5 ]:SetTotal( ::oDbfFacTGst:LastRec() )
 
          ::oDbfFacTGst:GoTop()
+
          while !( ::oDbfFacTGst:eof() )
 
             GenPgoFacCli( ::oDbfFacTGst:cSerie + Str( ::oDbfFacTGst:nNumFac ) + ::oDbfFacTGst:cSufFac, ::oDbfFacTGst:cAlias, ::oDbfFacLGst:cAlias, ::oDbfFacPGst:cAlias, ::oDbfAntTGst:cAlias, ::oDbfCliGst:cAlias, ::oDbfPgo:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias, ,.f. )
@@ -1031,21 +1038,26 @@ METHOD Importar()
             ::oDbfFacPrvTGst:Append()
             ::oDbfFacPrvTGst:Blank()
 
-            ::oDbfFacPrvTGst:cSerFac     := "A"
-            ::oDbfFacPrvTGst:nNumFac     := Val( ::oDbfFacPrvTFac:Numero )
-            ::oDbfFacPrvTGst:cSufFac     := "00"
-            ::oDbfFacPrvTGst:cTurFac     := cCurSesion()
-            ::oDbfFacPrvTGst:dFecFac     := ::oDbfFacPrvTFac:Fecha
-            ::oDbfFacPrvTGst:cCodAlm     := oUser():cAlmacen()
-            ::oDbfFacPrvTGst:cCodCaj     := cDefCaj()
-            ::oDbfFacPrvTGst:dFecEnt     := ::oDbfFacPrvTFac:Fecha
-            ::oDbfFacPrvTGst:lLiquidada  := .t.
-            ::oDbfFacPrvTGst:lContab     := .f.
-            ::oDbfFacPrvTGst:cCodPago    := cDefFpg()
-            ::oDbfFacPrvTGst:cDivFac     := cDivEmp()
-            ::oDbfFacPrvTGst:cCodUsr     := cCurUsr()
-            ::oDbfFacPrvTGst:dFecChg     := GetSysDate()
-            ::oDbfFacPrvTGst:cTimChg     := Time()
+            ::oDbfFacPrvTGst:cSerFac         := "A"
+            ::oDbfFacPrvTGst:nNumFac         := Val( ::oDbfFacPrvTFac:Numero )
+            ::oDbfFacPrvTGst:cSufFac         := "00"
+            ::oDbfFacPrvTGst:cTurFac         := cCurSesion()
+            ::oDbfFacPrvTGst:dFecFac         := ::oDbfFacPrvTFac:Fecha
+            ::oDbfFacPrvTGst:cCodAlm         := oUser():cAlmacen()
+            ::oDbfFacPrvTGst:cCodCaj         := cDefCaj()
+            ::oDbfFacPrvTGst:cSuPed          := ::oDbfFacPrvTFac:Numfactura
+            ::oDbfFacPrvTGst:dFecEnt         := ::oDbfFacPrvTFac:Fecha
+            ::oDbfFacPrvTGst:lLiquidada      := .t.
+            ::oDbfFacPrvTGst:lContab         := .f.
+            ::oDbfFacPrvTGst:cCodPago        := cDefFpg()
+            ::oDbfFacPrvTGst:cDivFac         := cDivEmp()
+            ::oDbfFacPrvTGst:cCodUsr         := cCurUsr()
+            ::oDbfFacPrvTGst:dFecChg         := GetSysDate()
+            ::oDbfFacPrvTGst:cTimChg         := Time()
+
+            if ::oDbfFacPrvTFac:Sincont      
+               ::oDbfFacPrvTGst:lFacGas      := .t.
+            end if 
 
             nOrdAnt := ::oDbfPrvGst:OrdSetFocus( "TITULO" )
             ::oDbfPrvGst:GoTop()
@@ -1080,7 +1092,7 @@ METHOD Importar()
 
             else
 
-               ::odbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
+               ::oDbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
                ::oDbfFacPrvTGst:cDniPrv      := ::oDbfPrvGst:Nif
                ::oDbfFacPrvTGst:cDtoEsp      := Padr( "General", 50 )
                ::oDbfFacPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
@@ -1089,7 +1101,7 @@ METHOD Importar()
 
             ::oDbfPrvGst:OrdSetFocus( nOrdAnt )
 
-            ::odbfFacPrvTGst:Save()
+            ::oDbfFacPrvTGst:Save()
 
             ::aMtrIndices[ 6 ]:Set( ::oDbfFacPrvTFac:Recno() )
 
@@ -1097,13 +1109,69 @@ METHOD Importar()
 
          end while
 
-         //   ::aMtrIndices[ 6 ]:SetTotal( ::oDbfAlbLFac:LastRec() ) //meter de las lineas 
+         ::aMtrIndices[ 6 ]:SetTotal( ::oDbfAlbLFac:LastRec() )  
 
-         //   ::oDbfAlbLFac:GoTop()  //go top en la tabla de lineas conteni1.dbf
+         ::oDbfAlbLFac:GoTop()  //go top en la tabla de lineas conteni1.dbf
 
-//empieza el while de las lineas de facturas de proveedores
+         //empieza el while de las lineas de facturas de proveedores
 
-         //end while
+         while !( ::oDbfAlbLFac:eof() )
+
+            if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "G"
+
+               ::oDbfFacPrvLGst:Append()
+               ::oDbfFacPrvLGst:Blank()
+
+               ::oDbfFacPrvLGst:cSerFac   := "A"
+               ::oDbfFacPrvLGst:nNumFac   := Val( SubStr( ::oDbfAlbLFac:RfaLin, 5, 7 ) )
+               ::oDbfFacPrvLGst:cSufFac   := "00"
+               ::oDbfFacPrvLGst:cRef      := ::oDbfAlbLFac:Codigo
+               ::oDbfFacPrvLGst:cDetalle  := ::oDbfAlbLFac:Concepto
+               ::oDbfFacPrvLGst:nPreUnit  := ::oDbfAlbLFac:Precio
+               ::oDbfFacPrvLGst:nDto      := ::oDbfAlbLFac:Descuento
+               ::oDbfFacPrvLGst:nIva      := ::oDbfAlbLFac:Iva
+               ::oDbfFacPrvLGst:nCanEnt   := 1
+               ::oDbfFacPrvLGst:nUniCaja  := ::oDbfAlbLFac:Cantidad
+               ::oDbfFacPrvLGst:nDtoLin   := ::oDbfAlbLFac:Descuento
+               ::oDbfFacPrvLGst:nPreCom   := ::oDbfAlbLFac:Precio
+               ::oDbfFacPrvLGst:cAlmLin   := oUser():cAlmacen()
+
+               if ::oDbfAlbLFac:Valestock 
+                  ::oDbfFacPrvLGst:nCtlStk := 1
+               else
+                  ::oDbfFacPrvLGst:nCtlStk := 3
+               end if
+
+               ::oDbfFacPrvLGst:nNumLin   := Val( SubStr( ::oDbfAlbLFac:RfaLin, 12 ) )
+
+               ::oDbfArtGst:GoTop()
+               if ::oDbfArtGst:Seek( ::oDbfAlbLFac:Codigo )
+                  ::oDbfFacPrvLGst:cCodFam := ::oDbfArtGst:Familia
+               end if 
+
+               ::oDbfFacPrvLGst:Save()
+
+            end if
+
+            ::aMtrIndices[ 6 ]:Set( ::oDbfAlbLFac:Recno() )
+
+            ::oDbfAlbLFac:Skip()
+
+         end while
+
+         ::aMtrIndices[ 6 ]:SetTotal( ::oDbfFacPrvTGst:LastRec() )
+
+         ::oDbfFacPrvTGst:GoTop()
+         
+         while !( ::oDbfFacPrvTGst:eof() )
+
+            GenPgoFacPrv( ::oDbfFacPrvTGst:cSerFac + Str( ::oDbfFacPrvTGst:nNumFac ) + ::oDbfFacPrvTGst:cSufFac, ::oDbfFacPrvTGst:cAlias, ::oDbfFacPrvLGst:cAlias, ::oDbfFacPrvPGst:cAlias, ::oDbfPrvGst:cAlias, ::oDbfPgo:cAlias,  ::oDbfDiv:cAlias )
+
+            ::aMtrIndices[ 6 ]:Set( ::oDbfFacPrvTGst:Recno() )
+
+            ::oDbfFacPrvTGst:Skip()
+
+         end while
 
       end if 
 
