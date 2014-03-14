@@ -206,7 +206,7 @@ METHOD lGenerate()
             ::oDbf:cDesTik    := ( ::cDbfArt )->cDesTik
 
             if !oUser():lNotCostos()
-               ::oDbf:pCosto  := nCnv2Div( nCosto( nil, ::cDbfArt ), cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
+               ::oDbf:pCosto  := nCnv2Div( nCosto( nil, ::cDbfArt, ::cDbfKit ), cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
             end if
 
             ::oDbf:PvpRec     := nCnv2Div( ( ::cDbfArt )->PvpRec, cDivEmp(), ::cDivInf, ::oDbfDiv:cAlias )
