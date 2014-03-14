@@ -820,10 +820,6 @@ METHOD Importar()
 
                ::oDbfAlbLGst:cSerAlb     := cSerie
                ::oDbfAlbLGst:nNumAlb     := nNumero
-<<<<<<< HEAD
-               ::oDbfAlbLGst:cSufAlb     := "00"
-=======
-<<<<<<< HEAD
                ::oDbfAlbLGst:cSufAlb     := "00"
 
                if ::oDbfAlbLFac:Codigo == ""
@@ -833,12 +829,9 @@ METHOD Importar()
                   ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
                end if 
                
-=======
                ::oDbfAlbLGst:cSufAlb     := Space( 2 )
->>>>>>> 1bef79d552de5f697e8b626415ed048b14855d88
                ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
                ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
->>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
                ::oDbfAlbLGst:nPreUnit    := ::oDbfAlbLFac:Precio
                ::oDbfAlbLGst:nDto        := ::oDbfAlbLFac:Descuento
                ::oDbfAlbLGst:nIva        := ::oDbfAlbLFac:Iva
@@ -1026,15 +1019,11 @@ METHOD Importar()
 
       //Traspaso de facturas de proveedores------------------------------------
 
-      if ::aLgcIndices[ 6 ]
+      /*if ::aLgcIndices[ 6 ]
 
          ::aMtrIndices[ 6 ]:SetTotal( ::oDbfFacPrvTFac:LastRec() )
 
          ::oDbfFacPrvTFac:GoTop()
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 1bef79d552de5f697e8b626415ed048b14855d88
          while !( ::oDbfFacPrvTFac:Eof() )
 
             while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacPrvTFac:Numero ), 9 ) + "00" )
@@ -1052,26 +1041,6 @@ METHOD Importar()
             ::oDbfFacPrvTGst:Append()
             ::oDbfFacPrvTGst:Blank()
 
-<<<<<<< HEAD
-            ::oDbfFacPrvTGst:cSerFac     := "A"
-            ::oDbfFacPrvTGst:nNumFac     := Val( ::oDbfFacPrvTFac:Numero )
-            ::oDbfFacPrvTGst:cSufFac     := "00"
-            ::oDbfFacPrvTGst:cTurFac     := cCurSesion()
-            ::oDbfFacPrvTGst:dFecFac     := ::oDbfFacPrvTFac:Fecha
-            ::oDbfFacPrvTGst:cCodAlm     := oUser():cAlmacen()
-            ::oDbfFacPrvTGst:cCodCaj     := cDefCaj()
-            ::oDbfFacPrvTGst:dFecEnt     := ::oDbfFacPrvTFac:Fecha
-            ::oDbfFacPrvTGst:lLiquidada  := .t.
-            ::oDbfFacPrvTGst:lContab     := .f.
-            ::oDbfFacPrvTGst:cCodPago    := cDefFpg()
-            ::oDbfFacPrvTGst:cDivFac     := cDivEmp()
-            ::oDbfFacPrvTGst:cCodUsr     := cCurUsr()
-            ::oDbfFacPrvTGst:dFecChg     := GetSysDate()
-            ::oDbfFacPrvTGst:cTimChg     := Time()
-
-            nOrdAnt := ::oDbfPrvGst:OrdSetFocus( "TITULO" )
-            ::oDbfPrvGst:GoTop()
-=======
             ::oDbfFacPrvTGst:cSerFac         := "A"
             ::oDbfFacPrvTGst:nNumFac         := Val( ::oDbfFacPrvTFac:Numero )
             ::oDbfFacPrvTGst:cSufFac         := "00"
@@ -1130,14 +1099,6 @@ METHOD Importar()
                ::oDbfFacPrvTGst:cDniPrv      := ::oDbfPrvGst:Nif
                ::oDbfFacPrvTGst:cDtoEsp      := Padr( "General", 50 )
                ::oDbfFacPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
-=======
-         while !( ::oDbfFacPrvTFac:oef() )
-
-            while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + Space(2) )
-                  ::oDbfFacTGst:Delete( .f. )
-               end
->>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
->>>>>>> 1bef79d552de5f697e8b626415ed048b14855d88
 
             if !Empty( ::oDbfFacPrvTFac:NombreF ) .and. ::oDbfPrvGst:Seek( UPPER( ::oDbfFacPrvTFac:NombreF ) )
 
@@ -1161,15 +1122,13 @@ METHOD Importar()
                   ::oDbfFacPrvTGst:cDtoEsp   := Padr( "General", 50 )
                end if
 
-<<<<<<< HEAD
                if !Empty( ::oDbfPrvGst:cDtoPp )
                   ::oDbfFacPrvTGst:cDpp        := ::oDbfPrvGst:cDtoPp
                else
                   ::oDbfFacPrvTGst:cDpp        := Padr( "Pronto pago", 50 )
                end if
-=======
-<<<<<<< HEAD
-            ::oDbfFacPrvTGst:Save()
+
+               ::oDbfFacPrvTGst:Save()
 =======
                ::oDbfFacPrvTGst:Append()
                ::oDbfFacPrvTGst:Blank()
@@ -1210,9 +1169,6 @@ METHOD Importar()
                   ::oDbfFacPrvTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
                   ::oDbfFacPrvTGst:lRecargo     := ::oDvfPrvGst:lReq
                   
->>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
->>>>>>> 1bef79d552de5f697e8b626415ed048b14855d88
-
             else
 
                ::odbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
@@ -1232,17 +1188,6 @@ METHOD Importar()
 
          end while
 
-<<<<<<< HEAD
-         //   ::aMtrIndices[ 6 ]:SetTotal( ::oDbfAlbLFac:LastRec() ) //meter de las lineas 
-
-         //   ::oDbfAlbLFac:GoTop()  //go top en la tabla de lineas conteni1.dbf
-
-//empieza el while de las lineas de facturas de proveedores
-
-         //end while
-
-=======
-<<<<<<< HEAD
          ::aMtrIndices[ 6 ]:SetTotal( ::oDbfAlbLFac:LastRec() )  
 
          ::oDbfAlbLFac:GoTop()  //go top en la tabla de lineas conteni1.dbf
@@ -1307,10 +1252,7 @@ METHOD Importar()
 
          end while
 
-=======
->>>>>>> 740d75dd155c201ce3d728b9a3dfbb83b2b96842
->>>>>>> 1bef79d552de5f697e8b626415ed048b14855d88
-      end if 
+      end if */
 
 
       ::CloseFiles()
@@ -1327,6 +1269,7 @@ METHOD Importar()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 /*Funcion que llama a la clase*/
 
 FUNCTION ImpFacCom( oMenuItem, oWnd )
@@ -1341,4 +1284,5 @@ FUNCTION ImpFacCom( oMenuItem, oWnd )
    oImpFacCom     := TImpFacCom():New():Resource()
 
 RETURN nil
+
 //---------------------------------------------------------------------------//
