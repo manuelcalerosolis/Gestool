@@ -1799,7 +1799,7 @@ METHOD Importar()
             ::oDbfPreTGst:cSufPre      := Space( 2 )
             ::oDbfPreTGst:cTurPre      := cCurSesion()
             ::oDbfPreTGst:dFecPre      := ::oDbfPreTFac:dFecPre
-            ::oDbfPreTGst:cCodAlm      := ::oDbfPreTFac:cCodAlm
+            ::oDbfPreTGst:cCodAlm      := RJust( ::oDbfPreTFac:cCodAlm, "0", 3 )
             ::oDbfPreTGst:cCodCli      := SpecialPadr( ::oDbfPreTFac:cCodCli, "0", RetNumCodCliEmp() )
             ::oDbfPreTGst:cCodCaj      := "000"
             ::oDbfPreTGst:cCodPgo      := ::oDbfPreTFac:cCodPago
@@ -1951,7 +1951,7 @@ METHOD Importar()
             ::oDbfPedTGst:cSufPed      := Space( 2 )
             ::oDbfPedTGst:cTurPed      := cCurSesion()
             ::oDbfPedTGst:dFecPed      := ::oDbfPedTFac:dFecPed
-            ::oDbfPedTGst:cCodAlm      := ::oDbfPedTFac:cCodAlm
+            ::oDbfPedTGst:cCodAlm      := RJust( ::oDbfPedTFac:cCodAlm, "0", 3 )
             ::oDbfPedTGst:cCodCli      := SpecialPadr( ::oDbfPedTFac:cCodCli, "0", RetNumCodCliEmp() )
             ::oDbfPedTGst:cCodCaj      := "000"
             ::oDbfPedTGst:cCodPgo      := ::oDbfPedTFac:cCodPago
@@ -2102,7 +2102,7 @@ METHOD Importar()
             ::oDbfAlbTGst:cTurAlb      := cCurSesion()
             ::oDbfAlbTGst:dFecAlb      := ::oDbfAlbTFac:dFecAlb
             ::oDbfAlbTGst:cCodCli      := SpecialPadr( ::oDbfAlbTFac:cCodCli, "0", RetNumCodCliEmp() )
-            ::oDbfAlbTGst:cCodAlm      := ::oDbfAlbTFac:cCodAlm
+            ::oDbfAlbTGst:cCodAlm      := RJust( ::oDbfAlbTFac:cCodAlm, "0", 3 )
             ::oDbfAlbTGst:cCodCaj      := "000"
 
             if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfAlbTFac:cCodCli, "0", RetNumCodCliEmp() ) )
@@ -2246,7 +2246,7 @@ METHOD Importar()
                   nRegIva                    := 1
                end if
 
-               ::oDbfFacTGst:cCodAlm         := ::oDbfFacTFac:cCodAlm
+               ::oDbfFacTGst:cCodAlm         := RJust( ::oDbfFacTFac:cCodAlm, "0", 3 )
                ::oDbfFacTGst:cCodCaj         := "000"
                ::oDbfFacTGst:cCodAge         := SpecialPadr( ::oDbfFacTFac:cCodAge, '0' )
                ::oDbfFacTGst:nPctComAge      := ::oDbfFacTFac:nComision
@@ -2465,7 +2465,7 @@ METHOD Importar()
                   end if
                end if
 
-               ::oDbfFacRecTGst:cCodAlm         := ::oDbfFacTFac:cCodAlm
+               ::oDbfFacRecTGst:cCodAlm         := RJust( ::oDbfFacTFac:cCodAlm, "0", 3 )
                ::oDbfFacRecTGst:cCodCaj         := "000"
                ::oDbfFacRecTGst:cCodAge         := SpecialPadr( ::oDbfFacTFac:cCodAge, '0' )
                ::oDbfFacRecTGst:nPctComAge      := ::oDbfFacTFac:nComision
@@ -2643,7 +2643,7 @@ METHOD Importar()
             ::oDbfTikTGst:dFecTik      := ::oDbfTikTFac:dFecha
             ::oDbfTikTGst:cHorTik      := ::oDbfTikTFac:cTime
             ::oDbfTikTGst:cNcjTik      := "000"
-            ::oDbfTikTGst:cAlmTik      := ::oDbfTikTFac:cCodAlm
+            ::oDbfTikTGst:cAlmTik      := RJust( ::oDbfTikTFac:cCodAlm, "0", 3 )
             ::oDbfTikTGst:cCliTik      := SpecialPadr( ::oDbfTikTFac:cCodCli, "0", RetNumCodCliEmp() )
             ::oDbfTikTGst:nTarifa      := 1
             if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfTikTFac:cCodCli, "0", RetNumCodCliEmp() ) )
@@ -2728,7 +2728,7 @@ METHOD Importar()
             ::oDbfTikTGst:dFecTik      := ::oDbfHisTFac:dFecha
             ::oDbfTikTGst:cHorTik      := ::oDbfHisTFac:cTime
             ::oDbfTikTGst:cNcjTik      := "000"
-            ::oDbfTikTGst:cAlmTik      := ::oDbfHisTFac:cCodAlm
+            ::oDbfTikTGst:cAlmTik      := RJust( ::oDbfHisTFac:cCodAlm, "0", 3 )
             ::oDbfTikTGst:cCliTik      := SpecialPadr( ::oDbfHisTFac:cCodCli, "0", RetNumCodCliEmp() )
             ::oDbfTikTGst:nTarifa      := 1
             if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfHisTFac:cCodCli, "0", RetNumCodCliEmp() ) )
@@ -2865,7 +2865,7 @@ METHOD Importar()
 
             if isNil( cCodAlm ) .or. ( cCodAlm != ::oDbfMovLFac:cCodAlm )
 
-               cCodAlm                 := ::oDbfMovLFac:cCodAlm
+               cCodAlm                 := RJust( ::oDbfMovLFac:cCodAlm, "0", 3 )
                nLinea                  := 0
                nCounter++
 
@@ -2874,7 +2874,7 @@ METHOD Importar()
                ::oDbfMovTGst:dFecRem   := GetSysDate()
                ::oDbfMovTGst:cCodUsr   := cCurUsr()
                ::oDbfMovTGst:nTipMov   := 4
-               ::oDbfMovTGst:cAlmDes   := ::oDbfMovLFac:cCodAlm
+               ::oDbfMovTGst:cAlmDes   := RJust( ::oDbfMovLFac:cCodAlm, "0", 3 )
                ::oDbfMovTGst:Save()
 
             end if
@@ -2886,7 +2886,7 @@ METHOD Importar()
             ::oDbfMovLGst:nNumLin      := nLinea
             ::oDbfMovLGst:dFecMov      := GetSysDate()
             ::oDbfMovLGst:nTipMov      := 4
-            ::oDbfMovLGst:cAliMov      := ::oDbfMovLFac:cCodAlm
+            ::oDbfMovLGst:cAliMov      := RJust( ::oDbfMovLFac:cCodAlm, "0", 3 )
             ::oDbfMovLGst:cRefMov      := ::oDbfMovLFac:cRef
             ::oDbfMovLGst:cValPr1      := ::oDbfMovLFac:cProp1
             ::oDbfMovLGst:cValPr2      := ::oDbfMovLFac:cProp2
@@ -2928,7 +2928,7 @@ METHOD Importar()
             ::oDbfPepTGst:cSufPed      := Space( 2 )
             ::oDbfPepTGst:cTurPed      := cCurSesion()
             ::oDbfPepTGst:dFecPed      := ::oDbfPepTFac:dFecPed
-            ::oDbfPepTGst:cCodAlm      := ::oDbfPepTFac:cCodAlm
+            ::oDbfPepTGst:cCodAlm      := RJust( ::oDbfPepTFac:cCodAlm, "0", 3 )
             ::oDbfPepTGst:cCodPrv      := SpecialPadr( ::oDbfPepTFac:cCodPro, "0", RetNumCodPrvEmp() )
             ::oDbfPepTGst:cCodCaj      := "000"
             ::oDbfPepTGst:cCodPgo      := ::oDbfPepTFac:cCodPago
@@ -3026,7 +3026,7 @@ METHOD Importar()
             ::oDbfAlpTGst:cSufAlb      := Space( 2 )
             ::oDbfAlpTGst:cTurAlb      := cCurSesion()
             ::oDbfAlpTGst:dFecAlb      := ::oDbfAlpTFac:dFecAlb
-            ::oDbfAlpTGst:cCodAlm      := ::oDbfAlpTFac:cCodAlm
+            ::oDbfAlpTGst:cCodAlm      := RJust( ::oDbfAlpTFac:cCodAlm, "0", 3 )
             ::oDbfAlpTGst:cCodCaj      := cDefCaj()
             ::oDbfAlpTGst:cCodPrv      := SpecialPadr( ::oDbfAlpTFac:cCodPro, "0", RetNumCodPrvEmp() )
 
@@ -3166,7 +3166,7 @@ METHOD Importar()
             ::oDbfFapTGst:cSufFac    := Space( 2 )
             ::oDbfFapTGst:cTurFac    := cCurSesion()
             ::oDbfFapTGst:dFecFac    := ::oDbfFapTFac:dFecFac
-            ::oDbfFapTGst:cCodAlm    := ::oDbfFapTFac:cCodAlm
+            ::oDbfFapTGst:cCodAlm    := RJust( ::oDbfFapTFac:cCodAlm, "0", 3 )
             ::oDbfFapTGst:cCodCaj    := cDefCaj()
             ::oDbfFapTGst:cCodPrv    := SpecialPadr( ::oDbfFapTFac:cCodPro, "0", RetNumCodPrvEmp() )
 

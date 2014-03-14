@@ -1310,8 +1310,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
       REDEFINE GET oUsr VAR cUsr ;
          ID       216 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[2]
+         WHEN     ( .f. ) ; 
+         OF       oFld:aDialogs[2] 
 
       // Datos del proveedor_________________________________________________
 
@@ -1560,7 +1560,50 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader          := cNombreUnidades()
+            :cHeader             := cNombreUnidades()
+            :cSortOrder          := "nUniCaja"
+            :bEditValue          := {|| ( dbfTmpLin )->nUniCaja }
+            :cEditPicture        := cPicUnd
+            :nWidth              := 60
+            :nDataStrAlign       := 1
+            :nHeadStrAlign       := 1
+            :lHide               := .t.
+            :nEditType           := 1
+            :nFooterType         := AGGR_SUM
+            :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+         end with
+   
+         with object ( oBrwLin:AddCol() )
+            :cHeader             := "Sumar unidades"
+            :bStrData            := {|| "" }
+            :bOnPostEdit         := {|| .t. }
+            :bEditBlock          := {|| SumaUnidadLinea( aTmp ) }
+            :nEditType           := 5
+            :nWidth              := 20
+            :nHeadBmpNo          := 1
+            :nBtnBmp             := 1
+            :nHeadBmpAlign       := 1
+            :AddResource( "Navigate_Plus_16" )
+            :lHide               := .t.
+         end with
+   
+         with object ( oBrwLin:AddCol() )
+            :cHeader             := "Restar unidades"
+            :bStrData            := {|| "" }
+            :bOnPostEdit         := {|| .t. }
+            :bEditBlock          := {|| RestaUnidadLinea( aTmp ) }
+            :nEditType           := 5
+            :nWidth              := 20
+            :nHeadBmpNo          := 1
+            :nBtnBmp             := 1
+            :nHeadBmpAlign       := 1
+            :AddResource( "Navigate_Minus_16" )
+            :lHide               := .t.
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Total " + cNombreUnidades()
             :bEditValue       := {|| nTotNPedPrv( dbfTmpLin ) }
             :cEditPicture     := cPicUnd
             :nWidth           := 60
@@ -1640,6 +1683,47 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
+            :cHeader          := "Consumo"
+            :bEditValue       := {|| ( dbfTmpLin )->nConRea }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "7 dias"
+            :bEditValue       := {|| ( dbfTmpLin )->nConSem }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "15 dias"
+            :bEditValue       := {|| ( dbfTmpLin )->nConQui }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "30 dias"
+            :bEditValue       := {|| ( dbfTmpLin )->nConMes }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :lHide            := .t.
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+
+         with object ( oBrwLin:AddCol() )
             :cHeader          := "% " + cImp()
             :bEditValue       := {|| ( dbfTmpLin )->nIva }
             :cEditPicture     := "@E 999.99"
@@ -1703,7 +1787,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          ID       526 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( CargaComprasProveedor( aTmp, oBrwLin ) )
+         ACTION   ( ImportaComprasProveedor( aTmp, oBrwLin ) )
 
       /*
 	Descuentos______________________________________________________________
@@ -5487,6 +5571,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpLin )->( OrdCreate( cNewFile, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin, 4 ) } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cNewFile, "cRef", "cRef", {|| Field->cRef } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
       end if
@@ -6667,6 +6754,9 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nStkMin", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nPdtRec", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nConRea", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConSem", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConQui", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConMes", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
 
 return ( aColPedPrv )
 
@@ -8966,13 +9056,15 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
             return .f.
       end if
 
+      CursorWait()
+
       nOrd        := ( dbfArticulo )->( ordSetFocus( "cPrvHab" ) )
 
       if ( dbfArticulo )->( dbSeek( aTmp[ _CCODPRV ] ) )
 
             while ( dbfArticulo )->cPrvHab == aTmp[ _CCODPRV ] .and. !( dbfArticulo )->( eof() )
 
-            if !( dbfArticulo )->lObs
+            if !dbSeekInOrd( ( dbfArticulo )->Codigo, "cRef", dbfTmpLin ) .and. !( dbfArticulo )->lObs
                   
                   ( dbfTmpLin )->( dbAppend() )
                   ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )                  
@@ -9048,7 +9140,7 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
                         end if
 
                         /*
-                        Descuento de promocional----------------------------------------------
+                        Descuento de promocional-------------------------------
                         */
 
                         nPreCom     := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, dbfArtPrv )
@@ -9071,18 +9163,8 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
       
                   ( dbfTmpLin )->nPvpRec        := ( dbfArticulo )->PvpRec
                   ( dbfTmpLin )->cUnidad        := ( dbfArticulo )->cUnidad
-      
-                  /*
-                  Ponemos el stock---------------------------------------------------
-                  */
-
-                  oStock:nPutStockActual( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, ( dbfTmpLin )->lKitArt )
-
-                  ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
-                  ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
                   ( dbfTmpLin )->nStkMin        := ( dbfArticulo )->nMinimo
-                  ( dbfTmpLin )->nConRea        := 0
-
+      
                   ( dbfTmpLin )->( dbUnlock() )
 
             end if
@@ -9093,12 +9175,133 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
       
       end if 
 
-      oBrwLin:Refresh()
-
       ( dbfArticulo )->( ordSetFocus( nOrd ) )
+
+      CursorWE()
+
+Return .t. 
+
+//---------------------------------------------------------------------------//
+
+Static Function CalculaComprasProveedor( aTmp, oBrwLin, oImportaComprasProveedor )
+
+      local nRec
+      local nConsumo    := 0
+      local nConsumoDia := 0
+      local dFecIni     := oImportaComprasProveedor:oFechaInicio:Value()
+      local dFecFin     := oImportaComprasProveedor:oFechaFin:Value() 
+      local nPorcentaje := oImportaComprasProveedor:oPorcentaje:Value()
+      local nDias       := dFecFin - dFecIni
+
+      CursorWait()
+
+      nRec  := ( dbfTmpLin )->( RecNo() )
+
+      ( dbfTmpLin )->( dbGoTop() )
+      while !( dbfTmpLin )->( eof() )
+
+            /*
+            Ponemos el stock---------------------------------------------------
+            */
+
+            oStock:nPutStockActual( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, ( dbfTmpLin )->lKitArt )
+
+            if ( dbfTmpLin )->( dbRLock() )
+
+                  ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
+                  ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
+
+                  nConsumo                      := oStock:nConsumoArticulo( ( dbfTmpLin )->cRef, , ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
+
+                  if !Empty( nConsumo )
+                        
+                        ( dbfTmpLin )->nConRea  := nConsumo
+
+                        // Aplicamos el incremento-----------------------------
+
+                        nConsumoDia             := nConsumo + ( nConsumo * nPorcentaje / 100 )
+                        nConsumoDia             := nConsumoDia / nDias
+
+                        ( dbfTmpLin )->nConSem  := Round( nConsumoDia * 7, 0 ) 
+                        ( dbfTmpLin )->nConQui  := Round( nConsumoDia * 15, 0 ) 
+                        ( dbfTmpLin )->nConMes  := Round( nConsumoDia * 30, 0 ) 
+
+                  end if 
+
+                  ( dbfTmpLin )->( dbUnlock() )
+
+            end if
+
+            ( dbfTmpLin )->( dbSkip() )
+
+      end while
+
+      ( dbfTmpLin )->( dbGoTo( nRec ) )
+
+      oBrwLin:Refresh()
 
       RecalculaTotal( aTmp )
 
+      CursorWE()
+
 Return nil 
+
+//---------------------------------------------------------------------------//
+ 
+Static Function ImportaComprasProveedor( aTmp, oBrwLin )
+
+      local oImportaComprasProveedor      := ImportarProductosProveedor():New()
+
+      oImportaComprasProveedor:bAction    := {|| if(  CargaComprasProveedor( aTmp, oBrwLin),;
+                                                      CalculaComprasProveedor( aTmp, oBrwLin, oImportaComprasProveedor ), ) }
+
+      oImportaComprasProveedor:Resource()
+      oImportaComprasProveedor:End()      
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmpLin )->nUnicaja       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Sumamos una unidad a la linea de la factura--------------------------------
+*/
+
+Static Function SumaUnidadLinea( aTmp )
+
+   ( dbfTmpLin )->nUniCaja++
+
+   RecalculaTotal( aTmp )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Restamos una unidad a la linea de la factura-------------------------------
+*/
+
+Static Function RestaUnidadLinea( aTmp )
+
+   ( dbfTmpLin )->nUniCaja--
+
+   RecalculaTotal( aTmp )
+
+Return .t.
 
 //---------------------------------------------------------------------------//

@@ -283,7 +283,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION PageIni( oMenuItem, oWnd, cCodCli, cCodPrv )
+FUNCTION PageIni( oMenuItem, oWnd )
 
    local oError
    local oBlock
@@ -313,11 +313,8 @@ FUNCTION PageIni( oMenuItem, oWnd, cCodCli, cCodPrv )
       return nil
    end if
 
-//   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-//   BEGIN SEQUENCE
-
-   cCodigoCliente          := cCodCli
-   cCodigoProveedor        := cCodPrv
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    // Cargamos los valores por defecto-----------------------------------------
 
@@ -331,34 +328,21 @@ FUNCTION PageIni( oMenuItem, oWnd, cCodCli, cCodPrv )
 
    nFolder                 := 1
 
-
    /*
    Caja de dialogo_____________________________________________________________
    */
 
    DEFINE DIALOG oDlg RESOURCE "PAGEINI" OF oWnd
 
-   if empty( cCodCli )
-
       REDEFINE FOLDER oFld ;
          ID          200 ;
          OF          oDlg ;
-         PROMPT      "&Cobros", "Pagos" ;
-         DIALOGS     "PAGEINI_01", "PAGEINI_02"
-
-   else 
-
-      REDEFINE FOLDER oFld ;
-         ID          200 ;
-         OF          oDlg ;
-         PROMPT      "&Cobros", "Incidencias" ;
-         DIALOGS     "PAGEINI_01", "PAGEINI_03"
-
-   end if 
+         PROMPT      "&Cobros",;
+                     "Pagos" ;
+         DIALOGS     "PAGEINI_01",;
+                     "PAGEINI_02"
 
       PageIniCobros()
-
-      PageIniIncidecias()
 
       PageIniPagos()
 
@@ -377,15 +361,15 @@ FUNCTION PageIni( oMenuItem, oWnd, cCodCli, cCodPrv )
 
    // Guardamos la configuracion de los browse------------------------------------
 
-//   RECOVER USING oError
-//
-//      msgStop( ErrorMessage( oError ), "Imposible página de inicio" )
-//
-//      CloseFiles()
-//
-//   END SEQUENCE
-//
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible cargar gestión de cartera" )
+
+      CloseFiles()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    /*
    Cerramos las tablas abiertas------------------------------------------------
@@ -413,12 +397,115 @@ RETURN ( NIL )
 
 //----------------------------------------------------------------------------//
 
+FUNCTION PageIniClient( oMenuItem, cCodCli )
+
+   local oError
+   local oBlock
+
+   DEFAULT  oMenuItem      := "01004"
+
+   // Obtenemos el nivel de acceso
+
+   nLevel                  := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end if
+
+   /*
+   Abrimos las tablas necesarias-----------------------------------------------
+   */
+
+   if !OpenFiles()
+      return nil
+   end if
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   cCodigoCliente          := cCodCli
+
+   // Cargamos los valores por defecto-----------------------------------------
+
+   cEstadoCli              := "Pendientes"
+
+   aPeriodoCli             := aCreaArrayPeriodos()
+   cPeriodoCli             := "Hoy"
+
+   nFolder                 := 1
+
+   /*
+   Caja de dialogo_____________________________________________________________
+   */
+
+   DEFINE DIALOG oDlg RESOURCE "PAGEINI"
+
+      REDEFINE FOLDER oFld ;
+         ID          200 ;
+         OF          oDlg ;
+         PROMPT      "&Cobros",;
+                     "Incidencias" ;
+         DIALOGS     "PAGEINI_01",;
+                     "PAGEINI_03"
+
+      PageIniCobros()
+
+      PageIniIncidecias()
+
+      // Redefinimos el meter--------------------------------------------------
+
+      oMeter         := TMeter():ReDefine( 210, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, ( dbfNewRecCli )->( ordKeyCount() ), oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
+         ACTION      ( oDlg:End() )
+
+      oDlg:bStart    := {|| lRecFechaCli(), LoadPageIni( .t. ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   // Guardamos la configuracion de los browse------------------------------------
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible cargar gestión de cartera" )
+
+      CloseFiles()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   /*
+   Cerramos las tablas abiertas------------------------------------------------
+   */
+
+   CloseFiles()
+
+   /*
+   Matamos el objeto imagen----------------------------------------------------
+   */
+
+   if !Empty( oBmpCobros )
+      oBmpCobros:End()
+   end if
+
+   if !empty( oBmpIncidencias ) 
+      oBmpIncidencias:End()
+   end if 
+
+RETURN ( NIL )
+
+//----------------------------------------------------------------------------//
+
 Static Function StartPageIni( oFld )
 
    lRecFechaCli()
+
    lRecFechaPrv()
 
-   LoadPageIni( .t., .t.)
+   LoadPageIni( .t., .t. )
 
 RETURN ( NIL )
 
@@ -428,8 +515,8 @@ static function LoadPageIni( lLoadCli, lLoadPrv )
 
    local cExpHead    := ""
 
-   DEFAULT lLoadCli  := .t.
-   DEFAULT lLoadPrv  := .t.
+   DEFAULT lLoadCli  := .f.
+   DEFAULT lLoadPrv  := .f.
 
    /*
    Recargamos la temporal de recibos de clientes-------------------------------
@@ -926,11 +1013,10 @@ Static Function lRecFechaCli()
 
       case cPeriodoCli == "Mes anterior"
 
-         oFecIniCli:cText( CtoD( "01/" + Str( Month( GetSysDate() ) - 1 ) + "/" + Str( Year( GetSysDate() ) ) ) )
-         oFecFinCli:cText( nLastDay( Month( GetSysDate() ) - 1 ) )
+         oFecIniCli:cText( BoM( AddMonth( GetSysDate(), -1 ) ) )
+         oFecFinCli:cText( EoM( AddMonth( GetSysDate(), -1 ) ) )
 
       case cPeriodoCli == "Primer trimestre"
-
          oFecIniCli:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          oFecFinCli:cText( CtoD( "31/03/" + Str( Year( GetSysDate() ) ) ) )
 
@@ -993,8 +1079,8 @@ Static Function lRecFechaPrv()
 
       case cPeriodoPrv == "Mes anterior"
 
-         oFecIniPrv:cText( CtoD( "01/" + Str( Month( GetSysDate() ) - 1 ) + "/" + Str( Year( GetSysDate() ) ) ) )
-         oFecFinPrv:cText( nLastDay( Month( GetSysDate() ) - 1 ) )
+         oFecIniPrv:cText( BoM( AddMonth( GetSysDate(), -1 ) ) )
+         oFecFinPrv:cText( EoM( AddMonth( GetSysDate(), -1 ) ) )
 
       case cPeriodoPrv == "Primer trimestre"
 
