@@ -1201,7 +1201,12 @@ STATIC FUNCTION OpenFiles()
 
       TDataView():Get( "TIva", nView )
 
+      /*
+      DOCUMENTOS ABIERTOS POR TIPO---------------------------------------------
+      */
+
       TDataView():Documentos( nView )
+      ( TDataView():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
       // TDataview con objetos-------------------------------------------------
 
