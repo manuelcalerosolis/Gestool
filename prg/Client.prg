@@ -1068,6 +1068,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
             TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
+
+         DEFINE BTNSHELL RESOURCE "briefcase2_column-chart_" OF oWndBrw ;
+            ACTION   ( PageIniClient( "01004", ( TDataView():Get( "Client", nView ) )->Cod ) );
+            TOOLTIP  "Cartera de cliente" ;
+            FROM     oRotor ;
+            LEVEL    ACC_EDIT
+
 /*
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
             ALLOW    EXIT ;

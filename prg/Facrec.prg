@@ -6655,15 +6655,18 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          aGet[ _MLNGDES  ]:hide()
 
          aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
+         aGet[ _MLNGDES  ]:cText( ( dbfArticulo )->Nombre )
 
          /*
          Descripciones largas--------------------------------------------------
          */
 
-         if !Empty( aGet[ _DESCRIP ] )
-            aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
-         else
-            aTmp[ _DESCRIP ]     := ( dbfArticulo )->Descrip
+         if !empty( ( dbfArticulo )->Descrip )
+            if !empty( aGet[ _DESCRIP ] )
+               aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
+            else
+               aTmp[ _DESCRIP ]     := ( dbfArticulo )->Descrip
+            end if 
          end if
 
          /*

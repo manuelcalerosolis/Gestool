@@ -55,9 +55,8 @@ CLASS PrintSeries
 
    METHOD Resource()
       METHOD StartResource()
+      METHOD ActionResource()
       METHOD End()                     INLINE ( ::oDlg:end() )
-
-   METHOD StartPrint()
 
    METHOD Serie( cSerie )              INLINE ( ::oSerieInicio:cText( cSerie ), ::oSerieFin:cText( cSerie ) )
    METHOD Documento( cDocumento )      INLINE ( ::oDocumentoInicio:cText( cDocumento ), ::oDocumentoFin:cText( cDocumento ) )
@@ -141,14 +140,14 @@ METHOD Resource() CLASS PrintSeries
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDlg ;
-      ACTION      ( ::StartPrint() )
+      ACTION      ( ::ActionResource() )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
       OF          ::oDlg ;
       ACTION      ( ::oDlg:end() )
 
-   ::oDlg:AddFastKey( VK_F5, {|| ::StartPrint() } )
+   ::oDlg:AddFastKey( VK_F5, {|| ::ActionResource() } )
 
    ::oDlg:bStart  := {|| ::StartResource() }
 
@@ -180,7 +179,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD StartPrint() CLASS PrintSeries
+METHOD ActionResource() CLASS PrintSeries
 
    local nRecno
    local nOrdAnt
@@ -217,6 +216,77 @@ METHOD StartPrint() CLASS PrintSeries
 
 RETURN ( Self )
 
+//--------------------------------------------------------------------------//
+
+CLASS ImportarProductosProveedor FROM PrintSeries
+
+   DATA oPorcentaje
+
+   METHOD New( nView )
+
+   METHOD Resource()
+
+   METHOD ActionResource()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS ImportarProductosProveedor
+
+   ::nView                 := nView
+
+   ::oFechaInicio          := GetFecha():New( 100, Self )
+   ::oFechaInicio:FirstDayPreviusMonth()
+
+   ::oFechaFin             := GetFecha():New( 110, Self )
+   ::oFechaFin:LastDayPreviusMonth()
+
+   ::oPorcentaje           := GetPorcentaje():New( 120, Self )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource() CLASS ImportarProductosProveedor
+
+   DEFINE DIALOG ::oDlg RESOURCE "ImportarProductosProveedor"
+
+   aEval( ::aComponents, {| o | o:Resource() } )
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDlg ;
+      ACTION      ( ::ActionResource() )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDlg ;
+      ACTION      ( ::oDlg:end() )
+
+   ::oDlg:AddFastKey( VK_F5, {|| ::ActionResource() } )
+
+   ACTIVATE DIALOG ::oDlg CENTER
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD ActionResource() CLASS ImportarProductosProveedor
+
+   ::oDlg:disable()
+
+      if !empty( ::bAction )
+         eval( ::bAction )
+      end if 
+
+   ::oDlg:enable()
+   ::oDlg:end( IDOK )
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
 CLASS Component
@@ -554,7 +624,15 @@ CLASS GetFecha FROM ComponentGet
    METHOD New( idGet, oContainer )
 
    METHOD Resource()
-   METHOD FirstDayYear()   INLINE ( ::cText( CtoD( "01/01/" + Str( Year( Date() ) ) ) ) )
+
+   METHOD FirstDayYear()         INLINE ( ::cText( BoY( Date() ) ) )
+   METHOD LastDayYear()          INLINE ( ::cText( EoY( Date() ) ) )
+
+   METHOD FirstDayMonth()        INLINE ( ::cText( BoM( Date() ) ) )
+   METHOD LastDayMonth()         INLINE ( ::cText( EoM( Date() ) ) )
+
+   METHOD FirstDayPreviusMonth() INLINE ( ::cText( BoM( AddMonth( Date(), -1 ) ) ) )
+   METHOD LastDayPreviusMonth()  INLINE ( ::cText( EoM( AddMonth( Date(), -1 ) ) ) ) 
 
 END CLASS 
 
@@ -623,6 +701,53 @@ METHOD Resource() CLASS GetCopias
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+CLASS GetPorcentaje FROM ComponentGet
+
+   DATA idGet 
+
+   METHOD New( idGet, oContainer )
+
+   METHOD Resource()
+
+END CLASS 
+
+METHOD New( idGet, oContainer ) CLASS GetPorcentaje
+
+   Super:New( idGet, oContainer )
+
+   ::uGetValue    := 0
+   
+   ::bValid       := {|| ::uGetValue >= 0 .and. ::uGetValue <= 100 }
+
+Return ( Self )
+
+METHOD Resource() CLASS GetPorcentaje
+
+   REDEFINE GET   ::oGetControl ;
+      VAR         ::uGetValue ;
+      ID          ::idGet ;
+      PICTURE     "999" ;
+      SPINNER ;
+      VALID       ::bValid ;
+      OF          ::oContainer:oDlg
+
+Return ( Self )
+
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+Function nLastDay( nMes )
+
+   local cMes     := Str( if( nMes == 12, 1, nMes + 1 ), 2 )
+   local cAno     := Str( if( nMes == 12, Year( Date() ) + 1, Year( Date() ) ) )
+
+Return ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
+
+//---------------------------------------------------------------------------//
+

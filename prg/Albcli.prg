@@ -1201,7 +1201,12 @@ STATIC FUNCTION OpenFiles()
 
       TDataView():Get( "TIva", nView )
 
+      /*
+      DOCUMENTOS ABIERTOS POR TIPO---------------------------------------------
+      */
+
       TDataView():Documentos( nView )
+      ( TDataView():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
       // TDataview con objetos-------------------------------------------------
 
@@ -9705,6 +9710,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             aGet[ _MLNGDES  ]:hide()
 
             aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
+            aGet[ _MLNGDES  ]:cText( ( dbfArticulo )->Nombre )
 
             // Ultima fecha de venta-------------------------------------------
 
@@ -9738,17 +9744,21 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             Descripciones largas--------------------------------------------------
             */
 
-            if aGet[ _MLNGDES ] != nil
-               aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
-            else
-               aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
-            end if
+            if !empty( ( dbfArticulo )->Descrip )
 
-            if !Empty( aGet[ _DESCRIP ] )
-               aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
-            else
-               aTmp[ _DESCRIP ]  := ( dbfArticulo )->Descrip
-            end if
+               if aGet[ _MLNGDES ] != nil
+                  aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
+               else
+                  aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
+               end if           
+   
+               if !Empty( aGet[ _DESCRIP ] )
+                  aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
+               else
+                  aTmp[ _DESCRIP ]  := ( dbfArticulo )->Descrip
+               end if
+
+            end if 
 
             /*
             Peso y volumen

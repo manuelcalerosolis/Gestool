@@ -98,7 +98,7 @@ RETURN ( Self )
 
 METHOD lResource( cFld )
 
-   ::dIniInf            := nFirstDay( Month( Date() ) )
+   ::dIniInf            := BoM( Date() ) 
    ::lGrpFecInf         := .f.
    ::lNewInforme        := .t.
    ::lDefCondiciones    := .f.

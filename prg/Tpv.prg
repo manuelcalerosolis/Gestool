@@ -18822,6 +18822,25 @@ RETURN ( nTotNTpv )
 
 //----------------------------------------------------------------------------//
 /*
+Total de unidades en tickets
+*/
+
+Function nTotNTickets( cTikL )
+
+   local nTotNTickets   := 0
+
+   DEFAULT cTikL        := dbfTikL
+
+   if ( ( cTikL )->cTipTil == SAVTIK .or. ( cTikL )->cTipTil == SAVAPT )
+      nTotNTickets      := ( cTikL )->nUntTil 
+   else
+      nTotNTickets      := - ( cTikL )->nUntTil 
+   end if
+
+Return ( nTotNTickets )
+
+//----------------------------------------------------------------------------//
+/*
 Recalcula el total
 */
 

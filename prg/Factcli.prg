@@ -18405,78 +18405,75 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             MsgStop( Trim( ( dbfArticulo )->mComent ) )
          end if
 
-        /*
-		Metemos el proveedor por defecto---------------------------------------
-        */
+         // Metemos el proveedor por defecto---------------------------------------
 
-        if !Empty( aGet[ _CCODPRV ] )
-        	aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
-        	aGet[ _CCODPRV ]:lValid()
-        else
-        	aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab	
-        end if	
+         if !Empty( aGet[ _CCODPRV ] )
+        	   aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+        	   aGet[ _CCODPRV ]:lValid()
+         else
+         	aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab	
+         end if	
 
-        aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
+         aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( dbfArticulo )->cPrvHab , dbfArtPrv ), 18 )
 
-        aGet[ _CDETALLE ]:show()
-        aGet[ _MLNGDES  ]:hide()
+         aGet[ _CDETALLE ]:show()
+         aGet[ _MLNGDES  ]:hide()
 
-        aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre  )
+         aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
+         aGet[ _MLNGDES  ]:cText( ( dbfArticulo )->Nombre )
 
-        if aGet[ _MLNGDES ] != nil
-           aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
-        else
-           aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
-        end if
+         if !empty( ( dbfArticulo )->Descrip )
 
-        /*
-        Peso y volumen
-        ----------------------------------------------------------------------
-        */
+            if aGet[ _MLNGDES ] != nil
+               aGet[ _MLNGDES ]:cText( ( dbfArticulo )->Descrip )
+            else
+               aTmp[ _MLNGDES ]  := ( dbfArticulo )->Descrip
+            end if
 
-        if !Empty( aGet[ _NPESOKG ] )
-           aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
-        else
-           aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
-        end if
+         end if
 
-        if !Empty( aGet[ _CPESOKG ] )
+         // Peso y volumen------------------------------------------------------
+
+         if !Empty( aGet[ _NPESOKG ] )
+            aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
+         else
+            aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
+         end if
+
+         if !Empty( aGet[ _CPESOKG ] )
             aGet[ _CPESOKG ]:cText( ( dbfArticulo )->cUndDim )
-        else
+         else
             aTmp[ _CPESOKG ] := ( dbfArticulo )->cUndDim
-        end if
+         end if
 
-        if !Empty( aGet[ _NVOLUMEN ] )
-           aGet[ _NVOLUMEN ]:cText( ( dbfArticulo )->nVolumen )
-        else
-           aGet[ _NVOLUMEN ] := ( dbfArticulo )->nVolumen
-        end if
+         if !Empty( aGet[ _NVOLUMEN ] )
+            aGet[ _NVOLUMEN ]:cText( ( dbfArticulo )->nVolumen )
+         else
+            aGet[ _NVOLUMEN ] := ( dbfArticulo )->nVolumen
+         end if
 
-        if !Empty( aGet[ _CUNIDAD ] )
+         if !Empty( aGet[ _CUNIDAD ] )
             aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
             aGet[ _CUNIDAD ]:lValid()
-        else
+         else
             aTmp[ _CUNIDAD ] := ( dbfArticulo )->cUnidad
-        end if
-
-        if !Empty( aGet[ _CVOLUMEN ] )
+         end if
+         
+         if !Empty( aGet[ _CVOLUMEN ] )
             aGet[ _CVOLUMEN ]:cText( ( dbfArticulo )->cVolumen )
-        else
+         else
             aTmp[ _CVOLUMEN ]:= ( dbfArticulo )->cVolumen
-        end if
+         end if
+         
+         if !Empty( aGet[_CCODTIP ] )
+            aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
+         else
+            aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
+         end if
 
-        if !Empty( aGet[_CCODTIP ] )
-           aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
-        else
-           aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
-        end if
+         // Factor de comversion
 
-        /*
-        Factor de comversion
-        ----------------------------------------------------------------------
-        */
-
-        aTmp[ _NFACCNV ]     := 1
+         aTmp[ _NFACCNV ]     := 1
 
          /*
          Lotes
