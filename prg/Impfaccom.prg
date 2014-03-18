@@ -53,6 +53,8 @@ CLASS TImpFacCom
 
    METHOD ImportaProveedores()
 
+   METHOD ImportaClientes()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -456,6 +458,8 @@ METHOD Importar()
    if ::aLgcIndices[ 1 ]
       ::ImportaProveedores()
    end if 
+
+
 
          /*
          Empezamos el trasbase de proveedores
@@ -1198,9 +1202,7 @@ RETURN ( Self )
 
 METHOD ImportaProveedores()
 
-   /*
-   Empezamos el trasbase de proveedores
-   */
+   //Empezamos el trasbase de proveedores
 
    ::aMtrIndices[ 1 ]:SetTotal( ::oDbfPrvFac:LastRec() )
 
@@ -1239,6 +1241,92 @@ METHOD ImportaProveedores()
    end while
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImportaClientes()
+
+   ::aMtrIndices[ 2 ]:SetTotal( ::oDbfCliFac:LastRec() )
+
+   ::oDbfCliFac:GoTop()
+
+   while !( ::oDbfCliFac:eof() )
+
+      while ::oDbfCliGst:Seek( ::oDbfCliFac:Codigo )
+         ::oDbfCliGst:Delete( .f. )
+      end if
+
+      ::oDbfCliGst:Append()
+      ::oDbfCliGst:Blank()
+
+      ::oDbfCliGst:Cod        := ::oDbfCliFac:Codigo
+      ::oDbfCliGst:Titulo     := ::oDbfCliFac:Nombre
+      ::oDbfCliGst:Nif        := ::oDbfCliFac:Cif
+      ::oDbfCliGst:Domicilio  := ::oDbfCliFac:Direccion
+      ::oDbfCliGst:Poblacion  := ::oDbfCliFac:Ciudad
+      ::oDbfCliGst:Telefono   := ::oDbfCliFac:Telefono
+      ::oDbfCliGst:Fax        := ::oDbfCliFac:Fax
+      ::oDbfCliGst:Movil      := ::oDbfCliFac:Movil
+      ::oDbfCliGst:nTipCli    := 1
+      ::oDbfCliGst:CopiasF    := 1
+      if ::oDbfCliFac:Exento
+         ::oDbfCliGst:nRegIva := 3
+      else
+         ::oDbfCliGst:nRegIva := 1
+      end if
+      ::oDbfCliGst:lReq       := ::oDbfCliFac:Recargo
+      ::oDbfCliGst:nTarifa    := ::oDbfCliFac:Tarifa
+      ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:Correoe
+      ::oDbfCliGst:cWebInt    := ::oDbfCliFac:Url
+      ::oDbfCliGst:cPerCto    := ::oDbfCliFac:Contacto
+      ::oDbfCliGst:cCodAlm    := oUser():cAlmacen()
+      ::oDbfCliGst:cCodUsr    := cCurUsr()
+      ::oDbfCliGst:dFecChg    := GetSysDate()
+      ::oDbfCliGst:cTimChg    := Time()
+      ::oDbfCliGst:cDtoEsp    := Padr( "General", 50 )
+      ::oDbfCliGst:cDpp       := Padr( "Pronto pago", 50 )
+      ::oDbfCliGst:cDtoAtp    := Padr( "Atipico", 50 )
+      ::oDbfCliGst:nDtoEsp    := ::oDbfCliFac:Descuento
+      ::oDbfCliGst:lChgPre    := .t.
+
+      //LLenamos la tabla de bancos de clientes
+
+      if !Empty( ::oDbfCliFac:Ccc )
+
+
+         ::oDbfCliGst:Banco   := ::oDbfCliFac:Domicilia
+         ::oDbfCliGst:Cuenta  := ::oDbfCliFac:Ccc
+
+         ::oDbfCliBnc:Append()
+
+         ::oDbfCliBnc:cCodCli := ::oDbfCliFac:Codigo
+         ::oDbfCliBnc:cCtaBnc := ::oDbfCliFac:Ccc
+         ::oDbfCliBnc:lBncDef := .t.
+         ::oDbfCliBnc:cCodBnc := ::oDbfCliFac:Domicilia
+
+         ::oDbfCliBnc:Save()
+
+      end if
+
+      ::oDbfCliGst:Save()
+
+      ::aMtrIndices[ 2 ]:Set( ::oDbfCliFac:Recno() )
+
+      ::oDbfCliFac:Skip()
+
+   end while
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImportaArticulos()
+
+
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 /*Funcion que llama a la clase*/
 
