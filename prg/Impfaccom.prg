@@ -51,6 +51,7 @@ CLASS TImpFacCom
 
    METHOD SelectChk( lSet )
 
+   METHOD ImportaProveedores()
 
 END CLASS
 
@@ -442,18 +443,24 @@ METHOD Importar()
    local cSerie := ""
    local nNumero := ""
 
-   if ::OpenFiles()
+   if !::OpenFiles()
+      MsgStop( "Error al abrir los ficheros" )
+      RETURN ( Self )
+   end if
 
-      ::oDlg:Disable()
 
-      /*Traspaso de Proveedor*/
+   ::oDlg:Disable()
 
-      if ::aLgcIndices[ 1 ]
+   //Traspaso de Proveedor
+
+   if ::aLgcIndices[ 1 ]
+      ::ImportaProveedores()
+   end if 
 
          /*
          Empezamos el trasbase de proveedores
          */
-
+/*
          ::aMtrIndices[ 1 ]:SetTotal( ::oDbfPrvFac:LastRec() )
 
          ::oDbfPrvFac:GoTop()
@@ -492,13 +499,11 @@ METHOD Importar()
 
       end if
 
-      /*Traspaso de Clientes*/
+      // Traspaso de Clientes
 
       if ::aLgcIndices[ 2 ]
 
-         /*
-         Empezamos el trasbase de clientes
-         */
+         //Empezamos el trasbase de clientes
 
          ::aMtrIndices[ 2 ]:SetTotal( ::oDbfCliFac:LastRec() )
 
@@ -571,11 +576,11 @@ METHOD Importar()
 
       end if
 
-      /*Traspaso de artículos*/
+      //Traspaso de artículos
 
       if ::aLgcIndices[ 3 ]
 
-         /*Lo primero es meter las familias, ya que hay que crearles el código*/
+         //Lo primero es meter las familias, ya que hay que crearles el código
 
          ::aMtrIndices[ 3 ]:SetTotal( ::oDbfArtFac:LastRec() )
 
@@ -604,9 +609,7 @@ METHOD Importar()
 
          end while
 
-         /*
-         Empezamos el trasbase de artículos
-         */
+         //Empezamos el trasbase de artículos
 
          ::aMtrIndices[ 3 ]:SetTotal( ::oDbfArtFac:LastRec() )
 
@@ -704,7 +707,7 @@ METHOD Importar()
 
       end if
 
-      /*Traspaso de albaranes de clientes*/
+      //Traspaso de albaranes de clientes
 
       if ::aLgcIndices[ 4 ]
 
@@ -860,7 +863,7 @@ METHOD Importar()
 
       end if
 
-      /*Traspaso de facturas de clientes*/
+      //Traspaso de facturas de clientes
 
       if ::aLgcIndices[ 5 ]
 
@@ -1018,16 +1021,13 @@ METHOD Importar()
       end if
 
       //Traspaso de facturas de proveedores------------------------------------
-
-      /*if ::aLgcIndices[ 6 ]
+/*
+      if ::aLgcIndices[ 6 ]
 
          ::aMtrIndices[ 6 ]:SetTotal( ::oDbfFacPrvTFac:LastRec() )
 
          ::oDbfFacPrvTFac:GoTop()
-<<<<<<< HEAD
 
-=======
->>>>>>> 0ab8f1e736ec8256a472b3758d5dbebbc49b3955
          while !( ::oDbfFacPrvTFac:Eof() )
 
             while ::oDbfFacPrvTGst:Seek( "A" + Str( Val( ::oDbfFacPrvTFac:Numero ), 9 ) + "00" )
@@ -1103,88 +1103,6 @@ METHOD Importar()
                ::oDbfFacPrvTGst:cDniPrv      := ::oDbfPrvGst:Nif
                ::oDbfFacPrvTGst:cDtoEsp      := Padr( "General", 50 )
                ::oDbfFacPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
-<<<<<<< HEAD
-
-            end if 
-
-            ::oDbfFacPrvTGst:Save()
-=======
-
-            if !Empty( ::oDbfFacPrvTFac:NombreF ) .and. ::oDbfPrvGst:Seek( UPPER( ::oDbfFacPrvTFac:NombreF ) )
-
-               ::oDbfFacPrvTGst:cCodPrv      := ::oDbfPrvGst:Cod
-               ::odbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
-               ::oDbfFacPrvTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
-               ::odbfFacPrvTGst:cPobPrv      := ::oDbfPrvGst:Poblacion
-               if !Empty( ::odbfFacPrvTFac:Cif )
-                  ::oDbfFacPrvTGst:cDniPrv   := ::oDbfFacPrvTFac:Cif
-               else
-                  ::oDbfFacPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
-               end if 
-               ::oDbfFacPrvTGst:cProvProv    := ::oDbfPrvGst:Provincia
-               ::oDbfFacPrvTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
-               ::oDbfFacPrvTGst:lRecargo     := ::oDbfPrvGst:lReq
-               ::oDbffacPrvTGst:nRegIva      := ::odbfPrvGst:nRegIva
-
-               if !Empty( ::oDbfPrvGst:cDtoEsp )
-                  ::oDbfFacPrvTGst:cDtoEsp   := ::oDbfPrvGst:cDtoEsp
-               else
-                  ::oDbfFacPrvTGst:cDtoEsp   := Padr( "General", 50 )
-               end if
-
-               if !Empty( ::oDbfPrvGst:cDtoPp )
-                  ::oDbfFacPrvTGst:cDpp        := ::oDbfPrvGst:cDtoPp
-               else
-                  ::oDbfFacPrvTGst:cDpp        := Padr( "Pronto pago", 50 )
-               end if
-
-               ::oDbfFacPrvTGst:Save()
-=======
-               ::oDbfFacPrvTGst:Append()
-               ::oDbfFacPrvTGst:Blank()
-
-               ::oDbfFacPrvTGst:cSerFac     := "A"
-               ::oDbfFacPrvTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
-               ::oDbfFacPrvTGst:cSufFac     := Space( 2 )
-               ::oDbfFacPrvTGst:cTurFac     := cCurSesion()
-               ::oDbfFacPrvTGst:dFecFac     := ::oDbfFacPrvTFac:Fecha
-               ::oDbfFacPrvTGst:cCodAlm     := oUser():cAlmacen()
-               ::oDbfFacPrvTGst:cCodCaj     := cDefCaj()
-               ::oDbfFacPrvTGst:dFecEnt     := ::oDbfFacPrvTFac:Fecha
-               ::oDbfFacPrvTGst:lLiquidada  := .t.
-               ::oDbfFacPrvTGst:lContab     := .f.
-               ::oDbfFacPrvTGst:cCodPago    := cDefFpg()
-               ::oDbfFacPrvTGst:lIvaInc     := ::oDbfFacPrvTFac:IvaIncl
-               ::oDbfFacPrvTGst:cDivFac     := cDivEmp()
-               ::oDbfFacPrvTGst:cCodUsr     := cCurUsr()
-               ::oDbfFacPrvTGst:dFecChg     := GetSysDate()
-               ::oDbfFacPrvTGst:cTimChg     := Time()
-
-
-               nOrdAnt := ::oDbfPrvGst:OrdSetFocus( "TITULO" )
-               ::oDbfPrvGst:GoTop()
-
-               if !Empty( ::oDbfFacPrvTFac:NombreF ) .and. ::oDbfPrvGst:Seek( UPPER( ::oDbfFacPrvTFac:NombreF ) )
-
-                  ::oDbfFacPrvTGst:cCodPrv      := ::oDbfPrvGst:Cod
-                  ::odbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
-                  ::oDbfFacPrvTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
-                  ::odbfFacPrvTGst:cPobPrv      := ::oDbfPrvGst:Poblacion
-                  if !Empty( ::odbfFacPrvTFac )
-                     ::oDbfFacPrvTGst:cDniPrv   := ::oDbfFacPrvTFac:Cif
-                  else
-                     ::oDbfFacPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
-                  end if 
-                  ::oDbfFacPrvTGst:cProvProv    := ::oDbfPrvGst:Provincia
-                  ::oDbfFacPrvTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
-                  ::oDbfFacPrvTGst:lRecargo     := ::oDvfPrvGst:lReq
-                  
-            else
-
-               ::odbfFacPrvTGst:cNomPrv      := UPPER( ::oDbfFacPrvTFac:NombreF )
-               ::oDbfFacPrvTGst:cDniPrv      := ::oDbfPrvGst:Nif
-               ::oDbfFacPrvTGst:cDtoEsp      := Padr( "General", 50 )
-               ::oDbfFacPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
 
             end if 
 
@@ -1195,7 +1113,6 @@ METHOD Importar()
             ::aMtrIndices[ 6 ]:Set( ::oDbfFacPrvTFac:Recno() )
 
             ::oDbfFacPrvTFac:Skip()
->>>>>>> 0ab8f1e736ec8256a472b3758d5dbebbc49b3955
 
          end while
 
@@ -1263,11 +1180,9 @@ METHOD Importar()
 
          end while
 
-<<<<<<< HEAD
       end if 
-=======
+
       end if */
->>>>>>> 0ab8f1e736ec8256a472b3758d5dbebbc49b3955
 
 
       ::CloseFiles()
@@ -1277,13 +1192,53 @@ METHOD Importar()
       ::oDlg:Enable()
       ::oDlg:end()
 
-   else
-      MsgStop( "Error al abrir los ficheros" )
-   end if
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD ImportaProveedores()
+
+   /*
+   Empezamos el trasbase de proveedores
+   */
+
+   ::aMtrIndices[ 1 ]:SetTotal( ::oDbfPrvFac:LastRec() )
+
+   ::oDbfPrvFac:GoTop()
+   while !( ::oDbfPrvFac:eof() )
+
+      while ::oDbfPrvGst:Seek( ::oDbfPrvFac:Codigo )
+         ::oDbfPrvGst:Delete( .f. )
+      end while
+
+      ::oDbfPrvGst:Append()
+
+      ::oDbfPrvGst:Cod         := ::oDbfPrvFac:Codigo
+      ::oDbfPrvGst:Titulo      := ::oDbfPrvFac:Nombre
+      ::oDbfPrvGst:Nif         := ::oDbfPrvFac:Cif
+      ::oDbfPrvGst:Domicilio   := ::oDbfPrvFac:Direccion
+      ::oDbfPrvGst:Poblacion   := ::oDbfPrvFac:Ciudad
+      ::oDbfPrvGst:cPerCto     := ::oDbfPrvFac:Contacto
+      ::oDbfPrvGst:Telefono    := ::oDbfPrvFac:Telefono
+      ::oDbfPrvGst:Fax         := ::oDbfPrvFac:Fax
+      ::oDbfPrvGst:Movil       := ::oDbfPrvFac:Movil
+      ::oDbfPrvGst:cMeiInt     := ::oDbfPrvFac:Correoe
+      ::oDbfPrvGst:cWebInt     := ::oDbfPrvFac:Url
+      ::oDbfPrvGst:nCopiasf    := 1
+      ::oDbfPrvGst:cCodUsr     := cCurUsr()
+      ::oDbfPrvGst:dFecChg     := GetSysDate()
+      ::oDbfPrvGst:cTimChg     := Time()
+      ::oDbfPrvGst:lBlqPrv     := .f.
+
+      ::oDbfPrvGst:Save()
+
+      ::aMtrIndices[ 1 ]:Set( ::oDbfPrvFac:Recno() )
+
+      ::oDbfPrvFac:Skip()
+
+   end while
+
+RETURN ( Self )
 
 /*Funcion que llama a la clase*/
 
@@ -1301,3 +1256,4 @@ FUNCTION ImpFacCom( oMenuItem, oWnd )
 RETURN nil
 
 //---------------------------------------------------------------------------//
+
