@@ -45,8 +45,6 @@ CLASS TImpFacCom
 
    METHOD CloseFiles()
 
-<<<<<<< HEAD
-=======
    METHOD Resource()
 
    METHOD Importar()
@@ -65,7 +63,6 @@ CLASS TImpFacCom
 
    METHOD ImportaFacturasProveedores()
 
->>>>>>> 497a917d105919b656dd4cea6368d675ead53487
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -370,8 +367,6 @@ RETURN .T.
 
 METHOD New()
 
-<<<<<<< HEAD
-=======
    ::cPathFac     := Space( 100 )
 
    ::aLgcIndices  := Afill( Array( 6 ), .t. )
@@ -1640,7 +1635,6 @@ METHOD ImportaAlbaranesClientes()
 
    end while
 
->>>>>>> 497a917d105919b656dd4cea6368d675ead53487
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
