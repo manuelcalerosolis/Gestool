@@ -6361,30 +6361,28 @@ Return ( if( !lReturnCliente, oDlg:nResult == IDOK, cCliente ) )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode )
+Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
 
    local oDlg
    local oNomInci
    local cNomInci
 
-   if nMode == APPD_MODE
-      if IsMuebles()
-         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      end if
+   if ( nMode == APPD_MODE .and. !empty( cCodCli ) )
+      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodCli" ) ) ]  := cCodCli
    end if
 
-   if !Empty( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )
-      cNomInci    := cNomInci( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+   if !Empty( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ] )
+      cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], dbfInci )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de clientes"
 
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
+      REDEFINE GET aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
+         VAR      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
+         VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -6392,24 +6390,24 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode )
          ID       130 ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
+      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ] ;
+      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "mDesInc" ) ) ] ;
          MEMO ;
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lListo" ) ) ] ;
+      REDEFINE CHECKBOX aTmp[ ( dbfFacCliI )->( FieldPos( "lListo" ) ) ] ;
          ID       140 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ] ;
+      REDEFINE CHECKBOX aTmp[ ( dbfFacCliI )->( FieldPos( "lAviso" ) ) ] ;
          ID       150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -6418,7 +6416,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) )
+         ACTION   ( WinGather( aTmp, nil, dbfFacCliI, oBrw, nMode ), oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -6427,7 +6425,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode )
          ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
+         oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfFacCliI, oBrw, nMode ), oDlg:end( IDOK ) } )
       end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -12066,9 +12064,64 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
+FUNCTION AddCliIncidencia( nView, cCodigoCliente )
+
+? cCodigoCliente
+
+   WinAppRec( nil, bEdtInc, TDataView():Get( "CliAtp", nView ), cCodigoCliente )
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
 FUNCTION EdtCliIncidencia( nView )
 
    WinEdtRec( nil, bEdtInc, ( TDataView():Get( "CliAtp", nView ) ) )
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+
+FUNCTION AppIncidenciaCliente()
+
+   local nLevel         := nLevelUsr( "01032" )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      WinAppRec( nil, bEdtInc, ( TDataView():Get( "Client", nView ) ) )
+         
+      CloseFiles()
+
+   end if
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+FUNCTION EdtIncidenciaCliente( nOrdKeyNumber )
+
+   local nLevel         := nLevelUsr( "01032" )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      if ( dbfCliInc )->( ordKeyGoTo( nOrdKeyNumber ) )
+         WinEdtRec( nil, bEdtInc, dbfCliInc )
+      end if
+
+      CloseFiles()
+
+   end if
 
 RETURN .t.
 
