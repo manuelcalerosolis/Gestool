@@ -1194,6 +1194,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
    local cCodCli              := GetCodCli( aTmp[ _CNUMPEDCLI ] )
    local cNomCli              := GetNomCli( aTmp[ _CNUMPEDCLI ] )
    local oBmpGeneral
+   local oBmpDatos
+   local oBmpIncidencias
+   local oBmpDocumentos
 
    /*
    Este valor los guaradamos para detectar los posibles cambios
@@ -1203,7 +1206,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
    cPicUnd                    := MasUnd()                               // Picture de las unidades
 
    do case
-   case nMode  == APPD_MODE
+   case nMode == APPD_MODE
 
       if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
          msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
@@ -1297,7 +1300,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 	REDEFINE FOLDER oFld ;
          ID       400 ; 
          OF       oDlg ;
-         PROMPT   "&Pedido",  "Da&tos",   "&Incidencias",   "D&ocumentos" ;
+         PROMPT   "&Pedido",  "Da&tos",   "I&ncidencias",   "D&ocumentos" ;
          DIALOGS  "PEDPRV_1", "PEDPRV_2", "PEDCLI_3",       "PEDCLI_4"
 
       // cuadro del usuario
@@ -1321,39 +1324,37 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
             TRANSPARENT ;
             OF          oFld:aDialogs[1]
 
-      REDEFINE BITMAP oBmpGeneral ;
+      REDEFINE BITMAP oBmpDatos ;
         ID       990 ;
         RESOURCE "folder2_red_alpha_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[2]
 
-      REDEFINE BITMAP oBmpGeneral ;
+      REDEFINE BITMAP oBmpIncidencias ;
         ID       990 ;
         RESOURCE "information_48_alpha" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[3]
 
-      REDEFINE BITMAP oBmpGeneral ;
+      REDEFINE BITMAP oBmpDocumentos ;
         ID       990 ;
         RESOURCE "address_book2_alpha_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
 
       REDEFINE GET aGet[_CCODPRV] VAR aTmp[_CCODPRV] ;
-			ID 		140 ;
-			COLOR 	CLR_GET ;
-			PICTURE	( RetPicCodPrvEmp() ) ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay[ 4 ], oTlfPrv ) ) ;
-         ON HELP  ( BrwProvee( aGet[_CCODPRV], oSay[ 4 ] ) ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[1]
+            ID 		140 ;
+            PICTURE	( RetPicCodPrvEmp() ) ;
+		WHEN 		( nMode != ZOOM_MODE ) ;
+            VALID       ( LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay[ 4 ], oTlfPrv ) ) ;
+            ON HELP     ( BrwProvee( aGet[_CCODPRV], oSay[ 4 ] ) ) ;
+            BITMAP      "LUPA" ;
+            OF          oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CNOMPRV] VAR aTmp[ _CNOMPRV ];
-			ID 		141 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
-			OF 		oFld:aDialogs[1]
+      REDEFINE GET aGet[ _CNOMPRV ] VAR aTmp[ _CNOMPRV ];
+		ID 		141 ;
+            WHEN        ( nMode != ZOOM_MODE ) ;
+            OF 		oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CDNIPRV] VAR aTmp[_CDNIPRV] ;
          ID       145 ;
@@ -1740,6 +1741,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
             :nFooterType      := AGGR_SUM
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Comentario"
+            :bEditValue       := {|| RetFld( ( dbfTmpLin )->cRef, dbfArticulo, "mComent" )  }
+            :nWidth           := 180
+            :lHide            := .t.
+            :nEditType        := 1
+            :bOnPostEdit      := {|o,x,n| ChangeComentario( o, x, n, aTmp ) }
          end with
 
          if nMode != ZOOM_MODE
@@ -2340,7 +2350,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
    oBmpDiv:end()
    oBmpEmp:end()
-   oBmpGeneral:End()
+   oBmpGeneral:end()
+   oBmpIncidencias:end()
+   oBmpDatos:end()
+   oBmpDocumentos:end()
 
    /*
    Guardamos los datos del browse----------------------------------------------
@@ -9279,6 +9292,31 @@ Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function ChangeComentario( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      if dbSeekInOrd( ( dbfTmpLin )->cRef, "Codigo", dbfArticulo )
+
+            if dbLock( dbfArticulo )
+                  ( dbfArticulo )->mComent      := uNewValue
+                  ( dbfArticulo )->( dbUnlock() )
+            end if
+
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+
 /*
 Sumamos una unidad a la linea de la factura--------------------------------
 */
