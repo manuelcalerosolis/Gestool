@@ -1,6 +1,4 @@
-/* ImportaciÃ³n de datos de factucont */
-// PRUEBA DEL GIT
-// PRUEBA DEL GIT
+/* Importación de datos de factucont */
 
 #include "FiveWin.Ch"
 #include "Factu.ch" 
