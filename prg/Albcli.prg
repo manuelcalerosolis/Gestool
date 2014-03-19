@@ -801,6 +801,18 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Bultos"
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nBultos }
+         :cEditPicture     := "99999"
+         :nWidth           := 95
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+         :nEditType        := 1
+         :bOnPostEdit      := {|o,x,n| ChangeBultos( o, x, n ) }
+      end with
+
       oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -13227,6 +13239,25 @@ Static Function ImprimirSeriesAlbaranes()
 Return .t.
 
 //---------------------------------------------------------------------------//
+/*
+Cambiamos el valor de los bultos en el albaran---------------------------------
+*/
+
+Static Function ChangeBultos( oCol, uNewValue, nKey )
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      if ( TDataview():Lock( "AlbCliT" ) )
+         ( TDataview():Get( "AlbCliT" ) )->nBultos    := uNewValue
+         ( TDataview():UnLock( "AlbCliT" ) )
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 /*------------------------FUNCIONES GLOBALESS--------------------------------*/
