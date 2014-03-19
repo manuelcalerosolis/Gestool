@@ -1,12 +1,12 @@
 #ifndef __PDA__
-#include "FiveWin.Ch"
+#include "FiveWin.Ch"   
 #include "Font.ch"
 #include "Report.ch"
 #include "Factu.ch" 
 #else
 #include "FWCE.ch"
 REQUEST DBFCDX
-#endif
+#endif   
 
 #ifndef __PDA__
 
@@ -41,6 +41,7 @@ static dbfUbicaL
 static dbfTmp
 static cNewFile
 
+//----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
 #ifndef __PDA__
