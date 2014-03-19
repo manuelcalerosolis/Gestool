@@ -1790,7 +1790,7 @@ METHOD ImportaFacturasClientes()
 
    ::oDbfFacTGst:GoTop()
 
-   while !( ::oDbfFacTGst:eof() )
+   /*while !( ::oDbfFacTGst:eof() )
 
       GenPgoFacCli( ::oDbfFacTGst:cSerie + Str( ::oDbfFacTGst:nNumFac ) + ::oDbfFacTGst:cSufFac, ::oDbfFacTGst:cAlias, ::oDbfFacLGst:cAlias, ::oDbfFacPGst:cAlias, ::oDbfAntTGst:cAlias, ::oDbfCliGst:cAlias, ::oDbfPgo:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias, ,.f. )
 
@@ -1798,7 +1798,7 @@ METHOD ImportaFacturasClientes()
 
       ::oDbfFacTGst:Skip()
 
-   end while
+   end while*/
 
 RETURN ( Self )
 
