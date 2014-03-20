@@ -990,7 +990,7 @@ Static Function PageIniIncidecias()
       REDEFINE BUTTON ;
          ID          110 ;
          OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( EdtCliIncidenciaCliente(  ) )
+         ACTION      ( Msginfo( "EdtCliIncidenciaCliente" ) ) //EdtCliIncidenciaCliente(  ) )
 
       REDEFINE BUTTON ;
          ID          120 ;
@@ -1052,17 +1052,17 @@ Static Function PageIniPagos()
       REDEFINE BUTTON ;
          ID          140 ;
          OF          fldRecibosProveedores ;
-         ACTION      ( SelAllRecPrv( .t. ) )
+         ACTION      ( Msginfo( "SelAllRecPrv" ) ) //SelAllRecPrv( .t. ) )
 
       REDEFINE BUTTON ;
          ID          150 ;
          OF          fldRecibosProveedores ;
-         ACTION      ( SelAllRecPrv( .f. ) )
+         ACTION      ( Msginfo( "SelAllRecPrv" ) ) //SelAllRecPrv( .f. ) )
 
       REDEFINE BUTTON ;
          ID          160 ;
          OF          fldRecibosProveedores ;
-         ACTION      ( SelRecPrv() )
+         ACTION      ( Msginfo( "SelRecPrv" ) ) //SelRecPrv() )
 
       REDEFINE BUTTON ;
          ID          180 ;
@@ -1080,7 +1080,7 @@ Static Function PageIniPagos()
       oBrwRecPrv:lRecordSelector := .f.
       oBrwRecPrv:cName           := "Recibos de proveedor.Inicio"
 
-      oBrwRecPrv:bLDblClick      := {|| SelRecPrv() }
+      //oBrwRecPrv:bLDblClick      := {|| SelRecPrv() }
 
       oBrwRecPrv:CreateFromResource( 170 )
 
@@ -1138,7 +1138,7 @@ Static Function PageIniPagos()
       end with
 
       oFld:aDialogs[ nFolder ]:AddFastKey( VK_F3, {|| if( !Empty( ( dbfNewRecPrv )->cSerFac ), EdtRecPrv( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ) ), ) } )
-      oFld:aDialogs[ nFolder ]:AddFastKey( VK_F5, {|| LiquidaRecPrv() } )
+      //oFld:aDialogs[ nFolder ]:AddFastKey( VK_F5, {|| LiquidaRecPrv() } )
 
    end if
 
