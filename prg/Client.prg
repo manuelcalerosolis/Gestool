@@ -11667,6 +11667,9 @@ Function cClientCuenta( cCliente, dbfBncCli, lIBAN )
 
    if Empty( dbfBncCli )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBncCli ) )
+      
+      msgalert( cPatCli() + "CliBnc.Cdx" )
+
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
       lCloseBnc      := .t.
    end if
