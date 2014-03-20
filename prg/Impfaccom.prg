@@ -75,7 +75,7 @@ METHOD OpenFiles()
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    if Empty( ::cPathFac )
-      MsgStop( "Ruta de factucont ® está vacía" )
+      MsgStop( "Ruta de factucont Â® estÃ¡ vacÃ­a" )
       return .f.
    end if
 
@@ -106,7 +106,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTE.DBF"  VIA ( cDriver() )CLASS "CLIFAC"
    end if
 
-   if !File( ::cPathFac + "Articulo.DBF" )
+   if !File( ::cPathFac + "Articulo.DBF" )      
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de artículos", ::cPathFac + "ARTICULO.DBF" )
    else
@@ -117,9 +117,9 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTFAC"
    end if
 
-//Comprobamos si existe el fichero donde se guardan las líneas de todos los documentos
+//Comprobamos si existe el fichero donde se guardan las lÃ­neas de todos los documentos
 
-   if !File( ::cPathFac + "CONTENI1.DBF" )
+   if !File( ::cPathFac + "CONTENI1.DBF" ) 
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
@@ -363,7 +363,7 @@ METHOD CloseFiles()
 RETURN .T.
 
 // ----------------------------------------------------------------------------- //
-/*Constructor para el método*/
+/*Constructor para el mÃ©todo*/
 
 METHOD New()
 

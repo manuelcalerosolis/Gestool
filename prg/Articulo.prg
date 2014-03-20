@@ -813,7 +813,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          TITLE    "Artículos" ;
          PROMPT   "Código",;
 						"Nombre",;
-                  "Código familia",;
+                  "Familia",;
                   "Proveedor" ,;
                   "No obsoletos + Código",;
                   "No obsoletos + Nombre",;
@@ -915,7 +915,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código familia"
+         :cHeader          := "Familia"
          :cSortOrder       := "cFamCod"
          :bEditValue       := {|| ( dbfArticulo )->Familia }
          :nWidth           := 80
