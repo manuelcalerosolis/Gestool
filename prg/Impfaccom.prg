@@ -108,7 +108,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Articulo.DBF" )      
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de art√≠culos", ::cPathFac + "ARTICULO.DBF" )
+      msgStop( "No existe fichero de artÌculos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtPrv PATH ( cPatArt() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
       DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
@@ -119,11 +119,11 @@ METHOD OpenFiles()
 
 //Comprobamos si existe el fichero donde se guardan las l√≠neas de todos los documentos
 
-   if !File( ::cPathFac + "CONTENI1.DBF" )
+   if !File( ::cPathFac + "CONTENI1.DBF" ) 
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de detalle de l√≠neas", ::cPathFac + "CONTENI1.DBF" )
+      msgStop( "No existe fichero de detalle de lÌneas", ::cPathFac + "CONTENI1.DBF" )
    else
 
       DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "CONTENI1.DBF"   VIA ( cDriver() )CLASS "ALBLFAC"
