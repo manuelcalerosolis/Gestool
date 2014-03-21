@@ -468,13 +468,19 @@ Static Function WinAppEmp()
 
       dbCloseAll()
 
-      mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
+      mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .f., nSemillaContadores )
 
       /*
       Establecemos la empresa como la seleccionada-----------------------------
       */
 
-      SetEmpresa( cCodigoEmpresa, , , , , oWnd() )
+      SetEmpresa( cCodigoEmpresa, , , , , oWnd(), .t. )
+
+      /*
+      Reindexamos--------------------------------------------------------------
+      */
+
+      ReindexaEmp( cPatEmpOld( cCodigoEmpresa ), cCodigoEmpresa )
 
       /*
       Iniciamos todas los servicios---------------------------------------------
@@ -3375,7 +3381,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 Return nil
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 
 /*Funcion que borra el grupo de empresas y el directorio*/
@@ -4078,19 +4083,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       */
 
       if lNewEmp
-
-         with object ( TReindex():New( nil, nil, cPath ) )
-            :lEmpresa      := .f.
-            :lMessageEnd   := .f.
-            :cCodEmp       := cCodEmpNew
-            :cPatCli       := cPatCli( cCodEmpNew, .f., .t. )
-            :cPatArt       := cPatArt( cCodEmpNew, .f., .t. )
-            :cPatPrv       := cPatPrv( cCodEmpNew, .f., .t. )
-            :cPatAlm       := cPatAlm( cCodEmpNew, .f., .t. )
-            :cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
-            :GenIndices( oMsg )
-         end with
-
+         ReindexaEmp( cPath, cCodEmpNew, oMsg )
       end if
 
       /*
@@ -4128,6 +4121,24 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    ErrorBlock( oBlock )
 
 RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+function ReindexaEmp( cPath, cCodEmpNew, oMsg )
+
+   with object ( TReindex():New( nil, nil, cPath ) )
+      :lEmpresa      := .f.
+      :lMessageEnd   := .f.
+      :cCodEmp       := cCodEmpNew
+      :cPatCli       := cPatCli( cCodEmpNew, .f., .t. )
+      :cPatArt       := cPatArt( cCodEmpNew, .f., .t. )
+      :cPatPrv       := cPatPrv( cCodEmpNew, .f., .t. )
+      :cPatAlm       := cPatAlm( cCodEmpNew, .f., .t. )
+      :cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
+      :GenIndices( oMsg )
+   end with
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 /*

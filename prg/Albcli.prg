@@ -14784,8 +14784,6 @@ function SynAlbCli( cPath )
       ( TDataView():Get( "AlbCliL", nView ) )->( ordSetFocus( 0 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTop() )
 
-      Msginfo( ( TDataView():Get( "AlbCliL", nView ) )->( OrdKeyCount() ), "Número de registros" )
-
       while !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
 
          if Empty( ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb )
