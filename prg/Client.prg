@@ -9681,7 +9681,8 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
 
    if nMode == APPD_MODE
 
-      if ( TDataView():Get( "Articulo", nView ) )->( dbSeek( cCodArt ) )
+      if dbSeekInOrd( cCodArt, "Codigo", TDataView():Get( "Articulo", nView ) )
+      //if ( TDataView():Get( "Articulo", nView ) )->( dbSeek( cCodArt ) )
 
          if !Empty( oGet )
             oGet:cText( ( TDataView():Get( "Articulo", nView ) )->Nombre )
