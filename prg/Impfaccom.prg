@@ -110,7 +110,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Articulo.DBF" )      
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de artÌculos", ::cPathFac + "ARTICULO.DBF" )
+      msgStop( "No existe fichero de art√≠culos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtPrv PATH ( cPatArt() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
       DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
@@ -121,11 +121,11 @@ METHOD OpenFiles()
 
 //Comprobamos si existe el fichero donde se guardan las l√≠neas de todos los documentos
 
-   if !File( ::cPathFac + "CONTENI1.DBF" ) 
+   if !File( ::cPathFac + "CONTENI1.DBF" )
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de detalle de lÌneas", ::cPathFac + "CONTENI1.DBF" )
+      msgStop( "No existe fichero de detalle de l√≠neas", ::cPathFac + "CONTENI1.DBF" )
    else
 
       DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "CONTENI1.DBF"   VIA ( cDriver() )CLASS "ALBLFAC"
@@ -160,19 +160,14 @@ METHOD OpenFiles()
          DATABASE NEW ::oDbfFacPrvPGst PATH ( cPatEmp() )    FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FACPRVPGST" INDEX "FACPRVP.CDX"
       end if 
 
-
-      /*
-      if !File( ::cPathFac + "INGRESO1.DBF" )
+      if !File( ::cPathFac + "PEDIDOS1.DBF" )
          ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
-         msgStop( "No existe fichero de facturas de clientes", ::cPathFac + "INGRESO1.DBF" )
+         msgStop( "No existe fichero de facturas de clientes", ::cPathFac + "PEDIDOS1.DBF" )
       else
-         DATABASE NEW ::oDbfFacTGst PATH ( cPatEmp() )  FILE "FACCLIT.DBF"    VIA ( cDriver() )CLASS "FACTGST"  INDEX "FACCLIT.CDX"
-         DATABASE NEW ::oDbfFacTFac PATH ( ::cPathFac ) FILE "INGRESO1.DBF"   VIA ( cDriver() )CLASS "FACTFAC"
-         DATABASE NEW ::oDbfFacLGst PATH ( cPatEmp() )  FILE "FACCLIL.DBF"    VIA ( cDriver() )CLASS "FACLGST"  INDEX "FACCLIL.CDX"
-         DATABASE NEW ::oDbfFacPGst PATH ( cPatEmp() )  FILE "FACCLIP.DBF"    VIA ( cDriver() )CLASS "FACPGST"  INDEX "FACCLIP.CDX"
-         DATABASE NEW ::oDbfAntTGst PATH ( cPatEmp() )  FILE "ANTCLIT.DBF"    VIA ( cDriver() )CLASS "ANTTGST"  INDEX "ANTCLIT.CDX"
+         DATABASE NEW ::oDbfPedPrvTFac PATH ( ::cPathFac )  FILE "PEDIDOS1.DBF"     VIA ( cDriver() )CLASS "PEDPRVTFAC"
+         DATABASE NEW ::oDbfPedPrvTGst PATH ( cPatEmp() )   FILE "PEDPROVT.DBF"     VIA ( cDriver() )CLASS "PEDPRVTGST" INDEX "PEDPROVT.CDX"
+         DATABASE NEW ::oDbfPedPrvLGst PATH ( cPatEmp() )   FILE "PEDPROVL.DBF"     VIA ( cDriver() )CLASS "PEDPRVLGST" INDEX "PEDPROVL.CDX"
       end if 
-      */
 
    end if
 
@@ -374,6 +369,24 @@ METHOD CloseFiles()
       ::oDbfFacPrvPGst:End()
    else
       ::oDbfFacPrvPGst := nil 
+   end if
+
+   if !Empty( ::oDbfPedPrvLGst )
+      ::oDbfPedPrvLGst:End()
+   else
+      ::oDbfPedPrvLGst := nil 
+   end if 
+
+   if !Empty( ::oDbfPedPrvTGst )
+      ::oDbfPedPrvTGst:End()
+   else
+      ::oDbfPedPrvTGst := nil 
+   end if 
+
+   if !Empty( ::oDbfPedPrvTFac )
+      ::oDbfPedPrvTFac:End()
+   else
+      ::oDbfPedPrvTFac := nil 
    end if 
 
 RETURN .T.
@@ -385,10 +398,10 @@ METHOD New()
 
    ::cPathFac     := Space( 100 )
 
-   ::aLgcIndices  := Afill( Array( 6 ), .t. )
-   ::aChkIndices  := Array( 6 )
-   ::aMtrIndices  := Array( 6 )
-   ::aNumIndices  := Afill( Array( 6 ), 0 )
+   ::aLgcIndices  := Afill( Array( 7 ), .t. )
+   ::aChkIndices  := Array( 7 )
+   ::aMtrIndices  := Array( 7 )
+   ::aNumIndices  := Afill( Array( 7 ), 0 )
 
 RETURN ( Self )
 
@@ -420,7 +433,8 @@ METHOD Resource()
       REDEFINE CHECKBOX ::aChkIndices[ 3 ]   VAR ::aLgcIndices[ 3 ]  ID 130 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 4 ]   VAR ::aLgcIndices[ 4 ]  ID 150 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 5 ]   VAR ::aLgcIndices[ 5 ]  ID 160 OF ::oDlg
-      REDEFINE CHECKBOX ::aChkIndices[ 6 ]   VAR ::aLgcIndices[ 6 ]  ID 170 of ::oDlg 
+      REDEFINE CHECKBOX ::aChkIndices[ 6 ]   VAR ::aLgcIndices[ 6 ]  ID 170 of ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 7 ]   VAR ::aLgcIndices[ 7 ]  ID 180 of ::oDlg  
 
       REDEFINE METER ::aMtrIndices[ 1 ]      VAR ::aNumIndices[ 1 ]  ID 111 OF ::oDlg
       REDEFINE METER ::aMtrIndices[ 2 ]      VAR ::aNumIndices[ 2 ]  ID 121 OF ::oDlg
@@ -428,6 +442,7 @@ METHOD Resource()
       REDEFINE METER ::aMtrIndices[ 4 ]      VAR ::aNumIndices[ 4 ]  ID 151 OF ::oDlg
       REDEFINE METER ::aMtrIndices[ 5 ]      VAR ::aNumIndices[ 5 ]  ID 161 OF ::oDlg
       REDEFINE METER ::aMtrIndices[ 6 ]      VAR ::aNumIndices[ 6 ]  ID 171 OF ::oDlg
+      REDEFINE METER ::aMtrIndices[ 7 ]      VAR ::aNumIndices[ 7 ]  ID 181 OF ::oDlg
 
       REDEFINE BUTTON ID 500        OF ::oDlg ACTION ( ::SelectChk( .t. ) )
       REDEFINE BUTTON ID 501        OF ::oDlg ACTION ( ::SelectChk( .f. ) )
