@@ -63,6 +63,8 @@ CLASS TImpFacCom
 
    METHOD ImportaFacturasProveedores()
 
+   METHOD ImportaReciboClientes()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -157,6 +159,20 @@ METHOD OpenFiles()
          DATABASE NEW ::oDbfFacPrvLGst PATH ( cPatEmp() )    FILE "FACPRVL.DBF"  VIA ( cDriver() )CLASS "FACPRVLGST" INDEX "FACPRVL.CDX"
          DATABASE NEW ::oDbfFacPrvPGst PATH ( cPatEmp() )    FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FACPRVPGST" INDEX "FACPRVP.CDX"
       end if 
+
+
+      /*
+      if !File( ::cPathFac + "INGRESO1.DBF" )
+         ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
+         msgStop( "No existe fichero de facturas de clientes", ::cPathFac + "INGRESO1.DBF" )
+      else
+         DATABASE NEW ::oDbfFacTGst PATH ( cPatEmp() )  FILE "FACCLIT.DBF"    VIA ( cDriver() )CLASS "FACTGST"  INDEX "FACCLIT.CDX"
+         DATABASE NEW ::oDbfFacTFac PATH ( ::cPathFac ) FILE "INGRESO1.DBF"   VIA ( cDriver() )CLASS "FACTFAC"
+         DATABASE NEW ::oDbfFacLGst PATH ( cPatEmp() )  FILE "FACCLIL.DBF"    VIA ( cDriver() )CLASS "FACLGST"  INDEX "FACCLIL.CDX"
+         DATABASE NEW ::oDbfFacPGst PATH ( cPatEmp() )  FILE "FACCLIP.DBF"    VIA ( cDriver() )CLASS "FACPGST"  INDEX "FACCLIP.CDX"
+         DATABASE NEW ::oDbfAntTGst PATH ( cPatEmp() )  FILE "ANTCLIT.DBF"    VIA ( cDriver() )CLASS "ANTTGST"  INDEX "ANTCLIT.CDX"
+      end if 
+      */
 
    end if
 
@@ -479,6 +495,7 @@ METHOD Importar()
 
    if ::aLgcIndices[ 5 ]
       ::ImportaFacturasClientes()
+      ::ImportaReciboClientes()
    end if 
 
    if ::aLgcIndices[ 6 ]
@@ -1661,9 +1678,7 @@ METHOD ImportaFacturasClientes()
       while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
          ::oDbfFacPGst:Delete( .f. )
       end 
-
-      if Val( ::oDbfFacTFac:Numero ) <> 0
-
+//
          ::oDbfFacTGst:Append()
          ::oDbfFacTGst:Blank()
    
@@ -1737,8 +1752,7 @@ METHOD ImportaFacturasClientes()
          ::oDbfCliGst:OrdSetFocus( nOrdAnt )
    
          ::oDbfFacTGst:Save()
-
-      end if 
+//
 
       ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
 
@@ -1751,7 +1765,7 @@ METHOD ImportaFacturasClientes()
    ::oDbfAlbLFac:GoTop()
    while !( ::oDbfAlbLFac:eof() )
 
-      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "F"
+      if Left( ::oDbfAlbLFac:RfaLin, 2 ) == "F "
 
          ::oDbfFacLGst:Append()
 
@@ -1792,13 +1806,123 @@ METHOD ImportaFacturasClientes()
 
    while !( ::oDbfFacTGst:eof() )
 
-      GenPgoFacCli( ::oDbfFacTGst:cSerie + Str( ::oDbfFacTGst:nNumFac ) + ::oDbfFacTGst:cSufFac, ::oDbfFacTGst:cAlias, ::oDbfFacLGst:cAlias, ::oDbfFacPGst:cAlias, ::oDbfAntTGst:cAlias, ::oDbfCliGst:cAlias, ::oDbfPgo:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias, ,.f. )
+      //GenPgoFacCli( ::oDbfFacTGst:cSerie + Str( ::oDbfFacTGst:nNumFac ) + ::oDbfFacTGst:cSufFac, ::oDbfFacTGst:cAlias, ::oDbfFacLGst:cAlias, ::oDbfFacPGst:cAlias, ::oDbfAntTGst:cAlias, ::oDbfCliGst:cAlias, ::oDbfPgo:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias, ,.f. )
 
       ::aMtrIndices[ 5 ]:Set( ::oDbfFacTGst:Recno() )
 
       ::oDbfFacTGst:Skip()
 
    end while
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImportaReciboClientes()
+   
+   local cSerie         := "A"
+   local nNumero
+   local cSufijo        := "00"
+   local nTotalFactura
+
+   ::aMtrIndices[ 5 ]:SetTotal( ::oDbfFacTFac:LastRec() )
+   
+
+   // Traspaso de recibos de clientes------------------------------------------
+
+   ::oDbfFacTFac:GoTop()
+   while !( ::oDbfFacTFac:eof() )
+
+      while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
+         ::oDbfFacPGst:Delete( .f. )
+      end 
+
+      nNumero           := val( ::oDbfFacTFac:Numero )
+
+      // Calculo de total factura----------------------------------------------
+
+      nTotalFactura     := 0
+
+      nTotalFactura     += ::oDbfFacTFac:Base1 
+
+      if ::oDbfFacTFac:Iva1 != 0
+         nTotalFactura  += Round( ::oDbfFacTFac:Base1 * ::oDbfFacTFac:Iva1 / 100, 2 )
+      end if
+
+      nTotalFactura     += ::oDbfFacTFac:Base2 
+
+      if ::oDbfFacTFac:Iva2 != 0
+         nTotalFactura  += Round( ::oDbfFacTFac:Base2 * ::oDbfFacTFac:Iva2 / 100, 2 )
+      end if
+
+      nTotalFactura     += ::oDbfFacTFac:Base3 
+
+      if ::oDbfFacTFac:Iva3 != 0
+         nTotalFactura  += Round( ::oDbfFacTFac:Base3 * ::oDbfFacTFac:Iva3 / 100, 2 )
+      end if
+
+      nTotalFactura     := Round( nTotalFactura, 2 )
+
+      // Agrego cobros a la factura--------------------------------------------
+
+      ::oDbfFacPGst:Append()
+      ::oDbfFacPGst:Blank()
+
+      ::oDbfFacPGst:cSerie       := cSerie
+      ::oDbfFacPGst:nNumFac      := nNumero
+      ::oDbfFacPGst:cSufFac      := cSufijo
+      ::oDbfFacPGst:nNumRec      := 1
+      ::oDbfFacPGst:cCodPgo     := "00"
+      ::oDbfFacPGst:cCodCaj      := "000"
+      ::oDbfFacPGst:cTurRec      := cCurSesion()
+      ::oDbfFacPGst:cNomCli      := ::oDbfFacTFac:NombreF 
+      ::oDbfFacPGst:dEntrada     := ::oDbfFacTFac:Fecha 
+      ::oDbfFacPGst:cDesCriP     := "Recibo nº 1 de factura " + cSerie  + "/" + Alltrim( Str( nNumero ) ) + "/" + ::oDbfFacPGst:cSufFac 
+      ::oDbfFacPGst:dPreCob      := ::oDbfFacTFac:Fecha 
+      
+      ::oDbfFacPGst:cDivPgo      := "EUR"
+      ::oDbfFacPGst:nVdvPgo      := 1
+      ::oDbfFacPGst:dFecVto      := ::oDbfFacTFac:Fecha
+
+      ::oDbfFacPGst:cCodUsr      := cCurUsr()
+
+      if ::oDbfFacTGst:SeekInOrd( cSerie + Str( nNumero, 9 ) + cSufijo, "nNumFac" )
+         ::oDbfFacPGst:cCodCli   := ::oDbfFacTGst:cCodCli
+         ::oDbfFacPGst:cCodAge   := ::oDbfFacTGst:cCodAge
+      end if
+
+      // Estudio segun pagos---------------------------------------------------
+
+      if ::oDbfFacTFac:Pendiente == 0 
+         ::oDbfFacPGst:lCobrado     := .t.
+         ::oDbfFacPGst:nImporte     := nTotalFactura
+         ::oDbfFacPGst:nImpCob      := nTotalFactura
+      end if
+
+      if ::oDbfFacTFac:Pendiente == nTotalFactura
+         ::oDbfFacPGst:lCobrado     := .f.
+         ::oDbfFacPGst:nImporte     := nTotalFactura
+         ::oDbfFacPGst:nImpCob      := nTotalFactura
+      end if
+
+      if ::oDbfFacTFac:Pendiente != 0 .and. ::oDbfFacTFac:Pendiente != nTotalFactura
+         ::oDbfFacPGst:lCobrado     := .t.
+         ::oDbfFacPGst:nImporte     := ( nTotalFactura - ::oDbfFacTFac:Pendiente )
+         ::oDbfFacPGst:nImpCob      := ( nTotalFactura - ::oDbfFacTFac:Pendiente )
+
+      end if
+
+      ::oDbfFacPGst:Save()
+
+      // Siguiente registro--------------------------------------------------------
+
+      ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
+
+      ::oDbfFacTFac:skip()
+
+   end while 
+
+   ::aMtrIndices[ 5 ]:SetTotal( ::oDbfFacTFac:LastRec() )   
 
 RETURN ( Self )
 
