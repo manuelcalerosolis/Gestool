@@ -354,7 +354,6 @@ static cTmpPgo
 static cTmpSer
 static dbfInci
 static dbfRuta
-static dbfCliInc
 static dbfCliBnc
 static dbfArtPrv
 static dbfAlm
@@ -444,6 +443,7 @@ static nDpvDiv
 static oTipArt
 static oGrpFam
 static oFraPub
+static oPais
 
 static oBtnKit
 static oBtnAtp
@@ -933,6 +933,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       lGenAlbCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( GenerarEtiquetas() ) ;
+      TOOLTIP  "Eti(q)uetas" ;
+      HOTKEY   "Q";
+      LEVEL    ACC_IMPR
+
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( If( !( TDataView():Get( "AlbCliT", nView ) )->lFacturado, WinAppRec( oWndBrw:oBrw, bEdtPgo, TDataView():Get( "AlbCliP", nView ) ), MsgStop( "El albarán ya fue facturado." ) ) );
@@ -1171,6 +1178,8 @@ STATIC FUNCTION OpenFiles()
 
       TDataView():Get( "AntCliT", nView )
 
+      TDataview():Get( "CliInc", nView )
+
       /*
       Contadores---------------------------------------------------------------
       */
@@ -1265,8 +1274,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "TIKES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKES", @dbfTikS ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKES.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
@@ -1453,6 +1460,11 @@ STATIC FUNCTION OpenFiles()
 
       oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
       if !oFraPub:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
+      oPais             := TPais():Create( cPatDat() )
+      if !oPais:OpenFiles()
          lOpenFiles     := .f.
       end if
 
@@ -1727,9 +1739,6 @@ STATIC FUNCTION CloseFiles()
    if dbfRctPrvS != nil
       ( dbfRctPrvS )->( dbCloseArea() )
    end if
-   if dbfCliInc != nil
-      ( dbfCliInc )->( dbCloseArea() )
-   end if
    if dbfPedPrvL != nil
       ( dbfPedPrvL )->( dbCloseArea() )
    end if
@@ -1759,6 +1768,9 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oFraPub )
       oFraPub:end()
    end if
+   if !Empty( oPais )
+      oPais:End()
+   end if 
 
    TDataView():DeleteView( nView )
 
@@ -1808,7 +1820,6 @@ STATIC FUNCTION CloseFiles()
    dbfHisMov      := nil
    dbfHisMovS     := nil
    dbfAlbPrvL     := nil
-   dbfCliInc      := nil
    dbfPedPrvL     := nil
    dbfCliBnc      := nil
 
@@ -8121,6 +8132,11 @@ return .t.
 
 Static Function DataReport( oFr )
 
+   oFr:DeleteCategory(  "Albaranes" )
+   oFr:DeleteCategory(  "Lineas de albaranes" )
+   oFr:DeleteCategory(  "Clientes" )
+   oFr:DeleteCategory(  "Clientes.País" )
+
    /*
    Zona de datos------------------------------------------------------------
    */
@@ -8150,6 +8166,9 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Clientes", ( TDataView():Get( "Client", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Clientes.País", oPais:Select() )
+   oFr:SetFieldAliases( "Clientes.País", cObjectsToReport( oPais:oDbf ) )
 
    oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
    oFr:SetFieldAliases( "Obras",  cItemsToReport( aItmObr() ) )
@@ -8201,6 +8220,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Transportistas",                  {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Albaranes", "Usuarios",                        {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodUsr } )
+
+   oFr:SetMasterDetail( "Clientes", "Clientes.Pais",                    {|| ( TDataView():Get( "Client", nView ) )->cCodPai } )
 
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",             {|| ( TDataView():Get( "AlbCliL", nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",         {|| ( TDataView():Get( "AlbCliL", nView ) )->cTipMov } )
@@ -9084,7 +9105,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             MsgStop( Trim( ( TDataView():Get( "Client", nView ) )->mComent ) )
          end if
 
-         ShowInciCliente( ( TDataView():Get( "Client", nView ) )->Cod, dbfCliInc )
+         ShowIncidenciaCliente( ( TDataView():Get( "Client", nView ) )->Cod, nView )
 
          if ( TDataView():Get( "Client", nView ) )->lBlqCli
             msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarán" )
@@ -12860,9 +12881,9 @@ Static Function AppendDatosAtipicas( aTmpAlb )
       if ( dbfArticulo )->( dbSeek( ( dbfCliAtp )->cCodArt ) )
          ( dbfTmpLin )->cDetalle    := ( dbfArticulo )->Nombre
          ( dbfTmpLin )->nIva        := nIva( TDataView():Get( "TIva", nView ), ( dbfArticulo )->TipoIva )
-         ( dbfTmpLin )->cUniDad     := ( dbfArticulo )->cUnidad
+         ( dbfTmpLin )->cUnidad     := ( dbfArticulo )->cUnidad
          ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
-         ( dbfTmpLin )->lLotE       := ( dbfArticulo )->lLote
+         ( dbfTmpLin )->lLote       := ( dbfArticulo )->lLote
          ( dbfTmpLin )->lMsgVta     := ( dbfArticulo )->lMsgVta
          ( dbfTmpLin )->lNotVta     := ( dbfArticulo )->lNotVta
          ( dbfTmpLin )->cCodTip     := ( dbfArticulo )->cCodTip
@@ -12984,15 +13005,15 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
       */
 
       do case
-         case nDevice == IS_SCREEN
+         case nDevice == IS_SCREEN 
 
             oFr:ShowPreparedReport()
 
          case nDevice == IS_PRINTER
 
-            oFr:PrintOptions:SetPrinter( cPrinter )
             oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetShowDialog( .f. ) 
             oFr:Print()
 
          case nDevice == IS_PDF
@@ -13176,11 +13197,11 @@ Static Function ImprimirSeriesAlbaranes()
    oPrinter:Documento(  ( TDataView():AlbaranesClientes( nView ) )->nNumAlb )
    oPrinter:Sufijo(     ( TDataView():AlbaranesClientes( nView ) )->cSufAlb )
 
-   oPrinter:oClienteInicio:Top()
-   oPrinter:oClienteFin:Bottom()
+   oPrinter:oClienteInicio:First()
+   oPrinter:oClienteFin:Last()
 
-   oPrinter:oGrupoClienteInicio:Top()
-   oPrinter:oGrupoClienteFin:Bottom()
+   oPrinter:oGrupoClienteInicio:First()
+   oPrinter:oGrupoClienteFin:Last()
 
    oPrinter:oFormatoDocumento:TypeDocumento( "AC" )   
 
@@ -13222,6 +13243,13 @@ Static Function ImprimirSeriesAlbaranes()
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function GenerarEtiquetas()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 /*------------------------FUNCIONES GLOBALESS--------------------------------*/
@@ -16205,13 +16233,13 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "CRETMAT"   ,"C", 20, 0, "Matrícula" ,                                            "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CNUMDOC"   ,"C", 12, 0, "",                                                      "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CSUPED"    ,"C", 50, 0, "Su pedido",                                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LIVAINC"   ,"L",  1, 0, cImp() + " incluido",                                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NREGIVA"   ,"N",  1, 0, "Regimen de " + cImp(),                                     "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "LIVAINC"   ,"L",  1, 0, cImp() + " incluido",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NREGIVA"   ,"N",  1, 0, "Regimen de " + cImp(),                                  "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "LGENLQD"   ,"L",  1, 0, "Generado por liquidación",                              "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "NNUMORD"   ,"N",  9, 0, "Número de la orden de carga" ,                          "'999999999'",        "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CSUFORD"   ,"C",  2, 0, "Sufijo de la orden de carga" ,                          "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "DFECORD"   ,"D",  8, 0, "Fecha de la orden de carga" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NIVAMAN"   ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,                       "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "NIVAMAN"   ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,               "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "NMANOBR"   ,"N", 16, 6, "Gastos" ,                                               "cPorDivAlb",         "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "cCodTrn"   ,"C",  9, 0, "Código del transportista" ,                             "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "nKgsTrn"   ,"N", 16, 6, "TARA del transportista" ,                               "",                   "", "( cDbf )"} )
@@ -17483,3 +17511,5 @@ Function cDireccionSAT()
 Return ( cDireccion )
 
 //---------------------------------------------------------------------------//
+
+

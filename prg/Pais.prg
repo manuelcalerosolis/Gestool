@@ -105,10 +105,11 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "PAIS.DBF" CLASS "Pais" PATH ( cPath ) VIA ( cDriver ) COMMENT "Paises"
 
-      FIELD NAME "CCODPAI"    TYPE "C" LEN  4  DEC 0  COMMENT "Código"  DEFAULT Space( 4 )      COLSIZE 80  OF ::oDbf
-      FIELD NAME "CNOMPAI"    TYPE "C" LEN 35  DEC 0  COMMENT "Nombre"  DEFAULT Space( 35)      COLSIZE 200 OF ::oDbf
-      FIELD NAME "CBNDPAI"    TYPE "C" LEN  4  DEC 0  COMMENT ""                           HIDE COLSIZE 0   OF ::oDbf
-      FIELD NAME "CRESPAI"    TYPE "C" LEN  8  DEC 0  COMMENT ""                           HIDE COLSIZE 0   OF ::oDbf
+      FIELD NAME "cCodPai"    TYPE "C" LEN  4  DEC 0  COMMENT "Código"  DEFAULT Space( 4 )      COLSIZE 80  OF ::oDbf
+      FIELD NAME "cNomPai"    TYPE "C" LEN 35  DEC 0  COMMENT "Nombre"  DEFAULT Space( 35)      COLSIZE 200 OF ::oDbf
+      FIELD NAME "cCodIso"    TYPE "C" LEN  3  DEC 0  COMMENT "ISO"                             COLSIZE 80  OF ::oDbf
+      FIELD NAME "cBndPai"    TYPE "C" LEN  4  DEC 0  COMMENT ""                           HIDE COLSIZE 0   OF ::oDbf
+      FIELD NAME "cResPai"    TYPE "C" LEN  8  DEC 0  COMMENT ""                           HIDE COLSIZE 0   OF ::oDbf
 
       INDEX TO "Pais.CDX" TAG "CCODPAI" ON "CCODPAI" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "Pais.CDX" TAG "CNOMPAI" ON "CNOMPAI" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -140,6 +141,11 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      REDEFINE GET ::oDbf:cCodIso UPDATE;
+         ID       130 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       /*
 		Bandera_________________________________________________________________
 		*/
@@ -162,11 +168,6 @@ METHOD Resource( nMode )
 			OF 		oDlg ;
          CANCEL ;
 			ACTION 	( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       998 ;
-			OF 		oDlg ;
-         ACTION   ( GoHelp() )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGet, oCmb, oDlg, nMode ) } )

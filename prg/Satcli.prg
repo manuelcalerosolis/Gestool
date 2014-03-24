@@ -284,6 +284,9 @@ memvar nTotalDto
 memvar oReport
 
 static oWndBrw
+
+static nView
+
 static oBrwIva
 static dbfUsr
 static dbfRuta
@@ -293,7 +296,6 @@ static dbfSatCliI
 static dbfSatCliD
 static dbfSatCliS
 static dbfClient
-static dbfCliInc
 static dbfArtPrv
 static dbfDiv
 static dbfCajT
@@ -486,6 +488,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
+      nView             := TDataView():CreateView()
+
+      TDataView():Get( "CliInc", nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -503,9 +509,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
@@ -796,6 +799,7 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
+
    if ( dbfSatCliT ) != nil
       ( dbfSatCliT )->( dbCloseArea() )
    end if
@@ -1000,10 +1004,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfHisMov )->( dbCloseArea() )
    end if
 
-   if dbfCliInc != nil
-      ( dbfCliInc )->( dbCloseArea() )
-   end if
-
    if dbfFacCliP != nil
       ( dbfFacCliP )->( dbCloseArea() )
    end if
@@ -1039,6 +1039,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oFraPub )
       oFraPub:end()
    end if
+
+   TDataView():DeleteView( nView )
 
    dbfSatCliT     := nil
    dbfSatCliL     := nil
@@ -1097,7 +1099,6 @@ STATIC FUNCTION CloseFiles()
    dbfProLin      := nil
    dbfProMat      := nil
    dbfHisMov      := nil
-   dbfCliInc      := nil
 
    lOpenFiles     := .f.
 
@@ -8125,7 +8126,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
             aTmp[ _NSBRATP ]  := ( dbfClient )->nSbrAtp
 
-            ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
+            ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
 
          end if
 

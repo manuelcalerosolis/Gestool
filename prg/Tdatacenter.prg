@@ -4822,6 +4822,8 @@ RETURN lGood
 
 CLASS TDataView
 
+   CLASSDATA   aStatus
+
    CLASSDATA   hViews                        INIT {=>}
    CLASSDATA   nView                         INIT 0
 
@@ -4851,10 +4853,13 @@ CLASS TDataView
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
 
-   METHOD GetStatus( cDatabase, nView )      INLINE ( aGetStatus( ::Get( cDatabase, nView ) ) )
-   METHOD GetInitStatus( cDatabase, nView )  INLINE ( aGetStatus( ::Get( cDatabase, nView ), .t. ) )
-   METHOD SetStatus( cDatabase, nView, aStatus ) ;
-                                             INLINE ( SetStatus( ::Get( cDatabase, nView ), aStatus ) ) 
+   METHOD GetStatus( cDatabase, nView )      INLINE ( ::aStatus := aGetStatus( ::Get( cDatabase, nView ) ) )
+   METHOD GetInitStatus( cDatabase, nView )  INLINE ( ::aStatus := aGetStatus( ::Get( cDatabase, nView ), .t. ) )
+   METHOD SetStatus( cDatabase, nView )      INLINE ( SetStatus( ::Get( cDatabase, nView ), ::aStatus ) ) 
+
+   METHOD SeekInOrd( cDatabase, nView, uValue, cOrder ) ;
+                                             INLINE ( dbSeekInOrd( uValue, cOrder, ::Get( cDatabase, nView ) ) )
+   METHOD Eof( cDatabase, nView )            INLINE ( ( ::Get( cDatabase, nView ) )->( eof() ) )
 
    METHOD Top( cDatabase, nView )            INLINE ( dbFirst( ::Get( cDatabase, nView ) ) )
    METHOD Bottom( cDatabase, nView )         INLINE ( dbLast( ::Get( cDatabase, nView ) ) )

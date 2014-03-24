@@ -4472,6 +4472,9 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          end if
          */
 
+         oMsg:SetText( "País" )
+         TPais():Create( cPatDat() ):SyncAllDbf()
+
          oMsg:SetText( "Unidades de medición" )
          UniMedicion():Create():SyncAllDbf()
 

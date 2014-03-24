@@ -12,21 +12,20 @@ CLASS TLabelGenerator
    Data oDlg
    Data oFld
 
+   Data nView
+
    Data oParent
 
    Data lMovimientoAlmacen       INIT .f.
 
    Data oSerieInicio
-   Data cSerieInicio
-
    Data oSerieFin
-   Data cSerieFin
 
-   Data nDocumentoInicio
-   Data nDocumentoFin
+   Data oDocumentoInicio
+   Data oDocumentoFin
 
-   Data cSufijoInicio
-   Data cSufijoFin
+   Data oSufijoInicio
+   Data oSufijoFin
 
    Data oFormatoLabel
    Data cFormatoLabel
@@ -42,7 +41,7 @@ CLASS TLabelGenerator
    Data nUnidadesLabels
 
    Data oMtrLabel
-   Data nMtrLabel
+   Data nMtrLabel                   INIT 0
 
    Data lClose
 
@@ -50,7 +49,7 @@ CLASS TLabelGenerator
    Data oBtnAnterior
    Data oBtnCancel
 
-   Data aSearch
+   Data aSearch                     INIT { "Código", "Nombre" }
 
    Data cFileTmpLabel
    Data cAreaTmpLabel
@@ -61,7 +60,13 @@ CLASS TLabelGenerator
    DATA oBtnMod
    DATA oBtnZoo
 
-   DATA aFieldsAuxiliarArticulo
+   DATA aFieldsAuxiliarArticulo     INIT  {  { "cCodArt"  ,"C",  18, 0, "Código del artículo" },;
+                                             { "cNomArt"  ,"C",  18, 0, "Nombre del artículo" },;
+                                             { "nLabel"   ,"N",  16, 6, "Número de etiquetas" },;
+                                             { "lLabel"   ,"L",   1, 0, "Lógico etiqueta seleccionada" },;
+                                             { "cValPrp1" ,"C",  18, 0, "Valor de la propiedad 1" },;
+                                             { "cValPrp2" ,"C",  18, 0, "Valor de la propiedad 2" },;
+                                             { "cLote"    ,"C",  18, 0, "Lote del producto" } }
 
    DATA cDbfDocumento
    DATA cDbfCabecera
@@ -77,6 +82,8 @@ CLASS TLabelGenerator
    METHOD lCreateAuxiliarArticulo()
 
    METHOD LoadAuxiliarMovimientoAlmacen()
+
+   METHOD LoadAlbaranesClientes()
 
    /*METHOD lCreateTemporal()
    METHOD PrepareTemporal( oFr )
@@ -123,39 +130,12 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Create() CLASS TLabelGenerator
+METHOD Create( nView, nDocument ) CLASS TLabelGenerator
 
-   ::cSerieInicio       := ""
-   ::cSerieFin          := ""
-   ::nDocumentoInicio   := 0
-   ::nDocumentoFin      := 0
-   ::cSufijoInicio      := ""
-   ::cSufijoFin         := ""   
-   ::cTipoFormato       := ""
+   DEFAULT nDocument    := ALB_CLI
 
-   ::nMtrLabel          := 0
-
-   ::nFilaInicio        := 1
-   ::nColumnaInicio     := 1
-
-   ::nCantidadLabels    := 1
-   ::nUnidadesLabels    := 1
-
-   ::aSearch            := { "Código", "Nombre" }
-
-   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Movimiento almacen", Space( 3 ), cPatEmp() + "Empresa.Ini" )
-    
-   if len( ::cFormatoLabel ) < 3
-      ::cFormatoLabel   := Space( 3 )
-   end if
-
-   ::aFieldsAuxiliarArticulo  := {  { "cCodArt"  ,"C",  18, 0, "Código del artículo" },;
-                                    { "cNomArt"  ,"C",  18, 0, "Nombre del artículo" },;
-                                    { "nLabel"   ,"N",  16, 6, "Número de etiquetas" },;
-                                    { "lLabel"   ,"L",   1, 0, "Lógico etiqueta seleccionada" },;
-                                    { "cValPrp1" ,"C",  18, 0, "Valor de la propiedad 1" },;
-                                    { "cValPrp2" ,"C",  18, 0, "Valor de la propiedad 2" },;
-                                    { "cLote"    ,"C",  18, 0, "Lote del producto" } }
+   ::nView              := nView
+   ::nDocument          := nDocument
 
 Return ( Self )
 
@@ -172,83 +152,31 @@ Method Resource() CLASS TLabelGenerator
       DEFINE DIALOG ::oDlg RESOURCE "SelectLabels_0"
 
          REDEFINE PAGES ::oFld ;
-            ID       10;
-            OF       ::oDlg ;
-            DIALOGS  "SelectLabels_1",; 
-                     "SelectLabels_2"
+            ID          10;
+            OF          ::oDlg ;
+            DIALOGS     "SelectLabels_1",; 
+                        "SelectLabels_2"
 
          /*
          Bitmap-------------------------------------------------------------------
          */
 
          REDEFINE BITMAP ;
-            RESOURCE "EnvioEtiquetas" ;
-            ID       500 ;
-            OF       ::oDlg ;
+            RESOURCE    "EnvioEtiquetas" ;
+            ID          500 ;
+            OF          ::oDlg ;
 
-         REDEFINE GET ::oSerieInicio VAR ::cSerieInicio ;
-            ID       100 ;
-            PICTURE  "@!";
-            SPINNER ;
-            ON UP    ( UpSerie( ::oSerieInicio ) );
-            ON DOWN  ( DwSerie( ::oSerieInicio ) );
-            UPDATE ;
-            OF       ::oFld:aDialogs[ 1 ]
+         ::oSerieInicio          := GetSerie():New( 100, ::oDlg )
+         ::oSerieFin             := GetSerie():New( 110, ::oDlg )
 
-            if ::lMovimientoAlmacen
-               ::oSerieInicio:bValid   := {|| .t. }
-            else
-               ::oSerieInicio:bValid   := {|| ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" ) }
-            end if
+         ::oDocumentoInicio      := GetNumero():New( 120, ::oDlg )
+         ::oDocumentoFin         := GetNumero():New( 130, ::oDlg )
 
-         REDEFINE GET ::oSerieFin VAR ::cSerieFin ;
-            ID       110 ;
-            PICTURE  "@!" ;
-            SPINNER ;
-            ON UP    ( UpSerie( ::oSerieFin ) );
-            ON DOWN  ( DwSerie( ::oSerieFin ) );
-            UPDATE ;
-            OF       ::oFld:aDialogs[ 1 ]
+         ::oSufijoInicio         := GetSufijo():New( 140, ::oDlg )
+         ::oSufijoFin            := GetSufijo():New( 150, ::oDlg )
 
-            if ::lMovimientoAlmacen
-               ::oSerieFin:bValid   := {|| .t. }
-            else
-               ::oSerieFin:bValid   := {|| ( ::cSerieFin >= "A" .and. ::cSerieFin<= "Z" ) }
-            end if
-
-         REDEFINE GET ::nDocumentoInicio ;
-            ID       120 ;
-            PICTURE  "999999999" ;
-            SPINNER ;
-            OF       ::oFld:aDialogs[ 1 ]
-
-         REDEFINE GET ::nDocumentoFin ;
-            ID       130 ;
-            PICTURE  "999999999" ;
-            SPINNER ;
-            OF       ::oFld:aDialogs[ 1 ]
-
-         REDEFINE GET ::cSufijoInicio ;
-            ID       140 ;
-            PICTURE  "##" ;
-            OF       ::oFld:aDialogs[ 1 ]
-
-         REDEFINE GET ::cSufijoFin ;
-            ID       150 ;
-            PICTURE  "##" ;
-            OF       ::oFld:aDialogs[ 1 ]
-
-         REDEFINE GET ::nFilaInicio ;
-            ID       180 ;
-            PICTURE  "999" ;
-            SPINNER ;
-            OF       ::oFld:aDialogs[ 1 ]
-
-         REDEFINE GET ::nColumnaInicio ;
-            ID       190 ;
-            PICTURE  "999" ;
-            SPINNER ;
-            OF       ::oFld:aDialogs[ 1 ]
+         ::oFilaInicio           := GetNumero():New( 180, ::oDlg ):SetPicture( "999" )
+         ::oColumnaInicio        := GetNumero():New( 190, ::oDlg ):SetPicture( "999" )
 
          REDEFINE GET ::oFormatoLabel VAR ::cFormatoLabel ;
             ID       160 ;
@@ -449,17 +377,11 @@ Return ( Self )
 
 METHOD StartResource() CLASS TLabelGenerator
 
-   if ::lMovimientoAlmacen
+   do case
+      case ::nDocument == ALB_CLI
+         ::LoadAlbaranesClientes()
 
-      if !Empty( ::oSerieInicio )
-         ::oSerieInicio:Hide()
-      end if
-
-      if !Empty( ::oSerieFin )
-         ::oSerieFin:Hide()
-      end if
-
-   end if
+   end case
 
    if !Empty( ::oBtnAnterior ) 
       ::oBtnAnterior:Hide()
@@ -476,6 +398,75 @@ METHOD StartResource() CLASS TLabelGenerator
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD LoadAlbaranesClientes() CLASS TLabelGenerator
+
+   local nRec
+   local nOrd
+
+   /*
+   Limpiamos la base de datos temporal-----------------------------------------
+   */
+
+   ( ::cAreaTmpLabel )->( __dbZap() )
+
+   /*
+   Llenamos la tabla temporal--------------------------------------------------
+   */
+
+   nRec           := ( ::cDbfCabecera() )->( Recno() )
+   nOrd           := ( ::cDbfCabecera() )->( OrdSetFocus( "cNumRem" ) )
+
+   if ( ::cDbfCabecera() )->( dbSeek( Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio, .t. ) )
+
+      while Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem >= Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio .and. ;
+            Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem <= Str( ::nDocumentoFin, 9 ) + ::cSufijoFin       .and. ;
+            !( ::cDbfCabecera() )->( eof() )
+
+         if ( ::cDbfLinea() )->( dbSeek( Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem ) )
+
+            while ( Str( ( ::cDbfLinea() )->nNumRem ) + ( ::cDbfLinea() )->cSufRem == Str( ( ::cDbfCabecera() )->nNumRem ) + ( ::cDbfCabecera() )->cSufRem ) .and. ( ::cDbfLinea() )->( !eof() )
+
+               if !Empty( ( ::cDbfLinea() )->cRef )
+
+                  ( ::cAreaTmpLabel )->( dbAppend() )
+
+                  ( ::cAreaTmpLabel )->cCodArt  := ( ::cDbfLinea() )->cRefMov
+                  ( ::cAreaTmpLabel )->cNomArt  := RetFld( ( ::cDbfLinea() )->cRefMov, ::cDbfArticulo() )
+                  ( ::cAreaTmpLabel )->cValPrp1 := ( ::cDbfLinea() )->cValPr1
+                  ( ::cAreaTmpLabel )->cValPrp2 := ( ::cDbfLinea() )->cValPr2
+                  ( ::cAreaTmpLabel )->cLote    := ( ::cDbfLinea() )->cLote
+                  ( ::cAreaTmpLabel )->lLabel   := .t.
+
+                  if ::nCantidadLabels == 1
+                  ( ::cAreaTmpLabel )->nLabel   := ( ::cDbfLinea() )->nUndMov
+                  else
+                  ( ::cAreaTmpLabel )->nLabel   := ::nUnidadesLabels
+                  end if
+
+               end if
+
+               ( ::cDbfLinea() )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( ::cDbfCabecera() )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::cDbfCabecera() )->( OrdSetFocus( nOrd ) )
+   ( ::cDbfCabecera() )->( dbGoTo( nRec ) )
+
+   ( ::cAreaTmpLabel )->( dbGoTop() )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 Method lCreateAuxiliarArticulo() CLASS TLabelGenerator
 

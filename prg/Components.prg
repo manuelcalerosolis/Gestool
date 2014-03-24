@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PrintSeries
+CLASS ResourceBuilder
 
    DATA bInit 
    DATA bWhile                         INIT {|| .t. }
@@ -49,22 +49,15 @@ CLASS PrintSeries
 
    DATA oImageList
 
-   METHOD New( nView )
+   METHOD End()                           INLINE ( ::oDlg:end() )
 
-   METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
+   METHOD Serie( cSerie )                 INLINE ( ::oSerieInicio:cText( cSerie ), ::oSerieFin:cText( cSerie ) )
+   METHOD Documento( cDocumento )         INLINE ( ::oDocumentoInicio:cText( cDocumento ), ::oDocumentoFin:cText( cDocumento ) )
+   METHOD Sufijo( cSufijo )               INLINE ( ::oSufijoInicio:cText( cSufijo ), ::oSufijoFin:cText( cSufijo ) )
+   METHOD FormatoDocumento( cFormato )    INLINE ( ::oFormatoDocumento:cText( cFormato ) )
 
-   METHOD Resource()
-      METHOD StartResource()
-      METHOD ActionResource()
-      METHOD End()                     INLINE ( ::oDlg:end() )
-
-   METHOD Serie( cSerie )              INLINE ( ::oSerieInicio:cText( cSerie ), ::oSerieFin:cText( cSerie ) )
-   METHOD Documento( cDocumento )      INLINE ( ::oDocumentoInicio:cText( cDocumento ), ::oDocumentoFin:cText( cDocumento ) )
-   METHOD Sufijo( cSufijo )            INLINE ( ::oSufijoInicio:cText( cSufijo ), ::oSufijoFin:cText( cSufijo ) )
-   METHOD FormatoDocumento( cFormato ) INLINE ( ::oFormatoDocumento:cText( cFormato ) )
-
-   METHOD DocumentoInicio()            INLINE ( ::oSerieInicio:Value() + str( ::oDocumentoInicio:Value(), 9 ) + ::oSufijoInicio:Value() )
-   METHOD DocumentoFin()               INLINE ( ::oSerieFin:Value() + str( ::oDocumentoFin:Value(), 9 ) + ::oSufijoFin:Value() )
+   METHOD DocumentoInicio()               INLINE ( ::oSerieInicio:Value() + str( ::oDocumentoInicio:Value(), 9 ) + ::oSufijoInicio:Value() )
+   METHOD DocumentoFin()                  INLINE ( ::oSerieFin:Value() + str( ::oDocumentoFin:Value(), 9 ) + ::oSufijoFin:Value() )
 
    // Metdos auxiliares para comparaciones -----------------------------------
 
@@ -74,6 +67,20 @@ CLASS PrintSeries
    METHOD InRangeGrupoCliente( uValue )   INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoClienteInicio:Value() .and. uValue <= ::oGrupoClienteFin:Value() ) )
 
    METHOD InRangeFecha( uValue )          INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS PrintSeries FROM ResourceBuilder
+
+   METHOD New( nView )
+
+   METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
+
+   METHOD Resource()
+      METHOD StartResource()
+      METHOD ActionResource()
 
 END CLASS
 
@@ -395,6 +402,10 @@ Return ( Self )
 CLASS GetCliente FROM ComponentGetSay
 
    METHOD New( idGet, idSay, oContainer ) 
+
+   METHOD First()    INLINE ( ::cText( Space( RetNumCodCliEmp() ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodCliEmp() ) ) )
+
    METHOD Top()      INLINE ( ::cText( TDataView():Top( "Client", ::oContainer:nView ) ) )
    METHOD Bottom()   INLINE ( ::cText( TDataView():Bottom( "Client", ::oContainer:nView ) ) )
 
@@ -416,6 +427,9 @@ Return ( Self )
 CLASS GetGrupoCliente FROM ComponentGetSay
 
    METHOD New( idGet, idSay, oContainer )
+
+   METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
 
    METHOD Top()      INLINE ( ::cText( TDataView():GetObject( "GruposClientes", ::oContainer:nView ):Top() ) )
    METHOD Bottom()   INLINE ( ::cText( TDataView():GetObject( "GruposClientes", ::oContainer:nView ):Bottom() ) )
@@ -559,6 +573,8 @@ CLASS GetNumero FROM ComponentGet
 
    METHOD Resource()
 
+   METHOD SetPicture()
+
 END CLASS 
 
 METHOD New( idGet, oContainer ) CLASS GetNumero
@@ -583,10 +599,20 @@ METHOD Resource() CLASS GetNumero
 
 Return ( Self )
 
+METHOD SetPicture( cPicture )
+
+   ::oGetControl:oGet:Assign()
+   ::oGetControl:oGet:Picture   := cPicture
+   ::oGetControl:oGet:UpdateBuffer()
+
+Return ( Self )
+
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
+
+
 
 CLASS GetSufijo FROM ComponentGet
 
