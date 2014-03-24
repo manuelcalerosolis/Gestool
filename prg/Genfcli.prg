@@ -1172,29 +1172,33 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                de la ficha del cliente
                */
 
-               if ( dbfCliAtp )->( dbSeek( ( dbfFacCliT )->cCodCli + ( dbfAlbCliL )->cRef ) )                  .and. ;
-                  ( dbfCliAtp )->lAplFac                                                                       .and. ;
-                  ( ( dbfCliAtp )->dFecIni <= ( dbfFacCliT )->dFecFac .or. Empty( ( dbfCliAtp )->dFecIni ) )   .and. ;
-                  ( ( dbfCliAtp )->dFecFin >= ( dbfFacCliT )->dFecFac .or. Empty( ( dbfCliAtp )->dFecFin ) )
+               if ( "GARRIDO" $ cParamsMain() )
 
-                  /*if ( dbfCliAtp )->nPrcArt != 0
-                     ( dbfFacCliL )->nPreUnit   := ( dbfCliAtp )->nPrcArt
-                  end if*/
+                  if ( dbfCliAtp )->( dbSeek( ( dbfFacCliT )->cCodCli + ( dbfAlbCliL )->cRef ) )                  .and. ;
+                     ( dbfCliAtp )->lAplFac                                                                       .and. ;
+                     ( ( dbfCliAtp )->dFecIni <= ( dbfFacCliT )->dFecFac .or. Empty( ( dbfCliAtp )->dFecIni ) )   .and. ;
+                     ( ( dbfCliAtp )->dFecFin >= ( dbfFacCliT )->dFecFac .or. Empty( ( dbfCliAtp )->dFecFin ) )
 
-                  if ( dbfCliAtp )->nDtoArt != 0
-                     ( dbfFacCliL )->nDto       := ( dbfCliAtp )->nDtoArt
-                  end if
+                     /*if ( dbfCliAtp )->nPrcArt != 0
+                        ( dbfFacCliL )->nPreUnit   := ( dbfCliAtp )->nPrcArt
+                     end if*/
 
-                  if ( dbfCliAtp )->nDprArt != 0
-                     ( dbfFacCliL )->nDtoPrm    := ( dbfCliAtp )->nDprArt
-                  end if
+                     if ( dbfCliAtp )->nDtoArt != 0
+                        ( dbfFacCliL )->nDto       := ( dbfCliAtp )->nDtoArt
+                     end if
 
-                  if ( dbfCliAtp )->nComAge != 0
-                     ( dbfFacCliL )->nComAge    := ( dbfCliAtp )->nComAge
-                  end if
+                     if ( dbfCliAtp )->nDprArt != 0
+                        ( dbfFacCliL )->nDtoPrm    := ( dbfCliAtp )->nDprArt
+                     end if
 
-                  if ( dbfCliAtp )->nDtoDiv != 0
-                     ( dbfFacCliL )->nDtoDiv    := ( dbfCliAtp )->nDtoDiv
+                     if ( dbfCliAtp )->nComAge != 0
+                        ( dbfFacCliL )->nComAge    := ( dbfCliAtp )->nComAge
+                     end if
+
+                     if ( dbfCliAtp )->nDtoDiv != 0
+                        ( dbfFacCliL )->nDtoDiv    := ( dbfCliAtp )->nDtoDiv
+                     end if
+
                   end if
 
                end if

@@ -166,6 +166,8 @@ CLASS TMant
    METHOD Top()                           INLINE ( dbFirst( ::oDbf:cAlias ) )
    METHOD Bottom()                        INLINE ( dbLast( ::oDbf:cAlias ) )
 
+   METHOD GetField( cCodigo, uField )     INLINE ( oRetFld( cCodigo, ::oDbf, uField ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -602,7 +604,12 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    ::oDbf:GoTop()
 
    if !empty( oGet )
-      ::oDbf:Seek( oGet:varGet(), .t. )
+      do case
+         case IsObject( oGet )
+            ::oDbf:Seek( oGet:varGet(), .t. )
+         case IsChar( oGet )
+            ::oDbf:Seek( oGet, .t. )
+      end case          
    end if 
 
    nOrdAnt        := ::oDbf:OrdSetFocus( nOrd )
@@ -698,7 +705,7 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
 
    TButton():ReDefine( IDCANCEL, {|| oDlg:end() }, oDlg, , , .f. )
 
-   oDlg:bStart             := {|| oBrw:Load(), if( !Empty( oGet ), oGet:SetFocus(), ) }
+   oDlg:bStart             := {|| oBrw:Load(), if( !Empty( oGet ) .and. IsObject( oGet ), oGet:SetFocus(), ) }
 
    if !IsReport()
       oDlg:AddFastKey( VK_F2, {|| ::Append( oBrw ) } )
@@ -717,7 +724,7 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
 
       uVal                 := ::oDbf:FieldGetByName( cField )
 
-      if !Empty( oGet ) .and. !Empty( uVal )
+      if !Empty( oGet ) .and. IsObject( oGet ) .and. !Empty( uVal )
 
          oGet:cText( uVal )
          oGet:lValid()

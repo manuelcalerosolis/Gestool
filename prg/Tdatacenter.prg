@@ -2674,6 +2674,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacPrvD"
    oDataTable:cName        := cPatEmp() + "FacPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvD.Cdx"
@@ -2682,6 +2683,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacPrvP"
    oDataTable:cName        := cPatEmp() + "FacPrvP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvP.Cdx"
@@ -2690,6 +2692,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacPrvS"
    oDataTable:cName        := cPatEmp() + "FacPrvS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvS.Cdx"
@@ -4839,8 +4842,11 @@ CLASS TDataView
 
    METHOD GetObject( cObject, nView )
 
-   METHOD AlbaranesClientes( nView )         INLINE ( ::Get( "AlbCliT", nView ) )
-      METHOD AlbaranesClientesId( nView )    INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
+   METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
+      METHOD AlbaranesClientesId( nView )       INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
+
+   METHOD FacturasClientesCobros( nView )       INLINE ( ::Get( "FacCliP", nView ) )
+      METHOD FacturasClientesCobrosId( nView )  INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )

@@ -1745,10 +1745,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Comentario"
-            :bEditValue       := {|| RetFld( ( dbfTmpLin )->cRef, dbfArticulo, "mComent" )  }
+            :bEditValue       := {|| Padr( RetFld( ( dbfTmpLin )->cRef, dbfArticulo, "mComent" ), 100 ) }
             :nWidth           := 180
             :lHide            := .t.
             :nEditType        := 1
+            :cEditPicture     := "@S180"
             :bOnPostEdit      := {|o,x,n| ChangeComentario( o, x, n, aTmp ) }
          end with
 
