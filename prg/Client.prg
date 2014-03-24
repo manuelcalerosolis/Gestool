@@ -6356,7 +6356,11 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
    end if
 
    if !Empty( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ] )
+<<<<<<< HEAD
       cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], TDataView():Get( "TipInci", nView ) )
+=======
+      cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de clientes"
@@ -6364,9 +6368,15 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
       REDEFINE GET aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
+<<<<<<< HEAD
          VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], TDataView():Get( "TipInci", nView ), oNomInci ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIncidencia( TDataView():Get( "TipInci", nView ), aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+=======
+         VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -9665,7 +9675,8 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
 
    if nMode == APPD_MODE
 
-      if ( TDataView():Get( "Articulo", nView ) )->( dbSeek( cCodArt ) )
+      if dbSeekInOrd( cCodArt, "Codigo", TDataView():Get( "Articulo", nView ) )
+      //if ( TDataView():Get( "Articulo", nView ) )->( dbSeek( cCodArt ) )
 
          if !Empty( oGet )
             oGet:cText( ( TDataView():Get( "Articulo", nView ) )->Nombre )
@@ -12067,7 +12078,11 @@ RETURN .t.
 //---------------------------------------------------------------------------//
 
 
+<<<<<<< HEAD
 FUNCTION AppIncidenciaCliente( nView )
+=======
+FUNCTION AppIncidenciaCliente()
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
    local nLevel         := nLevelUsr( "01032" )
 
@@ -12078,7 +12093,11 @@ FUNCTION AppIncidenciaCliente( nView )
 
    if OpenFiles( .t. )
 
+<<<<<<< HEAD
       WinAppRec( nil, bEdtInc, ( TDataView():Get( "CliAtp", nView ) ) )
+=======
+      WinAppRec( nil, bEdtInc, ( TDataView():Get( "Client", nView ) ) )
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
          
       CloseFiles()
 
@@ -12088,7 +12107,11 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
+<<<<<<< HEAD
 FUNCTION EdtIncidenciaCliente( nOrdKeyNumber, nView )
+=======
+FUNCTION EdtIncidenciaCliente( nOrdKeyNumber )
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
    local nLevel         := nLevelUsr( "01032" )
 
@@ -12097,12 +12120,26 @@ FUNCTION EdtIncidenciaCliente( nOrdKeyNumber, nView )
       return .t.
    end if
 
+<<<<<<< HEAD
    if ( TDataView():Get( "CliInc", nView ) )->( ordKeyGoTo( nOrdKeyNumber ) )
       WinEdtRec( nil, bEdtInc, TDataView():Get( "CliInc", nView ) )
+=======
+   if OpenFiles( .t. )
+
+      if ( dbfCliInc )->( ordKeyGoTo( nOrdKeyNumber ) )
+         WinEdtRec( nil, bEdtInc, dbfCliInc )
+      end if
+
+      CloseFiles()
+
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
    end if
 
 RETURN .t.
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a

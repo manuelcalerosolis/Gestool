@@ -985,12 +985,20 @@ Static Function PageIniIncidecias()
       REDEFINE BUTTON ;
          ID          100 ;
          OF          oFld:aDialogs[ nFolder ] ;
+<<<<<<< HEAD
          ACTION      ( AppIncidenciaCliente() )
+=======
+         ACTION      ( AddCliIncidencia( nView, cCodigoCliente ) )
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
       REDEFINE BUTTON ;
          ID          110 ;
          OF          oFld:aDialogs[ nFolder ] ;
+<<<<<<< HEAD
          ACTION      ( EdtIncidenciaCliente( ( TDataView():Get( "CliInc", nView ) )->( OrdKeyNo() ) ) )
+=======
+         ACTION      ( Msginfo( "EdtCliIncidenciaCliente" ) ) //EdtCliIncidenciaCliente(  ) )
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
       REDEFINE BUTTON ;
          ID          120 ;
@@ -1048,6 +1056,24 @@ Static Function PageIniPagos()
          ITEMS       aEstadoPrv ;
          ON CHANGE   ( LoadPageIni( .f., .t. ) );
          OF          fldRecibosProveedores
+<<<<<<< HEAD
+=======
+
+      REDEFINE BUTTON ;
+         ID          140 ;
+         OF          fldRecibosProveedores ;
+         ACTION      ( Msginfo( "SelAllRecPrv" ) ) //SelAllRecPrv( .t. ) )
+
+      REDEFINE BUTTON ;
+         ID          150 ;
+         OF          fldRecibosProveedores ;
+         ACTION      ( Msginfo( "SelAllRecPrv" ) ) //SelAllRecPrv( .f. ) )
+
+      REDEFINE BUTTON ;
+         ID          160 ;
+         OF          fldRecibosProveedores ;
+         ACTION      ( Msginfo( "SelRecPrv" ) ) //SelRecPrv() )
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
       REDEFINE BUTTON ;
          ID          180 ;
@@ -1065,7 +1091,11 @@ Static Function PageIniPagos()
       oBrwRecPrv:lRecordSelector := .f.
       oBrwRecPrv:cName           := "Recibos de proveedor.Inicio"
 
+<<<<<<< HEAD
       oBrwRecPrv:bLDblClick      := {|| Msginfo("hola") }
+=======
+      //oBrwRecPrv:bLDblClick      := {|| SelRecPrv() }
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
       oBrwRecPrv:CreateFromResource( 170 )
 
@@ -1131,3 +1161,96 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+<<<<<<< HEAD
+=======
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a

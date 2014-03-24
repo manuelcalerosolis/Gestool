@@ -801,6 +801,37 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Bultos"
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nBultos }
+         :cEditPicture     := "99999"
+         :nWidth           := 95
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+         :nEditType        := 1
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ChangeBultos( oCol, uNewValue, nKey ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Transportista"
+         :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn }
+         :nWidth           := 60
+         :lHide            := .t.
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ChangeTrasportista( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| oTrans:Buscar( ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn ) }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre transportista"
+         :bEditValue       := {|| oTrans:GetField( ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn, "cNomTrn" ) }
+         :nWidth           := 180
+         :lHide            := .t.
+      end with
+
       oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -1210,7 +1241,12 @@ STATIC FUNCTION OpenFiles()
 
       TDataView():Get( "TIva", nView )
 
+      /*
+      DOCUMENTOS ABIERTOS POR TIPO---------------------------------------------
+      */
+
       TDataView():Documentos( nView )
+      ( TDataView():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
       // TDataview con objetos-------------------------------------------------
 
@@ -13243,10 +13279,57 @@ Static Function ImprimirSeriesAlbaranes()
 Return .t.
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
 
 Static Function GenerarEtiquetas()
 
 Return ( nil )
+=======
+/*
+Cambiamos el valor de los bultos en el albaran---------------------------------
+*/
+
+Static Function ChangeBultos( oCol, uNewValue, nKey )
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      if ( TDataview():Lock( "AlbCliT", nView ) )
+         ( TDataview():Get( "AlbCliT", nView ) )->nBultos    := uNewValue
+         ( TDataview():UnLock( "AlbCliT", nView ) )
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Cambiamos el valor de los bultos en el albaran---------------------------------
+*/
+
+Static Function ChangeTrasportista( oCol, uNewValue, nKey )
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      if oTrans:oDbf:SeekInOrd( uNewValue, "cCodTrn" )
+
+         if ( TDataview():Lock( "AlbCliT", nView ) )
+            ( TDataview():Get( "AlbCliT", nView ) )->cCodTrn   := uNewValue
+            ( TDataview():Get( "AlbCliT", nView ) )->nKgsTrn   := oTrans:oDbf:nKgsTrn
+            ( TDataview():UnLock( "AlbCliT", nView ) )
+         end if
+
+      else
+
+         msgStop( "Código de transportista no encontrado." )
+         Return .f.
+
+      end if
+
+   end if
+
+Return .t.
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
 //---------------------------------------------------------------------------//
 

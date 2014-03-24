@@ -5792,6 +5792,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                   cLote          := ( dbfArticulo )->cLote
                end if 
 
+               aTmp[ _LLOTE ]    := ( dbfArticulo )->lLote
+
                if !Empty( aGet[ _CLOTE ] )
 
                   aGet[ _CLOTE ]:Show()
