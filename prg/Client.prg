@@ -9670,7 +9670,7 @@ Return ( .t. )
 Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto )
 
 	local lReturn	:= .t.
-   local cCodArt  := aGet[ _aCCODART ]:VarGet()
+   local cCodArt  := Padr( aGet[ _aCCODART ]:VarGet(), 18 )
    local nPreCom  := 0
    local nPreVta  := 0
 
