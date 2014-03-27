@@ -133,7 +133,6 @@ static dbfTmpDoc
 static dbfIva
 static dbfCount
 static dbfCli
-static dbfCliInc
 static dbfFPago
 static dbfAgent
 static dbfDiv
@@ -365,6 +364,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    nView                := TDataView():CreateView()
 
+   TDataView():Get( "CliInc", nView )
+
    TDataView():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
@@ -378,9 +379,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
    USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
    SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-   SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
    USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
    SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
@@ -553,10 +551,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfEmp )->( dbCloseArea() )
    end if
 
-   if dbfCliInc != nil
-      ( dbfCliInc )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfTikCliT )
       ( dbfTikCliT )->( dbCloseArea() )
    end if
@@ -598,7 +592,6 @@ STATIC FUNCTION CloseFiles()
    dbfDelega   := nil
    dbfAgeCom   := nil
    dbfEmp      := nil
-   dbfCliInc   := nil
 
    oWndBrw     := nil
 
@@ -2441,7 +2434,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
          oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfCli )->Riesgo )
       end if
 
-      ShowInciCliente( ( dbfCli )->Cod, dbfCliInc )
+      ShowIncidenciaCliente( ( dbfCli )->Cod, nView )
 
       cOldCodCli  := ( dbfCli )->Cod
 

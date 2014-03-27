@@ -285,6 +285,9 @@ memvar nTotalDto
 memvar oReport
 
 static oWndBrw
+
+static nView
+
 static oBrwIva
 static dbfUsr
 static dbfRuta
@@ -613,6 +616,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
+      nView             := TDataView():CreateView()
+
+      TDataView():Get( "CliInc", nView )
+
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
          lOpenFiles     := .f.
       end if 
@@ -631,9 +638,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
@@ -1171,6 +1175,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oFraPub )
       oFraPub:end()
    end if
+
+   TDataView():DeleteView( nView )
 
    dbfPreCliT     := nil
    dbfPreCliL     := nil
@@ -8260,7 +8266,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
             aTmp[ _NSBRATP ]  := ( dbfClient )->nSbrAtp
 
-            ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
+            ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
 
          end if
 

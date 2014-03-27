@@ -324,7 +324,11 @@ static cOldUndMed    := ""
 
 static dbfOferta
 static lOpenFiles    := .f.
+
 static oWndBrw
+
+static nView
+
 static dbfPedCliT
 static dbfPedCliL
 static dbfPedCliI
@@ -343,7 +347,6 @@ static dbfAlbCliP
 static dbfAlbPrvT
 static dbfAlbPrvL
 static dbfClient
-static dbfCliInc
 static dbfCliBnc
 static dbfIva
 static dbfTarPreL
@@ -670,6 +673,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
+      nView             := TDataView():CreateView()
+
+      TDataView():Get( "CliInc", nView )
+
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
 
@@ -717,9 +724,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
       USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
       SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
@@ -1350,8 +1354,18 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Pendiente " + cDivEmp()
+         :cHeader          := "Pendiente"
          :bEditValue       := {|| ( nTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliP, dbfDiv, nil, .f. ) ) }
+         :nWidth           := 100
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :cEditPicture     := cPorDiv
+         :lHide            := .t. 
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Comisión agente"
+         :bEditValue       := {|| sTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv ):nTotalAgente }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -13969,7 +13983,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfProLin  ), ( dbfProLin  )->( dbCloseArea() ), )
    if( !Empty( dbfProMat  ), ( dbfProMat  )->( dbCloseArea() ), )
    if( !Empty( dbfHisMov  ), ( dbfHisMov  )->( dbCloseArea() ), )
-   if( !Empty( dbfCliInc  ), ( dbfCliInc  )->( dbCloseArea() ), )
    if( !Empty( dbfCliBnc  ), ( dbfCliBnc  )->( dbCloseArea() ), )
 
    if( !Empty( oStock     ), oStock:end(),  )
@@ -13985,6 +13998,8 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oUndMedicion )
       oUndMedicion:end()
    end if
+
+   TDataView():DeleteView( nView )
 
    dbfPedCliT     := nil
    dbfPedCliL     := nil
@@ -14047,7 +14062,6 @@ STATIC FUNCTION CloseFiles()
    dbfProLin      := nil
    dbfProMat      := nil
    dbfHisMov      := nil
-   dbfCliInc      := nil
    dbfCliBnc      := nil
 
    oStock         := nil
@@ -14472,15 +14486,15 @@ Calcula el Total del pedido
 
 FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDivRet, lPic, cDbfClient )
 
-	local nRecno
-	local cCodDiv
-	local cPouDiv
-	local dFecPed
-	local bCondition
-	local nDtoEsp
-	local nDtoPP
-	local nDtoUno
-	local nDtoDos
+   local nRecno
+   local cCodDiv
+   local cPouDiv
+   local dFecPed
+   local bCondition
+   local nDtoEsp
+   local nDtoPP
+   local nDtoUno
+   local nDtoDos
    local lIvaInc
    local nIvaMan
    local nManObr
@@ -15955,7 +15969,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          MsgStop( Trim( ( dbfClient )->mComent ) )
       end if
 
-      ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
+      ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
 
       lValid      := .t.
 

@@ -398,8 +398,8 @@ FUNCTION PageIniClient( oMenuItem, nView )
          OF          oDlg ;
          PROMPT      "&Cobros",;
                      "Incidencias" ;
-         DIALOGS     "PAGEINI_01",;
-                     "PAGEINI_03"
+         DIALOGS     "PageIni_01",;
+                     "PageIni_03"
 
       PageIniCobros()
 
@@ -990,7 +990,7 @@ Static Function PageIniIncidecias()
       REDEFINE BUTTON ;
          ID          110 ;
          OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( Msginfo( "EdtCliIncidenciaCliente" ) ) //EdtCliIncidenciaCliente(  ) )
+         ACTION      ( EdtIncidenciaCliente( ( TDataView():Get( "CliInc", nView ) )->( OrdKeyNo() ) ) )
 
       REDEFINE BUTTON ;
          ID          120 ;
@@ -1080,7 +1080,7 @@ Static Function PageIniPagos()
       oBrwRecPrv:lRecordSelector := .f.
       oBrwRecPrv:cName           := "Recibos de proveedor.Inicio"
 
-      //oBrwRecPrv:bLDblClick      := {|| SelRecPrv() }
+      oBrwRecPrv:bLDblClick      := {|| Msginfo("hola") }
 
       oBrwRecPrv:CreateFromResource( 170 )
 

@@ -316,6 +316,9 @@ Variables Staticas para todo el .prg logico no!
 */
 
 static oWndBrw
+
+static nView
+
 static oBrwIva
 static dbfRuta
 static dbfTikCliT
@@ -348,7 +351,6 @@ static dbfTmpSer
 static dbfIva
 static dbfCount
 static dbfClient
-static dbfCliInc
 static dbfArtPrv
 static dbfFPago
 static dbfAgent
@@ -723,6 +725,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
+      nView 			:= TDataView():CreateView()
+
+      TDataView():Get( "CliInc", nView )
+
       USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
 
@@ -765,8 +771,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
@@ -1333,10 +1337,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfHisMovS )->( dbCloseArea() )
    end if
 
-   if dbfCliInc != nil
-      ( dbfCliInc )->( dbCloseArea() )
-   end if
-
    if dbfPedPrvL != nil
       ( dbfPedPrvL )->( dbCloseArea() )
    end if
@@ -1445,7 +1445,6 @@ STATIC FUNCTION CloseFiles()
    dbfProLin   := nil
    dbfProMat   := nil
    dbfHisMov   := nil
-   dbfCliInc   := nil
    dbfPedPrvL  := nil
    dbfCliBnc   := nil
 
@@ -7493,7 +7492,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
       end if
 
-      ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
+      ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
 
       cOldCodCli  := ( dbfClient )->Cod
 

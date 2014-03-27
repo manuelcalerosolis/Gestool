@@ -210,7 +210,6 @@ static tmpClient
 static dbfClientD
 static dbfCliAtp
 static dbfPro
-static dbfCliInc
 static dbfProL
 static dbfArtKit
 static dbfFPago
@@ -231,8 +230,6 @@ static dbfTmpInc
 static dbfTmpCon
 static dbfTmpSubCta
 static dbfArtDiv
-static dbfInci
-
 static dbfOfe
 static oTrans
 static cTmpDoc
@@ -326,6 +323,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():Get( "FacCliT", nView )
 
+      TDataView():Get( "TipInci", nView )
+
+      TDataView():Get( "CliInc", nView )
+
       // USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       // SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
@@ -368,13 +369,6 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
       /*
-      Apertura de fichero de Indicencias--------------------------------------------
-      */
-
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
-
-      /*
       Articulos-------------------------------------------------------------------
       */
 
@@ -403,8 +397,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
       SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
@@ -498,7 +490,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    end if
 
    CLOSE ( dbfArtKit    )
-   CLOSE ( dbfCliInc    )
    CLOSE ( cFPago       )
    CLOSE ( cAgente      )
    CLOSE ( dbfObrasT    )
@@ -510,7 +501,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    CLOSE ( dbfProL      )
    CLOSE ( dbfDoc       )
    CLOSE ( dbfBanco     )
-   CLOSE ( dbfInci      )
    CLOSE ( dbfOfe       )
    CLOSE ( dbfArtDiv    )
    CLOSE ( dbfRuta      )
@@ -546,7 +536,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    TDataView():DeleteView( nView )
 
    dbfArtKit      := nil
-   dbfCliInc      := nil
    cFPago         := nil
    cAgente        := nil
    dbfObrasT      := nil
@@ -558,7 +547,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfProL        := nil
    dbfDoc         := nil
    dbfBanco       := nil
-   dbfInci        := nil
    dbfOfe         := nil
    dbfArtDiv      := nil
    dbfRuta        := nil
@@ -625,7 +613,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
          XBROWSE ;
-			TITLE 	"Clientes" ;
+         TITLE    "Clientes" ;
          PROMPT   "Código",;
                   "Nombre",;
                   if( uFieldEmpresa( "nCifRut" ) == 1, "NIF/CIF", "RUT" ),;
@@ -877,46 +865,46 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       oWndBrw:CreateXFromCode()
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( oWndBrw:SearchSetFocus() ) ;
-			TOOLTIP 	"(B)uscar" ;
+         TOOLTIP  "(B)uscar" ;
          HOTKEY   "B"
 
       oWndBrw:AddSeaBar()
 
-		DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecAdd() );
-			ON DROP	( oWndBrw:RecDup() );
-			TOOLTIP 	"(A)ñadir";
+      DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecAdd() );
+         ON DROP  ( oWndBrw:RecDup() );
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
 
-		DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecDup() );
-			TOOLTIP 	"(D)uplicar";
+      DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecDup() );
+         TOOLTIP  "(D)uplicar";
          HOTKEY   "D" ;
          LEVEL    ACC_APPD
 
-		DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
-			NOBORDER ;
-			ACTION  	( oWndBrw:RecEdit() );
-			TOOLTIP 	"(M)odificar";
+      DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecEdit() );
+         TOOLTIP  "(M)odificar";
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
-		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
-			NOBORDER ;
+      DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+         NOBORDER ;
          ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ) );
-			TOOLTIP 	"(Z)oom";
-			HOTKEY 	"Z"
+         TOOLTIP  "(Z)oom";
+         HOTKEY   "Z"
 
       DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecDel() );
-			TOOLTIP 	"(E)liminar";
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecDel() );
+         TOOLTIP  "(E)liminar";
          HOTKEY   "E" ;
          LEVEL    ACC_DELE
 
@@ -938,26 +926,26 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          LEVEL    ACC_DELE
 
       DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( BrwVtaCli( ( TDataView():Get( "Client", nView ) )->Cod, ( TDataView():Get( "Client", nView ) )->Titulo ) );
          TOOLTIP  "(I)nforme cliente" ;
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
 
-		DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
-			NOBORDER ;
+      DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
+         NOBORDER ;
          ACTION   ( TInfCliGrp():New( "Listado de clientes" ):Play() ) ;
          TOOLTIP  "Lis(t)ado";
          HOTKEY   "T"
 
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( TarCli():New( "Tarifas personalizadas por clientes" ):Play() ) ;
          TOOLTIP  "Listad(o) de tarifas";
          HOTKEY   "O"
 
       DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( ReportingClient() ) ;
          TOOLTIP  "Rep(o)rting";
          HOTKEY   "O" ;
@@ -966,13 +954,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       #endif
 
       DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( TClienteLabelGenerator():Create() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q"
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( TGenMailing():ClientResource( ( TDataView():Get( "Client", nView ) ), aItmCli(), oWndBrw ) ) ;
          TOOLTIP  "Enviar correos" ;
          HOTKEY   "V" ;
@@ -1036,9 +1024,9 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       end if
 
-		DEFINE BTNSHELL RESOURCE "CNFCLI" GROUP OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( CnfCli( TDataView():Get( "Client", nView ) ) ) ;
+      DEFINE BTNSHELL RESOURCE "CNFCLI" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( CnfCli( TDataView():Get( "Client", nView ) ) ) ;
          TOOLTIP  "Confi(g)urar" ;
          HOTKEY   "G";
          LEVEL    ACC_APPD
@@ -1099,9 +1087,9 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
          ALLOW    EXIT ;
-			ACTION 	( oWndBrw:End() ) ;
-			TOOLTIP 	"(S)alir" ;
-			HOTKEY 	"S"
+         ACTION   ( oWndBrw:End() ) ;
+         TOOLTIP  "(S)alir" ;
+         HOTKEY   "S"
 
       /*
       Datos para el filtro-----------------------------------------------------
@@ -1120,7 +1108,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
    else
 
-		oWndBrw:SetFocus()
+      oWndBrw:SetFocus()
 
    end if
 
@@ -1134,7 +1122,7 @@ Edita el cliente en el tactil
 
 STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
-	local oDlg
+   local oDlg
    local oBmpGeneral
    local cResource      := "BigEdtCliente"
 
@@ -1174,8 +1162,8 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET aGet[ _TITULO ] VAR aTmp[ _TITULO ];
          ID       110 ;
-			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
          ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidNombre( aGet[_TITULO] ), .t. ) ) ;
@@ -1189,7 +1177,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
          ID       130 ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
@@ -1227,33 +1215,33 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ _CMEIINT ] VAR aTmp[ _CMEIINT ] ;
          ID       170 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          ON HELP  ( ShellExecute( oDlg:hWnd, "open", "mailto:" + Rtrim( aGet[ _CMEIINT ]:cText() ) ) ) ;
          UPDATE ;
          OF       oDlg
 
       REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ];
          ID       180 ;
-			MEMO ;
+         MEMO ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-		/*
-		Botones de la Caja de Dialogo__________________________________________
-		*/
+      /*
+      Botones de la Caja de Dialogo__________________________________________
+      */
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
+         OF       oDlg ;
          CANCEL ;
-			ACTION 	( oDlg:end() )
+         ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
@@ -1272,12 +1260,12 @@ Edita el cliente
 
 STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
-	local oDlg
-	local oFld
+   local oDlg
+   local oFld
    local oGetSubCta
    local oGetSubDto
    local oBrwCta
-	local oBrwObr
+   local oBrwObr
    local oBrwAtp
    local oBrwDoc
    local oBrwBnc
@@ -1296,9 +1284,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oSay           := Array( 9 )
    local cSay           := Array( 9 )
    local oGetCta
-	local cGetSubCta		:= Space( 30 )
+   local cGetSubCta     := Space( 30 )
    local cGetSubDto     := Space( 30 )
-	local cGetCta			:= Space( 30 )
+   local cGetCta        := Space( 30 )
    local nGetDebe       := 0
    local nGetHaber      := 0
    local oGetSaldo
@@ -1403,10 +1391,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          RESOURCE "CLIENT" ;
          TITLE    LblTitle( nMode ) + "Cliente : " + Rtrim( aTmp[ _TITULO ] )
 
-		REDEFINE FOLDER oFld ;
-			ID 		500 ;
-			OF 		oDlg ;
-			PROMPT 	"&General",;
+      REDEFINE FOLDER oFld ;
+         ID       500 ;
+         OF       oDlg ;
+         PROMPT   "&General",;
                   "C&omercial",;
                   "Au&tomáticas",;
                   "&Direcciones",;
@@ -1442,7 +1430,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oGet ;
          VAR      aTmp[ _COD ] ;
-			ID 		110 ;
+         ID       110 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) );
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          ON HELP  ( oGet:cText( NextKey( aTmp[ _COD ], ( TDataView():Get( "Client", nView ) ), "0", RetNumCodCliEmp() ) ) ) ;
@@ -1458,9 +1446,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET aGet[_TITULO] VAR aTmp[_TITULO];
-			ID 		120 ;
-			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
+         ID       120 ;
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
          ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidNombre( aGet[_TITULO] ), .t. ) ) ;
@@ -1469,7 +1457,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       if uFieldEmpresa( "nCifRut" ) <= 1
 
       REDEFINE GET aGet[ _NIF ] VAR aTmp[ _NIF ] ;
-			ID 		130 ;
+         ID       130 ;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( CheckCif( aGet[ _NIF ] ), if( nMode == APPD_MODE, lValidCif( aGet[ _NIF ] ), .t. ) );
@@ -1478,7 +1466,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       else
 
       REDEFINE GET aGet[ _NIF ] VAR aTmp[ _NIF ] ;
-			ID 		130 ;
+         ID       130 ;
          PICTURE  "@R 999999999-9" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( CheckRut( aGet[ _NIF ] ), if( nMode == APPD_MODE, lValidCif( aGet[ _NIF ] ), .t. ) );
@@ -1487,7 +1475,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end if
 
       REDEFINE GET aGet[ _DOMICILIO ] VAR aTmp[ _DOMICILIO ];
-			ID 		140 ;
+         ID       140 ;
          BITMAP   "Environnment_View_16" ;
          ON HELP  GoogleMaps( aTmp[ _DOMICILIO ], Rtrim( aTmp[ _POBLACION ] ) + Space( 1 ) + Rtrim( aTmp[ _PROVINCIA ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -1499,20 +1487,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
-			ID 		150 ;
-			COLOR 	CLR_GET ;
+         ID       150 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CODPOSTAL ] VAR aTmp[ _CODPOSTAL ] ;
-			ID 		160 ;
-			COLOR 	CLR_GET ;
+         ID       160 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _PROVINCIA ] VAR aTmp[ _PROVINCIA ] ;
-			ID 		170 ;
-			COLOR 	CLR_GET ;
+         ID       170 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
@@ -1532,14 +1520,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oSay[6] VAR cSay[6] ;
          ID       302 ;
-			SPINNER ;
+         SPINNER ;
          WHEN     ( .f. ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CPERCTO ] VAR aTmp[ _CPERCTO ];
          ID       90 ;
-			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
@@ -1551,21 +1539,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET aGet[_TELEFONO] VAR aTmp[_TELEFONO] ;
-			ID 		180 ;
-			COLOR 	CLR_GET ;
+         ID       180 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[_TELEFONO] ), .t. ) ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_FAX] VAR aTmp[_FAX] ;
-			ID 		190 ;
-			COLOR 	CLR_GET ;
+         ID       190 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_MOVIL] VAR aTmp[_MOVIL] ;
          ID       195 ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
@@ -1600,8 +1588,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
-			ID 		200 ;
-			COLOR 	CLR_GET ;
+         ID       200 ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. oUser():lAdministrador() ) ;
          VALID    ( cTarifa( aGet[_CCODTAR], oSay[3] ) ) ;
          BITMAP   "LUPA" ;
@@ -1609,15 +1597,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET oSay[3] VAR cSay[3] ;
-			ID 		201;
-			COLOR 	CLR_GET ;
-			WHEN 		( .F. ) ;
+         ID       201;
+         COLOR    CLR_GET ;
+         WHEN     ( .F. ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_CODPAGO] VAR aTmp[_CODPAGO];
-			ID 		210 ;
+         ID       210 ;
          PICTURE  "@!" ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cFPago( aGet[_CODPAGO], dbfFPago, oSay[1] ) ) ;
          BITMAP   "LUPA" ;
@@ -1626,8 +1614,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oSay[1] VAR cSay[1];
          ID       211 ;
-			WHEN 		.F. ;
-			COLOR 	CLR_GET ;
+         WHEN     .F. ;
+         COLOR    CLR_GET ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_DIAPAGO] VAR aTmp[_DIAPAGO] ;
@@ -1652,7 +1640,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[ _CMEIINT ] VAR aTmp[ _CMEIINT ] ;
          ID       280 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          ON HELP  ( ShellExecute( oDlg:hWnd, "open", "mailto:" + Rtrim( aGet[ _CMEIINT ]:cText() ) ) ) ;
          BITMAP   "MAIL16" ;
          UPDATE ;
@@ -1672,7 +1660,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET oSay[8] VAR cSay[8] ;
-			WHEN 		.F. ;
+         WHEN     .F. ;
          ID       321 ;
          OF       fldGeneral
 
@@ -1682,13 +1670,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          VALID    ( cRuta( aGet[_CCODRUT], nil, oSay[4] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwRuta( aGet[_CCODRUT], nil, oSay[4] ) ) ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          OF       fldGeneral
 
       REDEFINE GET oSay[4] VAR cSay[4] ;
          ID       221 ;
          WHEN     ( .f. ) ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CAGENTE ] VAR aTmp[ _CAGENTE ] ;
@@ -1701,8 +1689,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oSay[2] VAR cSay[2] ;
          ID       231 ;
-			COLOR 	CLR_GET ;
-			WHEN 		( .F. ) ;
+         COLOR    CLR_GET ;
+         WHEN     ( .F. ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
@@ -1716,7 +1704,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oSay[5] VAR cSay[5] ;
          ID       241 ;
-			SPINNER ;
+         SPINNER ;
          WHEN     ( .f. ) ;
          COLOR    CLR_GET ;
          OF       fldGeneral
@@ -1731,11 +1719,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          VALID    ( cAlmacen( aGet[ _CCODALM ], dbfAlmT, oSay[7] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CCODALM ], oSay[7] ) ) ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          OF       fldGeneral
 
       REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
-			WHEN 		.F. ;
+         WHEN     .F. ;
          ID       311 ;
          OF       fldGeneral
 
@@ -1755,12 +1743,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aTmp[ _COPIASF ] ;
          ID       270 ;
-			SPINNER ;
+         SPINNER ;
          MIN      0;
          MAX      9;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			PICTURE 	"9" ;
+         PICTURE  "9" ;
          OF       fldGeneral
 
       REDEFINE CHECKBOX aTmp[ _LPNTVER ] ;
@@ -1800,7 +1788,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       /*
       Segunda Caja de Dialogo--------------------------------------------------
-		*/
+      */
 
       REDEFINE BITMAP oBmpComercial ;
          ID       500 ;
@@ -1812,14 +1800,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[_NBREST] VAR aTmp[_NBREST];
          ID       100 ;
-			PICTURE 	"@!" ;
-			COLOR 	CLR_GET ;
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[_DIREST] VAR aTmp[_DIREST] ;
          ID       110 ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
@@ -1830,7 +1818,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[ _CWEBINT ] VAR aTmp[ _CWEBINT ] ;
          ID       290 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          OF       fldComercial
 
       REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
@@ -1888,75 +1876,75 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       */
 
       REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
-			SPINNER ;
+         SPINNER ;
          ID       159;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[_NDTOESP] VAR aTmp[_NDTOESP] ;
-			SPINNER ;
+         SPINNER ;
          ID       160;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
-			SPINNER ;
+         SPINNER ;
          ID       169;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[_NDPP] VAR aTmp[_NDPP] ;
-			SPINNER ;
+         SPINNER ;
          ID       170;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _CDTOUNO ] VAR aTmp[ _CDTOUNO ] ;
-			SPINNER ;
+         SPINNER ;
          ID       175;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _NDTOCNT ] VAR aTmp[ _NDTOCNT ];
-			SPINNER ;
+         SPINNER ;
          ID       180 ;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _CDTODOS ] VAR aTmp[ _CDTODOS ] ;
-			SPINNER ;
+         SPINNER ;
          ID       185;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _CDTOATP ] VAR aTmp[ _CDTOATP ] ;
-			SPINNER ;
+         SPINNER ;
          ID       205;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _NDTORAP ] VAR aTmp[ _NDTORAP ];
-			SPINNER ;
+         SPINNER ;
          ID       190 ;
          PICTURE  "@E 999.99" ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
       REDEFINE GET aGet[ _NDTOATP ] VAR aTmp[ _NDTOATP ];
-			SPINNER ;
+         SPINNER ;
          ID       200 ;
          PICTURE  "@E 999.99" ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
@@ -2248,19 +2236,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldDirecciones
 
       REDEFINE BUTTON  ;
-			ID 		500 ;
+         ID       500 ;
          OF       fldDirecciones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( AppObras( aTmp[ _COD ], dbfTmpObr, oBrwObr ) )
 
       REDEFINE BUTTON ;
-			ID 		501 ;
+         ID       501 ;
          OF       fldDirecciones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( EdtObras( aTmp[ _COD ], nil, dbfTmpObr, oBrwObr, .t. ) )
 
       REDEFINE BUTTON ;
-			ID 		502 ;
+         ID       502 ;
          OF       fldDirecciones ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( DelObras( dbfTmpObr, oBrwObr ) )
@@ -2357,19 +2345,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldContactos
 
       REDEFINE BUTTON  ;
-			ID 		500 ;
+         ID       500 ;
          OF       fldContactos ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( AppContactos( aTmp[ _COD ], dbfTmpCon, oBrwCon ) )
 
       REDEFINE BUTTON ;
-			ID 		501 ;
+         ID       501 ;
          OF       fldContactos ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( EdtContactos( dbfTmpCon, oBrwCon ) )
 
       REDEFINE BUTTON ;
-			ID 		502 ;
+         ID       502 ;
          OF       fldContactos ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( DelContactos( dbfTmpCon, oBrwCon ) )
@@ -2607,8 +2595,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                                oGetSaldo ) );
          OF       fldContabilidad
 
-		REDEFINE GET oGetSubCta VAR cGetSubCta ;
-			ID 		351 ;
+      REDEFINE GET oGetSubCta VAR cGetSubCta ;
+         ID       351 ;
          WHEN     .f. ;
          OF       fldContabilidad
 
@@ -2619,16 +2607,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldContabilidad
 
       REDEFINE GET aGet[_CTAVENTA] VAR aTmp[_CTAVENTA] ;
-			ID 		360 ;
-			COLOR 	CLR_GET ;
+         ID       360 ;
+         COLOR    CLR_GET ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkCta( aGet[_CTAVENTA], oGetCta ) ) ;
          VALID    ( ChkCta( aTmp[_CTAVENTA], oGetCta ) ) ;
          OF       fldContabilidad
 
-		REDEFINE GET oGetCta VAR cGetCta ;
-			ID 		361 ;
+      REDEFINE GET oGetCta VAR cGetCta ;
+         ID       361 ;
          WHEN     .f. ;
          OF       fldContabilidad
 
@@ -2638,7 +2626,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[_SUBCTADTO] VAR aTmp[_SUBCTADTO] ;
          ID       370 ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
@@ -2664,15 +2652,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oGetSubDto VAR cGetSubDto ;
          ID       371 ;
-			COLOR 	CLR_GET ;
+         COLOR    CLR_GET ;
          WHEN     .F. ;
          OF       fldContabilidad
 
       REDEFINE GET oGetSalDto VAR nGetSalDto ;
          ID       372 ;
          PICTURE  cPorDiv ;
-			COLOR 	CLR_GET ;
-			WHEN 		.F. ;
+         COLOR    CLR_GET ;
+         WHEN     .F. ;
          OF       fldContabilidad
 
       /*
@@ -2763,7 +2751,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       /*
       Tercera caja de dialogo_______________________________________________
-		*/
+      */
 
       REDEFINE BITMAP oBmpComentario ;
          ID       500 ;
@@ -2785,9 +2773,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldDefinidos   
 
       REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ];
-			ID 		370 ;
-			MEMO ;
-			COLOR 	CLR_GET ;
+         ID       370 ;
+         MEMO ;
+         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldDefinidos
 
@@ -2797,88 +2785,88 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldDefinidos
 
       REDEFINE SAY PROMPT aIniCli[1] ;
-			ID 		105 ;
+         ID       105 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF01 ] VAR aTmp[ _CUSRDEF01 ] ;
-			ID 		110 ;
+         ID       110 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[2] ;
-			ID 		115 ;
+      REDEFINE SAY PROMPT aIniCli[2] ;
+         ID       115 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF02 ] VAR aTmp[ _CUSRDEF02 ] ;
-			ID 		120 ;
+         ID       120 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[3] ;
-			ID 		125 ;
+      REDEFINE SAY PROMPT aIniCli[3] ;
+         ID       125 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF03 ] VAR aTmp[ _CUSRDEF03 ] ;
-			ID 		130 ;
+         ID       130 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[4] ;
-			ID 		135 ;
+      REDEFINE SAY PROMPT aIniCli[4] ;
+         ID       135 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF04 ] VAR aTmp[ _CUSRDEF04 ] ;
-			ID 		140 ;
+         ID       140 ;
          OF       fldDefinidos
 
       REDEFINE SAY PROMPT aIniCli[5] ;
-			ID 		145 ;
+         ID       145 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF05 ] VAR aTmp[ _CUSRDEF05 ] ;
-			ID 		150 ;
+         ID       150 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[6] ;
-			ID 		155 ;
+      REDEFINE SAY PROMPT aIniCli[6] ;
+         ID       155 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF06 ] VAR aTmp[ _CUSRDEF06 ] ;
-			ID 		160 ;
+         ID       160 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[7] ;
-			ID 		165 ;
+      REDEFINE SAY PROMPT aIniCli[7] ;
+         ID       165 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF07 ] VAR aTmp[ _CUSRDEF07 ] ;
-			ID 		170 ;
+         ID       170 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[8] ;
-			ID 		175 ;
+      REDEFINE SAY PROMPT aIniCli[8] ;
+         ID       175 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF08 ] VAR aTmp[ _CUSRDEF08 ] ;
-			ID 		180 ;
+         ID       180 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[9] ;
-			ID 		185 ;
+      REDEFINE SAY PROMPT aIniCli[9] ;
+         ID       185 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF09 ] VAR aTmp[ _CUSRDEF09 ] ;
-			ID 		190 ;
+         ID       190 ;
          OF       fldDefinidos
 
-		REDEFINE SAY PROMPT aIniCli[10] ;
-			ID 		195 ;
+      REDEFINE SAY PROMPT aIniCli[10] ;
+         ID       195 ;
          OF       fldDefinidos
 
       REDEFINE GET aGet[ _CUSRDEF10 ] VAR aTmp[ _CUSRDEF10 ] ;
-			ID 		200 ;
+         ID       200 ;
          OF       fldDefinidos
 
-		/*
+      /*
       Quinta caja de dialogo__________________________________________________
-		*/
+      */
 
       REDEFINE BITMAP oBmpTarifa ;
          ID       600 ;
@@ -3152,8 +3140,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ACTION   ( ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) )
 
       /*
-		Detalle________________________________________________________________
-		*/
+      Detalle________________________________________________________________
+      */
 
       REDEFINE BITMAP oBmpIncidencias ;
          ID       600 ;
@@ -3187,7 +3175,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       with object ( oBrwInc:AddCol() )
          :cHeader          := "Incidencia"
-         :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) }
+         :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
          :nWidth           := 180
       end with
 
@@ -3214,23 +3202,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE BUTTON ;
          ID       500 ;
          OF       fldIncidencias ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       fldIncidencias ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )
 
-		REDEFINE BUTTON ;
-			ID 		502 ;
+      REDEFINE BUTTON ;
+         ID       502 ;
          OF       fldIncidencias ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .t. ) )
 
-		REDEFINE BUTTON ;
-			ID 		503 ;
+      REDEFINE BUTTON ;
+         ID       503 ;
          OF       fldIncidencias ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
 
@@ -3426,21 +3414,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       oRTF:bChange:= { || RTFRefreshButtons( oRtf, oBtn ) }
 
-		/*
-		Botones de la Caja de Dialogo__________________________________________
-		*/
+      /*
+      Botones de la Caja de Dialogo__________________________________________
+      */
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
+         OF       oDlg ;
          CANCEL ;
-			ACTION 	( oDlg:end() )
+         ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
 
@@ -3473,7 +3461,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end if
 
    oDlg:bStart := {||   ShowComentario( aTmp ),;
-                        ShowInciCliente( aTmp[ _COD ], dbfCliInc ),;
+                        ShowIncidenciaCliente( aTmp[ _COD ], nView ),;
                         ShowFld( aTmp, aGet ),;
                         FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ),;
                         oGet:SetFocus(),;
@@ -3545,40 +3533,36 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-function ShowInciCliente( cCodCli, dbfInci )
+function ShowIncidenciaCliente( cCodigoCliente, nView )
 
-   local nRec  := ( dbfInci )->( Recno() )
+   TDataView():GetStatus( "CliInc", nView )
 
-   if dbSeekInOrd( cCodCli, "CCODCLI", dbfInci )
+   if TDataView():SeekInOrd( "CliInc", nView, cCodigoCliente, "cCodCli" )
 
-      while ( dbfInci )->cCodCli == cCodCli .and. !( dbfInci )->( Eof() )
+      while ( TDataView():Get( "CliInc", nView ) )->cCodCli == cCodigoCliente .and. !TDataView():Eof( "CliInc", nView ) 
 
-         if ( dbfInci )->lAviso .and. !( dbfInci )->lListo
+         if ( TDataView():Get( "CliInc", nView ) )->lAviso .and. !( TDataView():Get( "CliInc", nView ) )->lListo
 
-            MsgInfo( AllTrim( ( dbfInci )->mDesInc ), "Incidencia de cliente" )
+            MsgInfo( AllTrim( ( TDataView():Get( "CliInc", nView ) )->mDesInc ), "Incidencia de cliente" )
 
          end if
 
-         ( dbfInci )->( dbSkip() )
+         ( TDataView():Get( "CliInc", nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfInci )->( dbGoTo( nRec ) )
+   TDataView():SetStatus( "CliInc", nView )
 
 Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-static function ShowComentario( aTmp, nMode )
+Static Function ShowComentario( aTmp, nMode )
 
-   if nMode != APPD_MODE         .and.;
-      aTmp[ _LMOSCOM ]           .and.;
-      !Empty( aTmp[ _MCOMENT ] )
-
+   if nMode != APPD_MODE .and. aTmp[ _LMOSCOM ] .and. !Empty( aTmp[ _MCOMENT ] )
       MsgInfo( AllTrim( aTmp[ _MCOMENT ] ), "Comentario" )
-
    end if
 
 Return ( .t. )
@@ -3654,7 +3638,7 @@ Return ( oDlg:nResult == IDOK )
 
 Static Function ShowFld( aTmp, aGet )
 
-	local n
+   local n
 
    for n := 1 TO 10
       if Empty( Rtrim( aIniCli[ n ] ) )
@@ -3757,7 +3741,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
 
       REDEFINE FOLDER oFld ;
          ID       100 ;
-			OF 		oDlg ;
+         OF       oDlg ;
          PROMPT   "&General"  ,;
                   "A&mbito"   ;
          DIALOGS  "CLIATP_0"  ,;
@@ -3768,20 +3752,20 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          ID       90 ;
          ON CHANGE( ChangeNaturaleza( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetArticulo, oGetFamilia, oCosto, nMode, oSayLabels ) ) ;
          WHEN     ( nMode == APPD_MODE ) ;
-			OF 		oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _aCCODART ] VAR aTmp[ _aCCODART ];
-			ID 		100 ;
+         ID       100 ;
          WHEN     ( nMode == APPD_MODE );
          ON HELP  ( BrwArticulo( aGet[ _aCCODART ], oGetArticulo ) );
          BITMAP   "LUPA" ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
          VALID    ( IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataView():Get( "CliAtp", nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ) ) ;
-			OF 		oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET oGetArticulo VAR cGetArticulo ;
-			ID 		110 ;
-			WHEN  	( .F. );
+         ID       110 ;
+         WHEN     ( .F. );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _aCCODFAM ] VAR aTmp[ _aCCODFAM ];
@@ -3970,9 +3954,9 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _aNDTOART ] VAR aTmp[ _aNDTOART ];
-			ID 		130 ;
+         ID       130 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[_aNDTOART] >= 0 .AND. aTmp[_aNDTOART] <= 100 ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ))  ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
          PICTURE  "@E 999.99";
@@ -3990,7 +3974,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[_aNDPRART] VAR aTmp[_aNDPRART];
          ID       601 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[_aNDPRART] >= 0 .AND. aTmp[_aNDPRART] <= 100 ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) ) ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
          PICTURE  "@E 999.99";
@@ -4003,9 +3987,9 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _aNCOMAGE ] VAR aTmp[ _aNCOMAGE ];
-			ID 		150 ;
+         ID       150 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[_aNCOMAGE] >= 0 .AND. aTmp[_aNCOMAGE] <= 100 ), lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) ) ;
          ON CHANGE( lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) );
          PICTURE  "@E 999.99";
@@ -4031,7 +4015,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aNDTO1 ] VAR aTmp[ _aNDTO1 ];
          ID       400 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[ _aNDTO1 ] >= 0 .AND. aTmp[ _aNDTO1 ] <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4039,7 +4023,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aNDTO2 ] VAR aTmp[ _aNDTO2 ];
          ID       410 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[ _aNDTO2 ] >= 0 .AND. aTmp[ _aNDTO2 ] <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4047,7 +4031,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aNDTO3 ] VAR aTmp[ _aNDTO3 ];
          ID       420 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[ _aNDTO3 ] >= 0 .AND. aTmp[ _aNDTO3 ] <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4055,7 +4039,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aNDTO4 ] VAR aTmp[ _aNDTO4 ];
          ID       430 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[ _aNDTO4 ] >= 0 .AND. aTmp[ _aNDTO4 ] <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4063,7 +4047,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aNDTO5 ] VAR aTmp[ _aNDTO5 ];
          ID       440 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[ _aNDTO5 ] >= 0 .AND. aTmp[ _aNDTO5 ] <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4071,7 +4055,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       REDEFINE GET aGet[ _aNDTO6 ] VAR aTmp[ _aNDTO6 ];
          ID       450 ;
          WHEN     ( nMode != ZOOM_MODE );
-			SPINNER ;
+         SPINNER ;
          VALID    ( ( aTmp[ _aNDTO6 ] >= 0 .AND. aTmp[ _aNDTO6 ] <= 100 ) ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4159,7 +4143,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       oSobre:bChange := {|| lArrayRen( oSobre:nAt, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto ) }
 
       REDEFINE LISTBOX oBrwRen ;
-			FIELDS ;
+         FIELDS ;
                   if( aRentabilidad[ oBrwRen:nAt, 5 ], LoadBitmap( GetResources(), "BALERT" ), "" ) ,;
                   aRentabilidad[ oBrwRen:nAt, 1 ],;
                   aRentabilidad[ oBrwRen:nAt, 2 ],;
@@ -4173,7 +4157,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
                   "Importe " + cDivEmp(),;
                   "Importe " + cDivChg(),;
                   "";
-			FIELDSIZES;
+         FIELDSIZES;
                   16,;
                   97,;
                   48,;
@@ -4360,8 +4344,8 @@ STATIC FUNCTION ChkAllSubCta()
    end if
 
    /*
-	Obtenemos los valores del primer y ultimo codigo
-	*/
+   Obtenemos los valores del primer y ultimo codigo
+   */
 
    cCliOrg           := dbFirst( ( TDataView():Get( "Client", nView ) ), 1 )
    cCliDes           := dbLast(  ( TDataView():Get( "Client", nView ) ), 1 )
@@ -4374,7 +4358,7 @@ STATIC FUNCTION ChkAllSubCta()
 
    /*
    Llamada a la funcion que activa la caja de dialogo--------------------------
-	*/
+   */
 
    DEFINE DIALOG oDlg RESOURCE "ChkAllSubCta"
 
@@ -4408,22 +4392,22 @@ STATIC FUNCTION ChkAllSubCta()
 
    REDEFINE CHECKBOX oChkCreate VAR lChkCreate ;
       ID       100 ;
-		OF 		oDlg
+      OF       oDlg
 
    REDEFINE CHECKBOX oChkCuenta VAR lChkCuenta ;
       ID       110 ;
-		OF 		oDlg
+      OF       oDlg
 
    oTree       := TTreeView():Redefine( 170, oDlg )
 
    REDEFINE BUTTON ;
       ID       IDOK ;
-		OF 		oDlg ;
+      OF       oDlg ;
       ACTION   ( MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, aMsg, oTree, oDlg ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL ;
-		OF 		oDlg ;
+      OF       oDlg ;
       CANCEL ;
       ACTION   ( oDlg:end() )
 
@@ -4431,8 +4415,8 @@ STATIC FUNCTION ChkAllSubCta()
       CENTER ;
       ON INIT  ( oTree:SetImageList( oImageList ) )
 
-	( TDataView():Get( "Client", nView ) )->( dbGoTo( nRecno ) )
-	( TDataView():Get( "Client", nView ) )->( OrdSetFocus( cTag ) )
+   ( TDataView():Get( "Client", nView ) )->( dbGoTo( nRecno ) )
+   ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( cTag ) )
 
    CLOSE ( cArea )
 
@@ -4531,7 +4515,7 @@ Devuelve la estructura de la base de datos en funcion del codigo de cliente
 
 STATIC FUNCTION CnfCli()
 
-	local oDlg
+   local oDlg
    local cIniCli  := cPatEmp() + "Client.Ini"
 
    DEFINE DIALOG oDlg RESOURCE "CNF_DEF_CLI" TITLE "Configurar clientes"
@@ -4560,13 +4544,13 @@ STATIC FUNCTION CnfCli()
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( WrtIniCli( cIniCli, ), oDlg:end( IDOK ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
    oDlg:AddFastKey( VK_F5, {|| WrtIniCli( cIniCli, ), oDlg:end( IDOK ) } )
 
@@ -4580,16 +4564,16 @@ RETURN NIL
 
 STATIC FUNCTION WrtIniCli( cIniCli )
 
-	WritePProString( "campos", "1", aIniCli[ 1 ], cIniCli )
-	WritePProString( "campos", "2", aIniCli[ 2 ], cIniCli )
-	WritePProString( "campos", "3", aIniCli[ 3 ], cIniCli )
-	WritePProString( "campos", "4", aIniCli[ 4 ], cIniCli )
-	WritePProString( "campos", "5", aIniCli[ 5 ], cIniCli )
-	WritePProString( "campos", "6", aIniCli[ 6 ], cIniCli )
-	WritePProString( "campos", "7", aIniCli[ 7 ], cIniCli )
-	WritePProString( "campos", "8", aIniCli[ 8 ], cIniCli )
-	WritePProString( "campos", "9", aIniCli[ 9 ], cIniCli )
-	WritePProString( "campos", "10",aIniCli[ 10], cIniCli )
+   WritePProString( "campos", "1", aIniCli[ 1 ], cIniCli )
+   WritePProString( "campos", "2", aIniCli[ 2 ], cIniCli )
+   WritePProString( "campos", "3", aIniCli[ 3 ], cIniCli )
+   WritePProString( "campos", "4", aIniCli[ 4 ], cIniCli )
+   WritePProString( "campos", "5", aIniCli[ 5 ], cIniCli )
+   WritePProString( "campos", "6", aIniCli[ 6 ], cIniCli )
+   WritePProString( "campos", "7", aIniCli[ 7 ], cIniCli )
+   WritePProString( "campos", "8", aIniCli[ 8 ], cIniCli )
+   WritePProString( "campos", "9", aIniCli[ 9 ], cIniCli )
+   WritePProString( "campos", "10",aIniCli[ 10], cIniCli )
    WritePProString( "filtro", "ft",aIniCli[ 11], cIniCli )
 
 RETURN NIL
@@ -5016,13 +5000,13 @@ return nil
 
 STATIC FUNCTION ChgPrc( oWndBrw )
 
-	local oDlg
+   local oDlg
    local cFam              := Space( 5 )
-	local oFam
+   local oFam
    local cTxtFam           := "Todas"
-	local oTxtFam
+   local oTxtFam
    local cTipIva           := Space( 1 )
-	local oTipIva
+   local oTipIva
    local cTxtIva           := "Todos"
    local oTxtIva
    local lTarifa1          := .f.
@@ -5064,15 +5048,15 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    local dFinPrc           := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
    local aStaCli           := aGetStatus( TDataView():Get( "Client", nView ), .t. )
 
-	/*
-	Llamada a la funcion que activa la caja de dialogo
-	*/
+   /*
+   Llamada a la funcion que activa la caja de dialogo
+   */
 
    DEFINE DIALOG oDlg RESOURCE "CHGPRECLI"
 
    /*
-	Obtenemos los valores del primer y ultimo codigo
-	*/
+   Obtenemos los valores del primer y ultimo codigo
+   */
 
    cCliOrg        := dbFirst( TDataView():Get( "Client", nView ), 1 )
    cCliDes        := dbLast ( TDataView():Get( "Client", nView ), 1 )
@@ -5124,7 +5108,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
       OF       oDlg
 
    REDEFINE GET oSayArtOrg VAR cSayArtOrg ;
-		WHEN 		.F.;
+      WHEN     .F.;
       ID       201 ;
       OF       oDlg
 
@@ -5136,7 +5120,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
       OF       oDlg
 
    REDEFINE GET oSayArtDes VAR cSayArtDes ;
-		WHEN 		.F.;
+      WHEN     .F.;
       ID       211 ;
       OF       oDlg
 
@@ -5145,36 +5129,36 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    */
 
    REDEFINE GET oFam VAR cFam ;
-		ID 		100 ;
-		VALID 	( cFamilia( oFam, , oTxtFam ) );
+      ID       100 ;
+      VALID    ( cFamilia( oFam, , oTxtFam ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwFamilia( oFam, oTxtFam ) );
-		COLOR 	CLR_GET ;
-		OF 		oDlg
+      COLOR    CLR_GET ;
+      OF       oDlg
 
-	REDEFINE GET oTxtFam VAR cTxtFam ;
-		ID 		110 ;
-		WHEN		.F. ;
-		COLOR 	CLR_GET ;
-		OF 		oDlg
+   REDEFINE GET oTxtFam VAR cTxtFam ;
+      ID       110 ;
+      WHEN     .F. ;
+      COLOR    CLR_GET ;
+      OF       oDlg
 
    /*
    Monta los tipos de impuestos
    */
 
    REDEFINE GET oTipIva VAR cTipIva ;
-		ID 		120 ;
+      ID       120 ;
       PICTURE  "@!" ;
       VALID    ( cTiva( oTipIva, TDataView():Get( "TIva", nView ), oTxtIva ) );
       BITMAP   "LUPA" ;
       ON HELP  ( BrwIva( oTipIva, nil, oTxtIva ) );
-		COLOR 	CLR_GET ;
-		OF 		oDlg
+      COLOR    CLR_GET ;
+      OF       oDlg
 
-	REDEFINE GET oTxtIva VAR cTxtIva ;
-		ID 		130 ;
-		WHEN		.F. ;
-		COLOR 	CLR_GET ;
+   REDEFINE GET oTxtIva VAR cTxtIva ;
+      ID       130 ;
+      WHEN     .F. ;
+      COLOR    CLR_GET ;
       OF       oDlg
 
    /*
@@ -5183,7 +5167,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
 
    REDEFINE CHECKBOX lGenerateTarifa ;
       ID       300 ;
-		OF 		oDlg
+      OF       oDlg
 
    REDEFINE GET dIniPrc;
       ID       230 ;
@@ -5206,28 +5190,28 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    */
 
    REDEFINE CHECKBOX lTarifa1 ;
-		ID 		161 ;
-		OF 		oDlg
+      ID       161 ;
+      OF       oDlg
 
    REDEFINE CHECKBOX lTarifa2 ;
-		ID 		162 ;
-		OF 		oDlg
+      ID       162 ;
+      OF       oDlg
 
    REDEFINE CHECKBOX lTarifa3 ;
       ID       163 ;
-		OF 		oDlg
+      OF       oDlg
 
    REDEFINE CHECKBOX lTarifa4 ;
       ID       164 ;
-		OF 		oDlg
+      OF       oDlg
 
    REDEFINE CHECKBOX lTarifa5 ;
       ID       165 ;
-		OF 		oDlg
+      OF       oDlg
 
    REDEFINE CHECKBOX lTarifa6 ;
       ID       166 ;
-		OF 		oDlg
+      OF       oDlg
 
    /*
    Monta el combo para saber cual es la base sobre la que se hace en nuevo precio
@@ -5244,60 +5228,60 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    */
 
    REDEFINE RADIO oRad VAR nRad ;
-		ID 		170, 172 ;
-		OF 		oDlg
+      ID       170, 172 ;
+      OF       oDlg
 
    /*
    Porcentual
    */
 
    REDEFINE GET nPctInc ;
-		WHEN		( nRad == 1 ) ;
-		PICTURE	"@E 999.99" ;
-		SPINNER ;
-		ID 		171 ;
-		OF 		oDlg
+      WHEN     ( nRad == 1 ) ;
+      PICTURE  "@E 999.99" ;
+      SPINNER ;
+      ID       171 ;
+      OF       oDlg
 
    /*
    Lineal
    */
 
    REDEFINE GET nUndInc ;
-		WHEN		( nRad == 2 ) ;
+      WHEN     ( nRad == 2 ) ;
       PICTURE  cPouDiv ;
-		ID 		173 ;
-		OF 		oDlg
+      ID       173 ;
+      OF       oDlg
 
    /*
    Elige si quiere redondeo y la cantidad
    */
 
    REDEFINE CHECKBOX lRnd ;
-		ID 		180 ;
-		OF 		oDlg
+      ID       180 ;
+      OF       oDlg
 
-	REDEFINE GET nDec ;
-		PICTURE	"@E 9" ;
-		SPINNER ;
-		ID 		190 ;
-		OF 		oDlg
+   REDEFINE GET nDec ;
+      PICTURE  "@E 9" ;
+      SPINNER ;
+      ID       190 ;
+      OF       oDlg
 
    REDEFINE METER oMtr;
-		VAR 		nMtr ;
-		PROMPT	"Procesando" ;
+      VAR      nMtr ;
+      PROMPT   "Procesando" ;
       ID       220 ;
-		OF 		oDlg ;
+      OF       oDlg ;
       TOTAL    ( TDataView():Get( "CliAtp", nView ) )->( lastrec() )
 
    REDEFINE BUTTON ;
       ID       IDOK;
-		OF 		oDlg ;
+      OF       oDlg ;
       ACTION   (  mkChgPrc( cFam, cTipIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, dbfCliAtp, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPrc, dFinPrc, lAppTarifaFecha ) )
 
-	REDEFINE BUTTON ;
+   REDEFINE BUTTON ;
       ID       IDCANCEL;
-		OF 		oDlg ;
-		ACTION	( oDlg:end() )
+      OF       oDlg ;
+      ACTION   ( oDlg:end() )
 
    oDlg:AddFastKey( VK_F5, {|| mkChgPrc( cFam, cTipIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, dbfCliAtp, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPrc, dFinPrc, lAppTarifaFecha ) } )
 
@@ -6372,7 +6356,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
    end if
 
    if !Empty( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ] )
-      cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+      cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], TDataView():Get( "TipInci", nView ) )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de clientes"
@@ -6380,9 +6364,9 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
       REDEFINE GET aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
-         VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
+         VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], TDataView():Get( "TipInci", nView ), oNomInci ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+         ON HELP  ( BrwIncidencia( TDataView():Get( "TipInci", nView ), aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -6404,12 +6388,12 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
 
       REDEFINE CHECKBOX aTmp[ ( dbfFacCliI )->( FieldPos( "lListo" ) ) ] ;
          ID       140 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX aTmp[ ( dbfFacCliI )->( FieldPos( "lAviso" ) ) ] ;
          ID       150 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE BUTTON ;
@@ -6973,10 +6957,10 @@ Return ( Self )
 
 Method SelectAllLabels( lSelect ) CLASS TClienteLabelGenerator
 
-	local n			:= 0
+   local n        := 0
    local nRecno   := ( TDataView():Get( "Client", nView ) )->( Recno() )
 
-	CursorWait()
+   CursorWait()
 
    ( TDataView():Get( "Client", nView ) )->( dbGoTop() )
    while !( TDataView():Get( "Client", nView ) )->( eof() )
@@ -6999,7 +6983,7 @@ Method SelectAllLabels( lSelect ) CLASS TClienteLabelGenerator
    ::oMtrLabel:Set( 0 )
    ::oMtrLabel:Refresh()
 
-	CursorArrow()
+   CursorArrow()
 
 Return ( Self )
 
@@ -7007,10 +6991,10 @@ Return ( Self )
 
 Method SelectCriterioLabels() CLASS TClienteLabelGenerator
 
-	local n			:= 0
+   local n        := 0
    local nRecno   := ( TDataView():Get( "Client", nView ) )->( Recno() )
 
-	CursorWait()
+   CursorWait()
 
    ( TDataView():Get( "Client", nView ) )->( dbGoTop() )
    while !( TDataView():Get( "Client", nView ) )->( eof() )
@@ -7049,7 +7033,7 @@ Method SelectCriterioLabels() CLASS TClienteLabelGenerator
    ::oMtrLabel:Set( 0 )
    ::oMtrLabel:Refresh()
 
-	CursorArrow()
+   CursorArrow()
 
 Return ( Self )
 
@@ -7388,14 +7372,14 @@ Browse de clientes
 
 FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 
-	local oDlg
+   local oDlg
    local hBmp
-	local oBrw
+   local oBrw
    local uGet1
-	local cGet1
+   local cGet1
    local cTxtOrigen  := uGet:VarGet()
    local nOrdAnt     := GetBrwOpt( "BrwClient" )
-	local oCbxOrd
+   local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01032" )
@@ -7434,18 +7418,18 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    end case
 
       REDEFINE GET uGet1 VAR cGet1;
-			ID 		104 ;
+         ID       104 ;
          ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, ( TDataView():Get( "Client", nView ) ), .t. ) );
          VALID    ( OrdClearScope( oBrw, ( TDataView():Get( "Client", nView ) ) ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
          ITEMS    aCbxOrd ;
          ON CHANGE( ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), uGet1:SetFocus() ) ;
-			OF 		oDlg
+         OF       oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -7580,25 +7564,25 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
          oBrw:nLineHeight     := 36
       end if
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( oDlg:end(IDOK) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
       REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
+         ID       500 ;
+         OF       oDlg ;
          WHEN     nAnd( nLevel, ACC_APPD ) != 0 ;
          ACTION   ( WinAppRec( oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ) )
 
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
          WHEN     nAnd( nLevel, ACC_EDIT ) != 0;
          ACTION   ( WinEdtRec( oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ) )
 
@@ -7645,18 +7629,18 @@ RETURN oDlg:nResult == IDOK
 
 FUNCTION LoaIniCli( cPath, cIniCli )
 
-	local n
+   local n
    local oIniCli
 
    DEFAULT cPath     := cPatEmp()
    DEFAULT cIniCli   := cPath + "Client.Ini"
 
-	/*
-	Fichero Ini de la Aplicaci¢n
-	---------------------------------------------------------------------------
-	*/
+   /*
+   Fichero Ini de la Aplicaci¢n
+   ---------------------------------------------------------------------------
+   */
 
-	INI oIniCli FILE cIniCli
+   INI oIniCli FILE cIniCli
 
       GET aIniCli[ 1 ] SECTION "campos" ENTRY "1" OF oIniCli DEFAULT Space( 50 )
 
@@ -7680,7 +7664,7 @@ FUNCTION LoaIniCli( cPath, cIniCli )
 
       GET aIniCli[ 11 ] SECTION "filtro" ENTRY "ft" OF oIniCli DEFAULT "Activas"
 
-	ENDINI
+   ENDINI
 
    for n := 1 TO 10
       aIniCli[ n ]   := padr( aIniCli[ n ], 50 )
@@ -8020,15 +8004,15 @@ STATIC FUNCTION CreateFiles( cPath )
 
    IF !lExistTable( cPath + "CLIENT.DBF" )
       dbCreate( cPath + "CLIENT.DBF", aSqlStruct( aItmCli() ), cDriver() )
-	END IF
+   END IF
 
    IF !lExistTable( cPath + "CLIATP.DBF" )
       dbCreate( cPath + "CLIATP.DBF", aSqlStruct( aItmAtp() ), cDriver() )
-	END IF
+   END IF
 
    IF !lExistTable( cPath + "OBRAST.DBF" )
       dbCreate( cPath + "OBRAST.DBF", aSqlStruct( aItmObr() ), cDriver() )
-	END IF
+   END IF
 
    IF !lExistTable( cPath + "CLIENTD.DBF" )
       dbCreate( cPath + "CLIENTD.DBF", aSqlStruct( aCliDoc() ), cDriver() )
@@ -8354,9 +8338,9 @@ Function nXbYAtipica( cCodArt, cCodCli, nCajVen, nUndVen, dFecOfe, dbfAtpCli )
    local aXbYRet     := { 0, 0 }
    local nOrd        := ( dbfAtpCli )->( OrdSetFocus( "cCliArt" ) )
 
-	/*
-	Primero buscar si existe el articulo en la oferta
-	*/
+   /*
+   Primero buscar si existe el articulo en la oferta
+   */
 
    if ( dbfAtpCli )->( dbSeek( cCodCli + cCodArt ) )
 
@@ -8795,7 +8779,7 @@ FUNCTION RetClient( cCodCli, dbfClient )
    local oBlock
    local oError
    local lClose   := .f.
-	local cText		:= Space( 30 )
+   local cText    := Space( 30 )
 
    cCodCli        := RJust( cCodCli, "0", RetNumCodCliEmp() )
 
@@ -8839,11 +8823,11 @@ FUNCTION cClient( oGet, dbfCli, oGet2 )
    local oError
    local lClose   := .f.
    local lValid   := .f.
-	local xValor	:= oGet:varGet()
+   local xValor   := oGet:varGet()
 
    if Empty( xValor )
       if IsObject( oGet2 )
-			oGet2:cText( "" )
+         oGet2:cText( "" )
          oGet2:SetColor( 0, CLR_WHITE )
       end if
       return .t.
@@ -9061,7 +9045,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    /*
    Añadimos desde el fichero de atipicas---------------------------------------
-	*/
+   */
 
    if nMode != APPD_MODE
 
@@ -9132,10 +9116,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de incidencias
       */
 
-      if ( dbfCliInc )->( dbSeek( cCodCli ) )
-         while ( ( dbfCliInc )->cCodCli == cCodCli ) .and. ( dbfCliInc )->( !eof() )
-            dbPass( dbfCliInc, dbfTmpInc, .t. )
-            ( dbfCliInc )->( dbSkip() )
+      if ( TDataView():Get( "CliInc", nView ) )->( dbSeek( cCodCli ) )
+         while ( ( TDataView():Get( "CliInc", nView ) )->cCodCli == cCodCli ) .and. !( TDataView():Eof( "CliInc", nView ) )
+            dbPass( TDataView():Get( "CliInc", nView ), dbfTmpInc, .t. )
+            ( TDataView():Get( "CliInc", nView ) )->( dbSkip() )
          end while
       end if
 
@@ -9604,8 +9588,8 @@ if !Empty( dbfTmpInc )
    oMsgText( "Eliminando incidencias cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
 
-   while ( dbfCliInc )->( dbSeek( aTmp[ _COD ] ) )
-      dbDel( dbfCliInc )
+   while ( TDataView():Get( "CliInc", nView ) )->( dbSeek( aTmp[ _COD ] ) )
+      dbDel( TDataView():Get( "CliInc", nView ) )
       oMsgProgress():DeltaPos( 1 )
    end while
 
@@ -9614,7 +9598,7 @@ if !Empty( dbfTmpInc )
 
    ( dbfTmpInc )->( dbGoTop() )
    while !( dbfTmpInc )->( eof() )
-      dbPass( dbfTmpInc, dbfCliInc, .t., aTmp[ _COD ] )
+      dbPass( dbfTmpInc, TDataView():Get( "CliInc", nView ), .t., aTmp[ _COD ] )
       ( dbfTmpInc )->( dbSkip() )
       oMsgProgress():DeltaPos( 1 )
    end while
@@ -9669,8 +9653,13 @@ Return ( .t. )
 
 Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto )
 
+<<<<<<< HEAD
 	local lReturn	:= .t.
    local cCodArt  := Padr( aGet[ _aCCODART ]:VarGet(), 18 )
+=======
+   local lReturn  := .t.
+   local cCodArt  := aGet[ _aCCODART ]:VarGet()
+>>>>>>> 6a67c5bbede385723a3a407ef59826c10b5d6957
    local nPreCom  := 0
    local nPreVta  := 0
 
@@ -10695,9 +10684,9 @@ Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
       nPrecio     += oNewImp:nValImp( cCodImp, .t., nIvaPct )
    end if
 
-	/*
+   /*
    Calculo del impuestos-------------------------------------------------------
-	*/
+   */
 
    nPrecio        += ( nPrecio * nIvaPct / 100 )
 
@@ -10711,12 +10700,12 @@ Return .t.
 
 Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
 
-	local nNewPre
+   local nNewPre
    local nIvaPct  := nIva( TDataView():Get( "TIva", nView ), cTipIva )
 
-	/*
+   /*
    Primero es quitar el impuestos
-	*/
+   */
 
    nNewPre        := Div( nPrecio, ( 1 + nIvaPct / 100 ) )
 
@@ -10728,9 +10717,9 @@ Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
       nNewPre     -= oNewImp:nValImp( cCodImp, lIvaInc , nIvaPct )
    end if
 
-	/*
-	Actualizamos la base
-	*/
+   /*
+   Actualizamos la base
+   */
 
    oGetBas:cText( nNewPre )
 
@@ -10750,9 +10739,9 @@ Function nCalIva( nPrecio, lIvaInc, cTipIva, cCodImp )
       nPrecio     += oNewImp:nValImp( cCodImp, .t., nIvaPct )
    end if
 
-	/*
+   /*
    Calculo del impuestos
-	*/
+   */
 
    nPrecio        += ( nPrecio * nIvaPct / 100 )
 
@@ -10762,12 +10751,12 @@ Return nPrecio
 
 Function nCalBas( nPrecio, lIvaInc, cTipIva, cCodImp )
 
-	local nNewPre
+   local nNewPre
    local nIvaPct  := nIva( TDataView():Get( "TIva", nView ), cTipIva )
 
-	/*
+   /*
    Primero es quitar el impuestos
-	*/
+   */
 
    nNewPre        := Div( nPrecio, ( 1 + nIvaPct / 100 ) )
 
@@ -10813,7 +10802,7 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Bancos",            ( dbfBanco )->( Select() ) )
    oFr:SetFieldAliases( "Bancos",            cItemsToReport( aCliBnc() ) )
 
-   oFr:SetWorkArea(     "Incidencias",       ( dbfCliInc )->( Select() ) )
+   oFr:SetWorkArea(     "Incidencias",       ( TDataView():Get( "CliInc", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias",       cItemsToReport( aCliInc() ) )
 
    if lTemporal
@@ -11041,9 +11030,9 @@ Static Function lArticuloEnOferta( cCodigoArticulo, cCodigoCliente, cCodigoGrupo
 
       while ( dbfOfe )->cArtOfe == cCodigoArticulo .and. !( dbfOfe )->( eof() )
 
-			/*
+         /*
          Comprobamos si esta entre las fechas----------------------------------
-			*/
+         */
 
          if ( GetSysDate() >= ( dbfOfe )->dIniOfe .or. Empty( ( dbfOfe )->dIniOfe ) ) .and. ;
             ( GetSysDate() <= ( dbfOfe )->dFinOfe .or. Empty( ( dbfOfe )->dFinOfe ) ) .and. ;
@@ -11483,14 +11472,14 @@ RETURN lRet
 
 FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodCli, dbfBancos )
 
-	local oDlg
-	local oBrw
+   local oDlg
+   local oBrw
    local oFont
    local oBtn
-	local oGet1
-	local cGet1
+   local oGet1
+   local cGet1
    local nOrd        := GetBrwOpt( "BrwBancos" )
-	local oCbxOrd
+   local oCbxOrd
    local aCbxOrd     := { "Nombre", "Cuenta" }
    local cCbxOrd     := "Nombre"
    local nLevel      := nLevelUsr( "01032" )
@@ -11500,7 +11489,7 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
    cCbxOrd           := aCbxOrd[ nOrd ]
 
    if Empty( cCodCli )
-		MsgStop( "Es necesario codificar un cliente" )
+      MsgStop( "Es necesario codificar un cliente" )
       return .t.
    end if
 
@@ -11531,16 +11520,16 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
          BITMAP   "Find" ;
          OF       oDlg
 
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
          ITEMS    aCbxOrd ;
          ON CHANGE(  ( dbfBancos )->( OrdSetFocus( oCbxOrd:nAt ) ),;
                      ( dbfBancos )->( OrdScope( 0, cCodCli ) ),;
                      ( dbfBancos )->( OrdScope( 1, cCodCli ) ),;
                      oBrw:Refresh(),;
                      oGet1:SetFocus() );
-			OF 		oDlg
+         OF       oDlg
 
       oBrw                 := TXBrowse():New( oDlg )
 
@@ -11612,13 +11601,13 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
 
       oBrw:CreateFromResource( 105 )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
          WHEN     ( .f. );
          ACTION   ( nil )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          WHEN     ( .f. );
@@ -11651,7 +11640,7 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
       ( dbfBancos )->( OrdScope( 1, nil ) )
    end if
 
-	oGet:setFocus()
+   oGet:setFocus()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -12084,7 +12073,7 @@ RETURN .t.
 //---------------------------------------------------------------------------//
 
 
-FUNCTION AppIncidenciaCliente()
+FUNCTION AppIncidenciaCliente( nView )
 
    local nLevel         := nLevelUsr( "01032" )
 
@@ -12105,7 +12094,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION EdtIncidenciaCliente( nOrdKeyNumber )
+FUNCTION EdtIncidenciaCliente( nOrdKeyNumber, nView )
 
    local nLevel         := nLevelUsr( "01032" )
 
@@ -12114,14 +12103,8 @@ FUNCTION EdtIncidenciaCliente( nOrdKeyNumber )
       return .t.
    end if
 
-   if OpenFiles( .t. )
-
-      if ( dbfCliInc )->( ordKeyGoTo( nOrdKeyNumber ) )
-         WinEdtRec( nil, bEdtInc, dbfCliInc )
-      end if
-
-      CloseFiles()
-
+   if ( TDataView():Get( "CliInc", nView ) )->( ordKeyGoTo( nOrdKeyNumber ) )
+      WinEdtRec( nil, bEdtInc, TDataView():Get( "CliInc", nView ) )
    end if
 
 RETURN .t.

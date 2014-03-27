@@ -34,6 +34,9 @@ CLASS TImpFacCom
    DATA oDbfFacPrvTGst
    DATA oDbfFacPrvLGst
    DATA oDbfFacPrvPGst
+   DATA oDbfPedPrvTFac
+   DATA oDbfPedPrvTGst
+   DATA oDbfPedPrvLGst
    DATA cPathFac
    DATA oDbfIva
    DATA oDbfPgo
@@ -62,6 +65,10 @@ CLASS TImpFacCom
    METHOD ImportaFacturasClientes()
 
    METHOD ImportaFacturasProveedores()
+
+   METHOD ImportaReciboClientes()
+
+   METHOD ImportaPedidosProveedores()
 
 END CLASS
 
@@ -108,7 +115,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Articulo.DBF" )      
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de artÌculos", ::cPathFac + "ARTICULO.DBF" )
+      msgStop( "No existe fichero de art√≠culos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtPrv PATH ( cPatArt() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
       DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
@@ -119,11 +126,11 @@ METHOD OpenFiles()
 
 //Comprobamos si existe el fichero donde se guardan las l√≠neas de todos los documentos
 
-   if !File( ::cPathFac + "CONTENI1.DBF" ) 
+   if !File( ::cPathFac + "CONTENI1.DBF" )
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de detalle de lÌneas", ::cPathFac + "CONTENI1.DBF" )
+      msgStop( "No existe fichero de detalle de l√≠neas", ::cPathFac + "CONTENI1.DBF" )
    else
 
       DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "CONTENI1.DBF"   VIA ( cDriver() )CLASS "ALBLFAC"
@@ -156,6 +163,17 @@ METHOD OpenFiles()
          DATABASE NEW ::oDbfFacPrvTFac PATH ( ::CPathFac() ) FILE "GASTOS1.DBF"  VIA ( cDriver() )CLASS "FACPRVTFAC"
          DATABASE NEW ::oDbfFacPrvLGst PATH ( cPatEmp() )    FILE "FACPRVL.DBF"  VIA ( cDriver() )CLASS "FACPRVLGST" INDEX "FACPRVL.CDX"
          DATABASE NEW ::oDbfFacPrvPGst PATH ( cPatEmp() )    FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FACPRVPGST" INDEX "FACPRVP.CDX"
+      end if 
+
+      if !File( ::cPathFac + "PEDIDOS1.DBF" )
+         ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
+         msgStop( "No existe fichero de pedidos de proveedores", ::cPathFac + "PEDIDOS1.DBF" )
+      else
+         
+         DATABASE NEW ::oDbfPedPrvTFac PATH ( ::cPathFac )  FILE "PEDIDOS1.DBF"     VIA ( cDriver() ) CLASS "PEDPRVTFAC"
+
+         DATABASE NEW ::oDbfPedPrvTGst PATH ( cPatEmp() )   FILE "PEDPROVT.DBF"     VIA ( cDriver() ) CLASS "PEDPRVTGST" INDEX "PEDPROVT.CDX"
+         DATABASE NEW ::oDbfPedPrvLGst PATH ( cPatEmp() )   FILE "PEDPROVL.DBF"     VIA ( cDriver() ) CLASS "PEDPRVLGST" INDEX "PEDPROVL.CDX"
       end if 
 
    end if
@@ -358,6 +376,24 @@ METHOD CloseFiles()
       ::oDbfFacPrvPGst:End()
    else
       ::oDbfFacPrvPGst := nil 
+   end if
+
+   if !Empty( ::oDbfPedPrvLGst )
+      ::oDbfPedPrvLGst:End()
+   else
+      ::oDbfPedPrvLGst := nil 
+   end if 
+
+   if !Empty( ::oDbfPedPrvTGst )
+      ::oDbfPedPrvTGst:End()
+   else
+      ::oDbfPedPrvTGst := nil 
+   end if 
+
+   if !Empty( ::oDbfPedPrvTFac )
+      ::oDbfPedPrvTFac:End()
+   else
+      ::oDbfPedPrvTFac := nil 
    end if 
 
 RETURN .T.
@@ -369,10 +405,10 @@ METHOD New()
 
    ::cPathFac     := Space( 100 )
 
-   ::aLgcIndices  := Afill( Array( 6 ), .t. )
-   ::aChkIndices  := Array( 6 )
-   ::aMtrIndices  := Array( 6 )
-   ::aNumIndices  := Afill( Array( 6 ), 0 )
+   ::aLgcIndices  := Afill( Array( 7 ), .t. )
+   ::aChkIndices  := Array( 7 )
+   ::aMtrIndices  := Array( 7 )
+   ::aNumIndices  := Afill( Array( 7 ), 0 )
 
 RETURN ( Self )
 
@@ -404,7 +440,8 @@ METHOD Resource()
       REDEFINE CHECKBOX ::aChkIndices[ 3 ]   VAR ::aLgcIndices[ 3 ]  ID 130 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 4 ]   VAR ::aLgcIndices[ 4 ]  ID 150 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 5 ]   VAR ::aLgcIndices[ 5 ]  ID 160 OF ::oDlg
-      REDEFINE CHECKBOX ::aChkIndices[ 6 ]   VAR ::aLgcIndices[ 6 ]  ID 170 of ::oDlg 
+      REDEFINE CHECKBOX ::aChkIndices[ 6 ]   VAR ::aLgcIndices[ 6 ]  ID 170 of ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 7 ]   VAR ::aLgcIndices[ 7 ]  ID 180 of ::oDlg  
 
       REDEFINE METER ::aMtrIndices[ 1 ]      VAR ::aNumIndices[ 1 ]  ID 111 OF ::oDlg
       REDEFINE METER ::aMtrIndices[ 2 ]      VAR ::aNumIndices[ 2 ]  ID 121 OF ::oDlg
@@ -412,6 +449,7 @@ METHOD Resource()
       REDEFINE METER ::aMtrIndices[ 4 ]      VAR ::aNumIndices[ 4 ]  ID 151 OF ::oDlg
       REDEFINE METER ::aMtrIndices[ 5 ]      VAR ::aNumIndices[ 5 ]  ID 161 OF ::oDlg
       REDEFINE METER ::aMtrIndices[ 6 ]      VAR ::aNumIndices[ 6 ]  ID 171 OF ::oDlg
+      REDEFINE METER ::aMtrIndices[ 7 ]      VAR ::aNumIndices[ 7 ]  ID 181 OF ::oDlg
 
       REDEFINE BUTTON ID 500        OF ::oDlg ACTION ( ::SelectChk( .t. ) )
       REDEFINE BUTTON ID 501        OF ::oDlg ACTION ( ::SelectChk( .f. ) )
@@ -479,10 +517,15 @@ METHOD Importar()
 
    if ::aLgcIndices[ 5 ]
       ::ImportaFacturasClientes()
+      ::ImportaReciboClientes()
    end if 
 
    if ::aLgcIndices[ 6 ]
       ::ImportaFacturasProveedores()
+   end if 
+
+   if ::aLgcIndices[ 7 ]
+      ::ImportaPedidosProveedores()
    end if 
 
          /*
@@ -1662,8 +1705,6 @@ METHOD ImportaFacturasClientes()
          ::oDbfFacPGst:Delete( .f. )
       end 
 
-      if Val( ::oDbfFacTFac:Numero ) <> 0
-
          ::oDbfFacTGst:Append()
          ::oDbfFacTGst:Blank()
    
@@ -1738,8 +1779,6 @@ METHOD ImportaFacturasClientes()
    
          ::oDbfFacTGst:Save()
 
-      end if 
-
       ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
 
       ::oDbfFacTFac:Skip()
@@ -1751,7 +1790,7 @@ METHOD ImportaFacturasClientes()
    ::oDbfAlbLFac:GoTop()
    while !( ::oDbfAlbLFac:eof() )
 
-      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "F"
+      if Left( ::oDbfAlbLFac:RfaLin, 2 ) == "F "
 
          ::oDbfFacLGst:Append()
 
@@ -1792,13 +1831,123 @@ METHOD ImportaFacturasClientes()
 
    while !( ::oDbfFacTGst:eof() )
 
-      GenPgoFacCli( ::oDbfFacTGst:cSerie + Str( ::oDbfFacTGst:nNumFac ) + ::oDbfFacTGst:cSufFac, ::oDbfFacTGst:cAlias, ::oDbfFacLGst:cAlias, ::oDbfFacPGst:cAlias, ::oDbfAntTGst:cAlias, ::oDbfCliGst:cAlias, ::oDbfPgo:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias, ,.f. )
+      //GenPgoFacCli( ::oDbfFacTGst:cSerie + Str( ::oDbfFacTGst:nNumFac ) + ::oDbfFacTGst:cSufFac, ::oDbfFacTGst:cAlias, ::oDbfFacLGst:cAlias, ::oDbfFacPGst:cAlias, ::oDbfAntTGst:cAlias, ::oDbfCliGst:cAlias, ::oDbfPgo:cAlias, ::oDbfDiv:cAlias, ::oDbfIva:cAlias, ,.f. )
 
       ::aMtrIndices[ 5 ]:Set( ::oDbfFacTGst:Recno() )
 
       ::oDbfFacTGst:Skip()
 
    end while
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImportaReciboClientes()
+   
+   local cSerie         := "A"
+   local nNumero
+   local cSufijo        := "00"
+   local nTotalFactura
+
+   ::aMtrIndices[ 5 ]:SetTotal( ::oDbfFacTFac:LastRec() )
+   
+
+   // Traspaso de recibos de clientes------------------------------------------
+
+   ::oDbfFacTFac:GoTop()
+   while !( ::oDbfFacTFac:eof() )
+
+      while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
+         ::oDbfFacPGst:Delete( .f. )
+      end 
+
+      nNumero           := val( ::oDbfFacTFac:Numero )
+
+      // Calculo de total factura----------------------------------------------
+
+      nTotalFactura     := 0
+
+      nTotalFactura     += ::oDbfFacTFac:Base1 
+
+      if ::oDbfFacTFac:Iva1 != 0
+         nTotalFactura  += Round( ::oDbfFacTFac:Base1 * ::oDbfFacTFac:Iva1 / 100, 2 )
+      end if
+
+      nTotalFactura     += ::oDbfFacTFac:Base2 
+
+      if ::oDbfFacTFac:Iva2 != 0
+         nTotalFactura  += Round( ::oDbfFacTFac:Base2 * ::oDbfFacTFac:Iva2 / 100, 2 )
+      end if
+
+      nTotalFactura     += ::oDbfFacTFac:Base3 
+
+      if ::oDbfFacTFac:Iva3 != 0
+         nTotalFactura  += Round( ::oDbfFacTFac:Base3 * ::oDbfFacTFac:Iva3 / 100, 2 )
+      end if
+
+      nTotalFactura     := Round( nTotalFactura, 2 )
+
+      // Agrego cobros a la factura--------------------------------------------
+
+      ::oDbfFacPGst:Append()
+      ::oDbfFacPGst:Blank()
+
+      ::oDbfFacPGst:cSerie       := cSerie
+      ::oDbfFacPGst:nNumFac      := nNumero
+      ::oDbfFacPGst:cSufFac      := cSufijo
+      ::oDbfFacPGst:nNumRec      := 1
+      ::oDbfFacPGst:cCodPgo      := cDefFpg()
+      ::oDbfFacPGst:cCodCaj      := cDefCaj()
+      ::oDbfFacPGst:cTurRec      := cCurSesion()
+      ::oDbfFacPGst:cNomCli      := ::oDbfFacTFac:NombreF 
+      ::oDbfFacPGst:dEntrada     := ::oDbfFacTFac:Fecha 
+      ::oDbfFacPGst:cDesCriP     := "Recibo n∫ 1 de factura " + cSerie  + "/" + Alltrim( Str( nNumero ) ) + "/" + ::oDbfFacPGst:cSufFac 
+      ::oDbfFacPGst:dPreCob      := ::oDbfFacTFac:Fecha 
+      
+      ::oDbfFacPGst:cDivPgo      := "EUR"
+      ::oDbfFacPGst:nVdvPgo      := 1
+      ::oDbfFacPGst:dFecVto      := ::oDbfFacTFac:Fecha
+
+      ::oDbfFacPGst:cCodUsr      := cCurUsr()
+
+      if ::oDbfFacTGst:SeekInOrd( cSerie + Str( nNumero, 9 ) + cSufijo, "nNumFac" )
+         ::oDbfFacPGst:cCodCli   := ::oDbfFacTGst:cCodCli
+         ::oDbfFacPGst:cCodAge   := ::oDbfFacTGst:cCodAge
+      end if
+
+      // Estudio segun pagos---------------------------------------------------
+
+      if ::oDbfFacTFac:Pendiente == 0 
+         ::oDbfFacPGst:lCobrado     := .t.
+         ::oDbfFacPGst:nImporte     := nTotalFactura
+         ::oDbfFacPGst:nImpCob      := nTotalFactura
+      end if
+
+      if ::oDbfFacTFac:Pendiente == nTotalFactura
+         ::oDbfFacPGst:lCobrado     := .f.
+         ::oDbfFacPGst:nImporte     := nTotalFactura
+         ::oDbfFacPGst:nImpCob      := nTotalFactura
+      end if
+
+      if ::oDbfFacTFac:Pendiente != 0 .and. ::oDbfFacTFac:Pendiente != nTotalFactura
+         ::oDbfFacPGst:lCobrado     := .t.
+         ::oDbfFacPGst:nImporte     := ( nTotalFactura - ::oDbfFacTFac:Pendiente )
+         ::oDbfFacPGst:nImpCob      := ( nTotalFactura - ::oDbfFacTFac:Pendiente )
+
+      end if
+
+      ::oDbfFacPGst:Save()
+
+      // Siguiente registro--------------------------------------------------------
+
+      ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
+
+      ::oDbfFacTFac:skip()
+
+   end while 
+
+   ::aMtrIndices[ 5 ]:SetTotal( ::oDbfFacTFac:LastRec() )   
 
 RETURN ( Self )
 
@@ -1965,6 +2114,158 @@ METHOD ImportaFacturasProveedores()
       ::oDbfFacPrvTGst:Skip()
 
    end while
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImportaPedidosProveedores()
+
+   local nNumero
+   local nTotIva
+   local nTotBase
+
+
+   //Traspaso de Pedidos de Proveedores-------------------------------------------------------
+
+   ::aMtrIndices[ 7 ]:SetTotal( ::oDbfPedPrvTFac:LastRec() )
+
+   ::oDbfPedPrvTGst:Zap()
+   ::oDbfPedPrvLGst:Zap()
+
+   ::oDbfPedPrvTFac:GoTop()
+   while !( ::oDbfPedPrvTFac:eof() )
+/*
+      while ::oDbfPedPrvTGst:Seek( "A" + Str( Val( ::oDbfPedPrvTFac:Numero ), 9 ) + "00" )
+         ::oDbfPedPrvTGst:Delete( .f. )
+      end while
+
+      while ::oDbfPedPrvLGst:Seek( "A" + Str( Val( ::oDbfPedPrvTFac:Numero ), 9 ) + "00" )
+         ::oDbfPedPrvLGst:Delete( .f. )
+      end while
+*/
+      ::oDbfPedPrvTGst:Append()
+      ::oDbfPedPrvTGst:Blank()
+
+      ::oDbfPedPrvTGst:cSerPed      := "A"
+      ::oDbfPedPrvTGst:nNumPed      := Val( ::oDbfPedPrvTFac:Numero )
+      ::oDbfPedPrvTGst:cSufPed      := "00"
+      ::oDbfPedPrvTGst:cTurPed      := cCurSesion()
+      ::oDbfPedPrvTGst:dFecPed      := ::oDbfPedPrvTFac:Fecha
+      ::oDbfPedPrvTGst:cNomPrv      := ::oDbfPedPrvTFac:NombreF
+
+      if ::oDbfPrvGst:SeekInOrd( Upper( rtrim( ::oDbfPedPrvTFac:NombreF ) ), "Titulo" )
+         ::oDbfPedPrvTGst:cCodPrv   := ::oDbfPrvGst:Cod
+         ::oDbfPedPrvTGst:cDirPrv   := ::oDbfPrvGst:Domicilio
+         ::oDbfPedPrvTGst:cPobPrv   := ::oDbfPrvGst:Poblacion
+         ::oDbfPedPrvTGst:cProPrv   := ::oDbfPrvGst:Provincia
+         ::oDbfPedPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
+         ::oDbfPedPrvTGst:cPosPrv   := ::oDbfPrvGst:CodPostal
+      end if
+
+      ::oDbfPedPrvTGst:cCodAlm      := oUser():cAlmacen()
+      ::oDbfPedPrvTGst:cCodCaj      := cDefCaj()
+      ::oDbfPedPrvTGst:dFecEnt      := ::oDbfPedPrvTFac:Fecha
+      ::oDbfPedPrvTGst:cCodPgo      := cDefFpg()
+      ::oDbfPedPrvTGst:cDtoEsp      := Padr( "General", 50 )
+      ::oDbfPedPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
+      ::oDbfPedPrvTGst:cCodUsr      := cCurUsr()
+      ::oDbfFacPrvTGst:dFecChg      := GetSysDate()
+      ::oDbfFacPrvTGst:cTimChg      := Time()
+
+      if ::oDbfPedPrvTFac:Facturado
+         ::oDbfPedPrvTGst:nEstado      := 3
+      else
+         ::oDbfPedPrvTGst:nEstado      := 1
+      end if
+
+
+      //Calculamos los Importes de Pedidos----------------------------------------
+
+      nTotIva     := 0
+
+      nTotBase    := ::oDbfPedPrvTFac:Base1 + ::oDbfPedPrvTFac:Base2 + ::oDbfPedPrvTFac:Base3
+
+      if ::oDbfPedPrvTFac:Iva1 != 0
+         nTotIva  += Round( ::oDbfPedPrvTFac:Base1 * ::oDbfPedPrvTFac:Iva1 / 100, 2 )
+      end if
+
+      nTotIva     += ::oDbfPedPrvTFac:Base2 
+
+      if ::oDbfPedPrvTFac:Iva2 != 0
+         nTotIva  += Round( ::oDbfPedPrvTFac:Base2 * ::oDbfPedPrvTFac:Iva2 / 100, 2 )
+      end if
+
+      nTotIva     += ::oDbfPedPrvTFac:Base3 
+
+      if ::oDbfPedPrvTFac:Iva3 != 0
+         nTotIva  += Round( ::oDbfPedPrvTFac:Base3 * ::oDbfPedPrvTFac:Iva3 / 100, 2 )
+      end if
+
+      nTotIva     := Round( nTotIva, 2 )
+
+      ::oDbfPedPrvTGst:nTotNet      := nTotBase
+      ::oDbfPedPrvTGst:nTotIva      := nTotIva
+      ::oDbfPedPrvTGst:nTotPed      := nTotBase + nTotIva
+
+
+      ::oDbfPedPrvTGst:Save()
+
+      // Siguiente registro----------------------------------------------------------------------
+
+      ::aMtrIndices[ 7 ]:Set( ::oDbfPedPrvTFac:Recno() )
+
+      ::oDbfPedPrvTFac:skip()
+
+   end while 
+
+   ::aMtrIndices[ 7 ]:SetTotal( ::oDbfPedPrvTFac:LastRec() )
+
+
+   //Traspaso de las lineas de los pedidos de proveedores---------------------------------------
+
+   ::aMtrIndices[ 7 ]:SetTotal( ::oDbfAlbLFac:LastRec() )
+
+   ::oDbfAlbLFac:GoTop() 
+   while !( ::oDbfAlbLFac:eof() )
+
+      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "D"
+
+         nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 7 ) )
+
+         ::oDbfPedPrvLGst:Append()
+         ::oDbfPedPrvLGst:Blank()
+
+         ::oDbfPedPrvLGst:cSerPed      := "A"
+         ::oDbfPedPrvLGst:nNumPed      := nNumero
+         ::oDbfPedPrvLGst:cSufPed      := "00"
+         ::oDbfPedPrvLGst:cRef         := ::oDbfAlbLFac:Codigo
+         ::oDbfPedPrvLGst:cDetalle     := ::oDbfAlbLFac:Concepto
+         ::oDbfPedPrvLGst:nIva         := ::oDbfAlbLFac:Iva
+         ::oDbfPedPrvLGst:nCanPed      := 1 
+         ::oDbfPedPrvLGst:nUniCaja     := ::oDbfAlbLFac:Cantidad
+         ::oDbfPedPrvLGst:nPreDiv      := ::oDbfAlbLFac:Precio
+         ::oDbfPedPrvLGst:cUnidad      := "UD"
+         ::oDbfPedPrvLGst:cAlmLin      := oUser():cAlmacen()
+         ::oDbfPedPrvLGst:nNumLin      := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 3 ) )
+
+         if ::oDbfAlbLFac:Valestock 
+            ::oDbfPedPrvLGst:nCtlStk := 1
+         else
+            ::oDbfPedPrvLGst:nCtlStk := 3
+         end if
+
+         ::oDbfPedPrvLGst:Save()
+
+      end if
+
+      ::aMtrIndices[ 7 ]:Set( ::oDbfAlbLFac:Recno() )
+
+      ::oDbfAlbLFac:Skip()
+
+   end while
+
+   ::aMtrIndices[ 7 ]:SetTotal( ::oDbfAlbLFac:LastRec() )
 
 RETURN ( Self )
 

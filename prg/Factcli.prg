@@ -418,7 +418,6 @@ static dbfTmpSer
 static dbfIva
 static dbfCount
 static dbfClient
-static dbfCliInc
 static dbfCliBnc
 static dbfArtPrv
 static dbfFPago
@@ -849,6 +848,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       nView 				:= TDataView():CreateView()
 
+      TDataView():Get( "CliInc", nView )
+
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
       end if
@@ -961,8 +962,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "CliInc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliInc", @dbfCliInc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliInc.Cdx" ) ADDITIVE
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
@@ -1568,10 +1567,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfHisMovS )->( dbCloseArea() )
    end if
 
-   if dbfCliInc != nil
-      ( dbfCliInc )->( dbCloseArea() )
-   end if
-
    if dbfCliBnc != nil
       ( dbfCliBnc )->( dbCloseArea() )
    end if
@@ -1702,7 +1697,6 @@ STATIC FUNCTION CloseFiles()
    dbfProLin   := nil
    dbfProMat   := nil
    dbfHisMov   := nil
-   dbfCliInc   := nil
    dbfPedPrvL  := nil
    dbfProMat   := nil
    dbfProvee   := nil	
@@ -12791,8 +12785,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Clientes.Pais", oPais:Select() )
-   oFr:SetFieldAliases( "Clientes.Pais", cObjectsToReport( oPais:oDbf ) )
+   oFr:SetWorkArea(     "Clientes.País", oPais:Select() )
+   oFr:SetFieldAliases( "Clientes.País", cObjectsToReport( oPais:oDbf ) )
 
    oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
@@ -17458,7 +17452,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
       end if
 
-      ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
+      ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
 
       cOldCodCli  := ( dbfClient )->Cod
 

@@ -13,6 +13,7 @@
 [Ff]ont/
 [Cc]lient/
 [Ii]ss/[Ee]xe/
+[Bb]in/
 [Bb]in/[Bb]mp/
 [Bb]in/[Ii]nclude/
 [Bb]in/[Ss]cript/
@@ -50,7 +51,10 @@
 *.zip
 *.rar
 *.adt
+<<<<<<< HEAD
+=======
 *.$$$
+>>>>>>> 1376acb30d4e4c21ef1905a47c4a69500631e32a
 
 ############
 ## Windows
@@ -61,5 +65,3 @@ Thumbs.db
 
 # Folder config file
 Desktop.ini
-
-
