@@ -252,7 +252,9 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
    ::aItems          := aItems
    ::dbfAlias        := dbfAlias
 
-   ::aFields         := ::oFlt:aTblMask
+   if !Empty( ::oFlt )
+      ::aFields      := ::oFlt:aTblMask
+   end if 
 
    cTag              := ( ::dbfAlias )->( OrdSetFocus() )
    nRecno            := ( ::dbfAlias )->( RecNo() )
