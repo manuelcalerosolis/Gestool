@@ -415,6 +415,11 @@ static dbfTmpAnt
 static dbfTmpPgo
 static dbfTmpSer
 
+static oRieCli
+static nRieCli
+static oTlfCli
+static cTlfCli
+
 static dbfIva
 static dbfCount
 static dbfClient
@@ -2456,10 +2461,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
    local oBmpEmp
    local nOrd
    local oBtn
-   local oTlfCli
    local cTlfCli
-   local oRieCli
-   local nRieCli
    local oGetMasDiv
    local cGetMasDiv        := ""
    local cGetPctRet
@@ -2671,7 +2673,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
          ID       170 ;
          WHEN     ( lWhen ) ;
-         VALID    ( loaCli( aGet, aTmp, nMode, oRieCli ), RecalculaTotal( aTmp ) ); 
+         VALID    ( loaCli( aGet, aTmp, nMode ), RecalculaTotal( aTmp ) ); 
          BITMAP   "Lupa" ;
          ON HELP  ( BrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ), ::lValid() ) ;
          OF       oFld:aDialogs[1]
@@ -9326,7 +9328,7 @@ RETURN ( aDoc )
 
 //---------------------------------------------------------------------------//
 
-function ShowKit( dbfMaster, dbfTmpLin, oBrw, lSet, dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt )
+function ShowKit( dbfMaster, dbfTmpLin, oBrw, lSet, dbfTmpInc, cCodCli, dbfClient, oGetRnt, aGet, oSayGetRnt )
 
    local lShwKit     := lShwKit()
 
@@ -13510,15 +13512,11 @@ STATIC FUNCTION EdtPda( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode )
    local cSayAge
    local cRuta
    local oRuta
-   local nRieCli
-   local oRieCli
    local nTotFactCli
    local nTotFacLin     := 0
    local oSayTit
    local oTitulo
    local cTitulo        := LblTitle( nMode ) + "factura de cliente"
-   local oTlfCli
-   local cTlfCli
    local cLiquidada     := ""
 
    /*
@@ -13659,7 +13657,7 @@ STATIC FUNCTION EdtPda( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode )
          ID       120 ;
          PICTURE  RetPicCodCliEmp() ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli ) ) ;
+         VALID    ( LoaCli( aGet, aTmp, nMode ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( pdaBrwClient( aGet[ _CCODCLI ] , aGet[ _CNOMCLI ]  ) ) ;
          OF       oFld:aDialogs[1]
@@ -17154,7 +17152,7 @@ Return ( lErrors )
 Cargaos los datos del cliente
 */
 
-STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
+STATIC FUNCTION loaCli( aGet, aTmp, nMode )
 
    local lValid      := .t.
    local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
@@ -17368,6 +17366,14 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
                aGet[ _MOBSERV ]:cText( ( dbfClient )->mComent )
             end if
 
+	      	if !Empty( oRieCli ) .and. lChgCodCli
+         		oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
+      		end if
+
+            if ( ( dbfClient )->lCreSol ) .and. ( nRieCli >= ( dbfClient )->Riesgo )
+            	msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
+         	end if 
+
             /*
             Retenciones desde la ficha de cliente----------------------------------
             */
@@ -17446,10 +17452,6 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
       if ( dbfClient )->lMosCom .and. !Empty( ( dbfClient )->mComent ) .and. lChgCodCli
          MsgStop( Trim( ( dbfClient )->mComent ) )
-      end if
-
-      if !Empty( oRieCli ) .and. lChgCodCli
-         oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
       end if
 
       ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
@@ -19781,20 +19783,26 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacén no puede estar vacío." )
+      msgStop( "Almacén no puede estar vacío.", "Imposible archivar como factura" )
       aGet[ _CCODALM ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODPAGO ] )
-      msgStop( "Forma de pago no puede estar vacía." )
+      msgStop( "Forma de pago no puede estar vacía.", "Imposible archivar como factura" )
       aGet[ _CCODPAGO ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDIVFAC ] )
-      MsgStop( "No puede almacenar documento sin código de divisa." )
+      MsgStop( "No puede almacenar documento sin código de divisa.", "Imposible archivar como factura" )
       aGet[ _CDIVFAC ]:SetFocus()
+      return .f.
+   end if
+
+   if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, dbfClient )
+      msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
+      aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if
 

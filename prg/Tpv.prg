@@ -269,6 +269,9 @@ static dbfRuta
 static dbfAlm
 static dbfDoc
 
+static nRieCli
+static oRieCli
+
 static dbfCliAtp
 static dbfCajPorta
 static dbfAgeCom
@@ -353,8 +356,6 @@ static oTotDpp
 
 static oGetRnt
 static oSayGetRnt
-
-static oRieCli
 
 static oOfficeBar
 
@@ -2051,7 +2052,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
    local nOrd
    local oBmpDiv
    local cTitDoc
-   local nRieCli           := 0
    local cResource         := "TPVFRONT_1024x768"
    local nScreenVertRes    := GetSysMetrics( 1 )
 
@@ -3683,6 +3683,12 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       if Empty( aTmp[ _CDNICLI ] ) .and. !( "GA" $ oWnd():Cargo )
          msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacio." )
          lSaveNewTik         := .f.
+         return .f.
+      end if
+
+      if lClienteEvaluarRiesgo( aTmp[ _CCLITIK ], oStock, dbfClient )
+         msgStop( "Este cliente supera el limite de riesgo permitido." )
+         aGet[ _CCLITIK ]:SetFocus()
          return .f.
       end if
 
@@ -11308,6 +11314,14 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
          aTmp[ _CCODGRP ]  := ( dbfClient )->cCodGrp
       end if
 
+      if !Empty( oRieCli ) .and. lChgCodCli
+         oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
+      end if
+
+      if ( ( dbfClient )->lCreSol ) .and. ( nRieCli >= ( dbfClient )->Riesgo )
+         msgStop( "Este cliente supera el limite de riesgo permitido.")
+      end if 
+
       /*
       Cargamos la obra por defecto-------------------------------------
       */
@@ -11408,10 +11422,6 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
       if ( dbfClient )->lMosCom .and. !Empty( ( dbfClient )->mComent ) .and. lChgCodCli
          MsgStop( Trim( ( dbfClient )->mComent ) )
-      end if
-
-      if !Empty( oRieCli ) .and. lChgCodCli
-         oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
       end if
 
       if lObras() .and. Empty( aTmp[ _CCODOBR ] ) .and. lChgCodCli
