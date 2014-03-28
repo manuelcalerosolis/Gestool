@@ -496,7 +496,7 @@ CLASS Deudor FROM Acreedor
    DATA cImporte                          INIT '0'
    DATA cFechaMandato                     INIT DateToString()
    DATA cEntidadBIC                       INIT space( 11 )
-   DATA cTipo                             INIT space( 1 )
+   DATA cTipo                             INIT '1'
    DATA cEmisor                           INIT space( 35 )
    DATA cIdentificadorCuenta              INIT 'A'
    DATA cProposito                        INIT space( 4 )
@@ -516,6 +516,8 @@ CLASS Deudor FROM Acreedor
    METHOD IdentificadorCuenta( cValue )   INLINE ( if( !Empty( cValue ), ::cIdentificadorCuenta := padr( cValue, 1 ),            ::cIdentificadorCuenta ) )
    METHOD Proposito( cValue )             INLINE ( if( !Empty( cValue ), ::cProposito           := padr( cValue, 4 ),            ::cProposito ) )
    METHOD Concepto( cValue )              INLINE ( if( !Empty( cValue ), ::cConcepto            := padr( cValue, 140 ),          ::cConcepto ) )
+
+   METHOD Nif( cValue )
 
    METHOD CodigoRegistro()                INLINE ( '03' )
    METHOD Dato()                          INLINE ( '003' )
@@ -572,6 +574,22 @@ ENDCLASS
       cBuffer        := padr( cBuffer, 600 ) + CRLF 
 
    Return ( cBuffer )
+
+//---------------------------------------------------------------------------//
+
+   METHOD Nif( cValue ) CLASS Deudor
+
+      if !Empty( cValue )
+
+         ::cNif      := padr( cValue, 36 )
+
+         if !isAlpha( left( ::cNif, 1 ) )
+            ::Tipo( '2' )
+         end if
+
+      end if
+
+   RETURN ( ::cNif ) 
 
 //---------------------------------------------------------------------------//
 

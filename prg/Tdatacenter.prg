@@ -2648,6 +2648,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacPrvT"
    oDataTable:cName        := cPatEmp() + "FacPrvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvT.Cdx"
@@ -2658,6 +2659,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacPrvL"   
    oDataTable:cName        := cPatEmp() + "FacPrvL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvL.Cdx"
@@ -2666,6 +2668,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacPrvI"
    oDataTable:cName        := cPatEmp() + "FacPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvI.Cdx"
@@ -2705,6 +2708,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RctPrvT"   
    oDataTable:cName        := cPatEmp() + "RctPrvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvT.Cdx"
@@ -2715,6 +2719,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RctPrvL"
    oDataTable:cName        := cPatEmp() + "RctPrvL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvL.Cdx"
@@ -2723,6 +2728,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RctPrvI"   
    oDataTable:cName        := cPatEmp() + "RctPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvI.Cdx"
@@ -2731,6 +2737,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RctPrvD"   
    oDataTable:cName        := cPatEmp() + "RctPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvD.Cdx"
@@ -2751,6 +2758,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "SatCliT"
    oDataTable:cName        := cPatEmp() + "SatCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliT.Cdx"
@@ -2760,6 +2768,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "SatCliL"
    oDataTable:cName        := cPatEmp() + "SatCliL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliL.Cdx"
@@ -2768,6 +2777,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "SatCliI"
    oDataTable:cName        := cPatEmp() + "SatCliI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliI.Cdx"
@@ -2776,6 +2786,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "SatCliD"
    oDataTable:cName        := cPatEmp() + "SatCliD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliD.Cdx"
@@ -2784,6 +2795,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "SatCliS"
    oDataTable:cName        := cPatEmp() + "SatCliS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliS.Cdx"
@@ -2797,6 +2809,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PreCliT"
    oDataTable:cName        := cPatEmp() + "PreCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliT.Cdx"
@@ -2807,6 +2820,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PreCliL"
    oDataTable:cName        := cPatEmp() + "PreCliL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliL.Cdx"
@@ -3014,6 +3028,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacRecT"
    oDataTable:cName        := cPatEmp() + "FacRecT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecT.Cdx"
@@ -3024,6 +3039,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacRecL"
    oDataTable:cName        := cPatEmp() + "FacRecL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecL.Cdx"
@@ -3032,6 +3048,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacRecI"
    oDataTable:cName        := cPatEmp() + "FacRecI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecI.Cdx"
@@ -3040,6 +3057,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacRecD"
    oDataTable:cName        := cPatEmp() + "FacRecD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecD.Cdx"
@@ -3048,6 +3066,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacRecS"
    oDataTable:cName        := cPatEmp() + "FacRecS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecS.Cdx"
@@ -3068,6 +3087,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacCliG"
    oDataTable:cName        := cPatEmp() + "FacCliG"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliG.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliG.Cdx"
@@ -3076,6 +3096,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacAutT"
    oDataTable:cName        := cPatEmp() + "FacAutT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutT.Cdx"
@@ -3084,6 +3105,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "GrpFac"
    oDataTable:cName        := cPatEmp() + "GrpFac"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "GrpFac.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "GrpFac.Cdx"
@@ -3093,6 +3115,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacAutL"
    oDataTable:cName        := cPatEmp() + "FacAutL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutL.Cdx"
@@ -3102,6 +3125,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacAutI"
    oDataTable:cName        := cPatEmp() + "FacAutI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacAutI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacAutI.Cdx"
@@ -3111,7 +3135,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
-   Facturas de anticipo
+   Facturas de anticipo-----------------------------------------------
    */
 
    oDataTable              := TDataTable()
@@ -3126,6 +3150,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AntCliI"
    oDataTable:cName        := cPatEmp() + "AntCliI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AntCliI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AntCliI.Cdx"
@@ -3134,6 +3159,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AntCliD"
    oDataTable:cName        := cPatEmp() + "AntCliD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AntCliD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AntCliD.Cdx"
@@ -3146,6 +3172,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TikeT"
    oDataTable:cName        := cPatEmp() + "TikeT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeT.Cdx"
@@ -4849,6 +4876,9 @@ CLASS TDataView
 
    METHOD FacturasClientesCobros( nView )       INLINE ( ::Get( "FacCliP", nView ) )
       METHOD FacturasClientesCobrosId( nView )  INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
+
+   METHOD FacturasProveedoresCobros( nView )       INLINE ( ::Get( "FacPrvP", nView ) )
+      METHOD FacturasProveedoresCobrosId( nView )  INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )

@@ -323,6 +323,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():Get( "FacCliT", nView )
 
+      TDataView():Get( "FacCliP", nView )
+
       TDataView():Get( "TipInci", nView )
 
       TDataView():Get( "CliInc", nView )
@@ -932,6 +934,12 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
 
+      DEFINE BTNSHELL RESOURCE "briefcase2_column-chart_" OF oWndBrw ;
+         ACTION   ( PageIniClient( nView ) );
+         TOOLTIP  "(C)artera de cliente" ;
+         HOTKEY   "C";
+         LEVEL    ACC_EDIT
+
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TInfCliGrp():New( "Listado de clientes" ):Play() ) ;
@@ -1003,8 +1011,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( ChgPrc( oWndBrw ) ) ;
-            TOOLTIP  "(C)ambiar precios" ;
-            HOTKEY   "C";
+            TOOLTIP  "Cambiar precios" ;
             LEVEL    ACC_APPD
 
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
@@ -1054,12 +1061,6 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
             ACTION   ( appAlbCli( { "Cliente" => ( TDataView():Get( "Client", nView ) )->Cod } ) );
             TOOLTIP  "Añadir albarán de cliente" ;
-            FROM     oRotor ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "briefcase2_column-chart_" OF oWndBrw ;
-            ACTION   ( PageIniClient( "01004", ( TDataView():Get( "Client", nView ) )->Cod ) );
-            TOOLTIP  "Cartera de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
@@ -3167,19 +3168,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwInc:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "cCodTip"
-         :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
-         :nWidth           := 80
-      end with
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader          := "Incidencia"
-         :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
-         :nWidth           := 180
-      end with
-
-      with object ( oBrwInc:AddCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| Dtoc( ( dbfTmpInc )->dFecInc ) }
@@ -3189,7 +3177,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       with object ( oBrwInc:AddCol() )
          :cHeader          := "Descripción"
          :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
-         :nWidth           := 300
+         :nWidth           := 350
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodTip"
+         :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
+         :nWidth           := 40
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader          := "Tipo incidencia"
+         :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
+         :nWidth           := 180
       end with
 
       if nMode != ZOOM_MODE
@@ -3446,7 +3447,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
          fldTarifa:AddFastKey( VK_F2, {|| WinAppRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) } )
          fldTarifa:AddFastKey( VK_F3, {|| WinEdtRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) } )
-         fldTarifa:AddFastKey( VK_F4, {|| WinDelRec(  oBrwAtp, dbfTmpAtp ), oBrwAtp:Refresh() } )
+         fldTarifa:AddFastKey( VK_F4, {|| WinDelRec( oBrwAtp, dbfTmpAtp ) } )
 
          fldDocumentos:AddFastKey( VK_F2, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
          fldDocumentos:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
@@ -6359,11 +6360,12 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
       cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], TDataView():Get( "TipInci", nView ) )
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de clientes"
+   DEFINE DIALOG oDlg RESOURCE "Incidencia" TITLE LblTitle( nMode ) + "incidencias de clientes"
 
       REDEFINE GET aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], TDataView():Get( "TipInci", nView ), oNomInci ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIncidencia( TDataView():Get( "TipInci", nView ), aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
@@ -9009,10 +9011,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( "TmpInc", @dbfTmpInc ), .f. )
 
    ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-   ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodCli", "cCodCli + Dtos( dFecInc )", {|| Field->cCodCli + Dtos( Field->dFecInc ) } ) )
+   ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodCli", "Dtos( dFecInc )", {|| Dtos( Field->dFecInc ) } ) )
 
    ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-   ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodTip", "cCodCli + cCodTip", {|| Field->cCodCli + Field->cCodTip } ) )
+   ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodTip", "cCodTip", {|| Field->cCodTip } ) )
 
    ( dbfTmpInc )->( OrdSetFocus( "cCodCli" ) )
 
@@ -12049,58 +12051,33 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION AddCliIncidencia( nView, cCodigoCliente )
+FUNCTION AddIncidenciaCliente( nView, oBrw )
 
-? cCodigoCliente
-
-   WinAppRec( nil, bEdtInc, TDataView():Get( "CliAtp", nView ), cCodigoCliente )
+   WinAppRec( oBrw, bEdtInc, ( TDataView():Get( "CliInc", nView ) ), ( TDataView():Get( "Client", nView ) )->Cod ) 
 
 RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION EdtCliIncidencia( nView )
+FUNCTION EdtIncidenciaCliente( nView, oBrw )
 
-   WinEdtRec( nil, bEdtInc, ( TDataView():Get( "CliAtp", nView ) ) )
-
-RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-
-FUNCTION AppIncidenciaCliente( nView )
-
-   local nLevel         := nLevelUsr( "01032" )
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if OpenFiles( .t. )
-
-      WinAppRec( nil, bEdtInc, ( TDataView():Get( "Client", nView ) ) )
-         
-      CloseFiles()
-
-   end if
+   WinEdtRec( oBrw, bEdtInc, TDataView():Get( "CliInc", nView ) )
 
 RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION EdtIncidenciaCliente( nOrdKeyNumber, nView )
+FUNCTION ZooIncidenciaCliente( nView, oBrw )
 
-   local nLevel         := nLevelUsr( "01032" )
+   WinZooRec( oBrw, bEdtInc, TDataView():Get( "CliInc", nView ) )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
+RETURN .t.
 
-   if ( TDataView():Get( "CliInc", nView ) )->( ordKeyGoTo( nOrdKeyNumber ) )
-      WinEdtRec( nil, bEdtInc, TDataView():Get( "CliInc", nView ) )
-   end if
+//---------------------------------------------------------------------------//
+
+FUNCTION DelIncidenciaCliente( nView, oBrw )
+
+   WinDelRec( oBrw, TDataView():Get( "CliInc", nView ) )
 
 RETURN .t.
 

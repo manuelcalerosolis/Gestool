@@ -2669,7 +2669,7 @@ Function CreateAcceso( oWnd )
    oItemTpv:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 6
+   oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'T.P.V.'
    oGrupo:cLittleBitmap := "Cashier_user1_16"
    oGrupo:cBigBitmap    := "Cashier_user1_32"
@@ -2730,6 +2730,16 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
    oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "01093" ):Activate() }
    oItem:cId            := "01093"
+   oItem:cBmp           := "Sort_az_descending_alpha_16"
+   oItem:cBmpBig        := "Sort_az_descending_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemTPV:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Menús'
+   oItem:cMessage       := 'Acceso a los menús'
+   oItem:bAction        := {|| TpvMenu():New( cPatEmp(), oWnd ):Activate() }
+   oItem:cId            := "01200"
    oItem:cBmp           := "Sort_az_descending_alpha_16"
    oItem:cBmpBig        := "Sort_az_descending_32"
    oItem:lShow          := .f.

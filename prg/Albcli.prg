@@ -964,11 +964,11 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       lGenAlbCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
-   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( GenerarEtiquetas() ) ;
-      TOOLTIP  "Eti(q)uetas" ;
-      HOTKEY   "Q";
+      ACTION   ( TFastVentasArticulos():New():Play( ALB_CLI ) ) ;
+      TOOLTIP  "Rep(o)rting";
+      HOTKEY   "O" ;
       LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;

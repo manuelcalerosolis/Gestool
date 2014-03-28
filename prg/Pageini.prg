@@ -11,29 +11,12 @@
 static nView
 
 static nLevel
-static dbfFacPrvP
-static dbfClient
 
-static dbfFacPrvT
-static dbfFacPrvL
-static dbfFacCliT
-static dbfFacCliL
-static dbfFacRecT
-static dbfFacRecL
-static dbfRctPrvT
-static dbfRctPrvL
-static dbfAntCliT
-static dbfIva
-static dbfDiv
-
-static cNewCli
-static cNewPrv
-static dbfNewRecPrv
-
-static oFechaInicio
-static oFechaFin
+static oFecIniCli
+static oFecFinCli
 static dFecIniCli
 static dFecFinCli
+
 static oEstadoCli
 static aEstadoCli    := { "Pendientes", "Pagados", "Todos" }
 static cEstadoCli
@@ -42,33 +25,34 @@ static oPeriodoCli
 static aPeriodoCli   := {}
 static cPeriodoCli
 
-static oPeriodoPrv
-static aPeriodoPrv   := {}
-static cPeriodoPrv
+static cCodigoCliente
+static cNombreCliente
 
 static oFecIniPrv
 static oFecFinPrv
 static dFecIniPrv
 static dFecFinPrv
+
 static oEstadoPrv
 static aEstadoPrv    := { "Pendientes", "Pagados", "Todos" }
 static cEstadoPrv
 
-static cCodigoCliente
+static oPeriodoPrv
+static aPeriodoPrv   := {}
+static cPeriodoPrv
+
 static cCodigoProveedor
-
-static oBrwRecCli
-static oBrwRecPrv
-
-static nMeter        := 0
-static oMeter
+static cNombreProveedor
 
 static nFolder
-static hFolder
 
 static oDlg
 static oFld
+
 static oBrwInc
+static oBrwRecCli
+static oBrwRecPrv
+
 static oBmpCobros
 static oBmpPagos
 static oBmpIncidencias
@@ -82,55 +66,31 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-   nView          := TDataView():CreateView()
-
-   TDataView():Get( "Client", nView )
-
-   TDataView():Get( "CliInc", nView )
-
-   TDataView():Get( "TipInci", nView )
-
-   TDataView():Get( "FacCliP", nView )
-
-   USE ( cPatEmp() + "FACPRVP.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVP", @dbfFacPrvP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACPRVP.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "CLIENT.DBF" )    NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT",  @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACPRVT.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACPRVT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACPRVL.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACCLIL.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACRECT.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACRECL.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACRECL.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfRctPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfRctPrvL ) )
-   SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
-
-   if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-      lOpen          := .f.
-   end if
+      nView       := TDataView():CreateView()
+   
+      TDataView():Get( "Client", nView )
+      TDataView():Get( "CliInc", nView )
+   
+      TDataView():Get( "TipInci", nView )
+   
+      TDataView():Get( "FacPrvT", nView )
+      TDataView():Get( "FacPrvL", nView )
+      TDataView():Get( "FacPrvP", nView )
+   
+      TDataView():Get( "FacRecT", nView )
+      TDataView():Get( "FacRecL", nView )
+   
+      TDataView():Get( "AntCliT", nView )
+   
+      TDataView():Get( "FacPrvT", nView )
+      TDataView():Get( "FacPrvL", nView )
+      TDataView():Get( "FacPrvP", nView )
+   
+      TDataView():Get( "RctPrvT", nView )
+      TDataView():Get( "RctPrvL", nView )
+   
+      TDataView():Get( "TIva", nView )
+      TDataView():Get( "Divisas", nView )
 
    RECOVER
 
@@ -138,7 +98,7 @@ STATIC FUNCTION OpenFiles()
 
       CloseFiles()
 
-      lOpen          := .f.
+      lOpen       := .f.
 
    END SEQUENCE
 
@@ -150,87 +110,7 @@ Return ( lOpen )
 
 STATIC FUNCTION CloseFiles()
 
-   if !Empty( dbfNewRecPrv )
-      ( dbfNewRecPrv )->( dbCloseArea() )
-   end if
-
-   if File( cNewCli )
-      fErase( cNewCli )
-   end if
-
-   if File( cNewPrv )
-      fErase( cNewPrv )
-   end if
-
-   if !Empty( dbfFacPrvP )
-      ( dbfFacPrvP )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfClient )
-      ( dbfClient )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacPrvT )
-      ( dbfFacPrvT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacPrvL )
-      ( dbfFacPrvL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfRctPrvT )
-      ( dbfRctPrvT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfRctPrvL )
-      ( dbfRctPrvL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliT )
-      ( dbfFacCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliL )
-      ( dbfFacCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacRecT )
-      ( dbfFacRecT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacRecL )
-      ( dbfFacRecL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAntCliT )
-      ( dbfAntCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfIva )
-      ( dbfIva )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDiv )
-      ( dbfDiv )->( dbCloseArea() )
-   end if
-
    TDataView():DeleteView( nView )  
-
-   dbfFacPrvP              := nil
-   dbfClient               := nil
-   dbfFacPrvT              := nil
-   dbfFacPrvL              := nil
-   dbfRctPrvT              := nil
-   dbfRctPrvL              := nil
-   dbfFacCliT              := nil
-   dbfFacCliL              := nil
-   dbfFacRecT              := nil
-   dbfFacRecL              := nil
-   dbfAntCliT              := nil
-   dbfIva                  := nil
-   dbfDiv                  := nil
-
-   dbfNewRecPrv            := nil
 
 Return .t.
 
@@ -271,15 +151,13 @@ FUNCTION PageIni( oMenuItem, oWnd )
 
    // Cargamos los valores por defecto-----------------------------------------
 
-   cEstadoCli              := "Pendientes"
-   cEstadoPrv              := "Pendientes"
-
-   aPeriodoCli             := aCreaArrayPeriodos()
    cPeriodoCli             := "Hoy"
-   aPeriodoPrv             := aCreaArrayPeriodos()
-   cPeriodoPrv             := "Hoy"
+   cEstadoCli              := "Pendientes"
+   aPeriodoCli             := aCreaArrayPeriodos()
 
-   nFolder                 := 1
+   cPeriodoPrv             := "Hoy"
+   cEstadoPrv              := "Pendientes"
+   aPeriodoPrv             := aCreaArrayPeriodos()
 
    /*
    Caja de dialogo_____________________________________________________________
@@ -291,17 +169,19 @@ FUNCTION PageIni( oMenuItem, oWnd )
          ID          200 ;
          OF          oDlg ;
          PROMPT      "&Cobros",;
-                     "Pagos" ;
+                     "&Pagos";
          DIALOGS     "PAGEINI_01",;
                      "PAGEINI_02"
 
+      nFolder        := 1
+
       PageIniCobros()
+
+      nFolder++
 
       PageIniPagos()
 
       // Redefinimos el meter--------------------------------------------------
-
-      oMeter         := TMeter():ReDefine( 210, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, ( dbfNewRecPrv )->( LastRec() ), oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -350,48 +230,38 @@ RETURN ( NIL )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION PageIniClient( oMenuItem, nView )
+FUNCTION PageIniClient( View )
 
    local oError
    local oBlock
 
-   DEFAULT  oMenuItem      := "01004"
+   // Obtenemos el nivel de acceso---------------------------------------------
 
-   // Obtenemos el nivel de acceso
-
-   nLevel                  := nLevelUsr( oMenuItem )
+   nLevel                  := nLevelUsr( "01004" )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
 
-   /*
-   Abrimos las tablas necesarias-----------------------------------------------
-
-   if !OpenFiles()
-      return nil
-   end if
-   */
+   nView                   := View
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   cCodigoCliente          := ( TDataView():Get( "FacCliP", nView ) )->cCodCli 
+   cCodigoCliente          := ( TDataView():Get( "Client", nView ) )->Cod
+   cNombreCliente          := ( TDataView():Get( "Client", nView ) )->Titulo
 
    // Cargamos los valores por defecto-----------------------------------------
 
+   cPeriodoCli             := "Todos"
    cEstadoCli              := "Pendientes"
-
    aPeriodoCli             := aCreaArrayPeriodos()
-   cPeriodoCli             := "Hoy"
 
-   nFolder                 := 1
+   // Caja de dialogo_____________________________________________________________
 
-   /*
-   Caja de dialogo_____________________________________________________________
-   */
-
-   DEFINE DIALOG oDlg RESOURCE "PAGEINI"
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "PageIni" ;
+      TITLE          "Gestión de cartera : " + alltrim( cCodigoCliente ) + space( 1 ) + alltrim( cNombreCliente )
 
       REDEFINE FOLDER oFld ;
          ID          200 ;
@@ -401,20 +271,20 @@ FUNCTION PageIniClient( oMenuItem, nView )
          DIALOGS     "PageIni_01",;
                      "PageIni_03"
 
+      nFolder        := 1
+
       PageIniCobros()
 
+      nFolder++
+
       PageIniIncidecias()
-
-      // Redefinimos el meter--------------------------------------------------
-
-      oMeter         := TMeter():ReDefine( 210, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, ( TDataView():Get( "FacCliP", nView ) )->( ordKeyCount() ), oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
          OF          oDlg ;
          ACTION      ( oDlg:End() )
 
-      oDlg:bStart    := {|| lRecargaFecha( oFechaInicio, oFechaFin ), LoadPageIni( .t. ) }
+      oDlg:bStart    := {|| lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ), LoadPageClient() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -430,11 +300,9 @@ FUNCTION PageIniClient( oMenuItem, nView )
 
    ErrorBlock( oBlock )
 
-   /*
-   Cerramos las tablas abiertas------------------------------------------------
+   DestroyFastFilter( TDataView():Get( "FacPrvP", nView ) )
 
-   CloseFiles()
-   */
+   DestroyFastFilter( TDataView():Get( "FacPrvP", nView ) )
 
    /*
    Matamos el objeto imagen----------------------------------------------------
@@ -452,82 +320,73 @@ RETURN ( NIL )
 
 //----------------------------------------------------------------------------//
 
-Static Function StartPageIni( oFld )
+Static Function StartPageIni()
 
-   lRecargaFecha( oFechaInicio, oFechaFin )
+   lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli )
 
-   lRecargaFecha( oFecIniPrv, oFecFinPrv )
+   lRecargaFecha( oFecIniPrv, oFecFinPrv, cPeriodoPrv )
 
-   LoadPageIni( .t., .t. )
+   LoadPageClient()
+
+   LoadPageProveedor()
 
 RETURN ( NIL )
 
 //----------------------------------------------------------------------------//
 
-static function LoadPageIni( lLoadCli, lLoadPrv )
+Static Function LoadPageClient()
 
    local cExpHead    := ""
 
-   DEFAULT lLoadCli  := .f.
-   DEFAULT lLoadPrv  := .f.
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "dFecVto" ) )
 
-   /*
-   Recargamos la temporal de recibos de clientes-------------------------------
-   */
+   do case
+      case oEstadoCli:nAt == 1
+         cExpHead    := '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+      case oEstadoCli:nAt == 2
+         cExpHead    := 'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+      case oEstadoCli:nAt == 3
+         cExpHead    := 'dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+   end case
 
-   if lLoadCli
-
-      /*
-      Vaciamos la tabla y colocamos los filtros--------------------------------
-      */
-
-      ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "dFecVto" ) )
-
-      do case
-         case oEstadoCli:nAt == 1
-            cExpHead    := '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
-         case oEstadoCli:nAt == 2
-            cExpHead    := 'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
-         case oEstadoCli:nAt == 3
-            cExpHead    := 'dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
-      end case
-
-      CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f., oMeter )
-
+   if !empty( cCodigoCliente )
+      cExpHead       += ' .and. rtrim( cCodCli ) == "' + rtrim( cCodigoCliente ) + '"'
    end if
 
-   /*
-   Recargamos la temporal de recibos de proveedores----------------------------
-   */
+    CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f. )
 
-   if lLoadPrv
-
-      /*
-      Vaciamos la tabla y colocamos los filtros--------------------------------
-      */
-
-      ( TDataView():Get( "FacPrvP", nView ) )->( OrdSetFocus( "dFecVto" ) )
-
-      do case
-         case oEstadoPrv:nAt == 1
-            cExpHead    := '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniPrv ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinPrv ) + '" )'
-         case oEstadoPrv:nAt == 2
-            cExpHead    := 'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniPrv ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinPrv ) + '" )'
-         case oEstadoPrv:nAt == 3
-            cExpHead    := 'dFecVto >= Ctod( "' + Dtoc( dFecIniPrv ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinPrv ) + '" )'
-      end case
-
-      CreateFastFilter( cExpHead, TDataView():Get( "FacPrvP", nView ), .f., oMeter )
-
-   end if
-
-   /*
-   Refrescamos los browse------------------------------------------------------
-   */
+   // Refrescamos los browse------------------------------------------------------
 
    if !Empty( oBrwRecCli )
       oBrwRecCli:Refresh()
    end if
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function LoadPageProveedor()
+
+   local cExpHead    := ""
+
+   ( TDataView():Get( "FacPrvP", nView ) )->( OrdSetFocus( "dFecVto" ) )
+
+   do case
+      case oEstadoPrv:nAt == 1
+         cExpHead    := '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniPrv ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinPrv ) + '" )'
+      case oEstadoPrv:nAt == 2
+         cExpHead    := 'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniPrv ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinPrv ) + '" )'
+      case oEstadoPrv:nAt == 3
+         cExpHead    := 'dFecVto >= Ctod( "' + Dtoc( dFecIniPrv ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinPrv ) + '" )'
+   end case
+
+   if !empty( cCodigoCliente )
+      cExpHead       += ' .and. rtrim( cCodPrv ) == "' + rtrim( cCodigoProveedor ) + '"'
+   end if
+
+   CreateFastFilter( cExpHead, TDataView():Get( "FacPrvP", nView ), .f. )
+
+   // Refrescamos los browse------------------------------------------------------
 
    if !Empty( oBrwRecPrv )
       oBrwRecPrv:Refresh()
@@ -536,159 +395,323 @@ static function LoadPageIni( lLoadCli, lLoadPrv )
 return .t.
 
 //---------------------------------------------------------------------------//
-/*
-static function LiquidaRecCli()
 
-   ( TDataView():Get( "FacCliP", nView ) )->( dbGoTop() )
+Static Function PageIniCobros()
 
-   oMeter:SetTotal( ( TDataView():Get( "FacCliP", nView ) )->( OrdKeyCount() ) )
+   local oBtnModificarRecibo
 
-   while !( TDataView():Get( "FacCliP", nView ) )->( Eof() )
+      REDEFINE BITMAP oBmpCobros ;
+         ID          500 ;
+         RESOURCE    "SAFE_INTO_ALPHA_48" ;
+         TRANSPARENT ;
+         OF          oFld:aDialogs[ nFolder ]
 
-      if ( TDataView():Get( "FacCliP", nView ) )->lCobrado
+      REDEFINE COMBOBOX oPeriodoCli ;
+         VAR         cPeriodoCli ;
+         ID          100 ;
+         ITEMS       aPeriodoCli ;
+         ON CHANGE   ( lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ), LoadPageClient() ) ;
+         OF          oFld:aDialogs[ nFolder ]
 
-         if Empty( ( TDataView():Get( "FacCliP", nView ) )->cTipRec )
+      REDEFINE GET oFecIniCli VAR dFecIniCli;
+         ID          110 ;
+         SPINNER ;
+         VALID       ( LoadPageClient() );
+         OF          oFld:aDialogs[ nFolder ]
 
-            if dbSeekInOrd( ( TDataView():Get( "FacCliP", nView ) )->cSerie + Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) +  ( TDataView():Get( "FacCliP", nView ) )->cSufFac + Str( ( TDataView():Get( "FacCliP", nView ) )->nNumRec ), "pNumFac", dbfFacCliP )  .and.;
-               !( dbfFacCliP )->lCobrado
+      REDEFINE GET oFecFinCli VAR dFecFinCli;
+         ID          120 ;
+         SPINNER ;
+         VALID       ( LoadPageClient() );
+         OF          oFld:aDialogs[ nFolder ]
 
-               if ( dbfFacCliP )->( dbRLock() )
-                  ( dbfFacCliP )->lCobrado   := .t.
-                  ( dbfFacCliP )->dEntrada   := GetSysDate()
-                  ( dbfFacCliP )->cTurRec    := cCurSesion()
-                  delRiesgo( ( dbfFacCliP )->nImporte, ( dbfFacCliP )->cCodCli, dbfClient )
-                  ( dbfFacCliP )->( dbUnLock() )
-               end if
+      REDEFINE COMBOBOX oEstadoCli VAR cEstadoCli ;
+         ID          130 ;
+         ITEMS       aEstadoCli ;
+         ON CHANGE   ( LoadPageClient() );
+         OF          oFld:aDialogs[ nFolder ]
 
-               // Actualizamos el estado de la factura----------------------------------
+      REDEFINE BUTTON oBtnModificarRecibo ;
+         ID          180 ;
+         OF          oFld:aDialogs[ nFolder ] ;
+         ACTION      (  if ( !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cSerie ),;
+                           EdtRecCli( TDataView():FacturasClientesCobrosId( nView ), .f., !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cTipRec ) ), ),;
+                           oBrwRecCli:Refresh() )
 
-               if ( dbfFacCliT )->( dbSeek( ( TDataView():Get( "FacCliP", nView ) )->cSerie + Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) +  ( TDataView():Get( "FacCliP", nView ) )->cSufFac ) )
-                  ChkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
-               end if
+      oBrwRecCli                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
 
-            end if
+      oBrwRecCli:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwRecCli:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-         else
+      oBrwRecCli:cAlias          := ( TDataView():Get( "FacCliP", nView ) )
 
-            if dbSeekInOrd( ( TDataView():Get( "FacCliP", nView ) )->cSerie + Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) +  ( TDataView():Get( "FacCliP", nView ) )->cSufFac + Str( ( TDataView():Get( "FacCliP", nView ) )->nNumRec ), "rNumFac", dbfFacCliP ) .and.;
-               !( dbfFacCliP )->lCobrado
+      oBrwRecCli:nMarqueeStyle   := 6
+      oBrwRecCli:lRecordSelector := .f.
+      oBrwRecCli:cName           := "Recibos de Clientes.Inicio"
 
-               if ( dbfFacCliP )->( dbRLock() )
-                  ( dbfFacCliP )->lCobrado   := .t.
-                  ( dbfFacCliP )->dEntrada   := GetSysDate()
-                  ( dbfFacCliP )->cTurRec    := cCurSesion()
-                  delRiesgo( ( dbfFacCliP )->nImporte, ( dbfFacCliP )->cCodCli, dbfClient )
-                  ( dbfFacCliP )->( dbUnLock() )
-               end if
+      oBrwRecCli:bLDblClick      := {|| oBtnModificarRecibo:Click() }
 
-               // Actualizamos el estado de la factura----------------------------------
+      oBrwRecCli:CreateFromResource( 170 )
 
-               if ( dbfFacRecT )->( dbSeek( ( TDataView():Get( "FacCliP", nView ) )->cSerie + Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) +  ( TDataView():Get( "FacCliP", nView ) )->cSufFac ) )
-                  ChkLqdFacRec( nil, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
-               end if
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "E. Estado"
+         :bStrData               := {|| "" }
+         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->lCobrado }
+         :nWidth                 := 18
+         :SetCheck( { "Sel16", "Cnt16" } )
+      end with
 
-            end if
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "T. Tipo"
+         :bEditValue             := {|| if( Empty( ( TDataView():Get( "FacCliP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
+         :nWidth                 := 18
+      end with
 
-         end if
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Número"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSerie ) + "/" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumRec ) ) }
+         :nWidth                 := 80
+      end with
 
-      end if
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Cliente"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cCodCli ) }
+         :nWidth                 := 60
+      end with
 
-      ( TDataView():Get( "FacCliP", nView ) )->( dbSkip() )
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Nombre"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cNomCli ) }
+         :nWidth                 := 160
+      end with
 
-      oMeter:Set( ( TDataView():Get( "FacCliP", nView ) )->( OrdKeyNo() ) )
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Fecha"
+         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dPreCob ) }
+         :nWidth                 := 80
+      end with
 
-   end while
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Vencimiento"
+         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dFecVto ) }
+         :nWidth                 := 80
+      end with
 
-   oMeter:Set( ( TDataView():Get( "FacCliP", nView ) )->( LastRec() ) )
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Importe"
+         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->nImporte }
+         :cEditPicture           := cPorDiv()
+         :nWidth                 := 70
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end with
 
-   LoadPageIni( .t., .f. )
+      oFld:aDialogs[ nFolder ]:AddFastKey( VK_F3, {|| oBtnModificarRecibo:Click() } )
 
-   Msginfo( "Proceso Finalizado con éxito" )
+Return ( nil )
 
-   if !Empty( oBrwRecCli )
-      oBrwRecCli:Refresh()
-   end if
-
-return .t.
-*/
 //---------------------------------------------------------------------------//
-/*
-static function LiquidaRecPrv()
 
-   local nOrdAnt  := ( dbfFacPrvP )->( OrdSetFocus( "nNumFac" ) )
+Static Function PageIniPagos()
 
-   ( dbfNewRecPrv )->( dbGoTop() )
+   local oBtnModificarRecibo
 
-   oMeter:SetTotal( ( dbfNewRecPrv )->( OrdKeyCount() ) )
+      REDEFINE BITMAP oBmpCobros ;
+         ID          500 ;
+         RESOURCE    "SAFE_OUT_ALPHA_48" ;
+         TRANSPARENT ;
+         OF          oFld:aDialogs[ nFolder ]
 
-   while !( dbfNewRecPrv )->( Eof() )
+      REDEFINE COMBOBOX oPeriodoPrv ;
+         VAR         cPeriodoPrv ;
+         ID          100 ;
+         ITEMS       aPeriodoPrv ;
+         ON CHANGE   ( lRecargaFecha( oFecIniPrv, oFecFinPrv, cPeriodoPrv ), LoadPageProveedor() ) ;
+         OF          oFld:aDialogs[ nFolder ]
 
-      if ( dbfNewRecPrv )->lCobrado
+      REDEFINE GET oFecIniPrv VAR dFecIniPrv;
+         ID          110 ;
+         SPINNER ;
+         VALID       ( LoadPageProveedor() );
+         OF          oFld:aDialogs[ nFolder ]
 
-         if Empty( ( dbfNewRecPrv )->cTipRec )
+      REDEFINE GET oFecFinPrv VAR dFecFinPrv;
+         ID          120 ;
+         SPINNER ;
+         VALID       ( LoadPageProveedor() );
+         OF          oFld:aDialogs[ nFolder ]
 
-            if dbSeekInOrd( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ), "fNumFac", dbfFacPrvP ) .and.;
-               !( dbfFacPrvP )->lCobrado
+      REDEFINE COMBOBOX oEstadoPrv VAR cEstadoPrv ;
+         ID          130 ;
+         ITEMS       aEstadoPrv ;
+         ON CHANGE   ( LoadPageProveedor() );
+         OF          oFld:aDialogs[ nFolder ]
 
-               if ( dbfFacPrvP )->( dbRLock() )
-                  ( dbfFacPrvP )->lCobrado   := .t.
-                  ( dbfFacPrvP )->dEntrada   := GetSysDate()
-                  ( dbfFacPrvP )->cTurRec    := cCurSesion()
-                  ( dbfFacPrvP )->( dbUnLock() )
-               end if
+      REDEFINE BUTTON oBtnModificarRecibo ;
+         ID          180 ;
+         OF          oFld:aDialogs[ nFolder ] ;
+         ACTION      (  if ( !Empty( ( TDataView():FacturasProveedoresCobros( nView ) )->cSerFac ),;
+                           EdtRecPrv( TDataView():FacturasProveedoresCobrosId( nView ), .f., !Empty( ( TDataView():FacturasProveedoresCobros( nView ) )->cTipRec ) ), ),;
+                           oBrwRecPrv:Refresh() )
 
-            end if
+      oBrwRecPrv                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
 
-            // Actualizamos el estado de la factura----------------------------------
+      oBrwRecPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwRecPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-            if ( dbfFacPrvT )->( dbSeek( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac ) )
-               ChkLqdFacPrv( nil, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv )
-            end if
+      oBrwRecPrv:cAlias          := ( TDataView():Get( "FacPrvP", nView ) )
 
-         else
+      oBrwRecPrv:nMarqueeStyle   := 6
+      oBrwRecPrv:lRecordSelector := .f.
+      oBrwRecPrv:cName           := "Recibos de Proveedores.Inicio"
 
-            if dbSeekInOrd( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ), "rNumFac", dbfFacPrvP ) .and.;
-               !( dbfFacPrvP )->lCobrado
+      oBrwRecPrv:bLDblClick      := {|| oBtnModificarRecibo:Click() }
 
-               if ( dbfFacPrvP )->( dbRLock() )
-                  ( dbfFacPrvP )->lCobrado   := .t.
-                  ( dbfFacPrvP )->dEntrada   := GetSysDate()
-                  ( dbfFacPrvP )->cTurRec    := cCurSesion()
-                  ( dbfFacPrvP )->( dbUnLock() )
-               end if
+      oBrwRecPrv:CreateFromResource( 170 )
 
-            end if
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "E. Estado"
+         :bStrData               := {|| "" }
+         :bEditValue             := {|| ( TDataView():Get( "FacPrvP", nView ) )->lCobrado }
+         :nWidth                 := 18
+         :SetCheck( { "Sel16", "Cnt16" } )
+      end with
 
-            // Actualizamos el estado de la factura----------------------------------
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "T. Tipo"
+         :bEditValue             := {|| if( Empty( ( TDataView():Get( "FacPrvP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
+         :nWidth                 := 18
+      end with
 
-            if ( dbfRctPrvT )->( dbSeek( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac ) )
-               ChkLqdRctPrv( nil, dbfRctPrvT, dbfRctPrvL, dbfFacPrvP, dbfIva, dbfDiv )
-            end if
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "Número"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cSerFac ) + "/" + AllTrim( Str( ( TDataView():Get( "FacPrvP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( TDataView():Get( "FacPrvP", nView ) )->nNumRec ) ) }
+         :nWidth                 := 80
+      end with
 
-         end if
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "Proveedor"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cCodPrv ) }
+         :nWidth                 := 60
+      end with
 
-      end if
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "Nombre"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cNomPrv ) }
+         :nWidth                 := 160
+      end with
 
-      ( dbfNewRecPrv )->( dbSkip() )
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "Fecha"
+         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacPrvP", nView ) )->dPreCob ) }
+         :nWidth                 := 80
+      end with
 
-      oMeter:Set( ( dbfNewRecPrv )->( OrdKeyNo() ) )
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "Vencimiento"
+         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacPrvP", nView ) )->dFecVto ) }
+         :nWidth                 := 80
+      end with
 
-   end while
+      with object ( oBrwRecPrv:AddCol() )
+         :cHeader                := "Importe"
+         :bEditValue             := {|| ( TDataView():Get( "FacPrvP", nView ) )->nImporte }
+         :cEditPicture           := cPorDiv()
+         :nWidth                 := 70
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end with
 
-   oMeter:Set( ( dbfNewRecPrv )->( LastRec() ) )
+      oFld:aDialogs[ nFolder ]:AddFastKey( VK_F3, {|| oBtnModificarRecibo:Click() } )
 
-   ( dbfFacPrvP )->( OrdSetFocus( nOrdAnt ) )
+Return ( nil )
 
-   LoadPageIni( .f., .t. )
+//---------------------------------------------------------------------------//
 
-   Msginfo( "Proceso Finalizado con éxito" )
+Static Function PageIniIncidecias()
 
-   if !Empty( oBrwRecPrv )
-      oBrwRecPrv:Refresh()
+   // Incidencias de Clientes ----------------------------------------------
+
+   if !empty( cCodigoCliente )
+
+      REDEFINE BITMAP oBmpIncidencias ;
+         ID          500 ;
+         RESOURCE    "Sign_Warning_Alpha_48" ;
+         TRANSPARENT ;
+         OF          oFld:aDialogs[ nFolder ] 
+
+      oBrwInc                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
+
+      oBrwInc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwInc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwInc:cAlias          := TDataView():Get( "CliInc", nView )
+      oBrwInc:nMarqueeStyle   := 6
+      oBrwInc:cName           := "Clientes.Incidencias"
+
+      oBrwInc:bLDblClick      := {|| EdtIncidenciaCliente( nView, oBrwInc ) }
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Rs. Resuelta"
+         :bStrData            := {|| "" }
+         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->lListo }
+         :nWidth              := 18
+         :SetCheck( { "Sel16", "Nil16" } )
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Fecha"
+         :cSortOrder          := "cCodPrv"
+         :bEditValue          := {|| Dtoc( ( TDataView():Get( "CliInc", nView ) )->dFecInc ) }
+         :nWidth              := 80
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Descripción"
+         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->mDesInc }
+         :nWidth              := 350
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Código"
+         :cSortOrder          := "cCodTip"
+         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->cCodTip }
+         :nWidth              := 40
+      end with
+
+      with object ( oBrwInc:AddCol() )
+         :cHeader             := "Tipo incidencia"
+         :bEditValue          := {|| cNomInci( ( TDataView():Get( "CliInc", nView ) )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
+         :nWidth              := 180
+      end with
+
+
+      oBrwInc:CreateFromResource( 400 )
+
+      REDEFINE BUTTON ;
+         ID          100 ;
+         OF          oFld:aDialogs[ nFolder ] ;
+         ACTION      ( AddIncidenciaCliente( nView, oBrwInc ) )
+
+      REDEFINE BUTTON ;
+         ID          110 ;
+         OF          oFld:aDialogs[ nFolder ] ;
+         ACTION      ( EdtIncidenciaCliente( nView, oBrwInc ) )
+
+      REDEFINE BUTTON ;
+         ID          120 ;
+         OF          oFld:aDialogs[ nFolder ] ;
+         ACTION      ( DelIncidenciaCliente( nView, oBrwInc ) )
+
+      REDEFINE BUTTON ;
+         ID          130 ;
+         OF          oFld:aDialogs[ nFolder ] ;
+         ACTION      ( ZooIncidenciaCliente( nView, oBrwInc ) )
+
    end if
 
-return .t.
-*/
+Return ( nil )
+
 //---------------------------------------------------------------------------//
 
 static function aCreaArrayPeriodos()
@@ -730,65 +753,73 @@ static function aCreaArrayPeriodos()
 
    aAdd( aPeriodo, "Año anterior" )
 
+   aAdd( aPeriodo, "Todos" )
+
 Return ( aPeriodo )
 
 //---------------------------------------------------------------------------//
 
-Static Function lRecargaFecha( oFechaInicio, oFechaFin )
+Static Function lRecargaFecha( oFechaInicio, oFechaFin, cPeriodo )
 
    do case
-      case cPeriodoCli == "Hoy"
+      case cPeriodo == "Hoy"
 
          oFechaInicio:cText( GetSysDate() )
          oFechaFin:cText( GetSysDate() )
 
-      case cPeriodoCli == "Ayer"
+      case cPeriodo == "Ayer"
 
          oFechaInicio:cText( GetSysDate() -1 )
          oFechaFin:cText( GetSysDate() -1 )
 
-      case cPeriodoCli == "Mes en curso"
+      case cPeriodo == "Mes en curso"
 
          oFechaInicio:cText( CtoD( "01/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( GetSysDate() )
 
-      case cPeriodoCli == "Mes anterior"
+      case cPeriodo == "Mes anterior"
 
          oFechaInicio:cText( BoM( AddMonth( GetSysDate(), -1 ) ) )
          oFechaFin:cText( EoM( AddMonth( GetSysDate(), -1 ) ) )
 
-      case cPeriodoCli == "Primer trimestre"
+      case cPeriodo == "Primer trimestre"
+         
          oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "31/03/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodoCli == "Segundo trimestre"
+      case cPeriodo == "Segundo trimestre"
 
          oFechaInicio:cText( CtoD( "01/04/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "30/06/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodoCli == "Tercer trimestre"
+      case cPeriodo == "Tercer trimestre"
 
          oFechaInicio:cText( CtoD( "01/07/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "30/09/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodoCli == "Cuatro trimestre"
+      case cPeriodo == "Cuatro trimestre"
 
          oFechaInicio:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodoCli == "Doce últimos meses"
+      case cPeriodo == "Doce últimos meses"
 
          oFechaInicio:cText( CtoD( Str( Day( GetSysDate() ) ) + "/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) -1 ) ) )
          oFechaFin:cText( GetSysDate() )
 
-      case cPeriodoCli == "Año en curso"
+      case cPeriodo == "Año en curso"
 
          oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodoCli == "Año anterior"
+      case cPeriodo == "Año anterior"
 
          oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
+         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
+      
+      case cPeriodo == "Todos"
+
+         oFechaInicio:cText( CtoD( "01/01/2000" ) ) 
          oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
 
    end case
@@ -799,353 +830,6 @@ Static Function lRecargaFecha( oFechaInicio, oFechaFin )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-Static Function PageIniCobros()
-
-   local oBtnModificarRecibo
-
-      /*
-      PRIMERA CAJA DE DIALOGO--------------------------------------------------
-      */
-
-      REDEFINE BITMAP oBmpCobros ;
-         ID          500 ;
-         RESOURCE    "SAFE_INTO_ALPHA_48" ;
-         TRANSPARENT ;
-         OF          oFld:aDialogs[ nFolder ]
-
-      REDEFINE COMBOBOX oPeriodoCli ;
-         VAR         cPeriodoCli ;
-         ID          100 ;
-         ITEMS       aPeriodoCli ;
-         ON CHANGE   ( lRecargaFecha( oFechaInicio, oFechaFin ), LoadPageIni( .t., .f. ) ) ;
-         OF          oFld:aDialogs[ nFolder ]
-
-      REDEFINE GET oFechaInicio VAR dFecIniCli;
-         ID          110 ;
-         SPINNER ;
-         VALID       ( LoadPageIni( .t., .f. ) );
-         OF          oFld:aDialogs[ nFolder ]
-
-      REDEFINE GET oFechaFin VAR dFecFinCli;
-         ID          120 ;
-         SPINNER ;
-         VALID       ( LoadPageIni( .t., .f. ) );
-         OF          oFld:aDialogs[ nFolder ]
-
-      REDEFINE COMBOBOX oEstadoCli VAR cEstadoCli ;
-         ID          130 ;
-         ITEMS       aEstadoCli ;
-         ON CHANGE   ( LoadPageIni( .t., .f. ) );
-         OF          oFld:aDialogs[ nFolder ]
-
-      REDEFINE BUTTON oBtnModificarRecibo ;
-         ID          180 ;
-         OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( if( !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cSerie ),;
-                           EdtRecCli( TDataView():FacturasClientesCobrosId( nView ), .f., !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cTipRec ) ), ),;
-                           oBrwRecCli:Refresh() )
-
-      oBrwRecCli                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
-
-      oBrwRecCli:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwRecCli:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwRecCli:cAlias          := ( TDataView():Get( "FacCliP", nView ) )
-
-      oBrwRecCli:nMarqueeStyle   := 6
-      oBrwRecCli:lRecordSelector := .f.
-      oBrwRecCli:cName           := "Recibos de clientes.Inicio"
-
-      oBrwRecCli:bLDblClick      := {|| oBtnModificarRecibo:Click() }
-
-      oBrwRecCli:CreateFromResource( 170 )
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "E. Estado"
-         :bStrData               := {|| "" }
-         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->lCobrado }
-         :nWidth                 := 18
-         :SetCheck( { "Sel16", "Cnt16" } )
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "T. Tipo"
-         :bEditValue             := {|| if( Empty( ( TDataView():Get( "FacCliP", nView ) )->cTipRec ), "F. Factura", "R. Rectificativa" ) }
-         :nWidth                 := 18
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "Número"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSerie ) + "/" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumRec ) ) }
-         :nWidth                 := 80
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "Cliente"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cCodCli ) }
-         :nWidth                 := 60
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "Nombre"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cNomCli ) }
-         :nWidth                 := 130
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "Fecha"
-         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dPreCob ) }
-         :nWidth                 := 80
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "Vencimiento"
-         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dFecVto ) }
-         :nWidth                 := 80
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "Importe"
-         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->nImporte }
-         :cEditPicture           := cPorDiv()
-         :nWidth                 := 70
-         :nDataStrAlign          := 1
-         :nHeadStrAlign          := 1
-      end with
-
-      oFld:aDialogs[ nFolder ]:AddFastKey( VK_F3, {|| oBtnModificarRecibo:Click() } )
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function PageIniIncidecias()
-
-   // Incidencias de clientes ----------------------------------------------
-
-   if !empty( cCodigoCliente )
-
-      nFolder++
-
-      REDEFINE BITMAP oBmpIncidencias ;
-         ID          500 ;
-         RESOURCE    "Sign_warning_Alpha_48" ;
-         TRANSPARENT ;
-         OF          oFld:aDialogs[ nFolder ] 
-
-      oBrwInc                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
-
-      oBrwInc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwInc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwInc:cAlias          := TDataView():Get( "CliInc", nView )
-      oBrwInc:nMarqueeStyle   := 5
-      oBrwInc:cName           := "Clientes.Incidencias"
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader             := "Rs. Resuelta"
-         :bStrData            := {|| "" }
-         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->lListo }
-         :nWidth              := 18
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader             := "Código"
-         :cSortOrder          := "cCodTip"
-         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->cCodTip }
-         :nWidth              := 80
-      end with
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader             := "Incidencia"
-         :bEditValue          := {|| cNomInci( ( TDataView():Get( "CliInc", nView ) )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
-         :nWidth              := 180
-      end with
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader             := "Fecha"
-         :cSortOrder          := "cCodCli"
-         :bEditValue          := {|| Dtoc( ( TDataView():Get( "CliInc", nView ) )->dFecInc ) }
-         :nWidth              := 80
-      end with
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader             := "Descripción"
-         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->mDesInc }
-         :nWidth              := 300
-      end with
-
-      oBrwInc:bLDblClick      := {|| EdtCliIncidencia( nView ) }
-      oBrwInc:bRClicked       := {| nRow, nCol, nFlags | oBrwInc:RButtonDown( nRow, nCol, nFlags ) }
-
-      oBrwInc:CreateFromResource( 400 )
-
-      REDEFINE BUTTON ;
-         ID          100 ;
-         OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( AddCliIncidencia( nView, cCodigoCliente ) )
-
-      REDEFINE BUTTON ;
-         ID          110 ;
-         OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( EdtIncidenciaCliente( ( TDataView():Get( "CliInc", nView ) )->( OrdKeyNo() ) ) )
-
-      REDEFINE BUTTON ;
-         ID          120 ;
-         OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( Msginfo( "Del") )
-
-      REDEFINE BUTTON ;
-         ID          130 ;
-         OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      ( Msginfo( "Zoo") )
-
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function PageIniPagos()
-
-   if empty( cCodigoCliente )
-
-      nFolder++
-
-      /*
-      SEGUNDA CAJA DE DIALOGO--------------------------------------------------
-      */
-
-      REDEFINE BITMAP oBmpPagos ;
-         ID          500 ;
-         RESOURCE    "SAFE_OUT_ALPHA_48" ;
-         TRANSPARENT ;
-         OF          fldRecibosProveedores
-
-      REDEFINE COMBOBOX oPeriodoPrv ;
-         VAR         cPeriodoPrv ;
-         ID          100 ;
-         ITEMS       aPeriodoPrv ;
-         ON CHANGE   ( lRecargaFecha( oFecIniPrv, oFecFinPrv ), LoadPageIni( .f., .t. ) );
-         OF          fldRecibosProveedores
-
-      REDEFINE GET oFecIniPrv VAR dFecIniPrv;
-         ID          110 ;
-         SPINNER ;
-         VALID       ( LoadPageIni( .f., .t. ) );
-         OF          fldRecibosProveedores
-
-      REDEFINE GET oFecFinPrv VAR dFecFinPrv;
-         ID          120 ;
-         SPINNER ;
-         VALID       ( LoadPageIni( .f., .t. ) );
-         OF          fldRecibosProveedores
-
-      REDEFINE COMBOBOX oEstadoPrv VAR cEstadoPrv ;
-         ID          130 ;
-         ITEMS       aEstadoPrv ;
-         ON CHANGE   ( LoadPageIni( .f., .t. ) );
-         OF          fldRecibosProveedores
-
-      REDEFINE BUTTON ;
-         ID          140 ;
-         OF          fldRecibosProveedores ;
-         ACTION      ( Msginfo( "SelAllRecPrv" ) ) //SelAllRecPrv( .t. ) )
-
-      REDEFINE BUTTON ;
-         ID          150 ;
-         OF          fldRecibosProveedores ;
-         ACTION      ( Msginfo( "SelAllRecPrv" ) ) //SelAllRecPrv( .f. ) )
-
-      REDEFINE BUTTON ;
-         ID          160 ;
-         OF          fldRecibosProveedores ;
-         ACTION      ( Msginfo( "SelRecPrv" ) ) //SelRecPrv() )
-
-      REDEFINE BUTTON ;
-         ID          180 ;
-         OF          fldRecibosProveedores ;
-         ACTION      ( if( !Empty( ( dbfNewRecPrv )->cSerFac ), EdtRecPrv( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ) ), ) )
-
-      oBrwRecPrv                 := IXBrowse():New( fldRecibosProveedores )
-
-      oBrwRecPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwRecPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwRecPrv:cAlias          := dbfNewRecPrv
-
-      oBrwRecPrv:nMarqueeStyle   := 6
-      oBrwRecPrv:lRecordSelector := .f.
-      oBrwRecPrv:cName           := "Recibos de proveedor.Inicio"
-
-      oBrwRecPrv:bLDblClick      := {|| Msginfo("hola") }
-
-      oBrwRecPrv:CreateFromResource( 170 )
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "E. Estado"
-         :bStrData               := {|| "" }
-         :bEditValue             := {|| ( dbfNewRecPrv )->lCobrado }
-         :nWidth                 := 18
-         :SetCheck( { "Sel16", "Cnt16" } )
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "T. Tipo"
-         :bEditValue             := {|| if( Empty( (dbfNewRecPrv )->cTipRec ), "F. Factura", "R. Rectificativa" ) }
-         :nWidth                 := 18
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "Número"
-         :bEditValue             := {|| AllTrim( ( dbfNewRecPrv )->cSerFac ) + "/" + AllTrim( Str( ( dbfNewRecPrv )->nNumFac ) ) + "/" +  AllTrim( ( dbfNewRecPrv )->cSufFac ) + "-" + AllTrim( Str( ( dbfNewRecPrv )->nNumRec ) ) }
-         :nWidth                 := 80
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "Proveedor"
-         :bEditValue             := {|| AllTrim( ( dbfNewRecPrv )->cCodPrv ) }
-         :nWidth                 := 60
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "Nombre"
-         :bEditValue             := {|| AllTrim( ( dbfNewRecPrv )->cNomPrv ) }
-         :nWidth                 := 130
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "Fecha"
-         :bEditValue             := {|| Dtoc( ( dbfNewRecPrv )->dPreCob ) }
-         :nWidth                 := 80
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "Vencimiento"
-         :bEditValue             := {|| Dtoc( ( dbfNewRecPrv )->dFecVto ) }
-         :nWidth                 := 80
-      end with
-
-      with object ( oBrwRecPrv:AddCol() )
-         :cHeader                := "Importe"
-         :bEditValue             := {|| ( dbfNewRecPrv )->nImporte }
-         :cEditPicture           := cPirDiv()
-         :nWidth                 := 70
-         :nDataStrAlign          := 1
-         :nHeadStrAlign          := 1
-      end with
-
-      oFld:aDialogs[ nFolder ]:AddFastKey( VK_F3, {|| if( !Empty( ( dbfNewRecPrv )->cSerFac ), EdtRecPrv( ( dbfNewRecPrv )->cSerFac + Str( ( dbfNewRecPrv )->nNumFac ) +  ( dbfNewRecPrv )->cSufFac + Str( ( dbfNewRecPrv )->nNumRec ) ), ) } )
-      //oFld:aDialogs[ nFolder ]:AddFastKey( VK_F5, {|| LiquidaRecPrv() } )
-
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
 
  
 

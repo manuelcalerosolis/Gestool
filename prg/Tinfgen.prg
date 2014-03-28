@@ -305,6 +305,8 @@ CLASS TInfGen
 
    DATA cEmptyIndex     INIT "cNumDoc"
 
+   DATA uParam 
+
    METHOD New( cSubTitle, aFields, oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate()

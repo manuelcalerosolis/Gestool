@@ -426,6 +426,8 @@ RETURN .t.
 
 METHOD Create( uParam ) CLASS TFastVentasArticulos
 
+   ::uParam    := uParam
+
    ::AddField( "cCodArt",     "C", 18, 0, {|| "@!" }, "Código artículo"                         )
    ::AddField( "cNomArt",     "C",100, 0, {|| ""   }, "Nombre artículo"                         )
 
@@ -633,6 +635,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT oTree           := ::oTreeReporting
    DEFAULT lLoadFile       := .t.
 
+
    aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos",          "File" => "Listado.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
@@ -672,9 +675,12 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   } ;
                   } }
 
-   ::BuildNode( aReports, oTree, lLoadFile )
+   do case 
+      case ( ::uParam == ALB_CLI )
+         aReports := { { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Articulos\Ventas",   "File" => "Albaranes de clientes.fr3" } }
+   end case
 
-   //oTree:ExpandAll()
+   ::BuildNode( aReports, oTree, lLoadFile )
 
 RETURN ( Self )
 
@@ -701,6 +707,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Artículos.Informe",          ::oDbfArt:nArea )
    ::oFastReport:SetFieldAliases(   "Artículos.Informe",          cItemsToReport( aItmArt() ) )
 
+   ::oFastReport:SetWorkArea(       "Artículos.Escandallos",      ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos",      cItemsToReport( aItmArt() ) )
+
    ::oFastReport:SetWorkArea(       "Imagenes",                   ::oArtImg:nArea )
    ::oFastReport:SetFieldAliases(   "Imagenes",                   cItemsToReport( aItmImg() ) )
 
@@ -712,9 +721,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetWorkArea(       "Stock",                      ::oStock:Select() )
    ::oFastReport:SetFieldAliases(   "Stock",                      cObjectsToReport( ::oStock:oDbfStock ) )
-
-   ::oFastReport:SetWorkArea(       "Artículos.Escandallos",      ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos",      cItemsToReport( aItmArt() ) )
 
    ::oFastReport:SetWorkArea(       "Familias",                   ::oDbfFam:nArea )
    ::oFastReport:SetFieldAliases(   "Familias",                   cItemsToReport( aItmFam() ) )
@@ -1276,7 +1282,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    local cExpHead
    local cExpLine
 
-   DEFAULT lFacturados              := .f.
+   DEFAULT lFacturados  := .f.
 
    ::InitAlbaranesClientes()
 
@@ -1296,17 +1302,17 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando albaranes"
+   ::oMtrInf:cText      := "Procesando albaranes"
    ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
    /*
    Lineas de albaranes---------------------------------------------------------
    */
 
-   cExpLine          := '!lTotLin .and. !lControl'
+   cExpLine             := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
    end if
 
    ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1750,7 +1756,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
          while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
 
-            if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTik )
+            if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
@@ -1829,7 +1835,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             end if
 
-            if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTik )
+            if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
@@ -2666,10 +2672,3 @@ METHOD AddVariableStock()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-
-
-
-
-
-

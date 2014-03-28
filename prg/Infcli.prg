@@ -227,14 +227,13 @@ METHOD lGenerate()
    end if
 
    ::oDbfCli:GoTop()
-
    while !::oDbfCli:Eof()
 
       if Eval( bValid )                                                                               .and.;
          ( ::lGrpAll .or. ( ::oDbfCli:cCodGrp >= ::cGrpOrg .and. ::oDbfCli:cCodGrp <= ::cGrpDes ) )   .and.;
          ( ::lAllCli .or. ( ::oDbfCli:Cod >= ::cCliOrg .and. ::oDbfCli:Cod <= ::cCliDes ) )           .and.;
          ( if( ::lOnlySelected, ::oDbfCli:lLabel, .t. ) )                                             .and.;
-         ::EvalFilter()
+         ::EvalFilter( ::oDbfCli )
 
          ::oDbf:Append()
 
