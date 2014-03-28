@@ -34,9 +34,9 @@ CLASS Redur FROM Cuaderno
    DATA dFechaFactura                     INIT date()
    DATA nImporteFactura                   INIT 0
    DATA nImporteReembolso                 INIT 0 
-   DATA cTipoServicio                     INIT     //¿A que se inicia?-------------------------------
-   DATA cCodigoPais                       INIT 724 //¿Iniciado al Codigo de España?------------------
-   DATA nVersionRedur                     INIT     //¿A que se inicia?-------------------------------
+   DATA cTipoServicio                     INIT 'U'
+   DATA cCodigoPais                       INIT '724'
+   DATA nVersionRedur                     INIT ''
    DATA cNombreRemitente                  INIT ''
    DATA cDireccionRemitente               INIT ''
    DATA cPoblacionRemitente               INIT ''
@@ -45,8 +45,8 @@ CLASS Redur FROM Cuaderno
    DATA cPlazaSalida                      INIT ''
    DATA nTotalBultosADR                   INIT 0
    DATA cNivelInformacionADR              INIT '0'
-   DATA cAlbaranCliente                   INIT 'N' //¿Iniciado a "No"?-------------------------------
-   DATA cDevolverAlbaranFirmado           INIT 'N' //¿Iniciado a "No"?-------------------------------
+   DATA cAlbaranCliente                   INIT 'N'
+   DATA cDevolverAlbaranFirmado           INIT 'N'
    DATA cInformacionAdicionalCliente      INIT ''
    DATA cNombreContacto                   INIT ''
    DATA cTelefonoContacto                 INIT ''
