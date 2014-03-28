@@ -282,7 +282,7 @@ METHOD lGenerate() CLASS TDiaCFac
          ::oFacCliT:DFECFAC <= ::dFinInf                                                    .AND.;
          ::oFacCliT:CCODCLI >= ::cCliOrg                                                    .AND.;
          ::oFacCliT:CCODCLI <= ::cCliDes                                                    .AND.;
-         if( ::lExcCredito, lCliCreditoSolicitado( ::oFacCliT:cCodCli, ::oDbfCli:cAlias ), .t. ) .AND.;
+         if( ::lExcCredito, lClienteBloquearRiesgo( ::oFacCliT:cCodCli, ::oDbfCli:cAlias ), .t. ) .AND.;
          lChkSer( ::oFacCliT:CSERIE, ::aSer )
 
          /*

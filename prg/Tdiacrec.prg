@@ -193,7 +193,7 @@ METHOD lGenerate() CLASS TDiaCRec
 
    while !::lBreak .and. !::oFacCliP:Eof()
 
-      if !( ::lExcCredito .and. lCliCreditoSolicitado( ::oFacCliP:cCodCli, ::oDbfCli:cAlias ) )          .and.;
+      if !( ::lExcCredito .and. lClienteBloquearRiesgo( ::oFacCliP:cCodCli, ::oDbfCli:cAlias ) )          .and.;
          lChkSer( ::oFacCliP:cSerie, ::aSer )
 
          /*
@@ -256,7 +256,7 @@ METHOD lGenerate() CLASS TDiaCRec
 
          if ::lAllCli .or. ( cCodCli >= ::cCliOrg .and. cCodCli <= ::cCliDes )
 
-            if !( ::lExcCredito .and. lCliCreditoSolicitado( cCodCli, ::oDbfCli:cAlias ) )   .and.;
+            if !( ::lExcCredito .and. lClienteBloquearRiesgo( cCodCli, ::oDbfCli:cAlias ) )   .and.;
                !( ::lExcCero .and. nTotUCobTik( ::oTikCliP, ::nDerOut, ::nValDiv ) == 0 )    .and.;
                lChkSer( ::oTikCliP:cSerTik, ::aSer )
 

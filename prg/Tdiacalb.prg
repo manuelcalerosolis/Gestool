@@ -219,7 +219,7 @@ METHOD lGenerate() CLASS TDiaCAlb
    while !::lBreak .and. !::oAlbCliT:Eof()
 
       if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )                             .AND.;
-         if( ::lExcCredito, lCliCreditoSolicitado( ::oAlbCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
+         if( ::lExcCredito, lClienteBloquearRiesgo( ::oAlbCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
 
          /*
          Posicionamos en las lineas de detalle --------------------------------

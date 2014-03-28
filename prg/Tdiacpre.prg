@@ -197,7 +197,7 @@ METHOD lGenerate() CLASS TDiaCPre
    while !::lBreak .and. !::oPreCliT:Eof()
 
       if lChkSer( ::oPreCliT:cSerPre, ::aSer )                                                          .AND.;
-         if( ::lExcCredito, lCliCreditoSolicitado( ::oPreCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
+         if( ::lExcCredito, lClienteBloquearRiesgo( ::oPreCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
 
          /*
          Posicionamos en las lineas de detalle --------------------------------

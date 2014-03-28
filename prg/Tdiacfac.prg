@@ -262,7 +262,7 @@ METHOD lGenerate() CLASS TDiaCFac
       while !::lBreak .and. !::oFacCliT:Eof()
 
          if lChkSer( ::oFacCliT:cSerie, ::aSer )                      .AND.;
-            if( ::lExcCredito, lCliCreditoSolicitado( ::oFacCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
+            if( ::lExcCredito, lClienteBloquearRiesgo( ::oFacCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
 
             /*
             Posicionamos en las lineas de detalle --------------------------------

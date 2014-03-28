@@ -176,7 +176,7 @@ METHOD lGenerate() CLASS TDiaCAnt
    while !::lBreak .and. !::oAntCliT:Eof()
 
       if lChkSer( ::oAntCliT:cSerAnt, ::aSer )                  .and.;
-         if( ::lExcCredito, lCliCreditoSolicitado( ::oAntCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
+         if( ::lExcCredito, lClienteBloquearRiesgo( ::oAntCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
 
          /*
          Posicionamos en las lineas de detalle --------------------------------

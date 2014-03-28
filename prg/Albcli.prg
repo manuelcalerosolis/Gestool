@@ -454,6 +454,12 @@ static oBtnPed
 static oBtnAgruparPedido
 static oBtnAgruparSAT
 
+static oRieCli
+static nRieCli
+
+static oTlfCli
+static cTlfCli
+
 static aNumPed          := {}
 static aNumSat          := {}
 static oGetAlb
@@ -2083,10 +2089,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oSayLabels  := Array( 10 )
    local oBmpDiv
    local oBmpEmp
-   local oRieCli
-   local nRieCli
-   local oTlfCli
-   local cTlfCli
    local oBrwPgo
    local lWhen       := if( oUser():lAdministrador(), nMode != ZOOM_MODE, if( nMode == EDIT_MODE, !aTmp[ _LCLOALB ], nMode != ZOOM_MODE ) )
    local oSayGetRnt
@@ -2286,7 +2288,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
          ID       170 ;
          WHEN     ( lWhen ) ;
-         VALID    ( LoaCli( aGet, aTmp, nMode, oRieCli ), RecalculaTotal( aTmp ) ) ;
+         VALID    ( LoaCli( aGet, aTmp, nMode ), RecalculaTotal( aTmp ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) );
          OF       oFld:aDialogs[1]
@@ -8851,19 +8853,19 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
+STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
    local lValid      := .t.
    local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
    local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
 
-   IF Empty( cNewCodCli )
+   if Empty( cNewCodCli )
       Return .t.
-   ELSEIF At( ".", cNewCodCli ) != 0
-      cNewCodCli     := PntReplace( aGet[_CCODCLI], "0", RetNumCodCliEmp() )
-   ELSE
+   elseif At( ".", cNewCodCli ) != 0
+      cNewCodCli     := PntReplace( aGet[ _CCODCLI ], "0", RetNumCodCliEmp() )
+   else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
-   END IF
+   end if
 
    /*
    Calculo del reisgo del cliente
@@ -8945,15 +8947,13 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          end if
 
+         aTmp[ _LMODCLI ]  := ( TDataView():Get( "Client", nView ) )->lModDat
+
          /*
          Calculo del reisgo del cliente-------------------------------------------
          */
 
-         if oRieCli != nil
-            oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Get( "Client", nView ) )->Riesgo )
-         end if
-
-         aTmp[ _LMODCLI ]  := ( TDataView():Get( "Client", nView ) )->lModDat
+         oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Get( "Client", nView ) )->Riesgo )
 
       end if
 
@@ -9068,7 +9068,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _CCODTRN ]:lValid()
          end if
 
-
          if lChgCodCli
 
             aGet[ _LRECARGO ]:Click( ( TDataView():Get( "Client", nView ) )->lReq ):Refresh()
@@ -9150,6 +9149,10 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          if !( TDataView():Get( "Client", nView ) )->lChgPre
             msgStop( "Este cliente no tiene autorización para venta a credito", "Imposible archivar como albarán" )
          end if
+
+         if ( ( TDataView():Get( "Client", nView ) )->lCreSol ) .and. ( nRieCli >= ( TDataView():Get( "Client", nView ) )->Riesgo )
+            msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como albarán" )
+         end if 
 
       end if
 
@@ -11136,6 +11139,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    if !lCliChg( aTmp[ _CCODCLI ], TDataView():Get( "Client", nView ) )
       msgStop( "Este cliente no tiene autorización para venta a credito.", "Imposible archivar como albarán" )
+      aGet[ _CCODCLI ]:SetFocus()
+      return .f.
+   end if
+
+   if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, TDataView():Get( "Client", nView ) )
+      msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como albarán" )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if

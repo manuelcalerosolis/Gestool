@@ -8202,8 +8202,8 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cCodRem",   "C",  3, 0, "Código de remesa" ,                             "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cMeiInt",   "C", 65, 0, "Correo electrónico" ,                           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cWebInt",   "C", 65, 0, "Página web" ,                                   "",                   "", "( cDbfCli )" } )
-   aAdd( aBase, { "lChgPre",   "L",  1, 0, "Lógico para autorizacion de venta de crédito" , "",                   "", "( cDbfCli )" } )
-   aAdd( aBase, { "lCreSol",   "L",  1, 0, "Lógico para credito solicitado" ,               "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "lChgPre",   "L",  1, 0, "Lógico para autorización de venta de crédito" , "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "lCreSol",   "L",  1, 0, "Lógico para bloquear con riesgo alcanzado" ,    "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "lPntVer",   "L",  1, 0, "Lógico para operar con punto verde" ,           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cUsrDef01", "C",100, 0, "Campo definido 1" ,                             "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cUsrDef02", "C",100, 0, "Campo definido 2" ,                             "",                   "", "( cDbfCli )" } )
@@ -11455,7 +11455,7 @@ RETURN cText
 
 //---------------------------------------------------------------------------//
 
-FUNCTION lCliCreditoSolicitado( cCodCli, dbfCli )
+FUNCTION lClienteBloquearRiesgo( cCodCli, dbfCli )
 
    local lRet     := .f.
 
@@ -11464,6 +11464,22 @@ FUNCTION lCliCreditoSolicitado( cCodCli, dbfCli )
    end if
 
 RETURN lRet
+
+//---------------------------------------------------------------------------//
+
+Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient )
+
+   if lClienteBloquearRiesgo( cCodCli, dbfClient )
+
+      if oStock:nRiesgo( cCodCli ) >= ( dbfClient )->Riesgo
+
+         Return .t.
+
+      end if 
+
+   end if   
+
+Return .f. 
 
 //---------------------------------------------------------------------------//
 

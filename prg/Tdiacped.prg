@@ -200,7 +200,7 @@ METHOD lGenerate() CLASS TDiaCPed
    WHILE !::lBreak .and. !::oPedCliT:Eof()
 
       if lChkSer( ::oPedCliT:cSerPed, ::aSer )                                                          .AND.;
-         if( ::lExcCredito, lCliCreditoSolicitado( ::oPedCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
+         if( ::lExcCredito, lClienteBloquearRiesgo( ::oPedCliT:cCodCli, ::oDbfCli:cAlias ), .t. )
 
          aTotTmp        := aTotPedCli (::oPedCliT:CSERPED + Str( ::oPedCliT:NNUMPED ) + ::oPedCliT:CSUFPED, ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oDbfPago:cAlias, nil, cDivEmp())
 
