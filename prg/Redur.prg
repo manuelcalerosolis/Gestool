@@ -4,6 +4,70 @@
 
 //---------------------------------------------------------------------------//
 
+Function Inicio()
+
+   local oAlbarenesClientesRedur
+
+   oAlbarenesClientesRedur    := AlbarenesClientesRedur():New()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+CLASS AlbarenesClientesRedur
+
+   DATA nView
+
+   DATA oAlbaran
+   DATA aAlbaranes   INIT {}
+
+   METHOD New()
+
+   METHOD OpenFiles()
+   METHOD CloseFiles()
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+   METHOD New() CLASS AlbarenesClientesRedur
+
+      if ::OpenFiles()
+
+         if ( TDataView():AlbaranesClientes( ::nView ) )->( dbseek( date() ) )
+            while !( TDataView():AlbaranesClientes( ::nView ) )->( eof() )
+
+               ::oAlbaran  := Redur():New()
+
+               ::oAlbaran:NombreConsignatario( ( TDataView():AlbaranesClientes( ::nView ) )->cNomCli )
+               
+               ::oAlbaran:WriteASCII()
+
+            end while
+         end if 
+
+         ::CloseFiles()
+
+      end if 
+
+   Return ( Self )
+
+   METHOD OpenFiles() CLASS AlbarenesClientesRedur
+
+      TDataView():AlbaranesClientes( ::nView )
+
+      ( TDataView():AlbaranesClientes( ::nView ) )->( ordsetfocus( "dFecAlb" ) )
+
+   Return ( Self )
+
+   METHOD CloseFiles CLASS AlbarenesClientesRedur
+
+      TDataView():DeleteView( ::nView )
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 CLASS Redur FROM Cuaderno
 
    DATA cTipoRegisto                      INIT 'R00'
@@ -57,6 +121,10 @@ CLASS Redur FROM Cuaderno
    DATA cDireccionAdicionalContinuacion   INIT ''
    DATA cInstruccionesAdicionales         INIT ''
 
+   METHOD New()
+
+   METHOD WriteASCII()
+   METHOD SerializeASCII()
 
    METHOD TipoRegisto()                    INLINE ( if( !Empty(), ::cTipoRegisto                     := , padr( ::cTipoRegisto, 3 ) )
    METHOD CodigoCliente()                  INLINE ( if( !Empty(), ::cCodigoCliente                   := , padr( ::cCodigoCliente, 12 ) )
@@ -108,12 +176,6 @@ CLASS Redur FROM Cuaderno
    METHOD DireccionAdicional()             INLINE ( if( !Empty(), ::cDireccionAdicional              := , padr( ::cDireccionAdicional, 40 ) )
    METHOD DireccionAdicionalContinuacion() INLINE ( if( !Empty(), ::cDireccionAdicionalContinuacion  := , padr( ::cDireccionAdicionalContinuacion, 40 ) )
    METHOD InstruccionesAdicionales()       INLINE ( if( !Empty(), ::cInstruccionesAdicionales        := , padr( ::cInstruccionesAdicionales, 70 ) )
-
-
-   METHOD New()
-
-   METHOD WriteASCII()
-   METHOD SerializeASCII()
 
 ENDCLASS
 
