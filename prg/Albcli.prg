@@ -508,6 +508,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    local oBtnEur
    local nLevel
    local oRotor
+   local oScript
    local lEuro          := .f.
 
    DEFAULT  oMenuItem   := _MENUITEM_
@@ -865,8 +866,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "D";
       LEVEL    ACC_APPD
 
-#ifdef __HARBOUR__
-
       DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( DupSerie( oWndBrw ) );
@@ -874,8 +873,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          FROM     oDup ;
          CLOSED ;
          LEVEL    ACC_APPD
-
-#endif
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
       NOBORDER ;
@@ -1071,6 +1068,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "AlbaranesClientes" )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;

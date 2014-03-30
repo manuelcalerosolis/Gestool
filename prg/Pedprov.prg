@@ -1476,10 +1476,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          ID       500 ;
          OF       oDlg ;
 
-		/*
-		Detalle________________________________________________________________
-		*/
-
       /*
       Precios de compra por propiedades----------------------------------------
       */
@@ -8096,7 +8092,7 @@ Static Function LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, 
    while !( dbfArticulo )->( Eof() )
 
          nStkFisico                    := oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , ( dbfArticulo )->lKitArt, ( dbfArticulo )->nKitStk )
-         nStkDisponible                := oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , ( dbfArticulo )->lKitArt, ( dbfArticulo )->nKitStk ) - nReservado( ( dbfArticulo )->Codigo )
+         nStkDisponible                := nStkFisico - nReservado( ( dbfArticulo )->Codigo )
 
       if ( dbfArticulo )->cPrvHab == cProvee .and.;
          ( dbfArticulo )->Codigo >= cArtOrg  .and.;
@@ -9060,10 +9056,16 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function CargaComprasProveedor( aTmp, oBrwLin )
+Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor )
 
       local nOrd
       local nPreCom
+      local nConsumo    := 0
+      local nConsumoDia := 0
+      local dFecIni     := oImportaComprasProveedor:oFechaInicio:Value()
+      local dFecFin     := oImportaComprasProveedor:oFechaFin:Value() 
+      local nPorcentaje := oImportaComprasProveedor:oPorcentaje:Value()
+      local nDias       := dFecFin - dFecIni
 
       if empty( aTmp[ _CCODPRV ] )
             msgStop( "Código del proveedor no puede esta vacio.")
@@ -9081,6 +9083,7 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
             if !dbSeekInOrd( ( dbfArticulo )->Codigo, "cRef", dbfTmpLin ) .and. !( dbfArticulo )->lObs
                   
                   ( dbfTmpLin )->( dbAppend() )
+
                   ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )                  
                   ( dbfTmpLin )->cRef           := ( dbfArticulo )->Codigo
                   ( dbfTmpLin )->cDetalle       := ( dbfArticulo )->Nombre      
@@ -9178,7 +9181,33 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
                   ( dbfTmpLin )->nPvpRec        := ( dbfArticulo )->PvpRec
                   ( dbfTmpLin )->cUnidad        := ( dbfArticulo )->cUnidad
                   ( dbfTmpLin )->nStkMin        := ( dbfArticulo )->nMinimo
-      
+
+                  // Valores del stock-----------------------------------------
+
+                  oStock:aStockArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin )
+
+                  ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
+                  ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
+
+                  // Consumo de producto entre dos fechas----------------------
+
+                  nConsumo                      := oStock:nConsumoArticulo( ( dbfTmpLin )->cRef, , ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
+
+                  if !Empty( nConsumo )
+                        
+                        ( dbfTmpLin )->nConRea  := nConsumo
+
+                        // Aplicamos el incremento-----------------------------
+
+                        nConsumoDia             := nConsumo + ( nConsumo * nPorcentaje / 100 )
+                        nConsumoDia             := nConsumoDia / nDias
+
+                        ( dbfTmpLin )->nConSem  := Round( nConsumoDia * 7, 0 ) 
+                        ( dbfTmpLin )->nConQui  := Round( nConsumoDia * 15, 0 ) 
+                        ( dbfTmpLin )->nConMes  := Round( nConsumoDia * 30, 0 ) 
+
+                  end if 
+
                   ( dbfTmpLin )->( dbUnlock() )
 
             end if
@@ -9190,6 +9219,8 @@ Static Function CargaComprasProveedor( aTmp, oBrwLin )
       end if 
 
       ( dbfArticulo )->( ordSetFocus( nOrd ) )
+
+      ( dbfTmpLin )->( dbGoTop() )
 
       CursorWE()
 
@@ -9209,7 +9240,7 @@ Static Function CalculaComprasProveedor( aTmp, oBrwLin, oImportaComprasProveedor
 
       CursorWait()
 
-      nRec  := ( dbfTmpLin )->( RecNo() )
+      nRec              := ( dbfTmpLin )->( RecNo() )
 
       ( dbfTmpLin )->( dbGoTop() )
       while !( dbfTmpLin )->( eof() )
@@ -9218,9 +9249,9 @@ Static Function CalculaComprasProveedor( aTmp, oBrwLin, oImportaComprasProveedor
             Ponemos el stock---------------------------------------------------
             */
 
-            oStock:nPutStockActual( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, ( dbfTmpLin )->lKitArt )
-
             if ( dbfTmpLin )->( dbRLock() )
+
+                  oStock:aStockArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin )
 
                   ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
                   ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
@@ -9266,8 +9297,7 @@ Static Function ImportaComprasProveedor( aTmp, oBrwLin )
 
       local oImportaComprasProveedor      := ImportarProductosProveedor():New()
 
-      oImportaComprasProveedor:bAction    := {|| if(  CargaComprasProveedor( aTmp, oBrwLin),;
-                                                      CalculaComprasProveedor( aTmp, oBrwLin, oImportaComprasProveedor ), ) }
+      oImportaComprasProveedor:bAction    := {|| CargaComprasProveedor( aTmp, oImportaComprasProveedor ), oBrwLin:Refresh() }
 
       oImportaComprasProveedor:Resource()
       oImportaComprasProveedor:End()      

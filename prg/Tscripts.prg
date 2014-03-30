@@ -385,8 +385,6 @@ Return .t.
 
 METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
 
-   local u
-   local pHrb
    local oError
    local oBlock
    local cFichero
@@ -414,13 +412,7 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
    Ejecutamos el script compilado----------------------------------------------
    */
 
-   if File( cFichero )
-
-      pHrb        := __hrbLoad( cFichero )
-      u           := __hrbDo( pHrb )
-      __hrbUnload( pHrb )
-
-   end if
+   RunScript( cFichero )
 
    RECOVER USING oError
 
@@ -483,5 +475,41 @@ METHOD EndTimer()
    next
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function RunScript( cFichero )
+
+   local u
+   local pHrb
+
+   if File( cFichero )
+
+      pHrb        := __hrbLoad( cFichero )
+      u           := __hrbDo( pHrb )
+      __hrbUnload( pHrb )
+
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function ImportScript( oMainWindow, oBoton, cDirectory )
+
+   local aFile
+   local aDirectory  
+   
+   aDirectory  := Directory( cPatScript() + cDirectory + "\*.hrb" )
+
+   if !Empty( aDirectory )
+
+      for each aFile in aDirectory
+         oMainWindow:NewAt( "Document", , , {|| RunScript( cPatScript() + cDirectory + '\' + aFile[ 1 ] ) }, Rtrim( aFile[ 1 ] ), , , , , oBoton )
+      next 
+
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

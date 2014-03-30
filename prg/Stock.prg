@@ -1500,27 +1500,25 @@ RETURN ( nUnits )
 
 METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, oSay ) CLASS TStock
 
-   local cClass   := oSay:ClassName()
+   local cClass   
    local nStock   := 0
 
    if !uFieldEmpresa( "lNStkAct" )
       nStock      := ::nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, nKitStk )
    end if
 
-   do case
-      case cClass == "TGET" .or. cClass == "TGETHLP"
-         oSay:cText( nStock )
-      case cClass == "TSAY"
-         oSay:SetText( nStock )
-   end case
+   if !empty( oSay )
 
-   /*
-   if nStock > 0
-      oSay:SetColor( CLR_GREEN, CLR_GREEN )
-   elseif nStock < 0
-      oSay:SetColor( CLR_RED, CLR_RED )
+      cClass      := oSay:ClassName()
+
+      do case
+         case cClass == "TGET" .or. cClass == "TGETHLP"
+            oSay:cText( nStock )
+         case cClass == "TSAY"
+            oSay:SetText( nStock )
+      end case
+
    end if
-   */
 
 return ( nStock )
 
@@ -1898,10 +1896,8 @@ RETURN ( lDup )
 
       end with
 
-      RETURN nil
+   RETURN nil
 
-   
-   
    //---------------------------------------------------------------------------//
 
    METHOD InsertStockFacturaProveedores( lNumeroSerie )
@@ -1935,9 +1931,7 @@ RETURN ( lDup )
 
       end with
 
-      RETURN nil
-
-   
+   RETURN nil 
    
    //---------------------------------------------------------------------------//
 
@@ -1972,8 +1966,7 @@ RETURN ( lDup )
 
       end with
 
-      RETURN nil
-
+   RETURN nil
    
    //---------------------------------------------------------------------------//
 
@@ -2179,7 +2172,6 @@ RETURN ( lDup )
       end with
 
       RETURN nil
-
    
    //---------------------------------------------------------------------------//
 
@@ -2215,10 +2207,6 @@ RETURN ( lDup )
       end with
 
       RETURN nil
-
-   
-   
-   //---------------------------------------------------------------------------//
 
    //---------------------------------------------------------------------------//
 
