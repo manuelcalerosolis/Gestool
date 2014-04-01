@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TpvMenu FROM TMant
+CLASS TpvMenu FROM TMasDet
 
    CLASSDATA oInstance
 
@@ -13,10 +13,19 @@ CLASS TpvMenu FROM TMant
    DATA  oGetCodigo
    DATA  oGetNombre
 
+   DATA oOrdenComandas  
+
+   DATA oDetOrdenesMenu   
+
+   DATA oBrwOrdenesComanda
+
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
 
    METHOD DefineFiles()
+
+   METHOD OpenFiles( lExclusive, cPath )   
+   METHOD CloseFiles( lExclusive, cPath )   
 
    METHOD Resource( nMode )
    METHOD   StartResource()                     VIRTUAL
@@ -50,6 +59,11 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.
+
+   ::oOrdenComandas     := TOrdenComanda():Create()
+
+   ::oDetOrdenesMenu    := TpvOrdenesMenu():New( cPath, Self )
+   ::AddDetail( ::oDetOrdenesMenu )
 
 RETURN ( Self )
 
@@ -87,6 +101,60 @@ RETURN ( ::oDbf )
 
 //----------------------------------------------------------------------------//
 
+METHOD OpenFiles( lExclusive, cPath )
+
+   local oError
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+
+   ::lOpenFiles         := .t.
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+      if !::oOrdenComandas:OpenFiles()
+         ::lOpenFiles   := .f.
+      end if      
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos." )
+
+      ::CloseFiles()
+      
+      ::lOpenFiles      := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( ::lOpenFiles )
+
+//----------------------------------------------------------------------------//
+
+METHOD CloseFiles() 
+
+   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   if !Empty( ::oOrdenComandas )
+      ::oOrdenComandas:End()
+   end if      
+
+   ::oDbf      := nil
+
+RETURN .t.
+
+//----------------------------------------------------------------------------//
+
 METHOD Resource( nMode )
 
 	local oDlg
@@ -117,6 +185,39 @@ METHOD Resource( nMode )
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
+
+      // Browse de odenes de comanda------------------------------------------
+
+      ::oBrwOrdenesComanda                := IXBrowse():New( oDlg )
+
+      ::oBrwOrdenesComanda:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwOrdenesComanda:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      ::oDetOrdenesMenu:oDbfVir:SetBrowse( ::oBrwOrdenesComanda ) 
+
+      ::oBrwOrdenesComanda:nMarqueeStyle  := 6
+      ::oBrwOrdenesComanda:cName          := "Lineas de ordenes de comanda"
+      ::oBrwOrdenesComanda:lFooter        := .t.
+
+      ::oBrwOrdenesComanda:CreateFromResource( 400 )
+
+      with object ( ::oBrwOrdenesComanda:AddCol() )
+         :cHeader          := "Código orden comanda"
+         :bStrData         := {|| ::oDetOrdenesMenu:oDbfVir:FieldGetByName( "cCodOrd" )  }
+         :nWidth           := 60
+      end with
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::oDetOrdenesMenu:Append( ::oBrwOrdenesComanda ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::oDetOrdenesMenu:Del( ::oBrwOrdenesComanda ) )
 
       /*
       Creamos los botones------------------------------------------------------

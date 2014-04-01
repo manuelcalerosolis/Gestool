@@ -2460,6 +2460,10 @@ Function PageIniClient()
 
 Return nil
 
+Function ImportScript()
+
+Return nil
+
 /*
 //---------------------------------------------------------------------------//
 
