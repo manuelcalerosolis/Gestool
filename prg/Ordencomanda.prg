@@ -199,14 +199,14 @@ METHOD Resource( nMode )
       REDEFINE GET      ::oCodOrd ;
          VAR            ::oDbf:cCodOrd ;
          UPDATE ;
-			ID             110 ;
+			ID             100 ;
          WHEN           ( nMode != ZOOM_MODE ) ;
 			OF             ::oDlg
 
       REDEFINE GET      ::oNomOrd ;
          VAR            ::oDbf:cNomOrd ;
          UPDATE ;
-         ID             100 ;
+         ID             101 ;
          WHEN           ( nMode == APPD_MODE ) ;
          PICTURE        "@!" ;
          OF             ::oDlg
@@ -267,11 +267,11 @@ RETURN ( cCodOrden )
 
 //---------------------------------------------------------------------------//
 
-METHOD cNombre( cOrdOrd )
+METHOD cNombre( cCodOrd )
 
    local cNombre        := ""
 
-   if ::oDbf:SeekInOrd( cOrdOrd, "cOrdOrd" )
+   if ::oDbf:SeekInOrd( cCodOrd, "cCodOrd" )
       cNombre           := ::oDbf:cNomOrd
    end if
 

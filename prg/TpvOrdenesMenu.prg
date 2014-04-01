@@ -40,7 +40,9 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                   OF oDbf
       FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                  OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu + cCodOrd"               NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu + cCodOrd"                NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
+
 
    END DATABASE oDbf
 
@@ -139,16 +141,28 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( oDlg )
 
+   local lPreSave    := .t.
+
+
    if Empty( ::oDbfVir:cCodOrd )
       MsgStop( "Código del orden no puede estar vacio" )
       Return ( .f. )
    end if
 
-   ::oDbfVir:Seek( space( 3 ) + ::oDbfVir:cCodOrd )
+   ::oDbfVir:GetStatus()
 
-   msgAlert( ::oDbfVir:cCodOrd, "comprobar q no este antes" )
+   if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodOrd, "cCodOrd" )
+      MsgStop( "El orden ya esta añadido" )
+      lPreSave    := .f.
+   end if
 
-RETURN ( oDlg:end( IDOK ) )
+   ::oDbfVir:SetStatus()
+
+   if lPreSave
+      oDlg:End( IDOK )
+   end if 
+
+RETURN ( lPreSave )
 
 //----------------------------------------------------------------------------//
 

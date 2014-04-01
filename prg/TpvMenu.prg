@@ -202,9 +202,15 @@ METHOD Resource( nMode )
       ::oBrwOrdenesComanda:CreateFromResource( 400 )
 
       with object ( ::oBrwOrdenesComanda:AddCol() )
-         :cHeader          := "Código orden comanda"
-         :bStrData         := {|| ::oDetOrdenesMenu:oDbfVir:FieldGetByName( "cCodOrd" )  }
-         :nWidth           := 60
+         :cHeader          := "Código"
+         :bStrData         := {|| ::oDetOrdenesMenu:oDbfVir:FieldGetByName( "cCodOrd" ) }
+         :nWidth           := 50
+      end with
+
+      with object ( ::oBrwOrdenesComanda:AddCol() )
+         :cHeader          := "Orden de comanda"
+         :bStrData         := {|| ::oOrdenComandas:cNombre( ::oDetOrdenesMenu:oDbfVir:FieldGetByName( "cCodOrd" ) ) }
+         :nWidth           := 200
       end with
 
       REDEFINE BUTTON ;

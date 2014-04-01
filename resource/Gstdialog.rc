@@ -19553,15 +19553,15 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 62, 16, 200, 11
   CONTROL "", 120, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 62, 29, 100, 11
   CONTROL "Obsoleto", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 44, 48, 10
+  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 6, 67, 50, 14
+  CONTROL "&Eliminar [F4]", 501, "Button", WS_TABSTOP, 62, 67, 50, 14
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 6, 84, 253, 132
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 156, 225, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 211, 225, 50, 14
   CONTROL "Nombre", -1, "Static", WS_GROUP, 4, 19, 42, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 4, 7, 37, 8
   CONTROL "Precio", -1, "Static", WS_GROUP, 4, 32, 54, 8
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 6, 84, 253, 132
   CONTROL "Ordenes de comanda", -1, "Button", BS_GROUPBOX, 2, 57, 261, 163
-  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 6, 67, 50, 14
-  CONTROL "&Eliminar [F4]", 501, "Button", WS_TABSTOP, 62, 67, 50, 14
 }
 
 ORDENES_MENU DIALOG DISCARDABLE 76, -80, 353, 37
