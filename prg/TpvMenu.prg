@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TpvMenu FROM TMant
+CLASS TpvMenu FROM TMasDet
 
    CLASSDATA oInstance
 

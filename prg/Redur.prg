@@ -52,6 +52,8 @@ ENDCLASS
 
    Return ( Self )
 
+//---------------------------------------------------------------------------//
+
    METHOD OpenFiles() CLASS AlbarenesClientesRedur
 
       TDataView():AlbaranesClientes( ::nView )
@@ -59,6 +61,8 @@ ENDCLASS
       ( TDataView():AlbaranesClientes( ::nView ) )->( ordsetfocus( "dFecAlb" ) )
 
    Return ( Self )
+
+//---------------------------------------------------------------------------//
 
    METHOD CloseFiles CLASS AlbarenesClientesRedur
 
@@ -195,6 +199,8 @@ ENDCLASS
          fWrite( ::hFile, ::SerializeASCII() )
          fClose( ::hFile )
       end if
+
+      msgAlert( ::SerializeASCII() )
 
    Return ( Self )
 

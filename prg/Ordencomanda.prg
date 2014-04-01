@@ -178,10 +178,11 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "OrdenComanda.Dbf" CLASS "OrdenComanda" ALIAS "OrdenComanda" PATH ( cPath ) VIA ( cDriver ) COMMENT "Orden Comanda"
 
+      FIELD NAME "cCodOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Códig"                  COLSIZE  30 OF ::oDbf
       FIELD NAME "cOrdOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Posición"   ALIGN RIGHT COLSIZE  80 OF ::oDbf 
       FIELD NAME "cNomOrd"          TYPE "C" LEN  30  DEC 0 COMMENT "Nombre"                 COLSIZE 200 OF ::oDbf
-      FIELD NAME "cAbrOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Abr. Abreviatura"       COLSIZE  30 OF ::oDbf
 
+      INDEX TO "OrdenComanda.Cdx"   TAG "cOrdOrd"  ON "cOrdOrd"   COMMENT "Posición"         NODELETED   OF ::oDbf
       INDEX TO "OrdenComanda.Cdx"   TAG "cOrdOrd"  ON "cOrdOrd"   COMMENT "Posición"         NODELETED   OF ::oDbf
       INDEX TO "OrdenComanda.Cdx"   TAG "cNomOrd"  ON "cNomOrd"   COMMENT "Nombre"           NODELETED   OF ::oDbf
 
@@ -195,20 +196,20 @@ METHOD Resource( nMode )
 
    DEFINE DIALOG ::oDlg RESOURCE "OrdenComanda" TITLE LblTitle( nMode ) + "orden de comanda"
 
-      REDEFINE GET      ::oNomOrd ;
-         VAR            ::oDbf:cNomOrd ;
-         UPDATE ;
-			ID             100 ;
-         WHEN           ( nMode == APPD_MODE ) ;
-			PICTURE 	      "@!" ;
-			OF             ::oDlg
-
-      REDEFINE GET      ::oAbrOrd ;
-         VAR            ::oDbf:cAbrOrd ;
+      REDEFINE GET      ::oCodOrd ;
+         VAR            ::oDbf:cCodOrd ;
          UPDATE ;
 			ID             110 ;
          WHEN           ( nMode != ZOOM_MODE ) ;
 			OF             ::oDlg
+
+      REDEFINE GET      ::oNomOrd ;
+         VAR            ::oDbf:cNomOrd ;
+         UPDATE ;
+         ID             100 ;
+         WHEN           ( nMode == APPD_MODE ) ;
+         PICTURE        "@!" ;
+         OF             ::oDlg
 
       REDEFINE BUTTON ;
          ID             IDOK ;
@@ -234,15 +235,15 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 METHOD lPreSave( nMode )
 
-   if Empty( ::oNomOrd:VarGet() )
-      MsgStop( "Orden de comanda no puede estar vacío." )
-      ::oNomOrd:SetFocus()
+   if Empty( ::oCodOrd:VerGet() )
+      MsgStop( "Códido de orden de comanda no puede estar vacío." )
+      ::oCodOrd:SetFocus()
       Return .f.
    end if
 
-   if Empty( ::oAbrOrd:VarGet() )
-      MsgStop( "Abreviatura de orden de comanda no puede estar vacío." )
-      ::oAbrOrd:SetFocus()
+   if Empty( ::oNomOrd:VarGet() )
+      MsgStop( "Orden de comanda no puede estar vacío." )
+      ::oNomOrd:SetFocus()
       Return .f.
    end if
 
