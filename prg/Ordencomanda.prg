@@ -8,7 +8,7 @@ CLASS TOrdenComanda FROM TMant
 
    DATA oDlg
    DATA oNomOrd
-   DATA oAbrOrd
+   DATA oCodOrd
 
    METHOD Create( cPath ) CONSTRUCTOR
 
@@ -24,7 +24,7 @@ CLASS TOrdenComanda FROM TMant
    METHOD Resource( nMode )
 
    METHOD cNombre( cOrdOrd )
-   METHOD cAbreviatura( cOrdOrd )
+   METHOD cCodigoOrden( cOrdOrd )
 
    METHOD cOrden( cNombre )
 
@@ -178,13 +178,13 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "OrdenComanda.Dbf" CLASS "OrdenComanda" ALIAS "OrdenComanda" PATH ( cPath ) VIA ( cDriver ) COMMENT "Orden Comanda"
 
-      FIELD NAME "cCodOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Códig"                  COLSIZE  30 OF ::oDbf
+      FIELD NAME "cCodOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Código"                 COLSIZE  60 OF ::oDbf
       FIELD NAME "cOrdOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Posición"   ALIGN RIGHT COLSIZE  80 OF ::oDbf 
       FIELD NAME "cNomOrd"          TYPE "C" LEN  30  DEC 0 COMMENT "Nombre"                 COLSIZE 200 OF ::oDbf
 
-      INDEX TO "OrdenComanda.Cdx"   TAG "cOrdOrd"  ON "cOrdOrd"   COMMENT "Posición"         NODELETED   OF ::oDbf
-      INDEX TO "OrdenComanda.Cdx"   TAG "cOrdOrd"  ON "cOrdOrd"   COMMENT "Posición"         NODELETED   OF ::oDbf
+      INDEX TO "OrdenComanda.Cdx"   TAG "cCodOrd"  ON "cCodOrd"   COMMENT "Código"           NODELETED   OF ::oDbf
       INDEX TO "OrdenComanda.Cdx"   TAG "cNomOrd"  ON "cNomOrd"   COMMENT "Nombre"           NODELETED   OF ::oDbf
+      INDEX TO "OrdenComanda.Cdx"   TAG "cOrdOrd"  ON "cOrdOrd"   COMMENT "Posición"         NODELETED   OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -235,7 +235,7 @@ RETURN ( ::oDlg:nResult == IDOK )
 
 METHOD lPreSave( nMode )
 
-   if Empty( ::oCodOrd:VerGet() )
+   if Empty( ::oCodOrd:VarGet() )
       MsgStop( "Códido de orden de comanda no puede estar vacío." )
       ::oCodOrd:SetFocus()
       Return .f.
@@ -255,15 +255,15 @@ RETURN ( ::oDlg:end( IDOK ) )
 
 //--------------------------------------------------------------------------//
 
-METHOD cAbreviatura( cOrdOrd )
+METHOD cCodigoOrden( cOrdOrd )
 
-   local cAbreviatura   := ""
+   local cCodOrden   := ""
 
    if ::oDbf:SeekInOrd( cOrdOrd, "cOrdOrd" )
-      cAbreviatura      := ::oDbf:cAbrOrd
+      cCodOrden      := ::oDbf:cCodOrd
    end if
 
-RETURN ( cAbreviatura )
+RETURN ( cCodOrden )
 
 //---------------------------------------------------------------------------//
 

@@ -27,7 +27,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
    local oDbf
 
    DEFAULT cPath        := ::cPath
-   DEFAULT lUniqueName  := .f.FROM TMasDet
+   DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "TpvOrdMnu"
    DEFAULT cVia         := cDriver()
 
