@@ -38,20 +38,9 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
 
       FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                   OF oDbf
-      FIELD NAME "nNumExp" TYPE "N" LEN 09  DEC 0 COMMENT "Número"                        OF oDbf
-      FIELD NAME "cSufExp" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                        OF oDbf
-      FIELD NAME "cCodTra" TYPE "C" LEN 05  DEC 0 COMMENT "Trabajador"                    OF oDbf
-      FIELD NAME "cCodAct" TYPE "C" LEN 03  DEC 0 COMMENT "Actuación"                     OF oDbf
-      FIELD NAME "dFecIni" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                  OF oDbf
-      FIELD NAME "cHorIni" TYPE "C" LEN 05  DEC 0 COMMENT "Hora inicio"                   OF oDbf
-      FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"                     OF oDbf
-      FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora fin"                      OF oDbf
-      FIELD NAME "mMemAct" TYPE "M" LEN 10  DEC 0 COMMENT "Descripción de la actuación"   OF oDbf
-      FIELD NAME "lActEnd" TYPE "L" LEN 01  DEC 0 COMMENT "Tarea finalizada"              OF oDbf
+      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                  OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cNumExp" ON "cSerExp + Str( nNumExp, 9 ) + cSufExp"   NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodTra" ON "cCodTra"                                 NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodAct" ON "cCodAct"                                 NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu + cCodOrd"               NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -69,13 +58,13 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::oDbf            := ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !lExclusive )
+      ::oDbf:Activate( .f., !lExclusive )
 
-   ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
+      ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
 
    RECOVER USING oError
 
@@ -107,131 +96,25 @@ RETURN .t.
 METHOD Resource( nMode )
 
    local oDlg
-   local oGetTra
-   local oSayTra
-   local cSayTra
-   local oGetAct
-   local oSayAct
-   local cSayAct
-   local oFecIni
-   local oFecFin
-   local oHorIni
-   local oHorFin
+   local oGetOrd
 
-   if nMode == APPD_MODE
+   // Caja de dialogo-------------------------------------------------------------
 
-      ::oDbfVir:dFecIni := ::oParent:oDbf:dFecOrd
-      ::oDbfVir:cHorIni := ::oParent:oDbf:cHorOrd
-      ::oDbfVir:cCodTra := ::oParent:oDbf:cCodTra
+   DEFINE DIALOG oDlg RESOURCE "OrdenComanda" 
 
-   end if
 
-   /*
-   Etiquetas-------------------------------------------------------------------
-   */
-
-   cSayAct              := oRetFld( ::oDbfVir:cCodAct, ::oParent:oActuaciones:oDbf, "cDesAct" )
-   cSayTra              := oRetFld( ::oDbfVir:cCodTra, ::oParent:oOperario:oDbf, "cNomTra" )
-
-   /*
-   Caja de dialogo-------------------------------------------------------------
-   */
-
-   DEFINE DIALOG oDlg RESOURCE "lExpediente" TITLE LblTitle( nMode ) + "actuaciones"
-
-      /*
-      Código de personal-------------------------------------------------------
-      */
-
-      REDEFINE GET oGetAct VAR ::oDbfVir:cCodAct;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         OF       oDlg
-      oGetAct:bHelp  := {|| ::oParent:oActuaciones:Buscar( oGetAct ) }
-      oGetAct:bValid := {|| ::oParent:oActuaciones:Existe( oGetAct, oSayAct, "cDesAct", .t., .t., "0" ) }
-
-      REDEFINE GET oSayAct VAR cSayAct ;
-         ID       111 ;
-         WHEN     ( .f. ) ;
-			OF 		oDlg
-
-      /*
-      Código de personal-------------------------------------------------------
-      */
-
-      REDEFINE GET oGetTra VAR ::oDbfVir:cCodTra;
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         BITMAP   "LUPA" ;
-         OF       oDlg
-      oGetTra:bHelp  := {|| ::oParent:oOperario:Buscar( oGetTra ) }
-      oGetTra:bValid := {|| ::oParent:oOperario:Existe( oGetTra, oSayTra, "cNomTra", .t., .t., "0" ) }
-
-      REDEFINE GET oSayTra VAR cSayTra ;
-         ID       121 ;
-         WHEN     ( .f. ) ;
-			OF 		oDlg
-
-      /*
-      Fechas y Horas-----------------------------------------------------------
-      */
-
-      REDEFINE GET oFecIni VAR ::oDbfVir:dFecIni ;
-         ID       140 ;
-			SPINNER ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET oHorIni ;
-         VAR      ::oDbfVir:cHorIni ;
-         PICTURE  "@R 99:99" ;
+      REDEFINE GET oGetOrd ;
+         VAR      ::oDbfVir:cCodOrd ;
+         BITMAP   "Lupa" ;
+         ID       100 ;
+         IDTEXT   101 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         SPINNER ;
-         ON UP    ( UpTime( oHorIni ) );
-         ON DOWN  ( DwTime( oHorIni ) );
-         ID       141 ;
          OF       oDlg
 
-      REDEFINE GET oFecFin VAR ::oDbfVir:dFecFin ;
-         ID       150 ;
-			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( Empty( ::oDbfVir:dFecIni ) .or. ( ::oDbfVir:dFecIni >= ::oDbfVir:dFecIni ) ) ;
-         OF       oDlg
+      oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetOrd, oGetOrd:oHelpText ) }
+      oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetOrd ) }
 
-      REDEFINE GET oHorFin ;
-         VAR      ::oDbfVir:cHorFin ;
-         PICTURE  "@R 99:99" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         SPINNER ;
-         ON UP    ( UpTime( oHorFin ) );
-         ON DOWN  ( DwTime( oHorFin ) );
-         ID       151 ;
-         OF       oDlg
-
-      /*
-      Comentarios--------------------------------------------------------------
-      */
-
-      REDEFINE GET ::oDbfVir:mMemAct ;
-         MEMO ;
-         ID       130;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
-
-      /*
-      Finalizado---------------------------------------------------------------
-      */
-
-      REDEFINE CHECKBOX ::oDbfVir:lActEnd ;
-         ID       160 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      /*
-      Botones------------------------------------------------------------------
-      */
+      // Botones------------------------------------------------------------------
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -256,15 +139,14 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( oDlg )
 
-   if Empty( ::oDbfVir:cCodAct )
-      MsgStop( "Código de la actuación no puede estar vacio" )
+   if Empty( ::oDbfVir:cCodOrd )
+      MsgStop( "Código del orden no puede estar vacio" )
       Return ( .f. )
    end if
 
-   if Empty( ::oDbfVir:cCodTra )
-      MsgStop( "Código del operario no puede estar vacio" )
-      Return ( .f. )
-   end if
+   ::oDbfVir:Seek( space( 3 ) + ::oDbfVir:cCodOrd )
+
+   msgAlert( ::oDbfVir:cCodOrd, "comprobar q no este antes" )
 
 RETURN ( oDlg:end( IDOK ) )
 
@@ -272,32 +154,9 @@ RETURN ( oDlg:end( IDOK ) )
 
 METHOD PreSaveDetails()
 
-   ::oDbfVir:cSerExp  := ::oParent:oDbf:cSerExp
-   ::oDbfVir:nNumExp  := ::oParent:oDbf:nNumExp
-   ::oDbfVir:cSufExp  := ::oParent:oDbf:cSufExp
+   ::oDbfVir:cCodMnu  := ::oParent:oDbf:cCodMnu
 
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
-
-function aItmActua()
-
-   local aBasActua  := {}
-
-   aAdd( aBasActua, { "cSerExp", "C",  1, 0, "Serie",                        "", "", "" } )
-   aAdd( aBasActua, { "nNumExp", "N",  9, 0, "Número",                       "", "", "" } )
-   aAdd( aBasActua, { "cSufExp", "C",  2, 0, "Sufijo",                       "", "", "" } )
-   aAdd( aBasActua, { "cCodTra", "C",  5, 0, "Trabajador",                   "", "", "" } )
-   aAdd( aBasActua, { "cCodAct", "C",  3, 0, "Actuación",                    "", "", "" } )
-   aAdd( aBasActua, { "dFecIni", "D",  8, 0, "Fecha inicio",                 "", "", "" } )
-   aAdd( aBasActua, { "cHorIni", "C",  5, 0, "Hora inicio",                  "", "", "" } )
-   aAdd( aBasActua, { "dFecFin", "D",  8, 0, "Fecha fin",                    "", "", "" } )
-   aAdd( aBasActua, { "cHorFin", "C",  5, 0, "Hora fin",                     "", "", "" } )
-   aAdd( aBasActua, { "mMemAct", "M", 10, 0, "Descripción de la actuación",  "", "", "" } )
-   aAdd( aBasActua, { "lActEnd", "L",  1, 0, "Lógico finalizado",            "", "", "" } )
-
-return ( aBasActua )
-
-//---------------------------------------------------------------------------//
-
 

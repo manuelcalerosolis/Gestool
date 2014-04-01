@@ -100,10 +100,6 @@ static cPrvOld
 static oMenu
 static aBmpTipCat
 
-static aNombreOrdenComanda
-static oNombreOrdenComanda 
-static cNombreOrdenComanda
-
 static aBenefSobre         := { "Costo", "Venta" }
 
 static cCodigoFamilia
@@ -428,11 +424,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      oOrdenComanda           := TOrdenComanda():Create( cPatArt() )
+      oOrdenComanda        := TOrdenComanda():Create( cPatArt() )
       if !oOrdenComanda:OpenFiles()
-         lOpenfiles           := .f.
-      else 
-         aNombreOrdenComanda  := oOrdenComanda:aNombreOrdenComanda()
+         lOpenfiles        := .f.
       end if 
 
       /*
@@ -1652,8 +1646,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    cPrvOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
    cImageOld                  := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
 
-   cNombreOrdenComanda        := oOrdenComanda:cNombre( aTmp[ ( dbfArticulo )->( fieldpos( "cOrdOrd" ) ) ] )
-
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
       aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
    end if
@@ -2019,13 +2011,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldTactil
 
-   REDEFINE COMBOBOX oNombreOrdenComanda ;
-      VAR         cNombreOrdenComanda ;
-      ITEMS       aNombreOrdenComanda ;
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldPos( "cOrdOrd" ) ) ] ;
+      VAR         aTmp[ ( dbfArticulo )->( fieldPos( "cOrdOrd" ) ) ] ;
+      BITMAP      "Lupa" ;
       ID          470 ;
+      IDTEXT      471 ;
+      VALID       ( oOrdenComanda:Existe( aGet[ ( dbfArticulo )->( fieldpos( "cOrdOrd" ) ) ], aGet[ ( dbfArticulo )->( fieldPos( "cOrdOrd" ) ) ]:oHelpText ) );
+      ON HELP     ( oOrdenComanda:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cOrdOrd" ) ) ] ) ) ;
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldTactil
-
 
    /*
 	Segunda Caja de Dialogo del Folder
@@ -5843,8 +5837,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
       aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
-
-      aTmp[ ( dbfArticulo )->( fieldpos( "cOrdOrd" ) ) ]       := oOrdenComanda:cOrden( cNombreOrdenComanda )
 
       if !Empty( oActiveX )
          aTmp[ ( dbfArticulo )->( fieldpos( "mDesTec" ) ) ]    := oActiveX:DocumentHTML

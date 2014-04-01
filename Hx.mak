@@ -112,6 +112,7 @@ Tmov.prg                	\
 Tipart.prg              	\
 Tproyecto.prg 				\
 TpvMenu.prg 				\
+TpvOrdenesMenu.prg 			\
 TFraPub.prg             	\
 SalaVta.prg             	\
 Tvta.prg                	\
@@ -501,6 +502,7 @@ Agenda.obj              \
 Tipart.obj              \
 Tproyecto.obj 			\
 TpvMenu.obj				\
+TpvOrdenesMenu.obj		\
 TFraPub.obj             \
 SalaVta.obj             \
 Tvta.obj                \
@@ -917,6 +919,7 @@ $(OBJ)\Tmov.obj                 +
 $(OBJ)\Tipart.obj               +
 $(OBJ)\Tproyecto.obj            +
 $(OBJ)\TpvMenu.obj              +
+$(OBJ)\TpvOrdenesMenu.obj		+
 $(OBJ)\TFraPub.obj              +
 $(OBJ)\SalaVta.obj              +
 $(OBJ)\Tvta.obj                 +

@@ -179,8 +179,8 @@ METHOD DefineFiles( cPath, cDriver )
    DEFINE DATABASE ::oDbf FILE "OrdenComanda.Dbf" CLASS "OrdenComanda" ALIAS "OrdenComanda" PATH ( cPath ) VIA ( cDriver ) COMMENT "Orden Comanda"
 
       FIELD NAME "cCodOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Código"                 COLSIZE  60 OF ::oDbf
+      FIELD NAME "cNomOrd"          TYPE "C" LEN  30  DEC 0 COMMENT "Nombre"                 COLSIZE 300 OF ::oDbf
       FIELD NAME "cOrdOrd"          TYPE "C" LEN   2  DEC 0 COMMENT "Posición"   ALIGN RIGHT COLSIZE  80 OF ::oDbf 
-      FIELD NAME "cNomOrd"          TYPE "C" LEN  30  DEC 0 COMMENT "Nombre"                 COLSIZE 200 OF ::oDbf
 
       INDEX TO "OrdenComanda.Cdx"   TAG "cCodOrd"  ON "cCodOrd"   COMMENT "Código"           NODELETED   OF ::oDbf
       INDEX TO "OrdenComanda.Cdx"   TAG "cNomOrd"  ON "cNomOrd"   COMMENT "Nombre"           NODELETED   OF ::oDbf
