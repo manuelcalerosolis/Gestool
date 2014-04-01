@@ -725,6 +725,21 @@ METHOD SetPedPrv( cNumPed ) CLASS TStock
          ( ::cPedPrvT )->( dbUnLock() )
       end if
 
+      if ( ::cPedPrvL )->( dbSeek( cNumPed ) )
+
+         while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed == cNumPed .and. !( ::cPedPrvL )->( eof() )
+
+            if dbLock( ::cPedPrvL )
+               ( ::cPedPrvL )->nEstado := nEstPed
+               ( ::cPedPrvL )->( dbUnLock() )
+            end if
+
+         ( ::cPedPrvL )->( dbSkip() )
+
+         end while
+
+      end if   
+
    end if
 
    ( ::cPedPrvT )->( OrdSetFocus( nOrdAnt ) )
@@ -4574,43 +4589,43 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             if Empty( cCodAlm ) .or. ( ::cPedPrvL )->cAlmLin == cCodAlm
 
-               if ( ::cAlbPrvL )->( dbSeek( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt ) )
+               if ( ::cPedPrvL )->nEstado != 3
 
                   nTotal               := nTotNPedPrv( ::cPedPrvL )
+                  
+                  if ( ::cAlbPrvL )->( dbSeek( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt ) )
 
-                  while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt == ( ::cAlbPrvL )->cCodPed + ( ::cAlbPrvL )->cRef .and.;
-                        !( ::cAlbPrvL )->( Eof() )
+                     while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt == ( ::cAlbPrvL )->cCodPed + ( ::cAlbPrvL )->cRef .and.;
+                           !( ::cAlbPrvL )->( Eof() )
 
-                     nTotal            -= nTotNAlbPrv( ::cAlbPrvL )
+                        nTotal         -= nTotNAlbPrv( ::cAlbPrvL )
 
-                     ( ::cAlbPrvL )->( dbSkip() )
+                        ( ::cAlbPrvL )->( dbSkip() )
 
-                  end while
+                     end while
 
-               else
+                  end if
 
-                  nTotal               := nTotNPedPrv( ::cPedPrvL )
+                  with object ( SStock():New() )
 
-               end if
+                     :cTipoDocumento      := ALB_PRV
+                     :cCodigo             := ( ::cPedPrvL )->cRef
+                     :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
+                     :cDelegacion         := ( ::cPedPrvL )->cSufPed
+                     :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
+                     :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
+                     :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
+                     :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
+                     :cValorPropiedad1    := ( ::cPedPrvL )->cValPr1
+                     :cValorPropiedad2    := ( ::cPedPrvL )->cValPr2
+                     :cLote               := ( ::cPedPrvL )->cLote
+                     :nPendientesRecibir  := if( nTotal > 0, nTotal, 0 )
 
-               with object ( SStock():New() )
+                     ::Integra( hb_QWith(), lLote, lNumeroSerie )
 
-                  :cTipoDocumento      := ALB_PRV
-                  :cCodigo             := ( ::cPedPrvL )->cRef
-                  :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
-                  :cDelegacion         := ( ::cPedPrvL )->cSufPed
-                  :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
-                  :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
-                  :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
-                  :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
-                  :cValorPropiedad1    := ( ::cPedPrvL )->cValPr1
-                  :cValorPropiedad2    := ( ::cPedPrvL )->cValPr2
-                  :cLote               := ( ::cPedPrvL )->cLote
-                  :nPendientesRecibir  := if( nTotal > 0, nTotal, 0 )
+                  end with
 
-                  ::Integra( hb_QWith(), lLote, lNumeroSerie )
-
-               end with
+               end if   
 
             end if
 

@@ -12913,7 +12913,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
       ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
       ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
       ( dbfTmpLin )->nDtoPrm        := ( dbfCliAtp )->nDprArt
-      ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1
+      ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1b
       ( dbfTmpLin )->cCodPr2        := ( dbfCliAtp )->cCodPr2
       ( dbfTmpLin )->cValPr1        := ( dbfCliAtp )->cValPr1
       ( dbfTmpLin )->cValPr2        := ( dbfCliAtp )->cValPr2
@@ -12937,6 +12937,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
          ( dbfTmpLin )->lNotVta     := ( dbfArticulo )->lNotVta
          ( dbfTmpLin )->cCodTip     := ( dbfArticulo )->cCodTip
          ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
+         ( dbfTmpLin )->nPesoKg     := ( dbfArticulo )->nPesoKg
       end if
    
       nPrecioAtipica                := nImporteAtipica( ( dbfCliAtp )->cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )

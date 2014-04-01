@@ -820,7 +820,7 @@ Static Function lRecargaFecha( oFechaInicio, oFechaFin, cPeriodo )
       case cPeriodo == "Todos"
 
          oFechaInicio:cText( CtoD( "01/01/2000" ) ) 
-         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
+         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
    end case
 

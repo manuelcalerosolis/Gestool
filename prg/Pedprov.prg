@@ -6767,6 +6767,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nConSem", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nConQui", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nConMes", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
 
 return ( aColPedPrv )
 
@@ -6986,6 +6987,7 @@ Function SynPedPrv( cPath )
    local oError
    local oBlock      
    local aTotPed
+   local nEstado
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -7089,6 +7091,12 @@ Function SynPedPrv( cPath )
 
       if Empty( ( dbfPedPrvL )->cAlmLin )
          ( dbfPedPrvL )->cAlmLin := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodAlm" )
+      end if
+
+      nEstado     := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "nEstado" )
+
+      if nEstado == 3
+         ( dbfPedPrvL )->nEstado := nEstado
       end if
 
       ( dbfPedPrvL )->( dbSkip() )
