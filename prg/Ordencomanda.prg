@@ -200,14 +200,14 @@ METHOD Resource( nMode )
          VAR            ::oDbf:cCodOrd ;
          UPDATE ;
 			ID             100 ;
-         WHEN           ( nMode != ZOOM_MODE ) ;
+         WHEN           ( nMode == APPD_MODE ) ;
 			OF             ::oDlg
 
       REDEFINE GET      ::oNomOrd ;
          VAR            ::oDbf:cNomOrd ;
          UPDATE ;
          ID             101 ;
-         WHEN           ( nMode == APPD_MODE ) ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
          PICTURE        "@!" ;
          OF             ::oDlg
 

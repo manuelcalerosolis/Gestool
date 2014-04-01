@@ -119,9 +119,9 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-      if !::oOrdenComandas:OpenFiles()
-         ::lOpenFiles   := .f.
-      end if      
+      ::oOrdenComandas:OpenFiles()
+
+      ::OpenDetails()
 
    RECOVER USING oError
 
@@ -145,9 +145,9 @@ METHOD CloseFiles()
       ::oDbf:End()
    end if
 
-   if !Empty( ::oOrdenComandas )
-      ::oOrdenComandas:End()
-   end if      
+   ::oOrdenComandas:CloseFiles()
+
+   ::CloseDetails()     
 
    ::oDbf      := nil
 

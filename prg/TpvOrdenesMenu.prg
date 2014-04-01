@@ -37,12 +37,11 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
 
-      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "CÃ³digo menu"                   OF oDbf
-      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "CÃ³digo orden"                  OF oDbf
+      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
+      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu + cCodOrd"                NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
-
 
    END DATABASE oDbf
 
@@ -52,11 +51,11 @@ RETURN ( oDbf )
 
 METHOD OpenFiles( lExclusive )
 
-   local lOpen          := .t.
+   local lOpen             := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
-   DEFAULT  lExclusive  := .f.
+   DEFAULT  lExclusive     := .f.
 
    BEGIN SEQUENCE
 
@@ -86,7 +85,9 @@ RETURN ( lOpen )
 
 METHOD CloseFiles()
 
-   if ::oDbf != nil .and. ::oDbf:Used()
+   msgAlert( "CloseFiles")
+
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:End()
       ::oDbf            := nil
    end if
@@ -105,13 +106,13 @@ METHOD Resource( nMode )
    DEFINE DIALOG oDlg RESOURCE "OrdenComanda" 
 
 
-      REDEFINE GET oGetOrd ;
-         VAR      ::oDbfVir:cCodOrd ;
-         BITMAP   "Lupa" ;
-         ID       100 ;
-         IDTEXT   101 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+      REDEFINE GET   oGetOrd ;
+         VAR         ::oDbfVir:cCodOrd ;
+         BITMAP      "Lupa" ;
+         ID          100 ;
+         IDTEXT      101 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetOrd, oGetOrd:oHelpText ) }
       oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetOrd ) }
@@ -143,16 +144,15 @@ METHOD lPreSave( oDlg )
 
    local lPreSave    := .t.
 
-
    if Empty( ::oDbfVir:cCodOrd )
-      MsgStop( "CÃ³digo del orden no puede estar vacio" )
+      MsgStop( "Código del orden no puede estar vacio" )
       Return ( .f. )
    end if
 
    ::oDbfVir:GetStatus()
 
    if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodOrd, "cCodOrd" )
-      MsgStop( "El orden ya esta aÃ±adido" )
+      MsgStop( "El orden ya esta añadido" )
       lPreSave    := .f.
    end if
 
