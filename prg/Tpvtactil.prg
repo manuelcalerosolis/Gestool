@@ -3067,7 +3067,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Or. Orden comanda"
       :lHide                  := .t.
-      :bEditValue             := {|| ::oOrdenComanda:cAbreviatura( ::oTemporalLinea:cOrdOrd ) } 
+      :bEditValue             := {|| ::oOrdenComanda:cCodigoOrden( ::oTemporalLinea:cOrdOrd ) } 
       :nWidth                 := ::ResizedCol( 30 )
    end with
 
