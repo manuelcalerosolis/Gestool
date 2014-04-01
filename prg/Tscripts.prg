@@ -389,18 +389,14 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
    local oBlock
    local cFichero
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
-   /*
-   Desactivamos todos los Scripts----------------------------------------------
-   */
+   // Desactivamos todos los Scripts-------------------------------------------
 
    ::DeActivateAllTimer()
 
-   /*
-   Comprobamos que el script haya sido compilado-------------------------------
-   */
+   // Comprobamos que el script haya sido compilado----------------------------
 
    cFichero       := cPatScript() + cCodigoScript + ".hrb"
 
@@ -408,12 +404,10 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
       ::CompilarScript( cCodigoScript )
    end if
 
-   /*
-   Ejecutamos el script compilado----------------------------------------------
-   */
+   // Ejecutamos el script compilado-------------------------------------------
 
    RunScript( cFichero )
-
+/*
    RECOVER USING oError
 
       msgStop( "Error de ejecución." + CRLF + ErrorMessage( oError ) )
@@ -421,10 +415,8 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   /*
-   Activamos todos los scripts-------------------------------------------------
-   */
+*/
+   // Activamos todos los scripts----------------------------------------------
 
    ::ActivateAllTimer()
 

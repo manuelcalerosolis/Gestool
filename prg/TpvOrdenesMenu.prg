@@ -27,7 +27,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
    local oDbf
 
    DEFAULT cPath        := ::cPath
-   DEFAULT lUniqueName  := .f.FROM TMasDet
+   DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "TpvOrdMnu"
    DEFAULT cVia         := cDriver()
 
@@ -37,16 +37,16 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
 
-      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "C骴igo menu"                   OF oDbf
-      FIELD NAME "nNumExp" TYPE "N" LEN 09  DEC 0 COMMENT "N鷐ero"                        OF oDbf
+      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "C贸digo menu"                   OF oDbf
+      FIELD NAME "nNumExp" TYPE "N" LEN 09  DEC 0 COMMENT "N煤mero"                        OF oDbf
       FIELD NAME "cSufExp" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                        OF oDbf
       FIELD NAME "cCodTra" TYPE "C" LEN 05  DEC 0 COMMENT "Trabajador"                    OF oDbf
-      FIELD NAME "cCodAct" TYPE "C" LEN 03  DEC 0 COMMENT "Actuaci髇"                     OF oDbf
+      FIELD NAME "cCodAct" TYPE "C" LEN 03  DEC 0 COMMENT "Actuaci贸n"                     OF oDbf
       FIELD NAME "dFecIni" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                  OF oDbf
       FIELD NAME "cHorIni" TYPE "C" LEN 05  DEC 0 COMMENT "Hora inicio"                   OF oDbf
       FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"                     OF oDbf
       FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora fin"                      OF oDbf
-      FIELD NAME "mMemAct" TYPE "M" LEN 10  DEC 0 COMMENT "Descripci髇 de la actuaci髇"   OF oDbf
+      FIELD NAME "mMemAct" TYPE "M" LEN 10  DEC 0 COMMENT "Descripci贸n de la actuaci贸n"   OF oDbf
       FIELD NAME "lActEnd" TYPE "L" LEN 01  DEC 0 COMMENT "Tarea finalizada"              OF oDbf
 
       INDEX TO ( cFileName ) TAG "cNumExp" ON "cSerExp + Str( nNumExp, 9 ) + cSufExp"   NODELETED OF oDbf
@@ -140,7 +140,7 @@ METHOD Resource( nMode )
    DEFINE DIALOG oDlg RESOURCE "lExpediente" TITLE LblTitle( nMode ) + "actuaciones"
 
       /*
-      C骴igo de personal-------------------------------------------------------
+      C贸digo de personal-------------------------------------------------------
       */
 
       REDEFINE GET oGetAct VAR ::oDbfVir:cCodAct;
@@ -157,7 +157,7 @@ METHOD Resource( nMode )
 			OF 		oDlg
 
       /*
-      C骴igo de personal-------------------------------------------------------
+      C贸digo de personal-------------------------------------------------------
       */
 
       REDEFINE GET oGetTra VAR ::oDbfVir:cCodTra;
@@ -257,12 +257,12 @@ RETURN ( oDlg:nResult == IDOK )
 METHOD lPreSave( oDlg )
 
    if Empty( ::oDbfVir:cCodAct )
-      MsgStop( "C骴igo de la actuaci髇 no puede estar vacio" )
+      MsgStop( "C贸digo de la actuaci贸n no puede estar vacio" )
       Return ( .f. )
    end if
 
    if Empty( ::oDbfVir:cCodTra )
-      MsgStop( "C骴igo del operario no puede estar vacio" )
+      MsgStop( "C贸digo del operario no puede estar vacio" )
       Return ( .f. )
    end if
 
@@ -285,16 +285,16 @@ function aItmActua()
    local aBasActua  := {}
 
    aAdd( aBasActua, { "cSerExp", "C",  1, 0, "Serie",                        "", "", "" } )
-   aAdd( aBasActua, { "nNumExp", "N",  9, 0, "N鷐ero",                       "", "", "" } )
+   aAdd( aBasActua, { "nNumExp", "N",  9, 0, "N煤mero",                       "", "", "" } )
    aAdd( aBasActua, { "cSufExp", "C",  2, 0, "Sufijo",                       "", "", "" } )
    aAdd( aBasActua, { "cCodTra", "C",  5, 0, "Trabajador",                   "", "", "" } )
-   aAdd( aBasActua, { "cCodAct", "C",  3, 0, "Actuaci髇",                    "", "", "" } )
+   aAdd( aBasActua, { "cCodAct", "C",  3, 0, "Actuaci贸n",                    "", "", "" } )
    aAdd( aBasActua, { "dFecIni", "D",  8, 0, "Fecha inicio",                 "", "", "" } )
    aAdd( aBasActua, { "cHorIni", "C",  5, 0, "Hora inicio",                  "", "", "" } )
    aAdd( aBasActua, { "dFecFin", "D",  8, 0, "Fecha fin",                    "", "", "" } )
    aAdd( aBasActua, { "cHorFin", "C",  5, 0, "Hora fin",                     "", "", "" } )
-   aAdd( aBasActua, { "mMemAct", "M", 10, 0, "Descripci髇 de la actuaci髇",  "", "", "" } )
-   aAdd( aBasActua, { "lActEnd", "L",  1, 0, "L骻ico finalizado",            "", "", "" } )
+   aAdd( aBasActua, { "mMemAct", "M", 10, 0, "Descripci贸n de la actuaci贸n",  "", "", "" } )
+   aAdd( aBasActua, { "lActEnd", "L",  1, 0, "L贸gico finalizado",            "", "", "" } )
 
 return ( aBasActua )
 
