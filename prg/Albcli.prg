@@ -809,6 +809,15 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Total peso"
+         :bEditValue       := {|| nTotalPesoAlbaranCliente( TDataView():AlbaranesClientesId( nView ), nView, MasUnd() ) }
+         :nWidth           := 95
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Bultos"
          :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->nBultos }
          :cEditPicture     := "99999"
@@ -3145,7 +3154,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       527 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin ) )
+         ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin, oDlg ) )
 
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
          ID       100 ;
@@ -4939,6 +4948,28 @@ static function nTotalUnd( nAlbaran, cPicUnd )
    ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTo( nRecNum ) )
 
 RETURN ( Trans( nTotUnd, cPicUnd ) )
+
+//--------------------------------------------------------------------------//
+
+/*
+Total peso en un albaran
+*/
+
+function nTotalPesoAlbaranCliente( nAlbaran, nView, cPicUnd )
+
+   local nTotPeso := 0
+   local nRecNum  := ( TDataView():Get( "AlbCliL", nView ) )->( RecNo() )
+
+   if ( TDataView():Get( "AlbCliL", nView ) )->( DbSeek( nAlbaran ) )
+      while  ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb == nAlbaran .and. ( TDataView():Get( "AlbCliL", nView ) )->( !eof() )
+         nTotPeso  += nPesLAlbCli( TDataView():Get( "AlbCliL", nView ) )
+         ( TDataView():Get( "AlbCliL", nView ) )->( dbSkip() )
+      end do
+   end if
+
+   ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTo( nRecNum ) )
+
+RETURN ( if( Empty( cPicUnd ), nTotPeso, Trans( nTotPeso, cPicUnd ) ) )
 
 //--------------------------------------------------------------------------//
 
@@ -12824,7 +12855,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
+Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
 
    local nOrder
    local lSearch     := .f.
@@ -12846,6 +12877,10 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
    if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
 
+      AutoMeterDialog( oDlg )
+
+      SetTotalAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
+
       while ( dbfCliAtp )->cCodCli == aTmpAlb[ _CCODCLI ] .and. !( dbfCliAtp )->( Eof() )
 
          if lConditionAtipica( nil, dbfCliAtp ) .and. ( dbfCliAtp )->lAplAlb
@@ -12854,9 +12889,13 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
 
          end if
 
+         SetAutoMeterDialog( ( dbfCliAtp )->( Recno() ) )
+
          ( dbfCliAtp )->( dbSkip() )
 
       end while
+
+      EndAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
 
    end if
 
@@ -12869,6 +12908,10 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
       ( dbfCliAtp )->( OrdSetFocus( "cCodGrp" ) )
    
       if ( dbfCliAtp )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
+
+         AutoMeterDialog( oDlg )
+
+         SetTotalAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
    
          while ( dbfCliAtp )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( dbfCliAtp )->( Eof() )
    
@@ -12877,10 +12920,14 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin )
                AppendDatosAtipicas( aTmpAlb )
    
             end if
+
+            SetAutoMeterDialog( ( dbfCliAtp )->( Recno() ) )
    
             ( dbfCliAtp )->( dbSkip() )
    
          end while
+
+         EndAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
    
       end if
    

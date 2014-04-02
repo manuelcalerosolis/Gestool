@@ -3015,7 +3015,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnAtp;
          ID       527 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin ) )
+         ACTION   ( CargaAtipicasCliente( aTmp, oBrwLin, oDlg ) )
 
       /*
       Detalle------------------------------------------------------------------
@@ -23281,7 +23281,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
+Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
 
 	/*
 	Controlamos que no nos pase código de cliente vacío------------------------
@@ -23307,6 +23307,10 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 		Importamos las tarifas de precios del cliente--------------------------
 		*/
 
+		AutoMeterDialog( oDlg )
+
+      	SetTotalAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
+
 		while ( dbfCliAtp )->cCodCli == aTmpFac[ _CCODCLI ] .and. !( dbfCliAtp )->( Eof() )
 
 		  	if lConditionAtipica( aTmpFac[ _DFECFAC ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplFac
@@ -23329,9 +23333,13 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin )
 
 		  	end if
 
+		  	SetAutoMeterDialog( ( dbfCliAtp )->( Recno() ) )
+
 		  	( dbfCliAtp )->( dbSkip() )
 
 		end while
+
+		EndAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
 
 	end if
 

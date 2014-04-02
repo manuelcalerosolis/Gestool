@@ -27,6 +27,7 @@ static cPeriodoCli
 
 static cCodigoCliente
 static cNombreCliente
+static cTelefonoCliente
 
 static oFecIniPrv
 static oFecFinPrv
@@ -250,6 +251,7 @@ FUNCTION PageIniClient( View )
 
    cCodigoCliente          := ( TDataView():Get( "Client", nView ) )->Cod
    cNombreCliente          := ( TDataView():Get( "Client", nView ) )->Titulo
+   cTelefonoCliente        := ( TDataView():Get( "Client", nView ) )->Telefono
 
    // Cargamos los valores por defecto-----------------------------------------
 
@@ -486,6 +488,13 @@ Static Function PageIniCobros()
       end with
 
       with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Teléfono"
+         :bEditValue             := {|| cTelefonoCliente }
+         :nWidth                 := 160
+         :lHide                  := .t.
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Fecha"
          :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dPreCob ) }
          :nWidth                 := 80
@@ -494,6 +503,7 @@ Static Function PageIniCobros()
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Vencimiento"
          :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dFecVto ) }
+         :bClrStd                := {|| { if( ( TDataView():Get( "FacCliP", nView ) )->dFecVto < GetSysDate(), CLR_HRED, CLR_BLACK ), GetSysColor( COLOR_WINDOW )} }
          :nWidth                 := 80
       end with
 

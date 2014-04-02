@@ -2747,7 +2747,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 	  REDEFINE BUTTON oBtnAtp;
         ID       	527 ;
         OF       	oFld:aDialogs[1] ;
-        ACTION   	( CargaAtipicasCliente( aTmp, oBrwLin ) )
+        ACTION   	( CargaAtipicasCliente( aTmp, oBrwLin, oDlg ) )
 
       REDEFINE GET aGet[_CSERPED] VAR aTmp[_CSERPED] ;
          ID       90 ;
@@ -19088,7 +19088,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function CargaAtipicasCliente( aTmpPed, oBrwLin )
+Static Function CargaAtipicasCliente( aTmpPed, oBrwLin, oDlg )
 
 	/*
 	Controlamos que no nos pase código de cliente vacío------------------------
@@ -19108,6 +19108,10 @@ Static Function CargaAtipicasCliente( aTmpPed, oBrwLin )
 		Return .f.
 
 	else
+
+		AutoMeterDialog( oDlg )
+
+      	SetTotalAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
 	
 		/*
 		Importamos las tarifas de precios del cliente--------------------------
@@ -19130,15 +19134,19 @@ Static Function CargaAtipicasCliente( aTmpPed, oBrwLin )
 
 		  			( dbfTmpLin )->nPreDiv  		:= nPrecioAtipica( aTmpPed[ _NTARIFA ], aTmpPed[ _LIVAINC ], dbfCliAtp )
 
-		  			( dbfTmpLin )->dFecUltCom 		:= dFechaUltimaVenta( aTmpPed[ _CCODCLI ], ( dbfCliAtp )->cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfTikCliT, dbfTikCliL )
+		  			( dbfTmpLin )->dFecUltCom 		:= dFechaUltimaVenta( aTmpPed[ _CCODCLI ], ( dbfCliAtp )->cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikCliL )
 
 		  		end if	
 
 		  	end if
 
+		  	SetAutoMeterDialog( ( dbfCliAtp )->( Recno() ) )
+
 		  	( dbfCliAtp )->( dbSkip() )
 
 		end while
+
+		EndAutoMeterDialog( ( dbfCliAtp )->( LastRec() ) )
 
 	end if
 

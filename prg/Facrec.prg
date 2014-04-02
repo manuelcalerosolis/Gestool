@@ -3586,7 +3586,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfFacRecT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], dbfClient, oRieCli, nil, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfFacRecT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], dbfClient, nil, aGet, oSayGetRnt ) }
 
    end case
 
