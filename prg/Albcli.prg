@@ -3137,13 +3137,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       524 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON ;
          ID       525 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
@@ -3173,13 +3173,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( .F. ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CSUFALB] VAR aTmp[_CSUFALB] ;
+      REDEFINE GET aGet[ _CSUFALB ] VAR aTmp[ _CSUFALB ] ;
          ID       120 ;
          PICTURE  "@!" ;
          WHEN     ( .F. ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_DFECALB] VAR aTmp[_DFECALB];
+      REDEFINE GET aGet[ _DFECALB ] VAR aTmp[ _DFECALB ];
          ID       130 ;
          SPINNER ;
          WHEN     ( lWhen ) ;
@@ -4957,17 +4957,14 @@ Total peso en un albaran
 
 function nTotalPesoAlbaranCliente( nAlbaran, nView, cPicUnd )
 
-   local nTotPeso := 0
-   local nRecNum  := ( TDataView():Get( "AlbCliL", nView ) )->( RecNo() )
+   local nTotPeso    := 0
 
-   if ( TDataView():Get( "AlbCliL", nView ) )->( DbSeek( nAlbaran ) )
-      while  ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb == nAlbaran .and. ( TDataView():Get( "AlbCliL", nView ) )->( !eof() )
-         nTotPeso  += nPesLAlbCli( TDataView():Get( "AlbCliL", nView ) )
-         ( TDataView():Get( "AlbCliL", nView ) )->( dbSkip() )
+   if ( TDataView():AlbaranesClientesLineas( nView ) )->( dbSeek( nAlbaran ) )
+      while TDataView():AlbaranesClientesLineasId( nView ) == nAlbaran .and. ( TDataView():AlbaranesClientesLineas( nView ) )->( !eof() )
+         nTotPeso    += nPesLAlbCli( TDataView():AlbaranesClientesLineas( nView ) )
+         ( TDataView():AlbaranesClientesLineas( nView ) )->( dbSkip() )
       end do
    end if
-
-   ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTo( nRecNum ) )
 
 RETURN ( if( Empty( cPicUnd ), nTotPeso, Trans( nTotPeso, cPicUnd ) ) )
 

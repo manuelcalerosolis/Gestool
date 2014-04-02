@@ -4874,6 +4874,9 @@ CLASS TDataView
    METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
       METHOD AlbaranesClientesId( nView )       INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
 
+   METHOD AlbaranesClientesLineas( nView )      INLINE ( ::Get( "AlbCliL", nView ) )
+      METHOD AlbaranesClientesLineasId( nView ) INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
+
    METHOD FacturasClientesCobros( nView )       INLINE ( ::Get( "FacCliP", nView ) )
       METHOD FacturasClientesCobrosId( nView )  INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
 

@@ -2871,28 +2871,6 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------//
-
 Function IsTrue( u )
 
 Return ( Valtype( u ) == "L" .and. u )
@@ -3274,6 +3252,92 @@ Function ValToMoney( cMoney )
 
 Return ( Val( StrTran( cMoney, ",", "." ) ) )
 
+//---------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------//
+
+Function LineDown( cAlias, oBrw )
+
+Return ( LineT( cAlias, oBrw, .f. ) )
+
+Function LineUp( cAlias, oBrw )
+
+Return ( LineT( cAlias, oBrw, .t. ) )
+
+Function LineT( cAlias, oBrw, lUp )
+
+   local nOrdNum  
+   local nRecNum  
+   local nOldNum
+   local nNewNum
+   
+   DEFAULT lUp    := .t.
+
+   if ( cAlias )->( fieldpos( "nNumLin" ) ) == 0
+      Return .f.
+   end if
+
+   nOrdNum        := ( cAlias )->( OrdSetFocus( "nNumLin" ) )
+
+   if ( lUp .and. ( cAlias )->( OrdKeyNo() ) == 1 )
+      ( cAlias )->( OrdSetFocus( nOrdNum ) )   
+      Return .f.
+   end if 
+
+   if ( !lUp .and. ( cAlias )->( OrdKeyNo() ) == ( cAlias )->( OrdKeyCount() ) )
+      ( cAlias )->( OrdSetFocus( nOrdNum ) )   
+      Return .f.
+   end if
+
+   CursorWait()
+
+   nRecNum        := ( cAlias )->( RecNo() )
+   nOldNum        := ( cAlias )->nNumLin
+
+   if lUp
+      ( cAlias )->( dbSkip(-1) )
+   else 
+      ( cAlias )->( dbSkip() )
+   end if 
+
+   nNewNum        := ( cAlias )->nNumLin
+
+   LineMove( nOldNum, -1, cAlias )
+   LineMove( nNewNum, nOldNum, cAlias )
+   LineMove( -1, nNewNum, cAlias )
+
+   ( cAlias )->( OrdSetFocus( nOrdNum ) )
+   ( cAlias )->( dbGoTo( nRecNum ) )
+
+   CursorWE()
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+      oBrw:Select( 0 )
+      oBrw:Select( 1 )
+      oBrw:SetFocus()
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function LineMove( nOldNum, nNewNum, cAlias )
+
+   ( cAlias )->( dbGoTop() )
+   while !( cAlias )->( eof() )
+
+      if ( cAlias )->nNumLin == nOldNum
+         ( cAlias )->nNumLin := nNewNum
+      end if
+
+      ( cAlias )->( dbSkip() )
+
+   end while
+
+Return nil
+
+//--------------------------------------------------------------------------//
 
 /*
 function AddResource( nHResource, cType )
