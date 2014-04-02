@@ -1794,7 +1794,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          ID       526 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ImportaComprasProveedor( aTmp, oBrwLin ) )
+         ACTION   ( ImportaComprasProveedor( aTmp, oBrwLin, oDlg ) )
 
       /*
 	Descuentos______________________________________________________________
@@ -9064,7 +9064,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor )
+Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
       local nOrd
       local nPreCom
@@ -9079,6 +9079,10 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor )
             msgStop( "Código del proveedor no puede esta vacio.")
             return .f.
       end if
+
+      AutoMeterDialog( oDlg )
+
+      SetTotalAutoMeterDialog( ( dbfArticulo )->( LastRec() ) )
 
       CursorWait()
 
@@ -9220,11 +9224,15 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor )
 
             end if
 
+            SetAutoMeterDialog( ( dbfArticulo )->( Recno() ) )
+
             ( dbfArticulo )->( dbSkip() )
 
             end while
       
       end if 
+
+      EndAutoMeterDialog( ( dbfArticulo )->( LastRec() ) )
 
       ( dbfArticulo )->( ordSetFocus( nOrd ) )
 
@@ -9301,11 +9309,11 @@ Return nil
 
 //---------------------------------------------------------------------------//
  
-Static Function ImportaComprasProveedor( aTmp, oBrwLin )
+Static Function ImportaComprasProveedor( aTmp, oBrwLin, oDlg )
 
       local oImportaComprasProveedor      := ImportarProductosProveedor():New()
 
-      oImportaComprasProveedor:bAction    := {|| CargaComprasProveedor( aTmp, oImportaComprasProveedor ), oBrwLin:Refresh() }
+      oImportaComprasProveedor:bAction    := {|| CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg ), oBrwLin:Refresh() }
 
       oImportaComprasProveedor:Resource()
       oImportaComprasProveedor:End()      

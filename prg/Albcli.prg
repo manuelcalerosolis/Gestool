@@ -12913,7 +12913,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
       ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
       ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
       ( dbfTmpLin )->nDtoPrm        := ( dbfCliAtp )->nDprArt
-      ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1b
+      ( dbfTmpLin )->cCodPr1        := ( dbfCliAtp )->cCodPr1
       ( dbfTmpLin )->cCodPr2        := ( dbfCliAtp )->cCodPr2
       ( dbfTmpLin )->cValPr1        := ( dbfCliAtp )->cValPr1
       ( dbfTmpLin )->cValPr2        := ( dbfCliAtp )->cValPr2
