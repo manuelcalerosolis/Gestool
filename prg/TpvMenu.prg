@@ -93,13 +93,13 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "TpvMenus.Dbf" CLASS "TpvMenus" ALIAS "TpvMenus" PATH ( cPath ) VIA ( cDriver ) COMMENT "Menús TPV" 
 
-      FIELD NAME "cCodMnu"  TYPE "C" LEN  3  DEC 0  COMMENT "Código"                               COLSIZE 80  OF ::oDbf
-      FIELD NAME "cNomMnu"  TYPE "C" LEN 40  DEC 0  COMMENT "Nombre"                               COLSIZE 200 OF ::oDbf
-      FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"          PICTURE cPorDiv()    COLSIZE 80  OF ::oDbf
-      FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                             HIDE        OF ::oDbf
+      FIELD NAME "cCodMnu"  TYPE "C" LEN  3  DEC 0  COMMENT "Código"                                                    COLSIZE 80  OF ::oDbf
+      FIELD NAME "cNomMnu"  TYPE "C" LEN 40  DEC 0  COMMENT "Nombre"                                                    COLSIZE 200 OF ::oDbf
+      FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"                ALIGN RIGHT   PICTURE cPorDiv()     COLSIZE 80  OF ::oDbf
+      FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                                                  HIDE        OF ::oDbf
 
-      INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"        NODELETED                   OF ::oDbf
-      INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"        NODELETED                   OF ::oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"         NODELETED                                       OF ::oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"         NODELETED                                       OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -259,6 +259,9 @@ METHOD Resource( nMode )
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
+   oDlg:AddFastKey( VK_F2, {|| ::oDetOrdenesMenu:Append( ::oBrwOrdenesComanda ) } )
+   oDlg:AddFastKey( VK_F3, {|| ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) } )
+   oDlg:AddFastKey( VK_F4, {|| ::oDetOrdenesMenu:Del( ::oBrwOrdenesComanda ) } )
    oDlg:AddFastKey( VK_F5, {|| ::lSaveResource( nMode, oDlg ) } )
 
    oDlg:bStart          := {|| ::StartResource() }

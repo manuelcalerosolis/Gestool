@@ -168,10 +168,10 @@ RETURN ( lPreSave )
 
 METHOD PreSaveDetails()
 
-   // msgAlert( ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd, "::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd" )
+    msgAlert( ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd, "::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd" )
 
    // ::oDbfVir:cCodMnu    := ::oDbf:cCodMnu
-   // ::oDbfVir:cCodOrd    := ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd
+    ::oDbfVir:cCodOrd    := ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd
 
 RETURN ( Self )
 

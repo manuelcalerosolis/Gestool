@@ -170,6 +170,8 @@ METHOD Resource()
 			ACTION 	( oDlg:end() )
 
       if ::nMode != ZOOM_MODE
+         oDlg:AddFastKey( VK_F2, {|| ::oParent:oDetArticuloMenu:Append( ::oBrwArticulosOrden ) } )
+         oDlg:AddFastKey( VK_F4, {|| ::oParent:oDetArticuloMenu:Del( ::oBrwArticulosOrden ) } )
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if
 
@@ -187,8 +189,6 @@ METHOD lPreSave( oDlg )
       MsgStop( "Código del orden no puede estar vacio" )
       Return ( .f. )
    end if
-  
-   msgAlert( ::oDbfVir:cCodOrd, "::oDbfVir:cCodOrd" )
 
    while !::oParent:oDetArticuloMenu:oDbfVir:eof()
       ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
