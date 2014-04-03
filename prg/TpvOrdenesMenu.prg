@@ -188,13 +188,20 @@ METHOD lPreSave( oDlg )
       Return ( .f. )
    end if
   
+   msgAlert( ::oDbfVir:cCodOrd, "::oDbfVir:cCodOrd" )
+
+   while !::oParent:oDetArticuloMenu:oDbfVir:eof()
+      ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
+      ::oParent:oDetArticuloMenu:oDbfVir:skip()
+   end while
+
 RETURN ( oDlg:End( IDOK ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD PreSaveDetails()
 
-   ::oDbfVir:cCodMnu    := ::oParent:oDbf:cCodMnu
+   ::oDbfVir:cCodMnu                               := ::oParent:oDbf:cCodMnu
 
 RETURN ( Self )
 
