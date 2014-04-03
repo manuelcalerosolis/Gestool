@@ -112,6 +112,15 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _NMEDUNO                  46
 #define _NMEDDOS                  47
 #define _NMEDTRE                  48
+#define _NSTKACT                  49  
+#define _NSTKMIN                  50  
+#define _NPDTREC                  51   
+#define _NCONREA                  52  
+#define _NCONSEM                  53  
+#define _NCONQUI                  54  
+#define _NCONMES                  55  
+#define _aNESTADO                 56  
+#define _LFROMIMP                 57  
 
 /*
 Definici¢n de Array para impuestos
@@ -1493,7 +1502,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Número"
+            :cSortOrder       := "nNumLin"
             :bEditValue       := {|| if( ( dbfTmpLin )->lKitChl, "", Trans( ( dbfTmpLin )->nNumLin, "9999" ) ) }
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
             :nWidth           := 65
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
@@ -1511,7 +1522,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Código"
+            :cSortOrder       := "cRef"
             :bEditValue       := {|| ( dbfTmpLin )->cRef }
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
             :nWidth           := 80
          end with
 
@@ -1531,7 +1544,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Descripción"
+            :cSortOrder       := "cDetalle"
             :bEditValue       := {|| if( Empty( ( dbfTmpLin )->cRef ), ( dbfTmpLin )->mLngDes, ( dbfTmpLin )->cDetalle ) }
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
             :nWidth           := 280
          end with
 
@@ -1778,17 +1793,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 			OF 		oFld:aDialogs[1] ;
                   ACTION      ( EdtZoom( oBrwLin, bEdtDet, aTmp ) )
 
-            REDEFINE BUTTON ;
-			ID 		524 ;
-			OF 		oFld:aDialogs[1] ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-                  ACTION      ( DbSwapUp( dbfTmpLin, oBrwLin ) )
+      REDEFINE BUTTON ;
+	   ID 	524 ;
+	   OF 	oFld:aDialogs[1] ;
+	   WHEN 	( nMode != ZOOM_MODE ) ;
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
 
 	REDEFINE BUTTON ;
 	   ID 	525 ;
 	   OF 	oFld:aDialogs[1] ;
 	   WHEN 	( nMode != ZOOM_MODE ) ;
-         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnAtp;
          ID       526 ;
@@ -5584,6 +5599,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpLin )->( OrdCreate( cNewFile, "cRef", "cRef", {|| Field->cRef } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cNewFile, "cDetalle", "Left( cDetalle, 100 )", {|| Left( Field->cDetalle, 100 ) } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cNewFile, "nUniCaja", "nUniCaja", {|| Field->nUniCaja } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
       end if
@@ -5818,10 +5839,10 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPED ]     := nTotPed
-/*
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    BeginTransaction()
 
    /*
@@ -5835,13 +5856,28 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    /*
    Ahora escribimos en el fichero definitivo-----------------------------------
-	*/
+   */
 
-   ( dbfTmpLin )->( dbGoTop() )
+   /*( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )
       dbPass( dbfTmpLin, dbfPedPrvL, .t., cSerie, nPedido, cSufPed )
       ( dbfTmpLin )->( dbSkip() )
       oMsgProgress():Deltapos(1)
+   end while*/
+
+   ( dbfTmpLin )->( dbGoTop() )
+   while !( dbfTmpLin )->( eof() )
+
+      if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromImp )
+
+         dbPass( dbfTmpLin, dbfPedPrvL, .t., cSerie, nPedido, cSufPed )
+
+      end if   
+
+      ( dbfTmpLin )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
    end while
 
    /*
@@ -5879,7 +5915,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    dbCommitAll()
 
    CommitTransaction()
-/*
+
    RECOVER USING oError
 
       RollBackTransaction()
@@ -5887,7 +5923,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-*/
+
    oMsgText()
    EndProgress()
 
@@ -6768,6 +6804,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nConQui", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nConMes", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
 
 return ( aColPedPrv )
 
@@ -9102,6 +9139,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
                   ( dbfTmpLin )->nIva           := nIva( dbfIva, ( dbfArticulo )->TipoIva )
                   ( dbfTmpLin )->nReq           := nReq( dbfIva, ( dbfArticulo )->TipoIva )
                   ( dbfTmpLin )->cAlmLin        := aTmp[ _CCODALM ]
+                  ( dbfTmpLin )->lFromImp       := .t.
 
                   if ( dbfArticulo )->nCajEnt != 0
                         ( dbfTmpLin )->nCanPed  := ( dbfArticulo )->nCajEnt 
