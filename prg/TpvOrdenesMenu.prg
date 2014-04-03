@@ -97,7 +97,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-METHOD Resource( nMode )
+METHOD Resource()
 
    local oDlg
    local oGetOrd
@@ -111,9 +111,9 @@ METHOD Resource( nMode )
          BITMAP      "Lupa" ;
          ID          100 ;
          IDTEXT      101 ;
-         WHEN        ( nMode == APPD_MODE ) ;
          OF          oDlg
 
+      oGetOrd:bWhen     := {|| ::nMode == APPD_MODE }
       oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetOrd, oGetOrd:oHelpText ) }
       oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetOrd ) }
 
@@ -124,44 +124,44 @@ METHOD Resource( nMode )
       ::oBrwArticulosOrden:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwArticulosOrden:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oParent:oDbfArticulo:SetBrowse( ::oBrwArticulosOrden ) 
+      ::oParent:oDetArticuloMenu:oDbfVir:SetBrowse( ::oBrwArticulosOrden ) 
 
       ::oBrwArticulosOrden:nMarqueeStyle  := 6
-      ::oBrwArticulosOrden:cName          := "Lineas de ordenes de comanda"
-      ::oBrwArticulosOrden:lFooter        := .t.
+      ::oBrwArticulosOrden:cName          := "Lineas de menus de articulos"
+      ::oBrwArticulosOrden:lFooter        := .f.
 
       ::oBrwArticulosOrden:CreateFromResource( 400 )
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Código"
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
-         :nWidth           := 50
+         :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Artículo"
          :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
-         :nWidth           := 200
+         :nWidth           := 240
       end with
 
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetArticuloMenu:Append( ::oBrwArticulosOrden ) )
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
+         ACTION   ( ::oParent:oDetArticuloMenu:Append( ::oBrwArticulosOrden ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetArticuloMenu:Del( ::oBrwArticulosOrden ) )
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
+         ACTION   ( ::oParent:oDetArticuloMenu:Del( ::oBrwArticulosOrden ) )
 
       // Botones------------------------------------------------------------------
 
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          ACTION   ( ::lPreSave( oDlg ) )
 
 		REDEFINE BUTTON ;
@@ -169,9 +169,11 @@ METHOD Resource( nMode )
 			OF 		oDlg ;
 			ACTION 	( oDlg:end() )
 
-      if nMode != ZOOM_MODE
+      if ::nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if
+
+      oDlg:bStart    := {|| if( ::nMode != APPD_MODE, oGetOrd:lValid(), ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -181,27 +183,12 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( oDlg )
 
-   local lPreSave    := .t.
-
    if Empty( ::oDbfVir:cCodOrd )
       MsgStop( "Código del orden no puede estar vacio" )
       Return ( .f. )
    end if
-
-   ::oDbfVir:GetStatus()
-
-   if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodOrd, "cCodOrd" )
-      MsgStop( "El orden ya esta añadido" )
-      lPreSave    := .f.
-   end if
-
-   ::oDbfVir:SetStatus()
-
-   if lPreSave
-      oDlg:End( IDOK )
-   end if 
-
-RETURN ( lPreSave )
+  
+RETURN ( oDlg:End( IDOK ) )
 
 //----------------------------------------------------------------------------//
 

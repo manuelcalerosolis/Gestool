@@ -209,7 +209,7 @@ METHOD Resource( nMode )
 
       ::oBrwOrdenesComanda:nMarqueeStyle  := 6
       ::oBrwOrdenesComanda:cName          := "Lineas de ordenes de comanda"
-      ::oBrwOrdenesComanda:lFooter        := .t.
+      ::oBrwOrdenesComanda:lFooter        := .f.
 
       ::oBrwOrdenesComanda:CreateFromResource( 400 )
 
@@ -270,8 +270,6 @@ RETURN ( oDlg:nResult == IDOK )
 //--------------------------------------------------------------------------//
 
 Method lSaveResource( nMode, oDlg )
-
-   local aGrp
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 

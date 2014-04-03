@@ -76,7 +76,7 @@ METHOD OpenFiles( lExclusive )
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      lOpen                := .f.
 
    END SEQUENCE
 
@@ -104,33 +104,31 @@ METHOD Resource( nMode )
 
    // Caja de dialogo-------------------------------------------------------------
 
-   DEFINE DIALOG oDlg RESOURCE "Menu_Orden_Articulo" 
-
+   DEFINE DIALOG oDlg RESOURCE "TpvMenuArticulo" 
 
       REDEFINE GET   oGetCodigoArticulo ;
-         VAR         ::oParent:oDbfVir:cCodArt ;
+         VAR         ::oDbfVir:cCodArt ;
          BITMAP      "Lupa" ;
          ID          100 ;
          IDTEXT      101 ;
          WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oDlg
 
-//      oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetCodArt, oGetCodArt:oHelpText ) }
-//      oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetCodArt ) }
-
+      oGetCodigoArticulo:bValid  := {|| cArticulo( oGetCodigoArticulo, ::oParent:oDbfArticulo:cAlias, oGetCodigoArticulo:oHelpText ) }
+      oGetCodigoArticulo:bHelp   := {|| BrwArticulo( oGetCodigoArticulo, oGetCodigoArticulo:oHelpText ) }
 
       // Botones------------------------------------------------------------------
 
       REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oDlg ) )
+         ID          IDOK ;
+			OF          oDlg ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ACTION      ( ::lPreSave( oDlg ) )
 
 		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         ID          IDCANCEL ;
+			OF          oDlg ;
+			ACTION      ( oDlg:end() )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
@@ -146,19 +144,19 @@ METHOD lPreSave( oDlg )
 
    local lPreSave    := .t.
 
-   if Empty( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt )
+   if Empty( ::oDbfVir:cCodArt )
       MsgStop( "Código del artículo no puede estar vacio" )
       Return ( .f. )
    end if
 
-   ::oParent:oDetArticuloMenu:oDbfVir:GetStatus()
+   ::oDbfVir:GetStatus()
 
-   if ::oParent:oDetArticuloMenu:oDbfVir:SeekInOrd( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, "cCodArt" )
+   if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodArt, "cCodArt" )
       MsgStop( "El artículo ya esta añadido" )
       lPreSave    := .f.
    end if
 
-   ::oParent:oDetArticuloMenu:oDbfVir:SetStatus()
+   ::oDbfVir:SetStatus()
 
    if lPreSave
       oDlg:End( IDOK )
@@ -170,7 +168,10 @@ RETURN ( lPreSave )
 
 METHOD PreSaveDetails()
 
-   :oParent:oDetArticuloMenu:oDbfVir:cCodMnu    := ::oDbf:cCodMnu
+   msgAlert( ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd, "::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd" )
+
+   // ::oDbfVir:cCodMnu    := ::oDbf:cCodMnu
+   ::oDbfVir:cCodOrd    := ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd
 
 RETURN ( Self )
 
