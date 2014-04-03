@@ -15,6 +15,9 @@ CLASS TpvMenu FROM TMasDet
 
    DATA oOrdenComandas  
 
+   DATA oDbfArticulo
+
+   DATA oDetArticuloMenu
    DATA oDetOrdenesMenu   
 
    DATA oBrwOrdenesComanda
@@ -64,6 +67,9 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::oDetOrdenesMenu    := TpvOrdenesMenu():New( cPath, Self )
    ::AddDetail( ::oDetOrdenesMenu )
+
+   ::oDetArticuloMenu   := TpvMenuArticulo():New( cPath, Self )
+   ::AddDetail( ::oDetArticuloMenu )
 
 RETURN ( Self )
 
@@ -119,9 +125,13 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
+      DATABASE NEW ::oDbfArticulo PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+
       ::oOrdenComandas:OpenFiles()
 
       ::OpenDetails()
+
+      ::bFirstKey       := {|| ::oDbf:cCodMnu }      
 
    RECOVER USING oError
 
@@ -146,6 +156,8 @@ METHOD CloseFiles()
    end if
 
    ::oOrdenComandas:CloseFiles()
+
+   ::oDbfArticulo:End()
 
    ::CloseDetails()     
 
@@ -221,6 +233,12 @@ METHOD Resource( nMode )
 
       REDEFINE BUTTON ;
          ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) )
+
+      REDEFINE BUTTON ;
+         ID       502 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ::oDetOrdenesMenu:Del( ::oBrwOrdenesComanda ) )

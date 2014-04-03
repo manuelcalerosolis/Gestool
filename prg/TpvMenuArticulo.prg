@@ -4,9 +4,7 @@
 
 //--------------------------------------------------------------------------//
 
-CLASS TpvOrdenesMenu FROM TDet
-
-   DATA oBrwArticulosOrden
+CLASS TpvMenuArticulo FROM TDet
 
    METHOD DefineFiles()
 
@@ -30,7 +28,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFAULT cPath        := ::cPath
    DEFAULT lUniqueName  := .f.
-   DEFAULT cFileName    := "TpvOrdMnu"
+   DEFAULT cFileName    := "TpvMnuArt"
    DEFAULT cVia         := cDriver()
 
    if lUniqueName
@@ -41,10 +39,12 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
       FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
       FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
+      FIELD NAME "cCodArt" TYPE "C" LEN 18  DEC 0 COMMENT "Código artículo"                OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd"                NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodArt" ON "cCodArt"                          NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd + cCodArt"      NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -100,61 +100,24 @@ RETURN .t.
 METHOD Resource( nMode )
 
    local oDlg
-   local oGetOrd
+   local oGetCodigoArticulo
 
    // Caja de dialogo-------------------------------------------------------------
 
-   DEFINE DIALOG oDlg RESOURCE "OrdenComanda"
+   DEFINE DIALOG oDlg RESOURCE "Menu_Orden_Articulo" 
 
-      REDEFINE GET   oGetOrd ;
-         VAR         ::oDbfVir:cCodOrd ;
+
+      REDEFINE GET   oGetCodigoArticulo ;
+         VAR         ::oParent:oDbfVir:cCodArt ;
          BITMAP      "Lupa" ;
          ID          100 ;
          IDTEXT      101 ;
-         WHEN        ( nMode == APPD_MODE ) ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oDlg
 
-      oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetOrd, oGetOrd:oHelpText ) }
-      oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetOrd ) }
+//      oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetCodArt, oGetCodArt:oHelpText ) }
+//      oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetCodArt ) }
 
-      // Browse de odenes de comanda------------------------------------------
-
-      ::oBrwArticulosOrden                := IXBrowse():New( oDlg )
-
-      ::oBrwArticulosOrden:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwArticulosOrden:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      ::oParent:oDbfArticulo:SetBrowse( ::oBrwArticulosOrden ) 
-
-      ::oBrwArticulosOrden:nMarqueeStyle  := 6
-      ::oBrwArticulosOrden:cName          := "Lineas de ordenes de comanda"
-      ::oBrwArticulosOrden:lFooter        := .t.
-
-      ::oBrwArticulosOrden:CreateFromResource( 400 )
-
-      with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "Código"
-         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
-         :nWidth           := 50
-      end with
-
-      with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "Artículo"
-         :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
-         :nWidth           := 200
-      end with
-
-      REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetArticuloMenu:Append( ::oBrwArticulosOrden ) )
-
-      REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetArticuloMenu:Del( ::oBrwArticulosOrden ) )
 
       // Botones------------------------------------------------------------------
 
@@ -183,19 +146,19 @@ METHOD lPreSave( oDlg )
 
    local lPreSave    := .t.
 
-   if Empty( ::oDbfVir:cCodOrd )
-      MsgStop( "Código del orden no puede estar vacio" )
+   if Empty( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt )
+      MsgStop( "Código del artículo no puede estar vacio" )
       Return ( .f. )
    end if
 
-   ::oDbfVir:GetStatus()
+   ::oParent:oDetArticuloMenu:oDbfVir:GetStatus()
 
-   if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodOrd, "cCodOrd" )
-      MsgStop( "El orden ya esta añadido" )
+   if ::oParent:oDetArticuloMenu:oDbfVir:SeekInOrd( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, "cCodArt" )
+      MsgStop( "El artículo ya esta añadido" )
       lPreSave    := .f.
    end if
 
-   ::oDbfVir:SetStatus()
+   ::oParent:oDetArticuloMenu:oDbfVir:SetStatus()
 
    if lPreSave
       oDlg:End( IDOK )
@@ -207,7 +170,7 @@ RETURN ( lPreSave )
 
 METHOD PreSaveDetails()
 
-   ::oDbfVir:cCodMnu    := ::oParent:oDbf:cCodMnu
+   :oParent:oDetArticuloMenu:oDbfVir:cCodMnu    := ::oDbf:cCodMnu
 
 RETURN ( Self )
 

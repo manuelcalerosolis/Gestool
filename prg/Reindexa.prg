@@ -420,6 +420,10 @@ METHOD GenIndices( oMsg )
             ::SetText( "Generando índices : Comentarios", ::aProgress[ 4 ] );             TComentarios():Create( ::cPatArt ):Reindexa()
             ::SetText( "Generando índices : Lineas de comentarios", ::aProgress[ 4 ] );   TDetComentarios():Create( ::cPatArt ):Reindexa()
             ::SetText( "Generando índices : Ordenenes de comanda", ::aProgress[ 4 ] );    TOrdenComanda():Create( ::cPatArt ):Reindexa()
+            ::SetText( "Generando índices : Ordenenes de menu", ::aProgress[ 4 ] );       TpvOrdenesMenu():Create( ::cPatArt ):Reindexa()
+            ::SetText( "Generando índices : Tvp Menu", ::aProgress[ 4 ] );                TpvMenu():Create( ::cPatArt ):Reindexa()            
+            ::SetText( "Generando índices : Articulos de menu", ::aProgress[ 4 ] );       TpvMenuArticulo():Create( ::cPatArt ):Reindexa()            
+
 
          end if
 
