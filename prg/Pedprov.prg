@@ -9129,7 +9129,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
             while ( dbfArticulo )->cPrvHab == aTmp[ _CCODPRV ] .and. !( dbfArticulo )->( eof() )
 
-            if !dbSeekInOrd( ( dbfArticulo )->Codigo, "cRef", dbfTmpLin ) .and. !( dbfArticulo )->lObs
+            if !dbSeekInOrd( ( dbfArticulo )->Codigo, "cRef", dbfTmpLin ) .and. !( dbfArticulo )->lObs 
                   
                   ( dbfTmpLin )->( dbAppend() )
 
