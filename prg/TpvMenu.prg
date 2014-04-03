@@ -34,6 +34,8 @@ CLASS TpvMenu FROM TMasDet
    METHOD   StartResource()                     VIRTUAL
    METHOD   lSaveResource()
 
+//   METHOD SaveDetails()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -131,7 +133,7 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::OpenDetails()
 
-      ::bFirstKey       := {|| ::oDbf:cCodMnu }      
+      ::bFirstKey          := {|| ::oDbf:cCodMnu }  
 
    RECOVER USING oError
 
@@ -296,7 +298,26 @@ Method lSaveResource( nMode, oDlg )
       Return nil
    end if
 
-Return oDlg:end( IDOK )
+   // ::SaveDetails()
+
+Return ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
+/*
+METHOD SaveDetails()
 
+   msgAlert( ::oDbf:cCodMnu, "::oDbf:cCodMnu" )
+
+   while !::oDetArticuloMenu:oDbfVir:eof()
+      ::oDetArticuloMenu:oDbfVir:cCodMnu     := ::oDbf:cCodMnu
+      ::oDetArticuloMenu:oDbfVir:skip()
+   end while
+
+   while !::oDetOrdenesMenu:oDbfVir:eof()
+      ::oDetOrdenesMenu:oDbfVir:cCodMnu      := ::oDbf:cCodMnu
+      ::oDetOrdenesMenu:oDbfVir:skip()
+   end while
+
+RETURN ( Self )
+*/
+//--------------------------------------------------------------------------//

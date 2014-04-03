@@ -102,6 +102,12 @@ METHOD Resource( nMode )
    local oDlg
    local oGetCodigoArticulo
 
+   msgAlert( ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd, "Resource de TpvMenuArticulo")
+
+   if ::nMode == APPD_MODE
+      ::oDbfVir:cCodOrd := ::oParent:oDetOrdenesMenu:cScopeValue
+   end if
+
    // Caja de dialogo-------------------------------------------------------------
 
    DEFINE DIALOG oDlg RESOURCE "TpvMenuArticulo" 
@@ -142,36 +148,28 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( oDlg )
 
-   local lPreSave    := .t.
-
    if Empty( ::oDbfVir:cCodArt )
       MsgStop( "Código del artículo no puede estar vacio" )
       Return ( .f. )
    end if
 
-   ::oDbfVir:GetStatus()
-
    if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodArt, "cCodArt" )
       MsgStop( "El artículo ya esta añadido" )
-      lPreSave    := .f.
+      Return ( .f. )
    end if
 
-   ::oDbfVir:SetStatus()
-
-   if lPreSave
-      oDlg:End( IDOK )
-   end if 
-
-RETURN ( lPreSave )
+RETURN ( oDlg:End( IDOK ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD PreSaveDetails()
 
-    msgAlert( ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd, "::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd" )
+    msgAlert( ::oParent:oDbf:cCodMnu, "PreSaveDetails TpvMenuArticulo" )
+
+   ::oDbfVir:cCodMnu                               := ::oParent:oDbf:cCodMnu
 
    // ::oDbfVir:cCodMnu    := ::oDbf:cCodMnu
-    ::oDbfVir:cCodOrd    := ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd
+   // ::oDbfVir:cCodOrd    := ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd
 
 RETURN ( Self )
 

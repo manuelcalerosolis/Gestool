@@ -8,6 +8,8 @@ CLASS TpvOrdenesMenu FROM TDet
 
    DATA oBrwArticulosOrden
 
+   DATA cScopeValue
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -19,6 +21,9 @@ CLASS TpvOrdenesMenu FROM TDet
    METHOD lPreSave()
 
    METHOD PreSaveDetails()
+
+   METHOD PreEdit()
+   METHOD PostEdit()
 
 END CLASS
 
@@ -69,6 +74,12 @@ METHOD OpenFiles( lExclusive )
       ::oDbf:Activate( .f., !lExclusive )
 
       ::bOnPreSaveDetail   := {|| ::PreSaveDetails() }
+      
+      ::bOnPreAppend       := {|| ::PreEdit() }
+      ::bOnPreEdit         := {|| ::PreEdit() }
+
+      ::bOnPostAppend      := {|| ::PostEdit() }
+      ::bOnPostEdit        := {|| ::PostEdit() }
 
    RECOVER USING oError
 
@@ -92,6 +103,29 @@ METHOD CloseFiles()
       ::oDbf:End()
       ::oDbf            := nil
    end if
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
+METHOD PreEdit()
+
+   ::cScopeValue        := ::oDbfVir:cCodOrd
+
+   msgAlert( ::cScopeValue, "Coloca el scope" )
+
+   ::oParent:oDetArticuloMenu:oDbfVir:OrdSetFocus( "cCodOrd" )
+   ::oParent:oDetArticuloMenu:oDbfVir:SetScope( ::cScopeValue )
+   ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
+METHOD PostEdit()
+
+   ::oParent:oDetArticuloMenu:oDbfVir:ClearScope()
+   ::oParent:oDetArticuloMenu:oDbfVir:OrdSetFocus( "cCodMnu" )
 
 RETURN .t.
 
@@ -131,6 +165,12 @@ METHOD Resource()
       ::oBrwArticulosOrden:lFooter        := .f.
 
       ::oBrwArticulosOrden:CreateFromResource( 400 )
+
+      with object ( ::oBrwArticulosOrden:AddCol() )
+         :cHeader          := "orden"
+         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
+         :nWidth           := 100
+      end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Código"
@@ -190,9 +230,21 @@ METHOD lPreSave( oDlg )
       Return ( .f. )
    end if
 
+   msgAlert( ::oDbfVir:cCodOrd, "Codigo de orden en presave ")   
+
+   ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
    while !::oParent:oDetArticuloMenu:oDbfVir:eof()
+
+      msgAlert( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, "Articulooooooooooooooooooooo" )
+
       ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
-      ::oParent:oDetArticuloMenu:oDbfVir:skip()
+
+      if ::nMode == APPD_MODE
+         ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
+      else
+         ::oParent:oDetArticuloMenu:oDbfVir:skip()
+      end if 
+
    end while
 
 RETURN ( oDlg:End( IDOK ) )
