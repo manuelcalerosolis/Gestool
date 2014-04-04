@@ -52,8 +52,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
-      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
-      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
+      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "CÃ³digo menu"                    OF oDbf
+      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "CÃ³digo orden"                   OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
@@ -215,14 +215,33 @@ METHOD Resource()
       ::oBrwArticulosOrden:CreateFromResource( 400 )
 
       with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "Código"
-         :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
+<<<<<<< HEAD:prg/TpvOrdenesMenu.prg
+         :cHeader          := "orden"
+         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
          :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
+         :cHeader          := "CÃ³digo"
+=======
+         :cHeader          := "Código"
+<<<<<<< HEAD
+         :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
+=======
+>>>>>>> 627dacff064d763cec7ef919253ae5694ed54b6e:prg/TpvMenuOrdenes.prg
+         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
+>>>>>>> dba59f283120337811aca6e1f6e19ad10b3f7fa4
+         :nWidth           := 100
+      end with
+
+      with object ( ::oBrwArticulosOrden:AddCol() )
+<<<<<<< HEAD
          :cHeader          := "Artículo"
          :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
+=======
+         :cHeader          := "ArtÃ­culo"
+         :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
+>>>>>>> dba59f283120337811aca6e1f6e19ad10b3f7fa4
          :nWidth           := 240
       end with
 
@@ -278,7 +297,7 @@ RETURN (Self)
 METHOD lPreSave( oDlg )
 
    if Empty( ::oDbfVir:cCodOrd )
-      MsgStop( "Código del orden no puede estar vacio" )
+      MsgStop( "CÃ³digo del orden no puede estar vacio" )
       Return ( .f. )
    end if
 
