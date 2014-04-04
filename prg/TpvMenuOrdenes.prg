@@ -4,11 +4,13 @@
 
 //--------------------------------------------------------------------------//
 
-CLASS TpvOrdenesMenu FROM TDet
+CLASS TpvMenuOrdenes FROM TDet
 
    DATA oBrwArticulosOrden
 
    DATA cScopeValue
+
+   DATA oGetOrdenComanda
 
    METHOD DefineFiles()
 
@@ -25,6 +27,10 @@ CLASS TpvOrdenesMenu FROM TDet
    METHOD PreEdit()
    METHOD PostEdit()
 
+   METHOD ValidOrden( cGetOrd )
+
+   METHOD StartResource()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -35,14 +41,14 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFAULT cPath        := ::cPath
    DEFAULT lUniqueName  := .f.
-   DEFAULT cFileName    := "TpvOrdMnu"
+   DEFAULT cFileName    := "TpvMnuOrd"
    DEFAULT cVia         := cDriver()
 
    if lUniqueName
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
       FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "CÃ³digo menu"                    OF oDbf
       FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "CÃ³digo orden"                   OF oDbf
@@ -129,25 +135,54 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
+METHOD ValidOrden()
+   
+   local lValid      := .t.
+
+   if ::nMode == APPD_MODE
+
+      if ::oParent:oOrdenComandas:Existe( ::oGetOrdenComanda, ::oGetOrdenComanda:oHelpText )
+
+         ::oDbfVir:GetStatus()
+
+         if ::oDbfVir:SeekInOrd( ::oGetOrdenComanda:varGet(), "cCodOrd" )
+            lValid      := .f.
+            msgStop( "El orden ya esta agregado" )
+         end if
+
+         ::oDbfVir:SetStatus()
+
+      else
+
+         lValid         := .f.
+
+      end if
+
+   end if
+
+RETURN ( lValid )   
+
+//--------------------------------------------------------------------------//
+
+
 METHOD Resource()
 
    local oDlg
-   local oGetOrd
 
    // Caja de dialogo-------------------------------------------------------------
 
-   DEFINE DIALOG oDlg RESOURCE "OrdenComanda"
+   DEFINE DIALOG oDlg RESOURCE "TpvMenuOrdenes" TITLE LblTitle( ::nMode ) + "orden de comanda"
 
-      REDEFINE GET   oGetOrd ;
+      REDEFINE GET   ::oGetOrdenComanda ;
          VAR         ::oDbfVir:cCodOrd ;
          BITMAP      "Lupa" ;
          ID          100 ;
          IDTEXT      101 ;
          OF          oDlg
 
-      oGetOrd:bWhen     := {|| ::nMode == APPD_MODE }
-      oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetOrd, oGetOrd:oHelpText ) }
-      oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetOrd ) }
+      ::oGetOrdenComanda:bWhen     := {|| ::nMode == APPD_MODE }
+      ::oGetOrdenComanda:bValid    := {|| ::ValidOrden() }
+      ::oGetOrdenComanda:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( ::oGetOrdenComanda ) }
 
       // Browse de odenes de comanda------------------------------------------
 
@@ -165,6 +200,7 @@ METHOD Resource()
       ::oBrwArticulosOrden:CreateFromResource( 400 )
 
       with object ( ::oBrwArticulosOrden:AddCol() )
+<<<<<<< HEAD:prg/TpvOrdenesMenu.prg
          :cHeader          := "orden"
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
          :nWidth           := 100
@@ -172,6 +208,9 @@ METHOD Resource()
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "CÃ³digo"
+=======
+         :cHeader          := "Código"
+>>>>>>> 627dacff064d763cec7ef919253ae5694ed54b6e:prg/TpvMenuOrdenes.prg
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
          :nWidth           := 100
       end with
@@ -198,14 +237,14 @@ METHOD Resource()
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          WHEN     ( ::nMode != ZOOM_MODE ) ;
          ACTION   ( ::lPreSave( oDlg ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
       if ::nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| ::oParent:oDetArticuloMenu:Append( ::oBrwArticulosOrden ) } )
@@ -213,13 +252,23 @@ METHOD Resource()
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if
 
-      oDlg:bStart    := {|| if( ::nMode != APPD_MODE, oGetOrd:lValid(), ) }
+      oDlg:bStart    := {|| ::StartResource() }
 
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
+
+METHOD StartResource()
+
+   if ( ::nMode != APPD_MODE )
+      ::oParent:oOrdenComandas:Existe( ::oGetOrdenComanda, ::oGetOrdenComanda:oHelpText )
+   end if
+
+RETURN (Self)
+
+//--------------------------------------------------------------------------//
 
 METHOD lPreSave( oDlg )
 
@@ -228,12 +277,12 @@ METHOD lPreSave( oDlg )
       Return ( .f. )
    end if
 
-   msgAlert( ::oDbfVir:cCodOrd, "Codigo de orden en presave ")   
+   if !::oGetOrdenComanda:lValid()
+      Return ( .f. )
+   end if 
 
    ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
    while !::oParent:oDetArticuloMenu:oDbfVir:eof()
-
-      msgAlert( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, "Articulooooooooooooooooooooo" )
 
       ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
 

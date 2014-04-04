@@ -288,7 +288,9 @@ FUNCTION PageIniClient( View )
 
       oDlg:bStart    := {|| lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ), LoadPageClient() }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg ;
+      ON INIT  ( oBrwRecCli:Load(), oBrwInc:Load() );
+      CENTER
 
    // Guardamos la configuracion de los browse------------------------------------
 
@@ -305,6 +307,13 @@ FUNCTION PageIniClient( View )
    DestroyFastFilter( TDataView():Get( "FacPrvP", nView ) )
 
    DestroyFastFilter( TDataView():Get( "FacPrvP", nView ) )
+
+   /*
+   Guardamos el orden de los browse--------------------------------------------
+   */
+
+   oBrwRecCli:CloseData()
+   oBrwInc:CloseData()
 
    /*
    Matamos el objeto imagen----------------------------------------------------

@@ -201,6 +201,7 @@ METHOD Resource( nMode )
          UPDATE ;
 			ID             100 ;
          WHEN           ( nMode == APPD_MODE ) ;
+         VALID          NotValid( ::oCodOrd, ::oDbf:cAlias, .t., "0" ) ;
 			OF             ::oDlg
 
       REDEFINE GET      ::oNomOrd ;

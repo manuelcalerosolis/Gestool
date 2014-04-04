@@ -67,7 +67,7 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::oOrdenComandas     := TOrdenComanda():Create()
 
-   ::oDetOrdenesMenu    := TpvOrdenesMenu():New( cPath, Self )
+   ::oDetOrdenesMenu    := TpvMenuOrdenes():New( cPath, Self )
    ::AddDetail( ::oDetOrdenesMenu )
 
    ::oDetArticuloMenu   := TpvMenuArticulo():New( cPath, Self )
@@ -212,6 +212,8 @@ METHOD Resource( nMode )
       ::oBrwOrdenesComanda:nMarqueeStyle  := 6
       ::oBrwOrdenesComanda:cName          := "Lineas de ordenes de comanda"
       ::oBrwOrdenesComanda:lFooter        := .f.
+
+      ::oBrwOrdenesComanda:bLDblClick     := {|| ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) }
 
       ::oBrwOrdenesComanda:CreateFromResource( 400 )
 

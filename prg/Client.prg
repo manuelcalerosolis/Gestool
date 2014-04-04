@@ -189,6 +189,7 @@
 #define fldDocumentos             oFld:aDialogs[10]
 #define fldIncidencias            oFld:aDialogs[11]
 #define fldObservaciones          oFld:aDialogs[12]
+#define fldRecibos                oFld:aDialogs[13]
 
 #define FW_BOLD                   700
 
@@ -253,6 +254,21 @@ static oMenu
 static oStock
 static oBanco
 static aFacAut          := {}
+
+static oFecIniCli
+static oFecFinCli
+static dFecIniCli
+static dFecFinCli
+
+static oEstadoCli
+static aEstadoCli    := { "Pendientes", "Pagados", "Todos" }
+static cEstadoCli
+
+static oPeriodoCli
+static aPeriodoCli   := {}
+static cPeriodoCli
+
+static oBrwRecCli
 
 static oRTF
 static cRTF
@@ -1326,6 +1342,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oBmpIncidencias
    local oBmpObservaciones
    local oBmpAutomaticas
+   local oBmpRecibos
 
    aFacAut              := hb_aTokens( aTmp[ _MFACAUT ], "," )
 
@@ -1363,6 +1380,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          nImpRie           := oStock:nRiesgo( aTmp[ _COD ] )
 
    end case
+
+   cPeriodoCli             := "Todos"
+   cEstadoCli              := "Pendientes"
+   aPeriodoCli             := aCreaArrayPeriodos()
 
    aTmp[ _NMESVAC ]        := aMes[ Min( Max( aTmp[ _NMESVAC ], 1 ), len( aMes ) ) ]
 
@@ -1406,7 +1427,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "&Tarifa",;
                   "Doc&umentos",;
                   "&Incidencias",;
-                  "Ob&servaciones";
+                  "Ob&servaciones",;
+                  "&Recibos" ;
          DIALOGS  "CLIENT_0"  ,;
                   "CLIENT_1"  ,;
                   "CLIENT_17" ,;
@@ -1418,7 +1440,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "CLIENT_5"  ,;
                   "CLIENT_10" ,;
                   "CLIENT_12" ,;
-                  "CLIENT_14"
+                  "CLIENT_14" ,;
+                  "CLIENT_18"
       /*
       Primera pestanña---------------------------------------------------------
       */
@@ -3416,6 +3439,125 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oRTF:bChange:= { || RTFRefreshButtons( oRtf, oBtn ) }
 
       /*
+      Pestaña de gestión de cobros de clientes_________________________________
+      */
+
+      REDEFINE BITMAP oBmpRecibos ;
+         ID          500 ;
+         RESOURCE    "SAFE_INTO_ALPHA_48" ;
+         TRANSPARENT ;
+         OF          fldRecibos
+
+      REDEFINE COMBOBOX oPeriodoCli ;
+         VAR         cPeriodoCli ;
+         ID          100 ;
+         ITEMS       aPeriodoCli ;
+         ON CHANGE   ( lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ), LoadPageClient( aTmp[ _COD ] ) ) ;
+         OF          fldRecibos
+
+      REDEFINE GET oFecIniCli VAR dFecIniCli;
+         ID          110 ;
+         SPINNER ;
+         VALID       ( LoadPageClient( aTmp[ _COD ] ) );
+         OF          fldRecibos
+
+      REDEFINE GET oFecFinCli VAR dFecFinCli;
+         ID          120 ;
+         SPINNER ;
+         VALID       ( LoadPageClient( aTmp[ _COD ] ) );
+         OF          fldRecibos
+
+      REDEFINE COMBOBOX oEstadoCli VAR cEstadoCli ;
+         ID          130 ;
+         ITEMS       aEstadoCli ;
+         ON CHANGE   ( LoadPageClient( aTmp[ _COD ] ) );
+         OF          fldRecibos
+
+      oBrwRecCli                 := IXBrowse():New( fldRecibos )
+
+      oBrwRecCli:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwRecCli:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwRecCli:cAlias          := ( TDataView():Get( "FacCliP", nView ) )
+
+      oBrwRecCli:nMarqueeStyle   := 6
+      oBrwRecCli:lRecordSelector := .f.
+      oBrwRecCli:cName           := "Recibos de Clientes.Inicio" 
+      oBrwRecCli:lFooter         := .t. 
+
+      oBrwRecCli:bLDblClick      := {|| if ( !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cSerie ), EdtRecCli( TDataView():FacturasClientesCobrosId( nView ), .f., !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cTipRec ) ), ), LoadPageClient( aTmp[ _COD ] ) }
+
+      oBrwRecCli:CreateFromResource( 170 )
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "E. Estado"
+         :bStrData               := {|| "" }
+         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->lCobrado }
+         :nWidth                 := 18
+         :SetCheck( { "Sel16", "Cnt16" } )
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "T. Tipo"
+         :bEditValue             := {|| if( Empty( ( TDataView():Get( "FacCliP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
+         :nWidth                 := 18
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Número"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSerie ) + "/" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumRec ) ) }
+         :nWidth                 := 80
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Cliente"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cCodCli ) }
+         :nWidth                 := 60
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Nombre"
+         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cNomCli ) }
+         :nWidth                 := 200
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Fecha"
+         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dPreCob ) }
+         :nWidth                 := 80
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Vencimiento"
+         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dFecVto ) }
+         :bClrStd                := {|| { if( ( TDataView():Get( "FacCliP", nView ) )->dFecVto < GetSysDate(), CLR_HRED, CLR_BLACK ), GetSysColor( COLOR_WINDOW )} }
+         :nWidth                 := 80
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Importe"
+         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->nImporte }
+         :cEditPicture           := cPorDiv()
+         :nFooterType            := AGGR_SUM
+         :nWidth                 := 70
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader             := "Modificar"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| if ( !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cSerie ), EdtRecCli( TDataView():FacturasClientesCobrosId( nView ), .f., !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cTipRec ) ), ), LoadPageClient( aTmp[ _COD ] ) }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "EDIT16" )
+      end with 
+
+      /*
       Botones de la Caja de Dialogo__________________________________________
       */
 
@@ -3470,7 +3612,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                         oBrwObr:Load(),;
                         oBrwCta:Load(),;
                         oBrwAtp:Load(),;
-                        if( !empty( nTab ), oFld:setOption( nTab ), ) }
+                        oBrwRecCli:Load(),;
+                        if( !empty( nTab ), oFld:setOption( nTab ), ),;
+                        lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
+                        LoadPageClient( aTmp[ _COD ] ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode ) ) ;
@@ -3491,6 +3636,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    oBmpIncidencias:End()
    oBmpObservaciones:End()
    oBmpAutomaticas:End()
+   oBmpRecibos:End()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -12096,5 +12242,153 @@ FUNCTION DelIncidenciaCliente( nView, oBrw )
    WinDelRec( oBrw, TDataView():Get( "CliInc", nView ) )
 
 RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+static function aCreaArrayPeriodos()
+
+   local aPeriodo := {}
+
+   aAdd( aPeriodo, "Hoy" )
+
+   aAdd( aPeriodo, "Ayer" )
+
+   aAdd( aPeriodo, "Mes en curso" )
+
+   aAdd( aPeriodo, "Mes anterior" )
+
+   do case
+      case Month( GetSysDate() ) <= 3
+         aAdd( aPeriodo, "Primer trimestre" )
+
+      case Month( GetSysDate() ) > 3 .and. Month( GetSysDate() ) <= 6
+         aAdd( aPeriodo, "Primer trimestre" )
+         aAdd( aPeriodo, "Segundo trimestre" )
+
+      case Month( GetSysDate() ) > 6 .and. Month( GetSysDate() ) <= 9
+         aAdd( aPeriodo, "Primer trimestre" )
+         aAdd( aPeriodo, "Segundo trimestre" )
+         aAdd( aPeriodo, "Tercer trimestre" )
+
+      case Month( GetSysDate() ) > 9 .and. Month( GetSysDate() ) <= 12
+         aAdd( aPeriodo, "Primer trimestre" )
+         aAdd( aPeriodo, "Segundo trimestre" )
+         aAdd( aPeriodo, "Tercer trimestre" )
+         aAdd( aPeriodo, "Cuatro trimestre" )
+
+   end case
+
+   aAdd( aPeriodo, "Doce últimos meses" )
+
+   aAdd( aPeriodo, "Año en curso" )
+
+   aAdd( aPeriodo, "Año anterior" )
+
+   aAdd( aPeriodo, "Todos" )
+
+Return ( aPeriodo )
+
+//---------------------------------------------------------------------------//
+
+Static Function lRecargaFecha( oFechaInicio, oFechaFin, cPeriodo )
+
+   do case
+      case cPeriodo == "Hoy"
+
+         oFechaInicio:cText( GetSysDate() )
+         oFechaFin:cText( GetSysDate() )
+
+      case cPeriodo == "Ayer"
+
+         oFechaInicio:cText( GetSysDate() -1 )
+         oFechaFin:cText( GetSysDate() -1 )
+
+      case cPeriodo == "Mes en curso"
+
+         oFechaInicio:cText( CtoD( "01/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( GetSysDate() )
+
+      case cPeriodo == "Mes anterior"
+
+         oFechaInicio:cText( BoM( AddMonth( GetSysDate(), -1 ) ) )
+         oFechaFin:cText( EoM( AddMonth( GetSysDate(), -1 ) ) )
+
+      case cPeriodo == "Primer trimestre"
+         
+         oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( CtoD( "31/03/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Segundo trimestre"
+
+         oFechaInicio:cText( CtoD( "01/04/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( CtoD( "30/06/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Tercer trimestre"
+
+         oFechaInicio:cText( CtoD( "01/07/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( CtoD( "30/09/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Cuatro trimestre"
+
+         oFechaInicio:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Doce últimos meses"
+
+         oFechaInicio:cText( CtoD( Str( Day( GetSysDate() ) ) + "/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) -1 ) ) )
+         oFechaFin:cText( GetSysDate() )
+
+      case cPeriodo == "Año en curso"
+
+         oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Año anterior"
+
+         oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
+         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
+      
+      case cPeriodo == "Todos"
+
+         oFechaInicio:cText( CtoD( "01/01/2000" ) ) 
+         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+   end case
+
+   oFechaInicio:Refresh()
+   oFechaFin:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function LoadPageClient( cCodigoCliente )
+
+   local cExpHead    := ""
+
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "dFecVto" ) )
+
+   do case
+      case oEstadoCli:nAt == 1
+         cExpHead    := '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+      case oEstadoCli:nAt == 2
+         cExpHead    := 'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+      case oEstadoCli:nAt == 3
+         cExpHead    := 'dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+   end case
+
+   if !empty( cCodigoCliente )
+      cExpHead       += ' .and. rtrim( cCodCli ) == "' + rtrim( cCodigoCliente ) + '"'
+   end if
+
+    CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f. )
+
+   // Refrescamos los browse------------------------------------------------------
+
+   if !Empty( oBrwRecCli )
+      oBrwRecCli:Refresh()
+   end if
+
+return .t.
 
 //---------------------------------------------------------------------------//
