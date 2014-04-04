@@ -215,30 +215,14 @@ METHOD Resource()
       ::oBrwArticulosOrden:CreateFromResource( 400 )
 
       with object ( ::oBrwArticulosOrden:AddCol() )
-<<<<<<< HEAD
-         :cHeader          := "orden"
-         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
-         :nWidth           := 100
-      end with
-
-      with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "CÃ³digo"
-=======
->>>>>>> db9ccd050f401b2d8f7bd1de054f601493041dcf
          :cHeader          := "Código"
-         :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
          :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Artículo"
-         :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
-<<<<<<< HEAD
-         :cHeader          := "ArtÃ­culo"
          :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
-=======
->>>>>>> db9ccd050f401b2d8f7bd1de054f601493041dcf
          :nWidth           := 240
       end with
 
