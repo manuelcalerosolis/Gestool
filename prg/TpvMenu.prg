@@ -8,7 +8,7 @@ CLASS TpvMenu FROM TMasDet
 
    CLASSDATA oInstance
 
-   DATA  cMru                                   INIT "Led_Red_16"
+   DATA  cMru                                   INIT "clipboard"
 
    DATA  oGetCodigo
    DATA  oGetNombre
@@ -44,6 +44,8 @@ METHOD New( cPath, oWndParent, nLevel )
 
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT nLevel       := "01200"
+
+   ::cMru               := "Clipboard_16"
 
    ::Create( cPath )
 

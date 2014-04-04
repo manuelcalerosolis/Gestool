@@ -215,7 +215,6 @@ METHOD Resource()
       ::oBrwArticulosOrden:CreateFromResource( 400 )
 
       with object ( ::oBrwArticulosOrden:AddCol() )
-<<<<<<< HEAD:prg/TpvOrdenesMenu.prg
          :cHeader          := "orden"
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
          :nWidth           := 100
@@ -223,25 +222,17 @@ METHOD Resource()
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "CÃ³digo"
-=======
          :cHeader          := "Código"
-<<<<<<< HEAD
          :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
-=======
->>>>>>> 627dacff064d763cec7ef919253ae5694ed54b6e:prg/TpvMenuOrdenes.prg
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
->>>>>>> dba59f283120337811aca6e1f6e19ad10b3f7fa4
          :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
-<<<<<<< HEAD
          :cHeader          := "Artículo"
          :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
-=======
          :cHeader          := "ArtÃ­culo"
          :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
->>>>>>> dba59f283120337811aca6e1f6e19ad10b3f7fa4
          :nWidth           := 240
       end with
 
