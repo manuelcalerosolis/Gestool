@@ -29,6 +29,8 @@ CLASS TpvMenuOrdenes FROM TDet
 
    METHOD ValidOrden( cGetOrd )
 
+   METHOD StartResource()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -137,26 +139,31 @@ METHOD ValidOrden()
    
    local lValid      := .t.
 
-   if ::oParent:oOrdenComandas:Existe( ::oGetOrdenComanda, ::oGetOrdenComanda:oHelpText )
+   if ::nMode == APPD_MODE
 
-      ::oDbfVir:GetStatus()
+      if ::oParent:oOrdenComandas:Existe( ::oGetOrdenComanda, ::oGetOrdenComanda:oHelpText )
 
-      if ::oDbfVir:SeekInOrd( ::oGetOrdenComanda:varGet(), "cCodOrd" )
-         lValid      := .f.
-         msgStop( "El orden ya esta agregado" )
+         ::oDbfVir:GetStatus()
+
+         if ::oDbfVir:SeekInOrd( ::oGetOrdenComanda:varGet(), "cCodOrd" )
+            lValid      := .f.
+            msgStop( "El orden ya esta agregado" )
+         end if
+
+         ::oDbfVir:SetStatus()
+
+      else
+
+         lValid         := .f.
+
       end if
 
-      ::oDbfVir:SetStatus()
-
-   else
-
-      lValid         := .f.
-
-   end if 
+   end if
 
 RETURN ( lValid )   
 
 //--------------------------------------------------------------------------//
+
 
 METHOD Resource()
 
@@ -220,14 +227,14 @@ METHOD Resource()
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          WHEN     ( ::nMode != ZOOM_MODE ) ;
          ACTION   ( ::lPreSave( oDlg ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
       if ::nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| ::oParent:oDetArticuloMenu:Append( ::oBrwArticulosOrden ) } )
@@ -235,13 +242,23 @@ METHOD Resource()
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if
 
-      oDlg:bStart    := {|| if( ::nMode != APPD_MODE, ::oGetOrdenComanda:lValid(), ) }
+      oDlg:bStart    := {|| ::StartResource() }
 
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
+
+METHOD StartResource()
+
+   if ( ::nMode != APPD_MODE )
+      ::oParent:oOrdenComandas:Existe( ::oGetOrdenComanda, ::oGetOrdenComanda:oHelpText )
+   end if
+
+RETURN (Self)
+
+//--------------------------------------------------------------------------//
 
 METHOD lPreSave( oDlg )
 
