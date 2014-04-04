@@ -67,7 +67,7 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::oOrdenComandas     := TOrdenComanda():Create()
 
-   ::oDetOrdenesMenu    := TpvOrdenesMenu():New( cPath, Self )
+   ::oDetOrdenesMenu    := TpvMenuOrdenes():New( cPath, Self )
    ::AddDetail( ::oDetOrdenesMenu )
 
    ::oDetArticuloMenu   := TpvMenuArticulo():New( cPath, Self )

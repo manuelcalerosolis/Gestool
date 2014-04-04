@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------------------//
 
-CLASS TpvOrdenesMenu FROM TDet
+CLASS TpvMenuOrdenes FROM TDet
 
    DATA oBrwArticulosOrden
 
@@ -35,7 +35,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFAULT cPath        := ::cPath
    DEFAULT lUniqueName  := .f.
-   DEFAULT cFileName    := "TpvOrdMnu"
+   DEFAULT cFileName    := "TpvMnuOrd"
    DEFAULT cVia         := cDriver()
 
    if lUniqueName
