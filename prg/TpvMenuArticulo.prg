@@ -18,6 +18,8 @@ CLASS TpvMenuArticulo FROM TDet
 
    METHOD PreSaveDetails()
 
+   METHOD ValidCodigoArticulo()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -97,6 +99,23 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
+METHOD ValidCodigoArticulo( oGetCodigoArticulo )
+   
+   local lValid      := .f.
+
+   if cArticulo( oGetCodigoArticulo, ::oParent:oDbfArticulo:cAlias, oGetCodigoArticulo:oHelpText )
+      lValid         := .t.
+
+      /*if oGetCodigoArticulo:oBmpImage != nil
+         oGetCodigoArticulo:BmpImage:LoadBMP( cFileBmpName( ( ::oParent:dbfArticulo )->cImagen, .t. ) )
+         oGetCodigoArticulo:BmpImage:Refresh()
+      end if*/
+   end if
+
+RETURN (lValid)
+
+//--------------------------------------------------------------------------//
+
 METHOD Resource( nMode )
 
    local oDlg
@@ -118,8 +137,19 @@ METHOD Resource( nMode )
          WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oDlg
 
-      oGetCodigoArticulo:bValid  := {|| cArticulo( oGetCodigoArticulo, ::oParent:oDbfArticulo:cAlias, oGetCodigoArticulo:oHelpText ) }
+      oGetCodigoArticulo:bValid  := {|| ::ValidCodigoArticulo(oGetCodigoArticulo) }
       oGetCodigoArticulo:bHelp   := {|| BrwArticulo( oGetCodigoArticulo, oGetCodigoArticulo:oHelpText ) }
+
+      // Imagen-------------------------------------------------------------------
+
+      /*REDEFINE IMAGE oBmpImage ;
+         ID          102 ;
+         OF          oDlg
+
+      oBmpImage:SetColor( , GetSysColor( 15 ) )
+
+      oBmpImage:bLClicked  := {|| ShowImage( oBmpImage ) }
+      oBmpImage:bRClicked  := {|| ShowImage( oBmpImage ) }*/
 
       // Botones------------------------------------------------------------------
 
@@ -139,6 +169,8 @@ METHOD Resource( nMode )
       end if
 
    ACTIVATE DIALOG oDlg CENTER
+
+   //oBmpImage:End()
 
 RETURN ( oDlg:nResult == IDOK )
 

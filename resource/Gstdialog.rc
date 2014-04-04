@@ -19576,12 +19576,12 @@ FONT 8, "Helv"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 54, 13, 101, 11
   CONTROL "", 101, "Edit", WS_BORDER|WS_TABSTOP, 54, 26, 212, 11
+  CONTROL "", 102, "TBitMap", 0x00800000, 275, 7, 60, 62
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 165, 74, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 220, 74, 50, 14
   CONTROL "Artículo", -1, "Button", BS_GROUPBOX, 2, 3, 268, 66
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 16, 27, 8
   CONTROL "Descripción ", -1, "Static", WS_GROUP, 8, 29, 45, 8
-  CONTROL "", 500, "TBitMap", 0x00800000, 275, 7, 60, 62
 }
 
 ORDENCOMANDA DIALOG DISCARDABLE 60, 16, 296, 64

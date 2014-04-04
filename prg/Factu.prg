@@ -2740,8 +2740,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los menús'
    oItem:bAction        := {|| TpvMenu():New( cPatEmp(), oWnd ):Activate() }
    oItem:cId            := "01200"
-   oItem:cBmp           := "Sort_az_descending_alpha_16"
-   oItem:cBmpBig        := "Sort_az_descending_32"
+   oItem:cBmp           := "Clipboard_empty_16"
+   oItem:cBmpBig        := "Clipboard_empty_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()

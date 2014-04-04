@@ -141,7 +141,6 @@ RETURN .t.
 
 METHOD PreDelete()
 
-   msgAlert( "voy a borrar " + ::oDbfVir:cCodOrd )
    while ( ::oParent:oDetMenuArticulo:oDbfVir:SeekInOrd( ::oDbfVir:cCodOrd, "cCodOrd" ) )
       ::oParent:oDetMenuArticulo:oDbfVir:Delete()
    end while 
@@ -216,13 +215,13 @@ METHOD Resource()
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
+         :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
          :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Artículo"
-         :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
+         :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
          :nWidth           := 240
       end with
 

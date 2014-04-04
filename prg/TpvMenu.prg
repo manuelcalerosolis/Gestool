@@ -8,7 +8,7 @@ CLASS TpvMenu FROM TMasDet
 
    CLASSDATA oInstance
 
-   DATA  cMru                                   INIT "clipboard"
+   DATA  cMru                                   INIT "clipboard_empty_16"
 
    DATA  oGetCodigo
    DATA  oGetNombre
@@ -44,8 +44,6 @@ METHOD New( cPath, oWndParent, nLevel )
 
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT nLevel       := "01200"
-
-   ::cMru               := "Clipboard_16"
 
    ::Create( cPath )
 
@@ -161,7 +159,9 @@ METHOD CloseFiles()
 
    ::oOrdenComandas:CloseFiles()
 
-   ::oDbfArticulo:End()
+   if !Empty( ::oDbfArticulo ) .and. ( ::oDbfArticulo:used() )
+      ::oDbfArticulo:End()
+   end if 
 
    ::CloseDetails()     
 
@@ -312,14 +312,14 @@ METHOD SaveDetails()
 
    msgAlert( ::oDbf:cCodMnu, "::oDbf:cCodMnu" )
 
-   while !::oDetArticuloMenu:oDbfVir:eof()
-      ::oDetArticuloMenu:oDbfVir:cCodMnu     := ::oDbf:cCodMnu
-      ::oDetArticuloMenu:oDbfVir:skip()
+   while !::oDetMenuArticulo:oDbfVir:eof()
+      ::oDetMenuArticulo:oDbfVir:cCodMnu     := ::oDbf:cCodMnu
+      ::oDetMenuArticulo:oDbfVir:skip()
    end while
 
-   while !::oDetOrdenesMenu:oDbfVir:eof()
-      ::oDetOrdenesMenu:oDbfVir:cCodMnu      := ::oDbf:cCodMnu
-      ::oDetOrdenesMenu:oDbfVir:skip()
+   while !::oDetMenuOrdenes:oDbfVir:eof()
+      ::oDetMenuOrdenes:oDbfVir:cCodMnu      := ::oDbf:cCodMnu
+      ::oDetMenuOrdenes:oDbfVir:skip()
    end while
 
 RETURN ( Self )
