@@ -3555,7 +3555,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
          :AddResource( "EDIT16" )
-      end with 
+      end with
 
       /*
       Botones de la Caja de Dialogo__________________________________________
