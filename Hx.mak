@@ -113,7 +113,7 @@ Tipart.prg              	\
 Tproyecto.prg 				\
 TpvMenu.prg 				\
 TpvMenuArticulo.prg			\
-TpvOrdenesMenu.prg 			\
+TpvMenuOrdenes.prg 			\
 TFraPub.prg             	\
 SalaVta.prg             	\
 Tvta.prg                	\
@@ -504,7 +504,7 @@ Tipart.obj              \
 Tproyecto.obj 			\
 TpvMenu.obj				\
 TpvMenuArticulo.obj 	\
-TpvOrdenesMenu.obj		\
+TpvMenuOrdenes.obj		\
 TFraPub.obj             \
 SalaVta.obj             \
 Tvta.obj                \
@@ -922,7 +922,7 @@ $(OBJ)\Tipart.obj               +
 $(OBJ)\Tproyecto.obj            +
 $(OBJ)\TpvMenu.obj              +
 $(OBJ)\TpvMenuArticulo.obj      +
-$(OBJ)\TpvOrdenesMenu.obj		+
+$(OBJ)\TpvMenuOrdenes.obj		+
 $(OBJ)\TFraPub.obj              +
 $(OBJ)\SalaVta.obj              +
 $(OBJ)\Tvta.obj                 +
