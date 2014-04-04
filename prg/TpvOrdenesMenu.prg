@@ -44,8 +44,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
 
-      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "C骴igo menu"                    OF oDbf
-      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "C骴igo orden"                   OF oDbf
+      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "C贸digo menu"                    OF oDbf
+      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "C贸digo orden"                   OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
@@ -112,8 +112,6 @@ METHOD PreEdit()
 
    ::cScopeValue        := ::oDbfVir:cCodOrd
 
-   msgAlert( ::cScopeValue, "Coloca el scope" )
-
    ::oParent:oDetArticuloMenu:oDbfVir:OrdSetFocus( "cCodOrd" )
    ::oParent:oDetArticuloMenu:oDbfVir:SetScope( ::cScopeValue )
    ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
@@ -173,13 +171,13 @@ METHOD Resource()
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "C骴igo"
+         :cHeader          := "C贸digo"
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
          :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "Art韈ulo"
+         :cHeader          := "Art铆culo"
          :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
          :nWidth           := 240
       end with
@@ -226,7 +224,7 @@ RETURN ( oDlg:nResult == IDOK )
 METHOD lPreSave( oDlg )
 
    if Empty( ::oDbfVir:cCodOrd )
-      MsgStop( "C骴igo del orden no puede estar vacio" )
+      MsgStop( "C贸digo del orden no puede estar vacio" )
       Return ( .f. )
    end if
 
