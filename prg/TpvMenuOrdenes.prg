@@ -27,6 +27,8 @@ CLASS TpvMenuOrdenes FROM TDet
    METHOD PreEdit()
    METHOD PostEdit()
 
+   METHOD PreDelete()
+
    METHOD ValidOrden( cGetOrd )
 
    METHOD StartResource()
@@ -87,6 +89,8 @@ METHOD OpenFiles( lExclusive )
       ::bOnPostAppend      := {|| ::PostEdit() }
       ::bOnPostEdit        := {|| ::PostEdit() }
 
+      ::bOnPreDelete       := {|| ::PreDelete() }
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
@@ -118,9 +122,9 @@ METHOD PreEdit()
 
    ::cScopeValue        := ::oDbfVir:cCodOrd
 
-   ::oParent:oDetArticuloMenu:oDbfVir:OrdSetFocus( "cCodOrd" )
-   ::oParent:oDetArticuloMenu:oDbfVir:SetScope( ::cScopeValue )
-   ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
+   ::oParent:oDetMenuArticulo:oDbfVir:OrdSetFocus( "cCodOrd" )
+   ::oParent:oDetMenuArticulo:oDbfVir:SetScope( ::cScopeValue )
+   ::oParent:oDetMenuArticulo:oDbfVir:GoTop()
 
 RETURN .t.
 
@@ -128,8 +132,19 @@ RETURN .t.
 
 METHOD PostEdit()
 
-   ::oParent:oDetArticuloMenu:oDbfVir:ClearScope()
-   ::oParent:oDetArticuloMenu:oDbfVir:OrdSetFocus( "cCodMnu" )
+   ::oParent:oDetMenuArticulo:oDbfVir:ClearScope()
+   ::oParent:oDetMenuArticulo:oDbfVir:OrdSetFocus( "cCodMnu" )
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
+METHOD PreDelete()
+
+   msgAlert( "voy a borrar " + ::oDbfVir:cCodOrd )
+   while ( ::oParent:oDetMenuArticulo:oDbfVir:SeekInOrd( ::oDbfVir:cCodOrd, "cCodOrd" ) )
+      ::oParent:oDetMenuArticulo:oDbfVir:Delete()
+   end while 
 
 RETURN .t.
 
@@ -191,7 +206,7 @@ METHOD Resource()
       ::oBrwArticulosOrden:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwArticulosOrden:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oParent:oDetArticuloMenu:oDbfVir:SetBrowse( ::oBrwArticulosOrden ) 
+      ::oParent:oDetMenuArticulo:oDbfVir:SetBrowse( ::oBrwArticulosOrden ) 
 
       ::oBrwArticulosOrden:nMarqueeStyle  := 6
       ::oBrwArticulosOrden:cName          := "Lineas de menus de articulos"
@@ -201,13 +216,13 @@ METHOD Resource()
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
+         :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
          :nWidth           := 100
       end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Artículo"
-         :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
+         :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
          :nWidth           := 240
       end with
 
@@ -215,13 +230,13 @@ METHOD Resource()
          ID       500 ;
          OF       oDlg ;
          WHEN     ( ::nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oParent:oDetArticuloMenu:Append( ::oBrwArticulosOrden ) )
+         ACTION   ( ::oParent:oDetMenuArticulo:Append( ::oBrwArticulosOrden ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          WHEN     ( ::nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oParent:oDetArticuloMenu:Del( ::oBrwArticulosOrden ) )
+         ACTION   ( ::oParent:oDetMenuArticulo:Del( ::oBrwArticulosOrden ) )
 
       // Botones------------------------------------------------------------------
 
@@ -237,8 +252,8 @@ METHOD Resource()
          ACTION   ( oDlg:end() )
 
       if ::nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F2, {|| ::oParent:oDetArticuloMenu:Append( ::oBrwArticulosOrden ) } )
-         oDlg:AddFastKey( VK_F4, {|| ::oParent:oDetArticuloMenu:Del( ::oBrwArticulosOrden ) } )
+         oDlg:AddFastKey( VK_F2, {|| ::oParent:oDetMenuArticulo:Append( ::oBrwArticulosOrden ) } )
+         oDlg:AddFastKey( VK_F4, {|| ::oParent:oDetMenuArticulo:Del( ::oBrwArticulosOrden ) } )
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if
 
@@ -271,15 +286,15 @@ METHOD lPreSave( oDlg )
       Return ( .f. )
    end if 
 
-   ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
-   while !::oParent:oDetArticuloMenu:oDbfVir:eof()
+   ::oParent:oDetMenuArticulo:oDbfVir:GoTop()
+   while !::oParent:oDetMenuArticulo:oDbfVir:eof()
 
-      ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
+      ::oParent:oDetMenuArticulo:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
 
       if ::nMode == APPD_MODE
-         ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
+         ::oParent:oDetMenuArticulo:oDbfVir:GoTop()
       else
-         ::oParent:oDetArticuloMenu:oDbfVir:skip()
+         ::oParent:oDetMenuArticulo:oDbfVir:skip()
       end if 
 
    end while

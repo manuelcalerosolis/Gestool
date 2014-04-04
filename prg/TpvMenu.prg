@@ -17,8 +17,8 @@ CLASS TpvMenu FROM TMasDet
 
    DATA oDbfArticulo
 
-   DATA oDetArticuloMenu
-   DATA oDetOrdenesMenu   
+   DATA oDetMenuArticulo
+   DATA oMenuOrdenes   
 
    DATA oBrwOrdenesComanda
 
@@ -67,11 +67,11 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::oOrdenComandas     := TOrdenComanda():Create()
 
-   ::oDetOrdenesMenu    := TpvMenuOrdenes():New( cPath, Self )
-   ::AddDetail( ::oDetOrdenesMenu )
+   ::oMenuOrdenes    := TpvMenuOrdenes():New( cPath, Self )
+   ::AddDetail( ::oMenuOrdenes )
 
-   ::oDetArticuloMenu   := TpvMenuArticulo():New( cPath, Self )
-   ::AddDetail( ::oDetArticuloMenu )
+   ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, Self )
+   ::AddDetail( ::oDetMenuArticulo )
 
 RETURN ( Self )
 
@@ -207,25 +207,25 @@ METHOD Resource( nMode )
       ::oBrwOrdenesComanda:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwOrdenesComanda:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oDetOrdenesMenu:oDbfVir:SetBrowse( ::oBrwOrdenesComanda ) 
+      ::oMenuOrdenes:oDbfVir:SetBrowse( ::oBrwOrdenesComanda ) 
 
       ::oBrwOrdenesComanda:nMarqueeStyle  := 6
       ::oBrwOrdenesComanda:cName          := "Lineas de ordenes de comanda"
       ::oBrwOrdenesComanda:lFooter        := .f.
 
-      ::oBrwOrdenesComanda:bLDblClick     := {|| ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) }
+      ::oBrwOrdenesComanda:bLDblClick     := {|| ::oMenuOrdenes:Edit( ::oBrwOrdenesComanda ) }
 
       ::oBrwOrdenesComanda:CreateFromResource( 400 )
 
       with object ( ::oBrwOrdenesComanda:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| ::oDetOrdenesMenu:oDbfVir:FieldGetByName( "cCodOrd" ) }
+         :bStrData         := {|| ::oMenuOrdenes:oDbfVir:FieldGetByName( "cCodOrd" ) }
          :nWidth           := 50
       end with
 
       with object ( ::oBrwOrdenesComanda:AddCol() )
          :cHeader          := "Orden de comanda"
-         :bStrData         := {|| ::oOrdenComandas:cNombre( ::oDetOrdenesMenu:oDbfVir:FieldGetByName( "cCodOrd" ) ) }
+         :bStrData         := {|| ::oOrdenComandas:cNombre( ::oMenuOrdenes:oDbfVir:FieldGetByName( "cCodOrd" ) ) }
          :nWidth           := 200
       end with
 
@@ -233,19 +233,19 @@ METHOD Resource( nMode )
          ID       500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetOrdenesMenu:Append( ::oBrwOrdenesComanda ) )
+         ACTION   ( ::oMenuOrdenes:Append( ::oBrwOrdenesComanda ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) )
+         ACTION   ( ::oMenuOrdenes:Edit( ::oBrwOrdenesComanda ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetOrdenesMenu:Del( ::oBrwOrdenesComanda ) )
+         ACTION   ( ::oMenuOrdenes:Del( ::oBrwOrdenesComanda ) )
 
       /*
       Creamos los botones------------------------------------------------------
@@ -263,9 +263,9 @@ METHOD Resource( nMode )
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F2, {|| ::oDetOrdenesMenu:Append( ::oBrwOrdenesComanda ) } )
-   oDlg:AddFastKey( VK_F3, {|| ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) } )
-   oDlg:AddFastKey( VK_F4, {|| ::oDetOrdenesMenu:Del( ::oBrwOrdenesComanda ) } )
+   oDlg:AddFastKey( VK_F2, {|| ::oMenuOrdenes:Append( ::oBrwOrdenesComanda ) } )
+   oDlg:AddFastKey( VK_F3, {|| ::oMenuOrdenes:Edit( ::oBrwOrdenesComanda ) } )
+   oDlg:AddFastKey( VK_F4, {|| ::oMenuOrdenes:Del( ::oBrwOrdenesComanda ) } )
    oDlg:AddFastKey( VK_F5, {|| ::lSaveResource( nMode, oDlg ) } )
 
    oDlg:bStart          := {|| ::StartResource() }

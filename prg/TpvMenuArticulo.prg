@@ -103,7 +103,7 @@ METHOD Resource( nMode )
    local oGetCodigoArticulo
 
    if ::nMode == APPD_MODE
-      ::oDbfVir:cCodOrd := ::oParent:oDetOrdenesMenu:cScopeValue
+      ::oDbfVir:cCodOrd := ::oParent:oMenuOrdenes:cScopeValue
    end if
 
    // Caja de dialogo-------------------------------------------------------------
