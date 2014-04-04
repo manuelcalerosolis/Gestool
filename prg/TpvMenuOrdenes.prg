@@ -215,6 +215,7 @@ METHOD Resource()
       ::oBrwArticulosOrden:CreateFromResource( 400 )
 
       with object ( ::oBrwArticulosOrden:AddCol() )
+<<<<<<< HEAD
          :cHeader          := "orden"
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
          :nWidth           := 100
@@ -222,6 +223,8 @@ METHOD Resource()
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "CÃ³digo"
+=======
+>>>>>>> db9ccd050f401b2d8f7bd1de054f601493041dcf
          :cHeader          := "Código"
          :bStrData         := {|| ::oParent:oDetMenuArticulo:oDbfVir:cCodArt }
          :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodArt }
@@ -231,8 +234,11 @@ METHOD Resource()
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Artículo"
          :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
+<<<<<<< HEAD
          :cHeader          := "ArtÃ­culo"
          :bStrData         := {|| retArticulo( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
+=======
+>>>>>>> db9ccd050f401b2d8f7bd1de054f601493041dcf
          :nWidth           := 240
       end with
 
@@ -288,7 +294,7 @@ RETURN (Self)
 METHOD lPreSave( oDlg )
 
    if Empty( ::oDbfVir:cCodOrd )
-      MsgStop( "CÃ³digo del orden no puede estar vacio" )
+      MsgStop( "Código del orden no puede estar vacio" )
       Return ( .f. )
    end if
 

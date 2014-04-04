@@ -10,8 +10,12 @@ WEBTOPRED BITMAP "..\\bmp\\MkTopRed.bmp"
 
 AssDocAuto BITMAP "..\\bmp\\AssDocAuto.bmp"
 AssCambioIva BITMAP "..\\bmp\\AssCambioIva.bmp"
+
 CLIPBOARD_EMPTY_EARTH_16 BITMAP "..\\bmp\\clipboard_empty_earth_16.bmp"
 CLIPBOARD_EMPTY_EARTH_32 BITMAP "..\\bmp\\clipboard_empty_earth_32.bmp"
+
+CLIPBOARD_EMPTY_16 BITMAP "..\\bmp\\clipboard_empty_16.bmp"
+CLIPBOARD_EMPTY_32 BITMAP "..\\bmp\\clipboard_empty_32.bmp"
 
 UNDORED16 BITMAP "..\\bmp\\UndoRed16.bmp"
 Add2_Alpha_48 BITMAP "..\\bmp\\Add2_Alpha_48.bmp"
