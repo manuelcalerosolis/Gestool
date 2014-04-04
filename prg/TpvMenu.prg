@@ -213,6 +213,8 @@ METHOD Resource( nMode )
       ::oBrwOrdenesComanda:cName          := "Lineas de ordenes de comanda"
       ::oBrwOrdenesComanda:lFooter        := .f.
 
+      ::oBrwOrdenesComanda:bLDblClick     := {|| ::oDetOrdenesMenu:Edit( ::oBrwOrdenesComanda ) }
+
       ::oBrwOrdenesComanda:CreateFromResource( 400 )
 
       with object ( ::oBrwOrdenesComanda:AddCol() )

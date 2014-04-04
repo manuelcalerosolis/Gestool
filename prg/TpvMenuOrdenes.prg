@@ -10,6 +10,8 @@ CLASS TpvMenuOrdenes FROM TDet
 
    DATA cScopeValue
 
+   DATA oGetOrdenComanda
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -24,6 +26,8 @@ CLASS TpvMenuOrdenes FROM TDet
 
    METHOD PreEdit()
    METHOD PostEdit()
+
+   METHOD ValidOrden( cGetOrd )
 
 END CLASS
 
@@ -42,7 +46,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
       FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
       FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
@@ -112,8 +116,6 @@ METHOD PreEdit()
 
    ::cScopeValue        := ::oDbfVir:cCodOrd
 
-   msgAlert( ::cScopeValue, "Coloca el scope" )
-
    ::oParent:oDetArticuloMenu:oDbfVir:OrdSetFocus( "cCodOrd" )
    ::oParent:oDetArticuloMenu:oDbfVir:SetScope( ::cScopeValue )
    ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
@@ -131,25 +133,49 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
+METHOD ValidOrden()
+   
+   local lValid      := .t.
+
+   if ::oParent:oOrdenComandas:Existe( ::oGetOrdenComanda, ::oGetOrdenComanda:oHelpText )
+
+      ::oDbfVir:GetStatus()
+
+      if ::oDbfVir:SeekInOrd( ::oGetOrdenComanda:varGet(), "cCodOrd" )
+         lValid      := .f.
+         msgStop( "El orden ya esta agregado" )
+      end if
+
+      ::oDbfVir:SetStatus()
+
+   else
+
+      lValid         := .f.
+
+   end if 
+
+RETURN ( lValid )   
+
+//--------------------------------------------------------------------------//
+
 METHOD Resource()
 
    local oDlg
-   local oGetOrd
 
    // Caja de dialogo-------------------------------------------------------------
 
-   DEFINE DIALOG oDlg RESOURCE "OrdenComanda"
+   DEFINE DIALOG oDlg RESOURCE "TpvMenuOrdenes" TITLE LblTitle( ::nMode ) + "orden de comanda"
 
-      REDEFINE GET   oGetOrd ;
+      REDEFINE GET   ::oGetOrdenComanda ;
          VAR         ::oDbfVir:cCodOrd ;
          BITMAP      "Lupa" ;
          ID          100 ;
          IDTEXT      101 ;
          OF          oDlg
 
-      oGetOrd:bWhen     := {|| ::nMode == APPD_MODE }
-      oGetOrd:bValid    := {|| ::oParent:oOrdenComandas:Existe( oGetOrd, oGetOrd:oHelpText ) }
-      oGetOrd:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( oGetOrd ) }
+      ::oGetOrdenComanda:bWhen     := {|| ::nMode == APPD_MODE }
+      ::oGetOrdenComanda:bValid    := {|| ::ValidOrden() }
+      ::oGetOrdenComanda:bHelp     := {|| ::oParent:oOrdenComandas:Buscar( ::oGetOrdenComanda ) }
 
       // Browse de odenes de comanda------------------------------------------
 
@@ -165,12 +191,6 @@ METHOD Resource()
       ::oBrwArticulosOrden:lFooter        := .f.
 
       ::oBrwArticulosOrden:CreateFromResource( 400 )
-
-      with object ( ::oBrwArticulosOrden:AddCol() )
-         :cHeader          := "orden"
-         :bStrData         := {|| ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd }
-         :nWidth           := 100
-      end with
 
       with object ( ::oBrwArticulosOrden:AddCol() )
          :cHeader          := "Código"
@@ -215,7 +235,7 @@ METHOD Resource()
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if
 
-      oDlg:bStart    := {|| if( ::nMode != APPD_MODE, oGetOrd:lValid(), ) }
+      oDlg:bStart    := {|| if( ::nMode != APPD_MODE, ::oGetOrdenComanda:lValid(), ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -230,12 +250,12 @@ METHOD lPreSave( oDlg )
       Return ( .f. )
    end if
 
-   msgAlert( ::oDbfVir:cCodOrd, "Codigo de orden en presave ")   
+   if !::oGetOrdenComanda:lValid()
+      Return ( .f. )
+   end if 
 
    ::oParent:oDetArticuloMenu:oDbfVir:GoTop()
    while !::oParent:oDetArticuloMenu:oDbfVir:eof()
-
-      msgAlert( ::oParent:oDetArticuloMenu:oDbfVir:cCodArt, "Articulooooooooooooooooooooo" )
 
       ::oParent:oDetArticuloMenu:oDbfVir:cCodOrd   := ::oDbfVir:cCodOrd
 

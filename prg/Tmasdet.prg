@@ -658,8 +658,6 @@ METHOD Edit( oBrw ) CLASS TMasDet
 
       lEdit          := ::Resource( 2 )
 
-      msgAlert( lEdit, "lEdit")
-
       if ::lAutoActions
          ::EndEdit( lEdit )
       end if
@@ -687,10 +685,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 Method EndEdit( lEdit )
-
-   msgAlert( "EndEdit" )
-
-   msgAlert( lEdit, "EndEdit")
 
    if lEdit
 

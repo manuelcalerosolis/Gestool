@@ -35,7 +35,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "ordenes menu"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Articulo Menú"
 
       FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
       FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
@@ -102,15 +102,13 @@ METHOD Resource( nMode )
    local oDlg
    local oGetCodigoArticulo
 
-   msgAlert( ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd, "Resource de TpvMenuArticulo")
-
    if ::nMode == APPD_MODE
       ::oDbfVir:cCodOrd := ::oParent:oDetOrdenesMenu:cScopeValue
    end if
 
    // Caja de dialogo-------------------------------------------------------------
 
-   DEFINE DIALOG oDlg RESOURCE "TpvMenuArticulo" 
+   DEFINE DIALOG oDlg RESOURCE "TpvMenuArticulo" TITLE LblTitle( nMode ) + "artículo"
 
       REDEFINE GET   oGetCodigoArticulo ;
          VAR         ::oDbfVir:cCodArt ;
@@ -163,8 +161,6 @@ RETURN ( oDlg:End( IDOK ) )
 //----------------------------------------------------------------------------//
 
 METHOD PreSaveDetails()
-
-    msgAlert( ::oParent:oDbf:cCodMnu, "PreSaveDetails TpvMenuArticulo" )
 
    ::oDbfVir:cCodMnu                               := ::oParent:oDbf:cCodMnu
 
