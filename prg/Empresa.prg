@@ -3604,9 +3604,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando catálogos" )
       end if
       if cPathOld != nil
-         TCatalogo():Create( cPath ):CheckFiles( cPathGrp + "Catalogo.Dbf" )   ; SysRefresh()
+         TCatalogo():Create( cPath ):CheckFiles( cPathGrp + "Catalogo.Dbf" )  ; SysRefresh()
       else
-         TCatalogo():Create( cPath ):CheckFiles()                            ; sysRefresh()
+         TCatalogo():Create( cPath ):CheckFiles()                             ; sysRefresh()
       end if
 
       if oMsg != nil
@@ -3684,6 +3684,28 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       mkTpv(      cPath, aImportacion:lVale, cPathOld )                 ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando menus tpv" )
+      end if
+
+      if cPathOld != nil
+         TPVMenu():Create( cPath ):CheckFiles( cPathGrp + "TpvMenus.Dbf" )   ; SysRefresh()
+      else
+         TPVMenu():Create( cPath ):CheckFiles()                            ; sysRefresh()
+      end if
+
+      if cPathOld != nil
+         TPVMenuArticulo():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuArt.Dbf" )   ; SysRefresh()
+      else
+         TPVMenuArticulo():Create( cPath ):CheckFiles()                            ; sysRefresh()
+      end if
+
+      if cPathOld != nil
+         TPVMenuOrdenes():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuOrd.Dbf" )  ; SysRefresh()
+      else
+         TPVMenuOrdenes():Create( cPath ):CheckFiles()                              ; sysRefresh()
+      end if
 
       if oMsg != nil
          oMsg:SetText( "Creando forma de pago" )

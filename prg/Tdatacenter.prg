@@ -3230,6 +3230,33 @@ METHOD BuildEmpresa()
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "TpvMenus"
+   oDataTable:cName        := cPatEmp() + "TpvMenus"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "TpvMenus.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TpvMenus.Cdx"
+   oDataTable:cDescription := "Menus para TPV"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "TpvMnuArt"
+   oDataTable:cName        := cPatEmp() + "TpvMnuArt"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "TpvMnuArt.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TpvMnuArt.Cdx"
+   oDataTable:cDescription := "Artículos para menus de TPV"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "TpvMnuOrd"
+   oDataTable:cName        := cPatEmp() + "TpvMnuOrd"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "TpvMnuOrd.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TpvMnuOrd.Cdx"
+   oDataTable:cDescription := "Ordenes para menus de TPV"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Salas de venta--------------------------------------------------------------
    */

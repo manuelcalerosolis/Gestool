@@ -170,7 +170,12 @@ CLASS TpvTactil
    DATA oFideliza
    DATA oTipArt
    DATA oFabricante
+   
    DATA oOrdenComanda
+   DATA oTpvMenu
+   DATA oTpvMenuOrdenes
+   DATA oTpvMenuArticulo
+
    DATA oVisor
 
    DATA oBrwFamilias
@@ -435,8 +440,8 @@ CLASS TpvTactil
    METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
 
    METHOD CargaBrowseFamilias()
-
    METHOD CargaArticulosFamilia( cCodFam )
+   METHOD CargaMenus()                 VIRTUAL
 
    METHOD ChangeFamilias()
       METHOD SetFamilia()
@@ -2331,6 +2336,11 @@ METHOD OpenFiles() CLASS TpvTactil
       ::lOpenfiles            := .f.
    end if 
 
+   ::oTpvMenu                 := TpvMenu():Create( cPatArt() )
+   if !::oTpvMenu:OpenService()
+      ::lOpenfiles            := .f.
+   end if 
+
    ::cPictureImporte          := cPouDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa
    ::cPictureTotal            := cPorDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa redondeada
    ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales
@@ -4062,21 +4072,21 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
       Return .t.
    end if
 
-   /*
-   Inicializamos el array de familias------------------------------------------
-   */
+   // Inicializamos el array de familias------------------------------------------
 
    ::aFamilias          := {}
 
-   /*
-   Caso especial de favoritos--------------------------------------------------
-   */
+   // Caso especial de favoritos--------------------------------------------------
 
    aAdd( ::aFamilias, { "Favoritos", nil, ::CargaFavoritos(), "Star_Red_Alpha_48" } )
 
-   /*
-   Recorremos la tabla y rellenamos el array de familias-----------------------
-   */
+   // Preguntamos si hay menus activos-----------------------------------------
+
+   if ::oTpvMenu:lIsMenuActive()
+      aAdd( ::aFamilias, { "Menús", nil, ::CargaMenus(), "Clipboard_empty_48" } )
+   end if 
+
+   // Recorremos la tabla y rellenamos el array de familias-----------------------
 
    ::oFamilias:GetStatus()
    ::oFamilias:OrdSetFocus( "nPosTpv" )
@@ -4101,6 +4111,8 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
    local aItems                     := {}
 
    ::oArticulo:GetStatus()
+
+   // Si queremos los botones ordenados por nombre o por posicion--------------
 
    if uFieldEmpresa( "lOrdNomTpv" )
       ::oArticulo:OrdSetFocus( "nNomTpv" )
