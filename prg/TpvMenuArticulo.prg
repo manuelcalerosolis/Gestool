@@ -6,6 +6,8 @@
 
 CLASS TpvMenuArticulo FROM TDet
 
+   DATA oBmpImage
+
    METHOD DefineFiles()
 
    METHOD OpenFiles( lExclusive )
@@ -104,13 +106,16 @@ METHOD ValidCodigoArticulo( oGetCodigoArticulo )
    local lValid      := .f.
 
    if cArticulo( oGetCodigoArticulo, ::oParent:oDbfArticulo:cAlias, oGetCodigoArticulo:oHelpText )
+
       lValid         := .t.
 
-      /*if oGetCodigoArticulo:oBmpImage != nil
-         oGetCodigoArticulo:BmpImage:LoadBMP( cFileBmpName( ( ::oParent:dbfArticulo )->cImagen, .t. ) )
-         oGetCodigoArticulo:BmpImage:Refresh()
-      end if*/
+      if ::oBmpImage != nil
+         ::oBmpImage:LoadBMP( cFileBmpName( ::oParent:oDbfArticulo:cImagen, .t. ) )
+         ::oBmpImage:Refresh()
+      end if
+
    end if
+
 
 RETURN (lValid)
 
@@ -142,14 +147,14 @@ METHOD Resource( nMode )
 
       // Imagen-------------------------------------------------------------------
 
-      /*REDEFINE IMAGE oBmpImage ;
+      REDEFINE IMAGE ::oBmpImage ;
          ID          102 ;
          OF          oDlg
 
-      oBmpImage:SetColor( , GetSysColor( 15 ) )
+      ::oBmpImage:SetColor( , GetSysColor( 15 ) )
 
-      oBmpImage:bLClicked  := {|| ShowImage( oBmpImage ) }
-      oBmpImage:bRClicked  := {|| ShowImage( oBmpImage ) }*/
+      ::oBmpImage:bLClicked  := {|| ShowImage( ::oBmpImage ) }
+      ::oBmpImage:bRClicked  := {|| ShowImage( ::oBmpImage ) }
 
       // Botones------------------------------------------------------------------
 
@@ -170,7 +175,7 @@ METHOD Resource( nMode )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   //oBmpImage:End()
+   ::oBmpImage:End()
 
 RETURN ( oDlg:nResult == IDOK )
 
