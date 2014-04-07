@@ -1481,6 +1481,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    local nLevel
    local oRotor
    local oLiq
+   local oScript
 
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
@@ -1953,32 +1954,39 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    end if
 
-   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
-         NOBORDER ;
-         MENU     This:Toggle() ;
-         ACTION   ( oRotor:Expand() ) ;
-         TOOLTIP  "Rotor" ;
+   	DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
+        NOBORDER ;
+        MENU     This:Toggle() ;
+        ACTION   ( oRotor:Expand() ) ;
+        TOOLTIP  "Rotor" ;
 
-      DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
+    DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( EdtCli( ( dbfFacRecT )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
             CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
+    DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( InfCliente( ( dbfFacRecT )->cCodCli ) );
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
             CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( EdtObras( ( dbfFacRecT )->cCodCli, ( dbfFacRecT )->cCodObr, dbfObrasT ) );
-            TOOLTIP  "Modificar obra" ;
-            FROM     oRotor ;
-            CLOSED ;
+   	DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+    	NOBORDER ;
+      	ACTION   ( oScript:Expand() ) ;
+      	TOOLTIP  "Scripts" ;
+
+      	ImportScript( oWndBrw, oScript, "FacturasRectificativasClientes" )  
+
+    DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
+        NOBORDER ;
+        ACTION   ( EdtObras( ( dbfFacRecT )->cCodCli, ( dbfFacRecT )->cCodObr, dbfObrasT ) );
+        TOOLTIP  "Modificar obra" ;
+        FROM     oRotor ;
+        CLOSED ;
 
    DEFINE BTNSHELL RESOURCE "END"  GROUP OF oWndBrw ;
       NOBORDER ;

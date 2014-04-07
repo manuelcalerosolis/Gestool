@@ -237,7 +237,7 @@ CLASS Cuaderno1914 FROM Cuaderno
 
    METHOD TotalImporte()                  INLINE ( ::oPresentador:TotalImporte() )
    METHOD TotalRegistros()                INLINE ( strzero( ::oPresentador:nTotalRegistros(), 8 ) )
-   METHOD TotalFinalRegistros()           INLINE ( strzero( ::oPresentador:nTotalRegistros() + 5, 10 ) )
+   METHOD TotalFinalRegistros()           INLINE ( strzero( ::oPresentador:nTotalFinalRegistros() + 2, 10 ) )
 
    METHOD New()
    METHOD WriteASCII()
@@ -323,7 +323,8 @@ CLASS Presentador
 
    METHOD TotalRegistros()       INLINE ( strzero( ::nTotalRegistros(), 8 ) )
    METHOD nTotalRegistros()                
-   METHOD TotalFinalRegistros()  INLINE ( strzero( ::nTotalRegistros() + 3, 10 ) )
+   METHOD TotalFinalRegistros()  INLINE ( strzero( ::nTotalRegistros() + ( len( ::aChild ) * 2 ) + 1, 10 ) )
+   METHOD nTotalFinalRegistros() INLINE ( ::nTotalRegistros() + ( len( ::aChild ) * 2 ) + 1 )
 
    METHOD GetAcreedor()          INLINE ( atail( ::aChild ) )
    METHOD InsertAcreedor()       INLINE ( aadd( ::aChild, Acreedor():New( Self ) ), ::GetAcreedor() )
