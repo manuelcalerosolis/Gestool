@@ -1016,6 +1016,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    local nLevel
    local lEuro          := .f.
    local oRotor
+   local oScript
    local aEstGen        := {  "No" , "Parcial" , "Si" }
 
    DEFAULT  oMenuItem   := _MENUITEM_
@@ -1397,6 +1398,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Condición"
+         :bEditValue       := {|| AllTrim( ( dbfPedCliT )->cCondEnt ) }
+         :nWidth           := 200
+         :lHide            := .t.
+      end with
+
       oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -1598,6 +1606,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "PedidosClientes" )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          ACTION   ( oRotor:Expand() ) ;

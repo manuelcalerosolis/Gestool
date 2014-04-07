@@ -582,13 +582,23 @@ ENDCLASS
 
       if !Empty( cValue )
 
-         ::cNif      := padr( cValue, 36 )
+         ::cNif      := cValue
 
          if !isAlpha( left( ::cNif, 1 ) )
             ::Tipo( '2' )
          end if
 
+      else
+
+         if ::Tipo() == '1'
+            ::cNif   := 'A' + alltrim( ::cNif )
+         else 
+            ::cNif   := 'J' + alltrim( ::cNif )
+         end if 
+
       end if
+
+      ::cNif         := padr( ::cNif, 36 )
 
    RETURN ( ::cNif ) 
 

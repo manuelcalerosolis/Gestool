@@ -950,12 +950,6 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
 
-      DEFINE BTNSHELL RESOURCE "briefcase2_column-chart_" OF oWndBrw ;
-         ACTION   ( PageIniClient( nView ) );
-         TOOLTIP  "(C)artera de cliente" ;
-         HOTKEY   "C";
-         LEVEL    ACC_EDIT
-
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( TInfCliGrp():New( "Listado de clientes" ):Play() ) ;

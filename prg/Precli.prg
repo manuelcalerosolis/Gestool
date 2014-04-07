@@ -1263,6 +1263,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
    local nLevel
    local lEuro          := .f.
    local oRotor
+   local oScript
 
    DEFAULT oMenuItem    := _MENUITEM_
    DEFAULT oWnd         := oWnd()
@@ -1703,6 +1704,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "PresupuestosClientes" )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          NOBORDER ;

@@ -343,29 +343,39 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ];
-			ID 		110 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ], dbfCajT, .t., "0" ) ) ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ] ;
+         VAR         aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ];
+			ID          110 ;
+         PICTURE     "@!" ;
+         WHEN        ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
+         VALID       ( NotValid( aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ], dbfCajT, .t., "0" ) ) ;
+         OF          oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] ;
-			ID 		120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] ;
+         VAR         aTmp[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] ;
+			ID          120 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
       REDEFINE CHECKBOX aGet[ ( dbfCajT )->( FieldPos( "lNoArq" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "lNoArq" ) ) ] ;
-         ID       170 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         VAR         aTmp[ ( dbfCajT )->( FieldPos( "lNoArq" ) ) ] ;
+         ID          170 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
-      /*
-      Proximo turno------------------------------------------------------------
-      */
+      // Caja padre------------------------------------------------------------
+
+      REDEFINE GET   aGet[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ] ;
+         VAR         aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ];
+         ID          200 ;
+         IDTEXT      201 ;
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         VALID       ( ValidCajaPadre( aGet, aTmp ) );
+         OF          oFld:aDialogs[ 1 ]
+
+      // Proximo turno------------------------------------------------------------
 
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ] ;
          VAR      nNumTur ;
@@ -1125,6 +1135,7 @@ Static Function StartRec( aGet, aTmp )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnReg" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnApt" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEna" ) ) ], dbfDoc, "cDescrip" ) )
+   aGet[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ], dbfCajT ) )
 
 Return .t.
 
@@ -1951,6 +1962,42 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
+Static Function ValidCajaPadre( aGet, aTmp )
+
+   local lValid   := .t.
+
+   if empty( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ] )
+      Return ( lValid )
+   end if 
+
+   hGetStatus( dbfCajT )
+
+   if ( dbfCajT )->( dbSeekInOrd( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ], "cCodCaj", dbfCajT ) )  
+
+      aGet[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ]:oHelpText:cText( ( dbfCajT )->cNomCaj )
+
+      if aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ] == aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]
+      
+         msgStop( "Código de caja padre no puede ser la misma." )
+
+         lValid   := .f.
+
+      end if
+
+   else 
+      
+      msgStop( "Código de caja no existe." )
+      
+      lValid      := .f.
+
+   end if 
+
+   hSetStatus()
+
+Return ( lValid )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION mkCajas( cPath, oMeter )
 
    DEFAULT cPath     := cPatDat()
@@ -1997,6 +2044,9 @@ FUNCTION rxCajas( cPath, oMeter )
 
       ( dbfCajT )->( ordCondSet("!Deleted() .and. !Field->lNoArq", {|| !Deleted() .and. !Field->lNoArq }  ) )
       ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "lNoArq", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
+
+      ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "cCajPrt", "Upper( cCajPrt )", {|| Upper( Field->cCajPrt ) }, ) )
 
       ( dbfCajT )->( dbCloseArea() )
 
@@ -2283,6 +2333,7 @@ Function aItmCaja()
    aAdd( aBase, { "nCopCie",   "N",  2,   0, "Copias para arqueos ciegos" } )
    aAdd( aBase, { "cPrnNota",  "C",  250, 0, "Impresora de entregas de notas" } )
    aAdd( aBase, { "cNumTur",   "C",  6,   0, "Número del turno" } )
+   aAdd( aBase, { "cCajPrt",   "C",  3,   0, "Caja padre" } )
 
 Return ( aBase )
 
@@ -2304,6 +2355,36 @@ Return ( aBase )
 
 //---------------------------------------------------------------------------//
 
+Function RecursiveSeekEnCaja( cCodCaj, dbfCajT, cField, uValue )
+
+   DEFAULT cField    := "cPrnTik"
+
+   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
+
+      uValue         := ( dbfCajT )->( fieldGet( fieldPos( cField ) ) )
+
+      logwrite( "primer uValue" + uValue )
+
+      if empty( uValue ) .and. !empty( ( dbfCajT )->cCajPrt )
+
+         logwrite( "caja padre" + ( dbfCajT )->cCajPrt )
+
+         if dbSeekInOrd( ( dbfCajT )->cCajPrt, "cCodCaj", dbfCajT )
+            
+            uValue   := ( dbfCajT )->( fieldGet( fieldPos( cField ) ) )
+
+            logwrite( "segundo uValue" + uValue )
+
+         end if
+
+      end if
+
+   end if
+
+Return ( uValue )
+
+//---------------------------------------------------------------------------//
+
 Function cFormatoTicketEnCaja( cCodCaj, dbfCajT )
 
    local cFmt  := Space( 3 )
@@ -2312,7 +2393,7 @@ Function cFormatoTicketEnCaja( cCodCaj, dbfCajT )
       cFmt     := ( dbfCajT )->cPrnTik
    end if
 
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnTik", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -3657,4 +3738,6 @@ Function SetNumeroSesionCaja( cNumeroSesion, cCodigoCaja, dbfCaja )
 Return ( cNumeroSesion )
 
 //---------------------------------------------------------------------------//
+
+
 
