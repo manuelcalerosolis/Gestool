@@ -337,7 +337,7 @@ METHOD lGenerate()
          ::oDbf:nComAge    := aTotal[ 7 ]
 
          ::oDbf:nTotCos    := aTotal[ 9 ]
-         ::oDbf:nMarGen    := aTotal[ 4 ] - aTotal[ 9 ]
+         ::oDbf:nMarGen    := ::oDbf:nTotNet - ::oDbf:nTotCos //aTotal[ 4 ] - aTotal[ 9 ]
          ::oDbf:nRenTab    := ( ( aTotal[ 4 ] / aTotal[ 9 ] ) - 1 ) * 100
 
          ::oDbf:Save()
@@ -405,7 +405,7 @@ METHOD lGenerate()
          ::oDbf:nTotPgd    := nTotPag
 
          ::oDbf:nTotCos    := aTotal[ 9 ]
-         ::oDbf:nMarGen    := aTotal[ 4 ] - aTotal[ 9 ]
+         ::oDbf:nMarGen    := ::oDbf:nTotNet - ::oDbf:nTotCos //aTotal[ 4 ] - aTotal[ 9 ]
          ::oDbf:nRenTab    := ( ( aTotal[ 4 ] / aTotal[ 9 ] ) - 1 ) * 100
 
          ::oDbf:Save()
@@ -478,7 +478,7 @@ METHOD lGenerate()
          ::oDbf:nTotPgd    := nTotPag
 
          ::oDbf:nTotCos    := aTotal[ 9 ]
-         ::oDbf:nMarGen    := aTotal[ 4 ] - aTotal[ 9 ]
+         ::oDbf:nMarGen    := ::oDbf:nTotNet - ::oDbf:nTotCos //aTotal[ 4 ] - aTotal[ 9 ]
          ::oDbf:nRenTab    := ( ( aTotal[ 4 ] / aTotal[ 9 ] ) - 1 ) * 100
 
          ::oDbf:Save()
