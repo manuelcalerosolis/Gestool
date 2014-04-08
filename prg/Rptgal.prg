@@ -2464,6 +2464,10 @@ Function ImportScript()
 
 Return nil
 
+Function TpvMenu() ;          Return nil
+Function TpvMenuArticulo() ;  Return nil
+Function TpvMenuOrdenes() ;   Return nil
+
 /*
 //---------------------------------------------------------------------------//
 

@@ -2363,17 +2363,11 @@ Function RecursiveSeekEnCaja( cCodCaj, dbfCajT, cField, uValue )
 
       uValue         := ( dbfCajT )->( fieldGet( fieldPos( cField ) ) )
 
-      logwrite( "primer uValue" + uValue )
-
       if empty( uValue ) .and. !empty( ( dbfCajT )->cCajPrt )
-
-         logwrite( "caja padre" + ( dbfCajT )->cCajPrt )
 
          if dbSeekInOrd( ( dbfCajT )->cCajPrt, "cCodCaj", dbfCajT )
             
             uValue   := ( dbfCajT )->( fieldGet( fieldPos( cField ) ) )
-
-            logwrite( "segundo uValue" + uValue )
 
          end if
 
@@ -2387,176 +2381,94 @@ Return ( uValue )
 
 Function cFormatoTicketEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnTik
-   end if
-
 Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnTik", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoPagoEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnPgo
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnPgo", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoEntregaEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnEnt
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEnt", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoAlbaranEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnAlb
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAlb", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoFacturaEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnFac
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnFac", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoValeEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnVal
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnVal", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoDevolucionEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnDev
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnDev", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoArqueoEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnArq
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnArq", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoArqueoParcialEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnPar
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnPar", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoArqueoCiegoEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnCie
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCie", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoTicketRegaloEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnReg
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnReg", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoChequeRegaloEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnChk
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnChk", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoEntregasCuentaEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnEna
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEna", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cFormatoComandaEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
 
-   local cFmt  := Space( 3 )
+   local cFmt     := Space( 3 )
 
    cTipImp        := Padr( Upper( cTipImp ), 50 )
 
-   if dbSeekInOrd( cCodCaj + cTipImp, "CCODCAJ", dbfCajL )
-      cFmt     := ( dbfCajL )->cPrnCom
+   if dbSeekInOrd( cCodCaj + cTipImp, "cCodCaj", dbfCajL )
+      cFmt        := ( dbfCajL )->cPrnCom
    end if
 
-   if Empty( cFmt )
-
-      if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-         cFmt     := ( dbfCajT )->cPrnCom
-      end if
-
+   if empty( cFmt )
+      Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCom", Space( 3 ) ) )
    end if
 
 Return ( cFmt )
@@ -2565,20 +2477,16 @@ Return ( cFmt )
 
 Function cFormatoAnulacionEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
 
-   local cFmt  := Space( 3 )
+   local cFmt     := Space( 3 )
 
    cTipImp        := Padr( Upper( cTipImp ), 50 )
 
-   if dbSeekInOrd( cCodCaj + cTipImp, "CCODCAJ", dbfCajL )
-      cFmt     := ( dbfCajL )->cPrnAnu
+   if dbSeekInOrd( cCodCaj + cTipImp, "cCodCaj", dbfCajL )
+      cFmt        := ( dbfCajL )->cPrnAnu
    end if
 
-   if Empty( cFmt )
-
-      if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-         cFmt     := ( dbfCajT )->cPrnAnu
-      end if
-
+   if empty( cFmt )
+      Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAnu", Space( 3 ) ) )
    end if
 
 Return ( cFmt )
@@ -2587,13 +2495,7 @@ Return ( cFmt )
 
 Function cFormatoApartadosEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cPrnApt
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnApt", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
