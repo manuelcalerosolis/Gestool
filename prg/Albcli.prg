@@ -12949,13 +12949,13 @@ Static Function AppendDatosAtipicas( aTmpAlb )
 
    local nPrecioAtipica
 
-   if !dbSeekInOrd( ( dbfCliAtp )->cCodArt, "cRef", dbfTmpLin ) .and.;
-      ( dbfArticulo )->( dbSeek( ( dbfCliAtp )->cCodArt ) )
-
-      if !( dbfArticulo )->lObs
+   if !dbSeekInOrd( ( dbfCliAtp )->cCodArt, "cRef", dbfTmpLin )
+      
+      if ( dbfArticulo )->( dbSeek( ( dbfCliAtp )->cCodArt ) ) .and.;
+         !( dbfArticulo )->lObs
 
          ( dbfTmpLin )->( dbAppend() )
-   
+
          ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
          ( dbfTmpLin )->cRef           := ( dbfCliAtp )->cCodArt
          ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
@@ -12988,15 +12988,39 @@ Static Function AppendDatosAtipicas( aTmpAlb )
          ( dbfTmpLin )->nPesoKg     := ( dbfArticulo )->nPesoKg
    
          nPrecioAtipica                := nImporteAtipica( ( dbfCliAtp )->cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+
          if nPrecioAtipica != 0
             ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
          else 
             ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
          end if
+
          ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
          ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], ( dbfCliAtp )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
 
       end if
+
+   else
+
+      if ( dbfTmpLin )->nPreUnit == 0
+
+         nPrecioAtipica                := nImporteAtipica( ( dbfCliAtp )->cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], dbfCliAtp )
+
+         if nPrecioAtipica != 0
+            ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
+         else 
+            ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
+         end if
+
+      end if
+
+      if ( dbfTmpLin )->nDto == 0
+         ( dbfTmpLin )->nDto           := ( dbfCliAtp )->nDtoArt
+      end if
+
+      if ( dbfTmpLin )->nDtoPrm == 0
+         ( dbfTmpLin )->nDtoPrm        := ( dbfCliAtp )->nDprArt
+      end if   
 
    end if
 
