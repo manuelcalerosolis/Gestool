@@ -8030,7 +8030,7 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMOBR", "cCodCli + cNomObr", {|| Field->cCodCli + Field->cNomObr } ) )
 
       ( dbfCli )->( ordCondSet("lDefObr .and. !Deleted()", {|| Field->lDefObr .and. !Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "LDEFOBR", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
+      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "lDefObr", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "CCODIGO", "cCodObr", {|| Field->cCodObr } ) )

@@ -8515,6 +8515,66 @@ Function SynAlbPrv( cPath )
 
    ( dbfAlbPrvS )->( ordSetFocus( 1 ) )
 
+   // Lineas huerfanas---------------------------------------------------------
+
+   ( dbfAlbPrvT )->( ordSetFocus( 1 ) )
+
+   // Lineas-------------------------------------------------------------------
+
+   ( dbfAlbPrvL )->( ordSetFocus( 1 ) )
+   ( dbfAlbPrvL )->( dbGoTop() )
+
+   while !( dbfAlbPrvL )->( eof() )
+
+      if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) )
+         ( dbfAlbPrvL )->( dbDelete() )
+         ( dbfAlbPrvL )->( dbSkip( 0 ) )
+      else
+         ( dbfAlbPrvL )->( dbSkip( 1 ) )
+      end if 
+      
+      SysRefresh()
+
+   end while
+
+   // Series-------------------------------------------------------------------
+
+   ( dbfAlbPrvS )->( ordSetFocus( 1 ) )
+   ( dbfAlbPrvS )->( dbGoTop() )
+
+   while !( dbfAlbPrvL )->( eof() )
+
+      if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb ) )
+         ( dbfAlbPrvS )->( dbDelete() )
+         ( dbfAlbPrvS )->( dbSkip( 0 ) )
+      else
+         ( dbfAlbPrvS )->( dbSkip( 1 ) )
+      end if 
+      
+      SysRefresh()
+
+   end while
+
+   // Incidencias-------------------------------------------------------------------
+
+   ( dbfAlbPrvI )->( ordSetFocus( 1 ) )
+   ( dbfAlbPrvI )->( dbGoTop() )
+
+   while !( dbfAlbPrvL )->( eof() )
+
+      if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb ) )
+         ( dbfAlbPrvI )->( dbDelete() )
+         ( dbfAlbPrvI )->( dbSkip( 0 ) )
+      else
+         ( dbfAlbPrvI )->( dbSkip( 1 ) )
+      end if 
+      
+      SysRefresh()
+
+   end while
+
+   // Fin lineas huerfanas-----------------------------------------------------
+
    RECOVER USING oError
 
       msgStop( "Imposible sincronizar albaranes de proveedores" + CRLF + ErrorMessage( oError ) )

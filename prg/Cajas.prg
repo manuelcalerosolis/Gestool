@@ -2501,347 +2501,79 @@ Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnApt", Space( 3 ) ) )
 
 Function lImpTicketsEnImpresora( cCodCaj, dbfCajT )
 
-   local lImp  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lImp     := ( dbfCajT )->lPrnTik
-   end if
-
-Return ( lImp )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnTik", .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Function lImpValesEnImpresora( cCodCaj, dbfCajT )
 
-   local lImp  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lImp     := ( dbfCajT )->lPrnVal
-   end if
-
-Return ( lImp )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnVal", .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Function lImpDevolucionesEnImpresora( cCodCaj, dbfCajT )
 
-   local lImp  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lImp     := ( dbfCajT )->lPrnDev
-   end if
-
-Return ( lImp )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnDev", .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Function lImpEntregasEnImpresora( cCodCaj, dbfCajT )
 
-   local lImp  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lImp     := ( dbfCajT )->lPrnEnt
-   end if
-
-Return ( lImp )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnEnt", .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Function lImpAlbaranesEnImpresora( cCodCaj, dbfCajT )
 
-   local lImp  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lImp     := ( dbfCajT )->lPrnAlb
-   end if
-
-Return ( lImp )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnAlb", .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Function lImpFacturasEnImpresora( cCodCaj, dbfCajT )
 
-   local lImp  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lImp     := ( dbfCajT )->lPrnFac
-   end if
-
-Return ( lImp )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnFac", .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Function cCapturaCaja( cCodCaj, dbfCajT )
 
-   local cCap  := "000"
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT ) .and. !Empty( ( dbfCajT )->cCapCaj )
-      cCap     := ( dbfCajT )->cCapCaj
-   end if
-
-Return ( cCap )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCapCaj", "000" ) )
 
 //---------------------------------------------------------------------------//
 
 Function cBalanzaEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cCodBal
-   end if
-
-Return ( cFmt )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el código de la impresora de tickets que usa esta caja
-*/
-
-Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
-
-   local oBlock
-   local oError
-   local lClo  := .f.
-   local cFmt  := Space( 3 )
-
-   if !lExistTable( cPatDat() + "Cajas.Dbf" ) .or. !lExistIndex( cPatDat() + "Cajas.Cdx" )
-      msgInfo( "No existen ficheros de cajas." )
-      Return ( cFmt )
-   end if
-
-   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfCajT )
-      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
-      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
-      lClo     := .t.
-   end if
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cCodPrn
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClo
-      CLOSE ( dbfCajT )
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodBal", "000" ) )
 
 //---------------------------------------------------------------------------//
 
 Function cVisorEnCaja( cCodCaj, dbfCajT )
 
-   local cFmt  := Space( 3 )
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cFmt     := ( dbfCajT )->cCodVis
-   end if
-
-Return ( cFmt )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodVis", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
 Function cCodigoCorteEnCaja( cCodCaj, dbfCajT )
 
-   local cCodigo  := ""
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT ) .and. !Empty( ( dbfCajT )->cCodCut )
-      cCodigo     := ( dbfCajT )->cCodCut
-   end if
-
-Return ( cCodigo )
-
-//---------------------------------------------------------------------------//
-
-Function cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAnulacion )
-
-   DEFAULT lComanda       := .f.
-   DEFAULT lAnulacion     := .f.
-   DEFAULT cTipImpCom     := ""
-
-   if !lComanda .and. !lAnulacion
-
-      if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )               .and.;
-         !Empty( ( dbfCajT )->cCodCut )                           .and.;
-         !Empty( ( dbfCajT )->cWinTik )
-
-         PrintEscCode( ( dbfCajT )->cCodCut, ( dbfCajT )->cWinTik )
-
-      end if
-
-   else
-
-      if dbSeekInOrd( cCodCaj + cTipImpCom, "cCodCaj", dbfCajL )  .and.;
-         !Empty( ( dbfCajL )->cCodCut )                           .and.;
-         !Empty( ( dbfCajL )->cNomPrn )
-
-         PrintEscCode( ( dbfCajL )->cCodCut, ( dbfCajL )->cNomPrn )
-
-      end if
-
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Function SelCajTactil( oWnd, lInicio )
-
-   local oBlock
-   local oError
-   local oDlg
-   local dbfCaj
-   local oImgCaj
-   local oLstCaj
-   local cPath          := cPatDat()
-
-   DEFAULT lInicio      := .f.
-
-   /*
-   Si el usuario ya tiene elegida una caja y estamos al inicio de la app pasamos
-   */
-
-   if lInicio .and. !Empty( oUser():cCaja() )
-      Return ( nil )
-   end if
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      USE ( cPath + "CAJAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
-      SET ADSINDEX TO ( cPath + "CAJAS.CDX" ) ADDITIVE
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      Return nil
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if ( dbfCaj )->( LastRec() ) <= 0
-      ( dbfCaj )->( dbCloseArea() )
-      Return nil
-   end if
-
-   DEFINE DIALOG oDlg ;
-      RESOURCE    "SelUsuarios" ;
-      TITLE       "Seleccione caja"
-
-      oImgCaj     := TImageList():New( 48, 48 )
-
-      oLstCaj     := TListView():Redefine( 100, oDlg, {| nOpt | SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj ) }, 1 )
-
-      REDEFINE BUTTONBMP ;
-         BITMAP   "Delete_32" ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end(), if( lInicio, oWnd:End(), ) )
-
-   ACTIVATE DIALOG oDlg;
-      ON INIT     ( InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj ) ) ;
-      CENTER
-
-   ( dbfCaj )->( dbCloseArea() )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//
-// Inicializa el tree
-//
-
-Static Function InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
-
-   ( dbfCaj )->( dbGoTop() )
-   while !( dbfCaj )->( eof() )
-
-      oImgCaj:Add( TBitmap():Define( "CASHIER_48", , oDlg ) )
-
-      oLstCaj:InsertItem( ( dbfCaj )->( OrdKeyNo() ) - 1, Capitalize( ( dbfCaj )->cNomCaj ) )
-
-      ( dbfCaj )->( dbSkip() )
-
-   end while
-
-   oLstCaj:SetImageList( oImgCaj )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-// Función que chequea la caja y nos deja pasar
-
-Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
-
-   // Chequeamos que seleccione almenos una caja-------------------------------
-
-   if nOpt == 0
-      MsgStop( "Seleccione caja" )
-      Return nil
-   end if
-
-   if ( dbfCaj )->( OrdKeyGoTo( nOpt ) )
-      //Cambia la caja del usuario
-      lChgCaja( ( dbfCaj )->cCodCaj, oUser():cCodigo() )
-      oDlg:end( IDOK )
-   else
-      MsgStop( "La caja no existe" )
-   end if
-
-Return ( nil )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodCut", "" ) )
 
 //---------------------------------------------------------------------------//
 
 Function lWindowsPrinterEnCaja( cCodCaj, dbfCajT )
 
-   local lWin  := .f.
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      lWin     := ( ( dbfCajT )->nPrnTik == 2 )
-   end if
-
-Return ( lWin )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "nPrnTik", 0 ) == 2  )
 
 //---------------------------------------------------------------------------//
 
 Function cWindowsPrinterEnCaja( cCodCaj, dbfCajT )
 
-   local cPrn  := ""
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
-   end if
-
-Return ( cPrn )
+Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnWin", "" ) )
 
 //---------------------------------------------------------------------------//
 
 Function cPrinterTiket( cCodCaj, dbfCajT )
 
-   local cPrn  := ""
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-
-      if ( dbfCajT )->lPrnTik
-         cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
-      else
-         cPrn     := Rtrim( ( dbfCajT )->cWinTik )
-      endif
-
-   end if
-
-Return ( cPrn )
+Return ( if( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnTik", .f. ), Rtrim( ( dbfCajT )->cPrnWin ), Rtrim( ( dbfCajT )->cWinTik ) ) )
 
 //---------------------------------------------------------------------------//
 /*
@@ -2850,25 +2582,21 @@ Devolvemos la impresora de comanda---------------------------------------------
 
 Function cPrinterComanda( cCodCaj, dbfCajT, nNumImp )
 
-   local cPrn  := ""
+   local cPrn        := ""
 
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
+   do case
+      case nNumImp == 1
+         cPrn     := RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cWinCom1", "" )
 
-         do case
-            case nNumImp == 1
-               cPrn     := Rtrim( ( dbfCajT )->cWinCom1 )
+      case nNumImp == 2
+         cPrn     := RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cWinCom2", "" )
 
-            case nNumImp == 2
-               cPrn     := Rtrim( ( dbfCajT )->cWinCom2 )
+      case nNumImp == 3
+         cPrn     := RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cWinCom3", "" )
 
-            case nNumImp == 3
-               cPrn     := Rtrim( ( dbfCajT )->cWinCom3 )
+   end case
 
-         end case
-
-   end if
-
-Return ( cPrn )
+Return ( rtrim( cPrn ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2876,14 +2604,10 @@ Function cPrinterVale( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-
-      if ( dbfCajT )->lPrnVal
-         cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
-      else
-         cPrn     := Rtrim( ( dbfCajT )->cWinTik )
-      endif
-
+   if RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnVal", .f. )
+      cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
+   else
+      cPrn     := Rtrim( ( dbfCajT )->cWinTik )
    end if
 
 Return ( cPrn )
@@ -2894,14 +2618,10 @@ Function cPrinterDevolucion( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-
-      if ( dbfCajT )->lPrnDev
-         cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
-      else
-         cPrn     := Rtrim( ( dbfCajT )->cWinTik )
-      endif
-
+   if RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnDev", .f. )
+      cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
+   else
+      cPrn     := Rtrim( ( dbfCajT )->cWinTik )
    end if
 
 Return ( cPrn )
@@ -2912,21 +2632,17 @@ Function cPrinterEntrega( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
+   if RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnEnt", .f. )
 
-      if ( dbfCajT )->lPrnEnt
+      cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
 
-         cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
-
-      else
+   else
          
-         if !Empty( ( dbfCajT )->cPrnNota )
-            cPrn  := Rtrim( ( dbfCajT )->cPrnNota )
-         else
-            cPrn  := Rtrim( ( dbfCajT )->cWinTik )
-         end if
-
-      endif
+      if !Empty( ( dbfCajT )->cPrnNota )
+         cPrn  := Rtrim( ( dbfCajT )->cPrnNota )
+      else
+         cPrn  := Rtrim( ( dbfCajT )->cWinTik )
+      end if
 
    end if
 
@@ -2936,7 +2652,7 @@ Return ( cPrn )
 
 Function cPrinterApartados( cCodCaj, dbfCajT )
 
-   local cPrn  := ""
+   local cPrn     := ""
 
    if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
 
@@ -3113,7 +2829,6 @@ Function cPrinterArqueoCiego( cCodCaj, dbfCajT )
 Return ( cPrn )
 
 //---------------------------------------------------------------------------//
-
 
 Function lImpArqueoEnImpresora( cCodCaj, dbfCajT )
 
@@ -3321,6 +3036,203 @@ Function nCopiasEntregasCuentaEnCaja( cCodCaj, dbfCajT )
    end if
 
 Return ( NotCero( nCop ) )
+
+//---------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+Devuelve el código de la impresora de tickets que usa esta caja
+*/
+
+Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
+
+   local oBlock
+   local oError
+   local lClo  := .f.
+   local cFmt  := Space( 3 )
+
+   if !lExistTable( cPatDat() + "Cajas.Dbf" ) .or. !lExistIndex( cPatDat() + "Cajas.Cdx" )
+      msgInfo( "No existen ficheros de cajas." )
+      Return ( cFmt )
+   end if
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfCajT )
+      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
+      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
+      lClo     := .t.
+   end if
+
+   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
+      cFmt     := ( dbfCajT )->cCodPrn
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if lClo
+      CLOSE ( dbfCajT )
+   end if
+
+Return ( cFmt )
+
+//---------------------------------------------------------------------------//
+
+Function cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAnulacion )
+
+   DEFAULT lComanda       := .f.
+   DEFAULT lAnulacion     := .f.
+   DEFAULT cTipImpCom     := ""
+
+   if !lComanda .and. !lAnulacion
+
+      if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )               .and.;
+         !Empty( ( dbfCajT )->cCodCut )                           .and.;
+         !Empty( ( dbfCajT )->cWinTik )
+
+         PrintEscCode( ( dbfCajT )->cCodCut, ( dbfCajT )->cWinTik )
+
+      end if
+
+   else
+
+      if dbSeekInOrd( cCodCaj + cTipImpCom, "cCodCaj", dbfCajL )  .and.;
+         !Empty( ( dbfCajL )->cCodCut )                           .and.;
+         !Empty( ( dbfCajL )->cNomPrn )
+
+         PrintEscCode( ( dbfCajL )->cCodCut, ( dbfCajL )->cNomPrn )
+
+      end if
+
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function SelCajTactil( oWnd, lInicio )
+
+   local oBlock
+   local oError
+   local oDlg
+   local dbfCaj
+   local oImgCaj
+   local oLstCaj
+   local cPath          := cPatDat()
+
+   DEFAULT lInicio      := .f.
+
+   /*
+   Si el usuario ya tiene elegida una caja y estamos al inicio de la app pasamos
+   */
+
+   if lInicio .and. !Empty( oUser():cCaja() )
+      Return ( nil )
+   end if
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      USE ( cPath + "CAJAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
+      SET ADSINDEX TO ( cPath + "CAJAS.CDX" ) ADDITIVE
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      Return nil
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if ( dbfCaj )->( LastRec() ) <= 0
+      ( dbfCaj )->( dbCloseArea() )
+      Return nil
+   end if
+
+   DEFINE DIALOG oDlg ;
+      RESOURCE    "SelUsuarios" ;
+      TITLE       "Seleccione caja"
+
+      oImgCaj     := TImageList():New( 48, 48 )
+
+      oLstCaj     := TListView():Redefine( 100, oDlg, {| nOpt | SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj ) }, 1 )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(), if( lInicio, oWnd:End(), ) )
+
+   ACTIVATE DIALOG oDlg;
+      ON INIT     ( InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj ) ) ;
+      CENTER
+
+   ( dbfCaj )->( dbCloseArea() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//
+// Inicializa el tree
+//
+
+Static Function InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
+
+   ( dbfCaj )->( dbGoTop() )
+   while !( dbfCaj )->( eof() )
+
+      oImgCaj:Add( TBitmap():Define( "CASHIER_48", , oDlg ) )
+
+      oLstCaj:InsertItem( ( dbfCaj )->( OrdKeyNo() ) - 1, Capitalize( ( dbfCaj )->cNomCaj ) )
+
+      ( dbfCaj )->( dbSkip() )
+
+   end while
+
+   oLstCaj:SetImageList( oImgCaj )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+// Función que chequea la caja y nos deja pasar
+
+Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
+
+   // Chequeamos que seleccione almenos una caja-------------------------------
+
+   if nOpt == 0
+      MsgStop( "Seleccione caja" )
+      Return nil
+   end if
+
+   if ( dbfCaj )->( OrdKeyGoTo( nOpt ) )
+      //Cambia la caja del usuario
+      lChgCaja( ( dbfCaj )->cCodCaj, oUser():cCodigo() )
+      oDlg:end( IDOK )
+   else
+      MsgStop( "La caja no existe" )
+   end if
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 

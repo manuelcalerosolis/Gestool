@@ -1949,10 +1949,10 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       */
 
       ( TDataView():Get( "Client", nView ))->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) )
-      ( dbfAgent )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodAge ) )
       ( TDataView():Get( "FPago", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodPago) )
-      ( dbfObrasT)->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli + ( TDataView():Get( "AlbCliT", nView ) )->cCodObr ) )
-      ( dbfDelega)->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodDlg ) )
+      ( dbfAgent  )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodAge ) )
+      ( dbfObrasT )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli + ( TDataView():Get( "AlbCliT", nView ) )->cCodObr ) )
+      ( dbfDelega )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodDlg ) )
 
       oTrans:oDbf:Seek( ( TDataView():Get( "AlbCliT", nView ) )->cCodTrn )
 
@@ -8981,16 +8981,14 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
          aTmp[ _LMODCLI ]  := ( TDataView():Get( "Client", nView ) )->lModDat
 
+         aTmp[ _LOPERPV ]  := ( TDataView():Get( "Client", nView ) )->lPntVer
+
          /*
          Calculo del reisgo del cliente-------------------------------------------
          */
 
          oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Get( "Client", nView ) )->Riesgo )
 
-      end if
-
-      if ( lChgCodCli )
-         aTmp[ _LOPERPV ]  := ( TDataView():Get( "Client", nView ) )->lPntVer
       end if
 
       if nMode == APPD_MODE
@@ -14901,12 +14899,10 @@ function SynAlbCli( cPath )
       while !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
 
          if Empty( ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb )
-            
             if dbLock( TDataView():Get( "AlbCliL", nView ) )
                ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb    := "00"
                ( TDataView():Get( "AlbCliL", nView ) )->( dbUnLock() )
             end if
-
          end if
 
          if !Empty( ( TDataView():Get( "AlbCliL", nView ) )->cNumPed ) .and. Len( AllTrim( ( TDataView():Get( "AlbCliL", nView ) )->cNumPed ) ) != 12
@@ -15006,7 +15002,9 @@ function SynAlbCli( cPath )
          // Numeros de serie------------------------------------------------------
 
          if !Empty( ( TDataView():Get( "AlbCliL", nView ) )->mNumSer )
+
             aNumSer                       := hb_aTokens( ( TDataView():Get( "AlbCliL", nView ) )->mNumSer, "," )
+         
             for each cNumSer in aNumSer
                ( TDataView():Get( "AlbCliS", nView ) )->( dbAppend() )
                ( TDataView():Get( "AlbCliS", nView ) )->cSerAlb    := ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb
@@ -16328,7 +16326,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "Descrip",   "M", 10, 0, "Observación de línea",          "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lFacturado","L",  1, 0, "Lógico de facturado",           "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",              "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con IpusEsp",  "",            "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con impuestos especiales","", "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )

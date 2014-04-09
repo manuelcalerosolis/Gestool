@@ -1071,7 +1071,7 @@ METHOD Importar()
 
             ::oDbfArtGst:Codigo     := ::oDbfArtFac:cRef
             ::oDbfArtGst:Nombre     := ::oDbfArtFac:cDetalle
-            ::oDbfArtGst:pCosto     := ::oDbfArtFac:nCosteProm
+            ::oDbfArtGst:pCosto     := ::oDbfArtFac:nCosteDiv
             ::oDbfArtGst:Benef1     := ::oDbfArtFac:nBenefPvp
             ::oDbfArtGst:Benef2     := ::oDbfArtFac:nBenefMay
             ::oDbfArtGst:pVenta1    := ::oDbfArtFac:nPvp
