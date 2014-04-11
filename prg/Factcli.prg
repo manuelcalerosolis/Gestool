@@ -21344,13 +21344,15 @@ RETURN ( cChkPag )
 
 FUNCTION nChkPagFacCli( cFacCli, dbfFacCliT, dbfFacCliP )
 
+   local nOrd
    local nBitmap        := 3
 
    if ( dbfFacCliT )->lLiquidada
+      Return ( 1 )
+   end if
 
-      nBitmap           := 1
-
-   elseif ( dbfFacCliP )->( dbSeek( cFacCli ) )
+   nOrd 				:= ( dbfFacCliP )->( ordsetfocus( "nNumFac" ) )
+   if ( dbfFacCliP )->( dbSeek( cFacCli ) )
 
       while ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFacCli .and. !( dbfFacCliP )->( eof() )
 
@@ -21366,8 +21368,9 @@ FUNCTION nChkPagFacCli( cFacCli, dbfFacCliT, dbfFacCliP )
       end while
 
    end if
+   ( dbfFacCliP )->( ordsetfocus( nOrd ) )
 
-RETURN nBitmap
+RETURN ( nBitmap )
 
 //---------------------------------------------------------------------------//
 
