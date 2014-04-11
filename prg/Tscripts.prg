@@ -30,9 +30,24 @@ CLASS TScripts FROM TMant
 
    METHOD   lPreSave()
 
-   METHOD   CompilarScript()
-   METHOD   EjecutarScript()
-   METHOD   CompilarEjecutarScript( cCodScr )   INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript( cCodScr ) )
+   // Compilaciones y ejecuciones----------------------------------------------
+
+   METHOD   CompilarFicheroScript()
+   METHOD   CompilarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
+
+   METHOD   EjecutarFicheroScript()
+   METHOD   EjecutarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".hrb" ) )
+
+   METHOD   CompilarEjecutarFicheroScript( cFilePrg ); 
+                                                INLINE ( ::CompilarFicheroScript( cFilePrg ),;
+                                                         ::EjecutarFicheroScript( strtran( cFilePrg, ".prg", ".hbr" ) ) )
+   METHOD   CompilarEjecutarCodigoScript( cCodScr ); 
+                                                INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".prg", .t. ),;
+                                                         ::EjecutarCodigoScript( cPatScript() + cCodScr + ".hrb" ) )
+
+   METHOD   RunScript( cFichero )
+
+   // Metodos para los timers--------------------------------------------------
 
    METHOD   StartTimer()
    METHOD   EndTimer()
@@ -178,7 +193,7 @@ METHOD Activate() CLASS TScripts
          RESOURCE "gears_run_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::CompilarScript( ::oDbf:cCodScr ) ) ;
+         ACTION   ( ::CompilarCodigoScript( ::oDbf:cCodScr ) ) ;
          TOOLTIP  "(C)ompilar";
          HOTKEY   "C" ;
          LEVEL    ACC_ZOOM
@@ -187,7 +202,7 @@ METHOD Activate() CLASS TScripts
          RESOURCE "Flash_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::EjecutarScript( ::oDbf:cCodScr ) ) ;
+         ACTION   ( ::EjecutarCodigoScript( ::oDbf:cCodScr ) ) ;
          TOOLTIP  "E(j)ecutar";
          HOTKEY   "J" ;
          LEVEL    ACC_ZOOM
@@ -196,7 +211,7 @@ METHOD Activate() CLASS TScripts
          RESOURCE "Flash_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::CompilarEjecutarScript( ::oDbf:cCodScr ) ) ;
+         ACTION   ( ::CompilarEjecutarCodigoScript( ::oDbf:cCodScr ) ) ;
          TOOLTIP  "C(o)mpilar y ejecutar";
          HOTKEY   "O" ;
          LEVEL    ACC_ZOOM
@@ -294,7 +309,7 @@ METHOD Resource( nMode ) CLASS TScripts
          ID       500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( ::lPreSave( nMode, cScript ), ( ::CompilarScript( ::oDbf:cCodScr ), oDlg:end( IDOK ) ), ) )
+         ACTION   ( if( ::lPreSave( nMode, cScript ), ( ::CompilarCodigoScript( ::oDbf:cCodScr ), oDlg:end( IDOK ) ), ) )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode, cScript ), oDlg:end( IDOK ), ) } )
@@ -354,10 +369,10 @@ Ejecuta un fichero .hrb creado a partir de un .prg
 c:\xharbour\bin>harbour c:\test.prg /gh /n
 */
 
-METHOD CompilarScript( cCodScr ) CLASS TScripts
+METHOD CompilarFicheroScript( cFicheroPrg ) CLASS TScripts
 
-   local cFicheroPrg    := cPatScript() + cCodScr + ".prg"
-   local cFicheroHbr    := cPatScript() + cCodScr + ".hrb"
+   local lReturn
+   local cFicheroHbr    := strtran( cFicheroPrg, ".prg", ".hbr" )
 
    if !File( FullCurDir() + "harbour.exe" )
       msgStop( "No existe compilador" )
@@ -371,43 +386,42 @@ METHOD CompilarScript( cCodScr ) CLASS TScripts
 
    fErase( cFicheroHbr )
 
-   WinExec( FullCurDir() + "harbour.exe " + cFicheroPrg + " /gh /n /o" + cPatScript(), 2 ) // Minimized
+   WinExec( FullCurDir() + "harbour.exe " + cFicheroPrg + " /gh /n /o" + cFicheroHbr, 2 ) // Minimized
 
-   msgStop( cFicheroHbr )
-
-   if !File( cFicheroHbr )
-      msgStop( "Error al compilar el fichero" )
+   lReturn              := !File( cFicheroHbr )
+   if lReturn
+      msgStop( "Error al compilar el fichero " + cFicheroHbr )
+   else 
+      msgStop( "Fichero compilado con exito " + cFicheroHbr )
    end if
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
+METHOD EjecutarFicheroScript( cFicheroHbr ) CLASS TScripts
 
    local oError
    local oBlock
    local cFichero
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   // Desactivamos todos los Scripts-------------------------------------------
+      // Desactivamos todos los Scripts-------------------------------------------
 
-   ::DeActivateAllTimer()
+      ::DeActivateAllTimer()
 
-   // Comprobamos que el script haya sido compilado----------------------------
+      // Comprobamos que el script haya sido compilado----------------------------
 
-   cFichero       := cPatScript() + cCodigoScript + ".hrb"
+      if !File( cFicheroHbr ) 
+         ::CompilarFicheroScript( cFicheroHbr )
+      end if
 
-   if !File( cFichero )
-      ::CompilarScript( cCodigoScript )
-   end if
+      // Ejecutamos el script compilado-------------------------------------------
 
-   // Ejecutamos el script compilado-------------------------------------------
+      ::RunScript( cFicheroHbr )
 
-   RunScript( cFichero )
-/*
    RECOVER USING oError
 
       msgStop( "Error de ejecución." + CRLF + ErrorMessage( oError ) )
@@ -415,12 +429,22 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    // Activamos todos los scripts----------------------------------------------
 
    ::ActivateAllTimer()
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD RunScript( cFichero ) CLASS TScripts
+
+   if File( cFichero )
+      __hrbUnload( __hrbDo( __hrbLoad( cFichero ) ) )
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -470,34 +494,17 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function RunScript( cFichero )
-
-   local u
-   local pHrb
-
-   if File( cFichero )
-
-      pHrb        := __hrbLoad( cFichero )
-      u           := __hrbDo( pHrb )
-      __hrbUnload( pHrb )
-
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 Function ImportScript( oMainWindow, oBoton, cDirectory )
 
    local aFile
    local aDirectory  
    
-   aDirectory  := Directory( cPatScript() + cDirectory + "\*.hrb" )
+   aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
 
    if !Empty( aDirectory )
 
       for each aFile in aDirectory
-         oMainWindow:NewAt( "Document", , , {|| RunScript( cPatScript() + cDirectory + '\' + aFile[ 1 ] ) }, Rtrim( aFile[ 1 ] ), , , , , oBoton )
+         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ] ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
       next 
 
    end if 
