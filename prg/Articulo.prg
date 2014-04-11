@@ -17291,7 +17291,7 @@ FUNCTION retArticulo( cCodArt, dbfArticulo )
       nRecno      := ( dbfArticulo )->( Recno() )
       if ( dbfArticulo )->( dbSeek( cCodArt ) )
          cTemp    := Rtrim( ( dbfArticulo )->Nombre )
-      end if
+      end if 
       ( dbfArticulo )->( dbGoTo( nRecno ) )
    end if
 

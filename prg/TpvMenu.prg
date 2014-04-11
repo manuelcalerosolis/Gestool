@@ -162,7 +162,9 @@ METHOD CloseFiles()
       ::oDbf:End()
    end if
 
-   ::oOrdenComandas:CloseFiles()
+   if !empty( ::oOrdenComandas )
+      ::oOrdenComandas:CloseFiles()
+   end if 
 
    if !Empty( ::oDbfArticulo ) .and. ( ::oDbfArticulo:used() )
       ::oDbfArticulo:End()
@@ -232,7 +234,7 @@ METHOD Resource( nMode )
 
       with object ( ::oBrwOrdenesComanda:AddCol() )
          :cHeader          := "Orden de comanda"
-         :bStrData         := {|| ::oOrdenComandas:cNombre( ::oMenuOrdenes:oDbfVir:FieldGetByName( "cCodOrd" ) ) }
+         :bStrData         := {|| ::oOrdenComandas:cNombre( ::oMenuOrdenes:oDbfVir:FieldGetByName( "cCodOrd" ) ) } 
          :nWidth           := 200
       end with
 

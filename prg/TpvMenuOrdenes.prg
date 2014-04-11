@@ -33,6 +33,8 @@ CLASS TpvMenuOrdenes FROM TDet
 
    METHOD StartResource()
 
+   METHOD aOrdenes()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -52,8 +54,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
-      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "CÃ³digo menu"                    OF oDbf
-      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "CÃ³digo orden"                   OF oDbf
+      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
+      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
@@ -237,6 +239,11 @@ METHOD Resource()
          WHEN     ( ::nMode != ZOOM_MODE ) ;
          ACTION   ( ::oParent:oDetMenuArticulo:Del( ::oBrwArticulosOrden ) )
 
+      REDEFINE BUTTON ;
+         ID       502 ;
+         OF       oDlg ;
+         ACTION   ( msgAlert("hola") )
+
       // Botones------------------------------------------------------------------
 
       REDEFINE BUTTON ;
@@ -310,3 +317,28 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
+METHOD aOrdenes( cCodMnu )
+   
+   local aOrdenes      := {}
+
+   ::oDbf:GetStatus()
+
+   ::oDbf:OrdSetFocus( "cCodMnu" ) 
+
+   if ::oDbf:Seek( cCodMnu )
+
+      while ( cCodMnu == ::oDbf:cCodMnu ) .and. !::oDbf:eof()
+
+         aAdd( aOrdenes, ::oDbf:cCodOrd )
+
+         ::oDbf:skip()
+
+      end while
+
+   end if 
+
+   ::oDbf:SetStatus()
+
+RETURN ( aOrdenes )
+
+//--------------------------------------------------------------------------//

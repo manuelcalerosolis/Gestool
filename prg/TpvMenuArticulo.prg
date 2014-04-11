@@ -22,6 +22,8 @@ CLASS TpvMenuArticulo FROM TDet
 
    METHOD ValidCodigoArticulo()
 
+   METHOD aArticulos()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -107,15 +109,19 @@ METHOD ValidCodigoArticulo( oGetCodigoArticulo )
 
    if cArticulo( oGetCodigoArticulo, ::oParent:oDbfArticulo:cAlias, oGetCodigoArticulo:oHelpText )
 
-      lValid         := .t.
+      if !::oParent:oDbfArticulo:lIncTcl
+         MsgStop( "El artículo no está incluido en el táctil" )
+         Return ( lValid )
+      end if
 
       if ::oBmpImage != nil
          ::oBmpImage:LoadBMP( cFileBmpName( ::oParent:oDbfArticulo:cImagen, .t. ) )
          ::oBmpImage:Refresh()
       end if
 
-   end if
+      lValid         := .t.
 
+   end if
 
 RETURN (lValid)
 
@@ -205,6 +211,32 @@ METHOD PreSaveDetails()
    // ::oDbfVir:cCodOrd    := ::oParent:oDetOrdenesMenu:oDbfVir:cCodOrd
 
 RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD aArticulos( cCodMnu, cCodOrd )
+
+   local aArticulos     := {}
+
+   ::oDbf:GetStatus()
+
+   ::oDbf:OrdSetFocus( "cMnuOrd" )
+
+   if ::oDbf:Seek( cCodMnu + cCodOrd )
+
+      while ( cCodMnu + cCodOrd == ::oDbf:cCodMnu + ::oDbf:cCodOrd ) .and. !::oDbf:eof() 
+
+         aAdd( aArticulos, ::oDbf:cCodArt )
+
+         ::oDbf:skip()
+
+      end while
+
+   end if 
+
+   ::oDbf:SetStatus()
+
+RETURN (aArticulos)
 
 //--------------------------------------------------------------------------//
 

@@ -925,7 +925,7 @@ if ::nOption != 0
    endif
 
    if ::bAction != nil
-      eval(::bAction, self )
+      eval(::bAction, self ) 
    endif
 
    ::nOption := 0
@@ -1088,6 +1088,7 @@ CLASS C5ImageViewItem
    DATA cImage
    DATA cText
    DATA Cargo
+   DATA bAction
    DATA nClrPane
 
    METHOD New( cImage, cText, nClrPane, Cargo )  CONSTRUCTOR

@@ -23,7 +23,7 @@ CLASS TOrdenComanda FROM TMant
 
    METHOD Resource( nMode )
 
-   METHOD cNombre( cOrdOrd )
+   METHOD cNombre( cCodOrd )
    METHOD cCodigoOrden( cOrdOrd )
 
    METHOD cOrden( cNombre )
@@ -272,9 +272,13 @@ METHOD cNombre( cCodOrd )
 
    local cNombre        := ""
 
+   ::oDbf:GetStatus()
+
    if ::oDbf:SeekInOrd( cCodOrd, "cCodOrd" )
       cNombre           := ::oDbf:cNomOrd
    end if
+
+   ::oDbf:SetStatus()
 
 RETURN ( cNombre )
 
@@ -284,9 +288,13 @@ METHOD cOrden( cNomOrd )
 
    local cCodigo        := ""
 
+   ::oDbf:GetStatus()
+
    if !Empty( cNomOrd ) .and. ::oDbf:SeekInOrd( cNomOrd, "cNomOrd" )
       cCodigo           := ::oDbf:cOrdOrd
    end if
+
+   ::oDbf:SetStatus()
 
 RETURN ( cCodigo )
 
@@ -357,6 +365,7 @@ METHOD BajarOrden()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
 
 METHOD aNombreOrdenComanda()
 

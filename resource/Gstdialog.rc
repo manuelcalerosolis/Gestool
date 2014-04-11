@@ -19078,14 +19078,15 @@ FONT 8, "Helv"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 57, 13, 33, 11
   CONTROL "", 101, "Edit", WS_BORDER|WS_TABSTOP, 57, 28, 229, 11
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 6, 61, 50, 14
-  CONTROL "&Eliminar [F4]", 501, "Button", WS_TABSTOP, 62, 61, 50, 14
   CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 6, 78, 282, 132
+  CONTROL "&Eliminar [F4]", 501, "Button", WS_TABSTOP, 62, 61, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 189, 219, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 244, 219, 50, 14
   CONTROL "Orden", -1, "Button", BS_GROUPBOX, 2, 3, 290, 43
   CONTROL "Código", -1, "Static", WS_GROUP, 10, 17, 38, 8
   CONTROL "Descripción ", -1, "Static", WS_GROUP, 10, 32, 44, 8
   CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 2, 51, 290, 163
+  CONTROL "&Zoom", 502, "Button", WS_TABSTOP, 118, 61, 50, 14
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN

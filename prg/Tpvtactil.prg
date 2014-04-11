@@ -381,6 +381,8 @@ CLASS TpvTactil
 
    DATA lCopiaComanda
 
+   DATA nLineasAgregadas      INIT 0
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -440,8 +442,8 @@ CLASS TpvTactil
    METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
 
    METHOD CargaBrowseFamilias()
-   METHOD CargaArticulosFamilia( cCodFam )
-   METHOD CargaMenus()                 VIRTUAL
+   METHOD CargaBrowseMenus()
+   METHOD CargaMenus() 
 
    METHOD ChangeFamilias()
       METHOD SetFamilia()
@@ -458,17 +460,18 @@ CLASS TpvTactil
 
    METHOD CargaContador()
 
-   METHOD CargaArticulos()
-
    METHOD SeleccionaArticulos()
-   METHOD SeleccionaFavoritos()
    METHOD SeleccionaOrden()
+   METHOD ActionListArticulo()
 
    METHOD cFileBmpName( cFile, lEmptyImage )
 
    METHOD lFileBmpName( cFile )        INLINE ( File( ::cFileBmpName( cFile ) ) )
 
+   METHOD CargaArticulosFamilia( cCodFam )
+   METHOD CargaArticulosOrden()             
    METHOD CargaFavoritos()
+      METHOD CreateItemArticulo( aItems )
 
    METHOD AgregarLineas()
       METHOD AgregarPrincipal()
@@ -476,6 +479,8 @@ CLASS TpvTactil
       METHOD AgregarKit()
       METHOD AgregarPLU()
       METHOD AgregarFavoritos( cNombreArticulo )
+
+      METHOD AgregarLineasMenu()
 
       METHOD AgregarLibre()
          METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
@@ -2341,6 +2346,16 @@ METHOD OpenFiles() CLASS TpvTactil
       ::lOpenfiles            := .f.
    end if 
 
+   ::oTpvMenuOrdenes          := TpvMenuOrdenes():Create( cPatArt() )
+   if !::oTpvMenuOrdenes:OpenService()
+      ::lOpenfiles            := .f.
+   end if 
+
+   ::oTpvMenuArticulo         := TpvMenuArticulo():Create( cPatArt() )
+   if !::oTpvMenuArticulo:OpenService()
+      ::lOpenfiles            := .f.
+   end if 
+
    ::cPictureImporte          := cPouDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa
    ::cPictureTotal            := cPorDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa redondeada
    ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales
@@ -2754,6 +2769,18 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oVisor:End()
    end if
 
+   if !empty( ::oTpvMenu )
+      ::oTpvMenu:End()
+   end if 
+   
+   if !empty( ::oTpvMenuOrdenes )
+      ::oTpvMenuOrdenes:End()
+   end if 
+
+   if !empty( ::oTpvMenuArticulo )
+      ::oTpvMenuArticulo:End()
+   end if 
+
    TDataView():DeleteView( ::nView )
 
    ::oTiketCabecera                          := nil
@@ -2936,7 +2963,7 @@ METHOD Resource() CLASS TpvTactil
    ::oLstArticulos:nAlignText    := nOr( DT_TOP, DT_CENTER, DT_WORDBREAK )
 
    ::oLstArticulos:nOption       := 0
-   ::oLstArticulos:bAction       := {|| ::SeleccionaArticulos() }
+   ::oLstArticulos:bAction       := {|| ::ActionListArticulo() }
    ::oLstArticulos:bRClicked     := {|nRow, nCol| ::EditArticulo( nRow, nCol ) }
 
    ::oLstArticulos:SetFont( ::oFntBrw )
@@ -3769,122 +3796,80 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD CargaArticulos() CLASS TpvTactil
+METHOD ActionListArticulo()
 
-   local oBmp
-   local nUser          := 0
-   local nRecArt        := ::oArticulo:Recno()
-   local aTctFam
-   local nItemFamilia   := nil
-   local nImg           := -1
+   local oOpt
 
-   if !Empty( ::oImgArticulos ) .and. !Empty( ::oLstArticulos )
-
-      ::oLstArticulos:SetImageList( ::oImgArticulos )
-
-      ::oLstArticulos:EnableGroupView()
-
-      ::oLstArticulos:SetIconSpacing( 90, 135 )
-
-      /*
-      Cargamos los grupos con el array de familias-----------------------------
-      */
-
-      for each aTctFam in ::aFamilias()
-         ::oLstArticulos:InsertGroup( aTctFam[3], aTctFam[1] )
-      next
-
-      ::oArticulo:GoTop()
-
-      while !::oArticulo:Eof()
-
-         nItemFamilia      := aScan( ::aFamilias, {|a| a[2] == ::oArticulo:Familia } )
-
-         if nItemFamilia != 0 .and. ::oArticulo:lIncTcl
-
-            oBmp           := TBitmap():Define( , Rtrim( ::cFileBmpName( ::oArticulo:cImagen, .t. ) ) )
-
-            ::oImgArticulos:Add( oBmp )
-
-            nImg++
-
-            ::oLstArticulos:aAddItemGroup( nImg, ::cNombreArticulo(), ::aFamilias[ nItemFamilia, 3 ] )
-
-         end if
-
-         ::oArticulo:Skip()
-
-      end while
-
+   if !::lEditableDocumento()
+      MsgStop( "El documento ya está cerrado" )
+      Return ( Self )
    end if
 
-   ::oArticulo:GoTo( nRecArt )
+   if Empty( ::oLstArticulos )   
+      Return ( Self )
+   end if
+
+   oOpt     := ::oLstArticulos:GetSelection()
+
+   if Empty( oOpt )
+      MsgStop( "Seleccione una opción valida." )
+      Return ( Self )
+   end if
+
+   if !empty( ::oLstArticulos:GetSelection():bAction )
+      eval( ::oLstArticulos:GetSelection():bAction, ::oLstArticulos:GetSelection():Cargo )
+   end if
+
+/*
+   if ::GetMenuMode()
+      ::CargaBrowseMenus( nOpt )
+   else
+      ::SeleccionaArticulos( nOpt )
+   end if
+*/ 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaBrowseMenus( cMenu )
+
+   local cOrden
+   local aOrdenes
+
+   if !empty( cMenu )
+      aOrdenes          := ::oTpvMenuOrdenes:aOrdenes( cMenu ) 
+   end if
+
+   if empty( aOrdenes )
+      Return ( .f.)
+   end if
+
+   ::aFamilias          := {}
+
+   for each cOrden in aOrdenes
+      aAdd( ::aFamilias, { ::oOrdenComanda:cNombre( cOrden ), cOrden, {|| ::CargaArticulosOrden( cMenu, cOrden ) }, "" } )
+   next
+
+   aAdd( ::aFamilias, { "Salir", nil, {|| ::CargaBrowseFamilias(), ::CargaFavoritos() }, } )
+
+   ::oBrwFamilias:SetArray( ::aFamilias, , , .f. )   
+
+   // Carga la familia actual--------------------------------------------------
+
+   ::ChangeFamilias()
+
+   // Pide el número de comensales---------------------------------------------
+
+   ::OnClickComensales()
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeleccionaArticulos() CLASS TpvTactil
+METHOD SeleccionaArticulos( nOpt ) CLASS TpvTactil
 
-   local nOpt
-
-   if !::lEditableDocumento()
-      MsgStop( "El documento ya está cerrado" )
-      Return ( .t. )
-   end if
-
-   if !Empty( ::oLstArticulos )
-
-      nOpt     := ::oLstArticulos:nOption
-
-      if Empty( nOpt )
-         MsgStop( "Seleccione un artículo" )
-         Return .f.
-      end if
-
-      nOpt     := Max( Min( nOpt, len( ::oLstArticulos:aItems ) ), 1 )
-
-      if nOpt > 0 .and. nOpt <= len( ::oLstArticulos:aItems )
-         ::AgregarLineas( ::oLstArticulos:aItems[ nOpt ]:Cargo )
-      end if
-
-   end if
-
-   // ::oGetUnidades:SetFocus()
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeleccionaFavoritos() CLASS TpvTactil
-
-   local nOpt
-
-   if !::lEditableDocumento()
-      MsgStop( "El documento ya está cerrado" )
-      Return ( .t. )
-   end if
-
-   if !Empty( ::oLstFavoritos )
-
-      nOpt        := ::oLstFavoritos:nOption
-
-      if Empty( nOpt )
-         MsgStop( "Seleccione un favorito" )
-         Return .f.
-      end if
-
-      nOpt        := Max( Min( nOpt, len( ::oLstFavoritos:aItems ) ), 1 )
-
-      if nOpt > 0 .and. nOpt <= len( ::oLstFavoritos:aItems )
-         ::AgregarLineas( ::oLstFavoritos:aItems[ nOpt ]:Cargo )
-      end if
-
-   end if
-
-   if !Empty( ::oBrwLineas )
-      ::oBrwLineas:Refresh()
-   end if
+   ::AgregarLineas( ::oLstArticulos:aItems[ nOpt ]:Cargo )
 
 Return ( .t. )
 
@@ -4078,12 +4063,12 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    // Caso especial de favoritos--------------------------------------------------
 
-   aAdd( ::aFamilias, { "Favoritos", nil, ::CargaFavoritos(), "Star_Red_Alpha_48" } )
+   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "Star_Red_Alpha_48" } )
 
    // Preguntamos si hay menus activos-----------------------------------------
 
    if ::oTpvMenu:lIsMenuActive()
-      aAdd( ::aFamilias, { "Menús", nil, ::CargaMenus(), "Clipboard_empty_48" } )
+      aAdd( ::aFamilias, { "Menús", nil, {|| ::CargaMenus() }, "Clipboard_empty_48" } )
    end if 
 
    // Recorremos la tabla y rellenamos el array de familias-----------------------
@@ -4094,7 +4079,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
    ::oFamilias:GoTop()
    while !::oFamilias:Eof()
 
-      aAdd( ::aFamilias, { Capitalize( AllTrim( ::oFamilias:cNomFam ) ), ::oFamilias:cCodFam, ::CargaArticulosFamilia(), cFileBmpName( ::oFamilias:cImgBtn ) } )
+      aAdd( ::aFamilias, { Capitalize( AllTrim( ::oFamilias:cNomFam ) ), ::oFamilias:cCodFam, {|| ::CargaArticulosFamilia() }, cFileBmpName( ::oFamilias:cImgBtn ) } )
 
       ::oFamilias:Skip()
 
@@ -4102,11 +4087,15 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    ::oFamilias:SetStatus()
 
+   if !empty( ::oBrwFamilias )
+      ::oBrwFamilias:SetArray( ::aFamilias, , , .f. ) 
+   end if 
+
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
+METHOD CargaArticulosFamilia( cCodFam ) CLASS TpvTactil
 
    local aItems                     := {}
 
@@ -4124,41 +4113,7 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
       while ( ::oArticulo:Familia == ::oFamilias:cCodFam ) .and. !::oArticulo:Eof()
 
-         if !::oArticulo:lObs
-
-            with object ( C5ImageViewItem() )
-
-               :cText               := ::cNombreArticulo()
-
-               if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
-
-                  :cImage           := ::cFileBmpName( ::oArticulo:cImagen )
-
-               else
-
-                  if ::oArticulo:nColBtn == 0
-
-                     if ::oFamilias:nColBtn == Rgb( 255, 255, 255 )
-                        :nClrPane   := GetSysColor( COLOR_BTNFACE )
-                     else
-                        :nClrPane   := ::oFamilias:nColBtn
-                     end if
-
-                  else
-                  
-                     :nClrPane      := ::oArticulo:nColBtn
-
-                  end if   
-
-               end if
-
-               :Cargo               := ::oArticulo:Codigo
-
-               :Add( aItems )
-
-            end with
-
-         end if
+         ::CreateItemArticulo( aItems )
 
          ::oArticulo:Skip()
 
@@ -4193,31 +4148,7 @@ METHOD CargaFavoritos() CLASS TpvTactil
    ::oArticulo:GoTop()
    while nCount < 50 .and. !::oArticulo:Eof()
 
-      if ::oArticulo:lIncTcl .and. !::oArticulo:lObs
-
-         with object ( C5ImageViewItem() )
-
-           :cText             := ::cNombreArticulo()
-
-            if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
-               :cImage        := ::cFileBmpName( ::oArticulo:cImagen )
-            else
-               
-               if ::oArticulo:nColBtn == 0 
-                  :nClrPane   := oRetFld( ::oArticulo:Familia, ::oFamilias, "nColBtn", "cCodFam" )
-               else
-                  :nClrPane   := ::oArticulo:nColBtn
-               end if
-                  
-            end if
-
-            :Cargo            := ::oArticulo:Codigo
-
-            :Add( aItems )
-
-         end with
-
-      end if
+      ::CreateItemArticulo( aItems )
 
       ::oArticulo:Skip()
 
@@ -4231,17 +4162,98 @@ Return ( aItems )
 
 //---------------------------------------------------------------------------//
 
+METHOD CargaMenus()
+
+   local aItems      := {}
+   local nCount      := 0
+
+
+   if !::oTpvMenu:lIsMenuActive()
+      Return ( aItems )
+   end if
+       
+   if ::oTpvMenu:nMenuActive() > 1 
+
+      ::oTpvMenu:oDbf:GoTop()
+      while !::oTpvMenu:oDbf:Eof() 
+      
+         if !::oTpvMenu:oDbf:lObsMnu
+
+            with object ( C5ImageViewItem() )
+
+               :Cargo      := ::oTpvMenu:oDbf:cCodMnu
+               :bAction    := {|cMenu| ::CargaBrowseMenus( cMenu ) }
+               :cText      := alltrim( ::oTpvMenu:oDbf:cNomMnu )
+               :nClrPane   := rgb( 255,255,0 )
+
+               :Add( aItems )
+
+            end with
+
+         end if
+
+         ::oTpvMenu:oDbf:Skip()
+
+      end while
+
+   else 
+
+      ::CargaBrowseMenus( ::oTpvMenu:oDbf:cCodMnu )
+
+   end if
+
+Return ( aItems )
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaArticulosOrden( cCodMnu, cCodOrd )
+   
+   local cArticulo
+   local aItems      := {}
+   local aArticulos  := ::oTpvMenuArticulo:aArticulos( cCodMnu, cCodOrd )
+
+   ::oArticulo:GetStatus()
+
+   ::oArticulo:OrdSetFocus( "Codigo" )
+
+   for each cArticulo in aArticulos
+
+      if ::oArticulo:Seek( cArticulo )
+
+         ::CreateItemArticulo( aItems, .t. )
+
+      else 
+
+      end if 
+
+   next
+
+   ::oArticulo:SetStatus()
+
+RETURN ( aItems )
+
+//---------------------------------------------------------------------------//
+
 METHOD ChangeFamilias() CLASS TpvTactil
 
    local nAt
    local aRow
+   local uEval
+
+   ::nLineasAgregadas   := 0
 
    if !Empty( ::oBrwFamilias ) .and. !Empty( ::oLstArticulos )
 
       aRow     := ::oBrwFamilias:aRow
 
-      if !Empty( aRow )
-         ::oLstArticulos:SetItems( aRow[ 3 ] )
+      if !Empty( aRow ) .and. isBlock( aRow[ 3 ] )
+
+         uEval := Eval( aRow[ 3 ] )
+      
+         if isArray( uEval )            
+            ::oLstArticulos:SetItems( uEval )
+         end if 
+      
       end if
 
       /*
@@ -4606,50 +4618,65 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
    // Buscamos dentro la tablas articulos por nombre de articulo---------------
 
-   if ::oArticulo:Seek( cCodigoArticulo )
+      if ::oArticulo:Seek( cCodigoArticulo )
 
-      if ::lCombinandoDos
-      
-         ::AgregarCombinado( cCodigoArticulo )
-             
-      else 
+         if ::lCombinandoDos
+         
+            ::AgregarCombinado( cCodigoArticulo )
+                
+         else 
 
-         // Vemos si este atículo es acumulable--------------------------------
+            // Vemos si este atículo es acumulable--------------------------------
 
-         if !::lAcumulaArticulo()
+            if !::lAcumulaArticulo()
 
-            ::AgregarPrincipal( cCodigoArticulo )
+               ::AgregarPrincipal( cCodigoArticulo )
 
-            ::InitComentarios( .f. )
+               ::InitComentarios( .f. )
 
-            if ::lCombinando
-               ::lCombinandoDos     := .t.
-               ::GoFamilia()
+               if ::lCombinando
+                  ::lCombinandoDos     := .t.
+                  ::GoFamilia()
+               end if
+
             end if
 
          end if
 
+         // Informamos en el visor------------------------------------------------
+
+         ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
+
+         // refrescos de pantalla-------------------------------------------------
+
+         ::oBrwLineas:Refresh()
+
+         ::SetTotal()
+
+         ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
+
+      else
+
+         Return ( .f. )
+
       end if
 
-      // Informamos en el visor------------------------------------------------
+Return ( .t. )
 
-      ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
+//---------------------------------------------------------------------------//
 
-      // refrescos de pantalla-------------------------------------------------
+METHOD AgregarLineasMenu( cCodigoArticulo )
 
-      ::oBrwLineas:Refresh()
+   if ::nLineasAgregadas < ::oTiketCabecera:nNumCom
+      ::AgregarLineas( cCodigoArticulo )
+      ::nLineasAgregadas ++
+   endif
 
-      ::SetTotal()
-
-      ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
-
-   else
-
-      Return ( .f. )
-
+   if ::nLineasAgregadas >= ::oTiketCabecera:nNumCom
+      ::oBrwFamilias:GoDown()
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -9698,6 +9725,45 @@ METHOD AddLineNewToOrg() Class TpvTactil
    ::oTemporalDivisionNuevoTicket:GoTop()
    ::oBrwOriginal:Refresh()
    ::oBrwNuevoTicket:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreateItemArticulo( aItems, lMenu )
+
+   DEFAULT lMenu := .f.
+
+   if ::oArticulo:lIncTcl .and. !::oArticulo:lObs
+
+      with object ( C5ImageViewItem() )
+
+         :Cargo            := ::oArticulo:Codigo
+         :cText            := ::cNombreArticulo()
+
+         if !lMenu
+            :bAction          := {|cCodigoArticulo| ::AgregarLineas( cCodigoArticulo ) }
+         else
+            :bAction          := {|cCodigoArticulo| ::AgregarLineasMenu( cCodigoArticulo ) }
+         end if
+
+         if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
+            :cImage        := ::cFileBmpName( ::oArticulo:cImagen )
+         else
+            
+            if ::oArticulo:nColBtn == 0 
+               :nClrPane   := oRetFld( ::oArticulo:Familia, ::oFamilias, "nColBtn", "cCodFam" )
+            else
+               :nClrPane   := ::oArticulo:nColBtn
+            end if
+               
+         end if
+
+         :Add( aItems )
+
+      end with
+
+   end if
 
 Return ( Self )
 
