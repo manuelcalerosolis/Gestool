@@ -18181,6 +18181,7 @@ function aColTik()
    aAdd( aColTik, { "lDelTil",  "L",      1,     0, "Línea borrada",                      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "dFecCad",  "D",      1,     0, "Fecha de caducidad",                 "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lMnuTil",  "L",      1,     0, "Línea de menu",                      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodMnu",  "C",      3,     0, "Código de menu",                     "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

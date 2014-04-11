@@ -1074,7 +1074,7 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
 
       oDlg:AddFastKey( VK_F5, {|| oDlg:End( IDOK ) } )
 
-      oDlg:bStart       := {|| oGet:SetFocus( .t. ) }
+      oDlg:bStart       := {|| oGet:SetFocus( .t. ), oGet:selectAll() }
 
    ACTIVATE DIALOG oDlg CENTERED
 

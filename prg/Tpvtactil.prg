@@ -1622,6 +1622,10 @@ CLASS TpvTactil
          cTexto      := Space( 3 ) + "<" + cTexto + ">"
       end if
 
+      if !Empty( oDbf:lMnuTil )
+         cTexto      := Space( 3 ) + "{" + cTexto + "}"
+      end if
+
       RETURN ( cTexto )
 
    ENDMETHOD
@@ -3863,6 +3867,8 @@ METHOD CargaBrowseMenus( cMenu )
 
    ::OnClickComensales()
 
+   // Agrego linea 
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -4079,7 +4085,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
    ::oFamilias:GoTop()
    while !::oFamilias:Eof()
 
-      aAdd( ::aFamilias, { Capitalize( AllTrim( ::oFamilias:cNomFam ) ), ::oFamilias:cCodFam, {|| ::CargaArticulosFamilia() }, cFileBmpName( ::oFamilias:cImgBtn ) } )
+      aAdd( ::aFamilias, { Capitalize( AllTrim( ::oFamilias:cNomFam ) ), ::oFamilias:cCodFam, {|cCodFam| ::CargaArticulosFamilia( cCodFam ) }, cFileBmpName( ::oFamilias:cImgBtn ) } )
 
       ::oFamilias:Skip()
 
@@ -4109,9 +4115,9 @@ METHOD CargaArticulosFamilia( cCodFam ) CLASS TpvTactil
       ::oArticulo:OrdSetFocus( "nPosTpv" )
    end if
 
-   if ::oArticulo:Seek( ::oFamilias:cCodFam )
+   if ::oArticulo:Seek( cCodFam )
 
-      while ( ::oArticulo:Familia == ::oFamilias:cCodFam ) .and. !::oArticulo:Eof()
+      while ( ::oArticulo:Familia == cCodFam ) .and. !::oArticulo:Eof()
 
          ::CreateItemArticulo( aItems )
 
@@ -4220,7 +4226,7 @@ METHOD CargaArticulosOrden( cCodMnu, cCodOrd )
 
       if ::oArticulo:Seek( cArticulo )
 
-         ::CreateItemArticulo( aItems, .t. )
+         ::CreateItemArticulo( aItems, cCodMnu, cCodOrd )
 
       else 
 
@@ -4240,15 +4246,13 @@ METHOD ChangeFamilias() CLASS TpvTactil
    local aRow
    local uEval
 
-   ::nLineasAgregadas   := 0
-
    if !Empty( ::oBrwFamilias ) .and. !Empty( ::oLstArticulos )
 
       aRow     := ::oBrwFamilias:aRow
 
       if !Empty( aRow ) .and. isBlock( aRow[ 3 ] )
 
-         uEval := Eval( aRow[ 3 ] )
+         uEval := Eval( aRow[ 3 ], aRow[ 2 ] )
       
          if isArray( uEval )            
             ::oLstArticulos:SetItems( uEval )
@@ -4610,7 +4614,7 @@ RETURN ( cFile )
 
 //---------------------------------------------------------------------------//
 
-METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
+METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
    // Tomamos las unidades del teclado-----------------------------------------
 
@@ -4630,7 +4634,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
             if !::lAcumulaArticulo()
 
-               ::AgregarPrincipal( cCodigoArticulo )
+               ::AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
                ::InitComentarios( .f. )
 
@@ -4665,12 +4669,12 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD AgregarLineasMenu( cCodigoArticulo )
+METHOD AgregarLineasMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
-   if ::nLineasAgregadas < ::oTiketCabecera:nNumCom
-      ::AgregarLineas( cCodigoArticulo )
-      ::nLineasAgregadas ++
-   endif
+//   if ::nLineasAgregadas < ::oTiketCabecera:nNumCom
+      ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+//      ::nLineasAgregadas ++
+//   endif
 
    if ::nLineasAgregadas >= ::oTiketCabecera:nNumCom
       ::oBrwFamilias:GoDown()
@@ -4680,7 +4684,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD AgregarPrincipal( cCodigoArticulo )
+METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    CursorWait()
 
@@ -4717,7 +4721,16 @@ METHOD AgregarPrincipal( cCodigoArticulo )
 
    ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
 
-   ::oTemporalLinea:cOrdOrd      := ::oArticulo:cOrdOrd
+   if !empty(cCodigoMenu)
+      ::oTemporalLinea:lMnuTil   := .t.
+      ::oTemporalLinea:cCodMnu   := cCodigoMenu
+   end if
+
+   if !empty(cCodigoOrden)
+      ::oTemporalLinea:cOrdOrd   := cCodigoOrden
+   else
+      ::oTemporalLinea:cOrdOrd   := ::oArticulo:cOrdOrd
+   end if
 
    ::oTemporalLinea:Save()
 
@@ -9730,9 +9743,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateItemArticulo( aItems, lMenu )
-
-   DEFAULT lMenu := .f.
+METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )
 
    if ::oArticulo:lIncTcl .and. !::oArticulo:lObs
 
@@ -9741,10 +9752,10 @@ METHOD CreateItemArticulo( aItems, lMenu )
          :Cargo            := ::oArticulo:Codigo
          :cText            := ::cNombreArticulo()
 
-         if !lMenu
-            :bAction          := {|cCodigoArticulo| ::AgregarLineas( cCodigoArticulo ) }
+         if empty( cCodigoMenu )
+            :bAction       := {|cCodigoArticulo| ::AgregarLineas( cCodigoArticulo ) }
          else
-            :bAction          := {|cCodigoArticulo| ::AgregarLineasMenu( cCodigoArticulo ) }
+            :bAction       := {|cCodigoArticulo| ::AgregarLineasMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) }
          end if
 
          if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )

@@ -209,6 +209,8 @@ METHOD Resource()
 
       ::oParent:oDetMenuArticulo:oDbfVir:SetBrowse( ::oBrwArticulosOrden ) 
 
+      ::oBrwArticulosOrden:bLDblClick     := {|| EdtArticulo(::oParent:oDetMenuArticulo:oDbfVir:cCodArt) }
+
       ::oBrwArticulosOrden:nMarqueeStyle  := 6
       ::oBrwArticulosOrden:cName          := "Lineas de menus de articulos"
       ::oBrwArticulosOrden:lFooter        := .f.
@@ -242,7 +244,7 @@ METHOD Resource()
       REDEFINE BUTTON ;
          ID       502 ;
          OF       oDlg ;
-         ACTION   ( msgAlert("hola") )
+         ACTION   ( EdtArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt ) )
 
       // Botones------------------------------------------------------------------
 
