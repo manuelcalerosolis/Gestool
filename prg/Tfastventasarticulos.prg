@@ -2022,7 +2022,6 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
    ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oProCab:GoTop()
-
    while !::lBreak .and. !::oProCab:Eof()
 
       if lChkSer( ::oProCab:cSerOrd, ::aSer )

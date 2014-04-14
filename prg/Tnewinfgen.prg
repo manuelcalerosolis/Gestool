@@ -4014,8 +4014,6 @@ METHOD End() CLASS TNewInfGen
       ::oGrpCli:CloseService()
    end if
 
-   ? "CloseService TNewInfGen"
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
