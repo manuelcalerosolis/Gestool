@@ -4067,6 +4067,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "quantity, " + ;
                      "minimal_quantity, " + ;
                      "price, " + ;
+                     "weight, " + ;
                      "active, " + ;
                      "date_add, " + ;
                      "date_upd )" + ;
@@ -4078,6 +4079,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "'1', " + ;                                                                                  //quantity
                      "'1', " + ;                                                                                  //minimal_quantity
                      "'" + AllTrim( Str( nPrecio ) ) + "', " + ;                                                  //price
+                     "'" + AllTrim( Str( ::oArt:nPesoKg ) ) + "', " + ;                                           //weight
                      "'1', " + ;                                                                                  //active
                      "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
                      "'" + dtos( GetSysDate() ) + "' )"
@@ -4289,6 +4291,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
                            "id_tax_rules_group='" + AllTrim( Str( oRetFld( ::oArt:TipoIva, ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;
                            "id_category_default='" + AllTrim( Str( nParent ) ) + "', " + ;
                            "price='" + if( !Empty( ::oArt:cCodPrp1 ), "0", AllTrim( Str( ::oArt:nImpInt1 ) ) ) + "', " + ;
+                           "weight='" + AllTrim( Str( ::oArt:nPesoKg ) ) + "', " + ;
                            "date_upd='" + AllTrim( dtoc( GetSysDate() ) ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
 
