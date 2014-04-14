@@ -1693,95 +1693,99 @@ METHOD ImportaFacturasClientes()
    ::oDbfFacTFac:GoTop()
    while !( ::oDbfFacTFac:eof() )
 
-      while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + "00" )
-         ::oDbfFacTGst:Delete( .f. )
-      end
+         while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + "00" )
+            ::oDbfFacTGst:Delete( .f. )
+         end
 
-      while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
-         ::oDbfFacLGst:Delete( .f. )
-      end
+         while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
+            ::oDbfFacLGst:Delete( .f. )
+         end
 
-      while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
-         ::oDbfFacPGst:Delete( .f. )
-      end 
+         while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
+            ::oDbfFacPGst:Delete( .f. )
+         end
 
-         ::oDbfFacTGst:Append()
-         ::oDbfFacTGst:Blank()
-   
-         ::oDbfFacTGst:cSerie      := "A"
-         ::oDbfFacTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
-         ::oDbfFacTGst:cSufFac     := "00"
-         ::oDbfFacTGst:cTurFac     := cCurSesion()
-         ::oDbfFacTGst:dFecFac     := ::oDbfFacTFac:Fecha
-         ::oDbfFacTGst:cCodAlm     := oUser():cAlmacen()
-         ::oDbfFacTGst:cCodCaj     := cDefCaj()
-         ::oDbfFacTGst:dFecEnt     := ::oDbfFacTFac:Fecha
-         ::oDbfFacTGst:nTarifa     := 1
-         ::oDbfFacTGst:lLiquidada  := .t.
-         ::oDbfFacTGst:lContab     := .f.
-         ::oDbfFacTGst:cCodPago    := cDefFpg()
-         ::oDbfFacTGst:lIvaInc     := ::oDbfFacTFac:IvaIncl
-         ::oDbfFacTGst:cDivFac     := cDivEmp()
-         ::oDbfFacTGst:cCodUsr     := cCurUsr()
-         ::oDbfFacTGst:dFecCre     := GetSysDate()
-         ::oDbfFacTGst:cTimCre     := Time()
+         if SubStr(::oDbfFacTFac:Numero, 1, 1) != "R"  
 
-         nOrdAnt := ::oDbfCliGst:OrdSetFocus( "TITULO" )
-         ::oDbfCliGst:GoTop()
-         if !Empty( ::oDbfFacTFac:NombreF ) .and. ::oDbfCliGst:Seek( UPPER( ::oDbfFacTFac:NombreF ) )
+            ::oDbfFacTGst:Append()
+            ::oDbfFacTGst:Blank()
+      
+            ::oDbfFacTGst:cSerie      := "A"
+            ::oDbfFacTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
+            ::oDbfFacTGst:cSufFac     := "00"
+            ::oDbfFacTGst:cTurFac     := cCurSesion()
+            ::oDbfFacTGst:dFecFac     := ::oDbfFacTFac:Fecha
+            ::oDbfFacTGst:cCodAlm     := oUser():cAlmacen()
+            ::oDbfFacTGst:cCodCaj     := cDefCaj()
+            ::oDbfFacTGst:dFecEnt     := ::oDbfFacTFac:Fecha
+            ::oDbfFacTGst:nTarifa     := 1
+            ::oDbfFacTGst:lLiquidada  := .t.
+            ::oDbfFacTGst:lContab     := .f.
+            ::oDbfFacTGst:cCodPago    := cDefFpg()
+            ::oDbfFacTGst:lIvaInc     := ::oDbfFacTFac:IvaIncl
+            ::oDbfFacTGst:cDivFac     := cDivEmp()
+            ::oDbfFacTGst:cCodUsr     := cCurUsr()
+            ::oDbfFacTGst:dFecCre     := GetSysDate()
+            ::oDbfFacTGst:cTimCre     := Time()
 
-            ::oDbfFacTGst:cCodCli        := ::oDbfCliGst:Cod
-            ::oDbfFacTGst:cNomCli        := UPPER( ::oDbfFacTFac:NombreF )
-            if !Empty( ::oDbfFacTFac:DireccionF )
-               ::oDbfFacTGst:cDirCli     := ::oDbfFacTFac:DireccionF
+            nOrdAnt := ::oDbfCliGst:OrdSetFocus( "TITULO" )
+            ::oDbfCliGst:GoTop()
+            if !Empty( ::oDbfFacTFac:NombreF ) .and. ::oDbfCliGst:Seek( UPPER( ::oDbfFacTFac:NombreF ) )
+
+               ::oDbfFacTGst:cCodCli        := ::oDbfCliGst:Cod
+               ::oDbfFacTGst:cNomCli        := UPPER( ::oDbfFacTFac:NombreF )
+               if !Empty( ::oDbfFacTFac:DireccionF )
+                  ::oDbfFacTGst:cDirCli     := ::oDbfFacTFac:DireccionF
+               else
+                  ::oDbfFacTGst:cDirCli     := ::oDbfCliGst:Domicilio
+               end if
+               if !Empty( ::oDbfFacTFac:CiudadF )
+                  ::oDbfFacTGst:cPobCli     := ::oDbfFacTFac:CiudadF
+               else
+                  ::oDbfFacTGst:cPobCli     := ::oDbfCliGst:Poblacion
+               end if
+               if !Empty( ::oDbfFacTFac:Cif )
+                  ::oDbfFacTGst:cDniCli     := ::oDbfFacTFac:cif
+               else
+                  ::oDbfFacTGst:cDniCli     := ::oDbfCliGst:Nif
+               end if
+
+               ::oDbfFacTGst:cPrvCli        := ::oDbfCliGst:Provincia
+               ::oDbfFacTGst:cPosCli        := ::oDbfCliGst:CodPostal
+
+               if !Empty( ::oDbfCliGst:cDtoEsp )
+                  ::oDbfFacTGst:cDtoEsp     := ::oDbfCliGst:cDtoEsp
+               else
+                  ::oDbfFacTGst:cDtoEsp     := Padr( "General", 50 )
+               end if
+
+               if !Empty( ::oDbfCliGst:cDpp )
+                  ::oDbfFacTGst:cDpp        := ::oDbfCliGst:cDpp
+               else
+                  ::oDbfFacTGst:cDpp        := Padr( "Pronto pago", 50 )
+               end if
+
+               ::oDbfFacTGst:lRecargo       := ::oDbfCliGst:lReq
+               ::oDbfFacTGst:nRegIva        := ::oDbfCliGst:nRegIva
+
             else
-               ::oDbfFacTGst:cDirCli     := ::oDbfCliGst:Domicilio
-            end if
-            if !Empty( ::oDbfFacTFac:CiudadF )
-               ::oDbfFacTGst:cPobCli     := ::oDbfFacTFac:CiudadF
-            else
-               ::oDbfFacTGst:cPobCli     := ::oDbfCliGst:Poblacion
-            end if
-            if !Empty( ::oDbfFacTFac:Cif )
-               ::oDbfFacTGst:cDniCli     := ::oDbfFacTFac:cif
-            else
-               ::oDbfFacTGst:cDniCli     := ::oDbfCliGst:Nif
+               ::oDbfFacTGst:cNomCli        := UPPER( ::oDbfFacTFac:NombreF )
+               ::oDbfFacTGst:cDirCli        := ::oDbfFacTFac:DireccionF
+               ::oDbfFacTGst:cPobCli        := ::oDbfFacTFac:CiudadF
+               ::oDbfFacTGst:cDniCli        := ::oDbfFacTFac:cif
+               ::oDbfFacTGst:cDtoEsp        := Padr( "General", 50 )
+               ::oDbfFacTGst:cDpp           := Padr( "Pronto pago", 50 )
             end if
 
-            ::oDbfFacTGst:cPrvCli        := ::oDbfCliGst:Provincia
-            ::oDbfFacTGst:cPosCli        := ::oDbfCliGst:CodPostal
+            ::oDbfCliGst:OrdSetFocus( nOrdAnt )
+      
+            ::oDbfFacTGst:Save()
 
-            if !Empty( ::oDbfCliGst:cDtoEsp )
-               ::oDbfFacTGst:cDtoEsp     := ::oDbfCliGst:cDtoEsp
-            else
-               ::oDbfFacTGst:cDtoEsp     := Padr( "General", 50 )
-            end if
-
-            if !Empty( ::oDbfCliGst:cDpp )
-               ::oDbfFacTGst:cDpp        := ::oDbfCliGst:cDpp
-            else
-               ::oDbfFacTGst:cDpp        := Padr( "Pronto pago", 50 )
-            end if
-
-            ::oDbfFacTGst:lRecargo       := ::oDbfCliGst:lReq
-            ::oDbfFacTGst:nRegIva        := ::oDbfCliGst:nRegIva
-
-         else
-            ::oDbfFacTGst:cNomCli        := UPPER( ::oDbfFacTFac:NombreF )
-            ::oDbfFacTGst:cDirCli        := ::oDbfFacTFac:DireccionF
-            ::oDbfFacTGst:cPobCli        := ::oDbfFacTFac:CiudadF
-            ::oDbfFacTGst:cDniCli        := ::oDbfFacTFac:cif
-            ::oDbfFacTGst:cDtoEsp        := Padr( "General", 50 )
-            ::oDbfFacTGst:cDpp           := Padr( "Pronto pago", 50 )
          end if
 
-         ::oDbfCliGst:OrdSetFocus( nOrdAnt )
-   
-         ::oDbfFacTGst:Save()
+         ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
 
-      ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
-
-      ::oDbfFacTFac:Skip()
+         ::oDbfFacTFac:Skip()
 
    end while
 
