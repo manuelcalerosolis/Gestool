@@ -297,6 +297,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddVariableRectificativaCliente()
    METHOD AddVariableLineasRectificativaCliente()
+
+   METHOD AddVariableLineasParteProduccion()                      VIRTUAL
    
    METHOD cDetalleRectificativasClientes()                           INLINE ( cDesFacRec ( ::oFacRecL:cAlias ) )
    METHOD nTotalUnidadesRectificativasClientes()                     INLINE ( nTotNFacRec( ::oFacRecL:cAlias ) )
@@ -3410,7 +3412,6 @@ METHOD AddVariableLineasAlbaranCliente()
 
    ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total descuento porcentual artículo",          "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPorcentualLineaAlbaranesClientes'])" )
    ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total descuento promocional artículo",         "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPromocionalLineaAlbaranesClientes'])")
-
 
 RETURN ( Self )
 
