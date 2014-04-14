@@ -17226,7 +17226,6 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
 
       /*
       Cargamos la obra por defecto-------------------------------------
-      */
 
       if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
 
@@ -17239,6 +17238,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
    	   aGet[ _CCODOBR ]:lValid()
 
       end if
+      */
 
       if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
          aTmp[ _CCODGRP ]  := ( dbfClient )->cCodGrp

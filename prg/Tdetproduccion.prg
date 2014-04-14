@@ -138,6 +138,12 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
 
       ::CommunFields( oDbf )
 
+      FIELD CALCULATE NAME "Unidades" LEN 16 DEC 6 COMMENT "Unidades";
+         VAL {|| ( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ) ) }  OF oDbf
+
+      FIELD CALCULATE NAME "TotalImporte" LEN 16 DEC 6 COMMENT "Total Importe";
+         VAL {|| oDbf:Unidades() * oDbf:FieldGetByName( "nImpOrd" ) }                                    OF oDbf
+   
       INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd,9 ) + cSufOrd"                       NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt"                                                    NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cArtLot" ON "cCodArt + cValPr1 + cValPr2 + cLote"                        NODELETED OF oDbf
@@ -150,6 +156,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       INDEX TO ( cFileName )  TAG "cCodTmp" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodTmp"            NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "cCodFab" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodFab"            NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "nTipArt" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + Str( nTipArt, 1 )"  NODELETED OF oDbf
+      INDEX TO ( cFileName )  TAG "iNumOrd" ON "'30' + cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"               NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -705,7 +712,7 @@ METHOD nUnidades( oDbf ) CLASS TDetProduccion
 
    DEFAULT oDbf      := ::oDbf
 
-RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ), ::oParent:nDouDiv ), ( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ) ) ) )
+RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( oDbf:Unidades(), ::oParent:nDouDiv ), oDbf:Unidades() ) )
 
 //--------------------------------------------------------------------------//
 

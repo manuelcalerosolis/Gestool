@@ -223,6 +223,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD FastReportFacturaCliente()
    METHOD FastReportFacturaRectificativa()
    METHOD FastReportTicket()
+   METHOD FastReportParteProduccion()   
 
    METHOD FastReportPedidoProveedor()
    METHOD FastReportAlbaranProveedor()
@@ -3187,6 +3188,32 @@ METHOD FastReportTicket()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+/*
+Produccion--------------------------------------------------------------------------
+*/
+
+METHOD FastReportParteProduccion()
+
+   ::oProCab:OrdSetFocus( "iNumOrd" )
+   
+   ::oFastReport:SetWorkArea(       "Partes de producción", ::oProCab:nArea )
+   ::oFastReport:SetFieldAliases(   "Partes de producción", cObjectsToReport( ::oProCab ) )
+   
+   ::oProLin:OrdSetFocus( "iNumOrd" )
+   
+   ::oFastReport:SetWorkArea(       "Lineas partes de producción", ::oProLin:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas partes de producción", cObjectsToReport( ::oProLin ) )
+   
+   ::oFastReport:SetMasterDetail(   "Informe", "Partes de producción",              {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas partes de producción",       {|| ::cIdeDocumento() } )
+   
+   ::oFastReport:SetResyncPair(     "Informe", "Partes de producción" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas partes de producción" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD FastReportPedidoProveedor()
       

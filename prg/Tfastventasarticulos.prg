@@ -2010,88 +2010,66 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
    ::oMtrInf:SetTotal( ::oProCab:OrdKeyCount() )
 
    /*
-   Lineas de Pedturas----------------------------------------------------------
+   Lineas de produccion----------------------------------------------------------
    */
 
    cExpLine          := '!lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cCodArt >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
    end if
 
-   ::oPedPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ), ::oPedPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
-   ::oPedPrvT:GoTop()
+   ::oProCab:GoTop()
 
-   while !::lBreak .and. !::oPedPrvT:Eof()
+   while !::lBreak .and. !::oProCab:Eof()
 
-      if lChkSer( ::oPedPrvT:cSerPed, ::aSer )
+      if lChkSer( ::oProCab:cSerOrd, ::aSer )
 
-         if ::oPedPrvL:Seek( ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed )
+         if ::oProLin:Seek( ::oProCab:cSerOrd + Str( ::oProCab:nNumOrd, 9 ) + ::oProCab:cSufOrd )
 
-            while !::lBreak .and. ( ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed == ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed ) .and. !::oPedPrvL:Eof()
+            while !::lBreak .and. ( ::oProLin:cSerOrd + Str( ::oProLin:nNumOrd, 9 ) + ::oProLin:cSufOrd == ::oProCab:cSerOrd + Str( ::oProCab:nNumOrd, 9 ) + ::oProCab:cSufOrd ) .and. !::oProLin:Eof()
 
-               if !( ::lExcCero  .and. nTotNPedPrv( ::oPedPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               if !( ::lExcCero  .and. ::oProLin:Unidades() == 0 )  .and.;
+                  !( ::lExcImp   .and. ::oProLin:TotalImporte() == 0 )
 
                      ::oDbf:Blank()
 
-                     ::oDbf:cCodArt    := ::oPedPrvL:cRef
-                     ::oDbf:cNomArt    := ::oPedPrvL:cDetalle
+                     ::oDbf:cCodArt    := ::oProLin:cCodArt
+                     ::oDbf:cNomArt    := ::oProLin:cNomArt
 
-                     ::oDbf:cCodFam    := ::oPedPrvL:cCodFam
-                     ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedPrvL:nIva )
-                     ::oDbf:cCodTip    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                     ::oDbf:cCodCate   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                     ::oDbf:cCodTemp   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                     ::oDbf:cCodFab    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                     ::oDbf:cCodCli    := ::oPedPrvT:cCodPrv
-                     ::oDbf:cNomCli    := ::oPedPrvT:cNomPrv
-                     ::oDbf:cPobCli    := ::oPedPrvT:cPobPrv
-                     ::oDbf:cPrvCli    := ::oPedPrvT:cProPrv
-                     ::oDbf:cPosCli    := ::oPedPrvT:cPosPrv
-                     ::oDbf:cCodGrp    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
-                     ::oDbf:cCodAlm    := ::oPedPrvL:cAlmLin
-                     ::oDbf:cCodPago   := ::oPedPrvT:cCodPgo
-                     ::oDbf:cCodRut    := ""
-                     ::oDbf:cCodAge    := ""
-                     ::oDbf:cCodTrn    := ""
-                     ::oDbf:cCodUsr    := ::oPedPrvT:cCodUsr
+                     ::oDbf:cCodFam    := ::oProLin:cCodFam
+                     ::oDbf:cCodGrp    := ::oProLin:cGrpFam
+                     ::oDbf:cCodTip    := ::oProLin:cCodTip
+                     ::oDbf:cCodCate   := ::oProLin:cCodCat
+                     ::oDbf:cCodTemp   := ::oProLin:cCodTmp
+                     ::oDbf:cCodFab    := ::oProLin:cCodFab
+                     ::oDbf:cCodAlm    := ::oProLin:cAlmOrd
 
-                     ::oDbf:nUniArt    := nTotNPedPrv( ::oPedPrvL:cAlias )
-                     ::oDbf:nPreArt    := nImpUPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDerOut, ::nValDiv )
+                     ::oDbf:nUniArt    := ::oProLin:Unidades()
+                     ::oDbf:nPreArt    := ::oProLin:nImpOrd
 
-                     ::oDbf:nDtoArt    := ::oPedPrvL:nDtoLin                     
-                     ::oDbf:nPrmArt    := ::oPedPrvL:nDtoPrm
+                     ::oDbf:nBrtArt    := ::oProLin:TotalImporte()
+                     ::oDbf:nTotArt    := ::oProLin:TotalImporte()
 
-                     ::oDbf:nTotDto    := nDtoLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotPrm    := nPrmLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:cCodPr1    := ::oProLin:cCodPr1
+                     ::oDbf:cCodPr2    := ::oProLin:cCodPr2
+                     ::oDbf:cValPr1    := ::oProLin:cValPr1
+                     ::oDbf:cValPr2    := ::oProLin:cValPr2
 
-                     ::oDbf:nBrtArt    := nBrtLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nImpArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                     ::oDbf:nIvaArt    := nIvaLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                     ::oDbf:nTotArt    += nIvaLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nCosArt    := 0
+                     ::oDbf:cClsDoc    := PAR_PRO
+                     ::oDbf:cTipDoc    := "Parte producción"
 
-                     ::oDbf:cCodPr1    := ::oPedPrvL:cCodPr1
-                     ::oDbf:cCodPr2    := ::oPedPrvL:cCodPr2
-                     ::oDbf:cValPr1    := ::oPedPrvL:cValPr1
-                     ::oDbf:cValPr2    := ::oPedPrvL:cValPr2
-
-                     ::oDbf:cClsDoc    := PED_PRV
-                     ::oDbf:cTipDoc    := "Pedido proveedor"
-                     ::oDbf:cSerDoc    := ::oPedPrvT:cSerPed
-                     ::oDbf:cNumDoc    := Str( ::oPedPrvT:nNumPed )
-                     ::oDbf:cSufDoc    := ::oPedPrvT:cSufPed
+                     ::oDbf:cSerDoc    := ::oProCab:cSerOrd
+                     ::oDbf:cNumDoc    := Str( ::oProCab:nNumOrd )
+                     ::oDbf:cSufDoc    := ::oProCab:cSufOrd
 
                      ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
-                     ::oDbf:nAnoDoc    := Year( ::oPedPrvT:dFecPed )
-                     ::oDbf:nMesDoc    := Month( ::oPedPrvT:dFecPed )
-                     ::oDbf:dFecDoc    := ::oPedPrvT:dFecPed
-                     ::oDbf:cHorDoc    := SubStr( ::oPedPrvT:cTimChg, 1, 2 )
-                     ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 4, 2 )
+                     ::oDbf:nAnoDoc    := Year( ::oProCab:dFecOrd )
+                     ::oDbf:nMesDoc    := Month( ::oProCab:dFecOrd )
+                     ::oDbf:dFecDoc    := ::oProCab:dFecOrd
 
                   ::InsertIfValid()
 
@@ -2105,14 +2083,14 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
 
       end if
 
-      ::oPedPrvT:Skip()
+      ::oProCab:Skip()
 
       ::oMtrInf:AutoInc()
 
    end while
 
-   ::oPedPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ) )
-   ::oPedPrvL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ) )
+   ::oProCab:IdxDelete( cCurUsr(), GetFileNoExt( ::oProCab:cFile ) )
+   ::oProLin:IdxDelete( cCurUsr(), GetFileNoExt( ::oProLin:cFile ) )
 
 RETURN ( Self )
 

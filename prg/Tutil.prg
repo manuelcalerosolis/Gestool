@@ -796,3 +796,14 @@ function cGetFilename( cExt, cText, oGet )
 return ( cPathFile )
 
 //---------------------------------------------------------------------------//
+
+function GetFileDateTime( cFile )
+
+   local dChangeDate
+   local nChangeTime   
+
+   FileStats( cFile, , , , , @dChangeDate, @nChangeTime )
+
+Return ( dtos( dChangeDate ) + alltrim( str( nChangeTime ) ) )
+
+//---------------------------------------------------------------------------//

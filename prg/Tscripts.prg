@@ -374,6 +374,8 @@ METHOD CompilarFicheroScript( cFicheroPrg ) CLASS TScripts
    local lReturn
    local cFicheroHbr    := strtran( cFicheroPrg, ".prg", ".hbr" )
 
+   msgStop( "CompilarFicheroScript" )
+
    if !File( FullCurDir() + "harbour.exe" )
       msgStop( "No existe compilador" )
       Return .t.
@@ -383,6 +385,9 @@ METHOD CompilarFicheroScript( cFicheroPrg ) CLASS TScripts
       msgStop( "No existe el fichero " + cFicheroPrg )
       Return .t.
    end if 
+
+   msgAlert( GetFileDateTime( cFicheroPrg ), "fchero prg" )
+   msgAlert( GetFileDateTime( cFicheroHbr ), "fchero hbr" )
 
    fErase( cFicheroHbr )
 

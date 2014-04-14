@@ -8207,6 +8207,8 @@ Static Function DataReport( oFr )
    oFr:DeleteCategory(  "Clientes" )
    oFr:DeleteCategory(  "Clientes.País" )
 
+   msgAlert( "Zona de datos------------------------------------------------------------") 
+
    /*
    Zona de datos------------------------------------------------------------
    */
@@ -8215,6 +8217,8 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Albaranes", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Albaranes", cItemsToReport( aItmAlbCli() ) )
+
+   msgAlert( ( TDataview():Get( "AlbCLIL", nView ) )->( ordSetFocus() ), "Alert" )
 
    oFr:SetWorkArea(     "Lineas de albaranes", ( TDataView():Get( "AlbCliL", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de albaranes", cItemsToReport( aColAlbCli() ) )
@@ -8418,6 +8422,8 @@ Static Function DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
       oFr:SetWorkArea(  "Entrega", ( TDataView():Get( "AlbCliP", nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    end if
    oFr:SetFieldAliases( "Entrega", cItemsToReport( aItmAlbPgo() ) )
+
+   msgAlert( TDataview():Get( "AlbCliT", nView ) )
 
    if lTicket
    oFr:SetWorkArea(     "Albarán de cliente", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ) )
@@ -16027,7 +16033,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( __dbPack() )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRef", "cRef + cCodPr1 + cCodPr2 + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )

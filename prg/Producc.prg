@@ -975,6 +975,7 @@ METHOD DefineFiles( cPath, cDriver )
       INDEX TO "ProCab.Cdx" TAG "cCodOpe" ON "cCodOpe"                                 COMMENT "Operación"     NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "cCodSec" ON "cCodSec"                                 COMMENT "Sección"       NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "cAlmOrd" ON "cAlmOrd"                                 COMMENT "Almacén"       NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "iNumOrd" ON "'30' + cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT ""       NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -985,11 +986,11 @@ RETURN ( ::oDbf )
 METHOD DefineHash()
 
    ::hDefinition  := {;
-      "Table" => "Procab",;
+      "Table"          => "Procab",;
       "ExtensionTable" => "Dbf",;
-      "Path" => cPatEmp(),;
-      "Comment" => "Partes de producción",;
-      "Fields" => {;
+      "Path"           => cPatEmp(),;
+      "Comment"        => "Partes de producción",;
+      "Fields"         => {;
          "cSerOrd" => { "Type" => "C", "Len" => 01, "Decimals" => 0, "Comment" => "Serie",            "Validate" => "Required" },;
          "nNumOrd" => { "Type" => "N", "Len" => 09, "Decimals" => 0, "Comment" => "Número",           "Validate" => "Required" },;
          "cSufOrd" => { "Type" => "C", "Len" => 02, "Decimals" => 0, "Comment" => "Sufijo",           "Validate" => "Required" },;
@@ -1004,9 +1005,9 @@ METHOD DefineHash()
          "cCodOpe" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Operación",        "Validate" => "Required" },;
          "cAlmOrg" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Almacen Origen",   "Validate" => "" };
       },;
-      "Index" => "Porcab",;
+      "Index"          => "Porcab",;
       "ExtensionIndex" => "Cdx",;
-      "Tags" => {;
+      "Tags"           => {;
          "cNumOrd" => { "Expresion" => "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd", "Comment" => "Número" },;
          "dFecOrd" => { "Expresion" => "dFecOrd", "Comment" => "Fecha inicio" },;
          "cCodOpe" => { "Expresion" => "cCodOpe", "Comment" => "Operación"    },;

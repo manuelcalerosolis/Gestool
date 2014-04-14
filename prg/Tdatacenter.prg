@@ -531,27 +531,6 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
-   INLINE METHOD oProCab()
-
-      local cFilter
-      local oProCab
-
-      DATABASE NEW oProCab PATH ( cPatEmp() ) FILE "ProCab.Dbf" VIA ( cDriver() ) SHARED INDEX "ProCab.Cdx"
-
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufOrd == '" + oUser():cDelegacion() 
-
-            ( oProCab:cAlias )->( AdsSetAOF( cFilter ) )
-
-         end if
-
-      Return ( oProCab )   
-
-   ENDMETHOD
-
-   //---------------------------------------------------------------------------//
-
    INLINE METHOD oCliBnc()
 
       local oCliBnc

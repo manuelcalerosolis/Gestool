@@ -8528,7 +8528,6 @@ Function SynAlbPrv( cPath )
 
       if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) )
          ( dbfAlbPrvL )->( dbDelete() )
-         ( dbfAlbPrvL )->( dbSkip( 0 ) )
       else
          ( dbfAlbPrvL )->( dbSkip( 1 ) )
       end if 
@@ -8546,7 +8545,6 @@ Function SynAlbPrv( cPath )
 
       if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb ) )
          ( dbfAlbPrvS )->( dbDelete() )
-         ( dbfAlbPrvS )->( dbSkip( 0 ) )
       else
          ( dbfAlbPrvS )->( dbSkip( 1 ) )
       end if 
@@ -8564,7 +8562,6 @@ Function SynAlbPrv( cPath )
 
       if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb ) )
          ( dbfAlbPrvI )->( dbDelete() )
-         ( dbfAlbPrvI )->( dbSkip( 0 ) )
       else
          ( dbfAlbPrvI )->( dbSkip( 1 ) )
       end if 
