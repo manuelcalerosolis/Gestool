@@ -1996,6 +1996,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ArtCodebar"
    oDataTable:cName        := cPatEmp() + "ArtCodebar"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtCodebar.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtCodebar.Cdx"
@@ -2004,6 +2005,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ArtLbl"
    oDataTable:cName        := cPatEmp() + "ArtLbl"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtLbl.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtLbl.Cdx"
@@ -2311,6 +2313,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Ruta"
    oDataTable:cName        := cPatCli() + "Ruta"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "Ruta.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "Ruta.Cdx"
@@ -2332,6 +2335,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Agentes"
    oDataTable:cName        := cPatEmp() + "Agentes"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Agentes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Agentes.Cdx"
@@ -4896,10 +4900,12 @@ CLASS TDataView
       METHOD FacturasProveedoresCobrosId( nView )  INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
+      METHOD GruposClientes( nView )         INLINE ( ::GetObject( "GruposClientes", nView ) )
+
+   METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
+
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
    METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
-
-   METHOD GruposClientes( nView )            INLINE ( ::GetObject( "GruposClientes", nView ) )
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
