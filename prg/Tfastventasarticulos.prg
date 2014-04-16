@@ -604,21 +604,21 @@ Return ( Self )
 
 Method lValidRegister() CLASS TFastVentasArticulos
 
-   if ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:Desde      .and. ::oDbf:cCodArt   <= ::oGrupoArticulo:Cargo:Hasta )      .and.;
-      ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:Desde       .and. ::oDbf:cCodFam   <= ::oGrupoFamilia:Cargo:Hasta )       .and.;
-      ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:Desde     .and. ::oDbf:cCodTip   <= ::oGrupoTArticulo:Cargo:Hasta )     .and.;
-      ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:Desde           .and. ::oDbf:TipoIva   <= ::oGrupoIva:Cargo:Hasta )           .and.;
-      ( ::oDbf:cCodCate    >= ::oGrupoCategoria:Cargo:Desde     .and. ::oDbf:cCodCate  <= ::oGrupoCategoria:Cargo:Hasta )     .and.;
-      ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:Desde     .and. ::oDbf:cCodTemp  <= ::oGrupoTemporada:Cargo:Hasta )     .and.;
-      ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:Desde    .and. ::oDbf:cCodFab   <= ::oGrupoFabricante:Cargo:Hasta )    .and.;
-      ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:Desde       .and. ::oDbf:cCodCli   <= ::oGrupoCliente:Cargo:Hasta )       .and.;
-      ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:Desde      .and. ::oDbf:cCodGrp   <= ::oGrupoGCliente:Cargo:Hasta )      .and.;
-      ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:Desde         .and. ::oDbf:cCodPago  <= ::oGrupoFpago:Cargo:Hasta )         .and.;
-      ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:Desde          .and. ::oDbf:cCodRut   <= ::oGrupoRuta:Cargo:Hasta )          .and.;
-      ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:Desde        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:Hasta )        .and.;
-      ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:Desde .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:Hasta ) .and.;
-      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:Desde       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )       .and.;
-      ( ::cReportType == "Existencias" .or.( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:Desde .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:Hasta ) )
+   if ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()      .and. ::oDbf:cCodArt   <= ::oGrupoArticulo:Cargo:getHasta() )      .and.;
+      ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()       .and. ::oDbf:cCodFam   <= ::oGrupoFamilia:Cargo:getHasta() )       .and.;
+      ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:getDesde()     .and. ::oDbf:cCodTip   <= ::oGrupoTArticulo:Cargo:getHasta() )     .and.;
+      ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:getDesde()           .and. ::oDbf:TipoIva   <= ::oGrupoIva:Cargo:getHasta() )           .and.;
+      ( ::oDbf:cCodCate    >= ::oGrupoCategoria:Cargo:getDesde()     .and. ::oDbf:cCodCate  <= ::oGrupoCategoria:Cargo:getHasta() )     .and.;
+      ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()     .and. ::oDbf:cCodTemp  <= ::oGrupoTemporada:Cargo:getHasta() )     .and.;
+      ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()    .and. ::oDbf:cCodFab   <= ::oGrupoFabricante:Cargo:getHasta() )    .and.;
+      ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()       .and. ::oDbf:cCodCli   <= ::oGrupoCliente:Cargo:getHasta() )       .and.;
+      ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()      .and. ::oDbf:cCodGrp   <= ::oGrupoGCliente:Cargo:getHasta() )      .and.;
+      ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()         .and. ::oDbf:cCodPago  <= ::oGrupoFpago:Cargo:getHasta() )         .and.;
+      ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()          .and. ::oDbf:cCodRut   <= ::oGrupoRuta:Cargo:getHasta() )          .and.;
+      ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:getHasta() )        .and.;
+      ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
+      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
+      ( ::cReportType == "Existencias" .or.( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() ) )
 
       Return .t.
 
@@ -849,10 +849,10 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    ::oSatCliL:OrdSetFocus( "nNumSat" )
 
    cExpHead          := 'dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )   + '" ) .and. nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerSat <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumSat >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. nNumSat <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufSat >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufSat <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -866,7 +866,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    cExpLine          := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oSatCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliL:cFile ), ::oSatCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1000,10 +1000,10 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    ::oPreCliL:OrdSetFocus( "nNumPre" )
 
    cExpHead          := 'dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )   + '" ) .and. nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumPre >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" ) .and. nNumPre <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufPre >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPre <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1017,7 +1017,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    cExpLine          := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oPreCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliL:cFile ), ::oPreCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1143,10 +1143,10 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde ) + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1160,7 +1160,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    cExpLine          := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1295,10 +1295,10 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
       cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    end if
 
-   cExpHead             += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead             += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead             += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde ) + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead             += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead             += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead             += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead             += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead             += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1312,7 +1312,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    cExpLine             := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1442,10 +1442,10 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    ::oFacCliL:OrdSetFocus( "nNumFac" )
 
    cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. cCodCli <= "'   + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )      + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )    + '" ) .and. nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )    + '" .and. cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() )   + '" .and. cCodCli <= "'   + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )      + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1459,7 +1459,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    cExpLine          := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1586,10 +1586,10 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    ::oFacRecL:OrdSetFocus( "nNumFac" )
 
    cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde ) + '" ) .and. nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1601,7 +1601,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    cExpLine          := '!lTotLin .and. !lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -1728,10 +1728,10 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    cExpHead       := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    cExpHead       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
-   cExpHead       += ' .and. cCliTik >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCliTik <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   cExpHead       += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead       += ' .and. cNumTik >= "' + Rtrim( ::oGrupoNumero:Cargo:Desde )   + '" .and. cNumTik <= "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '"'
-   cExpHead       += ' .and. cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )   + '" .and. cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead       += ' .and. cCliTik >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCliTik <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
+   cExpHead       += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead       += ' .and. cNumTik >= "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )   + '" .and. cNumTik <= "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '"'
+   cExpHead       += ' .and. cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1741,8 +1741,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    // Lineas de tickets -------------------------------------------------------
 
-   cExpLine       := 'cCbaTil >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:Hasta + '" .or. '
-   cExpLine       += 'cComTil >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cComTil <= "' + ::oGrupoArticulo:Cargo:Hasta + ' )"'
+   cExpLine       := '( ( cCbaTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '") .or. '
+   cExpLine       += '( cComTil >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cComTil <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" ) )'
 
    ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
 
@@ -1756,7 +1756,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
          while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
 
-            if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
+            if !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
@@ -1976,7 +1976,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       */
  
       if ::InsertIfValid() .and. lStock
-         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:Desde, ::oGrupoAlmacen:Cargo:Hasta, , ::dFinInf )
+         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
       end if
 
       ::oDbfArt:Skip()
@@ -1999,9 +1999,9 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
    ::oProCab:OrdSetFocus( "dFecOrd" )
 
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )        + '" .and. cSerOrd <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumOrd >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumOrd <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufOrd >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufOrd <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerOrd <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumOrd >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumOrd <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufOrd >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufOrd <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oProCab:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProCab:cFile ), ::oProCab:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2016,7 +2016,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
    cExpLine          := '!lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cCodArt >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -2104,10 +2104,10 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    ::oPedPrvL:OrdSetFocus( "nNumPed" )
 
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:Desde )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufPed <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufPed <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2121,7 +2121,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    cExpLine          := '!lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oPedPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ), ::oPedPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -2237,12 +2237,12 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
       cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    else
       cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   end id
+   end if
 
-   cExpHead             += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:Desde )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:Hasta ) + '"'
-   cExpHead             += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )        + '" .and. cSerAlb <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead             += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead             += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufAlb <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead             += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
+   cExpHead             += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerAlb <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead             += ' .and. nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead             += ' .and. cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufAlb <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2256,7 +2256,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
    cExpLine             := '!lControl'
 
    if !::lAllArt
-      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine          += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oAlbPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvL:cFile ), ::oAlbPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -2285,12 +2285,12 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodCate   := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cCodGrp    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodCli    := ::oAlbPrvT:cCodPrv
                   ::oDbf:cNomCli    := ::oAlbPrvT:cNomPrv
                   ::oDbf:cPobCli    := ::oAlbPrvT:cPobPrv
                   ::oDbf:cPrvCli    := ::oAlbPrvT:cProPrv
                   ::oDbf:cPosCli    := ::oAlbPrvT:cPosPrv
-                  ::oDbf:cCodGrp    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodAlm    := ::oAlbPrvL:cAlmLin
                   ::oDbf:cCodPago   := ::oAlbPrvT:cCodPgo
                   ::oDbf:cCodRut    := ""
@@ -2371,10 +2371,10 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    ::oFacPrvL:OrdSetFocus( "nNumFac" )
 
    cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:Desde )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )        + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde )  + '" ) .and. nNumFac <= Val( "'   + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )       + '" .and. cSufFac <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumFac <= Val( "'   + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufFac <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2388,7 +2388,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    cExpLine          := '!lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oFacPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvL:cFile ), ::oFacPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -2417,12 +2417,12 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodCate   := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cCodGrp    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodCli    := ::oFacPrvT:cCodPrv
                   ::oDbf:cNomCli    := ::oFacPrvT:cNomPrv
                   ::oDbf:cPobCli    := ::oFacPrvT:cPobPrv
                   ::oDbf:cPrvCli    := ::oFacPrvT:cProvProv
                   ::oDbf:cPosCli    := ::oFacPrvT:cPosPrv
-                  ::oDbf:cCodGrp    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodAlm    := ::oFacPrvL:cAlmLin
                   ::oDbf:cCodPago   := ::oFacPrvT:cCodPago
                   ::oDbf:cCodRut    := ""
@@ -2503,10 +2503,10 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    ::oRctPrvL:OrdSetFocus( "nNumFac" )
 
    cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:Desde ) + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )     + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Desde ) + '" ) .and. nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:Hasta ) + '" )'
-   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde )    + '" .and. cSufFac <= "'   + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '"'
+   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() ) + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. cSerFac >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )     + '" .and. cSerFac <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   cExpHead          += ' .and. nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumFac <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   cExpHead          += ' .and. cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. cSufFac <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    ::oRctPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oRctPrvT:cFile ), ::oRctPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2520,7 +2520,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    cExpLine          := '!lControl'
 
    if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
    ::oRctPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oRctPrvL:cFile ), ::oRctPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
@@ -2549,12 +2549,12 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodCate   := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:cCodGrp    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodCli    := ::oRctPrvT:cCodPrv
                   ::oDbf:cNomCli    := ::oRctPrvT:cNomPrv
                   ::oDbf:cPobCli    := ::oRctPrvT:cPobPrv
                   ::oDbf:cPrvCli    := ::oRctPrvT:cProvProv
                   ::oDbf:cPosCli    := ::oRctPrvT:cPosPrv
-                  ::oDbf:cCodGrp    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
                   ::oDbf:cCodAlm    := ::oRctPrvL:cAlmLin
                   ::oDbf:cCodPago   := ::oRctPrvT:cCodPago
                   ::oDbf:cCodRut    := ""

@@ -8207,8 +8207,6 @@ Static Function DataReport( oFr )
    oFr:DeleteCategory(  "Clientes" )
    oFr:DeleteCategory(  "Clientes.País" )
 
-   msgAlert( "Zona de datos------------------------------------------------------------") 
-
    /*
    Zona de datos------------------------------------------------------------
    */
@@ -8217,8 +8215,6 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Albaranes", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Albaranes", cItemsToReport( aItmAlbCli() ) )
-
-   msgAlert( ( TDataview():Get( "AlbCLIL", nView ) )->( ordSetFocus() ), "Alert" )
 
    oFr:SetWorkArea(     "Lineas de albaranes", ( TDataView():Get( "AlbCliL", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de albaranes", cItemsToReport( aColAlbCli() ) )
@@ -8422,8 +8418,6 @@ Static Function DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
       oFr:SetWorkArea(  "Entrega", ( TDataView():Get( "AlbCliP", nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    end if
    oFr:SetFieldAliases( "Entrega", cItemsToReport( aItmAlbPgo() ) )
-
-   msgAlert( TDataview():Get( "AlbCliT", nView ) )
 
    if lTicket
    oFr:SetWorkArea(     "Albarán de cliente", ( TDataView():Get( "AlbCliT", nView ) )->( Select() ) )
@@ -8649,14 +8643,14 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       if !NetErr() .and. ( dbfTmpLin )->( Used() )
 
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
+
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "cDetalle", "Left( cDetalle, 100 )", {|| Left( Field->cDetalle, 100 ) } ) )
-
-         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumAlb", "Str( Recno() )", {|| Str( Recno() ) } ) )

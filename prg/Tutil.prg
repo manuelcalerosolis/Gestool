@@ -802,6 +802,10 @@ function GetFileDateTime( cFile )
    local dChangeDate
    local nChangeTime   
 
+   if !file( cFile )
+      Return ""
+   end if 
+
    FileStats( cFile, , , , , @dChangeDate, @nChangeTime )
 
 Return ( dtos( dChangeDate ) + alltrim( str( nChangeTime ) ) )

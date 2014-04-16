@@ -2099,9 +2099,9 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    Obtenemos los datos necesarios para el informe------------------------------
    */
 
-   if hb_isHash( oTreeInforme:bAction ) 
+   if hb_isHash( oTreeInforme:bAction ) .and. hHasKey( oTreeInforme:bAction, "Type" )
+      ::cReportType     := oTreeInforme:bAction[ "Type"  ]
       ::cReportName     := oTreeInforme:bAction[ "Title" ] 
-      ::cReportType     := oTreeInforme:bAction[ "Type" ]
       ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
    else
       msgStop( "No se ha podido cargar el informe." )

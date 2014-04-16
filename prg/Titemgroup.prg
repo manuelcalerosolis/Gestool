@@ -38,6 +38,9 @@ CLASS TItemGroup
    METHOD ValidMayorIgual( uVal, uMayor )
    METHOD ValidMenorIgual( uVal, uMenor )
 
+   METHOD GetDesde()       INLINE ( alltrim( ::Desde ) )
+   METHOD GetHasta()       INLINE ( alltrim( ::Hasta ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

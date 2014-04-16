@@ -371,8 +371,8 @@ c:\xharbour\bin>harbour c:\test.prg /gh /n
 
 METHOD CompilarFicheroScript( cFicheroPrg ) CLASS TScripts
 
-   local lReturn
-   local cFicheroHbr    := strtran( cFicheroPrg, ".prg", ".hbr" )
+   local lFile
+   local cFicheroHbr    := alltrim( strtran( cFicheroPrg, ".prg", ".hbr" ) )
 
    msgStop( "CompilarFicheroScript" )
 
@@ -386,21 +386,24 @@ METHOD CompilarFicheroScript( cFicheroPrg ) CLASS TScripts
       Return .t.
    end if 
 
-   msgAlert( GetFileDateTime( cFicheroPrg ), "fchero prg" )
-   msgAlert( GetFileDateTime( cFicheroHbr ), "fchero hbr" )
-
    fErase( cFicheroHbr )
 
-   WinExec( FullCurDir() + "harbour.exe " + cFicheroPrg + " /gh /n /o" + cFicheroHbr, 2 ) // Minimized
+   //msgAlert( FullCurDir() + "harbour\harbour.exe " + cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + cFicheroHbr ) // Minimized
 
-   lReturn              := !File( cFicheroHbr )
-   if lReturn
-      msgStop( "Error al compilar el fichero " + cFicheroHbr )
-   else 
+   logwrite( FullCurDir() + "harbour\harbour.exe " + cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + cFicheroHbr ) // Minimized
+
+   WinExec( FullCurDir() + "harbour\harbour.exe " + cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + cFicheroHbr, 2 ) // Minimized
+
+   //msgAlert( !File( cFicheroHbr ), ( cFicheroHbr ) )
+
+   lFile                := File( cFicheroHbr )
+   if lFile
       msgStop( "Fichero compilado con exito " + cFicheroHbr )
+   else 
+      msgStop( "Error al compilar el fichero " + cFicheroHbr )
    end if
 
-Return .t.
+Return ( lFile )
 
 //---------------------------------------------------------------------------//
 
@@ -419,9 +422,9 @@ METHOD EjecutarFicheroScript( cFicheroHbr ) CLASS TScripts
 
       // Comprobamos que el script haya sido compilado----------------------------
 
-      if !File( cFicheroHbr ) 
-         ::CompilarFicheroScript( cFicheroHbr )
-      end if
+      // if !File( cFicheroHbr ) 
+         //::CompilarFicheroScript( cFicheroHbr )
+      //end if
 
       // Ejecutamos el script compilado-------------------------------------------
 
@@ -445,8 +448,13 @@ Return .t.
 
 METHOD RunScript( cFichero ) CLASS TScripts
 
+   local u
+   local pHrb
+
    if File( cFichero )
-      __hrbUnload( __hrbDo( __hrbLoad( cFichero ) ) )
+      pHrb        := __hrbLoad( cFichero )
+      u           := __hrbDo( pHrb )
+      __hrbUnload( pHrb )   
    end if
 
 RETURN ( nil )
