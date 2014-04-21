@@ -8528,9 +8528,8 @@ Function SynAlbPrv( cPath )
 
       if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) )
          ( dbfAlbPrvL )->( dbDelete() )
-      else
-         ( dbfAlbPrvL )->( dbSkip( 1 ) )
       end if 
+      ( dbfAlbPrvL )->( dbSkip( 1 ) )
       
       SysRefresh()
 
@@ -8541,14 +8540,13 @@ Function SynAlbPrv( cPath )
    ( dbfAlbPrvS )->( ordSetFocus( 1 ) )
    ( dbfAlbPrvS )->( dbGoTop() )
 
-   while !( dbfAlbPrvL )->( eof() )
+   while !( dbfAlbPrvS )->( eof() )
 
       if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb ) )
          ( dbfAlbPrvS )->( dbDelete() )
-      else
-         ( dbfAlbPrvS )->( dbSkip( 1 ) )
       end if 
-      
+      ( dbfAlbPrvS )->( dbSkip( 1 ) )
+
       SysRefresh()
 
    end while
@@ -8558,14 +8556,13 @@ Function SynAlbPrv( cPath )
    ( dbfAlbPrvI )->( ordSetFocus( 1 ) )
    ( dbfAlbPrvI )->( dbGoTop() )
 
-   while !( dbfAlbPrvL )->( eof() )
+   while !( dbfAlbPrvI )->( eof() )
 
       if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb ) )
          ( dbfAlbPrvI )->( dbDelete() )
-      else
-         ( dbfAlbPrvI )->( dbSkip( 1 ) )
       end if 
-      
+      ( dbfAlbPrvI )->( dbSkip( 1 ) )
+
       SysRefresh()
 
    end while
