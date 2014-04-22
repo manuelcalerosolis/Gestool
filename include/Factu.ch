@@ -217,6 +217,7 @@ Defines para ficheros INI
 #define FST_ART                 '33'
 #define FST_CLI                 '34'
 #define FST_PRV                 '35'
+#define FST_PRO                 '36'
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir

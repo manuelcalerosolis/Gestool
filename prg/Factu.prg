@@ -3118,7 +3118,7 @@ Function CreateAcceso( oWnd )
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
+   oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Informes personalizables'
    oGrupo:cLittleBitmap := "Lifebelt_16"
    oGrupo:cBigBitmap    := "Lifebelt_32"
@@ -3151,6 +3151,16 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01121"
    oItem:cBmp           := "businessman_chart_16"
    oItem:cBmpBig        := "businessman_chart_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemReporting:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Produccion'
+   oItem:cMessage       := 'Informes realacionados con la produccion'
+   oItem:bAction        := {|| TFastVentasProveedores():New():Play() }
+   oItem:cId            := "01123"
+   oItem:cBmp           := "Worker2_Form_Red_16"
+   oItem:cBmpBig        := "Worker2_Form_Red_32"
    oItem:lShow          := .f.
 
    if lAIS()

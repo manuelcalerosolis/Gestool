@@ -4608,7 +4608,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
                   with object ( SStock():New() )
 
-                     :cTipoDocumento      := ALB_PRV
+                     :cTipoDocumento      := PED_PRV
                      :cCodigo             := ( ::cPedPrvL )->cRef
                      :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
                      :cDelegacion         := ( ::cPedPrvL )->cSufPed
