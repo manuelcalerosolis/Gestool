@@ -1160,7 +1160,8 @@ METHOD Firma()
 
    if !Empty( ::oFirma )
 
-      xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
+      xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, "B21473970", ::cFicheroDestino )
+      // xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
 
       if Left( xRet, 2 ) == "00"
 
