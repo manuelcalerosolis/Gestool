@@ -396,7 +396,7 @@ METHOD PartiesXml()
          ::oXmlTaxIdentification  := TXmlNode():new( , 'TaxIdentification' )
             ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'PersonTypeCode', ,          ::oSellerParty:cPersonTypeCode ) )
             ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'ResidenceTypeCode', ,       ::oSellerParty:cResidenceTypeCode ) )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oSellerParty:cTaxIdentificationNumber ) )
+            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oSellerParty:TaxIdentificationNumber() ) )
 
          ::oXmlSellerParty:addBelow( ::oXmlTaxIdentification )
 
@@ -463,8 +463,8 @@ METHOD PartiesXml()
 
                ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
 
-                  if !Empty( ::oSellerParty:cTelephone )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oSellerParty:cTelephone ) )
+                  if !Empty( ::oSellerParty:Telephone() )
+                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oSellerParty:Telephone() ) )
                   end if
 
                   if !Empty( ::oSellerParty:cTelFax )
@@ -522,8 +522,8 @@ METHOD PartiesXml()
 
                ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
 
-                  if !Empty( ::oSellerParty:cTelephone )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oSellerParty:cTelephone ) )
+                  if !Empty( ::oSellerParty:Telephone() )
+                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oSellerParty:Telephone() ) )
                   end if
 
                   if !Empty( ::oSellerParty:cTelFax )
@@ -563,7 +563,7 @@ METHOD PartiesXml()
          ::oXmlTaxIdentification  := TXmlNode():new( , 'TaxIdentification' )
             ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'PersonTypeCode', ,          ::oBuyerParty:cPersonTypeCode ) )
             ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'ResidenceTypeCode', ,       ::oBuyerParty:cResidenceTypeCode ) )
-            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oBuyerParty:cTaxIdentificationNumber ) )
+            ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oBuyerParty:TaxIdentificationNumber() ) )
 
          ::oXmlBuyerParty:addBelow( ::oXmlTaxIdentification )
 
@@ -630,20 +630,20 @@ METHOD PartiesXml()
 
                ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
 
-                  if !Empty( ::oBuyerParty:cTelephone )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oBuyerParty:cTelephone ) )
+                  if !Empty( ::oBuyerParty:Telephone )
+                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oBuyerParty:Telephone() ) )
                   end if
 
-                  if !Empty( ::oBuyerParty:cTelFax )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oBuyerParty:cTelFax ) )
+                  if !Empty( ::oBuyerParty:TelFax() )
+                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oBuyerParty:TelFax() ) )
                end if
 
-               if !Empty( ::oBuyerParty:cWebAddress )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oBuyerParty:cWebAddress ) )
+               if !Empty( ::oBuyerParty:WebAddress() )
+                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oBuyerParty:WebAddress() ) )
                end if
 
-               if !Empty( ::oBuyerParty:cElectronicMail )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oBuyerParty:cElectronicMail ) )
+               if !Empty( ::oBuyerParty:ElectronicMail() )
+                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oBuyerParty:ElectronicMail() ) )
                end if
 
                ::oXmlLegalEntity:addBelow( ::oXmlContactDetails )
@@ -687,20 +687,20 @@ METHOD PartiesXml()
 
                ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
 
-                  if !Empty( ::oBuyerParty:cTelephone )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oBuyerParty:cTelephone ) )
-                  end if
-
-                  if !Empty( ::oBuyerParty:cTelFax )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oBuyerParty:cTelFax ) )
+               if !Empty( ::oBuyerParty:Telephone() )
+                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oBuyerParty:Telephone() ) )
                end if
 
-               if !Empty( ::oBuyerParty:cWebAddress )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oBuyerParty:cWebAddress ) )
+               if !Empty( ::oBuyerParty:TelFax() )
+                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oBuyerParty:TelFax() ) )
                end if
 
-               if !Empty( ::oBuyerParty:cElectronicMail )
-                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oBuyerParty:cElectronicMail ) )
+               if !Empty( ::oBuyerParty:WebAddress() )
+                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'WebAddress', ,     ::oBuyerParty:WebAddress() ) )
+               end if
+
+               if !Empty( ::oBuyerParty:ElectronicMail() )
+                  ::oXmlContactDetails:addBelow( TXmlNode():new( , 'ElectronicMail', , ::oBuyerParty:ElectronicMail() ) )
                end if
 
                ::oXmlLegalEntity:addBelow( ::oXmlContactDetails )
@@ -1160,8 +1160,9 @@ METHOD Firma()
 
    if !Empty( ::oFirma )
 
-      xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, "B21473970", ::cFicheroDestino )
-      // xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
+      // xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
+      // xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, "B21473970", ::cFicheroDestino )
+      xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
 
       if Left( xRet, 2 ) == "00"
 
@@ -1349,6 +1350,15 @@ CLASS Party
    DATA     cName                         INIT ''
    DATA     cFirstSurname                 INIT ''
    DATA     cSecondSurname                INIT ''
+
+   ACCESS   TaxIdentificationNumber       INLINE ( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) )
+
+   ACCESS   Telephone                     INLINE ( Rtrim( ::cTelephone         ) )
+   ACCESS   TelFax                        INLINE ( Rtrim( ::cTelFax            ) )
+   ACCESS   WebAddress                    INLINE ( Rtrim( ::cWebAddress        ) )
+   ACCESS   ElectronicMail                INLINE ( Rtrim( ::cElectronicMail    ) )
+   ACCESS   PersonTypeCode                INLINE ( Rtrim( ::cPersonTypeCode    ) )
+   ACCESS   ResidenceTypeCode             INLINE ( Rtrim( ::cResidenceTypeCode ) )
 
    ACCESS   CorporateName                 INLINE ( Rtrim( Left( ::cCorporateName, 80 ) ) )
    ACCESS   TradeName                     INLINE ( Rtrim( Left( ::cTradeName, 40 ) ) )

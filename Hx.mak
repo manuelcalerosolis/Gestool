@@ -170,6 +170,7 @@ TFastReportInfGen.prg   	\
 TFastVentasArticulos.prg	\
 TFastVentasClientes.prg 	\
 TFastVentasProveedores.prg 	\
+TFastProduccion.prg 		\
 Titemgroup.prg          	\
 Ttikstka.prg            	\
 TStockMinimoFamilia.prg 	\
@@ -569,6 +570,7 @@ TFastReportInfGen.obj   \
 TFastVentasArticulos.obj\
 TFastVentasClientes.obj \
 TFastVentasProveedores.obj \
+TFastProduccion.obj		\
 Titemgroup.obj          \
 Tartalb.obj             \
 Tfamtik.obj             \
@@ -978,7 +980,7 @@ $(OBJ)\Webmap.obj               +
 $(OBJ)\Meter.obj                +
 $(OBJ)\Tankes.obj               +
 $(OBJ)\Grpcli.obj               +
-$(OBJ)\Atipicas.obj 				  +
+$(OBJ)\Atipicas.obj 			+
 $(OBJ)\Grpfacauto.obj           +
 $(OBJ)\Recprv.obj               +
 $(OBJ)\TInfAlm.obj              +
@@ -990,8 +992,9 @@ $(OBJ)\Tinfgen.obj              +
 $(OBJ)\TNewInfGen.obj           +
 $(OBJ)\TFastReportInfGen.obj    +
 $(OBJ)\TFastVentasArticulos.obj +
-$(OBJ)\TFastVentasClientes.obj    +
-$(OBJ)\TFastVentasProveedores.obj +
+$(OBJ)\TFastVentasClientes.obj    	+
+$(OBJ)\TFastVentasProveedores.obj 	+
+$(OBJ)\TFastProduccion.obj    		+
 $(OBJ)\Titemgroup.obj           +
 $(OBJ)\Ttikstka.obj             +
 $(OBJ)\TStockMinimoFamilia.obj  +

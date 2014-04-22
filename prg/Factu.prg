@@ -3156,8 +3156,8 @@ Function CreateAcceso( oWnd )
    oItem                := oItemReporting:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Produccion'
-   oItem:cMessage       := 'Informes realacionados con la produccion'
-   oItem:bAction        := {|| TFastVentasProveedores():New():Play() }
+   oItem:cMessage       := 'Informes realacionados con la producción'
+   oItem:bAction        := {|| TFastProduccion():New():Play() }
    oItem:cId            := "01123"
    oItem:cBmp           := "Worker2_Form_Red_16"
    oItem:cBmpBig        := "Worker2_Form_Red_32"

@@ -958,6 +958,10 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cSerOrd" TYPE "C" LEN 01  DEC 0 COMMENT "Serie"                               OF ::oDbf
       FIELD NAME "nNumOrd" TYPE "N" LEN 09  DEC 0 COMMENT "Número"                              OF ::oDbf
       FIELD NAME "cSufOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Sufijo"                              OF ::oDbf
+
+      FIELD CALCULATE NAME "iNumOrd"   LEN  12 DEC  0 COMMENT "" ; 
+         VAL ( ::oDbf:cSerOrd + str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) HIDE                   OF ::oDbf
+
       FIELD NAME "dFecOrd" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha inicio"                        OF ::oDbf
       FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"                           OF ::oDbf
       FIELD NAME "cCodDiv" TYPE "C" LEN 03  DEC 0 COMMENT "Divisa"                              OF ::oDbf
@@ -2733,8 +2737,6 @@ Devuelve el total producido----------------------------------------------------
 function nTotProd( cNumParte, cDetPro )
 
    local nTotal := 0
-
-   ( cDetPro )->( dbGoTop() )
 
    if ( cDetPro )->( dbSeek( cNumParte ) )
 
