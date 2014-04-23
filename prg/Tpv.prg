@@ -18180,8 +18180,9 @@ function aColTik()
    aAdd( aColTik, { "cNomOrd",  "C",     30,     0, "Orden de comanda",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lDelTil",  "L",      1,     0, "Línea borrada",                      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "dFecCad",  "D",      1,     0, "Fecha de caducidad",                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "lMnuTil",  "L",      1,     0, "Línea de menu",                      "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodMnu",  "C",      3,     0, "Código de menu",                     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lMnuTil",  "L",      1,     0, "Línea de menú padre",                "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodMnu",  "C",      3,     0, "Código de menú",                     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nLinMnu",  "N",      4,     0, "Número de linea de menú",            "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

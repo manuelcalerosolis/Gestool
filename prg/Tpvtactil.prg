@@ -381,8 +381,6 @@ CLASS TpvTactil
 
    DATA lCopiaComanda
 
-   DATA nLineasAgregadas      INIT 0
-
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -481,10 +479,17 @@ CLASS TpvTactil
       METHOD AgregarFavoritos( cNombreArticulo )
 
       METHOD AgregarLineasMenu()
+      METHOD nLineaMenuActivo()
+      METHOD nNumeroArticulosOrden()
+      METHOD nNumeroUnidadesMenu()
 
       METHOD AgregarLibre()
          METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
          METHOD GuardarAgregarLibre()
+
+   METHOD AgregarMenu()
+
+   METHOD DialogoPropiedadArticulo()
 
    METHOD nPrecioArticulo()
 
@@ -1622,8 +1627,8 @@ CLASS TpvTactil
          cTexto      := Space( 3 ) + "<" + cTexto + ">"
       end if
 
-      if !Empty( oDbf:lMnuTil )
-         cTexto      := Space( 3 ) + "{" + cTexto + "}"
+      if !Empty( oDbf:nLinMnu )
+         cTexto      := Space( 3 ) + "<" + cTexto + ">"
       end if
 
       RETURN ( cTexto )
@@ -3105,10 +3110,29 @@ METHOD Resource() CLASS TpvTactil
       :nHeadStrAlign          := AL_RIGHT
    end with
 
+    with object ( ::oBrwLineas:AddCol() )
+      :cHeader                := "Nº Linea menú"
+      :bEditValue             := {|| ::oTemporalLinea:nLinMnu }
+      :lHide                  := .t.
+      :nWidth                 := ::ResizedCol( 20 )
+      :nDataStrAlign          := AL_RIGHT
+      :nHeadStrAlign          := AL_RIGHT
+   end with
+
+    with object ( ::oBrwLineas:AddCol() )
+      :cHeader                := "Recno"
+      :bEditValue             := {|| ::oTemporalLinea:Recno() }
+      :lHide                  := .t.
+      :nWidth                 := ::ResizedCol( 20 )
+      :nDataStrAlign          := AL_RIGHT
+      :nHeadStrAlign          := AL_RIGHT
+   end with
+
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Or. Orden comanda"
       :lHide                  := .t.
-      :bEditValue             := {|| ::oOrdenComanda:cCodigoOrden( ::oTemporalLinea:cOrdOrd ) } 
+      :bEditValue             := {|| ::oOrdenComanda:cNombre( ::oTemporalLinea:cOrdOrd ) }
+      // :bEditValue             := {|| ::oOrdenComanda:cCodigoOrden( ::oTemporalLinea:cOrdOrd ) } 
       :nWidth                 := ::ResizedCol( 30 )
    end with
 
@@ -3867,7 +3891,9 @@ METHOD CargaBrowseMenus( cMenu )
 
    ::OnClickComensales()
 
-   // Agrego linea 
+   // Agrego linea de menú-----------------------------------------------------
+
+   ::AgregarMenu( cMenu )
 
 RETURN ( .t. )
 
@@ -3878,6 +3904,39 @@ METHOD SeleccionaArticulos( nOpt ) CLASS TpvTactil
    ::AgregarLineas( ::oLstArticulos:aItems[ nOpt ]:Cargo )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AgregarMenu( cCodigoMenu )
+
+   ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+
+   ::oTemporalLinea:Append()
+   ::oTemporalLinea:Blank()
+
+   ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+   ::oTemporalLinea:nUntTil      := ::oTiketCabecera:nNumCom
+   ::oTemporalLinea:cNomTil      := ::oTpvMenu:cNombre(cCodigoMenu)
+         
+   ::oTemporalLinea:nPvpTil      := ::oTpvMenu:nPrecio(cCodigoMenu)
+   ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
+
+   if !empty(cCodigoMenu)
+      ::oTemporalLinea:lMnuTil   := .t.
+      ::oTemporalLinea:cCodMnu   := cCodigoMenu
+   end if
+
+   ::oTemporalLinea:Save()
+
+   // refrescos de pantalla-------------------------------------------------
+
+   ::oBrwLineas:Refresh()
+
+   ::SetTotal()
+
+   ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4460,10 +4519,11 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalLinea:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalLinea ) TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"   FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalLinea
-      INDEX TO ( ::cTemporalLinea ) TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"   NODELETED                              OF ::oTemporalLinea
-      INDEX TO ( ::cTemporalLinea ) TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"  NODELETED                              OF ::oTemporalLinea
-      INDEX TO ( ::cTemporalLinea ) TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"   NODELETED                              OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"            NODELETED                              OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"            NODELETED                              OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"           NODELETED                              OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "cCodMnu"  ON Field->cCodMnu          COMMENT "Codigo Menú"      NODELETED                              OF ::oTemporalLinea
 
    END DATABASE ::oTemporalLinea
 
@@ -4632,7 +4692,7 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
             // Vemos si este atículo es acumulable--------------------------------
 
-            if !::lAcumulaArticulo()
+            if !::lAcumulaArticulo( cCodigoOrden )
 
                ::AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
@@ -4670,32 +4730,105 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD AgregarLineasMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+   
+   local nLineaMenuActivo     := ::nLineaMenuActivo()
 
-//   if ::nLineasAgregadas < ::oTiketCabecera:nNumCom
+   if ::nNumeroArticulosOrden( nLineaMenuActivo, cCodigoOrden ) < ::nNumeroUnidadesMenu( nLineaMenuActivo )
+      
       ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
-//      ::nLineasAgregadas ++
-//   endif
+      
+      if ::nNumeroArticulosOrden( nLineaMenuActivo, cCodigoOrden ) == ::nNumeroUnidadesMenu( nLineaMenuActivo )
+         ::oBrwFamilias:GoDown()
+      end if
 
-   if ::nLineasAgregadas >= ::oTiketCabecera:nNumCom
+   else
+
+      msgStop( "Ya has añadido todos los artículos para este orden." )
+   
       ::oBrwFamilias:GoDown()
-   end if
+
+   endif
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD nNumeroUnidadesMenu( nLineaMenu )
+   
+   local nUnidades      := 0
+
+   ::oTemporalLinea:GetStatus()
+
+   if ::oTemporalLinea:SeekInOrd( str( nLineaMenu, 4 ), "nNumLin" )
+      nUnidades      := ::nUnidadesLinea( ::oTemporalLinea )
+   end if
+
+   ::oTemporalLinea:SetStatus()
+
+RETURN ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
+METHOD nNumeroArticulosOrden( nLineaMenu, cCodigoOrden )
+   
+   local nArticulos     := 0
+
+   ::oTemporalLinea:GetStatus()
+
+   ::oTemporalLinea:GoTop()
+
+   while !::oTemporalLinea:eof()
+
+      if cCodigoOrden == ::oTemporalLinea:cOrdOrd .and. nLineaMenu == ::oTemporalLinea:nLinMnu
+         nArticulos     += ::nUnidadesLinea( ::oTemporalLinea )
+      end if
+
+      ::oTemporalLinea:Skip()
+
+   end while
+
+   ::oTemporalLinea:SetStatus()
+
+RETURN ( nArticulos )
+
+//---------------------------------------------------------------------------//
+
+METHOD nLineaMenuActivo()
+
+   local nLinea   := 0
+
+   if ::oTemporalLinea:lMnuTil
+      nLinea      := ::oTemporalLinea:nNumLin
+   endif
+
+   if empty( nLinea )
+      if ::oTemporalLinea:nLinMnu != 0
+         nLinea   := ::oTemporalLinea:nLinMnu
+      end if
+   end if 
+
+RETURN ( nLinea )
+
+//---------------------------------------------------------------------------//
+
 METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+
+   local nLineaMenu
 
    CursorWait()
 
    SysRefresh()
 
+   nLineaMenu                    := ::nLineaMenuActivo()
+
    ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+
 
    ::oTemporalLinea:Append()
    ::oTemporalLinea:Blank()
 
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+
    ::oTemporalLinea:nUntTil      := ::nUnidades
    ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
    ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
@@ -4709,7 +4842,6 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
       ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
    end if 
          
-   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
    ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
    ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
    ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
@@ -4721,15 +4853,35 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
 
-   if !empty(cCodigoMenu)
-      ::oTemporalLinea:lMnuTil   := .t.
+   if !empty( cCodigoMenu )
+      ::oTemporalLinea:nLinMnu   := nLineaMenu
       ::oTemporalLinea:cCodMnu   := cCodigoMenu
    end if
 
-   if !empty(cCodigoOrden)
+   if !empty( cCodigoOrden )
       ::oTemporalLinea:cOrdOrd   := cCodigoOrden
    else
       ::oTemporalLinea:cOrdOrd   := ::oArticulo:cOrdOrd
+
+   end if
+
+// Si forma parte de un menú su precio lo ponemos a 0--------------------------
+
+   if Empty( ::oTemporalLinea:nLinMnu )
+      ::oTemporalLinea:nPvpTil      := 0
+   else
+      ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
+   end if
+
+
+   if !Empty( ::oArticulo:cCodPrp1 )
+      
+      msgAlert(::oArticulo:Codigo, "::oArticulo:Codigo")
+
+         msgAlert("Tiene alguna propiedad")
+         ::DialogoPropiedadArticulo( .t., ::oArticulo:Codigo )
+
+
    end if
 
    ::oTemporalLinea:Save()
@@ -4771,6 +4923,91 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD DialogoPropiedadArticulo( lForced, cCodigoArticulo ) CLASS TpvTactil
+
+   local oDlgPropiedadArticulo
+   local oBrwPropiedades
+
+   DEFAULT lForced   := .f.
+
+   //  Mostramos las propiedades si nos fuerzan
+
+   if !lForced
+      RETURN ( nil )
+   end if
+
+   ::oArticuloDividido:SetScope( cCodigoArticulo )
+
+   DEFINE DIALOG oDlgPropiedadArticulo RESOURCE "TPV_Propiedad_Articulo"
+
+     REDEFINE BUTTONBMP ;
+         ID       101 ;
+         OF       oDlgPropiedadArticulo ;
+         BITMAP   "Navigate_up" ;
+         ACTION   ( oBrwPropiedades:Select( 0 ), oBrwPropiedades:GoUp(), oBrwPropiedades:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         ID       102 ;
+         OF       oDlgPropiedadArticulo ;
+         BITMAP   "Navigate_down" ;
+         ACTION   ( oBrwPropiedades:Select( 0 ), oBrwPropiedades:GoDown(), oBrwPropiedades:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDlgPropiedadArticulo ;
+         ACTION   ( /*::EndPropiedades( oDlgComentarios, oGetComentario )*/ nil )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlgPropiedadArticulo ;
+         ACTION   ( oDlgPropiedadArticulo:End() )
+
+
+      // Montamos el browse de propiedades
+
+      msgAlert(::oArticuloDividido:cCodArt, "::oArticuloDividido:cCodArt")
+
+      oBrwPropiedades                  := IXBrowse():New( oDlgPropiedadArticulo )
+
+      oBrwPropiedades:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwPropiedades:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwPropiedades:nMarqueeStyle    := MARQSTYLE_HIGHLROW
+      oBrwPropiedades:cName            := "Propiedades de artículos"
+      oBrwPropiedades:lHeader          := .f.
+      oBrwPropiedades:lHScroll         := .f.
+      oBrwPropiedades:nRowHeight       := 45
+      
+      oBrwPropiedades:SetFont( ::oFntBrw )
+
+      oBrwPropiedades:CreateFromResource( 100 )
+
+
+      ::oArticuloDividido:SetBrowse( oBrwPropiedades )
+
+
+      with object ( oBrwPropiedades:AddCol() )
+         :bEditValue                         := {|| ::oArticuloDividido:cValPr1 }
+      end with
+
+
+      oBrwPropiedades:bLClicked              := {|| msgAlert("le he dado") }
+
+      oDlgPropiedadArticulo:bStart           := {|| msgAlert("le he dado") }
+
+
+      ::oArticuloDividido:ClearScope()
+
+
+
+
+   ACTIVATE DIALOG oDlgPropiedadArticulo CENTER
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD nPrecioArticulo() CLASS TpvTactil
 
    local sOferta
@@ -4804,11 +5041,12 @@ Return ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
-METHOD lAcumulaArticulo() CLASS TpvTactil
+METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
 
    local lReturn        := .f.
-   local cOrdSetFocus
+   local nLineaMenu
    local nPrecioLinea
+   local aStatus
 
    if ( ::oTemporalLinea:ordKeyCount() == 0 )
       Return .f.
@@ -4828,21 +5066,27 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
 
    CursorWait()
 
+   nLineaMenu           := ::nLineaMenuActivo()
+   aStatus              := ::oTemporalLinea:GetStatus()
+
    /*
    Buscamos codigos iguales----------------------------------------------------
    */
 
-   cOrdSetFocus         := ::oTemporalLinea:OrdSetFocus( "cCbaTil" )
-
+   ::oTemporalLinea:OrdSetFocus( "cCbaTil" )
    if ::oTemporalLinea:Seek( ::oArticulo:Codigo )
 
       while ( ::oTemporalLinea:cCbaTil == ::oArticulo:Codigo ) .and. !( ::oTemporalLinea:Eof() )
 
-         nPrecioLinea   := cRetPreArt( ::oArticulo:Codigo, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+         nPrecioLinea      := cRetPreArt( ::oArticulo:Codigo, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
 
-         /*
-         Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
-         */
+         // Obtenemos el codigo de orden si no nos lo pasan--------------------
+
+         if empty( cCodigoOrden )
+            cCodigoOrden   := ::oArticulo:cOrdOrd
+         end if 
+
+         // Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
 
          if Empty( ::oTemporalLinea:cComTil )                              .and. ;
             Empty( ::oTemporalLinea:cComent )                              .and. ;
@@ -4851,8 +5095,9 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             !::oTemporalLinea:lDelTil                                      .and. ;
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
-            ::oTemporalLinea:cOrdOrd == ::oArticulo:cOrdOrd                .and. ;
+            ::oTemporalLinea:cOrdOrd == cCodigoOrden                       .and. ;
             ::oTemporalLinea:nUntTil > 0                                   .and. ;
+            ::oTemporalLinea:nLinMnu == nLineaMenu                         .and. ;
             ::nUnidades > 0
 
             /*
@@ -4877,7 +5122,7 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
 
    end if
 
-   ::oTemporalLinea:OrdSetFocus( cOrdSetFocus )
+   ::oTemporalLinea:SetStatus( aStatus )
 
    CursorWE()
 
@@ -5299,6 +5544,14 @@ METHOD EndComentarios( oDlg, oGetComentario ) CLASS TpvTactil
    oDlg:End( IDOK )
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+//METHOD EndPropiedadArticulo( oDlg ) CLASS TpvTactil
+
+
+
+//Return ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -1799,20 +1799,22 @@ METHOD GetStatus( lInit ) CLASS TDbf
         ::SetIndex( 1 )
     end if
 
-return( Self )
+return ( ::aStatus )
 
 //----------------------------------------------------------------------------//
 
-METHOD SetStatus() CLASS TDbf
+METHOD SetStatus( aStatus ) CLASS TDbf
 
-    ::GoTo( ::aStatus[ 2 ] )
-    ::OrdSetFocus( ::aStatus[ 1 ] )
+    DEFAULT aStatus     := ::aStatus
 
-    if ::aStatus[ 3 ]
-        ::SetScope( ::aStatus[ 4, 1 ], ::aStatus[ 4, 2 ] )
+    ::GoTo( aStatus[ 2 ] )
+    ::OrdSetFocus( aStatus[ 1 ] )
+
+    if aStatus[ 3 ]
+        ::SetScope( aStatus[ 4, 1 ], aStatus[ 4, 2 ] )
     endif
 
-    ::lBuffer  := ::aStatus[ 5 ]
+    ::lBuffer  := aStatus[ 5 ]
 
 return( Self )
 

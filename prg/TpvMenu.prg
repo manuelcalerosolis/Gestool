@@ -38,6 +38,10 @@ CLASS TpvMenu FROM TMasDet
    METHOD lIsMenuActive()
    METHOD nMenuActive()
 
+   METHOD cNombre( cCodMnu )
+   METHOD nPrecio( cCodMnu )
+
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -331,6 +335,38 @@ METHOD nMenuActive()
    ::oDbf:setStatus()
 
 Return ( nMenuActive )
+
+//---------------------------------------------------------------------------//
+
+METHOD cNombre( cCodMnu )
+
+   local cNombre        := ""
+
+   ::oDbf:GetStatus()
+
+   if ::oDbf:SeekInOrd( cCodMnu, "cCodMnu" )
+      cNombre           := ::oDbf:cNomMnu
+   end if
+
+   ::oDbf:SetStatus()
+
+RETURN ( cNombre )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPrecio( cCodMnu )
+
+   local nPrecio        := 0
+
+   ::oDbf:GetStatus()
+
+   if ::oDbf:SeekInOrd( cCodMnu, "cCodMnu" )
+      nPrecio           := ::oDbf:nImpMnu
+   end if
+
+   ::oDbf:SetStatus()
+
+RETURN ( nPrecio )
 
 //---------------------------------------------------------------------------//
 

@@ -50,6 +50,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodArt" ON "cCodArt"                          NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cOrdArt" ON "cCodOrd + cCodArt"                NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd + cCodArt"      NODELETED OF oDbf
 
    END DATABASE oDbf
@@ -194,7 +195,7 @@ METHOD lPreSave( oDlg )
       Return ( .f. )
    end if
 
-   if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodArt, "cCodArt" )
+   if ::oDbfVir:SeekInOrd( ( ::oDbfVir:cCodOrd + ::oDbfVir:cCodArt ), "cOrdArt" )
       MsgStop( "El artículo ya esta añadido" )
       Return ( .f. )
    end if
