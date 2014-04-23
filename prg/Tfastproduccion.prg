@@ -104,6 +104,10 @@ METHOD lResource( cFld ) CLASS TFastProduccion
       return .f.
    end if
 
+   if !::lGrupoSerie( .t. )
+      return .f.
+   end if
+
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
@@ -221,7 +225,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 Method lValidRegister( cCodigoProveedor ) CLASS TFastProduccion
-
+/*
    if ( ::oDbf:cCodPrv >= ::oGrupoProveedor:Cargo:Desde     .and. ::oDbf:cCodPrv <= ::oGrupoProveedor:Cargo:Hasta )  .and.;
       ( ::oDbf:cCodGrp >= ::oGrupoGProveedor:Cargo:Desde    .and. ::oDbf:cCodGrp <= ::oGrupoGProveedor:Cargo:Hasta ) .and.;
       ( ::oDbf:cCodPgo >= ::oGrupoFpago:Cargo:Desde         .and. ::oDbf:cCodPgo <= ::oGrupoFpago:Cargo:Hasta )
@@ -229,7 +233,7 @@ Method lValidRegister( cCodigoProveedor ) CLASS TFastProduccion
       Return .t.
 
    end if
-
+*/
 /*
 lGrupoOperacion
 lGrupoTOperacion
@@ -245,13 +249,12 @@ lGrupoOperario
 lGrupoMaquina
 */
 
-RETURN ( .f. )
+RETURN ( .t. )
 
 
 //---------------------------------------------------------------------------//
 
 METHOD AddParteProducccion() CLASS TFastProduccion
-
    local sTot
    local oError
    local oBlock
@@ -259,7 +262,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   
+
       ::oProCab:OrdSetFocus( "dFecOrd" )
 
       cExpHead          := 'dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -287,18 +290,18 @@ METHOD AddParteProducccion() CLASS TFastProduccion
          ::oDbf:nTotMat    := 0
          ::oDbf:nTotPer    := 0
          ::oDbf:nTotMaq    := 0
-         ::oDbf:nTotPrd    := nTotProd( ::oProCab:iNumOrd, ::oProLin:cAlias )
+         //::oDbf:nTotPrd    := nTotProd( ::oProCab:iNumOrd, ::oProLin:cAlias )
 
          /*
          Añadimos un nuevo registro--------------------------------------------
          */
-/*
+
          if ::lValidRegister()
             ::oDbf:Insert()
          else
             ::oDbf:Cancel()
          end if
-*/
+
          ::oProCab:Skip()
 
          ::oMtrInf:AutoInc()
@@ -365,7 +368,7 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
 
    ::oFastReport:SetWorkArea(       "Lineas de material producido", ::oProLin:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas de material producido", cObjectsToReport( ::oProLin ) )
+   ::oFastReport:SetFieldAliases(   "Lineas de material producido", cObjectsToReport( TDetProduccion():DefineFiles()  ) )
 
     /*
    Relaciones------------------------------------------------------------------
