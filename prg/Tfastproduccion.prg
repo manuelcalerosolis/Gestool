@@ -60,7 +60,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    /*
    Carga controles-------------------------------------------------------------
    */
-
+/*
    if !::lGrupoOperacion( .t. )
       return .f.
    end if
@@ -72,7 +72,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    if !::lGrupoSeccion( .t. )
       return .f.
    end if
-
+*/
    if !::lGrupoAlmacen( .t. )
       return .f.
    end if
@@ -100,7 +100,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    if !::lGrupoTemporada( .t. )
       return .f.
    end if
-
+/*
    if !::lGrupoOperario( .t. )
       return .t.
    end if
@@ -108,7 +108,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    if !::lGrupoMaquina( .t. )
       return .f.
    end if
-
+*/
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
@@ -124,19 +124,19 @@ METHOD OpenFiles() CLASS TFastProduccion
    local lOpen    := .t.
    local oBlock
    local oError
-/*
+
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
       DATABASE NEW ::oProCab     PATH ( cPatEmp() ) CLASS "PROCAB"      FILE "PROCAB.DBF"    VIA ( cDriver() ) SHARED INDEX "PROCAB.CDX"
       DATABASE NEW ::oProLin     PATH ( cPatEmp() ) CLASS "PROLIN"      FILE "PROLIN.DBF"    VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
       DATABASE NEW ::oProMat     PATH ( cPatEmp() ) CLASS "PROMAT"      FILE "PROMAT.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
-      DATABASE NEW ::oHorasPers  PATH ( cPatEmp() ) CLASS "HORASPERS"   FILE "PROHPER.BDF"   VIA ( cDriver() ) SHARED INDEX "PROHPER.CDX"
-      DATABASE NEW ::oMaqLin     PATH ( cPatEmp() ) CLASS "MAQLIN"      FILE "MAQCOSL.CBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
+      DATABASE NEW ::oHorasPers  PATH ( cPatEmp() ) CLASS "HORASPERS"   FILE "PROHPER.DBF"   VIA ( cDriver() ) SHARED INDEX "PROHPER.CDX"
+      DATABASE NEW ::oMaqLin     PATH ( cPatEmp() ) CLASS "MAQLIN"      FILE "MAQCOSL.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
       DATABASE NEW ::oOperacion  PATH ( cPatEmp() ) CLASS "OPERACION"   FILE "OPERACIO.DBF"  VIA ( cDriver() ) SHARED INDEX "OPERACIO.CDX"
       DATABASE NEW ::oTipOpera   PATH ( cPatEmp() ) CLASS "TIPOPERA"    FILE "TIPOPERA.DBF"  VIA ( cDriver() ) SHARED INDEX "TIPOPERA.CDX"
       DATABASE NEW ::oSeccion    PATH ( cPatEmp() ) CLASS "SECCION"     FILE "SECCION.DBF"   VIA ( cDriver() ) SHARED INDEX "SECCION.CDX"
-      DATABASE NEW ::oPersonal   PATH ( cPatEmp() ) CLASS "PERSONAL"    FILE "PERSONAL.DBF"  VIA ( cDriver() ) SHARED INDEX "PERSONAL.CDX"
+      DATABASE NEW ::oPersonal   PATH ( cPatEmp() ) CLASS "PERSONAL"    FILE "OPET.DBF"      VIA ( cDriver() ) SHARED INDEX "OPET.CDX"
       DATABASE NEW ::oMaquina    PATH ( cPatEmp() ) CLASS "MAQUINA"     FILE "MAQCOST.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOST.CDX"
       DATABASE NEW ::oProMaq     PATH ( cPatEmp() ) CLASS "PROMAQ"      FILE "PROMAQ.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAQ.CDX"
       DATABASE NEW ::oArticulos  PATH ( cPatEmp() ) CLASS "ARTICULOS"   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
@@ -144,7 +144,7 @@ METHOD OpenFiles() CLASS TFastProduccion
       DATABASE NEW ::oAlmacen    PATH ( cPatEmp() ) CLASS "ALMACEN"     FILE "ALMACEN.DBF"   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
       ::oCnfFlt   := TDataCenter():oCnfFlt()
-/*
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de producción" )
@@ -156,7 +156,7 @@ METHOD OpenFiles() CLASS TFastProduccion
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
@@ -317,18 +317,18 @@ METHOD AddParteProducccion() CLASS TFastProduccion
          ::oDbf:nTotMat    := 0
          ::oDbf:nTotPer    := 0
          ::oDbf:nTotMaq    := 0
-         ::oDbf:nTotPrd    := nTotProd( ::oDbf:iNumOrd, ::oProLin:cAlias )
+         ::oDbf:nTotPrd    := nTotProd( ::oProCab:iNumOrd, ::oProLin:cAlias )
 
          /*
          Añadimos un nuevo registro--------------------------------------------
          */
-
+/*
          if ::lValidRegister()
             ::oDbf:Insert()
          else
             ::oDbf:Cancel()
          end if
-
+*/
          ::oProCab:Skip()
 
          ::oMtrInf:AutoInc()
@@ -368,8 +368,8 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastProduccion
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports          := {  "Title" => "Partes de produccion", "Image" => 14, "Type" => "Partes de produccion", "Directory" => "Partes de produccion", "File" => "Partes de produccion.fr3"  }
-               
+   aReports          := {  {  "Title" => "Partes de produccion", "Image" => 14, "Type" => "Partes de produccion", "Directory" => "Produccion", "File" => "Partes de produccion.fr3"  } }
+
    ::BuildNode( aReports, oTree, lLoadFile )
 
    //oTree:ExpandAll()
@@ -394,14 +394,14 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
    ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(                 "Lineas de material producido", ::oProLin:nArea )
-   oFr:SetFieldAliases(             "Lineas de material producido", cObjectsToReport( ::oProLin ) )
+   ::oFastReport:SetWorkArea(       "Lineas de material producido", ::oProLin:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de material producido", cObjectsToReport( ::oProLin ) )
 
     /*
    Relaciones------------------------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",   {|| ::oDbf:iNumOrd } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",         {|| cCodEmp() } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de material producido" )
