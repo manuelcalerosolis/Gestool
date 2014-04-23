@@ -15,11 +15,6 @@ CLASS TFastProduccion FROM TFastReportInfGen
    DATA oProMat   
    DATA oHorasPers
    DATA oMaqLin   
-   DATA oOperacion
-   DATA oTipOpera 
-   DATA oSeccion  
-   DATA oPersonal 
-   DATA oMaquina  
    DATA oProMaq   
    DATA oArticulos
    DATA oFamArt   
@@ -60,7 +55,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    /*
    Carga controles-------------------------------------------------------------
    */
-/*
+
    if !::lGrupoOperacion( .t. )
       return .f.
    end if
@@ -72,7 +67,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    if !::lGrupoSeccion( .t. )
       return .f.
    end if
-*/
+
    if !::lGrupoAlmacen( .t. )
       return .f.
    end if
@@ -100,7 +95,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    if !::lGrupoTemporada( .t. )
       return .f.
    end if
-/*
+
    if !::lGrupoOperario( .t. )
       return .t.
    end if
@@ -108,7 +103,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    if !::lGrupoMaquina( .t. )
       return .f.
    end if
-*/
+
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
@@ -133,11 +128,6 @@ METHOD OpenFiles() CLASS TFastProduccion
       DATABASE NEW ::oProMat     PATH ( cPatEmp() ) CLASS "PROMAT"      FILE "PROMAT.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
       DATABASE NEW ::oHorasPers  PATH ( cPatEmp() ) CLASS "HORASPERS"   FILE "PROHPER.DBF"   VIA ( cDriver() ) SHARED INDEX "PROHPER.CDX"
       DATABASE NEW ::oMaqLin     PATH ( cPatEmp() ) CLASS "MAQLIN"      FILE "MAQCOSL.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
-      DATABASE NEW ::oOperacion  PATH ( cPatEmp() ) CLASS "OPERACION"   FILE "OPERACIO.DBF"  VIA ( cDriver() ) SHARED INDEX "OPERACIO.CDX"
-      DATABASE NEW ::oTipOpera   PATH ( cPatEmp() ) CLASS "TIPOPERA"    FILE "TIPOPERA.DBF"  VIA ( cDriver() ) SHARED INDEX "TIPOPERA.CDX"
-      DATABASE NEW ::oSeccion    PATH ( cPatEmp() ) CLASS "SECCION"     FILE "SECCION.DBF"   VIA ( cDriver() ) SHARED INDEX "SECCION.CDX"
-      DATABASE NEW ::oPersonal   PATH ( cPatEmp() ) CLASS "PERSONAL"    FILE "OPET.DBF"      VIA ( cDriver() ) SHARED INDEX "OPET.CDX"
-      DATABASE NEW ::oMaquina    PATH ( cPatEmp() ) CLASS "MAQUINA"     FILE "MAQCOST.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOST.CDX"
       DATABASE NEW ::oProMaq     PATH ( cPatEmp() ) CLASS "PROMAQ"      FILE "PROMAQ.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAQ.CDX"
       DATABASE NEW ::oArticulos  PATH ( cPatEmp() ) CLASS "ARTICULOS"   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       DATABASE NEW ::oFamArt     PATH ( cPatEmp() ) CLASS "FAMART"      FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
@@ -171,32 +161,12 @@ METHOD CloseFiles() CLASS TFastProduccion
       ::oProLin:end()
    end if
 
-   if !Empty( ::oOperacion ) .and. ( ::oOperacion:Used() )
-      ::oOperacion:end()
-   end if
-
-   if !Empty( ::oTipOpera ) .and. ( ::oTipOpera:Used() )
-      ::oTipOpera:end()
-   end if
-
-   if !Empty( ::oSeccion ) .and. ( ::oSeccion:Used() )
-      ::oSeccion:end()
-   end if
-
    if !Empty( ::oProMat ) .and. ( ::oProMat:Used() )
       ::oProMat:end()
    end if
 
-   if !Empty( ::oPersonal ) .and. ( ::oPersonal:Used() )
-      ::oPersonal:end()
-   end if
-
    if !Empty( ::oHorasPers ) .and. ( ::oHorasPers:Used() )
       ::oHorasPers:end()
-   end if
-
-   if !Empty( ::oMaquina ) .and. ( ::oMaquina:Used() )
-      ::oMaquina:end()
    end if
 
    if !Empty( ::oMaqLin ) .and. ( ::oMaqLin:Used() )
