@@ -287,10 +287,10 @@ METHOD AddParteProducccion() CLASS TFastProduccion
          ::oDbf:dFecDoc    := ::oProCab:dFecOrd
 
          ::oDbf:nTotDoc    := 0
-         ::oDbf:nTotMat    := 0
-         ::oDbf:nTotPer    := 0
-         ::oDbf:nTotMaq    := 0
-         //::oDbf:nTotPrd    := nTotProd( ::oProCab:iNumOrd, ::oProLin:cAlias )
+         ::oDbf:nTotMat    := nTotMat( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProMat:cAlias )
+         ::oDbf:nTotPer    := nTotPer( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oHorasPers:cAlias )
+         ::oDbf:nTotMaq    := nTotMaq( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProMaq:cAlias )
+         ::oDbf:nTotPrd    := nTotProd( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProLin:cAlias )
 
          /*
          Añadimos un nuevo registro--------------------------------------------
