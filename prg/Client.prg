@@ -131,6 +131,7 @@
 #define _NTARCMB                 121      //   N      1     0
 #define _DLLACLI                 122
 #define _CTIMCLI                 123
+#define _CTIPINCI                124
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1398,6 +1399,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    if Empty( aTmp[ _CDTOATP ] )
       aTmp[ _CDTOATP ]     := Padr( "Atipico", 50 )
    end if
+
+   aTmp[ _CTIPINCI ]       := oUser():cTipoIncidencia()
 
    /*
    Colocamos los filtros
@@ -3240,6 +3243,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldIncidencias ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
 
+      REDEFINE GET aGet[ _CTIPINCI ] VAR aTmp[ _CTIPINCI ];
+         ID       450 ;
+         IDTEXT   451 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cTipInci( aGet[ _CTIPINCI ], TDataView():Get( "TipInci", nView ), aGet[ _CTIPINCI ]:oHelpText ), FiltraIncidencias( aTmp, oBrwInc ) ) ;
+         BITMAP   "LUPA" ;
+         ON CHANGE( FiltraIncidencias( aTmp, oBrwInc ) );
+         ON HELP  ( BrwIncidencia( TDataView():Get( "TipInci", nView ), aGet[ _CTIPINCI ], aGet[ _CTIPINCI ]:oHelpText ) ) ;
+         OF       fldIncidencias   
+
       /*
       Observaciones de clientes------------------------------------------------
       */
@@ -3549,11 +3562,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
          :AddResource( "EDIT16" )
+     end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Pago"
+         :bEditValue             := {|| cNbrFPago( ( TDataView():FacturasClientesCobros( nView ) )->cCodPgo, dbfFPago ) }
+         :nWidth                 := 200
+         :lHide                  := .t.
       end with
 
       /*
       Botones de la Caja de Dialogo__________________________________________
       */
+
+      REDEFINE BUTTON ;
+         ID       3 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) )
+
+      REDEFINE BUTTON ;
+         ID       4 ;
+         OF       oDlg ;
+         ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -3593,6 +3623,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          fldIncidencias:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
          fldIncidencias:AddFastKey( VK_F4, {|| DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .t. ) } )
 
+         oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
+         oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
+
          oDlg:AddFastKey(             VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
 
       end if
@@ -3608,6 +3641,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                         oBrwAtp:Load(),;
                         oBrwCon:Load(),;
                         oBrwRecCli:Load(),;
+                        aGet[ _CTIPINCI ]:lValid(),;
                         if( !empty( nTab ), oFld:setOption( nTab ), ),;
                         lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
                         LoadPageClient( aTmp[ _COD ] ) }
@@ -3634,6 +3668,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    oBmpRecibos:End()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function FiltraIncidencias( aTmp, oBrwInc )
+
+   if Empty( aTmp[ _CTIPINCI ] )
+      ( dbfTmpInc )->( OrdScope( 0, nil ) )
+      ( dbfTmpInc )->( OrdScope( 1, nil ) )
+   else
+      ( dbfTmpInc )->( OrdScope( 0, nil ) )
+      ( dbfTmpInc )->( OrdScope( 1, nil ) )
+      ( dbfTmpInc )->( OrdScope( 0, aTmp[ _CTIPINCI ] ) )
+      ( dbfTmpInc )->( OrdScope( 1, aTmp[ _CTIPINCI ] ) )
+   end if
+
+   ( dbfTmpInc )->( dbGoTop() )
+
+   if !Empty( oBrwInc )
+      oBrwInc:Refresh()
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -6493,8 +6549,16 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
    local oNomInci
    local cNomInci
 
-   if ( nMode == APPD_MODE .and. !empty( cCodCli ) )
-      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodCli" ) ) ]  := cCodCli
+   if nMode == APPD_MODE
+
+      if !empty( cCodCli )
+         aTmp[ ( dbfFacCliI )->( FieldPos( "cCodCli" ) ) ]  := cCodCli
+      end if
+      
+      if !Empty( oUser():cTipoIncidencia() )
+         aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ]  := oUser():cTipoIncidencia()
+      end if
+
    end if
 
    if !Empty( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ] )
@@ -8415,6 +8479,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en táctil" ,     "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "dLlaCli",   "D",  8, 0, "Última llamada del cliente" ,                   "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora última llamada del cliente" ,              "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "cTipInci",  "C",  5, 0, "Tipo de incidencia" ,                           "",                   "", "( cDbfCli )" } )
 
 RETURN ( aBase )
 
@@ -9097,10 +9162,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local lErrors     := .f.
    local cCodCli     := aTmp[ ( TDataView():Get( "Client", nView ) )->( fieldpos( "Cod" ) ) ]
    local cCodSubCta  := aTmp[ ( TDataView():Get( "Client", nView ) )->( fieldpos( "SubCta" ) ) ]
-/*
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    cTmpObr           := cGetNewFileName( cPatTmp() + "TmpObr" )
    cTmpBnc           := cGetNewFileName( cPatTmp() + "TmpBnc" )
    cTmpDoc           := cGetNewFileName( cPatTmp() + "TmpDoc" )
@@ -9151,8 +9216,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    dbCreate( cTmpInc, aSqlStruct( aCliInc() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( "TmpInc", @dbfTmpInc ), .f. )
 
-   ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-   ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodCli", "Dtos( dFecInc )", {|| Dtos( Field->dFecInc ) } ) )
+   ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() }, , , , , , , , , .t. ) )
+   ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodCli", "cCodTip + Dtos( dFecInc )", {|| Field->cCodTip + Dtos( Field->dFecInc ) } ) )
 
    ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
    ( dbfTmpInc )->( OrdCreate( cTmpInc, "cCodTip", "cCodTip", {|| Field->cCodTip } ) )
@@ -9270,7 +9335,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-/*
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
@@ -9282,7 +9346,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
 
 return ( lErrors )
 
@@ -9735,6 +9798,9 @@ if !Empty( dbfTmpInc )
       dbDel( TDataView():Get( "CliInc", nView ) )
       oMsgProgress():DeltaPos( 1 )
    end while
+
+   ( dbfTmpInc )->( OrdScope( 0, nil ) )
+   ( dbfTmpInc )->( OrdScope( 1, nil ) )
 
    oMsgText( "Archivando incidencias cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )

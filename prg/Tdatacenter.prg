@@ -2262,6 +2262,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ObrasT"
    oDataTable:cName        := cPatCli() + "ObrasT"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "ObrasT.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "ObrasT.Cdx"

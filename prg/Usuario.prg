@@ -43,6 +43,7 @@ REQUEST DBFCDX
 #define _DULTAUT                 32      //   D      8      0     Último documento aautomático
 #define _LNOOPCAJ                33      //   L      1      0 
 #define _LARQCIE                 34      //   L      1      0
+#define _CTIPINCI                35      //   C      3      0 
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -55,6 +56,7 @@ static dbfUser
 static dbfMapa
 static dbfCajT
 static dbfDelega
+static dbfTipInci
 
 static oOperario
 static oClaveRepetida
@@ -98,6 +100,9 @@ Function OpenFiles()
    USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
    SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
+   USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfTipInci ) )
+   SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
+
    if !Empty( oOperario )
       oOperario:OpenFiles()
    end if
@@ -138,11 +143,16 @@ Static Function CloseFiles()
       ( dbfDelega )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfTipInci )
+      ( dbfTipInci )->( dbCloseArea() )
+   end if
+
    dbfUser        := nil
    dbfMapa        := nil
    dbfCajT        := nil
    dbfEmp         := nil 
    dbfDelega      := nil
+   dbfTipInci     := nil
 
    if oWndBrw != nil
       oWndBrw     := nil
@@ -513,6 +523,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          ON HELP  ( oOperario:Buscar( aGet[ _CCODTRA ] ) ) ;
          OF       oDlg
 
+      REDEFINE GET aGet[ _CTIPINCI ] VAR aTmp[ _CTIPINCI ];
+         ID       450 ;
+         IDTEXT   451 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cTipInci( aGet[ _CTIPINCI ], dbfTipInci, aGet[ _CTIPINCI ]:oHelpText ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwIncidencia( dbfTipInci, aGet[ _CTIPINCI ], aGet[ _CTIPINCI ]:oHelpText ) ) ;
+         OF       oDlg
+
       REDEFINE BITMAP bmpImage ;
          ID       500 ;
          FILE     ( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) ) ;
@@ -670,7 +689,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
    oDlg:AddFastKey( VK_F1, {|| ChmHelp ("Usuarios") } )
 
-   oDlg:bStart    := {|| EvalGet( aGet, nMode ), oGet:SetFocus() }
+   oDlg:bStart    := {|| EvalGet( aGet, nMode ), oGet:SetFocus(), aGet[ _CTIPINCI ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( InitEdtRec( aTmp, aGet, oTree, oImgLst, bmpImage ) ) ;
@@ -2704,7 +2723,9 @@ Function aItmUsuario()
                      { "lDocAut",   "L",  1,  0, "Lógico documentos automáticos" },;
                      { "dUltAut",   "D",  8,  0, "Fecha último documento automático" },;
                      { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" },;
-                     { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" } }
+                     { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" },;
+                     { "cTipInci",  "C",  3,  0, "Tipo de incidencia por defecto" } }
+
 
 Return ( aBase )
 

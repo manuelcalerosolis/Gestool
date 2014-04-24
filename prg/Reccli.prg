@@ -4688,7 +4688,7 @@ Function rxRecCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumCli", "Str( nNumRem ) + cSufRem + cCodCli", {|| Str( Field->nNumRem ) + Field->cSufRem + Field->cCodCli } ) )
 
-      // Cuentas de remesas
+      // Cuentas de remesas----------------------------------------------------
 
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCtaRem", "cCtaRem", {|| Field->CCTAREM }, ) )
@@ -4716,6 +4716,9 @@ Function rxRecCli( cPath, oMeter )
 
       ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
+
+      ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FacCliP.Cdx", "iNumFac", "'21' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '21' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacCliT )->( dbCloseArea() )
 
