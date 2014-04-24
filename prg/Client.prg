@@ -2415,7 +2415,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       with object ( oBrwCon:AddCol() )
          :cHeader             := "Población"
          :bEditValue          := {|| ( dbfTmpCon )->cPobCon }
-         :nWidth              := 80
+         :nWidth              := 100
       end with
 
       with object ( oBrwCon:AddCol() )
@@ -2427,7 +2427,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       with object ( oBrwCon:AddCol() )
          :cHeader             := "Provincia"
          :bEditValue          := {|| ( dbfTmpCon )->cPrvCon }
-         :nWidth              := 80
+         :nWidth              := 100
       end with
 
       with object ( oBrwCon:AddCol() )
@@ -3606,6 +3606,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                         oBrwObr:Load(),;
                         oBrwCta:Load(),;
                         oBrwAtp:Load(),;
+                        oBrwCon:Load(),;
                         oBrwRecCli:Load(),;
                         if( !empty( nTab ), oFld:setOption( nTab ), ),;
                         lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
