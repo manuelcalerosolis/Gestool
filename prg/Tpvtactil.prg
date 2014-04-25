@@ -111,7 +111,7 @@ CLASS TpvTactil
    DATA oAgentes
    DATA oRuta
    DATA oAlmacen
-   DATA oArticuloDividido
+   DATA oArticuloPropiedades
    DATA oTarifaPrecioLinea
    DATA oTarifaPrecioLineaAgente
    DATA oDocument
@@ -499,6 +499,11 @@ CLASS TpvTactil
    METHOD DialogoPropiedadArticulo()
 
    //------------------------------------------------------------------------//
+
+   METHOD ResetPropiedadArticulos()                                  INLINE ( ::SetCodigoPropiedadArticulo1() ,;
+                                                                              ::SetCodigoPropiedadArticulo2() ,;
+                                                                              ::SetValorPropiedadArticulo1() ,; 
+                                                                              ::SetValorPropiedadArticulo2() )
 
    METHOD SetCodigoPropiedadArticulo1( cCodigoPropiedadArticulo )    INLINE ( ::cCodigoPropiedadArticulo1   := cCodigoPropiedadArticulo )
    METHOD SetCodigoPropiedadArticulo2( cCodigoPropiedadArticulo )    INLINE ( ::cCodigoPropiedadArticulo2   := cCodigoPropiedadArticulo )
@@ -2206,7 +2211,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oAlmacen                                  PATH ( cPatAlm() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oArticuloDividido                         PATH ( cPatArt() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+   DATABASE NEW ::oArticuloPropiedades                         PATH ( cPatArt() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
    DATABASE NEW ::oTarifaPrecioLinea                        PATH ( cPatArt() )   FILE "TARPREL.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
@@ -2572,8 +2577,8 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oAlmacen:End()
    end if
 
-   if ::oArticuloDividido != nil .and. ::oArticuloDividido:Used()
-      ::oArticuloDividido:End()
+   if ::oArticuloPropiedades != nil .and. ::oArticuloPropiedades:Used()
+      ::oArticuloPropiedades:End()
    end if
 
    if ::oTarifaPrecioLinea != nil .and. ::oTarifaPrecioLinea:Used()
@@ -2849,7 +2854,7 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oAgentes                                := nil
    ::oRuta                                   := nil
    ::oAlmacen                                := nil
-   ::oArticuloDividido                       := nil
+   ::oArticuloPropiedades                       := nil
    ::oTarifaPrecioLinea                      := nil
    ::oTarifaPrecioLineaAgente                := nil
    ::oDocument                               := nil
@@ -3150,8 +3155,6 @@ METHOD Resource() CLASS TpvTactil
       :bEditValue             := {|| ::oTemporalLinea:cValPr1 }
       :lHide                  := .t.
       :nWidth                 := ::ResizedCol( 20 )
-      :nDataStrAlign          := AL_RIGHT
-      :nHeadStrAlign          := AL_RIGHT
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -4702,61 +4705,66 @@ RETURN ( cFile )
 
 METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
+   // Buscamos dentro la tablas articulos por nombre de articulo---------------
+
+   if !::oArticulo:Seek( cCodigoArticulo )
+      Return ( .f. )
+   end if 
+
    // Tomamos las unidades del teclado-----------------------------------------
 
    ::nUnidades                      := ::nGetUnidades( .t. )
 
-   // Buscamos dentro la tablas articulos por nombre de articulo---------------
+   // Preguntamos si estamos combinando----------------------------------------
 
-   if ::oArticulo:Seek( cCodigoArticulo )
+   if ::lCombinandoDos
+   
+      ::AgregarCombinado( cCodigoArticulo )
+          
+   else 
 
-      if ::lCombinandoDos
-      
-         ::AgregarCombinado( cCodigoArticulo )
-             
-      else 
+      // Preguntamos si el articulo tiene propiedades--------------------------
 
-         // Preguntamos si el articulo tiene propiedades--------------------
+      if !empty( ::oArticulo:cCodPrp1 ) .and. !::DialogoPropiedadArticulo( ::oArticulo:Codigo )
+         Return ( .f. )
+      end if
 
-         if !empty( ::oArticulo:cCodPrp1 ) .and. !::DialogoPropiedadArticulo( ::oArticulo:Codigo )
-            Return ( .f. )
+      // Vemos si este atículo es acumulable-----------------------------------
+
+      if !::lAcumulaArticulo( cCodigoOrden )
+
+         // Agregamos el articulo----------------------------------------------
+
+         ::AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+
+         ::InitComentarios( .f. )
+
+         // Reseteamos las propiedades-----------------------------------------
+
+         ::ResetPropiedadArticulos()
+
+         // Combinados---------------------------------------------------------
+
+         if ::lCombinando
+            ::lCombinandoDos  := .t.
+            ::GoFamilia()
          end if
 
-         // Vemos si este atículo es acumulable--------------------------------
+      end if
 
-         if !::lAcumulaArticulo( cCodigoOrden )
+   end if 
 
-            // Agregamos el articulo------------------------------------------
 
-            ::AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+   // refrescos de pantalla-------------------------------------------------
 
-            ::InitComentarios( .f. )
+   ::oBrwLineas:Refresh()
 
-            if ::lCombinando
-               ::lCombinandoDos  := .t.
-               ::GoFamilia()
-            end if
+   ::SetTotal()
 
-         end if
-      end if 
-
-      // Informamos en el visor------------------------------------------------
-
-      ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
-
-      // refrescos de pantalla-------------------------------------------------
-
-      ::oBrwLineas:Refresh()
-
-      ::SetTotal()
-
-      ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
-
-   else
-
-      Return ( .f. )
-
-   end if
+   // Informamos en el visor------------------------------------------------
+   
+   ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
+   ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
 
 Return ( .t. )
 
@@ -4964,12 +4972,12 @@ METHOD DialogoPropiedadArticulo( cCodigoArticulo ) CLASS TpvTactil
 
    // Filtramos la tabla para que solo nos salgan las propiedades nuestras--------
 
-   ::oArticuloDividido:GetStatus()
+   ::oArticuloPropiedades:GetStatus()
 
-   nOrdAnt        := ::oArticuloDividido:OrdSetFocus( "cCodigo" )
+   nOrdAnt        := ::oArticuloPropiedades:OrdSetFocus( "cCodigo" )
 
-   ::oArticuloDividido:OrdScope( cCodigoArticulo )
-   ::oArticuloDividido:GoTop()
+   ::oArticuloPropiedades:OrdScope( cCodigoArticulo )
+   ::oArticuloPropiedades:GoTop()
 
    DEFINE DIALOG oDlgPropiedadArticulo RESOURCE "TPV_Propiedad_Articulo"
 
@@ -5014,27 +5022,24 @@ METHOD DialogoPropiedadArticulo( cCodigoArticulo ) CLASS TpvTactil
 
       oBrwPropiedades:CreateFromResource( 100 )
 
-      ::oArticuloDividido:SetBrowse( oBrwPropiedades )
+      ::oArticuloPropiedades:SetBrowse( oBrwPropiedades )
 
       with object ( oBrwPropiedades:AddCol() )
-         :bEditValue                   := {|| ::oArticuloDividido:cValPr1 }
+         :bEditValue                   := {|| cNombrePropiedad( ::oArticuloPropiedades:cCodPr1, ::oArticuloPropiedades:cValPr1, ::oPropiedadesLinea )  }
       end with
 
    ACTIVATE DIALOG oDlgPropiedadArticulo CENTER
 
    if oDlgPropiedadArticulo:nResult == IDOK
-      ::SetCodigoPropiedadArticulo1(   ::oArticuloDividido:cCodPr1 )
-      ::SetValorPropiedadArticulo1(    ::oArticuloDividido:cValPr1 )
-   else 
-      ::SetCodigoPropiedadArticulo1()
-      ::SetValorPropiedadArticulo1()
+      ::SetCodigoPropiedadArticulo1(   ::oArticuloPropiedades:cCodPr1 )
+      ::SetValorPropiedadArticulo1(    ::oArticuloPropiedades:cValPr1 )
    end if
 
    // Dejamos la tabla como estaba------------------------------------------------
 
-   ::oArticuloDividido:ClearScope()
-   ::oArticuloDividido:OrdSetFocus( nOrdAnt )
-   ::oArticuloDividido:SetStatus()
+   ::oArticuloPropiedades:ClearScope()
+   ::oArticuloPropiedades:OrdSetFocus( nOrdAnt )
+   ::oArticuloPropiedades:SetStatus()
 
 RETURN ( oDlgPropiedadArticulo:nResult == IDOK )
 
@@ -5057,7 +5062,7 @@ METHOD nPrecioArticulo( cCodigoArticulo ) CLASS TpvTactil
 
    if !empty( ::GetCodigoPropiedadArticulo1() )
 
-      nPrecio           := nPrecioPorPorpiedades( cCodigoArticulo, ::GetCodigoPropiedadArticulo1(), ::GetValorPropiedadArticulo1(), ::GetCodigoPropiedadArticulo2(), ::GetValorPropiedadArticulo2(), ::oArticuloDividido:cAlias )
+      nPrecio           := nPrecioPorPorpiedades( cCodigoArticulo, ::GetCodigoPropiedadArticulo1(), ::GetValorPropiedadArticulo1(), ::GetCodigoPropiedadArticulo2(), ::GetValorPropiedadArticulo2(), ::oArticuloPropiedades:cAlias )
 
       if nPrecio != 0
          Return ( nPrecio )
@@ -5145,6 +5150,10 @@ METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
             ::oTemporalLinea:cOrdOrd == cCodigoOrden                       .and. ;
             ::oTemporalLinea:nUntTil > 0                                   .and. ;
             ::oTemporalLinea:nLinMnu == nLineaMenu                         .and. ;
+            ::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1()    .and. ;
+            ::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1()     .and. ;
+            ::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2()    .and. ;
+            ::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2()     .and. ;
             ::nUnidades > 0
 
             /*

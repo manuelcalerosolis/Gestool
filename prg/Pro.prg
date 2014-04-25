@@ -2168,6 +2168,37 @@ RETURN ( cPrp )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION cNombrePropiedad( cCodigoPropiedad, cValorPropiedad, dbfPro )
+
+   local oBlock
+   local oError
+   local cNombrePropiedad
+
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if IsObject( dbfPro )
+      if dbfPro:Seek( cCodigoPropiedad + cValorPropiedad )
+         cNombrePropiedad     := dbfPro:cDesTbl
+      end if
+   else
+      if ( dbfPro )->( dbSeek( cCodigoPropiedad + cValorPropiedad ) )
+         cNombrePropiedad     := ( dbfPro )->cDesTbl
+      end if
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( cNombrePropiedad )
+
+//---------------------------------------------------------------------------//
+
 Static Function ChangelSndDoc( aTmp )
 
    local nRec
