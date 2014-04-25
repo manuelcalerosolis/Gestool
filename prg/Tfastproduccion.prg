@@ -384,7 +384,7 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetWorkArea(       "Lineas de costo de maquinaria", ::oProMaq:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de costo de maquinaria", cObjectsToReport( TDetMaquina():DefineFiles()  ) )
 
-    /*
+   /*
    Relaciones------------------------------------------------------------------
    */
 
