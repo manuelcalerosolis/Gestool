@@ -981,16 +981,21 @@ METHOD lGrupoOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoOperacion:Cargo:ValidDesde := {|oGet| if( ::oOperacion:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesOpe", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoOperacion:Cargo:ValidHasta := {|oGet| if( ::oOperacion:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesOpe", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoOperacion:Cargo:lImprimir  := lImp
+   ::oGrupoOperacion:Cargo:cBitmap     := "Worker2_Hammer2_16"
 
-   ::oImageList:AddMasked( TBitmap():Define( "Worker2_Hammer2_16" ), Rgb( 255, 0, 255 ) )
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Worker2_Hammer2_16" ), Rgb( 255, 0, 255 ) )
+   end if   
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoOperacion )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Worker2_Hammer2_16" ), Rgb( 255, 0, 255 ) )
-
-      ::oGrupoOperacion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Worker2_Hammer2_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoOperacion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      end if
 
       if lInitGroup
          if !Empty( ::oColNombre )
@@ -1049,16 +1054,20 @@ METHOD lGrupoTOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTOperacion:Cargo:ValidDesde := {|oGet| if( ::oTipOpera:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesTip", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTOperacion:Cargo:ValidHasta := {|oGet| if( ::oTipOpera:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesTip", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoTOperacion:Cargo:lImprimir  := lImp
+   ::oGrupoTOperacion:Cargo:cBitmap    := "Worker_Folder_Blue_16" 
 
-   ::oImageList:AddMasked( TBitmap():Define( "Worker_Folder_Blue_16" ), Rgb( 255, 0, 255 ) )
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Worker_Folder_Blue_16" ), Rgb( 255, 0, 255 ) )
+   end if   
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoTOperacion )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Worker_Folder_Blue_16" ), Rgb( 255, 0, 255 ) )
-
-      ::oGrupoTOperacion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) - 1
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Worker_Folder_Blue_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoTOperacion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) - 1
+      end if   
 
       if lInitGroup
          if !Empty( ::oColNombre )
@@ -1117,16 +1126,21 @@ METHOD lGrupoSeccion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoSeccion:Cargo:ValidDesde := {|oGet| if( ::oSeccion:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesSec", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoSeccion:Cargo:ValidHasta := {|oGet| if( ::oSeccion:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesSec", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoSeccion:Cargo:lImprimir  := lImp
+   ::oGrupoSeccion:Cargo:cBitmap    := "Group_Worker2_16"
 
-   ::oImageList:AddMasked( TBitmap():Define( "Group_Worker2_16" ), Rgb( 255, 0, 255 ) )
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Group_Worker2_16" ), Rgb( 255, 0, 255 ) )
+   end if
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoSeccion )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Group_Worker2_16" ), Rgb( 255, 0, 255 ) )
-
-      ::oGrupoSeccion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Group_Worker2_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoSeccion:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      end if   
 
       if lInitGroup
          if !Empty( ::oColNombre )
@@ -1260,16 +1274,20 @@ METHOD lGrupoMaquina( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoMaquina:Cargo:ValidDesde := {|oGet| if( ::oMaquina:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesMaq", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoMaquina:Cargo:ValidHasta := {|oGet| if( ::oMaquina:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cDesMaq", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoMaquina:Cargo:lImprimir  := lImp
+   ::oGrupoMaquina:Cargo:cBitmap    := "Robot_16"
 
-   ::oImageList:AddMasked( TBitmap():Define( "Robot_16" ), Rgb( 255, 0, 255 ) )
+   if !Empty( ::oImageList )   
+      ::oImageList:AddMasked( TBitmap():Define( "Robot_16" ), Rgb( 255, 0, 255 ) )
+   end if
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoMaquina )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Robot_16" ), Rgb( 255, 0, 255 ) )
-
-      ::oGrupoMaquina:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Robot_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoMaquina:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      end if   
 
       if lInitGroup
          if !Empty( ::oColNombre )
@@ -1328,16 +1346,20 @@ METHOD lGrupoOperario( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoOperario:Cargo:ValidDesde := {|oGet| if( ::oOperario:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomTra", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoOperario:Cargo:ValidHasta := {|oGet| if( ::oOperario:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomTra", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoOperario:Cargo:lImprimir  := lImp
+   ::oGrupoOperario:Cargo:cBitmap    := "Worker2_16"
 
-   ::oImageList:AddMasked( TBitmap():Define( "Worker2_16" ), Rgb( 255, 0, 255 ) )
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Worker2_16" ), Rgb( 255, 0, 255 ) )
+   end if   
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoOperario )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Worker2_16" ), Rgb( 255, 0, 255 ) )
-
-      ::oGrupoOperario:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Worker2_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoOperario:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      end if   
 
       if lInitGroup
          if !Empty( ::oColNombre )

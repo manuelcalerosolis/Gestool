@@ -40,6 +40,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD AddFacturaCliente()
    METHOD AddFacturaRectificativa()
    METHOD AddTicket()
+   METHOD AddRecibosCliente( cCodigoCliente )
 
    METHOD AddClientes()
 
@@ -373,6 +374,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                      { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Clientes\Ventas",               "File" => "Tickets de clientes.fr3" },;
                      { "Title" => "Facturación de clientes",      "Image" => 8, "Type" => "Facturación de clientes",       "Directory" => "Clientes\Ventas",               "File" => "Facturación de clientes.fr3" },;
                      { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Clientes\Ventas",               "File" => "Ventas.fr3" },;
+                     { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas",               "File" => "Recibos de clientes.fr3" },;
                   } ;
                   }  }
 
@@ -385,6 +387,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD DataReport() CLASS TFastVentasClientes
+
+   msgAlert( "DataReport")
 
    /*
    Zona de detalle-------------------------------------------------------------
@@ -515,7 +519,13 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportTicket( .t. )
 
+      case ::cReportType == "Recibos"
+
+         ::FastReportRecibosCliente()
+
    end case
+
+   msgAlert( "cReportType" + ::cReportType)
 
    ::AddVariable()
 
@@ -608,6 +618,10 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableLineasTicketCliente()
 
+      case ::cReportType == "Recibos"
+
+         ::AddVariableRecibosCliente()
+
    end case
 
    ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
@@ -677,6 +691,10 @@ METHOD lGenerate() CLASS TFastVentasClientes
       case ::cReportType == "Listado"
 
          ::AddClientes()
+
+      case ::cReportType == "Recibos"
+
+         ::AddRecibosCliente()   
 
    end case
 
@@ -1438,6 +1456,88 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
    ErrorBlock( oBlock )
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
+
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::oFacCliP:OrdSetFocus( "dPreCob" )
+
+      cExpHead          := 'dPreCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPreCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando recibos"
+      ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
+
+      ::oFacCliP:GoTop()
+      while !::lBreak .and. !::oFacCliP:Eof()
+
+         ::oDbf:Blank()
+
+         ::oDbf:cCodCli    := ::oFacCliP:cCodCli
+         ::oDbf:cNomCli    := ::oFacCliP:cNomCli
+         ::oDbf:cCodAge    := ::oFacCliP:cCodAge
+         ::oDbf:cCodPgo    := ::oFacCliP:cCodPgo
+         ::oDbf:cCodUsr    := ::oFacCliP:cCodUsr
+
+         ::oDbf:cCodRut    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, 'cCodRut' )
+         ::oDbf:cCodPos    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, 'cCodPos' )
+         ::oDbf:cCodGrp    := cGruCli( ::oFacCliP:cCodCli, ::oDbfCli )
+
+         ::oDbf:cTipDoc    := "Recibos clientes"
+         ::oDbf:cClsDoc    := REC_CLI          
+         ::oDbf:cSerDoc    := ::oFacCliP:cSerie
+         ::oDbf:cNumDoc    := Str( ::oFacCliP:nNumFac )
+         ::oDbf:cSufDoc    := ::oFacCliP:cSufFac
+         ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+         ::oDbf:nAnoDoc    := Year( ::oFacCliP:dPreCob )
+         ::oDbf:nMesDoc    := Month( ::oFacCliP:dPreCob )
+         ::oDbf:dFecDoc    := ::oFacCliP:dPreCob
+         ::oDbf:cHorDoc    := SubStr( ::oFacCliP:cHorCre, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ::oFacCliP:cHorCre, 4, 2 )
+
+         ::oDbf:nTotNet    := nTotRecCli( ::oFacCliP )
+         ::oDbf:nTotCob    := nTotCobCli( ::oFacCliP )
+
+         // Añadimos un nuevo registro--------------------------------------------
+
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
+         end if
+
+         msgWait( "procesa" + str( ::oFacCliP:OrdKeyCount() ), , .1 )
+
+         ::oFacCliP:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir recibos de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

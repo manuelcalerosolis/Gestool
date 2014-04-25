@@ -399,10 +399,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oProCab:end()
       end if 
 
-      if !Empty( ::oProLin ) .and. ( ::oProLin:Used() )
-         ::oProLin:end()
-      end if 
-
       if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
          ::oCnfFlt:end()
       end if

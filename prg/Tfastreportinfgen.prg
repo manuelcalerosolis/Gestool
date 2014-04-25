@@ -224,6 +224,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD FastReportFacturaRectificativa()
    METHOD FastReportTicket()
    METHOD FastReportParteProduccion()   
+   METHOD FastReportRecibosCliente()
 
    METHOD FastReportPedidoProveedor()
    METHOD FastReportAlbaranProveedor()
@@ -284,6 +285,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddVariableFacturaCliente()
    METHOD AddVariableLineasFacturaCliente()
+   METHOD AddVariableRecibosCliente()
+
    METHOD cDetalleFacturasClientes()                              INLINE ( cDesFacCli ( ::oFacCliL:cAlias ) )
    METHOD nTotalUnidadesFacturasClientes()                        INLINE ( nTotNFacCli( ::oFacCliL:cAlias ) )
    METHOD nPrecioUnitarioFacturasClientes()                       INLINE ( nTotUFacCli( ::oFacCliL:cAlias ) ) 
@@ -924,6 +927,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
       ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
       ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
       ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
 
       if !Empty( ::oTreeReporting )
          ::oTreeReporting:SetImageList( ::oTreeImageList )
@@ -3190,6 +3194,25 @@ METHOD FastReportTicket()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD FastReportRecibosCliente()
+
+   msgalert( "FastReportRecibosCliente")
+
+   ::oFacCliP:OrdSetFocus( "iNumFac" )
+   
+   ::oFastReport:SetWorkArea(       "Recibos de clientes", ::oFacCliP:nArea )
+   ::oFastReport:SetFieldAliases(   "Recibos de clientes", cItemsToReport( aItmRecCli() ) )
+   
+   ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetResyncPair(     "Informe", "Recibos de clientes" )
+
+RETURN ( Self )
+
+/*
+Rectificativas--------------------------------------------------------------
+*/
+
 /*
 Produccion--------------------------------------------------------------------------
 */
@@ -3428,6 +3451,12 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD AddVariableRecibosCliente()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddVariableLineasFacturaCliente()
 
    ::oFastReport:AddVariable(     "Lineas de facturas",   "Detalle del artículo línea de factura",                      "CallHbFunc( 'oTInfGen', ['cDetalleFacturasClientes'])"                       )
@@ -3440,7 +3469,6 @@ METHOD AddVariableLineasFacturaCliente()
 
    ::oFastReport:AddVariable(     "Lineas de facturas",   "Total descuento porcentual artículo línea de factura",      "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPorcentualLineaFacturasClientes'])" )
    ::oFastReport:AddVariable(     "Lineas de facturas",   "Total descuento promocional artículo línea de factura",     "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPromocionalLineaFacturasClientes'])")
-
 
 RETURN ( Self )
 

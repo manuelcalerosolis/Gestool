@@ -104,6 +104,10 @@ CLASS TUser
    Data     _EnUso                     INIT     .f.
    Method   lEnUso( lNewVal )          INLINE   ( if( isLogic( lNewVal ), ::_EnUso := lNewVal, ::_EnUso ) )
 
+   Data     _TipoIncidencia            INIT ""
+   Method   cTipoIncidencia( cNewVal ) INLINE if( cNewVal != nil, ::_TipoIncidencia := cNewVal, ::_TipoIncidencia )
+
+
    //------------------------------------------------------------------------//
 
    Data     _Delegacion                INIT space( 2 )
@@ -318,6 +322,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::dUltAuto(          ( ::oDbf )->dUltAut )
          ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
          ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj )
+         ::cTipoIncidencia(   ( ::oDbf )->cTipInci )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
