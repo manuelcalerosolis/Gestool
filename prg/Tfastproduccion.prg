@@ -212,6 +212,9 @@ METHOD Create( uParam ) CLASS TFastProduccion
    ::AddField( "nMesDoc",     "N",  2, 0, {|| "" },   "Mes del documento"                       )
    ::AddField( "dFecDoc",     "D",  8, 0, {|| "" },   "Fecha del documento"                     )
 
+   ::AddField( "cCodOpe",     "C",  3, 0, {|| "" },   "Operación"                               )
+   ::AddField( "cCodSec",     "C",  3, 0, {|| "" },   "Sección"                                 )
+
    ::AddField( "nTotDoc",     "N", 16, 6, {|| "" },   "Total documento"                         )
    ::AddField( "nTotPrd",     "N", 16, 6, {|| "" },   "Total producido"                         )
    ::AddField( "nTotMat",     "N", 16, 6, {|| "" },   "Total materias primas"                   )
@@ -225,15 +228,14 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 Method lValidRegister( cCodigoProveedor ) CLASS TFastProduccion
-/*
-   if ( ::oDbf:cCodPrv >= ::oGrupoProveedor:Cargo:Desde     .and. ::oDbf:cCodPrv <= ::oGrupoProveedor:Cargo:Hasta )  .and.;
-      ( ::oDbf:cCodGrp >= ::oGrupoGProveedor:Cargo:Desde    .and. ::oDbf:cCodGrp <= ::oGrupoGProveedor:Cargo:Hasta ) .and.;
-      ( ::oDbf:cCodPgo >= ::oGrupoFpago:Cargo:Desde         .and. ::oDbf:cCodPgo <= ::oGrupoFpago:Cargo:Hasta )
+
+   if ( ::oDbf:cCodOpe >= ::oGrupoOperacion:Cargo:Desde     .and. ::oDbf:cCodOpe <= ::oGrupoOperacion:Cargo:Hasta )  .and.;
+      ( ::oDbf:cCodSec >= ::oGrupoSeccion:Cargo:Desde       .and. ::oDbf:cCodSec <= ::oGrupoSeccion:Cargo:Hasta )
 
       Return .t.
 
    end if
-*/
+
 /*
 lGrupoOperacion
 lGrupoTOperacion
@@ -249,7 +251,7 @@ lGrupoOperario
 lGrupoMaquina
 */
 
-RETURN ( .t. )
+RETURN ( .f. )
 
 
 //---------------------------------------------------------------------------//
@@ -286,11 +288,14 @@ METHOD AddParteProducccion() CLASS TFastProduccion
          ::oDbf:nMesDoc    := Month( ::oProCab:dFecOrd )
          ::oDbf:dFecDoc    := ::oProCab:dFecOrd
 
-         ::oDbf:nTotDoc    := 0
+         ::oDbf:cCodOpe    := ::oProCab:cCodOpe
+         ::oDbf:cCodSec    := ::oProCab:cCodSec
+
+         ::oDbf:nTotPrd    := nTotProd( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProLin:cAlias )
          ::oDbf:nTotMat    := nTotMat( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProMat:cAlias )
          ::oDbf:nTotPer    := nTotPer( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oHorasPers:cAlias )
          ::oDbf:nTotMaq    := nTotMaq( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProMaq:cAlias )
-         ::oDbf:nTotPrd    := nTotProd( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProLin:cAlias )
+         ::oDbf:nTotDoc    := nTotParte( ::oProCab:cSerOrd + Str(::oProCab:nNumOrd ) + ::oProCab:cSufOrd, ::oProLin:cAlias, ::oProMat:cAlias, ::oHorasPers:cAlias, ::oProMaq:cAlias )
 
          /*
          Añadimos un nuevo registro--------------------------------------------
@@ -370,16 +375,31 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetWorkArea(       "Lineas de material producido", ::oProLin:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de material producido", cObjectsToReport( TDetProduccion():DefineFiles()  ) )
 
+   ::oFastReport:SetWorkArea(       "Lineas de materias primas", ::oProMat:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de materias primas", cObjectsToReport( TDetMaterial():DefineFiles()  ) )
+
+   ::oFastReport:SetWorkArea(       "Lineas de horas de personal", ::oHorasPers:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de horas de personal", cObjectsToReport( TDetHorasPersonal():DefineFiles()  ) )
+
+   ::oFastReport:SetWorkArea(       "Lineas de costo de maquinaria", ::oProMaq:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de costo de maquinaria", cObjectsToReport( TDetMaquina():DefineFiles()  ) )
+
     /*
    Relaciones------------------------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",         {|| cCodEmp() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de materias primas",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de horas de personal",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de costo de maquinaria",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
 
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas de material producido" )
+
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
-
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de material producido" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de materias primas" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de horas de personal" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de costo de maquinaria" )
 
    //----------------------------------------------------------
 
