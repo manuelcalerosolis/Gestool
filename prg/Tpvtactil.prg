@@ -381,6 +381,11 @@ CLASS TpvTactil
 
    DATA lCopiaComanda
 
+   DATA cCodigoPropiedadArticulo1   
+   DATA cCodigoPropiedadArticulo2
+   DATA cValorPropiedadArticulo1   
+   DATA cValorPropiedadArticulo2
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -490,6 +495,20 @@ CLASS TpvTactil
    METHOD AgregarMenu()
 
    METHOD DialogoPropiedadArticulo()
+
+   //------------------------------------------------------------------------//
+
+   METHOD SetCodigoPropiedadArticulo1( cCodigoPropiedadArticulo )    INLINE ( ::cCodigoPropiedadArticulo1   := cCodigoPropiedadArticulo )
+   METHOD SetCodigoPropiedadArticulo2( cCodigoPropiedadArticulo )    INLINE ( ::cCodigoPropiedadArticulo2   := cCodigoPropiedadArticulo )
+   METHOD SetValorPropiedadArticulo1( cValorPropiedadArticulo )      INLINE ( ::cValorPropiedadArticulo1    := cValorPropiedadArticulo )
+   METHOD SetValorPropiedadArticulo2( cValorPropiedadArticulo )      INLINE ( ::cValorPropiedadArticulo2    := cValorPropiedadArticulo )
+
+   METHOD GetCodigoPropiedadArticulo1()                              INLINE ( if( empty( ::cCodigoPropiedadArticulo1 ), '', ::cCodigoPropiedadArticulo1 ) )
+   METHOD GetCodigoPropiedadArticulo2()                              INLINE ( if( empty( ::cCodigoPropiedadArticulo2 ), '', ::cCodigoPropiedadArticulo2 ) )
+   METHOD GetValorPropiedadArticulo1()                               INLINE ( if( empty( ::cValorPropiedadArticulo1 ),  '', ::cValorPropiedadArticulo1 ) )
+   METHOD GetValorPropiedadArticulo2()                               INLINE ( if( empty( ::cValorPropiedadArticulo2 ),  '', ::cValorPropiedadArticulo2 ) )
+
+   //------------------------------------------------------------------------//
 
    METHOD nPrecioArticulo()
 
@@ -3110,7 +3129,7 @@ METHOD Resource() CLASS TpvTactil
       :nHeadStrAlign          := AL_RIGHT
    end with
 
-    with object ( ::oBrwLineas:AddCol() )
+   with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Nº Linea menú"
       :bEditValue             := {|| ::oTemporalLinea:nLinMnu }
       :lHide                  := .t.
@@ -3119,9 +3138,9 @@ METHOD Resource() CLASS TpvTactil
       :nHeadStrAlign          := AL_RIGHT
    end with
 
-    with object ( ::oBrwLineas:AddCol() )
-      :cHeader                := "Recno"
-      :bEditValue             := {|| ::oTemporalLinea:Recno() }
+   with object ( ::oBrwLineas:AddCol() )
+      :cHeader                := "Propiedades"
+      :bEditValue             := {|| ::oTemporalLinea:cValPr1 }
       :lHide                  := .t.
       :nWidth                 := ::ResizedCol( 20 )
       :nDataStrAlign          := AL_RIGHT
@@ -4690,22 +4709,29 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
                 
          else 
 
+            // Preguntamos si el articulo tiene propiedades--------------------
+
+            if !empty( ::oArticulo:cCodPrp1 ) .and. !::DialogoPropiedadArticulo( ::oArticulo:Codigo )
+               Return ( .f. )
+            end if
+
             // Vemos si este atículo es acumulable--------------------------------
 
             if !::lAcumulaArticulo( cCodigoOrden )
+
+               // Agregamos el articulo------------------------------------------
 
                ::AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
                ::InitComentarios( .f. )
 
                if ::lCombinando
-                  ::lCombinandoDos     := .t.
+                  ::lCombinandoDos  := .t.
                   ::GoFamilia()
                end if
 
             end if
-
-         end if
+         end if 
 
          // Informamos en el visor------------------------------------------------
 
@@ -4823,7 +4849,6 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
 
-
    ::oTemporalLinea:Append()
    ::oTemporalLinea:Blank()
 
@@ -4862,31 +4887,22 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
       ::oTemporalLinea:cOrdOrd   := cCodigoOrden
    else
       ::oTemporalLinea:cOrdOrd   := ::oArticulo:cOrdOrd
-
    end if
 
-// Si forma parte de un menú su precio lo ponemos a 0--------------------------
-
-   if Empty( ::oTemporalLinea:nLinMnu )
-      ::oTemporalLinea:nPvpTil      := 0
-   else
-      ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
-   end if
-
+   // Guardamos las propiedades del articulo-----------------------------------
 
    if !Empty( ::oArticulo:cCodPrp1 )
-      
-      msgAlert(::oArticulo:Codigo, "::oArticulo:Codigo")
-
-         msgAlert("Tiene alguna propiedad")
-         ::DialogoPropiedadArticulo( .t., ::oArticulo:Codigo )
-
-
+      ::oTemporalLinea:cCodPr1      := ::GetCodigoPropiedadArticulo1()
+      ::oTemporalLinea:cValPr1      := ::GetValorPropiedadArticulo1()
    end if
+
+   // Obtenemos el precio del articulo-----------------------------------------
+
+   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
 
    ::oTemporalLinea:Save()
 
-   // Agregamos los kits si es el caso-----------------------------------
+   // Agregamos los kits si es el caso-----------------------------------------
 
    ::AgregarKit( cCodigoArticulo, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
 
@@ -4923,20 +4939,20 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD DialogoPropiedadArticulo( lForced, cCodigoArticulo ) CLASS TpvTactil
+METHOD DialogoPropiedadArticulo( cCodigoArticulo ) CLASS TpvTactil
 
-   local oDlgPropiedadArticulo
+   local nOrdAnt
    local oBrwPropiedades
+   local oDlgPropiedadArticulo
 
-   DEFAULT lForced   := .f.
+   // Filtramos la tabla para que solo nos salgan las propiedades nuestras--------
 
-   //  Mostramos las propiedades si nos fuerzan
+   ::oArticuloDividido:GetStatus()
 
-   if !lForced
-      RETURN ( nil )
-   end if
+   nOrdAnt        := ::oArticuloDividido:OrdSetFocus( "cCodigo" )
 
-   ::oArticuloDividido:SetScope( cCodigoArticulo )
+   ::oArticuloDividido:OrdScope( cCodigoArticulo )
+   ::oArticuloDividido:GoTop()
 
    DEFINE DIALOG oDlgPropiedadArticulo RESOURCE "TPV_Propiedad_Articulo"
 
@@ -4956,7 +4972,7 @@ METHOD DialogoPropiedadArticulo( lForced, cCodigoArticulo ) CLASS TpvTactil
          BITMAP   "Check_32" ;
          ID       IDOK ;
          OF       oDlgPropiedadArticulo ;
-         ACTION   ( /*::EndPropiedades( oDlgComentarios, oGetComentario )*/ nil )
+         ACTION   ( oDlgPropiedadArticulo:End( IDOK ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Delete_32" ;
@@ -4965,9 +4981,7 @@ METHOD DialogoPropiedadArticulo( lForced, cCodigoArticulo ) CLASS TpvTactil
          ACTION   ( oDlgPropiedadArticulo:End() )
 
 
-      // Montamos el browse de propiedades
-
-      msgAlert(::oArticuloDividido:cCodArt, "::oArticuloDividido:cCodArt")
+      // Montamos el browse de propiedades-------------------------------------
 
       oBrwPropiedades                  := IXBrowse():New( oDlgPropiedadArticulo )
 
@@ -4977,34 +4991,35 @@ METHOD DialogoPropiedadArticulo( lForced, cCodigoArticulo ) CLASS TpvTactil
       oBrwPropiedades:cName            := "Propiedades de artículos"
       oBrwPropiedades:lHeader          := .f.
       oBrwPropiedades:lHScroll         := .f.
-      oBrwPropiedades:nRowHeight       := 45
+      oBrwPropiedades:nRowHeight       := 60
       
       oBrwPropiedades:SetFont( ::oFntBrw )
 
       oBrwPropiedades:CreateFromResource( 100 )
 
-
       ::oArticuloDividido:SetBrowse( oBrwPropiedades )
 
-
       with object ( oBrwPropiedades:AddCol() )
-         :bEditValue                         := {|| ::oArticuloDividido:cValPr1 }
+         :bEditValue                   := {|| ::oArticuloDividido:cValPr1 }
       end with
-
-
-      oBrwPropiedades:bLClicked              := {|| msgAlert("le he dado") }
-
-      oDlgPropiedadArticulo:bStart           := {|| msgAlert("le he dado") }
-
-
-      ::oArticuloDividido:ClearScope()
-
-
-
 
    ACTIVATE DIALOG oDlgPropiedadArticulo CENTER
 
-RETURN ( nil )
+   if oDlgPropiedadArticulo:nResult == IDOK
+      ::SetCodigoPropiedadArticulo1(   ::oArticuloDividido:cCodPr1 )
+      ::SetValorPropiedadArticulo1(    ::oArticuloDividido:cValPr1 )
+   else 
+      ::SetCodigoPropiedadArticulo1()
+      ::SetValorPropiedadArticulo1()
+   end if
+
+   // Dejamos la tabla como estaba------------------------------------------------
+
+   ::oArticuloDividido:ClearScope()
+   ::oArticuloDividido:OrdSetFocus( nOrdAnt )
+   ::oArticuloDividido:SetStatus()
+
+RETURN ( oDlgPropiedadArticulo:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -5014,27 +5029,40 @@ METHOD nPrecioArticulo() CLASS TpvTactil
    local cCodGrp
    local nPrecio        := 0
    local nTotalLinea    := 0
-   local cCodArt        := ::oArticulo:Codigo
-   local cCodCli        := ::oTiketCabecera:cCliTik
-   local nTarifa        := ::nTarifaSolo
+
+   // si la pertenece a un menu el precio va en el menu---------------------------
+
+   if ::oTemporalLinea:nLinMnu != 0
+      Return ( nPrecio )
+   end if 
+
+   // Propiedad del articulo------------------------------------------------------
+
+   if !empty( ::oTemporalLinea:cCodPr1 )
+      nPrecio           := nPrecioPorPorpiedades( ::oTemporalLinea:cCbaTil, ::oTemporalLinea:cCodPr1, ::oTemporalLinea:cValPr1, ::oTemporalLinea:cCodPr2, ::oTemporalLinea:cValPr2, ::oArticuloDividido:cAlias )
+
+      if nPrecio != 0
+         Return ( nPrecio )
+      end if 
+   end if 
 
    // Obtenemos el precio normal del artículo-------------------------------------
 
-   nPrecio              := cRetPreArt( cCodArt, nTarifa, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+   nPrecio              := cRetPreArt( ::oTemporalLinea:cCbaTil, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
 
    // Si el artículo está de oferta cambiamos el precio hasta la oferta-----------
 
    cCodGrp              := RetGrpCli( ::oTiketCabecera:cCliTik, ::oCliente:cAlias )
 
-   sOferta              := sOfertaArticulo( cCodArt, ::oTiketCabecera:cCliTik, cCodGrp, 1, GetSysDate(), ::oArticulosOfertas:cAlias, nTarifa, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
+   sOferta              := sOfertaArticulo( ::oTemporalLinea:cCbaTil, ::oTiketCabecera:cCliTik, cCodGrp, 1, GetSysDate(), ::oArticulosOfertas:cAlias, ::nTarifaSolo, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
    if !Empty( sOferta ) 
       nPrecio           := sOferta:nPrecio
    end if
 
    // Si el cliente tiene una tarifa atípica la buscamos tb-----------------------
 
-   if lBuscarAtipicaArticulo( cCodCli, cCodGrp, GetSysDate(), cCodArt, Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oAtipicasCliente:cAlias )
-      nPrecio           := nImpAtp( nTarifa, ::oAtipicasCliente:cAlias, , nIva( ::oTipoIva, ::oArticulo:TipoIva ) )
+   if lBuscarAtipicaArticulo( ::oTiketCabecera:cCliTik, cCodGrp, GetSysDate(), ::oTemporalLinea:cCbaTil, Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oAtipicasCliente:cAlias )
+      nPrecio           := nImpAtp( ::nTarifaSolo, ::oAtipicasCliente:cAlias, , nIva( ::oTipoIva, ::oArticulo:TipoIva ) )
    end if   
 
 Return ( nPrecio )
@@ -5085,6 +5113,21 @@ METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
          if empty( cCodigoOrden )
             cCodigoOrden   := ::oArticulo:cOrdOrd
          end if 
+
+         
+
+         // Si es linea de menú le asignamos el precio 0 para que acumule.-----
+         if !Empty( ::oTemporalLinea:nLinMnu )
+            nPrecioLinea   := 0
+         end if
+
+         /* 
+            Comprobamos si el valor de la propiedad es la misma que la que seleccionamos 
+            y hacemos que nos calcule el precio teniendo en cuenta la propiedad.
+         */
+         if ::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1()
+            nPrecioLinea   := ::nPrecioArticulo()
+         end if
 
          // Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
 
@@ -5547,11 +5590,15 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-//METHOD EndPropiedadArticulo( oDlg ) CLASS TpvTactil
+/*METHOD EndPropiedadArticulo( oDlg ) CLASS TpvTactil
 
+   local nPrecio                := Alltrim( oGetComentario:VarGet() )
 
+   ::oTemporalLinea:FieldPutByName( "nPvpTil", nPrecio )
 
-//Return ( nil )
+   oDlg:End( IDOK )
+
+Return ( nil )*/
 
 //---------------------------------------------------------------------------//
 

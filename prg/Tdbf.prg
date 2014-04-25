@@ -1799,7 +1799,7 @@ METHOD GetStatus( lInit ) CLASS TDbf
         ::SetIndex( 1 )
     end if
 
-return ( ::aStatus )
+return( ::aStatus )
 
 //----------------------------------------------------------------------------//
 

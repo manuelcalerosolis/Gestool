@@ -2073,34 +2073,52 @@ Return ( nPreAlq )
 
 //---------------------------------------------------------------------------//
 
+Function nPrecioPorPorpiedades( cCodigoArticulo, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv, nTarPre, lIvaInc )
+
+   local nPreVta        := 0
+
+   DEFAULT nTarPre      := 1
+   DEFAULT lIvaInc      := .t.
+
+   if dbSeekInOrd( cCodigoArticulo + cCodPr1 + cCodPr2 + cValPr1 + cValPr2, "cCodArt", dbfArtDiv )
+
+      do case
+         case nTarPre <= 1
+            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva1, ( dbfArtDiv )->nPreVta1 )
+         case nTarPre == 2
+            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva2, ( dbfArtDiv )->nPreVta2 )
+         case nTarPre == 3
+            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva3, ( dbfArtDiv )->nPreVta3 )
+         case nTarPre == 4
+            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva4, ( dbfArtDiv )->nPreVta4 )
+         case nTarPre == 5
+            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva5, ( dbfArtDiv )->nPreVta5 )
+         case nTarPre == 6
+            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva6, ( dbfArtDiv )->nPreVta6 )
+      end case
+
+   end if
+
+Return ( nPreVta )
+
+//---------------------------------------------------------------------------//
+
 Function nPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc, dbfArtDiv, dbfTarPreL, cCodTar )
 
    local nPreVta        := 0
 
+   DEFAULT nTarPre      := 1
+   DEFAULT lIvaInc      := .t.
+
    if Empty( cCodTar )
 
-      if dbSeekInOrd( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2, "cCodArt", dbfArtDiv )
-
-         do case
-            case nTarPre <= 1
-               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva1, ( dbfArtDiv )->nPreVta1 )
-            case nTarPre == 2
-               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva2, ( dbfArtDiv )->nPreVta2 )
-            case nTarPre == 3
-               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva3, ( dbfArtDiv )->nPreVta3 )
-            case nTarPre == 4
-               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva4, ( dbfArtDiv )->nPreVta4 )
-            case nTarPre == 5
-               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva5, ( dbfArtDiv )->nPreVta5 )
-            case nTarPre == 6
-               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva6, ( dbfArtDiv )->nPreVta6 )
-         end case
-
-      end if
+      nPreVta           := nPrecioPorPorpiedades( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv, nTarPre, lIvaInc )
 
    else
 
-      nPreVta           := RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
+      if !empty( dbfTarPreL )
+         nPreVta        := RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
+      end if
 
    end if
 

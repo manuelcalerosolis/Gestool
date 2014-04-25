@@ -15313,6 +15313,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArticulo )->( ordCreate( cPath + "ArtDiv.Cdx", "cValPrp", "CCODART + CVALPR1 + CVALPR2", {|| Field->CCODART + Field->CVALPR1 + Field->CVALPR2 } ) )
 
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ArtDiv.Cdx", "cCodigo", "CCODART", {|| Field->CCODART } ) )
+
       ( dbfArticulo )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
