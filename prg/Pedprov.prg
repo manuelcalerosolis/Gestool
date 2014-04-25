@@ -3456,9 +3456,10 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             Preguntamos si el regimen de " + cImp() + " es distinto de Exento-------------
             */
 
-            aGet[ _NIVA ]:cText( nIva( dbfIva, ( dbfArticulo )->TipoIva ) )
-
-            aTmp[ _NREQ ]     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+            if aTmpPed[ _NREGIVA ] <= 1
+                  aGet[ _NIVA ]:cText( nIva( dbfIva, ( dbfArticulo )->TipoIva ) )
+                  aTmp[ _NREQ ]     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+            end if
 
             if ( dbfArticulo )->nCajEnt != 0
                aGet[ _NCANPED ]:cText( ( dbfArticulo )->nCajEnt )

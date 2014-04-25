@@ -5122,13 +5122,17 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             Preguntamos si el regimen de impuestos es distinto de Exento-------------
             */
 
-            nIva                 := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+            if aTmpAlb[ _NREGIVA ] <= 1
 
-            aGet[ _NIVA    ]:cText( nIva )
-            aGet[ _NIVALIN ]:cText( nIva )
-            aGet[ _LIVALIN ]:Click( ( dbfArticulo )->lIvaInc ):Refresh()
+               nIva                 := nIva( dbfIva, ( dbfArticulo )->TipoIva )
 
-            aTmp[ _NREQ    ]  := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+               aGet[ _NIVA    ]:cText( nIva )
+               aGet[ _NIVALIN ]:cText( nIva )
+               aGet[ _LIVALIN ]:Click( ( dbfArticulo )->lIvaInc ):Refresh()
+
+               aTmp[ _NREQ    ]  := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+
+            end if   
 
             aGet[ _CDETALLE]:cText( ( dbfArticulo )->Nombre )
 
