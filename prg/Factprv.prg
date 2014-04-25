@@ -5942,12 +5942,16 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             Preguntamos si el regimen de " + cImp() + " es distinto de Exento
             */
 
-            nIva           := nIva( dbfIva, ( dbfArticulo )->TipoIva )
-            aGet[ _NIVA    ]:cText( nIva )
-            aGet[ _NIVALIN ]:cText( nIva )
-            aGet[ _LIVALIN ]:Click( ( dbfArticulo )->lIvaInc ):Refresh()
+            if aTmpFac[ _NREGIVA ] <= 1
 
-            aTmp[ _NREQ ]  := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+               nIva           := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+               aGet[ _NIVA    ]:cText( nIva )
+               aGet[ _NIVALIN ]:cText( nIva )
+               aGet[ _LIVALIN ]:Click( ( dbfArticulo )->lIvaInc ):Refresh()
+
+               aTmp[ _NREQ ]  := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+
+            end if   
 
             if ( dbfArticulo )->nCajEnt != 0
                aGet[_NCANENT]:cText( ( dbfArticulo )->nCajEnt )
