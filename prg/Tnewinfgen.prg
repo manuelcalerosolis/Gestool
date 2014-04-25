@@ -18,6 +18,14 @@ memvar cGrupoAgenteDesde
 memvar cGrupoAgenteHasta
 memvar cGrupoProveedorDesde
 memvar cGrupoProveedorHasta
+memvar cGrupoTemporadaDesde
+memvar cGrupoTemporadaHasta
+memvar cGrupoCategoriaDesde
+memvar cGrupoCategoriaHasta
+memvar cGrupoFamiliaDesde
+memvar cGrupoFamiliaHasta
+memvar cGrupoTArticuloDesde
+memvar cGrupoTArticuloHasta
 
 //---------------------------------------------------------------------------//
 
@@ -3905,12 +3913,26 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoFamilia )
+
+      public cGrupoFamiliaDesde           := ::oGrupoFamilia:Cargo:Desde
+      public cGrupoFamiliaHasta           := ::oGrupoFamilia:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de familia",  "GetHbVar('cGrupoFamiliaDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de familia",  "GetHbVar('cGrupoFamiliaHasta')" )
+
    end if
 
    if !Empty( ::oGrupoGFamilia )
    end if
 
    if !Empty( ::oGrupoTArticulo )
+
+      public cGrupoTArticuloDesde           := ::oGrupoTArticulo:Cargo:Desde
+      public cGrupoTArticuloHasta           := ::oGrupoTArticulo:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de tipo de artículo",  "GetHbVar('cGrupoTArticuloDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de tipo de artículo",  "GetHbVar('cGrupoTArticuloHasta')" )
+
    end if
 
    if !Empty( ::oGrupoFabricante )
@@ -3920,6 +3942,13 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoCategoria )
+
+      public cGrupoCategoriaDesde           := ::oGrupoCategoria:Cargo:Desde
+      public cGrupoCategoriaHasta           := ::oGrupoCategoria:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de categoria",  "GetHbVar('cGrupoCategoriaDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de categoria",  "GetHbVar('cGrupoCategoriaHasta')" )
+
    end if
 
    if !Empty( ::oGrupoRuta )
@@ -3939,6 +3968,11 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoTemporada )
+      public cGrupoTemporadaDesde           := ::oGrupoTemporada:Cargo:Desde
+      public cGrupoTemporadaHasta           := ::oGrupoTemporada:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de temporada",  "GetHbVar('cGrupoTemporadaDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de temporada",  "GetHbVar('cGrupoTemporadaHasta')" )
    end if
 
    if !Empty( ::oGrupoIVA )
