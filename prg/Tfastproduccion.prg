@@ -133,7 +133,7 @@ METHOD OpenFiles() CLASS TFastProduccion
       DATABASE NEW ::oProMat     PATH ( cPatEmp() ) CLASS "PROMAT"      FILE "PROMAT.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
       DATABASE NEW ::oProPer     PATH ( cPatEmp() ) CLASS "PROPER"      FILE "PROPER.DBF"    VIA ( cDriver() ) SHARED INDEX "PROPER.CDX"
       DATABASE NEW ::oHorasPers  PATH ( cPatEmp() ) CLASS "HORASPERS"   FILE "PROHPER.DBF"   VIA ( cDriver() ) SHARED INDEX "PROHPER.CDX"
-      DATABASE NEW ::oMaqLin     PATH ( cPatEmp() ) CLASS "MAQLIN"      FILE "MAQCOSL.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
+      DATABASE NEW ::oMaqCos     PATH ( cPatEmp() ) CLASS "MAQLIN"      FILE "MAQCOSL.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
       DATABASE NEW ::oProMaq     PATH ( cPatEmp() ) CLASS "PROMAQ"      FILE "PROMAQ.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAQ.CDX"
       DATABASE NEW ::oArticulos  PATH ( cPatEmp() ) CLASS "ARTICULOS"   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       DATABASE NEW ::oFamArt     PATH ( cPatEmp() ) CLASS "FAMART"      FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
@@ -375,38 +375,51 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    Zona de datos---------------------------------------------------------------
    */
 
-   ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
+   ::oFastReport:SetWorkArea(       "Empresa",                       ::oDbfEmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Empresa",                       cItemsToReport( aItmEmp() ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas de material producido", ::oProLin:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas de material producido", cObjectsToReport( TDetProduccion():DefineFiles()  ) )
+   ::oFastReport:SetWorkArea(       "Lineas de material producido",  ::oProLin:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de material producido",  cObjectsToReport( TDetProduccion():DefineFiles()  ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas de materias primas", ::oProMat:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas de materias primas", cObjectsToReport( TDetMaterial():DefineFiles()  ) )
+   ::oFastReport:SetWorkArea(       "Lineas de materias primas",     ::oProMat:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de materias primas",     cObjectsToReport( TDetMaterial():DefineFiles()  ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas de personal", ::oProPer:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas de personal", cObjectsToReport( TDetPersonal():DefineFiles() ) )
+   ::oFastReport:SetWorkArea(       "Lineas de personal",            ::oProPer:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de personal",            cObjectsToReport( TDetPersonal():DefineFiles() ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas de horas de personal", ::oHorasPers:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas de horas de personal", cObjectsToReport( TDetHorasPersonal():DefineFiles()  ) )
+   ::oFastReport:SetWorkArea(       "Lineas de horas de personal",   ::oHorasPers:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de horas de personal",   cObjectsToReport( TDetHorasPersonal():DefineFiles()  ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas de costo de maquinaria", ::oProMaq:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas de costo de maquinaria", cObjectsToReport( TDetMaquina():DefineFiles()  ) )
+   ::oFastReport:SetWorkArea(       "Lineas de maquinaria",          ::oProMaq:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de maquinaria",          cObjectsToReport( TDetMaquina():DefineFiles()  ) )
 
-   ::oFastReport:SetWorkArea(       "Operarios", ::oOperario:oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Operarios", cObjectsToReport( TOperarios():DefineFiles() ) )
+   ::oFastReport:SetWorkArea(       "Operarios",                     ::oOperario:oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Operarios",                     cObjectsToReport( TOperarios():DefineFiles() ) )
+
+   ::oFastReport:SetWorkArea(       "Articulos.Material producido",  ::oArticulos:nArea )
+   ::oFastReport:SetFieldAliases(   "Articulos.Material producido",  cItemsToReport( aItmArt() ) )
+
+   ::oFastReport:SetWorkArea(       "Articulos.Materias primas",     ::oArticulos:nArea )
+   ::oFastReport:SetFieldAliases(   "Articulos.Materias primas",     cItemsToReport( aItmArt() ) )
+
+   ::oFastReport:SetWorkArea(       "Maquinaria",                    ::oMaquina:nArea )
+   ::oFastReport:SetFieldAliases(   "Maquinaria",                    cObjectsToReport( TMaquina():DefineFiles()  )  )
+   oMaquina
 
    /*
    Relaciones------------------------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",         {|| cCodEmp() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de materias primas",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de personal",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de costo de maquinaria",   {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Lineas de personal", "Operarios",   {|| ::oProPer:cCodTra } )
-   ::oFastReport:SetMasterDetail(   "Lineas de personal", "Lineas de horas de personal",   {|| ::oProPer:cSerOrd + Str( ::oProPer:nNumOrd) + ::oProPer:cSuford + ::oProPer:cCodTra } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                                             {|| cCodEmp() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",                        {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de materias primas",                           {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de personal",                                  {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de costo de maquinaria",                       {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Lineas de personal", "Operarios",                                {|| ::oProPer:cCodTra } )
+   ::oFastReport:SetMasterDetail(   "Lineas de personal", "Lineas de horas de personal",              {|| ::oProPer:cSerOrd + Str( ::oProPer:nNumOrd) + ::oProPer:cSuford + ::oProPer:cCodTra } )
+   ::oFastReport:SetMasterDetail(   "Lineas de material producido", "Articulos.Material producido",   {|| ::oProLin:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Lineas de materias primas", "Articulos.Materias primas",         {|| ::oProMat:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Lineas de maquinaria", "Maquinaria",                             {|| ::oProMaq:cCodMaq } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de material producido" )
@@ -415,7 +428,9 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de costo de maquinaria" )
    ::oFastReport:SetResyncPair(     "Lineas de personal", "Lineas de horas de personal" )
    ::oFastReport:SetResyncPair(     "Lineas de personal", "Operarios" )
-
+   ::oFastReport:SetResyncPair(     "Lineas de material producido", "Articulos.Material producido" )
+   ::oFastReport:SetResyncPair(     "Lineas de materias primas", "Articulos.Materias primas" )
+   ::oFastReport:SetResyncPair(     "Lineas de maquinaria", "Maquinaria" )
    //----------------------------------------------------------
 
    ::AddVariable()
