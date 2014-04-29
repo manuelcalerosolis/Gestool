@@ -297,3 +297,4 @@
 #define _LHEXPWEB			  		297
 #define _LRECCOSTES 		  		298
 #define _LDESCAJAS 		  		299
+#define _LSHOWLIN				300

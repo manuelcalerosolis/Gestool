@@ -1493,6 +1493,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       130 ;
          OF       fldTPV
 
+      REDEFINE CHECKBOX aGet[ _LSHOWLIN ] VAR aTmp[ _LSHOWLIN ] ;
+         ID       131 ;
+         OF       fldTPV
+
       REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
          ID       990 ;
          OF       fldTPV
@@ -6550,6 +6554,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botón exportar web",                            "", "", "aEmp()", } )
    aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
    aAdd( aDbf, {"lDesCajas",  "L",  1, 0, "Cajas desconectadas",                                   "", "", "aEmp()", } )
+   aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )
 

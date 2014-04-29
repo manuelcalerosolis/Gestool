@@ -1040,7 +1040,7 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
 
    DEFAULT cTitle       := "Teclado virtual"
 
-   cVar                 := Str( nVar, 2 )
+   //cVar                 := Str( nVar, 2 )
 
    DEFINE DIALOG oDlg NAME "NumKey" TITLE cTitle
 
@@ -1078,12 +1078,17 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
 
    ACTIVATE DIALOG oDlg CENTERED
 
+   if ( oDlg:nResult == IDOK )
+      cVar   := val( cVar )   
+   else 
+      cVar   := 0
+   endif 
+
    if !Empty( oBmp )
       oBmp:End()
-
    end if
 
-Return ( Val( cVar ) )
+Return ( cVar )
 
 //--------------------------------------------------------------------------//
 
