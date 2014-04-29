@@ -984,6 +984,8 @@ METHOD lGrupoOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoOperacion:Cargo:Hasta      := Replicate( "Z", 3 )   // dbLast( ::oOperacion:oDbf, 1 )
    ::oGrupoOperacion:Cargo:cPicDesde  := "@!"
    ::oGrupoOperacion:Cargo:cPicHasta  := "@!"
+   ::oGrupoOperacion:Cargo:TextDesde  := {|| oRetFld( ::oGrupoOperacion:Cargo:Desde, ::oOperacion:oDbf, "cDesOpe", "cCodOpe" ) }
+   ::oGrupoOperacion:Cargo:TextHasta  := {|| oRetFld( ::oGrupoOperacion:Cargo:Hasta, ::oOperacion:oDbf, "cDesOpe", "cCodOpe" ) }
    ::oGrupoOperacion:Cargo:HelpDesde  := {|| ::oOperacion:Buscar( ::oDesde ) }
    ::oGrupoOperacion:Cargo:HelpHasta  := {|| ::oOperacion:Buscar( ::oHasta ) }
    ::oGrupoOperacion:Cargo:ValidDesde := {|oGet| if( ::oOperacion:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesOpe", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
@@ -1057,6 +1059,8 @@ METHOD lGrupoTOperacion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTOperacion:Cargo:Hasta      := Replicate( "Z", 3 )  // dbLast( ::oTipOpera:oDbf, 1 )
    ::oGrupoTOperacion:Cargo:cPicDesde  := "@!"
    ::oGrupoTOperacion:Cargo:cPicHasta  := "@!"
+   ::oGrupoTOperacion:Cargo:TextDesde  := {|| oRetFld( ::oGrupoTOperacion:Cargo:Desde, ::oTipOpera:oDbf, "cDesTip", "cCodTip" ) }
+   ::oGrupoTOperacion:Cargo:TextHasta  := {|| oRetFld( ::oGrupoTOperacion:Cargo:Hasta, ::oTipOpera:oDbf, "cDesTip", "cCodTip" ) }
    ::oGrupoTOperacion:Cargo:HelpDesde  := {|| ::oTipOpera:Buscar( ::oDesde ) }
    ::oGrupoTOperacion:Cargo:HelpHasta  := {|| ::oTipOpera:Buscar( ::oHasta ) }
    ::oGrupoTOperacion:Cargo:ValidDesde := {|oGet| if( ::oTipOpera:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesTip", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
@@ -1129,6 +1133,8 @@ METHOD lGrupoSeccion( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoSeccion:Cargo:Hasta      := Replicate( "Z", 3 )  // dbLast( ::oSeccion:oDbf, 1 )
    ::oGrupoSeccion:Cargo:cPicDesde  := "@!"
    ::oGrupoSeccion:Cargo:cPicHasta  := "@!"
+   ::oGrupoSeccion:Cargo:TextDesde  := {|| oRetFld( ::oGrupoSeccion:Cargo:Desde, ::oSeccion:oDbf, "cDesSec", "cCodSec" ) }
+   ::oGrupoSeccion:Cargo:TextHasta  := {|| oRetFld( ::oGrupoSeccion:Cargo:Hasta, ::oSeccion:oDbf, "cDesSec", "cCodSec" ) }
    ::oGrupoSeccion:Cargo:HelpDesde  := {|| ::oSeccion:Buscar( ::oDesde ) }
    ::oGrupoSeccion:Cargo:HelpHasta  := {|| ::oSeccion:Buscar( ::oHasta ) }
    ::oGrupoSeccion:Cargo:ValidDesde := {|oGet| if( ::oSeccion:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesSec", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
@@ -1277,6 +1283,8 @@ METHOD lGrupoMaquina( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoMaquina:Cargo:Hasta      := Replicate( "Z", 3 )  // dbLast( ::oMaquina:oDbf, 1 )
    ::oGrupoMaquina:Cargo:cPicDesde  := "@!"
    ::oGrupoMaquina:Cargo:cPicHasta  := "@!"
+   ::oGrupoMaquina:Cargo:TextDesde  := {|| oRetFld( ::oGrupoMaquina:Cargo:Desde, ::oMaquina:oDbf, "cDesMaq", "cCodMaq" ) }
+   ::oGrupoMaquina:Cargo:TextHasta  := {|| oRetFld( ::oGrupoMaquina:Cargo:Hasta, ::oMaquina:oDbf, "cDesMaq", "cCodMaq" ) }
    ::oGrupoMaquina:Cargo:HelpDesde  := {|| ::oMaquina:Buscar( ::oDesde ) }
    ::oGrupoMaquina:Cargo:HelpHasta  := {|| ::oMaquina:Buscar( ::oHasta ) }
    ::oGrupoMaquina:Cargo:ValidDesde := {|oGet| if( ::oMaquina:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cDesMaq", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
@@ -1349,6 +1357,8 @@ METHOD lGrupoOperario( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoOperario:Cargo:Hasta      := Replicate( "Z", 5 ) // dbLast( ::oOperario:oDbf, 1 )
    ::oGrupoOperario:Cargo:cPicDesde  := "@!"
    ::oGrupoOperario:Cargo:cPicHasta  := "@!"
+   ::oGrupoOperario:Cargo:TextDesde  := {|| oRetFld( ::oGrupoOperario:Cargo:Desde, ::oOperario:oDbf, "cNomTra", "cCodTra" ) }
+   ::oGrupoOperario:Cargo:TextHasta  := {|| oRetFld( ::oGrupoOperario:Cargo:Hasta, ::oOperario:oDbf, "cNomTra", "cCodTra" ) }
    ::oGrupoOperario:Cargo:HelpDesde  := {|| ::oOperario:Buscar( ::oDesde ) }
    ::oGrupoOperario:Cargo:HelpHasta  := {|| ::oOperario:Buscar( ::oHasta ) }
    ::oGrupoOperario:Cargo:ValidDesde := {|oGet| if( ::oOperario:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomTra", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }

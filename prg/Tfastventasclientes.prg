@@ -304,6 +304,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cCodRut",  "C", 12, 0, {|| "@!" }, "Código de la ruta"                       )
    ::AddField( "cCodAge",  "C", 12, 0, {|| "@!" }, "Código del agente"                       )
    ::AddField( "cCodUsr",  "C",  3, 0, {|| "@!" }, "Código usuario"                          )
+   ::AddField( "cCodObr",  "C", 10, 0, {|| "@!" }, "Código dirección"                        )
 
    ::AddField( "cTipDoc",  "C", 30, 0, {|| "" },   "Tipo de documento"                       )
 
@@ -388,8 +389,6 @@ RETURN ( Self )
 
 METHOD DataReport() CLASS TFastVentasClientes
 
-   msgAlert( "DataReport")
-
    /*
    Zona de detalle-------------------------------------------------------------
    */
@@ -425,6 +424,9 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Direcciones",                      ::oObras:nArea )
    ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )
 
+   ::oFastReport:SetWorkArea(       "Cliente.Direcciones",              ::oObras:nArea )
+   ::oFastReport:SetFieldAliases(   "Cliente.Direcciones",              cItemsToReport( aItmObr() ) )
+
    ::oFastReport:SetWorkArea(       "Bancos",                           ::oBancos:nArea )
    ::oFastReport:SetFieldAliases(   "Bancos",                           cItemsToReport( aCliBnc() ) )
 
@@ -442,7 +444,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    */
 
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Cliente.Direcciones",   {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
@@ -459,6 +462,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
+   ::oFastReport:SetResyncPair(     "Informe", "Cliente.Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Bancos" )
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
@@ -524,8 +528,6 @@ METHOD DataReport() CLASS TFastVentasClientes
          ::FastReportRecibosCliente()
 
    end case
-
-   msgAlert( "cReportType" + ::cReportType)
 
    ::AddVariable()
 
@@ -767,6 +769,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oSatCliT:cCodPgo
             ::oDbf:cCodRut    := ::oSatCliT:cCodRut
             ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
+            ::oDbf:cCodObr    := ::oSatCliT:cCodObr
 
             ::oDbf:cCodPos    := ::oSatCliT:cPosCli
 
@@ -872,6 +875,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oPreCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPreCliT:cCodRut
             ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
+            ::oDbf:cCodObr    := ::oPreCliT:cCodObr
 
             ::oDbf:cCodPos    := ::oPreCliT:cPosCli
 
@@ -976,7 +980,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodAge    := ::oPedCliT:cCodAge
             ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
-            ::oDbf:cCodUsr    := ::oPedCliT:cCodUsr
+            ::oDbf:cCodObr    := ::oPedCliT:cCodObr
 
             ::oDbf:cCodPos    := ::oPedCliT:cPosCli
 
@@ -1086,7 +1090,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
             ::oDbf:cCodPgo    := ::oAlbCliT:cCodPago
             ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
-            ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
+            ::oDbf:cCodObr    := ::oAlbCliT:cCodObr
 
             ::oDbf:cCodPos    := ::oAlbCliT:cPosCli
 
@@ -1191,6 +1195,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oFacCliT:cCodPago
             ::oDbf:cCodRut    := ::oFacCliT:cCodRut
             ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
+            ::oDbf:cCodObr    := ::oFacCliT:cCodObr
 
             ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
@@ -1295,6 +1300,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
             ::oDbf:cCodRut    := ::oFacRecT:cCodRut
             ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
+            ::oDbf:cCodObr    := ::oFacRecT:cCodObr
 
             ::oDbf:cCodPos    := ::oFacRecT:cPosCli
 
@@ -1399,6 +1405,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
             ::oDbf:cCodRut    := ::oTikCliT:cCodRut
             ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
+            ::oDbf:cCodObr    := ::oTikCliT:cCodObr
 
             ::oDbf:cCodPos    := ::oTikCliT:cPosCli
 
@@ -1566,6 +1573,7 @@ METHOD AddClientes() CLASS TFastVentasClientes
       ::oDbf:cCodRut := ::oDbfCli:cCodRut
       ::oDbf:cCodAge := ::oDbfCli:cAgente
       ::oDbf:cCodUsr := ""
+      ::oDbf:cCodObr := ""
       ::oDbf:cCodPos := ::oDbfCli:CodPostal
 
       if ::lValidRegister()
