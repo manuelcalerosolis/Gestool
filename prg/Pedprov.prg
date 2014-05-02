@@ -3508,6 +3508,12 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
 
             /*
+            Control de stocks--------------------------------------------------
+            */
+
+            aTmp[ _NCTLSTK ]     := ( dbfArticulo )->nCtlStock
+
+            /*
             Tratamientos kits-----------------------------------------------------
             */
 
@@ -9158,17 +9164,21 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
                   Tratamientos kits-----------------------------------------------------
                   */
 
+                  ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
+
                   if ( dbfArticulo )->lKitArt
+                  
                         ( dbfTmpLin )->lKitArt  := ( dbfArticulo )->lKitArt                        // Marcamos como padre del kit
                         ( dbfTmpLin )->lImpLin  := lImprimirCompuesto( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
                         ( dbfTmpLin )->lKitPrc  := lPreciosCompuestos( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
-                  end if 
 
-                  if lStockCompuestos( ( dbfArticulo )->Codigo, dbfArticulo )
-                        ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
-                  else
-                        ( dbfTmpLin )->nCtlStk  := STOCK_NO_CONTROLAR // No controlar Stock
-                  end if
+                        if lStockCompuestos( ( dbfArticulo )->Codigo, dbfArticulo )
+                              ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
+                        else
+                              ( dbfTmpLin )->nCtlStk  := STOCK_NO_CONTROLAR // No controlar Stock
+                        end if
+
+                  end if 
 
                   /*
                   Buscamos la familia del articulo y anotamos las propiedades--------
