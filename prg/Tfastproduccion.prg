@@ -17,11 +17,7 @@ CLASS TFastProduccion FROM TFastReportInfGen
    DATA oHorasPersonal
    DATA oMaquinasCostes   
    DATA oMaquinasParte   
-   DATA oArticulos
    DATA oFamArt   
-   DATA oAlmacen 
-   
- 
 
    METHOD lResource( cFld )
 
@@ -71,11 +67,21 @@ METHOD lResource( cFld ) CLASS TFastProduccion
       return .f.
    end if
 
-   if !::lGrupoAlmacen( .t. )
+   if !::lGrupoAlmacenOrigen( .t. )
       return .f.
    end if
 
+   if !::lGrupoAlmacen( .t. )
+      return .f.
+   else 
+      ::oGrupoAlmacen:Cargo:Nombre     := "Almacén destino"
+   end if
+
    if !::lGrupoArticulo( .t. )
+      return .f.
+   end if
+
+   if !::lGrupoMateriaPrima( .t. )
       return .f.
    end if
 
@@ -137,9 +143,6 @@ METHOD OpenFiles() CLASS TFastProduccion
       DATABASE NEW ::oHorasPersonal       PATH ( cPatEmp() ) CLASS "HORASPERS"   FILE "PROHPER.DBF"   VIA ( cDriver() ) SHARED INDEX "PROHPER.CDX"
       DATABASE NEW ::oMaquinasCostes      PATH ( cPatEmp() ) CLASS "MAQCOSL"     FILE "MAQCOSL.DBF"   VIA ( cDriver() ) SHARED INDEX "MAQCOSL.CDX"
       DATABASE NEW ::oMaquinasParte       PATH ( cPatEmp() ) CLASS "PROMAQ"      FILE "PROMAQ.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAQ.CDX"
-      DATABASE NEW ::oArticulos           PATH ( cPatEmp() ) CLASS "ARTICULOS"   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
-      DATABASE NEW ::oFamArt              PATH ( cPatEmp() ) CLASS "FAMART"      FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
-      DATABASE NEW ::oAlmacen             PATH ( cPatEmp() ) CLASS "ALMACEN"     FILE "ALMACEN.DBF"   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
       ::oCnfFlt   := TDataCenter():oCnfFlt()
 
@@ -189,18 +192,6 @@ METHOD CloseFiles() CLASS TFastProduccion
       ::oMaquinasParte:end()
    end if
 
-   if !Empty( ::oArticulos ) .and. ( ::oArticulos:Used() )
-      ::oArticulos:end()
-   end if
-
-   if !Empty( ::oFamArt ) .and. ( ::oFamArt:Used() )
-      ::oFamArt:end()
-   end if
-
-   if !Empty( ::oAlmacen ) .and. ( ::oAlmacen:Used() )
-      ::oAlmacen:end()
-   end if
-
    if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
       ::oCnfFlt:end()
    end if
@@ -222,6 +213,8 @@ METHOD Create( uParam ) CLASS TFastProduccion
 
    ::AddField( "cCodOpe",     "C",  3, 0, {|| "" },   "Operación"                               )
    ::AddField( "cCodSec",     "C",  3, 0, {|| "" },   "Sección"                                 )
+   ::AddField( "cCodAlmDes",  "C",  3, 0, {|| "" },   "Almacen destino"                         ) 
+   ::AddField( "cCodAlmOrg",  "C",  3, 0, {|| "" },   "Almacen origen"                         ) 
 
    ::AddField( "nTotDoc",     "N", 16, 6, {|| "" },   "Total documento"                         )
    ::AddField( "nTotPrd",     "N", 16, 6, {|| "" },   "Total producido"                         )
@@ -238,7 +231,7 @@ RETURN ( self )
 Method lValidRegister( cCodigoProveedor ) CLASS TFastProduccion
 
    if ( ::oDbf:cCodOpe >= ::oGrupoOperacion:Cargo:Desde     .and. ::oDbf:cCodOpe <= ::oGrupoOperacion:Cargo:Hasta )  .and.;
-      ( ::oDbf:cCodSec >= ::oGrupoSeccion:Cargo:Desde       .and. ::oDbf:cCodSec <= ::oGrupoSeccion:Cargo:Hasta )
+      ( ::oDbf:cCodSec >= ::oGrupoSeccion:Cargo:Desde       .and. ::oDbf:cCodSec <= ::oGrupoSeccion:Cargo:Hasta )   
 
       Return .t.
 
@@ -298,6 +291,8 @@ METHOD AddParteProducccion() CLASS TFastProduccion
 
          ::oDbf:cCodOpe    := ::oParteProduccion:cCodOpe
          ::oDbf:cCodSec    := ::oParteProduccion:cCodSec
+         ::oDbf:cCodAlmDes := ::oParteProduccion:cAlmOrd
+         ::oDbf:cCodAlmOrg := ::oParteProduccion:cAlmOrg
 
          ::oDbf:nTotPrd    := nTotProd( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaterialProducido:cAlias )
          ::oDbf:nTotMat    := nTotMat( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMateriasPrimas:cAlias )
@@ -401,14 +396,26 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetWorkArea(       "Operarios.Lineas de horas de personal",  ::oOperario:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Operarios.Lineas de horas de personal",  cObjectsToReport( TOperarios():DefineFiles() ) )
 
-   ::oFastReport:SetWorkArea(       "Articulos.Material producido",           ::oArticulos:nArea )
+   ::oFastReport:SetWorkArea(       "Articulos.Material producido",           ::oDbfArt:nArea )
    ::oFastReport:SetFieldAliases(   "Articulos.Material producido",           cItemsToReport( aItmArt() ) )
 
-   ::oFastReport:SetWorkArea(       "Articulos.Materias primas",              ::oArticulos:nArea )
+   ::oFastReport:SetWorkArea(       "Articulos.Materias primas",              ::oDbfArticuloMateriaPrima:nArea )
    ::oFastReport:SetFieldAliases(   "Articulos.Materias primas",              cItemsToReport( aItmArt() ) )
 
    ::oFastReport:SetWorkArea(       "Maquinaria",                             ::oMaquina:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Maquinaria",                             cObjectsToReport( TMaquina():DefineFiles()  )  )
+
+   ::oFastReport:SetWorkArea(       "Almacen",                                ::oDbfAlm:nArea )
+   ::oFastReport:SetFieldAliases(   "Almacen",                                cItemsToReport( aItmAlm()  )  )
+
+   ::oFastReport:SetWorkArea(       "Operacion",                              ::oOperacion:oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Operacion",                              cObjectsToReport( TOperacion():DefineFiles()  )  )
+
+   ::oFastReport:SetWorkArea(       "Tipo operacion",                         ::oTipOpera:oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Tipo operacion",                         cObjectsToReport( TTipOpera():DefineFiles()  )  )
+  
+
+
 
    /*
    Relaciones------------------------------------------------------------------
@@ -420,6 +427,7 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas de personal",                                  {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas de costo de maquinaria",                       {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas de horas de personal",                         {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Operacion",                                           {|| ::oDbf:cCodOpe } )
 
    ::oFastReport:SetMasterDetail(   "Lineas de personal",            "Operarios.Lineas de personal",           {|| ::oPersonal:cCodTra } )
    ::oFastReport:SetMasterDetail(   "Lineas de horas de personal",   "Operarios.Lineas de horas de personal",  {|| ::oHorasPersonal:cCodTra } )
@@ -428,18 +436,21 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    ::oFastReport:SetMasterDetail(   "Lineas de materias primas",     "Articulos.Materias primas",     {|| ::oMateriasPrimas:cCodArt } )
    
    ::oFastReport:SetMasterDetail(   "Lineas de maquinaria",          "Maquinaria",                    {|| ::oMaquinasParte:cCodMaq } )
+   ::oFastReport:SetMasterDetail(   "Operacion",                     "Tipo operacion",                {|| ::oOperacion:oDbf:cTipOpe } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de material producido" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de materias primas" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de personal" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas de costo de maquinaria" )
+   ::oFastReport:SetResyncPair(     "Informe", "Operacion" )
 
    ::oFastReport:SetResyncPair(     "Lineas de personal",            "Lineas de horas de personal" )
    ::oFastReport:SetResyncPair(     "Lineas de personal",            "Operarios" )
    ::oFastReport:SetResyncPair(     "Lineas de material producido",  "Articulos.Material producido" )
    ::oFastReport:SetResyncPair(     "Lineas de materias primas",     "Articulos.Materias primas" )
-   ::oFastReport:SetResyncPair(     "Lineas de maquinaria",           "Maquinaria" )
+   ::oFastReport:SetResyncPair(     "Lineas de maquinaria",          "Maquinaria" )
+   ::oFastReport:SetResyncPair(     "Operacion",                     "Tipo operacion" )
 
    //----------------------------------------------------------
 

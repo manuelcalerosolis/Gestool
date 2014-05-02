@@ -10,6 +10,8 @@ memvar cGrupoFabricanteDesde
 memvar cGrupoFabricanteHasta
 memvar cGrupoArticuloDesde
 memvar cGrupoArticuloHasta
+memvar cGrupoMateriaPrimaDesde
+memvar cGrupoMateriaPrimaHasta
 memvar cGrupoClienteDesde
 memvar cGrupoClienteHasta
 memvar cGrupoRutaDesde
@@ -71,11 +73,13 @@ CLASS TNewInfGen FROM TInfGen
    DATA oTipOpera
 
    DATA oGrupoArticulo
+   DATA oGrupoMateriaPrima
    DATA oGrupoCliente
    DATA oGrupoProveedor
    DATA oGrupoOperacion
    DATA oGrupoSeccion
    DATA oGrupoAlmacen
+   DATA oGrupoAlmacenOrigen
    DATA oGrupoMaquina
    DATA oGrupoOperario
    DATA oGrupoFpago
@@ -135,6 +139,8 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD lGrupoArticulo( lInitGroup, lImp )
 
+   METHOD lGrupoMateriaPrima( lInitGroup, lImp )
+
    METHOD lGrupoCliente( lInitGroup, lImp )
 
    METHOD lGrupoOperacion( lInitGroup, lImp )
@@ -142,6 +148,8 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoSeccion( lInitGroup, lImp )
 
    METHOD lGrupoAlmacen( lInitGroup, lImp )
+
+   METHOD lGrupoAlmacenOrigen( lInitGroup, lImp )
 
    METHOD lGrupoMaquina( lInitGroup, lImp )
 
@@ -811,6 +819,86 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
+
+METHOD lGrupoMateriaPrima( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock
+
+   DEFAULT lImp         := .t.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ::oDbfArticuloMateriaPrima == nil .or. !::oDbfArticuloMateriaPrima:Used()
+      DATABASE NEW ::oDbfArticuloMateriaPrima PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   end if
+
+   ::oGrupoMateriaPrima                    := TRGroup():New( {|| ::oDbf:cCodArt }, {|| "Materia prima : " + AllTrim( ::oDbf:cCodArt ) + " - " + AllTRim( ::oDbf:cNomArt ) }, {|| "Total artículo..." }, {|| 3 }, ::lSalto )
+
+   ::oGrupoMateriaPrima:Cargo              := TItemGroup()
+   ::oGrupoMateriaPrima:Cargo:Nombre       := "Materia prima"
+   ::oGrupoMateriaPrima:Cargo:Expresion    := "cCodArt"
+   ::oGrupoMateriaPrima:Cargo:Todos        := .t.
+   ::oGrupoMateriaPrima:Cargo:Desde        := Space( 18 )          // dbFirst( ::oDbfArticuloMateriaPrima, 1 )
+   ::oGrupoMateriaPrima:Cargo:Hasta        := Replicate( "Z", 18 ) // dbLast( ::oDbfArticuloMateriaPrima, 1 )
+   ::oGrupoMateriaPrima:Cargo:cPicDesde    := Replicate( "#", 18 )
+   ::oGrupoMateriaPrima:Cargo:cPicHasta    := Replicate( "#", 18 )
+   ::oGrupoMateriaPrima:Cargo:TextDesde    := {|| oRetFld( ::oGrupoMateriaPrima:Cargo:Desde, ::oDbfArticuloMateriaPrima, "Nombre", "Codigo" ) }
+   ::oGrupoMateriaPrima:Cargo:TextHasta    := {|| oRetFld( ::oGrupoMateriaPrima:Cargo:Hasta, ::oDbfArticuloMateriaPrima, "Nombre", "Codigo" ) }
+   ::oGrupoMateriaPrima:Cargo:HelpDesde    := {|| BrwArticulo( ::oDesde, ::oSayDesde, , .f. ) }
+   ::oGrupoMateriaPrima:Cargo:HelpHasta    := {|| BrwArticulo( ::oHasta, ::oSayHasta, , .f. ) }
+   ::oGrupoMateriaPrima:Cargo:ValidDesde   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfArticuloMateriaPrima:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoMateriaPrima:Cargo:ValidHasta   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfArticuloMateriaPrima:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoMateriaPrima:Cargo:lImprimir    := lImp
+   ::oGrupoMateriaPrima:Cargo:cBitmap      := "Cube_Yellow_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Cube_Yellow_16" ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoMateriaPrima )
+
+      if !Empty( ::oImageGroup )
+
+         ::oImageGroup:AddMasked( TBitmap():Define( "Cube_Yellow_16" ), Rgb( 255, 0, 255 ) )
+
+         ::oGrupoMateriaPrima:Cargo:Imagen := len( ::oImageGroup:aBitmaps ) - 1
+
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoMateriaPrima:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoMateriaPrima )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoMateriaPrima )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      if !Empty( ::oDbfArticuloMateriaPrima )
+         ::oDbfArticuloMateriaPrima:End()
+      end if
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
 METHOD lGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
@@ -1248,6 +1336,81 @@ METHOD lGrupoAlmacen( lInitGroup, lImp ) CLASS TNewInfGen
 
       if !Empty( ::oDbfAlm )
          ::oDbfAlm:End()
+      end if
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD lGrupoAlmacenOrigen( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lImp         := .t.
+
+   BEGIN SEQUENCE
+
+   if ::oDbfAlmacenOrigen == nil .or. !::oDbfAlmacenOrigen:Used()
+      DATABASE NEW ::oDbfAlmacenOrigen PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   end if
+
+   ::oGrupoAlmacenOrigen                  := TRGroup():New( {|| ::oDbf:cCodAlm }, {|| "Almacén origen: " + AllTrim( ::oDbf:cCodAlm ) + " - " + AllTrim( ::oDbf:cNomAlm ) }, {|| "Total almacén : " + ::oDbf:cCodAlm }, {|| 3 }, ::lSalto )
+
+   ::oGrupoAlmacenOrigen:Cargo            := TItemGroup()
+   ::oGrupoAlmacenOrigen:Cargo:Nombre     := "Almacén origen"
+   ::oGrupoAlmacenOrigen:Cargo:Expresion  := "cCodAlm"
+   ::oGrupoAlmacenOrigen:Cargo:Todos      := .t.
+   ::oGrupoAlmacenOrigen:Cargo:Desde      := Space( 3 )           // dbFirst( ::oDbfAlmacenOrigen, 1 )
+   ::oGrupoAlmacenOrigen:Cargo:Hasta      := Replicate( "Z", 3 )  // dbLast( ::oDbfAlmacenOrigen, 1 )
+   ::oGrupoAlmacenOrigen:Cargo:cPicDesde  := Replicate( "#", 3 )
+   ::oGrupoAlmacenOrigen:Cargo:cPicHasta  := Replicate( "#", 3 )
+   ::oGrupoAlmacenOrigen:Cargo:TextDesde  := {|| oRetFld( ::oGrupoAlmacenOrigen:Cargo:Desde, ::oDbfAlmacenOrigen, "cNomAlm", "cCodAlm" ) }
+   ::oGrupoAlmacenOrigen:Cargo:TextHasta  := {|| oRetFld( ::oGrupoAlmacenOrigen:Cargo:Hasta, ::oDbfAlmacenOrigen, "cNomAlm", "cCodAlm" ) }
+   ::oGrupoAlmacenOrigen:Cargo:HelpDesde  := {|| BrwAlmacen( ::oDesde, ::oSayDesde ) }
+   ::oGrupoAlmacenOrigen:Cargo:HelpHasta  := {|| BrwAlmacen( ::oHasta, ::oSayHasta ) }
+   ::oGrupoAlmacenOrigen:Cargo:ValidDesde := {|oGet| if( cAlmacen( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfAlmacenOrigen:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoAlmacenOrigen:Cargo:ValidHasta := {|oGet| if( cAlmacen( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfAlmacenOrigen:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoAlmacenOrigen:Cargo:lImprimir  := lImp
+   ::oGrupoAlmacenOrigen:Cargo:cBitmap    := "Package_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "Package_16" ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoAlmacenOrigen )
+
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "Package_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoAlmacenOrigen:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoAlmacenOrigen:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoAlmacenOrigen )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoAlmacenOrigen )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      if !Empty( ::oDbfAlmacenOrigen )
+         ::oDbfAlmacenOrigen:End()
       end if
 
       lOpen          := .f.
@@ -3836,31 +3999,39 @@ Method AddVariable() CLASS TNewInfGen
    public dFechaInicio                 := Dtoc( ::dIniInf )
    public dFechaFin                    := Dtoc( ::dFinInf )
 
-   ::oFastReport:AddVariable(          "Informe",  "Desde fecha",                 "GetHbVar('dFechaInicio')" )
-   ::oFastReport:AddVariable(          "Informe",  "Hasta fecha",                 "GetHbVar('dFechaFin')" )
+   ::oFastReport:AddVariable(          "Informe",  "Desde fecha",                   "GetHbVar('dFechaInicio')" )
+   ::oFastReport:AddVariable(          "Informe",  "Hasta fecha",                   "GetHbVar('dFechaFin')" )
 
    if !Empty( ::oGrupoFabricante )
       public cGrupoFabricanteDesde     := ::oGrupoFabricante:Cargo:Desde
       public cGrupoFabricanteHasta     := ::oGrupoFabricante:Cargo:Hasta
 
-      ::oFastReport:AddVariable(       "Informe", "Desde código de fabricante",  "GetHbVar('cGrupoFabricanteDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta código de fabricante",  "GetHbVar('cGrupoFabricanteHasta')" )
+      ::oFastReport:AddVariable(       "Informe", "Desde código de fabricante",     "GetHbVar('cGrupoFabricanteDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de fabricante",     "GetHbVar('cGrupoFabricanteHasta')" )
    end if
 
    if !Empty( ::oGrupoArticulo )
       public cGrupoArticuloDesde       := ::oGrupoArticulo:Cargo:Desde
       public cGrupoArticuloHasta       := ::oGrupoArticulo:Cargo:Hasta
 
-      ::oFastReport:AddVariable(       "Informe", "Desde código de artículo",  "GetHbVar('cGrupoArticuloDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta código de artículo",  "GetHbVar('cGrupoArticuloHasta')" )
+      ::oFastReport:AddVariable(       "Informe", "Desde código de artículo",       "GetHbVar('cGrupoArticuloDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de artículo",       "GetHbVar('cGrupoArticuloHasta')" )
+   end if
+
+   if !Empty( ::oGrupoMateriaPrima )
+      public cGrupoMateriaPrimaDesde   := ::oGrupoMateriaPrima:Cargo:Desde
+      public cGrupoMateriaPrimaHasta   := ::oGrupoMateriaPrima:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de materia prima",  "GetHbVar('cGrupoMateriaPrimaDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de materia prima",  "GetHbVar('cGrupoMateriaPrimaHasta')" )
    end if
 
    if !Empty( ::oGrupoCliente )
       public cGrupoClienteDesde        := ::oGrupoCliente:Cargo:Desde
       public cGrupoClienteHasta        := ::oGrupoCliente:Cargo:Hasta
 
-      ::oFastReport:AddVariable(       "Informe", "Desde código de cliente",  "GetHbVar('cGrupoClienteDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta código de cliente",  "GetHbVar('cGrupoClienteHasta')" )
+      ::oFastReport:AddVariable(       "Informe", "Desde código de cliente",        "GetHbVar('cGrupoClienteDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de cliente",        "GetHbVar('cGrupoClienteHasta')" )
    end if
 
    if !Empty( ::oGrupoProveedor )
@@ -3868,8 +4039,8 @@ Method AddVariable() CLASS TNewInfGen
       public cGrupoProveedorDesde      := ::oGrupoProveedor:Cargo:Desde
       public cGrupoProveedorHasta      := ::oGrupoProveedor:Cargo:Hasta
 
-      ::oFastReport:AddVariable(       "Informe", "Desde código de proveedor",  "GetHbVar('cGrupoProveedorDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta código de proveedor",  "GetHbVar('cGrupoProveedorHasta')" )
+      ::oFastReport:AddVariable(       "Informe", "Desde código de proveedor",      "GetHbVar('cGrupoProveedorDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de proveedor",      "GetHbVar('cGrupoProveedorHasta')" )
 
    end if
 
@@ -4079,6 +4250,8 @@ METHOD End() CLASS TNewInfGen
    if ::oGrpCli != nil
       ::oGrpCli:CloseService()
    end if
+
+
 
 RETURN ( Self )
 

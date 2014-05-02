@@ -140,10 +140,10 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
 
       FIELD CALCULATE NAME "Unidades" LEN 16 DEC 6 COMMENT "Unidades";
          VAL {|| ( NotCaja( oDbf:FieldGetByName( "nCajOrd" ) ) * oDbf:FieldGetByName( "nUndOrd" ) ) }  OF oDbf
-
+      /*
       FIELD CALCULATE NAME "TotalImporte" LEN 16 DEC 6 COMMENT "Total Importe";
          VAL {|| oDbf:Unidades() * oDbf:FieldGetByName( "nImpOrd" ) }                                    OF oDbf
-   
+      */
       INDEX TO ( cFileName )  TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd,9 ) + cSufOrd"                       NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cCodArt" ON "cCodArt"                                                    NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "cArtLot" ON "cCodArt + cValPr1 + cValPr2 + cLote"                        NODELETED OF oDbf
@@ -710,9 +710,21 @@ RETURN .t.
 
 METHOD nUnidades( oDbf ) CLASS TDetProduccion
 
+   local nUnidades   := 0
+
    DEFAULT oDbf      := ::oDbf
 
-RETURN ( if( !Empty( ::oParent:nDouDiv ), Round( oDbf:Unidades(), ::oParent:nDouDiv ), oDbf:Unidades() ) )
+   if !Empty( oDbf )
+
+      nUnidades := NotCaja( oDbf:nCajOrd() * oDbf:nUndOrd() )
+      
+      if !Empty( ::oParent:nDouDiv )
+         nUnidades := Round( nUnidades, ::oParent:nDouDiv )
+      end if
+
+   end if
+
+RETURN ( nUnidades )
 
 //--------------------------------------------------------------------------//
 

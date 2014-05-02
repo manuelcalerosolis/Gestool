@@ -110,9 +110,11 @@ CLASS TInfGen
    DATA oParent
    DATA oDetail
    DATA oDbfAlm
+   DATA oDbfAlmacenOrigen 
    DATA oDbfAge
    DATA oDbfRut
    DATA oDbfArt
+   DATA oDbfArticuloMateriaPrima
    DATA oArtImg
    DATA oArtKit
    DATA oArtCod
@@ -607,18 +609,20 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    Inicialización de objetos---------------------------------------------------
    */
 
-   ::aoCols          := {}
-   ::aoGroup         := {}
-   ::aInitGroup      := {}
-   ::aSelectedGroup  := {}
-   ::oDbf            := nil
-   ::oDbfAlm         := nil
-   ::oDbfAge         := nil
-   ::oDbfArt         := nil
-   ::aIniCli         := LoaIniCli()
-   ::aIniPrv         := LoaIniPrv()
-   ::lDefGraph       := .f.
-   ::lExcCero        := .t.
+   ::aoCols                   := {}
+   ::aoGroup                  := {}
+   ::aInitGroup               := {}
+   ::aSelectedGroup           := {}
+   ::oDbf                     := nil
+   ::oDbfAlm                  := nil
+   ::oDbfAlmacenOrigen        := nil
+   ::oDbfAge                  := nil
+   ::oDbfArt                  := nil
+   ::oDbfArticuloMateriaPrima := nil
+   ::aIniCli                  := LoaIniCli()
+   ::aIniPrv                  := LoaIniPrv()
+   ::lDefGraph                := .f.
+   ::lExcCero                 := .t.
 
 	/*
    Preparamos los dispositivos de salida---------------------------------------
@@ -735,8 +739,16 @@ METHOD End() CLASS TInfGen
       ::oDbfArt:End()
    end if
 
+   if ::oDbfArticuloMateriaPrima != nil .and. ::oDbfArticuloMateriaPrima:Used()
+      ::oDbfArticuloMateriaPrima:End()
+   end if
+
    if ::oDbfAlm != nil .and. ::oDbfAlm:Used()
       ::oDbfAlm:End()
+   end if
+
+   if ::oDbfAlmacenOrigen != nil .and. ::oDbfAlmacenOrigen:Used()
+      ::oDbfAlmacenOrigen:End()
    end if
 
    if ::oDbfAge != nil .and. ::oDbfAge:Used()
