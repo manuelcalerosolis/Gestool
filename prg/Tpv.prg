@@ -2827,14 +2827,14 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
 
    end if 
 
-   lRecTotal( aTmp, .f. )
+   lRecTotal( aTmp )
 
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function StateButtons( lState )
+Static Function StateButtons( lState ) 
 
    DEFAULT lState    := .f.
 
