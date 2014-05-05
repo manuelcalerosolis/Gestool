@@ -689,7 +689,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
    oDlg:AddFastKey( VK_F1, {|| ChmHelp ("Usuarios") } )
 
-   oDlg:bStart    := {|| EvalGet( aGet, nMode ), oGet:SetFocus(), aGet[ _CTIPINCI ]:lValid() }
+   oDlg:bStart    := {|| StartEdtRec( oGet, aGet, nMode ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( InitEdtRec( aTmp, aGet, oTree, oImgLst, bmpImage ) ) ;
@@ -698,6 +698,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
    oBmpGeneral:End()
 
 Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function StartEdtRec( oGet, aGet, nMode )
+
+   EvalGet( aGet, nMode )
+
+   if !Empty( aGet[ _CTIPINCI ] )
+      aGet[ _CTIPINCI ]:lValid()
+   end if 
+
+   oGet:SetFocus()
+
+Return ( .t.  )
 
 //--------------------------------------------------------------------------//
 

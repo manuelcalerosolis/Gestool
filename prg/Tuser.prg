@@ -313,7 +313,6 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lAlerta(           ( ::oDbf )->lAlerta )
          ::lNotConfirmDelete( ( ::oDbf )->lNotDel )
          ::cGrupo(            ( ::oDbf )->cCodGrp )
-         ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
          ::lFiltroVentas(     ( ::oDbf )->lFilVta )
          ::cCaja(             ( ::oDbf )->cCajUse )
          ::cAlmacen(          ( ::oDbf )->cAlmUse )
@@ -323,6 +322,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
          ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj )
          ::cTipoIncidencia(   ( ::oDbf )->cTipInci )
+         ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
