@@ -315,12 +315,16 @@ endif
 return ::nxHItem
 
 ********************************************************************************************************************
-    METHOD nWItem( nNewValue ) CLASS C5ImageView
+    METHOD nWItem( nNewValue, lResize ) CLASS C5ImageView
 ********************************************************************************************************************
 
+DEFAULT lResize   := .t.
+
 if pcount() > 0
-   ::nxWItem := nNewValue
-   ::Resize()
+   ::nxWItem      := nNewValue
+   if lResize
+      ::Resize()
+   endif 
 endif
 
 return ::nxWItem
@@ -639,26 +643,37 @@ local nWCol
 local nTop, nLeft, nBottom, nRight
 local nCount := 1
 local nR, nC
+local nWOffset
+local nHOffset
 
-rc := GetClientRect(::hWnd)
-rc := {rc[1],rc[2],rc[3],rc[4]}
+rc      := GetClientRect(::hWnd)
+rc      := {rc[1],rc[2],rc[3],rc[4]}
 
 // Calculamos las filas y las columnas en función del tamaño de la ficha
 
-::nRows := max(int((rc[3]-rc[1])/ (::nHItem)),1)
-::nCols := max(int((rc[4]-rc[2])/ (::nWItem)),1)
+::nRows := max( int( ( rc[3] - rc[1] ) / ( ::nHItem ) ), 1 )
+::nCols := max( int( ( rc[4] - rc[2] ) / ( ::nWItem ) ), 1 )
 
-::aCoors := array( ::nRows*::nCols )
+//msgAlert( int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols ), "me keda este espacio" )
+
+nHOffset := int( ( ( rc[3] - rc[1] ) - ( ::nHItem * ::nRows ) ) / ::nRows )
+nWOffset := int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols )
+
+logwrite( nWOffset )
+
+//::nWItem( ::nWItem + int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols ), .f. )
+
+::aCoors := array( ::nRows * ::nCols )
 
 for nR := 1 to ::nRows
 
-    nTop     := (nR-1)*::nHItem + rc[1]
-    nBottom  := nTop+::nHItem
+    nTop     := ( nR - 1 ) * ::nHItem + rc[1] //+ nHOffset
+    nBottom  := nTop + ::nHItem //+ nHOffset
 
     for nC := 1 to ::nCols
-        nLeft  := (nC-1)*::nWItem+ rc[2]
-        nRight := nLeft+::nWItem
-        ::aCoors[nCount] := {nTop,nLeft,nBottom,nRight}
+        nLeft               := ( nC - 1 ) * ( ::nWItem + rc[2] + nWOffset )
+        nRight              := nLeft + ::nWItem + nWOffset
+        ::aCoors[ nCount ]  := { nTop, nLeft, nBottom, nRight }
         nCount++
     next
 
