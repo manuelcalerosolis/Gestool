@@ -244,6 +244,9 @@ CLASS TpvTactil
    DATA oOfficeBar
    DATA oOfficeBarDividirMesas
 
+   DATA oTpvUtilidadesMesa
+
+
    DATA cTemporalLinea
    DATA oTemporalLinea
    DATA cTemporalComanda
@@ -540,7 +543,7 @@ CLASS TpvTactil
    //------------------------------------------------------------------------//
 
    METHOD SetLineaMenu( nLineaMenu )                                 INLINE ( ::nLineaMenu := nLineaMenu )
-   METHOD GetLineaMenu()                                             INLINE ( if( empty( ::nLineaMenu ), 0, ::nLineaMenu ) )
+   METHOD GetLineaMenu()                                             INLINE ( if( empty( ::nLineaMenu ), bottomNumber, ::nLineaMenu ) )
 
    //------------------------------------------------------------------------//
 
@@ -712,9 +715,11 @@ CLASS TpvTactil
    METHOD OnClickParaRecoger()
    METHOD OnClickEncargar()
    
-   METHOD OnclickDividirMesa()
-      METHOD StartDividirMesas( oDlg )
-      METHOD lInitCheckDividirMesas()
+   //METHOD OnclickDividirMesa()
+   //   METHOD StartDividirMesas( oDlg )
+   //   METHOD lInitCheckDividirMesas()
+
+   METHOD OnClickDividirMesaNew()
 
    METHOD OnClickEntrega()
 
@@ -1018,17 +1023,17 @@ CLASS TpvTactil
    METHOD lEditableDocumento()         INLINE ( !::oTiketCabecera:lCloTik )
    METHOD lEmptyLineas()               INLINE ( !Empty( ::oTiketCabecera:cNumTik ) .and. Empty( ::oTemporalLinea:OrdKeyCount() ) )
 
-   METHOD AddLineOrgToNew()
-   METHOD AddLineNewToOrg()
+   //METHOD AddLineOrgToNew()
+   //METHOD AddLineNewToOrg()
 
-   METHOD AceptarDividirMesa()
-   METHOD AceptarNuevoTicketDividirMesa()
+   //METHOD AceptarDividirMesa()
+   //METHOD AceptarNuevoTicketDividirMesa()
 
-   METHOD GuardaTemporal()
+   //METHOD GuardaTemporal()
 
    METHOD GuardaCobros()               INLINE ( ::oTpvCobros:ArchivaCobros() )
 
-   METHOD CreaNuevoTicket()
+   //METHOD CreaNuevoTicket()
 
    //------------------------------------------------------------------------//
 
@@ -1313,7 +1318,7 @@ CLASS TpvTactil
 
    METHOD nPrecioPorPersona()          INLINE ( ::sTotal:nTotalDocumento / NotCero( ::oTiketCabecera:nNumCom ) )
 
-   METHOD CargaTemporalOriginal()
+   //METHOD CargaTemporalOriginal()
 
    //------------------------------------------------------------------------//
 
@@ -1848,39 +1853,6 @@ CLASS TpvTactil
 
 //---------------------------------------------------------------------------//
 
-   INLINE METHOD lShowEscandallosDivision()
-
-      local cFocusOriginal
-      local cFocusNuevoTicket
-
-      cFocusOriginal      := Upper( ::oTemporalDivisionOriginal:OrdSetFocus() )
-
-      if ( cFocusOriginal == Upper( "nRecNum" ) )
-         ::oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
-      else
-         ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )
-      end if
-
-      cFocusNuevoTicket   := Upper( ::oTemporalDivisionNuevoTicket:OrdSetFocus() )
-
-      if ( cFocusNuevoTicket == Upper( "nRecNum" ) )
-         ::oTemporalDivisionNuevoTicket:OrdSetFocus( "lRecNum" )
-      else
-         ::oTemporalDivisionNuevoTicket:OrdSetFocus( "nRecNum" )
-      end if
-
-      ::oBrwOriginal:GoTop()
-      ::oBrwOriginal:Refresh()
-
-      ::oBrwNuevoTicket:GoTop()
-      ::oBrwNuevoTicket:Refresh()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
    INLINE METHOD OnClickImportesExactos()
 
       SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
@@ -2116,6 +2088,10 @@ METHOD End() CLASS TpvTactil
       ::oTpvCobros:End()
    end if
 
+   if !Empty( ::oTpvUtilidadesMesa )
+      ::oTpvUtilidadesMesa:End()
+   end if
+
    if !Empty( ::oTpvListaTicket )
       ::oTpvListaTicket:End()
    end if
@@ -2208,6 +2184,8 @@ METHOD Activate( lAlone ) CLASS TpvTactil
    ::oTpvCobros               := TpvCobros():New( Self )
 
    ::oTpvListaTicket          := TpvListaTicket():New( Self )
+
+   ::oTpvUtilidadesMesa       := TpvUtilidadesMesa():New( Self )
 
    ::oTurno                   := TTurno():New( cPatEmp(), oWnd(), "01001" )
 
@@ -3661,10 +3639,11 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",       1, {|| ::OpenCajon() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 246, "Mesas", .f., , "Users1_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnClickDividirMesaNew() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Unir mesa",         4, {|| ::OnClickDividirMesaNew() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
@@ -5204,7 +5183,7 @@ METHOD nPrecioArticulo( cCodigoArticulo ) CLASS TpvTactil
 
    // si la pertenece a un menu el precio va en el menu---------------------------
 
-   if ::GetLineaMenu() != 0
+   if ::GetLineaMenu() != bottomNumber
       Return ( nPrecio )
    end if 
 
@@ -7252,9 +7231,12 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       // Si el numero de ticket esta vacio debemos tomar un nuevo numero----------
 
       if ::lBlankTicket()
+
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
          ::oTiketCabecera:Insert()
+
       else
+         
          if !lZap
             
             // Solo salvar pq continuo editando--------------------------------
@@ -7267,12 +7249,13 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
             
             ::oTiketCabecera:SaveUnLock()
             
-         end if 
+         end if
+
       end if
 
       // Si este ticket ya tiene numero debemos quitar las lineas anteriores------
 
-      if !( ::lBlankTicket() ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
+      if !( ::lBlankTicket() ) // .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
          while ::oTiketLinea:Seek( ::cNumeroTicket() ) .and. !::oTiketLinea:eof()
             ::oTiketLinea:Delete(.f.)
          end while
@@ -7282,6 +7265,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       ::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "lRecNum" )
+
+      msgAlert( ::oTemporalLinea:RecCount(), "Nuero de registros" )
 
       ::oProgressBar:SetTotal( ::oTemporalLinea:RecCount() )
 
@@ -7303,6 +7288,10 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       end while
 
       ::oTemporalLinea:SetStatus()
+
+      // Cargamos valores por defecto------------------------------------------
+
+      // ::CargaValoresDefecto()
 
       // Vaciamos las lineas si estamos en un nuevo ticket---------------------
 
@@ -9450,6 +9439,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD OnClickDividirMesaNew() Class TpvTactil
+
+   msgAlert( "Entro en el nuevo dividir mesas" )
+
+   //Comprobaciones iniciales----------------------------------------------------
+   
+   ::DisableDialog()
+
+   ::oTpvUtilidadesMesa:DividirMesas()
+
+   ::EnableDialog()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+/*
 METHOD OnclickDividirMesa() Class TpvTactil
 
    local oDlg
@@ -9464,9 +9469,9 @@ METHOD OnclickDividirMesa() Class TpvTactil
    local oBtnEscandallosOrg  
    local oBtnEscandallosNew
    
-   /*
-   Comprobaciones iniciales----------------------------------------------------
-   */
+   
+   //Comprobaciones iniciales----------------------------------------------------
+   
 
    if !::lInitCheckDividirMesas()
       Return .f.
@@ -9474,9 +9479,9 @@ METHOD OnclickDividirMesa() Class TpvTactil
 
    ::DisableDialog()
 
-   /*
-   Rellenamos la temporal oiginal----------------------------------------------
-   */
+   
+   //Rellenamos la temporal oiginal----------------------------------------------
+   
 
    ::CargaTemporalOriginal()
 
@@ -9486,9 +9491,9 @@ METHOD OnclickDividirMesa() Class TpvTactil
    
    oGrupoOriginal:SetFont( ::oFntFld )
 
-   /*
-   Browse de Lineas Originales-------------------------------------------------
-   */
+   
+   //Browse de Lineas Originales-------------------------------------------------
+   
 
    ::oBrwOriginal                        := IXBrowse():New( oDlg )
 
@@ -9548,9 +9553,9 @@ METHOD OnclickDividirMesa() Class TpvTactil
       
       oGrupoNuevo:SetFont( ::oFntFld )
 
-   /*
-   Browse de Lineas para el Nuevo Ticket---------------------------------------
-   */
+   
+   //Browse de Lineas para el Nuevo Ticket---------------------------------------
+   
 
    ::oBrwNuevoTicket                        := IXBrowse():New( oDlg )
 
@@ -9599,17 +9604,17 @@ METHOD OnclickDividirMesa() Class TpvTactil
    oBtnUpNew            := TButtonBmp():ReDefine( 270, {|| ::oBrwNuevoTicket:GoUp() },   oDlg, , , .f., , , , .f., "Navigate_up" )
    oBtnDownNew          := TButtonBmp():ReDefine( 280, {|| ::oBrwNuevoTicket:GoDown() }, oDlg, , , .f., , , , .f., "Navigate_down" ) 
 
-   /*
-   Activamos el diálogo--------------------------------------------------------
-   */
+   
+   //Activamos el diálogo--------------------------------------------------------
+   
 
    oDlg:bStart := {|| ::StartDividirMesas( oDlg ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
-   /*
-   Matamos la Officebar antes de salir-----------------------------------------
-   */
+   
+   //Matamos la Officebar antes de salir-----------------------------------------
+   
 
    if !Empty( ::oOfficeBar )
       ::oOfficeBarDividirMesas:End()
@@ -9706,17 +9711,17 @@ METHOD AceptarDividirMesa( oDlg ) Class TpvTactil
    local cCodSala       := ::oTiketCabecera:cCodSala
    local cPntVenta      := ::oTiketCabecera:cPntVenta 
 
-   /*
-   Pasar la temporal-----------------------------------------------------------
-   */
+   
+   //Pasar la temporal-----------------------------------------------------------
+   
 
    ::GuardaTemporal()
 
    if ::GuardaDocumentoPendiente()
 
-      /*
-      Creamos el nuevo ticket-----------------------------------------------------
-      */
+      
+      //Creamos el nuevo ticket-----------------------------------------------------
+      
 
       ::CreaNuevoTicket( oDlg, cCodSala, cPntVenta )
 
@@ -9738,23 +9743,23 @@ METHOD AceptarNuevoTicketDividirMesa( oDlg ) Class TpvTactil
    local cCodSala       := ::oTiketCabecera:cCodSala
    local cPntVenta      := ::oTiketCabecera:cPntVenta 
 
-   /*
-   Pasar la temporal-----------------------------------------------------------
-   */
+   
+   //Pasar la temporal-----------------------------------------------------------
+   
 
    ::GuardaTemporal()
 
    if ::GuardaDocumentoPendiente()
 
-      /*
-      Creamos el nuevo ticket-----------------------------------------------------
-      */
+      
+      //Creamos el nuevo ticket-----------------------------------------------------
+      
 
       ::CreaNuevoTicket( oDlg, cCodSala, cPntVenta )
 
-      /*
-      Limpiamos y recargamos los temporales---------------------------------------
-      */
+      
+      //Limpiamos y recargamos los temporales---------------------------------------
+      
 
    end if
 
@@ -9802,9 +9807,9 @@ METHOD CreaNuevoTicket( oDlg, cCodSala, cPntVenta ) Class TpvTactil
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      /*
-      Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
-      */
+      
+      //Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
+      
 
       ::oTiketCabecera:Load()
 
@@ -9821,9 +9826,9 @@ METHOD CreaNuevoTicket( oDlg, cCodSala, cPntVenta ) Class TpvTactil
       ::oTiketCabecera:lAbierto  := .t.
       ::oTiketCabecera:Insert()
 
-      /*
-      Ahora metemos una linea-----------------------------------------------------
-      */
+      
+      //Ahora metemos una linea-----------------------------------------------------
+      
 
       ::oTemporalDivisionNuevoTicket:GoTop()
 
@@ -9890,9 +9895,9 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if  
 
-         /*
-         Si es un producto kit pasamos tambien los productos kit---------------
-         */
+         
+         //Si es un producto kit pasamos tambien los productos kit---------------
+         
 
          if ::oTemporalDivisionOriginal:lKitArt
 
@@ -9944,9 +9949,9 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if
 
-         /*
-         Si es un producto kit pasamos tambien los productos kit---------------
-         */
+         
+         //Si es un producto kit pasamos tambien los productos kit---------------
+         
 
          if ::oTemporalDivisionOriginal:lKitArt
 
@@ -10005,9 +10010,9 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if
 
-         /*
-         Si es un producto kit pasamos tambien los productos kit---------------
-         */
+         
+         //Si es un producto kit pasamos tambien los productos kit---------------
+         
 
          if ::oTemporalDivisionOriginal:lKitArt
 
@@ -10093,9 +10098,9 @@ METHOD AddLineNewToOrg() Class TpvTactil
 
          end if
 
-         /*
-         Si es un producto kit pasamos tambien los productos kit---------------
-         */
+         
+         //Si es un producto kit pasamos tambien los productos kit---------------
+         
 
          if ::oTemporalDivisionNuevoTicket:lKitArt
 
@@ -10147,9 +10152,9 @@ METHOD AddLineNewToOrg() Class TpvTactil
 
          end if
 
-         /*
-         Si es un producto kit pasamos tambien los productos kit---------------
-         */
+         
+         //Si es un producto kit pasamos tambien los productos kit---------------
+         
 
          if ::oTemporalDivisionNuevoTicket:lKitArt
 
@@ -10205,7 +10210,7 @@ METHOD AddLineNewToOrg() Class TpvTactil
    ::oBrwNuevoTicket:Refresh()
 
 Return ( Self )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )

@@ -213,6 +213,7 @@ CLASS TTpvSalon
    METHOD aNumerosTickets()
 
    METHOD oTactil()        INLINE ( ::oSender:oSender )
+   METHOD oTiketCabecera() INLINE ( ::oTactil():oTiketCabecera )
 
    METHOD lBrowseMultiplesTickets( aNumerosTickets )
 
@@ -442,6 +443,7 @@ METHOD SelectPunto( oPunto ) CLASS TTpvSalon
       if ::lBrowseMultiplesTickets( oPunto )
 
          ::oSelectedPunto  := oPunto
+
          ::Close( IDOK )
 
       end if   
@@ -449,6 +451,7 @@ METHOD SelectPunto( oPunto ) CLASS TTpvSalon
    else   
 
       ::oSelectedPunto     := oPunto
+
       ::Close( IDOK )
 
    end if
@@ -493,12 +496,12 @@ Method lBrowseMultiplesTickets( oPunto ) Class TTpvSalon
    local oBrw
    local oFont                := TFont():New( "Segoe UI",  0, 20, .f., .t. )
 
-   ::oTactil():oTiketCabecera:GetStatus()
+   ::oTiketCabecera():GetStatus()
 
-   ::oTactil():oTiketCabecera:OrdSetFocus( "cCodSal" )
-   ::oTactil():oTiketCabecera:OrdScope( oPunto:cCodigoSala + Padr( oPunto:cPuntoVenta, 30 ) )
+   ::oTiketCabecera():OrdSetFocus( "cCodSal" )
+   ::oTiketCabecera():OrdScope( oPunto:cCodigoSala + Padr( oPunto:cPuntoVenta, 30 ) )
    
-   ::oTactil():oTiketCabecera:GoTop()
+   ::oTiketCabecera():GoTop()
 
    DEFINE DIALOG oDlg RESOURCE ( "Tpv_Lista_Multiples" )
 
@@ -522,31 +525,31 @@ Method lBrowseMultiplesTickets( oPunto ) Class TTpvSalon
 
       oBrw:oFont             := oFont
 
-      ::oTactil():oTiketCabecera:SetBrowse( oBrw )
+      ::oTiketCabecera():SetBrowse( oBrw )
 
       oBrw:CreateFromResource( 100 )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Número"
-         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cSerTik" ) + "/" + AllTrim( ::oTactil():oTiketCabecera:FieldGetByName( "cNumTik" ) ) + "/" + ::oTactil():oTiketCabecera:FieldGetByName( "cSufTik" ) }
+         :bEditValue       := {|| ::oTiketCabecera():FieldGetByName( "cSerTik" ) + "/" + AllTrim( ::oTiketCabecera():FieldGetByName( "cNumTik" ) ) + "/" + ::oTiketCabecera():FieldGetByName( "cSufTik" ) }
          :nWidth           := 90
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Fecha" + CRLF + "Hora"
-         :bEditValue       := {|| dToc( ::oTactil():oTiketCabecera:FieldGetByName( "dFecTik" ) ) + CRLF + ::oTactil():oTiketCabecera:FieldGetByName( "cHorTik" ) }
+         :bEditValue       := {|| dToc( ::oTiketCabecera():FieldGetByName( "dFecTik" ) ) + CRLF + ::oTiketCabecera():FieldGetByName( "cHorTik" ) }
          :nWidth           := 100
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cNcjTik" ) }
+         :bEditValue       := {|| ::oTiketCabecera():FieldGetByName( "cNcjTik" ) }
          :nWidth           := 75
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cCcjTik" ) }
+         :bEditValue       := {|| ::oTiketCabecera():FieldGetByName( "cCcjTik" ) }
          :nWidth           := 75
       end with
 
@@ -558,13 +561,13 @@ Method lBrowseMultiplesTickets( oPunto ) Class TTpvSalon
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Cliente"
-         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cCliTik" ) + CRLF + ::oTactil():oTiketCabecera:FieldGetByName( "cNomTik" ) }
+         :bEditValue       := {|| ::oTiketCabecera():FieldGetByName( "cCliTik" ) + CRLF + ::oTiketCabecera():FieldGetByName( "cNomTik" ) }
          :nWidth           := 275
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "nTotTik" ) }
+         :bEditValue       := {|| ::oTiketCabecera():FieldGetByName( "nTotTik" ) }
          :cEditPicture     := ::oTactil():cPictureTotal
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -577,15 +580,15 @@ Method lBrowseMultiplesTickets( oPunto ) Class TTpvSalon
 
    if oDlg:nResult == IDOK
 
-      oPunto:cSerie        := ::oTactil():oTiketCabecera:FieldGetByName( "cSerTik" )
-      oPunto:cNumero       := ::oTactil():oTiketCabecera:FieldGetByName( "cNumTik" )
-      oPunto:cSufijo       := ::oTactil():oTiketCabecera:FieldGetByName( "cSufTik" )
+      oPunto:cSerie        := ::oTiketCabecera():FieldGetByName( "cSerTik" )
+      oPunto:cNumero       := ::oTiketCabecera():FieldGetByName( "cNumTik" )
+      oPunto:cSufijo       := ::oTiketCabecera():FieldGetByName( "cSufTik" )
 
    end if
 
-   ::oTactil():oTiketCabecera:OrdClearScope()
+   ::oTiketCabecera():OrdClearScope()
 
-   ::oTactil():oTiketCabecera:SetStatus()
+   ::oTiketCabecera():SetStatus()
 
    oFont:End()
 
@@ -1198,7 +1201,7 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Error al crear salon" )
+      msgStop( ErrorMessage( oError ), "Error al crear salón" )
 
    END SEQUENCE
 

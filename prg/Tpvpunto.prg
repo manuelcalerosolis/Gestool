@@ -440,6 +440,8 @@ Return ( "" )
 
 Method LoadMesa() CLASS sTpvPunto
 
+   local aStatus
+
    ::cSerie       := ""
    ::cNumero      := ""
    ::cSufijo      := ""
@@ -449,7 +451,10 @@ Method LoadMesa() CLASS sTpvPunto
    ::nEstado      := 1
    ::lMultiple    := .f.
 
+   aStatus        := ::oTiketCabecera():GetStatus()
+
    if ::oTiketCabecera():SeekInOrd( ::cPunto(), "cCodSal" )
+
       ::cSerie    := ::oTiketCabecera():FieldGetByName( "cSerTik"   )
       ::cNumero   := ::oTiketCabecera():FieldGetByName( "cNumTik"   )
       ::cSufijo   := ::oTiketCabecera():FieldGetByName( "cSufTik"   )
@@ -465,6 +470,8 @@ Method LoadMesa() CLASS sTpvPunto
       end if
 
    end if
+
+   ::oTiketCabecera():SetStatus( aStatus )
 
 Return ( Self )
 
@@ -503,7 +510,7 @@ Return ( Len( aNumeros ) > 1 )
 
 METHOD nTotalMultipleTicket()
 
-   local nTotal      := 0
+   local nTotal         := 0
 
    with object ( ::oTiketCabecera() )
       
@@ -515,7 +522,7 @@ METHOD nTotalMultipleTicket()
 
          while :FieldGetByName( "cCodSala" ) + :FieldGetByName( "cPntVenta" ) == ::cCodigoSala + Padr( ::cPuntoVenta, 30 ) .and. !:Eof()
 
-            nTotal   += :FieldGetByName( "nTotTik" )
+            nTotal      += :FieldGetByName( "nTotTik" )
 
             :Skip()
 

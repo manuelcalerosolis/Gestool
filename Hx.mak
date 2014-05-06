@@ -397,6 +397,7 @@ MsTable.prg             \
 TipoImpresora.prg       \
 PageIni.prg             \
 TpvTactil.prg           \
+TpvUtilidadesMesa.prg 	\
 TpvCobros.prg           \
 TpvListaTicket.prg      \
 TpvRestaurante.prg      \
@@ -819,6 +820,7 @@ MsTable.obj             \
 TipoImpresora.obj       \
 PageIni.obj             \
 TpvTactil.obj           \
+TpvUtilidadesMesa.obj 	\
 TpvCobros.obj           \
 TpvListaTicket.obj      \
 TpvRestaurante.obj      \
@@ -1213,6 +1215,7 @@ $(OBJ)\SincronizaPreventa.obj   +
 $(OBJ)\TipoImpresora.obj        +
 $(OBJ)\PageIni.obj              +
 $(OBJ)\TpvTactil.obj            +
+$(OBJ)\TpvUtilidadesMesa.obj 	+
 $(OBJ)\TpvCobros.obj            +
 $(OBJ)\TpvListaTicket.obj       +
 $(OBJ)\TpvRestaurante.obj       +

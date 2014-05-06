@@ -165,8 +165,11 @@ CLASS TTpvRestaurante FROM TMasDet
    DATA nTarifa            AS NUMERIC  INIT  1  
 
    DATA cSelectedSala
+
    DATA cSelectedPunto
    DATA oSelectedPunto
+
+   DATA nSelectedUbicacion 
 
    DATA nSelectedPrecio    AS NUMERIC  INIT  1
    DATA nSelectedCombinado AS NUMERIC  INIT  2
@@ -200,7 +203,7 @@ CLASS TTpvRestaurante FROM TMasDet
 
    Method cTextoSala()
 
-   Method SetTicket( sPunto )
+   Method SetTicket()
 
    Method Resource( nMode )
 
@@ -321,8 +324,8 @@ Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestauran
             Vamos a ver si en esta ubicacion hay tickets-----------------------
             */
 
-            if !Empty( ::oSalon:oSelectedPunto:cTiket() ) .and. ::oSender:oTiketCabecera:SeekInOrd( ::oSalon:oSelectedPunto:cTiket(), "cNumTik" )
-               ::SetTicket( ::oSalon:oSelectedPunto )
+            if !Empty( ::oSalon:oSelectedPunto:cTiket() )
+               ::SetTicket()
             else
                ::SetPunto( ::oSalon:oSelectedPunto )
             end if
@@ -348,11 +351,15 @@ Return ( lSelector )
 // Han seleccionado un ticket
 //
 
-Method SetTicket( sPunto ) CLASS TTpvRestaurante
+Method SetTicket() CLASS TTpvRestaurante
 
-   if !Empty( sPunto )
+   local aStatus
 
-      ::oSelectedPunto                 := sPunto
+   aStatus                             := ::oSender:oTiketCabecera:GetStatus()
+
+   if ::oSender:oTiketCabecera:SeekInOrd( ::oSalon:oSelectedPunto:cTiket(), "cNumTik" )
+
+      ::oSelectedPunto                 := ::oSalon:oSelectedPunto
 
       ::oSelectedPunto:cSerie          := ::oSender:oTiketCabecera:FieldGetByName( "cSerTik" )
       ::oSelectedPunto:cNumero         := ::oSender:oTiketCabecera:FieldGetByName( "cNumTik" )
@@ -362,9 +369,11 @@ Method SetTicket( sPunto ) CLASS TTpvRestaurante
       if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "nTarifa" ) )
          ::oSelectedPunto:nPrecio      := ::oSender:oTiketCabecera:FieldGetByName( "nTarifa" )
       end if
+      
       if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "cCodSala" ) )
          ::oSelectedPunto:cCodigoSala  := ::oSender:oTiketCabecera:FieldGetByName( "cCodSala" )
       end if
+      
       if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
          ::oSelectedPunto:cPuntoVenta  := ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" )
       end if
@@ -375,11 +384,12 @@ Method SetTicket( sPunto ) CLASS TTpvRestaurante
 
       ::cSelectedSala                  := ::oSelectedPunto:cSala
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
+      ::nSelectedUbicacion             := ::oSelectedPunto:nUbicacion
+      ::cSelectedImagen                := ::oSelectedPunto:cImagen
 
       ::SelectedPrecio(    ::oSelectedPunto:nPrecio )
       ::SelectedCombinado( ::oSelectedPunto:nPreCmb )
 
-      ::cSelectedImagen                := ::oSelectedPunto:cImagen
       ::cSelectedTiket                 := ::oSelectedPunto:cTiket()
       ::cSelectedTexto                 := ::oSelectedPunto:cTextoPunto()
 
@@ -387,6 +397,8 @@ Method SetTicket( sPunto ) CLASS TTpvRestaurante
       ::SetSelectedTexto()
 
    end if
+
+   ::oSender:oTiketCabecera:SetStatus( aStatus )   
 
 Return ( Self )
 
@@ -1383,6 +1395,7 @@ Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := sPunto:cSala
    ::cSelectedPunto              := sPunto:cPuntoVenta
+   ::nSelectedUbicacion          := sPunto:nUbicacion
 
    ::SelectedPrecio(    sPunto:nPrecio )
    ::SelectedCombinado( sPunto:nPreCmb )
@@ -1450,6 +1463,7 @@ Method SetPunto( sPunto ) CLASS TTpvRestaurante
 
       ::cSelectedSala                  := ::oSelectedPunto:cSala
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
+      ::nSelectedUbicacion             := ::oSelectedPunto:nUbicacion
      
       ::SelectedPrecio(    ::oSelectedPunto:nPrecio )             
       ::SelectedCombinado( ::oSelectedPunto:nPreCmb )             
