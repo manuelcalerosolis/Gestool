@@ -628,9 +628,10 @@ RETURN ( Self )
 
 METHOD DeleteDetails()
 
-   while ::oParent:oDetHorasPersonal:oDbfVir:Seek( Space( 5 ) )
+   while ::oParent:oDetHorasPersonal:oDbfVir:SeekInOrd( ::oDbfVir:cCodTra, "cCodTra" )
       ::oParent:oDetHorasPersonal:oDbfVir:Delete(.f.)
    end while
+
 
 RETURN ( Self )
 

@@ -716,7 +716,7 @@ METHOD nUnidades( oDbf ) CLASS TDetProduccion
 
    if !Empty( oDbf )
 
-      nUnidades := NotCaja( oDbf:nCajOrd() * oDbf:nUndOrd() )
+      nUnidades := NotCaja( oDbf:nCajOrd() ) * oDbf:nUndOrd()
       
       if !Empty( ::oParent:nDouDiv )
          nUnidades := Round( nUnidades, ::oParent:nDouDiv )
