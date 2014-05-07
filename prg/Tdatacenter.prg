@@ -4905,6 +4905,8 @@ CLASS TDataView
 
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
+   METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
+
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
    METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
 
