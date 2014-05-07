@@ -11949,6 +11949,208 @@ Return .f.
 
 //---------------------------------------------------------------------------//
 
+Function hAtipica( hValue )
+
+   local nRec
+   local hAtipica
+   local nModOferta
+
+   if !hhaskey( hValue, "cCodigoArticulo" )     .or.;
+      !hhaskey( hValue, "cCodigoPropiedad1" )   .or.;
+      !hhaskey( hValue, "cCodigoPropiedad2" )   .or.;
+      !hhaskey( hValue, "cValorPropiedad1" )    .or.;
+      !hhaskey( hValue, "cValorPropiedad2" )    .or.;
+      !hhaskey( hValue, "cCodigoFamilia" )      .or.;
+      !hhaskey( hValue, "cCodigoCliente" )      .or.;
+      !hhaskey( hValue, "cCodigoGrupo" )        .or.;
+      !hhaskey( hValue, "nTarifaPrecio" )       .or.;
+      !hhaskey( hValue, "lIvaIncluido" )        .or.;
+      !hhaskey( hValue, "dFecha" )              .or.;
+      !hhaskey( hValue, "nTipoDocumento" )      .or.;
+      !hhaskey( hValue, "nCajas" )              .or.;
+      !hhaskey( hValue, "nUnidades" )           .or.;
+      !hhaskey( hValue, "nView" )               
+
+      msgStop( "Faltan parametros función hAtipica" )
+
+      return ( hAtipica )
+
+   endif 
+
+   /*
+   Guardamos la posición inicial-----------------------------------------------
+   */
+
+   nRec              := ( TDataView():Atipicas( hValue[ "nView" ] ) )->( Recno() )
+
+   /*
+   Primero buscamos por familia y luego por artículo---------------------------
+   */
+
+   if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+      
+      if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+         lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+         hAtipica       := hValoresAtipica( hValue )
+
+      end if
+
+   end if 
+
+   if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
+
+      if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+
+         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+            hAtipica    := hValoresAtipica( hValue )
+         end if  
+      
+      end if 
+   
+   end if
+   
+   if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cCliArt", TDataView():Atipicas( hValue[ "nView" ] ) )
+      
+      if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+         lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+         hAtipica       := hValoresAtipica( hValue )
+
+      end if
+
+   end if 
+
+   if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nImporte" ] ) )
+
+      if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cGrpArt", TDataView():Atipicas( hValue[ "nView" ] ) )
+
+         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+            hAtipica    := hValoresAtipica( hValue )
+
+         end if   
+      
+      end if 
+   
+   end if 
+
+   /*
+   Informamos de las unidades de Regalo de las Unidades XY---------------------
+   */
+
+   if hhaskey( hAtipica, "nTipoXY" )           .and.;
+      hhaskey( hAtipica, "nUnidadesVender" )   .and.;
+      hhaskey( hAtipica, "nUnidadesCobrar" )
+
+      do case
+         case hAtipica[ "nTipoXY" ] == 1     //Cajas
+
+            if mod( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) == 0
+               nModOferta                       := Int( Div( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) )
+               hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+            end if   
+
+         case hAtipica[ "nTipoXY" ] == 2     //Unidades
+
+            if mod( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) == 0
+               nModOferta                       := Int( Div( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) )
+               hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+            end if
+
+      end case
+
+   end if   
+
+   /*
+   Devolvemos a su posición inicial--------------------------------------------
+   */
+   
+   ( TDataView():Atipicas( hValue[ "nView" ] ) )->( dbGoTo( nRec ) )
+
+Return ( hAtipica )
+      
+//---------------------------------------------------------------------------//
+
+Function hValoresAtipica( hValue )
+
+   local hAtipica                         := {=>}
+
+   /*
+   Carga de valores------------------------------------------------------------
+   */
+   
+   hAtipica[ "nDescuentoPorcentual" ]     := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoArt
+   hAtipica[ "nDescuentoLineal" ]         := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoDiv
+   hAtipica[ "nDescuentoPromocional" ]    := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDprArt
+   
+   if ( TDataView():Atipicas( hValue[ "nView" ] ) )->lComAge
+      hAtipica[ "nComisionAgente" ]       := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nComAge
+   end if
+      
+   hAtipica[ "nTipoXY" ]                  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nTipXby
+   hAtipica[ "nUnidadesVender" ]          := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nUnvOfe
+   hAtipica[ "nUnidadesCobrar" ]          := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nUncOfe
+
+   if ( TDataView():Atipicas( hValue[ "nView" ] ) )->lPrcCom
+      hAtipica[ "nCostoParticular" ]      := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcCom
+   end if
+
+   do case
+      case hValue[ "nTarifaPrecio" ] == 1
+        hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva1, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt )
+      case hValue[ "nTarifaPrecio" ] == 2
+        hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva2, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt2 )
+      case hValue[ "nTarifaPrecio" ] == 3
+        hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva3, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt3 )
+      case hValue[ "nTarifaPrecio" ] == 4
+        hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva4, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt4 )
+      case hValue[ "nTarifaPrecio" ] == 5
+        hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva5, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt5 )
+      case hValue[ "nTarifaPrecio" ] == 6
+        hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva6, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt6 )
+   end case
+
+Return ( hAtipica )
+
+//---------------------------------------------------------------------------//
+
+function lFechasAtipicas( nView, dFecha )
+
+Return ( ( empty( ( TDataView():Atipicas( nView ) )->dFecIni ) .or. ( TDataView():Atipicas( nView ) )->dFecIni <= dFecha ) .and. ;
+       ( empty( ( TDataView():Atipicas( nView ) )->dFecFin ) .or. ( TDataView():Atipicas( nView ) )->dFecFin >= dFecha ) )
+
+//---------------------------------------------------------------------------//
+
+function lAplicaDocumento( nView, nDocumento )
+
+   local lReturn  := .f.
+
+   do case
+      case nDocumento == PRE_CLI
+         lReturn  := ( TDataView():Atipicas( nView ) )->lAplPre
+
+      case nDocumento == PED_CLI
+         lReturn  := ( TDataView():Atipicas( nView ) )->lAplPed
+
+      case nDocumento == ALB_CLI
+         lReturn  := ( TDataView():Atipicas( nView ) )->lAplAlb
+
+      case nDocumento == FAC_CLI
+         lReturn  := ( TDataView():Atipicas( nView ) )->lAplFac
+
+      case nDocumento == SAT_CLI
+         lReturn  := ( TDataView():Atipicas( nView ) )->lAplSat
+
+   end case   
+
+Return lReturn
+
+//---------------------------------------------------------------------------//
+
 Function nImporteAtipica( cCodigoArticulo, cCodigoCliente, cCodigoGrupo, nTarifa, lIvaIncluido, dbfCliAtp )
 
    local nOrd              := ( dbfCliAtp )->( ordSetFocus() ) 
