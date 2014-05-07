@@ -42,9 +42,10 @@ CLASS TScripts FROM TMant
    METHOD   CompilarEjecutarFicheroScript( cFilePrg )
 
    METHOD   CompilarEjecutarCodigoScript( cCodScr ) ;  
-                                                INLINE ::CompilarEjecutarFicheroScript( cPatScript() + cCodScr + ".prg" )
+                                                INLINE ( ::CompilarEjecutarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
 
    METHOD   RunScript( cFichero )
+   METHOD   RunCodigoScript( cCodScr )          INLINE ( ::RunScript( cPatScript() + cCodScr + ".hrb" ) )
 
    // Metodos para los timers--------------------------------------------------
 
@@ -364,6 +365,9 @@ METHOD CompilarFicheroScript() CLASS TScripts
 
    // Vemos si tenemos q compilar por tiempos de los ficheros------------------
 
+   msgStop( GetFileDateTime( ::cFicheroPrg ), "Fecha prg " + ::cFicheroPrg ) 
+   msgStop( GetFileDateTime( ::cFicheroHbr ), "Fecha hbr " + ::cFicheroHbr )
+
    if GetFileDateTime( ::cFicheroPrg ) > GetFileDateTime( ::cFicheroHbr )
 
       ferase( ::cFicheroHbr )
@@ -443,7 +447,7 @@ METHOD StartTimer()
             
             cCodScr  := by( ::oDbf:cCodScr )
 
-            oTimer   := TTimer():New( ::oDbf:nMinScr * 60000, {|| ::EjecutarScript( cCodScr ) }, oWnd() )
+            oTimer   := TTimer():New( ::oDbf:nMinScr * 60000, {|| ::RunCodigoScript( cCodScr ) }, oWnd() )
             oTimer:Activate()
 
             aAdd( ::aTimer, oTimer ) 

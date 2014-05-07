@@ -761,6 +761,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    local nLevel
    local oBtnEur
    local oRotor
+   local oScript
 
    DEFAULT  oMenuItem   := "01014"
    DEFAULT  oWnd        := oWnd()
@@ -1280,22 +1281,23 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
 
-		DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
-			NOBORDER ;
+
+      DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
+         NOBORDER ;
          ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) );
          TOOLTIP  "Lis(t)ado";
          HOTKEY   "T" ;
          LEVEL    ACC_IMPR
 
       DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( TFastVentasArticulos():New():Play() ) ;
          TOOLTIP  "Rep(o)rting";
          HOTKEY   "O" ;
          LEVEL    ACC_IMPR
 
       DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( TArticuloLabelGenerator():Create() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
@@ -1393,12 +1395,19 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       if ( "VI" $ cParamsMain() )
 
       DEFINE BTNSHELL RESOURCE "BMPEXPTAR" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( GetDisk() ) ;
          TOOLTIP  "Infortisa" ;
          LEVEL    ACC_EDIT
 
       end if
+      
+      DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oScript:Expand() ) ;
+         TOOLTIP  "Scripts" ;
+
+         ImportScript( oWndBrw, oScript, "Articulos" )  
 
       DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          NOBORDER ;
