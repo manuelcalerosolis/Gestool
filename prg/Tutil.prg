@@ -799,23 +799,9 @@ return ( cPathFile )
 
 function GetFileDateTime( cFile )
 
-  local cFileAttr
-   local dChangeDate
-   local nChangeTime   
-   local nFileSize
-   local dCreateDate
-   local nCreateTime
-
    if !file( cFile )
       Return ""
    end if 
-
-   FileStats( cFile, , , , , @dChangeDate, @nChangeTime )
-   ? cFile
-   ? FileDate( cFile )
-   ? dtos( FileDate( cFile ) )
-   ? FileTime( cFile )
-   ? tstring( FileTime( cFile ) )
 
 Return ( dtos( FileDate( cFile ) ) + FileTime( cFile ) ) 
 

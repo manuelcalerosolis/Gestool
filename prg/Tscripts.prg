@@ -365,9 +365,6 @@ METHOD CompilarFicheroScript() CLASS TScripts
 
    // Vemos si tenemos q compilar por tiempos de los ficheros------------------
 
-   msgStop( GetFileDateTime( ::cFicheroPrg ), "Fecha prg " + ::cFicheroPrg ) 
-   msgStop( GetFileDateTime( ::cFicheroHbr ), "Fecha hbr " + ::cFicheroHbr )
-
    if GetFileDateTime( ::cFicheroPrg ) > GetFileDateTime( ::cFicheroHbr )
 
       ferase( ::cFicheroHbr )
