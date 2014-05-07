@@ -41,6 +41,12 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
  	DATA oSayInfoOrigen
  	DATA cSayInfoOrigen
 
+ 	DATA TiketOrigen
+ 	DATA TiketDestino
+
+ 	METHOD cTiketOrigen( uValue ) 	INLINE ( if( !empty( uValue ), ::TiketOrigen 	:= uValue, ::TiketOrigen ) )
+ 	METHOD cTiketDestino( uValue )	INLINE ( if( !empty( uValue ), ::TiketDestino 	:= uValue, ::TiketDestino ) )
+
 	METHOD New( oSender ) CONSTRUCTOR
 
 	METHOD End()
@@ -56,27 +62,8 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
 
 	METHOD AceptarDividirMesa()
 
-//---------------------------------------------------------------------------//
-
-	INLINE METHOD GuardaTicketOrigen()
-
-		if ::oSender:lEmptyLineas()
-
-			::oSender:OnClickSalaVenta()
-
-		else
-
-			::GuardaLineasTicketOrigen()
-			::oSender:GuardaDocumento( .f. )
-			
-		end if
-
-		RETURN ( Self )
-	
-	ENDMETHOD
-
-//---------------------------------------------------------------------------//
-	METHOD GuardaLineasTicketOrigen()
+	METHOD GuardaTicketOrigen() INLINE 		( ::GuardaLineasTicketOrigen(), ::oSender:GuardaDocumento( .f. ) )
+		METHOD GuardaLineasTicketOrigen()
 
 	METHOD CreaNuevoTicket()
 
@@ -204,6 +191,10 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
     end if 
 
 
+    ::cTiketOrigen( ::oSender:cNumeroTicket() )
+    ::cTiketDestino( ::oSelectedPunto:cTiket() )
+
+
     // Inicializacion de variables--------------------------------------------- 
 
 	::cSayZonaOrigen 	:= ::oSender:cTxtUbicacion()
@@ -281,7 +272,7 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	with object ( ::oBrwOriginal:AddCol() )
 	  :cHeader          := "Total"
 	  :bEditValue       := {|| ::oSender:nTotalLinea( ::oSender:oTemporalDivisionOriginal, .t. ) }
-	  :nWidth           := 100
+	  :nWidth           := 90
 	  :bFooter       := {|| Trans( ::oSender:nTotalTemporalDivision( ::oSender:oTemporalDivisionOriginal ), ::oSender:cPictureTotal ) }
 	  :nDataStrAlign := AL_RIGHT      
 	  :nHeadStrAlign := AL_RIGHT
@@ -349,7 +340,7 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	with object ( ::oBrwNuevoTicket:AddCol() )
 	  :cHeader       := "Total"
 	  :bEditValue    := {|| ::oSender:nTotalLinea( ::oSender:oTemporalDivisionNuevoTicket, .t. ) }
-	  :nWidth        := 80
+	  :nWidth        := 90
 	  :bFooter       := {|| Trans( ::oSender:nTotalTemporalDivision( ::oSender:oTemporalDivisionNuevoTicket ), ::oSender:cPictureTotal ) }
 	  :nDataStrAlign := AL_RIGHT 
 	  :nHeadStrAlign := AL_RIGHT
@@ -490,25 +481,94 @@ Return ( Self )
 
 METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 
-	::cCodSala 		:= ::oRestaurante():cSelectedSala
-	::cPntVenta 	:= ::oRestaurante():cSelectedPunto
+	local lDeleteOriginal 	:= .f.
 
-	::oDlg:Disable()
+	::cCodSala 				:= ::oRestaurante():cSelectedSala
+	::cPntVenta 			:= ::oRestaurante():cSelectedPunto
 
-	   	// Pasar la temporal-----------------------------------------------------------
+	// Preguntamos si el ticket de origen se va a quedar vacio--------------------------
 
-	   	::GuardaTicketOrigen()
+	if 	( ::oSender:oTemporalDivisionOriginal:OrdKeyCount() == 0 )
 
-		//Creamos el nuevo ticket-----------------------------------------------------
+		if ( ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oSender:cNumeroTicketFormato() + " ?", "Atención", .t. ) )
 
-		::GuardaTicketDestino()
-	   	//::CreaNuevoTicket()
+      		// Eliminamos origen y guardamos destino----------------------------
+
+			::oDlg:Disable()
+
+			::oSender:EliminaDocumento( ::cTiketOrigen )
+         		
+       		::GuardaTicketDestino()
+
+       		//Cargo documento destino-------------------------------------------
+
+       		::oSender:CargaDocumento( ::TiketDestino )
+
+	       	::oDlg:Enable()
+
+	       	::oDlg:End()
+
+	       	Return ( .t. )
+
+	    else
+
+	    	Return ( .f. )
+
+    	end if
+
+	end if 
+
+	// Si el ticket destino esta vacio y no es nuevo---------------------------
+
+	if ( ::oSender:oTemporalDivisionNuevoTicket:OrdKeyCount() == 0 ) .and. ( !::lNuevoTicket() )
+
+		if ( ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oSelectedPunto:cTextoTiket() + " ?", "Atención", .t. ) )
+
+      		// Eliminamos destino y guardamos origen----------------------------
+
+			::oDlg:Disable()
+         		
+       		::GuardaTicketOrigen()
+         		
+       		// Elimino documento destino-----------------------------------------
+
+       		::oSender:EliminaDocumento( ::TiketDestino )
+
+       		// Cargo el documento origen-----------------------------------------
+
+       		::oSender:CargaDocumento( ::TiketOrigen )
+
+	       	::oDlg:Enable()
+
+       		::oDlg:End()
+
+	       	Return ( .t. )
+
+	    else
+
+	    	Return ( .f. )
+
+	    end if
+
+	end if
 
 
-   ::oDlg:Enable()
-   ::oDlg:End( IDOK )
+	// Si no estan vacios ninguno de los dos tickets -------------------------------
 
-   ::oSender:oBrwLineas:Refresh()
+	::oDlg:Disable()		
+
+	// Pasar la temporal--------------------------------------------------------
+
+ 	::GuardaTicketOrigen()
+
+ 	// Guardamos el ticket de destino-------------------------------------------
+
+ 	::GuardaTicketDestino()
+
+ 	::oSender:CargaDocumento( ::cTiketDestino )
+
+   	::oDlg:Enable()
+   	::oDlg:End( IDOK )
 
 Return ( Self )
 
@@ -516,16 +576,12 @@ Return ( Self )
 
 METHOD GuardaLineasTicketOrigen() Class TpvUtilidadesMesa
 
-	msgAlert( "GuardaLineasTicketDestino")
-
    ::oSender:oTemporalLinea:Zap()
 
    ::oSender:oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
 
    ::oSender:oTemporalDivisionOriginal:GoTop()
    while !::oSender:oTemporalDivisionOriginal:Eof()
-
-   		msgAlert( "Estoy padanso lineas y no deberua")
 
       dbPass( ::oSender:oTemporalDivisionOriginal:cAlias, ::oSender:oTemporalLinea:cAlias, .t. )
 
@@ -547,15 +603,13 @@ METHOD GuardaTicketDestino()
 
 		cNumeroTicket 			:= ::oSelectedPunto:cTiket()
 
-		msgAlert( cNumeroTicket, "no es nuevo ")
-
 		::BorraLineasAnteriores( cNumeroTicket )
 
 	else
 		
 		cNumeroTicket 			:= ::CreaNuevaCabecera()
 
-		msgAlert( cNumeroTicket, "si es nuevo ")
+		::cTiketDestino( cNumeroTicket )
 
 	end if
 
@@ -566,8 +620,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD BorraLineasAnteriores( cNumeroTicket )
-
-	msgAlert(cNumeroTicket, "Numero ticket en BorraLineasAnteriores")
 
 	while ::oSender:oTiketLinea:SeekInOrd( cNumeroTicket, "cNumTil" )
 		::oSender:oTiketLinea:Delete()
@@ -602,8 +654,6 @@ METHOD GuardaLineasTicketDestino( cNumeroTicket )
 
 	if ::oSender:oTiketCabecera:SeekInOrd( cNumeroTicket, "cNumTik" )
 
-	msgAlert(cNumeroTicket, "entro en GuardaLineasTicketDestino")
-
 		::oSender:oTemporalDivisionNuevoTicket:GoTop()
       	while !::oSender:oTemporalDivisionNuevoTicket:Eof()
 
@@ -618,8 +668,6 @@ METHOD GuardaLineasTicketDestino( cNumeroTicket )
          	::oSender:oTemporalDivisionNuevoTicket:Skip()
 
    		end while
-
-   		::oSender:CargaDocumento( cNumeroTicket )
 
    	end if 
 

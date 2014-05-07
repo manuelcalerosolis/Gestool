@@ -7266,8 +7266,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "lRecNum" )
 
-      msgAlert( ::oTemporalLinea:RecCount(), "Nuero de registros" )
-
       ::oProgressBar:SetTotal( ::oTemporalLinea:RecCount() )
 
       ::oTemporalLinea:GoTop()
@@ -7582,6 +7580,9 @@ METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
 
    ::DisableDialog()
 
+   ::oTiketCabecera:GetStatus()
+   ::oTiketLinea:GetStatus()
+
    if ::oTiketCabecera:Seek( cNumeroTicket )
       ::oTiketCabecera:Delete()
    end if
@@ -7589,6 +7590,9 @@ METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
    while ( ::oTiketLinea:Seek( cNumeroTicket ) )
       ::oTiketLinea:Delete(.f.)
    end while
+
+   ::oTiketCabecera:SetStatus()
+   ::oTiketLinea:SetStatus()
 
    ::EnableDialog()
 
@@ -8747,13 +8751,13 @@ METHOD OnClickGuardar() CLASS TpvTactil
    // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
    if ::lEmptyDocumento()
-      Return ( .t. )
+      Return ( .f. )
    end if
 
    // Vamos a detectar si estoy en un General----------------------------------
 
    if ::lEmptyAlias() .and. !::SetAliasDocumento()
-      Return ( .t. )
+      Return ( .f. )
    end if
 
    ::DisableDialog()
@@ -8766,7 +8770,7 @@ METHOD OnClickGuardar() CLASS TpvTactil
 
    ::EnableDialog()
 
-Return ( Self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -9441,15 +9445,17 @@ Return ( Self )
 
 METHOD OnClickDividirMesaNew() Class TpvTactil
 
-   msgAlert( "Entro en el nuevo dividir mesas" )
+   if ::OnClickGuardar()
 
-   //Comprobaciones iniciales----------------------------------------------------
-   
-   ::DisableDialog()
+      //Comprobaciones iniciales----------------------------------------------------
 
-   ::oTpvUtilidadesMesa:DividirMesas()
+      ::DisableDialog()
 
-   ::EnableDialog()
+      ::oTpvUtilidadesMesa:DividirMesas()
+
+      ::EnableDialog()
+
+   end if 
 
 Return ( Self )
 
