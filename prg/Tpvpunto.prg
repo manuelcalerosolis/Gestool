@@ -113,6 +113,9 @@ CLASS sTpvPunto
    DATA cNumero            INIT ""
    DATA cSufijo            INIT ""
 
+   DATA dFecha             INIT Ctod( "" )
+   DATA cHora              INIT ""
+
    DATA cImagen
    DATA nPrecio
    DATA nPreCmb
@@ -292,6 +295,8 @@ Method CreateFromSalon( nNumero, oSender ) CLASS sTpvPunto
    ::cSerie          := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cSerTik"   )
    ::cNumero         := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cNumTik"   )
    ::cSufijo         := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cSufTik"   )
+   ::dFecha          := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "dFecTik"   )
+   ::cHora           := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cHorTik"   )
    ::cCodigoSala     := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cCodSala"  )
    ::cPuntoVenta     := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cPntVenta" )
    ::cAlias          := oSender:oSender:oSender:oTiketCabecera:FieldGetByName( "cAliasTik" )
@@ -315,11 +320,16 @@ Method Llevar( dbfTikT ) CLASS sTpvPunto
       ::cSerie       := ( dbfTikT )->cSerTik
       ::cNumero      := ( dbfTikT )->cNumTik
       ::cSufijo      := ( dbfTikT )->cSufTik
+      ::dFecha       := ( dbfTikT )->dFecTik
+      ::cHora        := ( dbfTikT )->cHorTik
       ::cAlias       := ( dbfTikT )->cAliasTik
+
    else
       ::cSerie       := ""
       ::cNumero      := ""
       ::cSufijo      := ""
+      ::dFecha       := Ctod( "" )
+      ::cHora        := ""
       ::cAlias       := ""
    end if
 
@@ -353,11 +363,15 @@ Method Encargar( dbfTikT ) CLASS sTpvPunto
       ::cSerie       := ( dbfTikT )->cSerTik
       ::cNumero      := ( dbfTikT )->cNumTik
       ::cSufijo      := ( dbfTikT )->cSufTik
+      ::dFecha       := ( dbfTikT )->dFecTik
+      ::cHora        := ( dbfTikT )->cHorTik
       ::cAlias       := ( dbfTikT )->cAliasTik
    else
       ::cSerie       := ""
       ::cNumero      := ""
       ::cSufijo      := ""
+      ::dFecha       := Ctod( "" )
+      ::cHora        := ""
       ::cAlias       := ""
    end if
 
@@ -445,6 +459,8 @@ Method LoadMesa() CLASS sTpvPunto
    ::cSerie       := ""
    ::cNumero      := ""
    ::cSufijo      := ""
+   ::dFecha       := Ctod( "" )
+   ::cHora        := ""
    ::cAlias       := ""
    ::cNombre      := ""
    ::nTotal       := 0
@@ -458,6 +474,8 @@ Method LoadMesa() CLASS sTpvPunto
       ::cSerie    := ::oTiketCabecera():FieldGetByName( "cSerTik"   )
       ::cNumero   := ::oTiketCabecera():FieldGetByName( "cNumTik"   )
       ::cSufijo   := ::oTiketCabecera():FieldGetByName( "cSufTik"   )
+      ::dFecha    := ::oTiketCabecera():FieldGetByName( "dFecTik"   )
+      ::cHora     := ::oTiketCabecera():FieldGetByName( "cHorTik"   )
       ::cAlias    := ::oTiketCabecera():FieldGetByName( "cAliasTik" )
       ::cNombre   := ::oTiketCabecera():FieldGetByName( "cNomTik"   )
       ::nEstado   := if( ::oTiketCabecera():FieldGetByName( "lAbierto" ), 2, 3 )

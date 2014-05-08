@@ -68,8 +68,10 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
 	METHOD CreaNuevoTicket()
 
 	METHOD AddLineOrgToNew()
+	METHOD AddAllOrgToNew()
 
 	METHOD AddLineNewToOrg()
+	METHOD AddAllNewToOrg()
 
 	METHOD lNuevoTicket() 	INLINE empty( ::oSelectedPunto:cTiket() ) .or. ( ::oSender:cNumeroTicket() == ::oSelectedPunto:cTiket() )
 
@@ -125,6 +127,15 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
          cInfo          += "Ticket : " + ::oSelectedPunto:cSerie + "/" + Alltrim( ::oSelectedPunto:cNumero) + Space( 1 )
       end if
 
+      
+      if !Empty( ::oSelectedPunto:dFecha )
+         cInfo          += Dtoc( ::oSelectedPunto:dFecha ) + Space( 1 )
+      end if
+
+      if !Empty( ::oSelectedPunto:cHora )
+         cInfo          += ( ::oSelectedPunto:cHora ) + Space( 1 )
+      end if
+
       RETURN ( cInfo )
 
    ENDMETHOD
@@ -177,8 +188,10 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	  	return .f.
 	end if
 
+	::oRestaurante():oSalon:cTitle( "Seleccionar punto de venta destino" )
+
 	if ::oRestaurante():Sala( nil, .t. )
-		
+
         cSelectedSala  		:= ::oRestaurante():cSelectedSala
         cSelectedPunto 		:= ::oRestaurante():cSelectedPunto
 
@@ -282,8 +295,10 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 	TButtonBmp():ReDefine( 320, {|| ::oBrwOriginal:GoUp() }, ::oDlg, , , .f., , , , .f., "Navigate_up" )
 	TButtonBmp():ReDefine( 330, {|| ::oBrwOriginal:GoDown() }, ::oDlg, , , .f., , , , .f., "Navigate_down" ) 
 
-	TButtonBmp():ReDefine( 300, {|| ::AddLineOrgToNew() }, ::oDlg, , , .f., , , , .f., "Navigate_right2" )
-	TButtonBmp():ReDefine( 310, {|| ::AddLineNewToOrg() }, ::oDlg, , , .f., , , , .f., "Navigate_left2" ) 
+	TButtonBmp():ReDefine( 300, {|| ::AddLineOrgToNew() }, ::oDlg, , , .f., , , , .f., "Navigate_right" )
+	TButtonBmp():ReDefine( 310, {|| ::AddLineNewToOrg() }, ::oDlg, , , .f., , , , .f., "Navigate_left" ) 
+	TButtonBmp():ReDefine( 360, {|| ::AddAllOrgToNew() }, ::oDlg, , , .f., , , , .f., "Navigate_right2" )
+	TButtonBmp():ReDefine( 370, {|| ::AddAllNewToOrg() }, ::oDlg, , , .f., , , , .f., "Navigate_left2" ) 
 
 	//Browse de Lineas para el Nuevo Ticket---------------------------------------
 
@@ -945,6 +960,38 @@ METHOD AddLineOrgToNew() Class TpvUtilidadesMesa
 
    ::oBrwOriginal:Refresh()
    ::oBrwNuevoTicket:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddAllOrgToNew() Class TpvUtilidadesMesa
+
+	::oSender:oTemporalDivisionOriginal:GoTop()
+	while !::oSender:oTemporalDivisionOriginal:Eof()
+		
+		::AddLineOrgToNew()
+
+	end while
+
+	::oBrwOriginal:Refresh()
+	::oBrwNuevoTicket:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddAllNewToOrg() Class TpvUtilidadesMesa
+
+	::oSender:oTemporalDivisionNuevoTicket:GoTop()
+	while !::oSender:oTemporalDivisionNuevoTicket:Eof()
+		
+		::AddLineNewToOrg()
+
+	end while
+
+	::oBrwOriginal:Refresh()
+	::oBrwNuevoTicket:Refresh()
 
 Return ( Self )
 

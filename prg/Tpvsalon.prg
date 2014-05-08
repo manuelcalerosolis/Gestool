@@ -134,6 +134,8 @@ CLASS TTpvSalon
    DATA  nLeft
    DATA  nType
 
+   DATA Title                             INIT "Seleccione puntos de venta"
+
    CLASSDATA   aBitmapsState
 
    METHOD New( oSender )
@@ -225,6 +227,11 @@ CLASS TTpvSalon
    METHOD LineaAnterior( oBrw )     INLINE ( oBrw:GoUp(),     oBrw:Select(0), oBrw:Select(1) )
    METHOD LineaSiguiente( oBrw )    INLINE ( oBrw:GoDown(),   oBrw:Select(0), oBrw:Select(1) )
    METHOD LineaUltima( oBrw )       INLINE ( oBrw:GoBottom(), oBrw:Select(0), oBrw:Select(1) )
+
+   METHOD cTitle( uValue )          INLINE ( if( !Empty( uValue ), ::Title := uValue, ::Title ) )
+
+//---------------------------------------------------------------------------//
+
 
 END CLASS
 
@@ -1049,7 +1056,6 @@ Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvSalon
 
    local n
    local sSala
-   local cTitle
 
    DEFAULT nSelectOption      := ubiSala
 
@@ -1058,15 +1064,9 @@ Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvSalon
       Return .f.
    end if
 
-   if IsTrue( lPuntosPendientes )
-      cTitle                  := "Selecionar punto pendiente"
-   else
-      cTitle                  := "Seleccionar punto de venta"
-   end if
-
    ::lDesign                  := .f.
 
-   ::oWnd                     := TDialog():New( , , , , cTitle, "SelectMesa" )
+   ::oWnd                     := TDialog():New( , , , , ::cTitle(), "SelectMesa" )
 
    ::oWnd:Activate( , , , .t., , , {|| ::InitSelector( lPuntosPendientes, lLlevar, nSelectOption ) } )
 
@@ -1144,7 +1144,7 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
       end if
 
       if uFieldEmpresa( "lEncargar" )
-         ::oBtnEncargar         := TDotNetButton():New( 60, oGrupo, "address_book2_32", "Encargar", ++nSala, {|| ::LoadEncargarPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
+         ::oBtnEncargar       := TDotNetButton():New( 60, oGrupo, "address_book2_32", "Encargar", ++nSala, {|| ::LoadEncargarPendientes( lPuntosPendientes ) }, , , .f., .f., .f. )
       end if
 
    end if
