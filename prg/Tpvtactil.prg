@@ -3069,13 +3069,13 @@ METHOD Resource() CLASS TpvTactil
 
    ::oBrwFamilias:CreateFromResource( 300 )
 
-   ::oBrwFamilias:SetArray( ::aFamilias, , , .f. )
+   ::oBrwFamilias:SetArray( ::aFamilias, , , .f. ) 
 
    with object ( ::oBrwFamilias:AddCol() )
       :nEditType        := TYPE_IMAGE
       :lBmpStretch      := .t.
       :nDataBmpAlign    := AL_LEFT
-      :nWidth           := 48
+      :nWidth           := 51
       :bStrImage        := {|| ::aFamilias[ ::oBrwFamilias:nArrayAt, 4 ] }
    end with
 
@@ -4281,7 +4281,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    if Empty( ::oFamilias )
       Return .t.
-   end if
+   end if 
 
    // Inicializamos el array de familias------------------------------------------
 
@@ -4289,12 +4289,12 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    // Caso especial de favoritos--------------------------------------------------
 
-   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "Star_Red_Alpha_48" } )
+   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "Star_Red_48" } ) 
 
    // Preguntamos si hay menus activos-----------------------------------------
 
    if ::oTpvMenu:lIsMenuActive()
-      aAdd( ::aFamilias, { "Menús", nil, {|| ::CargaMenus() }, "Clipboard_empty_48" } )
+      aAdd( ::aFamilias, { "Menús", nil, {|| ::CargaMenus() }, "Clipboard_empty_48" } ) 
    end if 
 
    // Recorremos la tabla y rellenamos el array de familias-----------------------
