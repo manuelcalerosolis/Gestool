@@ -10774,6 +10774,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
             aTmp[ _NCANENT  ] := aXbYStr[ 2 ]
             aTmp[ _NPREUNIT ] := 0
+            aTmp[ _NDTO ]     := 0
+            aTmp[ _NDTODIV ]  := 0
+            aTmp[ _NDTOPRM ]  := 0
+            aTmp[ _NCOMAGE ]  := 0
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
@@ -10810,6 +10814,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
             end if
 
             aTmp[ _NPREUNIT ] := 0
+            
+            aTmp[ _NDTO ]     := 0
+            aTmp[ _NDTODIV ]  := 0
+            aTmp[ _NDTOPRM ]  := 0
+            aTmp[ _NCOMAGE ]  := 0
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
