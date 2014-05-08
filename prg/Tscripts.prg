@@ -37,7 +37,7 @@ CLASS TScripts FROM TMant
    METHOD   CompilarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
 
    METHOD   EjecutarFicheroScript()
-   METHOD   EjecutarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".hrb" ) )
+   METHOD   EjecutarCodigoScript( cCodScr )     INLINE ( ::CompilarFicheroScript( cPatScript() + cCodScr + ".hbr" ) )
 
    METHOD   CompilarEjecutarFicheroScript( cFilePrg )
 
@@ -45,7 +45,7 @@ CLASS TScripts FROM TMant
                                                 INLINE ( ::CompilarEjecutarFicheroScript( cPatScript() + cCodScr + ".prg" ) )
 
    METHOD   RunScript( cFichero )
-   METHOD   RunCodigoScript( cCodScr )          INLINE ( ::RunScript( cPatScript() + cCodScr + ".hrb" ) )
+   METHOD   RunCodigoScript( cCodScr )          INLINE ( ::RunScript( cPatScript() + cCodScr + ".hbr" ) )
 
    // Metodos para los timers--------------------------------------------------
 
@@ -436,8 +436,11 @@ METHOD StartTimer()
 
    ::aTimer          := {} 
 
+   CursorWait()
+
    if ::OpenFiles()
 
+      ::oDbf:GoTop()
       while !::oDbf:Eof()
 
          if ( ::oDbf:nMinScr != 0 ) .and. ( Empty( ::oDbf:cCodUsr ) .or. ( ::oDbf:cCodUsr == cCurUsr() ) )
@@ -458,6 +461,8 @@ METHOD StartTimer()
       ::CloseFiles()
 
    end if
+
+   CursorWE()
 
 Return .t.
 
