@@ -12042,28 +12042,28 @@ Function hAtipica( hValue )
    Informamos de las unidades de Regalo de las Unidades XY---------------------
    */
 
-   if hhaskey( hAtipica, "nTipoXY" )           .and.;
-      hhaskey( hAtipica, "nUnidadesVender" )   .and.;
-      hhaskey( hAtipica, "nUnidadesCobrar" )
+   if !Empty( hAtipica )
 
-      do case
-         case hAtipica[ "nTipoXY" ] == 1     //Cajas
+      if hhaskey( hAtipica, "nTipoXY" )           .and.;
+         hhaskey( hAtipica, "nUnidadesVender" )   .and.;
+         hhaskey( hAtipica, "nUnidadesCobrar" )
 
-            if mod( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) == 0
+         do case
+            case hAtipica[ "nTipoXY" ] == 1     //Cajas
+
                nModOferta                       := Int( Div( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) )
                hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
-            end if   
 
-         case hAtipica[ "nTipoXY" ] == 2     //Unidades
+            case hAtipica[ "nTipoXY" ] == 2     //Unidades
 
-            if mod( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) == 0
                nModOferta                       := Int( Div( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) )
                hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
-            end if
 
-      end case
+         end case
 
-   end if   
+      end if  
+
+   end if 
 
    /*
    Devolvemos a su posición inicial--------------------------------------------
