@@ -27,6 +27,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  aUnidadesTiempo   INIT { "Dia(s)", "Semana(s)", "Mes(es)", "Año(s)" }
 
    DATA  oTreeReporting
+   DATA  oTreePersonalizados
    DATA  oTreeImageList
 
    DATA  oColDesde
@@ -88,29 +89,29 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoFacturasRectificativasClientes INIT 0
    DATA  nTotalFacturasRectificativasClientes   INIT 0
 
-   DATA  nBaseTicketsClientes                   INIT 0
-   DATA  nIVATicketsClientes                    INIT 0
-   DATA  nRecargoTicketsClientes                INIT 0
-   DATA  nTotalTicketsClientes                  INIT 0
+   DATA  nBaseTicketsClientes          INIT 0
+   DATA  nIVATicketsClientes           INIT 0
+   DATA  nRecargoTicketsClientes       INIT 0
+   DATA  nTotalTicketsClientes         INIT 0
 
-   DATA  nTotalPagosClientes                    INIT 0
-   DATA  nTotalPendientesClientes               INIT 0
+   DATA  nTotalPagosClientes           INIT 0
+   DATA  nTotalPendientesClientes      INIT 0
 
-   DATA  nBasePedidosProveedores                INIT 0
-   DATA  nIVAPedidosProveedores                 INIT 0
-   DATA  nRecargoPedidosProveedores             INIT 0
-   DATA  nTotalPedidosProveedores               INIT 0
+   DATA  nBasePedidosProveedores       INIT 0
+   DATA  nIVAPedidosProveedores        INIT 0
+   DATA  nRecargoPedidosProveedores    INIT 0
+   DATA  nTotalPedidosProveedores      INIT 0
 
-   DATA  nBaseAlbaranesProveedores              INIT 0
-   DATA  nIVAAlbaranesProveedores               INIT 0
-   DATA  nRecargoAlbaranesProveedores           INIT 0
-   DATA  nTotalAlbaranesProveedores             INIT 0
+   DATA  nBaseAlbaranesProveedores       INIT 0
+   DATA  nIVAAlbaranesProveedores        INIT 0
+   DATA  nRecargoAlbaranesProveedores    INIT 0
+   DATA  nTotalAlbaranesProveedores      INIT 0
 
-   DATA  nBaseFacturasProveedores               INIT 0
-   DATA  nIVAFacturasProveedores                INIT 0
-   DATA  nRecargoFacturasProveedores            INIT 0
-   DATA  nTotalFacturasProveedores              INIT 0
-         
+   DATA  nBaseFacturasProveedores       INIT 0
+   DATA  nIVAFacturasProveedores        INIT 0
+   DATA  nRecargoFacturasProveedores    INIT 0
+   DATA  nTotalFacturasProveedores      INIT 0
+
    DATA  nBaseFacturasRectificativasProveedores    INIT 0
    DATA  nIVAFacturasRectificativasProveedores     INIT 0
    DATA  nRecargoFacturasRectificativasProveedores INIT 0
@@ -932,6 +933,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
          ::oTreeReporting:SetImageList( ::oTreeImageList )
       end if
 
+      if !Empty( ::oTreePersonalizados )
+         ::oTreePersonalizados:SetImageList( ::oTreeImageList )
+      end if
+
       RETURN ( Self )
 
    ENDMETHOD
@@ -1059,9 +1064,21 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
 
    DEFINE DIALOG ::oDlg RESOURCE ::cResource TITLE ::cSubTitle
 
-   ::oTreeReporting                 := TTreeView():Redefine( 100, ::oDlg ) 
+   REDEFINE FOLDER ::oPages ;
+      ID       100;
+      OF       ::oDlg ;
+      PROMPT   "&General",;
+               "Personalizados" ;
+      DIALOGS  "FastReportPage",;
+               "FastReportPage"
+
+   ::oTreeReporting                 := TTreeView():Redefine( 100, ::oPages:aDialogs[ 1 ] )
    ::oTreeReporting:bChanged        := {|| ::TreeReportingChanged() }
    ::oTreeReporting:bLDblClick      := {|| ::TreeReportingClick() } // OnClick
+
+   ::oTreePersonalizados            := TTreeView():Redefine( 100, ::oPages:aDialogs[ 2 ] )
+   ::oTreePersonalizados:bChanged   := {|| ::TreePersonalizadosChanged() }
+   ::oTreePersonalizados:bLDblClick := {|| ::TreePersonalizadosClick() }
 
    /*
    Fechas----------------------------------------------------------------------
@@ -1121,7 +1138,7 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
 
    with object ( ::oBrwRango:AddCol() )
       :cHeader       := ""
-      :bEditValue    := {|| ::EditTextDesde() } 
+      :bEditValue    := {|| ::EditTextDesde() }
       :nEditType     := 0
       :nWidth        := 160
    end with
@@ -1551,7 +1568,11 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
    local oDlg
    local oTreeInforme
 
-   oTreeInforme            := ::oTreeReporting:GetSelected()
+   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
+      oTreeInforme      := ::oTreeReporting:GetSelected()
+   else
+      oTreeInforme      := ::oTreePersonalizados:GetSelected()
+   end if
 
    /*
    Obtenemos los datos necesarios para el informe------------------------------
@@ -2072,7 +2093,11 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
 
    local oTreeInforme
 
-   oTreeInforme         := ::oTreeReporting:GetSelected()
+   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
+      oTreeInforme      := ::oTreeReporting:GetSelected()
+   else
+      oTreeInforme      := ::oTreePersonalizados:GetSelected()
+   end if
 
    /*
    Obtenemos los datos necesarios para el informe------------------------------
@@ -2102,7 +2127,7 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    Creacion del objeto---------------------------------------------------------
    */
 
-   ::oFastReport                    := frReportManager():new()
+   ::oFastReport                       := frReportManager():new()
 
    ::oFastReport:LoadLangRes(       "Spanish.Xml" )
    ::oFastReport:SetIcon( 1 )
@@ -2167,9 +2192,41 @@ RETURN ( Self )
 
 Method SaveReport() CLASS TFastReportInfGen
 
-   local cFile    := strtran( ::cReportFile, cPatReporting(), cPatUserReporting() )
+   if ::lPersonalizado
 
-RETURN ( ::oFastReport:SaveToFile( cFile ) )
+      if ::oDbfPersonalizado:Seek( ::cReportKey() )
+         ::oDbfPersonalizado:Load()
+      else
+         ::oDbfPersonalizado:Append()
+      end if
+
+      ::oDbfPersonalizado:cCodUse   := cCurUsr()
+      ::oDbfPersonalizado:cClsInf   := ::ClassName()
+      ::oDbfPersonalizado:cTypInf   := ::cReportType
+      ::oDbfPersonalizado:cNomInf   := ::cReportName
+
+      ::oDbfPersonalizado:Save()
+
+      RETURN ( ::oFastReport:SaveToBlob( ::oDbfPersonalizado:nArea, "mModInf" ) )
+
+   else
+
+      if ::oDbfInf:Seek( ::cReportKey() )
+      ::oDbfInf:Load()
+      else
+      ::oDbfInf:Append()
+      end if
+
+      ::oDbfInf:cCodUse             := cCurUsr()
+      ::oDbfInf:cClsInf             := ::ClassName()
+      ::oDbfInf:cTypInf             := ::cReportType
+      ::oDbfInf:cNomInf             := ::cReportName
+
+      ::oDbfInf:Save()
+
+   end if
+
+RETURN ( ::oFastReport:SaveToBlob( ::oDbfInf:nArea, "mModInf" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2377,7 +2434,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD LoadPersonalizado() CLASS TFastReportInfGen
-/*
+
    local oItem
 
    if !Empty( ::oTreePersonalizados )
@@ -2397,6 +2454,8 @@ METHOD LoadPersonalizado() CLASS TFastReportInfGen
                oItem:Expand()
             end if
 
+            // ::oTreePersonalizados:Add( Alltrim( ::oDbfPersonalizado:cNomInf ) + Space( 1 ) + "[" + Alltrim( ::oDbfPersonalizado:cTypInf ) + "]", 1 )
+
             ::oDbfPersonalizado:Skip()
 
          end while
@@ -2406,7 +2465,7 @@ METHOD LoadPersonalizado() CLASS TFastReportInfGen
       ::oTreePersonalizados:Expand()
 
    end if
-*/
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2463,14 +2522,29 @@ METHOD lLoadReport() CLASS TFastReportInfGen
    Vamos a detectar si es un informe personalizado-----------------------------
    */
 
-   ::lPersonalizado              := .f.
+   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
 
-   if ::oDbfInf:Seek( ::cReportKey() )
+      ::lPersonalizado              := .f.
 
-      if !Empty( ::oDbfInf:mModInf )
-         ::cInformeFastReport    := ::oDbfInf:mModInf
-      elseif !Empty( ::oDbfInf:mOrgInf )
-         ::cInformeFastReport    := ::oDbfInf:mOrgInf
+      if ::oDbfInf:Seek( ::cReportKey() )
+
+         if !Empty( ::oDbfInf:mModInf )
+            ::cInformeFastReport    := ::oDbfInf:mModInf
+         elseif !Empty( ::oDbfInf:mOrgInf )
+            ::cInformeFastReport    := ::oDbfInf:mOrgInf
+         end if
+
+      end if
+
+   else
+
+      ::lPersonalizado              := .t.
+
+      if ::oDbfPersonalizado:Seek( ::cReportKey() )
+
+         if !Empty( ::oDbfPersonalizado:mModInf )
+            ::cInformeFastReport    := ::oDbfPersonalizado:mModInf
+         end if
 
       end if
 
@@ -2514,6 +2588,11 @@ METHOD DlgExportDocument( oWndBrw )
    /*
    Vamos a obtener el nombre del informe---------------------------------------
    */
+
+   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
+      MsgStop( "Solo es posible exportar informes personalizados." )
+      Return ( Self )
+   end if
 
    oTreeInforme         := ::oTreePersonalizados:GetSelected()
 
