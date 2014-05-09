@@ -920,14 +920,16 @@ CLASS TpvTactil
 
    // Colores-----------------------------------------------------------------
 
-   INLINE METHOD ColorLinea()
+   INLINE METHOD ColorLinea( oDbf )
       
       local aColor
 
+      DEFAULT oDbf   := ::oTemporalLinea
+
       do case 
-         case ::oTemporalLinea:lDelTil
+         case oDbf:FieldGetByName( "lDelTil" )
             aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
-         case ::oTemporalLinea:lMnuTil
+         case oDbf:FieldGetByName( "lMnuTil" )
             aColor   := { CLR_BLACK, Rgb( 34, 177, 76 ) }
          otherwise
             aColor   := { CLR_BLACK, Rgb( 255, 255, 255 ) }
@@ -937,14 +939,16 @@ CLASS TpvTactil
 
    ENDMETHOD 
 
-   INLINE METHOD ColorLineaSeleccionada()
+   INLINE METHOD ColorLineaSeleccionada( oDbf )
       
       local aColor
 
+      DEFAULT oDbf   := ::oTemporalLinea
+
       do case 
-         case ::oTemporalLinea:lDelTil
+         case oDbf:FieldGetByName( "lDelTil" )
             aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
-         case ::oTemporalLinea:lMnuTil
+         case oDbf:FieldGetByName( "lMnuTil" )
             aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
          otherwise
             aColor   := { CLR_BLACK, Rgb( 229, 229, 229 ) }
@@ -954,14 +958,16 @@ CLASS TpvTactil
 
    ENDMETHOD
 
-   INLINE METHOD ColorLineaFocus()
+   INLINE METHOD ColorLineaFocus( oDbf )
       
       local aColor
 
+      DEFAULT oDbf   := ::oTemporalLinea
+
       do case 
-         case ::oTemporalLinea:lDelTil
+         case oDbf:FieldGetByName( "lDelTil" )
             aColor   := { CLR_BLACK, Rgb( 255, 128, 128 ) }
-         case ::oTemporalLinea:lMnuTil
+         case oDbf:FieldGetByName( "lMnuTil" )
             aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
          otherwise
             aColor   := { CLR_BLACK, Rgb( 167, 205, 240 ) }
@@ -1822,7 +1828,11 @@ CLASS TpvTactil
          cTexto      += " con " + CRLF + oDbf:cNcmTil
       end if
 
-      if !Empty( oDbf:lKitChl )
+      if !Empty( oDbf:lKitChl ) 
+         cTexto      := Space( 3 ) + "<" + cTexto + ">"
+      end if
+
+      if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
          cTexto      := Space( 3 ) + "<" + cTexto + ">"
       end if
 
