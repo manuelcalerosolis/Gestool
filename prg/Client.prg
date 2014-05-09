@@ -12139,7 +12139,7 @@ function lAplicaDocumento( nView, nDocumento )
       case nDocumento == ALB_CLI
          lReturn  := ( TDataView():Atipicas( nView ) )->lAplAlb
 
-      case nDocumento == FAC_CLI
+      case nDocumento == FAC_CLI .or. nDocumento == FAC_REC .or. nDocumento == TIK_CLI
          lReturn  := ( TDataView():Atipicas( nView ) )->lAplFac
 
       case nDocumento == SAT_CLI

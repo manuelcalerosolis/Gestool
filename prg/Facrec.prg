@@ -366,7 +366,6 @@ static dbfArticulo
 static dbfCodebar
 static dbfTarPreL
 static dbfTarPreS
-static dbfCliAtp
 static dbfOferta
 static dbfDiv
 static dbfObrasT
@@ -727,6 +726,12 @@ STATIC FUNCTION OpenFiles( lExt )
 
       nView 			:= TDataView():CreateView()
 
+      /*
+      Atipicas de clientes-----------------------------------------------------
+      */
+
+      TDataView():Atipicas( nView )
+
       TDataView():Get( "CliInc", nView )
 
       USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
@@ -771,12 +776,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
-
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-      SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
 
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
       SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
@@ -1201,10 +1202,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfPromoC  )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfCliAtp )
-      ( dbfCliAtp  )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfTVta )
    ( dbfTVta    )->( dbCloseArea() )
    end if
@@ -1385,6 +1382,8 @@ STATIC FUNCTION CloseFiles()
       oBanco:End()
    end if
 
+   TDataView():DeleteView( nView )
+
    dbfIva      := nil
    dbfFPago    := nil
    dbfAgent    := nil
@@ -1414,7 +1413,6 @@ STATIC FUNCTION CloseFiles()
    dbfPromoL   := nil
    dbfPromoC   := nil
    dbfAlm      := nil
-   dbfCliAtp 	:= nil
    dbfTVta     := nil
    dbfDiv      := nil
    oBandera    := nil
@@ -4684,8 +4682,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
    local nRec     
    local aClo     
-   local aXbyStr
+   local aXbyStr 		:= { 0, 0 }
    local nTotUnd  		:= 0
+   local hAtipica
 
    oBtn:SetFocus()
 
@@ -4777,10 +4776,23 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
       end if
 
       /*
-      Chequeamos las ofertas X * Y---------------------------------------------
+      Buscamos si existen atipicas de clientes---------------------------------
       */
 
-      aXbYStr        				:= nXbYAtipica( aTmp[ _CREF ], aTmpFac[ _CCODCLI ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfCliAtp )
+      hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
+
+      if !Empty( hAtipica )
+
+         if hhaskey( hAtipica, "nTipoXY" )               .and.;
+            hhaskey( hAtipica, "nUnidadesGratis" )
+
+            if hAtipica[ "nUnidadesGratis" ] != 0
+               aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
+            end if
+
+         end if
+
+      end if
 
       if aXbYStr[ 1 ] == 0
 
@@ -4873,6 +4885,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
             aTmp[ _NCANENT  ] := aXbYStr[ 2 ]
             aTmp[ _NPREUNIT ] := 0
+            aTmp[ _NDTO ]     := 0
+            aTmp[ _NDTODIV ]  := 0
+            aTmp[ _NDTOPRM ]  := 0
+            aTmp[ _NCOMAGE ]  := 0
             aClo              := aClone( aTmp )
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
@@ -4906,6 +4922,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
             aTmp[ _NUNICAJA ] := aXbYStr[ 2 ]
             aTmp[ _NPREUNIT ] := 0
+            aTmp[ _NDTO ]     := 0
+            aTmp[ _NDTODIV ]  := 0
+            aTmp[ _NDTOPRM ]  := 0
+            aTmp[ _NCOMAGE ]  := 0
             aClo              := aClone( aTmp )
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
@@ -6557,6 +6577,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local cProveedor
    local nTarOld     			:= aTmp[ _NTARLIN ]
    local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local hAtipica
 
    DEFAULT lFocused  			:= .t.
 
@@ -7120,63 +7141,35 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         // Atipicas de clientes por artículos---------------------------------
+        /*
+        Chequeamos las atipicas del cliente--------------------------------
+        */
 
-         do case
-            case lBuscarAtipicaArticulo( aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
-               ( dbfCliAtp )->lAplFac
+        hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
 
-               nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
-               if nImpAtp  != 0
-                  aGet[ _NPREUNIT ]:cText( nImpAtp )
-               end if
+        if !Empty( hAtipica )
+               
+            if hhaskey( hAtipica, "nImporte" )
+                aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+            end if
 
-               // Descuentos por tarifas de precios----------------------------
+            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
+                aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+            end if
 
-               aGet[ _NDTO ]:cText( nDtoAtp( nTarOld, dbfCliAtp ) )
+            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
+                aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+            end if
 
-               // Descuento por promocion--------------------------------------
+            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
+                aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+            end if
 
-               if ( dbfCliAtp )->nDprArt != 0
-                  aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
-               end if
+            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+                aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+            end if
 
-               if ( dbfCliAtp )->nComAge != 0
-                  aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
-               end if
-
-               if ( dbfCliAtp )->nDtoDiv != 0
-                  if aGet[ _NDTODIV ] != nil
-                     aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
-                  else
-                     aTmp[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv
-                  end if
-               end if
-
-            // Atipicas de clientes por familias-------------------------------
-
-            case lBuscarAtipicaFamilia( aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], aTmp[ _CCODFAM ], dbfCliAtp ) .and. ;
-               ( dbfCliAtp )->lAplFac
-
-               aGet[ _NDTO ]:cText( ( dbfCliAtp )->nDtoArt )
-
-               if ( dbfCliAtp )->nDprArt != 0
-                  aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
-               end if
-
-               if ( dbfCliAtp )->nComAge != 0
-                  aGet[_NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
-               end if
-
-               if ( dbfCliAtp )->nDtoDiv != 0
-                  if aGet[ _NDTODIV ] != nil
-                     aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
-                  else
-                     aGet[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv
-                  end if
-               end if
-
-         end case
+        end if
 
          // Buscamos si existen ofertas para este articulo y le cambiamos el precio--
 
@@ -9804,6 +9797,7 @@ static function RecFacRec( aTmpFac )
    local nImpOfe  := 0
    local cCodFam
    local nRecno
+   local hAtipica
 
    if !ApoloMsgNoYes(  "¡Atención!,"                                      + CRLF + ;
                   "todos los precios se recalcularán en función de"  + CRLF + ;
@@ -9870,43 +9864,6 @@ static function RecFacRec( aTmpFac )
          // Chequeamos situaciones especiales----------------------------------
 
          do case
-         case lBuscarAtipicaArticulo( aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfCliAtp ) .and. ;
-            ( dbfCliAtp )->lAplFac
-
-            nImpAtp  						:= nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
-            if nImpAtp != 0
-               ( dbfTmpLin )->nPreUnit := nImpAtp
-            end if
-
-            ( dbfTmpLin )->nDto        := nDtoAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
-
-            if ( dbfCliAtp )->nDprArt != 0
-               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt
-            end if
-
-            if ( dbfCliAtp )->nComAge != 0
-               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge
-            end if
-
-         case lBuscarAtipicaFamilia( aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], ( dbfTmpLin )->cCodFam, dbfCliAtp ) .and. ;
-            ( dbfCliAtp )->lAplFac
-
-            if ( dbfCliAtp )->nDtoArt != 0
-               ( dbfTmpLin )->nDto     := ( dbfCliAtp )->nDtoArt 
-            end if 
-
-            if ( dbfCliAtp )->nDprArt != 0
-               ( dbfTmpLin )->nDtoPrm  := ( dbfCliAtp )->nDprArt 
-            end if
-
-            if ( dbfCliAtp )->nComAge != 0
-               ( dbfTmpLin )->nComAge  := ( dbfCliAtp )->nComAge 
-            end if
-
-            if ( dbfCliAtp )->nDtoDiv != 0
-               ( dbfTmpLin )->nDtoDiv  := ( dbfCliAtp )->nDtoDiv 
-            end if
-
          // Precios en tarifas-------------------------------------------------
 
          case !Empty( aTmpFac[ _CCODTAR ] )
@@ -9946,6 +9903,36 @@ static function RecFacRec( aTmpFac )
             end if
 
          end case
+
+         /*
+         Buscamos si existen atipicas de clientes------------------------------
+         */
+
+         hAtipica := hAtipica( hValue( dbfTmpLin, aTmpFac ) )
+
+         if !Empty( hAtipica )
+               
+            if hhaskey( hAtipica, "nImporte" )
+               ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPorcentual" )
+               ( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPromocional" )
+               ( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoLineal" )
+               ( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+            end if
+
+            if hhaskey( hAtipica, "nComisionAgente" )
+               ( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+            end if
+
+         end if
 
          /*
          Buscamos si existen ofertas para este articulo y le cambiamos el precio
@@ -14042,3 +14029,58 @@ static Function ActualizaStockWeb( cNumDoc )
 Return .t.
 
 //--------------------------------------------------------------------------//
+
+Static Function hValue( aTmp, aTmpFac )
+
+   local hValue                  := {=>}
+
+   do case 
+      case ValType( aTmp ) == "A"
+
+         hValue[ "cCodigoArticulo"   ] := aTmp[ _CREF ]
+         hValue[ "cCodigoPropiedad1" ] := aTmp[ _CCODPR1 ]
+         hValue[ "cCodigoPropiedad2" ] := aTmp[ _CCODPR2 ]
+         hValue[ "cValorPropiedad1"  ] := aTmp[ _CVALPR1 ]
+         hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
+         hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
+         hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
+         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
+         hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
+
+      case ValType( aTmp ) == "C"
+
+         hValue[ "cCodigoArticulo"   ] := ( aTmp )->cRef
+         hValue[ "cCodigoPropiedad1" ] := ( aTmp )->cCodPr1
+         hValue[ "cCodigoPropiedad2" ] := ( aTmp )->cCodPr2
+         hValue[ "cValorPropiedad1"  ] := ( aTmp )->cValPr1
+         hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
+         hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
+         hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
+         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
+         hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
+
+   end case      
+
+   do case 
+      case ValType( aTmpFac ) == "A"
+
+         hValue[ "cCodigoCliente"    ] := aTmpFac[ _CCODCLI ]
+         hValue[ "cCodigoGrupo"      ] := aTmpFac[ _CCODGRP ]
+         hValue[ "lIvaIncluido"      ] := aTmpFac[ _LIVAINC ]
+         hValue[ "dFecha"            ] := aTmpFac[ _DFECFAC ]
+
+      case ValType( aTmpFac ) == "C"
+         
+         hValue[ "cCodigoCliente"    ] := ( aTmpFac )->cCodCli
+         hValue[ "cCodigoGrupo"      ] := ( aTmpFac )->cCodGrp
+         hValue[ "lIvaIncluido"      ] := ( aTmpFac )->lIvaInc
+         hValue[ "dFecha"            ] := ( aTmpFac )->dFecFac
+
+   end case
+
+   hValue[ "nTipoDocumento"         ] := FAC_REC
+   hValue[ "nView"                  ] := nView
+
+Return ( hValue )
+
+//---------------------------------------------------------------------------//

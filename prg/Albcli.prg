@@ -10390,96 +10390,23 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPorcentual" )
+               if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
                   aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPromocional" )
+               if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
                   aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
                end if
 
-               if hhaskey( hAtipica, "nComisionAgente" )
+               if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
                   aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
                end if
 
-               if hhaskey( hAtipica, "nDescuentoLineal" )
+               if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
                   aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
                end if
 
             end if
-
-            /*
-            Chequeamos situaciones especiales y comprobamos las fechas
-            */
-
-            // Atipicas de clientes por artículos---------------------------------
-
-            /*Msginfo( aTmp[ _CREF ], "Artículo" )
-
-            MsgInfo( nImporteAtipica( aTmp[ _CREF ], aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], nTarOld, aTmpAlb[ _LIVAINC ], dbfCliAtp ), "nImporteAtipica Func" )
-
-            do case
-               case lBuscarAtipicaArticulo( aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp ) .and. ;
-                  ( dbfCliAtp )->lAplAlb
-
-                  MsgInfo( "Entro a poner la tarifa, ya que la he encontrado" )
-
-                  MsgInfo( nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] ), "Importe articulo")
-
-                  Msginfo( nPrecioAtipica( nTarOld, aTmpAlb[ _LIVAINC ], dbfCliAtp ), "Nueva" )
-   
-                  nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
-
-                  if nImpAtp  != 0
-                     aGet[ _NPREUNIT ]:cText( nImpAtp )
-                  end if
-   
-                  // Descuentos por tarifas de precios----------------------------
-   
-                  aGet[ _NDTO ]:cText( nDtoAtp( nTarOld, dbfCliAtp ) )
-   
-                  // Descuento por promocion--------------------------------------
-   
-                  if ( dbfCliAtp )->nDprArt != 0
-                     aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
-                  end if
-   
-                  if ( dbfCliAtp )->nComAge != 0
-                     aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
-                  end if
-   
-                  if ( dbfCliAtp )->nDtoDiv != 0
-                     if aGet[ _NDTODIV ] != nil
-                        aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
-                     else
-                        aTmp[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv
-                     end if
-                  end if
-   
-                  // Atipicas de clientes por familias-------------------------------
-      
-                  case lBuscarAtipicaFamilia( aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], aTmp[ _CCODFAM ], dbfCliAtp ) .and. ;
-                     ( dbfCliAtp )->lAplAlb
-   
-                  aGet[ _NDTO ]:cText( ( dbfCliAtp )->nDtoArt )
-   
-                  if ( dbfCliAtp )->nDprArt != 0
-                     aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )
-                  end if
-   
-                  if ( dbfCliAtp )->nComAge != 0
-                     aGet[_NCOMAGE]:cText( ( dbfCliAtp )->nComAge )
-                  end if
-   
-                  if ( dbfCliAtp )->nDtoDiv != 0
-                     if aGet[ _NDTODIV ] != nil
-                        aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
-                     else
-                        aGet[ _NDTODIV ]  := ( dbfCliAtp )->nDtoDiv
-                     end if
-                  end if
-   
-            end case*/
 
             ValidaMedicion( aTmp, aGet )
 
@@ -10630,12 +10557,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       if aTmp[ _LLOTE ]
          GraLotArt( aTmp[ _CREF ], dbfArticulo, aTmp[ _CLOTE ] )
       end if
-
-      /*
-      Chequeamos las ofertas X * Y---------------------------------------------
-      */
-
-      //aXbYStr        := nXbYAtipica( aTmp[ _CREF ], aTmpAlb[ _CCODCLI ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], TDataView():Atipicas( nView ) )
 
       /*
       Buscamos si existen atipicas de clientes---------------------------------
@@ -10814,7 +10735,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
             end if
 
             aTmp[ _NPREUNIT ] := 0
-            
             aTmp[ _NDTO ]     := 0
             aTmp[ _NDTODIV ]  := 0
             aTmp[ _NDTOPRM ]  := 0
@@ -13048,8 +12968,6 @@ Static Function AppendDatosAtipicas( aTmpAlb )
          ( dbfTmpLin )->cCodFam        := ( dbfArticulo )->Familia
          ( dbfTmpLin )->nPesoKg        := ( dbfArticulo )->nPesoKg
    
-         //nPrecioAtipica                := nImporteAtipica( ( TDataView():Atipicas( nView ) )->cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], TDataView():Atipicas( nView ) )
-
          do case
             case aTmpAlb[ _NTARIFA ] == 1
                nPrecioAtipica          := if( aTmpAlb[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva1, ( TDataView():Atipicas( nView ) )->nPrcArt )
@@ -13071,33 +12989,12 @@ Static Function AppendDatosAtipicas( aTmpAlb )
             ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
          end if
 
-         ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
-         ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ), TDataView():Get( "FacCliT", nView ), TDataView():Get( "FacCliL", nView ), dbfTikL )
+         ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ) )
+         ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ) )
 
       end if
 
    else
-
-      /*if ( dbfTmpLin )->nPreUnit == 0
-
-         nPrecioAtipica                := nImporteAtipica( ( TDataView():Atipicas( nView ) )->cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _NTARIFA ], aTmpAlb[ _LIVAINC ], TDataView():Atipicas( nView ) )
-
-         if nPrecioAtipica != 0
-            ( dbfTmpLin )->nPreUnit    := nPrecioAtipica
-         else 
-            ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
-         end if
-
-      end if
-
-      if ( dbfTmpLin )->nDto == 0
-         ( dbfTmpLin )->nDto           := ( TDataView():Atipicas( nView ) )->nDtoArt
-      end if
-
-      if ( dbfTmpLin )->nDtoPrm == 0
-         ( dbfTmpLin )->nDtoPrm        := ( TDataView():Atipicas( nView ) )->nDprArt
-      end if*/
-
 
       /*
       Buscamos si existen atipicas de clientes------------------------------
