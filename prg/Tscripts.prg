@@ -370,6 +370,7 @@ METHOD CompilarFicheroScript() CLASS TScripts
       ferase( ::cFicheroHbr )
       
       logwrite( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " )      
+      
       waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
 
       if !file( ::cFicheroHbr )

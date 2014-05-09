@@ -2168,6 +2168,12 @@ Return ( FullCurDir() + "Reporting\" )
 
 //----------------------------------------------------------------------------//
 
+Function cPatUserReporting()
+
+Return ( FullCurDir() + "UserReporting\" )
+
+//----------------------------------------------------------------------------//
+
 Function HtmlHelp()
 
 Return ( "" )

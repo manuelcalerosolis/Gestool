@@ -463,7 +463,6 @@ return ( nBitmapTipo )
 
 //---------------------------------------------------------------------------//
 
-
 Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
 
    local oBlock
@@ -473,7 +472,7 @@ Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
    local lValid         := .f.
    local xValor         := oGet:varGet()
 
-   if Empty( xValor )
+   if Empty( xValor ) .or. ( xValor == replicate( "Z", 3 ) )
       if( oGet2 != nil, oGet2:cText( "" ), )
       return .t.
    else
