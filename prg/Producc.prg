@@ -234,11 +234,13 @@ CLASS TProduccion FROM TMasDet
 
    METHOD CargaPersonalAnterior( aDatosAnterior )
 
-   METHOD nTotalProducido( cDocumento )
-   METHOD nTotalMaterial( cDocumento )
+   METHOD nTotalProducido( cDocumento, oDbf )
+   METHOD nTotalUnidadesProducido( cDocumento, oDbf )
+
+   METHOD nTotalMaterial( cDocumento, oDbf )
    METHOD nHorasPersonal( cDocumento )
-   METHOD nTotalPersonal( cDocumento )
-   METHOD nTotalMaquina( cDocumento )
+   METHOD nTotalPersonal( cDocumento, oDbfPers, oDbfHorasPers )
+   METHOD nTotalMaquina( cDocumento, oDbf )
    METHOD nTotalOperario( cDocOpe )
    METHOD nTotalVolumen( cDocumento )
 
@@ -2871,51 +2873,91 @@ Return cFormatoDDHHMM( nTiempoEntreFechas( dFecIni, dFecFin, cHorIni, cHorFin ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD nTotalProducido( cDocumento )
+METHOD nTotalProducido( cDocumento, oDbf )
 
    local nTotal   := 0
-   local nRec     := ::oDetProduccion:oDbf:Recno()
-   local nOrdAnt  := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
+   local nRec
+   local nOrdAnt
 
-   if ::oDetProduccion:oDbf:Seek( cDocumento )
+   DEFAULT oDbf   := ::oDetProduccion:oDbf 
 
-      while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd == cDocumento .and. !::oDetProduccion:oDbf:Eof()
+   nRec           := oDbf:Recno()
+   nOrdAnt        := oDbf:OrdSetFocus( "cNumOrd" )
 
-         nTotal   += ( NotCaja( ::oDetProduccion:oDbf:nCajOrd ) * ::oDetProduccion:oDbf:nUndOrd ) * ::oDetProduccion:oDbf:nImpOrd
+   if oDbf:Seek( cDocumento )
 
-         ::oDetProduccion:oDbf:Skip()
+      while oDbf:cSerOrd + Str( oDbf:nNumOrd ) + oDbf:cSufOrd == cDocumento .and. !oDbf:Eof()
+
+         nTotal   += ( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd ) * oDbf:nImpOrd
+
+         oDbf:Skip()
 
       end while
 
    end while
 
-   ::oDetProduccion:oDbf:OrdSetFocus( nOrdAnt )
-   ::oDetProduccion:oDbf:GoTo( nRec )
+   oDbf:OrdSetFocus( nOrdAnt )
+   oDbf:GoTo( nRec )
 
 RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD nTotalMaterial( cDocumento )
+METHOD nTotalUnidadesProducido( cDocumento, oDbf )
 
    local nTotal   := 0
-   local nRec     := ::oDetMaterial:oDbf:Recno()
-   local nOrdAnt  := ::oDetMaterial:oDbf:OrdSetFocus( "cNumOrd" )
+   local nRec     
+   local nOrdAnt  
 
-   if ::oDetMaterial:oDbf:Seek( cDocumento )
+   DEFAULT oDbf   := ::oDetProduccion:oDbf
 
-      while ::oDetMaterial:oDbf:cSerOrd + Str( ::oDetMaterial:oDbf:nNumOrd ) + ::oDetMaterial:oDbf:cSufOrd == cDocumento .and. !::oDetMaterial:oDbf:Eof()
+   nRec           := oDbf:Recno()
+   nOrdAnt        := oDbf:OrdSetFocus( "cNumOrd" )
 
-         nTotal   += ( NotCaja( ::oDetMaterial:oDbf:nCajOrd ) * ::oDetMaterial:oDbf:nUndOrd ) * ::oDetMaterial:oDbf:nImpOrd
+   if oDbf:Seek( cDocumento )
 
-        ::oDetMaterial:oDbf:Skip()
+      while oDbf:cSerOrd + Str( oDbf:nNumOrd ) + oDbf:cSufOrd == cDocumento .and. !oDbf:Eof()
+
+         nTotal   += TDetProduccion():nUnidades( oDbf ) // ( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd )
+
+         oDbf:Skip()
+
+      end while
+
+   end while
+
+   oDbf:OrdSetFocus( nOrdAnt )
+   oDbf:GoTo( nRec )
+
+RETURN ( nTotal )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalMaterial( cDocumento, oDbf )
+
+   local nTotal   := 0
+   local nRec     
+   local nOrdAnt 
+
+   DEFAULT oDbf   :=  ::oDetMaterial:oDbf 
+
+   nRec     := oDbf:Recno()
+   nOrdAnt  := oDbf:OrdSetFocus( "cNumOrd" )
+
+   if oDbf:Seek( cDocumento )
+
+      while oDbf:cSerOrd + Str( oDbf:nNumOrd ) + oDbf:cSufOrd == cDocumento .and. !oDbf:Eof()
+
+         nTotal   += ( NotCaja( oDbf:nCajOrd ) * oDbf:nUndOrd ) * oDbf:nImpOrd
+
+        oDbf:Skip()
 
       end while
 
    end if 
 
-   ::oDetMaterial:oDbf:OrdSetFocus( nOrdAnt )
-   ::oDetMaterial:oDbf:GoTo( nRec )
+   oDbf:OrdSetFocus( nOrdAnt )
+   oDbf:GoTo( nRec )
 
 RETURN ( nTotal )
 
@@ -2964,69 +3006,82 @@ RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD nTotalPersonal( cDocumento )
+METHOD nTotalPersonal( cDocumento, oDbfPers, oDbfHorasPers )
 
-   local nTotal   := 0
-   local nRec     := ::oDetPersonal:oDbf:Recno()
-   local nOrdAnt  := ::oDetPersonal:oDbf:OrdSetFocus( "cNumOrd" )
-   local nRecLin  := ::oDetHorasPersonal:oDbf:Recno()
-   local nOrdLin  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumOrd" )
+   local nTotal            := 0
+   local nRec    
+   local nOrdAnt 
+   local nRecLin 
+   local nOrdLin 
 
-   ::oDetPersonal:oDbf:GoTop()
-   ::oDetHorasPersonal:oDbf:GoTop()
+   DEFAULT oDbfPers        := ::oDetPersonal:oDbf
+   DEFAULT oDbfHorasPers   := ::oDetHorasPersonal:oDbf
 
-   if ::oDetPersonal:oDbf:Seek( cDocumento )
+   nRec                    := oDbfPers:Recno()
+   nOrdAnt                 := oDbfPers:OrdSetFocus( "cNumOrd" )
+   nRecLin                 := oDbfHorasPers:Recno()
+   nOrdLin                 := oDbfHorasPers:OrdSetFocus( "cNumTra" )
 
-      while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd == cDocumento .and. !::oDetPersonal:oDbf:Eof()
+   oDbfPers:GoTop()
+   oDbfHorasPers:GoTop()
 
-         if ::oDetHorasPersonal:oDbf:Seek( ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra )
+   if oDbfPers:Seek( cDocumento )
 
-            while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra == ::oDetHorasPersonal:oDbf:cSerOrd + Str( ::oDetHorasPersonal:oDbf:nNumOrd ) + ::oDetHorasPersonal:oDbf:cSufOrd + ::oDetHorasPersonal:oDbf:cCodTra .and. ;
-                  !::oDetHorasPersonal:oDbf:Eof()
+      while oDbfPers:cSerOrd + Str( oDbfPers:nNumOrd ) + oDbfPers:cSufOrd == cDocumento .and. !oDbfPers:Eof()
 
-               nTotal   += ::oDetHorasPersonal:oDbf:nNumHra * ::oDetHorasPersonal:oDbf:nCosHra
+         if oDbfHorasPers:Seek( oDbfPers:cSerOrd + Str( oDbfPers:nNumOrd ) + oDbfPers:cSufOrd + oDbfPers:cCodTra )
 
-               ::oDetHorasPersonal:oDbf:Skip()
+            while oDbfHorasPers:cSerOrd + Str( oDbfHorasPers:nNumOrd ) + oDbfHorasPers:cSufOrd + oDbfHorasPers:cCodTra == oDbfPers:cSerOrd + Str( oDbfPers:nNumOrd ) + oDbfPers:cSufOrd + oDbfPers:cCodTra .and. ;
+                  !oDbfHorasPers:Eof()
+
+               nTotal   += oDbfHorasPers:nNumHra * oDbfHorasPers:nCosHra
+
+               oDbfHorasPers:Skip()
 
             end while
 
          end if
 
-         ::oDetPersonal:oDbf:Skip()
+         oDbfPers:Skip()
 
       end while
 
    end if
 
-   ::oDetHorasPersonal:oDbf:OrdSetFocus( nOrdLin )
-   ::oDetHorasPersonal:oDbf:GoTo( nRecLin )
-   ::oDetPersonal:oDbf:OrdSetFocus( nOrdAnt )
-   ::oDetPersonal:oDbf:GoTo( nRec )
+   oDbfHorasPers:OrdSetFocus( nOrdLin )
+   oDbfHorasPers:GoTo( nRecLin )
+   oDbfPers:OrdSetFocus( nOrdAnt )
+   oDbfPers:GoTo( nRec )
 
 RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD nTotalMaquina( cDocumento )
+METHOD nTotalMaquina( cDocumento, oDbf )
 
    local nTotal   := 0
-   local nRec     := ::oDetMaquina:oDbf:Recno()
-   local nOrdAnt  := ::oDetMaquina:oDbf:OrdSetFocus( "cNumOrd" )
+   local nRec     
+   local nOrdAnt  
 
-   if ::oDetMaquina:oDbf:Seek( cDocumento )
+   DEFAULT oDbf   := ::oDetMaquina:oDbf
 
-      while ::oDetMaquina:oDbf:cSerOrd + Str( ::oDetMaquina:oDbf:nNumOrd ) + ::oDetMaquina:oDbf:cSufOrd == cDocumento.and. !::oDetMaquina:oDbf:Eof()
+   nRec           := oDbf:Recno()
+   nOrdAnt        := oDbf:OrdSetFocus( "cNumOrd" )
 
-         nTotal   += ::oDetMaquina:oDbf:nTotHra * ::oDetMaquina:oDbf:nCosHra
+   if oDbf:Seek( cDocumento )
 
-         ::oDetMaquina:oDbf:Skip()
+      while oDbf:cSerOrd + Str( oDbf:nNumOrd ) + oDbf:cSufOrd == cDocumento.and. !oDbf:Eof()
+
+         nTotal   += oDbf:nTotHra * oDbf:nCosHra
+
+         oDbf:Skip()
 
       end while
 
    end if 
 
-   ::oDetMaquina:oDbf:OrdSetFocus( nOrdAnt )
-   ::oDetMaquina:oDbf:GoTo( nRec )
+   oDbf:OrdSetFocus( nOrdAnt )
+   oDbf:GoTo( nRec )
 
 RETURN ( nTotal )
 
