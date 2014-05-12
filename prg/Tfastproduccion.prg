@@ -223,10 +223,10 @@ METHOD Create( uParam ) CLASS TFastProduccion
    ::AddField( "cTipOpe", )
    ::AddField( "cCodSec",     "C",  3, 0, {|| "" },   "Sección"                                 )
    ::AddField( "cCodAlmDes",  "C",  3, 0, {|| "" },   "Almacen destino"                         ) 
-   ::AddField( "cCodAlmOrg",  "C",  3, 0, {|| "" },   "Almacen origen"                         ) 
+   ::AddField( "cCodAlmOrg",  "C",  3, 0, {|| "" },   "Almacen origen"                          ) 
 
-   ::AddField( "nTotDoc",     "N", 16, 6, {|| "" },   "Total documento"                         )
    ::AddField( "nTotPrd",     "N", 16, 6, {|| "" },   "Total producido"                         )
+   ::AddField( "nUndPrd",     "N", 16, 6, {|| "" },   "Total unidades producidas"               )
    ::AddField( "nTotMat",     "N", 16, 6, {|| "" },   "Total materias primas"                   )
    ::AddField( "nTotPer",     "N", 16, 6, {|| "" },   "Total horas personal"                    )
    ::AddField( "nTotMaq",     "N", 16, 6, {|| "" },   "Total maquinaria"                        )
@@ -392,10 +392,10 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    local oError
    local oBlock
    local cExpHead
-   
+/*   
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
       ::oParteProduccion:OrdSetFocus( "dFecOrd" )
 
       cExpHead          := 'dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -424,11 +424,12 @@ METHOD AddParteProducccion() CLASS TFastProduccion
          ::oDbf:cCodAlmDes := ::oParteProduccion:cAlmOrd
          ::oDbf:cCodAlmOrg := ::oParteProduccion:cAlmOrg
 
-         ::oDbf:nTotPrd    := nTotProd( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaterialProducido:cAlias )
-         ::oDbf:nTotMat    := nTotMat( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMateriasPrimas:cAlias )
-         ::oDbf:nTotPer    := nTotPer( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oHorasPersonal:cAlias )
-         ::oDbf:nTotMaq    := nTotMaq( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaquinasParte:cAlias )
-         ::oDbf:nTotDoc    := nTotParte( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaterialProducido:cAlias, ::oMateriasPrimas:cAlias, ::oHorasPersonal:cAlias, ::oMaquinasParte:cAlias )
+         ::oDbf:nTotPrd    := TProduccion():nTotalProducido( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaterialProducido )
+         ::oDbf:nUndPrd    := TProduccion():nTotalUnidadesProducido( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaterialProducido )
+
+         ::oDbf:nTotMat    := TProduccion():nTotalMaterial( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMateriasPrimas )
+         ::oDbf:nTotPer    := TProduccion():nTotalPersonal( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oPersonal, ::oHorasPersonal )
+         ::oDbf:nTotMaq    := TProduccion():nTotalMaquina( ::oParteProduccion:cSerOrd + Str(::oParteProduccion:nNumOrd ) + ::oParteProduccion:cSufOrd, ::oMaquinasParte )
 
          /*
          Añadimos un nuevo registro--------------------------------------------
@@ -447,7 +448,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
       end while
 
       ::oParteProduccion:IdxDelete( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ) )
-   
+   /*
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir partes de producción" )
@@ -455,7 +456,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    ::oMtrInf:SetTotal( ::oDbf:OrdKeyCount() )
 
 RETURN ( Self )

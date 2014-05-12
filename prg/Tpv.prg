@@ -272,7 +272,6 @@ static dbfDoc
 static nRieCli
 static oRieCli
 
-static dbfCliAtp
 static dbfCajPorta
 static dbfAgeCom
 static dbfEmp
@@ -550,6 +549,12 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
       nView             := TDataView():CreateView()
 
+      /*
+      Atipicas de clientes-----------------------------------------------------
+      */
+
+      TDataView():Atipicas( nView )
+
       TDataView():Get( "LogPorta", nView )
 
       USE ( cPatEmp + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
@@ -651,9 +656,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatEmp + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
-
-      USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-      SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
 
       USE ( cPatEmp + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp + "NCOUNT.CDX" ) ADDITIVE
@@ -923,7 +925,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfAlm      )
    CLOSE ( dbfArtDiv   )
    CLOSE ( dbfDoc      )
-   CLOSE ( dbfCliAtp   )
    CLOSE ( dbfCajPorta )
    CLOSE ( dbfAgeCom   )
    CLOSE ( dbfEmp      )
@@ -1053,7 +1054,6 @@ STATIC FUNCTION CloseFiles()
    dbfAlm            := nil
    dbfArtDiv         := nil
    dbfDoc            := nil
-   dbfCliAtp         := nil
    dbfAgeCom         := nil
    dbfEmp            := nil
    dbfAlbCliP        := nil
@@ -7890,8 +7890,9 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    local lOk
    local oCtl
    local aClo
-   local aXbYStr
+   local aXbYStr        := { 0, 0 }
    local nStockActual
+   local hAtipica
 
    aClo                 := aClone( aTmp )
 
@@ -8124,7 +8125,24 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    if nMode == APPD_MODE
 
-      aXbYStr        := nXbYAtipica( aTmp[ _CCBATIL ], aTik[ _CCLITIK ], 1, aTmp[ _NUNTTIL ], aTik[ _DFECTIK ], dbfCliAtp )
+      /*
+      Buscamos si existen atipicas de clientes---------------------------------
+      */
+
+      hAtipica := hAtipica( hValue( aTmp, aTik ) )
+
+      if !Empty( hAtipica )
+
+         if hhaskey( hAtipica, "nTipoXY" )               .and.;
+            hhaskey( hAtipica, "nUnidadesGratis" )
+
+            if hAtipica[ "nUnidadesGratis" ] != 0
+               aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
+            end if
+
+         end if
+
+      end if
 
       if aXbYStr[ 1 ] == 0
 
@@ -8241,6 +8259,8 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
             end if
 
             aTmp[ _NPVPTIL ]     := 0
+            aTmp[ _NDTOLIN ]     := 0
+            aTmp[ _NDTODIV ]     := 0
 
             aClo                 := aClone( aTmp )
 
@@ -8387,6 +8407,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
    local cCodArt     := aGet[ _CCBATIL ]:cText()
    local nNumDto     := 0
    local nDtoLin     := 0
+   local hAtipica
 
    if Empty( cCodArt )
       if lRetCodArt()
@@ -8839,55 +8860,8 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          Chequeamos situaciones especiales-------------------------------------
          */
 
-         //--Atipicas de clientes por articulos--//
-
          do case
-         case lBuscarAtipicaArticulo( aTik[ _CCLITIK ], aTik[ _CCODGRP ], aTik[ _DFECTIK ], aTmp[ _CCBATIL ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfCliAtp )
-
-            // Precios---------------------------------------------------------
-
-            nImpOfe     := nImpAtp( aTik[ _NTARIFA ], dbfCliAtp, aGet[ _NPVPTIL ], aTmp[ _NIVATIL ] )
-            if nImpOfe  != 0
-               aGet[ _NPVPTIL ]:cText( nImpOfe )
-            end if
-
-            // Descuentos lineal tarifas de precios----------------------------
-
-            nImpOfe     := nDtoAtp( aTik[ _NTARIFA ], dbfCliAtp )
-            if !Empty( aGet[ _NDTOLIN ] )
-               aGet[ _NDTOLIN ]:cText( nImpOfe )
-            else
-               aTmp[ _NDTOLIN ]        := nImpOfe
-            end if
-
-            // Descuentos porcentual tarifas de precios------------------------
-
-            if ( dbfCliAtp )->nDtoDiv != 0
-               if !Empty( aGet[ _NDTODIV ] )
-                  aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
-               else
-                  aTmp[ _NDTODIV ]     := ( dbfCliAtp )->nDtoDiv
-               end if
-            end if
-
-         // Atipicas de clientes por familias----------------------------------
-
-         case lBuscarAtipicaFamilia( aTik[ _CCLITIK ], aTik[ _CCODGRP ], aTik[ _DFECTIK ], aTmp[ _CCODFAM ], dbfCliAtp )
-
-            if !Empty( aGet[ _NDTOLIN ] )
-               aGet[ _NDTOLIN ]:cText( ( dbfCliAtp )->nDtoArt )
-            else
-               aTmp[ _NDTOLIN ]     := ( dbfCliAtp )->nDtoArt
-            end if
-
-            if ( dbfCliAtp )->nDtoDiv != 0
-               if !Empty( aGet[ _NDTODIV ] )
-                  aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
-               else
-                  aTmp[ _NDTODIV ]     := ( dbfCliAtp )->nDtoDiv
-               end if
-            end if
-
+         
          //Tarifas de precios--------------------------------------------------
 
          case !Empty( aTik[ _CCODTAR ] )
@@ -8914,6 +8888,28 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
             end if
 
          end case
+
+         /*
+         Chequeamos las atipicas del cliente--------------------------------
+         */
+
+         hAtipica := hAtipica( hValue( aTmp, aTik ) )
+
+         if !Empty( hAtipica )
+               
+            if hhaskey( hAtipica, "nImporte" )
+               aGet[ _NPVPTIL ]:cText( hAtipica[ "nImporte" ] )
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTOLIN ] == 0
+               aGet[ _NDTOLIN ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+               aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+            end if
+
+         end if
 
       end if
 
@@ -20902,5 +20898,33 @@ static Function ActualizaStockWeb( cNumDoc )
    ( dbfTikL )->( dbGoTo( nRec ) )  
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+
+Static Function hValue( aTmp, aTmpTik )
+
+   local hValue                  := {=>}
+
+   hValue[ "cCodigoArticulo"   ] := aTmp[ _CCBATIL ]
+   hValue[ "cCodigoPropiedad1" ] := aTmp[ _CCODPR1 ]
+   hValue[ "cCodigoPropiedad2" ] := aTmp[ _CCODPR2 ]
+   hValue[ "cValorPropiedad1"  ] := aTmp[ _CVALPR1 ]
+   hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
+   hValue[ "cCodigoFamilia"    ] := aTmp[ _CFAMTIL ]
+   hValue[ "nCajas"            ] := 1
+   hValue[ "nUnidades"         ] := aTmp[ _NUNTTIL ]
+
+   hValue[ "cCodigoCliente"    ] := aTmpTik[ _CCLITIK ]
+   hValue[ "cCodigoGrupo"      ] := aTmpTik[ _CCODGRP ]
+   hValue[ "lIvaIncluido"      ] := .t.
+   hValue[ "dFecha"            ] := aTmpTik[ _DFECTIK ]
+   hValue[ "nTarifaPrecio"     ] := aTmpTik[ _NTARIFA ]         
+
+   hValue[ "nTipoDocumento"    ] := TIK_CLI
+   hValue[ "nView"             ] := nView
+
+Return ( hValue )
 
 //---------------------------------------------------------------------------//
