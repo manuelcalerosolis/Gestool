@@ -6536,14 +6536,8 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRef", "cRef + cValPr1 + cValPr2", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
 
-      ( dbfAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRefLote", "cRef + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
-
       ( dbfAlbPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "Lote", "cLote", {|| Field->cLote } ) )
-
-      ( dbfAlbPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
@@ -12039,10 +12033,10 @@ Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, dbfAlbPrvL, dbfF
 
    local dFechaCaducidad      := Ctod( "" )
 
-   if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", dbfAlbPrvL )
+   if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", dbfAlbPrvL )
       dFechaCaducidad         := ( dbfAlbPrvL )->dFecCad
    else
-      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", dbfFacPrvL )
+      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", dbfFacPrvL )
          dFechaCaducidad      := ( dbfFacPrvL )->dFecCad
       end if
    end if
