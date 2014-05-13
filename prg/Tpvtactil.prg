@@ -714,12 +714,8 @@ CLASS TpvTactil
    METHOD OnClickParaLlevar()
    METHOD OnClickParaRecoger()
    METHOD OnClickEncargar()
-   
-   //METHOD OnclickDividirMesa()
-   //   METHOD StartDividirMesas( oDlg )
-   //   METHOD lInitCheckDividirMesas()
 
-   METHOD OnClickDividirMesaNew()
+   METHOD OnClickDividirMesa()
 
    METHOD OnClickEntrega()
 
@@ -1029,17 +1025,7 @@ CLASS TpvTactil
    METHOD lEditableDocumento()         INLINE ( !::oTiketCabecera:lCloTik )
    METHOD lEmptyLineas()               INLINE ( !Empty( ::oTiketCabecera:cNumTik ) .and. Empty( ::oTemporalLinea:OrdKeyCount() ) )
 
-   //METHOD AddLineOrgToNew()
-   //METHOD AddLineNewToOrg()
-
-   //METHOD AceptarDividirMesa()
-   //METHOD AceptarNuevoTicketDividirMesa()
-
-   //METHOD GuardaTemporal()
-
    METHOD GuardaCobros()               INLINE ( ::oTpvCobros:ArchivaCobros() )
-
-   //METHOD CreaNuevoTicket()
 
    //------------------------------------------------------------------------//
 
@@ -1323,8 +1309,6 @@ CLASS TpvTactil
    METHOD ClearRelationReport()
 
    METHOD nPrecioPorPersona()          INLINE ( ::sTotal:nTotalDocumento / NotCero( ::oTiketCabecera:nNumCom ) )
-
-   //METHOD CargaTemporalOriginal()
 
    //------------------------------------------------------------------------//
 
@@ -3287,7 +3271,6 @@ METHOD Resource() CLASS TpvTactil
       :cHeader                := "Or. Orden comanda"
       :lHide                  := .t.
       :bEditValue             := {|| ::oOrdenComanda:cNombre( ::oTemporalLinea:cOrdOrd ) }
-      // :bEditValue             := {|| ::oOrdenComanda:cCodigoOrden( ::oTemporalLinea:cOrdOrd ) } 
       :nWidth                 := ::ResizedCol( 30 )
    end with
 
@@ -3652,7 +3635,7 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir o unir mesa",      3, {|| ::OnClickDividirMesaNew() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir o unir mesa",3,{|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
@@ -4712,11 +4695,14 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalDivisionOriginal:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"   NODELETED                              OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"   FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"  NODELETED                              OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"   NODELETED                              OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cLinCba"  ON Str( Field->nNumLin ) + Field->cCbaTil    COMMENT "Linea y código"  NODELETED    OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nOrdLin"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
+                                                                                          COMMENT "Orden lineas"     NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"            NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"           NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"            NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cLinCba"  ON Str( Field->nNumLin ) + Field->cCbaTil;             
+                                                                                          COMMENT "Linea y código"   NODELETED                              OF ::oTemporalDivisionOriginal
 
    END DATABASE ::oTemporalDivisionOriginal
 
@@ -4734,12 +4720,14 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalDivisionNuevoTicket:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "lRecNum"  ON Str( Recno() )           COMMENT "Recno"   NODELETED                              OF ::oTemporalDivisionNuevoTicket
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nRecNum"  ON Str( Recno() )           COMMENT "Recno"   FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionNuevoTicket
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "cCbaTil"  ON Field->cCbaTil           COMMENT "Código"  NODELETED                              OF ::oTemporalDivisionNuevoTicket
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nNumLin"  ON Str( Field->nNumLin )    COMMENT "Linea"   NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nOrdLin"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
+                                                                                             COMMENT "Orden lineas"     NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "lRecNum"  ON Str( Recno() )           COMMENT "Recno"            NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nRecNum"  ON Str( Recno() )           COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "cCbaTil"  ON Field->cCbaTil           COMMENT "Código"           NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nNumLin"  ON Str( Field->nNumLin )    COMMENT "Linea"            NODELETED                              OF ::oTemporalDivisionNuevoTicket
       INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "cLinCba"  ON Str( Field->nNumLin ) + Field->cCbaTil ;   
-                                                                                             COMMENT "Linea y código"  NODELETED    OF ::oTemporalDivisionNuevoTicket
+                                                                                             COMMENT "Linea y código"   NODELETED                              OF ::oTemporalDivisionNuevoTicket
 
    END DATABASE ::oTemporalDivisionNuevoTicket
 
@@ -5337,6 +5325,7 @@ METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS Tpv
             ::oTemporalLinea:Append()
             ::oTemporalLinea:Blank()
 
+            ::oTemporalLinea:nLinMnu      := bottomNumber
             ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
             ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
             ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
@@ -9452,7 +9441,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OnClickDividirMesaNew() Class TpvTactil
+METHOD OnClickDividirMesa() Class TpvTactil
 
    if ::OnClickGuardar()
 
@@ -9468,764 +9457,6 @@ METHOD OnClickDividirMesaNew() Class TpvTactil
 
 Return ( Self )
 
-//---------------------------------------------------------------------------//
-/*
-METHOD OnclickDividirMesa() Class TpvTactil
-
-   local oDlg
-   local oBtnAdd
-   local oBtnDel
-   local oGrupoOriginal
-   local oGrupoNuevo
-   local oBtnUpOrg
-   local oBtnDownOrg
-   local oBtnUpNew
-   local oBtnDownNew
-   local oBtnEscandallosOrg  
-   local oBtnEscandallosNew
-   
-   
-   //Comprobaciones iniciales----------------------------------------------------
-   
-
-   if !::lInitCheckDividirMesas()
-      Return .f.
-   end if
-
-   ::DisableDialog()
-
-   
-   //Rellenamos la temporal oiginal----------------------------------------------
-   
-
-   ::CargaTemporalOriginal()
-
-   DEFINE DIALOG oDlg RESOURCE "DIVIDIR_MESAS"
-
-   REDEFINE GROUP oGrupoOriginal ID 230 OF oDlg TRANSPARENT
-   
-   oGrupoOriginal:SetFont( ::oFntFld )
-
-   
-   //Browse de Lineas Originales-------------------------------------------------
-   
-
-   ::oBrwOriginal                        := IXBrowse():New( oDlg )
-
-   ::oBrwOriginal:bClrStd                := {|| if( ::oTemporalDivisionOriginal:lDelTil, { CLR_BLACK, Rgb( 255, 0, 0 ) }, { CLR_BLACK, Rgb( 255, 255, 255 ) } ) }
-   ::oBrwOriginal:bClrSel                := {|| if( ::oTemporalDivisionOriginal:lDelTil, { CLR_BLACK, Rgb( 255, 0, 0 ) }, { CLR_BLACK, Rgb( 229, 229, 229 ) } ) }
-   ::oBrwOriginal:bClrSelFocus           := {|| if( ::oTemporalDivisionOriginal:lDelTil, { CLR_BLACK, Rgb( 255, 128, 128 ) }, { CLR_BLACK, Rgb( 167, 205, 240 ) } ) }
-
-   //::oBrwOriginal:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   //::oBrwOriginal:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrwOriginal:lRecordSelector        := .f.
-   ::oBrwOriginal:lHScroll               := .f. 
-   ::oBrwOriginal:lVScroll               := .f.
-
-   ::oBrwOriginal:nMarqueeStyle          := MARQSTYLE_HIGHLROW
-   ::oBrwOriginal:nRowHeight             := 36
-   ::oBrwOriginal:cName                  := "Tactil.Lineas.Originales" 
-   ::oBrwOriginal:lFooter                := .t.
-
-   ::oBrwOriginal:SetFont( ::oFntBrw )
-
-   ::oTemporalDivisionOriginal:SetBrowse( ::oBrwOriginal )
-
-   ::oBrwOriginal:CreateFromResource( 100 )
-
-   with object ( ::oBrwOriginal:AddCol() )
-      :cHeader          := "Und"
-      :bEditValue       := {|| ::nUnidadesLinea( ::oTemporalDivisionOriginal, .t. ) }
-      :nWidth           := 50
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-   end with
-
-   with object ( ::oBrwOriginal:AddCol() )
-      :cHeader          := "Detalle"
-      :bEditValue       := {|| ::cTextoLineaDivision( ::oTemporalDivisionOriginal ) }
-      :nWidth           := 230
-   end with
-
-   with object ( ::oBrwOriginal:AddCol() )
-      :cHeader          := "Total"
-      :bEditValue       := {|| ::nTotalLinea( ::oTemporalDivisionOriginal, .t. ) }
-      :nWidth           := 100
-      :bFooter       := {|| Trans( ::nTotalTemporalDivision( ::oTemporalDivisionOriginal ), ::cPictureTotal ) }
-      :nDataStrAlign := AL_RIGHT      
-      :nHeadStrAlign := AL_RIGHT
-      :nFootStrAlign := AL_RIGHT 
-   end with
-
-   oBtnUpOrg            := TButtonBmp():ReDefine( 250, {|| ::oBrwOriginal:GoUp() }, oDlg, , , .f., , , , .f., "Navigate_up" )
-   oBtnDownOrg          := TButtonBmp():ReDefine( 260, {|| ::oBrwOriginal:GoDown() }, oDlg, , , .f., , , , .f., "Navigate_down" ) 
-
-   oBtnAdd              := TButtonBmp():ReDefine( 210, {|| ::AddLineOrgToNew() }, oDlg, , , .f., , , , .f., "Navigate_right2" )
-   oBtnDel              := TButtonBmp():ReDefine( 220, {|| ::AddLineNewToOrg() }, oDlg, , , .f., , , , .f., "Navigate_left2" ) 
-
-   REDEFINE GROUP oGrupoNuevo ID 240 OF oDlg TRANSPARENT
-      
-      oGrupoNuevo:SetFont( ::oFntFld )
-
-   
-   //Browse de Lineas para el Nuevo Ticket---------------------------------------
-   
-
-   ::oBrwNuevoTicket                        := IXBrowse():New( oDlg )
-
-   ::oBrwNuevoTicket:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwNuevoTicket:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrwNuevoTicket:lRecordSelector        := .f.
-   ::oBrwNuevoTicket:lHScroll               := .f.
-   ::oBrwNuevoTicket:lVScroll               := .f.
-
-   ::oBrwNuevoTicket:nMarqueeStyle          := MARQSTYLE_HIGHLROW
-   ::oBrwNuevoTicket:nRowHeight             := 36
-   ::oBrwNuevoTicket:cName                  := "Tactil.Lineas.NuevoTicket"
-   ::oBrwNuevoTicket:lFooter                := .t.
-
-   ::oBrwNuevoTicket:SetFont( ::oFntBrw )
-
-   ::oTemporalDivisionNuevoTicket:SetBrowse( ::oBrwNuevoTicket )
-
-   ::oBrwNuevoTicket:CreateFromResource( 200 )
-
-   with object ( ::oBrwNuevoTicket:AddCol() )
-      :cHeader       := "Und"
-      :bEditValue    := {|| ::nUnidadesLinea( ::oTemporalDivisionNuevoTicket, .t. ) }
-      :nWidth        := 50
-      :nDataStrAlign := AL_RIGHT      
-      :nHeadStrAlign := AL_RIGHT
-   end with
-
-   with object ( ::oBrwNuevoTicket:AddCol() )
-      :cHeader       := "Detalle"
-      :bEditValue    := {|| ::cTextoLineaDivision( ::oTemporalDivisionNuevoTicket ) }
-      :nWidth        := 230
-   end with
-
-   with object ( ::oBrwNuevoTicket:AddCol() )
-      :cHeader       := "Total"
-      :bEditValue    := {|| ::nTotalLinea( ::oTemporalDivisionNuevoTicket, .t. ) }
-      :nWidth        := 100
-      :bFooter       := {|| Trans( ::nTotalTemporalDivision( ::oTemporalDivisionNuevoTicket ), ::cPictureTotal ) }
-      :nDataStrAlign := AL_RIGHT 
-      :nHeadStrAlign := AL_RIGHT
-      :nFootStrAlign := AL_RIGHT 
-   end with
-
-   oBtnUpNew            := TButtonBmp():ReDefine( 270, {|| ::oBrwNuevoTicket:GoUp() },   oDlg, , , .f., , , , .f., "Navigate_up" )
-   oBtnDownNew          := TButtonBmp():ReDefine( 280, {|| ::oBrwNuevoTicket:GoDown() }, oDlg, , , .f., , , , .f., "Navigate_down" ) 
-
-   
-   //Activamos el diálogo--------------------------------------------------------
-   
-
-   oDlg:bStart := {|| ::StartDividirMesas( oDlg ) }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   
-   //Matamos la Officebar antes de salir-----------------------------------------
-   
-
-   if !Empty( ::oOfficeBar )
-      ::oOfficeBarDividirMesas:End()
-   end if
-
-   ::oOfficeBarDividirMesas      := nil
-
-   ::EnableDialog()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD StartDividirMesas( oDlg ) Class TpvTactil
-
-   local oBoton
-   local oGrupo 
-   local oCarpeta
-
-   ::oOfficeBarDividirMesas            := TDotNetBar():New( 0, 0, 1020, 120, oDlg, 1 )
-
-   ::oOfficeBarDividirMesas:lPaintAll  := .f.
-   ::oOfficeBarDividirMesas:lDisenio   := .f.
-
-   ::oOfficeBarDividirMesas:SetStyle( 1 )
-
-   oCarpeta                            := TCarpeta():New( ::oOfficeBarDividirMesas, "División de mesas" )
-
-   oGrupo                              := TDotNetGroup():New( oCarpeta, 66,  "Aceptar", .f. )
-                                          TDotNetButton():New( 60, oGrupo,    "Check_32",      "Aceptar",                 1, {|| ::AceptarDividirMesa( oDlg ) }, , , .f., .f., .f. )
-
-   oGrupo                              := TDotNetGroup():New( oCarpeta, 66,  "Escandallos", .f. )
-                                          TDotNetButton():New( 60, oGrupo,    "Text_code_32",  "Ocultar o mostrar",       1, {|| ::lShowEscandallosDivision() }, , , .f., .f., .f. )
-                                          
-   oGrupo                              := TDotNetGroup():New( oCarpeta, 66,  "Aceptar", .f. )
-                                          TDotNetButton():New( 60, oGrupo,    "End32",         "Salida",                  1, {|| oDlg:End() }, , , .f., .f., .f. )                                                                              
-
-   oDlg:oTop                           := ::oOfficeBarDividirMesas
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD lInitCheckDividirMesas() class TpvTactil
-
-   if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
-
-      MsgStop( "No puede dividir un documento sin línea" )
-
-      return .f.
-
-   end if
-
-   if ::oTiketCabecera:nUbiTik != ubiSala
-
-      MsgStop( "Sólo se puede dividir mesas" )
-
-      return .f.
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD CargaTemporalOriginal() class TpvTactil
-
-   ::oTemporalDivisionOriginal:Zap()
-   ::oTemporalDivisionNuevoTicket:Zap()
-
-   ::oTemporalLinea:GetStatus()
-
-   ::oTemporalLinea:OrdSetFocus( "lRecNum" )
-
-   ::oTemporalLinea:GoTop()  
-
-   while !::oTemporalLinea:Eof()
-
-      dbPass( ::oTemporalLinea:cAlias, ::oTemporalDivisionOriginal:cAlias, .t. )
-
-      ::oTemporalLinea:Skip()
-
-   end while
-
-   ::oTemporalLinea:SetStatus()
-   ::oTemporalDivisionOriginal:GoTop()
- 
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AceptarDividirMesa( oDlg ) Class TpvTactil
-
-   local cCodSala       := ::oTiketCabecera:cCodSala
-   local cPntVenta      := ::oTiketCabecera:cPntVenta 
-
-   
-   //Pasar la temporal-----------------------------------------------------------
-   
-
-   ::GuardaTemporal()
-
-   if ::GuardaDocumentoPendiente()
-
-      
-      //Creamos el nuevo ticket-----------------------------------------------------
-      
-
-      ::CreaNuevoTicket( oDlg, cCodSala, cPntVenta )
-
-   end if
-
-   oDlg:End( IDOK )
-
-   ::oBrwLineas:Refresh()
-
-   ::SetUbicacion()
-   ::SetInfo()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AceptarNuevoTicketDividirMesa( oDlg ) Class TpvTactil
-
-   local cCodSala       := ::oTiketCabecera:cCodSala
-   local cPntVenta      := ::oTiketCabecera:cPntVenta 
-
-   
-   //Pasar la temporal-----------------------------------------------------------
-   
-
-   ::GuardaTemporal()
-
-   if ::GuardaDocumentoPendiente()
-
-      
-      //Creamos el nuevo ticket-----------------------------------------------------
-      
-
-      ::CreaNuevoTicket( oDlg, cCodSala, cPntVenta )
-
-      
-      //Limpiamos y recargamos los temporales---------------------------------------
-      
-
-   end if
-
-   oDlg:End( IDOK )
-
-   ::oBrwLineas:Refresh()
-
-   ::SetUbicacion()
-   ::SetInfo()
-  
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GuardaTemporal() Class TpvTactil
-
-   ::oTemporalLinea:Zap()
-
-   ::oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
-
-   ::oTemporalDivisionOriginal:GoTop()
-
-   while !::oTemporalDivisionOriginal:Eof()
-
-      dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalLinea:cAlias, .t. )
-
-      ::oTemporalDivisionOriginal:Skip()
-
-   end while
-
-   ::oTemporalLinea:GoTop()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD CreaNuevoTicket( oDlg, cCodSala, cPntVenta ) Class TpvTactil
-
-   local oError
-   local oBlock
-   local cNumeroDoc
-
-   ::DisableDialog()
-
-   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      
-      //Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
-      
-
-      ::oTiketCabecera:Load()
-
-      ::CargaValoresDefecto( ubiSala, .t. )
-      cNumeroDoc                 := ::nNuevoNumeroTicket()
-      ::nNuevoNumeroTicket()
-      ::oTiketCabecera:cNumTik   := cNumeroDoc
-      ::oTiketCabecera:cCodSala  := cCodSala
-      ::oTiketCabecera:cPntVenta := cPntVenta 
-      ::oTiketCabecera:dFecTik   := GetSysDate()
-      ::oTiketCabecera:cHorTik   := Time()
-      ::oTiketCabecera:dFecCre   := GetSysDate()
-      ::oTiketCabecera:cTimCre   := Time()
-      ::oTiketCabecera:lAbierto  := .t.
-      ::oTiketCabecera:Insert()
-
-      
-      //Ahora metemos una linea-----------------------------------------------------
-      
-
-      ::oTemporalDivisionNuevoTicket:GoTop()
-
-      while !::oTemporalDivisionNuevoTicket:Eof()
-
-         appendPass( ::oTemporalDivisionNuevoTicket:cAlias,;
-                     ::oTiketLinea:cAlias,;
-                     {  "cSerTil" => ::oTiketCabecera:cSerTik,;
-                        "cNumTil" => ::oTiketCabecera:cNumTik,;
-                        "cSufTil" => ::oTiketCabecera:cSufTik,;
-                        "dTipTil" => ::oTiketCabecera:cTipTik,;
-                        "dFecTik" => ::oTiketCabecera:dFecTik } )
-
-         ::oTemporalDivisionNuevoTicket:Skip()
-
-   end while
-
-   ::CargaDocumento( ::cNumeroTicket() )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Error al generar nuevo ticket" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   ::EnableDialog()
-   
-Return ( cNumeroDoc )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddLineOrgToNew() Class TpvTactil
-
-   local nLinea
-   local cCodArt
-   local nUnidades
-
-   if ::oTemporalDivisionOriginal:lDelTil
-      msgStop( "No se pueden pasar lineas eliminadas de una mesa a otra" )
-      return ( Self )
-   end if   
-   
-   nLinea      := ::oTemporalDivisionOriginal:nNumLin
-   cCodArt     := ::oTemporalDivisionOriginal:cCbaTil
-   nUnidades   := ::oTemporalDivisionOriginal:nUntTil
-
-   if !::oTemporalDivisionOriginal:lKitChl .and. !Empty( ::oTemporalDivisionOriginal:RecCount() )
-
-      do case
-      case ::oTemporalDivisionOriginal:nUntTil > 1
-
-         ::oTemporalDivisionOriginal:nUntTil := ::oTemporalDivisionOriginal:nUntTil - 1
-
-         if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
-
-            dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-            ::oTemporalDivisionNuevoTicket:nUntTil := 1
-
-         else
-
-            ::oTemporalDivisionNuevoTicket:nUntTil++
-
-         end if  
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oTemporalDivisionOriginal:lKitArt
-
-            ::oTemporalDivisionOriginal:GetStatus()
-
-            ::oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
-
-            ::oTemporalDivisionOriginal:GoTop()
-
-               while !::oTemporalDivisionOriginal:Eof()
-
-                  if ::oTemporalDivisionOriginal:nNumLin == nLinea .and. ::oTemporalDivisionOriginal:cCbaTil != cCodArt
-
-                     if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
-
-                        dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-                        ::oTemporalDivisionNuevoTicket:nUntTil := ::oTemporalDivisionOriginal:nUntTil / nUnidades
-
-                     else
-
-                        ::oTemporalDivisionNuevoTicket:nUntTil += ::oTemporalDivisionOriginal:nUntTil /nUnidades
-
-                     end if
-
-                     ::oTemporalDivisionOriginal:nUntTil -= ::oTemporalDivisionOriginal:nUntTil /nUnidades
-
-                  end if
-
-                  ::oTemporalDivisionOriginal:Skip()
-
-               end while
-
-            ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )   
-
-            ::oTemporalDivisionOriginal:SetStatus()
-
-         end if
-
-      case ::oTemporalDivisionOriginal:nUntTil == 0
-
-         if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
-
-            dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-            ::oTemporalDivisionNuevoTicket:nUntTil := 1
-
-         else
-
-            ::oTemporalDivisionNuevoTicket:nUntTil++
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oTemporalDivisionOriginal:lKitArt
-
-            ::oTemporalDivisionOriginal:GetStatus()
-
-            ::oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
-
-            ::oTemporalDivisionOriginal:GoTop()
-
-            while !::oTemporalDivisionOriginal:Eof()
-
-               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and. ::oTemporalDivisionOriginal:cCbaTil != cCodArt
-
-                  if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
-
-                     dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-                     ::oTemporalDivisionNuevoTicket:nUntTil := ::oTemporalDivisionOriginal:nUntTil / nUnidades
-
-                  else
-
-                     ::oTemporalDivisionNuevoTicket:nUntTil += ::oTemporalDivisionOriginal:nUntTil /nUnidades
-
-                  end if
-
-                  ::oTemporalDivisionOriginal:nUntTil -= ::oTemporalDivisionOriginal:nUntTil /nUnidades
-
-               end if
-
-               ::oTemporalDivisionOriginal:Skip()
-
-            end while
-
-            ::oTemporalDivisionOriginal:GoTop()
-
-            while ( ::oTemporalDivisionOriginal:nNumLin == nLinea )
-               ::oTemporalDivisionOriginal:Delete( .f. )
-            end while
-
-            ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )
-
-            ::oTemporalDivisionOriginal:SetStatus()
-
-         end if
-
-         ::oTemporalDivisionOriginal:Delete(.f.)
-
-      otherwise
-      
-         if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
-
-            dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-
-         else
-
-            ::oTemporalDivisionNuevoTicket:nUntTil += ::oTemporalDivisionOriginal:nUntTil
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oTemporalDivisionOriginal:lKitArt
-
-            ::oTemporalDivisionOriginal:GetStatus()
-
-            ::oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
-
-            ::oTemporalDivisionOriginal:GoTop()
-
-            while !::oTemporalDivisionOriginal:Eof()
-
-               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and. ::oTemporalDivisionOriginal:cCbaTil != cCodArt
-
-                  if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
-
-                     dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-
-                  else
-
-                     ::oTemporalDivisionNuevoTicket:nUntTil += ::oTemporalDivisionOriginal:nUntTil
-
-                  end if
-
-                  ::oTemporalDivisionOriginal:nUntTil -= ::oTemporalDivisionOriginal:nUntTil
-
-               end if
-
-               ::oTemporalDivisionOriginal:Skip()
-
-            end while
-
-            ::oTemporalDivisionOriginal:GoTop()  
-
-            while ::oTemporalDivisionOriginal:nNumLin == nLinea
-               ::oTemporalDivisionOriginal:Delete(.f.)
-            end while
-
-            ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )
-
-            ::oTemporalDivisionOriginal:SetStatus()
-
-         end if
-
-         ::oTemporalDivisionOriginal:Delete(.f.)   
-
-      end case
-
-   end if
-
-   ::oTemporalDivisionOriginal:GoTop()
-
-   ::oBrwOriginal:Refresh()
-   ::oBrwNuevoTicket:Refresh()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddLineNewToOrg() Class TpvTactil
-
-   local nLinea
-   local cCodArt
-   local nUnidades
-
-   nLinea      := ::oTemporalDivisionNuevoTicket:nNumLin
-   cCodArt     := ::oTemporalDivisionNuevoTicket:cCbaTil
-   nUnidades   := ::oTemporalDivisionNuevoTicket:nUntTil
-
-   if !::oTemporalDivisionNuevoTicket:lKitChl .and. !Empty( ::oTemporalDivisionNuevoTicket:RecCount() )
-
-      if ::oTemporalDivisionNuevoTicket:nUntTil > 1
-
-         ::oTemporalDivisionNuevoTicket:nUntTil := ::oTemporalDivisionNuevoTicket:nUntTil - 1
-
-         if !::oTemporalDivisionOriginal:SeekinOrd( Str( ::oTemporalDivisionNuevoTicket:nNumLin ) + ::oTemporalDivisionNuevoTicket:cCbaTil, "cLinCba" )
-
-            dbPass( ::oTemporalDivisionNuevoTicket:cAlias, ::oTemporalDivisionOriginal:cAlias, .t. )
-            ::oTemporalDivisionOriginal:nUntTil := 1
-
-         else
-
-            ::oTemporalDivisionOriginal:nUntTil++
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oTemporalDivisionNuevoTicket:lKitArt
-
-            ::oTemporalDivisionNuevoTicket:GetStatus()
-
-            ::oTemporalDivisionNuevoTicket:OrdSetFocus( "lRecNum" )
-
-            ::oTemporalDivisionNuevoTicket:GoTop()
-
-               while !::oTemporalDivisionNuevoTicket:Eof()
-
-                  if ::oTemporalDivisionNuevoTicket:nNumLin == nLinea .and. ::oTemporalDivisionNuevoTicket:cCbaTil != cCodArt
-
-                     if !::oTemporalDivisionOriginal:SeekinOrd( Str( ::oTemporalDivisionNuevoTicket:nNumLin ) + ::oTemporalDivisionNuevoTicket:cCbaTil, "cLinCba" )
-
-                        dbPass( ::oTemporalDivisionNuevoTicket:cAlias, ::oTemporalDivisionOriginal:cAlias, .t. )
-                        ::oTemporalDivisionOriginal:nUntTil := ::oTemporalDivisionNuevoTicket:nUntTil / nUnidades
-
-                     else
-
-                        ::oTemporalDivisionOriginal:nUntTil += ::oTemporalDivisionNuevoTicket:nUntTil /nUnidades
-
-                     end if
-
-                     ::oTemporalDivisionNuevoTicket:nUntTil -= ::oTemporalDivisionNuevoTicket:nUntTil /nUnidades
-
-                  end if
-
-                  ::oTemporalDivisionNuevoTicket:Skip()
-
-               end while
-
-            ::oTemporalDivisionNuevoTicket:OrdSetFocus( "nRecNum" )   
-
-            ::oTemporalDivisionNuevoTicket:SetStatus()
-
-         end if
-
-      else
-
-         if !::oTemporalDivisionOriginal:SeekinOrd( Str( ::oTemporalDivisionNuevoTicket:nNumLin ) + ::oTemporalDivisionNuevoTicket:cCbaTil, "cLinCba" )
-
-            dbPass( ::oTemporalDivisionNuevoTicket:cAlias, ::oTemporalDivisionOriginal:cAlias, .t. )
-            ::oTemporalDivisionOriginal:nUntTil := 1
-
-         else
-
-            ::oTemporalDivisionOriginal:nUntTil++
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oTemporalDivisionNuevoTicket:lKitArt
-
-            ::oTemporalDivisionNuevoTicket:GetStatus()
-
-            ::oTemporalDivisionNuevoTicket:OrdSetFocus( "lRecNum" )
-
-            ::oTemporalDivisionNuevoTicket:GoTop()
-
-            while !::oTemporalDivisionNuevoTicket:Eof()
-
-               if ::oTemporalDivisionNuevoTicket:nNumLin == nLinea .and. ::oTemporalDivisionNuevoTicket:cCbaTil != cCodArt
-
-                  if !::oTemporalDivisionOriginal:SeekinOrd( Str( ::oTemporalDivisionNuevoTicket:nNumLin ) + ::oTemporalDivisionNuevoTicket:cCbaTil, "cLinCba" )
-
-                     dbPass( ::oTemporalDivisionNuevoTicket:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
-                     ::oTemporalDivisionOriginal:nUntTil := ::oTemporalDivisionNuevoTicket:nUntTil / nUnidades
-
-                  else
-
-                     ::oTemporalDivisionOriginal:nUntTil += ::oTemporalDivisionNuevoTicket:nUntTil /nUnidades
-
-                  end if
-
-                  ::oTemporalDivisionNuevoTicket:nUntTil -= ::oTemporalDivisionNuevoTicket:nUntTil /nUnidades
-
-               end if
-
-               ::oTemporalDivisionNuevoTicket:Skip()
-
-            end while
-
-            ::oTemporalDivisionNuevoTicket:GoTop()
-
-            while ::oTemporalDivisionNuevoTicket:nNumLin == nLinea
-               ::oTemporalDivisionNuevoTicket:Delete(.f.)
-            end while
-
-            ::oTemporalDivisionNuevoTicket:OrdSetFocus( "nRecNum" )
-
-            ::oTemporalDivisionNuevoTicket:SetStatus()
-
-         end if   
-
-         ::oTemporalDivisionNuevoTicket:Delete(.f.)
-
-      end if
-
-   end if
-
-   ::oTemporalDivisionNuevoTicket:GoTop()
-   ::oBrwOriginal:Refresh()
-   ::oBrwNuevoTicket:Refresh()
-
-Return ( Self )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )

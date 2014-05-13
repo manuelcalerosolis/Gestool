@@ -36,6 +36,12 @@ static oTotCob
 static oTotal
 static oGraph
 
+static oMeter
+static nMeter
+
+static oText
+static cText         := ""
+
 static cPouDiv
 static cPinDiv
 static cPirDiv
@@ -518,6 +524,12 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    Botones comunes a la caja de dialogo----------------------------------------
    */
 
+   REDEFINE SAY oText VAR cText ;
+      ID       400 ;
+      OF       oDlg
+
+   oMeter      := TMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+
    REDEFINE BUTTON ;
       ID       306 ;
       OF       oDlg ;
@@ -624,14 +636,14 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
 
    CursorWait()
 
-   oMsgProgress()
-   oMsgProgress():SetRange( 0, 6 )
+   oMeter:Show()
+   oMeter:SetTotal( 6 )
 
    /*
    Calculos de compras---------------------------------------------------------
    */
 
-   oMsgText( "Calculando compras mensuales" )
+   oText:SetText( "Calculando compras mensuales" )
 
    aTotCom[1]     := 0
    aTotCom[2]     := 0
@@ -647,11 +659,11 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
       aTotCom[2]     += aCom[n,2]
       aTotCom[3]     += aCom[n,3]
 
-      oMsgProgress():Deltapos(1)
+      oMeter:AutoInc()
 
    next
 
-   oMsgText( "Calculando de totales" )
+   oText:SetText( "Calculando de totales" )
 
    nComFac           := nTotComFac( cCodPrv, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
    nCobFac           := nTotCobFac( cCodPrv, dbfFacPrvT, dbfFacPrvP, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
@@ -660,7 +672,7 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
    oTotCob:SetText( nCobFac )
    oTotal:SetText( nComFac - nCobFac )
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    /*
    Cargamos los datos----------------------------------------------------------
@@ -668,19 +680,19 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
 
    oDbfTmp:Zap()
 
-   oMsgText( "Cargando los documentos" )
+   oText:SetText( "Cargando los documentos" )
 
    LoadPedidoProveedor( cCodPrv, dbfIva, dbfDiv, dbfFPago, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadAlbaranProveedor( cCodPrv, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadFacturaProveedor( cCodPrv, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadRectificativaProveedor( cCodPrv, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    oDbfTmp:GoTop()
 
@@ -693,7 +705,7 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
    Generamos el grafico--------------------------------------------------------
    */
 
-   oMsgText( "Calculando de gráficos" )
+   oText:SetText( "Calculando de gráficos" )
 
    oGraph:aSeries    := {}
    oGraph:aData      := {}
@@ -710,10 +722,9 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
    oGraph:nClrY            := CLR_RED
    oGraph:cPicture         := cPirDiv
 
-   oMsgProgress():Deltapos( 1 )
+   oText:SetText()
 
-   oMsgText()
-   EndProgress()
+   oMeter:Hide()
 
    CursorWE()
 

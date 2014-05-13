@@ -11,6 +11,8 @@
 #define ubiRecoger                  3
 #define ubiEncargar                 4
 
+#define bottomNumber                9999
+
 CLASS TpvUtilidadesMesa FROM TpvTactil
 
 	DATA oSender
@@ -54,7 +56,6 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
  	METHOD oRestaurante()   INLINE ( ::oSender:oRestaurante )
 
 	METHOD DividirMesas()
-		//METHOD StartDividirMesas()
 		METHOD lInitCheckDividirMesas()
 
 	METHOD CargaTemporalOrigen()
@@ -72,19 +73,11 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
 
 	METHOD AddEscandallo()
 
-	//METHOD AddLineOrgToNew()
-	//METHOD AddLineNewToOrg()
-
-	//METHOD AddAllOrgToNew()
-	//METHOD AddAllNewToOrg()
+	METHOD AddMenu()
 
 	METHOD PasaLinea()
-	//METHOD PasaLineaOrgToNew( nUnidades ) INLINE ( ::PasaLinea( nUnidades, ::oOriginal(), ::oNuevo() ) )
-	//METHOD PasaLineaNewToOrg( nUnidades )	INLINE ( ::PasaLinea( nUnidades, ::oNuevo(), ::oOriginal() ) )
 
-	METHOD BorraLinea( oDbf )				INLINE ( oDbf:Delete(.f.) )
-	//METHOD BorraLineaOrigen()				INLINE ( ::oOriginal():Delete(.f.) )
-	//METHOD BorraLineaDestino()			INLINE ( ::oNuevo():Delete(.f.) )
+	METHOD BorraLinea()				
 
 	METHOD lNuevoTicket() 					INLINE ( empty( ::oSelectedPunto:cTiket() ) .or. ( ::oSender:cNumeroTicket() == ::oSelectedPunto:cTiket() ) )
 
@@ -266,9 +259,6 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
    	::oBrwOriginal:bClrSel          := {|| ::oSender:ColorLineaSeleccionada( ::oSender:oTemporalDivisionOriginal ) } 
    	::oBrwOriginal:bClrSelFocus     := {|| ::oSender:ColorLineaFocus( ::oSender:oTemporalDivisionOriginal ) }
 
-	//::oBrwOriginal:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-	//::oBrwOriginal:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
 	::oBrwOriginal:lRecordSelector        := .f.
 	::oBrwOriginal:lHScroll               := .f. 
 	::oBrwOriginal:lVScroll               := .f.
@@ -430,39 +420,6 @@ METHOD lInitCheckDividirMesas() class TpvUtilidadesMesa
    end if
 
 Return( .t. )
-
-//---------------------------------------------------------------------------//
-
-/*
-METHOD StartDividirMesas() Class TpvUtilidadesMesa
-
-	local oCarpeta
-	local oGrupo
-	local oBoton
-
-   ::oOfficeBarDividirMesas            := TDotNetBar():New( 0, 0, 1020, 120, ::oDlg, 1 )
-
-   ::oOfficeBarDividirMesas:lPaintAll  := .f.
-   ::oOfficeBarDividirMesas:lDisenio   := .f.
-
-   ::oOfficeBarDividirMesas:SetStyle( 1 )
-
-   oCarpeta                           	:= TCarpeta():New( ::oOfficeBarDividirMesas, "División de mesas" )
-
-   oGrupo                             	:= TDotNetGroup():New( oCarpeta, 66,  "Aceptar", .f. )
-                                           TDotNetButton():New( 60, oGrupo,    "Check_32",      "Aceptar",                 1, {|| ::AceptarDividirMesa() }, , , .f., .f., .f. )
-
-   oGrupo                             	:= TDotNetGroup():New( oCarpeta, 66,  "Escandallos", .f. )
-                                           TDotNetButton():New( 60, oGrupo,    "Text_code_32",  "Ocultar o mostrar",       1, {|| ::lShowEscandallosDivision() }, , , .f., .f., .f. )
-                                          
-   oGrupo                             	:= TDotNetGroup():New( oCarpeta, 66,  "Aceptar", .f. )
-                                           TDotNetButton():New( 60, oGrupo,    "End32",         "Salida",                  1, {|| ::oDlg:End() }, , , .f., .f., .f. )                                                                              
-
-   ::oDlg:oTop                          := ::oOfficeBarDividirMesas
-
-Return ( Self )
-*/
-
 
 //---------------------------------------------------------------------------//
 
@@ -728,59 +685,45 @@ METHOD CreaNuevoTicket() Class TpvUtilidadesMesa
 
 	return .f.
 
-   ::DisableDialog()
-
-/*
-   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-*/
+   	::DisableDialog()
       
-      //Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
+	//Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
 
-      ::oSender:oTiketCabecera:Load()
+	::oSender:oTiketCabecera:Load()
 
-      ::oSender:CargaValoresDefecto( ubiSala, .t. )
+	::oSender:CargaValoresDefecto( ubiSala, .t. )
 
-      ::oSender:oTiketCabecera:cNumTik   	:= ::oSender:nNuevoNumeroTicket()
-      ::oSender:oTiketCabecera:cCodSala  	:= ::cCodSala
-      ::oSender:oTiketCabecera:cPntVenta 	:= ::cPntVenta 
-      ::oSender:oTiketCabecera:dFecTik   	:= GetSysDate()
-      ::oSender:oTiketCabecera:cHorTik   	:= Time()
-      ::oSender:oTiketCabecera:dFecCre   	:= GetSysDate()
-      ::oSender:oTiketCabecera:cTimCre   	:= Time()
-      ::oSender:oTiketCabecera:lAbierto  	:= .t.
+	::oSender:oTiketCabecera:cNumTik   	:= ::oSender:nNuevoNumeroTicket()
+	::oSender:oTiketCabecera:cCodSala  	:= ::cCodSala
+	::oSender:oTiketCabecera:cPntVenta 	:= ::cPntVenta 
+	::oSender:oTiketCabecera:dFecTik   	:= GetSysDate()
+	::oSender:oTiketCabecera:cHorTik   	:= Time()
+	::oSender:oTiketCabecera:dFecCre   	:= GetSysDate()
+	::oSender:oTiketCabecera:cTimCre   	:= Time()
+	::oSender:oTiketCabecera:lAbierto  	:= .t.
 
-      ::oSender:oTiketCabecera:Insert()
+	::oSender:oTiketCabecera:Insert()
 
-      //Ahora metemos una linea-----------------------------------------------------
-      
-      ::oNuevo():GoTop()
+	//Ahora metemos una linea-----------------------------------------------------
 
-      while !::oNuevo():Eof()
+	::oNuevo():GoTop()
 
-         appendPass( ::oNuevo():cAlias,;
-                     ::oSender:oTiketLinea:cAlias,;
-                     {  "cSerTil" => ::oSender:oTiketCabecera:cSerTik,;
-                        "cNumTil" => ::oSender:oTiketCabecera:cNumTik,;
-                        "cSufTil" => ::oSender:oTiketCabecera:cSufTik,;
-                        "dTipTil" => ::oSender:oTiketCabecera:cTipTik,;
-                        "dFecTik" => ::oSender:oTiketCabecera:dFecTik } )
+	while !::oNuevo():Eof()
 
-         ::oNuevo():Skip()
+		appendPass( ::oNuevo():cAlias,;
+		         ::oSender:oTiketLinea:cAlias,;
+		         {  "cSerTil" => ::oSender:oTiketCabecera:cSerTik,;
+		            "cNumTil" => ::oSender:oTiketCabecera:cNumTik,;
+		            "cSufTil" => ::oSender:oTiketCabecera:cSufTik,;
+		            "dTipTil" => ::oSender:oTiketCabecera:cTipTik,;
+		            "dFecTik" => ::oSender:oTiketCabecera:dFecTik } )
+
+		::oNuevo():Skip()
 
    end while
 
    ::oSender:CargaDocumento( ::oSender:cNumeroTicket() )
 
-/*
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Error al generar nuevo ticket" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-*/
    ::EnableDialog()
    
 Return ( Self )
@@ -795,21 +738,9 @@ METHOD PasaLinea( nUnidades, oOrigen, oDestino )
 
 		oDestino:nUntTil := nUnidades
 
-		if oOrigen:lKitArt
-
-			::AddEscandallo( oOrigen, oDestino )
-
-		end if
-
 	 else
 
 		oDestino:nUntTil += nUnidades
-
-		if oOrigen:lKitArt
-
-			::AddEscandallo( oOrigen, oDestino )
-
-		end if
 
 	end if  
 
@@ -819,6 +750,11 @@ Return ( Self )
 
 METHOD AddLinea( oOrigen, oDestino ) class TpvUtilidadesMesa
 
+	local nPasar
+	local nUnidades
+	local lEscandallo
+	local nNumeroLinea
+	local lMenu
 
 	if oOrigen:lDelTil
 		msgStop( "No se pueden pasar lineas eliminadas de una mesa a otra." )
@@ -835,25 +771,35 @@ METHOD AddLinea( oOrigen, oDestino ) class TpvUtilidadesMesa
 		return ( Self )
 	end if
 
+	nUnidades 		:= oOrigen:nUntTil
+	lEscandallo		:= oOrigen:lKitArt
+	nNumeroLinea 	:= oOrigen:nNumLin
+	lMenu 			:= oOrigen:lMnuTil
 
 	if oOrigen:nUntTil > 0 .and. isInteger( oOrigen:nUntTil )
+		nPasar 		:= 1 
+	else 
+		nPasar		:= nUnidades	
+	end if 
 
-		::PasaLinea( 1, oOrigen, oDestino )
+	::PasaLinea( nPasar, oOrigen, oDestino )
 
-		oOrigen:nUntTil--
+	// Si la linea pasada es un escandallo pasamos las lineas del escandallo---
 
-		if oOrigen:nUntTil == 0
-			
-			::BorraLinea( oOrigen )
-		
-		end if
+	if lEscandallo
+		::AddEscandallo( nNumeroLinea, nUnidades, oOrigen, oDestino )
+	end if
 
-	else
+	// Si la linea pasada es un menú y solo tenemos un menú pasamos las lineas del menú
 
-		::PasaLinea( oOrigen:nUntTil, oOrigen, oDestino )
+	if lMenu .and. nUnidades == 1
+		::AddMenu( nNumeroLinea, nUnidades, oOrigen, oDestino )
+	end if
 
-		::BorraLinea( oOrigen )
+	oOrigen:nUntTil -= nPasar
 
+	if Empty(oOrigen:nUntTil )
+		::BorraLinea( nNumeroLinea, oOrigen )
 	end if
 
 	oOrigen:GoTop()
@@ -865,45 +811,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddEscandallo( oOrigen, oDestino )
+METHOD AddMenu( nNumeroLinea, nUnidades, oOrigen, oDestino )
 
-	local nLinea
-	local cCodArt
-	local nUnidades
-	
-	nLinea      := oOrigen:nNumLin
-	cCodArt     := oOrigen:cCbaTil
-	nUnidades   := oOrigen:nUntTil
-
-    oOrigen:GetStatus()
-
+	oOrigen:GetStatus()
     oOrigen:OrdSetFocus( "lRecNum" )
 
     oOrigen:GoTop()
+   	while !oOrigen:Eof()
 
-       while !oOrigen:Eof()
+      	if oOrigen:nLinMnu == nNumeroLinea .and. !oOrigen:lMnuTil
+      		::PasaLinea( oOrigen:nUntTil / nUnidades, oOrigen, oDestino )
+      		oOrigen:nUntTil 	-= oOrigen:nUntTil / nUnidades
+      	endif
 
-          if oOrigen:nNumLin == nLinea .and. oOrigen:cCbaTil != cCodArt
+		oOrigen:Skip()
 
-             if !oDestino:SeekinOrd( Str( oOrigen:nNumLin ) + oOrigen:cCbaTil, "cLinCba" )
-
-                dbPass( oOrigen:cAlias, oDestino:cAlias, .t. )
-
-                oDestino:nUntTil := oOrigen:nUntTil / nUnidades
-
-             else
-
-                oDestino:nUntTil += oOrigen:nUntTil / nUnidades
-
-             end if
-
-             oOrigen:nUntTil -= oOrigen:nUntTil / nUnidades
-
-          end if
-
-          oOrigen:Skip()
-
-       end while
+   	end while
 
     oOrigen:OrdSetFocus( "nRecNum" )   
 
@@ -913,253 +836,53 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-/*
-METHOD AddLineOrgToNew() Class TpvUtilidadesMesa
-/*
-   local nLinea
-   local cCodArt
-   local nUnidades
+METHOD AddEscandallo( nNumeroLinea, nUnidades, oOrigen, oDestino )
 
-   if valor:lDelTil
-      msgStop( "No se pueden pasar lineas eliminadas de una mesa a otra." )
-      return ( Self )
-   end if   
+    oOrigen:GetStatus()
+    oOrigen:OrdSetFocus( "lRecNum" )
 
-   if valor:lKitChl
-      msgStop( "No se pueden pasar lineas pertenecientes a un escandallo." )
-      return ( Self )
-   end if 
+    oOrigen:GoTop()
+   	while !oOrigen:Eof()
 
-   if empty( valor:RecCount() )
-      msgStop( "No hay lineas que pasar." )
-      return ( Self )
-   end if
-/*
-   nLinea      := ::oOriginal():nNumLin
-   cCodArt     := ::oOriginal():cCbaTil
-   nUnidades   := ::oOriginal():nUntTil
+      	if oOrigen:nNumLin == nNumeroLinea .and. oOrigen:lKitChl
+      		::PasaLinea( oOrigen:nUntTil / nUnidades, oOrigen, oDestino )
+      		oOrigen:nUntTil 	-= oOrigen:nUntTil / nUnidades
+      	endif
 
-   	if ::oOriginal():nUntTil > 0 .and. isInteger( ::oOriginal():nUntTil )
+		oOrigen:Skip()
 
-		::PasaLineaOrgToNew( 1 )
+   	end while
 
-		::oOriginal():nUntTil-- 
+    oOrigen:OrdSetFocus( "nRecNum" )   
 
-		if ::oOriginal():nUntTil == 0
-			::BorraLineaOrigen()
-		end if
-
-	else
-		
-		::PasaLineaOrgToNew( ::oOriginal():nUntTil )
-
-		::BorraLineaOrigen()
-
-	end if
-
-
-
-/*
-
-
-   do case
-      case ::oOriginal():nUntTil > 0 .and. 
-
-
-
-
-
-         ::oOriginal():nUntTil 		:= ::oOriginal():nUntTil - 1
-         if ::oOriginal():nUntTil == 0
-         	::oOriginal():Delete(.f.)
-         end if 
-
-         if !::oNuevo():SeekinOrd( Str( ::oOriginal():nNumLin ) + ::oOriginal():cCbaTil, "cLinCba" )
-
-            dbPass( ::oOriginal():cAlias, ::oNuevo():cAlias, .t. )
-
-            ::oNuevo():nUntTil := 1
-
-         else
-
-            ::oNuevo():nUntTil++
-
-         end if  
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-         if ::oOriginal():lKitArt
-
-            ::oOriginal():GetStatus()
-
-            ::oOriginal():OrdSetFocus( "lRecNum" )
-
-            ::oOriginal():GoTop()
-
-               while !::oOriginal():Eof()
-
-                  if ::oOriginal():nNumLin == nLinea .and. ::oOriginal():cCbaTil != cCodArt
-
-                     if !::oNuevo():SeekinOrd( Str( ::oOriginal():nNumLin ) + ::oOriginal():cCbaTil, "cLinCba" )
-
-                        dbPass( ::oOriginal():cAlias, ::oNuevo():cAlias, .t. )
-
-                        ::oNuevo():nUntTil := ::oOriginal():nUntTil / nUnidades
-
-                     else
-
-                        ::oNuevo():nUntTil += ::oOriginal():nUntTil / nUnidades
-
-                     end if
-
-                     ::oOriginal():nUntTil -= ::oOriginal():nUntTil / nUnidades
-
-                  end if
-
-                  ::oOriginal():Skip()
-
-               end while
-
-            ::oOriginal():OrdSetFocus( "nRecNum" )   
-
-            ::oOriginal():SetStatus()
-
-         end if
-
-      case ::oOriginal():nUntTil == 0
-
-         if !::oNuevo():SeekinOrd( Str( ::oOriginal():nNumLin ) + ::oOriginal():cCbaTil, "cLinCba" )
-
-            dbPass( ::oOriginal():cAlias, ::oNuevo():cAlias, .t. )
-
-            ::oNuevo():nUntTil := 1
-
-         else
-
-            ::oNuevo():nUntTil++
-
-         end if
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-
-         if ::oOriginal():lKitArt
-
-            ::oOriginal():GetStatus()
-
-            ::oOriginal():OrdSetFocus( "lRecNum" )
-
-            ::oOriginal():GoTop()
-
-            while !::oOriginal():Eof()
-
-               if ::oOriginal():nNumLin == nLinea .and. ::oOriginal():cCbaTil != cCodArt
-
-                  if !::oNuevo():SeekinOrd( Str( ::oOriginal():nNumLin ) + ::oOriginal():cCbaTil, "cLinCba" )
-
-                     dbPass( ::oOriginal():cAlias, ::oNuevo():cAlias, .t. )
-
-                     ::oNuevo():nUntTil := ::oOriginal():nUntTil / nUnidades
-
-                  else
-
-                     ::oNuevo():nUntTil += ::oOriginal():nUntTil / nUnidades
-
-                  end if
-
-                  ::oOriginal():nUntTil -= ::oOriginal():nUntTil / nUnidades
-
-               end if
-
-               ::oOriginal():Skip()
-
-            end while
-
-            ::oOriginal():GoTop()
-
-            while ( ::oOriginal():nNumLin == nLinea )
-               ::oOriginal():Delete( .f. )
-            end while
-
-            ::oOriginal():OrdSetFocus( "nRecNum" )
-
-            ::oOriginal():SetStatus()
-
-         end if
-
-         ::oOriginal():Delete(.f.)
-
-      otherwise
-      
-         if !::oNuevo():SeekinOrd( Str( ::oOriginal():nNumLin ) + ::oOriginal():cCbaTil, "cLinCba" )
-
-            dbPass( ::oOriginal():cAlias, ::oNuevo():cAlias, .t. )
-
-         else
-
-            ::oNuevo():nUntTil += ::oOriginal():nUntTil
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oOriginal():lKitArt
-
-            ::oOriginal():GetStatus()
-
-            ::oOriginal():OrdSetFocus( "lRecNum" )
-
-            ::oOriginal():GoTop()
-
-            while !::oOriginal():Eof()
-
-               if ::oOriginal():nNumLin == nLinea .and. ::oOriginal():cCbaTil != cCodArt
-
-                  if !::oNuevo():SeekinOrd( Str( ::oOriginal():nNumLin ) + ::oOriginal():cCbaTil, "cLinCba" )
-
-                     dbPass( ::oOriginal():cAlias, ::oNuevo():cAlias, .t. )
-
-                  else
-
-                     ::oNuevo():nUntTil += ::oOriginal():nUntTil
-
-                  end if
-
-                  ::oOriginal():nUntTil -= ::oOriginal():nUntTil
-
-               end if
-
-               ::oOriginal():Skip()
-
-            end while
-
-            ::oOriginal():GoTop()  
-
-            while ::oOriginal():nNumLin == nLinea
-               ::oOriginal():Delete(.f.)
-            end while
-
-            ::oOriginal():OrdSetFocus( "nRecNum" )
-
-            ::oOriginal():SetStatus()
-
-         end if
-
-         ::oOriginal():Delete(.f.)   
-
-      end case
-
-
-
-   ::oOriginal():GoTop()
-
-   ::oBrwOriginal:Refresh()
-   ::oBrwNuevoTicket:Refresh()
+    oOrigen:SetStatus()
 
 Return ( Self )
-*/
+
+//---------------------------------------------------------------------------//
+
+METHOD BorraLinea( nNumeroLinea, oDbf )
+
+    oDbf:GetStatus()
+    oDbf:OrdSetFocus( "lRecNum" )
+
+    oDbf:GoTop()
+   	while !oDbf:Eof()
+
+      	if oDbf:nNumLin == nNumeroLinea .or. oDbf:nLinMnu == nNumeroLinea
+      		oDbf:Delete( .f. )
+      	endif
+
+		oDbf:Skip()
+
+   	end while
+
+    oDbf:OrdSetFocus( "nRecNum" )   
+
+    oDbf:SetStatus()
+
+Return ( Self )
+
 //---------------------------------------------------------------------------//
 
 METHOD AddAllLine( oOrigen, oDestino ) class TpvUtilidadesMesa
@@ -1180,217 +903,5 @@ METHOD AddAllLine( oOrigen, oDestino ) class TpvUtilidadesMesa
 	::oBrwNuevoTicket:Refresh()
 
 Return ( Self )
-
-//---------------------------------------------------------------------------//
-/*
-METHOD AddAllOrgToNew() Class TpvUtilidadesMesa
-
-	::oOriginal():GoTop()
-	while !::oOriginal():Eof()
-		
-		::AddLineOrgToNew()
-
-	end while
-
-	::oBrwOriginal:Refresh()
-	::oBrwNuevoTicket:Refresh()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddAllNewToOrg() Class TpvUtilidadesMesa
-
-	::oNuevo():GoTop()
-	while !::oNuevo():Eof()
-		
-		::AddLineNewToOrg()
-
-	end while
-
-	::oBrwOriginal:Refresh()
-	::oBrwNuevoTicket:Refresh()
-
-Return ( Self )
-*/
-//---------------------------------------------------------------------------//
-/*
-METHOD AddLineNewToOrg() Class TpvUtilidadesMesa
-/*
-	local nLinea
-	local cCodArt
-	local nUnidades
-
-	if valor:lDelTil
-	  msgStop( "No se pueden pasar lineas eliminadas de una mesa a otra." )
-	  return ( Self )
-	end if   
-
-	if valor:lKitChl
-	  msgStop( "No se pueden pasar lineas pertenecientes a un escandallo." )
-	  return ( Self )
-	end if 
-
-	if empty( valor:RecCount() )
-	  msgStop( "No hay lineas que pasar." )
-	  return ( Self )
-	end if
-
-	nLinea      := ::oNuevo():nNumLin
-	cCodArt     := ::oNuevo():cCbaTil
-	nUnidades   := ::oNuevo():nUntTil
-
-
-   	if ::oNuevo():nUntTil > 0 .and. isInteger( ::oNuevo():nUntTil )
-
-		::PasaLineaNewToOrg( 1 )
-
-		::oNuevo():nUntTil-- 
-
-		if ::oNuevo():nUntTil == 0
-
-			::BorraLineaDestino()
-
-		end if
-
-	else
-		::PasaLineaNewToOrg( ::oNuevo():nUntTil )
-
-		::BorraLineaDestino()
-
-	end if
-
-
-  /* if !::oNuevo():lKitChl .and. !Empty( ::oNuevo():RecCount() )
-
-      if ::oNuevo():nUntTil > 1
-
-         ::oNuevo():nUntTil := ::oNuevo():nUntTil - 1
-
-         if !::oOriginal():SeekinOrd( Str( ::oNuevo():nNumLin ) + ::oNuevo():cCbaTil, "cLinCba" )
-
-            dbPass( ::oNuevo():cAlias, ::oOriginal():cAlias, .t. )
-            ::oOriginal():nUntTil := 1
-
-         else
-
-            ::oOriginal():nUntTil++
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oNuevo():lKitArt
-
-            ::oNuevo():GetStatus()
-
-            ::oNuevo():OrdSetFocus( "lRecNum" )
-
-            ::oNuevo():GoTop()
-
-               while !::oNuevo():Eof()
-
-                  if ::oNuevo():nNumLin == nLinea .and. ::oNuevo():cCbaTil != cCodArt
-
-                     if !::oOriginal():SeekinOrd( Str( ::oNuevo():nNumLin ) + ::oNuevo():cCbaTil, "cLinCba" )
-
-                        dbPass( ::oNuevo():cAlias, ::oOriginal():cAlias, .t. )
-                        ::oOriginal():nUntTil := ::oNuevo():nUntTil / nUnidades
-
-                     else
-
-                        ::oOriginal():nUntTil += ::oNuevo():nUntTil /nUnidades
-
-                     end if
-
-                     ::oNuevo():nUntTil -= ::oNuevo():nUntTil /nUnidades
-
-                  end if
-
-                  ::oNuevo():Skip()
-
-               end while
-
-            ::oNuevo():OrdSetFocus( "nRecNum" )   
-
-            ::oNuevo():SetStatus()
-
-         end if
-
-      else
-
-         if !::oOriginal():SeekinOrd( Str( ::oNuevo():nNumLin ) + ::oNuevo():cCbaTil, "cLinCba" )
-
-            dbPass( ::oNuevo():cAlias, ::oOriginal():cAlias, .t. )
-            ::oOriginal():nUntTil := 1
-
-         else
-
-            ::oOriginal():nUntTil++
-
-         end if
-
-         
-         //Si es un producto kit pasamos tambien los productos kit---------------
-         
-
-         if ::oNuevo():lKitArt
-
-            ::oNuevo():GetStatus()
-
-            ::oNuevo():OrdSetFocus( "lRecNum" )
-
-            ::oNuevo():GoTop()
-
-            while !::oNuevo():Eof()
-
-               if ::oNuevo():nNumLin == nLinea .and. ::oNuevo():cCbaTil != cCodArt
-
-                  if !::oOriginal():SeekinOrd( Str( ::oNuevo():nNumLin ) + ::oNuevo():cCbaTil, "cLinCba" )
-
-                     dbPass( ::oNuevo():cAlias, ::oNuevo():cAlias, .t. )
-                     ::oOriginal():nUntTil := ::oNuevo():nUntTil / nUnidades
-
-                  else
-
-                     ::oOriginal():nUntTil += ::oNuevo():nUntTil /nUnidades
-
-                  end if
-
-                  ::oNuevo():nUntTil -= ::oNuevo():nUntTil /nUnidades
-
-               end if
-
-               ::oNuevo():Skip()
-
-            end while
-
-            ::oNuevo():GoTop()
-
-            while ::oNuevo():nNumLin == nLinea
-               ::oNuevo():Delete(.f.)
-            end while
-
-            ::oNuevo():OrdSetFocus( "nRecNum" )
-
-            ::oNuevo():SetStatus()
-
-         end if   
-
-         ::oNuevo():Delete(.f.)
-
-      end if
-
-   end if
-
-
-   ::oNuevo():GoTop()
-   ::oBrwOriginal:Refresh()
-   ::oBrwNuevoTicket:Refresh()
-
-Return ( Self )
-*/
 
 //---------------------------------------------------------------------------//

@@ -915,8 +915,8 @@ Method ExportarPrestashop() Class TComercio
 
    ::oBtnCancel:Disable()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE*/
 
    if ::OpenFiles()
 
@@ -1042,13 +1042,13 @@ Method ExportarPrestashop() Class TComercio
 
    end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    ::Closefiles()
 
@@ -5623,25 +5623,21 @@ Method GetLanguagePrestashop( oDb ) CLASS TComercio
    local oQuery
    local cCodLanguage
 
-   if oDb:ExistTable( ::cPreFixtable( "lang" ) )
+   oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "lang" ) +  ' WHERE active = 1' )
 
-      oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "lang" ) +  ' WHERE active = 1' )
+   if oQuery:Open()
 
-      if oQuery:Open()
-
-         if oQuery:RecCount() > 0
-
-            cCodLanguage   := oQuery:FieldGet( 1 )
-
-         end if
-
+      if oQuery:RecCount() > 0
+         cCodLanguage   := oQuery:FieldGet( 1 )
       end if
 
    end if
 
-   oQuery:Free()
+   if !Empty( oQuery )
+      oQuery:Free()
+   end if   
 
-Return if( !Empty( cCodLanguage ), cCodLanguage, 3 )
+Return if( !Empty( cCodLanguage ), cCodLanguage, 1 )
 
 //---------------------------------------------------------------------------//
 
