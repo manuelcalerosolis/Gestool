@@ -297,6 +297,8 @@ CLASS TComercio
    METHOD CreateDirectoryImages( cCarpeta )
    METHOD ReturnDirectoryImages( cCarpeta )
 
+   METHOD CreateDirectoryImagesLocal( cCarpeta )
+
    //------------------------------------------------------------------------//
 
    INLINE METHOD LoadIniValues
@@ -915,8 +917,8 @@ Method ExportarPrestashop() Class TComercio
 
    ::oBtnCancel:Disable()
 
-   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    if ::OpenFiles()
 
@@ -1042,13 +1044,13 @@ Method ExportarPrestashop() Class TComercio
 
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    ::Closefiles()
 
@@ -4948,6 +4950,7 @@ Method AppendImagesPrestashop() CLASS TComercio
    local nCount            := 0
    local cNewImg           := ""
    local oImagenFinal
+   local cCarpeta          := ""
 
    ::aImagesCategories     := {}
    ::aImagesArticulos      := {}
@@ -5151,13 +5154,11 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-               if !isDirectory( ::cDImagen + "/p/" + oImage:cCarpeta )
-                  Makedir( ::cDImagen + "/p/" + oImage:cCarpeta )
-               end if
+               cCarpeta       :=    ::CreateDirectoryImagesLocal( oImage:cCarpeta )
 
-               CopyFile( oImage:cNombreImagen, ::cDImagen + "/p/" + oImage:cCarpeta + "/" + cNoPath( oImage:cNombreImagen ) )
+               CopyFile( oImage:cNombreImagen, ::cDImagen + "/p" + cCarpeta + "/" + cNoPath( oImage:cNombreImagen ) )
 
-               nCount                  += 1
+               nCount         += 1
 
             next
 
@@ -6780,6 +6781,27 @@ METHOD ReturnDirectoryImages( cCarpeta )
 
 Return ( .t. )
 
+//---------------------------------------------------------------------------//
+
+METHOD CreateDirectoryImagesLocal( cCarpeta )
+
+   local n
+   local cResult  := ""
+
+   for n := 1 to Len( cCarpeta )
+
+      cResult  += "/" + SubStr( cCarpeta, n, 1 )
+         
+      if !isDirectory( ::cDImagen + "/p" + cResult )
+         Makedir( ::cDImagen + "/p" + cResult )
+      end if
+
+   next
+
+Return ( cResult )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
