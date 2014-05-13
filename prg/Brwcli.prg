@@ -32,6 +32,12 @@ static dbfClient
 static oDbfTmp
 static oBtnFiltro
 
+static oMeter
+static nMeter
+
+static oText
+static cText      := "" 
+
 static cPouDiv
 static cPinDiv
 static cPirDiv
@@ -640,6 +646,12 @@ end if
    Botones comunes a la caja de dialogo----------------------------------------
    */
 
+   REDEFINE SAY oText VAR cText ;
+      ID       400 ;
+      OF       oDlg
+
+   oMeter      := TMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+
    REDEFINE BUTTON ;
       ID       306 ;
       OF       oDlg ;
@@ -781,12 +793,12 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
    Calculos a mostrar----------------------------------------------------------
    */
 
-   oMsgProgress()
-   oMsgProgress():SetRange( 0, 15 )
+   oMeter:Show()
+   oMeter:SetTotal( 15 )
 
    SysRefresh()
 
-   oMsgText( "Calculando ventas mensuales" )
+   oText:SetText( "Calculando ventas mensuales" )
 
    aFill( aTotVta, 0 )
 
@@ -801,50 +813,43 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
 
    next
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando cobros de tickets" )
+   oText:SetText( "Calculando cobros de tickets" )
    nCobTik  := nCobrosTik( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando vales pendientes de liquidar" )
+   oText:SetText( "Calculando vales pendientes de liquidar" )
    nValTik  := nValesTik( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
+   oMeter:AutoInc()
 
-   oMsgProgress():Deltapos(1)
-
-   oMsgText( "Calculando cobros de facturas" )
+   oText:SetText( "Calculando cobros de facturas" )
    nCobFac  := nCobrosFac( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando facturas de clientes" )
+   oText:SetText( "Calculando facturas de clientes" )
    nTotFac  := nTotalFacturas( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando facturas rectificadas" )
+   oText:SetText( "Calculando facturas rectificadas" )
    nFacRec  := nTotalRectificativa( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando tickets de clientes" )
+   oText:SetText( "Calculando tickets de clientes" )
    nTotTik  := nTotalTickets( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando anticipos de facturas" )
+   oText:SetText( "Calculando anticipos de facturas" )
    nCobAnt  := nTotalAnticipo( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   if IsMuebles()
-   oMsgText( "Calculando pedidos de clientes" )
-   nTotPed  := nTotalPedido( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
-   end if
-
-   oMsgText( "Calculando entregas a cuenta" )
+   oText:SetText( "Calculando entregas a cuenta" )
    nTotEnt  := nTotalEntregas( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando ventas de albaranes" )
+   oText:SetText( "Calculando ventas de albaranes" )
    nPdtFac  := nTotalAlbaran( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    oPdtFac:SetText( nPdtFac )
 
@@ -869,40 +874,40 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
    Cargamos los datos----------------------------------------------------------
    */
 
-   oMsgText( "Cargando los documentos" )
+   oText:SetText( "Cargando los documentos" )
 
    LoadPresupuestoCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadPedidosCliente( cCodCli, dbfDiv, dbfIva, dbfFPago, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadAlbaranesCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadFacturasCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadFacturasRectificativas( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadRecibosCliente( cCodCli, dbfDiv, dbfIva, dbfClient, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadTiketsCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadCobrosTiketsCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadAnticiposCliente( cCodCli, dbfDiv, dbfIva, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadEntregasPedidos( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    LoadEntregasAlbaranes( cCodCli, if( Anio == "Todos", nil, Val( Anio ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    oDbfTmp:GoTop()
 
@@ -925,10 +930,11 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
    oGraph:nClrY      := CLR_RED
    oGraph:cPicture   := cPorDiv
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText()
-   EndProgress()
+   oText:SetText()
+
+   oMeter:Hide()
 
    CursorWE()
 

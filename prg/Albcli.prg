@@ -3707,7 +3707,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       4 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), GenAlbCli( IS_PRINTER ), ) )
+         ACTION   ( if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), ImprimirSeriesAlbaranes(), ) )
+         //ACTION   ( if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), GenAlbCli( IS_PRINTER ), ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -3745,7 +3746,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
       oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
 
-      oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), GenAlbCli( IS_PRINTER ), ) } )
+      //oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), GenAlbCli( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), ImprimirSeriesAlbaranes(), ) } )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
@@ -13308,11 +13310,14 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function ImprimirSeriesAlbaranes()
+Static Function ImprimirSeriesAlbaranes( nDevice, lExt )
 
    local aStatus
    local oPrinter   
    local cFormato 
+
+   DEFAULT nDevice   := IS_PRINTER
+   DEFAULT lExt      := .f.
 
    // Cremaos el dialogo-------------------------------------------------------
 
@@ -13329,6 +13334,13 @@ Static Function ImprimirSeriesAlbaranes()
 
    oPrinter:oGrupoClienteInicio:First()
    oPrinter:oGrupoClienteFin:Last()
+
+   if lExt
+
+      oPrinter:oFechaInicio:cText( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )
+      oPrinter:oFechaFin:cText( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )
+
+   end if
 
    oPrinter:oFormatoDocumento:TypeDocumento( "AC" )   
 
@@ -13347,15 +13359,17 @@ Static Function ImprimirSeriesAlbaranes()
    oPrinter:bInit    := {||   ( TDataview():AlbaranesClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
    oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():AlbaranesClientesId( nView ) )                  .and. ;
-                              oPrinter:InRangeFecha( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )           .and. ;
                               ( TDataView():AlbaranesClientes( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   oPrinter:InRangeCliente( ( TDataView():AlbaranesClientes( nView ) )->cCodCli )         .and. ;
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )           .and. ;
+                              oPrinter:InRangeCliente( ( TDataView():AlbaranesClientes( nView ) )->cCodCli )         .and. ;
                               oPrinter:InRangeGrupoCliente( retGrpCli( ( TDataView():AlbaranesClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( TDataView():AlbaranesClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+
+   oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
    // Abrimos el dialogo-------------------------------------------------------
 
@@ -13365,7 +13379,9 @@ Static Function ImprimirSeriesAlbaranes()
 
    TDataview():SetStatus( "AlbCliT", nView, aStatus )
    
-   oWndBrw:Refresh()
+   if !Empty( oWndBrw )
+      oWndBrw:Refresh()
+   end if   
 
 Return .t.
 
@@ -13687,19 +13703,21 @@ FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if AlbCli()
          if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
-            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+            ImprimirSeriesAlbaranes( IS_PRINTER, .t. )
+            //GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          else
-            MsgStop( "No se encuentra albaran" )
+            MsgStop( "No se encuentra albarán" )
          end if
       end if
 
    else
 
-      if OpenFiles( nil, .t. )
+      if OpenFiles()
 
          if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
-            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+            ImprimirSeriesAlbaranes( IS_PRINTER, .t. )
+            //GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          end if
 
          CloseFiles()
@@ -13727,9 +13745,10 @@ FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if AlbCli()
          if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
-            GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
+            ImprimirSeriesAlbaranes( IS_SCREEN, .t. )
+            //GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          else
-            MsgStop( "No se encuentra albaran" )
+            MsgStop( "No se encuentra albarán" )
          end if
       end if
 
@@ -13739,7 +13758,8 @@ FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
          if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
-            GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
+            ImprimirSeriesAlbaranes( IS_SCREEN, .t. )
+            //GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          end if
 
          CloseFiles()

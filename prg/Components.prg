@@ -11,7 +11,8 @@ CLASS ResourceBuilder
    DATA bFor                           INIT {|| .t. }
    DATA bAction   
    DATA bSkip                          INIT {|| .t. }
-   DATA bExit 
+   DATA bExit
+   DATA bStart 
 
    DATA nTotalPrinted                  INIT 0
 
@@ -81,6 +82,7 @@ CLASS PrintSeries FROM ResourceBuilder
    METHOD Resource()
       METHOD StartResource()
       METHOD ActionResource()
+      METHOD DisableRange()
 
 END CLASS
 
@@ -182,6 +184,10 @@ METHOD StartResource() CLASS PrintSeries
 
    ::oFormatoDocumento:Valid()
 
+   if !Empty( ::bStart )
+      Eval( ::bStart )
+   end if   
+
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
@@ -222,6 +228,30 @@ METHOD ActionResource() CLASS PrintSeries
    ::oDlg:end( IDOK )
 
 RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD DisableRange() CLASS PrintSeries
+
+   ::oSerieInicio:Disable()
+   ::oSerieFin:Disable()
+
+   ::oDocumentoInicio:Disable()
+   ::oDocumentoFin:Disable()
+
+   ::oSufijoInicio:Disable()
+   ::oSufijoFin:Disable()
+
+   ::oClienteInicio:Disable()
+   ::oClienteFin:Disable()
+
+   ::oGrupoClienteInicio:Disable()
+   ::oGrupoClienteFin:Disable()
+
+   ::oFechaInicio:Disable()
+   ::oFechaFin:Disable()
+
+RETURN ( Self )      
 
 //--------------------------------------------------------------------------//
 
@@ -333,6 +363,9 @@ CLASS ComponentGet FROM Component
    METHOD Value()                INLINE ( ::uGetValue )
 
    METHOD Valid()                INLINE ( if( !empty( ::oGetControl ), ::oGetControl:lValid(), .t. ) )
+
+   METHOD Disable()              INLINE ( ::oGetControl:Disable() )
+   METHOD Enable()               INLINE ( ::oGetControl:Enable() )
 
 END CLASS 
 
