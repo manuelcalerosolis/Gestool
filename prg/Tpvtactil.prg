@@ -4671,7 +4671,7 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalLinea:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalLinea ) TAG "nOrdLin"  ON Str( Field->nNumLin ) + Str( Field->nLinMnu );
+      INDEX TO ( ::cTemporalLinea ) TAG "nOrdLin"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
                                                                               COMMENT "Orden lineas"     NODELETED                              OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"            NODELETED                              OF ::oTemporalLinea
@@ -4695,11 +4695,14 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalDivisionOriginal:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"   NODELETED                              OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"   FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"  NODELETED                              OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"   NODELETED                              OF ::oTemporalDivisionOriginal
-      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cLinCba"  ON Str( Field->nNumLin ) + Field->cCbaTil    COMMENT "Linea y código"  NODELETED    OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nOrdLin"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
+                                                                                          COMMENT "Orden lineas"     NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"            NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"           NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"            NODELETED                              OF ::oTemporalDivisionOriginal
+      INDEX TO ( ::cTemporalDivisionOriginal )  TAG "cLinCba"  ON Str( Field->nNumLin ) + Field->cCbaTil;             
+                                                                                          COMMENT "Linea y código"   NODELETED                              OF ::oTemporalDivisionOriginal
 
    END DATABASE ::oTemporalDivisionOriginal
 
@@ -4717,12 +4720,14 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalDivisionNuevoTicket:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "lRecNum"  ON Str( Recno() )           COMMENT "Recno"   NODELETED                              OF ::oTemporalDivisionNuevoTicket
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nRecNum"  ON Str( Recno() )           COMMENT "Recno"   FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionNuevoTicket
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "cCbaTil"  ON Field->cCbaTil           COMMENT "Código"  NODELETED                              OF ::oTemporalDivisionNuevoTicket
-      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nNumLin"  ON Str( Field->nNumLin )    COMMENT "Linea"   NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nOrdLin"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
+                                                                                             COMMENT "Orden lineas"     NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "lRecNum"  ON Str( Recno() )           COMMENT "Recno"            NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nRecNum"  ON Str( Recno() )           COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "cCbaTil"  ON Field->cCbaTil           COMMENT "Código"           NODELETED                              OF ::oTemporalDivisionNuevoTicket
+      INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "nNumLin"  ON Str( Field->nNumLin )    COMMENT "Linea"            NODELETED                              OF ::oTemporalDivisionNuevoTicket
       INDEX TO ( ::cTemporalDivisionNuevoTicket ) TAG "cLinCba"  ON Str( Field->nNumLin ) + Field->cCbaTil ;   
-                                                                                             COMMENT "Linea y código"  NODELETED    OF ::oTemporalDivisionNuevoTicket
+                                                                                             COMMENT "Linea y código"   NODELETED                              OF ::oTemporalDivisionNuevoTicket
 
    END DATABASE ::oTemporalDivisionNuevoTicket
 
