@@ -16657,6 +16657,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       end if
 
    if !IsReport() .and. !uFieldEmpresa( "lNStkAct" )
+   
       REDEFINE BUTTON oBtnAceptarpropiedades ;
          ID       550 ;
 			OF 		oDlg ;

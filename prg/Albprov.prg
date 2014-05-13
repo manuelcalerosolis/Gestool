@@ -6564,7 +6564,7 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFast", "cRef", {|| Field->cRef } ) )
 
       ( dbfAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted()}  ) )
-      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkRef", "cRef + cValPr1 + cValPr2", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
+      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkRef", "cRef + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cPCliDet", "cNumPed + cRef + cValPr1 + cValPr2 + cLote ", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) ) // + cDetalle
