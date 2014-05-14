@@ -480,7 +480,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastProduccion
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports          := {  {  "Title" => "Partes de producción", "Image" => 14, "Type" => "Partes de producción", "Directory" => "Producción\Partes de producción", "File" => "Partes de producción.fr3"  } }
+   aReports          := {  {  "Title" => "Partes de produccion", "Image" => 14, "Type" => "Partes de produccion", "Directory" => "Produccion", "File" => "Partes de produccion.fr3"  } }
 
    ::BuildNode( aReports, oTree, lLoadFile )
 
@@ -552,32 +552,32 @@ METHOD DataReport( oFr ) CLASS TFastProduccion
    Relaciones------------------------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Empresa",                                {|| cCodEmp() } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Operación",                              {|| ::oDbf:cCodOpe } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Seccion",                                {|| ::oDbf:cCodSec } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Lineas de material producido",           {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Lineas de materias primas",              {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Lineas de personal",                     {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Lineas de horas de personal",            {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe",                       "Lineas de costo de maquinaria",          {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                                             {|| cCodEmp() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Operación",                                           {|| ::oDbf:cCodOpe } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Seccion",                                             {|| ::oDbf:cCodSec } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de material producido",                        {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de materias primas",                           {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de personal",                                  {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de horas de personal",                         {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas de costo de maquinaria",                       {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
 
-   ::oFastReport:SetMasterDetail(   "Operación",                     "Tipo operación",                         {|| ::oOperacion:oDbf:cTipOpe } )
+   ::oFastReport:SetMasterDetail(   "Operación",                     "Tipo operación",                {|| ::oOperacion:oDbf:cTipOpe } )
 
-   ::oFastReport:SetMasterDetail(   "Lineas de material producido",  "Articulos.Material producido",           {|| ::oMaterialProducido:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Lineas de materias primas",     "Articulos.Materias primas",              {|| ::oMateriasPrimas:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Lineas de material producido",  "Articulos.Material producido",  {|| ::oMaterialProducido:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Lineas de materias primas",     "Articulos.Materias primas",     {|| ::oMateriasPrimas:cCodArt } )
 
    ::oFastReport:SetMasterDetail(   "Lineas de personal",            "Operarios.Lineas de personal",           {|| ::oPersonal:cCodTra } )
    ::oFastReport:SetMasterDetail(   "Lineas de horas de personal",   "Operarios.Lineas de horas de personal",  {|| ::oHorasPersonal:cCodTra } )
    
-   ::oFastReport:SetMasterDetail(   "Lineas de maquinaria",          "Maquinaria",                             {|| ::oMaquinasParte:cCodMaq } )
+   ::oFastReport:SetMasterDetail(   "Lineas de maquinaria",          "Maquinaria",                    {|| ::oMaquinasParte:cCodMaq } )
 
-   ::oFastReport:SetResyncPair(     "Informe",                       "Empresa" )
-   ::oFastReport:SetResyncPair(     "Informe",                       "Operación" )
-   ::oFastReport:SetResyncPair(     "Informe",                       "Seccion" )
-   ::oFastReport:SetResyncPair(     "Informe",                       "Lineas de material producido" )
-   ::oFastReport:SetResyncPair(     "Informe",                       "Lineas de materias primas" )
-   ::oFastReport:SetResyncPair(     "Informe",                       "Lineas de personal" )
-   ::oFastReport:SetResyncPair(     "Informe",                       "Lineas de costo de maquinaria" )
+   ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
+   ::oFastReport:SetResyncPair(     "Informe", "Operación" )
+   ::oFastReport:SetResyncPair(     "Informe", "Seccion" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de material producido" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de materias primas" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de personal" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas de costo de maquinaria" )
 
    ::oFastReport:SetResyncPair(     "Operación",                     "Tipo operación" )
 

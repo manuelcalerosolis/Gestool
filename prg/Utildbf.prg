@@ -3362,6 +3362,19 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
+Function DeleteFilesToDirectory( cPath )
+
+   local aDirectory     := Directory( cPath + "/*.*" )
+   local cDirectory
+
+   for each cDirectory in aDirectory
+      ERASE ( cPath + "/" + cDirectory[ 1 ] )
+   next
+
+Return .t.   
+
+//--------------------------------------------------------------------------//
+
 Function PutBrackets( cText )
 
 Return ( "[" + QuitBrackets( cText ) + "]" )   
@@ -3374,7 +3387,6 @@ Function QuitBrackets( cText )
    cText    := strtran( cText, "]", "" )
 
 Return ( alltrim( cText ) )
-
 
 /*
 function AddResource( nHResource, cType )

@@ -2094,7 +2094,7 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
          Return ( .f. )
       end if 
       
-      cFile       := cPatUserReporting() + ::cReportDirectory  + "\" + alltrim( ::cReportName ) + ".fr3"
+      cFile       := cPatUserReporting() + ::cReportDirectory  + "\" + ::cReportType + "\" + alltrim( ::cReportName ) + ".fr3"
 
    case lSaveAs
 
@@ -2396,7 +2396,7 @@ METHOD lLoadInfo() CLASS TFastReportInfGen
       Return ( .f. )
    end if 
 
-   if hHasKey( oTreeInforme:bAction, "Title" ) .and. hHasKey( oTreeInforme:bAction, "Type" ) .and. hHasKey( oTreeInforme:bAction, "File" )
+   if hHasKey( oTreeInforme:bAction, "Title" ) .and. hHasKey( oTreeInforme:bAction, "Type" )
 
       ::oReportTree        := oTreeInforme
 
@@ -2427,8 +2427,10 @@ METHOD lLoadReport() CLASS TFastReportInfGen
 
    // Report por nombre del fichero ----------------------------------------------
 
-   if File( ::cReportFile )
-      ::cInformeFastReport       := MemoRead( ::cReportFile )
+   if Empty( ::cInformeFastReport )
+      if File( ::cReportFile )
+         ::cInformeFastReport       := MemoRead( ::cReportFile )
+      end if
    end if
 
 RETURN ( !Empty( ::cInformeFastReport ) )
@@ -2694,24 +2696,22 @@ METHOD BuildNode( aReports, oTree, lLoadFile )
 
             // Directorio de la aplicacion-------------------------------------
 
-            aDirectory  := Directory( cPatReporting() + hHash[ "Directory" ] + "\*.fr3" )
+            aDirectory  := Directory( cPatReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
             if !Empty( aDirectory )
 
                for each aFile in aDirectory
-                  oNode:Add( getFileNoExt( aFile[ 1 ] ), hHash[ "Image" ], { "Title" => getFileNoExt( aFile[ 1 ] ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ], "File" => aFile[ 1 ] } )
+                  oNode:Add( getFileNoExt( aFile[ 1 ] ), hHash[ "Image" ], { "Title" => getFileNoExt( aFile[ 1 ] ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ] + "\" + hHash[ "Type" ], "File" => aFile[ 1 ] } )
                next 
 
             end if 
 
             // Directorio de el usuario----------------------------------------
 
-            // msgalert( cPatUserReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
-
-            aDirectory  := Directory( cPatUserReporting() + hHash[ "Directory" ] + "\*.fr3" )
+            aDirectory  := Directory( cPatUserReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
             if !Empty( aDirectory )
 
                for each aFile in aDirectory
-                  oNode:Add( putBrackets( getFileNoExt( aFile[ 1 ] ) ), hHash[ "Image" ], { "Title" => putBrackets( getFileNoExt( aFile[ 1 ] ) ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ], "File" => aFile[ 1 ] } )
+                  oNode:Add( putBrackets( getFileNoExt( aFile[ 1 ] ) ), hHash[ "Image" ], { "Title" => putBrackets( getFileNoExt( aFile[ 1 ] ) ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ] + "\" + hHash[ "Type" ], "File" => aFile[ 1 ] } )
                next 
 
             end if 

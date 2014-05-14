@@ -631,50 +631,48 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT oTree           := ::oTreeReporting
    DEFAULT lLoadFile       := .t. 
 
-   aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos\Listado",                            "File" => "Listado.fr3"  },;
+   aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos",          "File" => "Listado.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
-                     { "Title" => "SAT de clientes",              "Image" =>20, "Type" => "SAT de clientes",               "Directory" => "Articulos\Ventas\SAT de clientes",             "File" => "SAT de clientes.fr3" },;
-                     { "Title" => "Presupuestos de clientes",     "Image" => 5, "Type" => "Presupuestos de clientes",      "Directory" => "Articulos\Ventas\Presupuestos de clientes",    "File" => "Presupuestos de clientes.fr3" },;
-                     { "Title" => "Pedidos de clientes",          "Image" => 6, "Type" => "Pedidos de clientes",           "Directory" => "Articulos\Ventas\Pedidos de clientes",         "File" => "Pedidos de clientes.fr3" },;
-                     { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Articulos\Ventas\Albaranes de clientes",       "File" => "Albaranes de clientes.fr3" },;
-                     { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Articulos\Ventas\Facturas de clientes",        "File" => "Facturas de clientes.fr3" },;
-                     { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Articulos\Ventas\Rectificativas de clientes",  "File" => "Rectificativas de clientes.fr3" },;
-                     { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Articulos\Ventas\Tickets de clientes",         "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Articulos\Ventas\Ventas",                      "File" => "Ventas.fr3" },;
+                     { "Title" => "SAT de clientes",              "Image" =>20, "Type" => "SAT de clientes",               "Directory" => "Articulos\Ventas",   "File" => "SAT de clientes.fr3" },;
+                     { "Title" => "Presupuestos de clientes",     "Image" => 5, "Type" => "Presupuestos de clientes",      "Directory" => "Articulos\Ventas",   "File" => "Presupuestos de clientes.fr3" },;
+                     { "Title" => "Pedidos de clientes",          "Image" => 6, "Type" => "Pedidos de clientes",           "Directory" => "Articulos\Ventas",   "File" => "Pedidos de clientes.fr3" },;
+                     { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Articulos\Ventas",   "File" => "Albaranes de clientes.fr3" },;
+                     { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Articulos\Ventas",   "File" => "Facturas de clientes.fr3" },;
+                     { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Articulos\Ventas",   "File" => "Rectificativas de clientes.fr3" },;
+                     { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Articulos\Ventas",   "File" => "Tickets de clientes.fr3" },;
+                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Articulos\Ventas",   "File" => "Ventas.fr3" },;
                   } ;
                   },;
                   {  "Title" => "Producción",                     "Image" => 14, "Subnode" =>;
                   { ;
-                     { "Title" => "Partes de producción",         "Image" => 14, "Type" => "Partes de producción",         "Directory" => "Articulos\Producción\Partes de producción",    "File" => "Partes de producción.fr3" },;
+                     { "Title" => "Partes de producción",         "Image" => 14, "Type" => "Partes de producción",         "Directory" => "Articulos\Produccion", "File" => "Partes de producción.fr3" },;
                   } ;
                   },; 
                   {  "Title" => "Compras",                        "Image" => 12, "Subnode" =>;
                   { ;
-                     { "Title" => "Pedidos de proveedores",       "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Articulos\Compras\Pedidos de proveedores",        "File" => "Pedidos de proveedores.fr3" },;
-                     { "Title" => "Albaranes de proveedores",     "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Articulos\Compras\Albaranes de proveedores",      "File" => "Albaranes de proveedores.fr3" },;
-                     { "Title" => "Facturas de proveedores",      "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Articulos\Compras\Facturas de proveedores",       "File" => "Facturas de proveedores.fr3" },;
-                     { "Title" => "Rectificativas de proveedores","Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Articulos\Compras\Rectificativas de proveedores", "File" => "Rectificativas de proveedores.fr3" },;
-                     { "Title" => "Compras",                      "Image" =>12, "Type" => "Compras",                       "Directory" => "Articulos\Compras\Compras",                       "File" => "Compras.fr3" },;
+                     { "Title" => "Pedidos de proveedores",       "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Articulos\Compras",  "File" => "Pedidos de proveedores.fr3" },;
+                     { "Title" => "Albaranes de proveedores",     "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Articulos\Compras",  "File" => "Albaranes de proveedores.fr3" },;
+                     { "Title" => "Facturas de proveedores",      "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Articulos\Compras",  "File" => "Facturas de proveedores.fr3" },;
+                     { "Title" => "Rectificativas de proveedores","Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Articulos\Compras",  "File" => "Rectificativas de proveedores.fr3" },;
+                     { "Title" => "Compras",                      "Image" =>12, "Type" => "Compras",                       "Directory" => "Articulos\Compras",  "File" => "Compras.fr3" },;
                   } ;
                   },; 
                   {  "Title" => "Compras/Ventas",                 "Image" => 12, "Subnode" =>;
                   { ;
-                     { "Title" => "Compras y ventas",             "Image" => 2, "Type" => "Compras y ventas",              "Directory" => "Articulos\ComprasVentas",                         "File" => "Compras y ventas.fr3" },;
+                     { "Title" => "Compras y ventas",             "Image" => 2, "Type" => "Compras y ventas",              "Directory" => "Articulos\ComprasVentas",  "File" => "Compras y ventas.fr3" },;
                   } ;
                   },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Existencias por articulo",     "Image" => 16, "Type" => "Existencias por articulo",     "Directory" => "Articulos\Existencias\Articulos",                 "File" => "Existencias por articulo.fr3" },;
-                     { "Title" => "Existencias por stocks",       "Image" => 16, "Type" => "Existencias por stocks",       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
+                     { "Title" => "Existencias por articulo",     "Image" => 16, "Type" => "Existencias por articulo",     "Directory" => "Articulos\Existencias\Articulos",  "File" => "Existencias por articulo.fr3" },;
+                     { "Title" => "Existencias por stocks",       "Image" => 16, "Type" => "Existencias por stocks",       "Directory" => "Articulos\Existencias\Stocks",     "File" => "Existencias por stock.fr3" },;
                   } ;
                   } }
 
    do case 
       case ( ::uParam == ALB_CLI )
-      
-         aReports := { { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",       "Directory" => "Articulos\Ventas\Albaranes de clientes",          "File" => "Albaranes de clientes.fr3" } }
-
+         aReports := { { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Articulos\Ventas",   "File" => "Albaranes de clientes.fr3" } }
    end case
 
    ::BuildNode( aReports, oTree, lLoadFile )

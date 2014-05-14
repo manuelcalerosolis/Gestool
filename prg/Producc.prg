@@ -535,13 +535,6 @@ METHOD Activate()
 
       ::lGenParte( ::oWndBrw:oBrw, oPdf, IS_PDF )
 
-   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF ::oWndBrw ;
-      NOBORDER ;
-      ACTION   ( TFastProduccion():New():Play() ) ;
-      TOOLTIP  "Rep(o)rting";
-      HOTKEY   "O" ;
-      LEVEL    ACC_IMPR
-
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::CreateAsistenteEtiquetas() ) ;
