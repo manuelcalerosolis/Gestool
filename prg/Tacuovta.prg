@@ -361,9 +361,12 @@ METHOD lGenerate()
 
          while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
 
-            if !Empty( ::oTikCliL:cCbaTil )                              .AND.;
-               !( ::oTikCliL:lControl )                                  .AND.;
+            if !( ::oTikCliL:lControl )                                  .AND.;
                !( ::lExcCero .AND. ::oTikCliL:nPvpTil == 0 )
+
+               if empty( ::oTikCliL:cCbaTil )
+                  ? "esta vacio"
+               end if
 
                ::AddTik( ::oTikCliL:cCbaTil, 1, .t. )
 

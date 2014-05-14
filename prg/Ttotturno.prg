@@ -733,7 +733,7 @@ Method nTotNumeroAptCajon( cTurno )
 
             while ::oTurno:oLogPorta:cNumTur + ::oTurno:oLogPorta:cSufTur == cTurno .and. ! ::oTurno:oLogPorta:eof()
 
-               nTotal   := nTotal + 1
+               nTotal++
 
                ::oTurno:oLogPorta:Skip()
 
@@ -1412,7 +1412,7 @@ Method CreateTree( cCaja, cTurno )
    end if
 
    if ::nTotNumeroAptCajon( cTurno ) != 0
-      TreeAddItem( "Número de aperturas de cajón" ):Cargo := { "Número de apertura de cajón", ::nTotNumeroAptCajon( cTurno )  }
+      TreeAddItem( "Número de aperturas de cajón" ):Cargo := { "Número de apertura de cajón :" + cTurno, ::nTotNumeroAptCajon( cTurno )  }
    end if
 
    TreeEnd()

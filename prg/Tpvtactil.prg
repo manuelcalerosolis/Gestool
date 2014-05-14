@@ -3986,14 +3986,6 @@ METHOD ActionListArticulo()
       eval( ::oLstArticulos:GetSelection():bAction, ::oLstArticulos:GetSelection():Cargo )
    end if
 
-/*
-   if ::GetMenuMode()
-      ::CargaBrowseMenus( nOpt )
-   else
-      ::SeleccionaArticulos( nOpt )
-   end if
-*/ 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -4500,7 +4492,9 @@ METHOD SetFamilia( cCodigoFamilia ) CLASS TpvTactil
          ::oBrwFamilias:nArrayAt := nAt
          ::oBrwFamilias:Refresh()
 
-         ::oLstArticulos:SetItems( ::aFamilias[ nAt, 3 ] )
+         ::ChangeFamilias()
+
+         // ::oLstArticulos:SetItems( ::aFamilias[ nAt, 3 ] )
 
       end if
 

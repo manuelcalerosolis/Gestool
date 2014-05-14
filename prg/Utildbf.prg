@@ -460,6 +460,22 @@ Return ( cPath )
 
 //----------------------------------------------------------------------------//
 
+Function RecursiveMakeDir( cPath )
+
+   local cRute       := ""
+   local aPath       := hb_atokens( cPath, "\" )
+
+   for each cPath in aPath 
+      cRute          += cPath + "\"
+      if !( ":" $ cPath ) .and. !lIsDir( cRute )
+         MakeDir( cRute )
+      end if 
+   next
+
+Return ( cPath )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION EvalGet( aGet, nMode )
 
 	local i
@@ -3346,6 +3362,7 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
+<<<<<<< HEAD
 Function DeleteFilesToDirectory( cPath )
 
    local aDirectory     := Directory( cPath + "/*.*" )
@@ -3358,6 +3375,21 @@ Function DeleteFilesToDirectory( cPath )
 Return .t.   
 
 //--------------------------------------------------------------------------//
+=======
+Function PutBrackets( cText )
+
+Return ( "[" + QuitBrackets( cText ) + "]" )   
+
+//--------------------------------------------------------------------------//
+
+Function QuitBrackets( cText )
+
+   cText    := strtran( cText, "[", "" )
+   cText    := strtran( cText, "]", "" )
+
+Return ( alltrim( cText ) )
+
+>>>>>>> 04e9d00b4c6d19e03681e58132a28bee299f3469
 
 /*
 function AddResource( nHResource, cType )

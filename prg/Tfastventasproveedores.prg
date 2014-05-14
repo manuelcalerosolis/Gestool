@@ -573,7 +573,6 @@ METHOD StartDialog() CLASS TFastVentasProveedores
 
  RETURN ( Self )
 
-
 //---------------------------------------------------------------------------//
 
 METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasProveedores

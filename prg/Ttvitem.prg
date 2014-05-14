@@ -44,6 +44,8 @@ CLASS TTVItem
 
    METHOD SetCheck( lOnOff ) INLINE ::oTree:SetCheck( Self, lOnOff )
 
+   METHOD End() INLINE TVDeleteItem( ::oTree:hWnd, ::hItem )   
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//

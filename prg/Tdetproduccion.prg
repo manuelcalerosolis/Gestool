@@ -20,6 +20,7 @@ CLASS TDetProduccion FROM TDetalleArticulos
    DATA  oGetTotalPrecio
    DATA  nGetTotalPrecio      INIT  0
    DATA  oLote
+   DATA  oFecCad 
    DATA  oSayPr1
    DATA  oValPr1
    DATA  oSayVp1
@@ -134,7 +135,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
-      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf              
+      FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf
+      FIELD NAME "dFecCad"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha de caducidad"            COLSIZE  80 OF oDbf             
 
       ::CommunFields( oDbf )
 
@@ -291,6 +293,13 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       REDEFINE GET ::oLote VAR ::oDbfVir:cLote;
          ID       210 ;
          IDSAY    211 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET ::oFecCad VAR ::oDbfVir:dFecCad;
+         ID       320 ;
+         IDSAY    321 ;
+         SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
@@ -531,6 +540,7 @@ METHOD SetResource( nMode ) CLASS TDetProduccion
    if nMode == APPD_MODE
 
       ::oLote:Hide()
+      ::oFecCad:HIde()
 
       ::oSayPr1:Hide()
       ::oValPr1:Hide()
@@ -544,8 +554,10 @@ METHOD SetResource( nMode ) CLASS TDetProduccion
 
       if ::oDbfVir:lLote
          ::oLote:Show()
+         ::oFeccad:Show()
       else
          ::oLote:Hide()
+         ::oFecCad:Hide()
       end if
 
       if !Empty( ::oDbfVir:cCodPr1 )
@@ -646,8 +658,11 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
                ::oLote:Show()
                ::oLote:cText( ::oParent:oArt:cLote )
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
+               ::oFecCad:Show()
+               //::oFecCad:cText( )
             else
                ::oLote:Hide()
+               ::oFecCad:Hide()
             end if
 
             ::LoadCommunFields()

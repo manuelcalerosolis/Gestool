@@ -336,7 +336,6 @@ METHOD AddTik( cCodArt, nPrecio, lAcumula )
          ::oDbf:cLote      := ::oTikCliL:cLote
          ::oDbf:cTipDoc    := "Tiket"
          ::oDbf:cDocMov    := ::oTikCliL:cSerTil + "/" + lTrim ( ::oTikCliL:cNumTil ) + "/" + lTrim ( ::oTikCliL:cSufTil )
-
       end if
 
       ::oDbf:Save()

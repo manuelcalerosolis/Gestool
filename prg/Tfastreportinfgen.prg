@@ -27,7 +27,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  aUnidadesTiempo   INIT { "Dia(s)", "Semana(s)", "Mes(es)", "Año(s)" }
 
    DATA  oTreeReporting
-   DATA  oTreePersonalizados
    DATA  oTreeImageList
 
    DATA  oColDesde
@@ -38,9 +37,13 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  cResource         INIT "FastReportArticulos"
 
+   DATA  oReportTree
    DATA  cReportType       INIT ""
    DATA  cReportName       INIT ""
    DATA  cReportFile       INIT ""
+   DATA  cReportDirectory  INIT ""
+
+   DATA  lUserDefine       INIT .f.
 
    DATA  oBtnPrevisualizar
    DATA  oBtnImprimir
@@ -49,7 +52,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  oBtnHTML
 
    DATA  oBtnDiseno
-   DATA  oBtnDuplicar
    DATA  oBtnEliminar
    DATA  oBtnFiltrar
 
@@ -57,12 +59,12 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  oExt
 
-   DATA  nTotalRemesasAgentes          INIT 0
+   DATA  nTotalRemesasAgentes                   INIT 0
 
-   DATA  nBaseSatClientes              INIT 0
-   DATA  nIVASatClientes               INIT 0
-   DATA  nRecargoSatClientes           INIT 0
-   DATA  nTotalSatClientes             INIT 0
+   DATA  nBaseSatClientes                       INIT 0
+   DATA  nIVASatClientes                        INIT 0
+   DATA  nRecargoSatClientes                    INIT 0
+   DATA  nTotalSatClientes                      INIT 0
 
    DATA  nBasePresupuestosClientes     INIT 0
    DATA  nIVAPresupuestosClientes      INIT 0
@@ -89,29 +91,29 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoFacturasRectificativasClientes INIT 0
    DATA  nTotalFacturasRectificativasClientes   INIT 0
 
-   DATA  nBaseTicketsClientes          INIT 0
-   DATA  nIVATicketsClientes           INIT 0
-   DATA  nRecargoTicketsClientes       INIT 0
-   DATA  nTotalTicketsClientes         INIT 0
+   DATA  nBaseTicketsClientes                   INIT 0
+   DATA  nIVATicketsClientes                    INIT 0
+   DATA  nRecargoTicketsClientes                INIT 0
+   DATA  nTotalTicketsClientes                  INIT 0
 
-   DATA  nTotalPagosClientes           INIT 0
-   DATA  nTotalPendientesClientes      INIT 0
+   DATA  nTotalPagosClientes                    INIT 0
+   DATA  nTotalPendientesClientes               INIT 0
 
-   DATA  nBasePedidosProveedores       INIT 0
-   DATA  nIVAPedidosProveedores        INIT 0
-   DATA  nRecargoPedidosProveedores    INIT 0
-   DATA  nTotalPedidosProveedores      INIT 0
+   DATA  nBasePedidosProveedores                INIT 0
+   DATA  nIVAPedidosProveedores                 INIT 0
+   DATA  nRecargoPedidosProveedores             INIT 0
+   DATA  nTotalPedidosProveedores               INIT 0
 
-   DATA  nBaseAlbaranesProveedores       INIT 0
-   DATA  nIVAAlbaranesProveedores        INIT 0
-   DATA  nRecargoAlbaranesProveedores    INIT 0
-   DATA  nTotalAlbaranesProveedores      INIT 0
+   DATA  nBaseAlbaranesProveedores              INIT 0
+   DATA  nIVAAlbaranesProveedores               INIT 0
+   DATA  nRecargoAlbaranesProveedores           INIT 0
+   DATA  nTotalAlbaranesProveedores             INIT 0
 
-   DATA  nBaseFacturasProveedores       INIT 0
-   DATA  nIVAFacturasProveedores        INIT 0
-   DATA  nRecargoFacturasProveedores    INIT 0
-   DATA  nTotalFacturasProveedores      INIT 0
-
+   DATA  nBaseFacturasProveedores               INIT 0
+   DATA  nIVAFacturasProveedores                INIT 0
+   DATA  nRecargoFacturasProveedores            INIT 0
+   DATA  nTotalFacturasProveedores              INIT 0
+         
    DATA  nBaseFacturasRectificativasProveedores    INIT 0
    DATA  nIVAFacturasRectificativasProveedores     INIT 0
    DATA  nRecargoFacturasRectificativasProveedores INIT 0
@@ -158,7 +160,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD OpenService( lExclusive, cPath )
    METHOD CloseService()
 
-   Method BuildFiles( lExclusive, cPath ) INLINE ( ::DefineReport( cPath ), ::DefinePersonalizado( cPath ), ::oDbfInf:Create(), ::oDbfPersonalizado:Create() )
+   Method BuildFiles( lExclusive, cPath ) INLINE ( ::DefineReport( cPath ), ::oDbfInf:Create() )
 
    METHOD lGenerate()
    
@@ -174,8 +176,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD DefineReport( cPath )
 
-   METHOD DefinePersonalizado( cPath )
-
    METHOD Reindexa( cPath )
 
    METHOD FastReport( nDevice )
@@ -187,28 +187,30 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD TreeReportingClick()         INLINE ( ::GenReport( IS_SCREEN ), 0 )
    METHOD TreePersonalizadosClick()    INLINE ( ::GenReport( IS_SCREEN ) )
 
-   METHOD SaveReport()
+   METHOD lLoadInfo()
+
    METHOD lLoadReport()
    METHOD MoveReport()
 
    METHOD OpenTemporal()
    METHOD CloseTemporal()
 
-   METHOD Duplicar()
+   METHOD SaveReport()
+      METHOD SaveReportAs()
+         METHOD EndSaveReportAs( cNombre, oDlg )
 
    METHOD Eliminar()
-
-   METHOD SaveDuplicar( cNombre, oTreeInforme )
 
    METHOD GetFieldByDescription( cDescription )
 
    METHOD DlgExportDocument()
-   METHOD ExportDocument( cGetFile )
+      METHOD ExportDocument( cGetFile )
 
    METHOD DlgImportDocument()
-   METHOD ImportDocument()
+      METHOD ImportDocument()
 
    METHOD BuildNode( aReports, oTree, lLoadFile )
+   METHOD ReBuildTree()                                           INLINE ( ::oTreeReporting:DeleteAll(), ::BuildTree() )
 
    METHOD nRemesaAgentes()
    METHOD nFacturaClientes()
@@ -933,10 +935,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
          ::oTreeReporting:SetImageList( ::oTreeImageList )
       end if
 
-      if !Empty( ::oTreePersonalizados )
-         ::oTreePersonalizados:SetImageList( ::oTreeImageList )
-      end if
-
       RETURN ( Self )
 
    ENDMETHOD
@@ -953,7 +951,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
          ::lShowFecha()
       end if
 
-      ::oDlg:cTitle( ::cSubTitle + " : [" + cTitle + "]" )
+      ::oDlg:cTitle( ::cSubTitle + " : " + cTitle )
    
       Return ( Self )
 
@@ -965,28 +963,24 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
       local cFile    := cPatTmp() + "Report.txt"
 
-      if ::lLoadReport()
-
-         CursorWait()
-
-         if File( cFile )
-            fErase( cFile )
-         end if
-
-         MemoWrit( cFile, ::cInformeFastReport )
-
-         CursorWE()    
-
-         if File( cFile )
-            WinExec( "notepad.exe " + cFile )
-         end if 
-
-      else 
-         
-         MsgStop( "No se ha podido cargar un diseño de informe valido.", ::cReportType )
+      if !::lLoadReport()
+         MsgStop( "No se ha podido cargar un diseño de informe valido." + CRLF + ::cReportFile )
          Return ( Self )
+      end if 
 
+      CursorWait()
+
+      if File( cFile )
+         fErase( cFile )
       end if
+
+      MemoWrit( cFile, ::cInformeFastReport )
+
+      CursorWE()    
+
+      if File( cFile )
+         WinExec( "notepad.exe " + cFile )
+      end if 
 
    ENDMETHOD
 
@@ -1064,21 +1058,9 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
 
    DEFINE DIALOG ::oDlg RESOURCE ::cResource TITLE ::cSubTitle
 
-   REDEFINE FOLDER ::oPages ;
-      ID       100;
-      OF       ::oDlg ;
-      PROMPT   "&General",;
-               "Personalizados" ;
-      DIALOGS  "FastReportPage",;
-               "FastReportPage"
-
-   ::oTreeReporting                 := TTreeView():Redefine( 100, ::oPages:aDialogs[ 1 ] )
+   ::oTreeReporting                 := TTreeView():Redefine( 100, ::oDlg ) 
    ::oTreeReporting:bChanged        := {|| ::TreeReportingChanged() }
    ::oTreeReporting:bLDblClick      := {|| ::TreeReportingClick() } // OnClick
-
-   ::oTreePersonalizados            := TTreeView():Redefine( 100, ::oPages:aDialogs[ 2 ] )
-   ::oTreePersonalizados:bChanged   := {|| ::TreePersonalizadosChanged() }
-   ::oTreePersonalizados:bLDblClick := {|| ::TreePersonalizadosClick() }
 
    /*
    Fechas----------------------------------------------------------------------
@@ -1138,7 +1120,7 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
 
    with object ( ::oBrwRango:AddCol() )
       :cHeader       := ""
-      :bEditValue    := {|| ::EditTextDesde() }
+      :bEditValue    := {|| ::EditTextDesde() } 
       :nEditType     := 0
       :nWidth        := 160
    end with
@@ -1275,15 +1257,9 @@ METHOD InitDialog() CLASS TFastReportInfGen
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 246, "Útiles", .f. )
       ::oBtnDiseno         := TDotNetButton():New( 60, oGrupo, "Drawing_utensils_32",  "Diseñar",           1, {|| ::DesignReport() }, , , .f., .f., .f. )
-      ::oBtnDuplicar       := TDotNetButton():New( 60, oGrupo, "Document_new_32",      "Nuevo",             2, {|| ::Duplicar() }, , , .f., .f., .f. )
-      ::oBtnEliminar       := TDotNetButton():New( 60, oGrupo, "Document_delete_32",   "Eliminar",          3, {|| ::Eliminar() }, , , .f., .f., .f. )
-      ::oBtnFiltrar        := TDotNetButton():New( 60, oGrupo, "Funnel_32",            "Filtrar",           4, {|| ::DlgFilter() }, , , .f., .f., .f. )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 186, "Herramientas", .f. )
-
-      ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "Folder_out_32",        "Exportar",          1, {|| ::DlgExportDocument() }, , , .f., .f., .f. )
-      ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Folder_into_32",       "Importar",          2, {|| ::DlgImportDocument() }, , , .f., .f., .f. )
-      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "Folder_document_32",   "Ver",               3, {|| ::XmlDocument() }, , , .f., .f., .f. )
+      ::oBtnEliminar       := TDotNetButton():New( 60, oGrupo, "Document_delete_32",   "Eliminar",          2, {|| ::Eliminar() }, , , .f., .f., .f. )
+      ::oBtnFiltrar        := TDotNetButton():New( 60, oGrupo, "Funnel_32",            "Filtrar",           3, {|| ::DlgFilter() }, , , .f., .f., .f. )
+      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "Folder_document_32",   "Ver",               4, {|| ::XmlDocument() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
 
@@ -1340,10 +1316,7 @@ METHOD SetDialog( lEnabled ) CLASS TFastReportInfGen
    ::oBtnHTML:lEnabled           := lEnabled
    ::oBtnDiseno:lEnabled         := lEnabled
    ::oBtnFiltrar:lEnabled        := lEnabled
-   ::oBtnDuplicar:lEnabled       := lEnabled
    ::oBtnEliminar:lEnabled       := lEnabled
-   ::oBtnExportar:lEnabled       := lEnabled
-   ::oBtnImportar:lEnabled       := lEnabled
    ::oBtnXml:lEnabled            := lEnabled
 
    if lEnabled
@@ -1566,38 +1539,14 @@ Return .t.
 METHOD GenReport( nOption ) CLASS TFastReportInfGen
 
    local oDlg
-   local oTreeInforme
-
-   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
-      oTreeInforme      := ::oTreeReporting:GetSelected()
-   else
-      oTreeInforme      := ::oTreePersonalizados:GetSelected()
-   end if
 
    /*
    Obtenemos los datos necesarios para el informe------------------------------
    */
 
-   if hb_isHash( oTreeInforme:bAction ) 
-
-      if hHasKey( oTreeInforme:bAction, "Title" ) .and. hHasKey( oTreeInforme:bAction, "Type" )
-
-         ::cReportName     := oTreeInforme:bAction[ "Title" ] 
-         ::cReportType     := oTreeInforme:bAction[ "Type" ]
-         ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
-
-      else 
-         
-         Return ( Self )
-
-      end if
-
-   else
-      
+   if !::lLoadInfo()
       msgStop( "No se ha podido cargar el nombre del informe." )
-      
       Return ( Self )
-
    end if
 
    /*
@@ -1605,9 +1554,9 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
    */
 
    if !::lLoadReport()
-      MsgStop( "No se ha podido cargar un diseño de informe valido.", ::cReportType )
+      MsgStop( "No se ha podido cargar un diseño de informe valido." + CRLF + ::cReportFile )
       Return ( Self )
-   end if
+   end if 
 
    /*
    Ponemos el dialogo a disable------------------------------------------------
@@ -1636,7 +1585,7 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
 
       if !::lBreak
 
-          DEFINE DIALOG oDlg ;
+         DEFINE DIALOG  oDlg ;
                FROM     0, 0 ;
                TO       4, 30 ;
                TITLE    "Generando informe" ;
@@ -1823,12 +1772,6 @@ METHOD OpenData( cPath, lExclusive ) CLASS TFastReportInfGen
 
       ::oDbfInf:Activate( .f., !( lExclusive ) )
 
-      if Empty( ::oDbfPersonalizado )
-         ::oDbfPersonalizado     := ::DefinePersonalizado( cPath )
-      end if
-
-      ::oDbfPersonalizado:Activate( .f., !( lExclusive ) )
-
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
@@ -1907,12 +1850,6 @@ METHOD OpenService( lExclusive, cPath ) CLASS TFastReportInfGen
 
       ::oDbfInf:Activate( .f., !( lExclusive ) )
 
-      if Empty( ::oDbfPersonalizado )
-         ::oDbfPersonalizado     := ::DefinePersonalizado( cPath )
-      end if
-
-      ::oDbfPersonalizado:Activate( .f., !( lExclusive ) )
-
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
@@ -1933,10 +1870,6 @@ METHOD CloseService() CLASS TFastReportInfGen
 
    if ::oDbfInf != nil .and. ::oDbfInf:Used()
       ::oDbfInf:end()
-   end if
-
-   if ::oDbfPersonalizado != nil .and. ::oDbfPersonalizado:Used()
-      ::oDbfPersonalizado:end()
    end if
 
 RETURN ( Self )
@@ -1965,29 +1898,6 @@ Return ( ::oDbfInf )
 
 //--------------------------------------------------------------------------//
 
-Method DefinePersonalizado( cPath ) CLASS TFastReportInfGen
-
-   DEFAULT cPath        := cPatEmp()
-
-   DEFINE DATABASE ::oDbfPersonalizado FILE "PrsInf.Dbf" CLASS "PrsInf" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Informes personalizados"
-
-      FIELD NAME "cCodUse" TYPE "C" LEN   3  DEC 0 COMMENT "Código usuario"            OF ::oDbfPersonalizado
-      FIELD NAME "cClsInf" TYPE "C" LEN  50  DEC 0 COMMENT "Clase del informe"         OF ::oDbfPersonalizado
-      FIELD NAME "cTypInf" TYPE "C" LEN  50  DEC 0 COMMENT "Tipo del informe"          OF ::oDbfPersonalizado
-      FIELD NAME "cNomInf" TYPE "C" LEN  50  DEC 0 COMMENT "Nombre del informe"        OF ::oDbfPersonalizado
-      FIELD NAME "mModInf" TYPE "M" LEN  10  DEC 0 COMMENT "Configuración modificada"  OF ::oDbfPersonalizado
-
-      INDEX TO "PrsInf.Cdx" TAG "cClsInf" ON "Upper( cClsInf ) + Upper( cTypInf ) + Upper( cNomInf )";
-                                                            NODELETED COMMENT "Código"    OF ::oDbfPersonalizado
-      INDEX TO "PrsInf.Cdx" TAG "cCodUse" ON "cCodUse + Upper( cNomInf )";
-                                                            NODELETED COMMENT "Usuario"   OF ::oDbfPersonalizado
-
-   END DATABASE ::oDbfPersonalizado
-
-Return ( ::oDbfPersonalizado )
-
-//--------------------------------------------------------------------------//
-
 Method Reindexa( cPath )
 
    if file( cPath + "FstInf.Cdx" )
@@ -2004,13 +1914,7 @@ Method Reindexa( cPath )
       ferase( cPath + "PrsInf.Cdx" )
    end if
 
-   ::DefinePersonalizado( cPath )
-
-   ::oDbfPersonalizado:Activate( .f., .f. )
-   ::oDbfPersonalizado:Pack()
-   ::oDbfPersonalizado:End()
-
-Return ( ::oDbfPersonalizado )
+Return ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -2025,7 +1929,7 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
       ::oFastReport:LoadLangRes(       "Spanish.Xml" )
       ::oFastReport:SetIcon( 1 )
 
-      ::oFastReport:SetEventHandler(   "Designer", "OnSaveReport", {|| ::SaveReport() } )
+      ::oFastReport:SetEventHandler(   "Designer", "OnSaveReport", {|lSaveAs| ::SaveReport( lSaveAs ) } )
 
       ::oFastReport:ClearDataSets()
 
@@ -2091,23 +1995,11 @@ RETURN ( Self )
 
 Method DesignReport( cNombre ) CLASS TFastReportInfGen
 
-   local oTreeInforme
-
-   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
-      oTreeInforme      := ::oTreeReporting:GetSelected()
-   else
-      oTreeInforme      := ::oTreePersonalizados:GetSelected()
-   end if
-
    /*
    Obtenemos los datos necesarios para el informe------------------------------
    */
 
-   if hb_isHash( oTreeInforme:bAction ) .and. hHasKey( oTreeInforme:bAction, "Type" )
-      ::cReportType     := oTreeInforme:bAction[ "Type"  ]
-      ::cReportName     := oTreeInforme:bAction[ "Title" ] 
-      ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
-   else
+   if !::lLoadInfo()
       msgStop( "No se ha podido cargar el informe." )
       Return ( Self )
    end if
@@ -2116,7 +2008,10 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    Obtenemos el informe personalizado------------------------------------------
    */
 
-   ::lLoadReport()
+   if !::lLoadReport()
+      MsgStop( "No se ha podido cargar un diseño de informe valido." + CRLF + ::cReportFile )
+      Return ( Self )
+   end if 
 
    if !Empty( cNombre )
       ::lPersonalizado  := .t.
@@ -2127,12 +2022,12 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    Creacion del objeto---------------------------------------------------------
    */
 
-   ::oFastReport                       := frReportManager():new()
+   ::oFastReport                    := frReportManager():new()
 
    ::oFastReport:LoadLangRes(       "Spanish.Xml" )
    ::oFastReport:SetIcon( 1 )
 
-   ::oFastReport:SetEventHandler(   "Designer", "OnSaveReport", {|| ::SaveReport() } )
+   ::oFastReport:SetEventHandler(   "Designer", "OnSaveReport", {|lSaveAs| ::SaveReport( lSaveAs ) } )
 
    ::oFastReport:ClearDataSets()
 
@@ -2141,10 +2036,6 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    if !Empty( ::cInformeFastReport )
 
       ::oFastReport:LoadFromString( ::cInformeFastReport )
-
-      if ::lPersonalizado
-         ::SaveReport()
-      end if
 
    else
 
@@ -2190,43 +2081,50 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SaveReport() CLASS TFastReportInfGen
+Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
 
-   if ::lPersonalizado
+   local cFile    
 
-      if ::oDbfPersonalizado:Seek( ::cReportKey() )
-         ::oDbfPersonalizado:Load()
-      else
-         ::oDbfPersonalizado:Append()
-      end if
+   do case
+      case !::lUserDefine
 
-      ::oDbfPersonalizado:cCodUse   := cCurUsr()
-      ::oDbfPersonalizado:cClsInf   := ::ClassName()
-      ::oDbfPersonalizado:cTypInf   := ::cReportType
-      ::oDbfPersonalizado:cNomInf   := ::cReportName
+      // Nuevo informe --------------------------------------------------------
 
-      ::oDbfPersonalizado:Save()
+      if !::SaveReportAs()
+         Return ( .f. )
+      end if 
+      
+      cFile       := cPatUserReporting() + ::cReportDirectory  + "\" + ::cReportType + "\" + alltrim( ::cReportName ) + ".fr3"
 
-      RETURN ( ::oFastReport:SaveToBlob( ::oDbfPersonalizado:nArea, "mModInf" ) )
+   case lSaveAs
 
-   else
+      // Version del informe---------------------------------------------------
 
-      if ::oDbfInf:Seek( ::cReportKey() )
-      ::oDbfInf:Load()
-      else
-      ::oDbfInf:Append()
-      end if
+      if !::SaveReportAs()
+         Return ( .f. )
+      end if 
+      
+      cFile       := cPatUserReporting() + ::cReportDirectory  + "\" + alltrim( ::cReportName ) + ".fr3"
 
-      ::oDbfInf:cCodUse             := cCurUsr()
-      ::oDbfInf:cClsInf             := ::ClassName()
-      ::oDbfInf:cTypInf             := ::cReportType
-      ::oDbfInf:cNomInf             := ::cReportName
+   otherwise
 
-      ::oDbfInf:Save()
+      cFile       := ::cReportFile
+   
+   end case
 
-   end if
+   // Creamos todos los directorios necesarios---------------------------------
 
-RETURN ( ::oFastReport:SaveToBlob( ::oDbfInf:nArea, "mModInf" ) )
+   RecursiveMakeDir( cOnlyPath( cFile )  )
+
+   // Salvamos el fichero------------------------------------------------------
+
+   ::oFastReport:SaveToFile( cFile )
+
+   // Recontruye el arbol------------------------------------------------------
+
+   ::ReBuildTree()
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -2366,56 +2264,47 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Duplicar() CLASS TFastReportInfGen
+METHOD SaveReportAs() CLASS TFastReportInfGen
 
    local oDlg
    local oNombre
-   local cNombre
+   local cNombre        := Padr( QuitBrackets( ::cReportName ), 200 )
    local oBmpGeneral
-   local oTreeInforme   := ::oTreeReporting:GetSelected()
 
-   if Empty( oTreeInforme:aItems ) .and. !Empty( oTreeInforme:cPrompt ) .and. Alltrim( Upper( oTreeInforme:cPrompt ) ) != "PERSONALIZADOS"
+   DEFINE DIALOG oDlg RESOURCE "ADD_FAVORITOS" TITLE "Nuevo " + Alltrim( Lower( ::cReportType ) )
 
-      DEFINE DIALOG oDlg RESOURCE "ADD_FAVORITOS" TITLE "Nuevo " + Alltrim( Lower( oTreeInforme:cPrompt ) )
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       500 ;
-         RESOURCE "Form_Blue_Add_Alpha_48" ;
+      REDEFINE BITMAP   oBmpGeneral ;
+         ID             500 ;
+         RESOURCE       "Form_Blue_Add_Alpha_48" ;
          TRANSPARENT ;
-         OF       oDlg
+         OF             oDlg
 
-      REDEFINE GET oNombre ;
-         VAR      cNombre ;
-         ID       100 ;
-         OF       oDlg
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( ::SaveDuplicar( cNombre, oDlg ) )
+      REDEFINE GET      oNombre ;
+         VAR            cNombre ;
+         ID             100 ;
+         OF             oDlg
 
       REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
+         ID             IDOK ;
+         OF             oDlg ;
+         ACTION         ( ::EndSaveReportAs( cNombre, oDlg ) )
 
-      oDlg:AddFastKey( VK_F5, {|| ::SaveDuplicar( cNombre, oDlg ) } )
+      REDEFINE BUTTON ;
+         ID             IDCANCEL ;
+         OF             oDlg ;
+         ACTION         ( oDlg:end() )
 
-      ACTIVATE DIALOG oDlg CENTER
+      oDlg:AddFastKey( VK_F5, {|| ::EndSaveReportAs( cNombre, oDlg ) } )
 
-      oBmpGeneral:End()
+   ACTIVATE DIALOG oDlg CENTER
 
-   else
+   oBmpGeneral:End()
 
-      MsgStop( "Debe seleccionar un tipo de documento." )
-
-   end if
-
-RETURN ( Self )
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD SaveDuplicar( cNombre, oDlg ) CLASS TFastReportInfGen
+METHOD EndSaveReportAs( cNombre, oDlg ) CLASS TFastReportInfGen
 
    if Empty( cNombre )
 
@@ -2423,9 +2312,9 @@ METHOD SaveDuplicar( cNombre, oDlg ) CLASS TFastReportInfGen
 
    else
 
-      ::DesignReport( cNombre )
+      ::cReportName  := cNombre
 
-      oDlg:End()
+      oDlg:End( IDOK )
 
    end if
 
@@ -2434,7 +2323,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD LoadPersonalizado() CLASS TFastReportInfGen
-
+/*
    local oItem
 
    if !Empty( ::oTreePersonalizados )
@@ -2454,8 +2343,6 @@ METHOD LoadPersonalizado() CLASS TFastReportInfGen
                oItem:Expand()
             end if
 
-            // ::oTreePersonalizados:Add( Alltrim( ::oDbfPersonalizado:cNomInf ) + Space( 1 ) + "[" + Alltrim( ::oDbfPersonalizado:cTypInf ) + "]", 1 )
-
             ::oDbfPersonalizado:Skip()
 
          end while
@@ -2465,52 +2352,72 @@ METHOD LoadPersonalizado() CLASS TFastReportInfGen
       ::oTreePersonalizados:Expand()
 
    end if
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD Eliminar() CLASS TFastReportInfGen
 
-   local oTreeInforme
-
-   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
-      MsgStop( "Solo es posible eliminar informes personalizados." )
-      Return ( Self )
-   else
-      oTreeInforme      := ::oTreePersonalizados:GetSelected()
-   end if
-
-   if IsArray( oTreeInforme:aItems ) .and. !Empty( oTreeInforme:aItems )
-      msgStop( "Seleccione el nodo inferior." )
-      Return ( Self )
-   end if
-
-   if IsChar( oTreeInforme:cPrompt ) .and. !Empty( oTreeInforme:cPrompt )
-      ::cReportName     := Rtrim( oTreeInforme:cPrompt )
-   else
+   if !::lLoadInfo()
       msgStop( "No se ha podido cargar el nombre del informe." )
       Return ( Self )
    end if
 
-   if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
-      ::cReportType       := Rtrim( oTreeInforme:bAction )
+   if ::lUserDefine .and. ApoloMsgNoYes( "¿Desea eliminar el informe " + ::cReportName + "?", "Confirme supresión" )
+
+      // Elimina el fichero----------------------------------------------------
+
+      fErase( ::cReportFile )
+
+      // Elimina rama del arbol------------------------------------------------
+
+      ::oReportTree:End()
+
    else
-      msgStop( "No se ha podido cargar el tipo de informe." )
-      Return ( Self )
+      
+      msgStop( "Solo puede eliminar informes definidos por el usuario." )
+
    end if
 
-   if ApoloMsgNoYes( "¿Desea eliminar el informe " + ::cReportName + "?", "Confirme supresión" )
+RETURN ( .t. )
 
-      if ::oDbfPersonalizado:Seek( ::cReportKey() )
-         ::oDbfPersonalizado:Delete()
+//---------------------------------------------------------------------------//
+
+METHOD lLoadInfo() CLASS TFastReportInfGen
+
+   local oTreeInforme      := ::oTreeReporting:GetSelected()
+
+   /*
+   Obtenemos los datos necesarios para el informe------------------------------
+   */
+
+   if !hb_isHash( oTreeInforme:bAction ) 
+      Return ( .f. )
+   end if 
+
+   if hHasKey( oTreeInforme:bAction, "Title" ) .and. hHasKey( oTreeInforme:bAction, "Type" )
+
+      ::oReportTree        := oTreeInforme
+
+      ::cReportType        := oTreeInforme:bAction[ "Type" ]
+      ::cReportDirectory   := oTreeInforme:bAction[ "Directory" ]
+      ::cReportName        := oTreeInforme:bAction[ "Title" ] 
+
+      ::lUserDefine        := ( left( ::cReportName, 1 ) == "[" )
+      if ::lUserDefine
+         ::cReportFile     := cPatUserReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
+      else 
+         ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
       end if
-
-      ::LoadPersonalizado()
+      
+   else 
+      
+      Return ( .f. )
 
    end if
 
-RETURN ( Self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -2518,41 +2425,7 @@ METHOD lLoadReport() CLASS TFastReportInfGen
 
    ::cInformeFastReport             := ""
 
-   /*
-   Vamos a detectar si es un informe personalizado-----------------------------
-   */
-
-   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
-
-      ::lPersonalizado              := .f.
-
-      if ::oDbfInf:Seek( ::cReportKey() )
-
-         if !Empty( ::oDbfInf:mModInf )
-            ::cInformeFastReport    := ::oDbfInf:mModInf
-         elseif !Empty( ::oDbfInf:mOrgInf )
-            ::cInformeFastReport    := ::oDbfInf:mOrgInf
-         end if
-
-      end if
-
-   else
-
-      ::lPersonalizado              := .t.
-
-      if ::oDbfPersonalizado:Seek( ::cReportKey() )
-
-         if !Empty( ::oDbfPersonalizado:mModInf )
-            ::cInformeFastReport    := ::oDbfPersonalizado:mModInf
-         end if
-
-      end if
-
-   end if
-
-   /*
-   Report por nombre del fichero ----------------------------------------------
-   */
+   // Report por nombre del fichero ----------------------------------------------
 
    if Empty( ::cInformeFastReport )
       if File( ::cReportFile )
@@ -2588,11 +2461,6 @@ METHOD DlgExportDocument( oWndBrw )
    /*
    Vamos a obtener el nombre del informe---------------------------------------
    */
-
-   if IsNil( ::oPages:nOption ) .or. ( ::oPages:nOption <= 1 )
-      MsgStop( "Solo es posible exportar informes personalizados." )
-      Return ( Self )
-   end if
 
    oTreeInforme         := ::oTreePersonalizados:GetSelected()
 
@@ -2826,11 +2694,24 @@ METHOD BuildNode( aReports, oTree, lLoadFile )
 
          if lLoadFile .and. hHasKey( hHash, "Directory" ) 
 
+            // Directorio de la aplicacion-------------------------------------
+
             aDirectory  := Directory( cPatReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
             if !Empty( aDirectory )
 
                for each aFile in aDirectory
                   oNode:Add( getFileNoExt( aFile[ 1 ] ), hHash[ "Image" ], { "Title" => getFileNoExt( aFile[ 1 ] ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ] + "\" + hHash[ "Type" ], "File" => aFile[ 1 ] } )
+               next 
+
+            end if 
+
+            // Directorio de el usuario----------------------------------------
+
+            aDirectory  := Directory( cPatUserReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
+            if !Empty( aDirectory )
+
+               for each aFile in aDirectory
+                  oNode:Add( putBrackets( getFileNoExt( aFile[ 1 ] ) ), hHash[ "Image" ], { "Title" => putBrackets( getFileNoExt( aFile[ 1 ] ) ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ] + "\" + hHash[ "Type" ], "File" => aFile[ 1 ] } )
                next 
 
             end if 
@@ -3013,12 +2894,7 @@ METHOD SyncAllDbf()
       ::DefineReport()
    end if
 
-   if Empty( ::oDbfPersonalizado )
-      ::DefinePersonalizado()
-   end if
-
    lCheckDbf( ::oDbfInf )
-   lCheckDbf( ::oDbfPersonalizado )
 
 RETURN ( Self )
 
