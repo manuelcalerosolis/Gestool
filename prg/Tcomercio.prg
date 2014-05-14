@@ -4301,7 +4301,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    cCommand          := "UPDATE " + ::cPrefixTable( "product_lang" ) + " SET " + ;
                            "description='" + if( !Empty( ::oArt:mDesTec ), AllTrim( ::oArt:mDesTec ), AllTrim( ::oArt:Nombre ) ) + "', " + ;
-                           "description_short='" + AllTrim( ::oArt:Nombre ) + "', " + ;
+                           "description_short='" + "Ref:" + AllTrim( ::oArt:Codigo ) + "', " + ;
                            "name='" + AllTrim( ::oArt:Nombre ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
 
@@ -4528,6 +4528,7 @@ METHOD DeleteImagesProducts( cCodProduct ) CLASS TComercio
    local oQuery
    local cCommand    := ""
    local aDelImages  := {}
+   local cCarpeta
 
    if !Empty( cCodProduct )
       
@@ -4568,79 +4569,58 @@ METHOD DeleteImagesProducts( cCodProduct ) CLASS TComercio
 
       oQuery:Free()
 
-      /*
-      Conectamos al FTP para eliminar las imagenes del articulo----------------
-      */
-
-      /*oInt         := TInternet():New()
-      oFtp         := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-      if Empty( oFtp ) .or. Empty( oFtp:hFtp )
-
-         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
-
-      else
+      if !Empty( ::cHostFtp )
 
          if !Empty( ::cDImagen )
             
             for each idDelete in aDelImages
 
-               oFtp:SetCurrentDirectory( ::cDImagen + "/p/" + AllTrim( Str( idDelete ) ) )
-            
-               oFtp:DeleteMask()
+               oInt         := TInternet():New()
+               oFtp         := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
-               oFtp:SetCurrentDirectory( ".." )
+               if Empty( oFtp ) .or. Empty( oFtp:hFtp )
 
-               oFtp:RemoveDirectory( ::cDImagen + "/p/" + AllTrim( Str( idDelete ) ) )
+                  MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+
+               else
+
+                  cCarpeta       := ::CreateDirectoryImagesLocal( idDelete )
+
+                  oFtp:SetCurrentDirectory( ::cDImagen + "/p" + cCarpeta )
+               
+                  oFtp:DeleteMask()
+
+                  oFtp:SetCurrentDirectory( ".." )
+
+               end if 
+                  
+               if !Empty( oInt )
+                  oInt:end()
+               end if
+
+               if !Empty( oFtp )
+                  oFtp:end()
+               end if  
 
             next
 
          end if
 
-      end if
+      else
 
-      if !Empty( oInt )
-         oInt:end()
-      end if
-
-      if !Empty( oFtp )
-         oFtp:end()
-      end if*/
-
-      if !Empty( ::cDImagen )
+         if isDirectory( ::cDImagen )
             
-         for each idDelete in aDelImages
+            for each idDelete in aDelImages
 
-            oInt         := TInternet():New()
-            oFtp         := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
+               cCarpeta       := ::CreateDirectoryImagesLocal( idDelete )
 
-            if Empty( oFtp ) .or. Empty( oFtp:hFtp )
+               DeleteFilesToDirectory( ::cDImagen + "/p" + cCarpeta )
 
-               MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+            next
 
-            else
-
-               oFtp:SetCurrentDirectory( ::cDImagen + "/p/" + AllTrim( Str( idDelete ) ) )
-            
-               oFtp:DeleteMask()
-
-               oFtp:SetCurrentDirectory( ".." )
-
-               oFtp:RemoveDirectory( ::cDImagen + "/p/" + AllTrim( Str( idDelete ) ) )
-
-            end if 
-               
-            if !Empty( oInt )
-               oInt:end()
-            end if
-
-            if !Empty( oFtp )
-               oFtp:end()
-            end if  
-
-         next
-
-      end if
+         end if
+      
+      end if   
 
    end if
 
@@ -6787,6 +6767,10 @@ METHOD CreateDirectoryImagesLocal( cCarpeta )
 
    local n
    local cResult  := ""
+
+   if ValType( cCarpeta ) == "N"
+      cCarpeta    := AllTrim( Str( cCarpeta ) )
+   end if
 
    for n := 1 to Len( cCarpeta )
 
