@@ -629,8 +629,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    local aReports
 
    DEFAULT oTree           := ::oTreeReporting
-   DEFAULT lLoadFile       := .t.
-
+   DEFAULT lLoadFile       := .t. 
 
    aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos",          "File" => "Listado.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
@@ -647,7 +646,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },;
                   {  "Title" => "Producción",                     "Image" => 14, "Subnode" =>;
                   { ;
-                     { "Title" => "Partes de producción",         "Image" => 14, "Type" => "Partes de producción",          "Directory" => "Articulos\Produccion",  "File" => "Partes de producción.fr3" },;
+                     { "Title" => "Partes de producción",         "Image" => 14, "Type" => "Partes de producción",         "Directory" => "Articulos\Produccion", "File" => "Partes de producción.fr3" },;
                   } ;
                   },; 
                   {  "Title" => "Compras",                        "Image" => 12, "Subnode" =>;

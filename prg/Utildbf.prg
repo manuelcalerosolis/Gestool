@@ -460,6 +460,22 @@ Return ( cPath )
 
 //----------------------------------------------------------------------------//
 
+Function RecursiveMakeDir( cPath )
+
+   local cRute       := ""
+   local aPath       := hb_atokens( cPath, "\" )
+
+   for each cPath in aPath 
+      cRute          += cPath + "\"
+      if !( ":" $ cPath ) .and. !lIsDir( cRute )
+         MakeDir( cRute )
+      end if 
+   next
+
+Return ( cPath )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION EvalGet( aGet, nMode )
 
 	local i
@@ -3345,6 +3361,20 @@ Static Function LineMove( nOldNum, nNewNum, cAlias )
 Return nil
 
 //--------------------------------------------------------------------------//
+
+Function PutBrackets( cText )
+
+Return ( "[" + QuitBrackets( cText ) + "]" )   
+
+//--------------------------------------------------------------------------//
+
+Function QuitBrackets( cText )
+
+   cText    := strtran( cText, "[", "" )
+   cText    := strtran( cText, "]", "" )
+
+Return ( alltrim( cText ) )
+
 
 /*
 function AddResource( nHResource, cType )
