@@ -3694,7 +3694,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          OF       oDlg
 
       ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::LoaArt( oGetDet, oDlg, .f., nMode ), .t. ) }
-      ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, oGetDet ) }
+      ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, oGetDet , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET oGetDet VAR cGetDet ;
 			ID 		110 ;
