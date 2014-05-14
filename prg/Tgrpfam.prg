@@ -17,6 +17,7 @@ CLASS TGrpFam FROM TMant
 
    DATA cCodWebPreDel
    DATA oBotonAceptarWeb
+   DATA lActualizaWeb         INIT .f.
 
    METHOD Create( cPath ) CONSTRUCTOR
 
@@ -213,7 +214,7 @@ METHOD Resource( nMode ) CLASS TGrpFam
          ID       500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::lPreSave( oGet, oGet2, oDlg, nMode ) )
+         ACTION   ( ::lPreSave( oGet, oGet2, oDlg, nMode ), ::lActualizaWeb := .t. )
 
       REDEFINE BUTTON;
          ID       IDOK ;
@@ -228,7 +229,13 @@ METHOD Resource( nMode ) CLASS TGrpFam
 			ACTION 	( oDlg:end() )
 
    if nMode != ZOOM_MODE
+      
       oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGet, oGet2, oDlg, nMode ) } )
+
+      if uFieldEmpresa( "lRealWeb" )
+         oDlg:AddFastKey( VK_F6, {|| ::lPreSave( oGet, oGet2, oDlg, nMode ), ::lActualizaWeb := .t. } )
+      end if
+
    end if
 
    oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Grupos_de_familias" ) } )
@@ -366,7 +373,7 @@ METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
 
    DEFAULT lDel      := .f.
 
-   if uFieldEmpresa( "lRealWeb" )
+   if ::lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
 
       if ::lPubGrp() .or. lDel
          with object ( TComercio():GetInstance() )
@@ -374,7 +381,9 @@ METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
          end with
       end if
       
-   end if   
+   end if
+
+   ::lActualizaWeb   := .f.   
       
 Return .t.
 
