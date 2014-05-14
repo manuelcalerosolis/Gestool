@@ -16,6 +16,7 @@ REQUEST DBFCDX
 CLASS TGrpFam FROM TMant
 
    DATA cCodWebPreDel
+   DATA oBotonAceptarWeb
 
    METHOD Create( cPath ) CONSTRUCTOR
 
@@ -39,6 +40,8 @@ CLASS TGrpFam FROM TMant
    METHOD Actualizaweb()
 
    METHOD lPubGrp()
+
+   METHOD StartResource( oGet )
 
 END CLASS
 
@@ -206,6 +209,12 @@ METHOD Resource( nMode ) CLASS TGrpFam
       bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
       bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }   
 
+      REDEFINE BUTTON ::oBotonAceptarWeb;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::lPreSave( oGet, oGet2, oDlg, nMode ) )
+
       REDEFINE BUTTON;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -218,21 +227,16 @@ METHOD Resource( nMode ) CLASS TGrpFam
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       9 ;
-			OF 		oDlg ;
-         ACTION   ( ChmHelp( "Grupos_de_familias" ) )
-
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGet, oGet2, oDlg, nMode ) } )
    end if
 
    oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Grupos_de_familias" ) } )
 
-   oDlg:bStart := { || oGet:SetFocus() }
+   oDlg:bStart := { || ::StartResource( oGet ) }
 
    ACTIVATE DIALOG oDlg ;
-   ON INIT     ( ChgBmp( oGetImage, bmpImage ) ) ;
+      ON INIT     ( ChgBmp( oGetImage, bmpImage ) ) ;
    CENTER
 
    if !Empty( bmpImage )
@@ -240,6 +244,20 @@ METHOD Resource( nMode ) CLASS TGrpFam
    end if
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+METHOD StartResource( oGet )
+
+   oGet:SetFocus()
+
+   if uFieldEmpresa( "lRealWeb" )
+      ::oBotonAceptarWeb:Show()
+   else
+      ::oBotonAceptarWeb:Hide()
+   end if   
+
+Return .t.
 
 //--------------------------------------------------------------------------//
 

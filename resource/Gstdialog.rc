@@ -7923,14 +7923,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 110, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER|WS_TABSTOP, 41, 15, 155, 12
   CONTROL "", 130, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER|WS_TABSTOP, 41, 28, 155, 12
   CONTROL "Publicar", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 41, 41, 60, 12
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 100, 73, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 155, 73, 50, 14
-  CONTROL "A&yuda", 9, "Button", WS_TABSTOP, 210, 73, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 157, 73, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 209, 73, 50, 14
   CONTROL "Código", -1, "Static", WS_GROUP, 3, 5, 27, 8
   CONTROL "Nombre ", -1, "Static", WS_GROUP, 3, 18, 27, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 68, 259, 1
   CONTROL "", 600, "TBitmap", 0x00800000, 199, 2, 60, 62
   CONTROL "Imagen", -1, "Static", WS_GROUP, 3, 31, 27, 8
+  CONTROL "Aceptar y actualizar &web [F6]", 500, "Button", WS_TABSTOP, 56, 73, 98, 14
 }
 
 GRPVENTA DIALOG DISCARDABLE 30, 108, 215, 59
