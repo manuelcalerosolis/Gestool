@@ -255,7 +255,7 @@ METHOD Resource( nMode )
       oGetArt:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
       oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr1  ) }
 
-      REDEFINE GET oGetNom ;
+      REDEFINE GET   oGetNom ;
          VAR         ::oDbfVir:cNomArt ;
          ID          111 ;
          WHEN        ( lModDes() .and. nMode != ZOOM_MODE ) ;

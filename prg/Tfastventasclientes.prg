@@ -363,19 +363,19 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports := {  {  "Title" => "Listado",                        "Image" => 19, "Type" => "Listado",                      "Directory" => "Clientes",                      "File" => "Listado.fr3"  },;
+   aReports := {  {  "Title" => "Listado",                        "Image" => 19, "Type" => "Listado",                      "Directory" => "Clientes\Listado",                             "File" => "Listado.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
-                     { "Title" => "SAT de clientes",              "Image" =>20, "Type" => "SAT de clientes",               "Directory" => "Clientes\Ventas",               "File" => "SAT de clientes.fr3" },;
-                     { "Title" => "Presupuestos de clientes",     "Image" => 5, "Type" => "Presupuestos de clientes",      "Directory" => "Clientes\Ventas",               "File" => "Presupuestos de clientes.fr3" },;
-                     { "Title" => "Pedidos de clientes",          "Image" => 6, "Type" => "Pedidos de clientes",           "Directory" => "Clientes\Ventas",               "File" => "Pedidos de clientes.fr3" },;
-                     { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Clientes\Ventas",               "File" => "Albaranes de clientes.fr3" },;
-                     { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Clientes\Ventas",               "File" => "Facturas de clientes.fr3" },;                                        
-                     { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Clientes\Ventas",               "File" => "Rectificativas de clientes.fr3" },;
-                     { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Clientes\Ventas",               "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Facturación de clientes",      "Image" => 8, "Type" => "Facturación de clientes",       "Directory" => "Clientes\Ventas",               "File" => "Facturación de clientes.fr3" },;
-                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Clientes\Ventas",               "File" => "Ventas.fr3" },;
-                     { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas",               "File" => "Recibos de clientes.fr3" },;
+                     { "Title" => "SAT de clientes",              "Image" =>20, "Type" => "SAT de clientes",               "Directory" => "Clientes\Ventas\SAT de clientes",              "File" => "SAT de clientes.fr3" },;
+                     { "Title" => "Presupuestos de clientes",     "Image" => 5, "Type" => "Presupuestos de clientes",      "Directory" => "Clientes\Ventas\Presupuestos de clientes",     "File" => "Presupuestos de clientes.fr3" },;
+                     { "Title" => "Pedidos de clientes",          "Image" => 6, "Type" => "Pedidos de clientes",           "Directory" => "Clientes\Ventas\Pedidos de clientes",          "File" => "Pedidos de clientes.fr3" },;
+                     { "Title" => "Albaranes de clientes",        "Image" => 7, "Type" => "Albaranes de clientes",         "Directory" => "Clientes\Ventas\Albaranes de clientes",        "File" => "Albaranes de clientes.fr3" },;
+                     { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Clientes\Ventas\Facturas de clientes",         "File" => "Facturas de clientes.fr3" },;                                        
+                     { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Clientes\Ventas\Rectificativas de clientes",   "File" => "Rectificativas de clientes.fr3" },;
+                     { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Clientes\Ventas\Tickets de clientes",          "File" => "Tickets de clientes.fr3" },;
+                     { "Title" => "Facturación de clientes",      "Image" => 8, "Type" => "Facturación de clientes",       "Directory" => "Clientes\Ventas\Facturación de clientes",      "File" => "Facturación de clientes.fr3" },;
+                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Clientes\Ventas\Ventas",                       "File" => "Ventas.fr3" },;
+                     { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
                   } ;
                   }  }
 

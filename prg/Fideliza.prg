@@ -307,7 +307,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       oDlg
 
-      REDEFINE GET ::oDbf:dFin ;
+      REDEFINE GET ::oDbf:dFin;
          ID       140 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE );

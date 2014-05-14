@@ -279,7 +279,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oFld:aDialogs[1]
 
       oGetArt:bValid := {|| cArticulo( oGetArt, ::oParent:oArt:cAlias, oGetNom ), ::LoaArticulo( oGetArt, oGetNom ) }
-      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr1  ) }
+      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2, ::oFecCad  ) }
 
       REDEFINE GET oGetNom VAR ::oDbfVir:cNomArt ;
          ID       111 ;

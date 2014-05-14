@@ -364,10 +364,6 @@ METHOD lGenerate()
             if !( ::oTikCliL:lControl )                                  .AND.;
                !( ::lExcCero .AND. ::oTikCliL:nPvpTil == 0 )
 
-               if empty( ::oTikCliL:cCbaTil )
-                  ? "esta vacio"
-               end if
-
                ::AddTik( ::oTikCliL:cCbaTil, 1, .t. )
 
             end if
