@@ -77,6 +77,7 @@ static oGrpFam
 static oFraPub
 static oTComandas
 static oComentarios
+static oBtnAceptarActualizarWeb
 static cNewFil
 static bEdit         := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
 static bEdit2        := { |aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode ) }
@@ -994,6 +995,12 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 
          // Grabamos-----------------------------------------------------------------
 
+         REDEFINE BUTTON oBtnAceptarActualizarWeb;
+            ID       500 ;
+            OF       oDlg ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            ACTION   ( EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) )
+
          REDEFINE BUTTON ;
             ID       IDOK ;
             OF       oDlg ;
@@ -1006,15 +1013,20 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             CANCEL ;
             ACTION   ( KillTrans(), oDlg:end() )
 
-
       if nMode != ZOOM_MODE
+         
          oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdit2, dbfTmp ) } )
          oFld:aDialogs[2]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) } )
          oFld:aDialogs[2]:AddFastKey( VK_F4, {|| dbDelRec( oBrwPrv, dbfTmp ) } )
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg ) } )
+         
+         if uFieldEmpresa( "lRealWeb" )
+            oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) } )
+         end if
+
       end if
 
-      oDlg:bStart    := {|| aGet[ _CCODGRP ]:lValid(), aGet[ _CCOMFAM ]:lValid(), aGet[ _CCODIMP ]:lValid(), aGet[ _CCODFRA ]:lValid(), aGet[ _CCODPRP1 ]:lValid(), aGet[ _CCODPRP2 ]:lValid(), aGet[ _CCODFAM ]:SetFocus(), aGet[ _CFAMCMB ]:lValid() }
+      oDlg:bStart    := {|| StartEdtRec( aGet ) }
 
       ACTIVATE DIALOG oDlg CENTER ;
          ON INIT     ( ChgBmp( aGet[ _CIMGBTN ], bmpImage ) ) ;
@@ -1040,6 +1052,28 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
+
+Static Function StartEdtRec( aGet )
+
+   aGet[ _CCODGRP ]:lValid()
+   aGet[ _CCOMFAM ]:lValid()
+   aGet[ _CCODIMP ]:lValid()
+   aGet[ _CCODFRA ]:lValid()
+   aGet[ _CCODPRP1 ]:lValid()
+   aGet[ _CCODPRP2 ]:lValid()
+   aGet[ _CFAMCMB ]:lValid()
+
+   aGet[ _CCODFAM ]:SetFocus()
+
+   if uFieldEmpresa( "lRealWeb" )
+      oBtnAceptarActualizarWeb:Show()
+   else
+      oBtnAceptarActualizarWeb:Hide()
+   end if   
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION BeginTrans( aTmp )
 
@@ -1079,11 +1113,13 @@ Return Nil
 
 //-----------------------------------------------------------------------//
 
-STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
+STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
 
    local oError
    local oBlock
-   local cCodFam     := aTmp[ _CCODFAM ]
+   local cCodFam           := aTmp[ _CCODFAM ]
+
+   DEFAULT lActualizaWeb   := .f.
 
    //Controlamos que no se cree una familia con el código o el nombre en blanco
 
@@ -1161,7 +1197,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
       Actualizamos los datos de la web para tiempo real------------------------
       */
 
-      Actualizaweb( cCodFam )
+      Actualizaweb( cCodFam, lActualizaweb )
 
       CommitTransaction()
 
@@ -1207,9 +1243,9 @@ RETURN .T.
 
 //------------------------------------------------------------------------//
 
-Static Function Actualizaweb( cCodFam )
+Static Function Actualizaweb( cCodFam, lActualizaweb )
 
-   if uFieldEmpresa( "lRealWeb" )
+   if lActualizaweb .and. uFieldEmpresa( "lRealWeb" )
 
       if lPubFam()
 
