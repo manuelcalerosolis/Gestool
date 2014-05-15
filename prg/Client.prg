@@ -9545,8 +9545,24 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    if Empty( aTmp[ _TITULO ] )
-      cText := Space( 6 ) + "* Nombre" + CRLF
+      cText    := Space( 6 ) + "* Nombre" + CRLF
    end if
+
+   // Campos necesarios para RISI----------------------------------------------
+
+   if ( "RISI" $ cParamsMain() )   
+
+      if Empty( aTmp[ _CCODGRP ] )
+         cText := Space( 6 ) + "* Código de grupo" + CRLF
+      end if
+
+      if Empty( aTmp[ _CCODRUT ] )
+         cText := Space( 6 ) + "* Código de ruta" + CRLF
+      end if
+
+   end if 
+
+   // Mostramos el mensaje-----------------------------------------------------
 
    if !Empty( cText )
       msginfo( "Los siguientes campo(s) son obligatorios: " + CRLF + cText )

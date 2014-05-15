@@ -571,7 +571,7 @@ METHOD StartDialog() CLASS TFastVentasProveedores
 
    ::BuildTree()
 
- RETURN ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
