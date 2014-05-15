@@ -8,6 +8,7 @@ static dbfProT
 static dbfProL
 static dbfTmpProL
 static cTmpProLin
+static oBtnAceptarActualizarWeb
 static nTipoActualizacionLineas  := EDIT_MODE
 static bEdit                     := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet                   := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -309,6 +310,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             WHEN     ( nMode != ZOOM_MODE ) ;
             ACTION   ( DownDet( oBrw ) )
 
+         REDEFINE BUTTON oBtnAceptarActualizarWeb ;
+            ID       505 ;
+            OF       oDlg ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            ACTION   ( EndTrans( aTmp, aGet, nMode, oDlg, .t. ) )
+
          REDEFINE BUTTON;
             ID       IDOK ;
             OF       oDlg ;
@@ -321,21 +328,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             CANCEL ;
             ACTION   ( oDlg:end() )
 
-         REDEFINE BUTTON ;
-            ID       559 ;
-            OF       oDlg ;
-            ACTION   ( ChmHelp( "Propiedades_de_articulos" ) )
-
          if nMode != ZOOM_MODE
             oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
             oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
             oDlg:AddFastKey( VK_F4, {|| DelDet( oBrw ) } )
             oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oDlg ) } )
+            
+            if uFieldEmpresa( "lRealWeb" )
+               oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oDlg, .t. ) } )
+            end if
+
          end if
 
          oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Propiedades_de_articulos" ) } )
 
-         oDlg:bStart := {|| aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus() }
+         oDlg:bStart := {|| StartEdtRec( aGet ) }
 
       ACTIVATE DIALOG oDlg CENTER
 
@@ -344,6 +351,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
    end if
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function StartEdtRec( aGet )
+
+   aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus() 
+
+   if uFieldEmpresa( "lRealWeb" )
+      oBtnAceptarActualizarWeb:Show()
+   else
+      oBtnAceptarActualizarWeb:Hide()
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -474,12 +495,14 @@ Return ( lCreate )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
+STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
 
    local oError
    local oBlock
    local nOrdAnt
    local cCodPrp
+
+   DEFAULT lActualizaWeb   := .f.
 
    //Controla que no metan una propiedad con el código o el nombre en blanco
 
@@ -541,7 +564,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
       Actualizamos los datos de la web para tiempo real------------------------
       */
 
-      Actualizaweb( cCodPrp )
+      Actualizaweb( cCodPrp, lActualizaweb )
 
       /*
       Termina la transación----------------------------------------------------
@@ -2426,9 +2449,9 @@ Return ( cMemo )
 
 //---------------------------------------------------------------------------//
 
-Static Function Actualizaweb( cCodPrp )
+Static Function Actualizaweb( cCodPrp, lActualizaweb )
 
-   if uFieldEmpresa( "lRealWeb" )
+   if lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
 
       if lPubPrp()
 

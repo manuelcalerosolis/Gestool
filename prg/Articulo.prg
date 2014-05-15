@@ -181,6 +181,8 @@ static oTimerBrw
 static cOldCodeBar   := ""
 static aOldCodeBar   := {}
 
+static oBtnAceptarActualizarWeb
+
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -4533,6 +4535,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          OF       oDlg ;
          ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
 
+   REDEFINE BUTTON oBtnAceptarActualizarWeb;
+         ID       5 ;
+         OF       oDlg ;
+         ACTION   ( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) )
+
    REDEFINE BUTTON aBtn[ 1 ] ;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -4567,6 +4574,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
       oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
+
+      if uFieldEmpresa( "lRealWeb" )
+         oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) } )
+      end if
 
    end if
 
@@ -5364,6 +5375,12 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
       oBrwStk:Show()
    end if
 
+   if uFieldEmpresa( "lRealWeb" )
+      oBtnAceptarActualizarWeb:Show()
+   else   
+      oBtnAceptarActualizarWeb:Hide()
+   end if
+
    oDlg:Enable()
 
    CursorWE()
@@ -5570,7 +5587,7 @@ Return ( lErrors )
 
 //--------------------------------------------------------------------------//
 
-Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpComanda1, oImpComanda2, aImpComanda )
+Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpComanda1, oImpComanda2, aImpComanda, lActualizaWeb )
 
    local i
    local cCod
@@ -5578,10 +5595,12 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    local oBlock
    local cCodArt
    local nTipBar
-   local aCodeBar    := {}
-   local lChange     := .f.
+   local aCodeBar          := {}
+   local lChange           := .f.
    local nRec
-   local lDefault    := .f.
+   local lDefault          := .f.
+
+   DEFAULT lActualizaWeb   := .f.
 
    /*
    Tomamos los valores de los códigos de barra---------------------------------
@@ -5891,7 +5910,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
       end if   
 
-      Actualizaweb( cCod, lChangeImage )
+      Actualizaweb( cCod, lChangeImage, lActualizaWeb )
 
       /*
       Terminamos la transación-------------------------------------------------
@@ -18473,9 +18492,9 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function Actualizaweb( cCodArt, lChangeImage )
+Static Function Actualizaweb( cCodArt, lChangeImage, lActualizaWeb )
 
-   if uFieldEmpresa( "lRealWeb" )
+   if lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
 
       if lPubArt()
 

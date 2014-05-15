@@ -1608,8 +1608,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 400, 305, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 456, 305, 50, 14
   CONTROL "", 500, "TBitmap", 0x00800000, 510, 14, 60, 62
-  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 6, 305, 50, 14
+  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 6, 306, 50, 14
   CONTROL "&Siguiente [F8]", 4, "Button", 0x00000000, 62, 305, 50, 14
+  CONTROL "Aceptar y actualizar &web [F6]", 5, "Button", WS_TABSTOP, 297, 305, 98, 14
 }
 
 ARTINFO DIALOG DISCARDABLE -243, -98, 674, 380
@@ -16446,25 +16447,25 @@ CAPTION "Propiedades"
 FONT 8, "Helv"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 50, 12, 60, 12
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 50, 24, 210, 12
-  CONTROL "Propiedad de tipo color", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 38, 88, 10
-  CONTROL "Publicar en internet", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 67, 88, 10
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 50, 79, 210, 12
-  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 8, 109, 50, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 63, 109, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 118, 109, 50, 14
-  CONTROL "", 120, "TXBrowse", WS_TABSTOP|0x00300000, 8, 125, 251, 142
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 106, 277, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 161, 277, 50, 14
-  CONTROL "&Ayuda", 559, "Button", WS_TABSTOP, 216, 277, 50, 14
-  CONTROL "Propiedad", -1, "Button", BS_GROUPBOX, 2, 3, 264, 48
-  CONTROL "Tabla de propiedades", -1, "Button", BS_GROUPBOX, 2, 97, 264, 176
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 50, 26, 210, 12
+  CONTROL "Propiedad de tipo color", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 41, 88, 10
+  CONTROL "Publicar en internet", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 68, 88, 10
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 50, 80, 210, 12
+  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 8, 111, 50, 14
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 63, 111, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 118, 111, 50, 14
+  CONTROL "", 120, "TXBrowse", WS_TABSTOP|0x00300000, 8, 127, 251, 142
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 163, 279, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 216, 279, 50, 14
+  CONTROL "Propiedad", -1, "Button", BS_GROUPBOX, 2, 3, 264, 52
+  CONTROL "Tabla de propiedades", -1, "Button", BS_GROUPBOX, 2, 99, 264, 176
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 16, 30, 8
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 28, 30, 8
-  CONTROL "Bajar", 504, "Button", WS_TABSTOP, 225, 109, 34, 14
-  CONTROL "Subir", 503, "Button", WS_TABSTOP, 190, 109, 34, 14
-  CONTROL "Comercio electrónico", -1, "Button", BS_GROUPBOX, 2, 56, 264, 39
-  CONTROL "Descripción", -1, "Static", WS_GROUP, 8, 82, 38, 8
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 30, 30, 8
+  CONTROL "Bajar", 504, "Button", WS_TABSTOP, 225, 111, 34, 14
+  CONTROL "Subir", 503, "Button", WS_TABSTOP, 190, 111, 34, 14
+  CONTROL "Comercio electrónico", -1, "Button", BS_GROUPBOX, 2, 57, 264, 39
+  CONTROL "Descripción", -1, "Static", WS_GROUP, 8, 83, 38, 8
+  CONTROL "Aceptar y actualizar &web [F6]", 505, "Button", WS_TABSTOP, 61, 279, 98, 14
 }
 
 PROP_GRAPH DIALOG DISCARDABLE 6, 18, 316, 161

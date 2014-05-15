@@ -383,7 +383,7 @@ METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
       
    end if
 
-   ::lActualizaWeb   := .f.   
+   ::lActualizaWeb   := .f.
       
 Return .t.
 
