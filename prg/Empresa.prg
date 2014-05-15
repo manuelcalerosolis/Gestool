@@ -1262,7 +1262,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          DIALOGS  "EMPRESA_2",;
                   "EMPRESA_3",;
                   "EMPRESA_8",;
-                  "EMPRESA_12",;
+                  "EMPRESA_TPV",;
                   "EMPRESA_10",;
                   "EMPRESA_CONTABILIDAD",;
                   "EMPRESA_6",;

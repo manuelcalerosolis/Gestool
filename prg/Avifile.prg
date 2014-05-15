@@ -256,7 +256,7 @@ Method New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
 
    ::oMessage           := TSay():ReDefine( 110, {|| ::cMessage }, ::oDlgWait, , , , .f. )
 
-   ::oProgress          := TMeter():ReDefine( 120, { | u | If( pCount() == 0, nPrgWat, nPrgWat := u ) }, ::nTotal, ::oDlgWait, .f.,,,.f. )
+   ::oProgress          := TMeter():ReDefine( 120, { | u | If( pCount() == 0, nPrgWat, nPrgWat := u ) }, ::nTotal, ::oDlgWait, .f., , , .t. )
 
    ::oDlgWait:Activate( , , , .t., ,.f. )
 

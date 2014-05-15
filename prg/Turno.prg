@@ -1806,7 +1806,7 @@ METHOD lOpenCaja( cCodCaj )
 
    DEFAULT cCodCaj         := ::GetCurrentCaja()
 
-   if uFieldEmpresa( "lDesCajas")
+   if uFieldEmpresa( "lDesCajas" )
 
       // Vamos a ver q turno esta abiertos-------------------------------------
 
@@ -2283,7 +2283,6 @@ METHOD DialogCreateTurno()
    cDivObjetivo         := cDivEmp()
    cNombreCaja          := Alltrim( oRetFld( ::GetCurrentCaja(), ::oCaja ) )
    cResource            := "ApTurnoTCT"
-
 
    /*
    Valores iniciales para la edicion-------------------------------------------
