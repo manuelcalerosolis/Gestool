@@ -550,7 +550,7 @@ FUNCTION Provee( oMenuItem, oWnd )
          NOBORDER ;
          MENU     This:Toggle() ;
          TOOLTIP  "En(v)iar" ;
-         ACTION   lSndCli( oWndBrw, dbfProvee ) ;
+         ACTION   lSndPrv( oWndBrw, dbfProvee ) ;
          HOTKEY   "V";
          LEVEL    ACC_EDIT
 
@@ -1948,6 +1948,7 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg 
          lCambiarPuntos( aTmp, dbfArticulo )
       end if
 
+      aTmp[ _LSNDINT ]     := .t.
       aTmp[ _CCODUSR ]     := cCurUsr()
       aTmp[ _DFECCHG ]     := GetSysDate()
       aTmp[ _CTIMCHG ]     := Time()
@@ -6111,5 +6112,34 @@ Function cNombreBancoProvee( cProvee, dbfBncPrv )
    end if
 
 Return cBanco
+
+//---------------------------------------------------------------------------//
+
+Static FUNCTION lSndPrv( oWndBrw, dbfProvee )
+
+   local nRecAct
+   local nRecOld           := ( dbfProvee )->( Recno() )
+
+   for each nRecAct in ( oWndBrw:oBrw:aSelected )
+
+      ( dbfProvee )->( dbGoTo( nRecAct ) )
+
+      if dbDialogLock( dbfProvee )
+
+         ( dbfProvee )->lSndInt  := !( dbfProvee )->lSndInt
+
+         ( dbfProvee )->( dbUnlock() )
+
+      end if
+
+   next
+
+   ( dbfProvee )->( dbGoTo( nRecOld ) )
+
+   oWndBrw:Refresh()
+
+   oWndBrw:oBrw:Select()
+
+Return nil
 
 //---------------------------------------------------------------------------//
