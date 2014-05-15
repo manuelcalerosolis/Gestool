@@ -582,7 +582,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasProveedores
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports := {  {  "Title" => "Listado",                           "Image" => 0, "Type" => "Listado",                       "Directory" => "Proveedores\Compras",                      "File" => "Listado.fr3"  },;
+   aReports := {  {  "Title" => "Listado",                           "Image" => 0, "Type" => "Listado",                       "Directory" => "Proveedores\Listado",                                "File" => "Listado.fr3"  },;
                   {  "Title" => "Compras",                           "Image" => 12, "Subnode" =>;
                   { ;
                      { "Title" => "Pedidos de proveedores",          "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Proveedores\Compras\Pedidos de proveedores",         "File" => "Pedidos de proveedores.fr3" },;
