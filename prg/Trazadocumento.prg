@@ -1138,6 +1138,28 @@ METHOD TrazaFacturaCliente( cNumDoc )
 
       end if
 
+      if !Empty( ::oFacCliT:cNumPre )
+
+         ::oPreCliT:GetStatus()
+         ::oPreCliT:OrdSetFocus( 'nNumPre' )
+
+         oItm1 := ::AddPresupuestoCliente( .f., ::oTree )
+
+         ::oPreCliT:SetStatus()
+
+      end if
+
+      if !Empty( ::oFacCliT:cNumPed )
+
+         ::oPedCliT:GetStatus()
+         ::oPedCliT:OrdSetFocus( 'nNumPed' )
+
+         oItm1 := ::AddPedidoCliente( .f., ::oTree )
+
+         ::oPedCliT:SetStatus()
+
+      end if
+
       ::AddFacturaCliente( .t., if( !Empty( oItm3 ), oItm3, if( !Empty( oItm2 ), oItm2, if( !Empty( oItm1 ), oItm1, ::oTree ) ) ) )
 
    end if

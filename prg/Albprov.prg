@@ -3016,7 +3016,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbPrvL, oBrw, aTmpAlb, cCodArtEnt, nMode
                   "&Observaciones" ;
          DIALOGS  "LALBPRV_1",;
                   "LALBPRV_2",;
-                  "LFACPRV_5"
+                  "LFACPRV_5"  
 
       oFld:aEnable         := { .t., !Empty( aTmp[ _CREF ] ), .t. }
 

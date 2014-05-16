@@ -2516,7 +2516,7 @@ METHOD lLoadDivisa() CLASS TInfGen
       ::nDecOut            := ::oDbfDiv:nDouDiv
       ::nDerOut            := ::oDbfDiv:nRouDiv
       ::cPicCom            := RetPic( ::oDbfDiv:nNinDiv, ::oDbfDiv:nDinDiv )
-      ::cPicIn             := RetPic( ::oDbfDiv:nNinDiv, ::oDbfDiv:nRinDiv )
+      ::cPicIn             := cPinDiv( ::cDivInf, ::oDbfDiv:cAlias )
       ::nDecIn             := ::oDbfDiv:nDinDiv
       ::nDerIn             := ::oDbfDiv:nRinDiv
       ::cPicPnt            := RetPic( ::oDbfDiv:nNpvDiv, ::oDbfDiv:nDpvDiv )
