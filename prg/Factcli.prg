@@ -855,45 +855,50 @@ STATIC FUNCTION OpenFiles( lExt )
 
     nView 				:= TDataView():CreateView()
 
+    /*
+    Apertura de bases de datos de facturas de clientes-------------------------
+	*/
+
+	// TDataView():FacturasClientes( nView )
+
+    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+        lOpenFiles     := .f.
+    end if
+
+    if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+        lOpenFiles     := .f.
+    end if
+
+    USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
+    SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
+
+    USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
+    SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
+
+    USE ( cPatEmp() + "FACCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLID", @dbfFacCliD ) )
+    SET ADSINDEX TO ( cPatEmp() + "FACCLID.CDX" ) ADDITIVE
+
+    USE ( cPatEmp() + "FACCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIS", @dbfFacCliS ) )
+    SET ADSINDEX TO ( cPatEmp() + "FACCLIS.CDX" ) ADDITIVE
+
 	/*
     Atipicas de clientes-----------------------------------------------------
     */
 
     TDataView():Atipicas( nView )
 
+    TDataView():Get( "CliInc", nView )
 
-      TDataView():Get( "CliInc", nView )
+    USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
+    SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
 
-      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-         lOpenFiles     := .f.
-      end if
+    USE ( cPatEmp() + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecL ) )
+    SET ADSINDEX TO ( cPatEmp() + "FACRECL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
+    USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
+    SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
 
-      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-         lOpenFiles     := .f.
-      end if
-
-      USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLID", @dbfFacCliD ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLID.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIS", @dbfFacCliS ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACRECL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
-
-      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+     if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpenFiles     := .f.
       end if
 
