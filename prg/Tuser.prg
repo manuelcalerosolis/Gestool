@@ -122,17 +122,17 @@ CLASS TUser
 
       else
 
-         ::_Delegacion  := uFieldEmpresa( "cSufDoc" )
-
-         cDlgUsr( uFieldEmpresa( "cSufDoc" ) )
-
          if Empty( ::_Delegacion )
 
-            ::_Delegacion  := "00"
-
-            cDlgUsr( "00" )
-               
+            if !empty( uFieldEmpresa( "cSufDoc" ) )
+               ::_Delegacion  := uFieldEmpresa( "cSufDoc")
+            else
+               ::_Delegacion  := "00"
+            end if 
+             
          end if   
+
+         // cDlgUsr( ::_Delegacion )
 
       end if
 
@@ -337,7 +337,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          /*
          Si el usuario tiene una delegacion fija la asignamos------------------
          */
-
+         
          if !Empty( ( ::oDbf )->cCodDlg ) .and. !::lMaster()
             ::cDelegacion(    ( ::oDbf )->cCodDlg )
          end if
@@ -411,9 +411,9 @@ Method Save( dbfUser, dbfCajas )
             ( ::oDbf )->lArqCie     := ::lArqueoCiego()
             ( ::oDbf )->nGrpUse     := ::nGrupoUsuario()
             ( ::oDbf )->cPcnUse     := ::cPcName()
-            
+
             if !::lMaster()
-               ( ::oDbf )->cCodDlg  := ::cDelegacion()
+               ::cDelegacion( ( ::oDbf )->cCodDlg )
             end if
 
             ( ::oDbf )->lAlerta     := ::lAlerta()
