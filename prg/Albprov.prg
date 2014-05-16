@@ -12036,7 +12036,7 @@ Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, dbfAlbPrvL, dbfF
    if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", dbfAlbPrvL )
       dFechaCaducidad         := ( dbfAlbPrvL )->dFecCad
    else
-      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", dbfFacPrvL )
+      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", dbfFacPrvL )
          dFechaCaducidad      := ( dbfFacPrvL )->dFecCad
       end if
    end if
