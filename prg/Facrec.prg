@@ -13792,7 +13792,7 @@ Function cCtaFacRec( cFacRecT, cFacCliP, cBncCli )
 
    local cCtaFacRec  := ""
 
-   DEFAULT cFacRecT  := cFacRecT
+   DEFAULT cFacRecT  := TDataView():FacturasRectificativas( nView )
    DEFAULT cFacCliP  := dbfFacCliP
    DEFAULT cBncCli   := dbfCliBnc
 

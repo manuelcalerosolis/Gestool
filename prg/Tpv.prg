@@ -8861,9 +8861,6 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          */
 
          do case
-         
-         //Tarifas de precios--------------------------------------------------
-
          case !Empty( aTik[ _CCODTAR ] )
 
             //--Precio--//

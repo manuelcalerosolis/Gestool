@@ -1080,7 +1080,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, TDataView():Clien( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", .f., "Simular resultados", .f., "Contabilizar recibos" ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, TDataView():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", .f., "Simular resultados", .f., "Contabilizar recibos" ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -16854,7 +16854,7 @@ Function cCtaFacCli( cFacCliT, cFacCliP, cBncCli )
 
    local cCtaFacCli     := ""
 
-   DEFAULT cFacCliT     := cFacCliT
+   DEFAULT cFacCliT     := TDataView():Clientes( nView )
    DEFAULT cFacCliP     := dbfFacCliP
    DEFAULT cBncCli      := dbfCliBnc
 
@@ -19106,13 +19106,13 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    local nDescuentosLineas := 0
    local lPntVer           := .f.
 
-   DEFAULT cFacCliT        := ( TDataview():FacturasClientes( nView ) )
+   DEFAULT cFacCliT        := TDataview():FacturasClientes( nView )
    DEFAULT cFacCliL        := dbfFacCliL
    DEFAULT cFacCliP        := dbfFacCliP
    DEFAULT cAntCliT        := dbfAntCliT
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
-   DEFAULT cFactura        := ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac
+   DEFAULT cFactura        := TDataview():FacturasClientesId( nView ) 
    DEFAULT lPic            := .f.
    DEFAULT lNeto           := .f.
 
@@ -20654,7 +20654,7 @@ Function lRectificadaCli( cNumFac, cFacCliT, cFacRecT )
 
    local lRectificada   := .f.
 
-   DEFAULT cFacCliT     := cFacCliT
+   DEFAULT cFacCliT     := TDataview():FacturasClientes( nView )
    DEFAULT cFacRecT     := dbfFacRecT
    DEFAULT cNumFac      := ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac
 

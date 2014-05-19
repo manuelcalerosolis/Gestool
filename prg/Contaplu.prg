@@ -1168,11 +1168,18 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
    end if
 
    if Empty( cRuta )
+      lOpenDiario    := .t.   
+      Return ( lOpenDiario )
+   end if
+
+/*   
+   if Empty( cRuta )
       if lMessage
          MsgStop( "Ruta de contaplus ® no valida" )
       end if
       return .f.
    end if
+*/
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE

@@ -1728,7 +1728,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    if lSimula .or. !lErrorFound
 
       if OpenDiario( , cCodEmp )
-         nAsiento := RetLastAsi()
+         nAsiento                := RetLastAsi()
       else
          oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " imposible abrir ficheros.", 0 ) )
          return .f.

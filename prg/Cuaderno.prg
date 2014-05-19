@@ -258,10 +258,6 @@ ENDCLASS
 
    METHOD WriteASCII()
 
-      if empty( ::cBuffer )
-         Return ( .f. )
-      end if
-
       ::hFile  := fCreate( ::cFile )
 
       if !Empty( ::hFile )
