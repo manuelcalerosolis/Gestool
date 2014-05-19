@@ -493,7 +493,6 @@ Method MkRecEdm()
       Recibiendo fichero de albaraness de clientes
       */
 
-      EdmFacCli( ( dbfRuta )->cCodRut, ::cPathOrg, Self, aSucces )
       SynFacCli()
 
       ::oMetDos:Set( 0 )

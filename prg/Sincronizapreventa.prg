@@ -230,12 +230,6 @@ METHOD Search( oDlg )
    //pdaAlbCliSenderReciver():CreateData( , ::oMessage, cPatServidor )
 
    /*
-   Sinconizacion de tablas de faccli-------------------------------------------
-   */
-
-   pdaFacCliSenderReciver():CreateData( , ::oMessage, cPatServidor )
-
-   /*
    Sinconizacion de tablas de RecCli-------------------------------------------
    */
 
