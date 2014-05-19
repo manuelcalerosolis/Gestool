@@ -310,7 +310,7 @@ function BrwVtaCli( cCodCli, cNomCli )
             PROMPT   "E&stadisticas"      ,;
                      "Documentos"         ,;
                      "Gráfico"            ;
-            DIALOGS  "CLIENT_9"           ,;
+            DIALOGS  "CLIENT_9"           ,; 
                      "INFO_1"             ,;
                      "INFO_2"
 

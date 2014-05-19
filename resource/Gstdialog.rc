@@ -3906,11 +3906,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "Saldo pendiente", -1, "Static", WS_GROUP, 51, 288, 60, 8
   CONTROL "0", 602, "Static", SS_RIGHT|WS_GROUP, 129, 223, 99, 8
   CONTROL "0", 603, "Static", SS_RIGHT|WS_GROUP, 129, 252, 99, 8
-  CONTROL "0", 607, "Static", SS_RIGHT|WS_GROUP, 129, 287, 99, 8
+  CONTROL "0", 607, "Static", SS_RIGHT|WS_GROUP, 129, 302, 99, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 49, 284, 182, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 49, 298, 182, 1
   CONTROL "Riesgo", -1, "Static", WS_GROUP, 51, 302, 27, 8
-  CONTROL "0", 608, "Static", SS_RIGHT|WS_GROUP, 129, 301, 99, 8
+  CONTROL "0", 608, "Static", SS_RIGHT|WS_GROUP, 129, 288, 99, 8
   CONTROL "Pendiente de facturar", -1, "Static", WS_GROUP, 51, 213, 70, 8
   CONTROL "0", 601, "Static", SS_RIGHT|WS_GROUP, 129, 213, 99, 8
   CONTROL "Total anticipado", -1, "Static", WS_GROUP, 51, 263, 54, 8
