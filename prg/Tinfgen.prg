@@ -1924,21 +1924,23 @@ METHOD oDefIniInf( nId, oDlg, nIdSay ) CLASS TInfGen
    //local oGet
    local oGroup
 
-   DEFAULT nId    := 1110
-   DEFAULT oDlg   := ::oFld:aDialogs[1]
+   DEFAULT nId       := 1110
+   DEFAULT oDlg      := ::oFld:aDialogs[1]
 
-   REDEFINE GET   ::oIniInf ;
-      VAR         ::dIniInf ;
+   REDEFINE GET      ::oIniInf ;
+      VAR            ::dIniInf ;
 		SPINNER ;
-      ID          nId ;
-      OF          oDlg
+      ID             nId ;
+      OF             oDlg
+
+   ::oIniInf:bHelp   := {|| ::oIniInf:cText( Calendario( ::dIniInf ) ) }
 
    if IsNum( nIdSay )
 
-   REDEFINE SAY   ::oIniText ;
-      PROMPT      "Desde" ;
-      ID          nIdSay ;
-      OF          oDlg
+   REDEFINE SAY      ::oIniText ;
+      PROMPT         "Desde" ;
+      ID             nIdSay ;
+      OF             oDlg
 
    end if
 
@@ -1967,13 +1969,16 @@ METHOD oDefFinInf( nId, oDlg, nIdSay ) CLASS TInfGen
 
    //local oGet
 
-   DEFAULT nId    := 1120
-   DEFAULT oDlg   := ::oFld:aDialogs[1]
+   DEFAULT nId       := 1120
+   DEFAULT oDlg      := ::oFld:aDialogs[1]
 
-   REDEFINE GET ::oFinInf VAR ::dFinInf;
+   REDEFINE GET      ::oFinInf ;
+      VAR            ::dFinInf ;
 		SPINNER ;
-      ID       nId ;
-      OF       oDlg
+      ID             nId ;
+      OF             oDlg
+
+   ::oFinInf:bHelp   := {|| ::oFinInf:cText( Calendario( ::dFinInf ) ) }
 
    if IsNum( nIdSay )
 

@@ -3180,7 +3180,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       130 ;
          SPINNER ;
          WHEN     ( lWhen ) ;
-         COLOR    CLR_GET ;
+         ON HELP  aGet[ _DFECALB ]:cText( Calendario( aTmp[ _DFECALB ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oTipAlb VAR cTipAlb ;
@@ -13310,14 +13310,14 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function ImprimirSeriesAlbaranes( nDevice, lExt )
+Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    local aStatus
    local oPrinter   
    local cFormato 
 
    DEFAULT nDevice   := IS_PRINTER
-   DEFAULT lExt      := .f.
+   DEFAULT lExternal := .f.
 
    // Cremaos el dialogo-------------------------------------------------------
 
@@ -13335,7 +13335,7 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExt )
    oPrinter:oGrupoClienteInicio:First()
    oPrinter:oGrupoClienteFin:Last()
 
-   if lExt
+   if lExternal
 
       oPrinter:oFechaInicio:cText( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )
       oPrinter:oFechaFin:cText( ( TDataView():AlbaranesClientes( nView ) )->dFecAlb )
@@ -13369,7 +13369,7 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExt )
 
    oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
 
-   oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
+   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ) }
 
    // Abrimos el dialogo-------------------------------------------------------
 
