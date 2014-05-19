@@ -1,16 +1,9 @@
-#ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Factu.ch" 
 #include "Report.ch"
 #include "Print.ch"
 #include "Xbrowse.ch"
-#else
-#include "FWCE.ch"
-REQUEST DBFCDX
-#endif
-
-#ifndef __PDA__
 
 #define _MENUITEM_           "01082"
 
@@ -456,14 +449,10 @@ static lOpenFiles          := .f.
 static lExternal           := .f.
 static cFiltroUsuario      := ""
 
-static bEdtRec             := { |aTmp, aGet, dbfFacRecT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, dbfFacRecT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
-static bEdtDet             := { |aTmp, aGet, dbfFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac ) }
+static bEdtRec             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
+static bEdtDet             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtInc             := { |aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmpLin| EdtInc( aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc             := { |aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin| EdtDoc( aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
-
-#endif
-
-#ifndef __PDA__
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -475,16 +464,16 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local oDevice
    local cNumFac
 
-   if ( dbfFacRecT )->( Lastrec() ) == 0
+   if ( TDataView():FacturasRectificativas( nView ) )->( Lastrec() ) == 0
       return nil
    end if
 
-   cNumFac              := ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac
+   cNumFac              := ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas rectificativas a clientes"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "FR", dbfDoc )
@@ -520,17 +509,17 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Recalculamos la factura-----------------------------------------------------
       */
 
-      nTotFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .t. )
+      nTotFacRec( cNumFac, TDataView():FacturasRectificativas( nView ), dbfFacRecL, dbfIva, dbfDiv, nil, nil, .t. )
 
       /*
       Pasamos los parametros------------------------------------------------------
       */
 
       private oReport      := oInf
-      private cDbf         := dbfFacRecT
+      private cDbf         := TDataView():FacturasRectificativas( nView )
       private cDbfCol      := dbfFacRecL
-      private cCliente     := dbfClient
-      private cDbfCli      := dbfClient
+      private cCliente     := TDataView():Clientes( nView )
+      private cDbfCli      := TDataView():Clientes( nView )
       private cDivisa      := dbfDiv
       private cDbfDiv      := dbfDiv
       private cFPago       := dbfFPago
@@ -562,7 +551,7 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private nDouDivFac   := nDouDiv
       private nRouDivFac   := nRouDiv
       private nDpvDivFac   := nDpvDiv
-      private cCodPgo      := ( dbfFacRecT )->cCodPago
+      private cCodPgo      := ( TDataView():FacturasRectificativas( nView ) )->cCodPago
 
       private nTotArt      := nNumArt
       private nTotCaj      := nNumCaj
@@ -591,14 +580,14 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Posicionamos en ficheros auxiliares-----------------------------------------
       */
 
-      ( dbfClient )->( dbSeek( ( dbfFacRecT )->cCodCli ) )
-      ( dbfAgent  )->( dbSeek( ( dbfFacRecT )->cCodAge ) )
-      ( dbfFPago  )->( dbSeek( ( dbfFacRecT )->cCodPago) )
-      ( dbfDiv    )->( dbSeek( ( dbfFacRecT )->cDivFac ) )
-      ( dbfUsr    )->( dbSeek( ( dbfFacRecT )->cCodUsr ) )
-      ( dbfObrasT )->( dbSeek( ( dbfFacRecT )->cCodCli + ( dbfFacRecT )->cCodObr ) )
+      ( TDataView():Clientes( nView ) )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) )
+      ( dbfAgent  )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cCodAge ) )
+      ( dbfFPago  )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cCodPago) )
+      ( dbfDiv    )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cDivFac ) )
+      ( dbfUsr    )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cCodUsr ) )
+      ( dbfObrasT )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cCodCli + ( TDataView():FacturasRectificativas( nView ) )->cCodObr ) )
 
-      oTrans:oDbf:Seek( ( dbfFacRecT )->cCodTrn )
+      oTrans:oDbf:Seek( ( TDataView():FacturasRectificativas( nView ) )->cCodTrn )
 
       /*
       Buscamos la primera linea de detalle----------------------------------------
@@ -669,7 +658,7 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    end if
 
-   lChgImpDoc( dbfFacReCT )
+   lChgImpDoc( TDataView():FacturasRectificativas( nView ) )
 
 Return nil
 
@@ -732,11 +721,17 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():Atipicas( nView )
 
+      TDataView():FacturasRectificativas( nView )
+
+	  TDataview():Clientes( nView )
+
+	  TDataview():GruposClientes( nView )
+      
       TDataView():Get( "CliInc", nView )
-
-      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
+/*
+      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @TDataView():FacturasRectificativas( nView ) ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-
+*/
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -772,10 +767,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+/*
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @TDataView():Clientes( nView ) ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
+*/
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
@@ -1049,7 +1044,7 @@ STATIC FUNCTION OpenFiles( lExt )
             cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
          end if 
 
-         ( dbfFacRecT )->( AdsSetAOF( cFiltroUsuario ) )
+         ( TDataView():FacturasRectificativas( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
 
       end if
 
@@ -1072,14 +1067,10 @@ RETURN ( lOpenFiles )
 
 STATIC FUNCTION CloseFiles()
 
-   DestroyFastFilter( dbfFacRecT, .t., .t. )
+   DestroyFastFilter( TDataView():FacturasRectificativas( nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
-   end if
-
-   if !Empty( dbfFacRecT )
-      ( dbfFacRecT )->( dbCloseArea() )
    end if
 
    if !Empty( dbfIva )
@@ -1092,10 +1083,6 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( dbfAgent )
       ( dbfAgent   )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfClient )
-      ( dbfClient     )->( dbCloseArea() )
    end if
 
    if !Empty( dbfFacRecL )
@@ -1387,9 +1374,7 @@ STATIC FUNCTION CloseFiles()
    dbfIva      := nil
    dbfFPago    := nil
    dbfAgent    := nil
-   dbfClient   := nil
    dbfFacRecL  := nil
-   dbfFacRecT  := nil
    dbfFacRecD  := nil
    dbfFacRecS  := nil
    dbfFacCliT  := nil
@@ -1519,11 +1504,11 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
                "Pago";
       MRU      "Document_delete_16";
       BITMAP   clrTopArchivos ;
-      ALIAS    ( dbfFacRecT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfFacRecT, cCodCli, cCodArt, aNumDoc ) ) ;
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfFacRecT, cCodCli, cCodArt, aNumDoc ) ) ;
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfFacRecT, cCodCli, cCodArt, aNumDoc ) ) ;
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfFacRecT, {|| QuiFacRec() } ) ) ;
+      ALIAS    ( TDataView():FacturasRectificativas( nView ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataView():FacturasRectificativas( nView ), cCodCli, cCodArt, aNumDoc ) ) ;
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataView():FacturasRectificativas( nView ), cCodCli, cCodArt, aNumDoc ) ) ;
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataView():FacturasRectificativas( nView ), cCodCli, cCodArt, aNumDoc ) ) ;
+      DELETE   ( WinDelRec( oWndBrw:oBrw, TDataView():FacturasRectificativas( nView ), {|| QuiFacRec() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
@@ -1535,7 +1520,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFacRecT )->lCloFac }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->lCloFac }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -1545,7 +1530,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Cobrado"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nChkPagFacRec( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, dbfFacRecT, dbfFacCliP ) }
+         :bBmpData         := {|| nChkPagFacRec( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, TDataView():FacturasRectificativas( nView ), dbfFacCliP ) }
          :nWidth           := 20
          :AddResource( "Bullet_Square_Green_16" )
          :AddResource( "Bullet_Square_Yellow_16" )
@@ -1557,7 +1542,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Contabilizado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFacRecT )->lConTab }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->lConTab }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "BmpConta16" )
@@ -1567,7 +1552,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFacRecT )->lSndDoc }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -1577,7 +1562,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Entregado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| !Empty( ( dbfFacRecT )->dFecEnt ) }
+         :bEditValue       := {|| !Empty( ( TDataView():FacturasRectificativas( nView ) )->dFecEnt ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "document_ok_16" )
@@ -1587,7 +1572,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -1600,7 +1585,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :cHeader          := "Impreso"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFacRecT )->lImprimido }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1610,14 +1595,14 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) )  }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) )  }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfFacRecT )->cSufFac }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cSufFac }
          :nWidth           := 40
          :lHide            := .t.
       end with
@@ -1625,7 +1610,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
          :cSortOrder       := "cTurFac"
-         :bEditValue       := {|| ( dbfFacRecT )->cTurFac }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cTurFac }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1636,21 +1621,21 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecFac"
-         :bEditValue       := {|| Dtoc( ( dbfFacRecT )->dFecFac ) }
+         :bEditValue       := {|| Dtoc( ( TDataView():FacturasRectificativas( nView ) )->dFecFac ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodCaj }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodUsr }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
@@ -1658,7 +1643,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfFacRecT )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1666,14 +1651,14 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| AllTrim( ( dbfFacRecT )->cNomCli ) }
+         :bEditValue       := {|| AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cNomCli ) }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
-         :bEditValue       := {|| AllTrim( ( dbfFacRecT )->cPobCli ) }
+         :bEditValue       := {|| AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cPobCli ) }
          :nWidth           := 180
          :lHide            := .t.
       end with
@@ -1681,7 +1666,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodAge }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :bLDClickData     := {|| oWndBrw:RecEdit() }
@@ -1690,7 +1675,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Pago"
          :cSortOrder       := "cCodPago"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodPago }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodPago }
          :nWidth           := 40
          :lHide            := .t.
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -1699,28 +1684,28 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodRut }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodRut }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodAlm }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Obra"
          :cSortOrder       := "cCodObr"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodObr }
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodObr }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( dbfFacRecT )->nTotNet }
-         :cEditPicture     := cPorDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->nTotNet }
+         :cEditPicture     := cPorDiv( ( TDataView():FacturasRectificativas( nView ) )->cDivFac, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1729,8 +1714,8 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( dbfFacRecT )->nTotIva }
-         :cEditPicture     := cPorDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->nTotIva }
+         :cEditPicture     := cPorDiv( ( TDataView():FacturasRectificativas( nView ) )->cDivFac, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1739,8 +1724,8 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( dbfFacRecT )->nTotReq }
-         :cEditPicture     := cPorDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->nTotReq }
+         :cEditPicture     := cPorDiv( ( TDataView():FacturasRectificativas( nView ) )->cDivFac, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1749,8 +1734,8 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfFacRecT )->nTotFac }
-         :cEditPicture     := cPorDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->nTotFac }
+         :cEditPicture     := cPorDiv( ( TDataView():FacturasRectificativas( nView ) )->cDivFac, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1758,7 +1743,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfFacRecT )->cDivFac ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():FacturasRectificativas( nView ) )->cDivFac ), dbfDiv ) }
          :nWidth           := 30
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1793,7 +1778,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfFacRecT ) );
+      ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtRec, TDataView():FacturasRectificativas( nView ) ) );
       TOOLTIP  "(Z)oom";
       HOTKEY   "Z" ;
       MRU;
@@ -1801,7 +1786,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( WinDelRec( oWndBrw:oBrw, dbfFacRecT, {|| QuiFacRec() } ) );
+      ACTION   ( WinDelRec( oWndBrw:oBrw, TDataView():FacturasRectificativas( nView ), {|| QuiFacRec() } ) );
       MENU     This:Toggle() ;
       TOOLTIP  "(E)liminar";
       HOTKEY   "E";
@@ -1827,7 +1812,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( PrnSerie(), oWndBrw:Refresh() );
+      ACTION   ( ImprimirSeriesFacturasRectificativas() );
       TOOLTIP  "Imp(r)imir series";
       HOTKEY   "R";
       LEVEL    ACC_IMPR
@@ -1869,7 +1854,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
+         ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
          TOOLTIP  "Cobrar series" ;
          FROM     oLiq ;
          CLOSED ;
@@ -1877,7 +1862,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacRec( lChk1, lChk2, nil, .t., oTree, nil, nil, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfClient, dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas rectificativas", .f., "Simular resultados", .f., "Contabilizar recibos", {|| oDiario() }, {|| cDiario() } ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacRec( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, TDataView():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas rectificativas", .f., "Simular resultados", .f., "Contabilizar recibos", {|| oDiario() }, {|| cDiario() } ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -1886,7 +1871,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {| lChk1 | if( ( dbfFacRecT )->( dbRLock() ), ( ( dbfFacRecT )->lContab := lChk1, ( dbfFacRecT )->( dbUnlock() ) ), ) }, "Cambiar estado", .f., "Contabilizado", .t. ) ) ;
+         ACTION   ( aGetSelRec( oWndBrw, {| lChk1 | if( ( TDataView():FacturasRectificativas( nView ) )->( dbRLock() ), ( ( TDataView():FacturasRectificativas( nView ) )->lContab := lChk1, ( TDataView():FacturasRectificativas( nView ) )->( dbUnlock() ) ), ) }, "Cambiar estado", .f., "Contabilizado", .t. ) ) ;
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
@@ -1898,13 +1883,13 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
       MESSAGE  "Seleccionar albaranes para ser enviados" ;
-      ACTION   lSnd( oWndBrw, dbfFacRecT ) ;
+      ACTION   lSnd( oWndBrw, TDataView():FacturasRectificativas( nView ) ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfFacRecT, "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, TDataView():FacturasRectificativas( nView ), "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1912,7 +1897,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfFacRecT, "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, TDataView():FacturasRectificativas( nView ), "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1920,7 +1905,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfFacRecT, "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, TDataView():FacturasRectificativas( nView ), "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1938,7 +1923,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, dbfFacRecT, aItmFacRec() ) ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, TDataView():FacturasRectificativas( nView ), aItmFacRec() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1960,14 +1945,14 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
     DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( EdtCli( ( dbfFacRecT )->cCodCli ) );
+            ACTION   ( EdtCli( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
             CLOSED ;
 
     DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( InfCliente( ( dbfFacRecT )->cCodCli ) );
+            ACTION   ( InfCliente( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) );
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
             CLOSED ;
@@ -1981,7 +1966,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
     DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
         NOBORDER ;
-        ACTION   ( EdtObras( ( dbfFacRecT )->cCodCli, ( dbfFacRecT )->cCodObr, dbfObrasT ) );
+        ACTION   ( EdtObras( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, ( TDataView():FacturasRectificativas( nView ) )->cCodObr, dbfObrasT ) );
         TOOLTIP  "Modificar obra" ;
         FROM     oRotor ;
         CLOSED ;
@@ -2014,7 +1999,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
 
    local oDlg
 	local oFld
@@ -2120,7 +2105,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
    Necestamos el orden el la primera clave
    */
 
-   nOrd                    := ( dbfFacRecT )->( ordSetFocus( 1 ) )
+   nOrd                    := ( TDataView():FacturasRectificativas( nView ) )->( ordSetFocus( 1 ) )
 
    /*
    Valores por defecto---------------------------------------------------------
@@ -2153,7 +2138,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
    nRieCli                 := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
    if Empty( aTmp[ _CTLFCLI ] )
-      aTmp[ _CTLFCLI ]     := RetFld( aTmp[ _CCODCLI ], dbfClient, "Telefono" )
+      aTmp[ _CTLFCLI ]     := RetFld( aTmp[ _CCODCLI ], TDataView():Clientes( nView ), "Telefono" )
    end if
 
    if BeginTrans( aTmp, nMode )
@@ -2591,7 +2576,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfFacRecT, dbfTmpLin, oBrwLin, .t. ) )
+         ACTION   ( ShowKit( TDataView():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .t. ) )
 
       /*
       Detalle___________________________________________________________________________
@@ -3592,7 +3577,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfFacRecT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], dbfClient, nil, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( TDataView():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], TDataView():Clientes( nView ), nil, aGet, oSayGetRnt ) }
 
    end case
 
@@ -3620,7 +3605,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
    Repos-----------------------------------------------------------------------
    */
 
-   ( dbfFacRecT )->( ordSetFocus( nOrd ) )
+   ( TDataView():FacturasRectificativas( nView ) )->( ordSetFocus( nOrd ) )
 
    oBrwLin:CloseData()
 
@@ -3651,88 +3636,6 @@ STATIC FUNCTION SetDialog( oSayGetRnt, oGetRnt )
 Return .t.
 
 //----------------------------------------------------------------------------//
-
-FUNCTION nBrtLFacRec( uTmpLin, nDec, nRec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT nDec      := 2
-   DEFAULT nVdv      := 1
-
-   nCalculo          := nTotUFacRec( uTmpLin, nDec, nVdv, cPorDiv )
-   nCalculo          *= nTotNFacRec( uTmpLin )
-
-   nCalculo          := Round( nCalculo / nVdv, nRec )
-
-Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-/*
-Devuelve el valor del impuestos de un artículo
-*/
-
-FUNCTION nIvaUFacRec( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-   nCalculo       := nTotUFacRec( dbfTmpLin, nDec, nVdv )
-
-   if !( dbfTmpLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfTmpLin )->nIva / 100
-   else
-      nCalculo    -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
-   end if
-
-   if nVdv != 0
-      nCalculo    := nCalculo / nVdv
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el precio unitario impuestos incluido
-*/
-
-FUNCTION nIncUFacRec( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-   nCalculo       := nTotUFacRec( dbfTmpLin, nDec, nVdv )
-
-   if !( dbfTmpLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfTmpLin )->nIva / 100
-   end if
-
-	IF nVdv != 0
-      nCalculo    := nCalculo / nVdv
-	END IF
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nDtoUFacRec( dbfTmpLin, nDec, nVdv )
-
-   local nCalculo := ( dbfTmpLin )->nDtoDiv
-
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
-
-	IF nVdv != 0
-      nCalculo    := ( dbfTmpLin )->nDtoDiv / nVdv
-	END IF
-
-RETURN ( round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
 
 /*
 Edita las lineas de Detalle
@@ -5353,17 +5256,17 @@ STATIC FUNCTION PrnSerie()
 
 	local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin
-   local cSerIni     := ( dbfFacRecT )->cSerie
-   local cSerFin     := ( dbfFacRecT )->cSerie
-   local nDocIni     := ( dbfFacRecT )->nNumFac
-   local nDocFin     := ( dbfFacRecT )->nNumFac
-   local cSufIni     := ( dbfFacRecT )->cSufFac
-   local cSufFin     := ( dbfFacRecT )->cSufFac
+   local cSerIni     := ( TDataView():FacturasRectificativas( nView ) )->cSerie
+   local cSerFin     := ( TDataView():FacturasRectificativas( nView ) )->cSerie
+   local nDocIni     := ( TDataView():FacturasRectificativas( nView ) )->nNumFac
+   local nDocFin     := ( TDataView():FacturasRectificativas( nView ) )->nNumFac
+   local cSufIni     := ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+   local cSufFin     := ( TDataView():FacturasRectificativas( nView ) )->cSufFac
    local oPrinter
    local cPrinter    := PrnGetName()
    local lCopiasPre  := .t.
@@ -5373,7 +5276,7 @@ STATIC FUNCTION PrnSerie()
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
    local dFecHasta   := Date()
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
    if Empty( cFmtDoc )
       cFmtDoc           := cSelPrimerDoc( "FR" )
@@ -5522,57 +5425,57 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    	if nRango == 1
 
-   		nRecno      := ( dbfFacRecT )->( Recno() )
-   		nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( "NNUMFAC" ) )
+   		nRecno      := ( TDataView():FacturasRectificativas( nView ) )->( Recno() )
+   		nOrdAnt     := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "NNUMFAC" ) )
 
    		if !lInvOrden
 
-      		( dbfFacRecT )->( dbSeek( cDocIni, .t. ) )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbSeek( cDocIni, .t. ) )
 
-      		while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + (dbfFacRecT)->cSufFac >= cDocIni .AND. ;
-        		( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + (dbfFacRecT)->cSufFac <= cDocFin
+      		while ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + (TDataView():FacturasRectificativas( nView ))->cSufFac >= cDocIni .AND. ;
+        		( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + (TDataView():FacturasRectificativas( nView ))->cSufFac <= cDocFin
 
-	        	lChgImpDoc( dbfFacRecT )
+	        	lChgImpDoc( TDataView():FacturasRectificativas( nView ) )
 
          		if lCopiasPre
 
-            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+            		nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
-            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
 
          		else
 
-            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
          		end if
 
-      		( dbfFacRecT )->( dbSkip() )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
 
       		end while
 
    		else
 
-      		( dbfFacRecT )->( dbSeek( cDocFin ) )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbSeek( cDocFin ) )
 
-      		while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac >= cDocIni .and.;
-            		( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac <= cDocFin .and.;
-            		!( dbfFacRecT )->( Bof() )
+      		while ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac >= cDocIni .and.;
+            		( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac <= cDocFin .and.;
+            		!( TDataView():FacturasRectificativas( nView ) )->( Bof() )
 
-            		lChgImpDoc( dbfFacRecT )
+            		lChgImpDoc( TDataView():FacturasRectificativas( nView ) )
 
         		 if lCopiasPre
 
-            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+            		nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
-            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
 
          		else
 
-           		 GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+           		 GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
         		 end if
 
-      		( dbfFacRecT )->( dbSkip( -1 ) )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbSkip( -1 ) )
 
       		end while
 
@@ -5580,62 +5483,62 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
 	else
 
-		nRecno      := ( dbfFacRecT )->( Recno() )
-   		nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( "DFECFAC" ) )
+		nRecno      := ( TDataView():FacturasRectificativas( nView ) )->( Recno() )
+   		nOrdAnt     := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "DFECFAC" ) )
 
    		if !lInvOrden
 
-      		( dbfFacRecT )->( dbGoTop() )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbGoTop() )
 
-      		while !( dbfFacRecT )->( Eof() )
+      		while !( TDataView():FacturasRectificativas( nView ) )->( Eof() )
 
-	        	if ( dbfFacRecT )->dFecFac >= dFecDesde .and. ( dbfFacRecT )->dFecFac <= dFecHasta
+	        	if ( TDataView():FacturasRectificativas( nView ) )->dFecFac >= dFecDesde .and. ( TDataView():FacturasRectificativas( nView ) )->dFecFac <= dFecHasta
 
-	        		lChgImpDoc( dbfFacRecT )
+	        		lChgImpDoc( TDataView():FacturasRectificativas( nView ) )
 
          			if lCopiasPre
 
-	            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+	            		nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
-            			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+            			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
 
          			else
 
-	            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+	            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
          			end if
 
          		end if
 
-      		( dbfFacRecT )->( dbSkip() )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
 
       		end while
 
    		else
 
-      		( dbfFacRecT )->( dbGobottom() )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbGobottom() )
 
-      		while !( dbfFacRecT )->( Bof() )
+      		while !( TDataView():FacturasRectificativas( nView ) )->( Bof() )
 
-            	if ( dbfFacRecT )->dFecFac >= dFecDesde .and. ( dbfFacRecT )->dFecFac <= dFecHasta
+            	if ( TDataView():FacturasRectificativas( nView ) )->dFecFac >= dFecDesde .and. ( TDataView():FacturasRectificativas( nView ) )->dFecFac <= dFecHasta
 
-            		lChgImpDoc( dbfFacRecT )
+            		lChgImpDoc( TDataView():FacturasRectificativas( nView ) )
 
         			if lCopiasPre
 
-	            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+	            		nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
-            			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+            			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
 
          			else
 
-	           			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+	           			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
         			end if
 
         		end if	
 
-      		( dbfFacRecT )->( dbSkip( -1 ) )
+      		( TDataView():FacturasRectificativas( nView ) )->( dbSkip( -1 ) )
 
       		end while
 
@@ -5643,8 +5546,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 	
 	end if	
 
-   	(dbfFacRecT)->( dbGoTo( nRecNo ) )
-   	(dbfFacRecT)->( ordSetFocus( nOrdAnt ) )
+   	(TDataView():FacturasRectificativas( nView ))->( dbGoTo( nRecNo ) )
+   	(TDataView():FacturasRectificativas( nView ))->( ordSetFocus( nOrdAnt ) )
 
    	oDlg:enable()
 
@@ -5751,6 +5654,5154 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
    end if
 
 RETURN ( if( !lTotal, .t., nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+
+
+STATIC FUNCTION lMoreIva( nCodIva )
+
+	/*
+	Si no esta dentro de los porcentajes anteriores
+	*/
+
+   IF _NPCTIVA1 == nil .OR. _NPCTIVA2 == nil .OR. _NPCTIVA3 == nil
+		RETURN .T.
+	END IF
+
+	IF _NPCTIVA1 == nCodIva .OR. _NPCTIVA2 == nCodIva .OR. _NPCTIVA3 == nCodIva
+		RETURN .T.
+	END IF
+
+   MsgStop( "Factura con más de 3 tipos de " + cImp() )
+
+RETURN .F.
+
+//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+/*
+Carga los articulos en la factura
+*/
+
+STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, lFocused )
+
+   local hHas128
+   local cLote
+   local dFechaCaducidad
+   local nDtoAge
+   local nImpAtp
+   local nImpOfe
+   local nCosPro
+   local cCodFam
+   local cPrpArt
+   local nPrePro     			:= 0
+   local nNumDto     			:= 0
+   local cProveedor
+   local nTarOld     			:= aTmp[ _NTARLIN ]
+   local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local hAtipica
+
+   DEFAULT lFocused  			:= .t.
+
+   if Empty( cCodArt )
+
+      if lRetCodArt()
+         MsgStop( "No se pueden añadir líneas sin codificar" )
+         return .f.
+      end if
+
+      if Empty( aTmp[ _NIVA ] )
+         aGet[ _NIVA ]:bWhen  	:= {|| .t. }
+      end if
+
+		aGet[ _CDETALLE ]:cText( Space( 50 ) )
+      aGet[ _CDETALLE ]:bWhen   	:= {|| .t. }
+      aGet[ _CDETALLE ]:Hide()
+
+      if !Empty( aGet[ _MLNGDES ] )
+         
+         aGet[ _MLNGDES ]:Show()
+
+	      if lFocused 
+   	     aGet[ _MLNGDES ]:SetFocus()
+      	end if
+
+      end if
+
+      aGet[_CVALPR1 ]:Hide()
+      oSayPr1:Hide()
+      oSayVp1:Hide()
+
+      aGet[_CVALPR2 ]:Hide()
+      oSayPr2:Hide()
+      oSayVp2:Hide()
+
+      Return .t.
+
+   end if
+
+   IF lModIva()
+      aGet[ _NIVA ]:bWhen  := {|| .t. }
+   ELSE
+      aGet[ _NIVA ]:bWhen 	:= {|| .f. }
+   END IF
+
+   /*
+   Buscamos codificacion GS1-128--------------------------------------------
+   */
+   
+   if Len( Alltrim( cCodArt ) ) > 18
+
+      hHas128              := ReadCodeGS128( )
+
+      if !Empty( hHas128 )
+         cCodArt           := uGetCodigo( hHas128, "01" )
+         cLote             := uGetCodigo( hHas128, "10" )
+         dFechaCaducidad   := uGetCodigo( hHas128, "15" )    
+      end if 
+
+   end if
+
+   cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
+
+   /*
+   Ahora buscamos por el codigo interno
+   */
+
+   if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
+
+      if ( lChgCodArt )
+
+         if ( dbfArticulo )->lObs
+            MsgStop( "Artículo catalogado como obsoleto" )
+            return .f.
+         end if
+
+         CursorWait()
+
+         cCodArt              := ( dbfArticulo )->Codigo
+
+         aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
+         aTmp[ _CREF ]        := cCodArt
+
+         if ( dbfArticulo )->lMosCom .and. !Empty( ( dbfArticulo )->mComent )
+            MsgStop( Trim( ( dbfArticulo )->mComent ) )
+         end if
+
+         /*
+         Metemos el proveedor habitual--------------------------------------
+         */
+
+         if !Empty( aGet[ _CCODPRV ] )
+            aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+            aGet[ _CCODPRV ]:lValid()
+         else
+            aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab   
+         end if
+
+         aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, (dbfArticulo)->cPrvHab, dbfArtPrv ), 18 )
+
+         aGet[ _CDETALLE ]:show()
+         aGet[ _MLNGDES  ]:hide()
+
+         aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
+         aGet[ _MLNGDES  ]:cText( ( dbfArticulo )->Nombre )
+
+         /*
+         Descripciones largas--------------------------------------------------
+         */
+
+         if !empty( ( dbfArticulo )->Descrip )
+            if !empty( aGet[ _DESCRIP ] )
+               aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
+            else
+               aTmp[ _DESCRIP ]     := ( dbfArticulo )->Descrip
+            end if 
+         end if
+
+         /*
+         Peso y volumen
+         -------------------------------------------------------------------
+         */
+
+         if !Empty( aGet[ _NPESOKG ] )
+            aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
+         else
+            aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
+         end if
+
+         if !Empty( aGet[ _CPESOKG ] )
+             aGet[ _CPESOKG ]:cText( ( dbfArticulo )->cUndDim )
+         else
+             aGet[ _CPESOKG ] := ( dbfArticulo )->cUndDim
+         end if
+
+         if !Empty( aGet[ _CUNIDAD ] )
+             aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
+             aGet[ _CUNIDAD ]:lValid()
+         else
+             aTmp[ _CUNIDAD ] := ( dbfArticulo )->cUnidad
+         end if
+
+         if !Empty( aGet[_CCODTIP ] )
+            aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
+         else
+            aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
+         end if
+
+         /*
+         Factor de conversion
+         ----------------------------------------------------------------------
+         */
+
+         if ( dbfArticulo )->lFacCnv
+            aTmp[ _NFACCNV ]  := ( dbfArticulo )->nFacCnv
+         end if
+
+         /*
+         Lotes
+         ----------------------------------------------------------------------
+         */
+
+         if ( dbfArticulo )->lLote
+
+         	if Empty( cLote )
+         		cLote 			:= ( dbfArticulo )->cLote
+         	end if 
+
+            if !Empty( aGet[ _CLOTE ] )
+               aGet[ _CLOTE ]:Show()
+               aGet[ _CLOTE ]:cText( cLote )
+               aGet[ _CLOTE ]:lValid()
+            else
+               aTmp[ _CLOTE ] := cLote
+            end if
+
+            aTmp[ _LLOTE ]    := .t.
+
+            /*
+            Fecha de caducidad-------------------------------------------------
+            */
+
+            if Empty( dFechaCaducidad )
+               dFechaCaducidad 	:= dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+            end if 
+            
+            if !Empty( aGet[ _DFECCAD ] )
+
+               aGet[ _DFECCAD ]:Show()
+
+               if Empty( aTmp[ _DFECCAD ] )
+                  aGet[ _DFECCAD ]:cText( dFechaCaducidad )
+               end if
+
+            end if
+
+         else
+
+            if !Empty( aGet[ _CLOTE ] )
+               aGet[ _CLOTE ]:Hide()
+            end if
+
+            if !Empty( aGet[ _DFECCAD ] )
+               aGet[ _DFECCAD ]:Hide()
+            end if
+
+         end if
+
+         /*
+         Tomamos el código de la familia y del grupo de familia----------------
+         */
+
+         cCodFam              := ( dbfArticulo )->Familia
+         if !Empty( cCodFam )
+            aTmp[_CCODFAM]    := cCodFam
+            aTmp[_CGRPFAM]    := cGruFam( cCodFam, dbfFamilia )
+            aGet[_CCODFAM]:cText( cCodFam )
+            aGet[_CGRPFAM]:cText( cGruFam( cCodFam, dbfFamilia ) )
+            aGet[_CCODFAM]:lValid()
+            aGet[_CGRPFAM]:lValid()
+         else
+            aGet[_CCODFAM]:cText( Space( 8 ) )
+            aGet[_CGRPFAM]:cText( Space( 3 ) )
+            aGet[_CCODFAM]:lValid()
+            aGet[_CGRPFAM]:lValid()
+         end if
+
+         /*
+         Tratamientos kits-----------------------------------------------------
+         */
+
+         if ( dbfArticulo )->lKitArt
+
+            aTmp[ _LKITART ]     := ( dbfArticulo )->lKitArt                        // Marcamos como padre del kit
+            aTmp[ _LIMPLIN ]     := lImprimirCompuesto( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
+            aTmp[ _LKITPRC ]     := lPreciosCompuestos( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
+
+            if lStockCompuestos( ( dbfArticulo )->Codigo, dbfArticulo )
+
+               if aGet[ _NCTLSTK ] != nil
+                  aGet[ _NCTLSTK ]:SetOption( ( dbfArticulo )->nCtlStock )
+               else
+                  aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
+               end if
+
+            else
+
+               if aGet[ _NCTLSTK ] != nil
+                  aGet[ _NCTLSTK ]:SetOption( STOCK_NO_CONTROLAR )
+               else
+                  aTmp[ _NCTLSTK ]  := STOCK_NO_CONTROLAR
+               end if
+
+            end if
+
+         else
+
+            aTmp[ _LIMPLIN ]     := .f.
+
+            if aGet[ _NCTLSTK ] != nil
+               aGet[ _NCTLSTK ]:SetOption( ( dbfArticulo )->nCtlStock )
+            else
+               aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
+            end if
+
+         end if
+
+         /*
+         Preguntamos si el regimen de impuestos es distinto de Exento----------------
+         */
+
+         if aTmpFac[_NREGIVA] <= 1
+            aGet[ _NIVA ]:cText( nIva( dbfIva, ( dbfArticulo )->TIPOIVA ) )
+            aTmp[ _NREQ ]        := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+         end if
+
+         /*
+         Ahora recogemos el impuesto especial si lo hay---------------------------
+         */
+
+         if !Empty( ( dbfArticulo )->cCodImp )
+            aTmp[ _CCODIMP ]  	:= ( dbfArticulo )->cCodImp
+            aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpFac[_LIVAINC], aTmp[_NIVA] ) )
+
+            aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
+
+            if !Empty( aGet[ _LVOLIMP ] )
+               aGet[ _LVOLIMP ]:Refresh()
+            end if
+
+         end if
+
+         if (dbfArticulo)->nCajEnt != 0
+            aGet[_NCANENT ]:cText( (dbfArticulo)->nCajEnt )
+         end if
+
+         if ( dbfArticulo )->nUniCaja != 0
+            aGet[_NUNICAJA]:cText( ( dbfArticulo )->nUniCaja )
+         end if
+
+         /*
+         Meses de grantia---------------------------------------------------------
+         */
+
+         aGet[_NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
+
+         /*
+         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
+         */
+
+         aGet[_NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
+
+         /*
+         Tomamos el valor del stock y anotamos si nos dejan vender sin stock
+         */
+
+         if oStkAct != nil .and. !uFieldEmpresa( "lNStkAct" ) .and. aTmp[ _NCTLSTK ] <= 1
+            oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
+         end if
+
+         aTmp[ _LNOTVTA ]     := ( dbfArticulo )->lNotVta
+
+         /*
+         Cargamos los costos------------------------------------------------
+         */
+
+         if !uFieldEmpresa( "lCosAct" )
+            nCosPro              := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ] )
+            if nCosPro == 0
+               nCosPro           := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
+            end if
+         else
+            nCosPro              := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
+         end if
+
+         if aGet[ _NCOSDIV ] != nil
+            aGet[ _NCOSDIV ]:cText( nCosPro )
+         else
+            aTmp[ _NCOSDIV ]  := nCosPro
+         end if
+
+         /*
+         Descuento de artículo----------------------------------------------
+         */
+
+         nNumDto              := RetFld( aTmpFac[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
+
+         if nNumDto != 0
+
+            do case
+               case nNumDto == 1
+
+                  if !Empty( aGet[ _NDTO ] )
+                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt1 )
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt1
+                  else
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt1
+                  end if
+
+               case nNumDto == 2
+
+                  if !Empty( aGet[ _NDTO ] )
+                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt2 )
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt2
+                  else
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt2
+                  end if
+
+               case nNumDto == 3
+
+                  if !Empty( aGet[ _NDTO ] )
+                     aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt3 )
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
+                  else
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
+                  end if
+
+               case nNumDto == 4
+
+                  if !Empty( aGet[ _NDTO ] )
+                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt4 )
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt4
+                  else
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt4
+                  end if
+
+               case nNumDto == 5
+
+                  if !Empty( aGet[ _NDTO ] )
+                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt5 )
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt5
+                  else
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt5
+                  end if
+
+               case nNumDto == 6
+
+                  if !Empty( aGet[ _NDTO ] )
+                     aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt6 )
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
+                  else
+                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
+                  end if
+
+            end case
+
+         end if
+
+          /*
+         Vemos si hay descuentos en las familias----------------------------
+         */
+
+         if aTmp[ _NDTO ] == 0
+
+            if !Empty( aGet[ _NDTO ] )
+               aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
+            else
+               aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, dbfFamilia )
+            end if
+
+         end if
+
+         /*
+         Imagen del producto------------------------------------------------
+         */
+
+         if !Empty( aGet[ _CIMAGEN ] )
+            aGet[ _CIMAGEN ]:cText( ( dbfArticulo )->cImagen )
+         else
+            aTmp[ _CIMAGEN ]     := ( dbfArticulo )->cImagen
+         end if
+
+         if !Empty( bmpImage )
+            if !Empty( aTmp[ _CIMAGEN ] )
+               bmpImage:Show()
+               bmpImage:LoadBmp( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) )
+            else
+               bmpImage:Hide()
+            end if
+         end if
+
+         /*
+         Buscamos la familia del articulo y anotamos las propiedades-----------
+         */
+
+         aTmp[ _CCODPR1 ]  := ( dbfArticulo )->cCodPrp1
+         aTmp[ _CCODPR2 ]  := ( dbfArticulo )->cCodPrp2
+
+         if !Empty( aTmp[ _CCODPR1 ] )
+            aGet[ _CVALPR1 ]:Show()
+            if lFocused
+               aGet[ _CVALPR1 ]:SetFocus()
+            end if
+            oSayPr1:SetText( retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
+            oSayPr1:Show()
+            oSayVp1:Show()
+         else
+            aGet[ _CVALPR1 ]:hide()
+            oSayPr1:hide()
+            oSayVp1:hide()
+         end if
+
+         if !Empty( aTmp[ _CCODPR2 ] )
+            aGet[ _CVALPR2 ]:Show()
+            oSayPr2:SetText( retProp( ( dbfArticulo )->cCodPrp2, dbfPro ) )
+            oSayPr2:Show()
+            oSayVp2:Show()
+         else
+            aGet[ _CVALPR2 ]:hide()
+            oSayPr2:Hide()
+            oSayVp2:Hide()
+         end if
+
+      end if
+
+      /*
+      He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
+      */
+
+      cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
+
+      if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
+
+         //--guardamos el código de la familia--//
+
+         if nMode == APPD_MODE
+            cCodFam        := RetFamArt( cCodArt, dbfArticulo )
+         else
+            cCodFam        := aTmp[_CCODFAM]
+         end if
+
+         /*
+         Cargamos el precio recomendado ,el precio de costo y el punto verde
+         */
+
+         aGet[ _NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
+         aTmp[ _NPVPREC ]   := ( dbfArticulo )->PvpRec
+
+         /*
+         Cargamos el codigo de las unidades---------------------------------
+         */
+
+         if !Empty( aGet[ _CUNIDAD ] )
+            aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
+         else
+            aTmp[ _CUNIDAD ]  := ( dbfArticulo )->cUnidad
+         end if
+
+         //--guardamos el precio del artículo dependiendo de las propiedades--//
+
+         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
+
+         if nPrePro == 0
+            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
+         else
+            aGet[_NPREUNIT]:cText( nPrePro )
+         end if
+
+         //--Precios en tarifas--//
+
+         if !Empty( aTmpFac[ _CCODTAR ] )
+
+            //--Precio--//
+            nImpOfe  := RetPrcTar( cCodArt, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
+            if nImpOfe != 0
+               aGet[_NPREUNIT]:cText( nImpOfe )
+            end if
+
+            //--Descuento porcentual--//
+            nImpOfe  := RetPctTar( cCodArt, cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
+            if nImpOfe != 0
+               aGet[_NDTO   ]:cText( nImpOfe )
+            end if
+
+            //--Descuento lineal--//
+            nImpOfe  := RetLinTar( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
+            if nImpOfe != 0
+               aGet[_NDTODIV]:cText( nImpOfe )
+            end if
+
+            //--Comision de agente--//
+            nImpOfe  := RetComTar( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
+            if nImpOfe != 0
+               aGet[_NCOMAGE]:cText( nImpOfe )
+            end if
+
+            //--Descuento de promoci¢n--//
+
+            nImpOfe  := RetDtoPrm( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
+            if nImpOfe  != 0
+               aGet[_NDTOPRM]:cText( nImpOfe )
+            end if
+
+            //--Descuento de promoci¢n para el agente--//
+
+            nDtoAge     := RetDtoAge( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
+            if nDtoAge  != 0
+               aGet[ _NCOMAGE ]:cText( nDtoAge )
+            end if
+
+         end if
+
+        /*
+        Chequeamos las atipicas del cliente--------------------------------
+        */
+
+        hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
+
+        if !Empty( hAtipica )
+               
+            if hhaskey( hAtipica, "nImporte" )
+                aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
+                aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
+                aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+            end if
+
+            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
+                aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+                aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+            end if
+
+        end if
+
+         // Buscamos si existen ofertas para este articulo y le cambiamos el precio--
+
+         nImpOfe     := nImpOferta( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+         if nImpOfe  != 0
+            aGet[ _NPREUNIT ]:cText( nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ] ) )
+         end if
+
+         // Buscamos si existen descuentos en las ofertas----------------------
+
+         nImpOfe     := nDtoOferta( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+         if nImpOfe  != 0
+            aGet[_NDTO]:cText( nImpOfe )
+         end if
+
+         // Buscamos si existen descuentos lineales en las ofertas-------------
+
+         nImpOfe     := nDtoLineal( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+         if nImpOfe  != 0
+            aGet[ _NDTODIV ]:cText( nImpOfe )
+         end if
+
+         ValidaMedicion( aTmp, aGet )
+
+      end if
+
+      /*
+      Buscamos si hay ofertas-----------------------------------------------
+      */
+
+      lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+
+      /*
+      Cargamos los valores para los cambios---------------------------------
+      */
+
+      cOldPrpArt  := cPrpArt
+      cOldCodArt  := cCodArt
+
+      /*
+      Solo pueden modificar los precios los administradores--------------
+      */
+
+      if Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+         aGet[ _NPREUNIT ]:HardEnable()
+         aGet[ _NIMPTRN  ]:HardEnable()
+         aGet[ _NPNTVER  ]:HardEnable()
+         aGet[ _NDTO     ]:HardEnable()
+         aGet[ _NDTOPRM  ]:HardEnable()
+         aGet[ _NDTODIV  ]:HardEnable()
+      else
+         aGet[ _NPREUNIT ]:HardDisable()
+         aGet[ _NIMPTRN  ]:HardDisable()
+         aGet[ _NPNTVER  ]:HardDisable()
+         aGet[ _NDTO     ]:HardDisable()
+         aGet[ _NDTOPRM  ]:HardDisable()
+         aGet[ _NDTODIV  ]:HardDisable()
+      end if
+
+      CursorWE()
+
+   else
+
+      MsgStop( "Artículo no encontrado" )
+      Return .f.
+
+   end if
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
+/*
+Cargaos los datos del cliente
+*/
+
+STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
+
+   local lValid      := .t.
+   local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
+   local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
+
+   if Empty( cNewCodCli )
+      Return .t.
+   elseif At( ".", cNewCodCli ) != 0
+      cNewCodCli     := PntReplace( aGet[ _CCODCLI ], "0", RetNumCodCliEmp() )
+   else
+      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
+   end if
+
+   if ( TDataView():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
+
+      /*
+      Asignamos el codigo siempre
+      */
+
+      aGet[ _CCODCLI ]:cText( ( TDataView():Clientes( nView ) )->Cod )
+
+      if oTlfCli != nil
+         oTlfCli:SetText( ( TDataView():Clientes( nView ) )->Telefono )
+      end if
+
+      if ( TDataView():Clientes( nView ) )->nColor != 0
+         aGet[_CNOMCLI]:SetColor( , ( TDataView():Clientes( nView ) )->nColor )
+      end if
+
+      if Empty( aGet[_CNOMCLI]:varGet() ) .or. lChgCodCli
+         aGet[_CNOMCLI]:cText( ( TDataView():Clientes( nView ) )->Titulo )
+      end if
+
+      if Empty( aGet[_CDIRCLI]:varGet() ) .or. lChgCodCli
+         aGet[_CDIRCLI]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
+      end if
+
+      if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
+         aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
+      end if
+
+      if Empty( aGet[_CPOBCLI]:varGet() ) .or. lChgCodCli
+         aGet[_CPOBCLI]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
+      end if
+
+      if Empty( aGet[_CPRVCLI]:varGet() ) .or. lChgCodCli
+         aGet[_CPRVCLI]:cText( ( TDataView():Clientes( nView ) )->Provincia )
+      end if
+
+      if Empty( aGet[_CPOSCLI]:varGet() ) .or. lChgCodCli
+         aGet[_CPOSCLI]:cText( ( TDataView():Clientes( nView ) )->CodPostal )
+      end if
+
+      if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
+         aGet[ _CDNICLI ]:cText( ( TDataView():Clientes( nView ) )->Nif )
+      end if
+
+      /*
+      Cargamos la obra por defecto-------------------------------------
+      */
+
+      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
+
+         if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
+            aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
+         else
+            aGet[ _CCODOBR ]:cText( Space( 10 ) )
+         end if
+
+         aGet[ _CCODOBR ]:lValid()
+
+      end if
+
+      if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
+         aTmp[ _CCODGRP ]  := ( TDataView():Clientes( nView ) )->cCodGrp
+      end if
+
+      if lChgCodCli
+         aTmp[ _LMODCLI ]  := ( TDataView():Clientes( nView ) )->lModDat
+      end if
+
+      if ( lChgCodCli )
+         aTmp[ _LOPERPV ]  := ( TDataView():Clientes( nView ) )->lPntVer
+      end if
+
+      if nMode == APPD_MODE
+
+         aTmp[_NREGIVA ]   := ( TDataView():Clientes( nView ) )->nRegIva
+
+         /*
+         Si estamos a¤adiendo cargamos todos los datos del cliente
+         */
+
+         if Empty( aTmp[ _CSERIE ] )
+
+            if !Empty( ( TDataView():Clientes( nView ) )->Serie )
+               aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            end if
+
+         else
+
+            if !Empty( ( TDataView():Clientes( nView ) )->Serie )               .and.;
+               aTmp[ _CSERIE ] != ( TDataView():Clientes( nView ) )->Serie      .and.;
+               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            end if
+
+         end if
+
+         if ( Empty( aGet[_CCODALM]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodAlm )
+            aGet[_CCODALM]:cText( ( TDataView():Clientes( nView ) )->cCodAlm )
+            aGet[_CCODALM]:lValid()
+         end if
+
+         if ( Empty( aGet[_CCODTAR]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTar )
+            aGet[_CCODTAR]:cText( ( TDataView():Clientes( nView ) )->CCODTAR )
+            aGet[_CCODTAR]:lValid()
+         end if
+
+         if ( Empty( aGet[_CCODPAGO]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
+
+            aGet[_CCODPAGO]:cText( (TDataView():Clientes( nView ))->CODPAGO )
+            aGet[_CCODPAGO]:lValid()
+
+            /*
+            Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
+            */
+
+            if RetFld( aTmp[ _CCODPAGO ], dbfFPago, "LUTLBNC" )
+
+               if lBancoDefecto( ( TDataView():Clientes( nView ) )->Cod, dbfCliBnc )
+
+                  if !Empty( aGet[ _CBANCO ] )
+                     aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
+                     aGet[ _CBANCO ]:lValid()
+                  end if
+
+		            if !Empty( aGet[ _CPAISIBAN ] )
+		               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
+		               aGet[ _CPAISIBAN ]:lValid()
+		            end if
+
+   		         if !Empty( aGet[ _CCTRLIBAN ] )
+   		            aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
+   		            aGet[ _CCTRLIBAN ]:lValid()
+   		         end if
+
+                  if !Empty( aGet[ _CENTBNC ] )
+                     aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
+                     aGet[ _CENTBNC ]:lValid()
+                  end if
+
+                  if !Empty( aGet[ _CSUCBNC ] )
+                     aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
+                     aGet[ _CSUCBNC ]:lValid()
+                  end if
+
+                  if !Empty( aGet[ _CDIGBNC ] )
+                     aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
+                     aGet[ _CDIGBNC ]:lValid()
+                  end if
+
+                  if !Empty( aGet[ _CCTABNC ] )
+                     aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
+                     aGet[ _CCTABNC ]:lValid()
+                  end if
+
+               end if
+
+            end if
+
+         end if
+
+         if ( Empty( aGet[_CCODAGE]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cAgente )
+            aGet[_CCODAGE]:cText( (TDataView():Clientes( nView ))->CAGENTE )
+            aGet[_CCODAGE]:lValid()
+         end if
+
+         if ( Empty( aGet[_CCODRUT]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodRut )
+            aGet[_CCODRUT]:cText( ( TDataView():Clientes( nView ))->CCODRUT )
+            aGet[_CCODRUT]:lValid()
+         end if
+
+         if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
+            aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
+         end if
+
+         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
+            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
+            aGet[ _CCODTRN ]:lValid()
+         end if
+
+         if lChgCodCli
+
+            aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq )
+
+            aGet[ _LOPERPV  ]:Click( ( TDataView():Clientes( nView ) )->lPntVer )
+
+            /*
+            Retenciones desde la ficha de cliente----------------------------------
+            */
+            /*
+            if !Empty( aGet[ _NTIPRET ] )
+               aGet[ _NTIPRET  ]:Select( ( TDataView():Clientes( nView ) )->nTipRet )
+            else
+               aTmp[ _NTIPRET  ] := ( TDataView():Clientes( nView ) )->nTipRet
+            end if
+            */
+            if !Empty( aGet[ _NPCTRET ] )
+               aGet[ _NPCTRET  ]:cText( ( TDataView():Clientes( nView ) )->nPctRet )
+            else
+               aTmp[ _NPCTRET  ] := ( TDataView():Clientes( nView ) )->nPctRet
+            end if
+
+            /*
+            Descuentos desde la ficha de cliente----------------------------------
+            */
+
+            aGet[ _CDTOESP ]:cText( ( TDataView():Clientes( nView ) )->cDtoEsp )
+
+            aGet[ _NDTOESP ]:cText( ( TDataView():Clientes( nView ) )->nDtoEsp )
+
+            aGet[ _CDPP    ]:cText( ( TDataView():Clientes( nView ) )->cDpp    )
+
+            aGet[ _NDPP    ]:cText( ( TDataView():Clientes( nView ) )->nDpp    )
+
+            aGet[ _CDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->cDtoUno )
+
+            aGet[ _CDTODOS ]:cText( ( TDataView():Clientes( nView ) )->cDtoDos )
+
+            aGet[ _NDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->nDtoCnt )
+
+            aGet[ _NDTODOS ]:cText( ( TDataView():Clientes( nView ) )->nDtoRap )
+
+         end if
+
+      end if
+
+      if ( TDataView():Clientes( nView ) )->lMosCom .and. !Empty( ( TDataView():Clientes( nView ) )->mComent ) .and. lChgCodCli
+         MsgStop( Trim( ( TDataView():Clientes( nView ) )->mComent ) )
+      end if
+
+      if !Empty( oRieCli ) .and. lChgCodCli
+         oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Clientes( nView ) )->Riesgo )
+      end if
+
+      ShowIncidenciaCliente( ( TDataView():Clientes( nView ) )->Cod, nView )
+
+      cOldCodCli  := ( TDataView():Clientes( nView ) )->Cod
+
+      lValid      := .t.
+
+   else
+
+		msgStop( "Cliente no encontrado" )
+
+      lValid      := .f.
+
+   end if
+
+RETURN lValid
+
+//----------------------------------------------------------------------------//
+
+/*
+Comienza la edición de la factura
+*/
+
+STATIC FUNCTION BeginTrans( aTmp, nMode )
+
+   local oError
+   local oBlock
+   local lErrors  := .f.
+   local cDbfLin  := "FCliL"
+   local cDbfInc  := "FCliI"
+   local cDbfDoc  := "FCliD"
+   local cDbfAnt  := "FCliA"
+   local cDbfPgo  := "FCliP"
+   local cDbfSer  := "FCliS"
+   local cFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
+
+   CursorWait()
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
+   cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
+   cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
+   cTmpAnt        := cGetNewFileName( cPatTmp() + cDbfAnt )
+   cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
+   cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
+
+   /*
+   Inicialización de variables-------------------------------------------------
+   */
+
+   aNumAlb        := {}
+
+   /*
+   Actualizacion de riesgo
+   */
+
+   do case
+   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+
+      nTotOld     := 0
+
+   case nMode == EDIT_MODE
+
+      nTotOld     := nTotFac
+
+   end case
+
+	/*
+   Primero crear la base de datos local----------------------------------------
+	*/
+
+   dbCreate( cTmpLin, aSqlStruct( aColFacRec() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
+   if !NetErr()
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+      if ( dbfFacRecL )->( dbSeek( cFac ) )
+         while ( ( dbfFacRecL )->CSERIE + Str( ( dbfFacRecL )->NNUMFAC ) + ( dbfFacRecL )->CSUFFAC ) == cFac .AND. !( dbfFacRecL )->( eof() )
+            dbPass( dbfFacRecL, dbfTmpLin, .t. )
+            ( dbfFacRecL )->( DbSkip() )
+         end while
+      endif
+
+      ( dbfTmpLin )->( dbGoTop() )
+
+   else
+
+      lErrors     := .t.
+
+   end if
+
+   /*
+   Creamos la tabla temporal
+   */
+
+   dbCreate( cTmpInc, aSqlStruct( aIncFacRec() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
+   if !NetErr()
+      ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpInc )->( ordCreate( cTmpInc, "Recno", "Recno()", {|| Recno() } ) )
+
+      if ( dbfFacRecI )->( dbSeek( cFac ) )
+         while ( ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac == cFac ) .AND. ( dbfFacRecI )->( !eof() )
+            dbPass( dbfFacRecI, dbfTmpInc, .t. )
+            ( dbfFacRecI )->( dbSkip() )
+         end while
+      end if
+
+      ( dbfTmpInc )->( dbGoTop() )
+
+   else
+
+      lErrors     := .t.
+
+   end if
+
+   /*
+   Creamos la tabla temporal
+   */
+
+   dbCreate( cTmpDoc, aSqlStruct( aFacRecDoc() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
+   if !NetErr()
+      ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
+
+      if ( dbfFacRecD )->( dbSeek( cFac ) )
+         while ( ( dbfFacRecD )->cSerFac + Str( ( dbfFacRecD )->nNumFac ) + ( dbfFacRecD )->cSufFac == cFac ) .AND. ( dbfFacRecD )->( !eof() )
+            dbPass( dbfFacRecD, dbfTmpDoc, .t. )
+            ( dbfFacRecD )->( dbSkip() )
+         end while
+      end if
+
+      ( dbfTmpDoc )->( dbGoTop() )
+
+   else
+
+      lErrors     := .t.
+
+   end if
+
+   /*
+   Creamos el fichero de series------------------------------------------------
+   */
+
+   dbCreate( cTmpSer, aSqlStruct( aSerFacRec() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpSer, cCheckArea( cDbfSer, @dbfTmpSer ), .f. )
+
+   if !( dbfTmpSer )->( NetErr() )
+
+      ( dbfTmpSer )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpSer )->( OrdCreate( cTmpSer, "nNumLin", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin, 4 ) + Field->cRef } ) )
+
+      if ( dbfFacRecS )->( dbSeek( cFac ) )
+         while ( ( dbfFacRecS )->cSerFac + Str( ( dbfFacRecS )->nNumFac ) + ( dbfFacRecS )->cSufFac == cFac ) .and. !( dbfFacRecS )->( eof() )
+            dbPass( dbfFacRecS, dbfTmpSer, .t. )
+            ( dbfFacRecS )->( dbSkip() )
+         end while
+      end if
+
+      ( dbfTmpSer )->( dbGoTop() )
+
+      oStock:SetTmpFacRecS( dbfTmpSer )
+
+   end if
+
+   /*
+   Creamos la tabla temporal de pagos------------------------------------------
+   */
+
+   dbCreate( cTmpPgo, aSqlStruct( aItmRecCli() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpPgo, cCheckArea( cDbfPgo, @dbfTmpPgo ), .f. )
+
+   if !NetErr()
+
+      ( dbfTmpPgo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo , "cRecDev", "cRecDev", {|| Field->cRecDev } ) )
+
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "nNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) + Field->cTipRec } ) )
+
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
+
+      if ( dbfFacCliP )->( dbSeek( cFac ) ) .and. nMode != DUPL_MODE
+         while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFac .and. ( dbfFacCliP )->( !eof() )
+            dbPass( dbfFacCliP, dbfTmpPgo, .t. )
+            ( dbfFacCliP )->( dbSkip() )
+         end while
+      end if
+
+      ( dbfTmpPgo  )->( dbGoTop() )
+
+   else
+
+      lErrors     := .t.
+
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
+
+      KillTrans()
+
+      lErrors     := .t.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CursorWE()
+
+Return ( lErrors )
+
+//-----------------------------------------------------------------------//
+/*
+Finaliza la transacción de datos
+*/
+
+STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oDlg, oFld )
+
+   local n
+   local cSerFac
+   local nNumFac
+   local cSufFac
+   local dFecFac
+   local oError
+   local oBlock
+
+   if Empty( aTmp[ _CSERIE ] )
+      aTmp[ _CSERIE ]   := "A"
+   end if
+
+   cSerFac              := aTmp[ _CSERIE  ]
+   nNumFac              := aTmp[ _NNUMFAC ]
+   cSufFac              := aTmp[ _CSUFFAC ]
+   dFecFac              := aTmp[ _DFECFAC ]
+
+   /*
+   Comprobamos la fecha del documento
+   */
+
+   if !lValidaOperacion( aTmp[_DFECFAC] )
+      Return .f.
+   end if
+
+   /*
+   Estos campos no pueden estar vacios
+   */
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. Empty( aTmp[ _CNUMFAC ] )
+      MsgStop( "Debe de indicar la factura que quiere rectificar." )
+      aGet[ _CNUMFAC ]:SetFocus()
+      return .f.
+   end if
+
+   if lCliBlq( aTmp[ _CCODCLI ], TDataView():Clientes( nView ) )
+      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
+      aGet[ _CCODCLI ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CNOMCLI ] )
+      msgStop( "Nombre de cliente no puede estar vacio." )
+      aGet[ _CNOMCLI ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CDIRCLI ] )
+      msgStop( "Domicilio de cliente no puede estar vacio." )
+      aGet[ _CDIRCLI ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CDNICLI ] )
+      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacio." )
+      aGet[ _CDNICLI ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CCODALM ] )
+      msgStop( "Almacén no puede estar vacio." )
+      aGet[ _CCODALM ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CCODPAGO ] )
+      msgStop( "Forma de pago no puede estar vacia." )
+      aGet[ _CCODPAGO ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CDIVFAC ] )
+      MsgStop( "No puede almacenar documento sin código de divisa." )
+      aGet[ _CDIVFAC ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
+      msgStop( "Agente no puede estar vacio." )
+      aGet[ _CCODAGE ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CCODOBR ] ) .and. lObras()
+      MsgStop( "Debe de introducir una obra." )
+      aGet[ _CCODOBR ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CMOTREC ] )
+      MsgStop( "Debe indicar un motivo para la factura rectificativa." )
+      oFld:SetOption( 2 )
+      aGet[ _CMOTREC ]:SetFocus()
+      return .f.
+   end if
+
+   if Empty( aTmp[ _CCAUREC ] )
+      MsgStop( "Debe indicar una causa por la que se emite la factura rectificativa." )
+      oFld:SetOption( 2 )
+      aGet[ _CCAUREC ]:SetFocus()
+      return .f.
+   end if
+
+   if ( dbfTmpLin )->( eof() )
+      MsgStop( "No puede almacenar un documento sin lineas." )
+      return .f.
+   end if
+
+   if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+      ( dbfTmpLin )->( dbGoTop() )
+      while !( dbfTmpLin )->( eof() )
+
+         if !( dbfTmpLin )->lControl .and. ( dbfTmpLin )->nPreUnit == 0 .and. !( dbfTmpLin )->lKitPrc
+            if !ApoloMsgNoYes( "El artículo " + Rtrim( ( dbfTmpLin )->cRef ) + " - " + Rtrim( Descrip( dbfTmpLin ) ) + " no esta valorado.", "¿Desea continuar archivando la factura?" )
+               return .f.
+            end if
+         end if
+
+         ( dbfTmpLin )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Para q nadie toque mientras grabamos----------------------------------------
+   */
+
+   CursorWait()
+
+   oDlg:Disable()
+
+   oMsgText( "Archivando" )
+
+   aTmp[ _DFECCRE ]     := GetSysDate()
+   aTmp[ _CTIMCRE ]     := Time()
+
+   /*
+   Quitamos los filtros
+   */
+
+   ( dbfTmpLin )->( dbClearFilter() )
+
+   /*
+   Primero hacer el RollBack---------------------------------------------------
+   */
+
+   do case
+   case ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+		/*
+      Obtenemos el nuevo numero de la factura----------------------------------
+		*/
+
+      nNumFac           := nNewDoc( cSerFac, TDataView():FacturasRectificativas( nView ), "nFacRec", , dbfCount )
+      aTmp[ _NNUMFAC ]  := nNumFac
+      aTmp[ _LIMPALB ]  := !Empty( aNumAlb )
+
+   case ( nMode == EDIT_MODE )
+
+      /*
+      Rollback de todos los articulos si la factura no se importo de albaranes-
+
+      oStock:FacRec( cSerFac + Str( nNumFac ) + cSufFac, ( TDataView():FacturasRectificativas( nView ) )->cCodAlm, .t., .t. )
+      */
+
+      while ( dbfFacRecL )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecL )->( eof() )
+         if dbLock( dbfFacRecL )
+            ( dbfFacRecL )->( dbDelete() )
+            ( dbfFacRecL )->( dbUnLock() )
+         end if
+      end while
+
+      /*
+      Eliminamos las incidencias anteriores------------------------------------
+      */
+
+      while ( dbfFacRecI )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecI )->( eof() )
+         if dbLock( dbfFacRecI )
+            ( dbfFacRecI )->( dbDelete() )
+            ( dbfFacRecI )->( dbUnLock() )
+         end if
+      end while
+
+      /*
+      Eliminamos las incidencias anteriores------------------------------------
+      */
+
+      while ( dbfFacRecD )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecD )->( eof() )
+         if dbLock( dbfFacRecD )
+            ( dbfFacRecD )->( dbDelete() )
+            ( dbfFacRecD )->( dbUnLock() )
+         end if
+      end while
+
+      /*
+      Eliminamos las series----------------------------------------------------
+      */
+
+      while ( dbfFacRecS )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecS )->( eof() )
+         if dbLock( dbfFacRecS )
+            ( dbfFacRecS )->( dbDelete() )
+            ( dbfFacRecS )->( dbUnLock() )
+         end if
+      end while
+
+      /*
+      Eliminamos los pagos anteriores------------------------------------------
+      */
+
+      while ( dbfFacCliP )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) .and. !( dbfFacCliP )->( eof() ) )
+         if dbLock( dbfFacCliP )
+            ( dbfFacCliP )->( dbDelete() )
+            ( dbfFacCliP )->( dbUnLock() )
+         end if
+      end while
+
+   end case
+
+   /*
+   Actualizacion de riesgo-----------------------------------------------------
+   */
+
+   oMsgProgress()
+   oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
+
+	/*
+   Ahora escribimos en el fichero definitivo-----------------------------------
+	*/
+
+   ( dbfTmpLin )->( dbGoTop() )
+   while ( dbfTmpLin )->( !eof() )
+
+      if ( dbfTmpLin )->dFecFac != aTmp[ _DFECFAC ]
+         ( dbfTmpLin )->dFecFac := aTmp[ _DFECFAC ]
+      end if
+
+      dbPass( dbfTmpLin, dbfFacRecL, .t., cSerFac, nNumFac, cSufFac )
+
+      ( dbfTmpLin )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de inicdencias--------------------
+	*/
+
+   ( dbfTmpInc )->( dbGoTop() )
+   while ( dbfTmpInc )->( !eof() )
+      dbPass( dbfTmpInc, dbfFacRecI, .t., cSerFac, nNumFac, cSufFac )
+      ( dbfTmpInc )->( dbSkip() )
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de documentos--------------------
+	*/
+
+   ( dbfTmpDoc )->( dbGoTop() )
+   while ( dbfTmpDoc )->( !eof() )
+      dbPass( dbfTmpDoc, dbfFacRecD, .t., cSerFac, nNumFac, cSufFac )
+      ( dbfTmpDoc )->( dbSkip() )
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de series--------------------
+	*/
+
+   ( dbfTmpSer )->( dbGoTop() )
+   while ( dbfTmpSer )->( !eof() )
+      dbPass( dbfTmpSer, dbfFacRecS, .t., cSerFac, nNumFac, cSufFac, dFecFac )
+      ( dbfTmpSer )->( dbSkip() )
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de pagos--------------------------
+	*/
+
+   ( dbfTmpPgo )->( dbGoTop() )
+   while ( dbfTmpPgo )->( !eof() )
+
+      if ( dbfTmpPgo )->cCodCli != aTmp[ _CCODCLI ]
+         ( dbfTmpPgo )->cCodCli := aTmp[ _CCODCLI ]
+      end if
+
+      if ( dbfTmpPgo )->cNomCli != aTmp[ _CNOMCLI ]
+         ( dbfTmpPgo )->cNomCli := aTmp[ _CNOMCLI ]
+      end if
+
+      dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
+
+      ( dbfTmpPgo )->( dbSkip() )
+
+   end while
+
+   /*
+   Rellenamos  los campos de los totales---------------------------------------
+   */
+
+   aTmp[ _NTOTNET ]  := nTotNet
+   aTmp[ _NTOTIVA ]  := nTotIva
+   aTmp[ _NTOTREQ ]  := nTotReq
+   aTmp[ _NTOTFAC ]  := nTotFac
+
+   /*
+   Grabamos el registro--------------------------------------------------------
+   */
+
+   WinGather( aTmp, , TDataView():FacturasRectificativas( nView ), , nMode )
+
+   /*
+   Actualizamos el stock en la web------------------------------------------
+   */
+
+   ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
+
+   /*
+   Actualizamos el estado de los albaranes de clientes-------------------------
+   */
+
+   if len( aNumAlb ) > 0
+      for n := 1 to len( aNumAlb )
+         if ( dbfAlbCliT )->( dbSeek( aNumAlb[n] ) )
+            if dbLock( dbfAlbCliT )
+               delRiesgo( nTotAlbCli( aNumAlb[ n ], dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv ), ( dbfAlbCliT )->cCodCli, TDataView():Clientes( nView ) )
+               ( dbfAlbCliT )->lFacturado := .t.
+               ( dbfAlbCliT )->cNumFac    := cSerFac + Str( nNumFac ) + cSufFac
+               ( dbfAlbCliT )->( dbUnlock() )
+               //oStock:AlbCli( aNumAlb[ n ], ( dbfAlbCliT )->cCodAlm, .f., .t., .t., nil, .f. )
+            end if
+         end if
+      next
+   end if
+
+   /*
+   Rollback de articulos si no esta importado desde albaranes
+
+   oStock:FacRec( cSerFac + Str( nNumFac ) + cSufFac, ( TDataView():FacturasRectificativas( nView ) )->cCodAlm, .f., .f. )
+   */
+
+   /*
+   Generar los pagos de las facturas-------------------------------------------
+   */
+
+   GenPgoFacRec( cSerFac + Str( nNumFac ) + cSufFac, TDataView():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, TDataView():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
+
+   /*
+   Comprobamos el estado de la factura-----------------------------------------
+   */
+
+   ChkLqdFacRec( nil, TDataView():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
+
+   /*
+   Escribe los datos pendientes------------------------------------------------
+   */
+
+   dbCommitAll()
+
+   /*
+   Cerramos el dialogo---------------------------------------------------------
+   */
+
+   oMsgText()
+
+   EndProgress()
+
+   oDlg:Enable()
+   oDlg:end( IDOK )
+
+   CursorWE()
+
+Return .t.
+
+//------------------------------------------------------------------------//
+
+Static Function KillTrans( oBrwDet, oBrwInc, oBrwPgo )
+
+	/*
+	Borramos los ficheros
+	*/
+
+   if !Empty( dbfTmpLin ) .and. ( dbfTmpLin )->( Used() )
+      ( dbfTmpLin )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() )
+      ( dbfTmpInc )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfTmpDoc ) .and. ( dbfTmpDoc )->( Used() )
+      ( dbfTmpDoc )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfTmpAnt ) .and. ( dbfTmpAnt )->( Used() )
+      ( dbfTmpAnt )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfTmpPgo ) .and. ( dbfTmpPgo )->( Used() )
+      ( dbfTmpPgo )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfTmpSer ) .and. ( dbfTmpSer )->( Used() )
+      ( dbfTmpSer )->( dbCloseArea() )
+   end if
+
+   dbfTmpLin      := nil
+   dbfTmpInc      := nil
+   dbfTmpDoc      := nil
+   dbfTmpAnt      := nil
+   dbfTmpPgo      := nil
+   dbfTmpSer      := nil
+
+   dbfErase( cTmpLin )
+   dbfErase( cTmpInc )
+   dbfErase( cTmpDoc )
+   dbfErase( cTmpAnt )
+   dbfErase( cTmpPgo )
+   dbfErase( cTmpSer )
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+/*
+Crea los ficheros de la facturaci¢n
+*/
+
+STATIC FUNCTION CreateFiles( cPath, lReindex )
+
+   DEFAULT lReindex  := .t.
+
+   if !lExistTable( cPath + "FacRecT.DBF" )
+      dbCreate( cPath + "FacRecT.DBF", aSqlStruct( aItmFacRec() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "FacRecL.DBF" )
+      dbCreate( cPath + "FacRecL.DBF", aSqlStruct( aColFacRec() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "FacRecI.DBF" )
+      dbCreate( cPath + "FacRecI.DBF", aSqlStruct( aIncFacRec() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "FacRecD.DBF" )
+      dbCreate( cPath + "FacRecD.DBF", aSqlStruct( aFacRecDoc() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "FacRecS.Dbf" )
+      dbCreate( cPath + "FacRecS.Dbf", aSqlStruct( aSerFacRec() ), cDriver() )
+   end if
+
+   if lReindex
+      rxFacRec( cPath )
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+static function lGenFacRec( oBrw, oBtn, nDevice )
+
+   local bAction
+
+   DEFAULT nDevice   := IS_PRINTER
+
+   if Empty( oBtn )
+      return nil
+   end if
+
+   if !( dbfDoc )->( dbSeek( "FR" ) )
+
+         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( msgStop( "No hay facturas rectificativas de clientes predefinidas" ) );
+            TOOLTIP  "No hay documentos" ;
+            HOTKEY   "N";
+            FROM     oBtn ;
+            CLOSED ;
+            LEVEL    ACC_EDIT
+
+   ELSE
+
+      WHILE ( dbfDoc )->CTIPO == "FR" .AND. !( dbfDoc )->( eof() )
+
+         bAction  := bGenFacRec( nDevice, "Imprimiendo facturas rectificativas de clientes", ( dbfDoc )->CODIGO )
+
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+
+         ( dbfDoc )->( dbSkip() )
+
+      END DO
+
+   END IF
+
+   SysRefresh()
+
+return nil
+
+//---------------------------------------------------------------------------//
+
+static function bGenFacRec( nDevice, cTitle, cCodDoc )
+
+   local bGen
+   local nDev  := by( nDevice )
+   local cTit  := by( cTitle  )
+   local cCod  := by( cCodDoc )
+
+   if nDev == IS_PRINTER
+      bGen     := {|| GenFacRec( nDev, cTit, cCod ) }
+   else
+      bGen     := {|| GenFacRec( nDev, cTit, cCod ) }
+   end if
+
+return ( bGen )
+
+//---------------------------------------------------------------------------//
+
+static function QuiFacRec()
+
+   local nOrdAnt
+   local cSerDoc     := ( TDataView():FacturasRectificativas( nView ) )->cSerie
+   local nNumDoc     := ( TDataView():FacturasRectificativas( nView ) )->nNumFac
+   local cSufDoc     := ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+
+   if ( TDataView():FacturasRectificativas( nView ) )->lCloFac .and. !oUser():lAdministrador()
+      msgStop( "Solo puede eliminar facturas cerradas los administradores." )
+      return .f.
+   end if
+
+   /*
+   Actualizamos los riesgos de clientes
+   */
+
+   DelRiesgo( nTotFac, ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ) )
+
+   /*
+   Eliminamos las lineas-------------------------------------------------------
+   */
+
+   nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
+
+   while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
+      if dbDialogLock( dbfFacRecL )
+         ( dbfFacRecL )->( dbDelete() )
+         ( dbfFacRecL )->( dbUnLock() )
+      end if
+
+      ( dbfFacRecL )->( dbSkip() )
+   end do
+
+   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Eliminamos los pagos--------------------------------------------------------
+   */
+
+   nOrdAnt     := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
+
+   if ( dbfFacCliP )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) )
+
+      while cSerDoc + Str( nNumDoc ) + cSufDoc == ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac .and. !( dbfFacCliP )->( eof() )
+
+         if ( dbfFacCliP )->cTipRec == "R"
+
+            if dbDialogLock( dbfFacCliP )
+               ( dbfFacCliP )->( dbDelete() )
+               ( dbfFacCliP )->( dbUnLock() )
+            end if
+
+         end if
+
+         ( dbfFacCliP )->( dbSkip() )
+
+      end do
+
+   end if
+
+   ( dbfFacCliP )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Eliminamos las incidencias--------------------------------------------------
+   */
+
+   nOrdAnt     := ( dbfFacRecI )->( OrdSetFocus( "nNumFac" ) )
+
+   while ( dbfFacRecI )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecI )->( eof() )
+      if dbDialogLock( dbfFacRecI )
+         ( dbfFacRecI )->( dbDelete() )
+         ( dbfFacRecI )->( dbUnLock() )
+      end if
+
+      ( dbfFacRecI )->( dbSkip() )
+   end do
+
+   ( dbfFacRecI )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Eliminamos los documentos---------------------------------------------------
+   */
+
+   nOrdAnt     := ( dbfFacRecD )->( OrdSetFocus( "nNumFac" ) )
+
+   while ( dbfFacRecD )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecD )->( eof() )
+      if dbDialogLock( dbfFacRecD )
+         ( dbfFacRecD )->( dbDelete() )
+         ( dbfFacRecD )->( dbUnLock() )
+      end if
+
+      ( dbfFacRecD )->( dbSkip() )
+   end do
+
+   ( dbfFacRecD )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Eliminamos las series-------------------------------------------------------
+   */
+
+   nOrdAnt     := ( dbfFacRecS )->( OrdSetFocus( "nNumFac" ) )
+
+   while ( dbfFacRecS )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecS )->( eof() )
+      if dbDialogLock( dbfFacRecS )
+         ( dbfFacRecS )->( dbDelete() )
+         ( dbfFacRecS )->( dbUnLock() )
+      end if
+
+      ( dbfFacRecS )->( dbSkip() )
+   end do
+
+   ( dbfFacRecS )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Recuperamos contadores------------------------------------------------------
+   */
+   
+   	if uFieldEmpresa( "LRECNUMFAC" )
+		nPutDoc( cSerDoc, nNumDoc, cSufDoc, TDataView():FacturasRectificativas( nView ), "nFacRec", , dbfCount )
+   	end if
+
+   /*
+   Refresh---------------------------------------------------------------------
+   */
+
+   if oWndBrw != nil
+      oWndBrw:Refresh()
+   end if
+
+return .t.
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTitle2, bPreAction, bPostAction )
+
+   local oDlg
+   local oRad
+   local nRad        := 1
+   local aRet        := {}
+   local oTree
+   local oChk1
+   local oChk2
+   local lChk1       := .t.
+   local lChk2       := .t.
+   local nRecno      := ( TDataView():FacturasRectificativas( nView ) )->( Recno() )
+   local nOrdAnt     := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( 1 ) )
+   local oSerIni
+   local oSerFin
+   local cSerIni     := ( TDataView():FacturasRectificativas( nView ) )->cSerie
+   local cSerFin     := ( TDataView():FacturasRectificativas( nView ) )->cSerie
+   local oDocIni
+   local oDocFin
+   local nDocIni     := ( TDataView():FacturasRectificativas( nView ) )->nNumFac
+   local nDocFin     := ( TDataView():FacturasRectificativas( nView ) )->nNumFac
+   local oSufIni
+   local oSufFin
+   local cSufIni     := ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+   local cSufFin     := ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+   local oMtrInf
+   local nMtrInf
+   local lFechas     := .t.
+   local dDesde      := CtoD( "01/01/" + Str( Year( Date() ) ) )
+   local dHasta      := Date()
+   local oImageList
+   local oBtnCancel
+
+   DEFAULT cTitle    := ""
+   DEFAULT lHide1    := .f.
+   DEFAULT cTitle1   := ""
+   DEFAULT lHide2    := .f.
+   DEFAULT cTitle2   := ""
+
+   oImageList        := TImageList():New( 16, 16 )
+   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
+   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+
+   DEFINE DIALOG oDlg RESOURCE "SelectRango" TITLE cTitle
+
+   REDEFINE RADIO oRad VAR nRad ;
+      ID       80, 81 ;
+      OF       oDlg
+
+   REDEFINE GET oSerIni VAR cSerIni ;
+      ID       100 ;
+      PICTURE  "@!" ;
+      SPINNER ;
+      ON UP    ( UpSerie( oSerIni ) );
+      ON DOWN  ( DwSerie( oSerIni ) );
+      WHEN     ( oRad:nOption == 2 ) ;
+      VALID    ( cSerIni >= "A" .and. cSerIni <= "Z" );
+      UPDATE ;
+      OF       oDlg
+
+   REDEFINE BTNBMP ;
+      ID       101 ;
+      OF       oDlg ;
+      RESOURCE "Up16" ;
+      NOBORDER ;
+      ACTION   ( dbFirst( TDataView():FacturasRectificativas( nView ), "nNumFac", oDocIni, cSerIni, "nNumFac" ) )
+
+   REDEFINE GET oSerFin VAR cSerFin ;
+      ID       110 ;
+      PICTURE  "@!" ;
+      SPINNER ;
+      ON UP    ( UpSerie( oSerFin ) );
+      ON DOWN  ( DwSerie( oSerFin ) );
+      WHEN     ( oRad:nOption == 2 ) ;
+      VALID    ( cSerFin >= "A" .and. cSerFin <= "Z" );
+      UPDATE ;
+      OF       oDlg
+
+   REDEFINE BTNBMP ;
+      ID       111 ;
+      OF       oDlg ;
+      RESOURCE "Down16" ;
+      NOBORDER ;
+      ACTION   ( dbLast( TDataView():FacturasRectificativas( nView ), "nNumFac", oDocFin, cSerFin, "nNumFAc" ) )
+
+   REDEFINE GET oDocIni VAR nDocIni;
+      ID       120 ;
+		PICTURE 	"999999999" ;
+      SPINNER ;
+      WHEN     ( nRad == 2 ) ;
+      OF       oDlg
+
+   REDEFINE GET oDocFin VAR nDocFin;
+      ID       130 ;
+		PICTURE 	"999999999" ;
+      SPINNER ;
+      WHEN     ( nRad == 2 ) ;
+      OF       oDlg
+
+   REDEFINE GET oSufIni VAR cSufIni ;
+      ID       140 ;
+      PICTURE  "##" ;
+      WHEN     ( nRad == 2 ) ;
+      OF       oDlg
+
+   REDEFINE GET oSufFin VAR cSufFin ;
+      ID       150 ;
+      PICTURE  "##" ;
+      WHEN     ( nRad == 2 ) ;
+      OF       oDlg
+
+   REDEFINE CHECKBOX oChk1 VAR lChk1 ;
+      ID       160 ;
+		OF 		oDlg
+
+   REDEFINE CHECKBOX oChk2 VAR lChk2 ;
+      ID       180 ;
+		OF 		oDlg
+
+   /*
+   Rango de fechas-------------------------------------------------------------
+   */
+
+   REDEFINE CHECKBOX lFechas ;
+      ID       300 ;
+		OF 		oDlg
+
+   REDEFINE GET dDesde ;
+      ID       310 ;
+      WHEN     ( !lFechas ) ;
+      SPINNER ;
+      OF       oDlg
+
+	REDEFINE GET dHasta ;
+      ID       320 ;
+      WHEN     ( !lFechas ) ;
+      SPINNER ;
+      OF       oDlg
+
+   /*
+   Resultados del proceso------------------------------------------------------
+   */
+
+   oTree             := TTreeView():Redefine( 170, oDlg )
+   oTree:bLDblClick  := {|| TreeChanged( oTree ) }
+
+   REDEFINE METER oMtrInf ;
+      VAR      nMtrInf ;
+      PROMPT   "Proceso" ;
+      ID       200 ;
+      OF       oDlg
+
+   oMtrInf:SetTotal( ( TDataView():FacturasRectificativas( nView ) )->( OrdKeyCount() ) )
+
+   REDEFINE BUTTON ;
+      ID       IDOK ;
+		OF 		oDlg ;
+      ACTION   ( MakSelRec( bAction, bPreAction, bPostAction, cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, oTree, oBrw, oMtrInf, oBtnCancel ) )
+
+   REDEFINE BUTTON oBtnCancel ;
+      ID       IDCANCEL ;
+		OF 		oDlg ;
+      CANCEL ;
+      ACTION   ( oDlg:end() )
+
+   oDlg:bStart := {|| StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 ) }
+
+   oDlg:AddFastKey( VK_F5, {|| MakSelRec( bAction, bPreAction, bPostAction, cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, oTree, oBrw, oMtrInf, oBtnCancel ) } )
+
+   ACTIVATE DIALOG oDlg ;
+      CENTER ;
+      ON INIT  ( oTree:SetImageList( oImageList ) )
+
+   ( TDataView():FacturasRectificativas( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( TDataView():FacturasRectificativas( nView ) )->( dbGoTo( nRecNo ) )
+
+   oImageList:End()
+
+   oTree:Destroy()
+
+   oBrw:SetFocus()
+   oBrw:Refresh()
+
+RETURN ( aRet )
+
+//---------------------------------------------------------------------------//
+
+Static Function StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 )
+
+   if !Empty( oBrw ) .and. ( len( oBrw:oBrw:aSelected ) > 1 )
+
+      oRad:SetOption( 1 )
+
+   else
+
+      oRad:SetOption( 2 )
+
+      oSerIni:Enable()
+      oSerFin:Enable()
+      oDocIni:Enable()
+      oDocFin:Enable()
+      oSufIni:Enable()
+      oSufFin:Enable()
+
+   end if
+
+   if lHide1
+      oChk1:Hide()
+   else
+      SetWindowText( oChk1:hWnd, cTitle1 )
+      oChk1:Refresh()
+   end if
+
+   if lHide2
+      oChk2:Hide()
+   else
+      SetWindowText( oChk2:hWnd, cTitle2 )
+      oChk2:Refresh()
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function TreeChanged( oTree )
+
+   local oItemTree   := oTree:GetItem()
+
+   if !Empty( oItemTree ) .and. !Empty( oItemTree:bAction )
+      Eval( oItemTree:bAction )
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, oTree, oBrw, oMtrInf, oBtnCancel )
+
+   local n        := 0
+   local nPos     := 0
+   local nRec     := ( TDataView():FacturasRectificativas( nView ) )->( Recno() )
+   local aPos
+   local lRet
+   local lPre
+   local lWhile   := .t.
+
+   /*
+   Preparamos la pantalla para mostrar la simulación---------------------------
+   */
+
+   if lChk1
+      aPos        := { 0, 0 }
+      ClientToScreen( oDlg:hWnd, aPos )
+      oDlg:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
+   end if
+
+   /*
+   Desabilitamos el dialogo para iniciar el proceso----------------------------
+   */
+
+   oDlg:Disable()
+
+   oTree:Enable()
+   oTree:DeleteAll()
+
+   oBtnCancel:bAction   := {|| lWhile := .f. }
+   oBtnCancel:Enable()
+
+   if !Empty( bPreAction )
+      lPre              := Eval( bPreAction )
+   end if
+
+   if !IsLogic( lPre ) .or. lPre
+
+      if nRad == 1
+
+         for each nPos in ( oBrw:oBrw:aSelected )
+
+            ( TDataView():FacturasRectificativas( nView ) )->( dbGoTo( nPos ) )
+
+            if lFechas .or.( ( TDataView():FacturasRectificativas( nView ) )->dFecFac >= dDesde .and. ( TDataView():FacturasRectificativas( nView ) )->dFecFac <= dHasta )
+
+               lRet  := Eval( bAction, lChk1, lChk2, oTree, TDataView():FacturasRectificativas( nView ), dbfFacRecL )
+
+               if IsFalse( lRet )
+                  exit
+               end if
+
+            end if
+
+            oMtrInf:Set( ++n )
+
+            SysRefresh()
+
+            if !lWhile
+               exit
+            end if
+
+         next
+
+      else
+
+         ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( cDocIni, .t. ) )
+
+         while ( lWhile )                                                                                      .and. ;
+               ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac, 9 ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac >= cDocIni .and. ;
+               ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac, 9 ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac <= cDocFin .and. ;
+               !( TDataView():FacturasRectificativas( nView ) )->( eof() )
+
+            if lFechas .or.( ( TDataView():FacturasRectificativas( nView ) )->dFecFac >= dDesde .and. ( TDataView():FacturasRectificativas( nView ) )->dFecFac <= dHasta )
+
+               lRet  := Eval( bAction, lChk1, lChk2, oTree, TDataView():FacturasRectificativas( nView ), dbfFacRecL )
+
+               if IsFalse( lRet )
+                  exit
+               end if
+
+            end if
+
+            oMtrInf:Set( ++n )
+
+            ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
+
+            SysRefresh()
+
+         end do
+
+      end if
+
+      if !Empty( bPostAction )
+         Eval( bPostAction )
+      end if
+
+   end if
+
+   oMtrInf:Set( ( TDataView():FacturasRectificativas( nView ) )->( OrdKeyCount() ) )
+
+   ( TDataView():FacturasRectificativas( nView ) )->( dbGoTo( nRec ) )
+
+   if lChk1
+      WndCenter( oDlg:hWnd )
+   end if
+
+   oBtnCancel:bAction   := {|| oDlg:End() }
+
+   oDlg:Enable()
+
+   if oBrw != nil
+      oBrw:Refresh()
+   end if
+
+RETURN ( lRet )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION DelSerie( oWndBrw )
+
+	local oDlg
+   local oSerIni
+   local oSerFin
+   local oTxtDel
+   local nTxtDel     := 0
+   local nRecno      := ( TDataView():FacturasRectificativas( nView ) )->( Recno() )
+   local nOrdAnt     := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( TDataView():FacturasRectificativas( nView ) )->cSerie, ( TDataView():FacturasRectificativas( nView ) )->nNumFac, ( TDataView():FacturasRectificativas( nView ) )->cSufFac, GetSysDate() )
+   local lCancel     := .f.
+   local oBtnAceptar
+   local oBtnCancel
+
+   DEFINE DIALOG oDlg ;
+      RESOURCE "DELSERDOC" ;
+      TITLE    "Eliminar series de facturas rectificativas" ;
+      OF       oWndBrw
+
+   REDEFINE RADIO oDesde:nRadio ;
+      ID       90, 91 ;
+      OF       oDlg
+
+   REDEFINE GET oSerIni VAR oDesde:cSerieInicio ;
+      ID       100 ;
+      PICTURE  "@!" ;
+      UPDATE ;
+      SPINNER ;
+      ON UP    ( UpSerie( oSerIni ) );
+      ON DOWN  ( DwSerie( oSerIni ) );
+      WHEN     ( oDesde:nRadio == 1 );
+      VALID    ( oDesde:cSerieInicio >= "A" .and. oDesde:cSerieInicio <= "Z"  );
+      OF       oDlg
+
+   REDEFINE GET oSerFin VAR oDesde:cSerieFin ;
+      ID       110 ;
+      PICTURE  "@!" ;
+      UPDATE ;
+      SPINNER ;
+      ON UP    ( UpSerie( oSerFin ) );
+      ON DOWN  ( DwSerie( oSerFin ) );
+      WHEN     ( oDesde:nRadio == 1 );
+      VALID    ( oDesde:cSerieFin >= "A" .and. oDesde:cSerieFin <= "Z"  );
+      OF       oDlg
+
+   REDEFINE GET oDesde:nNumeroInicio ;
+      ID       120 ;
+		PICTURE 	"999999999" ;
+      SPINNER ;
+      WHEN     ( oDesde:nRadio == 1 );
+      OF       oDlg
+
+   REDEFINE GET oDesde:nNumeroFin ;
+      ID       130 ;
+		PICTURE 	"999999999" ;
+      SPINNER ;
+      WHEN     ( oDesde:nRadio == 1 );
+      OF       oDlg
+
+   REDEFINE GET oDesde:cSufijoInicio ;
+      ID       140 ;
+      PICTURE  "##" ;
+      WHEN     ( oDesde:nRadio == 1 );
+      OF       oDlg
+
+   REDEFINE GET oDesde:cSufijoFin ;
+      ID       150 ;
+      PICTURE  "##" ;
+      WHEN     ( oDesde:nRadio == 1 );
+      OF       oDlg
+
+   REDEFINE GET oDesde:dFechaInicio ;
+      ID       170 ;
+      SPINNER ;
+      WHEN     ( oDesde:nRadio == 2 );
+      OF       oDlg
+
+   REDEFINE GET oDesde:dFechaFin ;
+      ID       180 ;
+      SPINNER ;
+      WHEN     ( oDesde:nRadio == 2 );
+      OF       oDlg
+
+   REDEFINE BUTTON oBtnAceptar ;
+      ID       IDOK ;
+		OF 		oDlg ;
+      ACTION   ( DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, @lCancel ) )
+
+   REDEFINE BUTTON oBtnCancel ;
+      ID       IDCANCEL ;
+		OF 		oDlg ;
+      CANCEL ;
+      ACTION   ( lCancel := .t., oDlg:end() )
+
+   REDEFINE METER oTxtDel VAR nTxtDel ;
+      ID       160 ;
+      NOPERCENTAGE ;
+      TOTAL    ( TDataView():FacturasRectificativas( nView ) )->( OrdKeyCount() ) ;
+      OF       oDlg
+
+   ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
+
+   ( TDataView():FacturasRectificativas( nView ) )->( dbGoTo( nRecNo ) )
+   ( TDataView():FacturasRectificativas( nView ) )->( ordSetFocus( nOrdAnt ) )
+
+   oWndBrw:SetFocus()
+   oWndBrw:Refresh()
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCancel )
+
+   local nOrd
+   local nDeleted       := 0
+   local nProcesed      := 0
+
+   oBtnAceptar:Hide()
+   oBtnCancel:bAction   := {|| lCancel := .t. }
+
+   if oDesde:nRadio == 1
+
+      nOrd              := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+      ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      while !lCancel .and. ( TDataView():FacturasRectificativas( nView ) )->( !eof() )
+
+         if ( TDataView():FacturasRectificativas( nView ) )->cSerie  >= oDesde:cSerieInicio  .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->cSerie  <= oDesde:cSerieFin     .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->nNumFac >= oDesde:nNumeroInicio .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->nNumFac <= oDesde:nNumeroFin    .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->cSufFac >= oDesde:cSufijoInicio .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->cSufFac <= oDesde:cSufijoFin
+
+            ++nDeleted
+
+            oTxtDel:cText  := "Eliminando : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+
+            WinDelRec( nil, TDataView():FacturasRectificativas( nView ), {|| QuiFacRec() } )
+
+         else
+
+            ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
+
+         end if
+
+         ++nProcesed
+
+         oTxtDel:Set( nProcesed )
+
+      end do
+
+      ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   else
+
+      nOrd              := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "dFecFac" ) )
+
+      ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      while !lCancel .and. ( TDataView():FacturasRectificativas( nView ) )->( !eof() )
+
+         if ( TDataView():FacturasRectificativas( nView ) )->dFecFac >= oDesde:dFechaInicio  .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->dFecFac <= oDesde:dFechaFin
+
+            ++nDeleted
+
+            oTxtDel:cText  := "Eliminando : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+
+            WinDelRec( nil, TDataView():FacturasRectificativas( nView ), {|| QuiFacRec() } )
+
+         else
+
+            ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
+
+         end if
+
+         ++nProcesed
+
+         oTxtDel:Set( nProcesed )
+
+      end do
+
+      ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   end if
+
+   lCancel              := .t.
+
+   oBtnAceptar:Show()
+
+   if lCancel
+      msgStop( "Total de registros borrados : " + Str( nDeleted ), "Proceso cancelado" )
+   else
+      msgInfo( "Total de registros borrados : " + Str( nDeleted ), "Proceso finalizado" )
+   end if
+
+RETURN ( oDlg:End() )
+
+//---------------------------------------------------------------------------//
+
+static function RecFacRec( aTmpFac )
+
+   local nDtoAge  := 0
+   local nImpAtp  := 0
+   local nImpOfe  := 0
+   local cCodFam
+   local nRecno
+   local hAtipica
+
+   if !ApoloMsgNoYes(  "¡Atención!,"                                      + CRLF + ;
+                  "todos los precios se recalcularán en función de"  + CRLF + ;
+                  "los valores en las bases de datos.",;
+                  "¿Desea proceder?" )
+      return nil
+   end if
+
+   nRecno         := ( dbfTmpLin )->( RecNo() )
+
+   ( dbfTmpLin )->( dbGotop() )
+   ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+
+   while !( dbfTmpLin )->( eof() )
+
+      /*
+      Ahora buscamos por el codigo interno
+      */
+
+      if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) )
+
+         if aTmpFac[_NREGIVA] <= 1
+            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+            ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+         end if
+
+         /*
+         Ahora recogemos el impuesto especial si lo hay
+         */
+
+         if !Empty( ( dbfArticulo )->cCodImp )
+            ( dbfTmpLin )->cCodImp  := ( dbfArticulo )->cCodImp
+            ( dbfTmpLin )->nValImp  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpFac[ _LIVAINC ], ( dbfTmpLin )->nIva )
+         end if
+
+         /*
+         Tomamos los precios de la base de datos de articulos
+         */
+
+         ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+
+         /*
+         Cargamos simpre los puntos verdes
+         */
+
+         ( dbfTmpLin )->nPntVer  := ( dbfArticulo )->nPntVer1
+
+         /*
+         Linea por contadores--------------------------------------------------
+         */
+
+         ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
+         ( dbfTmpLin )->nCosDiv     := nCosto( nil, dbfArticulo, dbfKit )
+         ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
+
+         /*
+         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
+         */
+
+         ( dbfTmpLin )->nComAge     := aTmpFac[ _NPCTCOMAGE ]
+
+         cCodFam                    := ( dbfArticulo )->Familia
+
+         // Chequeamos situaciones especiales----------------------------------
+
+         do case
+         // Precios en tarifas-------------------------------------------------
+
+         case !Empty( aTmpFac[ _CCODTAR ] )
+
+            nImpOfe     := RetPrcTar( ( dbfTmpLin )->cRef, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
+            if nImpOfe != 0
+               ( dbfTmpLin )->nPreUnit := nImpOfe
+            end if
+
+            nImpOfe     := RetPctTar( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL )
+            if nImpOfe != 0
+               ( dbfTmpLin )->nDto     := nImpOfe
+            end if
+
+            nImpOfe     := RetComTar( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            if nImpOfe  != 0
+               ( dbfTmpLin )->nComAge  := nImpOfe
+            end if
+
+            /*
+            Descuento de promoci¢n, esta funci¢n comprueba si existe y si es---
+            asi devuelve el descunto de la promoción---------------------------
+            */
+
+            nImpOfe     := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _DFECFAC ], dbfTarPreL )
+            if nImpOfe  != 0
+               ( dbfTmpLin )->nDtoPrm  := nImpOfe
+            end if
+
+            /*
+            Obtenemos el descuento de Agente
+            */
+
+            nDtoAge     := RetDtoAge( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _DFECFAC ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            if nDtoAge  != 0
+               ( dbfTmpLin )->nComAge  := nDtoAge
+            end if
+
+         end case
+
+         /*
+         Buscamos si existen atipicas de clientes------------------------------
+         */
+
+         hAtipica := hAtipica( hValue( dbfTmpLin, aTmpFac ) )
+
+         if !Empty( hAtipica )
+               
+            if hhaskey( hAtipica, "nImporte" )
+               ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPorcentual" )
+               ( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPromocional" )
+               ( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoLineal" )
+               ( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+            end if
+
+            if hhaskey( hAtipica, "nComisionAgente" )
+               ( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+            end if
+
+         end if
+
+         /*
+         Buscamos si existen ofertas para este articulo y le cambiamos el precio
+         */
+
+         nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         if nImpOfe  != 0
+            ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ] )
+         end if
+
+         /*
+         Buscamos si existen descuentos en las ofertas
+         */
+
+         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         if nImpOfe  != 0
+            ( dbfTmpLin )->nDtoPrm  := nImpOfe
+         end if
+
+      end if
+
+      ( dbfTmpLin )->( dbSkip() )
+
+   end while
+
+   ( dbfTmpLin )->( dbGoTo( nRecno ) )
+
+return nil
+
+//---------------------------------------------------------------------------//
+
+/*CLASS TFacturasRectificativasSenderReciver FROM TSenderReciverItem
+
+   Data lSuccesfullSendFacturas
+   Data lSuccesfullSendAnticipos
+
+   Data nFacturaNumberSend
+   Data nAnticipoNumberSend
+
+   Method CreateData()
+
+   Method RestoreData()
+
+   Method SendData()
+
+   Method ReciveData()
+
+   Method Process()
+
+   Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend     := GetPvProfInt( "Numero", "Facturas clientes", ::nFacturaNumberSend, ::cIniFile ) )
+   Method nGetAnticipoNumberToSend()   INLINE ( ::nAnticipoNumberSend    := GetPvProfInt( "Numero", "Anticipos clientes", ::nAnticipoNumberSend, ::cIniFile ) )
+
+   Method IncFacturaNumberToSend()     INLINE ( WritePProString( "Numero", "Facturas clientes",    cValToChar( ++::nFacturaNumberSend ),  ::cIniFile ) )
+   Method IncAnticipoNumberToSend()    INLINE ( WritePProString( "Numero", "Anticipos clientes",   cValToChar( ++::nAnticipoNumberSend ), ::cIniFile ) )
+
+END CLASS*/
+
+//----------------------------------------------------------------------------//
+
+/*Method CreateData()
+
+   local oBlock
+   local oError
+   local nOrd
+   local TDataView():FacturasRectificativas( nView )
+   local dbfFacRecL
+   local dbfFacRecI
+   local tmpFacRecT
+   local tmpFacRecL
+   local tmpFacRecI
+   local lSndFacRec           := .f.
+   local cFileNameFacturas
+
+   if ::oSender:lServer
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
+   else
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @TDataView():FacturasRectificativas( nView ) ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @dbfFacRecI ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacRecI.CDX" ) ADDITIVE
+
+   /*
+   Creamos todas las bases de datos relacionadas con Articulos
+
+   mkFacRec( cPatSnd() )
+   mkRecCli( cPatSnd() )
+
+   USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
+   SET ADSINDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
+
+   USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
+   SET ADSINDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
+
+   USE ( cPatSnd() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @tmpFacRecI ) )
+   SET ADSINDEX TO ( cPatSnd() + "FacRecI.CDX" ) ADDITIVE
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( TDataView():FacturasRectificativas( nView ) )->( LastRec() )
+   end if
+
+   ::oSender:SetText( "Enviando facturas rectificativas de clientes" )
+
+   nOrd  := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "lSndDoc" ) )
+
+   if ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( .t. ) )
+      while !( TDataView():FacturasRectificativas( nView ) )->( eof() )
+
+         if ( TDataView():FacturasRectificativas( nView ) )->lSndDoc
+
+            lSndFacRec  := .t.
+
+            dbPass( TDataView():FacturasRectificativas( nView ), tmpFacRecT, .t. )
+            ::oSender:SetText( ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + AllTrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) + "; " + Dtoc( ( TDataView():FacturasRectificativas( nView ) )->dFecFac ) + ";" + AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) + "; " + ( TDataView():FacturasRectificativas( nView ) )->cNomCli )
+
+            if ( dbfFacRecL )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) )
+               while ( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) == ( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) .AND. !( dbfFacRecL )->( eof() )
+                  dbPass( dbfFacRecL, tmpFacRecL, .t. )
+                  ( dbfFacRecL )->( dbSkip() )
+               end do
+            end if
+
+            if ( dbfFacRecI )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) )
+               while ( ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac ) == ( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) .AND. !( dbfFacRecI )->( eof() )
+                  dbPass( dbfFacRecI, tmpFacRecI, .t. )
+                  ( dbfFacRecI )->( dbSkip() )
+               end do
+            end if
+
+         end if
+
+         ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
+
+         if !Empty( ::oSender:oMtr )
+            ::oSender:oMtr:Set( ( TDataView():FacturasRectificativas( nView ) )->( OrdKeyNo() ) )
+         end if
+
+      end do
+   end if
+
+   ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( TDataView():FacturasRectificativas( nView ) )
+   CLOSE ( dbfFacRecL )
+   CLOSE ( dbfFacRecI )
+   CLOSE ( tmpFacRecT )
+   CLOSE ( tmpFacRecL )
+   CLOSE ( tmpFacRecI )
+
+   if lSndFacRec
+
+      /*
+      Comprimir los archivos---------------------------------------------------
+
+      ::oSender:SetText( "Comprimiendo facturas rectificativas" )
+
+      if ::oSender:lZipData( cFileNameFacturas )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay facturas rectificativas de clientes para enviar" )
+
+   end if
+
+   /*
+   Anticipos de clientes-------------------------------------------------------
+
+   ::oSender:SetText( "Enviando anticipos de clientes" )
+
+Return ( Self )*/
+
+//----------------------------------------------------------------------------//
+
+/*Method RestoreData()
+
+   local TDataView():FacturasRectificativas( nView )
+
+   if ::lSuccesfullSendFacturas
+
+      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @TDataView():FacturasRectificativas( nView ) ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
+      ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "lSndDoc" ) )
+
+      while ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( .t. ) ) .and. !( TDataView():FacturasRectificativas( nView ) )->( eof() )
+         if ( TDataView():FacturasRectificativas( nView ) )->( dbRLock() )
+            ( TDataView():FacturasRectificativas( nView ) )->lSndDoc := .f.
+            ( TDataView():FacturasRectificativas( nView ) )->( dbRUnlock() )
+         end if
+      end do
+
+
+      CLOSE ( TDataView():FacturasRectificativas( nView ) )
+
+   end if
+
+Return ( Self )*/
+
+//----------------------------------------------------------------------------//
+
+/*Method SendData()
+
+   local cFileNameFacturas
+
+   if ::oSender:lServer
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
+   else
+      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   ::lSuccesfullSendFacturas  := .f.
+   ::lSuccesfullSendAnticipos := .f.
+
+   /*
+   Enviarlos a internet--------------------------------------------------------
+
+   if File( cPatOut() + cFileNameFacturas )
+
+      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, 2000, ::oSender )
+         ::lSuccesfullSendFacturas  := .t.
+         ::oSender:SetText( "Fichero facturas rectificativas enviados " + cFileNameFacturas )
+      else
+         ::oSender:SetText( "ERROR al enviar fichero de facturas rectificativas" )
+      end if
+
+   end if
+
+   /*
+   Enviarlos a internet--------------------------------------------------------
+
+   if ::lSuccesfullSendFacturas
+      ::IncFacturaNumberToSend()
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method ReciveData()
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt  := aRetDlgEmp()
+   else
+      aExt  := { "All" }
+   end if
+
+   /*
+   Recibirlo de internet
+
+
+   ::oSender:SetText( "Recibiendo facturas rectificativas de clientes" )
+
+   for n := 1 to len( aExt )
+      ftpGetFiles( "FacRec*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   next
+
+   ::oSender:SetText( "Facturas rectificativas de clientes recibidos" )
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method Process()
+
+   local m
+   local oStock
+   local TDataView():FacturasRectificativas( nView )
+   local dbfFacRecL
+   local tmpFacRecT
+   local tmpFacRecL
+   local oBlock
+   local oError
+   local lClient     := ::oSender:lServer
+   local aFiles      := Directory( cPatIn() + "FacRec*.*" )
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+      BEGIN SEQUENCE
+
+      /*
+      descomprimimos el fichero
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         /*
+         Ficheros temporales
+
+         if file( cPatSnd() + "FacRecT.Dbf" ) .and.;
+            file( cPatSnd() + "FacRecL.Dbf" )
+
+            USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
+            SET ADSINDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
+
+            USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
+            SET ADSINDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
+
+            USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @TDataView():FacturasRectificativas( nView ) ) )
+            SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
+
+            USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
+            SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
+
+            USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @TDataView():Clientes( nView ) ) )
+            SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+
+            oStock            := TStock():New()
+            oStock:cFacRecT   := TDataView():FacturasRectificativas( nView )
+            oStock:cFacRecL   := dbfFacRecL
+
+            while ( tmpFacRecT )->( !eof() )
+
+               /*
+               Comprobamos que no exista la factura en la base de datos
+
+               if lValidaOperacion( ( tmpFacRecT )->dFecFac, .f. ) .and. ;
+                  !( TDataView():FacturasRectificativas( nView ) )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
+
+                  dbPass( tmpFacRecT, TDataView():FacturasRectificativas( nView ), .t. )
+
+                  if lClient .and. dbLock( TDataView():FacturasRectificativas( nView ) )
+                     ( TDataView():FacturasRectificativas( nView ) )->lSndDoc := .f.
+                     ( TDataView():FacturasRectificativas( nView ) )->( dbUnLock() )
+                  end if
+
+                  ::oSender:SetText( "Añadida factura     : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
+
+                  if ( tmpFacRecL )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
+                     while ( tmpFacRecL )->cSerie + Str( ( tmpFacRecL )->nNumFac ) + ( tmpFacRecL )->cSufFac == ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac .and. !( tmpFacRecL )->( eof() )
+                        dbPass( tmpFacRecL, dbfFacRecL, .t. )
+                        ( tmpFacRecL )->( dbSkip() )
+                     end do
+                  end if
+
+                  /*
+                  oStock:FacRec( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, ( TDataView():FacturasRectificativas( nView ) )->cCodAlm, .f., .f. )
+
+               else
+
+                  ::oSender:SetText( "Desestimada factura : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
+
+               end if
+
+               ( tmpFacRecT )->( dbSkip() )
+
+            end do
+
+            CLOSE ( TDataView():FacturasRectificativas( nView ) )
+            CLOSE ( dbfFacRecL )
+            CLOSE ( tmpFacRecT )
+            CLOSE ( tmpFacRecL )
+
+            oStock:end()
+
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !file( cPatSnd() + "FacRecT.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecT.Dbf" )
+            end if
+
+            if !file( cPatSnd() + "FacRecL.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecL.Dbf" )
+            end if
+
+         end if
+
+      else
+
+         ::oSender:SetText( "Error al descomprimir los ficheros" )
+
+      end if
+
+      RECOVER USING oError
+
+         CLOSE ( TDataView():FacturasRectificativas( nView ) )
+         CLOSE ( dbfFacRecL )
+         CLOSE ( tmpFacRecT )
+         CLOSE ( tmpFacRecL )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return Self*/
+
+//----------------------------------------------------------------------------//
+
+Static Function EdtRecMenu( aTmp, oDlg )
+
+   MENU oMenu
+
+      MENUITEM    "&1. Rotor"
+
+         MENU
+
+            MENUITEM    "&1. Modificar cliente";
+               MESSAGE  "Modifica la ficha del cliente" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
+
+            MENUITEM    "&2. Modificar cliente contactos";
+               MESSAGE  "Modifica la ficha del cliente en contactos" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )              
+
+            MENUITEM    "&3. Informe de cliente";
+               MESSAGE  "Informe de cliente" ;
+               RESOURCE "Info16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
+
+            MENUITEM    "&4. Modificar obra";
+               MESSAGE  "Modifica ficha de la obra" ;
+               RESOURCE "Worker16" ;
+               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oMenu )
+
+RETURN ( oMenu )
+
+//---------------------------------------------------------------------------//
+
+Static Function EndEdtRecMenu()
+
+Return( oMenu:End() )
+
+//---------------------------------------------------------------------------//
+
+Static Function nEstadoIncidencia( cNumFac )
+
+   local nEstado  := 0
+
+   if ( dbfFacRecI )->( dbSeek( cNumFac ) )
+
+      while ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac == cNumFac .and. !( dbfFacRecI )->( Eof() )
+
+         if ( dbfFacRecI )->lListo
+            do case
+               case nEstado == 0 .or. nEstado == 3
+                    nEstado := 3
+               case nEstado == 1
+                    nEstado := 2
+            end case
+         else
+            do case
+               case nEstado == 0
+                    nEstado := 1
+               case nEstado == 3
+                    nEstado := 2
+            end case
+         end if
+
+         ( dbfFacRecI )->( dbSkip() )
+
+      end while
+
+   end if
+
+Return ( nEstado )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
+
+   local aFacCliT
+   local aFacCliL
+   local cFactura    := aGet[ _CNUMFAC ]:varGet()
+   local nOption     := 0
+
+   if nMode != APPD_MODE .OR. Empty( cFactura )
+      return .t.
+   end if
+
+   aFacCliT          := aGetStatus( dbfFacCliT, .t. )
+   aFacCliL          := aGetStatus( dbfFacCliL, .t. )
+
+   if ( dbfFacCliT )->( dbSeek( cFactura ) )
+
+      aGet[_CCODCLI ]:cText( (dbfFacCliT)->cCodCli )
+      aGet[_CCODCLI ]:bWhen    := {|| .F. }
+      aGet[_CCODCLI ]:lValid()
+
+      aGet[_CNOMCLI ]:cText( (dbfFacCliT)->cNomCli )
+      aGet[_CDIRCLI ]:cText( (dbfFacCliT)->cDirCli )
+      aGet[_CPOBCLI ]:cText( (dbfFacCliT)->cPobCli )
+      aGet[_CPRVCLI ]:cText( (dbfFacCliT)->cPrvCli )
+      aGet[_CPOSCLI ]:cText( (dbfFacCliT)->cPosCli )
+      aGet[_CDNICLI ]:cText( (dbfFacCliT)->cDniCli )
+
+      aGet[_CCODALM ]:cText( ( dbfFacCliT )->cCodAlm )
+      aGet[_CCODALM ]:lValid()
+
+      aGet[_CCODCAJ ]:cText( ( dbfFacCliT )->cCodCaj )
+      aGet[_CCODCAJ ]:lValid()
+
+      aGet[_CCODPAGO]:cText( ( dbfFacCliT )->cCodPago )
+      aGet[_CCODPAGO]:lValid()
+
+      aGet[_CCODAGE ]:cText( ( dbfFacCliT )->cCodAge )
+      aGet[_CCODAGE ]:lValid()
+
+      aGet[_CCODTAR ]:cText( ( dbfFacCliT )->cCodTar )
+      aGet[_CCODTAR ]:lValid()
+
+      aGet[_CCODRUT ]:cText( ( dbfFacCliT )->cCodRut )
+      aGet[_CCODRUT ]:lValid()
+
+      aGet[_CCODOBR ]:cText( ( dbfFacCliT )->cCodObr )
+      aGet[_CCODOBR ]:lValid()
+
+      aGet[_CCODTRN ]:cText( ( dbfFacCliT )->cCodTrn )
+      aGet[_CCODTRN ]:lValid()
+
+      aGet[ _LRECARGO ]:Click( ( dbfFacCliT )->lRecargo )
+      aGet[ _LOPERPV  ]:Click( ( dbfFacCliT )->lOperPv )
+
+      aGet[ _LIVAINC ]:Click( ( dbfFacCliT )->lIvaInc )
+
+      aGet[ _CBANCO ]:cText( ( dbfFacCliT )->cBanco )
+      aGet[ _CBANCO ]:lValid()
+
+      aGet[ _CPAISIBAN ]:cText( ( dbfFacCliT )->cPaisIBAN )
+      aGet[ _CPAISIBAN ]:lValid()
+
+      aGet[ _CCTRLIBAN ]:cText( ( dbfFacCliT )->cCtrlIBAN )
+      aGet[ _CCTRLIBAN ]:lValid()
+
+      aGet[ _CENTBNC ]:cText( ( dbfFacCliT )->cEntBnc )
+      aGet[ _CENTBNC ]:lValid()
+
+      aGet[ _CSUCBNC ]:cText( ( dbfFacCliT )->cSucBnc )
+      aGet[ _CSUCBNC ]:lValid()
+
+      aGet[ _CDIGBNC ]:cText( ( dbfFacCliT )->cDigBnc )
+      aGet[ _CDIGBNC ]:lValid()
+
+      aGet[ _CCTABNC ]:cText( ( dbfFacCliT )->cCtaBnc )
+      aGet[ _CCTABNC ]:lValid()
+
+      /*
+      Pasamos los comentarios
+      */
+
+      aGet[ _MCOMENT ]:cText( ( dbfFacCliT )->mComEnt )
+      aTmp[ _MOBSERV ]  := ( dbfFacCliT )->mObsErv
+
+      /*
+      Pasamos todos los Descuentos
+      */
+
+      if Empty( ( dbfFacCliT )->cDtoEsp )
+         aGet[ _CDTOESP ]:cText( "General" )
+      else
+         aGet[ _CDTOESP ]:cText( ( dbfFacCliT )->cDtoEsp )
+      end if
+
+      if Empty( ( dbfFacCliT )->cDpp )
+         aGet[ _CDPP    ]:cText( "Pronto pago" )
+      else
+         aGet[ _CDPP    ]:cText( ( dbfFacCliT )->cDpp )
+      end if
+
+      aGet[ _NDTOESP ]:cText( ( dbfFacCliT )->nDtoEsp )
+      aGet[ _NDPP    ]:cText( ( dbfFacCliT )->nDpp    )
+      aGet[ _CDTOUNO ]:cText( ( dbfFacCliT )->cDtoUno )
+      aGet[ _NDTOUNO ]:cText( ( dbfFacCliT )->nDtoUno )
+      aGet[ _CDTODOS ]:cText( ( dbfFacCliT )->cDtoDos )
+      aGet[ _NDTODOS ]:cText( ( dbfFacCliT )->nDtoDos )
+      aGet[ _CMANOBR ]:cText( ( dbfFacCliT )->cManObr )
+      aGet[ _NIVAMAN ]:cText( ( dbfFacCliT )->nIvaMan )
+      aGet[ _NMANOBR ]:cText( ( dbfFacCliT )->nManObr )
+
+      aTmp[ _CCODGRP ] := ( dbfFacCliT )->cCodGrp
+      aTmp[ _LMODCLI ] := ( dbfFacCliT )->lModCli
+
+      aTmp[ _LOPERPV ] := ( dbfFacCliT )->lOperPv
+
+      /*
+      Comprobamos si el albarán tiene lineas de detalle
+      */
+
+      nOption           := nImportaLineas()
+
+      if nOption >= 1
+
+         CursorWait()
+
+         if ( dbfFacCliL )->( dbSeek( cFactura ) )
+
+            while ( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == cFactura )
+
+               if !( dbfFacCliL )->lTotLin  .and. !( dbfFacCliL )->lControl
+
+                  ( dbfTmpLin )->( dbAppend() )
+                  ( dbfTmpLin )->cSerie     := " "
+                  ( dbfTmpLin )->nNumFac    := 0
+                  ( dbfTmpLin )->nNumLin    := ( dbfFacCliL )->nNumLin
+                  ( dbfTmpLin )->cRef       := ( dbfFacCliL )->cRef
+                  ( dbfTmpLin )->cDetalle   := ( dbfFacCliL )->cDetalle
+                  ( dbfTmpLin )->mLngDes    := ( dbfFacCliL )->mLngDes
+                  ( dbfTmpLin )->mNumSer    := ( dbfFacCliL )->mNumSer
+                  ( dbfTmpLin )->nPreUnit   := ( dbfFacCliL )->nPreUnit
+                  ( dbfTmpLin )->nPntVer    := ( dbfFacCliL )->nPntVer
+                  ( dbfTmpLin )->nImpTrn    := ( dbfFacCliL )->nImpTrn
+                  ( dbfTmpLin )->nCanEnt    := ( dbfFacCliL )->nCanEnt
+                  ( dbfTmpLin )->cUnidad    := ( dbfFacCliL )->cUnidad
+                  ( dbfTmpLin )->nUniCaja   := if( nOption == 2, ( ( dbfFacCliL )->nUniCaja * -1 ), ( dbfFacCliL )->nUniCaja )
+                  ( dbfTmpLin )->nDto       := ( dbfFacCliL )->nDto
+                  ( dbfTmpLin )->nDtoPrm    := ( dbfFacCliL )->nDtoPrm
+                  ( dbfTmpLin )->nIva       := ( dbfFacCliL )->nIva
+                  ( dbfTmpLin )->nReq       := ( dbfFacCliL )->nReq
+                  ( dbfTmpLin )->nPesoKg    := ( dbfFacCliL )->nPesoKg
+                  ( dbfTmpLin )->cPesoKg    := ( dbfFacCliL )->cPesoKg
+                  ( dbfTmpLin )->nComAge    := ( dbfFacCliL )->nComAge
+                  ( dbfTmpLin )->dFecha     := ( dbfFacCliL )->dFecha
+                  ( dbfTmpLin )->cTipMov    := ( dbfFacCliL )->cTipMov
+                  ( dbfTmpLin )->cCodAlb    := ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac
+                  ( dbfTmpLin )->lTotLin    := ( dbfFacCliL )->lTotLin
+                  ( dbfTmpLin )->nDtoDiv    := ( dbfFacCliL )->nDtoDiv
+                  ( dbfTmpLin )->nCtlStk    := ( dbfFacCliL )->nCtlStk
+                  ( dbfTmpLin )->cAlmLin    := ( dbfFacCliL )->cAlmLin
+                  ( dbfTmpLin )->cTipMov    := ( dbfFacCliL )->cTipMov
+                  ( dbfTmpLin )->lIvaLin    := ( dbfFacCliL )->lIvaLin
+                  ( dbfTmpLin )->lImpLin    := ( dbfFacCliL )->lImpLin
+                  ( dbfTmpLin )->nValImp    := ( dbfFacCliL )->nValImp
+                  ( dbfTmpLin )->cCodImp    := ( dbfFacCliL )->cCodImp
+                  ( dbfTmpLin )->cCodPr1    := ( dbfFacCliL )->cCodPr1
+                  ( dbfTmpLin )->cCodPr2    := ( dbfFacCliL )->cCodPr2
+                  ( dbfTmpLin )->cValPr1    := ( dbfFacCliL )->cValPr1
+                  ( dbfTmpLin )->cValPr2    := ( dbfFacCliL )->cValPr2
+                  ( dbfTmpLin )->nCosDiv    := ( dbfFacCliL )->nCosDiv
+                  ( dbfTmpLin )->lKitArt    := ( dbfFacCliL )->lKitArt
+                  ( dbfTmpLin )->lKitChl    := ( dbfFacCliL )->lKitChl
+                  ( dbfTmpLin )->lKitPrc    := ( dbfFacCliL )->lKitPrc
+                  ( dbfTmpLin )->nMesGrt    := ( dbfFacCliL )->nMesGrt
+                  ( dbfTmpLin )->lLote      := ( dbfFacCliL )->lLote
+                  ( dbfTmpLin )->nLote      := ( dbfFacCliL )->nLote
+                  ( dbfTmpLin )->cLote      := ( dbfFacCliL )->cLote
+                  ( dbfTmpLin )->lControl   := ( dbfFacCliL )->lControl
+                  ( dbfTmpLin )->lNotVta    := ( dbfFacCliL )->lNotVta
+                  ( dbfTmpLin )->cCodTip    := ( dbfFacCliL )->cCodTip
+                  ( dbfTmpLin )->mObsLin    := ( dbfFacCliL )->mObsLin
+                  ( dbfTmpLin )->Descrip    := ( dbfFacCliL )->Descrip
+                  ( dbfTmpLin )->cCodPrv    := ( dbfFacCliL )->cCodPrv
+                  ( dbfTmpLin )->cImagen    := ( dbfFacCliL )->cImagen
+                  ( dbfTmpLin )->cCodFam    := ( dbfFacCliL )->cCodFam
+                  ( dbfTmpLin )->cGrpFam    := ( dbfFacCliL )->cGrpFam
+                  ( dbfTmpLin )->nNumMed    := ( dbfFacCliL )->nNumMed
+                  ( dbfTmpLin )->nMedUno    := ( dbfFacCliL )->nMedUno
+                  ( dbfTmpLin )->nMedDos    := ( dbfFacCliL )->nMedDos
+                  ( dbfTmpLin )->nMedTre    := ( dbfFacCliL )->nMedTre
+                  ( dbfTmpLin )->lVolImp    := ( dbfFacCliL )->lVolImp
+                  ( dbfTmpLin )->nVolumen   := ( dbfFacCliL )->nVolumen
+                  ( dbfTmpLin )->lLinOfe    := ( dbfFacCliL )->lLinOfe
+                  ( dbfTmpLin )->dFecCad    := ( dbfFacCliL )->dFecCad
+
+               end if
+
+               ( dbfFacCliL )->( dbSkip() )
+
+            end while
+
+         else
+
+            MsgStop( "La factura no contiene líneas de detalle." )
+
+         end if
+
+         ( dbfTmpLin )->( dbGoTop() )
+
+         /*
+         Pasamos todas las series----------------------------------------------
+         */
+
+         if ( dbfFacCliS )->( dbSeek( cFactura ) )
+
+            while ( dbfFacCliS )->cSerFac + Str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac == cFactura .and. !( dbfFacCliS )->( Eof() )
+
+               ( dbfTmpSer )->( dbAppend() )
+               ( dbfTmpSer )->nNumLin  := ( dbfFacCliS )->nNumLin
+               ( dbfTmpSer )->cRef     := ( dbfFacCliS )->cRef
+               ( dbfTmpSer )->cAlmLin  := ( dbfFacCliS )->cAlmLin
+               ( dbfTmpSer )->cNumSer  := ( dbfFacCliS )->cNumSer
+
+               ( dbfFacCliS )->( dbSkip() )
+
+            end while
+
+         end if
+
+         CursorWE()
+
+      end if
+
+      oBrw:SetFocus()
+      oBrw:Refresh()
+
+      oBrwIva:SetFocus()
+
+   else
+
+      MsgStop( "Factura : " + cFactura + " no encontrada" )
+
+   end if
+
+   SetStatus( dbfFacCliT, aFacCliT )
+   SetStatus( dbfFacCliL, aFacCliL )
+
+RETURN .T.
+
+//---------------------------------------------------------------------------//
+
+Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
+
+   local oDlg
+   local oPuntos
+   local oValorPunto
+   local oDtoPnt
+   local oIncPnt
+   local oImporte
+   local nPuntos     := 0
+   local nValorPunto := 0
+   local nDtoPnt     := 0
+   local nIncPnt     := 0
+
+   /*comprobamos que no esté vacío el artículo*/
+
+   if Empty( cCodArt )
+      MsgInfo( "Debe seleccinar un artículo", "Código vacío" )
+      return .f.
+   end if
+
+   /*Cargamos valores por defecto*/
+
+   nPuntos           := aTmp[ _NPUNTOS ]
+   nValorPunto       := aTmp[ _NVALPNT ]
+   nDtoPnt           := aTmp[ _NDTOPNT ]
+   nIncPnt           := aTmp[ _NINCPNT ]
+
+   DEFINE DIALOG oDlg RESOURCE "DESGPUNTOS" TITLE "Desglose de puntos"
+
+   REDEFINE GET oPuntos VAR nPuntos ;
+      ID       200 ;
+      SPINNER ;
+      ON CHANGE( oImporte:Refresh() ) ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      PICTURE  cPouDiv ;
+      OF       oDlg
+
+   REDEFINE GET oValorPunto VAR nValorPunto ;
+      ID       210 ;
+      SPINNER ;
+      ON CHANGE( oImporte:Refresh() ) ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      PICTURE  cPouDiv ;
+      OF       oDlg
+
+   REDEFINE GET oDtoPnt VAR nDtoPnt ;
+      ID       220 ;
+      SPINNER ;
+      MIN      0 ;
+      MAX      100 ;
+      ON CHANGE( oImporte:Refresh() ) ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      PICTURE  "999.99" ;
+      OF       oDlg
+
+   REDEFINE GET oIncPnt VAR nIncPnt ;
+      ID       230 ;
+      SPINNER ;
+      MIN      0 ;
+      MAX      100 ;
+      ON CHANGE( oImporte:Refresh() ) ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      PICTURE  "999.99" ;
+      OF       oDlg
+
+   REDEFINE SAY oImporte PROMPT nCalculoPuntos( nPuntos, nValorPunto, nDtoPnt, nIncPnt ) ;
+      ID       240 ;
+      PICTURE  cPouDiv ;
+      COLOR    CLR_GET ;
+      OF       oDlg
+
+   REDEFINE BUTTON ;
+      ID       500 ;
+      OF       oDlg ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      ACTION   ( EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) )
+
+   REDEFINE BUTTON ;
+      ID       550 ;
+      OF       oDlg ;
+      ACTION   ( oDlg:end() )
+
+   if nMode != ZOOM_MODE
+      oDlg:AddFastKey( VK_F5, {|| EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) } )
+   end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+      aTmp[ _NPUNTOS ]     := nPuntos
+      aTmp[ _NVALPNT ]     := nValorPunto
+      aTmp[ _NDTOPNT ]     := nDtoPnt
+      aTmp[ _NINCPNT ]     := nIncPnt
+      oCosDiv:cText( oImporte:VarGet() )
+      oCosDiv:Refresh()
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oCtaRem, nMode, oBandera )
+
+	local oDlg
+   local oBmpDiv
+   local oGetCli
+   local oGetAge
+   local oGetCaj
+   local oGetSubCta
+   local cGetSubCta
+   local oGetCtaRem
+   local cGetCtaRem
+   local oGetSubGas
+   local cGetSubGas
+   local lPgdOld
+   local nImpOld
+   local cGetCli     := RetClient( ( dbfTmpPgo )->cCodCli, TDataView():Clientes( nView ) )
+   local cGetAge     := cNbrAgent( ( dbfTmpPgo )->cCodAge, dbfAgent )
+   local cGetCaj     := RetFld( ( dbfTmpPgo )->cCodCaj, dbfCajT, "cNomCaj" )
+   local cPorDiv     := cPorDiv( aTmp[ ( dbfTmpPgo )->( FieldPos( "cDivPgo" ) ) ], dbfDiv )
+
+   if nMode == EDIT_MODE   .and.;
+      aTmp[ ( dbfTmpPgo )->( FieldPos( "LCONPGO" ) ) ]     .and.;
+      !ApoloMsgNoYes( 'La modificación de este recibo puede provocar descuadres contables.' + CRLF + '¿ Desea continuar ?', 'Recibo ya contabilizado' )
+      return .f.
+   end if
+
+   if nMode == EDIT_MODE
+      if aTmp[ ( dbfTmpPgo )->( FieldPos( "lCloPgo" ) ) ] .and. !oUser():lAdministrador()
+         msgStop( "Solo pueden modificar los recibos cerrados los administradores." )
+         return .f.
+      end if
+   end if
+
+   if Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ] )
+      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]   := oUser():cCaja()
+   end if
+
+   lPgdOld              := ( dbfTmpPgo )->lCobrado .or. ( dbfTmpPgo )->lRecDto
+   nImpOld              := ( dbfTmpPgo )->nImporte
+
+   DEFINE DIALOG oDlg RESOURCE "PAGOS" TITLE LblTitle( nMode ) + "recibos de clientes"
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ];
+         ID       100 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON HELP  aGet[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ]:cText( Calendario( aTmp[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ] ) ) ;
+         BITMAP   "LUPA" ;
+         COLOR    CLR_GET ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ];
+         ID       110 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON HELP  aGet[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ]:cText( Calendario( aTmp[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ] ) ) ;
+         BITMAP   "LUPA" ;
+         COLOR    CLR_GET ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ];
+         ID       120 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cClient( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ], TDataView():Clientes( nView ), oGetCli ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwClient( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ], oGetCli ) ) ;
+         OF       oDlg
+
+      REDEFINE GET oGetCli VAR cGetCli ;
+         ID       121 ;
+         WHEN     .f.;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ];
+         ID       130 ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         VALID    ( cAgentes( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ], dbfAgent, oGetAge ) );
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAgentes( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ], oGetAge ) );
+         OF       oDlg
+
+      REDEFINE GET oGetAge VAR cGetAge ;
+         ID       131 ;
+         WHEN     .f.;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDESCRIP" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CDESCRIP" ) ) ] ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CPGDOPOR" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CPGDOPOR" ) ) ];
+         ID       150 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDOCPGO" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CDOCPGO" ) ) ];
+         ID       155 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+			OF 		oDlg
+
+      REDEFINE CHECKBOX aGet[ ( dbfTmpPgo )->( FieldPos( "LRECIMP" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "LRECIMP" ) ) ];
+         ID       160 ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ];
+         WHEN     ( .f. ) ;
+         VALID    ( cDivOut( aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ], oBmpDiv, aGet[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ], nil, nil, @cPorDiv, nil, nil, nil, nil, dbfDiv, oBandera ) );
+         PICTURE  "@!";
+         ID       170 ;
+			COLOR 	CLR_GET ;
+         BITMAP   "LUPA" ;
+         ON HELP  BrwDiv( aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ], oBmpDiv, aGet[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ], dbfDiv, oBandera ) ;
+         OF       oDlg
+
+		REDEFINE BITMAP oBmpDiv ;
+         RESOURCE "BAN_EURO" ;
+         ID       171;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ];
+			WHEN		( .F. ) ;
+         ID       172 ;
+         VALID    ( aTmp[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ] > 0 ) ;
+         PICTURE  "@E 999,999.9999" ;
+         COLOR    CLR_GET ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] ;
+         ID       180 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPCOB" ) ) ]:cText( aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] ), .t. ) ;
+         COLOR    CLR_GET ;
+         PICTURE  ( cPorDiv ) ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPCOB" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPCOB" ) ) ];
+         ID       190 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( ValCobro( aGet, aTmp ) ) ;
+         COLOR    CLR_GET ;
+         PICTURE  ( cPorDiv ) ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPGAS" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPGAS" ) ) ];
+         ID       260 ;
+         WHEN     ( .f. ) ;
+         COLOR    CLR_GET ;
+         PICTURE  ( cPorDiv ) ;
+			OF 		oDlg
+
+      REDEFINE CHECKBOX aGet[ ( dbfTmpPgo )->( FieldPos( "lNotArqueo" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "lNotArqueo" ) ) ];
+         ID       200 ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE CHECKBOX aGet[ ( dbfTmpPgo )->( FieldPos( "LCOBRADO" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "LCOBRADO" ) ) ];
+         ID       220 ;
+         ON CHANGE( ValCheck( aGet, aTmp ) ) ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ];
+         ID       230 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON HELP  aGet[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ]:cText( Calendario( aTmp[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ] ) ) ;
+         BITMAP   "LUPA" ;
+         COLOR    CLR_GET ;
+			OF 		oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ] ;
+         ID       240 ;
+			COLOR 	CLR_GET ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], oGetSubCta ) ) ;
+         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], nil, oGetSubCta ) );
+         OF       oDlg
+
+		REDEFINE GET oGetSubCta VAR cGetSubCta ;
+         ID       241 ;
+			COLOR 	CLR_GET ;
+			WHEN 		.F. ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ] ;
+         ID       270 ;
+			COLOR 	CLR_GET ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], oGetSubGas ) ) ;
+         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], nil, oGetSubGas ) );
+         OF       oDlg
+
+      REDEFINE GET oGetSubGas VAR cGetSubGas ;
+         ID       271 ;
+			COLOR 	CLR_GET ;
+			WHEN 		.F. ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ] ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         VALID    ( oGetCtaRem:cText( retFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ], oCtaRem:GetAlias() ) ), .t. );
+         ON HELP  ( oCtaRem:Buscar( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ] ) ) ;
+         OF       oDlg
+
+      REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
+         ID       251 ;
+			COLOR 	CLR_GET ;
+			WHEN 		.F. ;
+         OF       oDlg
+
+      /*
+		Cajas____________________________________________________________________
+		*/
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ];
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ];
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         VALID    cCajas( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ], dbfCajT, oGetCaj ) ;
+         ID       280 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwCajas( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ], oGetCaj ) ) ;
+         OF       oDlg
+
+      REDEFINE GET oGetCaj VAR cGetCaj ;
+         ID       281 ;
+         WHEN     .f. ;
+         OF       oDlg
+
+      /*
+      Banco____________________________________________________________________
+		*/
+
+      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ];
+         ID       310 ;
+         IDTEXT   311 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oBanco:Existe( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ]:oHelpText, "cNomBnc", .t., .t., "0" ) );
+         ON HELP  ( oBanco:Buscar( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ] ) ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      /*
+      Botones__________________________________________________________________
+		*/
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMode ) )
+
+		REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+			OF 		oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:End() )
+
+   if nMode != ZOOM_MODE
+      oDlg:AddFastKey( VK_F5, {|| EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMode ) } )
+   end if
+
+   ACTIVATE DIALOG oDlg CENTER ;
+         ON INIT  (  aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ]:lValid(),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ]:lValid(),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ]:lValid(),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ]:lValid(),;
+                     aGet[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ]:SetFocus() )
+
+   oBmpDiv:End()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMode )
+
+   local nImp
+   local nCon
+   local nRec        := ( dbfTmpPgo )->( Recno() )
+   local lImpNeg     := ( dbfTmpPgo )->nImporte < 0
+   local nImpTmp     := abs( aTmp[ ( dbfTmpPgo )->( FieldPos( "nImporte" ) ) ] )
+   local nImpFld     := abs( ( dbfTmpPgo )->nImporte )
+
+   if !aGet[ ( dbfTmpPgo )->( FieldPos( "nImpCob" ) ) ]:lValid()
+      return .f.
+   end if
+
+   /*
+   El importe no puede ser mayor q el importe anterior-------------------------
+   */
+
+   if nImpTmp > nImpFld
+      msgStop( "El importe no puede ser superior al actual." )
+      return nil
+   end if
+
+   oDlg:Disable()
+
+   /*
+   Comprobamos q los importes sean distintos-----------------------------------
+   */
+
+   if nImpFld != nImpTmp
+
+      /*
+      El importe ha cambiado por tanto debemos de hacer un nuevo recibo por la diferencia
+      */
+
+      nImp                       := ( nImpFld - nImpTmp ) * if( lImpNeg, - 1 , 1 )
+
+      /*
+      Añadimos el nuevo recibo
+      */
+
+      ( dbfTmpPgo )->( dbAppend() )
+      nCon                       := ( dbfTmpPgo )->( Recno() )
+      ( dbfTmpPgo )->cSerie      := aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE"  ) ) ]
+      ( dbfTmpPgo )->nNumFac     := aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ]
+      ( dbfTmpPgo )->cSufFac     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
+      ( dbfTmpPgo )->nNumRec     := nCon
+      ( dbfTmpPgo )->cTipRec     := "R"
+      ( dbfTmpPgo )->cCodCaj     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]
+      ( dbfTmpPgo )->cCodCli     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ]
+      ( dbfTmpPgo )->dEntrada    := Ctod( "" )
+      ( dbfTmpPgo )->nImporte    := nImp
+      ( dbfTmpPgo )->nImpGas     := 0
+      ( dbfTmpPgo )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
+      ( dbfTmpPgo )->dPreCob     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], TDataView():FacturasRectificativas( nView ) )
+      ( dbfTmpPgo )->dFecVto     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], TDataView():FacturasRectificativas( nView ) )
+      ( dbfTmpPgo )->cPgdoPor    := ""
+      ( dbfTmpPgo )->lCobrado    := .f.
+      ( dbfTmpPgo )->cTurRec     := cCurSesion()
+      ( dbfTmpPgo )->cDivPgo     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ]
+      ( dbfTmpPgo )->nVdvPgo     := aTmp[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ]
+      ( dbfTmpPgo )->lConPgo     := .f.
+      ( dbfTmpPgo )->( dbUnLock() )
+
+   end if
+
+   ( dbfTmpPgo )->( dbGoTo( nRec ) )
+
+   /*
+   Grabamos el recibo
+   */
+
+   WinGather( aTmp, aGet, dbfTmpPgo, oBrw, nMode )
+
+   /*
+   Escribe los datos pendientes------------------------------------------------
+   */
+
+   dbCommitAll()
+
+   oDlg:Enable()
+
+   oDlg:End( IDOK )
+
+return .t.
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCancel, cFecDoc )
+
+   local nOrd
+   local nDuplicados    := 0
+   local nProcesed      := 0
+
+   oBtnAceptar:Hide()
+   oBtnCancel:bAction   := {|| lCancel := .t. }
+
+   if oDesde:nRadio == 1
+
+      nOrd              := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+      ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+
+      while !lCancel .and. ( TDataView():FacturasRectificativas( nView ) )->( !eof() )
+
+         if ( TDataView():FacturasRectificativas( nView ) )->cSerie  >= oDesde:cSerieInicio  .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->cSerie  <= oDesde:cSerieFin     .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->nNumFac >= oDesde:nNumeroInicio .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->nNumFac <= oDesde:nNumeroFin    .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->cSufFac >= oDesde:cSufijoInicio .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->cSufFac <= oDesde:cSufijoFin
+
+            ++nDuplicados
+
+            oTxtDup:cText  := "Duplicando : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+
+            DupFactura( cFecDoc )
+
+         end if
+
+         ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
+
+         ++nProcesed
+
+         oTxtDup:Set( nProcesed )
+
+      end do
+
+      ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   else
+
+      nOrd              := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( "dFecFac" ) )
+
+      ( TDataView():FacturasRectificativas( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+
+      while !lCancel .and. ( TDataView():FacturasRectificativas( nView ) )->( !eof() )
+
+         if ( TDataView():FacturasRectificativas( nView ) )->dFecFac >= oDesde:dFechaInicio  .and.;
+            ( TDataView():FacturasRectificativas( nView ) )->dFecFac <= oDesde:dFechaFin
+
+            ++nDuplicados
+
+            oTxtDup:cText  := "Duplicando : " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+
+            DupFactura( cFecDoc )
+
+         end if
+
+         ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() )
+
+         ++nProcesed
+
+         oTxtDup:Set( nProcesed )
+
+      end do
+
+      ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   end if
+
+   lCancel              := .t.
+
+   oBtnAceptar:Show()
+
+   if lCancel
+      msgStop( "Total de registros duplicados : " + Str( nDuplicados ), "Proceso cancelado" )
+   else
+      msgInfo( "Total de registros duplicados : " + Str( nDuplicados ), "Proceso finalizado" )
+   end if
+
+RETURN ( oDlg:End() )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag )
+
+   local nRec                 := ( cDbf )->( Recno() )
+   local aTabla               := {}
+   local nOrdAnt
+
+   DEFAULT lCab               := .f.
+   DEFAULT lPag               := .f.
+
+   aTabla                     := DBScatter( cDbf )
+   aTabla[ _CSERIE  ]         := xField1
+   aTabla[ _NNUMFAC ]         := xField2
+   aTabla[ _CSUFFAC ]         := xField3
+
+   if lCab
+
+      aTabla[ _CTURFAC     ]  := cCurSesion()
+      if !Empty( cFecDoc )
+         aTabla[ _DFECFAC  ]  := cFecDoc
+      end if
+      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _LCONTAB     ]  := .f.
+      aTabla[ _DFECENT     ]  := Ctod("")
+      aTabla[ _LIMPALB     ]  := .f.
+      aTabla[ _CNUMFAC     ]  := Space( 12 )
+      aTabla[ _LSNDDOC     ]  := .t.
+      aTabla[ _LCLOFAC     ]  := .f.
+      aTabla[ _CABNFAC     ]  := Space( 12 )
+      aTabla[ _CANTFAC     ]  := Space( 12 )
+      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _DFECCRE     ]  := GetSysDate()
+      aTabla[ _CTIMCRE     ]  := Time()
+      aTabla[ _LIMPRIMIDO  ]  := .f.
+      aTabla[ _DFECIMP     ]  := Ctod("")
+      aTabla[ _CHORIMP     ]  := Space( 5 )
+      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+
+      nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMFAC" ) )
+
+   end if
+
+   if lPag
+
+      aTabla[ ( dbfFacCliP )->( FieldPos( "lConPgo" ) ) ]      := .f.
+      aTabla[ ( dbfFacCliP )->( FieldPos( "lRecImp" ) ) ]      := .f.
+      aTabla[ ( dbfFacCliP )->( FieldPos( "lRecDto" ) ) ]      := .f.
+      aTabla[ ( dbfFacCliP )->( FieldPos( "lCloPgo" ) ) ]      := .f.
+      aTabla[ ( dbfFacCliP )->( FieldPos( "dPreCob" ) ) ]      := cFecDoc
+      aTabla[ ( dbfFacCliP )->( FieldPos( "dFecDto" ) ) ]      := Ctod("")
+      aTabla[ ( dbfFacCliP )->( FieldPos( "dFecImp" ) ) ]      := Ctod("")
+      aTabla[ ( dbfFacCliP )->( FieldPos( "cHorImp" ) ) ]      := Space( 5 )
+      aTabla[ ( dbfFacCliP )->( FieldPos( "dFecVto" ) ) ]      := cFecDoc
+      aTabla[ ( dbfFacCliP )->( FieldPos( "cTurRec" ) ) ]      := cCurSesion()
+      aTabla[ ( dbfFacCliP )->( FieldPos( "cCodCaj" ) ) ]      := oUser():cCaja()
+
+      if aTabla[ ( dbfFacCliP )->( FieldPos( "lCobrado" ) ) ]
+         aTabla[ ( dbfFacCliP )->( FieldPos( "dEntrada" ) ) ]  := cFecDoc
+      else
+         aTabla[ ( dbfFacCliP )->( FieldPos( "dEntrada" ) ) ]  := Ctod("")
+      end if
+
+   end if
+
+   if dbDialogLock( cDbf, .t. )
+      aEval( aTabla, { | uTmp, n | ( cDbf )->( fieldPut( n, uTmp ) ) } )
+      ( cDbf )->( dbUnLock() )
+   end if
+
+   if lCab
+      ( cDbf )->( OrdSetFocus( nOrdAnt ) )
+   end if
+
+   ( cDbf )->( dbGoTo( nRec ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION DupFactura( cFecDoc )
+
+   local nNewNumFac  := 0
+
+   //Recogemos el nuevo numero de factura--------------------------------------
+
+   nNewNumFac  := nNewDoc( ( TDataView():FacturasRectificativas( nView ) )->cSerie, TDataView():FacturasRectificativas( nView ), "NFACREC", , dbfCount )
+
+   //Duplicamos las cabeceras--------------------------------------------------
+
+   FacRecDup( TDataView():FacturasRectificativas( nView ), ( TDataView():FacturasRectificativas( nView ) )->cSerie, nNewNumFac, ( TDataView():FacturasRectificativas( nView ) )->cSufFac, .t., cFecDoc )
+
+   //Duplicamos las lineas del documento---------------------------------------
+
+   if ( dbfFacRecL )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) )
+
+      while ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac == ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac .and. ;
+            !( dbfFacRecL )->( Eof() )
+
+            FacRecDup( dbfFacRecL, ( TDataView():FacturasRectificativas( nView ) )->cSerie, nNewNumFac, ( TDataView():FacturasRectificativas( nView ) )->cSufFac, .f. )
+
+         ( dbfFacRecL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   //Duplicamos los pagos------------------------------------------------------
+
+   if ( dbfFacCliP )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) )
+
+      while ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac == ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac .and. ;
+            !Empty( ( dbfFacCliP )->cTipRec ) .and.;
+            !( dbfFacCliP )->( Eof() )
+
+            FacRecDup( dbfFacCliP, ( TDataView():FacturasRectificativas( nView ) )->cSerie, nNewNumFac, ( dbfFacCliT )->cSufFac, .f., cFecDoc, .t. )
+
+         ( dbfFacCliP )->( dbSkip() )
+
+      end while
+
+   end if
+
+   //Duplicamos los documentos-------------------------------------------------
+
+   if ( dbfFacRecD )->( dbSeek( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac ) )
+
+      while ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac == ( dbfFacRecD )->cSerie + Str( ( dbfFacRecD )->nNumFac ) + ( dbfFacRecD )->cSufFac .and. ;
+            !( dbfFacRecD )->( Eof() )
+
+            FacRecDup( dbfFacRecD, ( TDataView():FacturasRectificativas( nView ) )->cSerie, nNewNumFac, ( TDataView():FacturasRectificativas( nView ) )->cSufFac, .f. )
+
+         ( dbfFacRecD )->( dbSkip() )
+
+      end while
+
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION ValidaMedicion( aTmp, aGet )
+
+   local cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
+
+   /*
+   Cargamos el codigo de las unidades---------------------------------
+   */
+
+   if ( Empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
+
+      if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
+
+         if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            else
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
+            end if
+         else
+            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            else
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := 0
+            end if
+         end if
+
+         if oUndMedicion:oDbf:nDimension >= 2 .and.!Empty( oUndMedicion:oDbf:cTextoDim2 )
+            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            else
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
+            end if
+
+         else
+            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            else
+                 aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := 0
+            end if
+         end if
+
+         if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+
+            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            else
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
+            end if
+
+         else
+
+            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            else
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := 0
+            end if
+
+         end if
+
+      else
+
+         if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         end if
+
+         if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         end if
+
+         if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         end if
+
+      end if
+
+      cOldUndMed := cNewUndMed
+
+   end if
+
+RETURN .t.
+
+//-----------------------------------------------------------------------------------------
+
+Static Function ChangeTarifa( aTmp, aGet, aTmpFac )
+
+   local nPrePro
+
+   nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, aTmpFac[ _CCODTAR ] )
+
+   if nPrePro == 0
+      nPrePro     := nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+   end if
+
+   if nPrePro != 0
+      aGet[ _NPREUNIT ]:cText( nPrePro )
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
+
+Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
+
+   local uValor   := oGetCod:VarGet()
+
+   if Empty( uValor )
+
+      oSayTrn:cText( "" )
+      oGetKgs:cText( 0 )
+
+   else
+
+      if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
+         oGetCod:cText( uValor )
+         oSayTrn:cText( oTrans:oDbf:cNomTrn )
+         oGetKgs:cText( oTrans:oDbf:nKgsTrn )
+      else
+         msgStop( "Código de transportista no encontrado." )
+         Return .f.
+      end if
+
+   end if
+
+   RecalculaTotal( aTmp )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+#include "FastRepH.ch"
+
+Static Function DataReport( oFr )
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   oFr:ClearDataSets()
+
+   oFr:SetWorkArea(     "Facturas rectificativas", ( TDataView():FacturasRectificativas( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "Facturas rectificativas", cItemsToReport( aItmFacRec() ) )
+
+   oFr:SetWorkArea(     "Lineas de facturas rectificativas", ( dbfFacRecL )->( Select() ) )
+   oFr:SetFieldAliases( "Lineas de facturas rectificativas", cItemsToReport( aColFacRec() ) )
+
+   oFr:SetWorkArea(     "Series de lineas de facturas rectificativas", ( dbfFacRecS )->( Select() ) )
+   oFr:SetFieldAliases( "Series de lineas de facturas rectificativas", cItemsToReport( aSerFacRec() ) )
+
+   oFr:SetWorkArea(     "Incidencias de facturas rectificativas", ( dbfFacRecI )->( Select() ) )
+   oFr:SetFieldAliases( "Incidencias de facturas rectificativas", cItemsToReport( aIncFacRec() ) )
+
+   oFr:SetWorkArea(     "Documentos de facturas rectificativas", ( dbfFacRecD )->( Select() ) )
+   oFr:SetFieldAliases( "Documentos de facturas rectificativas", cItemsToReport( aFacRecDoc() ) )
+
+   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes", ( TDataView():Clientes( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
+   oFr:SetFieldAliases( "Obras",  cItemsToReport( aItmObr() ) )
+
+   oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
+   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
+   oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
+
+   oFr:SetWorkArea(     "Agentes", ( dbfAgent )->( Select() ) )
+   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
+   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
+   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
+
+   oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+
+   oFr:SetWorkArea(     "Tipo de artículo",  oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipo de artículo",  cObjectsToReport( oTipArt:oDbf ) )
+
+   oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
+   oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
+
+   oFr:SetWorkArea(     "Bancos", ( dbfCliBnc )->( Select() ) )
+   oFr:SetFieldAliases( "Bancos", cItemsToReport( aCliBnc() ) )
+
+   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+
+   oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Series de lineas de facturas rectificativas",  {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas",       {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Documentos de facturas rectificativas",        {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Empresa",                                      {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Clientes",                                     {|| ( TDataView():FacturasRectificativas( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Obras",                                        {|| ( TDataView():FacturasRectificativas( nView ) )->cCodCli + ( TDataView():FacturasRectificativas( nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Almacen",                                      {|| ( TDataView():FacturasRectificativas( nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Rutas",                                        {|| ( TDataView():FacturasRectificativas( nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Agentes",                                      {|| ( TDataView():FacturasRectificativas( nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Formas de pago",                               {|| ( TDataView():FacturasRectificativas( nView ) )->cCodPago } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( TDataView():FacturasRectificativas( nView ) )->cCodTrn } )
+   oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( TDataView():FacturasRectificativas( nView ) )->cCodCli } )
+
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {|| ( dbfFacRecL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( dbfFacRecL )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( dbfFacRecL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( dbfFacRecL )->cUnidad } )
+
+   oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Series de lineas de facturas rectificativas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Incidencias de facturas rectificativas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Documentos de facturas rectificativas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Empresa" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Clientes" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Obras" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Almacenes" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Rutas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Agentes" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Formas de pago" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Transportistas" )
+   oFr:SetResyncPair(   "Facturas rectificativas", "Bancos" )
+
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Tipo de artículo" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Ofertas" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de medición" )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function VariableReport( oFr )
+
+   oFr:DeleteCategory(  "Facturas rectificativas" )
+   oFr:DeleteCategory(  "Lineas de facturas rectificativas" )
+
+   /*
+   Creación de variables----------------------------------------------------
+   */
+
+   oFr:AddVariable(     "Facturas rectificativas",             "Total factura",                       "GetHbVar('nTotFac')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total descuento",                     "GetHbVar('nTotDto')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total bruto",                         "GetHbVar('nTotBrt')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total descuentos",                    "GetHbVar('nTotalDto')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total neto",                          "GetHbVar('nTotNet')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total RE",                            "GetHbVar('nTotReq')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total página",                        "GetHbVar('nTotPag')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total retención",                     "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total peso",                          "GetHbVar('nTotPes')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total costo",                         "GetHbVar('nTotCos')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total cobrado",                       "GetHbVar('nTotCob')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total artículos",                     "GetHbVar('nTotArt')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total cajas",                         "GetHbVar('nTotCaj')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
+
+   oFr:AddVariable(     "Facturas rectificativas",             "Bruto primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Bruto segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Bruto tercer tipo de " + cImp(),            "GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Base primer tipo de " + cImp(),             "GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Base segundo tipo de " + cImp(),            "GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Base tercer tipo de " + cImp(),             "GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje primer tipo " + cImp(),          "GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje segundo tipo " + cImp(),         "GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje tercer tipo " + cImp(),          "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe primer tipo " + cImp(),             "GetHbArrayVar('aIvaUno',8)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe segundo tipo " + cImp(),            "GetHbArrayVar('aIvaDos',8)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe tercer tipo " + cImp(),             "GetHbArrayVar('aIvaTre',8)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',9)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',9)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',9)" )
+
+   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
+
+   oFr:AddVariable(     "Facturas rectificativas",             "Total unidades primer tipo de impuestos especiales",            "GetHbArrayVar('aIvmUno',1 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total unidades segundo tipo de impuestos especiales",           "GetHbArrayVar('aIvmDos',1 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
+
+   oFr:AddVariable(     "Facturas rectificativas",             "Cuenta bancaria cliente",             "CallHbFunc('cCtaFacRec')" )
+
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo",                "CallHbFunc('cDesFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total unidades artículo",             "CallHbFunc('nTotNFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario del artículo",        "CallHbFunc('nTotUFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario con descuentos",      "CallHbFunc('nTotPFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Punto verde del artículo",            "CallHbFunc('nPntUFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total línea de factura",              "CallHbFunc('nTotLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total peso por línea",                "CallHbFunc('nPesLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total final línea del factura",       "CallHbFunc('nTotFFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Importe descuento línea del factura", "CallHbFunc('nDtoLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total descuento línea del factura",   "CallHbFunc('nTotDtoLFacRec')" )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function YearComboBoxChange()
+
+	 if oWndBrw:oWndBar:lAllYearComboBox()
+		DestroyFastFilter( TDataView():FacturasRectificativas( nView ) )
+      CreateUserFilter( "", TDataView():FacturasRectificativas( nView ), .f., , , "all" )
+	 else
+		DestroyFastFilter( TDataView():FacturasRectificativas( nView ) )
+      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), TDataView():FacturasRectificativas( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
+	 end if
+
+	 ( TDataView():FacturasRectificativas( nView ) )->( dbGoTop() )
+
+	 oWndBrw:Refresh()
+
+  Return nil
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION lLiquida( oBrw, cFactura )
+
+   DEFAULT cFactura  := ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
+
+   if ( TDataView():FacturasRectificativas( nView ) )->lLiquidada
+      msgStop( "Factura ya cobrada", "Imposible añadir cobros" )
+      return .f.
+   end if
+
+   /*
+   Comprobamos si existen recibos de esta factura------------------------------
+   */
+
+   ( dbfFacCliP )->( dbGoTop() )
+
+   if ( dbfFacCliP )->( dbSeek( cFactura ) )
+
+      while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFactura .and. !( dbfFacCliP )->( eof() )
+
+         if !Empty( ( dbfFacCliP )->cTipRec ) .and. !( dbfFacCliP )->lCobrado
+
+            EdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec, .f. )
+
+            exit
+
+         end if
+
+         ( dbfFacCliP )->( dbSkip() )
+
+      end do
+
+   end if
+
+   /*
+   Chekea el estado de la factura---------------------------------------------
+   */
+
+   ChkLqdFacRec( nil, TDataView():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
+
+   oBrw:Refresh()
+   oBrw:SetFocus()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+
+   local sOfeArt
+   local nTotalLinea    := 0
+
+
+   if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
+
+      /*
+      Buscamos si existen ofertas por artículo----------------------------
+      */
+
+      nTotalLinea       := lCalcDeta( aTmp, aTmpFac, .t. )
+
+      sOfeArt           := sOfertaArticulo( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVFAC ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANENT ], nTotalLinea )
+
+      if !Empty( sOfeArt ) 
+         if ( sOfeArt:nPrecio != 0 )
+            aGet[ _NPREUNIT ]:cText( sOfeArt:nPrecio )
+         end if 
+         if ( sOfeArt:nDtoPorcentual != 0 )
+            aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
+         end if 
+         if ( sOfeArt:nDtoLineal != 0)
+            aGet[ _NDTODIV  ]:cText( sOfeArt:nDtoLineal )
+         end if 
+         aTmp[ _LLINOFE  ] := .t.
+      end if
+
+      if !aTmp[ _LLINOFE ]
+
+         /*
+         Buscamos si existen ofertas por familia----------------------------
+         */
+
+         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
+            aTmp[ _LLINOFE ]  := .t.
+         end if
+
+      end if
+
+      if !aTmp[ _LLINOFE ]
+
+         /*
+         Buscamos si existen ofertas por tipos de articulos--------------
+         */
+
+         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
+            aTmp[ _LLINOFE ]  := .t.
+         end if
+
+      end if
+
+      if !aTmp[ _LLINOFE ]
+
+         /*
+         Buscamos si existen ofertas por tipos de articulos--------------
+         */
+
+         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
+            aTmp[ _LLINOFE ]  := .t.
+         end if
+
+      end if
+
+      if !aTmp[ _LLINOFE ]
+
+         /*
+         Buscamos si existen ofertas por temporadas----------------------
+         */
+
+         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
+            aTmp[ _LLINOFE ]  := .t.
+         end if
+
+      end if
+
+      if !aTmp[ _LLINOFE ]
+
+         /*
+         Buscamos si existen ofertas por fabricantes---------------------------
+         */
+
+         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
+            aTmp[ _LLINOFE ]  := .t.
+         end if
+
+      end if
+
+   end if
+
+return .t.
+
+//--------------------------------------------------------------------------//
+
+Static Function lValidLote( aTmp, aGet, oStkAct )
+
+   if !uFieldEmpresa( "lNStkAct" )
+      oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
+   end if
+
+   if !Empty( aGet[ _DFECCAD ] )
+      aGet[ _DFECCAD ]:cText( dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL ) )
+   end if
+
+Return ( .t. )
+
+//--------------------------------------------------------------------------//
+
+Static Function EditarNumeroSerie( aTmp, oStock, nMode )
+
+   with object ( TNumerosSerie() )
+
+      :nMode            := nMode
+
+      :cCodArt          := aTmp[ _CREF    ]
+      :cCodAlm          := aTmp[ _CALMLIN ]
+      :nNumLin          := aTmp[ _NNUMLIN ]
+
+      :nTotalUnidades   := nTotNFacRec( aTmp )
+
+      :oStock           := oStock
+
+      :uTmpSer          := dbfTmpSer
+
+      :Resource()
+
+   end with
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function OldEditarNumeroSerie( aTmp, oStock, nMode )
+
+   local n
+   local oDlg
+   local nTotUnd
+   local cCodArt
+   local cCodAlm
+   local oBrwSer
+   local aNumSer
+   local aValSer
+   local cPreFix  := Space( 18 )
+   local oSerIni
+   local nSerIni  := 0
+   local oSerFin
+   local nSerFin  := 0
+   local oNumGen
+   local nNumGen  := 0
+   local oSaySer
+   local cSaySer  := ""
+   local oProSer
+   local nProSer
+
+   DEFAULT nMode  := APPD_MODE
+
+   nTotUnd        := Abs( nTotNFacRec( aTmp ) )
+
+   if nTotUnd == 0
+      MsgStop( "No hay unidades para asignar números de serie." )
+      Return ( nil )
+   end if
+
+   n              := 1
+
+   cCodArt        := aTmp[ _CREF    ]
+   cCodAlm        := aTmp[ _CALMLIN ]
+
+   aNumSer        := Afill( Array( nTotUnd ), Space( 30 ) )
+   aValSer        := Afill( Array( nTotUnd ), .f. )
+
+   if ( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
+      while ( Str( ( dbfTmpSer )->nNumLin, 4 ) + ( dbfTmpSer )->cRef == Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) .and. !( dbfTmpSer )->( Eof() )
+         if ( n <= nTotUnd )
+            aNumSer[ n ]   := ( dbfTmpSer )->cNumSer
+         end if
+         ( dbfTmpSer )->( dbSkip() )
+         n++
+      end while
+   end if
+
+   DEFINE DIALOG oDlg RESOURCE "VTANUMSER"
+
+      REDEFINE GET nTotUnd ;
+			ID 		100 ;
+         PICTURE  MasUnd() ;
+         WHEN     .f. ;
+         OF       oDlg
+
+      REDEFINE GET cPreFix ;
+         ID       110 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET oSerIni VAR nSerIni ;
+         ID       120 ;
+         PICTURE  "99999999999999999999" ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oSerFin:cText( nSerIni + nTotUnd ), .t. ) ;
+         OF       oDlg
+
+      REDEFINE GET oSerFin VAR nSerFin ;
+         ID       130 ;
+         PICTURE  "99999999999999999999" ;
+         WHEN     .f. ;
+         OF       oDlg
+
+      REDEFINE GET oNumGen VAR nNumGen ;
+         ID       140 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "99999999999999999999" ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( oDlg:Disable(), GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer, oProSer ), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() )
+
+      oBrwSer                 := TXBrowse():New( oDlg )
+
+      oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwSer:lHScroll        := .f.
+      oBrwSer:lRecordSelector := .t.
+      oBrwSer:lFastEdit       := .t.
+
+      oBrwSer:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
+
+      oBrwSer:SetArray( aNumSer, , , .f. )
+
+      oBrwSer:nColSel         := 2
+
+      with object ( oBrwSer:addCol() )
+         :cHeader             := "N."
+         :bStrData            := {|| Trans( oBrwSer:nArrayAt, "999999" ) }
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with
+
+      with object ( oBrwSer:addCol() )
+         :cHeader             := "Serie"
+         :bEditValue          := {|| aNumSer[ oBrwSer:nArrayAt ] }
+         :nWidth              := 220
+         if nMode != ZOOM_MODE
+            :nEditType        := 1
+         end if
+         :bOnPostEdit         := {|o,x| aNumSer[ oBrwSer:nArrayAt ] := x, aValSer[ oBrwSer:nArrayAt ] := oStock:lValidNumeroSerie( cCodArt, cCodAlm, x ) }
+      end whit
+
+      with object ( oBrwSer:addCol() )
+         :cHeader             := "Es."
+         :nHeadBmpNo          := 4
+         :bStrData            := {|| "" }
+         :bBmpData            := {|| if( aValSer[ oBrwSer:nArrayAt ], 3, 1 ) }
+         :nWidth              := 20
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "Informacion_16" )
+      end with
+
+      oBrwSer:CreateFromResource( 150 )
+
+      REDEFINE SAY oSaySer VAR cSaySer ;
+         ID       230 ;
+         OF       oDlg
+
+      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      REDEFINE BUTTON ;
+         ID       510 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( if( lChkSer( aValSer, nTotUnd, oProSer, oBrwSer ), SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg ), ) )
+
+      REDEFINE BUTTON ;
+         ID       520 ;
+         OF       oDlg ;
+         ACTION   ( oDlg:End() )
+
+      oDlg:bStart := {|| oDlg:Disable(), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() }
+
+      oDlg:AddFastKey( VK_F5, {|| if( lChkSer( aValSer, nTotUnd, oProSer, oBrwSer ), SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg ),  ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer )
+
+   local n
+   local lValid         := .t.
+
+   CursorWait()
+
+   if !Empty( oProSer )
+      oProSer:Show()
+      oProSer:SetTotal( nTotUnd )
+   end if
+
+   if !Empty( oSaySer )
+      oSaySer:SetText( "Calculando disponibilidad del stock..." )
+   end if
+
+   for n := 1 to nTotUnd
+
+      if !Empty( aNumSer[ n ] )
+
+         aValSer[ n ]   := oStock:lValidNumeroSerie( cCodArt, cCodAlm, aNumSer[ n ] )
+
+         if !aValSer[ n ]
+            lValid      := .f.
+         end if
+
+      else
+
+         lValid         := .f.
+
+      end if
+
+      if !Empty( oProSer ) .and. ( Mod( n, int( nTotUnd / 100 ) ) == 0 )
+         oProSer:Set( n )
+      end if
+
+   next
+
+   if !Empty( oBrwSer )
+      oBrwSer:Refresh()
+   end if
+
+   if !Empty( oProSer )
+      oProSer:Set( 0 )
+      oProSer:Hide()
+   end if
+
+   if !Empty( oSaySer )
+      oSaySer:SetText( "" )
+   end if
+
+   CursorWE()
+
+Return ( lValid )
+
+//---------------------------------------------------------------------------//
+
+Static Function lChkSer( aValSer, nTotUnd, oProSer, oBrwSer )
+
+   local l
+   local n
+   local lValid            := .t.
+
+   CursorWait()
+
+   if !Empty( oProSer )
+      oProSer:Show()
+      oProSer:SetTotal( nTotUnd )
+   end if
+
+   for each l in aValSer
+
+      if IsFalse( l )
+
+         lValid            := .f.
+         n                 := hb_EnumIndex()
+         exit
+
+      else
+
+         if !Empty( oProSer ) // .and. ( Mod( n, int( nTotUnd / 10 ) ) == 0 )
+            oProSer:Set( hb_EnumIndex() )
+         end if
+
+      end if
+
+   next
+
+   if !lValid
+
+      if uFieldEmpresa( "lSerNoCom" )
+         msgStop( "Hay números de serie sin stock para su venta." )
+      else
+         lValid            := ApoloMsgNoYes( "Hay números de serie sin stock para su venta.", "¿Desea continuar con la venta?" )
+      end if
+
+      if !Empty( oBrwSer ) .and. IsNum( n )
+         oBrwSer:nArrayAt  := n
+         oBrwSer:Refresh()
+      end if
+
+   end if
+
+   if !Empty( oProSer )
+      oProSer:Hide()
+   end if
+
+   CursorWE()
+
+Return ( lValid )
+
+//---------------------------------------------------------------------------//
+
+Static Function SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg )
+
+   local cNumSer
+   local nTotUnd              := len( aNumSer )
+
+   oDlg:Disable()
+
+   EliminarNumeroSerie( aTmp )
+
+   if !Empty( oProSer )
+      oProSer:SetTotal( nTotUnd )
+   end if
+
+   for each cNumSer in aNumSer
+
+      ( dbfTmpSer )->( dbAppend() )
+      ( dbfTmpSer )->cRef        := aTmp[ _CREF        ]
+      ( dbfTmpSer )->cAlmLin     := aTmp[ _CALMLIN     ]
+      ( dbfTmpSer )->nNumLin     := aTmp[ _NNUMLIN     ]
+      ( dbfTmpSer )->cNumSer     := cNumSer
+
+      if !Empty( oProSer ) .and. ( Mod( hb_enumindex(), int( nTotUnd / 100 ) ) == 0 )
+         oProSer:Set( hb_enumindex() )
+      end if
+
+   next
+
+   oDlg:Enable()
+   oDlg:End()
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//
+
+Static Function EliminarNumeroSerie( aTmp )
+
+   while ( ( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) ) ) .and. !( dbfTmpSer )->( Eof() )
+      ( dbfTmpSer )->( dbDelete() )
+   end while
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//
+
+static Function ActualizaStockWeb( cNumDoc )
+
+   local nRec 		:= ( dbfFacRecL )->( Recno() )
+   local nOrdAnt 	:= ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+      	if ( dbfFacRecL )->( dbSeek( cNumDoc ) )
+
+      		while ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == cNumDoc .and. !( dbfFacRecL )->( Eof() )
+
+         		:ActualizaStockProductsPrestashop( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cValPr2 )
+
+         		( dbfFacRecL )->( dbSkip() )
+
+         	end while
+
+        end if
+        
+      end with
+
+   end if 
+
+   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacRecL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//--------------------------------------------------------------------------//
+
+Static Function hValue( aTmp, aTmpFac )
+
+   local hValue                  := {=>}
+
+   do case 
+      case ValType( aTmp ) == "A"
+
+         hValue[ "cCodigoArticulo"   ] := aTmp[ _CREF ]
+         hValue[ "cCodigoPropiedad1" ] := aTmp[ _CCODPR1 ]
+         hValue[ "cCodigoPropiedad2" ] := aTmp[ _CCODPR2 ]
+         hValue[ "cValorPropiedad1"  ] := aTmp[ _CVALPR1 ]
+         hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
+         hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
+         hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
+         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
+         hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
+
+      case ValType( aTmp ) == "C"
+
+         hValue[ "cCodigoArticulo"   ] := ( aTmp )->cRef
+         hValue[ "cCodigoPropiedad1" ] := ( aTmp )->cCodPr1
+         hValue[ "cCodigoPropiedad2" ] := ( aTmp )->cCodPr2
+         hValue[ "cValorPropiedad1"  ] := ( aTmp )->cValPr1
+         hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
+         hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
+         hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
+         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
+         hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
+
+   end case      
+
+   do case 
+      case ValType( aTmpFac ) == "A"
+
+         hValue[ "cCodigoCliente"    ] := aTmpFac[ _CCODCLI ]
+         hValue[ "cCodigoGrupo"      ] := aTmpFac[ _CCODGRP ]
+         hValue[ "lIvaIncluido"      ] := aTmpFac[ _LIVAINC ]
+         hValue[ "dFecha"            ] := aTmpFac[ _DFECFAC ]
+
+      case ValType( aTmpFac ) == "C"
+         
+         hValue[ "cCodigoCliente"    ] := ( aTmpFac )->cCodCli
+         hValue[ "cCodigoGrupo"      ] := ( aTmpFac )->cCodGrp
+         hValue[ "lIvaIncluido"      ] := ( aTmpFac )->lIvaInc
+         hValue[ "dFecha"            ] := ( aTmpFac )->dFecFac
+
+   end case
+
+   hValue[ "nTipoDocumento"         ] := FAC_REC
+   hValue[ "nView"                  ] := nView
+
+Return ( hValue )
+
+//---------------------------------------------------------------------------//
+
+Static Function ImprimirSeriesFacturasRectificativas( nDevice, lExt )
+
+   local aStatus
+   local oPrinter   
+   local cFormato 
+
+   DEFAULT nDevice   := IS_PRINTER
+   DEFAULT lExt      := .f.
+
+   // Cremaos el dialogo-------------------------------------------------------
+
+   oPrinter          := PrintSeries():New( nView )
+
+   // Establecemos sus valores-------------------------------------------------
+
+   oPrinter:Serie(      ( TDataView():FacturasRectificativas( nView ) )->cSerie )
+   oPrinter:Documento(  ( TDataView():FacturasRectificativas( nView ) )->nNumFac )
+   oPrinter:Sufijo(     ( TDataView():FacturasRectificativas( nView ) )->cSufFac )
+
+   oPrinter:oClienteInicio:First()
+   oPrinter:oClienteFin:Last()
+
+   oPrinter:oGrupoClienteInicio:First()
+   oPrinter:oGrupoClienteFin:Last()
+
+   if lExt
+
+      oPrinter:oFechaInicio:cText( ( TDataView():FacturasRectificativas( nView ) )->dFecFac )
+      oPrinter:oFechaFin:cText( ( TDataView():FacturasRectificativas( nView ) )->dFecFac )
+
+   end if
+
+   oPrinter:oFormatoDocumento:TypeDocumento( "FR" )   
+
+   // Formato de documento-----------------------------------------------------
+
+   cFormato          := cFormatoDocumento( ( TDataView():FacturasRectificativas( nView ) )->cSerie, "nFacRec", TDataView():Contadores( nView ) )
+   if empty( cFormato )
+      cFormato       := cFirstDoc( "FR", TDataView():Documentos( nView ) )
+   end if
+   oPrinter:oFormatoDocumento:cText( cFormato )
+
+   // Codeblocks para que trabaje----------------------------------------------
+
+   aStatus           := TDataview():GetInitStatus( "FacRecT", nView )
+
+   oPrinter:bInit    := {||   ( TDataview():FacturasRectificativas( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
+
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():FacturasRectificativasId( nView ) )                  .and. ;
+                              ( TDataView():FacturasRectificativas( nView ) )->( !eof() ) }
+
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( TDataView():FacturasRectificativas( nView ) )->dFecFac )           .and. ;
+                              oPrinter:InRangeCliente( ( TDataView():FacturasRectificativas( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeGrupoCliente( retGrpCli( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ) ) ) }
+
+   oPrinter:bSkip    := {||   ( TDataView():FacturasRectificativas( nView ) )->( dbSkip() ) }
+
+   oPrinter:bAction  := {||   GenFacRec( nDevice, "Imprimiendo documento : " + TDataView():FacturasRectificativasId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+
+   oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
+
+   // Abrimos el dialogo-------------------------------------------------------
+
+   oPrinter:Resource():End()
+
+   // Restore -----------------------------------------------------------------
+
+   TDataview():SetStatus( "FacRecT", nView, aStatus )
+   
+   if !Empty( oWndBrw )
+      oWndBrw:Refresh()
+   end if   
+
+Return .t.
+
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+/*------------------------FUNCIONES GLOBALESS--------------------------------*/
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION nBrtLFacRec( uTmpLin, nDec, nRec, nVdv, cPorDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT nDec      := 2
+   DEFAULT nVdv      := 1
+
+   nCalculo          := nTotUFacRec( uTmpLin, nDec, nVdv, cPorDiv )
+   nCalculo          *= nTotNFacRec( uTmpLin )
+
+   nCalculo          := Round( nCalculo / nVdv, nRec )
+
+Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+/*
+Devuelve el valor del impuestos de un artículo
+*/
+
+FUNCTION nIvaUFacRec( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   nCalculo       := nTotUFacRec( dbfTmpLin, nDec, nVdv )
+
+   if !( dbfTmpLin )->lIvaLin
+      nCalculo    := nCalculo * ( dbfTmpLin )->nIva / 100
+   else
+      nCalculo    -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
+   end if
+
+   if nVdv != 0
+      nCalculo    := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el precio unitario impuestos incluido
+*/
+
+FUNCTION nIncUFacRec( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   nCalculo       := nTotUFacRec( dbfTmpLin, nDec, nVdv )
+
+   if !( dbfTmpLin )->lIvaLin
+      nCalculo    += nCalculo * ( dbfTmpLin )->nIva / 100
+   end if
+
+	IF nVdv != 0
+      nCalculo    := nCalculo / nVdv
+	END IF
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nDtoUFacRec( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo := ( dbfTmpLin )->nDtoDiv
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+	IF nVdv != 0
+      nCalculo    := ( dbfTmpLin )->nDtoDiv / nVdv
+	END IF
+
+RETURN ( round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5878,17 +10929,17 @@ RETURN ( Round( nImpTrn, nRou ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nComLFacRec( dbfFacRecT, dbfFacRecL, nDecOut, nDerOut )
+FUNCTION nComLFacRec( cFacRecT, dbfFacRecL, nDecOut, nDerOut )
 
-   local nImpLFacRec  := nImpLFacRec( dbfFacRecT, dbfFacRecL, nDecOut, nDerOut, , .f., .t., .f., .f. )
+   local nImpLFacRec  := nImpLFacRec( cFacRecT, dbfFacRecL, nDecOut, nDerOut, , .f., .t., .f., .f. )
 
 RETURN ( nImpLFacRec * ( dbfFacRecL )->nComAge / 100 )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION aTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, cDivRet )
+FUNCTION aTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, cDivRet )
 
-   nTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet )
+   nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, nTotPnt, nTotTrn, nTotAge, aTotIva, nTotCos, nTotIvm, nTotRnt, nTotRet } )
 
@@ -5959,7 +11010,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    local nDescuentosLineas := 0
    local lPntVer           := .f.
 
-   DEFAULT cFacRecT        := dbfFacRecT
+   DEFAULT cFacRecT        := TDataView():FacturasRectificativas( nView )
    DEFAULT cFacRecL        := dbfFacRecL
    DEFAULT cIva            := cIva
    DEFAULT cDiv            := cDiv
@@ -6462,8 +11513,8 @@ RETURN ( if( lPic, Trans( nTotFac, cPorDiv ), nTotFac ) ) //
 
 STATIC FUNCTION RecalculaTotal( aTmp )
 
-   local nPagFacCli     := nPagFacRec( nil, dbfFacRecT, dbfTmpLin, dbfTmpPgo, dbfIva, dbfDiv, nil, .t. )
-   local nTotFacCli     := nTotFacRec( nil, dbfFacRecT, dbfTmpLin, dbfIva, dbfDiv, aTmp, nil, .f. )
+   local nPagFacCli     := nPagFacRec( nil, TDataView():FacturasRectificativas( nView ), dbfTmpLin, dbfTmpPgo, dbfIva, dbfDiv, nil, .t. )
+   local nTotFacCli     := nTotFacRec( nil, TDataView():FacturasRectificativas( nView ), dbfTmpLin, dbfIva, dbfDiv, aTmp, nil, .f. )
 
    /*
    Refrescos en Pantalla_______________________________________________________
@@ -6537,980 +11588,6 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION lMoreIva( nCodIva )
-
-	/*
-	Si no esta dentro de los porcentajes anteriores
-	*/
-
-   IF _NPCTIVA1 == nil .OR. _NPCTIVA2 == nil .OR. _NPCTIVA3 == nil
-		RETURN .T.
-	END IF
-
-	IF _NPCTIVA1 == nCodIva .OR. _NPCTIVA2 == nCodIva .OR. _NPCTIVA3 == nCodIva
-		RETURN .T.
-	END IF
-
-   MsgStop( "Factura con más de 3 tipos de " + cImp() )
-
-RETURN .F.
-
-//---------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-/*
-Carga los articulos en la factura
-*/
-
-STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, lFocused )
-
-   local hHas128
-   local cLote
-   local dFechaCaducidad
-   local nDtoAge
-   local nImpAtp
-   local nImpOfe
-   local nCosPro
-   local cCodFam
-   local cPrpArt
-   local nPrePro     			:= 0
-   local nNumDto     			:= 0
-   local cProveedor
-   local nTarOld     			:= aTmp[ _NTARLIN ]
-   local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local hAtipica
-
-   DEFAULT lFocused  			:= .t.
-
-   if Empty( cCodArt )
-
-      if lRetCodArt()
-         MsgStop( "No se pueden añadir líneas sin codificar" )
-         return .f.
-      end if
-
-      if Empty( aTmp[ _NIVA ] )
-         aGet[ _NIVA ]:bWhen  	:= {|| .t. }
-      end if
-
-		aGet[ _CDETALLE ]:cText( Space( 50 ) )
-      aGet[ _CDETALLE ]:bWhen   	:= {|| .t. }
-      aGet[ _CDETALLE ]:Hide()
-
-      if !Empty( aGet[ _MLNGDES ] )
-         
-         aGet[ _MLNGDES ]:Show()
-
-	      if lFocused 
-   	     aGet[ _MLNGDES ]:SetFocus()
-      	end if
-
-      end if
-
-      aGet[_CVALPR1 ]:Hide()
-      oSayPr1:Hide()
-      oSayVp1:Hide()
-
-      aGet[_CVALPR2 ]:Hide()
-      oSayPr2:Hide()
-      oSayVp2:Hide()
-
-      Return .t.
-
-   end if
-
-   IF lModIva()
-      aGet[ _NIVA ]:bWhen  := {|| .t. }
-   ELSE
-      aGet[ _NIVA ]:bWhen 	:= {|| .f. }
-   END IF
-
-   /*
-   Buscamos codificacion GS1-128--------------------------------------------
-   */
-   
-   if Len( Alltrim( cCodArt ) ) > 18
-
-      hHas128              := ReadCodeGS128( )
-
-      if !Empty( hHas128 )
-         cCodArt           := uGetCodigo( hHas128, "01" )
-         cLote             := uGetCodigo( hHas128, "10" )
-         dFechaCaducidad   := uGetCodigo( hHas128, "15" )    
-      end if 
-
-   end if
-
-   cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
-
-   /*
-   Ahora buscamos por el codigo interno
-   */
-
-   if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
-
-      if ( lChgCodArt )
-
-         if ( dbfArticulo )->lObs
-            MsgStop( "Artículo catalogado como obsoleto" )
-            return .f.
-         end if
-
-         CursorWait()
-
-         cCodArt              := ( dbfArticulo )->Codigo
-
-         aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
-         aTmp[ _CREF ]        := cCodArt
-
-         if ( dbfArticulo )->lMosCom .and. !Empty( ( dbfArticulo )->mComent )
-            MsgStop( Trim( ( dbfArticulo )->mComent ) )
-         end if
-
-         /*
-         Metemos el proveedor habitual--------------------------------------
-         */
-
-         if !Empty( aGet[ _CCODPRV ] )
-            aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
-            aGet[ _CCODPRV ]:lValid()
-         else
-            aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab   
-         end if
-
-         aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, (dbfArticulo)->cPrvHab, dbfArtPrv ), 18 )
-
-         aGet[ _CDETALLE ]:show()
-         aGet[ _MLNGDES  ]:hide()
-
-         aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
-         aGet[ _MLNGDES  ]:cText( ( dbfArticulo )->Nombre )
-
-         /*
-         Descripciones largas--------------------------------------------------
-         */
-
-         if !empty( ( dbfArticulo )->Descrip )
-            if !empty( aGet[ _DESCRIP ] )
-               aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
-            else
-               aTmp[ _DESCRIP ]     := ( dbfArticulo )->Descrip
-            end if 
-         end if
-
-         /*
-         Peso y volumen
-         -------------------------------------------------------------------
-         */
-
-         if !Empty( aGet[ _NPESOKG ] )
-            aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
-         else
-            aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
-         end if
-
-         if !Empty( aGet[ _CPESOKG ] )
-             aGet[ _CPESOKG ]:cText( ( dbfArticulo )->cUndDim )
-         else
-             aGet[ _CPESOKG ] := ( dbfArticulo )->cUndDim
-         end if
-
-         if !Empty( aGet[ _CUNIDAD ] )
-             aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
-             aGet[ _CUNIDAD ]:lValid()
-         else
-             aTmp[ _CUNIDAD ] := ( dbfArticulo )->cUnidad
-         end if
-
-         if !Empty( aGet[_CCODTIP ] )
-            aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
-         else
-            aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
-         end if
-
-         /*
-         Factor de conversion
-         ----------------------------------------------------------------------
-         */
-
-         if ( dbfArticulo )->lFacCnv
-            aTmp[ _NFACCNV ]  := ( dbfArticulo )->nFacCnv
-         end if
-
-         /*
-         Lotes
-         ----------------------------------------------------------------------
-         */
-
-         if ( dbfArticulo )->lLote
-
-         	if Empty( cLote )
-         		cLote 			:= ( dbfArticulo )->cLote
-         	end if 
-
-            if !Empty( aGet[ _CLOTE ] )
-               aGet[ _CLOTE ]:Show()
-               aGet[ _CLOTE ]:cText( cLote )
-               aGet[ _CLOTE ]:lValid()
-            else
-               aTmp[ _CLOTE ] := cLote
-            end if
-
-            aTmp[ _LLOTE ]    := .t.
-
-            /*
-            Fecha de caducidad-------------------------------------------------
-            */
-
-            if Empty( dFechaCaducidad )
-               dFechaCaducidad 	:= dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
-            end if 
-            
-            if !Empty( aGet[ _DFECCAD ] )
-
-               aGet[ _DFECCAD ]:Show()
-
-               if Empty( aTmp[ _DFECCAD ] )
-                  aGet[ _DFECCAD ]:cText( dFechaCaducidad )
-               end if
-
-            end if
-
-         else
-
-            if !Empty( aGet[ _CLOTE ] )
-               aGet[ _CLOTE ]:Hide()
-            end if
-
-            if !Empty( aGet[ _DFECCAD ] )
-               aGet[ _DFECCAD ]:Hide()
-            end if
-
-         end if
-
-         /*
-         Tomamos el código de la familia y del grupo de familia----------------
-         */
-
-         cCodFam              := ( dbfArticulo )->Familia
-         if !Empty( cCodFam )
-            aTmp[_CCODFAM]    := cCodFam
-            aTmp[_CGRPFAM]    := cGruFam( cCodFam, dbfFamilia )
-            aGet[_CCODFAM]:cText( cCodFam )
-            aGet[_CGRPFAM]:cText( cGruFam( cCodFam, dbfFamilia ) )
-            aGet[_CCODFAM]:lValid()
-            aGet[_CGRPFAM]:lValid()
-         else
-            aGet[_CCODFAM]:cText( Space( 8 ) )
-            aGet[_CGRPFAM]:cText( Space( 3 ) )
-            aGet[_CCODFAM]:lValid()
-            aGet[_CGRPFAM]:lValid()
-         end if
-
-         /*
-         Tratamientos kits-----------------------------------------------------
-         */
-
-         if ( dbfArticulo )->lKitArt
-
-            aTmp[ _LKITART ]     := ( dbfArticulo )->lKitArt                        // Marcamos como padre del kit
-            aTmp[ _LIMPLIN ]     := lImprimirCompuesto( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
-            aTmp[ _LKITPRC ]     := lPreciosCompuestos( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
-
-            if lStockCompuestos( ( dbfArticulo )->Codigo, dbfArticulo )
-
-               if aGet[ _NCTLSTK ] != nil
-                  aGet[ _NCTLSTK ]:SetOption( ( dbfArticulo )->nCtlStock )
-               else
-                  aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
-               end if
-
-            else
-
-               if aGet[ _NCTLSTK ] != nil
-                  aGet[ _NCTLSTK ]:SetOption( STOCK_NO_CONTROLAR )
-               else
-                  aTmp[ _NCTLSTK ]  := STOCK_NO_CONTROLAR
-               end if
-
-            end if
-
-         else
-
-            aTmp[ _LIMPLIN ]     := .f.
-
-            if aGet[ _NCTLSTK ] != nil
-               aGet[ _NCTLSTK ]:SetOption( ( dbfArticulo )->nCtlStock )
-            else
-               aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
-            end if
-
-         end if
-
-         /*
-         Preguntamos si el regimen de impuestos es distinto de Exento----------------
-         */
-
-         if aTmpFac[_NREGIVA] <= 1
-            aGet[ _NIVA ]:cText( nIva( dbfIva, ( dbfArticulo )->TIPOIVA ) )
-            aTmp[ _NREQ ]        := nReq( dbfIva, ( dbfArticulo )->TipoIva )
-         end if
-
-         /*
-         Ahora recogemos el impuesto especial si lo hay---------------------------
-         */
-
-         if !Empty( ( dbfArticulo )->cCodImp )
-            aTmp[ _CCODIMP ]  	:= ( dbfArticulo )->cCodImp
-            aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpFac[_LIVAINC], aTmp[_NIVA] ) )
-
-            aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
-
-            if !Empty( aGet[ _LVOLIMP ] )
-               aGet[ _LVOLIMP ]:Refresh()
-            end if
-
-         end if
-
-         if (dbfArticulo)->nCajEnt != 0
-            aGet[_NCANENT ]:cText( (dbfArticulo)->nCajEnt )
-         end if
-
-         if ( dbfArticulo )->nUniCaja != 0
-            aGet[_NUNICAJA]:cText( ( dbfArticulo )->nUniCaja )
-         end if
-
-         /*
-         Meses de grantia---------------------------------------------------------
-         */
-
-         aGet[_NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
-
-         /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
-         */
-
-         aGet[_NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
-
-         /*
-         Tomamos el valor del stock y anotamos si nos dejan vender sin stock
-         */
-
-         if oStkAct != nil .and. !uFieldEmpresa( "lNStkAct" ) .and. aTmp[ _NCTLSTK ] <= 1
-            oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
-         end if
-
-         aTmp[ _LNOTVTA ]     := ( dbfArticulo )->lNotVta
-
-         /*
-         Cargamos los costos------------------------------------------------
-         */
-
-         if !uFieldEmpresa( "lCosAct" )
-            nCosPro              := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ] )
-            if nCosPro == 0
-               nCosPro           := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
-            end if
-         else
-            nCosPro              := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
-         end if
-
-         if aGet[ _NCOSDIV ] != nil
-            aGet[ _NCOSDIV ]:cText( nCosPro )
-         else
-            aTmp[ _NCOSDIV ]  := nCosPro
-         end if
-
-         /*
-         Descuento de artículo----------------------------------------------
-         */
-
-         nNumDto              := RetFld( aTmpFac[ _CCODCLI ], dbfClient, "nDtoArt" )
-
-         if nNumDto != 0
-
-            do case
-               case nNumDto == 1
-
-                  if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt1 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt1
-                  else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt1
-                  end if
-
-               case nNumDto == 2
-
-                  if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt2 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt2
-                  else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt2
-                  end if
-
-               case nNumDto == 3
-
-                  if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt3 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
-                  else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
-                  end if
-
-               case nNumDto == 4
-
-                  if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt4 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt4
-                  else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt4
-                  end if
-
-               case nNumDto == 5
-
-                  if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt5 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt5
-                  else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt5
-                  end if
-
-               case nNumDto == 6
-
-                  if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt6 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
-                  else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
-                  end if
-
-            end case
-
-         end if
-
-          /*
-         Vemos si hay descuentos en las familias----------------------------
-         */
-
-         if aTmp[ _NDTO ] == 0
-
-            if !Empty( aGet[ _NDTO ] )
-               aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
-            else
-               aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, dbfFamilia )
-            end if
-
-         end if
-
-         /*
-         Imagen del producto------------------------------------------------
-         */
-
-         if !Empty( aGet[ _CIMAGEN ] )
-            aGet[ _CIMAGEN ]:cText( ( dbfArticulo )->cImagen )
-         else
-            aTmp[ _CIMAGEN ]     := ( dbfArticulo )->cImagen
-         end if
-
-         if !Empty( bmpImage )
-            if !Empty( aTmp[ _CIMAGEN ] )
-               bmpImage:Show()
-               bmpImage:LoadBmp( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) )
-            else
-               bmpImage:Hide()
-            end if
-         end if
-
-         /*
-         Buscamos la familia del articulo y anotamos las propiedades-----------
-         */
-
-         aTmp[ _CCODPR1 ]  := ( dbfArticulo )->cCodPrp1
-         aTmp[ _CCODPR2 ]  := ( dbfArticulo )->cCodPrp2
-
-         if !Empty( aTmp[ _CCODPR1 ] )
-            aGet[ _CVALPR1 ]:Show()
-            if lFocused
-               aGet[ _CVALPR1 ]:SetFocus()
-            end if
-            oSayPr1:SetText( retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
-            oSayPr1:Show()
-            oSayVp1:Show()
-         else
-            aGet[ _CVALPR1 ]:hide()
-            oSayPr1:hide()
-            oSayVp1:hide()
-         end if
-
-         if !Empty( aTmp[ _CCODPR2 ] )
-            aGet[ _CVALPR2 ]:Show()
-            oSayPr2:SetText( retProp( ( dbfArticulo )->cCodPrp2, dbfPro ) )
-            oSayPr2:Show()
-            oSayVp2:Show()
-         else
-            aGet[ _CVALPR2 ]:hide()
-            oSayPr2:Hide()
-            oSayVp2:Hide()
-         end if
-
-      end if
-
-      /*
-      He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
-      */
-
-      cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
-
-      if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
-
-         //--guardamos el código de la familia--//
-
-         if nMode == APPD_MODE
-            cCodFam        := RetFamArt( cCodArt, dbfArticulo )
-         else
-            cCodFam        := aTmp[_CCODFAM]
-         end if
-
-         /*
-         Cargamos el precio recomendado ,el precio de costo y el punto verde
-         */
-
-         aGet[ _NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
-         aTmp[ _NPVPREC ]   := ( dbfArticulo )->PvpRec
-
-         /*
-         Cargamos el codigo de las unidades---------------------------------
-         */
-
-         if !Empty( aGet[ _CUNIDAD ] )
-            aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
-         else
-            aTmp[ _CUNIDAD ]  := ( dbfArticulo )->cUnidad
-         end if
-
-         //--guardamos el precio del artículo dependiendo de las propiedades--//
-
-         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
-
-         if nPrePro == 0
-            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
-         else
-            aGet[_NPREUNIT]:cText( nPrePro )
-         end if
-
-         //--Precios en tarifas--//
-
-         if !Empty( aTmpFac[ _CCODTAR ] )
-
-            //--Precio--//
-            nImpOfe  := RetPrcTar( cCodArt, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
-            if nImpOfe != 0
-               aGet[_NPREUNIT]:cText( nImpOfe )
-            end if
-
-            //--Descuento porcentual--//
-            nImpOfe  := RetPctTar( cCodArt, cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
-            if nImpOfe != 0
-               aGet[_NDTO   ]:cText( nImpOfe )
-            end if
-
-            //--Descuento lineal--//
-            nImpOfe  := RetLinTar( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
-            if nImpOfe != 0
-               aGet[_NDTODIV]:cText( nImpOfe )
-            end if
-
-            //--Comision de agente--//
-            nImpOfe  := RetComTar( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
-            if nImpOfe != 0
-               aGet[_NCOMAGE]:cText( nImpOfe )
-            end if
-
-            //--Descuento de promoci¢n--//
-
-            nImpOfe  := RetDtoPrm( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
-            if nImpOfe  != 0
-               aGet[_NDTOPRM]:cText( nImpOfe )
-            end if
-
-            //--Descuento de promoci¢n para el agente--//
-
-            nDtoAge     := RetDtoAge( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
-            if nDtoAge  != 0
-               aGet[ _NCOMAGE ]:cText( nDtoAge )
-            end if
-
-         end if
-
-        /*
-        Chequeamos las atipicas del cliente--------------------------------
-        */
-
-        hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
-
-        if !Empty( hAtipica )
-               
-            if hhaskey( hAtipica, "nImporte" )
-                aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
-                aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
-                aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-            end if
-
-            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
-                aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
-                aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-            end if
-
-        end if
-
-         // Buscamos si existen ofertas para este articulo y le cambiamos el precio--
-
-         nImpOfe     := nImpOferta( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-         if nImpOfe  != 0
-            aGet[ _NPREUNIT ]:cText( nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ] ) )
-         end if
-
-         // Buscamos si existen descuentos en las ofertas----------------------
-
-         nImpOfe     := nDtoOferta( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-         if nImpOfe  != 0
-            aGet[_NDTO]:cText( nImpOfe )
-         end if
-
-         // Buscamos si existen descuentos lineales en las ofertas-------------
-
-         nImpOfe     := nDtoLineal( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[_CCODGRP], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-         if nImpOfe  != 0
-            aGet[ _NDTODIV ]:cText( nImpOfe )
-         end if
-
-         ValidaMedicion( aTmp, aGet )
-
-      end if
-
-      /*
-      Buscamos si hay ofertas-----------------------------------------------
-      */
-
-      lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
-
-      /*
-      Cargamos los valores para los cambios---------------------------------
-      */
-
-      cOldPrpArt  := cPrpArt
-      cOldCodArt  := cCodArt
-
-      /*
-      Solo pueden modificar los precios los administradores--------------
-      */
-
-      if Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
-         aGet[ _NPREUNIT ]:HardEnable()
-         aGet[ _NIMPTRN  ]:HardEnable()
-         aGet[ _NPNTVER  ]:HardEnable()
-         aGet[ _NDTO     ]:HardEnable()
-         aGet[ _NDTOPRM  ]:HardEnable()
-         aGet[ _NDTODIV  ]:HardEnable()
-      else
-         aGet[ _NPREUNIT ]:HardDisable()
-         aGet[ _NIMPTRN  ]:HardDisable()
-         aGet[ _NPNTVER  ]:HardDisable()
-         aGet[ _NDTO     ]:HardDisable()
-         aGet[ _NDTOPRM  ]:HardDisable()
-         aGet[ _NDTODIV  ]:HardDisable()
-      end if
-
-      CursorWE()
-
-   else
-
-      MsgStop( "Artículo no encontrado" )
-      Return .f.
-
-   end if
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-/*
-Cargaos los datos del cliente
-*/
-
-STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
-
-   local lValid      := .t.
-   local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
-   local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
-
-   if Empty( cNewCodCli )
-      Return .t.
-   elseif At( ".", cNewCodCli ) != 0
-      cNewCodCli     := PntReplace( aGet[ _CCODCLI ], "0", RetNumCodCliEmp() )
-   else
-      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
-   end if
-
-   if ( dbfClient )->( dbSeek( cNewCodCli ) )
-
-      /*
-      Asignamos el codigo siempre
-      */
-
-      aGet[ _CCODCLI ]:cText( ( dbfClient )->Cod )
-
-      if oTlfCli != nil
-         oTlfCli:SetText( ( dbfClient )->Telefono )
-      end if
-
-      if ( dbfClient )->nColor != 0
-         aGet[_CNOMCLI]:SetColor( , ( dbfClient )->nColor )
-      end if
-
-      if Empty( aGet[_CNOMCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CNOMCLI]:cText( ( dbfClient )->Titulo )
-      end if
-
-      if Empty( aGet[_CDIRCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CDIRCLI]:cText( ( dbfClient )->Domicilio )
-      end if
-
-      if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CTLFCLI ]:cText( ( dbfClient )->Telefono )
-      end if
-
-      if Empty( aGet[_CPOBCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPOBCLI]:cText( ( dbfClient )->Poblacion )
-      end if
-
-      if Empty( aGet[_CPRVCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPRVCLI]:cText( ( dbfClient )->Provincia )
-      end if
-
-      if Empty( aGet[_CPOSCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPOSCLI]:cText( ( dbfClient )->CodPostal )
-      end if
-
-      if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDNICLI ]:cText( ( dbfClient )->Nif )
-      end if
-
-      /*
-      Cargamos la obra por defecto-------------------------------------
-      */
-
-      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
-
-         if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
-            aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
-         else
-            aGet[ _CCODOBR ]:cText( Space( 10 ) )
-         end if
-
-         aGet[ _CCODOBR ]:lValid()
-
-      end if
-
-      if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
-         aTmp[ _CCODGRP ]  := ( dbfClient )->cCodGrp
-      end if
-
-      if lChgCodCli
-         aTmp[ _LMODCLI ]  := ( dbfClient )->lModDat
-      end if
-
-      if ( lChgCodCli )
-         aTmp[ _LOPERPV ]  := ( dbfClient )->lPntVer
-      end if
-
-      if nMode == APPD_MODE
-
-         aTmp[_NREGIVA ]   := ( dbfClient )->nRegIva
-
-         /*
-         Si estamos a¤adiendo cargamos todos los datos del cliente
-         */
-
-         if Empty( aTmp[ _CSERIE ] )
-
-            if !Empty( ( dbfClient )->Serie )
-               aGet[ _CSERIE ]:cText( ( dbfClient )->Serie )
-            end if
-
-         else
-
-            if !Empty( ( dbfClient )->Serie )               .and.;
-               aTmp[ _CSERIE ] != ( dbfClient )->Serie      .and.;
-               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERIE ]:cText( ( dbfClient )->Serie )
-            end if
-
-         end if
-
-         if ( Empty( aGet[_CCODALM]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cCodAlm )
-            aGet[_CCODALM]:cText( ( dbfClient )->cCodAlm )
-            aGet[_CCODALM]:lValid()
-         end if
-
-         if ( Empty( aGet[_CCODTAR]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cCodTar )
-            aGet[_CCODTAR]:cText( ( dbfClient )->CCODTAR )
-            aGet[_CCODTAR]:lValid()
-         end if
-
-         if ( Empty( aGet[_CCODPAGO]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->CodPago )
-
-            aGet[_CCODPAGO]:cText( (dbfClient)->CODPAGO )
-            aGet[_CCODPAGO]:lValid()
-
-            /*
-            Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
-            */
-
-            if RetFld( aTmp[ _CCODPAGO ], dbfFPago, "LUTLBNC" )
-
-               if lBancoDefecto( ( dbfClient )->Cod, dbfCliBnc )
-
-                  if !Empty( aGet[ _CBANCO ] )
-                     aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
-                     aGet[ _CBANCO ]:lValid()
-                  end if
-
-		            if !Empty( aGet[ _CPAISIBAN ] )
-		               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
-		               aGet[ _CPAISIBAN ]:lValid()
-		            end if
-
-   		         if !Empty( aGet[ _CCTRLIBAN ] )
-   		            aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
-   		            aGet[ _CCTRLIBAN ]:lValid()
-   		         end if
-
-                  if !Empty( aGet[ _CENTBNC ] )
-                     aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
-                     aGet[ _CENTBNC ]:lValid()
-                  end if
-
-                  if !Empty( aGet[ _CSUCBNC ] )
-                     aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
-                     aGet[ _CSUCBNC ]:lValid()
-                  end if
-
-                  if !Empty( aGet[ _CDIGBNC ] )
-                     aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
-                     aGet[ _CDIGBNC ]:lValid()
-                  end if
-
-                  if !Empty( aGet[ _CCTABNC ] )
-                     aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
-                     aGet[ _CCTABNC ]:lValid()
-                  end if
-
-               end if
-
-            end if
-
-         end if
-
-         if ( Empty( aGet[_CCODAGE]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cAgente )
-            aGet[_CCODAGE]:cText( (dbfClient)->CAGENTE )
-            aGet[_CCODAGE]:lValid()
-         end if
-
-         if ( Empty( aGet[_CCODRUT]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cCodRut )
-            aGet[_CCODRUT]:cText( ( dbfClient)->CCODRUT )
-            aGet[_CCODRUT]:lValid()
-         end if
-
-         if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->nTarifa )
-            aGet[ _NTARIFA ]:cText( ( dbfClient )->nTarifa )
-         end if
-
-         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cCodTrn )
-            aGet[ _CCODTRN ]:cText( ( dbfClient )->cCodTrn )
-            aGet[ _CCODTRN ]:lValid()
-         end if
-
-         if lChgCodCli
-
-            aGet[ _LRECARGO ]:Click( ( dbfClient )->lReq )
-
-            aGet[ _LOPERPV  ]:Click( ( dbfClient )->lPntVer )
-
-            /*
-            Retenciones desde la ficha de cliente----------------------------------
-            */
-            /*
-            if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( dbfClient )->nTipRet )
-            else
-               aTmp[ _NTIPRET  ] := ( dbfClient )->nTipRet
-            end if
-            */
-            if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( dbfClient )->nPctRet )
-            else
-               aTmp[ _NPCTRET  ] := ( dbfClient )->nPctRet
-            end if
-
-            /*
-            Descuentos desde la ficha de cliente----------------------------------
-            */
-
-            aGet[ _CDTOESP ]:cText( ( dbfClient )->cDtoEsp )
-
-            aGet[ _NDTOESP ]:cText( ( dbfClient )->nDtoEsp )
-
-            aGet[ _CDPP    ]:cText( ( dbfClient )->cDpp    )
-
-            aGet[ _NDPP    ]:cText( ( dbfClient )->nDpp    )
-
-            aGet[ _CDTOUNO ]:cText( ( dbfClient )->cDtoUno )
-
-            aGet[ _CDTODOS ]:cText( ( dbfClient )->cDtoDos )
-
-            aGet[ _NDTOUNO ]:cText( ( dbfClient )->nDtoCnt )
-
-            aGet[ _NDTODOS ]:cText( ( dbfClient )->nDtoRap )
-
-         end if
-
-      end if
-
-      if ( dbfClient )->lMosCom .and. !Empty( ( dbfClient )->mComent ) .and. lChgCodCli
-         MsgStop( Trim( ( dbfClient )->mComent ) )
-      end if
-
-      if !Empty( oRieCli ) .and. lChgCodCli
-         oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
-      end if
-
-      ShowIncidenciaCliente( ( dbfClient )->Cod, nView )
-
-      cOldCodCli  := ( dbfClient )->Cod
-
-      lValid      := .t.
-
-   else
-
-		msgStop( "Cliente no encontrado" )
-
-      lValid      := .f.
-
-   end if
-
-RETURN lValid
-
-//----------------------------------------------------------------------------//
-
 /*
 Crea las bases de datos necesarias para la facturación desde fuera
 */
@@ -7533,7 +11610,7 @@ Regenera indices
 
 FUNCTION rxFacRec( cPath, oMeter )
 
-   local dbfFacRecT
+   local cFacRecT
    local dbfFacRecL
    local dbfFacRecI
    local dbfFacRecD
@@ -7612,91 +11689,91 @@ FUNCTION rxFacRec( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecT.DBF", cCheckArea( "FacRecT", @dbfFacRecT ), .f. )
-   if !( dbfFacRecT )->( neterr() )
-      ( dbfFacRecT )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "FacRecT.DBF", cCheckArea( "FacRecT", @cFacRecT ), .f. )
+   if !( cFacRecT )->( neterr() )
+      ( cFacRecT )->( __dbPack() )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMFAC", "CSERIE + Str(NNUMFAC) + CSUFFAC", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac }, ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMFAC", "CSERIE + Str(NNUMFAC) + CSUFFAC", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac }, ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "DFECFAC", "DFECFAC", {|| Field->DFECFAC } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "DFECFAC", "DFECFAC", {|| Field->DFECFAC } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODOBR", "CCODOBR", {|| Field->CCODOBR } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODOBR", "CCODOBR", {|| Field->CCODOBR } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CTURFAC", "CTURFAC + CSUFFAC + CCODCAJ", {|| Field->CTURFAC + Field->CSUFFAC + Field->CCODCAJ } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CTURFAC", "CTURFAC + CSUFFAC + CCODCAJ", {|| Field->CTURFAC + Field->CSUFFAC + Field->CCODCAJ } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODRUT", "CCODRUT", {|| Field->CCODRUT } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODRUT", "CCODRUT", {|| Field->CCODRUT } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "cCodPago", "cCodPago", {|| Field->cCodPago } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "cCodPago", "cCodPago", {|| Field->cCodPago } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CPOBCLI", "CPOBCLI + CNOMCLI", {|| Field->CPOBCLI + Field->CNOMCLI } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CPOBCLI", "CPOBCLI + CNOMCLI", {|| Field->CPOBCLI + Field->CNOMCLI } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CDOCORG", "CDOCORG", {|| Field->CDOCORG } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CDOCORG", "CDOCORG", {|| Field->CDOCORG } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CAGEFEC", "CCODAGE + DtoS( DFECFAC )", {|| Field->CCODAGE + DtoS( Field->DFECFAC ) } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CAGEFEC", "CCODAGE + DtoS( DFECFAC )", {|| Field->CCODAGE + DtoS( Field->DFECFAC ) } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMLIQ", "Str( NNUMLIQ ) + CSUFLIQ", {|| Str( Field->NNUMLIQ ) + Field->CSUFLIQ } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMLIQ", "Str( NNUMLIQ ) + CSUFLIQ", {|| Str( Field->NNUMLIQ ) + Field->CSUFLIQ } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CABNFAC", "CABNFAC", {|| Field->CABNFAC } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CABNFAC", "CABNFAC", {|| Field->CABNFAC } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
-      ( dbfFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "cNumDoc", "cNumDoc", {|| Field->cNumDoc } ) )
+      ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "cNumDoc", "cNumDoc", {|| Field->cNumDoc } ) )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cNumFac", "Field->cNumFac", {|| Field->cNumFac } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cNumFac", "Field->cNumFac", {|| Field->cNumFac } ) )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
-      ( dbfFacRecT )->( dbCloseArea() )
+      ( cFacRecT )->( dbCloseArea() )
 
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacRecS.Dbf", cCheckArea( "FacRecS", @dbfFacRecT ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "FacRecS.Dbf", cCheckArea( "FacRecS", @cFacRecT ), .f. )
 
-   if !( dbfFacRecT )->( neterr() )
-      ( dbfFacRecT )->( __dbPack() )
+   if !( cFacRecT )->( neterr() )
+      ( cFacRecT )->( __dbPack() )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "nNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumLin )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumLin ) } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "nNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumLin )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumLin ) } ) )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
 
-      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "iNumFac", "'14' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "iNumFac", "'14' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
-      ( dbfFacRecT )->( dbCloseArea() )
+      ( cFacRecT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas rectificativas de clientes" )
    end if
@@ -7706,702 +11783,33 @@ Return nil
 //--------------------------------------------------------------------------//
 
 /*
-Comienza la edición de la factura
-*/
-
-STATIC FUNCTION BeginTrans( aTmp, nMode )
-
-   local oError
-   local oBlock
-   local lErrors  := .f.
-   local cDbfLin  := "FCliL"
-   local cDbfInc  := "FCliI"
-   local cDbfDoc  := "FCliD"
-   local cDbfAnt  := "FCliA"
-   local cDbfPgo  := "FCliP"
-   local cDbfSer  := "FCliS"
-   local cFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
-
-   CursorWait()
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
-   cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
-   cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
-   cTmpAnt        := cGetNewFileName( cPatTmp() + cDbfAnt )
-   cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
-   cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
-
-   /*
-   Inicialización de variables-------------------------------------------------
-   */
-
-   aNumAlb        := {}
-
-   /*
-   Actualizacion de riesgo
-   */
-
-   do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
-
-      nTotOld     := 0
-
-   case nMode == EDIT_MODE
-
-      nTotOld     := nTotFac
-
-   end case
-
-	/*
-   Primero crear la base de datos local----------------------------------------
-	*/
-
-   dbCreate( cTmpLin, aSqlStruct( aColFacRec() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
-   if !NetErr()
-
-      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
-
-      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-
-      if ( dbfFacRecL )->( dbSeek( cFac ) )
-         while ( ( dbfFacRecL )->CSERIE + Str( ( dbfFacRecL )->NNUMFAC ) + ( dbfFacRecL )->CSUFFAC ) == cFac .AND. !( dbfFacRecL )->( eof() )
-            dbPass( dbfFacRecL, dbfTmpLin, .t. )
-            ( dbfFacRecL )->( DbSkip() )
-         end while
-      endif
-
-      ( dbfTmpLin )->( dbGoTop() )
-
-   else
-
-      lErrors     := .t.
-
-   end if
-
-   /*
-   Creamos la tabla temporal
-   */
-
-   dbCreate( cTmpInc, aSqlStruct( aIncFacRec() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
-   if !NetErr()
-      ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpInc )->( ordCreate( cTmpInc, "Recno", "Recno()", {|| Recno() } ) )
-
-      if ( dbfFacRecI )->( dbSeek( cFac ) )
-         while ( ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac == cFac ) .AND. ( dbfFacRecI )->( !eof() )
-            dbPass( dbfFacRecI, dbfTmpInc, .t. )
-            ( dbfFacRecI )->( dbSkip() )
-         end while
-      end if
-
-      ( dbfTmpInc )->( dbGoTop() )
-
-   else
-
-      lErrors     := .t.
-
-   end if
-
-   /*
-   Creamos la tabla temporal
-   */
-
-   dbCreate( cTmpDoc, aSqlStruct( aFacRecDoc() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
-   if !NetErr()
-      ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
-
-      if ( dbfFacRecD )->( dbSeek( cFac ) )
-         while ( ( dbfFacRecD )->cSerFac + Str( ( dbfFacRecD )->nNumFac ) + ( dbfFacRecD )->cSufFac == cFac ) .AND. ( dbfFacRecD )->( !eof() )
-            dbPass( dbfFacRecD, dbfTmpDoc, .t. )
-            ( dbfFacRecD )->( dbSkip() )
-         end while
-      end if
-
-      ( dbfTmpDoc )->( dbGoTop() )
-
-   else
-
-      lErrors     := .t.
-
-   end if
-
-   /*
-   Creamos el fichero de series------------------------------------------------
-   */
-
-   dbCreate( cTmpSer, aSqlStruct( aSerFacRec() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpSer, cCheckArea( cDbfSer, @dbfTmpSer ), .f. )
-
-   if !( dbfTmpSer )->( NetErr() )
-
-      ( dbfTmpSer )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpSer )->( OrdCreate( cTmpSer, "nNumLin", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin, 4 ) + Field->cRef } ) )
-
-      if ( dbfFacRecS )->( dbSeek( cFac ) )
-         while ( ( dbfFacRecS )->cSerFac + Str( ( dbfFacRecS )->nNumFac ) + ( dbfFacRecS )->cSufFac == cFac ) .and. !( dbfFacRecS )->( eof() )
-            dbPass( dbfFacRecS, dbfTmpSer, .t. )
-            ( dbfFacRecS )->( dbSkip() )
-         end while
-      end if
-
-      ( dbfTmpSer )->( dbGoTop() )
-
-      oStock:SetTmpFacRecS( dbfTmpSer )
-
-   end if
-
-   /*
-   Creamos la tabla temporal de pagos------------------------------------------
-   */
-
-   dbCreate( cTmpPgo, aSqlStruct( aItmRecCli() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpPgo, cCheckArea( cDbfPgo, @dbfTmpPgo ), .f. )
-
-   if !NetErr()
-
-      ( dbfTmpPgo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfTmpPgo )->( ordCreate( cTmpPgo , "cRecDev", "cRecDev", {|| Field->cRecDev } ) )
-
-      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "nNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) + Field->cTipRec } ) )
-
-      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
-
-      if ( dbfFacCliP )->( dbSeek( cFac ) ) .and. nMode != DUPL_MODE
-         while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFac .and. ( dbfFacCliP )->( !eof() )
-            dbPass( dbfFacCliP, dbfTmpPgo, .t. )
-            ( dbfFacCliP )->( dbSkip() )
-         end while
-      end if
-
-      ( dbfTmpPgo  )->( dbGoTop() )
-
-   else
-
-      lErrors     := .t.
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
-
-      KillTrans()
-
-      lErrors     := .t.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CursorWE()
-
-Return ( lErrors )
-
-//-----------------------------------------------------------------------//
-/*
-Finaliza la transacción de datos
-*/
-
-STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oDlg, oFld )
-
-   local n
-   local cSerFac
-   local nNumFac
-   local cSufFac
-   local dFecFac
-   local oError
-   local oBlock
-
-   if Empty( aTmp[ _CSERIE ] )
-      aTmp[ _CSERIE ]   := "A"
-   end if
-
-   cSerFac              := aTmp[ _CSERIE  ]
-   nNumFac              := aTmp[ _NNUMFAC ]
-   cSufFac              := aTmp[ _CSUFFAC ]
-   dFecFac              := aTmp[ _DFECFAC ]
-
-   /*
-   Comprobamos la fecha del documento
-   */
-
-   if !lValidaOperacion( aTmp[_DFECFAC] )
-      Return .f.
-   end if
-
-   /*
-   Estos campos no pueden estar vacios
-   */
-
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. Empty( aTmp[ _CNUMFAC ] )
-      MsgStop( "Debe de indicar la factura que quiere rectificar." )
-      aGet[ _CNUMFAC ]:SetFocus()
-      return .f.
-   end if
-
-   if lCliBlq( aTmp[ _CCODCLI ], dbfClient )
-      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
-      aGet[ _CCODCLI ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CNOMCLI ] )
-      msgStop( "Nombre de cliente no puede estar vacio." )
-      aGet[ _CNOMCLI ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CDIRCLI ] )
-      msgStop( "Domicilio de cliente no puede estar vacio." )
-      aGet[ _CDIRCLI ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CDNICLI ] )
-      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacio." )
-      aGet[ _CDNICLI ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacén no puede estar vacio." )
-      aGet[ _CCODALM ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CCODPAGO ] )
-      msgStop( "Forma de pago no puede estar vacia." )
-      aGet[ _CCODPAGO ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CDIVFAC ] )
-      MsgStop( "No puede almacenar documento sin código de divisa." )
-      aGet[ _CDIVFAC ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
-      msgStop( "Agente no puede estar vacio." )
-      aGet[ _CCODAGE ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CCODOBR ] ) .and. lObras()
-      MsgStop( "Debe de introducir una obra." )
-      aGet[ _CCODOBR ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CMOTREC ] )
-      MsgStop( "Debe indicar un motivo para la factura rectificativa." )
-      oFld:SetOption( 2 )
-      aGet[ _CMOTREC ]:SetFocus()
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CCAUREC ] )
-      MsgStop( "Debe indicar una causa por la que se emite la factura rectificativa." )
-      oFld:SetOption( 2 )
-      aGet[ _CCAUREC ]:SetFocus()
-      return .f.
-   end if
-
-   if ( dbfTmpLin )->( eof() )
-      MsgStop( "No puede almacenar un documento sin lineas." )
-      return .f.
-   end if
-
-   if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-
-      ( dbfTmpLin )->( dbGoTop() )
-      while !( dbfTmpLin )->( eof() )
-
-         if !( dbfTmpLin )->lControl .and. ( dbfTmpLin )->nPreUnit == 0 .and. !( dbfTmpLin )->lKitPrc
-            if !ApoloMsgNoYes( "El artículo " + Rtrim( ( dbfTmpLin )->cRef ) + " - " + Rtrim( Descrip( dbfTmpLin ) ) + " no esta valorado.", "¿Desea continuar archivando la factura?" )
-               return .f.
-            end if
-         end if
-
-         ( dbfTmpLin )->( dbSkip() )
-
-      end while
-
-   end if
-
-   /*
-   Para q nadie toque mientras grabamos----------------------------------------
-   */
-
-   CursorWait()
-
-   oDlg:Disable()
-
-   oMsgText( "Archivando" )
-
-   aTmp[ _DFECCRE ]     := GetSysDate()
-   aTmp[ _CTIMCRE ]     := Time()
-
-   /*
-   Quitamos los filtros
-   */
-
-   ( dbfTmpLin )->( dbClearFilter() )
-
-   /*
-   Primero hacer el RollBack---------------------------------------------------
-   */
-
-   do case
-   case ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-
-		/*
-      Obtenemos el nuevo numero de la factura----------------------------------
-		*/
-
-      nNumFac           := nNewDoc( cSerFac, dbfFacRecT, "nFacRec", , dbfCount )
-      aTmp[ _NNUMFAC ]  := nNumFac
-      aTmp[ _LIMPALB ]  := !Empty( aNumAlb )
-
-   case ( nMode == EDIT_MODE )
-
-      /*
-      Rollback de todos los articulos si la factura no se importo de albaranes-
-
-      oStock:FacRec( cSerFac + Str( nNumFac ) + cSufFac, ( dbfFacRecT )->cCodAlm, .t., .t. )
-      */
-
-      while ( dbfFacRecL )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecL )->( eof() )
-         if dbLock( dbfFacRecL )
-            ( dbfFacRecL )->( dbDelete() )
-            ( dbfFacRecL )->( dbUnLock() )
-         end if
-      end while
-
-      /*
-      Eliminamos las incidencias anteriores------------------------------------
-      */
-
-      while ( dbfFacRecI )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecI )->( eof() )
-         if dbLock( dbfFacRecI )
-            ( dbfFacRecI )->( dbDelete() )
-            ( dbfFacRecI )->( dbUnLock() )
-         end if
-      end while
-
-      /*
-      Eliminamos las incidencias anteriores------------------------------------
-      */
-
-      while ( dbfFacRecD )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecD )->( eof() )
-         if dbLock( dbfFacRecD )
-            ( dbfFacRecD )->( dbDelete() )
-            ( dbfFacRecD )->( dbUnLock() )
-         end if
-      end while
-
-      /*
-      Eliminamos las series----------------------------------------------------
-      */
-
-      while ( dbfFacRecS )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecS )->( eof() )
-         if dbLock( dbfFacRecS )
-            ( dbfFacRecS )->( dbDelete() )
-            ( dbfFacRecS )->( dbUnLock() )
-         end if
-      end while
-
-      /*
-      Eliminamos los pagos anteriores------------------------------------------
-      */
-
-      while ( dbfFacCliP )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) .and. !( dbfFacCliP )->( eof() ) )
-         if dbLock( dbfFacCliP )
-            ( dbfFacCliP )->( dbDelete() )
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
-      end while
-
-   end case
-
-   /*
-   Actualizacion de riesgo-----------------------------------------------------
-   */
-
-   oMsgProgress()
-   oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
-
-	/*
-   Ahora escribimos en el fichero definitivo-----------------------------------
-	*/
-
-   ( dbfTmpLin )->( dbGoTop() )
-   while ( dbfTmpLin )->( !eof() )
-
-      if ( dbfTmpLin )->dFecFac != aTmp[ _DFECFAC ]
-         ( dbfTmpLin )->dFecFac := aTmp[ _DFECFAC ]
-      end if
-
-      dbPass( dbfTmpLin, dbfFacRecL, .t., cSerFac, nNumFac, cSufFac )
-
-      ( dbfTmpLin )->( dbSkip() )
-
-      oMsgProgress():Deltapos(1)
-
-   end while
-
-   /*
-   Ahora escribimos en el fichero definitivo de inicdencias--------------------
-	*/
-
-   ( dbfTmpInc )->( dbGoTop() )
-   while ( dbfTmpInc )->( !eof() )
-      dbPass( dbfTmpInc, dbfFacRecI, .t., cSerFac, nNumFac, cSufFac )
-      ( dbfTmpInc )->( dbSkip() )
-   end while
-
-   /*
-   Ahora escribimos en el fichero definitivo de documentos--------------------
-	*/
-
-   ( dbfTmpDoc )->( dbGoTop() )
-   while ( dbfTmpDoc )->( !eof() )
-      dbPass( dbfTmpDoc, dbfFacRecD, .t., cSerFac, nNumFac, cSufFac )
-      ( dbfTmpDoc )->( dbSkip() )
-   end while
-
-   /*
-   Ahora escribimos en el fichero definitivo de series--------------------
-	*/
-
-   ( dbfTmpSer )->( dbGoTop() )
-   while ( dbfTmpSer )->( !eof() )
-      dbPass( dbfTmpSer, dbfFacRecS, .t., cSerFac, nNumFac, cSufFac, dFecFac )
-      ( dbfTmpSer )->( dbSkip() )
-   end while
-
-   /*
-   Ahora escribimos en el fichero definitivo de pagos--------------------------
-	*/
-
-   ( dbfTmpPgo )->( dbGoTop() )
-   while ( dbfTmpPgo )->( !eof() )
-
-      if ( dbfTmpPgo )->cCodCli != aTmp[ _CCODCLI ]
-         ( dbfTmpPgo )->cCodCli := aTmp[ _CCODCLI ]
-      end if
-
-      if ( dbfTmpPgo )->cNomCli != aTmp[ _CNOMCLI ]
-         ( dbfTmpPgo )->cNomCli := aTmp[ _CNOMCLI ]
-      end if
-
-      dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
-
-      ( dbfTmpPgo )->( dbSkip() )
-
-   end while
-
-   /*
-   Rellenamos  los campos de los totales---------------------------------------
-   */
-
-   aTmp[ _NTOTNET ]  := nTotNet
-   aTmp[ _NTOTIVA ]  := nTotIva
-   aTmp[ _NTOTREQ ]  := nTotReq
-   aTmp[ _NTOTFAC ]  := nTotFac
-
-   /*
-   Grabamos el registro--------------------------------------------------------
-   */
-
-   WinGather( aTmp, , dbfFacRecT, , nMode )
-
-   /*
-   Actualizamos el stock en la web------------------------------------------
-   */
-
-   ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
-
-   /*
-   Actualizamos el estado de los albaranes de clientes-------------------------
-   */
-
-   if len( aNumAlb ) > 0
-      for n := 1 to len( aNumAlb )
-         if ( dbfAlbCliT )->( dbSeek( aNumAlb[n] ) )
-            if dbLock( dbfAlbCliT )
-               delRiesgo( nTotAlbCli( aNumAlb[ n ], dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv ), ( dbfAlbCliT )->cCodCli, dbfClient )
-               ( dbfAlbCliT )->lFacturado := .t.
-               ( dbfAlbCliT )->cNumFac    := cSerFac + Str( nNumFac ) + cSufFac
-               ( dbfAlbCliT )->( dbUnlock() )
-               //oStock:AlbCli( aNumAlb[ n ], ( dbfAlbCliT )->cCodAlm, .f., .t., .t., nil, .f. )
-            end if
-         end if
-      next
-   end if
-
-   /*
-   Rollback de articulos si no esta importado desde albaranes
-
-   oStock:FacRec( cSerFac + Str( nNumFac ) + cSufFac, ( dbfFacRecT )->cCodAlm, .f., .f. )
-   */
-
-   /*
-   Generar los pagos de las facturas-------------------------------------------
-   */
-
-   GenPgoFacRec( cSerFac + Str( nNumFac ) + cSufFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfClient, dbfFPago, dbfDiv, dbfIva, nMode )
-
-   /*
-   Comprobamos el estado de la factura-----------------------------------------
-   */
-
-   ChkLqdFacRec( nil, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
-
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
-
-   dbCommitAll()
-
-   /*
-   Cerramos el dialogo---------------------------------------------------------
-   */
-
-   oMsgText()
-
-   EndProgress()
-
-   oDlg:Enable()
-   oDlg:end( IDOK )
-
-   CursorWE()
-
-Return .t.
-
-//------------------------------------------------------------------------//
-
-Static Function KillTrans( oBrwDet, oBrwInc, oBrwPgo )
-
-	/*
-	Borramos los ficheros
-	*/
-
-   if !Empty( dbfTmpLin ) .and. ( dbfTmpLin )->( Used() )
-      ( dbfTmpLin )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() )
-      ( dbfTmpInc )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTmpDoc ) .and. ( dbfTmpDoc )->( Used() )
-      ( dbfTmpDoc )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTmpAnt ) .and. ( dbfTmpAnt )->( Used() )
-      ( dbfTmpAnt )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTmpPgo ) .and. ( dbfTmpPgo )->( Used() )
-      ( dbfTmpPgo )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTmpSer ) .and. ( dbfTmpSer )->( Used() )
-      ( dbfTmpSer )->( dbCloseArea() )
-   end if
-
-   dbfTmpLin      := nil
-   dbfTmpInc      := nil
-   dbfTmpDoc      := nil
-   dbfTmpAnt      := nil
-   dbfTmpPgo      := nil
-   dbfTmpSer      := nil
-
-   dbfErase( cTmpLin )
-   dbfErase( cTmpInc )
-   dbfErase( cTmpDoc )
-   dbfErase( cTmpAnt )
-   dbfErase( cTmpPgo )
-   dbfErase( cTmpSer )
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-/*
-Crea los ficheros de la facturaci¢n
-*/
-
-STATIC FUNCTION CreateFiles( cPath, lReindex )
-
-   DEFAULT lReindex  := .t.
-
-   if !lExistTable( cPath + "FacRecT.DBF" )
-      dbCreate( cPath + "FacRecT.DBF", aSqlStruct( aItmFacRec() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "FacRecL.DBF" )
-      dbCreate( cPath + "FacRecL.DBF", aSqlStruct( aColFacRec() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "FacRecI.DBF" )
-      dbCreate( cPath + "FacRecI.DBF", aSqlStruct( aIncFacRec() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "FacRecD.DBF" )
-      dbCreate( cPath + "FacRecD.DBF", aSqlStruct( aFacRecDoc() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "FacRecS.Dbf" )
-      dbCreate( cPath + "FacRecS.Dbf", aSqlStruct( aSerFacRec() ), cDriver() )
-   end if
-
-   if lReindex
-      rxFacRec( cPath )
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-/*
 Devuelve la fecha de una factura de cliente
 */
 
-FUNCTION dFecFacRec( cFacRec, dbfFacRecT )
+FUNCTION dFecFacRec( cFacRec, cFacRecT )
 
    local aStatus
 	local dFecFac	:= CtoD("")
 
-   if IsObject( dbfFacRecT )
+   if IsObject( cFacRecT )
 
-      dbfFacRecT:GetStatus( .t. )
+      cFacRecT:GetStatus( .t. )
 
-      if dbfFacRecT:Seek( cFacRec )
-         dFecFac  := dbfFacRecT:dFecFac
+      if cFacRecT:Seek( cFacRecT )
+         dFecFac  := cFacRecT:dFecFac
       end if
 
-      dbfFacRecT:SetStatus()
+      cFacRecT:SetStatus()
 
    else
 
-      aStatus     := aGetStatus( dbfFacRecT, .t. )
+      aStatus     := aGetStatus( cFacRecT, .t. )
 
-      if ( dbfFacRecT )->( dbSeek( cFacRec ) )
-         dFecFac  := ( dbfFacRecT )->dFecFac
+      if ( cFacRecT )->( dbSeek( cFacRecT ) )
+         dFecFac  := ( cFacRecT )->dFecFac
       end if
 
-      SetStatus( dbfFacRecT, aStatus )
+      SetStatus( cFacRecT, aStatus )
 
    end if
 
@@ -8412,17 +11820,17 @@ RETURN ( dFecFac )
 Devuelve el codigo del Cliente pasando un numero de factura
 */
 
-FUNCTION cCliFacRec( cFacRec, uFacRecT )
+FUNCTION cCliFacRec( cFacRecT, uFacRecT )
 
    local cCodCli  := ""
 
    do case
       case ValType( uFacRecT ) == "C"
-         if (uFacRecT)->( dbSeek( cFacRec ) )
+         if (uFacRecT)->( dbSeek( cFacRecT ) )
             cCodCli     := (uFacRecT)->CCODCLI
          end if
       case ValType( uFacRecT ) == "O"
-         if uFacRecT:Seek( cFacRec )
+         if uFacRecT:Seek( cFacRecT )
             cCodCli     := uFacRecT:cCodCli
          end if
    end case
@@ -8435,12 +11843,12 @@ RETURN ( cCodCli )
 Devuelve el Nombre del cliente pasando un numero de factura
 */
 
-FUNCTION cNbrFacRec( cFacRec, dbfFacRecT )
+FUNCTION cNbrFacRec( cFacRec, cFacRecT )
 
    local cNomCli  := ""
 
-   if ( dbfFacRecT )->( dbSeek( cFacRec ) )
-      cNomCli     := ( dbfFacRecT )->CNOMCLI
+   if ( cFacRecT )->( dbSeek( cFacRecT ) )
+      cNomCli     := ( cFacRecT )->CNOMCLI
 	END IF
 
 RETURN ( cNomCli )
@@ -8451,17 +11859,17 @@ RETURN ( cNomCli )
 Devuelve la forma de pago pasando un numero de factura
 */
 
-FUNCTION cPgoFacRec( cFacRec, dbfFacRecT )
+FUNCTION cPgoFacRec( cFacRec, cFacRecT )
 
    local cCodPgo  := ""
 
-   if ValType( dbfFacRecT ) == "O"
-      if dbfFacRecT:Seek( cFacRec )
-         cCodPgo  := dbfFacRecT:cCodPago
+   if ValType( cFacRecT ) == "O"
+      if cFacRecT:Seek( cFacRecT )
+         cCodPgo  := cFacRecT:cCodPago
       end if
    else
-      if ( dbfFacRecT )->( dbSeek( cFacRec ) )
-         cCodPgo  := ( dbfFacRecT )->cCodPago
+      if ( cFacRecT )->( dbSeek( cFacRecT ) )
+         cCodPgo  := ( cFacRecT )->cCodPago
       end if
    end if
 
@@ -8469,12 +11877,12 @@ RETURN ( cCodPgo )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION cProFacRec( cFacRec, dbfFacRecT )
+FUNCTION cProFacRec( cFacRec, cFacRecT )
 
    local cCodPro  := ""
 
-   if ( dbfFacRecT )->( dbSeek( cFacRec ) )
-      cCodPro     := ( dbfFacRecT )->CCODPRO
+   if ( cFacRecT )->( dbSeek( cFacRecT ) )
+      cCodPro     := ( cFacRecT )->CCODPRO
 	END IF
 
 RETURN ( cCodPro )
@@ -8484,12 +11892,12 @@ RETURN ( cCodPro )
 Devuelve si la factura esta contabilizada o no
 */
 
-FUNCTION lConFacRec( cFacRec, dbfFacRecT )
+FUNCTION lConFacRec( cFacRec, cFacRecT )
 
    local lConFac  := .f.
 
-   if ( dbfFacRecT )->( dbSeek( cFacRec ) )
-      lConFac     := ( dbfFacRecT )->lContab
+   if ( cFacRecT )->( dbSeek( cFacRecT ) )
+      lConFac     := ( cFacRecT )->lContab
 	END IF
 
 RETURN ( lConFac )
@@ -8499,17 +11907,17 @@ RETURN ( lConFac )
 Devuelve el codigo de cliente de una factura
 */
 
-FUNCTION cAgeFacRec( cFacRec, dbfFacRecT )
+FUNCTION cAgeFacRec( cFacRec, cFacRecT )
 
    local cCliFac  := ""
 
-   if ValType( dbfFacRecT ) == "O"
-      if dbfFacRecT:Seek( cFacRec )
-         cCliFac  := dbfFacRecT:cCodAge
+   if ValType( cFacRecT ) == "O"
+      if cFacRecT:Seek( cFacRecT )
+         cCliFac  := cFacRecT:cCodAge
       end if
    else
-      if ( dbfFacRecT )->( dbSeek( cFacRec ) )
-         cCliFac  := ( dbfFacRecT )->cCodAge
+      if ( cFacRecT )->( dbSeek( cFacRecT ) )
+         cCliFac  := ( cFacRecT )->cCodAge
       end if
    end if
 
@@ -8517,93 +11925,6 @@ RETURN ( cCliFac )
 
 //---------------------------------------------------------------------------//
 
-static function lGenFacRec( oBrw, oBtn, nDevice )
-
-   local bAction
-
-   DEFAULT nDevice   := IS_PRINTER
-
-   if Empty( oBtn )
-      return nil
-   end if
-
-   if !( dbfDoc )->( dbSeek( "FR" ) )
-
-         DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( msgStop( "No hay facturas rectificativas de clientes predefinidas" ) );
-            TOOLTIP  "No hay documentos" ;
-            HOTKEY   "N";
-            FROM     oBtn ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-   ELSE
-
-      WHILE ( dbfDoc )->CTIPO == "FR" .AND. !( dbfDoc )->( eof() )
-
-         bAction  := bGenFacRec( nDevice, "Imprimiendo facturas rectificativas de clientes", ( dbfDoc )->CODIGO )
-
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
-
-         ( dbfDoc )->( dbSkip() )
-
-      END DO
-
-   END IF
-
-   SysRefresh()
-
-return nil
-
-//---------------------------------------------------------------------------//
-
-static function bGenFacRec( nDevice, cTitle, cCodDoc )
-
-   local bGen
-   local nDev  := by( nDevice )
-   local cTit  := by( cTitle  )
-   local cCod  := by( cCodDoc )
-
-   if nDev == IS_PRINTER
-      bGen     := {|| GenFacRec( nDev, cTit, cCod ) }
-   else
-      bGen     := {|| GenFacRec( nDev, cTit, cCod ) }
-   end if
-
-return ( bGen )
-
-//---------------------------------------------------------------------------//
-//
-// Devuelve el total de la compra en facturas de proveedores de un articulo
-//
-/*
-function nTotVFacRec( cCodArt, dbfFacRecL, nDouDiv, nDorDiv )
-
-   local nTotVta  := 0
-   local nOrd     := ( dbfFacRecL )->( OrdSetFocus( "cRef" ) )
-   local nRec     := ( dbfFacRecL )->( Recno() )
-
-   if ( dbfFacRecL )->( dbSeek( cCodArt ) )
-
-      while ( dbfFacRecL )->CREF == cCodArt .and. !( dbfFacRecL )->( eof() )
-
-         if !( dbfFacRecL )->LTOTLIN
-            nTotVta += nTotLFacRec( dbfFacRecL, nDouDiv, nDorDiv )
-         end if
-
-         ( dbfFacRecL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfFacRecL )->( OrdSetFocus( nOrd  ) )
-   ( dbfFacRecL )->( dbGoTo( nRec ) )
-
-return ( nTotVta )
-*/
-//---------------------------------------------------------------------------//
 //
 // Devuelve el total de la compra en facturas de proveedores de un articulo
 //
@@ -8989,29 +12310,29 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-function nVtaFacRec( cCodCli, dDesde, dHasta, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nYear )
+function nVtaFacRec( cCodCli, dDesde, dHasta, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nYear )
 
    local nCon     := 0
-   local nOrd     := ( dbfFacRecT )->( OrdSetFocus( "CCODCLI" ) )
-   local nRec     := ( dbfFacRecT )->( Recno() )
+   local nOrd     := ( cFacRecT )->( OrdSetFocus( "CCODCLI" ) )
+   local nRec     := ( cFacRecT )->( Recno() )
 
    /*
    Facturas a Clientes -------------------------------------------------------
    */
 
-   if ( dbfFacRecT )->( dbSeek( cCodCli ) )
+   if ( cFacRecT )->( dbSeek( cCodCli ) )
 
-      while ( dbfFacRecT )->cCodCli = cCodCli .and. !( dbfFacRecT )->( Eof() )
+      while ( cFacRecT )->cCodCli = cCodCli .and. !( cFacRecT )->( Eof() )
 
-         if ( dDesde == nil .or. ( dbfFacRecT )->DFECFAC >= dDesde ) .and.;
-            ( dHasta == nil .or. ( dbfFacRecT )->DFECFAC <= dHasta ) .and.;
-            ( nYear == nil .or. Year( ( dbfFacRecT )->dFecFac ) == nYear )
+         if ( dDesde == nil .or. ( cFacRecT )->DFECFAC >= dDesde ) .and.;
+            ( dHasta == nil .or. ( cFacRecT )->DFECFAC <= dHasta ) .and.;
+            ( nYear == nil .or. Year( ( cFacRecT )->dFecFac ) == nYear )
 
-            nCon  += nTotFacRec( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
+            nCon  += nTotFacRec( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
 
          end if
 
-         ( dbfFacRecT )->( dbSkip() )
+         ( cFacRecT )->( dbSkip() )
 
          SysRefresh()
 
@@ -9019,145 +12340,13 @@ function nVtaFacRec( cCodCli, dDesde, dHasta, dbfFacRecT, dbfFacRecL, dbfIva, db
 
    end if
 
-   ( dbfFacRecT )->( OrdSetFocus( nOrd ) )
-   ( dbfFacRecT )->( dbGoTo( nRec ) )
+   ( cFacRecT )->( OrdSetFocus( nOrd ) )
+   ( cFacRecT )->( dbGoTo( nRec ) )
 
 return nCon
 
 //----------------------------------------------------------------------------//
 
-static function QuiFacRec()
-
-   local nOrdAnt
-   local cSerDoc     := ( dbfFacRecT )->cSerie
-   local nNumDoc     := ( dbfFacRecT )->nNumFac
-   local cSufDoc     := ( dbfFacRecT )->cSufFac
-
-   if ( dbfFacRecT )->lCloFac .and. !oUser():lAdministrador()
-      msgStop( "Solo puede eliminar facturas cerradas los administradores." )
-      return .f.
-   end if
-
-   /*
-   Actualizamos los riesgos de clientes
-   */
-
-   DelRiesgo( nTotFac, ( dbfFacRecT )->cCodCli, dbfClient )
-
-   /*
-   Eliminamos las lineas-------------------------------------------------------
-   */
-
-   nOrdAnt     := ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
-
-   while ( dbfFacRecL )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
-      if dbDialogLock( dbfFacRecL )
-         ( dbfFacRecL )->( dbDelete() )
-         ( dbfFacRecL )->( dbUnLock() )
-      end if
-
-      ( dbfFacRecL )->( dbSkip() )
-   end do
-
-   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
-
-   /*
-   Eliminamos los pagos--------------------------------------------------------
-   */
-
-   nOrdAnt     := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
-
-   if ( dbfFacCliP )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) )
-
-      while cSerDoc + Str( nNumDoc ) + cSufDoc == ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac .and. !( dbfFacCliP )->( eof() )
-
-         if ( dbfFacCliP )->cTipRec == "R"
-
-            if dbDialogLock( dbfFacCliP )
-               ( dbfFacCliP )->( dbDelete() )
-               ( dbfFacCliP )->( dbUnLock() )
-            end if
-
-         end if
-
-         ( dbfFacCliP )->( dbSkip() )
-
-      end do
-
-   end if
-
-   ( dbfFacCliP )->( OrdSetFocus( nOrdAnt ) )
-
-   /*
-   Eliminamos las incidencias--------------------------------------------------
-   */
-
-   nOrdAnt     := ( dbfFacRecI )->( OrdSetFocus( "nNumFac" ) )
-
-   while ( dbfFacRecI )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecI )->( eof() )
-      if dbDialogLock( dbfFacRecI )
-         ( dbfFacRecI )->( dbDelete() )
-         ( dbfFacRecI )->( dbUnLock() )
-      end if
-
-      ( dbfFacRecI )->( dbSkip() )
-   end do
-
-   ( dbfFacRecI )->( OrdSetFocus( nOrdAnt ) )
-
-   /*
-   Eliminamos los documentos---------------------------------------------------
-   */
-
-   nOrdAnt     := ( dbfFacRecD )->( OrdSetFocus( "nNumFac" ) )
-
-   while ( dbfFacRecD )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecD )->( eof() )
-      if dbDialogLock( dbfFacRecD )
-         ( dbfFacRecD )->( dbDelete() )
-         ( dbfFacRecD )->( dbUnLock() )
-      end if
-
-      ( dbfFacRecD )->( dbSkip() )
-   end do
-
-   ( dbfFacRecD )->( OrdSetFocus( nOrdAnt ) )
-
-   /*
-   Eliminamos las series-------------------------------------------------------
-   */
-
-   nOrdAnt     := ( dbfFacRecS )->( OrdSetFocus( "nNumFac" ) )
-
-   while ( dbfFacRecS )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecS )->( eof() )
-      if dbDialogLock( dbfFacRecS )
-         ( dbfFacRecS )->( dbDelete() )
-         ( dbfFacRecS )->( dbUnLock() )
-      end if
-
-      ( dbfFacRecS )->( dbSkip() )
-   end do
-
-   ( dbfFacRecS )->( OrdSetFocus( nOrdAnt ) )
-
-   /*
-   Recuperamos contadores------------------------------------------------------
-   */
-   
-   	if uFieldEmpresa( "LRECNUMFAC" )
-		nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbfFacRecT, "nFacRec", , dbfCount )
-   	end if
-
-   /*
-   Refresh---------------------------------------------------------------------
-   */
-
-   if oWndBrw != nil
-      oWndBrw:Refresh()
-   end if
-
-return .t.
-
-//--------------------------------------------------------------------------//
 //
 // Devuelve las unidades de una linea
 //
@@ -9231,736 +12420,6 @@ Static function lImpLin( dbfTmpLin, oBrwDet )
    oBrwDet:Refresh()
 
 Return nil
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTitle2, bPreAction, bPostAction )
-
-   local oDlg
-   local oRad
-   local nRad        := 1
-   local aRet        := {}
-   local oTree
-   local oChk1
-   local oChk2
-   local lChk1       := .t.
-   local lChk2       := .t.
-   local nRecno      := ( dbfFacRecT )->( Recno() )
-   local nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( 1 ) )
-   local oSerIni
-   local oSerFin
-   local cSerIni     := ( dbfFacRecT )->cSerie
-   local cSerFin     := ( dbfFacRecT )->cSerie
-   local oDocIni
-   local oDocFin
-   local nDocIni     := ( dbfFacRecT )->nNumFac
-   local nDocFin     := ( dbfFacRecT )->nNumFac
-   local oSufIni
-   local oSufFin
-   local cSufIni     := ( dbfFacRecT )->cSufFac
-   local cSufFin     := ( dbfFacRecT )->cSufFac
-   local oMtrInf
-   local nMtrInf
-   local lFechas     := .t.
-   local dDesde      := CtoD( "01/01/" + Str( Year( Date() ) ) )
-   local dHasta      := Date()
-   local oImageList
-   local oBtnCancel
-
-   DEFAULT cTitle    := ""
-   DEFAULT lHide1    := .f.
-   DEFAULT cTitle1   := ""
-   DEFAULT lHide2    := .f.
-   DEFAULT cTitle2   := ""
-
-   oImageList        := TImageList():New( 16, 16 )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
-   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
-
-   DEFINE DIALOG oDlg RESOURCE "SelectRango" TITLE cTitle
-
-   REDEFINE RADIO oRad VAR nRad ;
-      ID       80, 81 ;
-      OF       oDlg
-
-   REDEFINE GET oSerIni VAR cSerIni ;
-      ID       100 ;
-      PICTURE  "@!" ;
-      SPINNER ;
-      ON UP    ( UpSerie( oSerIni ) );
-      ON DOWN  ( DwSerie( oSerIni ) );
-      WHEN     ( oRad:nOption == 2 ) ;
-      VALID    ( cSerIni >= "A" .and. cSerIni <= "Z" );
-      UPDATE ;
-      OF       oDlg
-
-   REDEFINE BTNBMP ;
-      ID       101 ;
-      OF       oDlg ;
-      RESOURCE "Up16" ;
-      NOBORDER ;
-      ACTION   ( dbFirst( dbfFacRecT, "nNumFac", oDocIni, cSerIni, "nNumFac" ) )
-
-   REDEFINE GET oSerFin VAR cSerFin ;
-      ID       110 ;
-      PICTURE  "@!" ;
-      SPINNER ;
-      ON UP    ( UpSerie( oSerFin ) );
-      ON DOWN  ( DwSerie( oSerFin ) );
-      WHEN     ( oRad:nOption == 2 ) ;
-      VALID    ( cSerFin >= "A" .and. cSerFin <= "Z" );
-      UPDATE ;
-      OF       oDlg
-
-   REDEFINE BTNBMP ;
-      ID       111 ;
-      OF       oDlg ;
-      RESOURCE "Down16" ;
-      NOBORDER ;
-      ACTION   ( dbLast( dbfFacRecT, "nNumFac", oDocFin, cSerFin, "nNumFAc" ) )
-
-   REDEFINE GET oDocIni VAR nDocIni;
-      ID       120 ;
-		PICTURE 	"999999999" ;
-      SPINNER ;
-      WHEN     ( nRad == 2 ) ;
-      OF       oDlg
-
-   REDEFINE GET oDocFin VAR nDocFin;
-      ID       130 ;
-		PICTURE 	"999999999" ;
-      SPINNER ;
-      WHEN     ( nRad == 2 ) ;
-      OF       oDlg
-
-   REDEFINE GET oSufIni VAR cSufIni ;
-      ID       140 ;
-      PICTURE  "##" ;
-      WHEN     ( nRad == 2 ) ;
-      OF       oDlg
-
-   REDEFINE GET oSufFin VAR cSufFin ;
-      ID       150 ;
-      PICTURE  "##" ;
-      WHEN     ( nRad == 2 ) ;
-      OF       oDlg
-
-   REDEFINE CHECKBOX oChk1 VAR lChk1 ;
-      ID       160 ;
-		OF 		oDlg
-
-   REDEFINE CHECKBOX oChk2 VAR lChk2 ;
-      ID       180 ;
-		OF 		oDlg
-
-   /*
-   Rango de fechas-------------------------------------------------------------
-   */
-
-   REDEFINE CHECKBOX lFechas ;
-      ID       300 ;
-		OF 		oDlg
-
-   REDEFINE GET dDesde ;
-      ID       310 ;
-      WHEN     ( !lFechas ) ;
-      SPINNER ;
-      OF       oDlg
-
-	REDEFINE GET dHasta ;
-      ID       320 ;
-      WHEN     ( !lFechas ) ;
-      SPINNER ;
-      OF       oDlg
-
-   /*
-   Resultados del proceso------------------------------------------------------
-   */
-
-   oTree             := TTreeView():Redefine( 170, oDlg )
-   oTree:bLDblClick  := {|| TreeChanged( oTree ) }
-
-   REDEFINE METER oMtrInf ;
-      VAR      nMtrInf ;
-      PROMPT   "Proceso" ;
-      ID       200 ;
-      OF       oDlg
-
-   oMtrInf:SetTotal( ( dbfFacRecT )->( OrdKeyCount() ) )
-
-   REDEFINE BUTTON ;
-      ID       IDOK ;
-		OF 		oDlg ;
-      ACTION   ( MakSelRec( bAction, bPreAction, bPostAction, cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, oTree, oBrw, oMtrInf, oBtnCancel ) )
-
-   REDEFINE BUTTON oBtnCancel ;
-      ID       IDCANCEL ;
-		OF 		oDlg ;
-      CANCEL ;
-      ACTION   ( oDlg:end() )
-
-   oDlg:bStart := {|| StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 ) }
-
-   oDlg:AddFastKey( VK_F5, {|| MakSelRec( bAction, bPreAction, bPostAction, cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, oTree, oBrw, oMtrInf, oBtnCancel ) } )
-
-   ACTIVATE DIALOG oDlg ;
-      CENTER ;
-      ON INIT  ( oTree:SetImageList( oImageList ) )
-
-   ( dbfFacRecT )->( ordSetFocus( nOrdAnt ) )
-   ( dbfFacRecT )->( dbGoTo( nRecNo ) )
-
-   oImageList:End()
-
-   oTree:Destroy()
-
-   oBrw:SetFocus()
-   oBrw:Refresh()
-
-RETURN ( aRet )
-
-//---------------------------------------------------------------------------//
-
-Static Function StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 )
-
-   if !Empty( oBrw ) .and. ( len( oBrw:oBrw:aSelected ) > 1 )
-
-      oRad:SetOption( 1 )
-
-   else
-
-      oRad:SetOption( 2 )
-
-      oSerIni:Enable()
-      oSerFin:Enable()
-      oDocIni:Enable()
-      oDocFin:Enable()
-      oSufIni:Enable()
-      oSufFin:Enable()
-
-   end if
-
-   if lHide1
-      oChk1:Hide()
-   else
-      SetWindowText( oChk1:hWnd, cTitle1 )
-      oChk1:Refresh()
-   end if
-
-   if lHide2
-      oChk2:Hide()
-   else
-      SetWindowText( oChk2:hWnd, cTitle2 )
-      oChk2:Refresh()
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function TreeChanged( oTree )
-
-   local oItemTree   := oTree:GetItem()
-
-   if !Empty( oItemTree ) .and. !Empty( oItemTree:bAction )
-      Eval( oItemTree:bAction )
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, oTree, oBrw, oMtrInf, oBtnCancel )
-
-   local n        := 0
-   local nPos     := 0
-   local nRec     := ( dbfFacRecT )->( Recno() )
-   local aPos
-   local lRet
-   local lPre
-   local lWhile   := .t.
-
-   /*
-   Preparamos la pantalla para mostrar la simulación---------------------------
-   */
-
-   if lChk1
-      aPos        := { 0, 0 }
-      ClientToScreen( oDlg:hWnd, aPos )
-      oDlg:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
-   end if
-
-   /*
-   Desabilitamos el dialogo para iniciar el proceso----------------------------
-   */
-
-   oDlg:Disable()
-
-   oTree:Enable()
-   oTree:DeleteAll()
-
-   oBtnCancel:bAction   := {|| lWhile := .f. }
-   oBtnCancel:Enable()
-
-   if !Empty( bPreAction )
-      lPre              := Eval( bPreAction )
-   end if
-
-   if !IsLogic( lPre ) .or. lPre
-
-      if nRad == 1
-
-         for each nPos in ( oBrw:oBrw:aSelected )
-
-            ( dbfFacRecT )->( dbGoTo( nPos ) )
-
-            if lFechas .or.( ( dbfFacRecT )->dFecFac >= dDesde .and. ( dbfFacRecT )->dFecFac <= dHasta )
-
-               lRet  := Eval( bAction, lChk1, lChk2, oTree, dbfFacRecT, dbfFacRecL )
-
-               if IsFalse( lRet )
-                  exit
-               end if
-
-            end if
-
-            oMtrInf:Set( ++n )
-
-            SysRefresh()
-
-            if !lWhile
-               exit
-            end if
-
-         next
-
-      else
-
-         ( dbfFacRecT )->( dbSeek( cDocIni, .t. ) )
-
-         while ( lWhile )                                                                                      .and. ;
-               ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac, 9 ) + ( dbfFacRecT )->cSufFac >= cDocIni .and. ;
-               ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac, 9 ) + ( dbfFacRecT )->cSufFac <= cDocFin .and. ;
-               !( dbfFacRecT )->( eof() )
-
-            if lFechas .or.( ( dbfFacRecT )->dFecFac >= dDesde .and. ( dbfFacRecT )->dFecFac <= dHasta )
-
-               lRet  := Eval( bAction, lChk1, lChk2, oTree, dbfFacRecT, dbfFacRecL )
-
-               if IsFalse( lRet )
-                  exit
-               end if
-
-            end if
-
-            oMtrInf:Set( ++n )
-
-            ( dbfFacRecT )->( dbSkip() )
-
-            SysRefresh()
-
-         end do
-
-      end if
-
-      if !Empty( bPostAction )
-         Eval( bPostAction )
-      end if
-
-   end if
-
-   oMtrInf:Set( ( dbfFacRecT )->( OrdKeyCount() ) )
-
-   ( dbfFacRecT )->( dbGoTo( nRec ) )
-
-   if lChk1
-      WndCenter( oDlg:hWnd )
-   end if
-
-   oBtnCancel:bAction   := {|| oDlg:End() }
-
-   oDlg:Enable()
-
-   if oBrw != nil
-      oBrw:Refresh()
-   end if
-
-RETURN ( lRet )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION DelSerie( oWndBrw )
-
-	local oDlg
-   local oSerIni
-   local oSerFin
-   local oTxtDel
-   local nTxtDel     := 0
-   local nRecno      := ( dbfFacRecT )->( Recno() )
-   local nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( dbfFacRecT )->cSerie, ( dbfFacRecT )->nNumFac, ( dbfFacRecT )->cSufFac, GetSysDate() )
-   local lCancel     := .f.
-   local oBtnAceptar
-   local oBtnCancel
-
-   DEFINE DIALOG oDlg ;
-      RESOURCE "DELSERDOC" ;
-      TITLE    "Eliminar series de facturas rectificativas" ;
-      OF       oWndBrw
-
-   REDEFINE RADIO oDesde:nRadio ;
-      ID       90, 91 ;
-      OF       oDlg
-
-   REDEFINE GET oSerIni VAR oDesde:cSerieInicio ;
-      ID       100 ;
-      PICTURE  "@!" ;
-      UPDATE ;
-      SPINNER ;
-      ON UP    ( UpSerie( oSerIni ) );
-      ON DOWN  ( DwSerie( oSerIni ) );
-      WHEN     ( oDesde:nRadio == 1 );
-      VALID    ( oDesde:cSerieInicio >= "A" .and. oDesde:cSerieInicio <= "Z"  );
-      OF       oDlg
-
-   REDEFINE GET oSerFin VAR oDesde:cSerieFin ;
-      ID       110 ;
-      PICTURE  "@!" ;
-      UPDATE ;
-      SPINNER ;
-      ON UP    ( UpSerie( oSerFin ) );
-      ON DOWN  ( DwSerie( oSerFin ) );
-      WHEN     ( oDesde:nRadio == 1 );
-      VALID    ( oDesde:cSerieFin >= "A" .and. oDesde:cSerieFin <= "Z"  );
-      OF       oDlg
-
-   REDEFINE GET oDesde:nNumeroInicio ;
-      ID       120 ;
-		PICTURE 	"999999999" ;
-      SPINNER ;
-      WHEN     ( oDesde:nRadio == 1 );
-      OF       oDlg
-
-   REDEFINE GET oDesde:nNumeroFin ;
-      ID       130 ;
-		PICTURE 	"999999999" ;
-      SPINNER ;
-      WHEN     ( oDesde:nRadio == 1 );
-      OF       oDlg
-
-   REDEFINE GET oDesde:cSufijoInicio ;
-      ID       140 ;
-      PICTURE  "##" ;
-      WHEN     ( oDesde:nRadio == 1 );
-      OF       oDlg
-
-   REDEFINE GET oDesde:cSufijoFin ;
-      ID       150 ;
-      PICTURE  "##" ;
-      WHEN     ( oDesde:nRadio == 1 );
-      OF       oDlg
-
-   REDEFINE GET oDesde:dFechaInicio ;
-      ID       170 ;
-      SPINNER ;
-      WHEN     ( oDesde:nRadio == 2 );
-      OF       oDlg
-
-   REDEFINE GET oDesde:dFechaFin ;
-      ID       180 ;
-      SPINNER ;
-      WHEN     ( oDesde:nRadio == 2 );
-      OF       oDlg
-
-   REDEFINE BUTTON oBtnAceptar ;
-      ID       IDOK ;
-		OF 		oDlg ;
-      ACTION   ( DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, @lCancel ) )
-
-   REDEFINE BUTTON oBtnCancel ;
-      ID       IDCANCEL ;
-		OF 		oDlg ;
-      CANCEL ;
-      ACTION   ( lCancel := .t., oDlg:end() )
-
-   REDEFINE METER oTxtDel VAR nTxtDel ;
-      ID       160 ;
-      NOPERCENTAGE ;
-      TOTAL    ( dbfFacRecT )->( OrdKeyCount() ) ;
-      OF       oDlg
-
-   ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
-
-   ( dbfFacRecT )->( dbGoTo( nRecNo ) )
-   ( dbfFacRecT )->( ordSetFocus( nOrdAnt ) )
-
-   oWndBrw:SetFocus()
-   oWndBrw:Refresh()
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCancel )
-
-   local nOrd
-   local nDeleted       := 0
-   local nProcesed      := 0
-
-   oBtnAceptar:Hide()
-   oBtnCancel:bAction   := {|| lCancel := .t. }
-
-   if oDesde:nRadio == 1
-
-      nOrd              := ( dbfFacRecT )->( OrdSetFocus( "nNumFac" ) )
-
-      ( dbfFacRecT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
-      while !lCancel .and. ( dbfFacRecT )->( !eof() )
-
-         if ( dbfFacRecT )->cSerie  >= oDesde:cSerieInicio  .and.;
-            ( dbfFacRecT )->cSerie  <= oDesde:cSerieFin     .and.;
-            ( dbfFacRecT )->nNumFac >= oDesde:nNumeroInicio .and.;
-            ( dbfFacRecT )->nNumFac <= oDesde:nNumeroFin    .and.;
-            ( dbfFacRecT )->cSufFac >= oDesde:cSufijoInicio .and.;
-            ( dbfFacRecT )->cSufFac <= oDesde:cSufijoFin
-
-            ++nDeleted
-
-            oTxtDel:cText  := "Eliminando : " + ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
-
-            WinDelRec( nil, dbfFacRecT, {|| QuiFacRec() } )
-
-         else
-
-            ( dbfFacRecT )->( dbSkip() )
-
-         end if
-
-         ++nProcesed
-
-         oTxtDel:Set( nProcesed )
-
-      end do
-
-      ( dbfFacRecT )->( OrdSetFocus( nOrd ) )
-
-   else
-
-      nOrd              := ( dbfFacRecT )->( OrdSetFocus( "dFecFac" ) )
-
-      ( dbfFacRecT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
-      while !lCancel .and. ( dbfFacRecT )->( !eof() )
-
-         if ( dbfFacRecT )->dFecFac >= oDesde:dFechaInicio  .and.;
-            ( dbfFacRecT )->dFecFac <= oDesde:dFechaFin
-
-            ++nDeleted
-
-            oTxtDel:cText  := "Eliminando : " + ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
-
-            WinDelRec( nil, dbfFacRecT, {|| QuiFacRec() } )
-
-         else
-
-            ( dbfFacRecT )->( dbSkip() )
-
-         end if
-
-         ++nProcesed
-
-         oTxtDel:Set( nProcesed )
-
-      end do
-
-      ( dbfFacRecT )->( OrdSetFocus( nOrd ) )
-
-   end if
-
-   lCancel              := .t.
-
-   oBtnAceptar:Show()
-
-   if lCancel
-      msgStop( "Total de registros borrados : " + Str( nDeleted ), "Proceso cancelado" )
-   else
-      msgInfo( "Total de registros borrados : " + Str( nDeleted ), "Proceso finalizado" )
-   end if
-
-RETURN ( oDlg:End() )
-
-//---------------------------------------------------------------------------//
-
-static function RecFacRec( aTmpFac )
-
-   local nDtoAge  := 0
-   local nImpAtp  := 0
-   local nImpOfe  := 0
-   local cCodFam
-   local nRecno
-   local hAtipica
-
-   if !ApoloMsgNoYes(  "¡Atención!,"                                      + CRLF + ;
-                  "todos los precios se recalcularán en función de"  + CRLF + ;
-                  "los valores en las bases de datos.",;
-                  "¿Desea proceder?" )
-      return nil
-   end if
-
-   nRecno         := ( dbfTmpLin )->( RecNo() )
-
-   ( dbfTmpLin )->( dbGotop() )
-   ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
-
-   while !( dbfTmpLin )->( eof() )
-
-      /*
-      Ahora buscamos por el codigo interno
-      */
-
-      if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) )
-
-         if aTmpFac[_NREGIVA] <= 1
-            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
-            ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
-         end if
-
-         /*
-         Ahora recogemos el impuesto especial si lo hay
-         */
-
-         if !Empty( ( dbfArticulo )->cCodImp )
-            ( dbfTmpLin )->cCodImp  := ( dbfArticulo )->cCodImp
-            ( dbfTmpLin )->nValImp  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpFac[ _LIVAINC ], ( dbfTmpLin )->nIva )
-         end if
-
-         /*
-         Tomamos los precios de la base de datos de articulos
-         */
-
-         ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
-
-         /*
-         Cargamos simpre los puntos verdes
-         */
-
-         ( dbfTmpLin )->nPntVer  := ( dbfArticulo )->nPntVer1
-
-         /*
-         Linea por contadores--------------------------------------------------
-         */
-
-         ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
-         ( dbfTmpLin )->nCosDiv     := nCosto( nil, dbfArticulo, dbfKit )
-         ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
-
-         /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
-         */
-
-         ( dbfTmpLin )->nComAge     := aTmpFac[ _NPCTCOMAGE ]
-
-         cCodFam                    := ( dbfArticulo )->Familia
-
-         // Chequeamos situaciones especiales----------------------------------
-
-         do case
-         // Precios en tarifas-------------------------------------------------
-
-         case !Empty( aTmpFac[ _CCODTAR ] )
-
-            nImpOfe     := RetPrcTar( ( dbfTmpLin )->cRef, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
-            if nImpOfe != 0
-               ( dbfTmpLin )->nPreUnit := nImpOfe
-            end if
-
-            nImpOfe     := RetPctTar( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL )
-            if nImpOfe != 0
-               ( dbfTmpLin )->nDto     := nImpOfe
-            end if
-
-            nImpOfe     := RetComTar( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
-            if nImpOfe  != 0
-               ( dbfTmpLin )->nComAge  := nImpOfe
-            end if
-
-            /*
-            Descuento de promoci¢n, esta funci¢n comprueba si existe y si es---
-            asi devuelve el descunto de la promoción---------------------------
-            */
-
-            nImpOfe     := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _DFECFAC ], dbfTarPreL )
-            if nImpOfe  != 0
-               ( dbfTmpLin )->nDtoPrm  := nImpOfe
-            end if
-
-            /*
-            Obtenemos el descuento de Agente
-            */
-
-            nDtoAge     := RetDtoAge( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _DFECFAC ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
-            if nDtoAge  != 0
-               ( dbfTmpLin )->nComAge  := nDtoAge
-            end if
-
-         end case
-
-         /*
-         Buscamos si existen atipicas de clientes------------------------------
-         */
-
-         hAtipica := hAtipica( hValue( dbfTmpLin, aTmpFac ) )
-
-         if !Empty( hAtipica )
-               
-            if hhaskey( hAtipica, "nImporte" )
-               ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPorcentual" )
-               ( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPromocional" )
-               ( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoLineal" )
-               ( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
-            end if
-
-            if hhaskey( hAtipica, "nComisionAgente" )
-               ( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
-            end if
-
-         end if
-
-         /*
-         Buscamos si existen ofertas para este articulo y le cambiamos el precio
-         */
-
-         nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
-         if nImpOfe  != 0
-            ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ] )
-         end if
-
-         /*
-         Buscamos si existen descuentos en las ofertas
-         */
-
-         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
-         if nImpOfe  != 0
-            ( dbfTmpLin )->nDtoPrm  := nImpOfe
-         end if
-
-      end if
-
-      ( dbfTmpLin )->( dbSkip() )
-
-   end while
-
-   ( dbfTmpLin )->( dbGoTo( nRecno ) )
-
-return nil
 
 //---------------------------------------------------------------------------//
 
@@ -10304,405 +12763,14 @@ return ( aColFacRec )
 
 //---------------------------------------------------------------------------//
 
-/*CLASS TFacturasRectificativasSenderReciver FROM TSenderReciverItem
-
-   Data lSuccesfullSendFacturas
-   Data lSuccesfullSendAnticipos
-
-   Data nFacturaNumberSend
-   Data nAnticipoNumberSend
-
-   Method CreateData()
-
-   Method RestoreData()
-
-   Method SendData()
-
-   Method ReciveData()
-
-   Method Process()
-
-   Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend     := GetPvProfInt( "Numero", "Facturas clientes", ::nFacturaNumberSend, ::cIniFile ) )
-   Method nGetAnticipoNumberToSend()   INLINE ( ::nAnticipoNumberSend    := GetPvProfInt( "Numero", "Anticipos clientes", ::nAnticipoNumberSend, ::cIniFile ) )
-
-   Method IncFacturaNumberToSend()     INLINE ( WritePProString( "Numero", "Facturas clientes",    cValToChar( ++::nFacturaNumberSend ),  ::cIniFile ) )
-   Method IncAnticipoNumberToSend()    INLINE ( WritePProString( "Numero", "Anticipos clientes",   cValToChar( ++::nAnticipoNumberSend ), ::cIniFile ) )
-
-END CLASS*/
-
-//----------------------------------------------------------------------------//
-
-/*Method CreateData()
-
-   local oBlock
-   local oError
-   local nOrd
-   local dbfFacRecT
-   local dbfFacRecL
-   local dbfFacRecI
-   local tmpFacRecT
-   local tmpFacRecL
-   local tmpFacRecI
-   local lSndFacRec           := .f.
-   local cFileNameFacturas
-
-   if ::oSender:lServer
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
-   else
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
-   end if
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @dbfFacRecI ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacRecI.CDX" ) ADDITIVE
-
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-
-   mkFacRec( cPatSnd() )
-   mkRecCli( cPatSnd() )
-
-   USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
-
-   USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
-
-   USE ( cPatSnd() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @tmpFacRecI ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacRecI.CDX" ) ADDITIVE
-
-   if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfFacRecT )->( LastRec() )
-   end if
-
-   ::oSender:SetText( "Enviando facturas rectificativas de clientes" )
-
-   nOrd  := ( dbfFacRecT )->( OrdSetFocus( "lSndDoc" ) )
-
-   if ( dbfFacRecT )->( dbSeek( .t. ) )
-      while !( dbfFacRecT )->( eof() )
-
-         if ( dbfFacRecT )->lSndDoc
-
-            lSndFacRec  := .t.
-
-            dbPass( dbfFacRecT, tmpFacRecT, .t. )
-            ::oSender:SetText( ( dbfFacRecT )->cSerie + "/" + AllTrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + AllTrim( ( dbfFacRecT )->cSufFac ) + "; " + Dtoc( ( dbfFacRecT )->dFecFac ) + ";" + AllTrim( ( dbfFacRecT )->cCodCli ) + "; " + ( dbfFacRecT )->cNomCli )
-
-            if ( dbfFacRecL )->( dbSeek( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) )
-               while ( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) == ( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) .AND. !( dbfFacRecL )->( eof() )
-                  dbPass( dbfFacRecL, tmpFacRecL, .t. )
-                  ( dbfFacRecL )->( dbSkip() )
-               end do
-            end if
-
-            if ( dbfFacRecI )->( dbSeek( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) )
-               while ( ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac ) == ( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) .AND. !( dbfFacRecI )->( eof() )
-                  dbPass( dbfFacRecI, tmpFacRecI, .t. )
-                  ( dbfFacRecI )->( dbSkip() )
-               end do
-            end if
-
-         end if
-
-         ( dbfFacRecT )->( dbSkip() )
-
-         if !Empty( ::oSender:oMtr )
-            ::oSender:oMtr:Set( ( dbfFacRecT )->( OrdKeyNo() ) )
-         end if
-
-      end do
-   end if
-
-   ( dbfFacRecT )->( OrdSetFocus( nOrd ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfFacRecT )
-   CLOSE ( dbfFacRecL )
-   CLOSE ( dbfFacRecI )
-   CLOSE ( tmpFacRecT )
-   CLOSE ( tmpFacRecL )
-   CLOSE ( tmpFacRecI )
-
-   if lSndFacRec
-
-      /*
-      Comprimir los archivos---------------------------------------------------
-
-      ::oSender:SetText( "Comprimiendo facturas rectificativas" )
-
-      if ::oSender:lZipData( cFileNameFacturas )
-         ::oSender:SetText( "Ficheros comprimidos" )
-      else
-         ::oSender:SetText( "ERROR al crear fichero comprimido" )
-      end if
-
-   else
-
-      ::oSender:SetText( "No hay facturas rectificativas de clientes para enviar" )
-
-   end if
-
-   /*
-   Anticipos de clientes-------------------------------------------------------
-
-   ::oSender:SetText( "Enviando anticipos de clientes" )
-
-Return ( Self )*/
-
-//----------------------------------------------------------------------------//
-
-/*Method RestoreData()
-
-   local dbfFacRecT
-
-   if ::lSuccesfullSendFacturas
-
-      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-      ( dbfFacRecT )->( OrdSetFocus( "lSndDoc" ) )
-
-      while ( dbfFacRecT )->( dbSeek( .t. ) ) .and. !( dbfFacRecT )->( eof() )
-         if ( dbfFacRecT )->( dbRLock() )
-            ( dbfFacRecT )->lSndDoc := .f.
-            ( dbfFacRecT )->( dbRUnlock() )
-         end if
-      end do
-
-
-      CLOSE ( dbfFacRecT )
-
-   end if
-
-Return ( Self )*/
-
-//----------------------------------------------------------------------------//
-
-/*Method SendData()
-
-   local cFileNameFacturas
-
-   if ::oSender:lServer
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
-   else
-      cFileNameFacturas       := "FacRec" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + "." + RetSufEmp()
-   end if
-
-   ::lSuccesfullSendFacturas  := .f.
-   ::lSuccesfullSendAnticipos := .f.
-
-   /*
-   Enviarlos a internet--------------------------------------------------------
-
-   if File( cPatOut() + cFileNameFacturas )
-
-      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, 2000, ::oSender )
-         ::lSuccesfullSendFacturas  := .t.
-         ::oSender:SetText( "Fichero facturas rectificativas enviados " + cFileNameFacturas )
-      else
-         ::oSender:SetText( "ERROR al enviar fichero de facturas rectificativas" )
-      end if
-
-   end if
-
-   /*
-   Enviarlos a internet--------------------------------------------------------
-
-   if ::lSuccesfullSendFacturas
-      ::IncFacturaNumberToSend()
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method ReciveData()
-
-   local n
-   local aExt
-
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
-
-   /*
-   Recibirlo de internet
-
-
-   ::oSender:SetText( "Recibiendo facturas rectificativas de clientes" )
-
-   for n := 1 to len( aExt )
-      ftpGetFiles( "FacRec*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-   next
-
-   ::oSender:SetText( "Facturas rectificativas de clientes recibidos" )
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-Method Process()
-
-   local m
-   local oStock
-   local dbfFacRecT
-   local dbfFacRecL
-   local tmpFacRecT
-   local tmpFacRecL
-   local oBlock
-   local oError
-   local lClient     := ::oSender:lServer
-   local aFiles      := Directory( cPatIn() + "FacRec*.*" )
-
-   for m := 1 to len( aFiles )
-
-      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
-
-      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-      BEGIN SEQUENCE
-
-      /*
-      descomprimimos el fichero
-
-      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
-
-         /*
-         Ficheros temporales
-
-         if file( cPatSnd() + "FacRecT.Dbf" ) .and.;
-            file( cPatSnd() + "FacRecL.Dbf" )
-
-            USE ( cPatSnd() + "FacRecT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacRecT", @tmpFacRecT ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacRecT.CDX" ) ADDITIVE
-
-            USE ( cPatSnd() + "FacRecL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacRecL", @tmpFacRecL ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacRecL.CDX" ) ADDITIVE
-
-            USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-
-            USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-            SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
-
-            USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-            SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-            oStock            := TStock():New()
-            oStock:cFacRecT   := dbfFacRecT
-            oStock:cFacRecL   := dbfFacRecL
-
-            while ( tmpFacRecT )->( !eof() )
-
-               /*
-               Comprobamos que no exista la factura en la base de datos
-
-               if lValidaOperacion( ( tmpFacRecT )->dFecFac, .f. ) .and. ;
-                  !( dbfFacRecT )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
-
-                  dbPass( tmpFacRecT, dbfFacRecT, .t. )
-
-                  if lClient .and. dbLock( dbfFacRecT )
-                     ( dbfFacRecT )->lSndDoc := .f.
-                     ( dbfFacRecT )->( dbUnLock() )
-                  end if
-
-                  ::oSender:SetText( "Añadida factura     : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
-
-                  if ( tmpFacRecL )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
-                     while ( tmpFacRecL )->cSerie + Str( ( tmpFacRecL )->nNumFac ) + ( tmpFacRecL )->cSufFac == ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac .and. !( tmpFacRecL )->( eof() )
-                        dbPass( tmpFacRecL, dbfFacRecL, .t. )
-                        ( tmpFacRecL )->( dbSkip() )
-                     end do
-                  end if
-
-                  /*
-                  oStock:FacRec( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, ( dbfFacRecT )->cCodAlm, .f., .f. )
-
-               else
-
-                  ::oSender:SetText( "Desestimada factura : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
-
-               end if
-
-               ( tmpFacRecT )->( dbSkip() )
-
-            end do
-
-            CLOSE ( dbfFacRecT )
-            CLOSE ( dbfFacRecL )
-            CLOSE ( tmpFacRecT )
-            CLOSE ( tmpFacRecL )
-
-            oStock:end()
-
-            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
-
-         else
-
-            ::oSender:SetText( "Faltan ficheros" )
-
-            if !file( cPatSnd() + "FacRecT.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecT.Dbf" )
-            end if
-
-            if !file( cPatSnd() + "FacRecL.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacRecL.Dbf" )
-            end if
-
-         end if
-
-      else
-
-         ::oSender:SetText( "Error al descomprimir los ficheros" )
-
-      end if
-
-      RECOVER USING oError
-
-         CLOSE ( dbfFacRecT )
-         CLOSE ( dbfFacRecL )
-         CLOSE ( tmpFacRecT )
-         CLOSE ( tmpFacRecL )
-
-         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
-         ::oSender:SetText( ErrorMessage( oError ) )
-
-      END SEQUENCE
-
-      ErrorBlock( oBlock )
-
-   next
-
-Return Self*/
-
-//----------------------------------------------------------------------------//
 //
 // Devuelve el numero de unidades reservadas en facturas a clientes
 //
 
-function nTotRFacRec( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, dbfFacRecT, dbfFacRecL )
+function nTotRFacRec( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, cFacRecT, dbfFacRecL )
 
    local nTot        := 0
-   local aStaFac     := aGetStatus( dbfFacRecT, .t. )
+   local aStaFac     := aGetStatus( cFacRecT, .t. )
    local aStaLin     := aGetStatus( dbfFacRecL, .f. )
 
    DEFAULT cValPr1   := Space( 20 )
@@ -10713,7 +12781,7 @@ function nTotRFacRec( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, dbfFac
    if ( dbfFacRecL )->( dbSeek( cNumFac ) )
       while ( dbfFacRecL )->cSerie + str( ( dbfFacRecL )->nNumFac, 9 ) + ( dbfFacRecL )->cSufFac == cNumFac .and. !( dbfFacRecL )->( eof() )
          if ( dbfFacRecL )->cRef + ( dbfFacRecL )->cValPr1 + ( dbfFacRecL )->cValPr2 == cCodArt + cValPr1 + cValPr2
-            if Empty( dFecRes ) .or. dFecRes <= dFecFacRec( ( dbfFacRecL )->cSerFac + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT ) // Empty( dFecRes )
+            if Empty( dFecRes ) .or. dFecRes <= dFecFacRec( ( dbfFacRecL )->cSerFac + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, cFacRecT ) // Empty( dFecRes )
                if ( dbfFacRecL )->nLote == cLote
                   nTot  += nTotNFacRec( dbfFacRecL )
                end if
@@ -10723,443 +12791,12 @@ function nTotRFacRec( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, dbfFac
       end while
    end if
 
-   SetStatus( dbfFacRecT, aStaFac )
+   SetStatus( cFacRecT, aStaFac )
    SetStatus( dbfFacRecL, aStaLin )
 
 return ( nTot )
 
 //--------------------------------------------------------------------------//
-
-Static Function EdtRecMenu( aTmp, oDlg )
-
-   MENU oMenu
-
-      MENUITEM    "&1. Rotor"
-
-         MENU
-
-            MENUITEM    "&1. Modificar cliente";
-               MESSAGE  "Modifica la ficha del cliente" ;
-               RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
-
-            MENUITEM    "&2. Modificar cliente contactos";
-               MESSAGE  "Modifica la ficha del cliente en contactos" ;
-               RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )              
-
-            MENUITEM    "&3. Informe de cliente";
-               MESSAGE  "Informe de cliente" ;
-               RESOURCE "Info16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
-
-            MENUITEM    "&4. Modificar obra";
-               MESSAGE  "Modifica ficha de la obra" ;
-               RESOURCE "Worker16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
-
-         ENDMENU
-
-   ENDMENU
-
-   oDlg:SetMenu( oMenu )
-
-RETURN ( oMenu )
-
-//---------------------------------------------------------------------------//
-
-Static Function EndEdtRecMenu()
-
-Return( oMenu:End() )
-
-//---------------------------------------------------------------------------//
-
-Static Function nEstadoIncidencia( cNumFac )
-
-   local nEstado  := 0
-
-   if ( dbfFacRecI )->( dbSeek( cNumFac ) )
-
-      while ( dbfFacRecI )->cSerie + Str( ( dbfFacRecI )->nNumFac ) + ( dbfFacRecI )->cSufFac == cNumFac .and. !( dbfFacRecI )->( Eof() )
-
-         if ( dbfFacRecI )->lListo
-            do case
-               case nEstado == 0 .or. nEstado == 3
-                    nEstado := 3
-               case nEstado == 1
-                    nEstado := 2
-            end case
-         else
-            do case
-               case nEstado == 0
-                    nEstado := 1
-               case nEstado == 3
-                    nEstado := 2
-            end case
-         end if
-
-         ( dbfFacRecI )->( dbSkip() )
-
-      end while
-
-   end if
-
-Return ( nEstado )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
-
-   local aFacCliT
-   local aFacCliL
-   local cFactura    := aGet[ _CNUMFAC ]:varGet()
-   local nOption     := 0
-
-   if nMode != APPD_MODE .OR. Empty( cFactura )
-      return .t.
-   end if
-
-   aFacCliT          := aGetStatus( dbfFacCliT, .t. )
-   aFacCliL          := aGetStatus( dbfFacCliL, .t. )
-
-   if ( dbfFacCliT )->( dbSeek( cFactura ) )
-
-      aGet[_CCODCLI ]:cText( (dbfFacCliT)->cCodCli )
-      aGet[_CCODCLI ]:bWhen    := {|| .F. }
-      aGet[_CCODCLI ]:lValid()
-
-      aGet[_CNOMCLI ]:cText( (dbfFacCliT)->cNomCli )
-      aGet[_CDIRCLI ]:cText( (dbfFacCliT)->cDirCli )
-      aGet[_CPOBCLI ]:cText( (dbfFacCliT)->cPobCli )
-      aGet[_CPRVCLI ]:cText( (dbfFacCliT)->cPrvCli )
-      aGet[_CPOSCLI ]:cText( (dbfFacCliT)->cPosCli )
-      aGet[_CDNICLI ]:cText( (dbfFacCliT)->cDniCli )
-
-      aGet[_CCODALM ]:cText( ( dbfFacCliT )->cCodAlm )
-      aGet[_CCODALM ]:lValid()
-
-      aGet[_CCODCAJ ]:cText( ( dbfFacCliT )->cCodCaj )
-      aGet[_CCODCAJ ]:lValid()
-
-      aGet[_CCODPAGO]:cText( ( dbfFacCliT )->cCodPago )
-      aGet[_CCODPAGO]:lValid()
-
-      aGet[_CCODAGE ]:cText( ( dbfFacCliT )->cCodAge )
-      aGet[_CCODAGE ]:lValid()
-
-      aGet[_CCODTAR ]:cText( ( dbfFacCliT )->cCodTar )
-      aGet[_CCODTAR ]:lValid()
-
-      aGet[_CCODRUT ]:cText( ( dbfFacCliT )->cCodRut )
-      aGet[_CCODRUT ]:lValid()
-
-      aGet[_CCODOBR ]:cText( ( dbfFacCliT )->cCodObr )
-      aGet[_CCODOBR ]:lValid()
-
-      aGet[_CCODTRN ]:cText( ( dbfFacCliT )->cCodTrn )
-      aGet[_CCODTRN ]:lValid()
-
-      aGet[ _LRECARGO ]:Click( ( dbfFacCliT )->lRecargo )
-      aGet[ _LOPERPV  ]:Click( ( dbfFacCliT )->lOperPv )
-
-      aGet[ _LIVAINC ]:Click( ( dbfFacCliT )->lIvaInc )
-
-      aGet[ _CBANCO ]:cText( ( dbfFacCliT )->cBanco )
-      aGet[ _CBANCO ]:lValid()
-
-      aGet[ _CPAISIBAN ]:cText( ( dbfFacCliT )->cPaisIBAN )
-      aGet[ _CPAISIBAN ]:lValid()
-
-      aGet[ _CCTRLIBAN ]:cText( ( dbfFacCliT )->cCtrlIBAN )
-      aGet[ _CCTRLIBAN ]:lValid()
-
-      aGet[ _CENTBNC ]:cText( ( dbfFacCliT )->cEntBnc )
-      aGet[ _CENTBNC ]:lValid()
-
-      aGet[ _CSUCBNC ]:cText( ( dbfFacCliT )->cSucBnc )
-      aGet[ _CSUCBNC ]:lValid()
-
-      aGet[ _CDIGBNC ]:cText( ( dbfFacCliT )->cDigBnc )
-      aGet[ _CDIGBNC ]:lValid()
-
-      aGet[ _CCTABNC ]:cText( ( dbfFacCliT )->cCtaBnc )
-      aGet[ _CCTABNC ]:lValid()
-
-      /*
-      Pasamos los comentarios
-      */
-
-      aGet[ _MCOMENT ]:cText( ( dbfFacCliT )->mComEnt )
-      aTmp[ _MOBSERV ]  := ( dbfFacCliT )->mObsErv
-
-      /*
-      Pasamos todos los Descuentos
-      */
-
-      if Empty( ( dbfFacCliT )->cDtoEsp )
-         aGet[ _CDTOESP ]:cText( "General" )
-      else
-         aGet[ _CDTOESP ]:cText( ( dbfFacCliT )->cDtoEsp )
-      end if
-
-      if Empty( ( dbfFacCliT )->cDpp )
-         aGet[ _CDPP    ]:cText( "Pronto pago" )
-      else
-         aGet[ _CDPP    ]:cText( ( dbfFacCliT )->cDpp )
-      end if
-
-      aGet[ _NDTOESP ]:cText( ( dbfFacCliT )->nDtoEsp )
-      aGet[ _NDPP    ]:cText( ( dbfFacCliT )->nDpp    )
-      aGet[ _CDTOUNO ]:cText( ( dbfFacCliT )->cDtoUno )
-      aGet[ _NDTOUNO ]:cText( ( dbfFacCliT )->nDtoUno )
-      aGet[ _CDTODOS ]:cText( ( dbfFacCliT )->cDtoDos )
-      aGet[ _NDTODOS ]:cText( ( dbfFacCliT )->nDtoDos )
-      aGet[ _CMANOBR ]:cText( ( dbfFacCliT )->cManObr )
-      aGet[ _NIVAMAN ]:cText( ( dbfFacCliT )->nIvaMan )
-      aGet[ _NMANOBR ]:cText( ( dbfFacCliT )->nManObr )
-
-      aTmp[ _CCODGRP ] := ( dbfFacCliT )->cCodGrp
-      aTmp[ _LMODCLI ] := ( dbfFacCliT )->lModCli
-
-      aTmp[ _LOPERPV ] := ( dbfFacCliT )->lOperPv
-
-      /*
-      Comprobamos si el albarán tiene lineas de detalle
-      */
-
-      nOption           := nImportaLineas()
-
-      if nOption >= 1
-
-         CursorWait()
-
-         if ( dbfFacCliL )->( dbSeek( cFactura ) )
-
-            while ( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == cFactura )
-
-               if !( dbfFacCliL )->lTotLin  .and. !( dbfFacCliL )->lControl
-
-                  ( dbfTmpLin )->( dbAppend() )
-                  ( dbfTmpLin )->cSerie     := " "
-                  ( dbfTmpLin )->nNumFac    := 0
-                  ( dbfTmpLin )->nNumLin    := ( dbfFacCliL )->nNumLin
-                  ( dbfTmpLin )->cRef       := ( dbfFacCliL )->cRef
-                  ( dbfTmpLin )->cDetalle   := ( dbfFacCliL )->cDetalle
-                  ( dbfTmpLin )->mLngDes    := ( dbfFacCliL )->mLngDes
-                  ( dbfTmpLin )->mNumSer    := ( dbfFacCliL )->mNumSer
-                  ( dbfTmpLin )->nPreUnit   := ( dbfFacCliL )->nPreUnit
-                  ( dbfTmpLin )->nPntVer    := ( dbfFacCliL )->nPntVer
-                  ( dbfTmpLin )->nImpTrn    := ( dbfFacCliL )->nImpTrn
-                  ( dbfTmpLin )->nCanEnt    := ( dbfFacCliL )->nCanEnt
-                  ( dbfTmpLin )->cUnidad    := ( dbfFacCliL )->cUnidad
-                  ( dbfTmpLin )->nUniCaja   := if( nOption == 2, ( ( dbfFacCliL )->nUniCaja * -1 ), ( dbfFacCliL )->nUniCaja )
-                  ( dbfTmpLin )->nDto       := ( dbfFacCliL )->nDto
-                  ( dbfTmpLin )->nDtoPrm    := ( dbfFacCliL )->nDtoPrm
-                  ( dbfTmpLin )->nIva       := ( dbfFacCliL )->nIva
-                  ( dbfTmpLin )->nReq       := ( dbfFacCliL )->nReq
-                  ( dbfTmpLin )->nPesoKg    := ( dbfFacCliL )->nPesoKg
-                  ( dbfTmpLin )->cPesoKg    := ( dbfFacCliL )->cPesoKg
-                  ( dbfTmpLin )->nComAge    := ( dbfFacCliL )->nComAge
-                  ( dbfTmpLin )->dFecha     := ( dbfFacCliL )->dFecha
-                  ( dbfTmpLin )->cTipMov    := ( dbfFacCliL )->cTipMov
-                  ( dbfTmpLin )->cCodAlb    := ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac
-                  ( dbfTmpLin )->lTotLin    := ( dbfFacCliL )->lTotLin
-                  ( dbfTmpLin )->nDtoDiv    := ( dbfFacCliL )->nDtoDiv
-                  ( dbfTmpLin )->nCtlStk    := ( dbfFacCliL )->nCtlStk
-                  ( dbfTmpLin )->cAlmLin    := ( dbfFacCliL )->cAlmLin
-                  ( dbfTmpLin )->cTipMov    := ( dbfFacCliL )->cTipMov
-                  ( dbfTmpLin )->lIvaLin    := ( dbfFacCliL )->lIvaLin
-                  ( dbfTmpLin )->lImpLin    := ( dbfFacCliL )->lImpLin
-                  ( dbfTmpLin )->nValImp    := ( dbfFacCliL )->nValImp
-                  ( dbfTmpLin )->cCodImp    := ( dbfFacCliL )->cCodImp
-                  ( dbfTmpLin )->cCodPr1    := ( dbfFacCliL )->cCodPr1
-                  ( dbfTmpLin )->cCodPr2    := ( dbfFacCliL )->cCodPr2
-                  ( dbfTmpLin )->cValPr1    := ( dbfFacCliL )->cValPr1
-                  ( dbfTmpLin )->cValPr2    := ( dbfFacCliL )->cValPr2
-                  ( dbfTmpLin )->nCosDiv    := ( dbfFacCliL )->nCosDiv
-                  ( dbfTmpLin )->lKitArt    := ( dbfFacCliL )->lKitArt
-                  ( dbfTmpLin )->lKitChl    := ( dbfFacCliL )->lKitChl
-                  ( dbfTmpLin )->lKitPrc    := ( dbfFacCliL )->lKitPrc
-                  ( dbfTmpLin )->nMesGrt    := ( dbfFacCliL )->nMesGrt
-                  ( dbfTmpLin )->lLote      := ( dbfFacCliL )->lLote
-                  ( dbfTmpLin )->nLote      := ( dbfFacCliL )->nLote
-                  ( dbfTmpLin )->cLote      := ( dbfFacCliL )->cLote
-                  ( dbfTmpLin )->lControl   := ( dbfFacCliL )->lControl
-                  ( dbfTmpLin )->lNotVta    := ( dbfFacCliL )->lNotVta
-                  ( dbfTmpLin )->cCodTip    := ( dbfFacCliL )->cCodTip
-                  ( dbfTmpLin )->mObsLin    := ( dbfFacCliL )->mObsLin
-                  ( dbfTmpLin )->Descrip    := ( dbfFacCliL )->Descrip
-                  ( dbfTmpLin )->cCodPrv    := ( dbfFacCliL )->cCodPrv
-                  ( dbfTmpLin )->cImagen    := ( dbfFacCliL )->cImagen
-                  ( dbfTmpLin )->cCodFam    := ( dbfFacCliL )->cCodFam
-                  ( dbfTmpLin )->cGrpFam    := ( dbfFacCliL )->cGrpFam
-                  ( dbfTmpLin )->nNumMed    := ( dbfFacCliL )->nNumMed
-                  ( dbfTmpLin )->nMedUno    := ( dbfFacCliL )->nMedUno
-                  ( dbfTmpLin )->nMedDos    := ( dbfFacCliL )->nMedDos
-                  ( dbfTmpLin )->nMedTre    := ( dbfFacCliL )->nMedTre
-                  ( dbfTmpLin )->lVolImp    := ( dbfFacCliL )->lVolImp
-                  ( dbfTmpLin )->nVolumen   := ( dbfFacCliL )->nVolumen
-                  ( dbfTmpLin )->lLinOfe    := ( dbfFacCliL )->lLinOfe
-                  ( dbfTmpLin )->dFecCad    := ( dbfFacCliL )->dFecCad
-
-               end if
-
-               ( dbfFacCliL )->( dbSkip() )
-
-            end while
-
-         else
-
-            MsgStop( "La factura no contiene líneas de detalle." )
-
-         end if
-
-         ( dbfTmpLin )->( dbGoTop() )
-
-         /*
-         Pasamos todas las series----------------------------------------------
-         */
-
-         if ( dbfFacCliS )->( dbSeek( cFactura ) )
-
-            while ( dbfFacCliS )->cSerFac + Str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac == cFactura .and. !( dbfFacCliS )->( Eof() )
-
-               ( dbfTmpSer )->( dbAppend() )
-               ( dbfTmpSer )->nNumLin  := ( dbfFacCliS )->nNumLin
-               ( dbfTmpSer )->cRef     := ( dbfFacCliS )->cRef
-               ( dbfTmpSer )->cAlmLin  := ( dbfFacCliS )->cAlmLin
-               ( dbfTmpSer )->cNumSer  := ( dbfFacCliS )->cNumSer
-
-               ( dbfFacCliS )->( dbSkip() )
-
-            end while
-
-         end if
-
-         CursorWE()
-
-      end if
-
-      oBrw:SetFocus()
-      oBrw:Refresh()
-
-      oBrwIva:SetFocus()
-
-   else
-
-      MsgStop( "Factura : " + cFactura + " no encontrada" )
-
-   end if
-
-   SetStatus( dbfFacCliT, aFacCliT )
-   SetStatus( dbfFacCliL, aFacCliL )
-
-RETURN .T.
-
-//---------------------------------------------------------------------------//
-
-Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
-
-   local oDlg
-   local oPuntos
-   local oValorPunto
-   local oDtoPnt
-   local oIncPnt
-   local oImporte
-   local nPuntos     := 0
-   local nValorPunto := 0
-   local nDtoPnt     := 0
-   local nIncPnt     := 0
-
-   /*comprobamos que no esté vacío el artículo*/
-
-   if Empty( cCodArt )
-      MsgInfo( "Debe seleccinar un artículo", "Código vacío" )
-      return .f.
-   end if
-
-   /*Cargamos valores por defecto*/
-
-   nPuntos           := aTmp[ _NPUNTOS ]
-   nValorPunto       := aTmp[ _NVALPNT ]
-   nDtoPnt           := aTmp[ _NDTOPNT ]
-   nIncPnt           := aTmp[ _NINCPNT ]
-
-   DEFINE DIALOG oDlg RESOURCE "DESGPUNTOS" TITLE "Desglose de puntos"
-
-   REDEFINE GET oPuntos VAR nPuntos ;
-      ID       200 ;
-      SPINNER ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  cPouDiv ;
-      OF       oDlg
-
-   REDEFINE GET oValorPunto VAR nValorPunto ;
-      ID       210 ;
-      SPINNER ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  cPouDiv ;
-      OF       oDlg
-
-   REDEFINE GET oDtoPnt VAR nDtoPnt ;
-      ID       220 ;
-      SPINNER ;
-      MIN      0 ;
-      MAX      100 ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  "999.99" ;
-      OF       oDlg
-
-   REDEFINE GET oIncPnt VAR nIncPnt ;
-      ID       230 ;
-      SPINNER ;
-      MIN      0 ;
-      MAX      100 ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  "999.99" ;
-      OF       oDlg
-
-   REDEFINE SAY oImporte PROMPT nCalculoPuntos( nPuntos, nValorPunto, nDtoPnt, nIncPnt ) ;
-      ID       240 ;
-      PICTURE  cPouDiv ;
-      COLOR    CLR_GET ;
-      OF       oDlg
-
-   REDEFINE BUTTON ;
-      ID       500 ;
-      OF       oDlg ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      ACTION   ( EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID       550 ;
-      OF       oDlg ;
-      ACTION   ( oDlg:end() )
-
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) } )
-   end if
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   if oDlg:nResult == IDOK
-
-      aTmp[ _NPUNTOS ]     := nPuntos
-      aTmp[ _NVALPNT ]     := nValorPunto
-      aTmp[ _NDTOPNT ]     := nDtoPnt
-      aTmp[ _NINCPNT ]     := nIncPnt
-      oCosDiv:cText( oImporte:VarGet() )
-      oCosDiv:Refresh()
-
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
 
 Function AppFacRec( cCodCli, cCodArt, lOpenBrowse )
 
@@ -11181,7 +12818,7 @@ Function AppFacRec( cCodCli, cCodArt, lOpenBrowse )
    else
 
       if OpenFiles( .t. )
-         WinAppRec( nil, bEdtRec, dbfFacRecT, cCodCli, cCodArt )
+         WinAppRec( nil, bEdtRec, TDataView():FacturasRectificativas( nView ), cCodCli, cCodArt )
          CloseFiles()
       end if
 
@@ -11205,7 +12842,7 @@ Function EdtFacRec( cNumFac, lOpenBrowse )
    if lOpenBrowse
 
       if FacRec()
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra factura" )
@@ -11216,8 +12853,8 @@ Function EdtFacRec( cNumFac, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
-            WinEdtRec( nil, bEdtRec, dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
+            WinEdtRec( nil, bEdtRec, TDataView():FacturasRectificativas( nView ) )
          end if
 
          CloseFiles()
@@ -11244,7 +12881,7 @@ FUNCTION ZooFacRec( cNumFac, lOpenBrowse )
    if lOpenBrowse
 
       if FacRec()
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
             oWndBrw:RecZoom()
          else
             MsgStop( "No se encuentra factura" )
@@ -11254,8 +12891,8 @@ FUNCTION ZooFacRec( cNumFac, lOpenBrowse )
    else
 
       if OpenFiles( .t. )
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
-            WinZooRec( nil, bEdtRec, dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
+            WinZooRec( nil, bEdtRec, TDataView():FacturasRectificativas( nView ) )
          end if
          CloseFiles()
       end if
@@ -11280,8 +12917,8 @@ FUNCTION DelFacRec( cNumFac, lOpenBrowse )
    if lOpenBrowse
 
       if FacRec()
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
-            WinDelRec( nil, dbfFacRecT, {|| QuiFacRec() } )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
+            WinDelRec( nil, TDataView():FacturasRectificativas( nView ), {|| QuiFacRec() } )
          else
             MsgStop( "No se encuentra factura" )
          end if
@@ -11291,8 +12928,8 @@ FUNCTION DelFacRec( cNumFac, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
-            WinDelRec( nil, dbfFacRecT, {|| QuiFacRec() } )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
+            WinDelRec( nil, TDataView():FacturasRectificativas( nView ), {|| QuiFacRec() } )
          end if
 
          CloseFiles()
@@ -11319,7 +12956,7 @@ FUNCTION PrnFacRec( cNumFac, lOpenBrowse )
    if lOpenBrowse
 
       if FacRec()
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
             GenFacRec( IS_PRINTER )
          else
             MsgStop( "No se encuentra factura" )
@@ -11330,7 +12967,7 @@ FUNCTION PrnFacRec( cNumFac, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
             GenFacRec( IS_PRINTER )
          end if
 
@@ -11358,7 +12995,7 @@ FUNCTION VisFacRec( cNumFac, lOpenBrowse )
    if lOpenBrowse
 
       if FacRec()
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
             GenFacRec( IS_SCREEN )
          else
             MsgStop( "No se encuentra factura" )
@@ -11369,7 +13006,7 @@ FUNCTION VisFacRec( cNumFac, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumFac, "nNumFac", dbfFacRecT )
+         if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasRectificativas( nView ) )
             GenFacRec( IS_SCREEN )
          end if
 
@@ -11595,7 +13232,7 @@ Return nil
 Devuelve el total de pagos de una factura
 */
 
-FUNCTION nPagFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lOnlyCob, lPic )
+FUNCTION nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lOnlyCob, lPic )
 
    local nOrd
    local nRec
@@ -11670,406 +13307,17 @@ RETURN ( nTotalPagado )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oCtaRem, nMode, oBandera )
-
-	local oDlg
-   local oBmpDiv
-   local oGetCli
-   local oGetAge
-   local oGetCaj
-   local oGetSubCta
-   local cGetSubCta
-   local oGetCtaRem
-   local cGetCtaRem
-   local oGetSubGas
-   local cGetSubGas
-   local lPgdOld
-   local nImpOld
-   local cGetCli     := RetClient( ( dbfTmpPgo )->cCodCli, dbfClient )
-   local cGetAge     := cNbrAgent( ( dbfTmpPgo )->cCodAge, dbfAgent )
-   local cGetCaj     := RetFld( ( dbfTmpPgo )->cCodCaj, dbfCajT, "cNomCaj" )
-   local cPorDiv     := cPorDiv( aTmp[ ( dbfTmpPgo )->( FieldPos( "cDivPgo" ) ) ], dbfDiv )
-
-   if nMode == EDIT_MODE   .and.;
-      aTmp[ ( dbfTmpPgo )->( FieldPos( "LCONPGO" ) ) ]     .and.;
-      !ApoloMsgNoYes( 'La modificación de este recibo puede provocar descuadres contables.' + CRLF + '¿ Desea continuar ?', 'Recibo ya contabilizado' )
-      return .f.
-   end if
-
-   if nMode == EDIT_MODE
-      if aTmp[ ( dbfTmpPgo )->( FieldPos( "lCloPgo" ) ) ] .and. !oUser():lAdministrador()
-         msgStop( "Solo pueden modificar los recibos cerrados los administradores." )
-         return .f.
-      end if
-   end if
-
-   if Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ] )
-      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]   := oUser():cCaja()
-   end if
-
-   lPgdOld              := ( dbfTmpPgo )->lCobrado .or. ( dbfTmpPgo )->lRecDto
-   nImpOld              := ( dbfTmpPgo )->nImporte
-
-   DEFINE DIALOG oDlg RESOURCE "PAGOS" TITLE LblTitle( nMode ) + "recibos de clientes"
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ];
-         ID       100 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  aGet[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ]:cText( Calendario( aTmp[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ];
-         ID       110 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  aGet[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ]:cText( Calendario( aTmp[ ( dbfTmpPgo )->( FieldPos( "DFECVTO" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cClient( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ], dbfClient, oGetCli ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwClient( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ], oGetCli ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oGetCli VAR cGetCli ;
-         ID       121 ;
-         WHEN     .f.;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ];
-         ID       130 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAgentes( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ], dbfAgent, oGetAge ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODAGE" ) ) ], oGetAge ) );
-         OF       oDlg
-
-      REDEFINE GET oGetAge VAR cGetAge ;
-         ID       131 ;
-         WHEN     .f.;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDESCRIP" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CDESCRIP" ) ) ] ;
-         ID       140 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CPGDOPOR" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CPGDOPOR" ) ) ];
-         ID       150 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDOCPGO" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CDOCPGO" ) ) ];
-         ID       155 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
-
-      REDEFINE CHECKBOX aGet[ ( dbfTmpPgo )->( FieldPos( "LRECIMP" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "LRECIMP" ) ) ];
-         ID       160 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ];
-         WHEN     ( .f. ) ;
-         VALID    ( cDivOut( aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ], oBmpDiv, aGet[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ], nil, nil, @cPorDiv, nil, nil, nil, nil, dbfDiv, oBandera ) );
-         PICTURE  "@!";
-         ID       170 ;
-			COLOR 	CLR_GET ;
-         BITMAP   "LUPA" ;
-         ON HELP  BrwDiv( aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ], oBmpDiv, aGet[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ], dbfDiv, oBandera ) ;
-         OF       oDlg
-
-		REDEFINE BITMAP oBmpDiv ;
-         RESOURCE "BAN_EURO" ;
-         ID       171;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ];
-			WHEN		( .F. ) ;
-         ID       172 ;
-         VALID    ( aTmp[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ] > 0 ) ;
-         PICTURE  "@E 999,999.9999" ;
-         COLOR    CLR_GET ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] ;
-         ID       180 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPCOB" ) ) ]:cText( aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] ), .t. ) ;
-         COLOR    CLR_GET ;
-         PICTURE  ( cPorDiv ) ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPCOB" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPCOB" ) ) ];
-         ID       190 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( ValCobro( aGet, aTmp ) ) ;
-         COLOR    CLR_GET ;
-         PICTURE  ( cPorDiv ) ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "NIMPGAS" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPGAS" ) ) ];
-         ID       260 ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         PICTURE  ( cPorDiv ) ;
-			OF 		oDlg
-
-      REDEFINE CHECKBOX aGet[ ( dbfTmpPgo )->( FieldPos( "lNotArqueo" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "lNotArqueo" ) ) ];
-         ID       200 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE CHECKBOX aGet[ ( dbfTmpPgo )->( FieldPos( "LCOBRADO" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "LCOBRADO" ) ) ];
-         ID       220 ;
-         ON CHANGE( ValCheck( aGet, aTmp ) ) ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ];
-         ID       230 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  aGet[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ]:cText( Calendario( aTmp[ ( dbfTmpPgo )->( FieldPos( "DENTRADA" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
-			OF 		oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ] ;
-         ID       240 ;
-			COLOR 	CLR_GET ;
-         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], oGetSubCta ) ) ;
-         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], nil, oGetSubCta ) );
-         OF       oDlg
-
-		REDEFINE GET oGetSubCta VAR cGetSubCta ;
-         ID       241 ;
-			COLOR 	CLR_GET ;
-			WHEN 		.F. ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ] ;
-         ID       270 ;
-			COLOR 	CLR_GET ;
-         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], oGetSubGas ) ) ;
-         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], nil, oGetSubGas ) );
-         OF       oDlg
-
-      REDEFINE GET oGetSubGas VAR cGetSubGas ;
-         ID       271 ;
-			COLOR 	CLR_GET ;
-			WHEN 		.F. ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ] ;
-         ID       250 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         VALID    ( oGetCtaRem:cText( retFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ], oCtaRem:GetAlias() ) ), .t. );
-         ON HELP  ( oCtaRem:Buscar( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ] ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
-         ID       251 ;
-			COLOR 	CLR_GET ;
-			WHEN 		.F. ;
-         OF       oDlg
-
-      /*
-		Cajas____________________________________________________________________
-		*/
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ];
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ];
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    cCajas( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ], dbfCajT, oGetCaj ) ;
-         ID       280 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwCajas( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ], oGetCaj ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oGetCaj VAR cGetCaj ;
-         ID       281 ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      /*
-      Banco____________________________________________________________________
-		*/
-
-      REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ];
-         ID       310 ;
-         IDTEXT   311 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oBanco:Existe( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ], aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ]:oHelpText, "cNomBnc", .t., .t., "0" ) );
-         ON HELP  ( oBanco:Buscar( aGet[ ( dbfTmpPgo )->( FieldPos( "CCODBNC" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         OF       oDlg
-
-      /*
-      Botones__________________________________________________________________
-		*/
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMode ) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:End() )
-
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMode ) } )
-   end if
-
-   ACTIVATE DIALOG oDlg CENTER ;
-         ON INIT  (  aGet[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ]:lValid(),;
-                     aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ]:lValid(),;
-                     aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ]:lValid(),;
-                     aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREM" ) ) ]:lValid(),;
-                     aGet[ ( dbfTmpPgo )->( FieldPos( "DPRECOB" ) ) ]:SetFocus() )
-
-   oBmpDiv:End()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//--------------------------------------------------------------------------//
-
-Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMode )
-
-   local nImp
-   local nCon
-   local nRec        := ( dbfTmpPgo )->( Recno() )
-   local lImpNeg     := ( dbfTmpPgo )->nImporte < 0
-   local nImpTmp     := abs( aTmp[ ( dbfTmpPgo )->( FieldPos( "nImporte" ) ) ] )
-   local nImpFld     := abs( ( dbfTmpPgo )->nImporte )
-
-   if !aGet[ ( dbfTmpPgo )->( FieldPos( "nImpCob" ) ) ]:lValid()
-      return .f.
-   end if
-
-   /*
-   El importe no puede ser mayor q el importe anterior-------------------------
-   */
-
-   if nImpTmp > nImpFld
-      msgStop( "El importe no puede ser superior al actual." )
-      return nil
-   end if
-
-   oDlg:Disable()
-
-   /*
-   Comprobamos q los importes sean distintos-----------------------------------
-   */
-
-   if nImpFld != nImpTmp
-
-      /*
-      El importe ha cambiado por tanto debemos de hacer un nuevo recibo por la diferencia
-      */
-
-      nImp                       := ( nImpFld - nImpTmp ) * if( lImpNeg, - 1 , 1 )
-
-      /*
-      Añadimos el nuevo recibo
-      */
-
-      ( dbfTmpPgo )->( dbAppend() )
-      nCon                       := ( dbfTmpPgo )->( Recno() )
-      ( dbfTmpPgo )->cSerie      := aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE"  ) ) ]
-      ( dbfTmpPgo )->nNumFac     := aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ]
-      ( dbfTmpPgo )->cSufFac     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
-      ( dbfTmpPgo )->nNumRec     := nCon
-      ( dbfTmpPgo )->cTipRec     := "R"
-      ( dbfTmpPgo )->cCodCaj     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]
-      ( dbfTmpPgo )->cCodCli     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCLI" ) ) ]
-      ( dbfTmpPgo )->dEntrada    := Ctod( "" )
-      ( dbfTmpPgo )->nImporte    := nImp
-      ( dbfTmpPgo )->nImpGas     := 0
-      ( dbfTmpPgo )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
-      ( dbfTmpPgo )->dPreCob     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], dbfFacRecT )
-      ( dbfTmpPgo )->dFecVto     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], dbfFacRecT )
-      ( dbfTmpPgo )->cPgdoPor    := ""
-      ( dbfTmpPgo )->lCobrado    := .f.
-      ( dbfTmpPgo )->cTurRec     := cCurSesion()
-      ( dbfTmpPgo )->cDivPgo     := aTmp[ ( dbfTmpPgo )->( FieldPos( "CDIVPGO" ) ) ]
-      ( dbfTmpPgo )->nVdvPgo     := aTmp[ ( dbfTmpPgo )->( FieldPos( "NVDVPGO" ) ) ]
-      ( dbfTmpPgo )->lConPgo     := .f.
-      ( dbfTmpPgo )->( dbUnLock() )
-
-   end if
-
-   ( dbfTmpPgo )->( dbGoTo( nRec ) )
-
-   /*
-   Grabamos el recibo
-   */
-
-   WinGather( aTmp, aGet, dbfTmpPgo, oBrw, nMode )
-
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
-
-   dbCommitAll()
-
-   oDlg:Enable()
-
-   oDlg:End( IDOK )
-
-return .t.
-
-//--------------------------------------------------------------------------//
-
-FUNCTION nChkPagFacRec( cFacRec, dbfFacRecT, dbfFacCliP )
+FUNCTION nChkPagFacRec( cFacRec, cFacRecT, dbfFacCliP )
 
    local nBitmap        := 3
 
-   if ( dbfFacRecT )->lLiquidada
+   if ( cFacRecT )->lLiquidada
 
       nBitmap           := 1
 
-   elseif ( dbfFacCliP )->( dbSeek( cFacRec ) )
+   elseif ( dbfFacCliP )->( dbSeek( cFacRecT ) )
 
-      while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFacRec .and. !( dbfFacCliP )->( eof() )
+      while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFacRecT .and. !( dbfFacCliP )->( eof() )
 
          if ( dbfFacCliP )->lCobrado
 
@@ -12088,7 +13336,7 @@ RETURN nBitmap
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ChkLqdFacRec( aTmp, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
+FUNCTION ChkLqdFacRec( aTmp, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
 
    local nTotal
    local lChkLqd
@@ -12101,12 +13349,12 @@ FUNCTION ChkLqdFacRec( aTmp, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv 
       cFactura    := aTmp[_CSERIE ] + Str( aTmp[_NNUMFAC] ) + aTmp[_CSUFFAC]
       cDivFac     := aTmp[_CDIVFAC]
    else
-      cFactura    := ( dbfFacRecT )->CSERIE + Str( ( dbfFacRecT )->NNUMFAC ) + ( dbfFacRecT )->CSUFFAC
-      cDivFac     := ( dbfFacRecT )->CDIVFAC
+      cFactura    := ( cFacRecT )->CSERIE + Str( ( cFacRecT )->NNUMFAC ) + ( cFacRecT )->CSUFFAC
+      cDivFac     := ( cFacRecT )->CDIVFAC
    end if
 
-   nTotal         := abs( nTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
-   nPagFacCli     := abs( nPagFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
+   nTotal         := abs( nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, nil, .f. ) )
+   nPagFacCli     := abs( nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. ) )
 
    lChkLqd        := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
 
@@ -12114,9 +13362,9 @@ FUNCTION ChkLqdFacRec( aTmp, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv 
       aTmp[ _LLIQUIDADA ]        := lChkLqd
    end if
 
-   if dbLock( dbfFacRecT )
-      ( dbfFacRecT )->lLiquidada := lChkLqd
-      ( dbfFacRecT )->( dbUnLock() )
+   if dbLock( cFacRecT )
+      ( cFacRecT )->lLiquidada := lChkLqd
+      ( cFacRecT )->( dbUnLock() )
    end if
 
    ( dbfFacCliP )->( dbGoTo( nRec ) )
@@ -12146,9 +13394,9 @@ STATIC FUNCTION DupSerie( oWndBrw )
    local oSerFin
    local oTxtDup
    local nTxtDup     := 0
-   local nRecno      := ( dbfFacRecT )->( Recno() )
-   local nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( dbfFacRecT )->cSerie, ( dbfFacRecT )->nNumFac, ( dbfFacRecT )->cSufFac, GetSysDate() )
+   local nRecno      := ( TDataView():FacturasRectificativas( nView ) )->( Recno() )
+   local nOrdAnt     := ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( TDataView():FacturasRectificativas( nView ) )->cSerie, ( TDataView():FacturasRectificativas( nView ) )->nNumFac, ( TDataView():FacturasRectificativas( nView ) )->cSufFac, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -12243,15 +13491,15 @@ STATIC FUNCTION DupSerie( oWndBrw )
    REDEFINE METER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( dbfFacRecT )->( OrdKeyCount() ) ;
+      TOTAL    ( TDataView():FacturasRectificativas( nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( dbfFacRecT )->( dbGoTo( nRecNo ) )
-   ( dbfFacRecT )->( ordSetFocus( nOrdAnt ) )
+   ( TDataView():FacturasRectificativas( nView ) )->( dbGoTo( nRecNo ) )
+   ( TDataView():FacturasRectificativas( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -12259,374 +13507,6 @@ STATIC FUNCTION DupSerie( oWndBrw )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-
-STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCancel, cFecDoc )
-
-   local nOrd
-   local nDuplicados    := 0
-   local nProcesed      := 0
-
-   oBtnAceptar:Hide()
-   oBtnCancel:bAction   := {|| lCancel := .t. }
-
-   if oDesde:nRadio == 1
-
-      nOrd              := ( dbfFacRecT )->( OrdSetFocus( "nNumFac" ) )
-
-      ( dbfFacRecT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
-
-      while !lCancel .and. ( dbfFacRecT )->( !eof() )
-
-         if ( dbfFacRecT )->cSerie  >= oDesde:cSerieInicio  .and.;
-            ( dbfFacRecT )->cSerie  <= oDesde:cSerieFin     .and.;
-            ( dbfFacRecT )->nNumFac >= oDesde:nNumeroInicio .and.;
-            ( dbfFacRecT )->nNumFac <= oDesde:nNumeroFin    .and.;
-            ( dbfFacRecT )->cSufFac >= oDesde:cSufijoInicio .and.;
-            ( dbfFacRecT )->cSufFac <= oDesde:cSufijoFin
-
-            ++nDuplicados
-
-            oTxtDup:cText  := "Duplicando : " + ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
-
-            DupFactura( cFecDoc )
-
-         end if
-
-         ( dbfFacRecT )->( dbSkip() )
-
-         ++nProcesed
-
-         oTxtDup:Set( nProcesed )
-
-      end do
-
-      ( dbfFacRecT )->( OrdSetFocus( nOrd ) )
-
-   else
-
-      nOrd              := ( dbfFacRecT )->( OrdSetFocus( "dFecFac" ) )
-
-      ( dbfFacRecT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
-
-      while !lCancel .and. ( dbfFacRecT )->( !eof() )
-
-         if ( dbfFacRecT )->dFecFac >= oDesde:dFechaInicio  .and.;
-            ( dbfFacRecT )->dFecFac <= oDesde:dFechaFin
-
-            ++nDuplicados
-
-            oTxtDup:cText  := "Duplicando : " + ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac
-
-            DupFactura( cFecDoc )
-
-         end if
-
-         ( dbfFacRecT )->( dbSkip() )
-
-         ++nProcesed
-
-         oTxtDup:Set( nProcesed )
-
-      end do
-
-      ( dbfFacRecT )->( OrdSetFocus( nOrd ) )
-
-   end if
-
-   lCancel              := .t.
-
-   oBtnAceptar:Show()
-
-   if lCancel
-      msgStop( "Total de registros duplicados : " + Str( nDuplicados ), "Proceso cancelado" )
-   else
-      msgInfo( "Total de registros duplicados : " + Str( nDuplicados ), "Proceso finalizado" )
-   end if
-
-RETURN ( oDlg:End() )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag )
-
-   local nRec                 := ( cDbf )->( Recno() )
-   local aTabla               := {}
-   local nOrdAnt
-
-   DEFAULT lCab               := .f.
-   DEFAULT lPag               := .f.
-
-   aTabla                     := DBScatter( cDbf )
-   aTabla[ _CSERIE  ]         := xField1
-   aTabla[ _NNUMFAC ]         := xField2
-   aTabla[ _CSUFFAC ]         := xField3
-
-   if lCab
-
-      aTabla[ _CTURFAC     ]  := cCurSesion()
-      if !Empty( cFecDoc )
-         aTabla[ _DFECFAC  ]  := cFecDoc
-      end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
-      aTabla[ _LCONTAB     ]  := .f.
-      aTabla[ _DFECENT     ]  := Ctod("")
-      aTabla[ _LIMPALB     ]  := .f.
-      aTabla[ _CNUMFAC     ]  := Space( 12 )
-      aTabla[ _LSNDDOC     ]  := .t.
-      aTabla[ _LCLOFAC     ]  := .f.
-      aTabla[ _CABNFAC     ]  := Space( 12 )
-      aTabla[ _CANTFAC     ]  := Space( 12 )
-      aTabla[ _CCODUSR     ]  := cCurUsr()
-      aTabla[ _DFECCRE     ]  := GetSysDate()
-      aTabla[ _CTIMCRE     ]  := Time()
-      aTabla[ _LIMPRIMIDO  ]  := .f.
-      aTabla[ _DFECIMP     ]  := Ctod("")
-      aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
-
-      nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMFAC" ) )
-
-   end if
-
-   if lPag
-
-      aTabla[ ( dbfFacCliP )->( FieldPos( "lConPgo" ) ) ]      := .f.
-      aTabla[ ( dbfFacCliP )->( FieldPos( "lRecImp" ) ) ]      := .f.
-      aTabla[ ( dbfFacCliP )->( FieldPos( "lRecDto" ) ) ]      := .f.
-      aTabla[ ( dbfFacCliP )->( FieldPos( "lCloPgo" ) ) ]      := .f.
-      aTabla[ ( dbfFacCliP )->( FieldPos( "dPreCob" ) ) ]      := cFecDoc
-      aTabla[ ( dbfFacCliP )->( FieldPos( "dFecDto" ) ) ]      := Ctod("")
-      aTabla[ ( dbfFacCliP )->( FieldPos( "dFecImp" ) ) ]      := Ctod("")
-      aTabla[ ( dbfFacCliP )->( FieldPos( "cHorImp" ) ) ]      := Space( 5 )
-      aTabla[ ( dbfFacCliP )->( FieldPos( "dFecVto" ) ) ]      := cFecDoc
-      aTabla[ ( dbfFacCliP )->( FieldPos( "cTurRec" ) ) ]      := cCurSesion()
-      aTabla[ ( dbfFacCliP )->( FieldPos( "cCodCaj" ) ) ]      := oUser():cCaja()
-
-      if aTabla[ ( dbfFacCliP )->( FieldPos( "lCobrado" ) ) ]
-         aTabla[ ( dbfFacCliP )->( FieldPos( "dEntrada" ) ) ]  := cFecDoc
-      else
-         aTabla[ ( dbfFacCliP )->( FieldPos( "dEntrada" ) ) ]  := Ctod("")
-      end if
-
-   end if
-
-   if dbDialogLock( cDbf, .t. )
-      aEval( aTabla, { | uTmp, n | ( cDbf )->( fieldPut( n, uTmp ) ) } )
-      ( cDbf )->( dbUnLock() )
-   end if
-
-   if lCab
-      ( cDbf )->( OrdSetFocus( nOrdAnt ) )
-   end if
-
-   ( cDbf )->( dbGoTo( nRec ) )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION DupFactura( cFecDoc )
-
-   local nNewNumFac  := 0
-
-   //Recogemos el nuevo numero de factura--------------------------------------
-
-   nNewNumFac  := nNewDoc( ( dbfFacRecT )->cSerie, dbfFacRecT, "NFACREC", , dbfCount )
-
-   //Duplicamos las cabeceras--------------------------------------------------
-
-   FacRecDup( dbfFacRecT, ( dbfFacRecT )->cSerie, nNewNumFac, ( dbfFacRecT )->cSufFac, .t., cFecDoc )
-
-   //Duplicamos las lineas del documento---------------------------------------
-
-   if ( dbfFacRecL )->( dbSeek( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) )
-
-      while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac == ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac .and. ;
-            !( dbfFacRecL )->( Eof() )
-
-            FacRecDup( dbfFacRecL, ( dbfFacRecT )->cSerie, nNewNumFac, ( dbfFacRecT )->cSufFac, .f. )
-
-         ( dbfFacRecL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   //Duplicamos los pagos------------------------------------------------------
-
-   if ( dbfFacCliP )->( dbSeek( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) )
-
-      while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac == ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac .and. ;
-            !Empty( ( dbfFacCliP )->cTipRec ) .and.;
-            !( dbfFacCliP )->( Eof() )
-
-            FacRecDup( dbfFacCliP, ( dbfFacRecT )->cSerie, nNewNumFac, ( dbfFacCliT )->cSufFac, .f., cFecDoc, .t. )
-
-         ( dbfFacCliP )->( dbSkip() )
-
-      end while
-
-   end if
-
-   //Duplicamos los documentos-------------------------------------------------
-
-   if ( dbfFacRecD )->( dbSeek( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac ) )
-
-      while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac == ( dbfFacRecD )->cSerie + Str( ( dbfFacRecD )->nNumFac ) + ( dbfFacRecD )->cSufFac .and. ;
-            !( dbfFacRecD )->( Eof() )
-
-            FacRecDup( dbfFacRecD, ( dbfFacRecT )->cSerie, nNewNumFac, ( dbfFacRecT )->cSufFac, .f. )
-
-         ( dbfFacRecD )->( dbSkip() )
-
-      end while
-
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION ValidaMedicion( aTmp, aGet )
-
-   local cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
-
-   /*
-   Cargamos el codigo de las unidades---------------------------------
-   */
-
-   if ( Empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
-
-      if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
-
-         if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
-            else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
-            end if
-         else
-            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := 0
-            end if
-         end if
-
-         if oUndMedicion:oDbf:nDimension >= 2 .and.!Empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
-            else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
-            end if
-
-         else
-            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            else
-                 aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := 0
-            end if
-         end if
-
-         if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-
-            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
-            else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
-            end if
-
-         else
-
-            if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := 0
-            end if
-
-         end if
-
-      else
-
-         if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-         end if
-
-         if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-         end if
-
-         if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-         end if
-
-      end if
-
-      cOldUndMed := cNewUndMed
-
-   end if
-
-RETURN .t.
-
-//-----------------------------------------------------------------------------------------
-
-Static Function ChangeTarifa( aTmp, aGet, aTmpFac )
-
-   local nPrePro
-
-   nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, aTmpFac[ _CCODTAR ] )
-
-   if nPrePro == 0
-      nPrePro     := nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
-   end if
-
-   if nPrePro != 0
-      aGet[ _NPREUNIT ]:cText( nPrePro )
-   end if
-
-return .t.
-
-//-----------------------------------------------------------------------------
-
-Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
-
-   local uValor   := oGetCod:VarGet()
-
-   if Empty( uValor )
-
-      oSayTrn:cText( "" )
-      oGetKgs:cText( 0 )
-
-   else
-
-      if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
-         oGetCod:cText( uValor )
-         oSayTrn:cText( oTrans:oDbf:cNomTrn )
-         oGetKgs:cText( oTrans:oDbf:nKgsTrn )
-      else
-         msgStop( "Código de transportista no encontrado." )
-         Return .f.
-      end if
-
-   end if
-
-   RecalculaTotal( aTmp )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
 
 FUNCTION IsFacRec( cPath )
 
@@ -12658,198 +13538,6 @@ FUNCTION IsFacRec( cPath )
    end if
 
 Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-#include "FastRepH.ch"
-
-Static Function DataReport( oFr )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   oFr:ClearDataSets()
-
-   oFr:SetWorkArea(     "Facturas rectificativas", ( dbfFacRecT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-   oFr:SetFieldAliases( "Facturas rectificativas", cItemsToReport( aItmFacRec() ) )
-
-   oFr:SetWorkArea(     "Lineas de facturas rectificativas", ( dbfFacRecL )->( Select() ) )
-   oFr:SetFieldAliases( "Lineas de facturas rectificativas", cItemsToReport( aColFacRec() ) )
-
-   oFr:SetWorkArea(     "Series de lineas de facturas rectificativas", ( dbfFacRecS )->( Select() ) )
-   oFr:SetFieldAliases( "Series de lineas de facturas rectificativas", cItemsToReport( aSerFacRec() ) )
-
-   oFr:SetWorkArea(     "Incidencias de facturas rectificativas", ( dbfFacRecI )->( Select() ) )
-   oFr:SetFieldAliases( "Incidencias de facturas rectificativas", cItemsToReport( aIncFacRec() ) )
-
-   oFr:SetWorkArea(     "Documentos de facturas rectificativas", ( dbfFacRecD )->( Select() ) )
-   oFr:SetFieldAliases( "Documentos de facturas rectificativas", cItemsToReport( aFacRecDoc() ) )
-
-   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
-   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
-
-   oFr:SetWorkArea(     "Clientes", ( dbfClient )->( Select() ) )
-   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
-
-   oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
-   oFr:SetFieldAliases( "Obras",  cItemsToReport( aItmObr() ) )
-
-   oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
-   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
-
-   oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
-   oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
-
-   oFr:SetWorkArea(     "Agentes", ( dbfAgent )->( Select() ) )
-   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
-
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
-   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
-
-   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-
-   oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
-   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
-
-   oFr:SetWorkArea(     "Tipo de artículo",  oTipArt:Select() )
-   oFr:SetFieldAliases( "Tipo de artículo",  cObjectsToReport( oTipArt:oDbf ) )
-
-   oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
-   oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
-
-   oFr:SetWorkArea(     "Bancos", ( dbfCliBnc )->( Select() ) )
-   oFr:SetFieldAliases( "Bancos", cItemsToReport( aCliBnc() ) )
-
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
-
-   oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Series de lineas de facturas rectificativas",  {|| ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas",       {|| ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Documentos de facturas rectificativas",        {|| ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Empresa",                                      {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Clientes",                                     {|| ( dbfFacRecT )->cCodCli } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Obras",                                        {|| ( dbfFacRecT )->cCodCli + ( dbfFacRecT )->cCodObr } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Almacen",                                      {|| ( dbfFacRecT )->cCodAlm } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Rutas",                                        {|| ( dbfFacRecT )->cCodRut } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Agentes",                                      {|| ( dbfFacRecT )->cCodAge } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Formas de pago",                               {|| ( dbfFacRecT )->cCodPago } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( dbfFacRecT )->cCodTrn } )
-   oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( dbfFacRecT )->cCodCli } )
-
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( dbfFacRecL )->cCodTip } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( dbfFacRecL )->cUnidad } )
-
-   oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Series de lineas de facturas rectificativas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Incidencias de facturas rectificativas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Documentos de facturas rectificativas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Empresa" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Clientes" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Obras" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Almacenes" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Rutas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Agentes" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Formas de pago" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Transportistas" )
-   oFr:SetResyncPair(   "Facturas rectificativas", "Bancos" )
-
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Artículos" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Tipo de artículo" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Ofertas" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de medición" )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Static Function VariableReport( oFr )
-
-   oFr:DeleteCategory(  "Facturas rectificativas" )
-   oFr:DeleteCategory(  "Lineas de facturas rectificativas" )
-
-   /*
-   Creación de variables----------------------------------------------------
-   */
-
-   oFr:AddVariable(     "Facturas rectificativas",             "Total factura",                       "GetHbVar('nTotFac')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total descuento",                     "GetHbVar('nTotDto')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total bruto",                         "GetHbVar('nTotBrt')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total descuentos",                    "GetHbVar('nTotalDto')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total neto",                          "GetHbVar('nTotNet')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total página",                        "GetHbVar('nTotPag')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total retención",                     "GetHbVar('nTotRet')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total peso",                          "GetHbVar('nTotPes')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total costo",                         "GetHbVar('nTotCos')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total cobrado",                       "GetHbVar('nTotCob')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total artículos",                     "GetHbVar('nTotArt')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total cajas",                         "GetHbVar('nTotCaj')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
-
-   oFr:AddVariable(     "Facturas rectificativas",             "Bruto primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',1)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Bruto segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',1)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Bruto tercer tipo de " + cImp(),            "GetHbArrayVar('aIvaTre',1)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Base primer tipo de " + cImp(),             "GetHbArrayVar('aIvaUno',2)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Base segundo tipo de " + cImp(),            "GetHbArrayVar('aIvaDos',2)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Base tercer tipo de " + cImp(),             "GetHbArrayVar('aIvaTre',2)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje primer tipo " + cImp(),          "GetHbArrayVar('aIvaUno',3)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje segundo tipo " + cImp(),         "GetHbArrayVar('aIvaDos',3)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje tercer tipo " + cImp(),          "GetHbArrayVar('aIvaTre',3)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe primer tipo " + cImp(),             "GetHbArrayVar('aIvaUno',8)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe segundo tipo " + cImp(),            "GetHbArrayVar('aIvaDos',8)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe tercer tipo " + cImp(),             "GetHbArrayVar('aIvaTre',8)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',9)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',9)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',9)" )
-
-   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
-
-   oFr:AddVariable(     "Facturas rectificativas",             "Total unidades primer tipo de impuestos especiales",            "GetHbArrayVar('aIvmUno',1 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total unidades segundo tipo de impuestos especiales",           "GetHbArrayVar('aIvmDos',1 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
-
-   oFr:AddVariable(     "Facturas rectificativas",             "Cuenta bancaria cliente",             "CallHbFunc('cCtaFacRec')" )
-
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo",                "CallHbFunc('cDesFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total unidades artículo",             "CallHbFunc('nTotNFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario del artículo",        "CallHbFunc('nTotUFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario con descuentos",      "CallHbFunc('nTotPFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Punto verde del artículo",            "CallHbFunc('nPntUFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total línea de factura",              "CallHbFunc('nTotLFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total peso por línea",                "CallHbFunc('nPesLFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total final línea del factura",       "CallHbFunc('nTotFFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Importe descuento línea del factura", "CallHbFunc('nDtoLFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total descuento línea del factura",   "CallHbFunc('nTotDtoLFacRec')" )
-
-Return nil
 
 //---------------------------------------------------------------------------//
 
@@ -12964,7 +13652,7 @@ Return .t.
 Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "FacturasRectificativasCliente" + StrTran( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, " ", "" ) + ".Pdf"
+   local cFilePdf       := cPatTmp() + "FacturasRectificativasCliente" + StrTran( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -13059,15 +13747,15 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( dbfFacRecT )->cCodCli, dbfClient, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de factura rectificativa de cliente número " + ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro factura rectificativa de cliente " + ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( dbfFacRecT )->dFecFac ) + Space( 1 ) )
+                  :SetPara(         RetFld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, dbfClient, "cMeiInt" ) )
+                  :SetAsunto(       "Envio de factura rectificativa de cliente número " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro factura rectificativa de cliente " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():FacturasRectificativas( nView ) )->dFecFac ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( dbfFacRecT, aItmFacRec() )
+                  :GeneralResource( TDataView():FacturasRectificativas( nView ), aItmFacRec() )
 
                end with
 
@@ -13104,7 +13792,7 @@ Function cCtaFacRec( cFacRecT, cFacCliP, cBncCli )
 
    local cCtaFacRec  := ""
 
-   DEFAULT cFacRecT  := dbfFacRecT
+   DEFAULT cFacRecT  := cFacRecT
    DEFAULT cFacCliP  := dbfFacCliP
    DEFAULT cBncCli   := dbfCliBnc
 
@@ -13119,12 +13807,6 @@ Function cCtaFacRec( cFacRecT, cFacCliP, cBncCli )
 Return ( cCtaFacRec )
 
 //------------------------------------------------------------------------//
-
-#endif
-
-//---------------------------------------------------------------------------//
-//Funciones del programa y del pda
-//---------------------------------------------------------------------------//
 
 /*
 Lineas de total
@@ -13220,707 +13902,6 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-Static Function YearComboBoxChange()
-
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( dbfFacRecT )
-      CreateUserFilter( "", dbfFacRecT, .f., , , "all" )
-	 else
-		DestroyFastFilter( dbfFacRecT )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfFacRecT, .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
-
-	 ( dbfFacRecT )->( dbGoTop() )
-
-	 oWndBrw:Refresh()
-
-  Return nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION BrwFacRec( oGet, oIva )
-
-	local oDlg
-	local oBrw
-   local oGet1
-   local cGet1
-   local oCbxOrd
-   local cCbxOrd
-   local nOrd
-   local aCbxOrd
-
-   if !OpenFiles()
-      Return .f.
-   end if
-
-   aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
-   nOrd           := GetBrwOpt( "BrwFacRec" )
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Facturas rectificativas de clientes"
-
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacRecT, nil, nil, .f. ) );
-         VALID    ( OrdClearScope( oBrw, dbfFacRecT ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfFacRecT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
-
-      oBrw                 := IXBrowse():New( oDlg )
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:cAlias          := dbfFacRecT
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Factura de cliente.Browse"
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-
-      oBrw:CreateFromResource( 105 )
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Número"
-         :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacRecT )->cSerie + "/" + RTrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Fecha"
-         :cSortOrder       := "dFecFac"
-         :bEditValue       := {|| Dtoc( ( dbfFacRecT )->dFecFac ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Cliente"
-         :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| Rtrim( ( dbfFacRecT )->cCodCli ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| Rtrim( ( dbfFacRecT )->cNomCli ) }
-         :nWidth           := 180
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfFacRecT )->nTotFac }
-         :cEditPicture     := cPorDiv( ( dbfFacRecT )->cDivFac, dbfDiv )
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-		REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
-         WHEN     ( .f. ) ;
-         ACTION   ( nil )
-
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
-         WHEN     ( .f. ) ;
-         ACTION   ( nil )
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
-
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
-
-   ACTIVATE DIALOG oDlg ON INIT ( oBrw:Load() ) CENTER
-
-   if oDlg:nResult == IDOK
-
-      oGet:cText( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac )
-
-      oGet:bWhen   := {|| .f. }
-
-      if !Empty( oIva )
-         oIva:Click( ( dbfFacRecT )->lIvaInc ):Refresh()
-      end if
-
-   end if
-
-   SetBrwOpt( "BrwFacRec", ( dbfFacRecT )->( OrdNumber() ) )
-
-   ( dbfFacRecT )->( dbClearFilter() )
-
-   CloseFiles()
-
-   /*
-    Guardamos los datos del browse-------------------------------------------
-   */
-
-   oBrw:CloseData()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION lLiquida( oBrw, cFactura )
-
-   DEFAULT cFactura  := ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac
-
-   if ( dbfFacRecT )->lLiquidada
-      msgStop( "Factura ya cobrada", "Imposible añadir cobros" )
-      return .f.
-   end if
-
-   /*
-   Comprobamos si existen recibos de esta factura------------------------------
-   */
-
-   ( dbfFacCliP )->( dbGoTop() )
-
-   if ( dbfFacCliP )->( dbSeek( cFactura ) )
-
-      while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFactura .and. !( dbfFacCliP )->( eof() )
-
-         if !Empty( ( dbfFacCliP )->cTipRec ) .and. !( dbfFacCliP )->lCobrado
-
-            EdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec, .f. )
-
-            exit
-
-         end if
-
-         ( dbfFacCliP )->( dbSkip() )
-
-      end do
-
-   end if
-
-   /*
-   Chekea el estado de la factura---------------------------------------------
-   */
-
-   ChkLqdFacRec( nil, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
-
-   oBrw:Refresh()
-   oBrw:SetFocus()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
-
-   local sOfeArt
-   local nTotalLinea    := 0
-
-
-   if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
-
-      /*
-      Buscamos si existen ofertas por artículo----------------------------
-      */
-
-      nTotalLinea       := lCalcDeta( aTmp, aTmpFac, .t. )
-
-      sOfeArt           := sOfertaArticulo( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVFAC ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANENT ], nTotalLinea )
-
-      if !Empty( sOfeArt ) 
-         if ( sOfeArt:nPrecio != 0 )
-            aGet[ _NPREUNIT ]:cText( sOfeArt:nPrecio )
-         end if 
-         if ( sOfeArt:nDtoPorcentual != 0 )
-            aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
-         end if 
-         if ( sOfeArt:nDtoLineal != 0)
-            aGet[ _NDTODIV  ]:cText( sOfeArt:nDtoLineal )
-         end if 
-         aTmp[ _LLINOFE  ] := .t.
-      end if
-
-      if !aTmp[ _LLINOFE ]
-
-         /*
-         Buscamos si existen ofertas por familia----------------------------
-         */
-
-         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
-
-         if !Empty( sOfeArt ) 
-            if ( sOfeArt:nDtoPorcentual != 0 )
-               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            end if 
-            if ( sOfeArt:nDtoLineal != 0 )
-               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-            end if 
-            aTmp[ _LLINOFE ]  := .t.
-         end if
-
-      end if
-
-      if !aTmp[ _LLINOFE ]
-
-         /*
-         Buscamos si existen ofertas por tipos de articulos--------------
-         */
-
-         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
-
-         if !Empty( sOfeArt ) 
-            if ( sOfeArt:nDtoPorcentual != 0 )
-               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            end if 
-            if ( sOfeArt:nDtoLineal != 0 )
-               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-            end if 
-            aTmp[ _LLINOFE ]  := .t.
-         end if
-
-      end if
-
-      if !aTmp[ _LLINOFE ]
-
-         /*
-         Buscamos si existen ofertas por tipos de articulos--------------
-         */
-
-         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
-
-         if !Empty( sOfeArt ) 
-            if ( sOfeArt:nDtoPorcentual != 0 )
-               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            end if 
-            if ( sOfeArt:nDtoLineal != 0 )
-               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-            end if 
-            aTmp[ _LLINOFE ]  := .t.
-         end if
-
-      end if
-
-      if !aTmp[ _LLINOFE ]
-
-         /*
-         Buscamos si existen ofertas por temporadas----------------------
-         */
-
-         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
-
-         if !Empty( sOfeArt ) 
-            if ( sOfeArt:nDtoPorcentual != 0 )
-               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            end if 
-            if ( sOfeArt:nDtoLineal != 0 )
-               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-            end if 
-            aTmp[ _LLINOFE ]  := .t.
-         end if
-
-      end if
-
-      if !aTmp[ _LLINOFE ]
-
-         /*
-         Buscamos si existen ofertas por fabricantes---------------------------
-         */
-
-         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
-
-         if !Empty( sOfeArt ) 
-            if ( sOfeArt:nDtoPorcentual != 0 )
-               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            end if 
-            if ( sOfeArt:nDtoLineal != 0 )
-               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-            end if 
-            aTmp[ _LLINOFE ]  := .t.
-         end if
-
-      end if
-
-   end if
-
-return .t.
-
-//--------------------------------------------------------------------------//
-
-Static Function lValidLote( aTmp, aGet, oStkAct )
-
-   if !uFieldEmpresa( "lNStkAct" )
-      oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
-   end if
-
-   if !Empty( aGet[ _DFECCAD ] )
-      aGet[ _DFECCAD ]:cText( dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL ) )
-   end if
-
-Return ( .t. )
-
-//--------------------------------------------------------------------------//
-
-Static Function EditarNumeroSerie( aTmp, oStock, nMode )
-
-   with object ( TNumerosSerie() )
-
-      :nMode            := nMode
-
-      :cCodArt          := aTmp[ _CREF    ]
-      :cCodAlm          := aTmp[ _CALMLIN ]
-      :nNumLin          := aTmp[ _NNUMLIN ]
-
-      :nTotalUnidades   := nTotNFacRec( aTmp )
-
-      :oStock           := oStock
-
-      :uTmpSer          := dbfTmpSer
-
-      :Resource()
-
-   end with
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static Function OldEditarNumeroSerie( aTmp, oStock, nMode )
-
-   local n
-   local oDlg
-   local nTotUnd
-   local cCodArt
-   local cCodAlm
-   local oBrwSer
-   local aNumSer
-   local aValSer
-   local cPreFix  := Space( 18 )
-   local oSerIni
-   local nSerIni  := 0
-   local oSerFin
-   local nSerFin  := 0
-   local oNumGen
-   local nNumGen  := 0
-   local oSaySer
-   local cSaySer  := ""
-   local oProSer
-   local nProSer
-
-   DEFAULT nMode  := APPD_MODE
-
-   nTotUnd        := Abs( nTotNFacRec( aTmp ) )
-
-   if nTotUnd == 0
-      MsgStop( "No hay unidades para asignar números de serie." )
-      Return ( nil )
-   end if
-
-   n              := 1
-
-   cCodArt        := aTmp[ _CREF    ]
-   cCodAlm        := aTmp[ _CALMLIN ]
-
-   aNumSer        := Afill( Array( nTotUnd ), Space( 30 ) )
-   aValSer        := Afill( Array( nTotUnd ), .f. )
-
-   if ( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
-      while ( Str( ( dbfTmpSer )->nNumLin, 4 ) + ( dbfTmpSer )->cRef == Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) .and. !( dbfTmpSer )->( Eof() )
-         if ( n <= nTotUnd )
-            aNumSer[ n ]   := ( dbfTmpSer )->cNumSer
-         end if
-         ( dbfTmpSer )->( dbSkip() )
-         n++
-      end while
-   end if
-
-   DEFINE DIALOG oDlg RESOURCE "VTANUMSER"
-
-      REDEFINE GET nTotUnd ;
-			ID 		100 ;
-         PICTURE  MasUnd() ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET cPreFix ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET oSerIni VAR nSerIni ;
-         ID       120 ;
-         PICTURE  "99999999999999999999" ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oSerFin:cText( nSerIni + nTotUnd ), .t. ) ;
-         OF       oDlg
-
-      REDEFINE GET oSerFin VAR nSerFin ;
-         ID       130 ;
-         PICTURE  "99999999999999999999" ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET oNumGen VAR nNumGen ;
-         ID       140 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "99999999999999999999" ;
-         OF       oDlg
-
-      REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( oDlg:Disable(), GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer, oProSer ), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() )
-
-      oBrwSer                 := TXBrowse():New( oDlg )
-
-      oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwSer:lHScroll        := .f.
-      oBrwSer:lRecordSelector := .t.
-      oBrwSer:lFastEdit       := .t.
-
-      oBrwSer:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
-
-      oBrwSer:SetArray( aNumSer, , , .f. )
-
-      oBrwSer:nColSel         := 2
-
-      with object ( oBrwSer:addCol() )
-         :cHeader             := "N."
-         :bStrData            := {|| Trans( oBrwSer:nArrayAt, "999999" ) }
-         :nWidth              := 60
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
-      end with
-
-      with object ( oBrwSer:addCol() )
-         :cHeader             := "Serie"
-         :bEditValue          := {|| aNumSer[ oBrwSer:nArrayAt ] }
-         :nWidth              := 220
-         if nMode != ZOOM_MODE
-            :nEditType        := 1
-         end if
-         :bOnPostEdit         := {|o,x| aNumSer[ oBrwSer:nArrayAt ] := x, aValSer[ oBrwSer:nArrayAt ] := oStock:lValidNumeroSerie( cCodArt, cCodAlm, x ) }
-      end whit
-
-      with object ( oBrwSer:addCol() )
-         :cHeader             := "Es."
-         :nHeadBmpNo          := 4
-         :bStrData            := {|| "" }
-         :bBmpData            := {|| if( aValSer[ oBrwSer:nArrayAt ], 3, 1 ) }
-         :nWidth              := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Informacion_16" )
-      end with
-
-      oBrwSer:CreateFromResource( 150 )
-
-      REDEFINE SAY oSaySer VAR cSaySer ;
-         ID       230 ;
-         OF       oDlg
-
-      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      REDEFINE BUTTON ;
-         ID       510 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( lChkSer( aValSer, nTotUnd, oProSer, oBrwSer ), SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg ), ) )
-
-      REDEFINE BUTTON ;
-         ID       520 ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
-
-      oDlg:bStart := {|| oDlg:Disable(), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() }
-
-      oDlg:AddFastKey( VK_F5, {|| if( lChkSer( aValSer, nTotUnd, oProSer, oBrwSer ), SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg ),  ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static Function lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer )
-
-   local n
-   local lValid         := .t.
-
-   CursorWait()
-
-   if !Empty( oProSer )
-      oProSer:Show()
-      oProSer:SetTotal( nTotUnd )
-   end if
-
-   if !Empty( oSaySer )
-      oSaySer:SetText( "Calculando disponibilidad del stock..." )
-   end if
-
-   for n := 1 to nTotUnd
-
-      if !Empty( aNumSer[ n ] )
-
-         aValSer[ n ]   := oStock:lValidNumeroSerie( cCodArt, cCodAlm, aNumSer[ n ] )
-
-         if !aValSer[ n ]
-            lValid      := .f.
-         end if
-
-      else
-
-         lValid         := .f.
-
-      end if
-
-      if !Empty( oProSer ) .and. ( Mod( n, int( nTotUnd / 100 ) ) == 0 )
-         oProSer:Set( n )
-      end if
-
-   next
-
-   if !Empty( oBrwSer )
-      oBrwSer:Refresh()
-   end if
-
-   if !Empty( oProSer )
-      oProSer:Set( 0 )
-      oProSer:Hide()
-   end if
-
-   if !Empty( oSaySer )
-      oSaySer:SetText( "" )
-   end if
-
-   CursorWE()
-
-Return ( lValid )
-
-//---------------------------------------------------------------------------//
-
-Static Function lChkSer( aValSer, nTotUnd, oProSer, oBrwSer )
-
-   local l
-   local n
-   local lValid            := .t.
-
-   CursorWait()
-
-   if !Empty( oProSer )
-      oProSer:Show()
-      oProSer:SetTotal( nTotUnd )
-   end if
-
-   for each l in aValSer
-
-      if IsFalse( l )
-
-         lValid            := .f.
-         n                 := hb_EnumIndex()
-         exit
-
-      else
-
-         if !Empty( oProSer ) // .and. ( Mod( n, int( nTotUnd / 10 ) ) == 0 )
-            oProSer:Set( hb_EnumIndex() )
-         end if
-
-      end if
-
-   next
-
-   if !lValid
-
-      if uFieldEmpresa( "lSerNoCom" )
-         msgStop( "Hay números de serie sin stock para su venta." )
-      else
-         lValid            := ApoloMsgNoYes( "Hay números de serie sin stock para su venta.", "¿Desea continuar con la venta?" )
-      end if
-
-      if !Empty( oBrwSer ) .and. IsNum( n )
-         oBrwSer:nArrayAt  := n
-         oBrwSer:Refresh()
-      end if
-
-   end if
-
-   if !Empty( oProSer )
-      oProSer:Hide()
-   end if
-
-   CursorWE()
-
-Return ( lValid )
-
-//---------------------------------------------------------------------------//
-
-Static Function SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg )
-
-   local cNumSer
-   local nTotUnd              := len( aNumSer )
-
-   oDlg:Disable()
-
-   EliminarNumeroSerie( aTmp )
-
-   if !Empty( oProSer )
-      oProSer:SetTotal( nTotUnd )
-   end if
-
-   for each cNumSer in aNumSer
-
-      ( dbfTmpSer )->( dbAppend() )
-      ( dbfTmpSer )->cRef        := aTmp[ _CREF        ]
-      ( dbfTmpSer )->cAlmLin     := aTmp[ _CALMLIN     ]
-      ( dbfTmpSer )->nNumLin     := aTmp[ _NNUMLIN     ]
-      ( dbfTmpSer )->cNumSer     := cNumSer
-
-      if !Empty( oProSer ) .and. ( Mod( hb_enumindex(), int( nTotUnd / 100 ) ) == 0 )
-         oProSer:Set( hb_enumindex() )
-      end if
-
-   next
-
-   oDlg:Enable()
-   oDlg:End()
-
-Return ( nil )
-
-//----------------------------------------------------------------------------//
-
-Static Function EliminarNumeroSerie( aTmp )
-
-   while ( ( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) ) ) .and. !( dbfTmpSer )->( Eof() )
-      ( dbfTmpSer )->( dbDelete() )
-   end while
-
-Return ( nil )
-
-//----------------------------------------------------------------------------//
-
 Function nImportaLineas()
 
    local oDlg
@@ -13961,12 +13942,12 @@ RETURN ( nOption )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION sTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCliP, cDivRet )
+FUNCTION sTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCliP, cDivRet )
 
    local sTotal
    local nCobro
 
-   nTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet, .f. )
+   nTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet, .f. )
 
    sTotal                                 := sTotal()
 
@@ -13990,7 +13971,7 @@ FUNCTION sTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCli
 
    sTotal:aTotalIva                       := aTotIva
 
-   nCobro 								  := nPagFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
+   nCobro 								  := nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
 
    sTotal:nTotalCobrado                   := nCobro
 
@@ -13998,89 +13979,146 @@ Return ( sTotal )
 
 //--------------------------------------------------------------------------//
 
-static Function ActualizaStockWeb( cNumDoc )
+FUNCTION BrwFacRec( oGet, oIva )
 
-   local nRec 		:= ( dbfFacRecL )->( Recno() )
-   local nOrdAnt 	:= ( dbfFacRecL )->( OrdSetFocus( "nNumFac" ) )
+	local oDlg
+	local oBrw
+   local oGet1
+   local cGet1
+   local oCbxOrd
+   local cCbxOrd
+   local nOrd
+   local aCbxOrd
 
-   if uFieldEmpresa( "lRealWeb" )
+   if !OpenFiles()
+      Return .f.
+   end if
 
-      with object ( TComercio():GetInstance() )
+   aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
+   nOrd           := GetBrwOpt( "BrwFacRec" )
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
 
-      	if ( dbfFacRecL )->( dbSeek( cNumDoc ) )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Facturas rectificativas de clientes"
 
-      		while ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == cNumDoc .and. !( dbfFacRecL )->( Eof() )
+		REDEFINE GET oGet1 VAR cGet1;
+			ID 		104 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, TDataView():FacturasRectificativas( nView ), nil, nil, .f. ) );
+         VALID    ( OrdClearScope( oBrw, TDataView():FacturasRectificativas( nView ) ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
 
-         		:ActualizaStockProductsPrestashop( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cValPr2 )
+		REDEFINE COMBOBOX oCbxOrd ;
+			VAR 		cCbxOrd ;
+			ID 		102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE( ( TDataView():FacturasRectificativas( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+			OF 		oDlg
 
-         		( dbfFacRecL )->( dbSkip() )
+      oBrw                 := IXBrowse():New( oDlg )
 
-         	end while
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-        end if
-        
+      oBrw:cAlias          := TDataView():FacturasRectificativas( nView )
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Factura de cliente.Browse"
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumFac"
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + RTrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasRectificativas( nView ) )->cSufFac }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
-   end if 
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecFac"
+         :bEditValue       := {|| Dtoc( ( TDataView():FacturasRectificativas( nView ) )->dFecFac ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
 
-   ( dbfFacRecL )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfFacRecL )->( dbGoTo( nRec ) )  
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Cliente"
+         :cSortOrder       := "cCodCli"
+         :bEditValue       := {|| Rtrim( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
 
-Return .t.
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomCli"
+         :bEditValue       := {|| Rtrim( ( TDataView():FacturasRectificativas( nView ) )->cNomCli ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
 
-//--------------------------------------------------------------------------//
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->nTotFac }
+         :cEditPicture     := cPorDiv( ( TDataView():FacturasRectificativas( nView ) )->cDivFac, dbfDiv )
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
 
-Static Function hValue( aTmp, aTmpFac )
+		REDEFINE BUTTON ;
+			ID 		500 ;
+			OF 		oDlg ;
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
 
-   local hValue                  := {=>}
+		REDEFINE BUTTON ;
+			ID 		501 ;
+			OF 		oDlg ;
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
 
-   do case 
-      case ValType( aTmp ) == "A"
+		REDEFINE BUTTON ;
+         ID       IDOK ;
+			OF 		oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
 
-         hValue[ "cCodigoArticulo"   ] := aTmp[ _CREF ]
-         hValue[ "cCodigoPropiedad1" ] := aTmp[ _CCODPR1 ]
-         hValue[ "cCodigoPropiedad2" ] := aTmp[ _CCODPR2 ]
-         hValue[ "cValorPropiedad1"  ] := aTmp[ _CVALPR1 ]
-         hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
-         hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
-         hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
-         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
-         hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
+		REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+			OF 		oDlg ;
+			ACTION 	( oDlg:end() )
 
-      case ValType( aTmp ) == "C"
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
-         hValue[ "cCodigoArticulo"   ] := ( aTmp )->cRef
-         hValue[ "cCodigoPropiedad1" ] := ( aTmp )->cCodPr1
-         hValue[ "cCodigoPropiedad2" ] := ( aTmp )->cCodPr2
-         hValue[ "cValorPropiedad1"  ] := ( aTmp )->cValPr1
-         hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
-         hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
-         hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
-         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
-         hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
+   ACTIVATE DIALOG oDlg ON INIT ( oBrw:Load() ) CENTER
 
-   end case      
+   if oDlg:nResult == IDOK
 
-   do case 
-      case ValType( aTmpFac ) == "A"
+      oGet:cText( ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac )
 
-         hValue[ "cCodigoCliente"    ] := aTmpFac[ _CCODCLI ]
-         hValue[ "cCodigoGrupo"      ] := aTmpFac[ _CCODGRP ]
-         hValue[ "lIvaIncluido"      ] := aTmpFac[ _LIVAINC ]
-         hValue[ "dFecha"            ] := aTmpFac[ _DFECFAC ]
+      oGet:bWhen   := {|| .f. }
 
-      case ValType( aTmpFac ) == "C"
-         
-         hValue[ "cCodigoCliente"    ] := ( aTmpFac )->cCodCli
-         hValue[ "cCodigoGrupo"      ] := ( aTmpFac )->cCodGrp
-         hValue[ "lIvaIncluido"      ] := ( aTmpFac )->lIvaInc
-         hValue[ "dFecha"            ] := ( aTmpFac )->dFecFac
+      if !Empty( oIva )
+         oIva:Click( ( TDataView():FacturasRectificativas( nView ) )->lIvaInc ):Refresh()
+      end if
 
-   end case
+   end if
 
-   hValue[ "nTipoDocumento"         ] := FAC_REC
-   hValue[ "nView"                  ] := nView
+   SetBrwOpt( "BrwFacRec", ( TDataView():FacturasRectificativas( nView ) )->( OrdNumber() ) )
 
-Return ( hValue )
+   ( TDataView():FacturasRectificativas( nView ) )->( dbClearFilter() )
+
+   CloseFiles()
+
+   /*
+    Guardamos los datos del browse-------------------------------------------
+   */
+
+   oBrw:CloseData()
+
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//

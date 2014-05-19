@@ -4900,6 +4900,9 @@ CLASS TDataView
    METHOD FacturasProveedoresCobros( nView )       INLINE ( ::Get( "FacPrvP", nView ) )
       METHOD FacturasProveedoresCobrosId( nView )  INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
+   METHOD FacturasRectificativas( nView )       INLINE ( ::Get( "FacRecT", nView ) )
+      METHOD FacturasRectificativasId( nView )  INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
+
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
       METHOD GruposClientes( nView )         INLINE ( ::GetObject( "GruposClientes", nView ) )
 
