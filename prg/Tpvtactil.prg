@@ -625,13 +625,11 @@ CLASS TpvTactil
 
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
-   METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
    METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
 
+   METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
    METHOD cNumeroTicketByName()        INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + ::oTiketCabecera:FieldGetByName( "cNumTik" ) + ::oTiketCabecera:FieldGetByName( "cSufTik" ) )
-
    METHOD cNumeroTicketFormato()       INLINE ( ::oTiketCabecera:cSerTik + "/" + AllTrim( ::oTiketCabecera:cNumTik ) )
-
    METHOD cNumeroTicketByNameFormato() INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + "/" + AllTrim( ::oTiketCabecera:FieldGetByName( "cNumTik" ) ) )
 
    METHOD lEmptyNumeroTicket()         INLINE Empty( ::oTiketCabecera:cNumTik )
@@ -873,6 +871,8 @@ CLASS TpvTactil
          Return ( .t. )
       end if
 
+      ::DisableDialog()
+
       if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
 
          if ::oTemporalLinea:lMnuTil
@@ -885,9 +885,7 @@ CLASS TpvTactil
             while !::oTemporalLinea:Eof()
 
                if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
-
                   ::EliminaLineaTemporal()
-               
                end if 
 
                ::oTemporalLinea:Skip()
@@ -896,15 +894,19 @@ CLASS TpvTactil
 
             ::oTemporalLinea:SetStatus()
 
-         else 
+         else
 
             ::EliminaLineaTemporal()
 
-         end if 
+         end if
 
-      ::oBrwLineas:Refresh()
+         ::oBrwLineas:Refresh()
       
       end if
+
+      ::EnableDialog()
+
+      // Nuevo total-----------------------------------------------------------
 
       ::SetTotal()
 
@@ -1106,7 +1108,7 @@ CLASS TpvTactil
 
    METHOD CargaDocumento()
 
-   METHOD EliminaDocumento()
+   METHOD EliminarDocumento()
 
    METHOD GetTotalDocumento( uValue )  INLINE ( oSend( ::sTotal, uValue ) )
 
@@ -6308,9 +6310,7 @@ METHOD OnClickUsuarios() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -6965,9 +6965,7 @@ METHOD OnClickPendientes() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -7042,9 +7040,7 @@ METHOD OnClickLista() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -7155,9 +7151,7 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -7340,8 +7334,6 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    local cSufAlb     
    local nNewAlbCli
 
-   CursorWait()
-
    ::DisableDialog()
 
    n                                      := 1
@@ -7490,8 +7482,6 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
 
    ::EnableDialog()
 
-   CursorWE()
-
 Return .t.
 
 //---------------------------------------------------------------------------//
@@ -7566,31 +7556,37 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
+METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
 
-   CursorWait()
+   local lElimina    := .f.
 
    ::DisableDialog()
 
-   ::oTiketCabecera:GetStatus()
-   ::oTiketLinea:GetStatus()
+   if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::cNumeroTicketFormato() + " ?", "Atención", .t. )
 
-   if ::oTiketCabecera:Seek( cNumeroTicket )
-      ::oTiketCabecera:Delete()
+      ::oTiketCabecera:GetStatus()
+      ::oTiketLinea:GetStatus()
+
+      if ::oTiketCabecera:Seek( cNumeroTicket )
+         ::oTiketCabecera:Delete()
+      end if
+
+      while ( ::oTiketLinea:Seek( cNumeroTicket ) )
+         ::oTiketLinea:Delete(.f.)
+      end while
+
+      ::oTiketCabecera:SetStatus()
+      ::oTiketLinea:SetStatus()
+
+      logwrite( "Ticket eliminado " + cNumeroTicket, "Eliminados.txt" )
+
+      lElimina       := .t.
+
    end if
-
-   while ( ::oTiketLinea:Seek( cNumeroTicket ) )
-      ::oTiketLinea:Delete(.f.)
-   end while
-
-   ::oTiketCabecera:SetStatus()
-   ::oTiketLinea:SetStatus()
 
    ::EnableDialog()
 
-   CursorWE()
-
-Return .t.
+Return ( lElimina )
 
 //---------------------------------------------------------------------------//
 
@@ -7787,9 +7783,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -7923,9 +7917,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -8016,9 +8008,7 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -8110,9 +8100,7 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
@@ -8210,9 +8198,7 @@ METHOD OnClickEncargar() CLASS TpvTactil
    */
 
    if ::lEmptyLineas()
-      if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + "/" + Alltrim( ::oTiketCabecera:cSufTik ) + " ?", "Atención", .t. )
-         ::EliminaDocumento( ::cNumeroTicket() )
-      end if
+      ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
 
