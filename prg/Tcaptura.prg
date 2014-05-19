@@ -413,14 +413,13 @@ Method CreateColumns( cCodCaptura, oBrw )
 
                :cHeader             := Rtrim( ::oCapCampos:oDbf:cTitulo )
                :nWidth              := ::oCapCampos:oDbf:nAncho
-
                :bEditValue          := NameToField( ::oCapCampos:oDbf:cNombre )
 
                if ( ::oCapCampos:oDbf:lBitmap )
                   :SetCheck( { "Star_Blue_16", "Nil16" } )
                end if
 
-               if ::oCapCampos:oDbf:lAlign
+               if ( ::oCapCampos:oDbf:lAlign )
                   :nDataStrAlign    := 1
                   :nHeadStrAlign    := 1
                end if

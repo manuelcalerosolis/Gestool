@@ -779,7 +779,7 @@ METHOD InPrograma( cCodigoArticulo, dFechaVenta, dbfArticulo )
          */
 
          if ( dFechaVenta >= ::oDbf:dInicio  .or. Empty( ::oDbf:dInicio ) ) .and. ;
-            ( dFechaVenta >= ::oDbf:dFin     .or. Empty( ::oDbf:dFin ) )
+            ( dFechaVenta <= ::oDbf:dFin     .or. Empty( ::oDbf:dFin ) )
 
             /*
             Comprobamos si cumple las condiciones------------------------------
