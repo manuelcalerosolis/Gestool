@@ -11968,7 +11968,7 @@ Return .f.
 Function hAtipica( hValue )
 
    local nRec
-   local hAtipica
+   local hAtipica                         := {=>}
    local nModOferta
 
    if !hhaskey( hValue, "cCodigoArticulo" )     .or.;
@@ -12000,40 +12000,15 @@ Function hAtipica( hValue )
    nRec              := ( TDataView():Atipicas( hValue[ "nView" ] ) )->( Recno() )
 
    /*
-   Primero buscamos por familia y luego por artículo---------------------------
+   Buscamos por articulo-------------------------------------------------------
    */
-
-   if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
-      
-      if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-         lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-         hAtipica       := hValoresAtipica( hValue )
-
-      end if
-
-   end if 
-
-   if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
-
-      if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
-
-         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-            hAtipica    := hValoresAtipica( hValue )
-         end if  
-      
-      end if 
-   
-   end if
    
    if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cCliArt", TDataView():Atipicas( hValue[ "nView" ] ) )
       
       if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
          lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
-         hAtipica       := hValoresAtipica( hValue )
+         hAtipica       := hValoresAtipica( hValue, hAtipica )
 
       end if
 
@@ -12046,13 +12021,43 @@ Function hAtipica( hValue )
          if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
             lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
-            hAtipica    := hValoresAtipica( hValue )
+            hAtipica    := hValoresAtipica( hValue, hAtipica )
 
          end if   
       
       end if 
    
    end if 
+
+   /*
+   Buscamos por familia--------------------------------------------------------
+   */
+
+   if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+      
+      if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+         lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+         hAtipica       := hValoresAtipica( hValue, hAtipica )
+
+      end if
+
+   end if 
+
+   if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
+
+      if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+
+         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+            hAtipica    := hValoresAtipica( hValue, hAtipica )
+
+         end if  
+      
+      end if 
+   
+   end if
 
    /*
    Informamos de las unidades de Regalo de las Unidades XY---------------------
@@ -12091,19 +12096,38 @@ Return ( hAtipica )
       
 //---------------------------------------------------------------------------//
 
-Function hValoresAtipica( hValue )
+Function hValoresAtipica( hValue, hAtipica )
 
-   local hAtipica                         := {=>}
    local nTarifa                          := hValue[ "nTarifaPrecio" ]
 
    /*
    Carga de valores------------------------------------------------------------
    */
    
-   hAtipica[ "nDescuentoPorcentual" ]     := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoArt
-   hAtipica[ "nDescuentoLineal" ]         := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoDiv
-   hAtipica[ "nDescuentoPromocional" ]    := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDprArt
-   
+   if hhaskey( hAtipica, "nDescuentoPorcentual" )
+      if hAtipica[ "nDescuentoPorcentual" ] == 0
+         hAtipica[ "nDescuentoPorcentual" ]  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoArt
+      end if
+   else
+      hAtipica[ "nDescuentoPorcentual" ]  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoArt
+   end if
+
+   if hhaskey( hAtipica, "nDescuentoLineal" )
+      if hAtipica[ "nDescuentoLineal" ] == 0
+         hAtipica[ "nDescuentoLineal" ]  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoDiv
+      end if
+   else
+      hAtipica[ "nDescuentoLineal" ]  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDtoDiv
+   end if
+
+   if hhaskey( hAtipica, "nDescuentoPromocional" )
+      if hAtipica[ "nDescuentoPromocional" ] == 0
+         hAtipica[ "nDescuentoPromocional" ]  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDprArt
+      end if
+   else
+      hAtipica[ "nDescuentoPromocional" ]  := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nDprArt
+   end if
+
    if ( TDataView():Atipicas( hValue[ "nView" ] ) )->lComAge
       hAtipica[ "nComisionAgente" ]       := ( TDataView():Atipicas( hValue[ "nView" ] ) )->nComAge
    end if
@@ -12128,17 +12152,65 @@ Function hValoresAtipica( hValue )
 
       do case
          case nTarifa == 1
-         hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva1, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt )
+            
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] == 0.00000
+                  hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva1, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt )
+               end if
+            else
+               hAtipica[ "nImporte" ]        := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva1, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt )
+            end if
+
          case nTarifa == 2
-         hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva2, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt2 )
+
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] == 0
+                  hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva2, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt2 )
+               end if
+            else
+               hAtipica[ "nImporte" ]        := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva2, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt2 )
+            end if
+
          case nTarifa == 3
-         hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva3, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt3 )
+
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] == 0
+                  hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva3, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt3 )
+               end if
+            else
+               hAtipica[ "nImporte" ]        := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva3, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt3 )
+            end if
+
          case nTarifa == 4
-         hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva4, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt4 )
+
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] == 0
+                  hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva4, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt4 )
+               end if
+            else
+               hAtipica[ "nImporte" ]        := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva4, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt4 )
+            end if
+
          case nTarifa == 5
-         hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva5, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt5 )
+
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] == 0
+                  hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva5, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt5 )
+               end if
+            else
+               hAtipica[ "nImporte" ]        := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva5, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt5 )
+            end if
+
          case nTarifa == 6
-         hAtipica[ "nImporte" ]            := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva6, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt6 )
+
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] == 0
+                  hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva6, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt6 )
+               end if
+            else
+               hAtipica[ "nImporte" ]        := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva6, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt6 )
+            end if
+
       end case
 
       if hAtipica[ "nImporte" ] == 0 .and. nTarifa > 1 .and. lBuscaImportes()

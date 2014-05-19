@@ -19210,13 +19210,10 @@ Static Function AppendDatosAtipicas( aTmpPed )
 
          ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
          ( dbfTmpLin )->cRef           := ( TDataView():Atipicas( nView ) )->cCodArt
-         ( dbfTmpLin )->nDto           := ( TDataView():Atipicas( nView ) )->nDtoArt
-         ( dbfTmpLin )->nDtoPrm        := ( TDataView():Atipicas( nView ) )->nDprArt
          ( dbfTmpLin )->cCodPr1        := ( TDataView():Atipicas( nView ) )->cCodPr1
          ( dbfTmpLin )->cCodPr2        := ( TDataView():Atipicas( nView ) )->cCodPr2
          ( dbfTmpLin )->cValPr1        := ( TDataView():Atipicas( nView ) )->cValPr1
          ( dbfTmpLin )->cValPr2        := ( TDataView():Atipicas( nView ) )->cValPr2
-         ( dbfTmpLin )->nDtoDiv        := ( TDataView():Atipicas( nView ) )->nDtoDiv
          ( dbfTmpLin )->nCosDiv        := ( TDataView():Atipicas( nView ) )->nPrcCom
          ( dbfTmpLin )->cAlmLin        := aTmpPed[ _CCODALM ]
          ( dbfTmpLin )->lIvaLin        := aTmpPed[ _LIVAINC ]
@@ -19242,29 +19239,42 @@ Static Function AppendDatosAtipicas( aTmpPed )
          ( dbfTmpLin )->cCodFam        := ( dbfArticulo )->Familia
          ( dbfTmpLin )->nPesoKg        := ( dbfArticulo )->nPesoKg
    
-         do case
-            case aTmpPed[ _NTARIFA ] == 1
-               nPrecioAtipica          := if( aTmpPed[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva1, ( TDataView():Atipicas( nView ) )->nPrcArt )
-            case aTmpPed[ _NTARIFA ] == 2
-               nPrecioAtipica          := if( aTmpPed[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva2, ( TDataView():Atipicas( nView ) )->nPrcArt2 )
-            case aTmpPed[ _NTARIFA ] == 3
-               nPrecioAtipica          := if( aTmpPed[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva3, ( TDataView():Atipicas( nView ) )->nPrcArt3 )
-            case aTmpPed[ _NTARIFA ] == 4
-               nPrecioAtipica          := if( aTmpPed[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva4, ( TDataView():Atipicas( nView ) )->nPrcArt4 )
-            case aTmpPed[ _NTARIFA ] == 5
-               nPrecioAtipica          := if( aTmpPed[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva5, ( TDataView():Atipicas( nView ) )->nPrcArt5 )
-            case aTmpPed[ _NTARIFA ] == 6
-               nPrecioAtipica          := if( aTmpPed[ _LIVAINC ], ( TDataView():Atipicas( nView ) )->nPreIva6, ( TDataView():Atipicas( nView ) )->nPrcArt6 )
-         end case
-
-         if nPrecioAtipica != 0
-            ( dbfTmpLin )->nPreDiv     := nPrecioAtipica
-         else 
-            ( dbfTmpLin )->nPreDiv     := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
-         end if
-
          ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpPed[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
          ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpPed[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
+
+         /*
+         Vamos a por los catos de la tarifa
+         */      
+
+         hAtipica := hAtipica( hValue( dbfTmpLin, aTmpPed ) )
+
+         if !Empty( hAtipica )
+               
+            if hhaskey( hAtipica, "nImporte" )
+               if hAtipica[ "nImporte" ] != 0
+                  ( dbfTmpLin )->nPreDiv    := hAtipica[ "nImporte" ]
+               else 
+                  ( dbfTmpLin )->nPreDiv    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+               end if
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPorcentual" )
+               ( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPromocional" )
+               ( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoLineal" )
+               ( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+            end if
+
+            if hhaskey( hAtipica, "nComisionAgente" )
+               ( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+            end if
+
+         end if
 
       end if
 
