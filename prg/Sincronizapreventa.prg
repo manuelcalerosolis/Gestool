@@ -221,7 +221,7 @@ METHOD Search( oDlg )
    Sinconizacion de tablas de pedcli-------------------------------------------
    */
 
-   pdaPedCliSenderReciver():CreateData( , ::oMessage, cPatServidor )
+   //pdaPedCliSenderReciver():CreateData( , ::oMessage, cPatServidor )
 
    /*
    Sinconizacion de tablas de albcli-------------------------------------------

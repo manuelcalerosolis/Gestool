@@ -2833,6 +2833,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliT"
    oDataTable:cName        := cPatEmp() + "PedCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliT.Cdx"
@@ -4902,6 +4903,9 @@ CLASS TDataView
 
    METHOD FacturasRectificativas( nView )       INLINE ( ::Get( "FacRecT", nView ) )
       METHOD FacturasRectificativasId( nView )  INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
+
+   METHOD PedidosClientes( nView )           INLINE ( ::Get( "PedCliT", nView ) )
+      METHOD PedidosClientesId( nView )      INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
       METHOD GruposClientes( nView )         INLINE ( ::GetObject( "GruposClientes", nView ) )
