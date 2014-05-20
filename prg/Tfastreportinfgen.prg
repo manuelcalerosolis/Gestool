@@ -210,6 +210,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
       METHOD ImportDocument()
 
    METHOD BuildNode( aReports, oTree, lLoadFile )
+   METHOD AddNode()
    METHOD ReBuildTree()                                           INLINE ( ::oTreeReporting:DeleteAll(), ::BuildTree() )
 
    METHOD nRemesaAgentes()
@@ -930,6 +931,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
       ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
       ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
       ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
 
       if !Empty( ::oTreeReporting )
          ::oTreeReporting:SetImageList( ::oTreeImageList )
@@ -2085,8 +2087,7 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
 
    local cFile    
 
-   do case
-      case !::lUserDefine
+   if !::lUserDefine .or. lSaveAs
 
       // Nuevo informe --------------------------------------------------------
 
@@ -2094,23 +2095,14 @@ Method SaveReport( lSaveAs ) CLASS TFastReportInfGen
          Return ( .f. )
       end if 
       
-      cFile       := cPatUserReporting() + ::cReportDirectory  + "\" + alltrim( ::cReportName ) + ".fr3"
+      cFile       := StrTran( ::cReportDirectory, cPatReporting(), cPatUserReporting() )
+      cFile       += "\" + alltrim( ::cReportName ) + ".fr3"
 
-   case lSaveAs
-
-      // Version del informe---------------------------------------------------
-
-      if !::SaveReportAs()
-         Return ( .f. )
-      end if 
-      
-      cFile       := cPatUserReporting() + ::cReportDirectory  + "\" + alltrim( ::cReportName ) + ".fr3"
-
-   otherwise
+   else
 
       cFile       := ::cReportFile
    
-   end case
+   end if 
 
    // Creamos todos los directorios necesarios---------------------------------
 
@@ -2405,12 +2397,16 @@ METHOD lLoadInfo() CLASS TFastReportInfGen
       ::cReportName        := oTreeInforme:bAction[ "Title" ] 
 
       ::lUserDefine        := ( left( ::cReportName, 1 ) == "[" )
+      ::cReportFile        := oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]
+
+/*
       if ::lUserDefine
-         ::cReportFile     := cPatUserReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
+         ::cReportFile     := cPatUserReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]  //  oTreeInforme:bAction[ "Directory" ] + "\" +
       else 
-         ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
+         ::cReportFile     := oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ]  // cPatReporting() + 
       end if
-      
+*/
+
    else 
       
       Return ( .f. )
@@ -2694,29 +2690,13 @@ METHOD BuildNode( aReports, oTree, lLoadFile )
 
             // Directorio de la aplicacion-------------------------------------
 
-            aDirectory  := Directory( cPatReporting() + hHash[ "Directory" ] + "\*.fr3" )
-            if !Empty( aDirectory )
-
-               for each aFile in aDirectory
-                  oNode:Add( getFileNoExt( aFile[ 1 ] ), hHash[ "Image" ], { "Title" => getFileNoExt( aFile[ 1 ] ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ], "File" => aFile[ 1 ] } )
-               next 
-
-            end if 
+            ::AddNode( cPatReporting() + hHash[ "Directory" ], hHash, oNode )
 
             // Directorio de el usuario----------------------------------------
 
-            // msgalert( cPatUserReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
+            ::AddNode( cPatUserReporting() + hHash[ "Directory" ], hHash, oNode, .t. )
 
-            aDirectory  := Directory( cPatUserReporting() + hHash[ "Directory" ] + "\*.fr3" )
-            if !Empty( aDirectory )
-
-               for each aFile in aDirectory
-                  oNode:Add( putBrackets( getFileNoExt( aFile[ 1 ] ) ), hHash[ "Image" ], { "Title" => putBrackets( getFileNoExt( aFile[ 1 ] ) ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ], "File" => aFile[ 1 ] } )
-               next 
-
-            end if 
-
-         end if          
+         end if 
 
          if hHasKey( hHash, "Subnode" )
             ::BuildNode( hHash[ "Subnode" ], oNode, lLoadFile )
@@ -3546,6 +3526,50 @@ Static Function CutString( cStart, cEnd, cText, lExclude )
    end if
 
 RETURN ( cString )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddNode( cDirectory, hHash, oNode, lBrackets )
+
+   local aFile
+   local cFile
+   local oNewNode
+   local aDirectory
+
+   DEFAULT lBrackets       := .f.
+
+   aDirectory              := Directory( cDirectory + "\*.*", "D" )
+   if !Empty( aDirectory )
+
+      for each aFile in aDirectory
+
+         if !( aFile[ 1 ] == '.' .or. aFile[ 1 ] == '..' )      
+
+            // Los personalizados le ponemos brackets--------------------------
+
+            cFile          := getFileNoExt( aFile[ 1 ] )
+            if lBrackets
+               cFile       := putBrackets( cFile )
+            end if 
+
+            // Si es un directorio----------------------------------------------
+
+            if ( aFile[ 5 ] == 'D' )
+               oNewNode    := oNode:Add( cFile, 22, { "Title" => cFile, "Type" => hHash[ "Type" ], "Directory" => cDirectory, "File" => aFile[ 1 ] } )
+               ::AddNode( cDirectory + "\" + aFile[ 1 ], hHash, oNewNode )
+            else 
+               if ( '.fr3' $ aFile[ 1 ] ) 
+                  oNode:Add( cFile, hHash[ "Image" ], { "Title" => cFile, "Type" => hHash[ "Type" ], "Directory" => cDirectory, "File" => aFile[ 1 ] } )
+               end if 
+            end if            
+         
+         end if 
+
+      next 
+
+   end if 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

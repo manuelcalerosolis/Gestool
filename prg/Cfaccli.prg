@@ -2358,7 +2358,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
 	--------------------------------------------------------------------------
 	*/
 
-   for n := 1 TO len( aIva )
+   for n := 1 to len( aIva )
 
       if !lSimula .and. !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Albaran cliente : " + Rtrim( nAlbaran ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )
@@ -3047,7 +3047,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	--------------------------------------------------------------------------
 	*/
 
-   for n := 1 TO len( aIva )
+   for n := 1 to len( aIva )
 
       if !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )

@@ -1885,8 +1885,6 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
          if Valtype( lTrigger ) != "L" .or. lTrigger
 
-            msgAlert( "dbDel")
-
             dbDel( cAlias )
 
             if !Empty( bPostBlock )

@@ -1168,18 +1168,12 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
    end if
 
    if Empty( cRuta )
-      lOpenDiario    := .t.   
-      Return ( lOpenDiario )
-   end if
-
-/*   
-   if Empty( cRuta )
       if lMessage
          MsgStop( "Ruta de contaplus ® no valida" )
       end if
-      return .f.
+      lOpenDiario    := .f.
+      Return ( lOpenDiario )
    end if
-*/
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -1224,11 +1218,11 @@ Return ( lOpenDiario )
 FUNCTION CloseDiario()
 
    if !Empty( cDiario )
-      ( cDiario    )->( dbCloseArea() )
+      ( cDiario )->( dbCloseArea() )
    end if
 
    if !Empty( cCuenta )
-      ( cCuenta    )->( dbCloseArea() )
+      ( cCuenta )->( dbCloseArea() )
    end if
 
    if !Empty( cSubCuenta )
