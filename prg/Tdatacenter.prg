@@ -4913,6 +4913,9 @@ CLASS TDataView
    METHOD PresupuestosClientes( nView )      INLINE ( ::Get( "PreCliT", nView ) )
       METHOD PresupuestosClientesId( nView ) INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliT", nView ) )->cSufPre )
 
+   METHOD SatClientes( nView )               INLINE ( ::Get( "SatCliT", nView ) )
+      METHOD SatClientesId( nView )          INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
+
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
