@@ -12144,7 +12144,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if aTmp[ _NDTO ] == 0
-
             if !Empty( aGet[ _NDTO ] )
                aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
             else
@@ -12212,26 +12211,30 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
         */
 
         hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
-
         if !Empty( hAtipica )
-               
+        ? "tiene atipica"       
             if hhaskey( hAtipica, "nImporte" )
+            ? "importe"
                 aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
+            ? "dto %"
                 aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
             end if
 
             if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
+            ?"dto prom"
                 aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
             end if
 
             if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
+            ?"dto com agente"
                	aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+            ? "dto dto lin"
                	aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
             end if
 
