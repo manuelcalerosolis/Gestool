@@ -10389,7 +10389,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             if !Empty( hAtipica )
                
                if hhaskey( hAtipica, "nImporte" )
-                  aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+                  if hAtipica[ "nImporte" ] != 0
+                     aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+                  end if   
                end if
 
                if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
@@ -13017,7 +13019,11 @@ Static Function AppendDatosAtipicas( aTmpAlb )
       if !Empty( hAtipica )
                
          if hhaskey( hAtipica, "nImporte" )
-            ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            if hAtipica[ "nImporte" ] != 0
+               ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            else
+               ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )   
+            end if
          end if
 
          if hhaskey( hAtipica, "nDescuentoPorcentual" )

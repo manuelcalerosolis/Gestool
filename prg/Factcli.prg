@@ -12212,30 +12212,29 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
         hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
         if !Empty( hAtipica )
-        ? "tiene atipica"       
+            
             if hhaskey( hAtipica, "nImporte" )
-            ? "importe"
-                aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+                if hAtipica[ "nImporte" ] != 0
+                	aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+                end if
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
-            ? "dto %"
                 aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
             end if
 
             if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
-            ?"dto prom"
                 aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
             end if
 
             if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
-            ?"dto com agente"
                	aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
-            ? "dto dto lin"
-               	aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+               	if hAtipica[ "nDescuentoLineal" ] != 0
+               		aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+               	end if
             end if
 
         end if
@@ -16262,7 +16261,11 @@ Static Function AppendDatosAtipicas( aTmpFac )
       if !Empty( hAtipica )
                
          if hhaskey( hAtipica, "nImporte" )
-            ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+         	if hAtipica[ "nImporte" ] != 0
+            	( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            else
+            	( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+            end if	
          end if
 
          if hhaskey( hAtipica, "nDescuentoPorcentual" )
