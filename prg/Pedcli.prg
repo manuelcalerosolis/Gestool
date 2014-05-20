@@ -14770,7 +14770,7 @@ Return .t.
 Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "PedidoCliente" + StrTran( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, " ", "" ) + ".Pdf"
+   local cFilePdf       := cPatTmp() + "PedidoCliente" + StrTran( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
