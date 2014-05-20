@@ -8054,23 +8054,33 @@ static function RecFacCli( aTmpFac, lMessage )
          if !Empty( hAtipica )
                
             if hhaskey( hAtipica, "nImporte" )
-               ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            	if hAtipica[ "nImporte" ] != 0
+               		( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+               	end if
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" )
-               ( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+            	if hAtipica[ "nDescuentoPorcentual" ] != 0
+               		( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+               	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoPromocional" )
-               ( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+            	if hAtipica[ "nDescuentoPromocional" ] != 0
+               		( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+               	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" )
-               ( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+            	if hAtipica[ "nDescuentoLineal" ] != 0
+               		( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+               	end if	
             end if
 
             if hhaskey( hAtipica, "nComisionAgente" )
-               ( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+            	if hAtipica[ "nComisionAgente" ] != 0
+               		( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+               	end if	
             end if
 
          end if
@@ -12220,15 +12230,21 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
-                aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+            	if hAtipica[ "nDescuentoPorcentual"] != 0 
+                	aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+                end if
             end if
 
             if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
-                aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+            	if hAtipica[ "nDescuentoPromocional" ] != 0
+                	aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+                end if
             end if
 
             if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
-               	aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+            	if hAtipica[ "nComisionAgente" ] != 0
+               		aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+               	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0

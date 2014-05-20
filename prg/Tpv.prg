@@ -8895,15 +8895,21 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          if !Empty( hAtipica )
                
             if hhaskey( hAtipica, "nImporte" )
-               aGet[ _NPVPTIL ]:cText( hAtipica[ "nImporte" ] )
+               if hAtipica[ "nImporte" ] != 0
+                  aGet[ _NPVPTIL ]:cText( hAtipica[ "nImporte" ] )
+               end if
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTOLIN ] == 0
-               aGet[ _NDTOLIN ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+               if hAtipica[ "nDescuentoPorcentual"] != 0
+                  aGet[ _NDTOLIN ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+               end if   
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
-               aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+               if hAtipica[ "nDescuentoLineal" ] != 0
+                  aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+               end if   
             end if
 
          end if
