@@ -10506,6 +10506,9 @@ Function SynPreCli( cPath )
 
    USE ( cPatEmp() + "PRECLII.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "PRECLII", @dbfPreCliI ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "PRECLII.CDX" ) ADDITIVE
+   
+   USE ( cPatEmp() + "CLIENT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CLIENT", @dbfClient ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -10521,6 +10524,7 @@ Function SynPreCli( cPath )
 
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
 
    ( dbfPreCliT )->( ordSetFocus( 0 ) )
    ( dbfPreCliT )->( dbGoTop() )
@@ -10540,7 +10544,7 @@ Function SynPreCli( cPath )
          end if
 
          if Empty( ( dbfPreCliT )->cCodGrp )
-            ( dbfPreCliT )->cCodGrp := RetGrpCli( ( dbfPreCliT )->cCodCli, TDataView():Clientes( nView ) )
+            ( dbfPreCliT )->cCodGrp := RetGrpCli( ( dbfPreCliT )->cCodCli, dbfClient )
          end if
 
          /*
@@ -10640,6 +10644,7 @@ Function SynPreCli( cPath )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )
    CLOSE ( dbfFPago   )
+   CLOSE ( dbfClient  )
 
 return nil
 

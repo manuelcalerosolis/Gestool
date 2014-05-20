@@ -10178,6 +10178,9 @@ Function SynSatCli( cPath )
    USE ( cPatEmp() + "SATCLIS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIS", @dbfSatCliS ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "SATCLIS.CDX" ) ADDITIVE
 
+   USE ( cPatEmp() + "CLIENT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CLIENT", @dbfClient ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
+
    USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
@@ -10215,7 +10218,7 @@ Function SynSatCli( cPath )
          end if
 
          if Empty( ( dbfSatCliT )->cCodGrp )
-            ( dbfSatCliT )->cCodGrp := RetGrpCli( ( dbfSatCliT )->cCodCli, TDataView():Clientes( nView ) )
+            ( dbfSatCliT )->cCodGrp := RetGrpCli( ( dbfSatCliT )->cCodCli, dbfClient )
          end if
 
          /*
@@ -10339,6 +10342,7 @@ Function SynSatCli( cPath )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )
    CLOSE ( dbfFPago   )
+   CLOSE ( dbfClient  )
 
 return nil
 
