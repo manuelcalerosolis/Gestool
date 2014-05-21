@@ -11407,7 +11407,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                	end if
 
                	if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
-               		if hAtipica[ "nDescuentoPorcentual"]
+               		if hAtipica[ "nDescuentoPorcentual"] != 0
                   		aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
                   	end if	
                	end if
