@@ -290,13 +290,21 @@ return ( Val( cDec ) )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION Calculadora( nNumber, oGet, lBig )
+FUNCTION Calculadora( nNumber, oGet, lBig, cTitulo )
 
    local oDialogo
    local cNumber
    local oNumber
    local nValue      := 0
    local cOperacion  := ""
+   local cTitle     
+
+    if Empty( cTitulo) 
+      cTitle         := "Calculadora"
+    else
+      cTitle         := cTitulo
+    end if
+
 
    DEFAULT nNumber   := oGet:VarGet()
    DEFAULT lBig      := .t.
@@ -304,9 +312,9 @@ FUNCTION Calculadora( nNumber, oGet, lBig )
    cNumber           := Ltrim( Str( nNumber, 20 ) )
 
    if lBig
-      DEFINE DIALOG oDialogo RESOURCE "Calculadora"
+      DEFINE DIALOG oDialogo RESOURCE "Calculadora" TITLE cTitle
    else
-      DEFINE DIALOG oDialogo RESOURCE "CalculadoraLittle"
+      DEFINE DIALOG oDialogo RESOURCE "CalculadoraLittle" TITLE cTitle
    end if
 
       REDEFINE GET oNumber VAR cNumber ID 100 OF oDialogo
@@ -331,8 +339,17 @@ FUNCTION Calculadora( nNumber, oGet, lBig )
       REDEFINE BUTTON ID 106 OF oDialogo ACTION KeyCal("8", @cNumber, oNumber, @cOperacion, @nValue )
       REDEFINE BUTTON ID 107 OF oDialogo ACTION KeyCal("9", @cNumber, oNumber, @cOperacion, @nValue )
 
-      REDEFINE BUTTON ID ( IDOK )    OF oDialogo ACTION ( oDialogo:End( IDOK ) )
-      REDEFINE BUTTON ID ( IDCANCEL) OF oDialogo ACTION ( oDialogo:End() )
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDialogo ;
+         ACTION   ( oDialogo:End( IDOK ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDialogo ;
+         ACTION   ( oDialogo:End() )
 
       oDialogo:bKeydown   := { | nKey | KeyCal( nKey, @cNumber, oNumber, @cOperacion, @nValue ) }
 

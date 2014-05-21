@@ -2032,6 +2032,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldTactil
 
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lPeso" ) ) ] ;
+      ID          480 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          fldTactil
+
    /*
 	Segunda Caja de Dialogo del Folder
 	---------------------------------------------------------------------------
@@ -15712,6 +15717,7 @@ function aItmArt()
    aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cOrdOrd",   "C",  2, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lTerminado","L",  1, 0, "Lógico de producto terminado (producción)" , "",                "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lPeso",     "L",  1, 0, "Lógico de producto por peso",              "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

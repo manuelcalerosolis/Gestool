@@ -451,6 +451,20 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
+   INLINE METHOD SaltaLineaTemporal()
+
+      if uFieldEmpresa( "lShowLin" )
+         ::oTemporalLinea:Skip(0)
+      else
+         ::oTemporalLinea:Skip()
+      end if 
+
+      RETURN ( nil )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
    METHOD Resource()
       METHOD ResizedResource()
       METHOD StartResource()
@@ -888,7 +902,7 @@ CLASS TpvTactil
                   ::EliminaLineaTemporal()
                end if 
 
-               ::oTemporalLinea:Skip()
+               ::SaltaLineaTemporal()
 
             end while
 
@@ -4840,7 +4854,21 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    // Tomamos las unidades del teclado-----------------------------------------
 
-   ::nUnidades                      := ::nGetUnidades( .t. )
+
+   if( ::oArticulo:lPeso )
+      
+      ::nUnidades                := Calculadora( 0, , , "Introduzca peso" )
+      
+      if( ::nUnidades == 0 )
+          Return .f.
+      end if
+
+   else
+
+      ::nUnidades               := ::nGetUnidades( .t. )
+
+   end if
+
 
    // Preguntamos si estamos combinando----------------------------------------
 
@@ -4991,7 +5019,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    ::oTemporalLinea:Append()
    ::oTemporalLinea:Blank()
-
+       
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
    ::oTemporalLinea:nLinMnu      := bottomNumber
 
@@ -5236,6 +5264,13 @@ METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
    if oRetFld( ::oArticulo:Familia, ::oFamilias, "lAcum", "cCodFam" )
       Return .f.
    end if
+
+   // Comprobamos que el artículo sea por peso----------------------------------
+
+   if ::oArticulo:lPeso
+      Return .f.
+   end if
+
 
    CursorWait()
 
