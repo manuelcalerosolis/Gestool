@@ -16876,7 +16876,7 @@ Function cCtaFacCli( cFacCliT, cFacCliP, cBncCli )
 
    local cCtaFacCli     := ""
 
-   DEFAULT cFacCliT     := TDataView():Clientes( nView )
+   DEFAULT cFacCliT     := TDataView():FacturasClientes( nView )
    DEFAULT cFacCliP     := dbfFacCliP
    DEFAULT cBncCli      := dbfCliBnc
 

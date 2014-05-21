@@ -191,6 +191,8 @@ RETURN ( cValue )
 METHOD BuildFilter( aFilter ) CLASS TFilterCreator
 
    local a
+   local oError
+   local oBlock
    local cCondition
 
    if Empty( aFilter )
@@ -199,25 +201,34 @@ METHOD BuildFilter( aFilter ) CLASS TFilterCreator
 
    CursorWait()
 
-   ::SetTextExpresion( "" )
+   oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   ::SetFilter( aFilter )
+      ::SetTextExpresion( "" )
 
-   for each a in aFilter
+      ::SetFilter( aFilter )
 
-      cCondition              := ::GetCondition( a[ fldCondition ] )
+      for each a in aFilter
 
-      if cCondition == " $ "
-         ::cExpresionFilter   += cGetValue( a[ fldValue ], ::GetType( a[ fldDescription ] ) ) + cCondition + ::GetField( a[ fldDescription ] )  
-      else
-         ::cExpresionFilter   += ::GetField( a[ fldDescription ] ) + cCondition + cGetValue( a[ fldValue ], ::GetType( a[ fldDescription ] ) )
-      end if 
+         cCondition              := ::GetCondition( a[ fldCondition ] )
 
-      ::cExpresionFilter      += ::GetNexo( a[ fldNexo ] )
+         if cCondition == " $ "
+            ::cExpresionFilter   += cGetValue( a[ fldValue ], ::GetType( a[ fldDescription ] ) ) + cCondition + ::GetField( a[ fldDescription ] )  
+         else
+            ::cExpresionFilter   += ::GetField( a[ fldDescription ] ) + cCondition + cGetValue( a[ fldValue ], ::GetType( a[ fldDescription ] ) )
+         end if 
 
-   next 
+         ::cExpresionFilter      += ::GetNexo( a[ fldNexo ] )
 
-   ::BuildExpresion( ::cExpresionFilter )
+      next 
+
+      ::BuildExpresion( ::cExpresionFilter )
+
+   RECOVER USING oError
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    CursorWE()
 
