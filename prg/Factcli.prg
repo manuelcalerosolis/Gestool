@@ -7929,7 +7929,7 @@ static function RecFacCli( aTmpFac, lMessage )
    local hAtipica
 
    DEFAULT lMessage  := .t.
-? "entra en la funcion"
+
    if lMessage
 
       if !ApoloMsgNoYes(  "¡Atención!,"                                       + CRLF + ;
@@ -7952,9 +7952,9 @@ static function RecFacCli( aTmpFac, lMessage )
       /*
       Ahora buscamos por el codigo interno
       */
-? "entra en el while"
+
       if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) )
-? "encuentra el articulo"
+
          if aTmpFac[ _NREGIVA ] <= 1
             ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
             ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
@@ -7974,7 +7974,7 @@ static function RecFacCli( aTmpFac, lMessage )
          */
 
          ( dbfTmpLin )->nPreUnit := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
-msgalert( ( dbfTmpLin )->nPreUnit, "guarda este precio" )
+
          /*
          Cargamos simpre los puntos verdes
          */
@@ -8008,7 +8008,7 @@ msgalert( ( dbfTmpLin )->nPreUnit, "guarda este precio" )
          */
 
          case !Empty( aTmpFac[_CCODTAR] )
-? "busca en tarifas"
+
             nImpOfe     := RetPrcTar( ( dbfTmpLin )->cRef, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
             if nImpOfe != 0
                ( dbfTmpLin )->nPreUnit := nImpOfe
@@ -8052,7 +8052,6 @@ msgalert( ( dbfTmpLin )->nPreUnit, "guarda este precio" )
          hAtipica := hAtipica( hValue( dbfTmpLin, aTmpFac ) )
 
          if !Empty( hAtipica )
-         ? "tiene atipica "      
             if hhaskey( hAtipica, "nImporte" )
             	if hAtipica[ "nImporte" ] != 0
                		( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
@@ -8092,7 +8091,6 @@ msgalert( ( dbfTmpLin )->nPreUnit, "guarda este precio" )
          nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
             ( dbfTmpLin )->nPreUnit := nCnv2Div( nImpOfe, cDivEmp(), aTmpFac[ _CDIVFAC ] )
-            ? "encuentra oferta"
          end if
 
          /*
@@ -8102,7 +8100,6 @@ msgalert( ( dbfTmpLin )->nPreUnit, "guarda este precio" )
          nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpFac[ _DFECFAC ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
             ( dbfTmpLin )->nDtoPrm  := nImpOfe
-            ? "encuentra descuentos"
          end if
 
       end if
@@ -12224,10 +12221,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
         hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
         if !Empty( hAtipica )
-         ? "entra en atipicas"   
             if hhaskey( hAtipica, "nImporte" )
                 if hAtipica[ "nImporte" ] != 0
-                	msgalert( hAtipica[ "nImporte" ], "importe array atipica" )
                 	aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
                 end if
             end if
