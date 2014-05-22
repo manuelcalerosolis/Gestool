@@ -12003,29 +12003,36 @@ Function hAtipica( hValue )
    Buscamos por articulo-------------------------------------------------------
    */
    
-   if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cCliArt", TDataView():Atipicas( hValue[ "nView" ] ) )
-      
-      if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-         lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+   if !Empty( hValue[ "cCodigoCliente" ] )
 
-         hAtipica       := hValoresAtipica( hValue, hAtipica )
+      if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cCliArt", TDataView():Atipicas( hValue[ "nView" ] ) )
+         
+         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
-      end if
+            hAtipica       := hValoresAtipica( hValue, hAtipica )
 
-   end if 
+         end if
+
+      end if 
+
+   end if   
 
    if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nImporte" ] ) )
 
-      if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cGrpArt", TDataView():Atipicas( hValue[ "nView" ] ) )
+      if Empty( hValue[ "cCodigoCliente" ] ) .and. !Empty( hValue[ "cCodigoGrupo" ] )
 
-         if Empty( hValue[ "cCodigoCliente" ] )                      .and.;
-            lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+         if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cGrpArt", TDataView():Atipicas( hValue[ "nView" ] ) )
 
-            hAtipica    := hValoresAtipica( hValue, hAtipica )
+            if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+               lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
-         end if   
-      
+               hAtipica    := hValoresAtipica( hValue, hAtipica )
+
+            end if   
+         
+         end if
+
       end if 
    
    end if 
@@ -12034,32 +12041,40 @@ Function hAtipica( hValue )
    Buscamos por familia--------------------------------------------------------
    */
 
-   if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
-      
-      if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-         lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+   if !Empty( hValue[ "cCodigoCliente" ] )
 
-         hAtipica       := hValoresAtipica( hValue, hAtipica )
-
-      end if
-
-   end if 
-
-   if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
-
-      if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
-
-         if Empty( hValue[ "cCodigoCliente" ] )                      .and.;
-            lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+      if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+         
+         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
             lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
-            hAtipica    := hValoresAtipica( hValue, hAtipica )
+            hAtipica       := hValoresAtipica( hValue, hAtipica )
 
-         end if  
-      
+         end if
+
       end if 
-   
-   end if
+
+   end if   
+
+   if Empty( hValue[ "cCodigoCliente" ] ) .and. !Empty( hValue[ "cCodigoGrupo" ] )
+
+      if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
+
+         if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+
+            if Empty( hValue[ "cCodigoCliente" ] )                      .and.;
+               lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+               lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+
+               hAtipica    := hValoresAtipica( hValue, hAtipica )
+
+            end if  
+         
+         end if 
+      
+      end if
+
+   end if   
 
    /*
    Informamos de las unidades de Regalo de las Unidades XY---------------------
