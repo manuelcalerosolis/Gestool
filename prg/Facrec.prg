@@ -10671,19 +10671,13 @@ Static Function ImprimirSeriesFacturasRectificativas( nDevice, lExt )
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView )
+   oPrinter          := PrintSeries():New( nView ):SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
    oPrinter:Serie(      ( TDataView():FacturasRectificativas( nView ) )->cSerie )
    oPrinter:Documento(  ( TDataView():FacturasRectificativas( nView ) )->nNumFac )
    oPrinter:Sufijo(     ( TDataView():FacturasRectificativas( nView ) )->cSufFac )
-
-   oPrinter:oClienteInicio:First()
-   oPrinter:oClienteFin:Last()
-
-   oPrinter:oGrupoClienteInicio:First()
-   oPrinter:oGrupoClienteFin:Last()
 
    if lExt
 

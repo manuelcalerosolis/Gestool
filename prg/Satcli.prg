@@ -7993,19 +7993,13 @@ Static Function ImprimirSeriesSatClientes( nDevice, lExt )
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView )
+   oPrinter          := PrintSeries():New( nView ):SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
    oPrinter:Serie(      ( TDataView():SatClientes( nView ) )->cSerSat )
    oPrinter:Documento(  ( TDataView():SatClientes( nView ) )->nNumSat )
    oPrinter:Sufijo(     ( TDataView():SatClientes( nView ) )->cSufSat )
-
-   oPrinter:oClienteInicio:First()
-   oPrinter:oClienteFin:Last()
-
-   oPrinter:oGrupoClienteInicio:First()
-   oPrinter:oGrupoClienteFin:Last()
 
    if lExt
 

@@ -8115,19 +8115,13 @@ Static Function ImprimirSeriesPresupuestosClientes( nDevice, lExt )
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView )
+   oPrinter          := PrintSeries():New( nView ):SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
    oPrinter:Serie(      ( TDataView():PresupuestosClientes( nView ) )->cSerPre )
    oPrinter:Documento(  ( TDataView():PresupuestosClientes( nView ) )->nNumPre )
    oPrinter:Sufijo(     ( TDataView():PresupuestosClientes( nView ) )->cSufPre )
-
-   oPrinter:oClienteInicio:First()
-   oPrinter:oClienteFin:Last()
-
-   oPrinter:oGrupoClienteInicio:First()
-   oPrinter:oGrupoClienteFin:Last()
 
    if lExt
 

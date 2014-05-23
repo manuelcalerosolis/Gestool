@@ -6,6 +6,8 @@
 
 CLASS TGrpPrv FROM TMant
 
+   DATA  cName          INIT "GruposProveedores"
+
    DATA  cMru           INIT "Users2_16"
 
    DATA  cParentSelect  INIT Space( 4 )
@@ -137,24 +139,32 @@ RETURN ( ::oDbf )
 METHOD Resource( nMode )
 
    local oDlg
+   local oFld
 
    DEFINE DIALOG oDlg RESOURCE "GRPCLI" TITLE LblTitle( nMode ) + "Grupos de proveedores"
 
-      REDEFINE GET ::oGetCodigo ;
-         VAR      ::oDbf:cCodGrp ;
-         ID       100 ;
-         WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    NotValid( ::oGetCodigo, ::oDbf:cAlias, .t., "0" ) ;
-         PICTURE  "@!" ;
-         OF       oDlg
+      REDEFINE FOLDER oFld ;
+         ID          500 ;
+         OF          oDlg ;
+         PROMPT      "&General" ;
+         DIALOGS     "GRPCLI_01"
 
-      REDEFINE GET ::oGetNombre ;
-         VAR      ::oDbf:cNomGrp ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+      REDEFINE GET   ::oGetCodigo ;
+         VAR         ::oDbf:cCodGrp ;
+         ID          100 ;
+         WHEN        ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
+         VALID       NotValid( ::oGetCodigo, ::oDbf:cAlias, .t., "0" ) ;
+         PICTURE     "@!" ;
+         OF          oFld:aDialogs[ 1 ]
 
-      ::oTreePadre                     := TTreeView():Redefine( 130, oDlg )
+
+      REDEFINE GET   ::oGetNombre ;
+         VAR         ::oDbf:cNomGrp ;
+         ID          110 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[ 1 ]
+
+      ::oTreePadre                     := TTreeView():Redefine( 130, oFld:aDialogs[ 1 ] )
       ::oTreePadre:bItemSelectChanged  := {|| ::ChangeTreeState() }
 
       REDEFINE BUTTON ;

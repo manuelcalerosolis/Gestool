@@ -601,18 +601,21 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    Estado de la base de datos--------------------------------------------------
    */
 
-   ::oDbf:GoTop()
-
    if !empty( oGet )
       do case
-         case IsObject( oGet )
-            ::oDbf:Seek( oGet:varGet(), .t. )
-         case IsChar( oGet )
-            ::oDbf:Seek( oGet, .t. )
+         case IsObject( oGet ) .and. !empty( oGet:varGet() )
+            uVal  := alltrim( oGet:varGet() )
+         case IsChar( oGet ) .and. !empty( oGet )
+            uVal  := alltrim( oGet )
       end case          
    end if 
 
-   nOrdAnt        := ::oDbf:OrdSetFocus( nOrd )
+   if !empty( uVal ) .and. ( uVal != replicate( "Z", ::oDbf:FieldSize( cField ) ) )
+      ::oDbf:Seek( uVal, .t. )
+   else
+      nOrdAnt              := ::oDbf:OrdSetFocus( nOrd )
+      ::oDbf:GoTop()
+   end if 
 
    /*
    Creamos el dialogo----------------------------------------------------------

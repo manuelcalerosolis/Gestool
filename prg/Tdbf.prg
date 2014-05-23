@@ -85,6 +85,7 @@ CLASS TDbf
     MESSAGE Delete( lNext )         METHOD _Delete( lNext )
     METHOD  Deleted()               INLINE ( ::nArea )->( Deleted() )
     METHOD  FieldName( nPos )       INLINE ( ::nArea )->( FieldName( nPos ) )
+    METHOD  FieldSize( cFld )       INLINE ( ::nArea )->( FieldSize( ::FieldPos( cFld ) ) ) //mcs)
     METHOD  FCount()                INLINE ( ::nArea )->( FCount() )
     METHOD  FieldGet( nPos )        INLINE ( ::nArea )->( FieldGet( nPos ) )
     METHOD  FieldGetName( cFld )    INLINE ( ::nArea )->( FieldGet( ::FieldPos( cFld ) ) ) //mcs

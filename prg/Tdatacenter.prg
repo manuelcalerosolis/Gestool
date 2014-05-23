@@ -119,6 +119,7 @@ CLASS TDataCenter
 
    METHOD AddDataTable( oTable )          INLINE aAdd( ::aDataTables, oTable )
    METHOD AddEmpresaTable( oTable )       INLINE aAdd( ::aEmpresaTables, oTable )
+   
    METHOD AddEmpresaObject( oObject )     INLINE aAdd( ::aEmpresaObject, oObject )
 
    METHOD CreateOperationLogTable()
@@ -2367,6 +2368,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "GrpPrv"
    oDataTable:cName        := cPatPrv() + "GrpPrv"
    oDataTable:cDataFile    := cPatPrv( , .t. ) + "GrpPrv.Dbf"
    oDataTable:cIndexFile   := cPatPrv( , .t. ) + "GrpPrv.Cdx"
@@ -2548,6 +2550,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedProvT"
    oDataTable:cName        := cPatEmp() + "PedProvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedProvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedProvT.Cdx"
@@ -3560,6 +3563,9 @@ METHOD BuildEmpresa()
    // Objetos -----------------------------------------------------------------
 
    oDataTable              := TGrpCli():Create( cPatCli() )
+   ::AddEmpresaObject( oDataTable )
+
+   oDataTable              := TGrpPrv():Create( cPatPrv() )
    ::AddEmpresaObject( oDataTable )
 
 RETURN ( Self )
@@ -4916,6 +4922,12 @@ CLASS TDataView
    METHOD SatClientes( nView )               INLINE ( ::Get( "SatCliT", nView ) )
       METHOD SatClientesId( nView )          INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
 
+   METHOD PedidosProveedores( nView )        INLINE ( ::Get( "PedProvT", nView ) )
+      METHOD PedidosProveedoresId( nView )   INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
+
+   METHOD Proveedores( nView )               INLINE ( ::Get( "Provee", nView ) )
+      METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
+
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
@@ -5087,8 +5099,8 @@ ENDCLASS
       local oObject     := TDataCenter():ScanObject( cObject )
 
       if !empty( oObject )
-
          lOpen          := oObject:OpenService()
+
          if lOpen
             ::AddView( cObject, oObject, nView )
          end if 

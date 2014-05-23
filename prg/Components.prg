@@ -37,6 +37,12 @@ CLASS ResourceBuilder
    DATA oGrupoClienteInicio
    DATA oGrupoClienteFin
 
+   DATA oProveedorInicio
+   DATA oProveedorFin
+
+   DATA oGrupoProveedorInicio
+   DATA oGrupoProveedorFin
+
    DATA oFechaInicio
    DATA oFechaFin
 
@@ -67,6 +73,9 @@ CLASS ResourceBuilder
    METHOD InRangeCliente( uValue )        INLINE ( empty( uValue ) .or. ( uValue >= ::oClienteInicio:Value() .and. uValue <= ::oClienteFin:Value() ) )
    METHOD InRangeGrupoCliente( uValue )   INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoClienteInicio:Value() .and. uValue <= ::oGrupoClienteFin:Value() ) )
 
+   METHOD InRangeProveedor( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oProveedorInicio:Value() .and. uValue <= ::oProveedorFin:Value() ) )
+   METHOD InRangeGrupoProveedor( uValue ) INLINE ( empty( uValue ) .or. ( uValue >= ::oGrupoProveedorInicio:Value() .and. uValue <= ::oGrupoProveedorFin:Value() ) )
+
    METHOD InRangeFecha( uValue )          INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
 
 END CLASS
@@ -76,6 +85,9 @@ END CLASS
 CLASS PrintSeries FROM ResourceBuilder
 
    METHOD New( nView )
+
+   METHOD SetCompras()
+   METHOD SetVentas()
 
    METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
 
@@ -106,16 +118,6 @@ METHOD New( nView ) CLASS PrintSeries
 
    ::oFechaFin             := GetFecha():New( 220, Self )
 
-   // Clientes-----------------------------------------------------------------
-
-   ::oClienteInicio        := GetCliente():New( 300, 310, Self )
-   ::oClienteFin           := GetCliente():New( 320, 330, Self )
-
-   // Grupo de cliente---------------------------------------------------------
-
-   ::oGrupoClienteInicio   := GetGrupoCliente():New( 340, 350, Self )
-   ::oGrupoClienteFin      := GetGrupoCliente():New( 360, 370, Self )
-
    ::oFormatoDocumento     := GetDocumento():New( 90, 91, 92, Self )
 
    ::oImpresora            := GetPrinter():New( 160, 161, Self )
@@ -127,6 +129,58 @@ METHOD New( nView ) CLASS PrintSeries
    ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetCompras()
+
+   // Proveedores-----------------------------------------------------------------
+
+   ::oProveedorInicio      := GetProveedor():New( 300, 310, 301, Self )
+   ::oProveedorInicio:SetText( "Desde proveedor" )
+   ::oProveedorInicio:First()
+
+   ::oProveedorFin         := GetProveedor():New( 320, 330, 321, Self )
+   ::oProveedorFin:SetText( "Hasta proveedor" )
+   ::oProveedorFin:Last()
+
+   // Grupo de proveedores---------------------------------------------------------
+
+   ::oGrupoProveedorInicio := GetGrupoProveedor():New( 340, 350, 341, Self )
+   ::oGrupoProveedorInicio:SetText( "Desde grupo proveedor" )
+   ::oGrupoProveedorInicio:First()
+
+   ::oGrupoProveedorFin    := GetGrupoProveedor():New( 360, 370, 361, Self )
+   ::oGrupoProveedorFin:SetText( "Hasta grupo proveedor" )
+   ::oGrupoProveedorFin:Last()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetVentas()
+
+   // Clientes-----------------------------------------------------------------
+
+   ::oClienteInicio        := GetCliente():New( 300, 310, 301, Self )
+   ::oClienteInicio:SetText( "Desde cliente" )
+   ::oClienteInicio:First()
+
+   ::oClienteFin           := GetCliente():New( 320, 330, 321, Self )
+   ::oClienteFin:SetText( "Hasta cliente" )
+   ::oClienteFin:Last()
+
+   // Grupo de cliente---------------------------------------------------------
+
+   ::oGrupoClienteInicio   := GetGrupoCliente():New( 340, 350, 341, Self )
+   ::oGrupoClienteInicio:SetText( "Desde grupo cliente" )
+   ::oGrupoClienteInicio:First()
+
+   ::oGrupoClienteFin      := GetGrupoCliente():New( 360, 370, 361, Self )
+   ::oGrupoClienteFin:SetText( "Hasta grupo cliente" )
+   ::oGrupoClienteFin:Last()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -176,11 +230,41 @@ METHOD StartResource() CLASS PrintSeries
 
    ::oInforme:SetImageList( ::oImageList )
 
-   ::oClienteInicio:Valid()   
-   ::oClienteFin:Valid()
+   //Si usamos clientes----------------------------------------------------
 
-   ::oGrupoClienteInicio:Valid()   
-   ::oGrupoClienteFin:Valid()
+   if !Empty( ::oClienteInicio ) 
+      ::oClienteInicio:Valid()
+   end if
+
+   if !Empty( ::oClienteFin )
+      ::oClienteFin:Valid()
+   end if
+
+   if !Empty( ::oGrupoClienteInicio )
+      ::oGrupoClienteInicio:Valid()
+   end if   
+
+   if !Empty( ::oGrupoClienteFin )
+      ::oGrupoClienteFin:Valid()
+   end if
+
+   //Si usamos proveedores---------------------------------------------------
+
+   if !Empty( ::oProveedorInicio ) 
+      ::oProveedorInicio:Valid()
+   end if
+
+   if !Empty( ::oProveedorFin )
+      ::oProveedorFin:Valid()
+   end if
+
+   if !Empty( ::oGrupoProveedorInicio )
+      ::oGrupoProveedorInicio:Valid()
+   end if   
+
+   if !Empty( ::oGrupoProveedorFin )
+      ::oGrupoProveedorFin:Valid()
+   end if
 
    ::oFormatoDocumento:Valid()
 
@@ -395,19 +479,26 @@ Return ( Self )
 CLASS ComponentGetSay FROM ComponentGet
 
    DATA idSay
+   DATA idText
 
    DATA oSayControl        
    DATA cSayValue                INIT ""
 
-   METHOD New( idGet, idSay, oContainer )
+   DATA oTextControl
+   DATA cTextValue
+
+   METHOD New( idGet, idSay, idText, oContainer )
 
    METHOD Resource()
 
+   METHOD SetText( cText )       INLINE ( if( !empty( ::oTextControl ), ::oTextControl:SetText( cText ), ::cTextValue := cText ) )
+
 END CLASS 
 
-METHOD New( idGet, idSay, oContainer ) CLASS ComponentGetSay
+METHOD New( idGet, idSay, idText, oContainer ) CLASS ComponentGetSay
 
    ::idSay  := idSay
+   ::idText := idText
 
    Super:New( idGet, oContainer )
 
@@ -423,6 +514,15 @@ METHOD Resource() CLASS ComponentGetSay
       WHEN        ( .f. ) ;
       OF          ::oContainer:oDlg
 
+   if !Empty( ::idText )
+
+   REDEFINE SAY   ::oTextControl ;
+      PROMPT      ::cTextValue ;
+      ID          ::idText ;
+      OF          ::oContainer:oDlg
+
+   end if 
+
 Return ( Self )
 
 //--------------------------------------------------------------------------//
@@ -434,7 +534,7 @@ Return ( Self )
 
 CLASS GetCliente FROM ComponentGetSay
 
-   METHOD New( idGet, idSay, oContainer ) 
+   METHOD New( idGet, idSay, idText, oContainer ) 
 
    METHOD First()    INLINE ( ::cText( Space( RetNumCodCliEmp() ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodCliEmp() ) ) )
@@ -444,9 +544,9 @@ CLASS GetCliente FROM ComponentGetSay
 
 END CLASS 
 
-METHOD New( idGet, idSay, oContainer ) CLASS GetCliente
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetCliente
 
-   Super:New( idGet, idSay, oContainer )
+   Super:New( idGet, idSay, idText, oContainer )
 
    ::bValid       := {|| cClient( ::oGetControl, TDataView():Clientes( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwClient( ::oGetControl, ::oSayControl ) }
@@ -459,7 +559,7 @@ Return ( Self )
 
 CLASS GetGrupoCliente FROM ComponentGetSay
 
-   METHOD New( idGet, idSay, oContainer )
+   METHOD New( idGet, idSay, idText, oContainer )
 
    METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
@@ -469,9 +569,9 @@ CLASS GetGrupoCliente FROM ComponentGetSay
 
 END CLASS 
 
-METHOD New( idGet, idSay, oContainer ) CLASS GetGrupoCliente
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoCliente
 
-   Super:New( idGet, idSay, oContainer )
+   Super:New( idGet, idSay, idText, oContainer )
 
    ::uGetValue    := Space( 4 )
 
@@ -489,7 +589,7 @@ CLASS GetDocumento FROM ComponentGetSay
    DATA idBtn
    DATA cTypeDocumento              INIT Space( 2 )
 
-   METHOD New( idGet, idSay, oContainer )
+   METHOD New( idGet, idSay, idBtn, oContainer )
 
    METHOD Resource()
 
@@ -499,7 +599,7 @@ END CLASS
 
 METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
 
-   Super:New( idGet, idSay, oContainer )
+   Super:New( idGet, idSay, nil, oContainer )
 
    ::idBtn        := idBtn
 
@@ -806,4 +906,60 @@ Function nLastDay( nMes )
 
 Return ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetProveedor FROM ComponentGetSay
+
+   METHOD New( idGet, idSay, idText, oContainer ) 
+
+   METHOD First()    INLINE ( ::cText( Space( RetNumCodPrvEmp() ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodPrvEmp() ) ) )
+
+   METHOD Top()      INLINE ( ::cText( TDataView():Top( "Provee", ::oContainer:nView ) ) )
+   METHOD Bottom()   INLINE ( ::cText( TDataView():Bottom( "Provee", ::oContainer:nView ) ) )
+
+END CLASS 
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
+
+   Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cProvee( ::oGetControl, TDataView():Proveedores( ::oContainer:nView ), ::oSayControl ) }
+   ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetGrupoProveedor FROM ComponentGetSay
+
+   METHOD New( idGet, idSay, idText, oContainer )
+
+   METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
+
+   METHOD Top()      INLINE ( ::cText( TDataView():GetObject( "GruposProveedores", ::oContainer:nView ):Top() ) )
+   METHOD Bottom()   INLINE ( ::cText( TDataView():GetObject( "GruposProveedores", ::oContainer:nView ):Bottom() ) )
+
+END CLASS 
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoProveedor
+
+   Super:New( idGet, idSay, idText, oContainer )
+
+   ::uGetValue    := Space( 4 )
+
+   ::bValid       := {|| TDataView():GruposProveedores( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
+   ::bHelp        := {|| TDataView():GruposProveedores( ::oContainer:nView ):Buscar( ::oGetControl ) }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//

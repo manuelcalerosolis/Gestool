@@ -270,6 +270,8 @@ static bEdtInc          := { |aTmp, aGet, dbfPedPrvI, oBrw, bWhen, bValid, nMode
 static bEdtDoc          := { |aTmp, aGet, dbfPedPrvD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedPrvD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static oUndMedicion
 
+static nView
+
 //----------------------------------------------------------------------------//
 
 STATIC FUNCTION OpenFiles( lExt )
@@ -293,8 +295,15 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
+      nView             := TDataView():CreateView()
+
+      TDataView():PedidosProveedores( nView )
+
+      TDataView():Proveedores( nView )
+
+      TDataView():GruposProveedores( nView )
+
+      TDataView():Clientes( nView )
 
       USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
@@ -310,9 +319,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
-
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -417,10 +423,10 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
       SET TAG TO "cRefMov"
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+/*
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @TDataView():Clientes( nView ) ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
+*/
       if !TDataCenter():OpenPedCliT( @dbfPedCliT )
          lOpenFiles     := .f.
       end if
@@ -487,11 +493,7 @@ STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   DestroyFastFilter( dbfPedPrvT, .t., .t. )
-
-   if !Empty( dbfPedPrvT )
-      ( dbfPedPrvT )->( dbCloseArea() )
-   end if
+   DestroyFastFilter( TDataView():PedidosProveedores( nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
@@ -519,10 +521,6 @@ STATIC FUNCTION CloseFiles()
 
    if dbfAlbPrvL != nil
       ( dbfAlbPrvL )->( dbCloseArea() )
-   end if
-
-   if dbfPrv != nil
-      ( dbfPrv )->( dbCloseArea() )
    end if
 
    if dbfIva != nil
@@ -648,11 +646,11 @@ STATIC FUNCTION CloseFiles()
    if dbfHisMov != nil
       ( dbfHisMov )->( dbCloseArea() )
    end if
-
-   if dbfClient != nil
-      ( dbfClient )->( dbCloseArea() )
+/*
+   if TDataView():Clientes( nView ) != nil
+      ( TDataView():Clientes( nView ) )->( dbCloseArea() )
    end if
-
+*/
    if oStock != nil
       oStock:end()
    end if
@@ -661,10 +659,10 @@ STATIC FUNCTION CloseFiles()
       oUndMedicion:end()
    end if
 
-   dbfPedPrvT  := nil
+   TDataView():DeleteView( nView )
+
    dbfPedPrvL  := nil
    dbfPedPrvI  := nil
-   dbfPrv      := nil
    dbfIva      := nil
    dbfFPago    := nil
    dbfDiv      := nil
@@ -693,7 +691,7 @@ STATIC FUNCTION CloseFiles()
    dbfProLin   := nil
    dbfProMat   := nil
    dbfHisMov   := nil
-   dbfClient   := nil
+//   TDataView():Clientes( nView )   := nil
 
    lOpenFiles  := .f.
 
@@ -758,24 +756,24 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
                "Nombre proveedor";
       MRU      "Clipboard_empty_businessman_16";
       BITMAP   Rgb( 0, 114, 198 ) ;
-      ALIAS    ( dbfPedPrvT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfPedPrvT, cCodPrv, cCodArt ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfPedPrvT, cCodPrv, cCodArt ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfPedPrvT, cCodPrv, cCodArt ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfPedPrvT ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfPedPrvT, {|| QuiPedPrv() } ) ) ;
+      ALIAS    ( TDataView():PedidosProveedores( nView ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosProveedores( nView ), cCodPrv, cCodArt ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosProveedores( nView ), cCodPrv, cCodArt ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosProveedores( nView ), cCodPrv, cCodArt ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosProveedores( nView ) ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, TDataView():PedidosProveedores( nView ), {|| QuiPedPrv() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
 	oWndBrw:lFechado     := .t.
-      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfPedPrvT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfPedPrvT, .f. ) ) }
+      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, TDataView():PedidosProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", TDataView():PedidosProveedores( nView ), .f. ) ) }
 	oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPedPrvT )->lCloPed }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->lCloPed }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -786,7 +784,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPedPrvT )->lSndDoc }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -796,7 +794,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| Max( ( dbfPedPrvT )->nEstado, 1 ) }
+         :bBmpData         := {|| Max( ( TDataView():PedidosProveedores( nView ) )->nEstado, 1 ) }
          :nWidth           := 20
          :AddResource( "Bullet_Square_Red_16" )
          :AddResource( "Bullet_Square_Yellow_16" )
@@ -808,7 +806,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -821,7 +819,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :cHeader          := "Impreso"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPedPrvT )->lImprimido }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -831,21 +829,21 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumPed"
-         :bEditValue       := {|| ( dbfPedPrvT )->cSerPed + "/" + Alltrim( Str( ( dbfPedPrvT )->nNumPed ) ) }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfPedPrvT )->cSufPed }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cSufPed }
          :nWidth           := 60
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( dbfPedPrvT )->cTurPed, "######" ) }
+         :bEditValue       := {|| Trans( ( TDataView():PedidosProveedores( nView ) )->cTurPed, "######" ) }
          :nWidth           := 60
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -855,21 +853,21 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecPed"
-         :bEditValue       := {|| Dtoc( ( dbfPedPrvT )->dFecPed ) }
+         :bEditValue       := {|| Dtoc( ( TDataView():PedidosProveedores( nView ) )->dFecPed ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( dbfPedPrvT )->cCodCaj }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( dbfPedPrvT )->cCodUsr }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
@@ -877,7 +875,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Entrada"
          :cSortOrder       := "dFecEnt"
-         :bEditValue       := {|| Dtoc( ( dbfPedPrvT )->dFecEnt ) }
+         :bEditValue       := {|| Dtoc( ( TDataView():PedidosProveedores( nView ) )->dFecEnt ) }
          :nWidth           := 80
          :lHide            := .t.
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -886,7 +884,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Situación"
          :cSortOrder       := "cSituac"
-         :bEditValue       := {|| ( dbfPedPrvT )->cSituac }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cSituac }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -894,7 +892,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodPrv"
-         :bEditValue       := {|| ( dbfPedPrvT )->cCodPrv }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cCodPrv }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -902,14 +900,14 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre proveedor"
          :cSortOrder       := "cNomPrv"
-         :bEditValue       := {|| ( dbfPedPrvT )->cNomPrv }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->cNomPrv }
          :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( dbfPedPrvT )->nTotNet }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->nTotNet }
          :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -919,7 +917,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( dbfPedPrvT )->nTotIva }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->nTotIva }
          :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -929,7 +927,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( dbfPedPrvT )->nTotReq }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->nTotReq }
          :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -939,7 +937,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfPedPrvT )->nTotPed }
+         :bEditValue       := {|| ( TDataView():PedidosProveedores( nView ) )->nTotPed }
          :cEditPicture     := cPirDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -948,13 +946,13 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfPedPrvT )->cDivPed ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():PedidosProveedores( nView ) )->cDivPed ), dbfDiv ) }
          :nWidth           := 30
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Cliente"
-         :bEditValue       := {|| if( !Empty( ( dbfPedPrvT )->cNumPedCli ), AllTrim( GetCodCli( ( dbfPedPrvT )->cNumPedCli ) ) + " - " + AllTrim( GetNomCli( ( dbfPedPrvT )->cNumPedCli ) ), "" ) }
+         :bEditValue       := {|| if( !Empty( ( TDataView():PedidosProveedores( nView ) )->cNumPedCli ), AllTrim( GetCodCli( ( TDataView():PedidosProveedores( nView ) )->cNumPedCli ) ) + " - " + AllTrim( GetNomCli( ( TDataView():PedidosProveedores( nView ) )->cNumPedCli ) ), "" ) }
          :nWidth           := 280
          :lHide            := .t.
       end with
@@ -1021,7 +1019,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( PrnSerie( oWndBrw:oBrw), oWndBrw:Refresh() ) ;
+      ACTION   ( ImprimirSeriesPedidosProveedores() ) ;
       TOOLTIP  "Imp(r)imir series";
       HOTKEY   "R";
       LEVEL    ACC_IMPR
@@ -1071,7 +1069,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
       MESSAGE  "Seleccionar pedidos para ser enviados" ;
-      ACTION   lSnd( oWndBrw, dbfPedPrvT ) ;
+      ACTION   lSnd( oWndBrw, TDataView():PedidosProveedores( nView ) ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
@@ -1086,7 +1084,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, dbfPedPrvT, aItmPedPrv() ) ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, TDataView():PedidosProveedores( nView ), aItmPedPrv() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1108,7 +1106,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( PED_PRV, ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( PED_PRV, ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1122,7 +1120,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( EdtPrv( ( dbfPedPrvT )->cCodPrv ) );
+         ACTION   ( EdtPrv( ( TDataView():PedidosProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Modificar proveedor" ;
          FROM     oRotor ;
          CLOSED ;
@@ -1130,7 +1128,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( InfProveedor( ( dbfPedPrvT )->cCodPrv ) );
+         ACTION   ( InfProveedor( ( TDataView():PedidosProveedores( nView ) )->cCodPrv ) );
          TOOLTIP  "Informe proveedor" ;
          FROM     oRotor ;
          CLOSED ;
@@ -1138,13 +1136,13 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( ( dbfPedPrvT )->nEstado == 3, MsgStop( "Pedido recibido" ), AlbPrv( nil, oWnd, nil, nil, ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) ) );
+         ACTION   ( if( ( TDataView():PedidosProveedores( nView ) )->nEstado == 3, MsgStop( "Pedido recibido" ), AlbPrv( nil, oWnd, nil, nil, ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed ) ) );
          TOOLTIP  "Generar albarán" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_BUSINESSMAN_" OF oWndBrw ;
-         ACTION   ( Ped2Alb( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) );
+         ACTION   ( Ped2Alb( ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed ) );
          TOOLTIP  "Modificar albarán" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
@@ -1179,7 +1177,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
    local oDlg
    local oFld
@@ -1299,8 +1297,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
    cSay[ 1 ]            := RetFld( aTmp[ _CCODALM ], dbfAlm )
    cSay[ 2 ]            := RetFld( aTmp[ _CCODPGO ], dbfFPago )
    cSay[ 3 ]            := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[ 4 ]            := RetFld( aTmp[ _CCODPRV ], dbfPrv )
-   cTlfPrv              := RetFld( aTmp[ _CCODPRV ], dbfPrv, "Telefono" )
+   cSay[ 4 ]            := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ) )
+   cTlfPrv              := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ), "Telefono" )
    cUsr                 := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
    cSay[ 5 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
@@ -1355,7 +1353,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
             ID 		140 ;
             PICTURE	( RetPicCodPrvEmp() ) ;
 		WHEN 		( nMode != ZOOM_MODE ) ;
-            VALID       ( LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay[ 4 ], oTlfPrv ) ) ;
+            VALID       ( LoaPrv( aGet, aTmp, TDataView():Proveedores( nView ), nMode, oSay[ 4 ], oTlfPrv ) ) ;
             ON HELP     ( BrwProvee( aGet[_CCODPRV], oSay[ 4 ] ) ) ;
             BITMAP      "LUPA" ;
             OF          oFld:aDialogs[1]
@@ -2350,7 +2348,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
 	ACTIVATE DIALOG oDlg	;
          ON INIT  (  EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg ),;
-                     ShowKitCom( dbfPedPrvT, dbfTmpLin, oBrwLin, cCodPrv, dbfTmpInc, aGet ),;
+                     ShowKitCom( TDataView():PedidosProveedores( nView ), dbfTmpLin, oBrwLin, cCodPrv, dbfTmpInc, aGet ),;
                      oBrwLin:Load(),;
                      oBrwInc:Load() ) ;
          ON PAINT (  RecalculaTotal( aTmp ) );
@@ -3810,7 +3808,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oGetIra, oFld, oDlg, oBrw, nMode,
 
          SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oGetIra, oFld, oDlg, oTotal, oGetStk )
 
-         nTotPedPrv( nil, dbfPedPrvT, dbfTmpLin, dbfIva, dbfDiv, aTmpPed )
+         nTotPedPrv( nil, TDataView():PedidosProveedores( nView ), dbfTmpLin, dbfIva, dbfDiv, aTmpPed )
 
       else
 
@@ -3875,23 +3873,23 @@ STATIC FUNCTION PrnSerie( oBrw )
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin   
-   local cSerIni     := ( dbfPedPrvT )->cSerPed
-   local cSerFin     := ( dbfPedPrvT )->cSerPed
-   local nDocIni     := ( dbfPedPrvT )->nNumPed
-   local nDocFin     := ( dbfPedPrvT )->nNumPed
-   local cSufIni     := ( dbfPedPrvT )->cSufPed
-   local cSufFin     := ( dbfPedPrvT )->cSufPed
+   local cSerIni     := ( TDataView():PedidosProveedores( nView ) )->cSerPed
+   local cSerFin     := ( TDataView():PedidosProveedores( nView ) )->cSerPed
+   local nDocIni     := ( TDataView():PedidosProveedores( nView ) )->nNumPed
+   local nDocFin     := ( TDataView():PedidosProveedores( nView ) )->nNumPed
+   local cSufIni     := ( TDataView():PedidosProveedores( nView ) )->cSufPed
+   local cSufFin     := ( TDataView():PedidosProveedores( nView ) )->cSufPed
    local oPrinter
    local cPrinter    := PrnGetName()
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -4043,57 +4041,57 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    if nRango == 1
 
-      nRecno            := ( dbfPedPrvT )->( Recno() )
-      nOrdAnt           := ( dbfPedPrvT )->( OrdSetFocus( "NNUMPED" ) )
+      nRecno            := ( TDataView():PedidosProveedores( nView ) )->( Recno() )
+      nOrdAnt           := ( TDataView():PedidosProveedores( nView ) )->( OrdSetFocus( "NNUMPED" ) )
 
       if !lInvOrden
 
-            ( dbfPedPrvT )->( dbSeek( cDocIni, .t. ) )
+            ( TDataView():PedidosProveedores( nView ) )->( dbSeek( cDocIni, .t. ) )
 
-            while ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed >= cDocIni .AND. ;
-                  ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed <= cDocFin
+            while ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed >= cDocIni .AND. ;
+                  ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed <= cDocFin
 
-                  lChgImpDoc( dbfPedPrvT )
+                  lChgImpDoc( TDataView():PedidosProveedores( nView ) )
 
             if lCopiasPre
 
-                  nCopyProvee := if( nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) )
+                  nCopyProvee := if( nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) )
 
-                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
+                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
 
             else
 
-                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nNumCop )
+                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
             end if
 
-            ( dbfPedPrvT )->( dbSkip() )
+            ( TDataView():PedidosProveedores( nView ) )->( dbSkip() )
 
             end while
 
       else
 
-      ( dbfPedPrvT )->( dbSeek( cDocFin ) )
+      ( TDataView():PedidosProveedores( nView ) )->( dbSeek( cDocFin ) )
 
-         while ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed >= cDocIni .and.;
-               ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed <= cDocFin .and.;
-               !( dbfPedPrvT )->( Bof() )
+         while ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed >= cDocIni .and.;
+               ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed <= cDocFin .and.;
+               !( TDataView():PedidosProveedores( nView ) )->( Bof() )
 
-               lChgImpDoc( dbfPedPrvT )
+               lChgImpDoc( TDataView():PedidosProveedores( nView ) )
 
          if lCopiasPre
 
-               nCopyProvee := if( nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) )
+               nCopyProvee := if( nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) )
 
-               GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
+               GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
 
          else
 
-               GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nNumCop )
+               GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
          end if
 
-         ( dbfPedPrvT )->( dbSkip( -1 ) )
+         ( TDataView():PedidosProveedores( nView ) )->( dbSkip( -1 ) )
 
          end while
 
@@ -4101,62 +4099,62 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    else
 
-      nRecno            := ( dbfPedPrvT )->( Recno() )
-      nOrdAnt           := ( dbfPedPrvT )->( OrdSetFocus( "DFECPED" ) )
+      nRecno            := ( TDataView():PedidosProveedores( nView ) )->( Recno() )
+      nOrdAnt           := ( TDataView():PedidosProveedores( nView ) )->( OrdSetFocus( "DFECPED" ) )
 
       if !lInvOrden
 
-            ( dbfPedPrvT )->( dbGoTop() )
+            ( TDataView():PedidosProveedores( nView ) )->( dbGoTop() )
 
-            while !( dbfPedPrvT )->( Eof() )
+            while !( TDataView():PedidosProveedores( nView ) )->( Eof() )
 
-               if ( dbfPedPrvT )->dFecPed >= dFecDesde .and. ( dbfPedPrvT )->dFecPed <= dFecHasta
+               if ( TDataView():PedidosProveedores( nView ) )->dFecPed >= dFecDesde .and. ( TDataView():PedidosProveedores( nView ) )->dFecPed <= dFecHasta
 
-                  lChgImpDoc( dbfPedPrvT )
+                  lChgImpDoc( TDataView():PedidosProveedores( nView ) )
 
                   if lCopiasPre
 
-                        nCopyProvee := if( nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) )
+                        nCopyProvee := if( nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) )
 
-                        GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
+                        GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
 
                   else
 
-                        GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nNumCop )
+                        GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
                   end if
 
                end if   
 
-            ( dbfPedPrvT )->( dbSkip() )
+            ( TDataView():PedidosProveedores( nView ) )->( dbSkip() )
 
             end while
 
       else
 
-         ( dbfPedPrvT )->( dbGoBottom() )
+         ( TDataView():PedidosProveedores( nView ) )->( dbGoBottom() )
 
-         while !( dbfPedPrvT )->( Bof() )
+         while !( TDataView():PedidosProveedores( nView ) )->( Bof() )
 
-            if ( dbfPedPrvT )->dFecPed >= dFecDesde .and. ( dbfPedPrvT )->dFecPed <= dFecHasta
+            if ( TDataView():PedidosProveedores( nView ) )->dFecPed >= dFecDesde .and. ( TDataView():PedidosProveedores( nView ) )->dFecPed <= dFecHasta
 
-               lChgImpDoc( dbfPedPrvT )
+               lChgImpDoc( TDataView():PedidosProveedores( nView ) )
 
                if lCopiasPre
 
-                  nCopyProvee := if( nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) )
+                  nCopyProvee := if( nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) )
 
-                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
+                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nCopyProvee )
 
                else
 
-                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + (dbfPedPrvT)->cSufPed, cFmtDoc, cPrinter, nNumCop )
+                  GenPedPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + (TDataView():PedidosProveedores( nView ))->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if   
 
-         ( dbfPedPrvT )->( dbSkip( -1 ) )
+         ( TDataView():PedidosProveedores( nView ) )->( dbSkip( -1 ) )
 
          end while
 
@@ -4164,8 +4162,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
    
    end if   
 
-   ( dbfPedPrvT )->( ordSetFocus( nOrdAnt ) )
-   ( dbfPedPrvT )->( dbGoTo( nRecNo ) )
+   ( TDataView():PedidosProveedores( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( TDataView():PedidosProveedores( nView ) )->( dbGoTo( nRecNo ) )
 
    oDlg:enable()
 
@@ -4179,16 +4177,16 @@ FUNCTION GenPedPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local oDevice
    local nPedido
 
-   if ( dbfPedPrvT )->( Lastrec() ) == 0
+   if ( TDataView():PedidosProveedores( nView ) )->( Lastrec() ) == 0
       return nil
    end if
 
-   nPedido              := ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed
+   nPedido              := ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo pedido"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfPedPrvT )->cSerPed, "nPedPrv", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "PP", dbfDoc )
@@ -4213,15 +4211,15 @@ FUNCTION GenPedPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       */
 
       ( dbfPedPrvL)->( dbSeek( nPedido ) )
-      ( dbfPrv    )->( dbSeek( ( dbfPedPrvT )->cCodPrv ) )
-      ( dbfDiv    )->( dbSeek( ( dbfPedPrvT )->cDivPed ) )
-      ( dbfFPago  )->( dbSeek( ( dbfPedPrvT )->cCodPgo ) )
-      ( dbfAlm    )->( dbSeek( ( dbfPedPrvT )->cCodAlm ) )
-      ( dbfUsr    )->( dbSeek( ( dbfPedPrvT )->cCodUsr ) )
+      ( TDataView():Proveedores( nView )    )->( dbSeek( ( TDataView():PedidosProveedores( nView ) )->cCodPrv ) )
+      ( dbfDiv    )->( dbSeek( ( TDataView():PedidosProveedores( nView ) )->cDivPed ) )
+      ( dbfFPago  )->( dbSeek( ( TDataView():PedidosProveedores( nView ) )->cCodPgo ) )
+      ( dbfAlm    )->( dbSeek( ( TDataView():PedidosProveedores( nView ) )->cCodAlm ) )
+      ( dbfUsr    )->( dbSeek( ( TDataView():PedidosProveedores( nView ) )->cCodUsr ) )
 
-      private cDbf         := dbfPedPrvT
+      private cDbf         := TDataView():PedidosProveedores( nView )
       private cDbfCol      := dbfPedPrvL
-      private cDbfPrv      := dbfPrv
+      private cDbfPrv      := TDataView():Proveedores( nView )
       private cDbfPgo      := dbfFPago
       private cDbfIva      := dbfIva
       private cDbfAlm      := dbfAlm
@@ -4236,7 +4234,7 @@ FUNCTION GenPedPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private cPirDivPed   := cPirDiv
       private nDinDivPed   := nDinDiv
       private nDirDivPed   := nDirDiv
-      private nVdvDivPed   := ( dbfPedPrvT )->nVdvPed
+      private nVdvDivPed   := ( TDataView():PedidosProveedores( nView ) )->nVdvPed
 
       /*
       Creamos el informe con la impresora seleccionada para ese informe-----------
@@ -4293,7 +4291,7 @@ FUNCTION GenPedPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    end if
 
-   lChgImpDoc( dbfPedPrvT )
+   lChgImpDoc( TDataView():PedidosProveedores( nView ) )
 
 RETURN NIL
 
@@ -4310,278 +4308,9 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-/*
-Calcula el Total del pedido
-*/
-
-FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPic )
-
-   local nRec
-   local nTotArt
-	local dFecFac
-	local lRecargo
-	local nDtoEsp
-	local nDtoPP
-   local nDtoUno
-	local nDtoDos
-	local nPorte
-	local cCodDiv
-   local nRegIva
-   local aTotDto     := { 0, 0, 0 }
-   local aTotDPP     := { 0, 0, 0 }
-   local aTotUno     := { 0, 0, 0 }
-   local aTotDos     := { 0, 0, 0 }
-   local bCondition
-
-   DEFAULT cPedPrvT  := dbfPedPrvT
-   DEFAULT cPedPrvL  := dbfPedPrvL
-   DEFAULT cIva      := dbfIva
-   DEFAULT cDiv      := dbfDiv
-   DEFAULT lPic      := .f.
-   DEFAULT cPedido   := ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed
-
-   public nTotPed    := 0
-   public nTotBrt    := 0
-   public nTotDto    := 0
-   public nTotDPP    := 0
-   public nTotNet    := 0
-   public nTotIva    := 0
-   public nTotReq    := 0
-   public nTotImp    := 0
-   public aTotIva    := { { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 } }
-   public aIvaUno    := aTotIva[ 1 ]
-   public aIvaDos    := aTotIva[ 2 ]
-   public aIvaTre    := aTotIva[ 3 ]
-   public nTotUno    := 0
-   public nTotDos    := 0
-    
-
-   nRec              := ( cPedPrvL )->( Recno() )
-
-   if aTmp != nil
-		dFecFac			:= aTmp[ _DFECPED ]
-		lRecargo			:= aTmp[ _LRECARGO]
-		nDtoEsp			:= aTmp[ _NDTOESP ]
-		nDtoPP			:= aTmp[ _NDPP    ]
-      nDtoUno        := aTmp[ _NDTOUNO ]
-      nDtoDos        := aTmp[ _NDTODOS ]
-		nPorte			:= aTmp[ _NPORTES ]
-		cCodDiv			:= aTmp[ _CDIVPED ]
-      nVdvDiv        := aTmp[ _NVDVPED ]
-      nRegIva        := aTmp[ _NREGIVA ]
-      bCondition     := {|| ( cPedPrvL )->( !eof() ) }
-      ( cPedPrvL )->( dbGoTop() )
-   else
-      dFecFac        := ( cPedPrvT )->dFecPed
-      lRecargo       := ( cPedPrvT )->lRecargo
-      nDtoEsp        := ( cPedPrvT )->nDtoEsp
-      nDtoPP         := ( cPedPrvT )->nDpp
-      nDtoUno        := ( cPedPrvT )->nDtoUno
-      nDtoDos        := ( cPedPrvT )->nDtoDos
-      nPorte         := ( cPedPrvT )->nPortes
-      cCodDiv        := ( cPedPrvT )->cDivPed
-      nVdvDiv        := ( cPedPrvT )->nVdvPed
-      nRegIva        := ( cPedPrvT )->nRegIva
-      bCondition     := {|| ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed == cPedido .and. ( cPedPrvL )->( !eof() ) }
-      ( cPedPrvL )->( dbSeek( cPedido ) )
-   end if
-
-   cPinDiv           := cPinDiv( cCodDiv, cDiv )
-   cPirDiv           := cPirDiv( cCodDiv, cDiv )
-   nDinDiv           := nDinDiv( cCodDiv, cDiv )
-   nDirDiv           := nRinDiv( cCodDiv, cDiv )
-
-   while Eval( bCondition )
-
-      if lValLine( cPedPrvL )
-
-         /*
-         Importes de lineas
-         */
-
-         nTotArt           := nTotLPedPrv( cPedPrvL, nDinDiv, nDirDiv )
-         if nTotArt != 0
-
-            /*
-            Estudio de impuestos
-            */
-
-            do case
-            case _NPCTIVA1 == NIL .OR. _NPCTIVA1 == ( cPedPrvL )->nIva
-               _NPCTIVA1   := (cPedPrvL)->NIVA
-               _NPCTREQ1   := (cPedPrvL)->NREQ
-               _NBRTIVA1   += nTotArt
-
-            case _NPCTIVA2 == NIL .OR. _NPCTIVA2 == ( cPedPrvL )->nIva
-               _NPCTIVA2   := (cPedPrvL)->NIVA
-               _NPCTREQ2   := (cPedPrvL)->NREQ
-               _NBRTIVA2   += nTotArt
-
-            case _NPCTIVA3 == NIL .OR. _NPCTIVA3 == ( cPedPrvL )->nIva
-               _NPCTIVA3   := (cPedPrvL)->NIVA
-               _NPCTREQ3   := (cPedPrvL)->NREQ
-               _NBRTIVA3   += nTotArt
-            end case
-
-         end if
-
-      end if
-
-      ( cPedPrvL )->( dbSkip() )
-
-   end while
-
-   ( cPedPrvL )->( dbGoTo( nRec ) )
-
-	/*
-   Obtenemos el total bruto----------------------------------------------------
-	*/
-
-   nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
-
-	/*
-   Portes de la Factura--------------------------------------------------------
-	*/
-
-   nTotBrt           += nPorte
-
-   _NBASIVA1         := _NBRTIVA1
-   _NBASIVA2         := _NBRTIVA2
-   _NBASIVA3         := _NBRTIVA3
-
-	/*
-	Descuentos de la Facturas
-	*/
-
-	IF nDtoEsp != 0
-
-      aTotDto[1]     := Round( _NBASIVA1 * nDtoEsp / 100, nDirDiv )
-      aTotDto[2]     := Round( _NBASIVA2 * nDtoEsp / 100, nDirDiv )
-      aTotDto[3]     := Round( _NBASIVA3 * nDtoEsp / 100, nDirDiv )
-
-      nTotDto        := aTotDto[1] + aTotDto[2] + aTotDto[3]
-
-      _NBASIVA1      -= aTotDto[1]
-      _NBASIVA2      -= aTotDto[2]
-      _NBASIVA3      -= aTotDto[3]
-
-   END IF
-
-	IF nDtoPP != 0
-
-      aTotDPP[1]     := Round( _NBASIVA1 * nDtoPP / 100, nDirDiv )
-      aTotDPP[2]     := Round( _NBASIVA2 * nDtoPP / 100, nDirDiv )
-      aTotDPP[3]     := Round( _NBASIVA3 * nDtoPP / 100, nDirDiv )
-
-      nTotDPP        := aTotDPP[1] + aTotDPP[2] + aTotDPP[3]
-
-      _NBASIVA1      -= aTotDPP[1]
-      _NBASIVA2      -= aTotDPP[2]
-      _NBASIVA3      -= aTotDPP[3]
-
-   END IF
-
-   IF nDtoUno != 0
-
-      aTotUno[1]     := Round( _NBASIVA1 * nDtoUno / 100, nDirDiv )
-      aTotUno[2]     := Round( _NBASIVA2 * nDtoUno / 100, nDirDiv )
-      aTotUno[3]     := Round( _NBASIVA3 * nDtoUno / 100, nDirDiv )
-
-      nTotUno        := aTotDPP[1] + aTotDPP[2] + aTotDPP[3]
-
-      _NBASIVA1      -= aTotUno[1]
-      _NBASIVA2      -= aTotUno[2]
-      _NBASIVA3      -= aTotUno[3]
-
-	END IF
-
-	IF nDtoDos != 0
-
-      aTotDos[1]     := Round( _NBASIVA1 * nDtoDos / 100, nDirDiv )
-      aTotDos[2]     := Round( _NBASIVA2 * nDtoDos / 100, nDirDiv )
-      aTotDos[3]     := Round( _NBASIVA3 * nDtoDos / 100, nDirDiv )
-
-      nTotDos        := aTotDPP[1] + aTotDPP[2] + aTotDPP[3]
-
-      _NBASIVA1      -= aTotDos[1]
-      _NBASIVA2      -= aTotDos[2]
-      _NBASIVA3      -= aTotDos[3]
-
-	END IF
-
-   nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nDirDiv )
-
-	/*
-   Calculos de impuestos
-	*/
-
-   if nRegIva <= 1
-
-      _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nDirDiv ), 0 )
-      _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nDirDiv ), 0 )
-      _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nDirDiv ), 0 )
-
-      /*
-      Calculo de recargo
-      */
-
-      if lRecargo
-         _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nDirDiv ), 0 )
-         _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nDirDiv ), 0 )
-         _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nDirDiv ), 0 )
-      end if
-
-   end if
-
-   /*
-   Total impuestos
-   */
-
-   nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nDirDiv )
-
-	/*
-   Total de R.E.
-	*/
-
-   nTotReq           := Round( _NIMPREQ1 + _NIMPREQ2 + _NIMPREQ3, nDirDiv )
-
-   /*
-	Total de impuestos
-	*/
-
-   nTotImp           := Round( nTotIva + nTotReq, nDirDiv )
-
-	/*
-	Total facturas
-	*/
-
-   nTotPed           := nTotNet + nTotImp
-
-	/*
-	Refrescos en Pantalla______________________________________________________
-	*/
-
-   aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
-
-   /*
-   Solicitan una divisa distinta a la q se hizo originalmente la factura
-   */
-
-   if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
-      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
-      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
-      nTotPed        := nCnv2Div( nTotPed, cCodDiv, cDivRet )
-      cPirDiv        := cPirDiv( cDivRet, cDiv )
-   end if
-
-RETURN ( if( lPic, Trans( nTotPed, cPirDiv ), nTotPed ) ) //
-
-//--------------------------------------------------------------------------//
-
 Static Function RecalculaTotal( aTmp )
 
-   nTotPedPrv( nil, dbfPedPrvT, dbfTmpLin, dbfIva, dbfDiv, aTmp )
+   nTotPedPrv( nil, TDataView():PedidosProveedores( nView ), dbfTmpLin, dbfIva, dbfDiv, aTmp )
 
    oBrwIva:Refresh()
 
@@ -4597,42 +4326,11 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION aTotPedPrv( cFactura, dbfPedPrvT, dbfLine, dbfIva, dbfDiv, cDivRet )
-
-   nTotPedPrv( cFactura, dbfPedPrvT, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f. )
-
-RETURN ( { nTotNet, nTotIva, nTotReq, nTotPed, aTotIva } )
-
-//---------------------------------------------------------------------------//
-
-Function sTotPedPrv( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
-
-   local sTotal
-
-   nTotPedPrv( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f. )
-
-   sTotal                                 := sTotal()
-   sTotal:nTotalBruto                     := nTotBrt
-   sTotal:nTotalNeto                      := nTotNet
-   sTotal:nTotalIva                       := nTotIva
-   sTotal:aTotalIva                       := aTotIva
-   sTotal:nTotalRecargoEquivalencia       := nTotReq
-   sTotal:nTotalDocumento                 := nTotPed
-   sTotal:nTotalDescuentoGeneral          := nTotDto
-   sTotal:nTotalDescuentoProntoPago       := nTotDpp
-   sTotal:nTotalDescuentoUno              := nTotUno
-   sTotal:nTotalDescuentoDos              := nTotDos
-
-Return ( sTotal )
-
-//--------------------------------------------------------------------------//
-
-
 /*
 Carga los datos del proveedor
 */
 
-STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
+STATIC FUNCTION LoaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
 
    local lValid      := .f.
    local cNewCodCli  := aGet[ _CCODPRV ]:VarGet()
@@ -4646,41 +4344,41 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodPrvEmp() )
    end if
 
-   if ( dbfPrv )->( dbSeek( cNewCodCli ) )
+   if ( TDataView():Proveedores( nView ) )->( dbSeek( cNewCodCli ) )
 
-      if ( dbfPrv )->lBlqPrv
+      if ( TDataView():Proveedores( nView ) )->lBlqPrv
          msgStop( "Proveedor bloqueado, no se pueden realizar operaciones de compra" )
          return .f.
       end if
 
-      aGet[ _CCODPRV ]:cText( ( dbfPrv )->Cod )
+      aGet[ _CCODPRV ]:cText( ( TDataView():Proveedores( nView ) )->Cod )
 
       if Empty( aGet[ _CNOMPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CNOMPRV ]:cText( ( dbfPrv )->Titulo )
+         aGet[ _CNOMPRV ]:cText( ( TDataView():Proveedores( nView ) )->Titulo )
       end if
 
       if oTlfPrv != nil
-         oTlfPrv:SetText( ( dbfPrv )->Telefono )
+         oTlfPrv:SetText( ( TDataView():Proveedores( nView ) )->Telefono )
       end if
 
       if Empty( aGet[ _CDIRPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDIRPRV ]:cText( ( dbfPrv )->Domicilio )
+         aGet[ _CDIRPRV ]:cText( ( TDataView():Proveedores( nView ) )->Domicilio )
       endif
 
       if Empty( aGet[ _CPOBPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPOBPRV ]:cText( ( dbfPrv )->Poblacion )
+         aGet[ _CPOBPRV ]:cText( ( TDataView():Proveedores( nView ) )->Poblacion )
       endif
 
       if Empty( aGet[ _CPROPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPROPRV ]:cText( ( dbfPrv )->Provincia )
+         aGet[ _CPROPRV ]:cText( ( TDataView():Proveedores( nView ) )->Provincia )
       endif
 
       if Empty( aGet[ _CPOSPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPOSPRV ]:cText( ( dbfPrv )->CodPostal )
+         aGet[ _CPOSPRV ]:cText( ( TDataView():Proveedores( nView ) )->CodPostal )
       endif
 
       if Empty( aGet[ _CDNIPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDNIPRV ]:cText( ( dbfPrv )->Nif )
+         aGet[ _CDNIPRV ]:cText( ( TDataView():Proveedores( nView ) )->Nif )
       endif
 
       /*
@@ -4688,14 +4386,14 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       */
 
       if lChgCodCli
-         aGet[ _CDTOESP ]:cText( ( dbfPrv )->cDtoEsp )
-         aGet[ _NDTOESP ]:cText( ( dbfPrv )->nDtoEsp )
-         aGet[ _CDPP    ]:cText( ( dbfPrv )->cDtoPp  )
-         aGet[ _NDPP    ]:cText( ( dbfPrv )->DtoPp   )
+         aGet[ _CDTOESP ]:cText( ( TDataView():Proveedores( nView ) )->cDtoEsp )
+         aGet[ _NDTOESP ]:cText( ( TDataView():Proveedores( nView ) )->nDtoEsp )
+         aGet[ _CDPP    ]:cText( ( TDataView():Proveedores( nView ) )->cDtoPp  )
+         aGet[ _NDPP    ]:cText( ( TDataView():Proveedores( nView ) )->DtoPp   )
       end if
 
       if Empty( aGet[_CCODPGO]:VarGet() )
-         aGet[ _CCODPGO ]:cText( ( dbfPrv )->fPago )
+         aGet[ _CCODPGO ]:cText( ( TDataView():Proveedores( nView ) )->fPago )
          aGet[ _CCODPGO ]:lValid()
       end if
 
@@ -4704,8 +4402,8 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       */
 
       if lChgCodCli
-         if ( dbfPrv )->nPlzEnt != 0
-            aGet[ _DFECENT ]:cText( GetSysDate() + ( dbfPrv )->nPlzEnt )
+         if ( TDataView():Proveedores( nView ) )->nPlzEnt != 0
+            aGet[ _DFECENT ]:cText( GetSysDate() + ( TDataView():Proveedores( nView ) )->nPlzEnt )
          else
             aGet[ _DFECENT ]:cText( Ctod( "" ) )
          end if
@@ -4713,19 +4411,19 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
 
       if nMode == APPD_MODE
 
-         aGet[ _NREGIVA ]:nOption( Max( ( dbfPrv )->nRegIva, 1 ) )
+         aGet[ _NREGIVA ]:nOption( Max( ( TDataView():Proveedores( nView ) )->nRegIva, 1 ) )
          aGet[ _NREGIVA ]:Refresh()
 
          if Empty( aTmp[ _CSERPED ] )
 
-            if !Empty( ( dbfPrv )->Serie )
-               aGet[ _CSERPED ]:cText( ( dbfPrv )->Serie )
+            if !Empty( ( TDataView():Proveedores( nView ) )->Serie )
+               aGet[ _CSERPED ]:cText( ( TDataView():Proveedores( nView ) )->Serie )
             end if
 
          else
 
-            if !Empty( ( dbfPrv )->Serie ) .and. aTmp[ _CSERPED ] != ( dbfPrv )->Serie .and. ApoloMsgNoYes( "La serie del proveedor seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERPED ]:cText( ( dbfPrv )->Serie )
+            if !Empty( ( TDataView():Proveedores( nView ) )->Serie ) .and. aTmp[ _CSERPED ] != ( TDataView():Proveedores( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del proveedor seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aGet[ _CSERPED ]:cText( ( TDataView():Proveedores( nView ) )->Serie )
             end if
 
          end if
@@ -4733,15 +4431,15 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       end if
 
       if lChgCodCli
-         aTmp[ _LRECARGO ] := ( dbfPrv )->lReq
+         aTmp[ _LRECARGO ] := ( TDataView():Proveedores( nView ) )->lReq
          aGet[ _LRECARGO ]:Refresh()
       end if
 
-      if ( dbfPrv )->lMosCom .and. !Empty( ( dbfPrv )->mComent ) .and. lChgCodCli
-         MsgStop( AllTrim( ( dbfPrv )->mComent ) )
+      if ( TDataView():Proveedores( nView ) )->lMosCom .and. !Empty( ( TDataView():Proveedores( nView ) )->mComent ) .and. lChgCodCli
+         MsgStop( AllTrim( ( TDataView():Proveedores( nView ) )->mComent ) )
       end if
 
-      cOldCodCli     := ( dbfPrv )->Cod
+      cOldCodCli     := ( TDataView():Proveedores( nView ) )->Cod
 
       lValid         := .t.
 
@@ -4754,200 +4452,6 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
 RETURN lValid
 
 //--------------------------------------------------------------------------//
-
-FUNCTION BrwPedPrv( oGetNum, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, dbfFPago )
-
-	local oDlg
-	local oBrw
-   local oGet1
-   local cGet1
-   local nOrd     := GetBrwOpt( "BrwPedPrv" )
-	local oCbxOrd
-   local aCbxOrd  := { "Número", "Fecha", "Código", "Nombre" }
-   local cCbxOrd
-   local aDbfBmp  := {  LoadBitmap( GetResources(), "BRED"   ),;
-                        LoadBitmap( GetResources(), "BYELOW" ),;
-                        LoadBitmap( GetResources(), "BGREEN" ) }
-
-   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrd ]
-
-   ( dbfPedPrvT )->( dbSetFilter( {|| Field->NESTADO != 3 }, "NESTADO != 3" ) )
-
-   nOrd              := ( dbfPedPrvT )->( OrdSetFocus( nOrd ) )
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Pedido a proveedores"
-
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfPedPrvT, .t., nil, .f. ) );
-         VALID    ( OrdClearScope( oBrw, dbfPedPrvT ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-         VAR       cCbxOrd ;
-         ID        102 ;
-         ITEMS     aCbxOrd ;
-         ON CHANGE ( ( dbfPedPrvT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-         OF        oDlg
-
-      oBrw                 := IXBrowse():New( oDlg )
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:cAlias          := dbfPedPrvT
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Pedido a proveedor.Browse"
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-
-      oBrw:CreateFromResource( 105 )
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Es. Estado"
-         :bStrData         := {|| "" }
-         :bBmpData         := {|| ( dbfPedPrvT )->nEstado }
-         :nWidth           := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Número" 
-         :cSortOrder       := "nNumPed"
-         :bEditValue       := {|| ( dbfPedPrvT )->cSerPed + "/" + Str( ( dbfPedPrvT )->nNumPed ) + "/" + ( dbfPedPrvT )->cSufPed }
-         :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Fecha"
-         :cSortOrder       := "dFecPed"
-         :bEditValue       := {|| dToc( ( dbfPedPrvT )->dFecPed ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "cCodPrv"
-         :bEditValue       := {|| Rtrim( ( dbfPedPrvT )->cCodPrv ) }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "cNomPrv"
-         :bEditValue       := {|| Rtrim( ( dbfPedPrvT )->cNomPrv ) }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Importe"
-         :bEditValue       := {|| nTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, nil, cDivEmp(), .t. ) }
-         :nWidth           := 60
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
-
-		REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
-			WHEN 		.F.
-
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
-			WHEN 		.F.
-
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_RETURN, {|| oDlg:end( IDOK ) } )
-
-   oDlg:bStart    := {|| oBrw:Load() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   IF oDlg:nResult == IDOK
-      oGetNum:cText( ( dbfPedPrvT )->CSERPED + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed )
-      oGetNum:disable()
-   END IF
-
-   DestroyFastFilter( dbfPedPrvT )
-
-   SetBrwOpt( "BrwPedPrv", ( dbfPedPrvT )->( OrdNumber() ) )
-
-   ( dbfPedPrvT )->( dbSetFilter() )
-   ( dbfPedPrvT )->( OrdSetFocus( nOrd ) )
-
-   AEval( aDbfBmp, { | hBmp | DeleteObject( hBmp ) } )
-
-   /*
-    Guardamos los datos del browse
-   */
-   oBrw:CloseData()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION ChgPedPrv( nPedido, nMode, dbfPedPrvT )
-
-   local oBlock
-   local oError
-   local lExito   := .t.
-   local lClose   := .f.
-
-   if nMode != APPD_MODE .OR. Empty( nPedido )
-      return nil
-   end if
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfPedPrvT )
-      USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
-		lClose := .T.
-   end if
-
-   if (dbfPedPrvT)->(DbSeek( nPedido ) )
-      if dbDialogLock( dbfPedPrvT )
-         ( dbfPedPrvT )->nEstado    := 1
-      end if
-   else
-      lExito      := .f.
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-		CLOSE (dbfPedPrvT)
-   end if
-
-RETURN lExito
-
-//-------------------------------------------------------------------------//
 
 /*
 Calcula totales en las lineas de Detalle
@@ -4978,601 +4482,6 @@ STATIC FUNCTION lCalcDeta( aTmp, oTotal )
 RETURN .T.
 
 //---------------------------------------------------------------------------//
-
-FUNCTION nTotEPedPrv( uTmp )
-
-   local nCalculo := 0
-
-   do case
-   case ValType( uTmp ) == "C"
-      nCalculo    := NotCaja( (uTmp)->nCanEnt ) * (uTmp)->nUniEnt
-   case ValType( uTmp ) == "O"
-      nCalculo    := NotCaja( uTmp:nCanEnt ) * uTmp:nUniEnt
-   case ValType( uTmp ) == "A"
-      nCalculo    := NotCaja( uTmp[ _NCANENT ] * uTmp[ _NUNIENT ] )
-   end case
-
-RETURN ( nCalculo )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nTotNPedPrv( uTmp )
-
-   local nCalculo := 0
-
-   DEFAULT uTmp   := dbfPedPrvL
-
-   do case
-   case ValType( uTmp ) == "C"
-      nCalculo    := ( uTmp )->nUniCaja
-      nCalculo    *= NotCaja( ( uTmp )->nCanPed )
-      nCalculo    *= NotCero( ( uTmp )->nUndKit )
-      nCalculo    *= NotCero( ( uTmp )->nMedUno )
-      nCalculo    *= NotCero( ( uTmp )->nMedDos )
-      nCalculo    *= NotCero( ( uTmp )->nMedTre )
-
-   case ValType( uTmp ) == "O"
-      nCalculo    := uTmp:nUniCaja
-      nCalculo    *= NotCaja( uTmp:nCanPed )
-      nCalculo    *= NotCero( uTmp:nUndKit )
-      nCalculo    *= NotCero( uTmp:nMedUno )
-      nCalculo    *= NotCero( uTmp:nMedDos )
-      nCalculo    *= NotCero( uTmp:nMedTre )
-
-   case ValType( uTmp ) == "A"
-      nCalculo    := uTmp[ _NUNICAJA ]
-      nCalculo    *= NotCaja( uTmp[ _NCANPED ] )
-      nCalculo    *= NotCero( uTmp[ _NUNDKIT ] )
-      nCalculo    *= NotCero( uTmp[ _NMEDUNO ] )
-      nCalculo    *= NotCero( uTmp[ _NMEDDOS ] )
-      nCalculo    *= NotCero( uTmp[ _NMEDTRE ] )
-
-   end case
-
-RETURN ( nCalculo )
-
-//---------------------------------------------------------------------------//
-//Total de una linea con impuestos incluidos
-
-FUNCTION nTotFPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
-
-   local nCalculo := 0
-
-   nCalculo       += nTotLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo       += nIvaLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-
-return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nTotUPedPrv( uTmp, nDec, nVdv )
-
-   local nCalculo := 0
-
-   DEFAULT uTmp   := dbfPedPrvL
-   DEFAULT nDec   := nDinDiv()
-   DEFAULT nVdv   := 1
-
-   do case
-      case ValType( uTmp ) == "C"
-         nCalculo := ( uTmp )->nPreDiv
-
-      case ValType( uTmp ) == "O"
-         nCalculo := uTmp:nPreDiv
-
-      case ValType( uTmp ) == "A"
-         nCalculo := uTmp[ _NPREDIV ]
-
-   end case
-
-   if nVdv != 0
-      nCalculo    := nCalculo / nVdv
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nImpUPedPrv( uPedPrvT, uPedPrvL, nDec, nVdv, cPorDiv )
-
-   local nCalculo       := 0
-
-   DEFAULT uPedPrvT     := dbfPedPrvt
-   DEFAULT uPedPrvL     := dbfPedPrvL
-   DEFAULT nDec         := nDinDiv()
-   DEFAULT nVdv         := 1
-
-   nCalculo             := nTotUPedPrv( uPedPrvL, nDec, nVdv ) 
-
-   if IsArray( uPedPrvT )
-
-      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDTOESP ]  / 100, nDec )
-      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDPP    ]  / 100, nDec )
-      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDTOUNO ]  / 100, nDec )
-      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDTODOS ]  / 100, nDec )
-   
-   else
-   
-      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDtoEsp / 100, nDec )
-      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDpp    / 100, nDec )
-      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDtoUno / 100, nDec )
-      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDtoDos / 100, nDec )
-   
-   end if
-
-Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nIvaUPedPrv( uTmp, nDec, nVdv )
-
-   local nCalculo
-
-   DEFAULT uTmp   := dbfPedPrvL
-   DEFAULT nDec   := nDinDiv()
-   DEFAULT nVdv   := 1
-
-   nCalculo       := nTotUPedPrv( uTmp, nDec, nVdv )
-   nCalculo       := nCalculo * ( uTmp )->nIva / 100
-
-   if nVdv != 0
-      nCalculo    := nCalculo / nVdv
-   end if
-
-RETURN ( Round( nCalculo, nDec ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nTotLPedPrv( uTmp, nDec, nRec, nVdv, cPouDiv )
-
-   local nCalculo
-
-   DEFAULT uTmp   := dbfPedPrvL
-   DEFAULT nDec   := nDinDiv()
-   DEFAULT nRec   := nRinDiv()
-   DEFAULT nVdv   := 1
-
-   // Precio ------------------------------------------------------------------
-
-   nCalculo       := nTotUPedPrv( uTmp, nDec, nVdv )
-
-   do case
-      case ValType( uTmp ) == "C"
-
-         if ( uTmp )->nDtoLin != 0
-            nCalculo    -= nCalculo * ( uTmp )->nDtoLin / 100
-         end if
-
-         if ( uTmp )->nDtoPrm != 0
-            nCalculo    -= nCalculo * ( uTmp )->nDtoPrm / 100
-         end if
-
-      case ValType( uTmp ) == "O"
-
-         if uTmp:nDtoLin != 0
-            nCalculo    -= nCalculo * uTmp:nDtoLin / 100
-         end if
-
-         if uTmp:nDtoPrm != 0
-            nCalculo    -= nCalculo * uTmp:nDtoPrm / 100
-         end if
-
-   end case
-
-   // Unidades
-
-   nCalculo       *= nTotNPedPrv( uTmp )
-
-   if nRec != nil
-      nCalculo    := Round( nCalculo, nRec )
-   end if
-
-RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el importe de descuento porcentual por cada linea---------------------
-*/
-
-FUNCTION nDtoLPedPrv( cPedPrvL, nDec, nRou, nVdv )
-
-   local nCalculo       := 0
-
-   DEFAULT cPedPrvL     := dbfPedPrvL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
-   DEFAULT nVdv         := 1
-
-   if ( cPedPrvL )->nDtoLin != 0 
-
-      nCalculo          := nTotUPedPrv( cPedPrvL, nDec ) * nTotNPedPrv( cPedPrvL )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      nCalculo          := nCalculo * ( cPedPrvL )->nDtoLin / 100
-
-
-      if nVdv != 0
-         nCalculo       := nCalculo / nVdv
-      end if
-
-      if nRou != nil
-         nCalculo       := Round( nCalculo, nRou )
-      end if
-
-   end if
-
-RETURN ( nCalculo ) 
-
-//---------------------------------------------------------------------------//
-/*
-Devuelve el importe de descuento porcentual en promociones por cada linea------
-*/
-
-FUNCTION nPrmLPedPrv( cPedPrvL, nDec, nRou, nVdv )
-
-   local nCalculo       := 0
-
-   DEFAULT cPedPrvL     := dbfPedPrvL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
-   DEFAULT nVdv         := 1
-
-   if ( cPedPrvL )->nDtoPrm != 0 
-
-      nCalculo          := nTotUPedPrv( cPedPrvL, nDec ) * nTotNPedPrv( cPedPrvL )
-
-      /*
-      Descuentos---------------------------------------------------------------
-      */
-
-      if ( cPedPrvL )->nDtoLin != 0 
-         nCalculo       -= nCalculo * ( cPedPrvL )->nDtoLin / 100
-      end if
-
-      nCalculo          := nCalculo * ( cPedPrvL )->nDtoPrm / 100
-
-      if nVdv != 0
-         nCalculo       := nCalculo / nVdv
-      end if
-
-      if nRou != nil
-         nCalculo       := Round( nCalculo, nRou )
-      end if
-
-   end if
-
-RETURN ( nCalculo ) 
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nIvaLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
-
-   local nCalculo
-
-   DEFAULT uPedPrvL  := dbfPedPrvL
-   DEFAULT nDec      := nDinDiv()
-   DEFAULT nRec      := nRinDiv()
-   DEFAULT nVdv      := 1
-
-   nCalculo          := nTotLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
-
-   nCalculo          := Round( nCalculo * ( uPedPrvL )->nIva / 100, nRec )
-
-RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nImpLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, lIva, cPouDiv )
-
-   local nCalculo
-
-   DEFAULT uPedPrvT  := dbfPedPrvT
-   DEFAULT uPedPrvL  := dbfPedPrvL
-   DEFAULT nDec      := nDinDiv()
-   DEFAULT nRec      := nRinDiv()
-   DEFAULT nVdv      := 1
-   DEFAULT lIva      := .f.
-
-   nCalculo          := nTotLPedPrv( uPedPrvL, nDec, nRec, nVdv )
-
-   if ValType( uPedPrvT ) == "A"
-      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDTOESP ]  / 100, nRec )
-      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDPP    ]  / 100, nRec )
-      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDTOUNO ]  / 100, nRec )
-      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDTODOS ]  / 100, nRec )
-   else
-      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDtoEsp / 100, nRec )
-      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDpp    / 100, nRec )
-      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDtoUno / 100, nRec )
-      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDtoDos / 100, nRec )
-   end if
-
-   if lIva .and. ( dbfPedPrvL )->nIva != 0
-      nCalculo    += nCalculo * ( uPedPrvL )->nIva / 100
-   end if
-
-RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION nBrtLPedPrv( uTmpLin, nDec, nRec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT nDec      := 2
-   DEFAULT nVdv      := 1
-
-   nCalculo          := nTotUPedPrv( uTmpLin, nDec, nVdv, cPorDiv )
-   nCalculo          *= nTotNPedPrv( uTmpLin )
-
-   nCalculo          := Round( nCalculo / nVdv, nRec )
-
-Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
-
-   local oldPedPrvT
-   local oldPedPrvL
-   local oldPedPrvI
-   local oldPedPrvD
-
-   DEFAULT lAppend   := .f.
-   DEFAULT bFor      := {|| .t. }
-
-   if oMeter != NIL
-      oMeter:cText   := "Generando bases"
-      SysRefresh()
-   end if
-
-   CreateFiles( cPath )
-
-   rxPedPrv( cPath, oMeter )
-
-   IF lAppend .and. lIsDir( cPathOld )
-
-      dbUseArea( .t., cDriver(), cPath + "PedPROVT.DBF", cCheckArea( "PedPROVT", @dbfPedPrvT ), .f. )
-      if !( dbfPedPrvT )->( neterr() )
-            ordListAdd( cPath + "PedPROVT.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPath + "PedPROVL.DBF", cCheckArea( "PedPROVL", @dbfPedPrvL ), .f. )
-      if !( dbfPedPrvL )->( neterr() )
-            ordListAdd( cPath + "PedPROVL.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPrvI", @dbfPedPrvI ), .f. )
-      if !( dbfPedPrvI )->( neterr() )
-            ( dbfPedPrvI )->( ordListAdd( cPath + "PedPrvI.Cdx" ) )
-      end if
-
-      dbUseArea( .t., cDriver(), cPath + "PedPrvD.Dbf", cCheckArea( "PedPrvD", @dbfPedPrvD ), .f. )
-      if !( dbfPedPrvD)->( neterr() )
-            ( dbfPedPrvD )->( ordListAdd( cPath + "PedPrvD.Cdx" ) )
-      end if
-
-      dbUseArea( .t., cDriver(), cPathOld + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @oldPedPrvT ), .f. )
-      if !( oldPedPrvT )->( neterr() )
-            ordListAdd( cPathOld + "PEDPROVT.CDX"  )
-      end if
-
-       dbUseArea( .t., cDriver(), cPathOld + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @oldPedPrvL ), .f. )
-      if !( oldPedPrvL )->( neterr() )
-            ordListAdd( cPathOld + "PEDPROVL.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPathOld + "PEDPRVI.DBF", cCheckArea( "PEDPRVI", @oldPedPrvI ), .f. )
-      if !( oldPedPrvI )->( neterr() )
-            ( oldPedPrvI )->( ordListAdd( cPathOld + "PEDPRVI.CDX" ) )
-      end if
-
-      dbUseArea( .t., cDriver(), cPathOld + "PEDPRVD.DBF", cCheckArea( "PEDPRVD", @oldPedPrvD ), .f. )
-      if !( dbfPedPrvD)->( neterr() )
-            ( oldPedPrvD )->( ordListAdd( cPathOld + "PEDPRVD.CDX" ) )
-      end if
-
-      while !( oldPedPrvT )->( eof() )
-
-         if eval( bFor, oldPedPrvT )
-            dbCopy( oldPedPrvT, dbfPedPrvT, .t. )
-
-            if ( dbfPedPrvT )->( dbRLock() )
-               ( dbfPedPrvT )->cTurPed    := Padl( "1", 6 )
-               ( dbfPedPrvT )->( dbRUnlock() )
-            end if
-
-            if ( oldPedPrvL )->( dbSeek( (oldPedPrvT)->CSERPED + Str( (oldPedPrvT)->nNumPed ) + (oldPedPrvT)->cSufPed ) )
-               while (oldPedPrvT)->CSERPED + Str( (oldPedPrvL)->nNumPed ) + (oldPedPrvL)->cSufPed == (oldPedPrvT)->CSERPED + Str( (dbfPedPrvT)->nNumPed ) + (dbfPedPrvT)->cSufPed .and. !(oldPedPrvL)->( eof() )
-                  dbCopy( oldPedPrvL, dbfPedPrvL, .t. )
-                  ( oldPedPrvL )->( dbSkip() )
-               end while
-            end if
-
-            if ( oldPedPrvI )->( dbSeek( ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed ) )
-               while ( oldPedPrvI )->cSerPed + Str( ( oldPedPrvI )->nNumPed ) + ( oldPedPrvI )->cSufPed == ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed .and. !( oldPedPrvI )->( eof() )
-                  dbCopy( oldPedPrvI, dbfPedPrvI, .t. )
-                  ( oldPedPrvI )->( dbSkip() )
-               end while
-            end if
-
-            if ( oldPedPrvD )->( dbSeek( ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed ) )
-               while ( oldPedPrvD )->cSerPed + Str( ( oldPedPrvD )->nNumPed ) + ( oldPedPrvD )->cSufPed == ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed .and. !( oldPedPrvD )->( eof() )
-                  dbCopy( oldPedPrvD, dbfPedPrvD, .t. )
-                  ( oldPedPrvD )->( dbSkip() )
-               end while
-            end if
-
-         end if
-
-         ( oldPedPrvT )->( dbSkip() )
-
-      end while
-
-      ( dbfPedPrvT )->( dbCloseArea() )
-      ( dbfPedPrvL )->( dbCloseArea() )
-      ( dbfPedPrvI )->( dbCloseArea() )
-      ( dbfPedPrvD )->( dbCloseArea() )
-
-      ( oldPedPrvT )->( dbCloseArea() )
-      ( oldPedPrvL )->( dbCloseArea() )
-      ( oldPedPrvI )->( dbCloseArea() )
-      ( oldPedPrvD )->( dbCloseArea() )
-
-   end if
-
-Return nil
-
-//--------------------------------------------------------------------------//
-
-FUNCTION rxPedPrv( cPath, oMeter )
-
-	local dbfPedPrvT
-
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "PEDPROVT.DBF" ) .or. ;
-      !lExistTable( cPath + "PEDPROVL.DBF" ) .or. ;
-      !lExistTable( cPath + "PEDPRVI.DBF" )  .or. ;
-      !lExistTable( cPath + "PEDPRVD.DBF" )
-      CreateFiles( cPath )
-   end if
-
-	/*
-	Eliminamos los indices
-	*/
-
-   fEraseIndex( cPath + "PEDPROVT.CDX" )
-   fEraseIndex( cPath + "PEDPROVL.CDX" )
-   fEraseIndex( cPath + "PEDPRVI.CDX" )
-   fEraseIndex( cPath + "PEDPRVD.CDX" )
-
-   dbUseArea( .t., cDriver(), cPath + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @dbfPedPrvT ), .f. )
-   if !( dbfPedPrvT )->( neterr() )
-      ( dbfPedPrvT)->( __dbPack() )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "DFECPED", "DFECPED", {|| Field->DFECPED } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "DFECENT", "DFECENT", {|| Field->DFECENT } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
-
-
-      /*
-      Ordenes fechados---------------------------------------------------------
-      */
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "nNumPedYea", "Str( Year( dFecPed ) ) + CSERPED + STR( NNUMPED ) + CSUFPED", {|| Str( Year( Field->dFecPed ) ) + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "dFecPedYea", "Str( Year( dFecPed ) ) + Dtoc( DFECPED )", {|| Str( Year( Field->dFecPed ) ) + Dtoc( Field->DFECPED ) } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "dFecEntYea", "Str( Year( dFecPed ) ) + Dtoc( DFECENT )", {|| Str( Year( Field->dFecPed ) ) + Dtoc( Field->DFECENT ) } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "cCodPrvYea", "Str( Year( dFecPed ) ) + CCODPRV", {|| Str( Year( Field->dFecPed ) ) + Field->CCODPRV } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "cNomPrvYea", "Str( Year( dFecPed ) ) + Upper( CNOMPRV )", {|| Str( Year( Field->dFecPed ) ) + Upper( Field->CNOMPRV ) } ) )
-
-      /*
-      Otros ordenes------------------------------------------------------------
-      */
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "NESTADO", "NESTADO", {|| Field->NESTADO } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PedProvT.CDX", "cTurPed", "cTurPed + cSufPed + cCodCaj", {|| Field->cTurPed + Field->cSufPed + Field->cCodCaj } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cPedCli", "cNumPedCli", {|| Field->cNumPedCli } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecChg ) + cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "iNumPed", "'01' + CSERPED + STR( NNUMPED ) + CSUFPED", {|| '01' + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @dbfPedPrvT ), .f. )
-   if !( dbfPedPrvT )->( neterr() )
-      ( dbfPedPrvT)->( __dbPack() )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "nNumPed", "cSerPed + Str( nNumPed ) + cSufPed", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRef", "cRef", {|| Field->cRef }, ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliRef", "cPedCli + cRef + cValPr1 + cValPr2", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
-
-      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliDet", "cPedCli + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
-
-      ( dbfPedPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "PedPrvI.DBF", cCheckArea( "PedPrvI", @dbfPedPrvT ), .f. )
-   if !( dbfPedPrvT )->( neterr() )
-      ( dbfPedPrvT )->( __dbPack() )
-
-      ( dbfPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT )->( ordCreate( cPath + "PedPrvI.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "PedPrvD.DBF", cCheckArea( "PedPrvD", @dbfPedPrvT ), .f. )
-   if !( dbfPedPrvT )->( neterr() )
-      ( dbfPedPrvT )->( __dbPack() )
-
-      ( dbfPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPedPrvT )->( ordCreate( cPath + "PedPrvD.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
-
-      ( dbfPedPrvT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
-   end if
-
-Return nil
-
-//--------------------------------------------------------------------------//
 
 STATIC FUNCTION BeginTrans( aTmp, nMode )
 
@@ -5645,7 +4554,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       if ( dbfPedPrvL )->( dbSeek( nPedido ) )
 
-         do while ( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed == nPedido )
+         while ( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed == nPedido .and. ( dbfPedPrvL )->( !eof() ) )
 
             dbPass( dbfPedPrvL, dbfTmpLin, .t. )
 
@@ -5705,38 +4614,6 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ErrorBlock( oBlock )
 
 RETURN ( lErrors )
-
-//---------------------------------------------------------------------------//
-
-function aIncPedPrv()
-
-   local aIncPedPrv  := {}
-
-   aAdd( aIncPedPrv, { "cSerPed", "C",    1,  0, "Serie de pedido" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "nNumPed", "N",    9,  0, "Número de pedido" ,                "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aIncPedPrv, { "lAviso",  "L",    1,  0, "Lógico de Aviso" ,                 "",                   "", "( cDbfCol )" } )
-
-return ( aIncPedPrv )
-
-//---------------------------------------------------------------------------//
-
-function aPedPrvDoc()
-
-   local aPedPrvDoc  := {}
-
-   aAdd( aPedPrvDoc, { "cSerPed", "C",    1,  0, "Serie de pedido" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aPedPrvDoc, { "nNumPed", "N",    9,  0, "Número de pedido" ,                "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aPedPrvDoc, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aPedPrvDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aPedPrvDoc, { "cRuta",   "M",   10,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aPedPrvDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
-
-return ( aPedPrvDoc )
 
 //---------------------------------------------------------------------------//
 
@@ -5806,7 +4683,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nPedido           := nNewDoc( cSerie, dbfPedPrvT, "NPEDPRV", , dbfCount )
+      nPedido           := nNewDoc( cSerie, TDataView():PedidosProveedores( nView ), "NPEDPRV", , dbfCount )
       aTmp[ _NNUMPED ]  := nPedido
 
    case nMode == EDIT_MODE
@@ -5911,7 +4788,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    Salvamos el registro del pedido
    */
 
-   WinGather( aTmp, , dbfPedPrvT, oBrw, nMode )
+   WinGather( aTmp, , TDataView():PedidosProveedores( nView ), oBrw, nMode )
 
    /*
    Ponemos el pedido en su estado
@@ -6019,41 +4896,41 @@ STATIC FUNCTION ChgState( oBrw )
       Cambia el estado del pedido----------------------------------------------
       */
 
-      /*if dbLock( dbfPedPrvT )
+      /*if dbLock( TDataView():PedidosProveedores( nView ) )
 
-         if ( dbfPedPrvT )->nEstado == 1
-            ( dbfPedPrvT )->nEstado := 3
+         if ( TDataView():PedidosProveedores( nView ) )->nEstado == 1
+            ( TDataView():PedidosProveedores( nView ) )->nEstado := 3
          else
-            ( dbfPedPrvT )->nEstado := 1
+            ( TDataView():PedidosProveedores( nView ) )->nEstado := 1
          end if
 
-         ( dbfPedPrvT )->( dbUnlock() )
+         ( TDataView():PedidosProveedores( nView ) )->( dbUnlock() )
 
       end if*/
 
       for each nRec in ( oBrw:aSelected )
 
-         ( dbfPedPrvT )->( dbGoTo( nRec ) )
+         ( TDataView():PedidosProveedores( nView ) )->( dbGoTo( nRec ) )
 
          lQuit                         := .f.
 
-         cNumPed                       := ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT  )->cSufPed
+         cNumPed                       := ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView )  )->cSufPed
 
          /*
          Cambiamos el estado---------------------------------------------------
          */
 
-         if dbLock( dbfPedPrvT )
+         if dbLock( TDataView():PedidosProveedores( nView ) )
 
-            if ( dbfPedPrvT )->nEstado == 1
-               ( dbfPedPrvT )->nEstado := 3
+            if ( TDataView():PedidosProveedores( nView ) )->nEstado == 1
+               ( TDataView():PedidosProveedores( nView ) )->nEstado := 3
             else
                lQuit                   := .t.
-               ( dbfPedPrvT )->nEstado := 1
-               ( dbfPedPrvT )->cNumAlb := ""
+               ( TDataView():PedidosProveedores( nView ) )->nEstado := 1
+               ( TDataView():PedidosProveedores( nView ) )->cNumAlb := ""
             end if
 
-            ( dbfPedPrvT )->( dbRUnlock() )
+            ( TDataView():PedidosProveedores( nView ) )->( dbRUnlock() )
 
          end if
 
@@ -6126,35 +5003,6 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
-FUNCTION lSnd( oWndBrw, dbf )
-
-   local nRecAct
-   local nRecOld           := ( dbf )->( Recno() )
-
-   for each nRecAct in ( oWndBrw:oBrw:aSelected )
-
-      ( dbf )->( dbGoTo( nRecAct ) )
-
-      if dbDialogLock( dbf )
-
-         ( dbf )->lSndDoc  := !( dbf )->lSndDoc
-
-         ( dbf )->( dbUnlock() )
-
-      end if
-
-   next
-
-   ( dbf )->( dbGoTo( nRecOld ) )
-
-    oWndBrw:Refresh()
-
-    oWndBrw:SetFocus()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Static Function lNotOpen()
 
    if NetErr()
@@ -6166,258 +5014,6 @@ Static Function lNotOpen()
 return .f.
 
 //---------------------------------------------------------------------------//
-
-Function AppPedPrv( cCodPrv, cCodArt, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if PedPrv( nil, nil, cCodPrv, cCodArt )
-         oWndBrw:RecAdd()
-      end if
-
-   else
-
-      if OpenFiles( .t. )
-         WinAppRec( nil, bEdtRec, dbfPedPrvT, cCodPrv, cCodArt )
-         CloseFiles()
-      end if
-
-   end if
-
-RETURN .t.
-
-//----------------------------------------------------------------------------//
-
-FUNCTION EdtPedPrv( nNumPed, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if PedPrv()
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            oWndBrw:RecEdit()
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( .t. )
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            WinEdtRec( nil, bEdtRec, dbfPedPrvT )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-         CloseFiles()
-      end if
-
-   end if
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-FUNCTION ZooPedPrv( nNumPed, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if PedPrv()
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            oWndBrw:RecZoom()
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( .t. )
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            WinZooRec( nil, bEdtRec, dbfPedPrvT )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-         CloseFiles()
-      end if
-
-   end if
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-FUNCTION DelPedPrv( nNumPed, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if PedPrv()
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            WinDelRec( nil, dbfPedPrvT, {|| QuiPedPrv() } )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( .t. )
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            WinDelRec( nil, dbfPedPrvT, {|| QuiPedPrv() } )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-         CloseFiles()
-      end if
-
-   end if
-
-Return nil
-
-//----------------------------------------------------------------------------//
-
-FUNCTION PrnPedPrv( nNumPed, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if PedPrv()
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            GenPedPrv( IS_PRINTER )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( .t. )
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            GenPedPrv( IS_PRINTER )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-         CloseFiles()
-      end if
-
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-FUNCTION VisPedPrv( nNumPed, lOpenBrowse )
-
-   local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   DEFAULT lOpenBrowse  := .f.
-
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
-      msgStop( 'Acceso no permitido.' )
-      return .t.
-   end if
-
-   if lOpenBrowse
-
-      if PedPrv()
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            GenPedPrv( IS_SCREEN )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-      end if
-
-   else
-
-      if OpenFiles( .t. )
-         if dbSeekInOrd( nNumPed, "nNumPed", dbfPedPrvT )
-            GenPedPrv( IS_SCREEN )
-         else
-            MsgStop( "No se encuentra pedido" )
-         end if
-         CloseFiles()
-      end if
-
-   end if
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-function nVtaPedPrv( cCodPrv, dDesde, dHasta, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv )
-
-   local nCon     := 0
-   local nRec     := ( dbfPedPrvT )->( Recno() )
-
-   /*
-   Facturas a Clientes -------------------------------------------------------
-   */
-
-   if ( dbfPedPrvT )->( dbSeek( cCodPrv ) )
-
-      while ( dbfPedPrvT )->cCodPrv == cCodPrv .and. !( dbfPedPrvT )->( Eof() )
-
-         if ( dDesde == nil .or. ( dbfPedPrvT )->dFecPed >= dDesde )    .and.;
-            ( dHasta == nil .or. ( dbfPedPrvT )->dFecPed <= dHasta )
-
-            nCon  += nTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
-
-         end if
-
-         ( dbfPedPrvT )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfPedPrvT )->( dbGoTo( nRec ) )
-
-return nCon
-
-//----------------------------------------------------------------------------//
 
 static function lGenPed( oBrw, oBtn, nDevice )
 
@@ -6477,127 +5073,20 @@ return bGen
 
 //---------------------------------------------------------------------------//
 
-FUNCTION aDocPedPrv( dbfDocFld, dbfDocCol )
-
-   local aDoc  := {}
-
-   /*
-   Itmes-----------------------------------------------------------------------
-   */
-
-   aAdd( aDoc, { "Empresa",         "EM" } )
-   aAdd( aDoc, { "Pedido",          "PP" } )
-   aAdd( aDoc, { "Proveedor",       "PR" } )
-   aAdd( aDoc, { "Almacen",         "AL" } )
-   aAdd( aDoc, { "Divisas",         "DV" } )
-   aAdd( aDoc, { "Formas de pago",  "PG" } )
-
-RETURN ( aDoc )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION dFecPedPrv( cPedPrv, dbfPedPrvT )
-
-   local dFecPed  := CtoD("")
-
-   IF ( dbfPedPrvT )->( dbSeek( cPedPrv ) )
-      dFecPed  := ( dbfPedPrvT )->dFecPed
-   END IF
-
-RETURN ( dFecPed )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nEstPedPrv( cPedPrv, dbfPedPrvT )
-
-   local nEstPed  := 1
-
-   IF ( dbfPedPrvT )->( dbSeek( cPedPrv ) )
-      nEstPed     := ( dbfPedPrvT )->nEstado
-   END IF
-
-RETURN ( nEstPed )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cNbrPedPrv( cPedPrv, dbfPedPrvT )
-
-   local cNomPrv  := ""
-
-   IF ( dbfPedPrvT )->( dbSeek( cPedPrv ) )
-      cNomPrv  := ( dbfPedPrvT )->cNomPrv
-	END IF
-
-RETURN ( cNomPrv )
-
-//---------------------------------------------------------------------------//
-
-function nTotDPedPrv( cCodArt, dbfPedPrvL, dbfPedPrvT, cCodAlm )
-
-   local nTotVta  := 0
-   local nRecno   := ( dbfPedPrvL )->( Recno() )
-
-   if ( dbfPedPrvL )->( dbSeek( cCodArt ) )
-
-      while ( dbfPedPrvL )->cRef == cCodArt .and. !( dbfPedPrvL )->( eof() )
-
-        if cCodAlm != nil
-           if cCodAlm == ( dbfPedPrvL )->cAlmLin
-              nTotVta  += nTotNPedPrv( dbfPedPrvL )
-           end if
-        else
-           nTotVta     += nTotNPedPrv( dbfPedPrvL )
-        end if
-
-        ( dbfPedPrvL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfPedPrvL )->( dbGoTo( nRecno ) )
-
-return ( nTotVta )
-
-//---------------------------------------------------------------------------//
-
-function nTotVPedPrv( cCodArt, dbfPedPrvL, nDec, nDor )
-
-   local nTotVta  := 0
-   local nRecno   := ( dbfPedPrvL )->( Recno() )
-
-   if ( dbfPedPrvL )->( dbSeek( cCodArt ) )
-
-      while ( dbfPedPrvL )->CREF == cCodArt .and. !( dbfPedPrvL )->( eof() )
-
-         nTotVta += nTotLPedPrv( dbfPedPrvL, nDec, nDor )
-
-         ( dbfPedPrvL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfPedPrvL )->( dbGoTo( nRecno ) )
-
-return ( nTotVta )
-
-//---------------------------------------------------------------------------//
-
 STATIC FUNCTION QuiPedPrv( lDetail )
 
    local cPedido
 
    DEFAULT lDetail   := .t.
 
-   if ( dbfPedPrvT )->lCloPed .and. !oUser():lAdministrador()
+   if ( TDataView():PedidosProveedores( nView ) )->lCloPed .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar los pedidos cerrados los administradores." )
       Return .f.
    end if
 
    CursorWait()
 
-   cPedido           := ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed
+   cPedido           := ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed
 
    if lDetail
       DelDetalle( cPedido )
@@ -6607,8 +5096,8 @@ STATIC FUNCTION QuiPedPrv( lDetail )
    Actualizamos el estado del campo generado-----------------------------------
    */
 
-   if !Empty( ( dbfPedPrvT )->cNumPedCli )
-      oStock:SetGeneradoPedCli( ( dbfPedPrvT )->cNumPedCli )
+   if !Empty( ( TDataView():PedidosProveedores( nView ) )->cNumPedCli )
+      oStock:SetGeneradoPedCli( ( TDataView():PedidosProveedores( nView ) )->cNumPedCli )
    end if
 
    CursorWe()
@@ -6621,7 +5110,7 @@ Static Function DelDetalle( cPedido )
 
    local nOrdAnt
 
-   DEFAULT cPedido  := ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed
+   DEFAULT cPedido  := ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed
 
    CursorWait()
 
@@ -6656,363 +5145,6 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function aItmPedPrv()
-
-   local aBase := {  { "cSerPed",   "C",  1,   0, "Serie del pedido",            "",                   "", "( cDbf )"},;
-                     { "nNumPed",   "N",  9,   0, "Número del pedido",           "'999999999'",        "", "( cDbf )"},;
-                     { "cSufPed",   "C",  2,   0, "Sufijo del pedido",           "",                   "", "( cDbf )"},;
-                     { "cTurPed",   "C",  6,   0, "Sesión del pedido",           "",                   "", "( cDbf )"},;
-                     { "dFecPed",   "D",  8,   0, "Fecha del pedido",            "",                   "", "( cDbf )"},;
-                     { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",        "",                   "", "( cDbf )"},;
-                     { "cCodAlm",   "C",  3,   0, "Código de almacen",           "",                   "", "( cDbf )"},;
-                     { "cCodCaj",   "C",  3,   0, "Código de caja",              "",                   "", "( cDbf )"},;
-                     { "cNomPrv",   "C", 35,   0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"},;
-                     { "cDirPrv",   "C", 35,   0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cPobPrv",   "C", 25,   0, "Población del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cProPrv",   "C", 20,   0, "Provincia del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cPosPrv",   "C",  5,   0, "Código postal del proveedor", "",                   "", "( cDbf )"},;
-                     { "cDniPrv",   "C", 30,   0, "D.N.I. del proveedor",        "",                   "", "( cDbf )"},;
-                     { "dFecEnt",   "D",  8,   0, "Fecha de entrada",            "",                   "", "( cDbf )"},;
-                     { "nEstado",   "N",  1,   0, "Estado del pedido",           "",                   "", "( cDbf )"},;
-                     { "cSuped",    "C", 10,   0, "Comentario su pedido",        "",                   "", "( cDbf )"},;
-                     { "cCodPgo",   "C",  2,   0, "Codigo de la forma de pago",  "",                   "", "( cDbf )"},;
-                     { "nBulTos",   "N",  3,   0, "Número de bultos",            "'999'",              "", "( cDbf )"},;
-                     { "nPorTes",   "N",  6,   0, "Precio de los portes",        "cPirDivPed",         "", "( cDbf )"},;
-                     { "cDtoEsp",   "C", 50,   0, "Descripción descuento especial","",                 "", "( cDbf )"},;
-                     { "nDtoEsp",   "N",  5,   2, "Descuento factura",           "'@EZ 99.99'",        "", "( cDbf )"},;
-                     { "cDpp",      "C", 50,   0, "Descripción descuento pronto pago","",              "", "( cDbf )"},;
-                     { "nDpp",      "N",  5,   2, "Descuento pronto pago",       "'@EZ 99.99'",        "", "( cDbf )"},;
-                     { "lRecargo",  "L",  1,   0, "Recargo de equivalencia",     "",                   "", "( cDbf )"},;
-                     { "cCondEnt",  "C", 20,   0, "Comentarios del pedido",      "",                   "", "( cDbf )"},;
-                     { "cExped",    "C", 20,   0, "Expedición",                  "",                   "", "( cDbf )"},;
-                     { "cObserv",   "M", 10,   0, "Observaciones",               "",                   "", "( cDbf )"},;
-                     { "cDivPed",   "C",  3,   0, "Codigo de divisa",            "",                   "", "( cDbf )"},;
-                     { "nVdvPed",   "N", 10,   4, "Valor de la divisa",          "'@EZ 999,999.9999'", "", "( cDbf )"},;
-                     { "lSndDoc",   "L",  1,   0, "Enviar documento",            "",                   "", "( cDbf )"},;
-                     { "cDtoUno",   "C", 25,   0, "Descripción de primer descuento personalizado", "", "", "( cDbf )"},;          //   26
-                     { "nDtoUno",   "N",  5,   2, "Porcentaje de primer descuento personalizado", "",  "", "( cDbf )"},;           //   27
-                     { "cDtoDos",   "C", 25,   0, "Descripción de segundo descuento personalizado","", "", "( cDbf )"},;          //   28
-                     { "nDtoDos",   "N",  5,   2, "Porcentaje de segundo descuento personalizado", "", "", "( cDbf )"},;
-                     { "lCloPed",   "L",  1,   0, "",                                              "", "", "( cDbf )"},;
-                     { "cCodUsr",   "C",  3,   0, "Código de usuario",                             "", "", "( cDbf )"},;
-                     { "cNumPedCli","C", 12,   0, "Número del pedido del cliente del que viene",   "", "", "( cDbf )"},;
-                     { "lImprimido","L",  1,   0, "Lógico de imprimido del documento",             "", "", "( cDbf )"},;
-                     { "dFecImp",   "D",  8,   0, "Última fecha de impresión del documento",       "", "", "( cDbf )"},;
-                     { "cHorImp",   "C",  5,   0, "Hora de la última impresión del documento",     "", "", "( cDbf )"},;
-                     { "dFecChg",   "D",  8,   0, "Fecha de modificación del documento",           "", "", "( cDbf )"},;
-                     { "cTimChg",   "C",  5,   0, "Hora de modificación del documento",            "", "", "( cDbf )"},;
-                     { "cCodDlg",   "C",  2,   0, "Código delegación",                             "", "", "( cDbf )"},;
-                     { "cSituac",   "C", 20,   0, "Situación del documento",                       "", "", "( cDbf )"},;
-                     { "nRegIva",   "N",  1,   0, "Regimen de " + cImp(),                          "", "", "( cDbf )"},;
-                     { "nTotNet",   "N", 16,   6, "Total neto",                                    "", "", "( cDbf )"},;
-                     { "nTotIva",   "N", 16,   6, "Total " + cImp(),                               "", "", "( cDbf )"},;
-                     { "nTotReq",   "N", 16,   6, "Total recargo equivalencia",                    "", "", "( cDbf )"},;
-                     { "nTotPed",   "N", 16,   6, "Total pedido",                                  "", "", "( cDbf )"},;
-                     { "cNumAlb",   "C", 12,   0, "Númeo del albarán en el se ha agrupado",        "", "", "( cDbf )"},;
-                     { "lRECC",     "L",  1,   0, "Lógico régimen especial del criterio de caja",  "", "", "( cDbf )"} }
-
-return ( aBase )
-
-//---------------------------------------------------------------------------//
-
-function aCalPedPrv()
-
-   local aCalPedPrv  := {  { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPirDivPed",  "!Empty( aTotIva[1,1] ) .and. lEnd" },;
-                           { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPirDivPed",  "!Empty( aTotIva[2,1] ) .and. lEnd" },;
-                           { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPirDivPed",  "!Empty( aTotIva[3,1] ) .and. lEnd" },;
-                           { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPirDivPed",  "!Empty( aTotIva[1,2] ) .and. lEnd" },;
-                           { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPirDivPed",  "!Empty( aTotIva[2,2] ) .and. lEnd" },;
-                           { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPirDivPed",  "!Empty( aTotIva[3,2] ) .and. lEnd" },;
-                           { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "!Empty( aTotIva[1,3] ) .and. lEnd" },;
-                           { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "!Empty( aTotIva[2,3] ) .and. lEnd" },;
-                           { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "!Empty( aTotIva[3,3] ) .and. lEnd" },;
-                           { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "!Empty( aTotIva[1,4] ) .and. lEnd" },;
-                           { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "!Empty( aTotIva[2,4] ) .and. lEnd" },;
-                           { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "!Empty( aTotIva[3,4] ) .and. lEnd" },;
-                           { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDinDivPed )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPinDivPed",  "!Empty( aTotIva[1,2] ) .and. lEnd" },;
-                           { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDinDivPed )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPinDivPed",  "!Empty( aTotIva[2,2] ) .and. lEnd" },;
-                           { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDinDivPed )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPinDivPed",  "!Empty( aTotIva[3,2] ) .and. lEnd" },;
-                           { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDinDivPed )",    "N", 16,  6, "Importe primer RE",           "cPinDivPed",  "!Empty( aTotIva[1,2] ) .and. lEnd" },;
-                           { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDinDivPed )",    "N", 16,  6, "Importe segundo RE",          "cPinDivPed",  "!Empty( aTotIva[2,2] ) .and. lEnd" },;
-                           { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDinDivPed )",    "N", 16,  6, "Importe tercer RE",           "cPinDivPed",  "!Empty( aTotIva[3,2] ) .and. lEnd" },;
-                           { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPirDivPed",  "lEnd" },;
-                           { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPirDivPed",  "lEnd" },;
-                           { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPirDivPed",  "lEnd" },;
-                           { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPirDivPed",  "lEnd" },;
-                           { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),                   "cPirDivPed",  "lEnd" },;
-                           { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPirDivPed",  "lEnd" },;
-                           { "nTotPed",                                                   "N", 16,  6, "Total pedido",                "cPirDivPed",  "lEnd" },;
-                           { "nImpEuros( nTotPed, (cDbf)->CDIVPED, cDbfDiv )",            "N", 16,  6, "Total pedido (Euros)",        "",            "lEnd" },;
-                           { "nImpPesetas( nTotPed, (cDbf)->CDIVPED, cDbfDiv )",          "N", 16,  6, "Total pedido (Pesetas)",      "",            "lEnd" },;
-                           { "nPagina",                                                   "N",  2,  0, "Número de página",            "'99'",        "" },;
-                           { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" } }
-
-return ( aCalPedPrv )
-
-//---------------------------------------------------------------------------//
-
-function aColPedPrv()
-
-   local aColPedPrv  := {}
-
-   aAdd( aColPedPrv,  { "CSERPED", "C",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NNUMPED", "N",  9,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CSUFPED", "C",  2,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CREF",    "C", 18,   0, "Referencia del artículo",          "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CREFPRV", "C", 18,   0, "Referencia del proveedor",         "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CDETALLE","C",250,   0, "Nombre del artículo",              "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NIVA",    "N",  6,   2, "Porcentaje de " + cImp(),                "'@E 99.9'",         "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NCANPED", "N", 16,   6, "Cantidad pedida",                  "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NUNICAJA","N", 16,   6, "Unidades por caja",                "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NPREDIV", "N", 16,   6, "Precio",                           "cPirDivPed",        "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NCANENT", "N", 16,   6, "Cajas recibidas",                  "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NUNIENT", "N", 16,   6, "Unidades recibidas",               "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CUNIDAD", "C",  2,   0, cNombreUnidades(),                  "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "MLNGDES", "M", 10,   0, "Descripción larga",                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NDTOLIN", "N",  6,   2, "Descuento en lineas",              "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NDTOPRM", "N",  6,   2, "Descuento pormociones",            "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NDTORAP", "N",  6,   2, "Descuento por rappels",            "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CCODPR1", "C", 20,   0, "Código de la primera propiedad",   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CCODPR2", "C", 20,   0, "Código de la segunda propiedad",   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CVALPR1", "C", 20,   0, "Valor de la primera propiedad",    "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CVALPR2", "C", 20,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NFACCNV", "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NCTLSTK", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CALMLIN" ,"C",  3,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LLOTE",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NLOTE",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
-   aAdd( aColPedPrv,  { "CLOTE",   "C", 12,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NNUMLIN", "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NUNDKIT", "N", 16,   6, "Unidades del producto kit",        "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LKITART", "L",  1,   0, "Línea con escandallo",             "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LKITCHL", "L",  1,   0, "Línea pertenciente a escandallo",  "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LKITPRC", "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LIMPLIN", "L",  1,   0, "Imprimir linea",                   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LCONTROL","L",  1,   0, "" ,                                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "MNUMSER", "M", 10,   0, "" ,                                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "LANULADO","L",  1,   0, "Anular linea",                     "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "DANULADO","D",  8,   0, "Fecha de anulacion",               "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "MANULADO","M",100,   0, "Motivo anulacion",                 "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CCODFAM", "C", 16,   0, "Código de familia",                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CGRPFAM", "C",  3,   0, "Código del grupo de familia",      "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "NREQ",    "N", 16,   6, "Recargo de equivalencia",          "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "MOBSLIN", "M", 10,   6, "Observaciones de la linea",        "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CPEDCLI", "C", 12,   0, "Número del pedido del cliente del que viene",  "",      "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nPvpRec", "N", 16,   6, "Precio de venta recomendado",      "cPirDivPed",        "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nNumMed", "N",  1,   0, "Número de mediciones",             "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nMedUno", "N", 16,   6, "Primera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nMedDos", "N", 16,   6, "Segunda unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nMedTre", "N", 16,   6, "Tercera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nStkAct", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nStkMin", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nPdtRec", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConRea", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConSem", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConQui", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nConMes", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
-
-return ( aColPedPrv )
-
-//---------------------------------------------------------------------------//
-
-function aCocPedPrv()
-
-   local aCocPedPrv  := {  { "Descrip( cDbfCol )",                                           "C", 50, 0, "Detalle del artículo",       "",            "Descripción", "" },;
-                           { "nTotNPedPrv( cDbfCol )",                                       "N", 16, 6, "Total unidades",             "cPicUndPed",  cNombreUnidades(),    "" },;
-                           { "nTotUPedPrv( cDbfCol, nDinDivPed, nVdvDivPed )",               "N", 16, 6, "Precio unitario de pedido",  "cPinDivPed",  "Precio",      "" },;
-                           { "nTotLPedPrv( cDbfCol, nDinDivPed, nDirDivPed, nVdvDivPed )",   "N", 16, 6, "Total linea de pedido",      "cPirDivPed",  "Total",       "" } }
-
-return ( aCocPedPrv )
-
-//---------------------------------------------------------------------------//
-
-Static Function nClrText( dbfTmpLin )
-
-Return ( if ( ( dbfTmpLin )->lKitChl, CLR_GRAY, CLR_BLACK ) )
-
-//----------------------------------------------------------------------------//
-
-Function EdtNumSer( mNumSer, nTotUnd, nMode )
-
-   local oDlg
-   local oBrwSer
-   local oProSer
-   local nProSer
-   local aNumSer
-   local cPreFix  := Space( 18 )
-   local oSerIni
-   local nSerIni  := 0
-   local oSerFin
-   local nSerFin  := 0
-   local oNumGen
-   local nNumGen  := 0
-
-   if nTotUnd == 0
-      MsgStop( "No hay unidades para asignar números de serie." )
-      Return ( mNumSer )
-   end if
-
-   DEFAULT nMode  := APPD_MODE
-
-   nTotUnd        := abs( nTotUnd )
-   aNumSer        := Afill( Array( nTotUnd ), Space( 30 ) )
-
-   if nMode != APPD_MODE
-      aMem2Ser( mNumSer, nTotUnd )
-   end if
-
-   DEFINE DIALOG oDlg RESOURCE "VtaNumSer"
-
-      REDEFINE GET nTotUnd ;
-			ID 		100 ;
-         PICTURE  MasUnd() ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET cPreFix ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET oSerIni VAR nSerIni ;
-         ID       120 ;
-         PICTURE  "99999999999999999999" ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oSerFin:cText( nSerIni + nTotUnd ), .t. ) ;
-         OF       oDlg
-
-      REDEFINE GET oSerFin VAR nSerFin ;
-         ID       130 ;
-         PICTURE  "99999999999999999999" ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET oNumGen VAR nNumGen ;
-         ID       140 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "99999999999999999999" ;
-         OF       oDlg
-
-      REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer ) )
-
-      oBrwSer                 := TXBrowse():New( oDlg )
-
-      oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwSer:lHScroll        := .f.
-      oBrwSer:lRecordSelector := .t.
-      oBrwSer:lFastEdit       := .t.
-
-      oBrwSer:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
-
-      oBrwSer:SetArray( aNumSer, , , .f. )
-
-      oBrwSer:nColSel         := 2
-
-      with object ( oBrwSer:addCol() )
-         :cHeader       := "N."
-         :bStrData      := {|| Trans( oBrwSer:nArrayAt, "999999999" ) }
-         :nWidth        := 60
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-      end with
-
-      with object ( oBrwSer:addCol() )
-         :cHeader       := "Serie"
-         :bEditValue    := {|| aNumSer[ oBrwSer:nArrayAt ] }
-         :nWidth        := 240
-         :nEditType     := 1
-         :bOnPostEdit   := {|o,x| aNumSer[ oBrwSer:nArrayAt ] := x }
-      end with
-
-      oBrwSer:CreateFromResource( 150 )
-
-      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      REDEFINE BUTTON ;
-         ID       510 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( mNumSer   := mSer2Mem( aNumSer, nTotUnd ), oDlg:End() )
-
-      REDEFINE BUTTON ;
-         ID       520 ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
-
-      oDlg:AddFastKey( VK_F5, {|| mNumSer := mSer2Mem( aNumSer, nTotUnd ), oDlg:End() } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-Return ( mNumSer )
-
-//----------------------------------------------------------------------------//
-
-Function GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer )
-
-   local n
-   local nChg  := 1
-
-   CursorWait()
-
-   if Empty( nNumGen )
-      aEval( aNumSer, {| a, n | aNumSer[ n ] := Padr( Rtrim( cPreFix ) + Ltrim( Str( nSerIni + n - 1 ) ), 30 ) } )
-   else
-      for n := 1 to len( aNumSer )
-         if Empty( aNumSer[ n ] )
-            aNumSer[ n ]                     := Padr( Rtrim( cPreFix ) + Ltrim( Str( nSerIni + nChg - 1 ) ), 30 )
-            nChg++
-         end if
-         if nChg == nNumGen
-            exit
-         end if
-      next
-   end if
-
-   CursorWE()
-
-   if !Empty( oBrwSer )
-      oBrwSer:Refresh()
-   end if
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function aMem2Ser( mNumSer, nTotUnd )
-
-   local n
-   local nPosSer
-   local aMemSer
-
-   CursorWait()
-
-   aMemSer           := Afill( Array( nTotUnd ), Space( 40 ) )
-
-   for n := 1 to nTotUnd
-
-      nPosSer        := At( ",", mNumSer )
-      if nPosSer != 0
-         aMemSer[ n ]:= Padr( SubStr( mNumSer, 1, nPosSer - 1 ), 40 )
-         mNumSer     := SubStr( mNumSer, nPosSer + 1 )
-      end if
-   next
-
-   CursorWE()
-
-Return ( aMemSer )
-
-//----------------------------------------------------------------------------//
-
 Static Function mSer2Mem( aNumSer, nTotUnd )
 
    local n
@@ -7025,502 +5157,6 @@ Static Function mSer2Mem( aNumSer, nTotUnd )
 Return ( mNumSer )
 
 //---------------------------------------------------------------------------//
-
-Function SynPedPrv( cPath )
-
-   local oError
-   local oBlock      
-   local aTotPed
-   local nEstado
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   dbUseArea( .t., cDriver(), cPath + "PedPROVT.DBF", cCheckArea( "PedPROVT", @dbfPedPrvT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PedPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "PedPROVL.DBF", cCheckArea( "PedPROVL", @dbfPedPrvL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PedPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPath + "PedPRVI.DBF", cCheckArea( "PedPRVI", @dbfPedPrvI ), .f. )
-   if !lAIS(); ordListAdd( cPath + "PedPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
-   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
-   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   ( dbfPedPrvT )->( OrdSetFocus( 0 ) )
-   ( dbfPedPrvT )->( dbGoTop() )
-
-   while !( dbfPedPrvT )->( eof() )
-
-      if Empty( ( dbfPedPrvT )->cSufPed )
-         ( dbfPedPrvT )->cSufPed    := "00"
-      end if
-
-      if Empty( ( dbfPedPrvT )->cCodCaj )
-         ( dbfPedPrvT )->cCodCaj    := "000"
-      end if
-
-      if !Empty( ( dbfPedPrvT )->cNumPedCli ) .and. Len( AllTrim( ( dbfPedPrvT )->cNumPedCli ) ) != 12
-         ( dbfPedPrvT )->cNumPedCli := AllTrim( ( dbfPedPrvT )->cNumPedCli ) + "00"
-      end if
-
-      if !Empty( ( dbfPedPrvT )->cNumAlb ) .and. Len( AllTrim( ( dbfPedPrvT )->cNumAlb ) ) != 12
-         ( dbfPedPrvT )->cNumAlb    := AllTrim( ( dbfPedPrvT )->cNumAlb ) + "00"
-      end if
-
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-      */
-
-      if ( dbfPedPrvT )->nTotPed == 0
-
-         aTotPed                    := aTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, ( dbfPedPrvT )->cDivPed )
-
-         ( dbfPedPrvT )->nTotNet    := aTotPed[1]
-         ( dbfPedPrvT )->nTotIva    := aTotPed[2]
-         ( dbfPedPrvT )->nTotReq    := aTotPed[3]
-         ( dbfPedPrvT )->nTotPed    := aTotPed[4]
-
-      end if
-
-      ( dbfPedPrvT )->( dbSkip() )
-
-   end while
-
-   ( dbfPedPrvT )->( OrdSetFocus( 1 ) )
-
-   // Lineas ------------------------------------------------------------------
-
-   ( dbfPedPrvL )->( OrdSetFocus( 0 ) )
-   ( dbfPedPrvL )->( dbGoTop() )
-
-   while !( dbfPedPrvL )->( eof() )
-
-      if Empty( ( dbfPedPrvL )->cSufPed )
-         ( dbfPedPrvL )->cSufPed := "00"
-      end if
-
-      if !Empty( ( dbfPedPrvL )->cPedCli ) .and. Len( AllTrim( ( dbfPedPrvL )->cPedCli ) ) != 12
-         ( dbfPedPrvL )->cPedCli := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
-      end if
-
-      if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )
-         ( dbfPedPrvL )->cLote   := AllTrim( Str( ( dbfPedPrvL )->nLote ) )
-      end if
-
-      if !Empty( ( dbfPedPrvL )->cRef ) .and. Empty( ( dbfPedPrvL )->cCodFam )
-         ( dbfPedPrvL )->cCodFam := RetFamArt( ( dbfPedPrvL )->cRef, dbfArticulo )
-      end if
-
-      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cGrpFam )
-         ( dbfPedPrvL )->cGrpFam := cGruFam( ( dbfPedPrvL )->cCodFam, dbfFamilia )
-      end if
-
-      if Empty( ( dbfPedPrvL )->nReq )
-         ( dbfPedPrvL )->nReq    := nPReq( dbfIva, ( dbfPedPrvL )->nIva )
-      end if
-
-      if Empty( ( dbfPedPrvL )->cAlmLin )
-         ( dbfPedPrvL )->cAlmLin := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodAlm" )
-      end if
-
-      nEstado     := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "nEstado" )
-
-      if nEstado == 3
-         ( dbfPedPrvL )->nEstado := nEstado
-      end if
-
-      ( dbfPedPrvL )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   ( dbfPedPrvL )->( OrdSetFocus( 1 ) )
-
-   // Incidencias -------------------------------------------------------------
-
-   ( dbfPedPrvI )->( OrdSetFocus( 0 ) )
-   ( dbfPedPrvI )->( dbGoTop() )
-
-   while !( dbfPedPrvI )->( eof() )
-
-      if Empty( ( dbfPedPrvI )->cSufPed )
-         ( dbfPedPrvI )->cSufPed := "00"
-      end if
-
-      ( dbfPedPrvI )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   ( dbfPedPrvI )->( OrdSetFocus( 1 ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible sincronizar pedidos de proveedores" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !Empty( dbfPedPrvT ) .and. ( dbfPedPrvT )->( Used() )
-      ( dbfPedPrvT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedPrvL ) .and. ( dbfPedPrvL )->( Used() )
-      ( dbfPedPrvL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedPrvI ) .and. ( dbfPedPrvI )->( Used() )
-      ( dbfPedPrvI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
-      ( dbfFamilia )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArtPrv ) .and. ( dbfArtPrv )->( Used() )
-      ( dbfArtPrv )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
-      ( dbfIva )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
-      ( dbfDiv )->( dbCloseArea() )
-   end if
-
-return nil
-
-//------------------------------------------------------------------------//
-
-CLASS TPedidosProveedorSenderReciver FROM TSenderReciverItem
-
-   Method CreateData()
-
-   Method RestoreData()
-
-   Method SendData()
-
-   Method ReciveData()
-
-   Method Process()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData()
-
-   local oBlock
-   local oError
-   local lSnd        := .f.
-   local dbfPedPrvT
-   local dbfPedPrvL
-   local tmpPedPrvT
-   local tmpPedPrvL
-   local cFileName   := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
-
-   ::oSender:SetText( "Enviando pedidos a proveedores" )
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
-
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
-
-   CreateFiles( cPatSnd() )
-
-   rxPedPrv( cPatSnd() )
-
-   USE ( cPatSnd() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @tmpPedPrvT ) )
-   SET ADSINDEX TO ( cPatSnd() + "PEDPROVT.CDX" ) ADDITIVE
-
-   USE ( cPatSnd() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @tmpPedPrvL ) )
-   SET ADSINDEX TO ( cPatSnd() + "PEDPROVL.CDX" ) ADDITIVE
-
-   if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfPedPrvT )->( lastrec() )
-   end if
-
-   while !( dbfPedPrvT )->( eof() )
-
-      if ( dbfPedPrvT )->lSndDoc
-
-         lSnd  := .t.
-
-         dbPass( dbfPedPrvT, tmpPedPrvT, .t. )
-
-         ::oSender:SetText( ( dbfPedPrvT )->cSerPed + "/" + AllTrim( Str( ( dbfPedPrvT )->nNumPed ) ) + "/" + Alltrim( ( dbfPedPrvT )->cSufPed ) + "; " + Dtoc( ( dbfPedPrvT )->dFecPed ) + "; " + AllTrim( ( dbfPedPrvT )->cCodPrv ) + "; " + ( dbfPedPrvT )->cNomPrv )
-
-         if ( dbfPedPrvL )->( dbSeek( ( dbfPedPrvT )->CSERPED + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) )
-
-            while ( ( dbfPedPrvL )->CSERPED + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed ) == ( ( dbfPedPrvT )->CSERPED + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) .AND. !( dbfPedPrvL )->( eof() )
-
-               dbPass( dbfPedPrvL, tmpPedPrvL, .t. )
-               ( dbfPedPrvL )->( dbSkip() )
-
-            end do
-
-         end if
-
-      end if
-
-      ( dbfPedPrvT )->( dbSkip() )
-
-      if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( dbfPedPrvT )->( OrdKeyNo() ) )
-      end if
-
-   END DO
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfPedPrvT )
-   CLOSE ( dbfPedPrvL )
-   CLOSE ( tmpPedPrvT )
-   CLOSE ( tmpPedPrvL )
-
-   /*
-   Comprimir los archivos------------------------------------------------------
-   */
-
-   if lSnd
-
-      ::oSender:SetText( "Comprimiendo pedidos de proveedores" )
-
-      if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
-      else
-         ::oSender:SetText( "ERROR al crear fichero comprimido" )
-      end if
-
-   else
-
-      ::oSender:SetText( "No hay pedidos de proveedores para enviar" )
-
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method RestoreData()
-
-   local oBlock
-   local oError
-   local dbfPedPrvT
-
-   if ::lSuccesfullSend
-
-      /*
-      Retorna el valor anterior
-      */
-
-      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-      USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
-
-         lSelectAll( nil, dbfPedPrvT, "lSndDoc", .f., .t., .f. )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-      CLOSE ( dbfPedPrvT )
-
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method SendData()
-
-   local cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
-
-   if File( cPatOut() + cFileName )
-
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
-         ::lSuccesfullSend := .t.
-         ::IncNumberToSend()
-         ::oSender:SetText( "Fichero enviado " + cFileName )
-      else
-         ::oSender:SetText( "ERROR al enviar fichero" )
-      end if
-
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method ReciveData()
-
-   local n
-   local aExt        := aRetDlgEmp()
-
-   /*
-   Recibirlo de internet
-   */
-
-   ::oSender:SetText( "Recibiendo pedidos de proveedores" )
-
-   for n := 1 to len( aExt )
-      ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-   next
-
-   ::oSender:SetText( "Pedidos de proveedores recibidos" )
-
-Return Self
-
-//----------------------------------------------------------------------------//
-
-Method Process()
-
-   local m
-   local oBlock
-   local oError
-   local dbfPedPrvT
-   local dbfPedPrvL
-   local tmpPedPrvT
-   local tmpPedPrvL
-   local aFiles      := Directory( cPatIn() + "PedPrv*.*" )
-
-   /*
-   Procesamos los ficheros recibidos
-   */
-
-   for m := 1 to len( aFiles )
-
-      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
-
-      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-      BEGIN SEQUENCE
-
-      /*
-      descomprimimos el fichero
-      */
-
-      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
-
-         dbUseArea(.t., cDriver(), cPatSnd() + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @tmpPedPrvT ), .f., .t. )
-         if !( dbfPedPrvT )->( neterr() )
-               ( tmpPedPrvT )->( ordListAdd( cPatSnd() + "PEDPROVT.CDX" ) )
-         end if
-
-         dbUseArea(.t., cDriver(), cPatSnd() + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @tmpPedPrvL ), .f., .t. )
-         if !( dbfPedPrvL )->( neterr() )
-               ( tmpPedPrvL )->( ordListAdd( cPatSnd() + "PEDPROVL.CDX" ) )
-         end if
-
-         USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
-         SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
-
-         USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
-         SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
-
-         WHILE ( tmpPedPrvT )->( !eof() )
-
-            /*
-            Comprobamos que no exista el pedido en la base de datos
-            */
-
-            if lValidaOperacion( ( tmpPedPrvT )->dFecPed, .f. ) .and. ;
-               !( dbfPedPrvT )->( dbSeek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
-
-               dbPass( tmpPedPrvT, dbfPedPrvT, .t. )
-               ::oSender:SetText( "Añadido     : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
-
-               if ( tmpPedPrvL )->( dbSeek( ( tmpPedPrvT )->CSERPED + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
-
-                  while ( ( tmpPedPrvL )->CSERPED + Str( ( tmpPedPrvL )->nNumPed ) + ( tmpPedPrvL )->cSufPed ) == ( ( tmpPedPrvT )->CSERPED + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) .AND. !( tmpPedPrvL )->( eof() )
-
-                     dbPass( tmpPedPrvL, dbfPedPrvL, .t. )
-                     ( tmpPedPrvL )->( dbSkip() )
-
-                  end do
-
-               end if
-
-            else
-
-               ::oSender:SetText( "Desestimado : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
-
-            end if
-
-            ( tmpPedPrvT )->( dbSkip() )
-
-         END DO
-
-         CLOSE ( dbfPedPrvT )
-         CLOSE ( dbfPedPrvL )
-         CLOSE ( tmpPedPrvT )
-         CLOSE ( tmpPedPrvL )
-
-         ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
-
-      end if
-
-      RECOVER USING oError
-
-         CLOSE ( dbfPedPrvT )
-         CLOSE ( dbfPedPrvL )
-         CLOSE ( tmpPedPrvT )
-         CLOSE ( tmpPedPrvL )
-
-         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
-         ::oSender:SetText( ErrorMessage( oError ) )
-
-      END SEQUENCE
-
-      ErrorBlock( oBlock )
-
-   next
-
-Return Self
-
-//----------------------------------------------------------------------------//
 
 static function CambiaAnulado( aGet, aTmp )
 
@@ -7537,62 +5173,6 @@ static function CambiaAnulado( aGet, aTmp )
    end if
 
 return .t.
-
-//---------------------------------------------------------------------------//
-
-/*
-Selecciona todos los registros
-*/
-
-FUNCTION lSelAll( oBrw, dbf, lSel, lTop, lMeter )
-
-   local nRecAct  := ( dbf )->( recno() )
-
-   DEFAULT lSel   := .t.
-   DEFAULT lTop   := .t.
-   DEFAULT lMeter := .f.
-
-   if lMeter
-      CreateWaitMeter( nil, nil, ( dbf )->( OrdKeyCount() ) )
-   else
-      CursorWait()
-   end if
-
-   if lTop
-      ( dbf )->( dbGoTop() )
-   end if
-
-   while !( dbf )->( eof() )
-
-      if dbLock( dbf )
-         ( dbf )->lSndDoc := lSel
-         ( dbf )->( dbUnlock() )
-      end if
-
-      ( dbf )->( dbSkip() )
-
-      if lMeter
-         RefreshWaitMeter( ( dbf )->( OrdKeyNo() ) )
-      else
-         SysRefresh()
-      end if
-
-   end do
-
-   ( dbf )->( dbGoTo( nRecAct ) )
-
-   if lMeter
-      EndWaitMeter()
-   else
-      CursorWE()
-   end if
-
-   if !Empty( oBrw )
-      oBrw:Refresh()
-      oBrw:SetFocus()
-   end if
-
-RETURN NIL
 
 //---------------------------------------------------------------------------//
 
@@ -7621,6 +5201,8 @@ Static Function TrazaPedidoProveedor( cNumDoc )
 
 Return nil
 
+//---------------------------------------------------------------------------//
+
 Static Function InitTrazaPedidoProveedor( cNumDoc, oTree )
 
    local n
@@ -7635,109 +5217,6 @@ Static Function InitTrazaPedidoProveedor( cNumDoc, oTree )
    next
 
 Return ( aDocumentsPedidoProveedor )
-
-FUNCTION aDocumentsPedidoProveedor( cNumPed )
-
-   local oBlock
-   local oError
-   local dbfAlbPrvT
-   local aDocuments  := {}
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
-   ( dbfAlbPrvT )->( OrdSetFocus( "cNumPed" ) )
-
-   if ( dbfAlbPrvT )->( dbSeek( cNumPed ) )
-      while ( dbfAlbPrvT )->cNumPed == cNumPed .and. !( dbfAlbPrvT )->( eof() )
-         aAdd( aDocuments, {  ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb,;
-                              Dtoc( ( dbfAlbPrvT )->dFecAlb ),;
-                              ( dbfAlbPrvT )->cCodPrv,;
-                              Rtrim( ( dbfAlbPrvT )->cNomPrv ),;
-                              ( dbfAlbPrvT )->cCodAlm } )
-         ( dbfAlbPrvT )->( dbSkip() )
-      end while
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE( dbfAlbPrvT )
-
-Return ( aDocuments )
-
-//---------------------------------------------------------------------------//
-
-Function GetCodCli( cNumPed )
-
-   local oBlock
-   local oError
-   local dbfPedCliT
-   local cCodCli  := ""
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-
-   ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
-
-   if ( dbfPedCliT )->( dbSeek( cNumPed ) )
-      cCodCli     := ( dbfPedCliT )->cCodCli
-   end if 
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE( dbfPedCliT )
-
-Return cCodCli
-
-//---------------------------------------------------------------------------//
-
-Function GetNomCli( cNumPed )
-
-   local oBlock
-   local oError
-   local dbfPedCliT
-   local cNomCli  := ""
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-
-   ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
-
-   if ( dbfPedCliT )->( dbSeek( cNumPed ) )
-      cNomCli     := ( dbfPedCliT )->cNomCli
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE( dbfPedCliT )
-
-Return cNomCli
 
 //---------------------------------------------------------------------------//
 
@@ -7775,255 +5254,6 @@ Return ( nEstado )
 
 //---------------------------------------------------------------------------//
 
-function lChgImpDoc( dbfT )
-
-   if dbLock( dbfT )
-      ( dbfT )->lImprimido := .t.
-      ( dbfT )->dFecImp    := GetSysDate()
-      ( dbfT )->cHorImp    := SubStr( Time(), 1, 5 )
-      ( dbfT )->( dbUnLock() )
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-/*
-Función que monta los diálogos para la generación de pedidos a proveedor
-*/
-
-Function Generador( oBrwPed )
-
-   local oDlg
-   local oPag
-   local oBmp
-   local oMtr
-   local nMtr
-   local oBrw
-   local oCol
-   local oBtnAnt
-   local oBtnNxt
-   local oProvee
-   local cProvee
-   local oSayPrv
-   local cSayPrv
-   local oArtOrg
-   local oArtDes
-   local oSayArtOrg
-   local oSayArtDes
-   local cArtOrg        := dbFirst ( dbfArticulo, 1 )
-   local cArtDes        := dbLast  ( dbfArticulo, 1 )
-   local cSayArtOrg     := dbFirst ( dbfArticulo, 2 )
-   local cSayArtDes     := dbLast  ( dbfArticulo, 2 )
-   local oCodAlm
-   local oNomAlm
-   local cCodAlm        := cDefAlm()
-   local cNomAlm        := retAlmacen( cCodAlm, dbfAlm )
-   local nStockDis      := 4
-   local nStockFin      := 1
-
-   CreaTemporal()
-
-   DEFINE DIALOG oDlg RESOURCE "ASS_PEDCLI" TITLE "Generar pedido a proveedor"
-
-   REDEFINE BITMAP oBmp ;
-      RESOURCE "GENERARPEDPRV" ;
-      ID       500 ;
-      OF       oDlg
-
-   REDEFINE PAGES oPag ID 110 OF oDlg ;
-      DIALOGS "ASS_PEDPRV1", "ASS_PEDCLI2"
-
-   REDEFINE GET oProvee VAR cProvee;
-      ID       110;
-      VALID    cProvee( oProvee, dbfPrv, oSayPrv ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  BrwProvee( oProvee, oSayPrv ) ;
-		COLOR 	CLR_GET ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oSayPrv VAR cSayPrv ;
-      ID       120;
-      WHEN     .f.;
-      COLOR    CLR_GET ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oArtOrg VAR cArtOrg;
-      ID       150 ;
-      VALID    cArticulo( oArtOrg, dbfArticulo, oSayArtOrg );
-      BITMAP   "LUPA" ;
-      ON HELP  BrwArticulo( oArtOrg, oSayArtOrg );
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oSayArtOrg VAR cSayArtOrg ;
-		WHEN 		.F.;
-      ID       160 ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oArtDes VAR cArtDes;
-      ID       170 ;
-      VALID    cArticulo( oArtDes, dbfArticulo, oSayArtDes );
-      BITMAP   "LUPA" ;
-      ON HELP  BrwArticulo( oArtDes, oSayArtDes );
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oSayArtDes VAR cSayArtDes ;
-		WHEN 		.F.;
-      ID       180 ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oCodAlm VAR cCodAlm ;
-      ID       190 ;
-      VALID    ( cAlmacen( oCodAlm, dbfAlm, oNomAlm ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwAlmacen( oCodAlm, oNomAlm ) ) ;
-      COLOR    CLR_GET ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE GET oNomAlm VAR cNomAlm ;
-      WHEN     .F. ;
-      ID       200 ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE RADIO nStockDis ;
-      ID       201, 202, 203, 204 ;
-      OF       oPag:aDialogs[1]
-
-   REDEFINE RADIO nStockFin ;
-      ID       212, 213 ;
-      OF       oPag:aDialogs[ 1 ]
-
-   REDEFINE METER oMtr ;
-      VAR      nMtr ;
-		PROMPT	"Procesando" ;
-      ID       220 ;
-      TOTAL    ( ( dbfArticulo )->( LastRec() ) ) ;
-      OF       oPag:aDialogs[ 1 ]
-
-   oBrw                 := IXBrowse():New( oPag:aDialogs[ 2 ] )
-
-   oBrw:lHScroll        := .f.
-
-   oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oBrw:cAlias          := dbfTmpArt
-   oBrw:nMarqueeStyle   := 5
-   oBrw:cName           := "Pedido a proveedores.Asistente"
-   oBrw:lFastEdit       := .t.
-   oBrw:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
-
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Se. Seleccionado"
-         :bStrData      := {|| "" }
-         :bEditValue    := {|| ( dbfTmpArt )->lSelArt }
-         :nEditType     := 0
-         :nWidth        := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Código"
-         :bEditValue    := {|| ( dbfTmpArt )->cRef }
-         :nEditType     := 0
-         :nWidth        := 60
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Detalle"
-         :bEditValue    := {|| ( dbfTmpArt )->cDetalle }
-         :nEditType     := 0
-         :nWidth        := 200
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Objetivo"
-         :bEditValue    := {|| ( dbfTmpArt )->nObjUni }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 0
-         :nWidth        := 65
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
-
-      with object ( oCol := oBrw:AddCol() )
-         :cHeader       := "A pedir"
-         :bEditValue    := {|| ( dbfTmpArt )->nNumUni }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 1
-         :nWidth        := 65
-         :bOnPostEdit   := {|o,x| if( x > 0, ( dbfTmpArt )->nNumUni := x, ), .t. }
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Stock actual"
-         :bEditValue    := {|| ( dbfTmpArt )->nStkFis }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 0
-         :nWidth        := 65
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Stock disponible"
-         :bEditValue    := {|| ( dbfTmpArt )->nStkDis }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 0
-         :nWidth        := 65
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
-
-   oBrw:CreateFromResource( 100 )
-
-   oBrw:bLDblClick      := {|| oCol:Edit() }
-
-   REDEFINE BUTTON ;
-      ID       110;
-      OF       oPag:aDialogs[2] ;
-      ACTION   ( oCol:Edit() )
-
-   REDEFINE BUTTON ;
-      ID       120;
-      OF       oPag:aDialogs[2] ;
-      ACTION   ( SelArt( dbfTmpArt, oBrw ) )
-
-   REDEFINE BUTTON ;
-      ID       130;
-      OF       oPag:aDialogs[2] ;
-      ACTION   ( SelAllArt( dbfTmpArt, oBrw, .t. ) )
-
-   REDEFINE BUTTON ;
-      ID       140;
-      OF       oPag:aDialogs[2] ;
-      ACTION   ( SelAllArt( dbfTmpArt, oBrw, .f. ) )
-
-   REDEFINE BUTTON oBtnAnt ;
-      ID       401 ;
-      OF       oDlg;
-      ACTION   ( BtnAnt( oPag, oBtnNxt, oBtnAnt ) )
-
-   REDEFINE BUTTON oBtnNxt ;
-      ID       402 ;
-      OF       oDlg;
-      ACTION   ( BtnNxt( oPag, oBtnNxt, oBtnAnt, oDlg, oProvee, cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, oMtr, oBrw, cCodAlm ) )
-
-   REDEFINE BUTTON ;
-      ID       403 ;
-      OF       oDlg ;
-      ACTION   ( KillTemporal(), oDlg:end() )
-
-   ACTIVATE DIALOG oDlg CENTER ON INIT( oBtnAnt:Hide(), oBrw:Load() )
-
-   oBmp:End()
-
-   oBrwPed:Refresh()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
 /*
 Botón anterior
 */
@@ -8346,40 +5576,40 @@ Static Function CreaPedido( cCodPrv, cCodAlm )
 
       //--creo la cabecera del pedido--//
 
-      ( dbfPrv )->( dbSeek( cCodPrv ) )
+      ( TDataView():Proveedores( nView ) )->( dbSeek( cCodPrv ) )
 
       //--recogo la serie, número, y sufijo del documento--//
 
       cSeriePedido               := cNewSer( "NPEDPRV" )
-      nNumeroPedido              := nNewDoc( cSeriePedido, dbfPedPrvT, "NPEDPRV" )
+      nNumeroPedido              := nNewDoc( cSeriePedido, TDataView():PedidosProveedores( nView ), "NPEDPRV" )
       cSufijoPedido              := RetSufEmp()
 
-      ( dbfPedPrvT )->( dbAppend())
-      ( dbfPedPrvT )->cSerPed    := cSeriePedido
-      ( dbfPedPrvT )->nNumPed    := nNumeroPedido
-      ( dbfPedPrvT )->cSufPed    := cSufijoPedido
-      ( dbfPedPrvT )->cTurPed    := cCurSesion()
-      ( dbfPedPrvT )->dFecPed    := GetSysDate()
-      ( dbfPedPrvT )->cCodPrv    := cCodPrv
+      ( TDataView():PedidosProveedores( nView ) )->( dbAppend())
+      ( TDataView():PedidosProveedores( nView ) )->cSerPed    := cSeriePedido
+      ( TDataView():PedidosProveedores( nView ) )->nNumPed    := nNumeroPedido
+      ( TDataView():PedidosProveedores( nView ) )->cSufPed    := cSufijoPedido
+      ( TDataView():PedidosProveedores( nView ) )->cTurPed    := cCurSesion()
+      ( TDataView():PedidosProveedores( nView ) )->dFecPed    := GetSysDate()
+      ( TDataView():PedidosProveedores( nView ) )->cCodPrv    := cCodPrv
       if !Empty( cCodAlm )
-         ( dbfPedPrvT )->cCodAlm := cCodAlm
+         ( TDataView():PedidosProveedores( nView ) )->cCodAlm := cCodAlm
       else
-         ( dbfPedPrvT )->cCodAlm := cDefAlm()
+         ( TDataView():PedidosProveedores( nView ) )->cCodAlm := cDefAlm()
       end if
-      ( dbfPedPrvT )->cCodCaj    := oUser():cCaja()
-      ( dbfPedPrvT )->cNomPrv    := ( dbfPrv )->Titulo
-      ( dbfPedPrvT )->cDirPrv    := ( dbfPrv )->Domicilio
-      ( dbfPedPrvT )->cPobPrv    := ( dbfPrv )->Poblacion
-      ( dbfPedPrvT )->cProPrv    := ( dbfPrv )->Provincia
-      ( dbfPedPrvT )->cPosPrv    := ( dbfPrv )->CodPostal
-      ( dbfPedPrvT )->cDniPrv    := ( dbfPrv )->Nif
-      ( dbfPedPrvT )->dFecEnt    := GetSysDate() + ( dbfPrv )->nPlzEnt
-      ( dbfPedPrvT )->nEstado    := 1
-      ( dbfPedPrvT )->cDivPed    := cDivEmp()
-      ( dbfPedPrvT )->nVdvPed    := nChgDiv( cDivEmp(), dbfDiv )
-      ( dbfPedPrvT )->lSndDoc    := .t.
-      ( dbfPedPrvT )->cCodUsr    := cCurUsr()
-      ( dbfPedPrvT )->( dbRUnLock() )
+      ( TDataView():PedidosProveedores( nView ) )->cCodCaj    := oUser():cCaja()
+      ( TDataView():PedidosProveedores( nView ) )->cNomPrv    := ( TDataView():Proveedores( nView ) )->Titulo
+      ( TDataView():PedidosProveedores( nView ) )->cDirPrv    := ( TDataView():Proveedores( nView ) )->Domicilio
+      ( TDataView():PedidosProveedores( nView ) )->cPobPrv    := ( TDataView():Proveedores( nView ) )->Poblacion
+      ( TDataView():PedidosProveedores( nView ) )->cProPrv    := ( TDataView():Proveedores( nView ) )->Provincia
+      ( TDataView():PedidosProveedores( nView ) )->cPosPrv    := ( TDataView():Proveedores( nView ) )->CodPostal
+      ( TDataView():PedidosProveedores( nView ) )->cDniPrv    := ( TDataView():Proveedores( nView ) )->Nif
+      ( TDataView():PedidosProveedores( nView ) )->dFecEnt    := GetSysDate() + ( TDataView():Proveedores( nView ) )->nPlzEnt
+      ( TDataView():PedidosProveedores( nView ) )->nEstado    := 1
+      ( TDataView():PedidosProveedores( nView ) )->cDivPed    := cDivEmp()
+      ( TDataView():PedidosProveedores( nView ) )->nVdvPed    := nChgDiv( cDivEmp(), dbfDiv )
+      ( TDataView():PedidosProveedores( nView ) )->lSndDoc    := .t.
+      ( TDataView():PedidosProveedores( nView ) )->cCodUsr    := cCurUsr()
+      ( TDataView():PedidosProveedores( nView ) )->( dbRUnLock() )
 
       /*
       Añado las lineas del pedido----------------------------------------------
@@ -8486,48 +5716,6 @@ Static Function AppTemPedL( cCodAlm )
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
-function ShowKitCom( dbfMaster, dbfTmpLin, oBrw, cCodPrv, dbfTmpInc, aGet )
-
-   if !Empty( aGet )
-
-      if lUsrMaster() .or. oUser():lCambiarPrecio()
-         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardEnable()
-      else
-         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardDisable()
-      end if
-
-      if !Empty( cCodPrv )
-         aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:cText( cCodPrv )
-         aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:lValid()
-      end if
-
-      aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:SetFocus()
-
-   end if
-
-   /*
-   Hace que salte la incidencia al entrar en el documento----------------------
-   */
-
-   if !Empty( dbfTmpInc )
-
-      while !( dbfTmpInc )->( Eof() )
-         if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
-            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
-         end if
-         ( dbfTmpInc )->( dbSkip() )
-      end while
-
-      ( dbfTmpInc )->( dbGoTop() )
-
-   end if
-
-   oBrw:Refresh()
-
-return nil
-
-//----------------------------------------------------------------------------//
 
 STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
@@ -8641,45 +5829,6 @@ RETURN ( nEstado )
 
 //---------------------------------------------------------------------------//
 
-Function IsPedPrv( cPath )
-
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "PedProvT.DBF" )
-      dbCreate( cPath + "PedProvT.DBF", aSqlStruct( aItmPedPrv() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "PedProvL.DBF" )
-      dbCreate( cPath + "PedProvL.DBF", aSqlStruct( aColPedPrv() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "PedPrvI.Dbf" )
-      dbCreate( cPath + "PedPrvI.Dbf", aSqlStruct( aIncPedPrv() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "PedPrvD.Dbf" )
-      dbCreate( cPath + "PedPrvD.Dbf", aSqlStruct( aPedPrvDoc() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "PedProvT.Cdx" ) .or. ;
-      !lExistIndex( cPath + "PedProvL.Cdx" ) .or. ;
-      !lExistIndex( cPath + "PedPrvI.Cdx" )  .or. ;
-      !lExistIndex( cPath + "PedPrvD.Cdx" )
-      rxPedPrv( cPath )
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cDesPedPrv( cPedPrvL )
-
-   DEFAULT cPedPrvL  := dbfPedPrvL
-
-RETURN ( Descrip( cPedPrvL ) )
-
-//---------------------------------------------------------------------------//
-
 #include "FastRepH.ch"
 
 Static Function DataReport( oFr )
@@ -8690,7 +5839,7 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Pedidos", ( dbfPedPrvT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Pedidos", ( TDataView():PedidosProveedores( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Pedidos", cItemsToReport( aItmPedPrv() ) )
 
    oFr:SetWorkArea(     "Lineas de pedidos", ( dbfPedPrvL )->( Select() ) )
@@ -8705,7 +5854,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Proveedor", ( dbfPrv )->( Select() ) )
+   oFr:SetWorkArea(     "Proveedor", ( TDataView():Proveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Proveedor", cItemsToReport( aItmPrv() ) )
 
    oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
@@ -8726,21 +5875,21 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Clientes", ( dbfClient )->( Select() ) )
+   oFr:SetWorkArea(     "Clientes", ( TDataView():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
-   oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed } )
-   oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed } )
-   oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",    {|| ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed } )
-   oFr:SetMasterDetail( "Pedidos", "Proveedor",                {|| ( dbfPedPrvT )->cCodPrv } )
-   oFr:SetMasterDetail( "Pedidos", "Almacenes",                {|| ( dbfPedPrvT )->cCodAlm } )
-   oFr:SetMasterDetail( "Pedidos", "Formas de pago",           {|| ( dbfPedPrvT )->cCodPgo } )
-   oFr:SetMasterDetail( "Pedidos", "Usuarios",                 {|| ( dbfPedPrvT )->cCodUsr } )
+   oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",    {|| ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Pedidos", "Proveedor",                {|| ( TDataView():PedidosProveedores( nView ) )->cCodPrv } )
+   oFr:SetMasterDetail( "Pedidos", "Almacenes",                {|| ( TDataView():PedidosProveedores( nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Pedidos", "Formas de pago",           {|| ( TDataView():PedidosProveedores( nView ) )->cCodPgo } )
+   oFr:SetMasterDetail( "Pedidos", "Usuarios",                 {|| ( TDataView():PedidosProveedores( nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Pedidos", "Empresa",                  {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Pedidos", "Clientes",                 {|| GetCodCli( ( dbfPedPrvT )->cNumPedCli ) } )
+   oFr:SetMasterDetail( "Pedidos", "Clientes",                 {|| GetCodCli( ( TDataView():PedidosProveedores( nView ) )->cNumPedCli ) } )
 
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( dbfPedPrvL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de pedidos", "Código de proveedores",   {|| ( dbfPedPrvT )->cCodPrv + ( dbfPedPrvL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Código de proveedores",   {|| ( TDataView():PedidosProveedores( nView ) )->cCodPrv + ( dbfPedPrvL )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( dbfPedPrvL )->cUnidad } )
 
    oFr:SetResyncPair(   "Pedidos", "Lineas de pedidos" )
@@ -8856,251 +6005,17 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportPedPrv( oFr, dbfDoc )
-
-   local lOpen    := .f.
-   local lFlag    := .f.
-
-   /*
-   Tratamiento para no hacer dos veces el openfiles al editar el documento en imprimir series
-   */
-
-   if lOpenFiles
-      lFlag       := .t.
-   else
-      if Openfiles()
-         lFlag    := .t.
-         lOpen    := .t.
-      else
-         lFlag    := .f.
-      end if
-   end if
-
-   if lFlag
-
-      /*
-      Zona de datos------------------------------------------------------------
-      */
-
-      DataReport( oFr )
-
-      /*
-      Paginas y bandas---------------------------------------------------------
-      */
-
-      if !Empty( ( dbfDoc )->mReport )
-
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      else
-
-         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-         oFr:SetProperty(     "Report.ScriptText", "Text",;
-                                                   + ;
-                                                   "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
-                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "CallHbFunc('nTotPedPrv');"                                 + Chr(13) + Chr(10) + ;
-                                                   "end;"                                                      + Chr(13) + Chr(10) + ;
-                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "end." )
-
-         oFr:AddPage(         "MainPage" )
-
-         oFr:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
-         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
-
-         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
-         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
-         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
-         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Pedidos" )
-
-         oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
-         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
-         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de pedidos" )
-         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
-
-         oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
-         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
-
-      end if
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReport( oFr )
-
-      /*
-      Diseño de report---------------------------------------------------------
-      */
-
-      oFr:DesignReport()
-
-      /*
-      Destruye el diseñador----------------------------------------------------
-      */
-
-      oFr:DestroyFr()
-
-      /*
-      Cierra ficheros----------------------------------------------------------
-      */
-
-      if lOpen
-         CloseFiles()
-      end if
-
-   else
-
-      Return .f.
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function PrintReportPedPrv( nDevice, nCopies, cPrinter, dbfDoc )
-
-   local oFr
-   local cFilePdf       := cPatTmp() + "PedidoProveedor" + StrTran( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, " ", "" ) + ".Pdf"
-
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
-
-   SysRefresh()
-
-   oFr                  := frReportManager():New()
-
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
-   oFr:SetIcon( 1 )
-
-   oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   DataReport( oFr )
-
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
-
-   if !Empty( ( dbfDoc )->mReport )
-
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      VariableReport( oFr )
-
-      /*
-      Preparar el report-------------------------------------------------------
-      */
-
-      oFr:PrepareReport()
-
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
-
-      do case
-         case nDevice == IS_SCREEN
-
-            oFr:ShowPreparedReport()
-
-         case nDevice == IS_PRINTER
-
-            oFr:PrintOptions:SetPrinter( cPrinter )
-            oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetShowDialog( .f. )
-            oFr:Print()
-
-         case nDevice == IS_PDF
-
-            oFr:PrintOptions:SetShowDialog( .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
-            oFr:DoExport(     "PDFExport" )
-
-         case nDevice == IS_MAIL
-
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
-            oFr:DoExport(     "PDFExport" )
-
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nPedPrv" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( dbfPedPrvT )->cCodPrv, dbfPrv, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de pedido de proveedor número " + ( dbfPedPrvT )->cSerPed + "/" + Alltrim( Str( ( dbfPedPrvT )->nNumPed ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro pedido de proveedor " + ( dbfPedPrvT )->cSerPed + "/" + Alltrim( Str( ( dbfPedPrvT )->nNumPed ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( dbfPedPrvT )->dfecPed ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :GeneralResource( dbfPedPrvT, aItmFacRec() )
-
-               end with
-
-            end if
-
-      end case
-
-   end if
-
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
-
-   oFr:DestroyFr()
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 Static Function YearComboBoxChange()
 
 	if oWndBrw:oWndBar:lAllYearComboBox()
-            DestroyFastFilter( dbfPedPrvT )
-            CreateUserFilter( "", dbfPedPrvT, .f., , , "all" )
+            DestroyFastFilter( TDataView():PedidosProveedores( nView ) )
+            CreateUserFilter( "", TDataView():PedidosProveedores( nView ), .f., , , "all" )
 	else
-		DestroyFastFilter( dbfPedPrvT )
-            CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfPedPrvT, .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
+		DestroyFastFilter( TDataView():PedidosProveedores( nView ) )
+            CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), TDataView():PedidosProveedores( nView ), .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
 	end if
 
-	( dbfPedPrvT )->( dbGoTop() )
+	( TDataView():PedidosProveedores( nView ) )->( dbGoTop() )
 
 	oWndBrw:Refresh()
 
@@ -9435,6 +6350,3176 @@ Static Function RestaUnidadLinea( aTmp )
    ( dbfTmpLin )->nUniCaja--
 
    RecalculaTotal( aTmp )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function ImprimirSeriesPedidosProveedores( nDevice, lExt )
+
+   local aStatus
+   local oPrinter   
+   local cFormato 
+
+   DEFAULT nDevice   := IS_PRINTER
+   DEFAULT lExt      := .f.
+
+   // Cremaos el dialogo-------------------------------------------------------
+
+   oPrinter          := PrintSeries():New( nView ):SetCompras()
+
+   // Establecemos sus valores-------------------------------------------------
+
+   oPrinter:Serie(      ( TDataView():PedidosProveedores( nView ) )->cSerPed )
+   oPrinter:Documento(  ( TDataView():PedidosProveedores( nView ) )->nNumPed )
+   oPrinter:Sufijo(     ( TDataView():PedidosProveedores( nView ) )->cSufPed )
+
+   if lExt
+
+      oPrinter:oFechaInicio:cText( ( TDataView():PedidosProveedores( nView ) )->dFecPed )
+      oPrinter:oFechaFin:cText( ( TDataView():PedidosProveedores( nView ) )->dFecPed )
+
+   end if
+
+   oPrinter:oFormatoDocumento:TypeDocumento( "PP" )   
+
+   // Formato de documento-----------------------------------------------------
+
+   cFormato          := cFormatoDocumento( ( TDataView():PedidosProveedores( nView ) )->cSerPed, "nPedPrv", TDataView():Contadores( nView ) )
+   if empty( cFormato )
+      cFormato       := cFirstDoc( "PP", TDataView():Documentos( nView ) )
+   end if
+   oPrinter:oFormatoDocumento:cText( cFormato )
+
+   // Codeblocks para que trabaje----------------------------------------------
+
+   aStatus           := TDataview():GetInitStatus( "PedPROVT", nView )
+
+   oPrinter:bInit    := {||   ( TDataview():PedidosProveedores( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
+
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():PedidosProveedoresId( nView ) )                  .and. ;
+                              ( TDataView():PedidosProveedores( nView ) )->( !eof() ) }
+
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( TDataView():PedidosProveedores( nView ) )->dFecPed )           .and. ;
+                              oPrinter:InRangeProveedor( ( TDataView():PedidosProveedores( nView ) )->cCodPrv )         .and. ;
+                              oPrinter:InRangeGrupoProveedor( RetFld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "cCodGrp" ) ) }
+
+   oPrinter:bSkip    := {||   ( TDataView():PedidosProveedores( nView ) )->( dbSkip() ) }
+
+   oPrinter:bAction  := {||   GenPedPrv( nDevice, "Imprimiendo documento : " + TDataView():PedidosProveedoresId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+
+   oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
+
+   // Abrimos el dialogo-------------------------------------------------------
+
+   oPrinter:Resource():End()
+
+   // Restore -----------------------------------------------------------------
+
+   TDataview():SetStatus( "PedPROVT", nView, aStatus )
+   
+   if !Empty( oWndBrw )
+      oWndBrw:Refresh()
+   end if   
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+/*------------------------FUNCIONES GLOBALESS--------------------------------*/
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+
+/*
+Calcula el Total del pedido
+*/
+
+FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPic )
+
+   local nRec
+   local nTotArt
+      local dFecFac
+      local lRecargo
+      local nDtoEsp
+      local nDtoPP
+   local nDtoUno
+      local nDtoDos
+      local nPorte
+      local cCodDiv
+   local nRegIva
+   local aTotDto     := { 0, 0, 0 }
+   local aTotDPP     := { 0, 0, 0 }
+   local aTotUno     := { 0, 0, 0 }
+   local aTotDos     := { 0, 0, 0 }
+   local bCondition
+
+   DEFAULT cPedPrvT  := TDataView():PedidosProveedores( nView )
+   DEFAULT cPedPrvL  := dbfPedPrvL
+   DEFAULT cIva      := dbfIva
+   DEFAULT cDiv      := dbfDiv
+   DEFAULT lPic      := .f.
+   DEFAULT cPedido   := ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed
+
+   public nTotPed    := 0
+   public nTotBrt    := 0
+   public nTotDto    := 0
+   public nTotDPP    := 0
+   public nTotNet    := 0
+   public nTotIva    := 0
+   public nTotReq    := 0
+   public nTotImp    := 0
+   public aTotIva    := { { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 } }
+   public aIvaUno    := aTotIva[ 1 ]
+   public aIvaDos    := aTotIva[ 2 ]
+   public aIvaTre    := aTotIva[ 3 ]
+   public nTotUno    := 0
+   public nTotDos    := 0
+    
+
+   nRec              := ( cPedPrvL )->( Recno() )
+
+   if aTmp != nil
+            dFecFac                 := aTmp[ _DFECPED ]
+            lRecargo                := aTmp[ _LRECARGO]
+            nDtoEsp                 := aTmp[ _NDTOESP ]
+            nDtoPP                  := aTmp[ _NDPP    ]
+      nDtoUno        := aTmp[ _NDTOUNO ]
+      nDtoDos        := aTmp[ _NDTODOS ]
+            nPorte                  := aTmp[ _NPORTES ]
+            cCodDiv                 := aTmp[ _CDIVPED ]
+      nVdvDiv        := aTmp[ _NVDVPED ]
+      nRegIva        := aTmp[ _NREGIVA ]
+      bCondition     := {|| ( cPedPrvL )->( !eof() ) }
+      ( cPedPrvL )->( dbGoTop() )
+   else
+      dFecFac        := ( cPedPrvT )->dFecPed
+      lRecargo       := ( cPedPrvT )->lRecargo
+      nDtoEsp        := ( cPedPrvT )->nDtoEsp
+      nDtoPP         := ( cPedPrvT )->nDpp
+      nDtoUno        := ( cPedPrvT )->nDtoUno
+      nDtoDos        := ( cPedPrvT )->nDtoDos
+      nPorte         := ( cPedPrvT )->nPortes
+      cCodDiv        := ( cPedPrvT )->cDivPed
+      nVdvDiv        := ( cPedPrvT )->nVdvPed
+      nRegIva        := ( cPedPrvT )->nRegIva
+      bCondition     := {|| ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed == cPedido .and. ( cPedPrvL )->( !eof() ) }
+      ( cPedPrvL )->( dbSeek( cPedido ) )
+   end if
+
+   cPinDiv           := cPinDiv( cCodDiv, cDiv )
+   cPirDiv           := cPirDiv( cCodDiv, cDiv )
+   nDinDiv           := nDinDiv( cCodDiv, cDiv )
+   nDirDiv           := nRinDiv( cCodDiv, cDiv )
+
+   while Eval( bCondition )
+
+      if lValLine( cPedPrvL )
+
+         /*
+         Importes de lineas
+         */
+
+         nTotArt           := nTotLPedPrv( cPedPrvL, nDinDiv, nDirDiv )
+         if nTotArt != 0
+
+            /*
+            Estudio de impuestos
+            */
+
+            do case
+            case _NPCTIVA1 == NIL .OR. _NPCTIVA1 == ( cPedPrvL )->nIva
+               _NPCTIVA1   := (cPedPrvL)->NIVA
+               _NPCTREQ1   := (cPedPrvL)->NREQ
+               _NBRTIVA1   += nTotArt
+
+            case _NPCTIVA2 == NIL .OR. _NPCTIVA2 == ( cPedPrvL )->nIva
+               _NPCTIVA2   := (cPedPrvL)->NIVA
+               _NPCTREQ2   := (cPedPrvL)->NREQ
+               _NBRTIVA2   += nTotArt
+
+            case _NPCTIVA3 == NIL .OR. _NPCTIVA3 == ( cPedPrvL )->nIva
+               _NPCTIVA3   := (cPedPrvL)->NIVA
+               _NPCTREQ3   := (cPedPrvL)->NREQ
+               _NBRTIVA3   += nTotArt
+            end case
+
+         end if
+
+      end if
+
+      ( cPedPrvL )->( dbSkip() )
+
+   end while
+
+   ( cPedPrvL )->( dbGoTo( nRec ) )
+
+      /*
+   Obtenemos el total bruto----------------------------------------------------
+      */
+
+   nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
+
+      /*
+   Portes de la Factura--------------------------------------------------------
+      */
+
+   nTotBrt           += nPorte
+
+   _NBASIVA1         := _NBRTIVA1
+   _NBASIVA2         := _NBRTIVA2
+   _NBASIVA3         := _NBRTIVA3
+
+      /*
+      Descuentos de la Facturas
+      */
+
+      IF nDtoEsp != 0
+
+      aTotDto[1]     := Round( _NBASIVA1 * nDtoEsp / 100, nDirDiv )
+      aTotDto[2]     := Round( _NBASIVA2 * nDtoEsp / 100, nDirDiv )
+      aTotDto[3]     := Round( _NBASIVA3 * nDtoEsp / 100, nDirDiv )
+
+      nTotDto        := aTotDto[1] + aTotDto[2] + aTotDto[3]
+
+      _NBASIVA1      -= aTotDto[1]
+      _NBASIVA2      -= aTotDto[2]
+      _NBASIVA3      -= aTotDto[3]
+
+   END IF
+
+      IF nDtoPP != 0
+
+      aTotDPP[1]     := Round( _NBASIVA1 * nDtoPP / 100, nDirDiv )
+      aTotDPP[2]     := Round( _NBASIVA2 * nDtoPP / 100, nDirDiv )
+      aTotDPP[3]     := Round( _NBASIVA3 * nDtoPP / 100, nDirDiv )
+
+      nTotDPP        := aTotDPP[1] + aTotDPP[2] + aTotDPP[3]
+
+      _NBASIVA1      -= aTotDPP[1]
+      _NBASIVA2      -= aTotDPP[2]
+      _NBASIVA3      -= aTotDPP[3]
+
+   END IF
+
+   IF nDtoUno != 0
+
+      aTotUno[1]     := Round( _NBASIVA1 * nDtoUno / 100, nDirDiv )
+      aTotUno[2]     := Round( _NBASIVA2 * nDtoUno / 100, nDirDiv )
+      aTotUno[3]     := Round( _NBASIVA3 * nDtoUno / 100, nDirDiv )
+
+      nTotUno        := aTotDPP[1] + aTotDPP[2] + aTotDPP[3]
+
+      _NBASIVA1      -= aTotUno[1]
+      _NBASIVA2      -= aTotUno[2]
+      _NBASIVA3      -= aTotUno[3]
+
+      END IF
+
+      IF nDtoDos != 0
+
+      aTotDos[1]     := Round( _NBASIVA1 * nDtoDos / 100, nDirDiv )
+      aTotDos[2]     := Round( _NBASIVA2 * nDtoDos / 100, nDirDiv )
+      aTotDos[3]     := Round( _NBASIVA3 * nDtoDos / 100, nDirDiv )
+
+      nTotDos        := aTotDPP[1] + aTotDPP[2] + aTotDPP[3]
+
+      _NBASIVA1      -= aTotDos[1]
+      _NBASIVA2      -= aTotDos[2]
+      _NBASIVA3      -= aTotDos[3]
+
+      END IF
+
+   nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nDirDiv )
+
+      /*
+   Calculos de impuestos
+      */
+
+   if nRegIva <= 1
+
+      _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nDirDiv ), 0 )
+      _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nDirDiv ), 0 )
+      _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nDirDiv ), 0 )
+
+      /*
+      Calculo de recargo
+      */
+
+      if lRecargo
+         _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nDirDiv ), 0 )
+         _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nDirDiv ), 0 )
+         _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nDirDiv ), 0 )
+      end if
+
+   end if
+
+   /*
+   Total impuestos
+   */
+
+   nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nDirDiv )
+
+      /*
+   Total de R.E.
+      */
+
+   nTotReq           := Round( _NIMPREQ1 + _NIMPREQ2 + _NIMPREQ3, nDirDiv )
+
+   /*
+      Total de impuestos
+      */
+
+   nTotImp           := Round( nTotIva + nTotReq, nDirDiv )
+
+      /*
+      Total facturas
+      */
+
+   nTotPed           := nTotNet + nTotImp
+
+      /*
+      Refrescos en Pantalla______________________________________________________
+      */
+
+   aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
+
+   /*
+   Solicitan una divisa distinta a la q se hizo originalmente la factura
+   */
+
+   if cDivRet != nil .and. cDivRet != cCodDiv
+      nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
+      nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
+      nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
+      nTotPed        := nCnv2Div( nTotPed, cCodDiv, cDivRet )
+      cPirDiv        := cPirDiv( cDivRet, cDiv )
+   end if
+
+RETURN ( if( lPic, Trans( nTotPed, cPirDiv ), nTotPed ) ) //
+
+//--------------------------------------------------------------------------//
+
+FUNCTION aTotPedPrv( cFactura, cPedPrvT, dbfLine, dbfIva, dbfDiv, cDivRet )
+
+   nTotPedPrv( cFactura, cPedPrvT, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f. )
+
+RETURN ( { nTotNet, nTotIva, nTotReq, nTotPed, aTotIva } )
+
+//---------------------------------------------------------------------------//
+
+Function sTotPedPrv( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
+
+   local sTotal
+
+   nTotPedPrv( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f. )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotPed
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION BrwPedPrv( oGetNum, cPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, dbfFPago )
+
+      local oDlg
+      local oBrw
+   local oGet1
+   local cGet1
+   local nOrd     := GetBrwOpt( "BrwPedPrv" )
+      local oCbxOrd
+   local aCbxOrd  := { "Número", "Fecha", "Código", "Nombre" }
+   local cCbxOrd
+   local aDbfBmp  := {  LoadBitmap( GetResources(), "BRED"   ),;
+                        LoadBitmap( GetResources(), "BYELOW" ),;
+                        LoadBitmap( GetResources(), "BGREEN" ) }
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   ( cPedPrvT )->( dbSetFilter( {|| Field->NESTADO != 3 }, "NESTADO != 3" ) )
+
+   nOrd              := ( cPedPrvT )->( OrdSetFocus( nOrd ) )
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Pedido a proveedores"
+
+            REDEFINE GET oGet1 VAR cGet1;
+                  ID          104 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, cPedPrvT, .t., nil, .f. ) );
+         VALID    ( OrdClearScope( oBrw, cPedPrvT ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+            REDEFINE COMBOBOX oCbxOrd ;
+         VAR       cCbxOrd ;
+         ID        102 ;
+         ITEMS     aCbxOrd ;
+         ON CHANGE ( ( cPedPrvT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         OF        oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := cPedPrvT
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Pedido a proveedor.Browse"
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Es. Estado"
+         :bStrData         := {|| "" }
+         :bBmpData         := {|| ( cPedPrvT )->nEstado }
+         :nWidth           := 20
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número" 
+         :cSortOrder       := "nNumPed"
+         :bEditValue       := {|| ( cPedPrvT )->cSerPed + "/" + Str( ( cPedPrvT )->nNumPed ) + "/" + ( cPedPrvT )->cSufPed }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecPed"
+         :bEditValue       := {|| dToc( ( cPedPrvT )->dFecPed ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodPrv"
+         :bEditValue       := {|| Rtrim( ( cPedPrvT )->cCodPrv ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomPrv"
+         :bEditValue       := {|| Rtrim( ( cPedPrvT )->cNomPrv ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Importe"
+         :bEditValue       := {|| nTotPedPrv( ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed, cPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, nil, cDivEmp(), .t. ) }
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+            REDEFINE BUTTON ;
+         ID       IDOK ;
+                  OF          oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+            REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+                  OF          oDlg ;
+                  ACTION      ( oDlg:end() )
+
+            REDEFINE BUTTON ;
+                  ID          500 ;
+                  OF          oDlg ;
+                  WHEN        .F.
+
+            REDEFINE BUTTON ;
+                  ID          501 ;
+                  OF          oDlg ;
+                  WHEN        .F.
+
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN, {|| oDlg:end( IDOK ) } )
+
+   oDlg:bStart    := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   IF oDlg:nResult == IDOK
+      oGetNum:cText( ( cPedPrvT )->CSERPED + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed )
+      oGetNum:disable()
+   END IF
+
+   DestroyFastFilter( cPedPrvT )
+
+   SetBrwOpt( "BrwPedPrv", ( cPedPrvT )->( OrdNumber() ) )
+
+   ( cPedPrvT )->( dbSetFilter() )
+   ( cPedPrvT )->( OrdSetFocus( nOrd ) )
+
+   AEval( aDbfBmp, { | hBmp | DeleteObject( hBmp ) } )
+
+   /*
+    Guardamos los datos del browse
+   */
+   oBrw:CloseData()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION ChgPedPrv( nPedido, nMode, cPedPrvT )
+
+   local oBlock
+   local oError
+   local lExito   := .t.
+   local lClose   := .f.
+
+   if nMode != APPD_MODE .OR. Empty( nPedido )
+      return nil
+   end if
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( cPedPrvT )
+      USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
+            lClose := .T.
+   end if
+
+   if (cPedPrvT)->(DbSeek( nPedido ) )
+      if dbDialogLock( cPedPrvT )
+         ( cPedPrvT )->nEstado    := 1
+      end if
+   else
+      lExito      := .f.
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if lClose
+            CLOSE (cPedPrvT)
+   end if
+
+RETURN lExito
+
+//-------------------------------------------------------------------------//
+
+FUNCTION nTotEPedPrv( uTmp )
+
+   local nCalculo := 0
+
+   do case
+   case ValType( uTmp ) == "C"
+      nCalculo    := NotCaja( (uTmp)->nCanEnt ) * (uTmp)->nUniEnt
+   case ValType( uTmp ) == "O"
+      nCalculo    := NotCaja( uTmp:nCanEnt ) * uTmp:nUniEnt
+   case ValType( uTmp ) == "A"
+      nCalculo    := NotCaja( uTmp[ _NCANENT ] * uTmp[ _NUNIENT ] )
+   end case
+
+RETURN ( nCalculo )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotNPedPrv( uTmp )
+
+   local nCalculo := 0
+
+   DEFAULT uTmp   := dbfPedPrvL
+
+   do case
+   case ValType( uTmp ) == "C"
+      nCalculo    := ( uTmp )->nUniCaja
+      nCalculo    *= NotCaja( ( uTmp )->nCanPed )
+      nCalculo    *= NotCero( ( uTmp )->nUndKit )
+      nCalculo    *= NotCero( ( uTmp )->nMedUno )
+      nCalculo    *= NotCero( ( uTmp )->nMedDos )
+      nCalculo    *= NotCero( ( uTmp )->nMedTre )
+
+   case ValType( uTmp ) == "O"
+      nCalculo    := uTmp:nUniCaja
+      nCalculo    *= NotCaja( uTmp:nCanPed )
+      nCalculo    *= NotCero( uTmp:nUndKit )
+      nCalculo    *= NotCero( uTmp:nMedUno )
+      nCalculo    *= NotCero( uTmp:nMedDos )
+      nCalculo    *= NotCero( uTmp:nMedTre )
+
+   case ValType( uTmp ) == "A"
+      nCalculo    := uTmp[ _NUNICAJA ]
+      nCalculo    *= NotCaja( uTmp[ _NCANPED ] )
+      nCalculo    *= NotCero( uTmp[ _NUNDKIT ] )
+      nCalculo    *= NotCero( uTmp[ _NMEDUNO ] )
+      nCalculo    *= NotCero( uTmp[ _NMEDDOS ] )
+      nCalculo    *= NotCero( uTmp[ _NMEDTRE ] )
+
+   end case
+
+RETURN ( nCalculo )
+
+//---------------------------------------------------------------------------//
+//Total de una linea con impuestos incluidos
+
+FUNCTION nTotFPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo       += nIvaLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+
+return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotUPedPrv( uTmp, nDec, nVdv )
+
+   local nCalculo := 0
+
+   DEFAULT uTmp   := dbfPedPrvL
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nVdv   := 1
+
+   do case
+      case ValType( uTmp ) == "C"
+         nCalculo := ( uTmp )->nPreDiv
+
+      case ValType( uTmp ) == "O"
+         nCalculo := uTmp:nPreDiv
+
+      case ValType( uTmp ) == "A"
+         nCalculo := uTmp[ _NPREDIV ]
+
+   end case
+
+   if nVdv != 0
+      nCalculo    := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nImpUPedPrv( uPedPrvT, uPedPrvL, nDec, nVdv, cPorDiv )
+
+   local nCalculo       := 0
+
+   DEFAULT uPedPrvT     := TDataView():PedidosProveedores( nView )
+   DEFAULT uPedPrvL     := dbfPedPrvL
+   DEFAULT nDec         := nDinDiv()
+   DEFAULT nVdv         := 1
+
+   nCalculo             := nTotUPedPrv( uPedPrvL, nDec, nVdv ) 
+
+   if IsArray( uPedPrvT )
+
+      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDTOESP ]  / 100, nDec )
+      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDPP    ]  / 100, nDec )
+      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDTOUNO ]  / 100, nDec )
+      nCalculo          -= Round( nCalculo * uPedPrvT[ _NDTODOS ]  / 100, nDec )
+   
+   else
+   
+      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDtoEsp / 100, nDec )
+      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDpp    / 100, nDec )
+      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDtoUno / 100, nDec )
+      nCalculo          -= Round( nCalculo * ( uPedPrvT )->nDtoDos / 100, nDec )
+   
+   end if
+
+Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nIvaUPedPrv( uTmp, nDec, nVdv )
+
+   local nCalculo
+
+   DEFAULT uTmp   := dbfPedPrvL
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nVdv   := 1
+
+   nCalculo       := nTotUPedPrv( uTmp, nDec, nVdv )
+   nCalculo       := nCalculo * ( uTmp )->nIva / 100
+
+   if nVdv != 0
+      nCalculo    := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotLPedPrv( uTmp, nDec, nRec, nVdv, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT uTmp   := dbfPedPrvL
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRec   := nRinDiv()
+   DEFAULT nVdv   := 1
+
+   // Precio ------------------------------------------------------------------
+
+   nCalculo       := nTotUPedPrv( uTmp, nDec, nVdv )
+
+   do case
+      case ValType( uTmp ) == "C"
+
+         if ( uTmp )->nDtoLin != 0
+            nCalculo    -= nCalculo * ( uTmp )->nDtoLin / 100
+         end if
+
+         if ( uTmp )->nDtoPrm != 0
+            nCalculo    -= nCalculo * ( uTmp )->nDtoPrm / 100
+         end if
+
+      case ValType( uTmp ) == "O"
+
+         if uTmp:nDtoLin != 0
+            nCalculo    -= nCalculo * uTmp:nDtoLin / 100
+         end if
+
+         if uTmp:nDtoPrm != 0
+            nCalculo    -= nCalculo * uTmp:nDtoPrm / 100
+         end if
+
+   end case
+
+   // Unidades
+
+   nCalculo       *= nTotNPedPrv( uTmp )
+
+   if nRec != nil
+      nCalculo    := Round( nCalculo, nRec )
+   end if
+
+RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
+
+FUNCTION nDtoLPedPrv( cPedPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPedPrvL     := dbfPedPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPedPrvL )->nDtoLin != 0 
+
+      nCalculo          := nTotUPedPrv( cPedPrvL, nDec ) * nTotNPedPrv( cPedPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          := nCalculo * ( cPedPrvL )->nDtoLin / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLPedPrv( cPedPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPedPrvL     := dbfPedPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPedPrvL )->nDtoPrm != 0 
+
+      nCalculo          := nTotUPedPrv( cPedPrvL, nDec ) * nTotNPedPrv( cPedPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      if ( cPedPrvL )->nDtoLin != 0 
+         nCalculo       -= nCalculo * ( cPedPrvL )->nDtoLin / 100
+      end if
+
+      nCalculo          := nCalculo * ( cPedPrvL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nIvaLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT uPedPrvL  := dbfPedPrvL
+   DEFAULT nDec      := nDinDiv()
+   DEFAULT nRec      := nRinDiv()
+   DEFAULT nVdv      := 1
+
+   nCalculo          := nTotLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
+
+   nCalculo          := Round( nCalculo * ( uPedPrvL )->nIva / 100, nRec )
+
+RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nImpLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, lIva, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT uPedPrvT  := TDataView():PedidosProveedores( nView )
+   DEFAULT uPedPrvL  := dbfPedPrvL
+   DEFAULT nDec      := nDinDiv()
+   DEFAULT nRec      := nRinDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lIva      := .f.
+
+   nCalculo          := nTotLPedPrv( uPedPrvL, nDec, nRec, nVdv )
+
+   if ValType( uPedPrvT ) == "A"
+      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDTOESP ]  / 100, nRec )
+      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDPP    ]  / 100, nRec )
+      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDTOUNO ]  / 100, nRec )
+      nCalculo    -= Round( nCalculo * uPedPrvT[ _NDTODOS ]  / 100, nRec )
+   else
+      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDtoEsp / 100, nRec )
+      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDpp    / 100, nRec )
+      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDtoUno / 100, nRec )
+      nCalculo    -= Round( nCalculo * ( uPedPrvT )->nDtoDos / 100, nRec )
+   end if
+
+   if lIva .and. ( dbfPedPrvL )->nIva != 0
+      nCalculo    += nCalculo * ( uPedPrvL )->nIva / 100
+   end if
+
+RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION nBrtLPedPrv( uTmpLin, nDec, nRec, nVdv, cPorDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT nDec      := 2
+   DEFAULT nVdv      := 1
+
+   nCalculo          := nTotUPedPrv( uTmpLin, nDec, nVdv, cPorDiv )
+   nCalculo          *= nTotNPedPrv( uTmpLin )
+
+   nCalculo          := Round( nCalculo / nVdv, nRec )
+
+Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
+
+   local oldPedPrvT
+   local oldPedPrvL
+   local oldPedPrvI
+   local oldPedPrvD
+
+   DEFAULT lAppend   := .f.
+   DEFAULT bFor      := {|| .t. }
+
+   if oMeter != NIL
+      oMeter:cText   := "Generando bases"
+      SysRefresh()
+   end if
+
+   CreateFiles( cPath )
+
+   rxPedPrv( cPath, oMeter )
+
+   IF lAppend .and. lIsDir( cPathOld )
+
+      dbUseArea( .t., cDriver(), cPath + "PedPROVT.DBF", cCheckArea( "PedPROVT", @dbfPedPrvT ), .f. )
+      if !( dbfPedPrvT )->( neterr() )
+            ordListAdd( cPath + "PedPROVT.CDX"  )
+      end if
+
+      dbUseArea( .t., cDriver(), cPath + "PedPROVL.DBF", cCheckArea( "PedPROVL", @dbfPedPrvL ), .f. )
+      if !( dbfPedPrvL )->( neterr() )
+            ordListAdd( cPath + "PedPROVL.CDX"  )
+      end if
+
+      dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPrvI", @dbfPedPrvI ), .f. )
+      if !( dbfPedPrvI )->( neterr() )
+            ( dbfPedPrvI )->( ordListAdd( cPath + "PedPrvI.Cdx" ) )
+      end if
+
+      dbUseArea( .t., cDriver(), cPath + "PedPrvD.Dbf", cCheckArea( "PedPrvD", @dbfPedPrvD ), .f. )
+      if !( dbfPedPrvD)->( neterr() )
+            ( dbfPedPrvD )->( ordListAdd( cPath + "PedPrvD.Cdx" ) )
+      end if
+
+      dbUseArea( .t., cDriver(), cPathOld + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @oldPedPrvT ), .f. )
+      if !( oldPedPrvT )->( neterr() )
+            ordListAdd( cPathOld + "PEDPROVT.CDX"  )
+      end if
+
+       dbUseArea( .t., cDriver(), cPathOld + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @oldPedPrvL ), .f. )
+      if !( oldPedPrvL )->( neterr() )
+            ordListAdd( cPathOld + "PEDPROVL.CDX"  )
+      end if
+
+      dbUseArea( .t., cDriver(), cPathOld + "PEDPRVI.DBF", cCheckArea( "PEDPRVI", @oldPedPrvI ), .f. )
+      if !( oldPedPrvI )->( neterr() )
+            ( oldPedPrvI )->( ordListAdd( cPathOld + "PEDPRVI.CDX" ) )
+      end if
+
+      dbUseArea( .t., cDriver(), cPathOld + "PEDPRVD.DBF", cCheckArea( "PEDPRVD", @oldPedPrvD ), .f. )
+      if !( dbfPedPrvD)->( neterr() )
+            ( oldPedPrvD )->( ordListAdd( cPathOld + "PEDPRVD.CDX" ) )
+      end if
+
+      while !( oldPedPrvT )->( eof() )
+
+         if eval( bFor, oldPedPrvT )
+            dbCopy( oldPedPrvT, dbfPedPrvT, .t. )
+
+            if ( dbfPedPrvT )->( dbRLock() )
+               ( dbfPedPrvT )->cTurPed    := Padl( "1", 6 )
+               ( dbfPedPrvT )->( dbRUnlock() )
+            end if
+
+            if ( oldPedPrvL )->( dbSeek( (oldPedPrvT)->CSERPED + Str( (oldPedPrvT)->nNumPed ) + (oldPedPrvT)->cSufPed ) )
+               while (oldPedPrvT)->CSERPED + Str( (oldPedPrvL)->nNumPed ) + (oldPedPrvL)->cSufPed == (oldPedPrvT)->CSERPED + Str( (dbfPedPrvT)->nNumPed ) + (dbfPedPrvT)->cSufPed .and. !(oldPedPrvL)->( eof() )
+                  dbCopy( oldPedPrvL, dbfPedPrvL, .t. )
+                  ( oldPedPrvL )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldPedPrvI )->( dbSeek( ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed ) )
+               while ( oldPedPrvI )->cSerPed + Str( ( oldPedPrvI )->nNumPed ) + ( oldPedPrvI )->cSufPed == ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed .and. !( oldPedPrvI )->( eof() )
+                  dbCopy( oldPedPrvI, dbfPedPrvI, .t. )
+                  ( oldPedPrvI )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldPedPrvD )->( dbSeek( ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed ) )
+               while ( oldPedPrvD )->cSerPed + Str( ( oldPedPrvD )->nNumPed ) + ( oldPedPrvD )->cSufPed == ( oldPedPrvT )->cSerPed + Str( ( oldPedPrvT )->nNumPed ) + ( oldPedPrvT )->cSufPed .and. !( oldPedPrvD )->( eof() )
+                  dbCopy( oldPedPrvD, dbfPedPrvD, .t. )
+                  ( oldPedPrvD )->( dbSkip() )
+               end while
+            end if
+
+         end if
+
+         ( oldPedPrvT )->( dbSkip() )
+
+      end while
+
+      ( dbfPedPrvT )->( dbCloseArea() )
+      ( dbfPedPrvL )->( dbCloseArea() )
+      ( dbfPedPrvI )->( dbCloseArea() )
+      ( dbfPedPrvD )->( dbCloseArea() )
+
+      ( oldPedPrvT )->( dbCloseArea() )
+      ( oldPedPrvL )->( dbCloseArea() )
+      ( oldPedPrvI )->( dbCloseArea() )
+      ( oldPedPrvD )->( dbCloseArea() )
+
+   end if
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+FUNCTION rxPedPrv( cPath, oMeter )
+
+      local cPedPrvT
+
+   DEFAULT cPath  := cPatEmp()
+
+   if !lExistTable( cPath + "PEDPROVT.DBF" ) .or. ;
+      !lExistTable( cPath + "PEDPROVL.DBF" ) .or. ;
+      !lExistTable( cPath + "PEDPRVI.DBF" )  .or. ;
+      !lExistTable( cPath + "PEDPRVD.DBF" )
+      CreateFiles( cPath )
+   end if
+
+      /*
+      Eliminamos los indices
+      */
+
+   fEraseIndex( cPath + "PEDPROVT.CDX" )
+   fEraseIndex( cPath + "PEDPROVL.CDX" )
+   fEraseIndex( cPath + "PEDPRVI.CDX" )
+   fEraseIndex( cPath + "PEDPRVD.CDX" )
+
+   dbUseArea( .t., cDriver(), cPath + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @cPedPrvT ), .f. )
+   if !( cPedPrvT )->( neterr() )
+      ( cPedPrvT)->( __dbPack() )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "DFECPED", "DFECPED", {|| Field->DFECPED } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "DFECENT", "DFECENT", {|| Field->DFECENT } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
+
+
+      /*
+      Ordenes fechados---------------------------------------------------------
+      */
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "nNumPedYea", "Str( Year( dFecPed ) ) + CSERPED + STR( NNUMPED ) + CSUFPED", {|| Str( Year( Field->dFecPed ) ) + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "dFecPedYea", "Str( Year( dFecPed ) ) + Dtoc( DFECPED )", {|| Str( Year( Field->dFecPed ) ) + Dtoc( Field->DFECPED ) } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "dFecEntYea", "Str( Year( dFecPed ) ) + Dtoc( DFECENT )", {|| Str( Year( Field->dFecPed ) ) + Dtoc( Field->DFECENT ) } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "cCodPrvYea", "Str( Year( dFecPed ) ) + CCODPRV", {|| Str( Year( Field->dFecPed ) ) + Field->CCODPRV } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "cNomPrvYea", "Str( Year( dFecPed ) ) + Upper( CNOMPRV )", {|| Str( Year( Field->dFecPed ) ) + Upper( Field->CNOMPRV ) } ) )
+
+      /*
+      Otros ordenes------------------------------------------------------------
+      */
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "NESTADO", "NESTADO", {|| Field->NESTADO } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.CDX", "cTurPed", "cTurPed + cSufPed + cCodCaj", {|| Field->cTurPed + Field->cSufPed + Field->cCodCaj } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cPedCli", "cNumPedCli", {|| Field->cNumPedCli } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecChg ) + cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "iNumPed", "'01' + CSERPED + STR( NNUMPED ) + CSUFPED", {|| '01' + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @cPedPrvT ), .f. )
+   if !( cPedPrvT )->( neterr() )
+      ( cPedPrvT)->( __dbPack() )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "nNumPed", "cSerPed + Str( nNumPed ) + cSufPed", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRef", "cRef", {|| Field->cRef }, ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliRef", "cPedCli + cRef + cValPr1 + cValPr2", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
+
+      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliDet", "cPedCli + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
+
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "PedPrvI.DBF", cCheckArea( "PedPrvI", @cPedPrvT ), .f. )
+   if !( cPedPrvT )->( neterr() )
+      ( cPedPrvT )->( __dbPack() )
+
+      ( cPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedPrvI.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "PedPrvD.DBF", cCheckArea( "PedPrvD", @cPedPrvT ), .f. )
+   if !( cPedPrvT )->( neterr() )
+      ( cPedPrvT )->( __dbPack() )
+
+      ( cPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedPrvD.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
+   end if
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+function aIncPedPrv()
+
+   local aIncPedPrv  := {}
+
+   aAdd( aIncPedPrv, { "cSerPed", "C",    1,  0, "Serie de pedido" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "nNumPed", "N",    9,  0, "Número de pedido" ,                "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aIncPedPrv, { "lAviso",  "L",    1,  0, "Lógico de Aviso" ,                 "",                   "", "( cDbfCol )" } )
+
+return ( aIncPedPrv )
+
+//---------------------------------------------------------------------------//
+
+function aPedPrvDoc()
+
+   local aPedPrvDoc  := {}
+
+   aAdd( aPedPrvDoc, { "cSerPed", "C",    1,  0, "Serie de pedido" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aPedPrvDoc, { "nNumPed", "N",    9,  0, "Número de pedido" ,                "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aPedPrvDoc, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aPedPrvDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aPedPrvDoc, { "cRuta",   "M",   10,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aPedPrvDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+
+return ( aPedPrvDoc )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION lSnd( oWndBrw, dbf )
+
+   local nRecAct
+   local nRecOld           := ( dbf )->( Recno() )
+
+   for each nRecAct in ( oWndBrw:oBrw:aSelected )
+
+      ( dbf )->( dbGoTo( nRecAct ) )
+
+      if dbDialogLock( dbf )
+
+         ( dbf )->lSndDoc  := !( dbf )->lSndDoc
+
+         ( dbf )->( dbUnlock() )
+
+      end if
+
+   next
+
+   ( dbf )->( dbGoTo( nRecOld ) )
+
+    oWndBrw:Refresh()
+
+    oWndBrw:SetFocus()
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function AppPedPrv( cCodPrv, cCodArt, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if PedPrv( nil, nil, cCodPrv, cCodArt )
+         oWndBrw:RecAdd()
+      end if
+
+   else
+
+      if OpenFiles( .t. )
+         WinAppRec( nil, bEdtRec, TDataView():PedidosProveedores( nView ), cCodPrv, cCodArt )
+         CloseFiles()
+      end if
+
+   end if
+
+RETURN .t.
+
+//----------------------------------------------------------------------------//
+
+FUNCTION EdtPedPrv( nNumPed, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if PedPrv()
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            oWndBrw:RecEdit()
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( .t. )
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            WinEdtRec( nil, bEdtRec, TDataView():PedidosProveedores( nView ) )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+         CloseFiles()
+      end if
+
+   end if
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION ZooPedPrv( nNumPed, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if PedPrv()
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            oWndBrw:RecZoom()
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( .t. )
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            WinZooRec( nil, bEdtRec, TDataView():PedidosProveedores( nView ) )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+         CloseFiles()
+      end if
+
+   end if
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION DelPedPrv( nNumPed, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if PedPrv()
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            WinDelRec( nil, TDataView():PedidosProveedores( nView ), {|| QuiPedPrv() } )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( .t. )
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            WinDelRec( nil, TDataView():PedidosProveedores( nView ), {|| QuiPedPrv() } )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+         CloseFiles()
+      end if
+
+   end if
+
+Return nil
+
+//----------------------------------------------------------------------------//
+
+FUNCTION PrnPedPrv( nNumPed, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if PedPrv()
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            GenPedPrv( IS_PRINTER )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( .t. )
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            GenPedPrv( IS_PRINTER )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+         CloseFiles()
+      end if
+
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+FUNCTION VisPedPrv( nNumPed, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if PedPrv()
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            GenPedPrv( IS_SCREEN )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles( .t. )
+         if dbSeekInOrd( nNumPed, "nNumPed", TDataView():PedidosProveedores( nView ) )
+            GenPedPrv( IS_SCREEN )
+         else
+            MsgStop( "No se encuentra pedido" )
+         end if
+         CloseFiles()
+      end if
+
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+function nVtaPedPrv( cCodPrv, dDesde, dHasta, cPedPrvT, dbfPedPrvL, dbfIva, dbfDiv )
+
+   local nCon     := 0
+   local nRec     := ( cPedPrvT )->( Recno() )
+
+   /*
+   Facturas a Clientes -------------------------------------------------------
+   */
+
+   if ( cPedPrvT )->( dbSeek( cCodPrv ) )
+
+      while ( cPedPrvT )->cCodPrv == cCodPrv .and. !( cPedPrvT )->( Eof() )
+
+         if ( dDesde == nil .or. ( cPedPrvT )->dFecPed >= dDesde )    .and.;
+            ( dHasta == nil .or. ( cPedPrvT )->dFecPed <= dHasta )
+
+            nCon  += nTotPedPrv( ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed, cPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, nil, cDivEmp(), .f. )
+
+         end if
+
+         ( cPedPrvT )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( cPedPrvT )->( dbGoTo( nRec ) )
+
+return nCon
+
+//----------------------------------------------------------------------------//
+
+FUNCTION aDocPedPrv( dbfDocFld, dbfDocCol )
+
+   local aDoc  := {}
+
+   /*
+   Itmes-----------------------------------------------------------------------
+   */
+
+   aAdd( aDoc, { "Empresa",         "EM" } )
+   aAdd( aDoc, { "Pedido",          "PP" } )
+   aAdd( aDoc, { "Proveedor",       "PR" } )
+   aAdd( aDoc, { "Almacen",         "AL" } )
+   aAdd( aDoc, { "Divisas",         "DV" } )
+   aAdd( aDoc, { "Formas de pago",  "PG" } )
+
+RETURN ( aDoc )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION dFecPedPrv( cPedPrv, cPedPrvT )
+
+   local dFecPed  := CtoD("")
+
+   IF ( cPedPrvT )->( dbSeek( cPedPrv ) )
+      dFecPed  := ( cPedPrvT )->dFecPed
+   END IF
+
+RETURN ( dFecPed )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nEstPedPrv( cPedPrv, cPedPrvT )
+
+   local nEstPed  := 1
+
+   IF ( cPedPrvT )->( dbSeek( cPedPrv ) )
+      nEstPed     := ( cPedPrvT )->nEstado
+   END IF
+
+RETURN ( nEstPed )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cNbrPedPrv( cPedPrv, cPedPrvT )
+
+   local cNomPrv  := ""
+
+   IF ( cPedPrvT )->( dbSeek( cPedPrv ) )
+      cNomPrv  := ( cPedPrvT )->cNomPrv
+      END IF
+
+RETURN ( cNomPrv )
+
+//---------------------------------------------------------------------------//
+
+function nTotDPedPrv( cCodArt, dbfPedPrvL, cPedPrvT, cCodAlm )
+
+   local nTotVta  := 0
+   local nRecno   := ( dbfPedPrvL )->( Recno() )
+
+   if ( dbfPedPrvL )->( dbSeek( cCodArt ) )
+
+      while ( dbfPedPrvL )->cRef == cCodArt .and. !( dbfPedPrvL )->( eof() )
+
+        if cCodAlm != nil
+           if cCodAlm == ( dbfPedPrvL )->cAlmLin
+              nTotVta  += nTotNPedPrv( dbfPedPrvL )
+           end if
+        else
+           nTotVta     += nTotNPedPrv( dbfPedPrvL )
+        end if
+
+        ( dbfPedPrvL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfPedPrvL )->( dbGoTo( nRecno ) )
+
+return ( nTotVta )
+
+//---------------------------------------------------------------------------//
+
+function nTotVPedPrv( cCodArt, dbfPedPrvL, nDec, nDor )
+
+   local nTotVta  := 0
+   local nRecno   := ( dbfPedPrvL )->( Recno() )
+
+   if ( dbfPedPrvL )->( dbSeek( cCodArt ) )
+
+      while ( dbfPedPrvL )->CREF == cCodArt .and. !( dbfPedPrvL )->( eof() )
+
+         nTotVta += nTotLPedPrv( dbfPedPrvL, nDec, nDor )
+
+         ( dbfPedPrvL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfPedPrvL )->( dbGoTo( nRecno ) )
+
+return ( nTotVta )
+
+//---------------------------------------------------------------------------//
+
+function aItmPedPrv()
+
+   local aBase := {  { "cSerPed",   "C",  1,   0, "Serie del pedido",            "",                   "", "( cDbf )"},;
+                     { "nNumPed",   "N",  9,   0, "Número del pedido",           "'999999999'",        "", "( cDbf )"},;
+                     { "cSufPed",   "C",  2,   0, "Sufijo del pedido",           "",                   "", "( cDbf )"},;
+                     { "cTurPed",   "C",  6,   0, "Sesión del pedido",           "",                   "", "( cDbf )"},;
+                     { "dFecPed",   "D",  8,   0, "Fecha del pedido",            "",                   "", "( cDbf )"},;
+                     { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",        "",                   "", "( cDbf )"},;
+                     { "cCodAlm",   "C",  3,   0, "Código de almacen",           "",                   "", "( cDbf )"},;
+                     { "cCodCaj",   "C",  3,   0, "Código de caja",              "",                   "", "( cDbf )"},;
+                     { "cNomPrv",   "C", 35,   0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"},;
+                     { "cDirPrv",   "C", 35,   0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"},;
+                     { "cPobPrv",   "C", 25,   0, "Población del proveedor",     "'@!'",               "", "( cDbf )"},;
+                     { "cProPrv",   "C", 20,   0, "Provincia del proveedor",     "'@!'",               "", "( cDbf )"},;
+                     { "cPosPrv",   "C",  5,   0, "Código postal del proveedor", "",                   "", "( cDbf )"},;
+                     { "cDniPrv",   "C", 30,   0, "D.N.I. del proveedor",        "",                   "", "( cDbf )"},;
+                     { "dFecEnt",   "D",  8,   0, "Fecha de entrada",            "",                   "", "( cDbf )"},;
+                     { "nEstado",   "N",  1,   0, "Estado del pedido",           "",                   "", "( cDbf )"},;
+                     { "cSuped",    "C", 10,   0, "Comentario su pedido",        "",                   "", "( cDbf )"},;
+                     { "cCodPgo",   "C",  2,   0, "Codigo de la forma de pago",  "",                   "", "( cDbf )"},;
+                     { "nBulTos",   "N",  3,   0, "Número de bultos",            "'999'",              "", "( cDbf )"},;
+                     { "nPorTes",   "N",  6,   0, "Precio de los portes",        "cPirDivPed",         "", "( cDbf )"},;
+                     { "cDtoEsp",   "C", 50,   0, "Descripción descuento especial","",                 "", "( cDbf )"},;
+                     { "nDtoEsp",   "N",  5,   2, "Descuento factura",           "'@EZ 99.99'",        "", "( cDbf )"},;
+                     { "cDpp",      "C", 50,   0, "Descripción descuento pronto pago","",              "", "( cDbf )"},;
+                     { "nDpp",      "N",  5,   2, "Descuento pronto pago",       "'@EZ 99.99'",        "", "( cDbf )"},;
+                     { "lRecargo",  "L",  1,   0, "Recargo de equivalencia",     "",                   "", "( cDbf )"},;
+                     { "cCondEnt",  "C", 20,   0, "Comentarios del pedido",      "",                   "", "( cDbf )"},;
+                     { "cExped",    "C", 20,   0, "Expedición",                  "",                   "", "( cDbf )"},;
+                     { "cObserv",   "M", 10,   0, "Observaciones",               "",                   "", "( cDbf )"},;
+                     { "cDivPed",   "C",  3,   0, "Codigo de divisa",            "",                   "", "( cDbf )"},;
+                     { "nVdvPed",   "N", 10,   4, "Valor de la divisa",          "'@EZ 999,999.9999'", "", "( cDbf )"},;
+                     { "lSndDoc",   "L",  1,   0, "Enviar documento",            "",                   "", "( cDbf )"},;
+                     { "cDtoUno",   "C", 25,   0, "Descripción de primer descuento personalizado", "", "", "( cDbf )"},;          //   26
+                     { "nDtoUno",   "N",  5,   2, "Porcentaje de primer descuento personalizado", "",  "", "( cDbf )"},;           //   27
+                     { "cDtoDos",   "C", 25,   0, "Descripción de segundo descuento personalizado","", "", "( cDbf )"},;          //   28
+                     { "nDtoDos",   "N",  5,   2, "Porcentaje de segundo descuento personalizado", "", "", "( cDbf )"},;
+                     { "lCloPed",   "L",  1,   0, "",                                              "", "", "( cDbf )"},;
+                     { "cCodUsr",   "C",  3,   0, "Código de usuario",                             "", "", "( cDbf )"},;
+                     { "cNumPedCli","C", 12,   0, "Número del pedido del cliente del que viene",   "", "", "( cDbf )"},;
+                     { "lImprimido","L",  1,   0, "Lógico de imprimido del documento",             "", "", "( cDbf )"},;
+                     { "dFecImp",   "D",  8,   0, "Última fecha de impresión del documento",       "", "", "( cDbf )"},;
+                     { "cHorImp",   "C",  5,   0, "Hora de la última impresión del documento",     "", "", "( cDbf )"},;
+                     { "dFecChg",   "D",  8,   0, "Fecha de modificación del documento",           "", "", "( cDbf )"},;
+                     { "cTimChg",   "C",  5,   0, "Hora de modificación del documento",            "", "", "( cDbf )"},;
+                     { "cCodDlg",   "C",  2,   0, "Código delegación",                             "", "", "( cDbf )"},;
+                     { "cSituac",   "C", 20,   0, "Situación del documento",                       "", "", "( cDbf )"},;
+                     { "nRegIva",   "N",  1,   0, "Regimen de " + cImp(),                          "", "", "( cDbf )"},;
+                     { "nTotNet",   "N", 16,   6, "Total neto",                                    "", "", "( cDbf )"},;
+                     { "nTotIva",   "N", 16,   6, "Total " + cImp(),                               "", "", "( cDbf )"},;
+                     { "nTotReq",   "N", 16,   6, "Total recargo equivalencia",                    "", "", "( cDbf )"},;
+                     { "nTotPed",   "N", 16,   6, "Total pedido",                                  "", "", "( cDbf )"},;
+                     { "cNumAlb",   "C", 12,   0, "Númeo del albarán en el se ha agrupado",        "", "", "( cDbf )"},;
+                     { "lRECC",     "L",  1,   0, "Lógico régimen especial del criterio de caja",  "", "", "( cDbf )"} }
+
+return ( aBase )
+
+//---------------------------------------------------------------------------//
+
+function aCalPedPrv()
+
+   local aCalPedPrv  := {  { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPirDivPed",  "!Empty( aTotIva[1,1] ) .and. lEnd" },;
+                           { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPirDivPed",  "!Empty( aTotIva[2,1] ) .and. lEnd" },;
+                           { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPirDivPed",  "!Empty( aTotIva[3,1] ) .and. lEnd" },;
+                           { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPirDivPed",  "!Empty( aTotIva[1,2] ) .and. lEnd" },;
+                           { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPirDivPed",  "!Empty( aTotIva[2,2] ) .and. lEnd" },;
+                           { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPirDivPed",  "!Empty( aTotIva[3,2] ) .and. lEnd" },;
+                           { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "!Empty( aTotIva[1,3] ) .and. lEnd" },;
+                           { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "!Empty( aTotIva[2,3] ) .and. lEnd" },;
+                           { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "!Empty( aTotIva[3,3] ) .and. lEnd" },;
+                           { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "!Empty( aTotIva[1,4] ) .and. lEnd" },;
+                           { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "!Empty( aTotIva[2,4] ) .and. lEnd" },;
+                           { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "!Empty( aTotIva[3,4] ) .and. lEnd" },;
+                           { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDinDivPed )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPinDivPed",  "!Empty( aTotIva[1,2] ) .and. lEnd" },;
+                           { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDinDivPed )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPinDivPed",  "!Empty( aTotIva[2,2] ) .and. lEnd" },;
+                           { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDinDivPed )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPinDivPed",  "!Empty( aTotIva[3,2] ) .and. lEnd" },;
+                           { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDinDivPed )",    "N", 16,  6, "Importe primer RE",           "cPinDivPed",  "!Empty( aTotIva[1,2] ) .and. lEnd" },;
+                           { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDinDivPed )",    "N", 16,  6, "Importe segundo RE",          "cPinDivPed",  "!Empty( aTotIva[2,2] ) .and. lEnd" },;
+                           { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDinDivPed )",    "N", 16,  6, "Importe tercer RE",           "cPinDivPed",  "!Empty( aTotIva[3,2] ) .and. lEnd" },;
+                           { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPirDivPed",  "lEnd" },;
+                           { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPirDivPed",  "lEnd" },;
+                           { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPirDivPed",  "lEnd" },;
+                           { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPirDivPed",  "lEnd" },;
+                           { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),                   "cPirDivPed",  "lEnd" },;
+                           { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPirDivPed",  "lEnd" },;
+                           { "nTotPed",                                                   "N", 16,  6, "Total pedido",                "cPirDivPed",  "lEnd" },;
+                           { "nImpEuros( nTotPed, (cDbf)->CDIVPED, cDbfDiv )",            "N", 16,  6, "Total pedido (Euros)",        "",            "lEnd" },;
+                           { "nImpPesetas( nTotPed, (cDbf)->CDIVPED, cDbfDiv )",          "N", 16,  6, "Total pedido (Pesetas)",      "",            "lEnd" },;
+                           { "nPagina",                                                   "N",  2,  0, "Número de página",            "'99'",        "" },;
+                           { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" } }
+
+return ( aCalPedPrv )
+
+//---------------------------------------------------------------------------//
+
+function aColPedPrv()
+
+   local aColPedPrv  := {}
+
+   aAdd( aColPedPrv,  { "CSERPED", "C",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NNUMPED", "N",  9,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CSUFPED", "C",  2,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CREF",    "C", 18,   0, "Referencia del artículo",          "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CREFPRV", "C", 18,   0, "Referencia del proveedor",         "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CDETALLE","C",250,   0, "Nombre del artículo",              "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NIVA",    "N",  6,   2, "Porcentaje de " + cImp(),                "'@E 99.9'",         "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NCANPED", "N", 16,   6, "Cantidad pedida",                  "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NUNICAJA","N", 16,   6, "Unidades por caja",                "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NPREDIV", "N", 16,   6, "Precio",                           "cPirDivPed",        "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NCANENT", "N", 16,   6, "Cajas recibidas",                  "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NUNIENT", "N", 16,   6, "Unidades recibidas",               "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CUNIDAD", "C",  2,   0, cNombreUnidades(),                  "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "MLNGDES", "M", 10,   0, "Descripción larga",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NDTOLIN", "N",  6,   2, "Descuento en lineas",              "'@E 999.99'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NDTOPRM", "N",  6,   2, "Descuento pormociones",            "'@E 999.99'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NDTORAP", "N",  6,   2, "Descuento por rappels",            "'@E 999.99'",       "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CCODPR1", "C", 20,   0, "Código de la primera propiedad",   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CCODPR2", "C", 20,   0, "Código de la segunda propiedad",   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CVALPR1", "C", 20,   0, "Valor de la primera propiedad",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CVALPR2", "C", 20,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NFACCNV", "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NCTLSTK", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CALMLIN" ,"C",  3,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LLOTE",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NLOTE",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
+   aAdd( aColPedPrv,  { "CLOTE",   "C", 12,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NNUMLIN", "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NUNDKIT", "N", 16,   6, "Unidades del producto kit",        "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LKITART", "L",  1,   0, "Línea con escandallo",             "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LKITCHL", "L",  1,   0, "Línea pertenciente a escandallo",  "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LKITPRC", "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LIMPLIN", "L",  1,   0, "Imprimir linea",                   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LCONTROL","L",  1,   0, "" ,                                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "MNUMSER", "M", 10,   0, "" ,                                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "LANULADO","L",  1,   0, "Anular linea",                     "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "DANULADO","D",  8,   0, "Fecha de anulacion",               "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "MANULADO","M",100,   0, "Motivo anulacion",                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CCODFAM", "C", 16,   0, "Código de familia",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CGRPFAM", "C",  3,   0, "Código del grupo de familia",      "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "NREQ",    "N", 16,   6, "Recargo de equivalencia",          "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "MOBSLIN", "M", 10,   6, "Observaciones de la linea",        "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CPEDCLI", "C", 12,   0, "Número del pedido del cliente del que viene",  "",      "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPvpRec", "N", 16,   6, "Precio de venta recomendado",      "cPirDivPed",        "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nNumMed", "N",  1,   0, "Número de mediciones",             "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nMedUno", "N", 16,   6, "Primera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nMedDos", "N", 16,   6, "Segunda unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nMedTre", "N", 16,   6, "Tercera unidad de medición",       "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nStkAct", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nStkMin", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nPdtRec", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConRea", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConSem", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConQui", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nConMes", "N", 16,   6, "",                                 "MasUnd()",          "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+
+return ( aColPedPrv )
+
+//---------------------------------------------------------------------------//
+
+function aCocPedPrv()
+
+   local aCocPedPrv  := {  { "Descrip( cDbfCol )",                                           "C", 50, 0, "Detalle del artículo",       "",            "Descripción", "" },;
+                           { "nTotNPedPrv( cDbfCol )",                                       "N", 16, 6, "Total unidades",             "cPicUndPed",  cNombreUnidades(),    "" },;
+                           { "nTotUPedPrv( cDbfCol, nDinDivPed, nVdvDivPed )",               "N", 16, 6, "Precio unitario de pedido",  "cPinDivPed",  "Precio",      "" },;
+                           { "nTotLPedPrv( cDbfCol, nDinDivPed, nDirDivPed, nVdvDivPed )",   "N", 16, 6, "Total linea de pedido",      "cPirDivPed",  "Total",       "" } }
+
+return ( aCocPedPrv )
+
+//---------------------------------------------------------------------------//
+
+Static Function nClrText( dbfTmpLin )
+
+Return ( if ( ( dbfTmpLin )->lKitChl, CLR_GRAY, CLR_BLACK ) )
+
+//----------------------------------------------------------------------------//
+
+Function EdtNumSer( mNumSer, nTotUnd, nMode )
+
+   local oDlg
+   local oBrwSer
+   local oProSer
+   local nProSer
+   local aNumSer
+   local cPreFix  := Space( 18 )
+   local oSerIni
+   local nSerIni  := 0
+   local oSerFin
+   local nSerFin  := 0
+   local oNumGen
+   local nNumGen  := 0
+
+   if nTotUnd == 0
+      MsgStop( "No hay unidades para asignar números de serie." )
+      Return ( mNumSer )
+   end if
+
+   DEFAULT nMode  := APPD_MODE
+
+   nTotUnd        := abs( nTotUnd )
+   aNumSer        := Afill( Array( nTotUnd ), Space( 30 ) )
+
+   if nMode != APPD_MODE
+      aMem2Ser( mNumSer, nTotUnd )
+   end if
+
+   DEFINE DIALOG oDlg RESOURCE "VtaNumSer"
+
+      REDEFINE GET nTotUnd ;
+                  ID          100 ;
+         PICTURE  MasUnd() ;
+         WHEN     .f. ;
+         OF       oDlg
+
+      REDEFINE GET cPreFix ;
+         ID       110 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET oSerIni VAR nSerIni ;
+         ID       120 ;
+         PICTURE  "99999999999999999999" ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oSerFin:cText( nSerIni + nTotUnd ), .t. ) ;
+         OF       oDlg
+
+      REDEFINE GET oSerFin VAR nSerFin ;
+         ID       130 ;
+         PICTURE  "99999999999999999999" ;
+         WHEN     .f. ;
+         OF       oDlg
+
+      REDEFINE GET oNumGen VAR nNumGen ;
+         ID       140 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "99999999999999999999" ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer ) )
+
+      oBrwSer                 := TXBrowse():New( oDlg )
+
+      oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwSer:lHScroll        := .f.
+      oBrwSer:lRecordSelector := .t.
+      oBrwSer:lFastEdit       := .t.
+
+      oBrwSer:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
+
+      oBrwSer:SetArray( aNumSer, , , .f. )
+
+      oBrwSer:nColSel         := 2
+
+      with object ( oBrwSer:addCol() )
+         :cHeader       := "N."
+         :bStrData      := {|| Trans( oBrwSer:nArrayAt, "999999999" ) }
+         :nWidth        := 60
+         :nDataStrAlign := 1
+         :nHeadStrAlign := 1
+      end with
+
+      with object ( oBrwSer:addCol() )
+         :cHeader       := "Serie"
+         :bEditValue    := {|| aNumSer[ oBrwSer:nArrayAt ] }
+         :nWidth        := 240
+         :nEditType     := 1
+         :bOnPostEdit   := {|o,x| aNumSer[ oBrwSer:nArrayAt ] := x }
+      end with
+
+      oBrwSer:CreateFromResource( 150 )
+
+      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      REDEFINE BUTTON ;
+         ID       510 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( mNumSer   := mSer2Mem( aNumSer, nTotUnd ), oDlg:End() )
+
+      REDEFINE BUTTON ;
+         ID       520 ;
+         OF       oDlg ;
+         ACTION   ( oDlg:End() )
+
+      oDlg:AddFastKey( VK_F5, {|| mNumSer := mSer2Mem( aNumSer, nTotUnd ), oDlg:End() } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( mNumSer )
+
+//----------------------------------------------------------------------------//
+
+Function GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer )
+
+   local n
+   local nChg  := 1
+
+   CursorWait()
+
+   if Empty( nNumGen )
+      aEval( aNumSer, {| a, n | aNumSer[ n ] := Padr( Rtrim( cPreFix ) + Ltrim( Str( nSerIni + n - 1 ) ), 30 ) } )
+   else
+      for n := 1 to len( aNumSer )
+         if Empty( aNumSer[ n ] )
+            aNumSer[ n ]                     := Padr( Rtrim( cPreFix ) + Ltrim( Str( nSerIni + nChg - 1 ) ), 30 )
+            nChg++
+         end if
+         if nChg == nNumGen
+            exit
+         end if
+      next
+   end if
+
+   CursorWE()
+
+   if !Empty( oBrwSer )
+      oBrwSer:Refresh()
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function aMem2Ser( mNumSer, nTotUnd )
+
+   local n
+   local nPosSer
+   local aMemSer
+
+   CursorWait()
+
+   aMemSer           := Afill( Array( nTotUnd ), Space( 40 ) )
+
+   for n := 1 to nTotUnd
+
+      nPosSer        := At( ",", mNumSer )
+      if nPosSer != 0
+         aMemSer[ n ]:= Padr( SubStr( mNumSer, 1, nPosSer - 1 ), 40 )
+         mNumSer     := SubStr( mNumSer, nPosSer + 1 )
+      end if
+   next
+
+   CursorWE()
+
+Return ( aMemSer )
+
+//----------------------------------------------------------------------------//
+
+Function SynPedPrv( cPath )
+
+   local oError
+   local oBlock      
+   local aTotPed
+   local nEstado
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .t., cDriver(), cPath + "PedPROVT.DBF", cCheckArea( "PedPROVT", @dbfPedPrvT ), .f. )
+   if !lAIS(); ordListAdd( cPath + "PedPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "PedPROVL.DBF", cCheckArea( "PedPROVL", @dbfPedPrvL ), .f. )
+   if !lAIS(); ordListAdd( cPath + "PedPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "PedPRVI.DBF", cCheckArea( "PedPRVI", @dbfPedPrvI ), .f. )
+   if !lAIS(); ordListAdd( cPath + "PedPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
+   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
+   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
+   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
+   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   ( dbfPedPrvT )->( OrdSetFocus( 0 ) )
+   ( dbfPedPrvT )->( dbGoTop() )
+
+   while !( dbfPedPrvT )->( eof() )
+
+      if Empty( ( dbfPedPrvT )->cSufPed )
+         ( dbfPedPrvT )->cSufPed    := "00"
+      end if
+
+      if Empty( ( dbfPedPrvT )->cCodCaj )
+         ( dbfPedPrvT )->cCodCaj    := "000"
+      end if
+
+      if !Empty( ( dbfPedPrvT )->cNumPedCli ) .and. Len( AllTrim( ( dbfPedPrvT )->cNumPedCli ) ) != 12
+         ( dbfPedPrvT )->cNumPedCli := AllTrim( ( dbfPedPrvT )->cNumPedCli ) + "00"
+      end if
+
+      if !Empty( ( dbfPedPrvT )->cNumAlb ) .and. Len( AllTrim( ( dbfPedPrvT )->cNumAlb ) ) != 12
+         ( dbfPedPrvT )->cNumAlb    := AllTrim( ( dbfPedPrvT )->cNumAlb ) + "00"
+      end if
+
+      /*
+      Rellenamos los campos de totales-----------------------------------------
+      */
+
+      if ( dbfPedPrvT )->nTotPed == 0
+
+         aTotPed                    := aTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, ( dbfPedPrvT )->cDivPed )
+
+         ( dbfPedPrvT )->nTotNet    := aTotPed[1]
+         ( dbfPedPrvT )->nTotIva    := aTotPed[2]
+         ( dbfPedPrvT )->nTotReq    := aTotPed[3]
+         ( dbfPedPrvT )->nTotPed    := aTotPed[4]
+
+      end if
+
+      ( dbfPedPrvT )->( dbSkip() )
+
+   end while
+
+   ( dbfPedPrvT )->( OrdSetFocus( 1 ) )
+
+   // Lineas ------------------------------------------------------------------
+
+   ( dbfPedPrvL )->( OrdSetFocus( 0 ) )
+   ( dbfPedPrvL )->( dbGoTop() )
+
+   while !( dbfPedPrvL )->( eof() )
+
+      if Empty( ( dbfPedPrvL )->cSufPed )
+         ( dbfPedPrvL )->cSufPed := "00"
+      end if
+
+      if !Empty( ( dbfPedPrvL )->cPedCli ) .and. Len( AllTrim( ( dbfPedPrvL )->cPedCli ) ) != 12
+         ( dbfPedPrvL )->cPedCli := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
+      end if
+
+      if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )
+         ( dbfPedPrvL )->cLote   := AllTrim( Str( ( dbfPedPrvL )->nLote ) )
+      end if
+
+      if !Empty( ( dbfPedPrvL )->cRef ) .and. Empty( ( dbfPedPrvL )->cCodFam )
+         ( dbfPedPrvL )->cCodFam := RetFamArt( ( dbfPedPrvL )->cRef, dbfArticulo )
+      end if
+
+      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cGrpFam )
+         ( dbfPedPrvL )->cGrpFam := cGruFam( ( dbfPedPrvL )->cCodFam, dbfFamilia )
+      end if
+
+      if Empty( ( dbfPedPrvL )->nReq )
+         ( dbfPedPrvL )->nReq    := nPReq( dbfIva, ( dbfPedPrvL )->nIva )
+      end if
+
+      if Empty( ( dbfPedPrvL )->cAlmLin )
+         ( dbfPedPrvL )->cAlmLin := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodAlm" )
+      end if
+
+      nEstado     := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "nEstado" )
+
+      if nEstado == 3
+         ( dbfPedPrvL )->nEstado := nEstado
+      end if
+
+      ( dbfPedPrvL )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfPedPrvL )->( OrdSetFocus( 1 ) )
+
+   // Incidencias -------------------------------------------------------------
+
+   ( dbfPedPrvI )->( OrdSetFocus( 0 ) )
+   ( dbfPedPrvI )->( dbGoTop() )
+
+   while !( dbfPedPrvI )->( eof() )
+
+      if Empty( ( dbfPedPrvI )->cSufPed )
+         ( dbfPedPrvI )->cSufPed := "00"
+      end if
+
+      ( dbfPedPrvI )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfPedPrvI )->( OrdSetFocus( 1 ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible sincronizar pedidos de proveedores" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !Empty( dbfPedPrvT ) .and. ( dbfPedPrvT )->( Used() )
+      ( dbfPedPrvT )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfPedPrvL ) .and. ( dbfPedPrvL )->( Used() )
+      ( dbfPedPrvL )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfPedPrvI ) .and. ( dbfPedPrvI )->( Used() )
+      ( dbfPedPrvI )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
+      ( dbfArticulo )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
+      ( dbfFamilia )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfArtPrv ) .and. ( dbfArtPrv )->( Used() )
+      ( dbfArtPrv )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
+      ( dbfIva )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
+      ( dbfDiv )->( dbCloseArea() )
+   end if
+
+return nil
+
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+
+CLASS TPedidosProveedorSenderReciver FROM TSenderReciverItem
+
+   Method CreateData()
+
+   Method RestoreData()
+
+   Method SendData()
+
+   Method ReciveData()
+
+   Method Process()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+Method CreateData()
+
+   local oBlock
+   local oError
+   local lSnd        := .f.
+   local cPedPrvT
+   local dbfPedPrvL
+   local tmpPedPrvT
+   local tmpPedPrvL
+   local cFileName   := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+
+   ::oSender:SetText( "Enviando pedidos a proveedores" )
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
+
+   /*
+   Creamos todas las bases de datos relacionadas con Articulos
+   */
+
+   CreateFiles( cPatSnd() )
+
+   rxPedPrv( cPatSnd() )
+
+   USE ( cPatSnd() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @tmpPedPrvT ) )
+   SET ADSINDEX TO ( cPatSnd() + "PEDPROVT.CDX" ) ADDITIVE
+
+   USE ( cPatSnd() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @tmpPedPrvL ) )
+   SET ADSINDEX TO ( cPatSnd() + "PEDPROVL.CDX" ) ADDITIVE
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( cPedPrvT )->( lastrec() )
+   end if
+
+   while !( cPedPrvT )->( eof() )
+
+      if ( cPedPrvT )->lSndDoc
+
+         lSnd  := .t.
+
+         dbPass( cPedPrvT, tmpPedPrvT, .t. )
+
+         ::oSender:SetText( ( cPedPrvT )->cSerPed + "/" + AllTrim( Str( ( cPedPrvT )->nNumPed ) ) + "/" + Alltrim( ( cPedPrvT )->cSufPed ) + "; " + Dtoc( ( cPedPrvT )->dFecPed ) + "; " + AllTrim( ( cPedPrvT )->cCodPrv ) + "; " + ( cPedPrvT )->cNomPrv )
+
+         if ( dbfPedPrvL )->( dbSeek( ( cPedPrvT )->CSERPED + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed ) )
+
+            while ( ( dbfPedPrvL )->CSERPED + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed ) == ( ( cPedPrvT )->CSERPED + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed ) .AND. !( dbfPedPrvL )->( eof() )
+
+               dbPass( dbfPedPrvL, tmpPedPrvL, .t. )
+               ( dbfPedPrvL )->( dbSkip() )
+
+            end do
+
+         end if
+
+      end if
+
+      ( cPedPrvT )->( dbSkip() )
+
+      if !Empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( cPedPrvT )->( OrdKeyNo() ) )
+      end if
+
+   END DO
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( cPedPrvT )
+   CLOSE ( dbfPedPrvL )
+   CLOSE ( tmpPedPrvT )
+   CLOSE ( tmpPedPrvL )
+
+   /*
+   Comprimir los archivos------------------------------------------------------
+   */
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo pedidos de proveedores" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay pedidos de proveedores para enviar" )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method RestoreData()
+
+   local oBlock
+   local oError
+   local cPedPrvT
+
+   if ::lSuccesfullSend
+
+      /*
+      Retorna el valor anterior
+      */
+
+      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
+
+         lSelectAll( nil, cPedPrvT, "lSndDoc", .f., .t., .f. )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+      CLOSE ( cPedPrvT )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method SendData()
+
+   local cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+
+   if File( cPatOut() + cFileName )
+
+      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+         ::lSuccesfullSend := .t.
+         ::IncNumberToSend()
+         ::oSender:SetText( "Fichero enviado " + cFileName )
+      else
+         ::oSender:SetText( "ERROR al enviar fichero" )
+      end if
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method ReciveData()
+
+   local n
+   local aExt        := aRetDlgEmp()
+
+   /*
+   Recibirlo de internet
+   */
+
+   ::oSender:SetText( "Recibiendo pedidos de proveedores" )
+
+   for n := 1 to len( aExt )
+      ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   next
+
+   ::oSender:SetText( "Pedidos de proveedores recibidos" )
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method Process()
+
+   local m
+   local oBlock
+   local oError
+   local cPedPrvT
+   local dbfPedPrvL
+   local tmpPedPrvT
+   local tmpPedPrvL
+   local aFiles      := Directory( cPatIn() + "PedPrv*.*" )
+
+   /*
+   Procesamos los ficheros recibidos
+   */
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+      BEGIN SEQUENCE
+
+      /*
+      descomprimimos el fichero
+      */
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         dbUseArea(.t., cDriver(), cPatSnd() + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @tmpPedPrvT ), .f., .t. )
+         if !( cPedPrvT )->( neterr() )
+               ( tmpPedPrvT )->( ordListAdd( cPatSnd() + "PEDPROVT.CDX" ) )
+         end if
+
+         dbUseArea(.t., cDriver(), cPatSnd() + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @tmpPedPrvL ), .f., .t. )
+         if !( dbfPedPrvL )->( neterr() )
+               ( tmpPedPrvL )->( ordListAdd( cPatSnd() + "PEDPROVL.CDX" ) )
+         end if
+
+         USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+         SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
+
+         USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
+         SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
+
+         WHILE ( tmpPedPrvT )->( !eof() )
+
+            /*
+            Comprobamos que no exista el pedido en la base de datos
+            */
+
+            if lValidaOperacion( ( tmpPedPrvT )->dFecPed, .f. ) .and. ;
+               !( cPedPrvT )->( dbSeek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
+
+               dbPass( tmpPedPrvT, cPedPrvT, .t. )
+               ::oSender:SetText( "Añadido     : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
+
+               if ( tmpPedPrvL )->( dbSeek( ( tmpPedPrvT )->CSERPED + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
+
+                  while ( ( tmpPedPrvL )->CSERPED + Str( ( tmpPedPrvL )->nNumPed ) + ( tmpPedPrvL )->cSufPed ) == ( ( tmpPedPrvT )->CSERPED + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) .AND. !( tmpPedPrvL )->( eof() )
+
+                     dbPass( tmpPedPrvL, dbfPedPrvL, .t. )
+                     ( tmpPedPrvL )->( dbSkip() )
+
+                  end do
+
+               end if
+
+            else
+
+               ::oSender:SetText( "Desestimado : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
+
+            end if
+
+            ( tmpPedPrvT )->( dbSkip() )
+
+         END DO
+
+         CLOSE ( cPedPrvT )
+         CLOSE ( dbfPedPrvL )
+         CLOSE ( tmpPedPrvT )
+         CLOSE ( tmpPedPrvL )
+
+         ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+      end if
+
+      RECOVER USING oError
+
+         CLOSE ( cPedPrvT )
+         CLOSE ( dbfPedPrvL )
+         CLOSE ( tmpPedPrvT )
+         CLOSE ( tmpPedPrvL )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+/*
+Selecciona todos los registros
+*/
+
+FUNCTION lSelAll( oBrw, dbf, lSel, lTop, lMeter )
+
+   local nRecAct  := ( dbf )->( recno() )
+
+   DEFAULT lSel   := .t.
+   DEFAULT lTop   := .t.
+   DEFAULT lMeter := .f.
+
+   if lMeter
+      CreateWaitMeter( nil, nil, ( dbf )->( OrdKeyCount() ) )
+   else
+      CursorWait()
+   end if
+
+   if lTop
+      ( dbf )->( dbGoTop() )
+   end if
+
+   while !( dbf )->( eof() )
+
+      if dbLock( dbf )
+         ( dbf )->lSndDoc := lSel
+         ( dbf )->( dbUnlock() )
+      end if
+
+      ( dbf )->( dbSkip() )
+
+      if lMeter
+         RefreshWaitMeter( ( dbf )->( OrdKeyNo() ) )
+      else
+         SysRefresh()
+      end if
+
+   end do
+
+   ( dbf )->( dbGoTo( nRecAct ) )
+
+   if lMeter
+      EndWaitMeter()
+   else
+      CursorWE()
+   end if
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+      oBrw:SetFocus()
+   end if
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+FUNCTION aDocumentsPedidoProveedor( cNumPed )
+
+   local oBlock
+   local oError
+   local dbfAlbPrvT
+   local aDocuments  := {}
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
+   ( dbfAlbPrvT )->( OrdSetFocus( "cNumPed" ) )
+
+   if ( dbfAlbPrvT )->( dbSeek( cNumPed ) )
+      while ( dbfAlbPrvT )->cNumPed == cNumPed .and. !( dbfAlbPrvT )->( eof() )
+         aAdd( aDocuments, {  ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb,;
+                              Dtoc( ( dbfAlbPrvT )->dFecAlb ),;
+                              ( dbfAlbPrvT )->cCodPrv,;
+                              Rtrim( ( dbfAlbPrvT )->cNomPrv ),;
+                              ( dbfAlbPrvT )->cCodAlm } )
+         ( dbfAlbPrvT )->( dbSkip() )
+      end while
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE( dbfAlbPrvT )
+
+Return ( aDocuments )
+
+//---------------------------------------------------------------------------//
+
+Function GetCodCli( cNumPed )
+
+   local oBlock
+   local oError
+   local dbfPedCliT
+   local cCodCli  := ""
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+
+   ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
+
+   if ( dbfPedCliT )->( dbSeek( cNumPed ) )
+      cCodCli     := ( dbfPedCliT )->cCodCli
+   end if 
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE( dbfPedCliT )
+
+Return cCodCli
+
+//---------------------------------------------------------------------------//
+
+Function GetNomCli( cNumPed )
+
+   local oBlock
+   local oError
+   local dbfPedCliT
+   local cNomCli  := ""
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+
+   ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
+
+   if ( dbfPedCliT )->( dbSeek( cNumPed ) )
+      cNomCli     := ( dbfPedCliT )->cNomCli
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE( dbfPedCliT )
+
+Return cNomCli
+
+//---------------------------------------------------------------------------//
+
+function lChgImpDoc( dbfT )
+
+   if dbLock( dbfT )
+      ( dbfT )->lImprimido := .t.
+      ( dbfT )->dFecImp    := GetSysDate()
+      ( dbfT )->cHorImp    := SubStr( Time(), 1, 5 )
+      ( dbfT )->( dbUnLock() )
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+/*
+Función que monta los diálogos para la generación de pedidos a proveedor
+*/
+
+Function Generador( oBrwPed )
+
+   local oDlg
+   local oPag
+   local oBmp
+   local oMtr
+   local nMtr
+   local oBrw
+   local oCol
+   local oBtnAnt
+   local oBtnNxt
+   local oProvee
+   local cProvee
+   local oSayPrv
+   local cSayPrv
+   local oArtOrg
+   local oArtDes
+   local oSayArtOrg
+   local oSayArtDes
+   local cArtOrg        := dbFirst ( dbfArticulo, 1 )
+   local cArtDes        := dbLast  ( dbfArticulo, 1 )
+   local cSayArtOrg     := dbFirst ( dbfArticulo, 2 )
+   local cSayArtDes     := dbLast  ( dbfArticulo, 2 )
+   local oCodAlm
+   local oNomAlm
+   local cCodAlm        := cDefAlm()
+   local cNomAlm        := retAlmacen( cCodAlm, dbfAlm )
+   local nStockDis      := 4
+   local nStockFin      := 1
+
+   CreaTemporal()
+
+   DEFINE DIALOG oDlg RESOURCE "ASS_PEDCLI" TITLE "Generar pedido a proveedor"
+
+   REDEFINE BITMAP oBmp ;
+      RESOURCE "GENERARPEDPRV" ;
+      ID       500 ;
+      OF       oDlg
+
+   REDEFINE PAGES oPag ID 110 OF oDlg ;
+      DIALOGS "ASS_PEDPRV1", "ASS_PEDCLI2"
+
+   REDEFINE GET oProvee VAR cProvee;
+      ID       110;
+      VALID    cProvee( oProvee, TDataView():Proveedores( nView ), oSayPrv ) ;
+      BITMAP   "LUPA" ;
+      ON HELP  BrwProvee( oProvee, oSayPrv ) ;
+            COLOR       CLR_GET ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oSayPrv VAR cSayPrv ;
+      ID       120;
+      WHEN     .f.;
+      COLOR    CLR_GET ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oArtOrg VAR cArtOrg;
+      ID       150 ;
+      VALID    cArticulo( oArtOrg, dbfArticulo, oSayArtOrg );
+      BITMAP   "LUPA" ;
+      ON HELP  BrwArticulo( oArtOrg, oSayArtOrg );
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oSayArtOrg VAR cSayArtOrg ;
+            WHEN        .F.;
+      ID       160 ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oArtDes VAR cArtDes;
+      ID       170 ;
+      VALID    cArticulo( oArtDes, dbfArticulo, oSayArtDes );
+      BITMAP   "LUPA" ;
+      ON HELP  BrwArticulo( oArtDes, oSayArtDes );
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oSayArtDes VAR cSayArtDes ;
+            WHEN        .F.;
+      ID       180 ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oCodAlm VAR cCodAlm ;
+      ID       190 ;
+      VALID    ( cAlmacen( oCodAlm, dbfAlm, oNomAlm ) ) ;
+      BITMAP   "LUPA" ;
+      ON HELP  ( BrwAlmacen( oCodAlm, oNomAlm ) ) ;
+      COLOR    CLR_GET ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE GET oNomAlm VAR cNomAlm ;
+      WHEN     .F. ;
+      ID       200 ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE RADIO nStockDis ;
+      ID       201, 202, 203, 204 ;
+      OF       oPag:aDialogs[1]
+
+   REDEFINE RADIO nStockFin ;
+      ID       212, 213 ;
+      OF       oPag:aDialogs[ 1 ]
+
+   REDEFINE METER oMtr ;
+      VAR      nMtr ;
+            PROMPT      "Procesando" ;
+      ID       220 ;
+      TOTAL    ( ( dbfArticulo )->( LastRec() ) ) ;
+      OF       oPag:aDialogs[ 1 ]
+
+   oBrw                 := IXBrowse():New( oPag:aDialogs[ 2 ] )
+
+   oBrw:lHScroll        := .f.
+
+   oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   oBrw:cAlias          := dbfTmpArt
+   oBrw:nMarqueeStyle   := 5
+   oBrw:cName           := "Pedido a proveedores.Asistente"
+   oBrw:lFastEdit       := .t.
+   oBrw:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
+
+      with object ( oBrw:AddCol() )
+         :cHeader       := "Se. Seleccionado"
+         :bStrData      := {|| "" }
+         :bEditValue    := {|| ( dbfTmpArt )->lSelArt }
+         :nEditType     := 0
+         :nWidth        := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader       := "Código"
+         :bEditValue    := {|| ( dbfTmpArt )->cRef }
+         :nEditType     := 0
+         :nWidth        := 60
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader       := "Detalle"
+         :bEditValue    := {|| ( dbfTmpArt )->cDetalle }
+         :nEditType     := 0
+         :nWidth        := 200
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader       := "Objetivo"
+         :bEditValue    := {|| ( dbfTmpArt )->nObjUni }
+         :cEditPicture  := MasUnd()
+         :nEditType     := 0
+         :nWidth        := 65
+         :nDataStrAlign := AL_RIGHT
+         :nHeadStrAlign := AL_RIGHT
+      end with
+
+      with object ( oCol := oBrw:AddCol() )
+         :cHeader       := "A pedir"
+         :bEditValue    := {|| ( dbfTmpArt )->nNumUni }
+         :cEditPicture  := MasUnd()
+         :nEditType     := 1
+         :nWidth        := 65
+         :bOnPostEdit   := {|o,x| if( x > 0, ( dbfTmpArt )->nNumUni := x, ), .t. }
+         :nDataStrAlign := AL_RIGHT
+         :nHeadStrAlign := AL_RIGHT
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader       := "Stock actual"
+         :bEditValue    := {|| ( dbfTmpArt )->nStkFis }
+         :cEditPicture  := MasUnd()
+         :nEditType     := 0
+         :nWidth        := 65
+         :nDataStrAlign := AL_RIGHT
+         :nHeadStrAlign := AL_RIGHT
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader       := "Stock disponible"
+         :bEditValue    := {|| ( dbfTmpArt )->nStkDis }
+         :cEditPicture  := MasUnd()
+         :nEditType     := 0
+         :nWidth        := 65
+         :nDataStrAlign := AL_RIGHT
+         :nHeadStrAlign := AL_RIGHT
+      end with
+
+   oBrw:CreateFromResource( 100 )
+
+   oBrw:bLDblClick      := {|| oCol:Edit() }
+
+   REDEFINE BUTTON ;
+      ID       110;
+      OF       oPag:aDialogs[2] ;
+      ACTION   ( oCol:Edit() )
+
+   REDEFINE BUTTON ;
+      ID       120;
+      OF       oPag:aDialogs[2] ;
+      ACTION   ( SelArt( dbfTmpArt, oBrw ) )
+
+   REDEFINE BUTTON ;
+      ID       130;
+      OF       oPag:aDialogs[2] ;
+      ACTION   ( SelAllArt( dbfTmpArt, oBrw, .t. ) )
+
+   REDEFINE BUTTON ;
+      ID       140;
+      OF       oPag:aDialogs[2] ;
+      ACTION   ( SelAllArt( dbfTmpArt, oBrw, .f. ) )
+
+   REDEFINE BUTTON oBtnAnt ;
+      ID       401 ;
+      OF       oDlg;
+      ACTION   ( BtnAnt( oPag, oBtnNxt, oBtnAnt ) )
+
+   REDEFINE BUTTON oBtnNxt ;
+      ID       402 ;
+      OF       oDlg;
+      ACTION   ( BtnNxt( oPag, oBtnNxt, oBtnAnt, oDlg, oProvee, cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, oMtr, oBrw, cCodAlm ) )
+
+   REDEFINE BUTTON ;
+      ID       403 ;
+      OF       oDlg ;
+      ACTION   ( KillTemporal(), oDlg:end() )
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT( oBtnAnt:Hide(), oBrw:Load() )
+
+   oBmp:End()
+
+   oBrwPed:Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+function ShowKitCom( dbfMaster, dbfTmpLin, oBrw, cCodPrv, dbfTmpInc, aGet )
+
+   if !Empty( aGet )
+
+      if lUsrMaster() .or. oUser():lCambiarPrecio()
+         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardEnable()
+      else
+         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardDisable()
+      end if
+
+      if !Empty( cCodPrv )
+         aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:cText( cCodPrv )
+         aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:lValid()
+      end if
+
+      aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:SetFocus()
+
+   end if
+
+   /*
+   Hace que salte la incidencia al entrar en el documento----------------------
+   */
+
+   if !Empty( dbfTmpInc )
+
+      while !( dbfTmpInc )->( Eof() )
+         if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
+            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
+         end if
+         ( dbfTmpInc )->( dbSkip() )
+      end while
+
+      ( dbfTmpInc )->( dbGoTop() )
+
+   end if
+
+   oBrw:Refresh()
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+Function IsPedPrv( cPath )
+
+   DEFAULT cPath  := cPatEmp()
+
+   if !lExistTable( cPath + "PedProvT.DBF" )
+      dbCreate( cPath + "PedProvT.DBF", aSqlStruct( aItmPedPrv() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "PedProvL.DBF" )
+      dbCreate( cPath + "PedProvL.DBF", aSqlStruct( aColPedPrv() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "PedPrvI.Dbf" )
+      dbCreate( cPath + "PedPrvI.Dbf", aSqlStruct( aIncPedPrv() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "PedPrvD.Dbf" )
+      dbCreate( cPath + "PedPrvD.Dbf", aSqlStruct( aPedPrvDoc() ), cDriver() )
+   end if
+
+   if !lExistIndex( cPath + "PedProvT.Cdx" ) .or. ;
+      !lExistIndex( cPath + "PedProvL.Cdx" ) .or. ;
+      !lExistIndex( cPath + "PedPrvI.Cdx" )  .or. ;
+      !lExistIndex( cPath + "PedPrvD.Cdx" )
+      rxPedPrv( cPath )
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesPedPrv( cPedPrvL )
+
+   DEFAULT cPedPrvL  := dbfPedPrvL
+
+RETURN ( Descrip( cPedPrvL ) )
+
+//---------------------------------------------------------------------------//
+
+Function DesignReportPedPrv( oFr, dbfDoc )
+
+   local lOpen    := .f.
+   local lFlag    := .f.
+
+   /*
+   Tratamiento para no hacer dos veces el openfiles al editar el documento en imprimir series
+   */
+
+   if lOpenFiles
+      lFlag       := .t.
+   else
+      if Openfiles()
+         lFlag    := .t.
+         lOpen    := .t.
+      else
+         lFlag    := .f.
+      end if
+   end if
+
+   if lFlag
+
+      /*
+      Zona de datos------------------------------------------------------------
+      */
+
+      DataReport( oFr )
+
+      /*
+      Paginas y bandas---------------------------------------------------------
+      */
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+         oFr:SetProperty(     "Report.ScriptText", "Text",;
+                                                   + ;
+                                                   "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
+                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
+                                                   "CallHbFunc('nTotPedPrv');"                                 + Chr(13) + Chr(10) + ;
+                                                   "end;"                                                      + Chr(13) + Chr(10) + ;
+                                                   "begin"                                                     + Chr(13) + Chr(10) + ;
+                                                   "end." )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", frxMasterData )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Pedidos" )
+
+         oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
+         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
+         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de pedidos" )
+         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end if
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReport( oFr )
+
+      /*
+      Diseño de report---------------------------------------------------------
+      */
+
+      oFr:DesignReport()
+
+      /*
+      Destruye el diseñador----------------------------------------------------
+      */
+
+      oFr:DestroyFr()
+
+      /*
+      Cierra ficheros----------------------------------------------------------
+      */
+
+      if lOpen
+         CloseFiles()
+      end if
+
+   else
+
+      Return .f.
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function PrintReportPedPrv( nDevice, nCopies, cPrinter, dbfDoc )
+
+   local oFr
+   local cFilePdf       := cPatTmp() + "PedidoProveedor" + StrTran( ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed, " ", "" ) + ".Pdf"
+
+   DEFAULT nDevice      := IS_SCREEN
+   DEFAULT nCopies      := 1
+   DEFAULT cPrinter     := PrnGetName()
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+   /*
+   Manejador de eventos--------------------------------------------------------
+   */
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   DataReport( oFr )
+
+   /*
+   Cargar el informe-----------------------------------------------------------
+   */
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      VariableReport( oFr )
+
+      /*
+      Preparar el report-------------------------------------------------------
+      */
+
+      oFr:PrepareReport()
+
+      /*
+      Imprimir el informe------------------------------------------------------
+      */
+
+      do case
+         case nDevice == IS_SCREEN
+
+            oFr:ShowPreparedReport()
+
+         case nDevice == IS_PRINTER
+
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:Print()
+
+         case nDevice == IS_PDF
+
+            oFr:PrintOptions:SetShowDialog( .f. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
+            oFr:DoExport(     "PDFExport" )
+
+         case nDevice == IS_MAIL
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
+            oFr:DoExport(     "PDFExport" )
+
+            if file( cFilePdf )
+
+               with object ( TGenMailing():New() )
+
+                  :SetTypeDocument( "nPedPrv" )
+                  :SetDe(           uFieldEmpresa( "cNombre" ) )
+                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAdjunto(      cFilePdf )
+                  :SetPara(         RetFld( ( TDataView():PedidosProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "cMeiInt" ) )
+                  :SetAsunto(       "Envio de pedido de proveedor número " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro pedido de proveedor " + ( TDataView():PedidosProveedores( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():PedidosProveedores( nView ) )->dfecPed ) + Space( 1 ) )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      "Reciba un cordial saludo." )
+
+                  :GeneralResource( TDataView():PedidosProveedores( nView ), aItmFacRec() )
+
+               end with
+
+            end if
+
+      end case
+
+   end if
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   oFr:DestroyFr()
 
 Return .t.
 

@@ -12249,19 +12249,13 @@ Static Function ImprimirSeriesPedidosClientes( nDevice, lExt )
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView )
+   oPrinter          := PrintSeries():New( nView ):SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
    oPrinter:Serie(      ( TDataView():PedidosClientes( nView ) )->cSerPed )
    oPrinter:Documento(  ( TDataView():PedidosClientes( nView ) )->nNumPed )
    oPrinter:Sufijo(     ( TDataView():PedidosClientes( nView ) )->cSufPed )
-
-   oPrinter:oClienteInicio:First()
-   oPrinter:oClienteFin:Last()
-
-   oPrinter:oGrupoClienteInicio:First()
-   oPrinter:oGrupoClienteFin:Last()
 
    if lExt
 

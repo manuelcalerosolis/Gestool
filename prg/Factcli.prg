@@ -16437,19 +16437,13 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView )
+   oPrinter          := PrintSeries():New( nView ):SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
    oPrinter:Serie(      ( TDataView():FacturasClientes( nView ) )->cSerie )
    oPrinter:Documento(  ( TDataView():FacturasClientes( nView ) )->nNumFac )
    oPrinter:Sufijo(     ( TDataView():FacturasClientes( nView ) )->cSufFac )
-
-   oPrinter:oClienteInicio:First()
-   oPrinter:oClienteFin:Last()
-
-   oPrinter:oGrupoClienteInicio:First()
-   oPrinter:oGrupoClienteFin:Last()
 
    if lExt
 
