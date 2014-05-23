@@ -1319,6 +1319,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :bEditValue       := {|| ( dbfTikT )->cCodObr }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
