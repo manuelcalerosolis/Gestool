@@ -1648,7 +1648,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    case nMode == DUPL_MODE
 
       aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"   ) ) ]   := NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo )
-      aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ]   := uFieldEmpresa( "cDefTem" )
       aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ""
 
    end case
