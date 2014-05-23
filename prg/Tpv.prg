@@ -1171,6 +1171,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
                "Cajero",;
                "Código",;
                "Nombre",;
+               "Obra",;
                "Sesión" ;
       MRU      "Cashier_user1_16";
       BITMAP   clrTopTPV ;
@@ -1310,6 +1311,14 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
          :cHeader          := "Almacén"
          :bEditValue       := {|| ( dbfTikT )->cAlmTik }
          :nWidth           := 60
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Obra"
+         :cSortOrder       := "cCodObr"
+         :bEditValue       := {|| ( dbfTikT )->cCodObr }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -17810,6 +17819,9 @@ FUNCTION rxTpv( cPath, oMeter )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "iNumTik", "'12' + CSERTIK + CNUMTIK + CSUFTIK", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+
+      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "cCodObr", "cCodObr + dtos( dFecTik )", {|| Field->cCodObr + dtos( Field->dFecTik ) } ) )
 
       ( dbfTikT )->( dbCloseArea() )
    else
