@@ -2195,7 +2195,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    end if
 
    /*
-   tipo de presupuesto---------------------------------------------------------
+   tipo de albaran---------------------------------------------------------
    */
 
    cTipAlb                    := aTipAlb[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
@@ -2601,7 +2601,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:lFooter         := .t.
 
       oBrwLin:CreateFromResource( 240 )
-
+      
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Oferta"
          :bStrData            := {|| "" }
@@ -3821,6 +3821,9 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       end if 
 
    end if 
+
+
+   oBrwLin:Load()
 
    /*
    Muestra y oculta las rentabilidades-----------------------------------------
@@ -6254,7 +6257,7 @@ Static Function RecAlbCli( aTmpAlb, oDlg )
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" )
-               if hAtipica[ "nDescuentoLineal" ]
+               if hAtipica[ "nDescuentoLineal" ] != 0
                   ( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
                end if
             end if
@@ -8671,6 +8674,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
             end while
          end if
 
+         ( dbfTmpLin )->( ordSetFocus( "nNumLin" ) )
          ( dbfTmpLin )->( dbGoTop() )
 
          oStock:SetTmpAlbCliL( dbfTmpLin )
