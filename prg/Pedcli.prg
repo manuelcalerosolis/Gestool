@@ -9667,10 +9667,7 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
 
    local oDlg
    local oNomInci
-   local cNomInci          := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
-   local oTitulo
-   local cTitulo        := LblTitle( nMode ) + " incidencia"
-
+   local cNomInci         	:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
 
    if nMode == APPD_MODE
       aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
@@ -9682,9 +9679,7 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
       end if
    end if
 
-
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
-
 
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
@@ -9721,11 +9716,6 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
          ID       140 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oDlg
-
-         REDEFINE SAY oTitulo VAR cTitulo;
-             ID       1000 ;
-             OF       oDlg
-
 
       REDEFINE BUTTON ;
          ID       IDOK ;
