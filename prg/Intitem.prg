@@ -165,7 +165,8 @@ Method CreateData() CLASS TClienteSenderReciver
    Creamos la temporal de atípicas---------------------------------------------
    */
 
-   TAtipicas():GetInstance( cPatSnd() ):OpenFiles()
+   TAtipicas():GetInstance():OpenFiles( .f., cPatSnd() )
+   tmpAtp   := TAtipicas():GetInstance():oDbf:cAlias
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfClient )->( lastrec() )
@@ -186,22 +187,26 @@ Method CreateData() CLASS TClienteSenderReciver
          ::oSender:SetText( AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
 
          if ( dbfObrasT )->( dbSeek( ( dbfClient )->Cod ) )
-            while ( dbfObrasT )->cCodCli == ( dbfClient )->Cod
+            while ( dbfObrasT )->cCodCli == ( dbfClient )->Cod .and. !( dbfObrasT )->( Eof() )
                dbPass( dbfObrasT, tmpObr, .t. )
+               SysRefresh()
                ( dbfObrasT )->( dbSkip() )
             end while
          end if
 
          if ( dbfContactos )->( dbSeek( ( dbfClient )->Cod ) )
-            while ( dbfContactos )->cCodCli == ( dbfClient )->Cod
+            while ( dbfContactos )->cCodCli == ( dbfClient )->Cod .and. !( dbfContactos )->( Eof() )
                dbPass( dbfContactos, tmpCon, .t. )
+               SysRefresh()
                ( dbfContactos )->( dbSkip() )
             end while
          end if
 
          if ( dbfCliAtp )->( dbSeek( ( dbfClient )->Cod ) )
-            while ( dbfCliAtp )->cCodCli == ( dbfClient )->Cod
-               dbPass( dbfCliAtp, TAtipicas():GetInstance( cPatSnd() ):oDbf:cAlias, .t. )
+            while ( dbfCliAtp )->cCodCli == ( dbfClient )->Cod .and. !( dbfCliAtp )->( Eof() )
+               Logwrite( ( dbfcliatp )->( OrdKeyNo() ) )
+               dbPass( dbfCliAtp, tmpAtp, .t. )
+               SysRefresh()
                ( dbfCliAtp )->( dbSkip() )
             end while
          end if
@@ -225,8 +230,8 @@ Method CreateData() CLASS TClienteSenderReciver
    END SEQUENCE
    ErrorBlock( oBlock )
 
-   TAtipicas():GetInstance( cPatSnd() ):CloseFiles()
-   TAtipicas():EndInstance( cPatSnd() )
+   TAtipicas():GetInstance():CloseFiles()
+   TAtipicas():EndInstance()
 
    CLOSE ( tmpCli       )
    CLOSE ( tmpObr       )
@@ -435,7 +440,7 @@ Method Process() CLASS TClienteSenderReciver
                   else
                         dbPass( tmpCli, dbfClient, .t. )
                         ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
-                        ::CleanRelation( ( tmpCli )->Cod, dbfCliAtp, dbfObrasT, dbfContactos )
+                        //::CleanRelation( ( tmpCli )->Cod, dbfCliAtp, dbfObrasT, dbfContactos )
                   end if
 
                   ( tmpCli )->( dbSkip() )
@@ -449,7 +454,7 @@ Method Process() CLASS TClienteSenderReciver
                end while
 
                if !Empty( ::oSender:oMtr )
-                  ::oSender:oMtr:nTotal := ( tmpAtp )->( lastrec() )
+                  ::oSender:oMtr:nTotal      := ( tmpAtp )->( lastrec() )
                end if
 
                ( tmpAtp )->( dbGoTop() )

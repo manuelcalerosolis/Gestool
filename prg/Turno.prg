@@ -491,7 +491,6 @@ CLASS TTurno FROM TMasDet
 
    Method EdtLine( oLbx )
 
-
    Method SyncAllDbf()
    Method Reindexa( oMeter )
 
@@ -500,8 +499,8 @@ CLASS TTurno FROM TMasDet
    Method Asiento()
 
    Method DlgImprimir()
-   Method StartDlgImprimir()
-   Method ExecuteDlgImprimir()
+      Method StartDlgImprimir()
+      Method ExecuteDlgImprimir()
 
    Method PrintArqueo( cCodCaj, nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
@@ -888,11 +887,14 @@ CLASS TTurno FROM TMasDet
 
    //-------------------------------------------------------------------------//
 
-   METHOD idTruno()                 INLINE ( if( uFieldEmpresa( "lDesCajas" ), ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj, ::oDbf:cNumTur + ::oDbf:cSufTur ) )
+   // METHOD idTruno()                 INLINE ( if( uFieldEmpresa( "lDesCajas" ), ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj, ::oDbf:cNumTur + ::oDbf:cSufTur ) )
+   METHOD idTruno()                    INLINE ( ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj )
 
-   METHOD cNumeroCurrentTurno()     INLINE ( SubStr( ::cCurTurno, 1, 6 ) )
-   METHOD cSufijoCurrentTurno()     INLINE ( SubStr( ::cCurTurno, 7, 2 ) )
-   METHOD cCajaCurrentTurno()       INLINE ( if( uFieldEmpresa( "lDesCajas"), SubStr( ::cCurTurno, 9, 3 ), "" ) )
+   METHOD cNumeroCurrentTurno()        INLINE ( SubStr( ::cCurTurno, 1, 6 ) )
+   METHOD cSufijoCurrentTurno()        INLINE ( SubStr( ::cCurTurno, 7, 2 ) )
+   METHOD cNumeroSufijoCurrentTurno()  INLINE ( SubStr( ::cCurTurno, 1, 8 ) )
+
+   METHOD cCajaCurrentTurno()          INLINE ( if( uFieldEmpresa( "lDesCajas"), SubStr( ::cCurTurno, 9, 3 ), "" ) )
 
 END CLASS
 
@@ -1806,7 +1808,7 @@ METHOD lOpenCaja( cCodCaj )
 
    DEFAULT cCodCaj         := ::GetCurrentCaja()
 
-   if uFieldEmpresa( "lDesCajas" )
+   if .t. // uFieldEmpresa( "lDesCajas" )
 
       // Vamos a ver q turno esta abiertos-------------------------------------
 
@@ -1815,7 +1817,7 @@ METHOD lOpenCaja( cCodCaj )
 
       lOpenCaja            := ::oDbf:Seek( cCodCaj )
       if lOpenCaja
-         ::cCurTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur
+         ::cCurTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj
       end if 
 
       ::oDbf:SetStatus()
@@ -1871,8 +1873,8 @@ METHOD lCloseCajaSeleccionada()
 
    // Cajas deseincronizadas---------------------------------------------------
 
-   if uFieldEmpresa( "lDesCajas" )
-      cCurrentTruno     := ::cCurTurno + ::GetCurrentCaja()
+   if .t. // uFieldEmpresa( "lDesCajas" )
+      cCurrentTruno     := ::cCurTurno // + ::GetCurrentCaja()
       bWhileTruno       := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur + ::oDbfCaj:cCajTur == cCurrentTruno }
    else 
       cCurrentTruno     := ::cCurTurno 
@@ -2546,7 +2548,7 @@ METHOD cValidTurno()
 
    local nCurTur  
 
-   if uFieldEmpresa( "lDesCajas" )
+   if .t. // uFieldEmpresa( "lDesCajas" )
       nCurTur     := cNumeroSesionCaja( ::GetCurrentCaja(), ::oCaja:cAlias, ::oDbf:cAlias )
    else 
       nCurTur     := nNewDoc( nil, ::oDbf:cAlias, "nSesion", 6, ::oContador:cAlias ) 
@@ -2768,7 +2770,7 @@ METHOD InvCierre( oDlg, oMsg )
       ::oAni:Show()
    end if
 
-   if uFieldEmpresa( "lDesCajas" )
+   if .t. // uFieldEmpresa( "lDesCajas" )
       bWhileCaja        := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur + ::oDbfCaj:cCodCaj == ::cCurTurno }
       bWhileContadores  := {|| ::oDbfDet:cNumTur + ::oDbfDet:cSufTur + ::oDbfDet:cCodCaj == ::cCurTurno }
    else
@@ -2829,8 +2831,8 @@ METHOD InvCierre( oDlg, oMsg )
 
    oMsg:SetText( 'Escribiendo contadores' )
    
-   if uFieldEmpresa( "lDesCajas" )
-      SetNumeroSesionCaja( ::cNumeroCurrentTurno(), ::cCajaCurrentTurno(), ::oCaja:cAlias )
+   if .t. // uFieldEmpresa( "lDesCajas" )
+      SetNumeroSesionCaja( ::cNumeroSufijoCurrentTurno(), ::cCajaCurrentTurno(), ::oCaja:cAlias )
    else
       SetFieldEmpresa( Val( ::cNumeroCurrentTurno() ), "nNumTur" )
    end if 
@@ -3263,8 +3265,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::cComentario     := ::oDbf:mComTur
    ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
+
+   ::cComentario     := ::oDbf:mComTur
 
    ::CreateCajaTurno()
 
@@ -11249,12 +11252,12 @@ METHOD GetLastOpen()
 
    // Cajas independientes-----------------------------------------------------
 
-   if uFieldEmpresa( "lDesCajas" )
+   if .t. // uFieldEmpresa( "lDesCajas" )
 
       ::oDbf:OrdSetFocus( "nStaCaj" )
 
       if ::oDbf:Seek( ::GetCurrentCaja() )
-         cLasTur           := ::oDbf:cNumTur + ::oDbf:cSufTur
+         cLasTur           := ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj
       else
          cLasTur           := ""
       end if 
@@ -11300,25 +11303,19 @@ RETURN ( cLasTur )
 
 //--------------------------------------------------------------------------//
 
-METHOD GetCurrentTurno( lDelega )
-
-   DEFAULT  lDelega  := .t.
+METHOD GetCurrentTurno()
 
    ::cCurTurno       := ::GetLastOpen()
-
-   if !lDelega
-      ::cCurTurno    := ::cNumeroCurrentTurno()
-   end if
 
 RETURN ( ::cCurTurno )
 
 //---------------------------------------------------------------------------//
 
-METHOD GoCurrentTurno( lDelega )
+METHOD GoCurrentTurno()
 
-   DEFAULT  lDelega  := .t.
+   ::GetCurrentTurno()
 
-   ::GetCurrentTurno( lDelega )
+   msgAlert( ::cCurTurno, "GoCurrentTurno")
 
 RETURN ( ::oDbf:SeekInOrd( ::cCurTurno, "cNumTur" ) )
 

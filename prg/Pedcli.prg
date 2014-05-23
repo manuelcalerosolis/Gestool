@@ -9667,10 +9667,7 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
 
    local oDlg
    local oNomInci
-   local cNomInci          := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
-   local oTitulo
-   local cTitulo        := LblTitle( nMode ) + " incidencia"
-
+   local cNomInci         	:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
 
    if nMode == APPD_MODE
       aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
@@ -9682,9 +9679,7 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
       end if
    end if
 
-
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
-
 
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
@@ -9721,11 +9716,6 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
          ID       140 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oDlg
-
-         REDEFINE SAY oTitulo VAR cTitulo;
-             ID       1000 ;
-             OF       oDlg
-
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -13559,17 +13549,17 @@ Function SynPedCli( cPath )
 
       end while
 
-   	( dbfPedCliT )->( ordSetFocus( 1 ) )
+   	/*( dbfPedCliT )->( ordSetFocus( 1 ) )
 
    	( dbfPedCliT )->( dbGoTop() )
-    
+
     while !( dbfPedCliT )->( eof() )
 
         /*
         Rellenamos los campos de totales--------------------------------------
         */
 
-        if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
+        /*if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
 
            	aTotPed                 := aTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, ( dbfPedCliT )->cDivPed )
 
@@ -13584,8 +13574,7 @@ Function SynPedCli( cPath )
 
          ( dbfPedCliT )->( dbSkip() )
 
-    end while
-
+    end while*/
 
     // Lineas -----------------------------------------------------------------
 
@@ -15884,9 +15873,12 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    local nDescuentosLineas := 0
    local lPntVer           := .f.
 
-   DEFAULT cPedCliT        := TDataView():PedidosClientes( nView )
+   if !Empty( nView )
+   		DEFAULT cPedCliT   := TDataView():PedidosClientes( nView )
+   		DEFAULT ccClient   := TDataView():Clientes( nView )
+   end if
+
    DEFAULT cPedCliL        := dbfPedCliL
-   DEFAULT ccClient        := TDataView():Clientes( nView )
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago

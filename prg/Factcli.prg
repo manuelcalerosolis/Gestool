@@ -8052,7 +8052,6 @@ static function RecFacCli( aTmpFac, lMessage )
          hAtipica := hAtipica( hValue( dbfTmpLin, aTmpFac ) )
 
          if !Empty( hAtipica )
-               
             if hhaskey( hAtipica, "nImporte" )
             	if hAtipica[ "nImporte" ] != 0
                		( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
@@ -12222,7 +12221,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
         hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
         if !Empty( hAtipica )
-            
             if hhaskey( hAtipica, "nImporte" )
                 if hAtipica[ "nImporte" ] != 0
                 	aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
@@ -16870,7 +16868,7 @@ Function cCtaFacCli( cFacCliT, cFacCliP, cBncCli )
 
    local cCtaFacCli     := ""
 
-   DEFAULT cFacCliT     := TDataView():Clientes( nView )
+   DEFAULT cFacCliT     := TDataView():FacturasClientes( nView )
    DEFAULT cFacCliP     := dbfFacCliP
    DEFAULT cBncCli      := dbfCliBnc
 
