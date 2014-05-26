@@ -4928,6 +4928,9 @@ CLASS TDataView
    METHOD Proveedores( nView )               INLINE ( ::Get( "Provee", nView ) )
       METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
 
+   METHOD FacturasProveedores( nView )       INLINE ( ::Get( "FacPrvT", nView ) ) 
+      METHOD FacturasProveedoresId( nView )  INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )
+
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
