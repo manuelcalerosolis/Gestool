@@ -12423,11 +12423,12 @@ FUNCTION BrwPedCli( oGet, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, oIva )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Importe"
-         :bEditValue       := {|| nTotPedCli( ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
+        :cHeader          	:= "Importe"
+        :bEditValue       	:= {|| ( cPedCliT )->nTotPed }
+		:cEditPicture     	:= cPorDiv()
+        :nWidth           	:= 80
+        :nDataStrAlign    	:= 1
+        :nHeadStrAlign    	:= 1
       end with
 
 		REDEFINE BUTTON ;
@@ -15845,60 +15846,60 @@ Calcula el Total del pedido
 
 FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDivRet, lPic, ccClient )
 
-   local nRecno
-   local cCodDiv
-   local cPouDiv
-   local dFecPed
-   local bCondition
-   local nDtoEsp
-   local nDtoPP
-   local nDtoUno
-   local nDtoDos
-   local lIvaInc
-   local nIvaMan
-   local nManObr
-   local nSbrAtp
-   local nDtoAtp
-   local nKgsTrn
-   local nTotLin           := 0
-   local nTotUnd           := 0
-   local aTotalDto         := { 0, 0, 0 }
-   local aTotalDPP         := { 0, 0, 0 }
-   local aTotalUno         := { 0, 0, 0 }
-   local aTotalDos         := { 0, 0, 0 }
-   local aTotalAtp         := { 0, 0, 0 }
-   local lRecargo
-   local nTotAcu           := 0
-   local n
-   local nDescuentosLineas := 0
-   local lPntVer           := .f.
+   	local nRecno
+   	local cCodDiv
+   	local cPouDiv
+   	local dFecPed
+   	local bCondition
+   	local nDtoEsp
+   	local nDtoPP
+   	local nDtoUno
+   	local nDtoDos
+   	local lIvaInc
+   	local nIvaMan
+   	local nManObr
+   	local nSbrAtp
+   	local nDtoAtp
+   	local nKgsTrn
+   	local nTotLin           := 0
+   	local nTotUnd           := 0
+   	local aTotalDto         := { 0, 0, 0 }
+   	local aTotalDPP         := { 0, 0, 0 }
+   	local aTotalUno         := { 0, 0, 0 }
+   	local aTotalDos         := { 0, 0, 0 }
+   	local aTotalAtp         := { 0, 0, 0 }
+   	local lRecargo
+   	local nTotAcu           := 0
+   	local n
+   	local nDescuentosLineas := 0
+   	local lPntVer           := .f.
 
-   if !Empty( nView )
-   		DEFAULT cPedCliT   := TDataView():PedidosClientes( nView )
-   		DEFAULT ccClient   := TDataView():Clientes( nView )
-   end if
+   	if !Empty( nView )
+   		DEFAULT cPedCliT   	:= TDataView():PedidosClientes( nView )
+		DEFAULT ccClient   	:= TDataView():Clientes( nView )
+	end if	
+   	
+   	DEFAULT cPedCliL        := dbfPedCliL
+   	DEFAULT cIva            := dbfIva
+   	DEFAULT cDiv            := dbfDiv
+   	DEFAULT cFPago          := dbfFPago
+   	DEFAULT cPedido         := ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed
+   	DEFAULT lPic            := .f.
 
-   DEFAULT cPedCliL        := dbfPedCliL
-   DEFAULT cIva            := dbfIva
-   DEFAULT cDiv            := dbfDiv
-   DEFAULT cFPago          := dbfFPago
-   DEFAULT cPedido         := ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed
-   DEFAULT lPic            := .f.
+   	if Empty( Select( cPedCliT ) )
+      	Return ( 0 )
+   	end if
 
-   if Empty( Select( cPedCliT ) )
-      Return ( 0 )
-   end if
+   	if Empty( Select( cPedCliL ) )
+      	Return ( 0 )
+   	end if
 
-   if Empty( Select( cPedCliL ) )
-      Return ( 0 )
-   end if
+   	if Empty( Select( cIva ) )
+      	Return ( 0 )
+   	end if
 
-   if Empty( Select( cIva ) )
-      Return ( 0 )
-   end if
-
-   if Empty( Select( cDiv ) )
-      Return ( 0 )
+   	if Empty( Select( cDiv ) )
+      	Return ( 0 )
    end if
 
    public nTotPed       := 0
