@@ -2596,8 +2596,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "Lupa" ;
-         ON HELP  ( BrwChkSubCta( aGet[_SUBCTA], oGetSubCta ) ) ;
-         VALID    ( MkSubCta(  aGet[ _SUBCTA ],;
+         ON HELP  ( BrwChkSubcuenta( aGet[_SUBCTA], oGetSubCta ) ) ;
+         VALID    ( MkSubcuenta(  aGet[ _SUBCTA ],;
                                {  aTmp[ _SUBCTA    ],;
                                   aTmp[ _TITULO    ],;
                                   aTmp[ _NIF       ],;
@@ -2651,8 +2651,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[_SUBCTADTO], oGetSubDto ) ) ;
-         VALID    ( MkSubCta( aGet[ _SUBCTADTO ],;
+         ON HELP  ( BrwChkSubcuenta( aGet[_SUBCTADTO], oGetSubDto ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _SUBCTADTO ],;
                               {  aTmp[ _SUBCTADTO ],;
                                  aTmp[ _TITULO    ],;
                                  aTmp[ _NIF       ],;
@@ -9181,7 +9181,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpSubCta )->( OrdCreate( cTmpCta, "dFecha", "dFecha", {|| Field->dFecha } ) )
 
    if nMode != APPD_MODE
-      LoadSubCta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
+      LoadSubcuenta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
    end if
 
    dbCreate( cTmpDoc, aSqlStruct( aCliDoc() ), cLocalDriver() )

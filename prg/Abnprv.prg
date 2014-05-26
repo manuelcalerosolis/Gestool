@@ -2002,7 +2002,7 @@ STATIC FUNCTION TransAbono( oBrw )
 	--------------------------------------------------------------------------
 	*/
 
-   IF !ChkSubCta( cRutCnt(), aIni()[CODEMPRESA], cCtaPRV, , .F. )
+   IF !ChkSubcuenta( cRutCnt(), aIni()[CODEMPRESA], cCtaPRV, , .F. )
 		MsgStop( "SubCuenta " + cCtaPRV + " no encontada", "Contaplus" )
 		RETURN .F.
 	END IF
@@ -2094,7 +2094,7 @@ STATIC FUNCTION TransAbono( oBrw )
 	*/
 
 	FOR n := 1 TO len( aVentas )
-      IF !ChkSubCta( cRutCnt(), aIni()[CODEMPRESA], aVentas[n,1], , .F. )
+      IF !ChkSubcuenta( cRutCnt(), aIni()[CODEMPRESA], aVentas[n,1], , .F. )
 			MsgStop( "SubCuenta " + aVentas[n,1] + " no encontada", "Contaplus" )
 			RETURN .F.
 		END IF
@@ -2123,7 +2123,7 @@ STATIC FUNCTION TransAbono( oBrw )
 
 		END IF
 
-		IF !ChkSubCta( , , cSubCtaIva, , .F. )
+		IF !ChkSubcuenta( , , cSubCtaIva, , .F. )
 			MsgStop( "SubCuenta " + cSubCtaIva + " no encontada", "Contaplus" )
 			RETURN .F.
 		END IF
@@ -2140,7 +2140,7 @@ STATIC FUNCTION TransAbono( oBrw )
 
 			cSubCtaReq	:= RetCtaEsp( 3 ) + RJust( nReq, "0", 4 )
 
-         IF !ChkSubCta( , , cSubCtaReq, , .f. )
+         IF !ChkSubcuenta( , , cSubCtaReq, , .f. )
 				MsgStop( "SubCuenta " + RTrim( cSubCtaReq ) + " no encontada", "Contaplus" )
 				RETURN .F.
 			END IF

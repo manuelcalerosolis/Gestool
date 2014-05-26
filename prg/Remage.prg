@@ -763,8 +763,8 @@ METHOD Detalle( nMode )
 			WHEN 		( RetLenSubCta() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       oDlg
-      ::oCtaRec:bHelp    := {|| BrwChkSubCta( ::oCtaRec, oGetSubCta ) }
-      ::oCtaRec:bValid   := {|| MkSubCta( ::oCtaRec, nil, oGetSubCta ) }
+      ::oCtaRec:bHelp    := {|| BrwChkSubcuenta( ::oCtaRec, oGetSubCta ) }
+      ::oCtaRec:bValid   := {|| MkSubcuenta( ::oCtaRec, nil, oGetSubCta ) }
 
       REDEFINE GET oGetSubCta VAR cGetSubCta ;
          ID       241 ;
@@ -777,8 +777,8 @@ METHOD Detalle( nMode )
 			WHEN 		( RetLenSubCta() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       oDlg
-      ::oCtaGas:bHelp      := {|| BrwChkSubCta( ::oCtaGas, oGetSubGas ) }
-      ::oCtaGas:bValid     := {|| MkSubCta( ::oCtaGas, nil, oGetSubGas ) }
+      ::oCtaGas:bHelp      := {|| BrwChkSubcuenta( ::oCtaGas, oGetSubGas ) }
+      ::oCtaGas:bValid     := {|| MkSubcuenta( ::oCtaGas, nil, oGetSubGas ) }
 
       REDEFINE GET oGetSubGas VAR cGetSubGas ;
          ID       271 ;
@@ -1157,7 +1157,7 @@ METHOD Conta( lSimula )
             cCtaCli     := ""
          end if
 
-         if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+         if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
             aadd( ::aMsg, { .f., "Cliente : " + rtrim( ::oClientes:Titulo ) + " cuenta contable no existe." } )
             return .f.
          end if
@@ -1178,7 +1178,7 @@ METHOD Conta( lSimula )
                return .f.
             end if
 
-            if !lSimula .and. !ChkSubCta( cRutCnt(), cCodEmp, cCtaGas, , .f., .f. )
+            if !lSimula .and. !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaGas, , .f., .f. )
                aAdd( ::aMsg, { .f., "Recibo : " + rtrim( ::cRecibo ) + " subcuenta " + rtrim( cCtaGas ) + " no encontada." } )
                return .f.
             end if

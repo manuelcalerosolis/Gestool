@@ -3616,7 +3616,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ], oGetSubCta ) ) ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ], oGetSubCta ) ) ;
          VALID    ( lValidaSubcuenta( aGet, aTmp, @nGetDebe, @nGetHaber, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCtaVta, dbfTmpSubCta ) );
          OF       fldContabilidad
 
@@ -3736,7 +3736,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ], oGetCtaCom ) ) ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ], oGetCtaCom ) ) ;
          VALID    ( lValidaSubcuentaCompras( aGet, aTmp, @nDebCom, @nHabCom, oGetSalCom, oGetCtaCom, cSubCtaAntCom, oBrwCtaCom, dbfTmpSubCom ) );
          OF       fldContabilidad
 
@@ -3845,8 +3845,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfArticulo )->( fieldpos( "CCTATRN" ) ) ], oGetCtaTrn ) ) ;
-         VALID    ( MkSubCta( aGet[ ( dbfArticulo )->( fieldpos( "CCTATRN" ) ) ],;
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfArticulo )->( fieldpos( "CCTATRN" ) ) ], oGetCtaTrn ) ) ;
+         VALID    ( MkSubcuenta( aGet[ ( dbfArticulo )->( fieldpos( "CCTATRN" ) ) ],;
                               {  aTmp[ ( dbfArticulo )->( fieldpos( "CCTATRN" ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "NOMBRE"  ) ) ] },;
                               oGetCtaTrn,;
@@ -5002,7 +5002,7 @@ Return ( oDlg:nResult == IDOK )
 
 Static function lValidaSubcuenta( aGet, aTmp, nGetDebe, nGetHaber, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCta, dbfTmpSubCta )
 
-   if MkSubCta( aGet[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ],;
+   if MkSubcuenta( aGet[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ],;
                 { aTmp[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ], aTmp[ ( dbfArticulo )->( fieldpos( "NOMBRE"  ) ) ] },;
                 oGetSubCta,;
                 nil,;
@@ -5012,7 +5012,7 @@ Static function lValidaSubcuenta( aGet, aTmp, nGetDebe, nGetHaber, oGetSaldo, oG
                 oGetSaldo )
 
       if aTmp[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ] != cSubCtaAnt
-         LoadSubCta( aTmp[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ], cRutCnt(), dbfTmpSubCta )
+         LoadSubcuenta( aTmp[ ( dbfArticulo )->( fieldpos( "CCTAVTA" ) ) ], cRutCnt(), dbfTmpSubCta )
          oBrwCta:Refresh()
       end if
 
@@ -5026,7 +5026,7 @@ Return .f.
 
 Static function lValidaSubcuentaCompras( aGet, aTmp, nGetDebe, nGetHaber, oGetSaldo, oGetSubCom, cSubCtaAntCom, oBrwCom, dbfTmpSubCom )
 
-   if MkSubCta( aGet[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ],;
+   if MkSubcuenta( aGet[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ],;
                 { aTmp[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ], aTmp[ ( dbfArticulo )->( fieldpos( "NOMBRE"  ) ) ] },;
                 oGetSubCom,;
                 nil,;
@@ -5036,7 +5036,7 @@ Static function lValidaSubcuentaCompras( aGet, aTmp, nGetDebe, nGetHaber, oGetSa
                 oGetSaldo )
 
       if aTmp[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ] != cSubCtaAntCom
-         LoadSubCta( aTmp[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ], cRutCnt(), dbfTmpSubCom )
+         LoadSubcuenta( aTmp[ ( dbfArticulo )->( fieldpos( "CCTACOM" ) ) ], cRutCnt(), dbfTmpSubCom )
          oBrwCom:Refresh()
       end if
 
@@ -5565,8 +5565,8 @@ Static Function BeginTrans( aTmp, nMode )
    ( dbfTmpSubCom )->( OrdCreate( filTmpSubCom, "dFecha", "dFecha", {|| Field->dFecha } ) )
 
    if nMode != APPD_MODE
-      LoadSubCta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
-      LoadSubCta( cCodSubCom, cRutCnt(), dbfTmpSubCom )
+      LoadSubcuenta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
+      LoadSubcuenta( cCodSubCom, cRutCnt(), dbfTmpSubCom )
    end if
 
    /*

@@ -151,8 +151,8 @@ METHOD Resource( nMode ) CLASS TNewImp
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( oCta, oGetSubCta ) );
-         VALID    ( MkSubCta( oCta, { ::oDbf:cSubCta, ::oDbf:cNomImp }, oGetSubCta ) );
+         ON HELP  ( BrwChkSubcuenta( oCta, oGetSubCta ) );
+         VALID    ( MkSubcuenta( oCta, { ::oDbf:cSubCta, ::oDbf:cNomImp }, oGetSubCta ) );
          OF       oDlg
 
       REDEFINE GET oGetSubCta VAR cGetSubCta ;

@@ -416,8 +416,8 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aoGet[ _CTAAGE ], aoGet[ _CTAAGE ]:oHelpText ) ) ;
-         VALID    ( MkSubCta( aoGet[ _CTAAGE ],;
+         ON HELP  ( BrwChkSubcuenta( aoGet[ _CTAAGE ], aoGet[ _CTAAGE ]:oHelpText ) ) ;
+         VALID    ( MkSubcuenta( aoGet[ _CTAAGE ],;
                               {  aTemp[ _CTAAGE    ],;
                                  Rtrim( aTemp[ _CNBRAGE ] ) + Space( 1 ) + Rtrim( aTemp[ _CAPEAGE ] ),;
                                  aTemp[ _CDNINIF   ],;
@@ -437,8 +437,8 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aoGet[ _CTAGAS ], aoGet[ _CTAGAS ]:oHelpText ) ) ;
-         VALID    ( MkSubCta( aoGet[ _CTAGAS ], nil, aoGet[ _CTAGAS ]:oHelpText ) );
+         ON HELP  ( BrwChkSubcuenta( aoGet[ _CTAGAS ], aoGet[ _CTAGAS ]:oHelpText ) ) ;
+         VALID    ( MkSubcuenta( aoGet[ _CTAGAS ], nil, aoGet[ _CTAGAS ]:oHelpText ) );
          OF       oFld:aDialogs[2]
 
       /*

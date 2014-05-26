@@ -1292,8 +1292,8 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAREC ], oGetSubCta ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAREC ], nil, oGetSubCta ) ) ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAREC ], oGetSubCta ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTAREC ], nil, oGetSubCta ) ) ;
          OF       oFld:aDialogs[ 5 ]
 
 		REDEFINE GET oGetSubCta VAR cGetSubCta ;
@@ -1306,8 +1306,8 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAGAS ], oGetSubGas ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAGAS ], nil, oGetSubGas ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAGAS ], oGetSubGas ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTAGAS ], nil, oGetSubGas ) );
          OF       oFld:aDialogs[ 5 ]
 
       REDEFINE GET oGetSubGas VAR cGetSubGas ;
@@ -1943,7 +1943,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       cCtaCli           := cCtaSin()
    end if
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
       oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " subcuenta de cliente " + cCtaCli + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
@@ -1974,7 +1974,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
          lErrorFound    := .t.
       end if
 
-      if !ChkSubCta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
          oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
          lErrorFound    := .t.
       end if
@@ -2011,7 +2011,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
             lErrorFound := .t.
          end if
 
-         if !ChkSubCta( cRuta, cCodEmp, cCtaGas, , .f., .f. )
+         if !ChkSubcuenta( cRuta, cCodEmp, cCtaGas, , .f., .f. )
             oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaGas ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
             lErrorFound := .t.
          end if

@@ -429,13 +429,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       lErrorFound    := .t.
    end if
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " subcuenta " + cCtaCli + " no encontada.", 0 ) )
       lErrorFound    := .t.
    end if
 
    if ptaRet != 0
-      if !ChkSubCta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
          oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( cFactura ) + " subcuenta " + cCtaRet() + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -448,12 +448,12 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    for n := 1 to len( aIva )
 
-      if !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
 
-      if lRecargo .and. !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -461,14 +461,14 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    for n := 1 to len( aVentas )
-      if !ChkSubCta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
    next
 
    for n := 1 to len( aIvm )
-      if !lSimula .and. !ChkSubCta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
+      if !lSimula .and. !ChkSubcuenta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
          oTree:Add( "Factura cliente : " + rtrim( nFactura ) + " subcuenta " + aIvm[ n, 1 ] + " no encontada.", 0 )
          lErrorFound := .t.
       end if
@@ -480,7 +480,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    for n := 1 to len( aTrn )
-      if !ChkSubCta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " subcuenta " + aTrn[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -490,7 +490,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    Chequeamos los anticipos-------------------------------------------------
    */
 
-   if nTotAnt != 0 .and. !ChkSubCta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
+   if nTotAnt != 0 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " subcuenta de anticipo " + cCtaAnticipo + " no encontada.", 0 ) )
       lErrorFound := .t.
    end if
@@ -740,27 +740,27 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       if nTotAnt != 0
 
-      aadd( aSimula, MkAsiento(  nAsiento,;
-                                 cCodDiv,;
-                                 dFecha,;
-                                 cCtaAnticipo,;
-                                 ,;
-                                 nAcuAnt,;
-                                 cConcepto,;
-                                 ,;
-                                 cFactura,;
-                                 ,;
-                                 ,;
-                                 ,;
-                                 ,;
-                                 cProyecto,;
-                                 cClave,;
-                                 ,;
-                                 ,;
-                                 ,;
-                                 lSimula,;
-                                 cTerNif,;
-                                 cTerNom ) )
+         aadd( aSimula, MkAsiento(  nAsiento,;
+                                    cCodDiv,;
+                                    dFecha,;
+                                    cCtaAnticipo,;
+                                    ,;
+                                    nAcuAnt,;
+                                    cConcepto,;
+                                    ,;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula,;
+                                    cTerNif,;
+                                    cTerNom ) )
 
       end if
 
@@ -1677,34 +1677,34 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    ----------------------------------------------------------------------------
    */
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
       oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " subcuenta de cliente " + RTrim( cCtaCli ) + " no encontada, en empresa" + cCodEmp, 0 ) )
       lErrorFound    := .t.
    end if
 
    for n := 1 to len( aVentas )
-      if !ChkSubCta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " subcuenta de ventas " + RTrim( aVentas[ n, 1 ] ) + " no encontada, en empresa" + cCodEmp, 0 ) )
          lErrorFound := .t.
       end if
    next
 
    for n := 1 to len( aIva )
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " subcuenta de " + cImp() + " " + RTrim( aIva[ n, 1 ] ) + " no encontada, en empresa" + cCodEmp, 0 ) )
          lErrorFound := .t.
       end if
    next
 
    for n := 1 to len( aIvm )
-      if !ChkSubCta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " subcuenta de IVM " + RTrim( aIvm[ n, 1 ] ) + " no encontada, en empresa" + cCodEmp, 0 ) )
          lErrorFound := .t.
       end if
    end if
 
    for n := 1 to len( aPago )
-      if !ChkSubCta( cRuta, cCodEmp, aPago[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aPago[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " subcuenta de pago " + RTrim( aPago[ n, 1 ] ) + " no encontada, en empresa" + cCodEmp, 0 ) )
          lErrorFound := .t.
       end if
@@ -2348,7 +2348,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
       lErrorFound    := .t.
    end if
 
-   if !lSimula .AND. !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+   if !lSimula .AND. !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
       oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " subcuenta " + cCtaCli + " no encontada.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -2360,12 +2360,12 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
 
    for n := 1 to len( aIva )
 
-      if !lSimula .and. !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !lSimula .and. !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Albaran cliente : " + Rtrim( nAlbaran ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
 
-      if lRecargo .and. !lSimula .and. !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if lRecargo .and. !lSimula .and. !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Select( oTree:Add( "Albaran cliente : " + Rtrim( nAlbaran ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -2373,14 +2373,14 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    next
 
    for n := 1 to len( aVentas )
-      if !lSimula .AND. !ChkSubCta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !lSimula .AND. !ChkSubcuenta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
    next
 
    for n := 1 to len( aIvm )
-      if !lSimula .AND. !ChkSubCta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
+      if !lSimula .AND. !ChkSubcuenta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " subcuenta " + aIvm[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -2392,7 +2392,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
 	*/
 
    for n := 1 to len( aTrn )
-      if !lSimula .AND. !ChkSubCta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
+      if !lSimula .AND. !ChkSubcuenta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " subcuenta " + aTrn[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -2402,7 +2402,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    Chequeamos los anticipos-------------------------------------------------
    */
 
-   if !lSimula .AND. nTotAnt != 0 .and. !ChkSubCta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
+   if !lSimula .AND. nTotAnt != 0 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
       oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " subcuenta de anticipo " + cCtaAnticipo + " no encontada.", 0 ) )
       lErrorFound := .t.
    end if
@@ -3037,7 +3037,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       aIva[ n, 4 ]   += aIva[ n, 5 ]
    next
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
       oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta " + cCtaCli + " no encontada.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -3049,12 +3049,12 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    for n := 1 to len( aIva )
 
-      if !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
 
-      if lRecargo .and. !ChkSubCta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -3062,14 +3062,14 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    for n := 1 to len( aVentas )
-      if !ChkSubCta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
    next
 
    for n := 1 to len( aIvm )
-      if !lSimula .and. !ChkSubCta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
+      if !lSimula .and. !ChkSubcuenta( cRuta, cCodEmp, aIvm[ n, 1 ], , .f., .f. )
          oTree:Add( "Factura rectificativa de cliente : " + rtrim( nFactura ) + " subcuenta " + aIvm[ n, 1 ] + " no encontada.", 0 )
          lErrorFound := .t.
       end if
@@ -3081,7 +3081,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    for n := 1 to len( aTrn )
-      if !ChkSubCta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aTrn[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta " + aTrn[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound := .t.
       end if
@@ -3091,7 +3091,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    Chequeamos los anticipos-------------------------------------------------
    */
 
-   if nTotAnt != 0 .and. !ChkSubCta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
+   if nTotAnt != 0 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
       oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " subcuenta de anticipo " + cCtaAnticipo + " no encontada.", 0 ) )
       lErrorFound := .t.
    end if
@@ -3577,7 +3577,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       cCtaPrvVta     := cCtaPrv()
    end if
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
       oTree:Select( oTree:Add( "Factura proveedor : " + rtrim( cFactura ) + " subcuenta de proveedor " + Rtrim( cCtaPrv ) + ", no encontada.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -3737,7 +3737,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 	*/
 
    for n := 1 TO len( aVentas )
-      if !ChkSubCta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura proveedor : " + rtrim( cFactura ) + " subcuenta de ventas " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
@@ -3749,12 +3749,12 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
    for n := 1 to len( aIva )
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " subcuenta de " + cImp() + " " + aIva[ n, 2 ] + ", no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " subcuenta de " + cImp() + " " + aIva[ n, 3 ] + ", no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
@@ -3763,7 +3763,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
    if nTotRet != 0
 
-      if !ChkSubCta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
          oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " subcuenta de retenciones " + cCtaRet() + ", no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
@@ -4145,7 +4145,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
       cCtaPrvVta     := cCtaPrv()
    end if
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
       oTree:Add( "Factura rectificativa proveedor : " + rtrim( cFactura ) + " subcuenta " + cCtaPrv + " no encontada.", 0 )
       lErrorFound    := .t.
    end if
@@ -4268,7 +4268,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
    for n := 1 to len( aVentas )
 
-      if !ChkSubCta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
 
          oTree:Add( "Factura rectificativa proveedor : " + rtrim( cFactura ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 )
          lErrorFound    := .t.
@@ -4283,12 +4283,12 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
    for n := 1 to len( aIva )
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Add( "Factura rectificativa proveedor : " + Rtrim( cFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 )
          lErrorFound    := .t.
       end if
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Add( "Factura rectificativa proveedor : " + Rtrim( cFactura ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 )
          lErrorFound    := .t.
       end if
@@ -4297,7 +4297,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
    if nTotRet != 0
 
-      if !ChkSubCta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
          oTree:Add( "Factura rectificativa proveedor : " + Rtrim( cFactura ) + " subcuenta " + cCtaRet() + " no encontada.", 0 )
          lErrorFound    := .t.
       end if
@@ -4676,7 +4676,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
 	--------------------------------------------------------------------------
 	*/
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaPrv, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaPrv, , .f., .f. )
       oTree:Select( oTree:Add( "Recibo proveedor : " + rtrim( cRecibo ) + " subcuenta " + cCtaPrv + " no encontada.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -4701,7 +4701,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
       lErrorFound    := .t.
    end if
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPgo, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaPgo, , .f., .f. )
       oTree:Select( oTree:Add( "Recibo proveedor : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0 ) )
       lErrorFound    := .t.
    end if

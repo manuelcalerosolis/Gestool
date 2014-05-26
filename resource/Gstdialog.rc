@@ -5615,33 +5615,33 @@ EMPRESA_1 DIALOG DISCARDABLE 31, 12, 397, 287
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 104, 36, 34, 12
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 104, 48, 175, 12
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 326, 48, 62, 12
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 104, 60, 175, 12
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 104, 72, 175, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 104, 88, 175, 12
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 104, 100, 40, 12
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 104, 112, 175, 12
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 104, 124, 105, 12
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 326, 88, 62, 12
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 326, 100, 62, 12
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 104, 142, 282, 12
-  CONTROL "", 194, "Edit", WS_BORDER|WS_TABSTOP, 104, 154, 282, 12
-  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 104, 239, 40, 12
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 147, 239, 239, 12
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 104, 36, 34, 11
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 104, 48, 175, 11
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 326, 48, 62, 11
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 104, 60, 175, 11
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 104, 72, 175, 11
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 104, 88, 175, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 104, 100, 40, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 104, 112, 175, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 104, 124, 105, 11
+  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 326, 88, 62, 11
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 326, 100, 62, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 104, 142, 282, 11
+  CONTROL "", 194, "Edit", WS_BORDER|WS_TABSTOP, 104, 154, 282, 11
+  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 104, 239, 40, 11
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 147, 239, 239, 11
   CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 104, 253, 110, 10
   CONTROL "Compartir proveedores con la matriz", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 104, 265, 125, 10
   CONTROL "Compartir artículos con la empresa matriz", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 237, 253, 142, 10
   CONTROL "Compartir almacenes con la empresa matriz", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 237, 265, 149, 10
-  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 104, 200, 40, 12
+  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 104, 200, 40, 11
   CONTROL "TBitMap", 361, "TBitMap", 0x00800020, 149, 200, 18, 11
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 104, 212, 40, 12
-  CONTROL "", 201, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 247, 200, 34, 12
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 104, 212, 40, 11
+  CONTROL "", 201, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 247, 200, 34, 11
   CONTROL "TBitMap", 371, "TBitMap", 0x00800000, 149, 212, 18, 11
-  CONTROL "", 205, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 247, 212, 34, 12
-  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 326, 200, 62, 12
-  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 326, 212, 62, 12
+  CONTROL "", 205, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 247, 212, 34, 11
+  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 326, 200, 62, 11
+  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 326, 212, 62, 11
   CONTROL "Nombre", -1, "Static", WS_GROUP, 50, 51, 42, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 91, 49, 8
   CONTROL "Población", -1, "Static", WS_GROUP, 50, 115, 46, 8
@@ -5673,9 +5673,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "Dígitos", -1, "Button", BS_GROUPBOX, 175, 190, 111, 37
   CONTROL "", 4002, "Static", SS_ETCHEDHORZ, 48, 168, 342, 1
   CONTROL "Acogida al régimen especial de criterio de caja desde año", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 173, 195, 10
-  CONTROL "", 196, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 247, 172, 40, 12
+  CONTROL "", 196, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 247, 172, 40, 11
   CONTROL "hasta año", -1, "Static", WS_GROUP, 289, 173, 37, 8
-  CONTROL "", 197, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 326, 172, 40, 12
+  CONTROL "", 197, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 326, 172, 40, 11
 }
 
 EMPRESA_10 DIALOG DISCARDABLE 68, -86, 432, 353
@@ -5725,27 +5725,26 @@ EMPRESA_TPV DIALOG DISCARDABLE 31, 12, 439, 313
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Sesiónes por cajas", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 40, 99, 10
-  CONTROL "Importes exactos en tickets", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 52, 99, 10
-  CONTROL "Recoger ubicaciones en sala", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 64, 105, 10
-  CONTROL "Mostrar la sala antes de iniciar la venta", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 76, 135, 10
-  CONTROL "Ordenar artículos por nombre", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 88, 105, 10
-  CONTROL "Asistente para devoluciones y vales", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 100, 126, 10
-  CONTROL "Habilitar programa de fideliazación", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 112, 121, 10
-  CONTROL "Usar colores en los artículos del táctil", 990, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 124, 131, 10
-  CONTROL "Crear tickets para recoger desde táctil", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 136, 133, 10
-  CONTROL "Crear tickets para llevar desde táctil", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 148, 125, 10
-  CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 132, 10
-  CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 111, 10
-  CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 71, 10
-  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 196, 67, 10
-  CONTROL "Ocultar líneas borradas", 131, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 208, 100, 10
-  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 220, 82, 10
-  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 234, 96, 91
+  CONTROL "Importes exactos en tickets", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 40, 99, 10
+  CONTROL "Recoger ubicaciones en sala", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 52, 105, 10
+  CONTROL "Mostrar la sala antes de iniciar la venta", 158, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 64, 135, 10
+  CONTROL "Ordenar artículos por nombre", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 76, 105, 10
+  CONTROL "Asistente para devoluciones y vales", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 88, 126, 10
+  CONTROL "Habilitar programa de fideliazación", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 100, 121, 10
+  CONTROL "Usar colores en los artículos del táctil", 990, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 112, 131, 10
+  CONTROL "Crear tickets para recoger desde táctil", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 124, 133, 10
+  CONTROL "Crear tickets para llevar desde táctil", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 136, 125, 10
+  CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 148, 132, 10
+  CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 111, 10
+  CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 71, 10
+  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 67, 10
+  CONTROL "Ocultar líneas borradas", 131, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 196, 100, 10
+  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 208, 82, 10
+  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 222, 96, 91
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 227
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones para el terminal punto de venta", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
-  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 237, 86, 8
+  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 225, 86, 8
 }
 
 EMPRESA_2 DIALOG DISCARDABLE 31, 12, 441, 340
@@ -6036,39 +6035,39 @@ EMPRESA_CONTABILIDAD DIALOG DISCARDABLE 68, -86, 437, 353
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 127, 38, 300, 12
-  CONTROL "&Modificar [F3]", 130, "Button", WS_TABSTOP, 50, 65, 71, 14
-  CONTROL "", 110, "TXBrowse", 0x00200000, 127, 65, 300, 77
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 127, 158, 36, 12
-  CONTROL "", 371, "Edit", WS_BORDER, 194, 158, 233, 12
-  CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 127, 170, 36, 12
-  CONTROL "", 381, "Edit", WS_BORDER, 194, 170, 233, 12
-  CONTROL "", 390, "Edit", WS_BORDER|WS_TABSTOP, 127, 182, 36, 12
-  CONTROL "", 391, "Edit", WS_BORDER, 194, 182, 233, 12
-  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 127, 194, 66, 12
-  CONTROL "", 401, "Edit", WS_BORDER, 194, 194, 233, 12
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 127, 206, 66, 12
-  CONTROL "", 411, "Edit", WS_BORDER, 194, 206, 233, 12
-  CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 127, 218, 66, 12
-  CONTROL "", 431, "Edit", WS_BORDER, 194, 218, 233, 12
-  CONTROL "", 440, "Edit", WS_BORDER|WS_TABSTOP, 127, 230, 66, 12
-  CONTROL "", 441, "Edit", WS_BORDER, 194, 230, 233, 12
-  CONTROL "", 445, "Edit", WS_BORDER|WS_TABSTOP, 127, 242, 66, 12
-  CONTROL "", 510, "Edit", WS_BORDER|WS_TABSTOP, 127, 254, 66, 12
-  CONTROL "", 511, "Edit", WS_BORDER, 194, 254, 233, 12
-  CONTROL "", 446, "Edit", WS_BORDER, 194, 242, 233, 12
-  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 127, 282, 66, 12
-  CONTROL "", 451, "Edit", WS_BORDER, 194, 282, 233, 12
-  CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 127, 294, 66, 12
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 127, 68, 300, 11
+  CONTROL "&Modificar [F3]", 130, "Button", WS_TABSTOP, 50, 81, 71, 14
+  CONTROL "", 110, "TXBrowse", 0x00200000, 127, 81, 300, 61
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 127, 158, 36, 11
+  CONTROL "", 371, "Edit", WS_BORDER, 194, 158, 233, 11
+  CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 127, 170, 36, 11
+  CONTROL "", 381, "Edit", WS_BORDER, 194, 170, 233, 11
+  CONTROL "", 390, "Edit", WS_BORDER|WS_TABSTOP, 127, 182, 36, 11
+  CONTROL "", 391, "Edit", WS_BORDER, 194, 182, 233, 11
+  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 127, 194, 66, 11
+  CONTROL "", 401, "Edit", WS_BORDER, 194, 194, 233, 11
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 127, 206, 66, 11
+  CONTROL "", 411, "Edit", WS_BORDER, 194, 206, 233, 11
+  CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 127, 218, 66, 11
+  CONTROL "", 431, "Edit", WS_BORDER, 194, 218, 233, 11
+  CONTROL "", 440, "Edit", WS_BORDER|WS_TABSTOP, 127, 230, 66, 11
+  CONTROL "", 441, "Edit", WS_BORDER, 194, 230, 233, 11
+  CONTROL "", 445, "Edit", WS_BORDER|WS_TABSTOP, 127, 242, 66, 11
+  CONTROL "", 510, "Edit", WS_BORDER|WS_TABSTOP, 127, 254, 66, 11
+  CONTROL "", 511, "Edit", WS_BORDER, 194, 254, 233, 11
+  CONTROL "", 446, "Edit", WS_BORDER, 194, 242, 233, 11
+  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 127, 282, 66, 11
+  CONTROL "", 451, "Edit", WS_BORDER, 194, 282, 233, 11
+  CONTROL "", 460, "Edit", WS_BORDER|WS_TABSTOP, 127, 294, 66, 11
   CONTROL "Realizar apunte siempre incluso con importes a cero", 470, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 309, 177, 11
   CONTROL "Utilizar decimales en cuentas con recargos de equivalencia", 480, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 322, 213, 11
   CONTROL "Permitir realizar apuntes en negativo", 490, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 335, 127, 11
   CONTROL "Impuesto + Recargo de equivalencia", 420, "Button", BS_AUTORADIOBUTTON, 293, 310, 129, 10
   CONTROL "Recargo de equivalencia + Impuesto", 421, "Button", BS_AUTORADIOBUTTON, 293, 322, 129, 10
-  CONTROL "", 461, "Edit", WS_BORDER, 194, 294, 233, 12
-  CONTROL "Ruta contaplus (r)", -1, "Button", BS_GROUPBOX, 44, 29, 388, 23
-  CONTROL "Enlace empresas para cada serie", -1, "Button", BS_GROUPBOX, 44, 54, 388, 92
-  CONTROL "Directorio", -1, "Static", WS_GROUP, 50, 41, 35, 7
+  CONTROL "", 461, "Edit", WS_BORDER, 194, 294, 233, 11
+  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 29, 388, 25
+  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 57, 388, 89
+  CONTROL "Directorio", -1, "Static", WS_GROUP, 50, 71, 35, 7
   CONTROL "Cuentas especiales", -1, "Button", BS_GROUPBOX, 44, 147, 388, 121
   CONTROL "Ventas", -1, "Static", WS_GROUP, 50, 161, 49, 8
   CONTROL "Compras", -1, "Static", WS_GROUP, 50, 173, 44, 8
@@ -6084,6 +6083,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Enlace y cuentas de contabilidad", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Portes", -1, "Static", WS_GROUP, 50, 245, 50, 8
   CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 257, 50, 8
+  CONTROL "", 90, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 127, 38, 300, 106
+  CONTROL "Aplicación", -1, "Static", WS_GROUP, 50, 42, 38, 9
 }
 
 EMPRESACFG DIALOG DISCARDABLE 137, 27, 435, 429

@@ -9262,8 +9262,8 @@ Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oCtaRem, nMode, oBa
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], oGetSubCta ) ) ;
-         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], nil, oGetSubCta ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], oGetSubCta ) ) ;
+         VALID    ( MkSubcuenta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], nil, oGetSubCta ) );
          OF       oDlg
 
 		REDEFINE GET oGetSubCta VAR cGetSubCta ;
@@ -9279,8 +9279,8 @@ Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oCtaRem, nMode, oBa
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], oGetSubGas ) ) ;
-         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], nil, oGetSubGas ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], oGetSubGas ) ) ;
+         VALID    ( MkSubcuenta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAGAS" ) ) ], nil, oGetSubGas ) );
          OF       oDlg
 
       REDEFINE GET oGetSubGas VAR cGetSubGas ;

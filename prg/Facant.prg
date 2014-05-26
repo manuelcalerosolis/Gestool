@@ -1560,8 +1560,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[_CCTAPGO], oGetSubCta ) ) ;
-         VALID    ( MkSubCta( aGet[_CCTAPGO], nil, oGetSubCta ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[_CCTAPGO], oGetSubCta ) ) ;
+         VALID    ( MkSubcuenta( aGet[_CCTAPGO], nil, oGetSubCta ) );
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET oGetSubCta VAR cGetSubCta ;
@@ -3915,12 +3915,12 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
       cCtaCli  := cCtaSin()
    end if
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
       oTree:Select( oTree:Add("Factura : " + cFactura + " subcuenta de cliente " + cCtaCli + " no encontada.", 0 ) )
       lErrorFound       := .t.
    end if
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaAnticipo, , .f., .f. )
       oTree:Select( oTree:Add("Factura : " + cFactura + " subcuenta de anticipo " + Rtrim( cCtaAnticipo ) + " no encontada.", 0 ) )
       lErrorFound       := .t.
    end if
@@ -3962,7 +3962,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
 
    cSubCtaIva     := RetCtaEsp( 2 ) + RJust( cSubCtaIva, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cSubCtaIva, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cSubCtaIva, , .f., .f. )
       oTree:Select( oTree:Add( "Factura : " + rtrim( cFactura ) + " subcuenta de " + cImp() + cSubCtaIva + " no encontada.", 0 ) )
       lErrorFound       := .t.
    end if
@@ -3982,7 +3982,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
 
       cSubCtaReq        := RetCtaEsp( 3 ) + RJust( nReq, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
 
-      if !ChkSubCta( cRutCnt(), cCodEmp, cSubCtaReq, , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, cSubCtaReq, , .f., .f. )
          oTree:Select( oTree:Add( "Factura : " + cFactura + " subcuenta de recargo " + Rtrim( cSubCtaReq ) + " no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
@@ -4003,7 +4003,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
       cCtaPgo  := cCtaCob()
    end if
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPgo, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaPgo, , .f., .f. )
       oTree:Select( oTree:Add("Factura : " + Rtrim( cFactura ) + " subcuenta de cobro " + Rtrim( cCtaPgo ) + " no encontada.", 0 ) )
       lErrorFound       := .t.
    end if

@@ -1152,6 +1152,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oSerie
    local cSerie                  := "A"
 
+   local oCmbContabilidad
+   local aCmbContabilidad        := { "Contaplus", "A3 CON" }        
+   local cCmbContabilidad        
+
    /*
    Obtenemos el nivel de acceso------------------------------------------------
    */
@@ -1242,12 +1246,13 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    cSay[ 39 ]              := aBnfSobre[ Max( aTmp[ _NDEFSBR4 ], 1 ) ]
    cSay[ 40 ]              := aBnfSobre[ Max( aTmp[ _NDEFSBR5 ], 1 ) ]
    cSay[ 41 ]              := aBnfSobre[ Max( aTmp[ _NDEFSBR6 ], 1 ) ]
-
    cSay[ 42 ]              := aCifRut[ Max( aTmp[ _NCIFRUT ], 1 ) ]
 
-   cSay[ 47 ]              := RetFld( aTmp[_CSUFDOC], dbfDlg, "cNomDlg" )
+   cSay[ 47 ]              := RetFld( aTmp[ _CSUFDOC ], dbfDlg, "cNomDlg" )
 
    cTiempoPed              := cTiempoToCadena( aTmp[ _NTIEMPOPED ] )
+
+   cCmbContabilidad        := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ]
 
    LoaItmEmp( aTmp )
 
@@ -1437,10 +1442,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       500 ;
          RESOURCE "Cashier_48_alpha" ;
          TRANSPARENT ;
-         OF       fldTPV
-
-      REDEFINE CHECKBOX aGet[ _LDESCAJAS ] VAR aTmp[ _LDESCAJAS ] ;
-         ID       185 ;
          OF       fldTPV
 
       REDEFINE CHECKBOX aGet[ _LIMPEXA ] VAR aTmp[ _LIMPEXA ] ;
@@ -2059,6 +2060,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          TRANSPARENT ;
          OF       fldContabilidad
 
+      REDEFINE COMBOBOX oCmbContabilidad ;
+         VAR      cCmbContabilidad ;
+         ITEMS    { "Contaplus", "A3 CON" } ;
+         ID       90 ;
+         OF       fldContabilidad
+
+      oCmbContabilidad:bChange       := {|| msgAlert( cCmbContabilidad ) }
+
       REDEFINE GET aGet[ _CRUTCNT ] VAR aTmp[ _CRUTCNT ] ;
          ID       100;
          PICTURE  "@!" ;
@@ -2151,8 +2160,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTACOB ], aGet[ _CCTACOB ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTACOB ], nil, aGet[ _CCTACOB ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTACOB ], aGet[ _CCTACOB ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTACOB ], nil, aGet[ _CCTACOB ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTASIN ] VAR aTmp[ _CCTASIN ] ;
@@ -2161,8 +2170,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTASIN ], aGet[ _CCTASIN ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTASIN ], nil, aGet[ _CCTASIN ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTASIN ], aGet[ _CCTASIN ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTASIN ], nil, aGet[ _CCTASIN ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTAANT ] VAR aTmp[ _CCTAANT ] ;
@@ -2171,8 +2180,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAANT ], aGet[ _CCTAANT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAANT ], nil, aGet[ _CCTAANT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAANT ], aGet[ _CCTAANT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTAANT ], nil, aGet[ _CCTAANT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTARET ] VAR aTmp[ _CCTARET ] ;
@@ -2181,8 +2190,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTARET ], aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTARET ], nil, aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTARET ], aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTARET ], nil, aGet[ _CCTARET ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTAPOR ] VAR aTmp[ _CCTAPOR ] ;
@@ -2191,8 +2200,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAPOR ], aGet[ _CCTAPOR ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAPOR ], nil, aGet[ _CCTAPOR ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAPOR ], aGet[ _CCTAPOR ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTAPOR ], nil, aGet[ _CCTAPOR ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTAGAS ] VAR aTmp[ _CCTAGAS ] ;
@@ -2201,8 +2210,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAGAS ], aGet[ _CCTAGAS ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAGAS ], nil, aGet[ _CCTAGAS ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAGAS ], aGet[ _CCTAGAS ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTAGAS ], nil, aGet[ _CCTAGAS ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTACEESPT ] VAR aTmp[ _CCTACEESPT ] ;
@@ -2211,8 +2220,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTACEESPT ], aGet[ _CCTACEESPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTACEESPT ], nil, aGet[ _CCTACEESPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTACEESPT ], aGet[ _CCTACEESPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTACEESPT ], nil, aGet[ _CCTACEESPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE GET aGet[ _CCTACEERPT ] VAR aTmp[ _CCTACEERPT ] ;
@@ -2221,8 +2230,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTACEERPT ], aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTACEERPT ], nil, aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTACEERPT ], aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTACEERPT ], nil, aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
       REDEFINE RADIO nIvaReq ;
@@ -6553,7 +6562,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "Año fin régimen especial del criterio de caja",         "", "", "aEmp()", } )
    aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botón exportar web",                            "", "", "aEmp()", } )
    aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
-   aAdd( aDbf, {"lDesCajas",  "L",  1, 0, "Cajas desconectadas",                                   "", "", "aEmp()", } )
+   aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )

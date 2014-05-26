@@ -288,8 +288,8 @@ METHOD Resource( nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( oGetCta, oGetSubCta ) ) ;
-         VALID    ( MkSubCta( oGetCta,;
+         ON HELP  ( BrwChkSubcuenta( oGetCta, oGetSubCta ) ) ;
+         VALID    ( MkSubcuenta( oGetCta,;
                               {  ::oDbf:cSubCta,;
                                  ::oDbf:cNomCta,;
                                  "",;
@@ -314,8 +314,8 @@ METHOD Resource( nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( oGetDto, oGetCtaDto ) ) ;
-         VALID    ( MkSubCta( oGetDto,;
+         ON HELP  ( BrwChkSubcuenta( oGetDto, oGetCtaDto ) ) ;
+         VALID    ( MkSubcuenta( oGetDto,;
                               {  ::oDbf:cSubCta,;
                                  ::oDbf:cNomCta,;
                                  "",;

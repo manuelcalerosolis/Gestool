@@ -2454,8 +2454,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( aTmp[ _LFACGAS ] .and. nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
          BITMAP   "Lupa" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _SUBCTA ], aGet[ _SUBCTA ]:oHelpText ) ) ;
-         VALID    ( MkSubCta( aGet[ _SUBCTA ], nil, aGet[ _SUBCTA ]:oHelpText ) ) ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ _SUBCTA ], aGet[ _SUBCTA ]:oHelpText ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _SUBCTA ], nil, aGet[ _SUBCTA ]:oHelpText ) ) ;
          OF       oFld:aDialogs[ 2 ]
 
       REDEFINE GET aGet[ _CCODPRO ] VAR aTmp[ _CCODPRO ] ;
@@ -6091,7 +6091,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
       cCtaPrvVta     := cCtaPrv()
    end if
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
       oTree:Select( oTree:Add( "Factura : " + rtrim( cFactura ) + " subcuenta " + cCtaPrv + " no encontada.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -6251,7 +6251,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
    */
 
    for n := 1 TO len( aVentas )
-      if !ChkSubCta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura : " + rtrim( cFactura ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
@@ -6263,12 +6263,12 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
    for n := 1 to len( aIva )
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 ) )
          lErrorFound    := .t.
       end if
@@ -6277,7 +6277,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
    if nTotRet != 0
 
-      if !ChkSubCta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
          oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " subcuenta " + cCtaRet() + " no encontada.", 0 ) )
          lErrorFound    := .t.
       end if

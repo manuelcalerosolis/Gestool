@@ -1870,8 +1870,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[_SUBCTA], oGetSubCta ) ) ;
-			VALID 	( MkSubCta( aGet[_SUBCTA],;
+         ON HELP  ( BrwChkSubcuenta( aGet[_SUBCTA], oGetSubCta ) ) ;
+			VALID 	( MkSubcuenta( aGet[_SUBCTA],;
                               {  aTmp[ _SUBCTA    ],;
                                  aTmp[ _TITULO    ],;
                                  aTmp[ _NIF       ],;

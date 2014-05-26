@@ -1300,7 +1300,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _SUBCTA ], oGetSubCta ) ) ;
+         ON HELP  ( BrwChkSubcuenta( aGet[ _SUBCTA ], oGetSubCta ) ) ;
          VALID    ( lValidaSubcuenta( aGet, aTmp, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCta, dbfTmpSubCta ) ) ;
          OF       oFld:aDialogs[4]
 
@@ -2022,7 +2022,7 @@ Return ( oDlg:nResult == IDOK )
 
 Static function lValidaSubcuenta( aGet, aTmp, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCta, dbfTmpSubCta )
 
-   MkSubCta( aGet[ _SUBCTA ],;
+   MkSubcuenta( aGet[ _SUBCTA ],;
              {  aTmp[ _SUBCTA    ],;
                 aTmp[ _TITULO    ],;
                 aTmp[ _NIF       ],;
@@ -2041,7 +2041,7 @@ Static function lValidaSubcuenta( aGet, aTmp, oGetSaldo, oGetSubCta, cSubCtaAnt,
              oGetSaldo )
 
    if aTmp[ ( dbfProvee )->( fieldpos( "SUBCTA" ) ) ] != cSubCtaAnt
-      LoadSubCta( aTmp[ ( dbfProvee )->( fieldpos( "SUBCTA" ) ) ], cRutCnt(), dbfTmpSubCta )
+      LoadSubcuenta( aTmp[ ( dbfProvee )->( fieldpos( "SUBCTA" ) ) ], cRutCnt(), dbfTmpSubCta )
       oBrwCta:Refresh()
    end if
 
@@ -2073,7 +2073,7 @@ static function BeginTrans( aTmp, nMode )
    end if
 
    if nMode != APPD_MODE
-      LoadSubCta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
+      LoadSubcuenta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
    end if
 
    dbCreate( cTmpDoc, aSqlStruct( aPrvDoc() ), cLocalDriver() )

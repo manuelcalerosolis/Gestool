@@ -2446,14 +2446,14 @@ METHOD Contabilizar( lSimula ) CLASS TCobAge
 
    cCtaAge           := oRetFld( ::oDbf:cCodAge, ::oAgentes, "CtaAge" )
 
-   if !lSimula .and. !ChkSubCta( cRuta, cCodEmp, cCtaAge, , .f., .f. )
+   if !lSimula .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaAge, , .f., .f. )
       ::oTreeSelect:Select( ::oTreeSelect:Add( "Cuenta de agente : " + Rtrim( ::oAgentes:cNbrAge ) + Space( 1 ) + Rtrim( ::oAgentes:cApeAge ) + " cuenta contable no existe.", 0 ) )
       lErrorFound    := .t.
    end if
 
    cCtaGas           := oRetFld( ::oDbf:cCodAge, ::oAgentes, "CtaGas" )
 
-   if !lSimula .and. !ChkSubCta( cRuta, cCodEmp, cCtaGas, , .f., .f. )
+   if !lSimula .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaGas, , .f., .f. )
       ::oTreeSelect:Select( ::oTreeSelect:Add( "Cuenta de gasto : " + Rtrim( ::oAgentes:cNbrAge ) + Space( 1 ) + Rtrim( ::oAgentes:cApeAge ) + " cuenta contable no existe.", 0 ) )
       lErrorFound    := .t.
    end if

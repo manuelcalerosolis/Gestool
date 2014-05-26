@@ -5,17 +5,17 @@
 
 #define _ASIEN                    1     //   N      6     0
 #define _FECHA                    2     //   D      8     0
-#define _SUBCTA                   3     //   C     12     0
-#define _CONTRA                   4     //   C     12     0
+#define _Subcuenta                   3     //   C     12     0
+#define _Contrapartida                   4     //   C     12     0
 #define _PTADEBE                  5     //   N     12     0
 #define _CONCEPTO                 6     //   C     25     0
 #define _PTAHABER                 7     //   N     12     0
 #define _FACTURA                  8     //   N      7     0
-#define _BASEIMPO                 9     //   N     11     0
+#define _BaseImponible                 9     //   N     11     0
 #define _IVA                     10     //   N      5     2
-#define _RECEQUIV                11     //   N      5     2
+#define _RecargoEquivalencia                11     //   N      5     2
 #define _DOCUMENTO               12     //   C      6     0
-#define _DEPARTA                 13     //   C      3     0
+#define _Departamento                 13     //   C      3     0
 #define _CLAVE                   14     //   C      6     0
 #define _ESTADO                  15     //   C      1     0
 #define _NCASADO                 16     //   N      6     0
@@ -76,7 +76,7 @@ Function ChkRuta( cRutaConta, lMessage )
    else
 
       if lMessage
-         msgStop( "Ruta invalida, fichero Contaplus no encontrado" + CRLF + "en ruta " + cRutaConta + "." )
+         msgStop( "Ruta invalida, fichero Contaplus no enContrapartidado" + CRLF + "en ruta " + cRutaConta + "." )
       end if
 
       lReturn        := .f.
@@ -126,7 +126,7 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
    else
 
       lValidFecha          := .f.
-      cText                += "Empresa no encontrada"
+      cText                += "Empresa no enContrapartidada"
 
       if lMessage
          msgStop( cText )
@@ -206,7 +206,7 @@ FUNCTION ChkEmpresaContaplus( cRuta, cCodEmp, oGetEmp, lMessage )
       end if
    else
       if lMessage
-         msgStop( "Empresa no encontrada" )
+         msgStop( "Empresa no enContrapartidada" )
       end if
    end if
 
@@ -373,7 +373,7 @@ RETURN ( nil )
 Devuelve el numero de digitos de una subcuenta
 */
 
-Function nLenSubCta( cRuta, cCodEmp, lMensaje )
+Function nLenSubcuenta( cRuta, cCodEmp, lMensaje )
 
 Return ( nLenCuentaContaplus( cRuta, cCodEmp, lMensaje ) + 3 )
 
@@ -438,7 +438,7 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
    else
 
       if lMensaje
-         MsgStop( "Empresa " + cCodEmp + " no encontrada." )
+         MsgStop( "Empresa " + cCodEmp + " no enContrapartidada." )
       end if
 
    end if
@@ -483,7 +483,7 @@ FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
    else
 
       if lMensaje
-         MsgStop( "Empresa " + cCodEmp + " no encontrada." )
+         MsgStop( "Empresa " + cCodEmp + " no enContrapartidada." )
       end if
 
    end if
@@ -538,7 +538,7 @@ FUNCTION ChkCta( cCodCuenta, oGetCta, lMessage, cRuta, cCodEmp )
       else
 
          if lMessage
-            msgStop( "Cuenta no encontrada" )
+            msgStop( "Cuenta no enContrapartidada" )
          end if
 
 			lReturn = .F.
@@ -553,7 +553,7 @@ RETURN lReturn
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ChkSubCta( cRuta, cCodEmp, cCodSubCta, oGetCta, lMessage, lEmpty )
+FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lEmpty )
 
    local lClose      := .f.
    local lReturn     := .t.
@@ -568,9 +568,9 @@ FUNCTION ChkSubCta( cRuta, cCodEmp, cCodSubCta, oGetCta, lMessage, lEmpty )
    end if
 
    cRuta             := cPath( cRuta )
-   cCodSubCta        := Padr( cCodSubCta, 12 )
+   cCodSubcuenta        := Padr( cCodSubcuenta, 12 )
 
-   if ( Empty( cCodSubCta ) .or. Empty( cRuta ) ) .and. lEmpty
+   if ( Empty( cCodSubcuenta ) .or. Empty( cRuta ) ) .and. lEmpty
       return .t.
    end if
 
@@ -583,7 +583,7 @@ FUNCTION ChkSubCta( cRuta, cCodEmp, cCodSubCta, oGetCta, lMessage, lEmpty )
       end if
    end if
 
-   if ( cSubCuenta )->( dbSeek( cCodSubCta ) )
+   if ( cSubCuenta )->( dbSeek( cCodSubcuenta ) )
 
       if !Empty( oGetCta )
          oGetCta:cText( ( cSubCuenta )->Titulo )
@@ -592,7 +592,7 @@ FUNCTION ChkSubCta( cRuta, cCodEmp, cCodSubCta, oGetCta, lMessage, lEmpty )
    else
 
       if lMessage
-         msgStop( "Subcuenta : " + cCodSubCta + CRLF + "no encontrada", "Contaplus" )
+         msgStop( "Subcuenta : " + cCodSubcuenta + CRLF + "no enContrapartidada", "Contaplus" )
       end if
 
       lReturn        := .f.
@@ -728,7 +728,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION BrwChkSubCta( oCodCta, oGetCta, cRuta, cCodEmp )
+FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
 
 	local oDlg
 	local oBrw
@@ -872,14 +872,14 @@ Return ( nil )
 Crea una subcuenta en contaplus
 */
 
-FUNCTION MkSubCta( oGetSubCta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGetHaber, oGetSaldo )
+FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGetHaber, oGetSaldo )
 
    local n
    local cArea
    local nSumaDB     := 0
    local nSumaHB     := 0
    local cTitCta     := ""
-   local cCodSubCta  := oGetSubCta:VarGet()
+   local cCodSubcuenta  := oGetSubcuenta:VarGet()
    local aEmpProced  := {}
 
    DEFAULT cCodEmp   := cEmpCnt( "A" )
@@ -889,20 +889,20 @@ FUNCTION MkSubCta( oGetSubCta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGetHaber,
       Return .f.
    end if
 
-   cRuta             := cPath( cRuta )
+   cRuta                := cPath( cRuta )
 
-   cCodSubCta        := PntReplace( oGetSubCta, "0", nLenSubCta() )
-   cCodSubCta        := PadR( cCodSubCta, nLenSubCta() )
-   cCodSubCta        := AllTrim( cCodSubCta )
+   cCodSubcuenta        := PntReplace( oGetSubcuenta, "0", nLenSubcuenta() )
+   cCodSubcuenta        := PadR( cCodSubcuenta, nLenSubcuenta() )
+   cCodSubcuenta        := AllTrim( cCodSubcuenta )
 
    /*
-   if len( cCodSubCta ) != nLenSubCta()
+   if len( cCodSubcuenta ) != nLenSubcuenta()
       MsgStop( "La longitud de la subcuenta no es correcta." )
       Return .t.
    end if
    */
 
-   if !Empty( cCodSubCta )
+   if !Empty( cCodSubcuenta )
 
       for n := 1 to len( aSerie )
 
@@ -912,16 +912,16 @@ FUNCTION MkSubCta( oGetSubCta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGetHaber,
 
             if OpenSubCuenta( cRuta, cCodEmp, @cArea )
 
-               if !( cArea )->( dbSeek( cCodSubCta, .t. ) ) .and. !Empty( aTemp )
+               if !( cArea )->( dbSeek( cCodSubcuenta, .t. ) ) .and. !Empty( aTemp )
 
-                  if ApoloMsgNoYes( "Subcuenta : " + Rtrim( cCodSubCta ) + " no existe en empresa : " + cCodEmp + CRLF + ;
+                  if ApoloMsgNoYes( "Subcuenta : " + Rtrim( cCodSubcuenta ) + " no existe en empresa : " + cCodEmp + CRLF + ;
                                     "¿ Desea crearla ?" ,;
                                     "Contabilidad" )
 
                      aSize( aTemp, 10 )
 
                      ( cArea )->( DbAppend() )
-                     ( cArea )->Cod       := cCodSubCta
+                     ( cArea )->Cod       := cCodSubcuenta
 
                      if ( cArea )->( FieldPos( "IDNIF" ) ) != 0
                         ( cArea )->IdNif     := 1
@@ -1026,7 +1026,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION LoadSubCta( cCodSubCta, cRuta, dbfTmp )
+FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
 
    local n
    local cCodEmp
@@ -1043,7 +1043,7 @@ FUNCTION LoadSubCta( cCodSubCta, cRuta, dbfTmp )
 
    ( dbfTmp )->( __dbZap() )
 
-   if Empty( AllTrim( cCodSubCta ) )
+   if Empty( AllTrim( cCodSubcuenta ) )
       return .t.
    end if
 
@@ -1058,9 +1058,9 @@ FUNCTION LoadSubCta( cCodSubCta, cRuta, dbfTmp )
 
             ( dbfDiario )->( OrdSetFocus( "SubCd" ) )
 
-            if ( dbfDiario )->( dbSeek( cCodSubCta ) )
+            if ( dbfDiario )->( dbSeek( cCodSubcuenta ) )
 
-               while ( dbfDiario )->SubCta == cCodSubCta .and. !( dbfDiario )->( eof() )
+               while ( dbfDiario )->Subcuenta == cCodSubcuenta .and. !( dbfDiario )->( eof() )
 
                   ( dbfTmp )->( dbAppend() )
 
@@ -1069,7 +1069,7 @@ FUNCTION LoadSubCta( cCodSubCta, cRuta, dbfTmp )
                   ( dbfTmp )->cConcepto := ( dbfDiario )->Concepto
                   ( dbfTmp )->nDebe     := ( dbfDiario )->EuroDebe
                   ( dbfTmp )->nHaber    := ( dbfDiario )->EuroHaber
-                  ( dbfTmp )->cDeparta  := ( dbfDiario )->Departa + "." + ( dbfDiario )->Clave
+                  ( dbfTmp )->cDepartamento  := ( dbfDiario )->Departamento + "." + ( dbfDiario )->Clave
                   ( dbfTmp )->nFactura  := ( dbfDiario )->Factura
                   ( dbfTmp )->nBase     := ( dbfDiario )->BaseEuro
                   ( dbfTmp )->nIva      := ( dbfDiario )->Iva
@@ -1270,36 +1270,35 @@ Realiza los asientos
 */
 
 FUNCTION MkAsiento( 	Asien,;
-                     cCodDiv,;
+                     cDivisa,;
 							Fecha,;
-							SubCta,;
-							Contra,;
+							Subcuenta,;
+							Contrapartida,;
                      nImporteDebe,;
 							Concepto,;
                      nImporteHaber,;
 							Factura,;
-							BaseImpo,;
+							BaseImponible,;
                      IVA,;
-							RecEquiv,;
+							RecargoEquivalencia,;
 							Documento,;
-							Departa,;
+							Departamento,;
 							Clave,;
                      lRectificativa,;
 							nCasado,;
 							tCasado,;
                      lSimula,;
-                     cTerNif,;
-                     cTerNom,;
+                     cNif,;
+                     cNombre,;
                      nEjeCon,;
                      cEjeCta )
 
-   local aTemp
    local cSerie            := "A"
    local oError
    local oBlock
    local nImporte
 
-   DEFAULT cCodDiv         := cDivEmp()
+   DEFAULT cDivisa         := cDivEmp()
    DEFAULT lRectificativa  := .f.
    DEFAULT lSimula         := .t.
    DEFAULT nImporteDebe    := 0
@@ -1328,22 +1327,90 @@ FUNCTION MkAsiento( 	Asien,;
    */
 
    if lBancas() .and. ( nImporteDebe == 0  ) .and. ( nImporteHaber == 0 )
-      return ( aTemp )
+      return ( nil )
    end if
 
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   /*
-   Importes en negativo--------------------------------------------------------
-   */
+      /*
+      Importes en negativo--------------------------------------------------------
+      */
 
-   if !uFieldEmpresa( "lAptNeg" ) .and. ( nImporteDebe < 0 .or. nImporteHaber < 0 )
-      nImporte             := abs( nImporteDebe )
-      nImporteDebe         := abs( nImporteHaber )
-      nImporteHaber        := nImporte
-      BaseImpo             := abs( BaseImpo )
-   end if
+      if !uFieldEmpresa( "lAptNeg" ) .and. ( nImporteDebe < 0 .or. nImporteHaber < 0 )
+         nImporte             := abs( nImporteDebe )
+         nImporteDebe         := abs( nImporteHaber )
+         nImporteHaber        := nImporte
+         BaseImponible        := abs( BaseImponible )
+      end if
+
+      /*
+      Asignacion de campos--------------------------------------------------------
+      */
+
+      MkAsientoContaplus(  Asien,;
+                           cDivisa,;
+                           Fecha,;
+                           Subcuenta,;
+                           Contrapartida,;
+                           nImporteDebe,;
+                           Concepto,;
+                           nImporteHaber,;
+                           cSerie,;
+                           Factura,;
+                           BaseImponible,;
+                           IVA,;
+                           RecargoEquivalencia,;
+                           Documento,;
+                           Departamento,;
+                           Clave,;
+                           lRectificativa,;
+                           nCasado,;
+                           tCasado,;
+                           lSimula,;
+                           cNif,;
+                           cNombre,;
+                           nEjeCon,;
+                           cEjeCta )   
+
+   RECOVER USING oError
+
+      msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+Static Function MkAsientoContaplus( Asien,;
+                                    cDivisa,;
+                                    Fecha,;
+                                    Subcuenta,;
+                                    Contrapartida,;
+                                    nImporteDebe,;
+                                    Concepto,;
+                                    nImporteHaber,;
+                                    cSerie,;
+                                    Factura,;
+                                    BaseImponible,;
+                                    IVA,;
+                                    RecargoEquivalencia,;
+                                    Documento,;
+                                    Departamento,;
+                                    Clave,;
+                                    lRectificativa,;
+                                    nCasado,;
+                                    tCasado,;
+                                    lSimula,;
+                                    cNif,;
+                                    cNombre,;
+                                    nEjeCon,;
+                                    cEjeCta )
+
+   local aTemp
 
    /*
    Asignacion de campos--------------------------------------------------------
@@ -1365,20 +1432,19 @@ FUNCTION MkAsiento( 	Asien,;
    aTemp[ ( cDiario )->( FieldPos( "SERIE" ) ) ]         := If ( cSerie   != NIL, cSerie,     aTemp[ ( cDiario )->( FieldPos( "SERIE" ) ) ] )
    aTemp[ ( cDiario )->( FieldPos( "FACTURA" ) ) ]       := If ( Factura  != NIL, Factura,    aTemp[ ( cDiario )->( FieldPos( "FACTURA" ) ) ] )
 
-   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ]      := If ( BaseImpo != NIL, BaseImpo,   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ] )
+   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ]      := If ( BaseImponible != NIL, BaseImponible,   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ] )
    aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]      := If ( nImporteDebe  != NIL, nImporteDebe,    aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] )
    aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]     := If ( nImporteHaber != NIL, nImporteHaber,   aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] )
 
-   aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ]        := If ( SubCta   != NIL, SubCta,     aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] )
-   aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ]        := If ( Contra   != NIL, Contra,     aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ] )
+   aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ]        := If ( Subcuenta   != NIL, Subcuenta,     aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] )
+   aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ]        := If ( Contrapartida   != NIL, Contrapartida,     aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ] )
 
    aTemp[ ( cDiario )->( FieldPos( "CONCEPTO" ) ) ]      := If ( Concepto != NIL, Concepto,   aTemp[ ( cDiario )->( FieldPos( "CONCEPTO" ) ) ] )
 
    aTemp[ ( cDiario )->( FieldPos( "IVA" ) )       ]     := If ( IVA      != NIL, IVA,        aTemp[ ( cDiario )->( FieldPos( "IVA" ) )        ] )
-   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )  ]     := If ( RecEquiv != NIL, RecEquiv,   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )   ] )
+   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )  ]     := If ( RecargoEquivalencia != NIL, RecargoEquivalencia,   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )   ] )
    aTemp[ ( cDiario )->( FieldPos( "DOCUMENTO" ) ) ]     := If ( Documento!= NIL, Documento,  aTemp[ ( cDiario )->( FieldPos( "DOCUMENTO" ) )  ] )
-   aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )   ]     := If ( Departa  != NIL, Departa,    aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )    ] )
-   aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )   ]     := If ( Departa  != NIL, Departa,    aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )    ] )
+   aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )   ]     := If ( Departamento  != NIL, Departamento,    aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )    ] )
    aTemp[ ( cDiario )->( FieldPos( "CLAVE" ) )     ]     := If ( Clave    != NIL, Clave,      aTemp[ ( cDiario )->( FieldPos( "CLAVE" ) )      ] )
    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )   ]     := If ( nCasado  != NIL, nCasado,    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )    ] )
    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )   ]     := If ( tCasado  != NIL, tCasado,    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )    ] )
@@ -1388,11 +1454,11 @@ FUNCTION MkAsiento( 	Asien,;
    end if
 
    if ( cDiario )->( FieldPos( "TERNIF" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ]     := If ( cTerNif  != NIL, cTerNif,    aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ] )
+      aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ]     := If ( cNif  != NIL, cNif,    aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ] )
    end if
 
    if ( cDiario )->( FieldPos( "TERNOM" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := If ( cTerNom  != NIL, cTerNom,    aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ] )
+      aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := If ( cNombre  != NIL, cNombre,    aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ] )
    end if
 
    if lRectificativa
@@ -1400,8 +1466,8 @@ FUNCTION MkAsiento( 	Asien,;
    end if
 
    /*
-	Para contaplus euro 2000----------------------------------------------------
-	*/
+   Para contaplus euro 2000----------------------------------------------------
+   */
 
    aTemp[ ( cDiario )->( FieldPos( "MONEDAUSO" ) ) ]     := "2"
 
@@ -1417,9 +1483,6 @@ FUNCTION MkAsiento( 	Asien,;
       if ( cDiario )->( FieldPos( "METALIMP" ) ) != 0      
          aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
       end if
-      if ( cDiario )->( FieldPos( "TERNOM" ) ) != 0
-         aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := cEjeCta
-      end if
       if ( cDiario )->( FieldPos( "METALEJE" ) ) != 0
          aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
       end if
@@ -1427,22 +1490,14 @@ FUNCTION MkAsiento( 	Asien,;
    end if 
 
    if !lSimula
-      WriteAsiento( aTemp, cCodDiv )
+      WriteAsiento( aTemp, cDivisa )
    end if
 
-   RECOVER USING oError
+Return ( nil )
 
-      msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
+//---------------------------------------------------------------------------//
 
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( aTemp )
-
-//----------------------------------------------------------------------------//
-
-Function WriteAsiento( aTemp, cCodDiv, lMessage )
+Function WriteAsiento( aTemp, cDivisa, lMessage )
 
    local cMes
    local nFld
@@ -1461,7 +1516,7 @@ Function WriteAsiento( aTemp, cCodDiv, lMessage )
 
       cMes           := Rjust( Month( aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ] ), "0", 2 )
 
-      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
+      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( FieldPos( "Subcuenta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
 
          ( cSubCuenta )->SUMADBEU               += aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]
          ( cSubCuenta )->SUMAHBEU               += aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]
@@ -1487,7 +1542,7 @@ Function WriteAsiento( aTemp, cCodDiv, lMessage )
       else
 
          if lMessage
-            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ], "Imposible actualizar saldos" )
+            MsgStop( "Subcuenta no enContrapartidada " + aTemp[ ( cDiario )->( FieldPos( "Subcuenta" ) ) ], "Imposible actualizar saldos" )
          end if
 
       end if
@@ -1506,12 +1561,12 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function aWriteAsiento( aTemp, cCodDiv, lMessage )
+Function aWriteAsiento( aTemp, cDivisa, lMessage )
 
    local a
 
    for each a in aTemp
-      WriteAsiento( a, cCodDiv, lMessage )
+      WriteAsiento( a, cDivisa, lMessage )
    next
 
 Return ( nil )
@@ -1620,7 +1675,7 @@ FUNCTION cCtaConta( oGet, dbfCuentas, oGet2 )
 
 	ELSE
 
-		msgStop( "Subcuentas no encontradas" )
+		msgStop( "Subcuentas no enContrapartidadas" )
 
 	END IF
 
@@ -1653,7 +1708,7 @@ STATIC FUNCTION OpnEmpresa( cRuta, lMessage )
 
    if !File( cRuta + "Emp\Empresa.Dbf" ) .or. !File( cRuta + "Emp\Empresa.Cdx" )
       if lMessage
-         MsgStop( "Fichero de empresa de Contaplus ® " +  cRuta + "Emp\Empresa.Dbf, no encontrado", "Abriendo fichero de empresas" )
+         MsgStop( "Fichero de empresa de Contaplus ® " +  cRuta + "Emp\Empresa.Dbf, no enContrapartidado", "Abriendo fichero de empresas" )
       end if
       Return .f.
    end if
@@ -1724,7 +1779,7 @@ STATIC FUNCTION OpnCta( cRuta, cCodEmp, cArea, lMessage )
    else
 
       if lMessage
-         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
+         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
       end if
 
       lOpen          := .f.
@@ -1775,26 +1830,26 @@ FUNCTION OpenSubCuenta( cRuta, cCodEmp, cArea, lMessage )
       /*
       Nuevo Contaplus
       do case
-         case File( cRuta + "EMP" + cCodEmp + "\SUBCTA" + cCodEmp + ".CDX" )
+         case File( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" )
 
 
-         USE ( cRuta + "EMP" + cCodEmp + "\SUBCTA" + cCodEmp + ".DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-         SET ADSINDEX TO ( cRuta + "EMP" + cCodEmp + "\SUBCTA" + cCodEmp + ".CDX" ) ADDITIVE
+         USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         SET ADSINDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" ) ADDITIVE
       */
 
-      if File( cRuta + "EMP" + cCodEmp + "\SUBCTA.CDX" )
+      if File( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" )
 
          /*
          Primavera
          */
 
-         USE ( cRuta + "EMP" + cCodEmp + "\SUBCTA.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SUBCTA.CDX" ) ADDITIVE
+         USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" ) ADDITIVE
 
       else
 
          if lMessage
-            msgStop( "Ficheros no encontrados", "Abriendo subcuentas" )
+            msgStop( "Ficheros no enContrapartidados", "Abriendo subcuentas" )
          end if
 
          lOpen       := .f.
@@ -1823,12 +1878,12 @@ Return ( lOpen )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION MsgTblCon( aTable, cCodDiv, dbfDiv, lConAsi, cTitle, bConta )
+FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
    local oDlg
 	local oBrw
    local oBtnCon
-   local cPorDiv           := cPorDiv( cCodDiv, dbfDiv )
+   local cPorDiv           := cPorDiv( cDivisa, dbfDiv )
 
    DEFAULT lConAsi         := .f.
    DEFAULT cTitle          := ""
@@ -1866,20 +1921,20 @@ FUNCTION MsgTblCon( aTable, cCodDiv, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Subcuenta"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Subcta" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Subcuenta" ) ) ] }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Contapartida"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Contra" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Contrapartida" ) ) ] }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Debe"
          :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "EuroDebe" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "PtaDebe" ) ) ] ) }
-         :bFooter          := {|| nTotDebe( aTable, cCodDiv ) }
+         :bFooter          := {|| nTotDebe( aTable, cDivisa ) }
          :cEditPicture     := cPorDiv
          :nWidth           := 70
          :nDataStrAlign    := 1
@@ -1896,7 +1951,7 @@ FUNCTION MsgTblCon( aTable, cCodDiv, dbfDiv, lConAsi, cTitle, bConta )
       with object ( oBrw:AddCol() )
          :cHeader          := "Haber"
          :bEditValue       := {|| if( .t., aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "EuroHaber" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "PtaHaber" ) ) ] ) }
-         :bFooter          := {|| nTotHaber( aTable, cCodDiv ) }
+         :bFooter          := {|| nTotHaber( aTable, cDivisa ) }
          :cEditPicture     := cPorDiv
          :nWidth           := 70
          :nDataStrAlign    := 1
@@ -1918,7 +1973,7 @@ FUNCTION MsgTblCon( aTable, cCodDiv, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Base imponible"
-         :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "BaseEuro" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "BaseImpo" ) ) ] ) }
+         :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "BaseEuro" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "BaseImponible" ) ) ] ) }
          :cEditPicture     := cPorDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1936,7 +1991,7 @@ FUNCTION MsgTblCon( aTable, cCodDiv, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "RecEquiv" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "RecargoEquivalencia" ) ) ] }
          :cEditPicture     := cPorDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1950,8 +2005,8 @@ FUNCTION MsgTblCon( aTable, cCodDiv, dbfDiv, lConAsi, cTitle, bConta )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Departamento"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Departa" ) ) ] }
+         :cHeader          := "Departamentomento"
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Departamento" ) ) ] }
          :nWidth           := 40
       end with
 
@@ -1995,7 +2050,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //-------------------------------------------------------------------------//
 
-function nTotDebe( aTable, cCodDiv, cPorDiv )
+function nTotDebe( aTable, cDivisa, cPorDiv )
 
    local nTotal      := 0
    local oError
@@ -2006,7 +2061,7 @@ function nTotDebe( aTable, cCodDiv, cPorDiv )
 
    if !Empty( aTable )
 
-   if .t. // cCodDiv == "EUR"
+   if .t. // cDivisa == "EUR"
       aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ], 0 ) } )
    else
       aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "PTADEBE" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "PTADEBE" ) ) ], 0 ) } )
@@ -2024,7 +2079,7 @@ return ( if( Empty( cPorDiv ), nTotal, Trans( nTotal, cPorDiv ) ) )
 
 //-------------------------------------------------------------------------//
 
-function nTotHaber( aTable, cCodDiv, cPorDiv )
+function nTotHaber( aTable, cDivisa, cPorDiv )
 
    local nTotal   := 0
    local oError
@@ -2033,7 +2088,7 @@ function nTotHaber( aTable, cCodDiv, cPorDiv )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if .t. // cCodDiv == "EUR"
+   if .t. // cDivisa == "EUR"
       aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ], 0 ) } )
    else
       aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "PTAHABER" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "PTAHABER" ) ) ], 0 ) } )
@@ -2193,7 +2248,7 @@ FUNCTION ChkProyecto( cCodPro, oGetPro, cRuta, cCodEmp, lMessage )
       else
 
          if lMessage
-            msgStop( "Proyecto : " + cCodPro + CRLF + "no encontrada", "Contaplus" )
+            msgStop( "Proyecto : " + cCodPro + CRLF + "no enContrapartidada", "Contaplus" )
          end if
 
       end if
@@ -2290,7 +2345,7 @@ function dbfCuenta() ; return ( cCuenta )
 
 //---------------------------------------------------------------------------//
 
-function dbfSubCta() ; return ( cSubCuenta )
+function dbfSubcuenta() ; return ( cSubCuenta )
 
 //---------------------------------------------------------------------------//
 
@@ -2338,7 +2393,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
       else
 
          if lMessage
-            msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
+            msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
       end if
@@ -2381,7 +2436,7 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
    else
 
       if lMessage
-         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo balances" )
+         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo balances" )
       end if
 
       Return nil
@@ -2401,7 +2456,7 @@ Return ( dbfBalance )
 
 Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
 
-   local dbfSubCta
+   local dbfSubcuenta
 
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT lMessage  := .f.
@@ -2418,35 +2473,35 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
 
    /*
    do case
-   case File( cRuta + "EMP" + cCodEmp + "\SUBCTA" + cCodEmp + ".CDX" )
+   case File( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" )
 
-      USE ( cRuta + "EMP" + cCodEmp + "\SUBCTA" + cCodEmp + ".DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubCta ) )
-      SET ADSINDEX TO ( cRuta + "EMP" + cCodEmp + "\SUBCTA" + cCodEmp + ".CDX" )
+      USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubcuenta ) )
+      SET ADSINDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" )
    */
 
-   if File( cRuta + "EMP" + cCodEmp + "\SUBCTA.CDX" )
+   if File( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" )
 
-      USE ( cRuta + "EMP" + cCodEmp + "\SUBCTA.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubCta ) )
-      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SUBCTA.CDX" )
+      USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubcuenta ) )
+      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" )
 
    else
 
       if lMessage
-         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
+         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
       end if
 
       Return nil
 
    end if
 
-   if ( dbfSubCta )->( RddName() ) == nil .or. NetErr()
+   if ( dbfSubcuenta )->( RddName() ) == nil .or. NetErr()
       if lMessage
          msgStop( "Imposible acceder a fichero Contaplus", "Abriendo subcuentas" )
       end if
       Return nil
    end if
 
-Return ( dbfSubCta )
+Return ( dbfSubcuenta )
 
 //----------------------------------------------------------------------------//
 

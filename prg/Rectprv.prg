@@ -2972,8 +2972,8 @@ Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oBandera, nMode, aT
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], oGetSubCta ) ) ;
-         VALID    ( MkSubCta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], { aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ] }, oGetSubCta ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], oGetSubCta ) ) ;
+         VALID    ( MkSubcuenta( aGet[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ], { aTmp[ ( dbfTmpPgo )->( FieldPos( "CCTAREC" ) ) ] }, oGetSubCta ) );
          OF       oDlg
 
 		REDEFINE GET oGetSubCta VAR cGetSubCta ;
@@ -6498,7 +6498,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
       cCtaPrvVta     := cCtaPrv()
    end if
 
-   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
+   if !ChkSubcuenta( cRutCnt(), cCodEmp, cCtaPrv, , .f., .f. )
       oTree:Add( "Factura rectificativa : " + rtrim( cFactura ) + " subcuenta " + cCtaPrv + " no encontada.", 0 )
       lErrorFound    := .t.
    end if
@@ -6621,7 +6621,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
 
    for n := 1 TO len( aVentas )
 
-      if !ChkSubCta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
+      if !ChkSubcuenta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
 
          oTree:Add( "Factura rectificativa : " + rtrim( cFactura ) + " subcuenta " + aVentas[ n, 1 ] + " no encontada.", 0 )
          lErrorFound    := .t.
@@ -6636,12 +6636,12 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
 
    for n := 1 to len( aIva )
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 2 ], , .f., .f. )
          oTree:Add( "Factura rectificativa : " + Rtrim( cFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 )
          lErrorFound    := .t.
       end if
 
-      if !ChkSubCta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, aIva[ n, 3 ], , .f., .f. )
          oTree:Add( "Factura rectificativa : " + Rtrim( cFactura ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 )
          lErrorFound    := .t.
       end if
@@ -6650,7 +6650,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
 
    if nTotRet != 0
 
-      if !ChkSubCta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
+      if !ChkSubcuenta( cRuta, cCodEmp, cCtaRet(), , .f., .f. )
          oTree:Add( "Factura rectificativa : " + Rtrim( cFactura ) + " subcuenta " + cCtaRet() + " no encontada.", 0 )
          lErrorFound    := .t.
       end if

@@ -1679,7 +1679,7 @@ METHOD Conta( lSimula )
 	--------------------------------------------------------------------------
 	*/
 
-   if !::lChkSelect .and. !ChkSubCta( cRuta, cCodEmp, cCtaCon, , .f., .f. )
+   if !::lChkSelect .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaCon, , .f., .f. )
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " subcuenta " + cCtaCon + " no encontada.", 0 )
       lErrorFound          := .t.
    end if
@@ -1690,12 +1690,12 @@ METHOD Conta( lSimula )
 	*/
 
 
-   if !ChkSubCta( cRuta, cCodEmp, cCtaCon, , .f., .f. )
+   if !ChkSubcuenta( cRuta, cCodEmp, cCtaCon, , .f., .f. )
       ::oTreeSelect:Add( "Cuenta : " + rtrim( cCtaCon ) + " banco no existe.", 0 )
       lErrorFound          := .t.
    end if
 
-   if ::oDbf:nTipRem == 2 .and. !ChkSubCta( cRuta, cCodEmp, cCtaBcoDto, , .f., .f. )
+   if ::oDbf:nTipRem == 2 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaBcoDto, , .f., .f. )
       ::oTreeSelect:Add( "Cuenta : " + rtrim( cCtaBcoDto ) + " de descuento banco no existe.", 0 )
       lErrorFound          := .t.
    end if
@@ -1712,7 +1712,7 @@ METHOD Conta( lSimula )
             cCtaCliCta     := ""
          end if
 
-         if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
+         if !ChkSubcuenta( cRuta, cCodEmp, cCtaCli, , .f., .f. )
             ::oTreeSelect:Add( "Cliente : " + rtrim( ::oClientes:Titulo ) + " cuenta contable no existe.", 0 )
             lErrorFound    := .t.
          end if
@@ -1721,7 +1721,7 @@ METHOD Conta( lSimula )
          Chequear en caso de remesas de descuento
          */
 
-         if ::oDbf:nTipRem == 2 .and. !ChkSubCta( cRuta, cCodEmp, cCtaCliDto, , .f., .f. )
+         if ::oDbf:nTipRem == 2 .and. !ChkSubcuenta( cRuta, cCodEmp, cCtaCliDto, , .f., .f. )
             ::oTreeSelect:Add( "Cliente : " + Rtrim( ::oClientes:Titulo ) + " cuenta descuento no existe.", 0 )
             lErrorFound    := .t.
          end if

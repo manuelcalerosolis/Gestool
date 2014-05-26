@@ -505,8 +505,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( !Empty( cRutCnt() ) .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTACOBRO ], oGetCob ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTACOBRO ], { aTmp[ _CCTACOBRO ], aTmp[ _CDESPAGO ] }, oGetCob ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTACOBRO ], oGetCob ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTACOBRO ], { aTmp[ _CCTACOBRO ], aTmp[ _CDESPAGO ] }, oGetCob ) );
 			OF oDlg
 
 		REDEFINE GET oGetCob VAR cGetCob ;
@@ -519,8 +519,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( !Empty( cRutCnt() ) .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAGAS ], oGetGas ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAGAS ], { aTmp[ _CCTAGAS ], aTmp[ _CDESPAGO ] }, oGetGas ) );
+         ON HELP  ( BrwChkSubcuenta( aGet[ _CCTAGAS ], oGetGas ) ) ;
+         VALID    ( MkSubcuenta( aGet[ _CCTAGAS ], { aTmp[ _CCTAGAS ], aTmp[ _CDESPAGO ] }, oGetGas ) );
          OF       oDlg
 
       REDEFINE GET oGetGas VAR cGetGas ;
