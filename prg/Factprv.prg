@@ -11797,7 +11797,7 @@ FUNCTION cDesFacPrv( cFacPrvT, cFacPrvL, cFacPrvS )
 
    local cReturn     := ""
 
-   DEFAULT cFacPrvT  := cFacPrvT
+   DEFAULT cFacPrvT  := TDataView():FacturasProveedores( nView )
    DEFAULT cFacPrvL  := dbfFacPrvL
    DEFAULT cFacPrvS  := dbfFacPrvS
 
@@ -11815,7 +11815,7 @@ Function cCtaFacPrv( cFacPrvT, cFacPrvP, cBncPrv )
 
    local cCtaFacPrv  := ""
 
-   DEFAULT cFacPrvT  := cFacPrvT
+   DEFAULT cFacPrvT  := TDataView():FacturasProveedores( nView )
    DEFAULT cFacPrvP  := dbfFacPrvP
    DEFAULT cBncPrv   := dbfPrvBnc
 
@@ -11839,7 +11839,7 @@ Function lRectificadaPrv( cNumFac, cFacPrvT, cRctPrvT )
 
    local lRectificada   := .f.
 
-   DEFAULT cFacPrvT     := cFacPrvT
+   DEFAULT cFacPrvT     := TDataView():FacturasProveedores( nView )
    DEFAULT cRctPrvT     := dbfRctPrvT
    DEFAULT cNumFac      := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
 
