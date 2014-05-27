@@ -425,9 +425,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():TiposIva( nView )
 
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
-      SET TAG TO "cCodPrv"
+      TDataView():ProveedorArticulo( nView )
+      ( TDataView():ProveedorArticulo( nView ) )->( OrdSetFocus( "cCodPrv" ) )
 
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -644,10 +643,6 @@ Static Function CloseFiles()
       ( dbfPedPrvL )->( dbCloseArea() )
    end if
 
-   if dbfArtPrv != nil
-      ( dbfArtPrv )->( dbCloseArea() )
-   end if
-
    if dbfFPago != nil
       ( dbfFPago )->( dbCloseArea() )
    end if
@@ -789,7 +784,6 @@ Static Function CloseFiles()
 
    dbfRctPrvT  := nil
    dbfRctPrvL  := nil
-   dbfArtPrv   := nil
    dbfFPago    := nil
    dbfUbicaL   := nil
    dbfArticulo := nil
@@ -2906,7 +2900,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
       else
 
          if uFieldEmpresa( "lCosPrv", .f. )
-            nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, dbfArtPrv )
+            nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
          end if
 
          if nPreCom != 0
@@ -2921,7 +2915,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
 
          if uFieldEmpresa( "lCosPrv", .f. )
 
-            nPreCom                 := nDtoArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, dbfArtPrv )
+            nPreCom                 := nDtoArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmp )->nDtoLin  := nPreCom
@@ -2931,7 +2925,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
          Descuento de promocional----------------------------------------------
          */
 
-            nPreCom                 := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, dbfArtPrv )
+            nPreCom                 := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmp )->nDtoPrm  :=  nPreCom
@@ -5086,7 +5080,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
       Ahora buscamos por el codigo interno-------------------------------------
       */
 
-      if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
+      if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, TDataView():ProveedorArticulo( nView ), dbfCodebar )
 
          if ( lChgCodArt )
 
@@ -5235,12 +5229,12 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             Referencia de proveedor-----------------------------------------------
             */
 
-            nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cCodPrv" ) )
+            nOrdAnt                 := ( TDataView():ProveedorArticulo( nView ) )->( OrdSetFocus( "cCodPrv" ) )
 
-            if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt) )
+            if ( TDataView():ProveedorArticulo( nView ) )->( dbSeek( cCodPrv + cCodArt) )
 
                if !Empty( aGet[ _CREFPRV ] )
-                  aGet[ _CREFPRV ]:cText( ( dbfArtPrv )->cRefPrv )
+                  aGet[ _CREFPRV ]:cText( ( TDataView():ProveedorArticulo( nView ) )->cRefPrv )
                end if
 
             else
@@ -5251,7 +5245,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             end if
 
-            ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
+            ( TDataView():ProveedorArticulo( nView ) )->( ordSetFocus( nOrdAnt ) )
 
             /*
             Ponemos el precio de venta recomendado--------------------------------
@@ -5380,7 +5374,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             else
 
                if uFieldEmpresa( "lCosPrv", .f. )
-                  nPreCom        := nPreArtPrv( cCodPrv, cCodArt, dbfArtPrv )
+                  nPreCom        := nPreArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                end if
 
                if nPreCom != 0
@@ -5397,7 +5391,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             if uFieldEmpresa( "lCosPrv", .f. )
 
-               nPreCom           := nDtoArtPrv( cCodPrv, cCodArt, dbfArtPrv )
+               nPreCom           := nDtoArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
 
                if nPreCom != 0
                   aGet[ _NDTOLIN ]:cText( nPreCom )
@@ -5407,7 +5401,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             Descuento de promocional----------------------------------------------
             */
 
-               nPreCom           := nPrmArtPrv( cCodPrv, cCodArt, dbfArtPrv )
+               nPreCom           := nPrmArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
 
                if nPreCom != 0
                   aGet[ _NDTOPRM ]:cText( nPreCom )
@@ -5547,11 +5541,11 @@ STATIC FUNCTION GetArtPrv( cRefPrv, cCodPrv, aGet )
 
    else
 
-      nOrdAnt  := ( dbfArtPrv )->( ordSetFocus( 3 ) )
+      nOrdAnt  := ( TDataView():ProveedorArticulo( nView ) )->( ordSetFocus( 3 ) )
 
-      if ( dbfArtPrv )->( dbSeek( cCodPrv + cRefPrv ) )
+      if ( TDataView():ProveedorArticulo( nView ) )->( dbSeek( cCodPrv + cRefPrv ) )
 
-         aGet[ _CREF ]:cText( ( dbfArtPrv )->cCodArt )
+         aGet[ _CREF ]:cText( ( TDataView():ProveedorArticulo( nView ) )->cCodArt )
          aGet[ _CREF ]:lValid()
 
       else
@@ -5560,7 +5554,7 @@ STATIC FUNCTION GetArtPrv( cRefPrv, cCodPrv, aGet )
 
       end if
 
-      ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
+      ( TDataView():ProveedorArticulo( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    end if
 
@@ -7200,7 +7194,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       Comprobamos que exista el articulo en la base de datos----------------
       */
 
-      AppRefPrv( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], dbfArtPrv )
+      AppRefPrv( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], TDataView():ProveedorArticulo( nView ) )
 
       /*
       Cambios de precios-------------------------------------------------------
@@ -8289,7 +8283,7 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Código de proveedores", ( dbfArtPrv )->( Select() ) )
+   oFr:SetWorkArea(     "Código de proveedores", ( TDataView():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
@@ -8369,7 +8363,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Código de proveedores", ( dbfArtPrv )->( Select() ) )
+   oFr:SetWorkArea(     "Código de proveedores", ( TDataView():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
@@ -13683,7 +13677,7 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-Function lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
+Function lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, cArtPrv, dbfCodebar )
 
    local nOrdAnt
    local cCodigoArticulo   
@@ -13703,13 +13697,13 @@ Function lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfC
    Busqueda por codigo de proveedor--------------------------------------------
    */
 
-   nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
+   nOrdAnt                 := ( cArtPrv )->( OrdSetFocus( "cRefPrv" ) )
 
-   if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
-      cCodigoProveedor     := ( dbfArtPrv )->cCodArt 
+   if ( cArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
+      cCodigoProveedor     := ( cArtPrv )->cCodArt 
    end if
 
-   ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
+   ( cArtPrv )->( ordSetFocus( nOrdAnt ) )
 
    /*
    Vamos a ver q ha pasado-----------------------------------------------------

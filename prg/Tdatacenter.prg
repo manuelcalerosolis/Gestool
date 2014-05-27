@@ -1971,6 +1971,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProvArt"
    oDataTable:cName        := cPatEmp() + "ProvArt"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProvArt.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProvArt.Cdx"
@@ -4958,6 +4959,8 @@ CLASS TDataView
       METHOD FacturasProveedoresPagosId( nView )   INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + str( ( ::Get( "FacPrvP", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvP", nView ) )->cSufFac )
 
    METHOD TiposIva( nView )                  INLINE ( ::Get( "TIva", nView ) )
+
+   METHOD ProveedorArticulo( nView )         INLINE ( ::Get( "ProvArt", nView ) )
 
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
