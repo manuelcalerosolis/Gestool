@@ -3758,7 +3758,7 @@ RETURN ( nPreMed )
 //---------------------------------------------------------------------------//
 
 METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote ) CLASS TStock
-
+   
    local nUnidades      := 0
    local nImporte       := 0
    local nCostoMedio    := 0
@@ -3785,6 +3785,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    */
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
+
+msgAlert( "mov alm")
 
       while ( ::cHisMovT)->cRefMov == cCodArt                        .and.;
          ( Empty( cValPr1 ) .or. ( ::cHisMovT)->cValPr1 == cValPr1 ) .and.;
@@ -3826,6 +3828,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
+msgalert( "albaranes proveedor" )
+
       while ( ::cAlbPrvL )->cRef == cCodArt                             .and.;
          ( Empty( cValPr1 ) .or. ( ::cAlbPrvL )->cValPr1 == cValPr1 )   .and.;
          ( Empty( cValPr2 ) .or. ( ::cAlbPrvL )->cValPr2 == cValPr2 )   .and.;
@@ -3851,6 +3855,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    */
 
    if ( ::cFacPrvL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
+
+   msgalert( "fac prv" )
 
       while ( ::cFacPrvL )->cRef == cCodArt                         .and.;
       ( Empty( cValPr1 ) .or. ( ::cFacPrvL )->cValPr1 == cValPr1 )  .and.;
@@ -3906,24 +3912,36 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
    if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
 
+msgAlert ( cCodArt, "codart" )
+msgAlert( cLote, "lote" )
+
       while ( ::cProducL )->cCodArt == cCodArt                          .and.;
          ( Empty( cValPr1 ) .or. ( ::cProducL )->cValPr1 == cValPr1 )   .and.;
          ( Empty( cValPr2 ) .or. ( ::cProducL )->cValPr2 == cValPr2 )   .and.;
          ( Empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
-        
-         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd ) .and.;
-            Empty( cCodAlm ) .or. ( ( ::cProducL )->cAlmOrd == cCodAlm )
-           
+      
+msgalert( ( ::cProducL )->cAlmOrd , "cAloOrd" )
+msgAlert( cCodAlm, "cCodAlm" )
+
+         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd ) //.and.;
+            // Empty( cCodAlm ) .or. ( ( ::cProducL )->cAlmOrd == cCodAlm )
+
             nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
-            
+
+         msgAlert( nUnidades, "unidades" )
+
             nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
-            
+           
+         msgAlert( nImporte, "importe" )
+
          end if
 
          ( ::cProducL )->( dbSkip() )
 
       end while
+
+      msgAlert( nImporte, "imp despues del while")
 
    end if
 
@@ -3932,6 +3950,9 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    */
 
    if nImporte != 0 .and. nUnidades != 0
+
+   msgalert( " calculo costo medio ")
+
       nCostoMedio       := ( nImporte / nUnidades )
    end if
 
@@ -3940,6 +3961,9 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    */
 
    if nCostoMedio == 0 .and. !Empty( ::cArticulo ) .and. !Empty( ::cKit )
+
+   msgAlert( "busca el costo en la ficha")
+   
       nCostoMedio       := nCosto( cCodArt, ::cArticulo, ::cKit )
    end if
 
@@ -6126,7 +6150,7 @@ Return ( nRiesgo )
 //---------------------------------------------------------------------------//
 
 METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
-
+                     
    local nRec           := ( ::cHisMovT )->( Recno() )
    local nOrd           := ( ::cHisMovT )->( OrdSetFocus( "cStock" ) )
 

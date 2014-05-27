@@ -3175,6 +3175,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
          return .f.
       end if
 
+
       if ( lChgCodArt )
 
          aGet[ ( dbfTmpLin )->( FieldPos( "cRefMov" ) ) ]:cText( ( dbfArticulo )->Codigo )
@@ -4489,10 +4490,15 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
             */
 
             if !uFieldEmpresa( "lCosAct" )
+               
+               // nPreMed     := ::oParent:oStock:nPrecioMedioCompra( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, nil, GetSysDate() )
 
-               nPreMed     := ::oParent:oStock:nPrecioMedioCompra( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, nil, GetSysDate() )
+              // msgalert( "llama la funcion")
+
+               nPreMed     := ::oParent:oStock:nCostoMedio( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
 
                if nPreMed == 0
+               msgAlert( "precio medio igual 0")
                   nPreMed  := nCosto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
                end if
 
