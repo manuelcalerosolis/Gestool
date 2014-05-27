@@ -4962,7 +4962,13 @@ CLASS TDataView
 
    METHOD ProveedorArticulo( nView )         INLINE ( ::Get( "ProvArt", nView ) )
 
+   METHOD CodigoBarrasArticulo( nView )       INLINE ( ::Get( "ArtCodebar", nView ) )
+
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
+
+   METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
+
+   METHOD Kit( nView )                       INLINE ( ::Get( "ArtKit", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
 
