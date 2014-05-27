@@ -1126,7 +1126,7 @@ METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
    Generación de pagos---------------------------------------------------------
    */
 
-   GenPgoFacPrv( cSerie + Str( nNumero ) + cSufijo, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oFacPrvP:cAlias, ::oProvee:cAlias, ::oFPago:cAlias, ::oDivisas:cAlias )
+   GenPgoFacPrv( cSerie + Str( nNumero ) + cSufijo, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oFacPrvP:cAlias, ::oProvee:cAlias, ::oIva:cAlias, ::oFPago:cAlias, ::oDivisas:cAlias )
 
    CursorWE()
 

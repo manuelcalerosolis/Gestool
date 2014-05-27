@@ -2111,7 +2111,7 @@ METHOD ImportaFacturasProveedores()
    
    while !( ::oDbfFacPrvTGst:eof() )
 
-      GenPgoFacPrv( ::oDbfFacPrvTGst:cSerFac + Str( ::oDbfFacPrvTGst:nNumFac ) + ::oDbfFacPrvTGst:cSufFac, ::oDbfFacPrvTGst:cAlias, ::oDbfFacPrvLGst:cAlias, ::oDbfFacPrvPGst:cAlias, ::oDbfPrvGst:cAlias, ::oDbfPgo:cAlias,  ::oDbfDiv:cAlias )
+      GenPgoFacPrv( ::oDbfFacPrvTGst:cSerFac + Str( ::oDbfFacPrvTGst:nNumFac ) + ::oDbfFacPrvTGst:cSufFac, ::oDbfFacPrvTGst:cAlias, ::oDbfFacPrvLGst:cAlias, ::oDbfFacPrvPGst:cAlias, ::oDbfPrvGst:cAlias, ::oDbfIva:cAlias, ::oDbfPgo:cAlias,  ::oDbfDiv:cAlias )
 
       ::aMtrIndices[ 6 ]:Set( ::oDbfFacPrvTGst:Recno() )
 

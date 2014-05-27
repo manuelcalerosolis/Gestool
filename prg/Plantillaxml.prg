@@ -2173,15 +2173,6 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
 
       /*
       Generamos los pagos y refrescamos el estado------------------------------
-
-      for each aCampos in aFacturas
-         if ::oFacPrvT:SeekInOrd( aCampos, "nNumFac" )
-            ::oRecTreeImportacion   := ::oTreeImportacion:Add( "Creando recibos de la factura " + aCampos, 0, nil )
-            ::oTreeImportacion:Select( ::oRecTreeImportacion )
-            GenPgoFacPrv( aCampos, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oFacPrvP:cAlias, ::oDbfPrv:cAlias, ::oDbfFPago:cAlias, ::oDbfDiv:cAlias )
-            ChkLqdFacPrv( nil, ::oFacPRvT:cAlias, ::oFacPrvL:cAlias, ::oFacPrvP:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
-         end if
-      next
       */
 
    case cTipo == "Recibos facturas proveedor"

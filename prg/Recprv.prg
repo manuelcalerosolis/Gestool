@@ -2252,7 +2252,7 @@ Function SynRecPrv( cPatEmp )
 
    while !( dbfFacPrvT )->( eof() )
 
-      GenPgoFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfFPago, dbfDiv )
+      GenPgoFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfIva, dbfFPago, dbfDiv )
 
       ChkLqdFacPrv( , dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv )
 

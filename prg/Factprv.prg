@@ -7304,7 +7304,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Generar los pagos de las facturas-------------------------------------------
    */
 
-   GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), dbfFPago, dbfDiv )
+   GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), TDataView():TiposIva( nView ), dbfFPago, dbfDiv )
 
    if nMode == APPD_MODE
 
@@ -9717,7 +9717,7 @@ RETURN nBitmap
 Genera los recibos de una factura
 */
 
-FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, dbfFPago, dbfDiv, aTmp )
+FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPago, dbfDiv, aTmp )
 
    local nCobro
    local cCodPgo
@@ -9795,7 +9795,7 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, dbfFPago, db
    Comprobar q el total de factura no es igual al de pagos
    */
 
-   nTotal            := nTotFacPrv( cNumFac, cFacPrvT, cFacPrvL, TDataView():TiposIva( nView ), dbfDiv, cFacPrvP, nil, nil, .f. )
+   nTotal            := nTotFacPrv( cNumFac, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, nil, nil, .f. )
    nTotCob           := nPagFacPrv( cNumFac, cFacPrvP, nil, dbfDiv, .f. )
    nDec              := nRouDiv( cDivFac, dbfDiv ) // Decimales de la divisa redondeada
 
