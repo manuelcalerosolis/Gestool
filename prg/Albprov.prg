@@ -253,7 +253,6 @@ static oWndBrw
 static oInf
 static nView
 static oGetTot
-static dbfPrv
 static dbfIva
 static dbfTmp
 static dbfInci
@@ -883,14 +882,18 @@ STATIC FUNCTION OpenFiles( lExt )
 
       nView             := TDataView():CreateView()
 
+      /*
+      Compras------------------------------------------------------------------
+      */
+
       TDataView():AlbaranesProveedores( nView )
       TDataView():AlbaranesProveedoresLineas( nView )
       TDataView():AlbaranesProveedoresIncidencias( nView )
       TDataView():AlbaranesProveedoresDocumentos( nView )
       TDataView():AlbaranesProveedoresSeries( nView )
 
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      TDataView():Proveedores( nView )
+
 
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
@@ -1104,10 +1107,6 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-   if dbfPrv != nil
-      ( dbfPrv )->( dbCloseArea() )
-   end if
-
    if dbfArtPrv != nil
       ( dbfArtPrv )->( dbCloseArea() )
    end if
@@ -1283,7 +1282,6 @@ STATIC FUNCTION CloseFiles()
    TDataView():DeleteView( nView )
 
    dbfUbicaL   := nil
-   dbfPrv      := nil
    dbfArtPrv   := nil
    dbfIva      := nil
    dbfArticulo := nil
@@ -1363,7 +1361,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    local oTlfPrv
    local oBmpGeneral
 
-   cTlfPrv              := RetFld( aTmp[ _CCODPRV ], dbfPrv, "Telefono" )
+   cTlfPrv              := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ), "Telefono" )
 
 	DO CASE
    CASE nMode == APPD_MODE
@@ -1460,7 +1458,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    cSay[ 2 ]            := RetFld( aTmp[ _CCODALM ], dbfAlm )
    cSay[ 3 ]            := RetFld( aTmp[ _CCODPGO ], dbfFPago )
    cSay[ 4 ]            := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[ 5 ]            := RetFld( aTmp[ _CCODPRV ], dbfPrv )
+   cSay[ 5 ]            := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ) )
    cSay[ 6 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "albaranes de proveedores"
@@ -1525,7 +1523,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			COLOR 	CLR_GET ;
 			PICTURE	( RetPicCodPrvEmp() ) ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay[ 5 ], oTlfPrv ) ) ;
+         VALID    ( LoaPrv( aGet, aTmp, nMode, oSay[ 5 ], oTlfPrv ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwProvee( aGet[_CCODPRV], oSay[ 5 ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -2626,7 +2624,7 @@ return nil
 Carga los datos del proveedor
 */
 
-STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
+STATIC FUNCTION LoaPrv( aGet, aTmp, nMode, oSay, oTlfPrv )
 
    local lValid      := .f.
    local cNewCodCli  := aGet[ _CCODPRV ]:VarGet()
@@ -2640,41 +2638,41 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodPrvEmp() )
    end if
 
-   if ( dbfPrv )->( dbSeek( cNewCodCli ) )
+   if ( TDataView():Proveedores( nView ) )->( dbSeek( cNewCodCli ) )
 
-      if ( dbfPrv )->lBlqPrv
+      if ( TDataView():Proveedores( nView ) )->lBlqPrv
          msgStop( "Proveedor bloqueado, no se pueden realizar operaciones de compra" )
          return .f.
       end if
 
-      aGet[ _CCODPRV ]:cText( ( dbfPrv )->Cod )
+      aGet[ _CCODPRV ]:cText( ( TDataView():Proveedores( nView ) )->Cod )
 
       if Empty( aGet[ _CNOMPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CNOMPRV ]:cText( ( dbfPrv )->Titulo )
+         aGet[ _CNOMPRV ]:cText( ( TDataView():Proveedores( nView ) )->Titulo )
       end if
 
       if oTlfPrv != nil
-         oTlfPrv:cText( ( dbfPrv )->Telefono )
+         oTlfPrv:cText( ( TDataView():Proveedores( nView ) )->Telefono )
       end if
 
       if Empty( aGet[ _CDIRPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDIRPRV ]:cText( ( dbfPrv )->Domicilio )
+         aGet[ _CDIRPRV ]:cText( ( TDataView():Proveedores( nView ) )->Domicilio )
       endif
 
       if Empty( aGet[ _CPOBPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPOBPRV ]:cText( (dbfPrv)->Poblacion )
+         aGet[ _CPOBPRV ]:cText( ( TDataView():Proveedores( nView ) )->Poblacion )
       endif
 
       if Empty( aGet[ _CPROPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPROPRV ]:cText( (dbfPrv)->Provincia )
+         aGet[ _CPROPRV ]:cText( ( TDataView():Proveedores( nView ) )->Provincia )
       endif
 
       if Empty( aGet[ _CPOSPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPOSPRV ]:cText( (dbfPrv)->CodPostal )
+         aGet[ _CPOSPRV ]:cText( ( TDataView():Proveedores( nView ) )->CodPostal )
       endif
 
       if Empty( aGet[ _CDNIPRV ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDNIPRV ]:cText( ( dbfPrv )->Nif )
+         aGet[ _CDNIPRV ]:cText( ( TDataView():Proveedores( nView ) )->Nif )
       endif
 
       /*
@@ -2682,32 +2680,32 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       */
 
       if lChgCodCli
-         aGet[ _CDTOESP ]:cText( ( dbfPrv )->cDtoEsp )
-         aGet[ _NDTOESP ]:cText( ( dbfPrv )->nDtoEsp )
-         aGet[ _CDPP    ]:cText( ( dbfPrv )->cDtoPp )
-         aGet[ _NDPP    ]:cText( ( dbfPrv )->DtoPp )
+         aGet[ _CDTOESP ]:cText( ( TDataView():Proveedores( nView ) )->cDtoEsp )
+         aGet[ _NDTOESP ]:cText( ( TDataView():Proveedores( nView ) )->nDtoEsp )
+         aGet[ _CDPP    ]:cText( ( TDataView():Proveedores( nView ) )->cDtoPp )
+         aGet[ _NDPP    ]:cText( ( TDataView():Proveedores( nView ) )->DtoPp )
       end if
 
       if Empty( aGet[ _CCODPGO ]:VarGet() )
-         aGet[ _CCODPGO ]:cText( ( dbfPrv )->fPago )
+         aGet[ _CCODPGO ]:cText( ( TDataView():Proveedores( nView ) )->fPago )
          aGet[ _CCODPGO ]:lValid()
       end if
 
       if nMode == APPD_MODE
 
-         aGet[ _NREGIVA ]:nOption( Max( ( dbfPrv )->nRegIva, 1 ) )
+         aGet[ _NREGIVA ]:nOption( Max( ( TDataView():Proveedores( nView ) )->nRegIva, 1 ) )
          aGet[ _NREGIVA ]:Refresh()
 
          if Empty( aTmp[ _CSERALB ] )
 
-            if !Empty( ( dbfPrv )->Serie )
-               aGet[ _CSERALB ]:cText( ( dbfPrv )->Serie )
+            if !Empty( ( TDataView():Proveedores( nView ) )->Serie )
+               aGet[ _CSERALB ]:cText( ( TDataView():Proveedores( nView ) )->Serie )
             end if
 
          else
 
-            if !Empty( ( dbfPrv )->Serie ) .and. aTmp[ _CSERALB ] != ( dbfPrv )->Serie .and. ApoloMsgNoYes( "La serie del proveedor seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERALB ]:cText( ( dbfPrv )->Serie )
+            if !Empty( ( TDataView():Proveedores( nView ) )->Serie ) .and. aTmp[ _CSERALB ] != ( TDataView():Proveedores( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del proveedor seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aGet[ _CSERALB ]:cText( ( TDataView():Proveedores( nView ) )->Serie )
             end if
 
          end if
@@ -2715,15 +2713,15 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
       end if
 
       if lChgCodCli
-         aTmp[ _LRECARGO ] := ( dbfPrv )->lReq
+         aTmp[ _LRECARGO ] := ( TDataView():Proveedores( nView ) )->lReq
          aGet[ _LRECARGO ]:Refresh()
       end if
 
-      if ( dbfPrv )->lMosCom .and. !Empty( ( dbfPrv )->mComent ) .and. lChgCodCli
-         MsgStop( AllTrim( ( dbfPrv )->mComent ) )
+      if ( TDataView():Proveedores( nView ) )->lMosCom .and. !Empty( ( TDataView():Proveedores( nView ) )->mComent ) .and. lChgCodCli
+         MsgStop( AllTrim( ( TDataView():Proveedores( nView ) )->mComent ) )
       end if
 
-      cOldCodCli  := ( dbfPrv )->Cod
+      cOldCodCli  := ( TDataView():Proveedores( nView ) )->Cod
 
       lValid      := .t.
 
@@ -4103,7 +4101,7 @@ STATIC FUNCTION PrnSerie( oBrw )
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -4269,7 +4267,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
+               nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
 
                GenAlbPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4295,7 +4293,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
+               nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
 
                GenAlbPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4328,7 +4326,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
+                  nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
 
                   GenAlbPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4356,7 +4354,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
+                  nCopyProvee := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
 
                   GenAlbPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4399,7 +4397,7 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo albarán"
    DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "AP", dbfDoc )
@@ -4428,14 +4426,14 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       */
 
       ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
-      ( dbfPrv    )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv ) )
+      ( TDataView():Proveedores( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv ) )
       ( dbfDiv    )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cDivAlb ) )
       ( dbfFPago  )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodPgo ) )
       ( dbfAlm    )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodAlm ) )
 
       private cDbf         := TDataView():AlbaranesProveedores( nView )
       private cDbfCol      := TDataView():AlbaranesProveedoresLineas( nView )
-      private cDbfPrv      := dbfPrv
+      private cDbfPrv      := TDataView():Proveedores( nView )
       private cDbfPgo      := dbfFPago
       private cDbfIva      := dbfIva
       private cDbfDiv      := dbfDiv
@@ -4504,7 +4502,7 @@ RETURN NIL
 static function nGenAlbPrv( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
    local nImpYet     := 1
-   local nCopyClient := Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "nCopiasF" )
+   local nCopyClient := Retfld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" )
 
    DEFAULT nDevice   := IS_PRINTER
    DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb, "nAlbPrv", dbfCount ) )
@@ -5130,7 +5128,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
          aGet[ _CDTODOS ]:cText( ( dbfPedPrvT )->cDtoDos )
          aGet[ _NDTODOS ]:cText( ( dbfPedPrvT )->nDtoDos )
 
-         aGet[ _NREGIVA ]:nOption( Max( ( dbfPrv )->nRegIva, 1 ) )
+         aGet[ _NREGIVA ]:nOption( Max( ( TDataView():Proveedores( nView ) )->nRegIva, 1 ) )
          aGet[ _NREGIVA ]:Refresh()
 
          aGet[ _COBSERV ]:cText( ( dbfPedPrvT )->cObserv )
@@ -6847,7 +6845,7 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Proveedores", ( dbfPrv )->( Select() ) )
+   oFr:SetWorkArea(     "Proveedores", ( TDataView():Proveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Proveedores", cItemsToReport( aItmPrv() ) )
 
    oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
@@ -6923,7 +6921,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Proveedor", ( dbfPrv )->( Select() ) )
+   oFr:SetWorkArea(     "Proveedor", ( TDataView():Proveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Proveedor", cItemsToReport( aItmPrv() ) )
 
    oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
@@ -7153,13 +7151,13 @@ Static Function IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
 
       ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv    := cCodPrv
 
-      if ( dbfPrv )->( dbSeek( cCodPrv ) )
-         ( TDataView():AlbaranesProveedores( nView ) )->cNomPrv := ( dbfPrv )->Titulo
-         ( TDataView():AlbaranesProveedores( nView ) )->cDirPrv := ( dbfPrv )->Domicilio
-         ( TDataView():AlbaranesProveedores( nView ) )->cPobPrv := ( dbfPrv )->Poblacion
-         ( TDataView():AlbaranesProveedores( nView ) )->cProPrv := ( dbfPrv )->Provincia
-         ( TDataView():AlbaranesProveedores( nView ) )->cPosPrv := ( dbfPrv )->CodPostal
-         ( TDataView():AlbaranesProveedores( nView ) )->cDniPrv := ( dbfPrv )->Nif
+      if ( TDataView():Proveedores( nView ) )->( dbSeek( cCodPrv ) )
+         ( TDataView():AlbaranesProveedores( nView ) )->cNomPrv := ( TDataView():Proveedores( nView ) )->Titulo
+         ( TDataView():AlbaranesProveedores( nView ) )->cDirPrv := ( TDataView():Proveedores( nView ) )->Domicilio
+         ( TDataView():AlbaranesProveedores( nView ) )->cPobPrv := ( TDataView():Proveedores( nView ) )->Poblacion
+         ( TDataView():AlbaranesProveedores( nView ) )->cProPrv := ( TDataView():Proveedores( nView ) )->Provincia
+         ( TDataView():AlbaranesProveedores( nView ) )->cPosPrv := ( TDataView():Proveedores( nView ) )->CodPostal
+         ( TDataView():AlbaranesProveedores( nView ) )->cDniPrv := ( TDataView():Proveedores( nView ) )->Nif
       end if
 
    ( TDataView():AlbaranesProveedores( nView ) )->( dbUnlock() )
@@ -7379,7 +7377,7 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, dbfPrv, "cMeiInt" ) )
+                  :SetPara(         RetFld( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de albaran de proveedor número " + ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) ) )
                   :SetMensaje(      "Adjunto le remito nuestro albaran de proveedor " + ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( TDataView():AlbaranesProveedores( nView ) )->dfecAlb ) + Space( 1 ) )
