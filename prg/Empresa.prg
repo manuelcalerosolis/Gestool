@@ -2066,7 +2066,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       90 ;
          OF       fldContabilidad
 
-      oCmbContabilidad:bChange       := {|| msgAlert( cCmbContabilidad ) }
+      oCmbContabilidad:bChange       := {|| aTmp[ _NEXPCONTBL ] := oCmbContabilidad:nAt }
 
       REDEFINE GET aGet[ _CRUTCNT ] VAR aTmp[ _CRUTCNT ] ;
          ID       100;

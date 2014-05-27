@@ -16760,6 +16760,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
          if !Empty( oGetLote )
             oGetLote:cText( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote )
+            oGetLote:lValid()
             oGetLote:Refresh()
          end if
 

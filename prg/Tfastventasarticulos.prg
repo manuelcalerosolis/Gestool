@@ -587,10 +587,10 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
-                     "Existencias por articulo" =>   {  "Generate" =>   {||   ::AddArticulo( .t. ) },;
+                     "Por artículo" =>                {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } },;
-                     "Existencias por stocks" =>      {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
+                     "Por stocks" =>                  {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } } }
 
@@ -665,8 +665,8 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Existencias por articulo",     "Image" => 16, "Type" => "Existencias por articulo",     "Directory" => "Articulos\Existencias\Articulos",                 "File" => "Existencias por articulo.fr3" },;
-                     { "Title" => "Existencias por stocks",       "Image" => 16, "Type" => "Existencias por stocks",       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
+                     { "Title" => "Por artículo",                 "Image" => 16, "Type" => "Por artículo",                 "Directory" => "Articulos\Existencias\Por artículo",              "File" => "Existencias por articulo.fr3" },;
+                     { "Title" => "Por stocks",                   "Image" => 16, "Type" => "Por stocks",                   "Directory" => "Articulos\Existencias\Por stocks",                "File" => "Existencias por stock.fr3" },;
                   } ;
                   } }
 

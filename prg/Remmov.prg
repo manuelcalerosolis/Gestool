@@ -45,8 +45,6 @@ static dbfAlbCliL
 static dbfFacCliT
 static dbfFacCliL
 
-static cOldCodArt       := ""
-
 //---------------------------------------------------------------------------//
 
 CLASS TRemMovAlm FROM TMasDet
@@ -3154,7 +3152,7 @@ function nTotNRemMov( uDbf )
 RETURN ( nTotUnd )
 
 //---------------------------------------------------------------------------//
-
+/*
 STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
 
    local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
@@ -3163,10 +3161,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
       MsgStop( "No se pueden añadir líneas sin codificar" )
       return .f.
    end if
-
-   /*
-   Ahora buscamos por el codigo interno
-   */
 
    if aSeekProp( @aTmp[ ( dbfTmpLin )->( FieldPos( "cRefMov" ) ) ], @aTmp[ ( dbfTmpLin )->( FieldPos( "cValPr1" ) ) ], @aTmp[ ( dbfTmpLin )->( FieldPos( "cValPr2" ) ) ], dbfArticulo, dbfTblPro )
 
@@ -3182,11 +3176,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
 
          oSay[ 1 ]:cText( ( dbfArticulo )->Nombre )
 
-         /*
-         Lotes
-         -------------------------------------------------------------------
-         */
-
          aTmp[ ( dbfTmpLin )->( FieldPos( "LLOTE" ) ) ]     := ( dbfArticulo )->lLote
 
          if ( dbfArticulo )->lLote
@@ -3199,10 +3188,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
                aGet[ ( dbfTmpLin )->( FieldPos( "CLOTE" ) ) ]:Hide()
             end if
          end if
-
-         /*
-         Buscamos la familia del articulo y anotamos las propiedades--------
-         */
 
          aTmp[ ( dbfTmpLin )->( FieldPos( "CCODPR1" ) ) ]   := ( dbfArticulo )->cCodPrp1
          aTmp[ ( dbfTmpLin )->( FieldPos( "CCODPR2" ) ) ]   := ( dbfArticulo )->cCodPrp2
@@ -3284,6 +3269,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
    end if
 
 RETURN ( .t. )
+*/
 
 //---------------------------------------------------------------------------//
 
@@ -3480,6 +3466,8 @@ CLASS TDetMovimientos FROM TDet
    DATA  cSayUnd           INIT  ""
    DATA  oSayLote
    DATA  oGetLote
+   DATA  oGetDetalle
+   DATA  cGetDetalle       INIT  ""
 
    DATA  oCajMov
    DATA  oUndMov
@@ -3495,6 +3483,7 @@ CLASS TDetMovimientos FROM TDet
 
    DATA  cTxtAlmacenOrigen
    DATA  cTxtAlmacenDestino
+
 
    DATA  oPreDiv
 
@@ -3515,7 +3504,7 @@ CLASS TDetMovimientos FROM TDet
 
    METHOD RollBack()
 
-   METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode )
+   METHOD LoaArt( oDlg, lValidDetalle, nMode )
 
    METHOD Save()
    METHOD Asigna()
@@ -3660,8 +3649,6 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    local oDlg
    local oBtn
    local oSayPre
-   local oGetDet
-   local cGetDet           := ""
    local nStockOrigen      := 0
    local nStockDestino     := 0
    local oTotUnd
@@ -3679,7 +3666,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    ::cOldValPr2            := ::oDbfVir:cValPr2
    ::cOldLote              := ::oDbfVir:cLote
 
-   cGetDet                 := oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "Nombre" )
+   ::cGetDetalle           := oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "Nombre" )
 
    ::aStockActual          := { { "", "", "", "", "", 0, 0, 0 } }
 
@@ -3694,10 +3681,10 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::LoaArt( oGetDet, oDlg, .f., nMode ), .t. ) }
-      ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, oGetDet , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
+      ::oRefMov:bValid     := {|| msgAlert( "valid"), if( !Empty( ::oDbfVir:cRefMov ), ( msgAlert( "LoaArt"), ::LoaArt( oDlg, .f., nMode ) ), .t. ) }
+      ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
-      REDEFINE GET oGetDet VAR cGetDet ;
+      REDEFINE GET ::oGetDetalle VAR ::cGetDetalle ;
 			ID 		110 ;
          WHEN     ( .f. ) ;
          OF       oDlg
@@ -3717,7 +3704,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::LoaArt( oGetDet, oDlg, .f., nMode ), .t. ) }
+      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::LoaArt( oDlg, .f., nMode ), .t. ) }
 
       REDEFINE GET ::oValPr1 VAR ::oDbfVir:cValPr1;
          ID       120 ;
@@ -3725,7 +3712,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::LoaArt( oGetDet, oDlg, .f., nMode ), .f. ) }
+      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::LoaArt( oDlg, .f., nMode ), .f. ) }
       ::oValPr1:bHelp      := {|| brwPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR ::cSayVp1;
@@ -3743,7 +3730,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::LoaArt( oGetDet, oDlg, .f., nMode ), .f. ) }
+      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::LoaArt( oDlg, .f., nMode ), .f. ) }
       ::oValPr2:bHelp      := {|| brwPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR ::cSayVp2 ;
@@ -3764,7 +3751,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          PICTURE  ::oParent:cPicUnd ;
          OF       oDlg
 
-      REDEFINE SAY ::oSayCaj PROMPT cNombreCajas();
+      REDEFINE SAY ::oSayCaj PROMPT cNombreCajas(); 
          ID       142 ;
          OF       oDlg
 
@@ -4077,7 +4064,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    oBtn:SetFocus()
 
-   if nMode == APPD_MODE .and. !::LoaArt( nil, nil, .t., nMode )
+   if nMode == APPD_MODE .and. !::LoaArt( nil, .t., nMode )
       ::oRefMov:SetFocus()
       Return .f.
    end if
@@ -4298,37 +4285,36 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
+METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    local a
    local nPos
    local nPreMed
    local cValPr1           := ""
    local cValPr2           := ""
-   local cCodArt           := ::oDbfVir:cRefMov
-   local lChgCodArt        := ( Empty( ::cOldCodArt ) .or. Rtrim( ::cOldCodArt ) != Rtrim( cCodArt ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
+   local cCodArt           := ""
+   local lChgCodArt        := .f.
 
    DEFAULT lValidDetalle   := .f.
 
-   if Empty( cCodArt )
-
+   if Empty( ::oDbfVir:cRefMov )
       if !Empty( ::oBrwPrp )
          ::oBrwPrp:Hide()
       end if
-
       Return .t.
-
    end if
 
-   /*
-   Conversión a codigo interno-------------------------------------------------
-   */
+   // Detectamos si hay cambios en los codigos y propiedades-------------------
 
-   cCodArt                 := cSeekCodebar( cCodArt, ::oParent:oDbfBar:cAlias, ::oParent:oArt:cAlias )
+   lChgCodArt              := ( Rtrim( ::cOldCodArt ) != Rtrim( ::oDbfVir:cRefMov ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
 
-   /*
-   Articulos con numeros de serie no podemos pasarlo en regularizacion por objetivos
-   */
+   msgAlert( lChgCodArt, "lChgCodArt")
+
+   // Conversión a codigo interno-------------------------------------------------
+
+   cCodArt                 := cSeekCodebar( ::oDbfVir:cRefMov, ::oParent:oDbfBar:cAlias, ::oParent:oArt:cAlias )
+
+   // Articulos con numeros de serie no podemos pasarlo en regularizacion por objetivos
 
    if ( ::oParent:oDbf:nTipMov == 3 ) .and. ( RetFld( cCodArt, ::oParent:oArt:cAlias, "lNumSer" ) )
 
@@ -4338,9 +4324,7 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    end if
 
-   /*
-   Ahora buscamos por el codigo interno----------------------------------------
-   */
+   // Ahora buscamos por el codigo interno----------------------------------------
 
    if aSeekProp( @cCodArt, @cValPr1, @cValPr2, ::oParent:oArt:cAlias, ::oParent:oTblPro:cAlias )// ::oArt:Seek( xVal ) .OR. ::oArt:Seek( Upper( xVal ) )
 
@@ -4352,15 +4336,11 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
             ::oRefMov:cText( ::oParent:oArt:Codigo )
 
-            /*
-            Nombre-------------------------------------------------------------
-            */
+            // Nombre-------------------------------------------------------------
 
-            oGetDet:cText( ::oParent:oArt:Nombre )
+            ::oGetDetalle:cText( ::oParent:oArt:Nombre )
 
-            /*
-            Propiedades--------------------------------------------------------
-            */
+            // Propiedades--------------------------------------------------------
 
             if !Empty( cValPr1 )
                ::oValPr1:cText( cValPr1 )
@@ -4370,9 +4350,7 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ::oValPr2:cText( cValPr2 )
             end if
 
-            /*
-            Dejamos pasar a los productos de tipo kit
-            */
+            // Dejamos pasar a los productos de tipo kit-----------------------
 
             if ::oParent:oArt:lKitArt
                ::oDbfVir:lNoStk     := !lStockCompuestos( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias )
@@ -4491,10 +4469,6 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
             if !uFieldEmpresa( "lCosAct" )
                
-               // nPreMed     := ::oParent:oStock:nPrecioMedioCompra( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, nil, GetSysDate() )
-
-              // msgalert( "llama la funcion")
-
                nPreMed     := ::oParent:oStock:nCostoMedio( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
 
                if nPreMed == 0
@@ -4518,8 +4492,6 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
             ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmOrg, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockOrigen )
 
-            ::oParent:oStock:lPutStockActual( ::oDbfVir:cRefMov, ::oParent:oDbf:cAlmDes, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, .f., ::oParent:oArt:nCtlStock, ::oGetStockDestino )
-
             /*
             Guardamos el stock anterior----------------------------------------
             */
@@ -4533,7 +4505,12 @@ METHOD LoaArt( oGetDet, oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
          end if
 
-         ::cOldCodArt            := cCodArt
+         // Variables para no volver a ejecutar--------------------------------
+
+         ::cOldCodArt            := ::oDbfVir:cRefMov
+         ::cOldLote              := ::oDbfVir:cLote
+         ::cOldValPr1            := ::oDbfVir:cValPr1
+         ::cOldValPr2            := ::oDbfVir:cValPr2
 
          CursorWE()
 
