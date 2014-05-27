@@ -6167,7 +6167,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
                   // Consumo de producto entre dos fechas----------------------
 
-                  nConsumo                      := oStock:nConsumoArticulo( ( dbfTmpLin )->cRef, , ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
+                  nConsumo                      := oStock:nConsumoArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
 
                   if !Empty( nConsumo )
                         
