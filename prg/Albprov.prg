@@ -260,13 +260,9 @@ static dbfInci
 static dbfTmpInc
 static dbfTmpDoc
 static dbfTmpSer
-static dbfAlbPrvL
-static dbfAlbPrvS
 static tmpAlbPrvL
 static tmpAlbPrvS
 static filAlbPrvL
-static dbfAlbPrvI
-static dbfAlbPrvD
 static dbfFPago
 static dbfArtCom
 static dbfUbicaL
@@ -614,7 +610,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total unidades"
-         :bEditValue       := {|| nTotalUnd( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, dbfAlbPrvL, cPicUnd ) }
+         :bEditValue       := {|| nTotalUnd( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, cPicUnd ) }
          :nWidth           := 80
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -770,7 +766,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfAlbPrvL, aColAlbPrv() ) ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, TDataView():AlbaranesProveedoresLineas( nView ), aColAlbPrv() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
@@ -888,22 +884,10 @@ STATIC FUNCTION OpenFiles( lExt )
       nView             := TDataView():CreateView()
 
       TDataView():AlbaranesProveedores( nView )
-      //TDataView():AlbaranesProveedoresLineas( nView )
-      //TDataView():AlbaranesProveedoresIncidencias( nView )
-      //TDataView():AlbaranesProveedoresDocumentos( nView )
-      //TDataView():AlbaranesProveedoresSeries( nView )
-
-      USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBPRVI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPRVI", @dbfAlbPrvI ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBPRVI.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBPRVD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPRVD", @dbfAlbPrvD ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBPRVD.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "AlbPrvS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbPrvS", @dbfAlbPrvS ) )
-      SET ADSINDEX TO ( cPatEmp() + "AlbPrvS.CDX" ) ADDITIVE
+      TDataView():AlbaranesProveedoresLineas( nView )
+      TDataView():AlbaranesProveedoresIncidencias( nView )
+      TDataView():AlbaranesProveedoresDocumentos( nView )
+      TDataView():AlbaranesProveedoresSeries( nView )
 
       USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
       SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
@@ -1120,22 +1104,6 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-   if dbfAlbPrvL != nil
-      ( dbfAlbPrvL )->( dbCloseArea() )
-   end if
-
-   if dbfAlbPrvI != nil
-      ( dbfAlbPrvI )->( dbCloseArea() )
-   end if
-
-   if dbfAlbPrvD != nil
-      ( dbfAlbPrvD )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbPrvS )
-      ( dbfAlbPrvS )->( dbCloseArea() )
-   end if
-
    if dbfPrv != nil
       ( dbfPrv )->( dbCloseArea() )
    end if
@@ -1316,10 +1284,6 @@ STATIC FUNCTION CloseFiles()
 
    dbfUbicaL   := nil
    dbfPrv      := nil
-   dbfAlbPrvL  := nil
-   dbfAlbPrvI  := nil
-   dbfAlbPrvD  := nil
-   dbfAlbPrvS  := nil
    dbfArtPrv   := nil
    dbfIva      := nil
    dbfArticulo := nil
@@ -3057,8 +3021,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       // Campos de las descripciones de la unidad de medición
 
-      REDEFINE GET aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ] ;
-         VAR      aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ] ;
+      REDEFINE GET aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
+         VAR      aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
          ID       420 ;
          IDSAY    421 ;
          SPINNER ;
@@ -3067,10 +3031,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-      aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
+      aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ] ;
-         VAR      aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ] ;
+      REDEFINE GET aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
+         VAR      aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
          ID       430 ;
          IDSAY    431 ;
          SPINNER ;
@@ -3079,10 +3043,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-      aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
+      aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ] ;
-         VAR      aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ] ;
+      REDEFINE GET aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
+         VAR      aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
          ID       440 ;
          IDSAY    441 ;
          SPINNER ;
@@ -3091,7 +3055,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-      aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
+      aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
       REDEFINE GET aGet[ _NPNTVER ] VAR aTmp[ _NPNTVER ] ;
          ID       171 ;
@@ -3818,25 +3782,25 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
 
    //Ocultamos las tres unidades de medicion
 
-   aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-   aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-   aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
    if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
       if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:Show()
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
       if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:Show()
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
       if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:Show()
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -4463,14 +4427,14 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Posicionamos las tablas auxiliares
       */
 
-      ( dbfAlbPrvL)->( dbSeek( nAlbaran ) )
+      ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
       ( dbfPrv    )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv ) )
       ( dbfDiv    )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cDivAlb ) )
       ( dbfFPago  )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodPgo ) )
       ( dbfAlm    )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cCodAlm ) )
 
       private cDbf         := TDataView():AlbaranesProveedores( nView )
-      private cDbfCol      := dbfAlbPrvL
+      private cDbfCol      := TDataView():AlbaranesProveedoresLineas( nView )
       private cDbfPrv      := dbfPrv
       private cDbfPgo      := dbfFPago
       private cDbfIva      := dbfIva
@@ -4498,7 +4462,7 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
          oInf:lAutoLand          := .f.
          oInf:lFinish            := .f.
          oInf:lNoCancel          := .t.
-         oInf:bSkip              := {|| ( dbfAlbPrvL )->( dbSkip() ) }
+         oInf:bSkip              := {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSkip() ) }
 
          oInf:oDevice:lPrvModal  := .t.
 
@@ -4519,8 +4483,8 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       END REPORT
 
       ACTIVATE REPORT      oInf ;
-         WHILE             ( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->CSUFALB == nAlbaran );
-         FOR               ( !( dbfAlbPrvL )->lImpLin ) ;
+         WHILE             ( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->CSUFALB == nAlbaran );
+         FOR               ( !( TDataView():AlbaranesProveedoresLineas( nView ) )->lImpLin ) ;
          ON ENDPAGE        EPage( oInf, cCodDoc )
 
       if nDevice == IS_PRINTER
@@ -4573,14 +4537,14 @@ RETURN NIL
 Total de unidades en un albaran
 */
 
-static function nTotalUnd( nAlbaran, dbfAlbPrvL, cPicUnd )
+static function nTotalUnd( nAlbaran, cPicUnd )
 
    local nTotUnd  := 0
 
-   if ( dbfAlbPrvL )->( dbSeek( nAlbaran ) )
-      while  ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->CSUFALB == nAlbaran .and. ( dbfAlbPrvL )->( !eof() )
-         nTotUnd  += nTotNAlbPrv( dbfAlbPrvL )
-         ( dbfAlbPrvL )->( dbSkip() )
+   if ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
+      while  ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->CSUFALB == nAlbaran .and. ( TDataView():AlbaranesProveedoresLineas( nView ) )->( !eof() )
+         nTotUnd  += nTotNAlbPrv( TDataView():AlbaranesProveedoresLineas( nView ) )
+         ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
       end do
    end if
 
@@ -4772,7 +4736,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                */
 
                if Empty( dFechaCaducidad )
-                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], TDataView():AlbaranesProveedoresLineas( nView ), dbfFacPrvL )
                end if 
 
                aGet[ _DFECCAD ]:Show()
@@ -5186,7 +5150,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                */
 
                nTotPed                 := NotCaja( ( dbfPedPrvL )->nCanPed ) * ( dbfPedPrvL )->nUniCaja
-               nTotRec                 := nUnidadesRecibidasPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, ( dbfPedPrvL )->cRef, ( dbfPedPrvL )->cValPr1, ( dbfPedPrvL )->cValPr2, ( dbfPedPrvL )->cRefPrv, ( dbfPedPrvL )->cDetalle, dbfAlbPrvL )
+               nTotRec                 := nUnidadesRecibidasPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, ( dbfPedPrvL )->cRef, ( dbfPedPrvL )->cValPr1, ( dbfPedPrvL )->cValPr2, ( dbfPedPrvL )->cRefPrv, ( dbfPedPrvL )->cDetalle, TDataView():AlbaranesProveedoresLineas( nView ) )
                nTotPdt                 := nTotPed - nTotRec
 
                /*
@@ -5328,24 +5292,6 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
             oBrw:Refresh()
 
          end if
-
-         /*
-         Pasamos series de pedidos---------------------------------------------
-
-         if ( dbfAlbPrvS )->( dbSeek( cPedido ) )
-
-            while ( ( dbfAlbPrvS )->cSerPed + Str( ( dbfAlbPrvS )->nNumPed ) + ( dbfAlbPrvS )->cSufPed == cPedido ) .and. !( dbfAlbPrvS )->( eof() )
-
-               dbPass( dbfTmpSer, dbfAlbPrvS, .t. )
-
-               ( dbfAlbPrvS )->( dbSkip() )
-
-            end while
-
-            ( dbfTmpSer )->( dbGoTop() )
-
-         end if
-         */
 
          aGet[ _CNUMPED ]:bWhen     := {|| .f. }
          aGet[ _CNUMPED ]:bValid    := {|| .t. }
@@ -5496,10 +5442,10 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
       A¤adimos desde el fichero de lineas
       */
 
-      if ( dbfAlbPrvL )->( dbSeek( nAlbaran ) )
-         while ( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb == nAlbaran .AND. !( dbfAlbPrvL )->( eof() ) )
-            dbPass( dbfAlbPrvL, dbfTmp, .t. )
-            ( dbfAlbPrvL )->( DbSkip() )
+      if ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
+         while ( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb == nAlbaran .AND. !( TDataView():AlbaranesProveedoresLineas( nView ) )->( eof() ) )
+            dbPass( TDataView():AlbaranesProveedoresLineas( nView ), dbfTmp, .t. )
+            ( TDataView():AlbaranesProveedoresLineas( nView ) )->( DbSkip() )
          end while
       end if
 
@@ -5521,10 +5467,10 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
       A¤adimos desde el fichero de incidencias
       */
 
-      if ( dbfAlbPrvI )->( dbSeek( nAlbaran ) )
-         while ( ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb == nAlbaran ) .AND. ( dbfAlbPrvI )->( !eof() )
-            dbPass( dbfAlbPrvI, dbfTmpInc, .t. )
-            ( dbfAlbPrvI )->( dbSkip() )
+      if ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( nAlbaran ) )
+         while ( ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->cSufAlb == nAlbaran ) .AND. ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( !eof() )
+            dbPass( TDataView():AlbaranesProveedoresIncidencias( nView ), dbfTmpInc, .t. )
+            ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -5546,10 +5492,10 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
       A¤adimos desde el fichero de documentos----------------------------------
       */
 
-      if ( dbfAlbPrvD )->( dbSeek( nAlbaran ) )
-         while ( ( dbfAlbPrvD )->cSerAlb + Str( ( dbfAlbPrvD )->nNumAlb ) + ( dbfAlbPrvD )->cSufAlb == nAlbaran ) .AND. ( dbfAlbPrvD )->( !eof() )
-            dbPass( dbfAlbPrvD, dbfTmpDoc, .t. )
-            ( dbfAlbPrvD )->( dbSkip() )
+      if ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbSeek( nAlbaran ) )
+         while ( ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->cSufAlb == nAlbaran ) .AND. ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( !eof() )
+            dbPass( TDataView():AlbaranesProveedoresDocumentos( nView ), dbfTmpDoc, .t. )
+            ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -5571,10 +5517,10 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
       A¤adimos desde el fichero de series-----------------------------------------
       */
 
-      if ( dbfAlbPrvS )->( dbSeek( nAlbaran ) )
-         do while ( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb == nAlbaran )
-            dbPass( dbfAlbPrvS, dbfTmpSer, .t. )
-            ( dbfAlbPrvS )->( dbSkip() )
+      if ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbSeek( nAlbaran ) )
+         do while ( ( TDataView():AlbaranesProveedoresSeries( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresSeries( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresSeries( nView ) )->cSufAlb == nAlbaran )
+            dbPass( TDataView():AlbaranesProveedoresSeries( nView ), dbfTmpSer, .t. )
+            ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -5695,31 +5641,31 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
          Resetea los pedidos de proveedores------------------------------------
          */
 
-         while ( dbfAlbPrvL )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( dbfAlbPrvL )->( eof() )
-            if dbLock( dbfAlbPrvL )
-               ( dbfAlbPrvL )->( dbDelete() )
-               ( dbfAlbPrvL )->( dbUnLock() )
+         while ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresLineas( nView ) )->( eof() )
+            if dbLock( TDataView():AlbaranesProveedoresLineas( nView ) )
+               ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
+               ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbUnLock() )
             end if
          end while
 
-         while ( dbfAlbPrvI )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( dbfAlbPrvI )->( eof() )
-            if dbLock( dbfAlbPrvI )
-               ( dbfAlbPrvI )->( dbDelete() )
-               ( dbfAlbPrvI )->( dbUnLock() )
+         while ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( eof() )
+            if dbLock( TDataView():AlbaranesProveedoresIncidencias( nView ) )
+               ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbDelete() )
+               ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbUnLock() )
             end if
          end while
 
-         while ( dbfAlbPrvD )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( dbfAlbPrvD )->( eof() )
-            if dbLock( dbfAlbPrvD )
-               ( dbfAlbPrvD )->( dbDelete() )
-               ( dbfAlbPrvD )->( dbUnLock() )
+         while ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( eof() )
+            if dbLock( TDataView():AlbaranesProveedoresDocumentos( nView ) )
+               ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbDelete() )
+               ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbUnLock() )
             end if
          end while
 
-         while ( dbfAlbPrvS )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( dbfAlbPrvS )->( eof() )
-            if dbLock( dbfAlbPrvS )
-               ( dbfAlbPrvS )->( dbDelete() )
-               ( dbfAlbPrvS )->( dbUnLock() )
+         while ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbSeek( cSerAlb + Str( nNumAlb ) + cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresSeries( nView ) )->( eof() )
+            if dbLock( TDataView():AlbaranesProveedoresSeries( nView ) )
+               ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbDelete() )
+               ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbUnLock() )
             end if
          end while
 
@@ -5747,7 +5693,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
          aTbl[ _CSUFALB ]                                   := cSufAlb
          aTbl[ _LCHGLIN ]                                   := .f.
          aTbl[ _NPRECOM ]                                   := nNetUAlbPrv( aTbl, aTmp, nDinDiv, nDirDiv, aTmp[ _NVDVALB ] )
-         aTbl[ ( dbfAlbPrvL )->( FieldPos( "dFecAlb" ) ) ]  := aTmp[ _DFECALB ]
+         aTbl[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( FieldPos( "dFecAlb" ) ) ]  := aTmp[ _DFECALB ]
 
          AppRefPrv( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVALB ], aTbl[ _NPREDIV ], dbfArtPrv )
 
@@ -5763,7 +5709,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
          Grabamos-----------------------------------------------------------------
          */
 
-         dbGather( aTbl, dbfAlbPrvL, .t. )
+         dbGather( aTbl, TDataView():AlbaranesProveedoresLineas( nView ), .t. )
 
          ( dbfTmp )->( dbSkip() )
 
@@ -5806,7 +5752,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
 
       ( dbfTmpInc )->( dbGoTop() )
       while ( dbfTmpInc )->( !eof() )
-         dbPass( dbfTmpInc, dbfAlbPrvI, .t., cSerAlb, nNumAlb, cSufAlb )
+         dbPass( dbfTmpInc, TDataView():AlbaranesProveedoresIncidencias( nView ), .t., cSerAlb, nNumAlb, cSufAlb )
          ( dbfTmpInc )->( dbSkip() )
       end while
 
@@ -5816,7 +5762,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
 
       ( dbfTmpDoc )->( dbGoTop() )
       while ( dbfTmpDoc )->( !eof() )
-         dbPass( dbfTmpDoc, dbfAlbPrvD, .t., cSerAlb, nNumAlb, cSufAlb )
+         dbPass( dbfTmpDoc, TDataView():AlbaranesProveedoresDocumentos( nView ), .t., cSerAlb, nNumAlb, cSufAlb )
          ( dbfTmpDoc )->( dbSkip() )
       end while
 
@@ -5826,7 +5772,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
 
       ( dbfTmpSer )->( dbGoTop() )
       while ( dbfTmpSer )->( !eof() )
-         dbPass( dbfTmpSer, dbfAlbPrvS, .t., cSerAlb, nNumAlb, cSufAlb, dFecAlb )
+         dbPass( dbfTmpSer, TDataView():AlbaranesProveedoresSeries( nView ), .t., cSerAlb, nNumAlb, cSufAlb, dFecAlb )
          ( dbfTmpSer )->( dbSkip() )
       end while
 
@@ -6059,9 +6005,9 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-static function nCanEnt( dbfAlbPrvL )
+static function nCanEnt()
 
-return ( If( ( dbfAlbPrvL )->NCANENT != 0, ( dbfAlbPrvL )->NCANENT, 1 ) * ( dbfAlbPrvL )->NUNICAJA )
+return ( If( ( TDataView():AlbaranesProveedoresLineas( nView ) )->NCANENT != 0, ( TDataView():AlbaranesProveedoresLineas( nView ) )->NCANENT, 1 ) * ( TDataView():AlbaranesProveedoresLineas( nView ) )->NUNICAJA )
 
 //---------------------------------------------------------------------------//
 
@@ -6101,36 +6047,36 @@ Static Function QuiAlbPrv( lDetail )
 
    CursorWait()
 
-   nRecAnt           := ( dbfAlbPrvL )->( Recno() )
-   nOrdAnt           := ( dbfAlbPrvL )->( OrdSetFocus( "nNumAlb" ) )
+   nRecAnt           := ( TDataView():AlbaranesProveedoresLineas( nView ) )->( Recno() )
+   nOrdAnt           := ( TDataView():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-   if ( dbfAlbPrvL )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) )
+   if ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) )
 
-      while ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb == ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb .and. ;
-            !( dbfAlbPrvL )->( Eof() )
+      while ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb == ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb .and. ;
+            !( TDataView():AlbaranesProveedoresLineas( nView ) )->( Eof() )
 
-         if aScan( aNumPedCli, ( dbfAlbPrvL )->cNumPed ) == 0
-            aAdd( aNumPedCli, ( dbfAlbPrvL )->cNumPed )
+         if aScan( aNumPedCli, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cNumPed ) == 0
+            aAdd( aNumPedCli, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cNumPed )
          end if
 
-         ( dbfAlbPrvL )->( dbSkip() )
+         ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfAlbPrvL )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfAlbPrvL )->( dbGoTo( nRecAnt ) )
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbGoTo( nRecAnt ) )
 
    /*
    Detalle---------------------------------------------------------------------
    */
 
-   while ( dbfAlbPrvL )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( dbfAlbPrvL )->( eof() )
+   while ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
-      if dbLock( dbfAlbPrvL )
-         ( dbfAlbPrvL )->( dbDelete() )
-         ( dbfAlbPrvL )->( dbUnLock() )
+      if dbLock( TDataView():AlbaranesProveedoresLineas( nView ) )
+         ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
+         ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbUnLock() )
       end if
 
    end while
@@ -6139,11 +6085,11 @@ Static Function QuiAlbPrv( lDetail )
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( dbfAlbPrvI )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( dbfAlbPrvI )->( eof() )
+   while ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( eof() )
 
-      if dbLock( dbfAlbPrvI )
-         ( dbfAlbPrvI )->( dbDelete() )
-         ( dbfAlbPrvI )->( dbUnLock() )
+      if dbLock( TDataView():AlbaranesProveedoresIncidencias( nView ) )
+         ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbDelete() )
+         ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbUnLock() )
       end if
 
    end while
@@ -6152,11 +6098,11 @@ Static Function QuiAlbPrv( lDetail )
    Documentos------------------------------------------------------------------
    */
 
-   while ( dbfAlbPrvD )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( dbfAlbPrvD )->( eof() )
+   while ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( eof() )
 
-      if dbLock( dbfAlbPrvD )
-         ( dbfAlbPrvD )->( dbDelete() )
-         ( dbfAlbPrvD )->( dbUnLock() )
+      if dbLock( TDataView():AlbaranesProveedoresDocumentos( nView ) )
+         ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbDelete() )
+         ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( dbUnLock() )
       end if
 
    end while
@@ -6165,11 +6111,11 @@ Static Function QuiAlbPrv( lDetail )
    Numeros de serie------------------------------------------------------------
    */
 
-   while ( dbfAlbPrvS )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( dbfAlbPrvS )->( eof() )
+   while ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) ) .and. !( TDataView():AlbaranesProveedoresSeries( nView ) )->( eof() )
 
-      if dbLock( dbfAlbPrvS )
-         ( dbfAlbPrvS )->( dbDelete() )
-         ( dbfAlbPrvS )->( dbUnLock() )
+      if dbLock( TDataView():AlbaranesProveedoresSeries( nView ) )
+         ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbDelete() )
+         ( TDataView():AlbaranesProveedoresSeries( nView ) )->( dbUnLock() )
       end if
 
    end while
@@ -6467,7 +6413,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                if aAlbaranes[ nItem, 2 ] == 2
 
                   nTotPed              := nTotNPedPrv( dbfPedPrvL )
-                  nTotRec              := nUnidadesRecibidasPedPrv( aAlbaranes[ nItem, 3 ], ( dbfPedPrvL )->cRef, ( dbfPedPrvL )->cCodPr1, ( dbfPedPrvL )->cCodPr2, ( dbfPedPrvL )->cRefPrv, ( dbfPedPrvL )->cDetalle, dbfAlbPrvL )
+                  nTotRec              := nUnidadesRecibidasPedPrv( aAlbaranes[ nItem, 3 ], ( dbfPedPrvL )->cRef, ( dbfPedPrvL )->cCodPr1, ( dbfPedPrvL )->cCodPr2, ( dbfPedPrvL )->cRefPrv, ( dbfPedPrvL )->cDetalle, TDataView():AlbaranesProveedoresLineas( nView ) )
                   nTotPdt              := nTotPed - nTotRec
 
                   if nTotPdt > 0
@@ -6711,11 +6657,11 @@ Static Function nEstadoIncidencia( cNumAlb )
 
    local nEstado  := 0
 
-   if ( dbfAlbPrvI )->( dbSeek( cNumAlb ) )
+   if ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbSeek( cNumAlb ) )
 
-      while ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb == cNumAlb .and. !( dbfAlbPrvI )->( Eof() )
+      while ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->cSufAlb == cNumAlb .and. !( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( Eof() )
 
-         if ( dbfAlbPrvI )->lListo
+         if ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->lListo
             do case
                case nEstado == 0 .or. nEstado == 3
                     nEstado := 3
@@ -6731,7 +6677,7 @@ Static Function nEstadoIncidencia( cNumAlb )
             end case
          end if
 
-         ( dbfAlbPrvI )->( dbSkip() )
+         ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( dbSkip() )
 
       end while
 
@@ -6789,72 +6735,72 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
+               aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
             end if
          else
-            if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
-               aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]  := 0
+               aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
+               aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
             end if
 
          else
-            if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
-                 aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]  := 0
+                 aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-            if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
+               aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
             end if
          else
-            if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
-               aTmp[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]  := 0
+               aTmp[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := 0
             end if
          end if
 
       else
 
-         if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfAlbPrvL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
 
       end if
@@ -6878,7 +6824,7 @@ Static Function DataLabel( oFr, lTemporal )
    if lTemporal
       oFr:SetWorkArea(  "Lineas de albaranes", ( tmpAlbPrvL )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
-      oFr:SetWorkArea(  "Lineas de albaranes", ( dbfAlbPrvL )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
+      oFr:SetWorkArea(  "Lineas de albaranes", ( TDataView():AlbaranesProveedoresLineas( nView ) )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
    end if
 
    oFr:SetFieldAliases( "Lineas de albaranes", cItemsToReport( aColAlbPrv() ) )
@@ -6892,10 +6838,10 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Precios por propiedades", ( dbfArtCom )->( Select() ) )
    oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
 
-   oFr:SetWorkArea(     "Incidencias de albaranes", ( dbfAlbPrvI )->( Select() ) )
+   oFr:SetWorkArea(     "Incidencias de albaranes", ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias de albaranes", cItemsToReport( aIncAlbPrv() ) )
 
-   oFr:SetWorkArea(     "Documentos de albaranes", ( dbfAlbPrvD )->( Select() ) )
+   oFr:SetWorkArea(     "Documentos de albaranes", ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de albaranes", cItemsToReport( aAlbPrvDoc() ) )
 
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
@@ -6926,11 +6872,11 @@ Static Function DataLabel( oFr, lTemporal )
       oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
    else
-      oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                {|| ( dbfAlbPrvL )->cRef } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",  {|| ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cCodPr1 + ( dbfAlbPrvL )->cCodPr2 + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb } )
-      oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",  {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr1 + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr2 + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr1 + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr2 } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
    end if
 
    oFr:SetMasterDetail(    "Albaranes", "Proveedores",                        {|| ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv } )
@@ -6962,16 +6908,16 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Albaranes", ( TDataView():AlbaranesProveedores( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Albaranes", cItemsToReport( aItmAlbPrv() ) )
 
-   oFr:SetWorkArea(     "Lineas de albaranes", ( dbfAlbPrvL )->( Select() ) )
+   oFr:SetWorkArea(     "Lineas de albaranes", ( TDataView():AlbaranesProveedoresLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de albaranes", cItemsToReport( aColAlbPrv() ) )
 
-   oFr:SetWorkArea(     "Series de lineas de albaranes", ( dbfAlbPrvS )->( Select() ) )
+   oFr:SetWorkArea(     "Series de lineas de albaranes", ( TDataView():AlbaranesProveedoresSeries( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Series de lineas de albaranes", cItemsToReport( aSerAlbPrv() ) )
 
-   oFr:SetWorkArea(     "Incidencias de albaranes", ( dbfAlbPrvI )->( Select() ) )
+   oFr:SetWorkArea(     "Incidencias de albaranes", ( TDataView():AlbaranesProveedoresIncidencias( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias de albaranes", cItemsToReport( aIncAlbPrv() ) )
 
-   oFr:SetWorkArea(     "Documentos de albaranes", ( dbfAlbPrvD )->( Select() ) )
+   oFr:SetWorkArea(     "Documentos de albaranes", ( TDataView():AlbaranesProveedoresDocumentos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de albaranes", cItemsToReport( aAlbPrvDoc() ) )
 
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
@@ -7003,9 +6949,9 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Proveedor",                       {|| ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv } )
    oFr:SetMasterDetail( "Albaranes", "Almacenes",                       {|| ( TDataView():AlbaranesProveedores( nView ) )->cCodAlm } )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                  {|| ( TDataView():AlbaranesProveedores( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",             {|| ( dbfAlbPrvL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Código de proveedores", {|| ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv + ( dbfAlbPrvL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",  {|| ( dbfAlbPrvL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",             {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Código de proveedores", {|| ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",  {|| ( TDataView():AlbaranesProveedoresLineas( nView ) )->cUnidad } )
 
    oFr:SetResyncPair(   "Albaranes", "Lineas de albaranes" )
    oFr:SetResyncPair(   "Albaranes", "Series de lineas de albaranes" )
@@ -7172,10 +7118,10 @@ Static Function IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
       nNumAlb                    := ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb
       cSufDoc                    := ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb
 
-      while ( dbfAlbPrvL )->( dbSeek( cSerDoc + Str( nNumAlb ) + cSufDoc ) )
-         if dbLock( dbfAlbPrvL )
-            ( dbfAlbPrvL )->( dbDelete() )
-            ( dbfAlbPrvL )->( dbUnLock() )
+      while ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cSerDoc + Str( nNumAlb ) + cSufDoc ) )
+         if dbLock( TDataView():AlbaranesProveedoresLineas( nView ) )
+            ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbDelete() )
+            ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbUnLock() )
          end if
       end while
 
@@ -7234,19 +7180,19 @@ Static Function IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoL
       end if
    end if
 
-   ( dbfAlbPrvL )->( dbAppend() )
-   ( dbfAlbPrvL )->cSerAlb    := cSerDoc
-   ( dbfAlbPrvL )->nNumAlb    := nNumAlb
-   ( dbfAlbPrvL )->cSufAlb    := cSufDoc
-   ( dbfAlbPrvL )->cAlmLin    := oUser():cAlmacen()
-   ( dbfAlbPrvL )->cRef       := cRefLin
-   ( dbfAlbPrvL )->cDetalle   := cDesLin
-   ( dbfAlbPrvL )->mLngDes    := cDesLin
-   ( dbfAlbPrvL )->nUniCaja   := nUntLin
-   ( dbfAlbPrvL )->nPreDiv    := nPvpLin
-   ( dbfAlbPrvL )->nDtoLin    := nDtoLin
-   ( dbfAlbPrvL )->nIva       := nIva( dbfIva, "G" )
-   ( dbfAlbPrvL )->( dbUnlock() )
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbAppend() )
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb    := cSerDoc
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb    := nNumAlb
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb    := cSufDoc
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef       := cRefLin
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->cDetalle   := cDesLin
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->mLngDes    := cDesLin
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->nUniCaja   := nUntLin
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPreDiv    := nPvpLin
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->nDtoLin    := nDtoLin
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIva       := nIva( dbfIva, "G" )
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbUnlock() )
 
 RETURN ( nil )
 
@@ -7308,20 +7254,20 @@ Return ( nil )
 
 static Function ActualizaStockWeb( cNumDoc )
 
-   local nRec     := ( dbfAlbPrvL )->( Recno() )
-   local nOrdAnt  := ( dbfAlbPrvL )->( OrdSetFocus( "nNumAlb" ) )
+   local nRec     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->( Recno() )
+   local nOrdAnt  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
    if uFieldEmpresa( "lRealWeb" )
 
       with object ( TComercio():GetInstance() )
 
-         if ( dbfAlbPrvL )->( dbSeek( cNumDoc ) )
+         if ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )
 
-            while ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb == cNumDoc .and. !( dbfAlbPrvL )->( Eof() )
+            while ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb == cNumDoc .and. !( TDataView():AlbaranesProveedoresLineas( nView ) )->( Eof() )
 
-               :ActualizaStockProductsPrestashop( ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->cCodPr1, ( dbfAlbPrvL )->cCodPr2, ( dbfAlbPrvL )->cValPr1, ( dbfAlbPrvL )->cValPr2 )
+               :ActualizaStockProductsPrestashop( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr2, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr2 )
 
-               ( dbfAlbPrvL )->( dbSkip() )
+               ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
 
             end while
 
@@ -7331,8 +7277,8 @@ static Function ActualizaStockWeb( cNumDoc )
 
    end if 
 
-   ( dbfAlbPrvL )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfAlbPrvL )->( dbGoTo( nRec ) )  
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbGoTo( nRec ) )  
 
 Return .t.
 
@@ -7652,7 +7598,7 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
          if dbLock( TDataView():AlbaranesProveedores( nView ) )
 
-            aTotAlb                 := aTotAlbPrv( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, TDataView():AlbaranesProveedores( nView ), dbfAlbPrvL, dbfIva, dbfDiv, ( TDataView():AlbaranesProveedores( nView ) )->cDivAlb )
+            aTotAlb                 := aTotAlbPrv( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, TDataView():AlbaranesProveedores( nView ), TDataView():AlbaranesProveedoresLineas( nView ), dbfIva, dbfDiv, ( TDataView():AlbaranesProveedores( nView ) )->cDivAlb )
 
             ( TDataView():AlbaranesProveedores( nView ) )->nTotNet := aTotAlb[ 1 ]
             ( TDataView():AlbaranesProveedores( nView ) )->nTotIva := aTotAlb[ 2 ]
@@ -7844,9 +7790,9 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
    
    if !Empty( nView )
       DEFAULT cAlbPrvT  := TDataView():AlbaranesProveedores( nView )
+      DEFAULT cAlbPrvL  := TDataView():AlbaranesProveedoresLineas( nView )
    end if
 
-   DEFAULT cAlbPrvL  := dbfAlbPrvL
    DEFAULT cIva      := cIva
    DEFAULT cDiv      := cDiv
    DEFAULT nAlbaran  := ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb
@@ -8122,7 +8068,7 @@ FUNCTION nTotUAlbPrv( uAlbPrvL, nDec, nVdv, cPinDiv )
 
    local nCalculo
 
-   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
    DEFAULT nDec      := nDinDiv()
    DEFAULT nVdv      := 1
 
@@ -8225,7 +8171,7 @@ FUNCTION nDtoLAlbPrv( cAlbPrvL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cAlbPrvL     := dbfAlbPrvL
+   DEFAULT cAlbPrvL     := TDataView():AlbaranesProveedoresLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -8262,7 +8208,7 @@ FUNCTION nPrmLAlbPrv( cAlbPrvL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cAlbPrvL     := dbfAlbPrvL
+   DEFAULT cAlbPrvL     := TDataView():AlbaranesProveedoresLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -8303,7 +8249,7 @@ FUNCTION nTotLAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
    local nDtoPrm
    local nTotDto     := 0
 
-   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
    DEFAULT nDec      := nDinDiv()
    DEFAULT nRec      := nRinDiv()
    DEFAULT nVdv      := 1
@@ -8360,7 +8306,7 @@ FUNCTION nImpUAlbPrv( uAlbPrvT, uAlbPrvL, nDec, nVdv, lIva, cPouDiv )
       DEFAULT uAlbPrvT  := TDataView():AlbaranesProveedores( nView )
    end if
 
-   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
    DEFAULT nDec      := nDinDiv()
    DEFAULT nVdv      := 1
    DEFAULT lIva      := .f.
@@ -8398,7 +8344,7 @@ FUNCTION nImpLAlbPrv( uAlbPrvT, uAlbPrvL, nDec, nRou, nVdv, lIva, cPouDiv )
       DEFAULT uAlbPrvT  := TDataView():AlbaranesProveedores( nView )
    end if
      
-   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
    DEFAULT nDec      := nDinDiv()
    DEFAULT nRou      := nRinDiv()
    DEFAULT nVdv      := 1
@@ -8428,7 +8374,7 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 Function nStockLineaAlbPrv()
 
-Return ( oStock:nTotStockAct( ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->cAlmLin, ( dbfAlbPrvL )->cValPr1, ( dbfAlbPrvL )->cValPr2 ) )
+Return ( oStock:nTotStockAct( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cAlmLin, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr2 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -8589,6 +8535,9 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
    local oldAlbPrvI
    local oldAlbPrvD
    local cAlbPrvT
+   local cAlbPrvL
+   local cAlbPrvI
+   local cAlbPrvD
 
    DEFAULT lAppend   := .f.
    DEFAULT bFor      := {|| .t. }
@@ -8610,14 +8559,14 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
       dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @cAlbPrvT ), .f. )
       ordListAdd( cPath + "ALBPROVT.CDX"  )
 
-      dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @dbfAlbPrvL ), .f. )
+      dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @cAlbPrvL ), .f. )
       ordListAdd( cPath + "ALBPROVL.CDX"  )
 
-      dbUseArea( .t., cDriver(), cPath + "AlbPrvI.Dbf", cCheckArea( "AlbPrvI", @dbfAlbPrvI ), .f. )
-      ( dbfAlbPrvI )->( ordListAdd( cPath + "AlbPrvI.Cdx"  ) )
+      dbUseArea( .t., cDriver(), cPath + "AlbPrvI.Dbf", cCheckArea( "AlbPrvI", @cAlbPrvI ), .f. )
+      ( cAlbPrvI )->( ordListAdd( cPath + "AlbPrvI.Cdx"  ) )
 
-      dbUseArea( .t., cDriver(), cPath + "AlbPrvD.Dbf", cCheckArea( "AlbPrvD", @dbfAlbPrvD ), .f. )
-      ( dbfAlbPrvD )->( ordListAdd( cPath + "AlbPrvD.Cdx"  ) )
+      dbUseArea( .t., cDriver(), cPath + "AlbPrvD.Dbf", cCheckArea( "AlbPrvD", @cAlbPrvD ), .f. )
+      ( cAlbPrvD )->( ordListAdd( cPath + "AlbPrvD.Cdx"  ) )
 
       dbUseArea( .t., cDriver(), cPathOld + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @oldAlbPrvT ), .f. )
       ordListAdd( cPathOld + "ALBPROVT.CDX"  )
@@ -8645,14 +8594,14 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 
                while (oldAlbPrvT)->cSerAlb + Str( (oldAlbPrvL)->nNumAlb ) + (oldAlbPrvL)->CSUFALB == (cAlbPrvT)->cSerAlb + Str( (cAlbPrvT)->nNumAlb ) + (cAlbPrvT)->CSUFALB .and. !(oldAlbPrvL)->( eof() )
 
-                  dbCopy( oldAlbPrvL, dbfAlbPrvL, .t. )
+                  dbCopy( oldAlbPrvL, cAlbPrvL, .t. )
 
                   /*
                   Quitamos stocks del stock inicial
                   */
 
                   if dbfMov != nil
-                     putStock( ( dbfAlbPrvL )->cRef, ( cAlbPrvT )->cCodAlm, nCanEnt( dbfAlbprvL ) * - 1 , dbfMov, "EI" )
+                     putStock( ( cAlbPrvL )->cRef, ( cAlbPrvT )->cCodAlm, nCanEnt() * - 1 , dbfMov, "EI" )
                   end if
 
                   ( oldAlbPrvL )->( dbSkip() )
@@ -8663,14 +8612,14 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 
             if ( oldAlbPrvI )->( dbSeek( (oldAlbPrvT)->cSerAlb + Str( (oldAlbPrvT)->nNumAlb ) + (oldAlbPrvT)->CSUFALB ) )
                while ( oldAlbPrvI )->cSerAlb + Str( ( oldAlbPrvI )->nNumAlb ) + ( oldAlbPrvI )->cSufAlb == ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb .and. !( oldAlbPrvI )->( eof() )
-                  dbCopy( oldAlbPrvL, dbfAlbPrvL, .t. )
+                  dbCopy( oldAlbPrvL, cAlbPrvI, .t. )
                   ( oldAlbPrvI )->( dbSkip() )
                end while
             end if
 
             if ( oldAlbPrvD )->( dbSeek( (oldAlbPrvT)->cSerAlb + Str( (oldAlbPrvT)->nNumAlb ) + (oldAlbPrvT)->CSUFALB ) )
                while ( oldAlbPrvD )->cSerAlb + Str( ( oldAlbPrvD )->nNumAlb ) + ( oldAlbPrvD )->cSufAlb == ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb .and. !( oldAlbPrvI )->( eof() )
-                  dbCopy( oldAlbPrvD, dbfAlbPrvD, .t. )
+                  dbCopy( oldAlbPrvD, cAlbPrvD, .t. )
                   ( oldAlbPrvD )->( dbSkip() )
                end while
             end if
@@ -8692,9 +8641,9 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
       */
 
       ( cAlbPrvT )->( dbCloseArea() )
-      ( dbfAlbPrvL )->( dbCloseArea() )
-      ( dbfAlbPrvI )->( dbCloseArea() )
-      ( dbfAlbPrvD )->( dbCloseArea() )
+      ( cAlbPrvL )->( dbCloseArea() )
+      ( cAlbPrvI )->( dbCloseArea() )
+      ( cAlbPrvD )->( dbCloseArea() )
 
       ( oldAlbPrvT )->( dbCloseArea() )
       ( oldAlbPrvL )->( dbCloseArea() )
@@ -9243,7 +9192,7 @@ FUNCTION nTotNAlbPrv( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uDbf   := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
 
    do case
       case ValType( uDbf ) == "A"
@@ -9317,7 +9266,7 @@ FUNCTION nIvaLAlbPrv( uAlbPrvL, nDec, nRou, nVdv, cPorDiv )
 
    local nCalculo 
 
-   DEFAULT uAlbPrvL  := dbfAlbPrvL
+   DEFAULT uAlbPrvL  := TDataView():AlbaranesProveedoresLineas( nView )
    DEFAULT nDec      := nDinDiv()
    DEFAULT nRou      := nRinDiv()
    DEFAULT nVdv      := 1
@@ -9540,7 +9489,7 @@ return ( aColAlbPrv )
 // Unidades recibidas en albaranes de proveedor desde un pedido de cliente
 //
 
-function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, dbfAlbPrvL )
+function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, cAlbPrvL )
 
    local nRec
    local nOrd
@@ -9549,29 +9498,29 @@ function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, 
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
 
-   nRec              := ( dbfAlbPrvL )->( Recno() )
-   nOrd              := ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
+   nRec              := ( cAlbPrvL )->( Recno() )
+   nOrd              := ( cAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
-   if ( dbfAlbPrvL )->( dbSeek( cPedCli + cCodArt + cValPr1 + cValPr2 ) )
+   if ( cAlbPrvL )->( dbSeek( cPedCli + cCodArt + cValPr1 + cValPr2 ) )
 
-      while ( dbfAlbPrvL )->cNumPed + ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 == cPedCli + cCodArt + cValPr1 + cValPr2 .and. !( dbfAlbPrvL )->( eof() )
+      while ( cAlbPrvL )->cNumPed + ( cAlbPrvL )->cRef + ( cAlbPrvL )->cValPr1 + ( cAlbPrvL )->cValPr2 == cPedCli + cCodArt + cValPr1 + cValPr2 .and. !( cAlbPrvL )->( eof() )
 
-         nTot        += nTotNAlbPrv( dbfAlbPrvL )
+         nTot        += nTotNAlbPrv( cAlbPrvL )
 
-         ( dbfAlbPrvL )->( dbSkip() )
+         ( cAlbPrvL )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfAlbPrvL )->( OrdSetFocus( nOrd ) )
-   ( dbfAlbPrvL )->( dbGoTo( nRec ) )
+   ( cAlbPrvL )->( OrdSetFocus( nOrd ) )
+   ( cAlbPrvL )->( dbGoTo( nRec ) )
 
 return ( nTot )
 
 //-----------------------------------------------------------------------------//
 
-function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, dbfAlbPrvL )
+function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, cAlbPrvL )
 
    local nRec
    local nOrd
@@ -9580,47 +9529,23 @@ function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, 
    DEFAULT cValPr1   := Space( 20 )
    DEFAULT cValPr2   := Space( 20 )
 
-   if IsMuebles()
+   nRec           := ( cAlbPrvL )->( Recno() )
+   nOrd           := ( cAlbPrvL )->( OrdSetFocus( "cPedPrvRef" ) )
 
-      nRec           := ( dbfAlbPrvL )->( Recno() )
-      nOrd           := ( dbfAlbPrvL )->( OrdSetFocus( "cPedPrvDet" ) )
+   if ( cAlbPrvL )->( dbSeek( cPedPrv + cCodArt + cValPr1 + cValPr2 ) )
 
-      if ( dbfAlbPrvL )->( dbSeek( cPedPrv + cCodArt + cValPr1 + cValPr2 + cRefPrv + cDetalle ) )
+      while ( cAlbPrvL )->cCodPed + ( cAlbPrvL )->cRef + ( cAlbPrvL )->cValPr1 + ( cAlbPrvL )->cValPr2 == cPedPrv + cCodArt + cValPr1 + cValPr2 .and. !( cAlbPrvL )->( eof() )
 
-         while ( dbfAlbPrvL )->cCodPed + ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 + ( dbfAlbPrvL )->cRefPrv + ( dbfAlbPrvL )->cDetalle  == cPedPrv + cCodArt + cValPr1 + cValPr2 + cRefPRv + cDetalle .and. !( dbfAlbPrvL )->( eof() )
+         nTot     += nTotNAlbPrv( cAlbPrvL )
 
-            nTot     += nTotNAlbPrv( dbfAlbPrvL )
+         ( cAlbPrvL )->( dbSkip() )
 
-            ( dbfAlbPrvL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( dbfAlbPrvL )->( OrdSetFocus( nOrd ) )
-      ( dbfAlbPrvL )->( dbGoTo( nRec ) )
-
-   else
-
-      nRec           := ( dbfAlbPrvL )->( Recno() )
-      nOrd           := ( dbfAlbPrvL )->( OrdSetFocus( "cPedPrvRef" ) )
-
-      if ( dbfAlbPrvL )->( dbSeek( cPedPrv + cCodArt + cValPr1 + cValPr2 ) )
-
-         while ( dbfAlbPrvL )->cCodPed + ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 == cPedPrv + cCodArt + cValPr1 + cValPr2 .and. !( dbfAlbPrvL )->( eof() )
-
-            nTot     += nTotNAlbPrv( dbfAlbPrvL )
-
-            ( dbfAlbPrvL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( dbfAlbPrvL )->( OrdSetFocus( nOrd ) )
-      ( dbfAlbPrvL )->( dbGoTo( nRec ) )
+      end while
 
    end if
+
+   ( cAlbPrvL )->( OrdSetFocus( nOrd ) )
+   ( cAlbPrvL )->( dbGoTo( nRec ) )
 
 return ( nTot )
 
@@ -9639,6 +9564,9 @@ Function SynAlbPrv( cPath )
    local cPedPrv
    local aPedPrv     := {}
    local cAlbPrvT
+   local cAlbPrvL
+   local cAlbPrvI
+   local cAlbPrvS
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -9646,13 +9574,13 @@ Function SynAlbPrv( cPath )
    dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @cAlbPrvT ), .f. )
    if !lAIS(); ordListAdd( cPath + "ALBPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @dbfAlbPrvL ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @cAlbPrvL ), .f. )
    if !lAIS(); ordListAdd( cPath + "ALBPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPath + "ALBPRVS.DBF", cCheckArea( "ALBPRVS", @dbfAlbPrvS ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "ALBPRVS.DBF", cCheckArea( "ALBPRVS", @cAlbPrvS ), .f. )
    if !lAIS(); ordListAdd( cPath + "ALBPRVS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPath + "ALBPRVI.DBF", cCheckArea( "ALBPRVI", @dbfAlbPrvI ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "ALBPRVI.DBF", cCheckArea( "ALBPRVI", @cAlbPrvI ), .f. )
    if !lAIS(); ordListAdd( cPath + "ALBPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
@@ -9703,7 +9631,7 @@ Function SynAlbPrv( cPath )
 
       if ( cAlbPrvT )->nTotAlb == 0 .and. dbLock( cAlbPrvT )
 
-         aTotAlb                 := aTotAlbPrv( ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb, cAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv, ( cAlbPrvT )->cDivAlb )
+         aTotAlb                 := aTotAlbPrv( ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb, cAlbPrvT, cAlbPrvL, dbfIva, dbfDiv, ( cAlbPrvT )->cDivAlb )
 
          ( cAlbPrvT )->nTotNet := aTotAlb[ 1 ]
          ( cAlbPrvT )->nTotIva := aTotAlb[ 2 ]
@@ -9744,127 +9672,127 @@ Function SynAlbPrv( cPath )
    Lineas----------------------------------------------------------------------
    */
    
-   ( dbfAlbPrvL )->( ordSetFocus( 0 ) )
-   ( dbfAlbPrvL )->( dbGoTop() )
+   ( cAlbPrvL )->( ordSetFocus( 0 ) )
+   ( cAlbPrvL )->( dbGoTop() )
 
-   while !( dbfAlbPrvL )->( eof() )
+   while !( cAlbPrvL )->( eof() )
 
-      if Empty( ( dbfAlbPrvL )->cSufAlb )
-         ( dbfAlbPrvL )->cSufAlb    := "00"
+      if Empty( ( cAlbPrvL )->cSufAlb )
+         ( cAlbPrvL )->cSufAlb    := "00"
       end if
 
-      if !Empty( ( dbfAlbPrvL )->cCodPed ) .and. Len( AllTrim( ( dbfAlbPrvL )->cCodPed ) ) != 12
-         ( dbfAlbPrvL )->cCodPed    := AllTrim( ( dbfAlbPrvL )->cCodPed ) + "00"
+      if !Empty( ( cAlbPrvL )->cCodPed ) .and. Len( AllTrim( ( cAlbPrvL )->cCodPed ) ) != 12
+         ( cAlbPrvL )->cCodPed    := AllTrim( ( cAlbPrvL )->cCodPed ) + "00"
       end if
 
-      if !Empty( ( dbfAlbPrvL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbPrvL )->cNumPed ) ) != 12
-         ( dbfAlbPrvL )->cNumPed    := AllTrim( ( dbfAlbPrvL )->cNumPed ) + "00"
+      if !Empty( ( cAlbPrvL )->cNumPed ) .and. Len( AllTrim( ( cAlbPrvL )->cNumPed ) ) != 12
+         ( cAlbPrvL )->cNumPed    := AllTrim( ( cAlbPrvL )->cNumPed ) + "00"
       end if
 
-      if Empty( ( dbfAlbPrvL )->cLote ) .and. !Empty( ( dbfAlbPrvL )->nLote )
-         ( dbfAlbPrvL )->cLote      := AllTrim( Str( ( dbfAlbPrvL )->nLote ) )
+      if Empty( ( cAlbPrvL )->cLote ) .and. !Empty( ( cAlbPrvL )->nLote )
+         ( cAlbPrvL )->cLote      := AllTrim( Str( ( cAlbPrvL )->nLote ) )
       end if
 
-      if !Empty( ( dbfAlbPrvL )->cRef ) .and. Empty( ( dbfAlbPrvL )->cCodFam )
-         ( dbfAlbPrvL )->cCodFam    := RetFamArt( ( dbfAlbPrvL )->cRef, dbfArticulo )
+      if !Empty( ( cAlbPrvL )->cRef ) .and. Empty( ( cAlbPrvL )->cCodFam )
+         ( cAlbPrvL )->cCodFam    := RetFamArt( ( cAlbPrvL )->cRef, dbfArticulo )
       end if
 
-      if !Empty( ( dbfAlbPrvL )->cRef ) .and. !Empty( ( dbfAlbPrvL )->cCodFam )
-         ( dbfAlbPrvL )->cGrpFam    := cGruFam( ( dbfAlbPrvL )->cCodFam, dbfFamilia )
+      if !Empty( ( cAlbPrvL )->cRef ) .and. !Empty( ( cAlbPrvL )->cCodFam )
+         ( cAlbPrvL )->cGrpFam    := cGruFam( ( cAlbPrvL )->cCodFam, dbfFamilia )
       end if
 
-      if Empty( ( dbfAlbPrvL )->nReq )
-         ( dbfAlbPrvL )->nReq       := nPReq( dbfIva, ( dbfAlbPrvL )->nIva )
+      if Empty( ( cAlbPrvL )->nReq )
+         ( cAlbPrvL )->nReq       := nPReq( dbfIva, ( cAlbPrvL )->nIva )
       end if
 
-      if Empty( ( dbfAlbPrvL )->cAlmLin )
-         ( dbfAlbPrvL )->cAlmLin    := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, cAlbPrvT, "cCodAlm" )
+      if Empty( ( cAlbPrvL )->cAlmLin )
+         ( cAlbPrvL )->cAlmLin    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodAlm" )
       end if
 
-      if ( dbfAlbPrvL )->lFacturado != RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
-         ( dbfAlbPrvL )->lFacturado := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
+      if ( cAlbPrvL )->lFacturado != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
+         ( cAlbPrvL )->lFacturado := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
       end if
 
-      if ( dbfAlbPrvL )->dFecAlb != RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
-         ( dbfAlbPrvL )->dFecAlb    := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
+      if ( cAlbPrvL )->dFecAlb != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
+         ( cAlbPrvL )->dFecAlb    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
       end if
 
-      if !Empty( ( dbfAlbPrvL )->mNumSer )
-         aNumSer                       := hb_aTokens( ( dbfAlbPrvL )->mNumSer, "," )
+      if !Empty( ( cAlbPrvL )->mNumSer )
+         aNumSer                       := hb_aTokens( ( cAlbPrvL )->mNumSer, "," )
          for each cNumSer in aNumSer
-            ( dbfAlbPrvS )->( dbAppend() )
-            ( dbfAlbPrvS )->cSerAlb    := ( dbfAlbPrvL )->cSerAlb
-            ( dbfAlbPrvS )->nNumAlb    := ( dbfAlbPrvL )->nNumAlb
-            ( dbfAlbPrvS )->cSufAlb    := ( dbfAlbPrvL )->cSufAlb
-            ( dbfAlbPrvS )->cRef       := ( dbfAlbPrvL )->cRef
-            ( dbfAlbPrvS )->cAlmLin    := ( dbfAlbPrvL )->cAlmLin
-            ( dbfAlbPrvS )->nNumLin    := ( dbfAlbPrvL )->nNumLin
-            ( dbfAlbPrvS )->lFacturado := ( dbfAlbPrvL )->lFacturado
-            ( dbfAlbPrvS )->cNumSer    := cNumSer
+            ( cAlbPrvS )->( dbAppend() )
+            ( cAlbPrvS )->cSerAlb    := ( cAlbPrvL )->cSerAlb
+            ( cAlbPrvS )->nNumAlb    := ( cAlbPrvL )->nNumAlb
+            ( cAlbPrvS )->cSufAlb    := ( cAlbPrvL )->cSufAlb
+            ( cAlbPrvS )->cRef       := ( cAlbPrvL )->cRef
+            ( cAlbPrvS )->cAlmLin    := ( cAlbPrvL )->cAlmLin
+            ( cAlbPrvS )->nNumLin    := ( cAlbPrvL )->nNumLin
+            ( cAlbPrvS )->lFacturado := ( cAlbPrvL )->lFacturado
+            ( cAlbPrvS )->cNumSer    := cNumSer
          next
-         ( dbfAlbPrvL )->mNumSer       := ""
+         ( cAlbPrvL )->mNumSer       := ""
       end if
 
       /*
       Referencias segun las compras--------------------------------------------
       */
 
-      if !Empty( ( dbfAlbPrvL )->cRefPrv )
-         cCodPrv                       := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, cAlbPrvT, "cCodPrv" )
+      if !Empty( ( cAlbPrvL )->cRefPrv )
+         cCodPrv                       := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodPrv" )
          if !Empty( cCodPrv )
-            AppRefPrv( ( dbfAlbPrvL )->cRefPrv, cCodPrv, ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->nDtoLin, ( dbfAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( dbfAlbPrvL )->nPreDiv, dbfArtPrv )
+            AppRefPrv( ( cAlbPrvL )->cRefPrv, cCodPrv, ( cAlbPrvL )->cRef, ( cAlbPrvL )->nDtoLin, ( cAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( cAlbPrvL )->nPreDiv, dbfArtPrv )
          end if 
       end if
 
-      ( dbfAlbPrvL )->( dbSkip() )
+      ( cAlbPrvL )->( dbSkip() )
 
       SysRefresh()
 
    end while
 
-   ( dbfAlbPrvL )->( ordSetFocus( 1 ) )
+   ( cAlbPrvL )->( ordSetFocus( 1 ) )
 
    // Incidencias -------------------------------------------------------------
    
-   ( dbfAlbPrvI )->( ordSetFocus( 0 ) )
-   ( dbfAlbPrvI )->( dbGoTop() )
+   ( cAlbPrvI )->( ordSetFocus( 0 ) )
+   ( cAlbPrvI )->( dbGoTop() )
 
-   while !( dbfAlbPrvI )->( eof() )
+   while !( cAlbPrvI )->( eof() )
 
-      if Empty( ( dbfAlbPrvI )->cSufAlb )
-         ( dbfAlbPrvI )->cSufAlb       := "00"
+      if Empty( ( cAlbPrvI )->cSufAlb )
+         ( cAlbPrvI )->cSufAlb       := "00"
       end if 
 
-      ( dbfAlbPrvI )->( dbSkip() )
+      ( cAlbPrvI )->( dbSkip() )
 
       SysRefresh()
 
    end while
 
-   ( dbfAlbPrvI )->( ordSetFocus( 1 ) )
+   ( cAlbPrvI )->( ordSetFocus( 1 ) )
 
    // Series ---------------------------------------------------------------
 
-   ( dbfAlbPrvS )->( ordSetFocus( 0 ) )
-   ( dbfAlbPrvS )->( dbGoTop() )
+   ( cAlbPrvS )->( ordSetFocus( 0 ) )
+   ( cAlbPrvS )->( dbGoTop() )
 
-   while !( dbfAlbPrvS )->( eof() )
+   while !( cAlbPrvS )->( eof() )
 
-      if Empty( ( dbfAlbPrvS )->cSufAlb )
-         ( dbfAlbPrvS )->cSufAlb := "00"
+      if Empty( ( cAlbPrvS )->cSufAlb )
+         ( cAlbPrvS )->cSufAlb := "00"
       end if 
       
-      if ( dbfAlbPrvS )->dFecAlb != RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, cAlbPrvT, "dFecAlb" )
-         ( dbfAlbPrvS )->dFecAlb := RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, cAlbPrvT, "dFecAlb" )
+      if ( cAlbPrvS )->dFecAlb != RetFld( ( cAlbPrvS )->cSerAlb + Str( ( cAlbPrvS )->nNumAlb ) + ( cAlbPrvS )->cSufAlb, cAlbPrvT, "dFecAlb" )
+         ( cAlbPrvS )->dFecAlb := RetFld( ( cAlbPrvS )->cSerAlb + Str( ( cAlbPrvS )->nNumAlb ) + ( cAlbPrvS )->cSufAlb, cAlbPrvT, "dFecAlb" )
       end if
 
-      ( dbfAlbPrvS )->( dbSkip() )
+      ( cAlbPrvS )->( dbSkip() )
 
       SysRefresh()
 
    end while
 
-   ( dbfAlbPrvS )->( ordSetFocus( 1 ) )
+   ( cAlbPrvS )->( ordSetFocus( 1 ) )
 
    // Lineas huerfanas---------------------------------------------------------
 
@@ -9872,15 +9800,15 @@ Function SynAlbPrv( cPath )
 
    // Lineas-------------------------------------------------------------------
 
-   ( dbfAlbPrvL )->( ordSetFocus( 1 ) )
-   ( dbfAlbPrvL )->( dbGoTop() )
+   ( cAlbPrvL )->( ordSetFocus( 1 ) )
+   ( cAlbPrvL )->( dbGoTop() )
 
-   while !( dbfAlbPrvL )->( eof() )
+   while !( cAlbPrvL )->( eof() )
 
-      if !( cAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) )
-         ( dbfAlbPrvL )->( dbDelete() )
+      if !( cAlbPrvT )->( dbSeek( ( cAlbPrvL )->cSerAlb + Str( (cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb ) )
+         ( cAlbPrvL )->( dbDelete() )
       end if 
-      ( dbfAlbPrvL )->( dbSkip( 1 ) )
+      ( cAlbPrvL )->( dbSkip( 1 ) )
       
       SysRefresh()
 
@@ -9888,15 +9816,15 @@ Function SynAlbPrv( cPath )
 
    // Series-------------------------------------------------------------------
 
-   ( dbfAlbPrvS )->( ordSetFocus( 1 ) )
-   ( dbfAlbPrvS )->( dbGoTop() )
+   ( cAlbPrvS )->( ordSetFocus( 1 ) )
+   ( cAlbPrvS )->( dbGoTop() )
 
-   while !( dbfAlbPrvS )->( eof() )
+   while !( cAlbPrvS )->( eof() )
 
-      if !( cAlbPrvT )->( dbSeek( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb ) )
-         ( dbfAlbPrvS )->( dbDelete() )
+      if !( cAlbPrvT )->( dbSeek( ( cAlbPrvS )->cSerAlb + Str( ( cAlbPrvS )->nNumAlb ) + ( cAlbPrvS )->cSufAlb ) )
+         ( cAlbPrvS )->( dbDelete() )
       end if 
-      ( dbfAlbPrvS )->( dbSkip( 1 ) )
+      ( cAlbPrvS )->( dbSkip( 1 ) )
 
       SysRefresh()
 
@@ -9904,15 +9832,15 @@ Function SynAlbPrv( cPath )
 
    // Incidencias-------------------------------------------------------------------
 
-   ( dbfAlbPrvI )->( ordSetFocus( 1 ) )
-   ( dbfAlbPrvI )->( dbGoTop() )
+   ( cAlbPrvI )->( ordSetFocus( 1 ) )
+   ( cAlbPrvI )->( dbGoTop() )
 
-   while !( dbfAlbPrvI )->( eof() )
+   while !( cAlbPrvI )->( eof() )
 
-      if !( cAlbPrvT )->( dbSeek( ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb ) )
-         ( dbfAlbPrvI )->( dbDelete() )
+      if !( cAlbPrvT )->( dbSeek( ( cAlbPrvI )->cSerAlb + Str( ( cAlbPrvI )->nNumAlb ) + ( cAlbPrvI )->cSufAlb ) )
+         ( cAlbPrvI )->( dbDelete() )
       end if 
-      ( dbfAlbPrvI )->( dbSkip( 1 ) )
+      ( cAlbPrvI )->( dbSkip( 1 ) )
 
       SysRefresh()
 
@@ -9932,16 +9860,16 @@ Function SynAlbPrv( cPath )
       ( cAlbPrvT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbPrvL ) .and. ( dbfAlbPrvL )->( Used() )
-      ( dbfAlbPrvL )->( dbCloseArea() )
+   if !Empty( cAlbPrvL ) .and. ( cAlbPrvL )->( Used() )
+      ( cAlbPrvL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbPrvI ) .and. ( dbfAlbPrvI )->( Used() )
-      ( dbfAlbPrvI )->( dbCloseArea() )
+   if !Empty( cAlbPrvI ) .and. ( cAlbPrvI )->( Used() )
+      ( cAlbPrvI )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbPrvS ) .and. ( dbfAlbPrvS )->( Used() )
-      ( dbfAlbPrvS )->( dbCloseArea() )
+   if !Empty( cAlbPrvS ) .and. ( cAlbPrvS )->( Used() )
+      ( cAlbPrvS )->( dbCloseArea() )
    end if
 
    if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
@@ -10227,8 +10155,8 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, oStock, oBrw, cAlbPrvT, cAlbP
    DEFAULT lFacturado   := .f.
    DEFAULT cNumFac      := Space( 12 )
    DEFAULT cAlbPrvT     := TDataView():AlbaranesProveedores( nView )
-   DEFAULT cAlbPrvL     := dbfAlbPrvL
-   DEFAULT cAlbPrvS     := dbfAlbPrvS
+   DEFAULT cAlbPrvL     := TDataView():AlbaranesProveedoresLineas( nView )
+   DEFAULT cAlbPrvS     := TDataView():AlbaranesProveedoresSeries( nView )
 
    CursorWait()
 
@@ -10351,7 +10279,7 @@ FUNCTION cCodAlbPrv( cAlbPrvL )
 
    local cReturn     := ""
 
-   DEFAULT cAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT cAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
 
    cReturn           += Alltrim( ( cAlbPrvL )->cRef )
 
@@ -10371,8 +10299,8 @@ RETURN ( cReturn )
 
 FUNCTION cDesAlbPrv( cAlbPrvL, cAlbPrvS )
 
-   DEFAULT cAlbPrvL  := dbfAlbPrvL
-   DEFAULT cAlbPrvS  := dbfAlbPrvS
+   DEFAULT cAlbPrvL  := TDataView():AlbaranesProveedoresLineas( nView )
+   DEFAULT cAlbPrvS  := TDataView():AlbaranesProveedoresSeries( nView )
 
 RETURN ( Descrip( cAlbPrvL, cAlbPrvS ) )
 
@@ -10588,7 +10516,7 @@ FUNCTION cBarPrp1( uAlbPrvL, uTblPro )
 
    local cBarPrp1    := ""
 
-   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
    DEFAULT uTblPro   := dbfTblPro
 
    if dbSeekInOrd( ( uAlbPrvL )->cCodPr1 + ( uAlbPrvL )->cValPr1, "cCodPro", uTblPro )
@@ -10603,7 +10531,7 @@ FUNCTION cBarPrp2( uAlbPrvL, uTblPro )
 
    local cBarPrp2    := ""
 
-   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, dbfAlbPrvL )
+   DEFAULT uAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, TDataView():AlbaranesProveedoresLineas( nView ) )
    DEFAULT uTblPro   := dbfTblPro
 
    if dbSeekInOrd( ( uAlbPrvL )->cCodPr2 + ( uAlbPrvL )->cValPr2, "cCodPro", uTblPro )
@@ -10614,15 +10542,15 @@ RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//
 
-Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, dbfAlbPrvL, dbfFacPrvL )
+Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, cAlbPrvL, cFacPrvL )
 
    local dFechaCaducidad      := Ctod( "" )
 
-   if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", dbfAlbPrvL )
-      dFechaCaducidad         := ( dbfAlbPrvL )->dFecCad
+   if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", cAlbPrvL )
+      dFechaCaducidad         := ( cAlbPrvL )->dFecCad
    else
-      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", dbfFacPrvL )
-         dFechaCaducidad      := ( dbfFacPrvL )->dFecCad
+      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", cFacPrvL )
+         dFechaCaducidad      := ( cFacPrvL )->dFecCad
       end if
    end if
 
@@ -11605,7 +11533,7 @@ Method PrepareTemporal( oFr ) CLASS TAlbaranProveedoresLabelGenerator
       nBlancos             += ( ::nFilaInicio - 1 )
 
       for n := 1 to nBlancos
-         dbPass( dbBlankRec( dbfAlbPrvL ), tmpAlbPrvL, .t. )
+         dbPass( dbBlankRec( TDataView():AlbaranesProveedoresLineas( nView ) ), tmpAlbPrvL, .t. )
       next
 
    end if 
@@ -11823,107 +11751,107 @@ Method LoadAuxiliar() CLASS TAlbaranProveedoresLabelGenerator
             ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb <= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin          .and. ;
             !( TDataView():AlbaranesProveedores( nView ) )->( eof() )
 
-         if ( dbfAlbPrvL )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) )
+         if ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) )
 
-            while ( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb == ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) .and. ( dbfAlbPrvL )->( !eof() )
+            while ( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb == ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb ) .and. ( TDataView():AlbaranesProveedoresLineas( nView ) )->( !eof() )
 
-               if !Empty( ( dbfAlbPrvL )->cRef )
+               if !Empty( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef )
 
                   ( ::cAreaTmpLabel )->( dbAppend() )
 
-                  ( ::cAreaTmpLabel )->cSerAlb  := ( dbfAlbPrvL )->cSerAlb
-                  ( ::cAreaTmpLabel )->nNumAlb  := ( dbfAlbPrvL )->nNumAlb
-                  ( ::cAreaTmpLabel )->cSufAlb  := ( dbfAlbPrvL )->cSufAlb
-                  ( ::cAreaTmpLabel )->cRef     := ( dbfAlbPrvL )->cRef
-                  ( ::cAreaTmpLabel )->cRefPrv  := ( dbfAlbPrvL )->cRefPrv
-                  ( ::cAreaTmpLabel )->cDetalle := ( dbfAlbPrvL )->cDetalle
-                  ( ::cAreaTmpLabel )->nPreDiv  := ( dbfAlbPrvL )->nPreDiv
-                  ( ::cAreaTmpLabel )->nIva     := ( dbfAlbPrvL )->nIva
-                  ( ::cAreaTmpLabel )->nReq     := ( dbfAlbPrvL )->nReq
-                  ( ::cAreaTmpLabel )->nCanEnt  := ( dbfAlbPrvL )->nCanEnt
-                  ( ::cAreaTmpLabel )->lControl := ( dbfAlbPrvL )->lControl
-                  ( ::cAreaTmpLabel )->cUnidad  := ( dbfAlbPrvL )->cUnidad
-                  ( ::cAreaTmpLabel )->nUniCaja := ( dbfAlbPrvL )->nUniCaja
-                  ( ::cAreaTmpLabel )->lChgLin  := ( dbfAlbPrvL )->lChgLin
-                  ( ::cAreaTmpLabel )->mLngDes  := ( dbfAlbPrvL )->mLngDes
-                  ( ::cAreaTmpLabel )->nDtoLin  := ( dbfAlbPrvL )->nDtoLin
-                  ( ::cAreaTmpLabel )->nDtoPrm  := ( dbfAlbPrvL )->nDtoPrm
-                  ( ::cAreaTmpLabel )->nDtoRap  := ( dbfAlbPrvL )->nDtoRap
-                  ( ::cAreaTmpLabel )->nPreCom  := ( dbfAlbPrvL )->nPreCom
-                  ( ::cAreaTmpLabel )->lBnfLin1 := ( dbfAlbPrvL )->lBnfLin1
-                  ( ::cAreaTmpLabel )->lBnfLin2 := ( dbfAlbPrvL )->lBnfLin2
-                  ( ::cAreaTmpLabel )->lBnfLin3 := ( dbfAlbPrvL )->lBnfLin3
-                  ( ::cAreaTmpLabel )->lBnfLin4 := ( dbfAlbPrvL )->lBnfLin4
-                  ( ::cAreaTmpLabel )->lBnfLin5 := ( dbfAlbPrvL )->lBnfLin5
-                  ( ::cAreaTmpLabel )->lBnfLin6 := ( dbfAlbPrvL )->lBnfLin6
-                  ( ::cAreaTmpLabel )->nBnfLin1 := ( dbfAlbPrvL )->nBnfLin1
-                  ( ::cAreaTmpLabel )->nBnfLin2 := ( dbfAlbPrvL )->nBnfLin2
-                  ( ::cAreaTmpLabel )->nBnfLin3 := ( dbfAlbPrvL )->nBnfLin3
-                  ( ::cAreaTmpLabel )->nBnfLin4 := ( dbfAlbPrvL )->nBnfLin4
-                  ( ::cAreaTmpLabel )->nBnfLin5 := ( dbfAlbPrvL )->nBnfLin5
-                  ( ::cAreaTmpLabel )->nBnfLin6 := ( dbfAlbPrvL )->nBnfLin6
-                  ( ::cAreaTmpLabel )->nBnfSbr1 := ( dbfAlbPrvL )->nBnfSbr1
-                  ( ::cAreaTmpLabel )->nBnfSbr2 := ( dbfAlbPrvL )->nBnfSbr2
-                  ( ::cAreaTmpLabel )->nBnfSbr3 := ( dbfAlbPrvL )->nBnfSbr3
-                  ( ::cAreaTmpLabel )->nBnfSbr4 := ( dbfAlbPrvL )->nBnfSbr4
-                  ( ::cAreaTmpLabel )->nBnfSbr5 := ( dbfAlbPrvL )->nBnfSbr5
-                  ( ::cAreaTmpLabel )->nBnfSbr6 := ( dbfAlbPrvL )->nBnfSbr6
-                  ( ::cAreaTmpLabel )->nPvpLin1 := ( dbfAlbPrvL )->nPvpLin1
-                  ( ::cAreaTmpLabel )->nPvpLin2 := ( dbfAlbPrvL )->nPvpLin2
-                  ( ::cAreaTmpLabel )->nPvpLin3 := ( dbfAlbPrvL )->nPvpLin3
-                  ( ::cAreaTmpLabel )->nPvpLin4 := ( dbfAlbPrvL )->nPvpLin4
-                  ( ::cAreaTmpLabel )->nPvpLin5 := ( dbfAlbPrvL )->nPvpLin5
-                  ( ::cAreaTmpLabel )->nPvpLin6 := ( dbfAlbPrvL )->nPvpLin6
-                  ( ::cAreaTmpLabel )->nIvaLin1 := ( dbfAlbPrvL )->nIvaLin1
-                  ( ::cAreaTmpLabel )->nIvaLin2 := ( dbfAlbPrvL )->nIvaLin2
-                  ( ::cAreaTmpLabel )->nIvaLin3 := ( dbfAlbPrvL )->nIvaLin3
-                  ( ::cAreaTmpLabel )->nIvaLin4 := ( dbfAlbPrvL )->nIvaLin4
-                  ( ::cAreaTmpLabel )->nIvaLin5 := ( dbfAlbPrvL )->nIvaLin5
-                  ( ::cAreaTmpLabel )->nIvaLin6 := ( dbfAlbPrvL )->nIvaLin6
-                  ( ::cAreaTmpLabel )->nIvaLin  := ( dbfAlbPrvL )->nIvaLin
-                  ( ::cAreaTmpLabel )->lIvaLin  := ( dbfAlbPrvL )->lIvaLin
-                  ( ::cAreaTmpLabel )->cCodPr1  := ( dbfAlbPrvL )->cCodPr1
-                  ( ::cAreaTmpLabel )->cCodPr2  := ( dbfAlbPrvL )->cCodPr2
-                  ( ::cAreaTmpLabel )->cValPr1  := ( dbfAlbPrvL )->cValPr1
-                  ( ::cAreaTmpLabel )->cValPr2  := ( dbfAlbPrvL )->cValPr2
-                  ( ::cAreaTmpLabel )->nFacCnv  := ( dbfAlbPrvL )->nFacCnv
-                  ( ::cAreaTmpLabel )->cAlmLin  := ( dbfAlbPrvL )->cAlmLin
-                  ( ::cAreaTmpLabel )->nCtlStk  := ( dbfAlbPrvL )->nCtlStk
-                  ( ::cAreaTmpLabel )->lLote    := ( dbfAlbPrvL )->lLote
-                  ( ::cAreaTmpLabel )->nLote    := ( dbfAlbPrvL )->nLote
-                  ( ::cAreaTmpLabel )->cLote    := ( dbfAlbPrvL )->cLote
-                  ( ::cAreaTmpLabel )->nNumLin  := ( dbfAlbPrvL )->nNumLin
-                  ( ::cAreaTmpLabel )->nUndKit  := ( dbfAlbPrvL )->nUndKit
-                  ( ::cAreaTmpLabel )->lKitArt  := ( dbfAlbPrvL )->lKitArt
-                  ( ::cAreaTmpLabel )->lKitChl  := ( dbfAlbPrvL )->lKitChl
-                  ( ::cAreaTmpLabel )->lKitPrc  := ( dbfAlbPrvL )->lKitPrc
-                  ( ::cAreaTmpLabel )->lImpLin  := ( dbfAlbPrvL )->lImpLin
-                  ( ::cAreaTmpLabel )->mNumSer  := ( dbfAlbPrvL )->mNumSer
-                  ( ::cAreaTmpLabel )->cCodUbi1 := ( dbfAlbPrvL )->cCodUbi1
-                  ( ::cAreaTmpLabel )->cCodUbi2 := ( dbfAlbPrvL )->cCodUbi2
-                  ( ::cAreaTmpLabel )->cCodUbi3 := ( dbfAlbPrvL )->cCodUbi3
-                  ( ::cAreaTmpLabel )->cValUbi1 := ( dbfAlbPrvL )->cValUbi1
-                  ( ::cAreaTmpLabel )->cValUbi2 := ( dbfAlbPrvL )->cValUbi2
-                  ( ::cAreaTmpLabel )->cValUbi3 := ( dbfAlbPrvL )->cValUbi3
-                  ( ::cAreaTmpLabel )->cNomUbi1 := ( dbfAlbPrvL )->cNomUbi1
-                  ( ::cAreaTmpLabel )->cNomUbi2 := ( dbfAlbPrvL )->cNomUbi2
-                  ( ::cAreaTmpLabel )->cNomUbi3 := ( dbfAlbPrvL )->cNomUbi3
-                  ( ::cAreaTmpLabel )->cCodFam  := ( dbfAlbPrvL )->cCodFam
-                  ( ::cAreaTmpLabel )->cGrpFam  := ( dbfAlbPrvL )->cGrpFam
-                  ( ::cAreaTmpLabel )->mObsLin  := ( dbfAlbPrvL )->mObsLin
-                  ( ::cAreaTmpLabel )->nPvpRec  := ( dbfAlbPrvL )->nPvpRec
-                  ( ::cAreaTmpLabel )->nUndLin  := nTotNAlbPrv( dbfAlbPrvL )
+                  ( ::cAreaTmpLabel )->cSerAlb  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb
+                  ( ::cAreaTmpLabel )->nNumAlb  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb
+                  ( ::cAreaTmpLabel )->cSufAlb  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb
+                  ( ::cAreaTmpLabel )->cRef     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef
+                  ( ::cAreaTmpLabel )->cRefPrv  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRefPrv
+                  ( ::cAreaTmpLabel )->cDetalle := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cDetalle
+                  ( ::cAreaTmpLabel )->nPreDiv  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPreDiv
+                  ( ::cAreaTmpLabel )->nIva     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIva
+                  ( ::cAreaTmpLabel )->nReq     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nReq
+                  ( ::cAreaTmpLabel )->nCanEnt  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nCanEnt
+                  ( ::cAreaTmpLabel )->lControl := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lControl
+                  ( ::cAreaTmpLabel )->cUnidad  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cUnidad
+                  ( ::cAreaTmpLabel )->nUniCaja := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nUniCaja
+                  ( ::cAreaTmpLabel )->lChgLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lChgLin
+                  ( ::cAreaTmpLabel )->mLngDes  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->mLngDes
+                  ( ::cAreaTmpLabel )->nDtoLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nDtoLin
+                  ( ::cAreaTmpLabel )->nDtoPrm  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nDtoPrm
+                  ( ::cAreaTmpLabel )->nDtoRap  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nDtoRap
+                  ( ::cAreaTmpLabel )->nPreCom  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPreCom
+                  ( ::cAreaTmpLabel )->lBnfLin1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lBnfLin1
+                  ( ::cAreaTmpLabel )->lBnfLin2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lBnfLin2
+                  ( ::cAreaTmpLabel )->lBnfLin3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lBnfLin3
+                  ( ::cAreaTmpLabel )->lBnfLin4 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lBnfLin4
+                  ( ::cAreaTmpLabel )->lBnfLin5 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lBnfLin5
+                  ( ::cAreaTmpLabel )->lBnfLin6 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lBnfLin6
+                  ( ::cAreaTmpLabel )->nBnfLin1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfLin1
+                  ( ::cAreaTmpLabel )->nBnfLin2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfLin2
+                  ( ::cAreaTmpLabel )->nBnfLin3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfLin3
+                  ( ::cAreaTmpLabel )->nBnfLin4 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfLin4
+                  ( ::cAreaTmpLabel )->nBnfLin5 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfLin5
+                  ( ::cAreaTmpLabel )->nBnfLin6 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfLin6
+                  ( ::cAreaTmpLabel )->nBnfSbr1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfSbr1
+                  ( ::cAreaTmpLabel )->nBnfSbr2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfSbr2
+                  ( ::cAreaTmpLabel )->nBnfSbr3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfSbr3
+                  ( ::cAreaTmpLabel )->nBnfSbr4 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfSbr4
+                  ( ::cAreaTmpLabel )->nBnfSbr5 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfSbr5
+                  ( ::cAreaTmpLabel )->nBnfSbr6 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBnfSbr6
+                  ( ::cAreaTmpLabel )->nPvpLin1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpLin1
+                  ( ::cAreaTmpLabel )->nPvpLin2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpLin2
+                  ( ::cAreaTmpLabel )->nPvpLin3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpLin3
+                  ( ::cAreaTmpLabel )->nPvpLin4 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpLin4
+                  ( ::cAreaTmpLabel )->nPvpLin5 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpLin5
+                  ( ::cAreaTmpLabel )->nPvpLin6 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpLin6
+                  ( ::cAreaTmpLabel )->nIvaLin1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin1
+                  ( ::cAreaTmpLabel )->nIvaLin2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin2
+                  ( ::cAreaTmpLabel )->nIvaLin3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin3
+                  ( ::cAreaTmpLabel )->nIvaLin4 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin4
+                  ( ::cAreaTmpLabel )->nIvaLin5 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin5
+                  ( ::cAreaTmpLabel )->nIvaLin6 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin6
+                  ( ::cAreaTmpLabel )->nIvaLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nIvaLin
+                  ( ::cAreaTmpLabel )->lIvaLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lIvaLin
+                  ( ::cAreaTmpLabel )->cCodPr1  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr1
+                  ( ::cAreaTmpLabel )->cCodPr2  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr2
+                  ( ::cAreaTmpLabel )->cValPr1  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr1
+                  ( ::cAreaTmpLabel )->cValPr2  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr2
+                  ( ::cAreaTmpLabel )->nFacCnv  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nFacCnv
+                  ( ::cAreaTmpLabel )->cAlmLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cAlmLin
+                  ( ::cAreaTmpLabel )->nCtlStk  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nCtlStk
+                  ( ::cAreaTmpLabel )->lLote    := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lLote
+                  ( ::cAreaTmpLabel )->nLote    := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nLote
+                  ( ::cAreaTmpLabel )->cLote    := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cLote
+                  ( ::cAreaTmpLabel )->nNumLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumLin
+                  ( ::cAreaTmpLabel )->nUndKit  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nUndKit
+                  ( ::cAreaTmpLabel )->lKitArt  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lKitArt
+                  ( ::cAreaTmpLabel )->lKitChl  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lKitChl
+                  ( ::cAreaTmpLabel )->lKitPrc  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lKitPrc
+                  ( ::cAreaTmpLabel )->lImpLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->lImpLin
+                  ( ::cAreaTmpLabel )->mNumSer  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->mNumSer
+                  ( ::cAreaTmpLabel )->cCodUbi1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodUbi1
+                  ( ::cAreaTmpLabel )->cCodUbi2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodUbi2
+                  ( ::cAreaTmpLabel )->cCodUbi3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodUbi3
+                  ( ::cAreaTmpLabel )->cValUbi1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValUbi1
+                  ( ::cAreaTmpLabel )->cValUbi2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValUbi2
+                  ( ::cAreaTmpLabel )->cValUbi3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValUbi3
+                  ( ::cAreaTmpLabel )->cNomUbi1 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cNomUbi1
+                  ( ::cAreaTmpLabel )->cNomUbi2 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cNomUbi2
+                  ( ::cAreaTmpLabel )->cNomUbi3 := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cNomUbi3
+                  ( ::cAreaTmpLabel )->cCodFam  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodFam
+                  ( ::cAreaTmpLabel )->cGrpFam  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cGrpFam
+                  ( ::cAreaTmpLabel )->mObsLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->mObsLin
+                  ( ::cAreaTmpLabel )->nPvpRec  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpRec
+                  ( ::cAreaTmpLabel )->nUndLin  := nTotNAlbPrv( TDataView():AlbaranesProveedoresLineas( nView ) )
                   ( ::cAreaTmpLabel )->lLabel   := .t.
 
                   if ::nCantidadLabels == 1
-                  ( ::cAreaTmpLabel )->nLabel   := nTotNAlbPrv( dbfAlbPrvL )
+                     ( ::cAreaTmpLabel )->nLabel   := nTotNAlbPrv( TDataView():AlbaranesProveedoresLineas( nView ) )
                   else
-                  ( ::cAreaTmpLabel )->nLabel   := ::nUnidadesLabels
+                     ( ::cAreaTmpLabel )->nLabel   := ::nUnidadesLabels
                   end if
 
                end if
 
-               ( dbfAlbPrvL )->( dbSkip() )
+               ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
 
             end while
 

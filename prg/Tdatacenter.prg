@@ -2601,7 +2601,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
-   oDataTable:cArea        := "AlbPrvL"
+   oDataTable:cArea        := "AlbProvL"
    oDataTable:cName        := cPatEmp() + "AlbProvL"
    oDataTable:cDescription := "Albaranes de proveedor lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
@@ -4935,7 +4935,7 @@ CLASS TDataView
       METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
 
    METHOD AlbaranesProveedores( nView )               INLINE ( ::Get( "AlbProvT", nView ) ) 
-   METHOD AlbaranesProveedoresLineas( nView )         INLINE ( ::Get( "AlbPrvL", nView ) )
+   METHOD AlbaranesProveedoresLineas( nView )         INLINE ( ::Get( "AlbProvL", nView ) )
    METHOD AlbaranesProveedoresIncidencias( nView )    INLINE ( ::Get( "AlbPrvI", nView ) )
    METHOD AlbaranesProveedoresDocumentos( nView )     INLINE ( ::Get( "AlbPrvD", nView ) )
    METHOD AlbaranesProveedoresSeries( nView )         INLINE ( ::Get( "AlbPrvS", nView ) )
