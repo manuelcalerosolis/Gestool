@@ -2589,6 +2589,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbProvT"
    oDataTable:cName        := cPatEmp() + "AlbProvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbProvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbProvT.Cdx"
@@ -2599,6 +2600,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbProL"
    oDataTable:cName        := cPatEmp() + "AlbProvL"
    oDataTable:cDescription := "Albaranes de proveedor lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
@@ -2607,6 +2609,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbProI"
    oDataTable:cName        := cPatEmp() + "AlbPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbPrvI.Cdx"
@@ -2615,6 +2618,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbProD"
    oDataTable:cName        := cPatEmp() + "AlbPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbPrvD.Cdx"
@@ -2623,6 +2627,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbProS"
    oDataTable:cName        := cPatEmp() + "AlbPrvS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbPrvS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbPrvS.Cdx"
@@ -4927,6 +4932,12 @@ CLASS TDataView
 
    METHOD Proveedores( nView )               INLINE ( ::Get( "Provee", nView ) )
       METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
+
+   METHOD AlbaranesProveedores( nView )               INLINE ( ::Get( "AlbPrvT", nView ) ) 
+   METHOD AlbaranesProveedoresLineas( nView )         INLINE ( ::Get( "AlbPrvL", nView ) )
+   METHOD AlbaranesProveedoresIncidencias( nView )    INLINE ( ::Get( "AlbPrvI", nView ) )
+   METHOD AlbaranesProveedoresDocumentos( nView )     INLINE ( ::Get( "AlbPrvD", nView ) )
+   METHOD AlbaranesProveedoresSeries( nView )         INLINE ( ::Get( "AlbPrvS", nView ) )
 
    METHOD FacturasProveedores( nView )       INLINE ( ::Get( "FacPrvT", nView ) ) 
       METHOD FacturasProveedoresId( nView )  INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )

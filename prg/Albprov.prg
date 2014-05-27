@@ -888,7 +888,16 @@ STATIC FUNCTION OpenFiles( lExt )
 
       nView             := TDataView():CreateView()
 
-      //TDataView():CabeceraAlbaranProveedor( nView )
+      //AlbaranesProveedores( nView )
+      //AlbaranesProveedoresLineas( nView )
+      //AlbaranesProveedoresIncidencias( nView )
+      //AlbaranesProveedoresDocumentos( nView )
+      //AlbaranesProveedoresSeries( nView )
+
+
+
+
+
 
       USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
