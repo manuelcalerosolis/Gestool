@@ -4937,6 +4937,12 @@ CLASS TDataView
    METHOD FacturasProveedoresIncidencias( nView )        INLINE ( ::Get( "FacPrvI", nView ) )
       METHOD FacturasProveedoresIncidenciasId ( nView )  INLINE ( ( ::Get( "FacPrvI", nView ) )->cSerFac + str( ( ::Get( "FacPrvI", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvI", nView ) )->cSufFac )
 
+   METHOD FacturasProveedoresDocumentos( nView )         INLINE ( ::Get( "FacPrvD", nView ) )
+      METHOD FacturasProveedoresDocumentosId( nView )    INLINE ( ( ::Get( "FacPrvD", nView ) )->cSerFac + str( ( ::Get( "FacPrvD", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvD", nView ) )->cSufFac )
+
+   METHOD FacturasProveedoresSeries( nView )       INLINE ( ::Get( "FacPrvS", nView ) )
+      METHOD FacturasProveedoresSeriesId( nView )  INLINE ( ( ::Get( "FacPrvS", nView ) )->cSerFac + str( ( ::Get( "FacPrvS", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvS", nView ) )->cSufFac )
+
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
