@@ -5019,7 +5019,6 @@ CLASS TDataView
 
    METHOD Empresa( nView )                   INLINE ( ::Get( "Empresa", nView ) )
 
-
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
 
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
