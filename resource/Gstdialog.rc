@@ -6035,9 +6035,8 @@ EMPRESA_CONTABILIDAD DIALOG DISCARDABLE 68, -86, 437, 353
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 127, 68, 300, 11
-  CONTROL "&Modificar [F3]", 130, "Button", WS_TABSTOP, 50, 81, 71, 14
-  CONTROL "", 110, "TXBrowse", 0x00200000, 127, 81, 300, 61
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 127, 53, 300, 11
+  CONTROL "", 110, "TXBrowse", 0x00200000, 127, 66, 300, 75
   CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 127, 158, 36, 11
   CONTROL "", 371, "Edit", WS_BORDER, 194, 158, 233, 11
   CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 127, 170, 36, 11
@@ -6065,9 +6064,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Impuesto + Recargo de equivalencia", 420, "Button", BS_AUTORADIOBUTTON, 293, 310, 129, 10
   CONTROL "Recargo de equivalencia + Impuesto", 421, "Button", BS_AUTORADIOBUTTON, 293, 322, 129, 10
   CONTROL "", 461, "Edit", WS_BORDER, 194, 294, 233, 11
-  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 29, 388, 25
-  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 57, 388, 89
-  CONTROL "Directorio", -1, "Static", WS_GROUP, 50, 71, 35, 7
+  CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 29, 388, 116
+  CONTROL "Directorio", -1, "Static", WS_GROUP, 50, 56, 35, 9
   CONTROL "Cuentas especiales", -1, "Button", BS_GROUPBOX, 44, 147, 388, 121
   CONTROL "Ventas", -1, "Static", WS_GROUP, 50, 161, 49, 8
   CONTROL "Compras", -1, "Static", WS_GROUP, 50, 173, 44, 8
@@ -6085,6 +6083,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Gastos", -1, "Static", WS_GROUP, 50, 257, 50, 8
   CONTROL "", 90, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 127, 38, 300, 106
   CONTROL "Aplicación", -1, "Static", WS_GROUP, 50, 42, 38, 9
+  CONTROL "Series y empresa", -1, "Static", WS_GROUP, 50, 70, 59, 10
 }
 
 EMPRESACFG DIALOG DISCARDABLE 137, 27, 435, 429

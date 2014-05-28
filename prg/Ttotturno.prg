@@ -329,7 +329,7 @@ CLASS TTotalTurno
    Method nTotNumeroVales( cCaja )                             INLINE   nNumero( cCaja, ::aTotNumeroVales )
    Method nTotNumeroDevoluciones( cCaja )                      INLINE   nNumero( cCaja, ::aTotNumeroDevoluciones )
    Method nTotNumeroCheques( cCaja )                           INLINE   nNumero( cCaja, ::aTotNumeroCheques )
-   Method nTotNumeroAptCajon( cTurno )
+   Method nTotNumeroAptCajon( cTurno, cCaja )
 
    Method nTiketMedio( cCaja, cSerie )                         INLINE   ( ::nTotTikCliVentas( cCaja, cSerie ) / NotCero( ::nTotNumeroTikets( cCaja ) ) )
 
@@ -718,7 +718,7 @@ Return ( nTotCaja )
 
 //---------------------------------------------------------------------------//
 
-Method nTotNumeroAptCajon( cTurno )
+Method nTotNumeroAptCajon( cTurno, cCaja )
 
    local oBlock
    local oError
@@ -729,9 +729,12 @@ Method nTotNumeroAptCajon( cTurno )
 
       if !Empty( ::oTurno )
 
-         if ::oTurno:oLogPorta:Seek( cTurno )
+         ::oTurno:oLogPorta:GetStatus()
+         ::oTurno:oLogPorta:ordsetfocus( "cTurCaj" )
 
-            while ::oTurno:oLogPorta:cNumTur + ::oTurno:oLogPorta:cSufTur == cTurno .and. ! ::oTurno:oLogPorta:eof()
+         if ::oTurno:oLogPorta:Seek( cTurno + cCaja )
+
+            while ::oTurno:oLogPorta:cNumTur + ::oTurno:oLogPorta:cSufTur + ::oTurno:oLogPorta:cCodCaj == cTurno + cCaja .and. ! ::oTurno:oLogPorta:eof()
 
                nTotal++
 
@@ -740,6 +743,9 @@ Method nTotNumeroAptCajon( cTurno )
             end while
 
          end if
+
+         ::oTurno:oLogPorta:SetStatus()
+
 
       end if
 
@@ -1411,8 +1417,8 @@ Method CreateTree( cCaja, cTurno )
       TreeAddItem( "Número de devoluciones" ):Cargo := { "Número de devoluciones", ::nTotNumeroDevoluciones( cCaja )  }
    end if
 
-   if ::nTotNumeroAptCajon( cTurno ) != 0
-      TreeAddItem( "Número de aperturas de cajón" ):Cargo := { "Número de apertura de cajón :" + cTurno, ::nTotNumeroAptCajon( cTurno )  }
+   if ::nTotNumeroAptCajon( cTurno, cCaja ) != 0
+      TreeAddItem( "Número de aperturas de cajón" ):Cargo := { "Número de apertura de cajón :" + cTurno, ::nTotNumeroAptCajon( cTurno, cCaja )  }
    end if
 
    TreeEnd()

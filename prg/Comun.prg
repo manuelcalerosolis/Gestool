@@ -966,6 +966,10 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
          aDlgEmp     := { "" }
       end if
 
+      // Cargamos el programa contable-----------------------------------------
+
+      SetAplicacionContable( ( dbfEmp )->nExpContbl )
+
    else
 
       lEmpFnd        := .f.

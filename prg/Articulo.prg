@@ -16393,7 +16393,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       oBrw:Cargo           := {}
 
       with object ( oBrw:AddCol() )
-         :cHeader          := ""
+         :cHeader          := "Seleccionando"
          :bEditValue       := {|| aScan( oBrw:Cargo, Eval( oBrw:bBookMark ) ) > 0 }
          :nWidth           := 20
          :SetCheck( { "Send", "Nil16" }, {|| SelectArticulo( oBrw ) } )

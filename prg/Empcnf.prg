@@ -1296,9 +1296,7 @@ FUNCTION lBuscaImportes()
    local cRutCnt  := Space( 1 )
 
    if !Empty( aEmp() )
-
       cRutCnt     := Rtrim( aEmp()[ _CRUTCNT ] )
-
    end if
 
  RETURN ( cRutCnt )
