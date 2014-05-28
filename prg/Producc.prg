@@ -1387,6 +1387,13 @@ METHOD Resource( nMode, aDatosAnterior )
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := "Lote"
+         :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cLote" ) }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := "Almacén"
          :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 55
@@ -1496,6 +1503,13 @@ METHOD Resource( nMode, aDatosAnterior )
          :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 60
       end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := "Lote"
+         :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cLote" ) }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with 
 
       with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := "Total unidades"

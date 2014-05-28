@@ -3681,7 +3681,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      ::oRefMov:bValid     := {|| msgAlert( "valid"), if( !Empty( ::oDbfVir:cRefMov ), ( msgAlert( "LoaArt"), ::LoaArt( oDlg, .f., nMode ) ), .t. ) }
+      ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::LoaArt( oDlg, .f., nMode ), .t. ) }
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::cGetDetalle ;
@@ -4308,8 +4308,6 @@ METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    lChgCodArt              := ( Rtrim( ::cOldCodArt ) != Rtrim( ::oDbfVir:cRefMov ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
 
-   msgAlert( lChgCodArt, "lChgCodArt")
-
    // Conversión a codigo interno-------------------------------------------------
 
    cCodArt                 := cSeekCodebar( ::oDbfVir:cRefMov, ::oParent:oDbfBar:cAlias, ::oParent:oArt:cAlias )
@@ -4472,7 +4470,6 @@ METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                nPreMed     := ::oParent:oStock:nCostoMedio( ::oParent:oArt:Codigo, ::oParent:oDbf:cAlmDes, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote )
 
                if nPreMed == 0
-               msgAlert( "precio medio igual 0")
                   nPreMed  := nCosto( ::oParent:oArt:Codigo, ::oParent:oArt:cAlias, ::oParent:oArtKit:cAlias )
                end if
 
