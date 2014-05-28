@@ -1554,6 +1554,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Cajas"
    oDataTable:cName        := cPatDat() + "Cajas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Cajas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Cajas.Cdx"
@@ -1818,6 +1819,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Almacen"
    oDataTable:cName        := cPatEmp() + "Almacen"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Almacen.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Almacen.Cdx"
@@ -2117,6 +2119,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Pro"
    oDataTable:cName        := cPatEmp() + "Pro"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Pro.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Pro.Cdx"
@@ -2126,6 +2129,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TblPro"
    oDataTable:cName        := cPatEmp() + "TblPro"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TblPro.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TblPro.Cdx"
@@ -4931,6 +4935,9 @@ CLASS TDataView
    METHOD PedidosProveedores( nView )        INLINE ( ::Get( "PedProvT", nView ) )
       METHOD PedidosProveedoresId( nView )   INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
 
+   METHOD PedidosProveedoresLineas( nView )        INLINE ( ::Get( "PedProvL", nView ) )
+      METHOD PedidosProveedoresLineasId( nView )   INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
+
    METHOD Proveedores( nView )               INLINE ( ::Get( "Provee", nView ) )
       METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
 
@@ -4962,13 +4969,31 @@ CLASS TDataView
 
    METHOD ProveedorArticulo( nView )         INLINE ( ::Get( "ProvArt", nView ) )
 
-   METHOD CodigoBarrasArticulo( nView )       INLINE ( ::Get( "ArtCodebar", nView ) )
+   METHOD CodigoBarrasArticulo( nView )      INLINE ( ::Get( "ArtCodebar", nView ) )
 
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
 
    METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
 
    METHOD Kit( nView )                       INLINE ( ::Get( "ArtKit", nView ) )
+
+   METHOD FormasPago( nView )                INLINE ( ::Get( "FPago", nView ) )
+
+   METHOD ArticuloPrecioPropiedades( nView ) INLINE ( ::Get( "ArtDiv", nView ) )
+
+   METHOD Divisas( nView )                   INLINE ( ::Get( "Divisas", nView ) )
+
+   METHOD Cajas( nView )                     INLINE ( ::Get( "Cajas", nView ) )
+
+   METHOD TipoIncidencia( nView )            INLINE ( ::Get( "TipInci", nView ) )
+
+   METHOD Propiedades( nView )               INLINE ( ::Get( "Pro", nView ) )
+      METHOD PropiedadesLineas( nView )      INLINE ( ::Get( "TblPro", nView ) )
+
+   METHOD Almacen( nView )                   INLINE ( ::Get( "Almacen", nView ) )
+
+   METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
+
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
 
