@@ -384,7 +384,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       REDEFINE GET ::oImpOrd VAR ::oDbfVir:nImpOrd ;
          ID       150;
 			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !::oParent:oDbf:lRecCos) ;
          PICTURE  ::oParent:cPouDiv ;
          OF       oFld:aDialogs[1]
 
