@@ -1535,6 +1535,7 @@ METHOD BuildData()
    ::aDataTables           := {}
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Users"
    oDataTable:cName        := cPatDat() + "Users"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Users.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Users.Cdx"
@@ -1676,6 +1677,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Empresa"
    oDataTable:cName        := cPatDat() + "Empresa"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Empresa.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Empresa.Cdx"
@@ -1686,6 +1688,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Delega"
    oDataTable:cName        := cPatDat() + "Delega"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Delega.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Delega.Cdx"
@@ -1933,6 +1936,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "UbiCal"
    oDataTable:cName        := cPatEmp() + "UbiCal"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "UbiCal.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "UbiCal.Cdx"
@@ -2401,6 +2405,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PrvBnc"
    oDataTable:cName        := cPatPrv() + "PrvBnc"
    oDataTable:cDataFile    := cPatPrv( , .t. ) + "PrvBnc.Dbf"
    oDataTable:cIndexFile   := cPatPrv( , .t. ) + "PrvBnc.Cdx"
@@ -4965,6 +4970,10 @@ CLASS TDataView
    METHOD FacturasProveedoresPagos( nView )        INLINE ( ::Get( "FacPrvP", nView ) )
       METHOD FacturasProveedoresPagosId( nView )   INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + str( ( ::Get( "FacPrvP", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvP", nView ) )->cSufFac )
 
+   METHOD FacturasRectificativasProveedores( nView )     INLINE ( ::Get( "RctPrvT", nView ) )
+
+   METHOD BancosProveedores( nView )         INLINE ( ::Get( "PrvBnc", nView ) )
+
    METHOD TiposIva( nView )                  INLINE ( ::Get( "TIva", nView ) )
 
    METHOD ProveedorArticulo( nView )         INLINE ( ::Get( "ProvArt", nView ) )
@@ -4993,6 +5002,16 @@ CLASS TDataView
    METHOD Almacen( nView )                   INLINE ( ::Get( "Almacen", nView ) )
 
    METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
+
+   METHOD Usuarios( nView )                  INLINE ( ::Get( "Users", nView ) )
+
+   METHOD UbicacionLineas( nView )           INLINE ( ::Get( "UbiCal", nView ) )
+
+   METHOD Delegaciones( nView )              INLINE ( ::Get( "Delega", nView ) )
+
+   METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
+
+   METHOD Empresa( nView )                   INLINE ( ::Get( "Empresa", nView ) )
 
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )

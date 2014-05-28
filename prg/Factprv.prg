@@ -271,10 +271,7 @@ static oWndBrw
 static oBrwIva
 static oInf
 static dbfFacPrvT
-static dbfRctPrvT
-static dbfRctPrvL
 static dbfIva
-static dbfInci
 static dbfFacPrvL
 static filFacPrvL
 static tmpFacPrvT
@@ -286,7 +283,6 @@ static dbfFacPrvP
 static dbfFacPrvI
 static dbfFacPrvD
 static dbfFacPrvS
-static dbfPedPrvL
 static dbfPrv
 static dbfArtPrv
 static dbfFPago
@@ -294,34 +290,17 @@ static dbfTmp
 static dbfTmpSer
 static dbfKit
 static dbfArticulo
-static dbfUbicaL
 static dbfCodebar
 static dbfFamilia
-static dbfTblCnv
 static dbfArtCom
-static dbfPro
-static dbfDoc
-static dbfCajT
-static dbfTblPro
 static dbfDiv
-static dbfUsr
 
 static dbfCount
 static oBandera
 static dbfAlbPrvT
 static dbfAlbPrvL
 static dbfAlbPrvS
-static dbfDelega
-static dbfEmp
 static dbfAlm
-static dbfPedCliL
-static dbfAlbCliL
-static dbfFacCliL
-static dbfFacRecL
-static dbfTikCliL
-static dbfProLin
-static dbfProMat
-static dbfHisMov
 static oStock
 static cNewFile
 static cPicEur
@@ -351,7 +330,6 @@ static oUsr
 static cUsr
 static oFntTot
 static oBanco
-static dbfPrvBnc
 static oUndMedicion
 
 static oMnuPgo
@@ -435,17 +413,11 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():Kit( nView )
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      TDataView():FormasPago( nView )
 
-      USE ( cPatArt() + "ArtDiv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTCOM", @dbfArtCom ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtDiv.Cdx" ) ADDITIVE
+      TDataView():ArticuloPrecioPropiedades( nView )
 
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
+      TDataView():Divisas( nView )
 
       TDataView():AlbaranesProveedores( nView )
 
@@ -453,85 +425,32 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():AlbaranesProveedoresSeries( nView )
 
-      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
-      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
-
       TDataView():PedidosProveedores( nView )
 
-      USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
+      TDataView():TipoIncidencia( nView )
 
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
+      TDataView():Propiedades( nView )
 
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+      TDataView():PropiedadesLineas( nView )
 
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+      TDataView():Almacen( nView )
 
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      TDataView():Documentos( nView )
+      ( TDataView():Documentos( nView ) )->( ordSetFocus( "CTIPO" ) )
 
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
+      TDataView():Usuarios( nView )
 
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
+      TDataView():UbicacionLineas( nView )
 
-      USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
-      SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
+      TDataView():Delegaciones( nView )
 
-      USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
-      SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
+      TDataView():Contadores( nView )
 
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+      TDataView():Empresa( nView )
 
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
+      TDataView():FacturasRectificativasProveedores( nView )
 
-      USE ( cPatEmp() + "PedCliL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCLIL", @dbfPedCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PedCliL.Cdx" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
-      SET TAG TO "cStkFast"
-
-      USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctPrvL ) )
-      SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
-      SET TAG TO "cRef"
-
-      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-      SET TAG TO "cRef"
-
-      USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
-      SET TAG TO "cRef"
-
-      USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
-      SET TAG TO "CSTKFAST"
-
-      USE ( cPatEmp() + "PROLIN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROLIN", @dbfProLin ) )
-      SET ADSINDEX TO ( cPatEmp() + "PROLIN.CDX" ) ADDITIVE
-      SET TAG TO "cCodArt"
-
-      USE ( cPatEmp() + "PROMAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMAT", @dbfProMat ) )
-      SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
-      SET TAG TO "cCodArt"
-
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-      SET TAG TO "cRefMov"
-
-      USE ( cPatPrv() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfPrvBnc ) )
-      SET ADSINDEX TO ( cPatPrv() + "PRVBNC.CDX" ) ADDITIVE
+      TDataView():BancosProveedores( nView )
 
       // Unidades de medicion
 
@@ -618,114 +537,6 @@ Static Function CloseFiles()
 
    DestroyFastFilter( TDataView():FacturasProveedores( nView ), .t., .t. )
 
-   if dbfRctPrvL != nil
-      ( dbfRctPrvL )->( dbCloseArea() )
-   end if
-
-   if dbfRctPrvT != nil
-      ( dbfRctPrvT )->( dbCloseArea() )
-   end if
-
-   if dbfPedPrvL != nil
-      ( dbfPedPrvL )->( dbCloseArea() )
-   end if
-
-   if dbfFPago != nil
-      ( dbfFPago )->( dbCloseArea() )
-   end if
-
-   if dbfArtCom != nil
-      ( dbfArtCom )->( dbCloseArea() )
-   end if
-
-   if dbfDiv != nil
-      ( dbfDiv )->( dbCloseArea() )
-   end if
-
-   if ( dbfTblCnv ) != nil
-      ( dbfTblCnv )->( dbCloseArea() )
-   end if
-
-   if dbfPro != nil
-      ( dbfPro )->( dbCloseArea() )
-   end if
-
-   if dbfTblPro != nil
-      ( dbfTblPro )->( dbCloseArea() )
-   end if
-
-   if dbfAlm != nil
-      ( dbfAlm )->( dbCloseArea() )
-   end if
-
-   if dbfDoc != nil
-      ( dbfDoc )->( dbCloseArea() )
-   end if
-
-   if dbfCajT != nil
-      ( dbfCajT )->( dbCloseArea() )
-   end if
-
-   if dbfUbicaL != nil
-      ( dbfUbicaL )->( dbCloseArea() )
-   end if
-
-   if dbfUsr != nil
-      ( dbfUsr )->( dbCloseArea() )
-   end if
-
-   if dbfInci != nil
-      ( dbfInci )->( dbCloseArea() )
-   end if
-
-   if dbfDelega != nil
-      ( dbfDelega )->( dbCloseArea() )
-   end if
-
-   if dbfCount != nil
-      ( dbfCount )->( dbCloseArea() )
-   end if
-
-   if dbfEmp != nil
-      ( dbfEmp )->( dbCloseArea() )
-   end if
-
-   if dbfPedCliL != nil
-      ( dbfPedCliL )->( dbCloseArea() )
-   end if
-
-   if dbfAlbCliL != nil
-      ( dbfAlbCliL )->( dbCloseArea() )
-   end if
-
-   if dbfFacCliL != nil
-      ( dbfFacCliL )->( dbCloseArea() )
-   end if
-
-   if dbfFacRecL != nil
-      ( dbfFacRecL )->( dbCloseArea() )
-   end if
-
-   if dbfTikCliL != nil
-      ( dbfTikCliL )->( dbCloseArea() )
-   end if
-
-   if dbfProLin != nil
-      ( dbfProLin )->( dbCloseArea() )
-   end if
-
-   if dbfProMat != nil
-      ( dbfProMat )->( dbCloseArea() )
-   end if
-
-   if dbfHisMov != nil
-      ( dbfHisMov )->( dbCloseArea() )
-   end if
-
-   if dbfPrvBnc != nil
-      ( dbfPrvBnc )->( dbCloseArea() )
-   end if
-
    if !Empty( oUndMedicion )
       oUndMedicion:end()
    end if
@@ -741,34 +552,9 @@ Static Function CloseFiles()
 
    TDataView():DeleteView( nView )
 
-   dbfRctPrvT  := nil
-   dbfRctPrvL  := nil
-   dbfFPago    := nil
-   dbfUbicaL   := nil
-   dbfArtCom   := nil
-   dbfDiv      := nil
    oBandera    := nil
-   dbfTblCnv   := nil
-   dbfPro      := nil
-   dbfTblPro   := nil
-   dbfDoc      := nil
-   dbfCajT     := nil
-   dbfUsr      := nil
    oStock      := nil
-   dbfInci     := nil
-   dbfDelega   := nil
-   dbfCount    := nil
    oBanco      := nil
-   dbfEmp      := nil
-   dbfPedCliL  := nil
-   dbfAlbCliL  := nil
-   dbfFacCliL  := nil
-   dbfFacRecL  := nil
-   dbfTikCliL  := nil
-   dbfProLin   := nil
-   dbfProMat   := nil
-   dbfHisMov   := nil
-   dbfPrvBnc   := nil
 
    lOpenFiles  := .f.
 
@@ -923,7 +709,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :cHeader          := "Rectificada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| lRectificadaPrv( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, TDataView():FacturasProveedores( nView ), dbfRctPrvT ) }
+         :bEditValue       := {|| lRectificadaPrv( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasRectificativasProveedores( nView ) ) }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -973,13 +759,6 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :nWidth           := 160
          :lHide            := .t.
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
-         :bEditValue       := {|| ( TDataView():FacturasProveedores( nView ) )->cCodDlg }
-         :nWidth           := 60
-         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1088,7 +867,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():FacturasProveedores( nView ) )->cDivFac ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():FacturasProveedores( nView ) )->cDivFac ), TDataView():Divisas( nView ) ) }
          :nWidth           := 30
       end with
 
@@ -1215,7 +994,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
    DEFINE BTNSHELL RESOURCE "BmpConta" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree | CntFacPrv( lChk1, lChk2, .t., oTree, nil, nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), dbfDiv, TDataView():Articulos( nView ), dbfFPago, TDataView():TiposIva( nView ) ) }, "Contabilizar facturas", .f., "Simular resultados", .f., "Contabilizar pagos" ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree | CntFacPrv( lChk1, lChk2, .t., oTree, nil, nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), TDataView():Divisas( nView ), TDataView():Articulos( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ) ) }, "Contabilizar facturas", .f., "Simular resultados", .f., "Contabilizar pagos" ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -1361,7 +1140,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    local oBmpGeneral
 
    cTlfPrv           := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ), "Telefono" )
-   cUsr              := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
+   cUsr              := RetFld( aTmp[ _CCODUSR ], TDataView():Usuarios( nView ), "cNbrUse" )
 
    do case
    case nMode == APPD_MODE
@@ -1371,11 +1150,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          Return .f.
       end if
 
-      aTmp[ _CSERFAC ]     := cNewSer( "nFacPrv", dbfCount )
+      aTmp[ _CSERFAC ]     := cNewSer( "nFacPrv", TDataView():Contadores( nView ) )
       aTmp[ _CSUFFAC ]     := RetSufEmp()
       aTmp[ _CTURFAC ]     := cCurSesion()
       aTmp[ _CDIVFAC ]     := cDivEmp()
-      aTmp[ _NVDVFAC ]     := nChgDiv( aTmp[ _CDIVFAC ], dbfDiv )
+      aTmp[ _NVDVFAC ]     := nChgDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )
       aTmp[ _CCODALM ]     := oUser():cAlmacen()
       aTmp[ _CCODCAJ ]     := oUser():cCaja()
       aTmp[ _LSNDDOC ]     := .t.
@@ -1450,22 +1229,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    cOldCodCli           := aTmp[ _CCODPRV ]
 
    cPicUnd              := MasUnd()                               // Picture de las unidades
-   cPinDiv              := cPinDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa
-   cPirDiv              := cPirDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa redondeada
-   nDinDiv              := nDinDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Decimales de la divisa
-   nRinDiv              := nRinDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Decimales de la divisa redondeada
-   cPouDiv              := cPouDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa
-   cPorDiv              := cPorDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa redondeada
+   cPinDiv              := cPinDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )    // Picture de la divisa
+   cPirDiv              := cPirDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )    // Picture de la divisa redondeada
+   nDinDiv              := nDinDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )    // Decimales de la divisa
+   nRinDiv              := nRinDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )    // Decimales de la divisa redondeada
+   cPouDiv              := cPouDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )    // Picture de la divisa
+   cPorDiv              := cPorDiv( aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )    // Picture de la divisa redondeada
 
    /*
    Etiquetas-------------------------------------------------------------------
    */
 
-   cGet[ 1 ]            := RetFld( aTmp[ _CCODALM ], dbfAlm )
+   cGet[ 1 ]            := RetFld( aTmp[ _CCODALM ], TDataView():Almacen( nView ) )
    cGet[ 2 ]            := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ) )
-   cGet[ 3 ]            := RetFld( aTmp[ _CCODPAGO], dbfFPago )
-   cGet[ 5 ]            := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cGet[ 6 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
+   cGet[ 3 ]            := RetFld( aTmp[ _CCODPAGO], TDataView():FormasPago( nView ) )
+   cGet[ 5 ]            := RetFld( aTmp[ _CCODCAJ ], TDataView():Cajas( nView ) )
+   cGet[ 6 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], TDataView():Delegaciones( nView ), "cNomDlg" )
 
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "facturas a proveedores"
 
@@ -1570,7 +1349,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          COLOR    CLR_GET ;
-         VALID    cAlmacen( aGet[_CCODALM], dbfAlm, oGet[ 1 ] );
+         VALID    cAlmacen( aGet[_CCODALM], TDataView():Almacen( nView ), oGet[ 1 ] );
          BITMAP   "LUPA" ;
          ON HELP  brwAlmacen( aGet[ _CCODALM ], oGet[ 1 ] );
          OF       oFld:aDialogs[1]
@@ -1586,7 +1365,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
-         VALID    cFPago( aGet[ _CCODPAGO ], dbfFPago, oGet[3] ) ;
+         VALID    cFPago( aGet[ _CCODPAGO ], TDataView():FormasPago( nView ), oGet[3] ) ;
          BITMAP   "LUPA" ;
          ON HELP  BrwFPago( aGet[ _CCODPAGO ], oGet[3] ) ;
          OF       oFld:aDialogs[1]
@@ -1656,7 +1435,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oGet[ 5 ] ) ;
+         VALID    cCajas( aGet[ _CCODCAJ ], TDataView():Cajas( nView ), oGet[ 5 ] ) ;
          ID       165 ;
          COLOR    CLR_GET ;
          BITMAP   "LUPA" ;
@@ -1684,11 +1463,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       REDEFINE GET aGet[ _CDIVFAC ] VAR aTmp[ _CDIVFAC ];
          WHEN     ( nMode == APPD_MODE ) ;
-         VALID    ( cDivIn( aGet[ _CDIVFAC ], oBmpDiv, aGet[ _NVDVFAC ], @cPinDiv, @nDinDiv, @cPirDiv, @nRinDiv, nil, dbfDiv, oBandera ) );
+         VALID    ( cDivIn( aGet[ _CDIVFAC ], oBmpDiv, aGet[ _NVDVFAC ], @cPinDiv, @nDinDiv, @cPirDiv, @nRinDiv, nil, TDataView():Divisas( nView ), oBandera ) );
          PICTURE  "@!";
          ID       170 ;
          BITMAP   "LUPA" ;
-         ON HELP  BrwDiv( aGet[ _CDIVFAC ], oBmpDiv, aGet[ _NVDVFAC ], dbfDiv, oBandera ) ;
+         ON HELP  BrwDiv( aGet[ _CDIVFAC ], oBmpDiv, aGet[ _NVDVFAC ], TDataView():Divisas( nView ), oBandera ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE BITMAP oBmpDiv ;
@@ -2261,7 +2040,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          PICTURE  "@R A/#########/##" ;
          WHEN     ( nMode == APPD_MODE ) ;
          VALID    ( cAlbPrv( aGet, oBrwLin, nMode, aTmp ), RecalculaTotal( aTmp ) ) ;
-         ON HELP  ( brwAlbPrv( aGet[ _CNUMALB ], TDataView():AlbaranesProveedores( nView ), TDataView():AlbaranesProveedoresLineas( nView ), TDataView():TiposIva( nView ), dbfDiv ) );
+         ON HELP  ( brwAlbPrv( aGet[ _CNUMALB ], TDataView():AlbaranesProveedores( nView ), TDataView():AlbaranesProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ) ) );
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
 
@@ -2315,7 +2094,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       REDEFINE GET   aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID          125 ;
          WHEN        ( .f. ) ;
-         VALID       ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, dbfUsr ) );
+         VALID       ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, TDataView():Usuarios( nView ) ) );
          OF          oFld:aDialogs[2]
 
       REDEFINE GET   oUsr VAR cUsr ;
@@ -2470,7 +2249,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
          with object ( oBrwPgo:AddCol() )
             :cHeader          := "Importe"
-            :bEditValue       := {|| nTotRecPrv( dbfTmpPgo, dbfDiv, nil, .t. ) }
+            :bEditValue       := {|| nTotRecPrv( dbfTmpPgo, TDataView():Divisas( nView ), nil, .t. ) }
             :nWidth           := 85
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
@@ -2478,19 +2257,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
          with object ( oBrwPgo:AddCol() )
             :cHeader          := "Divisa"
-            :bEditValue       := {|| cSimDiv( ( dbfTmpPgo )->cDivPgo, dbfDiv ) }
+            :bEditValue       := {|| cSimDiv( ( dbfTmpPgo )->cDivPgo, TDataView():Divisas( nView ) ) }
             :nWidth           := 55
          end with
 
          if nMode != ZOOM_MODE
-            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), dbfFPago, TDataView():TiposIva( nView ), dbfDiv, oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
          end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), dbfFPago, TDataView():TiposIva( nView ), dbfDiv, oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
+         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -2569,7 +2348,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
          with object ( oBrwInc:AddCol() )
             :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) }
+            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, TDataView():TipoIncidencia( nView ) ) }
             :nWidth           := 240
          end with
 
@@ -2698,7 +2477,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmp, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
 
-      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), dbfFPago, TDataView():TiposIva( nView ), dbfDiv, oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
+      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
       oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ExtDelRecPrv( dbfTmpPgo ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
 
       oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
@@ -2718,10 +2497,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:end() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], TDataView():Usuarios( nView ) ), , oDlg:end() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], TDataView():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
@@ -2761,7 +2540,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    Chequea si la factura esta liquidada----------------------------------------
    */
 
-   ChkLqdFacPrv( nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():TiposIva( nView ), dbfDiv )
+   ChkLqdFacPrv( nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ) )
 
    /*
    Cerramos los ficheros-------------------------------------------------------
@@ -2844,7 +2623,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
       Ahora buscamos por el codigo interno
       */
 
-      nPreCom                       := nComPro( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, dbfArtCom )
+      nPreCom                       := nComPro( ( dbfTmp )->cRef, ( dbfTmp )->cCodPr1, ( dbfTmp )->cValPr1, ( dbfTmp )->cCodPr2, ( dbfTmp )->cValPr2, TDataView():ArticuloPrecioPropiedades( nView ) )
 
       if nPrecom  != 0
 
@@ -2859,7 +2638,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
          if nPreCom != 0
             ( dbfTmp )->nPreUnit    := nPreCom
          else
-            ( dbfTmp )->nPreUnit    := nCosto( ( dbfTmp )->cRef, TDataView():Articulos( nView ), TDataView():Kit( nView ), .f., aTmp[ _CDIVFAC ], dbfDiv )
+            ( dbfTmp )->nPreUnit    := nCosto( ( dbfTmp )->cRef, TDataView():Articulos( nView ), TDataView():Kit( nView ), .f., aTmp[ _CDIVFAC ], TDataView():Divisas( nView ) )
          end if
 
          /*
@@ -2904,7 +2683,7 @@ Static Function EdtInc( aTmp, aGet, cFacPrvI, oBrw, bWhen, bValid, nMode, aTmpFa
 
    local oDlg
    local oNomInci
-   local cNomInci       := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+   local cNomInci       := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], TDataView():TipoIncidencia( nView ) )
 
    if nMode == APPD_MODE
 
@@ -2924,9 +2703,9 @@ Static Function EdtInc( aTmp, aGet, cFacPrvI, oBrw, bWhen, bValid, nMode, aTmpFa
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
+         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], TDataView():TipoIncidencia( nView ), oNomInci ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+         ON HELP  ( BrwIncidencia( TDataView():TipoIncidencia( nView ), aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -3176,7 +2955,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          ID       220 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], TDataView():PropiedadesLineas( nView ) ),;
                         LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
@@ -3197,7 +2976,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], TDataView():PropiedadesLineas( nView ) ),;
                         LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
@@ -3358,7 +3137,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbica( aTmp, aGet, dbfAlm ), cAlmacen( aGet[_CALMLIN], dbfAlm, oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) ) ;
+         VALID    ( cNomUbica( aTmp, aGet, TDataView():Almacen( nView ) ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
          COLOR    CLR_GET ;
@@ -3377,7 +3156,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          ID       270 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI1], aGet[_CNOMUBI1], aTmp[_CCODUBI1], dbfUbicaL ) ) ;
+         ON HELP  ( BrwUbiLin( aGet[_CVALUBI1], aGet[_CNOMUBI1], aTmp[_CCODUBI1], TDataView():UbicacionLineas( nView ) ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CNOMUBI1] VAR aTmp[_CNOMUBI1];
@@ -3393,7 +3172,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          ID       280 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI2], aGet[_CNOMUBI2], aTmp[_CCODUBI2], dbfUbicaL ) ) ;
+         ON HELP  ( BrwUbiLin( aGet[_CVALUBI2], aGet[_CNOMUBI2], aTmp[_CCODUBI2], TDataView():UbicacionLineas( nView ) ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CNOMUBI2] VAR aTmp[_CNOMUBI2];
@@ -3409,7 +3188,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          ID       290 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI3], aGet[_CNOMUBI3], aTmp[_CCODUBI3], dbfUbicaL ) ) ;
+         ON HELP  ( BrwUbiLin( aGet[_CVALUBI3], aGet[_CNOMUBI3], aTmp[_CCODUBI3], TDataView():UbicacionLineas( nView ) ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CNOMUBI3] VAR aTmp[_CNOMUBI3];
@@ -3780,11 +3559,11 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-static Function cNomUbica( aTmp, aGet, dbfAlm )
+static Function cNomUbica( aTmp, aGet, cAlm )
 
-   aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], dbfAlm, 1 )
-   aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], dbfAlm, 2 )
-   aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], dbfAlm, 3 )
+   aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], cAlm, 1 )
+   aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], cAlm, 2 )
+   aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], cAlm, 3 )
 
    if Empty( aTmp[_CCODUBI1] )
       aGet[_CCODUBI1]:Hide()
@@ -3915,7 +3694,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       aGet[ _CVALPR1 ]:lValid()
       oSayPr1:Show()
       oSayVp1:Show()
-      oSayPr1:SetText( retProp( aTmp[_CCODPR1], dbfPro ) )
+      oSayPr1:SetText( retProp( aTmp[_CCODPR1], TDataView():Propiedades( nView ) ) )
    else
       aGet[ _CVALPR1 ]:Hide()
       oSayPr1:Hide()
@@ -3927,7 +3706,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       aGet[ _CVALPR2 ]:lValid()
       oSayPr2:Show()
       oSayVp2:Show()
-      oSayPr2:SetText( retProp(  aTmp[_CCODPR2], dbfPro ) )
+      oSayPr2:SetText( retProp(  aTmp[_CCODPR2], TDataView():Propiedades( nView ) ) )
    else
       aGet[ _CVALPR2 ]:Hide()
       oSayPr2:Hide()
@@ -3994,7 +3773,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
       Return nil
    end if
 
-   if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
+   if !cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ) )
       MsgStop( "Código de almacen no encontrado" )
       Return nil
    end if
@@ -4168,7 +3947,7 @@ STATIC FUNCTION PrnSerie( oBrw )
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) )
    local oSayFmt
    local cSayFmt
    local oSerIni
@@ -4184,7 +3963,7 @@ STATIC FUNCTION PrnSerie( oBrw )
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -4283,7 +4062,7 @@ STATIC FUNCTION PrnSerie( oBrw )
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
       ID       90 ;
       COLOR    CLR_GET ;
-      VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      VALID    ( cDocumento( oFmtDoc, oSayFmt, TDataView():Documentos( nView ) ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "FP" ) ) ;
       OF       oDlg
@@ -4351,7 +4130,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) )
+               nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) )
 
                GenFacPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + (TDataView():FacturasProveedores( nView ))->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4377,7 +4156,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) )
+               nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) )
 
                GenFacPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + (TDataView():FacturasProveedores( nView ))->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4410,7 +4189,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) )
+                  nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) )
 
                   GenFacPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + (TDataView():FacturasProveedores( nView ))->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4438,7 +4217,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) )
+                  nCopyProvee    := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) )
 
                   GenFacPrv( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + (TDataView():FacturasProveedores( nView ))->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
 
@@ -4557,7 +4336,7 @@ RETURN .T.
 
 Static Function RecalculaTotal( aTmp )
 
-   nTotFacPrv( nil, TDataView():FacturasProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), dbfDiv, dbfTmpPgo, aTmp )
+   nTotFacPrv( nil, TDataView():FacturasProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), TDataView():Divisas( nView ), dbfTmpPgo, aTmp )
 
    if oBrwIva != nil
       oBrwIva:refresh()
@@ -4632,14 +4411,14 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas de proveedores"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) == 0, Max( Retfld( ( TDataView():FacturasProveedores( nView ) )->cCodPrv, TDataView():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", TDataView():Contadores( nView ) ) )
 
    if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "FP", dbfDoc )
+      cCodDoc           := cFirstDoc( "FP", TDataView():Documentos( nView ) )
    end if
 
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, TDataView():Documentos( nView ) )
       return nil
    end if
 
@@ -4647,9 +4426,9 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, TDataView():Documentos( nView ) )
 
-      PrintReportFacPrv( nDevice, nCopies, cPrinter, dbfDoc )
+      PrintReportFacPrv( nDevice, nCopies, cPrinter, TDataView():Documentos( nView ) )
 
    else
 
@@ -4657,7 +4436,7 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Recalculamos la factura
       */
 
-      nTotFacPrv( nFactura, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), dbfDiv, TDataView():FacturasProveedoresPagos( nView ) )
+      nTotFacPrv( nFactura, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():FacturasProveedoresPagos( nView ) )
 
       /*
       Buscamos el primer registro
@@ -4671,22 +4450,22 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       */
 
       ( TDataView():Proveedores( nView )   )->( dbSeek( ( TDataView():FacturasProveedores( nView ) )->cCodPrv ) )
-      ( dbfAlm   )->( dbSeek( ( TDataView():FacturasProveedores( nView ) )->cCodAlm ) )
-      ( dbfFPago )->( dbSeek( ( TDataView():FacturasProveedores( nView ) )->cCodPago) )
-      ( dbfDiv   )->( DbSeek( ( TDataView():FacturasProveedores( nView ) )->cDivFac ) )
+      ( TDataView():Almacen( nView )   )->( dbSeek( ( TDataView():FacturasProveedores( nView ) )->cCodAlm ) )
+      ( TDataView():FormasPago( nView ) )->( dbSeek( ( TDataView():FacturasProveedores( nView ) )->cCodPago) )
+      ( TDataView():Divisas( nView )   )->( DbSeek( ( TDataView():FacturasProveedores( nView ) )->cDivFac ) )
 
       private cDbf         := TDataView():FacturasProveedores( nView )
       private cDbfCol      := TDataView():FacturasProveedoresLineas( nView )
       private cDbfRec      := TDataView():FacturasProveedoresPagos( nView )
-      private cDbfAlm      := dbfAlm
+      private cDbfAlm      := TDataView():Almacen( nView )
       private cDbfPrv      := TDataView():Proveedores( nView )
-      private cDbfPgo      := dbfFPago
+      private cDbfPgo      := TDataView():FormasPago( nView )
       private cDbfIva      := TDataView():TiposIva( nView )
-      private cDbfDiv      := dbfDiv
+      private cDbfDiv      := TDataView():Divisas( nView )
       private cDbfArt      := TDataView():Articulos( nView )
       private cDbfKit      := TDataView():Kit( nView )
-      private cDbfPro      := dbfPro
-      private cDbfTblPro   := dbfTblPro
+      private cDbfPro      := TDataView():Propiedades( nView )
+      private cDbfTblPro   := TDataView():PropiedadesLineas( nView )
       private nTotPage     := nTotLFacPrv( TDataView():FacturasProveedoresLineas( nView ) )
       private cPinDivFac   := cPinDiv
       private cPirDivFac   := cPirDiv
@@ -4860,42 +4639,42 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
          */
 
-         if RetFld( aTmp[ _CCODPAGO ], dbfFPago, "LUTLBNC" )
+         if RetFld( aTmp[ _CCODPAGO ], TDataView():FormasPago( nView ), "LUTLBNC" )
 
-            if dbSeekInOrd( ( TDataView():Proveedores( nView ) )->Cod, "CCODDEF", dbfPrvBnc )
+            if dbSeekInOrd( ( TDataView():Proveedores( nView ) )->Cod, "CCODDEF", TDataView():BancosProveedores( nView ) )
 
                if !Empty( aGet[ _CBANCO ] )
-                  aGet[ _CBANCO ]:cText( ( dbfPrvBnc )->cCodBnc )
+                  aGet[ _CBANCO ]:cText( ( TDataView():BancosProveedores( nView ) )->cCodBnc )
                   aGet[ _CBANCO ]:lValid()
                end if
 
                if !Empty( aGet[ _CPAISIBAN ] )
-                  aGet[ _CPAISIBAN ]:cText( ( dbfPrvBnc )->cPaisIBAN )
+                  aGet[ _CPAISIBAN ]:cText( ( TDataView():BancosProveedores( nView ) )->cPaisIBAN )
                   aGet[ _CPAISIBAN ]:lValid()
                end if
 
                if !Empty( aGet[ _CCTRLIBAN ] )
-                  aGet[ _CCTRLIBAN ]:cText( ( dbfPrvBnc )->cCtrlIBAN )
+                  aGet[ _CCTRLIBAN ]:cText( ( TDataView():BancosProveedores( nView ) )->cCtrlIBAN )
                   aGet[ _CCTRLIBAN ]:lValid()
                end if
 
                if !Empty( aGet[ _CENTBNC ] )
-                  aGet[ _CENTBNC ]:cText( ( dbfPrvBnc )->cEntBnc )
+                  aGet[ _CENTBNC ]:cText( ( TDataView():BancosProveedores( nView ) )->cEntBnc )
                   aGet[ _CENTBNC ]:lValid()
                end if
 
                if !Empty( aGet[ _CSUCBNC ] )
-                  aGet[ _CSUCBNC ]:cText( ( dbfPrvBnc )->cSucBnc )
+                  aGet[ _CSUCBNC ]:cText( ( TDataView():BancosProveedores( nView ) )->cSucBnc )
                   aGet[ _CSUCBNC ]:lValid()
                end if
 
                if !Empty( aGet[ _CDIGBNC ] )
-                  aGet[ _CDIGBNC ]:cText( ( dbfPrvBnc )->cDigBnc )
+                  aGet[ _CDIGBNC ]:cText( ( TDataView():BancosProveedores( nView ) )->cDigBnc )
                   aGet[ _CDIGBNC ]:lValid()
                end if
 
                if !Empty( aGet[ _CCTABNC ] )
-                  aGet[ _CCTABNC ]:cText( ( dbfPrvBnc )->cCtaBnc )
+                  aGet[ _CCTABNC ]:cText( ( TDataView():BancosProveedores( nView ) )->cCtaBnc )
                   aGet[ _CCTABNC ]:lValid()
                end if
 
@@ -5216,9 +4995,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ;
                ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 
-               nPreCom           := nCosto( nil, TDataView():Articulos( nView ), TDataView():Kit( nView ), .f., aTmpFac[ _CDIVFAC ], dbfDiv )
+               nPreCom           := nCosto( nil, TDataView():Articulos( nView ), TDataView():Kit( nView ), .f., aTmpFac[ _CDIVFAC ], TDataView():Divisas( nView ) )
 
-               LoadPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfPro, dbfTblPro, dbfArtCom, oBrwPrp, aGet[ _NUNICAJA ], aGet[ _NPREUNIT ] )
+               LoadPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], TDataView():Propiedades( nView ), TDataView():PropiedadesLineas( nView ), TDataView():ArticuloPrecioPropiedades( nView ), oBrwPrp, aGet[ _NUNICAJA ], aGet[ _NPREUNIT ] )
 
                oGetIra:Show()
 
@@ -5235,7 +5014,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
                   end if
 
                   if oSayPr1 != nil
-                     oSayPr1:SetText( retProp( ( TDataView():Articulos( nView ) )->cCodPrp1, dbfPro ) )
+                     oSayPr1:SetText( retProp( ( TDataView():Articulos( nView ) )->cCodPrp1, TDataView():Propiedades( nView ) ) )
                      oSayPr1:Show()
                   end if
 
@@ -5266,7 +5045,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
                   end if
 
                   if oSayPr2 != nil
-                     oSayPr2:SetText( retProp( ( TDataView():Articulos( nView ) )->cCodPrp2, dbfPro ) )
+                     oSayPr2:SetText( retProp( ( TDataView():Articulos( nView ) )->cCodPrp2, TDataView():Propiedades( nView ) ) )
                      oSayPr2:Show()
                   end if
 
@@ -5319,7 +5098,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
                aGet[ _NPRECOM ]:cText( nNetUFacPrv( aTmp, aTmpFac, nDinDiv, nRinDiv, aTmpFac[ _NVDVFAC ] ) )
             end if
 
-            nPreCom              := nComPro( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], dbfArtCom )
+            nPreCom              := nComPro( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], TDataView():ArticuloPrecioPropiedades( nView ) )
             if nPrecom  != 0
 
                aGet[ _NPREUNIT ]:cText( nPreCom )
@@ -5333,7 +5112,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
                if nPreCom != 0
                   aGet[ _NPREUNIT ]:cText( nPreCom )
                else
-                  aGet[ _NPREUNIT ]:cText( nCosto( nil, TDataView():Articulos( nView ), TDataView():Kit( nView ), .f., aTmpFac[ _CDIVFAC ], dbfDiv ) )
+                  aGet[ _NPREUNIT ]:cText( nCosto( nil, TDataView():Articulos( nView ), TDataView():Kit( nView ), .f., aTmpFac[ _CDIVFAC ], TDataView():Divisas( nView ) ) )
                end if
 
             end if
@@ -5958,8 +5737,8 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
    local cRuta
    local cCodEmp
    local nImpDeta
-   local nDinDiv     := nDinDiv( ( TDataView():FacturasProveedores( nView ) )->cDivFac, dbfDiv )
-   local nRinDiv     := nRinDiv( ( TDataView():FacturasProveedores( nView ) )->cDivFac, dbfDiv )
+   local nDinDiv     := nDinDiv( ( TDataView():FacturasProveedores( nView ) )->cDivFac, TDataView():Divisas( nView ) )
+   local nRinDiv     := nRinDiv( ( TDataView():FacturasProveedores( nView ) )->cDivFac, TDataView():Divisas( nView ) )
    local aSimula     := {}
    local aIva        := {}
    local aVentas     := {}
@@ -6010,7 +5789,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
    Totales de las facturas
    */
 
-   aTotFac           := aTotFacPrv( nFactura, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), dbfDiv, TDataView():FacturasProveedoresPagos( nView ) )
+   aTotFac           := aTotFacPrv( nFactura, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():FacturasProveedoresPagos( nView ) )
    nTotFac           := aTotFac[ 4 ]
    aTotIva           := aTotFac[ 5 ]
    nTotRet           := aTotFac[ 6 ]
@@ -6441,7 +6220,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
          while ( ( TDataView():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( TDataView():FacturasProveedoresPagos( nView ) )->cSufFac = nFactura ) .and. !( TDataView():FacturasProveedoresPagos( nView ) )->( eof() )
 
-            lReturn  := CntRecPrv( lSimula, oTree, nAsiento, aSimula, .t., dbfRctPrvT, TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), dbfFPago, dbfDiv )
+            lReturn  := CntRecPrv( lSimula, oTree, nAsiento, aSimula, .t., TDataView():FacturasRectificativasProveedores( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), TDataView():FormasPago( nView ), TDataView():Divisas( nView ) )
 
             if IsFalse( lReturn )
                exit
@@ -6463,7 +6242,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
       else
 
-         lReturn  := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cFactura, {|| aWriteAsiento( aSimula, cCodDiv, .t., oTree, cFactura, nAsiento ), ChgContabilizado( .t., cFactura, nAsiento, oTree ) } )
+         lReturn  := msgTblCon( aSimula, cCodDiv, TDataView():Divisas( nView ), !lErrorFound, cFactura, {|| aWriteAsiento( aSimula, cCodDiv, .t., oTree, cFactura, nAsiento ), ChgContabilizado( .t., cFactura, nAsiento, oTree ) } )
 
       end if
 
@@ -6519,7 +6298,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
                               ( TDataView():AlbaranesProveedores( nView ) )->dFecAlb ,;
                               ( TDataView():AlbaranesProveedores( nView ) )->cCodPrv ,;
                               ( TDataView():AlbaranesProveedores( nView ) )->cNomPrv ,;
-                              nTotAlbPrv( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, TDataView():AlbaranesProveedores( nView ), TDataView():AlbaranesProveedoresLineas( nView ), TDataView():TiposIva( nView ), dbfDiv, nil, nil, .t. ) } )
+                              nTotAlbPrv( ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb, TDataView():AlbaranesProveedores( nView ), TDataView():AlbaranesProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), nil, nil, .t. ) } )
 
       endif
 
@@ -6684,7 +6463,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
       -----------------------------------------------------------------------
       */
 
-      nTotFacPrv( nil, TDataView():FacturasProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), dbfDiv, TDataView():FacturasProveedoresPagos( nView ), aTmp )
+      nTotFacPrv( nil, TDataView():FacturasProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():FacturasProveedoresPagos( nView ), aTmp )
 
    end if
 
@@ -6793,7 +6572,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
 
    end if
 
-   nTotFacPrv( nil, TDataView():FacturasProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), dbfDiv, TDataView():FacturasProveedoresPagos( nView ), aTmp )
+   nTotFacPrv( nil, TDataView():FacturasProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():FacturasProveedoresPagos( nView ), aTmp )
 
 RETURN lValid
 
@@ -7072,10 +6851,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       Obtenemos el nuevo numero de la factura----------------------------------
       */
 
-      nNumFac           := nNewDoc( cSerFac, TDataView():FacturasProveedores( nView ), "NFACPRV", , dbfCount )
+      nNumFac           := nNewDoc( cSerFac, TDataView():FacturasProveedores( nView ), "NFACPRV", , TDataView():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
 
-      nNumNFC           := nNewNFC( cSerFac, TDataView():FacturasProveedores( nView ), "NFACPRV", dbfCount )
+      nNumNFC           := nNewNFC( cSerFac, TDataView():FacturasProveedores( nView ), "NFACPRV", TDataView():Contadores( nView ) )
       aTmp[ _CNFC    ]  := nNumNFC
 
       aTmp[ _LIMPALB ]  := !Empty( aNumAlb ) .or. !Empty( aTmp[ _CNUMALB ] )
@@ -7257,7 +7036,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Generar los pagos de las facturas-------------------------------------------
    */
 
-   GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), TDataView():TiposIva( nView ), dbfFPago, dbfDiv )
+   GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), TDataView():TiposIva( nView ), TDataView():FormasPago( nView ), TDataView():Divisas( nView ) )
 
    if nMode == APPD_MODE
 
@@ -7729,7 +7508,7 @@ static function lGenFac( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   IF !( dbfDoc )->( dbSeek( "FP" ) )
+   IF !( TDataView():Documentos( nView ) )->( dbSeek( "FP" ) )
 
          DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
@@ -7742,13 +7521,13 @@ static function lGenFac( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->cTipo == "FP" .AND. !( dbfDoc )->( eof() )
+      WHILE ( TDataView():Documentos( nView ) )->cTipo == "FP" .AND. !( TDataView():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenFac( nDevice, "Imprimiendo facturas de proveedores", ( dbfDoc )->Codigo )
+         bAction  := bGenFac( nDevice, "Imprimiendo facturas de proveedores", ( TDataView():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( TDataView():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( TDataView():Documentos( nView ) )->( dbSkip() )
 
       END DO
 
@@ -7920,7 +7699,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura, cDivFac )
       Chequea si la factura esta liquidada----------------------------------------
       */
 
-      ChkLqdFacPrv( nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():TiposIva( nView ), dbfDiv )
+      ChkLqdFacPrv( nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ) )
 
    end if
 
@@ -8212,7 +7991,7 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Artículos", ( TDataView():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Precios por propiedades", ( dbfArtCom )->( Select() ) )
+   oFr:SetWorkArea(     "Precios por propiedades", ( TDataView():ArticuloPrecioPropiedades( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
 
    oFr:SetWorkArea(     "Incidencias de facturas", ( TDataView():FacturasProveedoresIncidencias( nView ) )->( Select() ) )
@@ -8221,16 +8000,16 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Documentos de facturas", ( TDataView():FacturasProveedoresDocumentos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de facturas", cItemsToReport( aFacPrvDoc() ) )
 
-   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
+   oFr:SetWorkArea(     "Empresa", ( TDataView():Empresa( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
    oFr:SetWorkArea(     "Proveedores", ( TDataView():Proveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Proveedores", cItemsToReport( aItmPrv() ) )
 
-   oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
+   oFr:SetWorkArea(     "Almacenes", ( TDataView():Almacen( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetWorkArea(     "Formas de pago", ( TDataView():FormasPago( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    oFr:SetWorkArea(     "Artículos", ( TDataView():Articulos( nView ) )->( Select() ) )
@@ -8242,7 +8021,7 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Bancos", ( dbfPrvBnc )->( Select() ) )
+   oFr:SetWorkArea(     "Bancos", ( TDataView():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
    if lTemporal
@@ -8301,16 +8080,16 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Documentos de facturas", ( TDataView():FacturasProveedoresDocumentos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de facturas", cItemsToReport( aFacPrvDoc() ) )
 
-   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
+   oFr:SetWorkArea(     "Empresa", ( TDataView():Empresa( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
    oFr:SetWorkArea(     "Proveedores", ( TDataView():Proveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Proveedores", cItemsToReport( aItmPrv() ) )
 
-   oFr:SetWorkArea(     "Almacenes", ( dbfAlm )->( Select() ) )
+   oFr:SetWorkArea(     "Almacenes", ( TDataView():Almacen( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetWorkArea(     "Formas de pago", ( TDataView():FormasPago( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    oFr:SetWorkArea(     "Artículos", ( TDataView():Articulos( nView ) )->( Select() ) )
@@ -8322,7 +8101,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Bancos", ( dbfPrvBnc )->( Select() ) )
+   oFr:SetWorkArea(     "Bancos", ( TDataView():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",      {|| ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac } )
@@ -8721,7 +8500,7 @@ Return .t.
 Devuelve el importe total de pagos de una factura de proveedores
 */
 
-FUNCTION nPagFacPrv( cFactura, cFacPrvP, cDivRet, dbfDiv, lOnlyCob, aTmp )
+FUNCTION nPagFacPrv( cFactura, cFacPrvP, cDivRet, cDiv, lOnlyCob, aTmp )
 
    local nRec
    local nOrd
@@ -8733,7 +8512,7 @@ FUNCTION nPagFacPrv( cFactura, cFacPrvP, cDivRet, dbfDiv, lOnlyCob, aTmp )
    DEFAULT cDivRet      := cDivEmp()
    DEFAULT lOnlyCob     := .t.
 
-   nRinDiv              := nRinDiv( cDivRet, dbfDiv )
+   nRinDiv              := nRinDiv( cDivRet, cDiv )
 
    /*
    Si nos pasan la divisa tomamos el valor de la misma-------------------------
@@ -8818,7 +8597,7 @@ RETURN nBitmap
 Comprueba si una factura esta liquidada
 */
 
-FUNCTION ChkLqdFacPrv( aTmp, cFacPrvT, cFacPrvL, cFacPrvP, cIva, dbfDiv )
+FUNCTION ChkLqdFacPrv( aTmp, cFacPrvT, cFacPrvL, cFacPrvP, cIva, cDiv )
 
    local oError
    local oBlock
@@ -8838,8 +8617,8 @@ FUNCTION ChkLqdFacPrv( aTmp, cFacPrvT, cFacPrvL, cFacPrvP, cIva, dbfDiv )
       cDivFac        := ( cFacPrvT )->cDivFac
    end if
 
-   nPagFac           := abs( nPagFacPrv( cNumFac, cFacPrvP, cDivFac, dbfDiv ) )
-   nTotFac           := abs( nTotFacPrv( cNumFac, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, nil, nil, .f. ) )
+   nPagFac           := abs( nPagFacPrv( cNumFac, cFacPrvP, cDivFac, cDiv ) )
+   nTotFac           := abs( nTotFacPrv( cNumFac, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, nil, nil, .f. ) )
 
    if aTmp != nil
       aTmp[ _LLIQUIDADA ]           := ( ( nPagFac == nTotFac ) .or. ( nPagFac > nTotFac ) )
@@ -8993,7 +8772,7 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDbfDiv, cFacPrvP, aTmp, cDivRet, lPic )
+FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, cDivRet, lPic )
 
    local bCondition
    local nTotalArt
@@ -9021,7 +8800,7 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDbfDiv, cFacPrvP, aTmp
    DEFAULT cFacPrvT  := TDataView():FacturasProveedores( nView )
    DEFAULT cFacPrvL  := TDataView():FacturasProveedoresLineas( nView )
    DEFAULT cIva      := TDataView():TiposIva( nView )
-   DEFAULT cDbfDiv   := dbfDiv
+   DEFAULT cDiv      := TDataView():Divisas( nView )
    DEFAULT cFacPrvP  := TDataView():FacturasProveedoresPagos( nView )
    DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
    DEFAULT lPic      := .f.
@@ -9092,10 +8871,10 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDbfDiv, cFacPrvP, aTmp
    Cargamos los pictures dependiendo de la moneda
    */
 
-   cPinDiv           := cPinDiv( cCodDiv, cDbfDiv )
-   cPirDiv           := cPirDiv( cCodDiv, cDbfDiv )
-   nDinDiv           := nDinDiv( cCodDiv, cDbfDiv )
-   nRinDiv           := nRinDiv( cCodDiv, cDbfDiv )
+   cPinDiv           := cPinDiv( cCodDiv, cDiv )
+   cPirDiv           := cPirDiv( cCodDiv, cDiv )
+   nDinDiv           := nDinDiv( cCodDiv, cDiv )
+   nRinDiv           := nRinDiv( cCodDiv, cDiv )
 
    if !lFacGas
 
@@ -9312,7 +9091,7 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDbfDiv, cFacPrvP, aTmp
    */
 
    if cFacPrvP != nil
-      nPagFac        := nPagFacPrv( cFactura, cFacPrvP, cCodDiv, cDbfDiv, .t., aTmp )
+      nPagFac        := nPagFacPrv( cFactura, cFacPrvP, cCodDiv, cDiv, .t., aTmp )
    end if
 
    aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
@@ -9326,14 +9105,14 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDbfDiv, cFacPrvP, aTmp
       nTotIva        := nCnv2Div( nTotIva, cCodDiv, cDivRet )
       nTotReq        := nCnv2Div( nTotReq, cCodDiv, cDivRet )
       nTotFac        := nCnv2Div( nTotFac, cCodDiv, cDivRet )
-      cPirDiv        := cPirDiv( cDivRet, cDbfDiv )
+      cPirDiv        := cPirDiv( cDivRet, cDiv )
    end if
 
 RETURN ( if( lPic, Trans( nTotFac, cPirDiv ), nTotFac ) )
 
 //--------------------------------------------------------------------------//
 
-function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cIva, dbfDiv, nYear )
+function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cIva, cDiv, nYear )
 
    local nCon     := 0
    local nRec     := ( cFacPrvT )->( Recno() )
@@ -9350,7 +9129,7 @@ function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cIva, dbfDiv, 
             ( dHasta == nil .or. ( cFacPrvT )->dFecFac <= dHasta )    .and.;
             ( nYear == nil .or. Year( ( cFacPrvT )->dFecFac ) == nYear )
 
-            nCon  += nTotFacPrv( ( cFacPrvT )->cSerFac + Str( (cFacPrvT)->nNumFac ) + (cFacPrvT)->cSufFac, cFacPrvT, cFacPrvL, cIva, dbfDiv, nil, nil, cDivEmp(), .f. )
+            nCon  += nTotFacPrv( ( cFacPrvT )->cSerFac + Str( (cFacPrvT)->nNumFac ) + (cFacPrvT)->cSufFac, cFacPrvT, cFacPrvL, cIva, cDiv, nil, nil, cDivEmp(), .f. )
 
          end if
 
@@ -9369,7 +9148,7 @@ return nCon
 // Devuelve el total de pagos en Facturas de un clientes determinado
 //
 
-function nCobFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvP, cIva, dbfDiv, lOnlyCob, nYear )
+function nCobFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvP, cIva, cDiv, lOnlyCob, nYear )
 
    local nCob        := 0
    local nOrd        := ( cFacPrvT )->( OrdSetFocus( "cCodPrv" ) )
@@ -9389,7 +9168,7 @@ function nCobFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvP, cIva, dbfDiv, 
             ( dHasta == nil .or. ( cFacPrvT )->DFECFAC <= dHasta ) .and.;
             ( nYear == nil .or. Year( ( cFacPrvT )->dFecFac ) == nYear )
 
-            nCob  += nPagFacPrv( ( cFacPrvT )->cSerFac + Str( (cFacPrvT)->nNumFac ) + (cFacPrvT)->cSufFac, cFacPrvP, cDivEmp(), dbfDiv, lOnlyCob )
+            nCob  += nPagFacPrv( ( cFacPrvT )->cSerFac + Str( (cFacPrvT)->nNumFac ) + (cFacPrvT)->cSufFac, cFacPrvP, cDivEmp(), cDiv, lOnlyCob )
 
          end if
 
@@ -9670,7 +9449,7 @@ RETURN nBitmap
 Genera los recibos de una factura
 */
 
-FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPago, dbfDiv, aTmp )
+FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, cFPago, cDiv, aTmp )
 
    local nCobro
    local cCodPgo
@@ -9748,9 +9527,9 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPa
    Comprobar q el total de factura no es igual al de pagos
    */
 
-   nTotal            := nTotFacPrv( cNumFac, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, nil, nil, .f. )
-   nTotCob           := nPagFacPrv( cNumFac, cFacPrvP, nil, dbfDiv, .f. )
-   nDec              := nRouDiv( cDivFac, dbfDiv ) // Decimales de la divisa redondeada
+   nTotal            := nTotFacPrv( cNumFac, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, nil, nil, .f. )
+   nTotCob           := nPagFacPrv( cNumFac, cFacPrvP, nil, cDiv, .f. )
+   nDec              := nRouDiv( cDivFac, cDiv ) // Decimales de la divisa redondeada
 
    if nTotal != nTotCob
 
@@ -9770,16 +9549,16 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPa
          end while
       end if
 
-      nTotal         -= nPagFacPrv( cNumFac, cFacPrvP, nil, dbfDiv, .f. )
+      nTotal         -= nPagFacPrv( cNumFac, cFacPrvP, nil, cDiv, .f. )
 
       /*
       Genera pagos
       */
 
-      if ( dbfFPago )->( dbSeek( cCodPgo ) )
+      if ( cFPago )->( dbSeek( cCodPgo ) )
 
          nTotAcu        := nTotal
-         nPlazos        := Max( ( dbfFPago )->nPlazos, 1 )
+         nPlazos        := Max( ( cFPago )->nPlazos, 1 )
 
          for n := 1 to nPlazos
 
@@ -9800,10 +9579,10 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPa
             ( cFacPrvP )->cDescrip      := "Recibo nº" + AllTrim( Str( ( cFacPrvP )->nNumRec ) ) + " de factura " + cSerFac  + '/' + allTrim( Str( nNumFac ) ) + '/' + cSufFac
             ( cFacPrvP )->cDivPgo       := cDivFac
             ( cFacPrvP )->nVdvPgo       := nVdvFac
-            ( cFacPrvP )->lCobRado      := ( ( dbfFPago )->nCobRec == 1 )
+            ( cFacPrvP )->lCobRado      := ( ( cFPago )->nCobRec == 1 )
             ( cFacPrvP )->dPreCob       := dFecFac
-            ( cFacPrvP )->dFecVto       := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), cPrv )
-            ( cFacPrvP )->cCtaRec       := ( dbfFPago )->cCtaCobro
+            ( cFacPrvP )->dFecVto       := dNexDay( dFecFac + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cPrv )
+            ( cFacPrvP )->cCtaRec       := ( cFPago )->cCtaCobro
             ( cFacPrvP )->dFecChg       := GetSysDate()
             ( cFacPrvP )->cTimChg       := Time()
             ( cFacPrvP )->cCodPgo       := cCodPgo
@@ -9811,14 +9590,14 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPa
             ( cFacPrvP )->cCodCaj       := cCodCaj
             ( cFacPrvP )->cCodUsr       := cCodUsr
 
-            if ( dbfFPago )->lUtlBnc
-               ( cFacPrvP )->cEPaisIBAN := ( dbfFPago )->cPaisIBAN
-               ( cFacPrvP )->cECtrlIBAN := ( dbfFPago )->cCtrlIBAN
-               ( cFacPrvP )->cBncEmp    := ( dbfFPago )->cBanco
-               ( cFacPrvP )->cEntEmp    := ( dbfFPago )->cEntBnc
-               ( cFacPrvP )->cSucEmp    := ( dbfFPago )->cSucBnc
-               ( cFacPrvP )->cDigEmp    := ( dbfFPago )->cDigBnc
-               ( cFacPrvP )->cCtaEmp    := ( dbfFPago )->cCtaBnc
+            if ( cFPago )->lUtlBnc
+               ( cFacPrvP )->cEPaisIBAN := ( cFPago )->cPaisIBAN
+               ( cFacPrvP )->cECtrlIBAN := ( cFPago )->cCtrlIBAN
+               ( cFacPrvP )->cBncEmp    := ( cFPago )->cBanco
+               ( cFacPrvP )->cEntEmp    := ( cFPago )->cEntBnc
+               ( cFacPrvP )->cSucEmp    := ( cFPago )->cSucBnc
+               ( cFacPrvP )->cDigEmp    := ( cFPago )->cDigBnc
+               ( cFacPrvP )->cCtaEmp    := ( cFPago )->cCtaBnc
             end if
 
             ( cFacPrvP )->cPaisIBAN     := cPaisIBAN
@@ -9829,8 +9608,8 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, dbfFPa
             ( cFacPrvP )->cDigPrv       := cControl
             ( cFacPrvP )->cCtaPrv       := cCuenta
 
-            if ( dbfFPago )->nCobRec == 1
-               ( cFacPrvP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), cPrv )
+            if ( cFPago )->nCobRec == 1
+               ( cFacPrvP )->dEntrada   := dNexDay( dFecFac + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cPrv )
             end if
 
             ( cFacPrvP )->( dbUnLock() )
@@ -10119,19 +9898,19 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 Devuelve un array con el neto, impuestos, recargo y total
 */
 
-FUNCTION aTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, cDivRet )
+FUNCTION aTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, cDivRet )
 
-   nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, nil, cDivRet )
+   nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, nil, cDivRet )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, aTotIva, nTotRet } )
 
 //---------------------------------------------------------------------------//
 
-Function sTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, cDivRet )
+Function sTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, cDivRet )
 
    local sTotal
 
-   nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, dbfDiv, cFacPrvP, nil, cDivRet )
+   nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, nil, cDivRet )
 
    sTotal                                 := sTotal()
    sTotal:nTotalBruto                     := nTotBrt
@@ -10657,7 +10436,7 @@ Function SynFacPrv( cPath )
 
       if ( dbfFacPrvT )->nTotFac == 0 .and. dbLock( dbfFacPrvT )
 
-         aTotFac                 := aTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, ( dbfFacPrvT )->cDivFac )
+         aTotFac                 := aTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, ( dbfFacPrvT )->dbfDivFac )
 
          ( dbfFacPrvT )->nTotNet := aTotFac[1]
          ( dbfFacPrvT )->nTotIva := aTotFac[2]
@@ -11727,7 +11506,7 @@ Function cCtaFacPrv( cFacPrvT, cFacPrvP, cBncPrv )
 
    DEFAULT cFacPrvT  := TDataView():FacturasProveedores( nView )
    DEFAULT cFacPrvP  := TDataView():FacturasProveedoresPagos( nView )
-   DEFAULT cBncPrv   := dbfPrvBnc
+   DEFAULT cBncPrv   := TDataView():BancosProveedores( nView )
 
    cCtaFacPrv        := Rtrim( ( cFacPrvT )->cEntBnc + ( cFacPrvT )->cSucBnc + ( cFacPrvT )->cDigBnc + ( cFacPrvT )->cCtaBnc )
 
@@ -11750,7 +11529,7 @@ Function lRectificadaPrv( cNumFac, cFacPrvT, cRctPrvT )
    local lRectificada   := .f.
 
    DEFAULT cFacPrvT     := TDataView():FacturasProveedores( nView )
-   DEFAULT cRctPrvT     := dbfRctPrvT
+   DEFAULT cRctPrvT     := TDataView():FacturasRectificativasProveedores( nView )
    DEFAULT cNumFac      := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
 
    if dbSeekInOrd( cNumFac, "CNUMFAC", cRctPrvT )
@@ -11922,7 +11701,7 @@ FUNCTION cBarPrp1FacPrv( uFacPrvL, uTblPro )
    local cBarPrp1    := ""
 
    DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, TDataView():FacturasProveedoresLineas( nView ) )
-   DEFAULT uTblPro   := dbfTblPro
+   DEFAULT uTblPro   := TDataView():PropiedadesLineas( nView )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr1 + ( uFacPrvL )->cValPr1, "cCodPro", uTblPro )
       cBarPrp1       := ( uTblPro )->nBarTbl
@@ -11937,7 +11716,7 @@ FUNCTION cBarPrp2FacPrv( uFacPrvL, uTblPro )
    local cBarPrp2    := ""
 
    DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, TDataView():FacturasProveedoresLineas( nView ) )
-   DEFAULT uTblPro   := dbfTblPro
+   DEFAULT uTblPro   := TDataView():PropiedadesLineas( nView )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr2 + ( uFacPrvL )->cValPr2, "cCodPro", uTblPro )
       cBarPrp2       := ( uTblPro )->nBarTbl
@@ -12221,7 +12000,7 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
             BITMAP   "LUPA" ;
             OF       ::oFld:aDialogs[ 1 ]
 
-            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "FL" ) }
+            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, TDataView():Documentos( nView ), "FL" ) }
             ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "FL" ) }
 
          TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
@@ -12613,7 +12392,7 @@ Method lPrintLabels() CLASS TFacturaProveedorLabelGenerator
       Manejador de eventos--------------------------------------------------------
       */
 
-      oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+      oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( TDataView():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
       /*
       Zona de datos---------------------------------------------------------------
@@ -12625,9 +12404,9 @@ Method lPrintLabels() CLASS TFacturaProveedorLabelGenerator
       Cargar el informe-----------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !Empty( ( TDataView():Documentos( nView ) )->mReport )
 
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+         oFr:LoadFromBlob( ( TDataView():Documentos( nView ) )->( Select() ), "mReport")
 
          /*
          Zona de variables--------------------------------------------------------
@@ -12977,7 +12756,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Function DesignLabelFacPrv( oFr, dbfDoc )
+Function DesignLabelFacPrv( oFr, cDoc )
 
    local oLabel   := TFacturaProveedorLabelGenerator():Init()
 
@@ -12994,9 +12773,9 @@ Function DesignLabelFacPrv( oFr, dbfDoc )
       Paginas y bandas------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !Empty( ( cDoc )->mReport )
 
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+         oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
 
       else
 
@@ -13052,7 +12831,7 @@ Return .t.
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-Function DesignReportFacPrv( oFr, dbfDoc )
+Function DesignReportFacPrv( oFr, cDoc )
 
    local lOpen    := .f.
    local lFlag    := .f.
@@ -13084,9 +12863,9 @@ Function DesignReportFacPrv( oFr, dbfDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !Empty( ( cDoc )->mReport )
 
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+         oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
 
       else
 
@@ -13161,7 +12940,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportFacPrv( nDevice, nCopies, cPrinter, dbfDoc )
+Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
    local cFilePdf       := cPatTmp() + "FacturaProveedor" + StrTran( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, " ", "" ) + ".Pdf"
@@ -13184,7 +12963,7 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, dbfDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( cDoc )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -13197,9 +12976,9 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !Empty( ( cDoc )->mReport )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -13405,7 +13184,7 @@ Function BrwFacPrv( oGet, oIva )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotFacPrv( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), dbfDiv, TDataView():FacturasProveedoresPagos( nView ), nil, cDivEmp(), .t. ) }
+         :bEditValue       := {|| nTotFacPrv( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():FacturasProveedoresPagos( nView ), nil, cDivEmp(), .t. ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -13541,7 +13320,7 @@ FUNCTION BrowseInformesFacPrv( oGet, oGet2 )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotFacPrv( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), dbfDiv, TDataView():FacturasProveedoresPagos( nView ), nil, cDivEmp(), .f. ) }
+         :bEditValue       := {|| nTotFacPrv( ( TDataView():FacturasProveedores( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedores( nView ) )->nNumFac ) + ( TDataView():FacturasProveedores( nView ) )->cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():FacturasProveedoresPagos( nView ), nil, cDivEmp(), .f. ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
