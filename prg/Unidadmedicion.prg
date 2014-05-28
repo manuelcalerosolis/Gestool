@@ -13,6 +13,8 @@ REQUEST DBFCDX
 
 CLASS UniMedicion FROM TMant
 
+   DATA  cName             INIT "UnidadMedicion"
+
    DATA  cMru              INIT "Worker_Folder_Blue_16"
 
    DATA  oGetDimension
@@ -27,7 +29,7 @@ CLASS UniMedicion FROM TMant
 
    METHOD OpenFiles( lExclusive )
 
-   METHOD OpenService( lExclusive )
+   METHOD OpenService( lExclusive )             INLINE ( ::OpenFiles( lExclusive ) )
 
    METHOD DefineFiles()
 
@@ -77,39 +79,6 @@ METHOD New( cPath, oWndParent, oMenuItem )
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive )
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         
-
-   DEFAULT  lExclusive  := .f.
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::DefineFiles()
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos de unidades de medición" + CRLF + ErrorMessage( oError )  )
-
-      ::CloseFiles()
-
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
 
 METHOD OpenFiles( lExclusive )
 

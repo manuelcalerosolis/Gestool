@@ -3583,6 +3583,12 @@ METHOD BuildEmpresa()
    oDataTable              := TGrpPrv():Create( cPatPrv() )
    ::AddEmpresaObject( oDataTable )
 
+   oDataTable              := UniMedicion():Create()
+   ::AddEmpresaObject( oDataTable )
+
+   oDataTable              := TBancos():Create()
+   ::AddEmpresaObject( oDataTable )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

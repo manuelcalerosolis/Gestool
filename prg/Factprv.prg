@@ -329,8 +329,6 @@ static oGetPdt
 static oUsr
 static cUsr
 static oFntTot
-static oBanco
-static oUndMedicion
 
 static oMnuPgo
 static oMnuRec
@@ -454,22 +452,19 @@ STATIC FUNCTION OpenFiles( lExt )
 
       // Unidades de medicion
 
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
-      if !oUndMedicion:OpenFiles()
-         lOpenFiles     := .f.
-      end if
+      TDataView():GetObject( "UnidadMedicion", nView )
 
-      oBandera          := TBandera():New()
+      TDataView():GetObject( "Bancos", nView )
 
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oBanco            := TBancos():Create()
-      if !oBanco:OpenFiles()
-         lOpenFiles     := .f.
-      end if
+
+
+
+      oBandera          := TBandera():New()
 
       oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
 
@@ -537,24 +532,14 @@ Static Function CloseFiles()
 
    DestroyFastFilter( TDataView():FacturasProveedores( nView ), .t., .t. )
 
-   if !Empty( oUndMedicion )
-      oUndMedicion:end()
-   end if
-
    if oStock != nil
       oStock:end()
-   end if
-
-   if oBanco != nil
-      oBanco:CloseFiles()
-      oBanco:End()
    end if
 
    TDataView():DeleteView( nView )
 
    oBandera    := nil
    oStock      := nil
-   oBanco      := nil
 
    lOpenFiles  := .f.
 
@@ -2262,14 +2247,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          end with
 
          if nMode != ZOOM_MODE
-            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():GetObject( "Bancos", nView ), oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
          end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
+         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():GetObject( "Bancos", nView ), oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -2477,7 +2462,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmp, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
 
-      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
+      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():GetObject( "Bancos", nView ), oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
       oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ExtDelRecPrv( dbfTmpPgo ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
 
       oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
@@ -3010,8 +2995,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          IDTEXT   153 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oUndMedicion:Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
-         ON HELP  ( oUndMedicion:Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
+         VALID    ( TDataView():GetObject( "UnidadMedicion", nView ):Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
+         ON HELP  ( TDataView():GetObject( "UnidadMedicion", nView ):Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
          OF       oFld:aDialogs[1]
 
       // Campos de las descripciones de la unidad de medición
@@ -3721,20 +3706,20 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
-   if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
+   if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+         aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
          aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+         aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
          aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+         aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
          aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
@@ -7888,11 +7873,11 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
    if ( Empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
 
-      if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-         if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+         if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
             if !Empty( aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
                aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( TDataView():Articulos( nView ) )->nLngArt )
                aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
@@ -7907,9 +7892,9 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+         if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
             if !Empty( aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
                aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( TDataView():Articulos( nView ) )->nAltArt )
                aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
@@ -7925,9 +7910,9 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+         if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
             if !Empty( aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
                aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( TDataView():Articulos( nView ) ) ->nAncArt )
                aGet[ ( TDataView():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
@@ -8018,8 +8003,8 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Código de proveedores", ( TDataView():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  TDataView():GetObject( "UnidadMedicion", nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( TDataView():GetObject( "UnidadMedicion", nView ):oDbf ) )
 
    oFr:SetWorkArea(     "Bancos", ( TDataView():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
@@ -8098,8 +8083,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Código de proveedores", ( TDataView():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  TDataView():GetObject( "UnidadMedicion", nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( TDataView():GetObject( "UnidadMedicion", nView ):oDbf ) )
 
    oFr:SetWorkArea(     "Bancos", ( TDataView():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )

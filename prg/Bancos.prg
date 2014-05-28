@@ -6,6 +6,8 @@
 
 CLASS TBancos FROM TMant
 
+   DATA  cName          INIT "Bancos"  
+
    DATA  cMru           INIT "Banc_16"
 
    DATA  cBitmap        INIT clrTopArchivos
