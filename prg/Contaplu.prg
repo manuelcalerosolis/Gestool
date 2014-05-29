@@ -2416,7 +2416,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
       else
 
          if lMessage
-            msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
+            msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
       end if
@@ -2460,7 +2460,7 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
    else
 
       if lMessage
-         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo balances" )
+         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo balances" )
       end if
 
       Return nil
@@ -2504,7 +2504,7 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
    else
 
       if lMessage
-         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
+         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
       end if
 
       Return nil
