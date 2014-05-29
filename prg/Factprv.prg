@@ -4474,7 +4474,7 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
          oInf:lAutoLand          := .f.
          oInf:lFinish            := .f.
          oInf:lNoCancel          := .t.
-         oInf:bSkip              := {|| FacPrvReportSkipper( TDataView():FacturasProveedoresLineas( nView ) ) }
+         oInf:bSkip              := {|| FacPrvReportSkipper() }
 
          oInf:oDevice:lPrvModal  := .t.
 
@@ -4515,7 +4515,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function FacPrvReportSkipper( dbf )
+Static Function FacPrvReportSkipper()
 
    ( TDataView():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 
