@@ -2580,6 +2580,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedPrvI"
    oDataTable:cName        := cPatEmp() + "PedPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedPrvI.Cdx"
@@ -2588,6 +2589,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedPrvD"
    oDataTable:cName        := cPatEmp() + "PedPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedPrvD.Cdx"
@@ -4950,6 +4952,10 @@ CLASS TDataView
 
    METHOD PedidosProveedoresLineas( nView )        INLINE ( ::Get( "PedProvL", nView ) )
       METHOD PedidosProveedoresLineasId( nView )   INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
+
+   METHOD PedidosProveedoresIncidencias( nView )   INLINE ( ::Get( "PedPrvI", nView ) )
+
+   METHOD PedidosProveedoresDocumentos( nView )    INLINE ( ::Get( "PedPrvD", nView ) )
 
    METHOD Proveedores( nView )               INLINE ( ::Get( "Provee", nView ) )
       METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
