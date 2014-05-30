@@ -1326,7 +1326,7 @@ METHOD EvalSelect( bAction ) CLASS TMasDet
    if ::lMoveDlgSelect
       aPos        := { 0, 0 }
       ClientToScreen( ::oDlgSelect:hWnd, aPos )
-      ::oDlgSelect:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
+      ::oDlgSelect:Move( aPos[ 1 ] - 26, aPos[ 2 ] - 510 )
    end if
 
    ::oDbf:GetStatus()

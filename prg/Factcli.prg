@@ -6970,7 +6970,7 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
    if lChk1
       aPos        := { 0, 0 }
       ClientToScreen( oDlg:hWnd, aPos )
-      oDlg:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
+      oDlg:Move( aPos[ 1 ] - 26, aPos[ 2 ] - 510 )
    end if
 
    /*

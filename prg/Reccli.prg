@@ -1736,7 +1736,7 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
    if lSimula
       aPos              := { 0, 0 }
       ClientToScreen( oDlg:hWnd, aPos )
-      oDlg:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
+      oDlg:Move( aPos[ 1 ] - 26, aPos[ 2 ] - 510 )
    end if
 
    /*
