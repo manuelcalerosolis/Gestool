@@ -109,12 +109,16 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
    DEFAULT lMessage  := .f.
    DEFAULT cText     := Space( 1 )
 
+   if lAplicacionA3()
+      Return ( .t. )
+   end if 
+
    if Empty( cRuta )
-      return .f.
+      Return ( .f. )
    end if
 
    if ( Empty( dFecha ) .or. Empty( cRuta ) )
-      return .t.
+      Return ( .t. )
    end if
 
    if Empty( cEmpresa )
@@ -134,7 +138,7 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
    else
 
       lValidFecha          := .f.
-      cText                += "Empresa no enContrapartidada"
+      cText                += "Empresa no encontrada"
 
       if lMessage
          msgStop( cText )
@@ -187,6 +191,10 @@ FUNCTION ChkEmpresaContaplus( cRuta, cCodEmp, oGetEmp, lMessage )
    DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT lMessage  := .f.
 
+   if lAplicacionA3()
+      Return ( .t. )
+   end if 
+
    if Empty( cRuta )
       Return ( .f. )
    end if
@@ -214,7 +222,7 @@ FUNCTION ChkEmpresaContaplus( cRuta, cCodEmp, oGetEmp, lMessage )
       end if
    else
       if lMessage
-         msgStop( "Empresa no enContrapartidada" )
+         msgStop( "Empresa no encontrada" )
       end if
    end if
 
@@ -456,7 +464,7 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
    else
 
       if lMensaje
-         MsgStop( "Empresa " + cCodEmp + " no enContrapartidada." )
+         MsgStop( "Empresa " + cCodEmp + " no encontrada." )
       end if
 
    end if
@@ -501,7 +509,7 @@ FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
    else
 
       if lMensaje
-         MsgStop( "Empresa " + cCodEmp + " no enContrapartidada." )
+         MsgStop( "Empresa " + cCodEmp + " no encontrada." )
       end if
 
    end if
@@ -618,7 +626,7 @@ FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lEmpty 
    else
 
       if lMessage
-         msgStop( "Subcuenta : " + cCodSubcuenta + CRLF + "no enContrapartidada", "Contaplus" )
+         msgStop( "Subcuenta : " + cCodSubcuenta + CRLF + "no encontrada", "Contaplus" )
       end if
 
       lReturn        := .f.
@@ -1130,6 +1138,10 @@ FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
    local oBlock
 	local cCtaEsp		:= ""
 
+   if lAplicacionA3()
+      Return ( cCtaEsp )
+   end if
+
 	DEFAULT nCuenta	:= 1
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT lMessage  := .f.
@@ -1171,7 +1183,7 @@ FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
 
    ErrorBlock( oBlock )
 
-RETURN cCtaEsp
+RETURN ( cCtaEsp )
 
 //----------------------------------------------------------------------------//
 
@@ -1185,6 +1197,10 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
 
    local oError
    local oBlock
+
+   if lAplicacionA3()
+      Return ( .t. )
+   end if
 
    DEFAULT cRuta     := cRutCnt()
    DEFAULT cCodEmp   := cEmpCnt()
@@ -1277,6 +1293,10 @@ Function RetLastAsi()
    local nRecno
    local nLastAsi    := 0
 
+   if lAplicacionA3()
+      Return ( nLastAsi )
+   end if
+
    if !Empty( cDiario ) .and. ( cDiario )->( Used() )
 
       nRecno         := ( cDiario )->( Recno() )
@@ -1324,6 +1344,7 @@ FUNCTION MkAsiento( 	Asien,;
    local oError
    local oBlock
    local nImporte
+   local aAsiento
 
    DEFAULT cDivisa         := cDivEmp()
    DEFAULT lRectificativa  := .f.
@@ -1365,40 +1386,40 @@ FUNCTION MkAsiento( 	Asien,;
       */
 
       if !uFieldEmpresa( "lAptNeg" ) .and. ( nImporteDebe < 0 .or. nImporteHaber < 0 )
-         nImporte             := abs( nImporteDebe )
-         nImporteDebe         := abs( nImporteHaber )
-         nImporteHaber        := nImporte
-         BaseImponible        := abs( BaseImponible )
+         nImporte          := abs( nImporteDebe )
+         nImporteDebe      := abs( nImporteHaber )
+         nImporteHaber     := nImporte
+         BaseImponible     := abs( BaseImponible )
       end if
 
       /*
       Asignacion de campos--------------------------------------------------------
       */
 
-      MkAsientoContaplus(  Asien,;
-                           cDivisa,;
-                           Fecha,;
-                           Subcuenta,;
-                           Contrapartida,;
-                           nImporteDebe,;
-                           Concepto,;
-                           nImporteHaber,;
-                           cSerie,;
-                           Factura,;
-                           BaseImponible,;
-                           IVA,;
-                           RecargoEquivalencia,;
-                           Documento,;
-                           Departamento,;
-                           Clave,;
-                           lRectificativa,;
-                           nCasado,;
-                           tCasado,;
-                           lSimula,;
-                           cNif,;
-                           cNombre,;
-                           nEjeCon,;
-                           cEjeCta )   
+      aAsiento    :=  MkAsientoContaplus( Asien,;
+                                          cDivisa,;
+                                          Fecha,;
+                                          Subcuenta,;
+                                          Contrapartida,;
+                                          nImporteDebe,;
+                                          Concepto,;
+                                          nImporteHaber,;
+                                          cSerie,;
+                                          Factura,;
+                                          BaseImponible,;
+                                          IVA,;
+                                          RecargoEquivalencia,;
+                                          Documento,;
+                                          Departamento,;
+                                          Clave,;
+                                          lRectificativa,;
+                                          nCasado,;
+                                          tCasado,;
+                                          lSimula,;
+                                          cNif,;
+                                          cNombre,;
+                                          nEjeCon,;
+                                          cEjeCta )   
 
    RECOVER USING oError
 
@@ -1408,7 +1429,7 @@ FUNCTION MkAsiento( 	Asien,;
 
    ErrorBlock( oBlock )
 
-RETURN ( nil )
+RETURN ( aAsiento )
 
 //----------------------------------------------------------------------------//
 
@@ -1520,7 +1541,7 @@ Static Function MkAsientoContaplus( Asien,;
       WriteAsiento( aTemp, cDivisa )
    end if
 
-Return ( nil )
+Return ( aTemp )
 
 //---------------------------------------------------------------------------//
 
@@ -1569,7 +1590,7 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
       else
 
          if lMessage
-            MsgStop( "Subcuenta no enContrapartidada " + aTemp[ ( cDiario )->( FieldPos( "Subcuenta" ) ) ], "Imposible actualizar saldos" )
+            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( FieldPos( "Subcuenta" ) ) ], "Imposible actualizar saldos" )
          end if
 
       end if
@@ -1670,7 +1691,7 @@ FUNCTION cCtaConta( oGet, dbfCuentas, oGet2 )
 	local lValid	:= .F.
 	local xValor	:= oGet:varGet()
    local cRuta    := cRutCnt()
-   local cCodEmp  := cEmpCnt( "A" )
+   local cCodEmp  := cEmpCnt()
 
    if Empty( xValor )
       Return .t.

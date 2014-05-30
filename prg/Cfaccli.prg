@@ -1259,7 +1259,7 @@ Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta
    if lSimula
       aPos        := { 0, 0 }
       ClientToScreen( oDlg:hWnd, aPos )
-      oDlg:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
+      oDlg:Move( aPos[ 1 ] - 26, aPos[ 2 ] - 510 )
    end if
 
    /*
@@ -1651,7 +1651,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
             cCtaPgo  := cCtaCob()
          end if
 
-         nTotPgo     := nCnv2Div( ( dbfTikP )->nImpTik, ( dbfTikP )->cDivPgo, cDivEmp() )
+         nTotPgo     := nTotUCobTik( dbfTikP, nRouDiv )
 
          if lDev
             nTotPgo  := - nTotPgo
