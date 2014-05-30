@@ -2148,7 +2148,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          end with
 
          if nMode != ZOOM_MODE
-            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():GetObject( "Bancos", nView ), oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, nView ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
          end if
 
       oBrwPgo:CreateFromResource( 220 )
@@ -2157,7 +2157,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 			ID 		501 ;
 			OF 		oFld:aDialogs[2];
 			WHEN 		( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():GetObject( "Bancos", nView ), oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
+         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, nView ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -2365,7 +2365,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmp, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
 
-      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ExtEdtRecPrv( dbfTmpPgo, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FormasPago( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ), TDataView():GetObject( "Bancos", nView ), oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
+      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ExtEdtRecPrv( dbfTmpPgo, nView ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
       oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ExtDelRecPrv( dbfTmpPgo ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) } )
 
       oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
