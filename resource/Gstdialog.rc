@@ -565,28 +565,30 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 103, "Edit", WS_BORDER|WS_TABSTOP, 280, 82, 155, 12
   CONTROL "", 107, "Edit", WS_BORDER|WS_TABSTOP, 225, 95, 85, 12
   CONTROL "", 106, "Edit", WS_BORDER, 345, 95, 90, 12
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 225, 108, 64, 12
+  CONTROL "", 171, "TBitMap", 0x00800000, 291, 109, 19, 11
+  CONTROL "", 180, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 314, 108, 121, 12
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 471, 30, 60, 12
   CONTROL "", 161, "Edit", WS_BORDER|WS_TABSTOP, 533, 30, 130, 12
   CONTROL "", 165, "Edit", WS_BORDER|WS_TABSTOP, 471, 43, 60, 12
   CONTROL "", 166, "Edit", WS_BORDER|WS_TABSTOP, 533, 43, 130, 12
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 471, 56, 60, 12
-  CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 533, 56, 130, 12
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 471, 69, 60, 12
-  CONTROL "", 171, "TBitMap", 0x00800000, 533, 69, 19, 11
-  CONTROL "", 180, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 554, 69, 109, 12
+  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 471, 56, 60, 12
+  CONTROL "", 341, "Edit", WS_BORDER|WS_TABSTOP, 533, 56, 130, 12
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 471, 69, 60, 12
+  CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 533, 69, 130, 12
   CONTROL "", 311, "Edit", WS_BORDER|WS_TABSTOP, 471, 82, 60, 12
   CONTROL "", 3111, "Edit", WS_BORDER, 533, 82, 130, 12
   CONTROL "", 321, "Edit", WS_BORDER|WS_TABSTOP, 471, 95, 60, 12
   CONTROL "", 3211, "Edit", WS_BORDER, 533, 95, 130, 12
   CONTROL "", 331, "Edit", WS_BORDER|WS_TABSTOP, 471, 108, 60, 12
   CONTROL "", 3311, "Edit", WS_BORDER, 533, 108, 130, 12
-  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 43, 110, 50, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 98, 110, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 153, 110, 50, 14
-  CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 209, 110, 50, 14
-  CONTROL "S&ubir", 524, "Button", WS_TABSTOP, 265, 110, 50, 14
-  CONTROL "&Bajar", 525, "Button", WS_TABSTOP, 320, 110, 50, 14
-  CONTROL "", 190, "TXBrowse", WS_TABSTOP|0x00300000, 44, 127, 619, 163
+  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 43, 123, 50, 14
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 98, 123, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 153, 123, 50, 14
+  CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 209, 123, 50, 14
+  CONTROL "S&ubir", 524, "Button", WS_TABSTOP, 265, 123, 50, 14
+  CONTROL "&Bajar", 525, "Button", WS_TABSTOP, 320, 123, 50, 14
+  CONTROL "", 190, "TXBrowse", WS_TABSTOP|0x00300000, 44, 140, 619, 150
   CONTROL "", 199, "Edit", WS_BORDER|WS_TABSTOP, 48, 307, 88, 12
   CONTROL "", 200, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 138, 307, 46, 12
   CONTROL "", 209, "Edit", WS_BORDER|WS_TABSTOP, 48, 320, 88, 12
@@ -607,7 +609,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 135, "Edit", WS_BORDER|WS_TABSTOP, 97, 82, 78, 12
   CONTROL "", 136, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 97, 95, 78, 12
   CONTROL "Proveedor", -1, "Static", WS_GROUP, 179, 33, 45, 8
-  CONTROL "Almacén", -1, "Static", WS_GROUP, 439, 59, 31, 8
+  CONTROL "Almacén", -1, "Static", WS_GROUP, 439, 73, 31, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 46, 49, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 44, 33, 49, 8
   CONTROL "Pedido", -1, "Static", WS_GROUP, 44, 59, 41, 8
@@ -620,7 +622,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Provincia", -1, "Static", WS_GROUP, 179, 98, 45, 8
   CONTROL "Pago", -1, "Static", WS_GROUP, 439, 33, 31, 8
   CONTROL "Caja", -1, "Static", WS_GROUP, 439, 46, 31, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 439, 72, 31, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 179, 112, 31, 8
   CONTROL "%", 701, "Static", WS_GROUP, 186, 309, 8, 8
   CONTROL "%", 702, "Static", WS_GROUP, 186, 322, 8, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 314, 98, 30, 8
@@ -640,6 +642,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fecha su alb.", -1, "Static", WS_GROUP, 44, 98, 49, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Albaranes de proveedores", -1, "Static", WS_GROUP, 44, 3, 120, 8
+  CONTROL "Alm.Org.", 342, "Static", WS_GROUP, 439, 60, 31, 8
 }
 
 ALBPRV_2 DIALOG DISCARDABLE 4, 18, 670, 375
@@ -5747,8 +5750,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 225, 86, 8
 }
 
-EMPRESA_2 DIALOG DISCARDABLE 31, 12, 441, 340
-STYLE WS_CHILD|DS_3DLOOK
+EMPRESA_2 DIALOG DISCARDABLE 31, 12, 441, 347
+STYLE WS_CHILD|DS_3DLOOK|WS_CAPTION
+CAPTION "s"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "Permitir solo artículos codificados", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 39, 118, 10
@@ -5761,41 +5765,42 @@ FONT 8, "MS Sans Serif"
   CONTROL "Utilizar rejillas de entrada de propiedades", 138, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 63, 143, 10
   CONTROL "Cambiar precios costo automáticamente", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 75, 139, 10
   CONTROL "", 139, "Edit", WS_BORDER|WS_TABSTOP, 309, 87, 67, 12
-  CONTROL "Recoger direcciones", 181, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 115, 79, 10
-  CONTROL "Recoger agentes", 182, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 127, 68, 10
-  CONTROL "Habilitar punto verde", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 139, 79, 10
-  CONTROL "Habilitar portes", 189, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 151, 60, 10
-  CONTROL "Habilitar descuento lineal", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 163, 92, 10
-  CONTROL "Seleccionar tarifas en línea", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 175, 99, 10
-  CONTROL "Agrupar entregas a cuenta en recibos", 204, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 187, 132, 10
-  CONTROL "Buscar precios en tarifas inferiores", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 199, 121, 10
-  CONTROL "Multiples tipos de movimientos ", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 115, 110, 10
-  CONTROL "Avisar en ventas sin valorar", 184, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 127, 100, 10
-  CONTROL "Avisar saldo pendiente", 192, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 139, 85, 10
-  CONTROL "Habilitar impuestos especiales", 183, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 151, 107, 10
-  CONTROL "Modificar impuestos especiales", 188, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 163, 111, 10
-  CONTROL "Costo actual en documentos", 761, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 175, 103, 10
-  CONTROL "No mostrar precios de costo en ventas", 205, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 187, 135, 10
-  CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 199, 125, 10
-  CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 229, 135, 10
-  CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 229, 137, 10
-  CONTROL "Recalcular costes de las lineas producidas", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 256, 151, 10
-  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 284, 39, 10
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 283, 314, 12
-  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 296, 51, 10
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 109, 295, 314, 12
-  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 308, 54, 10
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 109, 307, 314, 12
-  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 320, 47, 10
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 109, 319, 314, 12
+  CONTROL "Recoger direcciones", 181, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 113, 79, 10
+  CONTROL "Recoger agentes", 182, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 124, 68, 10
+  CONTROL "Habilitar punto verde", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 135, 79, 10
+  CONTROL "Habilitar portes", 189, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 146, 60, 10
+  CONTROL "Habilitar descuento lineal", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 157, 92, 10
+  CONTROL "Seleccionar tarifas en línea", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 168, 99, 10
+  CONTROL "Agrupar entregas a cuenta en recibos", 204, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 179, 132, 10
+  CONTROL "Buscar precios en tarifas inferiores", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 190, 121, 10
+  CONTROL "Multiples tipos de movimientos ", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 113, 110, 10
+  CONTROL "Avisar en ventas sin valorar", 184, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 124, 100, 10
+  CONTROL "Avisar saldo pendiente", 192, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 135, 85, 10
+  CONTROL "Habilitar impuestos especiales", 183, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 146, 107, 10
+  CONTROL "Modificar impuestos especiales", 188, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 157, 111, 10
+  CONTROL "Costo actual en documentos", 761, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 168, 103, 10
+  CONTROL "No mostrar precios de costo en ventas", 205, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 179, 135, 10
+  CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 190, 125, 10
+  CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 217, 135, 10
+  CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 217, 137, 10
+  CONTROL "Mostrar almacén origen en compras", 306, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 228, 135, 10
+  CONTROL "Recalcular costes de las lineas producidas", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 253, 151, 10
+  CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 281, 39, 10
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 280, 314, 12
+  CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 293, 51, 10
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 109, 292, 314, 12
+  CONTROL "Ntro. albarán", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 305, 54, 10
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 109, 304, 314, 12
+  CONTROL "Su albarán", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 317, 47, 10
+  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 109, 316, 314, 12
   CONTROL "Generales", -1, "Button", BS_GROUPBOX, 44, 29, 386, 73
-  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 272, 386, 63
+  CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 269, 386, 63
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones generales del programa", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
-  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 104, 386, 110
-  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 217, 386, 26
+  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 102, 386, 101
+  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 204, 386, 36
   CONTROL "Nombre del impuesto", -1, "Static", WS_GROUP, 234, 90, 70, 8
-  CONTROL "Producción", -1, "Button", BS_GROUPBOX, 44, 244, 386, 26
+  CONTROL "Producción", -1, "Button", BS_GROUPBOX, 44, 241, 386, 26
 }
 
 EMPRESA_3 DIALOG DISCARDABLE 92, 14, 436, 353
@@ -12009,18 +12014,20 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 260, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 331, 90, 65, 12
   CONTROL "", 152, "Edit", WS_BORDER|WS_TABSTOP, 181, 102, 44, 12
   CONTROL "", 153, "Edit", WS_BORDER, 227, 102, 169, 12
-  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 181, 115, 44, 12
-  CONTROL "", 241, "Edit", WS_BORDER, 227, 115, 103, 12
-  CONTROL "", 190, "Edit", ES_RIGHT|WS_BORDER, 331, 115, 65, 12
-  CONTROL "", 300, "Static", WS_GROUP, 131, 131, 48, 8
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 181, 128, 44, 12
-  CONTROL "", 271, "Edit", WS_BORDER, 227, 128, 169, 12
-  CONTROL "", 310, "Static", WS_GROUP, 131, 144, 48, 8
-  CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 181, 141, 44, 12
-  CONTROL "", 281, "Edit", WS_BORDER, 227, 141, 169, 12
-  CONTROL "", 320, "Static", WS_GROUP, 131, 156, 48, 8
-  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 181, 153, 44, 12
-  CONTROL "", 291, "Edit", WS_BORDER, 227, 153, 169, 12
+  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 181, 115, 44, 12
+  CONTROL "", 331, "Edit", WS_BORDER, 227, 115, 169, 12
+  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 181, 128, 44, 12
+  CONTROL "", 241, "Edit", WS_BORDER, 227, 128, 103, 12
+  CONTROL "", 190, "Edit", ES_RIGHT|WS_BORDER, 331, 128, 65, 12
+  CONTROL "", 300, "Static", WS_GROUP, 131, 145, 48, 8
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 181, 141, 44, 12
+  CONTROL "", 271, "Edit", WS_BORDER, 227, 141, 169, 12
+  CONTROL "", 310, "Static", WS_GROUP, 131, 157, 48, 8
+  CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 181, 153, 44, 12
+  CONTROL "", 281, "Edit", WS_BORDER, 227, 153, 169, 12
+  CONTROL "", 320, "Static", WS_GROUP, 131, 170, 48, 8
+  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 181, 166, 44, 12
+  CONTROL "", 291, "Edit", WS_BORDER, 227, 166, 169, 12
   CONTROL "", 210, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 64, 189, 65, 12
   CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 331, 188, 65, 12
   CONTROL "Descuento", -1, "Static", WS_GROUP, 131, 81, 40, 8
@@ -12032,7 +12039,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Tipo de imp.", -1, "Static", WS_GROUP, 3, 81, 49, 8
   CONTROL "Propiedad 2", 231, "Static", WS_GROUP, 3, 55, 43, 8
   CONTROL "Propiedad 1", 221, "Static", WS_GROUP, 3, 42, 43, 8
-  CONTROL "Alm./Stock", -1, "Static", WS_GROUP, 131, 118, 41, 8
+  CONTROL "Alm./Stock", -1, "Static", WS_GROUP, 131, 132, 41, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 184, 397, 1
   CONTROL "Nº lote", 111, "Static", WS_GROUP, 3, 18, 27, 8
   CONTROL "Dto. prm.", -1, "Static", WS_GROUP, 131, 93, 34, 8
@@ -12046,6 +12053,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Und. medición", -1, "Static", WS_GROUP, 131, 105, 47, 8
   CONTROL "Punto verde", 172, "Static", WS_GROUP, 3, 169, 47, 8
   CONTROL "", 171, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 64, 166, 65, 12
+  CONTROL "Alm. Origen", 332, "Static", WS_GROUP, 131, 119, 41, 8
 }
 
 LALBPRV_2 DIALOG DISCARDABLE 26, 35, 360, 261

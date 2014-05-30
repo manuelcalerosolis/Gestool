@@ -1194,11 +1194,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    /*
    Control de errores----------------------------------------------------------
+   */
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   */
-
+   
    if Empty( aTmp[ _CDEFSER ] )
       aTmp[ _CDEFSER ]     := Space( 1 )
    end if
@@ -1397,6 +1397,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE CHECKBOX aGet[ _LCOSPRV ] VAR aTmp[ _LCOSPRV ] ;
          ID       198 ;
          OF       fldGeneral
+
+      REDEFINE CHECKBOX aGet[ _LSHOWALMORG ] VAR aTmp[ _LSHOWALMORG ] ;
+         ID       306 ;
+         OF       fldGeneral         
 
       REDEFINE CHECKBOX aGet[ _LNUMPED ] VAR aTmp[ _LNUMPED ] ;
          ID       260 ;   
@@ -2465,14 +2469,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    /*
    Fin del control de errores--------------------------------------------------
+   */
 
    RECOVER USING oError
 
       msgStop( "Imposible editar configuración de empresas" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
-   ErrorBlock( oBlock )
-   */
+   ErrorBlock( oBlock ) 
 
    /*
    Matamos los objetos con las imágenes----------------------------------------
@@ -6564,8 +6568,9 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
    aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lShowAlmOrg","L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
 
-Return ( aDbf  )
+Return ( aDbf )
 
 //---------------------------------------------------------------------------//
 

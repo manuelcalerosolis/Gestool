@@ -75,6 +75,7 @@ Definici¢n de la base de datos de albaranes a proveedores
 #define _NTOTIVA                  58
 #define _NTOTREQ                  59
 #define _NTOTALB                  60
+#define _CALMORIGEN               61  
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -185,6 +186,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LNUMSER                 106
 #define _LAUTSER                 107
 #define _NPNTVER                 108
+#define __CALMORIGEN             109
 
 /*
 Definici¢n de Array para impuestos
@@ -301,7 +303,6 @@ static bEdtDet          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aAlbP
 static bEdtInc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 
-static oUndMedicion
 static cFiltroUsuario   := ""
 static cInforme
 
@@ -903,6 +904,8 @@ STATIC FUNCTION OpenFiles( lExt )
       TDataView():Documentos( nView )
       ( TDataView():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
+      TDataView():GetObject( "UnidadMedicion", nView )
+
       /*
       Almacenes----------------------------------------------------------------
       */
@@ -917,22 +920,20 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():PedidosClientes( nView )
 
-
-      // Unidades de medicion--------------------------------------------------
-
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
-      if !oUndMedicion:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-      // ----------------------------------------------------------------------
-
-      oBandera             := TBandera():New()
+      /*
+      Stocks-------------------------------------------------------------------
+      */
 
       oStock               := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
       end if
+
+      /*
+      Cargamos la clase bandera------------------------------------------------
+      */
+
+      oBandera             := TBandera():New()
 
       cPicUnd              := MasUnd()                               // Picture de las unidades
 
@@ -999,10 +1000,6 @@ STATIC FUNCTION CloseFiles()
       oStock:end()
    end if
 
-   if !Empty( oUndMedicion )
-      oUndMedicion:end()
-   end if
-
    TDataView():DeleteView( nView )
 
    oBandera    := nil
@@ -1027,8 +1024,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    local oBrwInc
    local oBrwDoc
    local oBmpDiv
-   local oSay           := Array( 6 )
-   local cSay           := Array( 6 )
+   local oSay           := Array( 7 )
+   local cSay           := Array( 7 )
    local oSayLabels     := Array( 7 )
    local oGetMasDiv
    local cGetMasDiv     := ""
@@ -1137,8 +1134,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    cSay[ 4 ]            := RetFld( aTmp[ _CCODCAJ ], TDataView():Cajas( nView ) )
    cSay[ 5 ]            := RetFld( aTmp[ _CCODPRV ], TDataView():Proveedores( nView ) )
    cSay[ 6 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], TDataView():Delegaciones( nView ), "cNomDlg" )
+   cSay[ 7 ]            := RetFld( aTmp[ _CALMORIGEN ], TDataView():Almacen( nView ) )
 
-   DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "albaranes de proveedores"
+   DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "albaranes de proveedores" 
 
       REDEFINE FOLDER oFld ;
          ID       400 ;
@@ -1307,6 +1305,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			PICTURE	"@E 999,999.9999" ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CALMORIGEN ] VAR aTmp[ _CALMORIGEN ]  ;
+         ID       340 ;
+         IDSAY    342 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cAlmacen( aGet[ _CALMORIGEN ], TDataView():Almacen( nView ), oSay[ 7 ] ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAlmacen( aGet[ _CALMORIGEN ], oSay[ 7 ] ) ) ;
+         COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
+         WHEN     .F. ;
+         ID       341 ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM]  ;
 			ID 		150 ;
@@ -2485,6 +2498,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 	local nTotal
    local cSay2
    local oSay2
+   local cSay3
+   local oSay3
    local cGetIra           := Space( 50 )
    local oGetIra
    local oBrwPrp
@@ -2512,6 +2527,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    case nMode == APPD_MODE
 
       aTmp[ _NUNICAJA ]    := 1
+      aTmp[ __CALMORIGEN ] := aTmpAlb[ _CALMORIGEN ]
       aTmp[ _CALMLIN  ]    := aTmpAlb[ _CCODALM ]
       aTmp[ _CCODPED  ]    := aTmpAlb[ _CNUMPED ]
       aTmp[ _LCHGLIN  ]    := lActCos()
@@ -2690,8 +2706,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          IDTEXT   153 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oUndMedicion:Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
-         ON HELP  ( oUndMedicion:Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
+         VALID    ( TDataView():GetObject( "UnidadMedicion", nView ):Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
+         ON HELP  ( TDataView():GetObject( "UnidadMedicion", nView ):Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
          OF       oFld:aDialogs[1]
 
       // Campos de las descripciones de la unidad de medición
@@ -2800,6 +2816,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 			PICTURE 	cPicUnd ;
 			OF 		oFld:aDialogs[1]
       */
+
+      REDEFINE GET aGet[ __CALMORIGEN ] VAR aTmp[ __CALMORIGEN ]  ;
+         ID       330 ;
+         IDSAY    332 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), oSay3 ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], oSay3 ) ) ;
+         COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET oSay3 VAR cSay3 ;
+         WHEN     .F. ;
+         ID       331 ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
@@ -3194,7 +3225,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn ) )
+         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oSay3 ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -3219,7 +3250,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal ),;
+      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal, oSay3 ),;
                          if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
@@ -3348,7 +3379,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal )
+Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal, oSay3 )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -3362,6 +3393,18 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
 
    if Empty( aTmp[_CALMLIN ] )
       aTmp[ _CALMLIN ]  := aTmpAlb[ _CCODALM ]
+   end if
+
+   if Empty( aTmp[ __CALMORIGEN ] )
+      aTmp[ __CALMORIGEN ]  := aTmpAlb[ _CALMORIGEN ]
+   end if
+
+   if uFieldEmpresa( "lShowAlmOrg" )
+      aGet[ __CALMORIGEN ]:Show()
+      oSay3:Show()
+   else
+      aGet[ __CALMORIGEN ]:Hide()
+      oSay3:Hide()
    end if
 
    if aGet[ _NPNTVER ] != nil
@@ -3391,6 +3434,7 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
       aGet[ _DFECCAD ]:Hide()
       aGet[ _NCANENT ]:cText( 1 )
       aGet[ _NUNICAJA]:cText( 1 )
+      aGet[ __CALMORIGEN ]:cText( aTmpAlb[ _CALMORIGEN ] )
       aGet[ _CALMLIN ]:cText( aTmpAlb[ _CCODALM ] )
 
       aGet[ _NIVA    ]:cText( nIva( TDataView():TiposIva( nView ), cDefIva() ) )
@@ -3461,25 +3505,26 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
    aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
-   if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
+   if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-      if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
          aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
          aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+         aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
          aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
 
+   aGet[ __CALMORIGEN  ]:lValid()
    aGet[ _CALMLIN  ]:lValid()
    aGet[ _CUNIDAD  ]:lValid()
    aGet[ _CREF     ]:SetFocus()
@@ -3495,7 +3540,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oBtnSer )
+STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oBtnSer, oSay3 )
 
    local n, i
 
@@ -3587,7 +3632,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
 
       if lEntCon()
 
-         SetDlgMode( aGet, aTmp, aTmpalb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal )
+         SetDlgMode( aGet, aTmp, aTmpalb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal, oSay3 )
 
          nTotAlbPrv( nil, TDataView():AlbaranesProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), TDataView():Divisas( nView ), aTmpAlb )
 
@@ -6389,11 +6434,11 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
    if ( Empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
 
-      if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
+      if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-         if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+         if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
             if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
                aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( TDataView():Articulos( nView ) )->nLngArt )
                aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
@@ -6408,9 +6453,9 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+         if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
             if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
                aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( TDataView():Articulos( nView ) )->nAltArt )
                aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
@@ -6426,9 +6471,9 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+         if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
             if !Empty( aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
                aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( TDataView():Articulos( nView ) ) ->nAncArt )
                aGet[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
@@ -6519,8 +6564,8 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Código de proveedores", ( TDataView():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  TDataView():GetObject( "UnidadMedicion", nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( TDataView():GetObject( "UnidadMedicion", nView ):oDbf ) )
 
    if lTemporal
       oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
@@ -6595,8 +6640,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Código de proveedores", ( TDataView():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  TDataView():GetObject( "UnidadMedicion", nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( TDataView():GetObject( "UnidadMedicion", nView ):oDbf ) )
 
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",             {|| ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",   {|| ( TDataView():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedores( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedores( nView ) )->cSufAlb } )
@@ -9003,6 +9048,7 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "nTotIva",      "N", 16,  6, "Total " + cImp(),                "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotReq",      "N", 16,  6, "Total R.E.",                  "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotAlb",      "N", 16,  6, "Total albarán",               "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "cAlmOrigen",   "C",  3,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
 
 Return ( aItmAlbPrv )
 
@@ -9120,6 +9166,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "lNumSer",      "L",  1, 0, "Lógico solicitar numero de serie", "",                "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "lAutSer",      "L",  1, 0, "Lógico de autoserializar",     "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,        "cPirDivAlb",          "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cAlmOrigen",   "C",  3,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 
