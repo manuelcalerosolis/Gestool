@@ -11716,8 +11716,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          aTmp[ _NFACCNV ]     := 1
 
-
-        
          /*
          Cogemos las familias y los grupos de familias-------------------------
          */
@@ -11956,8 +11954,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             end if
 
          end if
-
-
 
       /*
       He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles

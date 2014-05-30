@@ -3832,8 +3832,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( Empty( cLote )   .or. ( ::cAlbPrvL )->cLote == cLote )       .and.;
          !( ::cAlbPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) .and.;
-            Empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) //.and.;
+            //Empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNAlbPrv( ::cAlbPrvL )
             nImporte    += nTotLAlbPrv( ::cAlbPrvL, ::nDecIn, ::nDerIn )
@@ -3858,8 +3858,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
       ( Empty( cLote )   .or. ( ::cFacPrvL )->cLote == cLote )      .and.;
       !( ::cFacPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) .and.;
-            Empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) //.and.;
+            //Empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNFacPrv( ::cFacPrvL )
             nImporte    += nTotLFacPrv( ::cFacPrvL, ::nDecIn, ::nDerIn )
@@ -3886,8 +3886,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
       ( Empty( cLote )    .or. ( ::cRctPrvL )->cLote == cLote )      .and.;
       !( ::cRctPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac )   .and.;
-            Empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac )  // .and.;
+            //Empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNRctPrv( ::cRctPrvL )
             nImporte    += nTotLRctPrv( ::cRctPrvL, ::nDecIn, ::nDerIn )

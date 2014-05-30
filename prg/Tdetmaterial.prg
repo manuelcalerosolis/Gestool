@@ -21,6 +21,7 @@ CLASS TDetMaterial FROM TDetalleArticulos
    DATA  oSayVp1
    DATA  oSayVp2
    DATA  cOldCodArt           INIT  ""
+   DATA  dOldFecCad           
    DATA  oStkAct
    DATA  nStkAct              INIT  0
    DATA  oMenu
@@ -253,8 +254,8 @@ METHOD Resource( nMode )
          OF          oFld:aDialogs[1]
 
       oGetArt:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
-      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr1  ) }
-
+      oGetArt:bHelp  := {|| BrwArticulo( oGetArt, oGetNom, .f., .t., , ::oLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2, ::oFecCad  ) }
+                                       
       REDEFINE GET   oGetNom ;
          VAR         ::oDbfVir:cNomArt ;
          ID          111 ;
@@ -271,6 +272,9 @@ METHOD Resource( nMode )
          IDSAY       211 ;
          WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oFld:aDialogs[1]
+
+      ::oLote:bValid := {|| ::LoaArticulo( oGetArt, oGetNom ) }
+
 
       REDEFINE GET   ::oFecCad ; 
          VAR         ::oDbfVir:dFecCad;
@@ -566,7 +570,7 @@ RETURN ( Self )
 METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
    local cCodArt     := oGetArticulo:VarGet()
-   local lChgCodArt  := ( Empty( ::cOldCodArt ) .or. Rtrim( ::cOldCodArt ) != Rtrim( cCodArt ) )
+   local lChgCodArt  := .f.
 
    if Empty( cCodArt )
 
@@ -578,6 +582,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
       return .t.
 
    else
+
+      lChgCodArt     := Empty( ::cOldCodArt ) .or. ( ::oDbfVir:cCodArt + ::oDbfVir:cValPr1 + ::oDbfVir:cValPr2 + ::oDbfVir:cLote != ::cOldCodArt )
 
       /*
       Primero buscamos por codigos de barra
@@ -599,9 +605,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
          cCodArt  := ::oParent:oArt:Codigo
 
-         if !uFieldEmpresa( "lNStkAct" )
-            ::oStkAct:cText( ::oParent:oStock:nStockActual( cCodArt, ::oDbfVir:cAlmOrd ) )
-         end if
+         //Si cambia el código del artículo------------------------------------
 
          if lChgCodArt
 
@@ -619,10 +623,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                
                ::oLote:Show()
                ::oFecCad:Show()
-
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
-
-               ::oLote:cText(       ::oParent:oArt:cLote )
+               //::oFecCad:cText   := ::oDbfVir:dFecCad
 
             else
 
@@ -643,6 +645,12 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
             ::oGetUndVol:cText(  ::oParent:oArt:cVolumen )
 
             ::LoadCommunFields()
+
+            // Cotrol de stock-------------------------------------------------
+
+            if !uFieldEmpresa( "lNStkAct" )
+               ::oStkAct:cText( ::oParent:oStock:nTotStockAct( cCodArt, ::oDbfVir:cAlmOrd, ::oDbfvir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote  ) )
+            end if
 
          end if
 
@@ -676,7 +684,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
             ::oSayVp2:Hide()
          end if
 
-         ::cOldCodArt   := cCodArt
+         ::cOldCodArt         := ::oDbfVir:cCodArt + ::oDbfVir:cValPr1 + ::oDbfVir:cValPr2 + ::oDbfVir:cLote
 
          return .t.
 
