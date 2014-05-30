@@ -13550,7 +13550,7 @@ Function SynPedCli( cPath )
 
       end while
 
-   	/*( dbfPedCliT )->( ordSetFocus( 1 ) )
+   	( dbfPedCliT )->( ordSetFocus( 1 ) )
 
    	( dbfPedCliT )->( dbGoTop() )
 
@@ -13560,7 +13560,7 @@ Function SynPedCli( cPath )
         Rellenamos los campos de totales--------------------------------------
         */
 
-        /*if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
+        if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
 
            	aTotPed                 := aTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, ( dbfPedCliT )->cDivPed )
 
@@ -13575,7 +13575,7 @@ Function SynPedCli( cPath )
 
          ( dbfPedCliT )->( dbSkip() )
 
-    end while*/
+    end while
 
     // Lineas -----------------------------------------------------------------
 
@@ -15844,7 +15844,7 @@ return ( nTotRes )
 Calcula el Total del pedido
 */
 
-FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDivRet, lPic, ccClient )
+FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDivRet, lPic, cClient )
 
    	local nRecno
    	local cCodDiv
@@ -15876,7 +15876,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 
    	if !Empty( nView )
    		DEFAULT cPedCliT   	:= TDataView():PedidosClientes( nView )
-		DEFAULT ccClient   	:= TDataView():Clientes( nView )
+		DEFAULT cClient   	:= TDataView():Clientes( nView )
 	end if	
    	
    	DEFAULT cPedCliL        := dbfPedCliL
@@ -16461,7 +16461,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 
          aAdd( aImpVto, if( n != ( cFPago )->nPlazos, Round( nTotPed / ( cFPago )->nPlazos, nRouDiv ), Round( nTotAcu, nRouDiv ) ) )
 
-         aAdd( aDatVto, dNexDay( dFecPed + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), ccClient ) )
+         aAdd( aDatVto, dNexDay( dFecPed + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cClient ) )
 
       next
 
