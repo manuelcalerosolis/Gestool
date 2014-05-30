@@ -5,17 +5,17 @@
 
 #define _ASIEN                    1     //   N      6     0
 #define _FECHA                    2     //   D      8     0
-#define _Subcuenta                   3     //   C     12     0
-#define _Contrapartida                   4     //   C     12     0
+#define _SUBCTA                   3     //   C     12     0
+#define _CONTRA                   4     //   C     12     0
 #define _PTADEBE                  5     //   N     12     0
 #define _CONCEPTO                 6     //   C     25     0
 #define _PTAHABER                 7     //   N     12     0
 #define _FACTURA                  8     //   N      7     0
-#define _BaseImponible                 9     //   N     11     0
+#define _BASEIMPO                 9     //   N     11     0
 #define _IVA                     10     //   N      5     2
-#define _RecargoEquivalencia                11     //   N      5     2
+#define _RECEQUIV                11     //   N      5     2
 #define _DOCUMENTO               12     //   C      6     0
-#define _Departamento                 13     //   C      3     0
+#define _DEPARTA                 13     //   C      3     0
 #define _CLAVE                   14     //   C      6     0
 #define _ESTADO                  15     //   C      1     0
 #define _NCASADO                 16     //   N      6     0
@@ -36,6 +36,8 @@
 #define _NOCONV                  31     //   L      1     0
 #define _NUMEROINV               32     //   C     10     0
 
+#define _NLENSUBCTAA3            12
+
 static cDiario
 static cCuenta
 static cSubCuenta
@@ -51,6 +53,8 @@ static dFechaFinEmpresa
 static lOpenDiario         := .f.
 static lOpenSubCuenta      := .f.
 
+static nAplicacionContable
+
 static aSerie              := {"A","B","C","D","E","F","G","H","I","J","K","M","N","O","P","O","R","S","T","U","V","W","X","Y","Z"}
 
 //----------------------------------------------------------------------------//
@@ -60,6 +64,10 @@ Function ChkRuta( cRutaConta, lMessage )
    local lReturn     := .f.
 
    DEFAULT lMessage  := .f.
+
+   if lAplicacionA3()
+      Return .t.
+   end if
 
    if Empty( cRutaConta )
       Return .f.
@@ -76,7 +84,7 @@ Function ChkRuta( cRutaConta, lMessage )
    else
 
       if lMessage
-         msgStop( "Ruta invalida, fichero Contaplus no enContrapartidado" + CRLF + "en ruta " + cRutaConta + "." )
+         msgStop( "Ruta invalida, fichero Contaplus no encontrado" + CRLF + "en ruta " + cRutaConta + "." )
       end if
 
       lReturn        := .f.
@@ -226,6 +234,10 @@ FUNCTION cEmpresaContaplus( cRuta, cCodEmp )
    DEFAULT cRuta     := cRutCnt()
    DEFAULT cCodEmp   := cEmpCnt()
 
+   if !lAplicacionContaplus()
+      Return ( cNbrEmp )
+   end if
+
    if Empty( cRuta )
       Return ( cNbrEmp )
    end if
@@ -267,6 +279,11 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Empresa" }
    local cCbxOrd     := "Código"
+
+   if lAplicacionA3()
+      msgStop( "Opción no disponible para A3CON ®" )
+      Return( nil )
+   end if 
 
    DEFAULT cRuta     := cRutCnt()
 
@@ -395,15 +412,20 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
 
    local lClose      := .f.
    local nReturn     := 0
-   local nPosition   := aScan( aLenSubCuenta, {|a| a[ 1 ] == cCodEmp } )
+   local nPosition   
 
-   if nPosition != 0
-      Return ( aLenSubCuenta[ nPosition, 2 ] )
-   end if
+   if lAplicacionA3()
+      Return ( _NLENSUBCTAA3 )
+   end if 
 
    DEFAULT cRuta     := cRutCnt()
    DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT lMensaje  := .f.
+
+   nPosition         := aScan( aLenSubCuenta, {|a| a[ 1 ] == cCodEmp } )
+   if nPosition != 0
+      Return ( aLenSubCuenta[ nPosition, 2 ] )
+   end if
 
    if Empty( cRuta )
       if lMensaje
@@ -423,15 +445,11 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
 
    if ( cEmpresa )->( dbSeek( cCodEmp ) )
 
-      /*
-      Nivel de desglose menos 3 que es el numero de digitos de la cuenta----
-      */
+      // Nivel de desglose menos 3 que es el numero de digitos de la cuenta----
 
       nReturn        := ( cEmpresa )->Nivel
 
-      /*
-      Añadimos los valoresa al buffer---------------------------------------
-      */
+      // Añadimos los valoresa al buffer---------------------------------------
 
       aAdd( aLenSubCuenta, { cCodEmp, nReturn } )
 
@@ -506,12 +524,16 @@ FUNCTION ChkCta( cCodCuenta, oGetCta, lMessage, cRuta, cCodEmp )
    local lOld        := .t.
    local lReturn     := .t.
 
+   if lAplicacionA3()
+      Return ( .t. )
+   end if
+
    DEFAULT lMessage  := .f.
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT cRuta     := cRutCnt()
 
    if Empty( cRuta )
-      Return .f.
+      Return ( .f. )
    end if
 
    cRuta             := cPath( cRuta )
@@ -538,10 +560,10 @@ FUNCTION ChkCta( cCodCuenta, oGetCta, lMessage, cRuta, cCodEmp )
       else
 
          if lMessage
-            msgStop( "Cuenta no enContrapartidada" )
+            msgStop( "Cuenta no encontrada" )
          end if
 
-			lReturn = .F.
+			lReturn  := .f.
 
       end if
 
@@ -558,13 +580,17 @@ FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lEmpty 
    local lClose      := .f.
    local lReturn     := .t.
 
+   if lAplicacionA3()
+      Return ( .t. )
+   end if
+
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT lMessage  := .f.
    DEFAULT lEmpty    := .t.
    DEFAULT cRuta     := cRutCnt()
 
    if Empty( cRuta )
-      Return .f.
+      Return ( .f. )
    end if
 
    cRuta             := cPath( cRuta )
@@ -618,16 +644,21 @@ FUNCTION BrwChkCta( oCodCta, oGetCta, cRuta, cCodEmp )
    local aCbxOrd     := { "Código", "Cuenta" }
    local cCbxOrd     := "Código"
 
-   DEFAULT cCodEmp   := cEmpCnt( "A" )
+   if lAplicacionA3()
+      msgStop( "Opción no disponible para A3CON ®" )
+      Return( nil )
+   end if 
+
+   DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT cRuta     := cRutCnt()
 
    if Empty( cRuta )
-      Return .f.
+      Return ( nil )
    end if
 
    cRuta             := cPath( cRuta )
 
-   if OpnCta( cRuta, cCodEmp, @cArea )
+   if OpnCta( cRuta, cCodEmp, @cArea, .t. )
 
       ( cArea )->( dbSetFilter( {|| !Empty( Field->Cta ) }, "!Empty( Field->Cta )" ) )
       ( cArea )->( dbGoTop() )
@@ -738,16 +769,22 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
    local cArea
    local cCbxOrd     := "Cuenta"
 
+   if lAplicacionA3()
+      msgStop( "Opción no disponible para A3CON ®" )
+      Return( nil )
+   end if 
+
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT cRuta     := cRutCnt()
 
    if Empty( cRuta )
-      Return .f.
+      msgStop( "Ruta no definida" )
+      Return ( nil )
    end if
 
    cRuta             := cPath( cRuta )
 
-   if OpenSubCuenta( cRuta, cCodEmp, @cArea, .f. )
+   if OpenSubCuenta( cRuta, cCodEmp, @cArea, .t. )
 
 		( cArea )->( dbGoTop() )
 
@@ -764,22 +801,6 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
 				ID 		102 ;
             ITEMS    { "Cuenta", "Nombre" } ;
             OF       oDlg
-
-      /*
-			REDEFINE LISTBOX oBrw ;
-				FIELDS ;
-							(cArea)->COD,;
-							(cArea)->TITULO ;
-				HEAD ;
-                     "Código",;
-							"Cuenta" ;
-				ID 		105 ;
-				ALIAS 	( cArea ) ;
-				OF 		oDlg
-
-         oBrw:bLDblClick   := {|| oDlg:end( IDOK ) }
-         oBrw:bKeyDown     := {|nKey, nFalg| if( nKey == VK_RETURN, oDlg:end( IDOK ), ) }
-      */
 
          oBrw                 := IXBrowse():New( oDlg )
 
@@ -858,6 +879,7 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
 
    else
 
+      msgStop( "Imposible abrir ficheros de Contaplus ®")
       Return .f.
 
    end if
@@ -876,21 +898,26 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
 
    local n
    local cArea
-   local nSumaDB     := 0
-   local nSumaHB     := 0
-   local cTitCta     := ""
-   local cCodSubcuenta  := oGetSubcuenta:VarGet()
-   local aEmpProced  := {}
+   local nSumaDB        := 0
+   local nSumaHB        := 0
+   local cTitCta        := ""
+   local aEmpProced     := {}
+   local cCodSubcuenta  
 
-   DEFAULT cCodEmp   := cEmpCnt( "A" )
-   DEFAULT cRuta     := cRutCnt()
+   if lAplicacionA3()
+      Return ( .t. )
+   end if 
+
+   DEFAULT cCodEmp      := cEmpCnt( "A" )
+   DEFAULT cRuta        := cRutCnt()
 
    if Empty( cRuta )
-      Return .f.
+      Return ( .f. )
    end if
 
    cRuta                := cPath( cRuta )
 
+   cCodSubcuenta        := oGetSubcuenta:VarGet()
    cCodSubcuenta        := PntReplace( oGetSubcuenta, "0", nLenSubcuenta() )
    cCodSubcuenta        := PadR( cCodSubcuenta, nLenSubcuenta() )
    cCodSubcuenta        := AllTrim( cCodSubcuenta )
@@ -969,10 +996,6 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
                         cTitCta              := ( cArea )->Titulo
                      end if
 
-                  //else
-
-                     //exit
-
                   end if
 
                else
@@ -1032,6 +1055,10 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
    local cCodEmp
    local dbfDiario
    local aEmpProced  := {}
+
+   if lAplicacionA3()
+      Return ( .t. )
+   end if
 
    DEFAULT cRuta     := cRutCnt()
 
@@ -1160,7 +1187,7 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
    local oBlock
 
    DEFAULT cRuta     := cRutCnt()
-   DEFAULT cCodEmp   := cEmpCnt( "A" )
+   DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT lMessage  := .f.
 
    if lOpenDiario
@@ -1675,7 +1702,7 @@ FUNCTION cCtaConta( oGet, dbfCuentas, oGet2 )
 
 	ELSE
 
-		msgStop( "Subcuentas no enContrapartidadas" )
+		msgStop( "Subcuentas no encontrada" )
 
 	END IF
 
@@ -1760,37 +1787,33 @@ STATIC FUNCTION OpnCta( cRuta, cCodEmp, cArea, lMessage )
    end if
 
    cRuta             := cPath( cRuta )
+   cCodEmp           := alltrim( cCodEmp )
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-
    BEGIN SEQUENCE
 
-   if File( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" )  .and.;
-      File( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
+      if File( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" )  .and.;
+         File( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
 
-		/*
-      Nuevo Contaplus----------------------------------------------------------
-		*/
+         USE ( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
+   		SET TAG TO "CTA"
 
-      USE ( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
-		SET TAG TO "CTA"
+      else
 
-   else
+         if lMessage
+            msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
+         end if
 
-      if lMessage
-         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
+         lOpen          := .f.
+
       end if
 
-      lOpen          := .f.
+      if ( cArea )->( RddName() ) == nil .or. NetErr()
 
-   end if
+         lOpen          := .f.
 
-   if ( cArea )->( RddName() ) == nil .or. NetErr()
-
-      lOpen          := .f.
-
-   end if
+      end if
 
    RECOVER
 
@@ -1815,41 +1838,35 @@ FUNCTION OpenSubCuenta( cRuta, cCodEmp, cArea, lMessage )
    local oBlock
    local lOpen       := .t.
 
-   DEFAULT lMessage  := .f.
+   if lAplicacionA3()
+      msgStop( "Opción no disponible para A3CON ®" )
+      Return ( .f. )
+   end if 
+
    DEFAULT cRuta     := cRutCnt()
+   DEFAULT cCodEmp   := cEmpCnt()   
+   DEFAULT lMessage  := .f.
 
    if Empty( cRuta )
-      return .f.
+      msgStop( "Ruta de Contaplus esta vacia")
+      Return ( .f. )
    end if
 
    cRuta             := cPath( cRuta )
+   cCodEmp           := alltrim( cCodEmp )
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      /*
-      Nuevo Contaplus
-      do case
-         case File( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" )
+      if File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )
 
-
-         USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-         SET ADSINDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" ) ADDITIVE
-      */
-
-      if File( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" )
-
-         /*
-         Primavera
-         */
-
-         USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" ) ADDITIVE
+         USE ( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) ADDITIVE
 
       else
 
          if lMessage
-            msgStop( "Ficheros no enContrapartidados", "Abriendo subcuentas" )
+            msgStop( "Ficheros no encontrados", "Abriendo subcuentas" )
          end if
 
          lOpen       := .f.
@@ -2116,6 +2133,11 @@ FUNCTION BrwProyecto( oCodPro, oGetPro, cRuta, cCodEmp )
 	local cCbxOrd		:= "Nombre"
 	local cAreaAnt 	:= Alias()
 
+   if lAplicacionA3()
+      msgStop( "Opción no disponible para A3CON ®" )
+      Return( nil )
+   end if 
+
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT cRuta     := cRutCnt()
 
@@ -2248,7 +2270,7 @@ FUNCTION ChkProyecto( cCodPro, oGetPro, cRuta, cCodEmp, lMessage )
       else
 
          if lMessage
-            msgStop( "Proyecto : " + cCodPro + CRLF + "no enContrapartidada", "Contaplus" )
+            msgStop( "Proyecto : " + cCodPro + CRLF + "no encontrada", "Contaplus" )
          end if
 
       end if
@@ -2358,9 +2380,9 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
    local oBlock
    local dbfDiario      := nil
 
-   DEFAULT cCodEmp      := cEmpCnt( "A" )
-   DEFAULT lMessage     := .f.
    DEFAULT cRuta        := cRutCnt()
+   DEFAULT cCodEmp      := cEmpCnt()
+   DEFAULT lMessage     := .f.
 
    if Empty( cRuta )
       if lMessage
@@ -2370,6 +2392,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
    end if
 
    cRuta                := cPath( cRuta )
+   cCodEmp              := alltrim( cCodEmp )
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2393,7 +2416,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
       else
 
          if lMessage
-            msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
+            msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
       end if
@@ -2426,6 +2449,7 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
    end if
 
    cRuta             := cPath( cRuta )
+   cCodEmp           := alltrim( cCodEmp )
 
    if File( cRuta + "EMP" + cCodEmp + "\DIARIO.CDX" )
 
@@ -2436,7 +2460,7 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
    else
 
       if lMessage
-         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo balances" )
+         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo balances" )
       end if
 
       Return nil
@@ -2458,9 +2482,9 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
 
    local dbfSubcuenta
 
-   DEFAULT cCodEmp   := cEmpCnt( "A" )
-   DEFAULT lMessage  := .f.
    DEFAULT cRuta     := cRutCnt()
+   DEFAULT cCodEmp   := cEmpCnt()
+   DEFAULT lMessage  := .f.
 
    if Empty( cRuta )
       if lMessage
@@ -2470,24 +2494,17 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
    end if
 
    cRuta             := cPath( cRuta )
+   cCodEmp           := alltrim( cCodEmp )
 
-   /*
-   do case
-   case File( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" )
+   if File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )
 
-      USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubcuenta ) )
-      SET ADSINDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta" + cCodEmp + ".CDX" )
-   */
-
-   if File( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" )
-
-      USE ( cRuta + "EMP" + cCodEmp + "\Subcuenta.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubcuenta ) )
-      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Subcuenta.CDX" )
+      USE ( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubcuenta ) )
+      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )
 
    else
 
       if lMessage
-         msgStop( "Ficheros no enContrapartidados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
+         msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo subcuentas" )
       end if
 
       Return nil
@@ -2528,6 +2545,29 @@ Function CDiario()
 Return ( nil )
 
 //----------------------------------------------------------------------------//
+
+Function SetAplicacionContable( nAplicacion )
+   
+   if nAplicacionContable != nAplicacion
+      nAplicacionContable := nAplicacion
+   end if 
+
+Return ( nAplicacion )
+
+//---------------------------------------------------------------------------//
+       
+Function lAplicacionContaplus()
+
+Return ( nAplicacionContable <= 1 )
+
+//---------------------------------------------------------------------------//
+
+Function lAplicacionA3()
+
+Return ( nAplicacionContable == 2 )
+
+//---------------------------------------------------------------------------//
+
 
 /*
 Function SynDiarioContaplus()

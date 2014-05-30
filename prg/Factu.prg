@@ -340,7 +340,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "      + oUser():cAlmacen(), 100,,,, .t., {|| SelectAlmacen() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t. )
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t. ) 
 
    // Abrimos la ventana-------------------------------------------------------
 

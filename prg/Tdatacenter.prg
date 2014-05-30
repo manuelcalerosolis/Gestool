@@ -2580,6 +2580,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedPrvI"
    oDataTable:cName        := cPatEmp() + "PedPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedPrvI.Cdx"
@@ -2588,6 +2589,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedPrvD"
    oDataTable:cName        := cPatEmp() + "PedPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedPrvD.Cdx"
@@ -2749,6 +2751,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "RctPrvS"
    oDataTable:cName        := cPatEmp() + "RctPrvS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvS.Cdx"
@@ -4950,6 +4953,10 @@ CLASS TDataView
    METHOD PedidosProveedoresLineas( nView )        INLINE ( ::Get( "PedProvL", nView ) )
       METHOD PedidosProveedoresLineasId( nView )   INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
 
+   METHOD PedidosProveedoresIncidencias( nView )   INLINE ( ::Get( "PedPrvI", nView ) )
+
+   METHOD PedidosProveedoresDocumentos( nView )    INLINE ( ::Get( "PedPrvD", nView ) )
+
    METHOD Proveedores( nView )               INLINE ( ::Get( "Provee", nView ) )
       METHOD GruposProveedores( nView )      INLINE ( ::GetObject( "GruposProveedores", nView ) )
 
@@ -4979,6 +4986,15 @@ CLASS TDataView
 
    METHOD FacturasRectificativasProveedores( nView )        INLINE ( ::Get( "RctPrvT", nView ) )
       METHOD FacturasRectificativasProveedoresId( nView )   INLINE ( ( ::Get( "RctPrvT", nView ) )->cSerFac + str( ( ::Get( "RctPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "RctPrvT", nView ) )->cSufFac )
+
+   METHOD FacturasRectificativasProveedoresLineas( nView )        INLINE ( ::Get( "RctPrvL", nView ) )
+      METHOD FacturasRectificativasProveedoresLineasId( nView )   INLINE ( ( ::Get( "RctPrvL", nView ) )->cSerFac + str( ( ::Get( "RctPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "RctPrvL", nView ) )->cSufFac )
+
+   METHOD FacturasRectificativasProveedoresIncidencias( nView )   INLINE ( ::Get( "RctPrvI", nView ) )
+
+   METHOD FacturasRectificativasProveedoresDocumentos( nView )    INLINE ( ::Get( "RctPrvD", nView ) )
+
+   METHOD FacturasRectificativasProveedoresSeries( nView )        INLINE ( ::Get( "RctPrvS", nView ) )
 
    METHOD BancosProveedores( nView )         INLINE ( ::Get( "PrvBnc", nView ) )
 

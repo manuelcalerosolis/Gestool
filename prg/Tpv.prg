@@ -11253,8 +11253,8 @@ Return ( oDlg:nResult == IDOK )
 Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
    local lValid      := .f.
+   local lChgCodCli  := .f.
    local cNewCodCli  := aGet[ _CCLITIK ]:VarGet()
-   local lChgCodCli  := ( Empty( cOldCodCli ) .or. AllTrim( cOldCodCli ) != AllTrim( cNewCodCli ) )
 
    if Empty( cNewCodCli )
       Return .t.
@@ -11265,6 +11265,8 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
    else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
+
+   lChgCodCli        := ( Empty( cOldCodCli ) .or. AllTrim( cOldCodCli ) != AllTrim( cNewCodCli ) )
 
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
@@ -11346,7 +11348,6 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
          aGet[ _CCODOBR ]:lValid()
 
       end if
-
 
       if oTelefonoClient != nil
          oTelefonoClient:SetText( ( dbfClient )->Telefono )
@@ -20370,50 +20371,50 @@ END CLASS
 
 METHOD Load( dbfCajT )
 
-   ::cCodCaj         := oUser():cCaja()
+   local cCodCaj     := oUser():cCaja()
 
-   ::cFormatoTiket   := cFormatoTicketEnCaja(   ::cCodCaj, dbfCajT )
-   ::cFmtVal         := cFormatoValeEnCaja(     ::cCodCaj, dbfCajT )
-   ::cFmtAlb         := cFormatoAlbaranEnCaja(  ::cCodCaj, dbfCajT )
-   ::cFmtFac         := cFormatoFacturaEnCaja(  ::cCodCaj, dbfCajT )
+   ::cFormatoTiket   := cFormatoTicketEnCaja(   cCodCaj, dbfCajT )
+   ::cFmtVal         := cFormatoValeEnCaja(     cCodCaj, dbfCajT )
+   ::cFmtAlb         := cFormatoAlbaranEnCaja(  cCodCaj, dbfCajT )
+   ::cFmtFac         := cFormatoFacturaEnCaja(  cCodCaj, dbfCajT )
 
    ::cSayFmtTik      := cNombreDoc( ::cFormatoTiket )
    ::cSayFmtVal      := cNombreDoc( ::cFmtVal )
    ::cSayFmtAlb      := cNombreDoc( ::cFmtAlb )
    ::cSayFmtFac      := cNombreDoc( ::cFmtFac )
 
-   ::cPrinterTik     := cPrinterTiket(    ::cCodCaj, dbfCajT )
-   ::cPrinterVal     := cPrinterVale(     ::cCodCaj, dbfCajT )
-   ::cPrinterAlb     := cPrinterAlbaran(  ::cCodCaj, dbfCajT )
-   ::cPrinterFac     := cPrinterFactura(  ::cCodCaj, dbfCajT )
+   ::cPrinterTik     := cPrinterTiket(    cCodCaj, dbfCajT )
+   ::cPrinterVal     := cPrinterVale(     cCodCaj, dbfCajT )
+   ::cPrinterAlb     := cPrinterAlbaran(  cCodCaj, dbfCajT )
+   ::cPrinterFac     := cPrinterFactura(  cCodCaj, dbfCajT )
 
-   ::cFormatoRegalo  := cFormatoTicketRegaloEnCaja(   ::cCodCaj, dbfCajT )
-   ::cPrinterRegalo  := cPrinterRegalo(               ::cCodCaj, dbfCajT )
+   ::cFormatoRegalo  := cFormatoTicketRegaloEnCaja(   cCodCaj, dbfCajT )
+   ::cPrinterRegalo  := cPrinterRegalo(               cCodCaj, dbfCajT )
 
-   ::cFmtTikChk      := cFormatoChequeRegaloEnCaja(   ::cCodCaj, dbfCajT )
-   ::cPrinterTikChk  := cPrinterChequeRegalo(         ::cCodCaj, dbfCajT )
+   ::cFmtTikChk      := cFormatoChequeRegaloEnCaja(   cCodCaj, dbfCajT )
+   ::cPrinterTikChk  := cPrinterChequeRegalo(         cCodCaj, dbfCajT )
 
-   ::cFormatoEntrega := cFormatoEntregaEnCaja(     ::cCodCaj, dbfCajT )
-   ::cPrinterEntrega := cPrinterEntrega(           ::cCodCaj, dbfCajT )
-   ::cFmtTikDev      := cFormatoDevolucionEnCaja(  ::cCodCaj, dbfCajT )
-   ::cPrinterDev     := cPrinterDevolucion(        ::cCodCaj, dbfCajT )
-   ::cFmtAlbCaj      := cFormatoAlbaranEnCaja(     ::cCodCaj, dbfCajT )
-   ::cPrinterAlbCaj  := cWindowsPrinterEnCaja(     ::cCodCaj, dbfCajT )
+   ::cFormatoEntrega := cFormatoEntregaEnCaja(     cCodCaj, dbfCajT )
+   ::cPrinterEntrega := cPrinterEntrega(           cCodCaj, dbfCajT )
+   ::cFmtTikDev      := cFormatoDevolucionEnCaja(  cCodCaj, dbfCajT )
+   ::cPrinterDev     := cPrinterDevolucion(        cCodCaj, dbfCajT )
+   ::cFmtAlbCaj      := cFormatoAlbaranEnCaja(     cCodCaj, dbfCajT )
+   ::cPrinterAlbCaj  := cWindowsPrinterEnCaja(     cCodCaj, dbfCajT )
 
-   ::cFmtFacCaj      := cFormatoFacturaEnCaja(  ::cCodCaj, dbfCajT )
-   ::cPrinterFacCaj  := cWindowsPrinterEnCaja(  ::cCodCaj, dbfCajT )
+   ::cFmtFacCaj      := cFormatoFacturaEnCaja(  cCodCaj, dbfCajT )
+   ::cPrinterFacCaj  := cWindowsPrinterEnCaja(  cCodCaj, dbfCajT )
 
-   ::cFmtEntCaj      := cFormatoEntregaEnCaja(  ::cCodCaj, dbfCajT )
-   ::cPrinterEntCaj  := cPrinterEntrega(        ::cCodCaj, dbfCajT )
+   ::cFmtEntCaj      := cFormatoEntregaEnCaja(  cCodCaj, dbfCajT )
+   ::cPrinterEntCaj  := cPrinterEntrega(        cCodCaj, dbfCajT )
 
-   ::cFmtApt         := cFormatoApartadosEnCaja(   ::cCodCaj, dbfCajT )
-   ::cPrinterApt     := cPrinterApartados(         ::cCodCaj, dbfCajT )
+   ::cFmtApt         := cFormatoApartadosEnCaja(      cCodCaj, dbfCajT )
+   ::cPrinterApt     := cPrinterApartados(            cCodCaj, dbfCajT )
 
-   ::nCopiasTik      := nCopiasTicketsEnCaja( ::cCodCaj, dbfCajT )
-   ::nCopiasAlb      := nCopiasAlbaranesEnCaja( ::cCodCaj, dbfCajT )
-   ::nCopiasFac      := nCopiasFacturasEnCaja( ::cCodCaj, dbfCajT )
-   ::nCopiasEntrega  := nCopiasEntregasEnCaja( ::cCodCaj, dbfCajT )
-   ::nCopiasRegalo   := nCopiasTicketsRegaloEnCaja( ::cCodCaj, dbfCajT )    
+   ::nCopiasTik      := nCopiasTicketsEnCaja(         cCodCaj, dbfCajT )
+   ::nCopiasAlb      := nCopiasAlbaranesEnCaja(       cCodCaj, dbfCajT )
+   ::nCopiasFac      := nCopiasFacturasEnCaja(        cCodCaj, dbfCajT )
+   ::nCopiasEntrega  := nCopiasEntregasEnCaja(        cCodCaj, dbfCajT )
+   ::nCopiasRegalo   := nCopiasTicketsRegaloEnCaja(   cCodCaj, dbfCajT )    
    
 return self
 

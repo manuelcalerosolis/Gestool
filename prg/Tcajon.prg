@@ -153,6 +153,7 @@ METHOD LogCajon( nView )
 
       ( TDataView():Get( "LogPorta", nView ) )->cNumTur   := cCurSesion()
       ( TDataView():Get( "LogPorta", nView ) )->cSufTur   := RetSufEmp()
+      ( TDataView():Get( "LogPorta", nView ) )->cCodCaj   := oUser():cCaja()
       ( TDataView():Get( "LogPorta", nView ) )->cCodUse   := cCurUsr()
       ( TDataView():Get( "LogPorta", nView ) )->dFecApt   := GetSysDate()
       ( TDataView():Get( "LogPorta", nView ) )->cHorApt   := Substr( Time(), 1, 5 )

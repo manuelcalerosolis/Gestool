@@ -197,6 +197,7 @@ CLASS TTurno FROM TMasDet
    DATA  oLogPorta
 
    CLASSDATA  cCurTurno                            INIT ""
+   CLASSDATA  cCurCaja                             INIT ""
 
    DATA  lZoom
    DATA  dFecTur
@@ -378,8 +379,6 @@ CLASS TTurno FROM TMasDet
    DATA aSer                                       INIT Afill( Array( 26 ), .t. )
 
    DATA  lArqueoParcial                            INIT .f.
-
-   METHOD lArqueoTactil()                          INLINE lTactilMode()
    
    DATA  OpenTurno                                 INIT .f.
    DATA  OpenCaja                                  INIT .f.
@@ -402,6 +401,8 @@ CLASS TTurno FROM TMasDet
    Method New( cPath, oWndParent, oMenuItem )
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
+
+   METHOD lArqueoTactil()                          INLINE lTactilMode()
 
    // Ficheros ----------------------------------------------------------------
 
@@ -436,10 +437,12 @@ CLASS TTurno FROM TMasDet
    Method cNombreUser()
 
    METHOD SetCurrentTurno()                        INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
-   Method GetCurrentTurno()
+   Method GetCurrentTurno()                        INLINE   ( ::GetLastOpen() )
    Method GoCurrentTurno()
 
-   METHOD GetCurrentCaja()                         INLINE   ( oUser():cCaja() )
+   METHOD GetCurrentCaja()                         INLINE   ( ::cCurCaja   := oUser():cCaja() )
+
+   METHOD GetFullTurno()                           INLINE   ( ::cCurTurno + ::cCurCaja )
 
    Method cValidTurno()
 
@@ -637,6 +640,9 @@ CLASS TTurno FROM TMasDet
 
    Inline Method TotSesion( cTurno, cCaja )
 
+      DEFAULT cTurno    := ::cCurTurno
+      DEFAULT cCaja     := ::cCurCaja
+
       ::TotVenta(    cTurno, cCaja )
 
       ::TotEntrada(  cTurno, cCaja )
@@ -649,7 +655,7 @@ CLASS TTurno FROM TMasDet
 
       ::TotTipoIva(  cTurno, cCaja )
 
-      if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cNumTur" )
+      if ::oDbfCaj:SeekInOrd(    cTurno + cCaja, "cNumTur" )
          ::oTotales:addTotCajaEfectivo(   cCaja, ::oDbfCaj:nCanEfe )
          ::oTotales:addTotCajaNoEfectivo( cCaja, ::oDbfCaj:nCanEfe )
          ::oTotales:addTotCajaTarjeta(    cCaja, ::oDbfCaj:nCanTar )
@@ -753,7 +759,7 @@ CLASS TTurno FROM TMasDet
       if lState
 
          if !Empty( ::oTxt )
-            ::oTxt:SetText( "AÃ±adiendo a temporal " + Lower( cPrompt ) )
+            ::oTxt:SetText( "Añadiendo a temporal " + Lower( cPrompt ) )
          end if
 
          ::cGrupoEnUso  := Padr( cPrompt, 60 )
@@ -894,7 +900,7 @@ CLASS TTurno FROM TMasDet
    METHOD cSufijoCurrentTurno()        INLINE ( SubStr( ::cCurTurno, 7, 2 ) )
    METHOD cNumeroSufijoCurrentTurno()  INLINE ( SubStr( ::cCurTurno, 1, 8 ) )
 
-   METHOD cCajaCurrentTurno()          INLINE ( if( uFieldEmpresa( "lDesCajas"), SubStr( ::cCurTurno, 9, 3 ), "" ) )
+   METHOD cCajaCurrentTurno()          INLINE ( SubStr( ::cCurTurno, 9, 3 ) )
 
 END CLASS
 
@@ -920,7 +926,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oDbf               := nil
 
-   ::cCodCaj            := Space( 3 )
+   ::cCurCaja           := Space( 3 )
    ::cOldCaj            := Space( 3 )
 
    ::lAutoButtons       := .t.
@@ -1239,8 +1245,8 @@ METHOD DefineFiles( cPath )
                                                    VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
       FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
 
-      FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "NÃºmero"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
-      FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT "DelegaciÃ³n"                                                          COLSIZE 40               OF ::oDbf
+      FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
+      FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"                                                          COLSIZE 40               OF ::oDbf
       FIELD NAME "cCodCaj" TYPE "C"  LEN  3  DEC 0 COMMENT "Caja"                                                                COLSIZE 50               OF ::oDbf
 
       FIELD NAME "dOpnTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"                                                        COLSIZE 80               OF ::oDbf
@@ -1253,7 +1259,7 @@ METHOD DefineFiles( cPath )
       FIELD NAME "mComTur" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"                                                         COLSIZE 300              OF ::oDbf
       FIELD NAME "nStaTur" TYPE "N"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
 
-      INDEX TO "Turno.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj"  COMMENT "NÃºmero"        FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj"  COMMENT "Número"        FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "dOpnTur" ON "dOpnTur"                                              FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "lSndTur" ON "lSndTur"                                              FOR "!Deleted()"                       OF ::oDbf
       INDEX TO "Turno.Cdx" TAG "nStaTur" ON "nStaTur"                                              FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
@@ -1280,8 +1286,8 @@ METHOD DefineFiles( cPath )
       FIELD NAME "nCanTar" TYPE "N"  LEN 16  DEC 6 COMMENT "Importe de tarjeta"                                OF ::oDbfCaj
       FIELD NAME "nCanRet" TYPE "N"  LEN 16  DEC 6 COMMENT "Importe retirado"                                  OF ::oDbfCaj
       FIELD NAME "cMonRet" TYPE "C"  LEN 200 DEC 0 COMMENT ""                                                  OF ::oDbfCaj
-      FIELD NAME "nCanPre" TYPE "N"  LEN 16  DEC 6 COMMENT "Objetivo de la sesiÃ³n"                             OF ::oDbfCaj
-      FIELD NAME "cDivPre" TYPE "C"  LEN  3  DEC 0 COMMENT "Divisa del objetivo de la sesiÃ³n"                  OF ::oDbfCaj
+      FIELD NAME "nCanPre" TYPE "N"  LEN 16  DEC 6 COMMENT "Objetivo de la sesión"                             OF ::oDbfCaj
+      FIELD NAME "cDivPre" TYPE "C"  LEN  3  DEC 0 COMMENT "Divisa del objetivo de la sesión"                  OF ::oDbfCaj
       FIELD NAME "cCajOpe" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario inicio"                                    OF ::oDbfCaj
       FIELD NAME "dFecOpe" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"                                      OF ::oDbfCaj
       FIELD NAME "cHorOpe" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"                                       OF ::oDbfCaj
@@ -1300,15 +1306,15 @@ METHOD DefineFiles( cPath )
 
    DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Lineas de contadores en turnos de venta"
 
-      FIELD NAME "cNumTur" TYPE "C" LEN  6   DEC 0 COMMENT "NÃºmero"                          PICTURE "######"  OF ::oDbfDet
+      FIELD NAME "cNumTur" TYPE "C" LEN  6   DEC 0 COMMENT "Número"                          PICTURE "######"  OF ::oDbfDet
       FIELD NAME "cSufTur" TYPE "C" LEN  2   DEC 0 COMMENT "Sufijo"                                            OF ::oDbfDet
       FIELD NAME "cCodCaj" TYPE "C" LEN  3   DEC 0 COMMENT "Caja"                                              OF ::oDbfDet
-      FIELD NAME "cCodArt" TYPE "C" LEN 18   DEC 0 COMMENT "CÃ³digo del artÃ­culo"                               OF ::oDbfDet
-      FIELD NAME "cNomArt" TYPE "C" LEN 50   DEC 0 COMMENT "Nombre del artÃ­culo"                               OF ::oDbfDet
-      FIELD NAME "nCanAnt" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad anterior del artÃ­culo"                    OF ::oDbfDet
-      FIELD NAME "nCanAct" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad posterior del artÃ­culo"                   OF ::oDbfDet
-      FIELD NAME "nPvpArt" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de venta del artÃ­culo"                     OF ::oDbfDet
-      FIELD NAME "nIvaArt" TYPE "N" LEN  5   DEC 2 COMMENT "Porcentaje de " + cImp() + " del artÃ­culo"         OF ::oDbfDet
+      FIELD NAME "cCodArt" TYPE "C" LEN 18   DEC 0 COMMENT "Código del artículo"                               OF ::oDbfDet
+      FIELD NAME "cNomArt" TYPE "C" LEN 50   DEC 0 COMMENT "Nombre del artículo"                               OF ::oDbfDet
+      FIELD NAME "nCanAnt" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad anterior del artículo"                    OF ::oDbfDet
+      FIELD NAME "nCanAct" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad posterior del artículo"                   OF ::oDbfDet
+      FIELD NAME "nPvpArt" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de venta del artículo"                     OF ::oDbfDet
+      FIELD NAME "nIvaArt" TYPE "N" LEN  5   DEC 2 COMMENT "Porcentaje de " + cImp() + " del artículo"         OF ::oDbfDet
       FIELD NAME "nValImp" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de impuesto especial"    PICTURE ::cPouDiv OF ::oDbfDet
 
       INDEX TO "Turnol.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj + cCodArt" FOR "!Deleted()"  OF ::oDbfDet
@@ -1357,7 +1363,7 @@ METHOD Activate()
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
       NOBORDER ;
-      ACTION   ( ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "SesiÃ³n " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
+      ACTION   ( ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "Sesión " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
       TOOLTIP  "(Z)oom";
       HOTKEY   "Z";
       LEVEL    ACC_EDIT
@@ -1372,7 +1378,7 @@ METHOD Activate()
    DEFINE BTNSHELL RESOURCE "STOPWATCH_STOP_" OF ::oWndBrw ; 
       NOBORDER ;
       ACTION   ( ::oWndBrw:SetOnProcess(), ::lArqueoTurno( .f. ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
-      TOOLTIP  "(C)errar sesiÃ³n";
+      TOOLTIP  "(C)errar sesión";
       HOTKEY   "C";
       LEVEL    ACC_ZOOM
 
@@ -1431,8 +1437,8 @@ METHOD Activate()
       TOOLTIP  "(S)alir" ;
       HOTKEY   "S"
 
-   ::oWndBrw:cHtmlHelp  := "SesiÃ³n"
-   ::oWndBrw:bEdit      := {|| ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "SesiÃ³n " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() }
+   ::oWndBrw:cHtmlHelp  := "Sesión"
+   ::oWndBrw:bEdit      := {|| ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "Sesión " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() }
 
    ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
 
@@ -1444,7 +1450,7 @@ METHOD Resource( nMode )
 
    local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "TURNOS" TITLE "SesiÃ³n"
+   DEFINE DIALOG oDlg RESOURCE "TURNOS" TITLE "Sesión"
 
       REDEFINE GET ::oDbf:cNumTur UPDATE;
          ID       100 ;
@@ -1939,7 +1945,7 @@ METHOD lCloseCajaSeleccionada()
 
    end if
 
-   // Envio de informaciÃ³n e impresion--------------------------------------------
+   // Envio de información e impresion--------------------------------------------
 
    if ::oDbfCaj:Seek( cCurrentTruno )
 
@@ -1987,12 +1993,12 @@ METHOD lCloseCajaSeleccionada()
 
    ::oDbf:SetStatus()
 
-   // Envio de informaciÃ³n por internet----------------------------------------
+   // Envio de información por internet----------------------------------------
 
    if ::lEnvioInformacion .and. !::lArqueoParcial
 
       if !Empty( ::oTxt )
-         ::oTxt:SetText( "Enviando informaciÃ³n a servidores..." )
+         ::oTxt:SetText( "Enviando información a servidores..." )
       end if
 
       TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
@@ -2230,14 +2236,14 @@ Method lAllCloseTurno( cCurrentTruno )
       // Turnos cerrados----------------------------------------------------------
 
       if !empty( ::oTxt )
-         ::oTxt:SetText( "Cerrando la sesiÃ³n" )
+         ::oTxt:SetText( "Cerrando la sesión" )
       end if
 
       CloSesion()
 
    else
 
-      MsgStop( "La sesiÃ³n " + Trans( cCurrentTruno, "@R ######/##" ) + " no existe", "Imposible cerrar" )
+      MsgStop( "La sesión " + Trans( cCurrentTruno, "@R ######/##" ) + " no existe", "Imposible cerrar" )
 
    end if
 
@@ -2295,7 +2301,7 @@ METHOD DialogCreateTurno()
    ::cCajeroTurno       := cCurUsr()
    ::nObjetivoTurno     := 0
    ::nImporteTurno      := ::GetLastEfectivo()
-   ::cDescripcionTurno  := "Apertura de sesiÃ³n " + cNombreCaja
+   ::cDescripcionTurno  := "Apertura de sesión " + cNombreCaja
 
    /*
    Comienza el dialogo---------------------------------------------------------
@@ -2692,7 +2698,7 @@ METHOD lInvCierre()
    end if
 
    if nUsrInUse() > 1
-      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return .f.
    end if
 
@@ -2711,8 +2717,8 @@ METHOD lInvCierre()
 
    DEFINE DIALOG  oDlgWat ;
       RESOURCE    "INVTURNO" ;
-      TITLE       "Invirtiendo sesiÃ³n " + alltrim( trans( ::cNumeroCurrentTurno(), "@R ######" ) ) + ;
-                  " delegaciÃ³n " + ::cSufijoCurrentTurno() + ;
+      TITLE       "Invirtiendo sesión " + alltrim( trans( ::cNumeroCurrentTurno(), "@R ######" ) ) + ;
+                  " delegación " + ::cSufijoCurrentTurno() + ;
                   " caja " + ::cCajaCurrentTurno()
 
       REDEFINE BITMAP oBmp ;
@@ -3174,7 +3180,7 @@ METHOD GetLastEfectivo()
    local cNumeroCaja 
    local nEfectivo   := 0
 
-   if uFieldEmpresa( "lDesCajas" )
+   if .t. // uFieldEmpresa( "lDesCajas" )
       cNumeroCaja    := ::GetLastClose()
    else 
       cNumeroCaja    := ::GetLastClose() + ::GetCurrentCaja()
@@ -3233,7 +3239,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    else
 
       if !::GoCurrentTurno()
-         msgStop( "No puedo posicionarme en la sesiÃ³n actual.")
+         msgStop( "No puedo posicionarme en la sesión actual.")
          return .f.
       end if
 
@@ -3251,8 +3257,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    end if
 
-   if Empty( ::cCodCaj ) 
-      ::cCodCaj         := ::GetCurrentCaja()
+   if Empty( ::cCurCaja ) 
+      ::GetCurrentCaja()
    end if
 
    if !::lZoom .and. Empty( ::cCurTurno )
@@ -3262,9 +3268,11 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    // Cominenza el proceso de calculo---------------------------------------------
 
+
+/*
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
 
    ::cComentario     := ::oDbf:mComTur
@@ -3277,8 +3285,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    // Si estamos con las cajas desincorizadas el scope es por caja-------------
 
-   if uFieldEmpresa( "lDesCajas" )
-      ::oDbfCaj:OrdScope( ::cCurTurno + ::cCodCaj )
+   if .t. // uFieldEmpresa( "lDesCajas" ) 
+      ::oDbfCaj:OrdScope( ::GetFullTurno() )
    else
       ::oDbfCaj:OrdScope( ::cCurTurno )
    end if
@@ -3287,23 +3295,25 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    ::oDbfCaj:GoTop()
    while !::oDbfCaj:Eof()
-      ::SelCajas( ::oDbfCaj:cCodCaj == ::cCodCaj )
+      ::SelCajas( ::oDbfCaj:cCodCaj == ::cCurCaja )
       ::oDbfCaj:Skip()
    end while       
    ::oDbfCaj:GoTop()
 
-   // Valores de la impresiÃ³n-----------------------------------------------------
+   // Valores de la impresión-----------------------------------------------------
 
    do case
       case ::lArqueoCiego
-         ::cWinArq      := cPrinterArqueoCiego( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-         ::cPrnArq      := cFormatoArqueoCiegoEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+         ::cWinArq      := cPrinterArqueoCiego(          ::cCurCaja, ::oCaja:cAlias )
+         ::cPrnArq      := cFormatoArqueoCiegoEnCaja(    ::cCurCaja, ::oCaja:cAlias )
+      
       case !::lArqueoCiego .and. !::lArqueoParcial
-         ::cWinArq      := cPrinterArqueo( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-         ::cPrnArq      := cFormatoArqueoEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+         ::cWinArq      := cPrinterArqueo(               ::cCurCaja, ::oCaja:cAlias )
+         ::cPrnArq      := cFormatoArqueoEnCaja(         ::cCurCaja, ::oCaja:cAlias )
+      
       case !::lArqueoCiego .and. ::lArqueoParcial
-         ::cWinArq      := cPrinterArqueoParcial( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-         ::cPrnArq      := cFormatoArqueoParcialEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+         ::cWinArq      := cPrinterArqueoParcial(        ::cCurCaja, ::oCaja:cAlias )
+         ::cPrnArq      := cFormatoArqueoParcialEnCaja(  ::cCurCaja, ::oCaja:cAlias )
    end case 
 
    // Opciones de empresa------------------------------------------------------
@@ -3336,7 +3346,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       DEFINE DIALOG ::oDlgTurno ;
          RESOURCE       "ARQUEO_TCT";
-         TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesiÃ³n : " + Trans( ::cCurTurno, "@R ######" )
+         TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
          REDEFINE PAGES ::oFldTurno ;
             ID          200 ;
@@ -3351,7 +3361,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       DEFINE DIALOG ::oDlgTurno ;
          RESOURCE       "ARQUEO";
-         TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesiÃ³n : " + Trans( ::cCurTurno, "@R ######" )
+         TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
       REDEFINE PAGES    ::oFldTurno ;
          ID             200 ;
@@ -3527,7 +3537,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       end with
 
       with object ( oBrwCaj:AddCol() )
-         :cHeader          := "NÂº usuarios"
+         :cHeader          := "Nº usuarios"
          :bEditValue       := {|| nUserCaja( ::oDbfCaj:FieldGetByName( "cCodCaj" ) ) }
          :cEditPicture     := "9999"
          :nWidth           := 80
@@ -3570,7 +3580,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oDbfDet:SetBrowse( oBrwCnt )
 
       with object ( oBrwCnt:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :bEditValue       := {|| ::oDbfDet:cCodArt }
          :nWidth           := 50
       end with
@@ -3582,7 +3592,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       end with
 
       with object ( oBrwCnt:AddCol() )
-         :cHeader          := "NÂº anterior"
+         :cHeader          := "Nº anterior"
          :bEditValue       := {|| ::oDbfDet:nCanAnt }
          :cEditPicture     := ::cPicUnd
          :bOnPostEdit      := {|o,u,n| ::EdtAnt( o, u, n ), ::TotContadores(), oCol:RefreshFooter(), .t. }
@@ -3593,7 +3603,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       end with
 
       with object ( oCol   := oBrwCnt:AddCol() )
-         :cHeader          := "NÂº actual"
+         :cHeader          := "Nº actual"
          :bEditValue       := {|| ::oDbfDet:nCanAct }
          :cEditPicture     := ::cPicUnd
          :bOnPostEdit      := {|o,u,n| ::EdtCol( o, u, n ), ::TotContadores(), oCol:RefreshFooter(), .t. }
@@ -3624,7 +3634,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       with object ( oBrwCnt:AddCol() )
          :cHeader          := "Total"
          :bEditValue       := {|| ( ::oDbfDet:nPvpArt * ( ::oDbfDet:nCanAct - ::oDbfDet:nCanAnt ) ) }
-         :bFooter          := {|| ( ::oTotales:nTotContadores( ::cCodCaj ) ) }
+         :bFooter          := {|| ( ::oTotales:nTotContadores( ::cCurCaja ) ) }
          :cEditPicture     := ::cPorDiv
          :nWidth           := 75
          :nDataStrAlign    := AL_RIGHT
@@ -3657,7 +3667,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       if ::lArqueoTactil()
 
       REDEFINE GET ::oCodCaj ;
-         VAR      ::cCodCaj ;
+         VAR      ::cCurCaja ;
          ID       140 ;
          OF       ::oFldTurno:aDialogs[ 3 ]
 
@@ -3672,11 +3682,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       else
 
       REDEFINE GET ::oCodCaj ;
-         VAR      ::cCodCaj ;
+         VAR      ::cCurCaja ;
          ID       140 ;
          BITMAP   "LUPA" ;
          OF       ::oFldTurno:aDialogs[ 3 ]
 
+         ::oCodCaj:bWhen   := {|| .f. }  
          ::oCodCaj:bHelp   := {|| BrwCajas( ::oCodCaj, oCajNbr ) }
          ::oCodCaj:bValid  := {|| ::lChangeCajas( oCajNbr ) }
 
@@ -3687,11 +3698,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       end if
 
+/*
       if lZoom
-         ::oCodCaj:bWhen   := {|| .f. }  
       else
          ::oCodCaj:bWhen   := {|| oUser():lAdministrador() }
       end if
+*/
 
       // Formas de pago-----------------------------------------------------------
 
@@ -3717,56 +3729,56 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       if ::lArqueoTactil()
 
-         REDEFINE SAY ::oTotalEfectivo ;
-            VAR      ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
-            ID       400 ;
-            FONT     oFntSay ;
-            PICTURE  ::cPorDiv ;
-            OF       ::oFldTurno:aDialogs[3]
+         REDEFINE SAY   ::oTotalEfectivo ;
+            VAR         ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) ;
+            ID          400 ;
+            FONT        oFntSay ;
+            PICTURE     ::cPorDiv ;
+            OF          ::oFldTurno:aDialogs[3]
 
-         REDEFINE SAY ::oTotalTarjeta ;
-            VAR      ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ;
-            ID       410 ;
-            FONT     oFntSay ;
-            PICTURE  ::cPorDiv ;
-            OF       ::oFldTurno:aDialogs[3]
+         REDEFINE SAY   ::oTotalTarjeta ;
+            VAR         ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ;
+            ID          410 ;
+            FONT        oFntSay ;
+            PICTURE     ::cPorDiv ;
+            OF          ::oFldTurno:aDialogs[3]
 
-         REDEFINE SAY ::oTotalNoEfectivo ;
-            VAR      ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
-            ID       411 ;
-            FONT     oFntSay ;
-            PICTURE  ::cPorDiv ;
-            OF       ::oFldTurno:aDialogs[3]
+         REDEFINE SAY   ::oTotalNoEfectivo ;
+            VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCurCaja ) ;
+            ID          411 ;
+            FONT        oFntSay ;
+            PICTURE     ::cPorDiv ;
+            OF          ::oFldTurno:aDialogs[3]
 
-         REDEFINE SAY ::oTotalCobros ;
-            VAR      ( ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) + ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ) ;
-            ID       415 ;
-            FONT     oFntSay ;
-            PICTURE  ::cPorDiv ;
-            OF       ::oFldTurno:aDialogs[3]
+         REDEFINE SAY   ::oTotalCobros ;
+            VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) + ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ) ;
+            ID          415 ;
+            FONT        oFntSay ;
+            PICTURE     ::cPorDiv ;
+            OF          ::oFldTurno:aDialogs[3]
 
       else
 
          REDEFINE SAY   ::oTotalEfectivo ;
-            VAR         ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
+            VAR         ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) ;
             ID          400 ;
             PICTURE     ::cPorDiv ;
             OF          ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY   ::oTotalTarjeta ;
-            VAR         ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ;
+            VAR         ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ;
             ID          410 ;
             PICTURE     ::cPorDiv ;
             OF          ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY   ::oTotalNoEfectivo ;
-            VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
+            VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCurCaja ) ;
             ID          411 ;
             PICTURE     ::cPorDiv ;
             OF          ::oFldTurno:aDialogs[3]
 
          REDEFINE SAY   ::oTotalCobros ;
-            VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) + ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ) ;
+            VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) + ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ) ;
             ID          415 ;
             PICTURE     ::cPorDiv ;
             OF          ::oFldTurno:aDialogs[3]
@@ -3867,7 +3879,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID          441 ;
          OF          ::oFldTurno:aDialogs[ 3 ]
 
-      REDEFINE SAY   ::oDiferenciaEfectivo VAR ( ::nImporteEfectivo - ::oTotales:nTotSaldoEfectivo( ::cCodCaj )  ) ;
+      REDEFINE SAY   ::oDiferenciaEfectivo VAR ( ::nImporteEfectivo - ::oTotales:nTotSaldoEfectivo( ::cCurCaja )  ) ;
          ID          440 ;
          PICTURE     ::cPorDiv ;
          FONT        oFntSay ;
@@ -3878,7 +3890,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID          451 ;
          OF          ::oFldTurno:aDialogs[ 3 ]      
 
-      REDEFINE SAY   ::oDiferenciaTarjeta VAR ( ::nImporteTarjeta - ::oTotales:nTotCobroTarjeta( ::cCodCaj ) );
+      REDEFINE SAY   ::oDiferenciaTarjeta VAR ( ::nImporteTarjeta - ::oTotales:nTotCobroTarjeta( ::cCurCaja ) );
          ID          450 ;
          PICTURE     ::cPorDiv ;
          FONT        oFntSay ;
@@ -3905,7 +3917,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       200 ;
          OF       ::oFldTurno:aDialogs[4]
 
-      // ImpresiÃ³n----------------------------------------------------------------
+      // Impresión----------------------------------------------------------------
 
       REDEFINE CHECKBOX ::oNoImprimirArqueo ;
          VAR      ::lNoImprimirArqueo ;
@@ -3989,7 +4001,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTON ::oBtnRecalcular ;
          ID       300 ;
          OF       ::oDlgTurno ;
-         ACTION   ( ::lCalTurno( nil, ::cCodCaj ) )
+         ACTION   ( ::lCalTurno() )
 
       REDEFINE BUTTON ::oBtnPrv ;
          ID       100 ;
@@ -4051,7 +4063,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::lNowOpen()
 
    end if
-
+/*
    RECOVER USING oError
 
       if !Empty( ::oDlgTurno )
@@ -4063,9 +4075,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    /*
-   Limpiamos las estÃ¡ticas-----------------------------------------------------
+   Limpiamos las estáticas-----------------------------------------------------
    */
 
    ::lArqueoParcial     := .f.
@@ -4102,17 +4114,17 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       oFntBrw:End()
    end if
 
-   if ::oWndBrw != nil
+   if !Empty( ::oWndBrw )
       ::oWndBrw:Refresh()
    end if
 
-Return ( ::oDlgTurno:nResult == IDOK )
+Return ( if( !Empty( ::oDlgTurno ),  ::oDlgTurno:nResult == IDOK, .f. ) )
 
 //---------------------------------------------------------------------------//
 
 Method InitArqueoTurno()
 
-   if uFieldEmpresa( "lDesCajas") 
+   if .t. // uFieldEmpresa( "lDesCajas") 
       ::oBtnSelectAllCajas:Hide()
       ::oBtnUnSelectAllCajas:Hide()
    end if
@@ -4256,11 +4268,11 @@ Method InitDlgImprimir()
                      oSubTree:Add( "Saldos bancarios en cuentas de empresa" )
 
    oSubTree       := ::oTreeImpresion:Add( "Estadisticas" )
-                     oSubTree:Add( "Compras por artÃ­culos" )
-                     oSubTree:Add( "Ventas por artÃ­culos" )
-                     oSubTree:Add( "Ventas por tipo de artÃ­culos" )
+                     oSubTree:Add( "Compras por artículos" )
+                     oSubTree:Add( "Ventas por artículos" )
+                     oSubTree:Add( "Ventas por tipo de artículos" )
                      oSubTree:Add( "Ventas por familias" )
-                     oSubTree:Add( "Ventas por categorÃ­a" )
+                     oSubTree:Add( "Ventas por categoría" )
                      oSubTree:Add( "Ventas por fabricante" )
                      oSubTree:Add( "Ventas por temporada" )
                      oSubTree:Add( "Ventas por usuarios" )
@@ -4308,7 +4320,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GoPrev( oFld, oDlg, oBrw, oBrwCaj )
+METHOD GoPrev( oBrwCnt, oBrwCaj )
 
    do case
       case ::oFldTurno:nOption == 2
@@ -4386,7 +4398,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
             ::lCalTurno()
 
-            ::LoadImporte( ::cCodCaj )
+            ::LoadImporte( ::cCurCaja )
 
             ::oBtnRecalcular:Show()
 
@@ -4434,7 +4446,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
       case ::oFldTurno:nOption == 2
 
-         ::lCalTurno( nil, ::cCodCaj )
+         ::lCalTurno()
 
          ::oBtnRecalcular:Show()
 
@@ -4450,7 +4462,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
          ::oBtnRecalcular:Hide()
 
-         ::SaveImporte( ::cCodCaj )
+         ::SaveImporte( ::cCurCaja )
 
          ::oFldTurno:GoNext()
 
@@ -4601,7 +4613,7 @@ Method CreateCajaTurno()
 
    RECOVER USING oError
 
-      msgStop( "Imposible crear la sesiÃ³n para la caja actual." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible crear la sesión para la caja actual." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -4622,7 +4634,7 @@ Method SelCajas( lSelect, oBrw, lMessage )
       if ::oDbfCaj:FieldGetByName( "lCajClo" ) .and. !oUser():lMaster()
 
          if lMessage 
-            MsgStop( "La caja " + ::oDbfCaj:FieldGetByName( "cCodCaj" ) + " ya estÃ¡ cerrada." )
+            MsgStop( "La caja " + ::oDbfCaj:FieldGetByName( "cCodCaj" ) + " ya está cerrada." )
          end if 
       
       else 
@@ -4747,7 +4759,7 @@ Method lValidCajas()
       if ::lInCajaSelect( ::oDbfCaj:cCodCaj )
          nUsrCaj  := nUserCaja( ::oDbfCaj:cCodCaj )
          if !( nUsrCaj == 0 .or. ( nUsrCaj == 1 .and. ::oDbfCaj:cCodCaj == ::GetCurrentCaja() ) )
-            if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "Â¿ Desea continuar con el cierre ?" )
+            if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "¿ Desea continuar con el cierre ?" )
                lValidCajas := .f.
                exit
             end if
@@ -4801,7 +4813,7 @@ Method lChangeCajas( oNomCaj )
    Reclculamos con la caja seleccionada----------------------------------------
    */
 
-   ::lCalTurno( nil, ::cCodCaj )
+   ::lCalTurno()
 
    /*
    Refrescos en pantalla-------------------------------------------------------
@@ -4824,6 +4836,7 @@ METHOD lCalTurno( cTurno, cCaja )
    local aStream                 := {}
 
    DEFAULT cTurno                := ::cCurTurno
+   DEFAULT cCaja                 := ::cCurCaja
 
    CursorWait()
 
@@ -4866,6 +4879,10 @@ METHOD lCalTurno( cTurno, cCaja )
       Calculo en todas las cajas--------------------------------------------------
       */
 
+      ::TotSesion( cTurno, cCaja )
+
+      /*
+
       if Empty( cCaja )
 
          if ::oDbfCaj:Seek( cTurno )
@@ -4894,9 +4911,9 @@ METHOD lCalTurno( cTurno, cCaja )
 
       else
 
-         ::TotSesion( cTurno, cCaja )
 
       end if
+      */
 
       /*
       Refrescos en pantalla-------------------------------------------------------
@@ -4985,7 +5002,6 @@ METHOD lCalTurno( cTurno, cCaja )
       public nTotNumeroVales        := ::oTotales:nTotNumeroVales(        cCaja  )
       public nTotNumeroCheques      := ::oTotales:nTotNumeroCheques(      cCaja  )
       public nTotNumeroDevoluciones := ::oTotales:nTotNumeroDevoluciones( cCaja  )
-      public nTotNumeroAptCajon     := ::oTotales:nTotNumeroAptCajon(     cTurno )
       public nTotCaja               := ::oTotales:nTotCaja(               cCaja  )
       public nTotCajaEfectivo       := ::oTotales:nTotCajaEfectivo(       cCaja  )
       public nTotCajaNoEfectivo     := ::oTotales:nTotCajaNoEfectivo(     cCaja  )
@@ -4996,6 +5012,8 @@ METHOD lCalTurno( cTurno, cCaja )
       public nTotSaldoEfectivo      := ::oTotales:nTotSaldoEfectivo(      cCaja  )
       public nTotSaldoNoEfectivo    := ::oTotales:nTotSaldoNoEfectivo(    cCaja  )
       public nTotSaldoTarjeta       := ::oTotales:nTotSaldoTarjeta(       cCaja  )
+
+      public nTotNumeroAptCajon     := ::oTotales:nTotNumeroAptCajon(     cTurno, cCaja )
 
       /*
       Calculo Monedas-------------------------------------------------------------
@@ -5174,6 +5192,7 @@ return ( ::oTotales:nContadores )
 METHOD TotVenta( cTurno, cCaja )
 
    DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    /*
    Cerrar por turnos-----------------------------------------------------------
@@ -5329,9 +5348,7 @@ METHOD TotVenta( cTurno, cCaja )
       while ::oPedCliP:cTurRec + ::oPedCliP:cSufPed + ::oPedCliP:cCodCaj == cTurno + cCaja  .and. !::oPedCliP:Eof()
 
          if !::oPedCliP:lPasado
-
             ::oTotales:addTotPedCliEntregas( cCaja, ::oPedCliP:cSerPed, ::nTotPedidoEntrega(), ::cTxtPedidoEntrega(), ::bEdtPedidoEntrega() )
-
          end if
 
          ::oPedCliP:Skip()
@@ -5355,9 +5372,7 @@ METHOD TotVenta( cTurno, cCaja )
       while ::oAlbCliP:cTurRec + ::oAlbCliP:cSufAlb + ::oAlbCliP:cCodCaj == cTurno + cCaja  .and. !::oAlbCliP:Eof()
 
          if !::oAlbCliP:lPasado
-
             ::oTotales:addTotAlbCliEntregas( cCaja, ::oAlbCliP:cSerAlb, ::nTotAlbaranEntrega(), ::cTxtAlbaranEntrega(), ::bEdtAlbaranEntrega() )
-
          end if
 
          ::oAlbCliP:Skip()
@@ -5506,6 +5521,7 @@ RETURN ( Self )
 METHOD TotEntrada( cTurno, cCaja )
 
    DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oEntSal:LastRec() )
@@ -5544,6 +5560,7 @@ RETURN ( Self )
 METHOD TotCompra( cTurno, cCaja )
 
    DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    // Albaranes de proveedores_________________________________________________
 
@@ -5637,6 +5654,7 @@ METHOD TotCobro( cTurno, cCaja )
    local lFreTik
 
    DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    /*
    Total cobrado __________________________________________________________________
@@ -5882,6 +5900,7 @@ METHOD TotPago( cTurno, cCaja )
    local nTipoPgo
 
    DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    /*
    Total cobrado con facturas-----------------------------------------------------
@@ -5949,6 +5968,7 @@ METHOD TotTipoIva( cTurno, cCaja )
    local nTotLin        := 0
 
    DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    ::aTipIva            := {}
 
@@ -6210,16 +6230,16 @@ METHOD DlgImprimir( nDevice, lTactil )
       do case
 
          case ::nScreenVertRes == 560
-            DEFINE DIALOG oDlg RESOURCE "ARQUEOIMP_1024x576" TITLE "SesiÃ³n : " + ::oDbf:cNumTur
+            DEFINE DIALOG oDlg RESOURCE "ARQUEOIMP_1024x576" TITLE "Sesión : " + ::oDbf:cNumTur
 
          case ::nScreenVertRes != 560
-            DEFINE DIALOG oDlg RESOURCE "ARQUEOIMPBIG" TITLE "SesiÃ³n : " + ::oDbf:cNumTur
+            DEFINE DIALOG oDlg RESOURCE "ARQUEOIMPBIG" TITLE "Sesión : " + ::oDbf:cNumTur
 
       end case
 
    else
 
-      DEFINE DIALOG oDlg RESOURCE "ARQUEOIMP" TITLE "SesiÃ³n : " + ::oDbf:cNumTur
+      DEFINE DIALOG oDlg RESOURCE "ARQUEOIMP" TITLE "Sesión : " + ::oDbf:cNumTur
 
    end if
 
@@ -6377,8 +6397,8 @@ RETURN ( .t. )
 
 Method PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCopies )
 
-   DEFAULT cTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur
-   DEFAULT cCaja        := ::GetCurrentCaja()
+   DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo arqueo"
    DEFAULT cDocumento   := cFormatoArqueoEnCaja( ::GetCurrentCaja(), ::oCaja:cAlias )
@@ -6445,19 +6465,19 @@ METHOD Contabiliza()
    */
 
    if ::oDbf:nStaTur != cajCerrrada .and. !::lAllSesions
-      ::oTreeSelect:Add( "SesiÃ³n : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " no cerrada", 0 )
+      ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " no cerrada", 0 )
       Return ( Self )
    end if
 
    if ::oDbf:lConTur .and. !::lAllSesions
-      ::oTreeSelect:Add( "SesiÃ³n : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " ya contabilizada", 0 )
+      ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " ya contabilizada", 0 )
       Return ( Self )
    end if
 
    ::oMtrSelect:SetTotal( 8 )
 
    /*
-   RealizaciÃ³n de Asientos
+   Realización de Asientos
    -------------------------------------------------------------------------
    */
 
@@ -6465,7 +6485,7 @@ METHOD Contabiliza()
       ::nAsiento  := RetLastAsi()
       CloseDiario()
    else
-      ::oTreeSelect:Add( "SesiÃ³n : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " imposible abrir ficheros de contaplus", 0 )
+      ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " imposible abrir ficheros de contaplus", 0 )
       return .f.
    end if
 
@@ -6754,7 +6774,7 @@ METHOD Contabiliza()
             CloseDiario()
          end if
       else
-         MsgStop( "El asiento estÃ¡ vacÃ­o" )
+         MsgStop( "El asiento está vacío" )
       end if
 
    end if
@@ -6836,8 +6856,8 @@ METHOD ContabilizaContadores()
    local cCodDiv     := cDivEmp()
    local cCtaIvm     := cCtaVta() + RetGrpVta( ::oDbfDet:cCodArt, cRutCnt, ::cGetEmpresaContaplus, ::oArticulo:cAlias )
    local cCtaVen     := RetCtaVta( ::oDbfDet:cCodArt, ::oArticulo:cAlias )
-   local cDesAsi     := "N/SesiÃ³n " + lTrim( ::oDbf:cNumTur ) + "/" + ::oDbf:cSufTur
-   local cPgoAsi     := "C/SesiÃ³n " + lTrim( ::oDbf:cNumTur ) + "/" + ::oDbf:cSufTur
+   local cDesAsi     := "N/Sesión " + lTrim( ::oDbf:cNumTur ) + "/" + ::oDbf:cSufTur
+   local cPgoAsi     := "C/Sesión " + lTrim( ::oDbf:cNumTur ) + "/" + ::oDbf:cSufTur
    local dFecha      := ::oDbf:dCloTur
    local cTerNif     := Space(1)
    local cTerNom     := Space(1)
@@ -7239,7 +7259,7 @@ METHOD Asiento()
          cSubCta     := ::aSimula[ n, ( dbfDiario() )->( FieldPos( "SubCta" ) ) ]
 
          if !( DbfSubcuenta() )->( dbSeek( cSubCta ) )
-            ::oTreeSelect:Add( "SesiÃ³n : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " subcuenta " + Rtrim( cSubCta ) + " no encontrada, en empresa" + ::cGetEmpresaContaplus, 0 )
+            ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " subcuenta " + Rtrim( cSubCta ) + " no encontrada, en empresa" + ::cGetEmpresaContaplus, 0 )
             lErrors  := .t.
          end if
 
@@ -7256,7 +7276,7 @@ METHOD Asiento()
    end if
 
    /*
-   ContabilizaciÃ³n de las lineas del apunte
+   Contabilización de las lineas del apunte
    ----------------------------------------------------------------------------
    */
 
@@ -7314,11 +7334,11 @@ METHOD Asiento()
    end if
 
    /*
-   InformaciÃ³n por pantalla
+   Información por pantalla
    -------------------------------------------------------------------------
    */
 
-   ::oTreeSelect:Add( "SesiÃ³n : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " asiento generado num. " + Ltrim( Str( ::nAsiento ) ), 1 )
+   ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " asiento generado num. " + Ltrim( Str( ::nAsiento ) ), 1 )
 
 RETURN ( .t. )
 
@@ -7383,7 +7403,7 @@ METHOD lSelectTurno( lSel )
       ::MarkTurno( lSel )
 
       if !Empty( ::oTreeSelect )
-         ::oTreeSelect:Select( ::oTreeSelect:Add( "SesiÃ³n : " + ::oDbf:cNumTur + "/" + ::oDbf:cSufTur + " procesada.", 1 ) )
+         ::oTreeSelect:Select( ::oTreeSelect:Add( "Sesión : " + ::oDbf:cNumTur + "/" + ::oDbf:cSufTur + " procesada.", 1 ) )
       end if
 
    end if
@@ -7494,11 +7514,11 @@ METHOD lNowOpen( oWnd )
    ::GetCurrentTurno()
 
    if !::lOpenCaja() .and. !::DialogCreateTurno()
-      MsgStop( "Es necesario iniciar una sesiÃ³n para trabajar." ) 
+      MsgStop( "Es necesario iniciar una sesión para trabajar." ) 
    end if
 
    if oMsgSesion() != nil
-      oMsgSesion():SetText( "SesiÃ³n : " + Transform( ::cNumeroCurrentTurno(), "######" ) )
+      oMsgSesion():SetText( "Sesión : " + Transform( ::cNumeroCurrentTurno(), "######" ) )
    end if
 
    if ::oWndBrw != nil
@@ -7792,7 +7812,7 @@ Method Process()
                   ::oSender:SetText( "Reemplazado : " + oTurno:oDbf:cNumTur + "; " + Dtoc( oTurno:oDbf:dOpnTur ) + "; " + oTurno:oDbf:cHorOpn + "; " + Dtoc( oTurno:oDbf:dCloTur ) + "; " + oTurno:oDbf:cHorClo + "; " + oTurno:oDbf:cCajTur )
                else
                   dbPass( oTurnoTmp:oDbf:cAlias, oTurno:oDbf:cAlias, .t. )
-                  ::oSender:SetText( "AÃ±adido     : " + oTurno:oDbf:cNumTur + "; " + Dtoc( oTurno:oDbf:dOpnTur ) + "; " + oTurno:oDbf:cHorOpn + "; " + Dtoc( oTurno:oDbf:dCloTur ) + "; " + oTurno:oDbf:cHorClo + "; " + oTurno:oDbf:cCajTur )
+                  ::oSender:SetText( "Añadido     : " + oTurno:oDbf:cNumTur + "; " + Dtoc( oTurno:oDbf:dOpnTur ) + "; " + oTurno:oDbf:cHorOpn + "; " + Dtoc( oTurno:oDbf:dCloTur ) + "; " + oTurno:oDbf:cHorClo + "; " + oTurno:oDbf:cCajTur )
                end if
 
                /*
@@ -7915,6 +7935,8 @@ Return ( Self )
 
 METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
 
+   DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
    DEFAULT cPrinter     := PrnGetName()
@@ -7949,7 +7971,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
 
    ::oFastReport:SetIcon( 1 )
 
-   ::oFastReport:SetTitle(       "DiseÃ±ador de documentos" )
+   ::oFastReport:SetTitle(       "Diseñador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -8020,7 +8042,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el diseÃ±ador-------------------------------------------------------
+   Destruye el diseñador-------------------------------------------------------
    */
 
    if ::lDestroyFastReport
@@ -8042,8 +8064,8 @@ Return .t.
 
 METHOD DataReport( cTurno, cCaja, oFastReport )
 
-   DEFAULT cTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur
-   DEFAULT cCaja        := ::GetCurrentCaja()
+   DEFAULT cTurno       := ::cCurTurno
+   DEFAULT cCaja        := ::cCurCaja
 
    /*
    Zona de datos------------------------------------------------------------
@@ -8051,8 +8073,8 @@ METHOD DataReport( cTurno, cCaja, oFastReport )
 
    oFastReport:ClearDataSets()
 
-   oFastReport:SetWorkArea(     "SesiÃ³n", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-   oFastReport:SetFieldAliases( "SesiÃ³n", cObjectsToReport( ::oDbf ) )
+   oFastReport:SetWorkArea(     "Sesión", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFastReport:SetFieldAliases( "Sesión", cObjectsToReport( ::oDbf ) )
 
    oFastReport:SetWorkArea(     "Cajas", ::oDbfCaj:nArea )
    oFastReport:SetFieldAliases( "Cajas", cObjectsToReport( ::oDbfCaj ) )
@@ -8069,15 +8091,15 @@ METHOD DataReport( cTurno, cCaja, oFastReport )
    oFastReport:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFastReport:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFastReport:SetMasterDetail( "SesiÃ³n",   "Cajas",                {|| cTurno + cCaja } )
-   oFastReport:SetMasterDetail( "SesiÃ³n",   "Contadores",           {|| cTurno + cCaja } )
-   oFastReport:SetMasterDetail( "SesiÃ³n",   "Usuarios",             {|| ::oDbfCaj:cCajTur } )
-   oFastReport:SetMasterDetail( "SesiÃ³n",   "Empresa",              {|| cCodigoEmpresaEnUso() } )
+   oFastReport:SetMasterDetail( "Sesión",   "Cajas",                {|| cTurno + cCaja } )
+   oFastReport:SetMasterDetail( "Sesión",   "Contadores",           {|| cTurno + cCaja } )
+   oFastReport:SetMasterDetail( "Sesión",   "Usuarios",             {|| ::oDbfCaj:cCajTur } )
+   oFastReport:SetMasterDetail( "Sesión",   "Empresa",              {|| cCodigoEmpresaEnUso() } )
 
-   oFastReport:SetResyncPair(   "SesiÃ³n",   "Cajas" )
-   oFastReport:SetResyncPair(   "SesiÃ³n",   "Contadores" )
-   oFastReport:SetResyncPair(   "SesiÃ³n",   "Usuarios" )
-   oFastReport:SetResyncPair(   "SesiÃ³n",   "Empresa" )
+   oFastReport:SetResyncPair(   "Sesión",   "Cajas" )
+   oFastReport:SetResyncPair(   "Sesión",   "Contadores" )
+   oFastReport:SetResyncPair(   "Sesión",   "Usuarios" )
+   oFastReport:SetResyncPair(   "Sesión",   "Empresa" )
 
 Return nil
 
@@ -8085,121 +8107,121 @@ Return nil
 
 METHOD VariableReport( oFastReport )
 
-   oFastReport:DeleteCategory(  "Compras sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Ventas sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Entradas y salidas sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Cobros sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Pagos sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Diferencias sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Saldo sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Cajas sesiÃ³n" )
-   oFastReport:DeleteCategory(  "Numeros sesiÃ³n" )
+   oFastReport:DeleteCategory(  "Compras sesión" )
+   oFastReport:DeleteCategory(  "Ventas sesión" )
+   oFastReport:DeleteCategory(  "Entradas y salidas sesión" )
+   oFastReport:DeleteCategory(  "Cobros sesión" )
+   oFastReport:DeleteCategory(  "Pagos sesión" )
+   oFastReport:DeleteCategory(  "Diferencias sesión" )
+   oFastReport:DeleteCategory(  "Saldo sesión" )
+   oFastReport:DeleteCategory(  "Cajas sesión" )
+   oFastReport:DeleteCategory(  "Numeros sesión" )
    oFastReport:DeleteCategory(  "Monedas en caja" )
 
    /*
-   CreaciÃ³n de variables----------------------------------------------------
+   Creación de variables----------------------------------------------------
    */
 
-   oFastReport:AddVariable(     "Compras sesiÃ³n",   "Total alabranes de proveedores",                "GetHbVar('nTotAlbPrvCompras')"     )
-   oFastReport:AddVariable(     "Compras sesiÃ³n",   "Total facturas de proveedores",                 "GetHbVar('nTotFacPrvCompras')"     )
-   oFastReport:AddVariable(     "Compras sesiÃ³n",   "Total facturas rectificativas de proveedores",  "GetHbVar('nTotRctPrvCompras')"     )
-   oFastReport:AddVariable(     "Compras sesiÃ³n",   "Total compras",                                 "GetHbVar('nTotCompras')"           )
+   oFastReport:AddVariable(     "Compras sesión",   "Total alabranes de proveedores",                "GetHbVar('nTotAlbPrvCompras')"     )
+   oFastReport:AddVariable(     "Compras sesión",   "Total facturas de proveedores",                 "GetHbVar('nTotFacPrvCompras')"     )
+   oFastReport:AddVariable(     "Compras sesión",   "Total facturas rectificativas de proveedores",  "GetHbVar('nTotRctPrvCompras')"     )
+   oFastReport:AddVariable(     "Compras sesión",   "Total compras",                                 "GetHbVar('nTotCompras')"           )
 
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores en albaranes de clientes",      "GetHbVar('nTotAlbCliContadores')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total albaranes de clientes",                    "GetHbVar('nTotAlbCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores en facturas de clientes",       "GetHbVar('nTotFacCliContadores')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total facturas de clientes",                     "GetHbVar('nTotFacCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total facturas rectificativas de clientes",      "GetHbVar('nTotRctCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores en tickets de clientes",        "GetHbVar('nTotTikCliContadores')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total tickets de clientes",                      "GetHbVar('nTotTikCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores en cheques regalo de clientes", "GetHbVar('nTotTikCliContadores')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total cheques regalo de clientes",               "GetHbVar('nTotChkCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores en devoluciones de clientes",   "GetHbVar('nTotDevCliContadores')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total devoluciones de clientes",                 "GetHbVar('nTotDevCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores en vales de clientes",          "GetHbVar('nTotValCliContadores')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total vales de clientes",                        "GetHbVar('nTotValCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total liquidado en vales de clientes",           "GetHbVar('nTotValCliLiquidados')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total anticipos de clientes",                    "GetHbVar('nTotAntCliVentas')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total liquidado en anticipos de clientes",       "GetHbVar('nTotAntCliLiquidados')"  )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total contadores",                               "GetHbVar('nTotContadores')"        )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total ventas",                                   "GetHbVar('nTotVentas')"            )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total venta de credito",                         "GetHbVar('nTotVentaCredito')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total venta contado",                            "GetHbVar('nTotVentaContado')"      )
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Total ventas sesiÃ³n",                            "GetHbVar('nTotVentaSesion')"       )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores en albaranes de clientes",      "GetHbVar('nTotAlbCliContadores')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total albaranes de clientes",                    "GetHbVar('nTotAlbCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores en facturas de clientes",       "GetHbVar('nTotFacCliContadores')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total facturas de clientes",                     "GetHbVar('nTotFacCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total facturas rectificativas de clientes",      "GetHbVar('nTotRctCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores en tickets de clientes",        "GetHbVar('nTotTikCliContadores')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total tickets de clientes",                      "GetHbVar('nTotTikCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores en cheques regalo de clientes", "GetHbVar('nTotTikCliContadores')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total cheques regalo de clientes",               "GetHbVar('nTotChkCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores en devoluciones de clientes",   "GetHbVar('nTotDevCliContadores')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total devoluciones de clientes",                 "GetHbVar('nTotDevCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores en vales de clientes",          "GetHbVar('nTotValCliContadores')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total vales de clientes",                        "GetHbVar('nTotValCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total liquidado en vales de clientes",           "GetHbVar('nTotValCliLiquidados')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total anticipos de clientes",                    "GetHbVar('nTotAntCliVentas')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total liquidado en anticipos de clientes",       "GetHbVar('nTotAntCliLiquidados')"  )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total contadores",                               "GetHbVar('nTotContadores')"        )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total ventas",                                   "GetHbVar('nTotVentas')"            )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total venta de credito",                         "GetHbVar('nTotVentaCredito')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total venta contado",                            "GetHbVar('nTotVentaContado')"      )
+   oFastReport:AddVariable(     "Ventas sesión",   "Total ventas sesión",                            "GetHbVar('nTotVentaSesion')"       )
 
-   oFastReport:AddVariable(     "Ventas sesiÃ³n",   "Importe de ticket medio",                        "GetHbVar('nTicketMedio')"          )
+   oFastReport:AddVariable(     "Ventas sesión",   "Importe de ticket medio",                        "GetHbVar('nTicketMedio')"          )
 
-   oFastReport:AddVariable(     "Entradas y salidas sesiÃ³n", "Total entradas y salidas",             "GetHbVar('nTotEntradas')"          )
+   oFastReport:AddVariable(     "Entradas y salidas sesión", "Total entradas y salidas",             "GetHbVar('nTotEntradas')"          )
 
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total entregas en pedido de clientes",           "GetHbVar('nTotPedCliEntregas')"    )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total entregas en albaranes de clientes",        "GetHbVar('nTotAlbCliEntregas')"    )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total entregas a cuenta",                        "GetHbVar('nTotEntregas')"          )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total entregas en pedido de clientes",           "GetHbVar('nTotPedCliEntregas')"    )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total entregas en albaranes de clientes",        "GetHbVar('nTotAlbCliEntregas')"    )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total entregas a cuenta",                        "GetHbVar('nTotEntregas')"          )
 
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en tickets de clientes",            "GetHbVar('nTotTikCliCobros')"      )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en facturas de clientes",           "GetHbVar('nTotFacCliCobros')"      )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en vales de clientes",              "GetHbVar('nTotValCliCobros')"      )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en cheques regalo",                 "GetHbVar('nTotChkCliCobros')"      )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en efectivo",                       "GetHbVar('nTotCobroEfectivo')"     )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros no efectivo",                       "GetHbVar('nTotCobroNoEfectivo')"   )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en tarjeta",                        "GetHbVar('nTotCobroTarjeta')"      )
-   oFastReport:AddVariable(     "Cobros sesiÃ³n",   "Total cobros en sesiÃ³n",                         "GetHbVar('nTotCobroMedios')"       )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en tickets de clientes",            "GetHbVar('nTotTikCliCobros')"      )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en facturas de clientes",           "GetHbVar('nTotFacCliCobros')"      )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en vales de clientes",              "GetHbVar('nTotValCliCobros')"      )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en cheques regalo",                 "GetHbVar('nTotChkCliCobros')"      )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en efectivo",                       "GetHbVar('nTotCobroEfectivo')"     )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros no efectivo",                       "GetHbVar('nTotCobroNoEfectivo')"   )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en tarjeta",                        "GetHbVar('nTotCobroTarjeta')"      )
+   oFastReport:AddVariable(     "Cobros sesión",   "Total cobros en sesión",                         "GetHbVar('nTotCobroMedios')"       )
 
-   oFastReport:AddVariable(     "Pagos sesiÃ³n",   "Total pagos en facturas de proveedores",          "GetHbVar('nTotFacPrvPagos')"       )
-   oFastReport:AddVariable(     "Pagos sesiÃ³n",   "Total pagos en efectivo",                         "GetHbVar('nTotPagoEfectivo')"      )
-   oFastReport:AddVariable(     "Pagos sesiÃ³n",   "Total pagos no efectivo",                         "GetHbVar('nTotPagoNoEfectivo')"    )
-   oFastReport:AddVariable(     "Pagos sesiÃ³n",   "Total pagos en tarjeta",                          "GetHbVar('nTotPagoTarjeta')"       )
-   oFastReport:AddVariable(     "Pagos sesiÃ³n",   "Total pagos en sesion",                           "GetHbVar('nTotPagoMedios')"        )
+   oFastReport:AddVariable(     "Pagos sesión",   "Total pagos en facturas de proveedores",          "GetHbVar('nTotFacPrvPagos')"       )
+   oFastReport:AddVariable(     "Pagos sesión",   "Total pagos en efectivo",                         "GetHbVar('nTotPagoEfectivo')"      )
+   oFastReport:AddVariable(     "Pagos sesión",   "Total pagos no efectivo",                         "GetHbVar('nTotPagoNoEfectivo')"    )
+   oFastReport:AddVariable(     "Pagos sesión",   "Total pagos en tarjeta",                          "GetHbVar('nTotPagoTarjeta')"       )
+   oFastReport:AddVariable(     "Pagos sesión",   "Total pagos en sesion",                           "GetHbVar('nTotPagoMedios')"        )
 
-   oFastReport:AddVariable(     "Diferencias sesiÃ³n",   "Diferencias cobros",                        "GetHbVar('nDifCobros')"            )
-   oFastReport:AddVariable(     "Diferencias sesiÃ³n",   "Diferencias totales",                       "GetHbVar('nDifTotal')"             )
+   oFastReport:AddVariable(     "Diferencias sesión",   "Diferencias cobros",                        "GetHbVar('nDifCobros')"            )
+   oFastReport:AddVariable(     "Diferencias sesión",   "Diferencias totales",                       "GetHbVar('nDifTotal')"             )
 
-   oFastReport:AddVariable(     "Saldo sesiÃ³n",     "Total saldo efectivo",                           "GetHbVar('nTotSaldoEfectivo')"    )
-   oFastReport:AddVariable(     "Saldo sesiÃ³n",     "Total saldo no efectivo",                        "GetHbVar('nTotSaldoNoEfectivo')"  )
-   oFastReport:AddVariable(     "Saldo sesiÃ³n",     "Total saldo tarjeta",                            "GetHbVar('nTotSaldoTarjeta')"     )
+   oFastReport:AddVariable(     "Saldo sesión",     "Total saldo efectivo",                           "GetHbVar('nTotSaldoEfectivo')"    )
+   oFastReport:AddVariable(     "Saldo sesión",     "Total saldo no efectivo",                        "GetHbVar('nTotSaldoNoEfectivo')"  )
+   oFastReport:AddVariable(     "Saldo sesión",     "Total saldo tarjeta",                            "GetHbVar('nTotSaldoTarjeta')"     )
 
-   oFastReport:AddVariable(     "Cajas sesiÃ³n",     "Total caja efectivo",                           "GetHbVar('nTotCajaEfectivo')"      )
-   oFastReport:AddVariable(     "Cajas sesiÃ³n",     "Total caja tarjeta",                            "GetHbVar('nTotCajaTarjeta')"       )
-   oFastReport:AddVariable(     "Cajas sesiÃ³n",     "Total caja objetivo",                           "GetHbVar('nTotCajaObjetivo')"      )
-   oFastReport:AddVariable(     "Cajas sesiÃ³n",     "Total caja",                                    "GetHbVar('nTotCaja')"              )
+   oFastReport:AddVariable(     "Cajas sesión",     "Total caja efectivo",                           "GetHbVar('nTotCajaEfectivo')"      )
+   oFastReport:AddVariable(     "Cajas sesión",     "Total caja tarjeta",                            "GetHbVar('nTotCajaTarjeta')"       )
+   oFastReport:AddVariable(     "Cajas sesión",     "Total caja objetivo",                           "GetHbVar('nTotCajaObjetivo')"      )
+   oFastReport:AddVariable(     "Cajas sesión",     "Total caja",                                    "GetHbVar('nTotCaja')"              )
 
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de albaranes en sesiÃ³n",                 "GetHbVar('nTotNumeroAlbaranes')"   )
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de facturas en sesiÃ³n",                  "GetHbVar('nTotNumeroFacturas')"    )
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de tickets en sesiÃ³n",                   "GetHbVar('nTotNumeroTikets')"      )
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de vales en sesiÃ³n",                     "GetHbVar('nTotNumeroVales')"       )
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de cheques en sesiÃ³n",                   "GetHbVar('nTotNumeroCheques')"     )
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de devoluciones",                        "GetHbVar('nTotNumeroDevoluciones')")
-   oFastReport:AddVariable(     "Numeros sesiÃ³n",   "NÃºmero de aperturas de cajÃ³n",                  "GetHbVar('nTotNumeroAptCajon')"    )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de albaranes en sesión",                 "GetHbVar('nTotNumeroAlbaranes')"   )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de facturas en sesión",                  "GetHbVar('nTotNumeroFacturas')"    )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de tickets en sesión",                   "GetHbVar('nTotNumeroTikets')"      )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de vales en sesión",                     "GetHbVar('nTotNumeroVales')"       )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de cheques en sesión",                   "GetHbVar('nTotNumeroCheques')"     )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de devoluciones",                        "GetHbVar('nTotNumeroDevoluciones')")
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de aperturas de cajón",                  "GetHbVar('nTotNumeroAptCajon')"    )
 
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 500 â‚¬",                 "GetHbArrayVar('aMonedasEfe',1)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 200 â‚¬",                 "GetHbArrayVar('aMonedasEfe',2)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 100 â‚¬",                 "GetHbArrayVar('aMonedasEfe',3)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 50 â‚¬",                  "GetHbArrayVar('aMonedasEfe',4)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 20 â‚¬",                  "GetHbArrayVar('aMonedasEfe',5)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 10 â‚¬",                  "GetHbArrayVar('aMonedasEfe',6)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 5 â‚¬",                   "GetHbArrayVar('aMonedasEfe',7)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 2 â‚¬",                    "GetHbArrayVar('aMonedasEfe',8)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 1 â‚¬",                    "GetHbArrayVar('aMonedasEfe',9)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.50 â‚¬",                 "GetHbArrayVar('aMonedasEfe',10)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.20 â‚¬",                 "GetHbArrayVar('aMonedasEfe',11)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.10 â‚¬",                 "GetHbArrayVar('aMonedasEfe',12)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.05 â‚¬",                 "GetHbArrayVar('aMonedasEfe',13)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.02 â‚¬",                 "GetHbArrayVar('aMonedasEfe',14)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.01 â‚¬",                 "GetHbArrayVar('aMonedasEfe',15)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 500 â‚¬",                 "GetHbArrayVar('aMonedasRet',1)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 200 â‚¬",                 "GetHbArrayVar('aMonedasRet',2)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 100 â‚¬",                 "GetHbArrayVar('aMonedasRet',3)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 50 â‚¬",                  "GetHbArrayVar('aMonedasRet',4)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 20 â‚¬",                  "GetHbArrayVar('aMonedasRet',5)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 10 â‚¬",                  "GetHbArrayVar('aMonedasRet',6)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 5 â‚¬",                   "GetHbArrayVar('aMonedasRet',7)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 2 â‚¬",                    "GetHbArrayVar('aMonedasRet',8)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 1 â‚¬",                    "GetHbArrayVar('aMonedasRet',9)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.50 â‚¬",                 "GetHbArrayVar('aMonedasRet',10)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.20 â‚¬",                 "GetHbArrayVar('aMonedasRet',11)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.10 â‚¬",                 "GetHbArrayVar('aMonedasRet',12)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.05 â‚¬",                 "GetHbArrayVar('aMonedasRet',13)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.02 â‚¬",                 "GetHbArrayVar('aMonedasRet',14)")
-   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.01 â‚¬",                 "GetHbArrayVar('aMonedasRet',15)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 500 €",                 "GetHbArrayVar('aMonedasEfe',1)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 200 €",                 "GetHbArrayVar('aMonedasEfe',2)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 100 €",                 "GetHbArrayVar('aMonedasEfe',3)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 50 €",                  "GetHbArrayVar('aMonedasEfe',4)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 20 €",                  "GetHbArrayVar('aMonedasEfe',5)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 10 €",                  "GetHbArrayVar('aMonedasEfe',6)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en billetes de 5 €",                   "GetHbArrayVar('aMonedasEfe',7)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 2 €",                    "GetHbArrayVar('aMonedasEfe',8)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 1 €",                    "GetHbArrayVar('aMonedasEfe',9)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.50 €",                 "GetHbArrayVar('aMonedasEfe',10)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.20 €",                 "GetHbArrayVar('aMonedasEfe',11)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.10 €",                 "GetHbArrayVar('aMonedasEfe',12)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.05 €",                 "GetHbArrayVar('aMonedasEfe',13)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.02 €",                 "GetHbArrayVar('aMonedasEfe',14)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en monedas de 0.01 €",                 "GetHbArrayVar('aMonedasEfe',15)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 500 €",                 "GetHbArrayVar('aMonedasRet',1)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 200 €",                 "GetHbArrayVar('aMonedasRet',2)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 100 €",                 "GetHbArrayVar('aMonedasRet',3)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 50 €",                  "GetHbArrayVar('aMonedasRet',4)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 20 €",                  "GetHbArrayVar('aMonedasRet',5)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 10 €",                  "GetHbArrayVar('aMonedasRet',6)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en billetes de 5 €",                   "GetHbArrayVar('aMonedasRet',7)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 2 €",                    "GetHbArrayVar('aMonedasRet',8)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 1 €",                    "GetHbArrayVar('aMonedasRet',9)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.50 €",                 "GetHbArrayVar('aMonedasRet',10)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.20 €",                 "GetHbArrayVar('aMonedasRet',11)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.10 €",                 "GetHbArrayVar('aMonedasRet',12)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.05 €",                 "GetHbArrayVar('aMonedasRet',13)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.02 €",                 "GetHbArrayVar('aMonedasRet',14)")
+   oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.01 €",                 "GetHbArrayVar('aMonedasRet',15)")
   
    oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en caja",                              "GetHbVar('nEfectivoEnCaja')")
    oFastReport:AddVariable(     "Monedas en caja",  "Retirado en caja",                              "GetHbVar('nRetiradoEnCaja')")
@@ -8310,7 +8332,7 @@ METHOD DesignReport( oFastReport, dbfDoc )
       ::VariableReport( oFastReport )
 
       /*
-      DiseÃ±o de report---------------------------------------------------------
+      Diseño de report---------------------------------------------------------
       */
 
       oFastReport:DesignReport()
@@ -8337,7 +8359,7 @@ METHOD DefineTemporal()
 
    ::cFileTemporal   := cGetNewFileName( cPatTmp() + "TTur" )
 
-   DEFINE DATABASE ::oDbfTemporal FILE ( ::cFileTemporal ) CLASS "TTur" ALIAS "TTur" PATH ( cPatTmp() ) VIA ( cLocalDriver() ) COMMENT "lÃ­neas de informe"
+   DEFINE DATABASE ::oDbfTemporal FILE ( ::cFileTemporal ) CLASS "TTur" ALIAS "TTur" PATH ( cPatTmp() ) VIA ( cLocalDriver() ) COMMENT "líneas de informe"
 
       FIELD NAME "cGrpTur" TYPE "C"  LEN  60 DEC 0 COMMENT "Grupo"                                                            OF ::oDbfTemporal
       FIELD NAME "nGrpPes" TYPE "N"  LEN   3 DEC 0 COMMENT "Peso"                                                             OF ::oDbfTemporal
@@ -8345,7 +8367,7 @@ METHOD DefineTemporal()
       FIELD NAME "cNatTur" TYPE "C"  LEN 200 DEC 0 COMMENT "Naturaleza"                                                       OF ::oDbfTemporal
       FIELD NAME "nImpTur" TYPE "N"  LEN  16 DEC 6 COMMENT "Importe"                                                          OF ::oDbfTemporal
 
-      INDEX TO ( ::cFileTemporal ) TAG "cGruTur" ON "Str( nGrpPes, 3 ) + cGrpTur + cKeyTur" COMMENT "NÃºmero" NODELETED        OF ::oDbfTemporal
+      INDEX TO ( ::cFileTemporal ) TAG "cGruTur" ON "Str( nGrpPes, 3 ) + cGrpTur + cKeyTur" COMMENT "Número" NODELETED        OF ::oDbfTemporal
 
    END DATABASE ::oDbfTemporal
 
@@ -9491,7 +9513,7 @@ METHOD FillTemporal( cCodCaj )
    Estadisticas----------------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Compras por artÃ­culos" )
+   if ::GetItemCheckState( "Compras por artículos" )
 
       oDbcArticulos     := TDbVirtual( , "Imp" ):DefNew()
          oDbcArticulos:AddField( "cCodArt", "C", 14, 0 )
@@ -9640,7 +9662,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por articulos--------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por artÃ­culos" )
+   if ::GetItemCheckState( "Ventas por artículos" )
 
       oDbvArticulos     := TDbVirtual( , "Imp" ):DefNew()
          oDbvArticulos:AddField( "cCodArt", "C", 14, 0 )
@@ -10023,7 +10045,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por categorias---------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por categorÃ­a" )
+   if ::GetItemCheckState( "Ventas por categoría" )
 
       if ::oTikT:Seek( cTurnoCaja )
 
@@ -10458,7 +10480,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por tipo de articulos------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por tipo de artÃ­culos" )
+   if ::GetItemCheckState( "Ventas por tipo de artículos" )
 
       if ::oTikT:Seek( cTurnoCaja )
 
@@ -11257,9 +11279,9 @@ METHOD GetLastOpen()
       ::oDbf:OrdSetFocus( "nStaCaj" )
 
       if ::oDbf:Seek( ::GetCurrentCaja() )
-         cLasTur           := ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj
+         ::cCurTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur // + ::oDbf:cCodCaj
       else
-         cLasTur           := ""
+         ::cCurTurno       := ""
       end if 
 
    else
@@ -11299,21 +11321,15 @@ METHOD GetLastOpen()
 
    CursorWE()
 
-RETURN ( cLasTur )
-
-//--------------------------------------------------------------------------//
-
-METHOD GetCurrentTurno()
-
-   ::cCurTurno          := ::GetLastOpen()
-
 RETURN ( ::cCurTurno )
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
 
 METHOD GoCurrentTurno()
 
    ::GetCurrentTurno()
+
+   ::GetCurrentCaja()
 
 RETURN ( ::oDbf:SeekInOrd( ::cCurTurno, "cNumTur" ) )
 
@@ -11333,7 +11349,7 @@ METHOD MailArqueo( cCurrentTruno )
 
    cMensajeMail         := "Caja [" + ::oDbfCaj:cCodCaj + Space( 1 ) + Rtrim( oRetFld( ::oDbfCaj:cCodCaj, ::oCaja ) ) + "], "
    cMensajeMail         += "cerrada a las " + Left( Time(), 5 ) + Space( 1 )
-   cMensajeMail         += "del dÃ­a " + Dtoc( Date() ) + "." + CRLF
+   cMensajeMail         += "del día " + Dtoc( Date() ) + "." + CRLF
 
    if ::oTotales:nTotCompras( ::oDbfCaj:cCodCaj ) != 0
       cMensajeMail      += "Compras en albaranes "                + Alltrim( Str( ::oTotales:nTotAlbPrvCompras( ::oDbfCaj:cCodCaj ) ) )   + cSimDiv( cDivEmp(), ::oDbfDiv ) + "." + CRLF
@@ -11353,7 +11369,7 @@ METHOD MailArqueo( cCurrentTruno )
    end if
 
    cMensajeMail         += CRLF
-   cMensajeMail         += "Total venta sesiÃ³n " + Alltrim( Str( ::oTotales:nTotVentaSesion( ::oDbfCaj:cCodCaj ) ) ) + cSimDiv( cDivEmp(), ::oDbfDiv ) + "."
+   cMensajeMail         += "Total venta sesión " + Alltrim( Str( ::oTotales:nTotVentaSesion( ::oDbfCaj:cCodCaj ) ) ) + cSimDiv( cDivEmp(), ::oDbfDiv ) + "."
    cMensajeMail         += CRLF + CRLF
 
    ::lPdfShowDialog     := .t.
@@ -11365,7 +11381,7 @@ METHOD MailArqueo( cCurrentTruno )
    with object TGenMailing():New()
 
       :cGetDe           := __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
-      :cGetAsunto       := "Arqueo de caja " + Alltrim( ::oDbfCaj:cCodCaj ) + " sesiÃ³n " + Alltrim( cCurrentTruno )
+      :cGetAsunto       := "Arqueo de caja " + Alltrim( ::oDbfCaj:cCodCaj ) + " sesión " + Alltrim( cCurrentTruno )
       :cNombre          := __GSTROTOR__
       :cDireccion       := Rtrim( ::cEnviarMail )
 

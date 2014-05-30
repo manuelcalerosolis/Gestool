@@ -98,6 +98,9 @@ static cGrupoNFC
 static oGetPlantillaDefecto
 static cGetPlantillaDefecto
 
+static oCmbContabilidad
+static cCmbContabilidad        
+static aCmbContabilidad        := { "Contaplus", "A3 CON" }        
 
 //----------------------------------------------------------------------------//
 
@@ -1152,10 +1155,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oSerie
    local cSerie                  := "A"
 
-   local oCmbContabilidad
-   local aCmbContabilidad        := { "Contaplus", "A3 CON" }        
-   local cCmbContabilidad        
-
    /*
    Obtenemos el nivel de acceso------------------------------------------------
    */
@@ -2064,28 +2063,28 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          TRANSPARENT ;
          OF       fldContabilidad
 
-      REDEFINE COMBOBOX oCmbContabilidad ;
-         VAR      cCmbContabilidad ;
+      // Tipo de exportacion contable------------------------------------------
+
+      REDEFINE COMBOBOX oCmbContabilidad VAR cCmbContabilidad ;
          ITEMS    { "Contaplus", "A3 CON" } ;
          ID       90 ;
          OF       fldContabilidad
 
-      oCmbContabilidad:bChange       := {|| aTmp[ _NEXPCONTBL ] := oCmbContabilidad:nAt }
+      oCmbContabilidad:bChange      := {|| SetAplicacionContable( oCmbContabilidad:nAt ) }
 
-      REDEFINE GET aGet[ _CRUTCNT ] VAR aTmp[ _CRUTCNT ] ;
+      // Directorio contabilidad o exportacion---------------------------------
+
+      REDEFINE GET aGet[ _CRUTCNT ] ;
+         VAR      aTmp[ _CRUTCNT ] ;
          ID       100;
          PICTURE  "@!" ;
          BITMAP   "FOLDER" ;
          OF       fldContabilidad
 
-      aGet[ _CRUTCNT ]:bHelp        := {|| aGet[ _CRUTCNT ]:cText( Padr( cGetDir32( "Seleccione directorio de Contaplus", Rtrim( aTmp[ _CRUTCNT ] ), .t. ), 100 ) ) }
-      aGet[ _CRUTCNT ]:bValid       := {|| ChkRuta( aTmp[ _CRUTCNT ], .t. ), .t. }
+      aGet[ _CRUTCNT ]:bHelp        := {|| aGet[ _CRUTCNT ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CRUTCNT ] ), .t. ), 100 ) ) }
+      aGet[ _CRUTCNT ]:bValid       := {|| ValidRutaContabilidad( aGet, aTmp ) }
 
-      REDEFINE BUTTON;
-         ID       130 ;
-         OF       fldContabilidad ;
-         WHEN     ( ChkRuta( aTmp[ _CRUTCNT ], .f. ) );
-         ACTION   ( EditConta( oBrwEmp:nArrayAt, aTmp ), oBrwEmp:Refresh() )
+      // Empresa contabilidad--------------------------------------------------
 
       oBrwEmp                       := TXBrowse():New( fldContabilidad )
 
@@ -2098,35 +2097,51 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       oBrwEmp:SetArray( aItmEmp, , , .f. )
 
       oBrwEmp:nMarqueeStyle         := 5
+      oBrwEmp:nRowHeight            := 22      
       oBrwEmp:lHScroll              := .f.
 
       oBrwEmp:CreateFromResource( 110 )
 
       with object ( oBrwEmp:AddCol() )
          :cHeader          := "Serie"
-         :bEditValue       := {|| if( !Empty( aItmEmp ), aItmEmp[ oBrwEmp:nArrayAt, 1 ], "" ) }
+         :bEditValue       := {|| aItmEmp[ oBrwEmp:nArrayAt, 1 ] }
          :nWidth           := 30
       end with
 
       with object ( oBrwEmp:AddCol() )
          :cHeader          := "Código"
-         :bEditValue       := {|| if( !Empty( aItmEmp ), aItmEmp[ oBrwEmp:nArrayAt, 2 ], "" ) }
+         :bEditValue       := {|| aItmEmp[ oBrwEmp:nArrayAt, 2 ] }
          :nWidth           := 60
       end with
 
       with object ( oBrwEmp:AddCol() )
          :cHeader          := "Empresa"
-         :bEditValue       := {|| if( !Empty( aItmEmp ), cEmpresaContaplus( AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ oBrwEmp:nArrayAt, 2 ] ), "" ) }
+         :bEditValue       := {|| cEmpresaContaplus( AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ oBrwEmp:nArrayAt, 2 ] ) }
          :nWidth           := 190
       end with
 
       with object ( oBrwEmp:AddCol() )
          :cHeader          := "Proyecto"
-         :bEditValue       := {|| if( !Empty( aItmEmp ), Transform( aItmEmp[ oBrwEmp:nArrayAt, 3 ], "@R ###.#######" ), "" ) }
+         :bEditValue       := {|| Transform( aItmEmp[ oBrwEmp:nArrayAt, 3 ], "@R ###.#######" ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
+
+      with object ( oBrwEmp:AddCol() )
+         :cHeader          := "Modificar"
+         :bStrData         := {|| "" }
+         :bOnPostEdit      := {|| .t. }
+         :bEditBlock       := {|| EditConta( oBrwEmp:nArrayAt, aTmp ), oBrwEmp:Refresh() }
+         :nEditType        := 5
+         :nWidth           := 20
+         :nHeadBmpNo       := 1
+         :nBtnBmp          := 1
+         :nHeadBmpAlign    := 1
+         :AddResource( "Edit16" )
+     end with
+
+      // Cliente---------------------------------------------------------------
 
       REDEFINE GET aGet[ _CCTACLI ] VAR aTmp[ _CCTACLI ] ;
          ID       370;
@@ -2457,7 +2472,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       */
 
       fldContadores:AddFastKey(     VK_F3, {|| EdtCon( oBrwCon ) } )
-      fldContabilidad:AddFastKey(   VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
 
       oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) } )
 
@@ -3190,7 +3204,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    /*
    Directorios si no tiene grupo-----------------------------------------------
-
    */
 
    if Empty( ( dbfEmp )->cCodGrp ) 
@@ -5487,9 +5500,6 @@ STATIC FUNCTION EditConta( nAt, aTmp )
       REDEFINE GET oGetEmp VAR cGetEmp ;
          ID       100;
          PICTURE  "@!" ;
-         VALID    ( ChkEmpresaContaplus( AllTrim( aTmp[ _CRUTCNT ] ), cGetEmp, oSayEmp ), .t. ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwEmpresaContaplus( AllTrim( aTmp[ _CRUTCNT ] ), oGetEmp ) );
          OF       oDlg
 
       REDEFINE GET oSayEmp VAR cSayEmp ;
@@ -5501,9 +5511,6 @@ STATIC FUNCTION EditConta( nAt, aTmp )
       REDEFINE GET oGetPrj VAR cGetPrj ;
          ID       120 ;
          PICTURE  "@R ###.######" ;
-         VALID    ( ChkProyecto( cGetPrj, oSayPrj, AllTrim( aTmp[ _CRUTCNT ] ), cGetEmp ), .t. );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwProyecto( oGetPrj, oSayPrj, AllTrim( aTmp[ _CRUTCNT ] ), cGetEmp ) );
          OF       oDlg
 
       REDEFINE GET oSayPrj VAR cSayPrj ;
@@ -5511,9 +5518,7 @@ STATIC FUNCTION EditConta( nAt, aTmp )
          WHEN     .f.;
          OF       oDlg
 
-      /*
-      Botones --------------------------------------------------------------------
-      */
+      // Botones --------------------------------------------------------------
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -5526,9 +5531,27 @@ STATIC FUNCTION EditConta( nAt, aTmp )
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+      // controles para contaplus----------------------------------------------
 
-   ACTIVATE DIALOG oDlg CENTER ON INIT ( oGetEmp:lValid(), oGetPrj:lValid() )
+      if lAplicacionContaplus()
+         
+         oGetEmp:bValid    := {|| ChkEmpresaContaplus( AllTrim( aTmp[ _CRUTCNT ] ), cGetEmp, oSayEmp ), .t. }
+         oGetEmp:bHelp     := {|| BrwEmpresaContaplus( AllTrim( aTmp[ _CRUTCNT ] ), oGetEmp ) }
+         oGetEmp:cBmp      := "Lupa" 
+
+         oGetPrj:bValid    := {|| ChkProyecto( cGetPrj, oSayPrj, AllTrim( aTmp[ _CRUTCNT ] ), cGetEmp ), .t. }
+         oGetPrj:bHelp     := {|| BrwProyecto( oGetPrj, oSayPrj, AllTrim( aTmp[ _CRUTCNT ] ), cGetEmp ) }
+         oGetPrj:cBmp      := "Lupa"
+
+         oDlg:bStart       := {|| oGetEmp:lValid(), oGetPrj:lValid() }
+
+      end if 
+
+      // Teclas rapidas--------------------------------------------------------
+
+      oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER 
 
    if oDlg:nResult == IDOK
       aItmEmp[ nAt, 2 ]   := cGetEmp
@@ -5560,6 +5583,8 @@ Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
    /*
    Guarda los cambios----------------------------------------------------------
    */
+
+   aTmp[ _NEXPCONTBL ]  := oCmbContabilidad:nAt
 
    aTmp[ _CCODEMPA ]    := aItmEmp[ 1, 2 ]
    aTmp[ _CCODEMPB ]    := aItmEmp[ 2, 2 ]
@@ -5685,7 +5710,7 @@ static function LoaItmEmp( aTmp )
    aAdd( aItmEmp, { "Y", aTmp[ _CCODEMPY ], aTmp[ _CCODPROY ] } )
    aAdd( aItmEmp, { "Z", aTmp[ _CCODEMPZ ], aTmp[ _CCODPROZ ] } )
 
-   nIvaReq              := if( aTmp[ _LIVAREQ ], 1, 2 )
+   nIvaReq     := if( aTmp[ _LIVAREQ ], 1, 2 )
 
 return nil
 
@@ -6319,32 +6344,32 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"NDGTUND",    "N",  2, 0, "Número de digitos para las unidades", "",               "", "aEmp()", nil } )
    aAdd( aDbf, {"NDECUND",    "N",  1, 0, "Número de decimales para las unidades", "",             "", "aEmp()", nil } )
    aAdd( aDbf, {"CRUTCNT",    "C",100, 0, "Ruta de contabilidad",            "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpA",   "C",  4, 0, "Código de la empresa en contaplus para la serie A", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpB",   "C",  4, 0, "Código de la empresa en contaplus para la serie B", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpC",   "C",  4, 0, "Código de la empresa en contaplus para la serie C", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpD",   "C",  4, 0, "Código de la empresa en contaplus para la serie D", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpE",   "C",  4, 0, "Código de la empresa en contaplus para la serie E", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpF",   "C",  4, 0, "Código de la empresa en contaplus para la serie F", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpG",   "C",  4, 0, "Código de la empresa en contaplus para la serie G", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpH",   "C",  4, 0, "Código de la empresa en contaplus para la serie H", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpI",   "C",  4, 0, "Código de la empresa en contaplus para la serie I", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpJ",   "C",  4, 0, "Código de la empresa en contaplus para la serie J", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpK",   "C",  4, 0, "Código de la empresa en contaplus para la serie K", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpL",   "C",  4, 0, "Código de la empresa en contaplus para la serie L", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpM",   "C",  4, 0, "Código de la empresa en contaplus para la serie M", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpN",   "C",  4, 0, "Código de la empresa en contaplus para la serie N", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpO",   "C",  4, 0, "Código de la empresa en contaplus para la serie O", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpP",   "C",  4, 0, "Código de la empresa en contaplus para la serie P", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpQ",   "C",  4, 0, "Código de la empresa en contaplus para la serie Q", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpR",   "C",  4, 0, "Código de la empresa en contaplus para la serie R", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpS",   "C",  4, 0, "Código de la empresa en contaplus para la serie S", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpT",   "C",  4, 0, "Código de la empresa en contaplus para la serie T", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpU",   "C",  4, 0, "Código de la empresa en contaplus para la serie U", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpV",   "C",  4, 0, "Código de la empresa en contaplus para la serie V", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpW",   "C",  4, 0, "Código de la empresa en contaplus para la serie W", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpX",   "C",  4, 0, "Código de la empresa en contaplus para la serie X", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpY",   "C",  4, 0, "Código de la empresa en contaplus para la serie Y", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpZ",   "C",  4, 0, "Codigo de la empresa en contaplus para la serie Z", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpA",   "C",  5, 0, "Código de la empresa en contaplus para la serie A", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpB",   "C",  5, 0, "Código de la empresa en contaplus para la serie B", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpC",   "C",  5, 0, "Código de la empresa en contaplus para la serie C", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpD",   "C",  5, 0, "Código de la empresa en contaplus para la serie D", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpE",   "C",  5, 0, "Código de la empresa en contaplus para la serie E", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpF",   "C",  5, 0, "Código de la empresa en contaplus para la serie F", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpG",   "C",  5, 0, "Código de la empresa en contaplus para la serie G", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpH",   "C",  5, 0, "Código de la empresa en contaplus para la serie H", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpI",   "C",  5, 0, "Código de la empresa en contaplus para la serie I", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpJ",   "C",  5, 0, "Código de la empresa en contaplus para la serie J", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpK",   "C",  5, 0, "Código de la empresa en contaplus para la serie K", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpL",   "C",  5, 0, "Código de la empresa en contaplus para la serie L", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpM",   "C",  5, 0, "Código de la empresa en contaplus para la serie M", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpN",   "C",  5, 0, "Código de la empresa en contaplus para la serie N", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpO",   "C",  5, 0, "Código de la empresa en contaplus para la serie O", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpP",   "C",  5, 0, "Código de la empresa en contaplus para la serie P", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpQ",   "C",  5, 0, "Código de la empresa en contaplus para la serie Q", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpR",   "C",  5, 0, "Código de la empresa en contaplus para la serie R", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpS",   "C",  5, 0, "Código de la empresa en contaplus para la serie S", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpT",   "C",  5, 0, "Código de la empresa en contaplus para la serie T", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpU",   "C",  5, 0, "Código de la empresa en contaplus para la serie U", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpV",   "C",  5, 0, "Código de la empresa en contaplus para la serie V", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpW",   "C",  5, 0, "Código de la empresa en contaplus para la serie W", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpX",   "C",  5, 0, "Código de la empresa en contaplus para la serie X", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpY",   "C",  5, 0, "Código de la empresa en contaplus para la serie Y", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpZ",   "C",  5, 0, "Codigo de la empresa en contaplus para la serie Z", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodProA",   "C",  9, 0, "Código del proyecto en contaplus para la serie A" , "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodProB",   "C",  9, 0, "Código del proyecto en contaplus para la serie B" , "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodProC",   "C",  9, 0, "Código del proyecto en contaplus para la serie C" , "", "", "aEmp()", nil } )
@@ -7384,6 +7409,27 @@ static function CargaNombreSerie( aTmp, oSerie )
    end case
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function ValidRutaContabilidad( aGet, aTmp )
+
+   // Contaplus----------------------------------------------------------------
+
+   if lAplicacionContaplus()
+
+      ChkRuta( aTmp[ _CRUTCNT ], .t. )
+
+   else 
+
+      if !Empty( aTmp[ _CRUTCNT ] ) .and. !IsDir( aTmp[ _CRUTCNT ] )
+         msgStop( "Directorio " + alltrim( aTmp[ _CRUTCNT ] ) + " no existe." )
+         Return .f.
+      end if 
+
+   end if 
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

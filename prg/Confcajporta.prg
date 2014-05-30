@@ -775,16 +775,18 @@ FUNCTION mkLogPorta( cPath )
 
    DEFAULT cPath     := cPatEmp()
 
-   DEFINE DATABASE oLogPorta FILE "LogPorta.DBF" PATH ( cPath ) ALIAS "LogPorta" VIA ( cDriver() ) COMMENT  "Cajón Portamonedas"
+   DEFINE DATABASE oLogPorta FILE "LogPorta.Dbf" PATH ( cPath ) ALIAS "LogPorta" VIA ( cDriver() ) COMMENT  "Cajón Portamonedas"
 
       FIELD NAME "cNumTur" TYPE "C" LEN  6   DEC 0 COMMENT "Sesión de la apertura de cajón"     OF oLogPorta
       FIELD NAME "cSufTur" TYPE "C" LEN  2   DEC 0 COMMENT ""                                   OF oLogPorta
+      FIELD NAME "cCodCaj" TYPE "C" LEN  3   DEC 0 COMMENT "Código de la caja"                  OF oLogPorta
       FIELD NAME "cCodUse" TYPE "C" LEN  3   DEC 0 COMMENT "Código del usuario"                 OF oLogPorta
       FIELD NAME "dFecApt" TYPE "D" LEN  8   DEC 0 COMMENT "Fecha de la apertura del cajón"     OF oLogPorta
       FIELD NAME "cHorApt" TYPE "C" LEN  5   DEC 0 COMMENT "Hora de apertura de cajón"          OF oLogPorta
 
-      INDEX TO "LogPorta.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur"   FOR "!Deleted()"           OF oLogPorta
-      INDEX TO "LogPorta.Cdx" TAG "dFecApt" ON "dFecApt"             FOR "!Deleted()"           OF oLogPorta
+      INDEX TO "LogPorta.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur"            FOR "!Deleted()"  OF oLogPorta
+      INDEX TO "LogPorta.Cdx" TAG "cTurCaj" ON "cNumTur + cSufTur + cCodCaj " FOR "!Deleted()"  OF oLogPorta
+      INDEX TO "LogPorta.Cdx" TAG "dFecApt" ON "dFecApt"                      FOR "!Deleted()"  OF oLogPorta
 
    END DATABASE oLogPorta
 
@@ -818,6 +820,9 @@ FUNCTION mkLogPorta( cPath )
 
          ( dbfLogPorta )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
          ( dbfLogPorta )->( ordCreate( cPath + "LogPorta.CDX", "cNumTur", "Field->cNumTur + Field->cSufTur", {|| Field->cNumTur + Field->cSufTur } ) )
+
+         ( dbfLogPorta )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfLogPorta )->( ordCreate( cPath + "LogPorta.CDX", "cTurCaj", "Field->cNumTur + Field->cSufTur + Field->cCodCaj", {|| Field->cNumTur + Field->cSufTur + Field->cCodCaj } ) )
 
          ( dbfLogPorta )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
          ( dbfLogPorta )->( ordCreate( cPath + "LogPorta.CDX", "dFecApt", "Field->dFecApt", {|| Field->dFecApt } ) )
