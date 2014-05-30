@@ -2116,19 +2116,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], TDataView():Usuarios( nView ) ),;
-                              ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ),;
+                              ( ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) ),;
                               oDlg:end() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], TDataView():Usuarios( nView ) ),;
-                              ( AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ) ),;
+                              ( AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) ),;
                               oDlg:end() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ) }
+         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ) }
+         oDlg:bStart := {|| ShowKitCom( TDataView():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) }
 
    end case
 
@@ -2173,6 +2173,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    dbCommitAll()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+Static Function StartEdtRecAlbProv( aGet, oSay )
+
+   if uFieldEmpresa( "lShowAlmOrg" )
+      aGet[ _CALMORIGEN ]:Show()
+      oSay[7]:Show()
+   else
+      aGet[ _CALMORIGEN ]:Hide()
+      oSay[7]:Hide()
+   end if
+
+Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
