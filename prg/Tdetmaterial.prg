@@ -231,7 +231,7 @@ METHOD Resource( nMode )
 
    DEFINE DIALOG     oDlg ;
       RESOURCE       "LProducido" ;
-      TITLE          LblTitle( nMode ) + "articulos producidos"
+      TITLE          LblTitle( nMode ) + "materia prima"
       
       REDEFINE FOLDER oFld ;
          ID          400 ;

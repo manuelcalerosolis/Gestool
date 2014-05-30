@@ -544,6 +544,7 @@ static oBtnAtp
 static cOldCodCli          := ""
 static cOldCodArt          := ""
 static cOldPrpArt          := ""
+static dOldFecCad 			:= ""
 static cOldUndMed          := ""
 static lOpenFiles          := .f.
 static lExternal           := .f.
@@ -4730,7 +4731,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      aGet[ _CLOTE ]:bValid   := {|| lValidLote( aTmp, aGet, oStkAct ) }
+      aGet[ _CLOTE ]:bValid   := {|| loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .t. )  }
 
       if !aTmp[ __LALQUILER ]
 
@@ -11218,6 +11219,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
       aGet[ _CREF    ]:cText( Space( 200 ) )
 
       aTmp[ _LIVALIN ]  := aTmpFac[ _LIVAINC ]
+      aTmp[ _DFECCAD ]  := Ctod( "" )
 
       aGet[ _NCANENT ]:cText( 1 )
       aGet[ _NUNICAJA]:cText( 1 )
@@ -11714,66 +11716,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          aTmp[ _NFACCNV ]     := 1
 
-         /*
-         Lotes
-         ----------------------------------------------------------------------
-         */
 
-         if ( dbfArticulo )->lLote
-
-            aTmp[ _LLOTE ]    := ( dbfArticulo )->lLote
-
-         	if Empty( cLote )
-         		cLote 			:= ( dbfArticulo )->cLote
-         	end if
-
-            if !Empty( aGet[ _CLOTE ] )
-
-               aGet[ _CLOTE ]:Show()
-
-               if Empty( aGet[ _CLOTE ]:VarGet() )
-                  aGet[ _CLOTE ]:cText( cLote )
-                  aGet[ _CLOTE ]:lValid()
-               end if
-
-            else
-
-               if Empty( aTmp[ _CLOTE ] )
-                  aTmp[ _CLOTE ] := cLote
-               end if
-
-            end if
-
-            /*
-            Fecha de caducidad----------------------------------------------
-            */
-
-            if Empty( dFechaCaducidad )
-               dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
-            end if 
-            
-            if !Empty( aGet[ _DFECCAD ] )
-
-               aGet[ _DFECCAD ]:Show()
-
-               if Empty( aTmp[ _DFECCAD ] )
-                  aGet[ _DFECCAD ]:cText( dFechaCaducidad )
-               end if
-
-            end if
-
-         else
-
-            if !Empty( aGet[ _CLOTE ] )
-               aGet[ _CLOTE ]:Hide()
-            end if
-
-            if !Empty( aGet[ _DFECCAD ] )
-               aGet[ _DFECCAD ]:Hide()
-            end if
-
-         end if
-
+        
          /*
          Cogemos las familias y los grupos de familias-------------------------
          */
@@ -11860,15 +11804,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
             end if
 
-         end if
-
-         /*
-         Ponemos el stock del artículo-----------------------------------------
-         */
-
-         if oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
-            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
-            oStkAct:Refresh()
          end if
 
          /*
@@ -12022,11 +11957,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
+
+
       /*
       He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
       */
 
-      cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] + aTmp[ _CLOTE ]
+      cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] + aTmp[ _CLOTE ] 
 
       if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
 
@@ -12043,6 +11980,109 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if aTmp[ __LALQUILER ]
             aGet[ _NPREUNIT ]:cText( 0 )
             aGet[ _NPREALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpFac[_LIVAINC], dbfArticulo ) )
+         end if
+
+         /*
+         Lotes
+         ----------------------------------------------------------------------
+         */
+
+         if ( dbfArticulo )->lLote
+
+            aTmp[ _LLOTE ]    := ( dbfArticulo )->lLote
+
+         	if Empty( cLote )
+         		cLote 			:= ( dbfArticulo )->cLote
+         	end if
+
+            if !Empty( aGet[ _CLOTE ] )
+
+               aGet[ _CLOTE ]:Show()
+
+               if Empty( aGet[ _CLOTE ]:VarGet() )
+                  aGet[ _CLOTE ]:cText( cLote )
+                  aGet[ _CLOTE ]:lValid()
+               end if
+
+            else
+
+               if Empty( aTmp[ _CLOTE ] )
+                  aTmp[ _CLOTE ] := cLote
+               end if
+
+            end if
+
+            if Empty( dFechaCaducidad )
+               dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+            end if 
+            
+            if !Empty( aGet[ _DFECCAD ] )
+
+               aGet[ _DFECCAD ]:Show()
+
+               if Empty( aGet[ _DFECCAD ]:VarGet() ) .or. ( dFechaCaducidad != dOldFecCad )
+               	aGet[ _DFECCAD ]:cText( dFechaCaducidad )
+               end if 
+
+            else 
+
+            	if Empty( aTmp[ _DFECCAD ] )
+                  aTmp[ _DFECCAD ]	:= dFechaCaducidad
+               end if
+
+            end if
+
+         else
+
+         	if !Empty( aGet[ _CLOTE ] )
+               aGet[ _CLOTE ]:Hide()
+            end if
+
+            if !Empty( aGet[ _DFECCAD ] )
+               aGet[ _DFECCAD ]:Hide()
+            end if
+
+         end if
+/*
+         //Fecha de caducidad--------------------------------------------------
+         
+         if ( dbfArticulo )->lLote
+
+            if Empty( dFechaCaducidad )
+               dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+            end if 
+            
+            if !Empty( aGet[ _DFECCAD ] )
+
+               aGet[ _DFECCAD ]:Show()
+
+               if Empty( aGet[ _DFECCAD ]:VarGet() ) .or. ( dFechaCaducidad != dOldFecCad )
+               	aGet[ _DFECCAD ]:cText( dFechaCaducidad )
+               end if 
+
+            else 
+
+            	if Empty( aTmp[ _DFECCAD ] )
+                  aTmp[ _DFECCAD ]	:= dFechaCaducidad
+               end if
+
+            end if
+
+         else
+
+            if !Empty( aGet[ _DFECCAD ] )
+               aGet[ _DFECCAD ]:Hide()
+            end if
+
+         end if
+*/
+         /*
+         Ponemos el stock del artículo-----------------------------------------
+         */
+
+         if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
+            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
+            oStkAct:Refresh()
          end if
 
          /*
@@ -12279,6 +12319,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       cOldPrpArt  := cPrpArt
       cOldCodArt  := cCodArt
+      dOldFecCad  := dFechaCaducidad
 
       /*
       Solo pueden modificar los precios los administradores--------------
