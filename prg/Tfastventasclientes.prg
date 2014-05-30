@@ -424,8 +424,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Direcciones",                      ::oObras:nArea )
    ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )
 
-   ::oFastReport:SetWorkArea(       "Cliente.Direcciones",              ::oObras:nArea )
-   ::oFastReport:SetFieldAliases(   "Cliente.Direcciones",              cItemsToReport( aItmObr() ) )
+   //::oFastReport:SetWorkArea(       "Cliente.Direcciones",              ::oObras:nArea )
+   //::oFastReport:SetFieldAliases(   "Cliente.Direcciones",              cItemsToReport( aItmObr() ) )
 
    ::oFastReport:SetWorkArea(       "Bancos",                           ::oBancos:nArea )
    ::oFastReport:SetFieldAliases(   "Bancos",                           cItemsToReport( aCliBnc() ) )
@@ -444,8 +444,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    */
 
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Cliente.Direcciones",   {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )
+   //::oFastReport:SetMasterDetail(   "Informe", "Cliente.Direcciones",   {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
@@ -462,7 +462,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
-   ::oFastReport:SetResyncPair(     "Informe", "Cliente.Direcciones" )
+   //::oFastReport:SetResyncPair(     "Informe", "Cliente.Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Bancos" )
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )

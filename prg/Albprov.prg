@@ -2138,7 +2138,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       ON PAINT    ( RecalculaTotal( aTmp ) );
       CENTER
 
-   EndEdtRecMenu()
+   EndEdtRecMenu() 
 
    oBmpEmp:end()
    oBmpDiv:end()
