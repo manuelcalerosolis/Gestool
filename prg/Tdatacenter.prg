@@ -2898,6 +2898,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliR"
    oDataTable:cName        := cPatEmp() + "PedCliR"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliR.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliR.Cdx"
@@ -4937,6 +4938,8 @@ CLASS TDataView
 
    METHOD PedidosClientes( nView )           INLINE ( ::Get( "PedCliT", nView ) )
       METHOD PedidosClientesId( nView )      INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
+
+   METHOD PedidosClientesReservas( nView )   INLINE ( ::Get( "PedCliR", nView ) )
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
       METHOD GruposClientes( nView )         INLINE ( ::GetObject( "GruposClientes", nView ) )
