@@ -10150,7 +10150,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                   if Empty( aGet[ _CLOTE ]:VarGet() )
                      aGet[ _CLOTE ]:cText( cLote )
-                     aGet[ _CLOTE ]:lValid()
                   end if
 
                else
