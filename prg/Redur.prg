@@ -8,6 +8,8 @@ Function Inicio()
 
    local oAlbarenesClientesRedur
 
+   msgStop( "Inicio")
+
    oAlbarenesClientesRedur    := AlbarenesClientesRedur():New()
 
 Return ( nil )
@@ -188,7 +190,7 @@ quit
 
 CLASS Redur FROM Cuaderno
 
-   DATA cFile                             INIT 'redur_CAZU_' + dtos( date() ) + '.dcf'
+   DATA cFile                             INIT 'redur_CAZU_' + dateToEUString( date() ) + '.dcf'
    DATA cBuffer                           INIT ''
 
    DATA cTipoRegisto                      INIT 'R00'
@@ -254,8 +256,8 @@ CLASS Redur FROM Cuaderno
    METHOD CodigoConsignatario(uValue)            INLINE ( if( !Empty(uValue), ::cCodigoConsignatario             := uValue, padr( ::cCodigoConsignatario, 12 ) ) )
    METHOD Documentacion(uValue)                  INLINE ( if( !Empty(uValue), ::cDocumentacion                   := uValue, padr( ::cDocumentacion, 20 ) ) )
    METHOD Producto(uValue)                       INLINE ( if( !Empty(uValue), ::cProducto                        := uValue, padr( ::cProducto, 3 ) ) )
-   METHOD Preparacion(uValue)                    INLINE ( if( !Empty(uValue), ::dPreparacion                     := uValue, dtos( ::dPreparacion ) ) )
-   METHOD Recogida(uValue)                       INLINE ( if( !Empty(uValue), ::dRecogida                        := uValue, dtos( ::dRecogida ) ) )
+   METHOD Preparacion(uValue)                    INLINE ( if( !Empty(uValue), ::dPreparacion                     := uValue, dateToEUString( ::dPreparacion ) ) )
+   METHOD Recogida(uValue)                       INLINE ( if( !Empty(uValue), ::dRecogida                        := uValue, dateToEUString( ::dRecogida ) ) )
    METHOD NombreConsignatario(uValue)            INLINE ( if( !Empty(uValue), ::cNombreConsignatario             := uValue, padr( ::cNombreConsignatario, 35 ) ) )
    METHOD DireccionConsignatario(uValue)         INLINE ( if( !Empty(uValue), ::cDireccionConsignatario          := uValue, padr( ::cDireccionConsignatario, 60 ) ) )
    METHOD PoblacionConsignatario(uValue)         INLINE ( if( !Empty(uValue), ::cPoblacionConsignatario          := uValue, padr( ::cPoblacionConsignatario, 35 ) ) )
@@ -269,14 +271,14 @@ CLASS Redur FROM Cuaderno
 
    METHOD Referencia(uValue)                     INLINE ( if(  !Empty(uValue),;
                                                                ::cReferencia := alltrim( uValue ),; 
-                                                               padr( ::cReferencia, 22 ) ) )
+                                                               padr( ::cReferencia, 22 ) ) ) 
 
    METHOD Observaciones1(uValue)                 INLINE ( if( !Empty(uValue), ::cObservaciones1                  := uValue, padr( ::cObservaciones1, 40 ) ) )
    METHOD Observaciones2(uValue)                 INLINE ( if( !Empty(uValue), ::cObservaciones2                  := uValue, padr( ::cObservaciones2, 40 ) ) )
    METHOD Observaciones3(uValue)                 INLINE ( if( !Empty(uValue), ::cObservaciones3                  := uValue, padr( ::cObservaciones3, 40 ) ) )
    METHOD ValorAsegurado(uValue)                 INLINE ( if( !Empty(uValue), ::nValorAsegurado                  := uValue, strzero( round( ::nValorAsegurado * 100, 0 ), 11 ) ) )
    METHOD NumeroFactura(uValue)                  INLINE ( if( !Empty(uValue), ::cNumeroFactura                   := uValue, padr( ::cNumeroFactura, 12 ) ) )
-   METHOD FechaFactura(uValue)                   INLINE ( if( !Empty(uValue), ::dFechaFactura                    := uValue, dtos( ::dFechaFactura ) ) )
+   METHOD FechaFactura(uValue)                   INLINE ( if( !Empty(uValue), ::dFechaFactura                    := uValue, dateToEUString( ::dFechaFactura ) ) )
    METHOD ImporteFactura(uValue)                 INLINE ( if( !Empty(uValue), ::nImporteFactura                  := uValue, strzero( round( ::nImporteFactura * 100, 0 ), 13 ) ) )
    METHOD ImporteReembolso(uValue)               INLINE ( if( !Empty(uValue), ::nImporteReembolso                := uValue, strzero( round( ::nImporteReembolso * 100, 0 ), 13 ) ) )
    METHOD TipoServicio(uValue)                   INLINE ( if( !Empty(uValue), ::cTipoServicio                    := uValue, padr( ::cTipoServicio, 1 ) ) )
