@@ -10394,9 +10394,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             hAtipica := hAtipica( hValue( aTmp, aTmpAlb ) )
 
             if !Empty( hAtipica )
+
+               ?"1"
                
                if hhaskey( hAtipica, "nImporte" )
                   if hAtipica[ "nImporte" ] != 0
+                     ?hAtipica[ "nImporte" ]
                      aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
                   end if   
                end if

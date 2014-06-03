@@ -12020,7 +12020,7 @@ Function hAtipica( hValue )
 
    if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nImporte" ] ) )
 
-      if Empty( hValue[ "cCodigoCliente" ] ) .and. !Empty( hValue[ "cCodigoGrupo" ] )
+      if !Empty( hValue[ "cCodigoGrupo" ] )
 
          if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cGrpArt", TDataView():Atipicas( hValue[ "nView" ] ) )
 
@@ -12056,7 +12056,7 @@ Function hAtipica( hValue )
 
    end if   
 
-   if Empty( hValue[ "cCodigoCliente" ] ) .and. !Empty( hValue[ "cCodigoGrupo" ] )
+   if !Empty( hValue[ "cCodigoGrupo" ] )
 
       if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
 
