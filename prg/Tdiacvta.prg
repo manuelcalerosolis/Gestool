@@ -258,7 +258,7 @@ METHOD lGenerate()
 
             ::oDbf:cCodCli    := ::oTikCliT:cCliTik
             ::oDbf:dFecMov    := ::oTikCliT:dFecTik
-            ::oDbf:cCodCaj    := ::oTikCliT:cCodCaj
+            ::oDbf:cCodCaj    := ::oTikCliT:cNcjTik
 
             ::oDbf:nTotNet    := if( ::oTikCliT:cTipTik == "4", - aTotTmp[1], aTotTmp[1] )
             ::oDbf:nTotIva    := if( ::oTikCliT:cTipTik == "4", - aTotTmp[2], aTotTmp[2] )

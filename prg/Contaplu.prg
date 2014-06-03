@@ -1396,30 +1396,64 @@ FUNCTION MkAsiento( 	Asien,;
       Asignacion de campos--------------------------------------------------------
       */
 
-      aAsiento    :=  MkAsientoContaplus( Asien,;
-                                          cDivisa,;
-                                          Fecha,;
-                                          Subcuenta,;
-                                          Contrapartida,;
-                                          nImporteDebe,;
-                                          Concepto,;
-                                          nImporteHaber,;
-                                          cSerie,;
-                                          Factura,;
-                                          BaseImponible,;
-                                          IVA,;
-                                          RecargoEquivalencia,;
-                                          Documento,;
-                                          Departamento,;
-                                          Clave,;
-                                          lRectificativa,;
-                                          nCasado,;
-                                          tCasado,;
-                                          lSimula,;
-                                          cNif,;
-                                          cNombre,;
-                                          nEjeCon,;
-                                          cEjeCta )   
+      if lAplicacionContaplus()
+
+         aAsiento    :=  MkAsientoContaplus( Asien,;
+                                             cDivisa,;
+                                             Fecha,;
+                                             Subcuenta,;
+                                             Contrapartida,;
+                                             nImporteDebe,;
+                                             Concepto,;
+                                             nImporteHaber,;
+                                             cSerie,;
+                                             Factura,;
+                                             BaseImponible,;
+                                             IVA,;
+                                             RecargoEquivalencia,;
+                                             Documento,;
+                                             Departamento,;
+                                             Clave,;
+                                             lRectificativa,;
+                                             nCasado,;
+                                             tCasado,;
+                                             lSimula,;
+                                             cNif,;
+                                             cNombre,;
+                                             nEjeCon,;
+                                             cEjeCta )   
+
+      else 
+
+         hAsiento    := {""}
+
+         aAsiento    :=  MkAsientoA3(        Asien,;
+                                             cDivisa,;
+                                             Fecha,;
+                                             Subcuenta,;
+                                             Contrapartida,;
+                                             nImporteDebe,;
+                                             Concepto,;
+                                             nImporteHaber,;
+                                             cSerie,;
+                                             Factura,;
+                                             BaseImponible,;
+                                             IVA,;
+                                             RecargoEquivalencia,;
+                                             Documento,;
+                                             Departamento,;
+                                             Clave,;
+                                             lRectificativa,;
+                                             nCasado,;
+                                             tCasado,;
+                                             lSimula,;
+                                             cNif,;
+                                             cNombre,;
+                                             nEjeCon,;
+                                             cEjeCta )   
+
+
+      end if 
 
    RECOVER USING oError
 
@@ -2589,65 +2623,45 @@ Return ( nAplicacionContable == 2 )
 
 //---------------------------------------------------------------------------//
 
+CLASS EnlaceA3
 
-/*
-Function SynDiarioContaplus()
+   DATA cDirectory                        INIT "C:\EnlaceA3"
+   DATA cFile                             INIT "SuEnalce.Dat" 
+   DATA hFile 
+   DATA cDate                             INIT DateToString()
 
-   local dbfDiario
-   local cDirName       := cGetDir( "Select directory" )
-   local cFileNameCdx
-   local cFileNameDbf
+   METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
+   METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
+   METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
 
-   cFileNameDbf         := cDirName + "\Diario.Dbf"
-   cFileNameCdx         := cDirName + "\Diario.Cdx"
+   METHOD WriteASCII()   
+   METHOD SerializeASCII()
 
-   if !File( cFileNameDbf )
-      msgStop( "Fichero " + cFileNameDbf + " no existe" )
-      Return .f.
-   end if
+ENDCLASS
 
-   if !ApoloMsgNoYes( "Vamos a procesar el fichero" + cFileNameDbf + " desea continuar ?" )
-      Return .f.
-   end if
+//---------------------------------------------------------------------------//
 
-   USE ( cFileNameDbf ) NEW VIA ( cDriver() )ALIAS ( cCheckArea( "DIARIO", @dbfDiario ) )
-   SET ADSINDEX TO ( cFileNameCdx ) ADDITIVE
+   METHOD WriteASCII() CLASS EnlaceA3
 
-   while !( dbfDiario )->( Eof() )
+      ::hFile  := fCreate( ::cDirectory + "\" + ::cFile )
 
-      if ( dbfDiario )->EuroDebe < 0
-         LogWrite( Str( ( dbfDiario )->Asien ) + " asiento cambiado EuroDebe" + Str( ( dbfDiario )->EuroDebe ) + " importe anterior" , "Contaplus.Txt" )
-         ( dbfDiario )->EuroHaber   := Abs( ( dbfDiario )->EuroDebe )
-         ( dbfDiario )->EuroDebe    := 0
+      if !Empty( ::hFile )
+         fWrite( ::hFile, ::SerializeASCII() )
+         fClose( ::hFile )
       end if
 
-      if ( dbfDiario )->EuroHaber < 0
-         LogWrite( Str( ( dbfDiario )->Asien ) + " asiento cambiado EuroHaber" + Str( ( dbfDiario )->EuroHaber ) + " importe anterior" , "Contaplus.Txt" )
-         ( dbfDiario )->EuroDebe    := Abs( ( dbfDiario )->EuroHaber )
-         ( dbfDiario )->EuroHaber   := 0
-      end if
+   Return ( Self )
 
-      if ( dbfDiario )->PtaDebe < 0
-         LogWrite( Str( ( dbfDiario )->Asien ) + " asiento cambiado PtaDebe" + Str( ( dbfDiario )->PtaDebe ) + " importe anterior" , "Contaplus.Txt" )
-         ( dbfDiario )->PtaHaber    := Abs( ( dbfDiario )->PtaDebe )
-         ( dbfDiario )->PtaDebe     := 0
-      end if
+   //------------------------------------------------------------------------//
 
-      if ( dbfDiario )->PtaHaber < 0
-         LogWrite( Str( ( dbfDiario )->Asien ) + " asiento cambiado PtaHaber" + Str( ( dbfDiario )->PtaDebe ) + " importe anterior" , "Contaplus.Txt" )
-         ( dbfDiario )->PtaDebe   := Abs( ( dbfDiario )->PtaHaber )
-         ( dbfDiario )->PtaHaber  := 0
-      end if
+   METHOD SerializeASCII() CLASS EnlaceA3
 
-      Titulo( Str( ( dbfDiario )->( OrdKeyNo() ) ) )
+      local cBuffer     := ""
 
-      ( dbfDiario )->( dbSkip() )
+   Return ( cBuffer )
 
-   end while
+//---------------------------------------------------------------------------//
 
-   CLOSE( dbfDiario )
 
-   msginfo( "proceso finalizado" )
 
-Return .f.
-*/
+

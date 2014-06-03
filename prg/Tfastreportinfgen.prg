@@ -3053,8 +3053,6 @@ RETURN ( Self )
 
 METHOD FastReportRecibosCliente()
 
-   msgalert( "FastReportRecibosCliente")
-
    ::oFacCliP:OrdSetFocus( "iNumFac" )
    
    ::oFastReport:SetWorkArea(       "Recibos de clientes", ::oFacCliP:nArea )

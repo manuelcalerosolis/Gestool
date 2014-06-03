@@ -1828,9 +1828,6 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    DEFAULT lTactil   := .f.
 
    if Select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
-
-      msgAlert( "Salgo por aki")
-
       return ( .f. )
    end if
 
