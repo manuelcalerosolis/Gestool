@@ -3875,6 +3875,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[2]
 
+      /*
+      impuestos----------------------------------------------------------------------
+      */
+
+      REDEFINE RADIO aGet[ _NREGIVA ] ;
+         VAR      aTmp[ _NREGIVA ] ;
+         ID       410,;
+                  411,;
+                  412,;
+                  413 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
       /*Exportacion a EDI ( informa de si está exportado o no y de cuando se exportó )*/
 
       REDEFINE CHECKBOX aGet[ _LEXPEDI ] VAR aTmp[ _LEXPEDI ] ;
@@ -7956,10 +7969,14 @@ static function RecFacCli( aTmpFac, lMessage )
 
       if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) )
 
-         if aTmpFac[ _NREGIVA ] <= 1
-            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
-            ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
-         end if
+         do case
+         	case aTmpFac[ _NREGIVA ] <= 1
+	            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+    	        ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+         	case aTmpFac[ _NREGIVA ] == 3
+	            ( dbfTmpLin )->nIva     := 0
+    	        ( dbfTmpLin )->nReq     := 0
+         end case 
 
          /*
          Ahora recogemos el impuesto especial si lo hay
