@@ -4761,10 +4761,10 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          TSndRecInf():SyncAllDbf()
 
          oMsg:SetText( "Menús" )
-         TpvMenu():Create():SyncAllDbf(.t.)
+         TpvMenu():Create():SyncAllDbf()
 
          oMsg:SetText( "Ordenes de menús" )
-         TpvMenuOrdenes():Create():SyncAllDbf(.t.)
+         TpvMenuOrdenes():Create():SyncAllDbf()
 
          oMsg:SetText( "Articulos de menú" )
          TPVMenuArticulo():Create():SyncAllDbf()
