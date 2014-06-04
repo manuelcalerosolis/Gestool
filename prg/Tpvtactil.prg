@@ -246,6 +246,8 @@ CLASS TpvTactil
 
    DATA oTpvUtilidadesMesa
 
+   DATA oBtnPrecioUnidades
+
 
    DATA cTemporalLinea
    DATA oTemporalLinea
@@ -395,6 +397,8 @@ CLASS TpvTactil
    DATA cValorPropiedadArticulo1   
    DATA cValorPropiedadArticulo2
 
+   DATA nArticulos                  INIT 0
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -536,6 +540,8 @@ CLASS TpvTactil
    METHOD AgregarLineaMenu()
 
    METHOD DialogoPropiedadArticulo()
+
+   METHOD nArticulosOrdenesIntercambiables()
 
    //------------------------------------------------------------------------//
 
@@ -907,6 +913,9 @@ CLASS TpvTactil
             end while
 
             ::oTemporalLinea:SetStatus()
+
+            ::CargaBrowseFamilias()
+            ::ChangeFamilias()
 
          else
 
@@ -1928,6 +1937,22 @@ INLINE METHOD ResizedFont( nSize )
    ENDMETHOD
 
 METHOD ActualizaTarifaCliente()      
+
+//--------------------------------------------------------------------------//
+
+INLINE METHOD OnClickPrecioUnidades()
+
+      SetFieldEmpresa( !uFieldEmpresa( "lPrecio" ), "lPrecio" )
+
+      if uFieldEmpresa( "lPrecio" )
+         ::oBtnPrecioUnidades:Selected()
+      else 
+         ::oBtnPrecioUnidades:UnSelected()
+      end if 
+
+      RETURN ( Self )
+
+   ENDMETHOD
 
 //--------------------------------------------------------------------------//
 
@@ -3284,7 +3309,7 @@ METHOD Resource() CLASS TpvTactil
    end with
 
    with object ( ::oBrwLineas:AddCol() )
-      :cHeader                := "Or. Orden comanda"
+      :cHeader                := "Or. comanda"
       :lHide                  := .t.
       :bEditValue             := {|| ::oOrdenComanda:cNombre( ::oTemporalLinea:cOrdOrd ) }
       :nWidth                 := ::ResizedCol( 30 )
@@ -3364,6 +3389,8 @@ METHOD Resource() CLASS TpvTactil
    /*
    Get para las busquedas de códigos de barras------------------------------
    */
+
+   ::oBtnPrecioUnidades       := TButtonBmp():ReDefine( 601, {|| ::OnClickPrecioUnidades() }, ::oDlg, , , .f., , , , .f., "Money2_32" )
 
    REDEFINE GET ::oGetUnidades VAR ::cGetUnidades;
       ID       600 ;
@@ -3906,6 +3933,8 @@ METHOD ResizedResource() CLASS TpvTactil
    if !Empty( ::oBtnSSalir )
       ::oBtnSSalir:Move( ::oBtnSSalir:nTop + nDialogHeight, ::oBtnSSalir:nLeft + nDialogWidth, , , .f.)
    end if   
+
+   ::oBtnPrecioUnidades:Move( ::oBtnPrecioUnidades:nTop + nDialogHeight, ::oBtnPrecioUnidades:nLeft + nDialogWidth, , , .f. )
 
    ::oGetUnidades:Move( ::oGetUnidades:nTop + nDialogHeight, ::oGetUnidades:nLeft + nDialogWidth, , , .f. )
 
@@ -4929,21 +4958,43 @@ METHOD AgregarArticuloMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    
    ::SetLineaMenu( ::nLineaMenuActivo() )
 
-   if ::nNumeroArticulosOrden( cCodigoOrden ) < ::nNumeroUnidadesMenu()
+   if !::oTpvMenuOrdenes:lIntercambiable( cCodigoOrden )
+
+      if ::nNumeroArticulosOrden( cCodigoOrden ) < ::nNumeroUnidadesMenu()
+         
+         ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+         
+         if ::nNumeroArticulosOrden( cCodigoOrden ) ==  ::nNumeroUnidadesMenu()
+            ::oBrwFamilias:GoDown()
+         end if
+
+      else
+
+         msgStop( "Ya has añadido todos los artículos para este orden." )
       
-      ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
-      
-      if ::nNumeroArticulosOrden( cCodigoOrden ) == ::nNumeroUnidadesMenu()
          ::oBrwFamilias:GoDown()
-      end if
+
+      endif
 
    else
 
-      msgStop( "Ya has añadido todos los artículos para este orden." )
-   
-      ::oBrwFamilias:GoDown()
+      if ::nArticulosOrdenesIntercambiables() < ( ::oTpvMenuOrdenes:nIntercambiables( cCodigoMenu, ::oTpvMenuOrdenes:oDbf ) * ::nNumeroUnidadesMenu() )
 
-   endif
+         ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+         
+         if ::nNumeroArticulosOrden( cCodigoOrden ) >= ::nNumeroUnidadesMenu()
+            ::oBrwFamilias:GoDown()
+         end if
+
+      else
+
+         msgStop( "Ya has añadido todos los artículos para los ordenes intercambiables." )
+      
+         ::oBrwFamilias:GoDown()
+
+      endif
+
+   end if
 
    ::SetLineaMenu()
 
@@ -4967,8 +5018,32 @@ RETURN ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
+METHOD nArticulosOrdenesIntercambiables()
+
+   local nTotal   := 0
+
+   ::oTemporalLinea:GetStatus()
+
+   ::oTemporalLinea:GoTop()
+
+   while !::oTemporalLinea:eof()
+
+      if ::oTpvMenuOrdenes:lIntercambiable( ::oTemporalLinea:cOrdOrd )
+         nTotal     += ::nUnidadesLinea( ::oTemporalLinea )
+      end if
+
+      ::oTemporalLinea:Skip()
+
+   end while
+
+   ::oTemporalLinea:SetStatus()
+
+RETURN ( nTotal )
+
+//---------------------------------------------------------------------------//
+
 METHOD nNumeroArticulosOrden( cCodigoOrden )
-   
+
    local nArticulos     := 0
 
    ::oTemporalLinea:GetStatus()
@@ -8408,17 +8483,20 @@ Return ( Self )
 
 METHOD SetCalculadora() CLASS TpvTactil
 
-   local nGetUnidadesTop      := ::oGetUnidades:nTop
-   local nBtnFamiliasTop      := ::oBtnFamiliasUp:nTop
-   local nBrwFamiliasHeight   := ::oBrwFamilias:nHeight
+   local nGetUnidadesTop         := ::oGetUnidades:nTop
+   local nBtnFamiliasTop         := ::oBtnFamiliasUp:nTop
+   local nBrwFamiliasHeight      := ::oBrwFamilias:nHeight
+   local nBtnPrecioUnidadesTop   := ::oBtnPrecioUnidades:nTop
 
-   ::lHideCalculadora         := !::lHideCalculadora
+   ::lHideCalculadora            := !::lHideCalculadora
 
    if ::lHideCalculadora
 
       aEval( ::oBtnNum, {|o| o:Hide() } )
 
       ::oBrwFamilias:Move( , , , nBrwFamiliasHeight + calcDistance, .t. )
+
+      ::oBtnPrecioUnidades:Move(    nBtnPrecioUnidadesTop + calcDistance, , , , .t. )
 
       ::oGetUnidades:Move(          nGetUnidadesTop + calcDistance, , , , .t. )
 
@@ -8438,6 +8516,8 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBrwFamilias:Move( , , , nBrwFamiliasHeight - calcDistance, .t. )
 
       ::oGetUnidades:Move(          nGetUnidadesTop - calcDistance, , , , .t. )
+
+      ::oBtnPrecioUnidades:Move(    nBtnPrecioUnidadesTop - calcDistance, , , , .t. )
 
       ::oBtnFamiliasUp:Move(        nBtnFamiliasTop - calcDistance, , , , .t. )
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop - calcDistance, , , , .t. )

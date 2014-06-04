@@ -3642,6 +3642,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando unidades de medición" )
       end if
+
       if cPathOld != nil
          UniMedicion():Create( cPath ):CheckFiles( cPathGrp + "UndMed.Dbf" )   ; SysRefresh()
       else
@@ -4758,6 +4759,15 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
 
          oMsg:SetText( "Añadiendo envios y recepciones de internet" )
          TSndRecInf():SyncAllDbf()
+
+         oMsg:SetText( "Menús" )
+         TpvMenu():Create():SyncAllDbf(.t.)
+
+         oMsg:SetText( "Ordenes de menús" )
+         TpvMenuOrdenes():Create():SyncAllDbf(.t.)
+
+         oMsg:SetText( "Articulos de menú" )
+         TPVMenuArticulo():Create():SyncAllDbf()
 
       RECOVER USING oError
 
@@ -6594,6 +6604,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lShowAlmOrg","L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lPrecio",    "L",  1, 0, "Calculadora precios",                                   "", "", "aEmp()", nil } )
+
 
 Return ( aDbf )
 

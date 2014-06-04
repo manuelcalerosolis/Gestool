@@ -35,6 +35,13 @@ CLASS TpvMenuOrdenes FROM TDet
 
    METHOD aOrdenes()
 
+   METHOD nIntercambiables()
+
+   METHOD lIntercambiable()
+
+   METHOD Intercambiable()
+
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -54,12 +61,13 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
-      FIELD NAME "cCodMnu" TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
-      FIELD NAME "cCodOrd" TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
+      FIELD NAME "cCodMnu"          TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
+      FIELD NAME "cCodOrd"          TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
+      FIELD NAME "lIntOrd"          TYPE "L" LEN 1   DEC 0 COMMENT "Orden intercambiable"      HIDE OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                          NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                          NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd"                NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                                   NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                                   NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd"                         NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -228,6 +236,11 @@ METHOD Resource()
          :bStrData         := {|| retArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt, ::oParent:oDbfArticulo:cAlias ) }
          :nWidth           := 240
       end with
+      
+      REDEFINE CHECKBOX ::oDbfVir:lIntOrd ;
+         ID       110 ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       REDEFINE BUTTON ;
          ID       500 ;
@@ -344,3 +357,64 @@ METHOD aOrdenes( cCodMnu )
 RETURN ( aOrdenes )
 
 //--------------------------------------------------------------------------//
+
+METHOD nIntercambiables( cCodMnu, dbf )
+
+   local nIntercambiable   := 0
+
+   dbf:GetStatus()
+
+   dbf:GoTop()
+
+   dbf:OrdSetFocus( "cCodMnu" ) 
+
+   if dbf:Seek( cCodMnu )
+
+      while ( cCodMnu == dbf:cCodMnu ) .and. !dbf:eof()
+
+         if dbf:lIntOrd
+            nIntercambiable++
+         end if
+
+         dbf:Skip()
+
+      end while
+
+   end if
+
+   dbf:SetStatus()
+
+Return ( nIntercambiable )
+
+//---------------------------------------------------------------------------//
+
+METHOD lIntercambiable( cCodOrd )
+
+   local lIntercambiable   := .f.
+
+   ::oDbf:GetStatus()
+   ::oDbf:GoTop()
+
+   ::oDbf:OrdSetFocus( "cCodOrd" )
+
+   if( ::oDbf:Seek( cCodOrd ) )
+      if( ::oDbf:lIntOrd )
+         lIntercambiable   := .t.
+      end if
+   end if
+
+Return ( lIntercambiable )
+
+//---------------------------------------------------------------------------//
+
+METHOD Intercambiable( logico )
+
+   local clogico
+   
+   if logico == .t.
+      clogico  := "Si"
+   else
+      clogico  := "No"
+   end if
+       
+Return ( clogico )

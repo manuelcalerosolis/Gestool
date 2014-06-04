@@ -242,6 +242,12 @@ METHOD Resource( nMode )
          :nWidth           := 200
       end with
 
+      with object ( ::oBrwOrdenesComanda:AddCol() )
+         :cHeader          := "Intercambiable"
+         :bStrData         := {|| ::oMenuOrdenes:Intercambiable( ::oMenuOrdenes:oDbfVir:FieldGetByName( "lIntOrd" ) ) }
+         :nWidth           := 100
+      end with
+
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
@@ -311,6 +317,12 @@ Method lSaveResource( nMode, oDlg )
       MsgStop( "Nombre de menú no puede estar vacío" )
       ::oGetNombre:SetFocus()
       Return nil
+   end if
+
+   msgalert( ::oMenuOrdenes:nIntercambiables( ::oMenuOrdenes:oDbfVir:cCodMnu, ::oMenuOrdenes:oDbfVir ) )
+   if ::oMenuOrdenes:nIntercambiables( ::oMenuOrdenes:oDbfVir:cCodMnu, ::oMenuOrdenes:oDbfVir ) == 1
+      MsgStop( "Tiene que haber más de un orden intercambiable o ninguno." )
+      Return ( .f. )
    end if
 
    // ::SaveDetails()
