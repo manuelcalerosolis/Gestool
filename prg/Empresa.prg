@@ -6604,7 +6604,6 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lShowAlmOrg","L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lPrecio",    "L",  1, 0, "Calculadora precios",                                   "", "", "aEmp()", nil } )
 
 
 Return ( aDbf )
