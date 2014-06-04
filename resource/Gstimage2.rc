@@ -114,6 +114,7 @@ GRPPRV_16 BITMAP "..\\bmp\\Users3_16.bmp"
 GRPPRV_32 BITMAP "..\\bmp\\Users3_32.bmp"
 CURRENCY_EURO_16 BITMAP "..\\bmp\\Currency_Euro_16.bmp"
 CURRENCY_EURO_32 BITMAP "..\\bmp\\Currency_Euro_32.bmp"
+PAGINATOR_32 BITMAP "..\\bmp\\Paginator_32.bmp"
 
 PACKAGE_16 BITMAP "..\\bmp\\Package_16.bmp"
 PACKAGE_32 BITMAP "..\\bmp\\Package_32.bmp"

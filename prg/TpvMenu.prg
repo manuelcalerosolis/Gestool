@@ -319,7 +319,6 @@ Method lSaveResource( nMode, oDlg )
       Return nil
    end if
 
-   msgalert( ::oMenuOrdenes:nIntercambiables( ::oMenuOrdenes:oDbfVir:cCodMnu, ::oMenuOrdenes:oDbfVir ) )
    if ::oMenuOrdenes:nIntercambiables( ::oMenuOrdenes:oDbfVir:cCodMnu, ::oMenuOrdenes:oDbfVir ) == 1
       MsgStop( "Tiene que haber más de un orden intercambiable o ninguno." )
       Return ( .f. )

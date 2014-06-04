@@ -399,6 +399,8 @@ CLASS TpvTactil
 
    DATA nArticulos                  INIT 0
 
+   DATA lGetPrecio                  INIT .f.
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -601,19 +603,33 @@ CLASS TpvTactil
 
    INLINE METHOD nGetUnidades( lUnaUnidad )
 
-      local nUnidades      
+      local nUnidades      := 1
 
       DEFAULT lUnaUnidad   := .f.
 
       nUnidades            := Val( ::cGetUnidades )
 
-      if lUnaUnidad .and. ( nUnidades == 0 )
+      if ( ( lUnaUnidad .and. nUnidades == 0 ) .or. ::lGetPrecio )
          nUnidades         := 1 // Max( nUnidades, 1 )
       end if
 
-      ::oGetUnidades:cText( "" )
+      if !::lGetPrecio
+         ::oGetUnidades:cText( "" )
+      end if 
 
       RETURN ( nUnidades )
+
+   ENDMETHOD      
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD nGetPrecio()
+
+      local nPrecio      
+
+      nPrecio            := Val( ::cGetUnidades )
+
+      RETURN ( nPrecio )
 
    ENDMETHOD      
 
@@ -1940,19 +1956,23 @@ METHOD ActualizaTarifaCliente()
 
 //--------------------------------------------------------------------------//
 
-INLINE METHOD OnClickPrecioUnidades()
+INLINE METHOD CambiarUnidadesPrecio( lGetPrecio )
 
-      SetFieldEmpresa( !uFieldEmpresa( "lPrecio" ), "lPrecio" )
+   DEFAULT lGetPrecio        := !::lGetPrecio
 
-      if uFieldEmpresa( "lPrecio" )
-         ::oBtnPrecioUnidades:Selected()
-      else 
-         ::oBtnPrecioUnidades:UnSelected()
-      end if 
+   ::lGetPrecio              := lGetPrecio
 
-      RETURN ( Self )
+   if ::lGetPrecio
+      ::oBtnPrecioUnidades:LoadBitmap( "Currency_euro_32" ) 
+   else
+      ::oBtnPrecioUnidades:LoadBitmap( "Paginator_32" )
+   end if 
 
-   ENDMETHOD
+   ::oBtnPrecioUnidades:Refresh()
+
+   RETURN ( Self )
+
+ENDMETHOD
 
 //--------------------------------------------------------------------------//
 
@@ -3390,7 +3410,7 @@ METHOD Resource() CLASS TpvTactil
    Get para las busquedas de códigos de barras------------------------------
    */
 
-   ::oBtnPrecioUnidades       := TButtonBmp():ReDefine( 601, {|| ::OnClickPrecioUnidades() }, ::oDlg, , , .f., , , , .f., "Money2_32" )
+   ::oBtnPrecioUnidades       := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )
 
    REDEFINE GET ::oGetUnidades VAR ::cGetUnidades;
       ID       600 ;
@@ -4936,6 +4956,11 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
       end if
 
+      // Limpiamos el texto de la calculadora y ponemos la calculadora en unidades
+         
+      ::oGetUnidades:cText( "" )
+      ::CambiarUnidadesPrecio( .f. )
+
    end if 
 
 
@@ -5281,6 +5306,18 @@ METHOD nPrecioArticulo( cCodigoArticulo ) CLASS TpvTactil
 
    if ::GetLineaMenu() != bottomNumber
       Return ( nPrecio )
+   end if 
+
+   // si estamos capturando el precio por pantalla-----------------------------
+
+   if ::lGetPrecio
+      
+      nPrecio           := ::nGetPrecio()
+
+      if !Empty( nPrecio ) 
+         Return ( nPrecio )
+      end if
+
    end if 
 
    // Propiedad del articulo------------------------------------------------------
