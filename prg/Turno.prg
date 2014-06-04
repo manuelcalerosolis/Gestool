@@ -1866,7 +1866,6 @@ Cierra el turno
 METHOD lCloseCajaSeleccionada()
 
    local cCurrentTruno  
-   local bWhileTruno
    local nTotalCajas    := 0
    local aCajasCerradas := {}
    local nCajasCerradas := 0
@@ -1879,13 +1878,15 @@ METHOD lCloseCajaSeleccionada()
 
    // Cajas deseincronizadas---------------------------------------------------
 
+   cCurrentTruno     := ::cCurTurno 
+
+   /*
    if .t. // uFieldEmpresa( "lDesCajas" )
       cCurrentTruno     := ::cCurTurno // + ::GetCurrentCaja()
       bWhileTruno       := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur + ::oDbfCaj:cCajTur == cCurrentTruno }
    else 
-      cCurrentTruno     := ::cCurTurno 
-      bWhileTruno       := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno }
    end if 
+   */
 
    // Guardamos los comentarios---------------------------------------------------
 
@@ -1899,7 +1900,7 @@ METHOD lCloseCajaSeleccionada()
    
    if ::oDbfCaj:Seek( cCurrentTruno )
    
-      while ( eval( bWhileTruno ) ) .and. !::oDbfCaj:Eof()
+      while ( ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno ) .and. !( ::oDbfCaj:Eof() )
    
          nTotalCajas++
    
@@ -1949,7 +1950,7 @@ METHOD lCloseCajaSeleccionada()
 
    if ::oDbfCaj:Seek( cCurrentTruno )
 
-      while ( eval( bWhileTruno ) ) .and. !::oDbfCaj:Eof()
+      while ( ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno ) .and. !( ::oDbfCaj:Eof() )
 
          if aScan( aCajasCerradas, ::oDbfCaj:cCodCaj ) != 0
 

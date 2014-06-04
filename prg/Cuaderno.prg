@@ -25,16 +25,6 @@ Return ( cTime )
 
 //---------------------------------------------------------------------------//
 
-Function DateToString( dDate )
-      
-   local cDateFrm := Set( 4, "yyyy/mm/dd" )
-   local strDate  := if( dDate != NIL, dtos( dDate ), dtos( date() ) )
-   Set( 4, cDateFrm )
-
-Return( strDate )
-
-//---------------------------------------------------------------------------//
-
 Function GetBic( cEntidad )
 
    local cDevuelve

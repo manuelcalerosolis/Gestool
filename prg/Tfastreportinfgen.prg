@@ -3058,7 +3058,7 @@ METHOD FastReportRecibosCliente()
    ::oFastReport:SetWorkArea(       "Recibos de clientes", ::oFacCliP:nArea )
    ::oFastReport:SetFieldAliases(   "Recibos de clientes", cItemsToReport( aItmRecCli() ) )
    
-   ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",               {|| ::cIdeDocumento() + ::oDbf:cNumRec } )
    ::oFastReport:SetResyncPair(     "Informe", "Recibos de clientes" )
 
 RETURN ( Self )

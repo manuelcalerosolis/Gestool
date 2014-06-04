@@ -182,14 +182,14 @@
 #define fldComercial              oFld:aDialogs[2]
 #define fldAutomaticas            oFld:aDialogs[3]
 #define fldDirecciones            oFld:aDialogs[4]
-#define fldContactos              oFld:aDialogs[5]
-#define fldBancos                 oFld:aDialogs[6]
-#define fldContabilidad           oFld:aDialogs[7]
-#define fldDefinidos              oFld:aDialogs[8]
-#define fldTarifa                 oFld:aDialogs[9]
-#define fldDocumentos             oFld:aDialogs[10]
-#define fldIncidencias            oFld:aDialogs[11]
-#define fldObservaciones          oFld:aDialogs[12]
+#define fldBancos                 oFld:aDialogs[5]
+#define fldContabilidad           oFld:aDialogs[6]
+#define fldDefinidos              oFld:aDialogs[7]
+#define fldTarifa                 oFld:aDialogs[8]
+#define fldDocumentos             oFld:aDialogs[9]
+#define fldIncidencias            oFld:aDialogs[10]
+#define fldObservaciones          oFld:aDialogs[11]
+#define fldContactos              oFld:aDialogs[12]
 #define fldRecibos                oFld:aDialogs[13]
 
 #define FW_BOLD                   700
@@ -1416,7 +1416,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PROMPT   "&General",;
                   "C&omercial",;
                   "Au&tomáticas",;
-                  "&Direcciones",;
                   "C&ontactos",;
                   "&Bancos",;
                   "Co&ntabilidad",;
@@ -1425,12 +1424,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "Doc&umentos",;
                   "&Incidencias",;
                   "Ob&servaciones",;
+                  "&Direcciones",;
                   "&Recibos" ;
          DIALOGS  "CLIENT_0"  ,;
                   "CLIENT_1"  ,;
                   "CLIENT_17" ,;
                   "CLIENT_15" ,;
-                  "CLIENT_16" ,;
                   "CLIENT_2"  ,;
                   "CLIENT_3"  ,;
                   "CLIENT_4"  ,;
@@ -1438,6 +1437,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "CLIENT_10" ,;
                   "CLIENT_12" ,;
                   "CLIENT_14" ,;
+                  "CLIENT_16" ,;
                   "CLIENT_18"
       /*
       Primera pestanña---------------------------------------------------------
@@ -1509,13 +1509,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
          ID       150 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CODPOSTAL ] VAR aTmp[ _CODPOSTAL ] ;
          ID       160 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
@@ -1529,7 +1527,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       300 ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oPais:GetPais( aTmp[ _CCODPAI ], oSay[6], oBmpDiv ) ) ;
+         VALID    ( oPais:GetPais( aTmp[ _CCODPAI ], oSay[ 6 ], oBmpDiv ) ) ;
          ON HELP  ( oPais:Buscar( aGet[ _CCODPAI ] ) ) ;
          BITMAP   "LUPA" ;
          OF       fldGeneral
@@ -1545,7 +1543,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( .f. ) ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _CPERCTO ] VAR aTmp[ _CPERCTO ];
+      REDEFINE GET aGet[ _CPERCTO ] ;
+         VAR aTmp[ _CPERCTO ];
          ID       90 ;
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
@@ -1636,14 +1635,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET oSay[1] VAR cSay[1];
          ID       211 ;
          WHEN     .F. ;
-         COLOR    CLR_GET ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_DIAPAGO] VAR aTmp[_DIAPAGO] ;
          ID       232;
          PICTURE  "99" ;
          SPINNER ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
@@ -1651,7 +1648,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       233;
          PICTURE  "99" ;
          SPINNER ;
-         COLOR    CLR_GET ;
          VALID    ( if( ( aTmp[_DIAPAGO2] != 0 .and. aTmp[_DIAPAGO2] <= aTmp[_DIAPAGO] ),;
                       ( msgStop( "Segundo día de pago debe ser mayor que el primero" ), .f. ),;
                       .t. ) ) ;
@@ -1661,7 +1657,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[ _CMEIINT ] VAR aTmp[ _CMEIINT ] ;
          ID       280 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          ON HELP  ( ShellExecute( oDlg:hWnd, "open", "mailto:" + Rtrim( aGet[ _CMEIINT ]:cText() ) ) ) ;
          BITMAP   "MAIL16" ;
          UPDATE ;
@@ -1805,7 +1800,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       aGet[ _CCODTRN ]:bValid := {|| oTrans:Existe( aGet[ _CCODTRN ], aGet[ _CCODTRN ]:oHelpText ) }
       aGet[ _CCODTRN ]:bHelp  := {|| oTrans:Buscar( aGet[ _CCODTRN ] ) }
-
 
       /*
       Segunda Caja de Dialogo--------------------------------------------------
@@ -2358,7 +2352,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       /*
       Pestaña de contactos-----------------------------------------------------
       */
-
+      
       REDEFINE BITMAP oBmpContactos ;
          ID       600 ;
          RESOURCE "User_mobilephone_Alpha_48" ;
@@ -2465,6 +2459,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       oBrwCon:bRClicked       := {| nRow, nCol, nFlags | oBrwCon:RButtonDown( nRow, nCol, nFlags ) }
+
       if nMode != ZOOM_MODE
          oBrwCon:bLDblClick   := {|| EdtContactos( dbfTmpCon, oBrwCon ) }
       end if
@@ -2629,7 +2624,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[_CTAVENTA] VAR aTmp[_CTAVENTA] ;
          ID       360 ;
-         COLOR    CLR_GET ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwChkCta( aGet[_CTAVENTA], oGetCta ) ) ;
@@ -2673,14 +2667,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oGetSubDto VAR cGetSubDto ;
          ID       371 ;
-         COLOR    CLR_GET ;
          WHEN     .F. ;
          OF       fldContabilidad
 
       REDEFINE GET oGetSalDto VAR nGetSalDto ;
          ID       372 ;
          PICTURE  cPorDiv ;
-         COLOR    CLR_GET ;
          WHEN     .F. ;
          OF       fldContabilidad
 
@@ -2766,7 +2758,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      oBrwCta:bRClicked       := {| nRow, nCol, nFlags | oBrwCta:RButtonDown( nRow, nCol, nFlags ) }
+      oBrwCta:bRClicked    := {| nRow, nCol, nFlags | oBrwCta:RButtonDown( nRow, nCol, nFlags ) }
 
       oBrwCta:CreateFromResource( 400 )
 
@@ -3568,6 +3560,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :cHeader                := "Pago"
          :bEditValue             := {|| cNbrFPago( ( TDataView():FacturasClientesCobros( nView ) )->cCodPgo, dbfFPago ) }
          :nWidth                 := 200
+         :lHide                  := .t.
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Pagado por"
+         :bEditValue             := {|| ( TDataView():FacturasClientesCobros( nView ) )->cPgdoPor }
+         :nWidth                 := 100
+         :lHide                  := .t.
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Documento"
+         :bEditValue             := {|| ( TDataView():FacturasClientesCobros( nView ) )->cDocPgo }
+         :nWidth                 := 100
          :lHide                  := .t.
       end with
 

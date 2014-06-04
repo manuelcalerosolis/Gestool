@@ -10150,7 +10150,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                   if Empty( aGet[ _CLOTE ]:VarGet() )
                      aGet[ _CLOTE ]:cText( cLote )
-                     aGet[ _CLOTE ]:lValid()
                   end if
 
                else
@@ -10395,11 +10394,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             if !Empty( hAtipica )
 
-               ?"1"
-               
                if hhaskey( hAtipica, "nImporte" )
                   if hAtipica[ "nImporte" ] != 0
-                     ?hAtipica[ "nImporte" ]
                      aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
                   end if   
                end if
@@ -10472,7 +10468,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             end if
 
          else
-            aGet[ _NPREUNIT ]:HardDisable()
+            aGet[ _NPREUNIT ]:HardDisable() 
             aGet[ _NIMPTRN  ]:HardDisable()
             aGet[ _NPNTVER  ]:HardDisable()
             aGet[ _NDTO     ]:HardDisable()

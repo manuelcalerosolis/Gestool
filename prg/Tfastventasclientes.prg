@@ -313,6 +313,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cSerDoc",  "C",  1, 0, {|| "" },   "Serie del documento"                     )
    ::AddField( "cNumDoc",  "C", 10, 0, {|| "" },   "Número del documento"                    )
    ::AddField( "cSufDoc",  "C",  2, 0, {|| "" },   "Delegación del documento"                )
+   ::AddField( "cNumRec",  "C",  2, 0, {|| "" },   "Número del recibo"                       )
    ::AddField( "cCodPos",  "C", 15, 0, {|| "@!" }, "Código postal del documento"             )
 
    ::AddField( "nAnoDoc",  "N",  4, 0, {|| "" },   "Año del documento"                       )
@@ -1508,6 +1509,7 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cSerDoc    := ::oFacCliP:cSerie
          ::oDbf:cNumDoc    := Str( ::oFacCliP:nNumFac )
          ::oDbf:cSufDoc    := ::oFacCliP:cSufFac
+         ::oDbf:cNumRec    := Str( ::oFacCliP:nNumRec )
          ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
          ::oDbf:nAnoDoc    := Year( ::oFacCliP:dPreCob )
@@ -1526,8 +1528,6 @@ METHOD AddRecibosCliente( cCodigoCliente ) CLASS TFastVentasClientes
          else
             ::oDbf:Cancel()
          end if
-
-         msgWait( "procesa" + str( ::oFacCliP:OrdKeyCount() ), , .1 )
 
          ::oFacCliP:Skip()
 

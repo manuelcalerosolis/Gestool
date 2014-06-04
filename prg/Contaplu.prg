@@ -1345,6 +1345,7 @@ FUNCTION MkAsiento( 	Asien,;
    local oBlock
    local nImporte
    local aAsiento
+   local hAsiento
 
    DEFAULT cDivisa         := cDivEmp()
    DEFAULT lRectificativa  := .f.
@@ -1425,8 +1426,10 @@ FUNCTION MkAsiento( 	Asien,;
 
       else 
 
-         hAsiento    := {""}
-
+         hAsiento    := {  "Fecha"           => Fecha ,;
+                           "Subcuenta"       => Subcuenta,;
+                           "Contrapartida"   => Contrapartida }
+/*
          aAsiento    :=  MkAsientoA3(        Asien,;
                                              cDivisa,;
                                              Fecha,;
@@ -1451,7 +1454,7 @@ FUNCTION MkAsiento( 	Asien,;
                                              cNombre,;
                                              nEjeCon,;
                                              cEjeCta )   
-
+*/
 
       end if 
 

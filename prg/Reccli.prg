@@ -4718,7 +4718,7 @@ Function rxRecCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
 
       ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacCliT )->( ordCreate( cPath + "FacCliP.Cdx", "iNumFac", "'21' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '21' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FacCliP.Cdx", "iNumFac", "'21' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac + Str( nNumRec )", {|| '21' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac + Str( Field->nNumRec ) } ) )
 
       ( dbfFacCliT )->( dbCloseArea() )
 
