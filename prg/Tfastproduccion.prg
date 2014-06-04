@@ -217,7 +217,8 @@ METHOD Create( uParam ) CLASS TFastProduccion
 
    ::AddField( "nAnoDoc",     "N",  4, 0, {|| "" },   "Año del documento"                       )
    ::AddField( "nMesDoc",     "N",  2, 0, {|| "" },   "Mes del documento"                       )
-   ::AddField( "dFecDoc",     "D",  8, 0, {|| "" },   "Fecha del documento"                     )
+   ::AddField( "dFecIniDoc",  "D",  8, 0, {|| "" },   "Fecha inicio del documento"              )
+   ::AddField( "dFecFinDoc",  "D",  8, 0, {|| "" },   "Fecha fin del documento"                 )
 
    ::AddField( "cCodOpe",     "C",  3, 0, {|| "" },   "Operación"                               )
    ::AddField( "cTipOpe", )
@@ -398,7 +399,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
 */
       ::oParteProduccion:OrdSetFocus( "dFecOrd" )
 
-      cExpHead          := 'dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          := 'dFecFin >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFin <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. cSerOrd >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerOrd <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
       ::oParteProduccion:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ), ::oParteProduccion:OrdKey(), ( cExpHead ), , , , , , , , .t. )
@@ -417,7 +418,8 @@ METHOD AddParteProducccion() CLASS TFastProduccion
 
          ::oDbf:nAnoDoc    := Year( ::oParteProduccion:dFecOrd )
          ::oDbf:nMesDoc    := Month( ::oParteProduccion:dFecOrd )
-         ::oDbf:dFecDoc    := ::oParteProduccion:dFecOrd
+         ::oDbf:dFecIniDoc := ::oParteProduccion:dFecOrd
+         ::oDbf:dFecFinDoc := ::oParteProduccion:dFecFin 
 
          ::oDbf:cCodOpe    := ::oParteProduccion:cCodOpe
          ::oDbf:cCodSec    := ::oParteProduccion:cCodSec
