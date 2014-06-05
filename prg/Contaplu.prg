@@ -1095,7 +1095,7 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
 
             if ( dbfDiario )->( dbSeek( cCodSubcuenta ) )
 
-               while ( dbfDiario )->Subcuenta == cCodSubcuenta .and. !( dbfDiario )->( eof() )
+               while ( dbfDiario )->SubCta == cCodSubcuenta .and. !( dbfDiario )->( eof() )
 
                   ( dbfTmp )->( dbAppend() )
 
@@ -1104,7 +1104,7 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
                   ( dbfTmp )->cConcepto := ( dbfDiario )->Concepto
                   ( dbfTmp )->nDebe     := ( dbfDiario )->EuroDebe
                   ( dbfTmp )->nHaber    := ( dbfDiario )->EuroHaber
-                  ( dbfTmp )->cDepartamento  := ( dbfDiario )->Departamento + "." + ( dbfDiario )->Clave
+                  ( dbfTmp )->cDeparta  := ( dbfDiario )->Departa + "." + ( dbfDiario )->Clave
                   ( dbfTmp )->nFactura  := ( dbfDiario )->Factura
                   ( dbfTmp )->nBase     := ( dbfDiario )->BaseEuro
                   ( dbfTmp )->nIva      := ( dbfDiario )->Iva
@@ -1601,7 +1601,7 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
 
       cMes           := Rjust( Month( aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ] ), "0", 2 )
 
-      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( FieldPos( "Subcuenta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
+      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( FieldPos( "SubCta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
 
          ( cSubCuenta )->SUMADBEU               += aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]
          ( cSubCuenta )->SUMAHBEU               += aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]
@@ -1627,7 +1627,7 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
       else
 
          if lMessage
-            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( FieldPos( "Subcuenta" ) ) ], "Imposible actualizar saldos" )
+            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( FieldPos( "SubCta" ) ) ], "Imposible actualizar saldos" )
          end if
 
       end if
@@ -1996,13 +1996,13 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Subcuenta"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Subcuenta" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "SubCta" ) ) ] }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Contapartida"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Contrapartida" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Contra" ) ) ] }
          :nWidth           := 80
       end with
 
@@ -2080,7 +2080,7 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Departamentomento"
+         :cHeader          := "Departamento"
          :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Departamento" ) ) ] }
          :nWidth           := 40
       end with

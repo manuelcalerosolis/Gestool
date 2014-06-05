@@ -4757,17 +4757,26 @@ Method lValidCajas()
 
    ::oDbfCaj:GoTop()
    while !::oDbfCaj:Eof()
+
       if ::lInCajaSelect( ::oDbfCaj:cCodCaj )
-         nUsrCaj  := nUserCaja( ::oDbfCaj:cCodCaj )
+
+         nUsrCaj        := nUserCaja( ::oDbfCaj:cCodCaj )
+      
+         msgAlert( nUsrCaj, "nUsrCaj" )
+
          if !( nUsrCaj == 0 .or. ( nUsrCaj == 1 .and. ::oDbfCaj:cCodCaj == ::GetCurrentCaja() ) )
             if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "¿ Desea continuar con el cierre ?" )
                lValidCajas := .f.
                exit
             end if
          end if
+      
       end if
+      
       ::oDbfCaj:Skip()
+      
       SysRefresh()
+   
    end while
 
    ::oDbfCaj:SetRecno()

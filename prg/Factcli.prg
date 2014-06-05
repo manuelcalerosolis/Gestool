@@ -11626,7 +11626,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             if !Empty( cValPr1 )
                aGet[ _CVALPR1 ]:cText( cCodPrp( aTmp[ _CCODPR1 ], cValPr1, dbfTblPro ) )
-               aGet[ _CVALPR1 ]:lValid()
             end if
 
          end if
@@ -11635,7 +11634,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             if !Empty( cValPr2 )
                aGet[ _CVALPR2 ]:cText( cCodPrp( aTmp[ _CCODPR2 ], cValPr2, dbfTblPro ) )
-               aGet[ _CVALPR2 ]:lValid()
             end if
 
          end if
