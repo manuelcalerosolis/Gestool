@@ -705,8 +705,6 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
    local oSayPrpDos
    local cSayPrpDos     := ""
    local bmpImage
-   local oSayFamCmb
-   local cSayFamCmb     := ""
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -731,11 +729,11 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          ID       100 ;
          OF       oDlg ;
          PROMPT   "&General",;
-                  "&Proveedores",;
-                  "Relaciones";
+                  "&Propiedades",;
+                  "&Proveedores";
          DIALOGS  "FAMILIA_01",;
-                  "FAMILIA_02",;
-                  "FAMILIA_04"
+                  "FAMILIA_04",;
+                  "FAMILIA_02"
 
          /*
          Redefinici¢n de la primera caja de Dialogo-------------------------------
@@ -754,17 +752,6 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             ID       110 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             PICTURE  "@!" ;
-            OF       oFld:aDialogs[1]
-
-         REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
-            ID       115 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ON CHANGE( if( nMode != APPD_MODE, IncWeb( aTmp ), .t. ) ) ;
-            OF       oFld:aDialogs[1]
-
-         REDEFINE CHECKBOX aTmp[ _LFAMINT ];
-            ID       116 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oFld:aDialogs[1]
 
          REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
@@ -807,24 +794,45 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET oSayPrpDos VAR cSayPrpDos ;
             ID       141 ;
             WHEN     ( .f. ) ;
-            OF       oFld:aDialogs[ 1 ]
+            OF       oFld:aDialogs[ 1 ]   
 
-         REDEFINE GET aGet[ _CCODFRA ] VAR aTmp[ _CCODFRA ] ;
-            ID       280 ;
-            IDTEXT   281 ;
+         /*
+         Tree de las familias padre--------------------------------------------------
+         */   
+
+         oTreePadre                     := TTreeView():Redefine( 200, oFld:aDialogs[1] )
+         oTreePadre:bItemSelectChanged  := {|| ChangeTreeState() }
+
+         REDEFINE IMAGE bmpImage ;
+            ID       600 ;
+            OF       oFld:aDialogs[1] ;
+            FILE     cFileBmpName( aTmp[ _CIMGBTN ] )
+
+         bmpImage:SetColor( , GetSysColor( 15 ) )
+         bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
+         bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
+
+         /*
+         Segunda Caja de diálogo-----------------------------------------------
+         */
+
+         REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
+            ID       115 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            BITMAP   "LUPA" ;
-            OF       oFld:aDialogs[ 1 ]
+            ON CHANGE( if( nMode != APPD_MODE, IncWeb( aTmp ), .t. ) ) ;
+            OF       oFld:aDialogs[2]
 
-            aGet[ _CCODFRA ]:bValid := {|| ( aGet[ _CCODFRA ]:oHelpText:cText( RetFld( aTmp[ _CCODFRA ], oFraPub:GetAlias() ) ), .t. ) }
-            aGet[ _CCODFRA ]:bHelp  := {|| oFraPub:Buscar( aGet[ _CCODFRA ],  ) }
+         REDEFINE CHECKBOX aTmp[ _LFAMINT ];
+            ID       116 ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _NCOLBTN ] VAR aTmp[ _NCOLBTN ] ;
             ID       290 ;
             COLOR    aTmp[ _NCOLBTN ], aTmp[ _NCOLBTN ] ;
             BITMAP   "COLORS_16" ;
             ON HELP  ( ColorFam( aGet[ _NCOLBTN ] ) ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _CIMGBTN ] VAR aTmp[ _CIMGBTN ] ;
             BITMAP   "FOLDER" ;
@@ -832,22 +840,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             ON CHANGE( ChgBmp( aGet[ _CIMGBTN ], bmpImage ) ) ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             ID       300 ;
-            OF       oFld:aDialogs[1]
-
-         // Familia para combinar----------------------------------------------------
-
-         REDEFINE GET aGet[ _CFAMCMB ] VAR aTmp[ _CFAMCMB ] ;
-            ID       410 ;
-            VALID    ( cFamilia( aGet[ _CFAMCMB ], dbfFamilia, oSayFamCmb ), if( nMode != APPD_MODE, lValidFamiliaCombinado( aTmp ), .t. ) );
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            BITMAP   "LUPA" ;
-            ON HELP  ( BrwFamiliaCombinada( aGet[ _CFAMCMB ], dbfFamilia, oSayFamCmb ) );
-            OF       oFld:aDialogs[1]
-
-         REDEFINE GET oSayFamCmb VAR cSayFamCmb;
-            WHEN     ( .F. );
-            ID       411 ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          /*
          Comentario por defecto para el táctil---------------------------------
@@ -860,14 +853,14 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             VALID    ( oComentarios:Existe( aGet[ _CCOMFAM ], aGet[ _CCOMFAM ]:oHelpText, "cDescri" ) );
             ON HELP  ( oComentarios:Buscar( aGet[ _CCOMFAM ] ) ) ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _NDTOLIN ] VAR aTmp[ _NDTOLIN ] ;
             ID       320 ;
             SPINNER ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             PICTURE  "@E 99.99" ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _NPOSINT ] VAR aTmp[ _NPOSINT ] ;
             ID       180 ;
@@ -877,44 +870,35 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             MAX      ( 999 ) ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             PICTURE  "999" ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _NPCTRPL ] VAR aTmp[ _NPCTRPL ] ;
             ID       310 ;
             SPINNER ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             PICTURE  "@E 99.99" ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE CHECKBOX aTmp[ _LPREESP ];
             ID       315 ;
             WHEN     ( nMode != ZOOM_MODE );
-            OF       oFld:aDialogs[1]
-
-         REDEFINE IMAGE bmpImage ;
-            ID       600 ;
-            OF       oFld:aDialogs[1] ;
-            FILE     cFileBmpName( aTmp[ _CIMGBTN ] )
-
-         bmpImage:SetColor( , GetSysColor( 15 ) )
-         bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
-         bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
+            OF       oFld:aDialogs[2]
 
          REDEFINE CHECKBOX aTmp[ _LINCTPV ];
             ID       150 ;
             ON CHANGE( if( nMode != APPD_MODE, IncTactil( aTmp[ _LINCTPV ] ), .t. ) ) ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE CHECKBOX aTmp[ _LACUM ];
             ID       160 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE CHECKBOX aGet[ _LMOSTRAR ] VAR aTmp[ _LMOSTRAR ];
             ID       170 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _NPOSTPV ] VAR aTmp[ _NPOSTPV ] ;
             ID       330 ;
@@ -924,13 +908,13 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             SPINNER ;
             MIN      ( 1 ) ;
             MAX      ( 99 ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _CDESWEB ] VAR aTmp[ _CDESWEB ] ;
             ID       340 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             PICTURE  "@!" ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET aGet[ _CCODIMP ] VAR aTmp[ _CCODIMP ] ;
             ID       420 ;
@@ -938,22 +922,22 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             ON HELP  ( oTComandas:Buscar( aGet[ _CCODIMP ], "cCodigo" ) ) ;
             BITMAP   "LUPA" ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          REDEFINE GET oSayTComandas VAR cSayTComandas ;
             ID       421 ;
             SPINNER ;
             WHEN     ( .f. ) ;
-            OF       oFld:aDialogs[1]
+            OF       oFld:aDialogs[2]
 
          // Segunda caja de dialogo--------------------------------------------------
 
          REDEFINE CHECKBOX aTmp[ _LINFSTK ] ;
             ID       540 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[ 2 ]
+            OF       oFld:aDialogs[ 3 ]
 
-         oBrwPrv                 := IXBrowse():New( oFld:aDialogs[ 2 ] )
+         oBrwPrv                 := IXBrowse():New( oFld:aDialogs[ 3 ] )
 
          oBrwPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          oBrwPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -981,28 +965,21 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 
          REDEFINE BUTTON ;
             ID       500 ;
-            OF       oFld:aDialogs[2];
+            OF       oFld:aDialogs[3];
             WHEN     ( nMode != ZOOM_MODE ) ;
             ACTION   ( WinAppRec( oBrwPrv, bEdit2, dbfTmp ) )
 
          REDEFINE BUTTON ;
             ID       510 ;
-            OF       oFld:aDialogs[2];
+            OF       oFld:aDialogs[3];
             WHEN     ( nMode != ZOOM_MODE ) ;
             ACTION   ( WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) )
 
          REDEFINE BUTTON ;
             ID       520 ;
-            OF       oFld:aDialogs[2];
+            OF       oFld:aDialogs[3];
             WHEN     ( nMode != ZOOM_MODE ) ;
             ACTION   ( dbDelRec( oBrwPrv, dbfTmp ) )
-
-         /*
-         Tree de las familias padre--------------------------------------------------
-         */   
-
-         oTreePadre                     := TTreeView():Redefine( 100, oFld:aDialogs[3] )
-         oTreePadre:bItemSelectChanged  := {|| msginfo( "Cambio" ) }
 
          // Grabamos-----------------------------------------------------------------
 
@@ -1069,10 +1046,8 @@ Static Function StartEdtRec( aGet, aTmp )
    aGet[ _CCODGRP ]:lValid()
    aGet[ _CCOMFAM ]:lValid()
    aGet[ _CCODIMP ]:lValid()
-   aGet[ _CCODFRA ]:lValid()
    aGet[ _CCODPRP1 ]:lValid()
    aGet[ _CCODPRP2 ]:lValid()
-   aGet[ _CFAMCMB ]:lValid()
 
    aGet[ _CCODFAM ]:SetFocus()
 
@@ -1084,7 +1059,7 @@ Static Function StartEdtRec( aGet, aTmp )
 
    LoadTree()  
 
-   //SetTreeState( , , aTmp )
+   SetTreeState( , , aTmp[ _CFAMCMB ] )
 
 Return .t.
 
@@ -1133,7 +1108,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function SetTreeState( oTree, aItems, aTmp )
+static function SetTreeState( oTree, aItems, cCodFam )
 
    local oItem
 
@@ -1145,29 +1120,112 @@ static function SetTreeState( oTree, aItems, aTmp )
 
    for each oItem in aItems
 
-      
-      msginfo( aTmp[ _CFAMCMB ], len( aTmp[ _CFAMCMB ] ) )
-      Msginfo( oItem:Cargo     , len( oItem:Cargo ) )
-
-      if ( aTmp[ _CFAMCMB ] == oItem:Cargo )
-
-         // MsgWait( "", "", .0001 )
-
-         ?"Entro en el if"
+      if ( cCodFam == oItem:Cargo )
 
          oTree:Select( oItem )
 
          tvSetCheckState( oTree:hWnd, oItem:hItem, .t. )
 
+         SysRefresh()
+
       end if
 
       if len( oItem:aItems ) > 0
-         SetTreeState( oTree, oItem:aItems, aTmp )
+         SetTreeState( oTree, oItem:aItems, cCodFam )
       end if
 
    next
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function ChangeTreeState( oTree, aItems )
+
+   local oItem
+
+   DEFAULT oTree  := oTreePadre
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      SysRefresh()
+
+      tvSetCheckState( oTree:hWnd, oItem:hItem, .f. )
+
+      if len( oItem:aItems ) > 0
+         ChangeTreeState( oTree, oItem:aItems )
+      end if
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function GetTreeState( aTmp, oTree, aItems )
+
+   local oItem
+
+   DEFAULT oTree  := oTreePadre
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if tvGetCheckState( oTree:hWnd, oItem:hItem )
+         aTmp[ _CFAMCMB ]    := oItem:Cargo
+      end if
+
+      if len( oItem:aItems ) > 0
+         GetTreeState( aTmp, oTree, oItem:aItems )
+      end if
+
+   next
+
+Return ( aTmp )
+
+//---------------------------------------------------------------------------//
+
+static function aChildTree( cCodFamilia, aChild )
+
+   local nRec
+   local nOrd
+
+   if Empty( aChild )
+      aChild   := {}
+   end if
+
+   CursorWait()
+
+   nRec        := ( dbfFamilia )->( Recno() )
+   nOrd        := ( dbfFamilia )->( OrdSetFocus( "cFamCmb" ) )
+
+   if ( dbfFamilia )->( dbSeek( cCodFamilia ) )
+
+      while ( ( dbfFamilia )->cFamCmb == cCodFamilia .and. !( dbfFamilia )->( Eof() ) )
+
+         aAdd( aChild, ( dbfFamilia )->cCodFam )
+
+         aChildTree( ( dbfFamilia )->cCodFam, aChild )
+
+         ( dbfFamilia )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+   ( dbfFamilia )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+Return ( aChild )
 
 //---------------------------------------------------------------------------//
 
@@ -1214,6 +1272,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
    local oError
    local oBlock
    local cCodFam           := aTmp[ _CCODFAM ]
+   local aGrp
 
    DEFAULT lActualizaWeb   := .f.
 
@@ -1248,6 +1307,23 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
          MsgStop( "No puede repetir las propiedades." )
          Return nil
    end case
+
+   aTmp[ _CFAMCMB ]  := ""
+
+   GetTreeState( aTmp )
+
+   if ( aTmp[ _CFAMCMB ] == aTmp[ _CCODFAM ] )
+      MsgStop( "Familia padre no puede ser el mismo" )
+      oTreePadre:SetFocus()
+      Return nil
+   end if
+
+   aGrp  := aChildTree( aTmp[ _CCODFAM ] )
+   if aScan( aGrp, aTmp[ _CFAMCMB ] ) != 0
+      MsgStop( "Familia padre contiene referencia circular" )
+      oTreePadre:SetFocus()
+      Return nil
+   end if
 
    aTmp[ _LSELDOC ]  := .t.
 
