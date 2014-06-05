@@ -955,8 +955,8 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
 
                      aSize( aTemp, 10 )
 
-                     ( cArea )->( DbAppend() )
-                     ( cArea )->Cod       := cCodSubcuenta
+                     ( cArea )->( dbAppend() )
+                     ( cArea )->Cod          := cCodSubcuenta
 
                      if ( cArea )->( FieldPos( "IDNIF" ) ) != 0
                         ( cArea )->IdNif     := 1
@@ -1397,64 +1397,56 @@ FUNCTION MkAsiento( 	Asien,;
       Asignacion de campos--------------------------------------------------------
       */
 
+
       if lAplicacionContaplus()
 
-         aAsiento    :=  MkAsientoContaplus( Asien,;
-                                             cDivisa,;
-                                             Fecha,;
-                                             Subcuenta,;
-                                             Contrapartida,;
-                                             nImporteDebe,;
-                                             Concepto,;
-                                             nImporteHaber,;
-                                             cSerie,;
-                                             Factura,;
-                                             BaseImponible,;
-                                             IVA,;
-                                             RecargoEquivalencia,;
-                                             Documento,;
-                                             Departamento,;
-                                             Clave,;
-                                             lRectificativa,;
-                                             nCasado,;
-                                             tCasado,;
-                                             lSimula,;
-                                             cNif,;
-                                             cNombre,;
-                                             nEjeCon,;
-                                             cEjeCta )   
+         aAsiento          :=  MkAsientoContaplus( Asien,;
+                                                   cDivisa,;
+                                                   Fecha,;
+                                                   Subcuenta,;
+                                                   Contrapartida,;
+                                                   nImporteDebe,;
+                                                   Concepto,;
+                                                   nImporteHaber,;
+                                                   cSerie,;
+                                                   Factura,;
+                                                   BaseImponible,;
+                                                   IVA,;
+                                                   RecargoEquivalencia,;
+                                                   Documento,;
+                                                   Departamento,;
+                                                   Clave,;
+                                                   lRectificativa,;
+                                                   nCasado,;
+                                                   tCasado,;
+                                                   lSimula,;
+                                                   cNif,;
+                                                   cNombre,;
+                                                   nEjeCon,;
+                                                   cEjeCta )   
 
       else 
 
-         hAsiento    := {  "Fecha"           => Fecha ,;
-                           "Subcuenta"       => Subcuenta,;
-                           "Contrapartida"   => Contrapartida }
-/*
-         aAsiento    :=  MkAsientoA3(        Asien,;
-                                             cDivisa,;
-                                             Fecha,;
-                                             Subcuenta,;
-                                             Contrapartida,;
-                                             nImporteDebe,;
-                                             Concepto,;
-                                             nImporteHaber,;
-                                             cSerie,;
-                                             Factura,;
-                                             BaseImponible,;
-                                             IVA,;
-                                             RecargoEquivalencia,;
-                                             Documento,;
-                                             Departamento,;
-                                             Clave,;
-                                             lRectificativa,;
-                                             nCasado,;
-                                             tCasado,;
-                                             lSimula,;
-                                             cNif,;
-                                             cNombre,;
-                                             nEjeCon,;
-                                             cEjeCta )   
-*/
+
+         hAsiento          := {  "Fecha"                 => Fecha ,;
+                                 "Subcuenta"             => Subcuenta,;
+                                 "Contrapartida"         => Contrapartida,;
+                                 "ImporteDebe"           => nImporteDebe,;
+                                 "ImporteHaber"          => nImporteHaber,;
+                                 "Concepto"              => Concepto,;
+                                 "Serie"                 => cSerie,;
+                                 "Factura"               => Factura,;
+                                 "BaseImponible"         => BaseImponible,;
+                                 "IVA"                   => IVA,;
+                                 "RecargoEquivalencia"   => RecargoEquivalencia,;
+                                 "Documento"             => Documento,;
+                                 "Departamento"          => Departamento,;
+                                 "Clave"                 => Clave,;
+                                 "lRectificativa"        => lRectificativa,;
+                                 "Nif"                   => cNif,;
+                                 "Nombre"                => cNombre }
+
+         EnlaceA3():GetInstance():Add( hAsiento )
 
       end if 
 
@@ -2628,21 +2620,100 @@ Return ( nAplicacionContable == 2 )
 
 CLASS EnlaceA3
 
+   CLASSDATA oInstance
+
+   DATA aAsiento                          INIT {}
+
    DATA cDirectory                        INIT "C:\EnlaceA3"
    DATA cFile                             INIT "SuEnalce.Dat" 
    DATA hFile 
    DATA cDate                             INIT DateToString()
 
+   DATA cBuffer                           INIT ""
+
+   METHOD New()
+
+   METHOD GetInstance()
+
+   METHOD Add( hAsiento )                 INLINE ( aAdd( ::aAsiento, hAsiento ) )
+   METHOD Show()                          INLINE ( msgInfo( valtoprg( ::aAsiento ) ) )
+
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
 
+   METHOD Render()
+
    METHOD WriteASCII()   
    METHOD SerializeASCII()
+
+   METHOD TipoFormato()                   INLINE ( '3' )
+   METHOD CodigoEmpresa( hAsiento )       INLINE ( Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 )
+   METHOD FechaApunte( hAsiento )         INLINE ( Dtos( hAsiento[ "Fecha"] ) )
+   METHOD TipoRegistro( hAsiento )        INLINE ( if( hAsiento[ "lRectificativa" ], '2', '1' ) )
+
+         hAsiento          := {  "Fecha"                 => Fecha ,;
+                                 "Subcuenta"             => Subcuenta,;
+                                 "Contrapartida"         => Contrapartida,;
+                                 "ImporteDebe"           => nImporteDebe,;
+                                 "ImporteHaber"          => nImporteHaber,;
+                                 "Concepto"              => Concepto,;
+                                 "Serie"                 => cSerie,;
+                                 "Factura"               => Factura,;
+                                 "BaseImponible"         => BaseImponible,;
+                                 "IVA"                   => IVA,;
+                                 "RecargoEquivalencia"   => RecargoEquivalencia,;
+                                 "Documento"             => Documento,;
+                                 "Departamento"          => Departamento,;
+                                 "Clave"                 => Clave,;
+                                 "lRectificativa"        => lRectificativa,;
+                                 "Nif"                   => cNif,;
+                                 "Nombre"                => cNombre }
+
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
+
+   METHOD New()
+
+      ::aAsiento                          := {}
+      ::cDirectory                        := "C:\EnlaceA3"
+      ::cFile                             := "SuEnalce.Dat" 
+      ::cDate                             := DateToString()
+      ::cBuffer                           := ""
+
+   RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD GetInstance()
+
+      if Empty( ::oInstance )
+         ::oInstance                      := ::New()
+      end if
+
+   RETURN ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+   METHOD Render() CLASS EnlaceA3
+
+      local hAsiento
+
+      foreach hAsiento in ::aAsiento
+         ::cBuffer   += ::TipoFormato()
+         ::cBuffer   += ::CodigoEmpresa( hAsiento )
+         ::cBuffer   += ::FechaApunte( hAsiento )
+         ::cBuffer   += ::TipoRegistro()
+
+         ::cBuffer   += CRLF
+      next 
+
+   Return ( Self )
+
+   //------------------------------------------------------------------------//
+
 
    METHOD WriteASCII() CLASS EnlaceA3
 
@@ -2652,6 +2723,8 @@ ENDCLASS
          fWrite( ::hFile, ::SerializeASCII() )
          fClose( ::hFile )
       end if
+
+      msgAlert( ::SerializeASCII() )
 
    Return ( Self )
 

@@ -79,6 +79,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    cProyecto         := Left( cCodPro, 3 )
    cClave            := Right( cCodPro, 6 )
 
+   msgAlert( 'CntFacCli' )
+
    /*
    if Empty( ptaDebe )
       Return nil
@@ -997,17 +999,24 @@ RETURN ( lReturn )
 
 Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT, dbfFacCliP )
 
-   /*
-   Ponemos el ticket como contabilizado
-   ----------------------------------------------------------------------------
-   */
+   // Contabilizamos desde aki A3---------------------------------------------
+
+   if lAplicacionA3()
+      EnlaceA3():GetInstance():WriteASCII()
+   end if 
+
+   // Ponemos el ticket como contabilizado-------------------------------------
 
    if ( dbfFacCliT )->( dbRLock() )
       ( dbfFacCliT )->lContab := .t.
       ( dbfFacCliT )->( dbUnLock() )
    end if
 
+   // Mensaje------------------------------------------------------------------
+
    oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+
+   // Contabilizacion de recibos-----------------------------------------------
 
    if !Empty( dbfFacCliP )
 
