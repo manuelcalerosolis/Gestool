@@ -371,7 +371,7 @@ RETURN ( Self )
 
 METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
 
-   DEFAULT lDel      := .f.
+   /*DEFAULT lDel      := .f.
 
    if ::lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
 
@@ -383,7 +383,7 @@ METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
       
    end if
 
-   ::lActualizaWeb   := .f.
+   ::lActualizaWeb   := .f.*/
       
 Return .t.
 
