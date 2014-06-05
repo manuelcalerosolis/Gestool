@@ -7255,7 +7255,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "SysTabControl32", WS_TABSTOP, 3, 2, 349, 334
 }
 
-FAMILIA_01 DIALOG DISCARDABLE 98, -11, 346, 317
+FAMILIA_01 DIALOG DISCARDABLE 98, -11, 346, 318
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -7300,7 +7300,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Color botón", -1, "Static", WS_GROUP, 8, 138, 41, 8
   CONTROL "Imagen", -1, "Static", WS_GROUP, 8, 150, 29, 8
   CONTROL "Frase pub.", -1, "Static", WS_GROUP, 8, 87, 39, 8
-  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 1, 277, 279, 36
+  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 1, 277, 279, 38
   CONTROL "Descuento %", -1, "Static", WS_GROUP, 8, 303, 47, 8
   CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 1, 114, 279, 109
   CONTROL "Familia comb.", -1, "Static", WS_GROUP, 8, 173, 48, 8
@@ -7312,7 +7312,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Descripción", -1, "Static", WS_GROUP, 8, 263, 43, 8
 }
 
-FAMILIA_02 DIALOG DISCARDABLE 98, -11, 346, 300
+FAMILIA_02 DIALOG DISCARDABLE 98, -11, 346, 318
 STYLE WS_CHILD|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -7320,8 +7320,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 8, 42, 50, 14
   CONTROL "&Modificar [F3]", 510, "Button", WS_TABSTOP, 62, 42, 50, 14
   CONTROL "&Eliminar [F4]", 520, "Button", WS_TABSTOP, 116, 42, 50, 14
-  CONTROL "", 530, "TXBrowse", WS_TABSTOP|0x00300000, 8, 57, 328, 236
-  CONTROL "Codificación de proveedores", -1, "Button", BS_GROUPBOX, 1, 31, 339, 266
+  CONTROL "", 530, "TXBrowse", WS_TABSTOP|0x00300000, 8, 57, 328, 254
+  CONTROL "Codificación de proveedores", -1, "Button", BS_GROUPBOX, 1, 31, 339, 284
   CONTROL "Informes", -1, "Button", BS_GROUPBOX, 1, 3, 339, 26
 }
 
@@ -19744,4 +19744,14 @@ FONT 12, "Segoe UI"
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
 GESTOOL ICON "..\\Bmp\\Gestool.ico"
+
+LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
+
+FAMILIA_04 DIALOG DISCARDABLE 98, -11, 346, 318
+STYLE WS_CHILD|WS_VISIBLE
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "Familia padre", -1, "Button", BS_GROUPBOX, 1, 2, 339, 313
+  CONTROL "", 100, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_CHECKBOXES|TVS_FULLROWSELECT|WS_BORDER, 9, 14, 323, 295
+}
 

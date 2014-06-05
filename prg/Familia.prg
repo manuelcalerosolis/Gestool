@@ -88,6 +88,8 @@ static bEdtPda       := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | PdaE
 static dbfFamilia
 static dbfFamPrv
 
+static oTreePadre
+
 #define MENUOPTION   "01012"
 
 //----------------------------------------------------------------------------//
@@ -729,9 +731,11 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          ID       100 ;
          OF       oDlg ;
          PROMPT   "&General",;
-                  "&Proveedores";
+                  "&Proveedores",;
+                  "Relaciones";
          DIALOGS  "FAMILIA_01",;
-                  "FAMILIA_02"
+                  "FAMILIA_02",;
+                  "FAMILIA_04"
 
          /*
          Redefinici¢n de la primera caja de Dialogo-------------------------------
@@ -993,6 +997,13 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             WHEN     ( nMode != ZOOM_MODE ) ;
             ACTION   ( dbDelRec( oBrwPrv, dbfTmp ) )
 
+         /*
+         Tree de las familias padre--------------------------------------------------
+         */   
+
+         oTreePadre                     := TTreeView():Redefine( 100, oFld:aDialogs[3] )
+         oTreePadre:bItemSelectChanged  := {|| msginfo( "Cambio" ) }
+
          // Grabamos-----------------------------------------------------------------
 
          REDEFINE BUTTON oBtnAceptarActualizarWeb;
@@ -1026,7 +1037,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 
       end if
 
-      oDlg:bStart    := {|| StartEdtRec( aGet ) }
+      oDlg:bStart    := {|| StartEdtRec( aGet, aTmp ) }
 
       ACTIVATE DIALOG oDlg CENTER ;
          ON INIT     ( ChgBmp( aGet[ _CIMGBTN ], bmpImage ) ) ;
@@ -1053,7 +1064,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aGet )
+Static Function StartEdtRec( aGet, aTmp )
 
    aGet[ _CCODGRP ]:lValid()
    aGet[ _CCOMFAM ]:lValid()
@@ -1069,9 +1080,94 @@ Static Function StartEdtRec( aGet )
       oBtnAceptarActualizarWeb:Show()
    else
       oBtnAceptarActualizarWeb:Hide()
-   end if   
+   end if 
+
+   LoadTree()  
+
+   //SetTreeState( , , aTmp )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+static function LoadTree( oTree, cCodFam )
+
+   local nRec
+   local nOrd
+   local oNode
+
+   DEFAULT oTree     := oTreePadre
+
+   if Empty( cCodFam )
+      cCodFam      := Space( 16 )
+   end if
+
+   CursorWait()
+
+   nRec              := ( dbfFamilia )->( Recno() )
+   nOrd              := ( dbfFamilia )->( OrdSetFocus( "cFamCmb" ) )
+
+   if ( dbfFamilia )->( dbSeek( cCodFam ) )
+
+      while ( ( dbfFamilia )->cFamCmb == cCodFam .and. !( dbfFamilia )->( Eof() ) )
+
+         oNode       := oTree:Add( Alltrim( ( dbfFamilia )->cNomFam ) )
+         oNode:Cargo := ( dbfFamilia )->cCodFam
+
+         LoadTree( oNode, ( dbfFamilia )->cCodFam )
+
+         ( dbfFamilia )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+   ( dbfFamilia )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+   oTree:Expand()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function SetTreeState( oTree, aItems, aTmp )
+
+   local oItem
+
+   DEFAULT oTree  := oTreePadre
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      
+      msginfo( aTmp[ _CFAMCMB ], len( aTmp[ _CFAMCMB ] ) )
+      Msginfo( oItem:Cargo     , len( oItem:Cargo ) )
+
+      if ( aTmp[ _CFAMCMB ] == oItem:Cargo )
+
+         // MsgWait( "", "", .0001 )
+
+         ?"Entro en el if"
+
+         oTree:Select( oItem )
+
+         tvSetCheckState( oTree:hWnd, oItem:hItem, .t. )
+
+      end if
+
+      if len( oItem:aItems ) > 0
+         SetTreeState( oTree, oItem:aItems, aTmp )
+      end if
+
+   next
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -2785,6 +2881,9 @@ FUNCTION rxFamilia( cPath, oMeter )
 
       ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cFamCmb", "cFamCmb", {|| Field->cFamCmb } ) )
 
       ( dbfFamilia )->( dbCloseArea() )
    else
