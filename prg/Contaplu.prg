@@ -2650,15 +2650,10 @@ CLASS EnlaceA3
    METHOD TipoFormato()                   INLINE ( '3' )
    METHOD CodigoEmpresa( hAsiento )       INLINE ( Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 ) )
    METHOD FechaApunte( hAsiento )         INLINE ( Dtos( hAsiento[ "Fecha"] ) )
-<<<<<<< HEAD
+
    METHOD TipoRegistro( hAsiento )        INLINE ( if( hAsiento[ "lRectificativa" ], '2', '1' ) ) 
-/*
-         hAsiento          := {  "Fecha"                 => Fecha ,;
-=======
-   METHOD TipoRegistro( hAsiento )        INLINE ( if( hAsiento[ "lRectificativa" ], '2', '1' ) )
 
         /* hAsiento          := {  "Fecha"                 => Fecha ,;
->>>>>>> 29073344d3d3939ad2012475110ab5affdbdcb4d
                                  "Subcuenta"             => Subcuenta,;
                                  "Contrapartida"         => Contrapartida,;
                                  "ImporteDebe"           => nImporteDebe,;
@@ -2676,7 +2671,7 @@ CLASS EnlaceA3
                                  "Nif"                   => cNif,;
                                  "Nombre"                => cNombre }*/
 
-*/
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -2720,17 +2715,14 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
-
    METHOD WriteASCII() CLASS EnlaceA3
 
       ::hFile  := fCreate( ::cDirectory + "\" + ::cFile )
 
       if !Empty( ::hFile )
-         fWrite( ::hFile, ::SerializeASCII() )
+         fWrite( ::hFile, ::cBuffer )
          fClose( ::hFile )
       end if
-
-      msgAlert( ::SerializeASCII() )
 
    Return ( Self )
 
