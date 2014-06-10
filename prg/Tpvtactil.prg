@@ -913,22 +913,7 @@ CLASS TpvTactil
 
          if ::oTemporalLinea:lMnuTil
 
-            nLineaMenu                    := ::oTemporalLinea:nNumLin
-
-            ::oTemporalLinea:GetStatus()
-
-            ::oTemporalLinea:GoTop()
-            while !::oTemporalLinea:Eof()
-
-               if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
-                  ::EliminaLineaTemporal()
-               end if 
-
-               ::SaltaLineaTemporal()
-
-            end while
-
-            ::oTemporalLinea:SetStatus()
+            ::EliminaMenu( ::oTemporalLinea:nNumLin )
 
             ::CargaBrowseFamilias()
             ::ChangeFamilias()
@@ -951,6 +936,26 @@ CLASS TpvTactil
 
       Return ( .t. )
 
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD EliminaMenu( nLineaMenu )
+
+      ::oTemporalLinea:GetStatus()
+
+      ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
+      while ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+
+         ::EliminaLineaTemporal()
+
+         ::SaltaLineaTemporal()
+
+      end while
+
+      ::oTemporalLinea:SetStatus()
+
+      Return( Self )
    ENDMETHOD
 
    //------------------------------------------------------------------------//
@@ -4736,7 +4741,7 @@ METHOD CreateTemporal() CLASS TpvTactil
       INDEX TO ( ::cTemporalLinea ) TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"            NODELETED                              OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"            NODELETED                              OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"           NODELETED                              OF ::oTemporalLinea
-      INDEX TO ( ::cTemporalLinea ) TAG "cCodMnu"  ON Field->cCodMnu          COMMENT "Codigo Menú"      NODELETED                              OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "cCodMnu"  ON Field->cCodMnu          COMMENT "Codigo menú"      FOR "!Deleted() .and. !Field->lDelTil" OF ::oTemporalLinea
 
    END DATABASE ::oTemporalLinea
 
