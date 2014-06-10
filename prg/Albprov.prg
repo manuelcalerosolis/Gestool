@@ -858,6 +858,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       TDataView():FacturasProveedoresLineas( nView )
 
+      TDataView():PartesProduccionMaterialProducido( nView )
+
       /*
       Articulos----------------------------------------------------------------
       */
@@ -4470,7 +4472,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                */
 
                if Empty( dFechaCaducidad )
-                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], TDataView():AlbaranesProveedoresLineas( nView ), TDataView():FacturasProveedoresLineas( nView ) )
+                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], TDataView():AlbaranesProveedoresLineas( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():PartesProduccionMaterialProducido )
                end if 
 
                aGet[ _DFECCAD ]:Show()
@@ -10268,15 +10270,23 @@ RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//
 
-Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, cAlbPrvL, cFacPrvL )
+Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, cAlbPrvL, cFacPrvL, cProLin )
 
    local dFechaCaducidad      := Ctod( "" )
 
    if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", cAlbPrvL )
-      dFechaCaducidad         := ( cAlbPrvL )->dFecCad
-   else
-      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", cFacPrvL )
-         dFechaCaducidad      := ( cFacPrvL )->dFecCad
+      dFechaCaducidad      := ( cAlbPrvL )->dFecCad
+      RETURN( dFechaCaducidad)
+   endif
+
+   if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", cFacPrvL )
+      dFechaCaducidad      := ( cFacPrvL )->dFecCad
+      RETURN( dFechaCaducidad)
+   endif
+   
+   if cProLin != nil 
+      if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cArtLot", cProLin )
+         dFechaCaducidad      := ( cProLin )-> dFecCad             
       end if
    end if
 

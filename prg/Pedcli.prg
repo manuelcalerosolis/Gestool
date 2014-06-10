@@ -14499,7 +14499,8 @@ FUNCTION PrnPedCli( cNumPed, lOpenBrowse )
 
       if PedCli()
          if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
-            GenPedCli( IS_PRINTER )
+            ImprimirSeriesPedidosClientes( IS_PRINTER, .t. )
+            //GenPedCli( IS_PRINTER )
          else
             MsgStop( "No se encuentra pedido" )
          end if
@@ -14511,7 +14512,8 @@ FUNCTION PrnPedCli( cNumPed, lOpenBrowse )
 
          if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
             nTotPedCli()
-            GenPedCli( IS_PRINTER )
+            ImprimirSeriesPedidosClientes( IS_PRINTER, .t. )
+            //GenPedCli( IS_PRINTER )
          end if
 
          CloseFiles()
@@ -14539,7 +14541,8 @@ FUNCTION VisPedCli( cNumPed, lOpenBrowse )
 
       if PedCli()
          if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
-            GenPedCli( IS_SCREEN )
+            ImprimirSeriesPedidosClientes( IS_SCREEN, .t. )
+            //GenPedCli( IS_SCREEN )
          else
             MsgStop( "No se encuentra pedido" )
          end if
@@ -14551,7 +14554,8 @@ FUNCTION VisPedCli( cNumPed, lOpenBrowse )
 
          if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
             nTotPedCli()
-            GenPedCli( IS_SCREEN )
+            ImprimirSeriesPedidosClientes( IS_SCREEN, .t. )
+            //GenPedCli( IS_SCREEN )
          end if
 
          CloseFiles()

@@ -12024,7 +12024,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             end if
 
             if Empty( dFechaCaducidad )
-               dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL )
+               dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL, dbfProLin )
             end if 
             
             if !Empty( aGet[ _DFECCAD ] )
@@ -17781,7 +17781,8 @@ FUNCTION PrnFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if FactCli()
          if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasClientes( nView ) )
-            GenFacCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+            ImprimirSeriesFacturas( IS_PRINTER, .t. )
+            //GenFacCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          else
             MsgStop( "No se encuentra factura" )
          end if
@@ -17792,7 +17793,8 @@ FUNCTION PrnFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
       if OpenFiles( .t. )
 
          if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasClientes( nView ) )
-            GenFacCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+            ImprimirSeriesFacturas( IS_PRINTER, .t. )
+            //GenFacCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          end if
 
          CloseFiles()
@@ -17820,7 +17822,8 @@ FUNCTION VisFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if FactCli()
          if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasClientes( nView ) )
-            GenFacCli( IS_SCREEN, cCaption, cFormato, cPrinter )
+            ImprimirSeriesFacturas( IS_SCREEN, .t. )
+            //GenFacCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          else
             MsgStop( "No se encuentra factura" )
          end if
@@ -17831,7 +17834,8 @@ FUNCTION VisFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
       if OpenFiles( .t. )
 
          if dbSeekInOrd( cNumFac, "nNumFac", TDataView():FacturasClientes( nView ) )
-            GenFacCli( IS_SCREEN, cCaption, cFormato, cPrinter )
+            ImprimirSeriesFacturas( IS_SCREEN, .t. )
+            //GenFacCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          end if
 
          CloseFiles()

@@ -624,7 +624,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                ::oLote:Show()
                ::oFecCad:Show()
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
-               //::oFecCad:cText   := ::oDbfVir:dFecCad
+               ::oFecCad:cText   := ::oDbfVir:dFecCad
 
             else
 
