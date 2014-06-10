@@ -2648,11 +2648,11 @@ CLASS EnlaceA3
    METHOD SerializeASCII()
 
    METHOD TipoFormato()                   INLINE ( '3' )
-   METHOD CodigoEmpresa( hAsiento )       INLINE ( Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 )
+   METHOD CodigoEmpresa( hAsiento )       INLINE ( Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 ) )
    METHOD FechaApunte( hAsiento )         INLINE ( Dtos( hAsiento[ "Fecha"] ) )
    METHOD TipoRegistro( hAsiento )        INLINE ( if( hAsiento[ "lRectificativa" ], '2', '1' ) )
 
-         hAsiento          := {  "Fecha"                 => Fecha ,;
+        /* hAsiento          := {  "Fecha"                 => Fecha ,;
                                  "Subcuenta"             => Subcuenta,;
                                  "Contrapartida"         => Contrapartida,;
                                  "ImporteDebe"           => nImporteDebe,;
@@ -2668,7 +2668,7 @@ CLASS EnlaceA3
                                  "Clave"                 => Clave,;
                                  "lRectificativa"        => lRectificativa,;
                                  "Nif"                   => cNif,;
-                                 "Nombre"                => cNombre }
+                                 "Nombre"                => cNombre }*/
 
 
 ENDCLASS
@@ -2701,7 +2701,7 @@ ENDCLASS
 
       local hAsiento
 
-      foreach hAsiento in ::aAsiento
+      for each hAsiento in ::aAsiento
          ::cBuffer   += ::TipoFormato()
          ::cBuffer   += ::CodigoEmpresa( hAsiento )
          ::cBuffer   += ::FechaApunte( hAsiento )
