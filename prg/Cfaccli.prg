@@ -79,8 +79,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    cProyecto         := Left( cCodPro, 3 )
    cClave            := Right( cCodPro, 6 )
 
-   msgAlert( 'CntFacCli' )
-
    /*
    if Empty( ptaDebe )
       Return nil

@@ -4762,8 +4762,6 @@ Method lValidCajas()
 
          nUsrCaj        := nUserCaja( ::oDbfCaj:cCodCaj )
       
-         msgAlert( nUsrCaj, "nUsrCaj" )
-
          if !( nUsrCaj == 0 .or. ( nUsrCaj == 1 .and. ::oDbfCaj:cCodCaj == ::GetCurrentCaja() ) )
             if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "¿ Desea continuar con el cierre ?" )
                lValidCajas := .f.
