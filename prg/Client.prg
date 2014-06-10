@@ -3577,6 +3577,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :lHide                  := .t.
       end with
 
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) )
+         :bEditValue             := {|| aTmp[ _CUSRDEF01 ] }
+         :nWidth                 := 100
+         :lHide                  := .t.
+         :nEditType              := 1
+         :bOnPostEdit            := {|oCol, uNewValue, nKey| ChangeCampoDef( oCol, uNewValue, nKey, aTmp, _CUSRDEF01, oBrwRecCli ) }
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) )
+         :bEditValue             := {|| aTmp[ _CUSRDEF02 ] }
+         :nWidth                 := 100
+         :lHide                  := .t.
+         :nEditType              := 1
+         :bOnPostEdit            := {|oCol, uNewValue, nKey| ChangeCampoDef( oCol, uNewValue, nKey, aTmp, _CUSRDEF02, oBrwRecCli ) }
+      end with
+
       /*
       Botones de la Caja de Dialogo__________________________________________
       */
@@ -12784,5 +12802,23 @@ Static Function LoadPageClient( cCodigoCliente )
    end if
 
 return .t.
+
+//---------------------------------------------------------------------------//
+
+/*
+Cambiamos el valor del Campo definido
+*/
+
+Static Function ChangeCampoDef( oCol, uNewValue, nKey, aTmp, nValue, oBrw )
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+      aTmp[ nValue ]    := uNewValue
+   end if
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end if   
+
+Return .t.
 
 //---------------------------------------------------------------------------//
