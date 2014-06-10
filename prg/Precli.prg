@@ -11270,7 +11270,8 @@ FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
 
       if PreCli()
          if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            GenPreCli( IS_PRINTER )
+            ImprimirSeriesPresupuestosClientes( IS_PRINTER, .t. )
+            //GenPreCli( IS_PRINTER )
          else
             MsgStop( "No se encuentra presupuesto" )
          end if
@@ -11280,7 +11281,8 @@ FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
          if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            GenPreCli( IS_PRINTER )
+            ImprimirSeriesPresupuestosClientes( IS_PRINTER, .t. )
+            //GenPreCli( IS_PRINTER )
          else
             MsgStop( "No se encuentra presupuesto" )
          end if
@@ -11308,7 +11310,8 @@ FUNCTION VisPreCli( cNumPre, lOpenBrowse )
 
       if PreCli()
          if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            GenPreCli( IS_SCREEN )
+            ImprimirSeriesPresupuestosClientes( IS_SCREEN, .t. )
+            //GenPreCli( IS_SCREEN )
          else
             MsgStop( "No se encuentra presupuesto" )
          end if
@@ -11319,7 +11322,8 @@ FUNCTION VisPreCli( cNumPre, lOpenBrowse )
       if OpenFiles( .t. )
 
          if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            GenPreCli( IS_SCREEN )
+            ImprimirSeriesPresupuestosClientes( IS_SCREEN, .t. )
+            //GenPreCli( IS_SCREEN )
          end if
 
          CloseFiles()
