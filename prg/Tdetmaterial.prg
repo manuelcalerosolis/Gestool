@@ -569,8 +569,9 @@ RETURN ( Self )
 
 METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
-   local cCodArt     := oGetArticulo:VarGet()
-   local lChgCodArt  := .f.
+   local cCodArt           := oGetArticulo:VarGet()
+   local lChgCodArt        := .f.
+   local dFechaCaducidad   
 
    if Empty( cCodArt )
 
@@ -607,7 +608,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
          //Si cambia el código del artículo------------------------------------
 
-         if lChgCodArt
+         if lChgCodArt 
 
             oGetNombre:cText( ::oParent:oArt:Nombre )
 
@@ -622,10 +623,27 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
             if ::oParent:oArt:lLote
                
                ::oLote:Show()
-               ::oFecCad:Show()
+               
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
-               ::oFecCad:cText   := ::oDbfVir:dFecCad
 
+               ::oFecCad:Show()
+            /*   
+               msgAlert( ::oDbfVir:cLote, "lote" )
+               msgAlert( dFechaCaducidad,  "caducidad" )
+            
+               if Empty( dFechaCaducidad )
+                  dFechaCaducidad      := dFechaCaducidadLote( cCodArt, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL, ::oParent:oFacPrvL, ::oParent:oDetProduccion )
+               end if 
+
+               msgAlert( dFechaCaducidad, " caducidad despues de if" )
+               msgAlert( ::oDbfVir:dFecCad, "caducidad dbfvir" )
+
+               ::oFecCad:Show()
+
+               if Empty( ::oDbfVir:dFecCad )
+                  ::oFecCad:cText( dFechaCaducidad )
+               end if
+*/
             else
 
                ::oLote:Hide()
