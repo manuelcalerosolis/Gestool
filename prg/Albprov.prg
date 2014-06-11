@@ -2512,10 +2512,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    local oGet1
    local oTotal
 	local nTotal
-   local cSay2
-   local oSay2
-   local cSay3
-   local oSay3
    local cGetIra           := Space( 50 )
    local oGetIra
    local oBrwPrp
@@ -2592,7 +2588,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oGetStk, oBeneficioSobre, oTotal, nMode ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], , , , , aGet[ _DFECCAD ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
       /*
@@ -2835,34 +2831,26 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       REDEFINE GET aGet[ __CALMORIGEN ] VAR aTmp[ __CALMORIGEN ]  ;
          ID       330 ;
+         IDTEXT   331 ;
          IDSAY    332 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), oSay3 ) ) ;
+         VALID    ( cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], oSay3 ) ) ;
+         ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oSay3 VAR cSay3 ;
-         WHEN     .F. ;
-         ID       331 ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
+         IDTEXT   241 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbica( aTmp, aGet ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+         VALID    ( cNomUbica( aTmp, aGet ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), aGet[_CALMLIN]:oHelpText ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
+         ON HELP  ( BrwAlmacen( Self, aGet[_CALMLIN] ) ) ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
-		REDEFINE GET oSay2 VAR cSay2 ;
-			WHEN 		.F. ;
-         ID       241 ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
+	   REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
          ID       300 ;
          OF       oFld:aDialogs[1]
 
@@ -3241,7 +3229,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oSay3 ) )
+         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -3266,7 +3254,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal, oSay3 ),;
+      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal ),;
                          if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
@@ -3395,7 +3383,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal, oSay3 )
+Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -3417,10 +3405,8 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
 
    if uFieldEmpresa( "lShowAlmOrg" )
       aGet[ __CALMORIGEN ]:Show()
-      oSay3:Show()
    else
       aGet[ __CALMORIGEN ]:Hide()
-      oSay3:Hide()
    end if
 
    if aGet[ _NPNTVER ] != nil
@@ -3556,7 +3542,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oBtnSer, oSay3 )
+STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oBtnSer )
 
    local n, i
 
@@ -3571,13 +3557,19 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    end if
 
    if Empty( aTmp[ _CALMLIN ] )
-      MsgStop( "Código de almacen no puede estar vacio" )
+      MsgStop( "Código de almacén no puede estar vacio" )
       aGet[ _CALMLIN ]:SetFocus()
       Return nil
    end if
 
+   if ( aTmp[ _CALMLIN ] == aTmp[ __CALMORIGEN ] )
+      MsgStop( "El almacén de origen debe ser distinto al almacén de destino" )
+      aGet[ __CALMORIGEN ]:SetFocus()
+      Return nil
+   end if
+
    if !cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ) )
-      MsgStop( "Código de almacen no encontrado" )
+      MsgStop( "Código de almacén no encontrado" )
       Return nil
    end if
 
@@ -3648,7 +3640,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
 
       if lEntCon()
 
-         SetDlgMode( aGet, aTmp, aTmpalb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal, oSay3 )
+         SetDlgMode( aGet, aTmp, aTmpalb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal )
 
          nTotAlbPrv( nil, TDataView():AlbaranesProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), TDataView():Divisas( nView ), aTmpAlb )
 
@@ -5331,8 +5323,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    end if
 
    if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacen no puede estar vacío." )
+      msgStop( "Almacén no puede estar vacío." )
       aGet[ _CCODALM ]:SetFocus()
+      return .f.
+   end if
+
+   if ( aTmp[ _CCODALM ] == aTmp[ _CALMORIGEN ] )
+      msgStop( "Almacén origen debe ser distinto al almacén destino" )
+      aGet[ _CALMORIGEN ]:SetFocus()
       return .f.
    end if
 
@@ -5340,6 +5338,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       MsgStop( "No puede almacenar un documento sin líneas." )
       return .f.
    end if
+
 
    CursorWait()
 
