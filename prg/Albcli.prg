@@ -12986,6 +12986,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
 
          ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ) )
          ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, TDataView():Get( "AlbCliL", nView ), TDataView():Get( "FacCliL", nView ) )
+         ( dbfTmpLin )->nPreUnit       := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
 
          /*
          Vamos a por los catos de la tarifa
@@ -12995,12 +12996,8 @@ Static Function AppendDatosAtipicas( aTmpAlb )
 
          if !Empty( hAtipica )
                
-            if hhaskey( hAtipica, "nImporte" )
-               if hAtipica[ "nImporte" ] != 0
-                  ( dbfTmpLin )->nPreUnit    := hAtipica[ "nImporte" ]
-               else 
-                  ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )
-               end if
+            if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
+               ( dbfTmpLin )->nPreUnit    := hAtipica[ "nImporte" ]
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" )
@@ -13034,11 +13031,19 @@ Static Function AppendDatosAtipicas( aTmpAlb )
       if !Empty( hAtipica )
                
          if hhaskey( hAtipica, "nImporte" )
+
             if hAtipica[ "nImporte" ] != 0
+
                ( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            
             else
-               ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )   
+               
+               if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) ) .and. !( dbfArticulo )->lObs
+                  ( dbfTmpLin )->nPreUnit := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], dbfArticulo, TDataView():Get( "Divisas", nView ), dbfKit, TDataView():Get( "TIva", nView ) )   
+               end if 
+
             end if
+
          end if
 
          if hhaskey( hAtipica, "nDescuentoPorcentual" )

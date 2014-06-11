@@ -12086,8 +12086,7 @@ Function hAtipica( hValue )
 
          if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
 
-            if Empty( hValue[ "cCodigoCliente" ] )                      .and.;
-               lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+            if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
                lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
                hAtipica    := hValoresAtipica( hValue, hAtipica )
