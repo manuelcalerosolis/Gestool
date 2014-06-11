@@ -3299,6 +3299,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProLin"
    oDataTable:cName        := cPatEmp() + "ProLin"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProLin.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProLin.Cdx"
