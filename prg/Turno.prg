@@ -5980,6 +5980,8 @@ METHOD TotTipoIva( cTurno, cCaja )
 
    ::aTipIva            := {}
 
+   /*
+
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oAlbCliT:LastRec() )
    end if
@@ -6027,6 +6029,8 @@ METHOD TotTipoIva( cTurno, cCaja )
       end while
 
    end if
+
+   */
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oFacCliT:LastRec() )
