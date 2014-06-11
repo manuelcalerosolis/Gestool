@@ -7457,8 +7457,8 @@ static function lRecibosPagados( uFacPrv, cFacPrvP )
 
    local cNumFac
    local lRecPgd  := .f.
-   local nRecAct  := ( TDataView():FacturasProveedoresPagos( nView ) )->( Recno() )
-   local nOrdAct  := ( TDataView():FacturasProveedoresPagos( nView ) )->( OrdSetFocus( "NNUMFAC" ) )
+   local nRecAct  := ( cFacPrvP )->( Recno() )
+   local nOrdAct  := ( cFacPrvP )->( OrdSetFocus( "NNUMFAC" ) )
 
    if ValType( uFacPrv ) == "A"
       cNumFac     := uFacPrv[ _CSERFAC ] + Str( uFacPrv[ _NNUMFAC ], 9 ) + uFacPrv[ _CSUFFAC ]
@@ -7466,18 +7466,18 @@ static function lRecibosPagados( uFacPrv, cFacPrvP )
       cNumFac     := ( uFacPrv )->CSERFAC + Str( ( uFacPrv )->NNUMFAC ) + ( uFacPrv )->CSUFFAC
    end if
 
-   if ( TDataView():FacturasProveedoresPagos( nView ) )->( dbSeek( cNumFac ) )
-      while cNumFac == ( TDataView():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( TDataView():FacturasProveedoresPagos( nView ) )->cSufFac .and. !( TDataView():FacturasProveedoresPagos( nView ) )->( eof() )
-         if ( TDataView():FacturasProveedoresPagos( nView ) )->lCobrado .and. !( TDataView():FacturasProveedoresPagos( nView ) )->lDevuelto
+   if ( cFacPrvP )->( dbSeek( cNumFac ) )
+      while cNumFac == ( cFacPrvP )->cSerFac + Str( ( cFacPrvP )->nNumFac ) + ( cFacPrvP )->cSufFac .and. !( cFacPrvP )->( eof() )
+         if ( cFacPrvP )->lCobrado .and. !( cFacPrvP )->lDevuelto
             lRecPgd   := .t.
             exit
          end if
-         ( TDataView():FacturasProveedoresPagos( nView ) )->( dbSkip() )
+         ( cFacPrvP )->( dbSkip() )
       end while
    end if
 
-   ( TDataView():FacturasProveedoresPagos( nView ) )->( OrdSetFocus( nOrdAct ) )
-   ( TDataView():FacturasProveedoresPagos( nView ) )->( dbGoTo( nRecAct) )
+   ( cFacPrvP )->( OrdSetFocus( nOrdAct ) )
+   ( cFacPrvP )->( dbGoTo( nRecAct) )
 
 return ( lRecPgd )
 

@@ -896,6 +896,13 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
 
    ::oDbfTmp:GoTop()
 
+   // Fin del proceso
+
+   ::oMetMsg:cText   := "Proceso finalizado"
+   ::oMetMsg:SetTotal( 0 )
+
+   // Refrescos de pantalla
+
    ::oBrw:Refresh( .t. )
    ::oBrw:Select()
 
