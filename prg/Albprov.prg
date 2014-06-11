@@ -4472,7 +4472,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                */
 
                if Empty( dFechaCaducidad )
-                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], TDataView():AlbaranesProveedoresLineas( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():PartesProduccionMaterialProducido )
+                  dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], TDataView():AlbaranesProveedoresLineas( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():PartesProduccionMaterialProducido( nView ) )
                end if 
 
                aGet[ _DFECCAD ]:Show()
