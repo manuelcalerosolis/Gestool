@@ -3290,6 +3290,7 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable()
+   oDatatable:cArea        := "ProCab"
    oDataTable:cName        := cPatEmp() + "ProCab"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProCab.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProCab.Cdx"
@@ -3309,6 +3310,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProSer"
    oDataTable:cName        := cPatEmp() + "ProSer"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProSer.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProSer.Cdx"
@@ -3318,6 +3320,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProMat"
    oDataTable:cName        := cPatEmp() + "ProMat"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProMat.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProMat.Cdx"
@@ -3327,6 +3330,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProMaq"
    oDataTable:cName        := cPatEmp() + "ProMaq"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProMaq.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProMaq.Cdx"
@@ -3336,6 +3340,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "MaqCosT"
    oDataTable:cName        := cPatEmp() + "MaqCosT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "MaqCosT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MaqCosT.Cdx"
@@ -3344,6 +3349,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "MaqCosL"
    oDataTable:cName        := cPatEmp() + "MaqCosL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "MaqCosL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MaqCosL.Cdx"
@@ -3353,6 +3359,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Costes"
    oDataTable:cName        := cPatEmp() + "Costes"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Costes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Costes.Cdx"
@@ -3361,6 +3368,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProPer"
    oDataTable:cName        := cPatEmp() + "ProPer"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProPer.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProPer.Cdx"
@@ -3369,6 +3377,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "OpeT"
    oDataTable:cName        := cPatEmp() + "OpeT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "OpeT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "OpeT.Cdx"
@@ -3377,6 +3386,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "OpeL"
    oDataTable:cName        := cPatEmp() + "OpeL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "OpeL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "OpeL.Cdx"
@@ -3386,6 +3396,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Operacio"
    oDataTable:cName        := cPatEmp() + "Operacio"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Operacio.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Operacio.Cdx"
@@ -3394,6 +3405,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Seccion"
    oDataTable:cName        := cPatEmp() + "Seccion"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Seccion.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Seccion.Cdx"
@@ -3402,6 +3414,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Horas"
    oDataTable:cName        := cPatEmp() + "Horas"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Horas.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Horas.Cdx"
@@ -3410,6 +3423,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ProHPer"
    oDataTable:cName        := cPatEmp() + "ProHPer"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProHPer.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProHPer.Cdx"
@@ -3418,6 +3432,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "MatSer"
    oDataTable:cName        := cPatEmp() + "MatSer"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "MatSer.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MatSer.Cdx"
@@ -3426,6 +3441,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TipOpera"
    oDataTable:cName        := cPatEmp() + "TipOpera"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TipOpera.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TipOpera.Cdx"
@@ -3434,6 +3450,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ExtAgeT"
    oDataTable:cName        := cPatEmp() + "ExtAgeT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ExtAgeT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ExtAgeT.Cdx"
@@ -3443,6 +3460,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ExtAgeL"
    oDataTable:cName        := cPatEmp() + "ExtAgeL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ExtAgeL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ExtAgeL.Cdx"
