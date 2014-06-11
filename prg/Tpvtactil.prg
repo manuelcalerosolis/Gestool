@@ -5370,6 +5370,12 @@ METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
       Return .f.
    end if
 
+   // si esta marcada la casilla de no acumular en tactil----------------------
+
+   if uFieldEmpresa( "lAddCut" )
+      Return .f.
+   end if
+
    // si no estamos combinando-------------------------------------------------
 
    if ::lCombinando
