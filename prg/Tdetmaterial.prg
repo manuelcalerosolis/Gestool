@@ -626,8 +626,11 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
 
-               ::oFecCad:Show()
-            /*   
+               //if Empty( ::odbfVir:cLote)
+
+
+            //   ::oFecCad:Show()
+               
                msgAlert( ::oDbfVir:cLote, "lote" )
                msgAlert( dFechaCaducidad,  "caducidad" )
             
@@ -643,7 +646,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
                if Empty( ::oDbfVir:dFecCad )
                   ::oFecCad:cText( dFechaCaducidad )
                end if
-*/
+
             else
 
                ::oLote:Hide()

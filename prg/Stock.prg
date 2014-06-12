@@ -2174,6 +2174,7 @@ RETURN ( lDup )
          :cValorPropiedad1    := ( ::cProducL )->cValPr1
          :cValorPropiedad2    := ( ::cProducL )->cValPr2
          :cLote               := ( ::cProducL )->cLote
+         :dFechaCaducidad     := ( ::cProducL )->dFecCad
 
           if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
