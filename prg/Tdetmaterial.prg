@@ -571,6 +571,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
    local cCodArt           := oGetArticulo:VarGet()
    local lChgCodArt        := .f.
+   local cLote
    local dFechaCaducidad   
 
    if Empty( cCodArt )
@@ -622,29 +623,47 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
 
             if ::oParent:oArt:lLote
                
-               ::oLote:Show()
-               
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
 
-               //if Empty( ::odbfVir:cLote)
-
-
-            //   ::oFecCad:Show()
-               
-               msgAlert( ::oDbfVir:cLote, "lote" )
-               msgAlert( dFechaCaducidad,  "caducidad" )
-            
-               if Empty( dFechaCaducidad )
-                  dFechaCaducidad      := dFechaCaducidadLote( cCodArt, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL, ::oParent:oFacPrvL, ::oParent:oDetProduccion )
+               if Empty( cLote )
+                  cLote          := ::oParent:oArt:cLote
                end if 
 
-               msgAlert( dFechaCaducidad, " caducidad despues de if" )
-               msgAlert( ::oDbfVir:dFecCad, "caducidad dbfvir" )
+               if !Empty( ::oLote )
 
-               ::oFecCad:Show()
+                  ::oLote:Show()
 
-               if Empty( ::oDbfVir:dFecCad )
-                  ::oFecCad:cText( dFechaCaducidad )
+                  if Empty( ::oLote:VarGet() )
+                     ::oLote:cText( cLote )
+                  end if 
+
+               else 
+
+                  if Empty( ::oDbfVir:cLote)
+                     ::oDbfVir:cLote := cLote
+                  end if
+
+               end if 
+         
+               if Empty( dFechaCaducidad )
+                  dFechaCaducidad      := dFechaCaducidadLote( cCodArt, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDetProduccion:oDbf:calias )
+               end if 
+
+               
+               if !Empty( ::oFecCad )
+
+                  ::oFecCad:Show()
+
+                  if Empty( ::oFecCad:VarGet() ) .or. (dFechaCaducidad != ::oDbfVir:dFecCad )
+                     ::oFecCad:cText( dFechaCaducidad )
+                  end if
+
+               else 
+
+                  if Empty( ::oDbfVir:dFecCad )
+                     ( ::oDbfVir:dFecCad ) := dFechaCaducidad
+                  end if 
+
                end if
 
             else
