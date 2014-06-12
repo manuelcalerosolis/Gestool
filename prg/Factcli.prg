@@ -5121,7 +5121,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cAlmacen( aGet[ _CALMLIN ], , oSayAlm ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[_CALMLIN], oSayAlm ) ) ;
+         ON HELP  ( BrwAlmacen( aGet[ _CALMLIN ], oSayAlm ) ) ;
          OF       oFld:aDialogs[1]
 
       aGet[ _CALMLIN ]:bLostFocus   := {|| if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) }
@@ -11490,21 +11490,22 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
    local hHas128
    local cLote
+   local hAtipica
    local dFechaCaducidad
    local nDtoAge
    local nImpAtp
    local nImpOfe
-   local nCosPro
+   local nCosPro 			  := 0
    local cCodFam
    local cProveedor
-   local cValPr1 					:= ""
-   local cValPr2 					:= ""
+   local cValPr1 			  := ""
+   local cValPr2 			  := ""
    local cPrpArt
    local nNumDto              := 0
    local nPrePro              := 0
    local nTarOld              := aTmp[ _NTARLIN ]
    local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local hAtipica
+   local lChgPrpArt           := ( Empty( cOldPrpArt ) .or. cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] + aTmp[ _CLOTE ] )
 
    DEFAULT lFocused           := .t.
 
@@ -11976,7 +11977,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] + aTmp[ _CLOTE ] 
 
-      if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
+      if ( lChgCodArt ) .or. ( lChgPrpArt )
 
          /*
          Guardamos el código de la familia
@@ -12113,17 +12114,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if !uFieldEmpresa( "lCosAct" )
-
             nCosPro              := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
+         end if
 
-            if nCosPro == 0
-               nCosPro           := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
-            end if
-
-         else
-
+         if nCosPro == 0
             nCosPro              := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
-
          end if
 
          if aGet[ _NCOSDIV ] != nil

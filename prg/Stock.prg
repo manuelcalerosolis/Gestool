@@ -231,6 +231,7 @@ CLASS TStock
 
    METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
       METHOD lCheckConsolidacion()
+      METHOD lCheckConsolidacionMovimientosAlmancen()
 
    METHOD lValoracionCostoMedio( nTipMov )
 
@@ -3793,11 +3794,13 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( Empty( cLote )   .or. ( ::cHisMovT )->cLote == cLote )    .and.;
          ( ::cHisMovT)->( !Eof() )
 
+         // msgAlert( ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov ), "lValoracionCostoMedio" )
+
          if ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov )
 
             if !Empty( ( ::cHisMovT)->cAloMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
-               ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
+               ::lCheckConsolidacionMovimientosAlmancen( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
 
                nUnidades   += nTotNMovAlm( ::cHisMovT)
                nImporte    += nTotLMovAlm( ::cHisMovT)
@@ -3806,7 +3809,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
             if !Empty( ( ::cHisMovT)->cAliMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
-               ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
+               ::lCheckConsolidacionMovimientosAlmancen( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
 
                nUnidades   += nTotNMovAlm( ::cHisMovT)
                nImporte    += nTotLMovAlm( ::cHisMovT)
@@ -6181,6 +6184,19 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 Return ( lCheck )
 
 //---------------------------------------------------------------------------//
+
+METHOD lCheckConsolidacionMovimientosAlmancen( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
+
+   local lCheck   := .f.
+
+   ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+
+   lCheck         := ( Empty( ::dConsolidacion ) .or. dFecha > ::dConsolidacion )
+
+Return ( lCheck )
+
+//---------------------------------------------------------------------------//
+
 
 Static Function SeekOnStock( cSeek, oBrw )
 
