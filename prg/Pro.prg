@@ -887,7 +887,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static Function DeletePropiedades( cCodPro )
 
-   local nOrdAnt  := ( dbfProL )->( OrdSetFocus( 2 ) )
+   local nOrdAnt  := ( dbfProL )->( OrdSetFocus( "nOrdPro" ) )
 
    ( dbfProL )->( dbGoTop() )
 
@@ -953,6 +953,18 @@ Function cBarPrp( cCodPrp, cValPrp, dbfTblPro )
    end if
 
 return ( cBarPro )
+
+//---------------------------------------------------------------------------//
+
+function lEmptyProp( cCodPrp, dbfTblPro )
+
+   local lEmptyProp  := .t.
+
+   if !Empty( cCodPrp ) .and. dbSeekInOrd( cCodPrp, "nOrdPro", dbfTblPro ) 
+      lEmptyProp     := .f.
+   end if
+
+return ( lEmptyProp )
 
 //---------------------------------------------------------------------------//
 

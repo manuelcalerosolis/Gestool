@@ -1274,7 +1274,7 @@ if !oUser():lNotCostos()
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Importe"
          :bEditValue    := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "nPreDiv" ) }
-         :cEditPicture  := ::cPorDiv
+         :cEditPicture  := ::cPinDiv
          :nWidth        := 100
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
@@ -1284,7 +1284,7 @@ if !oUser():lNotCostos()
          :cHeader       := "Total"
          :bEditValue    := {|| nTotLMovAlm( ::oDetMovimientos:oDbfVir ) }
          :bFooter       := {|| ::oDetMovimientos:nTotRemVir( .t. ) }
-         :cEditPicture  := ::cPorDiv
+         :cEditPicture  := ::cPirDiv
          :nWidth        := 100
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
@@ -1508,8 +1508,8 @@ Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies )
       private cDbfArt      := ::oArt:cAlias
       private cDbfAge      := ::oDbfAge:cAlias
 
-      private cPouDivRem   := ::cPouDiv
-      private cPorDivRem   := ::cPorDiv
+      private cPouDivRem   := ::cPinDiv
+      private cPorDivRem   := ::cPirDiv
 
       ::nTotRemMov( .t. )
 
@@ -2649,7 +2649,7 @@ METHOD nTotRemMov( lPic )
 
    end if
 
-RETURN ( if( IsTrue( lPic ), Trans( nTot, ::cPorDiv ), nTot ) )
+RETURN ( if( IsTrue( lPic ), Trans( nTot, ::cPirDiv ), nTot ) )
 
 //--------------------------------------------------------------------------//
 
@@ -3780,7 +3780,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          ON CHANGE( oSayPre:Refresh() ) ;
          VALID    ( oSayPre:Refresh(), .t. ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  ::oParent:cPorDiv ;
+         PICTURE  ::oParent:cPinDiv ;
 			OF 		oDlg
 
       REDEFINE SAY oSayTotal ;
@@ -3789,7 +3789,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
       REDEFINE SAY oSayPre PROMPT nTotLMovAlm( ::oDbfVir ) ;
          ID       190 ;
-         PICTURE  ::oParent:cPorDiv ;
+         PICTURE  ::oParent:cPirDiv ;
 			OF 		oDlg
 
       /*
@@ -4402,18 +4402,22 @@ METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
             ::oDbfVir:cCodPr1       := ::oParent:oArt:cCodPrp1
             ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
 
-            if ( !Empty( ::oDbfVir:cCodPr1 ) .or. !Empty( ::oDbfVir:cCodPr2 ) )  .and.;
-               ( Empty( ::oDbfVir:cValPr1 ) .or. Empty( ::oDbfVir:cValPr2 ) )    .and.;
-               ( uFieldEmpresa( "lUseTbl" )                                      .and.;
+            if ( !Empty( ::oDbfVir:cCodPr1 ) .or. !Empty( ::oDbfVir:cCodPr2 ) )     .and.;
+               (  !lEmptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or.;
+                  !lEmptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) )      .and.;
+               ( Empty( ::oDbfVir:cValPr1 ) .or. Empty( ::oDbfVir:cValPr2 ) )       .and.;
+               ( uFieldEmpresa( "lUseTbl" )                                         .and.;
                ( nMode == APPD_MODE ) )
 
                ::oBrwPrp:Show()
+
                ::oValPr1:Hide()
                ::oSayPr1:Hide()
                ::oSayVp1:Hide()
                ::oValPr2:Hide()
                ::oSayPr2:Hide()
                ::oSayVp2:Hide()
+               
                ::oSayLote:Hide()
                ::oGetLote:Hide()
 
@@ -4972,7 +4976,7 @@ METHOD nTotRemVir( lPic ) CLASS TDetMovimientos
 
    end if
 
-RETURN ( if( lPic, Trans( nTot, ::oParent:cPorDiv ), nTot ) )
+RETURN ( if( lPic, Trans( nTot, ::oParent:cPirDiv ), nTot ) )
 
 //---------------------------------------------------------------------------//
 
