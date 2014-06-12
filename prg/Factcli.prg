@@ -17992,6 +17992,11 @@ function SynFacCli( cPath )
       USE ( cPatCli() + "Client.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @dbfClient ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatCli() + "Client.CDX" ) ADDITIVE
 
+      oStock            	:= TStock():Create( cPatGrp() )
+      if !oStock:lOpenFiles()
+      	lOpenFiles 			:= .f.
+      end if
+
       oNewImp              := TNewImp():Create( cPath )
       if !oNewImp:OpenFiles()
          lOpenFiles        := .f.
@@ -18165,6 +18170,13 @@ function SynFacCli( cPath )
             ( dbfFacCliL )->mNumSer    := ""
          end if
 
+         if !Empty( (dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
+
+         	( dbfFacCliL )->nCosDiv 	:= oStock:nCostoMedio( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2, ( dbfFacCliL )->cLote )   
+
+         end if 
+
+
          ( dbfFacCliL )->( dbSkip() )
 
          SysRefresh()
@@ -18305,28 +18317,28 @@ function SynFacCli( cPath )
 
    oNewImp     := nil
 
+
    /*
    Estado de los pedidos en stocks---------------------------------------------
    */
 
    if !Empty( aNumPed )
 
-      oStock   := TStock():Create( cPath )
-      if oStock:lOpenFiles()
-      
-         for each cNumPed in aNumPed
-            oStock:SetEstadoPedCli( cNumPed )
-         next 
-
-      end if 
-
-      if !Empty( oStock )
-         oStock:end()
-      end if
-
-      oStock   := nil
+      for each cNumPed in aNumPed
+         oStock:SetEstadoPedCli( cNumPed )
+      next 
 
    end if 
+
+   /*
+   Cerramos oStock-----------------------------------------------------------
+   */
+
+   if !Empty( oStock )
+      oStock:end()
+   end if
+
+   oStock   := nil
 
 Return nil
 
