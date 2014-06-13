@@ -3815,12 +3815,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    DEFAULT cLote        := Space( 12 )
 
    /*
-   Obtengo la fecha de consolidación-------------------------------------------
-   */
-
-   //::lCheckConsolidacion( cCodArt )
-
-   /*
    Recorremos movimientos de almacén-------------------------------------------
    */
 
@@ -3839,7 +3833,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
             if !Empty( ( ::cHisMovT)->cAloMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
                ::lCheckConsolidacionMovimientosAlmancen( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
-
                
                if nTotLMovAlm( ::cHisMovT) > 0 
 
@@ -3967,7 +3960,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
             // Empty( cCodAlm ) .or. ( ( ::cProducL )->cAlmOrd == cCodAlm )
 
             nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
-
             nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
            
          end if
