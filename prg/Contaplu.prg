@@ -2650,7 +2650,7 @@ CLASS EnlaceA3
    METHOD CodigoEmpresa( hAsiento )       INLINE ( ::cBuffer   += Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 ) )
    METHOD FechaApunte( hAsiento )         INLINE ( ::cBuffer   += Dtos( hAsiento[ "Fecha"] ) )
    METHOD TipoRegistro( hAsiento )        INLINE ( ::cBuffer   += if( hAsiento[ "Rectificativa" ], '2', '1' ) )
-   METHOD CRLF()                          INLINE ( ::cBuffer   += CRLF ) 
+   METHOD CRLF()                          INLINE ( ::cBuffer   += "" ) //CRLF ) 
 
       /* 
          hAsiento          := {  "Fecha"                 => Fecha ,;
@@ -2708,7 +2708,7 @@ ENDCLASS
          ::CodigoEmpresa( hAsiento )
          ::FechaApunte( hAsiento )
          ::TipoRegistro()
-         ::CRLF()
+         ::CRLF() 
       next 
 
    Return ( Self )
