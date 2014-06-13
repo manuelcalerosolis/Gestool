@@ -154,7 +154,12 @@ METHOD CloseFiles()
    TAtipicas():GetInstance():CloseFiles()
    TAtipicas():EndInstance()
 
-   TDataView():DeleteView( ::nView )
+   if !empty( ::nView )
+
+      TDataView():DeleteView( ::nView )
+      ::nView     := nil
+      
+   end if   
 
 RETURN ( .t. )
 
