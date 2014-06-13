@@ -2837,7 +2837,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          VALID    ( cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
@@ -2847,7 +2846,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          VALID    ( cNomUbica( aTmp, aGet ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), aGet[_CALMLIN]:oHelpText ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, aGet[_CALMLIN] ) ) ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
 	   REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
