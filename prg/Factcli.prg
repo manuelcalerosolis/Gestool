@@ -1576,11 +1576,11 @@ STATIC FUNCTION OpenFiles( lExt )
 
     DisableAcceso()
 
-    nView 				:= TDataView():CreateView()
-
     /*
     Apertura de bases de datos de facturas de clientes-------------------------
 	*/
+
+    nView 				:= TDataView():CreateView()
 
     TDataView():FacturasClientes( nView )
 
@@ -17961,101 +17961,84 @@ function SynFacCli( cPath )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPath + "FacCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "FacCliT.CDX" ) ADDITIVE
-
-      USE ( cPath + "FacCliL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "FacCliL.Cdx" ) ADDITIVE
-
-      USE ( cPath + "FacCliS.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliS", @dbfFacCliS ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "FacCliS.Cdx" ) ADDITIVE
-
-      USE ( cPath + "FacCliI.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliI", @dbfFacCliI ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "FacCliI.CDX" ) ADDITIVE
-
-      USE ( cPath + "FacCliP.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "FacCliP.CDX" ) ADDITIVE
-
-      USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPath + "AntCliT.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIVA", @dbfIva ) ) SHARED
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "Client.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @dbfClient ) ) EXCLUSIVE
-      SET ADSINDEX TO ( cPatCli() + "Client.CDX" ) ADDITIVE
-
-      oStock            	:= TStock():Create( cPatGrp() )
-      if !oStock:lOpenFiles()
-      	lOpenFiles 			:= .f.
-      end if
-
-      oNewImp              := TNewImp():Create( cPath )
-      if !oNewImp:OpenFiles()
-         lOpenFiles        := .f.
-      end if
+   if OpenFiles()
 
       // Cabeceras ------------------------------------------------------------
 
-      ( dbfFacCliT )->( OrdSetFocus( 0 ) )
-      ( dbfFacCliT )->( dbGoTop() )
+      ( TDataView():FacturasClientes( nView ) )->( OrdSetFocus( 0 ) )
+      ( TDataView():FacturasClientes( nView ) )->( dbGoTop() )
 
-      while !( dbfFacCliT )->( eof() )
+      while !( TDataView():FacturasClientes( nView ) )->( eof() )
 
-         if Empty( ( dbfFacCliT )->cSufFac )
-            ( dbfFacCliT )->cSufFac := "00"
+         if Empty( ( TDataView():FacturasClientes( nView ) )->cSufFac )
+            ( TDataView():FacturasClientes( nView ) )->cSufFac := "00"
          end if
 
-         if !Empty( ( dbfFacCliT )->cNumPre ) .and. Len( AllTrim( ( dbfFacCliT )->cNumPre ) ) != 12
-            ( dbfFacCliT )->cNumPre := AllTrim( ( dbfFacCliT )->cNumPre ) + "00"
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumPre ) .and. Len( AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumPre ) ) != 12
+         	if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+               ( TDataView():FacturasClientes( nView ) )->cNumPre := AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumPre ) + "00"
+               ( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if 
          end if
 
-         if !Empty( ( dbfFacCliT )->cNumPed ) .and. Len( AllTrim( ( dbfFacCliT )->cNumPed ) ) != 12
-            ( dbfFacCliT )->cNumPed := AllTrim( ( dbfFacCliT )->cNumPed ) + "00"
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumPed ) .and. Len( AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumPed ) ) != 12
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+               ( TDataView():FacturasClientes( nView ) )->cNumPed := AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumPed ) + "00"
+               ( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
          end if
 
-         if !Empty( ( dbfFacCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfFacCliT )->cNumAlb ) ) != 12
-            ( dbfFacCliT )->cNumAlb := AllTrim( ( dbfFacCliT )->cNumAlb ) + "00"
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumAlb ) .and. Len( AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumAlb ) ) != 12
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+               ( TDataView():FacturasClientes( nView ) )->cNumAlb := AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumAlb ) + "00"
+               ( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
          end if
 
-         if !Empty( ( dbfFacCliT )->cNumSat ) .and. Len( AllTrim( ( dbfFacCliT )->cNumSat ) ) != 12
-            ( dbfFacCliT )->cNumSat := AllTrim( ( dbfFacCliT )->cNumSat ) + "00"
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumSat ) .and. Len( AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumSat ) ) != 12
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+               ( TDataView():FacturasClientes( nView ) )->cNumSat := AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumSat ) + "00"
+               ( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
          end if
 
-         if !Empty( ( dbfFacCliT )->cNumDoc ) .and. Len( AllTrim( ( dbfFacCliT )->cNumDoc ) ) != 13
-            ( dbfFacCliT )->cNumDoc := AllTrim( ( dbfFacCliT )->cNumDoc ) + "00"
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumDoc ) .and. Len( AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumDoc ) ) != 13
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+            	( TDataView():FacturasClientes( nView ) )->cNumDoc := AllTrim( ( TDataView():FacturasClientes( nView ) )->cNumDoc ) + "00"
+            	( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
          end if
 
-         if !Empty( ( dbfFacCliT )->cFacPrv ) .and. Len( AllTrim( ( dbfFacCliT )->cFacPrv ) ) != 12
-            ( dbfFacCliT )->cFacPrv := AllTrim( ( dbfFacCliT )->cFacPrv ) + "00"
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cFacPrv ) .and. Len( AllTrim( ( TDataView():FacturasClientes( nView ) )->cFacPrv ) ) != 12
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+            	( TDataView():FacturasClientes( nView ) )->cFacPrv := AllTrim( ( TDataView():FacturasClientes( nView ) )->cFacPrv ) + "00"
+            	( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
          end if
 
-         if Empty( ( dbfFacCliT )->cCodCaj )
-            ( dbfFacCliT )->cCodCaj := "000"
+         if Empty( ( TDataView():FacturasClientes( nView ) )->cCodCaj )
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+            	( TDataView():FacturasClientes( nView ) )->cCodCaj := "000"
+            	( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if
          end if
 
-         if Empty( ( dbfFacCliT )->cNomCli ) .and. !Empty ( ( dbfFacCliT )->cCodCli )
-            ( dbfFacCliT )->cNomCli := RetFld( ( dbfFacCliT )->cCodCli, dbfClient, "Titulo" )
+         if Empty( ( TDataView():FacturasClientes( nView ) )->cNomCli ) .and. !Empty ( ( TDataView():FacturasClientes( nView ) )->cCodCli )
+            if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+            	( TDataView():FacturasClientes( nView ) )->cNomCli := RetFld( ( TDataView():FacturasClientes( nView ) )->cCodCli, dbfClient, "Titulo" )
+            	( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+            end if 
          end if
 
-         if !Empty( ( dbfFacCliT )->cNumPed )
-            aAdd( aNumPed, ( dbfFacCliT )->cNumPed )
+         if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumPed )
+            aAdd( aNumPed, ( TDataView():FacturasClientes( nView ) )->cNumPed )
          end if
 
-         ( dbfFacCliT )->( dbSkip() )
+         ( TDataView():FacturasClientes( nView ) )->( dbSkip() )
 
       end while
 
-      ( dbfFacCliT )->( OrdSetFocus( 1 ) )
+      ( TDataView():FacturasClientes( nView ) )->( OrdSetFocus( 1 ) )
 
       // Pagos ----------------------------------------------------------------
 
@@ -18065,11 +18048,17 @@ function SynFacCli( cPath )
       while !( dbfFacCliP )->( eof() )
 
          if Empty( ( dbfFacCliP )->cSufFac )
-            ( dbfFacCliP )->cSufFac := "00"
+            if ( dbfFacCliP )->( dbRLock() )
+               ( dbfFacCliP )->cSufFac := "00"
+               ( dbfFacCliP )->( dbUnLock() )
+            end if
          end if
 
          if Empty( ( dbfFacCliP )->cCodCaj )
-            ( dbfFacCliP )->cCodCaj := "000"
+            if ( dbfFacCliP )->( dbRLock() )
+               ( dbfFacCliP )->cCodCaj := "000"
+               ( dbfFacCliP )->( dbUnLock() )
+            end if
          end if
 
          ( dbfFacCliP )->( dbSkip() )
@@ -18086,75 +18075,120 @@ function SynFacCli( cPath )
       while !( dbfFacCliL )->( eof() )
 
          if Empty( ( dbfFacCliL )->cSufFac )
-            ( dbfFacCliL )->cSufFac    := "00"
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cSufFac    := "00"
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if !Empty( ( dbfFacCliL )->cNumPed ) .and. Len( AllTrim( ( dbfFacCliL )->cNumPed ) ) != 12
-            ( dbfFacCliL )->cNumPed := AllTrim( ( dbfFacCliL )->cNumPed ) + "00"
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cNumPed := AllTrim( ( dbfFacCliL )->cNumPed ) + "00"
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if !Empty( ( dbfFacCliL )->cCodAlb ) .and. Len( AllTrim( ( dbfFacCliL )->cCodAlb ) ) != 12
-            ( dbfFacCliL )->cCodAlb := AllTrim( ( dbfFacCliL )->cCodAlb ) + "00"
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cCodAlb := AllTrim( ( dbfFacCliL )->cCodAlb ) + "00"
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nValImp )
             cCodImp                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodImp" )
             if !Empty( cCodImp )
-               ( dbfFacCliL )->nValImp := oNewImp:nValImp( cCodImp )
+               if ( dbfFacCliL )->( dbRLock() )
+               	  ( dbfFacCliL )->nValImp := oNewImp:nValImp( cCodImp )
+               	  ( dbfFacCliL )->( dbUnLock() )
+               end if
             end if
          end if
 
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nVolumen )
-            ( dbfFacCliL )->nVolumen   := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "nVolumen" )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->nVolumen   := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "nVolumen" )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if Empty( ( dbfFacCliL )->cLote ) .and. !Empty( ( dbfFacCliL )->nLote )
-            ( dbfFacCliL )->cLote      := AllTrim( str( ( dbfFacCliL )->nLote ) )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cLote      := AllTrim( str( ( dbfFacCliL )->nLote ) )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
-         if ( dbfFacCliL )->lIvaLin != ( dbfFacCliT )->lIvaInc
-            ( dbfFacCliL )->lIvaLin    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "lIvaInc" )
+         if ( dbfFacCliL )->lIvaLin != ( TDataView():FacturasClientes( nView ) )->lIvaInc
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->lIvaLin    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, TDataView():FacturasClientes( nView ), "lIvaInc" )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->cCodFam )
             cCodFam                    := RetFamArt( ( dbfFacCliL )->cRef, dbfArticulo )
             if !Empty( cCodFam )
-               ( dbfFacCliL )->cCodFam := cCodFam
+               if ( dbfFacCliL )->( dbRLock() )
+               	  ( dbfFacCliL )->cCodFam := cCodFam
+                  ( dbfFacCliL )->( dbUnLock() )
+               end if
             end if
          end if
 
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->cCodTip )
             cCodTip                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodTip" )
             if !Empty( cCodTip )
-               ( dbfFacCliL )->cCodTip := cCodTip
+               if ( dbfFacCliL )->( dbRLock() )
+               	  ( dbfFacCliL )->cCodTip := cCodTip
+				  ( dbfFacCliL )->( dbUnLock() )
+               end if
             end if
          end if
 
          if !Empty( ( dbfFacCliL )->cRef ) .and. !Empty( ( dbfFacCliL )->cCodFam )
             cCodFam                    := cGruFam( ( dbfFacCliL )->cCodFam, dbfFamilia )
             if !Empty( cCodFam )
-               ( dbfFacCliL )->cGrpFam := cCodFam
+               if ( dbfFacCliL )->( dbRLock() )
+               	  ( dbfFacCliL )->cGrpFam := cCodFam
+               	  ( dbfFacCliL )->( dbUnLock() )
+               end if
             end if
          end if
 
          if Empty( ( dbfFacCliL )->nReq )
-            ( dbfFacCliL )->nReq       := nPReq( dbfIva, ( dbfFacCliL )->nIva )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->nReq       := nPReq( dbfIva, ( dbfFacCliL )->nIva )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if Empty( ( dbfFacCliL )->cCodAge )
-            ( dbfFacCliL )->cCodAge    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodAge" )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cCodAge    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, TDataView():FacturasClientes( nView ), "cCodAge" )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if Empty( ( dbfFacCliL )->dFecFac )
-            ( dbfFacCliL )->dFecFac    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "dFecFac" )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->dFecFac    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, TDataView():FacturasClientes( nView ), "dFecFac" )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if Empty( ( dbfFacCliL )->cCodCli )
-            ( dbfFacCliL )->cCodCli    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodCli" )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cCodCli    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, TDataView():FacturasClientes( nView ), "cCodCli" )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if Empty( ( dbfFacCliL )->cAlmLin )
-            ( dbfFacCliL )->cAlmLin    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodAlm" )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->cAlmLin    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, TDataView():FacturasClientes( nView ), "cCodAlm" )
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
          if !Empty( ( dbfFacCliL )->mNumSer )
@@ -18169,15 +18203,18 @@ function SynFacCli( cPath )
                ( dbfFacCliS )->nNumLin := ( dbfFacCliL )->nNumLin
                ( dbfFacCliS )->cNumSer := cNumSer
             next
-            ( dbfFacCliL )->mNumSer    := ""
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->mNumSer    := ""
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
          end if
 
-         if !Empty( (dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
-
-         	( dbfFacCliL )->nCosDiv 	:= oStock:nCostoMedio( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2, ( dbfFacCliL )->cLote )   
-
+         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
+         	if ( dbfFacCliL )->( dbRLock() )
+         	   ( dbfFacCliL )->nCosDiv 	:= oStock:nCostoMedio( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2, ( dbfFacCliL )->cLote )   
+               ( dbfFacCliL )->( dbUnLock() )         	   
+         	end if
          end if 
-
 
          ( dbfFacCliL )->( dbSkip() )
 
@@ -18195,7 +18232,10 @@ function SynFacCli( cPath )
       while !( dbfFacCliI )->( eof() )
 
          if Empty( ( dbfFacCliI )->cSufFac )
-            ( dbfFacCliI )->cSufFac := "00"
+         	if ( dbfFacCliI )->( dbRLock() )
+               ( dbfFacCliI )->cSufFac := "00"
+               ( dbfFacCliI )->( dbUnLock() )
+            end if 
          end if
 
          ( dbfFacCliI )->( dbSkip() )
@@ -18214,11 +18254,17 @@ function SynFacCli( cPath )
       while !( dbfFacCliS )->( eof() )
 
          if Empty( ( dbfFacCliS )->cSufFac )
-            ( dbfFacCliS )->cSufFac := "00"
+            if ( dbfFacCliS )->( dbRLock() )
+               ( dbfFacCliS )->cSufFac := "00"
+               ( dbfFacCliS )->( dbUnLock() )
+            end if 
          end if
 
          if Empty( ( dbfFacCliS )->dFecFac )
-            ( dbfFacCliS )->dFecFac := RetFld( ( dbfFacCliS )->cSerFac + str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac, dbfFacCliT, "dFecFac" )
+            if ( dbfFacCliS )->( dbRLock() )
+               ( dbfFacCliS )->dFecFac := RetFld( ( dbfFacCliS )->cSerFac + str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac, TDataView():FacturasClientes( nView ), "dFecFac" )
+               ( dbfFacCliS )->( dbUnLock() )
+            end if 
          end if
 
          ( dbfFacCliS )->( dbSkip() )
@@ -18233,24 +18279,30 @@ function SynFacCli( cPath )
       Rellenamos los campos de totales-----------------------------------------
       */
 
-      ( dbfFacCliT )->( dbGoTop() )
-      while !( dbfFacCliT )->( eof() )
+      ( TDataView():FacturasClientes( nView ) )->( dbGoTop() )
+      while !( TDataView():FacturasClientes( nView ) )->( eof() )
 
-         aTotFac           := aTotFacCli( ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
+         aTotFac           := aTotFacCli( ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( TDataView():FacturasClientes( nView ) )->cDivFac )
 
-         if ( dbfFacCliT )->nTotFac == 0
-            ( dbfFacCliT )->nTotNet := aTotFac[1]
-            ( dbfFacCliT )->nTotIva := aTotFac[2]
-            ( dbfFacCliT )->nTotReq := aTotFac[3]
-            ( dbfFacCliT )->nTotFac := aTotFac[4]
+         if ( TDataView():FacturasClientes( nView ) )->nTotFac == 0
+         	if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+	           ( TDataView():FacturasClientes( nView ) )->nTotNet := aTotFac[1]
+	           ( TDataView():FacturasClientes( nView ) )->nTotIva := aTotFac[2]
+	           ( TDataView():FacturasClientes( nView ) )->nTotReq := aTotFac[3]
+	           ( TDataView():FacturasClientes( nView ) )->nTotFac := aTotFac[4]
+	           ( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+	        end if 
          end if
 
-         if ( dbfFacCliT )->nTotLiq == 0
-            ( dbfFacCliT )->nTotLiq := aTotFac[13]
-            ( dbfFacCliT )->nTotPdt := aTotFac[4] - aTotFac[13]
+         if ( TDataView():FacturasClientes( nView ) )->nTotLiq == 0
+         	if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+	           ( TDataView():FacturasClientes( nView ) )->nTotLiq := aTotFac[13]
+    	       ( TDataView():FacturasClientes( nView ) )->nTotPdt := aTotFac[4] - aTotFac[13]
+    	       ( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+    	    end if 
          end if
 
-         ( dbfFacCliT )->( dbSkip() )
+         ( TDataView():FacturasClientes( nView ) )->( dbSkip() )
 
       end while
 
@@ -18259,8 +18311,11 @@ function SynFacCli( cPath )
       ( dbfFacCliL )->( dbGoTop() )
       while !( dbfFacCliL )->( eof() )
 
-         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) )
-            ( dbfFacCliL )->( dbDelete() )
+         if !( TDataView():FacturasClientes( nView ) )->( dbSeek( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) )
+         	if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->( dbDelete() )
+			   ( dbfFacCliL )->( dbRUnLock() )
+            end if 
          end if
 
          ( dbfFacCliL )->( dbSkip() )
@@ -18270,8 +18325,11 @@ function SynFacCli( cPath )
       ( dbfFacCliS )->( dbGoTop() )
       while !( dbfFacCliS )->( eof() )
 
-         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliS )->cSerFac + str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac ) )
-            ( dbfFacCliS )->( dbDelete() )
+         if !( TDataView():FacturasClientes( nView ) )->( dbSeek( ( dbfFacCliS )->cSerFac + str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac ) )
+         	if ( dbfFacCliS )->( dbRLock() )
+               ( dbfFacCliS )->( dbDelete() )
+			   ( dbfFacCliS )->( dbRUnLock() )
+			end if 
          end if
 
          ( dbfFacCliS )->( dbSkip() )
@@ -18283,8 +18341,11 @@ function SynFacCli( cPath )
       ( dbfFacCliI )->( dbGoTop() )
       while !( dbfFacCliI )->( eof() )
 
-         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliI )->cSerie + str( ( dbfFacCliI )->nNumFac ) + ( dbfFacCliI )->cSufFac ) )
-            ( dbfFacCliI )->( dbDelete() )
+         if !( TDataView():FacturasClientes( nView ) )->( dbSeek( ( dbfFacCliI )->cSerie + str( ( dbfFacCliI )->nNumFac ) + ( dbfFacCliI )->cSufFac ) )
+         	if ( dbfFacCliI )->( dbRLock() )
+         	   ( dbfFacCliI )->( dbDelete() )
+         	   ( dbfFacCliI )->( dbRUnLock() )
+         	end if
          end if
 
          ( dbfFacCliI )->( dbSkip() )
@@ -18292,6 +18353,24 @@ function SynFacCli( cPath )
          SysRefresh()
 
       end while
+
+	  /*
+	  Estado de los pedidos en stocks---------------------------------------------
+	  */
+
+	  if !Empty( aNumPed )
+
+	     for each cNumPed in aNumPed
+	        oStock:SetEstadoPedCli( cNumPed )
+	     next 
+
+	  end if 
+
+	  // Cerramos los ficheros-------------------------------------------------
+
+      CloseFiles()
+
+   end if 
       
    RECOVER USING oError
 
@@ -18300,47 +18379,6 @@ function SynFacCli( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   CLOSE ( dbfFacCliT  )
-   CLOSE ( dbfFacCliL  )
-   CLOSE ( dbfFacCliS  )
-   CLOSE ( dbfFacCliI  )
-   CLOSE ( dbfFacCliP  )
-   CLOSE ( dbfFamilia  )
-   CLOSE ( dbfIva      )
-   CLOSE ( dbfArticulo )
-   CLOSE ( dbfDiv      )
-   CLOSE ( dbfAntCliT  )
-   CLOSE ( dbfClient   )
-
-   if !Empty( oNewImp )
-      oNewImp:end()
-   end if
-
-   oNewImp     := nil
-
-
-   /*
-   Estado de los pedidos en stocks---------------------------------------------
-   */
-
-   if !Empty( aNumPed )
-
-      for each cNumPed in aNumPed
-         oStock:SetEstadoPedCli( cNumPed )
-      next 
-
-   end if 
-
-   /*
-   Cerramos oStock-----------------------------------------------------------
-   */
-
-   if !Empty( oStock )
-      oStock:end()
-   end if
-
-   oStock   := nil
 
 Return nil
 
