@@ -2195,7 +2195,7 @@ METHOD ExtractOrder() CLASS TFastReportInfGen
    if !Empty( ::cInformeFastReport )
 
       cText             := ::cInformeFastReport
-      cText             := CutString( '<TfrxGroupHeader', '>', cText )
+      cText             := aTextString( '<TfrxGroupHeader', '>', ::cInformeFastReport ) //CutString( '<TfrxGroupHeader', '>', cText )
 
       if !Empty( cText )
 
@@ -3525,6 +3525,70 @@ Static Function CutString( cStart, cEnd, cText, lExclude )
 
 RETURN ( cString )
 
+//---------------------------------------------------------------------------//
+
+Static Function aTextString( cStart, cEnd, cText )
+
+   local nStart
+   local nEnd
+   local cString        := ""
+   local nStartPos      := 1
+   local aExp           := {}
+   local n
+   local nTop
+   local nTopOld        := 0
+   local nPosicion      := 0
+
+   /*
+   Recojo en un array todas las expresiones completas--------------------------
+   */
+
+   do while ( ( nStart := at( cStart, cText, nStartPos ) ) != 0 )
+
+      nEnd              := At( cEnd, cText, nStart + len( cStart ) )
+
+      if nEnd != 0
+         cString        := SubStr( cText, nStart, ( nEnd - nStart + len( cEnd ) ) )
+      end if
+
+      aAdd( aExp, cString )
+
+      nStartPos               := nEnd + 1
+   
+   enddo
+
+   /*
+   Comprobamos los datos que hemos recibido y localizamos el mayor-------------
+   */
+
+   do case
+      case len( aExp ) == 0
+         cString  := ""
+
+      case len( aExp ) == 1
+         cString  := aExp[1]
+
+      otherwise
+
+         for n := 1 to Len( aExp )
+
+            nTop           := Val( CutString( 'Top="', '"', aExp[n], .t. ) )
+
+            if nTop > nTopOld
+
+               nTopOld     := nTop
+               nPosicion   := n
+
+            end if
+
+         next 
+
+         cString           := aExp[ nPosicion ]
+
+   end case
+
+RETURN ( cString )
+      
 //---------------------------------------------------------------------------//
 
 METHOD AddNode( cDirectory, hHash, oNode, lBrackets )
