@@ -495,7 +495,7 @@ METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 
 			::oDlg:Disable()
 
-			::oSender:EliminaDocumento( ::cTiketOrigen )
+			::oSender:EliminarDocumento( ::cTiketOrigen )
          		
        		::GuardaTicketDestino()
 
