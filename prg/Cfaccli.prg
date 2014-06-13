@@ -174,7 +174,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                end if
 
                /*
-               Construimos las bases de los impuestosS
+               Construimos las bases de los impuestos-----------------------------
                */
 
                if lIvaCEE
@@ -1000,7 +1000,8 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    // Contabilizamos desde aki A3---------------------------------------------
 
    if lAplicacionA3()
-      EnlaceA3():GetInstance():WriteASCII()
+      EnlaceA3():GetInstance():Render()
+      EnlaceA3():GetInstance():Show() 
    end if 
 
    // Ponemos el ticket como contabilizado-------------------------------------

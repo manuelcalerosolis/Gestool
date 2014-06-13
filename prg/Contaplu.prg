@@ -1427,7 +1427,6 @@ FUNCTION MkAsiento( 	Asien,;
 
       else 
 
-
          hAsiento          := {  "Fecha"                 => Fecha ,;
                                  "Subcuenta"             => Subcuenta,;
                                  "Contrapartida"         => Contrapartida,;
@@ -1442,7 +1441,7 @@ FUNCTION MkAsiento( 	Asien,;
                                  "Documento"             => Documento,;
                                  "Departamento"          => Departamento,;
                                  "Clave"                 => Clave,;
-                                 "lRectificativa"        => lRectificativa,;
+                                 "Rectificativa"         => lRectificativa,;
                                  "Nif"                   => cNif,;
                                  "Nombre"                => cNombre }
 
@@ -2636,7 +2635,7 @@ CLASS EnlaceA3
    METHOD GetInstance()
 
    METHOD Add( hAsiento )                 INLINE ( aAdd( ::aAsiento, hAsiento ) )
-   METHOD Show()                          INLINE ( msgInfo( valtoprg( ::aAsiento ) ) )
+   METHOD Show()                          INLINE ( msgInfo( ::cText ) )
 
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
@@ -2647,13 +2646,14 @@ CLASS EnlaceA3
    METHOD WriteASCII()   
    METHOD SerializeASCII()
 
-   METHOD TipoFormato()                   INLINE ( '3' )
-   METHOD CodigoEmpresa( hAsiento )       INLINE ( Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 ) )
-   METHOD FechaApunte( hAsiento )         INLINE ( Dtos( hAsiento[ "Fecha"] ) )
+   METHOD TipoFormato()                   INLINE ( ::cBuffer   += '3' )
+   METHOD CodigoEmpresa( hAsiento )       INLINE ( ::cBuffer   += Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 ) )
+   METHOD FechaApunte( hAsiento )         INLINE ( ::cBuffer   += Dtos( hAsiento[ "Fecha"] ) )
+   METHOD TipoRegistro( hAsiento )        INLINE ( ::cBuffer   += if( hAsiento[ "Rectificativa" ], '2', '1' ) )
+   METHOD CRLF()                          INLINE ( ::cBuffer   += CRLF ) 
 
-   METHOD TipoRegistro( hAsiento )        INLINE ( if( hAsiento[ "lRectificativa" ], '2', '1' ) ) 
-
-        /* hAsiento          := {  "Fecha"                 => Fecha ,;
+      /* 
+         hAsiento          := {  "Fecha"                 => Fecha ,;
                                  "Subcuenta"             => Subcuenta,;
                                  "Contrapartida"         => Contrapartida,;
                                  "ImporteDebe"           => nImporteDebe,;
@@ -2669,7 +2669,8 @@ CLASS EnlaceA3
                                  "Clave"                 => Clave,;
                                  "lRectificativa"        => lRectificativa,;
                                  "Nif"                   => cNif,;
-                                 "Nombre"                => cNombre }*/
+                                 "Nombre"                => cNombre }
+      */
 
 
 ENDCLASS
@@ -2703,12 +2704,11 @@ ENDCLASS
       local hAsiento
 
       for each hAsiento in ::aAsiento
-         ::cBuffer   += ::TipoFormato()
-         ::cBuffer   += ::CodigoEmpresa( hAsiento )
-         ::cBuffer   += ::FechaApunte( hAsiento )
-         ::cBuffer   += ::TipoRegistro()
-
-         ::cBuffer   += CRLF
+         ::TipoFormato()
+         ::CodigoEmpresa( hAsiento )
+         ::FechaApunte( hAsiento )
+         ::TipoRegistro()
+         ::CRLF()
       next 
 
    Return ( Self )

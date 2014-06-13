@@ -242,7 +242,10 @@ CLASS TStock
    //---------------------------------------------------------------------------//
 
    METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
+
    METHOD InsertStockAlbaranProveedores( lNumeroSerie )
+   METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
+
    METHOD InsertStockFacturaProveedores( lNumeroSerie )
    METHOD InsertStockRectificativaProveedores( lNumeroSerie )
    METHOD InsertStockAlbaranClientes( lNumeroSerie )
@@ -1873,6 +1876,41 @@ RETURN ( lDup )
 
          end if
 
+         ::Integra( hb_QWith() )
+
+      end with
+
+   RETURN nil
+
+   //---------------------------------------------------------------------------//
+
+   METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
+
+      local nUnidades         := nTotNAlbPrv( ::cAlbPrvL )
+
+      with object ( SStock():New() )
+      
+         :cTipoDocumento      := ALB_PRV
+         :cAlias              := ( ::cAlbPrvL )
+         :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
+         :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
+         :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
+         :cCodigo             := ( ::cAlbPrvL )->cRef
+         :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmLin
+         :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
+         :cCodigoPropiedad2   := ( ::cAlbPrvL )->cCodPr2
+         :cValorPropiedad1    := ( ::cAlbPrvL )->cValPr1
+         :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
+         :cLote               := ( ::cAlbPrvL )->cLote
+         :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
+
+         if IsTrue( lNumeroSerie )
+            :nUnidades        := if( nUnidades > 0, -1, 1 )
+            :cNumeroSerie     := ( ::cAlbPrvS )->cNumSer
+         else
+            :nUnidades        := -nUnidades
+         end if
+         
          ::Integra( hb_QWith() )
 
       end with
@@ -4150,26 +4188,57 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
          if ( ( ::cAlbPrvL )->nCtlStk < 2 )                                                                             .and.;
             ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) .and.;
-            ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) .and.;
-            ( Empty( cCodAlm ) .or. ( ::cAlbPrvL )->cAlmLin == cCodAlm ) 
+            ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
-            /*
-            Buscamos el numero de serie----------------------------------------
-            */
+            // Almacen destino-------------------------------------------------
 
-            if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
+            if ( Empty( cCodAlm ) .or. ( ::cAlbPrvL )->cAlmLin == cCodAlm ) 
 
-               while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
+               /*
+               Buscamos el numero de serie----------------------------------------
+               */
 
-                  ::InsertStockAlbaranProveedores( .t. )
+               if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
 
-                  ( ::cAlbPrvS )->( dbSkip() )
+                  while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
 
-               end while
+                     ::InsertStockAlbaranProveedores( .t. )
 
-            else 
+                     ( ::cAlbPrvS )->( dbSkip() )
 
-               ::InsertStockAlbaranProveedores()
+                  end while
+
+               else 
+
+                  ::InsertStockAlbaranProveedores()
+
+               end if 
+
+            end if 
+
+            // Almacen origen-------------------------------------------------- 
+
+            if !Empty( ( ::cAlbPrvL )->cAlmOrigen ) .and. ( Empty( cCodAlm ) .or. ( ::cAlbPrvL )->cAlmOrigen == cCodAlm ) 
+
+               /*
+               Buscamos el numero de serie----------------------------------------
+               */
+
+               if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
+
+                  while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
+
+                     ::DeleteStockAlbaranProveedores( .t. )
+
+                     ( ::cAlbPrvS )->( dbSkip() )
+
+                  end while
+
+               else 
+
+                  ::DeleteStockAlbaranProveedores()
+
+               end if 
 
             end if 
 

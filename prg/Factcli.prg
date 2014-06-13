@@ -12131,7 +12131,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Descuento de artículo----------------------------------------------
          */
 
-         nNumDto              := RetFld( aTmpFac[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
+         nNumDto              	:= RetFld( aTmpFac[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
 
          if nNumDto != 0
 
@@ -12266,8 +12266,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
         */
 
         hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
+        
         if !Empty( hAtipica )
-            if hhaskey( hAtipica, "nImporte" )
+
+            if hhaskey( hAtipica, "nImporte" ) 
                 if hAtipica[ "nImporte" ] != 0
                 	aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
                 end if
