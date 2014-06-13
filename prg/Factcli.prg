@@ -17957,10 +17957,10 @@ function SynFacCli( cPath )
    local aNumPed     := {}
 
    DEFAULT cPath     := cPatEmp()
-/*
+
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if OpenFiles()
 
       // Cabeceras ------------------------------------------------------------
@@ -18212,8 +18212,6 @@ function SynFacCli( cPath )
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
          	if ( dbfFacCliL )->( dbRLock() )
          	   ( dbfFacCliL )->nCosDiv 	:= oStock:nCostoMedio( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2, ( dbfFacCliL )->cLote )   
-         	   msgAlert(( dbfFacCliL )->cRef, "cRef" )
-         	   msgAlert( ( dbfFacCliL )->nCosDiv, "nCosDiv" )
                ( dbfFacCliL )->( dbUnLock() )         	   
          	end if
          end if 
@@ -18373,7 +18371,7 @@ function SynFacCli( cPath )
       CloseFiles()
 
    end if 
-/*      
+      
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos de facturas de clientes." + CRLF + ErrorMessage( oError ) )
@@ -18381,7 +18379,7 @@ function SynFacCli( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 Return nil
 
 //---------------------------------------------------------------------------//
