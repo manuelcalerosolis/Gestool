@@ -3226,12 +3226,16 @@ function DelProduccion( cNumParte, oBrw )
 
       if oProduccion:oDbf:SeekInOrd( cNumParte, "cNumOrd" )
 
-         oProduccion:Del( oBrw )
+         oProduccion:Del()
 
       end if
 
       oProduccion:CloseFiles()
 
+   end if
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
    end if
 
    if oProduccion != nil

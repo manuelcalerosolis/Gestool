@@ -3291,7 +3291,7 @@ Static Function DeleteDocument( oBrwTmp )
       case oDbfTmp:nTypDoc == PRO_LIN .or.;
            oDbfTmp:nTypDoc == PRO_MAT
 
-         DelProduccion( oBrwTmp )
+         DelProduccion( oDbfTmp:cNumDoc, oBrwTmp )
 
    end case
 

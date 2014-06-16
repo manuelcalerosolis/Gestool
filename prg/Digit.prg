@@ -168,19 +168,23 @@ Return ( .t. )
 function IbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta )
 
   local n
-  local cDC
+  local cDC         := ""
   local cIban       := cEntidad + cSucursal + cDigito + cCuenta
   local cAlgorithm  := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+  if !Empty( cIban )
   
-  cIban += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )
-  cIban += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
-  cIban += "00"
- 
-  do while len( cIban ) > 3
-    cDC   := str( val(substr( cIban, 1, 9 )) % 97, 2 )
-    cIban := cDC + substr( cIban, 10 )
-  enddo
-  cDC := strzero( 98 - val(cDC), 2 )
+    cIban += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )
+    cIban += str( at( substr(cCountry,2,1), cAlgorithm ) +9, 2, 0 )
+    cIban += "00"
+   
+    do while len( cIban ) > 3
+      cDC   := str( val(substr( cIban, 1, 9 )) % 97, 2 )
+      cIban := cDC + substr( cIban, 10 )
+    enddo
+    cDC := strzero( 98 - val(cDC), 2 )
+    
+  end if
  
 return( cDC ) 
 
