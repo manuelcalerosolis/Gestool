@@ -6261,7 +6261,7 @@ METHOD lCheckConsolidacionMovimientosAlmancen( cCodArt, cCodAlm, cCodPrp1, cCodP
 
    ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   lCheck         := ( Empty( ::dConsolidacion ) .or. dFecha > ::dConsolidacion )
+   lCheck         := ( Empty( ::dConsolidacion ) .or. dFecha >= ::dConsolidacion )
 
 Return ( lCheck )
 
