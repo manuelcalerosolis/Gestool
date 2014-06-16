@@ -1397,7 +1397,6 @@ FUNCTION MkAsiento( 	Asien,;
       Asignacion de campos--------------------------------------------------------
       */
 
-
       if lAplicacionContaplus()
 
          aAsiento          :=  MkAsientoContaplus( Asien,;
