@@ -477,12 +477,14 @@ CLASS TpvTactil
       METHOD EndResource()
       METHOD PaintResource()
 
-      METHOD DisableDialog()           INLINE ( ::lValidResource := .f.,;
+      METHOD DisableDialog()           INLINE ( CursorWait(),;
+                                                ::lValidResource := .f.,;
                                                 aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Disable(), ) } ),;
                                                 SysRefresh() )
 
       METHOD EnableDialog()            INLINE ( ::lValidResource := .t.,;
                                                 aEval( ::oDlg:aControls, { |o| if( o:ClassName != "TSAY" .and. o:ClassName != "TBITMAP", o:Enable(), ) } ),;
+                                                CursorWE(),;
                                                 SysRefresh() )
 
    METHOD l1024()                      INLINE ( ::nScreenHorzRes >= 1024 )
@@ -7367,9 +7369,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    local oBlock
    local sCobro
 
-   CursorWait()
-
-   ::DisableDialog()
+   // ::DisableDialog()
 
    DEFAULT lZap                     := .t.
    DEFAULT nSave                    := SAVTIK
@@ -7483,9 +7483,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    Dialogo se vuelve a habilitar para volcer al trabajo------------------------
    */
 
-   ::EnableDialog()
-
-   CursorWE()
+   // ::EnableDialog()
 
 Return .t.
 
@@ -7667,8 +7665,6 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
    oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::DisableDialog()
-
    if ::oTiketCabecera:Seek( cNumeroTicket ) .and. ::oTiketCabecera:RecLock()
 
       // Cargo el registro sin bloquear pq ya esta bloqueado-------------------
@@ -7718,8 +7714,6 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
       ::SetInfo()
 
    end if
-
-   ::EnableDialog()
 
    RECOVER USING oError
 
@@ -8669,8 +8663,6 @@ METHOD ProcesaComandas( lCopia )
 
    DEFAULT lCopia       := .f.
 
-   CursorWait()
-
    // Matamos la temporal------------------------------------------------------
 
    ::oTemporalComanda:Zap()
@@ -8758,8 +8750,6 @@ METHOD ProcesaComandas( lCopia )
 
    ::oTemporalComanda:Zap()
 
-   CursorWE()
-   
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -8816,8 +8806,6 @@ METHOD ProcesaAnulacion()
    local aImp           := {}
    local cWav           := ""
    local lAppend        := .f.
-
-   CursorWait()
 
    // Matamos la temporal------------------------------------------------------
 
@@ -8904,7 +8892,6 @@ METHOD ProcesaAnulacion()
 
    ::oTemporalComanda:Zap()
 
-   CursorWE()
    
 Return ( Self )
 
