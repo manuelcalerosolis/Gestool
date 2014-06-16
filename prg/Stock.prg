@@ -3836,8 +3836,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
                
                if nTotLMovAlm( ::cHisMovT ) > 0 
 
-                  nUnidades   += nTotNMovAlm( ::cHisMovT)
-                  nImporte    += nTotLMovAlm( ::cHisMovT)
+                  nUnidades   += nTotNMovAlm( ::cHisMovT )
+                  nImporte    += nTotLMovAlm( ::cHisMovT )
 
                end if 
 
@@ -3849,8 +3849,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
                if nTotNMovAlm( ::cHisMovT ) > 0
 
-                  nUnidades   += nTotNMovAlm( ::cHisMovT)
-                  nImporte    += nTotLMovAlm( ::cHisMovT)
+                  nUnidades   += nTotNMovAlm( ::cHisMovT )
+                  nImporte    += nTotLMovAlm( ::cHisMovT )
 
                end if 
 
