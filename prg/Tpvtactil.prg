@@ -446,7 +446,7 @@ CLASS TpvTactil
    INLINE METHOD EliminaLineaTemporal()
 
       if uFieldEmpresa( "lShowLin" )
-         ::oTemporalLinea:Delete()
+         ::oTemporalLinea:lDelTil   := .t. // ::oTemporalLinea:Delete()
       else 
          ::oTemporalLinea:lDelTil   := .t.
       end if
@@ -460,7 +460,7 @@ CLASS TpvTactil
    INLINE METHOD SaltaLineaTemporal()
 
       if uFieldEmpresa( "lShowLin" )
-         ::oTemporalLinea:Skip(0)
+         ::oTemporalLinea:Skip() // ::oTemporalLinea:Skip(0)
       else
          ::oTemporalLinea:Skip()
       end if 
@@ -1040,6 +1040,9 @@ CLASS TpvTactil
    */
 
    METHOD lLineaValida( lExcluirContadores )
+
+   METHOD lAnulacionImpresa()          INLINE ( ::oTiketLinea:lImpCom )
+      METHOD SetAnulacionImpresa()     INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", .t. ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
@@ -7415,13 +7418,17 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::oTemporalLinea:GoTop()
       while !::oTemporalLinea:eof()
 
-         ::oTemporalLinea:cSerTil   := ::oTiketCabecera:cSerTik
-         ::oTemporalLinea:cNumTil   := ::oTiketCabecera:cNumTik
-         ::oTemporalLinea:cSufTil   := ::oTiketCabecera:cSufTik
-         ::oTemporalLinea:cTipTil   := ::oTiketCabecera:cTipTik
-         ::oTemporalLinea:dFecTik   := ::oTiketCabecera:dFecTik
+         if !( ::oTemporalLinea:lDelTil .and. uFieldEmpresa( "lShowLin" ) )
 
-         ::oTiketLinea:AppendFromObject( ::oTemporalLinea )
+            ::oTemporalLinea:cSerTil   := ::oTiketCabecera:cSerTik
+            ::oTemporalLinea:cNumTil   := ::oTiketCabecera:cNumTik
+            ::oTemporalLinea:cSufTil   := ::oTiketCabecera:cSufTik
+            ::oTemporalLinea:cTipTil   := ::oTiketCabecera:cTipTik
+            ::oTemporalLinea:dFecTik   := ::oTiketCabecera:dFecTik
+
+            ::oTiketLinea:AppendFromObject( ::oTemporalLinea )
+
+         end if 
 
          ::oProgressBar:Set( ::oTemporalLinea:RecNo() )
 
@@ -8812,10 +8819,7 @@ METHOD ProcesaAnulacion()
 
          lAppend        := .f.
 
-      msgalert( ::nUnidadesImpresas(), "::nUnidadesImpresas()" )
-      msgalert( ::nUnidadesLinea(), "::nUnidadesLinea()" )
-
-      if ( ( ::oTiketLinea:lDelTil ) .or. ( ::nUnidadesLinea() < 0 ) ) .and. ( ::nUnidadesImpresas() > ::nUnidadesLinea() )
+         if ( ( ::oTiketLinea:lDelTil ) .or. ( ::nUnidadesLinea() < 0 ) ) .and. ( !::lAnulacionImpresa() )
 
             // Impresora Uno---------------------------------------------------
 
@@ -8846,6 +8850,10 @@ METHOD ProcesaAnulacion()
             if lAppend
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
             end if
+
+            // Marcamos la linea como ya impresa en anulacion------------------
+
+            ::SetAnulacionImpresa()
 
          end if
 
@@ -8911,6 +8919,15 @@ METHOD OnClickGuardar() CLASS TpvTactil
    // Mandamos las comandas a imprimir--------------------------------------------
 
    ::ProcesaDocumentosInternos()
+
+   // Refrescamos las lineas para los elementos borrados-----------------------
+
+   if uFieldEmpresa( "lShowLin" )
+
+      msgAlert( ::cNumeroTicket() )
+      
+      ::CargaDocumento( ::cNumeroTicket() )
+   end if 
 
    ::EnableDialog()
 
