@@ -665,7 +665,11 @@ CLASS TpvTactil
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
    METHOD cNumeroTicketByName()        INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + ::oTiketCabecera:FieldGetByName( "cNumTik" ) + ::oTiketCabecera:FieldGetByName( "cSufTik" ) )
-   METHOD cNumeroTicketFormato()       INLINE ( ::oTiketCabecera:cSerTik + "/" + AllTrim( ::oTiketCabecera:cNumTik ) )
+   METHOD cNumeroTicketFormato( cNumeroTicket ) ;
+                                       INLINE ( if(   Empty( cNumeroTicket ),;
+                                                      cNumeroTicket := ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik, ),;
+                                                      left( cNumeroTicket, 1 ) + "/" + alltrim( substr( cNumeroTicket, 2, 10 ) ) )
+
    METHOD cNumeroTicketByNameFormato() INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + "/" + AllTrim( ::oTiketCabecera:FieldGetByName( "cNumTik" ) ) )
 
    METHOD lEmptyNumeroTicket()         INLINE Empty( ::oTiketCabecera:cNumTik )
@@ -1041,7 +1045,7 @@ CLASS TpvTactil
 
    METHOD lLineaValida( lExcluirContadores )
 
-   METHOD lAnulacionImpresa()          INLINE ( ::oTiketLinea:lImpCom )
+   METHOD lAnulacionImpresa()          INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
       METHOD SetAnulacionImpresa()     INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", .t. ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
@@ -7365,6 +7369,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
    CursorWait()
 
+   ::DisableDialog()
+
    DEFAULT lZap                     := .t.
    DEFAULT nSave                    := SAVTIK
 
@@ -7418,17 +7424,13 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::oTemporalLinea:GoTop()
       while !::oTemporalLinea:eof()
 
-         if !( ::oTemporalLinea:lDelTil .and. uFieldEmpresa( "lShowLin" ) )
+         ::oTemporalLinea:cSerTil   := ::oTiketCabecera:cSerTik
+         ::oTemporalLinea:cNumTil   := ::oTiketCabecera:cNumTik
+         ::oTemporalLinea:cSufTil   := ::oTiketCabecera:cSufTik
+         ::oTemporalLinea:cTipTil   := ::oTiketCabecera:cTipTik
+         ::oTemporalLinea:dFecTik   := ::oTiketCabecera:dFecTik
 
-            ::oTemporalLinea:cSerTil   := ::oTiketCabecera:cSerTik
-            ::oTemporalLinea:cNumTil   := ::oTiketCabecera:cNumTik
-            ::oTemporalLinea:cSufTil   := ::oTiketCabecera:cSufTik
-            ::oTemporalLinea:cTipTil   := ::oTiketCabecera:cTipTik
-            ::oTemporalLinea:dFecTik   := ::oTiketCabecera:dFecTik
-
-            ::oTiketLinea:AppendFromObject( ::oTemporalLinea )
-
-         end if 
+         ::oTiketLinea:AppendFromObject( ::oTemporalLinea )
 
          ::oProgressBar:Set( ::oTemporalLinea:RecNo() )
 
@@ -7480,6 +7482,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    /*
    Dialogo se vuelve a habilitar para volcer al trabajo------------------------
    */
+
+   ::EnableDialog()
 
    CursorWE()
 
@@ -7663,6 +7667,8 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
    oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ::DisableDialog()
+
    if ::oTiketCabecera:Seek( cNumeroTicket ) .and. ::oTiketCabecera:RecLock()
 
       // Cargo el registro sin bloquear pq ya esta bloqueado-------------------
@@ -7677,7 +7683,11 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
          while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == cNumeroTicket ) .and. !( ::oTiketLinea:Eof() )
 
-            ::oTemporalLinea:AppendFromObject( ::oTiketLinea )
+            if !( uFieldEmpresa( "lShowLin" ) .and. ::oTiketLinea:lDelTil )
+
+               ::oTemporalLinea:AppendFromObject( ::oTiketLinea )
+
+            end if
 
             ::oTiketLinea:Skip()
 
@@ -7709,6 +7719,8 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
    end if
 
+   ::EnableDialog()
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al cargar el documento." )
@@ -7727,7 +7739,7 @@ METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
 
    ::DisableDialog()
 
-   if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::cNumeroTicketFormato() + " ?", "Atención", .t. )
+   if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::cNumeroTicketFormato( cNumeroTicket ) + " ?", "Atención", .t. )
 
       ::oTiketCabecera:GetStatus()
       ::oTiketLinea:GetStatus()
@@ -8845,15 +8857,15 @@ METHOD ProcesaAnulacion()
 
             end if
 
+            // Marcamos la linea como ya impresa en anulacion------------------
+
+            ::SetAnulacionImpresa()
+
             // Añadimos esta linea al temporal de comandas---------------------
 
             if lAppend
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
             end if
-
-            // Marcamos la linea como ya impresa en anulacion------------------
-
-            ::SetAnulacionImpresa()
 
          end if
 
@@ -8922,12 +8934,7 @@ METHOD OnClickGuardar() CLASS TpvTactil
 
    // Refrescamos las lineas para los elementos borrados-----------------------
 
-   if uFieldEmpresa( "lShowLin" )
-
-      msgAlert( ::cNumeroTicket() )
-      
-      ::CargaDocumento( ::cNumeroTicket() )
-   end if 
+   ::CargaDocumento( ::cNumeroTicket() )
 
    ::EnableDialog()
 

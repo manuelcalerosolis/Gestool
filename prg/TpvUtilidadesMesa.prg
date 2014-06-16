@@ -480,7 +480,7 @@ Return ( Self )
 
 METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 
-	local lDeleteOriginal 	:= .f.
+	local lExit 			:= .f.
 
 	::cCodSala 				:= ::oRestaurante():cSelectedSala
 	::cPntVenta 			:= ::oRestaurante():cSelectedPunto
@@ -489,14 +489,12 @@ METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 
 	if 	( ::oOriginal():OrdKeyCount() == 0 )
 
-		if ( ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oSender:cNumeroTicketFormato() + " ?", "Atención", .t. ) )
+      	// Eliminamos origen y guardamos destino----------------------------
 
-      		// Eliminamos origen y guardamos destino----------------------------
+		if ::oSender:EliminarDocumento( ::cTiketOrigen )
+        
+        	::oDlg:Disable() 		
 
-			::oDlg:Disable()
-
-			::oSender:EliminarDocumento( ::cTiketOrigen )
-         		
        		::GuardaTicketDestino()
 
        		//Cargo documento destino-------------------------------------------
@@ -521,24 +519,21 @@ METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 
 	if ( ::oNuevo():OrdKeyCount() == 0 ) .and. ( !::lNuevoTicket() )
 
-		if ( ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::oSelectedPunto:cTextoTiket() + " ?", "Atención", .t. ) )
+      	// Eliminamos destino y guardamos origen----------------------------
 
-      		// Eliminamos destino y guardamos origen----------------------------
-
-			::oDlg:Disable()
+       	::GuardaTicketOrigen()
          		
-       		::GuardaTicketOrigen()
-         		
-       		// Elimino documento destino-----------------------------------------
+   		// Elimino documento destino-----------------------------------------
 
-       		::oSender:EliminaDocumento( ::TiketDestino )
+   		if ::oSender:EliminarDocumento( ::TiketDestino )
+
+   			::oDlg:Disable()
 
        		// Cargo el documento origen-----------------------------------------
 
        		::oSender:CargaDocumento( ::TiketOrigen )
 
 	       	::oDlg:Enable()
-
        		::oDlg:End()
 
 	       	Return ( .t. )
@@ -551,10 +546,7 @@ METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 
 	end if
 
-
 	// Si no estan vacios ninguno de los dos tickets -------------------------------
-
-	::oDlg:Disable()		
 
 	// Pasar la temporal------------------------------------------------------------
 
@@ -563,14 +555,11 @@ METHOD AceptarDividirMesa() Class TpvUtilidadesMesa
 	// Guardamos el ticket de destino si no esta vacio------------------------------
 	
 	if ( ::oNuevo():OrdKeyCount() != 0 )
-
  		::GuardaTicketDestino()
-
  	end if
 
  	::oSender:CargaDocumento( ::cTiketDestino )
 
-   	::oDlg:Enable()
    	::oDlg:End( IDOK )
 
 Return ( Self )
@@ -578,6 +567,8 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD GuardaLineasTicketOrigen() Class TpvUtilidadesMesa
+
+   ::oSender:DisableDialog()
 
    ::oSender:oTemporalLinea:Zap()
 
@@ -593,6 +584,8 @@ METHOD GuardaLineasTicketOrigen() Class TpvUtilidadesMesa
    end while
 
    ::oSender:oTemporalLinea:GoTop()
+
+   ::oSender:EnableDialog()
 
 Return ( Self )
 
