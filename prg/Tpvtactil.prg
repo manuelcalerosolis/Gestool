@@ -8812,7 +8812,10 @@ METHOD ProcesaAnulacion()
 
          lAppend        := .f.
 
-         if !( ::oTiketLinea:lDelTil ) .and. ( ::nUnidadesLinea() < 0 ) .and. ( ::nUnidadesImpresas() > ::nUnidadesLinea() ) 
+      msgalert( ::nUnidadesImpresas(), "::nUnidadesImpresas()" )
+      msgalert( ::nUnidadesLinea(), "::nUnidadesLinea()" )
+
+      if ( ( ::oTiketLinea:lDelTil ) .or. ( ::nUnidadesLinea() < 0 ) ) .and. ( ::nUnidadesImpresas() > ::nUnidadesLinea() )
 
             // Impresora Uno---------------------------------------------------
 
