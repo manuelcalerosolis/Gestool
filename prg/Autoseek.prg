@@ -225,7 +225,7 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha )
 
    lRet        := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
-   if uFieldEmpresa( "lBusCir" )
+   if uFieldEmpresa( "lBusCir", .f. )
 
       if !lRet .and. !Empty( oBrw )
 

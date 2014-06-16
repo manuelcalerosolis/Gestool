@@ -3221,7 +3221,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
    local cGet1
    local oCbxOrd
    local aStaAnt
-   local aCbxOrd     := { "Número", "Fecha", "Cliente", "Nombre" }
+   local aCbxOrd     := { "Número", "Fecha", "Código", "Nombre" }
    local aNomOrd     := { "lNumAnt", "lFecAnt", "lCodCli", "lNomCli" }
    local cCbxOrd
    local oBtnSelect
@@ -3289,7 +3289,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Número"
-         :cSortOrder       := "nNumAnt"
+         :cSortOrder       := "lNumAnt"
          :bEditValue       := {|| ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -3297,7 +3297,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecAnt"
+         :cSortOrder       := "lFecAnt"
          :bEditValue       := {|| ( dbfAntCliT )->dFecAnt }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -3305,7 +3305,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
-         :cSortOrder       := "cCodCli"
+         :cSortOrder       := "lCodCli"
          :bEditValue       := {|| ( dbfAntCliT )->cCodCli }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -3313,7 +3313,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
-         :cSortOrder       := "cNomCli"
+         :cSortOrder       := "lNomCli"
          :bEditValue       := {|| ( dbfAntCliT )->cNomCli }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
