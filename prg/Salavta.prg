@@ -1674,3 +1674,186 @@ METHOD lPreSave( oGetDescrip, nMode ) CLASS TDetSalaVta
 Return ( lOk )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION cSalaVta( oGet, dbfSalaVta, oGet2 )
+
+   local oBlock
+   local oError
+   local lClose   := .f.
+   local lValid   := .f.
+   local xValor   := oGet:VarGet()
+
+   if Empty( xValor ) .or. ( xValor == Replicate( "Z", 3 ) )
+      if( oGet2 != nil, oGet2:cText( "" ), )
+      return .t.
+   else
+      xValor   := RJustObj( oGet, "0" )
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfSalaVta == nil
+      USE ( cPatAlm() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
+      SET ADSINDEX TO ( cPatAlm() + "SALAVTA.CDX" ) ADDITIVE
+      lClose      := .t.
+   end if
+
+   do case
+      case Valtype( dbfSalaVta ) == "C"
+
+         if ( dbfSalaVta )->( dbSeek( xValor ) )
+            oGet:cText( ( dbfSalaVta )->cCodigo )
+            if( oGet2 != nil, oGet2:cText( ( dbfSalaVta )->cDescrip ), )
+            lValid   := .t.
+         else
+            oGet:Refresh()
+            msgStop( "Sala de venta no encontrada" )
+         end if
+
+      case Valtype( dbfSalaVta ) == "O"
+
+         if dbfSalaVta:Seek( xValor )
+            oGet:cText( dbfSalaVta:cCodigo )
+
+            if oGet2 != nil
+               oGet2:cText( dbfSalaVta:cDescrip )
+            end if
+
+            lValid   := .t.
+         else
+            oGet:Refresh()
+            msgStop( "Sala de venta no encontrada" )
+         end if
+
+   end case
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de almacenes" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      CLOSE ( dbfSalaVta )
+   end if
+
+RETURN lValid
+
+//---------------------------------------------------------------------------//
+
+FUNCTION BrwSalaVta( dbfSalaVta, oGet, oGet2 )
+
+   local oDlg
+   local oBrw
+   local oBtn
+   local oGet1
+   local cGet1
+   local nOrdAnt        := 1
+   local oCbxOrd
+   local aCbxOrd        := { "Código", "Nombre" }
+   local cCbxOrd
+
+   nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd              := aCbxOrd[ nOrdAnt ]
+
+   nOrdAnt              := ( dbfSalaVta )->( OrdSetFocus( nOrdAnt ) )
+
+   ( dbfSalaVta )->( dbGoTop() )
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar Sala de ventas"
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfSalaVta ) );
+         VALID    ( OrdClearScope( oBrw, dbfSalaVta ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE( ( dbfSalaVta )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:Refresh() ) ;
+         OF       oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfSalaVta
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Salas de ventas"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodigo"
+         :bEditValue       := {|| ( dbfSalaVta )->cCodigo }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDescrip"
+         :bEditValue       := {|| ( dbfSalaVta )->cDescrip }
+         :nWidth           := 300
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+   REDEFINE BUTTON ;
+      ID       500 ;
+      OF       oDlg ;
+      WHEN     ( .f. );
+      ACTION   ( nil )
+
+   REDEFINE BUTTON ;
+      ID       501 ;
+      OF       oDlg ;
+      WHEN     ( .f. );
+      ACTION   ( nil )
+
+   REDEFINE BUTTON ;
+      ID       IDOK ;
+      OF       oDlg ;
+      ACTION   ( oDlg:end( IDOK ) )
+
+   REDEFINE BUTTON ;
+      ID       IDCANCEL ;
+      OF       oDlg ;
+      ACTION   ( oDlg:end() )
+
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+      oGet:cText( ( dbfSalaVta )->cCodigo )
+      oGet:lValid()
+
+      if ValType( oGet2 ) == "O"
+         oGet2:cText( ( dbfSalaVta )->cDescrip )
+      end if
+
+   end if
+
+   DestroyFastFilter( dbfSalaVta )
+
+   SetBrwOpt( "BrwSalaVta", ( dbfSalaVta )->( OrdNumber() ) )
+
+   oGet:SetFocus()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

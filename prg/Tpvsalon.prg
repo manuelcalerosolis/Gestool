@@ -1126,7 +1126,14 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
       for each sSala in ::oSender:aSalas
          oBoton               := TDotNetButton():New( 60, oGrupo, sSala:cImagen, sSala:cDescripcion, hb_enumindex(), {| oBoton | ::SelectSala( oBoton, lPuntosPendientes ) }, , , .f., .f., .f. )
          oBoton:cName         := sSala:cCodigo
-         oBoton:lSelected     := ( hb_enumindex() == 1 )
+
+         //Si el usuario tiene asignada una sala de venta seleccionamos el boton
+         if !empty( oUser():SalaVenta() )
+            oBoton:lSelected  := ( sSala:cCodigo == oUser():SalaVenta() )
+         else
+            oBoton:lSelected  := ( hb_enumindex() == 1 )
+         end if 
+
       next
 
    if lShowLlevar
@@ -1162,7 +1169,14 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
 
    ::oWnd:Maximize()
 
-   ::LoadFromMemory( nil, lPuntosPendientes )
+   //Comprobamos si el usuario tiene una sala de venta asignada por defecto----
+
+   if !Empty( oUser():SalaVenta() )
+      ::LoadFromMemory( oUser():SalaVenta(), lPuntosPendientes )
+   else
+      ::LoadFromMemory( nil, lPuntosPendientes )
+   end if
+
 
    /*
    Después de cargar todos los datos me muevo a la ubicaión que me hayan marcado

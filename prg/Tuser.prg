@@ -107,6 +107,8 @@ CLASS TUser
    Data     _TipoIncidencia            INIT ""
    Method   cTipoIncidencia( cNewVal ) INLINE if( cNewVal != nil, ::_TipoIncidencia := cNewVal, ::_TipoIncidencia )
 
+   Data     _CodigoSala                INIT ""
+   Method   SalaVenta( cNewVal )       INLINE if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
 
    //------------------------------------------------------------------------//
 
@@ -323,6 +325,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj )
          ::cTipoIncidencia(   ( ::oDbf )->cTipInci )
          ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
+         ::SalaVenta(         ( ::oDbf )->cCodSala )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse

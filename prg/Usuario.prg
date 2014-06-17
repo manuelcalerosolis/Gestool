@@ -44,6 +44,7 @@ REQUEST DBFCDX
 #define _LNOOPCAJ                33      //   L      1      0 
 #define _LARQCIE                 34      //   L      1      0
 #define _CTIPINCI                35      //   C      3      0 
+#define _CCODSALA                36      
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -57,6 +58,7 @@ static dbfMapa
 static dbfCajT
 static dbfDelega
 static dbfTipInci
+static dbfSalaVta
 
 static oOperario
 static oClaveRepetida
@@ -103,6 +105,9 @@ Function OpenFiles()
    USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfTipInci ) )
    SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
+   USE ( cPatEmp() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
+   SET ADSINDEX TO ( cPatEmp() + "SALAVTA.CDX" ) ADDITIVE
+
    if !Empty( oOperario )
       oOperario:OpenFiles()
    end if
@@ -147,12 +152,17 @@ Static Function CloseFiles()
       ( dbfTipInci )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfSalaVta )
+      ( dbfSalaVta )->( dbCloseArea() )
+   end if
+
    dbfUser        := nil
    dbfMapa        := nil
    dbfCajT        := nil
    dbfEmp         := nil 
    dbfDelega      := nil
    dbfTipInci     := nil
+   dbfSalaVta     := nil
 
    if oWndBrw != nil
       oWndBrw     := nil
@@ -530,6 +540,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          VALID    ( cTipInci( aGet[ _CTIPINCI ], dbfTipInci, aGet[ _CTIPINCI ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIncidencia( dbfTipInci, aGet[ _CTIPINCI ], aGet[ _CTIPINCI ]:oHelpText ) ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _CCODSALA ] VAR aTmp[ _CCODSALA ];
+         ID       460 ;
+         IDTEXT   461 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cSalaVta( aGet[ _CCODSALA ], dbfSalaVta, aGet[ _CCODSALA ]:oHelpText ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwSalaVta( dbfSalaVta, aGet[ _CCODSALA ], aGet[ _CCODSALA ]:oHelpText ) ) ;
          OF       oDlg
 
       REDEFINE BITMAP bmpImage ;
@@ -2738,7 +2757,8 @@ Function aItmUsuario()
                      { "dUltAut",   "D",  8,  0, "Fecha último documento automático" },;
                      { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" },;
                      { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" },;
-                     { "cTipInci",  "C",  3,  0, "Tipo de incidencia por defecto" } }
+                     { "cTipInci",  "C",  3,  0, "Tipo de incidencia por defecto" },;
+                     { "cCodSala",  "C",  3,  0, "Código de sala por defecto para este usuario" } }
 
 
 Return ( aBase )
