@@ -2633,14 +2633,15 @@ CLASS EnlaceA3
 
    METHOD GetInstance()
 
-   METHOD Add( hAsiento )                 INLINE ( aAdd( ::aAsiento, hAsiento ) )
-   METHOD Show()                          INLINE ( msgInfo( ::cText ) )
+   METHOD Add( hAsiento )                 INLINE ( aAdd( ::aAsiento, hAsiento ), msgInfo( valtoprg( hAsiento ), "hAsiento" ) )
+   METHOD Show()                          INLINE ( msgInfo( ::cBuffer ) )
 
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
 
-   METHOD Render()
+   METHOD RenderSinIVA()
+   METHOD RenderFacturaVenta()
 
    METHOD WriteASCII()   
    METHOD SerializeASCII()
@@ -2649,6 +2650,23 @@ CLASS EnlaceA3
    METHOD CodigoEmpresa( hAsiento )       INLINE ( ::cBuffer   += Padr( cEmpCnt( hAsiento[ "Serie" ] ), 5 ) )
    METHOD FechaApunte( hAsiento )         INLINE ( ::cBuffer   += Dtos( hAsiento[ "Fecha"] ) )
    METHOD TipoRegistro( hAsiento )        INLINE ( ::cBuffer   += if( hAsiento[ "Rectificativa" ], '2', '1' ) )
+   METHOD Cuenta( hAsiento )              INLINE ( ::cBuffer   += if (  hAsiento[ "ImporteDebe" ] != 0,;
+                                                                        padr( hAsiento[ "Subcuenta" ], 12 ),;
+                                                                        padr( hAsiento[ "Contrapartida" ], 12 ) ) )
+   METHOD DescripcionCuenta()             INLINE ( ::cBuffer   += Space( 30 ) )
+
+   METHOD TipoFacturaVenta()              INLINE ( ::cBuffer   += '1' )
+   METHOD TipoFacturaCompras()            INLINE ( ::cBuffer   += '2' )
+   METHOD TipoFacturaBienes()             INLINE ( ::cBuffer   += '3' )
+
+   METHOD NumeroFactura()                 INLINE ( ::cBuffer   += padr( str( hAsiento[ "Factura" ] ), 10 )
+   METHOD LineaApunte( hAsiento )         INLINE ( ::cBuffer   += 'I' )   
+
+   METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( hAsiento[ "Concepto" ] ) )
+
+   METHOD TipoImporte( hAsiento )         INLINE ( ::cBuffer   += if( hAsiento[ "ImporteDebe" ] != 0, 'D', 'H' ) )
+   METHOD Referencia( hAsiento )          INLINE ( ::cBuffer   += SubStr( hAsiento[ "Concepto" ], 1, 10 ) )
+//   METHOD LineaApunte( hAsiento )         INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
    METHOD FinLinea()                      INLINE ( ::cBuffer   += CRLF ) 
 
       /* 
@@ -2666,7 +2684,7 @@ CLASS EnlaceA3
                                  "Documento"             => Documento,;
                                  "Departamento"          => Departamento,;
                                  "Clave"                 => Clave,;
-                                 "lRectificativa"        => lRectificativa,;
+                                 "Rectificativa"        => lRectificativa,;
                                  "Nif"                   => cNif,;
                                  "Nombre"                => cNombre }
       */
@@ -2696,9 +2714,9 @@ ENDCLASS
 
    RETURN ( ::oInstance )
 
-//---------------------------------------------------------------------------//
+   //---------------------------------------------------------------------------//
 
-   METHOD Render() CLASS EnlaceA3
+   METHOD RenderSinIVA() CLASS EnlaceA3
 
       local hAsiento
 
@@ -2706,7 +2724,12 @@ ENDCLASS
          ::TipoFormato()
          ::CodigoEmpresa( hAsiento )
          ::FechaApunte( hAsiento )
-         ::TipoRegistro()
+         ::TipoRegistro( hAsiento )
+         ::Cuenta( hAsiento )
+         ::DescripcionCuenta()
+         ::TipoImporte( hAsiento )
+         ::Referencia( hAsiento )
+         ::LineaApunte( hAsiento )
          ::FinLinea() 
       next 
 
@@ -2714,14 +2737,42 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
+   METHOD RenderFacturaVenta() CLASS EnlaceA3
+
+      local hAsiento
+
+      for each hAsiento in ::aAsiento
+
+         ::TipoFormato()
+         ::CodigoEmpresa( hAsiento )
+         ::FechaApunte( hAsiento )
+         ::TipoRegistro( hAsiento )
+         ::Cuenta( hAsiento )
+         ::DescripcionCuenta()
+         ::TipoFacturaVenta()
+         ::NumeroFactura( hAsiento )
+         ::LineaApunte( hAsiento )
+         ::DescripcionApunte( hAsiento )
+
+         ::FinLinea() 
+      
+      next 
+
+   Return ( Self )
+
+   //------------------------------------------------------------------------//
+
+
    METHOD WriteASCII() CLASS EnlaceA3
 
-      ::hFile  := fCreate( ::cDirectory + "\" + ::cFile )
+      ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
 
       if !Empty( ::hFile )
          fWrite( ::hFile, ::cBuffer )
          fClose( ::hFile )
       end if
+
+      ::cBuffer   := ""
 
    Return ( Self )
 
