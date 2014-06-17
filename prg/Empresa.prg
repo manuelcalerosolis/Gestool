@@ -6249,14 +6249,26 @@ FUNCTION TstEmpresa( cPatDat )
       Comprobamos q el codigo de la delegacion no este vacio-------------------
       */
 
-      if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
+      //?( dbfDlg )->( OrdKeyCount() )
+
+      //if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
+      /*if !dbSeekInOrd( ( dbfEmp )->CodEmp, "cCodEmp", dbfDlg )
+         
+         //?( dbfEmp )->CodEmp
+         //?Len( ( dbfEmp )->CodEmp )
+
          if dbAppe( dbfDlg )
+
+            //?"Append de las delegaciones"
+
             ( dbfDlg )->cCodEmp  := ( dbfEmp )->CodEmp
             ( dbfDlg )->cCodDlg  := "00"
             ( dbfDlg )->cNomDlg  := "Central"
             ( dbfDlg )->( dbUnlock() )
-         end if 
-      end if
+
+         end if
+
+      end if*/
 
       /*
       Sigiente empresa---------------------------------------------------------
@@ -6271,6 +6283,7 @@ FUNCTION TstEmpresa( cPatDat )
    */
 
    ( dbfDlg )->( dbGoTop() )
+
    while !( dbfDlg )->( Eof() )
 
       if len( AllTrim( ( dbfDlg )->cCodEmp ) ) < 4
