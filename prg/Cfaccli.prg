@@ -635,7 +635,10 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                  ,;
                                  lSimula,;
                                  cTerNif,;
-                                 cTerNom ) )
+                                 cTerNom,;
+                                 ,;
+                                 ,;
+                                 "CabeceraFactura" ) )
 
       /*
       Asientos de Ventas
@@ -672,7 +675,10 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                     ,;
                                     lSimula,;
                                     cTerNif,;
-                                    cTerNom ) )
+                                    cTerNom,;
+                                    ,;
+                                    ,;
+                                    "VentaFactura" ) )
 
          else
 
@@ -696,7 +702,10 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                     ,;
                                     lSimula,;
                                     cTerNif,;
-                                    cTerNom ) )
+                                    cTerNom,;
+                                    ,;
+                                    ,;
+                                    "VentaFactura" ) )
 
          end if
 
@@ -706,7 +715,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       Asientos del retenciones________________________________________________________
       */
 
-      if ptaRet != 0
+      if lAplicacionContaplus() .and. ptaRet != 0
 
          aadd( aSimula, MkAsiento(  nAsiento,;
                                     cCodDiv,;
@@ -738,7 +747,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       -------------------------------------------------------------------------
       */
 
-      if nTotAnt != 0
+      if lAplicacionContaplus() .and. nTotAnt != 0
 
          aadd( aSimula, MkAsiento(  nAsiento,;
                                     cCodDiv,;
@@ -1000,7 +1009,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    // Contabilizamos desde aki A3---------------------------------------------
 
    if lAplicacionA3()
-      EnlaceA3():GetInstance():RenderFacturaVenta()
+      EnlaceA3():GetInstance():Render()
       EnlaceA3():GetInstance():Show() 
    end if 
 
