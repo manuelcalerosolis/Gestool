@@ -2654,7 +2654,7 @@ CLASS EnlaceA3
    METHOD TipoFormato()                   INLINE ( ::cBuffer   += '3' )
    METHOD CodigoEmpresa()                 INLINE ( ::cBuffer   += padr( cEmpCnt( ::hAsiento[ "Serie" ] ), 5 ) )
    METHOD FechaApunte()                   INLINE ( ::cBuffer   += dtos( date() ) )
-   METHOD TipoRegistro()                  INLINE ( ::cBuffer   += if( ::hAsiento[ "Rectificativa" ], '2', '1' ) )
+   METHOD TipoRegistro( nTipo )           INLINE ( ::cBuffer   += str( nTipo, 1 ) )
    METHOD Cuenta()                        INLINE ( ::cBuffer   += if (  ::hAsiento[ "ImporteDebe" ] != 0,;
                                                                         padr( ::hAsiento[ "Subcuenta" ], 12 ),;
                                                                         padr( ::hAsiento[ "Contrapartida" ], 12 ) ) )
@@ -2665,7 +2665,6 @@ CLASS EnlaceA3
    METHOD TipoFacturaBienes()             INLINE ( ::cBuffer   += '3' )
 
    METHOD NumeroFactura()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "Factura" ], 10 ) ) 
-   METHOD LineaApunte()                   INLINE ( ::cBuffer   += 'I' )   
 
    METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "Concepto" ] ) )
    METHOD ImporteDebe()                   INLINE ( ::cBuffer   += if( ::hAsiento[ "ImporteDebe" ] > 0, '+', '-' ) + strzero( ::hAsiento[ "ImporteDebe" ], 10, 2 ) )
@@ -2678,8 +2677,12 @@ CLASS EnlaceA3
    METHOD Generado()                      INLINE ( ::cBuffer   += 'N' )
 
    METHOD TipoImporte()                   INLINE ( ::cBuffer   += if( ::hAsiento[ "ImporteDebe" ] != 0, 'D', 'H' ) )
+   METHOD TipoCargoAbono()                INLINE ( ::cBuffer   += 'C' )
    METHOD Referencia()                    INLINE ( ::cBuffer   += substr( ::hAsiento[ "Concepto" ], 1, 10 ) )
-//   METHOD LineaApunte( ::hAsiento )         INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
+   
+   METHOD LineaApunte()                   INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
+   //METHOD LineaApunte()                   INLINE ( ::cBuffer   += 'I' )   
+   
    METHOD FinLinea()                      INLINE ( ::cBuffer   += CRLF ) 
 
       /* 
@@ -2759,8 +2762,9 @@ ENDCLASS
       ::TipoFormato()
       ::CodigoEmpresa()
       ::FechaApunte()
-      ::TipoRegistro()
+      ::TipoRegistro( 1 )
       ::Cuenta()
+      ::TipoImporte()
       ::DescripcionCuenta()
       ::TipoFacturaVenta()
       ::NumeroFactura()
@@ -2787,10 +2791,10 @@ ENDCLASS
       ::TipoFormato()
       ::CodigoEmpresa()
       ::FechaApunte()
-      ::TipoRegistro()
+      ::TipoRegistro( 9 )
       ::Cuenta()
       ::DescripcionCuenta()
-      ::TipoFacturaVenta()
+      ::TipoCargoAbono()
       ::NumeroFactura()
       ::LineaApunte()
       ::DescripcionApunte()
