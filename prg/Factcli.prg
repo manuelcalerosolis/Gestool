@@ -18209,12 +18209,12 @@ function SynFacCli( cPath )
          	end if
          end if
 
-         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
+         /*if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
          	if ( dbfFacCliL )->( dbRLock() )
          	   ( dbfFacCliL )->nCosDiv 	:= oStock:nCostoMedio( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2, ( dbfFacCliL )->cLote )   
                ( dbfFacCliL )->( dbUnLock() )         	   
          	end if
-         end if 
+         end if */
 
          ( dbfFacCliL )->( dbSkip() )
 

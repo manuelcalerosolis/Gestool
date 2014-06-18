@@ -298,4 +298,4 @@
 #define _LRECCOSTES 		  298
 #define _NEXPCONTBL			  299
 #define _LSHOWLIN			  300
-#define _LSHOWALMORG 		  301	
+#define _LSHOWORG 		  	  301	

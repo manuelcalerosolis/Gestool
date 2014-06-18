@@ -110,6 +110,9 @@ CLASS TUser
    Data     _CodigoSala                INIT ""
    Method   SalaVenta( cNewVal )       INLINE if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
 
+   Data     _DelegacionUsuario         INIT ""
+   Method   DelegacionUsuario( cNewVal ) INLINE if( cNewVal != nil, ::_DelegacionUsuario := cNewVal, ::_DelegacionUsuario )
+
    //------------------------------------------------------------------------//
 
    Data     _Delegacion                INIT space( 2 )
@@ -124,17 +127,15 @@ CLASS TUser
 
       else
 
-         if Empty( ::_Delegacion )
+         if Empty( ::DelegacionUsuario() )
 
             if !empty( uFieldEmpresa( "cSufDoc" ) )
                ::_Delegacion  := uFieldEmpresa( "cSufDoc")
             else
                ::_Delegacion  := "00"
-            end if 
+            end if
              
          end if   
-
-         // cDlgUsr( ::_Delegacion )
 
       end if
 
@@ -326,6 +327,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::cTipoIncidencia(   ( ::oDbf )->cTipInci )
          ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
          ::SalaVenta(         ( ::oDbf )->cCodSala )
+         ::DelegacionUsuario( ( ::oDbf )->cCodDlg )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
@@ -342,7 +344,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          */
          
          if !Empty( ( ::oDbf )->cCodDlg ) .and. !::lMaster()
-            ::cDelegacion(    ( ::oDbf )->cCodDlg )
+            ::cDelegacion( ( ::oDbf )->cCodDlg )
          end if
 
          /*
