@@ -615,7 +615,6 @@ METHOD FreeBitmaps() CLASS TBtnBmp
       PalBmpFree( ::hBitmap4, ::hPalette4 )
    endif
 
-
    ::hBitmap1  = 0
    ::hPalette1 = 0
    ::hBitmap2  = 0
