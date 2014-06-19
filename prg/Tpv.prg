@@ -18538,7 +18538,6 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
 
    end while
 
-
    nTotNet         := aBasTik[ 1 ] + aBasTik[ 2 ] + aBasTik[ 3 ]
    nTotIva         := aImpTik[ 1 ] + aImpTik[ 2 ] + aImpTik[ 3 ]
    nTotIvm         := aIvmTik[ 1 ] + aIvmTik[ 2 ] + aIvmTik[ 3 ]

@@ -4195,7 +4195,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    with object ( oBrwKit:AddCol() )
       :cHeader          := "Total"
-      :bEditValue       := {|| nCosto( ( dbfTmpKit )->cRefKit, dbfArticulo, dbfArtKit, .f., cDivUse, dbfDiv ) * nFactorConversion( ( dbfTmpKit )->cRefKit, dbfArticulo ) * ( dbfTmpKit )->nUndKit }
+      :bEditValue       := {|| nCosto( ( dbfTmpKit )->cRefKit, dbfArticulo, dbfArtKit, .f., cDivUse, dbfDiv ) * ( dbfTmpKit )->nUndKit } // * nFactorConversion( ( dbfTmpKit )->cRefKit, dbfArticulo ) 
       :bFooter          := {|| nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, .t., cDivUse, dbfDiv ) }
       :cEditPicture     := cPinDiv( cDivEmp(), dbfDiv )
       :nWidth           := 80
@@ -10788,7 +10788,7 @@ Function nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfD
 
       ( dbfTmpKit )->( dbGoTop() )
       while !( dbfTmpKit )->( eof() )
-         nCosto   += nCosto( ( dbfTmpKit )->cRefKit, dbfArticulo, dbfArtKit ) * nFactorConversion( ( dbfTmpKit )->cRefKit, dbfArticulo ) * ( dbfTmpKit )->nUndKit
+         nCosto   += nCosto( ( dbfTmpKit )->cRefKit, dbfArticulo, dbfArtKit ) * ( dbfTmpKit )->nUndKit * nFactorConversion( ( dbfTmpKit )->cRefKit, dbfArticulo )
          ( dbfTmpKit )->( dbSkip() )
       end while
 
@@ -16138,7 +16138,7 @@ Function nCosto( uTmp, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
 
       if ( dbfArtKit )->( dbSeek( cCodArt ) )
          while ( dbfArtKit )->cCodKit == cCodArt .and. !( dbfArtKit )->( eof() )
-            nCosto   += nCosto( ( dbfArtKit )->cRefKit, dbfArticulo, dbfArtKit ) * nFactorConversion( ( dbfArtKit )->cRefKit, dbfArticulo ) * ( dbfArtKit )->nUndKit
+            nCosto   += nCosto( ( dbfArtKit )->cRefKit, dbfArticulo, dbfArtKit ) * ( dbfArtKit )->nUndKit * nFactorConversion( ( dbfArtKit )->cRefKit, dbfArticulo ) 
             ( dbfArtKit )->( dbSkip() )
          end while
       end if
