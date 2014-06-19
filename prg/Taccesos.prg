@@ -100,6 +100,7 @@ CLASS TAcceso
    Method lHideCarpeta( oAcceso, cCurUsr )
 
    Method CreateSearchBar()
+   Method EndSearchBar()
    Method HideSearchBar()                 INLINE ( ::HideGet(), ::HideComboBox(), ::HideComboFilter(), ::HideButtonFilter(), ::HideAddButtonFilter(), ::HideEditButtonFilter(), ::HideYearComboBox() )
 
    Method InsertSearchBand()              INLINE ( ::oReBar:InsertBand( ::oSearchBar, "Buscar " ) )
@@ -656,6 +657,41 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
+Method EndSearchBar( oWnd )
+
+   if !Empty( ::oGet )
+      ::oGet:End()
+   end if 
+
+   if !Empty( ::oComboBox )
+      ::oComboBox:End()
+   end if 
+
+   if !Empty( ::oComboFilter )
+      ::oComboFilter:End()
+   end if 
+
+   if !Empty( ::oButtonAddFilter )
+      ::oButtonAddFilter:end()
+   end if 
+   
+   if !Empty( ::oButtonEditFilter )
+      ::oButtonEditFilter:End()
+   end if 
+
+   if !Empty( ::oButtonFilter )
+      ::oButtonFilter:End()
+   end if
+
+   if !Empty( ::oYearComboBox )
+      ::oYearComboBox:End()
+   end if 
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+
 Method CreateLogo()
 
    if Empty( ::oBmpLogo )
@@ -1029,8 +1065,7 @@ Method End()
    end if 
 
    if !Empty( ::oFont )
-      ::oFont:End(.t.)
-      ::oFont  := nil 
+      ::oFont:End( .t. )
    end if 
 
    if !Empty( ::oBmpLogo )
@@ -1048,6 +1083,24 @@ Method End()
    if !Empty( ::oButtonFilter )
       ::oButtonFilter:End()
    end if 
+
+   if !Empty( ::oComboBox )
+      ::oComboBox:End()
+   end if 
+
+   if !Empty( ::oComboFilter )
+      ::oComboFilter:End()
+   end if 
+
+   ::oRebar             := nil
+   ::oGet               := nil
+   ::oFont              := nil 
+   ::oBmpLogo           := nil
+   ::oButtonAddFilter   := nil 
+   ::oButtonEditFilter  := nil 
+   ::oButtonFilter      := nil 
+   ::oComboBox          := nil 
+   ::oComboFilter       := nil
 
 Return ( Self )
 

@@ -823,6 +823,8 @@ STATIC FUNCTION EndApp()
    ErrorBlock( oBlock )
 
    if ( oDlg:nResult == IDOK )
+   
+   
       FinishAplication()
    end if
 

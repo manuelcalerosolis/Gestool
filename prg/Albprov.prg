@@ -2180,7 +2180,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static Function StartEdtRecAlbProv( aGet, oSay )
 
-   if uFieldEmpresa( "lShowAlmOrg" )
+   if uFieldEmpresa( "lShowOrg" )
       aGet[ _CALMORIGEN ]:Show()
       oSay[7]:Show()
    else
@@ -3401,7 +3401,7 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
       aTmp[ __CALMORIGEN ]  := aTmpAlb[ _CALMORIGEN ]
    end if
 
-   if uFieldEmpresa( "lShowAlmOrg" )
+   if uFieldEmpresa( "lShowOrg" )
       aGet[ __CALMORIGEN ]:Show()
    else
       aGet[ __CALMORIGEN ]:Hide()

@@ -1397,7 +1397,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       198 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSHOWALMORG ] VAR aTmp[ _LSHOWALMORG ] ;
+      REDEFINE CHECKBOX aGet[ _LSHOWORG ] VAR aTmp[ _LSHOWORG ] ;
          ID       306 ;
          OF       fldGeneral         
 
@@ -6249,17 +6249,9 @@ FUNCTION TstEmpresa( cPatDat )
       Comprobamos q el codigo de la delegacion no este vacio-------------------
       */
 
-      //?( dbfDlg )->( OrdKeyCount() )
-
-      //if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
-      /*if !dbSeekInOrd( ( dbfEmp )->CodEmp, "cCodEmp", dbfDlg )
+      if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
          
-         //?( dbfEmp )->CodEmp
-         //?Len( ( dbfEmp )->CodEmp )
-
          if dbAppe( dbfDlg )
-
-            //?"Append de las delegaciones"
 
             ( dbfDlg )->cCodEmp  := ( dbfEmp )->CodEmp
             ( dbfDlg )->cCodDlg  := "00"
@@ -6268,7 +6260,7 @@ FUNCTION TstEmpresa( cPatDat )
 
          end if
 
-      end if*/
+      end if
 
       /*
       Sigiente empresa---------------------------------------------------------
@@ -6616,7 +6608,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
    aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lShowAlmOrg","L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lShowOrg",   "L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
 
 
 Return ( aDbf )
