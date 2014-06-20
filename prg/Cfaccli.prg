@@ -615,30 +615,50 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       Asiento de cliente----------------------------------------------------------
       */
 
-      aadd( aSimula, MkAsiento(  nAsiento, ;
-                                 cCodDiv,;
-                                 dFecha,;
-                                 cCtaCli,;
-                                 ,;
-                                 Round( ptaDebe, nRouDiv ),;
-                                 cConcepto,;
-                                 ,;
-                                 cFactura,;
-                                 ,;
-                                 ,;
-                                 ,;
-                                 ,;
-                                 cProyecto,;
-                                 cClave,;
-                                 ,;
-                                 ,;
-                                 ,;
-                                 lSimula,;
-                                 cTerNif,;
-                                 cTerNom,;
-                                 ,;
-                                 ,;
-                                 "CabeceraFactura" ) )
+      if lAplicacionContaplus()
+
+         aadd( aSimula, MkAsiento(  nAsiento, ;
+                                    cCodDiv,;
+                                    dFecha,;
+                                    cCtaCli,;
+                                    ,;
+                                    Round( ptaDebe, nRouDiv ),;
+                                    cConcepto,;
+                                    ,;
+                                    cFactura,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    cProyecto,;
+                                    cClave,;
+                                    ,;
+                                    ,;
+                                    ,;
+                                    lSimula,;
+                                    cTerNif,;
+                                    cTerNom ) )
+
+      else 
+
+         EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
+                                          "Fecha"                 => dFecha ,;
+                                          "TipoRegistro"          => '1',; // Facturas
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoFactura"           => '1',; // Ventas
+                                          "NumeroFacturaFactura"  => cFactura,;
+                                          "DescripcionApunte"     => cConcepto,;
+                                          "Importe"               => Round( ptaDebe, nRouDiv ),;
+                                          "Nif"                   => cTerNif,;
+                                          "NombreCliente"         => cTerNom,;
+                                          "CodigoPostal"          => ( dbfFacCliT )->cPosCli,;
+                                          "FechaOperacion"        => dFecha,;
+                                          "FechaFactura"          => dFecha,;
+                                          "Moneda"                => 'P',; // Euros
+                                          "Render"                => "CabeceraFactura" } )
+
+      end if 
 
       /*
       Asientos de Ventas
@@ -675,10 +695,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                     ,;
                                     lSimula,;
                                     cTerNif,;
-                                    cTerNom,;
-                                    ,;
-                                    ,;
-                                    "VentaFactura" ) )
+                                    cTerNom ) )
 
          else
 
@@ -702,10 +719,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                     ,;
                                     lSimula,;
                                     cTerNif,;
-                                    cTerNom,;
-                                    ,;
-                                    ,;
-                                    "VentaFactura" ) )
+                                    cTerNom ) )
 
          end if
 
