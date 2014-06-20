@@ -6857,7 +6857,59 @@ END CLASS
 
 function cLinkRewrite( cLink )
 
-Return( StrTran( AllTrim( cLink ), " ", "-" ) )
+   local cCaracter   := ""
+   local cResult     := ""
+   local cCarAnt     := ""
+
+   cLink             := AllTrim( cLink )
+
+   for each cCaracter in cLink
+
+      do case
+         case ( Abs( cCaracter ) >= 48 .and. Abs( cCaracter ) <= 57 ) .or.;
+              ( Abs( cCaracter ) >= 65 .and. Abs( cCaracter ) <= 90 ) .or.;
+              ( Abs( cCaracter ) >= 97 .and. Abs( cCaracter ) <= 122 )
+
+            cResult     := cResult + cCaracter
+
+         case Abs( cCaracter ) == 32
+
+            if Abs( cCarAnt ) != 32
+               cResult  := cResult + "-"
+            end if   
+
+         otherwise
+
+            cResult     := cResult + ReemplazaAcento( cCaracter )
+
+      end case
+
+      cCarAnt           := cCaracter
+
+   next
+
+   if !Empty( cResult )
+      cResult        := lower( cResult + "-" )
+   end if  
+
+Return( cResult )
+
+//---------------------------------------------------------------------------//
+
+Function ReemplazaAcento( cCaracter )
+
+   local nPos
+   local cPatron     := "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöùúûüýÿŠšŸ"
+   local cReemplazo  := "AAAAAAACEEEEIIIIDNOOOOOUUUUYaaaaaaaceeeeiiiinooooouuuuyySsY"
+   local cResultado  := Space( 0 )
+
+   nPos              := At( cCaracter, cPatron )
+
+   if nPos != 0
+      cResultado     := SubStr( cReemplazo, nPos, 1 )
+   end if
+
+return ( cResultado )
 
 //---------------------------------------------------------------------------//
 
