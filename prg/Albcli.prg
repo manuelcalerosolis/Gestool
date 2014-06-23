@@ -471,7 +471,7 @@ static nNumCaj          := 0
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
-static dOldFecCad 
+static dOldFecCad       := cToD( "" )
 static cOldUndMed       := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
