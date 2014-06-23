@@ -3434,7 +3434,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin,
        		aGet[ _CCODCLI ]:lValid()
    		end if
 
-		do case      
+		do case
       		case lRecogerUsuario() .and. Empty( cCodArt )
 
 	         	if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
