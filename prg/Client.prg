@@ -879,6 +879,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Agente"
+         :bEditValue       := {|| if( !Empty( ( TDataView():Get( "Client", nView ) )->cAgente ), ( TDataView():Get( "Client", nView ) )->cAgente + " - " + RetNbrAge( ( TDataView():Get( "Client", nView ) )->cAgente, cAgente ), "" ) }
+         :nWidth           := 200
+         :lHide            := .t.
+      end with
+
       oWndBrw:cHtmlHelp    := "Clientes"
 
       oWndBrw:CreateXFromCode()
