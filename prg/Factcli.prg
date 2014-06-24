@@ -11506,8 +11506,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nPrePro          	:= 0
    local nTarOld          	:= aTmp[ _NTARLIN ]
    local lChgCodArt       	:= ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local lChgPrpArt       	:= ( Empty( cOldPrpArt ) .or. cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
-   local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )
+   local lChgPrpArt       	:= ( cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
+   local lChgLotArt			:= ( cOldLotArt != Rtrim( aTmp[ _CLOTE ] ) )
 
    DEFAULT lFocused       	:= .t.
 
@@ -11979,7 +11979,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
 
-      if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
+      if ( lChgCodArt ) .or. ( lChgPrpArt )
 
          /*
          Guardamos el código de la familia
@@ -12201,9 +12201,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Solo si cambia el lote---------------------------------------------------
       */
 
-      msgAlert( lChgLotArt, "lChgLotArt" )
-
-      if ( lChgCodArt ) .or. ( cOldLotArt != aTmp[ _CLOTE ] )
+      if ( lChgCodArt ) .or. ( lChgLotArt )
 
       /*
       Lotes---------------------------------------------------------------------
@@ -12264,17 +12262,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                aGet[ _DFECCAD ]:Hide()
             end if
 
-         end if
-
-         /*
-         Ponemos el stock del artículo-----------------------------------------
-         */
-
-         if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
-            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
-            oStkAct:Refresh()
-         end if
-
+         end if  
 
       	/*
       	Cargamos los costos------------------------------------------------------
@@ -12295,6 +12283,19 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
       end if
+
+      /*
+      Ponemos el stock del artículo solo si cambian las prop o el lote---------
+      */
+
+      if ( lChgCodArt ) .or. ( lChgPrpArt ) .or. ( lChgLotArt )
+
+      	if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
+            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
+            oStkAct:Refresh()
+         end if
+
+      end if 
 
       /*
       Buscamos si hay ofertas-----------------------------------------------
