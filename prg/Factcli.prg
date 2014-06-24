@@ -11859,13 +11859,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          /*
          Meses de grantia------------------------------------------------------
          */
-
+         /*
         	if !Empty( aGet[ _NMESGRT ] )
             aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
         	else
             aGet[ _NMESGRT ]  := ( dbfArticulo )->nMesGrt
         	end if
-
+			*/
          /*
          Si la comisi¢n del articulo hacia el agente es distinto de cero-------
          */
