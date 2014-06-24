@@ -3563,7 +3563,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
-Static Function bGenEdtRecCli( cDocumento, lFromFactura )
+Function bGenEdtRecCli( cDocumento, lFromFactura )
 
    local bGen
    local cDoc           := by( cDocumento )

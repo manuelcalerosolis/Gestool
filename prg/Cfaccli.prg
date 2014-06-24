@@ -655,8 +655,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                           "CodigoPostal"          => ( dbfFacCliT )->cPosCli,;
                                           "FechaOperacion"        => dFecha,;
                                           "FechaFactura"          => dFecha,;
-                                          "Moneda"                => 'P',; // Euros
-                                          "Render"                => "CabeceraFactura" } )
+                                          "Moneda"                => 'E',; // Euros
+                                          "Render"                => 'CabeceraFactura' } )
 
       end if 
 
@@ -711,7 +711,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                              "TipoImporte"           => 'C',;
                                              "NumeroFactura"         => cFactura,;
                                              "DescripcionApunte"     => cConcepto,;
-                                             "SubtipoFactura"        => if( lIvaCEE, '2', '1' ),; // Ventas
+                                             "SubtipoFactura"        => if( lIvaCEE, '02', '01' ),; // Ventas
                                              "BaseImponible"         => nCalculo,;
                                              "PorcentajeIVA"         => aVentas[ n, 2 ],;
                                              "PorcentajeRecargo"     => nPReq( dbfIva, aVentas[ n, 2 ] ),;
@@ -720,7 +720,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                              "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
                                              "Modelo415"             => ' ',;
                                              "Analitico"             => ' ',;
-                                             "Moneda"                => 'P',; // Euros
+                                             "Moneda"                => 'E',; // Euros
                                              "Render"                => 'VentaFactura' } )
 
          end if 

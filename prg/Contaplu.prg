@@ -2641,181 +2641,107 @@ CLASS EnlaceA3
    METHOD GetInstance()
 
    METHOD Add( hAsiento )                 INLINE ( if( hhaskey( hAsiento, "Render" ) .and. !empty( hGet( hAsiento, "Render" ) ), aAdd( ::aAsiento, hAsiento ), ) )
-   METHOD Show()                          INLINE ( msgInfo( ::cBuffer ), ::cBuffer := "", ::aAsiento := {} )
+   METHOD Show()                          INLINE ( msgInfo( ::cBuffer ) )
 
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
 
    METHOD Render()
-   METHOD RenderSinIVA()
+   METHOD AutoRender()
    METHOD RenderCabeceraFactura()
    METHOD RenderVentaFactura()
+   METHOD RenderReciboFactura()
 
    METHOD WriteASCII()   
-   METHOD WriteInfo( oTree )              INLINE ( if( !empty( oTree ), oTree:Select( oTree:Add( ::cDirectory + "\" + ::cFile + " creado correctamente", 1 ) ), ) )
+   METHOD WriteInfo( oTree )              INLINE ( oTree:Select( oTree:Add( "Fichero : " + ( ::cDirectory + "\" + ::cFile ) + " generado satisfactoriamente.", 1 ) ) )
 
-   // Utiles-------------------------------------------------------------------
-
-   METHOD Signo( nNumero )                INLINE ( if( nNumero >= 0, '+', '-' ) + strzero( round( nNumero, 2 ), 13, 2 ) )
-   METHOD LineaApunte()                   INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
-
-   // Metodos para la creaciond del fichero------------------------------------
+   METHOD Signo( nImporte )      
+   METHOD Porcentaje( nPorcentaje )         
 
    METHOD TipoFormato()                   INLINE ( ::cBuffer   += '3' )
-   METHOD CodigoEmpresa()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "Empresa" ], 5 ) )
-   METHOD FechaApunte()                   INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha" ] ) )
-   METHOD TipoRegistro( nTipo )           INLINE ( ::cBuffer   += str( nTipo, 1 ) )
-   METHOD Cuenta()                        INLINE ( ::cBuffer   += padr( ::hAsiento[ "Cuenta" ], 12 ) )
-   METHOD DescripcionCuenta()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionCuenta" ], 30 ) )
-   METHOD TipoFactura()                   INLINE ( ::cBuffer   += ::hAsiento[ "TipoFactura"] )
+   METHOD Empresa()                       INLINE ( ::cBuffer   += padr( ::hAsiento[ "Empresa" ], 5 ) )
+   METHOD FechaApunte()                   INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha"] ) )
+   METHOD TipoRegistro()                  INLINE ( ::cBuffer   += ::hAsiento[ "TipoRegistro"] ) 
+   METHOD TipoImporte()                   INLINE ( ::cBuffer   += ::hAsiento[ "TipoImporte" ] )
    METHOD NumeroFactura()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NumeroFactura" ], 10 ) ) 
    METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionApunte" ], 30 ) )
-   METHOD Importe()                       INLINE ( ::cBuffer   += ::signo( ::hAsiento[ "Importe" ] ) )
+   METHOD Importe()                       INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "Importe" ] ) )
+   METHOD Reserva( nSpace )               INLINE ( ::cBuffer   += space( nSpace ) )
    METHOD NIF()                           INLINE ( ::cBuffer   += padr( ::hAsiento[ "Nif" ], 14 ) )
    METHOD NombreCliente()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NombreCliente" ], 40 ) )
    METHOD CodigoPostal()                  INLINE ( ::cBuffer   += padr( ::hAsiento[ "CodigoPostal" ], 5 ) )
-   METHOD FechaOperacion()                INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaOperacion" ] ) )
-   METHOD FechaFactura()                  INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaFactura" ] ) )
+   METHOD FechaOperacion()                INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaOperacion"] ) )
+   METHOD FechaFactura()                  INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaFactura"] ) )
    METHOD Moneda()                        INLINE ( ::cBuffer   += ::hAsiento[ "Moneda" ] )
 
-   METHOD Reserva( nSpace )               INLINE ( ::cBuffer   += space( nSpace ) )
+   METHOD Cuenta()                        INLINE ( ::cBuffer   += padr( ::hAsiento[ "Cuenta" ], 12 ) ) 
+   METHOD DescripcionCuenta()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionCuenta" ], 30 ) )
 
-   METHOD TipoFacturaCompras()            INLINE ( ::cBuffer   += '2' )
-   METHOD TipoFacturaBienes()             INLINE ( ::cBuffer   += '3' )
+   METHOD SubtipoFactura()                INLINE ( ::cBuffer   += ::hAsiento[ "SubtipoFactura" ] ) 
 
-   METHOD BaseImponible()                 INLINE ( ::cBuffer   += ::signo( ::hAsiento[ "BaseImponible" ] ) )
-   METHOD PorcentajeIVA()                 INLINE ( ::cBuffer   += strzero( ::hAsiento[ "PorcentajeIVA" ], 5, 2 ) )
-   METHOD CuotaIVA()                      INLINE ( ::cBuffer   += ::signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeIVA" ] / 100 ) )
-   METHOD PorcentajeRecargo()             INLINE ( ::cBuffer   += strzero( ::hAsiento[ "PorcentajeRecargo" ], 5, 2 ) )
-   METHOD CuotaRecargo()                  INLINE ( ::cBuffer   += ::signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRecargo" ] / 100 ) )
-   METHOD PorcentajeRetencion()           INLINE ( ::cBuffer   += strzero( ::hAsiento[ "PorcentajeRetencion" ], 5, 2 ) )
-   METHOD CuotaRetencion()                INLINE ( ::cBuffer   += ::signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRetencion" ] / 100 ) )
+   METHOD BaseImponible()                 INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] ) )
+   METHOD PorcentajeIVA()                 INLINE ( ::cBuffer   += ::Porcentaje( ::hAsiento[ "PorcentajeIVA" ], 5, 2 ) )
+   METHOD CuotaIVA()                      INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeIVA" ] / 100 ) )
+
+   METHOD PorcentajeRecargo()             INLINE ( ::cBuffer   += ::Porcentaje( ::hAsiento[ "PorcentajeRecargo" ], 5, 2 ) )
+   METHOD CuotaRecargo()                  INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRecargo" ] / 100 ) )
+
+   METHOD PorcentajeRetencion()           INLINE ( ::cBuffer   += ::Porcentaje( ::hAsiento[ "PorcentajeRetencion" ], 5, 2 ) )
+   METHOD CuotaRetencion()                INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRetencion" ] / 100 ) )
 
    METHOD Impreso()                       INLINE ( ::cBuffer   += ::hAsiento[ "Impreso" ] )
    METHOD SujetaIVA()                     INLINE ( ::cBuffer   += ::hAsiento[ "SujetaIVA" ] )
    METHOD Modelo415()                     INLINE ( ::cBuffer   += ::hAsiento[ "Modelo415" ] )
    METHOD Analitico()                     INLINE ( ::cBuffer   += ::hAsiento[ "Analitico" ] )
 
-   METHOD CodigoPostal()                  INLINE ( ::cBuffer   += space( 5 ) )
-   METHOD Moneda()                        INLINE ( ::cBuffer   += 'E' )
+   METHOD TipoFacturaVenta()              INLINE ( ::cBuffer   += '1' )
+   METHOD TipoFacturaCompras()            INLINE ( ::cBuffer   += '2' )
+   METHOD TipoFacturaBienes()             INLINE ( ::cBuffer   += '3' )
+
+   METHOD FechaOperacion()                INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha"] ) )
    METHOD Generado()                      INLINE ( ::cBuffer   += 'N' )
 
-   METHOD TipoImporte()                   INLINE ( ::cBuffer   += ::hAsiento[ "TipoImporte" ] )
-   METHOD SubtipoFactura()                INLINE ( ::cBuffer   += ::hAsiento[ "SubtipoFactura" ] )
-
+   METHOD TipoImporte()                   INLINE ( ::cBuffer   += 'C' )
    METHOD Referencia()                    INLINE ( ::cBuffer   += substr( ::hAsiento[ "Concepto" ], 1, 10 ) )
    
-
-   METHOD SubtipoFactura()                INLINE ( ::cBuffer   += if( ::hAsiento[ "PorcentajeIVA" ] != 0, '01', '02' ) )
+   METHOD LineaApunte()                   INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
    
    METHOD FinLinea()                      INLINE ( ::cBuffer   += CRLF ) 
 
-/* 
-   EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
-                                    "Fecha"                 => dFecha ,;
-                                    "TipoRegistro"          => '9',; // Facturas
-                                    "Cuenta"                => aVentas[ n, 1 ],;
-                                    "DescripcionCuenta"     => '',;
-                                    "TipoImporte"           => 'C',;
-                                    "NumeroFactura"         => cFactura,;
-                                    "DescripcionApunte"     => cConcepto,;
-                                    "SubtipoFactura"        => if( lIvaCEE, '2', '1' ),; // Ventas
-                                    "BaseImponible"         => nCalculo,;
-                                    "PorcentajeIVA"         => aIva[ n, 2 ],;
-                                    "PorcentajeRecargo"     => nPReq( dbfIva, aVentas[ n, 2 ] ),;
-                                    "PorcentajeRetencion"   => 0,;
-                                    "Impreso"               => '01',; // 347
-                                    "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
-                                    "Modelo415"             => ' ',;
-                                    "Analitico"             => ' ',;
-                                    "Moneda"                => 'P',; // Euros
-                                    "Render"                => 'VentaFactura' } )
-*/
+      /* 
+            EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
+                                             "Fecha"                 => dFecha ,;
+                                             "TipoRegistro"          => '9',; // Facturas
+                                             "Cuenta"                => aVentas[ n, 1 ],;
+                                             "DescripcionCuenta"     => '',;
+                                             "TipoImporte"           => 'C',;
+                                             "NumeroFactura"         => cFactura,;
+                                             "DescripcionApunte"     => cConcepto,;
+                                             "SubtipoFactura"        => if( lIvaCEE, '2', '1' ),; // Ventas
+                                             "BaseImponible"         => nCalculo,;
+                                             "PorcentajeIVA"         => aVentas[ n, 2 ],;
+                                             "PorcentajeRecargo"     => nPReq( dbfIva, aVentas[ n, 2 ] ),;
+                                             "PorcentajeRetencion"   => 0,;
+                                             "Impreso"               => '01',; // 347
+                                             "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
+                                             "Modelo415"             => ' ',;
+                                             "Analitico"             => ' ',;
+                                             "Moneda"                => 'E',; // Euros
+                                             "Render"                => 'VentaFactura' } )
+      */
+
 
 ENDCLASS
 
-//---------------------------------------------------------------------------//
-
-   METHOD New()
-
-      ::aAsiento                          := {}
-      ::cDirectory                        := "C:\EnlaceA3"
-      ::cFile                             := "SuEnalce.Dat" 
-      ::cDate                             := DateToString()
-      ::cBuffer                           := ""
-
-   RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD GetInstance()
-
-      if Empty( ::oInstance )
-         ::oInstance                      := ::New()
-      end if
-
-   RETURN ( ::oInstance )
-
-   //---------------------------------------------------------------------------//
-
-   METHOD Render() CLASS EnlaceA3
-
-      local hAsiento
-
-      for each hAsiento in ::aAsiento
-
-         ::hAsiento     := hAsiento
-
-         do case 
-            case ::hAsiento[ "Render" ] == "CabeceraFactura"
-               ::RenderCabeceraFactura()
-
-            case ::hAsiento[ "Render" ] == "VentaFactura"
-               ::RenderVentaFactura()
-         
-         end case
-
-      next
-
-   RETURN ( Self )
-
-   //---------------------------------------------------------------------------//
-
-   METHOD RenderCabeceraFactura() CLASS EnlaceA3
-
-      ::TipoFormato()
-      ::CodigoEmpresa()
-      ::FechaApunte()
-      ::TipoRegistro( 1 )
-      ::Cuenta()
-      ::DescripcionCuenta()
-      ::TipoFactura()
-      ::NumeroFactura()
-      ::LineaApunte()
-      ::DescripcionApunte()
-      ::Importe()
-      ::Reserva( 62 )
-      ::NIF()
-      ::NombreCliente()
-      ::CodigoPostal()
-      ::Reserva( 2 )
-      ::FechaOperacion()
-      ::FechaFactura()
-      ::Moneda()
-      ::Generado()
-      ::FinLinea() 
-
-   Return ( Self )
-
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
    METHOD RenderVentaFactura() CLASS EnlaceA3
 
       ::TipoFormato()
-      ::CodigoEmpresa()
+      ::Empresa()
       ::FechaApunte()
-      ::TipoRegistro( 9 )
+      ::TipoRegistro()
       ::Cuenta()
       ::DescripcionCuenta()
       ::TipoImporte()
@@ -2844,34 +2770,168 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
-   METHOD RenderSinIVA() CLASS EnlaceA3
+   METHOD RenderReciboFactura() CLASS EnlaceA3
+
+      ::TipoFormato()
+      ::Empresa()
+      ::FechaApunte()
+      ::TipoRegistro( '9' )
+      ::Cuenta()
+      ::DescripcionCuenta()
+      ::TipoCargoAbono()
+      ::NumeroFactura()
+      ::LineaApunte()
+      ::DescripcionApunte()
+      ::SubtipoFactura()
+      ::ImporteHaber()
+      ::PorcentajeIVA()
+      ::CuotaIVA()
+      ::PorcentajeRecargo()
+      ::CuotaRecargo()
+      ::Reserva( 62 )
+      ::NIF()
+      ::Nombre()
+      ::Reserva( 2 )
+      ::FechaOperacion()
+      ::FechaFactura()
+      ::Moneda()
+      ::Generado()
+
+      ::FinLinea() 
 
    Return ( Self )
 
-   //------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+
+   METHOD New()
+
+      ::aAsiento                          := {}
+      ::cDirectory                        := "C:\EnlaceA3"
+      ::cFile                             := "SuEnalce.Dat" 
+      ::cDate                             := DateToString()
+      ::cBuffer                           := ""
+
+   RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD GetInstance()
+
+      if Empty( ::oInstance )
+         ::oInstance                      := ::New()
+      end if
+
+   RETURN ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+   METHOD Render() CLASS EnlaceA3
+
+      local hAsiento
+
+      for each hAsiento in ::aAsiento
+
+         msgAlert( hb_enumindex() )
+
+         ::hAsiento     := hAsiento
+
+         do case 
+            case hAsiento[ "Render" ] == "CabeceraFactura"
+               ::RenderCabeceraFactura()
+            case hAsiento[ "Render" ] == "VentaFactura"
+               ::RenderVentaFactura()
+            case hAsiento[ "Render" ] == "ReciboFactura"
+               // ::RenderReciboFactura()
+         end case
+
+      next
+
+   RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD RenderCabeceraFactura() CLASS EnlaceA3
+
+      ::TipoFormato()
+      ::Empresa()
+      ::FechaApunte()
+      ::TipoRegistro( 1 )
+      ::Cuenta()
+      ::DescripcionCuenta()
+      ::TipoFacturaVenta()
+      ::NumeroFactura()
+      ::LineaApunte()
+      ::DescripcionApunte()
+      ::Importe()
+      ::Reserva( 62 )
+      ::NIF()
+      ::NombreCliente()
+      ::CodigoPostal()
+      ::Reserva( 2 )
+      ::FechaOperacion()
+      ::FechaOperacion()
+      ::Moneda()
+      ::Generado()
+
+      ::FinLinea() 
+
+   Return ( Self )
+
+//------------------------------------------------------------------------//
+
+   METHOD Signo( nImporte )
+
+      if nImporte == 0
+         Return ( space( 14 ) )
+      end if 
+
+   RETURN ( if( nImporte > 0, '+', '-' ) + strzero( nImporte, 13, 2 ) )
+
+//------------------------------------------------------------------------//
+
+   METHOD Porcentaje( nPorcentaje )
+
+      if nPorcentaje == 0
+         Return ( space( 5 ) )
+      end if 
+
+   RETURN ( strzero( ::hAsiento[ "PorcentajeIVA" ], 5, 2 ) ) 
+
+//------------------------------------------------------------------------//
+
+   METHOD AutoRender() CLASS EnlaceA3
+/*
+      for each hAsiento in ::aAsiento
+         msgAlert( HaaGetValueAt( hAsiento, 1 ) )
+
+      next
+*/
+   Return ( Self )
+
+//------------------------------------------------------------------------//
 
    METHOD WriteASCII() CLASS EnlaceA3
 
-      ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
+      ferase( ::cDirectory + "\" + ::cFile )
+
+      ::hFile        := fCreate( ::cDirectory + "\" + ::cFile )
 
       if !Empty( ::hFile )
+
          fWrite( ::hFile, ::cBuffer )
          fClose( ::hFile )
+
+         ::cBuffer   := ""
+         ::aAsiento  := {}
+
       end if
 
-      ::cBuffer   := ""
-      ::aAsiento  := {}
-
-      msgAlert( ::cDirectory + "\" + ::cFile )
-
    Return ( Self )
 
-   //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
 
-   Return ( Self )
-
-   //------------------------------------------------------------------------//
 
 
 

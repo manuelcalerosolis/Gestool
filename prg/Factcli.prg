@@ -1082,7 +1082,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, TDataView():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", .f., "Simular resultados", .f., "Contabilizar recibos" ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, TDataView():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos" ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -6938,6 +6938,7 @@ Static Function StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDoc
    end if
 
    if lHide1
+      oChk1:UnCheck()
       oChk1:Hide()
    else
       SetWindowText( oChk1:hWnd, cTitle1 )
@@ -6945,6 +6946,7 @@ Static Function StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDoc
    end if
 
    if lHide2
+      oChk2:UnCheck()
       oChk2:Hide()
    else
       SetWindowText( oChk2:hWnd, cTitle2 )
@@ -11507,7 +11509,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nTarOld          	:= aTmp[ _NTARLIN ]
    local lChgCodArt       	:= ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
    local lChgPrpArt       	:= ( Empty( cOldPrpArt ) .or. cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
-   local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )
+   local lChgLotArt			:= ( Empty( cOldLotArt ) .or. cOldLotArt != aTmp[ _CLOTE ] )		
 
    DEFAULT lFocused       	:= .t.
 
@@ -11859,13 +11861,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          /*
          Meses de grantia------------------------------------------------------
          */
-         /*
+
         	if !Empty( aGet[ _NMESGRT ] )
             aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
         	else
             aGet[ _NMESGRT ]  := ( dbfArticulo )->nMesGrt
         	end if
-			*/
+
          /*
          Si la comisi¢n del articulo hacia el agente es distinto de cero-------
          */
@@ -12201,9 +12203,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Solo si cambia el lote---------------------------------------------------
       */
 
-      msgAlert( lChgLotArt, "lChgLotArt" )
 
-      if ( lChgCodArt ) .or. ( cOldLotArt != aTmp[ _CLOTE ] )
+      if ( lChgCodArt ) .or. ( lChgLotArt )
 
       /*
       Lotes---------------------------------------------------------------------
