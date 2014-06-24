@@ -11507,7 +11507,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nTarOld          	:= aTmp[ _NTARLIN ]
    local lChgCodArt       	:= ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
    local lChgPrpArt       	:= ( Empty( cOldPrpArt ) .or. cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
-   local lChgLotArt			:= ( Empty( cOldLotArt ) .or. cOldLotArt != aTmp[ _CLOTE ] )		
+   local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )
 
    DEFAULT lFocused       	:= .t.
 
@@ -12201,8 +12201,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Solo si cambia el lote---------------------------------------------------
       */
 
+      msgAlert( lChgLotArt, "lChgLotArt" )
 
-      if ( lChgCodArt ) .or. ( lChgLotArt )
+      if ( lChgCodArt ) .or. ( cOldLotArt != aTmp[ _CLOTE ] )
 
       /*
       Lotes---------------------------------------------------------------------
