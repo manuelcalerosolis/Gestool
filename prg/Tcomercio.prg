@@ -2004,6 +2004,8 @@ Method UpdateCategoriesPrestashop() CLASS TComercio
    local cCommand := ""
    local nParent  := 2
 
+   ?"Entro en el updatecategorie"
+
    /*
    Actualizamos la familia en prestashop------------------------------------
    */
@@ -2028,6 +2030,8 @@ Method UpdateCategoriesPrestashop() CLASS TComercio
                      "WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
 
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::ActualizaCaterogiaPadrePrestashop()
 
    cCommand       := "UPDATE " + ::cPrefixTable( "category_lang" ) + " SET " + ;
                         "name='" + AllTrim( ::oFam:cNomFam ) + "', " + ;
