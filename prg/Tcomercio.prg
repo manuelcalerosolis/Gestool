@@ -183,7 +183,7 @@ CLASS TComercio
    Method GetInstance()
    Method New()
    Method Create()                  INLINE ( Self )
-   METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cPasswd ) .and. !Empty( ::cDbName ) )
+   METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
 
    Method OpenFiles()
    Method CloseFiles()
@@ -289,6 +289,7 @@ CLASS TComercio
    METHOD AppendClientPrestashop()
    METHOD AppendPedidoprestashop()
    METHOD EstadoPedidosPrestashop()
+   METHOD AppendMessagePedido()
 
    METHOD GetParentCategories()
 
@@ -1074,8 +1075,8 @@ Method ImportarPrestashop()
 
    ::oBtnCancel:Disable()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE*/
 
    if ::OpenFiles()
 
@@ -1138,13 +1139,13 @@ Method ImportarPrestashop()
 
    end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    ::Closefiles()
 
@@ -3562,7 +3563,7 @@ Method ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
    if !::lReady()
       Return .f.
    end if
-   
+
    ::lShowDialogWait()
 
    if ::OpenFiles()
@@ -3579,7 +3580,7 @@ Method ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
                   ::DeleteProductsPrestashop()
       
                case ::oArt:lPubInt .and. ::oArt:cCodWeb != 0
-      
+
                   cCommand := 'SELECT * FROM ' + ::cPrefixTable( "product" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
                   oQuery   := TMSQuery():New( ::oCon, cCommand )
       
@@ -3675,6 +3676,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "quantity, " + ;
                      "minimal_quantity, " + ;
                      "price, " + ;
+                     "reference, " + ;
                      "weight, " + ;
                      "active, " + ;
                      "date_add, " + ;
@@ -3687,6 +3689,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "'1', " + ;                                                                                  //quantity
                      "'1', " + ;                                                                                  //minimal_quantity
                      "'" + AllTrim( Str( nPrecio ) ) + "', " + ;                                                  //price
+                     "'" + AllTrim( ::oArt:Codigo ) + "', " + ;                                                   //reference
                      "'" + AllTrim( Str( ::oArt:nPesoKg ) ) + "', " + ;                                           //weight
                      "'1', " + ;                                                                                  //active
                      "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
@@ -3785,6 +3788,8 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "description, " + ;
                      "description_short, " + ;
                      "link_rewrite, " + ;
+                     "meta_title, " + ;
+                     "meta_description, " + ;
                      "name, " + ;
                      "available_now, " + ;
                      "available_later )" + ;
@@ -3792,8 +3797,10 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "('" + Str( nCodigoWeb ) + "', " + ;                  // id_product
                      "'" + Str( ::nLanguage ) + "', " + ;                  // id_lang
                      "'" + if( !Empty( ::oArt:mDesTec ), ::oCon:EscapeStr( ::oArt:mDesTec ), ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;        // description
-                     "'" + "Ref:" + AllTrim( ::oArt:Codigo ) + "', " + ;   // description_short
+                     "'" + AllTrim( ::oArt:Nombre ) + "', " + ;   // description_short
                      "'" + cLinkRewrite( ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;       // link_rewrite
+                     "'" + AllTrim( ::oArt:cTitSeo ) + "', " + ;   // Meta_título
+                     "'" + AllTrim( ::oArt:cDesSeo ) + "', " + ;   // Meta_description
                      "'" + ::oCon:EscapeStr( ::oArt:Nombre ) + "', " + ;      // name
                      "'En stock', " + ;                                       // avatible_now
                      "'' )"
@@ -3907,7 +3914,10 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    cCommand          := "UPDATE " + ::cPrefixTable( "product_lang" ) + " SET " + ;
                            "description='" + if( !Empty( ::oArt:mDesTec ), AllTrim( ::oArt:mDesTec ), AllTrim( ::oArt:Nombre ) ) + "', " + ;
-                           "description_short='" + "Ref:" + AllTrim( ::oArt:Codigo ) + "', " + ;
+                           "description_short='" + AllTrim( ::oArt:Nombre ) + "', " + ;
+                           "link_rewrite='" + cLinkRewrite( ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;
+                           "meta_title='" + AllTrim( ::oArt:cTitSeo ) + "', " + ;
+                           "meta_description='" + AllTrim( ::oArt:cDesSeo ) + "', " + ;
                            "name='" + AllTrim( ::oArt:Nombre ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
 
@@ -5814,7 +5824,7 @@ METHOD AppendPedidoprestashop()
                */
 
                cSerPed                 := uFieldEmpresa( "cSeriePed" )
-               nNumPed                 := nNewDoc( uFieldEmpresa( "cSeriePed" ), ::oPedCliT:cAlias, "NPEDCLI", , ::oCount:cAlias )
+               nNumPed                 := nNewDoc( if( !Empty( uFieldEmpresa( "cSeriePed" ) ), uFieldEmpresa( "cSeriePed" ), cNewSer( "nPedCli", ::oCount:cAlias ) ), ::oPedCliT:cAlias, "NPEDCLI", , ::oCount:cAlias )
                cSufPed                 := RetSufEmp()
 
                SET DATE FORMAT "yyyy/mm/dd"
@@ -5946,6 +5956,12 @@ METHOD AppendPedidoprestashop()
                   ::SetText( "Error al descargar el pedido: " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed, 3 )
                end if
 
+               /*
+               Metemos los comentarios del cliente como incidencias------------
+               */
+
+               ::AppendMessagePedido( cCodWeb, cSerPed, nNumPed, cSufPed, dFecha )
+
             else
 
                ::SetText( "El pedido " + ::oPedCliT:cSerPed + "/" + AllTrim( Str( ::oPedCliT:nNumPed ) ) + "/" + ::oPedCliT:cSufPed + " ya ha sido importado desde la página web.", 3 )
@@ -5965,6 +5981,63 @@ METHOD AppendPedidoprestashop()
    oQuery:Free()
 
    oQuery   := nil
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendMessagePedido( cCodWeb, cSerPed, nNumPed, cSufPed, dFecha ) Class TComercio
+
+   local oQueryThead
+   local oQueryMessage
+
+   oQueryThead    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "customer_thread" ) + " WHERE id_order=" + AllTrim( Str( cCodWeb ) ) )
+
+   if oQueryThead:Open()
+
+      if oQueryThead:RecCount() > 0
+
+         oQueryThead:GoTop()
+
+         while !oQueryThead:Eof()
+
+            oQueryMessage    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "customer_message" ) + " WHERE id_customer_thread=" + AllTrim( Str( oQueryThead:FieldGet( 1 ) ) ) )
+
+            if oQueryMessage:Open()
+
+               if oQueryMessage:RecCount() > 0
+
+                  oQueryMessage:GoTop()
+
+                  while !oQueryMessage:Eof()
+
+                     ::oPedCliI:Append()
+                     ::oPedCliI:Blank()
+
+                     ::oPedCliI:cSerPed   := cSerPed
+                     ::oPedCliI:nNumPed   := nNumPed
+                     ::oPedCliI:cSufPed   := cSufPed
+                     ::oPedCliI:dFecInc   := dFecha
+                     ::oPedCliI:mDesInc   := oQueryMessage:FieldGetByName( "message" )
+                     ::oPedCliI:lAviso    := .t.
+
+                     ::oPedCliI:Save()
+
+                  oQueryMessage:Skip()
+
+                  end while
+
+               end if
+               
+            end if      
+
+            oQueryThead:Skip()
+
+         end while
+
+      end if   
+
+   end if
 
 Return ( self )
 

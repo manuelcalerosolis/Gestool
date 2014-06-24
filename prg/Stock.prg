@@ -3826,14 +3826,12 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( Empty( cLote )   .or. ( ::cHisMovT )->cLote == cLote )    .and.;
          ( ::cHisMovT)->( !Eof() )
 
-         // msgAlert( ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov ), "lValoracionCostoMedio" )
-
          if ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov )
 
             if !Empty( ( ::cHisMovT)->cAloMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) .and.;
                ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
-               
+               msgAlert( (::cHisMovT)->nNumRem, "suma 1")
                if nTotLMovAlm( ::cHisMovT ) > 0 
 
                   nUnidades   += nTotNMovAlm( ::cHisMovT )
@@ -3846,7 +3844,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
             if !Empty( ( ::cHisMovT)->cAliMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
                ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
-
+               
                if nTotNMovAlm( ::cHisMovT ) > 0
 
                   nUnidades   += nTotNMovAlm( ::cHisMovT )
@@ -4002,7 +4000,8 @@ RETURN ( nCostoMedio )
 
 METHOD lValoracionCostoMedio( nTipMov )
 
-RETURN ( !uFieldEmpresa( "lMovCos" ) .and. ( nTipMov == 2 .or. nTipMov == 4 ) )
+//RETURN ( !uFieldEmpresa( "lMovCos" ) .and. ( nTipMov == 2 .or. nTipMov == 4 ) )
+RETURN ( !uFieldEmpresa( "lMovCos" ) .and. ( nTipMov == 2 .or. nTipMov == 4 .or. ntipMov == 1 )  )
 
 //---------------------------------------------------------------------------//
 
