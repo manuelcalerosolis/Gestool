@@ -12199,7 +12199,7 @@ Function hValoresAtipica( hValue, hAtipica )
 
       do case
          case nTarifa == 1
-            
+
             if hhaskey( hAtipica, "nImporte" )
                if hAtipica[ "nImporte" ] == 0.00000
                   hAtipica[ "nImporte" ]     := if( hValue[ "lIvaIncluido" ], ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPreIva1, ( TDataView():Atipicas( hValue[ "nView" ] ) )->nPrcArt )
