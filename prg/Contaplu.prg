@@ -2664,6 +2664,7 @@ CLASS EnlaceA3
    METHOD FechaApunte()                   INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha"] ) )
    METHOD TipoRegistro()                  INLINE ( ::cBuffer   += ::hAsiento[ "TipoRegistro"] ) 
    METHOD TipoImporte()                   INLINE ( ::cBuffer   += ::hAsiento[ "TipoImporte" ] )
+   METHOD FechaFactura()                  INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaFactura"] ) )
    METHOD NumeroFactura()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NumeroFactura" ], 10 ) ) 
    METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionApunte" ], 30 ) )
    METHOD Importe()                       INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "Importe" ] ) )
@@ -2676,6 +2677,8 @@ CLASS EnlaceA3
    METHOD Moneda()                        INLINE ( ::cBuffer   += ::hAsiento[ "Moneda" ] )
 
    METHOD Cuenta()                        INLINE ( ::cBuffer   += padr( ::hAsiento[ "Cuenta" ], 12 ) ) 
+   METHOD CuentaTesoreria()               INLINE ( ::cBuffer   += padr( ::hAsiento[ "CuentaTesoreria" ], 12 ) ) 
+
    METHOD DescripcionCuenta()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionCuenta" ], 30 ) )
 
    METHOD SubtipoFactura()                INLINE ( ::cBuffer   += ::hAsiento[ "SubtipoFactura" ] ) 
@@ -2703,6 +2706,16 @@ CLASS EnlaceA3
    METHOD Generado()                      INLINE ( ::cBuffer   += 'N' )
 
    METHOD TipoImporte()                   INLINE ( ::cBuffer   += 'C' )
+
+   // Vencimientos-------------------------------------------------------------
+
+   METHOD FechaVencimiento()              INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaVencimiento"] ) )
+   METHOD TipoVencimiento()               INLINE ( ::cBuffer   += ::hAsiento[ "TipoVencimiento" ] )
+   METHOD DescripcionVencimiento()        INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionVencimiento" ], 30 ) )   
+   METHOD ImporteVencimiento()            INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "ImporteVencimiento" ] ) )
+   METHOD NumeroVencimiento()             INLINE ( ::cBuffer   += str( ::hAsiento[ "NumeroVencimiento" ], 2 ) )
+   METHOD FormaPago()                     INLINE ( ::cBuffer   += ::hAsiento[ "FormaPago" ] )
+
    METHOD Referencia()                    INLINE ( ::cBuffer   += substr( ::hAsiento[ "Concepto" ], 1, 10 ) )
    
    METHOD LineaApunte()                   INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
@@ -2710,25 +2723,20 @@ CLASS EnlaceA3
    METHOD FinLinea()                      INLINE ( ::cBuffer   += CRLF ) 
 
       /* 
-            EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
-                                             "Fecha"                 => dFecha ,;
-                                             "TipoRegistro"          => '9',; // Facturas
-                                             "Cuenta"                => aVentas[ n, 1 ],;
-                                             "DescripcionCuenta"     => '',;
-                                             "TipoImporte"           => 'C',;
-                                             "NumeroFactura"         => cFactura,;
-                                             "DescripcionApunte"     => cConcepto,;
-                                             "SubtipoFactura"        => if( lIvaCEE, '2', '1' ),; // Ventas
-                                             "BaseImponible"         => nCalculo,;
-                                             "PorcentajeIVA"         => aVentas[ n, 2 ],;
-                                             "PorcentajeRecargo"     => nPReq( dbfIva, aVentas[ n, 2 ] ),;
-                                             "PorcentajeRetencion"   => 0,;
-                                             "Impreso"               => '01',; // 347
-                                             "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
-                                             "Modelo415"             => ' ',;
-                                             "Analitico"             => ' ',;
-                                             "Moneda"                => 'E',; // Euros
-                                             "Render"                => 'VentaFactura' } )
+         EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
+                                          "Fecha"                 => ( dbfFacCliP )->dFecVto,;
+                                          "TipoRegistro"          => 'V',; // Vencimientos
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoVencimiento"       => 'C',; // Cobro
+                                          "NumeroFactura"         => cRecibo,; 
+                                          "DescripcionVencimiento"=> cConcepto,;
+                                          "ImporteVencimiento"    => nImpRec,;
+                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
+                                          "CuentaTesoreria"       => cCtaPgo,;
+                                          "FormaPago"             => '  ',;
+                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
+                                          "Render"                => 'ReciboFactura' } )
       */
 
 
@@ -2736,31 +2744,24 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
-   METHOD RenderVentaFactura() CLASS EnlaceA3
+   METHOD RenderReciboFactura() CLASS EnlaceA3
 
       ::TipoFormato()
       ::Empresa()
-      ::FechaApunte()
-      ::TipoRegistro()
+      ::FechaVencimiento()
+      ::TipoRegistro( 'V' )
       ::Cuenta()
       ::DescripcionCuenta()
-      ::TipoImporte()
+      ::TipoVencimiento()
       ::NumeroFactura()
-      ::LineaApunte()
-      ::DescripcionApunte()
-      ::SubtipoFactura()
-      ::BaseImponible()
-      ::PorcentajeIVA()
-      ::CuotaIVA()
-      ::PorcentajeRecargo()
-      ::CuotaRecargo()
-      ::PorcentajeRetencion()
-      ::CuotaRetencion()
-      ::Impreso()
-      ::SujetaIVA()
-      ::Modelo415()
-      ::Reserva( 75 )
-      ::Analitico()
+      ::Reserva( 1 )             // Indicador de ampliacion   
+      ::DescripcionVencimiento() 
+      ::ImporteVencimiento()
+      ::FechaFactura()
+      ::CuentaTesoreria()
+      ::FormaPago()
+      ::NumeroVencimiento()
+      ::Reserva( 115 )
       ::Moneda()
       ::Generado()
 
@@ -2769,38 +2770,6 @@ ENDCLASS
    Return ( Self )
 
    //------------------------------------------------------------------------//
-
-   METHOD RenderReciboFactura() CLASS EnlaceA3
-
-      ::TipoFormato()
-      ::Empresa()
-      ::FechaApunte()
-      ::TipoRegistro( '9' )
-      ::Cuenta()
-      ::DescripcionCuenta()
-      ::TipoCargoAbono()
-      ::NumeroFactura()
-      ::LineaApunte()
-      ::DescripcionApunte()
-      ::SubtipoFactura()
-      ::ImporteHaber()
-      ::PorcentajeIVA()
-      ::CuotaIVA()
-      ::PorcentajeRecargo()
-      ::CuotaRecargo()
-      ::Reserva( 62 )
-      ::NIF()
-      ::Nombre()
-      ::Reserva( 2 )
-      ::FechaOperacion()
-      ::FechaFactura()
-      ::Moneda()
-      ::Generado()
-
-      ::FinLinea() 
-
-   Return ( Self )
-
 
 //---------------------------------------------------------------------------//
 
@@ -2842,7 +2811,7 @@ ENDCLASS
             case hAsiento[ "Render" ] == "VentaFactura"
                ::RenderVentaFactura()
             case hAsiento[ "Render" ] == "ReciboFactura"
-               // ::RenderReciboFactura()
+               ::RenderReciboFactura()
          end case
 
       next
@@ -2880,6 +2849,40 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
+   METHOD RenderVentaFactura() CLASS EnlaceA3
+
+      ::TipoFormato()
+      ::Empresa()
+      ::FechaApunte()
+      ::TipoRegistro()
+      ::Cuenta()
+      ::DescripcionCuenta()
+      ::TipoImporte()
+      ::NumeroFactura()
+      ::LineaApunte()
+      ::DescripcionApunte()
+      ::SubtipoFactura()
+      ::BaseImponible()
+      ::PorcentajeIVA()
+      ::CuotaIVA()
+      ::PorcentajeRecargo()
+      ::CuotaRecargo()
+      ::PorcentajeRetencion()
+      ::CuotaRetencion()
+      ::Impreso()
+      ::SujetaIVA()
+      ::Modelo415()
+      ::Reserva( 75 )
+      ::Analitico()
+      ::Moneda()
+      ::Generado()
+
+      ::FinLinea() 
+
+   Return ( Self )
+
+   //------------------------------------------------------------------------//
+
    METHOD Signo( nImporte )
 
       if nImporte == 0
@@ -2888,7 +2891,7 @@ ENDCLASS
 
    RETURN ( if( nImporte > 0, '+', '-' ) + strzero( nImporte, 13, 2 ) )
 
-//------------------------------------------------------------------------//
+   //------------------------------------------------------------------------//
 
    METHOD Porcentaje( nPorcentaje )
 

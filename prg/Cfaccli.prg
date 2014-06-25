@@ -5225,21 +5225,18 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       else 
 
          EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
-                                          "Fecha"                 => ( dbfFacCliP )->dFecVto,;
-                                          "TipoRegistro"          => 'V',; // Vencimientos
+                                          "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
                                           "Cuenta"                => cCtaCli,;
                                           "DescripcionCuenta"     => cTerNom,;
-                                          "TipoFactura"           => '1',; // Ventas
-                                          "NumeroFactura"         => cFactura,;
-                                          "DescripcionApunte"     => cConcepto,;
-                                          "Importe"               => Round( ptaDebe, nRouDiv ),;
-                                          "Nif"                   => cTerNif,;
-                                          "NombreCliente"         => cTerNom,;
-                                          "CodigoPostal"          => ( dbfFacCliT )->cPosCli,;
-                                          "FechaOperacion"        => dFecha,;
-                                          "FechaFactura"          => dFecha,;
-                                          "Moneda"                => 'E',; // Euros
-                                          "Render"                => 'CabeceraFactura' } )
+                                          "TipoVencimiento"       => 'C',; // Cobro
+                                          "NumeroFactura"         => cRecibo,; 
+                                          "DescripcionVencimiento"=> cConcepto,;
+                                          "ImporteVencimiento"    => nImpRec,;
+                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
+                                          "CuentaTesoreria"       => cCtaPgo,;
+                                          "FormaPago"             => '  ',;
+                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
+                                          "Render"                => 'ReciboFactura' } )
 
       end if 
 
