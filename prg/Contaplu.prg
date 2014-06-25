@@ -2742,35 +2742,6 @@ CLASS EnlaceA3
 
 ENDCLASS
 
-//------------------------------------------------------------------------//
-
-   METHOD RenderReciboFactura() CLASS EnlaceA3
-
-      ::TipoFormato()
-      ::Empresa()
-      ::FechaVencimiento()
-      ::TipoRegistro( 'V' )
-      ::Cuenta()
-      ::DescripcionCuenta()
-      ::TipoVencimiento()
-      ::NumeroFactura()
-      ::Reserva( 1 )             // Indicador de ampliacion   
-      ::DescripcionVencimiento() 
-      ::ImporteVencimiento()
-      ::FechaFactura()
-      ::CuentaTesoreria()
-      ::FormaPago()
-      ::NumeroVencimiento()
-      ::Reserva( 115 )
-      ::Moneda()
-      ::Generado()
-
-      ::FinLinea() 
-
-   Return ( Self )
-
-   //------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 
    METHOD New()
@@ -2800,8 +2771,6 @@ ENDCLASS
       local hAsiento
 
       for each hAsiento in ::aAsiento
-
-         msgAlert( hb_enumindex() )
 
          ::hAsiento     := hAsiento
 
@@ -2883,6 +2852,33 @@ ENDCLASS
 
    //------------------------------------------------------------------------//
 
+   METHOD RenderReciboFactura() CLASS EnlaceA3
+
+      ::TipoFormato()
+      ::Empresa()
+      ::FechaVencimiento()
+      ::TipoRegistro()
+      ::Cuenta()
+      ::DescripcionCuenta()
+      ::TipoVencimiento()
+      ::NumeroFactura()
+      ::Reserva( 1 )             // Indicador de ampliacion   
+      ::DescripcionVencimiento() 
+      ::ImporteVencimiento()
+      ::FechaFactura()
+      ::CuentaTesoreria()
+      ::FormaPago()
+      ::NumeroVencimiento()
+      ::Reserva( 115 )
+      ::Moneda()
+      ::Generado()
+
+      ::FinLinea() 
+
+   Return ( Self )
+
+   //------------------------------------------------------------------------//
+
    METHOD Signo( nImporte )
 
       if nImporte == 0
@@ -2903,24 +2899,23 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
-   METHOD AutoRender() CLASS EnlaceA3
-/*
-      for each hAsiento in ::aAsiento
-         msgAlert( HaaGetValueAt( hAsiento, 1 ) )
-
-      next
-*/
-   Return ( Self )
-
-//------------------------------------------------------------------------//
-
-   METHOD WriteASCII() CLASS EnlaceA3
+   METHOD GenerateFile()
 
       ferase( ::cDirectory + "\" + ::cFile )
 
       ::hFile        := fCreate( ::cDirectory + "\" + ::cFile )
 
-      if !Empty( ::hFile )
+   RETURN ( Self )   
+
+//------------------------------------------------------------------------//
+
+   METHOD WriteASCII() CLASS EnlaceA3
+
+      if !file( ::cDirectory + "\" + ::cFile ) .or. empty( ::hFile )
+         ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
+      end if 
+
+      if !empty( ::hFile )
 
          fWrite( ::hFile, ::cBuffer )
          fClose( ::hFile )
@@ -2934,6 +2929,16 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
+   METHOD AutoRender() CLASS EnlaceA3
+/*
+      for each hAsiento in ::aAsiento
+         msgAlert( HaaGetValueAt( hAsiento, 1 ) )
+
+      next
+*/
+   Return ( Self )
+
+//------------------------------------------------------------------------//
 
 
 

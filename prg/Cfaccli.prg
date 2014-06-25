@@ -968,6 +968,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    end if
 
+   // Contabilizamos desde aki A3---------------------------------------------
+
+   if lAplicacionA3()
+      EnlaceA3():GetInstance():Render()
+      EnlaceA3():GetInstance():WriteASCII()
+   end if 
+
    /*
    Contabilizamos los pagos
    ----------------------------------------------------------------------------
@@ -976,8 +983,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if lPago .and. !lErrorFound .and. ( dbfFacCliP )->( dbSeek( nFactura ) )
 
       while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
-
-         msgAlert( "llamada a ContabilizaReciboCliente")
 
          ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
 
@@ -4952,18 +4957,22 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    --------------------------------------------------------------------------
    */
 
+   if lAplicacionContaplus()
+
+      if !( ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lDevuelto ) 
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         lErrorFound       := .t.
+      end if
+
+      if ( dbfFacCliP )->lCobrado .and. !ChkFecha( , , ( dbfFacCliP )->dEntrada, .f. )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         lErrorFound       := .t.
+      end if
+
+   end if
+
    if ( dbfFacCliP )->lConPgo
       oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ya contabilizado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-      lErrorFound       := .t.
-   end if
-
-   if !( ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lDevuelto )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-      lErrorFound       := .t.
-   end if
-
-   if ( dbfFacCliP )->lCobrado .and. !ChkFecha( , , ( dbfFacCliP )->dEntrada, .f. )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -5033,10 +5042,14 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
          cCtaPgo        := cCtaCob()
       end if
 
-      if Empty( cCtaPgo )
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-         lErrorFound    := .t.
-      end if
+      if lAplicacionContaplus()
+
+         if Empty( cCtaPgo )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            lErrorFound    := .t.
+         end if
+
+      end if 
 
       if !ChkSubcuenta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
          oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
@@ -5047,16 +5060,20 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       Pago es en efectivo------------------------------------------------------
       */
 
-      if ( nTipoPago( cCodPgo, dbfFPago ) == 1 )
+      if lAplicacionContaplus()
 
-         nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
+         if ( nTipoPago( cCodPgo, dbfFPago ) == 1 )
 
-         if Empty( nEjeCon )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-            lErrorFound := .t.
-         end if
+            nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
 
-      end if 
+            if Empty( nEjeCon )
+               oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+               lErrorFound := .t.
+            end if
+
+         end if 
+
+      end if
 
       /*
       Obtenemos las cuentas de gastos------------------------------------------
@@ -5230,6 +5247,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                           "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
                                           "Cuenta"                => cCtaCli,;
                                           "DescripcionCuenta"     => cTerNom,;
+                                          "TipoRegistro"          => 'V',; 
                                           "TipoVencimiento"       => 'C',; // Cobro
                                           "NumeroFactura"         => cRecibo,; 
                                           "DescripcionVencimiento"=> cConcepto,;
@@ -5238,6 +5256,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                           "CuentaTesoreria"       => cCtaPgo,;
                                           "FormaPago"             => '  ',;
                                           "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
+                                          "Moneda"                => 'E',; // Euros
                                           "Render"                => 'ReciboFactura' } )
 
       end if 
