@@ -29,7 +29,10 @@ CLASS TpvMenu FROM TMasDet
 
    METHOD OpenFiles( lExclusive, cPath )  
 
-   METHOD CloseFiles( lExclusive, cPath )   
+   METHOD CloseFiles( lExclusive, cPath ) 
+
+   METHOD OpenService( lExclusive, cPath )
+   METHOD CloseService( lExclusive,cPath )  
 
    METHOD Resource( nMode )
    METHOD   StartResource()                     VIRTUAL
@@ -37,10 +40,10 @@ CLASS TpvMenu FROM TMasDet
 
    METHOD lIsMenuActive()
    METHOD nMenuActive()
+   METHOD cMenuActive()
 
    METHOD cNombre( cCodMnu )
    METHOD nPrecio( cCodMnu )
-
 
 END CLASS
 
@@ -73,7 +76,7 @@ METHOD New( cPath, oWndParent, nLevel )
 
    ::oOrdenComandas     := TOrdenComanda():Create()
 
-   ::oMenuOrdenes    := TpvMenuOrdenes():New( cPath, Self )
+   ::oMenuOrdenes       := TpvMenuOrdenes():New( cPath, Self )
    ::AddDetail( ::oMenuOrdenes )
 
    ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, Self )
@@ -103,14 +106,17 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE oDbf FILE "TpvMenus.Dbf" CLASS "TpvMenus" ALIAS "TpvMenus" PATH ( cPath ) VIA ( cDriver ) COMMENT "Menús TPV" 
 
-      FIELD NAME "cCodMnu"  TYPE "C" LEN  3  DEC 0  COMMENT "Código"                                                    COLSIZE 80  OF oDbf
-      FIELD NAME "cNomMnu"  TYPE "C" LEN 40  DEC 0  COMMENT "Nombre"                                                    COLSIZE 200 OF oDbf
-      FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"                ALIGN RIGHT   PICTURE cPorDiv()     COLSIZE 80  OF oDbf
-      FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                                                  HIDE        OF oDbf
+      FIELD NAME "cCodMnu"  TYPE "C" LEN  3  DEC 0  COMMENT "Código"                                                    COLSIZE 80                 OF oDbf
+      FIELD NAME "cNomMnu"  TYPE "C" LEN 40  DEC 0  COMMENT "Nombre"                                                    COLSIZE 200                OF oDbf
+      FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"                ALIGN RIGHT   PICTURE cPorDiv()     COLSIZE 80                 OF oDbf
+      FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                                                  HIDE                       OF oDbf
+      FIELD NAME "lAcomp"   TYPE "L" LEN 1   DEC 0  COMMENT "Menú acompañamiento"                                       HIDE                       OF oDbf
 
-      INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"         NODELETED                                       OF oDbf
-      INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"         NODELETED                                       OF oDbf
-      INDEX TO "TpvMenus.Cdx" TAG "lObsMnu" ON "cCodMnu"   COMMENT ""               FOR "!Deleted() .and. !Field->lObsMnu"          OF oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"         NODELETED                                                      OF oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"         NODELETED                                                      OF oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "lObsMnu" ON "cCodMnu"   COMMENT ""               FOR "!Deleted() .and. !Field->lObsMnu"                         OF oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "lAcomp"  ON "cCodMnu"   COMMENT ""               FOR "!Deleted() .and. !Field->lAcomp"                          OF oDbf
+      INDEX TO "TpvMenus.Cdx" TAG "lShwMnu" ON "cCodMnu"   COMMENT ""               FOR "!Deleted() .and. !Field->lAcomp .and. !Field->lObsMnu"    OF oDbf
 
    END DATABASE oDbf
 
@@ -126,7 +132,7 @@ METHOD OpenFiles( lExclusive, cPath )
    DEFAULT lExclusive   := .f.
 
    ::lOpenFiles         := .t.
-   
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -182,6 +188,49 @@ RETURN .t.
 
 //----------------------------------------------------------------------------//
 
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      lOpen             := .f.
+
+      ::CloseService()
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de TpvMenus" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseService()
+
+   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD Resource( nMode )
 
 	local oDlg
@@ -210,6 +259,11 @@ METHOD Resource( nMode )
 
       REDEFINE CHECKBOX ::oDbf:lObsMnu ;
          ID       130 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE CHECKBOX ::oDbf:lAcomp ;
+         ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
@@ -341,11 +395,29 @@ METHOD nMenuActive()
    local nMenuActive := 0
 
    ::oDbf:getStatus()
-   ::oDbf:ordsetfocus( "lObsMnu" )
-      nMenuActive    := ::oDbf:ordKeyCount()
+   ::oDbf:ordsetfocus( "lShwMnu" )
+
+   nMenuActive       := ::oDbf:ordKeyCount()
+
    ::oDbf:setStatus()
 
 Return ( nMenuActive )
+
+//---------------------------------------------------------------------------//
+
+METHOD cMenuActive()
+
+   local cMenuActive := ""
+
+   ::oDbf:getStatus()
+   ::oDbf:ordSetfocus( "lShwMnu" )
+   ::oDbf:goTop()
+   
+   cMenuActive       := ::oDbf:cCodMnu
+
+   ::oDbf:setStatus()
+
+Return ( cMenuActive )
 
 //---------------------------------------------------------------------------//
 

@@ -240,4 +240,3 @@ METHOD aArticulos( cCodMnu, cCodOrd )
 RETURN (aArticulos)
 
 //--------------------------------------------------------------------------//
-

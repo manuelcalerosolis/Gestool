@@ -526,6 +526,8 @@ CLASS TpvTactil
       METHOD AgregarPLU()
       METHOD AgregarFavoritos( cNombreArticulo )
 
+      METHOD AgregarAcompannamiento()
+
       METHOD nLineaMenuActivo()
       METHOD nNumeroArticulosOrden()
       METHOD nNumeroUnidadesMenu()
@@ -540,6 +542,8 @@ CLASS TpvTactil
    METHOD AgregarMenu()
       METHOD CargaFamiliaMenu()
       METHOD AgregarArticuloMenu()
+
+   METHOD AgregarMenuAcompannamiento()
 
    METHOD AgregarLineaMenu()
 
@@ -579,7 +583,7 @@ CLASS TpvTactil
   
    METHOD IncrementarUnidades()
 
-   METHOD cNombreArticulo()            INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
+   METHOD cNombreArticulo()                     INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
    //------------------------------------------------------------------------//
 
@@ -901,6 +905,10 @@ CLASS TpvTactil
       METHOD EndComentarios( oDlg, oGetComentario )
       METHOD ChangeComentarios( oBrwLineasComentarios )
       METHOD ChangeLineasComentarios( oGetComentario, cComentariosL )
+
+   // Menu Acompañamiento-----------------------------------------------------//
+
+   METHOD InitAcompannamiento()
 
    //------------------------------------------------------------------------//
 
@@ -4091,6 +4099,25 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD AgregarMenuAcompannamiento( cMenu )
+
+   local cCodArtAcomp      := ""
+   local lAcompannamiento  := .f.
+
+   if Empty( cMenu )
+      Return ( lAcompannamiento )
+   end if
+
+   cCodArtAcomp      := ::InitAcompannamiento()
+
+   if !Empty( cCodArtAcomp )
+      ::AgregarAcompannamiento( cCodArtAcomp )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD CargaFamiliaMenu( cMenu )
 
    local cOrden
@@ -4354,7 +4381,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "Star_Red_48" } ) 
 
-   // Preguntamos si hay menus activos-----------------------------------------
+   // Preguntamos si hay menus activos y es no es de acompañamiento---------------
 
    if ::oTpvMenu:lIsMenuActive()
       aAdd( ::aFamilias, { "Menús", nil, {|| ::CargaMenus() }, "Clipboard_empty_48" } ) 
@@ -4465,7 +4492,7 @@ METHOD CargaMenus()
       ::oTpvMenu:oDbf:GoTop()
       while !::oTpvMenu:oDbf:Eof() 
       
-         if !::oTpvMenu:oDbf:lObsMnu
+         if !::oTpvMenu:oDbf:lObsMnu .and. !::oTpvMenu:oDbf:lAcomp
 
             with object ( C5ImageViewItem() )
 
@@ -4486,7 +4513,7 @@ METHOD CargaMenus()
 
    else 
 
-      ::AgregarMenu( ::oTpvMenu:oDbf:cCodMnu )
+      ::AgregarMenu( ::oTpvMenu:cMenuActive() )
 
    end if
 
@@ -4917,7 +4944,6 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    // Tomamos las unidades del teclado-----------------------------------------
 
-
    if( ::oArticulo:lPeso )
       
       ::nUnidades                := Calculadora( 0, , , "Introduzca peso" )
@@ -4931,7 +4957,6 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
       ::nUnidades               := ::nGetUnidades( .t. )
 
    end if
-
 
    // Preguntamos si estamos combinando----------------------------------------
 
@@ -4956,6 +4981,10 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
          ::AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
          ::InitComentarios( .f. )
+
+         // Vemos si este artículo tiene un menú de acompañamiento-------------
+
+         ::AgregarMenuAcompannamiento( ::oArticulo:cMenu )
 
          // Reseteamos las propiedades-----------------------------------------
 
@@ -5191,7 +5220,67 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    // Agregamos los kits si es el caso-----------------------------------------
 
-   ::AgregarKit( cCodigoArticulo, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+   ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+
+   CursorWE()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AgregarAcompannamiento( cCodigoArticulo )
+
+   // Localizamos el articulo--------------------------------------------------
+
+   if !::oArticulo:Seek( cCodigoArticulo )
+      Return ( .f. )
+   end if
+
+   CursorWait()
+
+   SysRefresh()
+
+   ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+
+   ::oTemporalLinea:Append()
+   ::oTemporalLinea:Blank()
+       
+   ::oTemporalLinea:nNumLin      := ::nNumeroLinea
+   ::oTemporalLinea:nLinMnu      := bottomNumber
+
+   ::oTemporalLinea:nUntTil      := ::nUnidades
+   ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
+   ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
+   ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
+   ::oTemporalLinea:cLote        := ::oArticulo:cLote
+   ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
+   ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
+   ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
+
+   if ( ::oArticulo:lFacCnv )
+      ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
+   end if 
+         
+   ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
+   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
+   ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
+   ::oTemporalLinea:cComent      := ""
+
+   ::oTemporalLinea:lKitArt      := ::oArticulo:lKitArt
+   ::oTemporalLinea:lKitPrc      := lPreciosCompuestos( ::oArticulo:Codigo, ::oArticulo:cAlias )
+
+   ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
+
+   // Orden de la comanda------------------------------------------------------
+
+   ::oTemporalLinea:cOrdOrd   := ::oArticulo:cOrdOrd
+
+   ::oTemporalLinea:Save()
+
+   // Agregamos los kits si es el caso-----------------------------------------
+
+   ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
 
    CursorWE()
 
@@ -5403,6 +5492,11 @@ METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
       Return .f.
    end if
 
+   // Comprobamos que el artículo tenga acompañamiento-------------------------
+
+   if !Empty( ::oArticulo:cMenu )
+      Return .f.
+   end if
 
    CursorWait()
 
@@ -5475,7 +5569,10 @@ Return ( lReturn )
 
 //-------------------------------------------------------------------------//
 
-METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS TpvTactil
+METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2 ) CLASS TpvTactil
+
+   local aStatus        := ::oArticulosEscandallos:GetStatus()
+   local nTotalUnidades := 0
 
    if ::oArticulosEscandallos:Seek( cCodigoArticulo )
 
@@ -5485,10 +5582,17 @@ METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS Tpv
 
          if ::oArticulo:Seek( ::oArticulosEscandallos:cRefKit )
 
+            nTotalUnidades                := ::oArticulosEscandallos:nUndKit * nUnidades
+
             ::oTemporalLinea:Append()
             ::oTemporalLinea:Blank()
 
             ::oTemporalLinea:nLinMnu      := bottomNumber
+
+            // Total unidades--------------------------------------------------
+
+            ::oTemporalLinea:nUntTil      := nTotalUnidades
+
             ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
             ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
             ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
@@ -5496,13 +5600,11 @@ METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS Tpv
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
             ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
             ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
-            ::oTemporalLinea:nUntTil      := ::oArticulosEscandallos:nUndKit
 
             // Impresoras del compuesto----------------------------------------
 
             ::oTemporalLinea:cImpCom1     := cTipoImpresora1
             ::oTemporalLinea:cImpCom2     := cTipoImpresora2
-
 
             if ( ::oArticulo:lFacCnv )
                ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
@@ -5550,6 +5652,12 @@ METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS Tpv
 
          end if
 
+         // Tiene nuevos escandallos-------------------------------------------
+
+         ::AgregarKit( ::oArticulosEscandallos:cRefKit, nTotalUnidades, cTipoImpresora1, cTipoImpresora2 )
+
+         // Siguiente articulo del kit-----------------------------------------
+
          ::oArticulosEscandallos:Skip()
 
       end while
@@ -5557,6 +5665,8 @@ METHOD AgregarKit( cCodigoArticulo, cTipoImpresora1, cTipoImpresora2 ) CLASS Tpv
       ::oTemporalLinea:SetStatus()
 
    end if
+
+   ::oArticulosEscandallos:SetStatus( aStatus )
 
 Return ( .t. )
 
@@ -5718,6 +5828,69 @@ METHOD AgregarPLU() CLASS TpvTactil
    end if
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD InitAcompannamiento() CLASS TpvTactil
+
+   local oBrwAcompannamiento
+   local oDlgAcompannamiento
+   
+   // Definimos el dialogo para el menú de acompañamiento-----------------------
+
+   DEFINE DIALOG oDlgAcompannamiento RESOURCE "TPVMenuAcomp"
+
+      REDEFINE BUTTONBMP ;
+         ID       110 ;
+         OF       oDlgAcompannamiento ;
+         BITMAP   "Navigate_up" ;
+         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:GoUp(), oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         ID       111 ;
+         OF       oDlgAcompannamiento ;
+         BITMAP   "Navigate_down" ;
+         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:GoDown(), oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDlgAcompannamiento ;
+         ACTION   ( oDlgAcompannamiento:End( IDOK ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlgAcompannamiento ;
+         ACTION   ( oDlgAcompannamiento:End() )
+
+      oBrwAcompannamiento                  := IXBrowse():New( oDlgAcompannamiento )
+
+      oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwAcompannamiento:nMarqueeStyle    := MARQSTYLE_HIGHLROW
+      oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
+      oBrwAcompannamiento:lHeader          := .f.
+      oBrwAcompannamiento:lHScroll         := .f.
+      oBrwAcompannamiento:nRowHeight       := 45
+      
+      oBrwAcompannamiento:SetFont( ::oFntBrw )
+
+      oBrwAcompannamiento:CreateFromResource( 100 )
+
+      ::oTpvMenuArticulo:oDbf:SetBrowse( oBrwAcompannamiento )
+
+      with object ( oBrwAcompannamiento:AddCol() )
+         :bEditValue                         := {|| Alltrim( oRetFld( ::oTpvMenuArticulo:oDbf:cCodArt, ::oArticulo )) }
+      end with
+
+      oDlgAcompannamiento:bStart             := {|| ::SeleccionarDefecto( oBrwAcompannamiento ) }
+
+   ACTIVATE DIALOG oDlgAcompannamiento CENTER
+
+   ::oBrwLineas:Refresh()
+
+Return ( if( oDlgAcompannamiento:nResult == IDOK, ::oTpvMenuArticulo:oDbf:cCodArt, nil ) )
 
 //---------------------------------------------------------------------------//
 
