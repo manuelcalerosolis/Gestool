@@ -1,14 +1,10 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Folder.ch"
-   #include "Print.ch"
-   #include "Report.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-   #include "Factu.ch" 
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Folder.ch"
+#include "Print.ch"
+#include "Report.ch"
+#include "FastRepH.ch"
+#include "Factu.ch" 
 
 #define _MENUITEM_               "01059"
 
@@ -3579,8 +3575,6 @@ Function bGenEdtRecCli( cDocumento, lFromFactura )
 return ( bGen )
 
 //-------------------------------------------------------------------------//
-
-#include "FastRepH.ch"
 
 Static Function DataReport( oFr )
 
