@@ -939,7 +939,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nTotCSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := pCosto( ::oDbfArt:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * pCosto( ::oDbfArt:cAlias )
                   end if 
 
                   ::oDbf:cClsDoc    := SAT_CLI
@@ -1090,7 +1090,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cClsDoc    := PRE_CLI
@@ -1228,7 +1228,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nTotCPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cCodPr1    := ::oPedCliL:cCodPr1
@@ -1377,7 +1377,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cCodPr1    := ::oAlbCliL:cCodPr1
@@ -1523,7 +1523,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nCosLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
                   
                   ::oDbf:cCodPr1    := ::oFacCliL:cCodPr1
@@ -1666,7 +1666,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nCosLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cCodPr1    := ::oFacRecL:cCodPr1
@@ -1803,7 +1803,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   
                   ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
@@ -1875,7 +1875,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
                   ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
                   if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                     ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
                   ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
