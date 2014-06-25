@@ -2771,16 +2771,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Grt."
-         :bEditValue          := {|| ( dbfTmpLin )->nMesGrt }
-         :cEditPicture        := "99"
-         :nWidth              := 40
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
-         :lHide               := .t.
-      end with
-
-      with object ( oBrwLin:AddCol() )
          :cHeader             := "Fecha"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecha ) }
          :nWidth              := 40
@@ -4111,13 +4101,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1] ;
          IDSAY    321 ;
-
-      REDEFINE GET aGet[_NMESGRT] VAR aTmp[_NMESGRT] ;
-         ID       330 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         SPINNER ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
 
       /*
       Segunda caja de dilogo---------------------------------------------------
@@ -6013,12 +5996,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if ( dbfArticulo )->nUniCaja != 0
             aGet[_NUNICAJA]:cText( ( dbfArticulo )->nUniCaja )
          end if
-
-         /*
-         Meses de grantia---------------------------------------------------------
-         */
-
-         aGet[_NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
 
          /*
          Si la comisi¢n del articulo hacia el agente es distinto de cero----------
@@ -8903,7 +8880,6 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->lKitArt    := ( dbfFacCliL )->lKitArt
                   ( dbfTmpLin )->lKitChl    := ( dbfFacCliL )->lKitChl
                   ( dbfTmpLin )->lKitPrc    := ( dbfFacCliL )->lKitPrc
-                  ( dbfTmpLin )->nMesGrt    := ( dbfFacCliL )->nMesGrt
                   ( dbfTmpLin )->lLote      := ( dbfFacCliL )->lLote
                   ( dbfTmpLin )->nLote      := ( dbfFacCliL )->nLote
                   ( dbfTmpLin )->cLote      := ( dbfFacCliL )->cLote

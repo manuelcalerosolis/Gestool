@@ -4615,13 +4615,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _NMESGRT ] VAR aTmp[ _NMESGRT ] ;
-         ID       330 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
-
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
@@ -11091,16 +11084,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Meses de grantia---------------------------------------------------
-            */
-
-            if !Empty( aGet[ _NMESGRT ] )
-               aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
-            else
-               aGet[ _NMESGRT ]  := ( dbfArticulo )->nMesGrt
-            end if
-
-            /*
             Si la comisi¢n del articulo hacia el agente es distinto de cero----
             */
 
@@ -12767,7 +12750,6 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
                (dbfTmpLin)->cValPr1    := (dbfPreCliL)->cValPr1
                (dbfTmpLin)->cValPr2    := (dbfPreCliL)->cValPr2
                (dbfTmpLin)->nCosDiv    := (dbfPreCliL)->nCosDiv
-               (dbfTmpLin)->nMesGrt    := (dbfPreCliL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfPreclil)->llote
                (dbfTmpLin)->nLote      := (dbfPreclil)->nlote
                (dbfTmpLin)->cLote      := (dbfPreclil)->clote

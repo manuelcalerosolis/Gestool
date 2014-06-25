@@ -3536,13 +3536,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NMESGRT] VAR aTmp[_NMESGRT] ;
-         ID       330 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
-
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
@@ -5245,16 +5238,6 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                   oSayVp2:hide()
                end if
 
-            end if
-
-            /*
-            Meses de grantia------------------------------------------------------
-            */
-
-            if aGet[ _NMESGRT ] != nil
-               aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
-            else
-               aTmp[ _NMESGRT ]  := ( dbfArticulo )->nMesGrt
             end if
 
             /*

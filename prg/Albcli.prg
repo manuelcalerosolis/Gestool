@@ -4620,13 +4620,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NMESGRT] VAR aTmp[_NMESGRT] ;
-         ID       330 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
-
       /*
       Segunda caja de dialogo -------------------------------------------------
       */
@@ -5297,7 +5290,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->lIvaLin    := (dbfPedCliL)->lIvaLin
                   (dbfTmpLin)->cCodImp    := (dbfPedCLiL)->cCodImp
                   (dbfTmpLin)->nValImp    := (dbfPedCliL)->nValImp
-                  (dbfTmpLin)->nMesGrt    := (dbfPedCliL)->nMesGrt
                   (dbfTmpLin)->lLote      := (dbfPedCliL)->lLote
                   (dbfTmpLin)->nLote      := (dbfPedCliL)->nLote
                   (dbfTmpLin)->cLote      := (dbfPedCliL)->cLote
@@ -5909,7 +5901,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->cValPr1    := (dbfPedCliL)->cValPr1
                      (dbfTmpLin)->cValPr2    := (dbfPedCliL)->cValPr2
                      (dbfTmpLin)->nCosDiv    := (dbfPedCliL)->nCosDiv
-                     (dbfTmpLin)->nMesGrt    := (dbfPedCliL)->nMesGrt
                      (dbfTmpLin)->lMsgVta    := (dbfPedCliL)->lMsgVta
                      (dbfTmpLin)->lNotVta    := (dbfPedCliL)->lNotVta
                      (dbfTmpLin)->lLote      := (dbfPedCliL)->lLote
@@ -5995,7 +5986,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->cValPr1     := ( dbfPedCliL )->cValPr1
                   ( dbfTmpLin )->cValPr2     := ( dbfPedCliL )->cValPr2
                   ( dbfTmpLin )->nCosDiv     := ( dbfPedCliL )->nCosDiv
-                  ( dbfTmpLin )->nMesGrt     := ( dbfPedCliL )->nMesGrt
                   ( dbfTmpLin )->lMsgVta     := ( dbfPedCliL )->lMsgVta
                   ( dbfTmpLin )->lNotVta     := ( dbfPedCliL )->lNotVta
                   ( dbfTmpLin )->lLote       := ( dbfPedCliL )->lLote
@@ -9994,14 +9984,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Meses de grantia---------------------------------------------------
-            */
-            /*
-            if !Empty( aGet[ _NMESGRT ] )
-               aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt ) 
-            end if
-            */
-            /*
             Si la comisi¢n del articulo hacia el agente es distinto de cero----
             */
 
@@ -12000,7 +11982,6 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lKitArt    := (dbfPreCLiL)->lKitArt
                (dbfTmpLin)->lKitChl    := (dbfPreCLiL)->lKitChl
                (dbfTmpLin)->lKitPrc    := (dbfPreCliL)->lKitPrc
-               (dbfTmpLin)->nMesGrt    := (dbfPreCLiL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfPreCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfPreCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfPreCliL)->cLote
@@ -12236,7 +12217,6 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lKitArt    := (dbfSatCLiL)->lKitArt
                (dbfTmpLin)->lKitChl    := (dbfSatCLiL)->lKitChl
                (dbfTmpLin)->lKitPrc    := (dbfSatCliL)->lKitPrc
-               (dbfTmpLin)->nMesGrt    := (dbfSatCLiL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfSatCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfSatCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfSatCliL)->cLote
@@ -12697,7 +12677,6 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
                ( dbfTmpLin )->cValPr1     := ( dbfSatCliL )->cValPr1
                ( dbfTmpLin )->cValPr2     := ( dbfSatCliL )->cValPr2
                ( dbfTmpLin )->nCosDiv     := ( dbfSatCliL )->nCosDiv
-               ( dbfTmpLin )->nMesGrt     := ( dbfSatCliL )->nMesGrt
                ( dbfTmpLin )->lMsgVta     := ( dbfSatCliL )->lMsgVta
                ( dbfTmpLin )->lNotVta     := ( dbfSatCliL )->lNotVta
                ( dbfTmpLin )->lLote       := ( dbfSatCliL )->lLote
