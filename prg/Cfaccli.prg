@@ -977,6 +977,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       while ( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
+         msgAlert( "llamada a ContabilizaReciboCliente")
+
          ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
 
          ( dbfFacCliP )->( dbSkip() )
