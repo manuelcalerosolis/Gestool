@@ -3434,32 +3434,49 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin,
        		aGet[ _CCODCLI ]:lValid()
    		end if
 
-		do case      
-      	case lRecogerUsuario() .and. Empty( cCodArt )
+		do case
+      		case lRecogerUsuario() .and. Empty( cCodArt )
 
-         	if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
-         		oDlg:End()
+	         	if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+         			oDlg:End()
+         		end if
+
+      		case lRecogerUsuario() .and. !Empty( cCodArt )
+	      		
+      			if lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+	      			AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt )
+      			else
+	      			oDlg:End()
+      			end if 
+	      
+      		case !lRecogerUsuario() .and. !Empty( cCodArt )
+	         	
+         		AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) 
+
+      	end case 
+
+	   	if !Empty( cCodPre )
+	   		aGet[ _CNUMPRE ]:lValid()
+	   	end if 
+
+   	end if
+
+   	/*
+   	Hace que salte la incidencia al entrar en el documento----------------------
+   	*/
+
+   	if !Empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() ) 
+
+      	while !( dbfTmpInc )->( Eof() )
+         	if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
+            	MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
          	end if
+         	( dbfTmpInc )->( dbSkip() )
+      	end while
 
-      	case lRecogerUsuario() .and. !Empty( cCodArt )
-      		
-      		if lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
-      			AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt )
-      		else
-      			oDlg:End()
-      		end if 
-      
-      	case !lRecogerUsuario() .and. !Empty( cCodArt )
-         	
-         	AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) 
+      	( dbfTmpInc )->( dbGoTop() )
 
-      end case 
-
-	   if !Empty( cCodPre )
-   		aGet[ _CNUMPRE ]:lValid()
-   	end if 
-
-   end if
+   	end if
 
 Return ( nil )
 

@@ -4338,40 +4338,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| ChangeTarWeb( aGet, aTmp ) }
 
-   REDEFINE RADIO aTmp[ ( dbfArticulo )->( fieldpos( "NINFENT" ) ) ] ;
-         ID       180, 181, 182 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldWeb
-
-   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "NINFENT1" ) ) ] ;
-         ID       183 ;
-			SPINNER ;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "NINFENT" ) ) ] == 3 .and. nMode != ZOOM_MODE ) ;
-         PICTURE  "@E 99" ;
-         COLOR    CLR_GET ;
-         OF       fldWeb
-
-   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "NINFENT2" ) ) ] ;
-         ID       184 ;
-			SPINNER ;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "NINFENT" ) ) ] == 3 .and. nMode != ZOOM_MODE ) ;
-         PICTURE  "@E 99" ;
-         COLOR    CLR_GET ;
-         OF       fldWeb
-
-   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "NMESGRT" ) ) ] ;
-         ID       190 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "@E 99" ;
-         OF       fldWeb
-
-   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "MDESTEC" ) ) ] ;
-         ID       220 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         MEMO ;
-         OF       fldWeb
-
    REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
          WHEN     ( .F. );
@@ -4381,6 +4347,25 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
+
+   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "MDESTEC" ) ) ] ;
+         ID       220 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         MEMO ;
+         OF       fldWeb
+
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cTitSeo" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cTitSeo" ) ) ] ;
+         ID       180 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldWeb     
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cDesSeo" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cDesSeo" ) ) ] ;
+         ID       190 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldWeb       
 
    /*
    Cuarta Caja de Dialogo del Folder
@@ -15658,10 +15643,6 @@ function aItmArt()
    aAdd( aBase, { "NDTOINT6",  "N",  6, 2, "Descuento de oferta para tienda web 6",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT6",  "N", 15, 6, "Precio del producto en oferta 6",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA6",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 6", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NMESGRT",   "N",  2, 0, "Meses de garantía",                       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NINFENT",   "N",  1, 0, "Información de entrega",                  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NINFENT1",  "N",  3, 0, "Dias en entregar la mercancia ( desde )", "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NINFENT2",  "N",  3, 0, "Dias en entregar la mercancia ( hasta )", "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "MDESTEC",   "M", 10, 0, "Descripción técnica del artículo",        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NLNGCAJ",   "N", 16, 6, "Largo de la caja" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NALTCAJ",   "N", 16, 6, "Alto de la caja" ,                        "'@E 999,999.999999'","", "( cDbfArt )", nil } )
@@ -15739,7 +15720,12 @@ function aItmArt()
    aAdd( aBase, { "cOrdOrd",   "C",  2, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lTerminado","L",  1, 0, "Lógico de producto terminado (producción)" , "",                "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lPeso",     "L",  1, 0, "Lógico de producto por peso",              "",                  "", "( cDbfArt )", nil } )
+<<<<<<< HEAD
    aAdd( aBase, { "cMenu",     "C",  3, 0, "Código del menú de acompañamiento",        "",                  "", "( cDbfArt )", nil } )
+=======
+   aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-título",                              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
+>>>>>>> 662dc99d5286577be52bebe58053e2c6916f99c9
 
 return ( aBase )
 
@@ -18527,7 +18513,7 @@ Static Function Actualizaweb( cCodArt, lChangeImage, lActualizaWeb )
 
       if lPubArt()
 
-         with object ( TComercio():GetInstance() )    
+         with object ( TComercio():GetInstance() )  
             :ActualizaProductsPrestashop( cCodArt, lChangeImage )
          end with
 

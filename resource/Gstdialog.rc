@@ -1529,36 +1529,31 @@ ART_WEB DIALOG DISCARDABLE 36, 16, 496, 286
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Publicar este artículo en la página web", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 29, 141, 10
-  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 416, 28, 70, 12
-  CONTROL "Sobre precio", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 54, 54, 10
-  CONTROL "", 150, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 106, 53, 40, 12
-  CONTROL "", 120, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER, 106, 66, 56, 12
-  CONTROL "", 121, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 215, 66, 40, 12
-  CONTROL "", 122, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 285, 66, 57, 12
-  CONTROL "", 123, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 417, 66, 69, 12
-  CONTROL "No mostrar información de entrega", 180, "Button", BS_AUTORADIOBUTTON, 49, 96, 124, 10
-  CONTROL "Entrega inmediata", 181, "Button", BS_AUTORADIOBUTTON, 49, 108, 73, 10
-  CONTROL "Entrega en ", 182, "Button", BS_AUTORADIOBUTTON, 49, 120, 72, 10
-  CONTROL "", 183, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 141, 119, 30, 12
-  CONTROL "", 184, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 179, 119, 30, 12
-  CONTROL "Producto destacado", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 262, 96, 77, 10
-  CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 345, 119, 30, 12
-  CONTROL "", 220, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 147, 440, 133
-  CONTROL "dias", -1, "Static", WS_GROUP, 213, 121, 16, 9
-  CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 136, 448, 147
-  CONTROL "Meses de garantía", -1, "Static", WS_GROUP, 262, 122, 72, 8
-  CONTROL "-", -1, "Static", WS_GROUP, 173, 122, 8, 8
-  CONTROL "", -1, "Button", BS_GROUPBOX, 255, 85, 237, 48
-  CONTROL "Entregas", -1, "Button", BS_GROUPBOX, 44, 85, 207, 48
-  CONTROL "Ofertas para la web", -1, "Button", BS_GROUPBOX, 44, 42, 447, 41
-  CONTROL "Código web", -1, "Static", WS_GROUP, 351, 31, 40, 8
+  CONTROL "Publicar este artículo en la página web", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 38, 141, 10
+  CONTROL "Producto destacado", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 64, 50, 77, 10
+  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 416, 37, 70, 12
+  CONTROL "Sobre precio", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 77, 54, 10
+  CONTROL "", 150, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 106, 76, 40, 12
+  CONTROL "", 120, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER, 106, 89, 56, 12
+  CONTROL "", 121, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 215, 89, 40, 12
+  CONTROL "", 122, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 285, 89, 57, 12
+  CONTROL "", 123, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 417, 89, 69, 12
+  CONTROL "", 220, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 118, 440, 120
+  CONTROL "", 180, "Edit", ES_MULTILINE|WS_BORDER, 106, 254, 383, 12
+  CONTROL "", 190, "Edit", ES_MULTILINE|WS_BORDER, 106, 268, 383, 12
+  CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 107, 448, 135
+  CONTROL "Precios y ofertas para la web", -1, "Button", BS_GROUPBOX, 44, 65, 447, 41
+  CONTROL "Código web", -1, "Static", WS_GROUP, 351, 40, 40, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 3, 4, 34, 30
   CONTROL "Configuración para el artículo en la web", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-  CONTROL "Precios de tarifas", -1, "Static", WS_GROUP, 48, 69, 56, 8
-  CONTROL "% Descuento", -1, "Static", WS_GROUP, 166, 69, 47, 8
-  CONTROL "Neto", -1, "Static", WS_GROUP, 262, 69, 21, 8
-  CONTROL "Impuestos incluidos", -1, "Static", WS_GROUP, 351, 69, 64, 8
+  CONTROL "Precios de tarifas", -1, "Static", WS_GROUP, 48, 92, 56, 8
+  CONTROL "% Descuento", -1, "Static", WS_GROUP, 166, 92, 47, 8
+  CONTROL "Neto", -1, "Static", WS_GROUP, 262, 92, 21, 8
+  CONTROL "Impuestos incluidos", -1, "Static", WS_GROUP, 351, 92, 64, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 30, 447, 34
+  CONTROL "Motores de búsqueda SEO", -1, "Button", BS_GROUPBOX, 44, 243, 447, 41
+  CONTROL "Meta-título", -1, "Static", WS_GROUP, 48, 257, 56, 8
+  CONTROL "Meta-descripción", -1, "Static", WS_GROUP, 48, 271, 56, 8
 }
 
 ARTCODE DIALOG DISCARDABLE 175, 153, 369, 104

@@ -471,7 +471,7 @@ static nNumCaj          := 0
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
-static dOldFecCad 
+static dOldFecCad       := cToD( "" )
 static cOldUndMed       := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
@@ -9993,10 +9993,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             /*
             Meses de grantia---------------------------------------------------
             */
+            /*
             if !Empty( aGet[ _NMESGRT ] )
-               aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
+               aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt ) 
             end if
-
+            */
             /*
             Si la comisi¢n del articulo hacia el agente es distinto de cero----
             */
