@@ -152,8 +152,10 @@ CLASS TMant
 
    METHOD lLoadDivisa()
 
-   METHOD Filter()
+   METHOD SetFilter( cFilter )            INLINE ( ::oDbf:SetFilter( cFilter ) )
+   METHOD KillFilter()                    INLINE ( ::oDbf:SetFilter() )
 
+   METHOD Filter()
    METHOD LoadFilter()
 
    METHOD Report()

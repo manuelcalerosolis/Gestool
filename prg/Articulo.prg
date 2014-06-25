@@ -92,6 +92,7 @@ static oUndMedicion
 static oFraPub
 static oFabricante
 static oOrdenComanda
+static oTpvMenu
 
 static oActiveX
 
@@ -226,8 +227,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
    lExternal      := lExt
 
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+//   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+//   BEGIN SEQUENCE
 
       oMsgText( 'Abriendo ficheros artículos' )
 
@@ -431,6 +432,13 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenfiles        := .f.
       end if 
 
+      oTpvMenu             := TpvMenu():Create( cPath )
+      oTpvMenu:OpenService( .f., cPath )
+      oTpvMenu:SetFilter( 'Field->lAcomp == .t.' )
+      oTpvMenu:lAppendBuscar     := .f.
+      oTpvMenu:lModificarBuscar  := .f.
+
+
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
       */
@@ -455,15 +463,15 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       oMsgText( 'Ficheros de artículos abiertos' )
 
-   RECOVER USING oError
-
-      lOpenFiles           := .f.
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de artículos' )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//
+//      lOpenFiles           := .f.
+//
+//      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de artículos' )
+//
+//   END SEQUENCE
+//
+//   ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
@@ -699,6 +707,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oOrdenComanda:End()
    end if 
 
+   if !Empty( oTpvMenu )
+      oTpvMenu:CloseService()
+   end if
+
    dbfArticulo    := nil
    dbfProv        := nil
    dbfCatalogo    := nil
@@ -747,6 +759,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfUbicaT      := nil
    dbfUbicaL      := nil
    dbfTImp        := nil
+   oTpvMenu       := nil
 
    lOpenFiles     := .f.
 
@@ -2035,6 +2048,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldTactil
 
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldPos( "cMenu" ) ) ] ;
+      VAR         aTmp[ ( dbfArticulo )->( fieldPos( "cMenu" ) ) ] ;
+      BITMAP      "Lupa" ;
+      ID          490 ;
+      IDTEXT      491 ;
+      VALID       ( oTpvMenu:Existe( aGet[ ( dbfArticulo )->( fieldpos( "cMenu" ) ) ], aGet[ ( dbfArticulo )->( fieldPos( "cMenu" ) ) ]:oHelpText ) );
+      ON HELP     ( oTpvMenu:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cMenu" ) ) ] ) ) ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          fldTactil
+
    /*
 	Segunda Caja de Dialogo del Folder
 	---------------------------------------------------------------------------
@@ -2096,7 +2119,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          OF          fldPrecios ;
 
       REDEFINE SAY oCosto ;
-         PROMPT   nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ;
+         PROMPT   nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ;
          ID       111 ;
          PICTURE  cPinDiv ;
          OF       fldPrecios
@@ -2161,7 +2184,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 11 ]:nAt <= 1,;
-                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                               aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"   ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "Benef1"  ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ],;
@@ -2191,7 +2214,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 11 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
@@ -2210,7 +2233,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 11 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
@@ -2251,7 +2274,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          SPINNER ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF2" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 12 ]:nAt <= 1,;
-                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                               aTmp[ ( dbfArticulo )->( fieldpos( "LBNF2"    ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "BENEF2"   ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2269,7 +2292,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 12 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF2"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2286,7 +2309,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 12 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF2"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2327,7 +2350,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF3" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 13 ]:nAt <= 1,;
-                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                               aTmp[ ( dbfArticulo )->( fieldpos( "LBNF3"    ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "BENEF3"   ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2345,7 +2368,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 13 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF3"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2362,7 +2385,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 13 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF3"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2403,7 +2426,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF4" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 14 ]:nAt <= 1,;
-                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                               aTmp[ ( dbfArticulo )->( fieldpos( "LBNF4"    ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "BENEF4"   ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2421,7 +2444,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 14 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF4"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2438,7 +2461,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 14 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF4"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2479,7 +2502,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF5" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 15 ]:nAt <= 1,;
-                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                               aTmp[ ( dbfArticulo )->( fieldpos( "LBNF5"    ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "BENEF5"   ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2497,7 +2520,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 15 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF5"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2514,7 +2537,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 15 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF5" ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
@@ -2556,7 +2579,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LBNF6" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 16 ]:nAt <= 1,;
-                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                               aTmp[ ( dbfArticulo )->( fieldpos( "LBNF6"    ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "BENEF6"   ) ) ],;
                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2574,7 +2597,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 16 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF6"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -2591,7 +2614,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 16 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF6"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
@@ -4195,8 +4218,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    with object ( oBrwKit:AddCol() )
       :cHeader          := "Total"
-      :bEditValue       := {|| nCosto( ( dbfTmpKit )->cRefKit, dbfArticulo, dbfArtKit, .f., cDivUse, dbfDiv ) * ( dbfTmpKit )->nUndKit } // * nFactorConversion( ( dbfTmpKit )->cRefKit, dbfArticulo ) 
-      :bFooter          := {|| nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, .t., cDivUse, dbfDiv ) }
+      :bEditValue       := {|| nCosto( ( dbfTmpKit )->cRefKit, dbfArticulo, dbfArtKit, .f., cDivUse, dbfDiv ) * ( dbfTmpKit )->nUndKit * nFactorConversion( ( dbfTmpKit )->cRefKit, dbfArticulo ) } // 
+      :bFooter          := {|| nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, .t., cDivUse, dbfDiv ) }
       :cEditPicture     := cPinDiv( cDivEmp(), dbfDiv )
       :nWidth           := 80
       :nDataStrAlign    := AL_RIGHT
@@ -10760,7 +10783,7 @@ return ( nPreMed )
 
 //---------------------------------------------------------------------------//
 
-Function nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
+Function nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
 
    local nCosto   := 0
    local nOrdArt  := ( dbfArticulo )->( OrdSetFocus( 1 ) )
@@ -15697,6 +15720,7 @@ function aItmArt()
    aAdd( aBase, { "cOrdOrd",   "C",  2, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lTerminado","L",  1, 0, "Lógico de producto terminado (producción)" , "",                "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lPeso",     "L",  1, 0, "Lógico de producto por peso",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cMenu",     "C",  3, 0, "Código del menú de acompañamiento",        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-título",                              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
 
@@ -16121,7 +16145,7 @@ Function nCosto( uTmp, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
 
       if ( dbfArtKit )->( dbSeek( cCodArt ) )
          while ( dbfArtKit )->cCodKit == cCodArt .and. !( dbfArtKit )->( eof() )
-            nCosto   += nCosto( ( dbfArtKit )->cRefKit, dbfArticulo, dbfArtKit ) * ( dbfArtKit )->nUndKit * nFactorConversion( ( dbfArtKit )->cRefKit, dbfArticulo ) 
+            nCosto   += nCosto( ( dbfArtKit )->cRefKit, dbfArticulo, dbfArtKit ) * ( dbfArtKit )->nUndKit // * nFactorConversion( ( dbfArtKit )->cRefKit, dbfArticulo ) 
             ( dbfArtKit )->( dbSkip() )
          end while
       end if
@@ -16170,11 +16194,11 @@ Function pCosto( dbfArticulo, lPic, cDivRet, dbfDiv, lFacCnv )
    DEFAULT lFacCnv   := .t.
 
    nCosto            := ( dbfArticulo )->pCosto
-
+/*
    if ( dbfArticulo )->lFacCnv .and. ( dbfArticulo )->nFacCnv != 0
       nCosto         *= ( dbfArticulo )->nFacCnv
    end if
-
+*/
    if dbfDiv != nil
       if cDivRet != nil .and. cDivRet != cDivEmp()
          nCosto      := nCnv2Div( nCosto, cDivEmp(), cDivRet )
