@@ -3822,7 +3822,6 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
    end if 
 
-
    oBrwLin:Load()
 
    /*

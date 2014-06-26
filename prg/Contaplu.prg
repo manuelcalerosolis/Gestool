@@ -2646,13 +2646,15 @@ CLASS EnlaceA3
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
-
+   
+   
    METHOD Render()
    METHOD AutoRender()
    METHOD RenderCabeceraFactura()
    METHOD RenderVentaFactura()
    METHOD RenderReciboFactura()
 
+   METHOD GenerateFile()
    METHOD WriteASCII()   
    METHOD WriteInfo( oTree )              INLINE ( oTree:Select( oTree:Add( "Fichero : " + ( ::cDirectory + "\" + ::cFile ) + " generado satisfactoriamente.", 1 ) ) )
 
@@ -2905,11 +2907,15 @@ ENDCLASS
 
       ::hFile        := fCreate( ::cDirectory + "\" + ::cFile )
 
+      msgAlert( ::hFile, "::hFile GenerateFile" )
+
    RETURN ( Self )   
 
 //------------------------------------------------------------------------//
 
    METHOD WriteASCII() CLASS EnlaceA3
+
+      msgAlert( ::hFile, "::hFile WriteASCII" )
 
       if !file( ::cDirectory + "\" + ::cFile ) .or. empty( ::hFile )
          ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
