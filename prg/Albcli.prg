@@ -15,7 +15,7 @@
 Definición de la base de datos de albaranes a CLIENTES-------------------------
 */
 
-#define _CSERALB                  1
+#define _CSERALB                  1 
 #define _NNUMALB                  2
 #define _CSUFALB                  3
 #define _CTURALB                  4
