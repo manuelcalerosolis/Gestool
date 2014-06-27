@@ -3761,13 +3761,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NMESGRT] VAR aTmp[_NMESGRT] ;
-         ID       330 ;
-         SPINNER ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
-
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
@@ -5416,16 +5409,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Meses de grantia------------------------------------------------------
-            */
-
-            if aGet[ _NMESGRT ] != nil
-               aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
-            else
-               aTmp[ _NMESGRT ]  := ( dbfArticulo )->nMesGrt
-            end if
-
-            /*
             Si la comisi¢n del articulo hacia el agente es distinto de cero----
             */
 
@@ -5664,7 +5647,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[_CCODTAR] )
 
                if nPrePro == 0
-                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
+                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva ) )
                else
                   aGet[ _NPREDIV ]:cText( nPrePro )
                end if

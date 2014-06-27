@@ -13507,7 +13507,6 @@ Static Function AppendKit( uTmpLin, aTik )
             ( dbfTmpL )->lTipAcc    := ( dbfArticulo )->lTipAcc
             ( dbfTmpL )->nCtlStk    := ( dbfArticulo )->nCtlStock
             ( dbfTmpL )->cCodImp    := ( dbfArticulo )->cCodImp
-            ( dbfTmpL )->nMesGrt    := ( dbfArticulo )->nMesGrt
 
             if ( dbfArticulo )->lFacCnv
                ( dbfTmpL )->nFacCnv := ( dbfArticulo )->nFacCnv
@@ -17491,7 +17490,6 @@ static function EdtPdaL( aTmp, aGet, dbfTmpL, oBrw, aTmpHead, lNegative, nMode )
    aTmp[ _LKITCHG ]     := .f.
    aTmp[ _LKITPRC ]     := .f.
    aTmp[ _LIMPLIN ]     := .f.
-   aTmp[ _NMESGRT ]     := ( dbfArticulo )->nMesGrt
    aTmp[ _LCONTROL]     := .f.
    aTmp[ _CCODFAM ]     := ( dbfArticulo )->Familia
    aTmp[ _CGRPFAM ]     := RetFld( ( dbfArticulo )->Familia, dbfFamilia, "CCODGRP" )

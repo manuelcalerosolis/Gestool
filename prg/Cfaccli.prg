@@ -968,6 +968,12 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    end if
 
+   // Contabilizamos desde aki A3---------------------------------------------
+
+   if lAplicacionA3()
+      EnlaceA3():GetInstance():Render()
+   end if 
+
    /*
    Contabilizamos los pagos
    ----------------------------------------------------------------------------
@@ -1026,7 +1032,6 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
 
    if lAplicacionA3()
       EnlaceA3():GetInstance():Render()
-      EnlaceA3():GetInstance():WriteASCII()
    end if 
 
    // Ponemos el ticket como contabilizado-------------------------------------
@@ -4937,7 +4942,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    if !lFromFactura
 
       if OpenDiario( , cCodEmp )
-         nAsiento          := RetLastAsi()
+         nAsiento       := RetLastAsi()
       else
          oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " imposible abrir ficheros de contaplus.", 0 ) )
          Return .f.
@@ -4950,18 +4955,22 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    --------------------------------------------------------------------------
    */
 
+   if lAplicacionContaplus()
+
+      if !( ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lDevuelto ) 
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         lErrorFound       := .t.
+      end if
+
+      if ( dbfFacCliP )->lCobrado .and. !ChkFecha( , , ( dbfFacCliP )->dEntrada, .f. )
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+         lErrorFound       := .t.
+      end if
+
+   end if
+
    if ( dbfFacCliP )->lConPgo
       oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ya contabilizado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-      lErrorFound       := .t.
-   end if
-
-   if !( ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lDevuelto )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no cobrado o no devuelto.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-      lErrorFound       := .t.
-   end if
-
-   if ( dbfFacCliP )->lCobrado .and. !ChkFecha( , , ( dbfFacCliP )->dEntrada, .f. )
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " de " + dtoc( ( dbfFacCliP )->dEntrada ) + " asiento fuera de fechas", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
    end if
 
@@ -5031,10 +5040,14 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
          cCtaPgo        := cCtaCob()
       end if
 
-      if Empty( cCtaPgo )
-         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-         lErrorFound    := .t.
-      end if
+      if lAplicacionContaplus()
+
+         if Empty( cCtaPgo )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            lErrorFound    := .t.
+         end if
+
+      end if 
 
       if !ChkSubcuenta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
          oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
@@ -5045,16 +5058,20 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       Pago es en efectivo------------------------------------------------------
       */
 
-      if ( nTipoPago( cCodPgo, dbfFPago ) == 1 )
+      if lAplicacionContaplus()
 
-         nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
+         if ( nTipoPago( cCodPgo, dbfFPago ) == 1 )
 
-         if Empty( nEjeCon )
-            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-            lErrorFound := .t.
-         end if
+            nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
 
-      end if 
+            if Empty( nEjeCon )
+               oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+               lErrorFound := .t.
+            end if
+
+         end if 
+
+      end if
 
       /*
       Obtenemos las cuentas de gastos------------------------------------------
@@ -5132,93 +5149,115 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       Cliente por el total_____________________________________________________
       */
 
-      if nImpRec != 0
+      if lAplicacionContaplus()
 
-          aadd( aSimula, MkAsiento( nAsiento,;
-                                    cCodDiv,;
-                                    dFecha, ;
-                                    cCtaCli,;
-                                    ,;
-                                    if( ( dbfFacCliP )->lDevuelto, nImpRec, 0 ),;
-                                    cConcepto,;
-                                    if( ( dbfFacCliP )->lDevuelto, 0, nImpRec ),;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    cProyecto,;
-                                    cClave,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    lSimula,;
-                                    cTerNif,;
-                                    cTerNom ) )
+         if nImpRec != 0
 
-      end if
+             aadd( aSimula, MkAsiento( nAsiento,;
+                                       cCodDiv,;
+                                       dFecha, ;
+                                       cCtaCli,;
+                                       ,;
+                                       if( ( dbfFacCliP )->lDevuelto, nImpRec, 0 ),;
+                                       cConcepto,;
+                                       if( ( dbfFacCliP )->lDevuelto, 0, nImpRec ),;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
 
-      /*
-      Cobro____________________________________________________________________
-      */
+         end if
 
-      if nImpCob != 0
+         /*
+         Cobro____________________________________________________________________
+         */
 
-         aadd( aSimula, MkAsiento(  nAsiento,;
-                                    cCodDiv,;
-                                    dFecha, ;
-                                    cCtaPgo,;
-                                    ,;
-                                    if( ( dbfFacCliP )->lDevuelto, 0, nImpCob ),;
-                                    cConcepto,;
-                                    if( ( dbfFacCliP )->lDevuelto, nImpCob, 0 ),;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    cProyecto,;
-                                    cClave,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    lSimula,;
-                                    cTerNif,;
-                                    cTerNom,;
-                                    nEjeCon,;
-                                    cCtaCli ) )
+         if nImpCob != 0
 
-      end if
+            aadd( aSimula, MkAsiento(  nAsiento,;
+                                       cCodDiv,;
+                                       dFecha, ;
+                                       cCtaPgo,;
+                                       ,;
+                                       if( ( dbfFacCliP )->lDevuelto, 0, nImpCob ),;
+                                       cConcepto,;
+                                       if( ( dbfFacCliP )->lDevuelto, nImpCob, 0 ),;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom,;
+                                       nEjeCon,;
+                                       cCtaCli ) )
 
-      /*
-      Gastos___________________________________________________________________
-      */
+         end if
 
-      if nImpGas != 0
+         /*
+         Gastos___________________________________________________________________
+         */
 
-         aadd( aSimula, MkAsiento(  nAsiento,;
-                                    cCodDiv,;
-                                    dFecha, ;
-                                    cCtaGas,;
-                                    ,;
-                                    if( ( dbfFacCliP )->lDevuelto, 0, nImpGas ),;
-                                    cConcepto,;
-                                    if( ( dbfFacCliP )->lDevuelto, nImpGas, 0 ),;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    cProyecto,;
-                                    cClave,;
-                                    ,;
-                                    ,;
-                                    ,;
-                                    lSimula,;
-                                    cTerNif,;
-                                    cTerNom ) )
+         if nImpGas != 0
 
-      end if
+            aadd( aSimula, MkAsiento(  nAsiento,;
+                                       cCodDiv,;
+                                       dFecha, ;
+                                       cCtaGas,;
+                                       ,;
+                                       if( ( dbfFacCliP )->lDevuelto, 0, nImpGas ),;
+                                       cConcepto,;
+                                       if( ( dbfFacCliP )->lDevuelto, nImpGas, 0 ),;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         end if
+
+      else 
+
+         EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
+                                          "FechaVencimiento"      => ( dbfFacCliP )->dFecVto,;
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoRegistro"          => 'V',; 
+                                          "TipoVencimiento"       => 'C',; // Cobro
+                                          "NumeroFactura"         => cRecibo,; 
+                                          "DescripcionVencimiento"=> cConcepto,;
+                                          "ImporteVencimiento"    => nImpRec,;
+                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
+                                          "CuentaTesoreria"       => cCtaPgo,;
+                                          "FormaPago"             => '  ',;
+                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
+                                          "Moneda"                => 'E',; // Euros
+                                          "Render"                => 'ReciboFactura' } )
+
+      end if 
 
       if ( !lSimula .and. !lErrorFound )
          lReturn     := lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP )

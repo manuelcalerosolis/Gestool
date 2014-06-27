@@ -432,14 +432,12 @@ METHOD ProccesLine( cLine )
             ::oAlbCliL:nPesoKg   := ::oDbfArt:nPesoKg
             ::oAlbCliL:nCosDiv   := ::oDbfArt:pCosto
             ::oAlbCliL:nPvpRec   := ::oDbfArt:PvpRec
-            ::oAlbCliL:nMesGrt   := ::oDbfArt:nMesGrt
          else
             ::oAlbCliL:cDetalle  := Space(250)
             ::oAlbCliL:cUniDad   := Space(2)
             ::oAlbCliL:nPesoKg   := 0
             ::oAlbCliL:nCosDiv   := 0
             ::oAlbCliL:nPvpRec   := 0
-            ::oAlbCliL:nMesGrt   := 0
          end if
 
          ::oAlbCliL:nPreUnit     := Val( SubStr( cLine, 39, 6 ) + "." + SubStr( cLine, 45, 3 ) )
@@ -789,7 +787,6 @@ METHOD ProccesLine( cLine )
             ::oTikCliL:cGrpFam      := RetFld( ::oDbfArt:Familia, ::oDbfFam:cAlias, "cCodGrp"  )
             ::oTikCliL:lTipAcc      := ::oDbfArt:lTipAcc
             ::oTikCliL:nCtlStk      := ::oDbfArt:nCtlStock
-            ::oTikCliL:nMesGrt      := ::oDbfArt:nMesGrt
             ::oTikCliL:nCosDiv      := ::oDbfArt:pCosto
          else
             ::oTikCliL:cNomTil      := Space(250)

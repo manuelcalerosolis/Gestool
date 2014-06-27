@@ -1116,7 +1116,6 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                ( dbfFacCliL )->cValPr2    := ( dbfAlbCliL )->cValPr2
                ( dbfFacCliL )->nCtlStk    := ( dbfAlbCliL )->nCtlStk
                ( dbfFacCliL )->nCosDiv    := ( dbfAlbCliL )->nCosDiv
-               ( dbfFacCliL )->nMesGrt    := ( dbfAlbCliL )->nMesGrt
                ( dbfFacCliL )->lControl   := ( dbfAlbCliL )->lControl
                ( dbfFacCliL )->lKitArt    := ( dbfAlbCliL )->lKitArt
                ( dbfFacCliL )->lKitChl    := ( dbfAlbCliL )->lKitChl

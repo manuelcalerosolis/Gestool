@@ -2525,7 +2525,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    Chequea si la factura esta liquidada----------------------------------------
    */
 
-   ChkLqdFacPrv( nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ) )
+   ChkLqdFacPrv( nil, nView )
 
    /*
    Cerramos los ficheros-------------------------------------------------------
@@ -4542,19 +4542,6 @@ STATIC FUNCTION lMoreIva( nCodIva )
    MsgStop( "Factura con mas de 3 tipos de " + cImp(), "Imposible añadir" )
 
 RETURN .F.
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION ChgFactu( cFacPrvT, oBrw )
-
-   if dbLock( TDataView():FacturasProveedores( nView ) )
-      ( TDataView():FacturasProveedores( nView ) )->lLiquidada := !( TDataView():FacturasProveedores( nView ) )->lLiquidada
-      ( TDataView():FacturasProveedores( nView ) )->( dbUnLock() )
-   end if
-
-   oBrw:refresh()
-
-RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -7684,7 +7671,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura, cDivFac )
       Chequea si la factura esta liquidada----------------------------------------
       */
 
-      ChkLqdFacPrv( nil, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ) )
+      ChkLqdFacPrv( nil, nView )
 
    end if
 

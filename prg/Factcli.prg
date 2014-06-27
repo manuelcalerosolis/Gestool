@@ -195,7 +195,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LKITART            47      //   L     1      0
 #define _LKITCHL            48      //   L     1      0
 #define _LKITPRC            49      //   L     1      0
-#define _NMESGRT            50      //   N     2      0
+#define _NMESGRT            50      //   N     2      0 
 #define _LMSGVTA            51
 #define _LNOTVTA            52
 #define _CCODTIP            53      //   C     3      0
@@ -1082,7 +1082,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, TDataView():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos" ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, TDataView():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), EnlaceA3():GetInstance():WriteASCII(), ) } ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -3302,16 +3302,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Garantia"
-         :bEditValue          := {|| ( dbfTmpLin )->nMesGrt }
-         :cEditPicture        := "99"
-         :nWidth              := 30
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
-         :lHide               := .t.
-      end with
-
-      with object ( oBrwLin:AddCol() )
          :cHeader             := "Fecha"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecha ) }
          :nWidth              := 80
@@ -5145,13 +5135,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1] ;
          IDSAY    321 ;
 
-      REDEFINE GET aGet[_NMESGRT] VAR aTmp[_NMESGRT] ;
-         ID       330 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         SPINNER ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
-
       /*
       Segunda caja de dilogo---------------------------------------------------
       */
@@ -6030,7 +6013,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lKitArt    := (dbfAlbCliL)->lKitArt
                (dbfTmpLin)->lKitChl    := (dbfAlbCliL)->lKitChl
                (dbfTmpLin)->lKitPrc    := (dbfAlbCliL)->lKitPrc
-               (dbfTmpLin)->nMesGrt    := (dbfAlbCliL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfAlbCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfAlbCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfAlbCliL)->cLote
@@ -7003,6 +6985,8 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
    oBtnCancel:Enable()
 
    if !Empty( bPreAction )
+
+      msgAlert( valtoprg( bPreAction ) ) 
       lPre              := Eval( bPreAction )
    end if
 
@@ -7264,7 +7248,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lKitArt    := (dbfAlbCliL)->lKitArt
                (dbfTmpLin)->lKitChl    := (dbfPedCliL)->lKitChl
                (dbfTmpLin)->lKitPrc    := (dbfPedCliL)->lKitPrc
-               (dbfTmpLin)->nMesGrt    := (dbfPedCliL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfPedCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfPedCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfPedCliL)->cLote
@@ -7643,7 +7626,6 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lKitArt    := (dbfPreCLiL)->lKitArt
                (dbfTmpLin)->lKitChl    := (dbfPreCLiL)->lKitChl
                (dbfTmpLin)->lKitPrc    := (dbfPreCliL)->lKitPrc
-               (dbfTmpLin)->nMesGrt    := (dbfPreCLiL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfPreCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfPreCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfPreCliL)->cLote
@@ -8543,7 +8525,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->lKitChl  := ( dbfAlbCliL )->lKitChl
                ( dbfTmpLin )->lKitPrc  := ( dbfAlbCliL )->lKitPrc
                ( dbfTmpLin )->nUndKit  := ( dbfAlbCliL )->nUndKit
-               ( dbfTmpLin )->nMesGrt  := ( dbfAlbCliL )->nMesGrt
                ( dbfTmpLin )->lLote    := ( dbfAlbCliL )->lLote
                ( dbfTmpLin )->nLote    := ( dbfAlbCliL )->nLote
                ( dbfTmpLin )->cLote    := ( dbfAlbCliL )->cLote
@@ -11857,16 +11838,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if ( dbfArticulo )->nUniCaja != 0
             aGet[_NUNICAJA]:cText( ( dbfArticulo )->nUniCaja )
          end if
-
-         /*
-         Meses de grantia------------------------------------------------------
-         */
-
-        	if !Empty( aGet[ _NMESGRT ] )
-            aGet[ _NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
-        	else
-            aGet[ _NMESGRT ]  := ( dbfArticulo )->nMesGrt
-        	end if
 
          /*
          Si la comisi¢n del articulo hacia el agente es distinto de cero-------
@@ -15475,7 +15446,6 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lKitArt    := (dbfSatCLiL)->lKitArt
                (dbfTmpLin)->lKitChl    := (dbfSatCLiL)->lKitChl
                (dbfTmpLin)->lKitPrc    := (dbfSatCliL)->lKitPrc
-               (dbfTmpLin)->nMesGrt    := (dbfSatCLiL)->nMesGrt
                (dbfTmpLin)->lLote      := (dbfSatCliL)->lLote
                (dbfTmpLin)->nLote      := (dbfSatCliL)->nLote
                (dbfTmpLin)->cLote      := (dbfSatCliL)->cLote
@@ -15929,7 +15899,6 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
                ( dbfTmpLin )->cValPr1     := ( dbfSatCliL )->cValPr1
                ( dbfTmpLin )->cValPr2     := ( dbfSatCliL )->cValPr2
                ( dbfTmpLin )->nCosDiv     := ( dbfSatCliL )->nCosDiv
-               ( dbfTmpLin )->nMesGrt     := ( dbfSatCliL )->nMesGrt
                ( dbfTmpLin )->lMsgVta     := ( dbfSatCliL )->lMsgVta
                ( dbfTmpLin )->lNotVta     := ( dbfSatCliL )->lNotVta
                ( dbfTmpLin )->lLote       := ( dbfSatCliL )->lLote

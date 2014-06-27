@@ -2771,16 +2771,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Grt."
-         :bEditValue          := {|| ( dbfTmpLin )->nMesGrt }
-         :cEditPicture        := "99"
-         :nWidth              := 40
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
-         :lHide               := .t.
-      end with
-
-      with object ( oBrwLin:AddCol() )
          :cHeader             := "Fecha"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecha ) }
          :nWidth              := 40
@@ -4111,13 +4101,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1] ;
          IDSAY    321 ;
-
-      REDEFINE GET aGet[_NMESGRT] VAR aTmp[_NMESGRT] ;
-         ID       330 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         SPINNER ;
-         PICTURE  "99" ;
-         OF       oFld:aDialogs[1]
 
       /*
       Segunda caja de dilogo---------------------------------------------------
@@ -6015,12 +5998,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Meses de grantia---------------------------------------------------------
-         */
-
-         aGet[_NMESGRT ]:cText( ( dbfArticulo )->nMesGrt )
-
-         /*
          Si la comisi¢n del articulo hacia el agente es distinto de cero----------
          */
 
@@ -6227,7 +6204,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
 
          if nPrePro == 0
-            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
+            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva ) )
          else
             aGet[_NPREUNIT]:cText( nPrePro )
          end if
@@ -8903,7 +8880,6 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->lKitArt    := ( dbfFacCliL )->lKitArt
                   ( dbfTmpLin )->lKitChl    := ( dbfFacCliL )->lKitChl
                   ( dbfTmpLin )->lKitPrc    := ( dbfFacCliL )->lKitPrc
-                  ( dbfTmpLin )->nMesGrt    := ( dbfFacCliL )->nMesGrt
                   ( dbfTmpLin )->lLote      := ( dbfFacCliL )->lLote
                   ( dbfTmpLin )->nLote      := ( dbfFacCliL )->nLote
                   ( dbfTmpLin )->cLote      := ( dbfFacCliL )->cLote

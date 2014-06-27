@@ -2646,13 +2646,15 @@ CLASS EnlaceA3
    METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
    METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
    METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
-
+   
+   
    METHOD Render()
    METHOD AutoRender()
    METHOD RenderCabeceraFactura()
    METHOD RenderVentaFactura()
    METHOD RenderReciboFactura()
 
+   METHOD GenerateFile()
    METHOD WriteASCII()   
    METHOD WriteInfo( oTree )              INLINE ( oTree:Select( oTree:Add( "Fichero : " + ( ::cDirectory + "\" + ::cFile ) + " generado satisfactoriamente.", 1 ) ) )
 
@@ -2664,6 +2666,7 @@ CLASS EnlaceA3
    METHOD FechaApunte()                   INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha"] ) )
    METHOD TipoRegistro()                  INLINE ( ::cBuffer   += ::hAsiento[ "TipoRegistro"] ) 
    METHOD TipoImporte()                   INLINE ( ::cBuffer   += ::hAsiento[ "TipoImporte" ] )
+   METHOD FechaFactura()                  INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaFactura"] ) )
    METHOD NumeroFactura()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NumeroFactura" ], 10 ) ) 
    METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionApunte" ], 30 ) )
    METHOD Importe()                       INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "Importe" ] ) )
@@ -2676,6 +2679,8 @@ CLASS EnlaceA3
    METHOD Moneda()                        INLINE ( ::cBuffer   += ::hAsiento[ "Moneda" ] )
 
    METHOD Cuenta()                        INLINE ( ::cBuffer   += padr( ::hAsiento[ "Cuenta" ], 12 ) ) 
+   METHOD CuentaTesoreria()               INLINE ( ::cBuffer   += padr( ::hAsiento[ "CuentaTesoreria" ], 12 ) ) 
+
    METHOD DescripcionCuenta()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionCuenta" ], 30 ) )
 
    METHOD SubtipoFactura()                INLINE ( ::cBuffer   += ::hAsiento[ "SubtipoFactura" ] ) 
@@ -2703,6 +2708,16 @@ CLASS EnlaceA3
    METHOD Generado()                      INLINE ( ::cBuffer   += 'N' )
 
    METHOD TipoImporte()                   INLINE ( ::cBuffer   += 'C' )
+
+   // Vencimientos-------------------------------------------------------------
+
+   METHOD FechaVencimiento()              INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaVencimiento"] ) )
+   METHOD TipoVencimiento()               INLINE ( ::cBuffer   += ::hAsiento[ "TipoVencimiento" ] )
+   METHOD DescripcionVencimiento()        INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionVencimiento" ], 30 ) )   
+   METHOD ImporteVencimiento()            INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "ImporteVencimiento" ] ) )
+   METHOD NumeroVencimiento()             INLINE ( ::cBuffer   += str( ::hAsiento[ "NumeroVencimiento" ], 2 ) )
+   METHOD FormaPago()                     INLINE ( ::cBuffer   += ::hAsiento[ "FormaPago" ] )
+
    METHOD Referencia()                    INLINE ( ::cBuffer   += substr( ::hAsiento[ "Concepto" ], 1, 10 ) )
    
    METHOD LineaApunte()                   INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
@@ -2710,29 +2725,100 @@ CLASS EnlaceA3
    METHOD FinLinea()                      INLINE ( ::cBuffer   += CRLF ) 
 
       /* 
-            EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliT )->cSerie ),;
-                                             "Fecha"                 => dFecha ,;
-                                             "TipoRegistro"          => '9',; // Facturas
-                                             "Cuenta"                => aVentas[ n, 1 ],;
-                                             "DescripcionCuenta"     => '',;
-                                             "TipoImporte"           => 'C',;
-                                             "NumeroFactura"         => cFactura,;
-                                             "DescripcionApunte"     => cConcepto,;
-                                             "SubtipoFactura"        => if( lIvaCEE, '2', '1' ),; // Ventas
-                                             "BaseImponible"         => nCalculo,;
-                                             "PorcentajeIVA"         => aVentas[ n, 2 ],;
-                                             "PorcentajeRecargo"     => nPReq( dbfIva, aVentas[ n, 2 ] ),;
-                                             "PorcentajeRetencion"   => 0,;
-                                             "Impreso"               => '01',; // 347
-                                             "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;
-                                             "Modelo415"             => ' ',;
-                                             "Analitico"             => ' ',;
-                                             "Moneda"                => 'E',; // Euros
-                                             "Render"                => 'VentaFactura' } )
+         EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
+                                          "Fecha"                 => ( dbfFacCliP )->dFecVto,;
+                                          "TipoRegistro"          => 'V',; // Vencimientos
+                                          "Cuenta"                => cCtaCli,;
+                                          "DescripcionCuenta"     => cTerNom,;
+                                          "TipoVencimiento"       => 'C',; // Cobro
+                                          "NumeroFactura"         => cRecibo,; 
+                                          "DescripcionVencimiento"=> cConcepto,;
+                                          "ImporteVencimiento"    => nImpRec,;
+                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
+                                          "CuentaTesoreria"       => cCtaPgo,;
+                                          "FormaPago"             => '  ',;
+                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
+                                          "Render"                => 'ReciboFactura' } )
       */
 
 
 ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+   METHOD New()
+
+      ::aAsiento                          := {}
+      ::cDirectory                        := "C:\EnlaceA3"
+      ::cFile                             := "SuEnalce.Dat" 
+      ::cDate                             := DateToString()
+      ::cBuffer                           := ""
+
+   RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD GetInstance()
+
+      if Empty( ::oInstance )
+         ::oInstance                      := ::New()
+      end if
+
+   RETURN ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+   METHOD Render() CLASS EnlaceA3
+
+      local hAsiento
+
+      for each hAsiento in ::aAsiento
+
+         ::hAsiento     := hAsiento
+
+         do case 
+            case hAsiento[ "Render" ] == "CabeceraFactura"
+               ::RenderCabeceraFactura()
+            case hAsiento[ "Render" ] == "VentaFactura"
+               ::RenderVentaFactura()
+            case hAsiento[ "Render" ] == "ReciboFactura"
+               ::RenderReciboFactura()
+         end case
+
+      next
+
+      ::aAsiento        := {}
+
+   RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD RenderCabeceraFactura() CLASS EnlaceA3
+
+      ::TipoFormato()
+      ::Empresa()
+      ::FechaApunte()
+      ::TipoRegistro( 1 )
+      ::Cuenta()
+      ::DescripcionCuenta()
+      ::TipoFacturaVenta()
+      ::NumeroFactura()
+      ::LineaApunte()
+      ::DescripcionApunte()
+      ::Importe()
+      ::Reserva( 62 )
+      ::NIF()
+      ::NombreCliente()
+      ::CodigoPostal()
+      ::Reserva( 2 )
+      ::FechaOperacion()
+      ::FechaOperacion()
+      ::Moneda()
+      ::Generado()
+
+      ::FinLinea() 
+
+   Return ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -2774,26 +2860,20 @@ ENDCLASS
 
       ::TipoFormato()
       ::Empresa()
-      ::FechaApunte()
-      ::TipoRegistro( '9' )
+      ::FechaVencimiento()
+      ::TipoRegistro()
       ::Cuenta()
       ::DescripcionCuenta()
-      ::TipoCargoAbono()
+      ::TipoVencimiento()
       ::NumeroFactura()
-      ::LineaApunte()
-      ::DescripcionApunte()
-      ::SubtipoFactura()
-      ::ImporteHaber()
-      ::PorcentajeIVA()
-      ::CuotaIVA()
-      ::PorcentajeRecargo()
-      ::CuotaRecargo()
-      ::Reserva( 62 )
-      ::NIF()
-      ::Nombre()
-      ::Reserva( 2 )
-      ::FechaOperacion()
+      ::Reserva( 1 )             // Indicador de ampliacion   
+      ::DescripcionVencimiento() 
+      ::ImporteVencimiento()
       ::FechaFactura()
+      ::CuentaTesoreria()
+      ::FormaPago()
+      ::NumeroVencimiento()
+      ::Reserva( 115 )
       ::Moneda()
       ::Generado()
 
@@ -2801,84 +2881,7 @@ ENDCLASS
 
    Return ( Self )
 
-
-//---------------------------------------------------------------------------//
-
-   METHOD New()
-
-      ::aAsiento                          := {}
-      ::cDirectory                        := "C:\EnlaceA3"
-      ::cFile                             := "SuEnalce.Dat" 
-      ::cDate                             := DateToString()
-      ::cBuffer                           := ""
-
-   RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD GetInstance()
-
-      if Empty( ::oInstance )
-         ::oInstance                      := ::New()
-      end if
-
-   RETURN ( ::oInstance )
-
-//---------------------------------------------------------------------------//
-
-   METHOD Render() CLASS EnlaceA3
-
-      local hAsiento
-
-      for each hAsiento in ::aAsiento
-
-         msgAlert( hb_enumindex() )
-
-         ::hAsiento     := hAsiento
-
-         do case 
-            case hAsiento[ "Render" ] == "CabeceraFactura"
-               ::RenderCabeceraFactura()
-            case hAsiento[ "Render" ] == "VentaFactura"
-               ::RenderVentaFactura()
-            case hAsiento[ "Render" ] == "ReciboFactura"
-               // ::RenderReciboFactura()
-         end case
-
-      next
-
-   RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-   METHOD RenderCabeceraFactura() CLASS EnlaceA3
-
-      ::TipoFormato()
-      ::Empresa()
-      ::FechaApunte()
-      ::TipoRegistro( 1 )
-      ::Cuenta()
-      ::DescripcionCuenta()
-      ::TipoFacturaVenta()
-      ::NumeroFactura()
-      ::LineaApunte()
-      ::DescripcionApunte()
-      ::Importe()
-      ::Reserva( 62 )
-      ::NIF()
-      ::NombreCliente()
-      ::CodigoPostal()
-      ::Reserva( 2 )
-      ::FechaOperacion()
-      ::FechaOperacion()
-      ::Moneda()
-      ::Generado()
-
-      ::FinLinea() 
-
-   Return ( Self )
-
-//------------------------------------------------------------------------//
+   //------------------------------------------------------------------------//
 
    METHOD Signo( nImporte )
 
@@ -2888,7 +2891,7 @@ ENDCLASS
 
    RETURN ( if( nImporte > 0, '+', '-' ) + strzero( nImporte, 13, 2 ) )
 
-//------------------------------------------------------------------------//
+   //------------------------------------------------------------------------//
 
    METHOD Porcentaje( nPorcentaje )
 
@@ -2900,24 +2903,25 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
-   METHOD AutoRender() CLASS EnlaceA3
-/*
-      for each hAsiento in ::aAsiento
-         msgAlert( HaaGetValueAt( hAsiento, 1 ) )
-
-      next
-*/
-   Return ( Self )
-
-//------------------------------------------------------------------------//
-
-   METHOD WriteASCII() CLASS EnlaceA3
+   METHOD GenerateFile()
 
       ferase( ::cDirectory + "\" + ::cFile )
 
       ::hFile        := fCreate( ::cDirectory + "\" + ::cFile )
 
-      if !Empty( ::hFile )
+      msgAlert( ::hFile, "::hFile GenerateFile" )
+
+   RETURN ( Self )   
+
+//------------------------------------------------------------------------//
+
+   METHOD WriteASCII() CLASS EnlaceA3
+
+      if !file( ::cDirectory + "\" + ::cFile ) .or. empty( ::hFile )
+         ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
+      end if 
+
+      if !empty( ::hFile )
 
          fWrite( ::hFile, ::cBuffer )
          fClose( ::hFile )
@@ -2931,6 +2935,16 @@ ENDCLASS
 
 //------------------------------------------------------------------------//
 
+   METHOD AutoRender() CLASS EnlaceA3
+/*
+      for each hAsiento in ::aAsiento
+         msgAlert( HaaGetValueAt( hAsiento, 1 ) )
+
+      next
+*/
+   Return ( Self )
+
+//------------------------------------------------------------------------//
 
 
 
