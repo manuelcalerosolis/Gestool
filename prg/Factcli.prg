@@ -195,7 +195,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LKITART            47      //   L     1      0
 #define _LKITCHL            48      //   L     1      0
 #define _LKITPRC            49      //   L     1      0
-#define _NMESGRT            50      //   N     2      0
+#define _NMESGRT            50      //   N     2      0 
 #define _LMSGVTA            51
 #define _LNOTVTA            52
 #define _CCODTIP            53      //   C     3      0
