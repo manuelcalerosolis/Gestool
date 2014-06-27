@@ -972,7 +972,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    if lAplicacionA3()
       EnlaceA3():GetInstance():Render()
-      EnlaceA3():GetInstance():WriteASCII()
    end if 
 
    /*
@@ -1033,7 +1032,6 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
 
    if lAplicacionA3()
       EnlaceA3():GetInstance():Render()
-      EnlaceA3():GetInstance():WriteASCII()
    end if 
 
    // Ponemos el ticket como contabilizado-------------------------------------

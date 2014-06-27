@@ -2787,6 +2787,8 @@ ENDCLASS
 
       next
 
+      ::aAsiento        := {}
+
    RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2914,8 +2916,6 @@ ENDCLASS
 //------------------------------------------------------------------------//
 
    METHOD WriteASCII() CLASS EnlaceA3
-
-      msgAlert( ::hFile, "::hFile WriteASCII" )
 
       if !file( ::cDirectory + "\" + ::cFile ) .or. empty( ::hFile )
          ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
