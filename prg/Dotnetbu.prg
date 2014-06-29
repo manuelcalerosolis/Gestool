@@ -262,6 +262,7 @@ endif
 if hBmp != 0
    nH := BmpHeight( hBmp )
    nW := BmpWidth( hBmp )
+
 endif
 
 if hBmp != 0

@@ -341,7 +341,7 @@ METHOD Resource( nMode )
    oDlg:AddFastKey( VK_F4, {|| ::oMenuOrdenes:Del( ::oBrwOrdenesComanda ) } )
    oDlg:AddFastKey( VK_F5, {|| ::lSaveResource( nMode, oDlg ) } )
 
-   oDlg:bStart          := {|| ::StartResource() }
+   oDlg:bStart    := {|| ::StartResource() }
 
 	ACTIVATE DIALOG oDlg	CENTER
 

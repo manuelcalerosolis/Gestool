@@ -1044,7 +1044,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    // Mensaje------------------------------------------------------------------
 
    if lAplicacionA3()
-      EnlaceA3():GetInstance():WriteInfo( oTree )
+      EnlaceA3():GetInstance():WriteInfo( oTree, "Factura cliente : " + rtrim( pFactura ) + " asiento generado." )
    else
       oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
    end if 

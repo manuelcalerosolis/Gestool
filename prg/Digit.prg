@@ -1055,6 +1055,7 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
    local oGet
    local oDlg
    local oBmp
+   local oBtn
    local cVar
 
    DEFAULT nVar         := 0
@@ -1091,7 +1092,7 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
 
       REDEFINE BUTTON ID 150 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:cText( "0" ) )
 
-      REDEFINE BUTTONBMP BITMAP "Check_32" ID 130 OF oDlg ACTION ( oDlg:End( IDOK ) )
+      REDEFINE BUTTONBMP oBtn BITMAP "Check_32" ID 130 OF oDlg ACTION ( oDlg:End( IDOK ) )
 
       oDlg:AddFastKey( VK_F5, {|| oDlg:End( IDOK ) } )
 
@@ -1108,6 +1109,10 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
    if !Empty( oBmp )
       oBmp:End()
    end if
+
+   if !empty( oBtn ) 
+      oBtn:end()
+   end if 
 
 Return ( cVar )
 

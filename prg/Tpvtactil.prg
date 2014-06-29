@@ -2014,6 +2014,8 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    DEFAULT oMenuItem          := "01064"
    DEFAULT oWnd               := oWnd()
 
+   FWCleanResource()
+
    ::oWnd                     := oWnd
 
    if oMenuItem != nil
@@ -2096,11 +2098,11 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::oBtnNum                  := Array( 15 )
 
    ::oFntNum                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 46 ), .f., .f. )
+   ::oFntBrw                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 20 ), .f., .t. )
    ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
    ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
    ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
    ::oFntFld                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 26 ), .f., .t. )
-   ::oFntBrw                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 20 ), .f., .t. )
 
    ::cSayZona                 := "Zona"  
    ::cSayInfo                 := ""
@@ -2218,6 +2220,8 @@ METHOD End() CLASS TpvTactil
    ::oFntDto         := nil
 
    Self              := nil
+
+   CheckRes()
 
 Return .t.
 
@@ -3889,7 +3893,7 @@ METHOD StartResource() CLASS TpvTactil
    Foco a unidades-------------------------------------------------------------
    */
 
-   // ::oGetUnidades:SetFocus()
+   CheckRes()
 
 Return ( nil )
 
@@ -6373,12 +6377,13 @@ METHOD OnClickDescuento() CLASS TpvTactil
       REDEFINE GET oGetPorcentaje ;
          VAR      nGetPorcentaje ;
          ID       320 ;
-         FONT     ::oFntDto ;
          SPINNER ;
          MIN      0 ;
          MAX      100 ;
          PICTURE  "@E 999.99";
          OF       oDlg ;
+
+      oGetPorcentaje:SetFont( ::oFntDto )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Check_32" ;
@@ -9919,6 +9924,14 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 function SetResDebug( lOnOff ) // for backwards compatibility
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+function FWCleanResource()
+
+   aResources := {}
 
 return nil
 

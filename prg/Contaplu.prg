@@ -285,11 +285,11 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
 	local cGet1
    local lClose      := .f.
 	local oCbxOrd
-   local aCbxOrd     := { "Código", "Empresa" }
-   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "CÃ³digo", "Empresa" }
+   local cCbxOrd     := "CÃ³digo"
 
    if lAplicacionA3()
-      msgStop( "Opción no disponible para A3CON ®" )
+      msgStop( "OpciÃ³n no disponible para A3CON Â®" )
       Return( nil )
    end if 
 
@@ -310,7 +310,7 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
 
    ( cEmpresa )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Empresas de contaplus ®"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Empresas de contaplus Â®"
 
    REDEFINE GET oGet1 VAR cGet1;
       ID       104 ;
@@ -335,7 +335,7 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
    oBrw:cName           := "Browse.Empresas contaplus"
 
       with object ( oBrw:AddCol() )
-         :cHeader       := "Código"
+         :cHeader       := "CÃ³digo"
          :cSortOrder    := "Cod"
          :bEditValue    := {|| ( cEmpresa )->Cod }
          :nWidth        := 60
@@ -457,7 +457,7 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
 
       nReturn        := ( cEmpresa )->Nivel
 
-      // Añadimos los valoresa al buffer---------------------------------------
+      // AÃ±adimos los valoresa al buffer---------------------------------------
 
       aAdd( aLenSubCuenta, { cCodEmp, nReturn } )
 
@@ -649,11 +649,11 @@ FUNCTION BrwChkCta( oCodCta, oGetCta, cRuta, cCodEmp )
 	local cGet1
 	local oCbxOrd
 	local cArea
-   local aCbxOrd     := { "Código", "Cuenta" }
-   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "CÃ³digo", "Cuenta" }
+   local cCbxOrd     := "CÃ³digo"
 
    if lAplicacionA3()
-      msgStop( "Opción no disponible para A3CON ®" )
+      msgStop( "OpciÃ³n no disponible para A3CON Â®" )
       Return( nil )
    end if 
 
@@ -671,7 +671,7 @@ FUNCTION BrwChkCta( oCodCta, oGetCta, cRuta, cCodEmp )
       ( cArea )->( dbSetFilter( {|| !Empty( Field->Cta ) }, "!Empty( Field->Cta )" ) )
       ( cArea )->( dbGoTop() )
 
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Cuentas de contaplus ®"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Cuentas de contaplus Â®"
 
 		REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -696,7 +696,7 @@ FUNCTION BrwChkCta( oCodCta, oGetCta, cRuta, cCodEmp )
       oBrw:cName           := "Browse.Cuenta contaplus"
 
          with object ( oBrw:AddCol() )
-            :cHeader       := "Código"
+            :cHeader       := "CÃ³digo"
             :cSortOrder    := "Cta"
             :bEditValue    := {|| ( cArea )->Cta }
             :nWidth        := 60
@@ -778,7 +778,7 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
    local cCbxOrd     := "Cuenta"
 
    if lAplicacionA3()
-      msgStop( "Opción no disponible para A3CON ®" )
+      msgStop( "OpciÃ³n no disponible para A3CON Â®" )
       Return( nil )
    end if 
 
@@ -796,7 +796,7 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
 
 		( cArea )->( dbGoTop() )
 
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Subcuentas de contaplus ®"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Subcuentas de contaplus Â®"
 
 			REDEFINE GET oGet1 VAR cGet1;
 				ID 		104 ;
@@ -887,7 +887,7 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
 
    else
 
-      msgStop( "Imposible abrir ficheros de Contaplus ®")
+      msgStop( "Imposible abrir ficheros de Contaplus Â®")
       Return .f.
 
    end if
@@ -950,7 +950,7 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
                if !( cArea )->( dbSeek( cCodSubcuenta, .t. ) ) .and. !Empty( aTemp )
 
                   if ApoloMsgNoYes( "Subcuenta : " + Rtrim( cCodSubcuenta ) + " no existe en empresa : " + cCodEmp + CRLF + ;
-                                    "¿ Desea crearla ?" ,;
+                                    "Â¿ Desea crearla ?" ,;
                                     "Contabilidad" )
 
                      aSize( aTemp, 10 )
@@ -1130,7 +1130,7 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
 RETURN .T.
 
 //----------------------------------------------------------------------------//
-// Esta funci¢n devuelve la cuenta Especial de Contaplus
+// Esta funciÂ¢n devuelve la cuenta Especial de Contaplus
 
 FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
 
@@ -1176,7 +1176,7 @@ FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
    RECOVER
 
       if lMessage
-         MsgStop( "Imposible acceder a fichero de empresas de Contaplus ®", "Abriendo fichero de cuentas especiales" )
+         MsgStop( "Imposible acceder a fichero de empresas de Contaplus Â®", "Abriendo fichero de cuentas especiales" )
       end if
 
    END SEQUENCE
@@ -1212,7 +1212,7 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
 
    if Empty( cRuta )
       if lMessage
-         MsgStop( "Ruta de contaplus ® no valida" )
+         MsgStop( "Ruta de contaplus Â® no valida" )
       end if
       lOpenDiario    := .f.
       Return ( lOpenDiario )
@@ -1286,7 +1286,7 @@ FUNCTION CloseDiario()
 Return ( lOpenDiario )
 
 //----------------------------------------------------------------------------//
-// Esta funci¢n devuelve el ultimo numero de asiento de Contaplus
+// Esta funciÂ¢n devuelve el ultimo numero de asiento de Contaplus
 
 Function RetLastAsi()
 
@@ -1789,7 +1789,7 @@ STATIC FUNCTION OpnEmpresa( cRuta, lMessage )
 
    if !File( cRuta + "Emp\Empresa.Dbf" ) .or. !File( cRuta + "Emp\Empresa.Cdx" )
       if lMessage
-         MsgStop( "Fichero de empresa de Contaplus ® " +  cRuta + "Emp\Empresa.Dbf, no enContrapartidado", "Abriendo fichero de empresas" )
+         MsgStop( "Fichero de empresa de Contaplus Â® " +  cRuta + "Emp\Empresa.Dbf, no enContrapartidado", "Abriendo fichero de empresas" )
       end if
       Return .f.
    end if
@@ -1893,7 +1893,7 @@ FUNCTION OpenSubCuenta( cRuta, cCodEmp, cArea, lMessage )
    local lOpen       := .t.
 
    if lAplicacionA3()
-      msgStop( "Opción no disponible para A3CON ®" )
+      msgStop( "OpciÃ³n no disponible para A3CON Â®" )
       Return ( .f. )
    end if 
 
@@ -2188,7 +2188,7 @@ FUNCTION BrwProyecto( oCodPro, oGetPro, cRuta, cCodEmp )
 	local cAreaAnt 	:= Alias()
 
    if lAplicacionA3()
-      msgStop( "Opción no disponible para A3CON ®" )
+      msgStop( "OpciÃ³n no disponible para A3CON Â®" )
       Return( nil )
    end if 
 
@@ -2205,7 +2205,7 @@ FUNCTION BrwProyecto( oCodPro, oGetPro, cRuta, cCodEmp )
 
       ( cProyecto )->( dbGoTop() )
 
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Proyectos de contaplus ®"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Proyectos de contaplus Â®"
 
 		REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -2216,7 +2216,7 @@ FUNCTION BrwProyecto( oCodPro, oGetPro, cRuta, cCodEmp )
 		REDEFINE COMBOBOX oCbxOrd ;
 			VAR 		cCbxOrd ;
 			ID 		102 ;
-         ITEMS    { "Código", "Proyecto" } ;
+         ITEMS    { "CÃ³digo", "Proyecto" } ;
 			OF oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -2229,7 +2229,7 @@ FUNCTION BrwProyecto( oCodPro, oGetPro, cRuta, cCodEmp )
       oBrw:cName           := "Browse.Proyectos de contaplus"
 
          with object ( oBrw:AddCol() )
-            :cHeader       := "Código"
+            :cHeader       := "CÃ³digo"
             :cSortOrder    := "Proye"
             :bEditValue    := {|| ( cProyecto )->Proye }
             :cEditPicture  := "@R ####.######"
@@ -2440,7 +2440,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
 
    if Empty( cRuta )
       if lMessage
-         MsgStop( "Ruta de Contaplus ® no valida" )
+         MsgStop( "Ruta de Contaplus Â® no valida" )
       end if
       Return nil
    end if
@@ -2460,7 +2460,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
          if ( dbfDiario )->( RddName() ) == nil .or. ( dbfDiario )->( NetErr() )
 
             if lMessage
-               msgStop( "Imposible acceder a fichero Contaplus ®.", "Abriendo diario" )
+               msgStop( "Imposible acceder a fichero Contaplus Â®.", "Abriendo diario" )
             end if
 
             dbfDiario   := nil
@@ -2477,7 +2477,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®." )
+      msgStop( "Imposible abrir las bases de datos del diario de Contaplus Â®." )
 
    END SEQUENCE
 
@@ -2497,7 +2497,7 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
 
    if Empty( cRuta )
       if lMessage
-         MsgStop( "Ruta de Contaplus ® no valida" )
+         MsgStop( "Ruta de Contaplus Â® no valida" )
       end if
       Return nil
    end if
@@ -2542,7 +2542,7 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
 
    if Empty( cRuta )
       if lMessage
-         MsgStop( "Ruta de Contaplus ® no valida" )
+         MsgStop( "Ruta de Contaplus Â® no valida" )
       end if
       Return nil
    end if
@@ -2656,7 +2656,7 @@ CLASS EnlaceA3
 
    METHOD GenerateFile()
    METHOD WriteASCII()   
-   METHOD WriteInfo( oTree )              INLINE ( oTree:Select( oTree:Add( "Fichero : " + ( ::cDirectory + "\" + ::cFile ) + " generado satisfactoriamente.", 1 ) ) )
+   METHOD WriteInfo( oTree, cInfo )       INLINE ( oTree:Select( oTree:Add( cInfo, 1 ) ) )
 
    METHOD Signo( nImporte )      
    METHOD Porcentaje( nPorcentaje )         
@@ -2909,13 +2909,13 @@ ENDCLASS
 
       ::hFile        := fCreate( ::cDirectory + "\" + ::cFile )
 
-      msgAlert( ::hFile, "::hFile GenerateFile" )
-
    RETURN ( Self )   
 
 //------------------------------------------------------------------------//
 
    METHOD WriteASCII() CLASS EnlaceA3
+
+      ferase( ::cDirectory + "\" + ::cFile )
 
       if !file( ::cDirectory + "\" + ::cFile ) .or. empty( ::hFile )
          ::hFile     := fCreate( ::cDirectory + "\" + ::cFile )
@@ -2928,6 +2928,8 @@ ENDCLASS
 
          ::cBuffer   := ""
          ::aAsiento  := {}
+
+         msgInfo( "Fichero " + ( ::cDirectory + "\" + ::cFile ) + " exportado con exito.")
 
       end if
 
