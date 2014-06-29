@@ -18,9 +18,11 @@ CLASS TpvMenu FROM TMasDet
    DATA oDbfArticulo
 
    DATA oDetMenuArticulo
-   DATA oMenuOrdenes   
+   DATA oMenuOrdenes
 
    DATA oBrwOrdenesComanda
+
+   DATA oSender
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
@@ -44,6 +46,9 @@ CLASS TpvMenu FROM TMasDet
 
    METHOD cNombre( cCodMnu )
    METHOD nPrecio( cCodMnu )
+
+   // Menu Acompañamiento-----------------------------------------------------//
+   METHOD InitAcompannamiento()
 
 END CLASS
 
@@ -86,11 +91,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD Create( cPath, oSender )
 
    DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
+   ::oSender            := oSender
+
    ::oDbf               := nil
 
 RETURN ( Self )
@@ -205,6 +212,12 @@ METHOD OpenService( lExclusive, cPath )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
+      ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, Self )
+
+      if !::oDetMenuArticulo:OpenService()
+         lOpen             := .f.
+      end if
+
    RECOVER USING oError
 
       lOpen             := .f.
@@ -226,6 +239,13 @@ METHOD CloseService()
    if !Empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:End()
    end if
+
+   if !Empty( ::oDetMenuArticulo )
+      ::oDetMenuArticulo:CloseService()
+      ::oDetMenuArticulo:End()
+   end if
+
+
 
 RETURN ( .t. )
 
@@ -450,6 +470,82 @@ METHOD nPrecio( cCodMnu )
    ::oDbf:SetStatus()
 
 RETURN ( nPrecio )
+
+//---------------------------------------------------------------------------//
+
+METHOD InitAcompannamiento( cCodigoMenu )
+
+   local oBrwAcompannamiento
+   local oDlgAcompannamiento
+   local cCodigoArticulo
+   
+
+   ::oDetMenuArticulo:oDbf:SetFilter( "Field->cCodMnu == '" +  cCodigoMenu + "'" )
+   ::oDetMenuArticulo:oDbf:GoTop()
+
+   // Definimos el dialogo para el menú de acompañamiento-----------------------
+
+   DEFINE DIALOG oDlgAcompannamiento RESOURCE "TPVMenuAcomp"
+
+      REDEFINE BUTTONBMP ;
+         ID       110 ;
+         OF       oDlgAcompannamiento ;
+         BITMAP   "Navigate_up2" ;
+         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:PageUp(), oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         ID       111 ;
+         OF       oDlgAcompannamiento ;
+         BITMAP   "Navigate_down2" ;
+         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:PageDown(), oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDlgAcompannamiento ;
+         ACTION   ( oDlgAcompannamiento:End( IDOK ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlgAcompannamiento ;
+         ACTION   ( oDlgAcompannamiento:End() )
+
+      oBrwAcompannamiento                  := IXBrowse():New( oDlgAcompannamiento )
+
+      oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwAcompannamiento:nMarqueeStyle    := 3
+      oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
+      oBrwAcompannamiento:lHeader          := .f.
+      oBrwAcompannamiento:lHScroll         := .f.
+      oBrwAcompannamiento:nRowHeight       := 50
+      
+      oBrwAcompannamiento:CreateFromResource( 100 )
+
+      oBrwAcompannamiento:SetFont( ::oSender:oFntBrw )
+
+      ::oDetMenuArticulo:oDbf:SetBrowse( oBrwAcompannamiento )
+
+      with object ( oBrwAcompannamiento:AddCol() )
+         :bEditValue                         := {|| Alltrim( oRetFld( ::oDetMenuArticulo:oDbf:cCodArt, ::oSender:oArticulo )) }
+      end with
+
+      oDlgAcompannamiento:bStart             := {|| ::oSender:SeleccionarDefecto( oBrwAcompannamiento ) }
+
+   ACTIVATE DIALOG oDlgAcompannamiento CENTER
+
+   if oDlgAcompannamiento:nResult ==IDOK
+      cCodigoArticulo         := ::oDetMenuArticulo:oDbf:cCodArt
+   else 
+      cCodigoArticulo         := nil
+   end if
+
+   ::oDetMenuArticulo:oDbf:SetFilter()
+
+   ::oSender:oBrwLineas:Refresh()
+
+Return ( cCodigoArticulo )
 
 //---------------------------------------------------------------------------//
 
