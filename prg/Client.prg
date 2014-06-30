@@ -12074,7 +12074,8 @@ Function hAtipica( hValue )
 
    if !Empty( hValue[ "cCodigoCliente" ] )
 
-      if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+      if !Empty( hValue[ "cCodigoFamilia" ] )         .and.;
+         dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", TDataView():Atipicas( hValue[ "nView" ] ) )
          
          if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
             lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
@@ -12091,7 +12092,8 @@ Function hAtipica( hValue )
 
       if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
 
-         if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
+         if !Empty( hValue[ "cCodigoFamilia" ] )         .and.;
+            dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", TDataView():Atipicas( hValue[ "nView" ] ) )
 
             if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
                lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )

@@ -17980,10 +17980,19 @@ function SynFacCli( cPath )
 
          if Empty( ( TDataView():FacturasClientes( nView ) )->cNomCli ) .and. !Empty ( ( TDataView():FacturasClientes( nView ) )->cCodCli )
             if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
-            	( TDataView():FacturasClientes( nView ) )->cNomCli := RetFld( ( TDataView():FacturasClientes( nView ) )->cCodCli, dbfClient, "Titulo" )
+            	( TDataView():FacturasClientes( nView ) )->cNomCli := RetFld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataview():Clientes( nView ), "Titulo" )
             	( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
             end if 
          end if
+
+         /*
+         Esto es para Cafes y zumos para que todos los facturas tengan la ruta del cliente
+         */
+        
+         /*if ( TDataView():FacturasClientes( nView ) )->( dbRLock() )
+           	( TDataView():FacturasClientes( nView ) )->cCodRut := RetFld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataview():Clientes( nView ), "CCODRUT" )
+         	( TDataView():FacturasClientes( nView ) )->( dbUnLock() )
+         end if*/
 
          if !Empty( ( TDataView():FacturasClientes( nView ) )->cNumPed )
             aAdd( aNumPed, ( TDataView():FacturasClientes( nView ) )->cNumPed )

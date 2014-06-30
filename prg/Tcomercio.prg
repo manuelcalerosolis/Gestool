@@ -3794,6 +3794,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "link_rewrite, " + ;
                      "meta_title, " + ;
                      "meta_description, " + ;
+                     "meta_keywords, " + ;
                      "name, " + ;
                      "available_now, " + ;
                      "available_later )" + ;
@@ -3805,6 +3806,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "'" + cLinkRewrite( ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;       // link_rewrite
                      "'" + AllTrim( ::oArt:cTitSeo ) + "', " + ;   // Meta_título
                      "'" + AllTrim( ::oArt:cDesSeo ) + "', " + ;   // Meta_description
+                     "'" + AllTrim( ::oArt:cKeySeo ) + "', " + ;   // Meta_keywords
                      "'" + ::oCon:EscapeStr( ::oArt:Nombre ) + "', " + ;      // name
                      "'En stock', " + ;                                       // avatible_now
                      "'' )"
@@ -3922,6 +3924,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
                            "link_rewrite='" + cLinkRewrite( ::oCon:EscapeStr( ::oArt:Nombre ) ) + "', " + ;
                            "meta_title='" + AllTrim( ::oArt:cTitSeo ) + "', " + ;
                            "meta_description='" + AllTrim( ::oArt:cDesSeo ) + "', " + ;
+                           "meta_keywords='" + AllTrim( ::oArt:cKeySeo ) + "', " + ;
                            "name='" + AllTrim( ::oArt:Nombre ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
 

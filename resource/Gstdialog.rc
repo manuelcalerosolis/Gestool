@@ -1538,10 +1538,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 121, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 215, 89, 40, 12
   CONTROL "", 122, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 285, 89, 57, 12
   CONTROL "", 123, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 417, 89, 69, 12
-  CONTROL "", 220, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 118, 440, 120
-  CONTROL "", 180, "Edit", ES_MULTILINE|WS_BORDER, 106, 254, 383, 12
-  CONTROL "", 190, "Edit", ES_MULTILINE|WS_BORDER, 106, 268, 383, 12
-  CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 107, 448, 135
+  CONTROL "", 220, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 118, 440, 104
+  CONTROL "", 180, "Edit", ES_MULTILINE|WS_BORDER, 106, 241, 383, 12
+  CONTROL "", 190, "Edit", ES_MULTILINE|WS_BORDER, 106, 255, 383, 12
+  CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 107, 448, 120
   CONTROL "Precios y ofertas para la web", -1, "Button", BS_GROUPBOX, 44, 65, 447, 41
   CONTROL "Código web", -1, "Static", WS_GROUP, 351, 40, 40, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 3, 4, 34, 30
@@ -1551,9 +1551,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "Neto", -1, "Static", WS_GROUP, 262, 92, 21, 8
   CONTROL "Impuestos incluidos", -1, "Static", WS_GROUP, 351, 92, 64, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 30, 447, 34
-  CONTROL "Motores de búsqueda SEO", -1, "Button", BS_GROUPBOX, 44, 243, 447, 41
-  CONTROL "Meta-título", -1, "Static", WS_GROUP, 48, 257, 56, 8
-  CONTROL "Meta-descripción", -1, "Static", WS_GROUP, 48, 271, 56, 8
+  CONTROL "Motores de búsqueda SEO", -1, "Button", BS_GROUPBOX, 44, 229, 447, 55
+  CONTROL "Meta-título", -1, "Static", WS_GROUP, 48, 244, 56, 8
+  CONTROL "Meta-descripción", -1, "Static", WS_GROUP, 48, 258, 56, 8
+  CONTROL "", 200, "Edit", ES_MULTILINE|WS_BORDER, 106, 269, 383, 12
+  CONTROL "Meta-keywords", -1, "Static", WS_GROUP, 48, 272, 56, 8
 }
 
 ARTCODE DIALOG DISCARDABLE 175, 153, 369, 104

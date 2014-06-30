@@ -15,7 +15,7 @@
 Definición de la base de datos de albaranes a CLIENTES-------------------------
 */
 
-#define _CSERALB                  1      
+#define _CSERALB                  1
 #define _NNUMALB                  2
 #define _CSUFALB                  3
 #define _CTURALB                  4
@@ -14967,6 +14967,15 @@ function SynAlbCli( cPath )
          end if
 
          /*
+         Esto es para Cafes y zumos para que todos los albaranes tengan la ruta del cliente
+         */
+
+         /*if TDataView():Lock( "AlbCliT", nView )
+            ( TDataView():Get( "AlbCliT", nView ) )->cCodRut    := RetFld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CCODRUT" )
+            TDataView():UnLock( "AlbCliT", nView )
+         end if*/
+         
+         /*
          Rellenamos los campos de totales-----------------------------------------
          */
 
@@ -17799,5 +17808,3 @@ Function cDireccionSAT()
 Return ( cDireccion )
 
 //---------------------------------------------------------------------------//
-
-

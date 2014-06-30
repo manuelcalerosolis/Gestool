@@ -4367,6 +4367,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       fldWeb       
 
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cKeySeo" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cKeySeo" ) ) ] ;
+         ID       200 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldWeb      
+
    /*
    Cuarta Caja de Dialogo del Folder
    ----------------------------------------------------------------------------
@@ -15723,6 +15729,7 @@ function aItmArt()
    aAdd( aBase, { "cMenu",     "C",  3, 0, "Código del menú de acompañamiento",        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-título",                              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
