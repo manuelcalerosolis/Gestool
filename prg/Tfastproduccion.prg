@@ -393,10 +393,10 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    local oError
    local oBlock
    local cExpHead
-/*   
+   
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
       ::oParteProduccion:OrdSetFocus( "dFecOrd" )
 
       cExpHead          := 'dFecFin >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFin <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -450,7 +450,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
       end while
 
       ::oParteProduccion:IdxDelete( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ) )
-   /*
+   
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir partes de producción" )
@@ -458,7 +458,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    ::oMtrInf:SetTotal( ::oDbf:OrdKeyCount() )
 
 RETURN ( Self )

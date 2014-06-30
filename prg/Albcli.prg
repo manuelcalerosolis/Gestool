@@ -15106,6 +15106,20 @@ function SynAlbCli( cPath )
             end if   
          end if
 
+         /*
+         Cargamos los costos para Marbaroso------------------------------------
+         */
+         /*
+
+         if !Empty( ( TDataView():Get( "AlbCliL", nView ) )->cRef ) .and. Empty( ( TDataView():Get( "AlbCliL", nView ) )->nCosDiv )
+            if dbLock( TDataView():Get( "AlbCliL", nView ) )
+               ( TDataView():Get( "AlbCliL", nView ) )->nCosDiv := oStock:nCostoMedio( ( TDataView():Get( "AlbCliL", nView ) )->cRef, ( TDataView():Get( "AlbCliL", nView ) )->cAlmLin, ( TDataView():Get( "AlbCliL", nView ) )->cCodPr1, ( TDataView():Get( "AlbCliL", nView ) )->cCodPr2, ( TDataView():Get( "AlbCliL", nView ) )->cValPr1, ( TDataView():Get( "AlbCliL", nView ) )->cValPr2, ( TDataView():Get( "AlbCliL", nView ) )->cLote )
+               ( TDataView():Get( "AlbCliL", nView ) )->( dbUnLock() )
+            end if
+         end if
+
+         */
+
          // Numeros de serie------------------------------------------------------
 
          if !Empty( ( TDataView():Get( "AlbCliL", nView ) )->mNumSer )
