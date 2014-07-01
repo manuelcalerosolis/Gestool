@@ -9696,7 +9696,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
    local nImpOfe                 := 0
    local nNumDto                 := 0
    local nTarOld                 := aTmp[ _NTARLIN ]
-   local lChgCodArt              := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local lChgCodArt              := ( empty( cOldCodArt ) .or. rtrim( cOldCodArt ) != rtrim( cCodArt ) )
    local lChgPrpArt              := ( cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
    local lChgLotArt              := ( cOldLotArt != Rtrim( aTmp[ _CLOTE ] ) )
    local hAtipica

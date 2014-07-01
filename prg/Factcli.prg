@@ -544,8 +544,8 @@ static oBtnAtp
 static cOldCodCli          := ""
 static cOldCodArt          := ""
 static cOldPrpArt          := ""
-static cOldLotArt 			:= ""
-static dOldFecCad 			:= cToD("")
+static cOldLotArt          := ""
+static dOldFecCad          := cToD("")
 static cOldUndMed          := ""
 static lOpenFiles          := .f.
 static lExternal           := .f.
@@ -5128,7 +5128,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NCOSDIV] VAR aTmp[_NCOSDIV] ;
+      REDEFINE GET aGet[ _NCOSDIV ] VAR aTmp[ _NCOSDIV ] ;
          ID       320 ;
          WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE );
          PICTURE  cPouDiv ;
@@ -6985,8 +6985,6 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
    oBtnCancel:Enable()
 
    if !Empty( bPreAction )
-
-      msgAlert( valtoprg( bPreAction ) ) 
       lPre              := Eval( bPreAction )
    end if
 
@@ -11488,9 +11486,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nNumDto          	:= 0
    local nPrePro          	:= 0
    local nTarOld          	:= aTmp[ _NTARLIN ]
-   local lChgCodArt       	:= ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local lChgPrpArt       	:= ( Empty( cOldPrpArt ) .or. cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
-   local lChgLotArt			:= ( Empty( cOldLotArt ) .or. cOldLotArt != aTmp[ _CLOTE ] )		
+   local lChgCodArt       	:= ( empty( cOldCodArt ) .or. rtrim( cOldCodArt ) != rtrim( cCodArt ) )
+   local lChgPrpArt       	:= ( cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
+   local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )		
 
    DEFAULT lFocused       	:= .t.
 
@@ -12169,11 +12167,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       end if
 
-
       /*
       Solo si cambia el lote---------------------------------------------------
       */
-
 
       if ( lChgCodArt ) .or. ( lChgLotArt )
 
@@ -12247,7 +12243,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             oStkAct:Refresh()
          end if
 
-
       	/*
       	Cargamos los costos------------------------------------------------------
       	*/
@@ -12280,7 +12275,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       cOldPrpArt  := cPrpArt
       cOldCodArt  := cCodArt
-      cOldLotArt 	:= aTmp[ _CLOTE ]
+      cOldLotArt  := aTmp[ _CLOTE ]
       dOldFecCad  := dFechaCaducidad
 
       /*
