@@ -4542,15 +4542,13 @@ STATIC FUNCTION ChkAllSubCta()
 
    local oDlg
    local cArea
-   local nRecno      := ( TDataView():Get( "Client", nView ) )->( RecNo() )
-   local cTag        := ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( 1 ) )
-   local cRuta       := cRutCnt()
-   local cCodEmp     := cEmpCnt( "A" )
+   local nRecno      
+   local cTag        
    local oChkCreate
-   local lChkCreate  := .f.
+   local lChkCreate  
    local oChkCuenta
-   local lChkCuenta  := .f.
-   local aMsg        := {}
+   local lChkCuenta  
+   local aMsg        
    local oTree
    local cCliOrg
    local cCliDes
@@ -4561,20 +4559,37 @@ STATIC FUNCTION ChkAllSubCta()
    local cSayCliOrg
    local cSayCliDes
    local oImageList
+   local cRuta       
+   local cCodEmp     
 
-   if Empty( cRuta ) .or. Empty( cCodEmp )
-      msgStop( "No existe enlace a contaplus ®" )
-      return .f.
-   end if
+   // Comprobaciones de contaplus----------------------------------------------
 
-   if !OpenSubCuenta( cRuta, cCodEmp, @cArea, .f. )
-      msgStop( "Imposible acceder a ficheros de contaplus ®" )
-      return .t.
-   end if
+   if lAplicacionContaplus()
+
+      cRuta             := cRutCnt()
+      cCodEmp           := cEmpCnt( "A" )
+
+      if Empty( cRuta ) .or. Empty( cCodEmp )
+         msgStop( "No existe enlace a contaplus ®" )
+         return .f.
+      end if
+
+      if !OpenSubCuenta( cRuta, cCodEmp, @cArea, .f. )
+         msgStop( "Imposible acceder a ficheros de contaplus ®" )
+         return .t.
+      end if
+
+   end if 
 
    /*
-   Obtenemos los valores del primer y ultimo codigo
+   Obtenemos los valores del primer y ultimo codigo----------------------------
    */
+
+   nRecno            := ( TDataView():Get( "Client", nView ) )->( RecNo() )
+   cTag              := ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( 1 ) )
+   lChkCreate        := .f.
+   lChkCuenta        := .f.
+   aMsg              := {}
 
    cCliOrg           := dbFirst( ( TDataView():Get( "Client", nView ) ), 1 )
    cCliDes           := dbLast(  ( TDataView():Get( "Client", nView ) ), 1 )
@@ -4619,12 +4634,13 @@ STATIC FUNCTION ChkAllSubCta()
       ID       91 ;
       OF       oDlg
 
-   REDEFINE CHECKBOX oChkCreate VAR lChkCreate ;
-      ID       100 ;
-      OF       oDlg
-
    REDEFINE CHECKBOX oChkCuenta VAR lChkCuenta ;
       ID       110 ;
+      OF       oDlg
+
+   REDEFINE CHECKBOX oChkCreate VAR lChkCreate ;
+      ID       100 ;
+      WHEN     lAplicacionContaplus() ;
       OF       oDlg
 
    oTree       := TTreeView():Redefine( 170, oDlg )
@@ -4647,7 +4663,9 @@ STATIC FUNCTION ChkAllSubCta()
    ( TDataView():Get( "Client", nView ) )->( dbGoTo( nRecno ) )
    ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( cTag ) )
 
-   CLOSE ( cArea )
+   if lAplicacionContaplus()
+      CLOSE ( cArea )
+   end if 
 
    oImageList:End()
 
@@ -4682,45 +4700,51 @@ Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, a
             end if
          end if
 
-         if !Empty( AllTrim( ( TDataView():Get( "Client", nView ) )->SubCta ) )
+         // Creamos la subcuenta en contaplus----------------------------------
 
-            if !( cArea )->( dbSeek( ( TDataView():Get( "Client", nView ) )->SubCta, .t. ) )
+         if lAplicacionContaplus()
 
-               if lChkCreate .or. ApoloMsgNoYes(   "Subcuenta : " + Rtrim( ( TDataView():Get( "Client", nView ) )->SubCta ) + " no existe" + CRLF + ;
-                                                   "¿ Desea crearla ?",;
-                                                   "Enlace con contaplus ®" )
+            if !Empty( AllTrim( ( TDataView():Get( "Client", nView ) )->SubCta ) )
 
-                  ( cArea )->( dbAppend() )
-                  ( cArea )->Cod         := ( TDataView():Get( "Client", nView ) )->Subcta
-                  ( cArea )->Titulo      := ( TDataView():Get( "Client", nView ) )->Titulo
-                  ( cArea )->Nif         := ( TDataView():Get( "Client", nView ) )->Nif
-                  ( cArea )->Domicilio   := ( TDataView():Get( "Client", nView ) )->Domicilio
-                  ( cArea )->Poblacion   := ( TDataView():Get( "Client", nView ) )->Poblacion
-                  ( cArea )->Provincia   := ( TDataView():Get( "Client", nView ) )->Provincia
-                  ( cArea )->CodPostal   := ( TDataView():Get( "Client", nView ) )->CodPostal
-                  ( cArea )->( dbCommit() )
+               if !( cArea )->( dbSeek( ( TDataView():Get( "Client", nView ) )->SubCta, .t. ) )
 
-                  oItem := oTree:Add( "Cuenta " + Rtrim( ( TDataView():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " creada", 1 )
+                  if lChkCreate .or. ApoloMsgNoYes(   "Subcuenta : " + Rtrim( ( TDataView():Get( "Client", nView ) )->SubCta ) + " no existe" + CRLF + ;
+                                                      "¿ Desea crearla ?",;
+                                                      "Enlace con contaplus ®" )
+
+                     ( cArea )->( dbAppend() )
+                     ( cArea )->Cod         := ( TDataView():Get( "Client", nView ) )->Subcta
+                     ( cArea )->Titulo      := ( TDataView():Get( "Client", nView ) )->Titulo
+                     ( cArea )->Nif         := ( TDataView():Get( "Client", nView ) )->Nif
+                     ( cArea )->Domicilio   := ( TDataView():Get( "Client", nView ) )->Domicilio
+                     ( cArea )->Poblacion   := ( TDataView():Get( "Client", nView ) )->Poblacion
+                     ( cArea )->Provincia   := ( TDataView():Get( "Client", nView ) )->Provincia
+                     ( cArea )->CodPostal   := ( TDataView():Get( "Client", nView ) )->CodPostal
+                     ( cArea )->( dbCommit() )
+
+                     oItem := oTree:Add( "Cuenta " + Rtrim( ( TDataView():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " creada", 1 )
+
+                  else
+
+                     oItem := oTree:Add( "Cuenta " + Rtrim( ( TDataView():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " creación cancelada", 1 )
+
+                  end if
 
                else
 
-                  oItem := oTree:Add( "Cuenta " + Rtrim( ( TDataView():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " creación cancelada", 1 )
+                  oItem    := oTree:Add( "Cuenta " + Rtrim( ( TDataView():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " ya existe", 0 )
 
                end if
 
             else
 
-               oItem    := oTree:Add( "Cuenta " + Rtrim( ( TDataView():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " ya existe", 0 )
+               oItem       := oTree:Add( "El Cliente : " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " no tiene codificada cuenta en Contaplus", 0 )
 
             end if
 
-         else
+            oTree:Select( oItem )
 
-            oItem       := oTree:Add( "El Cliente : " + Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( TDataView():Get( "Client", nView ) )->Titulo ) + " no tiene codificada cuenta en Contaplus", 0 )
-
-         end if
-
-         oTree:Select( oItem )
+         end if 
 
          SysRefresh()
 

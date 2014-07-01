@@ -36,7 +36,7 @@
 #define _NOCONV                  31     //   L      1     0
 #define _NUMEROINV               32     //   C     10     0
 
-#define _NLENSUBCTAA3            12
+#define _NLENSUBCTAA3            10
 
 static cDiario
 static cCuenta
