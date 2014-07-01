@@ -62,7 +62,7 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
       Return nil
    end if
 
-   oDbfTmp              := dbfServer( "GenFac", SubStr( Str( Seconds() ), -6 ) ):New( "GenFac", "GenFac", cLocalDriver(), , cPatTmp() )
+   oDbfTmp              := dbfServer( "GenFac", SubStr( Str( Seconds() ), -6 ) ):New( "GenFac", "GenFac", cLocalDriver(), , cEmpTmp() )
    oDbfTmp:AddField( "lFacAlb", "L", 1, 0 )
    oDbfTmp:AddField( "cSerDoc", "C", 1, 0 )
    oDbfTmp:AddField( "nNumDoc", "N", 9, 0 )
@@ -512,15 +512,19 @@ static function GoNext( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lA
 
    do case
    case oPag:nOption == 1
+
       LoaAlbFac(  cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, lGrpCli, nGrpObr,;
                   lTotAlb, lUniPgo, lNotImp, aSer, oDbfTmp, oBrwAlb, oDlg, oMetMsg, dbfAlbCliT, dbfAlbCliL,;
                   dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP )
 
       oBtnPrv:Show()
+   
       SetWindowText( oBtnNxt:hWnd, "&Terminar" )
+   
       oPag:GoNext()
 
    case oPag:nOption == 2
+
       MakFacCli(  oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, nRadFec, oBrwAlb, oMetMsg,;
                   dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv,;
                   dbfFPago, dbfUsr, dbfCount, oStock, oDlg )
@@ -721,8 +725,8 @@ RETURN NIL
 
 Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, lUltimo )
 
-   local aTotAlb        := {}
    local nRecAnt
+   local aTotAlb        := {}
 
    DEFAULT lUltimo      := .f.
 
@@ -732,10 +736,9 @@ Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL,
 
       if lNuevo
 
-         if !Empty( cAnteriorAlbaran )                                     .and.;
-            cAnteriorAlbaran  != ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+         if !Empty( cAnteriorAlbaran ) .and. cAnteriorAlbaran != ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
 
-            nRecAnt  := oDbfTmp:Recno()
+            nRecAnt     := oDbfTmp:Recno()
 
             if oDbfTmp:SeekInOrd( cAnteriorAlbaran, "cNumAlb" )
 
@@ -763,23 +766,14 @@ Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL,
 
             oDbfTmp:GoTo( nRecAnt )
 
-            cAnteriorAlbaran     := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-            nAcumulaAlbaran      := aTotAlb[ 16 ]
-            nAcumulaDescuento1   := aTotAlb[ 12 ]
-            nAcumulaDescuento2   := aTotAlb[ 13 ]
-            nAcumulaDescuento3   := aTotAlb[ 14 ]
-            nAcumulaDescuento4   := aTotAlb[ 15 ]
-
-         else
-
-            cAnteriorAlbaran     := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-            nAcumulaAlbaran      := aTotAlb[ 16 ]
-            nAcumulaDescuento1   := aTotAlb[ 12 ]
-            nAcumulaDescuento2   := aTotAlb[ 13 ]
-            nAcumulaDescuento3   := aTotAlb[ 14 ]
-            nAcumulaDescuento4   := aTotAlb[ 15 ]
-
          end if
+
+         cAnteriorAlbaran        := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+         nAcumulaAlbaran         := aTotAlb[ 16 ]
+         nAcumulaDescuento1      := aTotAlb[ 12 ]
+         nAcumulaDescuento2      := aTotAlb[ 13 ]
+         nAcumulaDescuento3      := aTotAlb[ 14 ]
+         nAcumulaDescuento4      := aTotAlb[ 15 ]
 
       else
 
@@ -793,6 +787,7 @@ Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL,
 
       oDbfTmp:Append()
       oDbfTmp:Blank()
+
       oDbfTmp:nNumDoc            := nNumero
       oDbfTmp:lNewDoc            := lNuevo
       oDbfTmp:cSerDoc            := ( dbfAlbCliT )->cSerAlb
@@ -810,6 +805,7 @@ Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL,
       oDbfTmp:nTotEnt            := nPagAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliP, dbfDiv, cDivEmp(), .f. )
 
       if lUltimo
+
          if nAcumulaDescuento1 != 0
             oDbfTmp:nPctDto1     := ( nAcumulaDescuento1 * 100 ) / nAcumulaAlbaran
          end if
@@ -825,6 +821,7 @@ Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL,
          if nAcumulaDescuento4 != 0
             oDbfTmp:nPctDto4     := ( nAcumulaDescuento4 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 - nAcumulaDescuento2 - nAcumulaDescuento3 )
          end if
+
       end if
 
       oDbfTmp:Save()
@@ -908,18 +905,19 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
    while !oDbfTmp:Eof()
 
       /*
-      Posicionamiento en el albaran
+      Posicionamiento en el albaran--------------------------------------------
       */
 
       if ( dbfAlbCliT )->( dbSeek( oDbfTmp:cNumAlb ) ) .and. !oDbfTmp:lFacAlb
 
-         nProcesando          := oDbfTmp:nNumDoc
+         nProcesando                   := oDbfTmp:nNumDoc
 
          /*
-         Encontrado uno valido
+         Encontrado uno valido-------------------------------------------------
          */
 
          if aScan( aProcesado, nProcesando ) == 0
+
             aAdd( aProcesado, nProcesando )
 
             /*
@@ -930,20 +928,20 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             nNewFac                    := nNewDoc( ( dbfAlbCliT )->cSerAlb, dbfFacCliT, "NFACCLI", , dbfCount )
             nNumLin                    := 0
             cLinObr                    := Space( 1 )
+            cCodCaj                    := oUser():cCaja()
 
             ( dbfFacCliT )->( dbAppend() )
             ( dbfFacCliT )->cSerie     := cSerAlb
             ( dbfFacCliT )->nNumFac    := nNewFac
             ( dbfFacCliT )->cSufFac    := cSufEmp
+            ( dbfFacCliT )->cCodCaj    := cCodCaj
             ( dbfFacCliT )->cTurFac    := cCurSesion()
-            ( dbfFacCliT )->cCodAlm    := ( dbfAlbCliT )->cCodAlm
             ( dbfFacCliT )->cCodUsr    := cCurUsr()
             ( dbfFacCliT )->dFecCre    := Date()
             ( dbfFacCliT )->cTimCre    := Time()
             ( dbfFacCliT )->lImpAlb    := .t.
             ( dbfFacCliT )->cCodDlg    := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
-            ( dbfFacCliT )->cCodCaj    := oUser():cCaja()
-            cCodCaj                    := oUser():cCaja()
+            ( dbfFacCliT )->cCodAlm    := ( dbfAlbCliT )->cCodAlm
 
             if nRadFec == 1
                ( dbfFacCliT )->dFecFac := dFecFac
@@ -962,15 +960,16 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             end if
 
             /*
-            Asignando datos del cliente
+            Asignando datos del cliente----------------------------------------
             */
 
             cCodCli                       := ( dbfAlbCliT )->cCodCli
+            cNomCli                       := ( dbfClient )->Titulo
+
             ( dbfFacCliT )->cCodCli       := cCodCli
 
             if ( dbfClient )->( dbSeek( cCodCli ) )
                ( dbfFacCliT )->cNomCli    := ( dbfClient )->Titulo
-               cNomCli                    := ( dbfClient )->Titulo
                ( dbfFacCliT )->cDirCli    := ( dbfClient )->Domicilio
                ( dbfFacCliT )->cPobCli    := ( dbfClient )->Poblacion
                ( dbfFacCliT )->cPrvCli    := ( dbfClient )->Provincia
@@ -997,23 +996,16 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                ( dbfFacCliT )->nTarifa    := Max( ( dbfAlbCliT )->nTarifa, 1 )
             end if
 
-            ( dbfFacCliT )->cCodAge       := ( dbfAlbCliT )->cCodAge
             cCodAge                       := ( dbfAlbCliT )->cCodAge
+            cDivFac                       := ( dbfAlbCliT )->cDivAlb
+            nVdvFac                       := ( dbfAlbCliT )->nVdvAlb
+
+            ( dbfFacCliT )->cCodAge       := ( dbfAlbCliT )->cCodAge
             ( dbfFacCliT )->cCodRut       := ( dbfAlbCliT )->cCodRut
             ( dbfFacCliT )->cCodTar       := ( dbfAlbCliT )->cCodTar
             ( dbfFacCliT )->cCodObr       := ( dbfAlbCliT )->cCodObr
             ( dbfFacCliT )->cDivFac       := ( dbfAlbCliT )->cDivAlb
-            cDivFac                       := ( dbfAlbCliT )->cDivAlb
             ( dbfFacCliT )->nVdvFac       := ( dbfAlbCliT )->nVdvAlb
-            nVdvFac                       := ( dbfAlbCliT )->nVdvAlb
-            ( dbfFacCliT )->cDtoEsp       := Padr( "General", 50 )
-            ( dbfFacCliT )->nDtoEsp       := oDbfTmp:nPctDto1
-            ( dbfFacCliT )->cDpp          := Padr( "Pronto pago", 50 )
-            ( dbfFacCliT )->nDpp          := oDbfTmp:nPctDto2
-            ( dbfFacCliT )->cDtoUno       := Space(50)
-            ( dbfFacCliT )->nDtoUno       := oDbfTmp:nPctDto3
-            ( dbfFacCliT )->cDtoDos       := Space(50)
-            ( dbfFacCliT )->nDtoDos       := oDbfTmp:nPctDto4
             ( dbfFacCliT )->lRecargo      := ( dbfAlbCliT )->lRecargo
             ( dbfFacCliT )->lOperPv       := ( dbfAlbCliT )->lOperPv
             ( dbfFacCliT )->mComent       := ( dbfAlbCliT )->mComent
@@ -1030,6 +1022,28 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             aAdd( aMsg, {.t., "Factura generada : " + ( dbfFacCliT )->cSerie + "/" + Alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac } )
 
          end if
+
+         // Descuentos globales------------------------------------------------
+
+         if !empty( oDbfTmp:nPctDto1 ) .and. empty( ( dbfFacCliT )->cDtoEsp )
+            ( dbfFacCliT )->cDtoEsp := Padr( "General", 50 )
+            ( dbfFacCliT )->nDtoEsp := oDbfTmp:nPctDto1
+         end if 
+
+         if !empty( oDbfTmp:nPctDto2 ) .and. empty( ( dbfFacCliT )->cDpp )
+            ( dbfFacCliT )->cDpp    := Padr( "Pronto pago", 50 )
+            ( dbfFacCliT )->nDpp    := oDbfTmp:nPctDto2
+         end if 
+
+         if !empty( oDbfTmp:nPctDto3 ) .and. empty( ( dbfFacCliT )->cDtoUno )
+            ( dbfFacCliT )->cDtoUno := Space( 50 ) 
+            ( dbfFacCliT )->nDtoUno := oDbfTmp:nPctDto3
+         end if 
+
+         if !empty( oDbfTmp:nPctDto4 ) .and. empty( ( dbfFacCliT )->cDtoDos )
+            ( dbfFacCliT )->cDtoDos := Space(50)
+            ( dbfFacCliT )->nDtoDos := oDbfTmp:nPctDto4
+         end if 
 
          /*
          Marca para no volver a facturar el albaran____________________________
@@ -1059,7 +1073,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             end if
 
             /*
-            Albaranes
+            Albaranes----------------------------------------------------------
             */
 
             if lNumAlb() .or. lSuAlb()
@@ -1081,7 +1095,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             end if
 
             /*
-            Añadimos lineas de detalle
+            Añadimos lineas de detalle-----------------------------------------
             */
 
             while ( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == oDbfTmp:cNumAlb ) .AND. !( dbfAlbCliL )->( eof() )
@@ -1285,36 +1299,55 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             ( dbfFacCliP )->lConPgo  := .f.
             ( dbfFacCliP )->lRecImp  := .f.
             ( dbfFacCliP )->lRecDto  := .f.
+         
             ( dbfFacCliP )->( dbUnLock() )
 
          end if
 
          nTotEntAlb  := 0
 
-         /*
-         Generamos los pagos___________________________________________________
-         */
+         // Generamos los pagos________________________________________________
 
          GenPgoFacCli( cSerAlb + Str( nNewFac ) + cSufEmp, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfClient, dbfFPago, dbfDiv, dbfIva )
 
+         // Comprueba si la factura esta pagada--------------------------------
+
          ChkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, .f. )
 
-         /*
-         Guardamos los totales-------------------------------------------------
-         */
+         // Guardamos los totales----------------------------------------------
 
-         nRecAnt  := ( dbfFacCliT )->( RecNo() )
+         nRecAnt                          := ( dbfFacCliT )->( RecNo() )
 
          if dbSeekInOrd( cSerAlb + Str( nNewFac ) + cSufEmp, "nNumFac", dbfFacCliT )
 
-            aTotFac                    := aTotFacCli( cSerAlb + Str( nNewFac ) + cSufEmp, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
+            aTotFac                       := aTotFacCli( cSerAlb + Str( nNewFac ) + cSufEmp, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
 
             if dbLock( dbfFacCliT )
 
-               ( dbfFacCliT )->nTotNet := aTotFac[1]
-               ( dbfFacCliT )->nTotIva := aTotFac[2]
-               ( dbfFacCliT )->nTotReq := aTotFac[3]
-               ( dbfFacCliT )->nTotFac := aTotFac[4]
+               if !empty( oDbfTmp:nPctDto1 ) .and. empty( ( dbfFacCliT )->cDtoEsp )
+                  ( dbfFacCliT )->cDtoEsp := Padr( "General", 50 )
+                  ( dbfFacCliT )->nDtoEsp := oDbfTmp:nPctDto1
+               end if 
+
+               if !empty( oDbfTmp:nPctDto2 ) .and. empty( ( dbfFacCliT )->cDpp )
+                  ( dbfFacCliT )->cDpp    := Padr( "Pronto pago", 50 )
+                  ( dbfFacCliT )->nDpp    := oDbfTmp:nPctDto2
+               end if 
+
+               if !empty( oDbfTmp:nPctDto3 ) .and. empty( ( dbfFacCliT )->cDtoUno )
+                  ( dbfFacCliT )->cDtoUno := Space( 50 ) 
+                  ( dbfFacCliT )->nDtoUno := oDbfTmp:nPctDto3
+               end if 
+
+               if !empty( oDbfTmp:nPctDto4 ) .and. empty( ( dbfFacCliT )->cDtoDos )
+                  ( dbfFacCliT )->cDtoDos := Space(50)
+                  ( dbfFacCliT )->nDtoDos := oDbfTmp:nPctDto4
+               end if 
+
+               ( dbfFacCliT )->nTotNet    := aTotFac[1]
+               ( dbfFacCliT )->nTotIva    := aTotFac[2]
+               ( dbfFacCliT )->nTotReq    := aTotFac[3]
+               ( dbfFacCliT )->nTotFac    := aTotFac[4]
 
                ( dbfFacCliT )->( dbUnLock() )
 
