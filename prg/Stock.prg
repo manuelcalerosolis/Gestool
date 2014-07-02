@@ -4080,6 +4080,11 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   if !Empty( oBrw )
+      oBrw:aArrayData   := {}
+      oBrw:Refresh()
+   end if
+
    nOrdPedPrvL          := ( ::cPedPrvL )->( OrdSetFocus( "cRef"     ) )
    nOrdAlbPrvL          := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast" ) )
    nOrdAlbPrvS          := ( ::cAlbPrvS )->( OrdSetFocus( "nNumAlb"  ) )
@@ -4093,11 +4098,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    nOrdProducL          := ( ::cProducL )->( OrdSetFocus( "cCodArt"  ) )
    nOrdProducM          := ( ::cProducM )->( OrdSetFocus( "cCodArt"  ) )
    nOrdHisMov           := ( ::cHisMovT )->( OrdSetFocus( "cRefMov"  ) )
-
-   if !Empty( oBrw )
-      oBrw:aArrayData   := {}
-      oBrw:Refresh()
-   end if
 
    /*
    Movimientos de almacén------------------------------------------------------
@@ -5702,7 +5702,7 @@ Method Integra( sStocks ) CLASS TStock
 
    if ::lIntegra
 
-      nPos              := aScan( ::aStocks, {|o| o:cCodigo == sStocks:cCodigo .and. o:cCodigoAlmacen == sStocks:cCodigoAlmacen .and. o:cValorPropiedad1 == sStocks:cValorPropiedad1 .and. o:cValorPropiedad2 == sStocks:cValorPropiedad2 .and. if( ::lLote, o:cLote == sStocks:cLote, .t. ) .and. if( ::lNumeroSerie, o:cNumeroSerie == sStocks:cNumeroSerie, .t. ) } )
+      nPos              := aScan( ::aStocks, {|o| o:cCodigo == sStocks:cCodigo .and. o:cCodigoAlmacen == sStocks:cCodigoAlmacen .and. o:cValorPropiedad1 == sStocks:cValorPropiedad1 .and. o:cValorPropiedad2 == sStocks:cValorPropiedad2 .and. if( ::lLote, rtrim( o:cLote ) == rtrim( sStocks:cLote ), .t. ) .and. if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
       if nPos != 0
          ::aStocks[ nPos ]:nUnidades               += sStocks:nUnidades
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir

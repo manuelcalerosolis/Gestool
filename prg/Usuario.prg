@@ -1516,7 +1516,7 @@ Function lGetPsw( dbfUsr, lVirtual )
 
       if Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or.;
          Upper( cGetClv ) == Upper( "snorlax" )                      .or.;
-         ( "TERMINAL" $ cParamsMain() )
+         ( "NOPASSWORD" $ cParamsMain() )
          Return .t.
       else
          if !Empty( cGetClv )
@@ -1544,7 +1544,7 @@ Function lGetPsw( dbfUsr, lVirtual )
          
          if (  Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or. ;
                Upper( Rtrim( cGetClv ) ) == Upper( "snorlax" )                      .or. ;
-               ( "TERMINAL" $ cParamsMain() ) )
+               ( "NOPASSWORD" $ cParamsMain() ) )
 
             Return .t.
 
@@ -2503,7 +2503,7 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
       if !lError                                                                 .and. ;
          (  Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) )  .or. ;
             Upper( Rtrim( cGetPas ) ) == Upper( "snorlax" )                      .or. ;
-            ( "TERMINAL" $ cParamsMain() ) )
+            ( "NOPASSWORD" $ cParamsMain() ) )
 
          if ( dbfUser )->( dbRLock() )
             ( dbfUser )->lUseUse := .t.
