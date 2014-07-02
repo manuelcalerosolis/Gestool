@@ -10964,7 +10964,6 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             ( dbfTmpLin )->dFecha      := dFecAlb
             ( dbfTmpLin )->cTipMov     := cTipMov
             ( dbfTmpLin )->cNumPed     := cNumPed
-            ( dbfTmpLin )->nNumLin     := nNumLin
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
 
