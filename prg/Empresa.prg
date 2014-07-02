@@ -3272,6 +3272,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    TDataCenter():BuildEmpresa()
 
+   TDataCenter():BuildData()
+
    // TDataCenter():CheckEmpresa()
 
    /*

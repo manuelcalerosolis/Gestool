@@ -1912,10 +1912,6 @@ Method Reindexa( cPath )
    ::oDbfInf:Pack()
    ::oDbfInf:End()
 
-   if file( cPath + "PrsInf.Cdx" )
-      ferase( cPath + "PrsInf.Cdx" )
-   end if
-
 Return ( Self )
 
 //--------------------------------------------------------------------------//

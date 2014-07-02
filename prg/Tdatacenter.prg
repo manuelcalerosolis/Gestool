@@ -800,6 +800,7 @@ METHOD StartAdministratorTask()
          ::oMtrActualiza:Set( hb_EnumIndex() )
 
          SetEmpresa( cEmp[ 1 ], , , , , , .t. )
+
          lActualiza( cEmp[ 1 ], , .t., cEmp[ 2 ], .f. )
 
          cEmp[ 4 ]      := .t.
@@ -2548,13 +2549,15 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TFastReportInfGen():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
+   /*
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "PrsInf"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PrsInf.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PrsInf.Cdx"
    oDataTable:cDescription := "Documentos"
    ::AddEmpresaTable( oDataTable )
-
+   */
+   
    /*
    Pedido Proveedores----------------------------------------------------------
    */
@@ -4706,6 +4709,12 @@ CLASS TDataTable
 
    METHOD cFileName()   INLINE ( Upper( cNoPath( ::cName ) ) )
    METHOD cAreaName()   INLINE ( if( lAIS(), ::cFileName() + ".Dbf", ::cDataFile ) )
+
+   METHOD Say()         INLINE ( "cArea"        + ::cArea         + CRLF +;
+                                 "cName"        + ::cName         + CRLF +;
+                                 "cDataFile"    + ::cDataFile     + CRLF +;
+                                 "cIndexFile"   + ::cIndexFile    + CRLF +;
+                                 "cDescription" + ::cDescription )
 
 END CLASS
 
