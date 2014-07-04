@@ -17229,7 +17229,7 @@ function nCobFacCli( cCodCli, dDesde, dHasta, cFacCliT, dbfFacCliL, dbfFacCliP, 
 
       while ( dbfFacCliP )->cCodCli = cCodCli .and. !( dbfFacCliP )->( Eof() )
 
-         if ( ( dbfFacCliP )->lCobrado )                                   .and.;
+         if ( ( dbfFacCliP )->lCobrado .and. !( dbfFacCliP )->lPasado )    .and.;
             ( dDesde == nil .or. ( dbfFacCliP )->dEntrada >= dDesde )      .and.;
             ( dHasta == nil .or. ( dbfFacCliP )->dEntrada <= dHasta )      .and.;
             ( nYear == nil .or. Year( ( dbfFacCliP )->dEntrada ) == nYear )

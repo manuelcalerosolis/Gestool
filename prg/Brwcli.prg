@@ -386,7 +386,7 @@ function BrwVtaCli( cCodCli, cNomCli )
       :nFootStrAlign             := 1
    end with
 
-if !oUser():lNotRentabilidad()
+   if !oUser():lNotRentabilidad()
 
    with object ( oBrwVta:AddCol() )
       :cHeader                   := "Rentabilidad"
@@ -399,23 +399,25 @@ if !oUser():lNotRentabilidad()
       :nFootStrAlign             := 1
    end with
 
-end if
+   end if
 
    /*
    Estado de cuentas
    */
 
-   REDEFINE SAY oPdtFac PROMPT nPdtFac                                                       ID 601 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oTotFac PROMPT nTotFac                                                       ID 602 PICTURE cPorDiv   OF oFld:aDialogs[1]  //( aTotVta[3] - nPdtFac )
-   REDEFINE SAY oTotCob PROMPT nTotCob                                                       ID 603 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oCobAnt PROMPT nCobAnt                                                       ID 604 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oTotEnt PROMPT nTotEnt                                                       ID 605 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oFacRec PROMPT nFacRec                                                       ID 606 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oTotTik PROMPT nTotTik                                                       ID 611 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oTotPdt PROMPT ( nPdtFac + ( ( nTotFac + nTotTik + nFacRec ) - nTotCob ) )   ID 607 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oTotRie PROMPT ( ( ( nTotFac + nTotTik + nFacRec ) - nTotCob ) )             ID 608 PICTURE cPorDiv   OF oFld:aDialogs[1]
+   REDEFINE SAY oTotPed PROMPT nTotPed                                                       ID 609 PICTURE cPorDiv   OF oFld:aDialogs[1] // Pedido
+   REDEFINE SAY oPdtFac PROMPT nPdtFac                                                       ID 601 PICTURE cPorDiv   OF oFld:aDialogs[1] // Pendiente facturar
+   REDEFINE SAY oTotFac PROMPT nTotFac                                                       ID 602 PICTURE cPorDiv   OF oFld:aDialogs[1] // Facturado
+   REDEFINE SAY oFacRec PROMPT nFacRec                                                       ID 606 PICTURE cPorDiv   OF oFld:aDialogs[1] // Rectificado
+   REDEFINE SAY oTotTik PROMPT nTotTik                                                       ID 611 PICTURE cPorDiv   OF oFld:aDialogs[1] // Tickets
+   REDEFINE SAY oTotCob PROMPT nTotCob                                                       ID 603 PICTURE cPorDiv   OF oFld:aDialogs[1] // Cobros
+   REDEFINE SAY oCobAnt PROMPT nCobAnt                                                       ID 604 PICTURE cPorDiv   OF oFld:aDialogs[1] // Anticipado
+   REDEFINE SAY oTotEnt PROMPT nTotEnt                                                       ID 605 PICTURE cPorDiv   OF oFld:aDialogs[1] // Entregas
+   REDEFINE SAY oTotPdt PROMPT ( nPdtFac + ( ( nTotFac + nTotTik + nFacRec ) - ( nTotCob + nCobAnt + nTotEnt ) ) );
+                                                                                             ID 607 PICTURE cPorDiv   OF oFld:aDialogs[1]
+   REDEFINE SAY oTotRie PROMPT ( ( nTotFac + nTotTik + nFacRec ) - ( nTotCob + nCobAnt + nTotEnt ) ) ;
+                                                                                             ID 608 PICTURE cPorDiv   OF oFld:aDialogs[1]
 
-   REDEFINE SAY oTotPed PROMPT nTotPed                                                       ID 609 PICTURE cPorDiv   OF oFld:aDialogs[1]
 
    REDEFINE SAY oTotVal PROMPT nValTik                                                       ID 610 PICTURE cPorDiv   OF oFld:aDialogs[1]
 
@@ -855,15 +857,18 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
 
    oTotFac:SetText( nTotFac )
    oTotTik:SetText( nTotTik )
-   nTotCob  := nCobTik + nCobFac
+
+   // nTotCob  := nCobTik + nCobFac
+   
    oTotCob:SetText( nCobTik + nCobFac )
    oCobAnt:SetText( nCobAnt )
 
    oTotVal:SetText( nValTik )
    oTotEnt:SetText( nTotEnt )
    oFacRec:SetText( nFacRec )
-   oTotPdt:SetText( nPdtFac + ( ( nTotFac + nTotTik + nFacRec ) - nTotCob ) )
-   oTotRie:SetText( ( ( nTotFac + nTotTik + nFacRec ) - nTotCob ) )
+
+   oTotPdt:SetText( ( nPdtFac + nTotFac + nTotTik + nFacRec ) - ( nCobTik + nCobFac + nCobAnt + nTotEnt ) )
+   oTotRie:SetText( ( nTotFac + nTotTik + nFacRec ) - ( nCobTik + nCobFac + nCobAnt + nTotEnt ) )
 
    oBrwVta:Refresh()
    oBrwVta:RefreshFooters()
@@ -2199,235 +2204,37 @@ Return ( nCobTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliP, dbfIva, dbfDiv, nYe
 
 static function nValesTik( cCodCli, nYear )
 
-   local nOrdAnt
-   local cCodEmp
-   local dbfTikEmpT
-   local dbfTikEmpL
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal   += nValTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliL, dbfDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
-
-            nTotal   += nValTik( cCodCli, nil, nil, dbfTikEmpT, dbfTikEmpL, dbfDiv, nYear )
-
-            CLOSE( dbfTikEmpT )
-            CLOSE( dbfTikEmpL )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nValTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliL, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
 Static Function nCobrosFac( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfFacEmpT
-   local dbfFacEmpL
-   local dbfFacEmpP
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  += nCobFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, .t., nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacEmpP ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIP.CDX" ) ADDITIVE
-
-            nTotal  += nCobFacCli( cCodCli, nil, nil, dbfFacEmpT, dbfFacEmpL, dbfFacEmpP, dbfIva, dbfDiv, .t., nYear )
-
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfFacEmpP )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nCobFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, .t., nYear ) )
 
 //---------------------------------------------------------------------------//
 
 Static Function nTotalRectificativa( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfRecEmpT
-   local dbfRecEmpL
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  += nVtaFacRec( cCodCli, nil, nil, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfRecEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfRecEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECL.CDX" ) ADDITIVE
-
-            nTotal  += nVtaFacRec( cCodCli, nil, nil, dbfRecEmpT, dbfRecEmpL, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfRecEmpT )
-            CLOSE( dbfRecEmpL )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nVtaFacRec( cCodCli, nil, nil, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
 Static Function nTotalFacturas( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfFacEmpT
-   local dbfFacEmpL
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  +=  nVtaFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
-
-            nTotal  +=  nVtaFacCli( cCodCli, nil, nil, dbfFacEmpT, dbfFacEmpL, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nVtaFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
 Static Function nTotalTickets( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfTikEmpT
-   local dbfTikEmpL
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  +=  nVtaTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliL, dbfIva, dbfDiv )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
-            SET TAG TO "CCLITIK"
-
-            USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
-
-            nTotal  +=  nVtaTik( cCodCli, nil, nil, dbfTikEmpT, dbfTikEmpL, dbfIva, dbfDiv )
-
-            CLOSE( dbfTikEmpT )
-            CLOSE( dbfTikEmpL )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nVtaTik( cCodCli, nil, nil, dbfTikCliT, dbfTikCliL, dbfIva, dbfDiv ) )
 
 //---------------------------------------------------------------------------//
 
 Static Function nTotalAnticipo( cCodCli, nYear )
 
-   local cCodEmp
-   local dbfAntEmpT
-   local nTotal      := 0
-
-   /*if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()*/
-
-            nTotal  += nCobAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, nYear )
-
-         /*else
-
-            USE ( cPatStk( cCodEmp ) + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "AntCliT.CDX" ) ADDITIVE
-            SET TAG TO "CCODCLI"
-
-            nTotal  += nCobAntCli( cCodCli, dbfAntEmpT, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfAntEmpT )
-
-         end if
-
-      next
-
-   end if*/
-
-Return nTotal
+Return ( nCobAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 

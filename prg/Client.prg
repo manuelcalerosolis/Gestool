@@ -4695,7 +4695,7 @@ Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, a
 
          if Empty( AllTrim( ( TDataView():Get( "Client", nView ) )->SubCta ) ) .and. lChkCuenta
             if dbLock( TDataView():Get( "Client", nView ) )
-               ( TDataView():Get( "Client", nView ) )->SubCta      := "430" + Right( Rtrim( ( TDataView():Get( "Client", nView ) )->Cod ), nLen )
+               ( TDataView():Get( "Client", nView ) )->SubCta      := "430" + strzero( val( alltrim( ( TDataView():Get( "Client", nView ) )->Cod ) ), nLen )
                ( TDataView():Get( "Client", nView ) )->( dbUnLock() )
             end if
          end if

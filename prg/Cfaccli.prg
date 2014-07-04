@@ -714,7 +714,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                              "SubtipoFactura"        => if( lIvaCEE, '02', '01' ),; // Ventas
                                              "BaseImponible"         => nCalculo,;
                                              "PorcentajeIVA"         => aVentas[ n, 2 ],;
-                                             "PorcentajeRecargo"     => nPReq( dbfIva, aVentas[ n, 2 ] ),;
+                                             "PorcentajeRecargo"     => if( ( dbfFacCliT )->lRecargo, nPReq( dbfIva, aVentas[ n, 2 ] ), 0 ),;
                                              "PorcentajeRetencion"   => 0,;
                                              "Impreso"               => '01',; // 347
                                              "SujetaIVA"             => if( aVentas[ n, 2 ] != 0, 'S', 'N' ),;

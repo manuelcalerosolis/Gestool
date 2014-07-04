@@ -1276,35 +1276,36 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
 
             ( dbfFacCliP )->( dbAppend() )
 
-            ( dbfFacCliP )->cSerie   := cSerAlb
-            ( dbfFacCliP )->nNumFac  := nNewFac
-            ( dbfFacCliP )->cSufFac  := cSufEmp
-            ( dbfFacCliP )->nNumRec  := 1
-            ( dbfFacCliP )->cTurRec  := ""
-            ( dbfFacCliP )->lCloPgo  := .t.
-            ( dbfFacCliP )->cCodCaj  := cCodCaj
-            ( dbfFacCliP )->cCodCli  := cCodCli
-            ( dbfFacCliP )->cNomCli  := cNomCli
-            ( dbfFacCliP )->dEntrada := dFecFac
-            ( dbfFacCliP )->dPreCob  := dFecFac
-            ( dbfFacCliP )->dFecVto  := dFecFac
-            ( dbfFacCliP )->nImporte := nTotEntAlb
-            ( dbfFacCliP )->nImpCob  := nTotEntAlb
-            ( dbfFacCliP )->cDescrip := "Suma entregas a cuenta de albaranes"
-            ( dbfFacCliP )->cCodPgo  := cCodPgo
-            ( dbfFacCliP )->cDivPgo  := cDivFac
-            ( dbfFacCliP )->nVdvPgo  := nVdvFac
-            ( dbfFacCliP )->cCodAge  := cCodAge
-            ( dbfFacCliP )->lCobrado := .t.
-            ( dbfFacCliP )->lConPgo  := .f.
-            ( dbfFacCliP )->lRecImp  := .f.
-            ( dbfFacCliP )->lRecDto  := .f.
+            ( dbfFacCliP )->cSerie     := cSerAlb
+            ( dbfFacCliP )->nNumFac    := nNewFac
+            ( dbfFacCliP )->cSufFac    := cSufEmp
+            ( dbfFacCliP )->nNumRec    := 1
+            ( dbfFacCliP )->cTurRec    := ""
+            ( dbfFacCliP )->lCloPgo    := .t.
+            ( dbfFacCliP )->cCodCaj    := cCodCaj
+            ( dbfFacCliP )->cCodCli    := cCodCli
+            ( dbfFacCliP )->cNomCli    := cNomCli
+            ( dbfFacCliP )->dEntrada   := dFecFac
+            ( dbfFacCliP )->dPreCob    := dFecFac
+            ( dbfFacCliP )->dFecVto    := dFecFac
+            ( dbfFacCliP )->nImporte   := nTotEntAlb
+            ( dbfFacCliP )->nImpCob    := nTotEntAlb
+            ( dbfFacCliP )->cDescrip   := "Suma entregas a cuenta de albaranes"
+            ( dbfFacCliP )->cCodPgo    := cCodPgo
+            ( dbfFacCliP )->cDivPgo    := cDivFac
+            ( dbfFacCliP )->nVdvPgo    := nVdvFac
+            ( dbfFacCliP )->cCodAge    := cCodAge
+            ( dbfFacCliP )->lCobrado   := .t.
+            ( dbfFacCliP )->lConPgo    := .f.
+            ( dbfFacCliP )->lRecImp    := .f.
+            ( dbfFacCliP )->lRecDto    := .f.
+            ( dbfFacCliP )->lPasado    := .t.
          
             ( dbfFacCliP )->( dbUnLock() )
 
          end if
 
-         nTotEntAlb  := 0
+         nTotEntAlb                    := 0
 
          // Generamos los pagos________________________________________________
 

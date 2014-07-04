@@ -5762,7 +5762,7 @@ METHOD TotCobro( cTurno, cCaja )
 
       while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurno + cCaja .and. !::oFacCliP:eof()
 
-         if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo
+         if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo
 
             ::oTotales:addTotRctCliCobros( cCaja, ::oFacCliP:cSerie, ::nTotFacturaCobro(), ::cTxtFacturaCobro(), ::bEdtFacturaCobro() )
 
@@ -5930,7 +5930,7 @@ METHOD TotPago( cTurno, cCaja )
 
       while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurno + cCaja .and. !::oFacPrvP:eof()
 
-         if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo
+         if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo 
 
             nTipoPgo    := nTipoPago( ::oFacPrvP:cCodPgo, ::oFPago )
 
@@ -8928,7 +8928,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo
 
                ::AppendInTemporal(  nil, ::cTxtFacturaCobro(), ::nTotFacturaCobro() )
 
@@ -8959,7 +8959,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo .and. ( nTipoPago( ::oFacCliP:cCodPgo, ::oFPago ) < 2 )
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo .and. ( nTipoPago( ::oFacCliP:cCodPgo, ::oFPago ) < 2 )
 
                ::AppendInTemporal(  nil, ::cTxtFacturaCobro(), ::nTotFacturaCobro() )
 
@@ -8990,7 +8990,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo .and. ( nTipoPago( ::oFacCliP:cCodPgo, ::oFPago ) == 2 )
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo .and. ( nTipoPago( ::oFacCliP:cCodPgo, ::oFPago ) == 2 )
 
                ::AppendInTemporal(  nil, ::cTxtFacturaCobro(), ::nTotFacturaCobro() )
 
@@ -9021,7 +9021,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo .and. ( nTipoPago( ::oFacCliP:cCodPgo, ::oFPago ) == 3 )
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo .and. ( nTipoPago( ::oFacCliP:cCodPgo, ::oFPago ) == 3 )
 
                ::AppendInTemporal(  nil, ::cTxtFacturaCobro(), ::nTotFacturaCobro() )
 
@@ -9144,10 +9144,8 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo
-
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo
                ::AppendInTemporal( ::oFacCliP:cCodPgo, ::oFacCliP:cCodPgo + Space( 1 ) + oRetFld( ::oFacCliP:cCodPgo, ::oFPago ), ::nTotFacturaCobro() )
-
             end if
 
             ::oFacCliP:Skip()
@@ -9172,9 +9170,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oPedCliP:cTurRec + ::oPedCliP:cSufPed + ::oPedCliP:cCodCaj == cTurnoCaja .and. !::oPedCliP:eof()
 
             if !::oPedCliP:lPasado
-
                ::AppendInTemporal( ::oPedCliP:cCodPgo, ::oPedCliP:cCodPgo + Space( 1 ) + oRetFld( ::oPedCliP:cCodPgo, ::oFPago ), ::nTotPedidoEntrega() )
-
             end if
 
             ::oPedCliP:Skip()
@@ -9199,9 +9195,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oAlbCliP:cTurRec + ::oAlbCliP:cSufAlb + ::oAlbCliP:cCodCaj == cTurnoCaja .and. !::oAlbCliP:eof()
 
             if !::oAlbCliP:lPasado
-
                ::AppendInTemporal( ::oAlbCliP:cCodPgo, ::oAlbCliP:cCodPgo + Space( 1 ) + oRetFld( ::oAlbCliP:cCodPgo, ::oFPago ), ::nTotAlbaranEntrega() )
-
             end if
 
             ::oAlbCliP:Skip()
@@ -9230,9 +9224,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
             if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo
-
                ::AppendInTemporal(  nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
-
             end if
 
             ::oFacPrvP:Skip()
@@ -9263,9 +9255,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
             if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo .and. ( nTipoPago( ::oFacPrvP:cCodPgo, ::oFPago ) < 2 )
-
                ::AppendInTemporal(  nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
-
             end if
 
             ::oFacPrvP:Skip()
@@ -9292,9 +9282,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
             if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo .and. ( nTipoPago( ::oFacPrvP:cCodPgo, ::oFPago ) == 2 )
-
                ::AppendInTemporal(  nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
-
             end if
 
             ::oFacPrvP:Skip()
@@ -9402,7 +9390,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lNotArqueo .and. !Empty( cCuentaEmpresaRecibo( ::oFacCliP ) )
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo .and. !Empty( cCuentaEmpresaRecibo( ::oFacCliP ) )
 
                oDbvBancos:Append()
                oDbvBancos:cNomBnc   := oRetFld( cCuentaEmpresaRecibo( ::oFacCliP ), ::oEmpBnc, "cNomBnc", "cCtaBnc" )

@@ -5931,7 +5931,7 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
          nRiesgo     += ( ::cFacCliP )->nImporte
 
-         if lRiesgo .and. ( ::cFacCliP )->lCobrado
+         if lRiesgo .and. ( ::cFacCliP )->lCobrado .and. !( ::cFacCliP )->lPasado
             nRiesgo  -= ( ::cFacCliP )->nImporte
          end if
 
