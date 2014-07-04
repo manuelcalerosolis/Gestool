@@ -789,28 +789,28 @@ METHOD StartAdministratorTask()
 
    if ::lActualizaBaseDatos
 
-   ::oBrwEmpresas:GoTop()
+      ::oBrwEmpresas:GoTop()
 
-   for each cEmp in ::aEmpresas
+      for each cEmp in ::aEmpresas
 
-      if cEmp[ 6 ]
+         if cEmp[ 6 ]
 
-         ::oSayProceso:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+            ::oSayProceso:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
-         ::oMtrActualiza:Set( hb_EnumIndex() )
+            ::oMtrActualiza:Set( hb_EnumIndex() )
 
-         SetEmpresa( cEmp[ 1 ], , , , , , .t. )
+            SetEmpresa( cEmp[ 1 ], , , , , , .t. )
 
-         lActualiza( cEmp[ 1 ], , .t., cEmp[ 2 ], .f. )
+            lActualiza( cEmp[ 1 ], , .t., cEmp[ 2 ], .f. )
 
-         cEmp[ 4 ]      := .t.
+            cEmp[ 4 ]      := .t.
 
-      end if 
+         end if 
 
-      ::oBrwEmpresas:GoDown()
-      ::oBrwEmpresas:Refresh()
+         ::oBrwEmpresas:GoDown()
+         ::oBrwEmpresas:Refresh()
 
-   next
+      next
 
    end if 
 
@@ -859,7 +859,8 @@ METHOD StartAdministratorTask()
 
             SetEmpresa( cEmp[ 1 ], , , , , , .t. )
 
-            ::BuildEmpresa()     
+            ::BuildEmpresa()  
+               
             ::CreateEmpresaTable()
 
             cEmp[ 5 ]   := .t.
@@ -909,11 +910,11 @@ METHOD StartAdministratorTask()
 
       /*
       Reindexamos las bases de datos-------------------------------------------
+      */
 
       ::oSayProceso:SetText( "Regnerando indices" )
 
       ::Reindex()
-      */
 
    end if
 

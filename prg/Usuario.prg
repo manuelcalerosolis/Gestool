@@ -2579,13 +2579,13 @@ FUNCTION lFreeUser( cCodUsr, lSetUsr, dbfUser, oWndBrw )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfUser )
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
+   if empty( dbfUser )
+      USE ( cPatDat() + "Users.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
       lClo           := .t.
    end if
 
-   nRec              := ( dbfUser )->( Recno() )
+   nRec              := ( dbfUser )->( OrdKeyNo() )
    nOrd              := ( dbfUser )->( OrdSetFocus( "cCodUse" ) )
 
    if ( dbfUser )->( dbSeek( cCodUsr ) )
@@ -2619,10 +2619,10 @@ FUNCTION lFreeUser( cCodUsr, lSetUsr, dbfUser, oWndBrw )
    end if
 
    ( dbfUser )->( OrdSetFocus( nOrd ) )
-   ( dbfUser )->( dbGoTo( nRec ) )
+   ( dbfUser )->( OrdKeyGoTo( nRec ) )
 
    if lClo
-      CLOSE ( dbfUser )
+      CLOSE ( dbfUser ) 
    end if
 
    if oWndBrw != nil

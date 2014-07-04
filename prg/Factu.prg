@@ -190,37 +190,37 @@ function Main( cParams )
    */
 
    do case
-   case ( "ENVIO" $ cParamsMain )
+      case ( "ENVIO" $ cParamsMain )
 
-      if ( ":" $ cParamsMain )
-         cEmpUsr( Right( cParamsMain, 2 ) )
-      end if
+         if ( ":" $ cParamsMain )
+            cEmpUsr( Right( cParamsMain, 2 ) )
+         end if
 
-      if lInitCheck( .t. )
-         TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
-      end if
+         if lInitCheck( .t. )
+            TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
+         end if
 
-      return nil
+         return nil
 
-   case ( "REINDEXA" $ cParamsMain )
+      case ( "REINDEXA" $ cParamsMain )
 
-      if ( ":" $ cParamsMain )
-         cEmpUsr( Right( cParamsMain, 2 ) )
-      end if
+         if ( ":" $ cParamsMain )
+            cEmpUsr( Right( cParamsMain, 2 ) )
+         end if
 
-      if lInitCheck( .t. )
-         oIndex               := TReindex():New()
-         oIndex:lMessageEnd   := .f.
-         oIndex:Resource( .t. )
-      end if
+         if lInitCheck( .t. )
+            oIndex               := TReindex():New()
+            oIndex:lMessageEnd   := .f.
+            oIndex:Resource( .t. )
+         end if
 
-      return nil
+         return nil
 
-   case ( "EMPRESA" $ cParamsMain )
+      case ( "EMPRESA" $ cParamsMain )
 
-      if ( ":" $ cParamsMain )
-         cEmpUsr( Right( cParamsMain, 2 ) )
-      end if
+         if ( ":" $ cParamsMain )
+            cEmpUsr( Right( cParamsMain, 2 ) )
+         end if
 
    end case
 

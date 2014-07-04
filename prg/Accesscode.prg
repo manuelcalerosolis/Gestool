@@ -115,15 +115,15 @@ METHOD Resource() CLASS AccessCode
 
    DEFINE DIALOG oDlg RESOURCE "Bienvenidos" TITLE "Bienvenidos a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush ICON oIcoApp
 
-   REDEFINE BITMAP oBmpVersion ;
-      FILE     cBmpVersion() ;
-      ID       600 ;
-      OF       oDlg
+   REDEFINE BITMAP   oBmpVersion ;
+      FILE           cBmpVersion() ;
+      ID             600 ;
+      OF             oDlg
 
-   REDEFINE BITMAP oBmpLogo ;
-      FILE     ( FullCurDir() + "Bmp\Gestoollogo.bmp" ) ;
-      ID       610 ;
-      OF       oDlg
+   REDEFINE BITMAP   oBmpLogo ;
+      FILE           ( FullCurDir() + "Bmp\Gestoollogo.bmp" ) ;
+      ID             610 ;
+      OF             oDlg
 
    do case
       case lAds()
@@ -144,63 +144,54 @@ METHOD Resource() CLASS AccessCode
 
    // ::oSayDatabase:SetTransparent()
 
-   REDEFINE BITMAP ::oBmpEngine ;
-      ID       200 ;
-      RESOURCE ::cBmpEngine ;
+   REDEFINE BITMAP   ::oBmpEngine ;
+      ID             200 ;
+      RESOURCE       ::cBmpEngine ;
       TRANSPARENT ;
-      OF       oDlg
+      OF             oDlg
 
    ::oSayUser                    := TSay():Redefine( 100, , oDlg )
    ::oSayUser:lTransparent       := .t.
 
-   REDEFINE GET ::oGetUser ;
-      VAR      ::cGetUser ;
-      BITMAP   "LUPA" ;
-      ID       110 ;
-      OF       oDlg
+   REDEFINE GET      ::oGetUser ;
+      VAR            ::cGetUser ;
+      BITMAP         "LUPA" ;
+      ID             110 ;
+      OF             oDlg
 
    ::oGetUser:bHelp              := {|| BrwUser( ::oGetUser, nil, ::oGetUser, .f., .f., .f., .t. ) }
 
    ::oSayPassword                := TSay():Redefine( 120, , oDlg )
    ::oSayPassword:lTransparent   := .t.
 
-   REDEFINE GET ::oGetPassword ;
-      VAR      ::cGetPassword ;
-      ID       130 ;
-      OF       oDlg
+   REDEFINE GET      ::oGetPassword ;
+      VAR            ::cGetPassword ;
+      ID             130 ;
+      OF             oDlg
 
    ::oProgress                   := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-   REDEFINE BUTTON ::oBtnOk ;
-      ID       IDOK ;
-      OF       oDlg ;
-      ACTION   ( ::EndResource( oDlg ) )
+   REDEFINE BUTTON   ::oBtnOk ;
+      ID             IDOK ;
+      OF             oDlg ;
+      ACTION         ( ::EndResource( oDlg ) )
 
-   REDEFINE BUTTON ::oBtnCancel ;
-      ID       IDCANCEL ;
-      OF       oDlg ;
+   REDEFINE BUTTON   ::oBtnCancel ;
+      ID             IDCANCEL ;
+      OF             oDlg ;
       CANCEL ;
-      ACTION   ( oDlg:end() )
+      ACTION         ( oDlg:end() )
 
-   REDEFINE SAY ::oMessage PROMPT "" ;
-      ID       160 ;
-      COLOR    Rgb( 0,0,0 ), Rgb( 255,255,255 ) ;
-      OF       oDlg
+   REDEFINE SAY      ::oMessage PROMPT "" ;
+      ID             160 ;
+      COLOR          Rgb( 0,0,0 ), Rgb( 255,255,255 ) ;
+      OF             oDlg
 
    oDlg:AddFastKey( VK_F5, {|| ::EndResource( oDlg ) } )
 
-   oDlg:bStart := {|| ::InitResource( oDlg ) }
+   oDlg:bStart       := {|| ::InitResource( oDlg ) }
 
    ACTIVATE DIALOG oDlg CENTER
-
-   if !Empty( ::dbfUser )
-      ( ::dbfUser )->( dbClearFilter() )
-      ( ::dbfUser )->( dbCloseArea() )
-   end if
-
-   if !Empty( ::dbfCajas )
-      ( ::dbfCajas )->( dbCloseArea() )
-   end if
 
    if !Empty( oIcoApp )
       oIcoApp:end()

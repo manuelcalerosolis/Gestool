@@ -1384,8 +1384,8 @@ FUNCTION MkAsiento( 	Asien,;
       return ( nil )
    end if
 
-   // oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       /*
       Importes en negativo--------------------------------------------------------
@@ -1456,13 +1456,13 @@ FUNCTION MkAsiento( 	Asien,;
       end if 
 */
 
-   //RECOVER USING oError
-//
-//   //   msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
-//
-//   //END SEQUENCE
-//
-   //ErrorBlock( oBlock )
+   RECOVER USING oError
+
+      msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( aAsiento )
 

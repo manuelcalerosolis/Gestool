@@ -371,7 +371,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
 
       ::lCreated              := .f.
 
-      msgStop( "Usuario " + cCodUsr + "no encontrado." )
+      msgStop( "Usuario " + cCodUsr + " no encontrado.", "Creando usuario" )
 
    end if
 
