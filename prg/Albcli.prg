@@ -4552,6 +4552,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       301 ;
          OF       oFld:aDialogs[1]
 
+/*
       REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
          ID       612 ;
          OF       oFld:aDialogs[1]
@@ -4599,6 +4600,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     .F. ;
          ID       631 ;
          OF       oFld:aDialogs[1]
+*/
 
       REDEFINE GET oStkAct VAR nStkAct ;
          ID       310 ;
