@@ -921,6 +921,12 @@ CLASS TpvTactil
          Return ( .t. )
       end if
 
+      //Si es una línea hija de un escandallo no permitimos borrarla.----------
+      if ::oTemporalLinea:lKitChl
+         MsgStop( "No se puede borrar un componente de un escandallo" )
+         Return ( .t. )
+      end if
+
       ::DisableDialog()
 
       if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
@@ -934,7 +940,16 @@ CLASS TpvTactil
 
          else
 
-            ::EliminaLineaTemporal()
+         //Si la línea es un escandallo eliminamos el escandallo completo
+            if ( ::oTemporalLinea:lKitArt )
+
+               ::EliminaEscandallo( ::oTemporalLinea:nNumLin )
+
+            else
+
+               ::EliminaLineaTemporal()
+
+            end if
 
          end if
 
@@ -960,6 +975,26 @@ CLASS TpvTactil
 
       ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
       while ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+
+         ::EliminaLineaTemporal()
+
+         ::SaltaLineaTemporal()
+
+      end while
+
+      ::oTemporalLinea:SetStatus()
+
+      Return( Self )
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD EliminaEscandallo( nNumeroLinea )
+
+      ::oTemporalLinea:GetStatus()
+
+      ::oTemporalLinea:OrdSetFocus( "nNumLin" )
+      while ( nNumeroLinea == ::oTemporalLinea:nNumLin )
 
          ::EliminaLineaTemporal()
 
