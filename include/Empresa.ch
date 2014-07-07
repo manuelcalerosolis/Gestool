@@ -299,3 +299,5 @@
 #define _NEXPCONTBL			  299
 #define _LSHOWLIN			  300
 #define _LSHOWORG 		  	  301	
+#define _LBULTOS					302
+#define _CNBRBULTOS				303

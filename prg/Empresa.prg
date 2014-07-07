@@ -1218,6 +1218,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       aTmp[ _CNBRUND ]     := Padr( "Unidades", 100 )
    end if
 
+   if Empty( aTmp[ _CNBRBULTOS ] )
+      aTmp[ _CNBRBULTOS ]  := Padr( "Bultos", 100 )
+   end if
+
    if Empty( aTmp[ _CINIJOR ] )
       aTmp[ _CINIJOR ]     := "0800"
    end if
@@ -1895,6 +1899,15 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
+         OF       fldArticulos
+
+      REDEFINE CHECKBOX aGet[ _LBULTOS ] VAR aTmp[ _LBULTOS ] ;
+         ID       450 ;
+         OF       fldArticulos
+
+      REDEFINE GET aGet[ _CNBRBULTOS ] VAR aTmp[ _CNBRBULTOS ] ;
+         ID       460 ;
+         WHEN     aTmp[ _LBULTOS ] ;
          OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LUSECAJ ] VAR aTmp[ _LUSECAJ ] ;
@@ -6611,6 +6624,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lShowOrg",   "L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lUseBultos", "L",  1, 0, "Usar bultos",                                           "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cNbrBultos", "C",100, 0, "Descripción para bultos",                               "", "", "aEmp()", nil } )
 
 
 Return ( aDbf )

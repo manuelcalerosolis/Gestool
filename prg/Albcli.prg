@@ -219,6 +219,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CCODCLI                 96
 #define _DFECULTCOM               97  
 #define _DUNIULTCOM               98
+#define __NBULTOS                 99
+#define _CFORMATO                100
 
 /*
 Definici¢n de Array para impuestos
@@ -4298,17 +4300,25 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       end if
 
-      REDEFINE GET aGet[_NCANENT] VAR aTmp[_NCANENT];
+      REDEFINE GET aGet[ __NBULTOS ] VAR aTmp[ __NBULTOS ] ;
+         ID       610 ;
+         SPINNER ;
+         WHEN ( nMode != ZOOM_MODE ) .AND. uFieldEmpresa( "lUseBultos" ) ;
+         PICTURE  cPicUnd ;
+         OF       oFld:aDialogs[1] ;
+         IDSAY    611
+
+      REDEFINE GET aGet[_NCANENT] VAR aTmp[ _NCANENT ];
          ID       130;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. lUseCaj() .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .AND. lUseCaj() .AND. nMode != ZOOM_MODE ) ;
          PICTURE  cPicUnd ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          OF       oFld:aDialogs[1] ;
          IDSAY    131
 
-      REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA] ;
+      REDEFINE GET aGet[ _NUNICAJA ] VAR aTmp[ _NUNICAJA ] ;
          ID       140;
          SPINNER ;
          WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE ) ;
@@ -4448,6 +4458,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       620;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
          ID       180 ;
          SPINNER ;
@@ -4540,12 +4554,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
-         WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbica( aTmp, aGet, dbfAlm ), cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE ) ;         
+         VALID    ( cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CALMLIN ], oSayAlm ) ) ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
+
+//VALID    ( cNomUbica( aTmp, aGet, dbfAlm ), cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
 
       REDEFINE GET oSayAlm VAR cSayAlm ;
          WHEN     .f. ;
@@ -9204,6 +9220,14 @@ Estudiamos la posiblidades que se pueden dar en una linea de detalle
 STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if !lUseCaj()
       aGet[ _NCANENT ]:Hide()
@@ -16464,6 +16488,8 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",           "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",        "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",              "",                  "", "( cDbfCol )" } )
 
 Return ( aColAlbCli )
 
