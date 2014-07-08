@@ -9097,19 +9097,6 @@ FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm,
       if ( dbfArtPrv )->( dbSeek( cCodArt ) )
          while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
             if dbLock( dbfArtPrv )
-
-               msgAlert( ( dbfArtPrv )->cCodArt == cCodArt, '( dbfArtPrv )->cCodArt == cCodArt' ) 
-               msgAlert( ( dbfArtPrv )->cCodArt, '( dbfArtPrv )->cCodArt' ) 
-               msgAlert( cCodArt, 'cCodArt' ) 
-
-               msgAlert( ( dbfArtPrv )->cCodPrv == cCodPrv, '( dbfArtPrv )->cCodPrv == cCodPrv' ) 
-               msgAlert( ( dbfArtPrv )->cCodPrv, '( dbfArtPrv )->cCodPrv' ) 
-               msgAlert( cCodPrv, 'cCodPrv' ) 
-
-               msgAlert( ( dbfArtPrv )->cRefPrv == cRefPrv, '( dbfArtPrv )->cRefPrv == cRefPrv' ) 
-               msgAlert( ( dbfArtPrv )->cRefPrv, '( dbfArtPrv )->cRefPrv' ) 
-               msgAlert( cRefPrv, 'cRefPrv' ) 
-
                ( dbfArtPrv )->lDefPrv  := ( rtrim( ( dbfArtPrv )->cCodArt ) == rtrim( cCodArt ) .and. rtrim( ( dbfArtPrv )->cCodPrv ) == rtrim( cCodPrv ) .and. rtrim( ( dbfArtPrv )->cRefPrv ) == rtrim( cRefPrv ) )
                ( dbfArtPrv )->( dbUnLock() )
             end if 
@@ -9259,46 +9246,6 @@ RETURN ( nPvp )
 
 //---------------------------------------------------------------------------//
 
-/*
-Devuelve el precio de venta de un articulo
-*/
-
-FUNCTION retPvp( cCodArt, cCodDiv, nChgDiv, dbfArt, dbfDiv )
-
-	local nPvp			:= 0
-
-	DEFAULT nChgDiv	:= 0
-
-	IF ( dbfArt )->( dbSeek( cCodArt ) )
-
-		nPvp	:= ( dbfArt )->PVTAIVA3
-
-		/*
-		Buscamos la divisa pasada
-		*/
-
-		IF ( dbfDiv )->( dbSeek( ( dbfArt )->CODIGO + cCodDiv ) )
-
-         nPvp  := ( dbfDiv )->nPvpDiv
-
-		ELSE
-
-			/*
-			Aplicamos el cambio
-			*/
-
-			IF nChgDiv != 0
-            nPvp := Div( nPvp, nChgDiv )
-			END IF
-
-		END IF
-
-	END IF
-
-RETURN ( nPvp )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION RetImg( cCodArt, dbfArt )
 
    local cImg        := ""
@@ -9312,7 +9259,6 @@ FUNCTION RetImg( cCodArt, dbfArt )
 
 RETURN ( cImg )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
@@ -9359,7 +9305,7 @@ STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
    local cSayArtOrg
    local cSayArtDes
    local oGetTip
-   local cGetTip        := Space(3)
+   local cGetTip        := Space( 3 )
    local oTxtTip
    local cTxtTip        := "Todos"
 
@@ -9520,7 +9466,7 @@ STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
                   "10,00",;
                   "20,00",;
                   "50,00",;
-                  "100,00" } ;
+                  "100,00" } ; 
       OF       oDlg
 
    REDEFINE COMBOBOX oComBox ;
@@ -9637,7 +9583,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   Ajustamos
                   */
 
-                  if ( dbfArticulo )->lMarAju .and. !Empty( ( dbfArticulo )->cMarAju )
+                  if ( dbfArticulo )->lMarAju .and. !empty( ( dbfArticulo )->cMarAju )
                      ( dbfArticulo )->pCosto          := nAjuste( ( dbfArticulo )->pCosto, ( dbfArticulo )->cMarAju )
                   elseif lMargenAjuste
                      ( dbfArticulo )->pCosto          := nAjuste( ( dbfArticulo )->pCosto, cMargenAjuste )
