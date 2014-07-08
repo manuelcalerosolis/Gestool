@@ -4460,6 +4460,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
          ID       620;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
