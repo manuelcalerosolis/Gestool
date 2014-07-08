@@ -2460,7 +2460,7 @@ Static Function RecalculaFacturaRectificativas( aTmp, oDlg )
       else
 
          if uFieldEmpresa( "lCosPrv", .f. )
-            nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nPrecioReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
          end if
 
          if nPreCom != 0
@@ -4850,7 +4850,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             else
 
                if uFieldEmpresa( "lCosPrv", .f. )
-                  nPreCom     := nPreArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                  nPreCom     := nPrecioReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                end if
 
                if nPreCom != 0

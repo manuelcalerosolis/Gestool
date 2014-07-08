@@ -2279,7 +2279,7 @@ Static Function RecalculaAlbaranProveedores( aTmp, oDlg )
       else
 
          if uFieldEmpresa( "lCosPrv", .f. )
-            nPreCom                 := nPreArtPrv( cCodPrv, ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nPrecioReferenciaProveedor( cCodPrv, ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
          end if
 
          if nPreCom != 0
@@ -2294,7 +2294,7 @@ Static Function RecalculaAlbaranProveedores( aTmp, oDlg )
 
          if uFieldEmpresa( "lCosPrv", .f. )
 
-            nPreCom                 := nDtoArtPrv( cCodPrv, ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nDescuentoReferenciaProveedor( cCodPrv, ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmp )->nPreDiv  := nPreCom
@@ -2304,7 +2304,7 @@ Static Function RecalculaAlbaranProveedores( aTmp, oDlg )
             Descuento de promocional-------------------------------------------
             */
 
-            nPreCom                 := nPrmArtPrv( cCodPrv, ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nPromocionReferenciaProveedor( cCodPrv, ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmp )->nDtoPrm  := nPreCom
@@ -4669,7 +4669,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             else
 
                if uFieldEmpresa( "lCosPrv" )
-                  nPreCom        := nPreArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                  nPreCom        := nPrecioReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                end if
 
                if nPreCom != 0
@@ -4684,17 +4684,17 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
                if uFieldEmpresa( "lCosPrv", .f. )
 
-                  nPreCom           := nDtoArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                  nPreCom           := nDescuentoReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
 
                   if nPreCom != 0
                      aGet[ _NDTOLIN ]:cText( nPreCom )
                   end if
 
-               /*
-               Descuento de promocional----------------------------------------------
-               */
+                  /*
+                  Descuento de promocional----------------------------------------------
+                  */
 
-                  nPreCom           := nPrmArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                  nPreCom           := nPromocionReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
 
                   if nPreCom != 0
                      aGet[ _NDTOPRM ]:cText( nPreCom )
@@ -4716,8 +4716,8 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             Punto verde
             */
 
-            if !Empty( aGet[_NPNTVER ] )
-               aGet[_NPNTVER ]:cText( ( TDataView():Articulos( nView ) )->nPntVer1 )
+            if !Empty( aGet[ _NPNTVER ] )
+               aGet[ _NPNTVER ]:cText( ( TDataView():Articulos( nView ) )->nPntVer1 )
             end if
 
             /*
@@ -5300,7 +5300,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    Comprobamos la fecha del documento------------------------------------------
    */
 
-   if !lValidaOperacion( aTmp[_DFECALB] )
+   if !lValidaOperacion( aTmp[ _DFECALB ] )
       Return .f.
    end if
 
@@ -5337,6 +5337,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       return .f.
    end if
 
+   // Paramos las pantallas----------------------------------------------------
 
    CursorWait()
 
@@ -5428,7 +5429,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          aTbl[ _NPRECOM ]                                   := nNetUAlbPrv( aTbl, aTmp, nDinDiv, nDirDiv, aTmp[ _NVDVALB ] )
          aTbl[ ( TDataView():AlbaranesProveedoresLineas( nView ) )->( FieldPos( "dFecAlb" ) ) ]  := aTmp[ _DFECALB ]
 
-         AppRefPrv( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVALB ], aTbl[ _NPREDIV ], TDataView():ProveedorArticulo( nView ) )
+         AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVALB ], aTbl[ _NPREDIV ], TDataView():ProveedorArticulo( nView ), nMode )
 
          /*
          Cambios de precios-------------------------------------------------------
@@ -9465,7 +9466,7 @@ Function SynAlbPrv( cPath )
       if !Empty( ( cAlbPrvL )->cRefPrv )
          cCodPrv                       := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodPrv" )
          if !Empty( cCodPrv )
-            AppRefPrv( ( cAlbPrvL )->cRefPrv, cCodPrv, ( cAlbPrvL )->cRef, ( cAlbPrvL )->nDtoLin, ( cAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( cAlbPrvL )->nPreDiv, cArtPrv )
+            AppendReferenciaProveedor( ( cAlbPrvL )->cRefPrv, cCodPrv, ( cAlbPrvL )->cRef, ( cAlbPrvL )->nDtoLin, ( cAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( cAlbPrvL )->nPreDiv, cArtPrv )
          end if 
       end if
 

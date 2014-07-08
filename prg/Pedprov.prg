@@ -2159,7 +2159,7 @@ Static Function RecalculaPedidoProveedores( aTmp, oDlg )
       else
 
          if uFieldEmpresa( "lCosPrv", .f. )
-            nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nPrecioReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
          end if
 
          if nPreCom != 0
@@ -2174,7 +2174,7 @@ Static Function RecalculaPedidoProveedores( aTmp, oDlg )
 
          if uFieldEmpresa( "lCosPrv", .f. )
 
-            nPreCom                    := nDtoArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                    := nDescuentoReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmpLin )->nDtoLin  := nPreCom
@@ -2184,7 +2184,7 @@ Static Function RecalculaPedidoProveedores( aTmp, oDlg )
          Descuento de promocional----------------------------------------------
          */
 
-            nPreCom                    := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                    := nPromocionReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmpLin )->nDtoPrm  := nPreCom
@@ -3240,7 +3240,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
                else
 
                   if uFieldEmpresa( "lCosPrv", .f. )
-                     nPreCom     := nPreArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                     nPreCom     := nPrecioReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                   end if
 
                   if nPreCom != 0
@@ -3255,7 +3255,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
                   if uFieldEmpresa( "lCosPrv", .f. )
 
-                     nPreCom     := nDtoArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                     nPreCom     := nDescuentoReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                      if nPreCom != 0
                         aGet[ _NDTOLIN ]:cText( nPreCom )
                      end if
@@ -3264,7 +3264,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
                   Descuento de promocional----------------------------------------------
                   */
 
-                     nPreCom     := nPrmArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                     nPreCom     := nPromocionReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                      if nPreCom != 0
                         aGet[ _NDTOPRM ]:cText( nPreCom )
                      end if
@@ -4952,23 +4952,23 @@ Crea las bases de datos temporales que usaremos
 Static Function CreaTemporal()
 
    local cDbfArt  := "PArt"
-   local cDbfPed := "PPed"
+   local cDbfPed  := "PPed"
 
    cTmpArt        := cGetNewFileName( cPatTmp() + cDbfArt )
    cTmpPed        := cGetNewFileName( cPatTmp() + cDbfPed )
 
-   dbCreate( cTmpArt, aSqlStruct( aColTmpArt() ), cDriver() )
+   dbCreate( cTmpArt, aSqlStruct( aColTmpArt() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpArt, cCheckArea( cDbfArt, @dbfTmpArt ), .f. )
    if !( dbfTmpArt )->( neterr() )
       ( dbfTmpArt )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTmpArt )->( ordCreate( cTmpArt, "cRef", "cRef", {|| Field->CREF } ) )
+      ( dbfTmpArt )->( ordCreate( cTmpArt, "cRef", "cRef", {|| Field->cRef } ) )
    end if
 
-   dbCreate( cTmpPed, aSqlStruct( aColPedPrv() ), cDriver() )
+   dbCreate( cTmpPed, aSqlStruct( aColPedPrv() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpPed, cCheckArea( cDbfPed, @dbfTmpLin ), .f. )
    if !( dbfTmpLin )->( neterr() )
       ( dbfTmpLin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTmpLin )->( ordCreate( cTmpPed, "cRef", "cRef", {|| Field->CREF } ) )
+      ( dbfTmpLin )->( ordCreate( cTmpPed, "cRef", "cRef", {|| Field->cRef } ) )
    end if
 
 Return nil
@@ -5052,6 +5052,7 @@ static function AppTemporal( nStockFin, nStkFisico, nStkDisponible )
                ( dbfTmpArt )->lSelArt  := .t.
             end if
          end if
+      
       case nStockFin == 2
          if ( TDataView():Articulos( nView ) )->nMaximo   != 0
             ( dbfTmpArt )->nObjUni     := ( TDataView():Articulos( nView ) )->nMaximo
@@ -5726,7 +5727,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
                   end if
 
                   if uFieldEmpresa( "lCosPrv", .f. )
-                        nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
+                        nPreCom                 := nPrecioReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
                   end if
 
                   if nPreCom != 0
@@ -5741,7 +5742,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
                   if uFieldEmpresa( "lCosPrv", .f. )
 
-                        nPreCom     := nDtoArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
+                        nPreCom     := nDescuentoReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
                         if nPreCom != 0
                               ( dbfTmpLin )->nDtoLin  := nPreCom 
                         end if
@@ -5750,7 +5751,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
                         Descuento de promocional-------------------------------
                         */
 
-                        nPreCom     := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
+                        nPreCom     := nPromocionReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmpLin )->cRef, TDataView():ProveedorArticulo( nView ) )
                         if nPreCom != 0
                               ( dbfTmpLin )->nDtoPrm  := nPreCom
                         end if

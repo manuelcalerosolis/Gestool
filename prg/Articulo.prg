@@ -9037,9 +9037,10 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPrv, dbfArtPrv )
+FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPrv, dbfArtPrv, nMode )
 
    local nOrdAnt
+   local lSetDefault
 
    if nImpPrv <= 0
       Return nil
@@ -9053,13 +9054,19 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
       Return nil 
    end if    
 
-   nOrdAnt        := ( dbfArtPrv )->( OrdSetFocus( "cRefArt" ) )
+   // Ponemos el apunte como por defecto---------------------------------------
+
+   if !IsNil( nMode ) 
+      lSetDefault       := ( nMode == APPD_MODE .or. nMode == DUPL_MODE )   
+   end if 
+
+   nOrdAnt              := ( dbfArtPrv )->( OrdSetFocus( "cRefArt" ) )
 
    /*
 	Ahora pasamos las refrencias de los proveedores-----------------------------
 	*/
 
-   if !( dbfArtPrv)->( dbSeek( cCodArt + cCodPrv + cRefPrv ) )
+   if !( dbfArtPrv )->( dbSeek( cCodArt + cCodPrv + cRefPrv ) )
 
       if dbAppe( dbfArtPrv )
          ( dbfArtPrv )->cCodArt  := cCodArt
@@ -9084,9 +9091,81 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
    
    end if
 
+   // Ponemos el proveedor por defecto-----------------------------------------
+
+   if isTrue( lSetDefault )
+      if ( dbfArtPrv )->( dbSeek( cCodArt ) )
+         while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
+            if dbLock( dbfArtPrv )
+
+               msgAlert( ( dbfArtPrv )->cCodArt == cCodArt, '( dbfArtPrv )->cCodArt == cCodArt' ) 
+               msgAlert( ( dbfArtPrv )->cCodArt, '( dbfArtPrv )->cCodArt' ) 
+               msgAlert( cCodArt, 'cCodArt' ) 
+
+               msgAlert( ( dbfArtPrv )->cCodPrv == cCodPrv, '( dbfArtPrv )->cCodPrv == cCodPrv' ) 
+               msgAlert( ( dbfArtPrv )->cCodPrv, '( dbfArtPrv )->cCodPrv' ) 
+               msgAlert( cCodPrv, 'cCodPrv' ) 
+
+               msgAlert( ( dbfArtPrv )->cRefPrv == cRefPrv, '( dbfArtPrv )->cRefPrv == cRefPrv' ) 
+               msgAlert( ( dbfArtPrv )->cRefPrv, '( dbfArtPrv )->cRefPrv' ) 
+               msgAlert( cRefPrv, 'cRefPrv' ) 
+
+               ( dbfArtPrv )->lDefPrv  := ( rtrim( ( dbfArtPrv )->cCodArt ) == rtrim( cCodArt ) .and. rtrim( ( dbfArtPrv )->cCodPrv ) == rtrim( cCodPrv ) .and. rtrim( ( dbfArtPrv )->cRefPrv ) == rtrim( cRefPrv ) )
+               ( dbfArtPrv )->( dbUnLock() )
+            end if 
+            ( dbfArtPrv )->( dbSkip() )
+         end while
+      end if
+   end if
+
    ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+ Function nPrecioReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+
+   local nPreCom  := 0
+   local nRec     := ( dbfPrvArt )->( Recno() )
+
+   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
+      nPreCom     := ( dbfPrvArt )->nImpPrv
+   end if
+
+   ( dbfPrvArt )->( dbGoTo( nRec ) )
+
+Return nPreCom
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+
+   local nPreCom  := 0
+   local nRec     := ( dbfPrvArt )->( Recno() )
+
+   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
+      nPreCom     := ( dbfPrvArt )->nDtoPrv
+   end if
+
+   ( dbfPrvArt )->( dbGoTo( nRec ) )
+
+Return nPreCom
+
+//---------------------------------------------------------------------------//
+
+Function nPromocionReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+
+   local nPreCom  := 0
+   local nRec     := ( dbfPrvArt )->( Recno() )
+
+   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
+      nPreCom     := ( dbfPrvArt )->nDtoPrm
+   end if
+
+   ( dbfPrvArt )->( dbGoTo( nRec ) )
+
+Return nPreCom
 
 //--------------------------------------------------------------------------//
 
@@ -11214,7 +11293,7 @@ FUNCTION CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMo
 
       if cCatOld != aTmp[ ( dbfArticulo )->( fieldpos( "CCODCAT" ) ) ]                       .and.;
          ( dbfCatalogo )->( dbSeek( aTmp[ ( dbfArticulo )->( fieldpos( "CCODCAT" ) ) ] ) )   .and.;
-         !(dbfCatalogo)->lObsCat
+         !( dbfCatalogo )->lObsCat
 
          if ApoloMsgNoYes(  "¿ Desea actualizar los datos del artículo con los datos del catálogo ?", "Elija una opción" )
 
@@ -11226,20 +11305,16 @@ FUNCTION CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMo
             if ( dbfTmpPrv )->( dbSeek( ( dbfCatalogo )->cCodProv + Space( 18 ) ) )
 
                ( dbfTmpPrv )->( dbGoTop() )
-               while !( dbfTmpPrv )->( Eof () )
-                  if ( dbfTmpPrv )->cCodPrv + ( dbfTmpPrv )->cRefPrv == ( dbfCatalogo )->cCodProv + Space( 18 )
-                     ( dbfTmpPrv )->lDefPrv  := .t.
-                  else
-                     ( dbfTmpPrv )->lDefPrv  := .f.
-                  end if
+               while !( dbfTmpPrv )->( eof () )
+                  ( dbfTmpPrv )->lDefPrv     := ( dbfTmpPrv )->cCodPrv + ( dbfTmpPrv )->cRefPrv == ( dbfCatalogo )->cCodProv + Space( 18 )
                ( dbfTmpPrv )->( dbSkip() )
                end while
 
             else
 
                ( dbfTmpPrv )->( dbGoTop() )
-               while !( dbfTmpPrv )->( Eof () )
-                  ( dbfTmpPrv )->lDefPrv  := .f.
+               while !( dbfTmpPrv )->( eof () )
+                  ( dbfTmpPrv )->lDefPrv     := .f.
                ( dbfTmpPrv )->( dbSkip() )
                end while
 
@@ -12744,12 +12819,12 @@ Cambia el proveedor por defecto y lo refleja en la tabla de artículo (CPRVHAB)
 
 Static Function lSelPrvDef( aTmp, dbfTmpPrv, oBrw, aTmpArt )
 
-   local nRec := ( dbfTmpPrv )->( RecNo() )
+   local nRec                 := ( dbfTmpPrv )->( RecNo() )
 
    ( dbfTmpPrv )->( dbGoTop() )
 
-   while !( dbfTmpPrv )->( Eof() )
-         ( dbfTmpPrv )->lDefPrv  := .f.
+   while !( dbfTmpPrv )->( eof() )
+      ( dbfTmpPrv )->lDefPrv  := .f.
       ( dbfTmpPrv )->( dbSkip() )
    end while
 
@@ -14138,50 +14213,6 @@ Return ( ( dbfArticulo )->( Recno() ) )
 
 //----------------------------------------------------------------------------//
 
-Function nPreArtPrv( cCodPrv, cCodArt, dbfPrvArt )
-
-   local nPreCom  := 0
-   local nRec     := ( dbfPrvArt )->( Recno() )
-
-   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
-      nPreCom     := ( dbfPrvArt )->nImpPrv
-   end if
-
-   ( dbfPrvArt )->( dbGoTo( nRec ) )
-
-Return nPreCom
-
-//---------------------------------------------------------------------------//
-
-Function nDtoArtPrv( cCodPrv, cCodArt, dbfPrvArt )
-
-   local nPreCom  := 0
-   local nRec     := ( dbfPrvArt )->( Recno() )
-
-   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
-      nPreCom     := ( dbfPrvArt )->nDtoPrv
-   end if
-
-   ( dbfPrvArt )->( dbGoTo( nRec ) )
-
-Return nPreCom
-
-//---------------------------------------------------------------------------//
-
-Function nPrmArtPrv( cCodPrv, cCodArt, dbfPrvArt )
-
-   local nPreCom  := 0
-   local nRec     := ( dbfPrvArt )->( Recno() )
-
-   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
-      nPreCom     := ( dbfPrvArt )->nDtoPrm
-   end if
-
-   ( dbfPrvArt )->( dbGoTo( nRec ) )
-
-Return nPreCom
-
-//---------------------------------------------------------------------------//
 
 #else
 

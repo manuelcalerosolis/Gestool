@@ -2617,7 +2617,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
       else
 
          if uFieldEmpresa( "lCosPrv", .f. )
-            nPreCom                 := nPreArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nPrecioReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
          end if
 
          if nPreCom != 0
@@ -2632,7 +2632,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
 
          if uFieldEmpresa( "lCosPrv", .f. )
 
-            nPreCom                 := nDtoArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nDescuentoReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmp )->nDtoLin  := nPreCom
@@ -2642,7 +2642,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
          Descuento de promocional----------------------------------------------
          */
 
-            nPreCom                 := nPrmArtPrv( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
+            nPreCom                 := nPromocionReferenciaProveedor( aTmp[ _CCODPRV ], ( dbfTmp )->cRef, TDataView():ProveedorArticulo( nView ) )
 
             if nPreCom != 0
                ( dbfTmp )->nDtoPrm  :=  nPreCom
@@ -5078,7 +5078,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             else
 
                if uFieldEmpresa( "lCosPrv", .f. )
-                  nPreCom        := nPreArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+                  nPreCom        := nPrecioReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
                end if
 
                if nPreCom != 0
@@ -5095,7 +5095,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             if uFieldEmpresa( "lCosPrv", .f. )
 
-               nPreCom           := nDtoArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+               nPreCom           := nDescuentoReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
 
                if nPreCom != 0
                   aGet[ _NDTOLIN ]:cText( nPreCom )
@@ -5105,7 +5105,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             Descuento de promocional----------------------------------------------
             */
 
-               nPreCom           := nPrmArtPrv( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
+               nPreCom           := nPromocionReferenciaProveedor( cCodPrv, cCodArt, TDataView():ProveedorArticulo( nView ) )
 
                if nPreCom != 0
                   aGet[ _NDTOPRM ]:cText( nPreCom )
@@ -6895,10 +6895,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       aTbl[ ( TDataView():FacturasProveedoresLineas( nView ) )->( FieldPos( "dFecFac" ) ) ]  := aTmp[ _DFECFAC ]
 
       /*
-      Comprobamos que exista el articulo en la base de datos----------------
+      Comprobamos que exista el articulo en la base de datos-------------------
       */
 
-      AppRefPrv( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], TDataView():ProveedorArticulo( nView ) )
+      AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], TDataView():ProveedorArticulo( nView ), nMode )
 
       /*
       Cambios de precios-------------------------------------------------------

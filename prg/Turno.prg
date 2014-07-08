@@ -9282,7 +9282,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
             if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo .and. ( nTipoPago( ::oFacPrvP:cCodPgo, ::oFPago ) == 2 )
-               ::AppendInTemporal(  nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
+               ::AppendInTemporal( nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
             end if
 
             ::oFacPrvP:Skip()
@@ -9309,9 +9309,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
             if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo .and. ( nTipoPago( ::oFacPrvP:cCodPgo, ::oFPago ) == 3 )
-
-               ::AppendInTemporal(  nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
-
+               ::AppendInTemporal( nil, ::cTxtFacturaPago(), ::nTotFacturaPago() )
             end if
 
             ::oFacPrvP:Skip()
@@ -9342,9 +9340,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
             if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo
-
-               ::AppendInTemporal(  ::oFacPrvP:cCodPgo, ::oFacPrvP:cCodPgo + Space( 1 ) + oRetFld( ::oFacPrvP:cCodPgo, ::oFPago ), ::nTotFacturaPago() )
-
+               ::AppendInTemporal( ::oFacPrvP:cCodPgo, ::oFacPrvP:cCodPgo + Space( 1 ) + oRetFld( ::oFacPrvP:cCodPgo, ::oFPago ), ::nTotFacturaPago() )
             end if
 
             ::oFacPrvP:Skip()
