@@ -75,6 +75,8 @@ CLASS TDetMaterial FROM TDetalleArticulos
 
    METHOD EdtRotor( oDlg )
 
+   METHOD SyncAllDbf()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -875,6 +877,38 @@ RETURN oDlg:end( IDOK )
 
 //---------------------------------------------------------------------------//
 
+/*
+Metodo creado para marbaroso para rellenar el almacen-------------------------- 
+en las líneas de materia prima en partes de producción-------------------------
+*/
+
+METHOD SyncAllDbf()
+
+   ::Super():SyncAllDbf()
+
+   ::OpenFiles()
+
+   while !::oDbf:Eof()
+
+      if Empty( ::oDbf:cAlmOrd )
+
+         if ::oDbf:Lock()
+            ::oDbf:cAlmOrd := uFieldEmpresa( "CDEFALM" )
+            ::oDbf:Unlock()
+         end if
+
+      end if 
+
+      ::oDbf:Skip()
+
+   end while
+
+   ::CloseFiles()   
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 Function nTotNMaterial( uDbf )
 
    local nTotUnd
@@ -1002,5 +1036,4 @@ METHOD Resource( nMode ) CLASS TDetSeriesMaterial
 
 RETURN ( Self )
 
-//--------------------------------------------------------------------------//
-
+//---------------------------------------------------------------------------//
