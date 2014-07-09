@@ -1659,7 +1659,7 @@ Return ( aTemp )
 
 //---------------------------------------------------------------------------//
 
-Function aChildAlmacen( cCodigoAlmacen, dbfAlmacen, aChild )
+Function aChildAlmacen( cCodigoAlmacen, aChild, dbfAlmacen )
 
    local nRec
    local nOrd
