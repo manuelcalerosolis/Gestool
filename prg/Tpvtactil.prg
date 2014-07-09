@@ -4140,18 +4140,13 @@ RETURN ( .t. )
 
 METHOD AgregarMenuAcompannamiento( cMenu )
 
-   local cCodArtAcomp      := ""
    local lAcompannamiento  := .f.
 
    if Empty( cMenu )
       Return ( lAcompannamiento )
    end if
 
-   cCodArtAcomp      := ::oTpvMenu:InitAcompannamiento( cMenu )
-
-   if !Empty( cCodArtAcomp )
-      ::AgregarAcompannamiento( cCodArtAcomp )
-   end if
+   ::oTpvMenu:InitAcompannamiento( cMenu, ::oTpvMenu:nUnidadesMenuAcompannamiento( cMenu ) )
 
 RETURN ( Self )
 
@@ -5269,7 +5264,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD AgregarAcompannamiento( cCodigoArticulo )
+METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu )
 
    // Localizamos el articulo--------------------------------------------------
 
@@ -5289,7 +5284,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo )
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
    ::oTemporalLinea:nLinMnu      := bottomNumber
 
-   ::oTemporalLinea:nUntTil      := ::nUnidades
+   ::oTemporalLinea:nUntTil      := nUnidadesMenu
    ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
    ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
    ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
@@ -5321,7 +5316,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo )
 
    // Agregamos los kits si es el caso-----------------------------------------
 
-   ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+   ::AgregarKit( cCodigoArticulo, nUnidadesMenu, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
 
    CursorWE()
 

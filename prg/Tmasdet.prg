@@ -576,6 +576,8 @@ METHOD Append( oBrw ) CLASS TMasDet
       end if
    end if
 
+   ::nMode        := APPD_MODE
+
    ::oDbf:Blank()
    ::oDbf:SetDefault()
 

@@ -1,6 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "MesDbf.ch"
+#include "Xbrowse.ch"
 
 //----------------------------------------------------------------------------//
 
@@ -19,10 +20,14 @@ CLASS TpvMenu FROM TMasDet
 
    DATA oDetMenuArticulo
    DATA oMenuOrdenes
+   DATA oDlgAcompannamiento
 
    DATA oBrwOrdenesComanda
+   DATA oBrwAcompannamiento
 
    DATA oSender
+
+   DATA aIngredientes
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
@@ -48,7 +53,21 @@ CLASS TpvMenu FROM TMasDet
    METHOD nPrecio( cCodMnu )
 
    // Menu Acompañamiento-----------------------------------------------------//
+   
    METHOD InitAcompannamiento()
+   METHOD CargaDatosAcompannamiento()
+   METHOD PorcesaDatosAcompannamiento()
+
+   METHOD SumaUnidadesAcompannamiento()   INLINE ( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt, "Unidades" ]++,;
+                                                   ::oBrwAcompannamiento:Refresh() )
+
+   METHOD RestaUnidadesAcompannamiento()  INLINE ( if (  ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt, "Unidades" ] > 0,;
+                                                         ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt, "Unidades" ]--,;
+                                                         ),;
+                                                   ::oBrwAcompannamiento:Refresh() )
+
+   METHOD nUnidadesAcompannamiento()
+   METHOD nUnidadesMenuAcompannamiento( cCodigoMenu )
 
 END CLASS
 
@@ -118,6 +137,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"                ALIGN RIGHT   PICTURE cPorDiv()     COLSIZE 80                 OF oDbf
       FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                                                  HIDE                       OF oDbf
       FIELD NAME "lAcomp"   TYPE "L" LEN 1   DEC 0  COMMENT "Menú acompañamiento"                                       HIDE                       OF oDbf
+      FIELD NAME "nUnds"    TYPE "N" LEN 1   DEC 0  COMMENT "Unidades menú acompañamiento"                              HIDE                       OF oDbf
 
       INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"         NODELETED                                                      OF oDbf
       INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"         NODELETED                                                      OF oDbf
@@ -255,6 +275,14 @@ METHOD Resource( nMode )
 
 	local oDlg
 
+   msgAlert( ::nMode )
+
+   msgAlert( ::lAppendMode() )
+
+   if ::lAppendMode()
+      ::oDbf:nUnds   := 1
+   end if 
+
    DEFINE DIALOG oDlg RESOURCE "TpvMenus" TITLE LblTitle( nMode ) + "Ménus"
 
       REDEFINE GET ::oGetCodigo ;
@@ -274,7 +302,12 @@ METHOD Resource( nMode )
       REDEFINE GET ::oDbf:nImpMnu ;
          ID       120 ;
          PICTURE  ( cPorDiv() ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !::oDbf:lAcomp ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:nUnds ;
+         ID       150 ;
+         WHEN     ( nMode != ZOOM_MODE .and. ::oDbf:lAcomp ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::oDbf:lObsMnu ;
@@ -473,97 +506,207 @@ RETURN ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
-METHOD InitAcompannamiento( cCodigoMenu )
+METHOD InitAcompannamiento( cCodigoMenu, nUnidades )
 
-   local oBrwAcompannamiento
-   local oDlgAcompannamiento
    local cCodigoArticulo
-   
+   local oFntBrw                  := TFont():New( "Segoe UI",  0, 27, .f., .t. )
 
-   ::oDetMenuArticulo:oDbf:SetFilter( "Field->cCodMnu == '" +  cCodigoMenu + "'" )
-   ::oDetMenuArticulo:oDbf:GoTop()
+   if !::CargaDatosAcompannamiento( cCodigoMenu )
+      Return ( Self )
+   end if 
 
    // Definimos el dialogo para el menú de acompañamiento-----------------------
 
-   DEFINE DIALOG oDlgAcompannamiento RESOURCE "TPVMenuAcomp"
+   DEFINE DIALOG ::oDlgAcompannamiento RESOURCE "TPVMenuAcomp"
 
       REDEFINE BUTTONBMP ;
          ID       110 ;
-         OF       oDlgAcompannamiento ;
+         OF       ::oDlgAcompannamiento ;
          BITMAP   "Navigate_up2" ;
-         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:PageUp(), oBrwAcompannamiento:Select( 1 ) )
+         ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageUp(), ::oBrwAcompannamiento:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          ID       111 ;
-         OF       oDlgAcompannamiento ;
+         OF       ::oDlgAcompannamiento ;
          BITMAP   "Navigate_down2" ;
-         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:PageDown(), oBrwAcompannamiento:Select( 1 ) )
+         ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageDown(), ::oBrwAcompannamiento:Select( 1 ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Check_32" ;
          ID       IDOK ;
-         OF       oDlgAcompannamiento ;
-         ACTION   ( oDlgAcompannamiento:End( IDOK ) )
+         OF       ::oDlgAcompannamiento ;
+         ACTION   ( ::PorcesaDatosAcompannamiento( nUnidades ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Delete_32" ;
          ID       IDCANCEL ;
-         OF       oDlgAcompannamiento ;
-         ACTION   ( oDlgAcompannamiento:End() )
+         OF       ::oDlgAcompannamiento ;
+         ACTION   ( ::oDlgAcompannamiento:End() )
 
-      oBrwAcompannamiento                  := IXBrowse():New( oDlgAcompannamiento )
+      ::oBrwAcompannamiento                  := IXBrowse():New( ::oDlgAcompannamiento )
 
-      oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-      oBrwAcompannamiento:nMarqueeStyle    := 3
-      oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
-      oBrwAcompannamiento:lHeader          := .f.
-      oBrwAcompannamiento:lHScroll         := .f.
-      oBrwAcompannamiento:nRowHeight       := 50
-      
-      oBrwAcompannamiento:CreateFromResource( 100 )
+      ::oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwAcompannamiento:nMarqueeStyle    := 3
+      ::oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
+      ::oBrwAcompannamiento:lHeader          := .f.
+      ::oBrwAcompannamiento:lHScroll         := .f.
+      ::oBrwAcompannamiento:nRowHeight       := 55
 
-      oBrwAcompannamiento:SetFont( ::oSender:oFntBrw )
+      ::oBrwAcompannamiento:lFooter          := .t.
 
-      ::oDetMenuArticulo:oDbf:SetBrowse( oBrwAcompannamiento )
+      ::oBrwAcompannamiento:CreateFromResource( 100 )
 
-      with object ( oBrwAcompannamiento:AddCol() )
-         :bEditValue                         := {|| Alltrim( oRetFld( ::oDetMenuArticulo:oDbf:cCodArt, ::oSender:oArticulo )) }
+      ::oBrwAcompannamiento:SetFont( oFntBrw )
+
+      ::oBrwAcompannamiento:setArray( ::aIngredientes, , , .f. )
+
+      with object ( ::oBrwAcompannamiento:AddCol() )
+         :bEditValue                         := {|| hGet( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt ], "Nombre" ) }
+         :nWidth                             := 490
+         :bFooter                            := {|| "Total ingredientes a seleccionar: " + alltrim( str( nUnidades ) ) }
       end with
 
-      oDlgAcompannamiento:bStart             := {|| ::oSender:SeleccionarDefecto( oBrwAcompannamiento ) }
+      with object ( ::oBrwAcompannamiento:AddCol() )
+         :bEditValue                         := {|| hGet( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt ], "Unidades" ) }
+         :cEditPicture                       := "9"
+         :nWidth                             := 65
+         :nDataStrAlign                      := 1
+         :nHeadStrAlign                      := 1
+         :nFooterType                        := AGGR_SUM
+      end with
 
-   ACTIVATE DIALOG oDlgAcompannamiento CENTER
+      with object ( ::oBrwAcompannamiento:AddCol() )
+         :cHeader             := "Sumar unidades"
+         :bEditBlock          := {|| ::SumaUnidadesAcompannamiento() }
+         :nEditType           := 5
+         :nWidth              := 53
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Navigate2_plus_48" )
+      end with
 
-   if oDlgAcompannamiento:nResult ==IDOK
-      cCodigoArticulo         := ::oDetMenuArticulo:oDbf:cCodArt
-   else 
-      cCodigoArticulo         := nil
-   end if
+      with object ( ::oBrwAcompannamiento:AddCol() )
+         :cHeader             := "Restar unidades"
+         :bEditBlock          := {|| ::RestaUnidadesAcompannamiento() }
+         :nEditType           := 5
+         :nWidth              := 53
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Navigate2_minus_48" )
+      end with
 
-   ::oDetMenuArticulo:oDbf:SetFilter()
+      ::oDlgAcompannamiento:bStart             := {|| ::oSender:SeleccionarDefecto( ::oBrwAcompannamiento ) }
+
+   ACTIVATE DIALOG ::oDlgAcompannamiento CENTER
 
    ::oSender:oBrwLineas:Refresh()
+
+   if !Empty( oFntBrw )
+      oFntBrw:End()
+   end if
 
 Return ( cCodigoArticulo )
 
 //---------------------------------------------------------------------------//
 
-/*
-METHOD SaveDetails()
+METHOD CargaDatosAcompannamiento( cCodigoMenu )
 
-   msgAlert( ::oDbf:cCodMnu, "::oDbf:cCodMnu" )
+   ::aIngredientes     := {}
 
-   while !::oDetMenuArticulo:oDbfVir:eof()
-      ::oDetMenuArticulo:oDbfVir:cCodMnu     := ::oDbf:cCodMnu
-      ::oDetMenuArticulo:oDbfVir:skip()
-   end while
+   ::oDetMenuArticulo:oDbf:GetStatus()
 
-   while !::oDetMenuOrdenes:oDbfVir:eof()
-      ::oDetMenuOrdenes:oDbfVir:cCodMnu      := ::oDbf:cCodMnu
-      ::oDetMenuOrdenes:oDbfVir:skip()
-   end while
+   if ::oDetMenuArticulo:oDbf:Seek( cCodigoMenu )
+
+      while ::oDetMenuArticulo:oDbf:cCodMnu == cCodigoMenu .and. !::oDetMenuArticulo:oDbf:Eof()
+
+         aAdd( ::aIngredientes,  {  "Codigo"   => ::oDetMenuArticulo:oDbf:cCodArt ,;
+                                    "Nombre"   => Alltrim( oRetFld( ::oDetMenuArticulo:oDbf:cCodArt, ::oSender:oArticulo )) ,;
+                                    "Unidades" => 0 } )
+
+         ::oDetMenuArticulo:oDbf:skip()
+
+      end while
+
+   end if
+
+   ::oDetMenuArticulo:oDbf:SetStatus()
+
+RETURN ( len( ::aIngredientes ) > 0 )
+
+//--------------------------------------------------------------------------//
+
+METHOD PorcesaDatosAcompannamiento( nUnidades )
+
+   local aIngrediente
+   local nTotal      := 0
+
+   if ::nUnidadesAcompannamiento() > nUnidades
+      MsgStop( "Has introducido más ingredientes de lo permitido." )
+      Return nil
+   end if
+
+   if ::nUnidadesAcompannamiento() == 0
+      MsgStop( "No has seleccionado ningún ingrediente." )
+      Return nil
+   end if
+
+   ::oDlgAcompannamiento:Disable()
+
+   for each aIngrediente in ::aIngredientes
+
+      if aIngrediente[ "Unidades" ] > 0
+
+         ::oSender:AgregarAcompannamiento( aIngrediente[ "Codigo" ], aIngrediente[ "Unidades" ] )
+
+      end if
+
+   next
+
+   ::oDlgAcompannamiento:Enable()
+
+   ::oDlgAcompannamiento:End()
 
 RETURN ( Self )
-*/
+
 //--------------------------------------------------------------------------//
+
+METHOD nUnidadesAcompannamiento()
+   
+   local aIngrediente
+   local nTotal      := 0
+
+   for each aIngrediente in ::aIngredientes
+
+      if aIngrediente[ "Unidades" ] > 0
+
+         nTotal   += aIngrediente[ "Unidades" ]
+
+      end if
+
+   next
+
+RETURN ( nTotal )
+
+//--------------------------------------------------------------------------//
+
+METHOD nUnidadesMenuAcompannamiento( cCodigoMenu )
+
+   local nUnidades      := 0
+
+   ::oDbf:GetStatus()
+
+   if ::oDbf:Seek( cCodigoMenu )
+
+      nUnidades      := ::oDbf:nUnds
+
+   end if
+
+RETURN ( nUnidades )
+
+//--------------------------------------------------------------------------//
+
+
+

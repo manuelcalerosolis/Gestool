@@ -170,6 +170,8 @@ CLASS TMant
 
    METHOD GetField( cCodigo, uField )     INLINE ( oRetFld( cCodigo, ::oDbf, uField ) )
 
+   METHOD lAppendMode()                   INLINE ( ::nMode == APPD_MODE )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
