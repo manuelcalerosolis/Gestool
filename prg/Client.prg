@@ -1423,7 +1423,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PROMPT   "&General",;
                   "C&omercial",;
                   "Au&tomáticas",;
-                  "C&ontactos",;
+                  "&Direcciones",;
                   "&Bancos",;
                   "Co&ntabilidad",;
                   "Definidos",;
@@ -1431,7 +1431,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "Doc&umentos",;
                   "&Incidencias",;
                   "Ob&servaciones",;
-                  "&Direcciones",;
+                  "C&ontactos",;
                   "&Recibos" ;
          DIALOGS  "CLIENT_0"  ,;
                   "CLIENT_1"  ,;

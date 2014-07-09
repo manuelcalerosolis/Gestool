@@ -67,23 +67,23 @@
 #define _CCOMFAM                 38      //   C       3    0
 #define _CDESWEB                 39      //   C       3    0
 
-#ifndef __PDA__
-
 static oWndBrw
+
 static dbfPrv
 static dbfTmp
 static dbfArticulo
+
 static oGrpFam
 static oFraPub
 static oTComandas
 static oComentarios
+
 static oBtnAceptarActualizarWeb
+
 static cNewFil
+
 static bEdit         := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
 static bEdit2        := { |aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode ) }
-#else
-static bEdtPda       := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | PdaEdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
-#endif
 
 static dbfFamilia
 static dbfFamPrv
@@ -1043,9 +1043,9 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static Function StartEdtRec( aGet, aTmp )
 
-   aGet[ _CCODGRP ]:lValid()
-   aGet[ _CCOMFAM ]:lValid()
-   aGet[ _CCODIMP ]:lValid()
+   aGet[ _CCODGRP  ]:lValid()
+   aGet[ _CCOMFAM  ]:lValid()
+   aGet[ _CCODIMP  ]:lValid()
    aGet[ _CCODPRP1 ]:lValid()
    aGet[ _CCODPRP2 ]:lValid()
 
@@ -1170,16 +1170,16 @@ static function GetTreeState( aTmp, oTree, aItems )
 
    local oItem
 
-   DEFAULT oTree  := oTreePadre
+   DEFAULT oTree              := oTreePadre
 
    if Empty( aItems )
-      aItems      := oTree:aItems
+      aItems                  := oTree:aItems
    end if
 
    for each oItem in aItems
 
       if tvGetCheckState( oTree:hWnd, oItem:hItem )
-         aTmp[ _CFAMCMB ]    := oItem:Cargo
+         aTmp[ _CFAMCMB ]     := oItem:Cargo
       end if
 
       if len( oItem:aItems ) > 0
@@ -3033,8 +3033,8 @@ Function aItmFam()
                      {"cCodImp",    "C",     3,    0, "Codigo del orden de impresion comanda" },;
                      {"cNomImp",    "C",    50,    0, "Nombre del orden de impresion comanda" },;
                      {"nPosInt",    "N",     3,    0, "Pocisión para mostrar en internet" },;
-                     {"LFAMINT",    "L",     1,    0, "Añade la familia junto con la descripción en internet" },;
-                     {"CCOMFAM",    "C",     3,    0, "Comentario por defecto para la familia" },;
+                     {"lFamInt",    "L",     1,    0, "Añade la familia junto con la descripción en internet" },;
+                     {"cComFam",    "C",     3,    0, "Comentario por defecto para la familia" },;
                      {"cDesWeb",    "C",   250,    0, "Descripción para la web" } }
 
 return ( aBase )

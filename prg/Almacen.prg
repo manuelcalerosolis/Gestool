@@ -20,26 +20,25 @@ REQUEST DBFCDX
 #define _CFAXALM                   8      //   C     12     0
 #define _CPERALM                   9      //   C     50     0
 #define _CCODCLI                   10     //   C     14     0
-#define _CUBICA1                   11     //   C      5     0
-#define _CUBICA2                   12     //   C      5     0
-#define _CUBICA3                   13     //   C      5     0
-#define _CNOMUBI1                  14     //   C     30     0
-#define _CNOMUBI2                  15     //   C     30     0
-#define _CNOMUBI3                  16     //   C     30     0
+#define _CCOMALM                   11
 
-static bEdit := { |aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode | EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode ) }
-static bEdit2:= {	|aTemp, aoGet, dbfAlmL, oBrw, bWhen, bValid, nMode, cCodAlm | EdtDet( aTemp, aoGet, dbfAlmL, oBrw, bWhen, bValid, nMode, cCodAlm ) }
+static bEdit   := { |aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode | EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode ) }
+static bEdit2  := { |aTemp, aoGet, dbfAlmL, oBrw, bWhen, bValid, nMode, cCodAlm | EdtDet( aTemp, aoGet, dbfAlmL, oBrw, bWhen, bValid, nMode, cCodAlm ) }
 
 #endif
 
 static oWndBrw
+
 static dbfAlmT
 static dbfAlmL
 static dbfAgent
 static dbfUbicaT
 static dbfUbicaL
 static dbfTmp
+
 static cNewFile
+
+static oTreePadre
 
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -106,7 +105,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
          :cHeader          := "Código"
          :cSortOrder       := "cCodAlm"
          :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
-         :nWidth           := 80
+         :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -140,6 +139,13 @@ FUNCTION Almacen( oMenuItem, oWnd )
          :cHeader          := "Provincia"
          :bEditValue       := {|| ( dbfAlmT )->cProAlm }
          :nWidth           := 140
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Padre"
+         :bEditValue       := {|| ( dbfAlmT )->cComAlm }
+         :nWidth           := 120
+         :lHide            := .f.
       end with
 
       oWndBrw:cHtmlHelp    := "Almacen"
@@ -262,8 +268,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
       REDEFINE GET oGet VAR aTemp[ _CCODALM ];
          ID       100 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( oGet, dbfAlmT, .T., "0" ) ) ;
-         COLOR    CLR_GET ;
+         VALID    ( NotValid( oGet, dbfAlmT, .f. ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oGet2 VAR aTemp[ _CNOMALM ];
@@ -276,85 +281,46 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@!" ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aTemp[ _CPOSALM ];
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aTemp[ _CPOBALM ];
          ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aTemp[ _CPROALM ];
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aTemp[ _CTFNALM ];
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          PICTURE  "@R ##########" ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aTemp[ _CFAXALM ];
          ID       170 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          PICTURE  "@R ##########" ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aTemp[ _CPERALM ];
          ID       180;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aoGet[ _CUBICA1 ] VAR aTemp[ _CUBICA1 ];
-         ID       190;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
-         ON HELP  ( BrwUbicacion( aoGet[ _CUBICA1 ], dbfUbicaT, aoGet[ _CNOMUBI1 ] ) ) ;
-         OF       oFld:aDialogs[1]
+      // Tree de los almacenes padre-------------------------------------------
 
-      REDEFINE GET aoGet[ _CNOMUBI1 ] VAR aTemp[ _CNOMUBI1 ] ;
-         WHEN     .F. ;
-         ID       191 ;
-         OF       oFld:aDialogs[1]
+      oTreePadre                     := TTreeView():Redefine( 200, oFld:aDialogs[1] )
+      oTreePadre:bItemSelectChanged  := {|| ChangeTreeState() }
 
-      REDEFINE GET aoGet[ _CUBICA2 ] VAR aTemp[ _CUBICA2 ];
-         ID       200;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
-         ON HELP  ( BrwUbicacion( aoGet[ _CUBICA2 ], dbfUbicaT, aoGet[ _CNOMUBI2 ] ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aoGet[ _CNOMUBI2 ] VAR aTemp[ _CNOMUBI2 ] ;
-         WHEN     .F. ;
-         ID       201 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aoGet[ _CUBICA3 ] VAR aTemp[ _CUBICA3 ];
-         ID       210;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
-         ON HELP  ( BrwUbicacion( aoGet[ _CUBICA3 ], dbfUbicaT, aoGet[ _CNOMUBI3 ] ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aoGet[ _CNOMUBI3 ] VAR aTemp[ _CNOMUBI3 ] ;
-         WHEN     .F. ;
-         ID       211 ;
-         OF       oFld:aDialogs[1]
+      // Segunda caja de dialogo-----------------------------------------------
 
       REDEFINE GET aoGet[ _CCODCLI ] VAR aTemp[ _CCODCLI ];
          ID       190;
@@ -362,12 +328,10 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
          VALID    ( cClient( aoGet[ _CCODCLI ], , oCodCli ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwClient( aoGet[ _CCODCLI ], oCodCli ) ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET oCodCli VAR cCodCli ;
          WHEN     .F. ;
-         COLOR    CLR_GET ;
          ID       200 ;
          OF       oFld:aDialogs[2]
 
@@ -376,8 +340,8 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
       oBrw2:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw2:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw2:cAlias          := dbfTmp
-      oBrw2:nMarqueeStyle   := 5
+      oBrw2:cAlias         := dbfTmp
+      oBrw2:nMarqueeStyle  := 5
 
       with object ( oBrw2:AddCol() )
          :cHeader          := "Código"
@@ -448,12 +412,12 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
          oDlg:AddFastKey( VK_F5, {|| if( nMode == DUPL_MODE, if( oGet:lValid(), EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ), ), EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ) ) } )
    end if
 
-   oDlg:bStart := {|| oGet:SetFocus() }
+   oDlg:bStart    := {|| StartEdtRec( aTemp ) }
 
 	ACTIVATE DIALOG oDlg	ON PAINT ( EvalGet( aoGet ) ) CENTER
 
    /*
-	Borramos los ficheros
+	Borramos los ficheros-------------------------------------------------------
 	*/
 
    oBmpGeneral:End()
@@ -464,7 +428,17 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION BeginTrans( aTemp )
+Static Function StartEdtRec( aTemp )
+
+   LoadTree()  
+
+   SetTreeState( , , aTemp[ _CCOMALM ] )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function BeginTrans( aTemp )
 
    local cDbf     := "TAlmL"
 	local cCodAlm	:= aTemp[ ( dbfAlmT )->( FieldPos( "CCODALM" ) ) ]
@@ -499,7 +473,7 @@ STATIC FUNCTION BeginTrans( aTemp )
 
    end if
 
-RETURN NIL
+Return nil
 
 //-----------------------------------------------------------------------//
 
@@ -561,33 +535,23 @@ STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 
       Return nil
    end if
 
-   do case
-      case !Empty( aTemp[ _CUBICA3 ] ) .AND. ( Empty( aTemp[ _CUBICA2 ] ) .or. Empty( aTemp[ _CUBICA1 ] ) )
-         if Empty( aTemp[ _CUBICA1 ] )
-            MsgStop( "Para informar la ubicación 3 no puede dejar vacía la ubicación 1" )
-         end if
-         if Empty( aTemp[ _CUBICA2 ] )
-            MsgStop( "Para informar la ubicación 3 no puede dejar vacía la ubicación 2" )
-         end if
-         Return nil
+   // Relaciones entre almacenes-----------------------------------------------
 
-      case Empty( aTemp[ _CUBICA3 ] ) .AND. !Empty( aTemp[ _CUBICA2 ] ) .and. Empty( aTemp[ _CUBICA1 ] )
-         MsgStop( "Para informar la ubicación 2 no puede dejar vacía la ubicación 1" )
-         Return nil
+   aTemp[ _CCOMALM ]        := ""
 
-      case aTemp[ _CUBICA1 ] == aTemp[ _CUBICA2 ] .AND. !Empty( aTemp[ _CUBICA1 ] ) .AND. !Empty( aTemp[ _CUBICA2 ] )
-         MsgStop( "Ubicaciones repetidas" )
-         Return nil
+   GetTreeState( aTemp )
 
-      case aTemp[ _CUBICA1 ] == aTemp[ _CUBICA3 ] .AND. !Empty( aTemp[ _CUBICA1 ] ) .AND. !Empty( aTemp[ _CUBICA3 ] )
-         MsgStop( "Ubicaciones repetidas" )
-         Return nil
+   if ( aTemp[ _CCOMALM ] == aTemp[ _CCODALM ] )
+      MsgStop( "Almacén padre no puede ser el mismo" )
+      oTreePadre:SetFocus()
+      Return nil
+   end if
 
-      case aTemp[ _CUBICA2 ] == aTemp[ _CUBICA3 ] .AND. !Empty( aTemp[ _CUBICA2 ] ) .AND. !Empty( aTemp[ _CUBICA3 ] )
-         MsgStop( "Ubicaciones repetidas" )
-         Return nil
-
-   end case
+   if aScan( aChildAlmacen( aTemp[ _CCODALM ] ), aTemp[ _CCOMALM ] ) != 0
+      MsgStop( "Almacén padre contiene referencia circular" )
+      oTreePadre:SetFocus()
+      Return nil
+   end if
 
 	/*
    Primero hacer el RollBack---------------------------------------------------
@@ -824,22 +788,17 @@ FUNCTION aItmAlm()
 
    local aItmAlm  := {}
 
-   aAdd( aItmAlm, { "CCODALM",  "C",      3,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CNOMALM",  "C",     20,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CDIRALM",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CPOSALM",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CPOBALM",  "C",     30,     0, "Población de almacen"           ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CPROALM",  "C",     20,     0, "Provincia de almacen"           ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CTFNALM",  "C",     12,     0, "Teléfono de almacen"            ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CFAXALM",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CPERALM",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CCODCLI",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CUBICA1",  "C",      5,     0, "Ubicación 1"                    ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CUBICA2",  "C",      5,     0, "Ubicación 2"                    ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CUBICA3",  "C",      5,     0, "Ubicación 3"                    ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CNOMUBI1", "C",     30,     0, "Nombre ubicación 1"             ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CNOMUBI2", "C",     30,     0, "Nombre ubicación 2"             ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "CNOMUBI3", "C",     30,     0, "Nombre ubicación 3"             ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cCodAlm",  "C",     12,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cNomAlm",  "C",    100,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cDirAlm",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cPosAlm",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cPobAlm",  "C",     30,     0, "Población de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cProAlm",  "C",     20,     0, "Provincia de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cTfnAlm",  "C",     12,     0, "Teléfono de almacen"            ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cFaxAlm",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cPerAlm",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cCodCli",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cComAlm",  "C",     12,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
 
 RETURN ( aItmAlm )
 
@@ -861,21 +820,6 @@ Return aItmAlmAgente
 Function cGetUbica( cCodAlm, dbfAlm, nNumUbica )
 
    local cNomUbica := ""
-
-   ( dbfAlm )->( dbGoTop() )
-
-   if ( dbfAlm )->( dbSeek( cCodAlm ) )
-
-      do case
-         case nNumUbica == 1
-            cNomUbica := ( dbfAlm )->cUbica1
-         case nNumUbica == 2
-            cNomUbica := ( dbfAlm )->cUbica2
-         case nNumUbica == 3
-            cNomUbica := ( dbfAlm )->cUbica3
-      end case
-
-   end if
 
 return cNomUbica
 
@@ -1163,11 +1107,14 @@ FUNCTION rxAlmacen( cPath, oMeter )
    if !( dbfAlmT )->( neterr() )
       ( dbfAlmT )->( __dbPack() )
 
-      ( dbfAlmT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlmT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CCODALM", "CCODALM", {|| Field->cCodAlm } ) )
 
-      ( dbfAlmT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlmT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CNOMALM", "Upper( CNOMALM )", {|| Upper( Field->cNomAlm ) }, ) )
+
+      ( dbfAlmT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CCOMALM", "CCOMALM", {|| Field->cComAlm } ) )
 
       ( dbfAlmT )->( dbCloseArea() )
    else
@@ -1205,11 +1152,9 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
    local lValid   := .f.
    local xValor   := oGet:VarGet()
 
-   if Empty( xValor ) .or. ( xValor == Replicate( "Z", 3 ) )
+   if Empty( xValor ) .or. ( xValor == Replicate( "Z", 12 ) )
       if( oGet2 != nil, oGet2:cText( "" ), )
       return .t.
-   else
-      xValor   := RJustObj( oGet, "0" )
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1526,16 +1471,6 @@ STATIC FUNCTION lOpenFiles()
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
       SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
 
-#ifndef __PDA__
-
-      USE ( cPatAlm() + "UBICAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAT", @dbfUbicaT ) )
-      SET ADSINDEX TO ( cPatAlm() + "UBICAT.CDX" ) ADDITIVE
-
-      USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
-      SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
-
-#endif
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -1552,17 +1487,13 @@ RETURN lOpen
 
 STATIC FUNCTION CloseFiles()
 
-   CLOSE ( dbfAlmT   )
-   CLOSE ( dbfAlmL   )
-   CLOSE ( dbfAgent  )
-   CLOSE ( dbfUbicaT )
-   CLOSE ( dbfUbicaL )
+   CLOSE ( dbfAlmT  )
+   CLOSE ( dbfAlmL  )
+   CLOSE ( dbfAgent )
 
    dbfAlmT   := nil
    dbfAlmL   := nil
    dbfAgent  := nil
-   dbfUbicaT := nil
-   dbfUbicaL := nil
 
    oWndBrw   := nil
 
@@ -1593,5 +1524,173 @@ FUNCTION EdtAlm( cCodAlm )
    end if
 
 RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+static function LoadTree( oTree, cComAlm )
+
+   local nRec
+   local nOrd
+   local oNode
+
+   DEFAULT oTree     := oTreePadre
+
+   if Empty( cComAlm )
+      cComAlm        := Space( 12 )
+   end if
+
+   CursorWait()
+
+   nRec              := ( dbfAlmT )->( Recno() )
+   nOrd              := ( dbfAlmT )->( OrdSetFocus( "cComAlm" ) )
+
+   if ( dbfAlmT )->( dbSeek( cComAlm ) )
+
+      while ( ( dbfAlmT )->cComAlm == cComAlm .and. !( dbfAlmT )->( Eof() ) )
+
+         oNode       := oTree:Add( Alltrim( ( dbfAlmT )->cNomAlm ) )
+         oNode:Cargo := ( dbfAlmT )->cCodAlm
+
+         LoadTree( oNode, ( dbfAlmT )->cCodAlm )
+
+         ( dbfAlmT )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfAlmT )->( OrdSetFocus( nOrd ) )
+   ( dbfAlmT )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+   oTree:Expand()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function SetTreeState( oTree, aItems, cComAlm )
+
+   local oItem
+
+   DEFAULT oTree  := oTreePadre
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if ( cComAlm == oItem:Cargo )
+
+         oTree:Select( oItem )
+
+         tvSetCheckState( oTree:hWnd, oItem:hItem, .t. )
+
+         SysRefresh()
+
+      end if
+
+      if len( oItem:aItems ) > 0
+         SetTreeState( oTree, oItem:aItems, cComAlm )
+      end if
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
+Static Function ChangeTreeState( oTree, aItems )
+
+   local oItem
+
+   DEFAULT oTree  := oTreePadre
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      SysRefresh()
+
+      tvSetCheckState( oTree:hWnd, oItem:hItem, .f. )
+
+      if len( oItem:aItems ) > 0
+         ChangeTreeState( oTree, oItem:aItems )
+      end if
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function GetTreeState( aTemp, oTree, aItems )
+
+   local oItem
+
+   DEFAULT oTree           := oTreePadre
+
+   if Empty( aItems )
+      aItems               := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if tvGetCheckState( oTree:hWnd, oItem:hItem )
+         aTemp[ _CCOMALM ]  := oItem:Cargo
+
+         msgAlert( aTemp[ _CCOMALM ] )
+         msgAlert( oItem:Cargo)
+
+      end if
+
+      if len( oItem:aItems ) > 0
+         GetTreeState( aTemp, oTree, oItem:aItems )
+      end if
+
+   next
+
+Return ( aTemp )
+
+//---------------------------------------------------------------------------//
+
+Function aChildAlmacen( cCodigoAlmacen, dbfAlmacen, aChild )
+
+   local nRec
+   local nOrd
+
+   DEFAULT dbfAlmacen   := dbfAlmT
+   DEFAULT aChild       := {}
+
+   CursorWait()
+
+   nRec                 := ( dbfAlmacen )->( Recno() )
+   nOrd                 := ( dbfAlmacen )->( OrdSetFocus( "cComAlm" ) )
+
+   if ( dbfAlmacen )->( dbSeek( cCodigoAlmacen ) )
+
+      while ( ( dbfAlmacen )->cComAlm == cCodigoAlmacen .and. !( dbfAlmacen )->( Eof() ) )
+
+         aAdd( aChild, ( dbfAlmacen )->cCodAlm )
+
+         aChildAlmacen( ( dbfAlmacen )->cCodAlm, aChild, dbfAlmacen )
+
+         ( dbfAlmacen )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfAlmacen )->( OrdSetFocus( nOrd ) )
+   ( dbfAlmacen )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+Return ( aChild )
 
 //---------------------------------------------------------------------------//
