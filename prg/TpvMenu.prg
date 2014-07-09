@@ -275,10 +275,6 @@ METHOD Resource( nMode )
 
 	local oDlg
 
-   msgAlert( ::nMode )
-
-   msgAlert( ::lAppendMode() )
-
    if ::lAppendMode()
       ::oDbf:nUnds   := 1
    end if 
