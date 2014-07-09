@@ -9037,9 +9037,10 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPrv, dbfArtPrv )
+FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPrv, dbfArtPrv, nMode )
 
    local nOrdAnt
+   local lSetDefault
 
    if nImpPrv <= 0
       Return nil
@@ -9053,13 +9054,19 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
       Return nil 
    end if    
 
-   nOrdAnt        := ( dbfArtPrv )->( OrdSetFocus( "cRefArt" ) )
+   // Ponemos el apunte como por defecto---------------------------------------
+
+   if !IsNil( nMode ) 
+      lSetDefault       := ( nMode == APPD_MODE .or. nMode == DUPL_MODE )   
+   end if 
+
+   nOrdAnt              := ( dbfArtPrv )->( OrdSetFocus( "cRefArt" ) )
 
    /*
 	Ahora pasamos las refrencias de los proveedores-----------------------------
 	*/
 
-   if !( dbfArtPrv)->( dbSeek( cCodArt + cCodPrv + cRefPrv ) )
+   if !( dbfArtPrv )->( dbSeek( cCodArt + cCodPrv + cRefPrv ) )
 
       if dbAppe( dbfArtPrv )
          ( dbfArtPrv )->cCodArt  := cCodArt
@@ -9084,9 +9091,68 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
    
    end if
 
+   // Ponemos el proveedor por defecto-----------------------------------------
+
+   if isTrue( lSetDefault )
+      if ( dbfArtPrv )->( dbSeek( cCodArt ) )
+         while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
+            if dbLock( dbfArtPrv )
+               ( dbfArtPrv )->lDefPrv  := ( rtrim( ( dbfArtPrv )->cCodArt ) == rtrim( cCodArt ) .and. rtrim( ( dbfArtPrv )->cCodPrv ) == rtrim( cCodPrv ) .and. rtrim( ( dbfArtPrv )->cRefPrv ) == rtrim( cRefPrv ) )
+               ( dbfArtPrv )->( dbUnLock() )
+            end if 
+            ( dbfArtPrv )->( dbSkip() )
+         end while
+      end if
+   end if
+
    ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+ Function nPrecioReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+
+   local nPreCom  := 0
+   local nRec     := ( dbfPrvArt )->( Recno() )
+
+   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
+      nPreCom     := ( dbfPrvArt )->nImpPrv
+   end if
+
+   ( dbfPrvArt )->( dbGoTo( nRec ) )
+
+Return nPreCom
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+
+   local nPreCom  := 0
+   local nRec     := ( dbfPrvArt )->( Recno() )
+
+   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
+      nPreCom     := ( dbfPrvArt )->nDtoPrv
+   end if
+
+   ( dbfPrvArt )->( dbGoTo( nRec ) )
+
+Return nPreCom
+
+//---------------------------------------------------------------------------//
+
+Function nPromocionReferenciaProveedor( cCodPrv, cCodArt, dbfPrvArt )
+
+   local nPreCom  := 0
+   local nRec     := ( dbfPrvArt )->( Recno() )
+
+   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
+      nPreCom     := ( dbfPrvArt )->nDtoPrm
+   end if
+
+   ( dbfPrvArt )->( dbGoTo( nRec ) )
+
+Return nPreCom
 
 //--------------------------------------------------------------------------//
 
@@ -9180,46 +9246,6 @@ RETURN ( nPvp )
 
 //---------------------------------------------------------------------------//
 
-/*
-Devuelve el precio de venta de un articulo
-*/
-
-FUNCTION retPvp( cCodArt, cCodDiv, nChgDiv, dbfArt, dbfDiv )
-
-	local nPvp			:= 0
-
-	DEFAULT nChgDiv	:= 0
-
-	IF ( dbfArt )->( dbSeek( cCodArt ) )
-
-		nPvp	:= ( dbfArt )->PVTAIVA3
-
-		/*
-		Buscamos la divisa pasada
-		*/
-
-		IF ( dbfDiv )->( dbSeek( ( dbfArt )->CODIGO + cCodDiv ) )
-
-         nPvp  := ( dbfDiv )->nPvpDiv
-
-		ELSE
-
-			/*
-			Aplicamos el cambio
-			*/
-
-			IF nChgDiv != 0
-            nPvp := Div( nPvp, nChgDiv )
-			END IF
-
-		END IF
-
-	END IF
-
-RETURN ( nPvp )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION RetImg( cCodArt, dbfArt )
 
    local cImg        := ""
@@ -9233,7 +9259,6 @@ FUNCTION RetImg( cCodArt, dbfArt )
 
 RETURN ( cImg )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
@@ -9280,7 +9305,7 @@ STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
    local cSayArtOrg
    local cSayArtDes
    local oGetTip
-   local cGetTip        := Space(3)
+   local cGetTip        := Space( 3 )
    local oTxtTip
    local cTxtTip        := "Todos"
 
@@ -9441,7 +9466,7 @@ STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
                   "10,00",;
                   "20,00",;
                   "50,00",;
-                  "100,00" } ;
+                  "100,00" } ; 
       OF       oDlg
 
    REDEFINE COMBOBOX oComBox ;
@@ -9558,7 +9583,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   Ajustamos
                   */
 
-                  if ( dbfArticulo )->lMarAju .and. !Empty( ( dbfArticulo )->cMarAju )
+                  if ( dbfArticulo )->lMarAju .and. !empty( ( dbfArticulo )->cMarAju )
                      ( dbfArticulo )->pCosto          := nAjuste( ( dbfArticulo )->pCosto, ( dbfArticulo )->cMarAju )
                   elseif lMargenAjuste
                      ( dbfArticulo )->pCosto          := nAjuste( ( dbfArticulo )->pCosto, cMargenAjuste )
@@ -11214,7 +11239,7 @@ FUNCTION CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMo
 
       if cCatOld != aTmp[ ( dbfArticulo )->( fieldpos( "CCODCAT" ) ) ]                       .and.;
          ( dbfCatalogo )->( dbSeek( aTmp[ ( dbfArticulo )->( fieldpos( "CCODCAT" ) ) ] ) )   .and.;
-         !(dbfCatalogo)->lObsCat
+         !( dbfCatalogo )->lObsCat
 
          if ApoloMsgNoYes(  "¿ Desea actualizar los datos del artículo con los datos del catálogo ?", "Elija una opción" )
 
@@ -11226,20 +11251,16 @@ FUNCTION CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMo
             if ( dbfTmpPrv )->( dbSeek( ( dbfCatalogo )->cCodProv + Space( 18 ) ) )
 
                ( dbfTmpPrv )->( dbGoTop() )
-               while !( dbfTmpPrv )->( Eof () )
-                  if ( dbfTmpPrv )->cCodPrv + ( dbfTmpPrv )->cRefPrv == ( dbfCatalogo )->cCodProv + Space( 18 )
-                     ( dbfTmpPrv )->lDefPrv  := .t.
-                  else
-                     ( dbfTmpPrv )->lDefPrv  := .f.
-                  end if
+               while !( dbfTmpPrv )->( eof () )
+                  ( dbfTmpPrv )->lDefPrv     := ( dbfTmpPrv )->cCodPrv + ( dbfTmpPrv )->cRefPrv == ( dbfCatalogo )->cCodProv + Space( 18 )
                ( dbfTmpPrv )->( dbSkip() )
                end while
 
             else
 
                ( dbfTmpPrv )->( dbGoTop() )
-               while !( dbfTmpPrv )->( Eof () )
-                  ( dbfTmpPrv )->lDefPrv  := .f.
+               while !( dbfTmpPrv )->( eof () )
+                  ( dbfTmpPrv )->lDefPrv     := .f.
                ( dbfTmpPrv )->( dbSkip() )
                end while
 
@@ -12744,12 +12765,12 @@ Cambia el proveedor por defecto y lo refleja en la tabla de artículo (CPRVHAB)
 
 Static Function lSelPrvDef( aTmp, dbfTmpPrv, oBrw, aTmpArt )
 
-   local nRec := ( dbfTmpPrv )->( RecNo() )
+   local nRec                 := ( dbfTmpPrv )->( RecNo() )
 
    ( dbfTmpPrv )->( dbGoTop() )
 
-   while !( dbfTmpPrv )->( Eof() )
-         ( dbfTmpPrv )->lDefPrv  := .f.
+   while !( dbfTmpPrv )->( eof() )
+      ( dbfTmpPrv )->lDefPrv  := .f.
       ( dbfTmpPrv )->( dbSkip() )
    end while
 
@@ -14138,50 +14159,6 @@ Return ( ( dbfArticulo )->( Recno() ) )
 
 //----------------------------------------------------------------------------//
 
-Function nPreArtPrv( cCodPrv, cCodArt, dbfPrvArt )
-
-   local nPreCom  := 0
-   local nRec     := ( dbfPrvArt )->( Recno() )
-
-   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
-      nPreCom     := ( dbfPrvArt )->nImpPrv
-   end if
-
-   ( dbfPrvArt )->( dbGoTo( nRec ) )
-
-Return nPreCom
-
-//---------------------------------------------------------------------------//
-
-Function nDtoArtPrv( cCodPrv, cCodArt, dbfPrvArt )
-
-   local nPreCom  := 0
-   local nRec     := ( dbfPrvArt )->( Recno() )
-
-   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
-      nPreCom     := ( dbfPrvArt )->nDtoPrv
-   end if
-
-   ( dbfPrvArt )->( dbGoTo( nRec ) )
-
-Return nPreCom
-
-//---------------------------------------------------------------------------//
-
-Function nPrmArtPrv( cCodPrv, cCodArt, dbfPrvArt )
-
-   local nPreCom  := 0
-   local nRec     := ( dbfPrvArt )->( Recno() )
-
-   if dbSeekInOrd( cCodPrv + cCodArt, "cCodPrv", dbfPrvArt )
-      nPreCom     := ( dbfPrvArt )->nDtoPrm
-   end if
-
-   ( dbfPrvArt )->( dbGoTo( nRec ) )
-
-Return nPreCom
-
-//---------------------------------------------------------------------------//
 
 #else
 

@@ -230,12 +230,16 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLINOFE            82       // L       1    0
 #define _LVOLIMP            83
 #define _LGASSUP            84
-#define _dCNUMPED           85
-#define _dCNUMSAT           86
-#define _DFECULTCOM 		87
-#define __CCODCLI 			88
-#define _LFROMATP 			89
-#define _NUNDULTCOM  	 	90
+#define __CNUMPED           85
+#define __DFECFAC				 86
+#define _CSUPED				 87     
+#define __CNUMSAT           88
+#define _DFECULTCOM 			 89
+#define __CCODCLI 			 90
+#define _LFROMATP 			 91
+#define _NUNIULTCOM  	 	 92
+#define __NBULTOS				 93
+#define _CFORMATO 			 94
 
 /*
 Definici¢n de Array para impuestos
@@ -4638,7 +4642,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
       aTmp[ _CTIPMOV  ]       := cDefVta()
       aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
-      aTmp[ _dCNUMPED ]       := aTmpFac[ _CNUMPED ]
+      aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
 
       if !Empty( cCodArtEnt )
          cCodArt              := Padr( cCodArtEnt, 32 )
@@ -4864,6 +4868,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
    end if
 
+   	REDEFINE GET aGet[ __NBULTOS ] VAR aTmp[ __NBULTOS ] ;
+   		ID 		450 ;
+   		IDSAY		451 ;
+   		SPINNER ;
+   		WHEN 		( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+   		PICTURE 	cPicUnd ;
+   		OF 		oFld:aDialogs[1]
+   		
+
       REDEFINE GET aGet[_NCANENT] VAR aTmp[_NCANENT] ;
          ID       130 ;
          SPINNER ;
@@ -5007,6 +5020,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET aGet[ _CVOLUMEN ] VAR aTmp[ _CVOLUMEN ] ;
          ID       410;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .AND. nMode != MULT_MODE ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       460;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       if !aTmp[ __LALQUILER ]
@@ -11120,6 +11138,14 @@ Comprtamiento de la caja de dialogo
 STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, oRentLin )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if !lUseCaj()
       aGet[ _NCANENT ]:Hide()
@@ -18976,7 +19002,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nMedTre"    ,"N", 16, 6, "Tercera unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nTarLin"    ,"N",  1, 0, "Tarifa de precio aplicada"             , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lImpFra",   "L",   1, 0, "Lógico de imprimir frase publicitaria" , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       			 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       			 	  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cTxtFra",   "C", 250, 0, "Texto de la frase publicitaria"        , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "Descrip",   "M",  10, 0, "Descripción larga"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lLinOfe",   "L",   1, 0, "Linea con oferta"                      , "",              "", "( cDbfCol )" } )
@@ -18985,11 +19011,13 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			 , "",          	"", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 	  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					     , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			           , "",          		"", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 	  , "",              "", "( cDbfCol )" } )
+  	aAdd( aColFacCli, { "nBultos",   "N", 	16, 6, "Numero de bultos en líneas"				  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"							  , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
