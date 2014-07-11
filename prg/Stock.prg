@@ -4044,7 +4044,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    local nRec
    local oBlock
-   local oError
+   local oError 
    local dFecha         := Ctod( "" )
    local cSerie
    local nTotal
