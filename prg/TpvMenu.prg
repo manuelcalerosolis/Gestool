@@ -54,9 +54,10 @@ CLASS TpvMenu FROM TMasDet
 
    // Menu Acompañamiento-----------------------------------------------------//
    
-   METHOD InitAcompannamiento()
+   METHOD InitAcompannamientoMultiple()
+   METHOD InitAcompannamientoSimple( cCodigoMenu, cCodigoOrden )
    METHOD CargaDatosAcompannamiento()
-   METHOD PorcesaDatosAcompannamiento()
+   METHOD ProcesaDatosAcompannamiento()
 
    METHOD SumaUnidadesAcompannamiento()   INLINE ( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt, "Unidades" ]++,;
                                                    ::oBrwAcompannamiento:Refresh() )
@@ -67,7 +68,12 @@ CLASS TpvMenu FROM TMasDet
                                                    ::oBrwAcompannamiento:Refresh() )
 
    METHOD nUnidadesAcompannamiento()
-   METHOD nUnidadesMenuAcompannamiento( cCodigoMenu )
+
+   METHOD Acompannamiento( cCodigoMenu )
+
+
+   METHOD StartAcompannamiento( cCodigoMenu, cCodigoOrden )
+   METHOD ProcesaDatosAcompannamientoSimple( cCodigoArticulo )
 
 END CLASS
 
@@ -137,7 +143,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"                ALIGN RIGHT   PICTURE cPorDiv()     COLSIZE 80                 OF oDbf
       FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                                                  HIDE                       OF oDbf
       FIELD NAME "lAcomp"   TYPE "L" LEN 1   DEC 0  COMMENT "Menú acompañamiento"                                       HIDE                       OF oDbf
-      FIELD NAME "nUnds"    TYPE "N" LEN 1   DEC 0  COMMENT "Unidades menú acompañamiento"                              HIDE                       OF oDbf
+   // FIELD NAME "nUnds"    TYPE "N" LEN 1   DEC 0  COMMENT "Unidades menú acompañamiento"                              HIDE                       OF oDbf
 
       INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"         NODELETED                                                      OF oDbf
       INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"         NODELETED                                                      OF oDbf
@@ -232,6 +238,12 @@ METHOD OpenService( lExclusive, cPath )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
+      ::oMenuOrdenes       := TpvMenuOrdenes():New( cPath, Self )
+
+      if !::oMenuOrdenes:OpenService()
+         lOpen             := .f.
+      end if
+
       ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, Self )
 
       if !::oDetMenuArticulo:OpenService()
@@ -265,7 +277,10 @@ METHOD CloseService()
       ::oDetMenuArticulo:End()
    end if
 
-
+   if !Empty( ::oMenuOrdenes )
+      ::oMenuOrdenes:CloseService()
+      ::oMenuOrdenes:End()
+   end if
 
 RETURN ( .t. )
 
@@ -274,10 +289,6 @@ RETURN ( .t. )
 METHOD Resource( nMode )
 
 	local oDlg
-
-   if ::lAppendMode()
-      ::oDbf:nUnds   := 1
-   end if 
 
    DEFINE DIALOG oDlg RESOURCE "TpvMenus" TITLE LblTitle( nMode ) + "Ménus"
 
@@ -298,12 +309,7 @@ METHOD Resource( nMode )
       REDEFINE GET ::oDbf:nImpMnu ;
          ID       120 ;
          PICTURE  ( cPorDiv() ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. !::oDbf:lAcomp ) ;
-         OF       oDlg
-
-      REDEFINE GET ::oDbf:nUnds ;
-         ID       150 ;
-         WHEN     ( nMode != ZOOM_MODE .and. ::oDbf:lAcomp ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::oDbf:lObsMnu ;
@@ -502,14 +508,16 @@ RETURN ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
-METHOD InitAcompannamiento( cCodigoMenu, nUnidades )
+METHOD InitAcompannamientoMultiple( cCodigoMenu, cCodigoOrden, nUnidades )
 
+   local oFntBrw                  
    local cCodigoArticulo
-   local oFntBrw                  := TFont():New( "Segoe UI",  0, 27, .f., .t. )
 
-   if !::CargaDatosAcompannamiento( cCodigoMenu )
+   if !::CargaDatosAcompannamiento( cCodigoMenu, cCodigoOrden )
       Return ( Self )
    end if 
+
+   oFntBrw                          := TFont():New( "Segoe UI",  0, 27, .f., .t. )
 
    // Definimos el dialogo para el menú de acompañamiento-----------------------
 
@@ -531,7 +539,7 @@ METHOD InitAcompannamiento( cCodigoMenu, nUnidades )
          BITMAP   "Check_32" ;
          ID       IDOK ;
          OF       ::oDlgAcompannamiento ;
-         ACTION   ( ::PorcesaDatosAcompannamiento( nUnidades ) )
+         ACTION   ( ::ProcesaDatosAcompannamiento( nUnidades ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Delete_32" ;
@@ -608,15 +616,114 @@ Return ( cCodigoArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaDatosAcompannamiento( cCodigoMenu )
+METHOD InitAcompannamientoSimple( cCodigoMenu, cCodigoOrden )
+
+   local oFntBrw                  
+   local cCodigoArticulo
+
+   if !::CargaDatosAcompannamiento( cCodigoMenu, cCodigoOrden )
+      Return ( Self )
+   end if 
+
+   oFntBrw                          := TFont():New( "Segoe UI",  0, 27, .f., .t. )
+
+   // Definimos el dialogo para el menú de acompañamiento-----------------------
+
+   DEFINE DIALOG ::oDlgAcompannamiento RESOURCE "TPVMenuAcompSimple"
+
+      REDEFINE BUTTONBMP ;
+         ID       110 ;
+         OF       ::oDlgAcompannamiento ;
+         BITMAP   "Navigate_up2" ;
+         ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageUp(), ::oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         ID       111 ;
+         OF       ::oDlgAcompannamiento ;
+         BITMAP   "Navigate_down2" ;
+         ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageDown(), ::oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       ::oDlgAcompannamiento ;
+         ACTION   ( ::ProcesaDatosAcompannamiento() )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       ::oDlgAcompannamiento ;
+         ACTION   ( ::oDlgAcompannamiento:End() )
+
+      ::oBrwAcompannamiento                  := IXBrowse():New( ::oDlgAcompannamiento )
+
+      ::oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwAcompannamiento:nMarqueeStyle    := 3
+      ::oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
+      ::oBrwAcompannamiento:lHeader          := .f.
+      ::oBrwAcompannamiento:lHScroll         := .f.
+      ::oBrwAcompannamiento:nRowHeight       := 55
+
+      ::oBrwAcompannamiento:lFooter          := .t.
+
+      ::oBrwAcompannamiento:CreateFromResource( 100 )
+
+      ::oBrwAcompannamiento:SetFont( oFntBrw )
+
+      ::oBrwAcompannamiento:setArray( ::aIngredientes, , , .f. )
+
+      with object ( ::oBrwAcompannamiento:AddCol() )
+         :bEditValue                         := {|| hGet( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt ], "Nombre" ) }
+         :nWidth                             := 490
+      end with
+
+      ::oDlgAcompannamiento:bStart             := {|| ::oSender:SeleccionarDefecto( ::oBrwAcompannamiento ) }
+
+   ACTIVATE DIALOG ::oDlgAcompannamiento CENTER
+
+   ::oSender:oBrwLineas:Refresh()
+
+   if !Empty( oFntBrw )
+      oFntBrw:End()
+   end if
+
+Return ( cCodigoArticulo )
+
+//---------------------------------------------------------------------------//
+
+METHOD Acompannamiento( cCodigoMenu )
+   
+   local cOrden
+   local aOrdenes    := ::oMenuOrdenes:aOrdenes( cCodigoMenu )
+
+   for each cOrden in aOrdenes
+
+      if ::oMenuOrdenes:nUnidadesOrdenAcompannamiento( cCodigoMenu, cOrden ) > 1
+
+         ::InitAcompannamientoMultiple( cCodigoMenu, cOrden, ::oMenuOrdenes:nUnidadesOrdenAcompannamiento( cCodigoMenu, cOrden ) )
+
+      else
+
+         ::StartAcompannamiento( cCodigoMenu, cOrden ) //::InitAcompannamientoSimple( cCodigoMenu, cOrden )
+
+      end if
+
+   next  
+
+RETURN( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaDatosAcompannamiento( cCodigoMenu, cCodigoOrden )
 
    ::aIngredientes     := {}
 
    ::oDetMenuArticulo:oDbf:GetStatus()
 
-   if ::oDetMenuArticulo:oDbf:Seek( cCodigoMenu )
+   if ::oDetMenuArticulo:oDbf:SeekInOrd( cCodigoMenu + cCodigoOrden, "cMnuOrd" )
 
-      while ::oDetMenuArticulo:oDbf:cCodMnu == cCodigoMenu .and. !::oDetMenuArticulo:oDbf:Eof()
+      while ::oDetMenuArticulo:oDbf:cCodMnu == cCodigoMenu .and. ::oDetMenuArticulo:oDbf:cCodOrd == cCodigoOrden .and. !::oDetMenuArticulo:oDbf:Eof()
 
          aAdd( ::aIngredientes,  {  "Codigo"   => ::oDetMenuArticulo:oDbf:cCodArt ,;
                                     "Nombre"   => Alltrim( oRetFld( ::oDetMenuArticulo:oDbf:cCodArt, ::oSender:oArticulo )) ,;
@@ -634,10 +741,12 @@ RETURN ( len( ::aIngredientes ) > 0 )
 
 //--------------------------------------------------------------------------//
 
-METHOD PorcesaDatosAcompannamiento( nUnidades )
+METHOD ProcesaDatosAcompannamiento( nUnidades )
 
    local aIngrediente
    local nTotal      := 0
+
+   DEFAULT nUnidades := 1
 
    if ::nUnidadesAcompannamiento() > nUnidades
       MsgStop( "Has introducido más ingredientes de lo permitido." )
@@ -688,21 +797,95 @@ RETURN ( nTotal )
 
 //--------------------------------------------------------------------------//
 
-METHOD nUnidadesMenuAcompannamiento( cCodigoMenu )
+METHOD StartAcompannamiento( cCodigoMenu, cCodigoOrden )
 
-   local nUnidades      := 0
+local oFntBrw                  
+   local cCodigoArticulo
 
-   ::oDbf:GetStatus()
+   if !::CargaDatosAcompannamiento( cCodigoMenu, cCodigoOrden )
+      Return ( Self )
+   end if 
 
-   if ::oDbf:Seek( cCodigoMenu )
+   oFntBrw                          := TFont():New( "Segoe UI",  0, 27, .f., .t. )
 
-      nUnidades      := ::oDbf:nUnds
+   // Definimos el dialogo para el menú de acompañamiento-----------------------
 
+   DEFINE DIALOG ::oDlgAcompannamiento RESOURCE "TPVMenuAcompSimple"
+
+      REDEFINE BUTTONBMP ;
+         ID       110 ;
+         OF       ::oDlgAcompannamiento ;
+         BITMAP   "Navigate_up2" ;
+         ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageUp(), ::oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         ID       111 ;
+         OF       ::oDlgAcompannamiento ;
+         BITMAP   "Navigate_down2" ;
+         ACTION   ( ::oBrwAcompannamiento:Select( 0 ), ::oBrwAcompannamiento:PageDown(), ::oBrwAcompannamiento:Select( 1 ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       ::oDlgAcompannamiento ;
+         ACTION   ( ::ProcesaDatosAcompannamiento() )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       ::oDlgAcompannamiento ;
+         ACTION   ( ::oDlgAcompannamiento:End() )
+
+      ::oBrwAcompannamiento                  := IXBrowse():New( ::oDlgAcompannamiento )
+
+      ::oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::oBrwAcompannamiento:nMarqueeStyle    := 3
+      ::oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
+      ::oBrwAcompannamiento:lHeader          := .f.
+      ::oBrwAcompannamiento:lHScroll         := .f.
+      ::oBrwAcompannamiento:nRowHeight       := 55
+
+      ::oBrwAcompannamiento:lFooter          := .t.
+
+      ::oBrwAcompannamiento:CreateFromResource( 100 )
+
+      ::oBrwAcompannamiento:SetFont( oFntBrw )
+
+      ::oBrwAcompannamiento:setArray( ::aIngredientes, , , .f. )
+
+      with object ( ::oBrwAcompannamiento:AddCol() )
+         :bEditValue                         := {|| hGet( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt ], "Nombre" ) }
+         :nWidth                             := 490
+         :bAction                            := {|| ::ProcesaDatosAcompannamientoSimple( hGet( ::aIngredientes[ ::oBrwAcompannamiento:nArrayAt ], "Codigo" ) )}
+      end with
+
+      ::oDlgAcompannamiento:bStart             := {|| ::oSender:SeleccionarDefecto( ::oBrwAcompannamiento ) }
+
+   ACTIVATE DIALOG ::oDlgAcompannamiento CENTER
+
+   ::oSender:oBrwLineas:Refresh()
+
+   if !Empty( oFntBrw )
+      oFntBrw:End()
    end if
 
-RETURN ( nUnidades )
+Return ( cCodigoArticulo )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
+METHOD ProcesaDatosAcompannamientoSimple(cCodigoArticulo)
 
+   local aIngrediente
+   local nTotal      := 0
+
+   ::oDlgAcompannamiento:Disable()
+
+   ::oSender:AgregarAcompannamiento( cCodigoArticulo, 1 )
+
+   ::oDlgAcompannamiento:Enable()
+
+   ::oDlgAcompannamiento:End()
+
+RETURN ( Self )
 

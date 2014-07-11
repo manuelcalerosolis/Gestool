@@ -906,10 +906,6 @@ CLASS TpvTactil
       METHOD ChangeComentarios( oBrwLineasComentarios )
       METHOD ChangeLineasComentarios( oGetComentario, cComentariosL )
 
-   // Menu Acompañamiento-----------------------------------------------------//
-
-   //METHOD InitAcompannamiento()
-
    //------------------------------------------------------------------------//
 
    INLINE METHOD EliminarLinea()
@@ -974,9 +970,15 @@ CLASS TpvTactil
       ::oTemporalLinea:GetStatus()
 
       ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
-      while ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+      ::oTemporalLinea:GoTop()
 
-         ::EliminaLineaTemporal()
+      while !( ::oTemporalLinea:eof() )
+         
+         if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+
+            ::EliminaLineaTemporal()
+
+         end if
 
          ::SaltaLineaTemporal()
 
@@ -985,6 +987,7 @@ CLASS TpvTactil
       ::oTemporalLinea:SetStatus()
 
       Return( Self )
+
    ENDMETHOD
 
    //------------------------------------------------------------------------//
@@ -994,9 +997,15 @@ CLASS TpvTactil
       ::oTemporalLinea:GetStatus()
 
       ::oTemporalLinea:OrdSetFocus( "nNumLin" )
-      while ( nNumeroLinea == ::oTemporalLinea:nNumLin )
+      ::oTemporalLinea:GoTop()
 
-         ::EliminaLineaTemporal()
+      while !( ::oTemporalLinea:eof() )
+
+         if ( nNumeroLinea == ::oTemporalLinea:nNumLin ) 
+
+            ::EliminaLineaTemporal()
+
+         end if
 
          ::SaltaLineaTemporal()
 
@@ -1005,6 +1014,7 @@ CLASS TpvTactil
       ::oTemporalLinea:SetStatus()
 
       Return( Self )
+
    ENDMETHOD
 
    //------------------------------------------------------------------------//
@@ -4146,7 +4156,7 @@ METHOD AgregarMenuAcompannamiento( cMenu )
       Return ( lAcompannamiento )
    end if
 
-   ::oTpvMenu:InitAcompannamiento( cMenu, ::oTpvMenu:nUnidadesMenuAcompannamiento( cMenu ) )
+   ::oTpvMenu:Acompannamiento( cMenu )
 
 RETURN ( Self )
 
@@ -5256,7 +5266,14 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    // Agregamos los kits si es el caso-----------------------------------------
 
-   ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+   if !Empty( cCodigoMenu )
+
+      ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2, ::GetLineaMenu() )
+   else
+
+      ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+
+   end if
 
    CursorWE()
 
@@ -5605,11 +5622,13 @@ Return ( lReturn )
 
 //-------------------------------------------------------------------------//
 
-METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2 ) CLASS TpvTactil
+METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2, nLineaMenu ) CLASS TpvTactil
 
    local aStatusEscandallo := ::oArticulosEscandallos:GetStatus()
    local aStatusArticulo   := ::oArticulo:GetStatus()
    local nTotalUnidades    := 0
+
+   DEFAULT nLineaMenu      := bottomNumber
 
    if ::oArticulosEscandallos:Seek( cCodigoArticulo )
 
@@ -5624,7 +5643,7 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2 
             ::oTemporalLinea:Append()
             ::oTemporalLinea:Blank()
 
-            ::oTemporalLinea:nLinMnu      := bottomNumber
+            ::oTemporalLinea:nLinMnu      := nLineaMenu
 
             // Total unidades--------------------------------------------------
 
@@ -5691,7 +5710,7 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2 
 
          // Tiene nuevos escandallos-------------------------------------------
 
-         ::AgregarKit( ::oArticulosEscandallos:cRefKit, nTotalUnidades, cTipoImpresora1, cTipoImpresora2 )
+         ::AgregarKit( ::oArticulosEscandallos:cRefKit, nTotalUnidades, cTipoImpresora1, cTipoImpresora2, nLineaMenu )
 
          // Siguiente articulo del kit-----------------------------------------
 
@@ -5867,69 +5886,6 @@ METHOD AgregarPLU() CLASS TpvTactil
 
 Return .t.
 
-//---------------------------------------------------------------------------//
-/*
-METHOD InitAcompannamiento() CLASS TpvTactil
-
-   local oBrwAcompannamiento
-   local oDlgAcompannamiento
-   
-   // Definimos el dialogo para el menú de acompañamiento-----------------------
-
-   DEFINE DIALOG oDlgAcompannamiento RESOURCE "TPVMenuAcomp"
-
-      REDEFINE BUTTONBMP ;
-         ID       110 ;
-         OF       oDlgAcompannamiento ;
-         BITMAP   "Navigate_up2" ;
-         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:PageUp(), oBrwAcompannamiento:Select( 1 ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       111 ;
-         OF       oDlgAcompannamiento ;
-         BITMAP   "Navigate_down2" ;
-         ACTION   ( oBrwAcompannamiento:Select( 0 ), oBrwAcompannamiento:PageDown(), oBrwAcompannamiento:Select( 1 ) )
-
-      REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
-         ID       IDOK ;
-         OF       oDlgAcompannamiento ;
-         ACTION   ( oDlgAcompannamiento:End( IDOK ) )
-
-      REDEFINE BUTTONBMP ;
-         BITMAP   "Delete_32" ;
-         ID       IDCANCEL ;
-         OF       oDlgAcompannamiento ;
-         ACTION   ( oDlgAcompannamiento:End() )
-
-      oBrwAcompannamiento                  := IXBrowse():New( oDlgAcompannamiento )
-
-      oBrwAcompannamiento:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwAcompannamiento:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-      oBrwAcompannamiento:nMarqueeStyle    := 3
-      oBrwAcompannamiento:cName            := "Acompañamiento de artículo"
-      oBrwAcompannamiento:lHeader          := .f.
-      oBrwAcompannamiento:lHScroll         := .f.
-      oBrwAcompannamiento:nRowHeight       := 50
-      
-      oBrwAcompannamiento:SetFont( ::oFntBrw )
-
-      oBrwAcompannamiento:CreateFromResource( 100 )
-
-      ::oTpvMenuArticulo:oDbf:SetBrowse( oBrwAcompannamiento )
-
-      with object ( oBrwAcompannamiento:AddCol() )
-         :bEditValue                         := {|| Alltrim( oRetFld( ::oTpvMenuArticulo:oDbf:cCodArt, ::oArticulo )) }
-      end with
-
-      oDlgAcompannamiento:bStart             := {|| ::SeleccionarDefecto( oBrwAcompannamiento ) }
-
-   ACTIVATE DIALOG oDlgAcompannamiento CENTER
-
-   ::oBrwLineas:Refresh()
-
-Return ( if( oDlgAcompannamiento:nResult == IDOK, ::oTpvMenuArticulo:oDbf:cCodArt, nil ) )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD InitComentarios( lForced ) CLASS TpvTactil

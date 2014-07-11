@@ -42,6 +42,11 @@ CLASS TpvMenuOrdenes FROM TDet
    METHOD Intercambiable()
 
 
+   //Menu acompañamiento-------------------------------------------------------
+
+   METHOD nUnidadesOrdenAcompannamiento()
+
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -61,13 +66,15 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
-      FIELD NAME "cCodMnu"          TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                    OF oDbf
-      FIELD NAME "cCodOrd"          TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                   OF oDbf
-      FIELD NAME "lIntOrd"          TYPE "L" LEN 1   DEC 0 COMMENT "Orden intercambiable"      HIDE OF oDbf
+      FIELD NAME "cCodMnu"          TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                         OF oDbf
+      FIELD NAME "cCodOrd"          TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                        OF oDbf
+      FIELD NAME "lIntOrd"          TYPE "L" LEN 1   DEC 0 COMMENT "Orden intercambiable"           HIDE OF oDbf
+      FIELD NAME "nUndAcomp"        TYPE "N" LEN 1   DEC 0 COMMENT "Unidades menú acompañamiento"   HIDE OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                                   NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                                   NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd"                         NODELETED OF oDbf
+
+      INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                                        NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                                        NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd"                              NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -193,6 +200,10 @@ METHOD Resource()
 
    local oDlg
 
+   if ::nMode == APPD_MODE
+      ::oDbfVir:nUndAcomp   := 1
+   end if 
+
    // Caja de dialogo-------------------------------------------------------------
 
    DEFINE DIALOG oDlg RESOURCE "TpvMenuOrdenes" TITLE LblTitle( ::nMode ) + "orden de comanda"
@@ -240,6 +251,11 @@ METHOD Resource()
       REDEFINE CHECKBOX ::oDbfVir:lIntOrd ;
          ID       110 ;
          WHEN     ( ::nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbfVir:nUndAcomp ;
+         ID       120 ;
+         WHEN     ( ::nMode != ZOOM_MODE .and. ::oParent:oDbf:lAcomp ) ;
          OF       oDlg
 
       REDEFINE BUTTON ;
@@ -300,6 +316,11 @@ METHOD lPreSave( oDlg )
 
    if Empty( ::oDbfVir:cCodOrd )
       MsgStop( "Código del orden no puede estar vacio" )
+      Return ( .f. )
+   end if
+
+   if ::oDbfVir:nUndAcomp <= 0
+      MsgStop( "Número de unidades de acompañamiento tiene que ser superior a 0" )
       Return ( .f. )
    end if
 
@@ -418,3 +439,23 @@ METHOD Intercambiable( logico )
    end if
        
 Return ( clogico )
+
+//---------------------------------------------------------------------------//
+
+METHOD nUnidadesOrdenAcompannamiento( cCodigoMenu, cCodigoOrden )
+
+   local nUnidades      := 0
+
+   ::oDbf:GetStatus()
+
+   if ::oDbf:SeekInOrd( cCodigoMenu + cCodigoOrden, "cMnuOrd" )
+
+      nUnidades      := ::oDbf:nUndAcomp
+
+   end if
+
+   ::oDbf:SetStatus()
+
+RETURN ( nUnidades )
+
+//--------------------------------------------------------------------------//
