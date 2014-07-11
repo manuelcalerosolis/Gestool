@@ -10,6 +10,8 @@ CLASS TStock
 
    DATA lExclusive
 
+   DATA uCodigoAlmacen  
+
    DATA cAlm
    DATA cArticulo
 
@@ -4077,7 +4079,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
-   ::GetCodigoAlmacen( cCodAlm )
+   // ::GetCodigoAlmacen( cCodAlm )
 
    ::lLote              := lLote
    ::lNumeroSerie       := lNumeroSerie
