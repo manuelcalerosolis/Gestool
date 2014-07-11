@@ -4079,7 +4079,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
-   // ::GetCodigoAlmacen( cCodAlm )
+   ::GetCodigoAlmacen( cCodAlm )
 
    ::lLote              := lLote
    ::lNumeroSerie       := lNumeroSerie
@@ -6279,8 +6279,10 @@ METHOD GetCodigoAlmacen( cCodigoAlmacen )
       ::uCodigoAlmacen  := { cCodigoAlmacen }
       aChildAlmacen( cCodigoAlmacen, ::uCodigoAlmacen, ::cAlm )
    else
-      ::cCodigoAlmacen  := cCodigoAlmacen
+      ::uCodigoAlmacen  := cCodigoAlmacen
    end if 
+
+   msgAlert( valtoprg( ::uCodigoAlmacen ) )
 
 Return ( ::uCodigoAlmacen )
 

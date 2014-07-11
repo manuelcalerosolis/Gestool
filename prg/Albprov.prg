@@ -1337,54 +1337,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			ID 		151 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE SAY aGet[_CCODUBIT1] VAR aTmp[_CCODUBIT1];
-         ID       310 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBIT1] VAR aTmp[_CVALUBIT1] ;
-         ID       311 ;
-         BITMAP   "LUPA" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBIT1], aGet[_CNOMUBIT1], aTmp[_CCODUBIT1], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBIT1] VAR aTmp[_CNOMUBIT1];
-         WHEN     .F. ;
-         ID       3111 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBIT2] VAR aTmp[_CCODUBIT2];
-         ID       320 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBIT2] VAR aTmp[_CVALUBIT2] ;
-         ID       321 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBIT2], aGet[_CNOMUBIT2], aTmp[_CCODUBIT2], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBIT2] VAR aTmp[_CNOMUBIT2];
-         WHEN     .F. ;
-         ID       3211 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBIT3] VAR aTmp[_CCODUBIT3];
-         ID       330 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBIT3] VAR aTmp[_CVALUBIT3] ;
-         ID       331 ;
-         BITMAP   "LUPA" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBIT3], aGet[_CNOMUBIT3], aTmp[_CCODUBIT3], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBIT3] VAR aTmp[_CNOMUBIT3];
-         WHEN     .F. ;
-         ID       3311 ;
-         OF       oFld:aDialogs[1]
-
 		/*
 		Bitmap________________________________________________________________
 		*/
@@ -9008,7 +8960,7 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "CTURALB",      "C",  6,  0, "Sesión del albarán",          "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "DFECALB",      "D",  8,  0, "Fecha del albarán",           "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "CCODPRV",      "C", 12,  0, "Código del proveedor",        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbPrv, { "CCODALM",      "C",  3,  0, "Código de almacén",           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "CCODALM",      "C", 16,  0, "Código de almacén",           "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "CCODCAJ",      "C",  3,  0, "Código de caja",              "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "CNOMPRV",      "C", 35,  0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "CDIRPRV",      "C", 35,  0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"} )
@@ -9062,7 +9014,7 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "nTotIva",      "N", 16,  6, "Total " + cImp(),                "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotReq",      "N", 16,  6, "Total R.E.",                  "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotAlb",      "N", 16,  6, "Total albarán",               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbPrv, { "cAlmOrigen",   "C",  3,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
 
 Return ( aItmAlbPrv )
 
@@ -9129,7 +9081,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "CVALPR2",      "C", 20,  0, "Valor de segunda propiedad",  "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NFACCNV",      "N", 13,  4, "Factor de conversión de la compra","",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CCODPED",      "C", 12,  0, "Número del pedido",           "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CALMLIN",      "C",  3,  0, "Código del almacén",          "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cAlmLin",      "C", 16,  0, "Código del almacén",          "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NCTLSTK",      "N",  1,  0, "Tipo de stock de la línea",   "'9'",                 "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "LLOTE",        "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NLOTE",        "N",  9,  0, "",                            "",                    "", "( cDbfCol )" } )
@@ -9180,7 +9132,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "lNumSer",      "L",  1, 0, "Lógico solicitar numero de serie", "",                "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "lAutSer",      "L",  1, 0, "Lógico de autoserializar",     "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,        "cPirDivAlb",          "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cAlmOrigen",   "C",  3,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 
@@ -9196,7 +9148,7 @@ function aSerAlbPrv()
    aAdd( aColAlbPrv,  { "dFecAlb",     "D",  8,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColAlbPrv,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
    aAdd( aColAlbPrv,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "(cDbfCol)" } )
-   aAdd( aColAlbPrv,  { "cAlmLin",     "C",  3,   0, "Código de almacen",                "",                  "", "(cDbfCol)" } )
+   aAdd( aColAlbPrv,  { "cAlmLin",     "C", 16,   0, "Código de almacen",                "",                  "", "(cDbfCol)" } )
    aAdd( aColAlbPrv,  { "lFacturado",  "L",  1,   0, "Lógico de facturado",              "",                  "", "(cDbfCol)" } )
    aAdd( aColAlbPrv,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "(cDbfCol)" } )
    aAdd( aColAlbPrv,  { "cNumSer",     "C", 30,   0, "Numero de serie",                  "",                  "", "(cDbfCol)" } )

@@ -2528,11 +2528,11 @@ RETURN ( Self )
 METHOD InsertPresentador()
 
    with object ( ::oCuaderno:GetPresentador() )
-      :Nombre( ::oCtaRem:oDbf:cNomPre )
-      :Referencia( ::cNumRem() )            
-      :Nif( ::oCtaRem:oDbf:cNifPre )
-      :Entidad( ::oCtaRem:oDbf:cEntPre )
-      :Oficina( ::oCtaRem:oDbf:cAgcPre )
+      :Nombre(       ::oCtaRem:oDbf:cNomPre )
+      :Referencia(   ::cNumRem() )            
+      :Nif(          ::oCtaRem:oDbf:cNifPre )
+      :Entidad(      ::oCtaRem:oDbf:cEntPre )
+      :Oficina(      ::oCtaRem:oDbf:cAgcPre )
    end with
 
 RETURN ( Self )
@@ -2560,8 +2560,11 @@ RETURN ( Self )
 METHOD InsertDeudor()
 
    with object ( ::oCuaderno:InsertDeudor() )
+
+   // msgAlert( alltrim( ::oDbfDet:cCodCli ) + ::TextoDocumento() + tstring( seconds() ) ) 
+
       :Referencia(         "Recibo" + ::TextoDocumento() )
-      :ReferenciaMandato(  ::oDbfDet:cCodCli )
+      :ReferenciaMandato(  alltrim( ::oDbfDet:cCodCli ) + ::TextoDocumento() + tstring( seconds() ) )
       :Importe(            nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() ) )
       :EntidadBIC(         ::GetBICClient() )
       :Nombre(             ::oClientes:Titulo )
