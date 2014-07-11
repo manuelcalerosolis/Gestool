@@ -32,8 +32,6 @@ static oWndBrw
 static dbfAlmT
 static dbfAlmL
 static dbfAgent
-static dbfUbicaT
-static dbfUbicaL
 static dbfTmp
 
 static cNewFile
@@ -201,16 +199,12 @@ FUNCTION Almacen( oMenuItem, oWnd )
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
-#ifndef __TACTIL__
-
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( InfAlm():New( "Listado de almacenes" ):Play() ) ;
          TOOLTIP  "(L)istado" ;
          HOTKEY   "L";
          LEVEL    ACC_IMPR
-
-#endif
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -405,12 +399,12 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-   if nMode != ZOOM_MODE
+      if nMode != ZOOM_MODE
          oFld:aDialogs[2]:AddFastKey( VK_F2, {|| AppDeta( oBrw2, bEdit2, aTemp) } )
          oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EdtDeta( oBrw2, bEdit2, aTemp ) } )
          oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DelDeta( oBrw2, aTemp ) } )
          oDlg:AddFastKey( VK_F5, {|| if( nMode == DUPL_MODE, if( oGet:lValid(), EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ), ), EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ) ) } )
-   end if
+      end if
 
    oDlg:bStart    := {|| StartEdtRec( aTemp ) }
 
@@ -788,7 +782,7 @@ FUNCTION aItmAlm()
 
    local aItmAlm  := {}
 
-   aAdd( aItmAlm, { "cCodAlm",  "C",     12,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cCodAlm",  "C",     16,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cNomAlm",  "C",    100,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cDirAlm",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cPosAlm",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" } )
@@ -798,7 +792,7 @@ FUNCTION aItmAlm()
    aAdd( aItmAlm, { "cFaxAlm",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cPerAlm",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cCodCli",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "cComAlm",  "C",     12,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cComAlm",  "C",     16,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
 
 RETURN ( aItmAlm )
 
@@ -1239,16 +1233,6 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 
       ( dbfAlmT )->( dbGoTop() )
 
-      /*do case
-      case lBigStyle
-         DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar almacén"
-      case ( "PDA" $ cParamsMain() )
-         DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar almacén"
-      otherwise
-         DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar almacén"
-      end case*/
-
-#ifndef __PDA__
    if lBigStyle
 
       DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar almacén"
@@ -1272,34 +1256,6 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
          OF       oDlg
 
    end if
-#else
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar almacén"
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-         REDEFINE SAY oSayTit ;
-            VAR      "Buscando almacenes" ;
-            ID       110 ;
-            COLOR    "N/W*" ;
-            FONT     oFont ;
-            OF       oDlg
-
-         REDEFINE BTNBMP oBtn ;
-            ID       100 ;
-            OF       oDlg ;
-            FILE     ( cPatBmp() + "Factory_16.bmp" ) ;
-            NOBORDER ;
-            ACTION      ( nil )
-
-         oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlmT ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-#endif
 
 		REDEFINE COMBOBOX oCbxOrd ;
 			VAR 		cCbxOrd ;
@@ -1307,9 +1263,6 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
          ITEMS    aCbxOrd ;
          ON CHANGE( ( dbfAlmT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() ) ;
 			OF 		oDlg
-
-
-#ifndef __PDA__
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -1399,25 +1352,6 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end(IDOK) } )
 
       ACTIVATE DIALOG oDlg CENTER
-
-#else
-
-      REDEFINE LISTBOX oBrw ;
-			FIELDS ;
-                  ( dbfAlmT )->cCodAlm + CRLF + ( dbfAlmT )->cNomAlm ;
-			HEAD ;
-                  "Código" + CRLF + "Nombre" ;
-			ID 		105 ;
-			ALIAS 	( dbfAlmT ) ;
-			OF 		oDlg
-
-         oBrw:aActions        := {| nCol | lPressCol( nCol, oBrw, oCbxOrd, aCbxOrd, dbfAlmT ) }
-         oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( pdaMenuEdtRec( oDlg, oBrw ) )
-
-#endif
 
       cReturn                 := ( dbfAlmT )->cCodAlm
 
@@ -1536,7 +1470,7 @@ static function LoadTree( oTree, cComAlm )
    DEFAULT oTree     := oTreePadre
 
    if Empty( cComAlm )
-      cComAlm        := Space( 12 )
+      cComAlm        := Space( 16 )
    end if
 
    CursorWait()
@@ -1643,10 +1577,6 @@ Static Function GetTreeState( aTemp, oTree, aItems )
 
       if tvGetCheckState( oTree:hWnd, oItem:hItem )
          aTemp[ _CCOMALM ]  := oItem:Cargo
-
-         msgAlert( aTemp[ _CCOMALM ] )
-         msgAlert( oItem:Cargo)
-
       end if
 
       if len( oItem:aItems ) > 0

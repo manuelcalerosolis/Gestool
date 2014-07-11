@@ -2247,7 +2247,7 @@ FUNCTION NotValid( oGet, uAlias, lRjust, cChar, nTag, nLen )
 	DEFAULT cChar	:= "0"
 	DEFAULT nTag   := 1
 
-   if ValType( uAlias ) == "O"
+   if IsObject( uAlias )
       cAlias      := uAlias:cAlias
    else
       cAlias      := uAlias
@@ -2255,20 +2255,26 @@ FUNCTION NotValid( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
    nOldTag        := ( cAlias )->( OrdSetFocus( nTag ) )
 
-   /*
-	Cambiamos el tag y guardamos el anterior
-	*/
+	// Cambiamos el tag y guardamos el anterior---------------------------------
 
    if Empty( ( cAlias )->( OrdSetFocus() ) )
       MsgInfo( "Indice no disponible, comprobación imposible" )
       return .t.
    end if
 
-	IF ValType( xClave ) == "C" .AND. At( ".", xClave ) != 0
-		PntReplace( oGet, cChar, nLen )
-	ELSEIF lRjust
-		RJustObj( oGet, cChar, nLen )
-	END IF
+   // Ajustes------------------------------------------------------------------
+
+	if lRjust
+
+      if ischar( xClave ) .and. at( ".", xClave ) != 0
+         PntReplace( oGet, cChar, nLen )
+      else 
+         RJustObj( oGet, cChar, nLen )
+      end if
+
+	end if
+
+   // Sacamos la clave---------------------------------------------------------
 
    xClave         := oGet:VarGet()
 
