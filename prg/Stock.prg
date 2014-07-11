@@ -10,6 +10,8 @@ CLASS TStock
 
    DATA lExclusive
 
+   DATA uCodigoAlmacen  
+
    DATA cAlm
    DATA cArticulo
 
@@ -261,6 +263,9 @@ CLASS TStock
    METHOD nPendientesRecibirInStock()  
    METHOD nPendientesEntregarInStock()  
 
+   METHOD GetCodigoAlmacen( cCodigoAlmacen )
+   METHOD lCodigoAlmacen( cCodigoAlmacen )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -307,24 +312,24 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
 
    DEFINE DATABASE ::oDbfStock FILE ( ::cDbfStock ) CLASS "StockDbf" ALIAS "StockDbf" PATH ( cPath ) VIA ( cLocalDriver() ) 
 
-   FIELD NAME "cCodigo"    TYPE "C" LEN 18 DEC 0 COMMENT "C骴igo de art韈ulo"                    OF ::oDbfStock
-   FIELD NAME "cDelega"    TYPE "C" LEN  3 DEC 0 COMMENT "Delegaci髇"                            OF ::oDbfStock
+   FIELD NAME "cCodigo"    TYPE "C" LEN 18 DEC 0 COMMENT "C贸digo de art铆culo"                    OF ::oDbfStock
+   FIELD NAME "cDelega"    TYPE "C" LEN  3 DEC 0 COMMENT "Delegaci贸n"                            OF ::oDbfStock
    FIELD NAME "dFecDoc"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"                   OF ::oDbfStock
-   FIELD NAME "cAlmacen"   TYPE "C" LEN  3 DEC 0 COMMENT "C骴igo del almacen"                    OF ::oDbfStock
-   FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "C骴igo de la primera propiedad"        OF ::oDbfStock
-   FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "C骴igo de la segunda propiedad"        OF ::oDbfStock
+   FIELD NAME "cAlmacen"   TYPE "C" LEN  3 DEC 0 COMMENT "C贸digo del almacen"                    OF ::oDbfStock
+   FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "C贸digo de la primera propiedad"        OF ::oDbfStock
+   FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "C贸digo de la segunda propiedad"        OF ::oDbfStock
    FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
    FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
-   FIELD NAME "cLote"      TYPE "C" LEN 12 DEC 0 COMMENT "N鷐ero de lote"                        OF ::oDbfStock
-   FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "N鷐ero de serie"                       OF ::oDbfStock
+   FIELD NAME "cLote"      TYPE "C" LEN 12 DEC 0 COMMENT "N煤mero de lote"                        OF ::oDbfStock
+   FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "N煤mero de serie"                       OF ::oDbfStock
    FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
    FIELD NAME "nUnd"       TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades"                        OF ::oDbfStock
    FIELD NAME "nPdtRec"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de recibir"  OF ::oDbfStock
    FIELD NAME "nPdtEnt"    TYPE "N" LEN 16 DEC 6 COMMENT "Total unidades pendientes de entregar" OF ::oDbfStock
-   FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "N鷐ero del documento lote"             OF ::oDbfStock
+   FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "N煤mero del documento lote"             OF ::oDbfStock
    FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 
-   INDEX TO "Stock.Cdx" TAG "cCodArt"  ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "C骴igo"           FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO "Stock.Cdx" TAG "cCodArt"  ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "C贸digo"           FOR "!Deleted()" OF ::oDbfStock
    INDEX TO "Stock.Cdx" TAG "cCodAlm"  ON "cAlmacen + cCodigo + cValPrp1 + cValPrp2 + cLote"  COMMENT "Almacen"          FOR "!Deleted()" OF ::oDbfStock
    INDEX TO "Stock.Cdx" TAG "dFecCad"  ON "Dtos( dFecCad ) + cLote"                           COMMENT "Fecha caducidad"  FOR "!Deleted()" OF ::oDbfStock
 
@@ -609,7 +614,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 //
-// Este metodo a馻de y elimina stock pendiente de recibir por los pedidos a proveedores
+// Este metodo a帽ade y elimina stock pendiente de recibir por los pedidos a proveedores
 //
 
 METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
@@ -625,7 +630,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cPedPrvL == nil .or. cNumPed == nil
-      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -639,7 +644,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNPedPrv( ::cPedPrvL ) - ( ::cPedPrvL )->nUniEnt
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cPedPrvL )->nFacCnv != 0
@@ -766,7 +771,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cFacPrvL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -780,7 +785,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNFacPrv( ::cFacPrvL )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cFacPrvL )->nFacCnv != 0
@@ -834,7 +839,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cRctPrvL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -848,7 +853,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNRctPrv( ::cRctPrvL )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cRctPrvL )->nFacCnv != 0
@@ -903,7 +908,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbCliT ) .or. Empty( ::cAlbCliL ) .or. Empty( ::cAlbPrvL )
-      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -1134,7 +1139,7 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cPedPrvL )
-      msgStop( "Imposible actualizar el estado del pedido.", "Atenci髇" )
+      msgStop( "Imposible actualizar el estado del pedido.", "Atenci贸n" )
       return self
    end if
 
@@ -1304,7 +1309,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    */
 
    if ::cFacRecL == nil .or. cNumFac == nil
-      msgStop( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgStop( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -1318,7 +1323,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
             nUnits      := nTotNFacRec( ::cFacRecL )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cFacRecL )->nFacCnv != 0
@@ -1396,7 +1401,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
             nUnits      := ( ::cTikL )->nUntTil
 
             /*
-            mult. las unidades por su Tiktor de conversi髇
+            mult. las unidades por su Tiktor de conversi贸n
             */
 
             if ( ::cTikL )->nFacCnv != 0
@@ -1571,7 +1576,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
 
    if oMeter != NIL
       oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Art韈ulos"
+      oMeter:cText  := "Art铆culos"
    end if
 
    while !( dbf )->( eof() )
@@ -1579,7 +1584,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
       cCodAnt  := ( dbf )->Codigo
       ( dbf )->( dbSkip() )
       if cCodAnt == ( dbf )->Codigo .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Art韈ulo duplicado : " + cCodAnt } )
+         aAdd( aMsg, { .t., "Art铆culo duplicado : " + cCodAnt } )
          lDup  := .t.
       end if
 
@@ -3734,7 +3739,7 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
       oMtr:AutoInc()
    end if
 
-   //Recorremos movimientos de almac閚-----------------------------------------
+   //Recorremos movimientos de almac茅n-----------------------------------------
 
    if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
@@ -3815,7 +3820,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    DEFAULT cLote        := Space( 12 )
 
    /*
-   Recorremos movimientos de almac閚-------------------------------------------
+   Recorremos movimientos de almac茅n-------------------------------------------
    */
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
@@ -3943,7 +3948,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    end if
 
    /*
-   Recorremos partes de producci髇---------------------------
+   Recorremos partes de producci贸n---------------------------
    */
 
    if ( ::cProducL )->( dbSeek( cCodArt + cValPr1 + cValPr2 + cLote ) )
@@ -4074,6 +4079,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
+   // ::GetCodigoAlmacen( cCodAlm )
+
    ::lLote              := lLote
    ::lNumeroSerie       := lNumeroSerie
 
@@ -4100,7 +4107,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    nOrdHisMov           := ( ::cHisMovT )->( OrdSetFocus( "cRefMov"  ) )
 
    /*
-   Movimientos de almac閚------------------------------------------------------
+   Movimientos de almac茅n------------------------------------------------------
    */
 
    SysRefresh()
@@ -4988,7 +4995,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
       ::lCheckConsolidacion( cCodArt )
 
       /*
-      Movimientos de almac閚------------------------------------------------------
+      Movimientos de almac茅n------------------------------------------------------
       */
 
       if ( ::cHisMovS )->( dbSeek( cCodArt + cCodAlm + cNumeroSerie ) )
@@ -5623,7 +5630,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
          end if
 
          /*
-         Movimientos de almac閚------------------------------------------------------
+         Movimientos de almac茅n------------------------------------------------------
          */
 
          SysRefresh()
@@ -5790,7 +5797,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
 
    ::aSeries               := aNumSer
 
-   DEFINE DIALOG oDlg RESOURCE "BrowseNumeroSerie"  TITLE "Seleccionar n鷐ero de serie"
+   DEFINE DIALOG oDlg RESOURCE "BrowseNumeroSerie"  TITLE "Seleccionar n煤mero de serie"
 
       REDEFINE GET         oGet ;
          VAR               cGet ;
@@ -5813,7 +5820,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "N鷐ero de serie"
+         :cHeader          := "N煤mero de serie"
          :bStrData         := {|| if( !Empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cNumeroSerie, "" ) }
          :nWidth           := 200
       end with
@@ -6186,7 +6193,7 @@ Method SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente, lAviso )
 
          if lAviso
             msgStop( "El riesgo alacanzado es de " + Alltrim( Trans( nRiesgo, cPorDiv() ) ) + "; sobre el establecido en su ficha " + Alltrim( Trans( nRiesgoCliente, cPorDiv() ) ) + ".",;
-                     "El riesgo del cliente supera el l韒ite establecido" )
+                     "El riesgo del cliente supera el l铆mite establecido" )
 
          end if
 
@@ -6266,6 +6273,28 @@ Return ( lCheck )
 
 //---------------------------------------------------------------------------//
 
+METHOD GetCodigoAlmacen( cCodigoAlmacen )
+
+   if !Empty( cCodigoAlmacen )
+      ::uCodigoAlmacen  := { cCodigoAlmacen }
+      aChildAlmacen( cCodigoAlmacen, ::uCodigoAlmacen, ::cAlm )
+   else
+      ::cCodigoAlmacen  := cCodigoAlmacen
+   end if 
+
+Return ( ::uCodigoAlmacen )
+
+//---------------------------------------------------------------------------//
+
+METHOD lCodigoAlmacen( cCodigoAlmacen )
+
+   if empty( cCodigoAlmacen )
+      return .t.
+   end if 
+
+Return ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
+
+//---------------------------------------------------------------------------//
 
 Static Function SeekOnStock( cSeek, oBrw )
 

@@ -7563,7 +7563,7 @@ function aItmPedPrv()
                      { "cTurPed",   "C",  6,   0, "Sesión del pedido",           "",                   "", "( cDbf )"},;
                      { "dFecPed",   "D",  8,   0, "Fecha del pedido",            "",                   "", "( cDbf )"},;
                      { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",        "",                   "", "( cDbf )"},;
-                     { "cCodAlm",   "C", 12,   0, "Código de almacen",           "",                   "", "( cDbf )"},;
+                     { "cCodAlm",   "C", 16,   0, "Código de almacen",           "",                   "", "( cDbf )"},;
                      { "cCodCaj",   "C",  3,   0, "Código de caja",              "",                   "", "( cDbf )"},;
                      { "cNomPrv",   "C", 35,   0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"},;
                      { "cDirPrv",   "C", 35,   0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"},;
@@ -7660,7 +7660,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "cRef",    "C", 18,   0, "Referencia del artículo",          "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "cRefPrv", "C", 18,   0, "Referencia del proveedor",         "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "cDetalle","C",250,   0, "Nombre del artículo",              "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "nIva",    "N",  6,   2, "Porcentaje de " + cImp(),                "'@E 99.9'",         "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "nIva",    "N",  6,   2, "Porcentaje de " + cImp(),          "'@E 99.9'",         "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nCanPed", "N", 16,   6, "Cantidad pedida",                  "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nUniCaja","N", 16,   6, "Unidades por caja",                "MasUnd()",          "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nPreDiv", "N", 16,   6, "Precio",                           "cPirDivPed",        "", "(cDbfCol)" } )
@@ -7677,7 +7677,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "cValPr2", "C", 20,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nFacCnv", "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nCtlStk", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "cAlmLin" ,"C", 12,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "cAlmLin" ,"C", 16,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "lLotE",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nLote",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
    aAdd( aColPedPrv,  { "cLote",   "C", 12,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
