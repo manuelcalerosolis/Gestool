@@ -2550,7 +2550,7 @@ METHOD InsertAcreedor()
       :Provincia(    ::oCtaRem:oDbf:cProAcr )
       :Pais(         ::oCtaRem:oDbf:cPaiAcr )
       :Nif(          ::oCtaRem:oDbf:cNifPre )
-      :CuentaIBAN(   ::CuentaRemesa() )   
+      :CuentaIBAN(   ::CuentaRemesa() )    
    end with
 
 RETURN ( Self )
@@ -2560,12 +2560,8 @@ RETURN ( Self )
 METHOD InsertDeudor()
 
    with object ( ::oCuaderno:InsertDeudor() )
-
-   // msgAlert( alltrim( ::oDbfDet:cCodCli ) + ::TextoDocumento() + tstring( seconds() ) ) 
-
       :Referencia(         "Recibo" + ::TextoDocumento() )
-      :ReferenciaMandato(  alltrim( ::oDbfDet:cCodCli ) + ::TextoDocumento() + tstring( seconds() ) )
-      :Importe(            nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() ) )
+      :ReferenciaMandato(  alltrim( ::oDbfDet:cCodCli ) + ::TextoDocumento() + tstring( seconds() ) ) 
       :EntidadBIC(         ::GetBICClient() )
       :Nombre(             ::oClientes:Titulo )
       :Direccion(          ::oClientes:Domicilio )
