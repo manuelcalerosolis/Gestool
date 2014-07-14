@@ -1473,15 +1473,15 @@ METHOD ImportaArticulos()
             ::oDbfArtGst:pVtaIva2   := ::oDbfArtFac:Venta2 + ( ( ::oDbfArtFac:Venta2 * 4 ) / 100 )
             ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:Venta3 + ( ( ::oDbfArtFac:Venta3 * 4 ) / 100 )
          case ::oDbfArtFac:Iva  == 2
-            ::oDbfArtGst:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, 7 )
-            ::oDbfArtGst:pVtaIva1   := ::oDbfArtFac:Venta1 + ( ( ::oDbfArtFac:Venta1 * 7 ) / 100 )
-            ::oDbfArtGst:pVtaIva2   := ::oDbfArtFac:Venta2 + ( ( ::oDbfArtFac:Venta2 * 7 ) / 100 )
-            ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:Venta3 + ( ( ::oDbfArtFac:Venta3 * 7 ) / 100 )
+            ::oDbfArtGst:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, 10 )
+            ::oDbfArtGst:pVtaIva1   := ::oDbfArtFac:Venta1 + ( ( ::oDbfArtFac:Venta1 * 10 ) / 100 )
+            ::oDbfArtGst:pVtaIva2   := ::oDbfArtFac:Venta2 + ( ( ::oDbfArtFac:Venta2 * 10 ) / 100 )
+            ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:Venta3 + ( ( ::oDbfArtFac:Venta3 * 10 ) / 100 )
          case ::oDbfArtFac:Iva  == 3
-            ::oDbfArtGst:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, 16 )
-            ::oDbfArtGst:pVtaIva1   := ::oDbfArtFac:Venta1 + ( ( ::oDbfArtFac:Venta1 * 16 ) / 100 )
-            ::oDbfArtGst:pVtaIva2   := ::oDbfArtFac:Venta2 + ( ( ::oDbfArtFac:Venta2 * 16 ) / 100 )
-            ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:Venta3 + ( ( ::oDbfArtFac:Venta3 * 16 ) / 100 )
+            ::oDbfArtGst:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, 21 )
+            ::oDbfArtGst:pVtaIva1   := ::oDbfArtFac:Venta1 + ( ( ::oDbfArtFac:Venta1 * 21 ) / 100 )
+            ::oDbfArtGst:pVtaIva2   := ::oDbfArtFac:Venta2 + ( ( ::oDbfArtFac:Venta2 * 21 ) / 100 )
+            ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:Venta3 + ( ( ::oDbfArtFac:Venta3 * 21 ) / 100 )
       end case
 
       if ::oDbfFamGst:Seek( UPPER( ::oDbfArtFac:Familia ) )
