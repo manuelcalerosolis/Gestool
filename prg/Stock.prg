@@ -4065,18 +4065,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdProducM
    local nOrdHisMov
 
-
-   msgAlert( cCodArt, "cCodArt" )
-   msgAlert( cCodAlm, "cCodAlm" )
-   msgAlert( oBrw, "oBrw" )
-   msgAlert( lLote, "lLote" )
-   msgAlert( lNumeroSerie, "lNumeroSerie" )
-   msgAlert( dFecIni, "dFecIni" )
-   msgAlert( dFecFin, "dFecFin" )
-   msgAlert( lNotPendiente, "lNotPendiente" )
-
-   cCodAlm              := nil
-
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
    DEFAULT lNotPendiente:= .f.
