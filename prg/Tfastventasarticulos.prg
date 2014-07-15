@@ -1973,9 +1973,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       AÃ±adimos un nuevo registro----------------------------------------------
       */
 
-      if ::InsertIfValid()
-         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
-      end if
+      ::InsertIfValid()
 
       // Añadimos los stocks---------------------------------------------------
 
