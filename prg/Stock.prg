@@ -4077,7 +4077,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
-   //SetCodigoAlmacen( cCodAlm )
+   ::SetCodigoAlmacen( cCodAlm )
 
    lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
 
@@ -4179,8 +4179,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    /*
    Albaranes de proveedor------------------------------------------------------
    */
-
-   msgAlert( IsTrue( ::lAlbPrv ), "IsTrue( ::lAlbPrv )" )
 
    if IsTrue( ::lAlbPrv ) .and. ( ::cAlbPrvL )->( dbSeek( cCodArt ) )
 
