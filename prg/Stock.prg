@@ -4065,11 +4065,21 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdProducM
    local nOrdHisMov
 
+
+   msgAlert( cCodArt, "cCodArt" )
+   msgAlert( cCodAlm, "cCodAlm" )
+   msgAlert( oBrw, "oBrw" )
+   msgAlert( lLote, "lLote" )
+   msgAlert( lNumeroSerie, "lNumeroSerie" )
+   msgAlert( dFecIni, "dFecIni" )
+   msgAlert( dFecFin, "dFecFin" )
+   msgAlert( lNotPendiente, "lNotPendiente" )
+
+   cCodAlm              := nil
+
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
    DEFAULT lNotPendiente:= .f.
-
-   lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
 
    ::aStocks            := {}
 
@@ -4079,7 +4089,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
-   ::SetCodigoAlmacen( cCodAlm )
+   //SetCodigoAlmacen( cCodAlm )
+
+   lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
 
    ::lLote              := lLote
    ::lNumeroSerie       := lNumeroSerie
@@ -4112,7 +4124,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    SysRefresh()
 
-   if ( ::cHisMovT)->( dbSeek( cCodArt ) )
+   if ( ::cHisMovT )->( dbSeek( cCodArt ) )
 
       while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
@@ -4179,6 +4191,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    /*
    Albaranes de proveedor------------------------------------------------------
    */
+
+   msgAlert( IsTrue( ::lAlbPrv ), "IsTrue( ::lAlbPrv )" )
 
    if IsTrue( ::lAlbPrv ) .and. ( ::cAlbPrvL )->( dbSeek( cCodArt ) )
 

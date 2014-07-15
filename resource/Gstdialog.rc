@@ -12006,8 +12006,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 171, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 64, 166, 65, 11
   CONTROL "Alm. origen", 332, "Static", WS_GROUP, 132, 131, 40, 8
   CONTROL "Stock destino", -1, "Static", WS_GROUP, 132, 169, 49, 8
-  CONTROL "", 4001, "Edit", ES_RIGHT|WS_BORDER, 181, 141, 70, 11
-  CONTROL "Stock origen", -1, "Static", WS_GROUP, 132, 144, 45, 8
+  CONTROL "", 340, "Edit", ES_RIGHT|WS_BORDER, 181, 141, 70, 11
+  CONTROL "Stock origen", 341, "Static", WS_GROUP, 132, 144, 45, 8
 }
 
 LALBPRV_2 DIALOG DISCARDABLE 26, 35, 360, 261

@@ -311,6 +311,9 @@ static oBtnNumerosSerie
 
 static lIncidencia      := .f.
 
+static oGetStkOrigen
+static nGetStkOrigen     := 0
+
 //----------------------------------------------------------------------------//
 
 FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
@@ -2781,16 +2784,26 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          IDTEXT   331 ;
          IDSAY    332 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
+         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ),;
+                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ __CALMORIGEN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStkOrigen ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET oGetStkOrigen VAR nGetStkOrigen ;
+         ID       340 ;
+         IDSAY    341 ;
+         WHEN     .f. ;
+         PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ]  ;
          ID       240 ;
          IDTEXT   241 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+         VALID    (  msgAlert( "cAlmLin" ),;
+                     cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ),;
+                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -3192,8 +3205,10 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
 
    if uFieldEmpresa( "lShowOrg" )
       aGet[ __CALMORIGEN ]:Show()
+      oGetStkOrigen:Show()
    else
       aGet[ __CALMORIGEN ]:Hide()
+      oGetStkOrigen:Hide()
    end if
 
    if aGet[ _NPNTVER ] != nil
