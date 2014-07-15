@@ -1326,7 +1326,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM]  ;
 			ID 		150 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbicaT( aTmp, aGet ), cAlmacen( aGet[_CCODALM], TDataView():Almacen( nView ), oSay[ 2 ] ) ) ;
+         VALID    ( cAlmacen( aGet[_CCODALM], TDataView():Almacen( nView ), oSay[ 2 ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay[ 2 ] ) ) ;
 			COLOR 	CLR_GET ;
@@ -2087,7 +2087,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    end case
 
 	ACTIVATE DIALOG oDlg	;
-      ON INIT     (  if( !Empty( cCodPed ), aGet[ _CNUMPED ]:lValid(), ), cNomUbicaT( aTmp, aGet ), EdtRecMenu( aTmp, oDlg ),;
+      ON INIT     (  if( !Empty( cCodPed ), aGet[ _CNUMPED ]:lValid(), ),;
+                     EdtRecMenu( aTmp, oDlg ),;
                      oBrwLin:Load() ) ;
       ON PAINT    ( RecalculaTotal( aTmp ) );
       CENTER
@@ -2759,12 +2760,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE GET oGetStk VAR nGetStk ;
-         ID       190 ;
-         WHEN     .f. ;
-			PICTURE 	cPicUnd ;
-			OF 		oFld:aDialogs[1]
-
       REDEFINE GET aGet[ _CREFPRV ] VAR aTmp[ _CREFPRV ];
          ID       400 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -2791,61 +2786,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
+      REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ]  ;
          ID       240 ;
          IDTEXT   241 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbica( aTmp, aGet ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), aGet[_CALMLIN]:oHelpText ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+         VALID    ( cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( Self, aGet[_CALMLIN] ) ) ;
+         ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;
 			OF 		oFld:aDialogs[1]
 
-	   REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
-         ID       300 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI1] VAR aTmp[_CVALUBI1] ;
-         ID       270 ;
-         BITMAP   "LUPA" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI1], aGet[_CNOMUBI1], aTmp[_CCODUBI1], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI1] VAR aTmp[_CNOMUBI1];
-         WHEN     .F. ;
-         ID       271 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI2] VAR aTmp[_CCODUBI2];
-         ID       310 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI2] VAR aTmp[_CVALUBI2] ;
-         ID       280 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI2], aGet[_CNOMUBI2], aTmp[_CCODUBI2], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI2] VAR aTmp[_CNOMUBI2];
-         WHEN     .F. ;
-         ID       281 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI3] VAR aTmp[_CCODUBI3];
-         ID       320 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI3] VAR aTmp[_CVALUBI3] ;
-         ID       290 ;
-         BITMAP   "LUPA" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI3], aGet[_CNOMUBI3], aTmp[_CCODUBI3], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI3] VAR aTmp[_CNOMUBI3];
-         WHEN     .F. ;
-         ID       291 ;
+      REDEFINE GET oGetStk VAR nGetStk ;
+         ID       190 ;
+         WHEN     .f. ;
+         PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oTotal VAR nTotal ;
@@ -3214,122 +3167,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    EndDetMenu()
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static Function cNomUbica( aTmp, aGet )
-
-   aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], TDataView():Almacen( nView ), 1 )
-   aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], TDataView():Almacen( nView ), 2 )
-   aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], TDataView():Almacen( nView ), 3 )
-
-   if Empty( aTmp[_CCODUBI1] )
-      aGet[_CCODUBI1]:Hide()
-      aGet[_CVALUBI1]:Hide()
-      aGet[_CNOMUBI1]:Hide()
-   else
-      aGet[_CCODUBI1]:Show()
-      aGet[_CVALUBI1]:Show()
-      aGet[_CNOMUBI1]:Show()
-   end if
-
-   if Empty( aTmp[_CCODUBI2] )
-      aGet[_CCODUBI2]:Hide()
-      aGet[_CVALUBI2]:Hide()
-      aGet[_CNOMUBI2]:Hide()
-   else
-      aGet[_CCODUBI2]:Show()
-      aGet[_CVALUBI2]:Show()
-      aGet[_CNOMUBI2]:Show()
-   end if
-
-   if Empty( aTmp[_CCODUBI3] )
-      aGet[_CCODUBI3]:Hide()
-      aGet[_CVALUBI3]:Hide()
-      aGet[_CNOMUBI3]:Hide()
-   else
-      aGet[_CCODUBI3]:Show()
-      aGet[_CVALUBI3]:Show()
-      aGet[_CNOMUBI3]:Show()
-   end if
-
-   aGet[_CCODUBI1]:Refresh()
-   aGet[_CVALUBI1]:Refresh()
-   aGet[_CNOMUBI1]:Refresh()
-   aGet[_CCODUBI2]:Refresh()
-   aGet[_CVALUBI2]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-   aGet[_CCODUBI3]:Refresh()
-   aGet[_CVALUBI3]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static Function cNomUbicaT( aTmp, aGet )
-
-   if !Empty( aTmp[_CCODALM] )
-
-      aTmp[_CCODUBIT1]      := cGetUbica( aTmp[_CCODALM], TDataView():Almacen( nView ), 1 )
-      aTmp[_CCODUBIT2]      := cGetUbica( aTmp[_CCODALM], TDataView():Almacen( nView ), 2 )
-      aTmp[_CCODUBIT3]      := cGetUbica( aTmp[_CCODALM], TDataView():Almacen( nView ), 3 )
-
-      if Empty( aTmp[_CCODUBIT1] )
-         aGet[_CCODUBIT1]:Hide()
-         aGet[_CVALUBIT1]:Hide()
-         aGet[_CNOMUBIT1]:Hide()
-      else
-         aGet[_CCODUBIT1]:Show()
-         aGet[_CVALUBIT1]:Show()
-         aGet[_CNOMUBIT1]:Show()
-      end if
-
-      if Empty( aTmp[_CCODUBIT2] )
-         aGet[_CCODUBIT2]:Hide()
-         aGet[_CVALUBIT2]:Hide()
-         aGet[_CNOMUBIT2]:Hide()
-      else
-         aGet[_CCODUBIT2]:Show()
-         aGet[_CVALUBIT2]:Show()
-         aGet[_CNOMUBIT2]:Show()
-      end if
-
-      if Empty( aTmp[_CCODUBIT3] )
-         aGet[_CCODUBIT3]:Hide()
-         aGet[_CVALUBIT3]:Hide()
-         aGet[_CNOMUBIT3]:Hide()
-      else
-         aGet[_CCODUBIT3]:Show()
-         aGet[_CVALUBIT3]:Show()
-         aGet[_CNOMUBIT3]:Show()
-      end if
-
-   else
-
-      aGet[_CCODUBIT1]:Hide()
-      aGet[_CVALUBIT1]:Hide()
-      aGet[_CNOMUBIT1]:Hide()
-      aGet[_CCODUBIT2]:Hide()
-      aGet[_CVALUBIT2]:Hide()
-      aGet[_CNOMUBIT2]:Hide()
-      aGet[_CCODUBIT3]:Hide()
-      aGet[_CVALUBIT3]:Hide()
-      aGet[_CNOMUBIT3]:Hide()
-
-   end if
-
-   aGet[_CCODUBIT1]:Refresh()
-   aGet[_CVALUBIT1]:Refresh()
-   aGet[_CNOMUBIT1]:Refresh()
-   aGet[_CCODUBIT2]:Refresh()
-   aGet[_CVALUBIT2]:Refresh()
-   aGet[_CNOMUBIT3]:Refresh()
-   aGet[_CCODUBIT3]:Refresh()
-   aGet[_CVALUBIT3]:Refresh()
-   aGet[_CNOMUBIT3]:Refresh()
-
-return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -9129,8 +8966,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "lLabel",       "L",  1,  0, "Lógico para marca de etiqueta","",                   "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nLabel",       "N",  6,  0, "Unidades de etiquetas a imprimir","",                "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "dFecAlb",      "D",  8,  0, "Fecha de albaran",            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "lNumSer",      "L",  1, 0, "Lógico solicitar numero de serie", "",                "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "lAutSer",      "L",  1, 0, "Lógico de autoserializar",     "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "lNumSer",      "L",  1,  0, "Lógico solicitar numero de serie", "",               "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "lAutSer",      "L",  1,  0, "Lógico de autoserializar",     "",                   "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,        "cPirDivAlb",          "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
 

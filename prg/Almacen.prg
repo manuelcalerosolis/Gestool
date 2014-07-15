@@ -1277,7 +1277,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
          :cHeader          := "Código"
          :cSortOrder       := "cCodAlm"
          :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
-         :nWidth           := 80
+         :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 

@@ -2561,7 +2561,7 @@ METHOD InsertDeudor()
 
    with object ( ::oCuaderno:InsertDeudor() )
       :Referencia(         "Recibo" + ::TextoDocumento() )
-      :ReferenciaMandato(  alltrim( ::oDbfDet:cCodCli ) + ::TextoDocumento() + tstring( seconds() ) ) 
+      :ReferenciaMandato(  alltrim( upper( ::TextoDocumento() ) ) ) 
       :EntidadBIC(         ::GetBICClient() )
       :Nombre(             ::oClientes:Titulo )
       :Direccion(          ::oClientes:Domicilio )
@@ -2570,7 +2570,7 @@ METHOD InsertDeudor()
       :Provincia(          ::oClientes:Provincia )
       :Nif(                ::oClientes:Provincia )
       :CuentaIBAN(         ::GetValidCuentaCliente() )
-      :Concepto(           "Factura Nº" + ::TextoDocumento() )
+      :Concepto(           "Factura Nº" + ::TextoDocumento() ) 
    end with
 
 RETURN ( Self )

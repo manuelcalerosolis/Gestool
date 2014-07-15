@@ -67,7 +67,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD SetInformeDataReport()
 
-   METHOD lStocks()                       INLINE ( ::cReportType == "Existencias por stocks" )
+   METHOD lStocks()                       INLINE ( ::cReportType == "Por stocks" )
 
    METHOD AddVariableStock()              
 
@@ -614,7 +614,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:getHasta() )        .and.;
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
-      ( ::cReportType == "Existencias" .or.( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() ) )
+      ( ::lStocks() .or. ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() ) )
 
       Return .t.
 
@@ -1970,12 +1970,20 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       ::oDbf:cCodUsr  := ""
 
       /*
-      Añadimos un nuevo registro
+      Añadimos un nuevo registro----------------------------------------------
       */
- 
-      if ::InsertIfValid() .and. lStock
+
+      if ::InsertIfValid()
          ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
       end if
+
+      // A�adimos los stocks---------------------------------------------------
+
+      if lStock
+         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
+      end if
+ 
+      // siguiente
 
       ::oDbfArt:Skip()
 

@@ -263,7 +263,7 @@ CLASS TStock
    METHOD nPendientesRecibirInStock()  
    METHOD nPendientesEntregarInStock()  
 
-   METHOD GetCodigoAlmacen( cCodigoAlmacen )
+   METHOD SetCodigoAlmacen( cCodigoAlmacen )
    METHOD lCodigoAlmacen( cCodigoAlmacen )
 
 END CLASS
@@ -4079,7 +4079,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
-   ::GetCodigoAlmacen( cCodAlm )
+   ::SetCodigoAlmacen( cCodAlm )
 
    ::lLote              := lLote
    ::lNumeroSerie       := lNumeroSerie
@@ -6273,7 +6273,7 @@ Return ( lCheck )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetCodigoAlmacen( cCodigoAlmacen )
+METHOD SetCodigoAlmacen( cCodigoAlmacen )
 
    if !Empty( cCodigoAlmacen )
       ::uCodigoAlmacen  := { cCodigoAlmacen }

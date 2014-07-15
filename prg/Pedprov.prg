@@ -2541,16 +2541,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       REDEFINE GET oSayVp2 VAR cSayVp2;
          ID       232 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ]  ;
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+         VALID    ( cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
 		REDEFINE GET oSay2 VAR cSay2 ;
