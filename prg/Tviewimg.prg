@@ -453,35 +453,22 @@ if nLen > 0
           rc[ 2 ]          += ::nHSep / 2
 
           rc[ 3 ]          -= ::nVSep / 2
-          /*
-          if ::lTitle
-             rc[ 3 ]       -= ::nHTitle
-          endif
-          */
           rc[ 4 ]          -= ::nHSep / 2
 
-          if .t. // ::lShowOption
+          nClrPane := nil
 
-             nClrPane := nil
-
-             if .f. // n == ::nOption
-                nClrPane         := ::nClrPaneSel
-             else
-                if oItem:nClrPane != nil
-                   nClrPane      := oItem:nClrPane
-                else
-                   if ::nClrPaneTile != nil
-                      nClrPane   := ::nClrPaneTile
-                   endif
-                endif
+          if oItem:nClrPane != nil
+             nClrPane      := oItem:nClrPane
+          else
+             if ::nClrPaneTile != nil
+                nClrPane   := ::nClrPaneTile
              endif
+          endif
 
-             if nClrPane != nil
-                if !::lBoxSelection
-                   FillSolidRect( ::hDC, rc, nClrPane )
-                endif
-             endif
-
+          if nClrPane != nil
+            if !::lBoxSelection
+               FillSolidRect( ::hDC, rc, nClrPane )
+            endif
           endif
 
           /*
@@ -580,10 +567,8 @@ if nLen > 0
                 rc[1] := rc[3] - ::nHTitle
              endif
 
-             if .t. // n == ::nOption
-                SetTextColor( ::hDC, nColor )
-                nColor  := SetTextColor(::hDC, ::nClrTextSel )
-             endif
+             SetTextColor( ::hDC, nColor )
+             nColor  := SetTextColor(::hDC, ::nClrTextSel )
 
              // Pintamos sobre el alpha----------------------------------------
 
@@ -599,14 +584,10 @@ if nLen > 0
 
              // Pintamos el texto----------------------------------------------
 
-             // DrawText( ::hDC, Alltrim( Str( rc[1] ) ) + ": " + Alltrim( Str( rc[2] ) ) + ": " + Alltrim( Str( rc[3] ) ) + ": " + Alltrim( Str( rc[4] ) ), rc, ::nAlignText ) //c,vc,sl
-
              DrawText( ::hDC, cText, rc, ::nAlignText ) //c,vc,sl
 
-             if .t. //n == ::nOption
-                SetTextColor( ::hDC, nColor )
-                nColor  := SetTextColor(::hDC, ::nClrText )
-             endif
+             SetTextColor( ::hDC, nColor )
+             nColor  := SetTextColor(::hDC, ::nClrText )
 
           endif
 

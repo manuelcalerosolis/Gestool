@@ -2541,16 +2541,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       REDEFINE GET oSayVp2 VAR cSayVp2;
          ID       232 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ]  ;
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+         VALID    (  cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), oSay2 ),;
+                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
 		REDEFINE GET oSay2 VAR cSay2 ;
@@ -7678,7 +7677,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nFacCnv", "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nCtlStk", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "cAlmLin" ,"C", 16,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lLotE",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lLote",   "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nLote",   "N",  9,   0, "",                                 "'999999999'",       "", "(cDbfCol)" } ) 
    aAdd( aColPedPrv,  { "cLote",   "C", 12,   0, "Número de lote",                   "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nNumLin", "N",  4,   0, "Número de la línea",               "'9999'",            "", "(cDbfCol)" } )
@@ -7687,7 +7686,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "lKitChl", "L",  1,   0, "Línea pertenciente a escandallo",  "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "lKitPrc", "L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "lImpLin", "L",  1,   0, "Imprimir linea",                   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "lConTroL","L",  1,   0, "" ,                                "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "lControl","L",  1,   0, "" ,                                "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "mNumSer", "M", 10,   0, "" ,                                "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "lAnulado","L",  1,   0, "Anular linea",                     "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "dAnulado","D",  8,   0, "Fecha de anulacion",               "",                  "", "(cDbfCol)" } )
