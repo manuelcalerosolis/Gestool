@@ -228,7 +228,7 @@ METHOD Resource()
 
       ::oParent:oDetMenuArticulo:oDbfVir:SetBrowse( ::oBrwArticulosOrden ) 
 
-      ::oBrwArticulosOrden:bLDblClick     := {|| EdtArticulo(::oParent:oDetMenuArticulo:oDbfVir:cCodArt) }
+      ::oBrwArticulosOrden:bLDblClick     := {|| ::oParent:oDetMenuArticulo:Edit( ::oBrwArticulosOrden ) }
 
       ::oBrwArticulosOrden:nMarqueeStyle  := 6
       ::oBrwArticulosOrden:cName          := "Lineas de menus de articulos"
@@ -275,6 +275,12 @@ METHOD Resource()
          OF       oDlg ;
          ACTION   ( EdtArticulo( ::oParent:oDetMenuArticulo:oDbfVir:cCodArt ) )
 
+      REDEFINE BUTTON ;
+         ID       503 ;
+         OF       oDlg ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
+         ACTION   ( ::oParent:oDetMenuArticulo:Edit( ::oBrwArticulosOrden ) )
+
       // Botones------------------------------------------------------------------
 
       REDEFINE BUTTON ;
@@ -290,6 +296,7 @@ METHOD Resource()
 
       if ::nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| ::oParent:oDetMenuArticulo:Append( ::oBrwArticulosOrden ) } )
+         oDlg:AddFastKey( VK_F3, {|| ::oParent:oDetMenuArticulo:Edit( ::oBrwArticulosOrden ) } )
          oDlg:AddFastKey( VK_F4, {|| ::oParent:oDetMenuArticulo:Del( ::oBrwArticulosOrden ) } )
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oDlg ) } )
       end if

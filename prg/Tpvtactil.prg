@@ -3642,7 +3642,8 @@ METHOD Resource() CLASS TpvTactil
    if !::l1024()
       ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
       ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
-      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )   
+      ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
+      ::oBtnPrecioUnidades    := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )   
    end if
 
    /*
@@ -5018,7 +5019,7 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
       // Vemos si este atículo es acumulable-----------------------------------
 
-      if !::lAcumulaArticulo( cCodigoOrden )
+      if !::lAcumulaArticulo( cCodigoMenu, cCodigoOrden )
 
          // Agregamos el articulo----------------------------------------------
 
@@ -5026,7 +5027,7 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
          // Vemos si este artículo tiene un menú de acompañamiento-------------
 
-         ::AgregarMenuAcompannamiento( ::oArticulo:cMenu )
+         ::AgregarMenuAcompannamiento( ::oArticulo:cMenu, cCodigoMenu )
 
          // Iniciamos los comentarios------------------------------------------
 
@@ -5260,7 +5261,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    // Obtenemos el precio del articulo-----------------------------------------
 
-   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo( cCodigoArticulo )
+   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    ::oTemporalLinea:Save()
 
@@ -5281,7 +5282,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu )
+METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCodigoOrden )
 
    // Localizamos el articulo--------------------------------------------------
 
@@ -5299,8 +5300,15 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu )
    ::oTemporalLinea:Blank()
        
    ::oTemporalLinea:nNumLin      := ::nNumeroLinea
-   ::oTemporalLinea:nLinMnu      := bottomNumber
 
+   // Comprobamos si este acompañamiento pertenece a un artículo de un menú
+   if Empty( ::GetLineaMenu() )
+      ::oTemporalLinea:nLinMnu      := bottomNumber
+   else
+      ::oTemporalLinea:nLinMnu      := ::GetLineaMenu()
+   end if
+
+   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    ::oTemporalLinea:nUntTil      := nUnidadesMenu
    ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
    ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
@@ -5333,7 +5341,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu )
 
    // Agregamos los kits si es el caso-----------------------------------------
 
-   ::AgregarKit( cCodigoArticulo, nUnidadesMenu, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
+   ::AgregarKit( cCodigoArticulo, nUnidadesMenu, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2, ::GetLineaMenu() )
 
    CursorWE()
 
@@ -5451,17 +5459,25 @@ RETURN ( oDlgPropiedadArticulo:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD nPrecioArticulo( cCodigoArticulo ) CLASS TpvTactil
+METHOD nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
    local sOferta
    local cCodGrp
    local nPrecio        := 0
    local nTotalLinea    := 0
 
-   // si la pertenece a un menu el precio va en el menu---------------------------
+   // si el artículo pertenece a un menú comprobamos si tiene incremento, y si no el precio es 0 //
 
-   if ::GetLineaMenu() != bottomNumber
+   if !Empty(cCodigoMenu) 
+
+      if ::oTpvMenuArticulo:IncrementoPrecio( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) != 0
+
+         nPrecio        := ::oTpvMenuArticulo:IncrementoPrecio( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+
+      end if
+
       Return ( nPrecio )
+
    end if 
 
    // si estamos capturando el precio por pantalla-----------------------------
@@ -5511,7 +5527,7 @@ Return ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
-METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
+METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
    local lReturn        := .f.
    local nPrecioLinea
@@ -5564,7 +5580,8 @@ METHOD lAcumulaArticulo( cCodigoOrden ) CLASS TpvTactil
 
       while ( ::oTemporalLinea:cCbaTil == ::oArticulo:Codigo ) .and. !( ::oTemporalLinea:Eof() )
 
-         nPrecioLinea      := ::nPrecioArticulo( ::oArticulo:Codigo )
+         
+         nPrecioLinea      := ::nPrecioArticulo( ::oArticulo:Codigo, cCodigoMenu, cCodigoOrden )
 
          // Obtenemos el codigo de orden si no nos lo pasan--------------------
 
@@ -9800,7 +9817,9 @@ METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )
          end if
 
          if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
+
             :cImage        := ::cFileBmpName( ::oArticulo:cImagen )
+         
          else
             
             if ::oArticulo:nColBtn == 0 
