@@ -1950,7 +1950,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       */
 
       ( TDataView():Get( "Client", nView ))->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli ) )
-      ( TDataView():Get( "FPago", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodPago) )
+      ( TDataView():Get( "FPago", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodPago ) )
       ( dbfAgent  )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodAge ) )
       ( dbfObrasT )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli + ( TDataView():Get( "AlbCliT", nView ) )->cCodObr ) )
       ( dbfDelega )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cCodDlg ) )

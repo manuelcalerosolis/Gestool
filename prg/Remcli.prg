@@ -144,6 +144,8 @@ CLASS TRemesas FROM TMasDet
    METHOD GetBICClient()            INLINE ( GetBIC( ::GetValidEntidadCliente() ) )
 
    METHOD TextoDocumento()          INLINE ( ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac )
+   METHOD IdDocumento()             INLINE ( ::oDbfDet:cSerie + AllTrim( Str( ::oDbfDet:nNumFac ) ) +  ::oDbfDet:cSufFac )
+   METHOD ImporteDocumento()        INLINE ( ::oDbfDet:nImporte )
 
    METHOD CuentaRemesa()            INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
 
@@ -2560,17 +2562,18 @@ RETURN ( Self )
 METHOD InsertDeudor()
 
    with object ( ::oCuaderno:InsertDeudor() )
-      :Referencia(         "Recibo" + ::TextoDocumento() )
-      :ReferenciaMandato(  alltrim( upper( ::TextoDocumento() ) ) ) 
+      :Referencia(         "RECIBO" + ::TextoDocumento() )
+      :ReferenciaMandato(  ::IdDocumento() ) 
+      :Importe(            ::ImporteDocumento() )
       :EntidadBIC(         ::GetBICClient() )
       :Nombre(             ::oClientes:Titulo )
       :Direccion(          ::oClientes:Domicilio )
       :CodigoPostal(       ::oClientes:CodPostal )
       :Poblacion(          ::oClientes:Poblacion )
       :Provincia(          ::oClientes:Provincia )
-      :Nif(                ::oClientes:Provincia )
+      :Nif(                ::oClientes:Nif )
       :CuentaIBAN(         ::GetValidCuentaCliente() )
-      :Concepto(           "Factura Nº" + ::TextoDocumento() ) 
+      :Concepto(           "FACTURA Nº" + ::TextoDocumento() ) 
    end with
 
 RETURN ( Self )

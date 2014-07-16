@@ -73,6 +73,7 @@ CLASS C5ImageView FROM TControl
     DATA lxBorder
 
     DATA lTitle
+    DATA cTitle
     DATA lBoxSelection
     DATA aTextMargin
     DATA nHTitle

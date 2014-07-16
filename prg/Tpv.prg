@@ -11489,16 +11489,17 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliT )->cSerAlb    := cSerTik
       ( dbfAlbCliT )->nNumAlb    := cNumTik
       ( dbfAlbCliT )->cSufAlb    := cSufTik
+      ( dbfAlbCliT )->cNumDoc    := cSerTik + Str( cNumTik, 9 ) + cSufTik
+      ( dbfAlbCliT )->cTurAlb    := cCurSesion()
       ( dbfAlbCliT )->dFecCre    := aTik[ _DFECCRE ]
       ( dbfAlbCliT )->cTimCre    := aTik[ _CTIMCRE ]
       ( dbfAlbCliT )->dFecAlb    := aTik[ _DFECTIK ]
       ( dbfAlbCliT )->cCodUsr    := aTik[ _CCCJTIK ]
-      ( dbfAlbCliT )->cTurAlb    := cCurSesion()
-      ( dbfAlbCliT )->cNumDoc    := cSerTik + Str( cNumTik ) + cSufTik
       ( dbfAlbCliT )->cDtoEsp    := aTik[ _CDTOESP ]
       ( dbfAlbCliT )->nDtoEsp    := aTik[ _NDTOESP ]
-      ( dbfAlbCliT )->cDpp       := aTik[ _CDPP ]
-      ( dbfAlbCliT )->nDpp       := aTik[ _NDPP ]
+      ( dbfAlbCliT )->cDpp       := aTik[ _CDPP    ]
+      ( dbfAlbCliT )->nDpp       := aTik[ _NDPP    ]
+      ( dbfAlbCliT )->cCodPago   := aTik[ _CFPGPGO ]
 
       ( dbfAlbCliT )->( dbUnLock() )
 
@@ -11572,8 +11573,8 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliT )->nPctComAge    := aTik[ _NCOMAGE ]
       ( dbfAlbCliT )->cDtoEsp       := aTik[ _CDTOESP ]
       ( dbfAlbCliT )->nDtoEsp       := aTik[ _NDTOESP ]
-      ( dbfAlbCliT )->cDpp          := aTik[ _CDPP ]
-      ( dbfAlbCliT )->nDpp          := aTik[ _NDPP ]
+      ( dbfAlbCliT )->cDpp          := aTik[ _CDPP    ]
+      ( dbfAlbCliT )->nDpp          := aTik[ _NDPP    ]
 
       if Empty( ( dbfAlbCliT )->cTurAlb )
          ( dbfAlbCliT )->cTurAlb    := cCurSesion()
@@ -11601,21 +11602,21 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
    while !( dbfTmpL )->( eof() )
 
       ( dbfAlbCliL )->( dbAppend() )
-      ( dbfAlbCliL )->CSERALB    := ( dbfAlbCliT )->CSERALB
-      ( dbfAlbCliL )->NNUMALB    := ( dbfAlbCliT )->NNUMALB
-      ( dbfAlbCliL )->CSUFALB    := ( dbfAlbCliT )->CSUFALB
-      ( dbfAlbCliL )->CREF       := ( dbfTmpL    )->CCBATIL
-      ( dbfAlbCliL )->CDETALLE   := ( dbfTmpL    )->CNOMTIL
-      ( dbfAlbCliL )->NPREUNIT   := ( dbfTmpL    )->NPVPTIL //Round( ( dbfTmpL )->NPVPTIL / ( 1 + ( ( dbfTmpL )->NIVATIL / 100 ) ), nDouDiv )
-      ( dbfAlbCliL )->NDTO       := ( dbfTmpL    )->NDTOLIN
-      ( dbfAlbCliL )->NIVA       := ( dbfTmpL    )->NIVATIL
-      ( dbfAlbCliL )->NUNICAJA   := ( dbfTmpL    )->NUNTTIL
-      ( dbfAlbCliL )->CCODPR1    := ( dbfTmpL    )->CCODPR1
-      ( dbfAlbCliL )->CCODPR2    := ( dbfTmpL    )->CCODPR2
-      ( dbfAlbCliL )->CVALPR1    := ( dbfTmpL    )->CVALPR1
-      ( dbfAlbCliL )->CVALPR2    := ( dbfTmpL    )->CVALPR2
-      ( dbfAlbCliL )->NFACCNV    := ( dbfTmpL    )->NFACCNV
-      ( dbfAlbCliL )->NDTODIV    := ( dbfTmpL    )->NDTODIV
+      ( dbfAlbCliL )->cSerAlb    := ( dbfAlbCliT )->cSerAlb
+      ( dbfAlbCliL )->nNumAlb    := ( dbfAlbCliT )->nNumAlb
+      ( dbfAlbCliL )->cSufAlb    := ( dbfAlbCliT )->cSufAlb
+      ( dbfAlbCliL )->cRef       := ( dbfTmpL    )->cCbaTil
+      ( dbfAlbCliL )->cDetalle   := ( dbfTmpL    )->cNomTil
+      ( dbfAlbCliL )->nPreUnit   := ( dbfTmpL    )->nPvpTil //Round( ( dbfTmpL )->NPVPTIL / ( 1 + ( ( dbfTmpL )->NIVATIL / 100 ) ), nDouDiv )
+      ( dbfAlbCliL )->nDto       := ( dbfTmpL    )->nDtoLin
+      ( dbfAlbCliL )->nIva       := ( dbfTmpL    )->nIvaTil
+      ( dbfAlbCliL )->nUniCaja   := ( dbfTmpL    )->nUntTil
+      ( dbfAlbCliL )->cCodPr1    := ( dbfTmpL    )->cCodPr1
+      ( dbfAlbCliL )->cCodPr2    := ( dbfTmpL    )->cCodPr2
+      ( dbfAlbCliL )->cValPr1    := ( dbfTmpL    )->cValPr1
+      ( dbfAlbCliL )->cValPr2    := ( dbfTmpL    )->cValPr2
+      ( dbfAlbCliL )->nFacCnv    := ( dbfTmpL    )->nFacCnv
+      ( dbfAlbCliL )->nDtoDiv    := ( dbfTmpL    )->nDtoDiv
       ( dbfAlbCliL )->nCtlStk    := ( dbfTmpL    )->nCtlStk
       ( dbfAlbCliL )->nValImp    := ( dbfTmpL    )->nValImp
       ( dbfAlbCliL )->cCodImp    := ( dbfTmpL    )->cCodImp
@@ -11631,8 +11632,6 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfTmpL )->( dbSkip() )
 
    end while
-
-   //oStock:AlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, ( dbfAlbCliT )->cCodAlm, .f., .f., .t. )
 
    /*
    Rollback de los pagos-------------------------------------------------------
@@ -11687,11 +11686,11 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
    Rellenamos los campos de los totales----------------------------------------
    */
 
-   aTotal            := aTotAlbCli( aTik[ _CNUMDOC ], dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv )
+   aTotal                        := aTotAlbCli( aTik[ _CNUMDOC ], dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv )
 
-   aTik[ _NTOTNET ]  := aTotal[1]
-   aTik[ _NTOTIVA ]  := aTotal[2]
-   aTik[ _NTOTTIK ]  := aTotal[4]
+   aTik[ _NTOTNET ]              := aTotal[1]
+   aTik[ _NTOTIVA ]              := aTotal[2]
+   aTik[ _NTOTTIK ]              := aTotal[4]
 
    if dbLock( dbfAlbCliT )
       ( dbfAlbCliT )->nTotNet    := aTotal[1]
@@ -12034,6 +12033,8 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
          ( dbfFacCliT )->dFecFac    := aTik[ _DFECTIK ]
       end if
 
+      ( dbfFacCliT )->lSndDoc       := .t.
+      ( dbfFacCliT )->lIvaInc       := .t.
       ( dbfFacCliT )->cCodAlm       := aTik[ _CALMTIK ]
       ( dbfFacCliT )->cCodCaj       := aTik[ _CNCJTIK ]
       ( dbfFacCliT )->cCodCli       := aTik[ _CCLITIK ]
@@ -12052,12 +12053,10 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       ( dbfFacCliT )->cCodTar       := aTik[ _CCODTAR ]
       ( dbfFacCliT )->cCodObr       := aTik[ _CCODOBR ]
       ( dbfFacCliT )->nPctComAge    := aTik[ _NCOMAGE ]
-      ( dbfFacCliT )->lSndDoc       := .t.
-      ( dbfFacCliT )->lIvaInc       := .t.
       ( dbfFacCliT )->cDtoEsp       := aTik[ _CDTOESP ]
       ( dbfFacCliT )->nDtoEsp       := aTik[ _NDTOESP ]
-      ( dbfFacCliT )->cDpp          := aTik[ _CDPP ]
-      ( dbfFacCliT )->nDpp          := aTik[ _NDPP ]
+      ( dbfFacCliT )->cDpp          := aTik[ _CDPP    ]
+      ( dbfFacCliT )->nDpp          := aTik[ _NDPP    ]
 
       ( dbfFacCliT )->( dbUnLock() )
 

@@ -8,18 +8,18 @@ Function DecimalToString( nValue, nLen )
 
    local cValue       
       
-   cValue   := str( nValue, nLen + 1, 2 )    // +1 espacio que resta punto decimal
-   cValue   := strtran( cValue, "." )        // Quitar punto decimal
-   cValue   := strtran( cValue, " ", "0" )   // Reemplazar espacios por 0
-   
+   cValue      := str( nValue, nLen + 1, 2 )    // +1 espacio que resta punto decimal
+   cValue      := strtran( cValue, "." )        // Quitar punto decimal
+   cValue      := strtran( cValue, " ", "0" )   // Reemplazar espacios por 0
+
 Return ( cValue )
 
 //---------------------------------------------------------------------------//
 
 Function TimeToString()                         
 
-   local cTime  := time()
-   cTime        := substr( cTime, 1, 2 ) + substr( cTime, 4, 2 ) + substr( cTime, 7, 2 )
+   local cTime := time()
+   cTime       := substr( cTime, 1, 2 ) + substr( cTime, 4, 2 ) + substr( cTime, 7, 2 )
       
 Return ( cTime )
 
@@ -527,11 +527,10 @@ ENDCLASS
    METHOD Importe( nValue ) CLASS Deudor
 
       if !Empty( nValue )
-         ::nImporte                    := nValue
-         ::cImporte                    := DecimalToString( nValue, 11 )
+         ::nImporte                       := nValue
       endif
 
-   Return ( ::cImporte ) 
+   Return ( DecimalToString( ::nImporte, 11 ) ) 
 
    //------------------------------------------------------------------------//
 
