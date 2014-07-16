@@ -9031,8 +9031,6 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    local oBtnCalculator
    local oBrwPgo
    local oBrwVal
-   local oGetTxt
-   local cGetTxt
    local oFntDlg           
    local aBtnCob           := Array( 8 )
    local aSay              := Array( 3 )
@@ -9085,8 +9083,6 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          aTmp[ _CFPGTIK ]  := Space( 2 )
       end if
    end if
-
-   cGetTxt                 := cNbrFPago( aTmp[ _CFPGTIK ], dbfFPago )
 
    /*
    Reposicionamiento de los pagos----------------------------------------------
@@ -9161,19 +9157,16 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       Forma de pago---------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CFPGTIK ] VAR aTmp[ _CFPGTIK ] ;
-         ID       120 ;
-         WHEN     ( lWhen ) ;
-         VALID    cFpago( aGet[ _CFPGTIK ], dbfFPago, oGetTxt ) ;
-         FONT     oFntDlg ;
-         OF       oDlg
+      REDEFINE GET   aGet[ _CFPGTIK ] ;
+         VAR         aTmp[ _CFPGTIK ] ;
+         ID          120 ;
+         IDTEXT      121 ;
+         WHEN        ( lWhen ) ;
+         VALID       cFpago( aGet[ _CFPGTIK ], dbfFPago, aGet[ _CFPGTIK ]:oHelpText ) ;
+         FONT        oFntDlg ;
+         OF          oDlg
 
-         aGet[ _CFPGTIK ]:bHelp  := {|| BrwPgoTactil( aGet[ _CFPGTIK ], dbfFPago, oGetTxt ) }
-
-      REDEFINE GET oGetTxt VAR cGetTxt ;
-         ID       121 ;
-         FONT     oFntDlg ;
-         OF       oDlg
+         aGet[ _CFPGTIK ]:bHelp  := {|| BrwPgoTactil( aGet[ _CFPGTIK ], dbfFPago, aGet[ _CFPGTIK ]:oHelpText ) }
 
       /*
       Botones de formas de pago------------------------------------------------
@@ -9830,12 +9823,6 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
    ChkCobro( aTmp )
 
    /*
-   Botones de formas de pago---------------------------------------------------
-   */
-
-   aEval( aButtonsPago, {|oBtn| if( !Empty( oBtn:oButton ), oBtn:oButton:Show(), ), if( !Empty( oBtn:oSay ), oBtn:oSay:Show(), ) } )
-
-   /*
    Set controles de la ventana de cobros---------------------------------------
    */
 
@@ -9980,9 +9967,25 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
 
       end case
 
-      /*
-      Botones en funcion del mode-------------------------------------------------
-      */
+      // Guadamos como albaranes o facturas podemos tener cuaquier forma de pago
+
+      if ( nSave == SAVALB ) .or. ( nSave == SAVFAC )
+
+         aGet[ _CFPGTIK ]:Show()
+
+/*         for each oBtn in aButtonsPago 
+            oBtn:oButton:Hide()
+         next*/
+
+      else 
+      
+         aGet[ _CFPGTIK ]:Hide()
+
+         aEval( aButtonsPago, {|oBtn| if( !Empty( oBtn:oButton ), oBtn:oButton:Show(), ), if( !Empty( oBtn:oSay ), oBtn:oSay:Show(), ) } )
+
+      end if 
+
+      // Botones en funcion del mode-------------------------------------------------
 
       if nMode != APPD_MODE
 
