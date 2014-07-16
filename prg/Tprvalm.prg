@@ -30,7 +30,7 @@ METHOD CreateFields()
 
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },       "Art.",          .f., "Cod. artículo",      14, .f. )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },       "Artículo",      .f., "Artículo",           40, .f. )
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },       "Alm.",          .f., "Cod. almacén",        3, .f. )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },       "Alm.",          .f., "Cod. almacén",        3, .f. )
    ::AddField ( "cNomAlm", "C", 40, 0, {|| "@!" },       "Almacén",       .f., "Almacén",            40, .f. )
    ::FldPropiedades()
    ::FldProveedor()
@@ -55,7 +55,7 @@ RETURN ( Self )
 
 METHOD AnuAlmFields()
 
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },         "Cod.",            .t., "Cod. Almacén",     3 )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },         "Cod.",            .t., "Cod. Almacén",     3 )
    ::AddField ( "cNomAlm", "C", 40, 0, {|| "@!" },         "Almacén",         .t., "Almacén",         40 )
    ::AddField ( "nImpEne", "N", 16, 6, {|| ::cPicOut },    "Ene",             .t., "Enero",           12 )
    ::AddField ( "nImpFeb", "N", 16, 6, {|| ::cPicOut },    "Feb",             .t., "Febrero",         12 )
@@ -77,7 +77,7 @@ RETURN ( self )
 
 METHOD AcuCreate()
 
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },           "Alm",           .t., "Cod. almacén",      3, .f. )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },           "Alm",           .t., "Cod. almacén",      3, .f. )
    ::AddField ( "cNomAlm", "C", 50, 0, {|| "@!" },           "Almacém",       .t., "Nombre almacén",   15, .f. )
    ::AddField ( "nNumUni", "N", 16, 6, {|| MasUnd() },       cNombreUnidades(),     .t., cNombreUnidades(),   12, .t. )
    ::AddField ( "nImpArt", "N", 16, 6, {|| ::cPicImp },      "Precio",        .f., "Precio",           12, .f. )

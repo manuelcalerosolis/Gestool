@@ -134,8 +134,8 @@ local aBase := {  {"CNOMBREPC",  "C", 250, 0, "Directorio del programa"    ,  ""
                   {"CSUFPDA",    "C",   2, 0, "Sufijo de la PDA"           ,  "",  "", "( cDbfConfig )" },;
                   {"CCODTRA",    "C",   9, 0, "Código de transportista"    ,  "",  "", "( cDbfConfig )" },;
                   {"CCODAGE",    "C",   3, 0, "Código de agente"           ,  "",  "", "( cDbfConfig )" },;
-                  {"CCODALM",    "C",   3, 0, "Código de almacén"          ,  "",  "", "( cDbfConfig )" },;
-                  {"CALMCTR",    "C",   3, 0, "Código de almacén central"  ,  "",  "", "( cDbfConfig )" },;
+                  {"CCODALM",    "C",  16, 0, "Código de almacén"          ,  "",  "", "( cDbfConfig )" },;
+                  {"CALMCTR",    "C",  16, 0, "Código de almacén central"  ,  "",  "", "( cDbfConfig )" },;
                   {"LINITTPV",   "L",   1, 0, "lInitTpv"                   ,  "",  "", "( cDbfConfig )" },;
                   {"NTOTLIN",    "N",   2, 0, "Total lineas documento"     ,  "",  "", "( cDbfConfig )" },;
                   {"CCODCAJA",   "C",   3, 0, "Código para la caja"        ,  "",  "", "( cDbfConfig )" },;

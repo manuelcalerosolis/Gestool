@@ -28,7 +28,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "cCodAlm",  "C",  3, 0, {|| "@!" },  "Cod. almacén",      .f., "Cod. almacén",        5, .f. )
+   ::AddField( "cCodAlm",  "C", 16, 0, {|| "@!" },  "Cod. almacén",      .f., "Cod. almacén",        5, .f. )
    ::AddField( "cNomAlm",  "C", 50, 0, {|| "@!" },  "Almacém",           .f., "Nombre almacén",     40, .f. )
    ::AddField( "cCodFpg",  "C",  2, 0, {|| "@!" },  "Cod. pago",         .f., "Pgo.",                5, .f. )
    ::AddField( "cNomFpg",  "C", 40, 0, {|| "@!" },  "Forma de pago",     .f., "Formas de pago",     40, .f. )

@@ -12,7 +12,7 @@ FUNCTION TInfTkc()
    local aIdx  := {}
 
    aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },         "Art",                       .f., "Cod. Artículo",             14 } )
-   aAdd( aCol, { "CCODALM", "C",  3, 0, {|| "@!" },         "Alm",                       .f., "Cod. Almacén",               3 } )
+   aAdd( aCol, { "CCODALM", "C", 16, 0, {|| "@!" },         "Alm",                       .f., "Cod. Almacén",               3 } )
    aAdd( aCol, { "CCODCLI", "C", 12, 0, {|| "@!" },         "Cli",                       .t., "Cod. Cliente",               9 } )
    aAdd( aCol, { "CNOMCLI", "C", 50, 0, {|| "@!" },         "Nom",                       .t., "Nombre Cliente",            35 } )
    aAdd( aCol, { "CNIFCLI", "C", 15, 0, {|| "@!" },         "Nif",                       .f., "Nif",                       15 } )

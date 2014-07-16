@@ -3588,6 +3588,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       lSaveNewTik          := .t.
    end if
 
+   msgAlert( aTmp[ _CFPGTIK ], "aTmp[ _CFPGTIK ]" )
+
    /*
    Comprobamos la fecha del documento------------------------------------------
    */
@@ -3861,6 +3863,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    if lValePromocion
       nValePromocion    := nTotPrm * aTmp[ _NPCTPRM ] / 100
    end if
+
+   msgAlert( aTmp[ _CFPGTIK ], "antes de entrar en lCobro")
 
    /*
    Llamada a la funcion del cobro----------------------------------------------
@@ -9076,7 +9080,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       aTmp[ _CCLITIK ]     := cDefCli()
    end if
 
-   if nMode == APPD_MODE
+   if nMode == APPD_MODE .and. empty( aTmp[ _CFPGTIK ] )
       if !uFieldEmpresa( "lGetFpg" )
          aTmp[ _CFPGTIK ]  := cDefFpg()
       else
@@ -9152,6 +9156,8 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       REDEFINE SAY aSay[ 1 ] ID 910 OF oDlg
       REDEFINE SAY aSay[ 2 ] ID 911 OF oDlg
       REDEFINE SAY aSay[ 3 ] ID 912 OF oDlg
+
+      msgAlert( aTmp[ _CFPGTIK ], "aTmp[ _CFPGTIK ]" )
 
       /*
       Forma de pago---------------------------------------------------------------
@@ -9972,10 +9978,9 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
       if ( nSave == SAVALB ) .or. ( nSave == SAVFAC )
 
          aGet[ _CFPGTIK ]:Show()
+         aGet[ _CFPGTIK ]:lValid()
 
-/*         for each oBtn in aButtonsPago 
-            oBtn:oButton:Hide()
-         next*/
+         aEval( aButtonsPago, {|oBtn| if( !Empty( oBtn:oButton ), oBtn:oButton:Hide(), ), if( !Empty( oBtn:oSay ), oBtn:oSay:Hide(), ) } )
 
       else 
       

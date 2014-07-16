@@ -68,7 +68,7 @@ METHOD Create()
    ::AddField ( "cValPr1", "C", 10, 0, {|| "@!" },         "Prp. 1",           .f., "Propiedad 1",          6, .f. )
    ::AddField ( "cValPr2", "C", 10, 0, {|| "@!" },         "Prp. 2",           .f., "Propiedad 2",          6, .f. )
 
-   ::AddField ( "cCodAlm", "C",  8, 0, {|| "@!" },         "Cod. alm.",        .t., "Código almacén",       8 )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },         "Cod. alm.",        .t., "Código almacén",       8 )
    ::AddField ( "cNomAlm", "C", 50, 0, {|| "@!" },         "Nom. alm.",        .t., "Nombre almacén",      40 )
    ::AddField ( "nUndCom", "N", 19, 6, {|| MasUnd() },     "Compras",          .t., "Compras",             13 )
    ::AddField ( "nUndVta", "N", 19, 6, {|| MasUnd() },     "Ventas",           .t., "Ventas",              13 )

@@ -4577,7 +4577,7 @@ METHOD CreateFldAnu()
 
    ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },         "Cod. articulo",           .f., "Cod. Artículo",           14 )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },         "Artículo",                .f., "Nom. Artículo",           20 )
-   ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },         "Alm",                     .t., "Cod. almacén",             3 )
+   ::AddField( "cCodAlm", "C", 16, 0, {|| "@!" },         "Alm",                     .t., "Cod. almacén",             3 )
    ::AddField( "cNomAlm", "C", 50, 0, {|| "@!" },         "Almacém",                 .t., "Nombre almacén",          15 )
    ::AddField( "nImpEne", "N", 16, 6, {|| ::cPicOut },    "Ene",                     .t., "Enero",                   12 )
    ::AddField( "nImpFeb", "N", 16, 6, {|| ::cPicOut },    "Feb",                     .t., "Febrero",                 12 )

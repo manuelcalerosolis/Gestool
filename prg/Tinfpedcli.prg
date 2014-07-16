@@ -301,7 +301,7 @@ STATIC FUNCTION MkPreCliDet( cAlm1, cAlm2, cArt1, cArt2, dDesde, dHasta, nEstado
    local cRetCode
    local cPath    := cPatEmp()
    local aDbf     := {  { "CCODART", "C", 18, 0 },;
-                        { "CCODALM", "C",  3, 0 },;
+                        { "CCODALM", "C", 16, 0 },;
                         { "CCODCLI", "C", 12, 0 },;
 								{ "CNOMCLI", "C", 50, 0 },;
 								{ "NCAJENT", "N", 12, 0 },;

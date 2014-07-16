@@ -138,7 +138,7 @@ static aBase      := {  { "CSEREXT"   ,"C",  1, 0, "Serie de las existencias de 
                         { "NNUMEXT"   ,"N",  9, 0, "Número de las existencias de almacen" },;
                         { "CSUFEXT"   ,"C",  2, 0, "Sufijo de las existencias de almacen" },;
                         { "DFECEXT"   ,"D",  8, 0, "Fecha del las existencias" },;
-                        { "CCODALM"   ,"C",  3, 0, "Codigo de almacen" },;
+                        { "CCODALM"   ,"C", 16, 0, "Codigo de almacen" },;
                         { "CNOMALM"   ,"C", 35, 0, "Nombre del almacen" },;
                         { "CDIRALM"   ,"C", 35, 0, "Domicilio del almacen" },;
                         { "CPOBALM"   ,"C", 25, 0, "Población del almacen" },;

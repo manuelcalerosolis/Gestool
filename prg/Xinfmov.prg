@@ -89,7 +89,7 @@ METHOD FldCreate()
 
    ::FldPropiedades()
 
-   ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },          "Alm.",          .t., "Código almacen",            3, .f. )
+   ::AddField( "cCodAlm", "C", 16, 0, {|| "@!" },          "Alm.",          .t., "Código almacen",            3, .f. )
    ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },          "Cod.",          .t., "Código cliente",            9, .f. )
    ::AddField( "cNomCli", "C", 50, 0, {|| "@!" },          "Cli. - Prv.",   .t., "Cliente-Proveedor",        35, .f. )
 

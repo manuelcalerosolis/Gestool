@@ -234,7 +234,7 @@ METHOD OpenFiles()
       ::oDbfTmp:AddField( "cCodCli", "C", 12, 0 )
       ::oDbfTmp:AddField( "cCliPrv", "C", 50, 0 )
       ::oDbfTmp:AddField( "cCodObr", "C", 10, 0 )
-      ::oDbfTmp:AddField( "cCodAlm", "C",  3, 0 )
+      ::oDbfTmp:AddField( "cCodAlm", "C", 16, 0 )
       ::oDbfTmp:AddField( "nNumLin", "N",  4, 0 )
 
       ::oDbfTmp:Create()

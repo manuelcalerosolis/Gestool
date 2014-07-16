@@ -41,7 +41,7 @@ METHOD Create()
 
    ::AddField( "cCodTip", "C",  3, 0, {|| "@!" },           "Cod.",              .t., "Código tipo",            5, .f. )
    ::AddField( "cNomTip", "C", 35, 0, {|| "@!" },           "Tipo",              .t., "Nombre tipo",           20, .f. )
-   ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },           "Cod. Alm.",         .f., "Código almacén",         5, .f. )
+   ::AddField( "cCodAlm", "C", 16, 0, {|| "@!" },           "Cod. Alm.",         .f., "Código almacén",         5, .f. )
    ::AddField( "cNomAlm", "C", 20, 0, {|| "@!" },           "Nom. Alm.",         .f., "Nombre almacén",        20, .f. )
    ::AddField( "nTotCaj", "N", 16, 6, {|| MasUnd() },       "Cajas",             .f., "Cajas",                 12, .t. )
    ::AddField( "nTotUni", "N", 16, 6, {|| MasUnd() },       "Unds.",             .t., "Unidades",              10, .t. )

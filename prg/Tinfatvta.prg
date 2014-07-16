@@ -34,7 +34,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },       "Cod. Alm.",   .f., "Código almacén",              3, .f. )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },       "Cod. Alm.",   .f., "Código almacén",              3, .f. )
    ::AddField ( "cNomAlm", "C", 20, 0, {|| "@!" },       "Almacén",     .f., "Tipo de almacén",            28, .f. )
    ::DetCreateFields()
 

@@ -42,7 +42,7 @@ CLASS TInfStockMinimoFamilia FROM TInfGen
 
 METHOD Create()
 
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },            "Alm.",            .f., "Código almacén",     03 )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },            "Alm.",            .f., "Código almacén",     03 )
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },            "Código artículo",       .t., "Código artículo",    14 )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },            "Artículo",        .t., "Artículo",           40 )
    ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },            "Cod. Fam.",       .f., "Código familia",     05 )

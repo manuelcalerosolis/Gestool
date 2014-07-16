@@ -119,7 +119,7 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    end if
 
    if !Empty( nIdText )
-      ::oHelpText    := TGet():ReDefine( nIdText, { | u | If( PCount() == 0, ::cHelpText, ::cHelpText := u ) }, oWnd,,,,,,,,, .f., {||.f.} )
+      ::oHelpText    := TGet():ReDefine( nIdText, { | u | If( PCount() == 0, ::cHelpText, ::cHelpText := u ) }, oWnd, , , , , , oFont, , , .f., {||.f.} )
    end if
 
 Return Self

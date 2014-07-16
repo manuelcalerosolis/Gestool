@@ -38,7 +38,7 @@ METHOD Create()
 
    ::AddField( "cCodFam", "C", 18, 0, {|| "@!" },           "Fam.",           .t., "Código familia"    , 14, .f. )
    ::AddField( "cNomFam", "C", 50, 0, {|| "@!" },           "Nom. fam",       .t., "Familia"           , 35, .f. )
-   ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },           "Alm.",           .f., "Código familia"    ,  5, .f. )
+   ::AddField( "cCodAlm", "C", 16, 0, {|| "@!" },           "Alm.",           .f., "Código familia"    ,  5, .f. )
    ::AddField( "cNomAlm", "C", 20, 0, {|| "@!" },           "Nom. alm.",      .f., "Familia"           , 20, .f. )
    ::AddField( "nNumUni", "N", 16, 6, {|| MasUnd() },       cNombreUnidades(),.t., cNombreUnidades()   , 12, .t. )
    ::AddField( "nImpArt", "N", 16, 6, {|| ::cPicImp },      "Precio",         .f., "Precio"            , 12, .f. )

@@ -12,7 +12,7 @@ FUNCTION TComVta()
    local aIdx  := {}
 
    aAdd( aCol, { "cCodFam", "C", 16, 0, {|| "@!" },     "Fam. artículo", .f., "Familia artículo",    5 } )
-   aAdd( aCol, { "CCODALM", "C",  3, 0, {|| "@!" },     "Alm.",          .t., "Código almacén",      3 } )
+   aAdd( aCol, { "CCODALM", "C", 16, 0, {|| "@!" },     "Alm.",          .t., "Código almacén",      3 } )
    aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },     "Código",        .t., "Código artículo",     8 } )
    aAdd( aCol, { "CNOMART", "C",100, 0, {|| "@!" },     "Descripción",   .t., "Descripción",         40} )
    aAdd( aCol, { "NUNDCOM", "N", 19, 6, {|| MasUnd() }, "Compras",       .t., "Compras",             13} )

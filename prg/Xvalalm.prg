@@ -61,7 +61,7 @@ METHOD Create()
 
    ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },          "Familia",           .f., "Familia",                   8, .f. )
    ::AddField ( "cNomFam", "C", 50, 0, {|| "@!" },          "Nom. fam.",         .f., "Nombre familia",           40, .f. )
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },          "Alm.",              .f., "Código almacen",            3, .f. )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },          "Alm.",              .f., "Código almacen",            3, .f. )
    ::AddField ( "cNomAlm", "C", 50, 0, {|| "@!" },          "Almacén",           .t., "Almacén",                  35, .f. )
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },          "Código artículo",         .t., "Código artículo",          14, .f. )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },          "Artículo",          .t., "Artículo",                 35, .f. )

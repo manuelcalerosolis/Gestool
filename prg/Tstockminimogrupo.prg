@@ -44,7 +44,7 @@ CLASS TInfStockMinimoGrupo FROM TInfGen
 
 METHOD Create()
 
-   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },            "Alm.",            .f., "Código almacén",              03 )
+   ::AddField ( "cCodAlm", "C", 16, 0, {|| "@!" },            "Alm.",            .f., "Código almacén",              03 )
    ::AddField ( "cCodGrp", "C",  3, 0, {|| "@!" },            "Grp. Fam.",       .f., "Código grupo de familia",     10 )
    ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },            "Cod. Fam.",       .f., "Código familia",              05 )
    ::AddField ( "cNomFam", "C", 30, 0, {|| "@!" },            "Familia",         .f., "Nombre familia",              30 )

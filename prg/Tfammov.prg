@@ -11,7 +11,7 @@ FUNCTION TFamMov()
    local aCol  := {}
    local aIdx  := {}
 
-   aAdd( aCol, { "CCODALM", "C",  3, 0, {|| "@!" },          "Cod. Almacen",  .f., "Código almacen"      ,  3 } )
+   aAdd( aCol, { "CCODALM", "C", 16, 0, {|| "@!" },          "Cod. Almacen",  .f., "Código almacen"      ,  3 } )
    aAdd( aCol, { "CCODFAM", "C", 16, 0, {|| "@!" },          "Cod. familia",  .f., "Código familia"      ,  5 } )
    aAdd( aCol, { "CNOMFAM", "C", 50, 0, {|| "@!" },          "Familia",       .f., "Familia"             , 20 } )
    aAdd( aCol, { "CCODART", "C", 18, 0, {|| "@!" },          "Cod. Artículo", .f., "Código artículo"     , 10 } )

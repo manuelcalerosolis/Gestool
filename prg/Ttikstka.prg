@@ -50,7 +50,7 @@ CLASS TTikStkA FROM TInfGen
 
 METHOD Create()
 
-   ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },            "Cod. alm.",     .f., "Código almacén",      3 )
+   ::AddField( "cCodAlm", "C", 16, 0, {|| "@!" },            "Cod. alm.",     .f., "Código almacén",      3 )
    ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },            "Código",        .t., "Código artículo",     8 )
    ::AddField( "cDesArt", "C", 20, 0, {|| "@!" },            "Des. breve",    .t., "Descripción breve",   40)
    ::AddField( "cNomArt", "C", 50, 0, {|| "@!" },            "Descripción",   .f., "Descripción",         40)
