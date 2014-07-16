@@ -36,7 +36,7 @@ static dbfCount
 static cPicUnd
 static cNewFil
 static dbfNewFil
-static aDbf     := { { "CCODALM", "C",  3, 0, "Código del almacen" },;
+static aDbf     := { { "CCODALM", "C", 16, 0, "Código del almacen" },;
                      { "CNOMALM", "C", 20, 0, "Nombre del almacen" },;
                      { "CCODART", "C", 18, 0, "Código del artículo" },;
                      { "CNOMART", "C", 50, 0, "Nombre del artículo" },;

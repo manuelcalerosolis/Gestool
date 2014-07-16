@@ -1663,8 +1663,6 @@ STATIC FUNCTION LoadAlm( aGet, aTmp, nMode )
 		RETURN .T.
 	END IF
 
-	xValor 			:= Rjust( xValor, "0" )
-
 	IF (dbfAlmT)->( DbSeek( xValor ) )
 
 		/*
