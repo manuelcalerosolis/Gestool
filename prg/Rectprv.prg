@@ -1533,7 +1533,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Almacen"
             :bEditValue       := {|| ( dbfTmp )->cAlmLin }
-            :nWidth           := 60
+            :nWidth           := 65
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -3306,7 +3306,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbica( aTmp, aGet, TDataView():Almacen( nView ) ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) ) ;
+         VALID    ( cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ),;
+                    oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) ) ; 
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
 			COLOR 	CLR_GET ;
@@ -3316,55 +3317,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 			WHEN 		.F. ;
          ID       241 ;
 			OF 		oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
-         ID       300 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI1] VAR aTmp[_CVALUBI1] ;
-         ID       270 ;
-         BITMAP   "LUPA" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI1], aGet[_CNOMUBI1], aTmp[_CCODUBI1], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI1] VAR aTmp[_CNOMUBI1];
-         WHEN     .F. ;
-         ID       271 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI2] VAR aTmp[_CCODUBI2];
-         ID       310 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI2] VAR aTmp[_CVALUBI2] ;
-         ID       280 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI2], aGet[_CNOMUBI2], aTmp[_CCODUBI2], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI2] VAR aTmp[_CNOMUBI2];
-         WHEN     .F. ;
-         ID       281 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI3] VAR aTmp[_CCODUBI3];
-         ID       320 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI3] VAR aTmp[_CVALUBI3] ;
-         ID       290 ;
-         BITMAP   "LUPA" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI3], aGet[_CNOMUBI3], aTmp[_CCODUBI3], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI3] VAR aTmp[_CNOMUBI3];
-         WHEN     .F. ;
-         ID       291 ;
-         OF       oFld:aDialogs[1]
-
+   
       REDEFINE GET oGetIra VAR cGetIra;
          ID       410 ;
          IDSAY    411 ;
@@ -3428,56 +3381,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    EndDetMenu()
 
 RETURN ( oDlg:nResult == IDOK )
-
-//--------------------------------------------------------------------------//
-
-static Function cNomUbica( aTmp, aGet, cAlm )
-
-   aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], TDataView():Almacen( nView ), 1 )
-   aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], TDataView():Almacen( nView ), 2 )
-   aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], TDataView():Almacen( nView ), 3 )
-
-   if Empty( aTmp[_CCODUBI1] )
-      aGet[_CCODUBI1]:Hide()
-      aGet[_CVALUBI1]:Hide()
-      aGet[_CNOMUBI1]:Hide()
-   else
-      aGet[_CCODUBI1]:Show()
-      aGet[_CVALUBI1]:Show()
-      aGet[_CNOMUBI1]:Show()
-   end if
-
-   if Empty( aTmp[_CCODUBI2] )
-      aGet[_CCODUBI2]:Hide()
-      aGet[_CVALUBI2]:Hide()
-      aGet[_CNOMUBI2]:Hide()
-   else
-      aGet[_CCODUBI2]:Show()
-      aGet[_CVALUBI2]:Show()
-      aGet[_CNOMUBI2]:Show()
-   end if
-
-   if Empty( aTmp[_CCODUBI3] )
-      aGet[_CCODUBI3]:Hide()
-      aGet[_CVALUBI3]:Hide()
-      aGet[_CNOMUBI3]:Hide()
-   else
-      aGet[_CCODUBI3]:Show()
-      aGet[_CVALUBI3]:Show()
-      aGet[_CNOMUBI3]:Show()
-   end if
-
-   aGet[_CCODUBI1]:Refresh()
-   aGet[_CVALUBI1]:Refresh()
-   aGet[_CNOMUBI1]:Refresh()
-   aGet[_CCODUBI2]:Refresh()
-   aGet[_CVALUBI2]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-   aGet[_CCODUBI3]:Refresh()
-   aGet[_CVALUBI3]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-
-return .t.
 
 //--------------------------------------------------------------------------//
 
@@ -10087,7 +9990,7 @@ Function aSerRctPrv()
    aAdd( aColFacPrv,  { "cSufFac", "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColFacPrv,  { "nNumLin", "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
    aAdd( aColFacPrv,  { "cRef",    "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacPrv,  { "cAlmLin", "C",  3,   0, "Código de almacen",                "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacPrv,  { "cAlmLin", "C", 16,   0, "Código de almacen",                "",                  "", "( cDbfCol )" } )
    aAdd( aColFacPrv,  { "lUndNeg", "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
    aAdd( aColFacPrv,  { "cNumSer", "C", 30,   0, "Numero de serie",                  "",                  "", "( cDbfCol )" } )
 
@@ -10689,7 +10592,7 @@ function aItmRctPrv()
    aAdd( aItmFacPrv, { "CTURFAC"    ,"C",  6, 0, "Sesión del factura"                       ,            "",                   "", "( cDbf )"} )
    aAdd( aItmFacPrv, { "DFECFAC"    ,"D",  8, 0, "Fecha de la factura"                      ,            "",                   "", "( cDbf )"} )
    aAdd( aItmFacPrv, { "CCODPRV"    ,"C", 12, 0, "Código del proveedor"                     ,            "",                   "", "( cDbf )"} )
-   aAdd( aItmFacPrv, { "CCODALM"    ,"C",  3, 0, "Código de almacen"                        ,            "",                   "", "( cDbf )"} )
+   aAdd( aItmFacPrv, { "CCODALM"    ,"C", 16, 0, "Código de almacen"                        ,            "",                   "", "( cDbf )"} )
    aAdd( aItmFacPrv, { "CCODCAJ"    ,"C",  3, 0, "Código de caja"                           ,            "",                   "", "( cDbf )"} )
    aAdd( aItmFacPrv, { "CNOMPRV"    ,"C", 35, 0, "Nombre del proveedor"                     ,            "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacPrv, { "CDIRPRV"    ,"C", 35, 0, "Domicilio del proveedor"                  ,            "'@!'",               "", "( cDbf )"} )
@@ -10828,7 +10731,7 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "CVALPR1"    ,"C", 20, 0, "Valor de la propiedad 1" ,     "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "CVALPR2"    ,"C", 20, 0, "Valor de la propiedad 2" ,     "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "NFACCNV"    ,"N", 16, 6, "Factor de conversión de la compra", "",               "", "( cDbfCol )" } )
-   aAdd( aColFacPrv, { "CALMLIN"    ,"C",  3, 0, "Código del almacen" ,          "",                    "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "CALMLIN"    ,"C", 16, 0, "Código del almacen" ,          "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "NCTLSTK"    ,"N",  1, 0, "Tipo de stock de la línea",    "'9'",                 "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "LLOTE"      ,"L",  1, 0, "",                             "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "NLOTE"      ,"N",  9, 0, "",                             "'999999999'",         "", "( cDbfCol )" } )
@@ -11669,7 +11572,7 @@ Function aLblRctPrv()
    aAdd( aLblFacPrv, { "CVALPR1"    ,"C", 20, 0, "Valor de la propiedad 1" ,    "",                    "", "( cDbfCol )" } )
    aAdd( aLblFacPrv, { "CVALPR2"    ,"C", 20, 0, "Valor de la propiedad 2" ,    "",                    "", "( cDbfCol )" } )
    aAdd( aLblFacPrv, { "NFACCNV"    ,"N", 16, 6, "Factor de conversión de la compra", "",              "", "( cDbfCol )" } )
-   aAdd( aLblFacPrv, { "CALMLIN"    ,"C",  3, 0, "Código del almacen" ,         "",                    "", "( cDbfCol )" } )
+   aAdd( aLblFacPrv, { "CALMLIN"    ,"C", 16, 0, "Código del almacen" ,         "",                    "", "( cDbfCol )" } )
    aAdd( aLblFacPrv, { "NCTLSTK"    ,"N",  1, 0, "Tipo de stock de la línea",   "'9'",                 "", "( cDbfCol )" } )
    aAdd( aLblFacPrv, { "LLOTE"      ,"L",  1, 0, "",                            "",                    "", "( cDbfCol )" } )
    aAdd( aLblFacPrv, { "NLOTE"      ,"N",  9, 0, "",                            "'999999999'",         "", "( cDbfCol )" } )

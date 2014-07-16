@@ -3122,7 +3122,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cNomUbica( aTmp, aGet, TDataView():Almacen( nView ) ), cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) ) ;
+         VALID    (  cAlmacen( aGet[_CALMLIN], TDataView():Almacen( nView ), oSay2 ),;
+                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
          COLOR    CLR_GET ;
@@ -3131,54 +3132,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       REDEFINE GET oSay2 VAR cSay2 ;
          WHEN     .F. ;
          ID       241 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
-         ID       300 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI1] VAR aTmp[_CVALUBI1] ;
-         ID       270 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI1], aGet[_CNOMUBI1], aTmp[_CCODUBI1], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI1] VAR aTmp[_CNOMUBI1];
-         WHEN     .F. ;
-         ID       271 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI2] VAR aTmp[_CCODUBI2];
-         ID       310 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI2] VAR aTmp[_CVALUBI2] ;
-         ID       280 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI2], aGet[_CNOMUBI2], aTmp[_CCODUBI2], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI2] VAR aTmp[_CNOMUBI2];
-         WHEN     .F. ;
-         ID       281 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI3] VAR aTmp[_CCODUBI3];
-         ID       320 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI3] VAR aTmp[_CVALUBI3] ;
-         ID       290 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI3], aGet[_CNOMUBI3], aTmp[_CCODUBI3], TDataView():UbicacionLineas( nView ) ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI3] VAR aTmp[_CNOMUBI3];
-         WHEN     .F. ;
-         ID       291 ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oGetIra VAR cGetIra;
@@ -3543,7 +3496,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
-
+/*
 static Function cNomUbica( aTmp, aGet, cAlm )
 
    aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], cAlm, 1 )
@@ -3591,7 +3544,7 @@ static Function cNomUbica( aTmp, aGet, cAlm )
    aGet[_CNOMUBI3]:Refresh()
 
 return .t.
-
+*/
 //--------------------------------------------------------------------------//
 
 STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oTotal, oBrwPrp, oGetIra )

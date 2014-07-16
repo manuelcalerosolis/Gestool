@@ -321,9 +321,9 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE  OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
       FIELD NAME "cTimRem"             TYPE "C" LEN  5  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE  OF ::oDbf
-      FIELD NAME "cAlmOrg"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
+      FIELD NAME "cAlmOrg"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
       FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
-      FIELD NAME "cAlmDes"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60           OF ::oDbf
+      FIELD NAME "cAlmDes"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60           OF ::oDbf
       FIELD CALCULATE NAME "cNomAlmDes"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmDes, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
       FIELD NAME "cCodDiv"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                HIDE                                               COMMENT "Div."                                  OF ::oDbf
       FIELD NAME "nVdvDiv"             TYPE "N" LEN 13  DEC 6 PICTURE "@E 999,999.999999" HIDE                                               COMMENT "Cambio de la divisa"                   OF ::oDbf
@@ -3096,8 +3096,8 @@ Function aItmRemMov()
    aAdd( aBase, { "cCodMov",   "C",   2,  0, "Tipo de movimiento"   } )
    aAdd( aBase, { "dFecRem",   "D",   8,  0, "Fecha"                } )
    aAdd( aBase, { "cTimRem",   "C",   5,  0, "Hora"                 } )
-   aAdd( aBase, { "cAlmOrg",   "C",   3,  0, "Alm. org."            } )
-   aAdd( aBase, { "cAlmDes",   "C",   3,  0, "Alm. des."            } )
+   aAdd( aBase, { "cAlmOrg",   "C",  16,  0, "Alm. org."            } )
+   aAdd( aBase, { "cAlmDes",   "C",  16,  0, "Alm. des."            } )
    aAdd( aBase, { "cCodDiv",   "C",   3,  0, "Div."                 } )
    aAdd( aBase, { "nVdvDiv",   "N",  13,  6, "Cambio de la divisa"  } )
    aAdd( aBase, { "cComMov",   "C", 100,  0, "Comentario"           } )
@@ -3792,100 +3792,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          PICTURE  ::oParent:cPirDiv ;
 			OF 		oDlg
 
-      /*
-      Stock--------------------------------------------------------------------
-
-      ::oBrwStock                        := IXBrowse():New( oDlg )
-
-      ::oBrwStock:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwStock:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      ::oBrwStock:SetArray( ::oParent:oStock:aStocks, , , .f. )
-
-      ::oBrwStock:lFooter                := .t.
-      ::oBrwStock:lHScroll               := .f.
-      ::oBrwStock:nMarqueeStyle          := 5
-      ::oBrwStock:cName                  := "Stock movimientos"
-      ::oBrwStock:lRecordSelector        := .f.
-
-      ::oBrwStock:CreateFromResource( 300 )
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Código"
-         :nWidth              := 40
-         :bStrData            := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Almacén"
-         :nWidth              := 120
-         :bStrData            := {|| if( !Empty( ::oParent:oStock:aStocks ), RetAlmacen( ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:cCodigoAlmacen, ::oParent:oAlm ), "" ) }
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Prop. 1"
-         :nWidth              := 40
-         :bStrData            := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:cValorPropiedad1, "" ) }
-         :lHide               := .t.
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Prop. 2"
-         :nWidth              := 40
-         :bStrData            := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:cValorPropiedad2, "" ) }
-         :lHide               := .t.
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Lote"
-         :nWidth              := 60
-         :bStrData            := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:cLote, "" ) }
-         :lHide               := .t.
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Num. serie"
-         :nWidth              := 60
-         :bStrData            := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
-         :lHide               := .t.
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Unidades"
-         :nWidth              := 80
-         :bEditValue          := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:nUnidades, 0 ) }
-         :bFooter             := {|| nStockUnidades( ::oBrwStock ) }
-         :cEditPicture        := ::oParent:cPicUnd
-         :nDataStrAlign       := AL_RIGHT
-         :nHeadStrAlign       := AL_RIGHT
-         :nFootStrAlign       := AL_RIGHT
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Pdt. recibir"
-         :bEditValue          := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:nPendientesRecibir, 0 ) }
-         :bFooter             := {|| nStockPendiente( ::oBrwStock ) }
-         :nWidth              := 70
-         :cEditPicture        := ::oParent:cPicUnd
-         :nDataStrAlign       := AL_RIGHT
-         :nHeadStrAlign       := AL_RIGHT
-         :nFootStrAlign       := AL_RIGHT
-         :lHide               := .t.
-      end with
-
-      with object ( ::oBrwStock:AddCol() )
-         :cHeader             := "Pdt. entregar"
-         :bEditValue          := {|| if( !Empty( ::oParent:oStock:aStocks ), ::oParent:oStock:aStocks[ ::oBrwStock:nArrayAt ]:nPendientesEntregar, 0 ) }
-         :bFooter             := {|| nStockEntregar( ::oBrwStock ) }
-         :nWidth              := 70
-         :cEditPicture        := ::oParent:cPicUnd
-         :nDataStrAlign       := AL_RIGHT
-         :nHeadStrAlign       := AL_RIGHT
-         :nFootStrAlign       := AL_RIGHT
-         :lHide               := .t.
-      end with
-      */
-
+     
       /*
       Almacen origen-----------------------------------------------------------
       */
@@ -3906,6 +3813,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( .f. ) ;
          PICTURE  ::oParent:cPicUnd ;
          ID       402 ;
+         IDSAY    404 ;
          OF       oDlg
 
       /*
