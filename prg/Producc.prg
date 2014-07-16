@@ -975,12 +975,12 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "dFecFin" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha fin"                           OF ::oDbf
       FIELD NAME "cCodDiv" TYPE "C" LEN 03  DEC 0 COMMENT "Divisa"                              OF ::oDbf
       FIELD NAME "nVdvDiv" TYPE "N" LEN 16  DEC 6 COMMENT "Valor divisa"                        OF ::oDbf
-      FIELD NAME "cAlmOrd" TYPE "C" LEN 03  DEC 0 COMMENT "Almacén destino"                     OF ::oDbf
+      FIELD NAME "cAlmOrd" TYPE "C" LEN 16  DEC 0 COMMENT "Almacén destino"                     OF ::oDbf
       FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                             OF ::oDbf
       FIELD NAME "cHorIni" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"   OF ::oDbf
       FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"   OF ::oDbf
       FIELD NAME "cCodOpe" TYPE "C" LEN 03  DEC 0 COMMENT "Operación"                           OF ::oDbf
-      FIELD NAME "cAlmOrg" TYPE "C" LEN 03  DEC 0 COMMENT "Almacen Origen"                      OF ::oDbf
+      FIELD NAME "cAlmOrg" TYPE "C" LEN 16  DEC 0 COMMENT "Almacén Origen"                      OF ::oDbf
       FIELD NAME "lRecCos" TYPE "L" LEN 01  DEC 0 COMMENT "Recalcula"      HIDE                 OF ::oDbf
 
       INDEX TO "ProCab.Cdx" TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT "Número"        NODELETED OF ::oDbf
@@ -1011,12 +1011,12 @@ METHOD DefineHash()
          "dFecFin" => { "Type" => "D", "Len" => 08, "Decimals" => 0, "Comment" => "Fecha fin",        "Validate" => "Required" },;
          "cCodDiv" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Divisa",           "Validate" => "Required" },;
          "nVdvDiv" => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Valor divisa",     "Validate" => "Required" },;
-         "cAlmOrd" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Almacén destino",  "Validate" => "Required" },;
+         "cAlmOrd" => { "Type" => "C", "Len" => 16, "Decimals" => 0, "Comment" => "Almacén destino",  "Validate" => "Required" },;
          "cCodSec" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Sección",          "Validate" => "Required" },;
          "cHorIni" => { "Type" => "C", "Len" => 05, "Decimals" => 0, "Comment" => "Hora de inicio",   "Validate" => "Required", "Picture" => "@R 99:99" },;
          "cHorFin" => { "Type" => "C", "Len" => 05, "Decimals" => 0, "Comment" => "Hora de fin",      "Validate" => "Required", "Picture" => "@R 99:99" },;
          "cCodOpe" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Operación",        "Validate" => "Required" },;
-         "cAlmOrg" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Almacen Origen",   "Validate" => "" };
+         "cAlmOrg" => { "Type" => "C", "Len" => 16, "Decimals" => 0, "Comment" => "Almacén Origen",   "Validate" => "" };
       },;
       "Index"          => "Porcab",;
       "ExtensionIndex" => "Cdx",;
@@ -1349,7 +1349,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ACTION   ( ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMateriaPrima ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
       /*
-      Browse de materiales-----------------------------------------------------
+      Browse de materiales--------------------------------------------------------
       */
 
       ::oBrwMaterialProducido                := IXBrowse():New( oFld:aDialogs[1] )
@@ -4107,7 +4107,7 @@ METHOD DefineAuxiliar()
       FIELD NAME "cCodigo"    TYPE "C" LEN  18  DEC 0 COMMENT "Código"                                   OF ::cAreaTmpLabel
       FIELD NAME "cNombre"    TYPE "C" LEN 100  DEC 0 COMMENT "Nombre"                                   OF ::cAreaTmpLabel
       FIELD NAME "cTxtSer"    TYPE "M" LEN  10  DEC 0 COMMENT "Series"                                   OF ::cAreaTmpLabel
-      FIELD NAME "cCodAlm"    TYPE "C" LEN  03  DEC 0 COMMENT "Almacén"                                  OF ::cAreaTmpLabel
+      FIELD NAME "cCodAlm"    TYPE "C" LEN  16  DEC 0 COMMENT "Almacén"                                  OF ::cAreaTmpLabel
       FIELD NAME "cCodSec"    TYPE "C" LEN  03  DEC 0 COMMENT "Sección"                                  OF ::cAreaTmpLabel
       FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::cAreaTmpLabel
       FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::cAreaTmpLabel
@@ -4516,7 +4516,7 @@ Method lPrepareDataReportLbl( lDesign ) CLASS TProduccion
       FIELD NAME "cCodigo"    TYPE "C" LEN  18  DEC 0 COMMENT "Código"                                   OF ::cAreaTemporalLabel
       FIELD NAME "cNombre"    TYPE "C" LEN 100  DEC 0 COMMENT "Nombre"                                   OF ::cAreaTemporalLabel
       FIELD NAME "cTxtSer"    TYPE "M" LEN  10  DEC 0 COMMENT "Series"                                   OF ::cAreaTemporalLabel
-      FIELD NAME "cCodAlm"    TYPE "C" LEN  03  DEC 0 COMMENT "Almacén"                                  OF ::cAreaTemporalLabel
+      FIELD NAME "cCodAlm"    TYPE "C" LEN  16  DEC 0 COMMENT "Almacén"                                  OF ::cAreaTemporalLabel
       FIELD NAME "cCodSec"    TYPE "C" LEN  03  DEC 0 COMMENT "Sección"                                  OF ::cAreaTemporalLabel
       FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::cAreaTemporalLabel
       FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::cAreaTemporalLabel
