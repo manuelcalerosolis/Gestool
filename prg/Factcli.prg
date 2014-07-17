@@ -10035,7 +10035,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
    oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
 
-   // oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             								"CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
+   //oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             						"CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
 Return nil
 
