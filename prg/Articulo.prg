@@ -4851,7 +4851,7 @@ return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function ImportaImagenes( aTmp, oBrwImg )
+static function ImportaImagenes( aTmp, oBrwImg ) 
 
    local aImg
    local aImagenes
