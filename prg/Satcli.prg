@@ -176,6 +176,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DESCRIP                  77
 #define _LLINOFE                  78
 #define _LVOLIMP                  79
+#define __NBULTOS                 80
+#define _CFORMATO                 81
 
 /*
 Array para impuestos
@@ -3329,6 +3331,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[ 1 ]
 
+      /*
+      Bultos, cajas y unidades-------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ __NBULTOS ] ;
+         VAR      aTmp[ __NBULTOS ] ;
+         ID       450 ;
+         IDSAY    451 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  cPicUnd ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[ _NCANSAT ] ;
          VAR      aTmp[ _NCANSAT ];
          ID       130 ;
@@ -3422,6 +3437,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       410;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
          COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       460;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
@@ -3724,6 +3744,14 @@ Estudiamos la posiblidades que se pueden dar en una linea de detalle
 STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin )
 
    local cCodArt  := aGet[ _CREF ]:varGet()
+
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if aGet[ _NCANSAT ] != nil
       if !lUseCaj()
@@ -10085,6 +10113,8 @@ function aColSatCli()
    aAdd( aColSatCli, { "Descrip"  ,"M",  10,  0, "Descripción larga",                "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "lLinOfe"  ,"L",   1,  0, "Línea con oferta",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con impuestos especiales", "",    "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nBultos"  ,"N",  16,  6, "Numero de bultos en líneas",       "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                 "",                   "", "( cDbfCol )" } )
 
 return ( aColSatCli )
 

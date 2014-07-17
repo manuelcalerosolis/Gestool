@@ -25,7 +25,7 @@
 #define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _DFECFAC             5      //,"D",  8, 0, "Fecha de la factura" },;
 #define _CCODCLI             6      //,"C", 12, 0, "Codigo del cliente" },;
-#define _CCODALM             7      //,"C",  3, 0, "Codigo de almacen" },;
+#define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
 #define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
@@ -18962,7 +18962,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "NCTLSTK"    ,"N",  1, 0, "Tipo de stock de la linea"             , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NCOSDIV"    ,"N", 16, 6, "Costo del producto"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NPVPREC"    ,"N", 16, 6, "Precio de venta recomendado"           , "cPorDivFac" ,   "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CALMLIN"    ,"C",  3, 0, "Código de almacén"                     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CALMLIN"    ,"C", 16, 0, "Código de almacén"                     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LIVALIN"    ,"L",  1, 0, cImp() + " incluido"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CCODIMP"    ,"C",  3, 0, "Código del impuesto especial"          , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NVALIMP"    ,"N", 16, 6, "Importe del impuesto especial"         , "cPorDivFac" ,   "", "( cDbfCol )"} )
@@ -19033,7 +19033,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"CTURFAC"     ,"C",  6, 0, "Sesión de la factura" ,                                "######",             "", "( cDbf )"} )
    aAdd( aItmFacCli, {"DFECFAC"     ,"D",  8, 0, "Fecha de la factura" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CCODCLI"     ,"C", 12, 0, "Código del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODALM"     ,"C",  3, 0, "Código de almacén" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODALM"     ,"C", 16, 0, "Código de almacén" ,                                   "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CCODCAJ"     ,"C",  3, 0, "Código de caja" ,                                      "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CNOMCLI"     ,"C", 80, 0, "Nombre del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CDIRCLI"     ,"C",100, 0, "Domicilio del cliente" ,                               "'@!'",               "", "( cDbf )"} )
@@ -19164,7 +19164,7 @@ Function aSerFacCli()
    aAdd( aColFacCli,  { "dFecFac",     "D",  8,   0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColFacCli,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
    aAdd( aColFacCli,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cAlmLin",     "C",  3,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cAlmLin",     "C", 16,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
    aAdd( aColfacCli,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
    aAdd( aColFacCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
 

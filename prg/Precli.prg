@@ -175,6 +175,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLINOFE                  78
 #define _LVOLIMP                  79
 #define _DFECCAD                  80
+#define __NBULTOS                 81
+#DEFINE _CFORMATO                 82
 
 /*
 Array para impuestos
@@ -3541,6 +3543,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       end if
 
+      /*
+      Bultos, cajas y unidades-------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ __NBULTOS ] ;
+         VAR      aTmp[ __NBULTOS ] ;
+         ID       450 ;
+         IDSAY    451 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  cPicUnd ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[ _NCANPRE ] VAR aTmp[ _NCANPRE ];
          ID       130 ;
          SPINNER ;
@@ -3647,6 +3662,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       410;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
 			COLOR 	CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       460;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
@@ -3942,6 +3962,14 @@ Estudiamos la posiblidades que se pueden dar en una linea de detalle
 STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre,  oRentLin )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if aGet[ _NCANPRE ] != nil
       if !lUseCaj()
@@ -10253,6 +10281,8 @@ function aColPreCli()
    aAdd( aColPreCli, { "lLinOfe"  ,"L",   1,  0, "Línea con oferta",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con IpusEsp",  "",                "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "dFecCad"  ,"D",   8,  0, "Fecha de caducidad",               "",                   "", "( cDbfCol )" } )
+   aAdd( aColPreCli, { "nBultos"  ,"N",  16,  6, "Numero de bultos en líneas",       "",                   "", "( cDbfCol )" } )
+   aAdd( aColPreCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                 "",                   "", "( cDbfCol )" } )
 
 return ( aColPreCli )
 

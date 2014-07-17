@@ -203,9 +203,11 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  87
 #define _NPRODUC                  88
 #define _DFECCAD                  89
-#define _DFECULTCOM 			  90	
-#define _LFROMATP				  91
-#define _NUNIULTCOM 			  92
+#define _DFECULTCOM 			  		 90	
+#define _LFROMATP				  		 91
+#define _NUNIULTCOM 			  		 92
+#define __NBULTOS 					 93
+#define _CFORMATO 					 94
 
 /*
 Array para impuestos
@@ -15453,7 +15455,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "CCODAGE", "C",    3,  0, "Código del agente",               "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODOBR", "C",   10,  0, "Código de obra",                  "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODTAR", "C",    5,  0, "Código de tarifa",                "",                   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODALM", "C",    3,  0, "Código del almacen",              "",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODALM", "C",   16,  0, "Código del almacén",              "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODCAJ", "C",    3,  0, "Código de caja",                  "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODPGO", "C",    2,  0, "Código de pago",                  "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODRUT", "C",    4,  0, "Código de la ruta",               "",                   "", "( cDbf )", nil } )
@@ -15583,10 +15585,10 @@ function aColPedCli()
    aAdd( aColPedCli, { "NCTLSTK",   "N",    1,  0, "Tipo de stock de la linea",       "'9'",                "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NCOSDIV",   "N",   16,  6, "Costo del producto" ,             "cPorDivPre",         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NPVPREC",   "N",   16,  6, "Precio de venta recomendado" ,    "cPorDivPre",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CALMLIN",   "C",    3,  0, "Código de almacén" ,              "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CALMLIN",   "C",   16,  0, "Código de almacén" ,              "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CCODIMP",   "C",    3,  0, "Código del IVMH",                 "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NVALIMP",   "N",   16,  6, "Importe de impuesto",             "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LIVALIN",   "L",    1,  0, "Línea con impuesto incluido",     "",                 "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LIVALIN",   "L",    1,  0, "Línea con impuesto incluido",     "",                 	"", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "LLOTE",     "L",    1,  0, "",                                "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NLOTE",     "N",    9,  0, "",                                "'999999999'",        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CLOTE",     "C",   12,  0, "Número de lote",                  "",                   "", "( cDbfCol )", nil } )
@@ -15635,8 +15637,10 @@ function aColPedCli()
    aAdd( aColPedCli, { "nProduc",   "N",    1,  0, "Lógico de producido",              "",                  "", "( cDbfCol )", .f. } )
    aAdd( aColPedCli, { "dFecCad",   "D",    8,  0, "Fecha de caducidad",               "",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "dFecUltCom","D",    8,  0, "Fecha ultima venta",               "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								   "",          		"", "( cDbfCol )", .f. } )
-   aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		   "",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								         "",          			"", "( cDbfCol )", .f. } )
+   aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		      "",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nBultos",   "N", 	 16,  6, "Numero de bultos en líneas",			"",              		"", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",						"",              		"", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
