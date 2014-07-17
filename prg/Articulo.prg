@@ -4414,6 +4414,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( dbSwapDown( dbfTmpImg, oBrwImg ) )
 
+      REDEFINE BUTTON ;
+         ID       505 ;
+         OF       fldImagenes;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ImportaImagenes( aTmp, oBrwImg ) )   
+
    oBrwImg                 := IXBrowse():New( fldImagenes )
 
    oBrwImg:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -4842,6 +4848,93 @@ Static Function ActualizaCostoProveedor( aTmp, aGet, dbfTmpPrv )
    end if    
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function ImportaImagenes( aTmp, oBrwImg )
+
+   local aImg
+   local aImagenes
+   local cImage
+   local lDefault       := .f.
+   local cDirectorio    := uFieldEmpresa( "CDIRIMG" )
+   local cPrefix        := cDirectorio + AllTrim( aTmp[ ( dbfArticulo )->( fieldpos( "codigo" ) ) ] )
+   local nOrdAnt        := ( dbfTmpImg )->( OrdSetFocus( "cImgArt" ) )
+
+   /*
+   Cogemos las imágenes que hayan en el directorio para este artículo----------
+   */
+
+   aImagenes            := Directory( cPrefix + "*.*" )
+   
+   for each aImg in aImagenes
+      
+      cImage := Upper( Padr( cDirectorio + aImg[ 1 ], 230 ) )
+
+      /*
+      Buscamos para ver si ya está introducida ésta imagen, para que no se repitan
+      */
+
+      if !( dbfTmpImg )->( dbSeek( cImage ) )
+
+         ( dbfTmpImg )->( dbAppend() )
+         
+         ( dbfTmpImg )->cCodArt  := AllTrim( aTmp[ ( dbfArticulo )->( fieldpos( "codigo" ) ) ] )
+         ( dbfTmpImg )->cImgArt  := cImage
+         ( dbfTmpImg )->cNbrArt  := AllTrim( aTmp[ ( dbfArticulo )->( fieldpos( "nombre" ) ) ] )
+
+         ( dbfTmpImg )->( dbUnLock() )
+
+      end if   
+
+   next
+
+   /*
+   Comprobamos si hay alguna imagen por defecto, si no es así marcamos la primera
+   */
+
+   lDefault       := .f.
+
+   ( dbfTmpImg )->( dbGoTop() )
+
+   while !( dbfTmpImg )->( Eof() )
+
+      if ( dbfTmpImg )->lDefImg
+         lDefault := .t.
+      end if
+
+      ( dbfTmpImg )->( dbSkip() )
+
+   end while
+
+   if !lDefault
+
+      ( dbfTmpImg )->( dbGoTop() )         
+
+      if dbLock( dbfTmpImg )
+         ( dbfTmpImg )->lDefImg  := .t.
+         ( dbfTmpImg )->( dbUnLock() )
+      end if 
+
+   end if
+
+   /*
+   Volvemos al orden que traiamos----------------------------------------------
+   */
+
+   ( dbfTmpImg )->( OrdSetFocus( nOrdAnt ) )
+
+   ( dbfTmpImg )->( dbGoTop() )
+
+   /*
+   Refrescamos el browse antes de salir----------------------------------------
+   */
+   
+   if !Empty( oBrwImg )
+      oBrwImg:Refresh()
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 

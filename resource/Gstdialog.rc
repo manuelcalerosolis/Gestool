@@ -1011,6 +1011,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 40, 50, 14
   CONTROL "&Subir", 503, "Button", WS_TABSTOP, 212, 40, 50, 14
   CONTROL "&Bajar", 504, "Button", WS_TABSTOP, 266, 40, 50, 14
+  CONTROL "Importar", 505, "Button", WS_TABSTOP, 320, 40, 50, 14
 }
 
 ART_15 DIALOG DISCARDABLE 36, 16, 496, 286
