@@ -1387,8 +1387,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          NOBORDER ;
          MENU     This:Toggle() ;
          ACTION   ( ChangeField( dbfArticulo, "lIncTcl", !( dbfArticulo )->lIncTcl, oWndBrw ) ) ;
-         TOOLTIP  "Táct(i)l" ;
-         HOTKEY   "I";
+         TOOLTIP  "Táctil" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Up" OF oWndBrw ;
