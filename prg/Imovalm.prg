@@ -29,8 +29,8 @@ END CLASS
 METHOD Create()
 
    ::AddField( "dFecMov",   "D",  8, 0, {|| "" },     "Fecha",      .t.,"Fecha del movimiento",  12, .f.  )
-   ::AddField( "cAliMov",   "C",  3, 0, {|| "" },     "Alm. Org.",  .t.,"Almacen origen",        10, .f.  )
-   ::AddField( "cAloMov",   "C",  3, 0, {|| "" },     "Alm. Des.",  .t.,"Almacen destino",       10, .f.  )
+   ::AddField( "cAliMov",   "C", 16, 0, {|| "" },     "Alm. Org.",  .t.,"Almacen origen",        10, .f.  )
+   ::AddField( "cAloMov",   "C", 16, 0, {|| "" },     "Alm. Des.",  .t.,"Almacen destino",       10, .f.  )
    ::AddField( "cCodArt",   "C", 18, 0, {|| "" },     "Código artículo",  .t.,"Código de artículo",    15, .f.  )
    ::AddField( "cNomArt",   "C",100, 0, {|| "" },     "Nom. Art",   .t.,"Nombre de artículo",    30, .f.  )
    ::AddField( "nUndMov",   "N", 16, 3, {|| "" },     "Unidades",   .t.,"Unidades movidas",      10, .t.  )

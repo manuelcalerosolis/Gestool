@@ -203,9 +203,11 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  87
 #define _NPRODUC                  88
 #define _DFECCAD                  89
-#define _DFECULTCOM 			  90	
-#define _LFROMATP				  91
-#define _NUNIULTCOM 			  92
+#define _DFECULTCOM 			  		 90	
+#define _LFROMATP				  		 91
+#define _NUNIULTCOM 			  		 92
+#define __NBULTOS 					 93
+#define _CFORMATO 					 94
 
 /*
 Array para impuestos
@@ -15637,6 +15639,8 @@ function aColPedCli()
    aAdd( aColPedCli, { "dFecUltCom","D",    8,  0, "Fecha ultima venta",               "",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								   "",          		"", "( cDbfCol )", .f. } )
    aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		   "",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en líneas", 	   "",              	"", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                 "",              	"", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

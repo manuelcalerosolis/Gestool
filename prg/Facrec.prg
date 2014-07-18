@@ -16,7 +16,7 @@
 #define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _DFECFAC             5      //,"D",  8, 0, "Fecha de la factura" },;
 #define _CCODCLI             6      //,"C", 12, 0, "Codigo del cliente" },;
-#define _CCODALM             7      //,"C",  3, 0, "Codigo de almacen" },;
+#define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
 #define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;

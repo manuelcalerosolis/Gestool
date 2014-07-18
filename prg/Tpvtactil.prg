@@ -5367,6 +5367,9 @@ METHOD AgregarCombinado()
       end if
    
    ::oTemporalLinea:Save()
+
+   // Agregamos kits si los tiene----------------------------------------------
+   ::AgregarKit( ::oArticulo:Codigo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
    
    ::SetCombinando( .f. )
 

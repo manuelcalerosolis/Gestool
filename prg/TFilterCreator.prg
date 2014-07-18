@@ -92,6 +92,7 @@ CLASS TFilterCreator
    METHOD ScanStructure( cDescription, nPos )
 
    METHOD GetField( cDescription )           INLINE ( ::ScanStructure( cDescription, posField ) )
+   METHOD GetFieldAllTrim( cDescription )    INLINE ( "Trim( Field->" + ::GetField( cDescription ) + " ) " )
    METHOD GetType( cDescription )            INLINE ( ::ScanStructure( cDescription, posType ) )
    METHOD GetCondition( cCondition )         INLINE ( HGet( ::hConditions, cCondition ) )
    METHOD GetNexo( cNexo )                   INLINE ( HGet( ::hNexo, cNexo ) )
@@ -194,6 +195,7 @@ METHOD BuildFilter( aFilter ) CLASS TFilterCreator
    local oError
    local oBlock
    local cCondition
+   local cType
 
    if Empty( aFilter )
       RETURN .f.
@@ -211,11 +213,18 @@ METHOD BuildFilter( aFilter ) CLASS TFilterCreator
       for each a in aFilter
 
          cCondition              := ::GetCondition( a[ fldCondition ] )
+         cType                   := ::GetType( a[ fldDescription ] )
 
          if cCondition == " $ "
-            ::cExpresionFilter   += cGetValue( a[ fldValue ], ::GetType( a[ fldDescription ] ) ) + cCondition + ::GetField( a[ fldDescription ] )  
+            ::cExpresionFilter   += cGetValue( a[ fldValue ], cType ) + cCondition + ::GetField( a[ fldDescription ] )  
          else
-            ::cExpresionFilter   += ::GetField( a[ fldDescription ] ) + cCondition + cGetValue( a[ fldValue ], ::GetType( a[ fldDescription ] ) )
+            
+            if cType == "C"
+               ::cExpresionFilter   += ::GetFieldAllTrim( a[ fldDescription ] ) + cCondition + cGetValue( a[ fldValue ], cType )
+            else
+               ::cExpresionFilter   += ::GetField( a[ fldDescription ] ) + cCondition + cGetValue( a[ fldValue ], cType )
+            end if
+
          end if 
 
          ::cExpresionFilter      += ::GetNexo( a[ fldNexo ] )

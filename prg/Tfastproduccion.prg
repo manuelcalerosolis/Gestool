@@ -223,8 +223,8 @@ METHOD Create( uParam ) CLASS TFastProduccion
    ::AddField( "cCodOpe",     "C",  3, 0, {|| "" },   "Operación"                               )
    ::AddField( "cTipOpe", )
    ::AddField( "cCodSec",     "C",  3, 0, {|| "" },   "Sección"                                 )
-   ::AddField( "cCodAlmDes",  "C",  3, 0, {|| "" },   "Almacen destino"                         ) 
-   ::AddField( "cCodAlmOrg",  "C",  3, 0, {|| "" },   "Almacen origen"                          ) 
+   ::AddField( "cCodAlmDes",  "C", 16, 0, {|| "" },   "Almacen destino"                         ) 
+   ::AddField( "cCodAlmOrg",  "C", 16, 0, {|| "" },   "Almacen origen"                          ) 
 
    ::AddField( "nTotPrd",     "N", 16, 6, {|| "" },   "Total producido"                         )
    ::AddField( "nUndPrd",     "N", 16, 6, {|| "" },   "Total unidades producidas"               )

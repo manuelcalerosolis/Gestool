@@ -25,7 +25,7 @@
 #define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _DFECFAC             5      //,"D",  8, 0, "Fecha de la factura" },;
 #define _CCODCLI             6      //,"C", 12, 0, "Codigo del cliente" },;
-#define _CCODALM             7      //,"C",  3, 0, "Codigo de almacen" },;
+#define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
 #define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
@@ -10031,11 +10031,9 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano",                                "CallHbFunc('dJulianoFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
-
    oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
    oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
-
-   // oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             								"CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					   "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
 Return nil
 
@@ -19011,13 +19009,13 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 	  , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					     , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					     , "'@!'",          "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			           , "",          		"", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 	  , "",              "", "( cDbfCol )" } )
-  	aAdd( aColFacCli, { "nBultos",   "N", 	16, 6, "Numero de bultos en líneas"				  , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"							  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			 , "",         		"", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						 , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -20904,6 +20902,14 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, cFacCliT, dbfTikT )
 	CursorWE()
 
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
+
+//---------------------------------------------------------------------------//
+
+Function FacturaClienteLineaOrdSetFocus( cOrd )
+
+	( dbfFacCliL )->( OrdSetFocus( cOrd ) )
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
