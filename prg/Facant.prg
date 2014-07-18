@@ -640,9 +640,9 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    "Facturas de anticipos a clientes" ;
-      PROMPT   "Número",;
+      PROMPT   "NÃºmero",;
                "Fecha",;
-               "Código",;
+               "CÃ³digo",;
                "Nombre",;
                "Obra";
       MRU      "Document_money2_16";
@@ -662,7 +662,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión cerrada"
+         :cHeader          := "SesiÃ³n cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfAntCliT )->lCloAnt }
@@ -720,7 +720,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumAnt"
          :bEditValue       := {|| ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt }
          :nWidth           := 80
@@ -729,7 +729,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
+         :cHeader          := "DelegaciÃ³n"
          :bEditValue       := {|| ( dbfAntCliT )->cCodDlg }
          :nWidth           := 20
          :lHide            := .t.
@@ -737,7 +737,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión"
+         :cHeader          := "SesiÃ³n"
          :bEditValue       := {|| Trans( ( dbfAntCliT )->cTurAnt, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
@@ -770,7 +770,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| AllTrim( ( dbfAntCliT )->cCodCli ) }
          :nWidth           := 70
@@ -788,7 +788,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Población"
+         :cHeader          := "PoblaciÃ³n"
          :bEditValue       := {|| AllTrim( ( dbfAntCliT )->cPobCli ) }
          :nWidth           := 180
          :lHide            := .t.
@@ -810,7 +810,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Almacén"
+         :cHeader          := "AlmacÃ©n"
          :bEditValue       := {|| ( dbfAntCliT )->cCodAlm }
          :nWidth           := 60
          :bLDClickData     := {|| oWndBrw:RecEdit() }
@@ -895,7 +895,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       NOBORDER ;
       ACTION   ( oWndBrw:RecAdd() );
       ON DROP  ( oWndBrw:RecDup() );
-      TOOLTIP  "(A)ñadir";
+      TOOLTIP  "(A)Ã±adir";
       BEGIN GROUP;
       HOTKEY   "A";
       LEVEL    ACC_APPD
@@ -979,7 +979,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( GenAntCli( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
+      TOOLTIP  "Correo electrÃ³nico";
       LEVEL    ACC_IMPR
 
       lGenAntCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
@@ -1002,8 +1002,8 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidación", .f., "Liquidación", .t. ) ) ;
-      TOOLTIP  "Cambiar liquidación" ;
+      ACTION   ( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidaciÃ³n", .f., "LiquidaciÃ³n", .t. ) ) ;
+      TOOLTIP  "Cambiar liquidaciÃ³n" ;
       LEVEL    ACC_EDIT
 
    end if
@@ -1140,7 +1140,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
    case nMode == APPD_MODE
 
       if !lCurSesion()
-         msgStop( "No hay sesiones activas, imposible añadir documentos" )
+         msgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
          Return .f.
       end if
 
@@ -1171,7 +1171,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
    case nMode == DUPL_MODE
 
       if !lCurSesion()
-         msgStop( "No hay sesiones activas, imposible añadir documentos" )
+         msgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
          Return .f.
       end if
 
@@ -1199,7 +1199,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       end if
 
       if aTmp[ _LCONTAB ] .and.;
-         !ApoloMsgNoYes( "La modificación de este anticipo puede provocar descuadres contables." + CRLF + "¿ Desea continuar ?", "Anticipo ya contabilizada" )
+         !ApoloMsgNoYes( "La modificaciÃ³n de este anticipo puede provocar descuadres contables." + CRLF + "Â¿ Desea continuar ?", "Anticipo ya contabilizada" )
          return .f.
       end if
 
@@ -1243,7 +1243,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
    nRieCli                 := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
    /*
-   Inicialización de variables
+   InicializaciÃ³n de variables
    */
 
    BeginTrans( aTmp, nMode )
@@ -1660,7 +1660,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
+            :cHeader          := "CÃ³digo"
             :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
             :nWidth           := 80
          end with
@@ -1678,7 +1678,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Descripción"
+            :cHeader          := "DescripciÃ³n"
             :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
             :nWidth           := 500
          end with
@@ -1714,7 +1714,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          OF       oFld:aDialogs[ 2 ] ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
 
-      // Tercera caja de diálogo-----------------------------------------------
+      // Tercera caja de diÃ¡logo-----------------------------------------------
 
       oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 3 ] )
 
@@ -2324,7 +2324,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
 
       if uFieldEmpresa( "lSalPdt" ) .and. ( dbfCli )->Riesgo > 0
          if ( dbfCli )->nImpRie > ( dbfCli )->Riesgo
-            msgStop( "El riesgo del cliente supera el límite establecido", "Riesgo: " + Trans( ( dbfCli )->nImpRie, "@E 999999.99" ) )
+            msgStop( "El riesgo del cliente supera el lÃ­mite establecido", "Riesgo: " + Trans( ( dbfCli )->nImpRie, "@E 999999.99" ) )
          end if
       end if
 
@@ -2395,7 +2395,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
          aTmp[_NREGIVA ]   := ( dbfCli )->nRegIva
 
          /*
-         Si estamos a¤adiendo cargamos todos los datos del cliente
+         Si estamos aÂ¤adiendo cargamos todos los datos del cliente
          */
 
          if !Empty( (dbfCli)->Serie )
@@ -2453,7 +2453,7 @@ RETURN lValid
 //----------------------------------------------------------------------------//
 
 /*
-Comienza la edición de la Anticipo
+Comienza la ediciÃ³n de la Anticipo
 */
 
 STATIC FUNCTION BeginTrans( aTmp, nMode )
@@ -2497,7 +2497,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    /*
-   A¤adimos desde el fichero de incidencias
+   AÂ¤adimos desde el fichero de incidencias
 	*/
 
    if ( dbfAntCliI )->( dbSeek( cFac ) )
@@ -2510,7 +2510,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpInc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de Documentos
+   AÂ¤adimos desde el fichero de Documentos
 	*/
 
    if ( dbfAntCliD )->( dbSeek( cFac ) )
@@ -2527,7 +2527,7 @@ RETURN NIL
 //-----------------------------------------------------------------------//
 
 /*
-Finaliza la transacción de datos
+Finaliza la transacciÃ³n de datos
 */
 
 STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
@@ -2558,43 +2558,43 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
    */
 
    if Empty( aTmp[ _CNOMCLI ] )
-      msgStop( "Nombre de cliente no puede estar vacío." )
+      msgStop( "Nombre de cliente no puede estar vacÃ­o." )
       aGet[ _CNOMCLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDIRCLI ] )
-      msgStop( "Domicilio de cliente no puede estar vacía." )
+      msgStop( "Domicilio de cliente no puede estar vacÃ­a." )
       aGet[ _CDIRCLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDNICLI ] )
-      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacío." )
+      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacÃ­o." )
       aGet[ _CDNICLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacén no puede estar vacío." )
+      msgStop( "AlmacÃ©n no puede estar vacÃ­o." )
       aGet[ _CCODALM ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODPAGO ] )
-      msgStop( "Forma de pago no puede estar vacía." )
+      msgStop( "Forma de pago no puede estar vacÃ­a." )
       aGet[ _CCODPAGO ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDIVANT ] )
-      MsgStop( "No puede almacenar documento sin código de divisa." )
+      MsgStop( "No puede almacenar documento sin cÃ³digo de divisa." )
       aGet[ _CDIVANT ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
-      msgStop( "Agente no puede estar vacío." )
+      msgStop( "Agente no puede estar vacÃ­o." )
       aGet[ _CCODAGE ]:SetFocus()
       return .f.
    end if
@@ -3157,7 +3157,7 @@ function aCalAntCli()
    aAdd( aCalAntCli, { "nTotReq",   "N", 16,  6, "Total R.E.",                  "cPorDivAnt",  "!Empty( nTotReq ) .and. lEnd" } )
    aAdd( aCalAntCli, { "nTotImp",   "N", 16,  6, "Total impuestos",             "cPorDivAnt",  "!Empty( nTotImp ) .and. lEnd" } )
    aAdd( aCalAntCli, { "nTotAnt",   "N", 16,  6, "Total anticipos",             "cPorDivAnt",  "!Empty( nTotAnt ) .and. lEnd" } )
-   aAdd( aCalAntCli, { "nPagina",   "N",  2,  0, "Número de página",            "'99'",         "" }                            )
+   aAdd( aCalAntCli, { "nPagina",   "N",  2,  0, "NÃºmero de pÃ¡gina",            "'99'",         "" }                            )
    aAdd( aCalAntCli, { "lEnd",      "L",  1,  0, "Fin del documento",           "",             "" }                            )
 
 return ( aCalAntCli )
@@ -3168,13 +3168,13 @@ function aColAntCli()
 
    local aColAntCli  := {}
 
-   aAdd( aColAntCli, { "mDescrip",  "M", 10,  0, "Descripción",                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColAntCli, { "mDescrip",  "M", 10,  0, "DescripciÃ³n",                 "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColAntCli, { "nTotNet",   "N", 16,  6, "Total neto",                  "cPorDivAnt",  "!Empty( nTotNet ) .and. lEnd","" } )
    aAdd( aColAntCli, { "nTotIva",   "N", 16,  6, "Total " + cImp(),                "cPorDivAnt",  "!Empty( nTotIva ) .and. lEnd","" } )
    aAdd( aColAntCli, { "nTotReq",   "N", 16,  6, "Total R.E.",                  "cPorDivAnt",  "!Empty( nTotReq ) .and. lEnd","" } )
    aAdd( aColAntCli, { "nTotImp",   "N", 16,  6, "Total impuestos",             "cPorDivAnt",  "!Empty( nTotReq ) .and. lEnd","" } )
    aAdd( aColAntCli, { "nTotAnt",   "N", 16,  6, "Total anticipos",             "cPorDivAnt",  "!Empty( nTotAnt ) .and. lEnd","" } )
-   aAdd( aColAntCli, { "nPagina",   "N",  2,  0, "Número de página",            "'99'",        "",                            "" } )
+   aAdd( aColAntCli, { "nPagina",   "N",  2,  0, "NÃºmero de pÃ¡gina",            "'99'",        "",                            "" } )
    aAdd( aColAntCli, { "lEnd",      "L",  1,  0, "Fin del documento",           "",            "",                            "" } )
 
 return ( aColAntCli )
@@ -3201,7 +3201,7 @@ Static Function ShowInci( dbfTmpInc, cCodCli, dbfClient )
 
    while !( dbfTmpInc )->( Eof() )
       if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
-         MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
+         MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "Â¡Incidencia!" )
       end if
       ( dbfTmpInc )->( dbSkip() )
    end while
@@ -3221,7 +3221,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
    local cGet1
    local oCbxOrd
    local aStaAnt
-   local aCbxOrd     := { "Número", "Fecha", "Código", "Nombre" }
+   local aCbxOrd     := { "NÃºmero", "Fecha", "CÃ³digo", "Nombre" }
    local aNomOrd     := { "lNumAnt", "lFecAnt", "lCodCli", "lNomCli" }
    local cCbxOrd
    local oBtnSelect
@@ -3288,7 +3288,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "lNumAnt"
          :bEditValue       := {|| ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt }
          :nWidth           := 70
@@ -3304,7 +3304,7 @@ FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "lCodCli"
          :bEditValue       := {|| ( dbfAntCliT )->cCodCli }
          :nWidth           := 80
@@ -3733,7 +3733,7 @@ Static Function MakSelRec( bAction, cDocIni, cDocFin, bPreAction, bPostAction, n
 
 
    /*
-   Preparamos la pantalla para mostrar la simulación---------------------------
+   Preparamos la pantalla para mostrar la simulaciÃ³n---------------------------
    */
 
    if lChk1
@@ -3902,7 +3902,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
    cCodEmp              := cCodEmpCnt( ( dbfAntCliT )->cSerAnt )
 
    if empty( cCodEmp )
-      oTree:Select( oTree:Add("Factura : " + rtrim( cFactura ) + " no se definierón empresas asociadas.", 0 ) )
+      oTree:Select( oTree:Add("Factura : " + rtrim( cFactura ) + " no se definierÃ³n empresas asociadas.", 0 ) )
       lErrorFound       := .t.
    end if
 
@@ -4019,7 +4019,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
    cPago                := "C/Ant. N." + cFactura
 
 	/*
-   Realización de Asientos
+   RealizaciÃ³n de Asientos
 	--------------------------------------------------------------------------
    */
 
@@ -4352,17 +4352,17 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&3. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) );
 
             MENUITEM    "&4. Modificar obra";
                MESSAGE  "Modifica ficha de la obra" ;
                RESOURCE "Worker16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "CÃ³digo de obra vacÃ­o" ) ) );
 
 
          ENDMENU
@@ -4684,7 +4684,7 @@ Static Function VariableReport( oFr )
    oFr:DeleteCategory(  "Facturas anticipos" )
 
    /*
-   Creación de variables----------------------------------------------------
+   CreaciÃ³n de variables----------------------------------------------------
    */
 
    oFr:AddVariable(     "Facturas anticipos",             "Total factura",                      "GetHbVar('nTotAnt')" )
@@ -4692,7 +4692,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas anticipos",             "Total " + cImp(),                          "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Facturas anticipos",             "Total RE",                           "GetHbVar('nTotReq')" )
    oFr:AddVariable(     "Facturas anticipos",             "Total impuestos",                    "GetHbVar('nTotImp')" )
-   oFr:AddVariable(     "Facturas anticipos",             "Total retención",                    "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total retenciÃ³n",                    "GetHbVar('nTotRet')" )
    oFr:AddVariable(     "Facturas anticipos",             "Total agente",                       "GetHbVar('nTotAge')" )
    oFr:AddVariable(     "Facturas anticipos",             "Cuenta por defecto del cliente",     "GetHbVar('cCtaCli')" )
 
@@ -4777,13 +4777,13 @@ Function DesignReportAntCli( oFr, dbfDoc )
       VariableReport( oFr )
 
       /*
-      Diseño de report---------------------------------------------------------
+      DiseÃ±o de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseñador----------------------------------------------------
+      Destruye el diseÃ±ador----------------------------------------------------
       */
 
       oFr:DestroyFr()
@@ -4823,7 +4823,7 @@ Function PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle(        "DiseÃ±ador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -4905,7 +4905,7 @@ Function PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( dbfAntCliT )->cCodCli, dbfCli, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de factura de anticipo de cliente número " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) )
+                  :SetAsunto(       "Envio de factura de anticipo de cliente nÃºmero " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) )
                   :SetMensaje(      "Adjunto le remito nuestra factura de anticipo de cliente " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( dbfAntCliT )->dFecAnt ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -4923,7 +4923,7 @@ Function PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el diseñador-------------------------------------------------------
+   Destruye el diseÃ±ador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -5124,61 +5124,61 @@ function aItmAntCli()
    local aItmAntCli  := {}
 
    aAdd( aItmAntCli, {"cSerAnt"     ,"C",  1, 0, "Serie del anticipo" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"nNumAnt"     ,"N",  9, 0, "Número del anticipo" ,                                 "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nNumAnt"     ,"N",  9, 0, "NÃºmero del anticipo" ,                                 "'999999999'",        "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cSufAnt"     ,"C",  2, 0, "Sufijo del anticipo" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cTurAnt"     ,"C",  6, 0, "Sesión del anticipo" ,                                 "######",             "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cTurAnt"     ,"C",  6, 0, "SesiÃ³n del anticipo" ,                                 "######",             "", "( cDbf )"} )
    aAdd( aItmAntCli, {"dFecAnt"     ,"D",  8, 0, "Fecha del anticipo" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodCli"     ,"C", 12, 0, "Código del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodAlm"     ,"C",  3, 0, "Código de almacén" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja" ,                                      "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodCli"     ,"C", 12, 0, "CÃ³digo del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodAlm"     ,"C", 16, 0, "CÃ³digo de almacÃ©n" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodCaj"     ,"C",  3, 0, "CÃ³digo de caja" ,                                      "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cNomCli"     ,"C", 80, 0, "Nombre del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cDirCli"     ,"C",100, 0, "Domicilio del cliente" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cPobCli"     ,"C", 25, 0, "Población del cliente" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cPobCli"     ,"C", 25, 0, "PoblaciÃ³n del cliente" ,                               "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cPrvCli"     ,"C", 20, 0, "Provincia del cliente" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"nCodProv"    ,"N",  2, 0, "Número de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cPosCli"     ,"C", 15, 0, "Código postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nCodProv"    ,"N",  2, 0, "NÃºmero de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cPosCli"     ,"C", 15, 0, "CÃ³digo postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cDniCli"     ,"C", 30, 0, "DNI/Cif del cliente" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lModCli"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lMayor"      ,"L",  1, 0, "Lógico de mayorista" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodAge"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodRut"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodObr"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"nPctComAge"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lLiquidada"  ,"L",  1, 0, "Lógico de la liquidación" ,                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"dLiquidada"  ,"D",  8, 0, "Fecha de la liquidación" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cTurLiq"     ,"C",  6, 0, "Sesión de la liquidación" ,                             "######",             "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCajLiq"     ,"C",  3, 0, "Código de la liquidación" ,                            "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lContab"     ,"L",  1, 0, "Lógico de la contabilización" ,                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lModCli"     ,"L",  1, 0, "LÃ³gico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lMayor"      ,"L",  1, 0, "LÃ³gico de mayorista" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodAge"     ,"C",  3, 0, "CÃ³digo del agente" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodRut"     ,"C",  4, 0, "CÃ³digo de la ruta" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodObr"     ,"C", 10, 0, "CÃ³digo de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPctComAge"  ,"N",  6, 2, "Porcentaje de comisiÃ³n del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lLiquidada"  ,"L",  1, 0, "LÃ³gico de la liquidaciÃ³n" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"dLiquidada"  ,"D",  8, 0, "Fecha de la liquidaciÃ³n" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cTurLiq"     ,"C",  6, 0, "SesiÃ³n de la liquidaciÃ³n" ,                             "######",             "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCajLiq"     ,"C",  3, 0, "CÃ³digo de la liquidaciÃ³n" ,                            "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lContab"     ,"L",  1, 0, "LÃ³gico de la contabilizaciÃ³n" ,                        "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cSuant"      ,"C", 10, 0, "Su anticipo" ,                                         "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCondent"    ,"C", 20, 0, "Condición de entrada" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCondent"    ,"C", 20, 0, "CondiciÃ³n de entrada" ,                                "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"mDescrip"    ,"M", 10, 0, "Concepto" ,                                            "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nImpArt"     ,"N", 16, 6, "Importe del anticipo" ,                                "cPorDivAnt",         "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodPago"    ,"C",  2, 0, "Código del tipo de pago" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodPago"    ,"C",  2, 0, "CÃ³digo del tipo de pago" ,                             "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nPorcIva"    ,"N",  4, 1, "" ,                                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lRecargo"    ,"L",  1, 0, "Lógico para recargo" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lRecargo"    ,"L",  1, 0, "LÃ³gico para recargo" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cRemitido"   ,"C", 50, 0, "Campo de remitido" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"lIvaInc"     ,"L",  1, 0, cImp() + " incluido" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lSndDoc"     ,"L",  1, 0, "Lógico para documento enviado" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cDivAnt"     ,"C",  3, 0, "Código de la divisa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lSndDoc"     ,"L",  1, 0, "LÃ³gico para documento enviado" ,                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cDivAnt"     ,"C",  3, 0, "CÃ³digo de la divisa" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nVdvAnt"     ,"N", 10, 4, "Cambio de la divisa" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cRetPor"     ,"C",100, 0, "Retirado por" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cRetMat"     ,"C", 20, 0, "Matrícula" ,                                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cRetMat"     ,"C", 20, 0, "MatrÃ­cula" ,                                           "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cNumDoc"     ,"C", 12, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nRegIva"     ,"N",  1, 0, "Regimen de " + cImp() ,                                   "'@E 999,99'",        "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodPro"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cDocOrg"     ,"C", 10, 0, "Número del documento origen" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodPro"     ,"C",  9, 0, "CÃ³digo de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cDocOrg"     ,"C", 10, 0, "NÃºmero del documento origen" ,                         "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nPctIva"     ,"N",  6, 2, "Porcentaje de " + cImp() ,                                "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nPctReq"     ,"N",  6, 2, "Porcentaje de recargo de equivalencia",                "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                              "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lCloAnt"     ,"L",  1, 0, "Lógico para anticipo liquidado" ,                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación del documento",                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación del documento",                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"lSelDoc"     ,"L",  1, 0, "Lógico para seleccionar documento" ,                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retenciÃ³n",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lCloAnt"     ,"L",  1, 0, "LÃ³gico para anticipo liquidado" ,                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodUsr"     ,"C",  3, 0, "CÃ³digo de usuario",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creaciÃ³n del documento",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cTimCre"     ,"C",  5, 0, "Hora de creaciÃ³n del documento",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lSelDoc"     ,"L",  1, 0, "LÃ³gico para seleccionar documento" ,                   "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cCtaPgo"     ,"C", 12, 0, "Cuenta de pago" ,                                      "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nReq"        ,"N", 16, 6, "Recargo de equivalencia" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodDlg"     ,"C",  2, 0, "Código delegación" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"CTLFCLI"     ,"C", 20, 0, "Teléfono del cliente" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodDlg"     ,"C",  2, 0, "CÃ³digo delegaciÃ³n" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"CTLFCLI"     ,"C", 20, 0, "TelÃ©fono del cliente" ,                                "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nTotNet"     ,"N", 16, 6, "Total neto" ,                                          "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nTotIva"     ,"N", 16, 6, "Total " + cImp() ,                                           "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nTotReq"     ,"N", 16, 6, "Total recargo" ,                                       "",                   "", "( cDbf )"} )
@@ -5282,7 +5282,7 @@ Return ( .t. )
 //----------------------------------------------------------------------------//
 
 /*
-Crea las bases de datos necesarias para la Anticipoción desde fuera
+Crea las bases de datos necesarias para la AnticipociÃ³n desde fuera
 */
 
 FUNCTION mkAntCli( cPath, lAppend, cPathOld, oMeter )
@@ -5523,7 +5523,7 @@ RETURN NIL
 //--------------------------------------------------------------------------//
 
 /*
-Crea los ficheros de la Anticipoci¢n
+Crea los ficheros de la AnticipociÂ¢n
 */
 
 STATIC FUNCTION CreateFiles( cPath, lReindex )
@@ -5555,7 +5555,7 @@ function aAntCliDoc()
    local aAntCliDoc  := {}
 
    aAdd( aAntCliDoc, { "cSerAnt", "C",    1,  0, "Serie de anticipos" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aAntCliDoc, { "nNumAnt", "N",    9,  0, "Número de anticipos" ,             "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aAntCliDoc, { "nNumAnt", "N",    9,  0, "NÃºmero de anticipos" ,             "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aAntCliDoc, { "cSufAnt", "C",    2,  0, "Sufijo de anticipos" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aAntCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
    aAdd( aAntCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
@@ -5570,13 +5570,13 @@ function aIncAntCli()
    local aIncAntCli  := {}
 
    aAdd( aIncAntCli, { "cSerAnt", "C",    1,  0, "Serie de anticipo" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAntCli, { "nNumAnt", "N",    9,  0, "Número de anticipo" ,             "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "nNumAnt", "N",    9,  0, "NÃºmero de anticipo" ,             "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aIncAntCli, { "cSufAnt", "C",    2,  0, "Sufijo de anticipo" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aIncAntCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aIncAntCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,         "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAntCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,   "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAntCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAntCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "mDesInc", "M",   10,  0, "DescripciÃ³n de la incidencia" ,   "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "lListo",  "L",    1,  0, "LÃ³gico de listo" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "lAviso",  "L",    1,  0, "LÃ³gico de aviso" ,                "",                   "", "( cDbfCol )" } )
 
 return ( aIncAntCli )
 

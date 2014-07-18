@@ -3588,8 +3588,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       lSaveNewTik          := .t.
    end if
 
-   msgAlert( aTmp[ _CFPGTIK ], "aTmp[ _CFPGTIK ]" )
-
    /*
    Comprobamos la fecha del documento------------------------------------------
    */
@@ -3863,8 +3861,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    if lValePromocion
       nValePromocion    := nTotPrm * aTmp[ _NPCTPRM ] / 100
    end if
-
-   msgAlert( aTmp[ _CFPGTIK ], "antes de entrar en lCobro")
 
    /*
    Llamada a la funcion del cobro----------------------------------------------
@@ -9156,8 +9152,6 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       REDEFINE SAY aSay[ 1 ] ID 910 OF oDlg
       REDEFINE SAY aSay[ 2 ] ID 911 OF oDlg
       REDEFINE SAY aSay[ 3 ] ID 912 OF oDlg
-
-      msgAlert( aTmp[ _CFPGTIK ], "aTmp[ _CFPGTIK ]" )
 
       /*
       Forma de pago---------------------------------------------------------------
@@ -18057,7 +18051,7 @@ function aItmTik()
    aAdd( aItmTik, { "cHorTik",  "C",      5,     0, "Hora del tiket" }                                        )
    aAdd( aItmTik, { "cCcjTik",  "C",      3,     0, "Código del cajero" }                                     )
    aAdd( aItmTik, { "cNcjTik",  "C",      3,     0, "Código de caja" }                                        )
-   aAdd( aItmTik, { "cAlmTik",  "C",      3,     0, "Código del almacén" }                                    )
+   aAdd( aItmTik, { "cAlmTik",  "C",     16,     0, "Código del almacén" }                                    )
    aAdd( aItmTik, { "cCliTik",  "C",     12,     0, "Código del cliente" }                                    )
    aAdd( aItmTik, { "nTarifa",  "N",      1,     0, "Tarifa de precios" }                                     )
    aAdd( aItmTik, { "cNomTik",  "C",     80,     0, "Nombre del cliente" }                                    )
@@ -18152,7 +18146,7 @@ function aColTik()
    aAdd( aColTik, { "nDtoDiv",  "N",     16,     6, "Descuento lineal de la compra",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lTipAcc",  "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCtlStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cAlmLin",  "C",      3,     0, "Código de almacén en línea",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cAlmLin",  "C",     16,     0, "Código de almacén en línea",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nValImp",  "N",     16,     6, "Importe del impuesto",               "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cCodImp",  "C",      3,     0, "Código de IVMH",                     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCosDiv",  "N",     16,     6, "Precio de costo",                    "",                  "", "( cDbfCol )" } )
@@ -18239,7 +18233,7 @@ function aSerTik()
    aAdd( aColTik,  { "dFecTik", "D",      8,    0, "Fecha de ticket",                  "",                  "", "( cDbfCol )" } )
    aAdd( aColTik,  { "nNumLin", "N",      4,    0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
    aAdd( aColTik,  { "cCbaTil", "C",     18,    0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik,  { "cAlmLin", "C",      3,    0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik,  { "cAlmLin", "C",     16,    0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
    aAdd( aColTik,  { "lUndNeg", "L",      1,    0, "Lógico de valor absoluto",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik,  { "cNumSer", "C",     30,    0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
 
@@ -19956,7 +19950,7 @@ Static Function cInformeDevolucionTpv( dbfTmp )
    local oBmp
 
    if Empty( ( dbfTmp )->cSerTil )
-      Return ( nil )
+      Return ( nil ) 
    end if
 
    cNum           := ""

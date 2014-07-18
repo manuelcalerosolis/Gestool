@@ -2801,8 +2801,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       240 ;
          IDTEXT   241 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    (  msgAlert( "cAlmLin" ),;
-                     cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ),;
+         VALID    (  cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ),;
                      oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;

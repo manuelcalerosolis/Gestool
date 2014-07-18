@@ -11,7 +11,7 @@
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
-#define _NNUMFAC             2      //,"N",  9, 0, "Número de la factura" },;
+#define _NNUMFAC             2      //,"N",  9, 0, "NÃºmero de la factura" },;
 #define _CSUFFAC             3      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _DFECFAC             5      //,"D",  8, 0, "Fecha de la factura" },;
@@ -19,54 +19,54 @@
 #define _CCODALM             7      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
-#define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
-#define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
+#define _CDIRCLI            10      //,"C", 60, 0, "DirecciÃ³n del cliente" },;
+#define _CPOBCLI            11      //,"C", 25, 0, "PoblaciÃ³n del cliente" },;
 #define _CPRVCLI            12      //,"C", 20, 0, "Provincia del cliente" },;
-#define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },;
+#define _NCODPROV           13      //,"N",  2, 0, "NÃºmero de provincia cliente" },;
 #define _CPOSCLI            14      //,"C",  5, 0, "Codigos postal del cliente" },;
 #define _CDNICLI            15      //,"C", 15, 0, "DNI/CIF del cliente" },;
 #define _LMODCLI            16
-#define _LMAYOR             17      //,"L",  1, 0, "Lógico de mayorista" },;
-#define _NTARIFA            18      //,"L",  1, 0, "Lógico de mayorista" },;
+#define _LMAYOR             17      //,"L",  1, 0, "LÃ³gico de mayorista" },;
+#define _NTARIFA            18      //,"L",  1, 0, "LÃ³gico de mayorista" },;
 #define _CCODAGE            19      //,"C",  3, 0, "Codigo del agente" },;
 #define _CCODRUT            20      //,"C",  4, 0, "Codigo de la ruta" },;
 #define _CCODTAR            21      //,"C",  5, 0, "Codigo de la tarifa" },;
 #define _CCODOBR            22      //,"C",  3, 0, "Codigo de la obra" },;
-#define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisión del agente" },;
-#define _LLIQUIDADA         24      //,"L",  1, 0, "Lógico de la liquidación" },;
-#define _LCONTAB            25      //,"L",  1, 0, "Lógico de la contabilización" },;
+#define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisiÃ³n del agente" },;
+#define _LLIQUIDADA         24      //,"L",  1, 0, "LÃ³gico de la liquidaciÃ³n" },;
+#define _LCONTAB            25      //,"L",  1, 0, "LÃ³gico de la contabilizaciÃ³n" },;
 #define _DFECENT            26      //,"D",  8, 0, "Fecha de entrega" },;
 #define _CSUFAC             27      //,"C", 10, 0, "Su factura" },;
 #define _LIMPALB            28      //,"L", 10, 0, "Su pedido" },;
-#define _CCONDENT           29      //,"C", 20, 0, "Condición de entrada" },;
+#define _CCONDENT           29      //,"C", 20, 0, "CondiciÃ³n de entrada" },;
 #define _MCOMENT            30      //,"M", 10, 0, "Comentarios" },;
 #define _MOBSERV            31      //,"M", 10, 0, "Observaciones" },;
 #define _CCODPAGO           32      //,"C",  2, 0, "Codigo del tipo de pago" },;
-#define _NBULTOS            33      //,"N",  3, 0, "Número de bultos" },;
+#define _NBULTOS            33      //,"N",  3, 0, "NÃºmero de bultos" },;
 #define _NPORTES            34      //,"N",  6, 0, "Valor de los portes" },;
 #define _NIVAMAN            35      //,"N",  6, 0, "Valor de la mano de obra" },;
 #define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de obra" },;
-#define _CNUMFAC            37      //,"C", 12, 0, "Número de albaran" },;
-#define _NTIPOFAC           38      //,"N",  1, 0, "Número del tipo de factura" },;
+#define _CNUMFAC            37      //,"C", 12, 0, "NÃºmero de albaran" },;
+#define _NTIPOFAC           38      //,"N",  1, 0, "NÃºmero del tipo de factura" },;
 #define _CDTOESP            39      //,"N",  5, 2, "Porcentaje de descuento especial" },;
 #define _NDTOESP            40      //,"N",  5, 2, "Porcentaje de descuento especial" },;
 #define _CDPP               41      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
 #define _NDPP               42      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
-#define _CDTOUNO            43      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
+#define _CDTOUNO            43      //,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado"
 #define _NDTOUNO            44      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
-#define _CDTODOS            45      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
+#define _CDTODOS            45      //,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado"
 #define _NDTODOS            46      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
 #define _NDTOCNT            47      //,"N",  6, 2, "Porcentaje de Descuento por pago de Contado" },;
 #define _NDTORAP            48      //,"N",  6, 2, "Porcentaje de Descuento por Rappel" },;
 #define _NDTOPUB            49      //,"N",  6, 2, "Porcentaje de Descuento por Publicidad" },;
 #define _NDTOPGO            50      //,"N",  6, 2, "Porcentaje de Descuento por Pago Centralizado" },;
 #define _NDTOPTF            51      //,"N",  7, 2, "Descuento por plataforma" },;
-#define _NTIPOIVA           52      //,"N",  1, 0, "Número del tipo de " + cImp() },;
+#define _NTIPOIVA           52      //,"N",  1, 0, "NÃºmero del tipo de " + cImp() },;
 #define _NPORCIVA           53      //,"N",  4, 1, "Porcentaje de " + cImp() },;
-#define _LRECARGO           54      //,"L",  1, 0, "Lógico para recargo" },;
+#define _LRECARGO           54      //,"L",  1, 0, "LÃ³gico para recargo" },;
 #define _CREMITIDO          55      //,"C", 50, 0, "Campo de remitido" },;
-#define _LIVAINC            56      //,"N",  1, 0, "Selección de " + cImp() },;
-#define _LSNDDOC            57      //,"L",  1, 0, "Lógico para documento enviado" },;
+#define _LIVAINC            56      //,"N",  1, 0, "SelecciÃ³n de " + cImp() },;
+#define _LSNDDOC            57      //,"L",  1, 0, "LÃ³gico para documento enviado" },;
 #define _CDIVFAC            58      //,"C",  3, 0, "Codigo de la divisa" },;
 #define _NVDVFAC            59      //,"N", 10, 4, "Cambio de la divisa" },;
 #define _CRETPOR            60      //,"C",100, 0, "Retirado por" },;
@@ -75,15 +75,15 @@
 #define _NREGIVA            63
 #define _CCODPRO            64
 #define _CDOCORG            65
-#define _NNUMLIQ            66     //"N",  9, 0, "Número liquidación" }                                  "",                   "", "( cDbf )"} )
-#define _CSUFLIQ            67     //"C",  2, 0, "Sufijo liquidación" }                                  "",                   "", "( cDbf )"} )
-#define _NIMPLIQ            68     //"N", 16, 6, "Importe liquidación" }                                 "",                   "", "( cDbf )"} )
+#define _NNUMLIQ            66     //"N",  9, 0, "NÃºmero liquidaciÃ³n" }                                  "",                   "", "( cDbf )"} )
+#define _CSUFLIQ            67     //"C",  2, 0, "Sufijo liquidaciÃ³n" }                                  "",                   "", "( cDbf )"} )
+#define _NIMPLIQ            68     //"N", 16, 6, "Importe liquidaciÃ³n" }                                 "",                   "", "( cDbf )"} )
 #define _LLIQUID            69     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
 #define _CCODTRN            70     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
 #define _NKGSTRN            71     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
 #define _LCLOFAC            72     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
-#define _CABNFAC            73     //"C", 12, 0, "Número de presupuesto
-#define _CANTFAC            74     //"C", 12, 0, "Número de presupuesto
+#define _CABNFAC            73     //"C", 12, 0, "NÃºmero de presupuesto
+#define _CANTFAC            74     //"C", 12, 0, "NÃºmero de presupuesto
 #define _NPCTRET            75
 #define _CCODUSR            76
 #define _DFECCRE            77
@@ -111,7 +111,7 @@
 #define _LOPERPV            99
 
 /*
-Definici¢n de la base de datos de lineas de detalle
+DefiniciÂ¢n de la base de datos de lineas de detalle
 */
 
 #define _dCSERIE                  1      //   C      1     0
@@ -190,7 +190,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                 74
 
 /*
-Definici¢n de Array para impuestos
+DefiniciÂ¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -992,7 +992,7 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       /*
-      Declaración de variables publicas----------------------------------------
+      DeclaraciÃ³n de variables publicas----------------------------------------
       */
 
       public nTotFac    := 0
@@ -1494,12 +1494,12 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    "Facturas rectificativas" ;
-      PROMPT   "Número",;
+      PROMPT   "NÃºmero",;
                "Fecha",;
-               "Código",;
+               "CÃ³digo",;
                "Nombre",;
                "Obra",;
-               "Sesión",;
+               "SesiÃ³n",;
                "Agente",;
                "Pago";
       MRU      "Document_delete_16";
@@ -1517,7 +1517,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión cerrada"
+         :cHeader          := "SesiÃ³n cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->lCloFac }
@@ -1593,7 +1593,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) )  }
          :nWidth           := 80
@@ -1601,14 +1601,14 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
+         :cHeader          := "DelegaciÃ³n"
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cSufFac }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión"
+         :cHeader          := "SesiÃ³n"
          :cSortOrder       := "cTurFac"
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cTurFac }
          :nWidth           := 40
@@ -1641,7 +1641,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cCodCli ) }
          :nWidth           := 70
@@ -1657,7 +1657,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Población"
+         :cHeader          := "PoblaciÃ³n"
          :bEditValue       := {|| AllTrim( ( TDataView():FacturasRectificativas( nView ) )->cPobCli ) }
          :nWidth           := 180
          :lHide            := .t.
@@ -1689,7 +1689,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Almacén"
+         :cHeader          := "AlmacÃ©n"
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodAlm }
          :nWidth           := 60
       end with
@@ -1763,7 +1763,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       NOBORDER ;
       ACTION   ( oWndBrw:RecAdd() );
       ON DROP  ( oWndBrw:RecDup() );
-      TOOLTIP  "(A)ñadir";
+      TOOLTIP  "(A)Ã±adir";
       BEGIN GROUP;
       HOTKEY   "A";
       LEVEL    ACC_APPD
@@ -1841,7 +1841,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( GenFacRec( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
+      TOOLTIP  "Correo electrÃ³nico";
       LEVEL    ACC_IMPR
 
       lGenFacRec( oWndBrw:oBrw, oMail, IS_MAIL ) ;
@@ -2031,7 +2031,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    case nMode == APPD_MODE
 
       if !lCurSesion()
-         MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+         MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
          Return .f.
       end if
 
@@ -2065,7 +2065,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    case nMode == DUPL_MODE
 
       if !lCurSesion()
-         MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+         MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
          Return .f.
       end if
 
@@ -2089,7 +2089,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end if
 
       if aTmp[ _LCONTAB ] .and.;
-         !ApoloMsgNoYes(  "La modificación de esta factura puede provocar descuadres contables." + CRLF + "¿ Desea continuar ?", "Factura ya contabilizada" )
+         !ApoloMsgNoYes(  "La modificaciÃ³n de esta factura puede provocar descuadres contables." + CRLF + "Â¿ Desea continuar ?", "Factura ya contabilizada" )
          return .f.
       end if
 
@@ -2605,7 +2605,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Número"
+         :cHeader             := "NÃºmero"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
          :cEditPicture        := "9999"
          :nWidth              := 52
@@ -2614,7 +2614,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Código"
+         :cHeader             := "CÃ³digo"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
          :nWidth              := 50
       end with
@@ -2627,7 +2627,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Descripción"
+         :cHeader             := "DescripciÃ³n"
          :bEditValue          := {|| Descrip( dbfTmpLin ) }
          :nWidth              := 254
       end with
@@ -2672,7 +2672,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Unidad de medición"
+         :cHeader             := "Unidad de mediciÃ³n"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
          :nWidth              := 100
       end with
@@ -3170,7 +3170,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      /*Impresión ( informa de si está imprimido o no y de cuando se imprimió )*/
+      /*ImpresiÃ³n ( informa de si estÃ¡ imprimido o no y de cuando se imprimiÃ³ )*/
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
@@ -3225,7 +3225,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       oBrwPgo:CreateFromResource( 260 )
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Cr. Sesión cerrada"
+         :cHeader             := "Cr. SesiÃ³n cerrada"
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpPgo )->lCloPgo }
          :nWidth              := 20
@@ -3252,7 +3252,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Sesión"
+         :cHeader             := "SesiÃ³n"
          :bEditValue          := {|| Rtrim( ( dbfTmpPgo )->cTurRec ) }
          :nWidth              := 40
          :nDataStrAlign       := 1
@@ -3272,7 +3272,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       end with
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Descripción"
+         :cHeader             := "DescripciÃ³n"
          :bEditValue          := {|| ( dbfTmpPgo )->cDescrip }
          :nWidth              := 190
       end with
@@ -3383,7 +3383,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
+            :cHeader          := "CÃ³digo"
             :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
             :nWidth           := 80
          end with
@@ -3401,7 +3401,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Descripción"
+            :cHeader          := "DescripciÃ³n"
             :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
             :nWidth           := 450
          end with
@@ -3885,7 +3885,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      // Campos de las descripciones de la unidad de medición
+      // Campos de las descripciones de la unidad de mediciÃ³n
 
       REDEFINE GET aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ;
          VAR      aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ;
@@ -4147,7 +4147,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       220 ;
          OF       oFld:aDialogs[ 2 ]
 
-      /*Definición de familias y grupos de familias*/
+      /*DefiniciÃ³n de familias y grupos de familias*/
 
       REDEFINE GET aGet[ _CGRPFAM ] VAR aTmp[ _CGRPFAM ] ;
          ID       ( 150 );
@@ -4234,7 +4234,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE BUTTON ;
          ID       9 ;
 			OF 		oDlg ;
-         ACTION   ( ChmHelp( "Añadir_v" ) )
+         ACTION   ( ChmHelp( "AÃ±adir_v" ) )
 
       REDEFINE BUTTON oBtnSer ;
          ID       552 ;
@@ -4485,7 +4485,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    /*
-   Mostramos u ocultamos las tarifas por líneas--------------------------------
+   Mostramos u ocultamos las tarifas por lÃ­neas--------------------------------
    */
 
    if Empty( aTmp[ _NTARLIN ] )
@@ -4499,7 +4499,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    /*
-   Focus y validaci¢n----------------------------------------------------------
+   Focus y validaciÂ¢n----------------------------------------------------------
    */
 
    aGet[ _CTIPMOV ]:lValid()
@@ -4596,7 +4596,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    if Empty( aTmp[ _CALMLIN ] ) .and. !Empty( aTmp[ _CREF ] )
-      msgStop( "Código de almacén no puede estar vacío", "Atención" )
+      msgStop( "CÃ³digo de almacÃ©n no puede estar vacÃ­o", "AtenciÃ³n" )
       Return nil
    end if
 
@@ -4605,11 +4605,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    /*
-   Comprobamos si tiene que introducir números de serie------------------------
+   Comprobamos si tiene que introducir nÃºmeros de serie------------------------
    */
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], dbfArticulo, "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
-      MsgStop( "Tiene que introducir números de serie para este artículo." )
+      MsgStop( "Tiene que introducir nÃºmeros de serie para este artÃ­culo." )
       oBtnSer:Click()
       Return nil
    end if
@@ -4619,7 +4619,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    /*
-   Modo de edición multiple los cambios afectan a todos los registros seleccionados
+   Modo de ediciÃ³n multiple los cambios afectan a todos los registros seleccionados
    */
 
    if nMode == MULT_MODE
@@ -4646,7 +4646,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    /*
-   Fin de modo de edición multiple---------------------------------------------
+   Fin de modo de ediciÃ³n multiple---------------------------------------------
    */
 
    nRec     		:= ( dbfTmpLin )->( RecNo() )
@@ -4696,7 +4696,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
       if aXbYStr[ 1 ] == 0
 
          /*
-         Chequeamos las ofertas por artículos X  *  Y--------------------------
+         Chequeamos las ofertas por artÃ­culos X  *  Y--------------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -4714,7 +4714,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          end if
 
          /*
-         Chequeamos las ofertas por tipo de artículos X  *  Y------------------
+         Chequeamos las ofertas por tipo de artÃ­culos X  *  Y------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -5147,16 +5147,16 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
                         MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
                                  "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
-                                 "¡Atención!" )
+                                 "Â¡AtenciÃ³n!" )
 
                   case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
 
                         MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
-                                 "está bajo minimo." + CRLF + ;
+                                 "estÃ¡ bajo minimo." + CRLF + ;
                                  "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
                                  "Stock minimo : " + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
                                  "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
-                                 "¡Atención!" )
+                                 "Â¡AtenciÃ³n!" )
                end case
 
             end if
@@ -5176,7 +5176,7 @@ RETURN NIL
 //---------------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para A¤adir lineas de detalle a una Factura
+Funcion Auxiliar para AÂ¤adir lineas de detalle a una Factura
 */
 
 STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt )
@@ -5189,7 +5189,7 @@ STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt )
 
    else
 
-      MsgStop( "No se pueden añadir registros a una factura que" + CRLF + ;
+      MsgStop( "No se pueden aÃ±adir registros a una factura que" + CRLF + ;
                "proviene de albaranes." )
 
    end if
@@ -5198,7 +5198,7 @@ RETURN RecalculaTotal( aTmp )
 
 //--------------------------------------------------------------------------//
 /*
-Funcion Auxiliar para la Edici¢n de Lineas de Detalle en una Factura
+Funcion Auxiliar para la EdiciÂ¢n de Lineas de Detalle en una Factura
 */
 
 STATIC FUNCTION EdtDeta( oBrwDet, bEdtDet, aTmp, lTot, nFacMod )
@@ -5669,7 +5669,7 @@ STATIC FUNCTION lMoreIva( nCodIva )
 		RETURN .T.
 	END IF
 
-   MsgStop( "Factura con más de 3 tipos de " + cImp() )
+   MsgStop( "Factura con mÃ¡s de 3 tipos de " + cImp() )
 
 RETURN .F.
 
@@ -5702,7 +5702,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    if Empty( cCodArt )
 
       if lRetCodArt()
-         MsgStop( "No se pueden añadir líneas sin codificar" )
+         MsgStop( "No se pueden aÃ±adir lÃ­neas sin codificar" )
          return .f.
       end if
 
@@ -5769,7 +5769,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       if ( lChgCodArt )
 
          if ( dbfArticulo )->lObs
-            MsgStop( "Artículo catalogado como obsoleto" )
+            MsgStop( "ArtÃ­culo catalogado como obsoleto" )
             return .f.
          end if
 
@@ -5906,7 +5906,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Tomamos el código de la familia y del grupo de familia----------------
+         Tomamos el cÃ³digo de la familia y del grupo de familia----------------
          */
 
          cCodFam              := ( dbfArticulo )->Familia
@@ -5998,7 +5998,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
+         Si la comisiÂ¢n del articulo hacia el agente es distinto de cero----------
          */
 
          aGet[_NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
@@ -6033,7 +6033,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Descuento de artículo----------------------------------------------
+         Descuento de artÃ­culo----------------------------------------------
          */
 
          nNumDto              := RetFld( aTmpFac[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
@@ -6167,14 +6167,14 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       end if
 
       /*
-      He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
+      He terminado de meter todo lo que no son precios ahora es cuando meterÃ© los precios con todas las opciones posibles
       */
 
       cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
 
       if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
 
-         //--guardamos el código de la familia--//
+         //--guardamos el cÃ³digo de la familia--//
 
          if nMode == APPD_MODE
             cCodFam        := RetFamArt( cCodArt, dbfArticulo )
@@ -6199,7 +6199,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aTmp[ _CUNIDAD ]  := ( dbfArticulo )->cUnidad
          end if
 
-         //--guardamos el precio del artículo dependiendo de las propiedades--//
+         //--guardamos el precio del artÃ­culo dependiendo de las propiedades--//
 
          nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
 
@@ -6237,14 +6237,14 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                aGet[_NCOMAGE]:cText( nImpOfe )
             end if
 
-            //--Descuento de promoci¢n--//
+            //--Descuento de promociÂ¢n--//
 
             nImpOfe  := RetDtoPrm( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
             if nImpOfe  != 0
                aGet[_NDTOPRM]:cText( nImpOfe )
             end if
 
-            //--Descuento de promoci¢n para el agente--//
+            //--Descuento de promociÂ¢n para el agente--//
 
             nDtoAge     := RetDtoAge( cCodArt, cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
             if nDtoAge  != 0
@@ -6355,7 +6355,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
    else
 
-      MsgStop( "Artículo no encontrado" )
+      MsgStop( "ArtÃ­culo no encontrado" )
       Return .f.
 
    end if
@@ -6459,7 +6459,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          aTmp[_NREGIVA ]   := ( TDataView():Clientes( nView ) )->nRegIva
 
          /*
-         Si estamos a¤adiendo cargamos todos los datos del cliente
+         Si estamos aÂ¤adiendo cargamos todos los datos del cliente
          */
 
          if Empty( aTmp[ _CSERIE ] )
@@ -6472,7 +6472,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
             if !Empty( ( TDataView():Clientes( nView ) )->Serie )               .and.;
                aTmp[ _CSERIE ] != ( TDataView():Clientes( nView ) )->Serie      .and.;
-               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "Â¿Desea cambiar la serie?" )
                aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
             end if
 
@@ -6634,7 +6634,7 @@ RETURN lValid
 //----------------------------------------------------------------------------//
 
 /*
-Comienza la edición de la factura
+Comienza la ediciÃ³n de la factura
 */
 
 STATIC FUNCTION BeginTrans( aTmp, nMode )
@@ -6663,7 +6663,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
 
    /*
-   Inicialización de variables-------------------------------------------------
+   InicializaciÃ³n de variables-------------------------------------------------
    */
 
    aNumAlb        := {}
@@ -6838,7 +6838,7 @@ Return ( lErrors )
 
 //-----------------------------------------------------------------------//
 /*
-Finaliza la transacción de datos
+Finaliza la transacciÃ³n de datos
 */
 
 STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oDlg, oFld )
@@ -6903,7 +6903,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacén no puede estar vacio." )
+      msgStop( "AlmacÃ©n no puede estar vacio." )
       aGet[ _CCODALM ]:SetFocus()
       return .f.
    end if
@@ -6915,7 +6915,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if Empty( aTmp[ _CDIVFAC ] )
-      MsgStop( "No puede almacenar documento sin código de divisa." )
+      MsgStop( "No puede almacenar documento sin cÃ³digo de divisa." )
       aGet[ _CDIVFAC ]:SetFocus()
       return .f.
    end if
@@ -6957,7 +6957,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       while !( dbfTmpLin )->( eof() )
 
          if !( dbfTmpLin )->lControl .and. ( dbfTmpLin )->nPreUnit == 0 .and. !( dbfTmpLin )->lKitPrc
-            if !ApoloMsgNoYes( "El artículo " + Rtrim( ( dbfTmpLin )->cRef ) + " - " + Rtrim( Descrip( dbfTmpLin ) ) + " no esta valorado.", "¿Desea continuar archivando la factura?" )
+            if !ApoloMsgNoYes( "El artÃ­culo " + Rtrim( ( dbfTmpLin )->cRef ) + " - " + Rtrim( Descrip( dbfTmpLin ) ) + " no esta valorado.", "Â¿Desea continuar archivando la factura?" )
                return .f.
             end if
          end if
@@ -7268,7 +7268,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 /*
-Crea los ficheros de la facturaci¢n
+Crea los ficheros de la facturaciÂ¢n
 */
 
 STATIC FUNCTION CreateFiles( cPath, lReindex )
@@ -7741,7 +7741,7 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
    local lWhile   := .t.
 
    /*
-   Preparamos la pantalla para mostrar la simulación---------------------------
+   Preparamos la pantalla para mostrar la simulaciÃ³n---------------------------
    */
 
    if lChk1
@@ -8059,10 +8059,10 @@ static function RecFacRec( aTmpFac )
    local nRecno
    local hAtipica
 
-   if !ApoloMsgNoYes(  "¡Atención!,"                                      + CRLF + ;
-                  "todos los precios se recalcularán en función de"  + CRLF + ;
+   if !ApoloMsgNoYes(  "Â¡AtenciÃ³n!,"                                      + CRLF + ;
+                  "todos los precios se recalcularÃ¡n en funciÃ³n de"  + CRLF + ;
                   "los valores en las bases de datos.",;
-                  "¿Desea proceder?" )
+                  "Â¿Desea proceder?" )
       return nil
    end if
 
@@ -8118,7 +8118,7 @@ static function RecFacRec( aTmpFac )
          ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
 
          /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
+         Si la comisiÂ¢n del articulo hacia el agente es distinto de cero----------
          */
 
          ( dbfTmpLin )->nComAge     := aTmpFac[ _NPCTCOMAGE ]
@@ -8148,8 +8148,8 @@ static function RecFacRec( aTmpFac )
             end if
 
             /*
-            Descuento de promoci¢n, esta funci¢n comprueba si existe y si es---
-            asi devuelve el descunto de la promoción---------------------------
+            Descuento de promociÂ¢n, esta funciÂ¢n comprueba si existe y si es---
+            asi devuelve el descunto de la promociÃ³n---------------------------
             */
 
             nImpOfe     := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _DFECFAC ], dbfTarPreL )
@@ -8559,7 +8559,7 @@ Method Process()
                      ( TDataView():FacturasRectificativas( nView ) )->( dbUnLock() )
                   end if
 
-                  ::oSender:SetText( "Añadida factura     : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
+                  ::oSender:SetText( "AÃ±adida factura     : " + ( tmpFacRecL )->cSerie + "/" + AllTrim( Str( ( tmpFacRecL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacRecL )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli )
 
                   if ( tmpFacRecL )->( dbSeek( ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac ) )
                      while ( tmpFacRecL )->cSerie + Str( ( tmpFacRecL )->nNumFac ) + ( tmpFacRecL )->cSufFac == ( tmpFacRecT )->cSerie + Str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac .and. !( tmpFacRecL )->( eof() )
@@ -8641,22 +8641,22 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&1. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&2. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )              
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )              
 
             MENUITEM    "&3. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) );
 
             MENUITEM    "&4. Modificar obra";
                MESSAGE  "Modifica ficha de la obra" ;
                RESOURCE "Worker16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "CÃ³digo de obra vacÃ­o" ) ) );
 
          ENDMENU
 
@@ -8824,7 +8824,7 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
       aTmp[ _LOPERPV ] := ( dbfFacCliT )->lOperPv
 
       /*
-      Comprobamos si el albarán tiene lineas de detalle
+      Comprobamos si el albarÃ¡n tiene lineas de detalle
       */
 
       nOption           := nImportaLineas()
@@ -8909,7 +8909,7 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
 
          else
 
-            MsgStop( "La factura no contiene líneas de detalle." )
+            MsgStop( "La factura no contiene lÃ­neas de detalle." )
 
          end if
 
@@ -8970,10 +8970,10 @@ Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
    local nDtoPnt     := 0
    local nIncPnt     := 0
 
-   /*comprobamos que no esté vacío el artículo*/
+   /*comprobamos que no estÃ© vacÃ­o el artÃ­culo*/
 
    if Empty( cCodArt )
-      MsgInfo( "Debe seleccinar un artículo", "Código vacío" )
+      MsgInfo( "Debe seleccinar un artÃ­culo", "CÃ³digo vacÃ­o" )
       return .f.
    end if
 
@@ -9082,7 +9082,7 @@ Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oCtaRem, nMode, oBa
 
    if nMode == EDIT_MODE   .and.;
       aTmp[ ( dbfTmpPgo )->( FieldPos( "LCONPGO" ) ) ]     .and.;
-      !ApoloMsgNoYes( 'La modificación de este recibo puede provocar descuadres contables.' + CRLF + '¿ Desea continuar ?', 'Recibo ya contabilizado' )
+      !ApoloMsgNoYes( 'La modificaciÃ³n de este recibo puede provocar descuadres contables.' + CRLF + 'Â¿ Desea continuar ?', 'Recibo ya contabilizado' )
       return .f.
    end if
 
@@ -9399,7 +9399,7 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
       nImp                       := ( nImpFld - nImpTmp ) * if( lImpNeg, - 1 , 1 )
 
       /*
-      Añadimos el nuevo recibo
+      AÃ±adimos el nuevo recibo
       */
 
       ( dbfTmpPgo )->( dbAppend() )
@@ -9414,7 +9414,7 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
       ( dbfTmpPgo )->dEntrada    := Ctod( "" )
       ( dbfTmpPgo )->nImporte    := nImp
       ( dbfTmpPgo )->nImpGas     := 0
-      ( dbfTmpPgo )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
+      ( dbfTmpPgo )->cDescrip    := "Recibo nÂº" + AllTrim( Str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
       ( dbfTmpPgo )->dPreCob     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], TDataView():FacturasRectificativas( nView ) )
       ( dbfTmpPgo )->dFecVto     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], TDataView():FacturasRectificativas( nView ) )
       ( dbfTmpPgo )->cPgdoPor    := ""
@@ -9805,7 +9805,7 @@ Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
          oSayTrn:cText( oTrans:oDbf:cNomTrn )
          oGetKgs:cText( oTrans:oDbf:nKgsTrn )
       else
-         msgStop( "Código de transportista no encontrado." )
+         msgStop( "CÃ³digo de transportista no encontrado." )
          Return .f.
       end if
 
@@ -9866,11 +9866,11 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
    oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
 
-   oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
-   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+   oFr:SetWorkArea(     "ArtÃ­culos", ( dbfArticulo )->( Select() ) )
+   oFr:SetFieldAliases( "ArtÃ­culos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Tipo de artículo",  oTipArt:Select() )
-   oFr:SetFieldAliases( "Tipo de artículo",  cObjectsToReport( oTipArt:oDbf ) )
+   oFr:SetWorkArea(     "Tipo de artÃ­culo",  oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipo de artÃ­culo",  cObjectsToReport( oTipArt:oDbf ) )
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
@@ -9878,8 +9878,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( dbfCliBnc )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aCliBnc() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de mediciÃ³n",  oUndMedicion:Select() )
+   oFr:SetFieldAliases( "Unidades de mediciÃ³n",  cObjectsToReport( oUndMedicion:oDbf ) )
 
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Series de lineas de facturas rectificativas",  {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac } )
@@ -9895,10 +9895,10 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( TDataView():FacturasRectificativas( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( TDataView():FacturasRectificativas( nView ) )->cCodCli } )
 
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( dbfFacRecL )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "ArtÃ­culos",                          {|| ( dbfFacRecL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artÃ­culo",                   {|| ( dbfFacRecL )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( dbfFacRecL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de mediciÃ³n",               {|| ( dbfFacRecL )->cUnidad } )
 
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Series de lineas de facturas rectificativas" )
@@ -9914,10 +9914,10 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas rectificativas", "Transportistas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Bancos" )
 
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Artículos" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Tipo de artículo" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "ArtÃ­culos" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Tipo de artÃ­culo" )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Ofertas" )
-   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de mediciÃ³n" )
 
 Return nil
 
@@ -9929,7 +9929,7 @@ Static Function VariableReport( oFr )
    oFr:DeleteCategory(  "Lineas de facturas rectificativas" )
 
    /*
-   Creación de variables----------------------------------------------------
+   CreaciÃ³n de variables----------------------------------------------------
    */
 
    oFr:AddVariable(     "Facturas rectificativas",             "Total factura",                       "GetHbVar('nTotFac')" )
@@ -9942,13 +9942,13 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas rectificativas",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total página",                        "GetHbVar('nTotPag')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total retención",                     "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total pÃ¡gina",                        "GetHbVar('nTotPag')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total retenciÃ³n",                     "GetHbVar('nTotRet')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total peso",                          "GetHbVar('nTotPes')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total costo",                         "GetHbVar('nTotCos')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total cobrado",                       "GetHbVar('nTotCob')" )
-   oFr:AddVariable(     "Facturas rectificativas",             "Total artículos",                     "GetHbVar('nTotArt')" )
+   oFr:AddVariable(     "Facturas rectificativas",             "Total artÃ­culos",                     "GetHbVar('nTotArt')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Total cajas",                         "GetHbVar('nTotCaj')" )
    oFr:AddVariable(     "Facturas rectificativas",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
 
@@ -9994,16 +9994,16 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Facturas rectificativas",             "Cuenta bancaria cliente",             "CallHbFunc('cCtaFacRec')" )
 
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo",                "CallHbFunc('cDesFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total unidades artículo",             "CallHbFunc('nTotNFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario del artículo",        "CallHbFunc('nTotUFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artÃ­culo",                "CallHbFunc('cDesFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total unidades artÃ­culo",             "CallHbFunc('nTotNFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario del artÃ­culo",        "CallHbFunc('nTotUFacRec')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario con descuentos",      "CallHbFunc('nTotPFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Punto verde del artículo",            "CallHbFunc('nPntUFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total línea de factura",              "CallHbFunc('nTotLFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total peso por línea",                "CallHbFunc('nPesLFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total final línea del factura",       "CallHbFunc('nTotFFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Importe descuento línea del factura", "CallHbFunc('nDtoLFacRec')" )
-   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total descuento línea del factura",   "CallHbFunc('nTotDtoLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Punto verde del artÃ­culo",            "CallHbFunc('nPntUFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total lÃ­nea de factura",              "CallHbFunc('nTotLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total peso por lÃ­nea",                "CallHbFunc('nPesLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total final lÃ­nea del factura",       "CallHbFunc('nTotFFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Importe descuento lÃ­nea del factura", "CallHbFunc('nDtoLFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total descuento lÃ­nea del factura",   "CallHbFunc('nTotDtoLFacRec')" )
 
 Return nil
 
@@ -10032,7 +10032,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura )
    DEFAULT cFactura  := ( TDataView():FacturasRectificativas( nView ) )->cSerie + Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativas( nView ) )->cSufFac
 
    if ( TDataView():FacturasRectificativas( nView ) )->lLiquidada
-      msgStop( "Factura ya cobrada", "Imposible añadir cobros" )
+      msgStop( "Factura ya cobrada", "Imposible aÃ±adir cobros" )
       return .f.
    end if
 
@@ -10082,7 +10082,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
    if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
 
       /*
-      Buscamos si existen ofertas por artículo----------------------------
+      Buscamos si existen ofertas por artÃ­culo----------------------------
       */
 
       nTotalLinea       := lCalcDeta( aTmp, aTmpFac, .t. )
@@ -10273,7 +10273,7 @@ Static Function OldEditarNumeroSerie( aTmp, oStock, nMode )
    nTotUnd        := Abs( nTotNFacRec( aTmp ) )
 
    if nTotUnd == 0
-      MsgStop( "No hay unidades para asignar números de serie." )
+      MsgStop( "No hay unidades para asignar nÃºmeros de serie." )
       Return ( nil )
    end if
 
@@ -10500,9 +10500,9 @@ Static Function lChkSer( aValSer, nTotUnd, oProSer, oBrwSer )
    if !lValid
 
       if uFieldEmpresa( "lSerNoCom" )
-         msgStop( "Hay números de serie sin stock para su venta." )
+         msgStop( "Hay nÃºmeros de serie sin stock para su venta." )
       else
-         lValid            := ApoloMsgNoYes( "Hay números de serie sin stock para su venta.", "¿Desea continuar con la venta?" )
+         lValid            := ApoloMsgNoYes( "Hay nÃºmeros de serie sin stock para su venta.", "Â¿Desea continuar con la venta?" )
       end if
 
       if !Empty( oBrwSer ) .and. IsNum( n )
@@ -10747,7 +10747,7 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el valor del impuestos de un artículo
+Devuelve el valor del impuestos de un artÃ­culo
 */
 
 FUNCTION nIvaUFacRec( dbfTmpLin, nDec, nVdv )
@@ -11596,7 +11596,7 @@ Return .t.
 //--------------------------------------------------------------------------//
 
 /*
-Crea las bases de datos necesarias para la facturación desde fuera
+Crea las bases de datos necesarias para la facturaciÃ³n desde fuera
 */
 
 FUNCTION mkFacRec( cPath, oMeter, nLenCodCli )
@@ -11782,7 +11782,7 @@ FUNCTION rxFacRec( cPath, oMeter )
 
       ( cFacRecT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas rectificativas de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de nÃºmeros de series de facturas rectificativas de clientes" )
    end if
 
 Return nil
@@ -12458,50 +12458,50 @@ function aItmFacRec()
    local aItmFacRec  := {}
 
    aAdd( aItmFacRec, {"CSERIE"      ,"C",  1, 0, "Serie de la factura " ,                                "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NNUMFAC"     ,"N",  9, 0, "Número de la factura" ,                                "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NNUMFAC"     ,"N",  9, 0, "NÃºmero de la factura" ,                                "'999999999'",        "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CSUFFAC"     ,"C",  2, 0, "Sufijo de la factura" ,                                "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CTURFAC"     ,"C",  6, 0, "Sesión de la factura" ,                                "######",             "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CTURFAC"     ,"C",  6, 0, "SesiÃ³n de la factura" ,                                "######",             "", "( cDbf )"} )
    aAdd( aItmFacRec, {"DFECFAC"     ,"D",  8, 0, "Fecha de la factura" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODCLI"     ,"C", 12, 0, "Código del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODALM"     ,"C",  3, 0, "Código de almacén" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODCAJ"     ,"C",  3, 0, "Código de caja" ,                                      "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODCLI"     ,"C", 12, 0, "CÃ³digo del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODALM"     ,"C", 16, 0, "CÃ³digo de almacÃ©n" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODCAJ"     ,"C",  3, 0, "CÃ³digo de caja" ,                                      "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CNOMCLI"     ,"C", 80, 0, "Nombre del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CDIRCLI"     ,"C",100, 0, "Domicilio del cliente" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CPOBCLI"     ,"C", 25, 0, "Población del cliente" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CPOBCLI"     ,"C", 25, 0, "PoblaciÃ³n del cliente" ,                               "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CPRVCLI"     ,"C", 20, 0, "Provincia del cliente" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NCODPROV"    ,"N",  2, 0, "Número de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CPOSCLI"     ,"C", 15, 0, "Código postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NCODPROV"    ,"N",  2, 0, "NÃºmero de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CPOSCLI"     ,"C", 15, 0, "CÃ³digo postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CDNICLI"     ,"C", 30, 0, "DNI/Cif del cliente" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"lModCli"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"LMAYOR"      ,"L",  1, 0, "Lógico de mayorista" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"lModCli"     ,"L",  1, 0, "LÃ³gico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"LMAYOR"      ,"L",  1, 0, "LÃ³gico de mayorista" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NTARIFA"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODAGE"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODRUT"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODTAR"     ,"C",  5, 0, "Código de la tarifa" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODOBR"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"LLIQUIDADA"  ,"L",  1, 0, "Lógico de la liquidación" ,                            "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"LCONTAB"     ,"L",  1, 0, "Lógico de la contabilización" ,                        "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODAGE"     ,"C",  3, 0, "CÃ³digo del agente" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODRUT"     ,"C",  4, 0, "CÃ³digo de la ruta" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODTAR"     ,"C",  5, 0, "CÃ³digo de la tarifa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODOBR"     ,"C", 10, 0, "CÃ³digo de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisiÃ³n del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"LLIQUIDADA"  ,"L",  1, 0, "LÃ³gico de la liquidaciÃ³n" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"LCONTAB"     ,"L",  1, 0, "LÃ³gico de la contabilizaciÃ³n" ,                        "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"DFECENT"     ,"D",  8, 0, "Fecha de entrega" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CSUFAC"      ,"C", 10, 0, "Su factura" ,                                          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"LIMPALB"     ,"L",  1, 0, "Lógico si la factura se importó de albaranes" ,        "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCONDENT"    ,"C",100, 0, "Condición de entrada" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"LIMPALB"     ,"L",  1, 0, "LÃ³gico si la factura se importÃ³ de albaranes" ,        "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCONDENT"    ,"C",100, 0, "CondiciÃ³n de entrada" ,                                "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"MCOMENT"     ,"M", 10, 0, "Comentarios" ,                                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"MOBSERV"     ,"M", 10, 0, "Observaciones" ,                                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODPAGO"    ,"C",  2, 0, "Código del tipo de pago" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NBULTOS"     ,"N",  3, 0, "Número de bultos" ,                                    "999,999",            "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODPAGO"    ,"C",  2, 0, "CÃ³digo del tipo de pago" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NBULTOS"     ,"N",  3, 0, "NÃºmero de bultos" ,                                    "999,999",            "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NPORTES"     ,"N",  6, 0, "Valor del porte" ,                                     "cPorDivFac",         "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NIVAMAN"     ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,              "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NMANOBR"     ,"N", 16, 6, "Gastos" ,                                              "cPorDivFac",         "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CNUMFAC"     ,"C", 12, 0, "Número de factura" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CNUMFAC"     ,"C", 12, 0, "NÃºmero de factura" ,                                   "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NTIPOFAC"    ,"N",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CDTOESP"     ,"C", 50, 0, "Descripción de porcentaje de descuento especial" ,     "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CDTOESP"     ,"C", 50, 0, "DescripciÃ³n de porcentaje de descuento especial" ,     "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NDTOESP"     ,"N",  6, 2, "Porcentaje de descuento especial" ,                    "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CDPP"        ,"C", 50, 0, "Descripción de porcentaje de descuento por pronto pago","",                  "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CDPP"        ,"C", 50, 0, "DescripciÃ³n de porcentaje de descuento por pronto pago","",                  "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NDPP"        ,"N",  6, 2, "Porcentaje de descuento por pronto pago" ,             "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado", "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CDTOUNO"     ,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado", "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NDTOUNO"     ,"N",  6, 2, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,"'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CDTODOS"     ,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado" ,"'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NDTODOS"     ,"N",  4, 1, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NDTOCNT"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NDTORAP"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
@@ -12510,52 +12510,52 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"NDTOPTF"     ,"N",  7, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NTIPOIVA"    ,"N",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NPORCIVA"    ,"N",  4, 1, "" ,                                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"LRECARGO"    ,"L",  1, 0, "Lógico para recargo" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"LRECARGO"    ,"L",  1, 0, "LÃ³gico para recargo" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CREMITIDO"   ,"C", 50, 0, "Campo de remitido" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"LIVAINC"     ,"L",  1, 0, cImp() + " incluido" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"LSNDDOC"     ,"L",  1, 0, "Lógico para documento enviado" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CDIVFAC"     ,"C",  3, 0, "Código de la divisa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"LSNDDOC"     ,"L",  1, 0, "LÃ³gico para documento enviado" ,                       "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CDIVFAC"     ,"C",  3, 0, "CÃ³digo de la divisa" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NVDVFAC"     ,"N", 10, 4, "Cambio de la divisa" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CRETPOR"     ,"C",100, 0, "Retirado por" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CRETMAT"     ,"C", 20, 0, "Matrícula" ,                                           "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CRETMAT"     ,"C", 20, 0, "MatrÃ­cula" ,                                           "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CNUMDOC"     ,"C", 13, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NREGIVA"     ,"N",  1, 0, "Regimen de " + cImp() ,                                "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODPRO"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CDOCORG"     ,"C", 10, 0, "Número del documento origen" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NNUMLIQ"     ,"N",  9, 0, "Número liquidación",                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CSUFLIQ"     ,"C",  2, 0, "Sufijo de la liquidación",                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NIMPLIQ"     ,"N", 16, 6, "Importe liquidación",                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"DFECLIQ"     ,"D",  8, 0, "Fecha liquidación",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cCodTrn"     ,"C",  9, 0, "Código del transportista" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODPRO"     ,"C",  9, 0, "CÃ³digo de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CDOCORG"     ,"C", 10, 0, "NÃºmero del documento origen" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NNUMLIQ"     ,"N",  9, 0, "NÃºmero liquidaciÃ³n",                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CSUFLIQ"     ,"C",  2, 0, "Sufijo de la liquidaciÃ³n",                             "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NIMPLIQ"     ,"N", 16, 6, "Importe liquidaciÃ³n",                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"DFECLIQ"     ,"D",  8, 0, "Fecha liquidaciÃ³n",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cCodTrn"     ,"C",  9, 0, "CÃ³digo del transportista" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"nKgsTrn"     ,"N", 16, 6, "TARA del transportista" ,                              "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"lCloFac"     ,"L",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cAbnFac"     ,"C", 12, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cAntFac"     ,"C", 12, 0, "Factura de anticipo" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                              "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"dFecCre"     ,"D",  8, 0, "Fecha de creación del documento",                      "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cTimCre"     ,"C",  5, 0, "Hora de creación del documento",                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cCodGrp"     ,"C",  4, 0, "Código de grupo de cliente" ,                          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"lImprimido"  ,"L",  1, 0, "Lógico de imprimido" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"dFecImp"     ,"D",  8, 0, "Última fecha de impresión" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cHorImp"     ,"C",  5, 0, "Hora de la última impresión" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cCodDlg"     ,"C",  2, 0, "Código delegación" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retenciÃ³n",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cCodUsr"     ,"C",  3, 0, "CÃ³digo de usuario",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"dFecCre"     ,"D",  8, 0, "Fecha de creaciÃ³n del documento",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cTimCre"     ,"C",  5, 0, "Hora de creaciÃ³n del documento",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cCodGrp"     ,"C",  4, 0, "CÃ³digo de grupo de cliente" ,                          "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"lImprimido"  ,"L",  1, 0, "LÃ³gico de imprimido" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"dFecImp"     ,"D",  8, 0, "Ãšltima fecha de impresiÃ³n" ,                           "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cHorImp"     ,"C",  5, 0, "Hora de la Ãºltima impresiÃ³n" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cCodDlg"     ,"C",  2, 0, "CÃ³digo delegaciÃ³n" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cManObr"     ,"C",250, 0, "Literal de gastos" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cMotRec"     ,"C",250, 0, "Motivo de la factura rectificativa",                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cCauRec"     ,"C",250, 0, "Causa de la factura rectificativa",                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CTLFCLI"     ,"C", 20, 0, "Teléfono del cliente" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CTLFCLI"     ,"C", 20, 0, "TelÃ©fono del cliente" ,                                "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"nTotNet"     ,"N", 16, 6, "Total neto" ,                                          "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"nTotIva"     ,"N", 16, 6, "Total " + cImp() ,                                     "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"nTotReq"     ,"N", 16, 6, "Total recargo" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"nTotFac"     ,"N", 16, 6, "Total factura" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cBanco"      ,"C", 50, 0, "Nombre del banco del cliente" ,                        "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cPaisIBAN"   ,"C",  2, 0, "PaÃ­s IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cCtrlIBAN"   ,"C",  2, 0, "DÃ­gito de control IBAN de la cuenta bancaria del cliente", "",               "", "( cDbf )"} )
   	aAdd( aItmFacRec, {"cEntBnc"     ,"C",  4, 0, "Entidad de la cuenta bancaria del cliente" ,           "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cSucBnc"     ,"C",  4, 0, "Sucursal de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"cDigBnc"     ,"C",  2, 0, "Dígito de control de la cuenta bancaria del cliente" , "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cDigBnc"     ,"C",  2, 0, "DÃ­gito de control de la cuenta bancaria del cliente" , "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cCtaBnc"     ,"C", 10, 0, "Cuenta bancaria del cliente" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"lOperPV"     ,"L",  1, 0, "Lógico para operar con punto verde" ,                  "",                   "", "( cDbf )", .t. } )
+   aAdd( aItmFacRec, {"lOperPV"     ,"L",  1, 0, "LÃ³gico para operar con punto verde" ,                  "",                   "", "( cDbf )", .t. } )
 
 RETURN ( aItmFacRec )
 
@@ -12565,7 +12565,7 @@ function aCalFacRec()
 
    local aCalFacRec  := {}
 
-   aAdd( aCalFacRec, { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndFac",  "" } )
+   aAdd( aCalFacRec, { "nTotArt",                                                   "N", 16,  6, "Total artÃ­culos",             "cPicUndFac",  "" } )
    aAdd( aCalFacRec, { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndFac",  "" } )
    aAdd( aCalFacRec, { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivFac",  "!Empty( aTotIva[1,1] ) .and. lEnd" } )
    aAdd( aCalFacRec, { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivFac",  "!Empty( aTotIva[2,1] ) .and. lEnd" } )
@@ -12594,12 +12594,12 @@ function aCalFacRec()
    aAdd( aCalFacRec, { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),                   "cPorDivFac",  "lEnd" }                              )
    aAdd( aCalFacRec, { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivFac",  "lEnd" }                              )
    aAdd( aCalFacRec, { "nTotFac",                                                   "N", 16,  6, "Total factura",               "cPorDivFac",  "lEnd" }                              )
-   aAdd( aCalFacRec, { "nTotRet",                                                   "N", 16,  6, "Total retención",             "cPorDivFac",  "lEnd" }                              )
-   aAdd( aCalFacRec, { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivFac",  "!lEnd" }                             )
+   aAdd( aCalFacRec, { "nTotRet",                                                   "N", 16,  6, "Total retenciÃ³n",             "cPorDivFac",  "lEnd" }                              )
+   aAdd( aCalFacRec, { "nTotPage",                                                  "N", 16,  6, "Total pÃ¡gina",                "cPorDivFac",  "!lEnd" }                             )
    aAdd( aCalFacRec, { "nImpEuros( nTotFac, (cDbf)->cDivFac, cDbfDiv )",            "N", 16,  6, "Total factura (Euros)",       "",             "lEnd" }                             )
    aAdd( aCalFacRec, { "nImpPesetas( nTotFac, (cDbf)->cDivFac, cDbfDiv )",          "N", 16,  6, "Total factura (Pesetas)",     "",             "lEnd" }                             )
    aAdd( aCalFacRec, { "nTotCob",                                                   "N", 16,  6, "Total cobrado",               "cPorDivFac",   "lEnd" }                             )
-   aAdd( aCalFacRec, { "nPagina",                                                   "N",  2,  0, "Número de página",            "'99'",         "" }                                 )
+   aAdd( aCalFacRec, { "nPagina",                                                   "N",  2,  0, "NÃºmero de pÃ¡gina",            "'99'",         "" }                                 )
    aAdd( aCalFacRec, { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",             "" }                                 )
    aAdd( aCalFacRec, { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" }                            )
    aAdd( aCalFacRec, { "aDatVto[ 1 ]",                                              "D",  8,  0, "Fecha del primer vencimiento","",             "!Empty( aDatVto ) .and. len( aDatVto ) >= 1 .and. lEnd" } )
@@ -12625,8 +12625,8 @@ function aColFacRec()
    aAdd( aColFacRec, { "CSERIE"      ,"C",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NNUMFAC"     ,"N",  9, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CSUFFAC"     ,"C",  2, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CREF"        ,"C", 18, 0, "Referencia del artículo"               , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CDETALLE"    ,"C",250, 0, "Detalle del artículo"                  , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CREF"        ,"C", 18, 0, "Referencia del artÃ­culo"               , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CDETALLE"    ,"C",250, 0, "Detalle del artÃ­culo"                  , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NPREUNIT"    ,"N", 16, 6, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NPNTVER"     ,"N", 16, 6, "Importe punto verde"                   , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "nImpTrn"     ,"N", 16, 6, "Importe de portes"                     , "" ,             "", "( cDbfCol )"} )
@@ -12638,62 +12638,62 @@ function aColFacRec()
    aAdd( aColFacRec, { "NPESOKG"     ,"N", 16, 6, "Peso del producto"                     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CPESOKG"     ,"C",  2, 0, "Unidad de peso del producto"           , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CUNIDAD"     ,"C",  2, 0, "Unidades de venta"                     , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "NCOMAGE"     ,"N",  6, 2, "Comisión del agente"                   , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "NCOMAGE"     ,"N",  6, 2, "ComisiÃ³n del agente"                   , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NUNICAJA"    ,"N", 16, 6, "Unidades por caja"                     , "cPicUndFac" ,   "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NUNDKIT"     ,"N", 16, 6, "Unidades del producto kit"             , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "DFECHA"      ,"D",  8, 0, "Fecha de detalle"                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CTIPMOV"     ,"C",  2, 0, "Tipo de movimiento"                    , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "MLNGDES"     ,"M", 10, 0, "Descripción de artículo sin codificar" , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODALB"     ,"C", 12, 0, "Código del albarán de procedencia"     , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "DFECALB"     ,"D",  8, 0, "Fecha del albarán de procedencia"      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "LTOTLIN"     ,"L",  1, 0, "Valor lógico para línea de total"      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "LIMPLIN"     ,"L",  1, 0, "Valor lógico línea no imprimible"      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODPR1"     ,"C", 20, 0, "Código de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODPR2"     ,"C", 20, 0, "Código de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "MLNGDES"     ,"M", 10, 0, "DescripciÃ³n de artÃ­culo sin codificar" , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODALB"     ,"C", 12, 0, "CÃ³digo del albarÃ¡n de procedencia"     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "DFECALB"     ,"D",  8, 0, "Fecha del albarÃ¡n de procedencia"      , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "LTOTLIN"     ,"L",  1, 0, "Valor lÃ³gico para lÃ­nea de total"      , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "LIMPLIN"     ,"L",  1, 0, "Valor lÃ³gico lÃ­nea no imprimible"      , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODPR1"     ,"C", 20, 0, "CÃ³digo de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODPR2"     ,"C", 20, 0, "CÃ³digo de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CVALPR1"     ,"C", 20, 0, "Valor de primera propiedad"            , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CVALPR2"     ,"C", 20, 0, "Valor de segunda propiedad"            , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "NFACCNV"     ,"N", 16, 6, "Factor de conversión de la compra"     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "NFACCNV"     ,"N", 16, 6, "Factor de conversiÃ³n de la compra"     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NDTODIV"     ,"N", 16, 6, "Descuento lineal de la compra"         , "'@EZ 99,99'" ,  "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LSEL"        ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "NNUMLIN"     ,"N",  4, 0, "Número de la línea"                    , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "NNUMLIN"     ,"N",  4, 0, "NÃºmero de la lÃ­nea"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NCTLSTK"     ,"N",  1, 0, "Tipo de stock de la linea"             , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NCOSDIV"     ,"N", 16, 6, "Costo del producto"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NPVPREC"     ,"N", 16, 6, "Precio de venta recomendado"           , "cPorDivFac" ,   "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CALMLIN"     ,"C",  3, 0, "Código de almacén"                     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CALMLIN"     ,"C", 16, 0, "CÃ³digo de almacÃ©n"                     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LIVALIN"     ,"L",  1, 0, cImp() + " incluido"                          , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODIMP"     ,"C",  3, 0, "Código del impuesto especial"          , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODIMP"     ,"C",  3, 0, "CÃ³digo del impuesto especial"          , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NVALIMP"     ,"N", 16, 6, "Importe del impuesto especial"         , "cPorDivFac" ,   "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LLOTE"       ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NLOTE"       ,"N",  9, 0, ""                                      , "'999999999'" ,  "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CLOTE"       ,"C", 12, 0, "Número de lote"                        , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CLOTE"       ,"C", 12, 0, "NÃºmero de lote"                        , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "dFecCad"     ,"D",  8, 0, "Fecha de caducidad"                    , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "LKITART"     ,"L",  1, 0, "Línea con escandallo"                  , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "LKITCHL"     ,"L",  1, 0, "Línea pertenciente a escandallo"       , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "LKITART"     ,"L",  1, 0, "LÃ­nea con escandallo"                  , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "LKITCHL"     ,"L",  1, 0, "LÃ­nea pertenciente a escandallo"       , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LKITPRC"     ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "NMESGRT"     ,"N",  2, 0, "Meses de garantía"                     , "'99'",          "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "NMESGRT"     ,"N",  2, 0, "Meses de garantÃ­a"                     , "'99'",          "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LNOTVTA"     ,"L",  1, 0, "No permitir venta sin stocks"          , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODTIP"     ,"C",  3, 0, "Código del tipo de artículo"           , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODTIP"     ,"C",  3, 0, "CÃ³digo del tipo de artÃ­culo"           , "",              "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "MNUMSER"     ,"M", 10, 0, ""                                      , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODFAM"     ,"C", 16, 0, "Código de familia"                     , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CGRPFAM"     ,"C",  3, 0, "Código del grupo de familia"           , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODFAM"     ,"C", 16, 0, "CÃ³digo de familia"                     , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CGRPFAM"     ,"C",  3, 0, "CÃ³digo del grupo de familia"           , "",              "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NREQ"        ,"N", 16, 6, "Recargo de equivalencia"               , "",              "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "MOBSLIN"     ,"M", 10, 0, "Observaciones de linea"                , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODPRV"     ,"C", 12, 0, "Código del proveedor"                  , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODPRV"     ,"C", 12, 0, "CÃ³digo del proveedor"                  , "",              "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CNOMPRV"     ,"C", 30, 0, "Nombre del proveedor"                  , "",              "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "cImagen"     ,"C",128, 0, "Fichero de imagen"                     , "",              "", "( cDbfCol )", .t. } )
-   aAdd( aColFacRec, { "NPUNTOS"     ,"N", 15, 6, "Puntos del artículo"                   , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "NPUNTOS"     ,"N", 15, 6, "Puntos del artÃ­culo"                   , "",              "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "NVALPNT"     ,"N", 16, 6, "Valor del punto"                       , "",              "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "NDTOPNT"     ,"N",  5, 2, "Descuento puntos"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "NINCPNT"     ,"N",  5, 2, "Incremento porcentual"                 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "CREFPRV"     ,"C", 18, 0, "Referencia proveedor"                  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "NVOLUMEN"    ,"N", 16, 6, "Volumen del producto"                  , "'@E 9,999.99'", "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "CVOLUMEN"    ,"C",  2, 0, "Unidad del volumen"                    , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "nNumMed"     ,"N",  1, 0, "Número de mediciones"                  ,"MasUnd()",       "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "nMedUno"     ,"N", 16, 6, "Primera unidad de medición"            ,"MasUnd()",       "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "nMedDos"     ,"N", 16, 6, "Segunda unidad de medición"            ,"MasUnd()",       "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "nMedTre"     ,"N", 16, 6, "Tercera unidad de medición"            ,"MasUnd()",       "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nNumMed"     ,"N",  1, 0, "NÃºmero de mediciones"                  ,"MasUnd()",       "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nMedUno"     ,"N", 16, 6, "Primera unidad de mediciÃ³n"            ,"MasUnd()",       "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nMedDos"     ,"N", 16, 6, "Segunda unidad de mediciÃ³n"            ,"MasUnd()",       "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nMedTre"     ,"N", 16, 6, "Tercera unidad de mediciÃ³n"            ,"MasUnd()",       "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "nTarLin"     ,"N",  1, 0, "Tarifa de precio aplicada"             ,"",               "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "Descrip"     ,"M", 10, 0, "Descripción larga del artículo"        ,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "Descrip"     ,"M", 10, 0, "DescripciÃ³n larga del artÃ­culo"        ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "lLinOfe"     ,"L",  1, 0, "Linea con oferta"                      ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "lVolImp"     ,"L",  1, 0, "Aplicar volumen impuestos especiales " ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "dFecFac"     ,"D",  8, 0, "Fecha de la factura rectificativa"     ,"" ,              "", "( cDbfCol )" } )
@@ -12706,15 +12706,15 @@ function aCocFacRec()
 
    local aCocFacRec  := {}
 
-   aAdd( aCocFacRec, {"( Descrip( cDbfCol ) )",                                 "C", 50, 0, "Detalle del artículo",              "",            "Descripción", "" } )
-   aAdd( aCocFacRec, {"( nTotNFacRec( cDbfCol ) )",                             "N", 16, 6, "Total unidades artículo",           "MasUnd()",    "Unidades",    "" } )
-   aAdd( aCocFacRec, {"( nTotUFacRec( cDbfCol, nDouDivFac ) )",                 "N", 16, 6, "Precio unitario del artículo",      "cPouDivFac",  "Precio",      "" } )
+   aAdd( aCocFacRec, {"( Descrip( cDbfCol ) )",                                 "C", 50, 0, "Detalle del artÃ­culo",              "",            "DescripciÃ³n", "" } )
+   aAdd( aCocFacRec, {"( nTotNFacRec( cDbfCol ) )",                             "N", 16, 6, "Total unidades artÃ­culo",           "MasUnd()",    "Unidades",    "" } )
+   aAdd( aCocFacRec, {"( nTotUFacRec( cDbfCol, nDouDivFac ) )",                 "N", 16, 6, "Precio unitario del artÃ­culo",      "cPouDivFac",  "Precio",      "" } )
    aAdd( aCocFacRec, {"( nTotPFacRec( cDbfCol, nDouDivFac, nVdvDivFac ) )",     "N", 16, 6, "Precio unitario con descuentos",    "cPouDivFac",  "Precio neto", "" } )
-   aAdd( aCocFacRec, {"( nPntUFacRec( cDbfCol, nDpvDivFac ) )",                 "N", 16, 6, "Punto verde del artículo",          "cPpvDivFac",  "Punto verde", "" } )
-   aAdd( aCocFacRec, {"( nTotLFacRec( cDbfCol, nDouDivFac, nRouDivFac ) )",     "N", 16, 6, "Total línea del factura",           "cPorDivFac",  "Total",       "" } )
-   aAdd( aCocFacRec, {"( nTotFFacRec( cDbfCol, nDouDivFac, nRouDivFac ) )",     "N", 16, 6, "Total final línea del factura ",    "cPorDivFac",  "Total neto",  "" } )
-   aAdd( aCocFacRec, {"( nDtoLFacRec( cDbfCol, nDouDivFac, nVdvDivFac ) )",     "N", 16, 6, "Importe descuento línea del factura","cPouDivFac", "Dto.",        "" } )
-   aAdd( aCocFacRec, {"( nTotDtoLFacRec( cDbfCol, nDouDivFac, nVdvDivFac ) )",  "N", 16, 6, "Total descuento línea del factura ","cPouDivFac",  "Total dto.",  "" } )
+   aAdd( aCocFacRec, {"( nPntUFacRec( cDbfCol, nDpvDivFac ) )",                 "N", 16, 6, "Punto verde del artÃ­culo",          "cPpvDivFac",  "Punto verde", "" } )
+   aAdd( aCocFacRec, {"( nTotLFacRec( cDbfCol, nDouDivFac, nRouDivFac ) )",     "N", 16, 6, "Total lÃ­nea del factura",           "cPorDivFac",  "Total",       "" } )
+   aAdd( aCocFacRec, {"( nTotFFacRec( cDbfCol, nDouDivFac, nRouDivFac ) )",     "N", 16, 6, "Total final lÃ­nea del factura ",    "cPorDivFac",  "Total neto",  "" } )
+   aAdd( aCocFacRec, {"( nDtoLFacRec( cDbfCol, nDouDivFac, nVdvDivFac ) )",     "N", 16, 6, "Importe descuento lÃ­nea del factura","cPouDivFac", "Dto.",        "" } )
+   aAdd( aCocFacRec, {"( nTotDtoLFacRec( cDbfCol, nDouDivFac, nVdvDivFac ) )",  "N", 16, 6, "Total descuento lÃ­nea del factura ","cPouDivFac",  "Total dto.",  "" } )
 
 return ( aCocFacRec )
 
@@ -12725,13 +12725,13 @@ function aIncFacRec()
    local aIncFacRec  := {}
 
    aAdd( aIncFacRec, { "cSerie",  "C",    1,  0, "Serie de factura" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacRec, { "nNumFac", "N",    9,  0, "Número de factura" ,             "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncFacRec, { "nNumFac", "N",    9,  0, "NÃºmero de factura" ,             "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aIncFacRec, { "cSufFac", "C",    2,  0, "Sufijo de factura" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aIncFacRec, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,            "",                   "", "( cDbfCol )" } )
    aAdd( aIncFacRec, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,        "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacRec, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,  "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacRec, { "lListo",  "L",    1,  0, "Lógico de listo" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacRec, { "lAviso",  "L",    1,  0, "Lógico de Aviso" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aIncFacRec, { "mDesInc", "M",   10,  0, "DescripciÃ³n de la incidencia" ,  "",                   "", "( cDbfCol )" } )
+   aAdd( aIncFacRec, { "lListo",  "L",    1,  0, "LÃ³gico de listo" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aIncFacRec, { "lAviso",  "L",    1,  0, "LÃ³gico de Aviso" ,               "",                   "", "( cDbfCol )" } )
 
 return ( aIncFacRec )
 
@@ -12742,7 +12742,7 @@ function aFacRecDoc()
    local aFacRecDoc  := {}
 
    aAdd( aFacRecDoc, { "cSerFac", "C",    1,  0, "Serie de factura" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aFacRecDoc, { "nNumFac", "N",    9,  0, "Número de factura" ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aFacRecDoc, { "nNumFac", "N",    9,  0, "NÃºmero de factura" ,               "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aFacRecDoc, { "cSufFac", "C",    2,  0, "Sufijo de factura" ,               "",                   "", "( cDbfCol )" } )
    aAdd( aFacRecDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
    aAdd( aFacRecDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
@@ -12760,11 +12760,11 @@ function aSerFacRec()
    aAdd( aColFacRec,  { "nNumFac",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColFacRec,  { "cSufFac",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColFacRec,  { "dFecFac",     "D",  8,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacRec,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
-   aAdd( aColFacRec,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacRec,  { "cAlmLin",     "C",  3,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacRec,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades negativas",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacRec,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacRec,  { "nNumLin",     "N",  4,   0, "NÃºmero de la lÃ­nea",               "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColFacRec,  { "cRef",        "C", 18,   0, "Referencia del artÃ­culo",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacRec,  { "cAlmLin",     "C", 16,   0, "Almacen del artÃ­culo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacRec,  { "lUndNeg",     "L",  1,   0, "LÃ³gico de unidades negativas",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacRec,  { "cNumSer",     "C", 30,   0, "NÃºmero de serie",                  "",                  "", "( cDbfCol )" } )
 
 return ( aColFacRec )
 
@@ -13627,13 +13627,13 @@ Function DesignReportFacRec( oFr, dbfDoc )
       VariableReport( oFr )
 
       /*
-      Diseño de report---------------------------------------------------------
+      DiseÃ±o de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseñador----------------------------------------------------
+      Destruye el diseÃ±ador----------------------------------------------------
       */
 
       oFr:DestroyFr()
@@ -13673,7 +13673,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle(        "DiseÃ±ador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -13755,7 +13755,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, TDataView():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de factura rectificativa de cliente número " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) )
+                  :SetAsunto(       "Envio de factura rectificativa de cliente nÃºmero " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) )
                   :SetMensaje(      "Adjunto le remito nuestro factura rectificativa de cliente " + ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( TDataView():FacturasRectificativas( nView ) )->dFecFac ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -13773,7 +13773,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el diseñador-------------------------------------------------------
+   Destruye el diseÃ±ador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -13783,7 +13783,7 @@ Return .t.
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve la descripción de una line de factura
+Devuelve la descripciÃ³n de una line de factura
 */
 
 FUNCTION cDesFacRec( cFacRecL, cFacRecS )
@@ -13917,7 +13917,7 @@ Function nImportaLineas()
    local oBtnCancel
    local oOption
    local nOption  := 1
-   local cText    := "¿Desea importar las lineas de la factura?"
+   local cText    := "Â¿Desea importar las lineas de la factura?"
 
    DEFINE DIALOG oDlg RESOURCE "IMPFACREC"
 
@@ -14001,7 +14001,7 @@ FUNCTION BrwFacRec( oGet, oIva )
       Return .f.
    end if
 
-   aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
+   aCbxOrd        := { "NÃºmero", "Fecha", "Cliente", "Nombre" }
    nOrd           := GetBrwOpt( "BrwFacRec" )
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
@@ -14036,7 +14036,7 @@ FUNCTION BrwFacRec( oGet, oIva )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cSerie + "/" + RTrim( Str( ( TDataView():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasRectificativas( nView ) )->cSufFac }
          :nWidth           := 80

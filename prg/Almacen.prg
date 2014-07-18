@@ -86,8 +86,8 @@ FUNCTION Almacen( oMenuItem, oWnd )
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70;
       XBROWSE ;
-      TITLE    "Almacén" ;
-      PROMPT   "Código",;
+      TITLE    "AlmacÃ©n" ;
+      PROMPT   "CÃ³digo",;
 					"Nombre";
       MRU      "Package_16";
       BITMAP   clrTopAlmacenes ;
@@ -100,7 +100,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
 		OF 		oWnd
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cCodAlm"
          :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
          :nWidth           := 120
@@ -122,13 +122,13 @@ FUNCTION Almacen( oMenuItem, oWnd )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código postal"
+         :cHeader          := "CÃ³digo postal"
          :bEditValue       := {|| ( dbfAlmT )->cPosAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Población"
+         :cHeader          := "PoblaciÃ³n"
          :bEditValue       := {|| ( dbfAlmT )->cPobAlm }
          :nWidth           := 180
       end with
@@ -162,7 +162,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
 			NOBORDER ;
 			ACTION 	( oWndBrw:RecAdd() );
 			ON DROP	( oWndBrw:RecDup() );
-			TOOLTIP 	"(A)ñadir";
+			TOOLTIP 	"(A)Ã±adir";
          BEGIN GROUP;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -237,13 +237,13 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
 
 	BeginTrans( aTemp )
 
-   DEFINE DIALOG oDlg RESOURCE "ALMACEN" TITLE LblTitle( nMode ) + "Almacén"
+   DEFINE DIALOG oDlg RESOURCE "ALMACEN" TITLE LblTitle( nMode ) + "AlmacÃ©n"
 
       REDEFINE FOLDER oFld;
          ID       100 ;
          OF       oDlg ;
          PROMPT   "&General",;
-                  "&Facturación y agentes";
+                  "&FacturaciÃ³n y agentes";
          DIALOGS  "ALMACEN_01",;
                   "ALMACEN_02";
 
@@ -338,7 +338,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
       oBrw2:nMarqueeStyle  := 5
 
       with object ( oBrw2:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :bEditValue       := {|| ( dbfTmp )->cCodAge }
          :nWidth           := 120
       end with
@@ -451,7 +451,7 @@ Static Function BeginTrans( aTemp )
       ( dbfTmp )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
       /*
-      A¤adimos desde el fichero de lineas--------------------------------------
+      AÂ¤adimos desde el fichero de lineas--------------------------------------
       */
 
       if ( dbfAlmL )->( dbSeek( cCodAlm ) )
@@ -472,7 +472,7 @@ Return nil
 //-----------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para A¤adir lineas de detalle
+Funcion Auxiliar para AÂ¤adir lineas de detalle
 */
 
 STATIC FUNCTION AppDeta( oBrw, bEdit2, aTemp )
@@ -482,7 +482,7 @@ RETURN WinAppRec( oBrw, bEdit2, dbfTmp, , , aTemp[(dbfAlmT)->( FieldPos( "CCODAL
 //--------------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para la Edici¢n de Lineas de Detalle
+Funcion Auxiliar para la EdiciÂ¢n de Lineas de Detalle
 */
 
 STATIC FUNCTION EdtDeta( oBrw, bEdit2, aTemp )
@@ -511,20 +511,20 @@ STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if Empty( aTemp[ _CCODALM ] )
-         MsgStop( "El código del almacén no puede estar vacío." )
+         MsgStop( "El cÃ³digo del almacÃ©n no puede estar vacÃ­o." )
          oGet:SetFocus()
          Return nil
       end if
 
       if dbSeekInOrd( aTemp[ _CCODALM ], "CCODALM", dbfAlmT )
-         MsgStop( "Código ya existe " + Rtrim( aTemp[ _CCODALM ] ) )
+         MsgStop( "CÃ³digo ya existe " + Rtrim( aTemp[ _CCODALM ] ) )
          return nil
       end if
 
    end if
 
    if Empty( aTemp[ _CNOMALM ] )
-      MsgStop( "El nombre del almacén no puede estar vacío." )
+      MsgStop( "El nombre del almacÃ©n no puede estar vacÃ­o." )
       oGet2:SetFocus()
       Return nil
    end if
@@ -536,13 +536,13 @@ STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 
    GetTreeState( aTemp )
 
    if ( aTemp[ _CCOMALM ] == aTemp[ _CCODALM ] )
-      MsgStop( "Almacén padre no puede ser el mismo" )
+      MsgStop( "AlmacÃ©n padre no puede ser el mismo" )
       oTreePadre:SetFocus()
       Return nil
    end if
 
    if aScan( aChildAlmacen( aTemp[ _CCODALM ] ), aTemp[ _CCOMALM ] ) != 0
-      MsgStop( "Almacén padre contiene referencia circular" )
+      MsgStop( "AlmacÃ©n padre contiene referencia circular" )
       oTreePadre:SetFocus()
       Return nil
    end if
@@ -681,7 +681,7 @@ RETURN ( oDlg:nResult == IDOK )
 Static Function lPreSave( aTemp, aoGet, dbfTmp, oBrw, nMode, oDlg, oGet )
 
    if Empty( aTemp[ (dbfAlmL)->( FieldPos( "CCODAGE" ) ) ] )
-      MsgStop( "El código del agente no puede estar vacío" )
+      MsgStop( "El cÃ³digo del agente no puede estar vacÃ­o" )
       oGet:SetFocus()
       Return nil
    end if
@@ -782,17 +782,17 @@ FUNCTION aItmAlm()
 
    local aItmAlm  := {}
 
-   aAdd( aItmAlm, { "cCodAlm",  "C",     16,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cCodAlm",  "C",     16,     0, "CÃ³digo de almacen"              ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cNomAlm",  "C",    100,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cDirAlm",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "cPosAlm",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "cPobAlm",  "C",     30,     0, "Población de almacen"           ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cPosAlm",  "C",      7,     0, "CÃ³digo postal de almacen"       ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cPobAlm",  "C",     30,     0, "PoblaciÃ³n de almacen"           ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cProAlm",  "C",     20,     0, "Provincia de almacen"           ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "cTfnAlm",  "C",     12,     0, "Teléfono de almacen"            ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cTfnAlm",  "C",     12,     0, "TelÃ©fono de almacen"            ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cFaxAlm",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cPerAlm",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cCodCli",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
-   aAdd( aItmAlm, { "cComAlm",  "C",     16,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "cComAlm",  "C",     16,     0, "CÃ³digo de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
 
 RETURN ( aItmAlm )
 
@@ -802,14 +802,14 @@ Function aItmAlmAgente()
 
    local aItmAlmAgente  := {}
 
-   aAdd( aItmAlmAgente, { "CCODALM",  "C",      3,     0, "" } )
+   aAdd( aItmAlmAgente, { "CCODALM",  "C",     16,     0, "" } )
    aAdd( aItmAlmAgente, { "CCODAGE",  "C",      3,     0, "" } )
 
 Return aItmAlmAgente
 
 //---------------------------------------------------------------------------//
-//Funcion que devuelve el nombre de la ubicación, diciendole
-//el almacen y el número de la ubicación
+//Funcion que devuelve el nombre de la ubicaciÃ³n, diciendole
+//el almacen y el nÃºmero de la ubicaciÃ³n
 
 Function cGetUbica( cCodAlm, dbfAlm, nNumUbica )
 
@@ -827,7 +827,7 @@ Function SelectAlmacen()
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
-   local cCbxOrden      := "Código"
+   local cCbxOrden      := "CÃ³digo"
 
    if !lOpenFiles()
       return .f.
@@ -835,7 +835,7 @@ Function SelectAlmacen()
 
    DEFINE DIALOG oDlg ;
       RESOURCE    "SelectItem" ;
-      TITLE       "Seleccionar almacén" ;
+      TITLE       "Seleccionar almacÃ©n" ;
 
       REDEFINE BITMAP oBmp ;
          RESOURCE "package_48_alpha" ;
@@ -852,7 +852,7 @@ Function SelectAlmacen()
       REDEFINE COMBOBOX oCbxOrden ;
          VAR      cCbxOrden ;
          ID       110 ;
-         ITEMS    { "Código", "Nombre" } ;
+         ITEMS    { "CÃ³digo", "Nombre" } ;
          ON CHANGE( ( dbfAlmT )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() ) ;
 			OF 		oDlg
 
@@ -865,7 +865,7 @@ Function SelectAlmacen()
       oBrw:nMarqueeStyle   := 5
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
          :cSortOrder       := "cCodAlm"
          :nWidth           := 40
@@ -901,8 +901,8 @@ Function SelectAlmacen()
    if oDlg:nResult == IDOK
       oUser():cAlmacen( ( dbfAlmT )->cCodAlm )
    else
-      MsgInfo( "No seleccionó ningún almacén, se establecerá el almacén por defecto." + CRLF + ;
-               "Almacén actual, " + oUser():cAlmacen() )
+      MsgInfo( "No seleccionÃ³ ningÃºn almacÃ©n, se establecerÃ¡ el almacÃ©n por defecto." + CRLF + ;
+               "AlmacÃ©n actual, " + oUser():cAlmacen() )
    end if
 
    CloseFiles()
@@ -1031,7 +1031,7 @@ function IsAlmacen( cPatEmp )
    if !( dbfAlmT )->( dbSeek( "000" ) ) .and. ( dbfAlmT )->( LastRec() ) == 0
       ( dbfAlmT )->( dbAppend() )
       ( dbfAlmT )->cCodAlm := "000"
-      ( dbfAlmT )->cNomAlm := "Almacén principal"
+      ( dbfAlmT )->cNomAlm := "AlmacÃ©n principal"
       ( dbfAlmT )->( dbUnLock() )
    end if
 
@@ -1169,7 +1169,7 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
             lValid   := .t.
          else
             oGet:Refresh()
-            msgStop( "Almacén no encontrado" )
+            msgStop( "AlmacÃ©n no encontrado" )
          end if
 
       case Valtype( dbfAlmT ) == "O"
@@ -1184,7 +1184,7 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
             lValid   := .t.
          else
             oGet:Refresh()
-            msgStop( "Almacén no encontrado" )
+            msgStop( "AlmacÃ©n no encontrado" )
          end if
 
    end case
@@ -1215,7 +1215,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 	local cGet1
    local nOrdAnt        := GetBrwOpt( "BrwAlmacen" )
 	local oCbxOrd
-   local aCbxOrd        := { "Código", "Nombre" }
+   local aCbxOrd        := { "CÃ³digo", "Nombre" }
    local cCbxOrd
    local nLevel         := nLevelUsr( "01035" )
    local oSayText
@@ -1235,7 +1235,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 
    if lBigStyle
 
-      DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar almacén"
+      DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar almacÃ©n"
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -1246,7 +1246,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 
    else
 
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar almacén"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar almacÃ©n"
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -1274,7 +1274,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
       oBrw:cName           := "Browse.Almacen"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cCodAlm"
          :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
          :nWidth           := 140
@@ -1435,7 +1435,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 /*
-Funcion para editar un almacén desde cualquier parte del programa
+Funcion para editar un almacÃ©n desde cualquier parte del programa
 */
 
 FUNCTION EdtAlm( cCodAlm )
