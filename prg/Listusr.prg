@@ -23,7 +23,7 @@ METHOD Create()
    ::AddField( "cNbrUse",   "C", 30, 0, {|| "" },     "Usuario",           .t., "Nombre de usuario",              40, .f. )
    ::AddField( "cEmpUse",   "C",  4, 0, {|| "" },     "Empresa",           .f., "Empresa por defecto",             5, .f. )
    ::AddField( "cCajUse",   "C",  3, 0, {|| "" },     "Caja",              .f., "Caja por defecto",                5, .f. )
-   ::AddField( "cAlmUse",   "C",  3, 0, {|| "" },     "Almacén",           .f., "Almacén por defecto",             5, .f. )
+   ::AddField( "cAlmUse",   "C", 16, 0, {|| "" },     "Almacén",           .f., "Almacén por defecto",             5, .f. )
    ::AddField( "cFpgUse",   "C",  3, 0, {|| "" },     "F. Pago",           .f., "Forma de pago por defecto",       5, .f. )
 
    ::AddTmpIndex ( "cCodUse", "cCodUse" )

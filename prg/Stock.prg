@@ -315,7 +315,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cCodigo"    TYPE "C" LEN 18 DEC 0 COMMENT "Código de artículo"                    OF ::oDbfStock
    FIELD NAME "cDelega"    TYPE "C" LEN  3 DEC 0 COMMENT "Delegación"                            OF ::oDbfStock
    FIELD NAME "dFecDoc"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"                   OF ::oDbfStock
-   FIELD NAME "cAlmacen"   TYPE "C" LEN  3 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
+   FIELD NAME "cAlmacen"   TYPE "C" LEN 16 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
    FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la primera propiedad"        OF ::oDbfStock
    FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la segunda propiedad"        OF ::oDbfStock
    FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
@@ -6210,7 +6210,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    local nRec           := ( ::cHisMovT )->( Recno() )
    local nOrd           := ( ::cHisMovT )->( OrdSetFocus( "cStock" ) )
 
-   DEFAULT cCodAlm      := Space( 3 )  
+   DEFAULT cCodAlm      := Space( 16 )  
    DEFAULT cCodPrp1     := Space( 20 )
    DEFAULT cCodPrp2     := Space( 20 )
    DEFAULT cValPrp1     := Space( 20 )

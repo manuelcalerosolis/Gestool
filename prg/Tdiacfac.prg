@@ -17,6 +17,7 @@ CLASS TDiaCFac FROM TInfGen
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oDbfTvta    AS OBJECT
+   DATA  oDbfObr     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
    DATA  aTipo       AS ARRAY    INIT  { "Facturas", "Rectificativas", "Todas" }
    DATA  lExcCredito AS LOGIC    INIT .f.
@@ -41,6 +42,8 @@ METHOD create()
    ::AddField( "cDocMov", "C", 14, 0, {|| "@R #/#########/##" },  "Doc.",      .t., "Documento",            14, .f. )
    ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },                 "Fecha",     .t., "Fecha",                10, .f. )
    ::FldCliente()
+   ::AddField( "cCodObr", "C", 10, 0, {|| "@!" },                 "Cod. Dir.", .f., "Código dirección",     12, .f. )
+   ::AddField( "cNomObr", "C",150, 0, {|| "@!" },                 "Dirección", .f., "Nombre dirección",     20, .f. )
    ::AddField( "nBase18", "N", 16, 6, {|| ::cPicOut },            "Base 18%",  .f., "Base al 18%",          10, .t. )
    ::AddField( "nIva18",  "N", 16, 6, {|| ::cPicOut },            "IVA. 18%",  .f., "impuestos al 18%",          10, .t. )
    ::AddField( "nReq18",  "N", 16, 6, {|| ::cPicOut },            "REQ. 18%",  .f., "R.E. al 18%",          10, .t. )
@@ -94,19 +97,21 @@ METHOD OpenFiles() CLASS TDiaCFac
    ::oFacCliT := TDataCenter():oFacCliT()
    ::oFacCliT:SetOrder( "dFecFac" )
 
-   DATABASE NEW ::oFacCliL  PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
+   DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oFacRecT  PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
+   DATABASE NEW ::oFacRecT    PATH ( cPatEmp() ) FILE "FACRECT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
-   DATABASE NEW ::oFacRecL  PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
+   DATABASE NEW ::oFacRecL    PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
+   DATABASE NEW ::oAntCliT    PATH ( cPatEmp() ) FILE "ANTCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
-   DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
+   DATABASE NEW ::oDbfObr     PATH ( cPatEmp() ) FILE "OBRAST.DBF"  VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
+
+   DATABASE NEW ::oDbfIva     PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+   DATABASE NEW ::oDbfTvta    PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    RECOVER
 
@@ -148,15 +153,19 @@ METHOD CloseFiles() CLASS TDiaCFac
    if !Empty( ::oAntCliT ) .and. ::oAntCliT:Used()
       ::oAntCliT:End()
    end if
-
-   ::oFacCliT := nil
-   ::oFacCliL := nil
-   ::oFacRecT := nil
-   ::oFacRecL := nil
-   ::oDbfTvta := nil
-   ::oDbfIva  := nil
-   ::oFacCliP := nil
-   ::oAntCliT := nil
+   if !Empty( ::oDbfObr ) .and. ::oDbfObr:Used()
+      ::oDbfObr:End()
+   end if
+   
+   ::oFacCliT  := nil
+   ::oFacCliL  := nil
+   ::oFacRecT  := nil
+   ::oFacRecL  := nil
+   ::oDbfTvta  := nil
+   ::oDbfIva   := nil
+   ::oFacCliP  := nil
+   ::oAntCliT  := nil
+   ::oDbfObr   := nil
 
 RETURN ( Self )
 
@@ -274,6 +283,8 @@ METHOD lGenerate() CLASS TDiaCFac
             ::oDbf:cNomCli          := ::oFacCliT:cNomCli
             ::oDbf:dFecMov          := ::oFacCliT:dFecFac
             ::oDbf:cDocMov          := ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac
+            ::oDbf:cCodObr          := ::oFacCliT:cCodObr
+            ::oDbf:cNomObr          := oRetFld( ::oFacCliT:cCodCli + ::oFacCliT:cCodObr, ::oDbfObr, "cNomObr" )
 
             ::AddCliente( ::oFacCliT:cCodCli, ::oFacCliT, .f. )
 
@@ -463,7 +474,9 @@ METHOD lGenerate() CLASS TDiaCFac
             ::oDbf:cCodCli := ::oFacRecT:cCodCli
             ::oDbf:cNomCli := ::oFacRecT:cNomCli
             ::oDbf:dFecMov := ::oFacRecT:dFecFac
-            ::oDbf:cDocMov := ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac
+            ::oDbf:cDocMov := ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFacç
+            ::oDbf:cCodObr := ::oFacRecT:cCodObr
+            ::oDbf:cNomObr := oRetFld( ::oFacCliT:cCodCli + ::oFacRecT:cCodObr, ::oDbfObr, "cNomObr" )
 
             ::AddCliente( ::oFacRecT:cCodCli, ::oFacRecT, .f. )
 

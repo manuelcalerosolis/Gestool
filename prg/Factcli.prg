@@ -10032,10 +10032,10 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
 
-   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   			   "CallHbFunc('cFacturaClienteDireccionSAT')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             			   "CallHbFunc('nStockLineaFasCli')" )
 
-   //oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             						"CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					   "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
 Return nil
 
@@ -20904,6 +20904,14 @@ Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, cFacCliT, dbfTikT )
 	CursorWE()
 
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
+
+//---------------------------------------------------------------------------//
+
+Function FacturaClienteLineaOrdSetFocus( cOrd )
+
+	( dbfFacCliL )->( OrdSetFocus( cOrd ) )
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
