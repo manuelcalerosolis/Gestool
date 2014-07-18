@@ -2733,7 +2733,7 @@ Function aItmUsuario()
                      { "cPcnUse",   "C", 50,  0, "" },;
                      { "cCajUse",   "C",  3,  0, "Código de caja de usuario" },;
                      { "cCjrUse",   "C",  3,  0, "" },;
-                     { "cAlmUse",   "C",  3,  0, "Código de almacén de usuario" },;
+                     { "cAlmUse",   "C", 16,  0, "Código de almacén de usuario" },;
                      { "cFpgUse",   "C",  3,  0, "" },;
                      { "nGrpUse",   "N",  1,  0, "Tipo de usuario ( 1 Administradores - 2 Usuario )" },;
                      { "cImagen",   "C",128,  0, "" },;

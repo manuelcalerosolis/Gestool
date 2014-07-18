@@ -30,8 +30,8 @@ END CLASS
 METHOD Create()
 
    ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },      "Fecha",      .t., "Fecha",               8 )
-   ::AddField( "cAliMov", "C",  3, 0, {|| "@!" },      "Ent",        .t., "Almacen entrada",     3 )
-   ::AddField( "cAloMov", "C",  3, 0, {|| "@!" },      "Sal",        .t., "Almacen salida",      3 )
+   ::AddField( "cAliMov", "C", 16, 0, {|| "@!" },      "Ent",        .t., "Almacen entrada",    16 )
+   ::AddField( "cAloMov", "C", 16, 0, {|| "@!" },      "Sal",        .t., "Almacen salida",     16 )
    ::AddField( "cRefMov", "C", 18, 0, {|| "@!" },      "Código",     .t., "Código",             14 )
    ::AddField( "cNomMov", "C",100, 0, {|| "@!" },      "Artículo",   .t., "Artículo",           40 )
    ::AddField( "cCodMov", "C",  2, 0, {|| "" },        "TM",         .t., "Tipo de movimiento",  2 )

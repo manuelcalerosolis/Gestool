@@ -1971,7 +1971,7 @@ Method Process()
                   end if
 
                   ::oSender:SetText( "No existe almacen destino : " + AllTrim( Str( oRemMovTmp:oDbf:nNumRem, 9 ) ) + "/" + AllTrim( oRemMovTmp:oDbf:cSufRem ) + "; " + Dtoc( oRemMovTmp:oDbf:dFecRem ) )
-                  oRemMov:oDbf:FieldPutByName( "cAlmDes", Space( 3 ) )
+                  oRemMov:oDbf:FieldPutByName( "cAlmDes", Space( 16 ) )
 
                case !oAlm:Seek( oRemMovTmp:oDbf:cAlmOrg ) .and. oAlm:Seek( oRemMovTmp:oDbf:cAlmDes ) //
 
@@ -1984,7 +1984,7 @@ Method Process()
                   end if
 
                   ::oSender:SetText( "No existe almacen origen : " + AllTrim( Str( oRemMovTmp:oDbf:nNumRem, 9 ) ) + "/" + AllTrim( oRemMovTmp:oDbf:cSufRem ) + "; " + Dtoc( oRemMovTmp:oDbf:dFecRem ) )
-                  oRemMov:oDbf:FieldPutByName( "cAlmOrg", Space( 3 ) )
+                  oRemMov:oDbf:FieldPutByName( "cAlmOrg", Space( 16 ) )
 
                end case
 
@@ -2014,12 +2014,12 @@ Method Process()
                      case !oAlm:Seek( oRemMovTmp:oDetMovimientos:oDbf:cAliMov ) .and. oAlm:Seek( oRemMovTmp:oDetMovimientos:oDbf:cAloMov )
 
                         dbPass( oRemMovTmp:oDetMovimientos:oDbf:cAlias, oRemMov:oDetMovimientos:oDbf:cAlias, .t. )
-                        oRemMov:oDetMovimientos:oDbf:FieldPutByName( "cAliMov", Space( 3 ) )
+                        oRemMov:oDetMovimientos:oDbf:FieldPutByName( "cAliMov", Space( 16 ) )
 
                      case oAlm:Seek( oRemMovTmp:oDetMovimientos:oDbf:cAliMov ) .and. !oAlm:Seek( oRemMovTmp:oDetMovimientos:oDbf:cAloMov )
 
                         dbPass( oRemMovTmp:oDetMovimientos:oDbf:cAlias, oRemMov:oDetMovimientos:oDbf:cAlias, .t. )
-                        oRemMov:oDetMovimientos:oDbf:FieldPutByName( "cAloMov", Space( 3 ) )
+                        oRemMov:oDetMovimientos:oDbf:FieldPutByName( "cAloMov", Space( 16 ) )
 
                      end case
 
@@ -2496,7 +2496,7 @@ METHOD loadAlmacen( nMode )
                   ::oDetMovimientos:oDbfVir:nTipMov   := ::oDbf:nTipMov
                   ::oDetMovimientos:oDbfVir:cCodMov   := ::oDbf:cCodMov
                   ::oDetMovimientos:oDbfVir:cAliMov   := ::oDbf:cAlmDes
-                  ::oDetMovimientos:oDbfVir:cAloMov   := Space( 3 )
+                  ::oDetMovimientos:oDbfVir:cAloMov   := Space( 16 )
 
                   if !Empty( sStkAlm:cNumeroSerie )
 
@@ -2613,8 +2613,8 @@ METHOD ShwAlm( oSay, oBtnImp )
       oSay[ 1 ]:Hide()
       oSay[ 4 ]:Hide()
       ::oAlmOrg:Hide()
-      oSay[ 1 ]:cText( Space(3) )
-      ::oAlmOrg:cText( Space(3) )
+      oSay[ 1 ]:cText( Space(16) )
+      ::oAlmOrg:cText( Space(16) )
       if !Empty( oBtnImp )
          oBtnImp:Show()
       end if
@@ -3545,8 +3545,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       FIELD NAME "dFecMov"             TYPE "D" LEN   8 DEC 0 COMMENT "Fecha movimiento"                    OF oDbf
       FIELD NAME "cTimMov"             TYPE "C" LEN   5 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
       FIELD NAME "nTipMov"             TYPE "N" LEN   1 DEC 0 COMMENT "Tipo movimiento"                     OF oDbf
-      FIELD NAME "cAliMov"             TYPE "C" LEN   3 DEC 0 COMMENT "Alm. ent."                           OF oDbf
-      FIELD NAME "cAloMov"             TYPE "C" LEN   3 DEC 0 COMMENT "Alm. sal."                           OF oDbf
+      FIELD NAME "cAliMov"             TYPE "C" LEN  16 DEC 0 COMMENT "Alm. ent."                           OF oDbf
+      FIELD NAME "cAloMov"             TYPE "C" LEN  16 DEC 0 COMMENT "Alm. sal."                           OF oDbf
       FIELD NAME "cRefMov"             TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
       FIELD NAME "cCodPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 1"                    OF oDbf
@@ -5009,7 +5009,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetSeriesMovimi
       FIELD NAME "dFecRem"    TYPE "D" LEN  8  DEC 0                                            HIDE        OF oDbf
       FIELD NAME "nNumLin"    TYPE "N" LEN 04  DEC 0 COMMENT "Número de línea"                  COLSIZE  60 OF oDbf
       FIELD NAME "cCodArt"    TYPE "C" LEN 18  DEC 0 COMMENT "Artículo"                         COLSIZE  60 OF oDbf
-      FIELD NAME "cAlmOrd"    TYPE "C" LEN 03  DEC 0 COMMENT "Almacén"                          COLSIZE  50 OF oDbf
+      FIELD NAME "cAlmOrd"    TYPE "C" LEN 16  DEC 0 COMMENT "Almacén"                          COLSIZE  50 OF oDbf
       FIELD NAME "lUndNeg"    TYPE "L" LEN 01  DEC 0 COMMENT "Lógico de unidades en negativo"   HIDE        OF oDbf
       FIELD NAME "cNumSer"    TYPE "C" LEN 30  DEC 0 COMMENT "Número de serie"                  HIDE        OF oDbf
 
