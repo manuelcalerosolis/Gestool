@@ -2,25 +2,25 @@
 ******************************************************************************************************
 ******************************************************************************************************
 ******************************************************************************************************
-//  CopyRight de CanaFive Abril 2012. Francisco GarcÃ­a FernÃ¡ndez. pacogarcia@gmail.com
+//  CopyRight de CanaFive Abril 2012. Francisco García Fernández. pacogarcia@gmail.com
 //  Revisar fichero adjunto de licencia de uso.
 //
 //  Nota del Autor:
-//  Â¡En este mundo todo no vale!
+//  ¡En este mundo todo no vale!
 //
-//  Este control que tienes hoy en tus manos es el fruto de mi ingenio y de mi ilusiÃ³n. Como verÃ¡s te entrego el cÃ³digo fuente
-//  del programa. SÃ³lo tienes que comparar el precio de cualquier otro componente en internet para ver que no merece la pena piratear
-//  este software. Si lo compras tendrÃ¡s siempre mi ayuda ademÃ¡s de mi gratitud.
-//  Creo que es un control de calidad que estÃ¡ testeado. Si alguna duda te surge, ya sabes donde estÃ¡ mi puerta. Escribe me y lo
+//  Este control que tienes hoy en tus manos es el fruto de mi ingenio y de mi ilusión. Como verás te entrego el código fuente
+//  del programa. Sólo tienes que comparar el precio de cualquier otro componente en internet para ver que no merece la pena piratear
+//  este software. Si lo compras tendrás siempre mi ayuda además de mi gratitud.
+//  Creo que es un control de calidad que está testeado. Si alguna duda te surge, ya sabes donde está mi puerta. Escribe me y lo
 //  miramos.
-//  Por favor, no distribuyas este cÃ³digo y mantenlo en buen recaudo. Tu tambiÃ©n programas y sabes lo que te cuesta cada lÃ­nea de
-//  cÃ³digo. Tampoco a tÃ­ te gusta que te pirateen tu trabajo.
+//  Por favor, no distribuyas este código y mantenlo en buen recaudo. Tu también programas y sabes lo que te cuesta cada línea de
+//  código. Tampoco a tí te gusta que te pirateen tu trabajo.
 //  Un fuerte abrazo.
 //
-//  Paco GarcÃ­a
+//  Paco García
 //
 
-// Testeado con FWH 1211. No necesita de librerÃ­as de apoyo.
+// Testeado con FWH 1211. No necesita de librerías de apoyo.
 
 #define DT_TOP                      0x00000000
 #define DT_LEFT                     0x00000000
@@ -501,7 +501,7 @@ if nLen > 0
              nHImage    := nBmpHeight( hBmp )
              nWImage    := nBmpWidth ( hBmp )
 
-             // redimensionamos rc2 en funciÃ³n de ::lAdjust
+             // redimensionamos rc2 en función de ::lAdjust
 
              if ::lAdjust
 
@@ -631,7 +631,7 @@ local nHOffset
 rc      := GetClientRect(::hWnd)
 rc      := {rc[1],rc[2],rc[3],rc[4]}
 
-// Calculamos las filas y las columnas en funciÃ³n del tamaÃ±o de la ficha
+// Calculamos las filas y las columnas en función del tamaño de la ficha
 
 ::nRows := max( int( ( rc[3] - rc[1] ) / ( ::nHItem ) ), 1 )
 ::nCols := max( int( ( rc[4] - rc[2] ) / ( ::nWItem ) ), 1 )
@@ -984,7 +984,7 @@ return 0
 local n
 local nCell := 0
 
-//localizo la casilla del grid donde se pulsÃ³
+//localizo la casilla del grid donde se pulsó
 
 for n := 1 to len(::aCoors)
 

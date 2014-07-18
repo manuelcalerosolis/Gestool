@@ -28,57 +28,57 @@
 #define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
-#define _CDIRCLI            10      //,"C", 60, 0, "DirecciÃ³n del cliente" },;
-#define _CPOBCLI            11      //,"C", 25, 0, "PoblaciÃ³n del cliente" },;
+#define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
+#define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
 #define _CPRVCLI            12      //,"C", 20, 0, "Provincia del cliente" },;
-#define _NCODPROV           13      //,"N",  2, 0, "NÃºmero de provincia cliente" },;
+#define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },;
 #define _CPOSCLI            14      //,"C",  5, 0, "Codigos postal del cliente" },;
 #define _CDNICLI            15      //,"C", 15, 0, "DNI/CIF del cliente" },;
 #define _LMODCLI            16
-#define _LMAYOR             17      //,"L",  1, 0, "LÃ³gico de mayorista" },;
-#define _NTARIFA            18      //,"L",  1, 0, "LÃ³gico de mayorista" },;
+#define _LMAYOR             17      //,"L",  1, 0, "Lógico de mayorista" },;
+#define _NTARIFA            18      //,"L",  1, 0, "Lógico de mayorista" },;
 #define _CCODAGE            19      //,"C",  3, 0, "Codigo del agente" },;
 #define _CCODRUT            20      //,"C",  4, 0, "Codigo de la ruta" },;
 #define _CCODTAR            21      //,"C",  5, 0, "Codigo de la tarifa" },;
 #define _CCODOBR            22      //,"C",  3, 0, "Codigo de la obra" },;
-#define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisiÃ³n del agente" },;
-#define _LLIQUIDADA         24      //,"L",  1, 0, "LÃ³gico de la liquidaciÃ³n" },;
-#define _LCONTAB            25      //,"L",  1, 0, "LÃ³gico de la contabilizaciÃ³n" },;
+#define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisión del agente" },;
+#define _LLIQUIDADA         24      //,"L",  1, 0, "Lógico de la liquidación" },;
+#define _LCONTAB            25      //,"L",  1, 0, "Lógico de la contabilización" },;
 #define _DFECENT            26      //,"D",  8, 0, "Fecha de entrega" },;
 #define _CSUFAC             27      //,"C", 10, 0, "Su factura" },;
 #define _LIMPALB            28      //,"L", 10, 0, "Su pedido" },;
-#define _CCONDENT           29      //,"C", 20, 0, "CondiciÃ³n de entrada" },;
+#define _CCONDENT           29      //,"C", 20, 0, "Condición de entrada" },;
 #define _MCOMENT            30      //,"M", 10, 0, "Comentarios" },;
 #define _MOBSERV            31      //,"M", 10, 0, "Observaciones" },;
 #define _CCODPAGO           32      //,"C",  2, 0, "Codigo del tipo de pago" },;
-#define _NBULTOS            33      //,"N",  3, 0, "NÃºmero de bultos" },;
+#define _NBULTOS            33      //,"N",  3, 0, "Número de bultos" },;
 #define _NPORTES            34      //,"N",  6, 0, "Valor de los portes" },;
 #define _NIVAMAN            35      //,"N",  6, 0, "IvaValor de la mano de obra" },;
 #define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de obra" },;
-#define _CNUMALB            37      //,"C", 12, 0, "NÃºmero de albaran" },;
-#define _CNUMPED            38      //,"C", 12, 0, "NÃºmero de pedido
-#define _CNUMPRE            39      //,"C", 12, 0, "NÃºmero de presupuesto
-#define _CNUMSAT            40      //,"C", 12, 0, "NÃºmero de presupuesto
-#define _NTIPOFAC           41      //,"N",  1, 0, "NÃºmero del tipo de factura" },;
+#define _CNUMALB            37      //,"C", 12, 0, "Número de albaran" },;
+#define _CNUMPED            38      //,"C", 12, 0, "Número de pedido
+#define _CNUMPRE            39      //,"C", 12, 0, "Número de presupuesto
+#define _CNUMSAT            40      //,"C", 12, 0, "Número de presupuesto
+#define _NTIPOFAC           41      //,"N",  1, 0, "Número del tipo de factura" },;
 #define _CDTOESP            42      //,"N",  5, 2, "Porcentaje de descuento especial" },;
 #define _NDTOESP            43      //,"N",  5, 2, "Porcentaje de descuento especial" },;
 #define _CDPP               44      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
 #define _NDPP               45      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
-#define _CDTOUNO            46      //,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado"
+#define _CDTOUNO            46      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
 #define _NDTOUNO            47      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
-#define _CDTODOS            48      //,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado"
+#define _CDTODOS            48      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
 #define _NDTODOS            49      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
 #define _NDTOCNT            50      //,"N",  6, 2, "Porcentaje de Descuento por pago de Contado" },;
 #define _NDTORAP            51      //,"N",  6, 2, "Porcentaje de Descuento por Rappel" },;
 #define _NDTOPUB            52      //,"N",  6, 2, "Porcentaje de Descuento por Publicidad" },;
 #define _NDTOPGO            53      //,"N",  6, 2, "Porcentaje de Descuento por Pago Centralizado" },;
 #define _NDTOPTF            54      //,"N",  7, 2, "Descuento por plataforma" },;
-#define _NTIPOIVA           55      //,"N",  1, 0, "NÃºmero del tipo de " + cImp() },;
+#define _NTIPOIVA           55      //,"N",  1, 0, "Número del tipo de " + cImp() },;
 #define _NPORCIVA           56      //,"N",  4, 1, "Porcentaje de " + cImp() },;
-#define _LRECARGO           57      //,"L",  1, 0, "LÃ³gico para recargo" },;
+#define _LRECARGO           57      //,"L",  1, 0, "Lógico para recargo" },;
 #define _CREMITIDO          58      //,"C", 50, 0, "Campo de remitido" },;
-#define _LIVAINC            59      //,"N",  1, 0, "SelecciÃ³n de " + cImp() },;
-#define _LSNDDOC            60      //,"L",  1, 0, "LÃ³gico para documento enviado" },;
+#define _LIVAINC            59      //,"N",  1, 0, "Selección de " + cImp() },;
+#define _LSNDDOC            60      //,"L",  1, 0, "Lógico para documento enviado" },;
 #define _CDIVFAC            61      //,"C",  3, 0, "Codigo de la divisa" },;
 #define _NVDVFAC            62      //,"N", 10, 4, "Cambio de la divisa" },;
 #define _CRETPOR            63      //,"C",100, 0, "Retirado por" },;
@@ -87,15 +87,15 @@
 #define _NREGIVA            66
 #define _CCODPRO            67
 #define _CDOCORG            68
-#define _NNUMLIQ            69     //"N",  9, 0, "NÃºmero liquidaciÃ³n" }                                  "",                   "", "( cDbf )"} )
-#define _CSUFLIQ            70     //"C",  2, 0, "Sufijo liquidaciÃ³n" }                                  "",                   "", "( cDbf )"} )
-#define _NIMPLIQ            71     //"N", 16, 6, "Importe liquidaciÃ³n" }                                 "",                   "", "( cDbf )"} )
+#define _NNUMLIQ            69     //"N",  9, 0, "Número liquidación" }                                  "",                   "", "( cDbf )"} )
+#define _CSUFLIQ            70     //"C",  2, 0, "Sufijo liquidación" }                                  "",                   "", "( cDbf )"} )
+#define _NIMPLIQ            71     //"N", 16, 6, "Importe liquidación" }                                 "",                   "", "( cDbf )"} )
 #define _LLIQUID            72     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
 #define _CCODTRN            73     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
 #define _NKGSTRN            74     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
 #define _LCLOFAC            75     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
-#define _CABNFAC            76     //"C", 12, 0, "NÃºmero de presupuesto
-#define _CANTFAC            77     //"C", 12, 0, "NÃºmero de presupuesto
+#define _CABNFAC            76     //"C", 12, 0, "Número de presupuesto
+#define _CANTFAC            77     //"C", 12, 0, "Número de presupuesto
 #define _NTIPRET            78
 #define _NPCTRET            79
 #define _CCODUSR            80
@@ -106,8 +106,8 @@
 #define _DFECIMP            85      //   D      8     0
 #define _CHORIMP            86      //   C      5     0
 #define _CCODDLG            87
-#define _NDTOATP            88      //   N      6     2     Porcentaje de descuento atÃ­pico
-#define _NSBRATP            89      //   N      1     0     Lugar donde aplicar dto atÃ­pico
+#define _NDTOATP            88      //   N      6     2     Porcentaje de descuento atípico
+#define _NSBRATP            89      //   N      1     0     Lugar donde aplicar dto atípico
 #define _DFECENTR           90
 #define _DFECSAL            91
 #define _LALQUILER          92
@@ -143,7 +143,7 @@
 #define _CCODPRY           122
 
 /*
-DefiniciÂ¢n de la base de datos de lineas de detalle
+Definici¢n de la base de datos de lineas de detalle
 */
 
 #define _dCSERIE             1      //   C      1     0
@@ -242,7 +242,7 @@ DefiniciÂ¢n de la base de datos de lineas de detalle
 #define _CFORMATO 			 94
 
 /*
-DefiniciÂ¢n de Array para impuestos
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1           aTotIva[ 1, 1 ]
@@ -627,14 +627,14 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    "Facturas de clientes" ;
-      PROMPT   "NÃºmero",;
+      PROMPT   "Número",;
                "Fecha",;
-               "CÃ³digo",;
+               "Código",;
                "Nombre",;
-               "PoblaciÃ³n",;
+               "Población",;
                "Obra",;
                "Agente",;
-               "SesiÃ³n",;
+               "Sesión",;
                "NFC",;
                "Pago";
       MRU      "Document_user1_16";
@@ -653,7 +653,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "SesiÃ³n cerrada"
+         :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| if( ( TDataView():FacturasClientes( nView ) )->lCloFac, "Cerrada", "Abierta" ) }
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->lCloFac }
@@ -722,7 +722,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Exportado a Facturae 3.1 [Factura electrÃ³nica]"
+         :cHeader          := "Exportado a Facturae 3.1 [Factura electrónica]"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->lExpFac }
@@ -779,7 +779,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) }
          :nWidth           := 80
@@ -788,7 +788,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "DelegaciÃ³n"
+         :cHeader          := "Delegación"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cSufFac }
          :nWidth           := 40
          :lHide            := .t.
@@ -805,7 +805,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "SesiÃ³n"
+         :cHeader          := "Sesión"
          :cSortOrder       := "cTurFac"
          :bEditValue       := {|| Trans( ( TDataView():FacturasClientes( nView ) )->cTurFac, "######" ) }
          :nWidth           := 40
@@ -840,7 +840,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cCodCli ) }
          :nWidth           := 70
@@ -858,7 +858,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "PoblaciÃ³n"
+         :cHeader          := "Población"
          :cSortOrder       := "cPobCli"
          :bEditValue       := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cPobCli ) }
          :nWidth           := 180
@@ -894,7 +894,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "AlmacÃ©n"
+         :cHeader          := "Almacén"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cCodAlm }
          :nWidth           := 60
          :bLDClickData     := {|| oWndBrw:RecEdit() }
@@ -971,7 +971,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       NOBORDER ;
       ACTION   ( oWndBrw:RecAdd() );
       ON DROP  ( oWndBrw:RecDup() );
-      TOOLTIP  "(A)Ã±adir";
+      TOOLTIP  "(A)ñadir";
       BEGIN GROUP;
       HOTKEY   "A";
       LEVEL    ACC_APPD
@@ -1065,7 +1065,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( GenFacCli( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrÃ³nico";
+      TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
       lGenFacCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
@@ -1140,20 +1140,20 @@ if lBancas()
    DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FacCliExcelImport( oWndBrw ) );
-      TOOLTIP  "Importar facturaciÃ³n diaria" ;
+      TOOLTIP  "Importar facturación diaria" ;
       LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FacCliExcelNovotecno( oWndBrw ) );
-      TOOLTIP  "Importar facturaciÃ³n de Novotecno" ;
+      TOOLTIP  "Importar facturación de Novotecno" ;
       LEVEL    ACC_APPD
 
 else
 
    DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrÃ³nicas a Facturae v 3.1", .f., "Firmar digitalmente", .f., "Enviar por correo electrÃ³nico" ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.1", .f., "Firmar digitalmente", .f., "Enviar por correo electrónico" ) ) ;
       TOOLTIP  "Exportar a Facturae" ;
       LEVEL    ACC_EDIT
 
@@ -1243,8 +1243,8 @@ end if
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( if( !Empty( ( TDataView():FacturasClientes( nView ) )->cNumAlb ), ZooAlbCli( ( TDataView():FacturasClientes( nView ) )->cNumAlb ), MsgStop( "No hay albarÃ¡n asociado" ) ) );
-         TOOLTIP  "Visualizar albarÃ¡n" ;
+         ACTION   ( if( !Empty( ( TDataView():FacturasClientes( nView ) )->cNumAlb ), ZooAlbCli( ( TDataView():FacturasClientes( nView ) )->cNumAlb ), MsgStop( "No hay albarán asociado" ) ) );
+         TOOLTIP  "Visualizar albarán" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "Money2_businessman_" OF oWndBrw ;
@@ -1929,7 +1929,7 @@ STATIC FUNCTION OpenFiles( lExt )
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
       /*
-      Declaramos variables pÃºblicas--------------------------------------------
+      Declaramos variables públicas--------------------------------------------
       */
 
       public nTotFac    := 0
@@ -2502,7 +2502,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    case nMode == APPD_MODE
 
       if !lCurSesion()
-         MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
+         MsgStop( "No hay sesiones activas, imposible añadir documentos" )
          Return .f.
       end if
 
@@ -2535,7 +2535,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    case nMode == DUPL_MODE
 
       if !lCurSesion()
-         MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
+         MsgStop( "No hay sesiones activas, imposible añadir documentos" )
          Return .f.
       end if
 
@@ -2561,7 +2561,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    case nMode == EDIT_MODE
 
       if aTmp[ _LCONTAB ] .and.;
-         !ApoloMsgNoYes(  "La modificaciÃ³n de esta factura puede provocar descuadres contables." + CRLF + "Â¿ Desea continuar ?", "Factura ya contabilizada" )
+         !ApoloMsgNoYes(  "La modificación de esta factura puede provocar descuadres contables." + CRLF + "¿ Desea continuar ?", "Factura ya contabilizada" )
          return .f.
       end if
 
@@ -3057,7 +3057,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "NÃºmero"
+         :cHeader             := "Número"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
          :cEditPicture        := "9999"
          :nWidth              := 55
@@ -3066,7 +3066,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "CÃ³digo"
+         :cHeader             := "Código"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
          :nWidth              := 60
       end with
@@ -3079,20 +3079,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "DescripciÃ³n"
+         :cHeader             := "Descripción"
          :bEditValue          := {|| Descrip( dbfTmpLin ) }
          :nWidth              := 300
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Ãšltima venta"
+         :cHeader             := "Última venta"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
          :nWidth              := 80
          :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Ãšltima unidades"
+         :cHeader             := "Última unidades"
          :bEditValue          := {|| ( dbfTmpLin )->nUniUltCom }
          :cEditPicture        := MasUnd()
          :nWidth              := 60
@@ -3193,7 +3193,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Unidad de mediciÃ³n"
+         :cHeader             := "Unidad de medición"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
          :nWidth              := 105
          :lHide 			  := .t.
@@ -3742,7 +3742,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Segunda caja de diÃ¡logo--------------------------------------------------
+      Segunda caja de diálogo--------------------------------------------------
       */
 
       REDEFINE GET aGet[ _CCODDLG ] VAR aTmp[ _CCODDLG ] ;
@@ -3853,7 +3853,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
-      /*ImpresiÃ³n ( informa de si estÃ¡ imprimido o no y de cuando se imprimiÃ³ )*/
+      /*Impresión ( informa de si está imprimido o no y de cuando se imprimió )*/
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
@@ -3883,7 +3883,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      /*Exportacion a EDI ( informa de si estÃ¡ exportado o no y de cuando se exportÃ³ )*/
+      /*Exportacion a EDI ( informa de si está exportado o no y de cuando se exportó )*/
 
       REDEFINE CHECKBOX aGet[ _LEXPEDI ] VAR aTmp[ _LEXPEDI ] ;
          ID       130 ;
@@ -3931,7 +3931,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwPgo:CreateFromResource( 260 )
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Cr. SesiÃ³n cerrada"
+         :cHeader             := "Cr. Sesión cerrada"
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpPgo )->lCloPgo }
          :nWidth              := 20
@@ -3959,7 +3959,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "SesiÃ³n"
+         :cHeader             := "Sesión"
          :bEditValue          := {|| ( dbfTmpPgo )->cTurRec }
          :nWidth              := 50
          :nDataStrAlign       := 1
@@ -3986,7 +3986,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "DescripciÃ³n"
+         :cHeader             := "Descripción"
          :bEditValue          := {|| ( dbfTmpPgo )->cDescrip }
          :nWidth              := 182
       end with
@@ -4055,7 +4055,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwAnt:CreateFromResource( 290 )
 
       with object ( oBrwAnt:AddCol() )
-         :cHeader             := "NÃºmero"
+         :cHeader             := "Número"
          :bEditValue          := {|| ( dbfTmpAnt )->cSerAnt + "/" + AllTrim( str( ( dbfTmpAnt )->nNumAnt ) ) + "/" + ( dbfTmpAnt )->cSufAnt }
          :nWidth              := 70
       end with
@@ -4170,7 +4170,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "CÃ³digo"
+            :cHeader          := "Código"
             :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
             :nWidth           := 75
          end with
@@ -4188,7 +4188,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "DescripciÃ³n"
+            :cHeader          := "Descripción"
             :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
             :nWidth           := 380
          end with
@@ -4449,7 +4449,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       if IsHash( hHash )
 
          do case
-            case HGetKeyAt( hHash, 1 ) == "ArtÃ­culo"
+            case HGetKeyAt( hHash, 1 ) == "Artículo"
                AppDeta( oBrwLin, bEdtDet, aTmp, nil, HGetValueAt( hHash, 1 ) )
 
             case HGetKeyAt( hHash, 1 ) == "Cliente"
@@ -4503,7 +4503,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
       while !( dbfTmpInc )->( Eof() )
          if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
-            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "Â¡Incidencia!" )
+            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
          end if
          ( dbfTmpInc )->( dbSkip() )
       end while
@@ -4688,7 +4688,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
    Caja de dialogo-------------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "lÃ­neas de facturas de clientes"
+   DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "líneas de facturas de clientes"
 
       if aTmp[ __LALQUILER ]
 
@@ -4907,7 +4907,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1]
 
       /*
-      Campos de las descripciones de la unidad de mediciÃ³n---------------------
+      Campos de las descripciones de la unidad de medición---------------------
       */
 
       REDEFINE GET aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ] ;
@@ -5197,7 +5197,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[ 2 ]
 
       /*
-      DefiniciÃ³n de familias y grupos de familias------------------------------
+      Definición de familias y grupos de familias------------------------------
       */
 
       REDEFINE GET aGet[ _CGRPFAM ] VAR aTmp[ _CGRPFAM ] ;
@@ -5299,7 +5299,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
     REDEFINE BUTTON ;
         ID       9 ;
         OF       oDlg ;
-        ACTION   ( ChmHelp( "AÃ±adir_v" ) )
+        ACTION   ( ChmHelp( "Añadir_v" ) )
 
     REDEFINE BUTTON oBtnSer;
         ID       552 ;
@@ -5776,7 +5776,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura )
    DEFAULT cFactura  := ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac
 
    if ( TDataView():FacturasClientes( nView ) )->lLiquidada
-      msgStop( "Factura ya cobrada", "Imposible aÃ±adir cobros" )
+      msgStop( "Factura ya cobrada", "Imposible añadir cobros" )
       return .f.
    end if
 
@@ -5809,7 +5809,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura )
    ChkLqdFacCli( nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, .f. )
 
    /*
-   InformaciÃ³n para el Auditor-------------------------------------------------
+   Información para el Auditor-------------------------------------------------
    */
 
    if !Empty( oAuditor() )
@@ -5859,7 +5859,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
       if ( dbfAlbCliT )->lFacturado
 
-         MsgStop( "AlbarÃ¡n facturado" )
+         MsgStop( "Albarán facturado" )
 
       else
 
@@ -5960,7 +5960,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          end if
 
          /*
-         Su albarÃ¡n------------------------------------------------------------
+         Su albarán------------------------------------------------------------
          */
 
          aTmp[ _CSUALB ]               := ( dbfAlbCliT )->cCodSuAlb
@@ -5983,7 +5983,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             end if
 
             /*
-            AÂ¤ade lineas de Albaran a la Factura
+            A¤ade lineas de Albaran a la Factura
             */
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. !( dbfAlbCliL )->( eof() ) )
@@ -6083,7 +6083,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
          else
 
-            MsgStop( "AlbarÃ¡n no contiene lineas de detalle." )
+            MsgStop( "Albarán no contiene lineas de detalle." )
 
          end if
 
@@ -6156,7 +6156,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                ( dbfTmpPgo )->cTurRec  := ( dbfAlbCliT )->cTurAlb
                ( dbfTmpPgo )->lCloPgo  := .t.
                ( dbfTmpPgo )->cCodPgo  := ( dbfAlbCliT )->cCodPago
-               ( dbfTmpPgo )->cDescrip := "Suma entregas a cuenta albarÃ¡n: " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
+               ( dbfTmpPgo )->cDescrip := "Suma entregas a cuenta albarán: " + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb
                ( dbfTmpPgo )->( dbUnLock() )
 
             end if
@@ -6182,7 +6182,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   if !Empty( ( dbfAlbCliP )->cDescrip )
                   ( dbfTmpPgo )->cDescrip := ( dbfAlbCliP )->cDescrip
                   else
-                  ( dbfTmpPgo )->cDescrip := "Entrega nÂº " + AllTrim( str( ( dbfTmpPgo )->( RecNo() ) ) ) + " albarÃ¡n " + ( dbfAlbCliP )->cSerAlb + "/" + AllTrim( str( ( dbfAlbCliP )->nNumAlb ) ) + "/" + ( dbfAlbCliP )->cSufAlb
+                  ( dbfTmpPgo )->cDescrip := "Entrega nº " + AllTrim( str( ( dbfTmpPgo )->( RecNo() ) ) ) + " albarán " + ( dbfAlbCliP )->cSerAlb + "/" + AllTrim( str( ( dbfAlbCliP )->nNumAlb ) ) + "/" + ( dbfAlbCliP )->cSufAlb
                   end if
                   ( dbfTmpPgo )->cPgdoPor := ( dbfAlbCliP )->cPgdoPor
                   ( dbfTmpPgo )->cDocPgo  := ( dbfAlbCliP )->cDocPgo
@@ -6213,7 +6213,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          end if
 
          /*
-         Pasamos las incidencias del albarÃ¡n
+         Pasamos las incidencias del albarán
          */
 
          if ( dbfAlbCliI )->( dbSeek( cAlbaran ) )
@@ -6253,7 +6253,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
    else
 
-      MsgStop( "AlbarÃ¡n : " + cAlbaran + " no encontrado" )
+      MsgStop( "Albarán : " + cAlbaran + " no encontrado" )
 
    end if
 
@@ -6385,7 +6385,7 @@ STATIC FUNCTION cFacPrv( cFacPrv, aGet, aTmp, oBrw, nMode )
       end if
 
       /*
-      Recalculamos los precios de los artÃ­culos y refrescamos el browse--------
+      Recalculamos los precios de los artículos y refrescamos el browse--------
       */
 
       RecFacCli( aTmp, .f. )
@@ -6607,7 +6607,7 @@ static function QuiFacCli()
    end if
 
    /*
-   Desmarcamos las entregas a cuenta de albabÃ¡n--------------------------------
+   Desmarcamos las entregas a cuenta de albabán--------------------------------
    */
 
    if !Empty( cNumAlb )
@@ -6980,7 +6980,7 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
    local lWhile   := .t.
 
    /*
-   Preparamos la pantalla para mostrar la simulaciÃ³n---------------------------
+   Preparamos la pantalla para mostrar la simulación---------------------------
    */
 
    if lChk1
@@ -7216,7 +7216,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             (dbfTmpLin)->( dbAppend() )
             cDesAlb                    := ""
-            cDesAlb                    += "Pedido NÂº " + ( dbfPedCliT )->cSerPed + "/" + AllTrim( str( ( dbfPedCliT )->NNUMPED ) ) + "/" + ( dbfPedCliT )->CSUFPED
+            cDesAlb                    += "Pedido Nº " + ( dbfPedCliT )->cSerPed + "/" + AllTrim( str( ( dbfPedCliT )->NNUMPED ) ) + "/" + ( dbfPedCliT )->CSUFPED
             cDesAlb                    += " - Fecha " + Dtoc( (dbfPedCliT)->DFECPED )
             (dbfTmpLin)->MLNGDES       := cDesAlb
             (dbfTmpLin)->LCONTROL      := .t.
@@ -7406,7 +7406,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                      if !Empty( ( dbfPedCliP )->cDescrip )
                      ( dbfTmpPgo )->cDescrip := ( dbfPedCliP )->cDescrip
                      else
-                     ( dbfTmpPgo )->cDescrip := "Entrega nÂº " + AllTrim( str( ( dbfTmpPgo )->( RecNo() ) ) ) + " pedido " + ( dbfPedCliP )->cSerPed + "/" + AllTrim( str( ( dbfPedCliP )->nNumPed ) ) + "/" + ( dbfPedCliP )->cSufPed
+                     ( dbfTmpPgo )->cDescrip := "Entrega nº " + AllTrim( str( ( dbfTmpPgo )->( RecNo() ) ) ) + " pedido " + ( dbfPedCliP )->cSerPed + "/" + AllTrim( str( ( dbfPedCliP )->nNumPed ) ) + "/" + ( dbfPedCliP )->cSufPed
                      end if
                      ( dbfTmpPgo )->cPgdoPor := ( dbfPedCliP )->cPgdoPor
                      ( dbfTmpPgo )->cDocPgo  := ( dbfPedCliP )->cDocPgo
@@ -7595,7 +7595,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
             (dbfTmpLin)->( dbAppend() )
             cDesAlb              := ""
-            cDesAlb              += "Presupuesto NÂº " + ( dbfPreCliT )->cSerPre + "/" + AllTrim( str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre
+            cDesAlb              += "Presupuesto Nº " + ( dbfPreCliT )->cSerPre + "/" + AllTrim( str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre
             cDesAlb              += " - Fecha " + Dtoc( ( dbfPreCliT )->dFecPre )
             (dbfTmpLin)->MLNGDES    := cDesAlb
             (dbfTmpLin)->LCONTROL   := .t.
@@ -7947,10 +7947,10 @@ static function RecFacCli( aTmpFac, lMessage )
 
    if lMessage
 
-      if !ApoloMsgNoYes(  "Â¡AtenciÃ³n!,"                                       + CRLF + ;
-                           "todos los precios se recalcularÃ¡n en funciÃ³n de"  + CRLF + ;
+      if !ApoloMsgNoYes(  "¡Atención!,"                                       + CRLF + ;
+                           "todos los precios se recalcularán en función de"  + CRLF + ;
                            "los valores en las bases de datos.",;
-                           "Â¿ Desea proceder ?" )
+                           "¿ Desea proceder ?" )
          return nil
       end if
 
@@ -8009,7 +8009,7 @@ static function RecFacCli( aTmpFac, lMessage )
          ( dbfTmpLin )->nPvpRec  := (dbfArticulo)->PvpRec
 
          /*
-         Si la comisiÂ¢n del articulo hacia el agente es distinto de cero----------
+         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
          */
 
          ( dbfTmpLin )->nComAge  := aTmpFac[ _NPCTCOMAGE ]
@@ -8044,8 +8044,8 @@ static function RecFacCli( aTmpFac, lMessage )
             end if
 
             /*
-            Descuento de promociÂ¢n, esta funciÂ¢n comprueba si existe y si es
-            asi devuelve el descunto de la promociÂ¢n.
+            Descuento de promoci¢n, esta funci¢n comprueba si existe y si es
+            asi devuelve el descunto de la promoci¢n.
             */
 
             nImpOfe     := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpFac[ _DFECFAC ], dbfTarPreL )
@@ -8166,7 +8166,7 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 /*
-Funcion que nos permite aÂ¤adir a las facturas articulos de albaranes ya
+Funcion que nos permite a¤adir a las facturas articulos de albaranes ya
 existentes
 - Parametros:
    oGet     -> Objeto que contiene el valor del nuevo albaran
@@ -8319,14 +8319,14 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       end with
 
       with object ( oBrwDet:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :cSortOrder       := 2
          :bEditValue       := {|| aAlbaranes[ oBrwDet:nArrayAt, 10 ] + "/" + AllTrim( str( aAlbaranes[ oBrwDet:nArrayAt, 11 ] ) ) + "/" + aAlbaranes[ oBrwDet:nArrayAt, 12 ] }
          :nWidth           := 75
       end with
 
       with object ( oBrwDet:AddCol() )
-         :cHeader          := "Su albarÃ¡n"
+         :cHeader          := "Su albarán"
          :cSortOrder       := 3
          :bEditValue       := {|| aAlbaranes[ oBrwDet:nArrayAt, 3 ] }
          :nWidth           := 75
@@ -8347,14 +8347,14 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       end with
 
       with object ( oBrwDet:AddCol() )
-         :cHeader          := "MatrÃ­cula"
+         :cHeader          := "Matrícula"
          :cSortOrder       := 7
          :bEditValue       := {|| Rtrim( aAlbaranes[ oBrwDet:nArrayAt, 7 ] ) }
          :nWidth           := 80
       end with
 
       with object ( oBrwDet:AddCol() )
-         :cHeader          := "DirecciÃ³n"
+         :cHeader          := "Dirección"
          :cSortOrder       := 8
          :bEditValue       := {|| Rtrim( aAlbaranes[ oBrwDet:nArrayAt, 8 ] ) + Space(1) + RetFld( aAlbaranes[ oBrwDet:nArrayAt, 5 ] + aAlbaranes[ oBrwDet:nArrayAt, 8 ], dbfObrasT, "cNomObr" ) }
          :nWidth           := 225
@@ -8426,7 +8426,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       CursorWait()
 
       /*
-      AÂ¤adimos los albaranes seleccionado para despues
+      A¤adimos los albaranes seleccionado para despues
       */
 
       for nItem := 1 TO Len( aAlbaranes )
@@ -8673,14 +8673,14 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             if RetFld( cCodCli, TDataView():Clientes( nView ), "lTotAlb" )
                ( dbfTmpLin )->( dbAppend() )
                ( dbfTmpLin )->nNumLin  := ++nOffSet
-               ( dbfTmpLin )->mLngDes  := "Total albarÃ¡n..."
+               ( dbfTmpLin )->mLngDes  := "Total albarán..."
                ( dbfTmpLin )->lTotLin  := .t.
             end if
 
             ( dbfTmpLin )->( dbGoTop() )
 
             /*
-            Pasamos las incidencias del albarÃ¡n--------------------------------
+            Pasamos las incidencias del albarán--------------------------------
             */
 
             if ( dbfAlbCliI )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
@@ -8878,10 +8878,10 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             SEPARATOR
 
-            MENUITEM    "&3. Visualizar albarÃ¡n";
-               MESSAGE  "Visualiza el albarÃ¡n del que proviene" ;
+            MENUITEM    "&3. Visualizar albarán";
+               MESSAGE  "Visualiza el albarán del que proviene" ;
                RESOURCE "Document_Plain_User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CNUMALB ] ), ZooAlbCli( aTmp[ _CNUMALB ] ), MsgStop( "No hay albarÃ¡n asociado" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CNUMALB ] ), ZooAlbCli( aTmp[ _CNUMALB ] ), MsgStop( "No hay albarán asociado" ) ) );
 
             SEPARATOR
 
@@ -8893,22 +8893,22 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&5. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&6. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
             MENUITEM    "&7. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
             MENUITEM    "&8. Modificar obra";
                MESSAGE  "Modifica ficha de la obra" ;
                RESOURCE "Worker16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "CÃ³digo de obra vacÃ­o" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR
 
@@ -8977,10 +8977,10 @@ Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
    local nDtoPnt     := 0
    local nIncPnt     := 0
 
-   /*comprobamos que no estÃ© vacÃ­o el artÃ­culo*/
+   /*comprobamos que no esté vacío el artículo*/
 
    if Empty( cCodArt )
-      MsgInfo( "Debe seleccinar un artÃ­culo", "CÃ³digo vacÃ­o" )
+      MsgInfo( "Debe seleccinar un artículo", "Código vacío" )
       return .f.
    end if
 
@@ -9082,11 +9082,11 @@ Static Function FacCliNotas()
       end if
 
       if !Empty( ( TDataView():Clientes( nView ) )->Telefono )
-         cObserv  += "TÃ©lefono : " + Rtrim( ( TDataView():Clientes( nView ) )->Telefono ) + Space( 1 )
+         cObserv  += "Télefono : " + Rtrim( ( TDataView():Clientes( nView ) )->Telefono ) + Space( 1 )
       end if
 
       if !Empty( ( TDataView():Clientes( nView ) )->Movil )
-         cObserv  += "MÃ³vil : " + Rtrim( ( TDataView():Clientes( nView ) )->Movil ) + Space( 1 )
+         cObserv  += "Móvil : " + Rtrim( ( TDataView():Clientes( nView ) )->Movil ) + Space( 1 )
       end if
 
       if !Empty( ( TDataView():Clientes( nView ) )->Fax )
@@ -9111,7 +9111,7 @@ Return ( nil )
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
-   local cCbxOrden      := "NÃºmero"
+   local cCbxOrden      := "Número"
 
 
    nLevel               := nLevelUsr( _MENUITEM_ )
@@ -9145,7 +9145,7 @@ Return ( nil )
       REDEFINE COMBOBOX oCbxOrden ;
          VAR      cCbxOrden ;
          ID       110 ;
-         ITEMS    { "NÃºmero", "Fecha", "CÃ³digo", "Nombre" } ;
+         ITEMS    { "Número", "Fecha", "Código", "Nombre" } ;
          OF       oDlg
 
       oCbxOrden:bChange    := {|| ( TDataView():FacturasClientes( nView ) )->( OrdSetFocus( oCbxOrden:nAt ) ), ( TDataView():FacturasClientes( nView ) )->( dbGoTop() ), oBrw:Refresh(), oGetBuscar:SetFocus() }
@@ -9165,13 +9165,13 @@ Return ( nil )
                   nTotFacCli( ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, cDivEmp(), .t. );
          HEAD     "E",;
                   "I",;
-                  "NÃºmero",;
+                  "Número",;
                   "Fecha",;
-                  "CÃ³digo",;
+                  "Código",;
                   "Nombre",;
                   "Agente" ,;
                   "Ruta" ,;
-                  "AlmacÃ©n",;
+                  "Almacén",;
                   "Obra" ,;
                   "Div.",;
                   "Importe " + cDivEmp() ;
@@ -9225,11 +9225,11 @@ Static Function EditMenu( nLevel, oBrw, oDlg )
 
       MENUITEM    "Facturas"
 
-      MENUITEM    "&1. EdiciÃ³n"
+      MENUITEM    "&1. Edición"
 
          MENU
 
-            MENUITEM    "&1. AÃ±adir";
+            MENUITEM    "&1. Añadir";
                ACTION   ( if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtPda, TDataView():FacturasClientes( nView ) ),  MsgStop( "Acceso no permitido" ) ) );
 
             MENUITEM    "&2. Modificar";
@@ -9789,7 +9789,7 @@ Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
          oSayTrn:cText( oTrans:oDbf:cNomTrn )
          oGetKgs:cText( oTrans:oDbf:nKgsTrn )
       else
-         msgStop( "CÃ³digo de transportista no encontrado." )
+         msgStop( "Código de transportista no encontrado." )
          Return .f.
       end if
 
@@ -9848,14 +9848,14 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
    oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
 
-   oFr:SetWorkArea(     "ArtÃ­culos", ( dbfArticulo )->( Select() ) )
-   oFr:SetFieldAliases( "ArtÃ­culos", cItemsToReport( aItmArt() ) )
+   oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
 
-   oFr:SetWorkArea(     "Tipo artÃ­culo",  oTipArt:Select() )
-   oFr:SetFieldAliases( "Tipo artÃ­culo",  cObjectsToReport( oTipArt:oDbf ) )
+   oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
    oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
    oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
@@ -9875,11 +9875,11 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( dbfCliBnc )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aCliBnc() ) )
 
-   oFr:SetWorkArea(     "Unidades de mediciÃ³n",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de mediciÃ³n",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Clientes.PaÃ­s", oPais:Select() )
-   oFr:SetFieldAliases( "Clientes.PaÃ­s", cObjectsToReport( oPais:oDbf ) )
+   oFr:SetWorkArea(     "Clientes.País", oPais:Select() )
+   oFr:SetFieldAliases( "Clientes.País", cObjectsToReport( oPais:oDbf ) )
 
    oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
@@ -9901,12 +9901,12 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Usuarios",                         {|| ( TDataView():FacturasClientes( nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Facturas", "Bancos",                           {|| ( TDataView():FacturasClientes( nView ) )->cCodCli } )
 
-   oFr:SetMasterDetail( "Lineas de facturas", "ArtÃ­culos",              {|| ( dbfFacCliL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Artículos",              {|| ( dbfFacCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Familia",                {|| ( dbfFacCliL )->cCodFam } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Tipo artÃ­culo",          {|| ( dbfFacCliL )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",          {|| ( dbfFacCliL )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",          {|| ( dbfFacCliL )->cTipMov } )
    oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                {|| ( dbfFacCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Unidades de mediciÃ³n",   {|| ( dbfFacCliL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",   {|| ( dbfFacCliL )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	{|| ( dbfFacCliL )->cNumSat } )
 
    oFr:SetMasterDetail( "Clientes", "Clientes.Pais",                    {|| ( TDataView():Clientes( nView ) )->cCodPai } )
@@ -9928,12 +9928,12 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas", "Usuarios" )
    oFr:SetResyncPair(   "Facturas", "Bancos" )
 
-   oFr:SetResyncPair(   "Lineas de facturas", "ArtÃ­culos" )
+   oFr:SetResyncPair(   "Lineas de facturas", "Artículos" )
    oFr:SetResyncPair(   "Lineas de facturas", "Familia" )
-   oFr:SetResyncPair(   "Lineas de facturas", "Tipo artÃ­culo" )
+   oFr:SetResyncPair(   "Lineas de facturas", "Tipo artículo" )
    oFr:SetResyncPair(   "Lineas de facturas", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de facturas", "Ofertas" )
-   oFr:SetResyncPair(   "Lineas de facturas", "Unidades de mediciÃ³n" )
+   oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
    oFr:SetResyncPair( 	"Lineas de facturas", "SAT" )
 
    oFr:SetResyncPair(   "Clientes", "Clientes.Pais" )
@@ -9948,7 +9948,7 @@ Static Function VariableReport( oFr )
    oFr:DeleteCategory(  "Lineas de facturas" )
 
    /*
-   CreaciÃ³n de variables----------------------------------------------------
+   Creación de variables----------------------------------------------------
    */
 
    oFr:AddVariable(     "Facturas",             "Total bruto",                         "GetHbVar('nTotBrt')" )
@@ -9962,13 +9962,13 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
    oFr:AddVariable(     "Facturas",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Facturas",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "Facturas",             "Total pÃ¡gina",                        "GetHbVar('nTotPag')" )
-   oFr:AddVariable(     "Facturas",             "Total retenciÃ³n",                     "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "Facturas",             "Total página",                        "GetHbVar('nTotPag')" )
+   oFr:AddVariable(     "Facturas",             "Total retención",                     "GetHbVar('nTotRet')" )
    oFr:AddVariable(     "Facturas",             "Total peso",                          "GetHbVar('nTotPes')" )
    oFr:AddVariable(     "Facturas",             "Total costo",                         "GetHbVar('nTotCos')" )
    oFr:AddVariable(     "Facturas",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
    oFr:AddVariable(     "Facturas",             "Total cobrado",                       "GetHbVar('nTotCob')" )
-   oFr:AddVariable(     "Facturas",             "Total artÃ­culos",                     "GetHbVar('nTotArt')" )
+   oFr:AddVariable(     "Facturas",             "Total artículos",                     "GetHbVar('nTotArt')" )
    oFr:AddVariable(     "Facturas",             "Total cajas",                         "GetHbVar('nTotCaj')" )
    oFr:AddVariable(     "Facturas",             "Total punto verde",                   "GetHbVar('nTotPnt')" )
    oFr:AddVariable(     "Facturas",             "Total entrega inicial",               "GetHbVar('nTotEnt')" )
@@ -10017,22 +10017,22 @@ Static Function VariableReport( oFr )
    
    oFr:AddVariable(     "Facturas",             "Cuenta bancaria cliente",                         "CallHbFunc('cCtaFacCli')" )
 
-   oFr:AddVariable(     "Lineas de facturas",   "Detalle del artÃ­culo",                            "CallHbFunc('cDesFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Total unidades artÃ­culo",                         "CallHbFunc('nTotNFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Precio unitario del artÃ­culo",                    "CallHbFunc('nTotUFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                            "CallHbFunc('cDesFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Total unidades artículo",                         "CallHbFunc('nTotNFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Precio unitario del artículo",                    "CallHbFunc('nTotUFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario con descuentos",                  "CallHbFunc('nTotPFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Punto verde del artÃ­culo",                        "CallHbFunc('nPntUFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Total lÃ­nea de factura",                          "CallHbFunc('nTotLFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Total peso por lÃ­nea",                            "CallHbFunc('nPesLFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Total final lÃ­nea del factura",                   "CallHbFunc('nTotFFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Importe descuento lÃ­nea del factura",             "CallHbFunc('nDtoLFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Importe impuestos especiales lÃ­nea del factura",  "CallHbFunc('nTotIFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Total descuento lÃ­nea del factura",               "CallHbFunc('nTotDtoLFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Punto verde del artículo",                        "CallHbFunc('nPntUFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Total línea de factura",                          "CallHbFunc('nTotLFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Total peso por línea",                            "CallHbFunc('nPesLFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Total final línea del factura",                   "CallHbFunc('nTotFFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Importe descuento línea del factura",             "CallHbFunc('nDtoLFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Importe impuestos especiales línea del factura",  "CallHbFunc('nTotIFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Total descuento línea del factura",               "CallHbFunc('nTotDtoLFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano",                                "CallHbFunc('dJulianoFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
-   oFr:AddVariable(     "Lineas de facturas",   "DirecciÃ³n del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacÃ©n",             				"CallHbFunc('nStockLineaFasCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					   "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
 Return nil
@@ -10123,13 +10123,13 @@ Function DesignReportFacCli( oFr, dbfDoc )
       oFr:SetTabTreeExpanded( FR_tvAll, .f. )
 
       /*
-      DiseÃ±o de report---------------------------------------------------------
+      Diseño de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseÃ±ador----------------------------------------------------
+      Destruye el diseñador----------------------------------------------------
       */
 
       oFr:DestroyFr()
@@ -10172,7 +10172,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "DiseÃ±ador de documentos" )
+   oFr:SetTitle(        "Diseñador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -10253,7 +10253,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de factura de cliente nÃºmero " + ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) )
+                  :SetAsunto(       "Envio de factura de cliente número " + ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) )
                   :SetMensaje(      "Adjunto le remito nuestra factura de cliente " + ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( TDataView():FacturasClientes( nView ) )->dFecFac ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -10271,7 +10271,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el diseÃ±ador-------------------------------------------------------
+   Destruye el diseñador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -10301,7 +10301,7 @@ Return nil
 //----------------------------------------------------------------------------//
 
 /*
-Comienza la ediciÃ³n de la factura
+Comienza la edición de la factura
 */
 
 STATIC FUNCTION BeginTrans( aTmp, nMode )
@@ -10324,7 +10324,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    BEGIN SEQUENCE
 
    /*
-   InicializaciÃ³n de variables-------------------------------------------------
+   Inicialización de variables-------------------------------------------------
    */
 
    cFac           := aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
@@ -10644,7 +10644,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
          aTmp[ _NREGIVA ]  := ( TDataView():Clientes( nView ) )->nRegIva
 
          /*
-         Si estamos aÂ¤adiendo cargamos todos los datos del cliente
+         Si estamos a¤adiendo cargamos todos los datos del cliente
          */
 
          if Empty( aTmp[ _CSERIE ] )
@@ -10657,7 +10657,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
 
             if !Empty( ( TDataView():Clientes( nView ) )->Serie )               .and.;
                aTmp[ _CSERIE ] != ( TDataView():Clientes( nView ) )->Serie      .and.;
-               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "Â¿Desea cambiar la serie?" )
+               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
                aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
             end if
 
@@ -10966,7 +10966,7 @@ Return .t.
 //--------------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para AÂ¤adir lineas de detalle a una Factura
+Funcion Auxiliar para A¤adir lineas de detalle a una Factura
 */
 
 STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
@@ -10974,7 +10974,7 @@ STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
    DEFAULT lTot   := .f.
 
    if lRecibosPagadosTmp( dbfTmpPgo )
-      MsgStop( "No se pueden aÃ±adir registros a una factura con recibos cobrados" )
+      MsgStop( "No se pueden añadir registros a una factura con recibos cobrados" )
       return .f.
    end if
 
@@ -10984,7 +10984,7 @@ STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
 
    else
 
-      MsgStop( "No se pueden aÃ±adir registros a una factura que" + CRLF + ;
+      MsgStop( "No se pueden añadir registros a una factura que" + CRLF + ;
                "proviene de albaranes." )
 
    end if
@@ -11399,7 +11399,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    /*
-   Mostramos u ocultamos las tarifas por lÃ­neas--------------------------------
+   Mostramos u ocultamos las tarifas por líneas--------------------------------
    */
 
    if Empty( aTmp[ _NTARLIN ] )
@@ -11419,7 +11419,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    /*
-   Focus y validaciÂ¢n----------------------------------------------------------
+   Focus y validaci¢n----------------------------------------------------------
    */
 
    if !Empty( aGet[ _CTIPMOV ] )
@@ -11519,7 +11519,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    if Empty( cCodArt )
 
       if lRetCodArt()
-         MsgStop( "No se pueden aÃ±adir lÃ­neas sin codificar" )
+         MsgStop( "No se pueden añadir líneas sin codificar" )
          return .f.
       end if
 
@@ -11612,7 +11612,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       if ( lChgCodArt )
 
          if ( dbfArticulo )->lObs
-            MsgStop( "ArtÃ­culo catalogado como obsoleto" )
+            MsgStop( "Artículo catalogado como obsoleto" )
             return .f.
          end if
 
@@ -11862,13 +11862,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Si la comisiÂ¢n del articulo hacia el agente es distinto de cero-------
+         Si la comisi¢n del articulo hacia el agente es distinto de cero-------
          */
 
          aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
 
          /*
-         CÃ³digo de la frase publicitaria---------------------------------------
+         Código de la frase publicitaria---------------------------------------
          */
 
          if !Empty( ( dbfArticulo )->cCodFra )
@@ -11969,7 +11969,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
       /*
-      He terminado de meter todo lo que no son precios ahora es cuando meterÃ© los precios con todas las opciones posibles
+      He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
       */
 
       cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
@@ -11977,7 +11977,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       if ( lChgCodArt ) .or. ( cPrpArt != cOldPrpArt )
 
          /*
-         Guardamos el cÃ³digo de la familia
+         Guardamos el código de la familia
          */
 
          if nMode == APPD_MODE
@@ -12004,7 +12004,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          aTmp[_NPVPREC ]         := ( dbfArticulo )->PvpRec
 
          /*
-         Descuento de artÃ­culo----------------------------------------------
+         Descuento de artículo----------------------------------------------
          */
 
          nNumDto              	:= RetFld( aTmpFac[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
@@ -12083,7 +12083,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         //--guardamos el precio del artÃ­culo dependiendo de las propiedades--//
+         //--guardamos el precio del artículo dependiendo de las propiedades--//
 
          nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
 
@@ -12121,14 +12121,14 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                aGet[_NCOMAGE]:cText( nImpOfe )
             end if
 
-            //--Descuento de promociÂ¢n--//
+            //--Descuento de promoci¢n--//
 
             nImpOfe  := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
             if nImpOfe  != 0
                aGet[_NDTOPRM]:cText( nImpOfe )
             end if
 
-            //--Descuento de promociÂ¢n para el agente--//
+            //--Descuento de promoci¢n para el agente--//
 
             nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
             if nDtoAge  != 0
@@ -12259,7 +12259,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         Ponemos el stock del artÃ­culo-----------------------------------------
+         Ponemos el stock del artículo-----------------------------------------
          */
 
          if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
@@ -12343,7 +12343,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
    else
 
-      MsgStop( "ArtÃ­culo no encontrado" )
+      MsgStop( "Artículo no encontrado" )
       
       Return .f.
 
@@ -12372,7 +12372,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    /*
-   Fin de modo de ediciÃ³n multiple
+   Fin de modo de edición multiple
    */
 
    if !lMoreIva( aTmp[_NIVA] )
@@ -12380,7 +12380,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    if Empty( aTmp[ _CALMLIN ] )
-      MsgStop( "CÃ³digo de almacen no puede estar vacio" )
+      MsgStop( "Código de almacen no puede estar vacio" )
       aGet[ _CALMLIN ]:SetFocus()
       Return nil
    end if
@@ -12390,11 +12390,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    /*
-   Comprobamos si tiene que introducir nÃºmeros de serie------------------------
+   Comprobamos si tiene que introducir números de serie------------------------
    */
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], dbfArticulo, "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
-      MsgStop( "Tiene que introducir nÃºmeros de serie para este artÃ­culo." )
+      MsgStop( "Tiene que introducir números de serie para este artículo." )
       oBtnSer:Click()
       Return nil
    end if
@@ -12402,7 +12402,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    aClo     	:= aClone( aTmp )
 
    /*
-   Modo de ediciÃ³n multiple los cambios afectan a todos los registros seleccionados
+   Modo de edición multiple los cambios afectan a todos los registros seleccionados
    */
 
    if nMode == MULT_MODE
@@ -12444,12 +12444,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
             case oStkAct:VarGet() - nTotUnd < 0
 
                if aTmp[ _LNOTVTA ]
-                  MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacÃ©n " + aTmp[ _CALMLIN ] + "." )
+                  MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + aTmp[ _CALMLIN ] + "." )
                   return nil
                end if
 
                if aTmp[ _LMSGVTA ]
-                  if !ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + " en almacÃ©n " + aTmp[ _CALMLIN ] + ".", "Â¿Desea continuar?" )
+                  if !ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + " en almacén " + aTmp[ _CALMLIN ] + ".", "¿Desea continuar?" )
                      return nil
                   end if
                end if
@@ -12457,7 +12457,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
             case oStkAct:VarGet() - nTotUnd < RetFld( aTmp[ _CREF ], dbfArticulo, "nMinimo"  )
 
                if aTmp[ _LMSGVTA ]
-                  if !ApoloMsgNoYes( "El stock estÃ¡ por debajo del minimo.", "Â¿Desea continuar?" )
+                  if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
                      return nil
                   end if
                end if
@@ -12498,7 +12498,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
       	if aXbYStr[ 1 ] == 0
 
          /*
-         Chequeamos las ofertas por artÃ­culos X  *  Y--------------------------
+         Chequeamos las ofertas por artículos X  *  Y--------------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -12526,7 +12526,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          end if
 
          /*
-         Chequeamos las ofertas por tipo de artÃ­culos X  *  Y------------------
+         Chequeamos las ofertas por tipo de artículos X  *  Y------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -12871,16 +12871,16 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
                      MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
                               "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
-                              "Â¡AtenciÃ³n!" )
+                              "¡Atención!" )
 
                   case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
 
                      MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
-                              "estÃ¡ bajo minimo."        + CRLF + ;
+                              "está bajo minimo."        + CRLF + ;
                               "Unidades a vender : "     + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
-                              "Stock mÃ­nimo : "          + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
+                              "Stock mínimo : "          + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
                               "Stock actual : "          + AllTrim( Trans( nStkActual, MasUnd() ) ),;
-                              "Â¡AtenciÃ³n!" )
+                              "¡Atención!" )
                end case
 
             end if
@@ -12913,14 +12913,14 @@ STATIC FUNCTION lMoreIva( nCodIva )
       RETURN .T.
    END IF
 
-   MsgStop( "Factura con mÃ¡s de 3 tipos de " + cImp() )
+   MsgStop( "Factura con más de 3 tipos de " + cImp() )
 
 RETURN .F.
 
 //---------------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para la EdiciÂ¢n de Lineas de Detalle en una Factura
+Funcion Auxiliar para la Edici¢n de Lineas de Detalle en una Factura
 */
 
 STATIC FUNCTION EdtDeta( oBrwDet, bEdtDet, aTmp, lTot, nFacMod )
@@ -12982,7 +12982,7 @@ RETURN .t. //
 //--------------------------------------------------------------------------//
 
 /*
-Finaliza la transacciÃ³n de datos
+Finaliza la transacción de datos
 */
 
 STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oDlg )
@@ -13031,37 +13031,37 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if Empty( aTmp[ _CNOMCLI ] )
-      msgStop( "Nombre de cliente no puede estar vacÃ­o." )
+      msgStop( "Nombre de cliente no puede estar vacío." )
       aGet[ _CNOMCLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDIRCLI ] )
-      msgStop( "Domicilio de cliente no puede estar vacÃ­o." )
+      msgStop( "Domicilio de cliente no puede estar vacío." )
       aGet[ _CDIRCLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDNICLI ] )
-      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacÃ­o." )
+      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacío." )
       aGet[ _CDNICLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODALM ] )
-      msgStop( "AlmacÃ©n no puede estar vacÃ­o.", "Imposible archivar como factura" )
+      msgStop( "Almacén no puede estar vacío.", "Imposible archivar como factura" )
       aGet[ _CCODALM ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODPAGO ] )
-      msgStop( "Forma de pago no puede estar vacÃ­a.", "Imposible archivar como factura" )
+      msgStop( "Forma de pago no puede estar vacía.", "Imposible archivar como factura" )
       aGet[ _CCODPAGO ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDIVFAC ] )
-      MsgStop( "No puede almacenar documento sin cÃ³digo de divisa.", "Imposible archivar como factura" )
+      MsgStop( "No puede almacenar documento sin código de divisa.", "Imposible archivar como factura" )
       aGet[ _CDIVFAC ]:SetFocus()
       return .f.
    end if
@@ -13073,7 +13073,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
-      msgStop( "Agente no puede estar vacÃ­o." )
+      msgStop( "Agente no puede estar vacío." )
       aGet[ _CCODAGE ]:SetFocus()
       return .f.
    end if
@@ -13095,7 +13095,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       while !( dbfTmpLin )->( eof() )
 
          if !( dbfTmpLin )->lControl .and. ( dbfTmpLin )->nPreUnit == 0 .and. !( dbfTmpLin )->lKitPrc
-            if !ApoloMsgNoYes( "El artÃ­culo " + Rtrim( ( dbfTmpLin )->cRef ) + " - " + Rtrim( Descrip( dbfTmpLin ) ) + " no esta valorado.", "Â¿ Desea continuar archivando la factura ?" )
+            if !ApoloMsgNoYes( "El artículo " + Rtrim( ( dbfTmpLin )->cRef ) + " - " + Rtrim( Descrip( dbfTmpLin ) ) + " no esta valorado.", "¿ Desea continuar archivando la factura ?" )
                return .f.
             end if
          end if
@@ -13501,7 +13501,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       dbCommitAll()
 
-      oMsgText( "Finalizamos la transacciÃ³n" )
+      oMsgText( "Finalizamos la transacción" )
 
       CommitTransaction()
 
@@ -13741,14 +13741,14 @@ Static Function ExportaEDICabecera( hFicheroFactura )
    cCabecera         += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 55. Codigo de Comprador (quien pide)
    cCabecera         += Padr( "", 6 )                                                                                            // 61. Funcion del mensaje
    cCabecera         += Padr( Dtos( ( TDataView():FacturasClientes( nView ) )->dFecFac ), 8 )                                                               // 69. Fecha de la factura
-   cCabecera         += Padr( Dtos( ( TDataView():FacturasClientes( nView ) )->dFecFac ) + Dtos( ( TDataView():FacturasClientes( nView ) )->dFecFac ), 16 )                            // 85. Periodo de facturaciÃ³n pongo la misma fecha 2 veces
+   cCabecera         += Padr( Dtos( ( TDataView():FacturasClientes( nView ) )->dFecFac ) + Dtos( ( TDataView():FacturasClientes( nView ) )->dFecFac ), 16 )                            // 85. Periodo de facturación pongo la misma fecha 2 veces
    cCabecera         += Padr( "42", 6 )                                                                                          // 91. Forma de pago 42 por defecto
    cCabecera         += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 104. Codigo de Emisor de la factura coincide ( quien factura )
    cCabecera         += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 117. Codigo de Receptor de la factura ( quien recibe )
    if !Empty( ( TDataView():FacturasClientes( nView ) )->cCodObr )
       cCabecera      += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli + ( TDataView():FacturasClientes( nView ) )->cCodObr, dbfObrasT, "cCodEdi" ), 13 )            // 130. Codigo del receptor de la mercancia con codigo EDI en la obra
    else
-      cCabecera      += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 130. Codigo del receptor de la mercancia con cÃ³odigo EDI en el cliente
+      cCabecera      += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 130. Codigo del receptor de la mercancia con cóodigo EDI en el cliente
    end if
    cCabecera         += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 143. Codigo receptor del pago
    cCabecera         += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 156. Codigo del emisor del pago
@@ -13761,11 +13761,11 @@ Static Function ExportaEDICabecera( hFicheroFactura )
    cCabecera         += Padr( "", 17 )                                                                                           // 250. Numero de relacion de entregas
    cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cNomCli, 70 )                                                                      // 320. Razon social del receptor de la factura
    cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cDirCli, 70 )                                                                      // 390. Direccion del receptor de la factura
-   cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cPobCli, 35 )                                                                      // 425. PoblaciÃ³n del receptor de la factura
+   cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cPobCli, 35 )                                                                      // 425. Población del receptor de la factura
    cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cPosCli, 9 )                                                                       // 434. Codigo postal del receptor de la factura
    cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cDniCli, 17 )                                                                      // 451. Nif del receptor de la factura
    cCabecera         += Padr( uFieldEmpresa( "cDomicilio" ), 70 )                                                                // 521. Domicilio del emisor de la factura
-   cCabecera         += Padr( uFieldEmpresa( "cPoblacion" ), 35 )                                                                // 556. PoblaciÃ³n del emisor de la factura
+   cCabecera         += Padr( uFieldEmpresa( "cPoblacion" ), 35 )                                                                // 556. Población del emisor de la factura
    cCabecera         += Padr( uFieldEmpresa( "cCodPos" ), 9 )                                                                    // 565. Codigo postal del emisor de la factura
    cCabecera         += Padr( ( TDataView():FacturasClientes( nView ) )->cDivFac, 6 )                                                                       // 571. Codigo de la divisa
    cCabecera         += Padr( "", 8 )                                                                                            // 579. Fecha de vencimiento unico
@@ -13796,13 +13796,13 @@ Static Function ExportaEDILinea( nNumeroLinea, hFicheroFactura )
    cLinea            += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 42. Codigo de Vendedor a quien se pide
    cLinea            += Padr( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 55. Codigo de Comprador (quien pide)
    cLinea            += Padl( Trans( nNumeroLinea, "999999" ), 6 )                                                               // 61. Numero de linea
-   cLinea            += Padr( RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "Codebar" ), 15 ) //Padr( ( dbfFacCliL )->cRef, 15 )    // 76. CÃ³digo articulo / Codigo de barras
-   cLinea            += Padr( if( !Empty( ( dbfFacCliL )->cDetalle ), ( dbfFacCliL )->cDetalle, ( dbfFacCliL )->mLngDes ), 35 )  // 111. DescripciÃ³n articulo
+   cLinea            += Padr( RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "Codebar" ), 15 ) //Padr( ( dbfFacCliL )->cRef, 15 )    // 76. Código articulo / Codigo de barras
+   cLinea            += Padr( if( !Empty( ( dbfFacCliL )->cDetalle ), ( dbfFacCliL )->cDetalle, ( dbfFacCliL )->mLngDes ), 35 )  // 111. Descripción articulo
    cLinea            += Padr( "M", 1 )                                                                                           // 112. Tipo de articulo
    cLinea            += Padr( "", 15 )                                                                                           // 127. Codigo interno articulo proveedor
    cLinea            += Padr( "", 15 )                                                                                           // 142. Codigo interno articulo cliente
    cLinea            += Padr( "", 15 )                                                                                           // 157. Codigo variable promocional
-   cLinea            += Padr( "", 15 )                                                                                           // 172. Codigo unidad expediciÃ³n
+   cLinea            += Padr( "", 15 )                                                                                           // 172. Codigo unidad expedición
    cLinea            += Padr( ( dbfFacCliL )->cLote, 15 )                                                                        // 187. Numero de lote
    cLinea            += Padl( Trans( nTotNFacCli( dbfFacCliL ), "999999999999.999" ), 16 )                                       // 203. Unidades facturado
    cLinea            += Padl( Trans( 0, "999999999999.999" ), 16 )                                                               // 219. Unidades bonificadas
@@ -13842,7 +13842,7 @@ Static Function ExportaEDIRecibo( nNumeroRecibo, hFicheroFactura )
    cRecibo           += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 42. Codigo de Vendedor a quien se pide
    cRecibo           += Padr( Retfld( ( dbfFacCliP )->cCodCli, TDataView():Clientes( nView ), "cCodEdi" ), 13 )                                      // 55. Codigo de Comprador (quien pide)
    cRecibo           += Padl( Trans( nNumeroRecibo, "999999" ), 6 )                                                              // 61. Numero de Recibo
-   cRecibo           += Padr( Dtos( ( dbfFacCliP )->dFecVto ), 8 )                                                               // 76. CÃ³digo articulo
+   cRecibo           += Padr( Dtos( ( dbfFacCliP )->dFecVto ), 8 )                                                               // 76. Código articulo
    cRecibo           += Padl( Trans( nTotRecCli( dbfFacCliP, dbfDiv ), "999999999999.999" ), 16 )                                // 203. Unidades facturado
    cRecibo           += CRLF
 
@@ -14224,7 +14224,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                oItemLine:addTax( oTax )
 
-               // AÃ±adimos la linea--------------------------------------------
+               // Añadimos la linea--------------------------------------------
 
                :addItemLine( oItemLine )
 
@@ -14279,7 +14279,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                else
 
-                  oTree:Add( "Recibo : " + ( dbfFacCliP )->cSerie + "/" + AllTrim( str( ( dbfFacCliP )->nNumFac ) ) + "/" + ( dbfFacCliP )->cSufFac + "-" + str( ( dbfFacCliP )->nNumRec ) + " no tiene cÃ³digo de facturae." )
+                  oTree:Add( "Recibo : " + ( dbfFacCliP )->cSerie + "/" + AllTrim( str( ( dbfFacCliP )->nNumFac ) ) + "/" + ( dbfFacCliP )->cSufFac + "-" + str( ( dbfFacCliP )->nNumRec ) + " no tiene código de facturae." )
 
                end if
 
@@ -14399,7 +14399,7 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
       nImp                       := ( nImpFld - nImpTmp ) * if( lImpNeg, - 1 , 1 )
 
       /*
-      AÃ±adimos el nuevo recibo-------------------------------------------------
+      Añadimos el nuevo recibo-------------------------------------------------
       */
 
       ( dbfTmpPgo )->( dbAppend() )
@@ -14413,7 +14413,7 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
       ( dbfTmpPgo )->dEntrada    := Ctod( "" )
       ( dbfTmpPgo )->nImporte    := nImp
       ( dbfTmpPgo )->nImpGas     := 0
-      ( dbfTmpPgo )->cDescrip    := "Recibo nÂº" + AllTrim( str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
+      ( dbfTmpPgo )->cDescrip    := "Recibo nº" + AllTrim( str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
       ( dbfTmpPgo )->dPreCob     := dFecFacCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], TDataView():FacturasClientes( nView ) )
       ( dbfTmpPgo )->dFecVto     := dFecFacCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], TDataView():FacturasClientes( nView ) )
       ( dbfTmpPgo )->cPgdoPor    := ""
@@ -14596,7 +14596,7 @@ Static Function FacCliExcelImport()
 
       next
 
-      msgStop( "Proceso de importaciÃ³n finalizazo." )
+      msgStop( "Proceso de importación finalizazo." )
 
       oOleExcel:oExcel:Quit()
 
@@ -14667,7 +14667,7 @@ Static Function FacCliExcelNovotecno()
          ACTION   ( DelFichero( aFichero, oBrwFichero ) )
 
       /*
-      Tree de importaciÃ³n------------------------------------------------------
+      Tree de importación------------------------------------------------------
       */
 
       oTreeImportacion                    := TTreeView():Redefine( 300, oDlg )
@@ -14847,7 +14847,7 @@ Static Function ExecuteImportacion( aFichero, oTreeImportacion, oMeterImportacio
 
                // sNovotecnoImportacion:nNumeroOperacion       := Round( oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( str( n ) ) ):Value, 0 )
 
-               oNode                                        := oTreeImportacion:Add( "Procesando operaciÃ³n " + lTrim( str( n ) ) )
+               oNode                                        := oTreeImportacion:Add( "Procesando operación " + lTrim( str( n ) ) )
                oTreeImportacion:Select( oNode )
 
                sNovotecnoImportacion:cCodigoCliente         := oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( str( n ) ) ):Value
@@ -15109,7 +15109,7 @@ static function FacturaImportacion( oTreeImportacion )
 
    next
 
-   oTreeImportacion:Select( oTreeImportacion:Add( "Proceso de importaciÃ³n finalizado" ) )
+   oTreeImportacion:Select( oTreeImportacion:Add( "Proceso de importación finalizado" ) )
 
 return nil
 
@@ -15157,7 +15157,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
    if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
 
       /*
-      Buscamos si existen ofertas por artÃ­culo----------------------------
+      Buscamos si existen ofertas por artículo----------------------------
       */
 
       nTotalLinea       := lCalcDeta( aTmp, aTmpFac, .t. )
@@ -15419,7 +15419,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
             ( dbfTmpLin )->( dbAppend() )
             cDesAlb                    := ""
-            cDesAlb                    += "S.A.T. NÂº " + ( dbfSatCliT )->cSerSat + "/" + AllTrim( str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat
+            cDesAlb                    += "S.A.T. Nº " + ( dbfSatCliT )->cSerSat + "/" + AllTrim( str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat
             cDesAlb                    += " - Fecha " + Dtoc( ( dbfSatCliT )->dFecSat )
             ( dbfTmpLin )->MLNGDES     := cDesAlb
             ( dbfTmpLin )->LCONTROL    := .t.
@@ -15569,7 +15569,7 @@ RETURN lValid
 //---------------------------------------------------------------------------//
 
 /*
-Funcion que nos permite aÂ¤adir a los albaranes pedidos ye existentes
+Funcion que nos permite a¤adir a los albaranes pedidos ye existentes
 */
 
 STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
@@ -15713,7 +15713,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :bEditValue       := {|| aNumalb[ oBrwLin:nArrayAt, 3 ] }
          :cEditPicture     := "@R #/999999999/##"
          :nWidth           := 80
@@ -15806,7 +15806,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       HideImportacion()      
 
       /*
-      AÂ¤adimos los albaranes seleccionado para despues-------------------------
+      A¤adimos los albaranes seleccionado para despues-------------------------
       */
 
       for nItem := 1 to Len( aNumalb )
@@ -15867,7 +15867,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
             nNumLin                       := nil
 
             ( dbfTmpLin )->( dbAppend() )
-            cDesAlb                       := "SAT NÂº " + StrTran( Alltrim( Trans( aNumalb[ nItem, 3 ], "@R #/999999999/##" ) ), " ", "" )
+            cDesAlb                       := "SAT Nº " + StrTran( Alltrim( Trans( aNumalb[ nItem, 3 ], "@R #/999999999/##" ) ), " ", "" )
             cDesAlb                       += " - Fecha " + Dtoc( aNumalb[ nItem, 4] )
             ( dbfTmpLin )->mLngDes        := cDesAlb
             ( dbfTmpLin )->lControl       := .t.
@@ -16114,11 +16114,11 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
    local lSearch     := .f.
 
    /*
-   Controlamos que no nos pase cÃ³digo de cliente vacÃ­o------------------------
+   Controlamos que no nos pase código de cliente vacío------------------------
    */
 
    if Empty( aTmpFac[ _CCODCLI ] )
-      MsgStop( "CÃ³digo de cliente no puede estar vacÃ­o para utilizar el asistente." )
+      MsgStop( "Código de cliente no puede estar vacío para utilizar el asistente." )
       Return .f.
    end if
 
@@ -16228,7 +16228,7 @@ Static Function AppendDatosAtipicas( aTmpFac )
          ( dbfTmpLin )->nUniCaja       := 0
          ( dbfTmpLin )->lFromAtp       := .t.
    
-         //Datos de la tabla de artÃ­culo------------------------------------
+         //Datos de la tabla de artículo------------------------------------
 
          ( dbfTmpLin )->cDetalle       := ( dbfArticulo )->Nombre
          
@@ -16537,7 +16537,7 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el valor del impuestos de un artÃ­culo
+Devuelve el valor del impuestos de un artículo
 */
 
 FUNCTION nIvaUFacCli( dbfTmpLin, nDec, nVdv )
@@ -16563,7 +16563,7 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el valor del Req de un artÃ­culo
+Devuelve el valor del Req de un artículo
 */
 
 FUNCTION nReqUFacCli( dbfTmpLin, nDec, nVdv )
@@ -16872,7 +16872,7 @@ RETURN ( cCliFac )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve la descripciÃ³n de una line de factura
+Devuelve la descripción de una line de factura
 */
 
 FUNCTION cDesFacCli( cFacCliL, cFacCliS )
@@ -17350,7 +17350,7 @@ Function ShowKit( dbfMaster, dbfTmpLin, oBrw, lSet, dbfTmpInc, cCodCli, cClient,
 
       while !( dbfTmpInc )->( Eof() )
          if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
-            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "Â¡Incidencia!" )
+            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
          end if
          ( dbfTmpInc )->( dbSkip() )
       end while
@@ -17452,7 +17452,7 @@ FUNCTION BrwFacCli( oGet, oIva )
       Return .f.
    end if
 
-   aCbxOrd        := { "NÃºmero", "Fecha", "Cliente", "Nombre" }
+   aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
    nOrd           := GetBrwOpt( "BrwFacCli" )
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
@@ -17487,7 +17487,7 @@ FUNCTION BrwFacCli( oGet, oIva )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + RTrim( str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) }
          :nWidth           := 80
@@ -17495,7 +17495,7 @@ FUNCTION BrwFacCli( oGet, oIva )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "DelegaciÃ³n"
+         :cHeader          := "Delegación"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cSufFac }
          :nWidth           := 40
       end with
@@ -17880,7 +17880,7 @@ Function ExcelIsra()
                ( dbfFacCliP )->lCobrado   := .t.
                ( dbfFacCliP )->nImporte   := nImpFac
                ( dbfFacCliP )->nImpCob    := nImpFac
-               ( dbfFacCliP )->cDescrip   := "Recibo nÂº 1 de factura A/" + AllTrim( str( nNumFac ) ) + "/" + RetSufEmp()
+               ( dbfFacCliP )->cDescrip   := "Recibo nº 1 de factura A/" + AllTrim( str( nNumFac ) ) + "/" + RetSufEmp()
                ( dbfFacCliP )->cDivPgo    := cDivEmp()
                ( dbfFacCliP )->nVdvPgo    := nChgDiv( cDivEmp(), dbfDiv )
                ( dbfFacCliP )->dEntrada   := dFecFac
@@ -18641,7 +18641,7 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 /*
-Crea las bases de datos necesarias para la facturaciÃ³n desde fuera
+Crea las bases de datos necesarias para la facturación desde fuera
 */
 
 FUNCTION mkFacCli( cPath, oMeter, lReindex )
@@ -18879,7 +18879,7 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( cFacCliT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de nÃºmeros de series de facturas de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas de clientes" )
    end if
 
 Return nil
@@ -18891,13 +18891,13 @@ function aIncFacCli()
    local aIncFacCli  := {}
 
    aAdd( aIncFacCli, { "cSerie",  "C",    1,  0, "Serie de factura" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacCli, { "nNumFac", "N",    9,  0, "NÃºmero de factura" ,             "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncFacCli, { "nNumFac", "N",    9,  0, "Número de factura" ,             "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aIncFacCli, { "cSufFac", "C",    2,  0, "Sufijo de factura" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aIncFacCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,            "",                   "", "( cDbfCol )" } )
    aAdd( aIncFacCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,        "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacCli, { "mDesInc", "M",   10,  0, "DescripciÃ³n de la incidencia" ,  "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacCli, { "lListo",  "L",    1,  0, "LÃ³gico de listo" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aIncFacCli, { "lAviso",  "L",    1,  0, "LÃ³gico de Aviso" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aIncFacCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,  "",                   "", "( cDbfCol )" } )
+   aAdd( aIncFacCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aIncFacCli, { "lAviso",  "L",    1,  0, "Lógico de Aviso" ,               "",                   "", "( cDbfCol )" } )
 
 return ( aIncFacCli )
 
@@ -18908,7 +18908,7 @@ function aFacCliDoc()
    local aFacCliDoc  := {}
 
    aAdd( aFacCliDoc, { "cSerFac", "C",    1,  0, "Serie de factura" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aFacCliDoc, { "nNumFac", "N",    9,  0, "NÃºmero de factura" ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aFacCliDoc, { "nNumFac", "N",    9,  0, "Número de factura" ,               "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aFacCliDoc, { "cSufFac", "C",    2,  0, "Sufijo de factura" ,               "",                   "", "( cDbfCol )" } )
    aAdd( aFacCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
    aAdd( aFacCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
@@ -18925,8 +18925,8 @@ function aColFacCli()
    aAdd( aColFacCli, { "cSerie"     ,"C",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NNUMFAC"    ,"N",  9, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CSUFFAC"    ,"C",  2, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CREF"       ,"C", 18, 0, "Referencia del artÃ­culo"               , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CDETALLE"   ,"C",250, 0, "Detalle del artÃ­culo"                  , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CREF"       ,"C", 18, 0, "Referencia del artículo"               , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CDETALLE"   ,"C",250, 0, "Detalle del artículo"                  , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NPREUNIT"   ,"N", 16, 6, "Precio unitario"                       , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NPNTVER"    ,"N", 16, 6, "Importe punto verde"                   , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "nImpTrn"    ,"N", 16, 6, "Importe de portes"                     , "" ,             "", "( cDbfCol )"} )
@@ -18934,87 +18934,87 @@ function aColFacCli()
    aAdd( aColFacCli, { "NDTOPRM"    ,"N",  6, 2, "Descuento promocional"                 , "'@E 99,99'" ,   "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NIVA"       ,"N",  6, 2, "Porcentaje de " + cImp()               , "'@E 99,99'" ,   "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NCANENT"    ,"N", 16, 6, cNombreCajas()                          , "cPicUndFac" ,   "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "LCONTROL"   ,"L",  1, 0, "LÃ³gico linea de control"               , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "LCONTROL"   ,"L",  1, 0, "Lógico linea de control"               , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NPESOKG"    ,"N", 16, 6, "Peso del producto"                     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "cPesoKg"    ,"C",  2, 0, "Unidad de peso del producto"           , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CUNIDAD"    ,"C",  2, 0, "Unidades de venta"                     , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODAGE"    ,"C",  3, 0, "CÃ³digo del agente"                     , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "NCOMAGE"    ,"N",  6, 2, "ComisiÃ³n del agente"                   , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODAGE"    ,"C",  3, 0, "Código del agente"                     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "NCOMAGE"    ,"N",  6, 2, "Comisión del agente"                   , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NUNICAJA"   ,"N", 16, 6, cNombreUnidades()                       , "cPicUndFac" ,   "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NUNDKIT"    ,"N", 16, 6, "Unidades del producto kit"             , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "DFECHA"     ,"D",  8, 0, "Fecha de detalle"                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CTIPMOV"    ,"C",  2, 0, "Tipo de movimiento"                    , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "MLNGDES"    ,"M", 10, 0, "DescripciÃ³n de artÃ­culo sin codificar" , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODALB"    ,"C", 12, 0, "NÃºmero del albarÃ¡n de procedencia"     , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "DFECALB"    ,"D",  8, 0, "Fecha del albarÃ¡n de procedencia"      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "LTOTLIN"    ,"L",  1, 0, "Valor lÃ³gico para enviar el documento" , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "LIMPLIN"    ,"L",  1, 0, "LÃ­nea no imprimible"                   , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODPR1"    ,"C", 20, 0, "CÃ³digo de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODPR2"    ,"C", 20, 0, "CÃ³digo de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "MLNGDES"    ,"M", 10, 0, "Descripción de artículo sin codificar" , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODALB"    ,"C", 12, 0, "Número del albarán de procedencia"     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "DFECALB"    ,"D",  8, 0, "Fecha del albarán de procedencia"      , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "LTOTLIN"    ,"L",  1, 0, "Valor lógico para enviar el documento" , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "LIMPLIN"    ,"L",  1, 0, "Línea no imprimible"                   , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODPR1"    ,"C", 20, 0, "Código de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODPR2"    ,"C", 20, 0, "Código de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CVALPR1"    ,"C", 20, 0, "Valor de primera propiedad"            , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CVALPR2"    ,"C", 20, 0, "Valor de segunda propiedad"            , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "NFACCNV"    ,"N", 16, 6, "Factor de conversiÃ³n de la compra"     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "NFACCNV"    ,"N", 16, 6, "Factor de conversión de la compra"     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NDTODIV"    ,"N", 16, 6, "Descuento lineal de la compra"         , "'@EZ 99,99'" ,  "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LSEL"       ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "NNUMLIN"    ,"N",  4, 0, "NÃºmero de la lÃ­nea"                    , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "NCTLSTK"    ,"N",  1, 0, "Tipo de stock de la linea"             , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "NNUMLIN"    ,"N",  4, 0, "Número de la línea"                    , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "NCTLSTK"    ,"N",  1, 0, "Tipo de stock de la línea"             , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NCOSDIV"    ,"N", 16, 6, "Costo del producto"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NPVPREC"    ,"N", 16, 6, "Precio de venta recomendado"           , "cPorDivFac" ,   "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CALMLIN"    ,"C", 16, 0, "CÃ³digo de almacÃ©n"                     , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CALMLIN"    ,"C", 16, 0, "Código de almacén"                     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LIVALIN"    ,"L",  1, 0, cImp() + " incluido"                    , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODIMP"    ,"C",  3, 0, "CÃ³digo del impuesto especial"          , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODIMP"    ,"C",  3, 0, "Código del impuesto especial"          , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NVALIMP"    ,"N", 16, 6, "Importe del impuesto especial"         , "cPorDivFac" ,   "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LLOTE"      ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "NLOTE"      ,"N",  9, 0, ""                                      , "'999999999'" ,  "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CLOTE"      ,"C", 12, 0, "NÃºmero de lote"                        , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "NLOTE"      ,"N",  9, 0, ""                                      , "'999999999'" ,  "", "( cDbfCol )"} ) 
+   aAdd( aColFacCli, { "CLOTE"      ,"C", 12, 0, "Número de lote"                        , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "dFecCad"    ,"D",  8, 0, "Fecha de caducidad"                    , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "LKITART"    ,"L",  1, 0, "LÃ­nea con escandallo"                  , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "LKITCHL"    ,"L",  1, 0, "LÃ­nea pertenciente a escandallo"       , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "LKITART"    ,"L",  1, 0, "Línea con escandallo"                  , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "LKITCHL"    ,"L",  1, 0, "Línea pertenciente a escandallo"       , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LKITPRC"    ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "NMESGRT"    ,"N",  2, 0, "Meses de garantÃ­a"                     , "'99'",          "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "NMESGRT"    ,"N",  2, 0, "Meses de garantía"                     , "'99'",          "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LMSGVTA"    ,"L",  1, 0, "Avisar venta sin stocks"               , "",              "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "LNOTVTA"    ,"L",  1, 0, "No permitir venta sin stocks"          , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODTIP"    ,"C",  3, 0, "CÃ³digo del tipo de artÃ­culo"           , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODTIP"    ,"C",  3, 0, "Código del tipo de artículo"           , "",              "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "MNUMSER"    ,"M", 10, 0, ""                                      , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODFAM"    ,"C", 16, 0, "CÃ³digo de familia"                     , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CGRPFAM"    ,"C",  3, 0, "CÃ³digo del grupo de familia"           , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODFAM"    ,"C", 16, 0, "Código de familia"                     , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CGRPFAM"    ,"C",  3, 0, "Código del grupo de familia"           , "",              "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "NREQ"       ,"N", 16, 6, "Recargo de equivalencia"               , "",              "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "MOBSLIN"    ,"M", 10, 0, "Observaciones de linea"                , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "CCODPRV"    ,"C", 12, 0, "CÃ³digo del proveedor"                  , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "CCODPRV"    ,"C", 12, 0, "Código del proveedor"                  , "",              "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "CNOMPRV"    ,"C", 30, 0, "Nombre del proveedor"                  , "",              "", "( cDbfCol )"} )
    aAdd( aColFacCli, { "cImagen"    ,"C",128, 0, "Fichero de imagen"                     , "",              "", "( cDbfCol )", .t. } )
-   aAdd( aColFacCli, { "NPUNTOS"    ,"N", 15, 6, "Puntos del artÃ­culo"                   , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "NPUNTOS"    ,"N", 15, 6, "Puntos del artículo"                   , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "NVALPNT"    ,"N", 16, 6, "Valor del punto"                       , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "NDTOPNT"    ,"N",  5, 2, "Descuento puntos"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "NINCPNT"    ,"N",  5, 2, "Incremento porcentual"                 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "CREFPRV"    ,"C", 18, 0, "Referencia proveedor"                  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nVolumen"   ,"N", 16, 6, "Volumen del producto"                  , "'@E 9,999.99'", "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cVolumen"   ,"C",  2, 0, "Unidad del volumen"                    , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lAlquiler"  ,"L",  1, 0, "LÃ³gico de lÃ­nea de alquiler"           , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lAlquiler"  ,"L",  1, 0, "Lógico de línea de alquiler"           , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecEnt"    ,"D",  8, 0, "Fecha de entrada del alquiler"         , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecSal"    ,"D",  8, 0, "Fecha de salida del alquiler"          , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nPreAlq"    ,"N", 16, 6, "Precio de alquiler"                    , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nNumMed"    ,"N",  1, 0, "NÃºmero de mediciones"                  , "MasUnd()",      "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nMedUno"    ,"N", 16, 6, "Primera unidad de mediciÃ³n"            , "MasUnd()",      "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nMedDos"    ,"N", 16, 6, "Segunda unidad de mediciÃ³n"            , "MasUnd()",      "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nMedTre"    ,"N", 16, 6, "Tercera unidad de mediciÃ³n"            , "MasUnd()",      "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nNumMed"    ,"N",  1, 0, "Número de mediciones"                  , "MasUnd()",      "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nMedUno"    ,"N", 16, 6, "Primera unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nMedDos"    ,"N", 16, 6, "Segunda unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nMedTre"    ,"N", 16, 6, "Tercera unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nTarLin"    ,"N",  1, 0, "Tarifa de precio aplicada"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lImpFra",   "L",   1, 0, "LÃ³gico de imprimir frase publicitaria" , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "CÃ³digo del proyecto"       			 	  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lImpFra",   "L",   1, 0, "Lógico de imprimir frase publicitaria" , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       			 	  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cTxtFra",   "C", 250, 0, "Texto de la frase publicitaria"        , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "Descrip",   "M",  10, 0, "DescripciÃ³n larga"                     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "Descrip",   "M",  10, 0, "Descripción larga"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lLinOfe",   "L",   1, 0, "Linea con oferta"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lVolImp",   "L",   1, 0, "Aplicar volumen impuestos especiales"  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lGasSup",   "L",   1, 0, "Linea de gastos suplidos"              , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "NÃºmero del pedido"                     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarÃ¡n)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "NÃºmero del SAT" 						 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha Ãºltima compra" 					 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "CÃ³digo del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			 , "",         		"", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades Ãºltima compra"				 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en lÃ­neas"			 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						 , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
@@ -19026,53 +19026,53 @@ function aItmFacCli()
    local aItmFacCli  := {}
 
    aAdd( aItmFacCli, {"CSERIE"      ,"C",  1, 0, "Serie de la factura" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NNUMFAC"     ,"N",  9, 0, "NÃºmero de la factura" ,                                "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NNUMFAC"     ,"N",  9, 0, "Número de la factura" ,                                "'999999999'",        "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CSUFFAC"     ,"C",  2, 0, "Sufijo de la factura" ,                                "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CTURFAC"     ,"C",  6, 0, "SesiÃ³n de la factura" ,                                "######",             "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CTURFAC"     ,"C",  6, 0, "Sesión de la factura" ,                                "######",             "", "( cDbf )"} )
    aAdd( aItmFacCli, {"DFECFAC"     ,"D",  8, 0, "Fecha de la factura" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODCLI"     ,"C", 12, 0, "CÃ³digo del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODALM"     ,"C", 16, 0, "CÃ³digo de almacÃ©n" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODCAJ"     ,"C",  3, 0, "CÃ³digo de caja" ,                                      "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODCLI"     ,"C", 12, 0, "Código del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODALM"     ,"C", 16, 0, "Código de almacén" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODCAJ"     ,"C",  3, 0, "Código de caja" ,                                      "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CNOMCLI"     ,"C", 80, 0, "Nombre del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CDIRCLI"     ,"C",100, 0, "Domicilio del cliente" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CPOBCLI"     ,"C", 25, 0, "PoblaciÃ³n del cliente" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CPOBCLI"     ,"C", 25, 0, "Población del cliente" ,                               "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CPRVCLI"     ,"C", 20, 0, "Provincia del cliente" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NCODPROV"    ,"N",  2, 0, "NÃºmero de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CPOSCLI"     ,"C", 15, 0, "CÃ³digo postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NCODPROV"    ,"N",  2, 0, "Número de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CPOSCLI"     ,"C", 15, 0, "Código postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CDNICLI"     ,"C", 30, 0, "NIF del cliente" ,                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LMODCLI"     ,"L",  1, 0, "LÃ³gico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LMAYOR"      ,"L",  1, 0, "LÃ³gico de mayorista" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LMODCLI"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LMAYOR"      ,"L",  1, 0, "Lógico de mayorista" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NTARIFA"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODAGE"     ,"C",  3, 0, "CÃ³digo del agente" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODRUT"     ,"C",  4, 0, "CÃ³digo de la ruta" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODTAR"     ,"C",  5, 0, "CÃ³digo de la tarifa" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODOBR"     ,"C", 10, 0, "CÃ³digo de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisiÃ³n del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LLIQUIDADA"  ,"L",  1, 0, "LÃ³gico de la factura pagada" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LCONTAB"     ,"L",  1, 0, "LÃ³gico de la factura contabilizada" ,                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODAGE"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODRUT"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODTAR"     ,"C",  5, 0, "Código de la tarifa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODOBR"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LLIQUIDADA"  ,"L",  1, 0, "Lógico de la factura pagada" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LCONTAB"     ,"L",  1, 0, "Lógico de la factura contabilizada" ,                  "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"DFECENT"     ,"D",  8, 0, "Fecha de entrega" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CSUFAC"      ,"C", 50, 0, "Su factura" ,                                          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LIMPALB"     ,"L",  1, 0, "LÃ³gico si la factura se importÃ³ de albaranes" ,        "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCONDENT"    ,"C",100, 0, "CondiciÃ³n de entrada" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LIMPALB"     ,"L",  1, 0, "Lógico si la factura se importó de albaranes" ,        "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCONDENT"    ,"C",100, 0, "Condición de entrada" ,                                "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"MCOMENT"     ,"M", 10, 0, "Comentarios" ,                                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"MOBSERV"     ,"M", 10, 0, "Observaciones" ,                                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODPAGO"    ,"C",  2, 0, "CÃ³digo del tipo de pago" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NBULTOS"     ,"N",  3, 0, "NÃºmero de bultos" ,                                    "999,999",            "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODPAGO"    ,"C",  2, 0, "Código del tipo de pago" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NBULTOS"     ,"N",  3, 0, "Número de bultos" ,                                    "999,999",            "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NPORTES"     ,"N",  6, 0, "Valor del porte" ,                                     "cPorDivFac",         "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NIVAMAN"     ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,              "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NMANOBR"     ,"N", 16, 6, "Gasto" ,                                               "cPorDivFac",         "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CNUMALB"     ,"C", 12, 0, "NÃºmero de albarÃ¡n" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CNUMPED"     ,"C", 12, 0, "NÃºmero de pedido" ,                                    "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CNUMPRE"     ,"C", 12, 0, "NÃºmero de presupuesto" ,                               "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CNUMSAT"     ,"C", 12, 0, "NÃºmero de S.A.T." ,                                    "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CNUMALB"     ,"C", 12, 0, "Número de albarán" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CNUMPED"     ,"C", 12, 0, "Número de pedido" ,                                    "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CNUMPRE"     ,"C", 12, 0, "Número de presupuesto" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CNUMSAT"     ,"C", 12, 0, "Número de S.A.T." ,                                    "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NTIPOFAC"    ,"N",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cDtoEsp"     ,"C", 50, 0, "DescripciÃ³n de porcentaje de descuento especial" ,     "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cDtoEsp"     ,"C", 50, 0, "Descripción de porcentaje de descuento especial" ,     "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nDtoEsp"     ,"N",  6, 2, "Porcentaje de descuento especial" ,                    "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cDpp"        ,"C", 50, 0, "DescripciÃ³n de porcentaje de descuento por pronto pago","",                  "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cDpp"        ,"C", 50, 0, "Descripción de porcentaje de descuento por pronto pago","",                  "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nDpp"        ,"N",  6, 2, "Porcentaje de descuento por pronto pago" ,             "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado", "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado", "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTOUNO"     ,"N",  6, 2, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "DescripciÃ³n de porcentaje de descuento personalizado" ,"'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,"'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTODOS"     ,"N",  4, 1, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTOCNT"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTORAP"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
@@ -19081,51 +19081,51 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"NDTOPTF"     ,"N",  7, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NTIPOIVA"    ,"N",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NPORCIVA"    ,"N",  4, 1, "" ,                                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LRECARGO"    ,"L",  1, 0, "LÃ³gico para recargo" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LRECARGO"    ,"L",  1, 0, "Lógico para recargo" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CREMITIDO"   ,"C", 50, 0, "Campo de remitido" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LIVAINC"     ,"L",  1, 0, "LÃ³gico " + cImp() + " incluido" ,                      "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"LSNDDOC"     ,"L",  1, 0, "LÃ³gico para documento enviado" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDIVFAC"     ,"C",  3, 0, "CÃ³digo de la divisa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LIVAINC"     ,"L",  1, 0, "Lógico " + cImp() + " incluido" ,                      "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"LSNDDOC"     ,"L",  1, 0, "Lógico para documento enviado" ,                       "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDIVFAC"     ,"C",  3, 0, "Código de la divisa" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NVDVFAC"     ,"N", 10, 4, "Cambio de la divisa" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CRETPOR"     ,"C",100, 0, "Retirado por" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CRETMAT"     ,"C", 20, 0, "MatrÃ­cula" ,                                           "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CRETMAT"     ,"C", 20, 0, "Matrícula" ,                                           "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CNUMDOC"     ,"C", 13, 0, "" ,                                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NREGIVA"     ,"N",  1, 0, "RÃ©gimen de " + cImp() ,                                "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODPRO"     ,"C",  9, 0, "CÃ³digo de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDOCORG"     ,"C", 10, 0, "NÃºmero del documento origen" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NNUMLIQ"     ,"N",  9, 0, "NÃºmero liquidaciÃ³n",                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CSUFLIQ"     ,"C",  2, 0, "Sufijo de la liquidaciÃ³n",                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NIMPLIQ"     ,"N", 16, 6, "Importe liquidaciÃ³n",                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"DFECLIQ"     ,"D",  8, 0, "Fecha liquidaciÃ³n",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodTrn"     ,"C",  9, 0, "CÃ³digo del transportista" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NREGIVA"     ,"N",  1, 0, "Régimen de " + cImp() ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODPRO"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDOCORG"     ,"C", 10, 0, "Número del documento origen" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NNUMLIQ"     ,"N",  9, 0, "Número liquidación",                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CSUFLIQ"     ,"C",  2, 0, "Sufijo de la liquidación",                             "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NIMPLIQ"     ,"N", 16, 6, "Importe liquidación",                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"DFECLIQ"     ,"D",  8, 0, "Fecha liquidación",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodTrn"     ,"C",  9, 0, "Código del transportista" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nKgsTrn"     ,"N", 16, 6, "TARA del transportista" ,                              "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lCloFac"     ,"L",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cAbnFac"     ,"C", 12, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cAntFac"     ,"C", 12, 0, "Factura de anticipo" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nTipRet"     ,"N",  1, 0, "Tipo de retenciÃ³n ( 1. Base / 2. Base+IVA )",          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retenciÃ³n",                              "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "CÃ³digo de usuario",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creaciÃ³n/modificaciÃ³n del documento",         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creaciÃ³n/modificaciÃ³n del documento",          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodGrp"     ,"C",  4, 0, "CÃ³digo de grupo de cliente" ,                          "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lImprimido"  ,"L",  1, 0, "LÃ³gico de imprimido" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"dFecImp"     ,"D",  8, 0, "Ãšltima fecha de impresiÃ³n" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cHorImp"     ,"C",  5, 0, "Hora de la Ãºltima impresiÃ³n" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodDlg"     ,"C",  2, 0, "CÃ³digo delegaciÃ³n" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDtoAtp"     ,"N",  6, 2, "Porcentaje de descuento atÃ­pico",                      "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nSbrAtp"     ,"N",  1, 0, "Lugar donde aplicar dto atÃ­pico",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nTipRet"     ,"N",  1, 0, "Tipo de retención ( 1. Base / 2. Base+IVA )",          "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación/modificación del documento",         "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación/modificación del documento",          "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodGrp"     ,"C",  4, 0, "Código de grupo de cliente" ,                          "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lImprimido"  ,"L",  1, 0, "Lógico de imprimido" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"dFecImp"     ,"D",  8, 0, "Última fecha de impresión" ,                           "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cHorImp"     ,"C",  5, 0, "Hora de la última impresión" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodDlg"     ,"C",  2, 0, "Código delegación" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDtoAtp"     ,"N",  6, 2, "Porcentaje de descuento atípico",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nSbrAtp"     ,"N",  1, 0, "Lugar donde aplicar dto atípico",                      "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"dFecEntr"    ,"D",  8,  0, "Fecha de entrada de alquiler",                        "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"dFecSal"     ,"D",  8,  0, "Fecha de salida de alquiler",                         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lAlquiler"   ,"L",  1,  0, "LÃ³gico de alquiler",                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lPayCli"     ,"L",  1,  0, "LÃ³gico a pagar por el cliente",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lAlquiler"   ,"L",  1,  0, "Lógico de alquiler",                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lPayCli"     ,"L",  1,  0, "Lógico a pagar por el cliente",                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nPayCli"     ,"N", 16,  6, "A pagar por el cliente",                              "cPorDivFac",         "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cManObr"     ,"C",250,  0, "Literal de gastos",                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lExpEdi"     ,"L",  1,  0, "LÃ³gico de factura exportada a EDI",                   "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"dFecEdi"     ,"D",  8,  0, "Fecha exportaciÃ³n a EDI",                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cHorEdi"     ,"C",  5,  0, "Hora exportaciÃ³n a EDI",                              "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cSuAlb"      ,"C", 25,  0, "Referencia a su albarÃ¡n",                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lExpFac"     ,"L",  1,  0, "LÃ³gico de factura exportada a Facturae 3.1 [Factura electrÃ³nica]", "",      "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cTlfCli"     ,"C", 20,  0, "TelÃ©fono del cliente" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lExpEdi"     ,"L",  1,  0, "Lógico de factura exportada a EDI",                   "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"dFecEdi"     ,"D",  8,  0, "Fecha exportación a EDI",                             "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cHorEdi"     ,"C",  5,  0, "Hora exportación a EDI",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cSuAlb"      ,"C", 25,  0, "Referencia a su albarán",                             "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lExpFac"     ,"L",  1,  0, "Lógico de factura exportada a Facturae 3.1 [Factura electrónica]", "",      "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cTlfCli"     ,"C", 20,  0, "Teléfono del cliente" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotNet"     ,"N", 16,  6, "Total neto" ,                                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotSup"     ,"N", 16,  6, "Total gastos suplidos" ,                              "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotIva"     ,"N", 16,  6, "Total " + cImp() ,                                    "",                   "", "( cDbf )"} )
@@ -19133,20 +19133,20 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTotFac"     ,"N", 16,  6, "Total factura" ,                                      "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nEntIni"     ,"N",  6,  2, "Porcentaje de entrega inicial" ,                      "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nPctDto"     ,"N",  6,  2, "Porcentaje de descuento por entrega inicial" ,        "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "CÃ³digo NFC" ,                                         "'@!",                "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "Código NFC" ,                                         "'@!",                "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cFacPrv"     ,"C", 12,  0, "Factura de proveedor" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cBanco"      ,"C", 50,  0, "Nombre del banco del cliente" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "PaÃ­s IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "DÃ­gito de control IBAN de la cuenta bancaria del cliente", "",              "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",              "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cEntBnc"     ,"C",  4,  0, "Entidad de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cSucBnc"     ,"C",  4,  0, "Sucursal de la cuenta bancaria del cliente" ,         "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cDigBnc"     ,"C",  2,  0, "DÃ­gito de control de la cuenta bancaria del cliente" ,"",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cDigBnc"     ,"C",  2,  0, "Dígito de control de la cuenta bancaria del cliente" ,"",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cCtaBnc"     ,"C", 10,  0, "Cuenta bancaria del cliente" ,                        "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotLiq"     ,"N", 16,  6, "Total liquidado" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "LÃ³gico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al rÃ©gimen especial del criterio de caja", 	"", 						 "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodPry" 		,"C", 4,   0, "CÃ³digo del proyecto", 											"", 						 "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"", 						 "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodPry" 		,"C", 4,   0, "Código del proyecto", 											"", 						 "", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 
@@ -19160,11 +19160,11 @@ Function aSerFacCli()
    aAdd( aColFacCli,  { "nNumFac",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColFacCli,  { "cSufFac",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
    aAdd( aColFacCli,  { "dFecFac",     "D",  8,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "nNumLin",     "N",  4,   0, "NÃºmero de la lÃ­nea",               "'9999'",            "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cRef",        "C", 18,   0, "Referencia del artÃ­culo",          "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cAlmLin",     "C", 16,   0, "Almacen del artÃ­culo",             "",                  "", "( cDbfCol )" } )
-   aAdd( aColfacCli,  { "lUndNeg",     "L",  1,   0, "LÃ³gico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cNumSer",     "C", 30,   0, "NÃºmero de serie",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cAlmLin",     "C", 16,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColfacCli,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
 
 Return ( aColFacCli )
 
@@ -20415,7 +20415,7 @@ FUNCTION BrowseInformesFacCli( oGet, oGet2 )
       Return .f.
    end if
 
-   aCbxOrd           := { "NÃºmero", "Fecha", "Cliente", "Nombre" }
+   aCbxOrd           := { "Número", "Fecha", "Cliente", "Nombre" }
    nOrd              := GetBrwOpt( "BrwFacCli" )
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
@@ -20450,7 +20450,7 @@ FUNCTION BrowseInformesFacCli( oGet, oGet2 )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "NÃºmero"
+         :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + RTrim( str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) + "/" + ( TDataView():FacturasClientes( nView ) )->cSufFac }
          :nWidth           := 80
@@ -20749,7 +20749,7 @@ Return ( Num2Text( nTotFac ) )
 //---------------------------------------------------------------------------//
 
 /*
-Funcion que nos indica si una factura estÃ¡ rectificada o no--------------------
+Funcion que nos indica si una factura está rectificada o no--------------------
 */
 
 Function lRectificadaCli( cNumFac, cFacCliT, cFacRecT )
@@ -21418,7 +21418,7 @@ Method Process()
                     	( dbfFacCliT )->( dbUnLock() )
                   	end if
 
-                  	::oSender:SetText( "AÃ±adida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+                  	::oSender:SetText( "Añadida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                   	if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
                     	while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
@@ -21446,7 +21446,7 @@ Method Process()
             	if !( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + str( ( tmpFacCliP )->nNumRec ) ) )
 
                		dbPass( tmpFacCliP, dbfFacCliP, .t. )
-               		::oSender:SetText( "AÃ±adido recibo     : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
+               		::oSender:SetText( "Añadido recibo     : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
 
             	else
 
@@ -21557,7 +21557,7 @@ Method Process()
                         ( dbfAntCliT )->( dbUnLock() )
                      end if
 
-                     ::oSender:SetText( "AÃ±adido     : " + ( tmpAntCliT )->cSerAnt + "/" + AllTrim( str( ( tmpAntCliT )->NNUMANT ) ) + "/" + AllTrim( ( tmpAntCliT )->CSUFANT ) + "; " + Dtoc( ( tmpAntCliT )->DFECANT ) + "; " + Alltrim( ( tmpAntCliT )->cCodCli ) + "; " + ( tmpAntCliT )->cNomCli )
+                     ::oSender:SetText( "Añadido     : " + ( tmpAntCliT )->cSerAnt + "/" + AllTrim( str( ( tmpAntCliT )->NNUMANT ) ) + "/" + AllTrim( ( tmpAntCliT )->CSUFANT ) + "; " + Dtoc( ( tmpAntCliT )->DFECANT ) + "; " + Alltrim( ( tmpAntCliT )->cCodCli ) + "; " + ( tmpAntCliT )->cNomCli )
                   else
                      if dbLock( dbfAntCliT )
                         ( dbfAntCliT )->lLiquidada := ( tmpAntCliT )->lLiquidada
