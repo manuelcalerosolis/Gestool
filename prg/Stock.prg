@@ -2175,7 +2175,6 @@ RETURN ( lDup )
          :cValorPropiedad2       := ( ::cTikL )->cValPr2
          :cLote                  := ( ::cTikL )->cLote
 
-
          if IsTrue( lNumeroSerie )
 
             if ( ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT )
@@ -2191,7 +2190,7 @@ RETURN ( lDup )
             :nUnidades           := - nTotNTickets( ::cTikL )
 
          end if
-               
+
          ::Integra( hb_QWith() )
 
       end with
@@ -4524,24 +4523,20 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    if ( ::cTikL )->( dbSeek( cCodArt ) )
 
-      if !Empty( ( ::cTikL )->cComTil )
+      while ( ::cTikL )->cComTil == cCodArt .and. !( ::cTikL )->( Eof() )
 
-         while ( ::cTikL )->cComTil == cCodArt .and. !( ::cTikL )->( Eof() )
+         if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
+            ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and.;
+            ( ( ::cTikL )->nComStk < 2 ) .and.;
+            ( ::lCodigoAlmacen( ( ::cTikL )->cAlmLin ) )
 
-            if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
-               ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and.;
-               ( ( ::cTikL )->nCtlStk < 2 ) .and.;
-               ( ::lCodigoAlmacen( ( ::cTikL )->cAlmLin ) )
+            ::InsertStockTiketsClientes( .f. , .t.)
 
-               ::InsertStocktiketsClientes( .f. , .t.)
+         end if 
 
-            end if 
+         ( ::cTikL )->( dbSkip() )
 
-            ( ::cTikL )->( dbSkip() )
-
-         end while
-
-      end if
+      end while
 
    end if
 
@@ -6274,6 +6269,10 @@ METHOD lCodigoAlmacen( cCodigoAlmacen )
    if empty( cCodigoAlmacen )
       return .t.
    end if 
+
+   if empty( ::uCodigoAlmacen )
+      return .t.
+   end if
 
 Return ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
 

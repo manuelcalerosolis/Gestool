@@ -18199,6 +18199,7 @@ function aColTik()
    aAdd( aColTik, { "lMnuTil",  "L",      1,     0, "Línea de menú padre",                "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cCodMnu",  "C",      3,     0, "Código de menú",                     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nLinMnu",  "N",      4,     0, "Número de linea de menú",            "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "nComStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

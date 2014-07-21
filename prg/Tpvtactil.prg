@@ -5361,6 +5361,7 @@ METHOD AgregarCombinado()
       ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
       ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
       ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
+      ::oTemporalLinea:nComStk      := ::oArticulo:nCtlStock
 
       if ( ::oArticulo:lFacCnv )
          ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )

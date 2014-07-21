@@ -759,12 +759,6 @@ METHOD InitAcompannamientoSimple( cCodigoMenu, cCodigoOrden )
          ACTION   ( ::oLstArticulos:PageDown() )
 
       REDEFINE BUTTONBMP ;
-         BITMAP   "Check_32" ;
-         ID       IDOK ;
-         OF       ::oDlgAcompannamiento ;
-         ACTION   ( ::ProcesaDatosAcompannamiento() )
-
-      REDEFINE BUTTONBMP ;
          BITMAP   "Delete_32" ;
          ID       IDCANCEL ;
          OF       ::oDlgAcompannamiento ;
