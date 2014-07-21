@@ -2138,7 +2138,7 @@ RETURN ( lDup )
 
    METHOD InsertStockTiketsClientes( lNumeroSerie, lCombinado )
 
-      local nUnidades         := nTotVTikTpv( ::cTikL )
+      local nUnidades            := nTotVTikTpv( ::cTikL )
 
       with object ( SStock():New() )
 
@@ -4077,6 +4077,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       cCodArt           := Left( cCodArt, 18 )
    end if
 
+   // Colocamos el codigo de almacen-----------------------------------------
+
    ::SetCodigoAlmacen( cCodAlm )
 
    lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
@@ -4119,7 +4121,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          if ( Empty( dFecIni ) .or. ( ::cHisMovT)->dFecMov >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
             if ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
-               ( !Empty( ( ::cHisMovT)->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) )
+               ::lCodigoAlmacen( ( ::cHisMovT)->cAliMov )
 
                /*
                Buscamos el numero de serie----------------------------------------
@@ -4144,7 +4146,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             end if
 
             if ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
-               ( !Empty( ( ::cHisMovT)->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) )
+               ( !Empty( ( ::cHisMovT)->cAloMov ) .and. ( ::lCodigoAlmacen( ( ::cHisMovT)->cAloMov ) ) )
 
                /*
                Buscamos el numero de serie----------------------------------------
@@ -4184,13 +4186,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. !( ::cAlbPrvL )->( Eof() )
 
-         if ( ( ::cAlbPrvL )->nCtlStk < 2 )                                                                             .and.;
+         if ( ( ::cAlbPrvL )->nCtlStk < 2 ) .and.;
             ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) .and.;
             ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
             // Almacen destino-------------------------------------------------
 
-            if ( Empty( cCodAlm ) .or. ( ::cAlbPrvL )->cAlmLin == cCodAlm ) 
+            if ::lCodigoAlmacen( ( ::cAlbPrvL )->cAlmLin ) 
 
                /*
                Buscamos el numero de serie----------------------------------------
@@ -4216,7 +4218,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             // Almacen origen-------------------------------------------------- 
 
-            if !Empty( ( ::cAlbPrvL )->cAlmOrigen ) .and. ( Empty( cCodAlm ) .or. ( ::cAlbPrvL )->cAlmOrigen == cCodAlm ) 
+            if !Empty( ( ::cAlbPrvL )->cAlmOrigen ) .and. ( ::lCodigoAlmacen( ( ::cAlbPrvL )->cAlmOrigen ) )
                
                /*
                Buscamos el numero de serie----------------------------------------
@@ -4261,7 +4263,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          if ( ( ::cFacPrvL )->nCtlStk < 2 )                                                                             .and.;
             ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) ) .and.;
             ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )   .and.;
-            ( Empty( cCodAlm ) .or. ( ::cFacPrvL )->cAlmLin == cCodAlm ) 
+            ( ::lCodigoAlmacen( ( ::cFacPrvL )->cAlmLin ) ) 
 
             /*
             Buscamos el numero de serie----------------------------------------
@@ -4301,10 +4303,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cRctPrvL )->cRef == cCodArt .and. !( ::cRctPrvL )->( Eof() )
 
-         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac ) .and.;
-            ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin )   .and.;
-            ( ( ::cRctPrvL )->nCtlStk < 2 )                                                                             .and.;
-            ( Empty( cCodAlm ) .or. ( ::cRctPrvL )->cAlmLin == cCodAlm )
+         if ( ( ::cRctPrvL )->nCtlStk < 2 ) .and.;
+            ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac ) .and.;
+            ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) .and.;
+            ( ::lCodigoAlmacen( ( ::cRctPrvL )->cAlmLin ) )
 
              /*
             Buscamos el numero de serie----------------------------------------
@@ -4344,10 +4346,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cAlbCliL )->cRef == cCodArt .and. !( ::cAlbCliL )->( Eof() )
 
-         if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb ) .and.;
+         if ( ( ::cAlbCliL )->nCtlStk < 2 ) .and.;
+            ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb ) .and.;
             ( Empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )   .and.;
-            ( ( ( ::cAlbCliL )->nCtlStk < 2 )                                                                           .and.;
-            ( Empty( cCodAlm ) .or. ( ::cAlbCliL )->cAlmLin == cCodAlm ) )
+            ( ::lCodigoAlmacen( ( ::cAlbCliL )->cAlmLin ) )
 
             /*
             Buscamos el numero de serie----------------------------------------
@@ -4393,10 +4395,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             dFecDoc                 := ( ::cFacCliL )->dFecFac
          end if
 
-         if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, dFecDoc )  .and.;
-            ( Empty( dFecIni ) .or. dFecDoc >= dFecIni ) .and. ( Empty( dFecFin ) .or. dFecDoc <= dFecFin )   .and.;
-            ( ( ( ::cFacCliL )->nCtlStk < 2 )                                           .and.;
-            ( Empty( cCodAlm ) .or. ( ::cFacCliL )->cAlmLin == cCodAlm ) )
+         if ( ( ::cFacCliL )->nCtlStk < 2 ) .and.;
+            ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, dFecDoc ) .and.;
+            ( Empty( dFecIni ) .or. dFecDoc >= dFecIni ) .and. ( Empty( dFecFin ) .or. dFecDoc <= dFecFin ) .and.;
+            ( ::lCodigoAlmacen( ( ::cFacCliL )->cAlmLin ) )
 
             /*
             Buscamos el numero de serie----------------------------------------
@@ -4436,10 +4438,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cFacRecL )->cRef == cCodArt .and. !( ::cFacRecL )->( Eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac )  .and.;
+         if ( ( ::cFacRecL )->nCtlStk < 2 ) .and.;
+            ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac ) .and.;
             ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )   .and.;
-            ( ( ( ::cFacRecL )->nCtlStk < 2 )                                                                           .and.;
-            ( Empty( cCodAlm ) .or. ( ::cFacRecL )->cAlmLin == cCodAlm ) )
+            ( ::lCodigoAlmacen( ( ::cFacRecL )->cAlmLin ) )
 
             /*
             Buscamos el numero de serie----------------------------------------
@@ -4481,18 +4483,16 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
          if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
             ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and.;
-            ( ( ( ::cTikL )->nCtlStk < 2 )                                                                        .and.;
-            ( Empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm ) )
+            ( ( ::cTikL )->nCtlStk < 2 ) .and. ;
+            ( ::lCodigoAlmacen( ( ::cTikL )->cAlmLin ) )
 
-             /*
-            Buscamos el numero de serie----------------------------------------
-            */
+            // Buscamos el numero de serie-------------------------------------
 
             if lNumeroSerie .and. ( ::cTikS )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikl )->nNumLin ) ) )
 
                while ( ::cTikS )->cSerTiK + ( ::cTiks )->cNumTik + ( ::cTikS )->CSUFTIK + Str( ( ::cTikS )->nNumLin ) == ( ::cTikl )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikL )->nNumLin ) .and. !( ::cTikS )->( eof() )
 
-                  ::InsertStocktiketsClientes( .t. )
+                  ::InsertStockTiketsClientes( .t. )
 
                   ( ::cTikS )->( dbSkip() )
 
@@ -4500,11 +4500,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             else 
 
-               ::InsertStocktiketsClientes()
+               ::InsertStockTiketsClientes()
 
             end if 
 
          end if
+
+         // Siguiente registro-------------------------------------------------
 
          ( ::cTikL )->( dbSkip() )
 
@@ -4518,8 +4520,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    SysRefresh()
 
-   ( ::cTikL )->( dbGoTop() )
-
    nOrdAnt              := ( ::cTikL )->( OrdSetFocus( "cStkCom" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt ) )
@@ -4530,29 +4530,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
                ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and.;
-               ( ( ( ::cTikL )->nCtlStk < 2 )                                                                        .and.;
-               ( Empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm ) )
-
-            /*
-            Buscamos el numero de serie----------------------------------------
-            */
-
-           if lNumeroSerie .and. ( ::cTikS )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikl )->nNumLin ) ) )
-
-               while ( ::cTikS )->cSerTil + ( ::cTiks )->cNumTil + ( ::cTikS )->cSufTil + Str( ( ::cTikS )->nNumLin ) == ( ::cTikS )->cSerTil + ( ::cTikS )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikL )->nNumLin ) .and. !( ::cTikS )->( eof() )
-                  ::InsertStocktiketsClientes( .t. , .t. )
-
-                  ( ::cTikS )->( dbSkip() )
-
-               end while
-
-            else 
+               ( ( ::cTikL )->nCtlStk < 2 ) .and.;
+               ( ::lCodigoAlmacen( ( ::cTikL )->cAlmLin ) )
 
                ::InsertStocktiketsClientes( .f. , .t.)
 
             end if 
-
-         end if
 
             ( ::cTikL )->( dbSkip() )
 
@@ -4576,7 +4559,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
          if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd )  .and.;
             ( Empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )  .and.;
-            ( Empty( cCodAlm ) .or. ( ::cProducL )->cAlmOrd == cCodAlm )
+            ( ::lCodigoAlmacen( ( ::cProducL )->cAlmOrd ) )
 
             /*
             Buscamos el numero de serie----------------------------------------
@@ -4594,7 +4577,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             else 
 
-               ::InsertStockMaterialesProducidos ()
+               ::InsertStockMaterialesProducidos()
 
             end if 
 
@@ -4623,7 +4606,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
          if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd )  .and.;
             ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )   .and.;
-            ( Empty( cCodAlm ) .or. ( ::cProducM )->cAlmOrd == cCodAlm )
+            ( ::lCodigoAlmacen( ( ::cProducM )->cAlmOrd ) )
 
             /*
             Buscamos el numero de serie----------------------------------------
@@ -4667,7 +4650,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
          while ( ::cPedPrvL )->cRef == cCodArt .and. !( ::cPedPrvL )->( Eof() )
 
-            if Empty( cCodAlm ) .or. ( ::cPedPrvL )->cAlmLin == cCodAlm
+            if ::lCodigoAlmacen( ( ::cPedPrvL )->cAlmLin )
 
                if ( ::cPedPrvL )->nEstado != 3
 

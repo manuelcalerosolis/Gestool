@@ -2631,7 +2631,7 @@ CLASS EnlaceA3
    DATA hAsiento
    DATA aAsiento                          INIT {}
 
-   DATA cDirectory                        INIT "C:\EnlaceA3"
+   DATA cDirectory                        INIT "C:\ENLACEA3"
    DATA cFile                             INIT "SUENLACE.DAT" 
    DATA hFile 
    DATA cDate                             INIT DateToString()
@@ -2751,8 +2751,8 @@ ENDCLASS
    METHOD New()
 
       ::aAsiento                          := {}
-      ::cDirectory                        := "C:\EnlaceA3"
-      ::cFile                             := "SuEnalce.Dat" 
+      ::cDirectory                        := "C:\ENLACEA3"
+      ::cFile                             := "SUENALCE.DAT" 
       ::cDate                             := DateToString()
       ::cBuffer                           := ""
 
