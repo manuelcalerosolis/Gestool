@@ -1303,6 +1303,10 @@ Static Function aPropertiesTable( oBrw, nTotalCol )
 
    nAt               := oBrw:nAt
 
+   if nAt == 0
+      Return ( aRow )
+   end if 
+
    for n := 1 to nTotalCol
       if oBrw:Cargo[ nAt, n ]:Value == nil
          aAdd( aRow, oBrw:Cargo[ nAt, n ]:cText )
