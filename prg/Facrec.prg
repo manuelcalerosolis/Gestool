@@ -188,6 +188,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DESCRIP                 72
 #define _LLINOFE                 73      //   L      1     0
 #define _LVOLIMP                 74
+#define __DFECFAC						75
+#define __NBULTOS 					76
+#define _CFORMATO 					77
 
 /*
 Definici¢n de Array para impuestos
@@ -3856,6 +3859,20 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
 
+      /*
+      Bultos, cajas y unidades
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ __NBULTOS ] ;
+         VAR      aTmp[ __NBULTOS ] ;
+         ID       450 ;
+         IDSAY    451 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  cPicUnd ;
+         OF       oFld:aDialogs[1]
+
 		REDEFINE GET aGet[_NCANENT] VAR aTmp[_NCANENT] ;
 			ID 		130 ;
 			SPINNER ;
@@ -3978,6 +3995,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       410;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .AND. nMode != MULT_MODE ) ;
 			COLOR 	CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       460;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE CHECKBOX aGet[ _LVOLIMP ] VAR aTmp[ _LVOLIMP ] ;
@@ -4276,6 +4298,14 @@ Comprtamiento de la caja de dialogo
 STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if !lUseCaj()
       aGet[ _NCANENT ]:Hide()
@@ -12697,6 +12727,8 @@ function aColFacRec()
    aAdd( aColFacRec, { "lLinOfe"     ,"L",  1, 0, "Linea con oferta"                      ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "lVolImp"     ,"L",  1, 0, "Aplicar volumen impuestos especiales " ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "dFecFac"     ,"D",  8, 0, "Fecha de la factura rectificativa"     ,"" ,              "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nBultos"  	 ,"N", 16, 6, "Numero de bultos en líneas"				,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "cFormato" 	 ,"C",100, 0, "Formato de venta"								,"",               "", "( cDbfCol )" } )
 
 return ( aColFacRec )
 

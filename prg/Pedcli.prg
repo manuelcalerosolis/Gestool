@@ -4375,9 +4375,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end if
 
       /*
-      Cajas y unidades
-      -------------------------------------------------------------------------
+      Bultos, cajas y unidades-------------------------------------------------
       */
+
+      REDEFINE GET aGet[ __NBULTOS ] ;
+         VAR      aTmp[ __NBULTOS ] ;
+         ID       450 ;
+         IDSAY    451 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  cPicUnd ;
+         OF       oFld:aDialogs[1]
 
 		REDEFINE GET aGet[_NCANPED] VAR aTmp[_NCANPED];
 			ID 		130 ;
@@ -4502,6 +4510,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       410;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
 			COLOR 	CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       460;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
@@ -9758,6 +9771,15 @@ Estudiamos la posiblidades que se pueden dar en una linea de detalle
 STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+
+   
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if !lUseCaj()
       aGet[ _NCANPED ]:Hide()
