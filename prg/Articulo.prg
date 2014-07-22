@@ -200,8 +200,8 @@ Static Function aItmCom()
    aAdd( aBase, { "cCodDiv",   "C",  3, 0, "Código de divisa"              , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad"   , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad"   , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad"    , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad"    , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr1",   "C", 40, 0, "Valor de primera propiedad"    , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr2",   "C", 40, 0, "Valor de segunda propiedad"    , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreCom",   "N", 16, 6, "Precio de compras"             , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nValPnt",   "N", 16, 6, "Valor del punto"               , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto"           , "",                  "", "( cDbfArt )", nil } )
@@ -7026,7 +7026,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   if aVal1:lsel
 
-                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 20 ) + aVal1:cValPrp + Space( 20 ) ) )
+                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 40 ) + aVal1:cValPrp + Space( 40 ) ) )
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
@@ -15836,8 +15836,8 @@ Function aItmVta()
    aAdd( aBase, { "cCodDiv",   "C",  3, 0, "Código de divisa",                         "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",               "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad",               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr1",   "C", 40, 0, "Valor de primera propiedad",               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr2",   "C", 40, 0, "Valor de segunda propiedad",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreCom",   "N", 16, 6, "Precio de compras",                        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nValPnt",   "N", 16, 6, "Valor del punto",                          "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto",                      "",                  "", "( cDbfArt )", nil } )
@@ -15903,8 +15903,8 @@ Function aItmLbl()
    aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo",                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",               "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad",               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr1",   "C", 40, 0, "Valor de primera propiedad",               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr2",   "C", 40, 0, "Valor de segunda propiedad",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nUndLbl",   "N", 16, 6, "Precio de compras",                        "",                  "", "( cDbfArt )", nil } )
 
 Return ( aBase )
@@ -18545,7 +18545,7 @@ return( nCosto )
 CLASS SValorPropiedades
 
    DATA cCodPrp   INIT Space( 20 )
-   DATA cValPrp   INIT Space( 20 )
+   DATA cValPrp   INIT Space( 40 )
    DATA cDesPrp
    DATA nColor
    DATA lSel      INIT .f.

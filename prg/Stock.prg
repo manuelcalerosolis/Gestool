@@ -2623,8 +2623,8 @@ METHOD nTotAlbPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cAlbEmpT
    local cAlbEmpL
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    nTotal            := 0
@@ -2719,8 +2719,8 @@ METHOD nTotFacPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cFacEmpT
    local cFacEmpL
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    nTotal            := 0
@@ -2811,8 +2811,8 @@ METHOD nTotRctPrv( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cFacEmpT
    local cFacEmpL
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    nTotal            := 0
@@ -2904,8 +2904,8 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cAlbEmpL
    local cCodEmp
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    if Len( aEmpGrp() ) != 0
@@ -3088,8 +3088,8 @@ METHOD nTotFacRec( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cFacRecEmpT
    local cFacRecEmpL
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    if Len( aEmpGrp() ) != 0
@@ -3179,8 +3179,8 @@ METHOD nTotTikCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cTikEmpL
    local nTotal      := 0
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    if Len( aEmpGrp() ) != 0
@@ -3319,8 +3319,8 @@ METHOD nTotMovAlm( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local nOrd
    local nTotal      := 0
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    nOrd              := ( ::cHisMovT)->( OrdSetFocus( "cRefMov" ) )
@@ -3814,8 +3814,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
    DEFAULT cCodPr1      := Space( 20 )
    DEFAULT cCodPr2      := Space( 20 )
-   DEFAULT cValPr1      := Space( 20 )
-   DEFAULT cValPr2      := Space( 20 )
+   DEFAULT cValPr1      := Space( 40 )
+   DEFAULT cValPr2      := Space( 40 )
    DEFAULT cLote        := Space( 12 )
 
    /*

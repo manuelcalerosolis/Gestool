@@ -68,8 +68,8 @@ function aItmTarifaLineas()
    aAdd( aItmTar, { "NDTOPRM",   "N",    6,    2, "Descuento promoción" }            )
    aAdd( aItmTar, { "CCODPR1",   "C",   20,    0, "Código de primera propiedad" }    )
    aAdd( aItmTar, { "CCODPR2",   "C",   20,    0, "Código de segunda propiedad" }    )
-   aAdd( aItmTar, { "CVALPR1",   "C",   20,    0, "Valor de primera propiedad" }     )
-   aAdd( aItmTar, { "CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" }     )
+   aAdd( aItmTar, { "CVALPR1",   "C",   40,    0, "Valor de primera propiedad" }     )
+   aAdd( aItmTar, { "CVALPR2",   "C",   40,    0, "Valor de segunda propiedad" }     )
 
 Return ( aItmTar )      
 
@@ -84,8 +84,8 @@ function aItmTarifaAgentes()
    aAdd( aItmTar, { "CCODFAM",   "C",   16,    0, "Código de la família" }                )
    aAdd( aItmTar, { "CCODPR1",   "C",   20,    0, "Código de primera propiedad" }         )
    aAdd( aItmTar, { "CCODPR2",   "C",   20,    0, "Código de segunda propiedad" }         )
-   aAdd( aItmTar, { "CVALPR1",   "C",   20,    0, "Valor de primera propiedad" }          )
-   aAdd( aItmTar, { "CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" }          )
+   aAdd( aItmTar, { "CVALPR1",   "C",   40,    0, "Valor de primera propiedad" }          )
+   aAdd( aItmTar, { "CVALPR2",   "C",   40,    0, "Valor de segunda propiedad" }          )
    aAdd( aItmTar, { "CCODAGE",   "C",    3,    0, "Código del agentes" }                  )
    aAdd( aItmTar, { "NCOMAGE",   "N",    6,    2, "Porcentaje de comisión del agente" }   )
    aAdd( aItmTar, { "NCOMPRM",   "N",    6,    2, "Porcentaje de comisión en promoción" } )
@@ -1996,8 +1996,8 @@ FUNCTION RetDtoAge( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
 
    DEFAULT cCodPr1:= Space( 20 )
    DEFAULT cCodPr2:= Space( 20 )
-   DEFAULT cValPr1:= Space( 20 )
-   DEFAULT cValPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 40 )
+   DEFAULT cValPr2:= Space( 40 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2049,8 +2049,8 @@ FUNCTION RetDtoPrm( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
 
    DEFAULT cCodPr1:= Space( 20 )
    DEFAULT cCodPr2:= Space( 20 )
-   DEFAULT cValPr1:= Space( 20 )
-   DEFAULT cValPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 40 )
+   DEFAULT cValPr2:= Space( 40 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2096,8 +2096,8 @@ FUNCTION RetComTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
 
    DEFAULT cCodPr1:= Space( 20 )
    DEFAULT cCodPr2:= Space( 20 )
-   DEFAULT cValPr1:= Space( 20 )
-   DEFAULT cValPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 40 )
+   DEFAULT cValPr2:= Space( 40 )
 
    if ( dbfTarPreL )->( dbSeek( cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
       cCodSek  := cCodTar + cCodArt + Space(16) + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cCodAge
@@ -2125,8 +2125,8 @@ FUNCTION RetLinTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
 
    DEFAULT cCodPr1:= Space( 20 )
    DEFAULT cCodPr2:= Space( 20 )
-   DEFAULT cValPr1:= Space( 20 )
-   DEFAULT cValPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 40 )
+   DEFAULT cValPr2:= Space( 40 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2163,8 +2163,8 @@ FUNCTION RetPctTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
 
    DEFAULT cCodPr1:= Space( 20 )
    DEFAULT cCodPr2:= Space( 20 )
-   DEFAULT cValPr1:= Space( 20 )
-   DEFAULT cValPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 40 )
+   DEFAULT cValPr2:= Space( 40 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2204,8 +2204,8 @@ FUNCTION RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTar
 
    DEFAULT cCodPr1:= Space( 20 )
    DEFAULT cCodPr2:= Space( 20 )
-   DEFAULT cValPr1:= Space( 20 )
-   DEFAULT cValPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 40 )
+   DEFAULT cValPr2:= Space( 40 )
    DEFAULT nTarPre:= 1
 
    cCodSek        := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2

@@ -338,7 +338,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "         + oUser():cCaja(), 100,,,, .t., {|| SelectCajas() } )
 
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "      + oUser():cAlmacen(), 100,,,, .t., {|| SelectAlmacen() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "      + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
    oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t. ) 
 
