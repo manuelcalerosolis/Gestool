@@ -247,11 +247,15 @@ static oPais
 static oCtaRem
 static cAgente
 static oNewImp
+
 static cPinDiv
 static cPouDiv
 static cPorDiv
+
 static aRgbColor
+
 static oMenu
+
 static oStock
 static oBanco
 static aFacAut          := {}
@@ -8361,9 +8365,9 @@ FUNCTION aItmAtp()
    aAdd( aBase,  { "cCodFam",   "C", 16, 0, "Código de familias en atipicas" }         )
    aAdd( aBase,  { "nTipAtp",   "N",  1, 0, "Tipo de atípicas" }                       )
    aAdd( aBase,  { "cCodPr1",   "C", 20, 0, "Código propiedad 1" }                     )
-   aAdd( aBase,  { "cValPr1",   "C", 20, 0, "Valor propiedad 1" }                      )
+   aAdd( aBase,  { "cValPr1",   "C", 40, 0, "Valor propiedad 1" }                      )
    aAdd( aBase,  { "cCodPr2",   "C", 20, 0, "Código propiedad 2" }                     )
-   aAdd( aBase,  { "cValPr2",   "C", 20, 0, "Valor propiedad 2" }                      )
+   aAdd( aBase,  { "cValPr2",   "C", 40, 0, "Valor propiedad 2" }                      )
    aAdd( aBase,  { "dFecIni",   "D",  8, 0, "Fecha inicio de la situación atipica" }   )
    aAdd( aBase,  { "dFecFin",   "D",  8, 0, "Fecha fin de la situación atipica" }      )
    aAdd( aBase,  { "lPrcCom",   "L",  1, 0, "Lógico para precio de compras personal" } )
@@ -8894,7 +8898,7 @@ function lSeekAtpArt( cCadSea, cCodPrp, cValPrp, dFecDoc, dbfCliAtp )
    local nOrd        := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
 
    DEFAULT cCodPrp   := Space( 20 )
-   DEFAULT cValPrp   := Space( 20 )
+   DEFAULT cValPrp   := Space( 40 )
 
    if ( dbfCliAtp )->( dbSeek( cCadSea + cCodPrp + cValPrp ) )
 
@@ -12409,8 +12413,8 @@ Function lBuscarAtipicaArticulo( cCodCli, cCodGrp, dFecDoc, cCodArt, cCodPr1, cC
 
    DEFAULT cCodPr1   := Space( 20 )
    DEFAULT cCodPr2   := Space( 20 )
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr1   := Space( 40 )
 
    nOrd              := ( dbfCliAtp )->( OrdSetFocus( "cCliArt" ) )
 

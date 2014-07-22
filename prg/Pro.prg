@@ -1514,8 +1514,8 @@ Method New() CLASS TPropertiesItems
    ::Value              := nil
    ::cCodigoPropiedad1  := Space( 20 )
    ::cCodigoPropiedad2  := Space( 20 )
-   ::cValorPropiedad1   := Space( 20 )
-   ::cValorPropiedad2   := Space( 20 )
+   ::cValorPropiedad1   := Space( 40 )
+   ::cValorPropiedad2   := Space( 40 )
    ::nPrecioCompra      := 0
 
 Return ( Self )

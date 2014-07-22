@@ -12680,8 +12680,8 @@ function aColFacRec()
    aAdd( aColFacRec, { "LIMPLIN"     ,"L",  1, 0, "Valor lógico línea no imprimible"      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CCODPR1"     ,"C", 20, 0, "Código de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CCODPR2"     ,"C", 20, 0, "Código de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CVALPR1"     ,"C", 20, 0, "Valor de primera propiedad"            , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CVALPR2"     ,"C", 20, 0, "Valor de segunda propiedad"            , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CVALPR1"     ,"C", 40, 0, "Valor de primera propiedad"            , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CVALPR2"     ,"C", 40, 0, "Valor de segunda propiedad"            , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NFACCNV"     ,"N", 16, 6, "Factor de conversión de la compra"     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NDTODIV"     ,"N", 16, 6, "Descuento lineal de la compra"         , "'@EZ 99,99'" ,  "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LSEL"        ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
@@ -12812,8 +12812,8 @@ function nTotRFacRec( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, cFacRe
    local aStaFac     := aGetStatus( cFacRecT, .t. )
    local aStaLin     := aGetStatus( dbfFacRecL, .f. )
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
 
    ( dbfFacRecL )->( dbGoTop() )
 

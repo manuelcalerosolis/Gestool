@@ -17477,8 +17477,8 @@ static function EdtPdaL( aTmp, aGet, dbfTmpL, oBrw, aTmpHead, lNegative, nMode )
    aTmp[ _LOFETIL ]     := .f.
    aTmp[ _CCODPR1 ]     := Space( 20 )
    aTmp[ _CCODPR2 ]     := Space( 20 )
-   aTmp[ _CVALPR1 ]     := Space( 20 )
-   aTmp[ _CVALPR2 ]     := Space( 20 )
+   aTmp[ _CVALPR1 ]     := Space( 40 )
+   aTmp[ _CVALPR2 ]     := Space( 40 )
 
    if ( dbfArticulo )->lFacCnv
       aTmp[ _NFACCNV ]  := ( dbfArticulo )->nFacCnv
@@ -18140,8 +18140,8 @@ function aColTik()
    aAdd( aColTik, { "nDtoLin",  "N",      6,     2, "Descuento en linea",                 "'@E 999.9'",        "", "( cDbfCol )" } )
    aAdd( aColTik, { "cCodPr1",  "C",     20,     0, "Código de la primera propiedad",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cCodPr2",  "C",     20,     0, "Código de la segunda propiedad",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cValPr1",  "C",     20,     0, "Valor de la primera propiedad",      "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cValPr2",  "C",     20,     0, "Valor de la segunda propiedad",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cValPr1",  "C",     40,     0, "Valor de la primera propiedad",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cValPr2",  "C",     40,     0, "Valor de la segunda propiedad",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nFacCnv",  "N",     16,     6, "Factor de conversión",               "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nDtoDiv",  "N",     16,     6, "Descuento lineal de la compra",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lTipAcc",  "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )

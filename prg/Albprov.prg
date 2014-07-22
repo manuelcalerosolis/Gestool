@@ -8928,8 +8928,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "LCHGLIN",      "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CCODPR1",      "C", 20,  0, "Código de primera propiedad", "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CCODPR2",      "C", 20,  0, "Código de segunda propiedad", "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALPR1",      "C", 20,  0, "Valor de primera propiedad",  "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALPR2",      "C", 20,  0, "Valor de segunda propiedad",  "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "CVALPR1",      "C", 40,  0, "Valor de primera propiedad",  "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "CVALPR2",      "C", 40,  0, "Valor de segunda propiedad",  "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NFACCNV",      "N", 13,  4, "Factor de conversión de la compra","",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CCODPED",      "C", 12,  0, "Número del pedido",           "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cAlmLin",      "C", 16,  0, "Código del almacén",          "",                    "", "( cDbfCol )" } )
@@ -9018,8 +9018,8 @@ function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, 
    local nOrd
    local nTot        := 0
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
 
    nRec              := ( cAlbPrvL )->( Recno() )
    nOrd              := ( cAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
@@ -9049,8 +9049,8 @@ function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, 
    local nOrd
    local nTot        := 0
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
 
    nRec           := ( cAlbPrvL )->( Recno() )
    nOrd           := ( cAlbPrvL )->( OrdSetFocus( "cPedPrvRef" ) )

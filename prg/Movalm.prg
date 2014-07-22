@@ -1263,8 +1263,8 @@ static function LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, o
 
          aTmp[ _CCODPR1 ]  := ( dbfArticulo )->cCodPrp1
          aTmp[ _CCODPR2 ]  := ( dbfArticulo )->cCodPrp2
-         aTmp[ _CVALPR1 ]  := Space( 20 )
-         aTmp[ _CVALPR2 ]  := Space( 20 )
+         aTmp[ _CVALPR1 ]  := Space( 40 )
+         aTmp[ _CVALPR2 ]  := Space( 40 )
 
          if !Empty( aTmp[_CCODPR1 ] )
 
@@ -1697,8 +1697,8 @@ Function aItmMov()
    aAdd( aBase, { "cCodMov",   "C",     2,    0, "Tipo de movimiento" }                )
    aAdd( aBase, { "cCodPr1",   "C",    20,    0, "Código de la primera propiedad" }    )
    aAdd( aBase, { "cCodPr2",   "C",    20,    0, "Código de la segunda propiedad" }    )
-   aAdd( aBase, { "cValPr1",   "C",    20,    0, "Valor de la primera propiedad"  }    )
-   aAdd( aBase, { "cValPr2",   "C",    20,    0, "Valor de la segunda propiedad"  }    )
+   aAdd( aBase, { "cValPr1",   "C",    40,    0, "Valor de la primera propiedad"  }    )
+   aAdd( aBase, { "cValPr2",   "C",    40,    0, "Valor de la segunda propiedad"  }    )
    aAdd( aBase, { "cCodUsr",   "C",     3,    0, "Código de usuario" }                 )
    aAdd( aBase, { "cCodDlg",   "C",     2,    0, "Código de delegación" }              )
    aAdd( aBase, { "lLote"  ,   "L",     1,    0, "" }                                  )
