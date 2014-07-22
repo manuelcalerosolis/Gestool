@@ -317,7 +317,7 @@ METHOD Resource( nMode )
       REDEFINE GET ::oDbf:nImpMnu ;
          ID       120 ;
          PICTURE  ( cPorDiv() ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !::oDbf:lAcomp ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX ::oDbf:lObsMnu ;
