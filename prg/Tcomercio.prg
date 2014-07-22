@@ -4998,7 +4998,9 @@ METHOD lLimpiaRefImgWeb()
 
    while !::oArtDiv:Eof()
 
-      ::oArtDiv:fieldPutByName( "cCodImgWeb", 0 )
+      if ::oArtDiv:cCodImgWeb != 0
+         ::oArtDiv:fieldPutByName( "cCodImgWeb", 0 )
+      end if   
 
       ::oArtDiv:Skip()
 
