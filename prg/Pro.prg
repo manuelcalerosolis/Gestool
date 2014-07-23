@@ -245,14 +245,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             :cHeader          := "Código"
             :cSortOrder       := "cCodTbl"
             :bEditValue       := {|| ( dbfTmpProL )->cCodTbl }
-            :nWidth           := 60
+            :nWidth           := 160
          end with
 
          with object ( oBrw:AddCol() )
             :cHeader          := "Nombre"
             :cSortOrder       := "cDesTbl"
             :bEditValue       := {|| ( dbfTmpProL )->cDesTbl }
-            :nWidth           := 160
+            :nWidth           := 250
          end with
 
          with object ( oBrw:AddCol() )
@@ -273,6 +273,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             :nWidth           := 50
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          oBrw:CreateFromResource( 120 )
@@ -910,11 +911,7 @@ Return .t.
 
 Static Function DelDet( oBrwLineas )
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
-
-      dbDelRec( oBrwLineas, dbfTmpProL )
-
-   end if
+   dbDelRec( oBrwLineas, dbfTmpProL )
 
 Return .t.
 

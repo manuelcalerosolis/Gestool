@@ -3536,13 +3536,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Prop. 1"
-         :nWidth              := 40
+         :nWidth              := 120
          :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad1, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Prop. 2"
-         :nWidth              := 40
+         :nWidth              := 120
          :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad2, "" ) }
       end with
 
@@ -3578,6 +3578,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          :nDataStrAlign       := AL_RIGHT
          :nHeadStrAlign       := AL_RIGHT
          :nFootStrAlign       := AL_RIGHT
+         :lHide               := .t.
       end with
 
       with object ( oBrwStk:AddCol() )
@@ -3589,6 +3590,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          :nDataStrAlign       := AL_RIGHT
          :nHeadStrAlign       := AL_RIGHT
          :nFootStrAlign       := AL_RIGHT
+         :lHide               := .t.
       end with
 
    oBrwStk:CreateFromResource( 130 )
@@ -4780,7 +4782,7 @@ static function ImportaImagenes( aTmp, oBrwImg )
    local aImagenes
    local cImage
    local lDefault       := .f.
-   local cDirectorio    := uFieldEmpresa( "CDIRIMG" )
+   local cDirectorio    := cDirectorioImagenes()
    local cPrefix        := cDirectorio + AllTrim( aTmp[ ( dbfArticulo )->( fieldpos( "codigo" ) ) ] )
    local nOrdAnt        := ( dbfTmpImg )->( OrdSetFocus( "cImgArt" ) )
 
