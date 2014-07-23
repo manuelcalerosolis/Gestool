@@ -1636,11 +1636,7 @@ METHOD lGenerate() CLASS TFastReportInfGen
    aGenerate         := ::GetReportType()
 
    if !Empty( aGenerate )
-      msgAlert( "NO Esta vacio el Generate" )
       Eval( hGet( aGenerate, "Generate" ) )
-   else 
-      msgAlert( "Esta vacio el Generate" )
-
    end if 
 
    // Colocamos el filtro -----------------------------------------------------
