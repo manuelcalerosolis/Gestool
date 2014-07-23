@@ -16125,8 +16125,8 @@ Function nCosto( uTmp, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
    BEGIN SEQUENCE
 
    nOrdArt           := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
-   nOrdKit           := ( dbfArtKit   )->( OrdSetFocus( "cCodKit" ) )
    nRecArt           := ( dbfArticulo )->( Recno() )
+   nOrdKit           := ( dbfArtKit   )->( OrdSetFocus( "cCodKit" ) )
    nRecKit           := ( dbfArtKit   )->( Recno() )
 
    do case
@@ -16157,8 +16157,8 @@ Function nCosto( uTmp, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
    end if
 
    ( dbfArticulo )->( OrdSetFocus( nOrdArt ) )
-   ( dbfArtKit   )->( OrdSetFocus( nOrdKit ) )
    ( dbfArticulo )->( dbGoTo( nRecArt ) )
+   ( dbfArtKit   )->( OrdSetFocus( nOrdKit ) )
    ( dbfArtKit   )->( dbGoTo( nRecKit ) )
 
    if dbfDiv != nil

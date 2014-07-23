@@ -1633,9 +1633,14 @@ METHOD lGenerate() CLASS TFastReportInfGen
 
    // Generamos el informe-----------------------------------------------------
 
-   aGenerate   := ::GetReportType()
+   aGenerate         := ::GetReportType()
+
    if !Empty( aGenerate )
+      msgAlert( "NO Esta vacio el Generate" )
       Eval( hGet( aGenerate, "Generate" ) )
+   else 
+      msgAlert( "Esta vacio el Generate" )
+
    end if 
 
    // Colocamos el filtro -----------------------------------------------------
@@ -1653,6 +1658,7 @@ METHOD SetDataReport() CLASS TFastReportInfGen
    local aData
 
    aData       := ::GetReportType()
+
    if !Empty( aData )
       Eval( hGet( aData, "Data" ) )
    end if 
@@ -1668,6 +1674,7 @@ METHOD AddVariable() CLASS TFastReportInfGen
    Super:AddVariable()
 
    aVariable   := ::GetReportType()
+
    if !Empty( aVariable )
       Eval( hGet( aVariable, "Variable" ) )
    end if 

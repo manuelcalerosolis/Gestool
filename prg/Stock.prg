@@ -5687,7 +5687,12 @@ Method Integra( sStocks ) CLASS TStock
 
    if ::lIntegra
 
-      nPos              := aScan( ::aStocks, {|o| o:cCodigo == sStocks:cCodigo .and. o:cCodigoAlmacen == sStocks:cCodigoAlmacen .and. o:cValorPropiedad1 == sStocks:cValorPropiedad1 .and. o:cValorPropiedad2 == sStocks:cValorPropiedad2 .and. if( ::lLote, rtrim( o:cLote ) == rtrim( sStocks:cLote ), .t. ) .and. if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
+      nPos              := aScan( ::aStocks, {|o|  rtrim( o:cCodigo ) == rtrim( sStocks:cCodigo )                    .and.;
+                                                   rtrim( o:cCodigoAlmacen ) == rtrim( sStocks:cCodigoAlmacen )      .and.;
+                                                   rtrim( o:cValorPropiedad1 ) == rtrim( sStocks:cValorPropiedad1 )  .and.;
+                                                   rtrim( o:cValorPropiedad2 ) == rtrim( sStocks:cValorPropiedad2 )  .and.;
+                                                   if( ::lLote, rtrim( o:cLote ) == rtrim( sStocks:cLote ), .t. )    .and.;
+                                                   if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
       if nPos != 0
          ::aStocks[ nPos ]:nUnidades               += sStocks:nUnidades
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir
