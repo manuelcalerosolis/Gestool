@@ -1860,7 +1860,7 @@ Static Function aItmTmpBrw()
 
    local aBase := {}
 
-   aAdd( aBase, { "CCODTBL",  "C", 20, 0, "Código de línea de propiedadades"   } )
+   aAdd( aBase, { "CCODTBL",  "C", 40, 0, "Código de línea de propiedadades"   } )
    aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de línea de propiedadades"   } )
 
 return ( aBase )
@@ -2062,7 +2062,7 @@ Static Function aItmPro()
    local aBase := {}
 
    aAdd( aBase, { "cCodPro",   "C", 20, 0, "Código propiedad"                       } )
-   aAdd( aBase, { "cCodTbl",   "C", 20, 0, "Código de línea de propiedad"           } )
+   aAdd( aBase, { "cCodTbl",   "C", 40, 0, "Código de línea de propiedad"           } )
    aAdd( aBase, { "cDesTbl",   "C", 30, 0, "Nombre de línea de propiedad"           } )
    aAdd( aBase, { "nOrdTbl",   "N",  4, 0, "Número de orden para codigos de barras" } )
    aAdd( aBase, { "nBarTbl",   "C",  4, 0, "Código para codigos de barras"          } )
