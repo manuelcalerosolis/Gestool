@@ -106,6 +106,7 @@ CLASS TStock
 
    DATA oDbfStock
    DATA cDbfStock
+   DATA cCdxStock
 
    METHOD New( cPath, lExclusive )
 
@@ -307,6 +308,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    DEFAULT cPath        := cPatTmp()
 
    ::cDbfStock          := "Stock" + cCurUsr() + ".Dbf"
+   ::cCdxStock          := "Stock" + cCurUsr() + ".Cdx"
 
    ::DeleteTemporalFiles( cPath )
 
@@ -329,9 +331,9 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento lote"             OF ::oDbfStock
    FIELD NAME "cTipDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Tipo del documento"                    OF ::oDbfStock
 
-   INDEX TO "Stock.Cdx" TAG "cCodArt"  ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "Código"           FOR "!Deleted()" OF ::oDbfStock
-   INDEX TO "Stock.Cdx" TAG "cCodAlm"  ON "cAlmacen + cCodigo + cValPrp1 + cValPrp2 + cLote"  COMMENT "Almacen"          FOR "!Deleted()" OF ::oDbfStock
-   INDEX TO "Stock.Cdx" TAG "dFecCad"  ON "Dtos( dFecCad ) + cLote"                           COMMENT "Fecha caducidad"  FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO ( ::cCdxStock ) TAG "cCodArt"  ON "cCodigo + cAlmacen + cValPrp1 + cValPrp2 + cLote"  COMMENT "Código"           FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO ( ::cCdxStock ) TAG "cCodAlm"  ON "cAlmacen + cCodigo + cValPrp1 + cValPrp2 + cLote"  COMMENT "Almacen"          FOR "!Deleted()" OF ::oDbfStock
+   INDEX TO ( ::cCdxStock ) TAG "dFecCad"  ON "Dtos( dFecCad ) + cLote"                           COMMENT "Fecha caducidad"  FOR "!Deleted()" OF ::oDbfStock
 
    END DATABASE ::oDbfStock
 
