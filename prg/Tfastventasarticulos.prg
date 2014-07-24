@@ -1926,7 +1926,10 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
 
    DEFAULT lStock          := .f.
 
-   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+   ::oDbfArt:OrdClearScope()   
+
+   ::oMtrInf:SetTotal(  ::oDbfArt:OrdKeyCount() )
+   ::oMtrInf:AutoInc(   ::oDbfArt:OrdKeyCount() )
 
    ::oMtrInf:cText         := "Procesando artículos"
 
@@ -1934,15 +1937,15 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
    Vaciamos los stocks anteriores----------------------------------------------
    */
 
-   ::oStock:ZapStockArticulo()   
+   if lStock
+      ::oStock:ZapStockArticulo()   
+   end if 
 
    /*
    Recorremos artículos--------------------------------------------------------
    */
 
-   ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
-
-   ::oDbfArt:GoTop()
+   ::oDbfArt:GoTop() 
    while !::oDbfArt:Eof() .and. !::lBreak
 
       ::oDbf:Blank()
@@ -1955,8 +1958,9 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       ::oDbf:cCodCate := ::oDbfArt:cCodCate
       ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
       ::oDbf:cCodFab  := ::oDbfArt:cCodFab
-      ::oDbf:cCodGrp  := ""
       ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+/*
+      ::oDbf:cCodGrp  := ""
       ::oDbf:cCodCli  := ""
       ::oDbf:cNomCli  := ""
       ::oDbf:cPobCli  := ""
@@ -1968,10 +1972,8 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       ::oDbf:cCodAge  := ""
       ::oDbf:cCodTrn  := ""
       ::oDbf:cCodUsr  := ""
-
-      /*
-      AÃ±adimos un nuevo registro----------------------------------------------
-      */
+*/
+      // Añadimos un nuevo registro--------------------------------------------
 
       ::InsertIfValid()
 
@@ -1981,7 +1983,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
          ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
       end if
  
-      // siguiente
+      // Siguiente-------------------------------------------------------------
 
       ::oDbfArt:Skip()
 

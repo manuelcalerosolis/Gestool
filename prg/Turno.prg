@@ -7552,10 +7552,17 @@ METHOD SyncAllDbf()
 
    ::oDbf:Activate( .f., .f. )
    while !::oDbf:Eof()
+
       if Empty( ::oDbf:cSufTur )
          ::oDbf:FieldPutByName( "cSufTur", "00" )
       end if 
+   
+      if Empty( ::oDbf:cCodCaj )
+         ::oDbf:FieldPutByName( "cCodCaj", "000" )
+      end if 
+   
       ::oDbf:Skip()
+   
    end while
    ::oDbf:End()
 
@@ -7563,10 +7570,13 @@ METHOD SyncAllDbf()
 
    ::oDbfCaj:Activate( .f., .f. )
    while !::oDbfCaj:Eof()
+
       if Empty( ::oDbfCaj:cSufTur )
          ::oDbfCaj:FieldPutByName( "cSufTur", "00" )
       end if 
+
       ::oDbfCaj:Skip()
+
    end while
    ::oDbfCaj:End()
 

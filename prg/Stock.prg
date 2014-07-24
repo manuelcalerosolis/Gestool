@@ -318,8 +318,8 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
    FIELD NAME "cAlmacen"   TYPE "C" LEN 16 DEC 0 COMMENT "Código del almacen"                    OF ::oDbfStock
    FIELD NAME "cCodPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la primera propiedad"        OF ::oDbfStock
    FIELD NAME "cCodPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Código de la segunda propiedad"        OF ::oDbfStock
-   FIELD NAME "cValPrp1"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
-   FIELD NAME "cValPrp2"   TYPE "C" LEN 20 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
+   FIELD NAME "cValPrp1"   TYPE "C" LEN 40 DEC 0 COMMENT "Valor de la primera propiedad"         OF ::oDbfStock 
+   FIELD NAME "cValPrp2"   TYPE "C" LEN 40 DEC 0 COMMENT "Valor de la segunda propiedad"         OF ::oDbfStock
    FIELD NAME "cLote"      TYPE "C" LEN 12 DEC 0 COMMENT "Número de lote"                        OF ::oDbfStock
    FIELD NAME "cNumSer"    TYPE "C" LEN 30 DEC 0 COMMENT "Número de serie"                       OF ::oDbfStock
    FIELD NAME "dFecCad"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha de caducidad"                    OF ::oDbfStock
@@ -2996,8 +2996,8 @@ METHOD nTotFacCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    local cFacEmpT
    local cFacEmpL
 
-   DEFAULT cValPr1   := Space( 20 )
-   DEFAULT cValPr2   := Space( 20 )
+   DEFAULT cValPr1   := Space( 40 )
+   DEFAULT cValPr2   := Space( 40 )
    DEFAULT cLote     := Space( 12 )
 
    if Len( aEmpGrp() ) != 0
@@ -5687,7 +5687,12 @@ Method Integra( sStocks ) CLASS TStock
 
    if ::lIntegra
 
-      nPos              := aScan( ::aStocks, {|o| o:cCodigo == sStocks:cCodigo .and. o:cCodigoAlmacen == sStocks:cCodigoAlmacen .and. o:cValorPropiedad1 == sStocks:cValorPropiedad1 .and. o:cValorPropiedad2 == sStocks:cValorPropiedad2 .and. if( ::lLote, rtrim( o:cLote ) == rtrim( sStocks:cLote ), .t. ) .and. if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
+      nPos              := aScan( ::aStocks, {|o|  rtrim( o:cCodigo ) == rtrim( sStocks:cCodigo )                    .and.;
+                                                   rtrim( o:cCodigoAlmacen ) == rtrim( sStocks:cCodigoAlmacen )      .and.;
+                                                   rtrim( o:cValorPropiedad1 ) == rtrim( sStocks:cValorPropiedad1 )  .and.;
+                                                   rtrim( o:cValorPropiedad2 ) == rtrim( sStocks:cValorPropiedad2 )  .and.;
+                                                   if( ::lLote, rtrim( o:cLote ) == rtrim( sStocks:cLote ), .t. )    .and.;
+                                                   if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
       if nPos != 0
          ::aStocks[ nPos ]:nUnidades               += sStocks:nUnidades
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir
@@ -6191,8 +6196,8 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    DEFAULT cCodAlm      := Space( 16 )  
    DEFAULT cCodPrp1     := Space( 20 )
    DEFAULT cCodPrp2     := Space( 20 )
-   DEFAULT cValPrp1     := Space( 20 )
-   DEFAULT cValPrp2     := Space( 20 )
+   DEFAULT cValPrp1     := Space( 40 )
+   DEFAULT cValPrp2     := Space( 40 )
    DEFAULT cLote        := Space( 12 )
 
    ::dConsolidacion     := nil

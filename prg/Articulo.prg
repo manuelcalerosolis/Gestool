@@ -38,7 +38,6 @@
 #define fldOfertas                  oFld:aDialogs[10]
 #define fldEscandallos              oFld:aDialogs[11]
 #define fldWeb                      oFld:aDialogs[12]
-#define fldUbicaciones              oFld:aDialogs[12]
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -3080,13 +3079,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          with object ( oBrwDiv:AddCol() )
             :cHeader          := "Prop. 1"
             :bEditValue       := {|| ( dbfTmpVta )->cValPr1 }
-            :nWidth           := 40
+            :nWidth           := 160
          end with
 
          with object ( oBrwDiv:AddCol() )
             :cHeader          := "Prop. 2"
             :bEditValue       := {|| ( dbfTmpVta )->cValPr2 }
-            :nWidth           := 40
+            :nWidth           := 160
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3096,6 +3095,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPinDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3123,6 +3123,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3132,6 +3133,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3141,6 +3143,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3150,6 +3153,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3159,6 +3163,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3168,6 +3173,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3177,6 +3183,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3186,6 +3193,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3195,6 +3203,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -3204,6 +3213,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
             :cEditPicture     := cPouDiv
             :nDataStrAlign    := AL_RIGHT
             :nHeadStrAlign    := AL_RIGHT
+            :lHide            := .t.
          end with
 
          if nMode != ZOOM_MODE
@@ -3526,13 +3536,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Prop. 1"
-         :nWidth              := 40
+         :nWidth              := 120
          :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad1, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Prop. 2"
-         :nWidth              := 40
+         :nWidth              := 120
          :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad2, "" ) }
       end with
 
@@ -3568,6 +3578,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          :nDataStrAlign       := AL_RIGHT
          :nHeadStrAlign       := AL_RIGHT
          :nFootStrAlign       := AL_RIGHT
+         :lHide               := .t.
       end with
 
       with object ( oBrwStk:AddCol() )
@@ -3579,6 +3590,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          :nDataStrAlign       := AL_RIGHT
          :nHeadStrAlign       := AL_RIGHT
          :nFootStrAlign       := AL_RIGHT
+         :lHide               := .t.
       end with
 
    oBrwStk:CreateFromResource( 130 )
@@ -4457,92 +4469,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    oBrwImg:CreateFromResource( 100 )
 
    /*
-   Fechas de venta-------------------------------------------------------------
-
-   REDEFINE BITMAP oBmpubicaciones ;
-         ID       500 ;
-         RESOURCE "Forklift_Alpha_48" ;
-         TRANSPARENT ;
-         OF       fldUbicaciones
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "dFecVta" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "dFecVta" ) ) ] ;
-         ID       100 ;
-         OF       fldUbicaciones
-
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "dFinVta" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "dFinVta" ) ) ] ;
-         ID       110 ;
-         OF       fldUbicaciones
-   */
-
-   /*
-   Ubicaciones-----------------------------------------------------------------
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ] ;
-         ID       510 ;
-         IDTEXT   511 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUbicacion( aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ], dbfUbicaT, aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ]:oHelpText ) );
-         VALID    ( cUbica( aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ], dbfUbicaT, aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ]:oHelpText ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldUbicaciones
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ] ;
-         ID       520 ;
-         IDTEXT   521 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUbicacion( aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ], dbfUbicaT, aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ]:oHelpText ) );
-         VALID    ( cUbica( aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ], dbfUbicaT, aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ]:oHelpText ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldUbicaciones
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ] ;
-         ID       530 ;
-         IDTEXT   531 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUbicacion( aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ], dbfUbicaT, aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ]:oHelpText ) );
-         VALID    ( cUbica( aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ], dbfUbicaT, aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ]:oHelpText ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldUbicaciones
-
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI1" ) ) ] ;
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CVALUBI1" ) ) ] ;
-      ID       540 ;
-      IDTEXT   541 ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwUbiLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI1" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ], dbfUbicaL ) );
-      VALID    ( cUbicaLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI1" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ], dbfUbicaL ) );
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldUbicaciones
-
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI2" ) ) ] ;
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CVALUBI2" ) ) ] ;
-      ID       550 ;
-      IDTEXT   551 ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwUbiLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI2" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ], dbfUbicaL ) );
-      VALID    ( cUbicaLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI2" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI2" ) ) ], dbfUbicaL ) );
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldUbicaciones
-
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ] ;
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ] ;
-      ID       560 ;
-      IDTEXT   561 ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwUbiLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ], dbfUbicaL ) );
-      VALID    ( cUbicaLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ], dbfUbicaL ) );
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldUbicaciones
-   */
-
-
-   /*
 	Botones de la Caja de Dialogo
    ----------------------------------------------------------------------------
    */
@@ -4856,7 +4782,7 @@ static function ImportaImagenes( aTmp, oBrwImg )
    local aImagenes
    local cImage
    local lDefault       := .f.
-   local cDirectorio    := uFieldEmpresa( "CDIRIMG" )
+   local cDirectorio    := cDirectorioImagenes()
    local cPrefix        := cDirectorio + AllTrim( aTmp[ ( dbfArticulo )->( fieldpos( "codigo" ) ) ] )
    local nOrdAnt        := ( dbfTmpImg )->( OrdSetFocus( "cImgArt" ) )
 
@@ -16201,8 +16127,8 @@ Function nCosto( uTmp, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
    BEGIN SEQUENCE
 
    nOrdArt           := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
-   nOrdKit           := ( dbfArtKit   )->( OrdSetFocus( "cCodKit" ) )
    nRecArt           := ( dbfArticulo )->( Recno() )
+   nOrdKit           := ( dbfArtKit   )->( OrdSetFocus( "cCodKit" ) )
    nRecKit           := ( dbfArtKit   )->( Recno() )
 
    do case
@@ -16233,8 +16159,8 @@ Function nCosto( uTmp, dbfArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
    end if
 
    ( dbfArticulo )->( OrdSetFocus( nOrdArt ) )
-   ( dbfArtKit   )->( OrdSetFocus( nOrdKit ) )
    ( dbfArticulo )->( dbGoTo( nRecArt ) )
+   ( dbfArtKit   )->( OrdSetFocus( nOrdKit ) )
    ( dbfArtKit   )->( dbGoTo( nRecKit ) )
 
    if dbfDiv != nil

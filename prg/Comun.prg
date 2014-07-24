@@ -2765,6 +2765,17 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
+function cDirectorioImagenes()
+
+  local cDirectorio := AllTrim( uFieldEmpresa( "CDIRIMG" ) )
+
+  if Right( cDirectorio, 1 ) != "\"
+    cDirectorio     := cDirectorio + "\"
+  end if
+
+Return ( cDirectorio )
+
+//----------------------------------------------------------------------------//
 
 /*------------------------------------------------------------------------------
 Pasa del formato RGB al format RGB Hexadecimal  #000000-------------------------
