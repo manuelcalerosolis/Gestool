@@ -912,7 +912,7 @@ METHOD StartAdministratorTask()
       Reindexamos las bases de datos-------------------------------------------
       */
 
-      ::oSayProceso:SetText( "Regnerando indices" )
+      ::oSayProceso:SetText( "Regenerando indices" )
 
       ::Reindex()
 
@@ -4295,6 +4295,10 @@ METHOD Reindex()
 
          if !Empty( ::oMsg )
             ::oMsg:SetText( "Generando índices : " + oTable:cDescription )
+         end if
+
+         if !empty( ::oSayProceso )
+            ::oSayProceso:SetText( "Generando índices : " + oTable:cDescription )
          end if
 
          ::ReindexTable( oTable )
