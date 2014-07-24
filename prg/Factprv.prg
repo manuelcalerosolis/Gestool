@@ -8322,11 +8322,15 @@ static Function ActualizaStockWeb( cNumDoc )
 
       with object ( TComercio():GetInstance() )
 
-         if ( TDataView():FacturasProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )
+         if ( TDataView():FacturasProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )  
 
             while ( TDataView():FacturasProveedoresLineas( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedoresLineas( nView ) )->nNumFac ) + ( TDataView():FacturasProveedoresLineas( nView ) )->cSufFac == cNumDoc .and. !( TDataView():FacturasProveedoresLineas( nView ) )->( Eof() )
 
-               :ActualizaStockProductsPrestashop( ( TDataView():FacturasProveedoresLineas( nView ) )->cRef, ( TDataView():FacturasProveedoresLineas( nView ) )->cCodPr1, ( TDataView():FacturasProveedoresLineas( nView ) )->cCodPr2, ( TDataView():FacturasProveedoresLineas( nView ) )->cValPr1, ( TDataView():FacturasProveedoresLineas( nView ) )->cValPr2 )
+               if Retfld( ( TDataView():FacturasProveedoresLineas( nView ) )->cRef, TDataView():Articulos( nView ), "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ( TDataView():FacturasProveedoresLineas( nView ) )->cRef, ( TDataView():FacturasProveedoresLineas( nView ) )->cCodPr1, ( TDataView():FacturasProveedoresLineas( nView ) )->cCodPr2, ( TDataView():FacturasProveedoresLineas( nView ) )->cValPr1, ( TDataView():FacturasProveedoresLineas( nView ) )->cValPr2 )
+
+               end if
 
                ( TDataView():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 

@@ -754,7 +754,7 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "FacCliS.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
+      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE 
 
       USE ( cPatEmp() + "ALBCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIS", @dbfAlbCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIS.CDX" ) ADDITIVE
@@ -3804,7 +3804,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
          VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
-                        loaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, nMode, .f. ),;
+                        loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
          OF       oFld:aDialogs[1]
@@ -5724,10 +5724,12 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nNumDto     			:= 0
    local cProveedor
    local nTarOld     			:= aTmp[ _NTARLIN ]
-   local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local lChgCodArt
    local hAtipica
 
    DEFAULT lFocused  			:= .t.
+
+   lChgCodArt           		:= ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
 
    if Empty( cCodArt )
 
@@ -10609,7 +10611,11 @@ static Function ActualizaStockWeb( cNumDoc )
 
       		while ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == cNumDoc .and. !( dbfFacRecL )->( Eof() )
 
-         		:ActualizaStockProductsPrestashop( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cValPr2 )
+         		if Retfld( ( dbfFacRecL )->cRef, dbfArticulo, "lPubInt", "Codigo" )
+
+         			:ActualizaStockProductsPrestashop( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cValPr2 )
+
+         		end if	
 
          		( dbfFacRecL )->( dbSkip() )
 

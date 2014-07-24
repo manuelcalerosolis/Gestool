@@ -1719,7 +1719,7 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
+      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) ) 
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
@@ -16089,7 +16089,11 @@ static Function ActualizaStockWeb( cNumDoc )
 
       		while ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == cNumDoc .and. !( dbfFacCliL )->( Eof() )
 
-         		:ActualizaStockProductsPrestashop( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2 )
+         		if Retfld( ( dbfFacCliL )->cRef, dbfArticulo, "lPubInt", "Codigo" )
+
+         			:ActualizaStockProductsPrestashop( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2 )
+
+         		end if	
 
          		( dbfFacCliL )->( dbSkip() )
 

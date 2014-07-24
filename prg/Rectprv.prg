@@ -3486,7 +3486,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    aGet[ ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    aGet[ ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
-   if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
+   /*if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
 
       if TDataView():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
          aGet[ ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( TDataView():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
@@ -3503,7 +3503,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
          aGet[ ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
-   end if
+   end if*/
 
    aGet[ _CALMLIN ]:lValid()
    aGet[ _CUNIDAD ]:lValid()
@@ -7622,7 +7622,11 @@ static Function ActualizaStockWeb( cNumDoc )
 
             while ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cSerFac + Str( ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->nNumFac ) + ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cSufFac == cNumDoc .and. !( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->( Eof() )
 
-               :ActualizaStockProductsPrestashop( ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2 )
+               if Retfld( ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cRef, TDataView():Articulos( nView ), "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr1, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cCodPr2, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cValPr1, ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->cValPr2 )
+
+               end if
 
                ( TDataView():FacturasRectificativasProveedoresLineas( nView ) )->( dbSkip() )
 

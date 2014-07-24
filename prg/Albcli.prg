@@ -1336,7 +1336,7 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "TIKES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKES", @dbfTikS ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIKES.CDX" ) ADDITIVE
+      SET ADSINDEX TO ( cPatEmp() + "TIKES.CDX" ) ADDITIVE 
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
@@ -12851,7 +12851,11 @@ Static Function ActualizaStockWeb( cNumDoc )
 
             while ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb == cNumDoc .and. !( TDataView():Get( "AlbCliL", nView ) )->( Eof() )
 
-               :ActualizaStockProductsPrestashop( ( TDataView():Get( "AlbCliL", nView ) )->cRef, ( TDataView():Get( "AlbCliL", nView ) )->cCodPr1, ( TDataView():Get( "AlbCliL", nView ) )->cCodPr2, ( TDataView():Get( "AlbCliL", nView ) )->cValPr1, ( TDataView():Get( "AlbCliL", nView ) )->cValPr2 )
+               if Retfld( ( TDataView():Get( "AlbCliL", nView ) )->cRef, dbfArticulo, "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ( TDataView():Get( "AlbCliL", nView ) )->cRef, ( TDataView():Get( "AlbCliL", nView ) )->cCodPr1, ( TDataView():Get( "AlbCliL", nView ) )->cCodPr2, ( TDataView():Get( "AlbCliL", nView ) )->cValPr1, ( TDataView():Get( "AlbCliL", nView ) )->cValPr2 )
+
+               end if   
 
                ( TDataView():Get( "AlbCliL", nView ) )->( dbSkip() )
 

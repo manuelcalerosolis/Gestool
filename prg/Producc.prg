@@ -4771,7 +4771,11 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
 
             while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd == cNumDoc .and. !::oDetProduccion:oDbf:Eof()
 
-               :ActualizaStockProductsPrestashop( ::oDetProduccion:oDbf:cCodArt, ::oDetProduccion:oDbf:cCodPr1, ::oDetProduccion:oDbf:cCodPr2, ::oDetProduccion:oDbf:cValPr1, ::oDetProduccion:oDbf:cValPr2 )
+               if oRetfld( ::oDetProduccion:oDbf:cCodArt, ::oArt, "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ::oDetProduccion:oDbf:cCodArt, ::oDetProduccion:oDbf:cCodPr1, ::oDetProduccion:oDbf:cCodPr2, ::oDetProduccion:oDbf:cValPr1, ::oDetProduccion:oDbf:cValPr2 )
+
+               end if
 
                ::oDetProduccion:oDbf:Skip()
 
@@ -4797,7 +4801,11 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
 
             while ::oDetMaterial:oDbf:cSerOrd + Str( ::oDetMaterial:oDbf:nNumOrd ) + ::oDetMaterial:oDbf:cSufOrd == cNumDoc .and. !::oDetMaterial:oDbf:Eof()
 
-               :ActualizaStockProductsPrestashop( ::oDetMaterial:oDbf:cCodArt, ::oDetMaterial:oDbf:cCodPr1, ::oDetMaterial:oDbf:cCodPr2, ::oDetMaterial:oDbf:cValPr1, ::oDetMaterial:oDbf:cValPr2 )
+               if oRetfld( ::oDetMaterial:oDbf:cCodArt, ::oArt, "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ::oDetMaterial:oDbf:cCodArt, ::oDetMaterial:oDbf:cCodPr1, ::oDetMaterial:oDbf:cCodPr2, ::oDetMaterial:oDbf:cValPr1, ::oDetMaterial:oDbf:cValPr2 )
+
+               end if
 
                ::oDetMaterial:oDbf:Skip()
 

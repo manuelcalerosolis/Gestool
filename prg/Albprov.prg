@@ -6771,7 +6771,7 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-static Function ActualizaStockWeb( cNumDoc )
+static Function ActualizaStockWeb( cNumDoc ) 
 
    local nRec     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->( Recno() )
    local nOrdAnt  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
@@ -6784,7 +6784,11 @@ static Function ActualizaStockWeb( cNumDoc )
 
             while ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( TDataView():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( TDataView():AlbaranesProveedoresLineas( nView ) )->cSufAlb == cNumDoc .and. !( TDataView():AlbaranesProveedoresLineas( nView ) )->( Eof() )
 
-               :ActualizaStockProductsPrestashop( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr2, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr2 )
+               if Retfld( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef, TDataView():Articulos( nView ), "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ( TDataView():AlbaranesProveedoresLineas( nView ) )->cRef, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cCodPr2, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( TDataView():AlbaranesProveedoresLineas( nView ) )->cValPr2 )
+
+               end if   
 
                ( TDataView():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
 

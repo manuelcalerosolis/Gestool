@@ -576,7 +576,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
-      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
+      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE 
 
       USE ( cPatDat() + "CajasL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJASL", @dbfCajL ) )
       SET ADSINDEX TO ( cPatDat() + "CajasL.Cdx" ) ADDITIVE
@@ -20898,7 +20898,11 @@ static Function ActualizaStockWeb( cNumDoc )
 
             while ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == cNumDoc .and. !( dbfTikL )->( Eof() )
 
-               :ActualizaStockProductsPrestashop( ( dbfTikL )->cCbaTil, ( dbfTikL )->cCodPr1, ( dbfTikL )->cCodPr2, ( dbfTikL )->cValPr1, ( dbfTikL )->cValPr2 )
+               if Retfld( ( dbfTikL )->cCbaTil, dbfArticulo, "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ( dbfTikL )->cCbaTil, ( dbfTikL )->cCodPr1, ( dbfTikL )->cCodPr2, ( dbfTikL )->cValPr1, ( dbfTikL )->cValPr2 )
+
+               end if
 
                ( dbfTikL )->( dbSkip() )
 
@@ -20914,8 +20918,6 @@ static Function ActualizaStockWeb( cNumDoc )
    ( dbfTikL )->( dbGoTo( nRec ) )  
 
 Return .t.
-
-//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 
