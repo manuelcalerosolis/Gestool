@@ -2977,7 +2977,11 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TRemMovAlm
 
             while Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == cNumDoc .and. !::oDetMovimientos:oDbf:Eof()
 
-               :ActualizaStockProductsPrestashop( ::oDetMovimientos:oDbf:cRefMov, ::oDetMovimientos:oDbf:cCodPr1, ::oDetMovimientos:oDbf:cCodPr2, ::oDetMovimientos:oDbf:cValPr1, ::oDetMovimientos:oDbf:cValPr2 )
+               if oRetfld( ::oDetMovimientos:oDbf:cRefMov, ::oArt, "lPubInt", "Codigo" )
+
+                  :ActualizaStockProductsPrestashop( ::oDetMovimientos:oDbf:cRefMov, ::oDetMovimientos:oDbf:cCodPr1, ::oDetMovimientos:oDbf:cCodPr2, ::oDetMovimientos:oDbf:cValPr1, ::oDetMovimientos:oDbf:cValPr2 )
+
+               end if                  
 
                ::oDetMovimientos:oDbf:Skip()
 
