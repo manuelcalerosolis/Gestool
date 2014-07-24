@@ -1100,8 +1100,8 @@ CLASS TpvTactil
 
    METHOD lLineaValida( lExcluirContadores )
 
-   METHOD lAnulacionImpresa()          INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
-      METHOD SetAnulacionImpresa()     INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", .t. ) )
+   METHOD lLineaImpresa()          INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
+      METHOD SetLineaImpresa()     INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", .t. ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
@@ -1449,7 +1449,7 @@ CLASS TpvTactil
       end if
 
       if !Empty( ::oTotalTicket )
-         ::oTotalTicket:SetText( abs( ::oTpvCobros:Cambio() ) )
+         ::oTotalTicket:SetText( abs( ::oTpvCobros:Total() - ::oTpvCobros:nGetEntregado ) )
       end if
 
       RETURN ( Self )
@@ -8900,9 +8900,14 @@ METHOD ProcesaComandas( lCopia )
                   ::oTemporalComanda:FieldPutByName( "nUntTil", ( ::nUnidadesLinea() - ::nUnidadesImpresas() ) )
                end if
 
+               // Marcamos la linea como ya impresa en anulacion---------------------
+
+               ::SetLineaImpresa()
+               
             end if
 
          end if
+
 
          // Siguiente linea----------------------------------------------------
 
@@ -9008,7 +9013,7 @@ METHOD ProcesaAnulacion()
 
          lAppend        := .f.
 
-         if ( ( ::oTiketLinea:lDelTil ) .or. ( ::nUnidadesLinea() < 0 ) ) .and. ( !::lAnulacionImpresa() )
+         if ( ( ::oTiketLinea:lDelTil ) .or. ( ::nUnidadesLinea() < 0 ) ) .and. ( ::lLineaImpresa() )
 
             // Impresora Uno---------------------------------------------------
 
@@ -9033,10 +9038,6 @@ METHOD ProcesaAnulacion()
                lAppend  := .t.
 
             end if
-
-            // Marcamos la linea como ya impresa en anulacion------------------
-
-            ::SetAnulacionImpresa()
 
             // Añadimos esta linea al temporal de comandas---------------------
 
