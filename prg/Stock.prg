@@ -2276,10 +2276,15 @@ RETURN ( lDup )
       local aStock
 
       for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
+
          if ( Empty( cAlmcenOrigen )     .or. aStock:cCodigoAlmacen >= cAlmcenOrigen   ) .and. ;
-            ( Empty( cAlmacenDestino )   .or. aStock:cCodigoAlmacen <= cAlmacenDestino )
+            ( Empty( cAlmacenDestino )   .or. aStock:cCodigoAlmacen <= cAlmacenDestino ) .and. ;
+            ( aStock:nUnidades != 0 )
+
             aStock:Save( ::oDbfStock )
+         
          end if 
+      
       next 
 
    RETURN ( Self )
