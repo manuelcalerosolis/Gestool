@@ -437,7 +437,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oTpvMenu:lAppendBuscar     := .f.
       oTpvMenu:lModificarBuscar  := .f.
 
-
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
       */

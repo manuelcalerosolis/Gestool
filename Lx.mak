@@ -1054,6 +1054,9 @@ TDataCenter.prg         \
 Valtostr.prg            \
 OrdenComanda.prg 		\
 Atipicas.prg 			\
+TpvMenu.prg 			\
+TpvMenuArticulo.prg 	\
+TpvMenuOrdenes.prg 		\
 
 C               =       \
 Metafi32.c              \
@@ -2112,6 +2115,9 @@ TDataCenter.obj         \
 Valtostr.obj            \
 OrdenComanda.obj 		\
 Atipicas.obj 			\
+TpvMenu.obj 			\
+TpvMenuArticulo.obj 	\
+TpvMenuOrdenes.obj 		\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3170,6 +3176,9 @@ $(OBJ)\TDataCenter.obj          +
 $(OBJ)\Valtostr.obj             +
 $(OBJ)\OrdenComanda.obj 		+
 $(OBJ)\Atipicas.obj 			+
+$(OBJ)\TpvMenu.obj 				+
+$(OBJ)\TpvMenuArticulo.obj 		+
+$(OBJ)\TpvMenuOrdenes.obj 		+
 (HBLIB)\Mapi32.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +
