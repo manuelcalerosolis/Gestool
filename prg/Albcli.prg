@@ -11384,7 +11384,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Ahora escribimos en el fichero definitivo-----------------------------------
    */
 
-   ( dbfTmpInc )->( dbGoTop() )
+   ( dbfTmpInc )->( dbGoTop() ) 
    while ( dbfTmpInc )->( !eof() )
       dbPass( dbfTmpInc, TDataView():Get( "AlbCliI", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
       ( dbfTmpInc )->( dbSkip() )
