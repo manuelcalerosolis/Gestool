@@ -75,7 +75,7 @@ CLASS TDetMaterial FROM TDetalleArticulos
 
    METHOD EdtRotor( oDlg )
 
-   METHOD SyncAllDbf()
+//   METHOD SyncAllDbf()
 
 END CLASS
 
@@ -126,8 +126,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "cUndVol"    TYPE "C" LEN  2  DEC 0 COMMENT "Unidad del volumen"            COLSIZE  80 OF oDbf
       FIELD NAME "cCodPr1"    TYPE "C" LEN 20  DEC 0 COMMENT "Código de primera propiedad"   COLSIZE  80 OF oDbf
       FIELD NAME "cCodPr2"    TYPE "C" LEN 20  DEC 0 COMMENT "Código de segunda propiedad"   COLSIZE  80 OF oDbf
-      FIELD NAME "cValPr1"    TYPE "C" LEN 20  DEC 0 COMMENT "Valor de primera propiedad"    COLSIZE  80 OF oDbf
-      FIELD NAME "cValPr2"    TYPE "C" LEN 20  DEC 0 COMMENT "Valor de segunda propiedad"    COLSIZE  80 OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN 40  DEC 0 COMMENT "Valor de primera propiedad"    COLSIZE  80 OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN 40  DEC 0 COMMENT "Valor de segunda propiedad"    COLSIZE  80 OF oDbf
       FIELD NAME "lLote"      TYPE "L" LEN  1  DEC 0 COMMENT "Lógico lote"                   COLSIZE  80 OF oDbf
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "cCodPro"    TYPE "C" LEN 18  DEC 0 COMMENT "Código del artídulo producido" COLSIZE  80 OF oDbf
@@ -881,7 +881,7 @@ RETURN oDlg:end( IDOK )
 Metodo creado para marbaroso para rellenar el almacen-------------------------- 
 en las líneas de materia prima en partes de producción-------------------------
 */
-
+/*
 METHOD SyncAllDbf()
 
    ::Super():SyncAllDbf()
@@ -906,7 +906,7 @@ METHOD SyncAllDbf()
    ::CloseFiles()   
 
 RETURN ( Self )
-
+*/
 //---------------------------------------------------------------------------//
 
 Function nTotNMaterial( uDbf )

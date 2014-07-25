@@ -6209,9 +6209,21 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    ::dConsolidacion     := nil
 
+   /*
+   Hay veces que los valores no tienen la longitud correcta pr eso obligamos a que cada una tenga la longitud que debe tener
+   */
+
+   cCodArt              := if ( len( cCodart )  != 18, Padr( cCodart, 18 ), cCodArt )
+   cCodAlm              := if ( len( cCodAlm )  != 16, Padr( cCodAlm, 16 ), cCodAlm )
+   cCodPrp1             := if ( len( cCodPrp1 ) != 20, Padr( cCodPrp1, 20 ), cCodPrp1 )
+   cCodPrp2             := if ( len( cCodPrp2 ) != 20, Padr( cCodPrp2, 20 ), cCodPrp2 )
+   cValPrp1             := if ( len( cValPrp1 ) != 40, Padr( cValPrp1, 40 ), cValPrp1 )
+   cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
+   cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
+
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
 
-      while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
+      while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == ( cCodAlm ) .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
 
          if Empty( ::dConsolidacion )
 
@@ -6228,7 +6240,6 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
          ( ::cHisMovT)->( dbSkip() )
 
       end while
-
 
    end if
 
