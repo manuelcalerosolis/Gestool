@@ -983,20 +983,20 @@ METHOD InsertUbicacionGeneral() CLASS TpvListaTicket
       while !( ::oSender:oTiketCabecera:eof() )
 
          do case
-         case ( ::oSender:oTiketCabecera:nUbiTik == ubiSala )
-            ::oListViewPendiente:aAddItemGroup( 0, ::oSender:cInfoPendiente(), grpMesas, ::oSender:cNumeroTicket() )
+            case ( ::oSender:oTiketCabecera:nUbiTik == ubiSala )
+               ::oListViewPendiente:aAddItemGroup( 0, ::oSender:cInfoPendiente(), grpMesas, ::oSender:cNumeroTicket() )
 
-         case ( ::oSender:oTiketCabecera:nUbiTik == ubiGeneral )
-            ::oListViewPendiente:aAddItemGroup( 1, ::oSender:cInfoPendiente(), gprGeneral, ::oSender:cNumeroTicket() )
+            case ( ::oSender:oTiketCabecera:nUbiTik == ubiGeneral )
+               ::oListViewPendiente:aAddItemGroup( 1, ::oSender:cInfoPendiente(), gprGeneral, ::oSender:cNumeroTicket() )
 
-         case ( ::oSender:oTiketCabecera:nUbiTik == ubiRecoger )
-            ::oListViewPendiente:aAddItemGroup( 2, ::oSender:cInfoPendiente(), grpParaRecoger, ::oSender:cNumeroTicket() )
+            case ( ::oSender:oTiketCabecera:nUbiTik == ubiRecoger )
+               ::oListViewPendiente:aAddItemGroup( 2, ::oSender:cInfoPendiente(), grpParaRecoger, ::oSender:cNumeroTicket() )
 
-         case ( ::oSender:oTiketCabecera:nUbiTik == ubiLlevar )
-            ::oListViewPendiente:aAddItemGroup( 3, ::oSender:cInfoPendiente(), grpParaLlevar, ::oSender:cNumeroTicket() )
+            case ( ::oSender:oTiketCabecera:nUbiTik == ubiLlevar )
+               ::oListViewPendiente:aAddItemGroup( 3, ::oSender:cInfoPendiente(), grpParaLlevar, ::oSender:cNumeroTicket() )
 
-         case ( ::oSender:oTiketCabecera:nUbiTik == ubiEncargar )
-            ::oListViewPendiente:aAddItemGroup( 4, ::oSender:cInfoPendiente(), grpParaEncargar, ::oSender:cNumeroTicket() )
+            case ( ::oSender:oTiketCabecera:nUbiTik == ubiEncargar )
+               ::oListViewPendiente:aAddItemGroup( 4, ::oSender:cInfoPendiente(), grpParaEncargar, ::oSender:cNumeroTicket() )
 
          end case
 

@@ -7209,7 +7209,7 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       Abrimos el cajón portamonedas antes de imprimir-----------------------
       */
 
-      if ( ::oTpvCobros:nTotalCobro != 0 )
+      if ( ::oTpvCobros:Entregado() != 0 )
          ::OpenCajon()
       end if
 

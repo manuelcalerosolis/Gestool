@@ -2092,47 +2092,47 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
    local oDlg
    local oBtn
    local aSta
-   local lCloseUsr      := .f.
-   local lCloseCaj      := .f.
    local oImgUsr
    local oLstUsr
+   local lCloseUsr         := .f.
+   local lCloseCaj         := .f.
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfUsr )
-      USE ( cPatDat() + "Users.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Users", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "Users.CDX" ) ADDITIVE
-      lCloseUsr         := .t.
-   end if
+      if Empty( dbfUsr )
+         USE ( cPatDat() + "Users.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Users", @dbfUsr ) )
+         SET ADSINDEX TO ( cPatDat() + "Users.CDX" ) ADDITIVE
+         lCloseUsr         := .t.
+      end if
 
-   if Empty( dbfCaj )
-      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Cajas", @dbfCaj ) )
-      SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
-      lCloseCaj         := .t.
-   end if
+      if Empty( dbfCaj )
+         USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Cajas", @dbfCaj ) )
+         SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
+         lCloseCaj         := .t.
+      end if
 
-   aSta                 := aGetStatus( dbfUsr )
+      aSta                 := aGetStatus( dbfUsr )
 
-   DEFINE DIALOG oDlg RESOURCE "SelUsuarios"
+      DEFINE DIALOG oDlg RESOURCE "SelUsuarios"
 
-      oImgUsr           := TImageList():New( 50, 50 )
+         oImgUsr           := TImageList():New( 50, 50 )
 
-      oLstUsr           := TListView():Redefine( 100, oDlg )
-      oLstUsr:nOption   := 0
-      oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj, .t. ) }
+         oLstUsr           := TListView():Redefine( 100, oDlg )
+         oLstUsr:nOption   := 0
+         oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj, .t. ) }
 
-      REDEFINE BUTTONBMP oBtn ;
-         BITMAP   "Delete_32" ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
+         REDEFINE BUTTONBMP oBtn ;
+            BITMAP         "Delete_32" ;
+            ID             IDCANCEL ;
+            OF             oDlg ;
+            ACTION         ( oDlg:End() )
 
-   ACTIVATE DIALOG oDlg ;
-      ON INIT     ( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) ) ;
-      CENTER
+      ACTIVATE DIALOG oDlg ;
+         ON INIT           ( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) ) ;
+         CENTER
 
-   SetStatus( dbfUsr, aSta )
+      SetStatus( dbfUsr, aSta )
 
    RECOVER USING oError
 
@@ -2179,20 +2179,23 @@ Function InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
                oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
 
-               oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser )
+               // oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser )
+
+               oLstUsr:aAddItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser, ( dbfUsr )->cCodUse )
 
                nUser++
 
             else
 
                if ( dbfUsr )->nGrpUse <= 1
-                  oLstUsr:InsertItemGroup( 0, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+                  // oLstUsr:InsertItemGroup( 0, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+                  oLstUsr:aAddItemGroup( 0, Capitalize( ( dbfUsr )->cNbrUse ), 1, ( dbfUsr )->cCodUse )
                else
-                  oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), 2 )
+                  // oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), 2 )
+                  oLstUsr:aAddItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), 2, ( dbfUsr )->cCodUse )
                end if
 
             end if
-
 
          end if 
 
@@ -2208,42 +2211,47 @@ RETURN ( nil )
 
 Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj )
 
+   local cCodigoUsuario
+
    if ( nOpt == 0 )
       MsgStop( "Seleccione usuario" )
       Return nil
    end if
 
-   if ( dbfUsr )->( OrdKeyGoTo( nOpt ) )
+   if !( nOpt > 0 .and. nOpt <= len( oLstUsr:aCargo ) )
+      MsgStop( "Seleccione usuario" )
+      Return nil
+   end if       
 
-      if ( dbfUsr )->lUseUse
+   cCodigoUsuario    := oLstUsr:aCargo[ nOpt ]
 
-         if !( ( dbfUsr )->cCodUse == cCurUsr() )
+   if empty( cCodigoUsuario )
+      MsgStop( "Seleccione usuario" )
+      Return nil
+   end if 
 
-            MsgStop( "Usuario en uso" )
-
-            Return nil
-
-         end if
-
-      end if
-
-      if .t. // lGetPsw( dbfUsr, .t. )
-
-         oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCaj, cCurUsr(), .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
-
-         oDlg:end( IDOK )
-
-      else
-
-         oLstUsr:nOption   := 0
-
-      end if
-
-   else
-
+   if !( dbSeekInOrd( cCodigoUsuario, "cCodUse", dbfUsr ) ) // ( dbfUsr )->( OrdKeyGoTo( nOpt ) )
       MsgStop( "El usuario no existe" )
+      Return nil
+   end if 
+
+   if ( dbfUsr )->lUseUse
+
+      if !( ( dbfUsr )->cCodUse == cCurUsr() )
+
+         MsgStop( "Usuario en uso" )
+
+         Return nil
+
+      end if
 
    end if
+
+   oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCaj, cCurUsr(), .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+
+   oLstUsr:nOption   := 0
+
+   oDlg:end( IDOK )
 
 Return nil
 

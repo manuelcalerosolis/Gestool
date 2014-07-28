@@ -92,7 +92,6 @@ CLASS TpvCobros
 
    METHOD lResource()
 
-      METHOD Resource()                INLINE ( if( ::oSender:l1024(), "NewCobro", "NewCobro" ) )
       METHOD RefreshResource()         INLINE ( ::oBrwPago:Refresh(), ::SetTextoTotal() )
       METHOD PushCalculadora( cTexto )
       METHOD PushMoney( nImporte )
@@ -285,7 +284,10 @@ METHOD lResource() CLASS TpvCobros
       ::nGetEntregado   := 0
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE ( ::Resource() ) TITLE ( ::oSender:cTipoDocumento() ) FONT ( ::oSender:oFntDlg )
+   DEFINE DIALOG ::oDlg ;
+      RESOURCE          ( "NewCobro" ) ;
+      TITLE             ( ::oSender:cTipoDocumento() );
+      FONT              ( ::oSender:oFntDlg )
 
       /*
       SAY con la imformación de los cobros-------------------------------------
@@ -338,19 +340,7 @@ METHOD lResource() CLASS TpvCobros
          :nDataStrAlign          := 1
          :nHeadStrAlign          := 1
       end with
-   /*
-      with object ( ::oBrwPago:AddCol() )
-         :cHeader                := "Eliminar"
-         :bStrData               := {|| "" }
-         :bOnPostEdit            := {|| .t. }
-         :bEditBlock             := {|| ::OnClickEliminarCobro() }
-         :nEditType              := 5
-         :nWidth                 := 40
-         :nBtnBmp                := 1
-         :nHeadBmpAlign          := 1
-         :AddResource( "Delete2_24" )
-      end with
-   */
+
       ::oBrwPago:CreateFromResource( 130 )
 
       /*
@@ -601,11 +591,7 @@ Return ( Self )
 
 METHOD OnClickAceptar()
 
-   local lEnd     := .t.
-
-   if ( ::oSender:nTipoDocumento == documentoAlbaran )
-      Return .f.
-   end if
+   local lEnd        := .t.
 
    ::oDlg:Disable()
 
@@ -613,11 +599,17 @@ METHOD OnClickAceptar()
 
    ::RefreshResource()
 
-   if ::ValidCobro() 
-      ::nEstado   := estadoPagado
-   else 
-      msgStop( "Importe insuficiente." )
-      lEnd        := .f. 
+   // Si guardamos un albaran dejamos importes menores al ticket 
+
+   if ( ::oSender:nTipoDocumento != documentoAlbaran )
+
+      if ::ValidCobro() 
+         ::nEstado   := estadoPagado
+      else 
+         msgStop( "Importe insuficiente." )
+         lEnd        := .f. 
+      end if
+
    end if
 
    ::oDlg:Enable()
