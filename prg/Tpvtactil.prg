@@ -1101,7 +1101,7 @@ CLASS TpvTactil
    METHOD lLineaValida( lExcluirContadores )
 
    METHOD lLineaImpresa()          INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
-      METHOD SetLineaImpresa()     INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", .t. ) )
+      METHOD SetLineaImpresa( lImpresa)     INLINE ( if( lImpresa, ::oTiketLinea:FieldPutByName( "lImpCom", .t. ), ::oTiketLinea:FieldPutByName( "lImpCom", .f. ) ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
@@ -8903,7 +8903,7 @@ METHOD ProcesaComandas( lCopia )
 
                // Marcamos la linea como ya impresa en anulacion---------------------
 
-               ::SetLineaImpresa()
+               ::SetLineaImpresa( .t. )
 
             end if
 
@@ -9043,7 +9043,12 @@ METHOD ProcesaAnulacion()
             // Añadimos esta linea al temporal de comandas---------------------
 
             if lAppend
+
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
+
+               //Quitamos la marca de impresa para que no se vuelva a imprimir-
+               ::SetLineaImpresa( .f. )
+
             end if
 
          end if
