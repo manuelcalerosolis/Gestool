@@ -16691,7 +16691,7 @@ FUNCTION nNoIncLFacCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPo
    nCalculo       := nTotLFacCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn )
 
    if ( dbfLin )->lIvaLin
-      nCalculo    -= nCalculo * ( dbfLin )->nIva / 100
+      nCalculo    := nCalculo / ( ( ( dbfLin )->nIva / 100 ) + 1 )
    end if
 
 RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
@@ -16711,10 +16711,10 @@ FUNCTION nNoIncUFacCli( dbfLin, nDec, nVdv )
    nCalculo       := nTotUFacCli( dbfLin, nDec, nVdv )
 
    if ( dbfLin )->lIvaLin
-      nCalculo    -= nCalculo * ( dbfLin )->nIva / 100
+      nCalculo    := nCalculo / ( ( ( dbfLin )->nIva / 100 ) + 1 )
    end if
 
-RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
@@ -20329,7 +20329,7 @@ FUNCTION nTotFFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   nCalculo          += nTotLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo          += nNoIncLFacCli( dbfLin )
    nCalculo          += nIvaLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )

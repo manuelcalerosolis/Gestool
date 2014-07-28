@@ -292,8 +292,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD cDetalleFacturasClientes()                              INLINE ( cDesFacCli ( ::oFacCliL:cAlias ) )
    METHOD nTotalUnidadesFacturasClientes()                        INLINE ( nTotNFacCli( ::oFacCliL:cAlias ) )
-   METHOD nPrecioUnitarioFacturasClientes()                       INLINE ( nTotUFacCli( ::oFacCliL:cAlias ) ) 
-   METHOD nTotalLineaFacturasClientes()                           INLINE ( nTotLFacCli( ::oFacCliL:cAlias ) )
+   METHOD nPrecioUnitarioFacturasClientes()                       INLINE ( nNoIncUFacCli( ::oFacCliL:cAlias ) ) 
+   METHOD nTotalLineaFacturasClientes()                           INLINE ( nNoIncLFacCli( ::oFacCliL:cAlias ) )
+
    METHOD nTotalPesoLineaFacturasClientes()                       INLINE ( nPesLFacCli( ::oFacCliL:cAlias ) )
    METHOD nTotalImpuestosIncluidosLineaFacturasClientes()         INLINE ( nTotFFacCli( ::oFacCliL:cAlias ) )
    METHOD nTotalIVALineaFacturasClientes()                        INLINE ( nIvaLFacCli( ::oFacCliL:cAlias ) )
