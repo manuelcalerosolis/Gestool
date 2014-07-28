@@ -456,8 +456,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Informe", "Incidencias",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",              {|| ::oDbf:cCodUsr } )
-
-   ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                 {|| ::oDbf:cCodRut } )
+   
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
 
@@ -472,8 +472,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Documentos" )
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
-
-   ::oFastReport:SetResyncPair(     "Clientes", "Rutas" )
+   ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
+   
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )
 
