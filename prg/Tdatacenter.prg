@@ -44,8 +44,8 @@ CLASS TDataCenter
    DATA        oMtrDiccionario
    DATA        nMtrDiccionario            INIT 0
 
-   DATA        oSayProceso
-   DATA        cSayProceso                INIT ""
+   DATA        oMsg
+   DATA        cMsg                INIT ""
 
    DATA        oBtnOk
    DATA        oBntCancel
@@ -166,6 +166,8 @@ CLASS TDataCenter
 
    METHOD Reindex()
    METHOD ReindexTable( oTable )
+
+   METHOD Syncronize()
 
    METHOD ActualizaDataTable( oTable )       INLINE  ( ::ActualizaTable( oTable, cPatDat() ) )
    METHOD ActualizaEmpresaTable( oTable )    INLINE  ( ::ActualizaTable( oTable, cPatEmp() ) )
@@ -730,8 +732,8 @@ METHOD lAdministratorTask()
          :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 2 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 2 ] ) }
       end with
 
-      REDEFINE SAY         ::oSayProceso ;
-         PROMPT            ::cSayProceso ;
+      REDEFINE SAY         ::oMsg ;
+         PROMPT            ::cMsg ;
          ID                400 ;
          OF                ::oDlg
 
@@ -795,7 +797,7 @@ METHOD StartAdministratorTask()
 
          if cEmp[ 6 ]
 
-            ::oSayProceso:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+            ::oMsg:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
             ::oMtrActualiza:Set( hb_EnumIndex() )
 
@@ -829,7 +831,7 @@ METHOD StartAdministratorTask()
       Eliminamos todas las tablas del diccionario de datos------------------
       */
 
-      ::oSayProceso:SetText( "Eliminando tablas anteriores de diccionario de datos" )
+      ::oMsg:SetText( "Eliminando tablas anteriores de diccionario de datos" )
 
       ::DeleteAllTable()
 
@@ -837,7 +839,7 @@ METHOD StartAdministratorTask()
       Construimos la base de datos de estructura----------------------------
       */
 
-      ::oSayProceso:SetText( "Creando arbol de tablas datos generales aplicación" )
+      ::oMsg:SetText( "Creando arbol de tablas datos generales aplicación" )
 
       ::BuildData()
 
@@ -853,7 +855,7 @@ METHOD StartAdministratorTask()
 
          if cEmp[ 6 ]
 
-            ::oSayProceso:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
+            ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
             ::oMtrActualiza:Set( hb_EnumIndex() )
 
@@ -862,6 +864,8 @@ METHOD StartAdministratorTask()
             ::BuildEmpresa()  
                
             ::CreateEmpresaTable()
+
+            ::Reindex()
 
             cEmp[ 5 ]   := .t.
 
@@ -878,7 +882,7 @@ METHOD StartAdministratorTask()
       Creamos las tablas de operacioens----------------------------------------
       */
 
-      ::oSayProceso:SetText( "Creando tablas de operaciones" )
+      ::oMsg:SetText( "Creando tablas de operaciones" )
 
       ::CreateOperationLogTable()
 
@@ -892,7 +896,7 @@ METHOD StartAdministratorTask()
       Creamos los triggers de los datos----------------------------------------
       */
 
-      ::oSayProceso:SetText( "Creando triggers de datos" )
+      ::oMsg:SetText( "Creando triggers de datos" )
 
       ::CreateDataTrigger()
 
@@ -902,19 +906,11 @@ METHOD StartAdministratorTask()
       Creamos los triggers de las empresas-------------------------------------
       */
 
-      ::oSayProceso:SetText( "Creando triggers de empresa" )
+      ::oMsg:SetText( "Creando triggers de empresa" )
 
       ::CreateEmpresaTrigger()
 
       ::oMtrDiccionario:Set( 5 )
-
-      /*
-      Reindexamos las bases de datos-------------------------------------------
-      */
-
-      ::oSayProceso:SetText( "Regenerando indices" )
-
-      ::Reindex()
 
    end if
 
@@ -4262,6 +4258,8 @@ METHOD StartResource()
    ::BuildEmpresa()
 
    ::Reindex()
+
+   ::Syncronize()
     
    CursorWE()
 
@@ -4295,10 +4293,6 @@ METHOD Reindex()
 
          if !Empty( ::oMsg )
             ::oMsg:SetText( "Generando índices : " + oTable:cDescription )
-         end if
-
-         if !empty( ::oSayProceso )
-            ::oSayProceso:SetText( "Generando índices : " + oTable:cDescription )
          end if
 
          ::ReindexTable( oTable )
@@ -4337,6 +4331,19 @@ METHOD Reindex()
 
    end if   
 
+   ::EnableTriggers()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Syncronize()
+
+   local oTable
+   local cAlias
+
+   ::DisableTriggers()
+
    /*
    Sincronizacion de la empresa------------------------------------------------
    */
@@ -4370,6 +4377,7 @@ METHOD Reindex()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
 
 METHOD ReindexTable( oTable )
 
