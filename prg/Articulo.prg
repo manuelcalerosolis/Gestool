@@ -5701,13 +5701,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       while !( dbfTmpVta )->( Eof() )
 
          if !Empty( ( dbfTmpVta )->cImgWeb )                      .and.;
-            !dbSeekInOrd( ( dbfTmpVta )->cImgWeb, "cImgArt", dbfTmpImg )
+            !dbSeekInOrd( AllTrim( Upper( ( dbfTmpVta )->cImgWeb ) ), "cImgArt", dbfTmpImg )
 
             lDefault                 := ( dbfTmpImg )->( LastRec() ) == 0
 
             ( dbfTmpImg )->( dbAppend() )
             ( dbfTmpImg )->cCodArt   := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
-            ( dbfTmpImg )->cImgArt   := ( dbfTmpVta )->cImgWeb
+            ( dbfTmpImg )->cImgArt   := AllTrim( Upper( ( dbfTmpVta )->cImgWeb ) )
             ( dbfTmpImg )->lDefImg   := lDefault
 
             ( dbfTmpImg )->( dbUnLock() )            
@@ -6826,6 +6826,8 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( ChgBmp( oImgArt ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
+
+      TBtnBmp():ReDefine( 211, "photo_scenery_16",,,,,{|| ShowImageFile( aTmp[ ( dbfTmpVta )->( FieldPos( "cImgWeb" ) ) ] ) }, oDlg, .f., , .f.,  )
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldPos( "cToolTip" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldPos( "cToolTip" ) ) ] ;
@@ -8941,7 +8943,7 @@ STATIC FUNCTION DelDetalle( cCodArt )
    Ofertas
    */
 
-   if ( dbfOfe )->( dbSeek( cCodArt ) )
+   /*if ( dbfOfe )->( dbSeek( cCodArt ) )
 
       while ( dbfOfe )->cArtOfe == cCodArt .and. !( dbfOfe )->( eof() )
 
@@ -8954,16 +8956,23 @@ STATIC FUNCTION DelDetalle( cCodArt )
 
       end while
 
-   end if
-
-   /*
-   Imagenes
-   */
+   end if*/
 
    while ( dbfOfe )->( dbSeek( cCodArt ) )
       if dbLock( dbfOfe )
          ( dbfOfe )->( dbDelete() )
          ( dbfOfe )->( dbUnLock() )
+      end if
+   end while
+
+   /*
+   Eliminamos las imágenes-----------------------------------------------------
+   */
+
+   while ( dbfImg )->( dbSeek( cCodArt ) )
+      if dbLock( dbfImg )
+         ( dbfImg )->( dbDelete() )
+         ( dbfImg )->( dbUnLock() )
       end if
    end while
 

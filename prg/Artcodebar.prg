@@ -660,13 +660,13 @@ Selecciona el fichero de un grafico
 
 FUNCTION GetBmp( aGet )
 
-   local cFile := cGetFile( "Imagenes (*.bmp,jpg,png,gif)|*.bmp;*.jpg;*.png;*.gif|", "Seleccione el fichero", 1, Rtrim( cPatImg() ) )
+   local cFile := Upper( cGetFile( "Imagenes (*.bmp,jpg,png,gif)|*.bmp;*.jpg;*.png;*.gif|", "Seleccione el fichero", 1, Rtrim( cPatImg() ) ) )
 
    if aGet != nil .and. !Empty( cFile )
 
-      if !Empty( cPatImg() )
+      /*if !Empty( cPatImg() )
          cFile := StrTran( Lower( cFile ), Lower( cPatImg() ), "" )
-      end if
+      end if*/
 
       aGet:cText( Padr( cFile, 254 ) )
 
@@ -759,7 +759,7 @@ Function ShowImageFile( cImageFile )
 
    if File( Rtrim( cImageFile ) )
 
-      DEFINE DIALOG oDlg FROM 0, 0 TO 56, 56 PIXEL TITLE "Imagen"
+      DEFINE DIALOG oDlg FROM 0, 0 TO 800, 800 PIXEL TITLE "Imagen"
 
          @ 0, 0   IMAGE oBmp ;
                   OF    oDlg ;
