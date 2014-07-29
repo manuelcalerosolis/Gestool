@@ -181,7 +181,7 @@ Source: "c:\fw195\gestool\include\*.*";               DestDir: "{app}\Include"; 
 ; Firma electronica
 
 Source: "c:\fw195\gestool\bin\jre7\*.*";              DestDir: "{app}\Jre7";  Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\bin\firma7\*.*";            DestDir: "{app}\Firma";  Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\bin\firma\*.*";             DestDir: "{app}\Firma";  Flags: ignoreversion onlyifdoesntexist
 
 ; Fuentes
 

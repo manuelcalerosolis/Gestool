@@ -14408,6 +14408,7 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Tickets",             "Ubicación del ticket",                    "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
 
+   oFr:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",                "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
    oFr:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                       "CallHbFunc('nTotNTpv')" )
    oFr:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                  "CallHbFunc('nTotUTpv')" )
    oFr:AddVariable(     "Lineas de tickets",   "Precio unitario con descuentos",                "CallHbFunc('nNetLTpv')" )

@@ -1101,7 +1101,7 @@ CLASS TpvTactil
    METHOD lLineaValida( lExcluirContadores )
 
    METHOD lLineaImpresa()          INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
-      METHOD SetLineaImpresa()     INLINE ( ::oTiketLinea:FieldPutByName( "lImpCom", .t. ) )
+      METHOD SetLineaImpresa( lImpresa)     INLINE ( if( lImpresa, ::oTiketLinea:FieldPutByName( "lImpCom", .t. ), ::oTiketLinea:FieldPutByName( "lImpCom", .f. ) ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
@@ -1900,7 +1900,7 @@ CLASS TpvTactil
          cTexto      := Space( 3 ) + "<" + cTexto + ">"
       end if
 
-      RETURN ( cTexto )
+      RETURN ( alltrim( cTexto ) )
 
    ENDMETHOD
 
@@ -4816,10 +4816,10 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalLinea:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalLinea ) TAG "nOrdLin"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
-                                                                              COMMENT "Orden lineas"     NODELETED                              OF ::oTemporalLinea
-      INDEX TO ( ::cTemporalLinea ) TAG "nRecNum"  ON Str( Recno() )          COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalLinea
-      INDEX TO ( ::cTemporalLinea ) TAG "lRecNum"  ON Str( Recno() )          COMMENT "Recno"            NODELETED                              OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "nRecNum"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
+                                                                              COMMENT "Recno"            FOR "!Deleted() .and. !Field->lKitChl" OF ::oTemporalLinea
+      INDEX TO ( ::cTemporalLinea ) TAG "lRecNum"  ON Str( Field->nLinMnu ) + Str( Field->nNumLin );
+                                                                              COMMENT "Recno"            NODELETED                              OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "nNumLin"  ON Str( Field->nNumLin )   COMMENT "Linea"            NODELETED                              OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "cCbaTil"  ON Field->cCbaTil          COMMENT "Código"           NODELETED                              OF ::oTemporalLinea
       INDEX TO ( ::cTemporalLinea ) TAG "cCodMnu"  ON Field->cCodMnu          COMMENT "Codigo menú"      FOR "!Deleted() .and. !Field->lDelTil" OF ::oTemporalLinea
@@ -5276,6 +5276,8 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    end if
 
+   ::oBrwLineas:Refresh()
+
    CursorWE()
 
 Return ( .t. )
@@ -5370,6 +5372,7 @@ METHOD AgregarCombinado()
    ::oTemporalLinea:Save()
 
    // Agregamos kits si los tiene----------------------------------------------
+
    ::AgregarKit( ::oArticulo:Codigo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
    
    ::SetCombinando( .f. )
@@ -5645,15 +5648,21 @@ Return ( lReturn )
 
 METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2, nLineaMenu ) CLASS TpvTactil
 
-   local aStatusEscandallo := ::oArticulosEscandallos:GetStatus()
-   local aStatusArticulo   := ::oArticulo:GetStatus()
+   local lKitHijo
+   local lImprimirLinea
+   local lKitPrecio
    local nTotalUnidades    := 0
+   local aStatusLinea      := ::oTemporalLinea:GetStatus()
+   local aStatusArticulo   := ::oArticulo:GetStatus()
+   local aStatusEscandallo := ::oArticulosEscandallos:GetStatus()
 
    DEFAULT nLineaMenu      := bottomNumber
+   
+   lKitHijo                := !lKitAsociado( cCodigoArticulo, ::oArticulo )
+   lKitPrecio              := lPreciosComponentes( cCodigoArticulo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
+   lImprimirLinea          := lImprimirComponente( cCodigoArticulo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
 
    if ::oArticulosEscandallos:Seek( cCodigoArticulo )
-
-      ::oTemporalLinea:GetStatus()
 
       while ( ::oArticulosEscandallos:cCodKit == cCodigoArticulo ) .and. !( ::oArticulosEscandallos:eof() )
 
@@ -5697,9 +5706,9 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
             Propiedades de los kits-----------------------------------------
             */
 
-            ::oTemporalLinea:lKitChl      := !lKitAsociado( ::oArticulo:Codigo, ::oArticulo )
-            ::oTemporalLinea:lImpLin      := lImprimirComponente( ::oArticulo:Codigo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
-            ::oTemporalLinea:lKitPrc      := lPreciosComponentes( ::oArticulo:Codigo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
+            ::oTemporalLinea:lKitChl      := lKitHijo
+            ::oTemporalLinea:lImpLin      := lImprimirLinea
+            ::oTemporalLinea:lKitPrc      := lKitPrecio
 
             /*
             Podemos sacar productos asociados----------------------------------
@@ -5715,7 +5724,7 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
             Precio del producto asociado---------------------------------------
             */
 
-            if ::oTemporalLinea:lKitPrc
+            if lKitPrecio
                ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oArticulo:Codigo, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
             end if
 
@@ -5739,10 +5748,9 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
 
       end while
 
-      ::oTemporalLinea:SetStatus()
-
    end if
 
+   ::oTemporalLinea:SetStatus( aStatusLinea )
    ::oArticulosEscandallos:SetStatus( aStatusEscandallo )
    ::oArticulo:SetStatus( aStatusArticulo )
 
@@ -8902,8 +8910,13 @@ METHOD ProcesaComandas( lCopia )
 
                // Marcamos la linea como ya impresa en anulacion---------------------
 
+<<<<<<< HEAD
                ::SetLineaImpresa()
                
+=======
+               ::SetLineaImpresa( .t. )
+
+>>>>>>> 36fb62cb4b96bb1d8766531a182d2e7af9a4ad20
             end if
 
          end if
@@ -9042,7 +9055,12 @@ METHOD ProcesaAnulacion()
             // Añadimos esta linea al temporal de comandas---------------------
 
             if lAppend
+
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
+
+               //Quitamos la marca de impresa para que no se vuelva a imprimir-
+               ::SetLineaImpresa( .f. )
+
             end if
 
          end if
