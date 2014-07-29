@@ -85,8 +85,9 @@ Name: "{app}\Harbour";  Permissions: everyone-full
 Name: "{app}\Include";  Permissions: everyone-full
 Name: "{app}\Client";   Permissions: everyone-full
 Name: "{app}\Backup";   Permissions: everyone-full
-
-
+Name: "{app}\Jre7";     Permissions: everyone-full
+Name: "{app}\Firma";    Permissions: everyone-full
+                    
 [Tasks]
 ; Name: "desktopicon"; Description: "&Crear acceso directo en escritorio"; GroupDescription: "Iconos adicionales:"; MinVersion: 4,4
 
@@ -117,9 +118,9 @@ Source: "c:\fw195\gestool\bin\freeImage.dll";          DestDir: "{app}"; Flags: 
 Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\ace32.dll";              DestDir: "{app}"; Flags: ignoreversion
-; Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\aicu32.dll";             DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\axcws32.dll";            DestDir: "{app}"; Flags: ignoreversion
+; Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\rmphtml.ocx";            DestDir: "{app}"; Flags: ignoreversion regserver
 Source: "c:\fw195\gestool\bin\rmphtml.dll";            DestDir: "{app}"; Flags: ignoreversion 
@@ -176,6 +177,11 @@ Source: "c:\fw195\actualiza\psion\*.*";               DestDir: "{app}\Psion";   
 
 Source: "c:\fw195\gestool\harbour\harbour.exe";       DestDir: "{app}\Harbour";   Flags: ignoreversion;
 Source: "c:\fw195\gestool\include\*.*";               DestDir: "{app}\Include";   Flags: ignoreversion onlyifdoesntexist
+
+; Firma electronica
+
+Source: "c:\fw195\gestool\bin\jre7\*.*";              DestDir: "{app}\Jre7";  Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\bin\firma7\*.*";            DestDir: "{app}\Firma";  Flags: ignoreversion onlyifdoesntexist
 
 ; Fuentes
 

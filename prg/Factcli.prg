@@ -13995,7 +13995,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    with object ( oFactura )
 
       :cFicheroOrigen            := cPatXml() + cNumero + ".xml"
-      :cFicheroDestino           := cPatXml() + cNumero + ".f64"
+      :cFicheroDestino           := cPatXml() + cNumero + ".xml"
 
       /*
       Datos para el envio de la factura por mail-------------------------------
@@ -14172,8 +14172,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       // :nTotalGrossAmountBeforeTaxes                := nTotBrt - nTotalDto
 
       /*
-      Lineas de detalle----------------------------------------------------
-      ----
+      Lineas de detalle--------------------------------------------------------
       */
 
       if ( dbfFacCliL )->( dbSeek( nNumero ) )
@@ -14311,7 +14310,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    */
 
    if lFirmar
-      oFactura:Firma()
+      oFactura:FirmaJava()
    end if
 
    if lEnviar

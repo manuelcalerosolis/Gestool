@@ -1096,7 +1096,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lSendMail()  CLASS TGenMailing
+Method lSendMail() CLASS TGenMailing
 
    local oError
    local oBlock

@@ -15,9 +15,9 @@
 #define InvoiceClass             'OO'
 #define TaxTypeCode              '01'
 
-#define DoubleTwoDecimalPicture  "999,999,999.99"
-#define DoubleFourDecimalPicture "999,999,999.9999"
-#define DoubleSixDecimalPicture  "999,999,999.999999"
+#define DoubleTwoDecimalPicture  "999999999.99"
+#define DoubleFourDecimalPicture "999999999.9999"
+#define DoubleSixDecimalPicture  "999999999.999999"
 
 CLASS TFacturaElectronica
 
@@ -55,7 +55,6 @@ CLASS TFacturaElectronica
    DATA  oXmlInvoiceTotals
    DATA  oXmlGeneralDiscounts
    DATA  oXmlDiscount
-   DATA  oXmlInvoiceLine
    DATA  oXmlInvoiceLine
    DATA  oXmlItems
    DATA  oXmlDiscountsAndRebates
@@ -168,6 +167,8 @@ CLASS TFacturaElectronica
 
    METHOD Firma()
    METHOD VerificaFirma()
+
+   METHOD FirmaJava()
 
    METHOD Enviar()
 
@@ -631,11 +632,11 @@ METHOD PartiesXml()
                ::oXmlContactDetails := TXmlNode():new( , 'ContactDetails' )
 
                   if !Empty( ::oBuyerParty:Telephone )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,      ::oBuyerParty:Telephone() ) )
+                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'Telephone', ,   ::oBuyerParty:Telephone() ) )
                   end if
 
                   if !Empty( ::oBuyerParty:TelFax() )
-                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,        ::oBuyerParty:TelFax() ) )
+                     ::oXmlContactDetails:addBelow( TXmlNode():new( , 'TeleFax', ,     ::oBuyerParty:TelFax() ) )
                end if
 
                if !Empty( ::oBuyerParty:WebAddress() )
@@ -1160,9 +1161,9 @@ METHOD Firma()
 
    if !Empty( ::oFirma )
 
-      // xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
-      // xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, "B21473970", ::cFicheroDestino )
+      //xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, "B21473970", ::cFicheroDestino )
       xRet        := ::oFirma:FIRMA( ::cFicheroOrigen, ::cNif, ::cFicheroDestino )
+      xRet        := ::oFirma:VERIFICA( ::cFicheroOrigen, ::cFicheroDestino )
 
       if Left( xRet, 2 ) == "00"
 
@@ -1228,6 +1229,30 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD FirmaJava()
+
+   local oError
+   local oBlock
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      waitRun(    FullcurDir() + "jre7\bin\java -jar " + FullCurDir() + "firma\firelefa.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer", 6 )
+
+      ::oTree:Add( "Firma digital realizada satisfactoriamente.", 1 )
+
+   RECOVER USING oError
+
+      ::oTree:Add( "No se ha podido realizar la firma digital." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD Enviar()
 
    local oError
@@ -1244,6 +1269,24 @@ METHOD Enviar()
       Return ( lSendMail )
    end if
 
+   with object ( TGenMailing():New() )
+
+      :SetTypeDocument( "nFacCli" )
+      :SetDe(           uFieldEmpresa( "cNombre" ) )
+      :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+      :SetAdjunto(      ::cFicheroDestino )
+      :SetPara(         "mcalero@gestool.es" )
+      :SetAsunto(       "Envio de factura de cliente" )
+      :SetMensaje(      "Adjunto le remito nuestra factura de cliente" )
+      :SetMensaje(      CRLF )
+      :SetMensaje(      CRLF )
+      :SetMensaje(      "Reciba un cordial saludo." )
+
+      :lExternalSendMail()
+
+   end with
+
+/*
    if !File( FullCurDir() + "\JMail.dll")
       ::oTree:Add( "No existe el componente JMail.Dll" )
       Return ( Self )
@@ -1293,6 +1336,7 @@ METHOD Enviar()
       ::oMail:Close()
 
    end if
+*/
 
 Return ( lSendMail )
 

@@ -5718,7 +5718,6 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
             if ::oTemporalLinea:lKitPrc
                ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oArticulo:Codigo, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
             end if
-            
 
             /*
             Control de stock---------------------------------------------------
@@ -7825,9 +7824,9 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
 
    RECOVER USING oError
 
-   RollBackTransaction()
+      RollBackTransaction()
 
-   msgStop( "Error al grabar el albarán" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error al grabar el albarán" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -8904,7 +8903,7 @@ METHOD ProcesaComandas( lCopia )
                // Marcamos la linea como ya impresa en anulacion---------------------
 
                ::SetLineaImpresa()
-
+               
             end if
 
          end if
