@@ -8910,13 +8910,8 @@ METHOD ProcesaComandas( lCopia )
 
                // Marcamos la linea como ya impresa en anulacion---------------------
 
-<<<<<<< HEAD
-               ::SetLineaImpresa()
-               
-=======
                ::SetLineaImpresa( .t. )
 
->>>>>>> 36fb62cb4b96bb1d8766531a182d2e7af9a4ad20
             end if
 
          end if
