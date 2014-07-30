@@ -2054,7 +2054,7 @@ return ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Static Function aItmPro()
+Function aItmPro()
 
    local aBase := {}
 

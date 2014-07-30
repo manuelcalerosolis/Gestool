@@ -8107,6 +8107,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Total línea de factura",                    "CallHbFunc('nTotLFacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Código de barras para primera propiedad",   "CallHbFunc('cBarPrp1FacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Código de barras para segunda propiedad",   "CallHbFunc('cBarPrp2FacPrv')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Nombre primera propiedad",                  "CallHbFunc('cNomValPrp1')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Nombre segunda propiedad",                  "CallHbFunc('cNomValPrp2')" )
 
    oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",                   "CallHbFunc('nStockLineaFacPrv')" )
 
@@ -11649,6 +11651,36 @@ FUNCTION cBarPrp2FacPrv( uFacPrvL, uTblPro )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr2 + ( uFacPrvL )->cValPr2, "cCodPro", uTblPro )
       cBarPrp2       := ( uTblPro )->nBarTbl
+   end if
+
+RETURN ( cBarPrp2 )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cNomValPrp1( uFacPrvL, uTblPro )
+
+   local cBarPrp1    := ""
+
+   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, TDataView():FacturasProveedoresLineas( nView ) )
+   DEFAULT uTblPro   := TDataView():PropiedadesLineas( nView )
+
+   if dbSeekInOrd( ( uFacPrvL )->cCodPr1 + ( uFacPrvL )->cValPr1, "cCodPro", uTblPro )
+      cBarPrp1       := ( uTblPro )->cDesTbl
+   end if
+
+RETURN ( cBarPrp1 )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cNomValPrp2( uFacPrvL, uTblPro )
+
+   local cBarPrp2    := ""
+
+   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, TDataView():FacturasProveedoresLineas( nView ) )
+   DEFAULT uTblPro   := TDataView():PropiedadesLineas( nView )
+
+   if dbSeekInOrd( ( uFacPrvL )->cCodPr2 + ( uFacPrvL )->cValPr2, "cCodPro", uTblPro )
+      cBarPrp2       := ( uTblPro )->cDesTbl
    end if
 
 RETURN ( cBarPrp2 )
