@@ -14017,7 +14017,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       :cInvoiceCurrencyCode      := ( TDataView():FacturasClientes( nView ) )->cDivFac
       :cTaxCurrencyCode          := ( TDataView():FacturasClientes( nView ) )->cDivFac
       :nInvoiceTotalAmount       := nTotal
-      :nTotalOutstandingAmount   := nTotal - nPago
+      :nTotalOutstandingAmount   := nTotal 
       :nTotalExecutableAmount    := nTotal
 
       /*
@@ -14084,8 +14084,6 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       /*
       Totales------------------------------------------------------------------
       */
-
-      msgAlert( nTotBrt, "nTotBrt" )
 
       :nInvoiceTotal                               	:= nTotal
       :nTotalGrossAmount                           	:= nTotBrt
@@ -14185,7 +14183,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                oItemLine:cItemDescription          := Descrip( dbfFacCliL )
                oItemLine:nQuantity                 := nTotNFacCli( dbfFacCliL )
-               oItemLine:nUnitPriceWithoutTax      := nTotUFacCli( dbfFacCliL, nRouDiv )
+               oItemLine:nUnitPriceWithoutTax      := nNetUFacCli( dbfFacCliL, nDouDiv ) 
 
                // Primer descuento en linea---------------------------------------
 
@@ -14213,7 +14211,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                oTax                                := Tax()
                oTax:nTaxRate                       := ( dbfFacCliL )->nIva
-               oTax:nTaxBase                       := nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , , .f., .f. )
+               oTax:nTaxBase                       := nNetLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , , .f., .f. ) 
                oTax:nTaxAmount                     := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , .f., .f., .f. )
 
                if ( TDataView():FacturasClientes( nView ) )->lRecargo
@@ -18492,6 +18490,23 @@ FUNCTION nTotUFacCli( dbfLin, nDec, nVdv )
 RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
+
+Function nNetUFacCli( dbfLin, nDec, nVdv )
+
+	local nCalculo		:= nTotUFacCli( dbfLin, nDec, nVdv )		
+
+	if ( dbfLin )->nIva != 0 .and. ( dbfLin )->lIvaLin
+      	if nDec != nil
+        	nCalculo 	-= Round( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ), nDec )
+      	else
+         	nCalculo 	-= ( nCalculo / ( 100 / ( dbfLin )->nIva + 1 ) )
+      	end if
+   	end if
+
+RETURN ( nCalculo )
+
+//---------------------------------------------------------------------------//
+
 /*
 Cambia el importe unitario de la linea
 */
