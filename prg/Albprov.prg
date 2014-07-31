@@ -5950,7 +5950,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                if aAlbaranes[ nItem, 2 ] == 2
 
                   nTotPed              := nTotNPedPrv( TDataView():PedidosProveedoresLineas( nView ) )
-                  nTotRec              := nUnidadesRecibidasPedPrv( aAlbaranes[ nItem, 3 ], ( TDataView():PedidosProveedoresLineas( nView ) )->cRef, ( TDataView():PedidosProveedoresLineas( nView ) )->cCodPr1, ( TDataView():PedidosProveedoresLineas( nView ) )->cCodPr2, ( TDataView():PedidosProveedoresLineas( nView ) )->cRefPrv, ( TDataView():PedidosProveedoresLineas( nView ) )->cDetalle, TDataView():AlbaranesProveedoresLineas( nView ) )
+                  nTotRec              := nUnidadesRecibidasPedPrv( aAlbaranes[ nItem, 3 ], ( TDataView():PedidosProveedoresLineas( nView ) )->cRef, ( TDataView():PedidosProveedoresLineas( nView ) )->cValPr1, ( TDataView():PedidosProveedoresLineas( nView ) )->cValPr2, ( TDataView():PedidosProveedoresLineas( nView ) )->cRefPrv, ( TDataView():PedidosProveedoresLineas( nView ) )->cDetalle, TDataView():AlbaranesProveedoresLineas( nView ) )
                   nTotPdt              := nTotPed - nTotRec
 
                   if nTotPdt > 0
@@ -6042,31 +6042,31 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      end if
 
 
-                  if lCalCaj()
+                     if lCalCaj()
 
-                     if nTotRec != 0
+                        if nTotRec != 0
 
-                        nDiv  := Mod( nTotPdt, ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja )
-                        if nDiv == 0 .and. ( TDataView():PedidosProveedoresLineas( nView ) )->nCanPed != 0
-                           ( dbfTmp )->nCanEnt  := Div( nTotPdt, ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja )
-                           ( dbfTmp )->nUniCaja := ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja
+                           nDiv  := Mod( nTotPdt, ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja )
+                           if nDiv == 0 .and. ( TDataView():PedidosProveedoresLineas( nView ) )->nCanPed != 0
+                              ( dbfTmp )->nCanEnt  := Div( nTotPdt, ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja )
+                              ( dbfTmp )->nUniCaja := ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja
+                           else
+                              ( dbfTmp )->nCanEnt  := 0
+                              ( dbfTmp )->nUniCaja := nTotPdt
+                           end if
+
                         else
-                           ( dbfTmp )->nCanEnt  := 0
-                           ( dbfTmp )->nUniCaja := nTotPdt
+
+                           ( dbfTmp )->nCanEnt     := ( TDataView():PedidosProveedoresLineas( nView ) )->nCanPed
+                           ( dbfTmp )->nUniCaja    := ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja
+
                         end if
 
                      else
 
-                        ( dbfTmp )->nCanEnt     := ( TDataView():PedidosProveedoresLineas( nView ) )->nCanPed
-                        ( dbfTmp )->nUniCaja    := ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja
+                        ( dbfTmp )->nUniCaja       := nTotPdt
 
                      end if
-
-                  else
-
-                     ( dbfTmp )->nUniCaja       := nTotPdt
-
-                  end if
 
                   end if
 
