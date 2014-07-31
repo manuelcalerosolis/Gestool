@@ -987,7 +987,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrw, oDlg, nDinDiv, nMode ) } )
+      oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nDinDiv, nMode ) } )
    end if
 
    oDlg:AddFastKey ( VK_F1, {|| ChmHelp ("Pagos") } )

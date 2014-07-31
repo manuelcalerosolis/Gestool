@@ -1777,7 +1777,7 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
             if lChgState
                lReturn  := ChgState( lSimula )
             else
-               lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfDiv )
+               lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfClient, dbfDiv, .f. )
             end if
 
          case ( cTipo == "Rectificativas" .or. cTipo == "Todas" ) .and. !Empty( ( dbfFacCliP )->cTipRec )
@@ -1785,12 +1785,12 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
             if lChgState
                lReturn  := ChgState( lSimula )
             else
-               lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfDiv )
+               lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfClient, dbfDiv, .f. )
             end if
 
       end case
 
-      if IsFalse( lReturn )
+      if isFalse( lReturn ) 
          exit
       end if
 

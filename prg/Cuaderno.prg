@@ -580,7 +580,7 @@ ENDCLASS
       else
 
          if ::Tipo() == '1'
-            ::cNif   := 'A' + alltrim( ::cNif )
+            ::cNif   := 'I' + alltrim( ::cNif )
          else 
             ::cNif   := 'J' + alltrim( ::cNif )
          end if 

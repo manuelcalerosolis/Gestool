@@ -85,7 +85,6 @@ Name: "{app}\Harbour";  Permissions: everyone-full
 Name: "{app}\Include";  Permissions: everyone-full
 Name: "{app}\Client";   Permissions: everyone-full
 Name: "{app}\Backup";   Permissions: everyone-full
-Name: "{app}\Jre7";     Permissions: everyone-full
 Name: "{app}\Firma";    Permissions: everyone-full
                     
 [Tasks]
@@ -180,8 +179,7 @@ Source: "c:\fw195\gestool\include\*.*";               DestDir: "{app}\Include"; 
 
 ; Firma electronica
 
-Source: "c:\fw195\gestool\bin\jre7\*.*";              DestDir: "{app}\Jre7";  Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\gestool\bin\firma\*.*";             DestDir: "{app}\Firma";  Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\gestool\bin\firma\*.*";             DestDir: "{app}\Firma";   Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs
 
 ; Fuentes
 

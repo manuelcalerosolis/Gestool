@@ -310,7 +310,7 @@ METHOD lGenerate()
    ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
    ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
 
-   /*Facturas rectificativas*/
+   // Facturas rectificativas--------------------------------------------------
 
    ::oFacRecT:OrdSetFocus( "dFecFac" )
    ::oFacRecL:OrdSetFocus( "nNumFac" )

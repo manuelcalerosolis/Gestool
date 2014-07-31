@@ -79,9 +79,9 @@ CLASS TFacturaElectronica
    DATA     nInvoiceTotalAmount           INIT  0
 
    DATA     nTotalGrossAmount             INIT  0
+   DATA     nTotalGrossAmountBeforeTaxes  INIT  0
    DATA     nTotalGeneralDiscounts        INIT  0
    DATA     nTotalGeneralSurcharges       INIT  0
-   DATA     nTotalGrossAmountBeforeTaxes  INIT  0
    DATA     nTotalTaxOutputs              INIT  0
    DATA     nTotalTaxesWithheld           INIT  0
    DATA     nInvoiceTotal                 INIT  0
@@ -97,7 +97,7 @@ CLASS TFacturaElectronica
 
    ACCESS   TotalTaxOutputs               INLINE ( Alltrim( Trans( ::nTotalTaxOutputs,             DoubleTwoDecimalPicture ) ) )
 
-   ACCESS   TotalGrossAmountBeforeTaxes   INLINE ( Alltrim( Trans( ::nTotalGrossAmount - ::nTotalGeneralDiscounts + ::nTotalGeneralSurcharges, DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalGrossAmountBeforeTaxes   INLINE ( Alltrim( Trans( ::nTotalGrossAmountBeforeTaxes, DoubleTwoDecimalPicture ) ) )
 
    ACCESS   TotalGeneralDiscounts         INLINE ( Alltrim( Trans( ::nTotalGeneralDiscounts,       DoubleTwoDecimalPicture ) ) )
 
@@ -281,6 +281,8 @@ METHOD GeneraXml()
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+      ferase( ::cFicheroOrigen )
 
       ::hDC       := fCreate( ::cFicheroOrigen )
 
@@ -546,10 +548,6 @@ METHOD PartiesXml()
             ::oXmlParties:addBelow( ::oXmlSellerParty )
 
          end if
-
-         /*
-         Comienza el buyerParty---------------------------------------------------
-         */
 
       /*
       Comienza el nodo BuyerParty---------------------------------------------
@@ -1237,7 +1235,8 @@ METHOD FirmaJava()
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      waitRun(    FullcurDir() + "jre7\bin\java -jar " + FullCurDir() + "firma\firelefa.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer", 6 )
+      logwrite(   "java -jar " + FullCurDir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer" )
+      waitRun(    "java -jar " + FullCurDir() + "firma\firma.jar " + ::cFicheroOrigen + space(1) + ::cFicheroDestino + space( 1 ) + "Explorer", 6 )
 
       ::oTree:Add( "Firma digital realizada satisfactoriamente.", 1 )
 

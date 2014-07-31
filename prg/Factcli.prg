@@ -1153,7 +1153,7 @@ else
 
    DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.1", .f., "Firmar digitalmente", .f., "Enviar por correo electrónico" ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.1", .f., "Firmar digitalmente (necesita runtime de Java)", .f., "Enviar por correo electrónico" ) ) ;
       TOOLTIP  "Exportar a Facturae" ;
       LEVEL    ACC_EDIT
 
@@ -14075,19 +14075,21 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       Fechas de emision de factura---------------------------------------------
       */
 
-      :dOperationDate                              := ( TDataView():FacturasClientes( nView ) )->dFecFac
-      :dIssueDate                                  := ( TDataView():FacturasClientes( nView ) )->dFecFac
+      :dOperationDate                              	:= ( TDataView():FacturasClientes( nView ) )->dFecFac
+      :dIssueDate                                  	:= ( TDataView():FacturasClientes( nView ) )->dFecFac
 
-
-      :cPlaceOfIssuePostCode                       := uFieldEmpresa( "cCodPos" )
-      :cPlaceOfIssueDescription                    := uFieldEmpresa( "cPoblacion" )
+      :cPlaceOfIssuePostCode                       	:= uFieldEmpresa( "cCodPos" )
+      :cPlaceOfIssueDescription                    	:= uFieldEmpresa( "cPoblacion" )
 
       /*
       Totales------------------------------------------------------------------
       */
 
-      :nInvoiceTotal                               := nTotal
-      :nTotalGrossAmount                           := nTotBrt
+      msgAlert( nTotBrt, "nTotBrt" )
+
+      :nInvoiceTotal                               	:= nTotal
+      :nTotalGrossAmount                           	:= nTotBrt
+      :nTotalGrossAmountBeforeTaxes 				:= nTotNet
 
       /*
       Impuestos----------------------------------------------------------------
@@ -14095,7 +14097,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
       for each a in aTotIva
 
-         if !IsNil( a[ 3 ] )
+         if !isNil( a[ 3 ] )
 
             oTax                                   := Tax()
             oTax:nTaxBase                          := a[ 2 ]
@@ -14169,8 +14171,6 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
       end if
 
-      // :nTotalGrossAmountBeforeTaxes                := nTotBrt - nTotalDto
-
       /*
       Lineas de detalle--------------------------------------------------------
       */
@@ -14235,9 +14235,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
       end if
 
-      /*
-      Pagos de factura---------------------------------------------------------
-      */
+      // Pagos de factura------------------------------------------------------
 
       if ( dbfFacCliP )->( dbSeek( nNumero ) )
 
@@ -19531,11 +19529,11 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    if nSbrAtp == 2 .and. nDtoAtp != 0
 
-      aTotalAtp[1]   := Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[2]   := Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
-      aTotalAtp[3]   := Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[1] 	:= Round( _NBASIVA1 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[2] 	:= Round( _NBASIVA2 * nDtoAtp / 100, nRouDiv )
+      aTotalAtp[3] 	:= Round( _NBASIVA3 * nDtoAtp / 100, nRouDiv )
 
-      nTotAtp      := aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
+      nTotAtp      	:= aTotalAtp[ 1 ] + aTotalAtp[ 2 ] + aTotalAtp[ 3 ]
 
    end if
 
@@ -19785,14 +19783,18 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          _NBASIVA3         -= ( _NIMPIVA3 + _NIMPREQ3 )
 
       else 
+         
          _NIMPIVA1         := if( _NPCTIVA1 != nil .and. _NPCTIVA1 != 0, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
          _NIMPIVA2         := if( _NPCTIVA2 != nil .and. _NPCTIVA2 != 0, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
          _NIMPIVA3         := if( _NPCTIVA3 != nil .and. _NPCTIVA3 != 0, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
+
          _NBASIVA1         -= _NIMPIVA1
          _NBASIVA2         -= _NIMPIVA2
          _NBASIVA3         -= _NIMPIVA3
 
       end if
+
+      nTotBrt 				:= Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
    else
 
@@ -19812,13 +19814,13 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Redondeo del neto de la factura---------------------------------------------
    */
 
-   nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
+   nTotNet           	:= Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
    /*
    Total entregas--------------------------------------------------------------
    */
 
-   nTotEnt           := Round( nTotNet * nEntIni / 100, nRouDiv )
+   nTotEnt           	:= Round( nTotNet * nEntIni / 100, nRouDiv )
 
    /*
    Sumamos los portes al final-------------------------------------------------
