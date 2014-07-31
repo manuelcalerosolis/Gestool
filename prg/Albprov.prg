@@ -4678,7 +4678,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                Calculamos el total de unidades q se tienen q llevar------------
                */
 
-               nTotPed                 := NotCaja( ( TDataView():PedidosProveedoresLineas( nView ) )->nCanPed ) * ( TDataView():PedidosProveedoresLineas( nView ) )->nUniCaja
+               nTotPed                 := nTotNPedPrv( TDataView():PedidosProveedoresLineas( nView ) )
                nTotRec                 := nUnidadesRecibidasPedPrv( ( TDataView():PedidosProveedoresLineas( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedoresLineas( nView ) )->nNumPed ) + ( TDataView():PedidosProveedoresLineas( nView ) )->cSufPed, ( TDataView():PedidosProveedoresLineas( nView ) )->cRef, ( TDataView():PedidosProveedoresLineas( nView ) )->cValPr1, ( TDataView():PedidosProveedoresLineas( nView ) )->cValPr2, ( TDataView():PedidosProveedoresLineas( nView ) )->cRefPrv, ( TDataView():PedidosProveedoresLineas( nView ) )->cDetalle, TDataView():AlbaranesProveedoresLineas( nView ) )
                nTotPdt                 := nTotPed - nTotRec
 
@@ -4686,7 +4686,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                Vamos a ver si quedan unidades por recibir
                */
 
-               if Abs( nTotPdt ) > 0
+               if nTotPdt > 0
 
                   (dbfTmp)->( dbAppend() )
 
