@@ -2721,7 +2721,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :lHide               := .t.
          :nEditType           := 1
          :nFooterType         := AGGR_SUM
-         :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
+         :bOnPostEdit         := {|o,x,n| if( lCompruebaStock( dbfTmpLin, ( x - nTotNAlbCli( dbfTmpLin ) ) ), ChangeUnidades( o, x, n, aTmp ), ) }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
@@ -10562,7 +10562,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
          nTotUnd  -= nTotNAlbCli( dbfTmpLin )
       end if
 
-      if nTotUnd  != 0
+      if !lCompruebaStock( aTmp, nTotUnd, nStkAct )
+         return nil
+      end if   
+
+      /*if nTotUnd  != 0
 
          do case
             case ( nStkAct - nTotUnd ) < 0
@@ -10588,7 +10592,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
          end case
 
-      end if
+      end if*/
 
    end if
 
@@ -13097,6 +13101,66 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+Function lCompruebaStock( uTmpLin, nTotalUnidades, nStockActual )
+
+   local cCodigoArticulo
+   local cCodigoAlmacen
+   local lNotVta
+   local lMsgVta
+
+   do case
+      case ValType( uTmpLin ) == "A"
+
+         cCodigoArticulo   := uTmpLin[ _CREF ]
+         cCodigoAlmacen    := uTmpLin[ _CALMLIN ]
+         lNotVta           := uTmpLin[ _LNOTVTA ]
+         lMsgVta           := uTmpLin[ _LMSGVTA ]
+
+         if Empty( nStockActual )
+            nStockActual   := oStock:nTotStockAct( uTmpLin[ _CREF ], uTmpLin[ _CALMLIN ], uTmpLin[ _CVALPR1 ], uTmpLin[ _CVALPR2 ], uTmpLin[ _CLOTE ], uTmpLin[ _LKITART ], uTmpLin[ _NCTLSTK ] )
+         end if   
+
+      case ValType( uTmpLin ) == "C"
+
+         cCodigoArticulo   := ( uTmpLin )->cRef
+         cCodigoAlmacen    := ( uTmpLin )->cAlmLin
+         lNotVta           := ( uTmpLin )->lNotVta
+         lMsgVta           := ( uTmpLin )->lMsgVta
+
+         if Empty( nStockActual )
+            nStockActual   := oStock:nTotStockAct( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, ( dbfTmpLin )->lKitArt, ( dbfTmpLin )->nCtlStk )
+         end if
+
+   end case
+
+   if nTotalUnidades  != 0
+
+      do case
+         case ( nStockActual - nTotalUnidades ) < 0
+
+            if lNotVta
+               MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + cCodigoAlmacen + "." )
+               return .f.
+            end if
+
+            if lMsgVta
+               Return ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + " en almacén " + cCodigoAlmacen + ".", "¿Desea continuar?" )
+            end if
+
+         case ( nStockActual - nTotalUnidades ) < RetFld( cCodigoArticulo, dbfArticulo, "nMinimo"  )
+
+            if lMsgVta
+               Return ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
+            end if
+
+      end case
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
 
    /*
@@ -15242,6 +15306,24 @@ function SynAlbCli( cPath )
       end while
 
       ( TDataView():Get( "AlbCliS", nView ) )->( ordSetFocus( 1 ) )
+
+
+      // Lineas huerfanas---------------------------------------------------------
+
+      /*( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
+      ( TDataView():Get( "AlbCliL", nView ) )->( ordSetFocus( 1 ) )
+      ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTop() )
+
+      while !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
+
+         if !( TDataView():Get( "AlbCliL", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb ) )
+            ( TDataView():Get( "AlbCliL", nView ) )->( dbDelete() )
+         end if 
+         ( TDataView():Get( "AlbCliL", nView ) )->( dbSkip( 1 ) )
+         
+         SysRefresh()
+
+      end while*/
 
       CloseFiles()
 
