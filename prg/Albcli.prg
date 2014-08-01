@@ -2731,7 +2731,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :lHide               := .t.
          :nEditType           := 1
          :nFooterType         := AGGR_SUM
-         :bOnPostEdit         := {|o,x,n| if( lCompruebaStock( dbfTmpLin, ( x - nTotNAlbCli( dbfTmpLin ) ) ), ChangeUnidades( o, x, n, aTmp ), ) }
+         :bOnPostEdit         := {|o,x,n| if( lCompruebaStock( dbfTmpLin, oStock, ( x - nTotNAlbCli( dbfTmpLin ) ) ), ChangeUnidades( o, x, n, aTmp ), ) }
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
@@ -10572,7 +10572,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
          nTotUnd  -= nTotNAlbCli( dbfTmpLin )
       end if
 
-      if !lCompruebaStock( aTmp, nTotUnd, nStkAct )
+      if !lCompruebaStock( aTmp, oStock, nTotUnd, nStkAct )
          return nil
       end if   
 
@@ -13111,7 +13111,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function lCompruebaStock( uTmpLin, nTotalUnidades, nStockActual )
+Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
 
    local cCodigoArticulo
    local cCodigoAlmacen
@@ -13138,7 +13138,7 @@ Function lCompruebaStock( uTmpLin, nTotalUnidades, nStockActual )
          lMsgVta           := ( uTmpLin )->lMsgVta
 
          if Empty( nStockActual )
-            nStockActual   := oStock:nTotStockAct( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, ( dbfTmpLin )->lKitArt, ( dbfTmpLin )->nCtlStk )
+            nStockActual   := oStock:nTotStockAct( ( uTmpLin )->cRef, ( uTmpLin )->cAlmLin, ( uTmpLin )->cValPr1, ( uTmpLin )->cValPr2, ( uTmpLin )->cLote, ( uTmpLin )->lKitArt, ( uTmpLin )->nCtlStk )
          end if
 
    end case
