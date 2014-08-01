@@ -1195,10 +1195,10 @@ METHOD Resource( nMode )
       ::oBrwDet:CreateFromResource( 180 )
 
       with object ( ::oBrwDet:addCol() )
-         :cHeader          := "Se.  Seleccionado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "lSelDoc" ) }
-         :nWidth           := 24
+         :cHeader       := "Se.  Seleccionado"
+         :bStrData      := {|| "" }
+         :bEditValue    := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "lSelDoc" ) }
+         :nWidth        := 24
          :SetCheck( { "Sel16", "Nil16" } )
       end with
 
@@ -1214,12 +1214,16 @@ METHOD Resource( nMode )
          :cHeader       := "Código"
          :bStrData      := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "cRefMov" ) }
          :nWidth        := 100
+         :cSortOrder    := "cRefMov"
+         :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Nombre"
-         :bStrData      := {|| RetArticulo( ::oDetMovimientos:oDbfVir:FieldGetByName( "cRefMov" ), ::oArt:cAlias ) }
+         :bStrData      := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "cNomMov" ) }
          :nWidth        := 300
+         :cSortOrder    := "cNomMov"
+         :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( ::oBrwDet:addCol() )
@@ -1267,9 +1271,8 @@ METHOD Resource( nMode )
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
       end with
-
       
-if !oUser():lNotCostos()
+   if !oUser():lNotCostos()
 
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Importe"
@@ -1291,7 +1294,7 @@ if !oUser():lNotCostos()
          :nFootStrAlign := 1
       end with
 
-end if      
+   end if      
 
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Total peso"
@@ -1371,7 +1374,7 @@ METHOD Search()
 	local oDlg
 	local oIndice
    local cIndice  := "Código"
-   local aIndice  := { "Código" }
+   local aIndice  := { "Código", "Nombre" }
 	local oCadena
    local xCadena  := Space( 100 )
    local nOrdAnt  := ::oDetMovimientos:oDbfVir:OrdSetFocus( "cRefMov" )
@@ -1379,20 +1382,25 @@ METHOD Search()
    DEFINE DIALOG oDlg RESOURCE "sSearch"
 
 	REDEFINE GET oCadena VAR xCadena ;
-      ID       100 ;
-      OF       oDlg
-      oCadena:bChange   := {| nKey | oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ) + Chr( nKey ), .t. ), ::oBrwDet:Refresh() }
+      ID          100 ;
+      OF          oDlg
+      
+      oCadena:bChange   := {| nKey | oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ), .t. ), ::oBrwDet:Refresh() }
 
 	REDEFINE COMBOBOX oIndice VAR cIndice ;
-      ITEMS    aIndice ;
-      ID       101 ;
-      ON CHANGE( oCadena:SetFocus(), oCadena:SelectAll() ) ;
-		OF 		oDlg
+      ITEMS       aIndice ;
+      ID          101 ;
+      OF          oDlg
+
+   oIndice:bChange   := {||   ::oDetMovimientos:oDbfVir:OrdSetFocus( if( oIndice:nAt == 1, "cRefMov", "cNomMov" ) ),;
+                              ::oBrwDet:Refresh(),;
+                              oCadena:SetFocus(),;
+                              oCadena:SelectAll() }
 
 	REDEFINE BUTTON ;
-		ID 		510 ;
-		OF 		oDlg ;
-      ACTION   ( oDlg:end() )
+		ID 		   510 ;
+		OF          oDlg ;
+      ACTION      ( oDlg:end() )
 
 	ACTIVATE DIALOG oDlg CENTER
 
@@ -2168,10 +2176,13 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD CheckFiles()
+METHOD CheckFiles( cFileAppendFrom )
 
    if ::OpenService()
-      ::CloseFiles()
+      if !Empty( cFileAppendFrom )
+         ::AppendFrom( cFileAppendFrom )
+      end if
+      ::CloseService()
    end if
 
 Return ( Self )
@@ -3327,6 +3338,7 @@ Function SynRemMov( cPath )
    local dFecMov
    local dbfRemMov
    local dbfHisMov
+   local dbfArticulo
    local nTotRem  := 0
 
    DEFAULT cPath  := cPatEmp()
@@ -3339,6 +3351,9 @@ Function SynRemMov( cPath )
 
    USE ( cPath + "HISMOV.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
    SET ADSINDEX TO ( cPath + "HISMOV.CDX" ) ADDITIVE
+
+   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
    /*
    Cabeceras-------------------------------------------------------------------
@@ -3370,6 +3385,10 @@ Function SynRemMov( cPath )
       if Empty( ( dbfHisMov )->cSufRem )
          ( dbfHisMov )->cSufRem        := "00"
       end if
+
+      if Empty( ( dbfHisMov )->cNomMov )
+         ( dbfHisMov )->cNomMov        := RetArticulo( ( dbfHisMov )->cRefMov, dbfArticulo )
+      end if 
 
       if Empty( ( dbfHisMov )->dFecMov )
 
@@ -3430,6 +3449,7 @@ Function SynRemMov( cPath )
 
    CLOSE ( dbfRemMov )
    CLOSE ( dbfHisMov )
+   CLOSE ( dbfArticulo )
 
 return nil
 
@@ -3487,7 +3507,6 @@ CLASS TDetMovimientos FROM TDet
 
    DATA  cTxtAlmacenOrigen
    DATA  cTxtAlmacenDestino
-
 
    DATA  oPreDiv
 
@@ -3552,6 +3571,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       FIELD NAME "cAliMov"             TYPE "C" LEN  16 DEC 0 COMMENT "Alm. ent."                           OF oDbf
       FIELD NAME "cAloMov"             TYPE "C" LEN  16 DEC 0 COMMENT "Alm. sal."                           OF oDbf
       FIELD NAME "cRefMov"             TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
+      FIELD NAME "cNomMov"             TYPE "C" LEN 200 DEC 0 COMMENT "Nombre"                              OF oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
       FIELD NAME "cCodPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 1"                    OF oDbf
       FIELD NAME "cCodPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 2"                    OF oDbf
@@ -3586,6 +3606,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       INDEX TO ( cFileName ) TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov" ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefMov" ON "cRefMov + cValPr1 + cValPr2 + cLote"    NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cNomMov" ON "cNomMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cAloMov" ON "cAloMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cAliMov" ON "cAliMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefAlm" ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
@@ -3688,7 +3709,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::LoaArt( oDlg, .f., nMode ), .t. ) }
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
-      REDEFINE GET ::oGetDetalle VAR ::cGetDetalle ;
+      REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
 			ID 		110 ;
          WHEN     ( .f. ) ;
          OF       oDlg

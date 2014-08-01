@@ -2265,11 +2265,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    Comienza el dialogo---------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "albaranes a clientes"
+   DEFINE DIALOG oDlg ;
+      RESOURCE    "PEDCLI" ;
+      TITLE       LblTitle( nMode ) + "albaranes a clientes"
 
-      REDEFINE FOLDER oFld ID 200 OF oDlg ;
-         PROMPT   "Albará&n", "Da&tos",   "&Incidencias", "D&ocumentos" ;
-         DIALOGS  "ALBCLI_1", "ALBCLI_2", "PEDCLI_3",     "PEDCLI_4"
+      REDEFINE FOLDER oFld ;
+         ID       200 ;
+         OF       oDlg ;
+         PROMPT   "Albará&n",;
+                  "Da&tos",;
+                  "&Incidencias",;
+                  "D&ocumentos" ;
+         DIALOGS  "ALBCLI_1",;
+                  "ALBCLI_2",;
+                  "PEDCLI_3",;
+                  "PEDCLI_4"
 
       /*
       Codigo de Cliente________________________________________________________

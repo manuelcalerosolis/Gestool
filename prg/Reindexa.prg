@@ -361,7 +361,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Series de materias primas", ::aProgress[ 3 ] );        TDetSeriesMaterial():New( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Líneas de maquinaria", ::aProgress[ 3 ] );             TDetMaquina():New( ::cPathEmp ):Reindexa()
 
-         ::SetText( "Generando índices : Movimientos de almacen", ::aProgress[ 3 ] );           TDetMovimientos():New( ::cPathEmp ):Reindexa()
+         ::SetText( "Generando índices : Movimientos de almacén", ::aProgress[ 3 ] );           TDetMovimientos():New( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Series de movimientos de almacen", ::aProgress[ 3 ] ); TDetSeriesMovimientos():New( ::cPathEmp ):Reindexa()
 
          ::SetText( "Generando índices : Expediente", ::aProgress[ 3 ] );                       TExpediente():Create( ::cPathEmp ):Reindexa()

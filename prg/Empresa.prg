@@ -3551,8 +3551,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    SysRefresh()
 
+   msgAlert( ( cPath ), "cNamePath" )
    /*
-   msgAlert( cNamePath( cPath ), "cNamePath" )
    msgAlert( lChDir( cNamePath( cPath ) ), "lChDir" )
    msgAlert( MakeDir( cNamePath( cPath ) ) != -1, "makedir" )
    */
@@ -3643,11 +3643,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando movimientos de almacén" )
       end if
-      TRemMovAlm():Create( cPath ):CheckFiles()                         ; sysrefresh()
+      
+      TRemMovAlm():Create( cPath ):CheckFiles()                            ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando catálogos" )
       end if
+      
       if cPathOld != nil
          TCatalogo():Create( cPath ):CheckFiles( cPathGrp + "Catalogo.Dbf" )  ; SysRefresh()
       else
@@ -4698,12 +4700,10 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Añadiendo series de materiales de producción" )
          TDetSeriesMaterial():New():SyncAllDbf()
 
-         /*
-         oMsg:SetText( "Añadiendo lineas de movimientos de almacen" )
-         TDetMovimientos():New():SyncAllDbf()
-         */
+         oMsg:SetText( "Añadiendo lineas de movimientos de almacén" )
+         TDetMovimientos():New():SyncAllDbf(.t.)
 
-         oMsg:SetText( "Añadiendo series de movimientos de almacen" )
+         oMsg:SetText( "Añadiendo series de movimientos de almacén" )
          TDetSeriesMovimientos():New():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo líneas de maquinaria" )
