@@ -3551,8 +3551,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    SysRefresh()
 
-   msgAlert( ( cPath ), "cNamePath" )
    /*
+   msgAlert( ( cPath ), "cNamePath" )
    msgAlert( lChDir( cNamePath( cPath ) ), "lChDir" )
    msgAlert( MakeDir( cNamePath( cPath ) ) != -1, "makedir" )
    */
@@ -4701,7 +4701,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          TDetSeriesMaterial():New():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo lineas de movimientos de almacén" )
-         TDetMovimientos():New():SyncAllDbf(.t.)
+         TDetMovimientos():New():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo series de movimientos de almacén" )
          TDetSeriesMovimientos():New():SyncAllDbf()

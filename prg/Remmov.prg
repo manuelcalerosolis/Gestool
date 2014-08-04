@@ -1385,17 +1385,18 @@ METHOD Search()
       ID          100 ;
       OF          oDlg
       
-      oCadena:bChange   := {| nKey | oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ), .t. ), ::oBrwDet:Refresh() }
+      oCadena:bChange   := {||   oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( Rtrim( xCadena ), .t. ), ::oBrwDet:Refresh() }
 
-	REDEFINE COMBOBOX oIndice VAR cIndice ;
+	REDEFINE COMBOBOX oIndice ;
+      VAR         cIndice ;
       ITEMS       aIndice ;
       ID          101 ;
       OF          oDlg
 
-   oIndice:bChange   := {||   ::oDetMovimientos:oDbfVir:OrdSetFocus( if( oIndice:nAt == 1, "cRefMov", "cNomMov" ) ),;
-                              ::oBrwDet:Refresh(),;
-                              oCadena:SetFocus(),;
-                              oCadena:SelectAll() }
+   oIndice:bChange      := {||   ::oDetMovimientos:oDbfVir:OrdSetFocus( if( oIndice:nAt == 1, "cRefMov", "cNomMov" ) ),;
+                                 ::oBrwDet:Refresh(),;
+                                 oCadena:SetFocus(),;
+                                 oCadena:SelectAll() }
 
 	REDEFINE BUTTON ;
 		ID 		   510 ;
@@ -2487,7 +2488,7 @@ METHOD loadAlmacen( nMode )
                   ::oDetMovimientos:oDbfVir:lSelDoc   := .t.
       
                   ::oDetMovimientos:oDbfVir:cRefMov   := sStkAlm:cCodigo
-      
+                  ::oDetMovimientos:oDbfVir:cNomMov   := RetArticulo( sStkAlm:cCodigo, ::oArt:cAlias )
                   ::oDetMovimientos:oDbfVir:cCodPr1   := sStkAlm:cCodigoPropiedad1
                   ::oDetMovimientos:oDbfVir:cCodPr2   := sStkAlm:cCodigoPropiedad2
                   ::oDetMovimientos:oDbfVir:cValPr1   := sStkAlm:cValorPropiedad1
@@ -3573,10 +3574,10 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       FIELD NAME "cRefMov"             TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
       FIELD NAME "cNomMov"             TYPE "C" LEN 200 DEC 0 COMMENT "Nombre"                              OF oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
-      FIELD NAME "cCodPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 1"                    OF oDbf
-      FIELD NAME "cCodPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 2"                    OF oDbf
-      FIELD NAME "cValPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Prp.1"                               OF oDbf
-      FIELD NAME "cValPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Prp.2"                               OF oDbf
+      FIELD NAME "cCodPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 1"                  OF oDbf
+      FIELD NAME "cCodPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
+      FIELD NAME "cValPr1"             TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 1"                   OF oDbf
+      FIELD NAME "cValPr2"             TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 2"                   OF oDbf
       FIELD NAME "cCodUsr"             TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
       FIELD NAME "cCodDlg"             TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
       FIELD NAME "lLote"               TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf

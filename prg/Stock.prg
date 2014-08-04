@@ -234,7 +234,6 @@ CLASS TStock
 
    METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
       METHOD lCheckConsolidacion()
-      METHOD lCheckConsolidacionMovimientosAlmancen()
 
    METHOD lValoracionCostoMedio( nTipMov )
 
@@ -4124,10 +4123,11 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cHisMovT)->dFecMov >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
+         if ( Empty( dFecIni ) .or. ( ::cHisMovT)->dFecMov >= dFecIni ) .and.;
+            ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
-            if ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
-               ::lCodigoAlmacen( ( ::cHisMovT)->cAliMov )
+            if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT )->cAliMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov ) .and.;
+               ::lCodigoAlmacen( ( ::cHisMovT )->cAliMov )
 
                /*
                Buscamos el numero de serie----------------------------------------
@@ -4151,8 +4151,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             end if
 
-            if ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
-               ( !Empty( ( ::cHisMovT)->cAloMov ) .and. ( ::lCodigoAlmacen( ( ::cHisMovT)->cAloMov ) ) )
+            if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov ) .and.;
+               ( !Empty( ( ::cHisMovT )->cAloMov ) .and. ( ::lCodigoAlmacen( ( ::cHisMovT )->cAloMov ) ) )
 
                /*
                Buscamos el numero de serie----------------------------------------
@@ -6221,9 +6221,24 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
    cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
 
+   msgAlert( ( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ), "( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote )")
+   msgAlert( len( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ), "len" )
+
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
 
-      while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == ( cCodAlm ) .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
+      msgAlert( "Found: " + cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote )
+
+      msgAlert( ( ::cHisMovT )->cValPr1, "campo cValPr1")
+      msgAlert( len( ( ::cHisMovT )->cValPr1 ), "len campo cValPr1")
+      msgAlert( ( ::cHisMovT )->cValPr2, "campo cValPr2")
+      msgAlert( len( ( ::cHisMovT )->cValPr2 ), "len campo cValPr2")
+
+      msgAlert( cValPrp1, "variable cValPrp1")
+      msgAlert( len( cValPrp1 ), "len variable cValPrp1")
+      msgAlert( cValPrp2, "variable cValPrp2")
+      msgAlert( len( cValPrp2 ), "len variable cValPrp2")
+
+      while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
 
          if Empty( ::dConsolidacion )
 
@@ -6252,25 +6267,13 @@ Return ( ::dConsolidacion )
 
 METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
 
-   local lCheck   := .f.
+   local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+   msgAlert( dConsolidacion, "dConsolidacion" )
+   msgAlert( cCodArt, "cCodArt" )
+   msgAlert( cCodAlm, "cCodAlm" )
 
-   lCheck         := ( Empty( ::dConsolidacion ) .or. dFecha >= ::dConsolidacion )
-
-Return ( lCheck )
-
-//---------------------------------------------------------------------------//
-
-METHOD lCheckConsolidacionMovimientosAlmancen( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
-
-   local lCheck   := .f.
-
-   ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
-
-   lCheck         := ( Empty( ::dConsolidacion ) .or. dFecha >= ::dConsolidacion )
-
-Return ( lCheck )
+Return ( Empty( dConsolidacion ) .or. dFecha >= dConsolidacion )
 
 //---------------------------------------------------------------------------//
 

@@ -1878,7 +1878,7 @@ FUNCTION TpvDelRec()
 
       end if
 
-      nOrdAlb  := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
+      nOrdAlb           := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
 
       if ( dbfAlbCliL )->( dbSeek( ( dbfTikT )->cAlbTik ) )
 
@@ -2008,6 +2008,14 @@ FUNCTION TpvDelRec()
 
          while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliL )
             dbDel( dbfAlbCliL )
+         end if
+
+         while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliP )
+            dbDel( dbfAlbCliP )
+         end if
+
+         while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliS )
+            dbDel( dbfAlbCliS )
          end if
 
       case cTipDoc == SAVFAC

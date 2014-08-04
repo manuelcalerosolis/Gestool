@@ -4999,6 +4999,8 @@ Static Function QuiAlbCli()
    local nOrdPgo
    local nOrdInc
    local nOrdDoc
+   local nOrdSer
+   local cNumAlb
    local cNumPed
    local cNumSat
    local aNumPed
@@ -5011,18 +5013,20 @@ Static Function QuiAlbCli()
    CursorWait()
 
    aNumPed        := {}
+   cNumAlb        := ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb
    cNumPed        := ( TDataView():Get( "AlbCliT", nView ) )->cNumPed
    cNumSat        := ( TDataView():Get( "AlbCliT", nView ) )->cNumSat
    nOrdLin        := ( TDataView():Get( "AlbCliL", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdPgo        := ( TDataView():Get( "AlbCliP", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdInc        := ( TDataView():Get( "AlbCliI", nView ) )->( OrdSetFocus( "nNumAlb" ) )
    nOrdDoc        := ( TDataView():Get( "AlbCliD", nView ) )->( OrdSetFocus( "nNumAlb" ) )
+   nOrdSer        := ( TDataView():Get( "AlbCliS", nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
    /*
    Eliminamos las entregas-----------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliP", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb ) ) .and. !( TDataView():Get( "AlbCliP", nView ) )->( eof() )
+   while ( TDataView():Get( "AlbCliP", nView ) )->( dbSeek( cNumAlb ) ) .and. !( TDataView():Get( "AlbCliP", nView ) )->( eof() )
 
       if ( dbfPedCliP )->( dbSeek( ( TDataView():Get( "AlbCliP", nView ) )->cNumRec ) )
          if dbLock( dbfPedCliP )
@@ -5044,7 +5048,7 @@ Static Function QuiAlbCli()
    Detalle---------------------------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliL", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
+   while ( TDataView():Get( "AlbCliL", nView ) )->( dbSeek( cNumAlb ) ) .and. !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
       
       if aScan( aNumPed, ( TDataView():Get( "AlbCliL", nView ) )->cNumPed ) == 0
          aAdd( aNumPed, ( TDataView():Get( "AlbCliL", nView ) )->cNumPed )
@@ -5061,7 +5065,7 @@ Static Function QuiAlbCli()
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliI", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( TDataView():Get( "AlbCliI", nView ) )->( eof() )
+   while ( TDataView():Get( "AlbCliI", nView ) )->( dbSeek( cNumAlb ) ) .and. !( TDataView():Get( "AlbCliI", nView ) )->( eof() )
       if dbLock( TDataView():Get( "AlbCliI", nView ) )
          ( TDataView():Get( "AlbCliI", nView ) )->( dbDelete() )
          ( TDataView():Get( "AlbCliI", nView ) )->( dbUnLock() )
@@ -5072,7 +5076,7 @@ Static Function QuiAlbCli()
    Documentos------------------------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliD", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( TDataView():Get( "AlbCliD", nView ) )->( eof() )
+   while ( TDataView():Get( "AlbCliD", nView ) )->( dbSeek( cNumAlb ) ) .and. !( TDataView():Get( "AlbCliD", nView ) )->( eof() )
       if dbLock( TDataView():Get( "AlbCliD", nView ) )
          ( TDataView():Get( "AlbCliD", nView ) )->( dbDelete() )
          ( TDataView():Get( "AlbCliD", nView ) )->( dbUnLock() )
@@ -5083,7 +5087,7 @@ Static Function QuiAlbCli()
    Series----------------------------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliS", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb ) ) .and. !( TDataView():Get( "AlbCliS", nView ) )->( eof() )
+   while ( TDataView():Get( "AlbCliS", nView ) )->( dbSeek( cNumAlb ) ) .and. !( TDataView():Get( "AlbCliS", nView ) )->( eof() )
       if dbLock( TDataView():Get( "AlbCliS", nView ) )
          ( TDataView():Get( "AlbCliS", nView ) )->( dbDelete() )
          ( TDataView():Get( "AlbCliS", nView ) )->( dbUnLock() )
@@ -5095,7 +5099,7 @@ Static Function QuiAlbCli()
    */
 
    if !Empty( cNumPed )
-      oStock:SetEstadoPedCli( cNumPed, .t., ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb )
+      oStock:SetEstadoPedCli( cNumPed, .t., cNumAlb )
    end if
 
    /*
@@ -5111,14 +5115,14 @@ Static Function QuiAlbCli()
    */
 
    if !Empty( cNumSat )
-      oStock:SetEstadoSatCli( cNumSat, .t., ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb )
+      oStock:SetEstadoSatCli( cNumSat, .t., cNumAlb )
    end if
 
    /*
    Estado de los sat cuando es agrupando-----------------------------------
    */
 
-   while dbSeekInOrd( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView )  )->cSufAlb, "cNumAlb", dbfSatCliT ) .and. !( dbfSatCliT )->( Eof() )
+   while dbSeekInOrd( cNumAlb, "cNumAlb", dbfSatCliT ) .and. !( dbfSatCliT )->( Eof() )
 
       if dbLock( dbfSatCliT )
          ( dbfSatCliT )->cNumAlb    := ""
@@ -5136,6 +5140,7 @@ Static Function QuiAlbCli()
    ( TDataView():Get( "AlbCliP", nView ) )->( OrdSetFocus( nOrdPgo ) )
    ( TDataView():Get( "AlbCliI", nView ) )->( OrdSetFocus( nOrdInc ) )
    ( TDataView():Get( "AlbCliD", nView ) )->( OrdSetFocus( nOrdDoc ) )
+   ( TDataView():Get( "AlbCliS", nView ) )->( OrdSetFocus( nOrdSer ) )
 
    CursorWE()
 
