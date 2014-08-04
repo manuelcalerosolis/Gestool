@@ -4376,11 +4376,11 @@ METHOD FldPropiedades()
 
    ::AddField( "cCodPr1", "C", 20, 0, {|| "@!" },        "Cod. prp. 1",       .f., "Código propiedad 1",        6, .f. )
    ::AddField( "cNomPr1", "C", 35, 0, {|| "@!" },        "Nom. prp. 1",       .f., "Nombre propiedad 1",       20, .f. )
-   ::AddField( "cValPr1", "C", 20, 0, {|| "@!" },        "Val. prp. 1",       .f., "Valor propiedad 1",         6, .f. )
+   ::AddField( "cValPr1", "C", 40, 0, {|| "@!" },        "Val. prp. 1",       .f., "Valor propiedad 1",         6, .f. )
    ::AddField( "cNomVl1", "C", 30, 0, {|| "@!" },        "Nom. val. prp. 1",  .f., "Nombre valor propiedad 1", 20, .f. )
    ::AddField( "cCodPr2", "C", 20, 0, {|| "@!" },        "Cod. prp. 2",       .f., "Código propiedad 2",        6, .f. )
    ::AddField( "cNomPr2", "C", 35, 0, {|| "@!" },        "Nom. prp. 2",       .f., "Nombre propiedad 2",       20, .f. )
-   ::AddField( "cValPr2", "C", 20, 0, {|| "@!" },        "Val. prp. 2",       .f., "Valor propiedad 2",         6, .f. )
+   ::AddField( "cValPr2", "C", 40, 0, {|| "@!" },        "Val. prp. 2",       .f., "Valor propiedad 2",         6, .f. )
    ::AddField( "cNomVl2", "C", 30, 0, {|| "@!" },        "Nom. val. prp. 2",  .f., "Nombre valor propiedad 2", 20, .f. )
 
 RETURN nil

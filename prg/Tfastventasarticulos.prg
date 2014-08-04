@@ -468,8 +468,8 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cCodPr1",     "C", 20, 0, {|| "" },   "Código de la primera propiedad"          )
    ::AddField( "cCodPr2",     "C", 20, 0, {|| "" },   "Código de la segunda propiedad"          )
-   ::AddField( "cValPr1",     "C", 20, 0, {|| "" },   "Valor de la primera propiedad"           )
-   ::AddField( "cValPr2",     "C", 20, 0, {|| "" },   "Valor de la segunda propiedad"           )
+   ::AddField( "cValPr1",     "C", 40, 0, {|| "" },   "Valor de la primera propiedad"           )
+   ::AddField( "cValPr2",     "C", 40, 0, {|| "" },   "Valor de la segunda propiedad"           )
 
    ::AddField( "cLote",       "C", 12, 0, {|| "" },   "Número de lote"                          )
    ::AddField( "dFecCad",     "D",  8, 0, {|| "" },   "Fecha de caducidad"                      )

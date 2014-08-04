@@ -105,8 +105,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "mLngDes"   TYPE "M" LEN  10 DEC 0 COMMENT "Descripción larga del artículo"    OF oDbf
       FIELD NAME "cCodPr1"   TYPE "C" LEN  20 DEC 0 COMMENT "Código de la primera propiedad"    OF oDbf
       FIELD NAME "cCodPr2"   TYPE "C" LEN  20 DEC 0 COMMENT "Código de la segunda propiedad"    OF oDbf
-      FIELD NAME "cValPr1"   TYPE "C" LEN  20 DEC 0 COMMENT "Valor de la primera propiedad"     OF oDbf
-      FIELD NAME "cValPr2"   TYPE "C" LEN  20 DEC 0 COMMENT "Valor de la segunda propiedad"     OF oDbf
+      FIELD NAME "cValPr1"   TYPE "C" LEN  40 DEC 0 COMMENT "Valor de la primera propiedad"     OF oDbf
+      FIELD NAME "cValPr2"   TYPE "C" LEN  40 DEC 0 COMMENT "Valor de la segunda propiedad"     OF oDbf
       FIELD NAME "nCajas"    TYPE "N" LEN  16 DEC 6 COMMENT cNombreCajas()                      OF oDbf
       FIELD NAME "nUnidades" TYPE "N" LEN  16 DEC 6 COMMENT cNombreUnidades()                   OF oDbf
       FIELD NAME "nPreUnit"  TYPE "N" LEN  16 DEC 6 COMMENT "Precio unitario"                   OF oDbf
@@ -766,10 +766,10 @@ METHOD AppendKit()
             ::oDbfVir:cCodFac       := cCodFac
             ::oDbfVir:cCodArt       := ::oDbfKit:cRefKit
             ::oDbfVir:cDetalle      := ::oDbfArt:Nombre
-            ::oDbfVir:cCodPr1       := Space(5)
-            ::oDbfVir:cCodPr2       := Space(5)
-            ::oDbfVir:cValPr1       := Space(10)
-            ::oDbfVir:cValPr2       := Space(10)
+            ::oDbfVir:cCodPr1       := Space(20)
+            ::oDbfVir:cCodPr2       := Space(20)
+            ::oDbfVir:cValPr1       := Space(40)
+            ::oDbfVir:cValPr2       := Space(40)
             ::oDbfVir:nCajas        := nCajas
             ::oDbfVir:nUnidades     := nUnidades * ::oDbfKit:nUndKit
             ::oDbfVir:nPreUnit      := nRetPreArt( 1, cDivEmp(), .f., ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias, .f. )

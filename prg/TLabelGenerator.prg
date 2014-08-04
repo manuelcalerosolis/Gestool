@@ -64,8 +64,8 @@ CLASS TLabelGenerator
                                              { "cNomArt"  ,"C",  18, 0, "Nombre del artículo" },;
                                              { "nLabel"   ,"N",  16, 6, "Número de etiquetas" },;
                                              { "lLabel"   ,"L",   1, 0, "Lógico etiqueta seleccionada" },;
-                                             { "cValPrp1" ,"C",  18, 0, "Valor de la propiedad 1" },;
-                                             { "cValPrp2" ,"C",  18, 0, "Valor de la propiedad 2" },;
+                                             { "cValPrp1" ,"C",  40, 0, "Valor de la propiedad 1" },;
+                                             { "cValPrp2" ,"C",  40, 0, "Valor de la propiedad 2" },;
                                              { "cLote"    ,"C",  18, 0, "Lote del producto" } }
 
    DATA cDbfDocumento
