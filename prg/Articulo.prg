@@ -17472,8 +17472,10 @@ Static Function VariableReport( oFr )
    Creación de variables----------------------------------------------------
    */
 
-   oFr:AddVariable(     "Artículos",      "Código de barras para primera propiedad",  "CallHbFunc('cArtBarPrp1')" )
-   oFr:AddVariable(     "Artículos",      "Código de barras para segunda propiedad",  "CallHbFunc('cArtBarPrp2')" )
+   oFr:AddVariable(     "Artículos",            "Código de barras para primera propiedad",   "CallHbFunc('cArtBarPrp1')" )
+   oFr:AddVariable(     "Artículos",            "Código de barras para segunda propiedad",   "CallHbFunc('cArtBarPrp2')" )
+   oFr:AddVariable(     "Artículos",            "Nombre primera propiedad",                  "CallHbFunc('cNomValPrp1Art')" )
+   oFr:AddVariable(     "Artículos",            "Nombre segunda propiedad",                  "CallHbFunc('cNomValPrp2Art')" )
 
 Return nil
 
@@ -18680,5 +18682,35 @@ Static Function ValidPrecioCosto( aGet, oSayWeb )
    aeval( oSayWeb, {|o| if( !empty(o), o:refresh(), ) } )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cNomValPrp1Art( uArticulo, uTblPro )
+
+   local cBarPrp1     := ""
+
+   DEFAULT uArticulo  := if( !Empty( tmpArticulo ), tmpArticulo, dbfArticulo )
+   DEFAULT uTblPro    := dbfTblPro
+
+   if dbSeekInOrd( ( uArticulo )->cCodPrp1 + ( uArticulo )->cValPrp1, "cCodPro", uTblPro )
+      cBarPrp1        := ( uTblPro )->cDesTbl
+   end if
+
+RETURN ( cBarPrp1 )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cNomValPrp2Art( uArticulo, uTblPro )
+
+   local cBarPrp2     := ""
+
+   DEFAULT uArticulo  := if( !Empty( tmpArticulo ), tmpArticulo, dbfArticulo )
+   DEFAULT uTblPro    := dbfTblPro
+
+   if dbSeekInOrd( ( uArticulo )->cCodPrp2 + ( uArticulo )->cValPrp2, "cCodPro", uTblPro )
+      cBarPrp2        := ( uTblPro )->cDesTbl
+   end if
+
+RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//

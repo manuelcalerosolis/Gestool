@@ -8116,7 +8116,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function YearComboBoxChange()
+Function YearComboBoxChange()
 
     if oWndBrw:oWndBar:lAllYearComboBox()
       DestroyFastFilter( TDataView():FacturasProveedores( nView ) )
@@ -8134,7 +8134,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
+Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
 
    local nNumLin
    local nNewLin
@@ -11657,7 +11657,7 @@ RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cNomValPrp1( uFacPrvL, uTblPro )
+STATIC FUNCTION cNomValPrp1( uFacPrvL, uTblPro )
 
    local cBarPrp1    := ""
 
@@ -11672,7 +11672,7 @@ RETURN ( cBarPrp1 )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cNomValPrp2( uFacPrvL, uTblPro )
+STATIC FUNCTION cNomValPrp2( uFacPrvL, uTblPro )
 
    local cBarPrp2    := ""
 
