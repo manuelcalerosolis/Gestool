@@ -6221,22 +6221,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
    cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
 
-   msgAlert( ( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ), "( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote )")
-   msgAlert( len( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ), "len" )
-
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
-
-      msgAlert( "Found: " + cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote )
-
-      msgAlert( ( ::cHisMovT )->cValPr1, "campo cValPr1")
-      msgAlert( len( ( ::cHisMovT )->cValPr1 ), "len campo cValPr1")
-      msgAlert( ( ::cHisMovT )->cValPr2, "campo cValPr2")
-      msgAlert( len( ( ::cHisMovT )->cValPr2 ), "len campo cValPr2")
-
-      msgAlert( cValPrp1, "variable cValPrp1")
-      msgAlert( len( cValPrp1 ), "len variable cValPrp1")
-      msgAlert( cValPrp2, "variable cValPrp2")
-      msgAlert( len( cValPrp2 ), "len variable cValPrp2")
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
 
@@ -6268,10 +6253,6 @@ Return ( ::dConsolidacion )
 METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
 
    local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
-
-   msgAlert( dConsolidacion, "dConsolidacion" )
-   msgAlert( cCodArt, "cCodArt" )
-   msgAlert( cCodAlm, "cCodAlm" )
 
 Return ( Empty( dConsolidacion ) .or. dFecha >= dConsolidacion )
 

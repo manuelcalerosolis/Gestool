@@ -8419,6 +8419,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de albaranes",   "Total peso por línea",                "CallHbFunc('nPesLAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Total línea sin " + cImp(),           "CallHbFunc('nNetLAlbCli')" )
 
+   oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 4 meses",            "CallHbFunc('dJuliano4AlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 8 meses",            "CallHbFunc('dJulianoAlbAnio')" )
 
@@ -9608,23 +9609,24 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oMargen, cCodDiv, lTo
    local nCosto
    local nMargen
    local nRentabilidad
-   local nBase    := 0
+   local nBase       := 0
+   local nComision   := 0
 
-   DEFAULT lTotal := .f.
+   DEFAULT lTotal    := .f.
 
    if aTmp[ __LALQUILER ]
-      nCalculo    := aTmp[ _NPREALQ  ]
+      nCalculo       := aTmp[ _NPREALQ  ]
    else
-      nCalculo    := aTmp[ _NPREUNIT  ]
+      nCalculo       := aTmp[ _NPREUNIT  ]
    end if
 
-   nCalculo       -= aTmp[ _NDTODIV  ]
+   nCalculo          -= aTmp[ _NDTODIV  ]
 
    /*
    Unidades
    */
 
-   nUnidades      := nTotNAlbCli( aTmp )
+   nUnidades         := nTotNAlbCli( aTmp )
 
    /*
    IVMH
@@ -9667,19 +9669,19 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oMargen, cCodDiv, lTo
    nCosto            := nUnidades * aTmp[ _NCOSDIV ]
 
    if aTmp[ _LIVALIN ] .and. aTmp[ _NIVA ] != 0
-      nMargen        := nCalculo - Round( nCalculo / ( 100 / aTmp[ _NIVA ] + 1 ), nRouDiv )
+      nBase          := nCalculo - Round( nCalculo / ( 100 / aTmp[ _NIVA ] + 1 ), nRouDiv )
    else
-      nMargen        := nCalculo
+      nBase          := nCalculo
    end if
 
-   nBase             := nMargen
+   nComision         := ( nBase * aTmp[ _NCOMAGE ] / 100 )
 
-   nMargen           -= nCosto
+   nMargen           := nBase - nComision - nCosto
 
    if nCalculo == 0
       nRentabilidad  := 0
    else
-      nRentabilidad  := nRentabilidad( nCalculo, 0, nCosto )
+      nRentabilidad  := nRentabilidad( nBase - nComision, 0, nCosto )
    end if
 
    /*
@@ -17881,6 +17883,25 @@ Function nTotDtoLAlbCli( dbfLin, nDec, nVdv, cPorDiv )
 RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
+
+Function dJuliano4AlbCli( cAlbCliL )
+
+   local cPrefijo
+   local cLote
+
+   DEFAULT cAlbCliL  := TDataView():Get( "AlbCliL", nView )
+
+   cLote             := ( cAlbCliL )->cLote
+
+   cPrefijo          := Substr( ( cAlbCliL )->cLote, 1, 1 )
+
+   if Val( cPrefijo ) == 0
+      cLote          := Substr( ( cAlbCliL )->cLote, 2 )
+   end if
+
+RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 4 ) )
+
+//---------------------------------------------------------------------------//
 
 Function dJulianoAlbCli( cAlbCliL )
 

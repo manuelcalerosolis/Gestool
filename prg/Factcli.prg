@@ -10029,6 +10029,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Importe impuestos especiales línea del factura",  "CallHbFunc('nTotIFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Total descuento línea del factura",               "CallHbFunc('nTotDtoLFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano",                                "CallHbFunc('dJulianoFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano 4 meses",                        "CallHbFunc('dJuliano4FacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
@@ -11005,6 +11006,7 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
    local nMargen
    local nRentabilidad
    local nBase
+   local nComision
 
    DEFAULT lTotal := .f.
 
@@ -11064,12 +11066,13 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
       nBase          := nCalculo
    end if
 
-   nMargen           := nBase - nCosto
+   nComision 		 := ( nBase * aTmp[ _NCOMAGE ] / 100 )
+   nMargen           := nBase - nCosto - nComision
 
    if nCalculo == 0
       nRentabilidad  := 0
    else
-      nRentabilidad  := nRentabilidad( nCalculo, 0, nCosto )
+      nRentabilidad  := nRentabilidad( nBase - nComision, 0, nCosto )
    end if
 
    /*
@@ -20588,6 +20591,14 @@ FUNCTION lValidInformeFacCli( oGet, oGet2 )
    CloseFiles()
 
 RETURN lValid
+
+//---------------------------------------------------------------------------//
+
+Function dJuliano4FacCli( cFacCliL )
+
+   DEFAULT cFacCliL  := dbfFacCliL
+
+RETURN ( AddMonth( JulianoToDate( , Val( ( cFacCliL )->cLote ) ), 4 ) )
 
 //---------------------------------------------------------------------------//
 

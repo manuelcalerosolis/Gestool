@@ -357,7 +357,7 @@ METHOD AppendLine( oFacT, aTotal, nTotPag )
    ::oDbf:nTotIva    := aTotal[ 2 ]
    ::oDbf:nTotReq    := aTotal[ 3 ]
    ::oDbf:nTotDoc    := aTotal[ 4 ]
-   ::oDbf:nTotPnt    := aTotal[ 5 ]
+   ::oDbf:nTotPnt    := aTotal[ 5 ]   
    ::oDbf:nTotTrn    := aTotal[ 6 ]
    ::oDbf:nComAge    := aTotal[ 7 ]
    ::oDbf:nTotPgd    := nTotPag
@@ -365,7 +365,8 @@ METHOD AppendLine( oFacT, aTotal, nTotPag )
    ::oDbf:nTotCos    := aTotal[ 9 ]
    nMargen           := ::oDbf:nTotNet - aTotal[ 7 ] - aTotal[ 9 ]
    ::oDbf:nMarGen    := nMargen
-   ::oDbf:nRenTab    := ( ( nMargen ) - 1 ) * 100
+   
+   ::oDbf:nRenTab    := nRentabilidad( ::oDbf:nTotNet - aTotal[ 7 ], 0, aTotal[ 9 ] )
 
    ::oDbf:Save()
 
