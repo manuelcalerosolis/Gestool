@@ -108,6 +108,8 @@ METHOD RentFields()
    ::AddField( "nCosMed", "N", 16, 6, {|| ::cPicOut },      "Costo medio",       .t., "Costo medio",           12, .f. )
    ::AddField( "cNumDoc", "C", 14, 0, {|| "@!" },           "Documento",         .t., "Documento",             12, .f. )
    ::AddField( "cTipDoc", "C", 20, 0, {|| "@!" },           "Tip. Doc.",         .f., "Tipo de documento",     15, .f. )
+   ::AddField( "nComAge", "N", 16, 6, {|| ::cPicOut },      "% Com.",            .f., "Comisión agente",       12, .f. )
+   ::AddField( "nTotCom", "N", 16, 6, {|| ::cPicOut },      "Total Com.",        .f., "Total comisión",        12, .t. )
 
 RETURN ( self )
 
@@ -853,6 +855,7 @@ METHOD AddRAlb()
    local nTotImpUni
    local nTotCosUni
    local nImpDtoAtp
+   local nTotalComision
 
    /*
    Calculamos las cajas en vendidas entre dos fechas
@@ -861,6 +864,7 @@ METHOD AddRAlb()
    nTotUni              := nTotNAlbCli( ::oAlbCliL:cAlias )
    nTotImpUni           := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
    nImpDtoAtp           := nDtoAtpAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
+   nTotalComision       := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
 
    if ::lCosAct .or. ::oAlbCliL:nCosDiv == 0
       nTotCosUni        := nRetPreCosto( ::oDbfArt:cAlias, ::oAlbCliL:cRef ) * nTotUni
@@ -894,11 +898,13 @@ METHOD AddRAlb()
    ::oDbf:nTotVol    := ::oDbf:nTotUni * oRetFld( ::oAlbCliL:cRef, ::oDbfArt, "nVolumen" )
    ::oDbf:nPreVol    := if( ::oDbf:nTotVol != 0, ::oDbf:nTotImp / ::oDbf:nTotVol, 0 )
    ::oDbf:nTotCos    := nTotCosUni
-   ::oDbf:nMargen    := ( nTotImpUni ) - ( nTotCosUni )
+   ::oDbf:nMargen    := nTotImpUni - nTotCosUni - nTotalComision
    ::oDbf:nDtoAtp    := nImpDtoAtp
+   ::oDbf:nComAge    := ::oAlbCliL:nComAge
+   ::oDbf:nTotCom    := nTotalComision
 
    if nTotUni != 0 .and. nTotCosUni != 0
-      ::oDbf:nRentab := nRentabilidad( nTotImpUni, nImpDtoAtp, nTotCosUni )
+      ::oDbf:nRentab := nRentabilidad( nTotImpUni - nTotalComision, nImpDtoAtp, nTotCosUni )
       ::oDbf:nPreMed := nTotImpUni / nTotUni
       ::oDbf:nCosMed := nTotCosUni / nTotUni
    else
@@ -922,6 +928,7 @@ METHOD AddRFac()
    local nTotImpUni
    local nTotCosUni
    local nImpDtoAtp
+   local nTotalComision
 
    /*
    Calculamos las cajas en vendidas entre dos fechas
@@ -930,6 +937,7 @@ METHOD AddRFac()
    nTotUni              := nTotNFacCli( ::oFacCliL:cAlias )
    nTotImpUni           := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
    nImpDtoAtp           := nDtoAtpFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
+   nTotalComision       := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
 
    if ::lCosAct .or. ::oFacCliL:nCosDiv == 0
       nTotCosUni        := nRetPreCosto( ::oDbfArt:cAlias, ::oFacCliL:cRef ) * nTotUni
@@ -963,11 +971,13 @@ METHOD AddRFac()
    ::oDbf:nTotVol    := ::oDbf:nTotUni * oRetFld( ::oFacCliL:cRef, ::oDbfArt, "nVolumen" )
    ::oDbf:nPreVol    := if( ::oDbf:nTotVol != 0, ::oDbf:nTotImp / ::oDbf:nTotVol, 0 )
    ::oDbf:nTotCos    := nTotCosUni
-   ::oDbf:nMargen    := ( nTotImpUni ) - ( nTotCosUni )
+   ::oDbf:nMargen    := nTotImpUni - nTotCosUni - nTotalComision
    ::oDbf:nDtoAtp    := nImpDtoAtp
+   ::oDbf:nComAge    := ::oFacCliL:nComAge
+   ::oDbf:nTotCom    := nTotalComision
 
    if nTotUni != 0 .and. nTotCosUni != 0
-      ::oDbf:nRentab := nRentabilidad( nTotImpUni, nImpDtoAtp, nTotCosUni )
+      ::oDbf:nRentab := nRentabilidad( nTotImpUni - nTotalComision, nImpDtoAtp, nTotCosUni )
       ::oDbf:nPreMed := nTotImpUni / nTotUni
       ::oDbf:nCosMed := nTotCosUni / nTotUni
    else
@@ -991,6 +1001,7 @@ METHOD AddRFacRec()
    local nTotImpUni
    local nTotCosUni
    local nImpDtoAtp
+   local nTotalComision
 
    /*
    Calculamos las cajas en vendidas entre dos fechas
@@ -999,6 +1010,7 @@ METHOD AddRFacRec()
    nTotUni              := ( nTotNFacRec( ::oFacRecL:cAlias ) )
    nTotImpUni           := ( nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut ) )
    nImpDtoAtp           := 0
+   nTotalComision       := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
 
    if ::lCosAct .or. ::oFacRecL:nCosDiv == 0
       nTotCosUni        := nRetPreCosto( ::oDbfArt:cAlias, ::oFacRecL:cRef ) * nTotUni
@@ -1032,11 +1044,13 @@ METHOD AddRFacRec()
    ::oDbf:nTotVol    := ::oDbf:nTotUni * oRetFld( ::oFacRecL:cRef, ::oDbfArt, "nVolumen" )
    ::oDbf:nPreVol    := if( ::oDbf:nTotVol != 0, ::oDbf:nTotImp / ::oDbf:nTotVol, 0 )
    ::oDbf:nTotCos    := nTotCosUni
-   ::oDbf:nMargen    := ( nTotImpUni ) - ( nTotCosUni )
+   ::oDbf:nMargen    := nTotImpUni - nTotCosUni - nTotalComision
    ::oDbf:nDtoAtp    := nImpDtoAtp
+   ::oDbf:nComAge    := ::oFacRecL:nComAge
+   ::oDbf:nTotCom    := nTotalComision
 
    if nTotUni != 0 .and. nTotCosUni != 0
-      ::oDbf:nRentab := nRentabilidad( nTotImpUni, nImpDtoAtp, nTotCosUni )
+      ::oDbf:nRentab := nRentabilidad( nTotImpUni - nTotalComision, nImpDtoAtp, nTotCosUni )
       ::oDbf:nPreMed := nTotImpUni / nTotUni
       ::oDbf:nCosMed := nTotCosUni / nTotUni
    else
