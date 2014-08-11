@@ -9878,8 +9878,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Clientes.País", oPais:Select() )
-   oFr:SetFieldAliases( "Clientes.País", cObjectsToReport( oPais:oDbf ) )
+   oFr:SetWorkArea(     "País", oPais:Select() )
+   oFr:SetFieldAliases( "País", cObjectsToReport( oPais:oDbf ) )
 
    oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
@@ -9900,6 +9900,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Anticipos",                        {|| ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Usuarios",                         {|| ( TDataView():FacturasClientes( nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Facturas", "Bancos",                           {|| ( TDataView():FacturasClientes( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Facturas", "País",                    			{|| RetFld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cCodPai" ) } )
 
    oFr:SetMasterDetail( "Lineas de facturas", "Artículos",              {|| ( dbfFacCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Familia",                {|| ( dbfFacCliL )->cCodFam } )
@@ -9908,8 +9909,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                {|| ( dbfFacCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",   {|| ( dbfFacCliL )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	{|| ( dbfFacCliL )->cNumSat } )
-
-   oFr:SetMasterDetail( "Clientes", "Clientes.Pais",                    {|| ( TDataView():Clientes( nView ) )->cCodPai } )
 
    oFr:SetResyncPair(   "Facturas", "Lineas de facturas" )
    oFr:SetResyncPair(   "Facturas", "Series de lineas de facturas" )
@@ -9927,6 +9926,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas", "Anticipos" )
    oFr:SetResyncPair(   "Facturas", "Usuarios" )
    oFr:SetResyncPair(   "Facturas", "Bancos" )
+   oFr:SetResyncPair(   "Facturas", "País" )
 
    oFr:SetResyncPair(   "Lineas de facturas", "Artículos" )
    oFr:SetResyncPair(   "Lineas de facturas", "Familia" )
@@ -9935,8 +9935,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
    oFr:SetResyncPair( 	"Lineas de facturas", "SAT" )
-
-   oFr:SetResyncPair(   "Clientes", "Clientes.Pais" )
 
 Return nil
 
