@@ -169,7 +169,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    // Llamada al objeto padre para que se cree---------------------------------
 
-   Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
+   ::Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
 
    // Imagelist----------------------------------------------------------------
 
@@ -375,7 +375,7 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    DEFAULT bValid    := {|| .t. }
 
-   Super:Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
+   ::Super:Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
                     bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight,;
                     bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp )
 
@@ -466,7 +466,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TInitShell
       Return 0
    end if
 
-return Super:KeyDown( nKey, nFlags )
+return ::Super:KeyDown( nKey, nFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -529,7 +529,7 @@ METHOD Destroy() CLASS TInitShell
    end if
 
    if ::hWnd != 0
-      Super:Destroy()
+      ::Super:Destroy()
    endif
 
    if ::bDestroy != nil

@@ -1,26 +1,26 @@
-HB 					= 	\xHarbour
+HB 					= 	\harbour_bcc582\
 
-HBINCLUDE 			= 	\xHarbour\Include
-FWINCLUDE 			= 	\Fwh1204\Include
+HBINCLUDE 			= 	\harbour_bcc582\Include
+FWINCLUDE 			= 	\Fwh1406\Include
 GTINCLUDE 			= 	.\Include
 
-HBLIB 				= 	\xHarbour\Lib
+HBLIB 				= 	\harbour_bcc582\Lib
 FWLIB 				= 	\Fwh102\Lib
 
 RESOURCE 			= 	.\Resource
 
-BORLAND 				= 	\Bcc55
+BORLAND 			= 	\Bcc55
 BORLANDLIB 			= 	\Bcc55\Lib\Psdk
 
 IMG2PDFLIB 			= 	\Img2Pdf
 
-OBJ 				= 	Obj
+OBJ 				= 	Obj1406
 SOURCEPRG 			= 	Prg
 
 SOURCEC 			=	C
-PPO 				= 	Ppo
+PPO 				= 	Ppo1406
 
-EXE 				= 	Bin\Gestool.exe
+EXE 				= 	Bin\GestoolHb.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
 .path.c       		=	.\$(SOURCEC)
@@ -835,7 +835,7 @@ Components.obj 			\
 TLabelGenerator.obj 	\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
