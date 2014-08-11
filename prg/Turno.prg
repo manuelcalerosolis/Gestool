@@ -2529,7 +2529,7 @@ METHOD CreateEntradaTurno()
       ::oEntSal:lSndEnt := .t.
       ::oEntSal:cCodDiv := cDivEmp()
       ::oEntSal:nVdvDiv := nValDiv( cDivEmp(), ::oDbfDiv:cAlias  )
-      ::oEntSal:Insert()
+      ::oEntSal:Insert() 
 
    end if
 
