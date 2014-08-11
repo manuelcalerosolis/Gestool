@@ -29,7 +29,7 @@ EXE 				= 	Bin\GestoolHb.exe
 PRG            		=    	\
 Factu.prg               	\
 Font.prg                	\
-DialogHb.prg            	\
+DialogExtend.prg           	\
 Window.prg              	\
 Msgbar.prg 					\
 Menu.prg 					\
@@ -67,7 +67,6 @@ TComercio.prg           	\
 Comun.prg               	\
 Valtostr.prg            	\
 AccessCode.prg          	\
-TXml.prg                	\
 Tgraph.prg              	\
 Toleexcel.prg           	\
 Toleword.prg            	\
@@ -435,9 +434,8 @@ TComercio.obj           \
 Comun.obj               \
 Valtostr.obj            \
 AccessCode.obj          \
-TXml.obj                \
 Font.obj                \
-DialogHb.obj            \
+DialogExtend.obj        \
 Window.obj              \
 Msgbar.obj 					\
 Menu.obj 					\
@@ -835,7 +833,7 @@ Components.obj 			\
 TLabelGenerator.obj 	\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
@@ -858,13 +856,12 @@ $(OBJ)\TComercio.obj            +
 $(OBJ)\Comun.obj                +
 $(OBJ)\Valtostr.obj             +
 $(OBJ)\AccessCode.obj           +
-$(OBJ)\TXml.obj                 +
-$(OBJ)\DialogHb.obj             +
+$(OBJ)\DialogExtend.obj         +
 $(OBJ)\Window.obj               +
-$(OBJ)\Msgbar.obj 				  +
-$(OBJ)\Menu.obj 				  	  +
-$(OBJ)\Tmsgitem.obj 				  +
-$(OBJ)\Mdiframe.obj 				  +
+$(OBJ)\Msgbar.obj 				+
+$(OBJ)\Menu.obj 				+
+$(OBJ)\Tmsgitem.obj 			+
+$(OBJ)\Mdiframe.obj 			+
 $(OBJ)\Rect.obj                 +
 $(OBJ)\Buttonb.obj              +
 $(OBJ)\Brush.obj                +

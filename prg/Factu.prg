@@ -112,6 +112,8 @@ function Main( cParams )
 
    SetResDebug( .t. )
 
+   DialogExtend() 
+
    /*
    Chequeamos la existencia del fichero de configuracion-----------------------
    */

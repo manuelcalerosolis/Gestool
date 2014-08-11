@@ -29,7 +29,7 @@ EXE 				= 	Bin\Gestool.exe
 PRG            		=    	\
 Factu.prg               	\
 Font.prg                	\
-DialogHb.prg            	\
+DialogExtend.prg            \
 Window.prg              	\
 Msgbar.prg 					\
 Menu.prg 					\
@@ -437,7 +437,7 @@ Valtostr.obj            \
 AccessCode.obj          \
 TXml.obj                \
 Font.obj                \
-DialogHb.obj            \
+DialogExtend.obj            \
 Window.obj              \
 Msgbar.obj 					\
 Menu.obj 					\
@@ -859,7 +859,7 @@ $(OBJ)\Comun.obj                +
 $(OBJ)\Valtostr.obj             +
 $(OBJ)\AccessCode.obj           +
 $(OBJ)\TXml.obj                 +
-$(OBJ)\DialogHb.obj             +
+$(OBJ)\DialogExtend.obj             +
 $(OBJ)\Window.obj               +
 $(OBJ)\Msgbar.obj 				  +
 $(OBJ)\Menu.obj 				  	  +

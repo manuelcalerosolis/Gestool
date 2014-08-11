@@ -300,43 +300,14 @@ CLASS TComercio
 
    METHOD CreateDirectoryImagesLocal( cCarpeta )
 
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD LoadIniValues
-
-      ::lArticulos            := ::oIniEmpresa:Get( "Prestashop", "Articulos",   .t., ::lArticulos   )
-      ::lFamilias             := ::oIniEmpresa:Get( "Prestashop", "Familias",    .t., ::lFamilias    )
-      ::lPedidos              := ::oIniEmpresa:Get( "Prestashop", "Pedidos",     .t., ::lPedidos     )
-      ::lFabricantes          := ::oIniEmpresa:Get( "Prestashop", "Fabricantes", .t., ::lFabricantes )
-      ::lIva                  := ::oIniEmpresa:Get( "Prestashop", "Iva",         .t., ::lIva         )
-      ::lClientes             := ::oIniEmpresa:Get( "Prestashop", "Clientes",    .t., ::lClientes    )
-      ::lImagenes             := ::oIniEmpresa:Get( "Prestashop", "Imagenes",    .t., ::lImagenes    )
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD SaveIniValues
-
-      ::oIniEmpresa:Set( "Prestashop", "Articulos",   ::lArticulos   )
-      ::oIniEmpresa:Set( "Prestashop", "Familias",    ::lFamilias    )
-      ::oIniEmpresa:Set( "Prestashop", "Pedidos",     ::lPedidos     )
-      ::oIniEmpresa:Set( "Prestashop", "Fabricantes", ::lFabricantes )
-      ::oIniEmpresa:Set( "Prestashop", "Iva",         ::lIva         )
-      ::oIniEmpresa:Set( "Prestashop", "Clientes",    ::lClientes    )
-      ::oIniEmpresa:Set( "Prestashop", "Imagenes",    ::lImagenes    )
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD LoadIniValues()
+   METHOD SaveIniValues()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-Method GetInstance()
+METHOD GetInstance()
 
    if Empty( ::oInstance )
       ::oInstance          := ::New()
@@ -785,6 +756,34 @@ METHOD Activate( oWnd ) CLASS TComercio
 Return Nil
 
 //---------------------------------------------------------------------------//
+
+METHOD LoadIniValues() CLASS TComercio
+
+      ::lArticulos            := ::oIniEmpresa:Get( "Prestashop", "Articulos",   .t., ::lArticulos   )
+      ::lFamilias             := ::oIniEmpresa:Get( "Prestashop", "Familias",    .t., ::lFamilias    )
+      ::lPedidos              := ::oIniEmpresa:Get( "Prestashop", "Pedidos",     .t., ::lPedidos     )
+      ::lFabricantes          := ::oIniEmpresa:Get( "Prestashop", "Fabricantes", .t., ::lFabricantes )
+      ::lIva                  := ::oIniEmpresa:Get( "Prestashop", "Iva",         .t., ::lIva         )
+      ::lClientes             := ::oIniEmpresa:Get( "Prestashop", "Clientes",    .t., ::lClientes    )
+      ::lImagenes             := ::oIniEmpresa:Get( "Prestashop", "Imagenes",    .t., ::lImagenes    )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD SaveIniValues() CLASS TComercio
+
+      ::oIniEmpresa:Set( "Prestashop", "Articulos",   ::lArticulos   )
+      ::oIniEmpresa:Set( "Prestashop", "Familias",    ::lFamilias    )
+      ::oIniEmpresa:Set( "Prestashop", "Pedidos",     ::lPedidos     )
+      ::oIniEmpresa:Set( "Prestashop", "Fabricantes", ::lFabricantes )
+      ::oIniEmpresa:Set( "Prestashop", "Iva",         ::lIva         )
+      ::oIniEmpresa:Set( "Prestashop", "Clientes",    ::lClientes    )
+      ::oIniEmpresa:Set( "Prestashop", "Imagenes",    ::lImagenes    )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
 
 Method StartDlg() CLASS TComercio
 
