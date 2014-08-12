@@ -765,434 +765,38 @@ CLASS TpvTactil
 
    METHOD nPrecioPorPersona()          INLINE ( ::sTotal:nTotalDocumento / NotCero( ::oTiketCabecera:nNumCom ) )
 
-   //------------------------------------------------------------------------//
+   METHOD InitDocumento( nUbicacion )
 
-   INLINE METHOD InitDocumento( nUbicacion )
+   METHOD UltimoCambio()
 
-      // Carga los valores del registro actual---------------------------------
-
-      CursorWait()
-
-      ::oTiketCabecera:Blank()
-      ::oTiketCabecera:SetDefault()
-
-
-      // Cargamos los valores por defecto--------------------------------------
-
-      ::CargaValoresDefecto( nUbicacion, .t. )
-
-      CursorWE()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD UltimoCambio()
-
-      if !Empty( ::oSayImporte )
-         ::oSayImporte:SetText( "Último cambio" )
-      end if
-
-      if !Empty( ::oTotalTicket )
-         ::oTotalTicket:SetText( abs( ::oTpvCobros:Total() - ::oTpvCobros:nGetEntregado ) )
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD EscribeVisor()
-
-      if ::oVisor != nil
-         ::oVisor:SetBufferLine( { "Total: ",  Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 1 )
-         ::oVisor:SetBufferLine( { "Cambio: ", Trans( ::oTpvCobros:Cambio(), ::cPictureTotal ) }, 2 )
-         ::oVisor:WriteBufferLine()
-      end if
-
-   ENDMETHOD
+   METHOD EscribeVisor()
 
    //------------------------------------------------------------------------//
 
-   METHOD OpenCajon()               INLINE ( oUser():OpenCajon( ::nView ) )
+   METHOD OpenCajon()               	INLINE ( oUser():OpenCajon( ::nView ) )
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD AgregaLineaVisor( aTextoLinea, nLinea )
+   METHOD AgregaLineaVisor( aTextoLinea, nLinea )
 
-      if ::oVisor != nil
-         
-         ::oVisor:SetBufferLine( aTextoLinea, nLinea )
-         
-         if nLinea == 2
-            ::oVisor:WriteBufferLine()
-         end if
-            
-      end if
+   METHOD SetTotal()
 
-   ENDMETHOD
-   
-   //------------------------------------------------------------------------//
+   METHOD nTotalTemporalDivision( oDbfTemporal )
 
-   INLINE METHOD SetTotal()
+   METHOD cTxtUbicacion()
 
-      ::sTotal    := ::sTotalTiket()
+   METHOD cUbicacion()
 
-      if !Empty( ::oSayImporte )
-         ::oSayImporte:SetText( "Total" )
-      end if
+   METHOD cInfo()
+   METHOD cInfoPendiente()
 
-      if !Empty( ::oTotalTicket )
-         ::oTotalTicket:SetText( ::sTotal:nTotalDocumento )
-      end if
+   METHOD cEstado()
 
-      if !Empty( ::oSayPrecioPersona )
-         if !Empty( ::oTiketCabecera:nNumCom )
-            ::oSayPrecioPersona:SetText( Alltrim( Trans( ::oTiketCabecera:nNumCom, "999" ) ) + " pax. x " + Alltrim( Trans( ::sTotal:nTotalPersona, ::cPictureTotal ) ) )
-         else
-            ::oSayPrecioPersona:SetText( "" )
-         end if
-      end if
+   METHOD SetCombinando( lCombinando )
 
-      RETURN ( Self )
+   METHOD ShowCombinado( lShowCombinando )
 
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD nTotalTemporalDivision( oDbfTemporal )
-
-      local nTotal   := 0
-
-      oDbfTemporal:GetStatus()
-
-      oDbfTemporal:Gotop()
-
-      while !oDbfTemporal:Eof()
-
-         nTotal += oDbfTemporal:nUntTil * oDbfTemporal:nPvpTil
-
-         oDbfTemporal:Skip()
-
-      end while   
-
-      oDbfTemporal:SetStatus()
-
-      RETURN ( nTotal )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD cTxtUbicacion()
-
-      local cUbicacion  := ""
-
-      if Empty( ::oTiketCabecera )
-         Return ( cUbicacion )
-      end if
-
-      do case
-         case ::oTiketCabecera:nUbiTik == ubiSala
-
-            cUbicacion  := ::oRestaurante:cTextoSala( ::oTiketCabecera:cCodSala ) + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cPntVenta )
-
-         case ::oTiketCabecera:nUbiTik == ubiGeneral
-
-            cUbicacion  := "General " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cAliasTik )
-
-         case ::oTiketCabecera:nUbiTik == ubiRecoger
-
-            cUbicacion  := "Para recoger " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cAliasTik )
-
-         case ::oTiketCabecera:nUbiTik == ubiLlevar
-
-            cUbicacion  := "Para llevar " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cNomTik )
-
-         case ::oTiketCabecera:nUbiTik == ubiEncargar
-
-            cUbicacion  := "Encargo " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cNomTik )
-
-      end case
-
-      RETURN ( cUbicacion )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD cUbicacion()
-
-      local cUbicacion  := ::cTxtUbicacion()
-
-      if !Empty( ::oGrpSalones )
-         aSend( ::oGrpSalones:aItems, "UnSelected" )
-      end if
-
-      do case
-         case ::oTiketCabecera:nUbiTik == ubiSala
-
-            if !Empty( ::oBtnSala )
-               ::oBtnSala:Selected()
-            end if
-
-            if !Empty( ::oBtnGeneral )
-               ::oBtnGeneral:UnSelected()
-            end if
-
-            if !Empty( ::oBtnLlevar )
-               ::oBtnLlevar:UnSelected()
-            end if
-
-            if !Empty( ::oBtnRecoger )
-               ::oBtnRecoger:UnSelected()
-            end if
-
-            if !Empty( ::oBtnEncargar )
-               ::oBtnEncargar:UnSelected()
-            end if
-
-         case ::oTiketCabecera:nUbiTik == ubiGeneral
-
-            if !Empty( ::oBtnSala )
-               ::oBtnSala:UnSelected()
-            end if
-
-            if !Empty( ::oBtnGeneral )
-               ::oBtnGeneral:Selected()
-            end if
-
-            if !Empty( ::oBtnLlevar )
-               ::oBtnLlevar:UnSelected()
-            end if
-
-            if !Empty( ::oBtnRecoger )
-               ::oBtnRecoger:UnSelected()
-            end if
-
-            if !Empty( ::oBtnEncargar )
-               ::oBtnEncargar:UnSelected()
-            end if
-
-         case ::oTiketCabecera:nUbiTik == ubiRecoger
-
-            if !Empty( ::oBtnSala )
-               ::oBtnSala:UnSelected()
-            end if
-
-            if !Empty( ::oBtnGeneral )
-               ::oBtnGeneral:UnSelected()
-            end if
-
-            if !Empty( ::oBtnLlevar )
-               ::oBtnLlevar:UnSelected()
-            end if
-
-            if !Empty( ::oBtnRecoger )
-               ::oBtnRecoger:UnSelected()
-            end if
-
-            if !Empty( ::oBtnEncargar )
-               ::oBtnEncargar:UnSelected()
-            end if
-
-         case ::oTiketCabecera:nUbiTik == ubiLlevar
-
-            if !Empty( ::oBtnSala )
-               ::oBtnSala:UnSelected()
-            end if
-
-            if !Empty( ::oBtnGeneral )
-               ::oBtnGeneral:UnSelected()
-            end if
-
-            if !Empty( ::oBtnLlevar )
-               ::oBtnLlevar:Selected()
-            end if
-
-            if !Empty( ::oBtnRecoger )
-               ::oBtnRecoger:UnSelected()
-            end if
-
-            if !Empty( ::oBtnEncargar )
-               ::oBtnEncargar:UnSelected()
-            end if
-
-         case ::oTiketCabecera:nUbiTik == ubiEncargar
-
-            if !Empty( ::oBtnSala )
-               ::oBtnSala:UnSelected()
-            end if
-
-            if !Empty( ::oBtnGeneral )
-               ::oBtnGeneral:UnSelected()
-            end if
-
-            if !Empty( ::oBtnLlevar )
-               ::oBtnLlevar:UnSelected()
-            end if
-
-            if !Empty( ::oBtnRecoger )
-               ::oBtnRecoger:UnSelected()
-            end if
-
-            if !Empty( ::oBtnEncargar )
-               ::oBtnEncargar:Selected()
-            end if
-
-      end case
-
-      if !Empty( ::oGrpSalones )
-         ::oGrpSalones:Refresh()
-      end if
-
-      RETURN ( cUbicacion )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD cInfo()
-
-      local cInfo       := ""
-
-      cInfo             += "Sesión : " + Alltrim( Transform( cCurSesion(), "######" ) ) + Space( 1 )
-
-      if ::lEmptyNumeroTicket()
-         cInfo          += "*Nuevo*"
-      else
-         cInfo          += "Ticket : " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + Space( 1 )
-      end if
-
-      if !Empty( ::oTiketCabecera:dFecCre )
-         cInfo          += Dtoc( ::oTiketCabecera:dFecCre ) + Space( 1 )
-      end if
-
-      if !Empty( ::oTiketCabecera:cTimCre )
-         cInfo          += ( ::oTiketCabecera:cTimCre ) + Space( 1 )
-      end if
-
-      RETURN ( cInfo )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD cInfoPendiente()
-
-      local cInfo       := ""
-
-      do case
-         case ::oTiketCabecera:nUbiTik == ubiSala
-            cInfo       := ::oRestaurante:cTextoSala( ::oTiketCabecera:cCodSala ) + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cPntVenta ) + CRLF + Space( 1 )
-
-         case ::oTiketCabecera:nUbiTik == ubiGeneral
-            cInfo       := Rtrim( ::oTiketCabecera:cAliasTik ) + CRLF + Space( 1 )
-
-         case ::oTiketCabecera:nUbiTik == ubiRecoger
-            cInfo       := Rtrim( ::oTiketCabecera:cAliasTik ) + CRLF + Space( 1 )
-
-         case ::oTiketCabecera:nUbiTik == ubiLlevar
-            cInfo       := Rtrim( ::oTiketCabecera:cNomTik )   + CRLF + Space( 1 )
-
-         case ::oTiketCabecera:nUbiTik == ubiEncargar
-            cInfo       := Rtrim( ::oTiketCabecera:cNomTik )   + CRLF + Space( 1 )
-
-      end case
-
-      if !Empty( ::oTiketCabecera:nTotTik )
-         cInfo          += Alltrim( Trans( ::oTiketCabecera:nTotTik, ::cPictureTotal ) )
-      end if
-
-      RETURN ( cInfo )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD cEstado()
-
-      local cEstado     := ""
-
-      if ::oTiketCabecera:lAbierto
-         cEstado        := "Abierto"
-      else
-         cEstado        := "Cerrado"
-      end if
-
-      RETURN ( cEstado )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD SetCombinando( lCombinando )
-
-      DEFAULT lCombinando        := !::lCombinando
-
-      ::lCombinando              := lCombinando
-      ::lCombinandoDos           := .f.
-
-      if ::lCombinando
-         ::oTimer:Activate()
-      else
-         ::oTimer:Deactivate()
-         ::ShowCombinado( .f. )
-      end if 
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD ShowCombinado( lShowCombinando )
-
-      DEFAULT lShowCombinando := !::lShowCombinado
-
-      ::lShowCombinado        := lShowCombinando
-
-      if lShowCombinando
-         ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
-         ::oSayImporte:SetText( "Combinando..." )
-      else
-         ::oBtnCombinado:LoadBitmap( "Led_green_32" )
-         ::oSayImporte:SetText( "Total" )
-      end if 
-       
-      ::oBtnCombinado:Refresh() 
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD SetOrdenComanda( lCombinando )
-
-      local cOrdenComanda           := ""
-
-      if ::lEmptyDocumento()
-         MsgInfo( "No hay producto para cambiar el orden de comanda." )
-         Return ( Self )
-      end if
-
-      cOrdenComanda                 := ::oOrdenComanda:Selector()
-
-      if !Empty( cOrdenComanda )
-         ::oTemporalLinea:cOrdOrd   := cOrdenComanda
-      end if 
-
-      ::oBrwLineas:Refresh()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
+   METHOD SetOrdenComanda( lCombinando )
 
    METHOD SetCalculadora()
 
@@ -9877,17 +9481,416 @@ RETURN ( Self )
 
 METHOD lEmptyAlias()
 
-  if !Empty( ::oTiketCabecera:cNumTik )
-     Return ( .f. )
-  end if
+	if !Empty( ::oTiketCabecera:cNumTik )
+		Return ( .f. )
+	end if
 
-  if ( ::oTiketCabecera:nUbiTik == ubiGeneral .or. ::oTiketCabecera:nUbiTik == ubiRecoger ) .and. Empty( ::oTiketCabecera:cPntVenta ) .and. Empty( ::oTiketCabecera:cAliasTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
-     Return ( .t. )
-  end if
+	if ( ::oTiketCabecera:nUbiTik == ubiGeneral .or. ::oTiketCabecera:nUbiTik == ubiRecoger ) .and. Empty( ::oTiketCabecera:cPntVenta ) .and. Empty( ::oTiketCabecera:cAliasTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
+		Return ( .t. )
+	end if
 
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
+
+METHOD InitDocumento( nUbicacion )
+
+	// Carga los valores del registro actual---------------------------------
+
+	CursorWait()
+
+	::oTiketCabecera:Blank()
+	::oTiketCabecera:SetDefault()
+
+	// Cargamos los valores por defecto--------------------------------------
+
+	::CargaValoresDefecto( nUbicacion, .t. )
+
+	CursorWE()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD UltimoCambio()
+
+	if !Empty( ::oSayImporte )
+	 	::oSayImporte:SetText( "Último cambio" )
+	end if
+
+	if !Empty( ::oTotalTicket )
+	 	::oTotalTicket:SetText( abs( ::oTpvCobros:Total() - ::oTpvCobros:nGetEntregado ) )
+	end if
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD EscribeVisor()
+
+	if ::oVisor != nil
+		::oVisor:SetBufferLine( { "Total: ",  Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 1 )
+		::oVisor:SetBufferLine( { "Cambio: ", Trans( ::oTpvCobros:Cambio(), ::cPictureTotal ) }, 2 )
+		::oVisor:WriteBufferLine()
+	end if
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AgregaLineaVisor( aTextoLinea, nLinea )
+
+  if ::oVisor != nil
+     
+     ::oVisor:SetBufferLine( aTextoLinea, nLinea )
+     
+     if nLinea == 2
+        ::oVisor:WriteBufferLine()
+     end if
+        
+  end if
+
+RETURN ( Self )
+  
+//------------------------------------------------------------------------//
+
+METHOD SetTotal()
+
+  ::sTotal    := ::sTotalTiket()
+
+  if !Empty( ::oSayImporte )
+     ::oSayImporte:SetText( "Total" )
+  end if
+
+  if !Empty( ::oTotalTicket )
+     ::oTotalTicket:SetText( ::sTotal:nTotalDocumento )
+  end if
+
+  if !Empty( ::oSayPrecioPersona )
+     if !Empty( ::oTiketCabecera:nNumCom )
+        ::oSayPrecioPersona:SetText( Alltrim( Trans( ::oTiketCabecera:nNumCom, "999" ) ) + " pax. x " + Alltrim( Trans( ::sTotal:nTotalPersona, ::cPictureTotal ) ) )
+     else
+        ::oSayPrecioPersona:SetText( "" )
+     end if
+  end if
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD nTotalTemporalDivision( oDbfTemporal )
+
+  local nTotal   := 0
+
+  oDbfTemporal:GetStatus()
+
+  oDbfTemporal:Gotop()
+
+  while !oDbfTemporal:Eof()
+
+     nTotal += oDbfTemporal:nUntTil * oDbfTemporal:nPvpTil
+
+     oDbfTemporal:Skip()
+
+  end while   
+
+  oDbfTemporal:SetStatus()
+
+RETURN ( nTotal )
+
+//-----------------------------------------------------------------------//
+
+METHOD cTxtUbicacion()
+
+  local cUbicacion  := ""
+
+  if Empty( ::oTiketCabecera )
+     Return ( cUbicacion )
+  end if
+
+  do case
+     case ::oTiketCabecera:nUbiTik == ubiSala
+
+        cUbicacion  := ::oRestaurante:cTextoSala( ::oTiketCabecera:cCodSala ) + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cPntVenta )
+
+     case ::oTiketCabecera:nUbiTik == ubiGeneral
+
+        cUbicacion  := "General " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cAliasTik )
+
+     case ::oTiketCabecera:nUbiTik == ubiRecoger
+
+        cUbicacion  := "Para recoger " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cAliasTik )
+
+     case ::oTiketCabecera:nUbiTik == ubiLlevar
+
+        cUbicacion  := "Para llevar " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cNomTik )
+
+     case ::oTiketCabecera:nUbiTik == ubiEncargar
+
+        cUbicacion  := "Encargo " + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cNomTik )
+
+  end case
+
+  RETURN ( cUbicacion )
+
+//------------------------------------------------------------------------//
+
+METHOD cUbicacion()
+
+  local cUbicacion  := ::cTxtUbicacion()
+
+  if !Empty( ::oGrpSalones )
+     aSend( ::oGrpSalones:aItems, "UnSelected" )
+  end if
+
+  do case
+     case ::oTiketCabecera:nUbiTik == ubiSala
+
+        if !Empty( ::oBtnSala )
+           ::oBtnSala:Selected()
+        end if
+
+        if !Empty( ::oBtnGeneral )
+           ::oBtnGeneral:UnSelected()
+        end if
+
+        if !Empty( ::oBtnLlevar )
+           ::oBtnLlevar:UnSelected()
+        end if
+
+        if !Empty( ::oBtnRecoger )
+           ::oBtnRecoger:UnSelected()
+        end if
+
+        if !Empty( ::oBtnEncargar )
+           ::oBtnEncargar:UnSelected()
+        end if
+
+     case ::oTiketCabecera:nUbiTik == ubiGeneral
+
+        if !Empty( ::oBtnSala )
+           ::oBtnSala:UnSelected()
+        end if
+
+        if !Empty( ::oBtnGeneral )
+           ::oBtnGeneral:Selected()
+        end if
+
+        if !Empty( ::oBtnLlevar )
+           ::oBtnLlevar:UnSelected()
+        end if
+
+        if !Empty( ::oBtnRecoger )
+           ::oBtnRecoger:UnSelected()
+        end if
+
+        if !Empty( ::oBtnEncargar )
+           ::oBtnEncargar:UnSelected()
+        end if
+
+     case ::oTiketCabecera:nUbiTik == ubiRecoger
+
+        if !Empty( ::oBtnSala )
+           ::oBtnSala:UnSelected()
+        end if
+
+        if !Empty( ::oBtnGeneral )
+           ::oBtnGeneral:UnSelected()
+        end if
+
+        if !Empty( ::oBtnLlevar )
+           ::oBtnLlevar:UnSelected()
+        end if
+
+        if !Empty( ::oBtnRecoger )
+           ::oBtnRecoger:UnSelected()
+        end if
+
+        if !Empty( ::oBtnEncargar )
+           ::oBtnEncargar:UnSelected()
+        end if
+
+     case ::oTiketCabecera:nUbiTik == ubiLlevar
+
+        if !Empty( ::oBtnSala )
+           ::oBtnSala:UnSelected()
+        end if
+
+        if !Empty( ::oBtnGeneral )
+           ::oBtnGeneral:UnSelected()
+        end if
+
+        if !Empty( ::oBtnLlevar )
+           ::oBtnLlevar:Selected()
+        end if
+
+        if !Empty( ::oBtnRecoger )
+           ::oBtnRecoger:UnSelected()
+        end if
+
+        if !Empty( ::oBtnEncargar )
+           ::oBtnEncargar:UnSelected()
+        end if
+
+     case ::oTiketCabecera:nUbiTik == ubiEncargar
+
+        if !Empty( ::oBtnSala )
+           ::oBtnSala:UnSelected()
+        end if
+
+        if !Empty( ::oBtnGeneral )
+           ::oBtnGeneral:UnSelected()
+        end if
+
+        if !Empty( ::oBtnLlevar )
+           ::oBtnLlevar:UnSelected()
+        end if
+
+        if !Empty( ::oBtnRecoger )
+           ::oBtnRecoger:UnSelected()
+        end if
+
+        if !Empty( ::oBtnEncargar )
+           ::oBtnEncargar:Selected()
+        end if
+
+  end case
+
+  if !Empty( ::oGrpSalones )
+     ::oGrpSalones:Refresh()
+  end if
+
+  RETURN ( cUbicacion )
+
+//-----------------------------------------------------------------------//
+
+METHOD cInfo()
+
+  local cInfo       := ""
+
+  cInfo             += "Sesión : " + Alltrim( Transform( cCurSesion(), "######" ) ) + Space( 1 )
+
+  if ::lEmptyNumeroTicket()
+     cInfo          += "*Nuevo*"
+  else
+     cInfo          += "Ticket : " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + Space( 1 )
+  end if
+
+  if !Empty( ::oTiketCabecera:dFecCre )
+     cInfo          += Dtoc( ::oTiketCabecera:dFecCre ) + Space( 1 )
+  end if
+
+  if !Empty( ::oTiketCabecera:cTimCre )
+     cInfo          += ( ::oTiketCabecera:cTimCre ) + Space( 1 )
+  end if
+
+  RETURN ( cInfo )
+
+//-----------------------------------------------------------------------//
+
+METHOD cInfoPendiente()
+
+  local cInfo       := ""
+
+  do case
+     case ::oTiketCabecera:nUbiTik == ubiSala
+        cInfo       := ::oRestaurante:cTextoSala( ::oTiketCabecera:cCodSala ) + Space( 1 ) + ":" + Space( 1 ) + Rtrim( ::oTiketCabecera:cPntVenta ) + CRLF + Space( 1 )
+
+     case ::oTiketCabecera:nUbiTik == ubiGeneral
+        cInfo       := Rtrim( ::oTiketCabecera:cAliasTik ) + CRLF + Space( 1 )
+
+     case ::oTiketCabecera:nUbiTik == ubiRecoger
+        cInfo       := Rtrim( ::oTiketCabecera:cAliasTik ) + CRLF + Space( 1 )
+
+     case ::oTiketCabecera:nUbiTik == ubiLlevar
+        cInfo       := Rtrim( ::oTiketCabecera:cNomTik )   + CRLF + Space( 1 )
+
+     case ::oTiketCabecera:nUbiTik == ubiEncargar
+        cInfo       := Rtrim( ::oTiketCabecera:cNomTik )   + CRLF + Space( 1 )
+
+  end case
+
+  if !Empty( ::oTiketCabecera:nTotTik )
+     cInfo          += Alltrim( Trans( ::oTiketCabecera:nTotTik, ::cPictureTotal ) )
+  end if
+
+  RETURN ( cInfo )
+
+//-----------------------------------------------------------------------//
+
+METHOD cEstado()
+
+  local cEstado     := ""
+
+  if ::oTiketCabecera:lAbierto
+     cEstado        := "Abierto"
+  else
+     cEstado        := "Cerrado"
+  end if
+
+  RETURN ( cEstado )
+
+//-----------------------------------------------------------------------//
+
+METHOD SetCombinando( lCombinando )
+
+  DEFAULT lCombinando        := !::lCombinando
+
+  ::lCombinando              := lCombinando
+  ::lCombinandoDos           := .f.
+
+  if ::lCombinando
+     ::oTimer:Activate()
+  else
+     ::oTimer:Deactivate()
+     ::ShowCombinado( .f. )
+  end if 
+
+  RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD ShowCombinado( lShowCombinando )
+
+  DEFAULT lShowCombinando := !::lShowCombinado
+
+  ::lShowCombinado        := lShowCombinando
+
+  if lShowCombinando
+     ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
+     ::oSayImporte:SetText( "Combinando..." )
+  else
+     ::oBtnCombinado:LoadBitmap( "Led_green_32" )
+     ::oSayImporte:SetText( "Total" )
+  end if 
+   
+  ::oBtnCombinado:Refresh() 
+
+  RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD SetOrdenComanda( lCombinando )
+
+  local cOrdenComanda           := ""
+
+  if ::lEmptyDocumento()
+     MsgInfo( "No hay producto para cambiar el orden de comanda." )
+     Return ( Self )
+  end if
+
+  cOrdenComanda                 := ::oOrdenComanda:Selector()
+
+  if !Empty( cOrdenComanda )
+     ::oTemporalLinea:cOrdOrd   := cOrdenComanda
+  end if 
+
+  ::oBrwLineas:Refresh()
+
+  RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
