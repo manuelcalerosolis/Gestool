@@ -292,7 +292,6 @@ static dbfTImp
 
 static oVisor
 static oImpresora
-static oBalanza
 static oInvitacion
 
 static cNewFilP
@@ -789,11 +788,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
-      cBalanza             := cBalanzaEnCaja( oUser():cCaja(), dbfCajT )
-      if !Empty( cBalanza )
-         oBalanza          := TCommPort():Create( cBalanza )
-      end if
-
       oInvitacion          := TInvitacion():Create( cPatGrp() )
       if !oInvitacion:OpenFiles()
          lOpenFiles        := .f.
@@ -993,10 +987,6 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oImpresora )
       oImpresora:End()
-   end if
-
-   if !Empty( oBalanza )
-      oBalanza:End()
    end if
 
    if !Empty( oUndMedicion )
@@ -15248,17 +15238,30 @@ RETURN ( nil )
 
 Static Function GetPesoBalanza( aGet, oBtn )
 
+   local oBal
    local nGetFocus   := GetFocus()
 
-   if !Empty( oBalanza )
-      aGet[ _NUNTTIL ]:cText( oBalanza:nPeso() )
-   end if
+   oBal   := TCommPort():Create( cBalanzaEnCaja( oUser():cCaja(), dbfCajT ) )
 
-   if !Empty( nGetFocus )
-      SendMessage( nGetFocus, FM_CLICK, 0, 0 )
-   end if
+   if oBal:lCreated
 
-   oBtn:Click()
+      aGet[ _NUNTTIL ]:cText( oBal:nPeso() )
+
+      if !Empty( nGetFocus )
+         SendMessage( nGetFocus, FM_CLICK, 0, 0 )
+      end if
+
+      if !Empty( oBtn )
+         oBtn:Click()
+      end if
+
+      oBal:End()
+      
+   else
+      
+      MsgStop( "El puerto de la balanza no se ha creado correctamente" )
+
+   end if      
 
 Return nil
 

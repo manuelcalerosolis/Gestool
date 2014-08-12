@@ -166,8 +166,6 @@ CLASS TpvTactil
    DATA cImpresora
    DATA oUndMedicion
    DATA oRestaurante
-   DATA oBalanza
-   DATA cBalanza
    DATA oInvitacion
    DATA oFideliza
    DATA oTipArt
@@ -300,6 +298,7 @@ CLASS TpvTactil
    DATA oBtnAgregarLibre
    DATA oBtnCombinado
    DATA oBtnCalculadora
+   DATA oBtnBalanza
 
    DATA oCarpetaLineas
    DATA oCarpetaInicio
@@ -1849,6 +1848,8 @@ CLASS TpvTactil
 
    METHOD SetCalculadora()
 
+   METHOD GetPesoBalanza()
+
    METHOD KillResource()         INLINE ( ::lKillResource   := .t., ::EnableDialog(), ::oDlg:End() )
 
    METHOD GeneraVale()
@@ -2586,11 +2587,6 @@ METHOD OpenFiles() CLASS TpvTactil
       ::oRestaurante:BuildSalas()
    end if
 
-   ::cBalanza                 := cBalanzaEnCaja( oUser():cCaja(), ::oCajaCabecera )
-   if !Empty( ::cBalanza )
-      ::oBalanza              := TCommPort():Create( ::cBalanza )
-   end if
-
    ::oInvitacion              := TInvitacion():Create( cPatGrp() )
    if !::oInvitacion:OpenFiles()
       ::lOpenFiles            := .f.
@@ -3017,10 +3013,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oRestaurante:End()
    end if
 
-   if !Empty( ::oBalanza )
-      ::oBalanza:End()
-   end if
-
    if !Empty( ::oInvitacion )
       ::oInvitacion:End()
    end if
@@ -3142,7 +3134,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oImpresora                              := nil
    ::oUndMedicion                            := nil
    ::oRestaurante                            := nil
-   ::oBalanza                                := nil
    ::oInvitacion                             := nil
    ::oFideliza                               := nil
    ::oTipArt                                 := nil
@@ -3265,8 +3256,9 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
+   ::oBtnBalanza                 := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "scales_32" )
 
-   if !::l1024()
+   if !::l1024() 
       ::oBtnSSalir               := TButtonBmp():ReDefine( 509, {|| ::oDlg:End },                  ::oDlg, , , .f., , , , .f., "End32" )
    end if
 
@@ -3658,6 +3650,8 @@ METHOD Resource() CLASS TpvTactil
 
    ::oDlg:bStart              := {|| ::StartResource() }
 
+   ::oDlg:AddFastKey( VK_F11, {|| ::GetPesoBalanza() } )
+
    ::oDlg:bResized            := {|| ::ResizedResource() } // lTop, lBottom, lLeft, lRight )() }
 
    // ::oDlg:bKeyChar            := {|| msgStop( "::oGetUnidades:SetFocus()" ) }
@@ -4021,6 +4015,7 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnPrintDocumento:Move( ::oBtnPrintDocumento:nTop + nDialogHeight, ::oBtnPrintDocumento:nLeft + nDialogWidth, , , .f. )
 
    ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f.)
+   ::oBtnBalanza:Move( ::oBtnBalanza:nTop + nDialogHeight, ::oBtnBalanza:nLeft + nDialogWidth, , , .f.)
    
    if !Empty( ::oBtnSSalir )
       ::oBtnSSalir:Move( ::oBtnSSalir:nTop + nDialogHeight, ::oBtnSSalir:nLeft + nDialogWidth, , , .f.)
@@ -8762,6 +8757,7 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop + calcDistance, , , , .t. )
 
       ::oBtnCalculadora:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
+      ::oBtnBalanza:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
 
       if !Empty( ::oBtnSSalir )
          ::oBtnSSalir:Move(         nBtnFamiliasTop + calcDistance, , , , .t. )
@@ -8781,6 +8777,7 @@ METHOD SetCalculadora() CLASS TpvTactil
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop - calcDistance, , , , .t. )
 
       ::oBtnCalculadora:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
+      ::oBtnBalanza:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
 
       if !Empty( ::oBtnSSalir )
          ::oBtnSSalir:Move(         nBtnFamiliasTop - calcDistance, , , , .t. )
@@ -9814,6 +9811,42 @@ METHOD OnClickDividirMesa() Class TpvTactil
       ::EnableDialog()
 
    end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetPesoBalanza() CLASS TpvTactil
+
+   local oBalanza
+
+   if ::oTemporalLinea:ordKeyCount() != 0 .and.;
+      !::oTemporalLinea:lDelTil           .and.;
+      !::oTemporalLinea:lKitArt
+
+      oBalanza              := TCommPort():Create( cBalanzaEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ) )
+
+      if oBalanza:lCreated
+
+         ::oTemporalLinea:GetStatus()
+
+         ::oTemporalLinea:nUntTil   := oBalanza:nPeso() 
+
+         ::oTemporalLinea:SetStatus()
+
+         ::SetTotal()
+
+         ::oBrwLineas:Refresh()
+
+         oBalanza:End()
+         
+      else  
+         
+         MsgAlert( "El puerto de la balanza no se ha creado correctamente" )
+
+      end if 
+
+   end if   
 
 Return ( Self )
 

@@ -383,7 +383,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfImpTik, oBrw, nMode, oDlg, cPort, cBits
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if Empty( aTmp[ ( dbfImpTik )->( FieldPos( "cCodImp" ) ) ] )
-         MsgStop( "El código de la impresora no puede estar vacío" )
+         MsgStop( "El código de la balanza no puede estar vacío" )
          aGet[ ( dbfImpTik )->( FieldPos( "cCodImp" ) ) ]:SetFocus()
          Return nil
       end if
@@ -398,7 +398,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfImpTik, oBrw, nMode, oDlg, cPort, cBits
    // "Comprobamos que el nombre no esté vacío"
 
    if Empty( aTmp[ ( dbfImpTik )->( FieldPos( "cNomImp" ) ) ] )
-      MsgStop( "El nombre de la impresora no puede estar vacío" )
+      MsgStop( "El nombre de la balanza no puede estar vacío" )
       aGet[ ( dbfImpTik )->( FieldPos( "cNomImp" ) ) ]:SetFocus()
       Return .f.
    end if
@@ -714,7 +714,7 @@ FUNCTION cBalanza( oGet, dbfImpTik, oGet2 )
             lValid   := .t.
          else
             oGet:Refresh()
-            msgStop( "Impresora no encontrada" )
+            msgStop( "Balanza no encontrada" )
          end if
 
       case Valtype( dbfImpTik ) == "O"
@@ -725,7 +725,7 @@ FUNCTION cBalanza( oGet, dbfImpTik, oGet2 )
             lValid   := .t.
          else
             oGet:Refresh()
-            msgStop( "Impresora no encontrada" )
+            msgStop( "Balanza no encontrada" )
          end if
 
    end case
@@ -761,11 +761,11 @@ function IsImpTik()
 
       ( dbfImpTik )->( dbAppend() )
       ( dbfImpTik )->cCodImp     := "000"
-      ( dbfImpTik )->cNomImp     := "Impresora de tickets por defecto"
+      ( dbfImpTik )->cNomImp     := "Balanza por defecto"
       ( dbfImpTik )->lWin        := .f.
       ( dbfImpTik )->cPort       := "COM1"
       ( dbfImpTik )->nBitsSec    := 9600
-      ( dbfImpTik )->nBitsPara   := 0
+      ( dbfImpTik )->nBitsPara   := 1
       ( dbfImpTik )->nBitsDatos  := 8
       ( dbfImpTik )->cBitsPari   := "Sin paridad"
       ( dbfImpTik )->cActCentr   := "27 97 49"
@@ -829,7 +829,7 @@ CLASS TCommPort
 
    METHOD Close()
 
-   METHOD End()         INLINE ( ::Close() )
+   METHOD End()         INLINE ( ::Flush(), ::Close() )
 
    METHOD nPeso()       INLINE ( Val( ::cPeso() ) )
 
