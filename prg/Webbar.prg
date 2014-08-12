@@ -46,7 +46,7 @@ CLASS TWebBar FROM TControl
                      nClrBack, nStyle, oBrush, oFont, lPixel, cMsg,;
                      oWnd, nHelpID, bRClick ) CONSTRUCTOR
 
-   METHOD End()            INLINE ( if( ::hWnd == 0, ::Destroy(), Super:End() ) )
+   METHOD End()            INLINE ( if( ::hWnd == 0, ::Destroy(), ::Super:End() ) )
 
    METHOD Display()        INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint() )
 
@@ -216,7 +216,7 @@ METHOD Destroy() CLASS TWebBar
    PalBmpFree( ::hBitmap, ::hPalette )
 
    if ::hWnd != 0
-      Super:Destroy()
+      ::Super:Destroy()
    endif
 
    ::oBrush    := nil

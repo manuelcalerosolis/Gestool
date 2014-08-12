@@ -115,17 +115,7 @@ CLASS TSeaNumSer
 
    Method nTreeImagen()
 
-   Inline Method cTextoMovimiento()
-
-      local cTexto   := ""
-
-      if ::oHisMovT:Seek( Str( ::oMovSerS:nNumRem,9 ) + ::oMovSerS:cSufRem )
-         cTexto      := ::aMovimiento[ Min( Max( ::oHisMovT:nTipMov, 1 ), 4 ) ]
-      end if
-
-      Return ( cTexto )
-
-   EndMethod
+   Method cTextoMovimiento()
 
 END CLASS
 
@@ -1487,6 +1477,18 @@ Method nTreeImagen()
 Return ( 1 )
 
 //---------------------------------------------------------------------------//
+
+METHOD cTextoMovimiento()
+
+   local cTexto   := ""
+
+   if ::oHisMovT:Seek( Str( ::oMovSerS:nNumRem,9 ) + ::oMovSerS:cSufRem )
+      cTexto      := ::aMovimiento[ Min( Max( ::oHisMovT:nTipMov, 1 ), 4 ) ]
+   end if
+
+Return ( cTexto )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -2062,3 +2064,4 @@ METHOD AutoSerializa() CLASS TNumerosSerie
 Return ( Self )
 
 //----------------------------------------------------------------------------//
+

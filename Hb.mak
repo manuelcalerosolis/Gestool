@@ -9,8 +9,8 @@ FWLIB 				= 	\Fwh102\Lib
 
 RESOURCE 			= 	.\Resource
 
-BORLAND 			= 	\Bcc55
-BORLANDLIB 			= 	\Bcc55\Lib\Psdk
+BORLAND 			= 	\Bcc582
+BORLANDLIB 			= 	\Bcc582\Lib\Psdk
 
 IMG2PDFLIB 			= 	\Img2Pdf
 
@@ -126,7 +126,6 @@ Turno.prg               	\
 Ttotturno.prg           	\
 Tblconv.prg             	\
 Regalm.prg              	\
-Rasdial.prg             	\
 Rhtml.prg               	\
 Tshell.prg              	\
 Rfile.prg               	\
@@ -163,9 +162,7 @@ Tbuscar.prg             	\
 Tmant.prg               	\
 TFiltercreator.prg 			\
 Tarray.prg              	\
-Tabs.prg                	\
 Webbtn.prg              	\
-Image.prg               	\
 Errorsys.prg            	\
 Tmessage.prg            	\
 Taccesos.prg            	\
@@ -208,9 +205,6 @@ Tutil.prg               	\
 Tidxutil.prg            	\
 Tindex.prg              	\
 Stock.prg               	\
-Wbrowse.prg             	\
-Whbrowse.prg            	\
-Xbrowse.prg             	\
 IXbrowse.prg            	\
 Autoseek.prg            	\
 Cccheck.prg             	\
@@ -222,15 +216,11 @@ Utildbf.prg             	\
 Remmov.prg              	\
 Dummy.prg               	\
 Rccs.prg                	\
-Rxml.prg                	\
 Ttarage.prg             	\
 Tdbaux.prg              	\
 Tiremage.prg            	\
 Tchgcode.prg            	\
-Tget.prg                	\
 Tgethlp.prg             	\
-Mget.prg                	\
-Say.prg                 	\
 Ean.prg                 	\
 TInfseanum.prg          	\
 TInftrazarlote.prg      	\
@@ -351,7 +341,6 @@ ExportaTarifas.prg      	\
 TComentarios.prg        	\
 TDetComentarios.prg     	\
 OrdenComanda.prg 			\
-IBrowse.prg             	\
 Fideliza.prg            	\
 TDetFideliza.prg        	\
 PlantillaXML.prg        	\
@@ -390,18 +379,7 @@ Components.prg 			\
 TLabelGenerator.prg 	\
 
 C               =       \
-Metafi32.c              \
 Img2pdf.c               \
-Wbrwline.c              \
-Enumfonts.c             \
-Pwebbtn.c               \
-Stretchblt.c            \
-Rebars.c                \
-Treeview.c              \
-Wininet.c               \
-Rasapi.c                \
-Attrib.c                \
-Comm.c
 
 OBJS            =       \
 Factu.obj               \
@@ -496,7 +474,6 @@ Turno.obj               \
 Ttotturno.obj           \
 Tblconv.obj             \
 Regalm.obj              \
-Rasdial.obj             \
 RpreviewC3.obj          \
 Rhtml.obj               \
 Tshell.obj              \
@@ -552,11 +529,9 @@ Tbuscar.obj             \
 Tmant.obj               \
 TFiltercreator.obj 		\
 Tarray.obj              \
-Tabs.obj                \
 Webbtn.obj              \
 Webbar.obj              \
 Webmap.obj              \
-Image.obj               \
 Errorsys.obj            \
 Tmessage.obj            \
 Taccesos.obj            \
@@ -605,9 +580,6 @@ Tutil.obj               \
 Tidxutil.obj            \
 Tindex.obj              \
 Stock.obj               \
-Wbrowse.obj             \
-Whbrowse.obj            \
-Xbrowse.obj             \
 IXbrowse.obj            \
 Autoseek.obj            \
 Cccheck.obj             \
@@ -619,33 +591,17 @@ Utildbf.obj             \
 Remmov.obj              \
 Dummy.obj               \
 Rccs.obj                \
-Rxml.obj                \
 Ttarage.obj             \
 TDbaux.obj              \
 Tiremage.obj            \
 Tchgcode.obj            \
-Mget.obj                \
-Tget.obj                \
 Tgethlp.obj             \
-Say.obj                 \
 Pdreport.obj            \
 RcolumnC3.obj           \
 Metafi32.obj            \
 Img2pdf.Obj             \
-Wbrwline.obj            \
 Ean.obj                 \
-EnumFonts.obj           \
-Rasapi.obj              \
-Wininet.obj             \
-Attrib.obj              \
-Comm.obj                \
-Stretchblt.obj          \
-TTreevc3.obj            \
-Treeview.obj            \
-Rebars.obj              \
-VistaMnu.obj            \
 C5Lib.obj               \
-Pwebbtn.obj             \
 TInfseanum.obj          \
 TInftrazarlote.obj      \
 Tseanum.obj             \
@@ -749,8 +705,7 @@ Fabricantes.obj         \
 ExportaTarifas.obj      \
 TComentarios.obj        \
 TDetComentarios.obj     \
-OrdenComanda.obj 			\
-IBrowse.obj             \
+OrdenComanda.obj 		\
 PlantillaXML.obj        \
 Fideliza.obj            \
 TDetFideliza.obj        \
@@ -794,7 +749,7 @@ TLabelGenerator.obj 	\
 $(EXE)                  : $( PRG:.PRG=.OBJ )
 
 .C.OBJ:
-  	$(BORLAND)\Bin\Bcc32 -c -tWM -D__XHARBOUR__ -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
+  	$(BORLAND)\Bin\Bcc32 -c -tWM -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
 
 $(EXE)                  : $( C:.C=.OBJ )
 
@@ -907,7 +862,6 @@ $(OBJ)\Turno.obj                +
 $(OBJ)\Ttotturno.obj            +
 $(OBJ)\Tblconv.obj              +
 $(OBJ)\Regalm.obj               +
-$(OBJ)\Rasdial.obj              +
 $(OBJ)\RpreviewC3.obj           +
 $(OBJ)\Rhtml.obj                +
 $(OBJ)\Tshell.obj               +
@@ -958,11 +912,9 @@ $(OBJ)\Tinforme.obj             +
 $(OBJ)\Tinfcols.obj             +
 $(OBJ)\Tbuscar.obj              +
 $(OBJ)\Tmant.obj                +
-$(OBJ)\TFiltercreator.obj 		  +
+$(OBJ)\TFiltercreator.obj 		+
 $(OBJ)\Tarray.obj               +
-$(OBJ)\Tabs.obj                 +
 $(OBJ)\Webbtn.obj               +
-$(OBJ)\Image.obj                +
 $(OBJ)\Errorsys.obj             +
 $(OBJ)\Tmessage.obj             +
 $(OBJ)\Taccesos.obj             +
@@ -1006,37 +958,26 @@ $(OBJ)\Tutil.obj                +
 $(OBJ)\Tidxutil.obj             +
 $(OBJ)\Tindex.obj               +
 $(OBJ)\Stock.obj                +
-$(OBJ)\Wbrowse.obj              +
-$(OBJ)\Whbrowse.obj             +
-$(OBJ)\Xbrowse.obj              +
 $(OBJ)\IXbrowse.obj             +
 $(OBJ)\Autoseek.obj             +
 $(OBJ)\Cccheck.obj              +
 $(OBJ)\Digit.obj                +
 $(OBJ)\Dlgtools.obj             +
-$(OBJ)\Rebars.obj               +
 $(OBJ)\Toolbar.obj              +
 $(OBJ)\Medicon.obj              +
 $(OBJ)\Utildbf.obj              +
 $(OBJ)\Remmov.obj               +
 $(OBJ)\Dummy.obj                +
 $(OBJ)\Rccs.obj                 +
-$(OBJ)\Rxml.obj                 +
 $(OBJ)\Ttarage.obj              +
 $(OBJ)\Tdbaux.obj               +
 $(OBJ)\Tiremage.obj             +
 $(OBJ)\Tchgcode.obj             +
-$(OBJ)\Mget.obj                 +
-$(OBJ)\Tget.obj                 +
 $(OBJ)\Tgethlp.obj              +
-$(OBJ)\Say.obj                  +
 $(OBJ)\Pdreport.obj             +
 $(OBJ)\ReportC3.obj             +
 $(OBJ)\RcolumnC3.obj            +
 $(OBJ)\Metafi32.obj             +
-$(OBJ)\Wbrwline.obj             +
-$(OBJ)\EnumFonts.obj            +
-$(OBJ)\Stretchblt.obj           +
 $(OBJ)\Tseanum.obj              +
 $(OBJ)\Siges.obj                +
 $(OBJ)\Trazalote.obj            +
@@ -1044,10 +985,6 @@ $(OBJ)\Trazadocumento.obj       +
 $(OBJ)\TInfseanum.obj           +
 $(OBJ)\TInftrazarlote.obj       +
 $(OBJ)\Ean.obj                  +
-$(OBJ)\Rasapi.obj               +
-$(OBJ)\TTreevc3.obj             +
-$(OBJ)\Treeview.obj             +
-$(OBJ)\Pwebbtn.obj              +
 $(OBJ)\TInfGCli.obj             +
 $(OBJ)\TdAgeAlb.obj             +
 $(OBJ)\TInfTrn.obj              +
@@ -1137,8 +1074,7 @@ $(OBJ)\ExportaTarifas.obj       +
 $(OBJ)\TDetOrdCar.obj           +
 $(OBJ)\TComentarios.obj         +
 $(OBJ)\TDetComentarios.obj      +
-$(OBJ)\OrdenComanda.obj 		  +
-$(OBJ)\IBrowse.obj              +
+$(OBJ)\OrdenComanda.obj 		+
 $(OBJ)\PlantillaXML.obj         +
 $(OBJ)\Fideliza.obj             +
 $(OBJ)\TDetFideliza.obj         +

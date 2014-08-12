@@ -85,7 +85,7 @@ METHOD New( cCaption, cAlias, uOrden, cField, aOrd, aCampos, aTitulos, aSizes,;
 
    ( ::cAlias )->( dbGoTop() )
 
-   Super:New( nil, nil, nil, nil, cCaption, "HELPENTRY", GetResources() )
+   ::Super:New( nil, nil, nil, nil, cCaption, "HELPENTRY", GetResources() )
 
    ::Resources()
 
@@ -261,7 +261,7 @@ METHOD Activate() CLASS TBuscar
 
    ::AddFastKey( VK_F5, {|| ::End( IDOK ) } )
 
-Return Super:Activate( , , , .t. )
+Return ::Super:Activate( , , , .t. )
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -269,7 +269,7 @@ METHOD End( nResult ) CLASS TBuscar
 
    DEFAULT nResult := IDCANCEL
 
-   Super:End( nResult )
+   ::Super:End( nResult )
 
    if nResult == IDOK
       ::uVal := ( ::cAlias )->( fieldGet( fieldPos( ::cField ) ) )
@@ -332,7 +332,7 @@ Method Create( oParent, cField )
    Creamos el dialogo----------------------------------------------------------
    */
 
-   Super:New( , , , , cCaption, "HELPENTRY", GetResources() )
+   ::Super:New( , , , , cCaption, "HELPENTRY", GetResources() )
 
    REDEFINE GET oGet VAR cGet;
       ID       104 ;
@@ -446,7 +446,7 @@ Method Create( oParent, cField )
 
    ::AddFastKey( VK_F5, {|| ::end( IDOK ) } )
 
-   Super:Activate( , , , .t. )
+   ::Super:Activate( , , , .t. )
 
    /*
    Guardamos el valor de la busqueda-------------------------------------------

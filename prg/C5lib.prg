@@ -239,14 +239,14 @@ return nil
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 local aAux := {}
-local cFiltro := "Im·genes (*.bmp) | *.bmp |"
+local cFiltro := "Im√°genes (*.bmp) | *.bmp |"
 local cFileName
 aImages := {}
 
 
 do while .t.
 
-   aAux := cGetFileEx( "*.bmp", "Seleccione im·genes" )
+   aAux := cGetFileEx( "*.bmp", "Seleccione im√°genes" )
 
    if !empty( aAux )
 
@@ -397,7 +397,7 @@ DEFAULT lFromCursor := .f.
 
 DEFINE DIALOG oDlg ;
        FROM 409, 544 TO 505, 709 PIXEL ;
-       TITLE "TamaÒo"
+       TITLE "Tama√±o"
 
        @ 10, 25 GET oGet1 VAR nSize ;
              SIZE 15, 8 PIXEL OF oDlg ;
@@ -771,7 +771,6 @@ return hBmpMem
    #define hb_storvc       hb_storc
    #define hb_storvni      hb_storni 
 #endif
-
 
 void DrawGradientFill( HDC hDC, RECT rct, COLORREF crStart, COLORREF crEnd, int nSegments, int bVertical )
 {

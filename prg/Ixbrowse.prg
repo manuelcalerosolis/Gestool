@@ -408,7 +408,7 @@ return nil
 
 METHOD Refresh( lComplete )
 
-   Super:Refresh( lComplete )
+   ::Super:Refresh( lComplete )
 
    if ::lFooter
       ::MakeTotals()

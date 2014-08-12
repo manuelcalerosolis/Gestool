@@ -831,132 +831,19 @@ CLASS TCommPort
 
    METHOD End()         INLINE ( ::Flush(), ::Close() )
 
+   //------------------------------------------------------------------------//
+
+   METHOD SetBitsSec( nBitsSec )
+   METHOD SetBitsParada( nBitsParada )
+   METHOD SetBitsDatos( nBitsDatos )
+   METHOD SetBitsParidad( cBitsParidad )
+
+   METHOD Inicializa()
+
+   METHOD nKilos()
+   METHOD nGramos()
+   METHOD cPeso()
    METHOD nPeso()       INLINE ( Val( ::cPeso() ) )
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD SetBitsSec( nBitsSec )
-
-      if ValType( nBitsSec ) == "N"
-         ::nBitsSec        := Alltrim( Str( nBitsSec ) )
-      else
-         ::nBitsSec        := Alltrim( nBitsSec )
-      end if
-
-      RETURN ( ::nBitsSec )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD SetBitsParada( nBitsParada )
-
-      if ValType( nBitsParada ) == "N"
-         ::nBitsParada     := Alltrim( Str( nBitsParada ) )
-      else
-         ::nBitsParada     := Alltrim( nBitsParada )
-      end if
-
-      RETURN ( ::nBitsParada )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD SetBitsDatos( nBitsDatos )
-
-      if ValType( nBitsDatos ) == "N"
-         ::nBitsDatos      := Alltrim( Str( nBitsDatos ) )
-      else
-         ::nBitsDatos      := Alltrim( nBitsDatos )
-      end if
-
-      RETURN ( ::nBitsDatos )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD SetBitsParidad( cBitsParidad )
-
-      do case
-         case Rtrim( cBitsParidad ) == "Sin paridad"
-            ::nBitsParidad := "n" // NOPARITY
-         case Rtrim( cBitsParidad ) == "Paridad par"
-            ::nBitsParidad := "p" // ODDPARITY
-         case Rtrim( cBitsParidad ) == "Paridad impar"
-            ::nBitsParidad := "i" //EVENPARITY
-      end do
-
-      RETURN ( ::nBitsParidad )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD Inicializa()
-
-      local nWrite
-
-      nWrite            := ::Write( "98000001" + Chr( 13 ) + Chr( 10 ) + Chr( 13 ) + Chr( 10 )  )
-
-      if nWrite <= 0
-         MsgInfo( "Error realizando la petición a la báscula : " + Str( GetCommError( ::nHComm ) ) )
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD nKilos()
-
-      local nKilos      := 0
-
-      ::Read()
-
-      if !Empty( ::cBuffer )
-         nKilos         := Val( Substr( ::cBuffer, 4, 2 ) )
-      end if
-
-      RETURN ( nKilos )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD nGramos()
-
-      local nGramos     := 0
-
-      ::Read()
-
-      if !Empty( ::cBuffer )
-         nGramos        := Val( Substr( ::cBuffer, 6, 3 ) )
-      end if
-
-      RETURN ( nGramos )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD cPeso()
-
-      local cPeso       := "0.000"
-
-      ::Read()
-
-      if !Empty( ::cBuffer )
-         cPeso          := Substr( ::cBuffer, 4, 2 ) + "." + Substr( ::cBuffer, 6, 3 )
-      end if
-
-      RETURN ( cPeso )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
 
 END CLASS
 
@@ -1216,7 +1103,7 @@ METHOD Read( nRetardo ) CLASS TCommPort
 
    SysRefresh()
 
-return ( ::cBuffer )
+RETURN ( ::cBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -1228,7 +1115,7 @@ METHOD Flush() CLASS TCommPort
       MsgStop( "Error vaciando el puerto : " + Str( GetCommError( ::nHComm ) ) )
    endif
 
-return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1238,9 +1125,117 @@ METHOD Close() CLASS TCommPort
       MsgStop( "Error cerrando el puerto : " + Str( GetCommError( ::nHComm ) ) )
    endif
 
-return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD SetBitsSec( nBitsSec )
+
+   if ValType( nBitsSec ) == "N"
+      ::nBitsSec        := Alltrim( Str( nBitsSec ) )
+   else
+      ::nBitsSec        := Alltrim( nBitsSec )
+   end if
+
+RETURN ( ::nBitsSec )
+
+//------------------------------------------------------------------------//
+
+METHOD SetBitsParada( nBitsParada )
+
+   if ValType( nBitsParada ) == "N"
+      ::nBitsParada     := Alltrim( Str( nBitsParada ) )
+   else
+      ::nBitsParada     := Alltrim( nBitsParada )
+   end if
+
+RETURN ( ::nBitsParada )
+
+//------------------------------------------------------------------------//
+
+METHOD SetBitsDatos( nBitsDatos )
+
+   if ValType( nBitsDatos ) == "N"
+      ::nBitsDatos      := Alltrim( Str( nBitsDatos ) )
+   else
+      ::nBitsDatos      := Alltrim( nBitsDatos )
+   end if
+
+RETURN ( ::nBitsDatos )
+
+//------------------------------------------------------------------------//
+
+METHOD SetBitsParidad( cBitsParidad )
+
+   do case
+      case Rtrim( cBitsParidad ) == "Sin paridad"
+         ::nBitsParidad := "n" // NOPARITY
+      case Rtrim( cBitsParidad ) == "Paridad par"
+         ::nBitsParidad := "p" // ODDPARITY
+      case Rtrim( cBitsParidad ) == "Paridad impar"
+         ::nBitsParidad := "i" //EVENPARITY
+   end do
+
+RETURN ( ::nBitsParidad )
+
+//------------------------------------------------------------------------//
+
+METHOD Inicializa()
+
+   local nWrite
+
+   nWrite            := ::Write( "98000001" + Chr( 13 ) + Chr( 10 ) + Chr( 13 ) + Chr( 10 )  )
+
+   if nWrite <= 0
+      MsgInfo( "Error realizando la petición a la báscula : " + Str( GetCommError( ::nHComm ) ) )
+   end if
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD nKilos()
+
+   local nKilos      := 0
+
+   ::Read()
+
+   if !Empty( ::cBuffer )
+      nKilos         := Val( Substr( ::cBuffer, 4, 2 ) )
+   end if
+
+RETURN ( nKilos )
+
+//------------------------------------------------------------------------//
+
+METHOD nGramos()
+
+   local nGramos     := 0
+
+   ::Read()
+
+   if !Empty( ::cBuffer )
+      nGramos        := Val( Substr( ::cBuffer, 6, 3 ) )
+   end if
+
+RETURN ( nGramos )
+
+//------------------------------------------------------------------------//
+
+METHOD cPeso()
+
+   local cPeso       := "0.000"
+
+   ::Read()
+
+   if !Empty( ::cBuffer )
+      cPeso          := Substr( ::cBuffer, 4, 2 ) + "." + Substr( ::cBuffer, 6, 3 )
+   end if
+
+RETURN ( cPeso )
+
+//------------------------------------------------------------------------//
+
 /*
 Method Test() CLASS TCommPort
 

@@ -172,34 +172,10 @@ CLASS TFacturaElectronica
 
    METHOD Enviar()
 
-   METHOD addItemLine( oItemLine )        INLINE  aAdd( ::aItemLine, oItemLine )
-   METHOD addInstallment( oInstallment )  INLINE  aAdd( ::aInstallment, oInstallment )
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD addTax( oTax )
-
-      ::nTotalTaxOutputs   += oTax:nTaxAmount
-
-      aAdd( ::aTax, oTax )
-
-      RETURN ( ::aTax )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD addDiscount( oDiscount )
-
-      ::nTotalGeneralDiscounts   += oDiscount:nDiscountAmount
-
-      aAdd( ::aDiscount, oDiscount )
-
-      RETURN ( ::aDiscount )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD addItemLine( oItemLine )        INLINE ( aAdd( ::aItemLine, oItemLine ) )
+   METHOD addInstallment( oInstallment )  INLINE ( aAdd( ::aInstallment, oInstallment ) )
+   METHOD addTax( oTax )                  INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
+   METHOD addDiscount( oDiscount )        INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
 
    METHOD MailServerSend()                INLINE ( ::cMailServer + if( !Empty( ::cMailServerPort ), ":" + Alltrim( Str( ::cMailServerPort ) ), "" ) )
 
@@ -1473,53 +1449,42 @@ CLASS ItemLine
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD New( oFacturaElectronica )
+   METHOD New( oFacturaElectronica )      INLINE ( ::oFacturaElectronica := oFacturaElectronica )
 
-      ::oFacturaElectronica               := oFacturaElectronica
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD addDiscount( oDiscount )
-
-      if Empty( ::nTotalCost )
-         ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
-      end if
-
-      oDiscount:nDiscountAmount           := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, nRouDiv() )
-
-      aAdd( ::aDiscount, oDiscount )
-
-      RETURN ( oDiscount )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD GrossAmount()
-
-      local oDiscount
-
-      ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithoutTax
-
-      for each oDiscount in ::aDiscount
-         ::nGrossAmount    -= oDiscount:nDiscountAmount
-      next
-
-      RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleTwoDecimalPicture ) ) )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD addDiscount( oDiscount )
+   METHOD GrossAmount()
 
    METHOD addTax( oTax )   INLINE aAdd( ::aTax, oTax )
 
-   //------------------------------------------------------------------------//
-
 ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD addDiscount( oDiscount )
+
+   if Empty( ::nTotalCost )
+      ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
+   end if
+
+   oDiscount:nDiscountAmount           := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, nRouDiv() )
+
+   aAdd( ::aDiscount, oDiscount )
+
+RETURN ( oDiscount )
+
+//------------------------------------------------------------------------//
+
+METHOD GrossAmount()
+
+   local oDiscount
+
+   ::nGrossAmount       := ::nQuantity * ::nUnitPriceWithoutTax
+
+   for each oDiscount in ::aDiscount
+      ::nGrossAmount    -= oDiscount:nDiscountAmount
+   next
+
+RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleTwoDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 

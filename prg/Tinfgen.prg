@@ -483,8 +483,6 @@ CLASS TInfGen
 
    METHOD Xml()
 
-   METHOD OldXml()
-
    METHOD AddImporte( dFecDoc, nImpDoc )
 
    METHOD nMediaMes( nAnno )
@@ -5675,40 +5673,6 @@ METHOD GenReport( nOption )
    end if
 
    ::oBtnCancel:bAction := {|| ::lBreak := .t., ::End() }
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD OldXml()
-
-   local nFor
-   local oXml
-
-   oXml  := TRXml():New( cPatTmp() + "Report.Xls" )
-
-   ::oDbf:GoTop()
-   while !::lBreak .and. !::oDbf:eof()
-
-      oXml:InitLabel( 'Register' )
-
-      for nFor := 1 to len( ::aoCols )
-
-         if ::aoCols[ nFor ] != nil .and. ::aoCols[ nFor ]:lSelect
-
-            oXml:Say( Eval( ::aoCols[ nFor ]:bFld ), ::aoCols[ nFor ]:cTitle )
-
-         end if
-
-      next
-
-      oXml:EndLabel( 'Register' )
-
-      ::oDbf:Skip()
-
-   end while
-
-   oXml:End()
 
 RETURN ( Self )
 

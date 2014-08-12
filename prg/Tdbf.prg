@@ -1710,7 +1710,7 @@ METHOD SetBrowse( oBrw ) CLASS TDbf
       oBrw:bLock        := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrLock() ), ) }
       oBrw:bUnlock      := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrUnlock() ), ) }
 
-   elseif Upper( oBrw:ClassName() ) $ "TWBROWSE TCBROWSE TSBROWSE IWBROWSE"
+   elseif Upper( oBrw:ClassName() ) $ "TWBROWSE TCBROWSE TSBROWSE"
 
       oBrw:bGoTop     := {|| ::GoTop() }
       oBrw:bGoBottom  := {|| ::GoBottom() }

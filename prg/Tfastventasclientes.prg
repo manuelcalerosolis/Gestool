@@ -640,7 +640,7 @@ METHOD AddVariable() CLASS TFastVentasClientes
    ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
    ::oFastReport:AddVariable(    "Clientes",    "Total facturado",    "CallHbFunc( 'oTinfGen', ['TotalFacturado'])" )
 
-Return ( Super:AddVariable() )
+Return ( ::Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 

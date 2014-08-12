@@ -2942,21 +2942,19 @@ RETURN ( cString )
 
 Static Function aTextString( cStart, cEnd, cText )
 
-   local nStart
+   local n
    local nEnd
+   local nStart
    local cString        := ""
    local nStartPos      := 1
    local aExp           := {}
-   local n
    local nTop
    local nTopOld        := 0
    local nPosicion      := 0
 
+   // Recojo en un array todas las expresiones completas--------------------------
    /*
-   Recojo en un array todas las expresiones completas--------------------------
-   */
-
-   do while ( ( nStart := at( cStart, cText, nStartPos ) ) != 0 )
+   do while ( ( nStart := At( cStart, cText, nStartPos ) ) != 0 )
 
       nEnd              := At( cEnd, cText, nStart + len( cStart ) )
 
@@ -2966,8 +2964,27 @@ Static Function aTextString( cStart, cEnd, cText )
 
       aAdd( aExp, cString )
 
-      nStartPos               := nEnd + 1
+      nStartPos         := nEnd + 1
    
+   enddo
+   */
+
+   // Recojo en un array todas las expresiones completas--------------------------
+
+   do while ( ( nStart := At( cStart, cText ) ) != 0 )
+
+      cText             := SubStr( cText, nStart )
+
+      nEnd              := At( cEnd, cText )
+
+      if nEnd != 0
+         cString        := SubStr( cText, 1, nEnd )
+      end if
+
+      aAdd( aExp, cString )
+
+      cText             := SubStr( cText, nEnd + 1 )
+
    enddo
 
    /*
@@ -2976,10 +2993,10 @@ Static Function aTextString( cStart, cEnd, cText )
 
    do case
       case len( aExp ) == 0
-         cString  := ""
+         cString           := ""
 
       case len( aExp ) == 1
-         cString  := aExp[1]
+         cString           := aExp[1]
 
       otherwise
 

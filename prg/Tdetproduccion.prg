@@ -1046,7 +1046,7 @@ METHOD Del( oBrw1, oBrw2 ) CLASS TDetProduccion
       ::oParent:oDetSeriesProduccion:oDbfVir:Delete(.f.)
    end while
 
-   Super:Del( oBrw1 )
+   ::Super:Del( oBrw1 )
 
    ::oParent:oTotProducido:Refresh()
 

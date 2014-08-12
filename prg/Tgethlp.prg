@@ -48,9 +48,9 @@ CLASS TGetHlp FROM TGet
 
    Method EvalMult()             INLINE ( if( ::bMult != nil, Eval( ::bMult, Self ), ) )
 
-   Method Hide()                 INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), Super:Hide() )
+   Method Hide()                 INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
 
-   Method Show()                 INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), Super:Show() )
+   Method Show()                 INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
 
    Method SetText( cText )       INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
 
@@ -78,7 +78,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
 
    DEFAULT cBmp      := ""
 
-   Super:New(  nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
+   ::Super:New(  nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
                nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
                lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
                lPassword, lNoBorder, nHelpId, lSpinner, bUp, bDown, bMin,;
@@ -103,7 +103,7 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    DEFAULT cBmp      := ""
    DEFAULT nIdSay    := 0
 
-   Super:ReDefine(   nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
+   ::Super:ReDefine(   nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
                      nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged,;
                      lReadOnly, lSpinner, bUp, bDown, bMin, bMax )
 
@@ -137,7 +137,7 @@ METHOD Display() CLASS TGetHlp
 
    end if
 
-Return Super:display()
+Return ::Super:display()
 
 //----------------------------------------------------------------------------//
 
@@ -155,7 +155,7 @@ METHOD Destroy() CLASS TGetHlp
       ::oHelpText:End()
    end if
 
-Return ( Super:Destroy() )
+Return ( ::Super:Destroy() )
 
 //---------------------------------------------------------------------------//
 
@@ -227,7 +227,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
 
            #ifndef __CLIPPER__
                if nKey == VK_RETURN  // Execute DEFPUSHBUTTON Action
-                  Super:KeyChar( nKey, nFlags )
+                  ::Super:KeyChar( nKey, nFlags )
                endif
            #endif
 
@@ -290,12 +290,10 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
               endif
            endif
 
-#ifndef __PDA__
            Eval( ::bPostKey, Self, ::oGet:Buffer )
-#endif
 
       otherwise
-           return Super:KeyChar( nKey, nFlags )
+           return ::Super:KeyChar( nKey, nFlags )
 
    endcase
 
@@ -422,7 +420,7 @@ return DLGC_WANTALLKEYS
 
 METHOD LostFocus( hCtlFocus ) CLASS TGetHlp
 
-   Super:LostFocus( hCtlFocus )
+   ::Super:LostFocus( hCtlFocus )
 
    if !::lPassword
       if ::oGet:buffer != GetWindowText( ::hWnd )  // right click popup action

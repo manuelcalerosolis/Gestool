@@ -166,48 +166,9 @@ CLASS TCobAge FROM TMasDet
    METHOD Contabilizar()
    METHOD ChangeConta( lCnt )    INLINE ( ::oDbf:FieldPutByName( "lConta", lCnt ), ::oWndBrw:Refresh() )
 
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD lContabilizar( nAsiento )
-
-      ::oDbf:FieldPutByName( "lConta", .t. )
-
-      ::oTreeSelect:Select( ::oTreeSelect:Add( "Liquidación de agentes : " + Alltrim( Str( ::oDbf:nNumCob, 9 ) ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD lValidFacturaProveedor( oGetFactura, nMode )
-
-      local cFactura
-
-      cFactura          := Upper( oGetFactura:VarGet() )
-      cFactura          := SubStr( cFactura, 1, 1 ) + Padl( Alltrim( SubStr( cFactura, 2, 9 ) ), 9 )
-
-      if Empty( cFactura )
-         RETURN ( .t. )
-      end if
-
-      if ::oFacPrvT:SeekInOrd( cFactura, "nNumFac" )
-
-         oGetFactura:cText( cFactura )
-
-         RETURN ( .t. )
-
-      else
-
-         MsgStop( "La factura de proveedores introducida no existe." )
-
-      end if
-
-      RETURN ( .f. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD lContabilizar( nAsiento )
+   
+   METHOD lValidFacturaProveedor( oGetFactura, nMode )
 
 END CLASS
 
@@ -996,6 +957,43 @@ METHOD lSave( nMode ) CLASS TCobAge
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD lContabilizar( nAsiento )
+
+	::oDbf:FieldPutByName( "lConta", .t. )
+
+	::oTreeSelect:Select( ::oTreeSelect:Add( "Liquidación de agentes : " + Alltrim( Str( ::oDbf:nNumCob, 9 ) ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD lValidFacturaProveedor( oGetFactura, nMode )
+
+	local cFactura
+
+	cFactura          := Upper( oGetFactura:VarGet() )
+	cFactura          := SubStr( cFactura, 1, 1 ) + Padl( Alltrim( SubStr( cFactura, 2, 9 ) ), 9 )
+
+	if Empty( cFactura )
+	 RETURN ( .t. )
+	end if
+
+	if ::oFacPrvT:SeekInOrd( cFactura, "nNumFac" )
+
+	 oGetFactura:cText( cFactura )
+
+	 RETURN ( .t. )
+
+	else
+
+	 MsgStop( "La factura de proveedores introducida no existe." )
+
+	end if
+
+RETURN ( .f. )
+
+//------------------------------------------------------------------------//
 
 METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
 

@@ -714,7 +714,7 @@ METHOD AddVariable() CLASS TFastVentasProveedores
            
    end case
 
-Return ( Super:AddVariable() )
+Return ( ::Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 

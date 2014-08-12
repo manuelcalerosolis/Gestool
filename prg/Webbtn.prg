@@ -14,7 +14,6 @@
 #define SRCCOPY         13369376
 
 #ifdef __XPP__
-   #define Super ::TControl
    #define New _New
 #endif
 
@@ -117,7 +116,7 @@ CLASS TWebBtn FROM TControl
 
    METHOD cText( cText )   SETGET
 
-   METHOD End() INLINE ( ::Destroy(), Super:End() ) 
+   METHOD End() INLINE ( ::Destroy(), ::Super:End() ) 
 
    METHOD VarGet()      INLINE   ( ::cCaption )
 
@@ -424,7 +423,7 @@ METHOD Click( lMenu ) CLASS TWebBtn
          end if
       end if
 
-      Super:Click()         // keep it here, the latest!
+      ::Super:Click()         // keep it here, the latest!
       ::lProcessing     := .f.
    endif
 
@@ -434,7 +433,7 @@ return nil
 
 METHOD GotFocus( hCtlLost ) CLASS TWebBtn
 
-return Super:GotFocus()
+return ::Super:GotFocus()
 
 //----------------------------------------------------------------------------//
 
@@ -442,7 +441,7 @@ METHOD Initiate( hDlg ) CLASS TWebBtn
 
    LOCAL aRect
 
-   Super:Initiate( hDlg )
+   ::Super:Initiate( hDlg )
 
    if ! Empty( ::cCaption )
       SetWindowText( ::hWnd, ::cCaption )
@@ -466,7 +465,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TWebBtn
    if nKey == VK_RETURN .or. nKey == VK_SPACE
       ::Click()
    else
-      return Super:KeyChar( nKey, nFlags )
+      return ::Super:KeyChar( nKey, nFlags )
    endif
 
 return nil
@@ -482,14 +481,14 @@ METHOD LostFocus() CLASS TWebBtn
 
    ::Refresh()
 
-return Super:LostFocus()
+Return ::Super:LostFocus()
 
 //----------------------------------------------------------------------------//
 
 METHOD LButtonDown( nRow, nCol ) CLASS TWebBtn
 
    if ::oDragCursor != nil
-      return Super:LButtonDown( nRow, nCol )
+      return ::Super:LButtonDown( nRow, nCol )
    endif
 
    ::lWorking = .t.
@@ -521,7 +520,7 @@ METHOD LButtonUp( nRow, nCol )  CLASS TWebBtn
    local lClick := IsOverWnd( ::hWnd, nRow, nCol )
 
    if ::oDragCursor != nil
-      return Super:LButtonUp( nRow, nCol )
+      return ::Super:LButtonUp( nRow, nCol )
    endif
 
    ::lBtnUp  = .t.
@@ -562,7 +561,7 @@ METHOD Destroy() CLASS TWebBtn
       ::oDragCursor:end()
    end if
 
-   Super:Destroy()
+   ::Super:Destroy()
 
 return 0
 
@@ -733,7 +732,7 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TWebBtn
 
    local lMenu := nCol > ::nRight - 18 .and. ::bMenu != nil
 
-   Super:MouseMove( nRow, nCol, nKeyFlags )
+   ::Super:MouseMove( nRow, nCol, nKeyFlags )
 
    /*
    Si no esta cpturado damos el valor inicial a lIsOverMenu

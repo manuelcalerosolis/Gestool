@@ -7,7 +7,7 @@ TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aFastKeys", __cls_
 
 TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "bTmpValid", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "AddFastKey", {|Self, nKey, bAction| Self, ( if( isNil(::aFastKeys), ::aFastKeys := {}, ), aAdd( ::aFastKeys, { nKey, bAction } ) ) }, 3, nil, 1, .f., .f. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
 TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
 

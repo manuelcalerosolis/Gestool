@@ -608,7 +608,7 @@ METHOD AddVariable() CLASS TFastProduccion
    
    ::AddVariableLineasParteProduccion()
 
-Return ( Super:AddVariable() )
+Return ( ::Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 

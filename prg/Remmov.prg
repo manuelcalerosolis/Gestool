@@ -1476,7 +1476,7 @@ Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nCopies      := nCopiasDocumento(    nil, "nMovAlm", ::oDbfCnt:cAlias )
 
    if ::oDbf:Lastrec() == 0
-      Return nil
+      return nil
    end if
 
    if Empty( cCodDoc )
@@ -1538,7 +1538,7 @@ Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies )
          oInf:lAutoland          := .f.
          oInf:lFinish            := .f.
          oInf:lNoCancel          := .t.
-         oInf:bSkip              := {|| ::::oDetMovimientos:oDbf:Skip() }
+         oInf:bSkip              := {|| ::oDetMovimientos:oDbf:Skip() }
 
          oInf:oDevice:lPrvModal  := .t.
 
@@ -1549,24 +1549,20 @@ Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies )
          SetMargin(  cCodDoc, oInf )
          PrintColum( cCodDoc, oInf )
 
-      end if
+         END REPORT
 
-      END REPORT
-
-      if !Empty( oInf )
-
-      ACTIVATE REPORT oInf ;
-         WHILE       ( Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == nNumRem .and. !::oDetMovimientos:oDbf:Eof() );
-         FOR         ( !::::oDetMovimientos:oDbf:lImpLin ) ;
-         ON ENDPAGE  ::EPage( oInf, cCodDoc )
+         ACTIVATE REPORT oInf ;
+            WHILE       ( Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == nNumRem .and. !::oDetMovimientos:oDbf:Eof() );
+            FOR         ( !::oDetMovimientos:oDbf:lImpLin ) ;
+            ON ENDPAGE  ( ::EPage( oInf, cCodDoc ) )
 
          if lPrinter
             oInf:oDevice:end()
          end if
 
-      end if
+         oInf        := nil
 
-      oInf  := nil
+      end if
 
    end if
 

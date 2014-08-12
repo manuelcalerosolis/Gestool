@@ -6401,87 +6401,86 @@ CLASS SStock
 
    //------------------------------------------------------------------------//
    
-   INLINE METHOD New()
-
-      ::cCodigo               := ""
-      ::cDelegacion           := ""
-      ::dFechaDocumento       := Ctod("")
-      ::cCodigoAlmacen        := ""
-      ::cCodigoPropiedad1     := ""
-      ::cCodigoPropiedad2     := ""
-      ::cValorPropiedad1      := ""
-      ::cValorPropiedad2      := ""
-      ::cLote                 := ""
-      ::cNumeroSerie          := ""
-      ::dFechaCaducidad       := Ctod( "" )
-      ::nUnidades             := 0
-      ::nPendientesRecibir    := 0
-      ::nPendientesEntregar   := 0
-      ::cNumeroDocumento      := ""
-      ::cTipoDocumento        := ""
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD New()
 
    METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) )
 
-   //------------------------------------------------------------------------//
+   METHOD Say()
 
-   INLINE METHOD Say()
-
-      RETURN ( "Alias"                    + ::cAlias                                + "," + ;
-               "Codigo"                   + ::cCodigo                               + "," + ;
-               "CodigoAlmacen"            + ::cCodigoAlmacen                        + "," + ;
-               "CodigoPropiedad1"         + ::cCodigoPropiedad1                     + "," + ;
-               "CodigoPropiedad2"         + ::cCodigoPropiedad2                     + "," + ;
-               "ValorPropiedad1"          + ::cValorPropiedad1                      + "," + ;
-               "ValorPropiedad2"          + ::cValorPropiedad2                      + "," + ;
-               "Lote"                     + ::cLote                                 + "," + ;
-               "NumeroSerie"              + ::cNumeroSerie                          + "," + ;
-               "Unidades"                 + Str( ::nUnidades )                      + "," + ;
-               "PendientesRecibir"        + Str( ::nPendientesRecibir )             + "," + ;
-               "PendientesEntregar"       + Str( ::nPendientesEntregar )            + "," + ;
-               "Unidades != 0"            + cValToChar( ::nUnidades != 0 )          + "," + ;
-               "PendientesRecibir != 0"   + cValToChar( ::nPendientesRecibir != 0 ) + "," + ;
-               "PendientesEntregar != 0"  + cValToChar( ::nPendientesEntregar != 0 ) )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD Save( oDbfStock )
-
-      oDbfStock:Append()
-
-      oDbfStock:cCodigo    := ::cCodigo               
-      oDbfStock:cDelega    := ::cDelegacion           
-      oDbfStock:dFecDoc    := ::dFechaDocumento       
-      oDbfStock:cAlmacen   := ::cCodigoAlmacen        
-      oDbfStock:cCodPrp1   := ::cCodigoPropiedad1     
-      oDbfStock:cCodPrp2   := ::cCodigoPropiedad2     
-      oDbfStock:cValPrp1   := ::cValorPropiedad1      
-      oDbfStock:cValPrp2   := ::cValorPropiedad2      
-      oDbfStock:cLote      := ::cLote                 
-      oDbfStock:cNumSer    := ::cNumeroSerie          
-      oDbfStock:dFecCad    := ::dFechaCaducidad       
-      oDbfStock:nUnd       := ::nUnidades             
-      oDbfStock:nPdtRec    := ::nPendientesRecibir    
-      oDbfStock:nPdtEnt    := ::nPendientesEntregar   
-      oDbfStock:cNumDoc    := ::cNumeroDocumento      
-      oDbfStock:cTipDoc    := ::cTipoDocumento        
-
-      oDbfStock:Save()
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD Save( oDbfStock )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD New() CLASS SStock
+
+   ::cCodigo               := ""
+   ::cDelegacion           := ""
+   ::dFechaDocumento       := Ctod("")
+   ::cCodigoAlmacen        := ""
+   ::cCodigoPropiedad1     := ""
+   ::cCodigoPropiedad2     := ""
+   ::cValorPropiedad1      := ""
+   ::cValorPropiedad2      := ""
+   ::cLote                 := ""
+   ::cNumeroSerie          := ""
+   ::dFechaCaducidad       := Ctod( "" )
+   ::nUnidades             := 0
+   ::nPendientesRecibir    := 0
+   ::nPendientesEntregar   := 0
+   ::cNumeroDocumento      := ""
+   ::cTipoDocumento        := ""
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD Say() CLASS SStock
+
+   RETURN ( "Alias"                    + ::cAlias                                + "," + ;
+            "Codigo"                   + ::cCodigo                               + "," + ;
+            "CodigoAlmacen"            + ::cCodigoAlmacen                        + "," + ;
+            "CodigoPropiedad1"         + ::cCodigoPropiedad1                     + "," + ;
+            "CodigoPropiedad2"         + ::cCodigoPropiedad2                     + "," + ;
+            "ValorPropiedad1"          + ::cValorPropiedad1                      + "," + ;
+            "ValorPropiedad2"          + ::cValorPropiedad2                      + "," + ;
+            "Lote"                     + ::cLote                                 + "," + ;
+            "NumeroSerie"              + ::cNumeroSerie                          + "," + ;
+            "Unidades"                 + Str( ::nUnidades )                      + "," + ;
+            "PendientesRecibir"        + Str( ::nPendientesRecibir )             + "," + ;
+            "PendientesEntregar"       + Str( ::nPendientesEntregar )            + "," + ;
+            "Unidades != 0"            + cValToChar( ::nUnidades != 0 )          + "," + ;
+            "PendientesRecibir != 0"   + cValToChar( ::nPendientesRecibir != 0 ) + "," + ;
+            "PendientesEntregar != 0"  + cValToChar( ::nPendientesEntregar != 0 ) )
+
+//------------------------------------------------------------------------//
+
+METHOD Save( oDbfStock ) CLASS SStock
+
+   oDbfStock:Append()
+
+   oDbfStock:cCodigo    := ::cCodigo               
+   oDbfStock:cDelega    := ::cDelegacion           
+   oDbfStock:dFecDoc    := ::dFechaDocumento       
+   oDbfStock:cAlmacen   := ::cCodigoAlmacen        
+   oDbfStock:cCodPrp1   := ::cCodigoPropiedad1     
+   oDbfStock:cCodPrp2   := ::cCodigoPropiedad2     
+   oDbfStock:cValPrp1   := ::cValorPropiedad1      
+   oDbfStock:cValPrp2   := ::cValorPropiedad2      
+   oDbfStock:cLote      := ::cLote                 
+   oDbfStock:cNumSer    := ::cNumeroSerie          
+   oDbfStock:dFecCad    := ::dFechaCaducidad       
+   oDbfStock:nUnd       := ::nUnidades             
+   oDbfStock:nPdtRec    := ::nPendientesRecibir    
+   oDbfStock:nPdtEnt    := ::nPendientesEntregar   
+   oDbfStock:cNumDoc    := ::cNumeroDocumento      
+   oDbfStock:cTipDoc    := ::cTipoDocumento        
+
+   oDbfStock:Save()
+
+RETURN (  Self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1813,7 +1813,7 @@ CLASS TMesa FROM TControl
 
    METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oSalon ) CONSTRUCTOR
 
-   METHOD End()            INLINE ( if( !Empty( ::hBmp ), DeleteObject( ::hBmp ), ), Super:End() )
+   METHOD End()            INLINE ( if( !Empty( ::hBmp ), DeleteObject( ::hBmp ), ), ::Super:End() )
 
    METHOD Build( cDescripcion, nTipo, nFila, nColumna, oSalon ) CONSTRUCTOR
    METHOD Generica() CONSTRUCTOR
@@ -2044,7 +2044,7 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TMesa
 
    end case
 
-Return ( Super:HandleEvent( nMsg, nWParam, nLParam ) )
+Return ( ::Super:HandleEvent( nMsg, nWParam, nLParam ) )
 
 //---------------------------------------------------------------------------//
 

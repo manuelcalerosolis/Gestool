@@ -212,17 +212,7 @@ CLASS TPlantillaXML FROM TMasDet
 
    Method aCampoClave()
 
-   Inline Method EditPlantillaImportacion()
-
-      local nRec  := ::oDbf:Recno()
-
-      if ::oDbf:SeekInOrd( ::aPlantilla[ ::oBrwPlantilla:nArrayAt, 1 ], "cCodigo" )
-         ::oWndBrw:RecEdit()
-      end if
-
-      ::oDbf:GoTo( nRec )
-
-   EndMethod
+   Method EditPlantillaImportacion()
 
 END CLASS
 
@@ -954,6 +944,20 @@ METHOD Importacion( cText ) CLASS TPlantillaXML
    ::oTreeImportacion:Destroy()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Method EditPlantillaImportacion()
+
+   local nRec  := ::oDbf:Recno()
+
+   if ::oDbf:SeekInOrd( ::aPlantilla[ ::oBrwPlantilla:nArrayAt, 1 ], "cCodigo" )
+      ::oWndBrw:RecEdit()
+   end if
+
+   ::oDbf:GoTo( nRec )
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

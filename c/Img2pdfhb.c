@@ -1,8 +1,14 @@
-#include <WinTen.h>
-#include <Windows.h>
-#include <ClipApi.h>
+#include "windows.h"
+#include "hbapi.h"
 
 #include "Image2PDF-BCC.h"
+
+#ifdef __XHARBOUR__
+   #define hb_parvc        hb_parc
+   #define hb_parvni       hb_parni
+   #define hb_storvc       hb_storc
+   #define hb_storvni      hb_storni 
+#endif
 
 /*
 #define PRINTER_STATUS_OK                       0
@@ -53,7 +59,7 @@ HB_FUNC(I2PDF_ADDIMAGE_XH)
 
     UINT iErr;
 
-    LPSTR lpImage   = hb_parc( 1 );
+    LPSTR lpImage   = hb_parvc( 1 );
 
     iErr            = I2PDF_AddImage( lpImage );
 
@@ -118,7 +124,7 @@ HB_FUNC(PRNSTATUS) // cPrinter or cPrinterServer --> nStatus
     DWORD cBytesNeeded = 0, cBytesUsed = 0;
     PRINTER_INFO_2 * pPrinterInfo = NULL;
 
-    if( OpenPrinter( _parc( 1 ), &hPrinter, NULL ) )
+    if( OpenPrinter( hb_parvc( 1 ), &hPrinter, NULL ) )
     {
         GetPrinter( hPrinter, 2, NULL, 0, &cBytesNeeded );
         pPrinterInfo = ( PRINTER_INFO_2 * ) hb_xgrab( cBytesNeeded );
