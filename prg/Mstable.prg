@@ -36,7 +36,7 @@ ENDCLASS
 
 METHOD Open() CLASS TVMyTable
 
-    local lRet := Super:Open()
+    local lRet := ::Super:Open()
 
     if lRet .and. ::lGenDataField
         MyGenDataField( Self )
@@ -111,7 +111,7 @@ ENDCLASS
 
 METHOD New( oDbCon, cName, cWhere, cHaving, cOrderBy, nLimit ) CLASS TMSTable
 
-    Super:New( oDbCon )
+    ::Super:New( oDbCon )
 
     if ::lInit
 
@@ -145,14 +145,15 @@ return( Self )
 
 METHOD Open() CLASS TMSTable
 
-    local lRet := Super:Open()
+    local lRet 			:= ::Super:Open()
 
     // Solo se debe ejecutar una vez en caso de "re-open":
+    
     if lRet .and. !::lOpenTable
-        ::lOpenTable := .t.
-        ::aBuffer := Array( ::FieldCount() )
-        ::nColAutoInc := E1FieldAutoInc( ::hMySQL )
-        ::aKey := E1ListKey( ::hMySQL )
+        ::lOpenTable 	:= .t.
+        ::aBuffer 		:= Array( ::FieldCount() )
+        ::nColAutoInc 	:= E1FieldAutoInc( ::hMySQL )
+        ::aKey 			:= E1ListKey( ::hMySQL )
     endif
 
 return( lRet )

@@ -400,6 +400,8 @@ CLASS TpvTactil
 
    DATA lGetPrecio                  INIT .f.
 
+   DATA nTipoDocumento     			INIT documentoTicket 
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -408,65 +410,6 @@ CLASS TpvTactil
 
    METHOD OpenFiles()
    METHOD CloseFiles()
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InstanceFastReport()
-
-      /*
-      Creamos el objeto FastReport---------------------------------------------
-      */
-
-      ::oFastReport     := frReportManager():New()
-      ::oFastReport:LoadLangRes( "Spanish.Xml" )
-
-      ::DataReport()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD DestroyFastReport()
-
-      if !Empty( ::oFastReport )
-         ::oFastReport:DestroyFr()
-      end if
-
-      ::oFastReport     := nil
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD EliminaLineaTemporal()
-
-      if uFieldEmpresa( "lShowLin" )
-         ::oTemporalLinea:lDelTil   := .t. // ::oTemporalLinea:Delete()
-      else 
-         ::oTemporalLinea:lDelTil   := .t.
-      end if
-
-      RETURN ( nil )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD SaltaLineaTemporal()
-
-      if uFieldEmpresa( "lShowLin" )
-         ::oTemporalLinea:Skip() // ::oTemporalLinea:Skip(0)
-      else
-         ::oTemporalLinea:Skip()
-      end if 
-
-      RETURN ( nil )
-
-   ENDMETHOD
 
    //------------------------------------------------------------------------//
 
@@ -584,86 +527,6 @@ CLASS TpvTactil
 
    METHOD cNombreArticulo()                     INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD CambiarPrecio()
-
-      if ( ::oTemporalLinea:ordKeyCount() != 0 ) .and. ( Val( ::cGetUnidades ) != 0 )
-
-         if ( ::oTemporalLinea:nPvpTil == 0 ) .or. ( ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. ) )
-
-            ::oTemporalLinea:nPvpTil   := ::nGetUnidades()
-
-            ::oBrwLineas:Refresh()
-
-         end if
-
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD nGetUnidades( lUnaUnidad )
-
-      local nUnidades      := 1
-
-      DEFAULT lUnaUnidad   := .f.
-
-      nUnidades            := Val( ::cGetUnidades )
-
-      if ( ( lUnaUnidad .and. nUnidades == 0 ) .or. ::lGetPrecio )
-         nUnidades         := 1 // Max( nUnidades, 1 )
-      end if
-
-      if !::lGetPrecio
-         ::oGetUnidades:cText( "" )
-      end if 
-
-      RETURN ( nUnidades )
-
-   ENDMETHOD      
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD nGetPrecio()
-
-      local nPrecio      
-
-      nPrecio            := Val( ::cGetUnidades )
-
-      RETURN ( nPrecio )
-
-   ENDMETHOD      
-
-   //------------------------------------------------------------------------//
-
-   DATA nTipoDocumento     INIT documentoTicket 
-
-   INLINE METHOD cTipoDocumento()
-
-      local cTipo := "Ticket"
-
-      do case
-         case ::nTipoDocumento == documentoAlbaran
-            cTipo := "Albarán de cliente"
-
-         case ::nTipoDocumento == documentoFactura
-            cTipo := "Factura de cliente"
-
-         otherwise
-            cTipo := "Ticket de cliente"
-
-      end case
-
-      RETURN cTipo
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
    METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
@@ -682,48 +545,6 @@ CLASS TpvTactil
    METHOD EditFamilia()                INLINE ( if( EdtFamilia( ::aFamilias[ ::oBrwFamilias:nArrayAt, 2 ] ), ( ::CargaBrowseFamilias(), ::ChangeFamilias(), ::oBrwFamilias:Refresh() ), ) )
 
    //------------------------------------------------------------------------//
-
-   INLINE METHOD EditArticulo( nRow, nCol )
-
-      local nOpt
-
-      if !Empty( ::oLstArticulos )
-
-         ::oLstArticulos:nOption       := ::oLstArticulos:GetOption( nRow, nCol )
-         ::oLstArticulos:Refresh()
-
-         nOpt                          := ::oLstArticulos:nOption
-
-         if Empty( nOpt )
-            RETURN ( .f. )
-         end if
-
-         if !Empty( ::oLstArticulos:oVScroll )
-            ::oLstArticulos:oVScroll:SetPos( ::oLstArticulos:nCurLine() )
-         end if
-
-         nOpt                          := Max( Min( nOpt, len( ::oLstArticulos:aItems ) ), 1 )
-
-         if nOpt > 0 .and. nOpt <= len( ::oLstArticulos:aItems )
-
-            if EdtArticulo( ::oLstArticulos:aItems[ nOpt ]:Cargo )
-
-               ::CargaBrowseFamilias()
-
-               ::ChangeFamilias()
-
-            end if
-
-         end if
-
-      end if
-
-      RETURN ( .t. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
 
    METHOD SelectUnaLineaInvitacion()
    METHOD SelectTodasLineasInvitacion()
@@ -781,122 +602,33 @@ CLASS TpvTactil
    METHOD OnClickGuardar()
    METHOD OnClickCloseTurno( lParcial )
 
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickIniciarSesion()
-
-      ::DisableDialog()
-
-      if ::oTurno:OpenFiles()
-         ::oTurno:lNowOpen( oWnd() )
-         ::oTurno:CloseFiles()
-      end if
-
-      ::SetInfo()
-
-      ::EnableDialog()
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD EditArticulo( nRow, nCol )
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD OnClickComensales()
+   METHOD InstanceFastReport()
+   METHOD DestroyFastReport()
+   
+   METHOD EliminaLineaTemporal()
+   METHOD SaltaLineaTemporal()
 
-      ::DisableDialog()
+   METHOD CambiarPrecio()
+   METHOD nGetUnidades( lUnaUnidad )
 
-      ::oTiketCabecera:nNumCom         := nVirtualNumKey( "Users1_32", "Número comensales", ::oTiketCabecera:nNumCom )
+   METHOD nGetPrecio()
+   METHOD cTipoDocumento()
 
-      ::SetTotal()
+   METHOD OnClickIniciarSesion()
 
-      ::EnableDialog()
+   METHOD OnClickComensales()
 
-      RETURN ( .t. )
+   METHOD OnClickComensalesMenus()
 
-   ENDMETHOD
+   METHOD ShowUsuario()
 
-   //------------------------------------------------------------------------//
+   METHOD GetUsuario( lForced )
 
-   INLINE METHOD OnClickComensalesMenus()
-
-      ::nComensalesMenu    := 0
-
-      ::DisableDialog()
-
-      ::nComensalesMenu    := nVirtualNumKey( "Users1_32", "Número de menús", 0 )
-
-      ::EnableDialog()
-
-      RETURN ( ::nComensalesMenu )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   /*
-   Si pulsamos sobre el boton de usuario nos crea el dialogo para cambiar de usuario
-   */
-
-   INLINE METHOD ShowUsuario()
-
-      if BrwBigUser()
-
-         ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "Security_Agent_32", "Dude4_32" ) )
-
-         ::oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
-
-      else
-
-         RETURN ( .f. )
-
-      end if
-
-      RETURN ( .t. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD GetUsuario( lForced )
-
-      local lShow
-
-      DEFAULT lForced                  := .f.
-
-      if ( lForced ) .or. ( ::lGetUsuario .and. lRecogerUsuario() )
-
-         lShow                         := ::ShowUsuario()
-
-         if !lShow
-
-            ::KillResource()
-
-            RETURN ( .f. )
-
-         else
-
-            ::lGetUsuario              := .f.
-
-         end if
-
-      end if
-
-      RETURN ( .t. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD GetUbicacion()
-
-      if ( uFieldEmpresa( "lShowSala" ) )
-         ::OnClickSalaVenta()
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD GetUbicacion()
 
    // Comentarios--------------------------------------------------------------
 
@@ -907,191 +639,19 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD EliminarLinea()
-
-      local nLineaMenu 
-
-      if !::lEditableDocumento()
-         MsgStop( "El documento ya está cerrado" )
-         Return ( .t. )
-      end if
-
-      //Si es una línea hija de un escandallo no permitimos borrarla.----------
-      if ::oTemporalLinea:lKitChl
-         MsgStop( "No se puede borrar un componente de un escandallo" )
-         Return ( .t. )
-      end if
-
-      ::DisableDialog()
-
-      if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
-
-         if ::oTemporalLinea:lMnuTil
-
-            ::EliminaMenu( ::oTemporalLinea:nNumLin )
-
-            ::CargaBrowseFamilias()
-            ::ChangeFamilias()
-
-         else
-
-         //Si la línea es un escandallo eliminamos el escandallo completo
-            if ( ::oTemporalLinea:lKitArt )
-
-               ::EliminaEscandallo( ::oTemporalLinea:nNumLin )
-
-            else
-
-               ::EliminaLineaTemporal()
-
-            end if
-
-         end if
-
-         ::oBrwLineas:Refresh()
-      
-      end if
-
-      ::EnableDialog()
-
-      // Nuevo total-----------------------------------------------------------
-
-      ::SetTotal()
-
-      Return ( .t. )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD EliminaMenu( nLineaMenu )
-
-      ::oTemporalLinea:GetStatus()
-
-      ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
-      ::oTemporalLinea:GoTop()
-
-      while !( ::oTemporalLinea:eof() )
-         
-         if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
-
-            ::EliminaLineaTemporal()
-
-         end if
-
-         ::SaltaLineaTemporal()
-
-      end while
-
-      ::oTemporalLinea:SetStatus()
-
-      Return( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD EliminaEscandallo( nNumeroLinea )
-
-      ::oTemporalLinea:GetStatus()
-
-      ::oTemporalLinea:OrdSetFocus( "nNumLin" )
-      ::oTemporalLinea:GoTop()
-
-      while !( ::oTemporalLinea:eof() )
-
-         if ( nNumeroLinea == ::oTemporalLinea:nNumLin ) 
-
-            ::EliminaLineaTemporal()
-
-         end if
-
-         ::SaltaLineaTemporal()
-
-      end while
-
-      ::oTemporalLinea:SetStatus()
-
-      Return( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD EliminarLinea()
+   METHOD EliminaMenu( nLineaMenu )
+   METHOD EliminaEscandallo( nNumeroLinea )
 
    // Colores-----------------------------------------------------------------
 
-   INLINE METHOD ColorLinea( oDbf )
-      
-      local aColor
+   METHOD ColorLinea( oDbf )
+   METHOD ColorLineaSeleccionada( oDbf )
+   METHOD ColorLineaFocus( oDbf )
 
-      DEFAULT oDbf   := ::oTemporalLinea
+   METHOD CargaMenuSeleccionado()
 
-      do case 
-         case oDbf:FieldGetByName( "lDelTil" )
-            aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
-         case oDbf:FieldGetByName( "lMnuTil" )
-            aColor   := { CLR_BLACK, Rgb( 34, 177, 76 ) }
-         otherwise
-            aColor   := { CLR_BLACK, Rgb( 255, 255, 255 ) }
-      end case 
-
-      RETURN ( aColor )
-
-   ENDMETHOD 
-
-   INLINE METHOD ColorLineaSeleccionada( oDbf )
-      
-      local aColor
-
-      DEFAULT oDbf   := ::oTemporalLinea
-
-      do case 
-         case oDbf:FieldGetByName( "lDelTil" )
-            aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
-         case oDbf:FieldGetByName( "lMnuTil" )
-            aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
-         otherwise
-            aColor   := { CLR_BLACK, Rgb( 229, 229, 229 ) }
-      end case 
-
-      RETURN ( aColor )
-
-   ENDMETHOD
-
-   INLINE METHOD ColorLineaFocus( oDbf )
-      
-      local aColor
-
-      DEFAULT oDbf   := ::oTemporalLinea
-
-      do case 
-         case oDbf:FieldGetByName( "lDelTil" )
-            aColor   := { CLR_BLACK, Rgb( 255, 128, 128 ) }
-         case oDbf:FieldGetByName( "lMnuTil" )
-            aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
-         otherwise
-            aColor   := { CLR_BLACK, Rgb( 167, 205, 240 ) }
-      end case 
-
-      RETURN ( aColor )
-
-   ENDMETHOD 
-
-   //--------------------------------------------------------------------------
-
-   // Cargar menú si es una linea de menú o un articulo del menú---------------
-
-   INLINE METHOD CargaMenuSeleccionado()
-
-      if ::nLineaMenuActivo() != 0 .and. !::oTemporalLinea:lDelTil
-         ::CargaFamiliaMenu( ::oTemporalLinea:cCodMnu )
-      end if
-   
-      RETURN ( Self )
-
-   ENDMETHOD 
-
-   //--------------------------------------------------------------------------
+   METHOD lEmptyAlias()
 
    /*
    Calculos--------------------------------------------------------------------
@@ -1134,25 +694,7 @@ CLASS TpvTactil
 
    METHOD GuardaCobros()               INLINE ( ::oTpvCobros:ArchivaCobros() )
 
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD lEmptyAlias()
-
-      if !Empty( ::oTiketCabecera:cNumTik )
-         Return ( .f. )
-      end if
-
-      if ( ::oTiketCabecera:nUbiTik == ubiGeneral .or. ::oTiketCabecera:nUbiTik == ubiRecoger ) .and. Empty( ::oTiketCabecera:cPntVenta ) .and. Empty( ::oTiketCabecera:cAliasTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
-         Return ( .t. )
-      end if
-
-      RETURN ( .f. )
-
-   ENDMETHOD
-
-   /*
-   Documentos------------------------------------------------------------------
-   */
+   // Documentos------------------------------------------------------------------
 
    METHOD GuardaDocumento( lZap, nSave )
 
@@ -1160,54 +702,11 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD GuardaDocumentoPendiente()
+   METHOD GuardaDocumentoPendiente()
 
-      ::oTiketCabecera:cTipTik      := SAVTIK
+   METHOD GuardaDocumentoCerrado()
 
-      ::GuardaDocumento()
-
-      ::ProcesaDocumentosInternos()
-
-      RETURN ( .t. )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD SetDocumentoPagado()
-
-      ::oTiketCabecera:cTipTik         := SAVTIK
-
-      do case
-         case ::oTpvCobros:nEstado == nParcial
-
-            ::oTiketCabecera:lPgdTik   := .f.
-            ::oTiketCabecera:lAbierto  := .t.
-
-         case ::oTpvCobros:nEstado == nPagado
-
-            ::oTiketCabecera:lPgdTik   := .t.
-            ::oTiketCabecera:lAbierto  := .f.
-
-      end case
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD GuardaDocumentoCerrado()
-
-      ::oTiketCabecera:lAbierto  := .f.
-
-      ::GuardaDocumento( .f. )
-
-      ::ProcesaDocumentosInternos()
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD SetDocumentoPagado()
 
    //-----------------------------------------------------------------------//
 
@@ -1235,173 +734,22 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD ImprimePago()
+   METHOD ImprimePago()
+   METHOD ImprimeComanda( cImpresora )
 
-      do case
-         case ::oTpvCobros:nExit == exitAceptarRegalo
-            ::ImprimeRegalo()
+   METHOD ImprimeAnulacion( cImpresora )
 
-         case ::oTpvCobros:nExit == exitAceptarDesglosado
-            ::ImprimeDesglosado()   
+   METHOD ImprimeTicket()
 
-         case ::oTpvCobros:nExit == exitAceptarImprimir
-            ::ImprimeTicket()
+   METHOD PrevisualizaTicket()
 
-      end case
+   METHOD ImprimeEntrega()
 
-      RETURN ( Self )  
+   METHOD ImprimeRegalo()
 
-   ENDMETHOD
+   METHOD ImprimeDesglosado()
 
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD ImprimeComanda( cImpresora )
-
-      ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-      ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
-      ::nDispositivo    := IS_PRINTER
-      ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
-      ::lComanda        := .t.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )  
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD ImprimeAnulacion( cImpresora )
-
-      ::cFormato        := cFormatoAnulacionEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-      ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
-      ::nDispositivo    := IS_PRINTER
-      ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
-      ::lComanda        := .t.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )  
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-
-   INLINE METHOD ImprimeTicket()
-
-      if ::lEmptyDocumento()
-         MsgStop( "El documento no contiene líneas." )
-         Return ( .t. )
-      end if
-
-      do case
-      case ::nTipoDocumento == documentoAlbaran
-         
-         ::cFormato     := ::oFormatosImpresion:cFmtAlb
-         ::cImpresora   := ::oFormatosImpresion:cPrinterAlb
-         ::nCopias      := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
-
-      otherwise
-         
-         ::cFormato     := ::oFormatosImpresion:cFormatoTiket
-         ::cImpresora   := ::oFormatosImpresion:cPrinterTik
-         ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
-
-      end case
-
-      
-      ::nDispositivo    := IS_PRINTER
-      ::lComanda        := .f.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD PrevisualizaTicket()
-
-      if ::lEmptyDocumento()
-         MsgStop( "El documento no contiene líneas." )
-         Return ( .t. )
-      end if
-
-      ::cFormato        := ::oFormatosImpresion:cFormatoTiket
-      ::cImpresora      := ::oFormatosImpresion:cPrinterTik
-      ::nDispositivo    := IS_SCREEN
-      ::nCopias         := 1
-      ::lComanda        := .f.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD ImprimeEntrega()
-
-      ::cFormato        := ::oFormatosImpresion:cFormatoEntrega
-      ::cImpresora      := ::oFormatosImpresion:cPrinterEntrega
-      ::nDispositivo    := IS_PRINTER
-      ::nCopias         := Max( ::oFormatosImpresion:nCopiasEntrega, 1 )
-      ::lComanda        := .f.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD ImprimeRegalo()
-
-      ::cFormato        := ::oFormatosImpresion:cFormatoRegalo
-      ::cImpresora      := ::oFormatosImpresion:cPrinterRegalo
-      ::nDispositivo    := IS_PRINTER
-      ::nCopias         := Max( ::oFormatosImpresion:nCopiasRegalo, 1 )
-      ::lComanda        := .f.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD ImprimeDesglosado()
-
-      ::cFormato        := ::oFormatosImpresion:cFmtFacCaj
-      ::cImpresora      := ::oFormatosImpresion:cPrinterFacCaj
-      ::nDispositivo    := IS_PRINTER
-      ::nCopias         := 1
-      ::lComanda        := .f.
-
-      ::ImprimeDocumento()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD SonidoComanda( cImpresora )
-
-      local cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
-
-      if !Empty( cWav ) .and. File( cWav )
-         SndPlaySound( cWav )
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
+   METHOD SonidoComanda( cImpresora )
 
    //------------------------------------------------------------------------//
 
@@ -4073,6 +3421,316 @@ METHOD PaintResource() CLASS TpvTactil
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD EditArticulo( nRow, nCol )
+
+  local nOpt
+
+  if !Empty( ::oLstArticulos )
+
+     ::oLstArticulos:nOption       := ::oLstArticulos:GetOption( nRow, nCol )
+     ::oLstArticulos:Refresh()
+
+     nOpt                          := ::oLstArticulos:nOption
+
+     if Empty( nOpt )
+        RETURN ( .f. )
+     end if
+
+     if !Empty( ::oLstArticulos:oVScroll )
+        ::oLstArticulos:oVScroll:SetPos( ::oLstArticulos:nCurLine() )
+     end if
+
+     nOpt                          := Max( Min( nOpt, len( ::oLstArticulos:aItems ) ), 1 )
+
+     if nOpt > 0 .and. nOpt <= len( ::oLstArticulos:aItems )
+
+        if EdtArticulo( ::oLstArticulos:aItems[ nOpt ]:Cargo )
+
+           ::CargaBrowseFamilias()
+
+           ::ChangeFamilias()
+
+        end if
+
+     end if
+
+  end if
+
+  RETURN ( .t. )
+
+//------------------------------------------------------------------------//
+
+METHOD InstanceFastReport()
+
+  /*
+  Creamos el objeto FastReport---------------------------------------------
+  */
+
+  ::oFastReport     := frReportManager():New()
+  ::oFastReport:LoadLangRes( "Spanish.Xml" )
+
+  ::DataReport()
+
+  RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD DestroyFastReport()
+
+  if !Empty( ::oFastReport )
+     ::oFastReport:DestroyFr()
+  end if
+
+  ::oFastReport     := nil
+
+  RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD EliminaLineaTemporal()
+
+  if uFieldEmpresa( "lShowLin" )
+     ::oTemporalLinea:lDelTil   := .t. // ::oTemporalLinea:Delete()
+  else 
+     ::oTemporalLinea:lDelTil   := .t.
+  end if
+
+  RETURN ( nil )
+
+//------------------------------------------------------------------------//
+
+METHOD SaltaLineaTemporal()
+
+  if uFieldEmpresa( "lShowLin" )
+     ::oTemporalLinea:Skip() // ::oTemporalLinea:Skip(0)
+  else
+     ::oTemporalLinea:Skip()
+  end if 
+
+  RETURN ( nil )
+
+//------------------------------------------------------------------------//
+
+METHOD CambiarPrecio()
+
+  if ( ::oTemporalLinea:ordKeyCount() != 0 ) .and. ( Val( ::cGetUnidades ) != 0 )
+
+     if ( ::oTemporalLinea:nPvpTil == 0 ) .or. ( ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. ) )
+
+        ::oTemporalLinea:nPvpTil   := ::nGetUnidades()
+
+        ::oBrwLineas:Refresh()
+
+     end if
+
+  end if
+
+  RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD nGetUnidades( lUnaUnidad )
+
+  local nUnidades      := 1
+
+  DEFAULT lUnaUnidad   := .f.
+
+  nUnidades            := Val( ::cGetUnidades )
+
+  if ( ( lUnaUnidad .and. nUnidades == 0 ) .or. ::lGetPrecio )
+     nUnidades         := 1 // Max( nUnidades, 1 )
+  end if
+
+  if !::lGetPrecio
+     ::oGetUnidades:cText( "" )
+  end if 
+
+  RETURN ( nUnidades )
+
+
+
+//------------------------------------------------------------------------//
+
+METHOD nGetPrecio()
+
+  local nPrecio      
+
+  nPrecio            := Val( ::cGetUnidades )
+
+RETURN ( nPrecio )
+
+//------------------------------------------------------------------------//
+
+METHOD cTipoDocumento()
+
+  local cTipo := "Ticket"
+
+  do case
+     case ::nTipoDocumento == documentoAlbaran
+        cTipo := "Albarán de cliente"
+
+     case ::nTipoDocumento == documentoFactura
+        cTipo := "Factura de cliente"
+
+     otherwise
+        cTipo := "Ticket de cliente"
+
+  end case
+
+RETURN cTipo
+
+//------------------------------------------------------------------------//
+
+METHOD GuardaDocumentoPendiente()
+
+  ::oTiketCabecera:cTipTik      := SAVTIK
+
+  ::GuardaDocumento()
+
+  ::ProcesaDocumentosInternos()
+
+RETURN ( .t. )
+
+//-----------------------------------------------------------------------//
+
+METHOD SetDocumentoPagado()
+
+  ::oTiketCabecera:cTipTik         := SAVTIK
+
+  do case
+     case ::oTpvCobros:nEstado == nParcial
+
+        ::oTiketCabecera:lPgdTik   := .f.
+        ::oTiketCabecera:lAbierto  := .t.
+
+     case ::oTpvCobros:nEstado == nPagado
+
+        ::oTiketCabecera:lPgdTik   := .t.
+        ::oTiketCabecera:lAbierto  := .f.
+
+  end case
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD GuardaDocumentoCerrado()
+
+  ::oTiketCabecera:lAbierto  := .f.
+
+  ::GuardaDocumento( .f. )
+
+  ::ProcesaDocumentosInternos()
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD OnClickIniciarSesion()
+
+  ::DisableDialog()
+
+  if ::oTurno:OpenFiles()
+     ::oTurno:lNowOpen( oWnd() )
+     ::oTurno:CloseFiles()
+  end if
+
+  ::SetInfo()
+
+  ::EnableDialog()
+
+  RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD OnClickComensales()
+
+  ::DisableDialog()
+
+  ::oTiketCabecera:nNumCom         := nVirtualNumKey( "Users1_32", "Número comensales", ::oTiketCabecera:nNumCom )
+
+  ::SetTotal()
+
+  ::EnableDialog()
+
+  RETURN ( .t. )
+
+//------------------------------------------------------------------------//
+
+METHOD OnClickComensalesMenus()
+
+  ::nComensalesMenu    := 0
+
+  ::DisableDialog()
+
+  ::nComensalesMenu    := nVirtualNumKey( "Users1_32", "Número de menús", 0 )
+
+  ::EnableDialog()
+
+  RETURN ( ::nComensalesMenu )
+
+//------------------------------------------------------------------------//
+
+/*
+Si pulsamos sobre el boton de usuario nos crea el dialogo para cambiar de usuario
+*/
+
+METHOD ShowUsuario()
+
+  if BrwBigUser()
+
+     ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "Security_Agent_32", "Dude4_32" ) )
+
+     ::oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
+
+  else
+
+     RETURN ( .f. )
+
+  end if
+
+  RETURN ( .t. )
+
+//------------------------------------------------------------------------//
+
+METHOD GetUsuario( lForced )
+
+  local lShow
+
+  DEFAULT lForced                  := .f.
+
+  if ( lForced ) .or. ( ::lGetUsuario .and. lRecogerUsuario() )
+
+     lShow                         := ::ShowUsuario()
+
+     if !lShow
+
+        ::KillResource()
+
+        RETURN ( .f. )
+
+     else
+
+        ::lGetUsuario              := .f.
+
+     end if
+
+  end if
+
+  RETURN ( .t. )
+
+//------------------------------------------------------------------------//
+
+METHOD GetUbicacion()
+
+  if ( uFieldEmpresa( "lShowSala" ) )
+     ::OnClickSalaVenta()
+  end if
+
+  RETURN ( Self )
+
+//------------------------------------------------------------------------//
 
 METHOD CambiaSerie( lSubir ) CLASS TpvTactil
 
@@ -8815,6 +8473,157 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
+METHOD ImprimePago()
+
+	do case
+	 case ::oTpvCobros:nExit == exitAceptarRegalo
+	    ::ImprimeRegalo()
+
+	 case ::oTpvCobros:nExit == exitAceptarDesglosado
+	    ::ImprimeDesglosado()   
+
+	 case ::oTpvCobros:nExit == exitAceptarImprimir
+	    ::ImprimeTicket()
+
+	end case
+
+RETURN ( Self )  
+
+//-----------------------------------------------------------------------//
+
+METHOD ImprimeComanda( cImpresora )
+
+  ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+  ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  ::nDispositivo    := IS_PRINTER
+  ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+  ::lComanda        := .t.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )  
+
+//-----------------------------------------------------------------------//
+
+METHOD ImprimeAnulacion( cImpresora )
+
+  ::cFormato        := cFormatoAnulacionEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+  ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  ::nDispositivo    := IS_PRINTER
+  ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+  ::lComanda        := .t.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )  
+
+//-----------------------------------------------------------------------//
+
+METHOD ImprimeTicket()
+
+  if ::lEmptyDocumento()
+     MsgStop( "El documento no contiene líneas." )
+     Return ( .t. )
+  end if
+
+  do case
+  case ::nTipoDocumento == documentoAlbaran
+     
+     ::cFormato     := ::oFormatosImpresion:cFmtAlb
+     ::cImpresora   := ::oFormatosImpresion:cPrinterAlb
+     ::nCopias      := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
+
+  otherwise
+     
+     ::cFormato     := ::oFormatosImpresion:cFormatoTiket
+     ::cImpresora   := ::oFormatosImpresion:cPrinterTik
+     ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
+
+  end case
+
+  
+  ::nDispositivo    := IS_PRINTER
+  ::lComanda        := .f.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD PrevisualizaTicket()
+
+  if ::lEmptyDocumento()
+     MsgStop( "El documento no contiene líneas." )
+     Return ( .t. )
+  end if
+
+  ::cFormato        := ::oFormatosImpresion:cFormatoTiket
+  ::cImpresora      := ::oFormatosImpresion:cPrinterTik
+  ::nDispositivo    := IS_SCREEN
+  ::nCopias         := 1
+  ::lComanda        := .f.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD ImprimeEntrega()
+
+  ::cFormato        := ::oFormatosImpresion:cFormatoEntrega
+  ::cImpresora      := ::oFormatosImpresion:cPrinterEntrega
+  ::nDispositivo    := IS_PRINTER
+  ::nCopias         := Max( ::oFormatosImpresion:nCopiasEntrega, 1 )
+  ::lComanda        := .f.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD ImprimeRegalo()
+
+  ::cFormato        := ::oFormatosImpresion:cFormatoRegalo
+  ::cImpresora      := ::oFormatosImpresion:cPrinterRegalo
+  ::nDispositivo    := IS_PRINTER
+  ::nCopias         := Max( ::oFormatosImpresion:nCopiasRegalo, 1 )
+  ::lComanda        := .f.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD ImprimeDesglosado()
+
+  ::cFormato        := ::oFormatosImpresion:cFmtFacCaj
+  ::cImpresora      := ::oFormatosImpresion:cPrinterFacCaj
+  ::nDispositivo    := IS_PRINTER
+  ::nCopias         := 1
+  ::lComanda        := .f.
+
+  ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD SonidoComanda( cImpresora )
+
+  local cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+
+  if !Empty( cWav ) .and. File( cWav )
+     SndPlaySound( cWav )
+  end if
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
 METHOD ImprimeDocumento() CLASS TpvTactil
 
 /*
@@ -9889,8 +9698,195 @@ METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )
 
 Return ( Self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+
+METHOD EliminarLinea()
+
+  local nLineaMenu 
+
+  if !::lEditableDocumento()
+     MsgStop( "El documento ya está cerrado" )
+     Return ( .t. )
+  end if
+
+  //Si es una línea hija de un escandallo no permitimos borrarla.----------
+  if ::oTemporalLinea:lKitChl
+     MsgStop( "No se puede borrar un componente de un escandallo" )
+     Return ( .t. )
+  end if
+
+  ::DisableDialog()
+
+  if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
+
+     if ::oTemporalLinea:lMnuTil
+
+        ::EliminaMenu( ::oTemporalLinea:nNumLin )
+
+        ::CargaBrowseFamilias()
+        ::ChangeFamilias()
+
+     else
+
+     //Si la línea es un escandallo eliminamos el escandallo completo
+        if ( ::oTemporalLinea:lKitArt )
+
+           ::EliminaEscandallo( ::oTemporalLinea:nNumLin )
+
+        else
+
+           ::EliminaLineaTemporal()
+
+        end if
+
+     end if
+
+     ::oBrwLineas:Refresh()
+  
+  end if
+
+  ::EnableDialog()
+
+  // Nuevo total-----------------------------------------------------------
+
+  ::SetTotal()
+
+Return ( .t. )
+
+//------------------------------------------------------------------------//
+
+METHOD EliminaMenu( nLineaMenu )
+
+  ::oTemporalLinea:GetStatus()
+
+  ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
+  ::oTemporalLinea:GoTop()
+
+  while !( ::oTemporalLinea:eof() )
+     
+     if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+
+        ::EliminaLineaTemporal()
+
+     end if
+
+     ::SaltaLineaTemporal()
+
+  end while
+
+  ::oTemporalLinea:SetStatus()
+
+Return( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD EliminaEscandallo( nNumeroLinea )
+
+  ::oTemporalLinea:GetStatus()
+
+  ::oTemporalLinea:OrdSetFocus( "nNumLin" )
+  ::oTemporalLinea:GoTop()
+
+  while !( ::oTemporalLinea:eof() )
+
+     if ( nNumeroLinea == ::oTemporalLinea:nNumLin ) 
+
+        ::EliminaLineaTemporal()
+
+     end if
+
+     ::SaltaLineaTemporal()
+
+  end while
+
+  ::oTemporalLinea:SetStatus()
+
+Return( Self )
+
+//------------------------------------------------------------------------//
+// Colores-----------------------------------------------------------------
+
+METHOD ColorLinea( oDbf )
+  
+  local aColor
+
+  DEFAULT oDbf   := ::oTemporalLinea
+
+  do case 
+     case oDbf:FieldGetByName( "lDelTil" )
+        aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
+     case oDbf:FieldGetByName( "lMnuTil" )
+        aColor   := { CLR_BLACK, Rgb( 34, 177, 76 ) }
+     otherwise
+        aColor   := { CLR_BLACK, Rgb( 255, 255, 255 ) }
+  end case 
+
+RETURN ( aColor )
+
+//------------------------------------------------------------------------//
+
+METHOD ColorLineaSeleccionada( oDbf )
+  
+  local aColor
+
+  DEFAULT oDbf   := ::oTemporalLinea
+
+  do case 
+     case oDbf:FieldGetByName( "lDelTil" )
+        aColor   := { CLR_BLACK, Rgb( 255, 0, 0 ) }
+     case oDbf:FieldGetByName( "lMnuTil" )
+        aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
+     otherwise
+        aColor   := { CLR_BLACK, Rgb( 229, 229, 229 ) }
+  end case 
+
+RETURN ( aColor )
+
+//------------------------------------------------------------------------//
+
+METHOD ColorLineaFocus( oDbf )
+  
+  local aColor
+
+  DEFAULT oDbf   := ::oTemporalLinea
+
+  do case 
+     case oDbf:FieldGetByName( "lDelTil" )
+        aColor   := { CLR_BLACK, Rgb( 255, 128, 128 ) }
+     case oDbf:FieldGetByName( "lMnuTil" )
+        aColor   := { CLR_BLACK, Rgb( 124, 231, 156 ) }
+     otherwise
+        aColor   := { CLR_BLACK, Rgb( 167, 205, 240 ) }
+  end case 
+
+RETURN ( aColor )
+
+//--------------------------------------------------------------------------
+
+// Cargar menú si es una linea de menú o un articulo del menú---------------
+
+METHOD CargaMenuSeleccionado()
+
+  if ::nLineaMenuActivo() != 0 .and. !::oTemporalLinea:lDelTil
+     ::CargaFamiliaMenu( ::oTemporalLinea:cCodMnu )
+  end if
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------
+
+METHOD lEmptyAlias()
+
+  if !Empty( ::oTiketCabecera:cNumTik )
+     Return ( .f. )
+  end if
+
+  if ( ::oTiketCabecera:nUbiTik == ubiGeneral .or. ::oTiketCabecera:nUbiTik == ubiRecoger ) .and. Empty( ::oTiketCabecera:cPntVenta ) .and. Empty( ::oTiketCabecera:cAliasTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
+     Return ( .t. )
+  end if
+
+RETURN ( .f. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -9974,6 +9970,9 @@ METHOD Refresh() CLASS STotalCobros
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

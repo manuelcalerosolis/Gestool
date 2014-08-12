@@ -215,7 +215,7 @@ if nMsg == 20 //WM_ERASEBKGND
    return 1
 endif
 
-return super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 
 ***************************************************************************************************
@@ -843,7 +843,7 @@ return 0
    // version 1.05 21.12.06
 
 
-   Super:ReSize( nType, nWidth, nHeight )
+   ::Super:ReSize( nType, nWidth, nHeight )
 
    nWidth := rc[4]-rc[2]
 
@@ -930,7 +930,7 @@ if ::IsPopup
    ::oWPEnd()
 endif
 
-return Super:LostFocus()
+return ::Super:LostFocus()
 
 ***********************************************************************************************************************
    METHOD oWPLostFocus() CLASS TDotNetBar

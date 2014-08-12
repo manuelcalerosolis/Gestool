@@ -1280,7 +1280,7 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TWindowExt1
   endif
   */
 
-return super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 *********************************************************************************************************************************
 
