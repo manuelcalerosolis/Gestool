@@ -1,7 +1,6 @@
 #include "Fivewin.ch"
 #include "Colors.ch"
 
-
 /*--------------------------------------------------------------------------------------------------------------*/
 /*  C5Box                                                                                                       */
 /*  DrawRect                                                                                                    */
@@ -757,7 +756,7 @@ return (nTop + sz[2])-rc[1]
    DeleteDC( hDCMem )
    DeleteDC( hDC )
    DestroyIcon( hIcon )
-
+ 
 return hBmpMem
 
 **********************************************************************************************************************
@@ -765,6 +764,14 @@ return hBmpMem
 #pragma BEGINDUMP
 #include "windows.h"
 #include "hbapi.h"
+
+#ifdef __XHARBOUR__
+   #define hb_parvc        hb_parc
+   #define hb_parvni       hb_parni
+   #define hb_storvc       hb_storc
+   #define hb_storvni      hb_storni 
+#endif
+
 
 void DrawGradientFill( HDC hDC, RECT rct, COLORREF crStart, COLORREF crEnd, int nSegments, int bVertical )
 {
@@ -779,7 +786,6 @@ void DrawGradientFill( HDC hDC, RECT rct, COLORREF crStart, COLORREF crEnd, int 
         int neB = GetBValue(crEnd);
         int neG = GetGValue(crEnd);
         int neR = GetRValue(crEnd);
-
 
         int nDiffR = (neR - nR);
         int nDiffG = (neG - nG);
@@ -861,11 +867,10 @@ HB_FUNC( DRAWGRADIENTFILL )
 {
         RECT rct;
 
-        rct.top    = hb_parni( 2, 1 );
-        rct.left   = hb_parni( 2, 2 );
-        rct.bottom = hb_parni( 2, 3 );
-        rct.right  = hb_parni( 2, 4 );
+        rct.top    = hb_parvni( 2, 1 );
+        rct.left   = hb_parvni( 2, 2 );
+        rct.bottom = hb_parvni( 2, 3 );
+        rct.right  = hb_parvni( 2, 4 );
 
         DrawGradientFill( ( HDC ) hb_parnl( 1 ) , rct, hb_parnl( 3 ), hb_parnl( 4 ), hb_parni(5), hb_parl( 6 ) );
-
 }

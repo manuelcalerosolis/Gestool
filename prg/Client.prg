@@ -292,7 +292,7 @@ static lOpenFiles       := .f.
 
 static nLabels          := 1
 
-static aIniCli          := Array( 11 )
+static aIniCli         
 
 static bEdtRec          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtBig          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtBig( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
@@ -7900,6 +7900,8 @@ FUNCTION LoaIniCli( cPath, cIniCli )
 
    DEFAULT cPath     := cPatEmp()
    DEFAULT cIniCli   := cPath + "Client.Ini"
+
+   aIniCli 			 := Array( 11 )
 
    /*
    Fichero Ini de la Aplicaci¢n

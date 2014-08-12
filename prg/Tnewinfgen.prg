@@ -1992,7 +1992,7 @@ METHOD lGrupoTransportista( lInitGroup, lImp ) CLASS TNewInfGen
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )ç
+      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de transportista' )
 
       if !Empty( ::oDbfTrn )
          ::oDbfTrn:End()

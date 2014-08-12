@@ -309,15 +309,18 @@ memvar cPorDivEnt
 memvar nTotPage
 memvar nTotalDto
 
-static aImpVto       := {}
-static aDatVto       := {}
+memvar aImpVto
+memvar aDatVto
+
+memvar nNumArt
+memvar nNumCaj
+
 static bEdtRec       := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, cCodPre | EdtRec( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, cCodPre ) }
 static bEdtDet       := { |aTmp, aGet, dbfPedCliL, oBrw, bWhen, bValid, nMode, aTmpPed | EdtDet( aTmp, aGet, dbfPedCliL, oBrw, bWhen, bValid, nMode, aTmpPed ) }
 static bEdtRes       := { |aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, aTmpLin | EdtRes( aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc       := { |aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo       := { |aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed | EdtEnt( aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed ) }
-static nNumArt       := 0
-static nNumCaj       := 0
+
 static lExternal     := .f.
 static aTipPed       := { "Venta", "Alquiler" }
 
@@ -4191,9 +4194,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          IDSAY    113 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oFld:aDialogs[1]
+		OF 		oFld:aDialogs[1]
 
-      aGet[ _CLOTE ]:bValid   := {|| if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ), .t. }
+   		aGet[ _CLOTE ]:bValid   := {|| oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
 
       if !aTmp[ __LALQUILER ]
 
@@ -8365,7 +8368,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
    oFr:AddVariable(     "Pedidos",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
    oFr:AddVariable(     "Pedidos",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
-   oFr:AddVariable(     "Pedidos",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
+   oFr:AddVariable(     "Pedidos",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" ) 
    oFr:AddVariable(     "Pedidos",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
    oFr:AddVariable(     "Pedidos",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
    oFr:AddVariable(     "Pedidos",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )

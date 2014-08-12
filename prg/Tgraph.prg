@@ -7,7 +7,6 @@
 #Include "Constant.Ch"
 
 #ifdef __XPP__
-   #define Super ::TControl
    #define New   _New
 #endif
 
@@ -102,7 +101,7 @@ CLASS TGraph FROM TControl
    METHOD ReDefine( nId, oWnd, cTitle, l3D, lxGrid, lyGrid, ;
                     lXval, lYval, lPupUp, lLegends, nType ) CONSTRUCTOR
 
-   METHOD  Initiate( hDlg ) INLINE Super:Initiate( hDlg ), ::Default()
+   METHOD  Initiate( hDlg ) INLINE ::Super:Initiate( hDlg ), ::Default()
    METHOD  Default()
    METHOD  Paint()
    METHOD  Display()
@@ -133,7 +132,7 @@ CLASS TGraph FROM TControl
                      ::oPrn:GetTextWidth( cText, oFont ) )
    METHOD Say( nRow, nCol, cText, oFont, nClrText, nPad, nWidth ) ;
           INLINE If( Empty( ::oPrn ),;
-                     Super:Say( nRow, nCol, cText, nClrText, , oFont, .T., .T., nPad ),;
+                     ::Super:Say( nRow, nCol, cText, nClrText, , oFont, .T., .T., nPad ),;
                      ::oPrn:Say( nRow, nCol, cText, oFont, nWidth, nClrText, , nPad ) )
 
    METHOD SetType( nType ) ;
@@ -375,7 +374,7 @@ METHOD Destroy() CLASS TGraph
    for each oFont in ::aFont
       oFont:End()
    next
-   Super:End()
+   ::Super:End()
 RETURN (Nil)
 
 

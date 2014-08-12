@@ -26,10 +26,10 @@ CLASS TAnimat FROM TControl
 
       METHOD Destroy() INLINE aeval( ::aBitmaps, {|x| DeleteObject( x ) } ) ,;
                               ::oTimer:End()                          ,;
-                              super:Destroy()
+                              ::Super:Destroy()
 
-      METHOD Initiate( hDlg ) INLINE super:Initiate( hDlg ), ::Default()
-      METHOD Init    ( hDlg ) INLINE super:Init    ( hDlg ), ::Default()
+      METHOD Initiate( hDlg ) INLINE ::Super:Initiate( hDlg ), ::Default()
+      METHOD Init    ( hDlg ) INLINE ::Super:Init    ( hDlg ), ::Default()
 
       METHOD Display() INLINE ::BeginPaint(),::Paint(),::EndPaint()
 

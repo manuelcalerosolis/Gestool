@@ -637,264 +637,24 @@ CLASS TTurno FROM TMasDet
 
    Method End()
 
-   //------------------------------------------------------------------------//
+   METHOD TotSesion( cTurno, cCaja )
 
-   Inline Method TotSesion( cTurno, cCaja )
+   METHOD GetTreeState( aItems )
+   METHOD SetTreeState( aItems )
 
-      DEFAULT cTurno    := ::cCurTurno
-      DEFAULT cCaja     := ::cCurCaja
+   METHOD SaveImporte( cCodCaj )
+   METHOD LoadImporte( cCodCaj )
 
-      ::TotVenta(    cTurno, cCaja )
+   METHOD GetItemCheckState( cPrompt )
 
-      ::TotEntrada(  cTurno, cCaja )
+   METHOD RefreshTurno()
 
-      ::TotCompra(   cTurno, cCaja )
+   METHOD cBancoCuenta( uRctCli )
 
-      ::TotCobro(    cTurno, cCaja )
+   METHOD cEstadoSesion()
 
-      ::TotPago(     cTurno, cCaja )
+   METHOD cInfoAperturaCierreCaja()
 
-      ::TotTipoIva(  cTurno, cCaja )
-
-      if ::oDbfCaj:SeekInOrd(    cTurno + cCaja, "cNumTur" )
-         ::oTotales:addTotCajaEfectivo(   cCaja, ::oDbfCaj:nCanEfe )
-         ::oTotales:addTotCajaNoEfectivo( cCaja, ::oDbfCaj:nCanEfe )
-         ::oTotales:addTotCajaTarjeta(    cCaja, ::oDbfCaj:nCanTar )
-         ::oTotales:addTotCajaObjetivo(   cCaja, ::oDbfCaj:nCanPre )
-      end if
-
-   Endmethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method GetTreeState( aItems )
-
-      local oItem
-
-      for each oItem in aItems
-
-         sysrefresh()
-
-         tvSetCheckState( ::oTreeImpresion:hWnd, oItem:hItem, ::oIniArqueo:Get( "Arqueo.Impresion", oItem:cPrompt, .t. ) )
-
-         if len( oItem:aItems ) > 0
-            ::GetTreeState( oItem:aItems )
-         end if
-
-      next
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method SetTreeState( aItems )
-
-      local oItem
-
-      for each oItem in aItems
-
-         sysrefresh()
-
-         ::oIniArqueo:Set( "Arqueo.Impresion", oItem:cPrompt, tvGetCheckState( ::oTreeImpresion:hWnd, oItem:hItem ) )
-
-         if len( oItem:aItems ) > 0
-            ::SetTreeState( oItem:aItems )
-         end if
-
-      next
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method SaveImporte( cCodCaj )
-
-      ::oDbfCaj:GetRecno()
-
-      if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cNumTur" )
-         ::oDbfCaj:Load()
-         ::oDbfCaj:nCanEfe := ::nImporteEfectivo
-         ::oDbfCaj:nCanTar := ::nImporteTarjeta
-         ::oDbfCaj:nCanRet := ::nImporteRetirado
-         ::oDbfCaj:cMonEfe := ::oMoneyEfectivo:GetStream()
-         ::oDbfCaj:cMonRet := ::oMoneyRetirado:GetStream()
-         ::oDbfCaj:Save()
-      end if
-
-      ::oDbfCaj:SetRecno()
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method LoadImporte( cCodCaj )
-
-      ::oDbfCaj:GetRecno()
-
-      if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cNumTur" )
-         ::oImporteTarjeta:cText(      ::oDbfCaj:nCanTar )
-         ::oImporteEfectivo:cText(     ::oDbfCaj:nCanEfe )
-         ::oImporteRetirado:cText(     ::oDbfCaj:nCanRet )
-         ::oMoneyEfectivo:SetStream(   ::oDbfCaj:cMonEfe )
-         ::oMoneyRetirado:SetStream(   ::oDbfCaj:cMonRet )
-      else
-         ::oImporteTarjeta:cText(      0 )
-         ::oImporteEfectivo:cText(     0 )
-         ::oImporteRetirado:cText(     0 )
-         ::oMoneyEfectivo:SetStream(   "" )
-         ::oMoneyRetirado:SetStream(   "" )
-      end if
-
-      ::oDbfCaj:SetRecno()
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method GetItemCheckState( cPrompt )
-
-      local lState      := .t.
-
-      lState            := ::oIniArqueo:Get( "Arqueo.Impresion", cPrompt, .t. )
-
-      if lState
-
-         if !Empty( ::oTxt )
-            ::oTxt:SetText( "Añadiendo a temporal " + Lower( cPrompt ) )
-         end if
-
-         ::cGrupoEnUso  := Padr( cPrompt, 60 )
-         ::nGrupoPeso++
-
-      end if
-
-      Return ( lState )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method RefreshTurno()
-
-      if !Empty( ::oTotalEfectivo )
-         ::oTotalEfectivo:Refresh()
-      end if
-
-      if !Empty( ::oTotalNoEfectivo )
-         ::oTotalNoEfectivo:Refresh()
-      end if
-
-      if !Empty( ::oTotalTarjeta )
-         ::oTotalTarjeta:Refresh()
-      end if
-
-      if !Empty( ::oTotalCobros )
-         ::oTotalCobros:Refresh()
-      end if
-
-      if !Empty( ::oTotalCaja )
-         ::oTotalCaja:Refresh()
-      end if
-
-      if !Empty( ::oDiferenciaEfectivo )
-
-         if Eval( ::oDiferenciaEfectivo:bSetGet ) > 0
-            ::oDiferenciaEfectivo:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
-         else
-            ::oDiferenciaEfectivo:SetColor( CLR_RED, GetSysColor( COLOR_BTNFACE ) )
-         end if
-
-         ::oDiferenciaEfectivo:Refresh()
-
-      end if
-
-      if !Empty( ::oDiferenciaTarjeta )
-
-         if Eval( ::oDiferenciaTarjeta:bSetGet ) > 0
-            ::oDiferenciaTarjeta:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
-         else
-            ::oDiferenciaTarjeta:SetColor( CLR_RED, GetSysColor( COLOR_BTNFACE ) )
-         end if
-
-         ::oDiferenciaTarjeta:Refresh()
-
-      end if
-
-      if !Empty( ::oDiferenciaTotal )
-
-         if Eval( ::oDiferenciaTotal:bSetGet ) > 0
-            ::oDiferenciaTotal:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
-         else
-            ::oDiferenciaTotal:SetColor( CLR_RED, GetSysColor( COLOR_BTNFACE ) )
-         end if
-
-         ::oDiferenciaTotal:Refresh()
-
-      end if
-
-      if !Empty( ::oImporteCambio )
-         ::oImporteCambio:SetText( ::nImporteEfectivo - ::nImporteRetirado )
-      end if
-
-      Return ( .t. )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method cBancoCuenta( uRctCli )
-
-      local cBanco      := ""
-      local cCuenta     := ""
-
-      DEFAULT uRctCli   := ::oFacCliP
-
-      cCuenta           := cCuentaEmpresaRecibo( uRctCli )
-
-      if !Empty( cCuenta )
-         cBanco         := oRetFld( cCodEmp() + cCuenta, ::oEmpBnc, "cCodBnc", "cCtaBnc" )
-         if !Empty( cBanco )
-            cCuenta     := Rtrim( cBanco ) + Space( 1 ) + Trans( cCuenta, "@R ####-####-##-##########" )
-         end if
-      end if
-
-      Return ( cCuenta )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method cEstadoSesion()
-
-      Return( ::aEstadoSesion[ MinMax( ::oDbf:nStaTur + 1, 1, 3 ) ] )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method cInfoAperturaCierreCaja()
-
-      local cInfoAperturaCierreCaja := ""
-      cInfoAperturaCierreCaja       += Dtoc( ::oDbfCaj:FieldGetByName( "dFecOpe" ) ) + Space(1)
-      cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cHorOpe" ) + Space(1)
-      cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cCajOpe" ) + Space(1)
-      cInfoAperturaCierreCaja       += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajOpe" ), ::oUser ) ) 
-      cInfoAperturaCierreCaja       += CRLF
-
-      if ::oDbfCaj:FieldGetByName( "lCajClo" )
-         cInfoAperturaCierreCaja    += Dtoc( ::oDbfCaj:FieldGetByName( "dFecClo" ) ) + Space(1)
-         cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cHorClo" ) + Space(1)
-         cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cCajTur" ) + Space(1)
-         cInfoAperturaCierreCaja    += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajTur" ), ::oUser ) ) 
-      end if  
-      
-      Return ( cInfoAperturaCierreCaja )
-
-   EndMethod
-
-   //-------------------------------------------------------------------------//
-
-   // METHOD idTruno()                 INLINE ( if( uFieldEmpresa( "lDesCajas" ), ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj, ::oDbf:cNumTur + ::oDbf:cSufTur ) )
    METHOD idTruno()                    INLINE ( ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj )
 
    METHOD cNumeroCurrentTurno()        INLINE ( SubStr( ::cCurTurno, 1, 6 ) )
@@ -11415,6 +11175,250 @@ METHOD MailArqueo( cCurrentTruno )
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+Method TotSesion( cTurno, cCaja )
+
+   DEFAULT cTurno    := ::cCurTurno
+   DEFAULT cCaja     := ::cCurCaja
+
+   ::TotVenta(    cTurno, cCaja )
+
+   ::TotEntrada(  cTurno, cCaja )
+
+   ::TotCompra(   cTurno, cCaja )
+
+   ::TotCobro(    cTurno, cCaja )
+
+   ::TotPago(     cTurno, cCaja )
+
+   ::TotTipoIva(  cTurno, cCaja )
+
+   if ::oDbfCaj:SeekInOrd(    cTurno + cCaja, "cNumTur" )
+      ::oTotales:addTotCajaEfectivo(   cCaja, ::oDbfCaj:nCanEfe )
+      ::oTotales:addTotCajaNoEfectivo( cCaja, ::oDbfCaj:nCanEfe )
+      ::oTotales:addTotCajaTarjeta(    cCaja, ::oDbfCaj:nCanTar )
+      ::oTotales:addTotCajaObjetivo(   cCaja, ::oDbfCaj:nCanPre )
+   end if
+
+Return ( nil ) 
+
+//------------------------------------------------------------------------//
+
+Method GetTreeState( aItems )
+
+   local oItem
+
+   for each oItem in aItems
+
+      sysrefresh()
+
+      tvSetCheckState( ::oTreeImpresion:hWnd, oItem:hItem, ::oIniArqueo:Get( "Arqueo.Impresion", oItem:cPrompt, .t. ) )
+
+      if len( oItem:aItems ) > 0
+         ::GetTreeState( oItem:aItems )
+      end if
+
+   next
+
+Return ( nil ) 
+
+//------------------------------------------------------------------------//
+
+Method SetTreeState( aItems )
+
+   local oItem
+
+   for each oItem in aItems
+
+      sysrefresh()
+
+      ::oIniArqueo:Set( "Arqueo.Impresion", oItem:cPrompt, tvGetCheckState( ::oTreeImpresion:hWnd, oItem:hItem ) )
+
+      if len( oItem:aItems ) > 0
+         ::SetTreeState( oItem:aItems )
+      end if
+
+   next
+
+Return ( nil ) 
+
+//------------------------------------------------------------------------//
+
+Method SaveImporte( cCodCaj )
+
+   ::oDbfCaj:GetRecno()
+
+   if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cNumTur" )
+      ::oDbfCaj:Load()
+      ::oDbfCaj:nCanEfe := ::nImporteEfectivo
+      ::oDbfCaj:nCanTar := ::nImporteTarjeta
+      ::oDbfCaj:nCanRet := ::nImporteRetirado
+      ::oDbfCaj:cMonEfe := ::oMoneyEfectivo:GetStream()
+      ::oDbfCaj:cMonRet := ::oMoneyRetirado:GetStream()
+      ::oDbfCaj:Save()
+   end if
+
+   ::oDbfCaj:SetRecno()
+
+Return ( nil ) 
+
+//------------------------------------------------------------------------//
+
+Method LoadImporte( cCodCaj )
+
+   ::oDbfCaj:GetRecno()
+
+   if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cNumTur" )
+      ::oImporteTarjeta:cText(      ::oDbfCaj:nCanTar )
+      ::oImporteEfectivo:cText(     ::oDbfCaj:nCanEfe )
+      ::oImporteRetirado:cText(     ::oDbfCaj:nCanRet )
+      ::oMoneyEfectivo:SetStream(   ::oDbfCaj:cMonEfe )
+      ::oMoneyRetirado:SetStream(   ::oDbfCaj:cMonRet )
+   else
+      ::oImporteTarjeta:cText(      0 )
+      ::oImporteEfectivo:cText(     0 )
+      ::oImporteRetirado:cText(     0 )
+      ::oMoneyEfectivo:SetStream(   "" )
+      ::oMoneyRetirado:SetStream(   "" )
+   end if
+
+   ::oDbfCaj:SetRecno()
+
+Return ( nil ) 
+
+//------------------------------------------------------------------------//
+
+Method GetItemCheckState( cPrompt )
+
+   local lState      := .t.
+
+   lState            := ::oIniArqueo:Get( "Arqueo.Impresion", cPrompt, .t. )
+
+   if lState
+
+      if !Empty( ::oTxt )
+         ::oTxt:SetText( "Añadiendo a temporal " + Lower( cPrompt ) )
+      end if
+
+      ::cGrupoEnUso  := Padr( cPrompt, 60 )
+      ::nGrupoPeso++
+
+   end if
+
+Return ( lState )
+
+//------------------------------------------------------------------------//
+
+Method RefreshTurno()
+
+   if !Empty( ::oTotalEfectivo )
+      ::oTotalEfectivo:Refresh()
+   end if
+
+   if !Empty( ::oTotalNoEfectivo )
+      ::oTotalNoEfectivo:Refresh()
+   end if
+
+   if !Empty( ::oTotalTarjeta )
+      ::oTotalTarjeta:Refresh()
+   end if
+
+   if !Empty( ::oTotalCobros )
+      ::oTotalCobros:Refresh()
+   end if
+
+   if !Empty( ::oTotalCaja )
+      ::oTotalCaja:Refresh()
+   end if
+
+   if !Empty( ::oDiferenciaEfectivo )
+
+      if Eval( ::oDiferenciaEfectivo:bSetGet ) > 0
+         ::oDiferenciaEfectivo:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
+      else
+         ::oDiferenciaEfectivo:SetColor( CLR_RED, GetSysColor( COLOR_BTNFACE ) )
+      end if
+
+      ::oDiferenciaEfectivo:Refresh()
+
+   end if
+
+   if !Empty( ::oDiferenciaTarjeta )
+
+      if Eval( ::oDiferenciaTarjeta:bSetGet ) > 0
+         ::oDiferenciaTarjeta:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
+      else
+         ::oDiferenciaTarjeta:SetColor( CLR_RED, GetSysColor( COLOR_BTNFACE ) )
+      end if
+
+      ::oDiferenciaTarjeta:Refresh()
+
+   end if
+
+   if !Empty( ::oDiferenciaTotal )
+
+      if Eval( ::oDiferenciaTotal:bSetGet ) > 0
+         ::oDiferenciaTotal:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
+      else
+         ::oDiferenciaTotal:SetColor( CLR_RED, GetSysColor( COLOR_BTNFACE ) )
+      end if
+
+      ::oDiferenciaTotal:Refresh()
+
+   end if
+
+   if !Empty( ::oImporteCambio )
+      ::oImporteCambio:SetText( ::nImporteEfectivo - ::nImporteRetirado )
+   end if
+
+Return ( .t. )
+
+//------------------------------------------------------------------------//
+
+Method cBancoCuenta( uRctCli )
+
+   local cBanco      := ""
+   local cCuenta     := ""
+
+   DEFAULT uRctCli   := ::oFacCliP
+
+   cCuenta           := cCuentaEmpresaRecibo( uRctCli )
+
+   if !Empty( cCuenta )
+      cBanco         := oRetFld( cCodEmp() + cCuenta, ::oEmpBnc, "cCodBnc", "cCtaBnc" )
+      if !Empty( cBanco )
+         cCuenta     := Rtrim( cBanco ) + Space( 1 ) + Trans( cCuenta, "@R ####-####-##-##########" )
+      end if
+   end if
+
+Return ( cCuenta )
+
+//------------------------------------------------------------------------//
+
+Method cEstadoSesion()
+
+Return( ::aEstadoSesion[ MinMax( ::oDbf:nStaTur + 1, 1, 3 ) ] )
+
+//------------------------------------------------------------------------//
+
+Method cInfoAperturaCierreCaja()
+
+   local cInfoAperturaCierreCaja := ""
+   cInfoAperturaCierreCaja       += Dtoc( ::oDbfCaj:FieldGetByName( "dFecOpe" ) ) + Space(1)
+   cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cHorOpe" ) + Space(1)
+   cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cCajOpe" ) + Space(1)
+   cInfoAperturaCierreCaja       += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajOpe" ), ::oUser ) ) 
+   cInfoAperturaCierreCaja       += CRLF
+
+   if ::oDbfCaj:FieldGetByName( "lCajClo" )
+      cInfoAperturaCierreCaja    += Dtoc( ::oDbfCaj:FieldGetByName( "dFecClo" ) ) + Space(1)
+      cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cHorClo" ) + Space(1)
+      cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cCajTur" ) + Space(1)
+      cInfoAperturaCierreCaja    += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajTur" ), ::oUser ) ) 
+   end if  
+   
+Return ( cInfoAperturaCierreCaja )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

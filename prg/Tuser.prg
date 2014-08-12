@@ -116,32 +116,7 @@ CLASS TUser
    //------------------------------------------------------------------------//
 
    Data     _Delegacion                INIT space( 2 )
- 
-   INLINE METHOD cDelegacion( cNewVal )
-
-      if cNewVal != nil
-
-         ::_Delegacion     := cNewVal
-
-         cDlgUsr( cNewVal ) 
-
-      else
-
-         if Empty( ::DelegacionUsuario() )
-
-            if !empty( uFieldEmpresa( "cSufDoc" ) )
-               ::_Delegacion  := uFieldEmpresa( "cSufDoc")
-            else
-               ::_Delegacion  := "00"
-            end if
-             
-         end if   
-
-      end if
-
-      RETURN ::_Delegacion
-
-   ENDMETHOD
+   Method   cDelegacion( cNewVal )
 
    //------------------------------------------------------------------------//
 
@@ -192,26 +167,7 @@ CLASS TUser
    */
 
    Data     _Empresa                   INIT ""
-
-   //------------------------------------------------------------------------//
-
-   Inline Method cEmpresa( cNewVal )
-
-      if cNewVal != nil
-
-         ::_Empresa := cNewVal
-
-         if !( "EMPRESA" $ cParamsMain() )
-            cEmpUsr( cNewVal )
-         end if
-
-      end if
-
-      Return ( ::_Empresa )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
+   Method   cEmpresa( cNewVal )
 
 END CLASS
 
@@ -686,8 +642,46 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD cDelegacion( cNewVal )
+
+   if cNewVal != nil
+
+      ::_Delegacion     := cNewVal
+
+      cDlgUsr( cNewVal ) 
+
+   else
+
+      if Empty( ::DelegacionUsuario() )
+
+         if !empty( uFieldEmpresa( "cSufDoc" ) )
+            ::_Delegacion  := uFieldEmpresa( "cSufDoc")
+         else
+            ::_Delegacion  := "00"
+         end if
+          
+      end if   
+
+   end if
+
+RETURN ::_Delegacion
 
 //---------------------------------------------------------------------------//
+
+Method cEmpresa( cNewVal )
+
+   if cNewVal != nil
+
+      ::_Empresa := cNewVal
+
+      if !( "EMPRESA" $ cParamsMain() )
+         cEmpUsr( cNewVal )
+      end if
+
+   end if
+
+Return ( ::_Empresa )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

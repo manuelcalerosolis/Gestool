@@ -257,7 +257,7 @@ return 0
 
    local uValue
 
-   uValue = Super:Initiate( hDlg )
+   uValue = ::Super:Initiate( hDlg )
    ::Default()
 
 
@@ -664,7 +664,7 @@ next
 
 ::VScrAdjust()
 
-return Super:Resize( nType, nWidth, nHeight )
+return ::Super:Resize( nType, nWidth, nHeight )
 
 ******************************************************************************************************************
   METHOD KeyDown( nKey, nFlags )  CLASS C5ImageView
@@ -707,7 +707,7 @@ return Super:Resize( nType, nWidth, nHeight )
               ::oVScroll:PageDown()
 
          otherwise
-              return Super:KeyDown( nKey, nFlags )
+              return ::Super:KeyDown( nKey, nFlags )
       endcase
 
 return 0

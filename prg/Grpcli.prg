@@ -26,8 +26,8 @@ CLASS TGrpCli FROM TMasDet
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()                          
 
-   METHOD OpenService( lExclusive, cPath )      INLINE ( Super:OpenService() )
-   METHOD CloseService()                        INLINE ( Super:CloseService() )
+   METHOD OpenService( lExclusive, cPath )      INLINE ( ::Super:OpenService() )
+   METHOD CloseService()                        INLINE ( ::Super:CloseService() )
 
    METHOD DefineFiles()
 
@@ -111,7 +111,7 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::nView           := TDataView():CreateView()
 
-      if !Super:OpenFiles()
+      if !::Super:OpenFiles()
          lOpen          := .f.
       end if 
 
@@ -149,7 +149,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles()
 
-   Super:CloseFiles()
+   ::Super:CloseFiles()
 
    TAtipicas():GetInstance():CloseFiles()
    TAtipicas():EndInstance()

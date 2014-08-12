@@ -31,7 +31,7 @@ Factu.prg               	\
 Font.prg                	\
 DialogExtend.prg            \
 Window.prg              	\
-Msgbar.prg 					\
+Msgbar.prg 					\ 
 Menu.prg 					\
 Tmsgitem.prg 				\
 Mdiframe.prg 				\

@@ -1,5 +1,4 @@
-#ifndef __PDA__
-
+#include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "Menu.ch" 
 #include "Font.ch"
@@ -7,18 +6,12 @@
 #include "Ads.ch"
 #include "Xbrowse.ch"
 
-#endif
-
-#include "FiveWin.Ch"
-
 #define GR_GDIOBJECTS         0      /* Count of GDI objects */
 #define GR_USEROBJECTS        1      /* Count of USER objects */
 
 #define CS_DBLCLKS            8
 
 #define HKEY_LOCAL_MACHINE    2147483650
-
-#ifndef __PDA__
 
 ANNOUNCE RDDSYS
 
@@ -28,8 +21,6 @@ REQUEST AdsKeyNo
 REQUEST AdsKeyCount
 REQUEST AdsGetRelKeyPos 
 REQUEST AdsSetRelKeyPos
-
-#endif
 
 static oWndBar
 static oMenu
@@ -51,7 +42,7 @@ static hDLLRich
 
 static oWnd
 static oBmp
-static lDemoMode     := .t.
+static lDemoMode     := .t. 
 
 static lStandard
 static lProfesional
@@ -3197,23 +3188,10 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-#ifdef __GST__
    oGrupo:nBigItems     := 4
-#endif
-
-#ifdef __MK__
-   oGrupo:nBigItems     := 2
-#endif
-
-#ifdef __OC__
-   oGrupo:nBigItems     := 2
-#endif
-
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "Lifebelt_16"
    oGrupo:cBigBitmap    := "Lifebelt_32"
-
-#ifdef __GST__
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
@@ -3224,8 +3202,6 @@ Function CreateAcceso( oWnd )
    oItem:cBmp           := "Lifebelt_16"
    oItem:cBmpBig        := "Lifebelt_32"
    oItem:lShow          := .f.
-
-#endif
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
@@ -3247,8 +3223,6 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "Help_32"
    oItem:lShow          := .f.
 
-#ifdef __GST__
-
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Asistencia remota'
@@ -3258,8 +3232,6 @@ Function CreateAcceso( oWnd )
    oItem:cBmp           := "Doctor_16"
    oItem:cBmpBig        := "Doctor_32"
    oItem:lShow          := .f.
-
-#endif
 
 Return ( oAcceso )
 
@@ -4234,16 +4206,12 @@ Function BuildMenu()
 
          MENU
 
-         #ifdef __GST__
-
             MENUITEM    "&1. Ayuda" ;
                ACTION   ( goWeb( __GSTHELP__ ) ) ;
                MESSAGE  "Ayuda sobre el programa" ;
                RESOURCE "Lifebelt_16"
 
             SEPARATOR
-
-         #endif
 
             MENUITEM    "&2. Visitar web";
                MESSAGE  "Visitar web" ;
@@ -4254,8 +4222,6 @@ Function BuildMenu()
                MESSAGE  "Datos sobre el autor" ;
                ACTION   ( About() ) ;
                RESOURCE "Help_16"
-
-         #ifdef __GST__
 
             MENUITEM    "&5. Solicitar asistencia remota";
                MESSAGE  "Solicitar asistencia remota" ;
@@ -4273,8 +4239,6 @@ Function BuildMenu()
             MENUITEM    "&1. Test factura electrinoca";
                ACTION   ( TFacturaElectronica():New( "d:\test.xml" ):GeneraXml() ) ;
                RESOURCE "Doctor_16"
-
-         #endif
 
          ENDMENU
 
@@ -4324,8 +4288,6 @@ RETURN oMenu
 
 Function About()
 
-#ifdef __GST__
-
    local oDlg
    local oTree
    local oBrush
@@ -4355,16 +4317,6 @@ Function About()
       CENTER
 
    oBrush:End()
-
-#else
-
-   msgAbout(   __GSTROTOR__               ,;
-               __GSTFACTORY__ + CRLF +    ;
-               __GSTDIRECCION__ + CRLF +  ;
-               __GSTPOBLACION__ + CRLF +  ;
-               __GSTOTROS__ )
-
-#endif
 
 Return nil
 
@@ -4847,11 +4799,7 @@ Function TctCreateButtonBar()
    // Ayudas-------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-#ifdef __GST__
    oGrupo:nBigItems     := 4
-#else
-   oGrupo:nBigItems     := 3
-#endif
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "Lifebelt_16"
    oGrupo:cBigBitmap    := "Lifebelt_32"
@@ -4886,8 +4834,6 @@ Function TctCreateButtonBar()
    oItem:cBmpBig        := "Help_32"
    oItem:lShow          := .f.
 
-#ifdef __GST__
-
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Asistencia remota'
@@ -4897,8 +4843,6 @@ Function TctCreateButtonBar()
    oItem:cBmp           := "Doctor_16"
    oItem:cBmpBig        := "Doctor_32"
    oItem:lShow          := .f.
-
-#endif
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
@@ -5121,11 +5065,7 @@ Function TPVCreateButtonBar()
    oItemArchivo:cBmpBig := "Folder_32"
 
    oGrupo               := TGrupoAcceso()
-#ifdef __GST__
    oGrupo:nBigItems     := 6
-#else
-   oGrupo:nBigItems     := 7
-#endif
    oGrupo:cPrompt       := 'Inicio'
    oGrupo:cLittleBitmap := "Home_16"
    oGrupo:cBigBitmap    := "Home_32"
@@ -5181,11 +5121,7 @@ Function TPVCreateButtonBar()
    oItem:cBmpBig        := "Cashier_replace_32"
 
    oGrupo               := TGrupoAcceso()
-#ifdef __GST__
    oGrupo:nBigItems     := 4
-#else
-   oGrupo:nBigItems     := 3
-#endif
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "Lifebelt_16"
    oGrupo:cBigBitmap    := "Lifebelt_32"
@@ -5217,8 +5153,6 @@ Function TPVCreateButtonBar()
    oItem:cBmpBig        := "Help_32"
    oItem:lShow          := .f.
 
-#ifdef __GST__
-
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Asistencia remota'
@@ -5228,8 +5162,6 @@ Function TPVCreateButtonBar()
    oItem:cBmp           := "Doctor_16"
    oItem:cBmpBig        := "Doctor_32"
    oItem:lShow          := .f.
-
-#endif
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1

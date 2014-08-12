@@ -124,50 +124,10 @@ CLASS TSndRecInf
    Method lZipData( cFileName )
    Method lUnZipData( cFileName )
 
-//---------------------------------------------------------------------------//
+   Method lFileRecive( cFile )
+   Method lFileProcesed( cFile )
 
-   Inline Method lFileRecive( cFile )
-
-      local lFileRecive    := .f.
-
-         if !Empty( cFile ) .and. IsChar( cFile )
-            lFileRecive    := ::oDbfFilesReciver:Seek( Rtrim( cFile ) )
-         end if
-
-      Return ( lFileRecive )
-
-   EndMethod
-
-//---------------------------------------------------------------------------//
-
-   Inline Method lFileProcesed( cFile )
-
-      local lFileProcesed  := .f.
-
-      if !Empty( cFile ) .and. IsChar( cFile )
-         lFileProcesed     := ::oDbfFilesReciver:Seek( Rtrim( cFile ) ) .and. ::oDbfFilesReciver:lProced
-      end if
-
-      Return ( lFileProcesed )
-
-   EndMethod
-
-//---------------------------------------------------------------------------//
-
-   Inline Method SyncAllDbf()
-
-      if Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
-         ::DefineFiles()
-      end if
-
-      lCheckDbf( ::oDbfSenderReciver )
-      lCheckDbf( ::oDbfFilesReciver )
-
-      Return ( Self )
-
-   EndMethod
-
-//---------------------------------------------------------------------------//
+   Method SyncAllDbf()
 
 END CLASS
 
@@ -1973,3 +1933,40 @@ METHOD Reindexa( cPath )
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
+
+Method lFileRecive( cFile )
+
+   local lFileRecive    := .f.
+
+   if !Empty( cFile ) .and. IsChar( cFile )
+      lFileRecive    := ::oDbfFilesReciver:Seek( Rtrim( cFile ) )
+   end if
+
+Return ( lFileRecive )
+
+//---------------------------------------------------------------------------//
+
+Method lFileProcesed( cFile )
+
+   local lFileProcesed  := .f.
+
+   if !Empty( cFile ) .and. IsChar( cFile )
+      lFileProcesed     := ::oDbfFilesReciver:Seek( Rtrim( cFile ) ) .and. ::oDbfFilesReciver:lProced
+   end if
+
+Return ( lFileProcesed )
+
+//---------------------------------------------------------------------------//
+
+Method SyncAllDbf()
+
+   if Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
+      ::DefineFiles()
+   end if
+
+   lCheckDbf( ::oDbfSenderReciver )
+   lCheckDbf( ::oDbfFilesReciver )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//

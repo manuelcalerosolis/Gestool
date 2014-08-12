@@ -277,6 +277,9 @@ memvar nPagina
 memvar lEnd
 memvar nTotalDto
 
+memvar nNumArt
+memvar nNumCaj
+
 memvar oReport
 
 static oWndBrw
@@ -377,8 +380,6 @@ static bEdtRec          := { | aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMod
 static bEdtDet          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | EdtDet( aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre ) }
 static bEdtInc          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | EdtInc( aTmp, aGet, dbfPreCliI, oBrw, bWhen, bValid, nMode, aTmpPre ) }
 static bEdtDoc          := { | aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpPre | EdtDoc( aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpPre ) }
-static nNumArt          := 0
-static nNumCaj          := 0
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
@@ -3374,7 +3375,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
 
-      aGet[ _CLOTE ]:bValid   := {|| if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ), .t. }
+         aGet[ _CLOTE ]:bValid   := {|| oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
 
       /*
       Fecha caducidad
@@ -3406,7 +3407,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
          OF       oFld:aDialogs[1]
 
-         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) }
+         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
 
       REDEFINE SAY oSayPr1 VAR cSayPr1;
          ID       271 ;
@@ -3429,7 +3430,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  ( brwPrpAct( aGet[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ] ) ) ;
          OF       oFld:aDialogs[1]
 
-         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) }
+         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
 
       REDEFINE SAY oSayPr2 VAR cSayPr2;
          ID       281 ;

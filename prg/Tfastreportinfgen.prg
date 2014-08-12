@@ -383,651 +383,61 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD ActiveClients()
+   METHOD ActiveClients()
+   METHOD TotalCodigoClientes( cCliDesde, cCliHasta, cDescription )
+   METHOD TotalFechaClientes( dDesde, dHasta, cDescription )
 
-      local nActiveClients := 0
+   METHOD TotalPreimerTrimestreClientes( cDescription )
+   METHOD TotalSegundoTrimestreClientes( cDescription )
+   METHOD TotalCodigoArticulos( cArtDesde, cArtHasta, cDescription )
 
-      ::oDbfCli:GetStatus()
-      ::oDbfCli:OrdSetFocus( "lBlqCli" )
+   METHOD BrwRangoKeyDown( o, nKey )
 
-      nActiveClients       := ::oDbfCli:OrdKeyCount()
+   METHOD Count( cDescription, lUnique )
 
-      ::oDbfCli:SetStatus()
+   METHOD InitSatClientes()
+   METHOD AddSATClientes()
 
-      RETURN ( nActiveClients )
+   METHOD InitPresupuestosClientes()
+   METHOD AddPresupuestosClientes()
 
-   ENDMETHOD
+   METHOD InitPedidosClientes()
+   METHOD AddPedidosClientes()
 
-   //------------------------------------------------------------------------//
+   METHOD InitAlbaranesClientes()
+   METHOD AddAlbaranesClientes()
 
-   INLINE METHOD TotalCodigoClientes( cCliDesde, cCliHasta, cDescription )
+   METHOD InitFacturasClientes()
+   METHOD AddFacturasClientes()
 
-      local uValue
-      local cField
-      local nTotalClients        := 0
+   METHOD InitFacturasRectificativasClientes()
+   METHOD AddFacturasRectificativasClientes()
 
-      DEFAULT cDescription       := "Total"
+   METHOD InitTicketsClientes()
+   METHOD AddTicketsClientes()
 
-      cField                     := ::GetFieldByDescription( cDescription )
+   METHOD InitPedidosProveedores()
+   METHOD AddPedidosProveedores()
 
-      if !Empty( cField ) .and. IsChar( cCliDesde ) .and. IsChar( cCliHasta )
+   METHOD InitAlbaranesProveedores()
+   METHOD AddAlbaranesProveedores()
 
-         ::oDbf:GetStatus()
+   METHOD InitFacturasProveedores()
+   METHOD AddFacturasProveedores()
 
-         ::oDbf:GoTop()
-         while !( ::oDbf:Eof() )
-
-            if ( Rtrim( ::oDbf:cCodCli ) >= Rtrim( cCliDesde ) .and. Rtrim( ::oDbf:cCodCli ) <= Rtrim( cCliHasta ) )
-
-               uValue            := ::oDbf:FieldGetByName( cField )
-
-               if IsNum( uValue )
-                  nTotalClients  += uValue
-               end if
-
-            end if
-
-            ::oDbf:Skip()
-
-         end while
-
-         ::oDbf:SetStatus()
-
-      end if
-
-      RETURN ( nTotalClients )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD TotalFechaClientes( dDesde, dHasta, cDescription )
-
-      local uValue
-      local cField
-      local nTotalClients        := 0
-
-      DEFAULT cDescription       := "Total"
-
-      cField                     := ::GetFieldByDescription( cDescription )
-
-      if !Empty( cField ) .and. IsDate( dDesde ) .and. IsDate( dHasta )
-
-         ::oDbf:GetStatus()
-
-         ::oDbf:GoTop()
-         while !( ::oDbf:Eof() )
-
-            if ( ::oDbf:dFecDoc >= dDesde ) .and. ( ::oDbf:dFecDoc <= dHasta )
-
-               uValue            := ::oDbf:FieldGetByName( cField )
-
-               if IsNum( uValue )
-                  nTotalClients  += uValue
-               end if
-
-            end if
-
-            ::oDbf:Skip()
-
-         end while
-
-         ::oDbf:SetStatus()
-
-      end if
-
-      RETURN ( nTotalClients )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD TotalPreimerTrimestreClientes( cDescription )
-
-      local dFechaInicio   := Ctod( "01/01/" + Str( Year( ::dIniInf ) ) )
-      local dFechaFin      := Ctod( "01/04/" + Str( Year( ::dIniInf ) ) ) - 1
-
-      RETURN ( ::TotalFechaClientes( dFechaInicio, dFechaFin, cDescription ) )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD TotalSegundoTrimestreClientes( cDescription )
-
-      local dFechaInicio   := Ctod( "01/04/" + Str( Year( ::dIniInf ) ) )
-      local dFechaFin      := Ctod( "01/08/" + Str( Year( ::dIniInf ) ) ) - 1
-
-      RETURN ( ::TotalFechaClientes( dFechaInicio, dFechaFin, cDescription ) )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD TotalCodigoArticulos( cArtDesde, cArtHasta, cDescription )
-
-      local uValue
-      local cField
-      local nTotalArticulos         := 0
-
-      DEFAULT cDescription          := "Total"
-
-      cField                        := ::GetFieldByDescription( cDescription )
-
-      if !Empty( cField ) .and. IsChar( cArtDesde ) .and. IsChar( cArtHasta )
-
-         ::oDbf:GetStatus()
-
-         ::oDbf:GoTop()
-         while !( ::oDbf:Eof() )
-
-            if ( Rtrim( ::oDbf:cCodArt ) >= Rtrim( cArtDesde ) .and. Rtrim( ::oDbf:cCodArt ) <= Rtrim( cArtHasta ) )
-
-               uValue               := ::oDbf:FieldGetByName( cField )
-
-               if IsNum( uValue )
-                  nTotalArticulos   += uValue
-               end if
-
-            end if
-
-            ::oDbf:Skip()
-
-         end while
-
-         ::oDbf:SetStatus()
-
-      end if
-
-      RETURN ( nTotalArticulos )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD BrwRangoKeyDown( o, nKey )
-
-      local oColumn  := o:SelectedCol()
-
-      if ( nKey == 107 .or. nKey == 187 )
- 
-         if !Empty( oColumn ) .and. !Empty( oColumn:bEditBlock )
-
-            oColumn:RunBtnAction()
-
-         end if
-
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD Count( cDescription, lUnique )
-
-      local cField
-      local uValue
-      local aValue               := {}
-      local nTotal               := 0
-
-      DEFAULT cDescription       := "Código cliente"
-      DEFAULT lUnique            := ".f."
-
-      cField                     := ::GetFieldByDescription( cDescription )
-      lUnique                    := Lower( lUnique ) == ".t."
-
-      if !Empty( cField )
-
-         ::oDbf:GetStatus()
-
-         ::oDbf:GoTop()
-         while !( ::oDbf:Eof() )
-
-            uValue               := ::oDbf:FieldGetByName( cField )
-
-            if !Empty( uValue )
-
-               if lUnique
-
-                  if aScan( aValue, uValue ) == 0
-                     aAdd( aValue, uValue )
-                     nTotal++
-                  end if
-
-               else
-
-                  nTotal++
-
-               end if
-
-            end if
-
-            ::oDbf:Skip()
-
-         end while
-
-         ::oDbf:SetStatus()
-
-      end if
-
-      RETURN ( nTotal )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitSatClientes()
-
-      ::nBaseSatClientes         := 0
-      ::nIVASatClientes          := 0
-      ::nRecargoSatClientes      := 0
-      ::nTotalSatClientes        := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddSATClientes()
-
-      ::nBaseSATClientes         += ::oSatCliT:nTotNet
-      ::nIVASATClientes          += ::oSatCliT:nTotIva
-      ::nRecargoSATClientes      += ::oSatCliT:nTotReq
-      ::nTotalSATClientes        += ::oSatCliT:nTotSat
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitPresupuestosClientes()
-
-      ::nBasePresupuestosClientes      := 0
-      ::nIVAPresupuestosClientes       := 0
-      ::nRecargoPresupuestosClientes   := 0
-      ::nTotalPresupuestosClientes     := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddPresupuestosClientes()
-
-      ::nBasePresupuestosClientes      += ::oPreCliT:nTotNet
-      ::nIVAPresupuestosClientes       += ::oPreCliT:nTotIva
-      ::nRecargoPresupuestosClientes   += ::oPreCliT:nTotReq
-      ::nTotalPresupuestosClientes     += ::oPreCliT:nTotPre
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitPedidosClientes()
-
-      ::nBasePedidosClientes           := 0
-      ::nIVAPedidosClientes            := 0
-      ::nRecargoPedidosClientes        := 0
-      ::nTotalPedidosClientes          := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddPedidosClientes()
-
-      ::nBasePedidosClientes           += ::oPedCliT:nTotNet
-      ::nIVAPedidosClientes            += ::oPedCliT:nTotIva
-      ::nRecargoPedidosClientes        += ::oPedCliT:nTotReq
-      ::nTotalPedidosClientes          += ::oPedCliT:nTotPed
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitAlbaranesClientes()
-
-      ::nBaseAlbaranesClientes         := 0
-      ::nIVAAlbaranesClientes          := 0
-      ::nRecargoAlbaranesClientes      := 0
-      ::nTotalAlbaranesClientes        := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddAlbaranesClientes()
-
-      ::nBaseAlbaranesClientes         += ::oAlbCliT:nTotNet
-      ::nIVAAlbaranesClientes          += ::oAlbCliT:nTotIva
-      ::nRecargoAlbaranesClientes      += ::oAlbCliT:nTotReq
-      ::nTotalAlbaranesClientes        += ::oAlbCliT:nTotAlb
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitFacturasClientes()
-
-      ::nBaseFacturasClientes          := 0
-      ::nIVAFacturasClientes           := 0
-      ::nRecargoFacturasClientes       := 0
-      ::nTotalFacturasClientes         := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddFacturasClientes()
-
-      ::nBaseFacturasClientes       += ::oFacCliT:nTotNet
-      ::nIVAFacturasClientes        += ::oFacCliT:nTotIva
-      ::nRecargoFacturasClientes    += ::oFacCliT:nTotReq
-      ::nTotalFacturasClientes      += ::oFacCliT:nTotFac
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitFacturasRectificativasClientes()
-
-      ::nBaseFacturasRectificativasClientes       := 0
-      ::nIVAFacturasRectificativasClientes        := 0
-      ::nRecargoFacturasRectificativasClientes    := 0
-      ::nTotalFacturasRectificativasClientes      := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddFacturasRectificativasClientes()
-
-      ::nBaseFacturasRectificativasClientes       += ::oFacRecT:nTotNet
-      ::nIVAFacturasRectificativasClientes        += ::oFacRecT:nTotIva
-      ::nRecargoFacturasRectificativasClientes    += ::oFacRecT:nTotReq
-      ::nTotalFacturasRectificativasClientes      += ::oFacRecT:nTotFac
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitTicketsClientes()
-
-      ::nBaseTicketsClientes       := 0
-      ::nIVATicketsClientes        := 0
-      ::nRecargoTicketsClientes    := 0
-      ::nTotalTicketsClientes      := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddTicketsClientes()
-
-      ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
-      ::nIVATicketsClientes        += ::oTikCliT:nTotIva
-      ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//  
-
-   INLINE METHOD InitPedidosProveedores()
-
-      ::nBasePedidosProveedores           := 0
-      ::nIVAPedidosProveedores            := 0
-      ::nRecargoPedidosProveedores        := 0
-      ::nTotalPedidosProveedores          := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddPedidosProveedores()
-
-      ::nBasePedidosProveedores           += ::oPedPrvT:nTotNet
-      ::nIVAPedidosProveedores            += ::oPedPrvT:nTotIva
-      ::nRecargoPedidosProveedores        += ::oPedPrvT:nTotReq
-      ::nTotalPedidosProveedores          += ::oPedPrvT:nTotPed
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitAlbaranesProveedores()
-
-      ::nBaseAlbaranesProveedores           := 0
-      ::nIVAAlbaranesProveedores            := 0
-      ::nRecargoAlbaranesProveedores        := 0
-      ::nTotalAlbaranesProveedores          := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddAlbaranesProveedores()
-
-      ::nBaseAlbaranesProveedores           += ::oAlbPrvT:nTotNet
-      ::nIVAAlbaranesProveedores            += ::oAlbPrvT:nTotIva
-      ::nRecargoAlbaranesProveedores        += ::oAlbPrvT:nTotReq
-      ::nTotalAlbaranesProveedores          += ::oAlbPrvT:nTotAlb
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD InitFacturasProveedores()
-
-      ::nBaseFacturasProveedores           := 0
-      ::nIVAFacturasProveedores            := 0
-      ::nRecargoFacturasProveedores        := 0
-      ::nTotalFacturasProveedores          := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddFacturasProveedores()
-
-      ::nBaseFacturasProveedores           += ::oFacPrvT:nTotNet
-      ::nIVAFacturasProveedores            += ::oFacPrvT:nTotIva
-      ::nRecargoFacturasProveedores        += ::oFacPrvT:nTotReq
-      ::nTotalFacturasProveedores          += ::oFacPrvT:nTotFac
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-      INLINE METHOD InitFacturasRectificativasProveedores()
-
-      ::nBaseFacturasRectificativasProveedores       := 0
-      ::nIVAFacturasRectificativasProveedores        := 0
-      ::nRecargoFacturasRectificativasProveedores    := 0
-      ::nTotalFacturasRectificativasProveedores      := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddFacturasRectificativasProveedores()
-
-      ::nBaseFacturasRectificativasProveedores       += ::oRctPrvT:nTotNet
-      ::nIVAFacturasRectificativasProveedores        += ::oRctPrvT:nTotIva
-      ::nRecargoFacturasRectificativasProveedores    += ::oRctPrvT:nTotReq
-      ::nTotalFacturasRectificativasProveedores      += ::oRctPrvT:nTotFac
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
+   METHOD InitFacturasRectificativasProveedores()
+   METHOD AddFacturasRectificativasProveedores()
 
    METHOD AddVariable()
 
-   //------------------------------------------------------------------------//
+   METHOD CreateTreeImageList()
+      METHOD TreeReportingChanged() 
 
-   INLINE METHOD CreateTreeImageList()
+   METHOD XmlDocument()
 
-      ::oTreeImageList        := TImageList():New( 16, 16 )
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_16" ),                      Rgb( 255, 0, 255 ) ) // 0
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_new_16" ),                  Rgb( 255, 0, 255 ) ) // 1
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),   Rgb( 255, 0, 255 ) ) // 2
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),    Rgb( 255, 0, 255 ) ) // 3
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),          Rgb( 255, 0, 255 ) ) // 4
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),                Rgb( 255, 0, 255 ) ) // 5
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),         Rgb( 255, 0, 255 ) ) // 6
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),          Rgb( 255, 0, 255 ) ) // 7
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),                Rgb( 255, 0, 255 ) ) // 8
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9 Rectificativas
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                 Rgb( 255, 0, 255 ) ) // 10
-      ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                     Rgb( 255, 0, 255 ) ) // 12
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 13
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),              Rgb( 255, 0, 255 ) ) // 14
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 16
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
-      ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
+   METHOD DlgFilter()
 
-      if !Empty( ::oTreeReporting )
-         ::oTreeReporting:SetImageList( ::oTreeImageList )
-      end if
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
-   INLINE METHOD TreeReportingChanged() 
-
-      local cTitle   := ::oTreeReporting:GetSelText()
-   
-      if cTitle == "Listado"
-         ::lHideFecha()
-      else
-         ::lShowFecha()
-      end if
-
-      ::oDlg:cTitle( ::cSubTitle + " : " + cTitle )
-   
-      Return ( Self )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
-   INLINE METHOD XmlDocument()
-
-      local cFile    := cPatTmp() + "Report.txt"
-
-      if !::lLoadReport()
-         MsgStop( "No se ha podido cargar un diseño de informe valido." + CRLF + ::cReportFile )
-         Return ( Self )
-      end if 
-
-      CursorWait()
-
-      if File( cFile )
-         fErase( cFile )
-      end if
-
-      MemoWrit( cFile, ::cInformeFastReport )
-
-      CursorWE()    
-
-      if File( cFile )
-         WinExec( "notepad.exe " + cFile )
-      end if 
-
-   ENDMETHOD
-
-//----------------------------------------------------------------------------//
-
-   INLINE METHOD DlgFilter()
-
-      if !Empty( ::oFilter )
-
-         ::oFilter:Dialog()
-
-         if !Empty( ::oBtnFiltrar )
-
-            if !Empty( ::oFilter:bExpresionFilter )
-               ::oBtnFiltrar:cCaption( "Filtro activo" )
-            else 
-               ::oBtnFiltrar:cCaption( "Filtrar" )
-            end if
-
-         end if 
-
-      end if
-
-      Return ( Self )
-
-   ENDMETHOD
-
-//----------------------------------------------------------------------------//
-
-   INLINE METHOD InsertIfValid()
-
-      local lValidRegister := ::lValidRegister()
-
-      if lValidRegister
-         ::oDbf:Insert()
-      else
-         ::oDbf:Cancel()
-      end if
-
-      Return ( lValidRegister )
-
-   ENDMETHOD
-
-//----------------------------------------------------------------------------//
+   METHOD InsertIfValid()
 
 END CLASS
 
@@ -1668,7 +1078,7 @@ METHOD AddVariable() CLASS TFastReportInfGen
 
    local aVariable
 
-   Super:AddVariable()
+   ::Super:AddVariable()
 
    aVariable   := ::GetReportType()
 
@@ -3635,3 +3045,576 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD ActiveClients()
+
+   local nActiveClients := 0
+
+   ::oDbfCli:GetStatus()
+   ::oDbfCli:OrdSetFocus( "lBlqCli" )
+
+   nActiveClients       := ::oDbfCli:OrdKeyCount()
+
+   ::oDbfCli:SetStatus()
+
+RETURN ( nActiveClients )
+
+//------------------------------------------------------------------------//
+
+METHOD TotalCodigoClientes( cCliDesde, cCliHasta, cDescription )
+
+   local uValue
+   local cField
+   local nTotalClients        := 0
+
+   DEFAULT cDescription       := "Total"
+
+   cField                     := ::GetFieldByDescription( cDescription )
+
+   if !Empty( cField ) .and. IsChar( cCliDesde ) .and. IsChar( cCliHasta )
+
+      ::oDbf:GetStatus()
+
+      ::oDbf:GoTop()
+      while !( ::oDbf:Eof() )
+
+         if ( Rtrim( ::oDbf:cCodCli ) >= Rtrim( cCliDesde ) .and. Rtrim( ::oDbf:cCodCli ) <= Rtrim( cCliHasta ) )
+
+            uValue            := ::oDbf:FieldGetByName( cField )
+
+            if IsNum( uValue )
+               nTotalClients  += uValue
+            end if
+
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::oDbf:SetStatus()
+
+   end if
+
+RETURN ( nTotalClients )
+
+//------------------------------------------------------------------------//
+
+METHOD TotalFechaClientes( dDesde, dHasta, cDescription )
+
+   local uValue
+   local cField
+   local nTotalClients        := 0
+
+   DEFAULT cDescription       := "Total"
+
+   cField                     := ::GetFieldByDescription( cDescription )
+
+   if !Empty( cField ) .and. IsDate( dDesde ) .and. IsDate( dHasta )
+
+      ::oDbf:GetStatus()
+
+      ::oDbf:GoTop()
+      while !( ::oDbf:Eof() )
+
+         if ( ::oDbf:dFecDoc >= dDesde ) .and. ( ::oDbf:dFecDoc <= dHasta )
+
+            uValue            := ::oDbf:FieldGetByName( cField )
+
+            if IsNum( uValue )
+               nTotalClients  += uValue
+            end if
+
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::oDbf:SetStatus()
+
+   end if
+
+RETURN ( nTotalClients )
+
+//------------------------------------------------------------------------//
+
+METHOD TotalPreimerTrimestreClientes( cDescription )
+
+   local dFechaInicio   := Ctod( "01/01/" + Str( Year( ::dIniInf ) ) )
+   local dFechaFin      := Ctod( "01/04/" + Str( Year( ::dIniInf ) ) ) - 1
+
+RETURN ( ::TotalFechaClientes( dFechaInicio, dFechaFin, cDescription ) )
+
+//------------------------------------------------------------------------//
+
+METHOD TotalSegundoTrimestreClientes( cDescription )
+
+   local dFechaInicio   := Ctod( "01/04/" + Str( Year( ::dIniInf ) ) )
+   local dFechaFin      := Ctod( "01/08/" + Str( Year( ::dIniInf ) ) ) - 1
+
+RETURN ( ::TotalFechaClientes( dFechaInicio, dFechaFin, cDescription ) )
+
+//------------------------------------------------------------------------//
+
+METHOD TotalCodigoArticulos( cArtDesde, cArtHasta, cDescription )
+
+   local uValue
+   local cField
+   local nTotalArticulos         := 0
+
+   DEFAULT cDescription          := "Total"
+
+   cField                        := ::GetFieldByDescription( cDescription )
+
+   if !Empty( cField ) .and. IsChar( cArtDesde ) .and. IsChar( cArtHasta )
+
+      ::oDbf:GetStatus()
+
+      ::oDbf:GoTop()
+      while !( ::oDbf:Eof() )
+
+         if ( Rtrim( ::oDbf:cCodArt ) >= Rtrim( cArtDesde ) .and. Rtrim( ::oDbf:cCodArt ) <= Rtrim( cArtHasta ) )
+
+            uValue               := ::oDbf:FieldGetByName( cField )
+
+            if IsNum( uValue )
+               nTotalArticulos   += uValue
+            end if
+
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::oDbf:SetStatus()
+
+   end if
+
+RETURN ( nTotalArticulos )
+
+//------------------------------------------------------------------------//
+
+METHOD BrwRangoKeyDown( o, nKey )
+
+   local oColumn  := o:SelectedCol()
+
+   if ( nKey == 107 .or. nKey == 187 )
+
+      if !Empty( oColumn ) .and. !Empty( oColumn:bEditBlock )
+
+         oColumn:RunBtnAction()
+
+      end if
+
+   end if
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD Count( cDescription, lUnique )
+
+   local cField
+   local uValue
+   local aValue               := {}
+   local nTotal               := 0
+
+   DEFAULT cDescription       := "Código cliente"
+   DEFAULT lUnique            := ".f."
+
+   cField                     := ::GetFieldByDescription( cDescription )
+   lUnique                    := Lower( lUnique ) == ".t."
+
+   if !Empty( cField )
+
+      ::oDbf:GetStatus()
+
+      ::oDbf:GoTop()
+      while !( ::oDbf:Eof() )
+
+         uValue               := ::oDbf:FieldGetByName( cField )
+
+         if !Empty( uValue )
+
+            if lUnique
+
+               if aScan( aValue, uValue ) == 0
+                  aAdd( aValue, uValue )
+                  nTotal++
+               end if
+
+            else
+
+               nTotal++
+
+            end if
+
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::oDbf:SetStatus()
+
+   end if
+
+RETURN ( nTotal )
+
+//------------------------------------------------------------------------//
+
+METHOD InitSatClientes()
+
+   ::nBaseSatClientes         := 0
+   ::nIVASatClientes          := 0
+   ::nRecargoSatClientes      := 0
+   ::nTotalSatClientes        := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddSATClientes()
+
+   ::nBaseSATClientes         += ::oSatCliT:nTotNet
+   ::nIVASATClientes          += ::oSatCliT:nTotIva
+   ::nRecargoSATClientes      += ::oSatCliT:nTotReq
+   ::nTotalSATClientes        += ::oSatCliT:nTotSat
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitPresupuestosClientes()
+
+   ::nBasePresupuestosClientes      := 0
+   ::nIVAPresupuestosClientes       := 0
+   ::nRecargoPresupuestosClientes   := 0
+   ::nTotalPresupuestosClientes     := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddPresupuestosClientes()
+
+   ::nBasePresupuestosClientes      += ::oPreCliT:nTotNet
+   ::nIVAPresupuestosClientes       += ::oPreCliT:nTotIva
+   ::nRecargoPresupuestosClientes   += ::oPreCliT:nTotReq
+   ::nTotalPresupuestosClientes     += ::oPreCliT:nTotPre
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitPedidosClientes()
+
+   ::nBasePedidosClientes           := 0
+   ::nIVAPedidosClientes            := 0
+   ::nRecargoPedidosClientes        := 0
+   ::nTotalPedidosClientes          := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddPedidosClientes()
+
+   ::nBasePedidosClientes           += ::oPedCliT:nTotNet
+   ::nIVAPedidosClientes            += ::oPedCliT:nTotIva
+   ::nRecargoPedidosClientes        += ::oPedCliT:nTotReq
+   ::nTotalPedidosClientes          += ::oPedCliT:nTotPed
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitAlbaranesClientes()
+
+   ::nBaseAlbaranesClientes         := 0
+   ::nIVAAlbaranesClientes          := 0
+   ::nRecargoAlbaranesClientes      := 0
+   ::nTotalAlbaranesClientes        := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddAlbaranesClientes()
+
+   ::nBaseAlbaranesClientes         += ::oAlbCliT:nTotNet
+   ::nIVAAlbaranesClientes          += ::oAlbCliT:nTotIva
+   ::nRecargoAlbaranesClientes      += ::oAlbCliT:nTotReq
+   ::nTotalAlbaranesClientes        += ::oAlbCliT:nTotAlb
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitFacturasClientes()
+
+   ::nBaseFacturasClientes          := 0
+   ::nIVAFacturasClientes           := 0
+   ::nRecargoFacturasClientes       := 0
+   ::nTotalFacturasClientes         := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddFacturasClientes()
+
+   ::nBaseFacturasClientes       += ::oFacCliT:nTotNet
+   ::nIVAFacturasClientes        += ::oFacCliT:nTotIva
+   ::nRecargoFacturasClientes    += ::oFacCliT:nTotReq
+   ::nTotalFacturasClientes      += ::oFacCliT:nTotFac
+
+   RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitFacturasRectificativasClientes()
+
+   ::nBaseFacturasRectificativasClientes       := 0
+   ::nIVAFacturasRectificativasClientes        := 0
+   ::nRecargoFacturasRectificativasClientes    := 0
+   ::nTotalFacturasRectificativasClientes      := 0
+
+   RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddFacturasRectificativasClientes()
+
+   ::nBaseFacturasRectificativasClientes       += ::oFacRecT:nTotNet
+   ::nIVAFacturasRectificativasClientes        += ::oFacRecT:nTotIva
+   ::nRecargoFacturasRectificativasClientes    += ::oFacRecT:nTotReq
+   ::nTotalFacturasRectificativasClientes      += ::oFacRecT:nTotFac
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitTicketsClientes()
+
+   ::nBaseTicketsClientes       := 0
+   ::nIVATicketsClientes        := 0
+   ::nRecargoTicketsClientes    := 0
+   ::nTotalTicketsClientes      := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddTicketsClientes()
+
+   ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
+   ::nIVATicketsClientes        += ::oTikCliT:nTotIva
+   ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//  
+
+METHOD InitPedidosProveedores()
+
+   ::nBasePedidosProveedores           := 0
+   ::nIVAPedidosProveedores            := 0
+   ::nRecargoPedidosProveedores        := 0
+   ::nTotalPedidosProveedores          := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddPedidosProveedores()
+
+   ::nBasePedidosProveedores           += ::oPedPrvT:nTotNet
+   ::nIVAPedidosProveedores            += ::oPedPrvT:nTotIva
+   ::nRecargoPedidosProveedores        += ::oPedPrvT:nTotReq
+   ::nTotalPedidosProveedores          += ::oPedPrvT:nTotPed
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitAlbaranesProveedores()
+
+   ::nBaseAlbaranesProveedores           := 0
+   ::nIVAAlbaranesProveedores            := 0
+   ::nRecargoAlbaranesProveedores        := 0
+   ::nTotalAlbaranesProveedores          := 0
+
+   RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddAlbaranesProveedores()
+
+   ::nBaseAlbaranesProveedores           += ::oAlbPrvT:nTotNet
+   ::nIVAAlbaranesProveedores            += ::oAlbPrvT:nTotIva
+   ::nRecargoAlbaranesProveedores        += ::oAlbPrvT:nTotReq
+   ::nTotalAlbaranesProveedores          += ::oAlbPrvT:nTotAlb
+
+   RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitFacturasProveedores()
+
+   ::nBaseFacturasProveedores           := 0
+   ::nIVAFacturasProveedores            := 0
+   ::nRecargoFacturasProveedores        := 0
+   ::nTotalFacturasProveedores          := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddFacturasProveedores()
+
+   ::nBaseFacturasProveedores           += ::oFacPrvT:nTotNet
+   ::nIVAFacturasProveedores            += ::oFacPrvT:nTotIva
+   ::nRecargoFacturasProveedores        += ::oFacPrvT:nTotReq
+   ::nTotalFacturasProveedores          += ::oFacPrvT:nTotFac
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD InitFacturasRectificativasProveedores()
+
+   ::nBaseFacturasRectificativasProveedores       := 0
+   ::nIVAFacturasRectificativasProveedores        := 0
+   ::nRecargoFacturasRectificativasProveedores    := 0
+   ::nTotalFacturasRectificativasProveedores      := 0
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD AddFacturasRectificativasProveedores()
+
+   ::nBaseFacturasRectificativasProveedores       += ::oRctPrvT:nTotNet
+   ::nIVAFacturasRectificativasProveedores        += ::oRctPrvT:nTotIva
+   ::nRecargoFacturasRectificativasProveedores    += ::oRctPrvT:nTotReq
+   ::nTotalFacturasRectificativasProveedores      += ::oRctPrvT:nTotFac
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD CreateTreeImageList()
+
+      ::oTreeImageList        := TImageList():New( 16, 16 )
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_16" ),                      Rgb( 255, 0, 255 ) ) // 0
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_new_16" ),                  Rgb( 255, 0, 255 ) ) // 1
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),   Rgb( 255, 0, 255 ) ) // 2
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),    Rgb( 255, 0, 255 ) ) // 3
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),          Rgb( 255, 0, 255 ) ) // 4
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),                Rgb( 255, 0, 255 ) ) // 5
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),         Rgb( 255, 0, 255 ) ) // 6
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),          Rgb( 255, 0, 255 ) ) // 7
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),                Rgb( 255, 0, 255 ) ) // 8
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9 Rectificativas
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                 Rgb( 255, 0, 255 ) ) // 10
+      ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                     Rgb( 255, 0, 255 ) ) // 12
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 13
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),              Rgb( 255, 0, 255 ) ) // 14
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 16
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
+      ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
+
+      if !Empty( ::oTreeReporting )
+         ::oTreeReporting:SetImageList( ::oTreeImageList )
+      end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD TreeReportingChanged() 
+
+      local cTitle   := ::oTreeReporting:GetSelText()
+   
+      if cTitle == "Listado"
+         ::lHideFecha()
+      else
+         ::lShowFecha()
+      end if
+
+      ::oDlg:cTitle( ::cSubTitle + " : " + cTitle )
+   
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD XmlDocument()
+
+   local cFile    := cPatTmp() + "Report.txt"
+
+   if !::lLoadReport()
+      MsgStop( "No se ha podido cargar un diseño de informe valido." + CRLF + ::cReportFile )
+      Return ( Self )
+   end if 
+
+   CursorWait()
+
+   if File( cFile )
+      fErase( cFile )
+   end if
+
+   MemoWrit( cFile, ::cInformeFastReport )
+
+   CursorWE()    
+
+   if File( cFile )
+      WinExec( "notepad.exe " + cFile )
+   end if 
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD DlgFilter()
+
+   if !Empty( ::oFilter )
+
+      ::oFilter:Dialog()
+
+      if !Empty( ::oBtnFiltrar )
+
+         if !Empty( ::oFilter:bExpresionFilter )
+            ::oBtnFiltrar:cCaption( "Filtro activo" )
+         else 
+            ::oBtnFiltrar:cCaption( "Filtrar" )
+         end if
+
+      end if 
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD InsertIfValid()
+
+   local lValidRegister := ::lValidRegister()
+
+   if lValidRegister
+      ::oDbf:Insert()
+   else
+      ::oDbf:Cancel()
+   end if
+
+Return ( lValidRegister )
+
+//----------------------------------------------------------------------------//

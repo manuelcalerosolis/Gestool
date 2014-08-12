@@ -493,7 +493,7 @@ static oDlgTpv
 static dbfFPago
 
 static aButtonsPago
-static aButtonsMoney       := Array( 16 )
+static aButtonsMoney       
 
 static lStopEntCont        := .f.
 static lStopEntContLine    := .f.
@@ -9063,6 +9063,10 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    end if 
 
    lWhen                   := ( nSave != SAVDEV .and. nSave != SAVVAL ) .or. ( nMode == APPD_MODE )
+
+   if isNil( aButtonsMoney )
+      aButtonsMoney        := Array(16)
+   end if 
 
    /*
    Desabilitamos la caja de detras---------------------------------------------

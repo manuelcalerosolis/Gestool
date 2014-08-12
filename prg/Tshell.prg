@@ -178,7 +178,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD lCloseArea    INLINE ( .t. ) // ::oBrw:lCloseArea() )
 
-   METHOD Refresh()     INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ), if( !Empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), Super:Refresh() )
+   METHOD Refresh()     INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ), if( !Empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), ::Super:Refresh() )
    METHOD UpStable()    INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
    METHOD GoUp()        INLINE ( ::oBrw:GoUp() )
    METHOD GoDown()      INLINE ( ::oBrw:GoDown() )
@@ -274,7 +274,7 @@ CLASS TShell FROM TMdiChild
    Method EditFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
                                                             ( ::oActiveFilter:EditFilter( ::oWndBar:GetComboFilter() ), ::ChgFilter() ), ) )
    Method KillFilter()                       INLINE ( if(   !Empty( ::oActiveFilter ) .and. !Empty( ::oWndBar ),;
-                                                            ( ::oActiveFilter:KillFilter(), ::oWndBar:HideButtonFilter(), ::oWndBar:HideEditButtonFilter(), ), ) )
+                                                            ( ::oActiveFilter:KillFilter(), ::oWndBar:HideButtonFilter(), ::oWndBar:HideEditButtonFilter() ), ) )
 
    Method CreateData()
    Method OpenData()
@@ -403,7 +403,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    ----------------------------------------------------------------------------
    */
 
-   Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
+   ::Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
 
    // Imagelist----------------------------------------------------------------
 
@@ -492,7 +492,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    ::lCenter         := lCenter
 
-   Super:Activate(   cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
+   ::Super:Activate(   cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
                      bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight,;
                      bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp )
 
@@ -564,7 +564,7 @@ RETURN NIL
 
 METHOD GotFocus() CLASS TShell
 
-	Super:GotFocus()
+	::Super:GotFocus()
 
    if ::oBrw != nil
 		::oBrw:SetFocus()
@@ -598,7 +598,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TShell
       ::oBrw:Refresh()
    end
 
-return Super:KeyChar( nKey, nFlags )
+return ::Super:KeyChar( nKey, nFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -749,7 +749,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TShell
 
    end if 
 
-return Super:KeyDown( nKey, nFlags )
+return ::Super:KeyDown( nKey, nFlags )
 
 //---------------------------------------------------------------------------//
 
@@ -1718,7 +1718,7 @@ METHOD SysCommand( nWParam, nLParam ) CLASS TShell
       ::Maximize()
       return 0
    else
-      Super:SysCommand( nWParam, nLParam )
+      ::Super:SysCommand( nWParam, nLParam )
    endif
 
 return nil
@@ -1788,7 +1788,7 @@ METHOD Destroy() CLASS TShell
    end if
 
    if ::hWnd != 0
-      Super:Destroy()
+      ::Super:Destroy()
    endif
 
    if ::bDestroy != nil

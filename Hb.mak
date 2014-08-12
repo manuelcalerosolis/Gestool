@@ -28,38 +28,17 @@ EXE 				= 	Bin\GestoolHb.exe
 
 PRG            		=    	\
 Factu.prg               	\
-Font.prg                	\
 DialogExtend.prg           	\
-Window.prg              	\
-Msgbar.prg 					\
-Menu.prg 					\
-Tmsgitem.prg 				\
-Mdiframe.prg 				\
-Brush.prg               	\
-Bitmap.prg              	\
-Rect.prg                	\
-Buttonb.prg             	\
-Splitter.prg            	\
-TpanelEx.prg            	\
-TCalenda.prg            	\
-MdiClien.prg            	\
-Folder.prg              	\
-Rebar.prg               	\
-VistaMnu.prg            	\
 C5Lib.prg               	\
-Checkbox.prg            	\
 RpreviewC3.prg          	\
 ReportC3.prg            	\
 RocolumnC3.prg          	\
 Treeitem.prg            	\
-Buttonb.prg             	\
-TlistVie.prg            	\
 TViewImg.prg            	\
 Printer.prg             	\
 Webbar.prg              	\
 Webmap.prg              	\
 Timaglst.prg            	\
-Icon.prg                	\
 Tinitshell.prg          	\
 WebBrow.prg             	\
 TMySql.prg              	\
@@ -157,7 +136,6 @@ Tdelobs.prg             	\
 Tdeltarifasclientes.prg 	\
 TftpC3.prg              	\
 Tftpfile.prg            	\
-Meter.prg               	\
 Tankes.prg              	\
 Grpcli.prg              	\
 Atipicas.prg 				\
@@ -432,35 +410,13 @@ WebBrow.obj             \
 TMySql.obj              \
 TComercio.obj           \
 Comun.obj               \
-Valtostr.obj            \
 AccessCode.obj          \
-Font.obj                \
 DialogExtend.obj        \
-Window.obj              \
-Msgbar.obj 					\
-Menu.obj 					\
-Tmsgitem.obj 				\
-Mdiframe.obj 				\
-Rect.obj                \
-Buttonb.obj             \
-Brush.obj               \
-Bitmap.obj              \
-Splitter.obj            \
-TpanelEx.obj            \
-TCalenda.obj            \
-MdiClien.obj            \
-Folder.obj              \
-Rebar.obj               \
-VistaMnu.obj            \
 C5Lib.obj               \
 Tgraph.obj              \
-Buttonb.obj             \
-TlistVie.obj            \
 TViewImg.obj            \
 Toleexcel.obj           \
 Toleword.obj            \
-Icon.obj                \
-Checkbox.obj            \
 Empresa.obj             \
 Empcnf.obj              \
 Reindexa.obj            \
@@ -557,7 +513,6 @@ TStockMinimoFamilia.obj \
 Xvalalmg.obj            \
 Tftpfile.obj            \
 Printer.obj             \
-Meter.obj               \
 Tankes.obj              \
 Grpcli.obj              \
 Atipicas.obj 				\
@@ -833,13 +788,13 @@ Components.obj 			\
 TLabelGenerator.obj 	\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
 
 .C.OBJ:
-  	$(BORLAND)\Bin\Bcc32 -c -tWM -D__HARBOUR__ -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
+  	$(BORLAND)\Bin\Bcc32 -c -tWM -D__XHARBOUR__ -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
 
 $(EXE)                  : $( C:.C=.OBJ )
 
@@ -858,12 +813,10 @@ $(OBJ)\Valtostr.obj             +
 $(OBJ)\AccessCode.obj           +
 $(OBJ)\DialogExtend.obj         +
 $(OBJ)\Window.obj               +
-$(OBJ)\Msgbar.obj 				+
 $(OBJ)\Menu.obj 				+
 $(OBJ)\Tmsgitem.obj 			+
 $(OBJ)\Mdiframe.obj 			+
 $(OBJ)\Rect.obj                 +
-$(OBJ)\Buttonb.obj              +
 $(OBJ)\Brush.obj                +
 $(OBJ)\Bitmap.obj               +
 $(OBJ)\Splitter.obj             +
@@ -872,13 +825,9 @@ $(OBJ)\TCalenda.obj             +
 $(OBJ)\MdiClien.obj             +
 $(OBJ)\Rebar.obj                +
 $(OBJ)\Tgraph.obj               +
-$(OBJ)\Buttonb.obj              +
-$(OBJ)\TlistVie.obj             +
 $(OBJ)\TViewImg.obj             +
 $(OBJ)\Toleexcel.obj            +
 $(OBJ)\Toleword.obj             +
-$(OBJ)\Icon.obj                 +
-$(OBJ)\Checkbox.obj             +
 $(OBJ)\Empresa.obj              +
 $(OBJ)\Empcnf.obj               +
 $(OBJ)\Reindexa.obj             +
@@ -976,7 +925,6 @@ $(OBJ)\Tftpfile.obj             +
 $(OBJ)\Printer.obj              +
 $(OBJ)\Webbar.obj               +
 $(OBJ)\Webmap.obj               +
-$(OBJ)\Meter.obj                +
 $(OBJ)\Tankes.obj               +
 $(OBJ)\Grpcli.obj               +
 $(OBJ)\Atipicas.obj 			+

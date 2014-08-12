@@ -5,17 +5,17 @@ FUNCTION DialogExtend()
 
 TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aFastKeys", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "bTmpValid", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 1      + 8, NIL, IIF( .F.,, 1 ), .F., .F. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "bTmpValid", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "AddFastKey", {|Self, nKey, bAction| Self, (  if( isNil(::aFastKeys), ::aFastKeys := {}, ), aAdd( ::aFastKeys, { nKey, bAction } ) ) }, 3, NIL, IIF( .F.,, 1 ), .F., .F. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "AddFastKey", {|Self, nKey, bAction| Self, ( if( isNil(::aFastKeys), ::aFastKeys := {}, ), aAdd( ::aFastKeys, { nKey, bAction } ) ) }, 3, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Enable()", {|Self| Self, (  ::bValid    := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, NIL, IIF( .F.,, 1 ), .F., .F. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Disable()", {|Self| Self, (  CursorWait(), ::bTmpValid := ::bValid, ::bValid    := {|| .F. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, NIL, IIF( .F.,, 1 ), .F., .F. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aEvalValid", @DialogEvalValid(), 0, NIL, IIF( .F.,, 1 ), .F., .F. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
 
-TDialog(); __clsModMsg( __ClsGetHandleFromName( "TDialog" ), "KeyDown", @DialogKeyDown(), IIF( .F.,, 1 ) )
+TDialog(); __clsModMsg( __ClsGetHandleFromName( "TDialog" ), "KeyDown", @DialogKeyDown(), 1 )
 
 /*
 EXTEND CLASS TDialog WITH DATA aFastKeys//  AS ARRAY INIT {} 
@@ -71,33 +71,36 @@ return ( lValid )
 
 STATIC FUNCTION DialogKeyDown( nKey, nFlags ) 
 
-   local n
    local Self       := HB_QSelf()
 
    if nKey == VK_ESCAPE
-
       if ::oWnd == nil
-         ::End()
-      else
-         if ::oWnd:ChildLevel( TMdiChild() ) != 0
+         if SetDialogEsc()
             ::End()
+         endif
+      else
+         if ::oWnd:IsKindOf( "TMDICHILD" )
+            if SetDialogEsc()
+               ::End()
+            endif
          else
-            if ::oWnd:ChildLevel( TDialog() ) != 0
-               ::End()
-            #ifdef __HARBOUR__
-            elseif Upper( ::oWnd:ClassName() ) == "TMDIFRAME" // To avoid ESC being ignored
-               ::End()
-            #endif
+            if ::oWnd:IsKindOf( "TDIALOG" )
+               if SetDialogEsc()
+                  ::End()
+               endif
+            elseif Upper( ::oWnd:ClassName() ) == "TMDIFRAME"
+               if SetDialogEsc() // To avoid ESC being ignored
+                  ::End()
+               endif
             else
                return ::Super:KeyDown( nKey, nFlags )
             endif
          endif
       endif
-   
    else
 
-      // MCS--------------------------------------------------------------------//
-
+      aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1], Eval( aKey[2] ), ) } )
+/*
       if !Empty( ::aFastKeys )
          for n := 1 to len( ::aFastKeys )
             if nKey == ::aFastKeys[ n, 1 ]
@@ -106,13 +109,11 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
             end if
          next
       end if
-
-      // fin MCS----------------------------------------------------------------//
-
+*/
       return ::Super:KeyDown( nKey, nFlags )
 
    endif
 
-return nil
+Return ( nil )
 
 //----------------------------------------------------------------------------//

@@ -146,23 +146,7 @@ CLASS TGenMailing
 
    Method lCheckActiveX()
 
-   Inline Method WaitSeconds( nTime )
-
-      local n
-
-      for n := 1 to nTime
-
-         if ::lCancel
-            exit
-         end if
-
-         WaitSeconds( 1 )
-
-         SysRefresh()
-
-      next
-
-   Endmethod
+   Method WaitSeconds( nTime )
 
    METHOD IsMailServer()
 
@@ -1563,6 +1547,26 @@ Return ( lCheck )
 
 //---------------------------------------------------------------------------//
 
+Method WaitSeconds( nTime )
+
+	local n
+
+	for n := 1 to nTime
+
+		if ::lCancel
+			exit
+		end if
+
+	 	WaitSeconds( 1 )
+
+	 	SysRefresh()
+
+	next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD IsMailServer()
 
    if Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword )
@@ -1630,7 +1634,7 @@ FUNCTION TranslateStrings( cString, aTranslate )
    local aTran
 
    for each aTran in aTranslate
-      if aTran[ 2 ] in cString
+      if aTran[ 2 ] $ cString
          cString  := StrTran( cString, aTran[ 2 ], aTran[ 1 ] )
       endif
    next
