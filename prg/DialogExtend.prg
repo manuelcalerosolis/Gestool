@@ -3,7 +3,7 @@
 
 FUNCTION DialogExtend()
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aFastKeys", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, nil, 1, .f., .f. )
+TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aFastKeys", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, {}, 1, .f., .f. )
 
 TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "bTmpValid", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, nil, 1, .f., .f. )
 
@@ -74,6 +74,7 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
    local Self       := HB_QSelf()
 
    if nKey == VK_ESCAPE
+
       if ::oWnd == nil
          if SetDialogEsc()
             ::End()
@@ -97,6 +98,7 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
             endif
          endif
       endif
+
    else
 
       aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1], Eval( aKey[2] ), ) } )

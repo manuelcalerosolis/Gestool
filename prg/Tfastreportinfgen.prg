@@ -2917,12 +2917,15 @@ Static Function CutString( cStart, cEnd, cText, lExclude )
 
    DEFAULT lExclude     := .f.
 
-   nStart               := Rat( cStart, cText )
+   nStart               := At( cStart, cText )
    if nStart != 0
 
-      nEnd              := At( cEnd, cText, nStart + len( cStart ) )
+      cText             := SubStr( cText, nStart )
+
+      nEnd              := Rat( cEnd, cText )
       if nEnd != 0
-         cString        := SubStr( cText, nStart, ( nEnd - nStart + len( cEnd ) ) )
+
+         cString        := SubStr( cText, 1, nEnd ) 
 
          if lExclude
             cString     := StrTran( cString, cStart, "" )
