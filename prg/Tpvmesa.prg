@@ -145,7 +145,7 @@ CLASS TTpvMesa FROM TControl
    METHOD LoadFromPunto( oSender )
    METHOD LoadFromSala( oSender )
 
-   METHOD End()            INLINE ( if( !Empty( ::hBmp ), ::DeleteBitmap(), ), Super:End() )
+   METHOD End()            INLINE ( if( !Empty( ::hBmp ), ::DeleteBitmap(), ), ::Super:End() )
 
    METHOD HandleEvent( nMsg, nWParam, nLParam )
 
@@ -702,7 +702,7 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TTpvMesa
 
    end case
 
-Return ( Super:HandleEvent( nMsg, nWParam, nLParam ) )
+Return ( ::Super:HandleEvent( nMsg, nWParam, nLParam ) )
 
 //---------------------------------------------------------------------------//
 

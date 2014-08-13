@@ -9,7 +9,7 @@ FWLIB 				= 	\Fwh102\Lib
 
 RESOURCE 			= 	.\Resource
 
-BORLAND 				= 	\Bcc55
+BORLAND 			= 	\Bcc55
 BORLANDLIB 			= 	\Bcc55\Lib\Psdk
 
 IMG2PDFLIB 			= 	\Img2Pdf

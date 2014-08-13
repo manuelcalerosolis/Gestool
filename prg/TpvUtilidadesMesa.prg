@@ -89,79 +89,12 @@ CLASS TpvUtilidadesMesa FROM TpvTactil
 	METHOD oOriginal() 						INLINE ( ::oSender:oTemporalDivisionOriginal )
 	METHOD oNuevo() 						INLINE ( ::oSender:oTemporalDivisionNuevoTicket )
 
-//---------------------------------------------------------------------------//
+   	METHOD lShowEscandallosDivision()
 
-   INLINE METHOD lShowEscandallosDivision()
+   	METHOD cInfo()
 
-      local cFocusOriginal
-      local cFocusNuevoTicket
-
-      cFocusOriginal      := Upper( ::oOriginal():OrdSetFocus() )
-
-      if ( cFocusOriginal == Upper( "nRecNum" ) )
-         ::oOriginal():OrdSetFocus( "lRecNum" )
-      else
-         ::oOriginal():OrdSetFocus( "nRecNum" )
-      end if
-
-      cFocusNuevoTicket   := Upper( ::oNuevo():OrdSetFocus() )
-
-      if ( cFocusNuevoTicket == Upper( "nRecNum" ) )
-         ::oNuevo():OrdSetFocus( "lRecNum" )
-      else
-         ::oNuevo():OrdSetFocus( "nRecNum" )
-      end if
-
-      ::oBrwOriginal:GoTop()
-      ::oBrwOriginal:Refresh()
-
-      ::oBrwNuevoTicket:GoTop()
-      ::oBrwNuevoTicket:Refresh()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
-   INLINE METHOD cInfo()
-
-      local cInfo       := ""
-
-      cInfo             += "Sesión : " + Alltrim( Transform( cCurSesion(), "######" ) ) + Space( 1 )
-
-      if ::lNuevoTicket()
-         cInfo          += "*Nuevo*"
-      else
-         cInfo          += "Ticket : " + ::oSelectedPunto:cSerie + "/" + Alltrim( ::oSelectedPunto:cNumero) + Space( 1 )
-      end if
-
-      
-      if !Empty( ::oSelectedPunto:dFecha ) .and. !::lNuevoTicket()
-         cInfo          += Dtoc( ::oSelectedPunto:dFecha ) + Space( 1 )
-      end if
-
-      if !Empty( ::oSelectedPunto:cHora ) .and. !::lNuevoTicket()
-         cInfo          += ( ::oSelectedPunto:cHora ) + Space( 1 )
-      end if
-
-      RETURN ( cInfo )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
-	INLINE METHOD cTxtUbicacion()
+	METHOD cTxtUbicacion()
 		
-		local cTxtUbicacion	:= ""
-
-		cTxtUbicacion 		+= ::oRestaurante:cTextoSala( ::oSelectedPunto:cSala ) + Space( 1 ) + ":" + Space( 1 )
-		cTxtUbicacion 		+= Rtrim( ::oSelectedPunto:cPuntoVenta )
-
-		RETURN ( cTxtUbicacion )
-
-	ENDMETHOD
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -898,3 +831,71 @@ METHOD AddAllLine( oOrigen, oDestino ) class TpvUtilidadesMesa
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD lShowEscandallosDivision()
+
+  local cFocusOriginal
+  local cFocusNuevoTicket
+
+  cFocusOriginal      := Upper( ::oOriginal():OrdSetFocus() )
+
+  if ( cFocusOriginal == Upper( "nRecNum" ) )
+     ::oOriginal():OrdSetFocus( "lRecNum" )
+  else
+     ::oOriginal():OrdSetFocus( "nRecNum" )
+  end if
+
+  cFocusNuevoTicket   := Upper( ::oNuevo():OrdSetFocus() )
+
+  if ( cFocusNuevoTicket == Upper( "nRecNum" ) )
+     ::oNuevo():OrdSetFocus( "lRecNum" )
+  else
+     ::oNuevo():OrdSetFocus( "nRecNum" )
+  end if
+
+  ::oBrwOriginal:GoTop()
+  ::oBrwOriginal:Refresh()
+
+  ::oBrwNuevoTicket:GoTop()
+  ::oBrwNuevoTicket:Refresh()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD cInfo()
+
+  local cInfo       := ""
+
+  cInfo             += "Sesión : " + Alltrim( Transform( cCurSesion(), "######" ) ) + Space( 1 )
+
+  if ::lNuevoTicket()
+     cInfo          += "*Nuevo*"
+  else
+     cInfo          += "Ticket : " + ::oSelectedPunto:cSerie + "/" + Alltrim( ::oSelectedPunto:cNumero) + Space( 1 )
+  end if
+
+  
+  if !Empty( ::oSelectedPunto:dFecha ) .and. !::lNuevoTicket()
+     cInfo          += Dtoc( ::oSelectedPunto:dFecha ) + Space( 1 )
+  end if
+
+  if !Empty( ::oSelectedPunto:cHora ) .and. !::lNuevoTicket()
+     cInfo          += ( ::oSelectedPunto:cHora ) + Space( 1 )
+  end if
+
+RETURN ( cInfo )
+
+//---------------------------------------------------------------------------//
+
+METHOD cTxtUbicacion()
+	
+	local cTxtUbicacion	:= ""
+
+	cTxtUbicacion 		+= ::oRestaurante:cTextoSala( ::oSelectedPunto:cSala ) + Space( 1 ) + ":" + Space( 1 )
+	cTxtUbicacion 		+= Rtrim( ::oSelectedPunto:cPuntoVenta )
+
+RETURN ( cTxtUbicacion )
+
+//---------------------------------------------------------------------------//
+

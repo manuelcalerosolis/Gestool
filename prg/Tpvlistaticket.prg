@@ -142,45 +142,7 @@ CLASS TpvListaTicket
 
    METHOD Imprimir( lPrevisualizar )
    
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD UnSelectButtons()
-
-      if !Empty( ::oBtnAbiertos )
-         ::oBtnAbiertos:UnSelected()
-      end if
-
-      if !Empty( ::oBtnTodos )
-         ::oBtnTodos:UnSelected()
-      end if 
-
-      if !Empt( ::oBtnFiltro )
-         ::oBtnFiltro:UnSelected()
-      end if 
-      
-      if !Empty( ::oBtnLstGeneral )
-         ::oBtnLstGeneral:UnSelected()
-      end if 
-
-      if !Empty( ::oBtnLstMesas )
-         ::oBtnLstMesas:UnSelected()
-      end if 
-
-      if !Empty( ::oBtnLstRecoger )
-         ::oBtnLstRecoger:UnSelected()
-      end if 
-
-      if !Empty( ::oBtnLstLlevar )
-         ::oBtnLstLlevar:UnSelected()
-      end if 
-
-      if !Empty( ::oBtnLstEncargar )
-         ::oBtnLstEncargar:UnSelected()
-      end if 
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
+   METHOD UnSelectButtons()
 
 END CLASS
 
@@ -1280,3 +1242,42 @@ METHOD Imprimir( lPrevisualizar )
 Return ( self )   
 
 //-------------------------------------------------------------------------//
+
+METHOD UnSelectButtons()
+
+   if !Empty( ::oBtnAbiertos )
+      ::oBtnAbiertos:UnSelected()
+   end if
+
+   if !Empty( ::oBtnTodos )
+      ::oBtnTodos:UnSelected()
+   end if 
+
+   if !Empt( ::oBtnFiltro )
+      ::oBtnFiltro:UnSelected()
+   end if 
+   
+   if !Empty( ::oBtnLstGeneral )
+      ::oBtnLstGeneral:UnSelected()
+   end if 
+
+   if !Empty( ::oBtnLstMesas )
+      ::oBtnLstMesas:UnSelected()
+   end if 
+
+   if !Empty( ::oBtnLstRecoger )
+      ::oBtnLstRecoger:UnSelected()
+   end if 
+
+   if !Empty( ::oBtnLstLlevar )
+      ::oBtnLstLlevar:UnSelected()
+   end if 
+
+   if !Empty( ::oBtnLstEncargar )
+      ::oBtnLstEncargar:UnSelected()
+   end if 
+
+Return ( self )   
+
+//-------------------------------------------------------------------------//
+

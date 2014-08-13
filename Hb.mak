@@ -5,12 +5,12 @@ FWINCLUDE 			= 	\Fwh1406\Include
 GTINCLUDE 			= 	.\Include
 
 HBLIB 				= 	\harbour_bcc582\Lib
-FWLIB 				= 	\Fwh102\Lib
+FWLIB 				= 	\Fwh1406\lib
 
 RESOURCE 			= 	.\Resource
 
 BORLAND 			= 	\Bcc582
-BORLANDLIB 			= 	\Bcc582\Lib\Psdk
+BORLANDLIB 			= 	\Bcc582\lib
 
 IMG2PDFLIB 			= 	\Img2Pdf
 
@@ -44,7 +44,6 @@ WebBrow.prg             	\
 TMySql.prg              	\
 TComercio.prg           	\
 Comun.prg               	\
-Valtostr.prg            	\
 AccessCode.prg          	\
 Tgraph.prg              	\
 Toleexcel.prg           	\
@@ -371,7 +370,6 @@ TpvPunto.prg            \
 TpvMesa.prg             \
 TpvSalon.prg            \
 TScripts.prg            \
-OutLook2010.prg         \
 TTreevc3.prg            \
 Cuaderno.prg 				\
 FacturarLineasAlbaranes.prg \
@@ -736,7 +734,6 @@ TpvPunto.obj            \
 TpvMesa.obj             \
 TpvSalon.obj            \
 TScripts.obj            \
-OutLook2010.obj         \
 Cuaderno.obj 				\
 FacturarLineasAlbaranes.obj \
 Components.obj 			\
@@ -758,27 +755,13 @@ $(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
   	-Gn -aa -Tpe -s -r -m -V4.0 +
 (BORLAND)\lib\c0w32.obj         +
 $(OBJ)\Factu.obj                +
-$(OBJ)\Font.obj                 +
 $(OBJ)\Tinitshell.obj           +
 $(OBJ)\WebBrow.obj              +
 $(OBJ)\TMySql.obj               +
 $(OBJ)\TComercio.obj            +
 $(OBJ)\Comun.obj                +
-$(OBJ)\Valtostr.obj             +
 $(OBJ)\AccessCode.obj           +
 $(OBJ)\DialogExtend.obj         +
-$(OBJ)\Window.obj               +
-$(OBJ)\Menu.obj 				+
-$(OBJ)\Tmsgitem.obj 			+
-$(OBJ)\Mdiframe.obj 			+
-$(OBJ)\Rect.obj                 +
-$(OBJ)\Brush.obj                +
-$(OBJ)\Bitmap.obj               +
-$(OBJ)\Splitter.obj             +
-$(OBJ)\TpanelEx.obj             +
-$(OBJ)\TCalenda.obj             +
-$(OBJ)\MdiClien.obj             +
-$(OBJ)\Rebar.obj                +
 $(OBJ)\Tgraph.obj               +
 $(OBJ)\TViewImg.obj             +
 $(OBJ)\Toleexcel.obj            +
@@ -866,9 +849,6 @@ $(OBJ)\RpreviewC3.obj           +
 $(OBJ)\Rhtml.obj                +
 $(OBJ)\Tshell.obj               +
 $(OBJ)\RocolumnC3.obj           +
-$(OBJ)\Wininet.obj              +
-$(OBJ)\Attrib.obj               +
-$(OBJ)\Comm.obj                 +
 $(OBJ)\Rfile.obj                +
 $(OBJ)\Tdprnc3.obj              +
 $(OBJ)\Animat.obj               +
@@ -1110,35 +1090,52 @@ $(OBJ)\Components.obj 			+
 $(OBJ)\TLabelGenerator.obj 		+
 $(OBJ)\MsTable.obj
 $<,$*
-$(FWLIB)\xc5h.lib               +
 $(HBLIB)\Eagle1.lib             +
-$(HBLIB)\MySql.lib              +
-$(FWLIB)\FiveHX.lib             +
+$(FWLIB)\FiveH.lib              +
 $(FWLIB)\FiveHC.lib             +
-$(HBLIB)\rtl.lib                +
-$(HBLIB)\vm.lib                 +
-$(HBLIB)\gtgui.lib              +
-$(HBLIB)\lang.lib               +
-$(HBLIB)\macro.lib              +
-$(HBLIB)\rdd.lib                +
-$(HBLIB)\dbfntx.lib             +
-$(HBLIB)\dbfcdx.lib             +
-$(HBLIB)\dbffpt.lib             +
-$(HBLIB)\hbsix.lib              +
-$(HBLIB)\b32\rddads.lib         +
-$(HBLIB)\b32\ace32.lib          +
-$(HBLIB)\common.lib             +
-$(HBLIB)\pp.lib                 +
-$(HBLIB)\ct.lib                 +
-$(HBLIB)\codepage.lib           +
-$(HBLIB)\pcrepos.lib            +
-$(IMG2PDFLIB)\Image2pdf.lib     +
-$(HBLIB)\hbzip.lib              +
-$(HBLIB)\zlib.lib               +
-$(BORLANDLIB)\msimg32.lib       +
-$(BORLANDLIB)\cw32.lib          +
-$(BORLANDLIB)\import32.lib      +
-$(BORLANDLIB)\psdk\wininet.lib,
+$(FWLIB)\libmysql.lib           +
+$(HBLIB)\hbwin.lib 				+
+$(HBLIB)\gtwin.lib 				+ 
+$(HBLIB)\gtgui.lib 				+ 
+$(HBLIB)\hbrtl.lib 				+ 
+$(HBLIB)\hbvm.lib 				+ 
+$(HBLIB)\hblang.lib 			+
+$(HBLIB)\hbmacro.lib 			+
+$(HBLIB)\hbrdd.lib 				+ 
+$(HBLIB)\rddntx.lib 			+
+$(HBLIB)\rddcdx.lib 			+
+$(HBLIB)\rddfpt.lib 			+
+$(HBLIB)\hbsix.lib 				+ 
+$(HBLIB)\hbdebug.lib 			+
+$(HBLIB)\hbcommon.lib 			+
+$(HBLIB)\hbpp.lib 				+ 
+$(HBLIB)\hbcpage.lib 			+
+$(HBLIB)\hbcplr.lib 			+
+$(HBLIB)\hbct.lib 				+ 
+$(HBLIB)\hbpcre.lib 			+
+$(HBLIB)\xhb.lib 				+ 
+$(HBLIB)\hbziparc.lib 			+
+$(HBLIB)\hbmzip.lib 			+
+$(HBLIB)\hbzlib.lib 			+
+$(HBLIB)\minizip.lib 			+
+$(HBLIB)\png.lib 				+ 
+$(HBLIB)\hbcurl.lib 			+
+$(HBLIB)\hbusrrdd.lib 			+
+$(HBLIB)\libcurl.lib 			+
+$(HBLIB)\b32\rddads.lib			+
+$(HBLIB)\b32\ace32.lib 			+
+$(BORLANDLIB)\cw32.lib 			+ 
+$(BORLANDLIB)\uuid.lib 			+ 
+$(BORLANDLIB)\import32.lib 		+ 
+$(BORLANDLIB)\ws2_32.lib 		+ 
+$(BORLANDLIB)\psdk\odbc32.lib 	+
+$(BORLANDLIB)\psdk\nddeapi.lib 	+
+$(BORLANDLIB)\psdk\iphlpapi.lib +
+$(BORLANDLIB)\psdk\msimg32.lib 	+
+$(BORLANDLIB)\psdk\psapi.lib 	+ 
+$(BORLANDLIB)\psdk\rasapi32.lib +
+$(BORLANDLIB)\psdk\gdiplus.lib 	+
+$(BORLANDLIB)\psdk\shell32.lib,
 $(RESOURCE)\GstDialog.Res       +
 $(RESOURCE)\GstTactil.Res       +
 $(RESOURCE)\GstImage1.Res       +

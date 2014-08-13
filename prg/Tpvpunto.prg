@@ -173,52 +173,13 @@ CLASS sTpvPunto
 
    METHOD nTotalMultipleTicket()
 
-   //------------------------------------------------------------------------//
+   METHOD cTextoTotalTiket()
+   METHOD nImagenTiket( n )
+   METHOD cAliasTiket( n )
 
-   Inline Method cTextoTotalTiket()
-
-      local cTexto         := ::cTextoTiket() + CRLF
-      cTexto               += "[ Total : " + lTrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + " ]"
-
-      Return ( cTexto )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method nImagenTiket( n )
-
-      local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
-
-      if !Empty( ::cTiket() ) .and. ::lAbierto
-         ++nImagen
-      end if
-
-      Return ( nImagen )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method cAliasTiket( n )
-
-      local cTexto         := Upper( Rtrim( ::cAlias ) ) + CRLF
-      cTexto               += "[ Total : " + lTrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + " ]"
-
-      Return ( cTexto )
-
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Inline Method SetSalon( oSalon )
-      ::oSalon                := oSalon
-   EndMethod
-
-   //------------------------------------------------------------------------//
-
-   Method GetSalon( oSalon )  INLINE ( ::oSalon )
-   Method GetSalonWnd()       INLINE ( ::oSalon:oWnd:oClient )
+   METHOD SetSalon( oSalon )  INLINE ( ::oSalon := oSalon )
+   METHOD GetSalon( oSalon )  INLINE ( ::oSalon )
+   METHOD GetSalonWnd()       INLINE ( ::oSalon:oWnd:oClient )
 
    //------------------------------------------------------------------------//
 
@@ -555,3 +516,33 @@ METHOD nTotalMultipleTicket()
 Return nTotal
 
 //---------------------------------------------------------------------------//
+
+Method cTextoTotalTiket()
+
+   local cTexto         := ::cTextoTiket() + CRLF
+   cTexto               += "[ Total : " + lTrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + " ]"
+
+Return ( cTexto )
+
+//------------------------------------------------------------------------//
+
+Method nImagenTiket( n )
+
+   local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
+
+   if !Empty( ::cTiket() ) .and. ::lAbierto
+      ++nImagen
+   end if
+
+Return ( nImagen )
+
+//------------------------------------------------------------------------//
+
+Method cAliasTiket( n )
+
+   local cTexto         := Upper( Rtrim( ::cAlias ) ) + CRLF
+   cTexto               += "[ Total : " + lTrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + " ]"
+
+Return ( cTexto )
+
+//------------------------------------------------------------------------//

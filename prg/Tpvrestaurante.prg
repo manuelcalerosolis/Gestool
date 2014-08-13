@@ -603,7 +603,7 @@ Method End() CLASS TTpvRestaurante
 
    ::oSalon    := nil
 
-Return ( Super:End() )
+Return ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 

@@ -807,192 +807,27 @@ CLASS TpvTactil
    METHOD GeneraVale()
    METHOD lLiquidaVale( sCobro )
 
-   //-----------------------------------------------------------------------//
-
-   INLINE METHOD cValeTicket( cNumeroTicket )
-
-      local cValeTicket := ""
-
-      ::oTiketCabecera:GetStatus()
-
-      if ::oTiketCabecera:SeekInOrd( cNumeroTicket, "cTikVal" )
-         cValeTicket    := ::cNumeroTicket()
-      end if
-
-      ::oTiketCabecera:SetStatus()
-
-      RETURN ( cValeTicket )
-
-   ENDMETHOD
-
-   //-----------------------------------------------------------------------//
+   METHOD cValeTicket( cNumeroTicket )
 
    METHOD cTextoLineaTicket()    INLINE ( ::cTextoLinea( ::oTiketLinea ) )
 
-   INLINE METHOD cTextoLinea( oDbf )
+   METHOD cTextoLinea( oDbf )
 
-      local cTexto
+   METHOD cTextoLineaDivision( oDbf )
 
-      DEFAULT oDbf   := ::oTemporalLinea
+   METHOD lShowEscandallos()
 
-      cTexto         := Rtrim( oDbf:cNomTil )
+   METHOD OnClickImportesExactos()
 
-      if !Empty( oDbf:cComent )
-         cTexto      := "[*] " + cTexto
-      end if
+   METHOD TreeReportingChanged() 
 
-      if !Empty( oDbf:cNcmTil )
-         cTexto      += " con " + CRLF + oDbf:cNcmTil
-      end if
+   METHOD ResizedCol( nSize )
 
-      if !Empty( oDbf:lKitChl )
-         cTexto      := Space( 3 ) + "<" + cTexto + ">"
-      end if
+   METHOD ResizedFont( nSize )
 
-      if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
-         cTexto      := Space( 3 ) + "<" + cTexto + ">"
-      end if
+   METHOD ActualizaTarifaCliente()      
 
-      RETURN ( alltrim( cTexto ) )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD cTextoLineaDivision( oDbf )
-
-      local cTexto
-
-      cTexto         := Rtrim( oDbf:cNomTil )
-
-      if !Empty( oDbf:cComent )
-         cTexto      := "[*] " + cTexto
-      end if
-
-      if !Empty( oDbf:cNcmTil )
-         cTexto      += " con " + CRLF + oDbf:cNcmTil
-      end if
-
-      if !Empty( oDbf:lKitChl ) 
-         cTexto      := Space( 3 ) + "<" + cTexto + ">"
-      end if
-
-      if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
-         cTexto      := Space( 3 ) + "<" + cTexto + ">"
-      end if
-
-      RETURN ( cTexto )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD lShowEscandallos()
-
-      local cFocus
-
-      cFocus         := Upper( ::oTemporalLinea:OrdSetFocus() )
-
-      if ( cFocus == Upper( "nRecNum" ) )
-         ::oTemporalLinea:OrdSetFocus( "lRecNum" )
-      else
-         ::oTemporalLinea:OrdSetFocus( "nRecNum" )
-      end if
-
-      ::oBrwLineas:GoTop()
-      ::oBrwLineas:Refresh()
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
-   INLINE METHOD OnClickImportesExactos()
-
-      SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
-
-      if uFieldEmpresa( "lImpExa" )
-         ::oBtnImportesExactos:Selected()
-      else 
-         ::oBtnImportesExactos:UnSelected()
-      end if 
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-//--------------------------------------------------------------------------//
-
-   INLINE METHOD TreeReportingChanged() 
-
-      local cTitle   := ::oTreeReporting:GetSelText()
-   
-      if cTitle == "Listado"
-         ::lHideFecha()
-      else
-         ::lShowFecha()
-      end if
-   
-      ::oDlg:cTitle( ::cSubTitle + " : [" + cTitle + "]" )
-   
-      Return ( Self )
-
-   ENDMETHOD
-
-//---------------------------------------------------------------------------//
-
-   INLINE METHOD ResizedCol( nSize )
-
-      local nResize := 24
-
-      if !::l1024 .and. nSize > nResize
-
-         nSize -= nResize
-
-      end if
-
-      Return( nSize )
-
-   ENDMETHOD   
-
-//--------------------------------------------------------------------------//
-
-INLINE METHOD ResizedFont( nSize )
-
-      local nResize := 25 //es un porcentaje
-
-      if !::l1024
-
-         nSize -= ( nSize * nResize ) / 100
-
-      end if
-
-      Return( nSize )
-
-   ENDMETHOD
-
-METHOD ActualizaTarifaCliente()      
-
-//--------------------------------------------------------------------------//
-
-INLINE METHOD CambiarUnidadesPrecio( lGetPrecio )
-
-   DEFAULT lGetPrecio        := !::lGetPrecio
-
-   ::lGetPrecio              := lGetPrecio
-
-   if ::lGetPrecio
-      ::oBtnPrecioUnidades:LoadBitmap( "Currency_euro_32" ) 
-   else
-      ::oBtnPrecioUnidades:LoadBitmap( "Paginator_32" )
-   end if 
-
-   ::oBtnPrecioUnidades:Refresh()
-
-   RETURN ( Self )
-
-ENDMETHOD
+   METHOD CambiarUnidadesPrecio( lGetPrecio )
 
 //--------------------------------------------------------------------------//
 
@@ -9760,7 +9595,7 @@ METHOD cUbicacion()
      ::oGrpSalones:Refresh()
   end if
 
-  RETURN ( cUbicacion )
+RETURN ( cUbicacion )
 
 //-----------------------------------------------------------------------//
 
@@ -9784,7 +9619,7 @@ METHOD cInfo()
      cInfo          += ( ::oTiketCabecera:cTimCre ) + Space( 1 )
   end if
 
-  RETURN ( cInfo )
+RETURN ( cInfo )
 
 //-----------------------------------------------------------------------//
 
@@ -9814,7 +9649,7 @@ METHOD cInfoPendiente()
      cInfo          += Alltrim( Trans( ::oTiketCabecera:nTotTik, ::cPictureTotal ) )
   end if
 
-  RETURN ( cInfo )
+RETURN ( cInfo )
 
 //-----------------------------------------------------------------------//
 
@@ -9828,7 +9663,7 @@ METHOD cEstado()
      cEstado        := "Cerrado"
   end if
 
-  RETURN ( cEstado )
+RETURN ( cEstado )
 
 //-----------------------------------------------------------------------//
 
@@ -9846,7 +9681,7 @@ METHOD SetCombinando( lCombinando )
      ::ShowCombinado( .f. )
   end if 
 
-  RETURN ( Self )
+RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
@@ -9866,7 +9701,7 @@ METHOD ShowCombinado( lShowCombinando )
    
   ::oBtnCombinado:Refresh() 
 
-  RETURN ( Self )
+RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
@@ -9891,7 +9726,169 @@ METHOD SetOrdenComanda( lCombinando )
 
 //-----------------------------------------------------------------------//
 
+METHOD cValeTicket( cNumeroTicket )
+
+   local cValeTicket := ""
+
+   ::oTiketCabecera:GetStatus()
+
+   if ::oTiketCabecera:SeekInOrd( cNumeroTicket, "cTikVal" )
+      cValeTicket    := ::cNumeroTicket()
+   end if
+
+   ::oTiketCabecera:SetStatus()
+
+RETURN ( cValeTicket )
+
 //---------------------------------------------------------------------------//
+
+METHOD cTextoLinea( oDbf )
+
+   local cTexto
+
+   DEFAULT oDbf   := ::oTemporalLinea
+
+   cTexto         := Rtrim( oDbf:cNomTil )
+
+   if !Empty( oDbf:cComent )
+      cTexto      := "[*] " + cTexto
+   end if
+
+   if !Empty( oDbf:cNcmTil )
+      cTexto      += " con " + CRLF + oDbf:cNcmTil
+   end if
+
+   if !Empty( oDbf:lKitChl )
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+   if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+RETURN ( alltrim( cTexto ) )
+
+//------------------------------------------------------------------------//
+
+METHOD cTextoLineaDivision( oDbf )
+
+   local cTexto
+
+   cTexto         := Rtrim( oDbf:cNomTil )
+
+   if !Empty( oDbf:cComent )
+      cTexto      := "[*] " + cTexto
+   end if
+
+   if !Empty( oDbf:cNcmTil )
+      cTexto      += " con " + CRLF + oDbf:cNcmTil
+   end if
+
+   if !Empty( oDbf:lKitChl ) 
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+   if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+RETURN ( cTexto )
+
+//------------------------------------------------------------------------//
+
+METHOD lShowEscandallos()
+
+   local cFocus
+
+   cFocus         := Upper( ::oTemporalLinea:OrdSetFocus() )
+
+   if ( cFocus == Upper( "nRecNum" ) )
+      ::oTemporalLinea:OrdSetFocus( "lRecNum" )
+   else
+      ::oTemporalLinea:OrdSetFocus( "nRecNum" )
+   end if
+
+   ::oBrwLineas:GoTop()
+   ::oBrwLineas:Refresh()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD OnClickImportesExactos()
+
+   SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
+
+   if uFieldEmpresa( "lImpExa" )
+      ::oBtnImportesExactos:Selected()
+   else 
+      ::oBtnImportesExactos:UnSelected()
+   end if 
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD TreeReportingChanged() 
+
+   local cTitle   := ::oTreeReporting:GetSelText()
+
+   if cTitle == "Listado"
+      ::lHideFecha()
+   else
+      ::lShowFecha()
+   end if
+
+   ::oDlg:cTitle( ::cSubTitle + " : [" + cTitle + "]" )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ResizedCol( nSize )
+
+   local nResize := 24
+
+   if !::l1024 .and. nSize > nResize
+
+      nSize -= nResize
+
+   end if
+
+Return ( nSize )
+
+//--------------------------------------------------------------------------//
+
+METHOD ResizedFont( nSize )
+
+   local nResize := 25 //es un porcentaje
+
+   if !::l1024
+
+      nSize -= ( nSize * nResize ) / 100
+
+   end if
+
+Return ( nSize )
+
+//--------------------------------------------------------------------------//
+
+METHOD CambiarUnidadesPrecio( lGetPrecio )
+
+   DEFAULT lGetPrecio        := !::lGetPrecio
+
+   ::lGetPrecio              := lGetPrecio
+
+   if ::lGetPrecio
+      ::oBtnPrecioUnidades:LoadBitmap( "Currency_euro_32" ) 
+   else
+      ::oBtnPrecioUnidades:LoadBitmap( "Paginator_32" )
+   end if 
+
+   ::oBtnPrecioUnidades:Refresh()
+
+RETURN ( Self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

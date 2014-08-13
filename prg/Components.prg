@@ -457,7 +457,7 @@ METHOD New( idGet, oContainer ) CLASS ComponentGet
 
    ::idGet  := idGet
 
-   Super:New( oContainer )
+   ::Super:New( oContainer )
 
 RETURN ( Self )
 
@@ -500,13 +500,13 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS ComponentGetSay
    ::idSay  := idSay
    ::idText := idText
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
 RETURN ( Self )
 
 METHOD Resource() CLASS ComponentGetSay
 
-   Super:Resource()
+   ::Super:Resource()
 
    REDEFINE GET   ::oSayControl ;
       VAR         ::cSayValue ;
@@ -546,7 +546,7 @@ END CLASS
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetCliente
 
-   Super:New( idGet, idSay, idText, oContainer )
+   ::Super:New( idGet, idSay, idText, oContainer )
 
    ::bValid       := {|| cClient( ::oGetControl, TDataView():Clientes( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwClient( ::oGetControl, ::oSayControl ) }
@@ -571,7 +571,7 @@ END CLASS
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoCliente
 
-   Super:New( idGet, idSay, idText, oContainer )
+   ::Super:New( idGet, idSay, idText, oContainer )
 
    ::uGetValue    := Space( 4 )
 
@@ -599,7 +599,7 @@ END CLASS
 
 METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
 
-   Super:New( idGet, idSay, nil, oContainer )
+   ::Super:New( idGet, idSay, nil, oContainer )
 
    ::idBtn        := idBtn
 
@@ -612,7 +612,7 @@ Return ( Self )
 
 METHOD Resource() CLASS GetDocumento
 
-   Super:Resource()
+   ::Super:Resource()
 
    TBtnBmp():ReDefine( ::idBtn, "Printer_pencil_16",,,,,{|| EdtDocumento( ::uGetValue ) }, ::oContainer:oDlg, .f., , .f.,  )
 
@@ -638,7 +638,7 @@ END CLASS
 
 METHOD New( idGet, idBtn, oContainer ) CLASS GetPrinter
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::idBtn        := idBtn
 
@@ -672,7 +672,7 @@ END CLASS
 
 METHOD New( idGet, oContainer ) CLASS GetSerie
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::uGetValue    := "A"
 
@@ -712,7 +712,7 @@ END CLASS
 
 METHOD New( idGet, oContainer ) CLASS GetNumero
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::uGetValue    := 1
    
@@ -755,7 +755,7 @@ END CLASS
 
 METHOD New( idGet, oContainer ) CLASS GetSufijo
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::uGetValue    := RetSufEmp()
 
@@ -795,7 +795,7 @@ END CLASS
 
 METHOD New( idGet, oContainer ) CLASS GetFecha
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::uGetValue    := Date()
    
@@ -830,7 +830,7 @@ END CLASS
 
 METHOD New( idCheck, idGet, oContainer ) CLASS GetCopias
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::idCheck      := idCheck
 
@@ -871,7 +871,7 @@ END CLASS
 
 METHOD New( idGet, oContainer ) CLASS GetPorcentaje
 
-   Super:New( idGet, oContainer )
+   ::Super:New( idGet, oContainer )
 
    ::uGetValue    := 0
    
@@ -928,7 +928,7 @@ END CLASS
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
 
-   Super:New( idGet, idSay, idText, oContainer )
+   ::Super:New( idGet, idSay, idText, oContainer )
 
    ::bValid       := {|| cProvee( ::oGetControl, TDataView():Proveedores( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
@@ -953,7 +953,7 @@ END CLASS
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoProveedor
 
-   Super:New( idGet, idSay, idText, oContainer )
+   ::Super:New( idGet, idSay, idText, oContainer )
 
    ::uGetValue    := Space( 4 )
 

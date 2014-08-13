@@ -29,7 +29,7 @@ Function GetBic( cEntidad )
 
    local cDevuelve
    local BIC         := {=>}
-   
+
    BIC[ "0030" ]     := 'ESPCESMMXXX'
    BIC[ "2100" ]     := 'CAIXESBBXXX'
    BIC[ "0073" ]     := 'OPENESMMXXX'
@@ -188,11 +188,11 @@ Function GetBic( cEntidad )
    BIC[ "3188" ]     := 'CCRIES2A188'
    BIC[ "9000" ]     := 'ESPBESMMXXX'
 
-   TRY
+   BEGIN SEQUENCE 
       cDevuelve      := BIC[ cEntidad ]
-   CATCH
-      cDevuelve      := space(10)
-   END
+   RECOVER
+      cDevuelve      := Space(10)
+   END SEQUENCE
 
 Return cDevuelve
 
