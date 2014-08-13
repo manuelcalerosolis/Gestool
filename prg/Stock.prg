@@ -2276,8 +2276,8 @@ RETURN ( lDup )
 
       for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
 
-         if ( Empty( cAlmcenOrigen )     .or. aStock:cCodigoAlmacen >= cAlmcenOrigen   ) .and. ;
-            ( Empty( cAlmacenDestino )   .or. aStock:cCodigoAlmacen <= cAlmacenDestino ) .and. ;
+         if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
+            ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) .and. ;
             ( aStock:nUnidades != 0 )
 
             aStock:Save( ::oDbfStock )

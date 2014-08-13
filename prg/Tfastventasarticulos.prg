@@ -1959,28 +1959,11 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
       ::oDbf:cCodFab  := ::oDbfArt:cCodFab
       ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-/*
-      ::oDbf:cCodGrp  := ""
-      ::oDbf:cCodCli  := ""
-      ::oDbf:cNomCli  := ""
-      ::oDbf:cPobCli  := ""
-      ::oDbf:cPrvCli  := ""
-      ::oDbf:cPosCli  := ""
-      ::oDbf:cCodAlm  := "" 
-      ::oDbf:cCodPago := ""
-      ::oDbf:cCodRut  := ""
-      ::oDbf:cCodAge  := ""
-      ::oDbf:cCodTrn  := ""
-      ::oDbf:cCodUsr  := ""
-*/
-      // Añadimos un nuevo registro--------------------------------------------
-
-      ::InsertIfValid()
 
       // Añadimos los stocks---------------------------------------------------
 
-      if lStock
-         ::oStock:SaveStockArticulo( ::oDbf:cCodArt, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
+      if ::InsertIfValid() .and. lStock
+         ::oStock:SaveStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
       end if
  
       // Siguiente-------------------------------------------------------------
