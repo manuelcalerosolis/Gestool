@@ -1,10 +1,11 @@
-#include "fivewin.ch"
+#include "fivewin.ch" 
 #include "oficebar.ch"
 
-
+#ifdef __XHARBOUR__
+   #define hb_CurDrive CurDrive
+#endif   
 
 CLASS TDotNetButton
-
 
       CLASS VAR nInitId     AS NUMERIC INIT 100 SHARED
       DATA aCoors           AS ARRAY INIT {0,0,0,0}
@@ -527,33 +528,6 @@ return 0
 ***********************************************************************************************
   METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TDotNetButton
 ***********************************************************************************************
-local oPopup
-local o := self
-local nWidth
-local cFile := lower(curdrive() + ":\" + curdir() + "\")
-
-  MENU oPopup POPUP
-     if ::oGrupo:lByLines
-        MENUITEM GROUPHEADER  ACTION ( o:lHead := .t., o:oGrupo:ResizeLines(),o:oParent:Refresh() )
-        MENUITEM MEDIUM       ACTION ( o:lHead := .f., o:lEnd := .f., o:oGrupo:ResizeLines(),o:oParent:Refresh() )
-        MENUITEM ENDGROUP     ACTION ( o:lEnd  := .t., o:oGrupo:ResizeLines(),o:oParent:Refresh() )
-        SEPARATOR
-     endif
-     MENUITEM ADDIMAGE
-     MENU
-        MENUITEM FROMFILE     ACTION ( o:cBmp := strtran(lower(cGetFile("*.bmp", "Seleccione Imágen" )),cFile,""), o:oParent:Refresh())
-        MENUITEM FROMDLL      ACTION ( ::cGetFromDll() )
-     ENDMENU
-     MENUITEM CHANGESIZE      ACTION ( nWidth := o:nWidth, DlgChangeSize( @nWidth, .t.  ), o:nWidth := nWidth, o:oGrupo:ResizeItems(), o:oParent:Refresh() )
-     MENUITEM DELETEBUTTON    ACTION ( o:Delete(),o:oGrupo:ResizeItems(),o:oParent:Refresh())
-     MENUITEM if(o:oPopup == nil,ADDMENU,RESETMENU)         ACTION ( o:oPopup := if( o:oPopup == nil,MakePopup( o ),nil), o:oGrupo:ResizeItems(),o:oParent:Refresh())
-     SEPARATOR
-     MENUITEM EDIT            ACTION o:Edit()
-     MENUITEM DELETETEXT      ACTION ( o:cPrompt := "",o:oParent:Refresh())
-     MENUITEM "Copy"          ACTION o:Copy()
-  ENDMENU
-  ACTIVATE POPUP oPopup AT nRow, nCol OF ::oParent
-
 
 return 0
 

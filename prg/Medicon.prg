@@ -1,12 +1,5 @@
-#ifndef __PDA__
-   #include "FiveWin.ch"
-   #include "Factu.ch" 
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
-#ifndef __PDA__
+#include "FiveWin.ch"
+#include "Factu.ch" 
 
 #define  HKEY_LOCAL_MACHINE      2147483650
 
@@ -14,8 +7,6 @@ static cFullCurDir
 
 static oMeter
 static nMeter  := 0
-
-#endif
 
 //--------------------------------------------------------------------------//
 
@@ -119,8 +110,6 @@ FUNCTION CompileParam( cExpression )
 RETURN ( bExpression )
 
 //----------------------------------------------------------------------------//
-
-#ifndef __908__
 /*
 Camino completo dentro de un disco
 */
@@ -129,7 +118,11 @@ FUNCTION FullCurDir()
 
    if Empty( cFullCurDir )
 
-      cFullCurDir    := CurDrive()
+#ifdef __XHARBOUR__
+      cFullCurDir    := curdrive()
+#else
+      cFullCurDir    := hb_curdrive()
+#endif   
 
       if IsAlpha( cFullCurDir )
          cFullCurDir += ":\"
@@ -142,23 +135,6 @@ FUNCTION FullCurDir()
 RETURN ( cFullCurDir )
 
 //----------------------------------------------------------------------------//
-#else
-/*
-Camino completo dentro de un disco
-*/
-
-FUNCTION FullCurDir()
-
-   if Empty( cFullCurDir )
-      cFullCurDir    := CurDir() + If( !Empty( CurDir() ), "\", "" )
-   end if
-
-RETURN ( cFullCurDir )
-
-//----------------------------------------------------------------------------//
-
-#endif
-
 /*
 Funcion Len con mas tipos de datos y acepta pictures
 */

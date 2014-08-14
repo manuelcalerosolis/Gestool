@@ -33,7 +33,7 @@ CLASS TFTP
  
    METHOD DeleteMask( cMask )        // as Clipper Directory() but on a FTP site!
 
-   METHOD GetCurrentDirectory()              INLINE ( FtpGetCurrentDirectory( ::hFTP ) )
+   // METHOD GetCurrentDirectory()              INLINE ( FtpGetCurrentDirectory( ::hFTP ) )
 
    Method SetCurrentDirectory( cDirectory )  INLINE ( FtpSetCurrentDirectory( ::hFTP, cDirectory ) )
 

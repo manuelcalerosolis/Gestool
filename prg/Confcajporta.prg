@@ -3,7 +3,9 @@
 #include "MesDbf.ch"
 
 static oWndBrw
+
 static dbfCajPorta
+
 static bEdit      := { |aTmp, aGet, dbfImpTik, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfImpTik, oBrw, bWhen, bValid, nMode ) }
 
 //----------------------------------------------------------------------------//
@@ -204,51 +206,6 @@ FUNCTION ConfCajPorta( oMenuItem, oWnd )
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
 
    local oDlg
-   local oBitsSec
-   local oBitsParada
-   local oBitsDatos
-   local oBitsParidad
-   local oPort
-   local cBitsSec
-   local cBitsParada
-   local cBitsDatos
-   local cBitsParidad
-   local cPort
-   local aBitsSec       := { "2400", "4800", "9600", "19200", "38400", "57600", "115200", "203400", "460800", "921600" }
-   local aBitsParada    := { "0", "1", "2" }
-   local aBitsDatos     := { "7", "8" }
-   local aBitsParidad   := { "Sin paridad", "Paridad par", "Paridad impar" }
-   local aPort          := { "LPT1", "LPT2", "LPT3", "LPT4", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9" }
-
-   if nMode != APPD_MODE
-      cPort             := aTmp[ ( dbfCajPorta )->( FieldPos( "cPort" ) ) ]
-      cBitsSec          := Str( aTmp[ ( dbfCajPorta )->( FieldPos( "nBitsSec" ) ) ] )
-      cBitsParada       := Str( aTmp[ ( dbfCajPorta )->( FieldPos( "nBitsPara" ) ) ] )
-      cBitsDatos        := Str( aTmp[ ( dbfCajPorta )->( FieldPos( "nBitsDatos" ) ) ] )
-      cBitsParidad      := aTmp[ ( dbfCajPorta )->( FieldPos( "cBitsPari" ) ) ]
-   else
-      aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ]  := 2
-   end if
-
-   if Empty( cPort )
-      cPort             := "LPT1"
-   end if
-
-   if Empty( cBitsSec )
-      cBitsSec          := "9600"
-   end if
-
-   if Empty( cBitsParada )
-      cBitsParada       := "0"
-   end if
-
-   if Empty( cBitsDatos )
-      cBitsDatos        := "8"
-   end if
-
-   if Empty( cBitsParidad )
-      cBitsParidad      := "Sin paridad"
-   end if
 
    if Empty( aTmp[ ( dbfCajPorta )->( FieldPos ( "cCodAper" ) ) ] )
       aTmp[ ( dbfCajPorta )->( FieldPos ( "cCodAper" ) ) ]  := "27 112 0 60 240"
@@ -275,52 +232,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       oDlg
 
-   //Tipo de impresion e impresora por defecto
-
-   REDEFINE RADIO aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] ;
-      ID       200, 210 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oDlg
-
    REDEFINE GET aGet[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ;
       VAR      aTmp[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ;
       ID       170 ;
       OF       oDlg
 
    TBtnBmp():ReDefine( 171, "Printer_preferences_16",,,,,{|| PrinterPreferences( aGet[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ) }, oDlg, .f., {|| aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] != 2 }, .f.,  )
-
-   //Grupo Propiedades
-
-   REDEFINE COMBOBOX oPort VAR cPort ;
-      ITEMS    aPort ;
-      ID       100 ;
-      ON CHANGE( oDlg:aEvalWhen() );
-      WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] == 2 ) ;
-      OF       oDlg
-
-   REDEFINE COMBOBOX oBitsSec VAR cBitsSec ;
-      WHEN     ( "COM" $ cPort .and. nMode != ZOOM_MODE .and. aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] == 2 );
-      ITEMS    aBitsSec ;
-      ID       120;
-      OF       oDlg
-
-   REDEFINE COMBOBOX oBitsParada VAR cBitsParada ;
-      WHEN     ( "COM" $ cPort .and. nMode != ZOOM_MODE .and. aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] == 2 ) ;
-      ITEMS    aBitsParada ;
-      ID       130;
-      OF       oDlg
-
-   REDEFINE COMBOBOX oBitsDatos VAR cBitsDatos ;
-      WHEN     ( "COM" $ cPort .and. nMode != ZOOM_MODE .and. aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] == 2 ) ;
-      ITEMS    aBitsDatos ;
-      ID       140;
-      OF       oDlg
-
-   REDEFINE COMBOBOX oBitsParidad VAR cBitsParidad ;
-      WHEN     ( "COM" $ cPort .and. nMode != ZOOM_MODE .and. aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ] == 2 ) ;
-      ITEMS    aBitsParidad ;
-      ID       150;
-      OF       oDlg
 
    REDEFINE GET aGet[ ( dbfCajPorta )-> ( FieldPos ( "cCodAper" ) ) ] ;
       VAR      aTmp[ ( dbfCajPorta )-> ( FieldPos ( "cCodAper" ) ) ] ;
@@ -334,13 +251,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
       ID       160;
       OF       oDlg ;
       WHEN     ( nMode != ZOOM_MODE ) ;
-      ACTION   ( TestCajon( aTmp, cPort, cBitsSec, cBitsParada, cBitsDatos, cBitsParidad, dbfCajPorta ) )
+      ACTION   ( TestCajon( aTmp, dbfCajPorta ) )
 
    REDEFINE BUTTON ;
       ID       1 ;
       OF       oDlg ;
       WHEN     ( nMode != ZOOM_MODE ) ;
-      ACTION   ( EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPort, oBitsSec, oBitsParada, oBitsDatos, oBitsParidad, aBitsSec, aBitsParada, aBitsDatos, aBitsParidad ) )
+      ACTION   ( EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL ;
@@ -351,7 +268,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
    //Teclas rápidas
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPort, oBitsSec, oBitsParada, oBitsDatos, oBitsParidad, aBitsSec, aBitsParada, aBitsDatos, aBitsParidad ) } )
+      oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg ) } )
    end if
 
    oDlg:bStart := {|| aGet[ ( dbfCajPorta )->( FieldPos( "cCodCaj" ) ) ]:SetFocus() }
@@ -365,7 +282,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
 Funcion que termina la edición del registro de la base de datos-----------------
 */
 
-STATIC FUNCTION EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPort, oBitsSec, oBitsParada, oBitsDatos, oBitsParidad, aBitsSec, aBitsParada, aBitsDatos, aBitsParidad )
+STATIC FUNCTION EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg )
 
    //Comprobamos que el código no esté vacío y que no exista
 
@@ -399,14 +316,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPo
       aGet[ ( dbfCajPorta )->( FieldPos( "cCodAper" ) ) ]:SetFocus()
       Return nil
    end if
-
-   //Metemos los valores de los combos
-
-   aTmp[ ( dbfCajPorta )->( FieldPos( "cPort" ) ) ]      := aPort[ oPort:nAt ]
-   aTmp[ ( dbfCajPorta )->( FieldPos( "nBitsSec" ) ) ]   := Val( aBitsSec[ oBitsSec:nAt ] )
-   aTmp[ ( dbfCajPorta )->( FieldPos( "nBitsPara" ) ) ]  := Val( aBitsParada[ oBitsParada:nAt ] )
-   aTmp[ ( dbfCajPorta )->( FieldPos( "nBitsDatos" ) ) ] := Val( aBitsDatos[ oBitsDatos:nAt ] )
-   aTmp[ ( dbfCajPorta )->( FieldPos( "cBitsPari" ) ) ]  := aBitsParidad[ oBitsParidad:nAt ]
 
    //Escribimos definitivamente la temporal a la base de datos
 
@@ -512,40 +421,6 @@ FUNCTION IsCajPorta()
       rxCajPorta( cPatDat() )
    end if
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatDat() + "CAJPORTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJPORTA", @dbfCajPorta ) )
-   // SET ADSINDEX TO ( cPatDat() + "CAJPORTA.CDX" ) ADDITIVE
-
-   ( dbfCajPorta )->( __dbLocate( { || ( dbfCajPorta )->cCodCaj == "000" } ) )
-
-   if!( dbfCajPorta )->( Found() )
-
-      ( dbfCajPorta )->( dbAppend() )
-      ( dbfCajPorta )->cCodCaj     := "000"
-      ( dbfCajPorta )->cNomCaj     := "Cajón portamonedas por defecto"
-      ( dbfCajPorta )->cPort       := "LPT1"
-      ( dbfCajPorta )->nDriver     := 2
-      ( dbfCajPorta )->nBitsSec    := 9600
-      ( dbfCajPorta )->nBitsPara   := 0
-      ( dbfCajPorta )->nBitsDatos  := 8
-      ( dbfCajPorta )->cBitsPari   := "Sin paridad"
-      ( dbfCajPorta )->cCodAper    := "27 112 0 60 240"
-      ( dbfCajPorta )->( dbUnLock() )
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfCajPorta )
-
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -557,18 +432,19 @@ FUNCTION BrwSelCajPorta( oGet, dbfCajPorta, oGet2 )
 
    local oDlg
 	local oBrw
-	local oGet1
-	local cGet1
+   local nRec           
+   local oGet1
+   local cGet1
    local nOrdAnt        := 1
-	local oCbxOrd
+   local oCbxOrd
    local aCbxOrd        := { "Código", "Descripción" }
    local cCbxOrd
-   local nRec           := ( dbfCajPorta )->( RecNo() )
    local nLevel         := nLevelUsr( "01091" )
 
    nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrdAnt ]
 
+   nRec                 := ( dbfCajPorta )->( RecNo() )
    nOrdAnt              := ( dbfCajPorta )->( OrdSetFocus( nOrdAnt ) )
 
    ( dbfCajPorta )->( dbGoTop() )
@@ -713,12 +589,9 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-Static Function TestCajon( aTmp, cPort, cBitsSec, cBitsParada, cBitsDatos, cBitsParidad, dbfCajPorta )
+Static Function TestCajon( aTmp, dbfCajPorta )
 
-   local oCajon
-   local cApertura   := aTmp[ ( dbfCajPorta )-> ( FieldPos ( "cCodAper" ) ) ]
-
-   oCajon            := TCajon():New( cPort, cBitsSec, cBitsParada, cBitsDatos, cBitsParidad, cApertura, aTmp[ ( dbfCajPorta )->( FieldPos( "nDriver" ) ) ], aTmp[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] )
+   local oCajon      := TCajon():New( aTmp[ ( dbfCajPorta )-> ( FieldPos ( "cCodAper" ) ) ], aTmp[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] )
 
    if !Empty( oCajon )
       oCajon:OpenTest()

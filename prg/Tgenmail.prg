@@ -138,7 +138,7 @@ CLASS TGenMailing
 
    Method GeneralResource()
 
-   Method InsertField()       INLINE ( ::oActiveX:InsertAtCursor( "{" + ValText( Alltrim( ::cField ) ) + "}", 0 ) )
+   Method InsertField()       INLINE ( ::oActiveX:InsertAtCursor( "{" + ( Alltrim( ::cField ) ) + "}", 0 ) )
 
    Method GetAdjunto()
 
@@ -1067,7 +1067,7 @@ Method ExpresionReplace( cDocumentHTML, cExpresion ) CLASS TGenMailing
 
    else
 
-      nScan                := aScan( ::aItems, {|a| ValText( a[ 5 ] ) == cExpresionToSearch .or. ValText( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
+      nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
       if nScan != 0
          cDocumentHTML     := StrTran( cDocumentHTML, cExpresion, cValToChar( ( ::dbfAlias )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
       else

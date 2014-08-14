@@ -132,8 +132,6 @@ TdprnC3.prg             	\
 Animat.prg              	\
 Tdelobs.prg             	\
 Tdeltarifasclientes.prg 	\
-TftpC3.prg              	\
-Tftpfile.prg            	\
 Tankes.prg              	\
 Grpcli.prg              	\
 Atipicas.prg 				\
@@ -170,8 +168,6 @@ Tdbfserv.prg            	\
 Tpanel.prg              	\
 Pais.prg                	\
 Bandera.prg             	\
-Timptik.prg             	\
-Tprntik.prg             	\
 Tvisor.prg              	\
 Tgrpfam.prg             	\
 Tdiacli.prg             	\
@@ -482,7 +478,6 @@ Tdprnc3.obj             \
 Animat.obj              \
 Tdelobs.obj             \
 Tdeltarifasclientes.obj \
-TftpC3.obj              \
 Ttikstka.obj            \
 TStockMinimoFamilia.obj \
 Xvalalmg.obj            \
@@ -538,8 +533,6 @@ Tdbfserv.obj            \
 Tpanel.obj              \
 Pais.obj                \
 Bandera.obj             \
-Timptik.obj             \
-Tprntik.obj             \
 Tvisor.obj              \
 Tgrpfam.obj             \
 Tdiacli.obj             \
@@ -854,8 +847,6 @@ $(OBJ)\Tdprnc3.obj              +
 $(OBJ)\Animat.obj               +
 $(OBJ)\Tdelobs.obj              +
 $(OBJ)\Tdeltarifasclientes.obj  +
-$(OBJ)\TftpC3.obj               +
-$(OBJ)\Tftpfile.obj             +
 $(OBJ)\Printer.obj              +
 $(OBJ)\Webbar.obj               +
 $(OBJ)\Webmap.obj               +
@@ -903,8 +894,6 @@ $(OBJ)\Tdbfserv.obj             +
 $(OBJ)\Tpanel.obj               +
 $(OBJ)\Pais.obj                 +
 $(OBJ)\Bandera.obj              +
-$(OBJ)\Timptik.obj              +
-$(OBJ)\Tprntik.obj              +
 $(OBJ)\Tvisor.obj               +
 $(OBJ)\Tgrpfam.obj              +
 $(OBJ)\Tinftik.obj              +

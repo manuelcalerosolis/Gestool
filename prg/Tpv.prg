@@ -291,7 +291,6 @@ static dbfPreCliL
 static dbfTImp
 
 static oVisor
-static oImpresora
 static oInvitacion
 
 static cNewFilP
@@ -778,11 +777,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          end if
       end if
 
-      cImpresora           := cImpresoraTicketEnCaja( oUser():cCaja(), dbfCajT )
-      if !Empty( cImpresora )
-         oImpresora        := TImpresoraTiket():Create( cImpresora )
-      end if
-
       oUndMedicion         := UniMedicion():Create( cPatGrp() )
       if !oUndMedicion:OpenFiles()
          lOpenFiles        := .f.
@@ -985,10 +979,6 @@ STATIC FUNCTION CloseFiles()
       oVisor:End()
    end if
 
-   if !Empty( oImpresora )
-      oImpresora:End()
-   end if
-
    if !Empty( oUndMedicion )
       oUndMedicion:end()
    end if
@@ -1074,7 +1064,6 @@ STATIC FUNCTION CloseFiles()
    oTComandas        := nil
    oNewImp           := nil
    oVisor            := nil
-   oImpresora        := nil
    oInvitacion       := nil
    oTipArt           := nil
    oFabricante       := nil

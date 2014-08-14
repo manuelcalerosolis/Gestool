@@ -1080,10 +1080,8 @@ Function Ejecutascript()
       if Len( aScripts ) > 0
 
          for each cScript in aScripts
-
-            pHrb  := __hrbLoad( cPatScript() + cScript[1] )
-            u     := __hrbDo( pHrb )
-            __hrbUnload( pHrb )
+         
+            TScripts():RunScript( cPatScript() + cScript[1] )
 
          next
 
@@ -1107,10 +1105,10 @@ c:\xharbour\bin>harbour c:\test.prg /gh /n
 
 Function DirectEjecutaScript()
 
+   Local u
+   Local pHrb
    local aScripts
    local cScript  := ""
-   Local pHrb
-   Local u
 
    /*
    Cerramos todas las ventanas antes de entrar---------------------------------
@@ -1124,19 +1122,13 @@ Function DirectEjecutaScript()
    Comprobaciones iniciales antes de mandar el script--------------------------
    */
 
-   aScripts    := Directory( cPatScript() + "*.hrb" )
+   aScripts       := Directory( cPatScript() + "*.hrb" )
 
    if Len( aScripts ) > 0
 
       for each cScript in aScripts
 
-         /*
-         Ejecutamos el script--------------------------------------------------
-         */
-
-         pHrb  := __hrbLoad( cPatScript() + cScript[1] )
-         u     := __hrbDo( pHrb )
-         __hrbUnload( pHrb )
+         TScripts():RunScript( cPatScript() + cScript[1] )
 
       next
 

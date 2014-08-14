@@ -835,13 +835,13 @@ Components.obj 			\
 TLabelGenerator.obj 	\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
 
 .C.OBJ:
-  	$(BORLAND)\Bin\Bcc32 -c -tWM -D__HARBOUR__ -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
+  	$(BORLAND)\Bin\Bcc32 -c -tWM -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
 
 $(EXE)                  : $( C:.C=.OBJ )
 

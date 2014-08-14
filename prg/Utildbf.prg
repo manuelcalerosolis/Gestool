@@ -3401,6 +3401,19 @@ Return( strDate )
 
 //---------------------------------------------------------------------------//
 
+Function DlgWait( nRetardo )
 
+   local nSeconds
+
+   DEFAULT nRetardo  := 0.1
+
+   nSeconds          := Seconds() + nRetardo
+
+   while nSeconds >= Seconds()
+   end while
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 

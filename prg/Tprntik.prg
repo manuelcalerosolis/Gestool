@@ -197,23 +197,6 @@ return ( lWrite )
 #endif
 
 //---------------------------------------------------------------------------//
-//Funciones comunes de programa y pda
-//---------------------------------------------------------------------------//
-
-Function DlgWait( nRetardo )
-
-   local nSeconds
-
-   DEFAULT nRetardo  := 0.1
-
-   nSeconds          := Seconds() + nRetardo
-
-   while nSeconds >= Seconds()
-   end while
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
 //Funciones de PDA
 //---------------------------------------------------------------------------//
 

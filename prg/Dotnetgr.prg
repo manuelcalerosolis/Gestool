@@ -1,7 +1,9 @@
 #include "fivewin.ch"
 #include "oficebar.ch"
 
-
+#ifdef __XHARBOUR__
+   #define hb_CurDrive CurDrive
+#endif   
 
 CLASS TDotNetGroup
 
