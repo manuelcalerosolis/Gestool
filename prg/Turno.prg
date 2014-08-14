@@ -590,7 +590,7 @@ CLASS TTurno FROM TMasDet
    Method bEdtFacturaProveedor()
 
    Method cTxtFacturaRectificativaProveedor() Inline ( ::oRctPrvT:cSerFac + "/" + Alltrim( Str( ::oRctPrvT:nNumFac ) ) + "/" + Alltrim( ::oRctPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctPrvT:dFecFac ) + Space( 1 ) + ( ::oRctPrvT:cTimChg ) + Space( 1 ) + ::oRctPrvT:cCodCaj + Space( 1 ) +Rtrim( ::oRctPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oRctPrvT:cNomPrv ) )
-   Method nTotFacturaRectificativaProveedor() Inline ( nTotRctPrv( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac, ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
+   Method nTotFacturaRectificativaProveedor() Inline ( nTotRctPrv( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac, ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias ) )
    Method bEdtFacturaRectificativaProveedor()
 
    Method nTotTiketCobro()       Inline ( nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() ) )

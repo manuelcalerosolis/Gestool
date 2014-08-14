@@ -9418,7 +9418,7 @@ FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
    DEFAULT cFacPrvL  := TDataView():FacturasRectificativasProveedoresLineas( nView )
    DEFAULT cFacPrvP  := TDataView():FacturasProveedoresPagos( nView )
    DEFAULT cIva      := TDataView():TiposIva( nView )
-   DEFAULT cDiv   := TDataView():Divisas( nView )
+   DEFAULT cDiv      := TDataView():Divisas( nView )
    DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
    DEFAULT lPic      := .f.
 
