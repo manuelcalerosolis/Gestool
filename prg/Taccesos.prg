@@ -284,7 +284,8 @@ Method AddTree( oTree, oAcceso )
    local oItemTree   := oTree:Add( oAcceso:cPrompt, oAcceso:nImageList, oAcceso:cId )
 
    if !Empty( ::oTree )
-      TvSetCheckState( ::oTree:hWnd, oItemTree:hItem, oAcceso:lShow )
+      // TvSetCheckState( ::oTree:hWnd, oItemTree:hItem, oAcceso:lShow )
+      ::oTree:SetCheck( oItemTree, oAcceso:lShow ) 
    end if
 
 Return ( oItemTree )

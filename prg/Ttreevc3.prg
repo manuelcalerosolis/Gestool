@@ -129,9 +129,14 @@ CLASS TTreeView FROM TControl
       If( oItem == nil, oItem := ::GetSelected(), nil ), ;
       If( oItem != nil, ( oItem:Toggle(), ScanItems( oItem:aItems, , .t. ) ), nil )
 
+   METHOD GetCheck( oItem ) INLINE ;
+      If( oItem == nil, oItem := ::GetSelected(), nil ), ;
+      TVGetCheck( ::hWnd, oItem:hItem )
+
    METHOD SetCheck( oItem, lOnOff ) INLINE ;
       If( oItem == nil, oItem := ::GetSelected(), nil ), ;
-      TVSetCheck( ::hWnd, oItem:hItem, lOnOff )
+      TVSetCheckState( ::hWnd, oItem:hItem, lOnOff )
+      // TVSetCheck( ::hWnd, oItem:hItem, lOnOff )
 
    METHOD SetColor( nClrText, nClrPane ) INLINE ;
       Super:SetColor( nClrText, nClrPane ), ;

@@ -11765,7 +11765,7 @@ return cLine
 
 //----------------------------------------------------------------------------//
 
-Function EQ( uFirst, uSecond, lExact )
+Static Function EQ( uFirst, uSecond, lExact )
 
    local c
 

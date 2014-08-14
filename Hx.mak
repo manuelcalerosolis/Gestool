@@ -424,7 +424,7 @@ Treeview.c              \
 Wininet.c               \
 Rasapi.c                \
 Attrib.c                \
-Comm.c
+Comm.c 					\
 
 OBJS            =       \
 Factu.obj               \

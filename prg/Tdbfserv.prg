@@ -72,7 +72,7 @@ function DbfServer( cFile, DbClass )
     EXTERNAL TDbf
     _HB_CLASS DbClass
 
-    __oDb := HbClass():New( DbClass, __CLS_PARAM ( "TDBF" ) )
+    __oDb := HbClass():New( DbClass, "TDBF" ) // __CLS_PARAM ( "TDBF" ) )
     __oDb:Create()
     __nClassH := __oDb:hClass
 

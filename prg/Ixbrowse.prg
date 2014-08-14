@@ -5,6 +5,12 @@
 #include "Report.ch"
 #include "Factu.ch" 
 
+#ifdef __HARBOUR__
+   #ifndef __XHARBOUR__
+      #xtranslate DbSkipper => __DbSkipper
+   #endif
+#endif
+
 //----------------------------------------------------------------------------//
 
 CLASS IXBrowse FROM TXBrowse

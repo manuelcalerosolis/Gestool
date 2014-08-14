@@ -9066,7 +9066,7 @@ Method SelectColumn( oCombo ) CLASS TRectificativaProveedorLabelGenerator
 
          for each oCol in :aCols
 
-            if Eq( cOrd, oCol:cHeader )
+            if Equal( cOrd, oCol:cHeader )
                oCol:cOrder       := "A"
                oCol:SetOrder()
             else

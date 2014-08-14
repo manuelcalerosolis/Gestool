@@ -18,8 +18,6 @@
 #define dfnSplitterWidth      0
 #define dfnSplitterHeight     44
 
-#ifndef __PDA__
-
 #define SC_MAXIMIZE           61488    // 0xF030
 
 #define CLR_BOTON             Rgb( 0, 0, 0 ) //Rgb( 255, 154, 49 ) Rgb( 255, 255, 255 )    //  //
@@ -28,6 +26,10 @@
 #define WM_CHILDACTIVATE      34       // 0x22
 #define WM_ICONERASEBKGND     39       // 0x27
 
+#ifdef __HARBOUR__
+   #ifndef __XHARBOUR__
+      #xtranslate DbSkipper => __DbSkipper
+   #endif
 #endif
 
 static oFontLittelTitle
@@ -1863,7 +1865,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
 
             for each oCol in :aCols
 
-               if Eq( cOrd, oCol:cHeader )
+               if Equal( cOrd, oCol:cHeader )
                   oCol:cOrder       := "A"
                   oCol:SetOrder()
                else
@@ -2883,6 +2885,33 @@ return aFld
 
 //---------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
+
+Function Equal( uFirst, uSecond, lExact )
+
+   local c
+
+   DEFAULT lExact := .t.
+
+   if ( c := Valtype( uFirst ) ) == Valtype( uSecond )
+      if c == 'C'
+         if lExact
+            if Upper( AllTrim( uFirst ) ) == Upper( AllTrim( uSecond ) )
+               return .t.
+            endif
+         else
+            if Upper( AllTrim( uFirst ) ) = Upper( AllTrim( uSecond ) )
+               return .t.
+            endif
+         endif
+      else
+         if uFirst == uSecond
+            return .t.
+         endif
+      endif
+   endif
+
+return .f.
+
 //----------------------------------------------------------------------------//
 
 Function oFontLittelTitle()

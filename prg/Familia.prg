@@ -1124,7 +1124,9 @@ static function SetTreeState( oTree, aItems, cCodFam )
 
          oTree:Select( oItem )
 
-         tvSetCheckState( oTree:hWnd, oItem:hItem, .t. )
+         // tvSetCheckState( oTree:hWnd, oItem:hItem, .t. )
+
+         oTree:SetCheck( oItem, .t. )
 
          SysRefresh()
 
@@ -1154,7 +1156,9 @@ static function ChangeTreeState( oTree, aItems )
 
       SysRefresh()
 
-      tvSetCheckState( oTree:hWnd, oItem:hItem, .f. )
+      //tvSetCheckState( oTree:hWnd, oItem:hItem, .f. )
+
+      oTree:SetCheck( oItem, .f. )
 
       if len( oItem:aItems ) > 0
          ChangeTreeState( oTree, oItem:aItems )

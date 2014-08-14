@@ -333,8 +333,6 @@ Return ( cNombrePc )
 
 //--------------------------------------------------------------------------//
 
-#ifndef __HARBOUR__ 
-
 Function CacheRecords( cAlias )
 
    if lAdsRdd()
@@ -342,8 +340,6 @@ Function CacheRecords( cAlias )
    end if
 
 Return nil
-
-#endif
 
 //---------------------------------------------------------------------------//
 

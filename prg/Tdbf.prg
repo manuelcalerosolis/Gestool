@@ -24,6 +24,12 @@
                   <uVar1> := If( <uVar1> == nil, <uVal1>, <uVar1> ) ;;
                 [ <uVarN> := If( <uVarN> == nil, <uValN>, <uVarN> ); ]
 
+#ifdef __HARBOUR__
+   #ifndef __XHARBOUR__
+      #xtranslate DbSkipper => __DbSkipper
+   #endif
+#endif
+
 //----------------------------------------------------------------------------//
 
 CLASS TDbf

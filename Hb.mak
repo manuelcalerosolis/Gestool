@@ -597,7 +597,7 @@ Tgethlp.obj             \
 Pdreport.obj            \
 RcolumnC3.obj           \
 Metafi32.obj            \
-Img2pdf.Obj             \
+Img2pdf.obj             \
 Ean.obj                 \
 C5Lib.obj               \
 TInfseanum.obj          \
@@ -1123,7 +1123,7 @@ $(HBLIB)\hbcurl.lib 			+
 $(HBLIB)\hbusrrdd.lib 			+
 $(HBLIB)\libcurl.lib 			+
 $(HBLIB)\b32\rddads.lib			+
-$(HBLIB)\b32\ace32.lib 			+
+$(HBLIB)\ace32.lib 				+
 $(BORLANDLIB)\cw32.lib 			+ 
 $(BORLANDLIB)\uuid.lib 			+ 
 $(BORLANDLIB)\import32.lib 		+ 
