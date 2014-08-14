@@ -6567,6 +6567,16 @@ METHOD OnClickEntrega() CLASS TpvTactil
 
    ::ImprimeEntrega()
 
+   /*
+   Recoger usuario-------------------------------------------------------
+   */
+
+   ::GetUsuario()
+
+   // Volver a la sala de venta---------------------------------------------
+
+   ::GetUbicacion()
+
    ::EnableDialog()
 
 RETURN ( Self )
@@ -9321,7 +9331,7 @@ METHOD lEmptyAlias()
 	end if
 
 	if ( ::oTiketCabecera:nUbiTik == ubiGeneral .or. ::oTiketCabecera:nUbiTik == ubiRecoger ) .and. Empty( ::oTiketCabecera:cPntVenta ) .and. Empty( ::oTiketCabecera:cAliasTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
-		Return ( .t. )
+      Return ( .t. )
 	end if
 
 RETURN ( .f. )
