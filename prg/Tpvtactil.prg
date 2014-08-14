@@ -9156,7 +9156,7 @@ METHOD EliminarLinea()
 
   ::DisableDialog()
 
-  if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
+  if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
 
      if ::oTemporalLinea:lMnuTil
 
