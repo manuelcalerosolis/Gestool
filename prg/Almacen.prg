@@ -1553,7 +1553,7 @@ Static Function ChangeTreeState( oTree, aItems )
       SysRefresh()
 
       // tvSetCheckState( oTree:hWnd, oItem:hItem, .f. )
-      
+
       oTree:SetCheck( oItem, .f. )
 
       if len( oItem:aItems ) > 0
@@ -1578,7 +1578,9 @@ Static Function GetTreeState( aTemp, oTree, aItems )
 
    for each oItem in aItems
 
-      if tvGetCheckState( oTree:hWnd, oItem:hItem )
+      // if tvGetCheckState( oTree:hWnd, oItem:hItem )
+      
+      if oTree:GetCheck( oItem )
          aTemp[ _CCOMALM ]  := oItem:Cargo
       end if
 

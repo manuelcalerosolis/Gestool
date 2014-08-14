@@ -56,7 +56,7 @@ METHOD New( cFTPSite, oInternet, cUserName, cPassword, lPassive ) CLASS TFTP
    ::lPassive        := lPassive
 
    if oInternet:hSession != nil
-      ::hFTP         := InternetConnect_C3( oInternet:hSession, cFTPSite, FTP_PORT, ::cUserName, ::cPassword, INTERNET_SERVICE_FTP, if( lPassive, INTERNET_FLAG_PASSIVE, 0 ), 0 )
+      ::hFTP         := InternetConnect( oInternet:hSession, cFTPSite, FTP_PORT, ::cUserName, ::cPassword, INTERNET_SERVICE_FTP, if( lPassive, INTERNET_FLAG_PASSIVE, 0 ), 0 )
       AAdd( oInternet:aFTPs, Self )
    endif
 
@@ -67,7 +67,7 @@ return ( Self )
 METHOD End() CLASS TFTP
 
    if ::hFTP != nil
-      InternetCloseHandle_C3( ::hFTP )
+      InternetCloseHandle( ::hFTP )
       ::hFTP         := nil
    endif
 
@@ -77,7 +77,7 @@ return nil
 
 METHOD DeleteFile( cFileName ) CLASS TFTP
 
-return If( ::hFTP != nil, FtpDeleteFile_C3( ::hFTP, cFileName ), .f. )
+return If( ::hFTP != nil, FtpDeleteFile( ::hFTP, cFileName ), .f. )
 
 //----------------------------------------------------------------------------//
 
@@ -87,7 +87,7 @@ METHOD Directory( cMask ) CLASS TFTP
 
    DEFAULT cMask  := "*.*"
 
-   aFiles         := InternetDirectory_C3( ::hFtp, cMask, INTERNET_FLAG_NEED_FILE, 0 )
+   aFiles         := InternetDirectory( ::hFtp, cMask, INTERNET_FLAG_NEED_FILE, 0 )
 
 return aFiles
 
@@ -106,7 +106,7 @@ METHOD DeleteMask( cMask ) CLASS TFTP
 
       FOR n = 1 TO len( aFiles )
 
-         FtpDeleteFile_C3( ::hFTP, aFiles[ n, 1 ] )
+         FtpDeleteFile( ::hFTP, aFiles[ n, 1 ] )
 
       NEXT
 

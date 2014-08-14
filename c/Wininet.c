@@ -1,14 +1,13 @@
 #include <WinTen.h>
 #include <Windows.h>
 #include <ClipApi.h>
-
 #include <Wininet.h>
 
 static HMODULE hModule = NULL;
 
 //----------------------------------------------------------------------------//
 
-HB_FUNC( WININET_C3 )
+HB_FUNC( WININET )
 {
     if( hModule == NULL )
         {
@@ -19,7 +18,7 @@ HB_FUNC( WININET_C3 )
 
 //----------------------------------------------------------------------------//
 
-HB_FUNC( WININETEXIT_C3 )
+HB_FUNC( WININETEXIT )
 {
     if( hModule != NULL )
     {
@@ -30,7 +29,7 @@ HB_FUNC( WININETEXIT_C3 )
 
 //----------------------------------------------------------------------------//
 
-HB_FUNC( INTERNETOPEN_C3 )
+HB_FUNC( INTERNETOPEN )
 {
 
     HINTERNET hInternet;
@@ -51,7 +50,7 @@ HB_FUNC( INTERNETOPEN_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( INTERNETCONNECT_C3 )
+HB_FUNC( INTERNETCONNECT )
 {
 
     HINTERNET hInternet         = ( HINTERNET ) _parnl( 1 );
@@ -73,14 +72,14 @@ HB_FUNC( INTERNETCONNECT_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( INTERNETCLOSEHANDLE_C3 )
+HB_FUNC( INTERNETCLOSEHANDLE )
 {
     _retl( InternetCloseHandle( ( HINTERNET ) _parnl( 1 ) ) );
 }
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( FTPPUTFILE_C3 )
+HB_FUNC( FTPPUTFILE )
 {
     HINTERNET hConnect          = ( HINTERNET ) _parnl( 1 );
     LPCTSTR lpszLocalFile       = _parc( 2 );
@@ -93,7 +92,7 @@ HB_FUNC( FTPPUTFILE_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( FTPGETFILE_C3 )
+HB_FUNC( FTPGETFILE )
 {
     HINTERNET hConnect          = ( HINTERNET ) _parnl( 1 );
     LPCTSTR lpszRemoteFile      = _parc( 2 );
@@ -108,7 +107,7 @@ HB_FUNC( FTPGETFILE_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( FTPOPENFILE_C3 )
+HB_FUNC( FTPOPENFILE )
 {
     HINTERNET hConnect          = ( HINTERNET ) _parnl( 1 );
     LPCTSTR lpszFileName        = _parc( 2 );
@@ -121,7 +120,7 @@ HB_FUNC( FTPOPENFILE_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( INTERNETWRITEFILE_C3 )
+HB_FUNC( INTERNETWRITEFILE )
 {
     HINTERNET hFile                     = ( HINTERNET ) _parnl( 1 );
     LPCVOID lpBuffer                    = _parc( 2 );
@@ -134,7 +133,7 @@ HB_FUNC( INTERNETWRITEFILE_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( INTERNETREADFILE_C3 )
+HB_FUNC( INTERNETREADFILE )
 {
     HINTERNET hFile                     = ( HINTERNET ) _parnl( 1 );
     DWORD dwNumberOfBytesToRead         = _parnl( 3 );
@@ -162,7 +161,7 @@ HB_FUNC( INTERNETREADFILE_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( FTPDELETEFILE_C3 )
+HB_FUNC( FTPDELETEFILE )
 {
     HINTERNET hConnect      = ( HINTERNET ) _parnl( 1 );
     LPCTSTR lpszFileName    = _parc( 2 );
@@ -173,7 +172,7 @@ HB_FUNC( FTPDELETEFILE_C3 )
 
 //---------------------------------------------------------------------------//
 
-HB_FUNC( INTERNETDIRECTORY_C3 )
+HB_FUNC( INTERNETDIRECTORY )
 {
 
    HINTERNET hConnect = ( HINTERNET ) hb_parnl( 1 );
@@ -252,7 +251,7 @@ HB_FUNC( FTPGETCURRENTDIRECTORY )
    DWORD    dwCurrentDirectory   = MAX_PATH     ;
    BOOL     bRet ;
 
-   bRet = FtpGetCurrentDirectory( hInternet, lpszCurrentDirectory, &dwCurrentDirectory ) ;
+   bRet = FtpGetCurrentDirectoryA( hInternet, lpszCurrentDirectory, &dwCurrentDirectory ) ;
    hb_retl( bRet ) ;
 
    if ( bRet )

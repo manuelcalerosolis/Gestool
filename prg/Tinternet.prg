@@ -23,10 +23,10 @@ ENDCLASS
 
 METHOD New() CLASS TInternet
 
-   local hWinINet := WinINet_C3()
+   local hWinINet := WinINet()
 
    if hWinINet < 0 .or. hWinINet >= 32
-      ::hSession  := InternetOpen_C3( 0, 0, 0, 0, 0 )
+      ::hSession  := InternetOpen( 0, 0, 0, 0, 0 )
    endif
 
 return Self
@@ -35,14 +35,10 @@ return Self
 
 METHOD End() CLASS TInternet
 
-   #ifdef __CLIPPER__
-      ASend( ::aFTPs, "End" )
-   #else
-      ASend( ::aFTPs, "End()" )
-   #endif
+   aSend( ::aFTPs, "End()" )
 
    if ::hSession != nil
-      InternetCloseHandle_C3( ::hSession )
+      InternetCloseHandle( ::hSession )
       ::hSession = nil
    endif
 

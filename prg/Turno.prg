@@ -11212,7 +11212,9 @@ Method GetTreeState( aItems )
 
       sysrefresh()
 
-      tvSetCheckState( ::oTreeImpresion:hWnd, oItem:hItem, ::oIniArqueo:Get( "Arqueo.Impresion", oItem:cPrompt, .t. ) )
+      // tvSetCheckState( ::oTreeImpresion:hWnd, oItem:hItem, ::oIniArqueo:Get( "Arqueo.Impresion", oItem:cPrompt, .t. ) )
+
+      ::oTreeImpresion:SetCheck( oItem, ::oIniArqueo:Get( "Arqueo.Impresion", oItem:cPrompt, .t. ) )
 
       if len( oItem:aItems ) > 0
          ::GetTreeState( oItem:aItems )
@@ -11232,7 +11234,9 @@ Method SetTreeState( aItems )
 
       sysrefresh()
 
-      ::oIniArqueo:Set( "Arqueo.Impresion", oItem:cPrompt, tvGetCheckState( ::oTreeImpresion:hWnd, oItem:hItem ) )
+      // ::oIniArqueo:Set( "Arqueo.Impresion", oItem:cPrompt, tvGetCheckState( ::oTreeImpresion:hWnd, oItem:hItem ) )
+
+      ::oIniArqueo:Set( "Arqueo.Impresion", oItem:cPrompt, ::oTreeImpresion:GetCheck( oItem ) ) 
 
       if len( oItem:aItems ) > 0
          ::SetTreeState( oItem:aItems )

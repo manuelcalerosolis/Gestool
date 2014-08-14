@@ -3794,7 +3794,9 @@ METHOD oDefDesglosar() CLASS TNewInfGen
 
    ::oDesglosar      := ::oTreeCondiciones:Add( "Desglosar por propiedades y lotes", 0 )
 
-   TvSetCheckState( ::oTreeCondiciones:hWnd, ::oDesglosar:hItem, .f. )
+   // TvSetCheckState( ::oTreeCondiciones:hWnd, ::oDesglosar:hItem, .f. )
+
+   ::oTreeCondiciones:SetCheck( ::oDesglosar, .f. ) 
 
 RETURN ( Self )
 
@@ -3804,7 +3806,9 @@ METHOD oDefLinImporteCero() CLASS TNewInfGen
 
    ::oLinImporteCero    := ::oTreeCondiciones:Add( "Excluir líneas con importe 0", 0 )
 
-   TvSetCheckState( ::oTreeCondiciones:hWnd, ::oLinImporteCero:hItem, .t. )
+   // TvSetCheckState( ::oTreeCondiciones:hWnd, ::oLinImporteCero:hItem, .t. )
+
+   ::oTreeCondiciones:SetCheck( ::oLinImporteCero, .t. )
 
 RETURN ( Self )
 
@@ -3814,7 +3818,9 @@ METHOD oDefDocImporteCero() CLASS TNewInfGen
 
    ::oDocImporteCero    := ::oTreeCondiciones:Add( "Excluir documentos con importe 0", 0 )
 
-   TvSetCheckState( ::oTreeCondiciones:hWnd, ::oDocImporteCero:hItem, .t. )
+   // TvSetCheckState( ::oTreeCondiciones:hWnd, ::oDocImporteCero:hItem, .t. )
+
+   ::oTreeCondiciones:SetCheck( ::oDocImporteCero, .t. )
 
 RETURN ( Self )
 

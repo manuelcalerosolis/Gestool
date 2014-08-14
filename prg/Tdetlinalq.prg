@@ -374,7 +374,9 @@ METHOD lGenerate()
    Tomamos las condiciones-----------------------------------------------------
    */
 
-   ::lLinImpCero     := TvGetCheckState( ::oTreeCondiciones:hWnd, ::oLinImporteCero:hItem )
+   //::lLinImpCero     := TvGetCheckState( ::oTreeCondiciones:hWnd, ::oLinImporteCero:hItem )
+   
+   ::lLinImpCero     := ::oTreeCondiciones:GetCheck( ::oLinImporteCero )
 
    /*
    Recorremos cabeceras y lineas, y informamos la ::oDbf-----------------------

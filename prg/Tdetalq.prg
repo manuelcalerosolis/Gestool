@@ -296,7 +296,8 @@ METHOD lGenerate()
    Tomamos las condiciones-----------------------------------------------------
    */
 
-   ::lDocImpCero     := TvGetCheckState( ::oTreeCondiciones:hWnd, ::oDocImporteCero:hItem )
+   // ::lDocImpCero     := TvGetCheckState( ::oTreeCondiciones:hWnd, ::oDocImporteCero:hItem )
+   ::lDocImpCero     := ::oTreeCondiciones:GetCheck( ::oDocImporteCero )
 
    /*
    Recorremos cabeceras y lineas, y informamos la ::oDbf-----------------------

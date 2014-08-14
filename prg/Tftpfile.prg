@@ -54,7 +54,7 @@ return Self
 METHOD End() CLASS TFTPFile
 
    if ::hFile != nil
-      InternetCloseHandle_C3( ::hFile )
+      InternetCloseHandle( ::hFile )
       ::hFile        := nil
    end if
 
@@ -64,7 +64,7 @@ return nil
 
 METHOD OpenWrite() CLASS TFTPFile
 
-   ::hFile           := FtpOpenFile_C3( ::oFTP:hFTP, ::cFileName, GENERIC_WRITE, If( ::lBinary, FTP_TRANSFER_TYPE_BINARY, FTP_TRANSFER_TYPE_ASCII ), 0 )
+   ::hFile           := FtpOpenFile( ::oFTP:hFTP, ::cFileName, GENERIC_WRITE, If( ::lBinary, FTP_TRANSFER_TYPE_BINARY, FTP_TRANSFER_TYPE_ASCII ), 0 )
 
 return Self
 
@@ -72,7 +72,7 @@ return Self
 
 METHOD OpenRead() CLASS TFTPFile
 
-   ::hFile           := FtpOpenFile_C3( ::oFTP:hFTP, ::cFileName, GENERIC_READ, If( ::lBinary, FTP_TRANSFER_TYPE_BINARY, FTP_TRANSFER_TYPE_ASCII ), 0 )
+   ::hFile           := FtpOpenFile( ::oFTP:hFTP, ::cFileName, GENERIC_READ, If( ::lBinary, FTP_TRANSFER_TYPE_BINARY, FTP_TRANSFER_TYPE_ASCII ), 0 )
 
 return Self
 
@@ -83,7 +83,7 @@ METHOD Write( cData ) CLASS TFTPFile
    local nWritten    := 0
    local nToWrite    := Len( cData )
 
-   InternetWriteFile_C3( ::hFile, cData, nToWrite, @nWritten )
+   InternetWriteFile( ::hFile, cData, nToWrite, @nWritten )
 
 return ( nWritten )
 
@@ -98,7 +98,7 @@ METHOD Read( nBytes ) CLASS TFTPFile
 
    cBuffer           := Space( nBytes )
 
-   InternetReadFile_C3( ::hFile, @cBuffer, nBytes, @nRead )
+   InternetReadFile( ::hFile, @cBuffer, nBytes, @nRead )
 
 return ( SubStr( cBuffer, 1, nRead ) )
 
@@ -167,7 +167,7 @@ METHOD PutFile( oMeter ) CLASS TFTPFile
    SysRefresh()
 
 /*
-return FtpPutFile_C3( ::oFTP:hFTP, ::cFileName, ::cSortFileName, If( ::lBinary, FTP_TRANSFER_TYPE_BINARY, FTP_TRANSFER_TYPE_ASCII ), 0 )
+return FtpPutFile( ::oFTP:hFTP, ::cFileName, ::cSortFileName, If( ::lBinary, FTP_TRANSFER_TYPE_BINARY, FTP_TRANSFER_TYPE_ASCII ), 0 )
 */
 
 Return ( lPutFile )

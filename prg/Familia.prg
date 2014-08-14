@@ -1182,7 +1182,8 @@ static function GetTreeState( aTmp, oTree, aItems )
 
    for each oItem in aItems
 
-      if tvGetCheckState( oTree:hWnd, oItem:hItem )
+      // if tvGetCheckState( oTree:hWnd, oItem:hItem )
+      if oTree:GetCheck( oItem )
          aTmp[ _CFAMCMB ]     := oItem:Cargo
       end if
 

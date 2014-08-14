@@ -688,7 +688,8 @@ Method CreateFilter()
 
          for each oItem in aItems:aItems
 
-            if TvGetCheckState( ::oTree:hWnd, oItem:hItem )
+            // if TvGetCheckState( ::oTree:hWnd, oItem:hItem )
+            if ::oTree:GetCheck( oItem )         
 
                if !Empty( cFilterOperacion )
                   cFilterOperacion  += " .or. "

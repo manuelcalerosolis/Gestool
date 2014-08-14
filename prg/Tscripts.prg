@@ -419,11 +419,23 @@ METHOD RunScript( cFichero ) CLASS TScripts
    local u
    local pHrb
 
-   if File( cFichero )
+#ifdef __XHARBOUR__
+
+   if file( cFichero )
       pHrb        := __hrbLoad( cFichero )
       u           := __hrbDo( pHrb )
       __hrbUnload( pHrb )   
    end if
+
+#else
+
+   if file( cFichero )
+      pHrb        := hb_hrbLoad( cFichero )
+      u           := hb_hrbDo( pHrb )
+      hb_hrbUnload( pHrb )   
+   end if
+
+#endif
 
 RETURN ( nil )
 

@@ -418,7 +418,8 @@ METHOD GetTreeState( oTree, aItems )
 
    for each oItem in aItems
 
-      if tvGetCheckState( oTree:hWnd, oItem:hItem )
+      // if tvGetCheckState( oTree:hWnd, oItem:hItem )
+      if oTree:GetCheck( oItem )      
          ::oDbf:cCodPdr    := oItem:Cargo
       end if
 

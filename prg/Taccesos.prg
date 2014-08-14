@@ -399,7 +399,8 @@ Method SaveTree( aItems, cCurUsr, cDbf )
          ( ::cDbf )->( dbAppend() )
          ( ::cDbf )->cCodUse     := cCurUsr
          ( ::cDbf )->cOpcion     := aItems[ n ]:cPrompt
-         ( ::cDbf )->lShow       := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
+         // ( ::cDbf )->lShow       := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
+         ( ::cDbf )->lShow       := ::oTree:GetCheck( aItems[ n ] )         
          ( ::cDbf )->( dbUnLock() )
 
          ::SaveTree( aItems[ n ]:aItems, cCurUsr, cDbf )
@@ -410,7 +411,8 @@ Method SaveTree( aItems, cCurUsr, cDbf )
             ( ::cDbf )->( dbAppend() )
             ( ::cDbf )->cCodUse  := cCurUsr
             ( ::cDbf )->cOpcion  := aItems[ n ]:bAction
-            ( ::cDbf )->lShow    := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
+            // ( ::cDbf )->lShow    := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
+            ( ::cDbf )->lShow    := ::oTree:GetCheck( aItems[ n ] )         
             ( ::cDbf )->( dbUnLock() )
          end if
 
@@ -462,7 +464,9 @@ Method LoadTree( aItems, cOpcion, lShow )
 
          if !Empty( aItems[ n ] ) .and. Rtrim( aItems[ n ]:cPrompt ) == Rtrim( cOpcion )
 
-            TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
+            // TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
+
+            ::oTree:SetCheck( aItems[ n ], lShow ) 
 
          end if
 
@@ -472,7 +476,9 @@ Method LoadTree( aItems, cOpcion, lShow )
 
          if !Empty( aItems[ n ]:bAction ) .and.  Rtrim( aItems[ n ]:bAction ) == Rtrim( cOpcion )
 
-            TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
+            // TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
+
+            ::oTree:SetCheck( aItems[ n ], lShow ) 
 
          end if
 
