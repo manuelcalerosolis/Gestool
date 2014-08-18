@@ -3163,11 +3163,11 @@ METHOD GetUsuario( lForced )
 
 METHOD GetUbicacion()
 
-  if ( uFieldEmpresa( "lShowSala" ) )
-     ::OnClickSalaVenta()
-  end if
+   if ( uFieldEmpresa( "lShowSala" ) )
+      ::OnClickSalaVenta()
+   end if
 
-  RETURN ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 

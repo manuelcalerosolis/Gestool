@@ -4321,23 +4321,9 @@ METHOD cNameIniPrv( nFld )
 
 return ( cText )
 
-
 //----------------------------------------------------------------------------//
 
 METHOD PrnTiket()
-
-   local oPrn
-   local cPort    := "Print.prn"
-
-   TImpresoraTiket():New():lBuildComm()
-
-   /*
-	Impresi¢n de Tiket. Titulo Centrado y enfatizado.
-	*/
-
-   oPrn := TDosPrn():New( cPort )
-   oPrn:LoadFile( cPort )
-   oPrn:End()
 
 return ( Self )
 
