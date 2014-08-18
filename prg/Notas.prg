@@ -865,9 +865,11 @@ Method SetFilter( cFltExpresion, oBtn, aBtn )
       oBtn:SetCheck( .t. )
    else
 
-   aEval( aBtn, {| oBtn | TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oBtn:hItem, 8 ) } )
+   // aEval( aBtn, {| oBtn | TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oBtn:hItem, 8 ) } )
+   aEval( aBtn, {| oBtn | ::oWndBrw:oBtnBar:SetItemImage( oBtn, 8 ) } )
 
-   TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oBtn:hItem, 7 )
+   // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oBtn:hItem, 7 )
+   ::oWndBrw:oBtnBar:SetItemImage( oBtn, 7 )
 
    end if
 

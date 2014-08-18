@@ -51,6 +51,7 @@ Checkbox.prg            	\
 RpreviewC3.prg          	\
 ReportC3.prg            	\
 RocolumnC3.prg          	\
+Ttreevie.prg 				\
 Treeitem.prg            	\
 Buttonb.prg             	\
 TlistVie.prg            	\
@@ -406,7 +407,6 @@ TpvMesa.prg             \
 TpvSalon.prg            \
 TScripts.prg            \
 OutLook2010.prg         \
-TTreevc3.prg            \
 Cuaderno.prg 				\
 FacturarLineasAlbaranes.prg \
 Components.prg 			\
@@ -421,6 +421,7 @@ Pwebbtn.c               \
 Stretchblt.c            \
 Rebars.c                \
 Treeview.c              \
+Notify.c 				\
 Wininet.c               \
 Rasapi.c                \
 Attrib.c                \
@@ -631,6 +632,7 @@ Impfaccom.obj           \
 InfoArticulo.obj        \
 TAuditor.obj            \
 Linklist.obj            \
+Ttreevie.obj 			\
 Treeitem.obj            \
 Ttvitem.obj             \
 Tur2ses.obj             \
@@ -687,8 +689,8 @@ Wininet.obj             \
 Attrib.obj              \
 Comm.obj                \
 Stretchblt.obj          \
-TTreevc3.obj            \
 Treeview.obj            \
+Notify.obj				\
 Rebars.obj              \
 VistaMnu.obj            \
 C5Lib.obj               \
@@ -1041,6 +1043,7 @@ $(OBJ)\Impfactu.obj             +
 $(OBJ)\ImpfacCom.obj            +
 $(OBJ)\InfoArticulo.obj         +
 $(OBJ)\TAuditor.obj             +
+$(OBJ)\Ttreevie.obj 			+
 $(OBJ)\Treeitem.obj             +
 $(OBJ)\Ttvitem.obj              +
 $(OBJ)\Tur2ses.obj              +
@@ -1100,8 +1103,8 @@ $(OBJ)\TInfseanum.obj           +
 $(OBJ)\TInftrazarlote.obj       +
 $(OBJ)\Ean.obj                  +
 $(OBJ)\Rasapi.obj               +
-$(OBJ)\TTreevc3.obj             +
 $(OBJ)\Treeview.obj             +
+$(OBJ)\Notify.obj 				+
 $(OBJ)\Pwebbtn.obj              +
 $(OBJ)\TInfGCli.obj             +
 $(OBJ)\TdAgeAlb.obj             +

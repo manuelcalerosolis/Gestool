@@ -86,7 +86,7 @@ return Self
 
 METHOD Destroy() CLASS TPanelEx
 
-return super:Destroy()
+return ::Super:Destroy()
 
 *************************************************************************************************************************************
 
@@ -108,7 +108,7 @@ local n, nLen
            ::Refresh()
    endcase
 
-return Super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 ***************************************************************************
    METHOD Paint() CLASS TPanelEx
@@ -124,7 +124,7 @@ local nMinTop    := int(nHeight / 2)
 local nMaxBottom := int(nHeight / 2)
 local rc := GetClientRect(::hWnd)
 
-super:Paint()
+::Super:Paint()
 
 if ::lVScroll
 
@@ -157,9 +157,7 @@ if ::bPainted != nil
    Eval( ::bPainted, ::hDC, self )
 endif
 
-
 return nil
-
 
 ***************************************************************************
   METHOD VScroll( nWParam, nLParam ) CLASS TPanelEx
@@ -363,7 +361,8 @@ return 0
 
 #pragma BEGINDUMP
 
-#include "windows.h"
+#include <windows.h>
+#include <hbapi.h>
 
 HB_FUNC( SHOWSCROLLBAR )
 {

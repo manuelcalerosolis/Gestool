@@ -848,7 +848,8 @@ static function SelMenu( oTree, oItem, aChkAcc, oChkAcc )
          oItem:Cargo    := nOr( oItem:Cargo, 32 )
       end if
 
-      TvSetItemImage( oTree:hWnd, oItem:hItem, nLev2Img( oItem:Cargo ) - 1 )
+      oTree:SetItemImage( oItem, nLev2Img( oItem:Cargo ) - 1 )
+      // TvSetItemImage( oTree:hWnd, oItem:hItem, nLev2Img( oItem:Cargo ) - 1 )
 
    else
 
@@ -887,7 +888,8 @@ function oMenuTree( cCodUsr, oTree, aItems )
 
             aItems[ n ]:Cargo       := nLevOpc
 
-            TvSetItemImage( oTree:hWnd, aItems[ n ]:hItem, nLev2Img( aItems[ n ]:Cargo ) - 1 )
+            oTree:SetItemImage( aItems[ n ], nLev2Img( aItems[ n ]:Cargo - 1 ) )
+            // TvSetItemImage( oTree:hWnd, aItems[ n ]:hItem, nLev2Img( aItems[ n ]:Cargo ) - 1 )
 
          end if
 

@@ -162,7 +162,7 @@ CLASS TpvTactil
    DATA oNewImp
    DATA oVisor
    DATA cVisor
-   DATA oImpresora
+
    DATA cImpresora
    DATA oUndMedicion
    DATA oRestaurante
@@ -1357,9 +1357,6 @@ METHOD OpenFiles() CLASS TpvTactil
    end if
 
    ::cImpresora               := cImpresoraTicketEnCaja( oUser():cCaja(), ::oCajaCabecera )
-   if !Empty( ::cImpresora )
-   ::oImpresora               := TImpresoraTiket():Create( ::cImpresora )
-   end if
 
    ::oUndMedicion             := UniMedicion():Create( cPatGrp() )
    if !::oUndMedicion:OpenFiles()
@@ -1788,10 +1785,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oVisor:End()
    end if
 
-   if !Empty( ::oImpresora )
-      ::oImpresora:End()
-   end if
-
    if !Empty( ::oUndMedicion )
       ::oUndMedicion:end()
    end if
@@ -1918,7 +1911,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oStock                                  := nil
    ::oNewImp                                 := nil
    ::oVisor                                  := nil
-   ::oImpresora                              := nil
    ::oUndMedicion                            := nil
    ::oRestaurante                            := nil
    ::oInvitacion                             := nil
@@ -8004,7 +7996,7 @@ METHOD PrevisualizaTicket()
 
   if ::lEmptyDocumento()
      MsgStop( "El documento no contiene líneas." )
-     Return ( .t. )
+     Return ( Self )
   end if
 
   ::cFormato        := ::oFormatosImpresion:cFormatoTiket

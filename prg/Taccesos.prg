@@ -544,11 +544,11 @@ Return Self
 
 Method CreateButtonBar( oWnd, lCreateButtonBar )
 
-   DEFAULT lCreateButtonBar   := .t.
+   DEFAULT lCreateButtonBar := .t.
 
-   ::oReBar                   := TPanelEx():New( 0, 0, if( ::lTactil, 124, 150 ), 1000, oWnd, Rgb( 255, 255, 255 ), .f. ) // Rgb( 191, 219, 255 )
+   ::oReBar                	:= TPanelEx():New( 0, 0, if( ::lTactil, 124, 150 ), 1000, oWnd, Rgb( 255, 255, 255 ), .f. ) 
 
-   oWnd:oTop                  := ::oReBar
+   oWnd:oTop                := ::oReBar
 
    ::CreateOfficeBar( oWnd )
 

@@ -165,7 +165,7 @@ Tmessage.prg            	\
 Taccesos.prg            	\
 TItemacceso.prg         	\
 Tdbfserv.prg            	\
-Tpanel.prg              	\
+Tpanelex.prg              	\
 Pais.prg                	\
 Bandera.prg             	\
 Tvisor.prg              	\
@@ -530,7 +530,7 @@ Tmessage.obj            \
 Taccesos.obj            \
 TItemacceso.obj         \
 Tdbfserv.obj            \
-Tpanel.obj              \
+Tpanelex.obj            \
 Pais.obj                \
 Bandera.obj             \
 Tvisor.obj              \
@@ -891,7 +891,7 @@ $(OBJ)\Tmessage.obj             +
 $(OBJ)\Taccesos.obj             +
 $(OBJ)\Titemacceso.obj          +
 $(OBJ)\Tdbfserv.obj             +
-$(OBJ)\Tpanel.obj               +
+$(OBJ)\Tpanelex.obj             +
 $(OBJ)\Pais.obj                 +
 $(OBJ)\Bandera.obj              +
 $(OBJ)\Tvisor.obj               +
@@ -1079,7 +1079,6 @@ $(OBJ)\Components.obj 			+
 $(OBJ)\TLabelGenerator.obj 		+
 $(OBJ)\MsTable.obj
 $<,$*
-$(HBLIB)\Eagle1.lib             +
 $(FWLIB)\FiveH.lib              +
 $(FWLIB)\FiveHC.lib             +
 $(FWLIB)\libmysql.lib           +
@@ -1111,6 +1110,7 @@ $(HBLIB)\png.lib 				+
 $(HBLIB)\hbcurl.lib 			+
 $(HBLIB)\hbusrrdd.lib 			+
 $(HBLIB)\libcurl.lib 			+
+$(IMG2PDFLIB)\Image2pdf.lib     +
 $(HBLIB)\b32\rddads.lib			+
 $(HBLIB)\ace32.lib 				+
 $(BORLANDLIB)\cw32.lib 			+ 

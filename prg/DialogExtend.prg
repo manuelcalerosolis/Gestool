@@ -3,19 +3,21 @@
 
 FUNCTION DialogExtend()
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aFastKeys", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, {}, 1, .f., .f. )
+local hClass  := TDialog():ClassH
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "bTmpValid", __cls_IncData( __ClsGetHandleFromName( "TDialog" ) ), 9, nil, 1, .f., .f. )
+__clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
+__clsAddMsg( hClass, "bTmpValid", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
+__clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
+__clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
 
-TDialog(); __clsAddMsg( __ClsGetHandleFromName( "TDialog" ), "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
+__clsAddMsg( hClass, "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
 
-TDialog(); __clsModMsg( __ClsGetHandleFromName( "TDialog" ), "KeyDown", @DialogKeyDown(), 1 )
+__clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
+
+__clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
 
 /*
 EXTEND CLASS TDialog WITH DATA aFastKeys//  AS ARRAY INIT {} 

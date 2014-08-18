@@ -387,48 +387,6 @@ RETURN ( ::oDbf:LastRec() > 0 )
 
 METHOD PrnTiket( lPrev )
 
-   local oPrnTik
-   local cCodAlm     := Space( 3 )
-   local cImpTik     := cImpresoraTicketEnCaja( oUser():cCaja() )
-
-   DEFAULT lPrev     := .t.
-
-   oPrnTik           := TImpresoraTiket():Create( cImpTik, lPrev )
-
-   if Empty( oPrnTik:cPort )
-      MsgStop( "No hay puerto de impresora" )
-      return nil
-   end if
-
-   if !oPrnTik:lBuildComm()
-      MsgStop( "No se puede crear un handle a la impresora" )
-      return nil
-   end if
-
-   oPrnTik:Write( PadC( Rtrim( ::cTitle ), 40 )       + CRLF )
-   oPrnTik:Write( PadC( Rtrim( ::cSubTitle ), 40 )    + CRLF )
-   oPrnTik:Write( CRLF )
-
-   ::oDbf:OrdSetFocus( ::oEstado:nAt )
-   ::oDbf:GoTop()
-
-   while !::oDbf:Eof()
-      if ::oDbf:cCodAlm != cCodAlm
-         oPrnTik:Write( Replicate( "-", 40 )                + CRLF )
-         oPrnTik:Write( "Almacen : " + ::oDbf:cCodAlm       + CRLF )
-         oPrnTik:Write( Replicate( "-", 40 )                + CRLF )
-         oPrnTik:Write( Padr( "Código", 8 ) + Space( 1 ) + Padr( "Artículo", 20 ) + Space( 1 ) + Padl( "Unidades", 10 ) + CRLF )
-         oPrnTik:Write( Replicate( "-", 40 )                + CRLF )
-         cCodAlm     := ::oDbf:cCodAlm
-      end if
-      oPrnTik:Write( left( ::oDbf:cCodArt, 8 ) + Space( 1 ) + Padr( ::oDbf:cDesArt, 20 ) + Space( 1 ) + Trans( ::oDbf:nNumUnd, Right( MasUnd(), 10 ) ) + CRLF )
-      ::oDbf:Skip()
-   end while
-
-   oPrnTik:Write( Replicate( "-", 40 ) + CRLF )
-
-   oPrnTik:End()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

@@ -1816,7 +1816,8 @@ Method PutOperarioIndex( nTypeExp, oButton )
    nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "on_worker2_folder_document_16" ) } )
    if nItemBitmap != 0
       nItemBitmap := nItemBitmap - 2
-      TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oButton:hItem, nItemBitmap )
+      // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oButton:hItem, nItemBitmap )
+      ::oWndBrw:oBtnBar:SetItemImage( oButton, nItemBitmap )
    end if
 
    /*
@@ -1925,7 +1926,8 @@ Method RestoreOperarioButton()
       nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "worker2_folder_document_16" ) } )
       if nItemBitmap != 0
          nItemBitmap := nItemBitmap - 2
-         TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, ::oButtonOld:hItem, nItemBitmap )
+         // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, ::oButtonOld:hItem, nItemBitmap )
+         ::oWndBrw:oBtnBar:SetItemImage( ::oButtonOld, nItemBitmap )
       end if
 
       ::oButtonOld                     := nil

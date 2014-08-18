@@ -876,7 +876,7 @@ METHOD PasaLineaAlbaran() CLASS TFacturarLineasAlbaranes
    end if
 
    if ( ::cTemporalLineaAlbaran )->( OrdKeyCount() ) == 0
-      ( ::cTemporalLineaAlbaran )->( dbZap() )
+      ( ::cTemporalLineaAlbaran )->( __dbZap() )
    end if
 
    /*
@@ -909,7 +909,7 @@ METHOD PasaTodoAlbaran() CLASS TFacturarLineasAlbaranes
    Elimino de albaranes--------------------------------------------------------
    */
 
-   ( ::cTemporalLineaAlbaran )->( dbZap() )
+   ( ::cTemporalLineaAlbaran )->( __dbZap() )
 
    /*
    Actualizamos los porcentajes y  el browse-----------------------------------
@@ -1027,7 +1027,7 @@ METHOD PasaLineaFactura() CLASS TFacturarLineasAlbaranes
    end if
 
    if ( ::cTemporalLineaFactura )->( OrdKeyCount() ) == 0
-      ( ::cTemporalLineaFactura )->( dbZap() )
+      ( ::cTemporalLineaFactura )->( __dbZap() )
    end if
 
    /*
@@ -1046,7 +1046,7 @@ METHOD PasaTodoFactura() CLASS TFacturarLineasAlbaranes
    Elimino de albaran----------------------------------------------------------
    */
 
-   ( ::cTemporalLineaAlbaran )->( dbZap() )
+   ( ::cTemporalLineaAlbaran )->( __dbZap() )
 
 
    /*
@@ -1059,7 +1059,7 @@ METHOD PasaTodoFactura() CLASS TFacturarLineasAlbaranes
    Elimino de factura----------------------------------------------------------
    */
 
-   ( ::cTemporalLineaFactura )->( dbZap() )
+   ( ::cTemporalLineaFactura )->( __dbZap() )
 
    /*
    Actualizamos los porcentajes y  el browse-----------------------------------
@@ -1519,7 +1519,7 @@ METHOD ComprobacionesCalculoPorcentajes() CLASS TFacturarLineasAlbaranes
       Elimino de albaran-------------------------------------------------------
       */
 
-      ( ::cTemporalLineaAlbaran )->( dbZap() )
+      ( ::cTemporalLineaAlbaran )->( __dbZap() )
 
       /* 
       Cargo de albaran---------------------------------------------------------
@@ -1531,7 +1531,7 @@ METHOD ComprobacionesCalculoPorcentajes() CLASS TFacturarLineasAlbaranes
       Elimino de factura-------------------------------------------------------
       */
 
-      ( ::cTemporalLineaFactura )->( dbZap() )
+      ( ::cTemporalLineaFactura )->( __dbZap() )
 
    end if
 

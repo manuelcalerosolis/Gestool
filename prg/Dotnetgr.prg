@@ -225,6 +225,7 @@ if !::lAgrupado
    do case
       case ::oParent:oColor:nStyle == 1
            Line( hDC,  nTop+2, nRight-1, nBottom, nRight-1,::oParent:oColor:nClrSeparador1 )
+           // Box( hDC,  nTop+2, nRight-1, nBottom, nRight-1,::oParent:oColor:nClrSeparador1 )
            VerticalGradient( hDC, {nTop+2, nRight, nBottom+1, nRight+1}, ::oParent:oColor:nClrSeparador11, ::oParent:oColor:nClrSeparador21 )
       otherwise
            RoundBox( hDC, nLeft+1,nTop+1, nRight+1, nBottom, ::oParent:oColor:nCorner1, ::oParent:oColor:nCorner1, ::oParent:oColor:_GRISBOX2 )
@@ -325,6 +326,7 @@ local nHeight
    do case
       case ::oParent:oColor:nStyle == 1
            Line( hDC,  nTop+2, nRight-1, nBottom, nRight-1,::oParent:oColor:nClrSeparador1 )
+           // Box( hDC,  nTop+2, nRight-1, nBottom, nRight-1,::oParent:oColor:nClrSeparador1 )
            VerticalGradient( hDC, {nTop+2, nRight, nBottom+1, nRight+1}, ::oParent:oColor:nClrSeparador11, ::oParent:oColor:nClrSeparador21 )
    endcase
 
@@ -1283,6 +1285,24 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TWindowExt1
   */
 
 return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+
+*********************************************************************************************************************************
+function Line( hDC, nTop, nLeft, nBottom, nRight, nColor, nGrueso )
+*********************************************************************************************************************************
+
+  local hPen, hOldPen
+  
+  DEFAULT nGrueso := 1
+  DEFAULT nColor := CLR_BLACK
+  
+  hPen := CreatePen( PS_SOLID, nGrueso, nColor )
+  hOldPen := SelectObject( hDC, hPen )
+  MoveTo( hDC, nLeft,  nTop    )
+  LineTo( hDC, nRight, nTop    )
+  SelectObject( hDC, hOldPen )
+  DeleteObject( hPen )
+
+return 0
 
 *********************************************************************************************************************************
 
