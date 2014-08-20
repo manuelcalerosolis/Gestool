@@ -823,7 +823,7 @@ METHOD ChgFields()
    Botones del dialogo---------------------------------------------------------
    */
 
-   REDEFINE METER ::oMtrReplace VAR ::nMtrReplace ;
+ REDEFINE APOLOMETER ::oMtrReplace VAR ::nMtrReplace ;
       PROMPT   "Procesando" ;
       ID       290 ;
       OF       oDlg

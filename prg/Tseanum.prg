@@ -621,7 +621,7 @@ METHOD Activate( oMenuItem, oWnd, lStart )
 
    ::oBrw:CreateFromResource( 140 )
 
-   REDEFINE METER ::oMetMsg VAR ::nMetMsg ;
+ REDEFINE APOLOMETER ::oMetMsg VAR ::nMetMsg ;
       ID       150 ;
       OF       oDlg
 
@@ -1730,7 +1730,7 @@ METHOD Resource() CLASS TNumerosSerie
          ID       230 ;
          OF       ::oDlg
 
-      ::oProSer   := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProSer, ::nProSer := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oProSer   := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProSer, ::nProSer := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID       510 ;

@@ -718,7 +718,7 @@ METHOD Resource( cFldRes ) CLASS TChgCode
    Meter-----------------------------------------------------------------------
    */
 
-   REDEFINE METER ::oMtrInf VAR ::nMtrInf ;
+ REDEFINE APOLOMETER ::oMtrInf VAR ::nMtrInf ;
 		PROMPT	"Procesando" ;
       ID       1160;
       TOTAL    100 ;

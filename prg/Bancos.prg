@@ -1030,7 +1030,7 @@ Return ( nSaldo )
 
 CLASS TFastCuentasBancarias FROM TFastReportInfGen
 
-   DATA  cResource       INIT "FastReportArticulos"
+   DATA  cResource       INIT "ReportingDialog"
 
    DATA  oPedCliP
    DATA  oAlbCliP

@@ -415,7 +415,7 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
          ID       110 ;
          OF       ::oFld:aDialogs[ 3 ]
 
-      REDEFINE METER ::oMtr ;
+REDEFINE APOLOMETER ::oMtr ;
          VAR      ::nMtr ;
          ID       120 ;
          OF       ::oFld:aDialogs[ 3 ]

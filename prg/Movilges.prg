@@ -554,7 +554,7 @@ Method MuestraDialogo()
 
    // ventana de resultados
 
-   REDEFINE METER ::oMedidor;
+ REDEFINE APOLOMETER ::oMedidor;
       VAR      ::nMedidor ;
       PROMPT   "Proceso Actual";
       ID       600 ;

@@ -242,7 +242,7 @@ Method Activate( oMenuItem, oWnd )
       OF       ::oFld:aDialogs[ 1 ] ;
       ACTION   ( ::SelAllRuta( .f. ) )
 
-   REDEFINE METER ::oMetUno;
+   REDEFINE APOLOMETER ::oMetUno;
       VAR      ::nMetUno ;
       PROMPT   "Progreso";
       ID       120 ;
@@ -278,7 +278,7 @@ Method Activate( oMenuItem, oWnd )
       ID       141 ;
       OF       ::oFld:aDialogs[ 2 ]
 
-   REDEFINE METER ::oMetDos;
+   REDEFINE APOLOMETER ::oMetDos;
       VAR      ::nMetDos ;
       PROMPT   "Progreso";
       ID       140 ;

@@ -847,7 +847,7 @@ METHOD Resource( nMode ) CLASS TCobAge
          ::oBrwDet:bLDblClick    := {|| ::oDetCobAge:Zoom() }
       end if
 
-      REDEFINE METER ::oMeter VAR ::nMeter ;
+REDEFINE APOLOMETER ::oMeter VAR ::nMeter ;
          ID       160 ;
          NOPERCENTAGE ;
          OF       oDlg

@@ -1274,7 +1274,7 @@ METHOD SelectRec( bAction, cDlgTitle, cChkTitle, lClose ) CLASS TMasDet
       OF       ::oDlgSelect ;
       ACTION   ( ::oDlgSelect:end() )
 
-   REDEFINE METER ::oMtrSelect ;
+ REDEFINE APOLOMETER ::oMtrSelect ;
       VAR      nMtrInf ;
       PROMPT   "Proceso" ;
       ID       200;

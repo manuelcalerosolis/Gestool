@@ -5089,7 +5089,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    oTree             := TTreeView():Redefine( 170, oDlg )
    oTree:bLDblClick  := {|| TreeChanged( oTree ) }
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf ;
       VAR      nMtrInf ;
       NOPERCENTAGE ;
       ID       200 ;
@@ -7557,7 +7557,7 @@ Static Function OldEditarNumeroSerie( aTmp, nMode )
 
       oBrwSer:CreateFromResource( 150 )
 
-      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      oProSer     := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID       510 ;
@@ -8510,8 +8510,8 @@ Method Create() CLASS TRectificativaProveedorLabelGenerator
             :bOnPostEdit      := {|o,x| if( dbDialogLock( ::cAreaTmpLabel ), ( ( ::cAreaTmpLabel )->nLabel := x, ( ::cAreaTmpLabel )->( dbUnlock() ) ), ) }
          end with
 
-         REDEFINE METER ::oMtrLabel ;
-            VAR      ::nMtrLabel ;
+         REDEFINE APOLOMETER 	::oMtrLabel ;
+            VAR      			::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;
             OF       ::oFld:aDialogs[ 2 ] ;

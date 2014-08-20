@@ -6714,7 +6714,7 @@ STATIC FUNCTION DupSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDup VAR nTxtDup ;
+   REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( TDataView():PedidosClientes( nView ) )->( OrdKeyCount() ) ;
@@ -7288,7 +7288,7 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
          ID       212, 213, 214 ;
          OF       ::oPag:aDialogs[1]
 
-      REDEFINE METER ::oMtr VAR ::nMtr ;
+	REDEFINE APOLOMETER ::oMtr VAR ::nMtr ;
          PROMPT   "Procesando" ;
          ID       220 ;
          TOTAL    ( dbfTmpPedLin )->( LastRec() ) ;

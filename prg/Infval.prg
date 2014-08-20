@@ -520,12 +520,12 @@ FUNCTION InfStocks( oMenuItem, oWnd )
       ID       160, 161 ;
       OF       oDlg ;
 
-   REDEFINE METER oMtrInf ;
-		VAR 		nMtrInf ;
+	REDEFINE APOLOMETER oMtrInf ;
+		VAR 	nMtrInf ;
 		PROMPT	"Procesando" ;
-      ID       400;
+      	ID       400;
 		OF 		oDlg ;
-      TOTAL    100
+      	TOTAL    100
 
 	REDEFINE BUTTON ;
 		ID 		508;

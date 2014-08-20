@@ -32,31 +32,31 @@ function PasEuro( oWndBrw, oWnd )
    Segunda caja de dialogo-----------------------------------------------------
    */
 
-   REDEFINE METER aoMeter[ 1 ] VAR anMeter[ 1 ] ;
+ REDEFINE APOLOMETER aoMeter[ 1 ] VAR anMeter[ 1 ] ;
          ID       100 ;
          OF       oPag:aDialogs[ 2 ]
 
-   REDEFINE METER aoMeter[ 2 ] VAR anMeter[ 2 ] ;
+ REDEFINE APOLOMETER aoMeter[ 2 ] VAR anMeter[ 2 ] ;
          ID       110 ;
          OF       oPag:aDialogs[ 2 ]
 
-   REDEFINE METER aoMeter[ 3 ] VAR anMeter[ 3 ] ;
+ REDEFINE APOLOMETER aoMeter[ 3 ] VAR anMeter[ 3 ] ;
          ID       120 ;
          OF       oPag:aDialogs[ 2 ]
 
-   REDEFINE METER aoMeter[ 4 ] VAR anMeter[ 4 ] ;
+ REDEFINE APOLOMETER aoMeter[ 4 ] VAR anMeter[ 4 ] ;
          ID       130 ;
          OF       oPag:aDialogs[ 2 ]
 
-   REDEFINE METER aoMeter[ 5 ] VAR anMeter[ 5 ] ;
+ REDEFINE APOLOMETER aoMeter[ 5 ] VAR anMeter[ 5 ] ;
          ID       140 ;
          OF       oPag:aDialogs[ 2 ]
 
-   REDEFINE METER aoMeter[ 6 ] VAR anMeter[ 6 ] ;
+ REDEFINE APOLOMETER aoMeter[ 6 ] VAR anMeter[ 6 ] ;
          ID       150 ;
          OF       oPag:aDialogs[ 2 ]
 
-   REDEFINE METER aoMeter[ 7 ] VAR anMeter[ 7 ] ;
+ REDEFINE APOLOMETER aoMeter[ 7 ] VAR anMeter[ 7 ] ;
          ID       160 ;
          OF       oPag:aDialogs[ 2 ]
 

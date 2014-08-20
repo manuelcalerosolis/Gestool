@@ -14,7 +14,8 @@
 
 CLASS TField
 
-    DATA cName, cType, cPict, cComment       AS STRING
+    DATA cName, cType                        AS STRING
+    DATA cPict, cComment       
     DATA nPos, nLen, nDec                    AS NUMERIC
     DATA bSetGet, bValid, bString, bDirect   AS BLOCK
     DATA lCalculate, lOEM                    AS LOGICAL
@@ -67,7 +68,7 @@ METHOD New( oDbf, cName, cType, nLen, nDec, cPict, DefaultVal, bValid, ;
    BYNAME nLen       DEFAULT 10
    BYNAME nDec       DEFAULT 0
    BYNAME cPict      DEFAULT "@"
-   BYNAME cComment   DEFAULT Self:cName
+   BYNAME cComment   DEFAULT cName 
 
    BYNAME lColAlign  DEFAULT ( ::cType == "N" )
    BYNAME nColSize   DEFAULT ( GetTextWidth( 0, replicate( "B", ::nLen ) ) )
@@ -124,7 +125,7 @@ METHOD New( oDbf, cName, cType, nLen, nDec, cPict, DefaultVal, bValid, ;
            BYNAME bSetGet
    endcase
 
-   BYNAME DefaultVal DEFAULT Self:LowVal
+   BYNAME DefaultVal DEFAULT ::LowVal
    BYNAME bValid     DEFAULT { || .t. }
 
    ::Val := ::LowVal

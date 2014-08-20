@@ -7834,7 +7834,7 @@ Function EdtNumSer( mNumSer, nTotUnd, nMode )
 
       oBrwSer:CreateFromResource( 150 )
 
-      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      oProSer     := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID       510 ;
@@ -8691,7 +8691,7 @@ Function Generador( oBrwPed )
       ID       212, 213 ;
       OF       oPag:aDialogs[ 1 ]
 
-   REDEFINE METER oMtr ;
+ REDEFINE APOLOMETER oMtr ;
       VAR      nMtr ;
             PROMPT      "Procesando" ;
       ID       220 ;

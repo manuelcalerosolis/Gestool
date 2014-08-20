@@ -2130,12 +2130,12 @@ METHOD oDefMetInf( nId, oDlg ) CLASS TInfGen
    DEFAULT nId    := 1160
    DEFAULT oDlg   := ::oFld:aDialogs[1]
 
-   REDEFINE METER ::oMtrInf ;
-      VAR      ::nMtrInf ;
-		PROMPT	"Procesando" ;
-      ID       nId;
-      TOTAL    100 ;
-      OF       oDlg
+ REDEFINE APOLOMETER ::oMtrInf ;
+      VAR         ::nMtrInf ;
+		PROMPT	   "Procesando" ;
+      ID          nId;
+      TOTAL       100 ;
+      OF          oDlg
 
 RETURN ( Self )
 

@@ -2240,7 +2240,7 @@ FUNCTION TraRecPrv( oBrw, cTitle, cOption, lChgState )
 
    oTree       := TTreeView():Redefine( 180, oDlg )
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf ;
       VAR      nMtrInf ;
       NOPERCENTAGE ;
       ID       200;

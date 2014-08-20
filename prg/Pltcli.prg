@@ -440,7 +440,8 @@ STATIC FUNCTION EndTrans( aTemp, nMode, oBrw )
 			ID 120 ;
 			OF oDlg
 
-		REDEFINE METER oMeter VAR nMeter ;
+		/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMeter VAR nMeter ;
 			PROMPT "ACTUALIZANDO" ;
 			ID 150 ;
 			OF oDlg

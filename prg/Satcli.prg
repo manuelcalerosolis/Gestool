@@ -7373,7 +7373,7 @@ STATIC FUNCTION DupSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDup VAR nTxtDup ;
+ REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( TDataView():SatClientes( nView ) )->( OrdKeyCount() ) ;

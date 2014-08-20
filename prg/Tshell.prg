@@ -82,7 +82,6 @@ CLASS TShell FROM TMdiChild
    DATA  lMin
    DATA  lZoom
    DATA  lNoSave     AS LOGIC    INIT .f.
-   DATA  aOriginal   AS ARRAY    INIT {}
    DATA  lBmpMenu    AS LOGIC    INIT .f.
    DATA  lAutoSeek   AS LOGIC    INIT .f.
    DATA  bExpFilter
@@ -93,6 +92,8 @@ CLASS TShell FROM TMdiChild
    DATA  nFlds
    DATA  cHtmlHelp
    DATA  aGoTo
+
+   DATA  aOriginal   
 
    DATA  bAdd
    DATA  bEdit
@@ -2368,6 +2369,7 @@ Method CreateXBrowse() CLASS TShell
 
       ::oBrw                  := TXBrowse():New( Self )
       ::oBrw:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
+      ::oBrw:l2007            := .f.
 
       ::oBrw:lRecordSelector  := .f.
 

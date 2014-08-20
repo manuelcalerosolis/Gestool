@@ -3753,7 +3753,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Botones generales--------------------------------------------------------
 
-      ::oMeter    := TMeter():ReDefine( 130, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, ::oDlgTurno, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+      ::oMeter    := TApoloMeter():ReDefine( 130, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, ::oDlgTurno, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
 
       REDEFINE SAY ::oTxt ;
          PROMPT   "" ;
@@ -10902,13 +10902,13 @@ METHOD ContabilizaSesiones()
    Meter-----------------------------------------------------------------------
    */
 
-   REDEFINE METER ::oMtrSelect ;
+ REDEFINE APOLOMETER ::oMtrSelect ;
       VAR      nMtrSelect ;
       NOPERCENTAGE ;
       ID       200;
       OF       ::oDlgSelect
 
-   REDEFINE METER ::oMtrProcess ;
+ REDEFINE APOLOMETER ::oMtrProcess ;
       VAR      nMtrProcess ;
       NOPERCENTAGE ;
       ID       210;

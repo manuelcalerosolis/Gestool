@@ -540,7 +540,7 @@ METHOD Resource( nMode )
 
          ::oBrwDet:LoadData()
 
-      REDEFINE METER ::oMeter VAR ::nMeter ;
+REDEFINE APOLOMETER ::oMeter VAR ::nMeter ;
          ID       160 ;
          NOPERCENTAGE ;
          OF       oDlg

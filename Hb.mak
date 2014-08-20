@@ -366,14 +366,17 @@ TpvPunto.prg            \
 TpvMesa.prg             \
 TpvSalon.prg            \
 TScripts.prg            \
-TTreevc3.prg            \
 Cuaderno.prg 				\
 FacturarLineasAlbaranes.prg \
 Components.prg 			\
 TLabelGenerator.prg 	\
+TTreevie.prg            \
+ApoloMeter.prg 			\
 
 C               =       \
 Img2pdf.c               \
+Treeview.c 				\
+
 
 OBJS            =       \
 Factu.obj               \
@@ -407,7 +410,7 @@ Extage.obj              \
 Lqdalm.obj              \
 Pedcli.obj              \
 Precli.obj              \
-Satcli.obj 					\
+Satcli.obj 				\
 Factcli.obj             \
 Facant.obj              \
 Facrec.obj              \
@@ -591,6 +594,7 @@ Pdreport.obj            \
 RcolumnC3.obj           \
 Metafi32.obj            \
 Img2pdf.obj             \
+Treeview.obj 			\
 Ean.obj                 \
 C5Lib.obj               \
 TInfseanum.obj          \
@@ -731,6 +735,8 @@ Cuaderno.obj 				\
 FacturarLineasAlbaranes.obj \
 Components.obj 			\
 TLabelGenerator.obj 	\
+TTreevie.obj 			\
+ApoloMeter.obj 			\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1025,6 +1031,7 @@ $(OBJ)\TDetMaterial.obj         +
 $(OBJ)\TDetPersonal.obj         +
 $(OBJ)\TDetMaquina.obj          +
 $(OBJ)\Img2pdf.obj              +
+$(OBJ)\Treeview.obj             +
 $(OBJ)\ReportGallery.obj        +
 $(OBJ)\PInfMateriales.obj       +
 $(OBJ)\UnidadMedicion.obj       +
@@ -1074,13 +1081,15 @@ $(OBJ)\TpvMesa.obj              +
 $(OBJ)\TpvSalon.obj             +
 $(OBJ)\TScripts.obj             +
 $(OBJ)\Cuaderno.obj 		  	+
-$(OBJ)\FacturarLineasAlbaranes.obj +
-$(OBJ)\Components.obj 			+
-$(OBJ)\TLabelGenerator.obj 		+
-$(OBJ)\MsTable.obj
+$(OBJ)\FacturarLineasAlbaranes.obj 	+
+$(OBJ)\Components.obj 				+
+$(OBJ)\TLabelGenerator.obj 			+
+$(OBJ)\TTreevie.obj 				+
+$(OBJ)\ApoloMeter.obj 		
 $<,$*
 $(FWLIB)\FiveH.lib              +
 $(FWLIB)\FiveHC.lib             +
+$(FWLIB)\Dolphin.lib            +
 $(FWLIB)\libmysql.lib           +
 $(HBLIB)\hbwin.lib 				+
 $(HBLIB)\gtwin.lib 				+ 

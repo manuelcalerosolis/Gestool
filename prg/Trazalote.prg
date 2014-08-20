@@ -536,7 +536,7 @@ METHOD Activate( oMenuItem, oWnd )
       ::oBrw:bLDblClick    := {|| ::Zoom() }
       ::oBrw:bChange       := {|| ::oBrw:Refresh() }
 
-   REDEFINE METER ::oMetMsg ;
+ REDEFINE APOLOMETER ::oMetMsg ;
       VAR      ::nMetMsg ;
       ID       160 ;
       OF       oDlg

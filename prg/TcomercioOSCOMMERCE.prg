@@ -831,9 +831,9 @@ METHOD Activate( oWnd ) CLASS TComercio
 
       REDEFINE SAY ::oText PROMPT ::cText ID 210 OF ::oDlg
 
-      ::oMeter       := TMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nActualMeter, ::nActualMeter := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMeter       := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nActualMeter, ::nActualMeter := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      ::oMeterL      := TMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nActualMeterL, ::nActualMeterL := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMeterL      := TApoloMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nActualMeterL, ::nActualMeterL := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       /*
       Botones------------------------------------------------------------------

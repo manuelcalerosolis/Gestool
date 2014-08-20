@@ -5523,7 +5523,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
       ID       190 ;
       OF       oDlg
 
-   REDEFINE METER oMtr;
+	REDEFINE APOLOMETER oMtr;
       VAR      nMtr ;
       PROMPT   "Procesando" ;
       ID       220 ;
@@ -7099,7 +7099,7 @@ Method Create() CLASS TClienteLabelGenerator
             :nWidth           := 100
          end with
 
-         REDEFINE METER ::oMtrLabel ;
+   REDEFINE APOLOMETER ::oMtrLabel ;
             VAR      ::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;

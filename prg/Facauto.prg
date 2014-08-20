@@ -1755,7 +1755,7 @@ METHOD Run() CLASS TCreaFacAutomaticas
       Resto de controles-------------------------------------------------------
       */
 
-      REDEFINE METER ::oMetMsg VAR nMetMsg ;
+REDEFINE APOLOMETER ::oMetMsg VAR nMetMsg ;
          ID       120 ;
          OF       oDlg
 

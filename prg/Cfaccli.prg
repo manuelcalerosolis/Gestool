@@ -1212,7 +1212,7 @@ Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfD
    oTree             := TTreeView():Redefine( 170, oDlg )
    oTree:bLDblClick  := {|| TreeChanged( oTree ) }
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf ;
       VAR      nMtrInf ;
       PROMPT   "Proceso" ;
       ID       200;

@@ -209,7 +209,7 @@ METHOD Create() CLASS TCambioDeIva
 
    ::oTree    := TTreeView():Redefine( 100, ::oFld:aDialogs[ 2 ] )
 
-   ::oMetMsg  := TMeter():ReDefine( 120, { | u | if( pCount() == 0, nMetMsg, nMetMsg := u ) }, 10, ::oFld:aDialogs[ 2 ], .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+   ::oMetMsg  := TApoloMeter():ReDefine( 120, { | u | if( pCount() == 0, nMetMsg, nMetMsg := u ) }, 10, ::oFld:aDialogs[ 2 ], .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
    ::oAni     := TAnimat():Redefine( ::oFld:aDialogs[ 2 ], 130, acImages, 1 )
 

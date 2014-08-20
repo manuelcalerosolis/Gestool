@@ -575,7 +575,7 @@ METHOD Activate( oWnd, lAuto )
          ID       110 ;
          OF       ::oFld:aDialogs[ 4 ]
 
-      REDEFINE METER ::oMtr ;
+REDEFINE APOLOMETER ::oMtr ;
          VAR      ::nMtr ;
          ID       120 ;
          OF       ::oFld:aDialogs[ 4 ]

@@ -870,7 +870,7 @@ METHOD ImportResource( nMode )
          SPINNER ;
          OF       oDlg
 
-      ::oMeter    := TMeter():ReDefine( 140, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 140, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMeter    := TApoloMeter():ReDefine( 140, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 140, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       /*
       Botones de acceso________________________________________________________

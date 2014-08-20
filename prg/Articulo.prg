@@ -9501,7 +9501,7 @@ STATIC FUNCTION ChgPrc( dbfArticulo, oWndBrw )
       ITEMS    aComBox ;
       OF       oDlg
 
-   oMtr        := TMeter():ReDefine( 220, { | u | if( pCount() == 0, nMtr, nMtr := u ) }, ( dbfArticulo )->( lastrec() ), oDlg, .f., , "Procesando", .f., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+   oMtr        := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, nMtr, nMtr := u ) }, ( dbfArticulo )->( lastrec() ), oDlg, .f., , "Procesando", .f., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
 
    REDEFINE BUTTON ;
       ID       IDOK;

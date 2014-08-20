@@ -1658,7 +1658,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    oTree             := TTreeView():Redefine( 180, oDlg )
    oTree:bLDblClick  := {|| TreeChanged( oTree ) }
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf ;
       VAR      nMtrInf ;
       NOPERCENTAGE ;
       ID       200;

@@ -2421,7 +2421,7 @@ METHOD Resource() CLASS TpvTactil
    Definimos el meter--------------------------------------------------------
    */
 
-   ::oProgressBar             := TMeter():ReDefine( 400, { | u | If( pCount() == 0, ::nProgressBar, ::nProgressBar := u ) },, ::oDlg, .f.,,, .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+   ::oProgressBar             := TApoloMeter():ReDefine( 400, { | u | If( pCount() == 0, ::nProgressBar, ::nProgressBar := u ) },, ::oDlg, .f.,,, .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
    /*
    Definimos los Splitters-----------------------------------------------------
@@ -9069,12 +9069,19 @@ Return ( Self )
 METHOD GetPesoBalanza() CLASS TpvTactil
 
    local oBalanza
+   local cBalanza 
+
+   cBalanza                :=  cBalanzaEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+
+   if empty( cBalanza )
+      return ( Self )
+   end if 
 
    if ::oTemporalLinea:ordKeyCount() != 0 .and.;
       !::oTemporalLinea:lDelTil           .and.;
       !::oTemporalLinea:lKitArt
 
-      oBalanza              := TCommPort():Create( cBalanzaEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ) )
+      oBalanza             := TCommPort():Create( cBalanza )
 
       if oBalanza:lCreated
 

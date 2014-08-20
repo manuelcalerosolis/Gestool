@@ -422,7 +422,7 @@ METHOD Resource( nMode )
             ::oBrwDet:bDel       := {|| ::DelLiqAge() }
          end if
 
-      REDEFINE METER ::oMeter VAR ::nMeter ;
+REDEFINE APOLOMETER ::oMeter VAR ::nMeter ;
          ID       160 ;
          NOPERCENTAGE ;
          OF       oDlg

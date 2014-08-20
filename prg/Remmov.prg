@@ -1321,7 +1321,7 @@ METHOD Resource( nMode )
       end with
 
       ::nMeter          := 0
-      ::oMeter          := TMeter():ReDefine( 400, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMeter          := TApoloMeter():ReDefine( 400, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID       511 ;
@@ -2413,7 +2413,7 @@ Method ImportAlmacen( nMode, oDlg )
       ::oArticuloFin:bValid       := {|| cArticulo( ::oArticuloFin, ::oArt:cAlias, ::oArticuloFin:oHelpText ) }
       ::oArticuloFin:bHelp        := {|| brwArticulo( ::oArticuloFin, ::oArticuloFin:oHelpText ) }
 
-      REDEFINE METER ::oMtrStock ;
+REDEFINE APOLOMETER ::oMtrStock ;
          VAR      ::nMtrStock ;
          PROMPT   "" ;
          ID       400 ;

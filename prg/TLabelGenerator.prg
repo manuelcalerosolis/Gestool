@@ -335,7 +335,7 @@ Method Resource() CLASS TLabelGenerator
             :bOnPostEdit      := {|o,x| if( dbDialogLock( ::cAreaTmpLabel ), ( ( ::cAreaTmpLabel )->nLabel := x, ( ::cAreaTmpLabel )->( dbUnlock() ) ), ) }
         end with
 
-        REDEFINE METER ::oMtrLabel ;
+  REDEFINE APOLOMETER ::oMtrLabel ;
             VAR      ::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;

@@ -79,7 +79,7 @@ FUNCTION ImpData( cAlias, oBrw )
 			COLOR CLR_GET ;
 			OF oDlg
 
-		REDEFINE METER oProc VAR nProc TOTAL 100 ;
+        REDEFINE APOLOMETER oProc VAR nProc TOTAL 100 ;
 			ID 105 ;
 			OF oDlg
 

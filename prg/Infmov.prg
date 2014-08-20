@@ -390,7 +390,8 @@ FUNCTION InfDetMov( oMenuItem, oWnd )
 		ID 		200 ;
 		OF 		oDlg
 
-	REDEFINE METER oMtrInf ;
+	/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMtrInf ;
 		VAR 		nMtrInf ;
 		PROMPT	"Procesando" ;
       ID       210;
@@ -1236,7 +1237,8 @@ FUNCTION InfDetPedCli( oMenuItem, oWnd )
       ID       201, 202, 203 ;
       OF       oDlg
 
-	REDEFINE METER oMtrInf ;
+	/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMtrInf ;
 		VAR 		nMtrInf ;
 		PROMPT	"Procesando" ;
       ID       210;
@@ -1728,7 +1730,8 @@ FUNCTION InfDetPreCli( oMenuItem, oWnd )
       ID       201, 202, 203 ;
       OF       oDlg
 
-	REDEFINE METER oMtrInf ;
+	/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMtrInf ;
 		VAR 		nMtrInf ;
 		PROMPT	"Procesando" ;
       ID       210;

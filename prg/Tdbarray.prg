@@ -112,7 +112,7 @@ CLASS TDbArray
          Used           AS LOGICAL
 
     DATA cAlias,    ;
-         cComment       AS CHARACTER
+         cComment       
 
     DATA nRecIni,   ;
          RecNo,     ;

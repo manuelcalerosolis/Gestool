@@ -364,7 +364,7 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
       OF       oPag:aDialogs[ 2 ] ;
       ACTION   ( oDbfTmp:GetStatus(), oDbfTmp:DbEval( {|| oDbfTmp:Load(), oDbfTmp:lFacAlb := .t., oDbfTmp:Save() } ), oDbfTmp:SetStatus(), oBrwAlb:refresh() )
 
-   oMetMsg  := TMeter():ReDefine( 120, { | u | if( pCount() == 0, nMetMsg, nMetMsg := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+   oMetMsg  := TApoloMeter():ReDefine( 120, { | u | if( pCount() == 0, nMetMsg, nMetMsg := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
    REDEFINE BUTTON oBtnPrv ;
       ID       500;

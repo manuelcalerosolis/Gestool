@@ -204,7 +204,7 @@ FUNCTION Internet( oWnd )
          ID       110 ;
          OF       oDlg
 
-      REDEFINE METER oMtr ;
+REDEFINE APOLOMETER oMtr ;
          VAR      nMtr ;
          ID       120 ;
          OF       oDlg
@@ -657,7 +657,8 @@ FUNCTION InfArticulo()
 		PICTURE "@E 999,999,999";
 		OF oDlg
 
-	REDEFINE METER oMeter VAR nMeter ;
+	/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMeter VAR nMeter ;
 		PROMPT "Calculando Entradas" ;
 		ID 240 ;
 		OF oDlg
@@ -861,7 +862,7 @@ FUNCTION InfArtFac()
       ID       191 ;
 		OF 		oDlg
 
-   REDEFINE METER oMtrInf ;
+REDEFINE APOLOMETER ;
 		VAR 		nMtrInf ;
 		PROMPT	"Procesando" ;
       ID       400;

@@ -191,7 +191,7 @@ METHOD Resource()
       WHEN     .f.;
       OF       ::oPages:aDialogs[ 1 ]
 
-   REDEFINE METER ::oMtrProceso ;
+ REDEFINE APOLOMETER ::oMtrProceso ;
       VAR      ::nMtrProceso ;
 		PROMPT	"Procesando" ;
       ID       150 ;

@@ -409,19 +409,19 @@ Method MuestraDialogo()
 
    //caja de dialogo BACKUP_4 -------------------------------------------------
 
-   REDEFINE METER ::oProgreso ;
+   REDEFINE APOLOMETER ::oProgreso ;
          VAR      ::nProgreso ;
          BARCOLOR nRgb( 128, 255, 0 ), nRgb( 255, 255, 255 ) ;
          ID       400 ;
          OF       ::oFld:aDialogs[ 4 ]
 
-   REDEFINE METER ::oProgresoTarget ;
+   REDEFINE APOLOMETER ::oProgresoTarget ;
          VAR      ::nProgresoTarget ;
          BARCOLOR nRgb( 128, 255, 0 ), nRgb( 255, 255, 255 ) ;
          ID       410 ;
          OF       ::oFld:aDialogs[ 4 ]
 
-   REDEFINE METER ::oProgresoInternet ;
+   REDEFINE APOLOMETER ::oProgresoInternet ;
          VAR      ::nProgresoInternet ;
          BARCOLOR nRgb( 128, 255, 0 ), nRgb( 255, 255, 255 ) ;
          ID       420 ;
@@ -501,7 +501,7 @@ Method MuestraDialogo()
 
    //caja de dialogo BACKUP_9
 
-   REDEFINE METER ::oProgresoRestore ;
+   REDEFINE APOLOMETER ::oProgresoRestore ;
       VAR      ::nProgresoRestore ;
       ID       400 ;
       OF       ::oFld:aDialogs[ 7 ]

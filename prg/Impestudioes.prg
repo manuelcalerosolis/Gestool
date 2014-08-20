@@ -309,7 +309,7 @@ METHOD Activate( oWnd )
 
       ::oTree     := TTreeView():Redefine( 100, ::oFld:aDialogs[ 2 ] )
 
-      REDEFINE METER ::oMtrProceso ;
+REDEFINE APOLOMETER ::oMtrProceso ;
          VAR      ::nMtrProceso ;
          PROMPT   "Procesando" ;
          TOTAL    100 ;

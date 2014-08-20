@@ -3094,7 +3094,7 @@ Method Create() CLASS TOfertaLabelGenerator
             :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfOferta ), ( ( dbfOferta )->nLabel := x, ( dbfOferta )->( dbUnlock() ) ), ) }
          end with
 
-         REDEFINE METER ::oMtrLabel ;
+   REDEFINE APOLOMETER ::oMtrLabel ;
             VAR      ::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;

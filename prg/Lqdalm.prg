@@ -376,7 +376,7 @@ FUNCTION LqdAlm( oMenuItem, oWnd )
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE METER oMetMsg VAR nMetMsg ;
+REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
          ID       140 ;
          NOPERCENTAGE ;
          OF       oFld:aDialogs[1]
@@ -463,7 +463,7 @@ FUNCTION LqdAlm( oMenuItem, oWnd )
          :nHeadStrAlign       := 1
       end with
 
-      REDEFINE METER oMetLqd VAR nMetLqd ;
+REDEFINE APOLOMETER oMetLqd VAR nMetLqd ;
          ID       150 ;
          NOPERCENTAGE ;
          OF       oFld:aDialogs[2]

@@ -624,6 +624,47 @@ Browse inteligente
              [\{<aJustify>\}],;
              [\{<aSelected>\}] )
 
+/*----------------------------------------------------------------------------//
+Meter autoinclemenatado
+!short: Meter  */
+
+#xcommand @ <nRow>, <nCol> APOLOMETER [ <oMeter> VAR ] <nActual> ;
+           [ TOTAL <nTotal> ] ;
+           [ SIZE <nWidth>, <nHeight> ];
+           [ OF <oWnd> ] ;
+           [ <update: UPDATE > ] ;
+           [ <lPixel: PIXEL > ] ;
+           [ FONT <oFont> ] ;
+           [ PROMPT <cPrompt> ] ;
+           [ <lNoPercentage: NOPERCENTAGE > ] ;
+           [ <color: COLOR, COLORS> <nClrPane>, <nClrText> ] ;
+           [ BARCOLOR <nClrBar>, <nClrBText> ] ;
+           [ <lDesign: DESIGN> ] ;
+     => ;
+        [ <oMeter> := ] TApoloMeter():New( <nRow>, <nCol>, bSETGET(<nActual>),;
+           <nTotal>, <oWnd>, <nWidth>, <nHeight>, <.update.>, ;
+           <.lPixel.>, <oFont>, <cPrompt>, <.lNoPercentage.>,;
+           <nClrPane>, <nClrText>, <nClrBar>, <nClrBText>, <.lDesign.> )
+
+#xcommand REDEFINE APOLOMETER [ <oMeter> VAR ] <nActual> ;
+             [ TOTAL <nTotal> ] ;
+             [ ID <nId> ];
+             [ OF <oWnd> ] ;
+             [ <update: UPDATE > ] ;
+             [ FONT <oFont> ] ;
+             [ PROMPT <cPrompt> ] ;
+             [ <lNoPercentage: NOPERCENTAGE > ] ;
+             [ <color: COLOR, COLORS> <nClrPane>, <nClrText> ] ;
+             [ BARCOLOR <nClrBar>, <nClrBText> ] ;
+       => ;
+          [ <oMeter> := ] TApoloMeter():ReDefine( <nId>, bSETGET(<nActual>),;
+              <nTotal>, <oWnd>, <.update.>, <oFont>, <cPrompt>, <.lNoPercentage.>, ;
+              <nClrPane>, <nClrText>, <nClrBar>, <nClrBText> )
+
+/*
+//----------------------------------------------------------------------------//
+*/
+
 #command SET ADSINDEX TO [<(i)> ] [<add: ADDITIVE>] => ;
          [ if !lAIS() ; ordListAdd( <(i)> ) ; else ; ordSetFocus( 1 ) ; end ]
 

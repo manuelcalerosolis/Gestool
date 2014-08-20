@@ -5626,6 +5626,8 @@ Return .f.
 
 //---------------------------------------------------------------------------//
 
+#ifdef __XHARBOUR__
+
 function lCheckSaasMode()
 
    local oCon
@@ -5717,6 +5719,14 @@ function lCheckSaasMode()
    end if
 
 Return ( lCheck )
+
+#else 
+
+function lCheckSaasMode()
+
+return ( .f. )
+
+#endif
 
 //---------------------------------------------------------------------------//
 

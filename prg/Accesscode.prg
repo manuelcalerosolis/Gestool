@@ -169,7 +169,7 @@ METHOD Resource() CLASS AccessCode
       ID             130 ;
       OF             oDlg
 
-   ::oProgress                   := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+   ::oProgress                   := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
    REDEFINE BUTTON   ::oBtnOk ;
       ID             IDOK ;
@@ -361,7 +361,7 @@ METHOD TactilResource() CLASS AccessCode
 
       TWebBtn():Redefine( 220,,,,,, oDlg,,,, cNameVersion(), "Left",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
 
-      ::oProgress                := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oProgress                := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE SAY ::oMessage PROMPT "" ID 160 COLOR Rgb( 0,0,0 ), Rgb( 255,255,255 ) OF oDlg
 

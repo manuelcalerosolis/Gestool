@@ -209,7 +209,8 @@ FUNCTION InfDetPreCli( oMenuItem, oWnd )
       ID       201, 202, 203 ;
       OF       oDlg
 
-	REDEFINE METER oMtrInf ;
+	/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMtrInf ;
 		VAR 		nMtrInf ;
 		PROMPT	"Procesando" ;
       ID       210;

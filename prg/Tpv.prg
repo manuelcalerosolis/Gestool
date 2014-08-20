@@ -2526,7 +2526,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       Barra de porcentaje______________________________________________________
       */
 
-		REDEFINE METER oMetMsg VAR nMetMsg ;
+		/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
 			ID 		460 ;
 			NOPERCENTAGE ;
          OF       oDlgTpv
@@ -12961,7 +12962,7 @@ STATIC FUNCTION DelSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDel VAR nTxtDel ;
+ REDEFINE APOLOMETER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( dbfTikT )->( OrdKeyCount() ) ;

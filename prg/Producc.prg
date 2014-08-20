@@ -3954,7 +3954,7 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
             :bOnPostEdit      := {|o,x| ::cAreaTmpLabel:nLabel := x, ::oBrwLabel:Refresh() }
          end with
 
-         REDEFINE METER ::oMtrLabel ;
+   REDEFINE APOLOMETER ::oMtrLabel ;
             VAR      ::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;

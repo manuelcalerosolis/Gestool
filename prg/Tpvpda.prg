@@ -1886,7 +1886,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode )
       Barra de porcentaje______________________________________________________
       */
 
-		REDEFINE METER oMetMsg VAR nMetMsg ;
+		/*----------------------------------------------------------------------------//
+REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
 			ID 		460 ;
 			NOPERCENTAGE ;
          OF       oDlgTpv
@@ -8866,7 +8867,7 @@ Static Function EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd )
    Barra de porcentaje______________________________________________________
    */
 
-      oMetMsg     := TMeter():ReDefine( 460, { | u | If( pCount() == 0, nMetMsg, nMetMsg := u ) },, oDlgTpv, .f.,,, .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      oMetMsg     := TApoloMeter():ReDefine( 460, { | u | If( pCount() == 0, nMetMsg, nMetMsg := u ) },, oDlgTpv, .f.,,, .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
    /*
    Apertura de la caja de dialogo----------------------------------------------
@@ -11709,7 +11710,7 @@ STATIC FUNCTION DelSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDel VAR nTxtDel ;
+ REDEFINE APOLOMETER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( dbfTikT )->( OrdKeyCount() ) ;

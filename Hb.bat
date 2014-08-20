@@ -1,6 +1,6 @@
 cd \fw195\gestool\
 
-taskkill /F /IM gestool.exe
+taskkill /F /IM gestoolHb.exe
 
 \BCC55\BIN\MAKE -S -fHB.MAK -D__GST__
 

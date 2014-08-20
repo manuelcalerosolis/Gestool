@@ -7213,7 +7213,7 @@ STATIC FUNCTION DelSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDel VAR nTxtDel ;
+   REDEFINE APOLOMETER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( TDataView():Get( "AlbCliT", nView ) )->( OrdKeyCount() ) ;
@@ -7781,7 +7781,7 @@ STATIC FUNCTION DupSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDup VAR nTxtDup ;
+   REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( TDataView():Get( "AlbCliT", nView ) )->( OrdKeyCount() ) ;
@@ -15327,20 +15327,21 @@ function SynAlbCli( cPath )
 
       // Lineas huerfanas---------------------------------------------------------
 
-      /*( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
+      ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( ordSetFocus( 1 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTop() )
 
       while !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
 
-         if !( TDataView():Get( "AlbCliL", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb ) )
+         if !( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb ) )
             ( TDataView():Get( "AlbCliL", nView ) )->( dbDelete() )
          end if 
+
          ( TDataView():Get( "AlbCliL", nView ) )->( dbSkip( 1 ) )
          
          SysRefresh()
 
-      end while*/
+      end while
 
       CloseFiles()
 

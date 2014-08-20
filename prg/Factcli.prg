@@ -4282,7 +4282,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       -----------------------------------------------------------------------
       */
 
-      oMeter      := TMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+      oMeter      := TApoloMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
 
       REDEFINE BUTTON ;
          ID       3 ;
@@ -6877,7 +6877,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    oTree             := TTreeView():Redefine( 170, oDlg )
    oTree:bLDblClick  := {|| TreeChanged( oTree ) }
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf ;
       VAR      nMtrInf ;
       NOPERCENTAGE ;
       ID       200 ;
@@ -7827,7 +7827,7 @@ STATIC FUNCTION DelSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDel VAR nTxtDel ;
+ REDEFINE APOLOMETER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( TDataView():FacturasClientes( nView ) )->( OrdKeyCount() ) ;
@@ -9365,7 +9365,7 @@ STATIC FUNCTION DupSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDup VAR nTxtDup ;
+ REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( TDataView():FacturasClientes( nView ) )->( OrdKeyCount() ) ;
@@ -14668,7 +14668,7 @@ Static Function FacCliExcelNovotecno()
 
       oTreeImportacion                    := TTreeView():Redefine( 300, oDlg )
 
-      REDEFINE METER oMeterImportacion ;
+REDEFINE APOLOMETER oMeterImportacion ;
          VAR      nMeterInformacion ;
          NOPERCENTAGE ;
          ID       310 ;

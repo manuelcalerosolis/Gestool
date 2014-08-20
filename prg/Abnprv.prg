@@ -840,7 +840,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAbnPrvT, oBrw, bWhen, bValid, nMode )
 		Botones comunes a ambas cajas de Dialogo_______________________________
 		*/
 
-		REDEFINE METER oMetMsg VAR nMetMsg ;
+		REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
 			ID 		100 ;
 			NOPERCENTAGE ;
 			OF 		oDlg

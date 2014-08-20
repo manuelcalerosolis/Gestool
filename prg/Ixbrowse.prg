@@ -29,6 +29,8 @@ CLASS IXBrowse FROM TXBrowse
 
    CLASSDATA nToolTip      AS NUMERIC     INIT 900
 
+   METHOD New( oWnd )
+
    Method GetOriginal()    INLINE ( ::cOriginal := ::SaveState() )
    Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
 
@@ -64,6 +66,16 @@ CLASS IXBrowse FROM TXBrowse
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD New( oWnd ) 
+
+   ::Super:New( oWnd )
+
+   ::l2007        := .f.
+
+return Self
+
+//----------------------------------------------------------------------------//
 
 Method CreateData( cPath )
 

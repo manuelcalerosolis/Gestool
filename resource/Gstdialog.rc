@@ -31,7 +31,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 58, 56, 75, 12
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 58, 86, 75, 12
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 136, 86, 291, 12
-  CONTROL "TMeter", 140, "TMeter", 0x00000000, 9, 120, 418, 10
+  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00000000, 9, 120, 418, 10
   CONTROL "&Aceptar [F5]", 500, "Button", WS_TABSTOP, 323, 141, 50, 14
   CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 377, 141, 50, 14
   CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 3, 35, 428, 36
@@ -1753,7 +1753,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 129, 64, 180, 12
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 58, 76, 70, 12
   CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 129, 76, 180, 12
-  CONTROL "TMeter", 150, "TMeter", 0x00000000, 58, 164, 318, 10
+  CONTROL "msctls_progress32", 150, "msctls_progress32", 0x00000000, 58, 164, 318, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 67, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 79, 30, 8
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 3, 41, 376, 51
@@ -1814,7 +1814,7 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 9, 12, 366, 148
-  CONTROL "", 110, "TMeter", 0x00800000, 9, 162, 366, 11
+  CONTROL "", 110, "msctls_progress32", 0x00800000, 9, 162, 366, 11
   CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 0, 377, 177
 }
 
@@ -1849,7 +1849,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Artículos no presupuestados", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 111, 104, 10
   CONTROL "Artículos no vendidos", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 123, 82, 10
   CONTROL "Artículos sin movimientos", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 135, 94, 10
-  CONTROL "TMeter", 150, "TMeter", 0x00000000, 58, 164, 318, 10
+  CONTROL "msctls_progress32", 150, "msctls_progress32", 0x00000000, 58, 164, 318, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 67, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 79, 30, 8
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 3, 41, 376, 112
@@ -1923,7 +1923,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Stock mínimo", 212, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 104, 55, 12
   CONTROL "Stock máximo", 213, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 118, 56, 12
   CONTROL "Cant. pedido cliente", 214, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 132, 79, 12
-  CONTROL "TMeter", 220, "TMeter", 0x00000000, 49, 175, 336, 10
+  CONTROL "msctls_progress32", 220, "msctls_progress32", 0x00000000, 49, 175, 336, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 12, 35, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 24, 35, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 47, 26, 8
@@ -1980,7 +1980,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Todos los artículos del proveedor", 204, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 148, 118, 12
   CONTROL "Stock mínimo", 212, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 106, 55, 12
   CONTROL "Stock máximo", 213, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 120, 56, 12
-  CONTROL "TMeter", 220, "TMeter", 0x00000000, 49, 175, 336, 10
+  CONTROL "msctls_progress32", 220, "msctls_progress32", 0x00000000, 49, 175, 336, 10
   CONTROL "Código", -1, "Static", WS_GROUP, 9, 12, 35, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 37, 26, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 59, 25, 8
@@ -2034,7 +2034,7 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Asistente creación documentos automáticos"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "TMeter", 120, "TMeter", 0x00000000, 40, 289, 523, 8
+  CONTROL "msctls_progress32", 120, "msctls_progress32", 0x00000000, 40, 289, 523, 8
   CONTROL "Iniciar", 500, "Button", WS_TABSTOP, 406, 296, 50, 14
   CONTROL "Salir", 550, "Button", WS_TABSTOP, 460, 296, 50, 14
   CONTROL "Ver resultado", 600, "Button", WS_TABSTOP, 513, 296, 50, 14
@@ -2209,11 +2209,11 @@ BACKUP_4 DIALOG DISCARDABLE 99, 64, 310, 160
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 400, "TMeter", 0x00000000, 4, 17, 299, 10
+  CONTROL "", 400, "msctls_progress32", 0x00000000, 4, 17, 299, 10
   CONTROL "Realizando copia de seguridad.", -1, "Static", WS_GROUP, 4, 5, 106, 10
-  CONTROL "", 410, "TMeter", 0x00000000, 4, 43, 299, 10
+  CONTROL "", 410, "msctls_progress32", 0x00000000, 4, 43, 299, 10
   CONTROL "Enviando datos a medio destino", -1, "Static", WS_GROUP, 4, 31, 106, 10
-  CONTROL "", 420, "TMeter", 0x00000000, 4, 69, 299, 10
+  CONTROL "", 420, "msctls_progress32", 0x00000000, 4, 69, 299, 10
   CONTROL "Enviando datos a servidor de backup", -1, "Static", WS_GROUP, 4, 57, 123, 10
 }
 
@@ -2248,7 +2248,7 @@ BACKUP_8 DIALOG DISCARDABLE 99, 64, 310, 160
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 400, "TMeter", 0x00000000, 4, 16, 299, 10
+  CONTROL "", 400, "msctls_progress32", 0x00000000, 4, 16, 299, 10
   CONTROL "Restaurando copia de seguridad.", -1, "Static", WS_GROUP, 4, 4, 106, 11
 }
 
@@ -2982,7 +2982,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Cambiar", -1, "Button", BS_GROUPBOX, 2, 3, 448, 38
   CONTROL "Campo", -1, "Static", WS_GROUP, 7, 14, 60, 8
   CONTROL "Expresión", -1, "Static", WS_GROUP, 194, 14, 60, 8
-  CONTROL "", 290, "TMeter", 0x00000000, 2, 293, 442, 8
+  CONTROL "", 290, "msctls_progress32", 0x00000000, 2, 293, 442, 8
   CONTROL "Inicializar", 100, "Button", WS_TABSTOP, 6, 67, 50, 14
   CONTROL "Eliminar linea", 120, "Button", WS_TABSTOP, 60, 67, 50, 14
   CONTROL "", 200, "TXBrowse", 0x00200000, 6, 83, 436, 202
@@ -3035,7 +3035,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 430, "Edit", ES_AUTOHSCROLL|WS_BORDER, 210, 218, 174, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 278, 237, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 334, 237, 50, 14
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 140, 262, 244, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 140, 262, 244, 10
   CONTROL "Cod. nuevo", -1, "Static", WS_GROUP, 85, 54, 46, 8
   CONTROL "Cod. actual", -1, "Static", WS_GROUP, 85, 41, 46, 8
   CONTROL "Progreso del cambio", -1, "Button", BS_GROUPBOX, 4, 253, 384, 26
@@ -3112,7 +3112,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 190, "Edit", ES_RIGHT|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 231, 157, 38, 12
   CONTROL "Margen de ajuste", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 133, 173, 68, 10
   CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 231, 171, 48, 94
-  CONTROL "", 220, "TMeter", 0x00000000, 9, 217, 306, 8
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 9, 217, 306, 8
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 215, 233, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 270, 233, 50, 14
   CONTROL "Artículo", -1, "Button", BS_GROUPBOX, 4, 1, 316, 38
@@ -3164,7 +3164,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 173, "Edit", ES_RIGHT|ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER|WS_TABSTOP, 224, 207, 62, 12
   CONTROL "Redondear a decimales", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 132, 230, 89, 10
   CONTROL "", 190, "Edit", ES_RIGHT|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 224, 228, 30, 12
-  CONTROL "", 220, "TMeter", 0x00000000, 8, 260, 280, 8
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 8, 260, 280, 8
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 189, 277, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 244, 277, 50, 14
   CONTROL "Familia", -1, "Static", WS_GROUP, 6, 90, 27, 8
@@ -4059,7 +4059,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Hasta", -1, "Static", WS_GROUP, 18, 31, 22, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 18, 60, 22, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 18, 72, 22, 8
-  CONTROL "TMeter", 220, "TMeter", 0x00000000, 2, 145, 208, 10
+  CONTROL "msctls_progress32", 220, "msctls_progress32", 0x00000000, 2, 145, 208, 10
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 5, 43, 200, 2
   CONTROL "", 210, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 2, 159, 208, 141
 }
@@ -4117,7 +4117,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 45, 56, 8
   CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 475, 45, 45, 8
   CONTROL "Divisa", -1, "Static", WS_GROUP, 212, 45, 26, 8
-  CONTROL "TMeter", 160, "TMeter", 0x00800000, 42, 335, 571, 8
+  CONTROL "msctls_progress32", 160, "msctls_progress32", 0x00800000, 42, 335, 571, 8
   CONTROL "Factura asociada", -1, "Static", WS_GROUP, 44, 57, 56, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Liquidación de agentes", -1, "Static", WS_GROUP, 44, 3, 120, 8
@@ -4624,7 +4624,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Inicio", -1, "Static", WS_GROUP, 9, 16, 36, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 9, 30, 35, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 69, 308, 1
-  CONTROL "TMeter", 200, "TMeter", 0x00000000, 2, 90, 308, 10
+  CONTROL "msctls_progress32", 200, "msctls_progress32", 0x00000000, 2, 90, 308, 10
   CONTROL "", 170, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 2, 104, 308, 180
 }
 
@@ -4651,7 +4651,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Simular resultados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 77, 200, 10
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 105, 96, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 159, 96, 50, 14
-  CONTROL "TMeter", 200, "TMeter", 0x00000000, 2, 114, 208, 8
+  CONTROL "msctls_progress32", 200, "msctls_progress32", 0x00000000, 2, 114, 208, 8
   CONTROL "", 180, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 2, 122, 208, 174
   CONTROL "Tipo", -1, "Static", WS_GROUP, 8, 6, 46, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 91, 208, 1
@@ -4683,7 +4683,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 260, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 49, 102, 180, 160
   CONTROL "", 270, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 233, 102, 80, 160
   CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 317, 102, 134, 13
-  CONTROL "", 290, "TMeter", 0x00000000, 44, 124, 444, 8
+  CONTROL "", 290, "msctls_progress32", 0x00000000, 44, 124, 444, 8
   CONTROL "&Guardar", 510, "Button", WS_TABSTOP, 44, 132, 50, 14
   CONTROL "&Eliminar", 500, "Button", WS_TABSTOP, 102, 132, 50, 14
   CONTROL "Condiciones", -1, "Button", BS_GROUPBOX, 44, 33, 444, 86
@@ -4737,7 +4737,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Desde", -1, "Static", WS_GROUP, 228, 55, 26, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 228, 67, 24, 8
   CONTROL "Sesiones", -1, "Button", BS_GROUPBOX, 222, 28, 178, 50
-  CONTROL "TMeter", 200, "TMeter", 0x00000000, 44, 213, 446, 8
+  CONTROL "msctls_progress32", 200, "msctls_progress32", 0x00000000, 44, 213, 446, 8
   CONTROL "", 400, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 44, 241, 448, 149
   CONTROL "Contabilizar ventas", -1, "Button", BS_GROUPBOX, 222, 123, 178, 88
   CONTROL "Enlace contaplus", -1, "Button", BS_GROUPBOX, 44, 82, 356, 38
@@ -4778,7 +4778,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Series", -1, "Button", BS_GROUPBOX, 402, 29, 89, 182
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Centro de contabilización", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-  CONTROL "TMeter", 210, "TMeter", 0x00000000, 44, 217, 446, 8
+  CONTROL "msctls_progress32", 210, "msctls_progress32", 0x00000000, 44, 217, 446, 8
 }
 
 CONTACTOS DIALOG DISCARDABLE 51, -26, 289, 218
@@ -5034,7 +5034,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fin", -1, "Static", WS_GROUP, 16, 59, 25, 8
   CONTROL "Proceda con precaución los registros una vez eliminados no prodran ser recuperados.", -1, "Static", SS_CENTER|WS_GROUP, 2, 5, 198, 17
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 137, 203, 1
-  CONTROL "TMeter", 160, "TMeter", WS_TABSTOP, 4, 143, 196, 10
+  CONTROL "msctls_progress32", 160, "msctls_progress32", WS_TABSTOP, 4, 143, 196, 10
   CONTROL "Inicio", -1, "Static", WS_GROUP, 16, 88, 26, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 16, 101, 25, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 66, 199, 47
@@ -5430,7 +5430,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Inicio", -1, "Static", WS_GROUP, 16, 23, 26, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 16, 36, 25, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 155, 203, 1
-  CONTROL "TMeter", 160, "TMeter", WS_TABSTOP, 4, 161, 196, 10
+  CONTROL "msctls_progress32", 160, "msctls_progress32", WS_TABSTOP, 4, 161, 196, 10
   CONTROL "Inicio", -1, "Static", WS_GROUP, 16, 65, 26, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 16, 78, 25, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 43, 199, 47
@@ -7375,7 +7375,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 310, "TXBrowse", 0x00200000, 8, 113, 470, 141
   CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 8, 274, 65, 12
   CONTROL "", 330, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 75, 273, 90, 49
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 8, 307, 470, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 8, 307, 470, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 119, 86, 26, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 217, 86, 24, 8
   CONTROL "Periodo", -1, "Button", BS_GROUPBOX, 4, 72, 478, 28
@@ -7386,12 +7386,11 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-FASTREPORTARTICULOS DIALOG DISCARDABLE 9, 8, 673, 401
+REPORTINGDIALOG DIALOG DISCARDABLE 9, 8, 673, 401
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Generador de informes"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 188, 384, 476, 10
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 184, 373, 486, 26
   CONTROL "", 220, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 188, 84, 106, 134
   CONTROL "", 1110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 328, 85, 65, 12
@@ -7401,6 +7400,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Hasta", 1121, "Static", WS_GROUP, 397, 88, 24, 8
   CONTROL "Rangos", -1, "Button", BS_GROUPBOX, 184, 72, 485, 299
   CONTROL "", 100, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_TRACKSELECT|WS_BORDER|WS_TABSTOP, 2, 72, 179, 327
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 188, 385, 476, 9
 }
 
 FASTREPORTARTICULOS_1 DIALOG DISCARDABLE 9, 8, 480, 240
@@ -7717,7 +7717,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 236, 190, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 291, 190, 50, 14
   CONTROL "A&yuda", 599, "Button", WS_TABSTOP, 346, 190, 50, 14
-  CONTROL "TMeter", 140, "TMeter", 0x00000000, 44, 216, 347, 9
+  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00000000, 44, 216, 347, 9
   CONTROL "Esta opción importara los datos de su facturación y los almacenará en las tarifas particulares de clientes, proceda con precaución. ", -1, "Static", WS_GROUP, 2, 3, 268, 18
   CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 2, 43, 268, 38
   CONTROL "Desde", -1, "Static", WS_GROUP, 7, 56, 30, 8
@@ -8377,7 +8377,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Progreso de la Copia", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 84, 252, 23
   CONTROL "Directorio", -1, "Static", WS_GROUP, 8, 46, 34, 8
   CONTROL "Tamaño", -1, "Static", WS_GROUP, 8, 59, 41, 8
-  CONTROL "", 140, "TMeter", 0x00000000, 7, 94, 244, 9
+  CONTROL "", 140, "msctls_progress32", 0x00000000, 7, 94, 244, 9
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 150, 113, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 205, 113, 50, 14
 }
@@ -8390,7 +8390,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Origen de los datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 4, 252, 26
   CONTROL "Progreso de la Copia", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 84, 252, 23
   CONTROL "Directorio", -1, "Static", WS_GROUP, 8, 17, 34, 8
-  CONTROL "", 110, "TMeter", 0x00000000, 7, 94, 244, 9
+  CONTROL "", 110, "msctls_progress32", 0x00000000, 7, 94, 244, 9
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 151, 113, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 206, 113, 50, 14
 }
@@ -8415,18 +8415,18 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 252, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 252, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 252, 50, 14
-  CONTROL "TMeter", 111, "TMeter", 0x00800000, 98, 70, 258, 10
-  CONTROL "TMeter", 121, "TMeter", 0x00800000, 98, 82, 258, 10
-  CONTROL "TMeter", 131, "TMeter", 0x00800000, 98, 94, 258, 10
-  CONTROL "TMeter", 151, "TMeter", 0x00800000, 98, 106, 258, 10
-  CONTROL "TMeter", 161, "TMeter", 0x00800000, 98, 118, 258, 10
+  CONTROL "msctls_progress32", 111, "msctls_progress32", 0x00800000, 98, 70, 258, 10
+  CONTROL "msctls_progress32", 121, "msctls_progress32", 0x00800000, 98, 82, 258, 10
+  CONTROL "msctls_progress32", 131, "msctls_progress32", 0x00800000, 98, 94, 258, 10
+  CONTROL "msctls_progress32", 151, "msctls_progress32", 0x00800000, 98, 106, 258, 10
+  CONTROL "msctls_progress32", 161, "msctls_progress32", 0x00800000, 98, 118, 258, 10
   CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 63, 360, 178
   CONTROL "Directorio de factucont", -1, "Static", WS_GROUP, 5, 52, 74, 8
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "TMeter", 171, "TMeter", 0x00800000, 98, 130, 258, 10
-  CONTROL "TMeter", 181, "TMeter", 0x00800000, 98, 142, 258, 10
+  CONTROL "msctls_progress32", 171, "msctls_progress32", 0x00800000, 98, 130, 258, 10
+  CONTROL "msctls_progress32", 181, "msctls_progress32", 0x00800000, 98, 142, 258, 10
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -8464,33 +8464,33 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 340, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 340, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 340, 50, 14
-  CONTROL "TMeter", 111, "TMeter", 0x00800000, 87, 70, 270, 10
-  CONTROL "TMeter", 121, "TMeter", 0x00800000, 87, 82, 270, 10
-  CONTROL "TMeter", 131, "TMeter", 0x00800000, 87, 94, 270, 10
-  CONTROL "TMeter", 141, "TMeter", 0x00800000, 87, 106, 270, 10
-  CONTROL "TMeter", 151, "TMeter", 0x00800000, 87, 118, 270, 10
-  CONTROL "TMeter", 161, "TMeter", 0x00800000, 87, 130, 270, 10
-  CONTROL "TMeter", 171, "TMeter", 0x00800000, 87, 142, 270, 10
-  CONTROL "TMeter", 211, "TMeter", 0x00800000, 87, 154, 270, 10
-  CONTROL "TMeter", 221, "TMeter", 0x00800000, 87, 166, 270, 10
-  CONTROL "TMeter", 181, "TMeter", 0x00800000, 87, 202, 270, 10
-  CONTROL "TMeter", 191, "TMeter", 0x00800000, 87, 214, 270, 10
-  CONTROL "TMeter", 201, "TMeter", 0x00800000, 87, 226, 270, 10
-  CONTROL "TMeter", 231, "TMeter", 0x00800000, 87, 238, 270, 10
+  CONTROL "msctls_progress32", 111, "msctls_progress32", 0x00800000, 87, 70, 270, 10
+  CONTROL "msctls_progress32", 121, "msctls_progress32", 0x00800000, 87, 82, 270, 10
+  CONTROL "msctls_progress32", 131, "msctls_progress32", 0x00800000, 87, 94, 270, 10
+  CONTROL "msctls_progress32", 141, "msctls_progress32", 0x00800000, 87, 106, 270, 10
+  CONTROL "msctls_progress32", 151, "msctls_progress32", 0x00800000, 87, 118, 270, 10
+  CONTROL "msctls_progress32", 161, "msctls_progress32", 0x00800000, 87, 130, 270, 10
+  CONTROL "msctls_progress32", 171, "msctls_progress32", 0x00800000, 87, 142, 270, 10
+  CONTROL "msctls_progress32", 211, "msctls_progress32", 0x00800000, 87, 154, 270, 10
+  CONTROL "msctls_progress32", 221, "msctls_progress32", 0x00800000, 87, 166, 270, 10
+  CONTROL "msctls_progress32", 181, "msctls_progress32", 0x00800000, 87, 202, 270, 10
+  CONTROL "msctls_progress32", 191, "msctls_progress32", 0x00800000, 87, 214, 270, 10
+  CONTROL "msctls_progress32", 201, "msctls_progress32", 0x00800000, 87, 226, 270, 10
+  CONTROL "msctls_progress32", 231, "msctls_progress32", 0x00800000, 87, 238, 270, 10
   CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 64, 360, 274
   CONTROL "Directorio de factuplus", -1, "Static", WS_GROUP, 5, 52, 74, 8
-  CONTROL "TMeter", 241, "TMeter", 0x00800000, 87, 250, 270, 10
+  CONTROL "msctls_progress32", 241, "msctls_progress32", 0x00800000, 87, 250, 270, 10
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "TMeter", 251, "TMeter", 0x00800000, 87, 274, 270, 10
-  CONTROL "TMeter", 261, "TMeter", 0x00800000, 87, 286, 270, 10
-  CONTROL "TMeter", 271, "TMeter", 0x00800000, 87, 298, 270, 10
-  CONTROL "TMeter", 281, "TMeter", 0x00800000, 87, 310, 270, 10
-  CONTROL "TMeter", 291, "TMeter", 0x00800000, 87, 322, 270, 10
-  CONTROL "TMeter", 301, "TMeter", 0x00800000, 87, 178, 270, 10
-  CONTROL "TMeter", 321, "TMeter", 0x00800000, 87, 262, 270, 10
-  CONTROL "TMeter", 311, "TMeter", 0x00800000, 87, 190, 270, 10
+  CONTROL "msctls_progress32", 251, "msctls_progress32", 0x00800000, 87, 274, 270, 10
+  CONTROL "msctls_progress32", 261, "msctls_progress32", 0x00800000, 87, 286, 270, 10
+  CONTROL "msctls_progress32", 271, "msctls_progress32", 0x00800000, 87, 298, 270, 10
+  CONTROL "msctls_progress32", 281, "msctls_progress32", 0x00800000, 87, 310, 270, 10
+  CONTROL "msctls_progress32", 291, "msctls_progress32", 0x00800000, 87, 322, 270, 10
+  CONTROL "msctls_progress32", 301, "msctls_progress32", 0x00800000, 87, 178, 270, 10
+  CONTROL "msctls_progress32", 321, "msctls_progress32", 0x00800000, 87, 262, 270, 10
+  CONTROL "msctls_progress32", 311, "msctls_progress32", 0x00800000, 87, 190, 270, 10
 }
 
 IMPFACPRV DIALOG DISCARDABLE 162, 52, 216, 122
@@ -8536,7 +8536,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 183, 71, 50, 14
   CONTROL "Desde", -1, "Static", WS_GROUP, 7, 16, 36, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 7, 30, 35, 8
-  CONTROL "TMeter", 140, "TMeter", 0x00000000, 48, 51, 179, 10
+  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00000000, 48, 51, 179, 10
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 42, 231, 23
 }
 
@@ -8555,7 +8555,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Resultado de la importación", -1, "Button", BS_GROUPBOX, 44, 136, 392, 168
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Importacion de ventas Novotecno", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 391, 8
-  CONTROL "", 310, "TMeter", 0x00000000, 44, 307, 392, 8
+  CONTROL "", 310, "msctls_progress32", 0x00000000, 44, 307, 392, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -8580,7 +8580,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 145, 141, 230, 12
   CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 67, 153, 75, 12
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 145, 153, 230, 12
-  CONTROL "", 400, "TMeter", 0x00000000, 4, 174, 381, 8
+  CONTROL "", 400, "msctls_progress32", 0x00000000, 4, 174, 381, 8
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 281, 186, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 336, 186, 50, 14
   CONTROL "Desde", 211, "Static", WS_GROUP, 11, 33, 30, 8
@@ -8691,7 +8691,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fecha expedición", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 3, 188, 38
   CONTROL "Desde", -1, "Static", WS_GROUP, 7, 17, 39, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 7, 30, 37, 8
-  CONTROL "TMeter", 140, "TMeter", 0x00800000, 2, 87, 188, 8
+  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00800000, 2, 87, 188, 8
   CONTROL "Fecha vencimiento", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 43, 188, 38
   CONTROL "Desde", -1, "Static", WS_GROUP, 7, 57, 39, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 7, 70, 37, 8
@@ -8923,7 +8923,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -8944,7 +8944,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -8977,7 +8977,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 95, 162, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 84, 30, 8
@@ -9013,7 +9013,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 96, 161, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 287, 11, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 344, 11, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 287, 28, 40, 12
@@ -9073,7 +9073,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 96, 159, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 1, 273, 50
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 27, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 39, 30, 8
@@ -9097,7 +9097,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -9118,7 +9118,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -9148,7 +9148,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Salto de página cada grupo ", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 57, 163, 110, 10
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 70, 30, 8
@@ -9179,7 +9179,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 161, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 187, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 200, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, -1, 273, 80
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 54, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 66, 30, 8
@@ -9230,7 +9230,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie X", 1420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 344, 148, 38, 12
   CONTROL "Serie Y", 1430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 344, 160, 39, 12
   CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 2, 1, 273, 36
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -9257,7 +9257,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -9278,7 +9278,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -9295,7 +9295,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 57, 22, 55, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 12, 26, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 25, 26, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -9317,7 +9317,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -9338,7 +9338,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -9367,7 +9367,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1120, "Edit", WS_BORDER|WS_TABSTOP, 57, 22, 60, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 12, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 25, 43, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -9399,7 +9399,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 161, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -9470,7 +9470,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 89, 167, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 51, 190, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 51, 203, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 51, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 51, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 50, 12
@@ -9538,7 +9538,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1130, "Edit", WS_BORDER|WS_TABSTOP, 57, 161, 35, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 161, 18, 11
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -9571,7 +9571,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 164, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 292, 24, 40, 12
@@ -9633,7 +9633,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 164, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -9704,7 +9704,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 169, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 192, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 204, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -9771,7 +9771,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 95, 168, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 191, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 204, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -9876,7 +9876,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie Y", 1430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 145, 39, 12
   CONTROL "Serie Z", 1440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 157, 40, 12
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 160, 18, 11
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 12, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 25, 43, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -9958,7 +9958,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie Y", 1430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 145, 39, 12
   CONTROL "Serie Z", 1440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 157, 40, 12
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 220, 164, 18, 11
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 12, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 25, 43, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -10001,7 +10001,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 176, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 198, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 210, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 230, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 230, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -10069,7 +10069,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 95, 164, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -10134,7 +10134,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 164, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -10245,7 +10245,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie Y", 1430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 145, 39, 12
   CONTROL "Serie Z", 1440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 157, 40, 12
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 220, 164, 18, 11
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 12, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 25, 43, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -10287,7 +10287,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 248, 160, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -10357,7 +10357,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 97, 180, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 59, 202, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 59, 214, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 59, 236, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 59, 236, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -10431,7 +10431,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 96, 162, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -10497,7 +10497,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 97, 169, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 59, 192, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 59, 205, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 59, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 59, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 10, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 10, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 290, 23, 40, 12
@@ -10562,7 +10562,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1130, "Edit", WS_BORDER|WS_TABSTOP, 58, 134, 35, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 190, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 203, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 134, 18, 11
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
@@ -10630,7 +10630,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 246, 140, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -10694,7 +10694,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie Z", 1440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 361, 169, 36, 12
   CONTROL "", 1130, "Edit", WS_BORDER|WS_TABSTOP, 317, 193, 35, 12
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 361, 193, 18, 11
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 317, 229, 80, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 317, 229, 80, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 118, 16, 22, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 214, 16, 21, 8
   CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 1, 2, 308, 26
@@ -10761,7 +10761,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie Z", 1440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 361, 169, 36, 12
   CONTROL "", 1130, "Edit", WS_BORDER|WS_TABSTOP, 317, 193, 35, 12
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 361, 193, 18, 11
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 317, 229, 80, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 317, 229, 80, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 118, 16, 23, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 213, 16, 22, 8
   CONTROL "Periodo", -1, "Button", BS_GROUPBOX, 1, 2, 308, 26
@@ -10896,7 +10896,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 119, 117, 148, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 48, 188, 220, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 47, 201, 221, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 47, 225, 221, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 47, 225, 221, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 6, 186, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 6, 199, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -10922,7 +10922,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 110, 24, 28, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -10944,7 +10944,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -10963,7 +10963,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1121, "Edit", WS_BORDER|WS_TABSTOP, 119, 26, 148, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 16, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 29, 43, 8
   CONTROL "Tipos de incidencias", -1, "Button", BS_GROUPBOX, 2, 1, 273, 42
@@ -10985,7 +10985,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 53, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 12, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 25, 43, 8
   CONTROL "Alm. origen", -1, "Static", WS_GROUP, 8, 44, 39, 8
@@ -11015,7 +11015,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1131, "TBitmap", 0x00800000, 95, 160, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 224, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 224, 210, 10
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 1, 273, 50
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 27, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 39, 30, 8
@@ -11041,7 +11041,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -11063,7 +11063,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 66, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -11144,7 +11144,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 218, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 57, 92, 91, 65
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -11171,7 +11171,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -11194,7 +11194,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 218, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 57, 150, 91, 65
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Ordenado por", -1, "Static", WS_GROUP, 8, 154, 48, 8
@@ -11216,7 +11216,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 47, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 47, 201, 210, 12
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, -1, 273, 37
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 47, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 47, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 11, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 23, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -11237,7 +11237,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -11263,7 +11263,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "No agrupar por familias", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 57, 105, 85, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 1, 273, 91
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
@@ -11321,7 +11321,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -11342,7 +11342,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -11362,7 +11362,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
   CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 2, 1, 273, 36
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 2, 216, 273, 23
@@ -11385,7 +11385,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 37, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 227, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 227, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 40, 30, 8
   CONTROL "Subtítulo", -1, "Static", WS_GROUP, 8, 204, 32, 8
@@ -11406,7 +11406,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -11427,7 +11427,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 129, 35, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 26, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 38, 30, 8
   CONTROL "Título", -1, "Static", WS_GROUP, 8, 191, 31, 8
@@ -11449,7 +11449,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 128, 71, 138, 12
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 56, 191, 212, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 56, 204, 212, 12
-  CONTROL "", 1160, "TMeter", 0x00000000, 57, 227, 201, 10
+  CONTROL "", 1160, "msctls_progress32", 0x00000000, 57, 227, 201, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 18, 43, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 31, 43, 8
   CONTROL "Modificados entre...", -1, "Button", BS_GROUPBOX, 1, 4, 272, 83
@@ -11484,7 +11484,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 162, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Todas", 1170, "TWebBtn", 0x00000000, 290, 12, 50, 11
   CONTROL "Ninguna", 1180, "TWebBtn", 0x00000000, 345, 12, 50, 11
   CONTROL "Serie A", 1190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 291, 25, 40, 12
@@ -11634,7 +11634,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Tarifa 4 %", -1, "Static", WS_GROUP, 5, 63, 48, 8
   CONTROL "Tarifa 5 %", -1, "Static", WS_GROUP, 5, 76, 45, 8
   CONTROL "Tarifa 6 %", -1, "Static", WS_GROUP, 5, 89, 48, 8
-  CONTROL "", 140, "TMETER", WS_GROUP, 59, 134, 242, 8
+  CONTROL "", 140, "msctls_progress32", WS_GROUP, 59, 134, 242, 8
 }
 
 INFTACTUACIONES DIALOG DISCARDABLE -2, -14, 406, 244
@@ -11681,7 +11681,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Serie X", 1420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 145, 35, 12
   CONTROL "Serie Y", 1430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 157, 34, 12
   CONTROL "Serie Z", 1440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 169, 36, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 283, 227, 114, 11
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 283, 227, 114, 11
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 1, 273, 127
   CONTROL "Desde", -1, "Static", WS_GROUP, 8, 102, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 114, 30, 8
@@ -13227,7 +13227,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Divisa", -1, "Static", WS_GROUP, 114, 21, 23, 8
   CONTROL "Desde fecha", -1, "Static", WS_GROUP, 393, 7, 41, 8
   CONTROL "Hasta fecha", -1, "Static", WS_GROUP, 394, 20, 41, 8
-  CONTROL "TMeter", 160, "TMeter", 0x00800000, 2, 263, 130, 10
+  CONTROL "msctls_progress32", 160, "msctls_progress32", 0x00800000, 2, 263, 130, 10
 }
 
 LIQAGE_1 DIALOG DISCARDABLE 147, 111, 434, 198
@@ -14328,7 +14328,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 152, 56, 195, 11
   CONTROL "&Siguiente >", 519, "Button", WS_TABSTOP, 249, 242, 50, 14
   CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 304, 242, 50, 14
-  CONTROL "TMeter", 140, "TMeter", 0x00800000, 82, 223, 266, 10
+  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00800000, 82, 223, 266, 10
   CONTROL "Datos de la liquidación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 4, 347, 69
   CONTROL "Procesando...", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 6, 214, 347, 22
   CONTROL "Desde almacén", -1, "Static", WS_GROUP, 10, 47, 68, 8
@@ -14342,7 +14342,7 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 11, 11, 336, 196
-  CONTROL "", 150, "TMeter", 0x00800000, 82, 223, 266, 10
+  CONTROL "", 150, "msctls_progress32", 0x00800000, 82, 223, 266, 10
   CONTROL "Liquidación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 6, 1, 346, 211
   CONTROL "Procesando...", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 6, 214, 346, 22
   CONTROL "&Visualizar", 508, "Button", WS_TABSTOP, 137, 242, 50, 14
@@ -14601,7 +14601,7 @@ STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "Resultados", -1, "Button", BS_GROUPBOX, 3, 28, 276, 191
-  CONTROL "TMeter", 600, "TMeter", 0x00000000, 8, 12, 265, 10
+  CONTROL "msctls_progress32", 600, "msctls_progress32", 0x00000000, 8, 12, 265, 10
   CONTROL "", 610, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 8, 37, 265, 177
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 3, 276, 23
 }
@@ -17316,7 +17316,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Delegación", -1, "Static", WS_GROUP, 50, 79, 38, 8
   CONTROL "General", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 243, 30, 418, 121
   CONTROL "", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 94, 192, 57
-  CONTROL "", 400, "TMeter", 0x00000000, 44, 349, 618, 8
+  CONTROL "", 400, "msctls_progress32", 0x00000000, 44, 349, 618, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Movimientos entre almacenes", -1, "Static", WS_GROUP, 44, 3, 120, 8
 }
@@ -17876,7 +17876,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Cliente", -1, "Static", WS_GROUP, 50, 69, 27, 8
   CONTROL "Artículo", -1, "Static", WS_GROUP, 50, 45, 30, 8
   CONTROL "Proveedor", -1, "Static", WS_GROUP, 50, 81, 38, 8
-  CONTROL "TMeter", 150, "TMeter", 0x00000000, 48, 309, 616, 8
+  CONTROL "msctls_progress32", 150, "msctls_progress32", 0x00000000, 48, 309, 616, 8
   CONTROL "Resultados", -1, "Button", BS_GROUPBOX, 44, 109, 623, 206
   CONTROL "I&nforme", IDOK, "Button", WS_TABSTOP, 48, 318, 52, 15
   CONTROL "Almacen", -1, "Static", WS_GROUP, 50, 93, 33, 8
@@ -18031,11 +18031,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Modificar", 160, "Button", WS_TABSTOP, 284, 33, 50, 14
   CONTROL "&Zoom", 165, "Button", WS_TABSTOP, 334, 33, 50, 14
   CONTROL "Agregar artículos", 180, "TXBrowse", WS_TABSTOP|0x00300000, 4, 49, 380, 194
-  CONTROL "TMeter", 190, "TMeter", 0x00800000, 4, 244, 380, 8
   CONTROL "", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 26, 386, 226
   CONTROL "Ordenado por", -1, "Button", BS_GROUPBOX, 279, 0, 109, 27
   CONTROL "Buscar por", -1, "Button", BS_GROUPBOX, 1, 0, 277, 27
   CONTROL "Propiedades", 220, "Button", WS_TABSTOP, 154, 33, 50, 14
+  CONTROL "", 190, "msctls_progress32", 0x00000000, 4, 244, 380, 7
 }
 
 SELECTLABELS_3 DIALOG DISCARDABLE 113, 78, 390, 194
@@ -18186,7 +18186,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Inicio", -1, "Static", WS_GROUP, 20, 34, 22, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 20, 46, 15, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 123, 220, 1
-  CONTROL "TMeter", 200, "TMeter", 0x00000000, 2, 144, 208, 8
+  CONTROL "msctls_progress32", 200, "msctls_progress32", 0x00000000, 2, 144, 208, 8
   CONTROL "", 170, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 2, 151, 208, 150
   CONTROL "Todas las fechas", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 59, 67, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 20, 74, 26, 8
@@ -18215,7 +18215,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Hasta", -1, "Static", WS_GROUP, 8, 30, 49, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 66, 308, 1
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 1, 308, 44
-  CONTROL "TMeter", 200, "TMeter", 0x00000000, 2, 87, 308, 10
+  CONTROL "msctls_progress32", 200, "msctls_progress32", 0x00000000, 2, 87, 308, 10
   CONTROL "", 170, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER|WS_TABSTOP, 2, 100, 308, 208
 }
 
@@ -18320,7 +18320,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 120, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 129, 120, 49, 55
   CONTROL "Directorio", 106, "Button", BS_AUTORADIOBUTTON, 79, 133, 47, 12
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 129, 134, 194, 12
-  CONTROL "", 130, "TMeter", 0x00000000, 79, 159, 244, 9
+  CONTROL "", 130, "msctls_progress32", 0x00000000, 79, 159, 244, 9
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 167, 178, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 222, 178, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 277, 178, 50, 14
@@ -18340,7 +18340,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 80, 41, 245, 75
   CONTROL "&Seleccionar", 514, "Button", WS_TABSTOP, 221, 121, 50, 14
   CONTROL "&Todas", 517, "Button", WS_TABSTOP, 276, 121, 50, 14
-  CONTROL "", 120, "TMeter", 0x00000000, 81, 153, 244, 9
+  CONTROL "", 120, "msctls_progress32", 0x00000000, 81, 153, 244, 9
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 168, 177, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 223, 177, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 278, 177, 50, 14
@@ -18428,7 +18428,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 5, 9, 212, 66
   CONTROL "", 90, "TXBrowse", WS_TABSTOP|0x00300000, 5, 91, 212, 66
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 5, 172, 263, 12
-  CONTROL "", 120, "TMeter", 0x00000000, 5, 196, 264, 9
+  CONTROL "", 120, "msctls_progress32", 0x00000000, 5, 196, 264, 9
   CONTROL "Rutas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 0, 272, 79
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 186, 273, 23
   CONTROL "Destino de los datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 162, 273, 24
@@ -18449,7 +18449,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Eliminar los ficheros tras la importación", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 38, 142, 10
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 65, 61, 38, 12
   CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 105, 61, 162, 12
-  CONTROL "", 140, "TMeter", 0x00000000, 5, 196, 264, 9
+  CONTROL "", 140, "msctls_progress32", 0x00000000, 5, 196, 264, 9
   CONTROL "Progreso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 186, 273, 22
   CONTROL "Origen de los datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 1, 1, 273, 24
   CONTROL "Forma de pago", -1, "Static", WS_GROUP, 5, 64, 53, 8
@@ -18634,7 +18634,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "TBitmap", 1131, "TBitmap", 0x00800000, 95, 163, 18, 11
   CONTROL "", 1140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 188, 210, 12
   CONTROL "", 1150, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 57, 201, 210, 12
-  CONTROL "TMeter", 1160, "TMeter", 0x00000000, 57, 225, 210, 10
+  CONTROL "msctls_progress32", 1160, "msctls_progress32", 0x00000000, 57, 225, 210, 10
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 28, 30, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 40, 30, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 9, 72, 30, 8
@@ -18976,7 +18976,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Almacén", -1, "Static", WS_GROUP, 368, 88, 29, 8
   CONTROL "Cobrado", 11, "Static", WS_GROUP, 3, 124, 36, 8
   CONTROL "Cliente", -1, "Static", WS_GROUP, 143, 76, 41, 8
-  CONTROL "", 460, "TMeter", 0x00000000, 2, 344, 526, 8
+  CONTROL "", 460, "msctls_progress32", 0x00000000, 2, 344, 526, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 3, 76, 36, 8
   CONTROL "Precios", -1, "Static", WS_GROUP, 293, 76, 24, 8
   CONTROL "Riesgo", -1, "Static", WS_GROUP, 293, 100, 26, 8
@@ -19057,7 +19057,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Almacén", -1, "Static", WS_GROUP, 423, 91, 30, 9
   CONTROL "Cobrado", 11, "Static", WS_GROUP, 3, 133, 41, 9
   CONTROL "Cliente", -1, "Static", WS_GROUP, 165, 77, 40, 9
-  CONTROL "", 460, "TMeter", 0x00000000, 2, 449, 675, 8
+  CONTROL "", 460, "msctls_progress32", 0x00000000, 2, 449, 675, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 3, 77, 41, 9
   CONTROL "Precios", -1, "Static", WS_GROUP, 316, 77, 29, 9
   CONTROL "Riesgo", -1, "Static", WS_GROUP, 316, 105, 27, 9
@@ -19138,7 +19138,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Almacén", -1, "Static", WS_GROUP, 553, 94, 35, 9
   CONTROL "Cobrado", 11, "Static", WS_GROUP, 3, 139, 35, 9
   CONTROL "Cliente", -1, "Static", WS_GROUP, 174, 79, 45, 9
-  CONTROL "", 460, "TMeter", 0x00000000, 2, 604, 842, 8
+  CONTROL "", 460, "msctls_progress32", 0x00000000, 2, 604, 842, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 3, 79, 30, 9
   CONTROL "Precios", -1, "Static", WS_GROUP, 438, 79, 24, 9
   CONTROL "Riesgo", -1, "Static", WS_GROUP, 438, 109, 26, 9
@@ -19350,7 +19350,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Imprimir", 220, "Button", WS_TABSTOP, 152, 83, 50, 14
   CONTROL "", 130, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 219, 83, 101, 88
   CONTROL "", 150, "TXBrowse", WS_TABSTOP|0x00300000, 48, 98, 620, 185
-  CONTROL "TMeter", 160, "TMeter", 0x00000000, 48, 284, 620, 8
+  CONTROL "msctls_progress32", 160, "msctls_progress32", 0x00000000, 48, 284, 620, 8
   CONTROL "Número de lote", -1, "Static", WS_GROUP, 44, 46, 51, 8
   CONTROL "Artículo", -1, "Static", WS_GROUP, 44, 33, 30, 8
   CONTROL "Resultados", -1, "Button", BS_GROUPBOX, 44, 72, 627, 219
@@ -19639,7 +19639,7 @@ CAPTION "Espere por favor..."
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 110, "Static", WS_GROUP, 44, 3, 332, 10
-  CONTROL "TMeter", 120, "TMeter", 0x00000000, 0, 39, 376, 8
+  CONTROL "msctls_progress32", 120, "msctls_progress32", 0x00000000, 0, 39, 376, 8
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 4, 3, 34, 30
 }
 
@@ -19702,5 +19702,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "Prestashop", -1, "Button", BS_GROUPBOX, 2, 123, 279, 51
   CONTROL "Comentario", -1, "Static", WS_GROUP, 9, 67, 48, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 9, 162, 43, 8
+}
+
+LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
+
+RDLG DIALOG DISCARDABLE 9, 8, 673, 401
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Generador de informes"
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 184, 373, 486, 26
+  CONTROL "", 220, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 188, 84, 106, 134
+  CONTROL "", 1110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 328, 85, 65, 12
+  CONTROL "", 1120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 424, 85, 65, 12
+  CONTROL "", 310, "TXBrowse", 0x00200000, 188, 100, 476, 267
+  CONTROL "Desde", 1111, "Static", WS_GROUP, 299, 88, 26, 8
+  CONTROL "Hasta", 1121, "Static", WS_GROUP, 397, 88, 24, 8
+  CONTROL "Rangos", -1, "Button", BS_GROUPBOX, 184, 72, 485, 299
+  CONTROL "", 200, "msctls_progress32", 0x00000000, 191, 385, 474, 4
 }
 

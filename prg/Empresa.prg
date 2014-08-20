@@ -2425,7 +2425,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             OF       fldComunicaciones ;
             RESOURCE "Data_Connection_16" ;
             NOBORDER ;
-            TOOLTIP  "Porbar conexión" ;
+            TOOLTIP  "Probar conexión" ;
             ACTION   ( TMySql():New( aTmp[ _CSITSQL ], aTmp[ _CUSRSQL ], aTmp[ _CPSWSQL ], aTmp[ _CDTBSQL ], aTmp[ _NPRTSQL ] ):TestConexion() )
 
       REDEFINE COMBOBOX cTiempoPed ;

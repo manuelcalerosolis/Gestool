@@ -730,9 +730,9 @@ METHOD lAdministratorTask()
          ID                400 ;
          OF                ::oDlg
 
-      ::oMtrActualiza      := TMeter():ReDefine( 500, { | u | if( pCount() == 0, ::nMtrActualiza, ::nMtrActualiza := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMtrActualiza      := TApoloMeter():ReDefine( 500, { | u | if( pCount() == 0, ::nMtrActualiza, ::nMtrActualiza := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      ::oMtrDiccionario    := TMeter():ReDefine( 510, { | u | if( pCount() == 0, ::nMtrDiccionario, ::nMtrDiccionario := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMtrDiccionario    := TApoloMeter():ReDefine( 510, { | u | if( pCount() == 0, ::nMtrDiccionario, ::nMtrDiccionario := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE CHECKBOX    ::lActualizaBaseDatos ;
          ID                600 ;
@@ -4206,9 +4206,9 @@ METHOD Resource( nId )
       REDEFINE CHECKBOX ::aChkIndices[ 2 ] VAR ::aLgcIndices[ 2 ] ID 101 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 3 ] VAR ::aLgcIndices[ 3 ] ID 102 OF ::oDlg
 
-      ::aProgress[ 1 ]  := TMeter():ReDefine( 200, { | u | if( pCount() == 0, ::nProgress[ 1 ], ::nProgress[ 1 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-      ::aProgress[ 2 ]  := TMeter():ReDefine( 210, { | u | if( pCount() == 0, ::nProgress[ 2 ], ::nProgress[ 2 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-      ::aProgress[ 3 ]  := TMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nProgress[ 3 ], ::nProgress[ 3 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::aProgress[ 1 ]  := TApoloMeter():ReDefine( 200, { | u | if( pCount() == 0, ::nProgress[ 1 ], ::nProgress[ 1 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::aProgress[ 2 ]  := TApoloMeter():ReDefine( 210, { | u | if( pCount() == 0, ::nProgress[ 2 ], ::nProgress[ 2 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::aProgress[ 3 ]  := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nProgress[ 3 ], ::nProgress[ 3 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE SAY ::oMsg PROMPT ::cMsg ID 110 OF ::oDlg
 
@@ -5131,7 +5131,8 @@ ENDCLASS
 
    METHOD DeleteView( nView ) CLASS TDataView
 
-      local o
+      local u
+      local value
       local hView
 
       if ::AssertView( nView )
@@ -5139,13 +5140,21 @@ ENDCLASS
          hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
 
-            for each o in hView
+            for each u in hView
+
+#ifdef __XHARBOUR__
+               value    := u:value()
+#else
+               value    := u
+#endif
+
                do case
-                  case isChar( o:value() )
-                     if( ( o:value() )->( used() ), ( o:value() )->( dbCloseArea() ), )
-                  case isObject( o:value() )
-                     o:value():CloseService()
+                  case isChar( value )
+                     if( ( value )->( used() ), ( value )->( dbCloseArea() ), )
+                  case isObject( value )
+                     value:CloseService()
                end case
+
             next 
 
          end if 

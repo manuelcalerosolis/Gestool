@@ -129,7 +129,7 @@ METHOD Activate( oMenuItem, oWnd )
       ID       ( 130 ) ;
       OF       oDlg
 
-   REDEFINE METER ::oMetMsg VAR nMetMsg ;
+   REDEFINE APOLOMETER ::oMetMsg VAR nMetMsg ;
       ID       140 ;
       TOTAL    ( ::oProduccT:oDbf:Lastrec() ) ;
       OF       oDlg

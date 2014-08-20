@@ -3942,7 +3942,7 @@ Method Create( ) CLASS TProveedorLabelGenerator
             :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfProvee ), ( ( dbfProvee )->nLabel := x, ( dbfProvee )->( dbUnlock() ) ), ) }
          end with
 
-         REDEFINE METER ::oMtrLabel ;
+   REDEFINE APOLOMETER ::oMtrLabel ;
             VAR      ::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;

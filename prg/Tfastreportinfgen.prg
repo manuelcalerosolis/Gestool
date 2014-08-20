@@ -35,7 +35,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  lPersonalizado    INIT .f.
    DATA  oDbfPersonalizado
 
-   DATA  cResource         INIT "FastReportArticulos"
+   DATA  cResource         INIT "ReportingDialog"
 
    DATA  oReportTree
    DATA  cReportType       INIT ""
@@ -448,47 +448,37 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
    local n
    local o
 
-   /*
-   Montamos el array con los periodos para los informes------------------------
-   */
+   // Montamos el array con los periodos para los informes------------------------
 
    ::lCreaArrayPeriodos()
-
-   /*
-   Aplicamos los valores segun se han archivado--------------------------------
-   */
-
+   
+   //Aplicamos los valores segun se han archivado--------------------------------
+   
    ::Default()
 
    ::lLoadDivisa()
 
    ::lDefDivInf                     := .f.
    ::lDefSerInf                     := .f.
-
-   /*
-   Caja de dialogo-------------------------------------------------------------
-   */
-
-   DEFINE DIALOG ::oDlg RESOURCE ::cResource TITLE ::cSubTitle
+   
+   //Caja de dialogo-------------------------------------------------------------
+   
+   DEFINE DIALOG ::oDlg RESOURCE "ReportingDialog" TITLE ::cSubTitle
 
    ::oTreeReporting                 := TTreeView():Redefine( 100, ::oDlg ) 
    ::oTreeReporting:bChanged        := {|| ::TreeReportingChanged() }
    ::oTreeReporting:bLDblClick      := {|| ::TreeReportingClick() } // OnClick
-
-   /*
-   Fechas----------------------------------------------------------------------
-   */
-
+   
+   //Fechas----------------------------------------------------------------------
+   
    if ::lDefFecInf
       ::oDefIniInf( 1110, ::oDlg, 1111 )
       ::oDefFinInf( 1120, ::oDlg, 1121 )
       ::lPeriodoInforme( 220, ::oDlg )
    end if
-
-   /*
-   Browse de los rangos----------------------------------------------------------
-   */
-
+   
+   //Browse de los rangos----------------------------------------------------------
+   
    ::oBrwRango                      := TXBrowse():New( ::oDlg )
 
    ::oBrwRango:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -560,31 +550,46 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
 
    ::oBrwRango:OnKeyDown            := {| o, nKey | ::BrwRangoKeyDown( o, nKey ) }
 
-   /*
-   Divisas---------------------------------------------------------------------
-   */
+   // Divisas---------------------------------------------------------------------
 
    if ::lDefDivInf
       ::oDefDivInf( 1130, 1131, ::oDlg )
    end if
 
-   /*
-   Series----------------------------------------------------------------------
-   */
+   // Series----------------------------------------------------------------------
 
    if ::lDefSerInf
       ::oDefSerInf( ::oDlg )
    end if
 
-   /*
-   Progreso--------------------------------------------------------------------
-   */
+   // Progreso--------------------------------------------------------------------
 
    if ::lDefMetInf
       ::oDefMetInf( 1160, ::oDlg )
    end if
 
 RETURN .t.
+
+//----------------------------------------------------------------------------//
+
+METHOD Activate() CLASS TFastReportInfGen
+
+   local lActivate      := .f.
+
+   if !Empty( ::oDlg )
+
+      ::oDlg:AddFastKey( VK_F5,  {|| ::GenReport( IS_SCREEN ) } )
+      ::oDlg:AddFastKey( VK_F9,  {|| ::MoveReport() } )
+
+      ::oDlg:bStart     := {|| ::StartDialog(), ::LoadPersonalizado() }
+
+      ::oDlg:Activate( , , , .t., , , {|| ::InitDialog() } )
+
+      lActivate         := ( ::oDlg:nResult == IDOK )
+
+   end if
+
+RETURN ( lActivate )
 
 //----------------------------------------------------------------------------//
 
@@ -753,27 +758,6 @@ METHOD Create() CLASS TFastReportInfGen
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS TFastReportInfGen
-
-   local lActivate      := .f.
-
-   if !Empty( ::oDlg )
-
-      ::oDlg:AddFastKey( VK_F5,  {|| ::GenReport( IS_SCREEN ) } )
-      ::oDlg:AddFastKey( VK_F9,  {|| ::MoveReport() } )
-
-      ::oDlg:bStart     := {|| ::StartDialog(), ::LoadPersonalizado() }
-
-      ::oDlg:Activate( , , , .t., , , {|| ::InitDialog() } )
-
-      lActivate         := ( ::oDlg:nResult == IDOK )
-
-   end if
-
-RETURN ( lActivate )
-
-//----------------------------------------------------------------------------//
 
 METHOD Play( uParam ) CLASS TFastReportInfGen
 

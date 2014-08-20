@@ -3,21 +3,38 @@
 
 FUNCTION DialogExtend()
 
-local hClass  := TDialog():ClassH
+local hClass
 
-__clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
+  hClass        := TDialog():ClassH
 
-__clsAddMsg( hClass, "bTmpValid", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-__clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "bTmpValid", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
 
-__clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
-__clsAddMsg( hClass, "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "Enable()", {|Self| Self, ( ::bValid := ::bTmpValid, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Enable(), ) } ), CursorArrow() ) }, 3, nil, 1, .f., .f. )
 
-__clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "Disable()", {|Self| Self, ( CursorWait(), ::bTmpValid := ::bValid, ::bValid := {|| .f. }, aEval( ::aControls, { |o| if( o:ClassName <> "TSAY" .AND. o:ClassName <> "TBITMAP", o:Disable(), ) } ) ) }, 3, nil, 1, .f., .f. )
 
-__clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
+  __clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
+
+  __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
+
+  //hClass      := TMeter():ClassH
+
+  //__clsAddMsg( hClass, "nCurrent", __cls_IncData( hClass ), 9, 0, 1, .f., .f. )
+
+  //__clsAddMsg( hClass, "AutoInc", {|| nil }, 3, nil, 1, .f., .f. ) 
+  // __clsAddMsg( hClass, "AutoInc()", {|Self| Self, ::nCurrent++, if( ( ::nTotal < 100 ) .or. ( Mod( ::nCurrent, Int( ::nTotal / 100 ) ) == 0 ), ::Set( ::nCurrent ), nil ) }, 3, nil, 1, .f., .f. ) 
+
+  //__clsAddMsg( hClass, "AutoInc", @MeterAutoInc(), 0, nil, 1, .f., .f. )
+
+  //__clsAddMsg( hClass, "SetTotal", @MeterSetTotal(), 0, nil, 1, .f., .f. )
+
+Return nil
+
+//----------------------------------------------------------------------------//
 
 /*
 EXTEND CLASS TDialog WITH DATA aFastKeys//  AS ARRAY INIT {} 
@@ -104,16 +121,7 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
    else
 
       aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1], Eval( aKey[2] ), ) } )
-/*
-      if !Empty( ::aFastKeys )
-         for n := 1 to len( ::aFastKeys )
-            if nKey == ::aFastKeys[ n, 1 ]
-               Eval( ::aFastKeys[ n, 2 ] )
-               Return nil
-            end if
-         next
-      end if
-*/
+
       return ::Super:KeyDown( nKey, nFlags )
 
    endif
@@ -121,3 +129,4 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
 Return ( nil )
 
 //----------------------------------------------------------------------------//
+

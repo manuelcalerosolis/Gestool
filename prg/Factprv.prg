@@ -5431,7 +5431,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    oTree             := TTreeView():Redefine( 170, oDlg )
    oTree:bLDblClick  := {|| TreeChanged( oTree ) }
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf;
       VAR      nMtrInf ;
       NOPERCENTAGE ;
       ID       200 ;
@@ -12105,7 +12105,7 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
             :bOnPostEdit      := {|o,x| if( dbDialogLock( ::cAreaTmpLabel ), ( ( ::cAreaTmpLabel )->nLabel := x, ( ::cAreaTmpLabel )->( dbUnlock() ) ), ) }
          end with
 
-         REDEFINE METER ::oMtrLabel ;
+   REDEFINE APOLOMETER ::oMtrLabel ;
             VAR      ::nMtrLabel ;
             PROMPT   "" ;
             ID       190 ;

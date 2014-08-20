@@ -3633,7 +3633,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    oTree             := TTreeView():Redefine( 170, oDlg )
    oTree:bLDblClick  := {|| TreeChanged( oTree ) }
 
-   REDEFINE METER oMtrInf ;
+   REDEFINE APOLOMETER oMtrInf;
       VAR      nMtrInf ;
       PROMPT   "Proceso" ;
       ID       200 ;
@@ -4477,7 +4477,7 @@ STATIC FUNCTION DelSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
-   REDEFINE METER oTxtDel VAR nTxtDel ;
+ REDEFINE APOLOMETER oTxtDel VAR nTxtDel ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( dbfAntCliT )->( OrdKeyCount() ) ;

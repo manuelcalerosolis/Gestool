@@ -3851,6 +3851,10 @@ RETURN ( .t. )
 
 METHOD lRecargaFecha() CLASS TNewInfGen
 
+	if empty( ::oIniInf ) .or. empty( ::oFinInf )
+		return ( .t. )
+	end if
+
    do case
       case ::cPeriodo == "Hoy"
 

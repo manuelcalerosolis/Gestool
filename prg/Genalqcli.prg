@@ -303,7 +303,7 @@ Function GenFacAlqCli( oBrw, aDbfBmp, dbfAlqCliT, dbfAlqCliL, dbfAlqCliP, dbfCli
       OF       oPag:aDialogs[ 2 ] ;
       ACTION   ( oDbfTmp:GetStatus(), oDbfTmp:DbEval( {|| oDbfTmp:Load(), oDbfTmp:lFacAlq := .t., oDbfTmp:Save() } ), oDbfTmp:SetStatus(), oBrwAlq:refresh() )
 
-   REDEFINE METER oMetMsg VAR nMetMsg ;
+ REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
       ID       120 ;
       OF       oDlg
 

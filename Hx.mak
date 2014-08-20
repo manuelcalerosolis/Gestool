@@ -159,7 +159,7 @@ Tdelobs.prg             	\
 Tdeltarifasclientes.prg 	\
 TftpC3.prg              	\
 Tftpfile.prg            	\
-Meter.prg               	\
+ApoloMeter.prg               	\
 Tankes.prg              	\
 Grpcli.prg              	\
 Atipicas.prg 				\
@@ -560,7 +560,7 @@ TStockMinimoFamilia.obj \
 Xvalalmg.obj            \
 Tftpfile.obj            \
 Printer.obj             \
-Meter.obj               \
+ApoloMeter.obj               \
 Tankes.obj              \
 Grpcli.obj              \
 Atipicas.obj 				\
@@ -981,7 +981,7 @@ $(OBJ)\Tftpfile.obj             +
 $(OBJ)\Printer.obj              +
 $(OBJ)\Webbar.obj               +
 $(OBJ)\Webmap.obj               +
-$(OBJ)\Meter.obj                +
+$(OBJ)\ApoloMeter.obj           +
 $(OBJ)\Tankes.obj               +
 $(OBJ)\Grpcli.obj               +
 $(OBJ)\Atipicas.obj 			+
