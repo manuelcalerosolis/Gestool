@@ -15334,7 +15334,9 @@ function SynAlbCli( cPath )
       while !( TDataView():Get( "AlbCliL", nView ) )->( eof() )
 
          if !( TDataView():Get( "AlbCliT", nView ) )->( dbSeek( ( TDataView():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", nView ) )->cSufAlb ) )
-            ( TDataView():Get( "AlbCliL", nView ) )->( dbDelete() )
+            if dbLock( TDataView():Get( "AlbCliL", nView ) )
+	            ( TDataView():Get( "AlbCliL", nView ) )->( dbDelete() )
+	        end if
          end if 
 
          ( TDataView():Get( "AlbCliL", nView ) )->( dbSkip( 1 ) )
