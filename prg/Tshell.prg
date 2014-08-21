@@ -833,10 +833,7 @@ METHOD End( lForceExit ) CLASS TShell
    ::oWndClient:ChildClose( Self )
 
    ::Super:End()
-
-   msgalert( "Destroy")
    ::Super:Destroy()
-   msgalert("CursorWE")
 
    CursorWE()
 
@@ -1028,7 +1025,8 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 /*
    if Empty( xCadena )
       Return .f.
-   end if*/
+   end if
+*/
 
    /*
    Guradamos valores iniciales-------------------------------------------------
