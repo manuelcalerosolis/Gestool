@@ -2099,7 +2099,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
       // Empresa contabilidad--------------------------------------------------
 
-      oBrwEmp                       := TXBrowse():New( fldContabilidad )
+      oBrwEmp                       := IXBrowse():New( fldContabilidad )
 
       oBrwEmp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwEmp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -7169,7 +7169,7 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
          ON CHANGE   ( ( dbfBancos )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
          OF          oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -7520,7 +7520,7 @@ Function SelectDelegacion()
          ON CHANGE( ( dbfDlg )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() ) ;
          OF       oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

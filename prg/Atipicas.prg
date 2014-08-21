@@ -797,7 +797,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
       ::oRentabilidadSobre:bChange        := {|| ::CalculaRentabilidad() }
 
 
-      ::oBrwRentabilidad                  := TXBrowse():New( ::oDlg )
+      ::oBrwRentabilidad                  := IXBrowse():New( ::oDlg )
       ::oBrwRentabilidad:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwRentabilidad:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
       ::oBrwRentabilidad:lVScroll         := .t.

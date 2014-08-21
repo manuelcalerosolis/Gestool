@@ -2431,7 +2431,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfDepAgeT, oBrw, bWhen, bValid, nMode )
       Cajas Bases de los impuestosS____________________________________________________________
 		*/
 
-      oBrwIva                        := TXBrowse():New( oDlg )
+      oBrwIva                        := IXBrowse():New( oDlg )
 
       oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

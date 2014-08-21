@@ -704,7 +704,7 @@ Function BrwInternalTemporada( oGet, dbfArticulo, oGet2 )
          ON CHANGE( ( dbfTemporada )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
 			OF 		oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

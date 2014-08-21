@@ -1586,7 +1586,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       Desglose del impuestos---------------------------------------------------------
       */
 
-      oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
+      oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
       oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1942,7 +1942,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          OF       oFld:aDialogs[ 3 ] ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
 
-      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 4 ] )
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
       oBrwDoc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDoc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -2564,7 +2564,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      oBrwPrp                       := TXBrowse():New( oFld:aDialogs[1] )
+      oBrwPrp                       := IXBrowse():New( oFld:aDialogs[1] )
 
       oBrwPrp:nDataType             := DATATYPE_ARRAY
 
@@ -2756,7 +2756,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       Browse de albaranes------------------------------------------------------
       */
 
-      oBrwAlb                 := TXBrowse():New( oFld:aDialogs[ 2 ] )
+      oBrwAlb                 := IXBrowse():New( oFld:aDialogs[ 2 ] )
 
       oBrwAlb:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwAlb:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -7801,7 +7801,7 @@ Function EdtNumSer( mNumSer, nTotUnd, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer ) )
 
-      oBrwSer                 := TXBrowse():New( oDlg )
+      oBrwSer                 := IXBrowse():New( oDlg )
 
       oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

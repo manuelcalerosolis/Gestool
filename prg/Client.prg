@@ -6998,7 +6998,7 @@ Method Create() CLASS TClienteLabelGenerator
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         ::oBrwLabel                 := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+         ::oBrwLabel                 := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
          ::oBrwLabel:nMarqueeStyle   := 5
          ::oBrwLabel:nColSel         := 2
@@ -11837,7 +11837,7 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
                      oGet1:SetFocus() );
          OF       oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

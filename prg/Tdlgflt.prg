@@ -443,7 +443,7 @@ METHOD BrwFilter( oDlg )
    Browse de los rangos----------------------------------------------------------
    */
 
-   ::oBrwFilter                  := TXBrowse():New( oDlg )
+   ::oBrwFilter                  := IXBrowse():New( oDlg )
 
    ::oBrwFilter:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwFilter:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -547,7 +547,7 @@ Method Dialog()
          OF       ( ::oFld:aDialogs[ 2 ] );
          ACTION   ( ::DeleteFilter() )
    
-      ::oBrwAlmacenados                   := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+      ::oBrwAlmacenados                   := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
    
       ::oBrwAlmacenados:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwAlmacenados:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

@@ -755,7 +755,7 @@ function Visor( aMsg )
 
    DEFINE DIALOG oDlg RESOURCE "VISOR"
 
-   oBrwCon                        := TXBrowse():New( oDlg )
+   oBrwCon                        := IXBrowse():New( oDlg )
 
    oBrwCon:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwCon:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

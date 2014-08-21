@@ -446,9 +446,9 @@ METHOD BuscarEspecial( oGetTip, oGetSub, cField )
 
    TButton():ReDefine( 501, {|| ::Edit( oBrwTipo ) }, oDlg, , , .f., {|| !IsReport() } )
 
-   TButton():ReDefine( IDOK, {|| oDlg:end( IDOK ) }, oDlg )
+   TButton():ReDefine( IDOK, {|| oDlg:end( IDOK ) }, oDlg, , , .f. )
 
-   TButton():ReDefine( IDCANCEL, {|| oDlg:end() }, oDlg )
+   TButton():ReDefine( IDCANCEL, {|| oDlg:end() }, oDlg, , , .f. )
 
    oDlg:bStart       := {|| oBrwTipo:Load(), oGetSearch:SetFocus() }
 

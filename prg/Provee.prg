@@ -3893,7 +3893,7 @@ Method Create( ) CLASS TProveedorLabelGenerator
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         ::oBrwLabel                   := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+         ::oBrwLabel                   := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
          ::oBrwLabel:nMarqueeStyle     := 5
          ::oBrwLabel:nColSel           := 2
@@ -5735,7 +5735,7 @@ FUNCTION BrwBncPrv( oGet, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaB
                      oGet1:SetFocus() );
 			OF 		oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

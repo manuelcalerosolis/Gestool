@@ -384,7 +384,8 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    // Fuentes en funcion del estilo
 
-   ::oFont           := oFontLittelTitle()
+   ::setFont( oFontLittelTitle() )
+   // ::oFont           := oFontLittelTitle()
 
    // Tamaño de la ventana siempre a pixels---------------------------------------
 
@@ -495,9 +496,9 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    ::lCenter         := lCenter
 
-   ::Super:Activate(   cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
-                     bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight,;
-                     bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp )
+   ::Super:Activate(    cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
+                        bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight,;
+                        bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp )
 
    ::Maximize()
 
@@ -832,6 +833,10 @@ METHOD End( lForceExit ) CLASS TShell
    ::oWndClient:ChildClose( Self )
 
    ::Super:End()
+
+   msgalert( "Destroy")
+   ::Super:Destroy()
+   msgalert("CursorWE")
 
    CursorWE()
 

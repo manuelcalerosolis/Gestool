@@ -306,7 +306,7 @@ Method MuestraDialogo()
 
    // Browse de empresas a copiar----------------------------------------------
 
-   ::oBrwSave                        := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+   ::oBrwSave                        := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
    ::oBrwSave:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwSave:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -448,7 +448,7 @@ Method MuestraDialogo()
 
    // Caja de dialogo backup_6 ------------------------------------------------
 
-   ::oBrwRestore                        := TXBrowse():New( ::oFld:aDialogs[ 6 ] )
+   ::oBrwRestore                        := IXBrowse():New( ::oFld:aDialogs[ 6 ] )
 
    ::oBrwRestore:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwRestore:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -518,7 +518,7 @@ Method MuestraDialogo()
 
    //caja de dialogo BACKUP_8
 
-   ::oBrwHistorial                 := TXBrowse():New( ::oFld:aDialogs[ 9 ] )
+   ::oBrwHistorial                 := IXBrowse():New( ::oFld:aDialogs[ 9 ] )
 
    ::oDbf:SetBrowse( ::oBrwHistorial )
 

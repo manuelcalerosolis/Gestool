@@ -1716,7 +1716,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       // Tercera caja de diálogo-----------------------------------------------
 
-      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 3 ] )
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 3 ] )
 
       oBrwDoc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDoc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

@@ -314,7 +314,7 @@ METHOD lResource() CLASS TpvCobros
       Browse con los diferentes pagos------------------------------------------
       */
 
-      ::oBrwPago                 := TXBrowse():New( ::oDlg )
+      ::oBrwPago                 := IXBrowse():New( ::oDlg )
       ::oBrwPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
       ::oBrwPago:lVScroll        := .t.
@@ -347,7 +347,7 @@ METHOD lResource() CLASS TpvCobros
       Browse con las formas de pago--------------------------------------------
       */
 
-      ::oBrwFormasPago                 := TXBrowse():New( ::oDlg )
+      ::oBrwFormasPago                 := IXBrowse():New( ::oDlg )
       ::oBrwFormasPago:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwFormasPago:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
       ::oBrwFormasPago:lVScroll        := .f.
@@ -394,13 +394,13 @@ METHOD lResource() CLASS TpvCobros
       Boton para limpiar la caja de texto--------------------------------------
       */
 
-      ::oBtnLimpiarTexto   := TButton():ReDefine( 160, {|| ::OnClickReset() }, ::oDlg )  
+      ::oBtnLimpiarTexto   := TButton():ReDefine( 160, {|| ::OnClickReset() }, ::oDlg, , , .f. )  
 
       /*
       Botones del teclado------------------------------------------------------
       */
 
-      aEval( ::aButtonsMoney, {|h| h[ "Object" ] := TButton():ReDefine( h[ "Id" ], h[ "Money", "Action" ], ::oDlg ) } ) 
+      aEval( ::aButtonsMoney, {|h| h[ "Object" ] := TButton():ReDefine( h[ "Id" ], h[ "Money", "Action" ], ::oDlg, , , .f. ) } ) 
 
       /*
       Boton cambiar teclado de monedas a calculadora---------------------------

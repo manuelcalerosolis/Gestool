@@ -8749,7 +8749,7 @@ Static Function EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd )
 		Detalle de Articulos____________________________________________________
 		*/
 
-      oBrwDet                    := TXBrowse():New( oDlgTpv )
+      oBrwDet                    := IXBrowse():New( oDlgTpv )
 
       oBrwDet:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDet:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

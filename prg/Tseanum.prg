@@ -536,7 +536,7 @@ METHOD Activate( oMenuItem, oWnd, lStart )
 
    // Lisbox de resultados-----------------------------------------------------
 
-   ::oBrw               := TXBrowse():New( oDlg )
+   ::oBrw               := IXBrowse():New( oDlg )
 
    ::oBrw:bClrSel       := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrw:bClrSelFocus  := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1667,7 +1667,7 @@ METHOD Resource() CLASS TNumerosSerie
          WHEN     ( ::nMode != ZOOM_MODE .and. !::lAutoSerializacion ) ;
          ACTION   ( ::GenerarSeries() )
 
-      ::oBrwSer                  := TXBrowse():New( ::oDlg )
+      ::oBrwSer                  := IXBrowse():New( ::oDlg )
 
       ::oBrwSer:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwSer:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

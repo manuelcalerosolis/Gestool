@@ -476,7 +476,7 @@ METHOD Activate( oWnd, lAuto )
       Primera caja de dialogo--------------------------------------------------
       */
 
-      oBrwSnd                        := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+      oBrwSnd                        := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
       oBrwSnd:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwSnd:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -522,7 +522,7 @@ METHOD Activate( oWnd, lAuto )
       Segunda caja de dialogo--------------------------------------------------
       */
 
-      oBrwRec                        := TXBrowse():New( ::oFld:aDialogs[ 3 ] )
+      oBrwRec                        := IXBrowse():New( ::oFld:aDialogs[ 3 ] )
 
       oBrwRec:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwRec:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -594,7 +594,7 @@ REDEFINE APOLOMETER ::oMtr ;
          OF       ::oFld:aDialogs[ 5 ] ;
          ACTION   ( ::ZoomHistorial() )
 
-      ::oBrwHistorial                 := TXBrowse():New( ::oFld:aDialogs[ 5 ] )
+      ::oBrwHistorial                 := IXBrowse():New( ::oFld:aDialogs[ 5 ] )
 
       ::oDbfSenderReciver:SetBrowse( ::oBrwHistorial, .f. )
 
@@ -650,7 +650,7 @@ REDEFINE APOLOMETER ::oMtr ;
          OF       ::oFld:aDialogs[ 6 ] ;
          ACTION   (  ::oDbfFilesReciver:Delete(), ::oBrwFiles:Refresh() )
 
-      ::oBrwFiles                 := TXBrowse():New( ::oFld:aDialogs[ 6 ] )
+      ::oBrwFiles                 := IXBrowse():New( ::oFld:aDialogs[ 6 ] )
 
       ::oDbfFilesReciver:SetBrowse( ::oBrwFiles, .f. )
 

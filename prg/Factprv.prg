@@ -1876,7 +1876,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       Desglose del impuestos---------------------------------------------------------
       */
 
-      oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
+      oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
       oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -2382,7 +2382,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       Caja de dialogo de incidencias
       */
 
-      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 4 ] )
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
       oBrwDoc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDoc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -12045,7 +12045,7 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         ::oBrwLabel                 := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+         ::oBrwLabel                 := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
          ::oBrwLabel:nMarqueeStyle   := 5
          ::oBrwLabel:nColSel         := 2

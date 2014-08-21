@@ -584,7 +584,7 @@ METHOD RedefineBrowse( id, oDlg )
    Browse de los Factura Automaticas-------------------------------------------
    */
 
-   ::oBrwFacturaAutomatica                   := TXBrowse():New( oDlg )
+   ::oBrwFacturaAutomatica                   := IXBrowse():New( oDlg )
    
    ::oBrwFacturaAutomatica:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwFacturaAutomatica:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

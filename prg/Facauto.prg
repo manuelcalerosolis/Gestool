@@ -918,7 +918,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
       -------------------------------------------------------------------------
       */
 
-      ::oBrwIva                        := TXBrowse():New( oFld:aDialogs[1] )
+      ::oBrwIva                        := IXBrowse():New( oFld:aDialogs[1] )
 
       ::oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1698,7 +1698,7 @@ METHOD Run() CLASS TCreaFacAutomaticas
       Plantillas para el proceso-----------------------------------------------
       */
 
-      ::oBrwPlantilla                  := TXBrowse():New( oFld:aDialogs[ 1 ] )
+      ::oBrwPlantilla                  := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
       ::oBrwPlantilla:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwPlantilla:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

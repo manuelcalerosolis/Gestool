@@ -309,7 +309,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfPromoT, oBrw, bWhen, bValid, nMode )
 		Segunda caja de Dialogo_______________________________________________
 		*/
 
-      oBrw2          := TXBrowse():New( oDlg )
+      oBrw2          := IXBrowse():New( oDlg )
 
       oBrw2:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw2:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -387,7 +387,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfPromoT, oBrw, bWhen, bValid, nMode )
 			END IF
       */
 
-      oBrw3          := TXBrowse():New( oDlg )
+      oBrw3          := IXBrowse():New( oDlg )
 
       oBrw3:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw3:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1270,7 +1270,7 @@ FUNCTION BrwPromo( oGet, dbfPromoT, oGet2 )
 			ON CHANGE( ( dbfPromoT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
 			OF 		oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

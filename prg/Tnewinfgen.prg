@@ -480,7 +480,7 @@ METHOD NewResource( cFldRes ) CLASS TNewInfGen
    Caja de dialogo comun-------------------------------------------------------
    */
 
-   ::oBrwCol                        := TXBrowse():New( if( ::lNewInforme, ::oFld:aDialogs[3], ::oFld:aDialogs[2] ) )
+   ::oBrwCol                        := IXBrowse():New( if( ::lNewInforme, ::oFld:aDialogs[3], ::oFld:aDialogs[2] ) )
 
    ::oBrwCol:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwCol:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

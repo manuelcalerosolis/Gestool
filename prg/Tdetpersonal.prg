@@ -348,7 +348,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ::oParent:oDetHorasPersonal:Del( ::oBrwHorasTrabajador ) )
 
-      ::oBrwHorasTrabajador                 := TXBrowse():New( oDlg )
+      ::oBrwHorasTrabajador                 := IXBrowse():New( oDlg )
 
       ::oBrwHorasTrabajador:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwHorasTrabajador:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

@@ -703,7 +703,7 @@ FUNCTION BrwSelVisor( oGet, dbfVisor, oGet2 )
       ON CHANGE( ( dbfVisor )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
       OF       oDlg
 
-   oBrw                 := TXBrowse():New( oDlg )
+   oBrw                 := IXBrowse():New( oDlg )
 
    oBrw:nMarqueeStyle   := 5
    oBrw:lHScroll        := .f.

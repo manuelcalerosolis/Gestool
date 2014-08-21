@@ -3802,7 +3802,7 @@ Return nil*/
          ON CHANGE( ( dbfDoc )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
          OF       oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:cAlias          := dbfDoc
 

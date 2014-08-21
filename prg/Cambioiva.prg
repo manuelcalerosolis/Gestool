@@ -154,7 +154,7 @@ METHOD Create() CLASS TCambioDeIva
    Primera caja de diálogo--------------------------------------------------
    */
 
-   ::oBrwEmp                        := TXBrowse():New( ::oFld:aDialogs[ 1 ] )
+   ::oBrwEmp                        := IXBrowse():New( ::oFld:aDialogs[ 1 ] )
 
    ::oBrwEmp:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwEmp:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

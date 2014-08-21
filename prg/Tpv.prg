@@ -2526,8 +2526,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       Barra de porcentaje______________________________________________________
       */
 
-		/*----------------------------------------------------------------------------//
-REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
+      REDEFINE APOLOMETER oMetMsg VAR nMetMsg ;
 			ID 		460 ;
 			NOPERCENTAGE ;
          OF       oDlgTpv
@@ -2641,9 +2640,10 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
    local oGrupo
    local oCarpeta
 
-   if Empty( oOfficeBar )
+   if empty( oOfficeBar )
 
       oOfficeBar              := TDotNetBar():New( 0, 0, 2020, 115, oDlgTpv, 1 )
+
       oOfficeBar:lPaintAll    := .f.
       oOfficeBar:lDisenio     := .f.
 
@@ -2826,7 +2826,6 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
    end if 
 
    lRecTotal( aTmp )
-
 
 Return ( nil )
 
@@ -19331,7 +19330,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
 		Detalle de Articulos____________________________________________________
 		*/
 
-      oBrwDev                    := TXBrowse():New( oDlg )
+      oBrwDev                    := IXBrowse():New( oDlg )
 
       oBrwDev:lFooter            := .t.
       oBrwDev:bClrStd            := {|| if( ( dbfTmp )->nUntTil > 0, { CLR_BLACK, GetSysColor( COLOR_WINDOW ) }, { CLR_GRAY, GetSysColor( COLOR_WINDOW ) } ) }
@@ -19996,7 +19995,7 @@ Static Function cInformeDevolucionTpv( dbfTmp )
          TRANSPARENT ;
          OF          oDlg
 
-      oBrw                       := TXBrowse():New( oDlg )
+      oBrw                       := IXBrowse():New( oDlg )
 
       oBrw:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

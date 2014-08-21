@@ -1940,7 +1940,7 @@ METHOD Resource() CLASS TpvTactil
    Browse de familias-------------------------------------------------------
    */
 
-   ::oBrwFamilias                         := TXBrowse():New( ::oDlg )  
+   ::oBrwFamilias                         := IXBrowse():New( ::oDlg )  
 
    ::oBrwFamilias:lRecordSelector         := .f.
    ::oBrwFamilias:lHScroll                := .f. 

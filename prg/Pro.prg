@@ -233,7 +233,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oDlg
 
-         oBrw                 := TXBrowse():New( oDlg )
+         oBrw                 := IXBrowse():New( oDlg )
 
          oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1716,7 +1716,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
          ON CHANGE( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
 			OF 		oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -2357,7 +2357,7 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
          OF       oDlg ;
          ACTION   ( SelectPropiedadDblClick( oBrw, aData, .f. ) )
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

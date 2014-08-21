@@ -2578,7 +2578,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       Cajas para el desglose de impuestos--------------------------------------------
 		*/
 
-      oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
+      oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
       oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -3250,7 +3250,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       //Caja de dialogo de docuentos
 
-      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 4 ] )
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
       oBrwDoc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDoc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -4766,7 +4766,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[3]
 
-      oBrwAlbPrv                 := TXBrowse():New( oFld:aDialogs[3] )
+      oBrwAlbPrv                 := IXBrowse():New( oFld:aDialogs[3] )
 
       oBrwAlbPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwAlbPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -4953,7 +4953,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[5]
 
-      oBrwAlbCli                 := TXBrowse():New( oFld:aDialogs[5] )
+      oBrwAlbCli                 := IXBrowse():New( oFld:aDialogs[5] )
 
       oBrwAlbCli:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwAlbCli:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -5032,7 +5032,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       Relación de facturas-----------------------------------------------------
       */
 
-      oBrwFacCli                 := TXBrowse():New( oFld:aDialogs[5] )
+      oBrwFacCli                 := IXBrowse():New( oFld:aDialogs[5] )
 
       oBrwFacCli:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwFacCli:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -7406,7 +7406,7 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
          OF       ::oPag:aDialogs[2] ;
          ACTION   ( ::SelectAllArticulo( .f. ) )
 
-      ::oBrwFin                  := TXBrowse():New( ::oPag:aDialogs[3] )
+      ::oBrwFin                  := IXBrowse():New( ::oPag:aDialogs[3] )
 
       ::oBrwFin:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwFin:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

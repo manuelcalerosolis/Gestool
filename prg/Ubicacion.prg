@@ -232,7 +232,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUbicaT, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -664,7 +664,7 @@ FUNCTION BrwUbicacion( oGet, dbfUbicaT, oGet2 )
       ON CHANGE( ( dbfUbicaT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
       OF       oDlg
 
-   oBrw                 := TXBrowse():New( oDlg )
+   oBrw                 := IXBrowse():New( oDlg )
 
    oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -802,7 +802,7 @@ FUNCTION BrwUbiLin( oGet, oGet2, cCodUbi, dbfUbicaL )
       ON CHANGE( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
       OF       oDlg
 
-   oBrw                 := TXBrowse():New( oDlg )
+   oBrw                 := IXBrowse():New( oDlg )
 
    oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

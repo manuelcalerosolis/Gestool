@@ -29,6 +29,10 @@ local hClass
 
   __clsAddMsg( hClass, "HardDisable", {|Self| Self, ::bOldWhen := ::bWhen, ::bWhen := {|| .f. } }, 3, nil, 1, .f., .f. ) 
 
+  hClass        := TXBrowse():ClassH
+
+  __clsAddMsg( hClass, "SelectOne", {|Self| Self, ::Select( 0 ), ::Select( 1 ) }, 3, nil, 1, .f., .f. ) 
+
 Return nil
 
 //----------------------------------------------------------------------------//

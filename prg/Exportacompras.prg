@@ -288,7 +288,7 @@ METHOD lResource( cFld ) CLASS TExportaCompras
    Browse para la configuracion del ascii--------------------------------------
    */
 
-   ::oBrwLin                  := TXBrowse():New( ::oDlg )
+   ::oBrwLin                  := IXBrowse():New( ::oDlg )
 
    ::oBrwLin:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwLin:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

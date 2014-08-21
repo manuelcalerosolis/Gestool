@@ -159,7 +159,7 @@ FUNCTION CuentasClientes( oWnd )
    Browse y botones de subir y bajar----------------------------------------
    */
 
-   oBrw                 := TXBrowse():New( oDlg )
+   oBrw                 := IXBrowse():New( oDlg )
 
    oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -891,7 +891,7 @@ Static Function PagosTikets( oCodCli )
    Browse y botones de subir y bajar----------------------------------------
    */
 
-   oBrw                 := TXBrowse():New( oDlg )
+   oBrw                 := IXBrowse():New( oDlg )
 
    oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

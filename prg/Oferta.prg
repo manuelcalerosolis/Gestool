@@ -3046,7 +3046,7 @@ Method Create() CLASS TOfertaLabelGenerator
             OF       ::oFld:aDialogs[2] ;
             ACTION   ( WinZooRec( ::oBrwLabel, bEdit, dbfOferta, .f., cDefIva() ) )
 
-         ::oBrwLabel                 := TXBrowse():New( ::oFld:aDialogs[2] )
+         ::oBrwLabel                 := IXBrowse():New( ::oFld:aDialogs[2] )
 
          ::oBrwLabel:nMarqueeStyle   := 5
          ::oBrwLabel:nColSel         := 2
@@ -3338,7 +3338,7 @@ Method SelectPropertiesLabels() CLASS TOfertaLabelGenerator
 
       DEFINE DIALOG oDlg RESOURCE "Propiedades"
 
-      oBrwPrp                       := TXBrowse():New( oDlg )
+      oBrwPrp                       := IXBrowse():New( oDlg )
 
       oBrwPrp:nDataType             := DATATYPE_ARRAY
 

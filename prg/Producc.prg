@@ -3893,7 +3893,7 @@ Method CreateAsistenteEtiquetas() CLASS TProduccion
             OF       ::oFldLbl:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         ::oBrwLabel                 := TXBrowse():New( ::oFldLbl:aDialogs[ 2 ] )
+         ::oBrwLabel                 := IXBrowse():New( ::oFldLbl:aDialogs[ 2 ] )
 
          ::cAreaTmpLabel:SetBrowse( ::oBrwLabel ) 
 

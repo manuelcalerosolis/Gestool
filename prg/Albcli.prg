@@ -2976,7 +2976,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       Desglose del impuestos---------------------------------------------------------
       */
 
-      oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
+      oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
       oBrwIva:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwIva:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -3656,7 +3656,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       //Caja de documentos
 
-      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 4 ] )
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
       oBrwDoc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDoc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -5697,7 +5697,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
          ID       503 ;
          OF       oDlg
 
-      oBrwLin                       := TXBrowse():New( oDlg )
+      oBrwLin                       := IXBrowse():New( oDlg )
 
       oBrwLin:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwLin:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -12483,7 +12483,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
          ID       503 ;
          OF       oDlg
 
-      oBrwLin                       := TXBrowse():New( oDlg )
+      oBrwLin                       := IXBrowse():New( oDlg )
 
       oBrwLin:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwLin:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

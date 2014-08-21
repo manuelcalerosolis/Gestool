@@ -897,7 +897,7 @@ METHOD Activate() CLASS TBrowseFilter
       OF       ( ::oDlg );
       ACTION   ( ::DeleteLine() )
 
-   ::oBrwFilter                  := TXBrowse():New( ::oDlg )
+   ::oBrwFilter                  := IXBrowse():New( ::oDlg )
 
    ::oBrwFilter:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwFilter:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -1049,7 +1049,7 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   ::oBrwAlmacenados                   := TXBrowse():New( ::oDlg )
+   ::oBrwAlmacenados                   := IXBrowse():New( ::oDlg )
    
    ::oBrwAlmacenados:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwAlmacenados:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

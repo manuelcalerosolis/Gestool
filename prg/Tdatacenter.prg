@@ -671,7 +671,7 @@ METHOD lAdministratorTask()
 
       DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::cDataDictionaryFile
 
-      ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
+      ::oBrwEmpresas                         := IXBrowse():New( ::oDlg )
 
       ::oBrwEmpresas:lRecordSelector         := .t.
       ::oBrwEmpresas:lTransparent            := .f.
@@ -3739,7 +3739,7 @@ METHOD Auditor()
       Operaciones -------------------------------------------------------------
       */
 
-      ::oBrwOperation                        := TXBrowse():New( ::oFldAuditor:aDialogs[1] )
+      ::oBrwOperation                        := IXBrowse():New( ::oFldAuditor:aDialogs[1] )
 
       ::oBrwOperation:lRecordSelector        := .t.
       ::oBrwOperation:lTransparent           := .f.
@@ -3814,7 +3814,7 @@ METHOD Auditor()
       Columnas de cambio-------------------------------------------------------
       */
 
-      ::oBrwColumn                        := TXBrowse():New( ::oFldAuditor:aDialogs[1] )
+      ::oBrwColumn                        := IXBrowse():New( ::oFldAuditor:aDialogs[1] )
 
       ::oBrwColumn:lRecordSelector        := .t.
       ::oBrwColumn:lTransparent           := .f.
@@ -3870,7 +3870,7 @@ METHOD Auditor()
          OF          ::oFldAuditor:aDialogs[2] ;
          ACTION      ( ::GetAllLocksTablesUsers(), ::oBrwBlocks:Refresh(), ::oBrwBlocks:GoTop() )
 
-      ::oBrwBlocks                        := TXBrowse():New( ::oFldAuditor:aDialogs[2] )
+      ::oBrwBlocks                        := IXBrowse():New( ::oFldAuditor:aDialogs[2] )
 
       ::oBrwBlocks:lRecordSelector        := .t.
       ::oBrwBlocks:lTransparent           := .f.

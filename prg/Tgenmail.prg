@@ -342,7 +342,7 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
          OF       ::oFld:aDialogs[ 2 ] ;
          ACTION   ( ::SelAllMailing( .f. ) )
 
-      ::oBrwClient                 := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+      ::oBrwClient                 := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
       ::oBrwClient:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwClient:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

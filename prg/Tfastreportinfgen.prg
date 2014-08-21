@@ -479,7 +479,7 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
    
    //Browse de los rangos----------------------------------------------------------
    
-   ::oBrwRango                      := TXBrowse():New( ::oDlg )
+   ::oBrwRango                      := IXBrowse():New( ::oDlg )
 
    ::oBrwRango:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwRango:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

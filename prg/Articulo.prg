@@ -6266,7 +6266,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Primer Browse de propiedades--------------------------------------------
       */
 
-      oBrwPrp1                        := TXBrowse():New( oDlg ) 
+      oBrwPrp1                        := IXBrowse():New( oDlg ) 
 
       oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -6322,7 +6322,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Segundo Browse de propiedades----------------------                                                                                                                                             ---------------------
       */
 
-      oBrwPrp2                        := TXBrowse():New( oDlg )
+      oBrwPrp2                        := IXBrowse():New( oDlg )
 
       oBrwPrp2:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp2:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -13299,7 +13299,7 @@ Method Create() CLASS TArticuloLabelGenerator
             OF       ::fldPrecios ;
             ACTION   ( WinZooRec( ::oBrwLabel, bEdit, dbfArticulo ) )
 
-         ::oBrwLabel                 := TXBrowse():New( ::fldPrecios )
+         ::oBrwLabel                 := IXBrowse():New( ::fldPrecios )
 
          ::oBrwLabel:nMarqueeStyle   := 5
          ::oBrwLabel:nColSel         := 2
@@ -13641,7 +13641,7 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
 
       DEFINE DIALOG oDlg RESOURCE "Propiedades"
 
-      oBrwPrp                       := TXBrowse():New( oDlg )
+      oBrwPrp                       := IXBrowse():New( oDlg )
 
       oBrwPrp:nDataType             := DATATYPE_ARRAY
 

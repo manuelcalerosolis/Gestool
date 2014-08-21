@@ -1185,7 +1185,7 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
          ON CHANGE      ( ( dbfUsr )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
 			OF             oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:cAlias          := dbfUsr
       oBrw:nMarqueeStyle   := 5

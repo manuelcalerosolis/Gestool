@@ -220,7 +220,7 @@ METHOD lResource ( cFld )
 
       ::oCbxArticulo:bChange  := {|| ::oDbfArt:ordSetFocus( ::oCbxArticulo:nAt ), ::oBrwArticulo:Refresh(), ::oGetArticulo:SetFocus() }
 
-   ::oBrwFamilia                    := TXBrowse():New( ::oFld:aDialogs[1] )
+   ::oBrwFamilia                    := IXBrowse():New( ::oFld:aDialogs[1] )
 
    ::oBrwFamilia:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwFamilia:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -247,7 +247,7 @@ METHOD lResource ( cFld )
       :nWidth                       := 160
    end with
 
-   ::oBrwArticulo                   := TXBrowse():New( ::oFld:aDialogs[1] )
+   ::oBrwArticulo                   := IXBrowse():New( ::oFld:aDialogs[1] )
 
    ::oBrwArticulo:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwArticulo:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -471,7 +471,7 @@ METHOD lResource ( cFld )
          ACTION   ( ::ActualizaArticulo() )
 
 
-   ::oBrwSeleccion                   := TXBrowse():New( ::oFld:aDialogs[1] )
+   ::oBrwSeleccion                   := IXBrowse():New( ::oFld:aDialogs[1] )
 
    ::oBrwSeleccion:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwSeleccion:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

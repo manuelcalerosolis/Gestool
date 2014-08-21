@@ -211,7 +211,7 @@ METHOD lResource() CLASS TpvListaTicket
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloTik" )
    ::oSender:oTiketCabecera:GoTop()
 
-   DEFINE DIALOG ::oDlg RESOURCE ( ::cResource )
+   DEFINE DIALOG ::oDlg RESOURCE ( ::cResource ) TITLE ( "Lista de tickets: Tickets abiertos" )
 
       ::oBrwListaTicket                   := IXBrowse():New( ::oDlg )
 
@@ -231,12 +231,11 @@ METHOD lResource() CLASS TpvListaTicket
 
       ::oBrwListaTicket:bLDblClick        := {|| ::OnClickListaTicket() }
 
-      ::oBrwListaTicket:oFont             := oFont
+      ::oBrwListaTicket:SetFont( oFont )
 
       ::oSender:oTiketCabecera:SetBrowse( ::oBrwListaTicket )
 
       ::oBrwListaTicket:CreateFromResource( 100 )
-
 
       with object ( ::oBrwListaTicket:AddCol() )
          :cHeader          := "Sesión cerrada"
@@ -398,12 +397,6 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "Index_32",                "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
          ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "Calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
 
-      /*
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Impresión", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "PREV1_32",                "Previsualizar",      1, {|| ::Imprimir( .t. ) }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "IMP32",                   "Imprimir",           2, {|| ::Imprimir( .f. ) }, , , .f., .f., .f. )
-      */
-      
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
          ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
          ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima() } )
@@ -418,12 +411,14 @@ METHOD StartResource() CLASS TpvListaTicket
 
    end if
 
+   return ( nil )      
+
+
    /*
    Ponemos el boton seleccionado por defecto-----------------------------------
    */
 
    ::oBtnAbiertos:Selected()
-   ::oDlg:cTitle( "Lista de tickets: Tickets abiertos" )
 
    ::oBrwListaTicket:Load()
    ::oBrwListaTicket:Refresh()
@@ -697,21 +692,35 @@ METHOD OnClickTodos() CLASS TpvListaTicket
 
    CursorWait()
 
+   msgAlert( 1 )
+
    ::UnSelectButtons()
 
+   msgAlert( 2 )
+
    ::oBtnTodos:Selected()
+
+   msgAlert( 3 )
 
    if file( ::oSender:oTiketCabecera:cFile )
       ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
    end if 
 
+   msgAlert( 4 )
+
    ::oSender:oTiketCabecera:OrdSetFocus( "dFecTik" )
    ::oSender:oTiketCabecera:GoTop()
 
+   msgAlert( 5 )
+
    CursorWE()
+
+   msgAlert( 6 )
 
    ::oBrwListaTicket:Refresh()
    ::oBrwListaTicket:SelectOne()
+
+   msgAlert( 7 )
 
    ::oDlg:cTitle( "Lista de tickets" )
 

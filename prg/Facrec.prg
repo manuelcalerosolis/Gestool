@@ -3443,7 +3443,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       // Caja de documentos----------------------------------------------------
 
-      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 4 ] )
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
       oBrwDoc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwDoc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -10367,7 +10367,7 @@ Static Function OldEditarNumeroSerie( aTmp, oStock, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( oDlg:Disable(), GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer, oProSer ), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() )
 
-      oBrwSer                 := TXBrowse():New( oDlg )
+      oBrwSer                 := IXBrowse():New( oDlg )
 
       oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

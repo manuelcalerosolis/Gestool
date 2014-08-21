@@ -812,7 +812,7 @@ METHOD Importacion( cText ) CLASS TPlantillaXML
 
    DEFINE DIALOG oDlg RESOURCE "ImportarPlantillaXML"
 
-      ::oBrwPlantilla                        := TXBrowse():New( oDlg )
+      ::oBrwPlantilla                        := IXBrowse():New( oDlg )
 
       ::oBrwPlantilla:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwPlantilla:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -868,7 +868,7 @@ METHOD Importacion( cText ) CLASS TPlantillaXML
       Browse de ficheros a importar--------------------------------------------
       */
 
-      ::oBrwFichero                        := TXBrowse():New( oDlg )
+      ::oBrwFichero                        := IXBrowse():New( oDlg )
 
       ::oBrwFichero:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwFichero:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -3456,7 +3456,7 @@ METHOD Resource( nMode ) CLASS TDetCabeceraPlantillaXML
       Browse de los rangos----------------------------------------------------------
       */
 
-      ::oBrwValues                  := TXBrowse():New( oDlg )
+      ::oBrwValues                  := IXBrowse():New( oDlg )
 
       ::oBrwValues:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwValues:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

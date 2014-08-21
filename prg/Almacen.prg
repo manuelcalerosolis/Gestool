@@ -329,7 +329,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
          ID       200 ;
          OF       oFld:aDialogs[2]
 
-      oBrw2                := TXBrowse():New( oFld:aDialogs[2] )
+      oBrw2                := IXBrowse():New( oFld:aDialogs[2] )
 
       oBrw2:bClrSel        := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw2:bClrSelFocus   := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -856,7 +856,7 @@ Function SelectAlmacen()
          ON CHANGE( ( dbfAlmT )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() ) ;
 			OF 		oDlg
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

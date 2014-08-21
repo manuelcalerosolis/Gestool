@@ -134,7 +134,7 @@ Method Activate( oMenuItem, oWnd )
          DIALOGS  "SND_EDM1",;
                   "SND_EDM2"
 
-   ::oBrwTipo                 := TXBrowse():New( ::oFld:aDialogs[ 1 ] )
+   ::oBrwTipo                 := IXBrowse():New( ::oFld:aDialogs[ 1 ] )
 
    oTipArt:oDbf:SetBrowse( ::oBrwTipo, .f. )
 
@@ -186,7 +186,7 @@ Method Activate( oMenuItem, oWnd )
    Primera caja de dialogo-----------------------------------------------------
    */
 
-   ::oBrwRuta                 := TXBrowse():New( ::oFld:aDialogs[ 1 ] )
+   ::oBrwRuta                 := IXBrowse():New( ::oFld:aDialogs[ 1 ] )
 
    ::oBrwRuta:cAlias          := dbfRuta
 

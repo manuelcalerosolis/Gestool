@@ -268,7 +268,7 @@ Method Resource() CLASS TLabelGenerator
             OF       ::oFld:aDialogs[ 2 ] ;
             ACTION   ( nil )
 
-         ::oBrwLabel                 := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+         ::oBrwLabel                 := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
 
          ::oBrwLabel:nMarqueeStyle   := 5
          ::oBrwLabel:nColSel         := 2

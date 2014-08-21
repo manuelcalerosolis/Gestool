@@ -415,7 +415,7 @@ METHOD Selector()
 
    DEFINE DIALOG oDlg RESOURCE "HelpEntryTactilIva" TITLE "Ordenes de comanda"
 
-      oBrw                 := TXBrowse():New( oDlg )
+      oBrw                 := IXBrowse():New( oDlg )
 
       ::oDbf:SetBrowse( oBrw )
 
