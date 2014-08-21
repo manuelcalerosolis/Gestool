@@ -21,16 +21,13 @@ local hClass
 
   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
 
-  //hClass      := TMeter():ClassH
+  hClass        := TCheckBox():ClassH
 
-  //__clsAddMsg( hClass, "nCurrent", __cls_IncData( hClass ), 9, 0, 1, .f., .f. )
+  __clsAddMsg( hClass, "bOldWhen", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
 
-  //__clsAddMsg( hClass, "AutoInc", {|| nil }, 3, nil, 1, .f., .f. ) 
-  // __clsAddMsg( hClass, "AutoInc()", {|Self| Self, ::nCurrent++, if( ( ::nTotal < 100 ) .or. ( Mod( ::nCurrent, Int( ::nTotal / 100 ) ) == 0 ), ::Set( ::nCurrent ), nil ) }, 3, nil, 1, .f., .f. ) 
+  __clsAddMsg( hClass, "HardEnable", {|Self| Self, ::bWhen := ::bOldWhen, ::Enable() }, 3, nil, 1, .f., .f. ) 
 
-  //__clsAddMsg( hClass, "AutoInc", @MeterAutoInc(), 0, nil, 1, .f., .f. )
-
-  //__clsAddMsg( hClass, "SetTotal", @MeterSetTotal(), 0, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "HardDisable", {|Self| Self, ::bOldWhen := ::bWhen, ::bWhen := {|| .f. } }, 3, nil, 1, .f., .f. ) 
 
 Return nil
 

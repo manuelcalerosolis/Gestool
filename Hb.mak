@@ -201,6 +201,7 @@ Tidxutil.prg            	\
 Tindex.prg              	\
 Stock.prg               	\
 IXbrowse.prg            	\
+Xbrowse1406.prg            	\
 Autoseek.prg            	\
 Cccheck.prg             	\
 Digit.prg               	\
@@ -575,6 +576,7 @@ Tidxutil.obj            \
 Tindex.obj              \
 Stock.obj               \
 IXbrowse.obj            \
+XBrowse1406.obj 		\
 Autoseek.obj            \
 Cccheck.obj             \
 Digit.obj               \

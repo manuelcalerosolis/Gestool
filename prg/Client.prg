@@ -273,6 +273,8 @@ static oPeriodoCli
 static aPeriodoCli   := {}
 static cPeriodoCli
 
+static aDescuentosAtipicos
+
 static oBrwRecCli
 
 static oRTF
@@ -1359,6 +1361,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       cColor            := aStrColor[ nSeaColor ]
    end if
 
+   aDescuentosAtipicos  := {  "Base",;
+                              if( !Empty( aTmp[ _CDTOESP ] ), aTmp[ _CDTOESP ], "General" ),;
+                              if( !Empty( aTmp[ _CDPP    ] ), aTmp[ _CDPP    ], "Pronto pago" ),;
+                              if( !Empty( aTmp[ _CDTOUNO ] ), aTmp[ _CDTOUNO ], "Definido 1" ),;
+                              if( !Empty( aTmp[ _CDTODOS ] ), aTmp[ _CDTODOS ], "Definido 2" ) }
+
    /*
    Abrimos las bases de datos temporales si no estan abiertas------------------
    */
@@ -1908,10 +1916,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
          OF       fldComercial
 
-      REDEFINE GET aGet[_NDTOESP] VAR aTmp[_NDTOESP] ;
+      REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
          SPINNER ;
          ID       160;
-         COLOR    CLR_GET ;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
@@ -1974,7 +1981,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
-      REDEFINE COMBOBOX aGet[ _NSBRATP ] VAR aTmp[ _NSBRATP ];
+      REDEFINE COMBOBOX aGet[ _NSBRATP ] ;
+         VAR      aTmp[ _NSBRATP ] ;
+         ITEMS    aDescuentosAtipicos ;
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
@@ -3803,7 +3812,7 @@ Return ( .t. )
 //--------------------------------------------------------------------------//
 
 Static Function lRecargaArray( aGet, aTmp )
-
+/*
    local aSbrAtp  := {}
    local nPosAtp  := aGet[ _NSBRATP ]:nAt
 
@@ -3813,9 +3822,9 @@ Static Function lRecargaArray( aGet, aTmp )
    aAdd( aSbrAtp, if( !Empty( aTmp[ _CDTOUNO ] ), aTmp[ _CDTOUNO ], "Definido 1" )   )
    aAdd( aSbrAtp, if( !Empty( aTmp[ _CDTODOS ] ), aTmp[ _CDTODOS ], "Definido 2" )   )
 
-   aGet[ _NSBRATP ]:SetItems( aSbrAtp )
+   aGet[ _NSBRATP ]:SetItems( aSbrAtp, .t. )
    aGet[ _NSBRATP ]:Set( aSbrAtp[ Min( Max( nPosAtp, 1 ), len( aSbrAtp ) ) ] )
-
+*/
 Return ( .t. )
 
 //--------------------------------------------------------------------------//
@@ -12831,7 +12840,7 @@ Static Function LoadPageClient( cCodigoCliente )
       cExpHead       += ' .and. rtrim( cCodCli ) == "' + rtrim( cCodigoCliente ) + '"'
    end if
 
-    CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f. )
+   CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f. )
 
    // Refrescamos los browse------------------------------------------------------
 

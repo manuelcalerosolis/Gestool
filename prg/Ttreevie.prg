@@ -6,6 +6,12 @@
 #define TVN_FIRST                -400
 #define TVN_ITEMEXPANDED        (TVN_FIRST-6)
 
+#define TVN_SELCHANGINGA        (TVN_FIRST-1)
+#define TVN_SELCHANGINGW        (TVN_FIRST-50)
+
+#define TVN_SELCHANGEDA         (TVN_FIRST-2)
+#define TVN_SELCHANGEDW         (TVN_FIRST-51)
+
 #define COLOR_WINDOW            5
 #define COLOR_WINDOWTEXT        8
 #define COLOR_BTNFACE           15
@@ -38,6 +44,11 @@ CLASS TTreeView FROM TControl
    DATA   oImageList
    DATA   bChanged
    DATA   bExpanded
+
+   DATA   bItemChanged
+   DATA   bItemSelectChanged
+   DATA   bAction
+
    
    CLASSDATA aProperties ;
       INIT { "aItems", "cTitle", "cVarName", "l3D", "nClrText",;
@@ -352,6 +363,18 @@ METHOD Notify( nIdCtrl, nPtrNMHDR ) CLASS TTreeView
                  Eval( ::bExpanded, NMTREEVIEWItemNew( nPtrNMHDR ) ) // hItem
               endif
            endif
+
+      case nCode == -24 //-419 // -401 // -530 //TVN_SELCHANGEDWTVN_SELCHANGINGA .or. nCode == TVN_SELCHANGINGW //
+
+         if !Empty( ::bItemSelectChanged )
+            Eval( ::bItemSelectChanged, Self )
+         end if
+
+      case nCode == -401 //-419 // -401 // -530 //TVN_SELCHANGEDW
+
+         if !Empty( ::bItemChanged )
+            Eval( ::bItemChanged, Self )
+         end if
       
    endcase
    

@@ -1191,7 +1191,7 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
       Reposicionamiento--------------------------------------------------------
       */
 
-      oBrw:bTextColor   := {| nRow, nCol, nStyleLine | if( nCol == 1, CLR_RED, 0 ) }
+      // oBrw:bTextColor   := {| nRow, nCol, nStyleLine | if( nCol == 1, CLR_RED, 0 ) }
       oBrw:bLine        := {|| aPropertiesTable( oBrw, nTotalCol ) }
       oBrw:aFooters     := {|| aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGetUnd ) }
       oBrw:aHeaders     := aHeadersTable

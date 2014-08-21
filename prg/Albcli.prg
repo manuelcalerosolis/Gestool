@@ -15324,7 +15324,6 @@ function SynAlbCli( cPath )
 
       ( TDataView():Get( "AlbCliS", nView ) )->( ordSetFocus( 1 ) )
 
-
       // Lineas huerfanas---------------------------------------------------------
 
       ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
