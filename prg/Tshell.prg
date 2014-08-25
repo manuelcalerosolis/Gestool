@@ -834,9 +834,7 @@ METHOD End( lForceExit ) CLASS TShell
 
    ::Super:End()
 
-   msgalert( "Destroy")
    ::Super:Destroy()
-   msgalert("CursorWE")
 
    CursorWE()
 
