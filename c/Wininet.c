@@ -1,7 +1,6 @@
-#include <WinTen.h>
 #include <Windows.h>
-#include <ClipApi.h>
 #include <Wininet.h>
+#include <hbapi.h>
 
 static HMODULE hModule = NULL;
 
@@ -13,11 +12,11 @@ HB_FUNC( WININET )
         {
         hModule = LoadLibrary( "WinINet.dll" );
         }
-    _retnl( ( LONG ) hModule );
+    hb_retnl( ( LONG ) hModule );
 }
 
 //----------------------------------------------------------------------------//
-
+ 
 HB_FUNC( WININETEXIT )
 {
     if( hModule != NULL )
@@ -34,18 +33,18 @@ HB_FUNC( INTERNETOPEN )
 
     HINTERNET hInternet;
 
-    LPCTSTR lpszAgent       = _parc( 1 );
-    DWORD dwAccessType      = _parnl( 2 );
-    LPCTSTR lpszProxyName   = _parc( 3 );
-    LPCTSTR lpszProxyBypass = _parc( 4 );
-    DWORD dwFlags           = _parnl( 5 );
+    LPCTSTR lpszAgent       = hb_parc( 1 );
+    DWORD dwAccessType      = hb_parnl( 2 );
+    LPCTSTR lpszProxyName   = hb_parc( 3 );
+    LPCTSTR lpszProxyBypass = hb_parc( 4 );
+    DWORD dwFlags           = hb_parnl( 5 );
 
     if( hModule == NULL )
         hModule = LoadLibrary( "WinINet.dll" );
 
     hInternet               = InternetOpenA( lpszAgent, dwAccessType, lpszProxyName, lpszProxyBypass, dwFlags );
 
-    _retnl( ( LONG ) hInternet );
+    hb_retnl( ( LONG ) hInternet );
 }
 
 //---------------------------------------------------------------------------//
@@ -53,109 +52,109 @@ HB_FUNC( INTERNETOPEN )
 HB_FUNC( INTERNETCONNECT )
 {
 
-    HINTERNET hInternet         = ( HINTERNET ) _parnl( 1 );
-    LPCTSTR lpszServerName      = _parc( 2 );
-    INTERNET_PORT nServerPort   = ( INTERNET_PORT ) _parnl( 3 );
-    LPCTSTR lpszUsername        = _parc( 4 );
-    LPCTSTR lpszPassword        = _parc( 5 );
-    DWORD dwService             = _parnl( 6 );
-    DWORD dwFlags               = _parnl( 7 );
-    DWORD_PTR dwContext         = ( DWORD_PTR ) _parnl( 8 );
+    HINTERNET hInternet         = ( HINTERNET ) hb_parnl( 1 );
+    LPCTSTR lpszServerName      = hb_parc( 2 );
+    INTERNET_PORT nServerPort   = ( INTERNET_PORT ) hb_parnl( 3 );
+    LPCTSTR lpszUsername        = hb_parc( 4 );
+    LPCTSTR lpszPassword        = hb_parc( 5 );
+    DWORD dwService             = hb_parnl( 6 );
+    DWORD dwFlags               = hb_parnl( 7 );
+    DWORD_PTR dwContext         = ( DWORD_PTR ) hb_parnl( 8 );
 
     if( hModule == NULL )
         hModule = LoadLibrary( "WinINet.dll" );
 
     hInternet                   = InternetConnectA( hInternet, lpszServerName, nServerPort, lpszUsername, lpszPassword, dwService, dwFlags, dwContext );
 
-    _retnl( ( LONG ) hInternet );
+    hb_retnl( ( LONG ) hInternet );
 }
 
 //---------------------------------------------------------------------------//
 
 HB_FUNC( INTERNETCLOSEHANDLE )
 {
-    _retl( InternetCloseHandle( ( HINTERNET ) _parnl( 1 ) ) );
+    hb_retl( InternetCloseHandle( ( HINTERNET ) hb_parnl( 1 ) ) );
 }
 
 //---------------------------------------------------------------------------//
 
 HB_FUNC( FTPPUTFILE )
 {
-    HINTERNET hConnect          = ( HINTERNET ) _parnl( 1 );
-    LPCTSTR lpszLocalFile       = _parc( 2 );
-    LPCTSTR lpszNewRemoteFile   = _parc( 3 );
-    DWORD dwFlags               = _parnl( 4 );
-    DWORD_PTR dwContext         = ( DWORD_PTR ) _parnl( 5 );
+    HINTERNET hConnect          = ( HINTERNET ) hb_parnl( 1 );
+    LPCTSTR lpszLocalFile       = hb_parc( 2 );
+    LPCTSTR lpszNewRemoteFile   = hb_parc( 3 );
+    DWORD dwFlags               = hb_parnl( 4 );
+    DWORD_PTR dwContext         = ( DWORD_PTR ) hb_parnl( 5 );
 
-    _retl( FtpPutFileA( hConnect, lpszLocalFile, lpszNewRemoteFile, dwFlags, dwContext ) );
+    hb_retl( FtpPutFileA( hConnect, lpszLocalFile, lpszNewRemoteFile, dwFlags, dwContext ) );
 }
 
 //---------------------------------------------------------------------------//
 
 HB_FUNC( FTPGETFILE )
 {
-    HINTERNET hConnect          = ( HINTERNET ) _parnl( 1 );
-    LPCTSTR lpszRemoteFile      = _parc( 2 );
-    LPCTSTR lpszNewFile         = _parc( 3 );
-    BOOL fFailIfExists          = _parl( 4 );
-    DWORD dwFlagsAndAttributes  = _parnl( 5 );
-    DWORD dwFlags               = _parnl( 6 );
-    DWORD_PTR dwContext         = ( DWORD_PTR ) _parnl( 7 );
+    HINTERNET hConnect          = ( HINTERNET ) hb_parnl( 1 );
+    LPCTSTR lpszRemoteFile      = hb_parc( 2 );
+    LPCTSTR lpszNewFile         = hb_parc( 3 );
+    BOOL fFailIfExists          = hb_parl( 4 );
+    DWORD dwFlagsAndAttributes  = hb_parnl( 5 );
+    DWORD dwFlags               = hb_parnl( 6 );
+    DWORD_PTR dwContext         = ( DWORD_PTR ) hb_parnl( 7 );
 
-    _retl( FtpGetFileA( hConnect, lpszRemoteFile, lpszNewFile, fFailIfExists, dwFlagsAndAttributes, dwFlags, dwContext ) );
+    hb_retl( FtpGetFileA( hConnect, lpszRemoteFile, lpszNewFile, fFailIfExists, dwFlagsAndAttributes, dwFlags, dwContext ) );
 }
 
 //---------------------------------------------------------------------------//
 
 HB_FUNC( FTPOPENFILE )
 {
-    HINTERNET hConnect          = ( HINTERNET ) _parnl( 1 );
-    LPCTSTR lpszFileName        = _parc( 2 );
-    DWORD dwAccess              = _parnl( 3 );
-    DWORD dwFlags               = _parnl( 4 );
-    DWORD_PTR dwContext         = ( DWORD_PTR ) _parnl( 5 );
+    HINTERNET hConnect          = ( HINTERNET ) hb_parnl( 1 );
+    LPCTSTR lpszFileName        = hb_parc( 2 );
+    DWORD dwAccess              = hb_parnl( 3 );
+    DWORD dwFlags               = hb_parnl( 4 );
+    DWORD_PTR dwContext         = ( DWORD_PTR ) hb_parnl( 5 );
 
-    _retnl( ( LONG ) FtpOpenFileA( hConnect, lpszFileName, dwAccess, dwFlags, dwContext ) );
+    hb_retnl( ( LONG ) FtpOpenFileA( hConnect, lpszFileName, dwAccess, dwFlags, dwContext ) );
 }
 
 //---------------------------------------------------------------------------//
 
 HB_FUNC( INTERNETWRITEFILE )
 {
-    HINTERNET hFile                     = ( HINTERNET ) _parnl( 1 );
-    LPCVOID lpBuffer                    = _parc( 2 );
-    DWORD dwNumberOfBytesToWrite        = _parnl( 3 );
+    HINTERNET hFile                     = ( HINTERNET ) hb_parnl( 1 );
+    LPCVOID lpBuffer                    = hb_parc( 2 );
+    DWORD dwNumberOfBytesToWrite        = hb_parnl( 3 );
     DWORD dwNumberOfBytesWritten        = 0;
 
-    _retl( InternetWriteFile( hFile, lpBuffer, dwNumberOfBytesToWrite, &dwNumberOfBytesWritten ) );
-    _stornl( dwNumberOfBytesWritten, 4 );
+    hb_retl( InternetWriteFile( hFile, lpBuffer, dwNumberOfBytesToWrite, &dwNumberOfBytesWritten ) );
+    hb_stornl( dwNumberOfBytesWritten, 4 );
 }
 
 //---------------------------------------------------------------------------//
 
 HB_FUNC( INTERNETREADFILE )
 {
-    HINTERNET hFile                     = ( HINTERNET ) _parnl( 1 );
-    DWORD dwNumberOfBytesToRead         = _parnl( 3 );
-    DWORD dwNumberOfBytesRead           = _parnl( 4 );
+    HINTERNET hFile                     = ( HINTERNET ) hb_parnl( 1 );
+    DWORD dwNumberOfBytesToRead         = hb_parnl( 3 );
+    DWORD dwNumberOfBytesRead           = hb_parnl( 4 );
     char * pBuffer;
 
-    if( _parcsiz( 2 ) >= dwNumberOfBytesToRead )
+    if( hb_parcsiz( 2 ) >= dwNumberOfBytesToRead )
     {
-        pBuffer = ( char * ) _xgrab( dwNumberOfBytesToRead );
+        pBuffer = ( char * ) hb_xgrab( dwNumberOfBytesToRead );
 
         if( InternetReadFile( hFile, pBuffer, dwNumberOfBytesToRead, &dwNumberOfBytesRead ) )
         {
-            _storclen( pBuffer, dwNumberOfBytesRead, 2 );
-            _stornl( dwNumberOfBytesRead, 4 );
+            hb_storclen( pBuffer, dwNumberOfBytesRead, 2 );
+            hb_stornl( dwNumberOfBytesRead, 4 );
 
-            _retl( TRUE );
+            hb_retl( TRUE );
         }
 
-        _xfree( pBuffer );
+        hb_xfree( pBuffer );
     }
 
-    _retl( FALSE );
+    hb_retl( FALSE );
 }
 
 
@@ -163,10 +162,10 @@ HB_FUNC( INTERNETREADFILE )
 
 HB_FUNC( FTPDELETEFILE )
 {
-    HINTERNET hConnect      = ( HINTERNET ) _parnl( 1 );
-    LPCTSTR lpszFileName    = _parc( 2 );
+    HINTERNET hConnect      = ( HINTERNET ) hb_parnl( 1 );
+    LPCTSTR lpszFileName    = hb_parc( 2 );
 
-    _retnl( ( LONG ) FtpDeleteFileA( hConnect, lpszFileName ) );
+    hb_retnl( ( LONG ) FtpDeleteFileA( hConnect, lpszFileName ) );
 
 }
 
@@ -296,300 +295,3 @@ HB_FUNC( FTPREMOVEDIRECTORY )
 }
 
 //---------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
