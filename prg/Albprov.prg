@@ -11381,6 +11381,8 @@ Method LoadAuxiliar() CLASS TAlbaranProveedoresLabelGenerator
                   ( ::cAreaTmpLabel )->cGrpFam  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cGrpFam
                   ( ::cAreaTmpLabel )->mObsLin  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->mObsLin
                   ( ::cAreaTmpLabel )->nPvpRec  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nPvpRec
+                  ( ::cAreaTmpLabel )->dFecCad  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->dFecCad
+                  ( ::cAreaTmpLabel )->dFecAlb  := ( TDataView():AlbaranesProveedoresLineas( nView ) )->dFecAlb
                   ( ::cAreaTmpLabel )->nUndLin  := nTotNAlbPrv( TDataView():AlbaranesProveedoresLineas( nView ) )
                   ( ::cAreaTmpLabel )->lLabel   := .t.
 
