@@ -95,6 +95,8 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _LOPERPV                  80
 #define _CNUMALB                  81
 #define _LGARANTIA                82
+#define _CCODOPE                  83
+#define _CCODCAT                  84
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -325,6 +327,7 @@ static dbfOferta
 static dbfTVta
 static dbfTblPro
 static dbfPro
+static dbfCategoria
 
 static dbfArtDiv
 static dbfDelega
@@ -346,6 +349,7 @@ static dbfTikCliT
 static dbfProLin
 static dbfProMat
 static dbfHisMov
+static oOperario
 static cTmpLin
 static cTmpInc
 static cTmpDoc
@@ -660,6 +664,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
       SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+
+      USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
+      SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
 /*
       if !TDataCenter():OpenSatCliT( @TDataView():SatClientes( nView ) )
          lOpenFiles     := .f.
@@ -707,6 +714,11 @@ STATIC FUNCTION OpenFiles( lExt )
       if !oUndMedicion:OpenFiles()
          lOpenFiles     := .f.
       end if
+
+      oOperario         := TOperarios():Create()
+      if !oOperario:OpenFiles()
+         lOpenFiles     := .f.
+      end if   
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1006,6 +1018,10 @@ STATIC FUNCTION CloseFiles()
       ( dbfAntCliT )->( dbCloseArea() )
    end if
 
+   if dbfCategoria != nil
+      ( dbfCategoria )->( dbCloseArea() )
+   end if
+
    if !Empty( oNewImp )
       oNewImp:End()
    end if
@@ -1033,6 +1049,10 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oFraPub )
       oFraPub:end()
    end if
+
+   if !Empty( oOperario )
+      oOperario:End()
+   end if   
 
    TDataView():DeleteView( nView )
 
@@ -1075,6 +1095,9 @@ STATIC FUNCTION CloseFiles()
    dbfInci        := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
+   dbfCategoria   := nil
+
+   oOperario      := nil
 
    dbfPedPrvL     := nil
    dbfAlbPrvL     := nil
@@ -1154,7 +1177,9 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Código",;
                "Nombre",;
                "Obra",;
-               "Agente";
+               "Agente",;
+               "Operario",;
+               "Categoría";
       MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( TDataView():SatClientes( nView ) );
@@ -1303,6 +1328,26 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Categoría"
+         :cSortOrder       := "cCodCat"
+         :bStrData         := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cCodCat ) + if( !Empty( ( TDataView():SatClientes( nView ) )->cCodCat ), " - ", "" ) + RetFld( ( TDataView():SatClientes( nView ) )->cCodCat, dbfCategoria, "cNombre" ) }
+         :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( TDataView():SatClientes( nView ) )->cCodCat, dbfCategoria, "cTipo" ) ) }
+         :nWidth           := 140
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
+         AddResourceTipoCategoria( hb_QWith() )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Operario"
+         :cSortOrder       := "cCodOpe"
+         :bStrData         := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cCodOpe ) + if( !Empty( ( TDataView():SatClientes( nView ) )->cCodOpe ), " - ", "" ) + oRetFld( ( TDataView():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) }
+         :nWidth           := 140
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1993,6 +2038,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ID       183 ;
          WHEN     ( .f. );
          OF       oFld:aDialogs[1]
+      
+
+      /*
+      Operario-----------------------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ _CCODOPE ]  VAR aTmp[ _CCODOPE ] ;
+         ID       300 ;
+         IDTEXT   310 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
+
+         aGet[ _CCODOPE ]:bHelp     := {|| oOperario:Buscar( aGet[ _CCODOPE ] ) }
+         aGet[ _CCODOPE ]:bValid    := {|| oOperario:Existe( aGet[ _CCODOPE ], aGet[ _CCODOPE ]:oHelpText, "cNomTra", .t., .t., "0" ) }
+
       /*
       Ruta____________________________________________________________________
       */
@@ -2542,10 +2603,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ON CHANGE( SetDiasSAT( aTmp, aGet ) );
          OF       oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX aGet[ _LGARANTIA ] VAR aTmp[ _LGARANTIA ] ;
-         ID       115 ;
-         OF       oFld:aDialogs[1]
-
       REDEFINE GET oAprovado VAR cAprovado ;
          ID       120 ;
          WHEN     ( .F. ) ;
@@ -2569,9 +2626,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _CCODCAT ] VAR aTmp[ _CCODCAT ] ;
+         ID       350 ;
+         IDTEXT   351 ;         
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cCategoria( aGet[ _CCODCAT ], dbfCategoria, aGet[ _CCODCAT ]:oHelpText ) ) ;
+         ON HELP  ( BrwCategoria( aGet[ _CCODCAT ], aGet[ _CCODCAT ]:oHelpText ) ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
+
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
+
+      REDEFINE CHECKBOX aGet[ _LGARANTIA ] VAR aTmp[ _LGARANTIA ] ;
+         ID       400 ;
+         OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       115 ;
@@ -2902,16 +2972,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid() ), oDlg:End() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
+         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( TDataView():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, TDataView():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( TDataView():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, TDataView():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid() }
 
    end case
 
@@ -9534,6 +9604,12 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodOpe", "cCodOpe", {|| Field->cCodOpe } ) )
+
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodCat", "cCodCat", {|| Field->cCodCat } ) )
+
       ( cSatCliT )->( dbCloseArea() )
 
    else
@@ -9975,6 +10051,8 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
    aAdd( aItmSatCli, { "cNumAlb",   "C", 12,  0, "Número del albarán donde se agrupa" ,               "", "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "lGarantia", "L",  1,  0, "Lógico de reparación en garantía" ,                 "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodOpe",   "C",  5,  0, "Código operario" ,                                  "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodCat",   "C",  3,  0, "Código categoría" ,                                 "", "", "( cDbf )"} )
 
 return ( aItmSatCli )
 
