@@ -180,6 +180,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  79
 #define __NBULTOS                 80
 #define _CFORMATO                 81
+#define __CCODCLI                 82
+#define __DFECSAT                 83
 
 /*
 Array para impuestos
@@ -3189,6 +3191,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _LIVALIN  ]    := aTmpSat[ _LIVAINC ]
       aTmp[ _CALMLIN  ]    := aTmpSat[ _CCODALM ]
       aTmp[ _NTARLIN  ]    := aTmpSat[ _NTARIFA ]
+      aTmp[ __CCODCLI ]    := aTmpSat[ _CCODCLI ]
+      aTmp[ __DFECSAT ]    := aTmpSat[ _DFECSAT ]
 
       if !Empty( cCodArtEnt )
          cCodArt           := Padr( cCodArtEnt, 32 )
@@ -6224,6 +6228,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    local nNumSat
    local cSufSat
    local dFecSat
+   local cCodCli
 
    if Empty( aTmp[ _CSERSAT ] )
       aTmp[ _CSERSAT ]  := "A"
@@ -6232,6 +6237,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    cSerSat              := aTmp[ _CSERSAT ]
    nNumSat              := aTmp[ _NNUMSAT ]
    cSufSat              := aTmp[ _CSUFSAT ]
+   cCodCli              := aTmp[ _CCODCLI ]
    dFecSat              := aTmp[ _DFECSAT ]
 
    /*
@@ -6352,6 +6358,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    ( dbfTmpLin )->( dbGoTop() )
    do while !( dbfTmpLin )->( Eof() )
+
+      ( dbfTmpLin )->dFecSat     := dFecSat
+      ( dbfTmpLin )->cCodCli     := cCodCli
 
       dbPass( dbfTmpLin, dbfSatCliL, .t., cSerSat, nNumSat, cSufSat )
       ( dbfTmpLin )->( dbSkip() )
@@ -10196,6 +10205,8 @@ function aColSatCli()
    aAdd( aColSatCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con impuestos especiales", "",    "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "nBultos"  ,"N",  16,  6, "Numero de bultos en l?eas",       "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cCodCli"  ,"C",  12,  0, "Código del cliente",               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "dFecSat"  ,"D",   8,  0, "Fecha del SAT",                    "",                   "", "( cDbfCol )" } )
 
 return ( aColSatCli )
 
