@@ -15326,6 +15326,7 @@ function SynAlbCli( cPath )
 
       // Lineas huerfanas---------------------------------------------------------
 
+/*
       ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( ordSetFocus( 1 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTop() )
@@ -15343,7 +15344,7 @@ function SynAlbCli( cPath )
          SysRefresh()
 
       end while
-
+*/
       CloseFiles()
 
    end if

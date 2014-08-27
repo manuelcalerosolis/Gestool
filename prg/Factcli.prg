@@ -12216,7 +12216,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                if Empty( aGet[ _CLOTE ]:VarGet() )
                   aGet[ _CLOTE ]:cText( cLote )
-                  aGet[ _CLOTE ]:lValid()
+                  //aGet[ _CLOTE ]:lValid()
                end if
 
             else
@@ -12259,15 +12259,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         /*
-         Ponemos el stock del artículo-----------------------------------------
-         */
-
-         if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
-            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
-            oStkAct:Refresh()
-         end if
-
       	/*
       	Cargamos los costos------------------------------------------------------
       	*/
@@ -12284,6 +12275,20 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aGet[ _NCOSDIV ]:cText( nCosPro )
          else
             aTmp[ _NCOSDIV ]  := nCosPro
+         end if
+
+      end if
+
+
+      /*
+      Calculamos el stock del articulo solo si cambian las prop o el lote---
+      */
+
+      if ( lChgCodArt ) .or. ( lChgPrpArt ) .or. ( lChgLotArt )
+
+         if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
+            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
+            oStkAct:Refresh()
          end if
 
       end if
