@@ -5653,9 +5653,9 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
             return .f.
       end if
 
-      AutoMeterDialog( oDlg )
+      //AutoMeterDialog( oDlg )
 
-      SetTotalAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
+      //SetTotalAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
 
       CursorWait()
 
@@ -5802,7 +5802,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
             end if
 
-            SetAutoMeterDialog( ( TDataView():Articulos( nView ) )->( Recno() ) )
+            //SetAutoMeterDialog( ( TDataView():Articulos( nView ) )->( Recno() ) )
 
             ( TDataView():Articulos( nView ) )->( dbSkip() )
 
@@ -5810,7 +5810,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       
       end if 
 
-      EndAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
+      //EndAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
 
       ( TDataView():Articulos( nView ) )->( ordSetFocus( nOrd ) )
 
