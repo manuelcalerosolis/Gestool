@@ -1814,7 +1814,7 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 9, 12, 366, 148
-  CONTROL "", 110, "msctls_progress32", 0x00800000, 9, 162, 366, 11
+  CONTROL "", 110, "msctls_progress32", WS_BORDER, 9, 162, 366, 11
   CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 0, 377, 177
 }
 
@@ -4117,7 +4117,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 45, 56, 8
   CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 475, 45, 45, 8
   CONTROL "Divisa", -1, "Static", WS_GROUP, 212, 45, 26, 8
-  CONTROL "msctls_progress32", 160, "msctls_progress32", 0x00800000, 42, 335, 571, 8
+  CONTROL "msctls_progress32", 160, "msctls_progress32", WS_BORDER, 42, 335, 571, 8
   CONTROL "Factura asociada", -1, "Static", WS_GROUP, 44, 57, 56, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Liquidación de agentes", -1, "Static", WS_GROUP, 44, 3, 120, 8
@@ -8415,18 +8415,18 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 252, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 252, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 252, 50, 14
-  CONTROL "msctls_progress32", 111, "msctls_progress32", 0x00800000, 98, 70, 258, 10
-  CONTROL "msctls_progress32", 121, "msctls_progress32", 0x00800000, 98, 82, 258, 10
-  CONTROL "msctls_progress32", 131, "msctls_progress32", 0x00800000, 98, 94, 258, 10
-  CONTROL "msctls_progress32", 151, "msctls_progress32", 0x00800000, 98, 106, 258, 10
-  CONTROL "msctls_progress32", 161, "msctls_progress32", 0x00800000, 98, 118, 258, 10
+  CONTROL "msctls_progress32", 111, "msctls_progress32", WS_BORDER, 98, 70, 258, 10
+  CONTROL "msctls_progress32", 121, "msctls_progress32", WS_BORDER, 98, 82, 258, 10
+  CONTROL "msctls_progress32", 131, "msctls_progress32", WS_BORDER, 98, 94, 258, 10
+  CONTROL "msctls_progress32", 151, "msctls_progress32", WS_BORDER, 98, 106, 258, 10
+  CONTROL "msctls_progress32", 161, "msctls_progress32", WS_BORDER, 98, 118, 258, 10
   CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 63, 360, 178
   CONTROL "Directorio de factucont", -1, "Static", WS_GROUP, 5, 52, 74, 8
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "msctls_progress32", 171, "msctls_progress32", 0x00800000, 98, 130, 258, 10
-  CONTROL "msctls_progress32", 181, "msctls_progress32", 0x00800000, 98, 142, 258, 10
+  CONTROL "msctls_progress32", 171, "msctls_progress32", WS_BORDER, 98, 130, 258, 10
+  CONTROL "msctls_progress32", 181, "msctls_progress32", WS_BORDER, 98, 142, 258, 10
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -8464,33 +8464,33 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 340, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 340, 50, 14
   CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 340, 50, 14
-  CONTROL "msctls_progress32", 111, "msctls_progress32", 0x00800000, 87, 70, 270, 10
-  CONTROL "msctls_progress32", 121, "msctls_progress32", 0x00800000, 87, 82, 270, 10
-  CONTROL "msctls_progress32", 131, "msctls_progress32", 0x00800000, 87, 94, 270, 10
-  CONTROL "msctls_progress32", 141, "msctls_progress32", 0x00800000, 87, 106, 270, 10
-  CONTROL "msctls_progress32", 151, "msctls_progress32", 0x00800000, 87, 118, 270, 10
-  CONTROL "msctls_progress32", 161, "msctls_progress32", 0x00800000, 87, 130, 270, 10
-  CONTROL "msctls_progress32", 171, "msctls_progress32", 0x00800000, 87, 142, 270, 10
-  CONTROL "msctls_progress32", 211, "msctls_progress32", 0x00800000, 87, 154, 270, 10
-  CONTROL "msctls_progress32", 221, "msctls_progress32", 0x00800000, 87, 166, 270, 10
-  CONTROL "msctls_progress32", 181, "msctls_progress32", 0x00800000, 87, 202, 270, 10
-  CONTROL "msctls_progress32", 191, "msctls_progress32", 0x00800000, 87, 214, 270, 10
-  CONTROL "msctls_progress32", 201, "msctls_progress32", 0x00800000, 87, 226, 270, 10
-  CONTROL "msctls_progress32", 231, "msctls_progress32", 0x00800000, 87, 238, 270, 10
+  CONTROL "msctls_progress32", 111, "msctls_progress32", WS_BORDER, 87, 70, 270, 10
+  CONTROL "msctls_progress32", 121, "msctls_progress32", WS_BORDER, 87, 82, 270, 10
+  CONTROL "msctls_progress32", 131, "msctls_progress32", WS_BORDER, 87, 94, 270, 10
+  CONTROL "msctls_progress32", 141, "msctls_progress32", WS_BORDER, 87, 106, 270, 10
+  CONTROL "msctls_progress32", 151, "msctls_progress32", WS_BORDER, 87, 118, 270, 10
+  CONTROL "msctls_progress32", 161, "msctls_progress32", WS_BORDER, 87, 130, 270, 10
+  CONTROL "msctls_progress32", 171, "msctls_progress32", WS_BORDER, 87, 142, 270, 10
+  CONTROL "msctls_progress32", 211, "msctls_progress32", WS_BORDER, 87, 154, 270, 10
+  CONTROL "msctls_progress32", 221, "msctls_progress32", WS_BORDER, 87, 166, 270, 10
+  CONTROL "msctls_progress32", 181, "msctls_progress32", WS_BORDER, 87, 202, 270, 10
+  CONTROL "msctls_progress32", 191, "msctls_progress32", WS_BORDER, 87, 214, 270, 10
+  CONTROL "msctls_progress32", 201, "msctls_progress32", WS_BORDER, 87, 226, 270, 10
+  CONTROL "msctls_progress32", 231, "msctls_progress32", WS_BORDER, 87, 238, 270, 10
   CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 64, 360, 274
   CONTROL "Directorio de factuplus", -1, "Static", WS_GROUP, 5, 52, 74, 8
-  CONTROL "msctls_progress32", 241, "msctls_progress32", 0x00800000, 87, 250, 270, 10
+  CONTROL "msctls_progress32", 241, "msctls_progress32", WS_BORDER, 87, 250, 270, 10
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "msctls_progress32", 251, "msctls_progress32", 0x00800000, 87, 274, 270, 10
-  CONTROL "msctls_progress32", 261, "msctls_progress32", 0x00800000, 87, 286, 270, 10
-  CONTROL "msctls_progress32", 271, "msctls_progress32", 0x00800000, 87, 298, 270, 10
-  CONTROL "msctls_progress32", 281, "msctls_progress32", 0x00800000, 87, 310, 270, 10
-  CONTROL "msctls_progress32", 291, "msctls_progress32", 0x00800000, 87, 322, 270, 10
-  CONTROL "msctls_progress32", 301, "msctls_progress32", 0x00800000, 87, 178, 270, 10
-  CONTROL "msctls_progress32", 321, "msctls_progress32", 0x00800000, 87, 262, 270, 10
-  CONTROL "msctls_progress32", 311, "msctls_progress32", 0x00800000, 87, 190, 270, 10
+  CONTROL "msctls_progress32", 251, "msctls_progress32", WS_BORDER, 87, 274, 270, 10
+  CONTROL "msctls_progress32", 261, "msctls_progress32", WS_BORDER, 87, 286, 270, 10
+  CONTROL "msctls_progress32", 271, "msctls_progress32", WS_BORDER, 87, 298, 270, 10
+  CONTROL "msctls_progress32", 281, "msctls_progress32", WS_BORDER, 87, 310, 270, 10
+  CONTROL "msctls_progress32", 291, "msctls_progress32", WS_BORDER, 87, 322, 270, 10
+  CONTROL "msctls_progress32", 301, "msctls_progress32", WS_BORDER, 87, 178, 270, 10
+  CONTROL "msctls_progress32", 321, "msctls_progress32", WS_BORDER, 87, 262, 270, 10
+  CONTROL "msctls_progress32", 311, "msctls_progress32", WS_BORDER, 87, 190, 270, 10
 }
 
 IMPFACPRV DIALOG DISCARDABLE 162, 52, 216, 122
@@ -8691,7 +8691,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fecha expedición", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 3, 188, 38
   CONTROL "Desde", -1, "Static", WS_GROUP, 7, 17, 39, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 7, 30, 37, 8
-  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00800000, 2, 87, 188, 8
+  CONTROL "msctls_progress32", 140, "msctls_progress32", WS_BORDER, 2, 87, 188, 8
   CONTROL "Fecha vencimiento", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 43, 188, 38
   CONTROL "Desde", -1, "Static", WS_GROUP, 7, 57, 39, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 7, 70, 37, 8
@@ -13227,7 +13227,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Divisa", -1, "Static", WS_GROUP, 114, 21, 23, 8
   CONTROL "Desde fecha", -1, "Static", WS_GROUP, 393, 7, 41, 8
   CONTROL "Hasta fecha", -1, "Static", WS_GROUP, 394, 20, 41, 8
-  CONTROL "msctls_progress32", 160, "msctls_progress32", 0x00800000, 2, 263, 130, 10
+  CONTROL "msctls_progress32", 160, "msctls_progress32", WS_BORDER, 2, 263, 130, 10
 }
 
 LIQAGE_1 DIALOG DISCARDABLE 147, 111, 434, 198
@@ -14328,7 +14328,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 152, 56, 195, 11
   CONTROL "&Siguiente >", 519, "Button", WS_TABSTOP, 249, 242, 50, 14
   CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 304, 242, 50, 14
-  CONTROL "msctls_progress32", 140, "msctls_progress32", 0x00800000, 82, 223, 266, 10
+  CONTROL "msctls_progress32", 140, "msctls_progress32", WS_BORDER, 82, 223, 266, 10
   CONTROL "Datos de la liquidación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 4, 347, 69
   CONTROL "Procesando...", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 6, 214, 347, 22
   CONTROL "Desde almacén", -1, "Static", WS_GROUP, 10, 47, 68, 8
@@ -14342,7 +14342,7 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 11, 11, 336, 196
-  CONTROL "", 150, "msctls_progress32", 0x00800000, 82, 223, 266, 10
+  CONTROL "", 150, "msctls_progress32", WS_BORDER, 82, 223, 266, 10
   CONTROL "Liquidación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 6, 1, 346, 211
   CONTROL "Procesando...", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 6, 214, 346, 22
   CONTROL "&Visualizar", 508, "Button", WS_TABSTOP, 137, 242, 50, 14
@@ -19720,5 +19720,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "Hasta", 1121, "Static", WS_GROUP, 397, 88, 24, 8
   CONTROL "Rangos", -1, "Button", BS_GROUPBOX, 184, 72, 485, 299
   CONTROL "", 200, "msctls_progress32", 0x00000000, 191, 385, 474, 4
+}
+
+LANGUAGE LANG_SPANISH,SUBLANG_SPANISH
+
+XTEST DIALOG DISCARDABLE 63, 35, 263, 57
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Test"
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "&Start meter", IDOK, "Button", WS_TABSTOP, 82, 12, 98, 14
+  CONTROL "", 100, "msctls_progress32", 0x00000000, 0, 34, 263, 9
 }
 

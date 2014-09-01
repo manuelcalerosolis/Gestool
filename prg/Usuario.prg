@@ -64,6 +64,9 @@ static oOperario
 static oClaveRepetida
 static cClaveRepetida
 
+static oLstUsr
+
+
 static bEdit            := { |aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode ) }
 
 //----------------------------------------------------------------------------//
@@ -2095,7 +2098,6 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
    local oBtn
    local aSta
    local oImgUsr
-   local oLstUsr
    local lCloseUsr         := .f.
    local lCloseCaj         := .f.
 
@@ -2122,7 +2124,7 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
 
          oLstUsr           := TListView():Redefine( 100, oDlg )
          oLstUsr:nOption   := 0
-         oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj, .t. ) }
+         oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj, .t. ) }
 
          REDEFINE BUTTONBMP oBtn ;
             BITMAP         "Delete_32" ;
@@ -2130,9 +2132,12 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
             OF             oDlg ;
             ACTION         ( oDlg:End() )
 
+         oDlg:bStart       := {|| InitBrwBigUser( oDlg, oImgUsr, dbfUsr ) }
+
       ACTIVATE DIALOG oDlg ;
-         ON INIT           ( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) ) ;
          CENTER
+
+         // ON INIT           ( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) ) ;
 
       SetStatus( dbfUsr, aSta )
 
@@ -2156,9 +2161,14 @@ Return ( oDlg:nResult == IDOK  )
 
 //---------------------------------------------------------------------------//
 
-Function InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr )
+Function InitBrwBigUser( oDlg, oImgUsr, dbfUsr )
 
-   local nUser := 0
+   local nItem
+   local oItem
+   local nGrpUse
+   local nImgUse
+
+   CursorWait()
 
    oImgUsr:AddMasked( TBitmap():Define( "Big_Admin" ), Rgb( 255, 0, 255 ) )
    oImgUsr:AddMasked( TBitmap():Define( "Big_User" ), Rgb( 255, 0, 255 ) )
@@ -2166,38 +2176,54 @@ Function InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr )
    if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
 
       oLstUsr:SetImageList( oImgUsr )
-
       oLstUsr:EnableGroupView()
 
-      oLstUsr:InsertGroup( 2, "Usuarios" )
-      oLstUsr:InsertGroup( 1, "Administradores" )
+      // oLstUsr:InsertGroup( 2, "Usuarios" )
+      // oLstUsr:InsertGroup( 1, "Administradores" )
+
+      oLstUsr:InsertGroup( "Administradores" )
+      oLstUsr:InsertGroup( "Usuarios" )
 
       ( dbfUsr )->( dbGoTop() )
       while !( dbfUsr )->( eof() )
 
          if !( dbfUsr )->lGrupo
 
+            if ( dbfUsr )->nGrpUse <= 1
+               nGrpUse           := 0
+               nImgUse           := 0
+            else
+               nGrpUse           := 1
+               nImgUse           := 1
+            end if 
+
             if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
 
                oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
 
-               // oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser )
-
-               oLstUsr:aAddItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser, ( dbfUsr )->cCodUse )
-
-               nUser++
-
-            else
-
-               if ( dbfUsr )->nGrpUse <= 1
-                  // oLstUsr:InsertItemGroup( 0, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
-                  oLstUsr:aAddItemGroup( 0, Capitalize( ( dbfUsr )->cNbrUse ), 1, ( dbfUsr )->cCodUse )
-               else
-                  // oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), 2 )
-                  oLstUsr:aAddItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), 2, ( dbfUsr )->cCodUse )
-               end if
+               nImgUse           := len( oImgUsr:aBitmaps )
 
             end if
+
+            // oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser )
+               
+            oItem                := TListViewItem():New( oLstUsr )
+            oItem:cText          := Capitalize( ( dbfUsr )->cNbrUse )
+            oItem:nImage         := nImgUse
+            oItem:nGroup         := nGrpUse
+            oItem:Cargo          := ( dbfUsr )->cCodUse
+            oItem:Create()
+
+/*
+            nItem                := oLstUsr:InsertItem( , ,  )               
+            oItem                := oLstUsr:GetItem( nItem )
+
+            if !empty(oItem)
+               oItem:Cargo       := 
+            end if
+*/
+
+            // oLstUsr:aAddItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser, ( dbfUsr )->cCodUse )
 
          end if 
 
@@ -2207,11 +2233,13 @@ Function InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
    end if
 
+   CursorWE()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj )
+Static Function SelBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
 
    local cCodigoUsuario
 
@@ -2220,12 +2248,12 @@ Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj )
       Return nil
    end if
 
-   if !( nOpt > 0 .and. nOpt <= len( oLstUsr:aCargo ) )
+   if !( nOpt > 0 .and. nOpt <= len( oLstUsr:aItems ) )
       MsgStop( "Seleccione usuario" )
       Return nil
    end if       
 
-   cCodigoUsuario    := oLstUsr:aCargo[ nOpt ]
+   cCodigoUsuario    := oLstUsr:GetItem( nOpt ):Cargo
 
    if empty( cCodigoUsuario )
       MsgStop( "Seleccione usuario" )

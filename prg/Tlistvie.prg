@@ -1,5 +1,4 @@
 // Win32 ListView Common Control support
-// (c) FiveTech Software
 
 #include "FiveWin.ch"
 #include "Constant.ch"
@@ -31,26 +30,22 @@
 #define lvgsCOLLAPSED         1
 #define lvgsHIDDEN            2
 
-#ifdef __XPP__
-   #define Super ::TControl
-   #define New _New
-#endif
-
 #define CTRL_CLASS            "SysListView32"
 
 //----------------------------------------------------------------------------//
 
 CLASS TListView FROM TControl
 
-   CLASSDATA aProperties   INIT { "nAlign", "nClrText", "nClrPane", "nOption", "nTop", "nLeft", "nWidth", "nHeight", "Cargo" }
+   CLASSDATA aProperties   INIT { "nAlign", "nClrText", "nClrPane", "nOption",;
+                                  "nTop", "nLeft", "nWidth", "nHeight", "Cargo" }
 
    DATA  aPrompts
-   DATA  aCargo
    DATA  aItems            INIT {}
    DATA  aGroups           INIT {}
    DATA  bAction
    DATA  bClick
    DATA  nOption
+   DATA  nGroups           INIT 0
 
    METHOD New( nTop, nLeft, aPrompts, bAction, oWnd, nClrFore,;
                nClrBack, lPixel, lDesign, nWidth, nHeight,;
@@ -64,18 +59,18 @@ CLASS TListView FROM TControl
 
    METHOD EraseBkGnd( hDC )                  INLINE 1
 
-   METHOD InsertItem( nImageIndex, cText )   INLINE LVInsertItem( ::hWnd, nImageIndex, cText )
+   METHOD InsertItem( nImageIndex, cText, nGroup )  INLINE LVInsertItem( ::hWnd, nImageIndex, cText, nGroup )
 
-   METHOD InsertItemGroup( nImageIndex, cText, nGroup ) INLINE LVInsertItemGroup( ::hWnd, nImageIndex, cText, nGroup )
-   METHOD aAddItemGroup( nImageIndex, cText, nGroup )
-
-   METHOD InsertGroup( nGroupIndex, cText )  INLINE LVInsertGroupInList( ::hWnd, nGroupIndex, cText )
+   METHOD InsertGroup( cText )               INLINE LVInsertGroup( ::hWnd, cText, ::nGroups++ )
 
    METHOD SetIconSpacing( x, y )             INLINE SendMessage( ::hWnd, LVM_SETICONSPACING, 0, nMakeLong( x, y ) )
+
    METHOD SetHotItem( nItem )                INLINE SendMessage( ::hWnd, LVM_SETHOTITEM, nItem, 0 )
 
    METHOD EnableGroupView()                  INLINE LVEnableGroupView( ::hWnd )
+
    METHOD FindItem( cText )                  INLINE LVFindItem( ::hWnd, cText )
+
    METHOD SetItemSelect( nItem )             INLINE LVSetItemSelect( ::hWnd, nItem )
 
    METHOD Paint()
@@ -105,10 +100,6 @@ METHOD New( nTop, nLeft, aPrompts, bAction, oWnd, nClrFore,;
            lDesign  := .f.,;
            nWidth   := 200, nHeight := 21
 
-   #ifdef __XPP__
-      #undef New
-   #endif
-
    ::nStyle    = nOR( WS_CHILD, WS_VISIBLE, If( lDesign, WS_CLIPSIBLINGS, 0 ), WS_TABSTOP )
    ::nId       = ::GetNewId()
    ::oWnd      = oWnd
@@ -125,7 +116,6 @@ METHOD New( nTop, nLeft, aPrompts, bAction, oWnd, nClrFore,;
    ::nClrText  = nClrFore
    ::nClrPane  = nClrBack
    ::nOption   = 1
-   ::aCargo    = {}
 
    if ! Empty( oWnd:hWnd )
       ::Create( CTRL_CLASS )
@@ -152,7 +142,6 @@ METHOD ReDefine( nId, oWnd, bAction ) CLASS TListView
    ::oWnd         := oWnd
    ::bAction      := bAction
    ::aPrompts     := {}
-   ::aCargo       := {}
 
    oWnd:DefControl( Self )
 
@@ -164,11 +153,13 @@ METHOD Default() CLASS TListView
 
    local n
 
+   ::InsertGroup( "default" )
+
    for n = 1 to Len( ::aPrompts )
       ::InsertItem( n - 1, ::aPrompts[ n ] )
    next
 
-return Super:Default()
+return ::Super:Default()
 
 //----------------------------------------------------------------------------//
 
@@ -193,12 +184,11 @@ return 1
 METHOD Notify( nIdCtrl, nPtrNMHDR ) CLASS TListView
 
    local nOption
-   local nCode       := GetNMHDRCode( nPtrNMHDR )
+   local nCode          := GetNMHDRCode( nPtrNMHDR )
 
    do case
       case nCode == NM_CLICK
-
-         nOption     := GetNMListViewItem( nPtrNMHDR ) + 1
+         nOption = GetNMListViewItem( nPtrNMHDR ) + 1
 
          if ::bClick != nil
             ::nOption   := nOption
@@ -206,8 +196,7 @@ METHOD Notify( nIdCtrl, nPtrNMHDR ) CLASS TListView
          endif
 
       case nCode == LVN_ITEMCHANGED
-
-         nOption     := GetNMListViewItem( nPtrNMHDR ) + 1
+         nOption = GetNMListViewItem( nPtrNMHDR ) + 1
 
          if ::nOption != nOption
 
@@ -239,29 +228,15 @@ Return nResult
 
 //----------------------------------------------------------------------------//
 
-METHOD aAddItemGroup( nImageIndex, cText, nGroup, Cargo ) CLASS TListView
-
-   aAdd( ::aPrompts, cText )
-   aAdd( ::aCargo, Cargo )
-
-Return ( LVInsertItemGroup( ::hWnd, nImageIndex, cText, nGroup ) )
-
-//----------------------------------------------------------------------------//
-
 METHOD GetItem( nItem ) CLASS TListView
 
-   if nItem > 0 .and. nItem <= len( ::aItems )
-      Return ( ::aItems[ nItem ] )
-   end if
+   if nItem > 0 .and. nItem <= Len( ::aItems )
+      return ::aItems[ nItem ]
+   endif
 
-Return ( nil )
+return nil
 
 //----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 
 CLASS TListViewItem
 
@@ -272,7 +247,7 @@ CLASS TListViewItem
    DATA  nImage   INIT 0
    DATA  nGroup   INIT 0
    DATA  nIndent  INIT 0
-   DATA  lChecked INIT .f.
+   DATA  lChecked INIT .F.
 
    DATA  nItem    INIT 0
 
@@ -293,84 +268,76 @@ ENDCLASS
 
 METHOD New( oParent ) CLASS TListViewItem
 
-   if !Empty( oParent )
-      ::oParent   := oParent
+   if ! Empty( oParent )
+      ::oParent := oParent
    end if
 
-RETURN Self
+return Self
 
 //------------------------------------------------------------------------------
 
 METHOD Create( oParent ) CLASS TListViewItem
 
    if !Empty( oParent )
-      ::oParent   := oParent
-   end if
+      ::oParent = oParent
+   endif
 
-   if !Empty( ::oParent ) .and. ::oParent:hWnd != 0
+   if ! Empty( ::oParent ) .and. ::oParent:hWnd != 0
       if ::InsertInList() > -1
-         aAdd( ::oParent:aItems, Self )
-      end if
-   end if
+         AAdd( ::oParent:aItems, Self )
+      endif
+   endif
 
-RETURN Self
+return Self
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 METHOD InsertInList()
 
-   local nItem
-
-   nItem          := LvInsertInList( ::oParent:hWnd, ::nImage, ::cText, ::nGroup )
+   local nItem := LvInsertInList( ::oParent:hWnd, ::nImage, ::cText, ::nGroup )
+   
    if nItem > -1
-      ::nItem     := nItem
-   end if
+      ::nItem = nItem
+   endif
 
-RETURN ( nItem )
+return nItem
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 METHOD Delete() CLASS TListViewItem
 
-   LOCAL aItems
-   LOCAL lSuccess
+   local aItems, lSuccess
 
    if ( lSuccess := ::DeleteItemC() )
 
-      ::lParam    := 0
-      aItems      := ::oParent:aItems
+      ::lParam = 0
+      aItems   = ::oParent:aItems
 
       if ::nItem == Len( aItems )
-         aSize( aItems, ::nItem - 1 )
+         ASize( aItems, ::nItem - 1 )
       elseif ::nItem > 0
          aItems[ ::nItem ] := nil
       endif
 
-      ::nItem    := 0
+      ::nItem = 0
 
    endif
 
-RETURN lSuccess
+return lSuccess
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 METHOD SetGroup( nGroup ) CLASS TListViewItem
 
-   LOCAL nLen
+   local nLen
 
-   if nGroup > 0 .and. aScan( ::oParent:aGroups, {|v| v:nItem == nGroup } ) > 0
+   if nGroup > 0 .and. AScan( ::oParent:aGroups, { |v| v:nItem == nGroup } ) > 0
       LVSetGroup( nGroup )
-   end if
+   endif
 
-RETURN ::nGroup
+return ::nGroup
 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 CLASS TListViewGroup
 
@@ -395,367 +362,51 @@ ENDCLASS
 
 METHOD New( oParent, nPos ) CLASS TListViewGroup
 
-   if !Empty( oParent )
-      ::oParent   := oParent
-   end if
+   if ! Empty( oParent )
+      ::oParent := oParent
+   endif
 
-RETURN Self
+return Self
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 METHOD Create( oParent ) CLASS TListViewGroup
 
-   if !Empty( oParent )
-      ::oParent   := oParent
-   end if
-
-   if ::nGroupId == nil
-      ::nGroupId  := Len( ::oParent:aGroups ) + 1
+   if ! Empty( oParent )
+      ::oParent = oParent
    endif
 
-   if !Empty( ::oParent ) .and. ( ::oParent:hWnd != 0 )
+   if ::nGroupId == nil
+      ::nGroupId = Len( ::oParent:aGroups ) + 1
+   endif
+
+   if ! Empty( ::oParent ) .and. ( ::oParent:hWnd != 0 )
       if ::InsertInList() > -1
-         aAdd( ::oParent:aGroups, Self )
-      end if
-   end if
+         AAdd( ::oParent:aGroups, Self )
+      endif
+   endif
 
 RETURN Self
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
-METHOD InsertInList()
+METHOD InsertInList() CLASS TListViewGroup
 
-   local nGroupId
-
-   nGroupId       := LvInsertGroupInList( ::oParent:hWnd, ::nGroupId, ::cHeader, ::nState )
+   local nGroupId := LvInsertGroupInList( ::oParent:hWnd, ::nGroupId, ::cHeader,;
+                                          ::nState )
+   
    if nGroupId > -1
-      ::nGroupId  := nGroupId
-   end if
+      ::nGroupId = nGroupId
+   endif
 
-RETURN ( nGroupId )
+return nGroupId
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
-METHOD SetState( nState )
+METHOD SetState( nState ) CLASS TListViewGroup
 
-   ::nState       := nState
+   ::nState = nState
 
-RETURN ( LvGroupSetState( ::oParent:hWnd, ::nGroupId, ::nState ) )
+return LVGroupSetState( ::oParent:hWnd, ::nGroupId, ::nState )
 
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-#pragma BEGINDUMP
-
-#define HB_OS_WIN_32_USED
-#define _WIN32_IE 0x0560
-
-#define NONAMELESSUNION
-
-#ifndef __FLAT__
-   #define LPCWSTR LPSTR
-   #define LPWSTR  LPSTR
-   #define NMHDR   void *
-   #define WCHAR   char
-#endif
-
-#include <Windows.h>
-#include <CommCtrl.h>
-
-void _bset( char * pDest, LONG lValue, LONG lLen );
-
-typedef struct _LVITEM {
-  UINT mask;
-  int iItem;
-  int iSubItem;
-  UINT state;
-  UINT stateMask;
-  LPTSTR pszText;
-  int cchTextMax;
-  int iImage;
-  LPARAM lParam;
-  #if (_WIN32_IE >= 0x0300)
-    int iIndent;
-  #endif
-    int iGroupId;
-} LVITEMNEW;
-
-typedef struct tagLVGROUP
-{
-    UINT    cbSize;
-    UINT    mask;
-    LPWSTR  pszHeader;
-    int     cchHeader;
-    LPWSTR  pszFooter;
-    int     cchFooter;
-    int     iGroupId;
-    UINT    stateMask;
-    UINT    state;
-    UINT    uAlign;
-} LVGROUP, *PLVGROUP;
-
-#define LVGF_NONE               0x00000000
-#define LVGF_HEADER             0x00000001
-#define LVGF_FOOTER             0x00000002
-#define LVGF_STATE              0x00000004
-#define LVGF_ALIGN              0x00000008
-#define LVGF_GROUPID            0x00000010
-
-#define LVGF_SUBSETITEMS        0x00010000  // readonly, cItems holds count of items in visible subset, iFirstItem is valid
-
-#define LVIF_GROUPID            0x0100
-#define LVIF_COLUMNS            0x0200
-
-#define LVM_INSERTGROUP         (LVM_FIRST + 145)
-#define ListView_InsertGroup(hwnd, index, pgrp)       SNDMSG((hwnd), LVM_INSERTGROUP, (WPARAM)(index), (LPARAM)(pgrp))
-
-#define LVM_ENABLEGROUPVIEW     (LVM_FIRST + 157)
-#define ListView_EnableGroupView(hwnd, fEnable)       SNDMSG((hwnd), LVM_ENABLEGROUPVIEW, (WPARAM)(fEnable), 0)
-
-#define LVM_SETGROUPINFO         (LVM_FIRST + 147)
-#define ListView_SetGroupInfo(hwnd, iGroupId, pgrp)   SNDMSG((hwnd), LVM_SETGROUPINFO, (WPARAM)iGroupId, (LPARAM)pgrp)
-
-#define LVIS_FOCUSED            0x0001
-#define LVIS_SELECTED           0x0002
-#define LVIS_CUT                0x0004
-#define LVIS_DROPHILITED        0x0008
-#define LVIS_ACTIVATING         0x0020
-
-#define LVIS_OVERLAYMASK        0x0F00
-#define LVIS_STATEIMAGEMASK     0xF000
-
-#define LVGS_NORMAL             0x00000000
-#define LVGS_COLLAPSED          0x00000001
-#define LVGS_HIDDEN             0x00000002
-#define LVGS_NOHEADER           0x00000004
-#define LVGS_COLLAPSIBLE        0x00000008
-#define LVGS_FOCUSED            0x00000010
-#define LVGS_SELECTED           0x00000020
-#define LVGS_SUBSETED           0x00000040
-#define LVGS_SUBSETLINKFOCUSED  0x00000080
-
-//-------------------------------------------------------------------------//
-
-LPWSTR AnsiToWide( LPSTR szAnsi )
-{
-   int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szAnsi, -1, NULL, 0 );
-
-   if( nLen )
-   {
-      LPWSTR szWide = ( LPWSTR ) hb_xgrab( nLen * 2 );
-
-      if( MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szAnsi, -1, szWide, nLen ) )
-         return szWide;
-      else
-         hb_xfree( szWide );
-   }
-
-   return NULL;
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC ( LVINSERTITEM ) // ( hWnd, nImageListIndex, cText ) --> nItem
-{
-   LVITEMNEW lvi;
-   HWND hWnd   = ( HWND ) hb_parnl( 1 );
-
-   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
-
-   lvi.mask    = LVIF_TEXT | LVIF_IMAGE;
-   lvi.iItem   = ListView_GetItemCount( hWnd );
-   lvi.iImage  = hb_parnl( 2 );
-   lvi.pszText = ( LPTSTR ) hb_parc( 3 );
-
-   hb_retnl( ListView_InsertItem( hWnd, &lvi ) );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC ( LVINSERTITEMGROUP ) // ( hWnd, nImageListIndex, cText ) --> nItem
-{
-   LVITEMNEW lvi;
-   HWND hWnd      = ( HWND ) hb_parnl( 1 );
-
-   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
-
-   lvi.mask       = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID;
-   lvi.iItem      = ListView_GetItemCount( hWnd );
-   lvi.iImage     = hb_parnl( 2 );
-   lvi.pszText    = ( LPTSTR ) hb_parc( 3 );
-   lvi.iGroupId   = hb_parnl( 4 );
-
-   hb_retnl( ListView_InsertItem( hWnd, &lvi ) );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC( LVINSERTINLIST )
-{
-   LVITEMNEW lvi;
-   HWND hWnd         = ( HWND ) hb_parnl( 1 );
-   int nGroup        = hb_parnl( 4 );
-
-   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
-
-   lvi.mask          = LVIF_IMAGE | LVIF_TEXT | LVIF_GROUPID;
-   lvi.iItem         = ListView_GetItemCount( hWnd );
-   lvi.iImage        = hb_parnl( 2 );
-   lvi.pszText       = ( LPTSTR ) hb_parc( 3 );
-
-   if( nGroup )
-      {
-      lvi.mask       |= LVIF_GROUPID;
-      lvi.iGroupId   = nGroup;
-      }
-
-   hb_retnl( ListView_InsertItem( hWnd, &lvi ) );
-}
-
-//-------------------------------------------------------------------------//
-// hwndList is the HWND of the control.
-
-HB_FUNC ( LVINSERTGROUPINLIST ) // ( pnmv ) --> nItem
-{
-   LVGROUP group;
-
-   HWND hWnd         = ( HWND ) hb_parnl( 1 );
-   LPWSTR pWide      = AnsiToWide( ( LPTSTR ) hb_parc( 3 ) );
-   int nState        = hb_parnl( 4 );
-
-   _bset( ( char * ) &group, 0, sizeof( group ) );
-
-   group.cbSize      = sizeof( LVGROUP );
-   group.iGroupId    = hb_parnl( 2 );
-   group.pszHeader   = pWide;
-
-   switch( nState )
-      {
-      case 0   :
-
-         group.mask  = LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
-         /*
-         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
-         group.state = LVGS_COLLAPSIBLE | LVGS_NORMAL;
-         */
-         break;
-
-      case 1   :
-
-         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
-         group.state = LVGS_SELECTED | LVGS_COLLAPSIBLE | LVGS_COLLAPSED;
-         break;
-
-      case 2   :
-
-         group.mask  = LVGF_STATE;
-         group.state = LVGS_SELECTED | LVGS_HIDDEN;
-         break;
-      }
-
-    hb_retnl( ListView_InsertGroup( hWnd, -1, &group) );
-
-    hb_xfree( ( void * ) pWide );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC ( LVGROUPSETSTATE )
-{
-   LVGROUP group;
-
-   HWND hWnd         = ( HWND ) hb_parnl( 1 );
-   int nIndex        = hb_parni( 2 );
-   int nState        = hb_parni( 3 );
-
-   _bset( ( char * ) &group, 0, sizeof( group ) );
-
-   group.cbSize      = sizeof( LVGROUP );
-   group.iGroupId    = nIndex;
-
-   switch( nState )
-      {
-      case LVGS_NORMAL   :
-         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
-         group.state = LVGS_SELECTED | LVGS_NORMAL;
-         break;
-
-      case LVGS_COLLAPSED:
-         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
-         group.state = LVGS_SELECTED | LVGS_COLLAPSIBLE | LVGS_COLLAPSED;
-         break;
-
-      case LVGS_HIDDEN   :
-         group.mask  = LVGF_STATE;
-         group.state = LVGS_SELECTED | LVGS_HIDDEN;
-         break;
-      }
-
-   ListView_SetGroupInfo( hWnd, nIndex, (LPARAM) &group );
-
-   InvalidateRect( hWnd, NULL, FALSE );
-
-   hb_retni( nState );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC ( LVENABLEGROUPVIEW ) // ( pnmv ) --> nItem
-{
-    hb_retnl( ListView_EnableGroupView( ( HWND ) hb_parnl( 1 ), 1 ) );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC ( LVFINDITEM ) // ( hWnd, nImageListIndex, cText ) --> nItem
-{
-   LVFINDINFO lvi;
-
-   HWND hWnd   = ( HWND ) hb_parnl( 1 );
-
-   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
-
-   lvi.flags   = LVFI_PARTIAL;
-   lvi.psz     = ( LPTSTR ) hb_parc( 2 );
-
-   hb_retnl( ListView_FindItem( hWnd, -1, &lvi ) );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC ( LVSETITEMSELECT )
-{
-   HWND hWnd   = ( HWND ) hb_parnl( 1 );
-
-   ListView_EnsureVisible( hWnd, hb_parnl( 2 ), FALSE );
-   ListView_SetItemState( hWnd, -1, 0, LVIS_SELECTED );
-   ListView_SetItemState( hWnd, hb_parnl( 2 ), (LVIS_SELECTED | LVIS_FOCUSED), (LVIS_SELECTED | LVIS_FOCUSED) );
-}
-
-//-------------------------------------------------------------------------//
-
-HB_FUNC( LVSETGROUP )
-{
-   HWND hWnd   = ( HWND ) hb_parnl( 1 );
-   int nId     = hb_parnl( 2 );
-   int nGroup  = hb_parnl( 3 );
-
-   LVITEMNEW lvi;
-   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
-   lvi.iItem      = nId;
-   lvi.mask       = LVIF_GROUPID | LVIF_COLUMNS;
-   lvi.iGroupId   = nGroup;
-   ListView_SetItem( hWnd, ( LPARAM ) &lvi );
-
-   hb_retnl( nGroup );
-}
-
-#pragma ENDDUMP
-
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------//

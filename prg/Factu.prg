@@ -5835,6 +5835,51 @@ Comenzamos la parte de código que se compila para PDA--------------------------
 -------------------------------------------------------------------------------
 */
 
+Function TestMeter()
+
+   local oDlg
+   local oMtr
+
+   DEFINE DIALOG oDlg RESOURCE "XTEST"
+
+   REDEFINE BUTTON ;
+      ID          IDOK ; 
+      OF          oDlg ;
+      ACTION      ( StartTestMeter( oDlg ) )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return nil 
+
+Static Function StartTestMeter( oDlg )
+
+   local nMeter
+   local oMeter
+
+   oMeter         := TMeter():New( 0, 0, {| u | if( pCount() == 0, nMeter, nMeter := u ) }, 5, oDlg, oDlg:nWidth, 4 )
+
+   msgWait("Pausa 1", "", 1 )
+
+   oMeter:Set( 1 )
+
+   msgWait("Pausa 2", "", 2 )
+
+   oMeter:Set( 2 )
+
+   msgWait("Pausa 3", "", 3 )
+
+   oMeter:Set( 3 )
+
+   msgWait("Pausa 4", "", 4 )
+
+   oMeter:Set( 4 )
+
+   msgWait("Pausa 5", "", 5 )
+
+   oMeter:Set( 5 )
+
+Return nil
+
 #else
 
 //---------------------------------------------------------------------------//

@@ -1,7 +1,10 @@
+#include "Error.ch"
 #include "FiveWin.ch"
 #include "Factu.ch" 
 
 #define  HKEY_LOCAL_MACHINE      2147483650
+
+#define NTRIM(n)                 ( LTrim( Str( n ) ) )
 
 static cFullCurDir
 
@@ -444,7 +447,7 @@ RETURN ( nil )
 
 Function AutoMeterDialog( oDialog )
 
-   oMeter   := TMeter():New( 0, 0, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 100, oDialog, oDialog:nWidth, 4 )
+   oMeter   := TMeter():New( 0, 0, {| u | if( pCount() == 0, nMeter, nMeter := u ) }, 100, oDialog, oDialog:nWidth, 4, .t., .t., , "", .t., rgb( 128,255,0 ) )
 
 RETURN ( oMeter )
 
@@ -474,3 +477,34 @@ Function EndAutoMeterDialog( nSet )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+/*
+Function ErrorMessage( e )
+
+   // start error message
+    local cMessage := if( empty( e:OsCode ), ;
+                          if( e:severity > ES_WARNING, "Error ", "Warning " ),;
+                          "(DOS Error " + NTRIM(e:osCode) + ") " )
+
+   // add subsystem name if available
+    cMessage += if( ValType( e:SubSystem ) == "C",;
+                    e:SubSystem()                ,;
+                    "???" )
+
+   // add subsystem's error code if available
+    cMessage += if( ValType( e:SubCode ) == "N",;
+                    "/" + NTRIM( e:SubCode )   ,;
+                    "/???" )
+   // add error description if available
+  if ( ValType( e:Description ) == "C" )
+        cMessage += "  " + e:Description
+   end
+
+   // add either filename or operation
+    cMessage += if( ! Empty( e:FileName ),;
+                    ": " + e:FileName   ,;
+                    if( !Empty( e:Operation ),;
+                        ": " + e:Operation   ,;
+                        "" ) )
+return cMessage
+*/
+//----------------------------------------------------------------------------//

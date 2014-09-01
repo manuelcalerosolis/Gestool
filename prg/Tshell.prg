@@ -833,7 +833,7 @@ METHOD End( lForceExit ) CLASS TShell
    ::oWndClient:ChildClose( Self )
 
    ::Super:End()
-   ::Super:Destroy()
+   // ::Super:Destroy()
 
    CursorWE()
 

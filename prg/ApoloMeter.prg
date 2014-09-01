@@ -5,7 +5,9 @@
 
 CLASS TApoloMeter FROM TMeter
 
-   DATA nCurrent    INIT 0
+   CLASSDATA lRegistered 	AS LOGICAL
+
+   DATA nCurrent    		INIT 0
 
    METHOD AutoInc() INLINE ;
       ::nCurrent++,;

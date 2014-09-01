@@ -9128,9 +9128,11 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
          if lChgCodCli
 
-            aGet[ _LRECARGO ]:Click( ( TDataView():Get( "Client", nView ) )->lReq ):Refresh()
+            aGet[ _LRECARGO ]:Click( ( TDataView():Get( "Client", nView ) )->lReq )
+            aGet[ _LRECARGO ]:Refresh()
 
-            aGet[ _LOPERPV  ]:Click( ( TDataView():Get( "Client", nView ) )->lPntVer ):Refresh()
+            aGet[ _LOPERPV  ]:Click( ( TDataView():Get( "Client", nView ) )->lPntVer )
+            aGet[ _LOPERPV  ]:Refresh()
 
             /*
             Descuentos desde la ficha de cliente----------------------------------

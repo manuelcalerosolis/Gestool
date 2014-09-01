@@ -2001,11 +2001,11 @@ STATIC FUNCTION CloseFiles()
    DisableAcceso()
 
    DestroyFastFilter( TDataView():FacturasClientes( nView ), .t., .t. )
-
+/*
    if !Empty( oFont )
       oFont:end()
    end if
-
+*/
    if !Empty( dbfIva )
       ( dbfIva     )->( dbCloseArea() )
    end if

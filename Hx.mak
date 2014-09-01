@@ -426,6 +426,7 @@ Wininet.c               \
 Rasapi.c                \
 Attrib.c                \
 Comm.c 					\
+Listview.c 				\
 
 OBJS            =       \
 Factu.obj               \
@@ -459,6 +460,7 @@ C5Lib.obj               \
 Tgraph.obj              \
 Buttonb.obj             \
 TlistVie.obj            \
+ListView.obj            \
 TViewImg.obj            \
 Toleexcel.obj           \
 Toleword.obj            \
@@ -862,8 +864,8 @@ $(OBJ)\Valtostr.obj             +
 $(OBJ)\AccessCode.obj           +
 $(OBJ)\TXml.obj                 +
 $(OBJ)\DialogExtend.obj             +
-$(OBJ)\Window.obj               +
-$(OBJ)\Msgbar.obj 				  +
+$(OBJ)\Window.obj               	+
+$(OBJ)\Msgbar.obj 				  	+
 $(OBJ)\Menu.obj 				  	  +
 $(OBJ)\Tmsgitem.obj 				  +
 $(OBJ)\Mdiframe.obj 				  +
@@ -879,6 +881,7 @@ $(OBJ)\Rebar.obj                +
 $(OBJ)\Tgraph.obj               +
 $(OBJ)\Buttonb.obj              +
 $(OBJ)\TlistVie.obj             +
+$(OBJ)\ListView.obj            	+
 $(OBJ)\TViewImg.obj             +
 $(OBJ)\Toleexcel.obj            +
 $(OBJ)\Toleword.obj             +
