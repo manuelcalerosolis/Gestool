@@ -676,6 +676,7 @@ METHOD CreaCobro( nImporte ) CLASS TpvCobros
 
    local cCodigo
    local sTipoCobro
+   local nCambio              := 0
 
    CursorWait()
 
@@ -687,12 +688,17 @@ METHOD CreaCobro( nImporte ) CLASS TpvCobros
 
    if !empty( nImporte )
 
+      nCambio                 := ::Total() - ::Entregado() - nImporte
+
       sTipoCobro              := STipoCobro()
 
       sTipoCobro:cCodigo      := cCodigo
       sTipoCobro:cTexto       := oRetFld( cCodigo, ::oSender:oFormaPago )
       sTipoCobro:nImporte     := nImporte
-      sTipoCobro:nCambio      := abs( ::Total() - ::Entregado() - nImporte )
+
+      if ( nCambio < 0 )
+         sTipoCobro:nCambio   := abs( nCambio )
+      end if
 
       sTipoCobro:AddCobro( ::aCobros )
 
