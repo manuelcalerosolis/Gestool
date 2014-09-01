@@ -12919,9 +12919,9 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
 
    if ( TDataView():Atipicas( nView ) )->( dbSeek( aTmpAlb[ _CCODCLI ] ) )
 
-      AutoMeterDialog( oDlg )
+      //AutoMeterDialog( oDlg )
 
-      SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+      //SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
 
       while ( TDataView():Atipicas( nView ) )->cCodCli == aTmpAlb[ _CCODCLI ] .and. !( TDataView():Atipicas( nView ) )->( Eof() )
 
@@ -12931,13 +12931,13 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
 
          end if
 
-         SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
+         //SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
 
          ( TDataView():Atipicas( nView ) )->( dbSkip() )
 
       end while
 
-      EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+      //EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
 
    end if
 
@@ -12951,9 +12951,9 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
    
       if ( TDataView():Atipicas( nView ) )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
 
-         AutoMeterDialog( oDlg )
+         //AutoMeterDialog( oDlg )
 
-         SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+         //SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
    
          while ( TDataView():Atipicas( nView ) )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( TDataView():Atipicas( nView ) )->( Eof() )
    
@@ -12963,13 +12963,13 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
    
             end if
 
-            SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
+            //SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
    
             ( TDataView():Atipicas( nView ) )->( dbSkip() )
    
          end while
 
-         EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+         //EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
    
       end if
    
@@ -15328,6 +15328,7 @@ function SynAlbCli( cPath )
 
       // Lineas huerfanas---------------------------------------------------------
 
+/*
       ( TDataView():Get( "AlbCliT", nView ) )->( ordSetFocus( 1 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( ordSetFocus( 1 ) )
       ( TDataView():Get( "AlbCliL", nView ) )->( dbGoTop() )
@@ -15345,7 +15346,7 @@ function SynAlbCli( cPath )
          SysRefresh()
 
       end while
-
+*/
       CloseFiles()
 
    end if

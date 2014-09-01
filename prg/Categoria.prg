@@ -209,11 +209,11 @@ FUNCTION Categoria( oMenuItem, oWnd )
       Anotamos el movimiento para el navegador
       */
 
-      AddMnuNext( "Categorías de artículos", ProcName() )
+      AddMnuNext( "Categorías", ProcName() )
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
-      TITLE    "Categorías de artículos" ;
+      TITLE    "Categorías" ;
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfCategoria ) ;
@@ -326,7 +326,7 @@ Static Function EdtRec( aTmp, aGet, dbfCategoria, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCategoria )->( fieldpos( "cTipo" ) ) ]  := aStrTipo[ 1 ]
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "CATEGORIA" TITLE LblTitle( nMode ) + "categoría de artículo"
+   DEFINE DIALOG oDlg RESOURCE "CATEGORIA" TITLE LblTitle( nMode ) + "categoría"
 
       REDEFINE GET aGet[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
          VAR      aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
@@ -555,7 +555,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Categorías de artículos"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Categorías"
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -697,7 +697,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Categorías de artículos"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Categorías"
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;

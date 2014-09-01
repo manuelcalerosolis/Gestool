@@ -12216,7 +12216,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                if Empty( aGet[ _CLOTE ]:VarGet() )
                   aGet[ _CLOTE ]:cText( cLote )
-                  aGet[ _CLOTE ]:lValid()
+                  //aGet[ _CLOTE ]:lValid()
                end if
 
             else
@@ -12259,15 +12259,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         /*
-         Ponemos el stock del artículo-----------------------------------------
-         */
-
-         if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
-            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
-            oStkAct:Refresh()
-         end if
-
       	/*
       	Cargamos los costos------------------------------------------------------
       	*/
@@ -12284,6 +12275,20 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aGet[ _NCOSDIV ]:cText( nCosPro )
          else
             aTmp[ _NCOSDIV ]  := nCosPro
+         end if
+
+      end if
+
+
+      /*
+      Calculamos el stock del articulo solo si cambian las prop o el lote---
+      */
+
+      if ( lChgCodArt ) .or. ( lChgPrpArt ) .or. ( lChgLotArt )
+
+         if !uFieldEmpresa( "lNStkAct" ) .and. oStkAct != nil .and. aTmp[ _NCTLSTK ] <= 1
+            oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )            								
+            oStkAct:Refresh()
          end if
 
       end if
@@ -16130,9 +16135,9 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
 
    if ( TDataView():Atipicas( nView ) )->( dbSeek( aTmpFac[ _CCODCLI ] ) )
 
-      AutoMeterDialog( oDlg )
+      //AutoMeterDialog( oDlg )
 
-      SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+      //SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
 
       while ( TDataView():Atipicas( nView ) )->cCodCli == aTmpFac[ _CCODCLI ] .and. !( TDataView():Atipicas( nView ) )->( Eof() )
 
@@ -16142,13 +16147,13 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
 
          end if
 
-         SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
+         //SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
 
          ( TDataView():Atipicas( nView ) )->( dbSkip() )
 
       end while
 
-      EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+      //EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
 
    end if
 
@@ -16162,9 +16167,9 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
    
       if ( TDataView():Atipicas( nView ) )->( dbSeek( aTmpFac[ _CCODGRP ] ) )
 
-         AutoMeterDialog( oDlg )
+         //AutoMeterDialog( oDlg )
 
-         SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+         //SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
    
          while ( TDataView():Atipicas( nView ) )->cCodGrp == aTmpFac[ _CCODGRP ] .and. !( TDataView():Atipicas( nView ) )->( Eof() )
    
@@ -16174,13 +16179,13 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
    
             end if
 
-            SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
+            //SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
    
             ( TDataView():Atipicas( nView ) )->( dbSkip() )
    
          end while
 
-         EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+         //EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
    
       end if
    

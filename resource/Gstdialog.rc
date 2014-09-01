@@ -17701,38 +17701,37 @@ FONT 8, "MS Sans Serif"
   CONTROL "0", 407, "Static", SS_RIGHT|WS_GROUP, 578, 346, 80, 8
   CONTROL "", 410, "Static", WS_GROUP, 462, 356, 35, 15
   CONTROL "0", 420, "Static", SS_RIGHT|WS_GROUP, 578, 356, 80, 15
-  CONTROL "", 90, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 96, 30, 24, 11
-  CONTROL "", 100, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 121, 30, 34, 11
-  CONTROL "", 105, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 156, 30, 18, 11
-  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 96, 42, 78, 11
-  CONTROL "", 111, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 96, 54, 78, 11
-  CONTROL "Reparación cubierta por garantía", 115, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 68, 121, 8
-  CONTROL "", 122, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 96, 78, 78, 11
-  CONTROL "", 218, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 96, 90, 78, 186
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 96, 103, 78, 11
+  CONTROL "", 90, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 82, 30, 24, 11
+  CONTROL "", 100, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 107, 30, 51, 11
+  CONTROL "", 105, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 159, 30, 18, 11
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 82, 42, 95, 11
+  CONTROL "", 111, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 82, 54, 95, 11
+  CONTROL "", 122, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 82, 66, 95, 11
+  CONTROL "", 218, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 82, 77, 95, 186
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 82, 90, 95, 11
   CONTROL "Impuestos incluidos", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 117, 75, 8
   CONTROL "Punto verde", 409, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 462, 328, 52, 10
   CONTROL "Descuentos", 700, "Button", BS_GROUPBOX, 44, 289, 160, 61
   CONTROL "Recargo de equivalencia", 406, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 462, 346, 93, 10
   CONTROL "Número", -1, "Static", WS_GROUP, 44, 33, 30, 8
-  CONTROL "Estado", -1, "Static", WS_GROUP, 44, 106, 51, 8
-  CONTROL "Cliente", -1, "Static", WS_GROUP, 178, 33, 46, 8
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 178, 45, 46, 8
-  CONTROL "N.I.F.", -1, "Static", WS_GROUP, 178, 57, 46, 8
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 178, 69, 46, 8
-  CONTROL "CP/Población", -1, "Static", WS_GROUP, 178, 81, 46, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 178, 93, 46, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 436, 93, 28, 8
+  CONTROL "Estado", -1, "Static", WS_GROUP, 44, 93, 36, 8
+  CONTROL "Cliente", -1, "Static", WS_GROUP, 179, 33, 46, 8
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 179, 45, 46, 8
+  CONTROL "N.I.F.", -1, "Static", WS_GROUP, 179, 57, 46, 8
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 179, 69, 46, 8
+  CONTROL "CP/Población", -1, "Static", WS_GROUP, 179, 81, 46, 8
+  CONTROL "Provincia", -1, "Static", WS_GROUP, 179, 93, 46, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 434, 93, 28, 8
   CONTROL "Precio", -1, "Static", WS_GROUP, 329, 33, 32, 8
   CONTROL "Riesgo", -1, "Static", WS_GROUP, 329, 57, 32, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 329, 93, 32, 8
-  CONTROL "Tarifa per.", -1, "Static", WS_GROUP, 435, 33, 28, 8
-  CONTROL "Dirección", -1, "Static", WS_GROUP, 178, 106, 46, 8
-  CONTROL "Almacén", -1, "Static", WS_GROUP, 178, 117, 46, 8
-  CONTROL "Pago", -1, "Static", WS_GROUP, 436, 45, 28, 8
-  CONTROL "Agente", -1, "Static", WS_GROUP, 436, 57, 28, 8
-  CONTROL "%Com.", -1, "Static", WS_GROUP, 436, 69, 28, 8
-  CONTROL "Ruta", -1, "Static", WS_GROUP, 436, 81, 28, 8
+  CONTROL "Tarifa per.", -1, "Static", WS_GROUP, 433, 33, 28, 8
+  CONTROL "Dirección", -1, "Static", WS_GROUP, 179, 105, 46, 8
+  CONTROL "Almacén", -1, "Static", WS_GROUP, 179, 117, 46, 8
+  CONTROL "Pago", -1, "Static", WS_GROUP, 434, 45, 28, 8
+  CONTROL "Agente", -1, "Static", WS_GROUP, 434, 57, 28, 8
+  CONTROL "%Com.", -1, "Static", WS_GROUP, 434, 69, 28, 8
+  CONTROL "Ruta", -1, "Static", WS_GROUP, 434, 81, 28, 8
   CONTROL "%", 703, "Static", WS_GROUP, 189, 302, 8, 8
   CONTROL "%", 704, "Static", WS_GROUP, 189, 314, 8, 8
   CONTROL "%", 705, "Static", WS_GROUP, 189, 326, 8, 8
@@ -17746,20 +17745,27 @@ FONT 8, "MS Sans Serif"
   CONTROL "0", 402, "Static", SS_RIGHT|WS_GROUP, 578, 310, 80, 8
   CONTROL "0", 404, "Static", SS_RIGHT|WS_GROUP, 578, 328, 80, 8
   CONTROL "", 408, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 89, 357, 108, 11
-  CONTROL "Entrega en", 112, "Static", WS_GROUP, 44, 57, 51, 8
-  CONTROL "Su referencia", 123, "Static", WS_GROUP, 44, 81, 51, 8
+  CONTROL "Entrega en", 112, "Static", WS_GROUP, 44, 57, 37, 8
+  CONTROL "Referencia", 123, "Static", WS_GROUP, 44, 69, 37, 8
   CONTROL "", 201, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE|SS_RIGHTJUST, 518, 90, 16, 11
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "S.A.T. de clientes", -1, "Static", WS_GROUP, 44, 4, 120, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 45, 25, 8
-  CONTROL "Situación ", -1, "Static", WS_GROUP, 44, 94, 37, 8
+  CONTROL "Situación ", -1, "Static", WS_GROUP, 44, 81, 37, 8
+  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 464, 102, 70, 11
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 536, 102, 126, 11
+  CONTROL "Operario", -1, "Static", WS_GROUP, 434, 105, 28, 8
+  CONTROL "", 350, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 82, 101, 34, 12
+  CONTROL "", 351, "Edit", WS_BORDER, 118, 101, 59, 12
+  CONTROL "Categoría", -1, "Static", WS_GROUP, 44, 105, 35, 8
 }
 
 SATCLI_2 DIALOG DISCARDABLE 45, 10, 670, 375
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 240, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 39, 552, 57
+  CONTROL "Reparación cubierta por garantía", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 100, 40, 121, 8
+  CONTROL "", 240, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 51, 552, 45
   CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 100, 125, 72, 12
   CONTROL "", 301, "Edit", WS_BORDER, 174, 125, 184, 12
   CONTROL "", 165, "Edit", WS_BORDER|WS_TABSTOP, 100, 138, 72, 12
@@ -17807,7 +17813,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Diferencia ", -1, "Static", WS_GROUP, 513, 164, 38, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 522, 346, 138, 27
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "S.A.T. clientes", -1, "Static", WS_GROUP, 44, 3, 120, 8
+  CONTROL "S.A.T. de clientes", -1, "Static", WS_GROUP, 44, 3, 120, 8
   CONTROL "", 115, "Edit", WS_BORDER|WS_TABSTOP, 100, 112, 72, 12
   CONTROL "", 116, "Edit", WS_BORDER, 174, 112, 184, 12
   CONTROL "Usuario", -1, "Static", WS_GROUP, 49, 115, 46, 8
@@ -19722,6 +19728,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 200, "msctls_progress32", 0x00000000, 191, 385, 474, 4
 }
 
+<<<<<<< HEAD
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH
 
 XTEST DIALOG DISCARDABLE 63, 35, 263, 57
@@ -19731,5 +19738,16 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "&Start meter", IDOK, "Button", WS_TABSTOP, 82, 12, 98, 14
   CONTROL "", 100, "msctls_progress32", 0x00000000, 0, 34, 263, 9
+=======
+LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
+
+INFO_4 DIALOG DISCARDABLE 32, 0, 670, 330
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 44, 32, 621, 288
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Información de máquinas", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
+>>>>>>> origin/master
 }
 

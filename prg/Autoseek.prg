@@ -338,7 +338,7 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          else
 
-            nLen     := 10
+            nLen     := 13
 
             if Empty( cPrefij )
 
