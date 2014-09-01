@@ -130,6 +130,8 @@ METHOD LoadSituaciones()
 
    ::aSituaciones := {}
 
+   ?"Paso por el loadSituaciones"
+
    ::oDbf:GoTop()
    while !::oDbf:Eof()
       aAdd( ::aSituaciones, ::oDbf:cSitua )

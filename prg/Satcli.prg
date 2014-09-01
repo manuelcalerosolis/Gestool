@@ -9696,6 +9696,9 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliS.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliS.CDX", "nNumRef", "cSerSat + Str( nNumSat ) + cSufSat + cRef + Str( nNumLin )", {|| Field->cSerSat + Str( Field->nNumSat ) + Field->cSufSat + Field->cRef + + Str( Field->nNumLin ) } ) )
+
       ( cSatCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de Sataranes de clientes" )

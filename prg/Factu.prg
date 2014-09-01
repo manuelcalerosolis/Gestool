@@ -1977,7 +1977,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| TSituaciones():New( cPatDat(), oWnd ) }
+   oItem:bAction        := {|| TSituaciones():New( cPatDat(), oWnd ):Play() }
    oItem:cId            := "01096"
    oItem:cBmp           := "Document_Attachment_16"
    oItem:cBmpBig        := "Document_Attachment_32"
@@ -3614,7 +3614,7 @@ Function BuildMenu()
                   MENUITEM    "&3. Situaciones de documentos";
                      MESSAGE  "Tipos de situaciones en documentos de compra y venta" ;
                      HELPID   "01096" ;
-                     ACTION   ( TSituaciones():New( cPatDat(), oWnd ) );
+                     ACTION   ( TSituaciones():New( cPatDat(), oWnd ):Play() );
                      RESOURCE "Document_Attachment_16" ;
 
                   MENUITEM    "&4. Tipos de comandas";
