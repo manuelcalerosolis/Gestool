@@ -120,7 +120,7 @@ CLASS TpvCobros
    METHOD GuardaCobros()
    METHOD InitCobros()                 INLINE ( ::aCobros := {} )
 
-   METHOD ArchivaCobros()              INLINE ( ::EliminaCobros(), ::GuardaCobros(), ::InitCobros() )
+   METHOD ArchivaCobros()              INLINE ( ::EliminaCobros(), ::GuardaCobros() ) //::InitCobros() )
 
    //------------------------------------------------------------------------//
 
@@ -218,6 +218,8 @@ METHOD lCobro() CLASS TpvCobros
    ::nTotal             := ::oSender:sTotal:nTotalDocumento
    ::nUbiTik            := ::oSender:oTiketCabecera:nUbiTik
    ::cCodigoFormaPago   := ::oSender:oTiketCabecera:cFpgTik
+
+   ::InitCobros()
   
    if lImporteExacto()
       Return ::lCobroExacto()

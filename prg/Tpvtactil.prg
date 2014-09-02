@@ -9363,7 +9363,7 @@ METHOD UltimoCambio()
 	end if
 
 	if !Empty( ::oTotalTicket )
-	 	::oTotalTicket:SetText( abs( ::oTpvCobros:Total() - ::oTpvCobros:nGetEntregado ) )
+	 	::oTotalTicket:SetText( abs( ::oTpvCobros:Total() - ::oTpvCobros:Entregado ) )
 	end if
 
 RETURN ( Self )

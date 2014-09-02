@@ -692,35 +692,21 @@ METHOD OnClickTodos() CLASS TpvListaTicket
 
    CursorWait()
 
-   msgAlert( 1 )
-
    ::UnSelectButtons()
 
-   msgAlert( 2 )
-
    ::oBtnTodos:Selected()
-
-   msgAlert( 3 )
 
    if file( ::oSender:oTiketCabecera:cFile )
       ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
    end if 
 
-   msgAlert( 4 )
-
    ::oSender:oTiketCabecera:OrdSetFocus( "dFecTik" )
    ::oSender:oTiketCabecera:GoTop()
 
-   msgAlert( 5 )
-
    CursorWE()
-
-   msgAlert( 6 )
 
    ::oBrwListaTicket:Refresh()
    ::oBrwListaTicket:SelectOne()
-
-   msgAlert( 7 )
 
    ::oDlg:cTitle( "Lista de tickets" )
 

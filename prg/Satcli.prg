@@ -1181,7 +1181,8 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Obra",;
                "Agente",;
                "Operario",;
-               "Categoría";
+               "Categoría",;
+               "Situación";
       MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( TDataView():SatClientes( nView ) );
@@ -1302,13 +1303,6 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Situación"
-         :bEditValue       := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cSituac ) }
-         :nWidth           := 80
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cCodCli ) }
@@ -1330,6 +1324,15 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Situación"
+         :cSortOrder       := "cSituac"
+         :bEditValue       := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cSituac ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1691,6 +1694,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    local cTipSat
    local oSayDias
    local oBmpGeneral
+   local oBmpCategoria
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -2632,10 +2636,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ID       350 ;
          IDTEXT   351 ;         
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cCategoria( aGet[ _CCODCAT ], dbfCategoria, aGet[ _CCODCAT ]:oHelpText ) ) ;
-         ON HELP  ( BrwCategoria( aGet[ _CCODCAT ], aGet[ _CCODCAT ]:oHelpText ) ) ;
+         VALID    ( cCategoria( aGet[ _CCODCAT ], dbfCategoria, aGet[ _CCODCAT ]:oHelpText, oBmpCategoria ) ) ;
+         ON HELP  ( BrwCategoria( aGet[ _CCODCAT ], aGet[ _CCODCAT ]:oHelpText, oBmpCategoria ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
+
+      REDEFINE BITMAP oBmpCategoria ;
+         ID       352 ;
+         TRANSPARENT ;
+         OF       oFld:aDialogs[1]   
 
       /*
       Segunda caja de dialogo--------------------------------------------------
@@ -3000,6 +3009,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    oBmpEmp:end()
    oBmpDiv:end()
    oBmpGeneral:End()
+   oBmpCategoria:End()
 
    ( TDataView():SatClientes( nView ) )->( ordSetFocus( nOrd ) )
 
@@ -9619,6 +9629,9 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodCat", "cCodCat", {|| Field->cCodCat } ) )
 
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cSituac", "cSituac", {|| Field->cSituac } ) )
+
       ( cSatCliT )->( dbCloseArea() )
 
    else
@@ -9698,6 +9711,9 @@ FUNCTION rxSatCli( cPath, oMeter )
 
       ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliS.CDX", "nNumRef", "cSerSat + Str( nNumSat ) + cSufSat + cRef + Str( nNumLin )", {|| Field->cSerSat + Str( Field->nNumSat ) + Field->cSufSat + Field->cRef + + Str( Field->nNumLin ) } ) )
+
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliS.CDX", "cRef", "cRef + cNumSer", {|| Field->cRef + Field->cNumSer } ) )
 
       ( cSatCliT )->( dbCloseArea() )
    else
