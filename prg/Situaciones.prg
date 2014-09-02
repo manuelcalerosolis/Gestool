@@ -22,7 +22,7 @@ CLASS TSituaciones FROM TMant
 
    METHOD LoadSituaciones()
    METHOD LoadSituacionesFromFiles()            INLINE ( if( ::OpenFiles(), ( ::LoadSituaciones(), ::CloseFiles() ), ) )
-   METHOD GetSituaciones()                      INLINE ( if( empty( ::aSituaciones ), ::LoadSituacionesFromFiles() , ), ::aSituaciones ) 
+   METHOD GetSituaciones()                      INLINE ( ::LoadSituacionesFromFiles(), ::aSituaciones ) 
 
 END CLASS
 
@@ -119,8 +119,6 @@ Method lSaveResource( oDlg )
       ::oGetCodigo:SetFocus()
       Return nil
    end if
-
-   ::loadSituaciones()
 
 Return ( oDlg:end( IDOK ) )
 
