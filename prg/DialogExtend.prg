@@ -33,6 +33,10 @@ local hClass
 
   __clsAddMsg( hClass, "SelectOne", {|Self| Self, ::Select( 0 ), ::Select( 1 ) }, 3, nil, 1, .f., .f. ) 
 
+  hClass        := TWBrowse():ClassH
+
+  __clsAddMsg( hClass, "_lDrawHeaders", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
+
 Return nil
 
 //----------------------------------------------------------------------------//

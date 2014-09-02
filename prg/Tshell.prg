@@ -2006,8 +2006,13 @@ METHOD ClickOnHeader( oCol ) CLASS TShell
 
    if !Empty( oCol )
       if aScan( ::aPrompt, oCol:cHeader ) != 0
+
          ::oWndBar:SetComboBoxSet( oCol:cHeader )
-         oCol:SetOrder()
+/*
+         msgAlert( oCol:SetOrder(), "SetOrder" )
+         msgAlert( oCol:cHeader, "cHeader")
+         msgAlert( ( ::oBrw:cAlias )->( OrdSetFocus() ) )
+*/
       end if
    end if
 
@@ -2375,6 +2380,7 @@ Method CreateXBrowse() CLASS TShell
       ::oBrw:l2007            := .f.
 
       ::oBrw:lRecordSelector  := .f.
+      ::oBrw:lAutoSort        := .t.
 
       // Propiedades del control ----------------------------------------------
 

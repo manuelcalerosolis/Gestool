@@ -1,6 +1,10 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "Ini.ch"
+#include "RichEdit.ch" 
+
+#define FW_BOLD                        700
+
 
 //---------------------------------------------------------------------------//
 
@@ -963,3 +967,275 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoProveedor
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetRichEdit 
+
+   DATA oDlg
+
+   DATA oClp
+
+   DATA oRTF
+
+   DATA oBtnPrint
+   DATA oBtnPreview
+   DATA oBtnSearch
+   DATA oBtnCut
+   DATA oBtnCopy
+   DATA oBtnPaste
+   DATA oBtnUndo
+   DATA oBtnRedo
+   DATA oBtnReadOnly
+   DATA oBtnItalics
+   DATA oBtnTextAlignLeft
+   DATA oBtnTextAlignCenter
+   DATA oBtnTextAlignRight
+   DATA oBtnJustified
+   DATA oBtnBullet
+   DATA oBtnUderLine
+   DATA oBtnDateTime
+   
+   DATA oZoom
+   DATA cZoom              INIT "100%"
+   DATA aZoom              INIT { "500%", "200%", "150%", "100%", "75%", "50%", "25%", "10%" }
+   
+   DATA oFuente
+   DATA cFuente            INIT "Arial"
+   DATA aFuente            INIT aGetFont( oWnd() )
+   
+   DATA oSize
+   DATA cSize              INIT "10"
+   DATA aSize              INIT { " 6", " 7", " 8", " 9", "10", "11", "12", "13", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }
+   
+   DATA aRatio             INIT { { 5, 1 }, { 2, 1 }, { 3, 2 }, { 1, 1 }, { 3, 4 }, { 1, 2 }, { 1, 4 }, { 1, 10 } }
+
+   DATA lItalic            INIT .f.
+   DATA lUnderline         INIT .f.
+   DATA lBullet            INIT .f.
+
+   METHOD Redefine( id, oDlg )
+
+   METHOD RTFRefreshButtons()
+
+   END CLASS
+
+//--------------------------------------------------------------------------//
+
+   METHOD Redefine( id, oDlg ) CLASS GetRichEdit 
+
+      DEFAULT id  := 600
+
+      DEFINE CLIPBOARD ::oClp OF ::oDlg FORMAT TEXT
+
+      REDEFINE BTNBMP ::oBtnPrint ;
+         ID       ( id ) ;
+         WHEN     ( .t. ) ;
+         OF       ::oDlg ;
+         RESOURCE "IMP16" ;
+         NOBORDER ;
+         TOOLTIP  "Imprimir" ;
+         ACTION   ( ::oRTF:Print(), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnPreview ;
+         ID       ( ++id ) ;
+         WHEN     ( .t. ) ;
+         OF       ::oDlg ;
+         RESOURCE "PREV116" ;
+         NOBORDER ;
+         TOOLTIP  "Previsualizar" ;
+         ACTION   ( ::oRTF:Preview( "Class TRichEdit" ) )
+
+      REDEFINE BTNBMP ::oBtnSearch ;
+         ID       ( ++id ) ;
+         WHEN     ( .t. ) ;
+         OF       ::oDlg ;
+         RESOURCE "Bus16" ;
+         NOBORDER ;
+         TOOLTIP  "Buscar" ;
+         ACTION   ( FindRich( ::oRTF ) )
+
+      REDEFINE BTNBMP ::oBtnCut ;
+         ID       ( ++id ) ;
+         WHEN     ( ! Empty( ::oRTF:GetSel() ) .and. ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Cut_16" ;
+         NOBORDER ;
+         TOOLTIP  "Cortar" ;
+         ACTION   ( ::oRTF:Cut(), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnCopy ;
+         ID       ( ++id ) ;
+         WHEN     ( ! Empty( ::oRTF:GetSel() ) ) ;
+         OF       ::oDlg ;
+         RESOURCE "Copy16" ;
+         NOBORDER ;
+         TOOLTIP  "Copiar" ;
+         ACTION   ( ::oRTF:Copy(), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnPaste ;
+         ID       ( ++id ) ;
+         WHEN     ( ! Empty( ::oClp:GetText() ) .and. ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Paste_16" ;
+         NOBORDER ;
+         TOOLTIP  "Pegar" ;
+         ACTION   ( ::oRTF:Paste(), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnUndo ;
+         ID       ( ++id ) ;
+         WHEN     ( ::oRTF:SendMsg( EM_CANUNDO ) != 0 ) ;
+         OF       ::oDlg ;
+         RESOURCE "Undo1_16" ;
+         NOBORDER ;
+         TOOLTIP  "Deshacer" ;
+         ACTION   ( ::oRTF:Undo(), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnRedo ;
+         ID       ( ++id ) ;
+         WHEN     ( ::oRTF:SendMsg( EM_CANREDO ) != 0 ) ;
+         OF       ::oDlg ;
+         RESOURCE "Redo_16" ;
+         NOBORDER ;
+         TOOLTIP  "Rehacer" ;
+         ACTION   ( ::oRTF:Redo(), ::oRTF:SetFocus() )
+
+      REDEFINE COMBOBOX ::oZoom ;
+         VAR      ::cZoom ;
+         ITEMS    ::aZoom ;
+         ID       ( ++id ) ;
+         OF       ::oDlg
+
+      ::oZoom:bChange      := {|| ::oRTF:SetZoom( ::aRatio[ ::oZoom:nAt, 1 ], ::aRatio[ ::oZoom:nAt, 2 ] ), ::oRTF:SetFocus()  }
+   
+      REDEFINE COMBOBOX ::oFuente ;
+         VAR      ::cFuente ;
+         ITEMS    ::aFuente ;
+         ID       ( ++id ) ;
+         OF       ::oDlg
+
+      ::oFuente:bChange    := {|| ::oRTF:SetFontName( ::oFuente:VarGet() ), ::oRTF:SetFocus() }
+
+      REDEFINE COMBOBOX ::oSize ;
+         VAR      ::cSize ;
+         ITEMS    ::aSize ;
+         ID       ( ++id ) ;
+         OF       ::oDlg
+
+      ::oSize:bChange      := {|| ::oRTF:SetFontSize( Val( ::oSize:VarGet() ) ), ::oRTF:SetFocus() }
+
+      REDEFINE BTNBMP ::oBtnReadOnly ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Bold" ;
+         NOBORDER ;
+         TOOLTIP  "Negrita" ;
+         ACTION   ( ::lBold  := !::lBold, ::oRTF:SetBold( ::lBold ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnItalics ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Italics_16" ;
+         NOBORDER ;
+         TOOLTIP  "Cursiva" ;
+         ACTION   ( ::lItalic := !::lItalic, ::oRTF:SetItalic( ::lItalic ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnUderLine;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Underlined_16" ;
+         NOBORDER ;
+         TOOLTIP  "Subrayado" ;
+         ACTION   ( ::lUnderline := !::lUnderline, ::oRTF:SetUnderline( ::lUnderline ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnTextAlignLeft ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Align_Left_16" ;
+         NOBORDER ;
+         TOOLTIP  "Izquierda" ;
+         ACTION   ( ::oRTF:SetAlign( PFA_LEFT ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnTextAlignCenter  ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Center" ;
+         NOBORDER ;
+         TOOLTIP  "Centro" ;
+         ACTION   ( ::oRTF:SetAlign( PFA_CENTER ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnTextAlignRight ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Align_Right_16" ;
+         NOBORDER ;
+         TOOLTIP  "Derecha" ;
+         ACTION   ( ::oRTF:SetAlign( PFA_RIGHT ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnTextJustify ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly ) ;
+         OF       ::oDlg ;
+         RESOURCE "Text_Justified_16" ;
+         NOBORDER ;
+         TOOLTIP  "Justificado" ;
+         ACTION   ( ::oRTF:SetAlign( PFA_JUSTIFY ), ::oRTF:SetFocus() )
+
+      REDEFINE BTNBMP ::oBtnBullet ;
+         ID       ( ++id ) ;
+         WHEN     ( ! ::oRTF:lReadOnly .and. ! ::oRTF:GetNumbering() ) ;
+         OF       ::oDlg ;
+         RESOURCE "Pin_Blue_16" ;
+         NOBORDER ;
+         TOOLTIP  "Viñetas" ;
+         ACTION   ( ::lBullet := !::lBullet, ::oRTF:SetBullet( ::lBullet ), ::oRTF:SetFocus() )
+
+      REDEFINE RICHEDIT ::oRTF ;
+         VAR      ::cRTF ;
+         ID       ( ++id ) ;
+         OF       ::oDlg
+
+      ::oRTF:bChange    := { || ::RTFRefreshButtons() }
+
+   RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+   METHOD RTFRefreshButtons() CLASS GetRichEdit 
+
+      local aChar    := REGetCharFormat( ::oRTF:hWnd )
+   
+      ::lBold        := aChar[ 5 ] == FW_BOLD
+      ::lItalic      := aChar[ 6 ]
+      ::lUnderline   := aChar[ 7 ]
+      ::lBullet      := REGetBullet( ::oRTF:hWnd )
+   
+      if ::oBtnCut:lWhen()
+         ::oBtnCut:Enable()
+      else
+         ::oBtnCut:Disable()
+      end if
+   
+      ::oBtnCut:Refresh()
+   
+      if ::oBtnCopy:lWhen()
+         ::oBtnCopy:Enable()
+      else
+         ::oBtnCopy:Disable()
+      end if
+   
+      ::oBtnCopy:Refresh()
+   
+   RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+
+
+

@@ -15,6 +15,8 @@
 
 CLASS IXBrowse FROM TXBrowse
 
+   CLASSDATA lRegistered   AS LOGICAL
+
    CLASSDATA  dbfUsr
    CLASSDATA  lOpenData    AS LOGIC       INIT .f.
 

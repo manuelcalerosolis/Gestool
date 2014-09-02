@@ -4,7 +4,8 @@
 #include "xbrowse.ch"
 #include "Report.ch"
 #include "dtpicker.ch"
-#include "hbcompat.ch"
+#include "dbinfo.ch"
+#include "adodef.ch"
 
 #xtranslate MinMax( <xValue>, <nMin>, <nMax> ) => ;
    Min( Max( <xValue>, <nMin> ), <nMax> )
@@ -96,13 +97,6 @@
 #define WM_MOUSELEAVE       675
 #define PM_REMOVE        0x0001
 
-#define DBS_EXTYPE   6
-#define DBS_PIC      7
-#define DBS_TAG      8
-#define DBS_BLOCK    9
-#define DBS_ASIZE    DBS_BLOCK
-
-/*
 #ifdef __XHARBOUR__
    #xtranslate hb_hKeyAt( <h>, <n> )     => hGetKeyAt( <h>, <n> )
    #xtranslate hb_hValueAt( <h>, <n> )   => hGetValueAt( <h>, <n> )
@@ -110,8 +104,12 @@
    #xtranslate hb_WildMatch( <a>, <b> [, <c> ] ) => WildMatch( <a>, <b> [, <c> ] )
    #xtranslate HB_STRTOHEX( <c> ) => STRTOHEX( <c> )
    #xtranslate HB_HEXTOSTR( <c> ) => HEXTOSTR( <c> )
+   #xtranslate HB_CToT( <c> )     => CToT( <c> )
+   #xtranslate HB_TToS( <t> )     => TToS( <t> )
 #endif
 
+/*
+// this is included in fivewin.ch
 #ifndef __XHARBOUR__
    #xtranslate \<|[<x,...>]| => {|<x>|
    #xcommand > [<*x*>]       => } <x>
@@ -121,7 +119,7 @@
 //------------------------------------------------------------------------------
 
 static lExcelInstl, lCalcInstl
-static nxlLangID, cxlTrue := "=(1=1)", cxlFalse := "=(1=0)", cxlSum, cxlSubTotal, lxlEnglish := .f., hLib
+static nxlLangID, cxlTrue := "=(1=1)", cxlFalse := "=(1=0)", cxlSum, lxlEnglish := .f., hLib
 
 static bXBrowse
 
@@ -256,12 +254,14 @@ CLASS TXBrowse FROM TControl
         lAllowColHiding,;     // If true col hiding is allowed
         lColDividerComplete,; // If true the vertical lines are displayed to the bottom of the browse even
         ;                     // there are not enough data rows
+        lFullGrid,;           // Draw full horiz and vert lines even if not all rows have data
         lFastEdit, ;          // Go to edit mode just pushing a alpha or digit char on a editable column
         ;                     // (incompatible with incremental seek and highlite row)
         lEditMode,;           // Some column is in edit mode (used internally)
         lEdit,;
         lRefreshOnlyData,;    // True when only the data should be painted (used internally)
-        l2007 ;               // 2007 look
+        l2007, ;              // 2007 look
+        lFlatStyle ;          // Flat Style
         AS LOGICAL
 
    // Datas for Multiselect
@@ -269,11 +269,13 @@ CLASS TXBrowse FROM TControl
    ACCESS lMultiSelect  INLINE IfNil( ::hMultiSelect, ( ::nMarqueeStyle == MARQSTYLE_HIGHLROWMS .or. ;
                                                         ::nMarqueeStyle == MARQSTYLE_HIGHLWIN7 ) )
    ASSIGN lMultiSelect( lSet ) INLINE ( ::hMultiSelect := lSet )
+   DATA   bOnMultiSelect
 
    // Datas for Excel Compatibility
    DATA lFormulaEdit    AS LOGICAL INIT .f.  // If .t. enables entry of formula starting with '=' for numerics
    DATA lEnterKey2Edit  AS LOGICAL INIT .t.
    DATA lF2KeyToEdit    AS LOGICAL INIT .f.
+   DATA lFreezeLikeExcel AS LOGICAL INIT .f.
 
    // Data for Incremental Seeks/Filters
    DATA lSeekWild       AS LOGICAL INIT .f.
@@ -282,12 +284,21 @@ CLASS TXBrowse FROM TControl
    DATA cFilterFld
    // end of block
 
+   // Data for SQLRDD compatibility
+   DATA lSqlRDD      INIT .f.
+   DATA nSqlRddMode  AS NUMERIC INIT 0 READONLY
+   // eo:sqlrdd
+   DATA lRelyOnKeyNo AS LOGICAL INIT .t. READONLY
+   // Buffer
+   DATA aBookMarks   AS ARRAY INIT Array(0) READONLY
+   //
    DATA lVThumbTrack    AS LOGICAL INIT .f. // When .t., thumbtrack scrolls the browse. (not suited for slow data access)
    DATA lColChangeNotify   AS LOGICAL INIT .f. // if true bChange is evaluated when col is changed
    DATA lAutoSort       AS LOGICAL INIT .f.  // used internally. do not use in applications
+   DATA lSortDescend    AS LOGICAL INIT .t.
    DATA lAllowCopy      AS LOGICAL INIT .t.
    DATA lCanPaste       AS LOGICAL INIT .f.
-   DATA lExcelCellWise  AS LOGICAL INIT .t.
+   DATA lExcelCellWise  AS LOGICAL INIT .f.
    DATA lMergeVert      AS LOGICAL INIT .f.  // used internally
    DATA lExitGetOnTypeOut AS LOGICAL INIT .f.
    DATA lOemAnsi        AS LOGICAL INIT .f.  // When .t. SetRDD() method creates codeblock to convert oem/ansi for bEditValue.
@@ -301,26 +312,35 @@ CLASS TXBrowse FROM TControl
    DATA lDisplayZeros  // init nil
 
    DATA nSaveMarq    // used internally
+   // ADO
    DATA oRS          // ADO recordset if Method SetAdo() is used
+   DATA lRsCanResync INIT .f.                              // Internally used for ADO Browses
+   DATA lAdoOverRideConflicts AS LOGICAL INIT .t.  // Can be modified by programmer
+   //
    DATA oMysql       // TMySQL recordset if Method Setmysql() is used
    DATA oTree, oTreeItem  // Do not set them directly, instead use SetTree method. Can be accessed
    DATA oColToolTip     // Used internally
+   DATA nRowToolTip     // Used Internally
    DATA bOnRowLeave
    DATA bOnSkip         INIT { || nil }
    DATA lEdited         INIT .f.
    DATA bLock           INIT { || .t. }
-   DATA bUnLock
+   DATA bUnLock         INIT { || nil }
+   DATA bSaveData       INIT { || .t. }
+   DATA bDelete, bEdit
    DATA aStretchInfo    // Internal use only
    DATA nStretchCol
    DATA bOnSwapCol
    DATA nRightMargin
    DATA nBottomMargin
+   DATA bOnRefresh
 
    // Earlier Group Header related DATA. Now Obsolete
    DATA aHeaderTop,; // Array of header string Top
           nHeader
 
    DATA lContrastClr INIT .t.
+   DATA lReadOnly       AS LOGICAL INIT .f.
 
    // DATAS used for Kinetic scrolling
    DATA nStartMRow,;
@@ -333,23 +353,21 @@ CLASS TXBrowse FROM TControl
    DATA lDown INIT   .t.
    DATA lPressed INIT.f.
    DATA lMoved PROTECTED INIT .f.
-   // End of Datas used for Kinetic Scrolling ( used Internally )
-
-   DATA aBitmaps INIT Array( 0 )
-
    DATA nStopRatio       AS NUMERIC INIT 4
    DATA nMaxRowToAdvance AS NUMERIC INIT 40
    DATA nMinVelocity     AS NUMERIC INIT 50
    DATA lDrawSelected    AS LOGICAL INIT .T.
-   //DATA hCursorHand
+   DATA hCursorHand
 
    DATA lKineticBrw      AS LOGICAL INIT .T.
+   // End of Datas used for Kinetic Scrolling ( used Internally )
 
+   DATA aBitmaps INIT Array( 0 )
    DATA nSizePen INIT 1
    DATA nColorPen INIT CLR_BLACK
 
+   CLASSDATA oActive
    CLASSDATA lKinetic    AS LOGICAL INIT SetKinetic()
-
    CLASSDATA lRegistered AS LOGICAL // used internally
 
    METHOD New( oWnd )
@@ -359,19 +377,23 @@ CLASS TXBrowse FROM TControl
 
    METHOD EraseBkGnd( hDC ) INLINE 1
 
+   METHOD cGenPrg()
+
    METHOD SetRDD( lAddColumns, lAutoSort, aFldNames, aRows )
    METHOD SetArray( aData, lAutoSort, nColOrder, aCols, bOnSkip )
    METHOD SetoDbf( oDbf, aCols, lAutoSort, lAutoCols, aRows )
    METHOD SetExcelRange( oRange, lHeaders, aCols )
    METHOD SetAdo( oRs, lAddCols, lAutoOrder, aFldNames ) // ADO object
-   METHOD SetTree( oTree, aResource, bOnSkip )
+   METHOD SetTree( oTree, aResource, bOnSkip, aCols )
+   METHOD SetColsForTree( uData )
+
    METHOD GetColsData( cData, lByCreationOrder )
    METHOD SetColsData( cData, aValues, lByCreationOrder )
 
    METHOD SetGroupHeader( cGrpHdr, nFrom, nUpto, oFont )
    METHOD SetGroupTotal( aCols, cHead, nType, oFont )
    METHOD ClearBlocks()
-   METHOD SetColFromADO( cnCol, lAutoOrder )  // Used internally
+   METHOD SetColFromADO( cnCol, lAutoOrder, aColNames, lJet )  // Used internally
    METHOD ArrCell( nRow, nCol, cFmt )
    METHOD ArrCellSet( nRow, nCol, uNewVal )
 
@@ -393,6 +415,7 @@ CLASS TXBrowse FROM TControl
    METHOD CreateFromResource( nId )
 
    METHOD SelectCol( nCol, lOffSet )
+   METHOD GoToCol( oCol )
    METHOD GoLeft( lOffset, lRefresh )
    METHOD GoRight( lOffset, lRefresh )
    METHOD GoLeftMost()
@@ -412,15 +435,21 @@ CLASS TXBrowse FROM TControl
                                   ( ::VSetRange( 1, ::nLen ), ::VUpdatePos() ), ),;
                               ::nLen )
 
-   METHOD KeyNo( n ) SETGET
-   METHOD BookMark( uBm ) SETGET
-   METHOD Skip( n )  INLINE Eval( ::bSkip, n )
-   METHOD Bof()      INLINE Eval( ::bBof )
-   METHOD Eof()      INLINE Eval( ::bEof )
+   ACCESS BookMark      INLINE Eval( ::bBookMark )
+   ASSIGN BookMark(u)   INLINE ( Eval( ::bBookMark, u ), Eval( ::bBookMark ) )
+   ACCESS KeyNo         INLINE Eval( ::bKeyNo, nil, Self )
+   ASSIGN Keyno( n )    INLINE ( Eval( ::bKeyNo, n, Self ), Eval( ::bKeyNo, nil, Self ) )
+   METHOD Skip( n )     INLINE Eval( ::bSkip, n )
+   METHOD Bof()         INLINE Eval( ::bBof )
+   METHOD Eof()         INLINE Eval( ::bEof )
 
    METHOD SaveState( aData )
    METHOD RestoreState( cInfo )
    METHOD OldRestoreState( cInfo )  // retained for comatibility 10.8 for another few versions
+
+   METHOD Lock()        INLINE If( ::bLock == nil,  .t.,  Eval( ::bLock ) )
+   METHOD UnLock()      INLINE If( ::bUnLock == nil, nil, Eval( ::bUnLock ) )
+   METHOD SaveData()    INLINE If( ::bSaveData == nil, .t., Eval( ::bSaveData, Self ) )
 
    METHOD Seek( cSeek )
    METHOD RddIncrSeek( cseek, uSeek )
@@ -437,20 +466,19 @@ CLASS TXBrowse FROM TControl
 
    METHOD SelectAll()  INLINE ::Select( 4 )
    METHOD SelectNone() INLINE ::Select( 0 )
-   METHOD SelectOne()  INLINE ( ::Select( 0 ), ::Select( 1 ) )
 
    METHOD Adjust()
    METHOD CheckSize()
-   METHOD Resize( nSizeType, nWidth, nHeight ) INLINE ( ::MakeBrush(), ::ColStretch(), ::Super:ReSize( nSizeType, nWidth, nHeight ), ::Refresh() )
+   METHOD Resize( nSizeType, nWidth, nHeight ) INLINE ( ::MakeBrush(), ::ColStretch(), ::Super:ReSize( nSizeType, nWidth, nHeight ), If( ::lAdjusted, ::Refresh(), ) )
    METHOD Change( lRow ) PROTECTED
    METHOD MakeTotals( aCols )
    METHOD Eval( bBlock, bFor, bWhile, nNext, nRec, lRest )
-   METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy )
+   METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy, cPDF )
    METHOD ToExcel( bProgress, nGroupBy, aCols )
-   METHOD ToCalc(  bProgress, nGroupBy, nPasteMode, aSaveAs )
+   METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols )
    METHOD ToDbf( cFile, bProgress, aCols, lPrompt )
    METHOD CurrentRow()
-
+   //
    METHOD AddBitmap( uBmp ) INLINE fnAddBitmap( Self, uBmp )
    METHOD aBitmap( n )      INLINE ( n := Abs( IfNil( n, 0  ) ), If( n > 0 .and. n <= Len( ::aBitmaps ), ::aBitmaps[ n ], nil ) )
 
@@ -463,6 +491,7 @@ CLASS TXBrowse FROM TControl
    METHOD PaintFooter( hDC, nBrwWidth, nBrwHeight, hWhitePen, hGrayPen )
 
    METHOD Refresh( lComplete )
+   METHOD CalcRowSelPos() PROTECTED // Used internally
    METHOD DelRePos()
 
    METHOD DrawLine( lSelected, nRowLine )
@@ -470,7 +499,7 @@ CLASS TXBrowse FROM TControl
    METHOD FullPaint() INLINE ( ::lTransparent .or. ::lMergeVert .or. ;
                                ::nMarqueeStyle == MARQSTYLE_HIGHLWIN7 )
 
-   METHOD GotFocus( hCtlFocus )  INLINE ( ::Super:GotFocus( hCtlFocus ),;
+   METHOD GotFocus( hCtlFocus )  INLINE ( ::oActive := Self, ::Super:GotFocus( hCtlFocus ),;
                                           If( GetParent( hCtlFocus ) != ::hWnd, ::Super:Refresh( .f. ),) )
    METHOD LostFocus( hCtlFocus ) INLINE ( ::Super:LostFocus( hCtlFocus ),;
                                           If( GetParent( hCtlFocus ) != ::hWnd, ::Super:Refresh( .f. ), ) )
@@ -533,7 +562,8 @@ CLASS TXBrowse FROM TControl
    METHOD GetDisplayCols()
    METHOD GetVisibleCols() // returns an array of visible (Not hided) column objects
    METHOD GetDisplayColsWidth( aOptionalReturnedSizes )
-   METHOD ColAtPos( nPos ) INLINE ::aCols[ ::aDisplay[ MinMax( If( nPos == nil .or. nPos == 0, 1, nPos ), 1, Len( ::aDisplay ) ) ] ]
+   METHOD ColAtPos( nPos ) INLINE ::aCols[ ::aDisplay[ MinMax( If( nPos == nil .or. ;
+                                  nPos == 0, 1, nPos ), 1, Len( ::aDisplay ) ) ] ]
    METHOD ColPos( oCol )
    METHOD SelectedCol() INLINE ::ColAtPos( ::nColSel )
 
@@ -578,6 +608,7 @@ CLASS TXBrowse FROM TControl
    METHOD Copy()
    METHOD Paste( cText )
    METHOD aCellCoor( nRow, nCol ) // --> { nTop, nLeft, nBottom, nRight } in pixels for cell at nVisibleRow, nVisibleCol
+   METHOD CellBitmap( nRow, nCol )
    METHOD SetPos( nRow, nCol, lPixel )
 
    METHOD SetBackGround( uBack, nBckMode ) // call with no paratmer to clear background
@@ -590,6 +621,14 @@ CLASS TXBrowse FROM TControl
    METHOD NcMouseMove( nHitTestCode, nRow, nCol )
    METHOD MouseLeave()
 
+   ACCESS uDataSource   INLINE IfNil( ::oRs, ::oMySql, ::oDbf, ::oTree, ::cAlias, ::aArrayData )
+   METHOD DataRow( lNew, cFieldList, lSourceData )
+   METHOD EditSource( lNew, cFieldList ) INLINE ::Edit( lNew, cFieldList, .t. )
+   METHOD Edit( lNew, cFieldList, lSourceData )
+   METHOD Delete()         INLINE If( ::lReadOnly .or. ::nLen < 1 .or. ::bDelete == nil, nil, ;
+                                    ( Eval( ::bDelete, Self ), ::Refresh(), ::SetFocus() ) )
+   METHOD SetChecks( aBmp, lEdit, aPrompt )
+   //
    ERROR HANDLER OnError
 
 ENDCLASS
@@ -600,18 +639,24 @@ METHOD New( oWnd ) CLASS TXBrowse
 
    local hBmp
 
+   BrwClasses( ::ClassName ) // inserted in FWH 13.03
+
    DEFAULT oWnd := GetWndDefault()
 
    ::oWnd  := oWnd
-
+/*
    if oWnd != nil
       if oWnd:oFont == nil
          oWnd:GetFont()
       endif
       ::oFont := oWnd:oFont
    endif
+*/
 
-   ::l2007        := .f. // ( ColorsQty() > 256 )
+   ::GetFont()
+
+   ::l2007        := ( ColorsQty() > 256 )
+   ::lFlatStyle   := .f.
    ::aCols        := {}
    ::aSelected    := {}
 
@@ -623,7 +668,8 @@ METHOD New( oWnd ) CLASS TXBrowse
    ::bClrFooter   := {|| { GetSysColor( COLOR_BTNTEXT ), If( ::l2007, nRGB( 231, 242, 255 ), GetSysColor( COLOR_BTNFACE ) ), ;
                            nRGB( 125, 165, 224 ), nRGB( 203, 225, 252 ) } }
    ::bClrStd      := {|| { CLR_BLACK, GetSysColor( COLOR_WINDOW )} }
-   ::bClrSel      := {|| { CLR_BLACK, GetSysColor( COLOR_INACTIVECAPTIONTEXT )} }
+//   ::bClrSel      := {|| { CLR_BLACK, GetSysColor( COLOR_INACTIVECAPTIONTEXT )} }
+   ::bClrSel      := {|| { GetSysColor( COLOR_INACTIVECAPTIONTEXT ), GetSysColor( COLOR_INACTIVECAPTION )} }
    ::bClrSelFocus := {|| { CLR_WHITE, GetSysColor( COLOR_HIGHLIGHT )} }
 
    // ::bKeyCount := { || 1 }
@@ -639,8 +685,8 @@ METHOD New( oWnd ) CLASS TXBrowse
 
    ::nTop     := 0
    ::nLeft    := 0
-   ::nBottom  := 100
-   ::nRight   := 100
+   ::nBottom  := oWnd:nHeight // 100
+   ::nRight   := oWnd:nWidth  // 100
 
    ::nStyle := nOr( WS_CHILD, WS_BORDER, WS_VISIBLE, WS_TABSTOP )
 
@@ -699,7 +745,7 @@ METHOD New( oWnd ) CLASS TXBrowse
    ::nHeader          := 0          // Obsolete
    ::aHeaderTop       := {}         // Obsolete
 
-   // ::hCursorHand      := CursorOpenHand()
+   ::hCursorHand      := CursorOpenHand()
    ::lKineticBrw      := ::lKinetic
    ::lAdjusted        := .f.
 
@@ -710,6 +756,10 @@ return Self
 METHOD Destroy() CLASS TXBrowse
 
    local nFor
+
+   if ::oActive == Self
+      ::oActive   := nil
+   endif
 
    ::lMoved = .F.
 
@@ -753,6 +803,8 @@ METHOD Destroy() CLASS TXBrowse
       ::hRowPen := nil
    endif
 
+   ::oRs := ::oMySql := ::oDbf := nil // Necessary to release the reference to oRs from memory
+
 return ::Super:Destroy()
 
 //----------------------------------------------------------------------------//
@@ -792,6 +844,8 @@ METHOD CreateFromCode() CLASS TXBrowse
       ::oWnd:DefControl( Self )
    endif
 
+   DEFAULT ::cVarName := "oBrw" + ::GetCtrlIndex()
+
 return Self
 
 //----------------------------------------------------------------------------//
@@ -813,6 +867,25 @@ METHOD CreateFromResource( nId ) CLASS TXBrowse
    ::oWnd:DefControl( Self )
 
 return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD cGenPrg() CLASS TXBrowse
+
+   local cCode := ""
+   local n
+
+   cCode += CRLF + "   @ " + Str( ::nTop, 3 ) + ", " + Str( ::nLeft, 3 ) + ;
+            " XBROWSE " + ::cVarName + ;
+            " OF " + ::oWnd:cVarName + ;
+            "; " + CRLF + ;
+            "      SIZE " + ;
+            AllTrim( Str( ::nWidth ) ) + ", " + ;
+            AllTrim( Str( ::nHeight ) ) + " PIXEL DESIGN" + CRLF + CRLF
+
+   cCode += "   " + ::cVarName + ":CreateFromCode()" + CRLF
+
+return cCode
 
 //----------------------------------------------------------------------------//
 
@@ -912,7 +985,7 @@ return Self
 
 //----------------------------------------------------------------------------//
 
-METHOD BrwFitSize( lReSize ) CLASS TXBrowse
+METHOD BrwFitSize( lReSize, nMaxRows ) CLASS TXBrowse
 
    local oRect, nX, nY
    local nWidth      := ::nWidth
@@ -920,14 +993,14 @@ METHOD BrwFitSize( lReSize ) CLASS TXBrowse
 
    if ::lAdjusted
 
-      DEFAULT lReSize   := .f.
+      DEFAULT lReSize   := .f., nMaxRows := ::RowCount()
 
       oRect    := ::GetCliRect()
       nX             := nWidth  - oRect:nWidth
       nY             := nHeight - oRect:nHeight
 
       nWidth         := ::GetDisplayColsWidth() + 1 + nX
-      nHeight        := Max( 3, Min( ::RowCount(), ::KeyCount() ) ) * ::nRowHeight + ;
+      nHeight        := Max( 3, Min( nMaxRows, ::KeyCount() ) ) * ::nRowHeight + ;
                         If( ::lHeader, ::nHeaderHeight, 0 ) + ;
                         If( ::lFooter, ::nFooterHeight, 0 ) + 1 + nY
 
@@ -961,6 +1034,10 @@ METHOD Adjust() CLASS TXBrowse
       if ValType( Eval( ::bClrSel )[ 2 ] ) != 'A'
          ::bClrSel := ::bClrSelFocus
       endif
+   endif
+
+   if ::lFlatStyle
+      ::l2007  := .f.
    endif
 
    ::CheckSize()
@@ -1003,6 +1080,13 @@ METHOD Adjust() CLASS TXBrowse
       ::nFooterHeight := ( nHeight * ::nFooterLines ) + ROW_EXTRAHEIGHT + 3 // lines to give 3d look
    endif
 
+   for each oCol in ::aCols
+      if ! Empty( oCol:aRows )
+         AEval( oCol:aRows, { |o| oCol:nWidth := Max( oCol:nWidth, o:nWidth ) } )
+         AEval( oCol:aRows, { |o| o:nWidth := oCol:nWidth } )
+      endif
+   next oCol
+
    if ::nRowHeight == nil
       nHeight := 0
       for nFor := 1 to nLen
@@ -1012,9 +1096,7 @@ METHOD Adjust() CLASS TXBrowse
       for each oCol in ::aCols
          if ! Empty( oCol:aRows )
             h  := 0
-            AEval( oCol:aRows, { |o| h += o:nDataHeight, ;
-                                oCol:nWidth := Max( oCol:nWidth, o:nWidth ) } )
-            AEval( oCol:aRows, { |o| o:nWidth := oCol:nWidth } )
+            AEval( oCol:aRows, { |o| h += o:nCellHeight } )
             nHeight  := Max( nHeight, Ceiling( h / ::nDataLines ) )
          endif
       next oCol
@@ -1168,9 +1250,9 @@ return ::nHeaderHeight
 
 METHOD Change( lRow ) CLASS TXBrowse
 
-   if ::bChange != nil
+   DEFAULT lRow := .t.
 
-      DEFAULT lRow := .t.
+   if ::bChange != nil
 
       if lRow .or. ::lColChangeNotify
          Eval( ::bChange, Self, lRow )
@@ -1184,44 +1266,63 @@ return nil
 
 METHOD Refresh( lComplete )  CLASS TXBrowse
 
-   local nKeyNo
+   local nKeyNo, nMaxRows, nBookMark, nTemp
 
    DEFAULT lComplete := .F.
 
    ::KeyCount()
 
    if lComplete
-
       ::nRowSel  = 1
       ::nArrayAt = Min( 1, ::nLen )
-
    else
-
-      nKeyNo     = ::KeyNo()
-      ::nArrayAt = Min( ::nArrayAt, ::nLen )
-      ::nRowSel  = Max( 1, Min( ::nRowSel, ::nLen ) )
-      ::nRowSel  = Max( 1, Min( ::nRowSel, nKeyNo ) ) // bKeyNo for ADS is approx. can be zero also
-
       ::DelRepos()  // if the row is deleted for RDD
-
-      if nKeyNo >= ::nLen .and. ::nLen > 1
-         ::nRowSel   := Min( nKeyNo, ::RowCount() )
+      nKeyNo     = ::KeyNo()
+      if nKeyNo > ::nLen         // Rare case
+         ::KeyNo  := ::nLen
+         nKeyNo  = ::nLen
       endif
-/*
-      if nKeyNo <= ::RowCount()
-         ::nRowSel   := nKeyNo
-      endif
-*/
       if ::nArrayAt == 0 .and. ::nLen > 0
          // when one or more rows are added to a blank array
          ::nArrayAt  := 1
       endif
-
    endif
-
+   ::CalcRowSelPos()
    ::GetDisplayCols()
 
-return ::Super:Refresh( .T. )
+   if ::bOnRefresh != nil
+      Eval( ::bOnRefresh, Self )
+   endif
+
+return ::Super:Refresh( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD CalcRowSelPos() CLASS TXBrowse
+
+   local nKeyNo, nMaxRows, nBookMark, nSkipped
+
+   nMaxRows    := ::RowCount()
+   if ::lRelyOnKeyNo
+      nKeyNo      := ::KeyNo()
+      if ::nLen <= nMaxRows
+         ::nRowSel   := nKeyNo
+      else
+         if ( ::nLen - nKeyNo  ) < ( nMaxRows - ::nRowSel )
+            ::nRowSel   := nMaxRows - ( ::nLen - nKeyNo )
+         endif
+         ::nRowSel   := Max( 1, Min( ::nRowSel, nKeyNo ) )
+      endif
+   else
+      nBookMark   := ::BookMark
+      nSkipped    := ::Skip( nMaxRows - ::nRowSel )
+      ::nRowSel   := Max( ::nRowSel, nMaxRows - nSkipped )
+      ::BookMark  := nBookMark
+      ::nRowSel   := 1 - ::Skip( 1 - ::nRowSel )
+      ::BookMark  := nBookMark
+   endif
+
+return nil
 
 //----------------------------------------------------------------------------//
 
@@ -1272,7 +1373,7 @@ METHOD Paint() CLASS TXBrowse
 
    local aCols, aColors, oRect
    local oCol
-   local nFor, nLen, nRow, nCol, nHeight, nLast, nTemp, nTemp2
+   local nFor, nLen, nRow, nCol, nHeight, nLast, nTemp, nTemp2, nKeyNo
    local nBrwWidth, nBrwHeight, nWidth
    local hBrush, hDC, hGrayPen, hWhitePen, hColPen, hRowPen, hSelBrush
    local nFirstRow, nLastRow, nMaxRows, nRowStyle, nColStyle, nRowPos, nRowHeight, nBookMark, nMarqStyle, nScan
@@ -1311,7 +1412,7 @@ METHOD Paint() CLASS TXBrowse
    end
 
    nLen       := Len( ::aDisplay )
-   aCols      := Array( nLen + 1)
+   aCols      := Array( nLen + 1 )
    nBrwWidth  := ::BrwWidth()
    nBrwHeight := ::BrwHeight()
    nRow       := 0
@@ -1338,14 +1439,18 @@ METHOD Paint() CLASS TXBrowse
    if lRecSel
       nCol += ::nRecSelWidth
       if !lOnlyData
-//         FillRect( hDC, {0, 0, nLastRow + 3, nCol - 1}, ::hBrushRecSel )
          FillRect( hDC, {0, 0, nLastRow + 3, nCol }, ::hBrushRecSel ) // Fills one pixel gap between recsel and data area
          nHeight := ::HeaderHeight()
          nTemp   := nBrwHeight - ::FooterHeight() + 3
-         DrawVert( hDC, nCol - 3, nHeight, nTemp,          hWhitePen )
-         DrawVert( hDC, nCol - 2, nHeight, nTemp,          hGrayPen )
-         DrawVert( hDC, 0,        0,       nBrwHeight + 3, hGrayPen )
-         DrawVert( hDC, 1,        0,       nBrwHeight + 3, hWhitePen )
+         if ::lFlatStyle
+            DrawVert( hDC, nCol - 2, nHeight, nTemp, hColPen )
+            DrawVert( hDC, 0,        0,       nBrwHeight + 3, hColPen )
+         else
+            DrawVert( hDC, nCol - 3, nHeight, nTemp,          hWhitePen )
+            DrawVert( hDC, nCol - 2, nHeight, nTemp,          hGrayPen )
+            DrawVert( hDC, 0,        0,       nBrwHeight + 3, hGrayPen )
+            DrawVert( hDC, 1,        0,       nBrwHeight + 3, hWhitePen )
+         endif
       endif
 
       //nCol --
@@ -1379,163 +1484,160 @@ METHOD Paint() CLASS TXBrowse
    Paint cols data
    */
 
-      ::lRefreshOnlyData := .f.
+   ::lRefreshOnlyData := .f.
 
-      if ::nLen == 0
-         ::EraseData( nFirstRow  )
-         ::DispEnd( aInfo )
-         return nil
+   if ::nLen == 0
+      ::EraseData( nFirstRow  )
+      ::DispEnd( aInfo )
+      return nil
+   endif
+
+   nRowHeight := ::nRowHeight
+   nHeight    := ::DataHeight() // nRowHeight - 2
+   nMaxRows   := ::RowCount()
+   nRowPos    := 1
+   nRow       := nFirstRow
+
+   TRY
+   nBookMark  := ::BookMark
+   CATCH
+   END
+
+   ::nRowSel   := Max( 1, Min( ::nRowSel, nMaxRows ) )
+   if Empty( ::nDataRows )
+      ::CalcRowSelPos()
+   endif
+   ::nRowSel   := 1 - ::Skip( 1 - ::nRowSel )
+
+   if nMarqStyle > MARQSTYLE_HIGHLCELL // .and. aCols[ nLast + 1 ] < nBrwWidth
+      if ::hWnd == GetFocus()
+         hSelBrush := CreateColorBrush( Eval( If( ::bClrRowFocus == nil, ::bClrSelFocus, ::bClrRowFocus ) )[ 2 ] )
+      else
+         hSelBrush := CreateColorBrush( Eval( ::bClrSel )[ 2 ] )
       endif
+   endif
 
-      nRowHeight := ::nRowHeight
-      nHeight    := ::DataHeight() // nRowHeight - 2
-      nMaxRows   := ::RowCount()
-      nRowPos    := 1
-      nRow       := nFirstRow
-      nBookMark  := Eval( ::bBookMark )
+   ::aBookMarks   := {}
+   do while nRowPos <= nMaxRows
 
-   //   Eval( ::bSkip, 1 - Min( ::nRowSel, nMaxRows ) )
-      ::Skip( 1 - Min( ::nRowSel, nMaxRows ) )
-
-      if nMarqStyle > MARQSTYLE_HIGHLCELL // .and. aCols[ nLast + 1 ] < nBrwWidth
-         if ::hWnd == GetFocus()
-            hSelBrush := CreateColorBrush( Eval( If( ::bClrRowFocus == nil, ::bClrSelFocus, ::bClrRowFocus ) )[ 2 ] )
-         else
-            hSelBrush := CreateColorBrush( Eval( ::bClrSel )[ 2 ] )
-         endif
-      endif
-
-      do while nRowPos <= nMaxRows
-
-         // We must also paint some times after the last visible column
-
-         if hSelBrush != nil
-
-            lHighLite := ::lMultiSelect .and. ( Ascan( ::aSelected, Eval( ::bBookMark ) ) > 0 )
-
-//            lHighLite := ( nMarqStyle == MARQSTYLE_HIGHLROWMS .or. ::nMarqueeStyle == MARQSTYLE_HIGHLWIN7 ) .and. ;
-//                         ( Ascan( ::aSelected, Eval( ::bBookMark ) ) > 0 )
-
-            if aCols[ nLast + 1 ] < nBrwWidth
-               nTemp     := nRow + nHeight
-               nTemp2    := aCols[nLast + 1]
-               if nColStyle < LINESTYLE_INSET
-                  nTemp2--
-               endif
-               if lHighLite .and. ::nMarqueeStyle != MARQSTYLE_HIGHLWIN7
-                  FillRect( hDC, {nRow, nTemp2, nTemp, nBrwWidth }, hSelBrush )
-               elseif nMarqStyle == MARQSTYLE_HIGHLROWMS
-//               else
-                  if ! ::lTransparent
-                     hBrush := CreateColorBrush( Eval( ::bClrStd )[ 2 ] )
-                     FillRect( hDC, {nRow, nTemp2, nTemp, nBrwWidth }, hBrush )
-                     DeleteObject( hBrush )
-                  endif
-
-               endif
-            endif
-
-         endif
-
-         for nFor := 1 to nLast
-            if aCols[ nFor ] > nBrwWidth
-               exit
-            endif
-            oCol := ::ColAtPos( nFor )
-            oCol:PaintData( nRow, aCols[ nFor ], nHeight, lHighLite, .f., nFor, nRowPos )
-         next
-
-         nRowPos++
-         nRow += nRowHeight
-
-         if ::Skip() == 0
-            exit
-         endif
-
-      enddo
-
-      if nMarqStyle <= MARQSTYLE_HIGHLCELL .and. aCols[ nLast + 1 ] < nBrwWidth .and. ! ::lTransparent
-         hBrush := CreateColorBrush( ::nClrPane )
-         nTemp  := aCols[nLast + 1] - 1
-         FillRect( hDC, {nFirstRow, nTemp, ::BrwHeight() - ::FooterHeight(), nBrwWidth }, hBrush )
-         DeleteObject( hBrush )
-      endif
+      // We must also paint some times after the last visible column
 
       if hSelBrush != nil
-         DeleteObject( hSelBrush )
-      endif
 
-      ::nDataRows := nRowPos - 1
-      ::nRowSel := Max( Min( ::nRowSel, ::nDataRows ), 1)
+         lHighLite := ::lMultiSelect .and. ( Ascan( ::aSelected, Eval( ::bBookMark ) ) > 0 )
 
-      if nRow < nLastRow
-         ::EraseData( nRow  )
-      endif
-
-      Eval( ::bBookMark, nBookMark )
-
-      ::DrawLine( .t. )
-
-      /*
-      Paint lines
-      */
-
-      do case
-      case nColStyle == LINESTYLE_NOLINES
-         nTemp := 2
-      case nColStyle < LINESTYLE_INSET
-         nTemp := 1
-      otherwise
-         nTemp := 0
-      end case
-
-      if nColStyle > 0
-         if ::lColDividerComplete
-            nHeight := nLastRow
-         else
-            nHeight := ( ::nRowHeight * ( nRowPos - 1 ) ) + nFirstRow
-         endif
-         for nFor := 2 to nLast + 1
-            nCol := acols[ nFor ]
-            if nColStyle != LINESTYLE_RAISED
-               DrawVert( hDC, nCol - 2, nFirstRow, nHeight, hColPen )
-            else
-               DrawVert( hDC, nCol - 2, nFirstRow, nHeight, hWhitePen )
-               DrawVert( hDC, nCol - 1, nFirstRow, nHeight, hColPen )
+         if aCols[ nLast + 1 ] < nBrwWidth
+            nTemp     := nRow + nHeight
+            nTemp2    := aCols[nLast + 1]
+            if nColStyle < LINESTYLE_INSET
+               nTemp2--
             endif
-            if nColStyle = LINESTYLE_INSET
-               DrawVert( hDC, nCol - 1, nFirstRow, nHeight, hWhitePen )
-            endif
-         next
-      endif
-
-      if nRowStyle > 0
-         nRow   := ::HeaderHeight() - 1
-         nTemp2 := ::nDataRows
-         do while nTemp2-- > 0
-            nRow += nRowHeight
-            if lRecSel
-               DrawHorz( hDC, nRow,     2, ::nRecSelWidth - 4, hGrayPen  )
-               DrawHorz( hDC, nRow + 1, 2, ::nRecSelWidth - 4, hWhitePen )
-            endif
-            for nFor := 1 to nLast
-               if ::aCols[ nFor ]:HasBorder( ::nDataRows - nTemp2 )
-                  nCol   := acols[ nFor ] - If( nFor != 1, nTemp, 0 )
-                  nWidth := nCol + ::ColAtPos( nFor ):nWidth + If( nFor != 1, nTemp, 0 )
-                  if nRowStyle != LINESTYLE_RAISED
-                     DrawHorz( hDC, nRow, nCol, nWidth, hRowPen )
-                  else
-                     DrawHorz( hDC, nRow,     nCol, nWidth, hWhitePen )
-                     DrawHorz( hDC, nRow - 1, nCol, nWidth, hRowPen   )
-                  endif
-                  if nRowStyle = LINESTYLE_INSET
-                     DrawHorz( hDC, nRow - 1, nCol, nWidth, hWhitePen )
-                  endif
+            if lHighLite .and. ::nMarqueeStyle != MARQSTYLE_HIGHLWIN7
+               FillRect( hDC, {nRow, nTemp2, nTemp, nBrwWidth }, hSelBrush )
+            elseif nMarqStyle >= MARQSTYLE_HIGHLROWRC //== MARQSTYLE_HIGHLROWMS  //12 aug 2013
+               if ! ::lTransparent
+                  hBrush := CreateColorBrush( Eval( ::bClrStd )[ 2 ] )
+                  FillRect( hDC, {nRow, nTemp2, nTemp, nBrwWidth }, hBrush )
+                  DeleteObject( hBrush )
                endif
-            next
-            if nMarqStyle >= MARQSTYLE_HIGHLROWRC .and. nLast == Len( ::aDisplay )
-               nCol   := acols[ nFor ] - nTemp
-               nWidth := ::BrwWidth() - 4
+            endif
+         endif
+
+      endif
+
+      AAdd( ::aBookMarks, ::BookMark )
+      for nFor := 1 to nLast
+         if aCols[ nFor ] > nBrwWidth
+            exit
+         endif
+         oCol := ::ColAtPos( nFor )
+         oCol:PaintData( nRow, aCols[ nFor ], nHeight, lHighLite, .f., nFor, nRowPos )
+      next
+
+      nRowPos++
+      nRow += nRowHeight
+      if ::Skip() == 0
+         exit
+      endif
+
+   enddo
+
+   if nMarqStyle <= MARQSTYLE_HIGHLCELL .and. aCols[ nLast + 1 ] < nBrwWidth .and. ! ::lTransparent
+      hBrush := CreateColorBrush( ::nClrPane )
+      nTemp  := aCols[nLast + 1] - 1
+      FillRect( hDC, {nFirstRow, nTemp, ::BrwHeight() - ::FooterHeight(), nBrwWidth }, hBrush )
+      DeleteObject( hBrush )
+   endif
+
+   if hSelBrush != nil
+      DeleteObject( hSelBrush )
+   endif
+
+   ::nDataRows := nRowPos - 1
+//      ::nRowSel := Max( Min( ::nRowSel, ::nDataRows ), 1)
+
+   if nRow < nLastRow
+      ::EraseData( nRow  )
+   endif
+
+   ::BookMark     := nBookMark
+   ::DrawLine( .t. )
+
+   /*
+   Paint lines
+   */
+
+   do case
+   case nColStyle == LINESTYLE_NOLINES
+      nTemp := 2
+   case nColStyle < LINESTYLE_INSET
+      nTemp := 1
+   otherwise
+      nTemp := 0
+   end case
+
+   if nColStyle > 0
+      if ::lColDividerComplete
+         nHeight := nLastRow
+      else
+         nHeight := ( ::nRowHeight * ( nRowPos - 1 ) ) + nFirstRow
+      endif
+      for nFor := 2 to nLast + 1
+         nCol := acols[ nFor ]
+         oCol := ::aCols[ nFor - 1 ]
+         hColPen     := IfNil( oCol:hColPen, ::hColPen )
+         nColStyle   := IfNil( oCol:nColDividerStyle, ::nColDividerStyle )
+         if nColStyle == 0
+            //
+         elseif nColStyle != LINESTYLE_RAISED
+            DrawVert( hDC, nCol - 2, nFirstRow, nHeight, hColPen )
+         else
+            DrawVert( hDC, nCol - 2, nFirstRow, nHeight, hWhitePen )
+            DrawVert( hDC, nCol - 1, nFirstRow, nHeight, hColPen )
+         endif
+         if nColStyle = LINESTYLE_INSET
+            DrawVert( hDC, nCol - 1, nFirstRow, nHeight, hWhitePen )
+         endif
+      next
+      if ! lRecSel .and. ::lVScroll .and. ::nColDividerStyle > 0 .and. ::lColDividerComplete
+         DrawVert( hDC, 0, 0, nBrwHeight + 3, hGrayPen )
+      endif
+
+   endif
+
+   if nRowStyle > 0
+      nRow   := ::HeaderHeight() - 1
+      nTemp2 := If( ::lFullGrid, nMaxRows, ::nDataRows )
+      do while nTemp2-- > 0
+         nRow += nRowHeight
+         if lRecSel
+            DrawHorz( hDC, nRow,     2, ::nRecSelWidth - 4, hGrayPen  )
+            DrawHorz( hDC, nRow + 1, 2, ::nRecSelWidth - 4, hWhitePen )
+         endif
+         for nFor := 1 to nLast
+            if ::aCols[ nFor ]:HasBorder( ::nDataRows - nTemp2 )
+               nCol   := acols[ nFor ] - If( nFor != 1, nTemp, 0 )
+               nWidth := nCol + ::ColAtPos( nFor ):nWidth + If( nFor != 1, nTemp, 0 )
                if nRowStyle != LINESTYLE_RAISED
                   DrawHorz( hDC, nRow, nCol, nWidth, hRowPen )
                else
@@ -1546,8 +1648,26 @@ METHOD Paint() CLASS TXBrowse
                   DrawHorz( hDC, nRow - 1, nCol, nWidth, hWhitePen )
                endif
             endif
-         enddo
-      endif
+         next
+         if ( ::lFullGrid .or. nMarqStyle >= MARQSTYLE_HIGHLROWRC ) .and. nLast == Len( ::aDisplay )
+            nCol   := acols[ nFor ] - nTemp
+            nWidth := ::BrwWidth() // - 4
+            if nRowStyle != LINESTYLE_RAISED
+               DrawHorz( hDC, nRow, nCol, nWidth, hRowPen )
+            else
+               DrawHorz( hDC, nRow,     nCol, nWidth, hWhitePen )
+               DrawHorz( hDC, nRow - 1, nCol, nWidth, hRowPen   )
+            endif
+            if nRowStyle = LINESTYLE_INSET
+               DrawHorz( hDC, nRow - 1, nCol, nWidth, hWhitePen )
+            endif
+         endif
+      enddo
+   endif
+
+   if ::bPainted != nil
+      Eval( ::bPainted, ::hDC, ::cPS, Self )
+   endif
 
    ::DispEnd( aInfo )
 
@@ -1565,22 +1685,33 @@ METHOD PaintHeader( hDC, aCols, nLast, hWhitePen, hGrayPen, hColPen ) CLASS TxBr
    nBrwWidth   := ::BrwWidth()
    aColors     := Eval( ::bClrHeader )
    hBrush      := CreateColorBrush( aColors[ 2 ] )
-   hHeaderPen  := CreatePen( PS_SOLID, 1, aColors[ Min( 3, Len( aColors ) ) ] )
+   hHeaderPen  := CreatePen( PS_SOLID, 1, If( Len( aColors ) >= 3, aColors[ 3 ], aColors[ 1 ] ) )
+   // aColors[ Min( 3, Len( aColors ) ) ] )
 
    nRow    := 0
-   nHeight := ::nHeaderHeight - 3 // Caution: Do not change -3 in a haste. This adjusts 3 pixels added in Adjust method
-   DrawHorz( hDC, nRow, 2, nBrwWidth, hGrayPen )
-   nRow++
-   DrawHorz( hDC, nRow, 2, nBrwWidth, hWhitePen )
-   nRow++
-   FillRect( hDC, { nRow, 2, nRow + nHeight, nBrwWidth}, hBrush ) //::hBrushRecSel )
+   if ::lFlatStyle
+      DrawHorz( hDC, nRow, 1, nBrwWidth, hHeaderPen ) //hColPen )
+      nHeight  := ::nHeaderHeight - 1
+      nRow++
+   else
+      nHeight := ::nHeaderHeight - 3 // Caution: Do not change -3 in a haste. This adjusts 3 pixels added in Adjust method
+      DrawHorz( hDC, nRow, 2, nBrwWidth, hGrayPen )
+      nRow++
+      DrawHorz( hDC, nRow, 2, nBrwWidth, hWhitePen )
+      nRow++
+   endif
+   FillRect( hDC, { nRow, If( ::lFlatStyle, 1, 2 ), nRow + nHeight, nBrwWidth}, hBrush ) //::hBrushRecSel )
 
    for nFor := 1 to nLast
       nCol     := aCols[ nFor ]
       oCol     := ::ColAtPos( nFor )
 
-      DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hGrayPen  )
-      DrawVert( hDC, nCol - 1, nRow + 1, nRow + nHeight - 2, hWhitePen )
+      if ::lFlatStyle
+         DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hHeaderPen )
+      else
+         DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hGrayPen  )
+         DrawVert( hDC, nCol - 1, nRow + 1, nRow + nHeight - 2, hWhitePen )
+      endif
       oCol:PaintHeader( nRow, nCol, nHeight, .f., hDC )
 
       if oCol:cGrpHdr != cGrpHdr
@@ -1609,7 +1740,11 @@ METHOD PaintHeader( hDC, aCols, nLast, hWhitePen, hGrayPen, hColPen ) CLASS TxBr
    nCol     := aCols[ nFor ]
    DrawVert( hDC, nCol - 2,       nRow + 1, nRow + nHeight - 2, hGrayPen  )
    DrawVert( hDC, nCol - 1,       nRow + 1, nRow + nHeight - 2, hWhitePen )
-   DrawHorz( hDC, nRow + nHeight, 0,        nBrwWidth - 2,      hGrayPen  )
+   if ::lFlatStyle
+      DrawHorz( hDC, nRow + nHeight - 1, 0, nBrwWidth, hHeaderPen  )
+   else
+      DrawHorz( hDC, nRow + nHeight, 0, nBrwWidth, hGrayPen  )
+   endif
 
    DeleteObject( hBrush )
    DeleteObject( hHeaderPen )
@@ -1621,30 +1756,41 @@ return nil
 METHOD PaintFooter( hDC, aCols, nLast, nBrwWidth, nBrwHeight, hWhitePen, hGrayPen ) CLASS TXBrowse
 
    local nRow, nCol, nFor, oCol
-   local nHeight, hBrush, aColors
+   local nHeight, hBrush, aColors, hPen
 
    nHeight  := ::nFooterHeight - 3 // Caution: Do not change -3 in a haste. This adjusts 3 pixels added in Adjust method
    nRow     := nBrwHeight - ::nFooterHeight
-   aColors := Eval( ::bClrFooter )
+   aColors  := Eval( ::bClrFooter )
+   hPen     := CreatePen( PS_SOLID, 1, If( Len( aColors ) >= 3, aColors[ 3 ], aColors[ 1 ] ) )
    DrawHorz( hDC, nRow, 0, nBrwWidth, hGrayPen )
    nRow++
    DrawHorz( hDC, nRow, 0, nBrwWidth, hWhitePen )
    nRow++
    DrawHorz( hDC, nRow + nHeight, 0, nBrwWidth, hGrayPen )
    hBrush  := CreateColorBrush( aColors[ 2 ] )
-   FillRect( hDC, { nRow, 1, nRow + nHeight, nBrwWidth}, ::hBrushRecSel ) // col 0 is painted with vert line. So paint has to start at col 1 ( not col 0 )
+//   FillRect( hDC, { nRow, 1, nRow + nHeight, nBrwWidth}, ::hBrushRecSel ) // col 0 is painted with vert line. So paint has to start at col 1 ( not col 0 )
+   FillRect( hDC, { nRow, 1, nRow + nHeight, nBrwWidth}, hBrush ) // FWH 13.09
    DeleteObject( hBrush )
    for nFor := 1 to nLast
       nCol := aCols[ nFor ]
       oCol := ::ColAtPos( nFor )
-      DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hGrayPen )
-      DrawVert( hDC, nCol - 1, nRow + 1, nRow + nHeight - 2, hWhitePen )
+      if ::lFlatStyle
+         DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hPen )
+      else
+         DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hGrayPen )
+         DrawVert( hDC, nCol - 1, nRow + 1, nRow + nHeight - 2, hWhitePen )
+      endif
       oCol:PaintFooter( nRow, nCol, nHeight )
    next
    nCol := aCols[ nFor ]
 
-   DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hGrayPen )
-   DrawVert( hDC, nCol - 1, nRow + 1, nRow + nHeight - 2, hWhitePen )
+   if ::lFlatStyle
+      DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hPen )
+   else
+      DrawVert( hDC, nCol - 2, nRow + 1, nRow + nHeight - 2, hGrayPen )
+      DrawVert( hDC, nCol - 1, nRow + 1, nRow + nHeight - 2, hWhitePen )
+   endif
+   DeleteObject( hPen )
 
 return nil
 
@@ -1720,7 +1866,7 @@ METHOD DrawLine( lSelected, nRowSel ) CLASS TXBrowse
             hBrush := CreateColorBrush( Eval( ::bClrStd )[ 2 ] )
          endif
          if lHighLite .or. ! ::lTransparent
-            FillRect( hDC, {nRow, nCol, nTemp, nWidth }, hBrush )
+            FillRect( hDC, {nRow, nCol, nTemp, nWidth + 1 }, hBrush )
          endif
          DeleteObject( hBrush )
       endif
@@ -1789,8 +1935,6 @@ METHOD DrawLine( lSelected, nRowSel ) CLASS TXBrowse
          RoundBox( hDC, 1, nRow - 2, nLast,     nRow + nDataHeight + 1, 2, 2,;
                    RGB( 125, 162, 206 ), 1 )
 
-
-
       endcase
    endif
 
@@ -1858,6 +2002,17 @@ METHOD GetDisplayCols() CLASS TXBrowse
    local aDisplay
    local nFor, nLen, nOffset, nFreeze, nCol, nCols
 
+   // Protection against the programmer deleting all columns
+   if Empty( ::aCols )
+      ::aCols     := {}
+      WITH OBJECT ::AddCol()
+         :cHeader    := "Empty Col"
+         :bEditValue := { || "Empty Col" }
+         :Adjust()
+      END
+   endif
+   //
+
    nFreeze  := ::nFreeze
    nOffset  := ::nColOffset + nFreeze
    nLen     := Len( ::aCols )
@@ -1896,6 +2051,13 @@ METHOD GetDisplayCols() CLASS TXBrowse
       endif
       nCol++
    enddo
+
+   // protection against the programme hiding all columns
+   if Empty( aDisplay )
+      ::aCols[ 1 ]:lHide   := .f.
+      aDisplay             := { 1 }
+   endif
+   //
 
    ::aDisplay := aDisplay
 
@@ -2138,11 +2300,17 @@ METHOD KeyDown( nKey, nFlags ) CLASS TXBrowse
         ::Select( 5 )
 
    case nKey == VK_UP
+      if ::KeyNo == 1 .and. ::lRelyOnKeyNo
+         return 0
+      endif
       ::Select( 0 )
       ::GoUp()
       ::Select( 1 )
 
    case nKey == VK_DOWN
+      if ::KeyNo == ::nLen .and. Empty( ::bPastEof ) .and. ::lRelyOnKeyNo
+         return 0
+      endif
       ::Select( 0 )
       ::GoDown()
       ::Select( 1 )
@@ -2202,9 +2370,13 @@ METHOD KeyDown( nKey, nFlags ) CLASS TXBrowse
    case ::lAllowCopy .and. nKey == ASC( 'C' ) .and. GetKeyState( VK_CONTROL )
          ::Copy()
 
-   case nKey == VK_F2 .and. ::lF2KeyToEdit
+   case nKey == VK_F2 .and. ::lF2KeyToEdit .and. ! ::lReadOnly
         if ! ::lEditMode
-            ::SelectedCol():Edit()
+            WITH OBJECT ::SelectedCol()
+               if ! :lReadOnly
+                  :Edit()
+               endif
+            END
         endif
 
    otherwise
@@ -2284,7 +2456,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TXBrowse
             DEFINE CLIPBOARD oClp OF ::oWnd FORMAT BITMAP
             uClip     := oClp:GetBitmap()
             if uClip != 0 .and. ::SelectedCol():nEditType > 0
-               ::SelectedCol():PostEdit( BmpToStr( uClip ) )
+               ::SelectedCol():VarPut( BmpToStr( uClip ) )
                oClp:Clear()
             endif
             oClp:End()
@@ -2299,6 +2471,9 @@ METHOD KeyChar( nKey, nFlags ) CLASS TXBrowse
          if ! Empty( uClip )
             ::Paste( uClip )
          endif
+
+      case ::lMultiSelect .and. nKey == 1  // Ctrl-A
+         ::SelectAll()
 
       otherwise
 
@@ -2400,7 +2575,51 @@ return nil
 
 //----------------------------------------------------------------------------//
 
+METHOD GoToCol( oCol ) CLASS TXBrowse
+
+   local nPos, nCol
+
+   oCol     := ::oCol( oCol )
+   if oCol == nil .or. oCol:lHide
+      return .f.
+   endif
+
+   if oCol:nPos > 0
+      if ::IsDisplayPosVisible( oCol:nPos, .t. )
+         if ::nColSel != oCol:nPos
+            ::nColSel   := oCol:nPos
+            ::RefreshCurrent()
+         endif
+         return .t.
+      elseif oCol:nPos <= ::nFreeze + ::nColOffSet
+         return .f.
+      else
+         do while ! ::IsDisplayPosVisible( oCol:nPos, .t. ) .and. ;
+            oCol:nPos > ::nFreeze + ::nColOffSet
+
+            ::nColOffSet++
+            ::GetDisplayCols()
+         enddo
+      endif
+   else
+      nCol  := AScan( ::GetVisibleCols(), { |o| o:nCreationOrder == oCol:nCreationOrder } )
+      ::nColOffSet   := nCol - ::nFreeze
+      ::GetDisplayCols()
+   endif
+
+   ::nColSel      := oCol:nPos
+   ::Refresh()
+
+return .t.
+
+//----------------------------------------------------------------------------//
+
 METHOD GoLeft( lOffset, lRefresh )  CLASS TXBrowse
+
+   local oFirstCol
+
+   DEFAULT lOffset  := .f.,;
+           lRefresh := .t.
 
    ::CancelEdit()
 
@@ -2408,8 +2627,9 @@ METHOD GoLeft( lOffset, lRefresh )  CLASS TXBrowse
       lOffset := .t.
    endif
 
-   DEFAULT lOffset  := .f.,;
-           lRefresh := .t.
+   if ::lFreezeLikeExcel .and. ::nFreeze > 0 .and. ::nColOffSet > 1 .and. ::nColSel == ::nFreeze + 1
+      lOffset := .t.
+   endif
 
    if ( !lOffset .and. ::IsDisplayPosVisible( ::nColSel - 1 ) ) .or. ;
       ( ::nColOffset == 1 .and. ::nColSel > 1 )
@@ -2593,7 +2813,7 @@ METHOD VScroll( nWParam, nLParam ) CLASS TXBrowse
             ::CancelEdit()
             nRow := ::nRowSel
             CursorWait()
-            //Eval( ::bSkip, ::VGetThumbPos( nPos ) - ::VGetPos() )
+            Eval( ::bSkip, ::VGetThumbPos( nPos ) - ::VGetPos() )
             ::KeyNo( ::VGetThumbPos( nPos ) )
             CursorArrow()
             nBook := Eval( ::bBookMark )
@@ -2651,6 +2871,8 @@ METHOD GoUp( nUp ) CLASS TXBrowse
             if ! ::FullPaint()
 
                XBrwScrollRow( ::hWnd, -::nRowHeight, ::HeaderHeight(), ::RowCount() * ::nRowHeight )
+               AIns( ::aBookMarks, 1 )
+               ::aBookMarks[ 1 ]    := ::BookMark
                if n < nUp
                   ::DrawLine( .f. )
                endif
@@ -2704,7 +2926,8 @@ METHOD GoDown( nDown ) CLASS TXBrowse
       if ::bPastEof != nil
          Eval( ::bPastEof )
       endif
-      return nil
+      // return nil
+      return 0 // need to return numeric value, 2014-02-13
    endif
 
    ::CancelEdit()
@@ -2728,13 +2951,17 @@ METHOD GoDown( nDown ) CLASS TXBrowse
 
    for n := 1 to nDown
 
-      if ::Skip( 1 ) == 1           //Eval( ::bSkip, 1 ) == 1
+      if ::Skip( 1 ) == 1
          if ::nRowSel < nLines
             ::nRowSel++
          else
 
             if ! ::FullPaint()
                XBrwScrollRow( ::hWnd, ::nRowHeight, ::HeaderHeight(), nLines * ::nRowHeight )
+               if ! Empty( ::aBookMarks )
+                  ADel( ::aBookMarks, 1 )
+                  ::aBookMarks[ ::nRowSel ] := ::BookMark
+               endif
                if n < nDown
                   ::DrawLine( .f. )
                endif
@@ -2768,7 +2995,7 @@ METHOD GoDown( nDown ) CLASS TXBrowse
       endif
    endif
 
-return nil
+return nDown      // return number of rows actually skipped
 
 //----------------------------------------------------------------------------//
 
@@ -2786,7 +3013,7 @@ METHOD PageUp( nLines ) CLASS TXBrowse
    ::Seek()
 *   ::DrawLine()
 
-   nSkipped = ::Skip( -nLines )        //Eval( ::bSkip, -nLines )
+   nSkipped = ::Skip( -nLines )
 
    if nSkipped = 0
 *      ::DrawLine(.t.)
@@ -2841,7 +3068,8 @@ METHOD PageDown( nLines ) CLASS TXBrowse
             ::VGoBottom()
          endif
       else
-         ::Super:Refresh( ::FullPaint() )
+         //::Super:Refresh( ::FullPaint() )
+         ::Refresh()    // Refresh is called for adjusting fullscreen fwh13.04
          if ::oVScroll != nil
             ::VSetPos( ::VGetPos() + nSkipped )
          endif
@@ -2852,16 +3080,6 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD KeyNo( nGoTo ) CLASS TXBrowse
-return Eval( ::bKeyNo, nGoTo, Self )
-
-//------------------------------------------------------------------//
-
-METHOD BookMark( uBm ) CLASS TXBrowse
-return Eval( ::bBookMark, uBm )
-
-//------------------------------------------------------------------//
-
 METHOD GoTop() CLASS TXBrowse
 
    if ::Bof() .or. ::nLen < 1
@@ -2870,8 +3088,6 @@ METHOD GoTop() CLASS TXBrowse
 
    ::CancelEdit()
    ::Seek()
-
-//   ::DrawLine()  // not necessary in view of call to Refresh later. Mr William Molares
 
    Eval( ::bGoTop )
 
@@ -2882,18 +3098,15 @@ METHOD GoTop() CLASS TXBrowse
    ::nRowSel := 1
    ::Change( .t. )
 
-//   ::lRefreshOnlyData := .t.
    ::Super:Refresh( .f. )
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD GoBottom( lNoRefresh ) CLASS TXBrowse
+METHOD GoBottom() CLASS TXBrowse
 
    local nLines, nRow, nBook
-
-   DEFAULT lNoRefresh := .f.
 
    ::CancelEdit()
    ::Seek()
@@ -2904,31 +3117,20 @@ METHOD GoBottom( lNoRefresh ) CLASS TXBrowse
       return nil
    endif
 
-   nLines := ::RowCount()
-   nRow   := nLines
-
    Eval( ::bGoBottom )
-
-   nBook := Eval( ::bBookMark )
-
-   do while nRow-- > 0 .and. ::Skip( -1 ) == -1    //Eval( ::bSkip, -1 ) == -1
-   enddo
-
-   ::nRowSel := nLines - nRow
-
-   Eval( ::bBookMark, nBook )
+   if ::lRelyOnKeyNo
+      ::nRowSel      := Max( 1, Min( ::nLen, ::RowCount() ) )
+   else
+      nBook          := ::BookMark
+      ::nRowSel      := 1 - ::Skip( 1 - ::RowCount() )
+      ::BookMark     := nBook
+   endif
 
    if ::oVScroll != nil
       ::VGoBottom()
    endif
    ::Change( .t. )
-   If lNoRefresh
-      ::KeyCount()
-      ::lRefreshOnlyData := .t.
-      ::Super:Refresh( .t. ) // ::Paint()
-   else
-      ::Super:Refresh( .f. )
-   Endif
+   ::Super:Refresh( .f. )
 
 return nil
 
@@ -3045,7 +3247,7 @@ METHOD SetPos( nRow, nCol, lPixel ) CLASS TXBrowse
 
          bm          := Eval( ::bBookMark )
          nSkip     := nRow - ::nRowSel
-         if ::Skip( nSkip ) == nSkip      // Eval( ::bSkip, nSkip ) == nSkip
+         if ::Skip( nSkip ) == nSkip
             ::nRowSel := nRow
             ::Change( .t. )
             lRepos      := .t.
@@ -3335,9 +3537,10 @@ return nil
 
 METHOD MouseLeave( nRow, nCol, nFlags ) CLASS TXBrowse
 
-   ::lPressed = .f.
-
-   ::Refresh()
+   if ::lKineticBrw .and. ::lPressed
+      ::lPressed = .f.
+      ::Refresh()
+   endif
 
 return nil
 
@@ -3381,7 +3584,7 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TXBrowse
 
    if ::lPressed .and. ! ::lCaptured
 
-      //SetCursor( ::hCursorHand )
+      SetCursor( ::hCursorHand )
 
       nVMove        = ::nRowAdvance - ::MouseRowPos( nRow )
       ::nRowAdvance = nMousePos
@@ -3482,6 +3685,47 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TXBrowse
       endif
    next
 
+   nFor  := ::MouseColPos( nCol )
+   if nFor > 0 .and. nFor <= nLen
+      // Column visible in window
+      CursorArrow()
+      oCol     := ::ColAtPos( nFor )
+      if ! Empty( ::oColToolTip ) // There is an active tooltip
+         if nMousePos != ::nRowToolTip .or. oCol != ::oColToolTip
+            ::DestroyToolTip()
+         endif
+      endif
+      if nRow < ::HeaderHeight()    // Mouse is on Header
+         if ! Empty( oCol:cToolTip )
+            ::ShowToolTip( nRow, nCol, oCol:cToolTip )
+            ::oColToolTip     := oCol
+            ::nRowToolTip     := 0
+            //
+            return 0
+         endif
+      elseif nMousePos > 0 // Row
+         if ::bDragBegin == nil .and. ! Empty( oCol:bToolTip )
+            if ! Empty( cTxt := Eval( oCol:bToolTip, Self, nRow, nCol, nkeyFlags, oCol, nMousePos ) )
+               ::ShowToolTip( nRow, nCol, cTxt )
+               ::oColToolTip  := oCol
+               ::nRowToolTip  := nMousePos
+               //
+               return 0
+            endif
+         endif
+      else
+         if ::oColToolTip != nil
+            ::DestroyToolTip()
+         endif
+         ::CheckToolTip()
+      endif
+   endif
+
+
+/*
+
+
+
    nFor     := If( nRow < ::HeaderHeight(), ::MouseColPos( nCol ), 0 )
 
    // ToolTip CELL
@@ -3500,31 +3744,32 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TXBrowse
       return 0
 
    elseif ::bDragBegin == nil .and. ( nFor := If( nRow > ::HeaderHeight(), ::MouseColPos( nCol ), 0 ) ) > 0
-       if nFor > 0 .and. nFor <= nLen
+      if nFor > 0 .and. nFor <= nLen
          oCol  := ::ColAtPos( ::MouseColPos( nCol ) )
          CursorArrow()
          if  ::MouseColPos( nCol ) > 0
-                  if Empty( oCol:bToolTip )
+            if Empty( oCol:bToolTip )
+               ::DestroyToolTip()
+            else
+               if ::oColToolTip == nil .or. ::oColToolTip:nCreationOrder != oCol:nCreationOrder
+                  cTxt := eval( oCol:bToolTip, Self, nRow, nCol, nkeyFlags )
+                  if !empty( cTxt )
                      ::DestroyToolTip()
-                  else
-                  if ::oColToolTip == nil .or. ::oColToolTip:nCreationOrder != oCol:nCreationOrder
-                       cTxt := eval( oCol:bToolTip, Self, nRow, nCol, nkeyFlags )
-                        if !empty( cTxt )
-                           ::DestroyToolTip()
-                           ::ShowToolTip( nRow,nCol, cTxt )
-                           ::oColToolTip := oCol
-                        endif
-                     endif
-                  endif
+                     ::ShowToolTip( nRow,nCol, cTxt )
+                     ::oColToolTip := oCol
+                   endif
+                endif
             endif
-            return 0
-         endif
-      else
+        endif
+        return 0
+      endif
+   else
       if ::oColToolTip != nil
          ::DestroyToolTip()
       endif
       ::CheckToolTip()
    endif
+*/
 
    nLen := ::nDataRows
 
@@ -3558,6 +3803,7 @@ METHOD LDblClick( nRow, nCol, nKeyFlags ) CLASS TXBrowse
 
    if nColPos == ::nColSel .and. nRowPos == ::nRowSel
       oCol := ::ColAtPos( nColPos )
+
       if oCol:lEditable .and. oCol:bLDClickData == nil
          if oCol:hChecked .and. oCol:bOnPostEdit != nil
 
@@ -3572,9 +3818,10 @@ METHOD LDblClick( nRow, nCol, nKeyFlags ) CLASS TXBrowse
          return XBrowse( oCol:Value, oCol:cHeader, nil, nil, nil, nil, nil, ;
                   oCol:nEditType > 0 )
       endif
+
    endif
 
-   If nColPos != 0 .and. nRowPos != 0
+   if nColPos != 0 .and. nRowPos != 0
       return ::Super:LDblClick( nRow, nCol, nKeyFlags )
    Endif
 
@@ -3655,6 +3902,8 @@ METHOD RButtonDown( nRow, nCol, nKeyFlags ) CLASS TXBrowse
       elseif oCol:bRClickData != nil
          return Eval( oCol:bRClickData, nRow, nCol, nKeyFlags, oCol )
       endif
+   else
+      return ::Super:RButtonDown( nRow, nCol, nKeyFlags )
    endif
 
    If nColPos != 0 .and. nRowPos != 0
@@ -3761,7 +4010,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames, aRows ) CLASS TXBrowse
 
    local oCol, aStruct
    local cAlias, cAdsKeyNo, cAdsKeyCount
-   local nFields, nFor, n
+   local nFields, nFor, n, uData
    local bOnSkip
 
    if Empty( ::cAlias )
@@ -3784,6 +4033,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames, aRows ) CLASS TXBrowse
 
    DEFAULT lAddColumns      := Empty( ::aCols ) .or. ! Empty( aFldNames )
    DEFAULT lAutoOrder       := ::lAutoSort
+   ::lAutoSort              := lAutoOrder
 
    cAlias      := ::cAlias
    if ValType( aRows ) == 'A' .and. Len( aRows ) > 0
@@ -3800,9 +4050,14 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames, aRows ) CLASS TXBrowse
       ::nDataType := DATATYPE_RDD
    endif
 
+   ::lSqlRDD := ( ( ::cAlias )->( RddName() ) == "SQLRDD" )
+   if ::lSqlRDD
+      DEFAULT ::bKeyNo  := { |n| 0 }
+   endif
+
    DEFAULT ::bGoTop    := {|| ( ::cAlias )->( DbGoTop() ) },;
            ::bGoBottom := {|| ( ::cAlias )->( DbGoBottom() ) },;
-           ::bSkip     := {| n | iif( n == nil, n := 1, ), ( ::cAlias )->( DbSkipper( n ) ) },;
+           ::bSkip     := {| n | ( ::cAlias )->( DbSkipper( IfNil( n, 1 ) ) ) },;
            ::bBof      := {|| ( ::cAlias )->( Bof() ) },;
            ::bEof      := {|| ( ::cAlias )->( Eof() ) },;
            ::bBookMark := {| n | iif( n == nil,;
@@ -3810,7 +4065,8 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames, aRows ) CLASS TXBrowse
                                      ( ::cAlias )->( DbGoto( n );
                                     ) ) }
 
-   If ( "ADS" $ ( ::cAlias )->( RddName() ) .or. 'ADT' $ ( ::cAlias )->( RddName() ) ) .and. ( ::cAlias )->( LastRec() ) > 200
+   If ( "ADS"$( ::cAlias )->( RddName() ) .or. 'ADT' $ ( ::cAlias )->( RddName() ) ) .and. ;
+      ( ::cAlias )->( LastRec() ) > 200
 
       // Modified in FWH 9.06
       // AdsGetRelKeyPos() returns approximate position as % and when multipilied by 100 and rounded off
@@ -3826,74 +4082,58 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames, aRows ) CLASS TXBrowse
 
       DEFAULT ::bKeyNo    := &cAdsKeyNo ,;
               ::bKeyCount := &cAdsKeyCount
-   elseif ( ::cAlias )->( RddName() ) == "SQLRDD"
-      DEFAULT ::bKeyNo     := ::bBookMark, ;
-              ::bKeyCount  := { || ( ::cAlias )->( LastRec() ) }
+
+      ::lRelyOnKeyNo      := .f.
    else
        DEFAULT ::bKeyNo    := {| n | iif( n == nil,;
                                         ( ::cAlias )->( OrdKeyNo() ),;
                                         ( ::cAlias )->( OrdKeyGoto( n );
                                         ) ) },;
-               ::bKeyCount := {|| ( ::cAlias )->( OrdKeyCount() ) }
-   Endif
+               ::bKeyCount := {|| ( ::cAlias )->( If( eof() .and. bof(), 0, OrdKeyCount() ) ) }
 
-   aStruct      := ( ::cAlias )->( dbstruct() )
+      ::lRelyOnKeyNo := If( Set( _SET_DELETED ), "DELETED()" $ Upper( DbFilter() ), .t. )
+   Endif
+   if ::lSqlRDD
+      ::lRelyOnKeyNo    := .f.
+   endif
+
+   ::lReadOnly    := ( ( ::cAlias )->( DbInfo( DBI_ISREADONLY ) ) == .t. )
+   aStruct        := ( ::cAlias )->( dbstruct() )
+
    if lAddColumns
       if Empty( aFldNames )
-         nFields      := ( ::cAlias )->( FCount() )
-         nFields      := Len( aStruct )
-
-         for nFor := 1 to nFields
-            oCol    := ::AddCol()
-            oCol:cExpr := aStruct[ nFor ][ 1 ]
-            oCol    := SetColFromRDD( oCol, nFor, ::cAlias, aStruct )
-         next nFor
-      else
-         nFields    := Len( aFldNames )
-         for nFor := 1 to nFields
-            oCol    := ::AddCol
-            if ValType( aFldNames[ nFor ] ) == 'B'
-               oCol:bEditValue   := aFldNames[ nFor ]
-               oCol:cHeader      := MakeColAlphabet( nFor )
-            elseif ValType( aFldNames[ nFor ] ) != 'C'
-               oCol:cExpr        := cValToChar( aFldNames[ nFor ] )
-               oCol:bEditValue   := MakeBlock( aFldNames[ nFor ] )
-               oCol:cHeader      := MakeColAlphabet( nFor )
-            elseif (::cAlias)->( FieldPos( aFldNames[ nFor ] ) ) == 0
-               oCol:cExpr        := aFldNames[ nFor ]
-               oCol:bEditValue   := &( "{ || " + ::cAlias + "->( " + aFldNames[nFor] + " ) }" )
-               oCol:cHeader      := (::cAlias)->( FieldInExpr( aFldNames[ nFor ], aStruct ) )
-            else
-               oCol    := SetColFromRDD( oCol, aFldNames[nFor], ::cAlias, aStruct )
-               oCol:cExpr  := oCol:cHeader
-            endif
-         next nFor
+         aFldNames   := { '*' }
       endif
-   endif
-
-   if lAutoOrder
-
-      (::cAlias)->( OrderTagInfo( aStruct, 8 ) )
-
-      for nFor := 1 to Len( ::aCols )
-         if ( n := AScan( aStruct, { |a| a[ 1 ] == Upper( ::aCols[ nFor ]:cHeader ) } ) ) > 0
-            ::aCols[ nFor ]:cSortOrder    := aStruct[ n ][ 8 ]
-            ::aCols[ nFor ]:cOrdBag       := ( cAlias )->( OrdBagName( ::aCols[ nFor ]:cSortOrder ) )
+      for each uData in aFldNames
+         if ValType( uData ) == 'C' .and. uData == '*'
+            for nFor := 1 to ( ::cAlias )->( FCount() )
+               ( ::cAlias )->( SetColFromRDD( ::AddCol(), nFor ) )
+            next
+         else
+            ( ::cAlias )->( SetColFromRDD( ::AddCol(), uData, aStruct ) )
          endif
-      next nFor
-
-      ::bSeek  := { |c,u| ::RddIncrSeek( c, @u ) }
-
+      next
    endif
 
-   ::bLock     := { || ( ::cAlias )->( DbrLock() ) }
-   ::bUnlock   := { || ( ::cAlias )->( DbrUnlock() ) }
+   (::cAlias)->( OrderTagInfo( aStruct, 8 ) )
 
-   if ( ::cAlias )->( RddName() ) == "SQLRDD"
-      ::bSeek        := nil
-      ::cSortOrders  := nil
-      ::cOrdBags     := nil
+   for nFor := 1 to Len( ::aCols )
+      if ( n := AScan( aStruct, { |a| a[ 1 ] == Upper( ::aCols[ nFor ]:cHeader ) } ) ) > 0
+         ::aCols[ nFor ]:cSortOrder    := aStruct[ n ][ 8 ]
+         ::aCols[ nFor ]:cOrdBag       := ( cAlias )->( OrdBagName( ::aCols[ nFor ]:cSortOrder ) )
+      endif
+   next nFor
+
+   DEFAULT ::bSeek  := { |c,u| ( ::cAlias )->( ::RddIncrSeek( c, @u ) ) }
+
+   if ( ::cAlias )->( DbInfo( DBI_SHARED ) )
+      ::bLock     := { || ( ::cAlias )->( DbrLock() ) }
+      ::bUnlock   := { || ( ::cAlias )->( DbrUnlock() ) }
    endif
+
+   ::bDelete   := { || ( ::cAlias )->( If( ::nLen > 0 .and. Eval( ::bLock ), ( DbDelete(), Eval( ::bUnlock ), ;
+                       If( Set( _SET_DELETED ), ( DbSkip(1), If( Eof(), DbGoBottom(), nil ) ), nil ) ;
+                       ), nil ) ) }
 
    if ::lCreated
       ::Adjust()
@@ -3910,7 +4150,7 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
    local nFor, lAddCols, aWidths
    local lReset   := .f.
 
-   if aData == nil //.or. ( Len( aData ) == 0 .and. Empty( aCols ) )
+   if aData == nil
       return nil
    endif
 
@@ -3934,7 +4174,7 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
    endif
 
    DEFAULT lAutoOrder := ::lAutosort
-   DEFAULT lAutoOrder := .f.
+   ::lAutosort  := lAutoOrder
 
    ::nRowSel    := 1
    ::nArrayAt   := 1
@@ -3970,12 +4210,12 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
 
       WITH OBJECT ::AddCol()
          :cHeader    := "Key"
-         :bEditValue := { || hb_hKeyAt( aData, ::nArrayAt ) }
+         :bEditValue := { || hb_hKeyAt( ::aArrayData, ::nArrayAt ) }
       END
 
       WITH OBJECT ::AddCol()
          :cHeader    := "Value"
-         :bEditValue := { || hb_hValueAt( aData, ::nArrayAt ) }
+         :bEditValue := { || hb_hValueAt( ::aArrayData, ::nArrayAt ) }
       END
       ::bSeek        := nil
       lAddCols       := .f.
@@ -3995,7 +4235,6 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
                END
             next nFor
          else
-            
             for nFor := 1 to Len( aCols )
                WITH OBJECT ::AddCol()
                   :cHeader := aCols[ nFor ]
@@ -4032,49 +4271,42 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
                oCol:cSortOrder   := 1
                if ValType( aCols[ nFor ] ) == 'B'
                   oCol:bEditValue   := aCols[ nFor ]
-               elseif ValType( aCols[ nFor ] ) == 'C'
-                  TRY
-                   ? "oCol:bEditValue"
-
-                     (0)->( &( aCols[ nFor ] ) )
-                     oCol:bEditValue   := &( "{ ||" + aCols[ nFor ] + "}" )
-                  CATCH
-                     oCol:bEditValue   := MakeBlock( aCols[ nFor ] )
-                  END
                else
-                  oCol:bEditValue   := MakeBlock( aCols[ nFor ] )
+                  oCol:bEditValue   := &( "{ |x,oCol| " + cValToChar( aCols[ nFor ] ) + " }" )
                endif
-
             endif
          next nFor
       endif
       AEval( ::aCols, {| oCol, i | oCol:cHeader := MakeColAlphabet( i ), ;
                               oCol:nHeadStrAlign := AL_CENTER } )
-
-      if lAutoOrder
+//      if lAutoOrder
          if Len( ::aCols ) > 1 //ValType( aData[ 1 ] ) == 'A' // Ver 10.8 to avoid runtime error for empty array
 
             DEFAULT nColOrder := ::aCols[ 1 ]:nArrayCol
             if Empty( nColOrder )
                nColOrder      := 1
             endif
-            AEval( ::aCols, {|oCol| oCol:cSortOrder := oCol:nArrayCol, ;
-                            If( oCol:nArrayCol == nColOrder, ;
-                                 (oCol:cOrder := 'D', oCol:SortArrayData() ), ;
-                                 nil ) ;
-                            } )
+            if lAutoOrder
+               AEval( ::aCols, {|oCol| oCol:cSortOrder := oCol:nArrayCol, ;
+                               If( oCol:nArrayCol == nColOrder, ;
+                                    (oCol:cOrder := 'D', oCol:SortArrayData() ), ;
+                                    nil ) ;
+                               } )
+            endif
          else
             oCol:cOrder := 'D'
             oCol:cSortOrder := 1
-            oCol:SortArrayData()
+            if lAutoOrder
+               oCol:SortArrayData()
+            endif
          endif
          ::nArrayAt  := 1
-      endif
+//      endif
    endif
 
-   if lAutoOrder
+//   if lAutoOrder
       ::bSeek := { | c,u | ::ArrayIncrSeek( c, @u ) }
-   endif
+//   endif
 
    if lReSet .and. ::lCreated
       ::Adjust()
@@ -4082,6 +4314,10 @@ METHOD SetArray( aData, lAutoOrder, nColOrder, aCols, bOnSkip ) CLASS TXBrowse
    endif
 
    ::lExcelCellWise  := .t.
+   ::lVThumbTrack    := .t.
+   ::bDelete         := { || If( ::nLen < 1, nil,  ;
+                              ( ADel( ::aArrayData, ::nArrayAt, .t. ), ;
+                                ::nArrayAt := Min( ::nArrayAt, Len( ::aArrayData ) ) ) ) }
 
 return Self
 
@@ -4122,7 +4358,7 @@ static function ArrCalcWidths( aData, aCols )
                if ( n := Len( Trim( uVal ) ) ) > IfNil( aSizes[ nCol ], 0 )
                   aSizes[ nCol ] := n
                endif
-            else
+            elseif cType $ "DLNT"
                if ( n := Len( cValToStr( uVal ) ) ) > IfNil( aSizes[ nCol ], 0 )
                   aSizes[ nCol ] := n
                endif
@@ -4265,7 +4501,8 @@ return { |x| If( x == nil, oBrw:oRs:Cells( oBrw:nArrayAt, nCol ):Value, ;
 
 METHOD SetAdO( oRs, lAddCols, lAutoOrder, aFldNames ) CLASS TXBrowse
 
-   LOCAL nFields,nFor, oCol
+   local nFields,nFor, oCol, aRsColNames
+   local lJet  := .f.
 
    if ::lCreated
       if ::nDataType == DATATYPE_ARRAY
@@ -4284,7 +4521,7 @@ METHOD SetAdO( oRs, lAddCols, lAutoOrder, aFldNames ) CLASS TXBrowse
 
    DEFAULT ::bGoTop    := {|| If( ::oRs:RecordCount() > 0, ::oRs:MoveFirst(), nil ) },;
            ::bGoBottom := {|| If( ::oRs:RecordCount() > 0, ::oRs:MoveLast(), nil )  },;
-           ::bSkip     := {| n | AdoSkip( ::oRs, If( n==nil, 1, n ) ) },;
+           ::bSkip     := {| n | AdoSkip( ::oRs, IfNil( n, 1 ) ) },;
            ::bBof      := {|| ::oRs:Bof },;
            ::bEof      := {|| ::oRs:Eof },;
            ::bBookMark := {| n | If( n == nil,;
@@ -4297,19 +4534,44 @@ METHOD SetAdO( oRs, lAddCols, lAutoOrder, aFldNames ) CLASS TXBrowse
 
    DEFAULT lAddCols   :=  Empty( ::aCols ) .or. ! Empty( aFldNames )
    DEFAULT lAutoOrder := ::lAutoSort
+   ::lAutosort        := lAutoOrder
 
    ::nDataType       := DATATYPE_ADO
+   ::lReadOnly       := ( ::oRs:LockType < 2 )
+   if ::lReadOnly
+      ::lRsCanResync := .f.
+   else
+      TRY
+         ::oRs:Resync( 1, 1 )
+         ::oRs:Resync( 1, 2 )
+         ::lRsCanResync    := .t.
+      CATCH
+         ::lRsCanResync    := .f.
+      END
+   endif
+
+   TRY
+      lJet  := " JET" $ Upper( oRs:ActiveConnection:Properties( "DBMS Name" ):Value )
+   CATCH
+   END
+
+   // list of columns in oRs
+   aRsColNames    := {}
+   for nFor := 0 to oRs:Fields:Count - 1
+      AAdd( aRsColNames, Upper( oRs:Fields( nFor ):Name ) )
+   next
+   ASort( aRsColNames,,,{ |x,y| Len( x ) > Len( y ) } )
 
    if lAddCols
       if aFldNames == nil
          nFields := oRs:Fields:Count - 1
          for nFor := 0 to nFields
-            ::SetColFromADO( nFor, lAutoOrder )
+            ::SetColFromADO( nFor, lAutoOrder, aRsColNames, lJet )
          next
       else
          nFields := Len( aFldnames )
          for nFor := 1 to nFields
-            oCol  := ::SetColFromADO( aFldNames[ nFor ], lAutoOrder )
+            oCol  := ::SetColFromADO( aFldNames[ nFor ], lAutoOrder, aRsColNames, lJet )
             if Empty( oCol:cHeader )
                oCol:cHeader   := "Col-" + LTrim( Str( nFor ) )
             endif
@@ -4317,13 +4579,12 @@ METHOD SetAdO( oRs, lAddCols, lAutoOrder, aFldNames ) CLASS TXBrowse
       endif
    endif
 
-   if oRs:LockType == 4
-      ::bOnRowLeave  := { || ::oRs:UpdateBatch() }
-   elseif oRs:LockType > 1
-      ::bOnRowLeave  := { || ::oRs:Update() }
+   if ::oRs:LockType > 1 .and. ::oRs:LockType < 4
+      ::bSaveData    := { || XbrAdoSave( Self ) }
    endif
-
-   ::bSeek  := { |c| ::AdoIncrSeek( c ) }
+   ::bDelete      := { || XbrAdoDelete( Self ) }
+   ::bSeek        := { |c| ::AdoIncrSeek( c ) }
+   ::lVThumbTrack := .t.
 
    if ::lCreated
       ::Adjust()
@@ -4343,6 +4604,7 @@ METHOD SetMySql( oMysql, lAddCols, lAutoOrder, aFldNames ) CLASS TXBrowse
    DEFAULT aFldNames   := {}
    DEFAULT lAddCols    :=  Empty( ::aCols ) .or. ! Empty( aFldNames )
    DEFAULT lAutoOrder  := ::lAutoSort
+   ::lAutoSort         := lAutoOrder
 
    ::oMysql            := oMysql
 
@@ -4401,17 +4663,21 @@ METHOD SetMySql( oMysql, lAddCols, lAutoOrder, aFldNames ) CLASS TXBrowse
 //----------------------------------------------------------------------------//
 
 METHOD SetDolphin( oQry, lAddCols, lAutoOrder, aFldNames, bSeptup ) CLASS TXBrowse
+
    LOCAL xField    := NIL
    LOCAL cHeader   := ""
    LOCAL cCol      := ""
    LOCAL oCol
+   local cWhere, aQryFldNames
 
    DEFAULT oQry        := ::oMysql
    DEFAULT aFldNames   := {}//oQry:aStructure
    DEFAULT lAddCols    :=  Empty( ::aCols ) .or. ! Empty( aFldNames )
    DEFAULT lAutoOrder  := ::lAutoSort
 
+   ::lAutoSort    := lAutoOrder
    ::oMysql = oQry
+   cWhere         := oQry:cWhere
 
    DEFAULT ;
       ::bGoTop    := {|| If( ::oMysql:RecCount() > 0, ::oMysql:GoTop(), NIL ) },;
@@ -4435,9 +4701,13 @@ METHOD SetDolphin( oQry, lAddCols, lAutoOrder, aFldNames, bSeptup ) CLASS TXBrow
        DEFAULT ::bSkip     := { | n | ::oMysql:Skip( n ) }
     ENDIF
 
-   ::nDataType         := DATATYPE_MYSQL
+   ::nDataType          := DATATYPE_MYSQL
 
    IF lAddCols
+
+      aQryFldNames   := ArrTranspose( ::oMySql:aStructure )[ 1 ]
+      AEval( aQryFldNames, { |c,i| aQryFldNames[ i ] := Upper( c ) } )
+      ASort( aQryFldNames,,,{ |x,y| Len( x ) > Len( y ) } )
 
       IF Len(aFldNames) == 0
          aFldNames := ::oMysql:aStructure
@@ -4458,14 +4728,17 @@ METHOD SetDolphin( oQry, lAddCols, lAutoOrder, aFldNames, bSeptup ) CLASS TXBrow
                cCol    := xField
                cHeader := xField
             ENDIF
-            ::SetColFromMySQL( cCol, cHeader, lAutoOrder )
+            ::SetColFromMySQL( cCol, cHeader, lAutoOrder, aQryFldNames )
          endif
 
       NEXT
 
-      ::bSeek  := { | c | DolphinSeek( c, ::oMysql, Self ) }
+      ::bSeek  := { | c | DolphinSeek( c, Self, cWhere ) }
 
    ENDIF
+
+   ::bSaveData    := { || ::oMySql:Save(), .t. }
+   ::bDelete      := { || If( ::nLen < 1, nil, ( ::oMySql:Delete(), ::oMySql:Save() ) ) }
 
    if ::lCreated
       ::Adjust()
@@ -4523,14 +4796,15 @@ return aJust
 
 //----------------------------------------------------------------------------//
 
-METHOD SetColFromADO( cnCol, lAutoOrder ) CLASS TXBrowse
+METHOD SetColFromADO( cnCol, lAutoOrder, aRsColNames, lJet ) CLASS TXBrowse
 
-   LOCAL   nType, cType, nLen, nDec, cName
-   LOCAL   oCol, oField, bExpr
+   local   nType, cType, nLen, nDec, cName
+   local   oCol, oField, bExpr, uVal
+   local   bReplace := { |c| " oCol:oBrw:oRs:Fields('" + Lower( c ) + "'):Value " }
 
-   oCol             := ::AddCol()
+   oCol              := ::AddCol()
    TRY
-      oField           := ::oRs:Fields( cnCol )
+      oField         := ::oRs:Fields( cnCol )
    CATCH
    END
 
@@ -4543,11 +4817,11 @@ METHOD SetColFromADO( cnCol, lAutoOrder ) CLASS TXBrowse
             if !( 'U' $ Type( cnCol ) )
                oCol:bEditValue   := &( "{||" + cnCol + "}" )
             else
-               bExpr             := RsExprnBlock( ::oRs, cnCol )
+               bExpr             := RsExprnBlock( aRsColNames, cnCol, bReplace )
                if bExpr != nil
-                  oCol:bEditValue   := { || Eval( bExpr, Self ) }
+                  oCol:bEditValue   := bExpr
                   TRY
-                     Eval( oCol:bEditValue )
+                     Eval( oCol:bEditValue, nil, oCol )
                   CATCH
                      oCol:bEditValue   := nil
                   END
@@ -4555,25 +4829,27 @@ METHOD SetColFromADO( cnCol, lAutoOrder ) CLASS TXBrowse
             endif
          endif
          if Empty( oCol:bEditValue )
-            oCol:bEditValue   := { || cnCol }
+            oCol:bEditValue   := &( "{ |x,oCol|" +  cValToChar( cnCol ) + " }" )
          endif
          oCol:cHeader   := cValToChar( cnCol )
+         oCol:cExpr     := oCol:cHeader
       endif
       return oCol
    endif
 
    oCol:cHeader     := If( ValType( cnCol ) == 'C', cnCol, oField:Name )
+   oCol:cExpr       := oCol:cHeader
    nType            := oField:Type
 
    DO CASE
    CASE ASCAN( { 2, 3, 16, 17, 18, 19, 20, 21 }, nType ) > 0
       cType         := 'N'
       nLen          := oField:Precision
-      nDec         := 0
+      nDec          := 0
    CASE ASCAN( { 14, 131, 139 }, nType ) > 0
       cType         := 'N'
-      nLen          := oField:Precision
-      nDec          := oField:NumericScale
+      nLen          := Min( 19, oField:Precision )
+      nDec          := If( oField:NumericScale >= 255, 0, Min( nLen - 2, oField:NumericScale ) )
    CASE ASCAN( { 4, 5, 6 }, nType ) > 0  // Single, Double, Currency
       cType         := 'N'
       nLen          := oField:Precision
@@ -4581,61 +4857,121 @@ METHOD SetColFromADO( cnCol, lAutoOrder ) CLASS TXBrowse
 
    CASE ASCAN( { 7, 133, 135 }, nType ) > 0
       cType         := 'D'
+      if ::oRs:RecordCount() > 0 .and. ValType( uVal := oField:Value ) == 'T' .and. ;
+         FW_TIMEPART( uVal ) >= 1.0
+         //
+         cType      := 'T'
+      endif
+      // Programmer can change oCol:cDataType to 'D' or 'T', before Adjust() is called
+      if lJet
+         oCol:bEditValue := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := x, ;
+                                  IfNil( ::oRs:Fields( cnCol ):Value, ;
+                                  If( oCol:cDataType == 'T', HB_CTOT( "" ), CTOD( "" ) ) ) ) }
+      else
+         oCol:bEditValue := { |x,o| XbrAdoDateIO( x, o, cnCol ) }
+      endif
    CASE nType == 11
       cType         := 'L'
-   CASE ASCAN( { 8,128,129,130,200,201,202,203,204,205 }, nType ) > 0
+      oCol:bEditValue := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := ! Empty( x ), ;
+                                   ! Empty( ::oRs:Fields( cnCol ):Value ) ) }
+   CASE ASCAN( { 128, 204, 205 }, nType ) > 0 // Binary
+      cType         := 'M'
+      nLen          := 10
+      oCol:bEditValue := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := HB_StrToHex( x ), ;
+                                    ::oRs:Fields( cnCol ):Value ) }
+
+   CASE ASCAN( { 8,129,130,200,201,202,203 }, nType ) > 0
       cType         := 'C'
       nLen          := oField:DefinedSize
-      if nLen == 0 .or. nLen > 100
-         cType      := 'M'
-         nLen       := 40
+      if ! lAnd( oField:Attributes, 0x10 ) // not fixed length
+         if nLen == 0 .or. nLen > 100
+            cType      := 'M'
+            nLen       := 40
+         else
+            nLen       := Min( 100, nLen )
+         endif
+      endif
+      if cType == 'M'
+         oCol:bEditValue   := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := Trim( x ), ;
+                                    If( ::oRs:RecordCount > 0,;
+                                    IfNil( ::oRs:Fields( cnCol ):Value, "" ), "" ) ) }
+      elseif lAnd( oField:Attributes, 0x10 )
+         oCol:bEditValue   := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := PadR( x, nLen ), ;
+                                 PadR( IfNil( ::oRs:Fields( cnCol ):Value, "" ), nLen ) ) }
+
       else
-         nLen       := Min( 100, nLen )
+         oCol:bEditValue   := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := Trim( x ), ;
+                                 PadR( IfNil( ::oRs:Fields( cnCol ):Value, "" ), nLen ) ) }
       endif
    ENDCASE
 
+   if oCol:bEditValue == nil .and. cType == 'N'
+      oCol:bEditValue := { |x| If( x != nil, ::oRs:Fields( cnCol ):Value := x, ;
+                                   IfNil( ::oRs:Fields( cnCol ):Value, 0.00 ) ) }
+
+   endif
+
+   oCol:lReadOnly    := ( FW_AdoFieldUpdateable( ::oRs, oField ) == .f. )
+
    if cType == nil
-      if nType == 205 // adLongVarBinary : assumed Image.
-         oCol:cDataTye     := 'P'
-      elseif nType == 136 // adChapter
+      if nType == 136 // adChapter
          oCol:bEditValue   := { || ::oRs:Fields( cnCol ):Value }
          oCol:bStrData     := { || "<Child>" }
       else
          oCol:bEditValue   := { || "..." }
       endif
-   else
-      oCol:bEditValue   := { | x | If( x == nil, ::oRs:Fields( cnCol ):Value, ;
-                                    ::oRs:Fields( cnCol ):Value := x ) }
    endif
 
-   oCol:bOnPostEdit  := { |o,x,n| If( n != VK_ESCAPE, o:Value := x, ) }
+   if oCol:lReadOnly
+      oCol:bOnPostEdit  := { || nil }
+   else
+      oCol:bOnPostEdit  := { |o,x,n| If( n == VK_ESCAPE .or. x == nil .or. EQ( o:Value, x, .t., .t. ), nil, o:Value := x ) }
+   endif
+
    oCol:cDataType    := If( cType == nil, 'C', cType )
    oCol:nDataLen     := nLen
+
    if nDec != nil
-      oCol:nDataDec  := Min( nDec, 2 )
+      oCol:nDataDec  := nDec
    endif
    if oCol:cDataType == 'D'
       oCol:cEditPicture := '@D'
+   elseif oCol:cDataType == 'N'
+      oCol:cEditPicture := NumPict( nLen, nDec )
    endif
 
-   if lAutoOrder
-      oCol:cSortOrder   := oCol:cHeader
-   endif
+   oCol:cSortOrder   := '[' + oField:Name + ']'
 
 return oCol
 
 //----------------------------------------------------------------------------//
 
-static function RsExprnBlock( oRs, cStr )
+static function XbrAdoDateIO( dNew, oCol, cnCol )
 
-   local aFldNames   := {}
+   local oRs   := oCol:oBrw:oRs, dVal
+
+   if dNew != nil
+#ifndef __XHARBOUR__
+      if Empty( dNew )
+         dNew  := 0.0
+      endif
+#endif
+      oRs:Fields( cnCol ):Value  := dNew
+   endif
+
+   dVal  := oRs:Fields( cnCol ):Value
+   if dVal == nil .or. FW_TTOD( dVal ) == {^ 1899/12/30 }
+      //
+      dVal  := CtoD( "" )
+   endif
+
+return dVal
+
+//----------------------------------------------------------------------------//
+
+static function RsExprnBlock( aFldNames, cStr, bReplace )
+
    local nAt, c, cCol, bExpr, cSave
-
-   for nAt := 0 to oRs:Fields:Count() - 1
-      AAdd( aFldNames, Upper( oRs:Fields( nAt ):Name ) )
-   next nAt
-
-   ASort( aFldNames,,,{ |x,y| Len( x ) > Len( y ) } )
 
    cSave := cStr
    cStr  := Upper( cStr )
@@ -4644,9 +4980,10 @@ static function RsExprnBlock( oRs, cStr )
 
       do while ( nAt := At( cCol, cStr ) ) > 0
          c := Left( LTrim( SubStr( cStr, nAt + Len( cCol ) ) ), 1 )
-         if c $ ")+-*/%^" .or. Empty( c )
-            cStr  := Stuff( cStr, nAt, Len( cCol ), ;
-                     " ::oRs:Fields('" + lower( cCol ) + "'):Value "  )
+         if c $ ")+-*/%^<>," .or. Empty( c )
+
+            cStr  := Stuff( cStr, nAt, Len( cCol ), Eval( bReplace, cCol )  )
+
          else
             cStr  := Stuff( cStr, nAt, Len( cCol ), Lower( cCol ) )
          endif
@@ -4654,7 +4991,7 @@ static function RsExprnBlock( oRs, cStr )
 
    next
    TRY
-      bExpr    := &( "{ |Self| " + cStr + "}" )
+      bExpr    := &( "{ |x,oCol| " + cStr + "}" )
    CATCH
    END
 
@@ -4662,20 +4999,47 @@ return bExpr
 
 //----------------------------------------------------------------------------//
 
-METHOD SetColFromMySQL( cnCol, cHeader, lAutoOrder ) CLASS TXBrowse
+METHOD SetColFromMySQL( cnCol, cHeader, lAutoOrder, aQryFldNames ) CLASS TXBrowse
 
    LOCAL nType, cType, nLen, nDec, cName
-   LOCAL oCol, nCol
+   LOCAL oCol, nCol := 0
+   local bReplace    := { |c| " oCol:oBrw:oMySql:" + Lower( c ) + " " }
 
-   IF ValType( cnCol ) == "C"
-      nCol               := ::oMysql:FieldPos( cnCol )
-   ENDIF
+   if ValType( cnCol ) == 'B'
+      WITH OBJECT ( oCol := ::AddCol() )
+         :bEditValue    := cnCol
+         :cHeader       := If( ValType( cHeader ) == 'C', cHeader, "Col-" + LTrim( Str( :nCreationOrder ) ) )
+      END
+      return oCol
+   endif
+
+   if ValType( cnCol ) == 'N' .and. cnCol > 0 .and. cnCol <= ::oMySql:FCount()
+      nCol              := cnCol
+   elseif ValType( cnCol ) == "C"
+      TRY
+         nCol            := ::oMysql:FieldPos( cnCol )
+      CATCH
+      END
+   endif
+   if nCol == 0
+      WITH OBJECT ( oCol := ::AddCol() )
+         if ValType( cnCol ) == 'C' .and. aQryFldNames != nil
+            :bEditValue    := RsExprnBlock( aQryFldNames, cnCol, bReplace )
+         else
+            :bEditValue    := &( '{ |x,oCol| ' + cValToChar( cnCol ) + ' }' )
+         endif
+         :cHeader       := If( ValType( cHeader ) == 'C', cHeader, "Col-" + LTrim( Str( :nCreationOrder ) ) )
+      END
+      return oCol
+   endif
 
    cName                 := ::oMysql:FieldName( nCol )
    DEFAULT ;
    nCol                  := cnCol
    oCol                  := ::AddCol()
-   oCol:cHeader          := cHeader
+   WITH OBJECT oCol
+      :cHeader           := If( ValType( cHeader ) == 'C', cHeader, cName )
+   END
    cType                 := ::oMysql:FieldType( nCol )
    nLen                  := 0
    nDec                  := 0
@@ -4684,7 +5048,7 @@ METHOD SetColFromMySQL( cnCol, cHeader, lAutoOrder ) CLASS TXBrowse
    CASE cType       == 'N'
       nLen               := ::oMysql:FieldLen( nCol )
       nDec               := ::oMysql:FieldDec( nCol )
-      oCol:cEditPicture  := NumPict( nLen, nDec, .F., .f. )
+      oCol:cEditPicture  := NumPict( nLen, nDec )
 
    CASE cType       == 'C'
       nLen               := MIN( 100, ::oMysql:FieldLen( nCol ) )
@@ -4694,30 +5058,31 @@ METHOD SetColFromMySQL( cnCol, cHeader, lAutoOrder ) CLASS TXBrowse
       nLen               := IF(nLen < 30, 30, nLen )
 
    CASE cType       == 'D'
-      oCol:nHeadStrAlign := 2
-      oCol:nDataStrAlign := 0
+      nLen              := 8
 
-   CASE cType       == NIL
-      // some types like adChapter( child recset), etc. can not be shown
-      // programmer who uses such types should make his own coding for
-      // such columns
-      oCol:bEditValue    := { || "..." }
+   CASE cType       == 'T'  // Dolphin returns Char Value (time stamp sting) Fix; 2014-JUN-19
+      nLen              := 19
+      cType             := 'C'
 
    OTHERWISE
       // just in case.  this will not be executed
-      oCol:bEditValue    := { || "..." } //{ || MSGINFO( "Abriendo fronteras, wmormar...", FWDESCRIPTION ) }
+      oCol:bEditValue    := { || "..." }
 
    ENDCASE
 
-   oCol:bEditValue       := { || ::oMysql:FieldGet( nCol ) }
-   oCol:cDataType        := If( cType == nil, 'C', cType )
-   oCol:bOnPostEdit      := { |o,x,n| If( n == VK_RETURN, ::onedit( o, x, n, cType, nCol ), NIL ) }
+   DEFAULT oCol:bEditValue := { |x| If( x == nil, ::oMySql:FieldGet( cName ), ::oMySql:FieldPut( nCol, x ) ) }
 
-   if lAutoOrder
-      oCol:cSortOrder   := cName
-   endif
+   WITH OBJECT oCol
+      :cDataType           := If( cType == nil, 'C', cType )
+      :nDataLen            := nLen
+      :nDataDec            := nDec
+      :bOnPostEdit         := { |o,x,n| If( n == VK_ESCAPE,,o:Value := x ) }
+      if lAutoOrder
+         :cSortOrder   := cName
+      endif
+   END
 
-   RETURN oCol
+RETURN oCol
 
 //----------------------------------------------------------------------------//
 
@@ -4727,44 +5092,38 @@ METHOD RddIncrSeek( cExpr, uSeek ) CLASS TXBrowse
    local lSoft       := .t.
    local cTemp, uOrdKeyVal, cOrdKeyType
 
-   // msgStop( cExpr, "cExpr" )
-   // msgStop( ::lIncrFilter, "::lIncrFilter" )
-
    if ::lIncrFilter
       return ::RDDIncrFilter( cExpr, @uSeek )
    endif
 
-   if Empty( ( ::cAlias )->( OrdSetFocus() ) ) //.or. Empty( cExpr )
+   if Empty( OrdSetFocus() ) //.or. Empty( cExpr )
       return .f.
    endif
 
-   uOrdKeyVal  := ( ::cAlias )->( OrdKeyVal() )
+   uOrdKeyVal  := OrdKeyVal()
    cOrdKeyType := ValType( uOrdKeyVal )
 
    if cOrdKeyType == 'C'
-
-      ::lSeekWild := "*" $ cExpr 
-
       if ::lSeekWild
-         if "UPPER" $ Upper( ( ::cAlias )->( OrdKey() ) )
+         if "UPPER" $ Upper( OrdKey() )
             cExpr := Upper( cExpr )
          endif
-         lFound   := ( ::cAlias )->( OrdWildSeek( StrTran( cExpr + "*", "**", "*" ) ) )
+         lFound   := OrdWildSeek( StrTran( "*" + cExpr + "*", "**", "*" ) )
       else
-         lFound   := ( ::cAlias )->( DbSeek( Upper( cExpr ) ) .or. ( ::cAlias )->( DbSeek( cExpr ) ) )
+         lFound   := DbSeek( Upper( cExpr ) ) .or. DbSeek( cExpr )
       endif
    else
       do case
       case cOrdKeyType == 'N'
          cExpr    := Val( cExpr )
       case cOrdKeyType $ 'DT'
-         cExpr    := CToD( cExpr + SubStr( DToC( uOrdKeyVal ), Len( cExpr ) + 1 ) )
+         cExpr    := SeekDate( cExpr, uOrdKeyVal )
       case cOrdKeyType == 'L'
          cExpr    := Upper( Left( cExpr, 1 ) ) == 'T'
       otherwise
          lSoft    := .f.
       endcase
-      ( ::cAlias )->( DbSeek( cExpr, lSoft ) )
+      DbSeek( cExpr, lSoft )
       lFound      := !Eof()
    endif
 
@@ -4782,29 +5141,38 @@ METHOD RddIncrFilter( cExpr, uSeek ) CLASS TXBrowse
    if ::bFilterExp == nil
       DEFAULT ::cFilterFld   := OrdKey()
       cKey  := ::cFilterFld
-      if ValType( &cKey ) == 'C'
-         if ! "UPPER" $ Upper( cKey )
-            cKey  := "UPPER( " + cKey + " )"
+      if ::lSQLRDD
+         if Empty( cExpr )
+            cFilter  := ""
+         else
+            cExpr := If( ::lSeekWild, "'%", "'" ) + Upper( Trim( cExpr ) ) + "%'"
+            cFilter  := cKey + " LIKE " + cExpr
          endif
       else
-         cKey  := "CVALTOCHAR(" + cKey + ")"
-      endif
-      if Empty( cExpr )
-         cFilter     := '!deleted()'
-      elseif ::lSeekWild
+         if ValType( &cKey ) == 'C'
+            if ! "UPPER" $ Upper( cKey )
+               cKey  := "UPPER( " + cKey + " )"
+            endif
+         else
+            cKey  := "CVALTOCHAR(" + cKey + ")"
+         endif
+         if Empty( cExpr )
+            cFilter     := '!deleted()'
+         elseif ::lSeekWild
 #ifdef __XHARBOUR__
-         cFilter     := 'WildMatch("*' + Upper( Trim( cExpr ) ) + '*",' + cKey + ')'
+            cFilter     := 'WildMatch("*' + Upper( Trim( cExpr ) ) + '*",' + cKey + ')'
 #else
-         cFilter     := 'HB_WildMatch("*' + Upper( Trim( cExpr ) ) + '*",' + cKey + ')'
+            cFilter     := 'HB_WildMatch("*' + Upper( Trim( cExpr ) ) + '*",' + cKey + ')'
 #endif
-      else
-         cFilter     := cKey + '="' + Upper( Trim( cExpr ) ) + '"'
+         else
+            cFilter     := cKey + '="' + Upper( Trim( cExpr ) ) + '"'
+         endif
       endif
    else
       cFilter        := Eval( ::bFilterExp, cExpr )
    endif
 
-   if &cFilter
+   if ! ::lSQLRDD .and. &cFilter
       uSeek          := ::BookMark
    endif
    SET FILTER TO &cFilter
@@ -4818,9 +5186,9 @@ return lFound
 METHOD AdoIncrSeek( uSeek ) CLASS TXBrowse
 
    local lFound   := .f.
-   local cCol     := StrToken( ::oRs:Sort, 1 )
+   local cCol     := CharRem( "[]", StrToken( ::oRs:Sort, 1 ) )
    local cExpr    := ''
-   local cType, d, uVal, lSoft
+   local cType, d, uVal, lSoft, cSaveFilt
 
    if ::lIncrFilter
       if ::bFilterExp == nil
@@ -4835,7 +5203,8 @@ METHOD AdoIncrSeek( uSeek ) CLASS TXBrowse
 
       DEFAULT lSoft := Set(_SET_SOFTSEEK), ::lSeekWild := .f.
 
-      cType       := ValType( uVal := ::oRs:Fields( cCol ):Value )
+      uVal     := ::oRs:Fields( cCol ):Value
+      cType    := If( uVal == nil, FieldTypeAdoToDbf( ::oRs:Fields( cCol ):Type ), ValType( uVal ) )
 
       do case
       case cType == 'C'
@@ -4852,20 +5221,8 @@ METHOD AdoIncrSeek( uSeek ) CLASS TXBrowse
          cExpr    := cCol + " >= " + ;
                      LTrim( Str( Val( uSeek ) ) )
 
-            cExpr    := "STRING( SALARY ) LIKE '*" + uSeek + "*'"
-
       case cType $ 'DT'
-
-         if Empty( d := CToD( uSeek ) )
-            d  := CToD( uSeek + SubStr( DToC( uVal ), Len( uSeek ) + 1 ) )
-         endif
-         if ! Empty( d )
-            cExpr    := cCol + " >= #" + ;
-                        StrZero( Year( d ), 4 ) + "-" + ;
-                        StrZero( Month( d ), 2 ) + "-" + ;
-                        StrZero( Day( d ), 2 ) + "#"
-
-         endif
+         cExpr    := cCol + " >= " + d2ado( SeekDate( uSeek, uVal ) )
       endcase
 
       if ! Empty( cExpr )
@@ -4875,20 +5232,30 @@ METHOD AdoIncrSeek( uSeek ) CLASS TXBrowse
                ::oRs:MoveFirst()
                lFound         := .t.
             else
+               cSaveFilt      := ::oRs:Filter
                ::oRs:Filter   := cExpr
-               lFound         := ( ::oRs:RecordCount > 0 )
+               if ! ( lFound := ( ::oRs:RecordCount > 0 ) )
+                  ::oRs:Filter   := cSaveFilt
+               endif
             endif
          else
-            ::oRs:Find( cExpr, 0, 1, 1 )
-            if ::oRs:Eof() .and. lSoft .and. cType == 'C'
-               ::oRs:MoveFirst()
-               cExpr := cCol + " > '" + uSeek + "'"
-               ::oRs:Find( cExpr, 0, 1, 1 )
-            endif
-            if ::oRs:Eof()
-               ::oRs:MoveLast()
-            else
+            if Empty( uSeek )
+               if ::oRs:RecordCount() > 0
+                  ::oRs:MoveFirst()
+               endif
                lFound   := .t.
+            else
+               ::oRs:Find( cExpr, 0, 1, 1 )
+               if ::oRs:Eof() .and. lSoft .and. cType == 'C'
+                  ::oRs:MoveFirst()
+                  cExpr := cCol + " > '" + uSeek + "'"
+                  ::oRs:Find( cExpr, 0, 1, 1 )
+               endif
+               if ::oRs:Eof()
+                  ::oRs:MoveLast()
+               else
+                  lFound   := .t.
+               endif
             endif
          endif
       endif
@@ -4899,13 +5266,38 @@ return lFound
 
 //----------------------------------------------------------------------------//
 
-static FUNCTION DolphinSeek( c, oQry, oBrw )
+static FUNCTION DolphinSeek( c, oBrw, cQryWhere )
 
-   LOCAL nStart
-   LOCAL uData, nNum
-   LOCAL cSortOrder
+   local oQry        := oBrw:oMySql
+   local nStart
+   local uData, nNum, lRet
+   local cSortOrder
 
-   STATIC aLastRec := {}
+   static aLastRec := {}
+
+   if oBrw:lIncrFilter
+      DEFAULT oBrw:cFilterFld := TOken( oQry:cOrder, , 1 )
+      if Empty( oBrw:cFilterFld )
+         return .f.
+      endif
+
+      if Empty( c )
+         c     := cQryWhere
+      else
+         c     := If( Empty( cQryWhere ), "", "(" + cQryWhere + ") and " ) + ;
+                  Lower( oBrw:cFilterFld ) + " like '" + ;
+                  If( oBrw:lSeekWild, "%", "" ) + ;
+                  c + "%'"
+      endif
+      oQry:SetWhere( c, .t. )
+      oQry:GoTop()
+      return ( oQry:LastRec() > 0 )
+
+   endif
+
+   if Empty( c )
+      return .t.
+   endif
 
    nNum = AScan( oBrw:aCols, {| o | !Empty( o:cOrder ) } )
 
@@ -4915,6 +5307,10 @@ static FUNCTION DolphinSeek( c, oQry, oBrw )
 
    cSortOrder = oBrw:aCols[ nNum ]:cSortOrder
 
+   if Len( c ) == 1
+      aLastRec    := {}
+   endif
+
    IF Len( aLastRec ) < Len( c )
       IF Len( aLastRec ) == 0
          nStart = 1
@@ -4923,8 +5319,9 @@ static FUNCTION DolphinSeek( c, oQry, oBrw )
       ENDIF
       AAdd( aLastRec, nStart )
    ELSE
-      ADel( aLastRec, Len( aLastRec ) )
-      ASize( aLastRec, Len( aLastRec ) - 1 )
+//      ADel( aLastRec, Len( aLastRec ) )
+//      ASize( aLastRec, Len( aLastRec ) - 1 )
+      ASize( aLastRec, Len( c ) - 1 )
       IF Len( aLastRec ) == 0
          nStart = 1
       ELSE
@@ -4932,9 +5329,9 @@ static FUNCTION DolphinSeek( c, oQry, oBrw )
       ENDIF
    ENDIF
 
-   oQry:Seek( c, cSortOrder, nStart, oQry:LastRec(), .T., .T. )
+   lRet  := ( oQry:Seek( c, cSortOrder, nStart - 1, oQry:LastRec(), .T., .T. ) != 0 )
 
-RETURN .T.
+return lRet
 
 //----------------------------------------------------------------------------//
 
@@ -5000,7 +5397,7 @@ return lFound
 
 //----------------------------------------------------------------------------//
 
-METHOD SetTree( oTree, aResource, bOnSkip ) CLASS TXBrowse
+METHOD SetTree( oTree, aResource, bOnSkip, aCols ) CLASS TXBrowse
 
    local oCol, aBmp := { 0, 0, 0 }
    local n, nLevels, aBlocks, bBookMark
@@ -5054,21 +5451,46 @@ METHOD SetTree( oTree, aResource, bOnSkip ) CLASS TXBrowse
       oCol  := ::InsCol( 1 )
    endif
 
-   oCol:bStrData     := ;
    oCol:bEditValue   := { |x| If( x == nil, ::oTreeItem:cPrompt, ::oTreeItem:cPrompt := x ) }
-   oCol:cHeader      := ""
-   oCol:nWidth       := 300
+   oCol:cHeader      := "Item"
+   oCol:nWidth       := 200
    oCol:bLDClickData := { || If( ::oTreeItem:oTree != nil,( ::oTreeItem:Toggle(), ::Refresh() ),) }
    oCol:bIndent      := { || ::oTreeItem:nLevel * 20 - 20 }
 
    if ValType( aResource ) == 'A'
       oCol:AddBitmap( aResource )
    endif
-   oCol:bBmpData     := { || If( ::oTreeItem:oTree == nil, 3, If( ::oTreeItem:lOpened, 1, 2 ) ) }
+   oCol:bBmpData   := { || If( ::oTreeItem:oTree == nil, 3, If( ::oTreeItem:lOpened, 1, 2 ) ) }
 
    ::nFreeze         := 1
 
+   if ValType( aCols ) == 'L' .and. aCols .and. ValType( ::oTreeItem:Cargo ) == 'A'
+      for n := 1 to Len( ::oTreeItem:Cargo )
+         ::SetColsForTree( n )
+      next n
+   elseif ValType( aCols ) == 'A'
+      for n := 1 to Len( aCols )
+         ::SetColsForTree( aCols[ n ] )
+      next n
+   endif
+
 return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD SetColsForTree( uData ) CLASS TXBrowse
+
+   local oCol  := ::AddCol()
+
+   if ValType( uData ) == 'B'
+      oCol:bEditValue   := uData
+   elseif ValType( ::oTreeItem:Cargo ) == 'A' .and. ValType( uData ) == 'N'
+      oCol:bEditValue   := { || ::oTreeItem:Cargo[ uData ] }
+   else
+      oCol:bEditValue   := &( "{ |x,oCol| " + cValToChar( uData )+ " }" )
+   endif
+
+return oCol
 
 //----------------------------------------------------------------------------//
 
@@ -5115,7 +5537,6 @@ METHOD SetoDbf( oDbf, aCols, lAutoSort, lAutoCols, aRows ) CLASS TXBrowse
                                  ( oDbf:GoTo( n ) ) ) }
 
       endif
-
       if __ObjHasMethod( oDbf, 'KEYNO' ) .and. __ObjHasMethod( oDbf, 'KEYCOUNT' ) .and. ;
          __ObjHasMethod( oDbf, 'KEYGOTO' )
          DEFAULT ;
@@ -5128,10 +5549,13 @@ METHOD SetoDbf( oDbf, aCols, lAutoSort, lAutoCols, aRows ) CLASS TXBrowse
 
       endif
 
+      if __ObjHasMethod( oDbf, 'SAVE' )
+         DEFAULT ::bSaveData := { || ::oDbf:Save() }
+      endif
+
       ::nDataType         := DATATYPE_ODBF
 
    endif
-
    if Empty( aCols ) .and. lAutoCols
       if __ObjHasData( oDbf, "aStruct" )
          aCols := {}
@@ -5173,6 +5597,10 @@ METHOD SetoDbf( oDbf, aCols, lAutoSort, lAutoCols, aRows ) CLASS TXBrowse
    endif
    if __ObjHasMethod( oDbf, 'SEEK' )
       DEFAULT ::bSeek := { |c| ::oDbf:Seek( c, , ::lSeekWild ) }
+   endif
+
+   if __ObjHasMethod( oDbf, "Delete" )
+      ::bDelete      := { || ::oDbf:Delete() }
    endif
 
 return Self
@@ -5341,14 +5769,12 @@ METHOD SetBackGround( uBack, uBckMode ) CLASS TXBrowse
          DEFAULT uBckMode := If( Empty( ::oBrush ), 0, ::oBrush:nResizeMode )
          SWITCH ValType( uBack )
          CASE 'A'
-            /*
             if ValType( uBckMode ) == 'N'
                uBckMode    := uBckMode < 2
             endif
             DEFINE BRUSH oBrush GRADIENT uBack ;
                STYLE ( If( ! Empty( uBckMode ), "VERTICAL", "HORIZONTAL" ) )
             EXIT
-            */
          CASE 'N'
             oBrush := TBrush():New( nil, nil, nil, nil, uBack, ;
                FW_Decode( uBckMode, 1, "STRETCH", 2, "RESIZE", "TILED" ) )
@@ -5380,15 +5806,14 @@ return Self
 
 METHOD MakeBrush() CLASS TXBrowse
 
-   if ::oBrush != NIL
-
-   ::oBrush:Resize( Self )
-   if ::lCreated
-      ::Refresh()
+   if ::oBrush != nil
+      if !( Empty( ::oBrush:hBitmap ) .and. Empty( ::oBrush:aGrad ) )
+         ::oBrush:Resize( Self )
+         if ::lAdjusted //::lCreated
+            ::Refresh()
+         endif
+      endif
    endif
-
-   endif
-
 return Self
 
 //------------------------------------------------------------------//
@@ -5462,18 +5887,20 @@ METHOD DelCol( nPos ) CLASS TXBrowse
 
    local nFor
 
-   ::aCols[ nPos ]:End()
+   if Len( ::aCols ) > 1
+      ::aCols[ nPos ]:End()
 
-   ADel( ::aCols, nPos )
-   ASize( ::aCols, Len( ::aCols ) - 1 )
+      ADel( ::aCols, nPos )
+      ASize( ::aCols, Len( ::aCols ) - 1 )
 
-//   for nFor := nPos + 1 to Len( ::aCols )
-   for nFor := nPos to Len( ::aCols )
-      ::aCols[ nFor ]:nCreationOrder := nFor
-   next
+   //   for nFor := nPos + 1 to Len( ::aCols )
+      for nFor := nPos to Len( ::aCols )
+         ::aCols[ nFor ]:nCreationOrder := nFor
+      next
 
-   ::GetDisplayCols()
-   ::Super:Refresh()
+      ::GetDisplayCols()
+      ::Super:Refresh()
+   endif
 
 return nil
 
@@ -5535,8 +5962,12 @@ METHOD AddColumn( cHead, bData, cPic, uClrFore, uClrBack, ;
       oCol:bEditWhen   := bWhen
       oCol:bEditValid  := bValid
       if bOnPostEdit == nil
+/*
          oCol:bOnPostEdit  := { |o,x,n| If( n != VK_ESCAPE .and. Eval( o:oBrw:bLock ), ;
-          o:Value := x, ) }
+          ( o:Value := x, Eval( o:oBrw:bUnLock ) ), nil ) }
+*/
+         oCol:bOnPostEdit  := { |o,x,n| If( n != VK_ESCAPE .and. o:oBrw:Lock(), ;
+                                o:Value := x, nil ) }    // FWH 13.03
 
       else
          oCol:bOnPostEdit := bOnPostEdit
@@ -5568,6 +5999,7 @@ METHOD AddColumn( cHead, bData, cPic, uClrFore, uClrBack, ;
 
    if ncOrder != nil
       oCol:cSortOrder := ncOrder
+      ::lAutoSort     := .t.
       if ::nDataType == DATATYPE_RDD .and. ! Empty( ::cAlias ) .and. SELECT( ::cAlias ) > 0
          oCol:cOrdBag    := ( ::cAlias )->( OrdBagName( ncOrder ) )
       endif
@@ -5942,8 +6374,14 @@ METHOD Select( nOperation ) CLASS TXBrowse
    case nOperation == 3 // Shift & lclick
       uBook   := Eval( ::bBookMark )
       uCurRow := ::KeyNo()
+      if ::lSqlRDD
+         uCurRow  := ( ::cAlias )->( IfNil( OrdKeyVal(), "" ) + Str( RecNo() ) )
+      endif
       Eval( ::bBookMark,  Atail( ::aSelected ) )
       uOldRow := ::KeyNo()
+      if ::lSqlRDD
+         uOldRow  := ( ::cAlias )->( IfNil( OrdKeyVal(), "" ) + Str( RecNo() ) )
+      endif
       if uOldRow != uCurRow
          ::aSelected := { Atail( ::aSelected ) }
          if uCurRow > uOldRow
@@ -5952,7 +6390,7 @@ METHOD Select( nOperation ) CLASS TXBrowse
                If Ascan( ::aSelected, uTemp ) == 0
                   Aadd( ::aSelected, uTemp )
                Endif
-               ::Skip( 1 )          // Eval( ::bSkip, 1 )
+               ::Skip( 1 )
             enddo
             CursorArrow()
          else
@@ -5961,7 +6399,7 @@ METHOD Select( nOperation ) CLASS TXBrowse
                If Ascan( ::aSelected, uTemp ) == 0
                   Aadd( ::aSelected, uTemp )
                endif
-               ::Skip( -1 )         // Eval( ::bSkip, -1 )
+               ::Skip( -1 )
             enddo
             CursorArrow()
          endif
@@ -5986,7 +6424,7 @@ METHOD Select( nOperation ) CLASS TXBrowse
       Eval( ::bGotop )
       do while nAt <= nLen //.and. !Eval( ::bEof )
          aTemp[ nAt++ ] := Eval( ::bBookMark )
-         ::Skip( 1 )             //Eval( ::bSkip, 1 )
+         ::Skip( 1 )
       enddo
       Eval( ::bBookMark, uBook )
       CursorArrow()
@@ -6012,6 +6450,10 @@ METHOD Select( nOperation ) CLASS TXBrowse
 
    end case
 
+   if ::bOnMultiSelect != nil
+      Eval( ::bOnMultiSelect, Self, nOperation )
+   endif
+
 return nil
 
 //----------------------------------------------------------------------------//
@@ -6033,9 +6475,9 @@ METHOD Seek( cSeek ) CLASS TXBrowse
             lRet     := .t.
             if Empty( uSeek )
                ::Refresh( .t. )
-               if ::BookMark != uBook
+//               if ::BookMark != uBook
                   ::Change( .t. )
-               endif
+//               endif
             else
                ::BookMark  := uSeek
                ::Refresh()
@@ -6073,22 +6515,21 @@ METHOD Seek( cSeek ) CLASS TXBrowse
    endif
 
    lRet     := .t.
-   if ::nRowSel > ::KeyNo()
-      ::nRowsel := 1
-   endif
-
    ::cSeek  := cSeek
    uSeek    := ::BookMark
-   nRows    := ::nDataRows
-   lRefresh := .t.
-
    if ::oSeek != nil
       ::oSeek:SetText( cSeek )
    endif
-
+   if uSeek == uBook
+      // found on the same row. no change
+      return .t.
+   endif
+   nRows    := ::nDataRows
+   lRefresh := .t.
    // if the new position is already on the screen
    // change rowpos only
    ::BookMark  := uBook
+   ::DrawLine( .f. )
    ::Skip( 1 - ::nRowSel )
 
    for nFor := 1 to nRows
@@ -6104,7 +6545,8 @@ METHOD Seek( cSeek ) CLASS TXBrowse
    if lRefresh
       ::BookMark  := uSeek
       ::Change( .t. )
-      ::Super:Refresh( .F. )
+//      ::Super:Refresh( .F. )
+      ::Refresh()
    else
       if ! ::FullPaint
          ::BookMark  := uBook
@@ -6136,7 +6578,13 @@ METHOD SetColumns( nRow, nCol, nFlags ) CLASS TXBrowse
    nLen := Len( ::aCols )
 
    MENU oMenu POPUP
-   oMenu:l2007    := ::l2007
+      if ::l2007
+         if WndMain() != nil .and. WndMain():oMenu != nil .and. WndMain():oMenu:l2010
+            oMenu:l2010    := .t.
+         else
+            oMenu:l2007    := .t.
+         endif
+      endif
       for nFor := 1 to nLen
          oCol := ::aCols[ nFor ]
          MenuAddItem( oCol:cHeader, , !oCol:lHide, ;
@@ -6540,39 +6988,31 @@ return nil
 METHOD Eval( bBlock, bFor, bWhile, nNext, nRec, lRest ) CLASS TXBrowse
 
    local lFromTop    := bWhile == nil .and. nNext == nil .and. nRec == nil .and. Empty( lRest )
-   local nSaveSelect := nil
    local uBookMark
    local nRow        := 0
 
    DEFAULT bBlock := { || nil }, bFor := { || .t. }, bWhile := { || .t. }, ;
-                     nRec := 0, lRest := .t.
+                     nNext := ::nLen, nRec := 0, lRest := .t.
 
-   if ::nDataType == DATATYPE_RDD .and. ! Empty( ::cAlias )
-      nSaveSelect := SELECT()
-      SELECT( ::cAlias )
-   endif
-
-   uBookMark      := Eval( ::bBookMark )
+   uBookMark      := ::BookMark
    if lFromTop
       ::GoTop()
    endif
    if nRec > 0
-      ::KeyNo( nRec )
+      ::BookMark  := nRec
       Eval( bBlock, Self )
    else
-      do while nRow++ <= ::nLen .and. Eval( bWhile, Self )
-         if Eval( bFor, Self )
-            Eval( bBlock, Self )
+      do while ( ::cAlias )->( Eval( bWhile, Self ) )
+         nRow++
+         if ( ::cAlias )->( Eval( bFor, Self ) )
+            ( ::cAlias )->( Eval( bBlock, Self ) )
          endif
-         if ::GoDown() < 1
+         if nRow >= nNext .or. ::GoDown() < 1
             exit
          endif
       enddo
    endif
-   Eval( ::bBookMark, uBookMark )
-   if ! Empty( nSaveSelect )
-      Select( nSaveSelect )
-   endif
+   ::BookMark     := uBookMark
    ::Refresh()
 
 return Self
@@ -6655,7 +7095,7 @@ return Self
 
 //----------------------------------------------------------------------------//
 
-METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy ) CLASS TXBrowse
+METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy, cPDF ) CLASS TXBrowse
 
    local oRep, oPrn, oFont, oBold, uRet
    local aCols, nFor, oCol, uBookMark
@@ -6674,10 +7114,12 @@ METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy ) CLASS TXBrowse
       return nil
    endif
 
-   oPrn :=  PrintBegin( nil, ;            // document
+   oPrn :=  PrintBegin( cTitle, ;            // document
                         .f., ;            // luser
                         lPreview, nil, ;  // xmodel
-                        lModal, .F. )     // lselect
+                        lModal, ;
+                        .f.,    ;         // lselect
+                        cPDF )            // PDF to Save
 
    if oPrn:hDC == 0
        return .f.
@@ -6691,6 +7133,7 @@ METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy ) CLASS TXBrowse
    DEFINE FONT oBold NAME 'TAHOMA' SIZE 0, - 8 BOLD
 
    REPORT oRep TITLE cTitle ;
+          FOOTER "Page : " + cValToChar( oRep:nPage ) CENTER ;
           FONT oFont,oBold ;
           TO DEVICE oPrn
 
@@ -6761,6 +7204,7 @@ METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy ) CLASS TXBrowse
    endif
    oRep:bWhile      := { || oRep:nCounter < nRows .and. ! lEof }
    oRep:bEnd        := ::bGoTop
+   oRep:bToExcel       := { || oBrw:ToExcel( nil, If( Empty( aGroupBy ), nil, 1 ) ) }
 
    if ::oTree != nil
 
@@ -6769,7 +7213,7 @@ METHOD Report( cTitle, lPreview, lModal, bSetUp, aGroupBy ) CLASS TXBrowse
                            ::oTreeItem:nLevel == nLevels }
    endif
 
-   oRep:Activate()
+   ( ::cAlias )->( oRep:Activate() )
 
    if ::oTree != nil
       ::oTree:Collapse()
@@ -6791,15 +7235,13 @@ return Self
 METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
 
    local oExcel, oBook, oSheet, oWin
-   local nCol, nXCol, oCol, cType, uValue, nAt, cxlAggr
+   local nCol, nXCol, oCol, cType, uValue, nAt, cFormula
    local uBookMark, nRow
    local nDataRows
    local oClip, cText, nPasteRow, nStep, cFormat
    local aTotals  := {}, lAnyTotals := .f.
    local aWidths  := {}
    local lContinue   := .t.
-   local oBlock
-   local oError
 
    if lExcelInstl == .f.
       // already checked and found excel not installed
@@ -6825,16 +7267,12 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    if ( oExcel := ExcelObj() ) == nil
       lExcelInstl := .f.
       if lCalcInstl == .f.
-         msgStop( "Excel not installed" )
+         MsgAlert( FWString( "Excel not installed" ), FWString( "Alert" ) )
          return Self
       else
          return ::ToCalc( bProgress, nGroupBy, , , aCols )
       endif
    endif
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
    lExcelInstl    := .t.
 
    if nxlLangID == nil
@@ -6842,8 +7280,7 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    endif
 
    oExcel:ScreenUpdating := .f.
-
-   oBook    := oExcel:WorkBooks:Add()
+   oBook   := oExcel:WorkBooks:Add()
    oSheet   := oExcel:ActiveSheet
 
    uBookMark   := EVAL( ::bBookMark )
@@ -6865,7 +7302,7 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
          CASE Empty( cType )
             // no action
          CASE cType == 'N'
-            cFormat     := Clp2xlNumPic( oCol:cEditPicture )
+            cFormat     := Dbf2ExcelNumFormat( oCol:cEditPicture )
             oSheet:Columns( nCol ):NumberFormat := cFormat
             oSheet:Columns( nCol ):HorizontalAlignment := - 4152 //xlRight
 
@@ -6884,7 +7321,7 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
             if ::nDataType != DATATYPE_ARRAY
                oSheet:Columns( nCol ):NumberFormat := "@"
                if ! Empty( oCol:nDataStrAlign )
-                  oSheet:Columns( nCol ):HorizontalAlignment := If( oCol:nDataStrAlign == AL_CENTER, -4108, -4152 )
+                  oSheet:Columns( nCol ):HorizontalAlignment := If( lAnd( oCol:nDataStrAlign, AL_CENTER ), -4108, -4152 )
                endif
             endif
          ENDCASE
@@ -6920,7 +7357,8 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
             if ::oWnd:oMsgBar == nil
                bProgress := { || nil }
             else
-               bProgress := { | n, t | ::oWnd:SetMsg( "To Excel : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
+               bProgress := { | n, t | ::oWnd:SetMsg( FWString( "To Excel" ) + ;
+                              " : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
             endif
          endif
 
@@ -6962,7 +7400,7 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
                   endif
                   cText    += ::ClpRow( .t., aCols )
 
-                  lContinue := ( ::Skip( 1 ) == 1 )            // Eval( ::bSkip, 1 )
+                  lContinue := ( ::Skip( 1 ) == 1 )
                   nRow ++
 
                   if Len( cText ) > 16000
@@ -7037,20 +7475,15 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
          oCol   := aCols[ nXCol ]
          nCol ++
          if oCol:lTotal
-            if ! Empty( cxlSum )
-               cxlAggr     := cxlSum
-               if lxlEnglish .and. ! Empty( oCol:nFooterType ) .and. oCol:nFooterType > AGGR_SUM
-                  cxlAggr  := { 'SUM(', 'MAX(', 'MIN(', 'COUNT(', 'AVERAGE(', 'STDEV(', 'STDEVP(' } ;
-                              [ AScan( { AGGR_SUM, AGGR_MAX, AGGR_MIN, AGGR_COUNT, AGGR_AVG, AGGR_STDEV, AGGR_STDEVP }, ;
-                                oCol:nFooterType ) ]
-               endif
-//               oSheet:Cells( nRow, nCol ):FormulaR1C1 := "=" + cxlAggr + excelRange( 2, nCol, nRow - 1 ) + ')' // FWH 9.11 + ')' added
-               oSheet:Cells( nRow, nCol ):Formula := "=" + cxlAggr + ;
-                  oSheet:Range( oSheet:Cells( 2, nCol ), ;
-                                oSheet:Cells( nRow - 1, nCol ) ):Address( .f., .f. ) + ")"
-
-               lAnyTotals := .t.
-            endif
+            cFormula:= "SUBTOTAL(" + ;
+                        LTrim( Str( FW_DeCode( IfNil( oCol:nFooterType, 0 ), AGGR_SUM, 9, AGGR_MAX, 4, AGGR_MIN, 5, ;
+                        AGGR_COUNT, 3, AGGR_AVG, 1, AGGR_STDEV, 7, AGGR_STDEVP, 8, 9 ) ) ) + ;
+                        "," + ;
+                        oSheet:Range( oSheet:Cells( 2, nCol ), ;
+                                      oSheet:Cells( nRow - 1, nCol ) ):Address( .f., .f. ) + ;
+                        ")"
+            oSheet:Cells( nRow, nCol ):Formula := '=' + ExcelTranslate( cFormula )
+            lAnyTotals := .t.
          endif
       next nXCol
       if lAnyTotals
@@ -7082,17 +7515,10 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    ShowWindow( oExcel:hWnd, 3 )
    BringWindowToTop( oExcel:hWnd )
 
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible establecer lenguaje de Excel" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
 return oSheet
 
 //----------------------------------------------------------------------------//
+
 METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
 
    local oCalc, oDeskTop,oBook, oSheet, oWin, oLocal, oDispatcher
@@ -7112,7 +7538,7 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
       endif
    endif
 
-   DEFAULT nPasteMode:=1
+   DEFAULT nPasteMode:=2
    DEFAULT aSaveAs:={}
    nxlLangID:=0  // This is a static variable used in ToExcel() and SetExcelLanguage()
 
@@ -7134,7 +7560,8 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
    if ( oCalc := SunCalcObj() ) == nil
       lCalcInstl  := .f.
       if lExcelInstl == .f.
-         msgStop( "No spreadsheet software installed" )
+         MsgAlert( FWString( "No spreadsheet software installed" ),;
+                   FWString( "Alert" ) )
          return Self
       else
          return ::ToExcel( bProgress, nGroupBy, aCols )
@@ -7182,7 +7609,7 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
 
       nCol ++
 
-      oSheet:GetCellByPosition( nCol-1, nRow-1 ):SetString = oCol:cHeader
+      oSheet:GetCellByPosition( nCol-1, nRow-1 ):SetString( oCol:cHeader )
       cType      := oCol:cDataType
 
       DO CASE
@@ -7199,7 +7626,6 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
                   cFormat  := Left( cformat, nAt ) + '"' + SubStr( cFormat, nAt + 1 ) + '"'
                endif
             endif
-
             oSheet:GetColumns():GetByIndex( nCol-1 ):NumberFormat:=GetNumberFormatId(oBook, cFormat, cType)
             oSheet:GetColumns():GetByIndex( nCol-1 ):HoriJustify = 3  // 3 Right Alignement
 
@@ -7215,7 +7641,7 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
          CASE cType == 'L'
             // leave as general format
          OTHERWISE
-             oSheet:GetColumns():GetByIndex( nCol-1 ):NumberFormat:= "@"
+             // oSheet:GetColumns():GetByIndex( nCol-1 ):NumberFormat:= "@"
       ENDCASE
 
    Next nXCol
@@ -7235,9 +7661,11 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
 
    // Make Setting for Paste Tab Delimited Text
    aProp:={}
+   /*  Commented by Anser. This is not required. Shall remove this later
    AAdd(aProp,GetPropertyValue(oCalc,  "FilterName", "Text" ) )
    AAdd(aProp,GetPropertyValue(oCalc, "FilterOptions", "9,,MS_1257,0,2/2/2/2/2/2/2/2/2/2/2/2/2/2/2/2"   )        )
-
+   AAdd(aProp,GetPropertyValue(oCalc,  "Format" , 10 ) )
+   */
     if Empty( ::aSelected ) .or. Len( ::aSelected ) == 1
 
       Eval( ::bGoTop )
@@ -7246,7 +7674,8 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
          if ::oWnd:oMsgBar == nil
             bProgress := { || nil }
          else
-            bProgress := { | n, t | ::oWnd:SetMsg( "To Calc  : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
+            bProgress := { | n, t | ::oWnd:SetMsg( FWString( "To Calc" ) + " : " + ;
+                                    Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
          endif
       endif
 
@@ -7260,11 +7689,11 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
          Eval( bProgress, 0, nDataRows )
          do while nRow <= ( nDataRows + 1 ) .and. lContinue
             if ! Empty( cText )
-               cText += CRLF
+               cText += Chr(13) // Changed CRLF to Chr(13)
             endif
             cText    += ::ClpRow( .t. )
 
-            lContinue := ( ::Skip( 1 ) == 1 )             // Eval( ::bSkip, 1 )
+            lContinue := ( ::Skip( 1 ) == 1 )
             nRow ++
 
             if Len( cText ) > 16000
@@ -7471,7 +7900,8 @@ METHOD ToDbf( cFile, bProgress, aCols, lPrompt ) CLASS TXBrowse
       if ::oWnd:oMsgBar == nil
          bProgress := { || nil }
       else
-         bProgress := { | n, t | ::oWnd:SetMsg( "To DBF : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
+         bProgress := { | n, t | ::oWnd:SetMsg( FWString( "To DBF" ) + " : " + ;
+                                 Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
       endif
    endif
 
@@ -7509,7 +7939,9 @@ METHOD ToDbf( cFile, bProgress, aCols, lPrompt ) CLASS TXBrowse
    ::nRowSel   := nRowPos
    ::Refresh()
 
-   if lPrompt .and. MsgYesNo( "View " + cFile + "?" )
+   if lPrompt .and. MsgYesNo( If( FWSetLanguage() == 2, "¿ ", "" ) + ;
+                              FWString( "View" ) + " " + cFile + " ?",;
+                              FWString( "Please select" ) )
       XBrowse( cFile )
    endif
 
@@ -7585,7 +8017,8 @@ STATIC Function GetNumberFormatId(oBook, cNumberFormat, cColHeader, cDataType)
      TRY
         nFormatId = oBook:GetNumberFormats:AddNew(cNumberFormat, cCharLocale)
      CATCH
-        MsgInfo("Could not set the format "+cNumberFormat+" to column "+cColHeader)
+        MsgInfo( FWString( "Could not set the format" ) + " " + cNumberFormat + " " + ;
+                 FWString( "to column" ) + " " + cColHeader, FWString( "Information" ) )
         IF cDataType == "D"  // Date
            nFormatId:=37
         Endif
@@ -7688,13 +8121,55 @@ return oRow
 
 //----------------------------------------------------------------------------//
 
+METHOD DataRow( lNew, cFieldList, lSourceData ) CLASS TXBrowse
+
+   local oRec
+   local u
+
+   if ValType( cFieldList ) == 'L' .or. ValType( lSourceData ) == 'C'
+      u           := lSourceData
+      lSourceData := cFieldList
+      cFieldList  := u
+   endif
+
+   DEFAULT lNew   := ( ::nLen == 0 ), lSourceData := .f.
+
+   oRec  := TDataRow():New( If( lSourceData, ::uDataSource, Self ), cFieldList, lNew )
+   oRec:bEdit     := ::bEdit
+   oRec:bOnSave   := { || ::Refresh() }
+
+return oRec
+
+//----------------------------------------------------------------------------//
+
+METHOD Edit( lNew, cFieldList, lSourceData ) CLASS TXBrowse
+
+   local u
+
+   if ValType( cFieldList ) == 'L' .or. ValType( lSourceData ) == 'C'
+      u           := lSourceData
+      lSourceData := cFieldList
+      cFieldList  := u
+   endif
+
+   ::DataRow( lNew, lSourceData, cFieldList ):Edit()
+   if lSourceData == .t.
+      ::Refresh()
+   endif
+   ::SetFocus()
+
+return Self
+
+//----------------------------------------------------------------------------//
+
 METHOD aCellCoor( nRow, nCol ) CLASS TXBrowse
 
    local nTop, nLeft, nBottom, nRight
-   local oCol := ::ColAtPos( nCol )
+   local oCol
 
    DEFAULT nRow := ::nRowSel, nCol := ::nColSel
 
+   oCol     := ::ColAtPos( nCol )
    nTop     := ( ( nRow - 1 ) * ::nRowHeight ) + ::HeaderHeight()
    nLeft    := oCol:nDisplayCol
    nBottom  := nTop + ::nRowHeight - 1
@@ -7704,10 +8179,19 @@ return { nTop, nLeft, nBottom, nRight }
 
 //----------------------------------------------------------------------------//
 
+METHOD CellBitmap( nRow, nCol ) CLASS TXBrowse
+
+   local oRect    := TRect():New( ::aCellCoor( nRow, nCol ) )
+
+return MakeBkBmpEx( ::hWnd, oRect:nTop, oRect:nLeft, oRect:nWidth, oRect:nHeight )
+
+//----------------------------------------------------------------------------//
+
 METHOD DestroyToolTip() CLASS TXBrowse
 
   TWindow():DestroyToolTip()
-  ::oColToolTip := nil
+  ::oColToolTip   := nil
+  ::nRowToolTip   := nil
 
 return nil
 
@@ -7792,11 +8276,16 @@ static function MakeRepCol( oRep, oXCol )
 
    local oCol, bData, cPic, nSize
    local cAlign
-
+/*
    if ( bData := oXCol:bEditValue ) == nil
       bData := oXCol:bStrData
    else
       cPic := oXCol:cEditPicture
+   endif
+*/
+   bData := { || oXCol:Value }
+   if oXCol:bEditValue != nil
+      cPic  := oXCol:cEditPicture
    endif
 
    if Empty( cPic )
@@ -7805,16 +8294,9 @@ static function MakeRepCol( oRep, oXCol )
 
    if bData != nil
 
-      cAlign   := If( oXCol:nDataStrAlign  == AL_RIGHT, "RIGHT", ;
-                  If( oXCol:nDataStrAlign  == AL_CENTER, "CENTER", "LEFT" ))
-/*
-      oCol := RptAddColumn( { { || oXCol:cHeader } }, nil ,;
-                            { bData }, oxCol:nDataLen, { cPic } ,;
-                            nil, oXCol:lTotal, nil ,;
-                            cAlign, .F., .F., nil, ;
-                            oxCol:cDataType == 'M', oxcol:cDataType == 'P', ;
-                            nil, oxCol:oBrw:nRowHeight(), .t., oxCol:nAlphaLevel() )
-*/
+      cAlign   := If( lAnd( oXCol:nDataStrAlign, AL_RIGHT  ), "RIGHT", ;
+                  If( lAnd( oXCol:nDataStrAlign, AL_CENTER ), "CENTER", "LEFT" ))
+
       oCol := RptAddColumn( { { || oXCol:cHeader } }, nil ,;
                             { bData }, nSize, { cPic } ,;
                             nil, oXCol:lTotal, nil ,;
@@ -7830,7 +8312,7 @@ return oCol
 
 static function MakeRepGroup( oCol )
 
-   local bData    := { || oCol:cHeader + " " + Eval( oCol:bStrData ) }
+   local bData    := { || oCol:cHeader + " " + Eval( oCol:bStrData, nil, oCol ) }
 
    if ! Empty( bData )
        RptAddGroup( bData, bData, nil, { || 2 }, .f. )
@@ -7861,7 +8343,7 @@ return ( oBrw:oTreeItem:nLevel == nLevels )
 
 //----------------------------------------------------------------------------//
 
-static function AdoSkip(oRs,n)  //Biel
+static function AdoSkip( oRs, n )
 
    LOCAL nRec
 
@@ -7870,6 +8352,7 @@ static function AdoSkip(oRs,n)  //Biel
    endif
 
    nRec := oRs:AbsolutePosition
+   If( oRs:Eof, oRs:MoveLast(), If( oRs:Bof, oRs:MoveFirst(),) )
    oRs:Move( n )
    If( oRs:Eof, oRs:MoveLast(), If( oRs:Bof, oRs:MoveFirst(),) )
 
@@ -7950,12 +8433,17 @@ METHOD ArrayIncrFilter( cSeek, nGoTo ) CLASS TXBrowse
       cSeek    := "*" + cSeek + "*"
    endif
    nSave       := ::nArrayAt
-   cVal     := Upper( Eval( oCol:bStrData ) )
-   lMatch   := If( ::lSeekWild, WildMatch( cSeek, cVal ), cVal = cSeek )
+   cVal     := Upper( Eval( oCol:bStrData, nil, oCol ) )
+   lMatch      := If( Empty( ::bFilterExp ), ;
+                     If( ::lSeekWild, WildMatch( cSeek, cVal ), cVal = cSeek ), ;
+                     Eval( ::bFilterExp, cSeek, ::aRow, Self ) )
+
    for n := 1 to nLen
       ::nArrayAt     := n
-      cVal     := Upper( Eval( oCol:bStrData ) )
-      if If( ::lSeekWild, WildMatch( cSeek, cVal ), cVal = cSeek )
+      cVal     := Upper( Eval( oCol:bStrData, nil, oCol ) )
+
+      if If( Empty( ::bFilterExp ) , If( ::lSeekWild, WildMatch( cSeek, cVal ), cVal = cSeek ), ;
+             Eval( ::bFilterExp, cSeek, ::aArrayData[ n ], Self ) )
          nMatches++
          if n > nMatches
             x                          := ::aArrayData[ nMatches ]
@@ -7989,6 +8477,15 @@ METHOD ArrayIncrFilter( cSeek, nGoTo ) CLASS TXBrowse
 return lFound
 
 //----------------------------------------------------------------------------//
+
+METHOD SetChecks( aBmp, lEdit, aPrompt ) CLASS TXBrowse
+
+   AEval( ::aCols, { |o| If( o:cDataType == 'L', o:SetCheck( aBmp, lEdit, aPrompt ), nil ) } )
+
+return nil
+
+//----------------------------------------------------------------------------//
+
 /*
 static function SeekOnArray( Self, aData, cSeek )
 
@@ -8040,119 +8537,130 @@ return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
-static function SetColFromRDD( oCol, nFld, cAlias, aFldInfo )
+//----------------------------------------------------------------------------//
 
-   local cName       // if fieldname is specified in different case, header is set accordingly
-   local uVal, nLen, nDec, nSelect  := SELECT( cAlias )
+static function SetColFromRDD( oCol, uData )
 
-   if valtype( nFld ) == 'C'
-      nFld  := (cAlias)->(FieldPos(cName := nFld))
+   local cFldType, cFldName, nFldPos
+   local a,c
 
-   endif
+   oCol:cHeader      := "Col-" + LTrim( Str( oCol:nCreationOrder ) )
+   oCol:cExpr        := cValToChar( uData )
 
-   aFldInfo          := aFldInfo[ nFld ]
-
-   oCol:cHeader      := If( cName == nil, aFldInfo[ 1 ], cName )
-   if ( cName == nil )
-      cName          := aFldInfo[ 1 ]
-   endif
-
-//   oCol:bEditValue   := FieldWBlock( cName, nSelect )
-   oCol:bEditValue   := { |x| If( x == nil, ( oCol:oBrw:cAlias )->( FieldGet( nFld ) ), ;
-                                ( oCol:oBrw:cAlias )->( FieldPut( nFld, x ) ) ) }
-
-   uVal              := ( oCol:oBrw:cAlias )->( FieldGet( nFld ) )
-   oCol:nDataLen              := aFldInfo[ 3 ]
-   oCol:nDataDec              := aFldInfo[ 4 ]
-
-   if Len( aFldInfo[ 2 ] ) == 1
-
-      oCol:cDataType      := aFldInfo[ 2 ]
-
-      if oCol:cDataType == "I"
-         oCol:cDataType := 'N'
-         if aFldInfo[ 3 ] == 2
-            oCol:nDataLen        := 6
-         else
-            oCol:nDataLen        := 13
-         endif
-         oCol:nDataDec           := 0
-      elseif oCol:cDataType == 'Y'
-         oCol:cDataType := 'N'
-         oCol:nDataLen           := 15
-         oCol:nDataDec           := 2
-      elseif oCol:cDataType == '@'
-         oCol:nDataLen           := 20
-#ifdef __XHARBOUR__
-         oCol:cDataType := 'T'
-#else
-         oCol:cDataType := ValType( uVal )
-         if oCol:cDataType == 'C'
-            oCol:nDataLen  := Len( uVal )
-         endif
-#endif
-      elseif oCol:cDataType == "U"
-         oCol:cDataType := 'C'
+   SWITCH ValType( uData )
+   CASE 'B'
+      oCol:bEditValue   := uData
+      EXIT
+   CASE 'N'
+      if ! Empty( cFldName := FieldName( uData ) )
+         nFldPos        := uData
       endif
-   else
-      // ADT table
-      oCol:cDataType    := ValType( uVal )
-      do case
-         case oCol:cDataType == 'N'
+      EXIT
+   CASE 'C'
+      if At( "FIELD->", uData ) == 1 .or. At( Alias() + "->", uData ) == 1
+         uData          := AFTERATNUM( "->", uData, 1 )
+      endif
+      if ( nFldPos := FieldPos( uData ) ) > 0
+         cFldName       := uData
+      endif
+      EXIT
+   END
+
+   if Empty( oCol:bEditValue )
+      if Empty( nFldPos ) .or. Empty( cFldName )
+         oCol:bEditValue   := &( "{ |x,oCol| " + cValToChar( uData ) + " }" )
+         TRY
+            Eval( oCol:bEditValue )
+         CATCH
+            oCol:bEditValue   := { || uData }
+         END
+         oCol:cDataType    := ValType( Eval( oCol:bEditValue ) )
+         if oCol:cDataType == 'N'
+            oCol:cEditPicture := NumPict( 12, 2 )
+         endif
+         if Empty( c := FieldInExpr( oCol:cExpr ) )
+            oCol:cHeader   := oCol:cExpr
+         else
+            oCol:cHeader   := c
+         endif
+      else
+         // regular field in Alias()
+         cFldType             := FieldType( nFldPos )
+         WITH OBJECT oCol
+            //
+            :cHeader          := cFldName
+            :bEditValue       := FIELDBLOCK( cFldName )
+            :nDataLen         := FieldLen( nFldPos )
+            :nDataDec         := FieldDec( nFldPos )
+            //
+            if Len( cFldType ) == 1
+               :cDataType     := cFldType
+            else
+               for each a in { ;
+                  { 'M', { "CHAR", "VARBIN", "MEMO", "BLOB", "RAW" } }, ;
+                  { '@', { "TIMESTAMP" } }, ;
+                  { '=', { "MODITIME"  } }, ;
+                  { 'T', { "TIME" } }, ;
+                  { '^', { "ROWVER" } }, ;
+                  { '+', { "AUTOINC" } }, ;
+                  { 'B', { "DOUBLE" } }, ;
+                  { 'Y', { "CURR" } }, ;
+                  { 'Z', { "CURD" } }, ;
+                  { 'P', { "IMAGE" } } }
+
+                  for each c in a[ 2 ]
+                     if c $ cFldType
+                        :cDataType  := a[ 1 ]
+                        exit
+                     endif
+                  next
+                  if ! Empty( :cDataType )
+                     exit
+                  endif
+               next
+               if Empty( :cDataType )
+                  :cDataType  := 'C'
+               endif
+            endif
+
             do case
-               case "DOUBLE" $ aFldInfo[ 2 ] .or. "MONEY" $ aFldInfo[ 2 ]
-                  oCol:nDataLen           := 15
-                  oCol:nDataDec           := 2
-               case AScan( { "AUTOINC", "ROWVERSION" }, aFldInfo[ 2 ] ) > 0
-                  oCol:nDataLen           := 15
-                  oCol:nDataDec           := 0
-               otherwise
-                  oCol:nDataLen           := 15
-                  oCol:nDataDec           := 0
+            case :cDataType == "CDLN"
+               // no action                                                                                     c
+            case :cDataType $ "MWQ"
+               :cDataType     := 'M'
+               :nDataLen      := 10
+            case :cDataType == 'I'
+               :nDataLen      := If( :nDataLen < 3, 6, 13 )
+               :nDataDec      := 0
+            case :cDataType $ "^+"
+               :cDataType     := 'N'
+               :nDataLen      := If( :cDataType == '^', 20, :nDataLen )
+            case :cDataType $ "YZ"
+               :cDataType     := 'N'
+               :nDataDec      := 2
+            case :cDataType $ "T@="
+               :cDataType     := 'T'
+               :cEditPicture  := "@T"
+            otherwise
+               :cDataType     := ValType( FieldGet( nFldPos ) )
             endcase
-#ifdef __XHARBOUR__
-         case oCol:cDataType == 'D'
-            if 'TIME' $ aFldInfo[ 2 ]
-               oCol:cDataType    := 'T'
-               oCol:cEditPicture := '@T'
-            endif
-#endif
-         case oCol:cDataType $ "CM"
-            if aFldInfo[ 2 ] = "IMAGE"
-               oCol:cDataType    := 'P'
-            elseif aFldInfo[ 2 ] = "RAW"
-               oCol:bStrData     := { || "<Binary>" }
-            endif
-         otherwise
-            // nothing to do
-      endcase
+         END
+         if oCol:cDataType $ "+="
+            oCol:lReadOnly    := .t.
+         endif
+
+      endif
    endif
 
-   // in case of new unhandled data types
-   if !( oCol:cDataType $ 'CDLMNPT' )
-      oCol:cDataType := ValType( uVal )
+   if DBINFO( DBI_ISREADONLY ) == .t. .or. oCol:lReadOnly
+      oCol:bOnPostEdit  := { || nil }
+   else
+      oCol:bOnPostEdit  := { |o,x,n| If( n != VK_ESCAPE .and. !eq( o:Value, x, .t., .t. ) .and. o:oBrw:Lock(),  ;
+                                     o:Value := x, nil ) }
    endif
-
-   // oCol:adjust() will set bstrdata
-
-   do case
-   case oCol:cDataType == 'N'
-      oCol:cEditPicture   := NumPict( oCol:nDataLen, oCol:nDataDec, .t. )
-   case oCol:cDataType  == 'D'
-      oCol:cEditPicture   := '@D'
-
-   endcase
-
-   if oCol:oBrw:lOemAnsi .and. oCol:cDataType $ "CM"
-      oCol:bEditValue := { |x| If( x == nil, OemToAnsi( (oCol:oBrw:cAlias)->( FieldGet(nFld) ) ), ;
-                                 ( (oCol:oBrw:cAlias)->( FieldPut( nFld, AnsiToOem( x ) ), x ) ) ) }
-   endif
-
-   oCol:bOnPostEdit  := { |o,x,n| If( n != VK_ESCAPE .and. Eval( o:oBrw:bLock ), ;
-          o:Value := x, ) }
-
 
 return oCol
+
 //----------------------------------------------------------------------------//
 
 static function AddOdbfCol( oBrw, cCol, aStruct )
@@ -8175,67 +8683,14 @@ static function AddOdbfCol( oBrw, cCol, aStruct )
 return oCol
 
 //----------------------------------------------------------------------------//
-/*
-static function excelCell( r, c )
-return "R" + LTrim( Str( r ) ) + 'C' + LTrim( Str( c ) )
-
-static function excelRange( r1, c1, r2, c2 )
-   DEFAULT r2 := r1, c2 := c1
-return excelCell( r1, c1 ) + ":" + excelCell( r2, c2 )
-*/
-//----------------------------------------------------------------------------//
 
 static function SetExcelLanguage( oExcel )
 
-   local aEng     := { 1033, 2057, 10249, 4105, 9225, 14345, 6153, 8201, 5129, 13321, 7177, 11273, 12297 }
-   local aSpanish := { 3082,1034,11274,16394,13322,9226,5130,7178,12298,17418,4106,18442,58378,2058,19466,6154,15370,10250,20490,21514,14346,8202}
-   local aGerman  := {1031,3079,5127,4103,2055}
-   local aFrench  := {1036,2060,11276,3084,9228,12300,15372,5132,13324,6156,14348,58380,8204,10252,4108,7180}
-
    if nxlLangID == nil
-
-      if ( oExcel := ExcelObj() ) == nil
-         nxlLangID := 0
-         return nil
-      endif
-
-      nxlLangID := oExcel:LanguageSettings:LanguageID( 2 )
-      do case
-         case AScan( aEng, nxlLangID ) > 0 // English
-            cxlTrue     := "TRUE"
-            cxlFalse    := "FALSE"
-            cxlSum      := "SUBTOTAL(9,"
-            lxlEnglish  := .t.
-
-         case AScan( aSpanish, nxlLangID ) > 0 // Spanish
-            cxlTrue     := "VERDADERO"
-            cxlFalse    := "FALSO"
-            cxlSum      := "SUBTOTALES(9;"
-
-         case nxlLangID == 1040 .or. nxlLangID == 2064 // Italian
-            cxlTrue     := "VERO"
-            cxlFalse    := "FALSO"
-            cxlSum      := "SOMMA("
-
-         case AScan( aGerman, nxlLangID ) > 0 // German
-            cxlTrue     := "WAHR"
-            cxlFalse    := "FALSCH"
-            cxlSum      := "SUMME("
-
-         case AScan( aFrench, nxlLangID ) > 0 // French
-            cxlTrue     := "VRAI"
-            cxlFalse    := "FAUX"
-            cxlSum      := "SOMME("
-
-         case nxlLangID == 2070 .or. nxlLangID == 1046 // Portugese
-            cxlTrue     := "VERDADEIRO"
-            cxlFalse    := "FALSO"
-            cxlSum      := "SOMA("
-         otherwise
-            cxlTrue     := "=(1=1)"
-            cxlFalse    := "=(1=0)"
-      endcase
-
+      nxlLangID   := ExcelLangID()
+      cxlTrue     := ExcelTranslate( "TRUE" )
+      cxlFalse    := ExcelTranslate( "FALSE" )
+      lxlEnglish  := ( ExcelLang() == 'en' )
    endif
 
 return nil
@@ -8285,7 +8740,7 @@ CLASS TXBrwColumn
 
    DATA bOnPostEdit     // Code-block to be evaluated after the edition of the column.
                         // It receives ...
-    DATA bOnPreEdit    // codeblock to be evaluated after build get object in edit mode
+   DATA bOnPreEdit    // codeblock to be evaluated after build get object in edit mode
 
    DATA bLClickHeader,; // codeblock to be evaluated when left clicking on the header
         bRClickHeader,; // codeblock to be evaluated when right clicking on the header
@@ -8310,7 +8765,8 @@ CLASS TXBrwColumn
         cExpr,;
         cGrpHdr,;       // Optional Group Header String
         cFooter,;       // footer string
-        cEditPicture,;  // Picture mask to be used for Get editing
+        cEditPicture,;  // Picture mask to be used for Get editing and display of data
+        cFooterPicture,;// Picture mask used to display footer
         cOrder,;        // Used internally for autosorting (""->None, "A"->Ascending, "D"->Descending)
         cSortOrder,;    // indextag or oRs:fieldname or column number of array programmer need not code for sorting colimns
         cOrdBag, ;      // Index OrderBagName ( Optional ) Can be codeblock also.
@@ -8326,7 +8782,7 @@ CLASS TXBrwColumn
         nPos,;          // Actual column position in the browse. If columns is not visible nPos == 0
         nTotal          // optional total to be displayed in footer
 
-   DATA nDataHeight     READONLY
+   DATA nCellHeight     //READONLY
    DATA aRows           READONLY // Column objects for showing as multiple rows in the same cell
 
    DATA nCount          INIT 0
@@ -8353,6 +8809,9 @@ CLASS TXBrwColumn
    DATA nDataStyle,;    // Style for data string (DrawTextEx() flags)
         nHeadStyle,;    // Style for header string (DrawTextEx() flags)
         nFootStyle      // Style for footer string (DrawTextEx() flags)
+
+   DATA nColDividerStyle, nColDividerColor, hColPen // DEFAULT all NIL
+   DATA nColDividerWidth PROTECTED // not yet implemented.
 
    DATA nArrayCol AS NUMERIC INIT 0 // For Array Browse. Specifying Column Numer is all that is needed
 
@@ -8383,8 +8842,9 @@ CLASS TXBrwColumn
    DATA lBmpTransparent //AS LOGICAL INIT .f.  // transparent bitmaps on brushed backgrounds ( default in adjust method )
    DATA lBtnTransparent AS LOGICAL INIT .f.  // transparent button on nEditType > 3
    DATA lAutoSave       AS LOGICAL INIT .f.
-   DATA lColTransparent AS LOGICAL INIT .f.
+   DATA lColTransparent
    DATA lDisplayZeros // init nil
+   DATA lOemAnsi
 
 // PROGBAR
    DATA lProgBar AS LOGICAL INIT .f.
@@ -8406,6 +8866,9 @@ CLASS TXBrwColumn
    DATA   hAlphaLevel   // Data for set Alpha Channel Level
 
    DATA   lWillShowABtn AS LOGICAL INIT .F. // Will show a edit button so data remains properly positioned
+   DATA   nBtnWidth, cBtnCaption
+
+   DATA lReadOnly    AS LOGICAL INIT .f.
 
 // METHODS
 
@@ -8490,6 +8953,7 @@ CLASS TXBrwColumn
    METHOD PostEdit()
 
    METHOD SetCheck( aBmps, uEdit, aPrompts )
+   METHOD SetLogical( uTrue, uFalse )  // uTrue and uFalse are optional
    METHOD CheckToggle()
    METHOD SetProgBar( nProgTotal, nWidth, bClrProg )
    METHOD SetAlign( nAlign )
@@ -8503,9 +8967,14 @@ CLASS TXBrwColumn
    METHOD BlankValue()
    METHOD VarGet() INLINE ::Value
    METHOD VarPut( uVal ) INLINE If( ::bOnPostEdit == nil, nil, ( ::PostEdit( uVal,, .t. ), uVal ) )
-   ACCESS lEditable INLINE ( ::nEditType > 0 .and. ::bOnPostEdit != nil .and. ;
+
+   ACCESS lEditable INLINE ( ! ::oBrw:lReadOnly .and. ! ::lReadOnly .and. ;
+                             ::nEditType > 0 .and. ::bOnPostEdit != nil .and. ;
                              ( ::bEditWhen == nil .or. Eval( ::bEditWhen, Self ) ) )
 
+   METHOD IsMemo() INLINE  ( IfNil( ::cDataType, 'C' ) $ 'MPm' .or. ;
+                     ( ValType( ::Value ) == 'C' .and. ( Len( ::Value ) > FWAdoMemoSizeThreshold() .or. ;
+                       CRLF $ ::Value .or. IsBinaryData( ::Value ) ) ) )
    METHOD SetColsAsRows( aCols ) // Show multiple columns as rows in the cell of this column
 
    METHOD WorkMergeData()
@@ -8558,6 +9027,11 @@ METHOD End() CLASS TXBrwColumn
       ::oEditGet:End()
    endif
 
+   if ::hColPen != nil
+      DeleteObject( ::hColPen )
+      ::hColPen   := nil
+   endif
+
    for nFor := 1 to Len( ::aBitmaps )
       PalBmpFree( ::aBitmaps[ nFor, BITMAP_HANDLE ], ::aBitmaps[ nFor, BITMAP_PALETTE ] )
    next
@@ -8577,6 +9051,8 @@ METHOD Adjust() CLASS TXBrwColumn
    endif
 
    if ValType( ::oBrw:aArrayData ) == 'A'
+      DEFAULT ::cEditPicture := { |u| If( ValType( u ) == 'N', ;
+               NumPict( ::nWidthChr, Len( AfterAtNum( '.', cValToChar( u ) ) ) ), nil ) }
       if ::bEditValue == nil
          if ::nArrayCol > 0
             ::bEditValue   := ;
@@ -8586,9 +9062,13 @@ METHOD Adjust() CLASS TXBrwColumn
                tmp                     := ::bBmpData
                ::bBmpData              := { || ::oBrw:aRow[ tmp ] }
             elseif ::bStrData == nil .and. ! ::hChecked
-               ::bStrData     := ;
-                  { || ::oBrw:ArrCell( ::oBrw:nArrayAt, ::nArrayCol, ::cEditPicture, ;
-                         ::lDisplayZeros ) }
+               if ::nEditType == EDIT_LISTBOX .and. ! Empty( ::aEditListTxt ) .and. ! Empty( ::aEditListBound )
+                  ::bStrData  := { || XbrLbxLookUp( ::Value, ::aEditListBound, ::aEditListTxt ) }
+               else
+                  ::bStrData     := ;
+                     { || ::oBrw:ArrCell( ::oBrw:nArrayAt, ::nArrayCol, ::cEditPicture, ;
+                            ::lDisplayZeros ) }
+               endif
             endif
          endif
       endif
@@ -8599,7 +9079,7 @@ METHOD Adjust() CLASS TXBrwColumn
 
    if ::bEditValue != nil
 
-      if Empty( ::cDataType ) .or. ::cDataType $ 'CU'
+      if Empty( ::cDataType ) .or. ::cDataType == 'U' //$ 'CU'
          ::cDataType := ValType( ::Value )
       endif
 
@@ -8627,13 +9107,17 @@ METHOD Adjust() CLASS TXBrwColumn
       endif
 
       if ::bStrData == nil .and. !( ::cDataType $ 'PF' )// .and. ::bBmpData == nil
-         ::bStrData  := { || cValToStr( ::Value, ::cEditPicture,, ;
-               IfNil( ::lDisplayZeros, ::oBrw:lDisplayZeros ) ) }
+         if ::nEditType == EDIT_LISTBOX .and. ! Empty( ::aEditListTxt ) .and. ! Empty( ::aEditListBound )
+            ::bStrData  := { || XbrLbxLookUp( ::Value, ::aEditListBound, ::aEditListTxt ) }
+         else
+            ::bStrData  := { || cValToStr( ::Value, ::cEditPicture,, ;
+                  IfNil( ::lDisplayZeros, ::oBrw:lDisplayZeros ) ) }
+         endif
       elseif ValType( ::bStrData ) != 'B'
          ::bStrData  := nil
       endif
 
-      DEFAULT ::bOnPostEdit := { |o,x,n| If( n != VK_ESCAPE, ::Value := x,) }
+      DEFAULT ::bOnPostEdit := { |o,x,n| If( n != VK_ESCAPE .and. ::oBrw:Lock(), ::Value := x, nil ) }
 
       if ::cSortOrder != nil
          if ValType( ::cSortOrder ) != 'B'
@@ -8646,23 +9130,25 @@ METHOD Adjust() CLASS TXBrwColumn
                   ::cOrder       := 'A'
                endif
             elseif ( ::oBrw:nDataType == DATATYPE_ADO )
-               if EQ( ::oBrw:oRs:Sort, ::cSortOrder )
+               if EQ( CharRem( "[]", ::oBrw:oRs:Sort ), CharRem( "[]", ::cSortOrder ) )
                   ::cOrder       := 'A'
                endif
             elseif ( ::oBrw:nDataType == DATATYPE_MYSQL )
                if ::oBrw:oMysql:IsKindOf( 'TDOLPHINQRY' )
-                  aToken := HB_ATokens( ::oBrw:oMySql:cOrder, " " )
-                  IF Len( aToken ) == 1
-                     AAdd( aToken, "ASC" )
-                  ENDIF
-                  cOrder = AllTrim( Lower( aToken[ 1 ] ) )
-                  cType = aToken[ 2 ]
-                  if EQ( cOrder, ::cSortOrder )
-                     IF Upper( cType ) == "ASC"
-                        ::cOrder = "A"
-                     ELSE
-                        ::cOrder = "D"
+                  if ! Empty( ::oBrw:oMySql:cOrder )
+                     aToken := HB_ATokens( ::oBrw:oMySql:cOrder, " " )
+                     IF Len( aToken ) == 1
+                        AAdd( aToken, "ASC" )
                      ENDIF
+                     cOrder = AllTrim( Lower( aToken[ 1 ] ) )
+                     cType = aToken[ 2 ]
+                     if EQ( cOrder, ::cSortOrder )
+                        IF Upper( cType ) == "ASC"
+                           ::cOrder = "A"
+                        ELSE
+                           ::cOrder = "D"
+                        ENDIF
+                     endif
                   endif
                else
                   if EQ( ::oBrw:oMysql:cSort, ::cSortOrder )
@@ -8699,7 +9185,7 @@ METHOD Adjust() CLASS TXBrwColumn
 
    DEFAULT ::lBmpTransparent := .t.
 
-   if ( ::bStrData == nil .or. Eval( ::bStrData ) == nil ) .and. ;
+   if ( ::bStrData == nil .or. Eval( ::bStrData, nil, Self ) == nil ) .and. ;
       ( ::bBmpData != nil .or. ::cDataType $ 'PF')
 
       DEFAULT ::nDataBmpAlign := AL_CENTER
@@ -8747,6 +9233,10 @@ METHOD Adjust() CLASS TXBrwColumn
       ::nGrpHeight   := FontHeight( ::oBrw, ::oGrpFont )
    endif
 
+   if ::nColDividerStyle != nil
+      ::hColPen   := CreateLinePen( ::oBrw, ::nColDividerStyle, PS_SOLID, ::nColDividerWidth, ::nColDividerColor )
+   endif
+
    ::CreateButtons()
 
    if ::lMergeVert
@@ -8762,38 +9252,39 @@ METHOD Value( uNew ) CLASS TXBrwColumn
 
    local uVal
 
-   if PCount() > 0 .and. ::bEditValue != nil
+   if ! ::oBrw:lReadOnly .and. ! ::lReadOnly .and. ;
+      PCount() > 0 .and. ::bEditValue != nil
 
+      if HB_IsString( uNew ) .and. IfNil( ::lOemAnsi, ::oBrw:lOemAnsi )
+         uNew     := AnsiToOem( uNew )
+      endif
       TRY
-         uVal   := Eval( ::bEditValue )
+         ( ::oBrw:cAlias )->( Eval( ::bEditValue, uNew, Self ) )
+         ::oBrw:lEdited    := .t.
       CATCH
       END
-      if ! ( ValType( uVal ) == ValType( uNew ) .and. uVal == uNew )
-         TRY
-            Eval( ::bEditValue, uNew )
-            ::oBrw:lEdited    := .t.
-         CATCH
-         END
-      endif
 
    endif
 
-   uVal     := nil
    if ::bEditValue == nil .and. ::nArrayCol > 0
       // this is the case for arrays before oCol:Adjust
       uVal     := ::oBrw:ArrCell( ::oBrw:nArrayAt, ::nArrayCol )
    elseif ::bEditValue != nil
       TRY
-         uVal  := Eval( ::bEditValue )
+         uVal  := ( ::oBrw:cAlias )->( Eval( ::bEditValue, nil, Self ) )
       CATCH
          uVal  := ::BlankValue()
       END
    elseif ::bStrData != nil
       TRY
-         uVal  := Eval( ::bStrData )
+         uVal  := ( ::oBrw:cAlias )->( Eval( ::bStrData, nil, Self ) )
       CATCH
          uVal  := ''
       END
+   endif
+
+   if HB_IsString( uVal ) .and. IfNil( ::lOemAnsi, ::oBrw:lOemAnsi )
+      uVal  := OemToAnsi( uVal )
    endif
 
 return uVal
@@ -8805,9 +9296,15 @@ METHOD BlankValue() CLASS TXBrwColumn
    local uVal  := ''
 
    if ::cDataType == 'N'
-      uVal     := 0
+      if IfNil( ::nDataDec, 0 ) > 0
+         uVal  := Val( "0." + Replicate( '0', ::nDataDec ) )
+      else
+         uVal  := 0
+      endif
    elseif ::cDataType == 'D'
       uVal     := CToD( '' )
+   elseif ::cDataType == 'T'
+      uVal     := HB_CTOT( '' )
    elseif ::cDataType == 'L'
       uVal     := .f.
    else
@@ -8863,6 +9360,32 @@ return ::hAlphaLevel
 
 //----------------------------------------------------------------------------//
 
+METHOD SetLogical( uTrue, uFalse ) CLASS TXBrwColumn
+
+   local lSet     := .f.
+   local b
+
+   if ! Empty( ::bEditValue )
+      b     := ::bEditValue
+      if ::cDataType == 'N'
+         ::bEditValue   := { |x| If( x == nil, ! Empty( Eval( b ) ), Eval( b, If( x, 1, 0 ) ) ) }
+         ::cDataType    := 'L'
+         lSet     := .t.
+      elseif ::cDataType == 'C'
+         DEFAULT uTrue := 'Y', uFalse := 'N'
+         uTrue    := Upper( Left( uTrue, 1 ) )
+         uFalse   := Upper( Left( uFalse, 1 ) )
+         ::bEditValue   := { |x| If( x == nil, !( Upper( Left( IfNil( Eval( b ), uFalse ), 1 ) ) == uFalse ), ;
+                                 Eval( b, If( x, uTrue, uFalse ) ) ) }
+         ::cDataType    := 'L'
+         lSet     := .t.
+      endif
+   endif
+
+return lSet
+
+//----------------------------------------------------------------------------//
+
 METHOD SetCheck( aBmps, uEdit, aPrompts ) CLASS TXBrwColumn
 
    local nBmpOn, nBmpOff := 0, nBmpNull := 0
@@ -8903,12 +9426,16 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD CheckToggle() CLASS TXBrwColumn
+METHOD CheckToggle( lOverRide ) CLASS TXBrwColumn
 
    local uVal  := IfNil( ::Value, .f. )
 
+   // If lOverRide is .t., the value is toggled ignoring ::nEditType
+   // Otheriwse toggled only if ::nEditType == EDIT_GET
+   // ::bEditWhen is ignored in both cases
+
    if ValType( uVal ) == 'L'
-      ::PostEdit( ! uVal )
+      ::PostEdit( ! uVal, nil, lOverRide )
    endif
 
 return Self
@@ -9072,7 +9599,7 @@ return Max( nWidth, 16 )
 
 METHOD DataHeight() CLASS TXBrwColumn
 
-   local nHeight, nBmp, nBmpHeight, cData
+   local nHeight, nBmpHeight, cData, nBmp := 0
 
    nHeight := FontHeight( ::oBrw, ::oBrw:oWnd:oFont )
 
@@ -9094,10 +9621,12 @@ METHOD DataHeight() CLASS TXBrwColumn
 
    if ::cDataType $ "PF"
       // image
-      if ::cDataType == 'F' .and. File( ::Value )
-         nBmp     := FILoadImg( ::Value )
-      else
-         nBmp     := FILoadFromMemory( ::Value )
+      if ValType( ::Value ) == 'C' .and. ! Empty( ::Value )
+         if ::cDataType == 'F' .and. File( ::Value )
+            nBmp     := FILoadImg( ::Value )
+         else
+            nBmp     := FILoadFromMemory( ::Value )
+         endif
       endif
       nHeight     := Int( GetSysMetrics( 1 ) / 10 )
       if nBmp > 0
@@ -9113,7 +9642,11 @@ METHOD DataHeight() CLASS TXBrwColumn
       nHeight  := Max( 24, nHeight )
    endif
 
-   ::nDataHeight  := nHeight
+   if ::nCellHeight != nil .and. ::nCellHeight > nHeight
+      nHeight     := ::nCellHeight
+   endif
+
+   ::nCellHeight  := nHeight
 
 return nHeight
 
@@ -9122,14 +9655,14 @@ return nHeight
 METHOD DataWidth() CLASS TXBrwColumn
 
    local cText, cLine, oFont
-   local nWidth, nFrom, nBmp, nLen
+   local nWidth, nFrom, nLen, nBmp := 0
    local nBmpWidth
 
    nWidth := 0
    nFrom  := 1
 
    if ::bStrData != nil
-      cText := Eval( ::bStrData )
+      cText := Eval( ::bStrData, nil, Self )
       nLen  := Len( cText )
       if ValType ( ::oDataFont ) == "B"
          oFont = Eval( ::oDataFont, Self )
@@ -9156,10 +9689,12 @@ METHOD DataWidth() CLASS TXBrwColumn
 
    if ::cDataType $ 'PF'
       // image
-      if ::cDataType == 'F' .and. File( ::Value )
-         nBmp     := FILoadImg( ::Value )
-      else
-         nBmp     := FILoadFromMemory( ::Value )
+      if ValType( ::Value ) == 'C' .and. ! Empty( ::Value )
+         if ::cDataType == 'F' .and. File( ::Value )
+            nBmp     := FILoadImg( ::Value )
+         else
+            nBmp     := FILoadFromMemory( ::Value )
+         endif
       endif
       nWidth      := Int( GetSysMetrics( 0 ) / 10 )
       if nBmp > 0
@@ -9173,7 +9708,7 @@ METHOD DataWidth() CLASS TXBrwColumn
    endif
 */
    if ::nEditType > 1
-      nWidth += 15
+      nWidth += ( IfNil( ::nBtnWidth, 10 ) + 5 )
    endif
 
 return nWidth
@@ -9422,8 +9957,8 @@ METHOD footerStr() CLASS TXBrwColumn
 
    cType    := ValType( cFooter )
    if cType != 'C'
-      if cType == ::cDataType .and. ::cEditPicture != nil
-         cFooter  := cValToStr( cFooter, ::cEditPicture,, ;
+      if cType == ::cDataType .and. IfNil( ::cFooterPicture, ::cEditPicture ) != nil
+         cFooter  := cValToStr( cFooter, IfNil( ::cFooterPicture, ::cEditPicture ),, ;
                      IfNil( ::lDisplayZeros, ::oBrw:lDisplayZeros ) )
       else
          cFooter := cValToChar( cFooter )
@@ -9451,11 +9986,6 @@ METHOD PaintFooter( nRow, nCol, nHeight, lInvert ) CLASS TXBrwColumn
    endif
 
    if !lInvert
-
-     if isnil( ::bClrFooter )
-      ? "es nil"
-    end if
-
       aColors := Eval( ::bClrFooter )
    else
       aColors := { CLR_WHITE, CLR_BLUE }
@@ -9570,7 +10100,6 @@ return nCol
 
 //----------------------------------------------------------------------------//
 
-
 METHOD SetColsAsRows(...) CLASS TXBrwColumn
 
    // Call this method before oBrw:CreateFromCode()
@@ -9602,8 +10131,10 @@ METHOD PaintData( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
    else
       nCol := ::nDisplayCol
    endif
-
-   nDataHeight    := If( Empty( ::aRows ), nHeight, ::nDataHeight )
+   if ::oBrw:lTransparent .and. Empty( ::oBrw:nRowDividerStyle )
+      nHeight     -= ROW_EXTRAHEIGHT
+   endif
+   nDataHeight    := If( Empty( ::aRows ), nHeight, IfNil( ::nCellHeight, ::DataHeight() ) )
    ::PaintCell( nRow, nCol, nDataHeight, lHighLite, lSelected, nOrder, nPaintRow )
 
    if ! Empty( ::aRows )
@@ -9611,7 +10142,7 @@ METHOD PaintData( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
          nHeight        -= nDataHeight
          nRow           += nDataHeight
          oCol           := ::aRows[ n ]
-         nDataHeight    := If( n == Len( ::aRows ), nHeight, oCol:nDataHeight )
+         nDataHeight    := If( n == Len( ::aRows ), nHeight, IfNil( oCol:nCellHeight, oCol:DataHeight() ) )
          oCol:PaintCell( nRow, nCol, nDataHeight, lHighLite, lSelected, nOrder, nPaintRow )
       next n
 
@@ -9651,8 +10182,8 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
       nCol := ::nDisplayCol
    endif
 
-   if ::bStrData != nil //.and. !::hChecked
-      cData := Eval( ::bStrData )
+   if ValType( ::bStrData ) == 'B'
+      cData := Eval( ::bStrData, nil, Self )
       if ValType( cData ) != 'C'
          cData := cValToChar( cData )
       endif
@@ -9690,7 +10221,7 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
       endif
    else
       aColors := Eval( ::bClrStd )
-      lTransparent := ::oBrw:lTransparent
+      lTransparent := IfNil( ::lColTransparent, ::oBrw:lTransparent )
    endif
 
    hDC     := ::oBrw:GetDC()
@@ -9699,6 +10230,9 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
       oFont = Eval( oFont, Self )
    endif
    nWidth  := ::nWidth
+   if ::oBrw:lTransparent .and. Empty( ::oBrw:nColDividerStyle )
+      nWidth   -= COL_EXTRAWIDTH
+   endif
 
    if ::oBrush != nil
       if ValType( ::oBrush ) == "B"
@@ -9712,11 +10246,12 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
       hBrush      := oBrush:hBrush
       lBrush      := .t.
       lTransparent:= .f.
-   elseif ! lTransparent .and. !::lColTransparent
+//   elseif ! lTransparent .and. !::lColTransparent
+   elseif ! IfNil( ::lColTransparent, lTransparent )
       hBrush  := CreateColorBrush( aColors[ 2 ] )
-   elseif ::lColTransparent
-         hBrush := CreateColorBrush( 0 )
-         lTransparent := .t.
+   elseif ::lColTransparent == .t.
+      hBrush := CreateColorBrush( 0 )
+      lTransparent := .t.
    endif
 
    nStyle  := ::oBrw:nColDividerStyle
@@ -9770,14 +10305,14 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
          nBtnWidth      := aBitMap[ BITMAP_WIDTH ] + 1
          aBitmap        := nil
       else
-         nBtnWidth      :=    10
+         nBtnWidth      := IfNil( ::nBtnWidth, 10 )
       endif
-      nButtonRow := nRow
-      nButtonCol := nCol + nWidth - nBtnWidth
-      nWidth -= ( nBtnWidth + 5 )
+      nButtonRow  := nRow
+      nButtonCol  := nCol + nWidth - nBtnWidth
+      nWidth      -= ( nBtnWidth + 5 )
    else
       if ::lWillShowABtn // to avoid the "dancing" of column data to the left
-         nWidth -= 15
+         nWidth -= ( IfNil( ::nBtnWidth, 10 ) + 5 )
       endif
    endif
 
@@ -9793,7 +10328,7 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
 
       if nCol + nWidth1 < ::oBrw:BrwWidth() - 4
          FillRect( hDC, { nRow, nCol + nWidth1 + 1, nRow + nHeight, ;
-             Min( nCol + nWidth, ::oBrw:BrwWidth() - 4 ) }, hBrush2 )
+            Min( nCol + nWidth, ::oBrw:BrwWidth() - 4 ) }, hBrush2 )
       endif
       DeleteObject( hBrush1 )
       DeleteObject( hBrush2 )
@@ -9867,7 +10402,8 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
          cImagen  := cData
          cData    := ''
       else
-         cData    := '<binary>'
+         cData    := RangeRepl( Chr(0), Chr(31), cData, '.' )
+//         cData    := '<binary>'
       endif
    endif
 
@@ -9983,7 +10519,7 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
          nStyle      := ::nDataStyle
          if ::oBrw:nDataType == DATATYPE_ARRAY .and. ;
             ::nDataStrAlign == AL_LEFT .and. ;
-            ValType( ::Value ) $ 'ND'
+            ValType( ::Value ) $ 'ND' //ValType( xEval( ::Value  ) ) $ 'ND'
 
             nStyle   := ::DefStyle( AL_RIGHT, .t. )
          endif
@@ -9998,15 +10534,21 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
             endif
          endif
 */
-         if ::cDataType != nil .and. ::cDataType $ 'CM' .and. lAnd( nStyle, DT_SINGLELINE ) .and. ;
-            ::oBrw:nRowHeight > 2 * nFontHeight + 2
+         if CRLF $ cData .or. ( ::cDataType != nil .and. ::cDataType $ 'CM' .and. lAnd( nStyle, DT_SINGLELINE ) .and. ;
+            ::oBrw:nRowHeight > 2 * nFontHeight + 2 )
 
             cData    := Trim( cData )
             if ( nTxtHeight := DrawTextEx( hDC, cData, aRect, nOr( DT_CALCRECT, DT_WORDBREAK ) ) ) > ;
                               DrawTextEx( hDC, cData, aRect, nOr( DT_CALCRECT, DT_SINGLELINE ) )
 
                nStyle      := nOr( nAnd( nStyle, nNot( DT_SINGLELINE ) ), DT_WORDBREAK )
-               aRect[ 1 ]  += Max( 0, Int( ( nHeight - nTxtHeight ) / 2 ) )
+               if lAnd( ::nDataStrAlign, AL_TOP )
+                  // aRect[ 1 ]  += 0  // nothing to be done.
+               elseif lAnd( ::nDataStrAlign, AL_BOTTOM )
+                  aRect[ 1 ]  += Max( 0, Int( ( nHeight - nTxtHeight - 1 ) ) )
+               else
+                  aRect[ 1 ]  += Max( 0, Int( ( nHeight - nTxtHeight ) / 2 ) )
+               endif
 
                if ::nDataLines == nil .and. ::cDataType == 'M'
                   ::nDataLines   := 2
@@ -10060,7 +10602,7 @@ METHOD PaintCell( nRow, nCol, nHeight, lHighLite, lSelected, nOrder, nPaintRow )
               ::oBtnElip:SetColor( aColors[ 1 ],aColors[ 2 ] )
            else
               FillRect( hDC, {nButtonRow, nButtonCol, nButtonRow + nHeight , nButtonCol + nBtnWidth + 1 },; // ButtonGet
-                      ::oBtnElip:oBrush:hBrush )
+                        ::oBtnElip:oBrush:hBrush )
            endif
             ::oBtnElip:Paint()
             ::oBtnElip:ReleaseDC()
@@ -10169,9 +10711,12 @@ return nil
 
 METHOD DefStyle( nAlign, lSingleLine ) CLASS TXBrwColumn
 
-   local nStyle
+   local nStyle, nVAlign
 
-   nStyle := nOr( DT_MODIFYSTRING, DT_EDITCONTROL, DT_NOPREFIX )
+   nStyle   := nOr( DT_MODIFYSTRING, DT_EDITCONTROL, DT_NOPREFIX )
+   nVAlign  := nAnd( nAlign, 12 )
+   nVAlign  := If( nVAlign == AL_TOP, DT_TOP, If( nVAlign == AL_BOTTOM, DT_BOTTOM, DT_VCENTER ) )
+   nAlign   := nAnd( nAlign, 3 )
 
    do case
    case nAlign == AL_LEFT
@@ -10183,7 +10728,7 @@ METHOD DefStyle( nAlign, lSingleLine ) CLASS TXBrwColumn
    end case
 
    if lSingleLine
-      nStyle := nOr( nStyle, DT_SINGLELINE, DT_VCENTER)
+      nStyle := nOr( nStyle, DT_SINGLELINE, nVAlign ) //DT_VCENTER)
    else
       nStyle := nOr( nStyle, DT_WORDBREAK)
    endif
@@ -10407,17 +10952,17 @@ METHOD CreateButtons() CLASS TXBrwColumn
       ::oBtnList:SetColor( aColors[ 1 ], aColors[ 2 ] )
 
       @ 0,0 BTNBMP ::oBtnElip OF ::oBrw NOBORDER SIZE 0,0
-      ::oBtnElip:cCaption := "..."
+      ::oBtnElip:cCaption := IfNil( ::cBtnCaption, "..." )
       ::oBtnElip:bAction := {|| ::RunBtnAction() }
       ::oBtnElip:SetFont( If( ValType( ::oDataFont ) == "B", Eval( ::oDataFont, Self ), ::oDataFont ) )
       ::oBtnElip:SetColor( aColors[ 1 ], aColors[ 2 ] )
 
-         if ::nBtnBmp > 0 .and. !empty( ::aBitMaps )
-            if ::nBtnBmp > len( ::aBitMaps )
-               ::nBtnBmp := len( ::aBitMaps )
-            endif
-               ::ChangeBitMap( )
+      if ::nBtnBmp > 0 .and. !empty( ::aBitMaps )
+         if ::nBtnBmp > len( ::aBitMaps )
+            ::nBtnBmp := len( ::aBitMaps )
          endif
+            ::ChangeBitMap( )
+      endif
 
       ::oBtnList:Hide()
       ::oBtnElip:Hide()
@@ -10428,7 +10973,7 @@ return nil
 
 //------------------------------------------------------------------------------
 
-METHOD ChangeBitmap() CLASS TXBrwColumn // BtnGet
+METHOD ChangeBitmap( ) CLASS TXBrwColumn // BtnGet
 
    if ::nBtnBmp > 0 .and. len( ::aBitmaps ) >= ::nBtnBmp
       ::oBtnElip:hBitmap1 := ::aBitMaps[::nBtnBmp, BITMAP_HANDLE ]
@@ -10539,14 +11084,16 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
    DEFAULT cPic := ""
 
    uValue  := IfNil( ::Value, ::BlankValue() )
-   if ValType( uValue ) == 'D'
-      if !Empty( cPic ) .and. Left( cPic, 1 ) != '@'
-         cPic  := '@D'
-      endif
-      if cPic == '@T'
-         cPic  := '@D'
-      endif
 
+   if ValType( uValue ) == 'B'
+      uValue   := Eval( uValue )
+   endif
+
+   if ValType( uValue ) == 'T' .and. cPic == '@D'
+      uValue   := FW_TTOD( uValue )
+   endif
+   if ValType( uValue ) $ 'DT'
+      cPic     := nil
    endif
 
    if ::nEditType >= EDIT_DATE
@@ -10554,8 +11101,8 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
    endif
 
    aColors := Eval( ::bClrEdit )
-   lCenter := ( ::nDataStrAlign == AL_CENTER )
-   lRight  := ( ::nDataStrAlign == AL_RIGHT )
+   lCenter := lAnd( ::nDataStrAlign, AL_CENTER )
+   lRight  := lAnd( ::nDataStrAlign, AL_RIGHT )
 
    nRow    := ( ( ::oBrw:nRowSel - 1 ) * ::oBrw:nRowHeight ) + ::oBrw:HeaderHeight()
 
@@ -10563,7 +11110,16 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
    ::EraseData( nRow, ::nDisplayCol, ::oBrw:nRowHeight  , hBrush )
    DeleteObject( hBrush )
 
-   if ValType( uValue ) == 'C' .and. IfNil( ::nDataLines, ::oBrw:nDataLines ) > 1 .and. ;
+   if ValType( uValue ) == 'C'
+      if IsBinaryData( uValue )
+         return ::RunBtnAction()
+      elseif ::cDataType == 'M' .and. IfNil( ::nDataLines, ::oBrw:nDataLines ) < 2
+         return ::RunBtnAction()
+      endif
+   endif
+
+   cPic     := xEval( cPic, uValue )
+   if ValType( uValue ) == 'C' .and. IfNil( ::nDataLines, ::oBrw:nDataLines ) >= 2 .and. ;
       Empty( cPic )
 
       if isRtf( uValue ) .or. isGtf( uValue )
@@ -10583,6 +11139,12 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
             uValue   := Space( 128 )
             cPic     := "@KS" + LTrim( Str( ::nWidthChr() ) )
          endif
+
+#ifndef __XHARBOUR__
+         if Empty( cPic ) .and. ValType( uValue ) == 'N'
+            cPic     := NumPict( ::nWidthChr, Len( AfterAtNum( '.', cValToChar( uValue ) ) ) )
+         endif
+#endif
 
          ::oEditGet := TGet():New( 0,0,{ | u | If(PCount()==0,uValue,uValue:= u ) },;
                                   ::oBrw,0,0,cPic,,aColors[ 1 ],aColors[ 2 ];
@@ -10609,7 +11171,7 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
    endif
 
    if nKey == Asc( '=' )
-     ::oEditGet:bValid  := <  | oGet |
+     ::oEditGet:bValid  := < | oGet |
                               local lValid, cBuf
 
                               oGet:lValidating := .t.
@@ -10630,7 +11192,7 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
                               endif
                               oGet:lValidating := .f.
                               return lValid
-                              >
+                           >
    else
 
    if ::bEditValid != nil
@@ -10663,7 +11225,11 @@ METHOD Edit( nKey ) CLASS TXBrwColumn
 
    ::oEditGet:Move( nRow, nCol, nWidth, nHeight, .t. )
    ::oEditGet:SetFocus()
-   ::oEditGet:SelectAll()
+   if XbrGetSelectAll() == .t. .or. ;
+         ( XBrGetSelectAll() == nil .and. nKey != nil .and. ValType( uValue ) != 'N' .and. ;
+            ::oEditGet:ClassName() == 'TGET' )
+      ::oEditGet:SelectAll()
+   endif
 
    ::oBrw:lEditMode := .T.
 
@@ -10836,8 +11402,8 @@ local uValue
    uValue  := ::Value
 
    aColors := Eval( ::bClrEdit )
-   lCenter := ( ::nDataStrAlign == AL_CENTER )
-   lRight  := ( ::nDataStrAlign == AL_RIGHT )
+   lCenter := lAnd( ::nDataStrAlign, AL_CENTER )
+   lRight  := lAnd( ::nDataStrAlign, AL_RIGHT )
 
    nRow    := ( ( ::oBrw:nRowSel - 1 ) * ::oBrw:nRowHeight ) + ::oBrw:HeaderHeight()
 
@@ -10900,6 +11466,7 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
    local xValue
    local hBrush
    local nAt, nRow, nCol, nWidth, nHeight, aColors, oFont
+   local lWhen    := ( ::bEditWhen == nil .or. Eval( ::bEditWhen, Self ) )
 
    if ::aEditListTxt == nil
       MsgStop( "oCol:aEditListTxt not defined", "Fivewin: Class TXBrwColumn" )
@@ -10914,34 +11481,37 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
 
    ::oBrw:nColSel := ::nPos
 
-   if ::bEditValue == nil
-      ::bEditValue := ::bStrData
+   aBound   := IfNil( ::aEditListBound, AClone( ::aEditListTxt ) )
+   if ValType( xValue := ::Value ) == 'C'
+      xValue   := Trim( xValue )
    endif
-
-   nAt     := Ascan( ::aEditListBound, Eval( ::bEditValue ) )
-   nRow    := ( ::oBrw:nRowSel * ::oBrw:nRowHeight ) + ::oBrw:HeaderHeight() - 1
-   nCol    := ::nDisplayCol - 2
-   nWidth  := ::nWidth + 3
-   nHeight := Len( ::aEditListTxt ) * ( FontHeight( ::oBrw, ::oBrw:oFont ) ) + 2
-
-   If nRow + nHeight > ::oBrw:BrwHeight()
-      If (::oBrw:BrwHeight() - nRow) < ::oBrw:nRowHeight
-         do while ( nRow -  nHeight - ::oBrw:nRowHeight + 1 ) < 0
-            nHeight -= FontHeight( ::oBrw, ::oBrw:oFont )
+   if ( nAt := Ascan( aBound, xValue ) ) == 0
+      if ValType( xValue ) == 'C'
+         do while Len( xValue ) > 1 .and. nAt == 0
+            xValue      := Left( xValue, Len( xValue ) - 1 )
+            nAt         := AScan( aBound, xValue )
          enddo
-         nRow :=  nRow - nHeight - ::oBrw:nRowHeight + 1
-      else
-         nHeight := ::oBrw:BrwHeight() - nRow
-      Endif
-   Endif
-
-   if ::aEditListBound == nil
-      aBound := Array( Len( ::aEditListTxt ) )
-      AEval( aBound, {|v,e| aBound[ e ] := ::aEditListTxt[ e ] } )
-//      AEval( aBound, {|v,e| aBound[ e ] := e } )
-   else
-      aBound := ::aEditListBound
+      elseif ( nAt := AScan( aBound, { |u| xValue <= u } ) ) > 0
+         nAt   := Len( aBound )
+      endif
    endif
+   xValue   := nil
+
+   nRow     := ( ::oBrw:nRowSel * ::oBrw:nRowHeight ) + ::oBrw:HeaderHeight() - 1
+   nCol     := ::nDisplayCol - 2
+   nWidth   := ::nWidth + 3
+   nHeight  := Len( ::aEditListTxt ) * ( FontHeight( ::oBrw, ::oBrw:oFont ) ) + 2
+
+   If nRow + nHeight > ::oBrw:BrwHeight() - ::oBrw:FooterHeight()
+      if nHeight <= ( nRow - ::oBrw:nRowHeight - ::oBrw:HeaderHeight() )
+         nRow     := nRow - ::oBrw:nRowHeight - nHeight
+      elseif ( nRow - ::oBrw:nRowHeight - ::oBrw:HeaderHeight() ) > ( ::oBrw:BrwHeight() - ::oBrw:FooterHeight() - nRow )
+         nHeight  := Min( nHeight, nRow - ::oBrw:nRowHeight - ::oBrw:HeaderHeight() )
+         nRow     -= ( nHeight + ::oBrw:nRowHeight )
+      else
+         nHeight  := Min( nHeight, ::oBrw:BrwHeight() - ::oBrw:FooterHeight() - nRow )
+      endif
+   Endif
 
    if ::oEditGet != nil
       ::oEditGet:End()
@@ -10957,18 +11527,22 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
    @ 0, 0 LISTBOX ::oEditLbx VAR nAt OF ::oBrw SIZE 0,0 ITEMS ::aEditListTxt ;
          COLOR aColors[ 1 ], aColors[ 2 ] FONT oFont
 
-   ::oEditLbx:bLostFocus := { | oLbx, hWndFocus | ::PostEdit( aBound[ Max( 1, nAt ) ], .t. ) } // iif(::oEditLbx != nil, ::oEditLbx:End(),) } A.L. Nov 2007
+//   ::oEditLbx:bLostFocus := { | oLbx, hWndFocus | ::PostEdit( aBound[ Max( 1, nAt ) ], .t. ) }
+   ::oEditLbx:bLostFocus := { | oLbx, hWndFocus | ::PostEdit( nil, .t. ) }
 
-   ::oEditLbx:bLButtonUp := {|| ::oEditLbx:Change(), ::oEditLbx:nLastKey := VK_RETURN,;
-                                ::PostEdit( aBound[ nAt ], .t. ) }
+   ::oEditLbx:bLButtonUp := {|| ::oEditLbx:Change(), ::PostEdit( If( lWhen, aBound[ nAt ], nil ), .t. ) }
+
+   ::oEditLbx:bChange = {|| If( ::oEditLbx != nil, ::oEditLbx:nLastKey := VK_RETURN,) }
 
    IF ::oBrw:oWnd:IsKindOf( "TDIALOG" )
       ::oEditLbx:nDlgCode = DLGC_WANTALLKEYS
-      ::oEditLbx:bKeyDown   := {|k| if( !Empty( ::oEditLbx), ::oEditLbx:nLastKey := k, ), nil }
+      ::oEditLbx:bKeyDown   := { | nKey | If( nKey == VK_RETURN,;
+                                            ( If( ::oEditLbx != nil, ::oEditLbx:Change(),),;
+                                              ::PostEdit( If( lWhen, aBound[ nAt ], nil ), .t. ) ),) }
 
    ELSE
       ::oEditLbx:bKeyDown   := {|k| ::oEditLbx:nLastKey := k, ;
-                                 If( k == VK_RETURN .and. nAt > 0,  xValue := aBound[ nAt ], ),;
+                                 If( k == VK_RETURN .and. nAt > 0 .and. lWhen,  xValue := aBound[ nAt ], ),;
                                  If( k == VK_RETURN .or. k == VK_ESCAPE, ::PostEdit( xValue, .t. ), ) }
    ENDIF
 
@@ -10990,11 +11564,17 @@ return .T.
 METHOD RunBtnAction( nKey ) CLASS TXBrwColumn
 
    local nRow, nCol
-   local hBrush
+   local hBrush, bEditBlock
 
    if ::bEditBlock == nil
-      MsgStop( "oCol:bEditBlock not defined", "Fivewin: Class TXBrwColumn")
-      return .f.
+      if ::IsMemo()
+         bEditBlock     := { |r,c,o,k| XbrEditMemo( r,c,o,k ) }
+      else
+         MsgStop( "oCol:bEditBlock not defined", "Fivewin: Class TXBrwColumn")
+         return .f.
+      endif
+   else
+      bEditBlock  := ::bEditBlock
    endif
 
    ::oBrw:nColSel := ::nPos
@@ -11012,7 +11592,7 @@ METHOD RunBtnAction( nKey ) CLASS TXBrwColumn
    nCol := ::nDisplayCol
 
    ::oBrw:lEditMode := .T.
-   ::PostEdit( Eval( ::bEditBlock, nRow, nCol, Self, nKey ), .t. )
+   ::PostEdit( Eval( bEditBlock, nRow, nCol, Self, nKey ), .t. )
    ::oBrw:nLastEditCol := ::nPos
 
 return .t.
@@ -11023,79 +11603,103 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
 
    local lGoNext := .f.
    local uOriginal    := ::Value()
-
    local nLastKey := 0
-   If ::lOnPostEdit
+   local bOnPostEdit
+
+   if ::lOnPostEdit
       return nil
    Endif
 
+   if ::lReadOnly .or. ::oBrw:lReadOnly
+      return nil
+   endif
+
    ::lOnPostEdit := .t.
+
+   if ValType( uOriginal ) == 'B'
+      bOnPostEdit    := { |o,x,k| If( k != VK_ESCAPE, xEval( uOriginal, x, o ), nil ) }
+   else
+      bOnPostEdit    := ::bOnPostEdit
+   endif
+
 
    DEFAULT lButton := .f., lDirectAssign := .f.
 
    do case
       case xValue != nil .and. ( ::nEditType == EDIT_GET .or. lDirectAssign )
-         Eval( ::bOnPostEdit, Self, xValue, 13 )
+         Eval( bOnPostEdit, Self, xValue, VK_RETURN )
+         nLastKey    := If( lDirectAssign, 0, VK_RETURN )
+
       case ::nEditType == EDIT_GET .or. ::nEditType >= EDIT_DATE
          if ::oEditGet != nil
-            Eval( ::bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
+            Eval( bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
             nLastKey := ::oEditGet:nLastKey
-            lGoNext := ( AScan( { VK_RETURN, VK_DOWN, VK_UP, VK_TAB }, ::oEditGet:nLastKey ) > 0 )
             ::oEditGet:End()
             ::oEditGet := nil
          endif
 
       case ::nEditType == EDIT_LISTBOX
-
-           if xValue != nil
-              Eval( ::bOnPostEdit, Self, xValue, If( ::oEditLbx != nil, ::oEditLbx:nLastKey, 0 ) )
-              nLastKey   := If( ::oEditLbx != nil, ::oEditLbx:nLastKey, 0 )
-              lGoNext    := ( nLastKey == VK_RETURN )
-           endif
-           if ::oEditLbx != nil .and. IsWindow( ::oEditLbx:hWnd )
-              ::oEditLbx:End()
-              ::oEditLbx := nil
-           endif
+         if xValue != nil
+            if ::oEditLbx:nLastKey == VK_RETURN
+               Eval( bOnPostEdit, Self, xValue, If( ::oEditLbx != nil, ::oEditLbx:nLastKey, 0 ) )
+            endif
+            nLastKey   := If( ::oEditLbx != nil, ::oEditLbx:nLastKey, 0 )
+         endif
+         if ::oEditLbx != nil .and. IsWindow( ::oEditLbx:hWnd )
+            ::oEditLbx:End()
+            ::oEditLbx := nil
+         endif
 
       case ::nEditType == EDIT_BUTTON
-           if ::bOnPostEdit != nil
-              if xValue != nil
-                 Eval( ::bOnPostEdit, Self, xValue, 0 )
-              endif
-              lGoNext   := .t.
-              nLastKey := VK_RETURN
-           endif
+
+         nLastKey     := If( xValue == nil, VK_ESCAPE, VK_RETURN )
+         Eval( bOnPostEdit, Self, xValue, nLastKey )
 
       case ::nEditType == EDIT_GET_LISTBOX
-           if ::oEditLbx != nil .and. IsWindow( ::oEditLbx:hWnd )
-              ::oEditLbx:End()
-              ::oEditLbx := nil
-           endif
-           if ! lButton
-              if ::oEditGet != nil
-                 Eval( ::bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
-                 lGoNext := ( ::oEditGet:nLastKey == VK_RETURN )
-                 ::oEditGet:End()
-                 ::oEditGet := nil
-              endif
-           elseif xValue != nil
-              Eval( ::bOnPostEdit, Self, xValue, 0 )
-           endif
+         if ::oEditLbx != nil .and. IsWindow( ::oEditLbx:hWnd )
+            nLastKey  := ::oEditLbx:nLastKey
+            ::oEditLbx:End()
+            ::oEditLbx := nil
+         endif
+         if ::oEditGet != nil
+            if ! lButton
+               xValue    := Eval( ::oEditGet:bSetGet )
+               nLastKey  := ::oEditGet:nLastKey
+            endif
+            ::oEditGet:End()
+            ::oEditGet   := nil
+         endif
+         if xValue != nil .and. ( ::bEditWhen == nil .or. Eval( ::bEditWhen, Self ) )
+            Eval( bOnPostEdit, Self, xValue, nLastKey )
+         endif
 
       case ::nEditType == EDIT_GET_BUTTON
-           if ! lButton
-              if ::oEditGet != nil
-                 Eval( ::bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
-                 lGoNext := ( ::oEditGet:nLastKey == VK_RETURN )
-                 ::oEditGet:End()
-                 ::oEditGet := nil
-              endif
-           elseif xValue != nil
-              if ::bOnPostEdit != nil
-                 Eval( ::bOnPostEdit, Self, xValue, 0 )
-              endif
-           endif
+         if ! lButton
+            if ::oEditGet != nil
+               Eval( bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
+               nLastKey    := ::oEditGet:nLastKey
+               ::oEditGet:End()
+               ::oEditGet := nil
+            endif
+         else     // if xValue != nil
+            nLastKey    := If( xValue == nil, VK_ESCAPE, VK_RETURN )
+            Eval( bOnPostEdit, Self, xValue, nLastKey )
+         endif
    endcase
+
+   lGoNext := !lDirectAssign .and. ( AScan( { VK_RETURN, VK_DOWN, VK_UP, VK_TAB }, nLastKey ) > 0 )
+
+   ::oBrw:SaveData()
+   ::oBrw:Unlock()
+
+   ::lOnPostEdit     := .f.
+   ::oBrw:lEditMode  := .f.
+   ::oBrw:nLastKey   := nLastKey
+
+   if ::bOnChange != nil .and. ( ! EQ( ::Value, uOriginal, .t., .t. ) .or. ;
+                                 ValType( uOriginal ) == 'B' )
+      Eval( ::bOnChange, Self, uOriginal )
+   endif
 
    ::oBrw:SetFocus()
    if Empty( ::cOrder )
@@ -11114,15 +11718,8 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
       ::RefreshFooter()
    endif
 
-   ::lOnPostEdit := .f.
-   ::oBrw:lEditMode := .f.
-
-   if ::bOnChange != nil .and. ! EQ( ::Value, uOriginal )
-      Eval( ::bOnChange, Self, uOriginal )
-   endif
-
    If lGoNext
-      ::oBrw:nLastKey   := nLastKey
+//      ::oBrw:nLastKey   := nLastKey  // already assigned a few lines above
       ::oBrw:GoNextCtrl()
    Endif
 
@@ -11258,109 +11855,99 @@ return nSum
 METHOD SetOrder() CLASS TXBrwColumn
 
    LOCAL   lSorted   := .F.
-   LOCAL   n, oCol, cSort, uRet
-   LOCAL   aToken
-   LOCAL   cType, cOrder
+   LOCAL   n, cSort, uVal
+   LOCAL   lDolphin  := .f.
    LOCAL   cOrdBag   := If( ValType( ::cOrdBag ) == 'B', Eval( ::cOrdBag ), ::cOrdBag )
 
-   if ::cSortOrder != nil
+   msgAlert( "joder")
+
+   if ::cOrder == 'A' .and. ! ::oBrw:lSortDescend
+      msgAlert( "salgo por aki")
+      return .f.
+   endif
+
+   msgAlert( ::oBrw:lAutoSort, "::oBrw:lAutoSort" )
+   msgAlert( ::cSortOrder != nil, "::cSortOrder != nil" )
+
+   msgAlert( ::oBrw:lAutoSort .and. ::cSortOrder != nil, "::oBrw:lAutoSort .and. ::cSortOrder != nil" )
+
+   msgAlert( ValType( ::oBrw:cAlias ) == 'C' .and. ValType( ::cSortOrder ) == 'C', "ValType( ::oBrw:cAlias ) == C .and. ValType( ::cSortOrder ) == C" )
+
+   if ::oBrw:lAutoSort .and. ::cSortOrder != nil
+
+      msgAlert( "dentro" )
 
       if ValType( ::cSortOrder ) == "B"
-         uRet  := Eval( ::cSortOrder, Self )
-         lSorted := ( ValType( uRet ) == 'C' .and. Upper( uRet ) $ 'AD' )
+         uVal  := Eval( ::cSortOrder, Self )
+         lSorted := ( ValType( uVal ) == 'C' .and. Upper( uVal ) $ 'AD' )
          if lSorted
             ::oBrw:cOrders := " "
-            ::cOrder       := Upper( uRet )
+            ::cOrder       := Upper( uVal )
          endif
 
       elseif ::oBrw:nDataType == DATATYPE_ARRAY
-         ::SortArrayData()
+         lSorted := ::SortArrayData()
 
-      elseif nAnd( ::oBrw:nDataType, DATATYPE_ADO ) == DATATYPE_ADO .and. ;
-         ::oBrw:oRs != nil
+      elseif lAnd( ::oBrw:nDataType, DATATYPE_ADO ) .and. ::oBrw:oRs != nil
 
          n       := If( ::oBrw:oRs:RecordCount > 0, ::oBrw:oRs:BookMark, nil )
          cSort   := Upper( ::oBrw:oRs:Sort )
-         cSort   := TRIM( StrTran( StrTran( cSort, 'DESC', '' ), 'ASC', '' ) )
-         if EQ( cSort, ::cSortOrder )
-            // Asc -> Desc or Desc -> Asc
-            if ::cOrder == 'D'
-               ::oBrw:oRs:Sort   := ::cSortOrder
-               ::cOrder          := 'A'
-            else
-               ::oBrw:oRs:Sort   := ::cSortOrder + " DESC"
-               ::cOrder          := 'D'
-            endif
-            lSorted      := .T.
+         cSort   := TRIM( StrTran( StrTran( cSort, ' DESC', '' ), ' ASC', '' ) )
+         if EQ( CharRem( "[]", cSort ), CharRem( "[]", ::cSortOrder ) )
+            ::cOrder       := If( ::cOrder == 'D', 'A', 'D' )
          else
-            // Asc Sort
-            ::oBrw:oRs:Sort      := ::cSortOrder
-            ::oBrw:cOrders       := " "
-            ::cOrder             := 'A'
-            lSorted              := .T.
+            ::oBrw:cOrders := ' '
+            ::cOrder       := 'A'
          endif
+         lSorted           := .t.
+         ::oBrw:oRs:Sort   := ::cSortOrder + If( ::cOrder == 'D', ' DESC', '' )
          if lSorted .and. n != nil
             ::oBrw:oRs:BookMark  := n
          endif
-      elseif nAnd( ::oBrw:nDataType, DATATYPE_MYSQL ) == DATATYPE_MYSQL .and. ;
-            ::oBrw:oMysql != nil
-         if ::oBrw:oMysql:IsKindOf( 'TDOLPHINQRY' )
-
-            aToken := HB_ATokens( ::oBrw:oMysql:cOrder, " " )
-
-            IF Len( aToken ) == 1
-               AAdd( aToken, "ASC" )
-            ENDIF
-
-            cOrder = AllTrim( Lower( aToken[ 1 ] ) )
-            cType = aToken[ 2 ]
-
-            AEval( ::oBrw:aCols, {| o | o:cOrder := " " } )
-            IF Lower( AllTrim( ::cSortOrder ) ) == cOrder
-               IF Upper( cType ) == "ASC"
-                  cType = "DESC"
-                  ::cOrder = "D"
-               ELSE
-                  cType = "ASC"
-                  ::cOrder = "A"
-               ENDIF
-            ELSE
-               cOrder = ::cSortOrder
-               cType = "ASC"
-               ::cOrder = "A"
-            ENDIF
-            ::oBrw:oMysql:SetOrder( cOrder + " " + cType )
-
+      elseif lAnd( ::oBrw:nDataType, DATATYPE_MYSQL ) .and. ::oBrw:oMysql != nil
+         n                 := 0
+         lDolphin          := ::oBrw:oMysql:IsKindOf( 'TDOLPHINQRY' )
+         if lDolphin
+            cSort   := Lower( ::oBrw:oMysql:cOrder )
          else
-            cSort   := Upper( ::oBrw:oMysql:cSort )
-            cSort   := TRIM( StrTran( StrTran( cSort, 'DESC', '' ), 'ASC', '' ) )
-            if EQ( cSort, ::cSortOrder )
-               // Asc -> Desc or Desc -> Asc
-               if ::cOrder == 'D'
-                  ::oBrw:oMysql:cSort := ::cSortOrder
-                  ::cOrder            := 'A'
-               else
-                  ::oBrw:oMysql:cSort := ::cSortOrder + " DESC"
-                  ::cOrder            := 'D'
-               endif
-               lSorted      := .T.
-            else
-               // Asc Sort
-               ::oBrw:oMysql:Sort      := ::cSortOrder
-               ::oBrw:cOrders       := " "
-               ::cOrder             := 'A'
-               lSorted              := .T.
-            endif
+            cSort   := Lower( ::oBrw:oMysql:cSort )
          endif
-      elseif nAnd( ::oBrw:nDataType, DATATYPE_ODBF ) == DATATYPE_ODBF .and. ;
-         ValType( ::cSortOrder ) == 'C'
+         cSort   := AllTrim( StrTran( StrTran( cSort, ' desc', '' ), ' asc', '' ) )
+         if EQ( cSort, ::cSortOrder ) // already sorted on this column
+            ::cOrder    := If( ::cOrder == 'D', 'A', 'D' )
+            n           := ::oBrw:oMySql:LastRec() - ::oBrw:oMySql:RecNo() + 1
+         else
+            ::oBrw:cOrders       := " "
+            ::cOrder             := 'A'
+         endif
+         lSorted     := .t.
+         cSort       := ::cSortOrder + If( ::cOrder == 'D', " DESC", "" )
+         if lDolphin
+            uVal     := ::Value
+            ::oBrw:oMySql:lInverted := ( ::cOrder == 'D' )
+            ::oBrw:oMySql:SetOrder( cSort )
+            if n > 0
+               ::oBrw:oMySql:GoTo( n )
+            else
+               ::oBrw:oMySql:Seek( uVal, Token( ::cSortOrder, nil, 1 ), 1, ::oBrw:oMySql:LastRec(), .t., .t. )
+            endif
+            // note: seek is not working in the descending order
+         else
+            ::oBrw:oMysql:cSort := cSort
+         endif
+
+      elseif lAnd( ::oBrw:nDataType, DATATYPE_ODBF ) .and. ValType( ::cSortOrder ) == 'C'
 
          if ::oBrw:oDbf:IsKindOf( "TDATABASE" )
 
             DEFAULT cOrdBag   := ::oBrw:oDbf:IndexBagName()
 
+            if ValType( cOrdBag ) == 'C'
+               cOrdBag        := Upper( cOrdBag )
+            endif
+
             if ::oBrw:oDbf:SetOrder() == Upper( ::cSortOrder )
-               if !Empty( ::cOrder ) .and. ::oBrw:oDbf:IndexBagName() == Upper( cOrdBag )
+               if !Empty( ::cOrder ) .and. ::oBrw:oDbf:IndexBagName() == cOrdBag
                   ::oBrw:oDbf:OrdDescend( nil, nil, ::cOrder == 'A' )
                   ::cOrder       := If( ::cOrder == 'A', 'D', 'A' )
                   lSorted        := .t.
@@ -11376,11 +11963,10 @@ METHOD SetOrder() CLASS TXBrwColumn
                ::oBrw:cOrders     := " "
                ::cOrder           := 'A'
             endif
-         /*
          else
             if __ObjHasMethod( ::oBrw:oDbf, 'ORDDESCEND' ) .and. ;
                ( ::cOrder == 'A' .or. ::cOrder == 'D' )
-               // ::oBrw:oDbf:OrdDescend( nil, nil, ::cOrder == 'A' )
+               ::oBrw:oDbf:OrdDescend( nil, nil, ::cOrder == 'A' )
                ::cOrder          := If( ::cOrder == 'A', 'D', 'A' )
                lSorted           := .t.
 
@@ -11390,16 +11976,27 @@ METHOD SetOrder() CLASS TXBrwColumn
                ::oBrw:cOrders     := ' '
                ::cOrder           := 'A'
             endif
-         */
          endif
+      
       elseif ValType( ::oBrw:cAlias ) == 'C' .and. ValType( ::cSortOrder ) == 'C'
+
+         cSort         := ( ::oBrw:cAlias )->( OrdSetFocus() )   // Save the present value
+
+         MsgAlert( cSort, "the presnt value")
 
          DEFAULT cOrdBag := ( ::oBrw:cAlias )->( OrdBagName() )
 
+         MsgAlert( (::oBrw:cAlias)->( OrdSetFocus() ) == Upper( ::cSortOrder ), "comparacion" )
+
          if (::oBrw:cAlias)->( OrdSetFocus() ) == Upper( ::cSortOrder )
             if !Empty( ::cOrder ) .and. Upper( cOrdBag ) == ( ::oBrw:cAlias )->( OrdBagName() )
-               // (::oBrw:cAlias)->( OrdDescend( , , ! OrdDescend() ) )
-               // ::cOrder          := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
+               (::oBrw:cAlias)->( OrdDescend( , , ! OrdDescend() ) )
+               if ::oBrw:lSQLRDD
+                  M->u__bm       := ::oBrw:BookMark
+                  ::oBrw:GoTop()
+                  ::oBrw:BookMark   := M->u__bm
+               endif
+               ::cOrder          := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
             else
                (::oBrw:cAlias)->( OrdSetFocus( ::cSortOrder, cOrdBag ) )
                ::cOrder          := 'A'
@@ -11408,10 +12005,12 @@ METHOD SetOrder() CLASS TXBrwColumn
 
          else
 
+            MsgAlert( ::cSortOrder, "cSortOrder" )
+
             (::oBrw:cAlias)->( OrdSetFocus( ::cSortOrder, cOrdBag ) )
             lSorted   := .T.
             ::oBrw:cOrders     := ' '
-            // ::cOrder           := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
+            ::cOrder           := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
 
          endif
 
@@ -11459,11 +12058,12 @@ METHOD SortArrayData()  CLASS TXBrwColumn
          ::cOrder     := 'A'
       endif
       ::oBrw:nArrayAt   := AScan( ::oBrw:aArrayData, { |a| a == uSave } )
-      ::oBrw:Refresh()
+
+//      ::oBrw:Refresh()
 
    endif
 
-return self
+return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -11514,7 +12114,7 @@ METHOD ClpText() CLASS TXBrwColumn
       if ::bStrData == nil
          RetVal   := ""
       else
-         RetVal   := AllTrim( Eval( ::bStrData ) )
+         RetVal   := AllTrim( Eval( ::bStrData, nil, Self ) )
       endif
    else
       RetVal       := ::Value()
@@ -11551,6 +12151,10 @@ METHOD ClpText() CLASS TXBrwColumn
 
    endif
 
+   if Left( RetVal, 1 ) == '"'
+      RetVal   := ' ' + RetVal
+   endif
+
 return RetVal
 
 //----------------------------------------------------------------------------//
@@ -11559,6 +12163,11 @@ METHOD ToExcel( oSheet, nRow, nCol ) CLASS TXBrwColumn
 
    local uVal     := ::Value
    local hBmp, hBmp2, nHeight, nWidth, oClp
+
+   if ValType( uVal ) $ 'DT' .and. Empty( uVal )
+      oSheet:Cells( nRow, nCol ):NumberFormat   := Lower( Set( _SET_DATEFORMAT ) )
+      return Self
+   endif
 
    if uVal != nil
       if ::cDataType $ 'PF'
@@ -11597,10 +12206,8 @@ METHOD ToExcel( oSheet, nRow, nCol ) CLASS TXBrwColumn
          DeleteObject( hBmp )
 
       else
-         if ValType( uVal ) $ 'DT'
-            if ! Empty( uVal ) .and. Year( uVal ) < 1900
-               uVal  := DToC( uVal )
-            endif
+         if ValType( uVal ) $ 'DT' .and. Year( uVal ) < 1900
+            uVal  := DToC( uVal )
          endif
          oSheet:Cells( nRow, nCol ):Value := uVal
       endif
@@ -11615,16 +12222,12 @@ METHOD Paste( cText ) CLASS TXBrwColumn
    local uNew, cType
 
    if ::cDataType $  'CM'
-      if Eval( ::oBrw:bLock )
-         ::Value     := Trim( cText )
-      endif
+      ::VarPut( Trim( cText ) )
    else
       uNew        := uCharToVal( cText, @cType )
       if uNew != nil
          if ::cDataType == nil .or. ::cDataType == cType
-            if EVal( ::oBrw:bLock )
-               ::Value  := uNew
-            endif
+            ::VarPut( uNew )
          endif
       endif
    endif
@@ -11765,74 +12368,42 @@ return cLine
 
 //----------------------------------------------------------------------------//
 
-Static Function EQ( uFirst, uSecond, lExact )
+static function EQ( uFirst, uSecond, lExact, lCaseSensitive )
 
-   local c
+   local   c, lRet := .f.
 
-   DEFAULT lExact := .t.
+   DEFAULT lExact := .t., lCaseSensitive := .f.
 
-   if ( c := Valtype( uFirst ) ) == Valtype( uSecond )
+   TRY
+      uFirst   := xEval( uFirst )
+   CATCH
+   END
+
+   TRY
+      uSecond  := xEval( uSecond )
+   CATCH
+   END
+
+   if ( C := valtype( uFirst ) ) == valtype( uSecond )
       if c == 'C'
          if lExact
-            if Upper( AllTrim( uFirst ) ) == Upper( AllTrim( uSecond ) )
-               return .t.
+            if lCaseSensitive
+               lRet     := ( AllTrim( uFirst ) == AllTrim( uSecond ) )
+            else
+               lRet     := ( Upper( AllTrim( uFirst ) ) == Upper( AllTrim( uSecond ) ) )
             endif
          else
-            if Upper( AllTrim( uFirst ) ) = Upper( AllTrim( uSecond ) )
-               return .t.
-            endif
+            lRet        := Upper( AllTrim( uFirst ) ) = Upper( AllTrim( uSecond ) )
          endif
       else
-         if uFirst == uSecond
-            return .t.
-         endif
+         lRet  := ( uFirst == uSecond )
       endif
    endif
 
-return .f.
+return lRet
 
 //----------------------------------------------------------------------------//
 
-static function clp2xlnumpic( cPic )
-
-   local cFormat, aPic, c, lEnglish := lxlEnglish
-
-   if cPic == nil
-      cFormat  := If( FWNumFormat()[ 2 ], If( lEnglish, "#,##0", "#.##0" ), "0" )
-   else
-      cPic     := StrTran( cPic, "#", "9" )
-      aPic     := HB_ATokens( cPic, " " )
-
-      cFormat  := ""
-      for each c in aPic
-         if Left( c, 1 ) == "@"
-/*
-            if 'E' $ c
-               lEnglish := .f.
-            endif
-*/
-         else
-            if "9" $ c
-               if Left( c, 1 ) == '$'
-                  cFormat  += '$'
-               endif
-               cFormat  += If( FWNumFormat()[ 2 ] .or. ",9" $ cPic, If( lEnglish, "#,##0", "#.##0" ), "0" )
-               if ".9" $ c
-                  cFormat  += If( lEnglish, ".", "," )
-                  cFormat  += StrTran( SubStr( c, At( ".", c ) + 1 ), "9", "0" )
-
-               endif
-               cFormat  += " "
-            else
-               cFormat  += ( '"' + c + '" ' )
-            endif
-         endif
-      next
-   endif
-
-return Trim( cFormat )
-
-//------------------------------------------------------------------//
 static function FontEsc( oFont )
 
    local nEsc := 0
@@ -11896,7 +12467,8 @@ function XbrowseNew( oWnd, nRow, nCol, nWidth, nHeight,;
                      cMsg, lUpdate, cDataSrc, bWhen, ;
                      lDesign, bValid, lPixel, nResID, lAutoSort, lAddCols, ;
                      aPics, aCols, aJust, aSort, lFooter, lFastEdit, ;
-                     lCell, lLines, aRows, uBack, cBckMode, bClass, lTransparent, lNoBorder )
+                     lCell, lLines, aRows, uBack, cBckMode, bClass, lTransparent,;
+                     lNoBorder, cVarName )
 
    local oBrw, n, i, oCol, oClass
 
@@ -11918,6 +12490,15 @@ function XbrowseNew( oWnd, nRow, nCol, nWidth, nHeight,;
       endif
    endif
 
+   if ValType( aCols ) == 'A' .and. Len( aCols ) == 1 .and. ValType( aCols[ 1 ] ) == 'C' .and. AllTrim( aCols[ 1 ] ) == "*"
+      lAddCols    := .t.
+      aCols       := nil
+   endif
+   if ValType( aSort ) == 'A' .and. Len( aSort ) == 1 .and. ValType( aSort[ 1 ] ) == 'C' .and. Upper( AllTrim( aSort[ 1 ] ) ) == "AUTO"
+      lAutoSort   := .t.
+      aSort       := nil
+   endif
+
    oBrw:lAutoSort  := lAutoSort
    oBrw:bLDblClick := bLDblClick
    oBrw:bRClicked  := bRClick
@@ -11935,7 +12516,9 @@ function XbrowseNew( oWnd, nRow, nCol, nWidth, nHeight,;
    endif
 
    XbrwSetDataSource( oBrw, cDataSrc, lAddCols, lAutoSort, ;
-      If( aCols == nil, nil, aCols[ 1 ] ), aRows, aHeaders  )
+      If( aCols == nil, nil, aCols[ 1 ] ), aRows, aHeaders, bChange  )
+
+   DEFAULT oBrw:bChange := bChange
 
    DEFAULT aHeaders := {}, aPics := {}, aColSizes := {}, aSort := {}
 
@@ -11945,6 +12528,8 @@ function XbrowseNew( oWnd, nRow, nCol, nWidth, nHeight,;
       aColSizes      := ArrMerge( aCols[ 4 ], aColSizes )
       aJust          := ArrMerge( aCols[ 5 ], aJust )
       aSort          := ArrMerge( aCols[ 6 ], aSort )
+      //
+      AEval( oBrw:aCols, { |o,i| If( Empty( o:cExpr ), o:cExpr := cValToChar( aCols[ 1, i ] ), nil ) },,Len( aCols[ 1 ] ) )
    endif
 
    if ! Empty( aFlds )
@@ -11999,9 +12584,8 @@ function XbrowseNew( oWnd, nRow, nCol, nWidth, nHeight,;
       oBrw:SetBackGround( uBack, n )
    endif
 
-   oBrw:bChange       := bChange
    if oFont != nil
-      oBrw:oFont      := oFont
+      oBrw:SetFont( oFont )
    endif
    if bWhen != nil
       oBrw:bWhen      := bWhen
@@ -12077,6 +12661,8 @@ function XbrowseNew( oWnd, nRow, nCol, nWidth, nHeight,;
       oBrw:lUpdate      := lUpdate
    endif
 
+   oBrw:cVarName = cVarName
+
 return oBrw
 
 //--------------------------------------------------------------------------//
@@ -12094,12 +12680,12 @@ return aArray
 
 //----------------------------------------------------------------------------//
 
-function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, aHeaders  )
+function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, aHeaders, bChange  )
 
    // This function is internally used by FWH libraries
    // Not advised for use in application programs
 
-   local cType    := ValType( uDataSrc ), lSet := .f.
+   local cType    := ValType( uDataSrc ), tmp, lSet := .f.
 
    if ! Empty( aCols )
       lAddCols    := .t.
@@ -12111,11 +12697,12 @@ function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, a
       if Select( uDataSrc ) > 0
          oBrw:cAlias    := uDataSrc
          oBrw:nDataType := DATATYPE_RDD
-         if lAddCols .or. ! Empty( aCols )
+         if .t.   // lAddCols .or. ! Empty( aCols )   // 21 sep 2013
             oBrw:SetRDD( lAddCols, lAutoSort, aCols, aRows )
          elseif ! Empty( aRows )
             oBrw:SetRDD( .f., lAutoSort, nil, aRows )
          endif
+         oBrw:bChange   := bChange
       endif
 
    case cType == 'A'
@@ -12126,18 +12713,22 @@ function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, a
       else
          oBrw:SetArray( uDataSrc, nil, nil, .f. )
       endif
+      oBrw:bChange   := bChange
 
    case cType == 'H'
       oBrw:aArrayData   := uDataSrc
       oBrw:nDataType    := DATATYPE_ARRAY
-      oBrw:SetArray( uDataSrc, nil, nil, lAddCols )
+      oBrw:SetArray( uDataSrc, nil, nil, .t. )
+      if bChange != nil
+         oBrw:bChange   := bChange
+      endif
 
    case cType == 'O'
 
       if IsRecordSet( uDataSrc )
          oBrw:nDataType := DATATYPE_ADO
          oBrw:oRs       := uDataSrc
-         if lAddCols .or. ! Empty( aCols )
+         if .t.   // lAddCols .or. ! Empty( aCols )   // 21 sep 2013
             oBrw:SetADO( uDataSrc, lAddCols, lAutoSort, aCols )
          endif
          lSet  := .t.
@@ -12146,24 +12737,31 @@ function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, a
          oBrw:oRs       := uDataSrc
          oBrw:SetExcelRange( uDataSrc, Empty( aHeaders ), aCols )
          lSet  := .t.
+      elseif uDataSrc:ClassName() == "TOLEAUTO" .and. ! Empty( tmp := GetOleProperties( uDataSrc ) )
+         oBrw:SetArray( tmp, .f., nil, { 1, 2, 3 } )
+         oBrw:cHeaders  := { "Num", "Name", "Value" }
+         oBrw:lReadOnly := .t.
+         lSet  := .t.
       elseif __ObjHasMethod( uDataSrc, 'ISKINDOF' )
          if uDataSrc:IsKindOf( 'TMYSQLQUERY' )
             oBrw:nDataType := DATATYPE_MYSQL
             oBrw:oMysql       := uDataSrc
-            if lAddCols .or. ! Empty( aCols )
+            if .t.   // lAddCols .or. ! Empty( aCols )   // 21 sep 2013
                oBrw:SetMysql( uDataSrc, lAddCols, lAutoSort, aCols )
             endif
+            oBrw:bChange   := bChange
             lSet  := .t.
          elseif  uDataSrc:IsKindOf( 'TDOLPHINQRY' )
             oBrw:nDataType := DATATYPE_MYSQL
             oBrw:oMysql       := uDataSrc
-            if lAddCols .or. ! Empty( aCols )
+            if .t.      //lAddCols .or. ! Empty( aCols )    // 21 sep 2013
                oBrw:SetDolphin( uDataSrc, lAddCols, lAutoSort, aCols )
             endif
+            oBrw:bChange   := bChange
             lSet  := .t.
 
          elseif uDataSrc:IsKindOf( "TLINKLIST" )
-            oBrw:SetTree( uDataSrc, , , If( aCols == nil, lAddCols, aCols ) )
+            oBrw:SetTree( uDataSrc, , bChange, If( aCols == nil, lAddCols, aCols ) )
             lSet  := .t.
 
          elseif uDataSrc:IsKindOf( "TSTRUCT" )
@@ -12178,10 +12776,12 @@ function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, a
                   nil ) }
             END
             oBrw:lFastEdit := .t.
+            oBrw:bChange   := bChange
             lSet = .t.
 
          elseif XBrowsableObj( uDataSrc )
             oBrw:SetoDbf( uDataSrc, aCols, lAutoSort, lAddCols, aRows )
+            oBrw:bChange   := bChange
             lSet  := .t.
          endif
       endif // __objHasMethod( 'iskindof' )
@@ -12190,6 +12790,7 @@ function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, a
          // Object Inspector
          oBrw:SetArray( aObjData( uDataSrc ), .f., nil, { 1, 2, 3 } )
          oBrw:aCols[ 1 ]:cHeader := 'Num'
+         oBrw:aCols[ 1 ]:nWidth := 40
          oBrw:aCols[ 2 ]:cHeader := 'Data'
          WITH OBJECT oBrw:aCols[ 3 ]
             :cHeader    := 'Value'
@@ -12201,6 +12802,7 @@ function XbrwSetDataSource( oBrw, uDataSrc, lAddCols, lAutoSort, aCols, aRows, a
                nil ) }
          END
          oBrw:lFastEdit := .t.
+         oBrw:bChange   := bChange
          lSet  := .t.
       endif
    otherwise
@@ -12214,18 +12816,22 @@ return nil
 static function IsRecordSet( o )
 
    local lRecSet  := .f.
-
-#ifdef __XHARBOUR__
-   lRecSet  := ( o:IsDerivedFrom( "TOLEAUTO" ) .and. "RECORDSET" $ Upper( o:cClassName ) )
-#else
    local u
 
-   TRY
-      u  := o:Fields:Count()
-      lRecSet  := .t.
-   CATCH
-   END
+#ifdef __XHARBOUR__
+   lRecSet  := ( o:IsDerivedFrom( "TOLEAUTO" ) .and. Upper( o:cClassName ) == "ADODB.RECORDSET" )
 #endif
+   if ! lRecSet
+      TRY
+         u  := o:Fields:Count()
+         TRY
+            u  := o:RecordCount()
+            lRecSet  := .t.
+         CATCH
+         END
+      CATCH
+      END
+   endif
 
 return lRecSet
 
@@ -12248,6 +12854,31 @@ static function IsXlRange( o )
 #endif
 
 return lXlRange
+
+//----------------------------------------------------------------------------//
+
+static function GetOleProperties( o )
+
+   local aProp    := {}
+   local nProp, oProp, i
+
+   TRY
+      nProp    := o:Properties:Count()
+      oProp    := o:Properties
+   CATCH
+      TRY
+         nProp    := o:Count()
+         oProp    := o
+      CATCH
+      END
+   END
+   if nProp != nil .and. nProp > 0
+      for i := 0 to nProp - 1
+         AAdd( aProp, { i, oProp:Item( i ):Name, oProp:Item( i ):Value } )
+      next
+   endif
+
+return aProp
 
 //----------------------------------------------------------------------------//
 
@@ -12389,13 +13020,13 @@ METHOD Save() CLASS TXBrRow
    local oCol, n
 
    Eval( ::oBrw:bBookMark, ::nRecNo )
-   if ::oBrw:bLock == nil .or. Eval( ::oBrw:bLock )
+   if ::oBrw:Lock()
       for n := 1 to Len( ::aHeaders )
          if ::aOriginals[ n ] != ::aValues[ n ]
             oCol     := ::oBrw:oCol( ::aHeaders[ n ] )
             if oCol:bOnPostEdit == nil
                if oCol:bEditValue != nil
-                  Eval( oCol:bEditValue, ::aValues[ n ] )
+                  oCol:Value := ::aValues[ n ]
                endif
             else
                Eval( oCol:bOnPostEdit, oCol, ::aValues[ n ], 13 )
@@ -12405,9 +13036,7 @@ METHOD Save() CLASS TXBrRow
       if ::bSave != nil
          Eval( ::bSave, Self )
       endif
-      if ::oBrw:bUnlock != nil
-         Eval( ::oBrw:bUnlock )
-      endif
+      Eval( ::oBrw:Unlock())
       if ::oBrw:bOnRowLeave != nil
          Eval( ::oBrw:bOnRowLeave )
       endif
@@ -12544,15 +13173,38 @@ return CreateSolidBrush( uClr )
 
 //------------------------------------------------------------------//
 
-static function MakeBlock( uVar )
-return { || uVar }
+static function CreateLinePen( oBrw, nLineStyle, nPenStyle, nWidth, nColor )
+
+   local hPen
+
+   DEFAULT  nLineStyle     := LINESTYLE_BLACK,  ;
+            nPenStyle      := PS_SOLID,         ;
+            nWidth         := 1,                ;
+            nColor         := CLR_BLACK
+
+   do case
+   case nLineStyle == LINESTYLE_BLACK .or. nLineStyle == LINESTYLE_RAISED .or. nLineStyle == LINESTYLE_INSET
+      hPen := CreatePen( PS_SOLID, nWidth, nColor )
+   case nLineStyle == LINESTYLE_DARKGRAY
+      hPen := CreatePen( PS_SOLID, nWidth, CLR_GRAY )
+   case nLineStyle == LINESTYLE_FORECOLOR
+      hPen := CreatePen( PS_SOLID, nWidth, oBrw:nClrText )
+   case nLineStyle == LINESTYLE_LIGHTGRAY
+      hPen := CreatePen( PS_SOLID, nWidth, CLR_LIGHTGRAY )
+   otherwise
+      hPen  := 0
+   end case
+
+return hPen
 
 //----------------------------------------------------------------------------//
 
 function DrawPen( hDC, aFromRC, aUptoRC, hPen )
 
-   MoveTo( hDC, aFromRC[ 2 ], aFromRC[ 1 ] )
-   LineTo( hDC, aUptoRC[ 2 ], aUptoRC[ 1 ], hPen )
+   if ! Empty( hPen )
+      MoveTo( hDC, aFromRC[ 2 ], aFromRC[ 1 ] )
+      LineTo( hDC, aUptoRC[ 2 ], aUptoRC[ 1 ], hPen )
+   endif
 
 return nil
 
@@ -12636,138 +13288,375 @@ return aArray1
 
 //----------------------------------------------------------------------------//
 
-static function FieldInExpr( cStr, aStruct )
+static function XbrLbxLookUp( uVal, aBound, aText )
 
-   local cFld  := ""
-   local aTokens  := GetTokens( cStr )
-   local cToken
+   local uRetVal  := Blank( aText[ 1 ] )
+   local nAt
 
-   DEFAULT aStruct   := DbStruct()
-   FOR EACH cToken IN aTokens
-      cToken   := Upper( cToken )
-      if AScan( aStruct, { |a| a[ 1 ] == cToken } ) > 0
-         cFld  := cToken
-         EXIT
+   if ! Empty( uVal )
+      if ValType( uVal ) == 'C'
+         uVal     := Upper( uVal )
+         nAt      := AScan( aBound, { |c| Upper( c ) == uVal } )
+      else
+         nAt      := AScan( aBound, uVal )
       endif
-   NEXT
+      if nAt > 0
+         uRetVal  := aText[ nAt ]
+      endif
+   endif
 
-return cFld
+return uRetVal
 
 //----------------------------------------------------------------------------//
-
-static function OrderTagInfo( aStruct, nCol )
-
-   local nFor, nAt, i, nOrders, aTokens, lCond, aCond, aPos
-
-   DEFAULT aStruct      := DbStruct(), ;
-           nCol         := DBS_TAG
-
-   aCond       := Array( Len( aStruct ) ); AFill( aCond, .f. )
-   aPos        := Array( Len( aStruct ) ); AFill( aPos,   0  )
-
-   for nFor := 1 to Len( aStruct )
-      if Len( aStruct[ nFor ] ) < nCol
-         ASize( aStruct[ nFor ], nCol )
-      endif
-   next nFor
-
-   nOrders     := OrdCount()
-   for nFor := 1 to nOrders
-
-      lCond    := ! Empty( OrdFor() )
-
-      aTokens  := GetTokens( OrdKey( nFor ) )
-      for i := 1 to Len( aTokens )
-         nAt   := AScan( aStruct, { |aFld| aFld[ 1 ] == aTokens[ i ] } )
-         if nAt > 0
-            if aStruct[ nAt ][ nCol ] == nil .or. ( aCond[ nAt ] .and. ! lCond ) .or. ;
-                                                  ( aPos[  nAt ] > i )
-               aStruct[ nAt ][ nCol ] := Upper( OrdName( nFor ) )
-               aCond[ nAt ]   := lCond
-               aPos[  nAt ]   := i
-            endif
-            EXIT
-         endif
-      next i
-
-   next nFor
-
-return aStruct
-
+// ADO Support Funcs
 //----------------------------------------------------------------------------//
 
-static function GetTokens( cStr )
+static function adoIsEmptyRow( oRs )
 
-   local aTokens  := {}
-   local n,c,sep
+   local lEmpty := .t.
+   local n, nFlds := oRs:Fields:Count() - 1
 
-   cStr  := Upper( cStr )
-   cStr  := StrTran( StrTran( cStr, "->", '!' ), '=', ' ' )
-   for n := 1 to 10
-      c  := Token( cStr, nil, n, nil, nil, @sep )
-      if Empty( c )
+   for n := 0 to nFlds
+      if ! ( oRs:Fields( n ):Value == nil )
+         lEmpty   := .f.
          exit
-      endif
-      if sep != '!' .and. sep != '('
-         AAdd( aTokens, c )
       endif
    next
 
-return aTokens
+return lEmpty
 
 //----------------------------------------------------------------------------//
 
-function FW_Decode(...)
+function XbrAdoSave( oBrw )
 
-   local xDefault, xVal, xRet, n
-   local aSearch  := HB_aParams()
-   local nLen     := Len( aSearch )
+   local lSaved   := .f.
+   local oRs      := oBrw:oRs
+   local lCanResync  := oBrw:lRsCanResync
+   local tmp
 
-   if nLen == 1 .and. ValType( aSearch[ 1 ] ) == 'A' .and. Len( aSearch[ 1 ] ) > 0
-      aSearch     := aSearch[ 1 ]
-      nLen        := Len( aSearch[ 1 ] )
+   if oRs:LockType > 1 // not readonly
+      TRY
+         oRs:Update()
+         lSaved   := .t.
+      CATCH
+         oRs:CancelUpdate()
+         tmp   := oRs:AbsolutePosition
+         if lCanResync
+            TRY
+               oRs:Resync( 1, 2 )
+            CATCH
+               oRs:ReQuery()
+               oRs:AbsolutePosition := Max( 1, Min( tmp, oRs:RecordCount() ) )
+               oBrw:Refresh()
+            END
+         endif
+      END
    endif
 
-   if nLen > 1
+return lSaved
 
-      xVal     := aSearch[ 1 ]
-      aSearch  := ADel( aSearch, 1, .t. )
-      nLen--
+//----------------------------------------------------------------------------//
 
-      if nLen <= 2
-         if ValType( aSearch[ 1 ] ) $ 'AH'
-            if nLen == 2
-               xDefault := aSearch[ 2 ]
-            endif
-            aSearch     := aSearch[ 1 ]
-            nLen        := Len( aSearch )
-         elseif nLen == 1
-            xDefault    := aSearch[ 1 ]
-            nLen        := 0
+static function XBrAdoDelete( oBrw )
+
+   local oRs   := oBrw:oRs
+   local n
+
+   WITH OBJECT oRs
+      n  := :AbsolutePosition
+      TRY
+         :Delete()
+      CATCH
+         :CancelUpdate()
+         :ReQuery()
+      END
+      :AbsolutePosition := Max( 1, Min( n, :RecordCount() ) )
+   END
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+static function SeekDate( cSeek, dDefault )  // convert imcomplete seek val to nearest date
+
+   local dSeek
+   local nLen
+
+   if IsDigit( SubStr( cSeek, 3 ) )
+      cSeek    := CharOnly( "0123456789", cSeek )
+      if IsDigit( SubStr( cSeek, 3 ) )
+         if ( nLen := Len( cSeek ) ) >= 8
+            cSeek    := Left( cSeek, 8 )
+         elseif nLen >= 6
+            cSeek    := Left( cSeek, 6 ) + "01"
+         elseif nLen >= 4
+            cSeek    := Left( cSeek, 4 ) + "0101"
+         else
+            cSeek    += "00101"
          endif
+      endif
+      dSeek          := SToD( cSeek )
+   elseif Len( cSeek ) > 6
+      cSeek       := PadR( cSeek, 10, '0' )
+      dSeek       := CToD( cSeek )
+   endif
+
+return If( Empty( dSeek ), dDefault, dSeek )
+
+//----------------------------------------------------------------------------//
+
+static function d2ado( dDate )
+
+   if Empty( dDate ) .or. dDate < {^ 1900/01/01 }
+      return "#1900-01-01#"
+   endif
+
+return '#' + TRANSFORM( DTOS( dDate ), "@R XXXX-XX-XX" ) + '#'
+
+//----------------------------------------------------------------------------//
+
+function XbrSQLRDDmode( nSet )      // For future use
+
+   static nMode := 0
+
+   local nOldMode    := nMode
+
+   if ValType( nSet ) == 'N'
+      nMode    := nSet
+   endif
+
+return nOldMode
+
+//----------------------------------------------------------------------------//
+
+function XbrGetSelectAll( uNew )  // uNew : .t. / .f. / nil
+
+   static lSet    := .t.
+
+   local lPrevSet := lSet
+
+   if PCount() > 0 .and. ( uNew == nil .or. ValType( uNew ) == 'L' )
+      lSet     := uNew
+   endif
+
+return lPrevSet
+
+//----------------------------------------------------------------------------//
+
+function FieldTypeAdoToDbf( nType )
+
+   do case
+   case AScan( { 8,128,129,130,200,201,202,203,204,205 }, nType ) > 0; return 'C'
+   case AScan( { 7, 133, 135 }, nType ) > 0; return 'D'
+   case nType == 11; return 'L'
+   case AScan( { 2, 3, 4, 5, 6, 14, 16, 17, 18, 19, 20, 21, 131, 139 }, nType ) > 0; return 'N'
+   endcase
+
+return ""
+
+//----------------------------------------------------------------------------//
+
+function IsImageData( cBuf )
+
+   if ValType( cBuf ) == 'C' .and.  ;
+      IsBinaryData( cBuf ) .and.    ;
+      IfNil( FITypeFromMemory( cBuf ), -1 ) >= 0
+      //
+      return .t.
+   endif
+
+return .f.
+
+//----------------------------------------------------------------------------//
+
+function xEval(...)
+
+   local aParams  := HB_AParams()
+   local uRet
+
+   if Len( aParams ) > 0
+      if ValType( aParams[ 1 ] ) == 'B'
+         TRY
+            uRet     := HB_ExecFromArray( aParams )
+         CATCH
+         END
       else
-         if nLen % 2 == 1
-            xDefault    := aSearch[ nLen ]
-            nLen--
-         endif
-      endif
-      if ValType( aSearch ) == 'H'
-         if HHasKey( aSearch, xVal )
-            xRet     := aSearch[ xVal ]
-         endif
-      elseif nLen > 1
-         nLen--
-         for n := 1 to nLen step 2
-            if ValType( xVal ) == ValType( aSearch[ n ] ) .and. ;
-                  aSearch[ n ] == xVal
-
-               xRet     := aSearch[ n + 1 ]
-               exit
-            endif
-         next n
+         uRet     := aParams[ 1 ]
       endif
    endif
 
-return IfNil( xRet, xDefault )
+return uRet
 
 //----------------------------------------------------------------------------//
+
+function XbrHexEdit( cVal, cTitle, lReadOnly )
+
+   local cTmp     := cVal
+   local nLen     := Len( cTmp )
+   local nLines   := Ceiling( nLen / 16 )
+   local oDlg, oBrw, oFont, lEdited := .f.
+
+   DEFAULT cTitle := "HEXEDIT", lReadOnly := .f.
+
+   DEFINE FONT oFont NAME "Lucida Console" SIZE 0,-14
+   DEFINE DIALOG oDlg SIZE 700,400 PIXEL FONT oFont TITLE cTitle
+
+   @ 30,10 XBROWSE oBrw SIZE -10,-30 PIXEL OF oDlg DATASOURCE {} NOBORDER
+
+   ADD TO oBrw DATA NUMTOHEX( oBrw:nArrayAt, 8 ) TITLE "LineHex"
+   ADD TO oBrw DATA RangeRepl( Chr(0), Chr(31), SubStr( cTmp, oBrw:nArrayAt * 16 - 15, 16 ), '.' ) ;
+       HEADER "Text"
+   ADD TO oBrw DATA STRTOHEX( SubStr( cTmp, oBrw:nArrayAt * 16 -15, 16 ) ) ;
+      HEADER "HexChar" PICTURE "@R" + Replicate( " !!", 16 )
+
+   WITH OBJECT oBrw
+      :bSeek            := { |c,nAt| If( Empty( c ), nAt := 1, nAt := At( Upper( c ), cTmp ) ), ;
+                           If( nAt > 0, oBrw:nArrayAt := Int( nAt / 16 ) + 1, nil ), ;
+                           nAt > 0 }
+      :bKeyCount        := { || nLines }
+      :nHeadStrAligns   := AL_CENTER
+      :nColDividerStyle := 1
+      :nStretchCol      := 2
+      WITH OBJECT :aCols[ 3 ]
+         :nEditType     := If( lReadOnly, EDIT_NONE, EDIT_GET )
+         :bEditValid    := { |o| Len( HEXTOSTR( CharRem( ' ', o:VarGet() ) ) ) == 16  }
+         :bClrEdit      := { || { CLR_BLACK, CLR_YELLOW } }
+         :bOnPostEdit   := { |o,x,n| If( n == VK_ESCAPE, nil, ( ;
+                              x := HEXTOSTR( CharRem( ' ', x ) ), ;
+                              If( x == o:Value, nil, ( cTmp := ;
+                                 Left( cTmp, oBrw:nArrayAt * 16 - 16 ) + ;
+                                 x + SubStr( cTmp, oBrw:nArrayAt * 16 + 1 ), ;
+                                 oDlg:AEvalWhen() ) ;
+                                 ) ) ) }
+      END
+      //
+      :CreateFromCode()
+   END
+
+   @  10, 10 SAY oBrw:oSeek VAR oBrw:cSeek SIZE 330,10 PIXEL OF oDlg COLOR CLR_BLACK,CLR_YELLOW
+   @ 180,255 BUTTON "Save"   SIZE 40,12 PIXEL OF oDlg WHEN cTmp != cVal ACTION ( oDlg:End() )
+   @ 180,300 BUTTON "Cancel" SIZE 40,12 PIXEL OF oDlg ACTION ( cTmp := cVal, oDlg:End() )
+
+   ACTIVATE DIALOG oDlg CENTERED
+   RELEASE FONT oFont
+
+   lEdited    := !( cVal == cTmp )
+   if lEdited
+      cVal     := cTmp
+   endif
+
+return lEdited
+
+//----------------------------------------------------------------------------//
+
+function XBrImageEdit( cBuf, cTitle, lReadOnly )
+
+   local cTmp        := cBuf
+   local hBitmap, hBmp
+   local oDlg, oImage, oFont, cFile
+   local oClp, uClip, lEdited := .f.
+
+   DEFAULT cTitle := "IMAGE", lReadOnly := .f.
+
+   DEFINE FONT oFont NAME "TAHOMA" SIZE 0,-12
+   DEFINE DIALOG oDlg SIZE 600,400 PIXEL FONT oFont
+
+   if !lReadOnly
+      DEFINE CLIPBOARD oClp OF oDlg FORMAT BITMAP
+      uClip    := oClp:GetBitmap()
+   endif
+
+   @ 10,10 IMAGE oImage SIZE 280,160 PIXEL OF oDlg NOBORDER
+   oImage:LoadFromMemory( cTmp, , 320 )
+
+   if lReadOnly
+
+      @ 180,250 BUTTON "Close" SIZE 40,12 PIXEL OF oDlg ACTION oDlg:End()
+
+   else
+
+      @ 180, 10 BUTTON "Open"   SIZE 40,12 PIXEL OF oDlg ACTION ( ;
+         If( Empty( cFile := cGetFile( "Image File (*.bmp,jpg,png)|*.bmp;*.jpg;*.jpeg;*.png|", ;
+                     CurDir() ) ), nil, ;
+           ( cTmp := MemoRead( cFile ), oImage:LoadFromMemory( cTmp, , 320 ), ;
+             oImage:Refresh(), oDlg:AEvalWhen() ) ) ;
+      )
+      @ 180, 55 BUTTON "Paste"   SIZE 40,12 WHEN ! Empty( uClip ) PIXEL OF oDlg ;
+         ACTION ( cTmp := BmpToStr( uClip ),  oClp:Clear(), uClip := nil, ;
+                  oImage:LoadFromMemory( cTmp, , 320 ), oImage:Refresh(), ;
+                  oDlg:AEvalWhen() )
+
+      @ 180,160 BUTTON "Undo"   SIZE 40,12 WHEN !( cTmp  == cBuf ) PIXEL OF oDlg ;
+         ACTION ( cTmp := cBuf, oImage:LoadFromMemory( cTmp, , 320 ), oImage:Refresh(), ;
+                  oDlg:AEvalWhen() )
+      @ 180,205 BUTTON "Save"   SIZE 40,12 WHEN !( cTmp  == cBuf ) PIXEL OF oDlg ACTION oDlg:End()
+      @ 180,250 BUTTON "Cancel" SIZE 40,12 PIXEL OF oDlg ACTION ( cTmp := cBuf, oDlg:End() )
+
+   endif
+
+   if ! lReadOnly
+      oDlg:bGotFocus    := { || uClip := oClp:GetBitmap(), oDlg:AEvalWhen() }
+   endif
+
+   ACTIVATE DIALOG oDlg CENTERED ;
+      ON RIGHT CLICK ( oImage:LoadFromMemory( memoread( "everest.jpg" ), , 320 ), oImage:Refresh() )
+
+   RELEASE FONT oFont
+   if oClp != nil
+      oClp:End()
+   endif
+
+   if ! lReadOnly
+      lEdited  := !( cBuf == cTmp )
+      if lEdited
+         cBuf  := cTmp
+      endif
+   endif
+
+return lEdited
+
+//----------------------------------------------------------------------------//
+
+function XbrEditMemo( nRow, nCol, oCol, nKey, cTitle )
+
+   local lReadOnly      := ! oCol:lEditable
+   local cVal           := IfNil( oCol:Value, "" )
+   local lBinaryData    := IsBinaryData( cVal )
+   local lText          := ( ! lBinaryData .and. ! IsRTF( cVal ) .and. ! IsGTF( cVal ) )
+   local lEdited        := .f.
+
+   DEFAULT cTitle       := oCol:cHeader
+
+   if IsRtf( cVal ) .or. IsGtf( cVal ) .or. ! lBinaryData
+      lEdited     := MemoEdit( @cVal, cTitle, nil, nil, nil, nil, ;
+          If( lText, MsgYesNo( "Edit as RTF?", cTitle ), nil ) )
+   elseif IsImageData( cVal )
+      lEdited     := XbrImageEdit( @cVal, cTitle, lReadOnly )
+   else
+      lEdited     := XBrHexEdit( @cVal, cTitle, lReadOnly )
+   endif
+
+   lEdited     := !lReadOnly .and. lEdited .and. ! ( cVal == oCol:Value )
+
+return If( lEdited, cVal, nil )
+
+//----------------------------------------------------------------------------//
+
+function FW_ArrSum( aArray, bnCol, nStart, nCount )
+
+   local nRet  := 0
+   local x
+
+   if Empty( bnCol )
+      AEval( aArray, { |n| If( ValType( n ) == 'N', nRet += n, nil ) }, nStart, nCount )
+   elseif ValType( bnCol ) == 'B'
+      AEval( aArray, { |a,i| If( ValType( x := xEval( bnCol, a, i, aArray ) ) == 'N', nRet += x, nil ) }, ;
+            nStart, nCount )
+   elseif ValType( bnCol ) == 'N'
+      AEval( aArray, { |a| If( ValType( a[ bnCol ] ) == 'N', nRet += a[ bnCol ], nil ) }, nStart, nCount )
+   endif
+
+return nRet
+
+//----------------------------------------------------------------------------//
+

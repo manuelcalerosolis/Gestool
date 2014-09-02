@@ -1392,11 +1392,13 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
          OF       ::oDlg
 
       TBtnBmp():ReDefine( 170, "Down16", , , , , {|| ::InsertField() }, ::oDlg, .f., , .f., "Insertar campo" )
+/*
 
       REDEFINE ACTIVEX ::oActiveX ;
          ID       130 ;
          OF       ::oDlg ;
          PROGID   "rmpHTML.HTMLed"
+*/
 
       /*
       Botones generales--------------------------------------------------------

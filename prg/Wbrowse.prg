@@ -592,7 +592,7 @@ CLASS TWBrowse FROM TControl
    METHOD GoTop()
    METHOD GoBottom()
 
-   METHOD GotFocus() INLINE Super:GotFocus(),;
+   METHOD GotFocus() INLINE ::Super:GotFocus(),;
                      If( ::nLen > 0 .and. ! EmptyAlias( ::cAlias ) .and. ;
                      ! ::lIconView, ::DrawSelect(),)
 
@@ -600,8 +600,7 @@ CLASS TWBrowse FROM TControl
 
    MESSAGE DrawIcon METHOD _DrawIcon( nIcon, lFocused )
 
-   METHOD Initiate( hDlg ) INLINE Super:Initiate( hDlg ), ::Default()
-
+   METHOD Initiate( hDlg ) INLINE ::Super:Initiate( hDlg ), ::Default()
 
    METHOD IsColVisible( nCol )
    METHOD KeyDown( nKey, nFlags )
@@ -609,7 +608,7 @@ CLASS TWBrowse FROM TControl
    METHOD LButtonDown( nRow, nCol, nKeyFlags )
    METHOD LButtonUp( nRow, nCol, nKeyFlags )
 
-   METHOD LostFocus( hCtlFocus ) INLINE Super:LostFocus( hCtlFocus ),;
+   METHOD LostFocus( hCtlFocus ) INLINE ::Super:LostFocus( hCtlFocus ),;
                    If( ::nLen > 0 .and. ! EmptyAlias( ::cAlias ) .and. ;
                    ! ::lIconView, ::DrawSelect(),)
 
@@ -655,7 +654,7 @@ CLASS TWBrowse FROM TControl
    METHOD SetTXT( uTxt )               // CeSoTech
    METHOD Destroy() INLINE If( ::oTXT !=Nil, (::oTXT:End(), ::oTXT:= Nil),),;
                            If( ::oFontFooter != Nil, ::oFontFooter:End(), ),;
-                           Super:Destroy()
+                           ::Super:Destroy()
    METHOD IsOverHeader( nMRow, nMCol )
    METHOD IsOverFooter( nMRow, nMCol )
    METHOD VerifyLogicLen( nLogicLen )
@@ -987,7 +986,7 @@ METHOD ReSize( nSizeType, nWidth, nHeight ) CLASS TWBrowse
 
    ::nRowPos = Min( ::nRowPos, Max( ::nRowCount(), 1 ) )
 
-return Super:ReSize( nSizeType, nWidth, nHeight )
+return ::Super:ReSize( nSizeType, nWidth, nHeight )
 
 //----------------------------------------------------------------------------//
 
@@ -1537,11 +1536,11 @@ METHOD LDblClick( nRow, nCol, nKeyFlags ) CLASS TWBrowse
       if ::lAutoEdit .and. nBrwCol > 0
          ::Edit( nBrwCol )
       else
-         return Super:LDblClick( nRow, nCol, nKeyFlags )
+         return ::Super:LDblClick( nRow, nCol, nKeyFlags )
       endif
 
    else                                                // CeSoTech
-      return Super:LDblClick( nRow, nCol, nKeyFlags )  // CeSoTech
+      return ::Super:LDblClick( nRow, nCol, nKeyFlags )  // CeSoTech
    endif
 
 return nil
@@ -1555,7 +1554,7 @@ METHOD LButtonDown( nRow, nCol, nKeyFlags ) CLASS TWBrowse
    local nAtCol
 
    if ::lDrag
-      return Super:LButtonDown( nRow, nCol, nKeyFlags )
+      return ::Super:LButtonDown( nRow, nCol, nKeyFlags )
    endif
 
    nClickRow = ::nWRow( nRow )
@@ -1671,7 +1670,7 @@ METHOD LButtonDown( nRow, nCol, nKeyFlags ) CLASS TWBrowse
    Fin nuevo para MCS----------------------------------------------------------
    */
 
-   Super:LButtonDown( nRow, nCol, nKeyFlags )
+   ::Super:LButtonDown( nRow, nCol, nKeyFlags )
 
 return 0
 
@@ -1681,7 +1680,7 @@ METHOD LButtonUp( nRow, nColM, nFlags ) CLASS TWBrowse
  LOCAL aSizes, nColChange // CeSoTech
 
    if ::lDrag
-      return Super:LButtonUp( nRow, nColM, nFlags )
+      return ::Super:LButtonUp( nRow, nColM, nFlags )
    endif
 
    if ::lCaptured
@@ -1705,7 +1704,7 @@ METHOD LButtonUp( nRow, nColM, nFlags ) CLASS TWBrowse
 
    endif
 
-   Super:LButtonUp( nRow, nColM, nFlags )
+   ::Super:LButtonUp( nRow, nColM, nFlags )
 
 return nil
 
@@ -1901,7 +1900,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TWBrowse
 
       case ::bSeek != Nil .and. ( nKey == VK_SHIFT .or. nKey >= 32 )
            // No Hacer nada !!!, pero respetar el Super.
-           Super:KeyDown( nKey, nFlags )
+           ::Super:KeyDown( nKey, nFlags )
 
       otherwise
            ::cBuffer:= ""
@@ -1912,7 +1911,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TWBrowse
               Eval( ::bKeyDown, nKey, nFlags )
            endif
 
-           return Super:KeyDown( nKey, nFlags )
+           return ::Super:KeyDown( nKey, nFlags )
    endcase
 
    If( ::bSeek != Nil .and. ::bUpdateBuffer != Nil, Eval( ::bUpdateBuffer ), )
@@ -1986,7 +1985,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TWBrowse
            ::lWorking:= .F.
 
       otherwise
-           return Super:KeyChar( nKey, nFlags )
+           return ::Super:KeyChar( nKey, nFlags )
    endcase
 
    If( ::bSeek != Nil .and. ::bUpdateBuffer != Nil, Eval( ::bUpdateBuffer ), )
@@ -2663,10 +2662,10 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TWBrowse
 
    local nColPos := 0
 
-   Super:MouseMove( nRow, nCol, nKeyFlags )
+   ::Super:MouseMove( nRow, nCol, nKeyFlags )
 
    if ::lDrag
-      return Super:MouseMove( nRow, nCol, nKeyFlags )
+      return ::Super:MouseMove( nRow, nCol, nKeyFlags )
    endif
 
    if ::lCaptured
@@ -2683,7 +2682,7 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TWBrowse
                             nCol <= nColPos + 1 }, ::nColPos ) != 0
       CursorWE()
    else
-      Super:MouseMove( nRow, nCol, nKeyFlags )
+      ::Super:MouseMove( nRow, nCol, nKeyFlags )
    endif
 
 return 0
@@ -3151,7 +3150,7 @@ METHOD Refresh( lSysRefresh ) CLASS TWBrowse
 
     If ::Cargo != Nil .or. ; // Tree
        !( ::nLen := Eval( ::bLogicLen ) ) > 0
-       Super:Refresh()
+       ::Super:Refresh()
     Else // Si hay elementos en la tabla
 
        ::lHitBottom  := .f.
@@ -3159,7 +3158,7 @@ METHOD Refresh( lSysRefresh ) CLASS TWBrowse
 
        ::DrawFooters()
 
-       Super:Refresh( .f. ) // No borrar fondo, WBrwPane se encarga de eso !!
+       ::Super:Refresh( .f. ) // No borrar fondo, WBrwPane se encarga de eso !!
 
        If lSysRefresh       // OJO Usar con cuidado porque puede hacer agotar
           SysRefresh()      // el Stack :-(

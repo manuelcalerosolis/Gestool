@@ -14950,7 +14950,7 @@ function SynAlbCli( cPath )
    local cNumPed
    local aNumPed     := {}
 
-   DEFAULT cPath     := cPatEmp()
+   DEFAULT cPath     := cPatEmp() 
 
    if OpenFiles()
 
@@ -15092,17 +15092,20 @@ function SynAlbCli( cPath )
          Rellenamos los campos de totales-----------------------------------------
          */
 
-         if ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb == 0 .and.;
-            TDataView():Lock( "AlbCliT", nView )
+         if ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb == 0 
 
-            aTotAlb                 := aTotAlbCli( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "TIva", nView ), TDataView():Get( "Divisas", nView ), ( TDataView():Get( "AlbCliT", nView ) )->cDivAlb )
+            if TDataView():Lock( "AlbCliT", nView )
 
-            ( TDataView():Get( "AlbCliT", nView ) )->nTotNet := aTotAlb[1]
-            ( TDataView():Get( "AlbCliT", nView ) )->nTotIva := aTotAlb[2]
-            ( TDataView():Get( "AlbCliT", nView ) )->nTotReq := aTotAlb[3]
-            ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb := aTotAlb[4]
+               aTotAlb              := aTotAlbCli( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliT", nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliT", nView ) )->cSufAlb, TDataView():Get( "AlbCliT", nView ), TDataView():Get( "AlbCliL", nView ), TDataView():Get( "TIva", nView ), TDataView():Get( "Divisas", nView ), ( TDataView():Get( "AlbCliT", nView ) )->cDivAlb )
+   
+               ( TDataView():Get( "AlbCliT", nView ) )->nTotNet := aTotAlb[1]
+               ( TDataView():Get( "AlbCliT", nView ) )->nTotIva := aTotAlb[2]
+               ( TDataView():Get( "AlbCliT", nView ) )->nTotReq := aTotAlb[3]
+               ( TDataView():Get( "AlbCliT", nView ) )->nTotAlb := aTotAlb[4]
+   
+               TDataView():UnLock( "AlbCliT", nView )
 
-            TDataView():UnLock( "AlbCliT", nView )
+            end if 
 
          end if
 
