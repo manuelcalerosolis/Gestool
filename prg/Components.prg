@@ -991,7 +991,7 @@ CLASS GetRichEdit
    DATA oBtnTextAlignLeft
    DATA oBtnTextAlignCenter
    DATA oBtnTextAlignRight
-   DATA oBtnJustified
+   DATA oBtnTextJustify
    DATA oBtnBullet
    DATA oBtnUderLine
    DATA oBtnDateTime
@@ -1013,11 +1013,19 @@ CLASS GetRichEdit
    DATA lItalic            INIT .f.
    DATA lUnderline         INIT .f.
    DATA lBullet            INIT .f.
+   DATA lBold              INIT .f.
 
    METHOD Redefine( id, oDlg )
 
    METHOD RTFRefreshButtons()
 
+   METHOD SetText( cText ) INLINE ( ::oRTF:SetText( cText ) )
+   METHOD GetText()        INLINE ( ::oRTF:GetText() )
+
+   METHOD cText( cText )   INLINE ( ::oRTF:cText( cText ) )
+
+   METHOD Paste()          INLINE ( ::oRTF:Paste() )
+   
    END CLASS
 
 //--------------------------------------------------------------------------//
@@ -1035,7 +1043,8 @@ CLASS GetRichEdit
          RESOURCE "IMP16" ;
          NOBORDER ;
          TOOLTIP  "Imprimir" ;
-         ACTION   ( ::oRTF:Print(), ::oRTF:SetFocus() )
+
+      ::oBtnPrint:bAction 	:= {|| ::oRTF:Print(), ::oRTF:SetFocus() }
 
       REDEFINE BTNBMP ::oBtnPreview ;
          ID       ( ++id ) ;
@@ -1080,7 +1089,8 @@ CLASS GetRichEdit
          RESOURCE "Paste_16" ;
          NOBORDER ;
          TOOLTIP  "Pegar" ;
-         ACTION   ( ::oRTF:Paste(), ::oRTF:SetFocus() )
+
+      ::oBtnPaste:bAction 	:= {|| msgAlert( ::oClp:GetText(), "GetText"), ::oRTF:Paste(), ::oRTF:SetFocus() }         
 
       REDEFINE BTNBMP ::oBtnUndo ;
          ID       ( ++id ) ;

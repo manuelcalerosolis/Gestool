@@ -138,7 +138,7 @@ CLASS TGenMailing
 
    Method GeneralResource()
 
-   Method InsertField()       INLINE ( ::oActiveX:InsertAtCursor( "{" + ( Alltrim( ::cField ) ) + "}", 0 ) )
+   Method InsertField()       INLINE ( ::oActiveX:oRTF:cText( "{" + ( Alltrim( ::cField ) ) + "}" ) )
 
    Method GetAdjunto()
 
@@ -415,7 +415,7 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
          ID       110 ;
          OF       ::oFld:aDialogs[ 3 ]
 
-REDEFINE APOLOMETER ::oMtr ;
+      REDEFINE APOLOMETER ::oMtr ;
          VAR      ::nMtr ;
          ID       120 ;
          OF       ::oFld:aDialogs[ 3 ]
@@ -458,10 +458,6 @@ REDEFINE APOLOMETER ::oMtr ;
 
    oWndBrw:Refresh()
 
-   if !Empty( ::oActiveX )
-      ::oActiveX:Destroy()
-   end if
-
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
@@ -498,6 +494,7 @@ Method InitClientResource() CLASS TGenMailing
    oBlock                                       := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   /*
    ::oActiveX:AlwaysConvertUnicodeCharacters    := .f.
    ::oActiveX:DocumentHTML                      := ::cGetMensaje
    ::oActiveX:LocalizationFile                  := fullcurdir() + "Spanish.xml"
@@ -513,10 +510,6 @@ Method InitClientResource() CLASS TGenMailing
    ::oActiveX:ShowFormattingToolbar1            := .t.
    ::oActiveX:ShowFormattingToolbar2            := .t.
 
-   /*
-   ::oActiveX:ShowFormToolbar                   := .t.
-   */
-
    if !Empty( uFieldEmpresa( "cHstFtpImg" ) )
       ::oActiveX:FTPHost                        := uFieldEmpresa( "cHstFtpImg" )
       ::oActiveX:FTPPassive                     := uFieldEmpresa( "lPasFtp" )
@@ -524,11 +517,6 @@ Method InitClientResource() CLASS TGenMailing
       ::oActiveX:FTPPassword                    := uFieldEmpresa( "cPswFtpImg" )
       ::oActiveX:FTPSaveToURL                   := uFieldEmpresa( "cdImagen" )
       ::oActiveX:RelativeURLs                   := .t.
-
-      /*
-      ::oActiveX:FTPInitDirectory               :=
-      */
-
    end if
 
    ::HTMLMenu()
@@ -539,6 +527,7 @@ Method InitClientResource() CLASS TGenMailing
          ::lCargaHtml( cHtmlDocument )
       end if
    end if
+   */
 
    RECOVER USING oError
 
@@ -1018,7 +1007,9 @@ Method MailMerge()  CLASS TGenMailing
    local nAtInit           := 0
    local nAtEnd            := 0
    local cExpresion        := ""
-   local cDocumentHTML     := ::oActiveX:DocumentHTML
+   local cDocumentHTML     := ::oActiveX:GetText()
+
+   msgAlert( cDocumentHTML, "cDocumentHTML")
 
    while .t.
 
@@ -1392,8 +1383,12 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
          OF       ::oDlg
 
       TBtnBmp():ReDefine( 170, "Down16", , , , , {|| ::InsertField() }, ::oDlg, .f., , .f., "Insertar campo" )
-/*
 
+      // Componentes-----------------------------------------------------------
+
+      ::oActiveX  := GetRichEdit():ReDefine( 600, ::oDlg )
+
+/*
       REDEFINE ACTIVEX ::oActiveX ;
          ID       130 ;
          OF       ::oDlg ;
@@ -1423,7 +1418,7 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
       REDEFINE BUTTON ;          // Boton anterior
          ID       IDOK ;
          OF       ::oDlg ;
-         ACTION   ( ::lExternalSendMail( .t. ), ::oDlg:End() )
+         ACTION   ( if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) )
 
       REDEFINE BUTTON ;            // Boton de Siguiente
          ID       IDCANCEL ;
@@ -1437,15 +1432,9 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
       ( dbfAlias )->( OrdSetFocus( cTag ) )
    end if
 
-   if !Empty( ::oActiveX )
-      ::oActiveX:Destroy()
-   end if
-
    if !Empty( oBmpGeneral )
       oBmpGeneral:end()
    end if
-
-   ::oActiveX     := nil
 
 Return ( Self )
 
