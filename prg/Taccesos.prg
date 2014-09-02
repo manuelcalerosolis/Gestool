@@ -638,6 +638,9 @@ Method CreateSearchBar( oWnd )
             NOBORDER ;
             ACTION   ( msgStop( "Quitar filtro activo" ) )
 
+   ::oButtonAddFilter:lTransparent 	:= .t.
+   ::oButtonAddFilter:lBoxSelect 	:= .f.
+
    @ 125, 658 BTNBMP ::oButtonEditFilter ;
             RESOURCE "bFilter16" ;
             SIZE     18, 18 ;
@@ -645,12 +648,18 @@ Method CreateSearchBar( oWnd )
             NOBORDER ;
             ACTION   ( msgStop( "Quitar filtro activo" ) )
 
+   ::oButtonEditFilter:lTransparent  := .t.
+   ::oButtonEditFilter:lBoxSelect 	 := .f.
+
    @ 125, 684 BTNBMP ::oButtonFilter ;
             RESOURCE "bNoFilter16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
             ACTION   ( msgStop( "Quitar filtro activo" ) )
+
+   ::oButtonFilter:lTransparent      := .t.
+   ::oButtonFilter:lBoxSelect 	     := .f.
 
    @ 124, 710 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;

@@ -423,6 +423,13 @@ RETURN ( Self )
 
 METHOD FilterDialog() CLASS TFilterDialog
 
+   local oError
+   local oBlock
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
       /*
       Clase para editar los filtros--------------------------------------------
       */
@@ -436,6 +443,10 @@ METHOD FilterDialog() CLASS TFilterDialog
 
       ::oBrwFilter:SetStructure( ::oFilterCreator:GetStructure() )
       ::oBrwFilter:Activate()
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
@@ -1325,11 +1336,15 @@ METHOD FiltersName( cFilterType ) CLASS TFilterDatabase
    
    DEFAULT cFilterType  := ::oFilterCreator:GetFilterType()
 
-   if ::oDbf:Seek( cFilterType )
-      while ( ::oDbf:cTipDoc == cFilterType ) .and. !( ::oDbf:Eof() )
-         aAdd( aFilter, ::oDbf:cTexFlt )
-         ::oDbf:Skip()
-      end while
+   if !empty( ::oDbf )
+
+      if ::oDbf:Seek( cFilterType )
+         while ( ::oDbf:cTipDoc == cFilterType ) .and. !( ::oDbf:Eof() )
+            aAdd( aFilter, ::oDbf:cTexFlt )
+            ::oDbf:Skip()
+         end while
+      end if 
+
    end if 
 
 RETURN ( aFilter )

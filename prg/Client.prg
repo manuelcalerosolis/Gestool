@@ -12067,7 +12067,7 @@ Function hAtipica( hValue )
    Guardamos la posición inicial-----------------------------------------------
    */
 
-   nRec              := ( TDataView():Atipicas( hValue[ "nView" ] ) )->( Recno() )
+   nRec              		:= ( TDataView():Atipicas( hValue[ "nView" ] ) )->( Recno() )
 
    /*
    Buscamos por articulo-------------------------------------------------------

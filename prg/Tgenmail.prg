@@ -138,7 +138,7 @@ CLASS TGenMailing
 
    Method GeneralResource()
 
-   Method InsertField()       INLINE ( ::oActiveX:oRTF:cText( "{" + ( Alltrim( ::cField ) ) + "}" ) )
+   Method InsertField()       INLINE ( ::oActiveX:oClp:SetText( "{" + ( Alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
    Method GetAdjunto()
 
@@ -245,7 +245,7 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
 
    ( ::dbfAlias )->( dbGoTop() )
 
-   DEFINE DIALOG ::oDlg RESOURCE "SelectMail_0"
+   DEFINE DIALOG ::oDlg RESOURCE "SelectMail_0" OF oWnd()
 
       REDEFINE PAGES ::oFld ;
          ID       10;
@@ -449,9 +449,9 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
          OF       ::oDlg ;
          ACTION   ( ::oDlg:End() )
 
-   ::oDlg:bStart  := {|| ::oBtnAnterior:Hide() }
+   ::oDlg:bStart  := {|| ::InitClientResource(), ::oBtnAnterior:Hide() }
 
-   ::oDlg:Activate( , , , .t., , , {|| ::InitClientResource()} )
+   ACTIVATE DIALOG ::oDlg CENTER 
 
    ( ::dbfAlias )->( dbGoTo( nRecno ) )
    ( ::dbfAlias )->( OrdSetFocus( cTag ) )
@@ -482,60 +482,12 @@ Return ( Self )
 
 Method InitClientResource() CLASS TGenMailing
 
-   local oError
-   local oBlock
-   local cHtmlDocument
-
    if Empty( ::oActiveX )
       MsgStop( "No se ha podido instanciar el control." )
       Return ( Self )
+   else 
+      ::oActiveX:SetHTML()
    end if
-
-   oBlock                                       := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   /*
-   ::oActiveX:AlwaysConvertUnicodeCharacters    := .f.
-   ::oActiveX:DocumentHTML                      := ::cGetMensaje
-   ::oActiveX:LocalizationFile                  := fullcurdir() + "Spanish.xml"
-   ::oActiveX:LocalImageStore                   := fullcurdir()
-   ::oActiveX:BorderStyle                       := 0
-
-   ::oActiveX:ShowFTPDialog                     := .t.
-
-   ::oActiveX:CSShttp                           := .t.
-   ::oActiveX:CSSText                           := "file:///" + fullcurdir( .t. ) + "Styles.css" // memoread( fullcurdir() + "Styles.css" ) //
-
-   ::oActiveX:ShowDOMToolbar                    := .t.
-   ::oActiveX:ShowFormattingToolbar1            := .t.
-   ::oActiveX:ShowFormattingToolbar2            := .t.
-
-   if !Empty( uFieldEmpresa( "cHstFtpImg" ) )
-      ::oActiveX:FTPHost                        := uFieldEmpresa( "cHstFtpImg" )
-      ::oActiveX:FTPPassive                     := uFieldEmpresa( "lPasFtp" )
-      ::oActiveX:FTPUser                        := uFieldEmpresa( "cUsrFtpImg" )
-      ::oActiveX:FTPPassword                    := uFieldEmpresa( "cPswFtpImg" )
-      ::oActiveX:FTPSaveToURL                   := uFieldEmpresa( "cdImagen" )
-      ::oActiveX:RelativeURLs                   := .t.
-   end if
-
-   ::HTMLMenu()
-
-   if !Empty( ::cTypeDocument )
-      cHtmlDocument                             := cGetHtmlDocumento( ::cTypeDocument )
-      if !Empty( cHtmlDocument )
-         ::lCargaHtml( cHtmlDocument )
-      end if
-   end if
-   */
-
-   RECOVER USING oError
-
-     msgStop( "Error al instanciar el control." + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-  ErrorBlock( oBlock )
 
 Return ( Self )
 
@@ -549,27 +501,13 @@ Method lSalvaHtml() CLASS TGenMailing
       cHtmlFile      := cFilePath( cHtmlFile ) + cFileNoExt( cHtmlFile ) + ".Html"
    endif
 
-   if file( cHtmlFile )
+   if file( cHtmlFile ) .and. ApoloMsgNoYes( "El fichero " + cHtmlFile + " ya existe. ¿Desea sobreescribir el fichero?", "Guardar fichero" )
       fErase( cHtmlFile )
+   else 
+      Return ( Self )
    end if
 
-   ::oActiveX:Save_Document( cHtmlFile )
-
-   /*
-   if ::oActiveX:CountLocalImages() > 0
-      if ApoloMsgNoYes( "¿Desea subir las imagenes locales, antes de continuar?", "Salvar en servidor web" )
-         ::oActiveX:UploadAllImages()
-      end if
-   end if
-
-   ::oActiveX:DocumentTitle   := "This is document title"
-   // ::oActiveX:Error           := {|n,c| msginfo( Str( n ) + ":" + c )}
-
-   if ::oActiveX:PutFileFTP( "C:\Temp.html", "news0034.html" ) // /public_html/news/
-      msginfo( "salvado" )
-      WinExec( "Start " + Alltrim( ::oActiveX:FTPSaveToURL ) + "news0034.html", 0 )
-   end if
-   */
+   ::oActiveX:SaveToFile( cHtmlFile )
 
 Return ( Self )
 
@@ -856,44 +794,15 @@ Method lCargaHtml( cFile ) CLASS TGenMailing
 
    if File( ::cGetHtml )  // !Empty( ::oActiveX )
 
+      ::cGetMensaje  := memoread( ::cGetHtml )
+
       if !Empty( ::oActiveX )
-
-         ::oActiveX:Open_Document( ::cGetHTML )
-
-      else
-
-         cMensaje          := ""
-
-         if !Empty( ::cGetHtml ) .and. File( ::cGetHtml )
-
-            hFile          := fOpen( ::cGetHtml )
-
-            if fError() != 0
-
-               MsgStop( "Error abriendo el fichero " + ::cGetHtml )
-
-            else
-
-               while ( nBytes := fRead( hFile, @cRead, nBufSize ) ) > 0
-                  cMensaje += SubStr( cRead, 1, nBytes )
-               end while
-
-               fClose( hFile )
-
-            end if
-
-            // Solo nos quedamos con lo que hay entre etiquetas <Html----------------
-
-            nStart         := At( "<HTML", Upper( cMensaje ) )
-            if nStart != 0
-               cMensaje    := SubStr( cMensaje, nStart )
-            end if
-
-         end if
-
-         ::cGetMensaje     := cMensaje
-
+         ::oActiveX:oRTF:SetText( ::cGetMensaje )
       end if
+
+   else 
+
+      msgStop( "El fichero " + alltrim( ::cGetHtml ) + " no existe." )
 
    end if
 
@@ -1008,8 +917,6 @@ Method MailMerge()  CLASS TGenMailing
    local nAtEnd            := 0
    local cExpresion        := ""
    local cDocumentHTML     := ::oActiveX:GetText()
-
-   msgAlert( cDocumentHTML, "cDocumentHTML")
 
    while .t.
 
@@ -1339,7 +1246,7 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
       ::aFields   := GetSubArray( aItems, 5 ) //aArray, nPos )::oFlt:aTblMask
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE "SendDocumentoMail"
+   DEFINE DIALOG ::oDlg RESOURCE "SendDocumentoMail" OF oWnd()
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
@@ -1388,16 +1295,7 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
 
       ::oActiveX  := GetRichEdit():ReDefine( 600, ::oDlg )
 
-/*
-      REDEFINE ACTIVEX ::oActiveX ;
-         ID       130 ;
-         OF       ::oDlg ;
-         PROGID   "rmpHTML.HTMLed"
-*/
-
-      /*
-      Botones generales--------------------------------------------------------
-      */
+      // Botones generales-----------------------------------------------------
 
       REDEFINE BUTTON ::oBtnCargarHTML ;          // Boton anterior
          ID       40 ;
@@ -1416,7 +1314,7 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
          ACTION   ( ::lDefectoHTML() )
 
       REDEFINE BUTTON ;          // Boton anterior
-         ID       IDOK ;
+         ID       900 ;
          OF       ::oDlg ;
          ACTION   ( if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) )
 
@@ -1425,7 +1323,9 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
          OF       ::oDlg ;
          ACTION   ( ::oDlg:End() )
 
-   ::oDlg:Activate( , , , .t., , , {|| ::InitClientResource()} )
+   ::oDlg:bStart  := {|| ::InitClientResource() }
+
+   ACTIVATE DIALOG ::oDlg CENTER 
 
    if !Empty( dbfAlias )
       ( dbfAlias )->( dbGoTo( nRecno ) )
