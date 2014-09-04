@@ -2456,7 +2456,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
 	REDEFINE FOLDER oFld ID 400 OF oDlg ;
          PROMPT   "&General"  , "Da&tos",    "&Anular",     "&Observaciones" ;
-         DIALOGS  "LFACPRV_1" , "LPEDPRV_2", "LFACPRV_4",   "LFACPRV_6"
+         DIALOGS  "LPEDPRV_1" , "LPEDPRV_2", "LFACPRV_4",   "LFACPRV_6"
 
       REDEFINE GET aGet[ _CREF ] VAR aTmp[ _CREF ];
 	   ID       110 ;

@@ -3163,6 +3163,6 @@ Return ( lSetUsr )
 
 Static Function lValidPassword( cClave, cCampo )
 
-Return ( Upper( cClave ) == Upper( Rtrim( cCampo ) ) .or. Upper( cClave ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
+Return ( Upper( Rtrim( cClave ) ) == Upper( Rtrim( cCampo ) ) .or. Upper( Rtrim( cClave ) ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
 
 //---------------------------------------------------------------------------//
