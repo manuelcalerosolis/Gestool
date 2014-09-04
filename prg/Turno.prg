@@ -349,6 +349,8 @@ CLASS TTurno FROM TMasDet
    DATA  aTipIva                                   AS ARRAY    INIT {}
 
    DATA  oBrwTotales
+   DATA  oTreeTotales
+
    DATA  oGrpArqueo
 
    DATA  oMoneyEfectivo
@@ -662,6 +664,10 @@ CLASS TTurno FROM TMasDet
    METHOD cNumeroSufijoCurrentTurno()  INLINE ( SubStr( ::cCurTurno, 1, 8 ) )
 
    METHOD cCajaCurrentTurno()          INLINE ( SubStr( ::cCurTurno, 9, 3 ) )
+   
+   METHOD GetItemTree()
+   METHOD GetImporteTree()
+   METHOD GetColorTree()               
 
 END CLASS
 
@@ -3414,6 +3420,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Tree de resultados-------------------------------------------------------
 
+      /*
       REDEFINE LISTBOX ::oBrwTotales ;
          FIELDS   ;
          HEADERS  "",;
@@ -3423,6 +3430,36 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
          ::oBrwTotales:oFont        := oFntBrw
          ::oBrwTotales:bKeyChar     := { | nKey, nFlags | if( nKey == 13, ( ::oBrwTotales:Cargo:Toggle(), ::oBrwTotales:Refresh() ), ) }
+      */
+
+      ::oBrwTotales                 := IXBrowse():New( ::oFldTurno:aDialogs[ 3 ] )
+
+      ::oBrwTotales:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwTotales:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      ::oBrwTotales:lVScroll        := .t.
+      ::oBrwTotales:lHScroll        := .t.
+      ::oBrwTotales:nMarqueeStyle   := 5
+      ::oBrwTotales:nClrPane        := {|| ::GetColorTree() }
+
+      with object ( ::oBrwTotales:AddCol() )
+         :cHeader                   := ""
+         :nWidth                    := 200
+         :bStrData                  := {|| ::GetItemTree() }
+         :lHide                     := .f.
+      end with
+
+      with object ( ::oBrwTotales:AddCol() )
+         :cHeader                   := "Importes"
+         :nWidth                    := 60
+         :bStrData                  := {|| ::GetImporteTree() }
+         :lHide                     := .f.
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :nFootStrAlign             := 1
+      end with
+   
+      ::oBrwTotales:CreateFromResource( 800 )
 
       // Cajas____________________________________________________________________
 
@@ -4651,40 +4688,6 @@ METHOD lCalTurno( cTurno, cCaja )
       ::TotSesion( cTurno, cCaja )
 
       /*
-
-      if Empty( cCaja )
-
-         if ::oDbfCaj:Seek( cTurno )
-
-            while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cTurno .and. !::oDbfCaj:Eof()
-
-               if aScan( aCajas, ::oDbfCaj:cCodCaj ) == 0
-
-                  aAdd( aCajas, ::oDbfCaj:cCodCaj )
-
-                  if ::lInCajaSelect( ::oDbfCaj:cCodCaj )
-
-                     ::TotSesion( cTurno, ::oDbfCaj:cCodCaj )
-                     
-                  end if
-
-               end if
-
-               ::oDbfCaj:Skip()
-
-               SysRefresh()
-
-            end while
-
-         end if
-
-      else
-
-
-      end if
-      */
-
-      /*
       Refrescos en pantalla-------------------------------------------------------
       */
 
@@ -4696,10 +4699,27 @@ METHOD lCalTurno( cTurno, cCaja )
 
       if !Empty( ::oBrwTotales )
 
+         ::oTreeTotales             := ::oTotales:CreateTree( cCaja, cTurno )   
+
+         if Empty( ::oBrwTotales:oTree )
+
+            ::oBrwTotales:SetTree( ::oTreeTotales, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" }, ,  ) 
+            ::oBrwTotales:aCols[ 1 ]:cHeader    := ""
+            ::oBrwTotales:aCols[ 1 ]:nWidth     := 20
+
+         else 
+
+            ::oBrwTotales:oTree     := ::oTreeTotales
+            ::oBrwTotales:oTreeItem := ::oTreeTotales:oFirst
+
+         end if 
+
+/*
          ::oBrwTotales:SetTree( ::oTotales:CreateTree( cCaja, cTurno ) )
 
          ::oBrwTotales:lDrawHeaders := .f.
-         ::oBrwTotales:bLine        := {|| { if( ::oBrwTotales:Cargo:lOpened, ::oBrwTotales:Cargo:hBmpOpen, ::oBrwTotales:Cargo:hBmpClose ), if( len( ::oBrwTotales:Cargo:Cargo ) >= 4, ::oBrwTotales:Cargo:Cargo[ 4 ], 0 ), ::oBrwTotales:Cargo:Cargo[ 1 ], if( ::oBrwTotales:Cargo:cPrompt == "Espacio", "", Trans( ::oBrwTotales:Cargo:Cargo[ 2 ], ::cPorDiv ) ) } }
+         ::oBrwTotales:bLine        := {|| { if( ::oBrwTotales:Cargo:lOpened, ::oBrwTotales:Cargo:hBmpOpen, ::oBrwTotales:Cargo:hBmpClose ), 
+         if( len( ::oBrwTotales:Cargo:Cargo ) >= 4, ::oBrwTotales:Cargo:Cargo[ 4 ], 0 ), ::oBrwTotales:Cargo:Cargo[ 1 ], if( ::oBrwTotales:Cargo:cPrompt == "Espacio", "", Trans( ::oBrwTotales:Cargo:Cargo[ 2 ], ::cPorDiv ) ) } }
          ::oBrwTotales:aHeaders     := { "", "", "", "Importes" }
          ::oBrwTotales:aColSizes    := { 18, 18, if( ::lArqueoTactil(), 350, 450 ), 150 }
          ::oBrwTotales:aJustify     := { .f., .f., .f., .t. }
@@ -4707,6 +4727,7 @@ METHOD lCalTurno( cTurno, cCaja )
          ::oBrwTotales:bLDblClick   := {|| ::ClickBrwTotales() }
          ::oBrwTotales:bKeyChar     := {|| ::ClickBrwTotales() }
          ::oBrwTotales:aLinActions  := { {|| ::ClickBrwTotales() }, , }
+*/
 
          ::oBrwTotales:Refresh()
 
@@ -11422,6 +11443,44 @@ Method cInfoAperturaCierreCaja()
    end if  
    
 Return ( cInfoAperturaCierreCaja )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetItemTree()
+
+   local cItem    := ""
+
+   if !Empty( ::oBrwTotales:oTreeItem ) 
+      cItem       := ::oBrwTotales:oTreeItem:Cargo[ 1 ]
+   end if
+
+Return ( cItem )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetImporteTree()
+
+   local cItem    := ""
+
+   if !Empty( ::oBrwTotales:oTreeItem ) 
+      if ::oBrwTotales:oTreeItem:cPrompt != "Espacio"
+         cItem    := Trans( ::oBrwTotales:oTreeItem:Cargo[ 2 ], ::cPorDiv )
+      end if 
+   end if
+
+Return ( cItem )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetColorTree()
+
+   local cColor   := CLR_WHITE
+
+   if !Empty( ::oBrwTotales:oTreeItem ) .and. Empty( ::oBrwTotales:oTreeItem:cPrompt )
+      cColor      := CLR_BAR
+   end if 
+
+Return ( cColor )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

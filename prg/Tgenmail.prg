@@ -227,11 +227,6 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
       ConfEmpresa( oWnd(), , 7 )
    end if
 
-   if !::lCheckActiveX()
-      MsgStop( "No existe el editor HTML." )
-      Return ( Self )
-   end if
-
    ::lCancel         := .f.
    ::aItems          := aItems
    ::dbfAlias        := dbfAlias
@@ -1227,11 +1222,6 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
       ConfEmpresa( oWnd(), , 7 )
    end if
 
-   if !::lCheckActiveX()
-      MsgStop( "No existe el editor HTML." )
-      Return ( Self )
-   end if
-
    if !Empty( aItems )
       ::aItems    := aItems
    end if
@@ -1322,6 +1312,8 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
          ID       IDCANCEL ;
          OF       ::oDlg ;
          ACTION   ( ::oDlg:End() )
+
+   ::oDlg:AddFastKey( VK_F5, {|| if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) } )
 
    ::oDlg:bStart  := {|| ::InitClientResource() }
 

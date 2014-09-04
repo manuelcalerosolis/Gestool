@@ -6347,35 +6347,35 @@ Return ( sTotal )
 
 FUNCTION BrwPedPrv( oGetNum, cPedPrvT, cPedPrvL, cIva, cDiv, cFPago )
 
-      local oDlg
-      local oBrw
+   local oDlg
+   local oBrw
    local oGet1
    local cGet1
    local nOrd     := GetBrwOpt( "BrwPedPrv" )
-      local oCbxOrd
+   local oCbxOrd
    local aCbxOrd  := { "Número", "Fecha", "Código", "Nombre" }
    local cCbxOrd
-   local aDbfBmp  := {  LoadBitmap( GetResources(), "BRED"   ),;
-                        LoadBitmap( GetResources(), "BYELOW" ),;
-                        LoadBitmap( GetResources(), "BGREEN" ) }
+   local aDbfBmp  := {  LoadBitmap( GetResources(), "bRed"   ),;
+                        LoadBitmap( GetResources(), "bYelow" ),;
+                        LoadBitmap( GetResources(), "bGreen" ) }
 
-   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrd ]
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
 
-   ( cPedPrvT )->( dbSetFilter( {|| Field->NESTADO != 3 }, "NESTADO != 3" ) )
+   ( cPedPrvT )->( dbSetFilter( {|| Field->nEstado != 3 }, "nEstado != 3" ) )
 
-   nOrd              := ( cPedPrvT )->( OrdSetFocus( nOrd ) )
+   nOrd           := ( cPedPrvT )->( OrdSetFocus( nOrd ) )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Pedido a proveedores"
 
-            REDEFINE GET oGet1 VAR cGet1;
-                  ID          104 ;
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
          ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, cPedPrvT, .t., nil, .f. ) );
          VALID    ( OrdClearScope( oBrw, cPedPrvT ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
-            REDEFINE COMBOBOX oCbxOrd ;
+      REDEFINE COMBOBOX oCbxOrd ;
          VAR       cCbxOrd ;
          ID        102 ;
          ITEMS     aCbxOrd ;
@@ -6433,49 +6433,50 @@ FUNCTION BrwPedPrv( oGetNum, cPedPrvT, cPedPrvL, cIva, cDiv, cFPago )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomPrv"
          :bEditValue       := {|| Rtrim( ( cPedPrvT )->cNomPrv ) }
-         :nWidth           := 200
+         :nWidth           := 400
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Importe"
-         :bEditValue       := {|| nTotPedPrv( ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed, cPedPrvT, cPedPrvL, cIva, cDiv, nil, cDivEmp(), .t. ) }
-         :nWidth           := 60
+         :cHeader          := "Total"
+         :bEditValue       := {|| ( cPedPrvT )->nTotPed }
+         :cEditPicture     := cPirDiv()
+         :nWidth           := 120
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
 
-            REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDOK ;
-                  OF          oDlg ;
+         OF       oDlg ;
          ACTION   ( oDlg:end( IDOK ) )
 
-            REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-                  OF          oDlg ;
-                  ACTION      ( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
-            REDEFINE BUTTON ;
-                  ID          500 ;
-                  OF          oDlg ;
-                  WHEN        .F.
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     .f.
 
-            REDEFINE BUTTON ;
-                  ID          501 ;
-                  OF          oDlg ;
-                  WHEN        .F.
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     .f.
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_RETURN, {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
    oDlg:bStart    := {|| oBrw:Load() }
 
    ACTIVATE DIALOG oDlg CENTER
 
-   IF oDlg:nResult == IDOK
-      oGetNum:cText( ( cPedPrvT )->CSERPED + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed )
-      oGetNum:disable()
-   END IF
+   if oDlg:nResult == IDOK
+      oGetNum:cText( ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed )
+      oGetNum:Disable()
+   end if
 
    DestroyFastFilter( cPedPrvT )
 
@@ -6487,8 +6488,9 @@ FUNCTION BrwPedPrv( oGetNum, cPedPrvT, cPedPrvL, cIva, cDiv, cFPago )
    AEval( aDbfBmp, { | hBmp | DeleteObject( hBmp ) } )
 
    /*
-    Guardamos los datos del browse
+   Guardamos los datos del browse
    */
+   
    oBrw:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
@@ -6512,10 +6514,10 @@ FUNCTION ChgPedPrv( nPedido, nMode, cPedPrvT )
    if Empty( cPedPrvT )
       USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
-            lClose := .T.
+      lClose      := .t.
    end if
 
-   if (cPedPrvT)->(DbSeek( nPedido ) )
+   if ( cPedPrvT )->( dbSeek( nPedido ) )
       if dbDialogLock( cPedPrvT )
          ( cPedPrvT )->nEstado    := 1
       end if
@@ -6532,7 +6534,7 @@ FUNCTION ChgPedPrv( nPedido, nMode, cPedPrvT )
    ErrorBlock( oBlock )
 
    if lClose
-            CLOSE (cPedPrvT)
+      CLOSE ( cPedPrvT )
    end if
 
 RETURN lExito

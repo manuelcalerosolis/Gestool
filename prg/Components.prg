@@ -1044,7 +1044,7 @@ CLASS GetRichEdit
       								::oBtnBullet:Hide() ,;
       								::oBtnDateTime:Hide() )
 
-   METHOD SetRTF()        	INLINE ( ::oBtnBold:Show() ,;
+   METHOD SetRTF()         INLINE ( ::oBtnBold:Show() ,;
       								::oBtnItalics:Show() ,;
       								::oBtnUnderLine:Show() ,;
       								::oBtnTextAlignLeft:Show() ,;
