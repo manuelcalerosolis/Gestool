@@ -206,7 +206,7 @@ Method SaveData( lSaveBrowseState )
 
    ErrorBlock( oBlock )
 
-   Return ( Self )
+Return ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -220,7 +220,7 @@ Method CleanData()
       end while
    end if
 
-   Return ( Self )
+Return ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -229,7 +229,7 @@ Method DeleteData()
    fErase( cPatEmp() + "CfgUse.Dbf" )
    fErase( cPatEmp() + "CfgUse.Cdx" )
 
-   Return ( Self )
+Return ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -436,47 +436,6 @@ METHOD Refresh( lComplete )
 
 return nil
 
-//----------------------------------------------------------------------------//
-/*
-
-METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
-
-   local oCol
-   local cAlias
-
-   DEFAULT lAddColumns     := .f.
-   DEFAULT lAutoOrder      := ::lAutoSort
-
-   if Empty( ::cAlias )
-      ::cAlias             := Alias()
-      if Empty( ::cAlias )
-         return nil
-      endif
-   endif
-
-   cAlias                  := ::cAlias
-
-   DEFAULT  ::bGoTop       := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoTop() ), ) },;
-            ::bGoBottom    := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoBottom() ), ) },;
-            ::bSkip        := {| n | iif( n == nil, n := 1, ), if( ( cAlias )->( Used() ), ( cAlias )->( DbSkipper( n ) ), 0 ) },;
-            ::bBof         := {|| if( ( cAlias )->( Used() ), ( cAlias )->( Bof() ), .t. ) },;
-            ::bEof         := {|| if( ( cAlias )->( Used() ), ( cAlias )->( Eof() ), .t. ) },;
-            ::bBookMark    := {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( RecNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( DbGoto( n ) ), 0 ) ) },;
-            ::bKeyNo       := {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyGoto( n ) ), 0 ) ) },;
-            ::bKeyCount    := {|| if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyCount() ), 0 ) }
-            ::bLock        := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrLock() ), .f. ) }
-            ::bUnlock      := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrUnlock() ), .f. ) }
-
-   if lAutoOrder
-      for each oCol in ( ::aCols )
-         if Valtype( oCol:cHeader ) == "C" .and. ( cAlias )->( OrdNumber( oCol:cHeader ) ) > 0
-            oCol:cSortOrder := oCol:cHeader
-         endif
-      next
-   endif
-
-return nil
-*/
 //----------------------------------------------------------------------------//
 
 METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse

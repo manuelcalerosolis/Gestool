@@ -371,8 +371,8 @@ Return ( .t. )
 
 Static Function UpDet( oBrw )
 
-	local nRecno	   := ( dbfTmpProL )->( Recno() )
-	local nPosition	   := ( dbfTmpProL )->nOrdTbl
+	local nRecno	    := ( dbfTmpProL )->( Recno() )
+	local nPosition	 := ( dbfTmpProL )->nOrdTbl
 
 	if nPosition > 1
 
@@ -1177,104 +1177,101 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
 
    ( dbfTblPro )->( OrdSetFocus( nOrd ) )
 
-   if !Empty( oBrw ) .and. oBrw:ClassName() == "TWBROWSE"
+   // Asignamos la informacion al browse---------------------------------------
 
-      /*
-      Cambio de valor en precio de costo---------------------------------------
-      */
+   if !Empty( oBrw ) 
 
-      if !Empty( oGetPre )
-         oGetPre:bValid := {|| SetPropertiesTable( oBrw, oGetPre ) }
-      end if
-
-      /*
-      Reposicionamiento--------------------------------------------------------
-      */
-
-      // oBrw:bTextColor   := {| nRow, nCol, nStyleLine | if( nCol == 1, CLR_RED, 0 ) }
-      oBrw:bLine        := {|| aPropertiesTable( oBrw, nTotalCol ) }
-      oBrw:aFooters     := {|| aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGetUnd ) }
-      oBrw:aHeaders     := aHeadersTable
-      oBrw:aColSizes    := aSizesTable
-      oBrw:aJustify     := aJustifyTable
-      oBrw:bKeyChar     := {| nKey | KeyPropertiesTable( nKey, oBrw ) }
-      oBrw:bEdit        := {|| EditPropertiesTable( oBrw ) }
-      oBrw:bLDblClick   := {|| EditPropertiesTable( oBrw ) }
-      oBrw:bMod         := {|| EditPropertiesTable( oBrw ) }
-      oBrw:bWhen        := {|| PutPropertiesTable( oBrw, oGetPre ) }
-      oBrw:bChange      := {|| PutPropertiesTable( oBrw, oGetPre ) }
-      oBrw:nColAct      := 2
-      oBrw:nFreeze      := 1
-      oBrw:lDrawFooters := .t.
-      oBrw:lAdjLastCol  := .f.
-      oBrw:lAdjBrowse   := .t.
-      oBrw:lCellStyle   := .t.
-      oBrw:Cargo        := aPropertiesTable
-      oBrw:SetArray( aPropertiesTable )
-
-      oBrw:Show()
-      oBrw:Refresh()
-
-   end if
-
-   /*
-   Esto es para xBrowse--------------------------------------------------------
-   */
-
-   if !Empty( oBrw ) .and. oBrw:ClassName() == "TXBROWSE"
-
-      /*
-      Cambio de valor en precio de costo---------------------------------------
-
-      if !Empty( oGetPre )
-         oGetPre:bValid       := {|| SetPropertiesTable( oBrw, oGetPre ) }
-      end if
-      */
-
-      /*
-      Reposicionamiento--------------------------------------------------------
-      */
-
-      oBrw:SetArray( aPropertiesTable, , , .f. )
-
-      for n := 1 to len( aPropertiesTable[ 1 ] )
-
-         if IsNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
-
-            with object ( oBrw:AddCol() )
-               :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
-               :bEditValue       := bGenEditText( aPropertiesTable, oBrw, n )
-               :nWidth           := 80
-               :bFooter          := {|| "Total" }
-            end with
-
-         else
-
-            with object ( oBrw:AddCol() )
-               :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
-               :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
-               :nWidth           := 60
-               :cEditPicture     := MasUnd()
-               :nTotal           := 0
-               :nDataStrAlign    := 1
-               :nHeadStrAlign    := 1
-
-               //:nEditType        := 1 // EDIT_GET
-               :bOnPostEdit      := {| oCol, xVal, nKey | aPropertiesTable[ oBrw:nArrayAt, oBrw:nColSel + oBrw:nColOffset - 1 ]:Value := xVal }
-            end with
-
+      if oBrw:ClassName() == "TWBROWSE"
+   
+         /*
+         Cambio de valor en precio de costo---------------------------------------
+         */
+   
+         if !Empty( oGetPre )
+            oGetPre:bValid := {|| SetPropertiesTable( oBrw, oGetPre ) }
          end if
+   
+         /*
+         Reposicionamiento--------------------------------------------------------
+         */
+   
+         // oBrw:bTextColor   := {| nRow, nCol, nStyleLine | if( nCol == 1, CLR_RED, 0 ) }
+         oBrw:bLine        := {|| aPropertiesTable( oBrw, nTotalCol ) }
+         oBrw:aFooters     := {|| aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGetUnd ) }
+         oBrw:aHeaders     := aHeadersTable
+         oBrw:aColSizes    := aSizesTable
+         oBrw:aJustify     := aJustifyTable
+         oBrw:bKeyChar     := {| nKey | KeyPropertiesTable( nKey, oBrw ) }
+         oBrw:bEdit        := {|| EditPropertiesTable( oBrw ) }
+         oBrw:bLDblClick   := {|| EditPropertiesTable( oBrw ) }
+         oBrw:bMod         := {|| EditPropertiesTable( oBrw ) }
+         oBrw:bWhen        := {|| PutPropertiesTable( oBrw, oGetPre ) }
+         oBrw:bChange      := {|| PutPropertiesTable( oBrw, oGetPre ) }
+         oBrw:nColAct      := 2
+         oBrw:nFreeze      := 1
+         oBrw:lDrawFooters := .t.
+         oBrw:lAdjLastCol  := .f.
+         oBrw:lAdjBrowse   := .t.
+         oBrw:lCellStyle   := .t.
+         oBrw:Cargo        := aPropertiesTable
+         oBrw:SetArray( aPropertiesTable )
+   
+         oBrw:Show()
+         oBrw:Refresh()
+   
+      end if
+   
+      /*
+      Esto es para xBrowse--------------------------------------------------------
+      */
+   
+      if ( oBrw:ClassName() == "TXBROWSE" .or. oBrw:ClassName() == "IXBROWSE" )
 
-      next
+         oBrw:aCols                 := {}
+         oBrw:Cargo                 := aPropertiesTable   
+         
+         oBrw:SetArray( aPropertiesTable, .f., 0, .f. )
 
-      oBrw:Adjust()
+         for n := 1 to len( aPropertiesTable[ 1 ] )
 
-      oBrw:Show()
+            if IsNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
+   
+               with object ( oBrw:AddCol() )
+                  :Adjust()
+                  :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
+                  :bEditValue       := bGenEditText( aPropertiesTable, oBrw, n )
+                  :nWidth           := 100
+                  :bFooter          := {|| "Total" }
+               end with
+   
+            else
+   
+               with object ( oBrw:AddCol() )
+                  :Adjust()
+                  :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
+                  :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
+                  :nWidth           := 60
+                  :cEditPicture     := MasUnd()
+                  :nTotal           := 0
+                  :nDataStrAlign    := 1
+                  :nHeadStrAlign    := 1
+                  :nFootStrAlign    := 1
+                  :nEditType        := 1 // EDIT_GET
+                  :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnd ) }
+               end with
+   
+            end if
+   
+         next
+         
+         oBrw:aCols[ 1 ]:Hide()
 
+         oBrw:Adjust()
+         oBrw:Show()
+      
+      end if
+   
    end if
-
-   // msginfo( "para" )
-
 
 Return ( aPropertiesTable )
 
@@ -1288,7 +1285,7 @@ Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:cText } )
 
 Static Function bGenEditValue( aTblPrp, oBrwPrp, n )
 
-Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
+Return ( {| x, oCol | aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
 
 //--------------------------------------------------------------------------//
 
@@ -1439,6 +1436,39 @@ Static Function aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGet )
 Return ( aRow )
 
 //---------------------------------------------------------------------------//
+
+Static Function bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnidades )
+
+   oBrw:Cargo[ oBrw:nArrayAt, oBrw:nColSel + oBrw:nColOffset - 1 ]:Value := xVal 
+
+   nTotalProperties( oBrw, oGetUnidades )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function nTotalProperties( oBrw, oGet )
+
+   local aRow  
+   local aCol
+   local nTot  := 0
+
+   for each aRow in oBrw:Cargo
+      for each aCol in aRow
+         if isNum( aCol:Value )
+            nTot  += aCol:Value 
+         end if
+      next
+   next 
+
+   if !empty( oGet )
+      oGet:cText( nTot )
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 Function SearchProperty( oGetIra, oBrwPrp )
 

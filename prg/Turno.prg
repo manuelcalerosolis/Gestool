@@ -2984,6 +2984,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    local oSayGeneral
    local oBmpGeneral
    local oSayGeneral2
+   local oBtnRetirado
+   local oBtnCalculadora
+   local oBtnEfectivo
 
    DEFAULT lZoom        := .f.
    DEFAULT lParcial     := .f.
@@ -3440,18 +3443,18 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oBrwTotales:lVScroll        := .t.
       ::oBrwTotales:lHScroll        := .t.
       ::oBrwTotales:nMarqueeStyle   := 5
-      ::oBrwTotales:nClrPane        := {|| ::GetColorTree() }
+      // ::oBrwTotales:bClrStd         := {|| ::GetColorTree() }
 
       with object ( ::oBrwTotales:AddCol() )
          :cHeader                   := ""
-         :nWidth                    := 200
+         :nWidth                    := 600
          :bStrData                  := {|| ::GetItemTree() }
          :lHide                     := .f.
       end with
 
       with object ( ::oBrwTotales:AddCol() )
          :cHeader                   := "Importes"
-         :nWidth                    := 60
+         :nWidth                    := 140
          :bStrData                  := {|| ::GetImporteTree() }
          :lHide                     := .f.
          :nDataStrAlign             := 1
@@ -3586,7 +3589,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       if ::lArqueoTactil()
 
-      REDEFINE BUTTONBMP ;
+      REDEFINE BUTTONBMP oBtnEfectivo;
          ID       220 ;
          OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
@@ -3595,7 +3598,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
-         TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
+         oBtnEfectivo            := TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
+         oBtnEfectivo:lTransparent  := .t.
+         oBtnEfectivo:lBoxSelect    := .f.
 
       end if
 
@@ -3611,7 +3616,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       if ::lArqueoTactil()
 
-      REDEFINE BUTTONBMP ;
+      REDEFINE BUTTONBMP oBtnCalculadora ;
          ID       230 ;
          OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
@@ -3620,7 +3625,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
-         TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
+         oBtnCalculadora            := TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
+         oBtnCalculadora:lTransparent  := .t.
+         oBtnCalculadora:lBoxSelect    := .f.
 
       end if
 
@@ -3628,7 +3635,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       if ::lArqueoTactil()
 
-      REDEFINE BUTTONBMP ;
+      REDEFINE BUTTONBMP oBtnRetirado ;
          ID       235 ;
          OF       ::oFldTurno:aDialogs[ 3 ] ;
          WHEN     !::lCerrado ;
@@ -3637,7 +3644,9 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
-         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
+         oBtnRetirado               := TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
+         oBtnRetirado:lTransparent  := .t.
+         oBtnRetirado:lBoxSelect    := .f.
 
       end if
 
@@ -4645,10 +4654,10 @@ METHOD lCalTurno( cTurno, cCaja )
    DEFAULT cCaja                 := ::cCurCaja
 
    CursorWait()
-
+/*
    oBlock                        := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
       if !Empty( ::oDlgTurno )
          ::oDlgTurno:Disable()
       end if
@@ -4704,8 +4713,11 @@ METHOD lCalTurno( cTurno, cCaja )
          if Empty( ::oBrwTotales:oTree )
 
             ::oBrwTotales:SetTree( ::oTreeTotales, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" }, ,  ) 
-            ::oBrwTotales:aCols[ 1 ]:cHeader    := ""
-            ::oBrwTotales:aCols[ 1 ]:nWidth     := 20
+            
+            if len( ::oBrwTotales:aCols ) > 1
+               ::oBrwTotales:aCols[ 1 ]:cHeader    := ""
+               ::oBrwTotales:aCols[ 1 ]:nWidth     := 20
+            end if 
 
          else 
 
@@ -4896,7 +4908,7 @@ METHOD lCalTurno( cTurno, cCaja )
          public nRetiradoEnCaja     := 0
 
       end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Error al calcular caja." + CRLF + ErrorMessage( oError ) )
@@ -4904,7 +4916,7 @@ METHOD lCalTurno( cTurno, cCaja )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    CursorWE()
 
    if !Empty( ::oDbfCaj )
@@ -11474,10 +11486,10 @@ Return ( cItem )
 
 METHOD GetColorTree()
 
-   local cColor   := CLR_WHITE
+   local cColor   := { CLR_BLACK, CLR_WHITE }
 
    if !Empty( ::oBrwTotales:oTreeItem ) .and. Empty( ::oBrwTotales:oTreeItem:cPrompt )
-      cColor      := CLR_BAR
+      cColor      := { CLR_BLACK, CLR_BAR }
    end if 
 
 Return ( cColor )

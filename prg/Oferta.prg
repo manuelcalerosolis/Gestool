@@ -3360,8 +3360,6 @@ Method SelectPropertiesLabels() CLASS TOfertaLabelGenerator
 
          with object ( oBrwPrp:aCols[ n ] )
 
-            logwrite( aTblPrp[ oBrwPrp:nArrayAt, n ]:ToString() )
-
             :cHeader          := aTblPrp[ oBrwPrp:nArrayAt, n ]:cHead
 
             if IsNil( aTblPrp[ oBrwPrp:nArrayAt, n ]:Value )
