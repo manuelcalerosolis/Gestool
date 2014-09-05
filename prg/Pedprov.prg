@@ -5648,7 +5648,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       local nPorcentaje := oImportaComprasProveedor:oPorcentaje:Value()
       local nDias       := dFecFin - dFecIni
 
-      local nSecon      := seconds()
+      oDlg:Disable()
 
       if empty( aTmp[ _CCODPRV ] )
             msgStop( "Código del proveedor no puede esta vacio.")
@@ -5820,7 +5820,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
       CursorWE()
 
-      //MsgAlert( seconds() - nSecon )
+      oDlg:Enable()
 
 Return .t. 
 

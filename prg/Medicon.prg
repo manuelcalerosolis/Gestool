@@ -447,7 +447,7 @@ RETURN ( nil )
 
 Function AutoMeterDialog( oDialog )
 
-   oMeter   := TMeter():New( 0, 0, {| u | if( pCount() == 0, nMeter, nMeter := u ) }, 100, oDialog, oDialog:nWidth, 4, .t., .t., , "", .t., rgb( 128,255,0 ) )
+   oMeter   := TMeter():New( 0, 0, {| u | if( pCount() == 0, nMeter, nMeter := u ) }, 100, oDialog, oDialog:nWidth, 4, .t., .t., , "", .t., , ,rgb( 128,255,0 ) )
 
 RETURN ( oMeter )
 
