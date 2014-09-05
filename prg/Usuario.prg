@@ -1188,7 +1188,7 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
          ON CHANGE      ( ( dbfUsr )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
 			OF             oDlg
 
-      oBrw                 := IXBrowse():New( oDlg )
+      oBrw                 := TXBrowse():New( oDlg )
 
       oBrw:cAlias          := dbfUsr
       oBrw:nMarqueeStyle   := 5
@@ -3163,6 +3163,6 @@ Return ( lSetUsr )
 
 Static Function lValidPassword( cClave, cCampo )
 
-Return ( Upper( cClave ) == Upper( Rtrim( cCampo ) ) .or. Upper( cClave ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
+Return ( Upper( Rtrim( cClave ) ) == Upper( Rtrim( cCampo ) ) .or. Upper( Rtrim( cClave ) ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
 
 //---------------------------------------------------------------------------//

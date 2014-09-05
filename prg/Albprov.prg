@@ -19,7 +19,7 @@ Definici¢n de la base de datos de albaranes a proveedores
 #define _NNUMALB                   2     //   N      9     0 "NNUMALB", 
 #define _CSUFALB                   3     //   C      2     0 "CSUFALB",
 #define _CTURALB                   4     //   C      6     0 "CTURALB",
-#define _DFECALB                   5     //   D      8     0 "DFECALB",
+#define _DFECALB                   5     //   D      8     0 "DFECALB",  
 #define _CCODPRV                   6     //   C      7     0 "CCODPRV",
 #define _CCODALM                   7     //   C      3     0 "CCODALM",
 #define _CCODCAJ                   8     //   C      3     0 "CCODCAJ",
@@ -310,9 +310,6 @@ static oNumerosSerie
 static oBtnNumerosSerie
 
 static lIncidencia      := .f.
-
-static oGetStkOrigen
-static nGetStkOrigen     := 0
 
 //----------------------------------------------------------------------------//
 
@@ -2449,8 +2446,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    local oBeneficioSobre   := Array( 6 )
    local cBeneficioSobre   := Afill( Array( 6 ), "" )
    local aBeneficioSobre   := { "Costo", "Venta" }
-   local oGetStk
-   local nGetStk           := 0
    local oSayLote
    local cCodArt           := Padr( aTmp[ _CREF ], 200 )
 
@@ -2509,7 +2504,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       REDEFINE GET aGet[ _CREF ] VAR cCodArt ;
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oGetStk, oBeneficioSobre, oTotal, nMode ) );
+         VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], , , , , aGet[ _DFECCAD ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -2566,12 +2561,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], TDataView():PropiedadesLineas( nView ) ),;
-                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oGetStk, oBeneficioSobre, oTotal, nMode ),;
+                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
-         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
+         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign() }
 
       REDEFINE SAY oSayPr1 VAR cSayPr1;
          ID       221 ;
@@ -2587,12 +2582,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], TDataView():PropiedadesLineas( nView ) ),;
-                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oGetStk, oBeneficioSobre, oTotal, nMode ),;
+                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
-         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
+         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign() }
 
       REDEFINE SAY oSayPr2 VAR cSayPr2;
          ID       231 ;
@@ -2765,34 +2760,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          IDTEXT   331 ;
          IDSAY    332 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ),;
-                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ __CALMORIGEN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStkOrigen ) ) ;
+         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], TDataView():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGetStkOrigen VAR nGetStkOrigen ;
-         ID       340 ;
-         IDSAY    341 ;
-         WHEN     .f. ;
-         PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ]  ;
          ID       240 ;
          IDTEXT   241 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    (  cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ),;
-                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+         VALID    (  cAlmacen( aGet[ _CALMLIN ], TDataView():Almacen( nView ), aGet[ _CALMLIN ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;
 			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oGetStk VAR nGetStk ;
-         ID       190 ;
-         WHEN     .f. ;
-         PICTURE  cPicUnd ;
-         OF       oFld:aDialogs[1]
 
       REDEFINE GET oTotal VAR nTotal ;
 			ID 		210 ;
@@ -3125,7 +3105,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn ) )
+         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oBtn ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -3185,10 +3165,8 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
 
    if uFieldEmpresa( "lShowOrg" )
       aGet[ __CALMORIGEN ]:Show()
-      oGetStkOrigen:Show()
    else
       aGet[ __CALMORIGEN ]:Hide()
-      oGetStkOrigen:Hide()
    end if
 
    if aGet[ _NPNTVER ] != nil
@@ -3324,7 +3302,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oGetStk, oBtn, oBtnSer )
+STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oBtn, oBtnSer )
 
    local n, i
 
@@ -3459,10 +3437,6 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    if oGet != nil
       oGet:cText( Space( 18 ) )
       oGet:SetFocus()
-   end if
-
-   if oGetStk != nil
-      oGetStk:cText( 0 )
    end if
 
 RETURN NIL
@@ -4113,7 +4087,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oGetStk, oBeneficioSobre, oTotal, nMode )
+Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode )
 
    local hHas128
    local cLote
@@ -4419,14 +4393,6 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
                end if
 
-            end if
-
-            /*
-            Ponemos el stock---------------------------------------------------
-            */
-
-            if oGetStk != nil .and. aTmp[ _NCTLSTK ] <= 1
-               oStock:nPutStockActual( cCodArt, aTmpAlb[ _CCODALM ], nil, nil, nil, aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk )
             end if
 
             /*
