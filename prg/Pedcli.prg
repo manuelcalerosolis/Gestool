@@ -7513,7 +7513,6 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
    
    cTmpLin        := cGetNewFileName( cPatTmp() + "PTmpCliL" )
    cTmpFin        := cGetNewFileName( cPatTmp() + "PTmpFinL" )
@@ -7865,7 +7864,7 @@ Method CreaPedidoProveedor() CLASS TPedidosClientes2PedidosProveedor
          ( dbfPedPrvL )->cSufPed          := cSufijoPedido
          ( dbfPedPrvL )->cRef             := ( dbfTmpPedLin )->cRef
          ( dbfPedPrvL )->cDetalle         := ( dbfTmpPedLin )->cDetalle
-			( dbfPedPrvL )->mLngDes          := ( dbfTmpPedLin )->mLngDes
+		 ( dbfPedPrvL )->mLngDes          := ( dbfTmpPedLin )->mLngDes
          ( dbfPedPrvL )->nIva             := ( dbfTmpPedLin )->nIva
          ( dbfPedPrvL )->nReq             := ( dbfTmpPedLin )->nReq
          ( dbfPedPrvL )->cPedCli          := ::cSerie + Str( ::nNumero ) + ::cSufijo
@@ -14251,6 +14250,7 @@ function aColTmpLin()
    aAdd( aColTmpLin, { "nMedUno", "N",   16,  6, "Primera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nMedDos", "N",   16,  6, "Segunda unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nMedTre", "N",   16,  6, "Tercera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nNumLin", "N",    4,  0, "Nímero de línea",      			"", 		"", "( cDbfCol )" } )
 
 return ( aColTmpLin )
 
