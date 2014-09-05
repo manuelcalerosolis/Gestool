@@ -12165,8 +12165,12 @@ Function hAtipica( hValue )
 
             case hAtipica[ "nTipoXY" ] == 2     //Unidades
 
-               nModOferta                       := Int( Div( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) )
-               hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+               if mod( hValue[ "nCajas" ] * hValue[ "nUnidades" ], hAtipica["nUnidadesVender"] ) == 0
+
+                  nModOferta                       := Int( Div( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) )
+                  hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+
+               end if
 
          end case
 
