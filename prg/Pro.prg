@@ -1264,7 +1264,9 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
    
          next
          
+#ifndef __XBARBOUR__         
          oBrw:aCols[ 1 ]:Hide()
+#endif
 
          oBrw:Adjust()
          oBrw:Show()

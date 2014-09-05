@@ -37,7 +37,7 @@ CLASS IXBrowse FROM TXBrowse
    Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
 
    Method Load()           INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
-   Method Save()           INLINE ( ::OpenData(), ::SaveData( .t.), ::CloseData() )
+   Method Save()           INLINE ( ::OpenData(), ::SaveData( .t. ), ::CloseData() )
 
    Method CreateData( cPath )
 
@@ -60,10 +60,11 @@ CLASS IXBrowse FROM TXBrowse
    Method CheckExtendInfo()
 
    Method ShowExtendInfo()
-
+/*
    Method SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
    Method Refresh( lComplete )
+*/
    
 END CLASS
 
@@ -146,6 +147,8 @@ Method LoadData()
          end if
 
       end if
+
+      ::MakeTotals()
 
    RECOVER USING oError
 
@@ -422,22 +425,20 @@ METHOD ShowExtendInfo()
 
    ::lOnProcess      := .f.
 
-return nil
+Return ( Self )
 
 //----------------------------------------------------------------------------//
-
+/*
 METHOD Refresh( lComplete )
 
-   ::Super:Refresh( lComplete )
-
    if ::lFooter
-      ::MakeTotals()
-   end if
+   ::Super:MakeTotals()
+   end if 
 
-return nil
-
+Return ( ::Super:Refresh( lComplete ) )
+*/
 //----------------------------------------------------------------------------//
-
+/*
 METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
 
    local oCol, aStruct
@@ -484,7 +485,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
    endif
 
 return nil
-
+*/
 //----------------------------------------------------------------------------//
 
 static function FindTag( cFld, nOrder )

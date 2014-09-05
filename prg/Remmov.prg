@@ -3711,11 +3711,32 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( .f. ) ;
          OF       oDlg
 
-      REDEFINE LISTBOX ::oBrwPrp ;
-         FIELDS   "" ;
-         HEAD     "" ;
-         ID       600 ;
-         OF       oDlg
+      // Browse de propiedades-------------------------------------------------
+
+      ::oBrwPrp                       := IXBrowse():New( oDlg )
+
+      ::oBrwPrp:nDataType             := DATATYPE_ARRAY
+
+      ::oBrwPrp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oBrwPrp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      ::oBrwPrp:lHScroll              := .t.
+      ::oBrwPrp:lVScroll              := .t.
+
+      ::oBrwPrp:nMarqueeStyle         := 3
+      ::oBrwPrp:nFreeze               := 1
+
+      ::oBrwPrp:lRecordSelector       := .f.
+      ::oBrwPrp:lFastEdit             := .t.
+      ::oBrwPrp:lFooter               := .t.
+
+      ::oBrwPrp:SetArray( {}, .f., 0, .f. )
+
+      ::oBrwPrp:MakeTotals()
+
+      ::oBrwPrp:CreateFromResource( 600 )
+
+      // Lote------------------------------------------------------------------
 
       REDEFINE SAY ::oSayLote VAR cSayLote ;
          ID       154;
