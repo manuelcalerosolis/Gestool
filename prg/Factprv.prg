@@ -2972,11 +2972,30 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE LISTBOX oBrwPrp ;
-         FIELDS   "" ;
-         HEAD     "" ;
-         ID       100 ;
-         OF       oFld:aDialogs[1]
+      // Browse de propiedades-------------------------------------------------
+
+      oBrwPrp                       := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwPrp:nDataType             := DATATYPE_ARRAY
+
+      oBrwPrp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwPrp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwPrp:lHScroll              := .t.
+      oBrwPrp:lVScroll              := .t.
+
+      oBrwPrp:nMarqueeStyle         := 3
+      oBrwPrp:nFreeze               := 1
+
+      oBrwPrp:lRecordSelector       := .f.
+      oBrwPrp:lFastEdit             := .t.
+      oBrwPrp:lFooter               := .t.
+
+      oBrwPrp:SetArray( {}, .f., 0, .f. )
+
+      oBrwPrp:MakeTotals()
+
+      oBrwPrp:CreateFromResource( 100 )
 
       /*
       fin de propiedades
@@ -3745,12 +3764,16 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
                if IsNum( oBrwPrp:Cargo[ n, i ]:Value ) .and. oBrwPrp:Cargo[ n, i ]:Value != 0 //  .and.
 
-                  aTmp[ _NUNICAJA]  := oBrwPrp:Cargo[ n, i ]:Value
-                  aTmp[ _CCODPR1 ]  := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
-                  aTmp[ _CVALPR1 ]  := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
-                  aTmp[ _CCODPR2 ]  := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
-                  aTmp[ _CVALPR2 ]  := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
-                  aTmp[ _NPREUNIT]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmp )
+                  aTmp[ _NUNICAJA]     := oBrwPrp:Cargo[ n, i ]:Value
+                  aTmp[ _CCODPR1 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
+                  aTmp[ _CVALPR1 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
+                  aTmp[ _CCODPR2 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR2 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
+                  
+                  if oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0
+                     aTmp[ _NPREUNIT]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+                  end if 
 
                   WinGather( aTmp, aGet, dbfTmp, oBrw, nMode, nil, .f. )
 
@@ -4245,13 +4268,7 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, aGet, oTotal )
    end if
 
    if lActCos()
-
-      if aTmp[ _NPREUNIT ] != 0
-         aGet[ _LCHGLIN ]:Click( .t. ):Refresh()
-      else
-         aGet[ _LCHGLIN ]:Click( .f. ):Refresh()
-      end if
-
+      aGet[ _LCHGLIN ]:Click( aTmp[ _NPREUNIT ] != 0 )
    end if
 
 RETURN .T.
@@ -4846,7 +4863,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
                nIva           := nIva( TDataView():TiposIva( nView ), ( TDataView():Articulos( nView ) )->TipoIva )
                aGet[ _NIVA    ]:cText( nIva )
                aGet[ _NIVALIN ]:cText( nIva )
-               aGet[ _LIVALIN ]:Click( ( TDataView():Articulos( nView ) )->lIvaInc ):Refresh()
+               aGet[ _LIVALIN ]:Click( ( TDataView():Articulos( nView ) )->lIvaInc )
 
                aTmp[ _NREQ ]  := nReq( TDataView():TiposIva( nView ), ( TDataView():Articulos( nView ) )->TipoIva )
 
@@ -5055,12 +5072,12 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             aGet[ _NBNFLIN5 ]:cText( ( TDataView():Articulos( nView ) )->Benef5 )
             aGet[ _NBNFLIN6 ]:cText( ( TDataView():Articulos( nView ) )->Benef6 )
 
-            aGet[ _LBNFLIN1 ]:Click( ( TDataView():Articulos( nView ) )->lBnf1 ):Refresh()
-            aGet[ _LBNFLIN2 ]:Click( ( TDataView():Articulos( nView ) )->lBnf2 ):Refresh()
-            aGet[ _LBNFLIN3 ]:Click( ( TDataView():Articulos( nView ) )->lBnf3 ):Refresh()
-            aGet[ _LBNFLIN4 ]:Click( ( TDataView():Articulos( nView ) )->lBnf4 ):Refresh()
-            aGet[ _LBNFLIN5 ]:Click( ( TDataView():Articulos( nView ) )->lBnf5 ):Refresh()
-            aGet[ _LBNFLIN6 ]:Click( ( TDataView():Articulos( nView ) )->lBnf6 ):Refresh()
+            aGet[ _LBNFLIN1 ]:Click( ( TDataView():Articulos( nView ) )->lBnf1 )
+            aGet[ _LBNFLIN2 ]:Click( ( TDataView():Articulos( nView ) )->lBnf2 )
+            aGet[ _LBNFLIN3 ]:Click( ( TDataView():Articulos( nView ) )->lBnf3 )
+            aGet[ _LBNFLIN4 ]:Click( ( TDataView():Articulos( nView ) )->lBnf4 )
+            aGet[ _LBNFLIN5 ]:Click( ( TDataView():Articulos( nView ) )->lBnf5 )
+            aGet[ _LBNFLIN6 ]:Click( ( TDataView():Articulos( nView ) )->lBnf6 )
 
             aGet[ _NPVPLIN1 ]:cText( ( TDataView():Articulos( nView ) )->pVenta1  )
             aGet[ _NPVPLIN2 ]:cText( ( TDataView():Articulos( nView ) )->pVenta2  )

@@ -25,7 +25,7 @@ FUNCTION Prop( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01015"
    DEFAULT  oWnd        := oWnd()
 
-	IF oWndBrw == NIL
+   IF oWndBrw == NIL
 
       /*
       Obtenemos el nivel de acceso
@@ -115,42 +115,42 @@ FUNCTION Prop( oMenuItem, oWnd )
       oWndBrw:CreateXFromCode()
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( oWndBrw:SearchSetFocus() ) ;
-			TOOLTIP 	"(B)uscar" ;
+         TOOLTIP  "(B)uscar" ;
          HOTKEY   "B"
 
       oWndBrw:AddSeaBar()
 
       DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
-			NOBORDER ;
-      	ACTION  	( oWndBrw:RecAdd() );
-			ON DROP	( oWndBrw:RecDup() );
-			TOOLTIP 	"(A)ñadir";
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecAdd() );
+         ON DROP  ( oWndBrw:RecDup() );
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
 
-		DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
-			NOBORDER ;
-			ACTION  	( oWndBrw:RecEdit() );
-			TOOLTIP 	"(M)odificar";
+      DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecEdit() );
+         TOOLTIP  "(M)odificar";
          MRU ;
          HOTKEY   "M";
          LEVEL    ACC_EDIT
 
-		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
-			NOBORDER ;
+      DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+         NOBORDER ;
          ACTION   ( WinZooRec( oWndBrw:oBrw, bEdit, dbfProT ) );
-			TOOLTIP 	"(Z)oom";
+         TOOLTIP  "(Z)oom";
          MRU ;
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
 
-		DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecDel() );
-			TOOLTIP 	"(E)liminar";
+      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecDel() );
+         TOOLTIP  "(E)liminar";
          MRU ;
          HOTKEY   "E";
          LEVEL    ACC_DELE
@@ -173,18 +173,18 @@ FUNCTION Prop( oMenuItem, oWnd )
 
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
-			NOBORDER ;
+         NOBORDER ;
          ACTION   ( oWndBrw:end() ) ;
-			TOOLTIP 	"(S)alir" ;
-			HOTKEY 	"S"
+         TOOLTIP  "(S)alir" ;
+         HOTKEY   "S"
 
-		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
+      ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-	ELSE
+   ELSE
 
-		oWndBrw:SetFocus()
+      oWndBrw:SetFocus()
 
-	END IF
+   END IF
 
 RETURN NIL
 
@@ -192,7 +192,7 @@ RETURN NIL
 
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
 
-	local oDlg
+   local oDlg
    local oBrw
 
    if BeginTrans( aTmp, nMode, ( dbfProT )->cCodPro )
@@ -371,24 +371,24 @@ Return ( .t. )
 
 Static Function UpDet( oBrw )
 
-	local nRecno	    := ( dbfTmpProL )->( Recno() )
-	local nPosition	 := ( dbfTmpProL )->nOrdTbl
+   local nRecno       := ( dbfTmpProL )->( Recno() )
+   local nPosition    := ( dbfTmpProL )->nOrdTbl
 
-	if nPosition > 1
+   if nPosition > 1
 
-		nPosition--
+      nPosition--
 
-		( dbfTmpProL )->( __dbLocate( {|| Field->nOrdTbl == nPosition } ) )
-		if ( dbfTmpProL )->( Found() )
-			( dbfTmpProL )->nOrdTbl++
-		endif
+      ( dbfTmpProL )->( __dbLocate( {|| Field->nOrdTbl == nPosition } ) )
+      if ( dbfTmpProL )->( Found() )
+         ( dbfTmpProL )->nOrdTbl++
+      endif
 
-		( dbfTmpProL )->( dbGoTo( nRecno ) )
-		( dbfTmpProL )->nOrdTbl--
+      ( dbfTmpProL )->( dbGoTo( nRecno ) )
+      ( dbfTmpProL )->nOrdTbl--
 
-	endif
+   endif
 
- 	oBrw:Refresh()
+   oBrw:Refresh()
 
 RETURN ( nil )
 
@@ -396,24 +396,24 @@ RETURN ( nil )
 
 Static Function DownDet( oBrw )
 
-	local nRecno	   := ( dbfTmpProL )->( Recno() )
-	local nPosition	   := ( dbfTmpProL )->nOrdTbl
+   local nRecno      := ( dbfTmpProL )->( Recno() )
+   local nPosition      := ( dbfTmpProL )->nOrdTbl
 
-	if nPosition < ( dbfTmpProL )->( LastRec() )
+   if nPosition < ( dbfTmpProL )->( LastRec() )
 
-		nPosition++
+      nPosition++
 
-		( dbfTmpProL )->( __dbLocate( {|| Field->nOrdTbl == nPosition } ) )
-		if ( dbfTmpProL )->( Found() )
-			( dbfTmpProL )->nOrdTbl--
-		endif
+      ( dbfTmpProL )->( __dbLocate( {|| Field->nOrdTbl == nPosition } ) )
+      if ( dbfTmpProL )->( Found() )
+         ( dbfTmpProL )->nOrdTbl--
+      endif
 
-		( dbfTmpProL )->( dbGoTo( nRecno ) )
-		( dbfTmpProL )->nOrdTbl++
+      ( dbfTmpProL )->( dbGoTo( nRecno ) )
+      ( dbfTmpProL )->nOrdTbl++
 
-	endif
+   endif
 
- 	oBrw:Refresh()
+   oBrw:Refresh()
 
 RETURN ( nil )
 
@@ -601,7 +601,7 @@ RETURN nil
 
 STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
-	local oDlg
+   local oDlg
 
    nTipoActualizacionLineas  := nMode
 
@@ -613,33 +613,33 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
       REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "cCodTbl" ) ) ];
          VAR      aTmp[ ( dbfProL )->( FieldPos( "cCodTbl" ) ) ];
-			ID 		100 ;
+         ID       100 ;
          VALID    ( !Empty( aTmp[ ( dbfTmpProL )->( FieldPos( "cCodTbl" ) ) ] ) );
          WHEN     ( nMode == APPD_MODE ) ;
-			PICTURE 	"@!" ;
-			OF 		oDlg
+         PICTURE  "@!" ;
+         OF       oDlg
 
       REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "cDesTbl" ) ) ];
          VAR      aTmp[ ( dbfProL )->( FieldPos( "cDesTbl" ) ) ];
-			ID 		110 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			PICTURE 	"@!" ;
-			OF 		oDlg
+         ID       110 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@!" ;
+         OF       oDlg
 
       REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ];
          VAR      aTmp[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ];
          ID       120 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "9999" ;
          SPINNER ;
-			OF 		oDlg
+         OF       oDlg
 
       REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "nBarTbl" ) ) ];
          VAR      aTmp[ ( dbfProL )->( FieldPos( "nBarTbl" ) ) ];
          ID       130 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "9999" ;
-			OF 		oDlg
+         OF       oDlg
 
       REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ];
          VAR      aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ];
@@ -654,19 +654,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
       REDEFINE BUTTON;
          ID       IDOK ;
-			OF 		oDlg ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL ) )
 
       REDEFINE BUTTON;
          ID       IDCANCEL ;
-			OF 		oDlg ;
+         OF       oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
 
       REDEFINE BUTTON ;
          ID       9 ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( ChmHelp( "Propiedades_de_articulos" ) )
 
    if nMode != ZOOM_MODE
@@ -789,17 +789,17 @@ FUNCTION brwProp( oGet, oSay )
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar propiedad"
 
       REDEFINE GET oGetNbr VAR cGetNbr ;
-			ID 		104 ;
+         ID       104 ;
          ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfProT ) );
          VALID    ( OrdClearScope( oBrw, dbfProT ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
          ITEMS    aCbxOrd ;
-			OF 		oDlg
+         OF       oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -833,23 +833,23 @@ FUNCTION brwProp( oGet, oSay )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( oDlg:end( IDOK ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( oDlg:end() )
 
       REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
+         ID       500 ;
+         OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 ) ;
          ACTION   ( WinAppRec( oBrw, bEdit, dbfProT ) )
 
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 ) ;
          ACTION   ( WinEdtRec( oBrw, bEdit, dbfProT ) )
 
@@ -1734,17 +1734,17 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE cTitle
 
       REDEFINE GET oGetNbr VAR cGetNbr ;
-			ID 		104 ;
+         ID       104 ;
          ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTmpBrw ) ;
          BITMAP   "FIND" ;
          OF       oDlg
 
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
          ITEMS    aCbxOrd ;
          ON CHANGE( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
-			OF 		oDlg
+         OF       oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -1790,13 +1790,13 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( oDlg:end( IDOK ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
@@ -1957,7 +1957,7 @@ Function mkPro( cPath, lAppend, cPathOld, oMeter )
    local cDbf
 
    DEFAULT cPath     := cPatArt()
-	DEFAULT lAppend	:= .F.
+   DEFAULT lAppend   := .F.
 
    if !lExistTable( cPath + "Pro.Dbf" )
       dbCreate( cPath + "Pro.Dbf", aSqlStruct( aPro() ), cDriver() )
@@ -2374,12 +2374,12 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
 
       REDEFINE BUTTON ;
          ID       500 ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( SelectPropiedadDblClick( oBrw, aData ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( SelectPropiedadDblClick( oBrw, aData, .t. ) )
 
       REDEFINE BUTTON ;
@@ -2422,13 +2422,13 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( oDlg:end( IDOK ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
@@ -2531,3 +2531,12 @@ Static Function lPubPrp()
 Return lPub
 
 //---------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+

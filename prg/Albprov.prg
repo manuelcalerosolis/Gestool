@@ -1608,7 +1608,40 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
 
-      // Desglose del impuestos------------------------------------------------
+      /*
+      Desglose del impuestos
+		________________________________________________________________________
+
+      REDEFINE LISTBOX oBrwIva ;
+			FIELDS ;
+                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 1 ], cPirDiv ), "" ),;
+                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 2 ], cPirDiv ), "" ),;
+                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 3 ], "@E 99.9"), "" ),;
+                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil,                          Trans( aTotIva[ oBrwIva:nAt, 3 ] * aTotIva[ oBrwIva:nAt, 2 ] / 100, cPirDiv ), "" ),;
+                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nAt, 4 ], "@E 99.9"), "" ),;
+                  if( aTotIva[ oBrwIva:nAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nAt, 4 ] * aTotIva[ oBrwIva:nAt, 2 ] / 100, cPirDiv ), "" ) ;
+         FIELDSIZES ;
+                  85,;
+                  85,;
+                  40,;
+                  80,;
+                  40,;
+                  80 ;
+         HEAD ;
+                  "Bruto",;
+                  "Base",;
+                  "%" + cImp(),;
+                  cImp(),;
+                  "%R.E.",;
+                  "R.E." ;
+         ID       490 ;
+			OF 		oFld:aDialogs[1]
+
+      oBrwIva:SetArray( aTotIva )
+      oBrwIva:aJustify     := { .t., .t., .t., .t., .t., .t. }
+      oBrwIva:aFooters     := {||{ Trans( nTotBrt, cPirDiv ), Trans( nTotNet, cPirDiv ), "" , Trans( nTotIva, cPirDiv ) , "" , Trans( nTotReq, cPirDiv ) } }
+      oBrwIva:lDrawFooters := .t.
+      */
 
       oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
@@ -2598,26 +2631,30 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-      oBrwPrp                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+      // Browse de propiedades-------------------------------------------------
+
+      oBrwPrp                       := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwPrp:nDataType             := DATATYPE_ARRAY
 
       oBrwPrp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
+      oBrwPrp:lHScroll              := .t.
+      oBrwPrp:lVScroll              := .t.
+
       oBrwPrp:nMarqueeStyle         := 3
       oBrwPrp:lRecordSelector       := .f.
       oBrwPrp:lFastEdit             := .t.
+      oBrwPrp:nFreeze               := 1
+      oBrwPrp:lFooter               := .t.
 
       oBrwPrp:SetArray( {}, .f., 0, .f. )
 
+      oBrwPrp:MakeTotals()
+
       oBrwPrp:CreateFromResource( 100 )
 
-/*
-      REDEFINE LISTBOX oBrwPrp ;
-         FIELDS   "" ;
-         HEAD     "" ;
-         ID       100 ;
-         OF       oFld:aDialogs[1]
-*/
       /*
       fin de propiedades
       -------------------------------------------------------------------------
@@ -3380,9 +3417,9 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
                   aTmp[ _CCODPR2 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
                   aTmp[ _CVALPR2 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
 
-                  if  oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0
+                  if oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0
                      aTmp[ _NPREDIV ]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
-                  end if 
+                  end if
 
                   WinGather( aTmp, aGet, dbfTmp, oBrw, nMode, nil, .f. )
 
@@ -4582,7 +4619,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
          cOldEst  := ( TDataView():PedidosProveedores( nView ) )->nEstado
 
          aGet[ _CNUMPED ]:cText( ( TDataView():PedidosProveedores( nView ) )->cSerPed + Str( ( TDataView():PedidosProveedores( nView ) )->nNumPed ) + ( TDataView():PedidosProveedores( nView ) )->cSufPed )
-         aGet[ _CNUMPED ]:bWhen := {|| .f. }
+         aGet[ _CNUMPED ]:bWhen := {|| .F. }
 
          aGet[ _CCODPRV ]:cText( ( TDataView():PedidosProveedores( nView ) )->cCodPrv )
          aGet[ _CCODPRV ]:lValid()
@@ -4870,9 +4907,7 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
    end if
 
    if lActCos()
-
       aGet[ _LCHGLIN ]:Click( aTmp[ _NPREDIV ] != 0 )
-
    end if
 
 Return .t.
@@ -4912,8 +4947,6 @@ STATIC FUNCTION BeginTrans( aTmp, aOld )
 
          ( dbfTmp )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
          ( dbfTmp )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
-
-         ( dbfTmp )->( OrdSetFocus( "nNumLin" ) )
       end if
 
       /*

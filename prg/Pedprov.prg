@@ -2557,13 +2557,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          ID       241 ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE LISTBOX oBrwPrp ;
-         FIELDS   "" ;
-         HEAD     "" ;
-         ID       100 ;
-         OF       oFld:aDialogs[1]
+      // Browse de propiedades-------------------------------------------------
 
-      /*
       oBrwPrp                       := IXBrowse():New( oFld:aDialogs[1] )
 
       oBrwPrp:nDataType             := DATATYPE_ARRAY
@@ -2580,12 +2575,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       oBrwPrp:nFreeze               := 1
       oBrwPrp:lFooter               := .t.
 
-      oBrwPrp:SetArray( {}, , , .f. )
+      oBrwPrp:SetArray( {}, .f., 0, .f. )
 
       oBrwPrp:MakeTotals()
 
       oBrwPrp:CreateFromResource( 100 )
-      */
+
       /*
       fin de propiedades
       -------------------------------------------------------------------------
@@ -3392,13 +3387,17 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oGetIra, oFld, oDlg, oBrw, nMode,
 
                if oBrwPrp:Cargo[ n, i ]:Value != nil .and. oBrwPrp:Cargo[ n, i ]:Value != 0
 
-                  aTmp[ _NUNICAJA]  := oBrwPrp:Cargo[ n, i ]:Value
-                  aTmp[ _CCODPR1 ]  := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
-                  aTmp[ _CVALPR1 ]  := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
-                  aTmp[ _CCODPR2 ]  := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
-                  aTmp[ _CVALPR2 ]  := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
-                  aTmp[ _NPREDIV ]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
-
+                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NUNICAJA]     := oBrwPrp:Cargo[ n, i ]:Value
+                  aTmp[ _CCODPR1 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
+                  aTmp[ _CVALPR1 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
+                  aTmp[ _CCODPR2 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR2 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
+                  
+                  if oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0
+                     aTmp[ _NPREDIV ]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+                  end if 
+                  
                   WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
 
                end if

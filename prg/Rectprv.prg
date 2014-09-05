@@ -3159,11 +3159,30 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE LISTBOX oBrwPrp ;
-         FIELDS   "" ;
-         HEAD     "" ;
-         ID       100 ;
-         OF       oFld:aDialogs[1]
+      // Browse de propiedades-------------------------------------------------
+
+      oBrwPrp                       := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwPrp:nDataType             := DATATYPE_ARRAY
+
+      oBrwPrp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwPrp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwPrp:lHScroll              := .t.
+      oBrwPrp:lVScroll              := .t.
+
+      oBrwPrp:nMarqueeStyle         := 3
+      oBrwPrp:nFreeze               := 1
+
+      oBrwPrp:lRecordSelector       := .f.
+      oBrwPrp:lFastEdit             := .t.
+      oBrwPrp:lFooter               := .t.
+
+      oBrwPrp:SetArray( {}, .f., 0, .f. )
+
+      oBrwPrp:MakeTotals()
+
+      oBrwPrp:CreateFromResource( 100 )
 
       /*
       fin de propiedades
@@ -3565,12 +3584,16 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
                if IsNum( oBrwPrp:Cargo[ n, i ]:Value ) .and. oBrwPrp:Cargo[ n, i ]:Value != 0 //  .and.
 
-                  aTmp[ _NUNICAJA]  := oBrwPrp:Cargo[ n, i ]:Value
-                  aTmp[ _CCODPR1 ]  := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
-                  aTmp[ _CVALPR1 ]  := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
-                  aTmp[ _CCODPR2 ]  := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
-                  aTmp[ _CVALPR2 ]  := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
-                  aTmp[ _NPREUNIT]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmp )
+                  aTmp[ _NUNICAJA]     := oBrwPrp:Cargo[ n, i ]:Value
+                  aTmp[ _CCODPR1 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
+                  aTmp[ _CVALPR1 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
+                  aTmp[ _CCODPR2 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR2 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
+
+                  if oBrwPrp:Cargo[ n, i ]:nPrecioCompra != 0
+                     aTmp[ _NPREUNIT]  := oBrwPrp:Cargo[ n, i ]:nPrecioCompra
+                  end if 
 
                   WinGather( aTmp, aGet, dbfTmp, oBrw, nMode, nil, .f. )
 
