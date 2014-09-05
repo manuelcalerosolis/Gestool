@@ -6,6 +6,10 @@
 
 CLASS TStock
 
+   CLASSDATA aStocks     AS ARRAY INIT {}
+   CLASSDATA cCodigoAlmacen
+   CLASSDATA cCodigoArticulo
+
    DATA cPath
 
    DATA lExclusive
@@ -92,8 +96,7 @@ CLASS TStock
    DATA oTree  
 
    DATA aMovAlm            AS ARRAY INIT {}
-   DATA aStocks            AS ARRAY INIT {}
-
+   
    DATA dConsolidacion
 
    DATA lAlbPrv            AS LOGIC INIT .t.
@@ -4069,11 +4072,26 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdProducL
    local nOrdProducM
    local nOrdHisMov
+   local Secon    := Seconds()
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
    DEFAULT lNotPendiente:= .f.
 
+   if ( !empty( ::cCodigoArticulo ) .and. cCodArt == ::cCodigoArticulo ) .and.;
+      ( !empty( ::cCodigoAlmacen ) .and. cCodAlm == ::cCodigoAlmacen ) .and.;
+      ( !empty( ::aStocks ) )
+
+      Return ( ::aStocks )
+
+   end if
+
+   LogWrite( "Paso por aStock" )
+   LogWrite( cCodArt )
+   LogWrite( cCodAlm )
+
+   ::cCodigoArticulo    := cCodArt
+   ::cCodigoAlmacen     := cCodAlm
    ::aStocks            := {}
 
    if Empty( cCodArt )
@@ -4926,6 +4944,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    END SEQUENCE
    
    ErrorBlock( oBlock )
+
+   logwrite( seconds() - secon )
 
 Return ( ::aStocks )
 

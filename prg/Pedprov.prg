@@ -5648,14 +5648,16 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       local nPorcentaje := oImportaComprasProveedor:oPorcentaje:Value()
       local nDias       := dFecFin - dFecIni
 
+      local nSecon      := seconds()
+
       if empty( aTmp[ _CCODPRV ] )
             msgStop( "Código del proveedor no puede esta vacio.")
             return .f.
       end if
 
-      //AutoMeterDialog( oDlg )
+      AutoMeterDialog( oDlg )
 
-      //SetTotalAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
+      SetTotalAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
 
       CursorWait()
 
@@ -5802,7 +5804,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
             end if
 
-            //SetAutoMeterDialog( ( TDataView():Articulos( nView ) )->( Recno() ) )
+            SetAutoMeterDialog( ( TDataView():Articulos( nView ) )->( Recno() ) )
 
             ( TDataView():Articulos( nView ) )->( dbSkip() )
 
@@ -5810,13 +5812,15 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       
       end if 
 
-      //EndAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
+      EndAutoMeterDialog( ( TDataView():Articulos( nView ) )->( LastRec() ) )
 
       ( TDataView():Articulos( nView ) )->( ordSetFocus( nOrd ) )
 
       ( dbfTmpLin )->( dbGoTop() )
 
       CursorWE()
+
+      //MsgAlert( seconds() - nSecon )
 
 Return .t. 
 
