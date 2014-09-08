@@ -2470,6 +2470,13 @@ Function ImportScript()
 
 Return nil
 
+Function TListViewItem()
+
+Return nil
+
+
+
+
 /*
 //---------------------------------------------------------------------------//
 
