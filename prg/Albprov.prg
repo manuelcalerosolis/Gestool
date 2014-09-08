@@ -187,6 +187,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LAUTSER                 107
 #define _NPNTVER                 108
 #define __CALMORIGEN             109
+#define __NBULTOS                110
+#define _CFORMATO                111
 
 /*
 Definici¢n de Array para impuestos
@@ -2465,8 +2467,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    local oGet1
    local oTotal
 	local nTotal
-   local cGetIra           := Space( 50 )
-   local oGetIra
    local oBrwPrp
    local oSayPr1
    local oSayPr2
@@ -2520,7 +2520,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    cBeneficioSobre[ 5 ]    := aBeneficioSobre[ Max( aTmp[ _NBNFSBR5 ], 1 ) ]
    cBeneficioSobre[ 6 ]    := aBeneficioSobre[ Max( aTmp[ _NBNFSBR6 ], 1 ) ]
 
-   DEFINE DIALOG oDlg RESOURCE "LAlbPrv" TITLE LblTitle( nMode ) + "lineas a albaranes de proveedores"
+   DEFINE DIALOG oDlg RESOURCE "LAlbPrv" TITLE LblTitle( nMode ) + "líneas a albaranes de proveedores"
 
       REDEFINE FOLDER oFld ;
          ID       400 ;
@@ -2537,7 +2537,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       REDEFINE GET aGet[ _CREF ] VAR cCodArt ;
 			ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ) );
+         VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], , , , , aGet[ _DFECCAD ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -2594,7 +2594,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], TDataView():PropiedadesLineas( nView ) ),;
-                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ),;
+                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -2615,7 +2615,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], TDataView():PropiedadesLineas( nView ) ),;
-                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ),;
+                        loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -2659,6 +2659,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       fin de propiedades
       -------------------------------------------------------------------------
       */
+
+      REDEFINE GET aGet[ __NBULTOS ] ;
+         VAR      aTmp[ __NBULTOS ] ;
+         ID       450 ;
+         IDSAY    451 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  cPicUnd ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NCANENT ] VAR aTmp[ _NCANENT ];
 			ID 		140 ;
@@ -2792,6 +2801,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 			OF 		oFld:aDialogs[1]
       */
 
+      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
+         ID       460;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[ __CALMORIGEN ] VAR aTmp[ __CALMORIGEN ]  ;
          ID       330 ;
          IDTEXT   331 ;
@@ -2816,14 +2830,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 			WHEN 		.F. ;
          PICTURE  cPirDiv ;
 			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oGetIra VAR cGetIra;
-         ID       410 ;
-         IDSAY    411 ;
-         BITMAP   "Lupa" ;
-         ON HELP  ( SearchProperty( oGetIra, oBrwPrp ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
 
       /*
       Segunda cajas de dialogo-------------------------------------------------
@@ -3142,7 +3148,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oBtn ) )
+         ACTION   ( SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet1, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oSayLote, oBtn ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -3167,7 +3173,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal ),;
+      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oDlg, oSayLote, oTotal ),;
                          if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
@@ -3180,9 +3186,17 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal )
+Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oDlg, oSayLote, oTotal )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+
+   if !uFieldEmpresa( "lUseBultos" )
+      aGet[ __NBULTOS ]:Hide()
+   else
+      if !Empty( aGet[ __NBULTOS ] )
+         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
 
    if !lUseCaj()
       aGet[ _NCANENT ]:Hide()
@@ -3213,7 +3227,6 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
    end if
 
    oBrwPrp:Hide()
-   oGetIra:Hide()
 
    oSayPr1:SetText( "" )
    oSayVp1:SetText( "" )
@@ -3339,7 +3352,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oSayLote, oBtn, oBtnSer )
+STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTmpAlb, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oSayLote, oBtn, oBtnSer )
 
    local n, i
 
@@ -3441,7 +3454,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
 
       if lEntCon()
 
-         SetDlgMode( aGet, aTmp, aTmpalb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oGetIra, oBmp, oDlg, oSayLote, oTotal )
+         SetDlgMode( aGet, aTmp, aTmpalb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oDlg, oSayLote, oTotal )
 
          nTotAlbPrv( nil, TDataView():AlbaranesProveedores( nView ), dbfTmp, TDataView():TiposIva( nView ), TDataView():Divisas( nView ), aTmpAlb )
 
@@ -4124,7 +4137,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode )
+Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode )
 
    local hHas128
    local cLote
@@ -4360,12 +4373,9 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
                LoadPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], TDataView():Propiedades( nView ), TDataView():PropiedadesLineas( nView ), TDataView():ArticuloPrecioPropiedades( nView ), oBrwPrp, aGet[ _NUNICAJA ], aGet[ _NPREDIV ]  )
 
-               oGetIra:Show()
-
             else
 
                oBrwPrp:Hide()
-               oGetIra:Hide()
 
                if !Empty( aTmp[ _CCODPR1 ] )
 
@@ -8970,6 +8980,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "lAutSer",      "L",  1,  0, "Lógico de autoserializar",     "",                   "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nPntVer",      "N", 16,  6, "Importe punto verde" ,        "cPirDivAlb",          "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "nBultos",      "N", 16,  6, "Numero de bultos en líneas", "",                     "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cFormato",     "C",100,  0, "Formato de compra", "",                              "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

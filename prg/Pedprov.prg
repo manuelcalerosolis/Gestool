@@ -7726,7 +7726,7 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nBultos", "N", 16,   6, "Numero de bultos en líneas",       "",                  "", "(cDbfCol )"} )
-   aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de venta",                 "",                  "", "(cDbfCol )"} )
+   aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                 "",                  "", "(cDbfCol )"} )
 
 return ( aColPedPrv )
 
