@@ -1938,7 +1938,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          PICTURE  "@R A/#########/##" ;
          WHEN     ( nMode == APPD_MODE ) ;
          VALID    ( cFacPrv( aGet, oBrwLin, nMode, aTmp ), RecalculaTotal( aTmp ) ) ;
-         ON HELP  ( brwFacPrv( aGet[ _CNUMFAC ], TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():TiposIva( nView ), TDataView():Divisas( nView ) ) );
+         ON HELP  ( brwFacPrv( aGet[ _CNUMFAC ], nView ) );
          BITMAP   "LUPA" ;
 			OF 		oFld:aDialogs[1]
 

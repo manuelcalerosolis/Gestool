@@ -13071,7 +13071,7 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-Function BrwFacPrv( oGet, oIva )
+Function BrwFacPrv( oGet, nView )
 
    local oDlg
    local oBrw
@@ -13082,9 +13082,9 @@ Function BrwFacPrv( oGet, oIva )
    local cCbxOrd
    local aCbxOrd
 
-   if !OpenFiles()
+   /*if !OpenFiles()
       Return .f.
-   end if
+   end if*/
 
    aCbxOrd           := { "Número", "Fecha", "Proveedor", "Nombre" }
    nOrd              := GetBrwOpt( "BrwFacPrv" )
@@ -13195,7 +13195,7 @@ Function BrwFacPrv( oGet, oIva )
 
    ( TDataView():FacturasProveedores( nView ) )->( dbClearFilter() )
 
-   CloseFiles()
+   //CloseFiles()
 
    /*
    Guardamos los datos del browse-------------------------------------------
