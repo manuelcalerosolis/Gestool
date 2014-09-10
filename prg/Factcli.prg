@@ -141,6 +141,7 @@
 #define _LOPERPV           120
 #define _LRECC             121
 #define _CCODPRY           122
+#define _NDTOTARIFA 	   123
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -231,15 +232,15 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP            83
 #define _LGASSUP            84
 #define __CNUMPED           85
-#define __DFECFAC				 86
-#define _CSUPED				 87     
+#define __DFECFAC			86
+#define _CSUPED				87     
 #define __CNUMSAT           88
-#define _DFECULTCOM 			 89
-#define __CCODCLI 			 90
-#define _LFROMATP 			 91
-#define _NUNIULTCOM  	 	 92
-#define __NBULTOS				 93
-#define _CFORMATO 			 94
+#define _DFECULTCOM 		89
+#define __CCODCLI 			90
+#define _LFROMATP 			91
+#define _NUNIULTCOM  	 	92
+#define __NBULTOS			93
+#define _CFORMATO 			94
 
 /*
 Definici¢n de Array para impuestos
@@ -10748,6 +10749,10 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
             aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
          end if
 
+		 if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
+            aTmp[ _NDTOTARIFA ] := ( TDataView():Clientes( nView ) )->nDtoArt
+         end if
+
          if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
@@ -16434,6 +16439,7 @@ Static Function hValue( aTmp, aTmpFac )
          hValue[ "cCodigoGrupo"      ] := aTmpFac[ _CCODGRP ]
          hValue[ "lIvaIncluido"      ] := aTmpFac[ _LIVAINC ]
          hValue[ "dFecha"            ] := aTmpFac[ _DFECFAC ]
+         hValue[ "nDescuentoTarifa"  ] := aTmpFac[ _NDTOTARIFA ]
 
       case ValType( aTmpFac ) == "C"
          
@@ -16441,6 +16447,7 @@ Static Function hValue( aTmp, aTmpFac )
          hValue[ "cCodigoGrupo"      ] := ( aTmpFac )->cCodGrp
          hValue[ "lIvaIncluido"      ] := ( aTmpFac )->lIvaInc
          hValue[ "dFecha"            ] := ( aTmpFac )->dFecFac
+         hValue[ "nDescuentoTarifa"  ] := ( aTmpFac )->nDtoTarifa
 
    end case
 
@@ -19171,6 +19178,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"",					 	"", "( cDbf )"} )
    aAdd( aItmFacCli, {"cCodPry" 	,"C", 4,   0, "Código del proyecto", 								"", 				 	"", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								"", 				 	"", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 

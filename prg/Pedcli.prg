@@ -105,13 +105,14 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CNUMALB                  90
 #define _LOPERPV                  91
 #define _CBANCO                   92
-#define _CPAISIBAN 					 93
-#define _CCTRLIBAN 					 94
+#define _CPAISIBAN 				  93
+#define _CCTRLIBAN 				  94
 #define _CENTBNC                  95
 #define _CSUCBNC                  96
 #define _CDIGBNC                  97
 #define _CCTABNC                  98
 #define _LPRODUC                  99
+#define _NDTOTARIFA              100
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -15563,6 +15564,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cDigBnc",  "C",   2,  0, "Dígito de control de la cuenta bancaria del cliente","","", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCtaBnc",  "C",  10,  0, "Cuenta bancaria del cliente", "",                       "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "lProduc",  "L",   1,  0, "Lógico para incluir en producción" , "",                "", "( cDbf )", .t. } )
+   aAdd( aItmPedCli, { "nDtoTarifa","N",  6,  2, "Descuentos de tarifa", 			"", 		 	 	  "", "( cDbf )" } )
 
 return ( aItmPedCli )
 

@@ -17643,17 +17643,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 296, 102, 136, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 225, 114, 70, 11
   CONTROL "", 161, "Edit", WS_BORDER|WS_TABSTOP, 296, 114, 136, 11
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 464, 30, 70, 11
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 465, 30, 70, 11
   CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 536, 30, 126, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 464, 42, 70, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 465, 42, 70, 11
   CONTROL "", 171, "Edit", WS_BORDER|WS_TABSTOP, 536, 42, 126, 11
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 464, 54, 70, 11
+  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 465, 54, 70, 11
   CONTROL "", 181, "Edit", WS_BORDER|WS_TABSTOP, 536, 54, 126, 11
-  CONTROL "", 182, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 464, 66, 70, 11
+  CONTROL "", 182, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 465, 66, 70, 11
   CONTROL "", 183, "Edit", ES_RIGHT|WS_BORDER, 536, 66, 126, 11
-  CONTROL "", 185, "Edit", WS_BORDER|WS_TABSTOP, 464, 78, 70, 11
+  CONTROL "", 185, "Edit", WS_BORDER|WS_TABSTOP, 465, 78, 70, 11
   CONTROL "", 186, "Edit", WS_BORDER|WS_TABSTOP, 536, 78, 126, 11
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 464, 90, 52, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 465, 90, 52, 11
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 43, 130, 50, 14
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 98, 130, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 153, 130, 50, 14
@@ -17701,17 +17701,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 179, 69, 46, 8
   CONTROL "CP/Población", -1, "Static", WS_GROUP, 179, 81, 46, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 179, 93, 46, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 434, 93, 28, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 432, 93, 28, 8
   CONTROL "Precio", -1, "Static", WS_GROUP, 329, 33, 32, 8
   CONTROL "Riesgo", -1, "Static", WS_GROUP, 329, 57, 32, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 329, 93, 32, 8
-  CONTROL "Tarifa per.", -1, "Static", WS_GROUP, 433, 33, 28, 8
+  CONTROL "Tarifa per.", -1, "Static", WS_GROUP, 432, 33, 28, 8
   CONTROL "Dirección", -1, "Static", WS_GROUP, 179, 105, 46, 8
   CONTROL "Almacén", -1, "Static", WS_GROUP, 179, 117, 46, 8
-  CONTROL "Pago", -1, "Static", WS_GROUP, 434, 45, 28, 8
-  CONTROL "Agente", -1, "Static", WS_GROUP, 434, 57, 28, 8
-  CONTROL "%Com.", -1, "Static", WS_GROUP, 434, 69, 28, 8
-  CONTROL "Ruta", -1, "Static", WS_GROUP, 434, 81, 28, 8
+  CONTROL "Pago", -1, "Static", WS_GROUP, 432, 45, 28, 8
+  CONTROL "Agente", -1, "Static", WS_GROUP, 432, 57, 28, 8
+  CONTROL "%Com.", -1, "Static", WS_GROUP, 432, 69, 28, 8
+  CONTROL "Ruta", -1, "Static", WS_GROUP, 432, 81, 28, 8
   CONTROL "%", 703, "Static", WS_GROUP, 189, 302, 8, 8
   CONTROL "%", 704, "Static", WS_GROUP, 189, 314, 8, 8
   CONTROL "%", 705, "Static", WS_GROUP, 189, 326, 8, 8
@@ -17732,12 +17732,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "S.A.T. de clientes", -1, "Static", WS_GROUP, 44, 4, 120, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 45, 25, 8
   CONTROL "Situación ", -1, "Static", WS_GROUP, 44, 81, 37, 8
-  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 464, 102, 70, 11
+  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 465, 102, 70, 11
   CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 536, 102, 126, 11
-  CONTROL "Operario", -1, "Static", WS_GROUP, 434, 105, 28, 8
-  CONTROL "", 350, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 82, 101, 34, 12
-  CONTROL "", 351, "Edit", WS_BORDER, 118, 101, 59, 12
-  CONTROL "Categoría", -1, "Static", WS_GROUP, 44, 105, 35, 8
+  CONTROL "Operario", -1, "Static", WS_GROUP, 432, 105, 28, 8
+  CONTROL "", 350, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 465, 114, 70, 11
+  CONTROL "", 351, "Edit", WS_BORDER, 536, 114, 110, 11
+  CONTROL "Categoría", -1, "Static", WS_GROUP, 432, 117, 34, 8
+  CONTROL "", 352, "TBitMap", 0x00800000, 648, 114, 14, 11
 }
 
 SATCLI_2 DIALOG DISCARDABLE 45, 10, 670, 375

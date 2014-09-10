@@ -116,6 +116,7 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CSUCBNC                  99
 #define _CDIGBNC                  100
 #define _CCTABNC                  101
+#define _NDTOTARIFA               102  
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -9121,6 +9122,10 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
              aGet[ _NTARIFA ]:cText( ( TDataView():Get( "Client", nView ) )->nTarifa )
          end if
 
+         if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
+             aTmp[ _NDTOTARIFA ]    := ( TDataView():Get( "Client", nView ) )->nDtoArt
+         end if
+
          if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Get( "Client", nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:cText( ( TDataView():Get( "Client", nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
@@ -13618,6 +13623,7 @@ Static Function hValue( aTmp, aTmpAlb )
          hValue[ "cCodigoGrupo"      ] := aTmpAlb[ _CCODGRP ]
          hValue[ "lIvaIncluido"      ] := aTmpAlb[ _LIVAINC ]
          hValue[ "dFecha"            ] := aTmpAlb[ _DFECALB ]
+         hValue[ "nDescuentoTarifa"  ] := aTmpAlb[ _NDTOTARIFA ]
 
       case ValType( aTmpAlb ) == "C"   
          
@@ -13625,6 +13631,7 @@ Static Function hValue( aTmp, aTmpAlb )
          hValue[ "cCodigoGrupo"      ] := ( aTmpAlb )->cCodGrp
          hValue[ "lIvaIncluido"      ] := ( aTmpAlb )->lIvaInc
          hValue[ "dFecha"            ] := ( aTmpAlb )->dFecAlb
+         hValue[ "nDescuentoTarifa"  ] := ( aTmpAlb )->nDtoTarifa
 
    end case
 
@@ -16712,6 +16719,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cSucBnc"  , "C",  4, 0, "Sucursal de la cuenta bancaria del cliente",            "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                           "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                        "",                   "", "( cDbf )", nil } )
 
 Return ( aItmAlbCli )
 
